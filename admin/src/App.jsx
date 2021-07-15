@@ -89,8 +89,8 @@ const Carts = Loadable({
 })
 
 const App = () => {
-   const location = useLocation()
-   const { routes, setRoutes } = useTabs()
+   // const location = useLocation()
+   // const { routes, setRoutes } = useTabs()
 
    const [open, toggle] = React.useState(false)
    const { loading, data: { apps = [] } = {} } = useSubscription(APPS)

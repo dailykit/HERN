@@ -19,6 +19,7 @@ import {
    Context,
    ContextualMenu,
    typeOf,
+   DropdownButton,
 } from '@dailykit/ui'
 import { jsPDF } from 'jspdf'
 import 'jspdf-autotable'
@@ -228,9 +229,8 @@ class DataTable extends React.Component {
          checked: false,
          groups: [localStorage.getItem('tabulator-recipe_table-group')],
       }
-      this.handleMultipleRowSelection = this.handleMultipleRowSelection.bind(
-         this
-      )
+      this.handleMultipleRowSelection =
+         this.handleMultipleRowSelection.bind(this)
       this.tableRef = React.createRef()
       this.handleRowSelection = this.handleRowSelection.bind(this)
    }
@@ -243,7 +243,8 @@ class DataTable extends React.Component {
          () => {
             if (this.state.checked) {
                this.tableRef.current.table.selectRow('active')
-               let multipleRowData = this.tableRef.current.table.getSelectedData()
+               let multipleRowData =
+                  this.tableRef.current.table.getSelectedData()
                this.props.setSelectedRows(multipleRowData)
                localStorage.setItem(
                   'selected-rows-id_recipe_table',
@@ -558,68 +559,68 @@ function RecipeName({ cell, addTab }) {
    )
 }
 
-const ActionBar = ({
-   downloadPdfData,
-   downloadCsvData,
-   downloadXlsxData,
-   selectedRows,
-   openTunnel,
-   handleGroupBy,
-   clearHeaderFilter,
-}) => {
-   const [groupByOptions] = React.useState([
-      { id: 1, title: 'isPublished' },
-      { id: 2, title: 'cuisine' },
-      { id: 3, title: 'author' },
-   ])
-   const selectedOption = option => {
-      localStorage.setItem(
-         'tabulator-recipe_table-group',
-         JSON.stringify(option.map(val => val.title))
-      )
-      const newOptions = option.map(val => val.title)
-      handleGroupBy(newOptions)
-   }
+// const ActionBar = ({
+//    downloadPdfData,
+//    downloadCsvData,
+//    downloadXlsxData,
+//    selectedRows,
+//    openTunnel,
+//    handleGroupBy,
+//    clearHeaderFilter,
+// }) => {
+//    const [groupByOptions] = React.useState([
+//       { id: 1, title: 'isPublished' },
+//       { id: 2, title: 'cuisine' },
+//       { id: 3, title: 'author' },
+//    ])
+//    const selectedOption = option => {
+//       localStorage.setItem(
+//          'tabulator-recipe_table-group',
+//          JSON.stringify(option.map(val => val.title))
+//       )
+//       const newOptions = option.map(val => val.title)
+//       handleGroupBy(newOptions)
+//    }
 
-   const defaultIDs = () => {
-      let arr = []
-      const recipeGroup = localStorage.getItem('tabulator-recipe_table-group')
-      const recipeGroupParse =
-         recipeGroup !== undefined &&
-         recipeGroup !== null &&
-         recipeGroup.length !== 0
-            ? JSON.parse(recipeGroup)
-            : null
-      if (recipeGroupParse !== null) {
-         recipeGroupParse.forEach(x => {
-            const foundGroup = groupByOptions.find(y => y.title == x)
-            arr.push(foundGroup.id)
-         })
-      }
-      return arr.length == 0 ? [] : arr
-   }
+//    const defaultIDs = () => {
+//       let arr = []
+//       const recipeGroup = localStorage.getItem('tabulator-recipe_table-group')
+//       const recipeGroupParse =
+//          recipeGroup !== undefined &&
+//          recipeGroup !== null &&
+//          recipeGroup.length !== 0
+//             ? JSON.parse(recipeGroup)
+//             : null
+//       if (recipeGroupParse !== null) {
+//          recipeGroupParse.forEach(x => {
+//             const foundGroup = groupByOptions.find(y => y.title == x)
+//             arr.push(foundGroup.id)
+//          })
+//       }
+//       return arr.length == 0 ? [] : arr
+//    }
 
-   return (
-      <IconButton type="ghost" onClick={() => onDelete(recipe)}>
-         <DeleteIcon color="#FF5A52" />
-      </IconButton>
-      // <ContextualMenu>
-      //    <Context
-      //       title="This is context 1"
-      //       handleClick={() => console.log('Context1')}
-      //    >
-      //       <p>This is things could be done</p>
-      //       <TextButton type="solid" size="sm">
-      //          Update
-      //       </TextButton>
-      //    </Context>
-      //    <Context
-      //       title="This is context 2"
-      //       handleClick={() => console.log('Context2')}
-      //    />
-      // </ContextualMenu>
-   )
-}
+//    return (
+//       <IconButton type="ghost" onClick={() => onDelete(recipe)}>
+//          <DeleteIcon color="#FF5A52" />
+//       </IconButton>
+//       // <ContextualMenu>
+//       //    <Context
+//       //       title="This is context 1"
+//       //       handleClick={() => console.log('Context1')}
+//       //    >
+//       //       <p>This is things could be done</p>
+//       //       <TextButton type="solid" size="sm">
+//       //          Update
+//       //       </TextButton>
+//       //    </Context>
+//       //    <Context
+//       //       title="This is context 2"
+//       //       handleClick={() => console.log('Context2')}
+//       //    />
+//       // </ContextualMenu>
+//    )
+// }
 
 function PublishStatus({ cell }) {
    const data = cell.getData()
@@ -653,75 +654,10 @@ function Selection() {
    )
 }
 
-function RecipeName({ cell, addTab }) {
-   const data = cell.getData()
-   return (
-      <>
-         <Flex
-            container
-            width="100%"
-            justifyContent="space-between"
-            alignItems="center"
-         >
-            <Flex
-               container
-               width="100%"
-               justifyContent="flex-end"
-               alignItems="center"
-            >
-               <p
-                  style={{
-                     width: '200px',
-                     whiteSpace: 'nowrap',
-                     overflow: 'hidden',
-                     textOverflow: 'ellipsis',
-                  }}
-                  // onClick={(e, cell) => {
-                  //    const { name, id } = data
-                  //    addTab(name, `/products/recipes/${id}`)
-                  //    console.log('hi')
-                  // }}
-
-                  // onClick(e, cell) => {
-                  //    const { name, id } = cell._cell.row.data
-                  //    this.props.addTab(name, `/products/recipes/${id}`)
-                  // }
-               >
-                  {cell._cell.value}
-               </p>
-            </Flex>
-
-            <Flex
-               container
-               width="100%"
-               justifyContent="space-between"
-               alignItems="center"
-            >
-               <IconButton type="ghost">
-                  {data.isPublished ? <PublishIcon /> : <UnPublishIcon />}
-               </IconButton>
-               {/* <ContextualMenu>
-                  <Context
-                     title="This is context 1"
-                     handleClick={() => console.log('Context1')}
-                  >
-                     <p>This is things could be done</p>
-                     <TextButton type="solid" size="sm">
-                        Update
-                     </TextButton>
-                  </Context>
-                  <Context
-                     title="This is context 2"
-                     handleClick={() => console.log('Context2')}
-                  />
-               </ContextualMenu> */}
-            </Flex>
-         </Flex>
-      </>
-   )
-}
-
 const ActionBar = ({
+   downloadPdfData,
+   downloadCsvData,
+   downloadXlsxData,
    selectedRows,
    openTunnel,
    handleGroupBy,
@@ -732,6 +668,25 @@ const ActionBar = ({
       { id: 2, title: 'cuisine' },
       { id: 3, title: 'author' },
    ])
+
+   const defaultIDs = () => {
+      let arr = []
+      const recipeGroup = localStorage.getItem('tabulator-recipe_table-group')
+      const recipeGroupParse =
+         recipeGroup !== undefined &&
+         recipeGroup !== null &&
+         recipeGroup.length !== 0
+            ? JSON.parse(recipeGroup)
+            : null
+      if (recipeGroupParse !== null) {
+         recipeGroupParse.forEach(x => {
+            const foundGroup = groupByOptions.find(y => y.title == x)
+            arr.push(foundGroup.id)
+         })
+      }
+      return arr.length == 0 ? [] : arr
+   }
+
    const selectedOption = option => {
       const newOptions = option.map(x => x.title)
       handleGroupBy(newOptions)
