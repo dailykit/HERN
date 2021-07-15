@@ -321,7 +321,7 @@ export const populate_env = async (req, res) => {
 
          const server = {}
 
-         get(grouped, 'server', []).forEach(node => {
+         get(grouped, 'server', {}).forEach(node => {
             server[node.title] = node.value
          })
 
@@ -330,60 +330,60 @@ export const populate_env = async (req, res) => {
             'module.exports = ' + JSON.stringify(server, null, 2)
          )
 
-         const subscription_shop = {}
+         const store = {}
 
-         get(grouped, 'subscription_shop', []).forEach(node => {
-            subscription_shop[node.title] = node.value
+         get(grouped, 'store', {}).forEach(node => {
+            store[node.title] = node.value
          })
 
          const PATH_TO_SUBS = path.join(
             __dirname,
             '../../../',
-            'subscription-shop',
+            'store',
             'public',
             'env-config.js'
          )
 
          fs.writeFileSync(
             PATH_TO_SUBS,
-            'window._env_ = ' + JSON.stringify(subscription_shop, null, 2)
+            'window._env_ = ' + JSON.stringify(store, null, 2)
          )
 
-         const dailyos = {}
+         const admin = {}
 
-         get(grouped, 'dailyos', []).forEach(node => {
-            dailyos[node.title] = node.value
+         get(grouped, 'admin', []).forEach(node => {
+            admin[node.title] = node.value
          })
 
          if (process.env.NODE_ENV === 'development') {
-            const PATH_TO_DAILYOS = path.join(
+            const PATH_TO_ADMIN = path.join(
                __dirname,
                '../../../',
-               'dailyos',
+               'admin',
                'public',
                'env-config.js'
             )
             fs.writeFileSync(
-               PATH_TO_DAILYOS,
-               'window._env_ = ' + JSON.stringify(dailyos, null, 2)
+               PATH_TO_ADMIN,
+               'window._env_ = ' + JSON.stringify(admin, null, 2)
             )
          } else {
-            const PATH_TO_DAILYOS = path.join(
+            const PATH_TO_ADMIN = path.join(
                __dirname,
                '../../../',
-               'dailyos',
+               'admin',
                'build',
                'env-config.js'
             )
             fs.writeFileSync(
-               PATH_TO_DAILYOS,
-               'window._env_ = ' + JSON.stringify(dailyos, null, 2)
+               PATH_TO_ADMIN,
+               'window._env_ = ' + JSON.stringify(admin, null, 2)
             )
          }
 
          return res.status(200).json({
             success: true,
-            data: { server, subscription_shop, dailyos }
+            data: { server, store, admin }
          })
       }
    } catch (error) {

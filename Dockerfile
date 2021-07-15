@@ -6,6 +6,7 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /usr/src/app
 COPY . .
 
+ENV SKIP_PREFLIGHT_CHECK=true
 RUN yarn install:packages && yarn build
 
 FROM node:14.4.0
@@ -30,19 +31,19 @@ WORKDIR /usr/src/app
 
 CMD ["google-chrome-unstable"]
 
-RUN mkdir subscription-shop
+RUN mkdir store
 
 # copy subscription shop files in to docker image
-COPY --from=builder /usr/src/app/subscription-shop/next.config.js ./subscription-shop
-COPY --from=builder /usr/src/app/subscription-shop/public ./subscription-shop/public
-COPY --from=builder /usr/src/app/subscription-shop/.next ./subscription-shop/.next
-COPY --from=builder /usr/src/app/subscription-shop/node_modules ./subscription-shop/node_modules
-COPY --from=builder /usr/src/app/subscription-shop/package.json ./subscription-shop/package.json
+COPY --from=builder /usr/src/app/store/next.config.js ./store
+COPY --from=builder /usr/src/app/store/public ./store/public
+COPY --from=builder /usr/src/app/store/.next ./store/.next
+COPY --from=builder /usr/src/app/store/node_modules ./store/node_modules
+COPY --from=builder /usr/src/app/store/package.json ./store/package.json
 
-RUN mkdir dailyos
+RUN mkdir admin
 
-# copy dailyos/build files in to docker image
-COPY --from=builder /usr/src/app/dailyos/build ./dailyos/build
+# copy admin/build files in to docker image
+COPY --from=builder /usr/src/app/admin/build ./admin/build
 
 # copy express server files in to docker image
 COPY --from=builder /usr/src/app/server ./server

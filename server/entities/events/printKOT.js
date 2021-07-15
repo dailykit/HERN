@@ -60,7 +60,7 @@ const print_job = async (url, title, printerId) => {
       url,
       title,
       printerId,
-      source: 'DailyOS',
+      source: 'Admin',
       contentType: 'pdf_uri'
    })
    return

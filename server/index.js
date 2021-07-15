@@ -25,7 +25,8 @@ import {
    handleImage,
    GetFullOccurenceRouter,
    CustomerRouter,
-   populate_env
+   populate_env,
+   ActionsRouter
 } from './entities'
 import { PrintRouter } from './entities/print'
 import {
@@ -43,7 +44,7 @@ const router = express.Router()
 
 // Routes
 router.get('/api/about', (req, res) => {
-   res.json({ about: 'This is dailyos server API!' })
+   res.json({ about: 'This is express server API!' })
 })
 router.use('/api/mof', MOFRouter)
 router.use('/api/menu', MenuRouter)
@@ -63,6 +64,7 @@ router.use('/api/modifier', ModifierRouter)
 router.use('/api/parseur', ParseurRouter)
 router.use('/api/occurences', GetFullOccurenceRouter)
 router.use('/api/customer', CustomerRouter)
+router.use('/api/actions', ActionsRouter)
 
 router.use('/webhook/user', UserRouter)
 router.use('/webhook/devices', DeviceRouter)

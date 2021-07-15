@@ -40,9 +40,9 @@ const PORT = process.env.PORT || 4000
 // serves dailyos-backend endpoints for ex. hasura event triggers, upload, parseur etc.
 app.use('/server', ServerRouter)
 /*
-serves build folder of dailyos
+serves build folder of admin
 */
-app.use('/apps', express.static('dailyos/build'))
+app.use('/apps', express.static('admin/build'))
 /*
 handles template endpoints for ex. serving labels, sachets, emails in pdf or html format
 
@@ -116,11 +116,11 @@ const serveSubscription = async (req, res, next) => {
                routePath === ''
                   ? path.join(
                        __dirname,
-                       `./subscription-shop/.next/server/pages/${brand}.html`
+                       `./store/.next/server/pages/${brand}.html`
                     )
                   : path.join(
                        __dirname,
-                       `./subscription-shop/.next/server/pages/${brand}/${routePath}.html`
+                       `./store/.next/server/pages/${brand}/${routePath}.html`
                     )
 
             /*
@@ -148,14 +148,12 @@ const serveSubscription = async (req, res, next) => {
             }
          } else {
             if (routePath.includes('env-config.js')) {
-               res.sendFile(
-                  path.join(__dirname, 'subscription-shop/public/env-config.js')
-               )
+               res.sendFile(path.join(__dirname, 'store/public/env-config.js'))
             } else {
                res.sendFile(
                   path.join(
                      __dirname,
-                     routePath.replace('_next', 'subscription-shop/.next')
+                     routePath.replace('_next', 'store/.next')
                   )
                )
             }

@@ -64,7 +64,7 @@ export const manage = async (req, res) => {
                const { printJob } = await client.request(PRINT_JOB, {
                   url,
                   title: trigger.name,
-                  source: 'DailyOS',
+                  source: 'Admin',
                   contentType: 'pdf_uri',
                   printerId: config.printerPrintNodeId
                })

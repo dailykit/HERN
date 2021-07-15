@@ -69,7 +69,7 @@ export const printLabel = async (req, res) => {
 
             await client.request(PRINT_JOB, {
                printerId,
-               source: 'DailyOS',
+               source: 'Admin',
                contentType: 'pdf_uri',
                url: `${url}?template=${template}&data={"id":${id}}`,
                title: `Order ${

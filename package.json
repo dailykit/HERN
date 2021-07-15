@@ -1,15 +1,15 @@
 {
-   "name": "dailyos-backend",
+   "name": "hern",
    "version": "0.1.0",
    "main": "index.js",
-   "repository": "https://github.com/dailykit/dailyos-backend.git",
+   "repository": "https://github.com/dailykit/hern.git",
    "author": "Praveen Bisht <prvnbist@gmail.com>",
    "license": "MIT",
    "scripts": {
-      "install:packages": "yarn && cd subscription-shop && yarn && cd ../dailyos && yarn",
-      "dev": "concurrently \"nodemon -r esm index.js\" \"cd subscription-shop && yarn dev\" \"cd dailyos && yarn start\"",
-      "build": "cd subscription-shop && yarn build && cd ../dailyos && yarn build",
-      "prod": "concurrently \"node -r esm index.js\" \"cd subscription-shop && yarn start\"",
+      "install:packages": "yarn && cd store && yarn && cd ../admin && yarn",
+      "dev": "concurrently \"nodemon -r esm index.js\" \"cd store && yarn dev\" \"cd admin && yarn start\"",
+      "build": "cd store && yarn build && cd ../admin && yarn build",
+      "prod": "concurrently \"node -r esm index.js\" \"cd store && yarn start\"",
       "dev:server": "nodemon -r esm index.js"
    },
    "dependencies": {
@@ -53,8 +53,8 @@
    },
    "nodemonConfig": {
       "ignore": [
-         "subscription-shop",
-         "dailyos"
+         "store",
+         "admin"
       ]
    }
 }
