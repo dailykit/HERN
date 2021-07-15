@@ -97,7 +97,13 @@ export const download = async (req, res) => {
    }
 }
 
+export const hydrateFold = async (req, res) => {
+   console.log('Incoming!')
+   res.send('OK')
+}
+
 router.get('/', root)
+router.post('/hydrate-fold', hydrateFold)
 router.post('/download/:path(*)', download)
 router.use('/files', express.static(__dirname + '../..' + '/templates'))
 

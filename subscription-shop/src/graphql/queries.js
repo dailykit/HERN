@@ -1083,8 +1083,11 @@ export const WEBSITE_PAGE = gql`
          route
          linkedNavigationMenuId
          websitePageModules(order_by: { position: desc_nulls_last }) {
-            fileId
             id
+            name
+            moduleType
+            isHidden
+            fileId
             position
             subscriptionDivFileId: file {
                path
