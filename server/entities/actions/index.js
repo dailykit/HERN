@@ -1,3 +1,3 @@
-import NutritionInfoRouter from './route'
+import ActionsRouter from './route'
 
-export { NutritionInfoRouter }
+export { ActionsRouter }
