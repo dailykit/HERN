@@ -25,7 +25,8 @@ import {
    handleImage,
    GetFullOccurenceRouter,
    CustomerRouter,
-   populate_env
+   populate_env,
+   NutritionInfoRouter
 } from './entities'
 import { PrintRouter } from './entities/print'
 import {
@@ -63,6 +64,7 @@ router.use('/api/modifier', ModifierRouter)
 router.use('/api/parseur', ParseurRouter)
 router.use('/api/occurences', GetFullOccurenceRouter)
 router.use('/api/customer', CustomerRouter)
+router.use('/api/actions', NutritionInfoRouter)
 
 router.use('/webhook/user', UserRouter)
 router.use('/webhook/devices', DeviceRouter)
