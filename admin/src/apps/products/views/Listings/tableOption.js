@@ -12,7 +12,7 @@ const options = {
    persistenceMode: 'local',
    selectablePersistence: true,
    persistence: {
-      group: true,
+      group: false,
       sort: true, //persist column sorting
       filter: true, //persist filter sorting
       page: true, //persist page

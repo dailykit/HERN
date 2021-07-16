@@ -387,8 +387,9 @@ class DataTable extends React.Component {
          recipeGroup.length !== 0
             ? JSON.parse(recipeGroup)
             : null
+      console.log('this is recipeGroup', recipeGroup)
       this.tableRef.current.table.setGroupBy(
-         !!recipeGroupParse && recipeGroupParse.length > 0
+         recipeGroupParse !== null && recipeGroupParse.length > 0
             ? recipeGroupParse
             : []
       )
@@ -688,7 +689,11 @@ const ActionBar = ({
    }
 
    const selectedOption = option => {
-      const newOptions = option.map(x => x.title)
+      localStorage.setItem(
+         'tabulator-recipe_table-group',
+         JSON.stringify(option.map(val => val.title))
+      )
+      const newOptions = option.map(val => val.title)
       handleGroupBy(newOptions)
    }
    const searchedOption = option => console.log(option)
@@ -778,6 +783,7 @@ const ActionBar = ({
                      variant="revamp"
                      disabled={true}
                      options={groupByOptions}
+                     selectedOption={selectedOption}
                      searchedOption={searchedOption}
                      defaultIds={defaultIDs()}
                      typeName="cuisine"
