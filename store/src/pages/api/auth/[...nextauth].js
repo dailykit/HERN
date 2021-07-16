@@ -127,8 +127,21 @@ export default async (req, res) => {
       providers,
       pages: { signIn: getRoute('/login') },
       callbacks: {
-         async signIn(user, account, profile) {
+         async signIn(user, account) {
             try {
+               const _client = await client()
+
+               const { provider_customers = [] } = await _client.request(
+                  PROVIDER_CUSTOMERS,
+                  {
+                     where: { providerAccountId: { _eq: user.id } },
+                  }
+               )
+
+               if (provider_customers.length > 0) {
+                  return true
+               }
+
                let customer = {}
                if (account.type === 'oauth') {
                   const name = user.name.split(' ')
@@ -141,8 +154,6 @@ export default async (req, res) => {
                   customer.email = user.email
                   customer.avatar = user.image
                }
-
-               const _client = await client()
 
                await _client.request(INSERT_PROVIDER_CUSTOMER, {
                   object: {
