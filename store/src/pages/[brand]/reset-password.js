@@ -4,9 +4,16 @@ import jwtDecode from 'jwt-decode'
 
 import tw, { styled, css } from 'twin.macro'
 import { useToasts } from 'react-toast-notifications'
+import { signIn, getSession } from 'next-auth/client'
 
 import { SEO, Layout, Loader } from '../../components'
-import { getRoute, getSettings, get_env, isClient } from '../../utils'
+import {
+   getRoute,
+   getSettings,
+   get_env,
+   isClient,
+   processUser,
+} from '../../utils'
 import { useMutation, useLazyQuery } from '@apollo/react-hooks'
 import {
    NAVIGATION_MENU,
@@ -17,7 +24,7 @@ import {
    BRAND,
    CUSTOMER,
 } from '../../graphql'
-import { useConfig } from '../../lib'
+import { graphQLClient, useConfig } from '../../lib'
 import { useQueryParams } from '../../utils/useQueryParams'
 import { useRouter } from 'next/router'
 import { useUser } from '../../context'
@@ -27,7 +34,7 @@ const ResetPassword = props => {
    const { addToast } = useToasts()
    const { dispatch } = useUser()
    const { brand, configOf, organization } = useConfig()
-   const params = { token: '' }
+   const params = useQueryParams()
    const { seo, settings, navigationMenus } = props
    const theme = configOf('theme-color', 'Visual')
 
@@ -66,7 +73,7 @@ const ResetPassword = props => {
             appearance: 'error',
          }),
    })
-   const [customer] = useLazyQuery(CUSTOMER.DETAILS, {
+   const [customer] = useLazyQuery(CUSTOMER.DETAILS_QUERY, {
       onCompleted: async ({ customer = {} }) => {
          const { email = '', keycloakId = '' } = jwtDecode(token)
          if (isEmpty(customer)) {
@@ -109,7 +116,7 @@ const ResetPassword = props => {
                localStorage.removeItem('landed_on')
                window.location.href = landedOn
             } else {
-               window.location.href = '/menu'
+               window.location.href = getRoute('/menu')
             }
          } else {
             console.log('CUSTOMER ISNT SUBSCRIBED')
@@ -120,7 +127,8 @@ const ResetPassword = props => {
                   window.location.href = landedOn
                } else {
                   window.location.href =
-                     window.location.origin + '/get-started/select-plan'
+                     window.location.origin +
+                     getRoute('/get-started/select-plan')
                }
             }
          }
@@ -138,7 +146,7 @@ const ResetPassword = props => {
                   'Seems like token has either expired or is invalid, please try again!',
                   { appearance: 'error' }
                )
-               router.push(getRoute('/get-started/register'))
+               // router.push(getRoute('/get-started/register'))
             }
          },
          onError: error => {
@@ -146,7 +154,7 @@ const ResetPassword = props => {
                'Seems like token has either expired or is invalid, please try again!',
                { appearance: 'error' }
             )
-            router.push(getRoute('/get-started/register'))
+            // router.push(getRoute('/get-started/register'))
          },
       }
    )
@@ -155,19 +163,22 @@ const ResetPassword = props => {
       onCompleted: async () => {
          addToast('Password changed successfully!', { appearance: 'success' })
          const parsedToken = jwtDecode(params['token'])
-         const token = await auth.login({
+         await signIn('email_password', {
             email: parsedToken.email,
             password: form.password,
+            redirect: false,
          })
+
+         const session = await getSession()
          if (token?.sub) {
             customer({
                variables: {
-                  keycloakId: token?.sub,
+                  keycloakId: session?.user?.id,
                   brandId: brand.id,
                },
             })
          } else {
-            router.push(getRoute('/get-started/register'))
+            // router.push(getRoute('/get-started/register'))
          }
       },
       onError: error => {
@@ -177,6 +188,7 @@ const ResetPassword = props => {
    React.useEffect(() => {
       if (params) {
          const token = params['token']
+         console.log({ token })
          if (token) {
             setToken(token)
             const { type = '', redirectUrl = '' } = jwtDecode(token)
@@ -187,7 +199,7 @@ const ResetPassword = props => {
                localStorage.setItem('landed_on', redirectUrl)
             }
          } else {
-            router.push(getRoute('/get-started/register'))
+            // router.push(getRoute('/get-started/register'))
          }
       }
    }, [params])

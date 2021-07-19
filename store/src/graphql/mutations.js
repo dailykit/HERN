@@ -311,7 +311,7 @@ export const FORGOT_PASSWORD = gql`
       $origin: String!
       $redirectUrl: String
    ) {
-      forgotPassword(
+      forgotPassword: forgotPassword_(
          type: $type
          email: $email
          origin: $origin
@@ -324,7 +324,7 @@ export const FORGOT_PASSWORD = gql`
 
 export const RESET_PASSWORD = gql`
    mutation ResetPassword($token: String!, $password: String!) {
-      resetPassword(token: $token, password: $password) {
+      resetPassword: resetPassword_(token: $token, password: $password) {
          success
          message
       }
@@ -332,8 +332,8 @@ export const RESET_PASSWORD = gql`
 `
 
 export const VERIFY_RESET_PASSWORD_TOKEN = gql`
-   mutation VerifyResetPasswordToken($token: String!) {
-      verifyResetPasswordToken(token: $token) {
+   mutation VerifyResetPasswordToken_($token: String!) {
+      verifyResetPasswordToken: verifyResetPasswordToken_(token: $token) {
          success
          message
       }

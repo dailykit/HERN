@@ -823,6 +823,80 @@ export const CUSTOMER = {
          }
       }
    `,
+   DETAILS_QUERY: gql`
+      query customer($keycloakId: String!, $brandId: Int!) {
+         customer(keycloakId: $keycloakId) {
+            id
+            keycloakId
+            isSubscriber
+            isTest
+            carts {
+               id
+               paymentStatus
+               subscriptionOccurence {
+                  fulfillmentDate
+               }
+            }
+            brandCustomers(where: { brandId: { _eq: $brandId } }) {
+               id
+               isDemo
+               brandId
+               keycloakId
+               isSubscriber
+               isSubscriptionCancelled
+               pausePeriod
+               subscriptionId
+               subscriptionAddressId
+               subscriptionPaymentMethodId
+               subscriptionOnboardStatus
+               subscription {
+                  recipes: subscriptionItemCount {
+                     count
+                     price
+                     tax
+                     isTaxIncluded
+                     servingId: subscriptionServingId
+                     serving: subscriptionServing {
+                        size: servingSize
+                     }
+                  }
+               }
+            }
+            platform_customer: platform_customer_ {
+               email
+               firstName
+               lastName
+               keycloakId
+               phoneNumber
+               stripeCustomerId
+               addresses: customerAddresses_(order_by: { created_at: desc }) {
+                  id
+                  lat
+                  lng
+                  line1
+                  line2
+                  city
+                  state
+                  country
+                  zipcode
+                  label
+                  notes
+               }
+               paymentMethods: stripePaymentMethods_ {
+                  brand
+                  last4
+                  country
+                  expMonth
+                  expYear
+                  funding
+                  keycloakId
+                  cardHolderName
+                  stripePaymentMethodId
+               }
+            }
+         }
+      }
+   `,
 }
 
 export const GET_FILEID = gql`
