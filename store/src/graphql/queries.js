@@ -823,6 +823,20 @@ export const CUSTOMER = {
          }
       }
    `,
+   WITH_BRAND: gql`
+      query customers(
+         $where: crm_customer_bool_exp = {}
+         $brandId: Int_comparison_exp = {}
+      ) {
+         customers(where: $where) {
+            id
+            brandCustomers(where: { brandId: $brandId }) {
+               id
+               subscriptionOnboardStatus
+            }
+         }
+      }
+   `,
 }
 
 export const GET_FILEID = gql`

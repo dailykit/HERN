@@ -1,12 +1,12 @@
 import React from 'react'
 import axios from 'axios'
-import { isEmpty } from 'lodash'
+import { get, isEmpty } from 'lodash'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import tw, { styled } from 'twin.macro'
 import Countdown from 'react-countdown'
 import { useToasts } from 'react-toast-notifications'
-import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { useLazyQuery, useMutation, useSubscription } from '@apollo/react-hooks'
 import { signIn, providers, getSession } from 'next-auth/client'
 
 import { useConfig } from '../../../lib'
@@ -79,7 +79,7 @@ const Register = props => {
                                  provider.name === 'Google' &&
                                     tw`bg-blue-500 text-white`,
                               ]}
-                              onClick={() => signIn(provider.id)}
+                              onClick={() => signIn(provider.id, { brand: 1 })}
                            >
                               Sign in with {provider.name}
                            </button>
@@ -102,6 +102,7 @@ export default Register
 
 const OTP = ({ setIsViaOtp }) => {
    const router = useRouter()
+   const { brand } = useConfig()
    const [error, setError] = React.useState('')
    const [loading, setLoading] = React.useState(false)
    const [hasOtpSent, setHasOtpSent] = React.useState(false)
@@ -111,6 +112,80 @@ const OTP = ({ setIsViaOtp }) => {
    const [otp, setOtp] = React.useState(null)
    const [resending, setResending] = React.useState(false)
    const [time, setTime] = React.useState(null)
+
+   const [createBrandCustomer] = useMutation(MUTATIONS.BRAND.CUSTOMER.CREATE, {
+      onError: () =>
+         addToast('Something went wrong!', {
+            appearance: 'error',
+         }),
+   })
+   const [create] = useMutation(MUTATIONS.CUSTOMER.CREATE, {
+      onCompleted: async ({ createCustomer }) => {
+         if (!isEmpty(createCustomer)) {
+         }
+      },
+      onError: () =>
+         addToast('Something went wrong!', {
+            appearance: 'error',
+         }),
+   })
+
+   const [fetchCustomer] = useLazyQuery(CUSTOMER.WITH_BRAND, {
+      onCompleted: ({ customers = [] } = []) => {
+         const session = await getSession()
+
+         const customerExists = customers.length > 0
+         const brandCustomerExists =
+            customerExists && customers[0].brandCustomers.length > 0
+
+         if (!customerExists) {
+            await create({
+               variables: {
+                  object: {
+                     keycloakId: session?.user?.id,
+                     source: 'subscription',
+                     sourceBrandId: brand.id,
+                     brandCustomers: {
+                        data: {
+                           brandId: brand.id,
+                           subscriptionOnboardStatus: 'SELECT_DELIVERY',
+                        },
+                     },
+                  },
+               },
+            })
+         }
+
+         if (!brandCustomerExists) {
+            await createBrandCustomer({
+               variables: {
+                  object: {
+                     brandId: brand.id,
+                     keycloakId: session?.user?.id,
+                     subscriptionOnboardStatus: 'SELECT_DELIVERY',
+                  },
+               },
+            })
+         }
+
+         let status = get(
+            customers,
+            '[0].brandCustomers[0].subscriptionOnboardStatus',
+            'SELECT_DELIVERY'
+         )
+
+         if (status === 'ONBOARDED') {
+            router.push(getRoute('/menu'))
+            return
+         }
+
+         router.push(getRoute('/get-started/select-plan'))
+      },
+      onError: error => {
+         setLoading(false)
+         console.error(error)
+      },
+   })
 
    const [resendOTP] = useMutation(RESEND_OTP, {
       onCompleted: () => {
@@ -203,8 +278,15 @@ const OTP = ({ setIsViaOtp }) => {
          setError('')
          const response = await signIn('otp', { redirect: false, ...form })
          if (response?.status === 200) {
-            router.push(getRoute('/get-started/select-plan'))
-            setLoading(false)
+            const session = await getSession()
+            await fetchCustomer({
+               variables: {
+                  where: {
+                     keycloakId: { _eq: session?.user?.id },
+                  },
+                  brandId: { _eq: brand?.id },
+               },
+            })
          } else {
             setLoading(false)
             setError('Entered OTP is incorrect, please try again!')
