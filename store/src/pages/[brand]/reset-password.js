@@ -146,7 +146,7 @@ const ResetPassword = props => {
                   'Seems like token has either expired or is invalid, please try again!',
                   { appearance: 'error' }
                )
-               // router.push(getRoute('/get-started/register'))
+               router.push(getRoute('/get-started/register'))
             }
          },
          onError: error => {
@@ -154,7 +154,7 @@ const ResetPassword = props => {
                'Seems like token has either expired or is invalid, please try again!',
                { appearance: 'error' }
             )
-            // router.push(getRoute('/get-started/register'))
+            router.push(getRoute('/get-started/register'))
          },
       }
    )
@@ -178,7 +178,7 @@ const ResetPassword = props => {
                },
             })
          } else {
-            // router.push(getRoute('/get-started/register'))
+            router.push(getRoute('/get-started/register'))
          }
       },
       onError: error => {
@@ -199,7 +199,7 @@ const ResetPassword = props => {
                localStorage.setItem('landed_on', redirectUrl)
             }
          } else {
-            // router.push(getRoute('/get-started/register'))
+            router.push(getRoute('/get-started/register'))
          }
       }
    }, [params])
