@@ -20,6 +20,7 @@ import {
    INSERT_PLATFORM_CUSTOMER,
    MUTATIONS,
    OTPS,
+   PLATFORM_CUSTOMERS,
    RESEND_OTP,
    SEND_SMS,
    UPSERT_BRAND_CUSTOMER,
@@ -103,15 +104,26 @@ export default Register
 const OTP = ({ setIsViaOtp }) => {
    const router = useRouter()
    const { brand } = useConfig()
+   const { addToast } = useToasts()
    const [error, setError] = React.useState('')
    const [loading, setLoading] = React.useState(false)
    const [hasOtpSent, setHasOtpSent] = React.useState(false)
    const [sendingOtp, setSendingOtp] = React.useState(false)
-   const [form, setForm] = React.useState({ phone: '', otp: '' })
+   const [form, setForm] = React.useState({ phone: '', otp: '', email: '' })
    const [otpId, setOtpId] = React.useState(null)
    const [otp, setOtp] = React.useState(null)
    const [resending, setResending] = React.useState(false)
    const [time, setTime] = React.useState(null)
+   const [isNewUser, setIsNewUser] = React.useState(false)
+
+   const [checkCustomerExistence] = useLazyQuery(PLATFORM_CUSTOMERS, {
+      onCompleted: ({ customers = [] }) => {
+         if (customers.length === 0) {
+            setIsNewUser(true)
+         }
+      },
+      onError: () => {},
+   })
 
    const [createBrandCustomer] = useMutation(BRAND.CUSTOMER.CREATE, {
       onError: () =>
@@ -215,7 +227,7 @@ const OTP = ({ setIsViaOtp }) => {
          } else {
             setOtp(null)
             setHasOtpSent(false)
-            setForm({ phone: '', otp: '' })
+            setForm({ phone: '', otp: '', email: '' })
             setSendingOtp(false)
             setError('')
             setLoading(false)
@@ -261,6 +273,9 @@ const OTP = ({ setIsViaOtp }) => {
 
    const onChange = e => {
       const { name, value } = e.target
+      if (name === 'email' && error) {
+         setError('')
+      }
       setForm(form => ({
          ...form,
          [name]: value,
@@ -273,10 +288,22 @@ const OTP = ({ setIsViaOtp }) => {
          setLoading(true)
          if (!form.otp) {
             setError('Please enter the OTP!')
+            setLoading(false)
             return
          }
+         const emailRegex =
+            /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+         if (isNewUser && !emailRegex.test(form.email)) {
+            setError('Please enter a valid email!')
+            setLoading(false)
+            return
+         }
+
          setError('')
-         const response = await signIn('otp', { redirect: false, ...form })
+         const response = await signIn('otp', {
+            redirect: false,
+            ...form,
+         })
          if (response?.status === 200) {
             const session = await getSession()
             await fetchCustomer({
@@ -292,6 +319,7 @@ const OTP = ({ setIsViaOtp }) => {
             setError('Entered OTP is incorrect, please try again!')
          }
       } catch (error) {
+         setLoading(false)
          console.error(error)
          setError('Failed to log in, please try again!')
       }
@@ -303,8 +331,12 @@ const OTP = ({ setIsViaOtp }) => {
             setError('Phone number is required!')
             return
          }
+
          setSendingOtp(true)
          setError('')
+         await checkCustomerExistence({
+            variables: { where: { phoneNumber: { _eq: form.phone } } },
+         })
          await insertOtpTransaction({
             variables: { object: { phoneNumber: form.phone } },
          })
@@ -360,6 +392,18 @@ const OTP = ({ setIsViaOtp }) => {
                </>
             ) : (
                <>
+                  {isNewUser && (
+                     <FieldSet>
+                        <Label htmlFor="email">Email*</Label>
+                        <Input
+                           name="email"
+                           type="text"
+                           onChange={onChange}
+                           value={form.email}
+                           placeholder="Enter your email"
+                        />
+                     </FieldSet>
+                  )}
                   <FieldSet>
                      <Label htmlFor="otp">OTP*</Label>
                      <Input
@@ -372,9 +416,11 @@ const OTP = ({ setIsViaOtp }) => {
                   </FieldSet>
                   <Submit
                      onClick={submit}
-                     disabled={resending || loading || !form.otp}
-                     className={
-                        resending || loading || !form.otp ? 'disabled' : ''
+                     disabled={
+                        resending ||
+                        loading ||
+                        !form.otp ||
+                        (isNewUser && !form.email)
                      }
                   >
                      Submit
@@ -950,7 +996,7 @@ const Input = styled.input`
 
 const Submit = styled.button`
    ${tw`bg-green-500 rounded w-full h-10 text-white uppercase tracking-wider`}
-   &.disabled {
+   &[disabled] {
       ${tw`cursor-not-allowed bg-gray-300 text-gray-700`}
    }
 `

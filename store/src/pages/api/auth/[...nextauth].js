@@ -75,18 +75,26 @@ const auth = {
             if (otps.length > 0) {
                const [otp] = otps
                if (Number(credentials.otp) === otp.code) {
-                  const { platform_customer = {} } = await _client.request(
+                  const { platform_customer = [] } = await _client.request(
                      PLATFORM_CUSTOMER,
                      {
                         where: { phoneNumber: { _eq: credentials.phone } },
                      }
                   )
-                  if (get(platform_customer, 'id')) {
-                     return platform_customer
+                  if (platform_customer.length > 0) {
+                     const [customer] = platform_customer
+                     return customer
                   } else {
                      const { insertCustomer = {} } = await _client.request(
                         INSERT_CUSTOMER,
-                        { object: { phoneNumber: credentials.phone } }
+                        {
+                           object: {
+                              ...(credentials.email && {
+                                 email: credentials.email,
+                              }),
+                              phoneNumber: credentials.phone,
+                           },
+                        }
                      )
                      return insertCustomer
                   }

@@ -1240,3 +1240,14 @@ export const OTPS = gql`
       }
    }
 `
+
+export const PLATFORM_CUSTOMERS = gql`
+   query customers($where: platform_customer__bool_exp = {}) {
+      customers: platform_customer_(where: $where) {
+         email
+         password
+         fullName
+         id: keycloakId
+      }
+   }
+`
