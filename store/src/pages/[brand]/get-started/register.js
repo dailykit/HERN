@@ -1,6 +1,5 @@
 import React from 'react'
 import axios from 'axios'
-import { get, isEmpty } from 'lodash'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import tw, { styled } from 'twin.macro'
@@ -13,8 +12,6 @@ import { useConfig } from '../../../lib'
 import { getRoute, getSettings, get_env, isClient } from '../../../utils'
 import { SEO, Layout, StepsNavbar } from '../../../components'
 import {
-   BRAND,
-   CUSTOMER,
    FORGOT_PASSWORD,
    INSERT_OTP_TRANSACTION,
    INSERT_PLATFORM_CUSTOMER,
@@ -23,7 +20,6 @@ import {
    PLATFORM_CUSTOMERS,
    RESEND_OTP,
    SEND_SMS,
-   UPSERT_BRAND_CUSTOMER,
 } from '../../../graphql'
 import {
    deleteStoredReferralCode,
@@ -102,9 +98,6 @@ const Register = props => {
 export default Register
 
 const OTP = ({ setIsViaOtp }) => {
-   const router = useRouter()
-   const { brand } = useConfig()
-   const { addToast } = useToasts()
    const [error, setError] = React.useState('')
    const [loading, setLoading] = React.useState(false)
    const [hasOtpSent, setHasOtpSent] = React.useState(false)
@@ -123,80 +116,6 @@ const OTP = ({ setIsViaOtp }) => {
          }
       },
       onError: () => {},
-   })
-
-   const [createBrandCustomer] = useMutation(BRAND.CUSTOMER.CREATE, {
-      onError: () =>
-         addToast('Something went wrong!', {
-            appearance: 'error',
-         }),
-   })
-   const [create] = useMutation(MUTATIONS.CUSTOMER.CREATE, {
-      onCompleted: async ({ createCustomer }) => {
-         if (!isEmpty(createCustomer)) {
-         }
-      },
-      onError: () =>
-         addToast('Something went wrong!', {
-            appearance: 'error',
-         }),
-   })
-
-   const [fetchCustomer] = useLazyQuery(CUSTOMER.WITH_BRAND, {
-      onCompleted: async ({ customers = [] } = []) => {
-         const session = await getSession()
-
-         const customerExists = customers.length > 0
-         const brandCustomerExists =
-            customerExists && customers[0].brandCustomers.length > 0
-
-         if (!customerExists) {
-            await create({
-               variables: {
-                  object: {
-                     keycloakId: session?.user?.id,
-                     source: 'subscription',
-                     sourceBrandId: brand.id,
-                     brandCustomers: {
-                        data: {
-                           brandId: brand.id,
-                           subscriptionOnboardStatus: 'SELECT_DELIVERY',
-                        },
-                     },
-                  },
-               },
-            })
-         }
-
-         if (!brandCustomerExists) {
-            await createBrandCustomer({
-               variables: {
-                  object: {
-                     brandId: brand.id,
-                     keycloakId: session?.user?.id,
-                     subscriptionOnboardStatus: 'SELECT_DELIVERY',
-                  },
-               },
-            })
-         }
-
-         let status = get(
-            customers,
-            '[0].brandCustomers[0].subscriptionOnboardStatus',
-            'SELECT_DELIVERY'
-         )
-
-         if (status === 'ONBOARDED') {
-            router.push(getRoute('/menu'))
-            return
-         }
-
-         router.push(getRoute('/get-started/select-plan'))
-      },
-      onError: error => {
-         setLoading(false)
-         console.error(error)
-      },
    })
 
    const [resendOTP] = useMutation(RESEND_OTP, {
@@ -305,15 +224,13 @@ const OTP = ({ setIsViaOtp }) => {
             ...form,
          })
          if (response?.status === 200) {
-            const session = await getSession()
-            await fetchCustomer({
-               variables: {
-                  where: {
-                     keycloakId: { _eq: session?.user?.id },
-                  },
-                  brandId: { _eq: brand?.id },
-               },
-            })
+            const landedOn = localStorage.getItem('landed_on')
+            if (landedOn) {
+               localStorage.removeItem('landed_on')
+               window.location.href = landedOn
+            } else {
+               window.location.href = getRoute('/menu')
+            }
          } else {
             setLoading(false)
             setError('Entered OTP is incorrect, please try again!')
@@ -468,27 +385,11 @@ const OTP = ({ setIsViaOtp }) => {
 
 const LoginPanel = () => {
    const router = useRouter()
-   const { brand } = useConfig()
    const [error, setError] = React.useState('')
    const [loading, setLoading] = React.useState(false)
    const [form, setForm] = React.useState({
       email: '',
       password: '',
-   })
-
-   const [createBrandCustomer] = useMutation(UPSERT_BRAND_CUSTOMER, {
-      onCompleted: () => {
-         const landedOn = isClient && localStorage.getItem('landed_on')
-         if (isClient && landedOn) {
-            localStorage.removeItem('landed_on')
-            window.location.href = landedOn
-         } else {
-            router.push(getRoute('/menu'))
-         }
-      },
-      onError: error => {
-         console.error(error)
-      },
    })
 
    const isValid = form.email && form.password
@@ -514,18 +415,12 @@ const LoginPanel = () => {
          if (response?.status !== 200) {
             setError('Email or password is incorrect!')
          } else if (response?.status === 200) {
-            const session = await getSession()
-            const { id: keycloakId = null } = session?.user
-            if (keycloakId) {
-               await createBrandCustomer({
-                  variables: {
-                     object: {
-                        keycloakId,
-                        brandId: brand.id,
-                        subscriptionOnboardStatus: 'SELECT_DELIVERY',
-                     },
-                  },
-               })
+            const landedOn = isClient && localStorage.getItem('landed_on')
+            if (isClient && landedOn) {
+               localStorage.removeItem('landed_on')
+               window.location.href = landedOn
+            } else {
+               router.push(getRoute('/menu'))
             }
          }
       } catch (error) {
@@ -598,29 +493,16 @@ const RegisterPanel = ({ setCurrent }) => {
       phone: '',
       code: '',
    })
-   const [create] = useMutation(MUTATIONS.CUSTOMER.CREATE, {
-      onCompleted: async ({ createCustomer }) => {
-         if (!isEmpty(createCustomer)) {
-            if (createCustomer?.keycloakId) {
-               const storedCode = getStoredReferralCode(null)
-               if (storedCode) {
-                  await applyReferralCode({
-                     variables: {
-                        brandId: brand.id,
-                        keycloakId: createCustomer.keycloakId,
-                        _set: {
-                           referredByCode: storedCode,
-                        },
-                     },
-                  })
-               }
-            }
-         }
+
+   const [applyReferralCode] = useMutation(MUTATIONS.CUSTOMER_REFERRAL.UPDATE, {
+      onCompleted: () => {
+         addToast('Referral code applied!', { appearance: 'success' })
+         deleteStoredReferralCode()
       },
-      onError: () =>
-         addToast('Something went wrong!', {
-            appearance: 'error',
-         }),
+      onError: error => {
+         console.log(error)
+         addToast('Referral code not applied!', { appearance: 'error' })
+      },
    })
 
    const [insertPlatformCustomer] = useMutation(INSERT_PLATFORM_CUSTOMER, {
@@ -634,35 +516,24 @@ const RegisterPanel = ({ setCurrent }) => {
                })
                if (response?.status === 200) {
                   const session = await getSession()
-                  if (session?.user?.id) {
-                     await create({
+                  const storedCode = getStoredReferralCode(null)
+                  if (storedCode && session?.user?.id) {
+                     await applyReferralCode({
                         variables: {
-                           object: {
-                              ...(session?.user?.email && {
-                                 email: session.user.email,
-                              }),
-                              keycloakId: session?.user?.id,
-                              source: 'subscription',
-                              sourceBrandId: brand.id,
-                              brandCustomers: {
-                                 data: {
-                                    brandId: brand.id,
-                                    subscriptionOnboardStatus:
-                                       'SELECT_DELIVERY',
-                                 },
-                              },
+                           brandId: brand.id,
+                           keycloakId: session?.user?.id,
+                           _set: {
+                              referredByCode: storedCode,
                            },
                         },
                      })
-                     window.location.href =
-                        window.location.origin +
-                        getRoute('/get-started/select-plan')
-
-                     setLoading(false)
-                  } else {
-                     setLoading(false)
-                     setError('Failed to register, please try again!')
                   }
+
+                  window.location.href =
+                     window.location.origin +
+                     getRoute('/get-started/select-plan')
+
+                  setLoading(false)
                } else {
                   setLoading(false)
                   setError('Failed to register, please try again!')
@@ -701,16 +572,6 @@ const RegisterPanel = ({ setCurrent }) => {
          },
       }
    )
-   const [applyReferralCode] = useMutation(MUTATIONS.CUSTOMER_REFERRAL.UPDATE, {
-      onCompleted: () => {
-         addToast('Referral code applied!', { appearance: 'success' })
-         deleteStoredReferralCode()
-      },
-      onError: error => {
-         console.log(error)
-         addToast('Referral code not applied!', { appearance: 'error' })
-      },
-   })
 
    const isValid =
       validateEmail(form.email) &&

@@ -190,28 +190,24 @@ export default async (req, res) => {
             }
          },
          async session(session, token) {
-            session.user.id = token.sub
-
-            if (get(session, 'user.email', '')) {
-               const id = get(token, 'sub')
-               const _client = await client()
-               const { provider_customers = [] } = await _client.request(
-                  PROVIDER_CUSTOMERS,
-                  {
-                     where: {
-                        _or: [
-                           { providerAccountId: { _eq: id } },
-                           { customerId: { _eq: id } },
-                        ],
-                     },
-                  }
-               )
-               if (provider_customers.length > 0) {
-                  const [customer] = provider_customers
-                  session.user.id = customer.customerId
+            const id = get(token, 'sub')
+            const _client = await client()
+            const { provider_customers = [] } = await _client.request(
+               PROVIDER_CUSTOMERS,
+               {
+                  where: {
+                     _or: [
+                        { providerAccountId: { _eq: id } },
+                        { customerId: { _eq: id } },
+                     ],
+                  },
                }
+            )
+            if (provider_customers.length > 0) {
+               const [customer] = provider_customers
+               session.user.email = customer.customer.email
+               session.user.id = customer.customerId
             }
-
             return session
          },
       },
@@ -280,6 +276,9 @@ const PROVIDER_CUSTOMERS = `
       provider_customers: platform_provider_customer(where: $where) {
          id
          customerId
+         customer {
+            email
+         }
       }
    }
 `
