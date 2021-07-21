@@ -65,31 +65,6 @@ const RecipesListing = () => {
       error,
    } = useSubscription(S_RECIPES)
 
-   // if (recipes.length > 0) {
-   //    const updatedRecipes = recipes.map(recipe => {
-   //       recipe.simpleRecipeYieldsLength = recipe.simpleRecipeYields.length
-   //       return recipe
-   //    })
-   //    recipes = [...updatedRecipes]
-   // }
-
-   // let recipes = []
-
-   // const { loading, error } = useSubscription(S_RECIPES, {
-   //    onSubscriptionData: data => {
-   //       const { simpleRecipes } = data.subscriptionData.data
-   //       const updatedRecipes = simpleRecipes.map(recipe => {
-   //          recipe.simpleRecipeYieldsLength = recipe.simpleRecipeYields.length
-   //          return recipe
-   //       })
-
-   //       console.log('up', updatedRecipes)
-   //       recipes = updatedRecipes
-   //    },
-   // })
-
-   console.log('re', recipes)
-
    const [createRecipe] = useMutation(CREATE_SIMPLE_RECIPE, {
       onCompleted: input => {
          addTab(
@@ -387,7 +362,6 @@ class DataTable extends React.Component {
          recipeGroup.length !== 0
             ? JSON.parse(recipeGroup)
             : null
-      console.log('this is recipeGroup', recipeGroup)
       this.tableRef.current.table.setGroupBy(
          recipeGroupParse !== null && recipeGroupParse.length > 0
             ? recipeGroupParse
@@ -560,69 +534,6 @@ function RecipeName({ cell, addTab }) {
    )
 }
 
-// const ActionBar = ({
-//    downloadPdfData,
-//    downloadCsvData,
-//    downloadXlsxData,
-//    selectedRows,
-//    openTunnel,
-//    handleGroupBy,
-//    clearHeaderFilter,
-// }) => {
-//    const [groupByOptions] = React.useState([
-//       { id: 1, title: 'isPublished' },
-//       { id: 2, title: 'cuisine' },
-//       { id: 3, title: 'author' },
-//    ])
-//    const selectedOption = option => {
-//       localStorage.setItem(
-//          'tabulator-recipe_table-group',
-//          JSON.stringify(option.map(val => val.title))
-//       )
-//       const newOptions = option.map(val => val.title)
-//       handleGroupBy(newOptions)
-//    }
-
-//    const defaultIDs = () => {
-//       let arr = []
-//       const recipeGroup = localStorage.getItem('tabulator-recipe_table-group')
-//       const recipeGroupParse =
-//          recipeGroup !== undefined &&
-//          recipeGroup !== null &&
-//          recipeGroup.length !== 0
-//             ? JSON.parse(recipeGroup)
-//             : null
-//       if (recipeGroupParse !== null) {
-//          recipeGroupParse.forEach(x => {
-//             const foundGroup = groupByOptions.find(y => y.title == x)
-//             arr.push(foundGroup.id)
-//          })
-//       }
-//       return arr.length == 0 ? [] : arr
-//    }
-
-//    return (
-//       <IconButton type="ghost" onClick={() => onDelete(recipe)}>
-//          <DeleteIcon color="#FF5A52" />
-//       </IconButton>
-//       // <ContextualMenu>
-//       //    <Context
-//       //       title="This is context 1"
-//       //       handleClick={() => console.log('Context1')}
-//       //    >
-//       //       <p>This is things could be done</p>
-//       //       <TextButton type="solid" size="sm">
-//       //          Update
-//       //       </TextButton>
-//       //    </Context>
-//       //    <Context
-//       //       title="This is context 2"
-//       //       handleClick={() => console.log('Context2')}
-//       //    />
-//       // </ContextualMenu>
-//    )
-// }
-
 function PublishStatus({ cell }) {
    const data = cell.getData()
    return (
@@ -644,7 +555,6 @@ function Selection() {
 
    const handleMultipleRowSelection = () => {
       setChecked(!checked)
-      console.log('handleMultipleRowSelection')
    }
    return (
       <Checkbox
