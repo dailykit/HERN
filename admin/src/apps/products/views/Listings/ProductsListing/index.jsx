@@ -233,7 +233,7 @@ class DataTable extends React.Component {
          headerSort: false,
          hozAlign: 'center',
          formatter: reactFormatter(
-            <DeleteProduct onDelete={this.props.deleteIngredientHandler} />
+            <DeleteProduct onDelete={this.props.deleteProductHandler} />
          ),
 
          width: 150,
