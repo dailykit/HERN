@@ -32,14 +32,6 @@ const PaymentTunnel = ({ setCard, closeTunnel }) => {
       variables: {
          where: {
             keycloakId: { _eq: customer.keycloakId },
-            customerByClient: {
-               clientId: {
-                  _in: [
-                     get_env('REACT_APP_KEYCLOAK_REALM'),
-                     `${get_env('REACT_APP_KEYCLOAK_REALM')}-subscription`,
-                  ],
-               },
-            },
          },
       },
       onError: () => {

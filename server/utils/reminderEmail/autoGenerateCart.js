@@ -248,15 +248,7 @@ const createCart = async data => {
             id: ORGANIZATION_ID
          })
 
-         const { stripeAccountType = '' } = organization
-
          let stripeCustomerId = platform_customer.stripeCustomerId
-         const { customerByClients = [] } = platform_customer
-
-         if (customerByClients.length > 0 && stripeAccountType === 'standard') {
-            const [customer] = customerByClients
-            stripeCustomerId = customer.organizationStripeCustomerId
-         }
          const { createCart } = await client.request(CREATE_CART, {
             object: {
                brandId,
@@ -296,10 +288,10 @@ const BRAND_CUSTOMER = `
             id
             email
             keycloakId
-            platform_customer {
+            platform_customer: platform_customer_ {
                firstName
                lastName
-               customerAddresses {
+               customerAddresses: customerAddresses_ {
                   id
                   line1
                   line2
@@ -385,12 +377,12 @@ const GET_CUSTOMER_ORDER_DETAILS = `
                   id
                   keycloakId
                   email
-                  platform_customer {
+                  platform_customer: platform_customer_ {
                      firstName
                      lastName
                      phoneNumber
                      stripeCustomerId
-                     customerAddresses {
+                     customerAddresses: customerAddresses_ {
                         city
                         country
                         created_at
@@ -402,10 +394,6 @@ const GET_CUSTOMER_ORDER_DETAILS = `
                         zipcode
                         state
                         id
-                     }
-                     customerByClients: CustomerByClients {
-                        keycloakId
-                        organizationStripeCustomerId
                      }
                   }
                }

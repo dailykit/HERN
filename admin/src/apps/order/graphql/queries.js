@@ -998,8 +998,8 @@ export const CUSTOMER_PAYMENT_METHODS = gql`
    query customer($keycloakId: String!) {
       customer(keycloakId: $keycloakId) {
          id
-         platform_customer {
-            payment_methods: stripePaymentMethods {
+         platform_customer: platform_customer_ {
+            payment_methods: stripePaymentMethods_ {
                brand
                last4
                funding

@@ -55,7 +55,7 @@ export const PaymentForm = ({ intent }) => {
                         expMonth: data.card.exp_month,
                         stripePaymentMethodId: data.id,
                         cardHolderName: data.billing_details.name,
-                        organizationStripeCustomerId:
+                        stripeCustomerId:
                            user.platform_customer?.stripeCustomerId,
                      },
                   },

@@ -85,7 +85,6 @@ const ResetPassword = props => {
                      keycloakId,
                      source: 'subscription',
                      sourceBrandId: brand.id,
-                     clientId: isClient && get_env('CLIENTID'),
                      brandCustomers: { data: { brandId: brand.id } },
                   },
                },

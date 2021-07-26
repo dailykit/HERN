@@ -30,7 +30,7 @@ export const CUSTOMERS_LISTING = gql`
                }
             }
          }
-         platform_customer {
+         platform_customer: platform_customer_ {
             firstName
             lastName
             email
@@ -58,7 +58,7 @@ export const CUSTOMER_DATA = gql`
                isTest
                email
                keycloakId
-               platform_customer {
+               platform_customer: platform_customer_ {
                   firstName
                   lastName
                   email
@@ -133,7 +133,7 @@ export const REFERRAL_LISTING = gql`
          }
       ) {
          customer {
-            platform_customer {
+            platform_customer: platform_customer_ {
                firstName
                lastName
                phoneNumber
@@ -246,8 +246,8 @@ export const ALL_DATA = gql`
       brand(id: $brandId) {
          brand_customers(where: { keycloakId: { _eq: $keycloakId } }) {
             customer {
-               platform_customers {
-                  customerAddresses {
+               platform_customer: platform_customer_ {
+                  customerAddresses: customerAddresses_ {
                      id
                      line1
                      line2
@@ -261,7 +261,7 @@ export const ALL_DATA = gql`
                      landmark
                      keycloakId
                   }
-                  stripePaymentMethods {
+                  stripePaymentMethods: stripePaymentMethods_ {
                      stripePaymentMethodId
                      brand
                      last4
@@ -432,7 +432,7 @@ export const CUSTOMERS_LISTING_2 = gql`
          customer {
             email
             source
-            platform_customer {
+            platform_customer: platform_customer_ {
                fullName
                phoneNumber
             }

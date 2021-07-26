@@ -2,7 +2,7 @@ import { isEmpty } from 'lodash'
 
 export const processUser = (customer, stripeAccountType = '') => {
    const sub = {}
-   const { brandCustomers = [], customerByClients, ...rest } = customer
+   const { brandCustomers = [], ...rest } = customer
 
    if (!isEmpty(brandCustomers)) {
       const [brand_customer] = brandCustomers

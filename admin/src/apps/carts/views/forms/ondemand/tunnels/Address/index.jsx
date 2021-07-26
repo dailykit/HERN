@@ -67,12 +67,6 @@ const Content = ({ panel }) => {
       variables: {
          where: {
             keycloakId: { _eq: customer.keycloakId },
-            clientId: {
-               _in: [
-                  get_env('REACT_APP_KEYCLOAK_REALM'),
-                  `${get_env('REACT_APP_KEYCLOAK_REALM')}-subscription`,
-               ],
-            },
          },
       },
       onError: () => {
@@ -136,7 +130,6 @@ const Content = ({ panel }) => {
             onSave={() => refetch()}
             closeTunnel={closeAddTunnel}
             keycloakId={customer?.keycloakId}
-            clientId={get_env('REACT_APP_KEYCLOAK_REALM')}
          />
       </>
    )

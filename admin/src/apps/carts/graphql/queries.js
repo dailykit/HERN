@@ -222,18 +222,13 @@ export const QUERIES = {
                   id
                   email
                   isTest
-                  platform_customer {
+                  platform_customer: platform_customer_ {
                      id: keycloakId
                      firstName
                      lastName
                      phoneNumber
                      fullName
                      stripeCustomerId
-                     customerByClients: CustomerByClients {
-                        id: keycloakId
-                        clientId
-                        organizationStripeCustomerId
-                     }
                   }
                }
             }
@@ -241,8 +236,8 @@ export const QUERIES = {
       `,
       ADDRESS: {
          LIST: gql`
-            query addresses($where: platform_customerAddress_bool_exp = {}) {
-               addresses: platform_customerAddresses(where: $where) {
+            query addresses($where: platform_customerAddress__bool_exp = {}) {
+               addresses: platform_customerAddress_(where: $where) {
                   id
                   lat
                   lng
@@ -262,7 +257,7 @@ export const QUERIES = {
       PAYMENT_METHODS: {
          ONE: gql`
             query paymentMethod($id: String!) {
-               paymentMethod: platform_stripePaymentMethod(
+               paymentMethod: platform_stripePaymentMethod__by_pk(
                   stripePaymentMethodId: $id
                ) {
                   id: stripePaymentMethodId
@@ -275,9 +270,9 @@ export const QUERIES = {
          `,
          LIST: gql`
             query paymentMethods(
-               $where: platform_stripePaymentMethod_bool_exp = {}
+               $where: platform_stripePaymentMethod__bool_exp = {}
             ) {
-               paymentMethods: platform_stripePaymentMethods(where: $where) {
+               paymentMethods: platform_stripePaymentMethod_(where: $where) {
                   id: stripePaymentMethodId
                   last4
                   expMonth

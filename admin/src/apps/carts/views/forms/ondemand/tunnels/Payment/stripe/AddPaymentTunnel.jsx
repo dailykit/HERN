@@ -94,8 +94,7 @@ const FormWrapper = ({ intent, onSave, closeTunnel }) => {
                         expMonth: data.card.exp_month,
                         stripePaymentMethodId: data.id,
                         cardHolderName: data.billing_details.name,
-                        organizationStripeCustomerId:
-                           customer?.stripeCustomerId,
+                        stripeCustomerId: customer?.stripeCustomerId,
                      },
                   },
                })
