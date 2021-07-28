@@ -6,8 +6,8 @@
    "dependencies": {
       "@apollo/react-hooks": "3.1.5",
       "@dailykit/react-tabulator": "0.13.6",
-      "@dailykit/web-renderer": "1.0.7",
       "@dailykit/ui": "^0.8.65",
+      "@dailykit/web-renderer": "1.0.7",
       "@monaco-editor/react": "^4.0.11",
       "@reach/tabs": "0.11.2",
       "@react-google-maps/api": "1.9.7",
@@ -35,6 +35,7 @@
       "grapesjs-preset-webpage": "^0.1.11",
       "grapesjs-tabs": "^1.0.6",
       "graphql": "15.0.0",
+      "graphql-request": "^3.4.0",
       "graphql-tag": "2.10.3",
       "html-to-react": "^1.4.5",
       "husky": "^5.0.0-alpha.6",

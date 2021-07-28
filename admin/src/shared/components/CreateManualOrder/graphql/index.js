@@ -83,6 +83,31 @@ export const MUTATIONS = {
          }
       }
    `,
+   INSERT_PLATFORM_PROVIDER_CUSTOMER: gql`
+      mutation createPlatformCustomer(
+         $object: platform_provider_customer_insert_input!
+      ) {
+         createPlatformCustomer: insert_platform_provider_customer_one(
+            object: $object
+         ) {
+            id
+            customerId
+         }
+      }
+   `,
+   INSERT_CUSTOMER: gql`
+      mutation createCustomer(
+         $object: crm_customer_insert_input!
+         $where: crm_brand_customer_bool_exp = {}
+      ) {
+         createCustomer(object: $object) {
+            id
+            brandCustomers(where: $where) {
+               id
+            }
+         }
+      }
+   `,
 }
 
 export const QUERIES = {

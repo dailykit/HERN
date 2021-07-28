@@ -2,6 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import { get } from 'lodash'
 import { toast } from 'react-toastify'
+import { GraphQLClient } from 'graphql-request'
 import { useLazyQuery, useMutation, useQuery } from '@apollo/react-hooks'
 import {
    Form,
@@ -32,9 +33,8 @@ export const CustomerTunnel = () => {
    const [customers, setCustomers] = React.useState([])
    const { mode, methods, brand, tunnels, dispatch } = useManual()
    const [isCustomersLoading, setIsCustomersLoading] = React.useState(true)
-   const [customerTunnels, openCustomerTunnel, closeCustomerTunnel] = useTunnel(
-      1
-   )
+   const [customerTunnels, openCustomerTunnel, closeCustomerTunnel] =
+      useTunnel(1)
 
    useQuery(QUERIES.CUSTOMER.LIST, {
       variables: {
@@ -95,8 +95,8 @@ export const CustomerTunnel = () => {
                            type="SSL2"
                            content={{
                               description: current.customer?.email,
-                              title:
-                                 current.customer?.platform_customer?.fullName,
+                              title: current.customer?.platform_customer
+                                 ?.fullName,
                            }}
                         />
                      ) : (
@@ -123,9 +123,8 @@ export const CustomerTunnel = () => {
                                  onClick={() => selectOption('id', option.id)}
                                  content={{
                                     description: option.customer?.email,
-                                    title:
-                                       option.customer?.platform_customer
-                                          ?.fullName,
+                                    title: option.customer?.platform_customer
+                                       ?.fullName,
                                  }}
                               />
                            ))}
@@ -143,7 +142,18 @@ export const CustomerTunnel = () => {
    )
 }
 
-const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+const CUSTOMERS = `
+   query customers($where: platform_customer__bool_exp = {}) {
+      customers: platform_customer_(where: $where) {
+         id: keycloakId
+         firstName
+         lastName
+      }
+   }
+`
+
+const EMAIL_REGEX =
+   /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
 const validateEmail = email => {
    const text = email.trim()
@@ -160,29 +170,23 @@ const validateEmail = email => {
    return { isValid, errors }
 }
 
+const client = new GraphQLClient(get_env('REACT_APP_DATA_HUB_URI'), {
+   headers: {
+      'x-hasura-admin-secret': get_env('REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET'),
+   },
+})
+
 const CreateCustomer = ({ closeCustomerTunnel }) => {
-   const [email, setEmail] = React.useState({
-      value: '',
-      meta: {
-         errors: [],
-         isValid: false,
-         isTouched: false,
-      },
-   })
+   const { mode, brand, dispatch, methods, tunnels } = useManual()
+   const [errors, setErrors] = React.useState([])
    const [form, setForm] = React.useState({
+      email: '',
       firstName: '',
       lastName: '',
       phoneNumber: '',
    })
-   const { mode, brand, methods, tunnels, dispatch } = useManual()
-   const [updatePlatformCustomer] = useMutation(
-      MUTATIONS.UPDATE_PLATFORM_CUSTOMER,
-      {
-         onError: error => logger(error),
-      }
-   )
 
-   const [fetchCustomer, { loading: loadingCustomer }] = useLazyQuery(
+   const [fetchCustomer, { loading: fetchingCustomer }] = useLazyQuery(
       QUERIES.CUSTOMER.ONE,
       {
          onCompleted: async ({ brandCustomer = {} } = {}) => {
@@ -190,120 +194,104 @@ const CreateCustomer = ({ closeCustomerTunnel }) => {
                type: 'SET_CUSTOMER',
                payload: brandCustomer,
             })
-            if (brandCustomer.customer?.platform_customer?.id) {
-               const _customer = {
-                  firstName:
-                     get(
-                        brandCustomer,
-                        'customer.platform_customer.firstName'
-                     ) || form.firstName,
-                  lastName:
-                     get(
-                        brandCustomer,
-                        'customer.platform_customer.lastName'
-                     ) || form.lastName,
-                  phoneNumber:
-                     get(
-                        brandCustomer,
-                        'customer.platform_customer.phoneNumber'
-                     ) || form.phoneNumber,
-               }
-               await updatePlatformCustomer({
-                  variables: {
-                     keycloakId: brandCustomer.keycloakId,
-                     _set: _customer,
-                  },
-               })
-            } else {
-               const _customer = {
-                  firstName: form.firstName,
-                  lastName: form.lastName,
-                  phoneNumber: form.phoneNumber,
-               }
-               await updatePlatformCustomer({
-                  variables: {
-                     keycloakId: brandCustomer.keycloakId,
-                     _set: _customer,
-                  },
-               })
-            }
             if (mode === 'ONDEMAND') {
                await methods.cart.create.mutate(brandCustomer)
             } else {
                tunnels.open(4)
             }
             closeCustomerTunnel(1)
-            toast.success('Successfully created the customer.')
-         },
-         onError: error => {
-            logger(error)
-            toast.error('Failed to create the customer.')
          },
       }
    )
-   const [create, { loading }] = useMutation(
-      MUTATIONS.REGISTER_AND_CREATE_BRAND_CUSTOMER,
+
+   const [createCustomer, { loading: creatingCustomer }] = useMutation(
+      MUTATIONS.INSERT_CUSTOMER,
       {
-         onCompleted: async ({ registerAndCreateBrandCustomer = {} } = {}) => {
-            if (registerAndCreateBrandCustomer.success) {
-               const {
-                  brandCustomers = [],
-               } = registerAndCreateBrandCustomer.data
-               if (brandCustomers.length > 0) {
-                  const [brandCustomer] = brandCustomers
-                  await fetchCustomer({ variables: { id: brandCustomer.id } })
-               } else {
-                  toast.error('Failed to create the customer.')
-               }
-            } else {
-               toast.error('Failed to create the customer.')
+         onCompleted: async ({ createCustomer = {} } = {}) => {
+            toast.success('Customer created successfully.')
+            if (createCustomer?.brandCustomers.length > 0) {
+               const [brandCustomer] = createCustomer.brandCustomers
+               await fetchCustomer({ variables: { id: brandCustomer.id } })
             }
          },
          onError: error => {
             logger(error)
-            toast.error('Failed to create the customer.')
+            toast.error('Failed to create customer!')
          },
       }
    )
-
-   const onBlur = e => {
-      const { value } = e.target
-      setEmail(existing => ({
-         ...existing,
-         meta: {
-            isTouched: true,
-            errors: validateEmail(value).errors,
-            isValid: validateEmail(value).isValid,
+   const [createProviderCustomer, { loading: creatingProviderCustomer }] =
+      useMutation(MUTATIONS.INSERT_PLATFORM_PROVIDER_CUSTOMER, {
+         onCompleted: async ({ createPlatformCustomer = {} } = {}) => {
+            const { customerId = '' } = createPlatformCustomer
+            if (customerId) {
+               await createCustomer({
+                  variables: {
+                     object: {
+                        email: form.email,
+                        sourceBrandId: brand.id,
+                        keycloakId: customerId,
+                        source:
+                           mode === 'SUBSCRIPTION'
+                              ? 'subscription'
+                              : 'a-la-carte',
+                        brandCustomers: {
+                           data: {
+                              brandId: brand.id,
+                              subscriptionOnboardStatus: 'SELECT_MENU',
+                           },
+                        },
+                     },
+                  },
+               })
+            }
          },
-      }))
-   }
+         onError: error => {
+            logger(error)
+            toast.error('Failed to create customer!')
+         },
+      })
 
    const onChange = e => {
-      const { value } = e.target
-      setEmail(existing => ({ ...existing, value }))
-   }
-
-   const onFormChange = e => {
       const { name, value } = e.target
-      setForm(existing => ({ ...existing, [name]: value }))
+      setForm({ ...form, [name]: value })
    }
 
    const handleSubmit = async () => {
-      create({
+      const { email, firstName, lastName, phoneNumber } = form
+
+      const { isValid, errors } = validateEmail(email)
+      if (!isValid && errors.length > 0) {
+         setErrors(errors)
+         return
+      }
+
+      const customersViaEmail = await client.request(CUSTOMERS, {
+         where: { email: { _eq: form.email } },
+      })
+
+      if (customersViaEmail?.customers.length > 0) {
+         setErrors(['Email is already taken!'])
+         return
+      }
+
+      const customersViaPhone = await client.request(CUSTOMERS, {
+         where: { phoneNumber: { _eq: form.phoneNumber } },
+      })
+
+      if (customersViaPhone?.customers.length > 0) {
+         setErrors(['Phone number is already taken!'])
+         return
+      }
+
+      setErrors([])
+
+      await createProviderCustomer({
          variables: {
-            input: {
-               brandId: brand.id,
-               email: email.value,
-               withRegister: true,
-               source: mode === 'SUBCRIPTION' ? 'subscription' : 'a-la-carte',
-               clientId:
-                  get_env('REACT_APP_KEYCLOAK_REALM') +
-                  `${mode === 'SUBSCRIPTION' ? '-subscription' : ''}`,
-               ...(form.firstName.trim() && { firstName: form.firstName }),
-               ...(form.lastName.trim() && { lastName: form.lastName }),
-               ...(form.phoneNumber.trim() && {
-                  phoneNumber: form.phoneNumber,
-               }),
+            object: {
+               providerType: 'credentials',
+               provider: 'email_password',
+               customer: { data: { email, firstName, lastName, phoneNumber } },
             },
          },
       })
@@ -323,17 +311,10 @@ const CreateCustomer = ({ closeCustomerTunnel }) => {
                <Form.Text
                   id="email"
                   name="email"
-                  onBlur={onBlur}
+                  value={form.email}
                   onChange={onChange}
-                  value={email.value}
                   placeholder="enter customer's email"
-                  hasError={email.meta.isTouched && !email.meta.isValid}
                />
-               {email.meta.isTouched &&
-                  !email.meta.isValid &&
-                  email.meta.errors.map((error, index) => (
-                     <Form.Error key={index}>{error}</Form.Error>
-                  ))}
             </Form.Group>
             <Spacer size="14px" />
             <Form.Group>
@@ -343,8 +324,8 @@ const CreateCustomer = ({ closeCustomerTunnel }) => {
                <Form.Text
                   id="firstName"
                   name="firstName"
+                  onChange={onChange}
                   value={form.firstName}
-                  onChange={onFormChange}
                   placeholder="enter customer's first name"
                />
             </Form.Group>
@@ -356,8 +337,8 @@ const CreateCustomer = ({ closeCustomerTunnel }) => {
                <Form.Text
                   id="lastName"
                   name="lastName"
+                  onChange={onChange}
                   value={form.lastName}
-                  onChange={onFormChange}
                   placeholder="enter customer's last name"
                />
             </Form.Group>
@@ -369,18 +350,26 @@ const CreateCustomer = ({ closeCustomerTunnel }) => {
                <Form.Text
                   id="phoneNumber"
                   name="phoneNumber"
+                  onChange={onChange}
                   value={form.phoneNumber}
-                  onChange={onFormChange}
                   placeholder="enter customer's phone number"
                />
             </Form.Group>
+            <Spacer size="16px" />
+            {errors.map(error => (
+               <Form.Error>{error}</Form.Error>
+            ))}
             <Spacer size="16px" />
             <TextButton
                size="sm"
                type="solid"
                onClick={handleSubmit}
-               disabled={!email.meta.isValid}
-               isLoading={loading || loadingCustomer}
+               disabled={!form.email}
+               isLoading={
+                  fetchingCustomer ||
+                  creatingCustomer ||
+                  creatingProviderCustomer
+               }
             >
                Create
             </TextButton>
