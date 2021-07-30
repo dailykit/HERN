@@ -29,7 +29,7 @@ import { PagePreviewTunnel } from './Tunnel'
 
 const PageForm = () => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
-   const { addTab, tab, setTitle: setTabTitle, closeAllTabs } = useTabs()
+   const { addTab, tab, setTabTitle, closeAllTabs } = useTabs()
    const [context, setContext] = useContext(BrandContext)
    const prevBrandId = useRef(context.brandId)
    const { pageId, pageName } = useParams()
@@ -106,10 +106,10 @@ const PageForm = () => {
    const [updatePage] = useMutation(UPDATE_WEBPAGE, {
       onCompleted: () => {
          toast.success('Updated!')
-         setTabTitle(pageTitle.value)
       },
       onError: error => {
-         toast.error('Something went wrong')
+         toast.error('Something went wrong with update_webpage')
+         console.log(error)
          logger(error)
       },
    })
@@ -129,22 +129,19 @@ const PageForm = () => {
       })
       // }
    }
-   // const updateCheckbox = () => {
-   //    updatePage({
-   //       variables: {
-   //          id: couponId,
-   //          set: {
-   //             isRewardMulti: !checkbox,
-   //          },
-   //       },
-   //    })
-   // }
 
    useEffect(() => {
       if (!tab) {
          addTab('Pages', '/content/pages')
       }
    }, [addTab, tab])
+
+   // whenever pageTitle value changes the tab title will be updated also
+   useEffect(() => {
+      if (pageTitle.value && !Boolean(pageTitle.meta.errors.length)) {
+         setTabTitle(pageTitle.value)
+      }
+   }, [pageTitle])
 
    if (context.brandId !== prevBrandId.current) {
       closeAllTabs()

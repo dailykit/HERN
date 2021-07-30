@@ -165,21 +165,22 @@ export const GET_TEMPLATES = gql`
 `
 
 export const LINKED_COMPONENT = gql`
-   subscription NAVIGATION_MENU_INFO($menuId: Int!) {
-      website_navigationMenuItem(
-         where: { navigationMenuId: { _eq: $menuId } }
+   subscription LINKED_COMPONENT($pageId: Int!) {
+      website_websitePageModule(
+         where: { websitePageId: { _eq: $pageId } }
          order_by: { position: desc_nulls_last }
       ) {
+         fileId
          id
-         label
-         navigationMenuId
-         openInNewTab
-         parentNavigationMenuItemId
+         config
+         internalModuleIdentifier
+         moduleType
          position
-         url
-         navigationMenu {
-            isPublished
-            title
+         templateId
+         visibilityConditionId
+         file {
+            fileName
+            path
          }
       }
    }

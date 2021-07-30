@@ -85,7 +85,7 @@ const ContentSelection = () => {
          closeConfigTunnel(1)
       },
       onError: error => {
-         toast.error('Something went wrong')
+         toast.error('Something went wrong while updating link component')
          logger(error)
          closeConfigTunnel(1)
       },
@@ -98,7 +98,7 @@ const ContentSelection = () => {
          setSelectedFileOptions([])
       },
       onError: error => {
-         toast.error('Something went wrong')
+         toast.error('Something went wrong while deleting linked component')
          logger(error)
          setSelectedFileOptions([])
       },
@@ -125,7 +125,7 @@ const ContentSelection = () => {
          const result = selectedFileOptions.map(option => {
             return {
                websitePageId: +pageId,
-               moduleType: option.type==="html"?'block':'file',
+               moduleType: option.type === 'html' ? 'block' : 'file',
                fileId: option.id,
             }
          })
@@ -168,7 +168,10 @@ const ContentSelection = () => {
       return <InlineLoader />
    }
    if (subscriptionError) {
-      toast.error('Something went wrong')
+      console.log(subscriptionError)
+      toast.error(
+         'Something went wrong in subscription query for linked components'
+      )
       logger(subscriptionError)
    }
    return (
