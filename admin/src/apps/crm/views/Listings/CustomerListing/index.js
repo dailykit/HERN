@@ -633,16 +633,16 @@ const CustomerListing = () => {
             <Flex
                container
                as="header"
-               width="70%"
+               width="75%"
                alignItems="center"
                justifyContent="space-around"
             >
                <Flex
                   container
                   as="header"
-                  width="70%"
+                  width="80%"
                   alignItems="center"
-                  justifyContent="flex-around"
+                  justifyContent="flex-end"
                >
                   <TextButton
                      onClick={() => {
@@ -700,7 +700,7 @@ const CustomerListing = () => {
                <Flex
                    container
                    as="header"
-                   width="30%"
+                   width="20%"
                    alignItems="center"
                    justifyContent="flex-end"
                >
