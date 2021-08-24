@@ -11,6 +11,7 @@ import TopCustomerTable from './Listings/TopCustomer'
 import RecipeSummaryApp from './Listings/RecipeSummary'
 import OrderOpportunityTable from './Listings/OrderOpportunity'
 import MenuSummary from './Listings/MenuSummary'
+import 'antd/es/date-picker/style/css'
 const { RangePicker } = DatePicker
 const DashboardTables = () => {
    return (

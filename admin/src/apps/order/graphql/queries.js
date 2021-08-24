@@ -1013,3 +1013,23 @@ export const CUSTOMER_PAYMENT_METHODS = gql`
       }
    }
 `
+export const ORDERS_ACCOUNTS = gql`
+   subscription ORDERS_ACCOUNTS($where: order_cart_bool_exp = {}) {
+      carts(where: $where, order_by: { created_at: desc_nulls_last }) {
+         orderId
+         customerId
+         paymentStatus
+         tip
+         walletAmountUsed
+         couponDiscount
+         loyaltyPointsUsed
+         created_at
+         amount
+         loyaltyPointTransactions {
+            amountRedeemed
+         }
+         customerInfo
+         customerKeycloakId
+      }
+   }
+`

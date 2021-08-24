@@ -13,6 +13,7 @@ import {
    InlineLoader,
    Banner,
 } from '../../../../shared/components'
+import OrdersAccounts from '../Listing/OrdersAccounts'
 
 const address = 'apps.order.views.home.'
 const Home = () => {
@@ -61,6 +62,14 @@ const Home = () => {
                conf="All available"
                onClick={() => addTab('Planned', '/order/planned')}
             />
+         </Flex>
+         <Flex
+            container
+            width="100%"
+            justifyContent="center"
+            margin="10px 0px 10px 10px"
+         >
+            <OrdersAccounts />
          </Flex>
          <Banner id="order-app-home-bottom" />
       </Flex>
