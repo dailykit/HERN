@@ -299,7 +299,7 @@ const CustomerListing = () => {
    const downloadXlsxData = () => {
       tableRef.current.table.download('xlsx', 'customers_table.xlsx')
    }
-   const clearProductOptionPersistence= () =>
+   const clearCustomerPersistence= () =>
       {
          localStorage.removeItem('tabulator-customer_table-columns')
          localStorage.removeItem('tabulator-customer_table-sort')
@@ -646,7 +646,7 @@ const CustomerListing = () => {
                >
                   <TextButton
                      onClick={() => {
-                        clearProductOptionPersistence ()
+                        clearCustomerPersistence ()
                      }}
                      type="ghost"
                      size="sm"
