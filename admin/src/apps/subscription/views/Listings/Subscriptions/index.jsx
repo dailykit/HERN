@@ -2,9 +2,10 @@ import React from 'react'
 import { v4 as uuid } from 'uuid'
 import { toast } from 'react-toastify'
 import { ReactTabulator } from '@dailykit/react-tabulator'
-import { Text, ComboButton, PlusIcon, Flex } from '@dailykit/ui'
+import { Text, ComboButton, PlusIcon, Flex,
+         Spacer,
+         ButtonGroup, } from '@dailykit/ui'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
-
 import options from '../../../tableOption'
 import { logger } from '../../../../../shared/utils'
 import { useTooltip, useTabs } from '../../../../../shared/providers'
@@ -103,22 +104,47 @@ export const Subscriptions = () => {
    return (
       <ResponsiveFlex maxWidth="1280px" margin="0 auto">
          <Banner id="subscription-app-subscriptions-listing-top" />
+
+
          <Flex
             container
-            as="header"
             height="80px"
+            padding="32px 0 0 0"
+            width="100%"
             alignItems="center"
             justifyContent="space-between"
          >
-            <Flex container alignItems="center">
-               <Text as="title">Subscriptions</Text>
+            <Flex
+               container
+               as="header"
+               width="25%"
+               alignItems="center"
+               justifyContent="space-between"
+             >
+               <Text as="h2">
+                  Subscriptions({titles.length})
+               </Text>
                <Tooltip identifier="listing_subscription_heading" />
             </Flex>
-            <ComboButton type="outline" onClick={() => createTab()}>
+
+                       
+            <Flex
+                container
+                as="header"
+                width="30%"
+                alignItems="center"
+                 justifyContent="flex-end"
+               >
+           <ButtonGroup>
+           <ComboButton type="solid" onClick={() => createTab()}>
                <PlusIcon />
                Create Subscription
             </ComboButton>
-         </Flex>
+            </ButtonGroup>
+               </Flex>
+            </Flex>
+         <Spacer size="30px" />
+
          {loading && <InlineLoader />}
          {!loading && (
             <ReactTabulator
