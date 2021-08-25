@@ -1,6 +1,19 @@
 .tabulator-header {
+   height: 80px;
    font-size: 14px;
    border-bottom: 2px solid #d8d8d8;
+}
+.tabulator-headers {
+   background-color: #f4f4f4;
+   text-align: left !important;
+   height: 100% ;
+}
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content{
+   height: 100% !important;
+}
+.tabulator-col {
+   background: #f4f4f4 !important;
+   height: 80px !important;
 }
 
 .tabulator-row {
