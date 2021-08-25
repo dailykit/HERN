@@ -66,12 +66,13 @@ export const Subscriptions = () => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
+         width: 400,
       },
       {
          width: 150,
          title: 'Demo',
          field: 'isDemo',
-         headerFilter: true,
+         headerFilter: false,
          formatter: 'tickCross',
          headerTooltip: column => {
             const identifier = 'listing_subscription_column_isDemo'
@@ -125,9 +126,7 @@ export const Subscriptions = () => {
                   Subscriptions({titles.length})
                </Text>
                <Tooltip identifier="listing_subscription_heading" />
-            </Flex>
-
-                       
+            </Flex>           
             <Flex
                 container
                 as="header"
