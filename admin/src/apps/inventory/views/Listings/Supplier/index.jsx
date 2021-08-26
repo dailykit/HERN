@@ -98,6 +98,7 @@ export default function SupplierListing() {
       {
          title: 'Name',
          field: 'name',
+         frozen: true,
          headerFilter: true,
          cssClass: 'RowClick',
          cellClick: openForm,
@@ -105,6 +106,19 @@ export default function SupplierListing() {
             const identifier = 'suppliers_listings_supplier_name'
             return tooltip(identifier)?.description || col.getDefinition().title
          },
+         width: 400,
+      },
+      {
+         title: 'Actions',
+         headerFilter: false,
+         headerSort: false,
+         frozen: true,
+         hozAlign: 'center',
+         cssClass: 'center-text',
+         formatter: reactFormatter(
+            <DeleteSupplier deleteSupplier={deleteSupplier} />
+         ),
+         width: 80,
       },
       {
          title: 'Person of Contact',
@@ -131,17 +145,7 @@ export default function SupplierListing() {
             return tooltip(identifier)?.description || col.getDefinition().title
          },
       },
-      {
-         title: 'Actions',
-         headerFilter: false,
-         headerSort: false,
-         hozAlign: 'center',
-         cssClass: 'center-text',
-         formatter: reactFormatter(
-            <DeleteSupplier deleteSupplier={deleteSupplier} />
-         ),
-         width: 100,
-      },
+      
    ]
 
    if (listLoading) return <Loader />
@@ -157,7 +161,7 @@ export default function SupplierListing() {
                padding="16px 0"
             >
                <Flex container>
-                  <Text as="h2">{t(address.concat('suppliers'))}</Text>
+                  <Text as="h2">{t(address.concat('suppliers'))}({suppliers.length})</Text>
                   <Tooltip identifier="suppliers_listings_heading" />
                </Flex>
                <Flex
