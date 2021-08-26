@@ -47,6 +47,7 @@ export default function BulkWorkOrders() {
       {
          title: 'Id',
          field: 'id',
+         frozen: true,
          headerFilter: false,
          cellClick: openForm,
          cssClass: 'RowClick',
@@ -54,11 +55,16 @@ export default function BulkWorkOrders() {
             const identifier = 'work-orders_listings_table_id'
             return tooltip(identifier)?.description || col.getDefinition().title
          },
+         width: 80,
       },
       {
          title: 'Scheduled On',
          field: 'scheduledOn',
          headerFilter: false,
+         frozen: true,
+         width: 350,
+         cellClick: openForm,
+         cssClass: 'RowClick',
          formatter: reactFormatter(<ShowDate />),
          hozAlign: 'left',
          headerHozAlign: 'left',
