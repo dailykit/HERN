@@ -8,6 +8,8 @@ import {
    Tunnels,
    useTunnel,
 } from '@dailykit/ui'
+import { BULK_WORK_ORDERS_COUNT_SUBSCRIPTION,
+   SACHET_WORK_ORDERS_COUNT_SUBSCRIPTION } from '../../../graphql'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Banner } from '../../../../../shared/components'
@@ -17,6 +19,7 @@ import { StyledWrapper } from '../styled'
 import BulkWorkOrders from './bulk'
 import SachetWorkOrders from './sachet'
 import WorkOrderTypeTunnel from './WorkOrderTypeTunnel'
+import { useSubscription } from '@apollo/react-hooks'
 
 const address = 'apps.inventory.views.listings.workorders.'
 
@@ -25,6 +28,14 @@ export default function WorkOrders() {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
    const [view, setView] = useState('Bulk')
+
+   const {
+      data: bulkWorkOrders
+   } = useSubscription(BULK_WORK_ORDERS_COUNT_SUBSCRIPTION)
+
+   const {
+      data: sachetWorkOrders  
+   } = useSubscription(SACHET_WORK_ORDERS_COUNT_SUBSCRIPTION)
 
    return (
       <>
@@ -43,7 +54,9 @@ export default function WorkOrders() {
                padding="16px 0"
             >
                <Flex container alignItems="center">
-                  <Text as="h2">{t(address.concat('work orders'))}</Text>
+                     { view === 'Bulk' ? <Text as="h2">{t(address.concat('work orders'))}({bulkWorkOrders?.bulkWorkOrdersAggregate.aggregate.count || 0})</Text>
+                        : <Text as="h2">{t(address.concat('work orders'))}({sachetWorkOrders?.sachetWorkOrdersAggregate.aggregate.count || 0})</Text>
+                       }
                   <Tooltip identifier="work-orders_listings_header_title" />
                </Flex>
                <Flex container>
