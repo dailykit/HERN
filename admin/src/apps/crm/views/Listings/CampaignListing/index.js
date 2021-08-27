@@ -173,6 +173,7 @@ const CampaignListing = () => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
+         cssClass: 'colHover',
          cssClass: 'rowClick',
          cellClick: (e, cell) => {
             rowClick(e, cell)
@@ -249,8 +250,21 @@ const CampaignListing = () => {
    return (
       <StyledWrapper>
          <Banner id="crm-app-campaigns-listing-top" />
-         <Flex container alignItems="center" justifyContent="space-between">
-            <Flex container height="80px" alignItems="center">
+         <Flex
+            container
+            height="80px"
+            width="100%"
+            alignItems="center"
+            justifyContent="space-between"
+             padding="15px 0 0 0"
+         >
+            <Flex
+               container
+               as="header"
+               width="25%"
+               alignItems="center"
+               justifyContent="space-between"
+             >
                <Text as="title">
                   Campaign(
                   {campaignTotal?.campaignsAggregate?.aggregate?.count || '...'}
@@ -258,8 +272,21 @@ const CampaignListing = () => {
                </Text>
                <Tooltip identifier="campaign_list_heading" />
             </Flex>
-
-            <TextButton
+            <Flex
+               container
+               as="header"
+               width="75%"
+               alignItems="center"
+               justifyContent="space-around"
+            >
+               <Flex
+                  container
+                  as="header"
+                  width="72%"
+                  alignItems="center"
+                  justifyContent="flex-end"
+               >
+                  <TextButton
                      onClick={() => {
                         clearCampaignPersistence()
                      }}
@@ -287,15 +314,25 @@ const CampaignListing = () => {
                            XLSX
                         </DropdownButton.Option>
                      </DropdownButton.Options>
-                  </DropdownButton>
-
-            <ButtonGroup>
+                  </DropdownButton>          
+            </Flex>         
+               <Flex
+                   container
+                   as="header"
+                   width="28%"
+                   alignItems="center"
+                   justifyContent="flex-end"
+               >
+               <ButtonGroup>
                <ComboButton type="solid" onClick={() => openTunnel(1)}>
                   <PlusIcon />
                   Create Campaign
                </ComboButton>
             </ButtonGroup>
+               </Flex>
+            </Flex>
          </Flex>
+         <Spacer size="20px" />
          {Boolean(campaign) && (
             <ReactTabulator
                columns={columns}
