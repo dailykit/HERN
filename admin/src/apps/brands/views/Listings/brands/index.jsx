@@ -24,6 +24,8 @@ import {
 } from '../../../../../shared/components'
 import { useTooltip, useTabs } from '../../../../../shared/providers'
 import CreateBrandTunnel from './CreateBrandTunnel'
+import {PublishIcon, UnPublishIcon } from '../../../assets/icons'
+
 
 export const Brands = () => {
    const { tooltip } = useTooltip()
@@ -125,9 +127,10 @@ export const Brands = () => {
          {
             title: 'Brand',
             field: 'title',
+            frozen: true,
             headerSort: true,
             headerFilter: true,
-            formatter: cell => cell.getData().title || 'N/A',
+            formatter: reactFormatter(<BrandName />),
             headerTooltip: function (column) {
                const identifier = 'brands_listing_brand_column'
                return (
@@ -138,6 +141,28 @@ export const Brands = () => {
             cssClass: 'rowClick',
             cellClick: (e, cell) => {
                cellClick(cell.getData())
+            },
+            width:400,
+            resizable: 'true',
+            minWidth: 100,
+            maxWidth: 500,
+         },
+         {
+            title: 'Actions',
+            hozAlign: 'center',
+            headerSort: false,
+            frozen:true,
+            width:80,
+            headerHozAlign: 'center',
+            formatter: reactFormatter(
+               <DeleteBrand deleteHandler={deleteHandler} />
+            ),
+            headerTooltip: function (column) {
+               const identifier = 'brands_listing_actions_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
             },
          },
          {
@@ -154,39 +179,8 @@ export const Brands = () => {
                )
             },
          },
-         {
-            title: 'Published',
-            headerSort: false,
-            hozAlign: 'center',
-            headerHozAlign: 'center',
-            field: 'isPublished',
-            formatter: 'tickCross',
-            headerTooltip: function (column) {
-               const identifier = 'brands_listing_publish_column'
-               return (
-                  tooltip(identifier)?.description ||
-                  column.getDefinition().title
-               )
-            },
-         },
-         {
-            title: 'Actions',
-            hozAlign: 'center',
-            headerSort: false,
-            headerHozAlign: 'center',
-            formatter: reactFormatter(
-               <DeleteBrand deleteHandler={deleteHandler} />
-            ),
-            headerTooltip: function (column) {
-               const identifier = 'brands_listing_actions_column'
-               return (
-                  tooltip(identifier)?.description ||
-                  column.getDefinition().title
-               )
-            },
-         },
+         
       ],
-      []
    )
 
    if (error) {
@@ -240,5 +234,47 @@ const DeleteBrand = ({ cell, deleteHandler }) => {
       <IconButton type="ghost" size="sm" onClick={onClick}>
          <DeleteIcon color="#FF5A52" />
       </IconButton>
+   )
+}
+function BrandName({ cell, addTab }) {
+   const data = cell.getData()
+   return (
+      <>
+         <Flex
+            container
+            width="100%"
+            justifyContent="space-between"
+            alignItems="center"
+         >
+            <Flex
+               container
+               width="100%"
+               justifyContent="flex-end"
+               alignItems="center"
+            >
+               <p
+                  style={{
+                     width: '230px',
+                     whiteSpace: 'nowrap',
+                     overflow: 'hidden',
+                     textOverflow: 'ellipsis',
+                  }}
+               >
+                  {cell._cell.value}
+               </p>
+            </Flex>
+
+            <Flex
+               container
+               width="100%"
+               justifyContent="flex-end"
+               alignItems="center"
+            >
+               <IconButton type="ghost">
+                  {data.isPublished ? <PublishIcon /> : <UnPublishIcon />}
+               </IconButton>
+            </Flex>
+         </Flex>
+      </>
    )
 }
