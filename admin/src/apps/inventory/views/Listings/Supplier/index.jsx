@@ -33,6 +33,7 @@ import {
 } from '../../../graphql'
 import { StyledWrapper } from '../styled'
 import tableOptions from '../tableOption'
+import './../tableStyle.css'
 
 const address = 'apps.inventory.views.listings.supplier.'
 
