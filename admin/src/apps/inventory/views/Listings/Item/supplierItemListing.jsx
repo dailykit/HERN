@@ -9,6 +9,7 @@ import { NO_SUPPLIER_ITEMS_LISTINGS } from '../../../constants/emptyMessages'
 import { useTabs } from '../../../../../shared/providers'
 import { SUPPLIER_ITEM_LISTINGS } from '../../../graphql'
 import tableOptions from '../tableOption'
+import './../tableStyle.css'
 
 export default function SupplierItemsListings({ tableRef }) {
    const { addTab } = useTabs()
@@ -35,6 +36,8 @@ export default function SupplierItemsListings({ tableRef }) {
          title: 'Item Name',
          field: 'name',
          headerFilter: true,
+         frozen: true,
+         width: 400,
          hozAlign: 'left',
          headerHozAlign: 'left',
          cssClass: 'RowClick',
