@@ -34,6 +34,7 @@ import {
 import { BrandAndShop, DateRangePicker } from '../..'
 import { BRANDS, GET_TOTAL_EARNING } from '../../graphQl/subscription'
 import OrderRefTable from '../OrderRefTunnel/orderRefTunnel'
+import EarningTable from './Listing/TotalEarningListing'
 
 const TotalEarningTunnel = ({ currency }) => {
    const [from, setFrom] = useState(moment().format('YYYY-MM-DD'))
@@ -107,15 +108,18 @@ const TotalEarningTunnel = ({ currency }) => {
                      : ''
                }`,
                groupingSets: `(${groupBy.toString()})`,
-               columns: groupBy
-                  .map(group => {
-                     return `EXTRACT(${group.toUpperCase()} FROM a.created_at) AS \"${group.toLowerCase()}\"`
-                  })
-                  .join(','),
+               columns:
+                  groupBy
+                     .map(group => {
+                        return `EXTRACT(${group.toUpperCase()} FROM a.created_at) AS \"${group.toLowerCase()}\"`
+                     })
+                     .join(',') +
+                  `,SUM(tax) AS \"totalTax\",SUM(discount) AS \"totalDiscount\",SUM(\"deliveryPrice\") AS \"totalDeliveryPrice\"`,
             },
          },
       },
    })
+   console.log('newEarning', insights_analytics)
    // subscription for compare data
    useSubscription(GET_TOTAL_EARNING, {
       fetchPolicy: 'network-only',
@@ -583,74 +587,78 @@ const DrillDownLineChart = ({
       )
    }
    return (
-      <Flex height="22rem">
-         <ResponsiveContainer width="100%" height="100%">
-            <LineChart
-               width={500}
-               height={300}
-               data={dataForGraph}
-               margin={{
-                  top: 5,
-                  right: 30,
-                  left: 20,
-                  bottom: 5,
-               }}
-            >
-               <CartesianGrid strokeDasharray="3 3" />
-               <XAxis
-                  dataKey="present"
-                  tickFormatter={tick => moment(tick).format('YYYY-MM-DD')}
-                  ticks={dataForGraph.map(x => x.present)}
-               />
-               <YAxis />
-               <Tooltip
-                  content={
-                     <CustomTooltip
-                        groupBy={groupBy[groupBy.length - 1]}
-                        dataOf={dataOf}
-                        currency={currency}
-                     />
-                  }
-               />
-               <Legend />
-               <Line
-                  type="monotone"
-                  name="Earning"
-                  dataKey={dataOf}
-                  stroke="#8884d8"
-                  activeDot={{
-                     onClick: (event, payload) => {
-                        if (
-                           payload.payload.orderRefspresent ||
-                           payload.payload.orderRefspast
-                        ) {
-                           setGraphTunnelData(prevState => ({
-                              ...prevState,
-                              title: graphTunnelTitle,
-                              orderRefData: [
-                                 payload.payload.orderRefspresent,
-                                 payload.payload.orderRefspast,
-                              ],
-                              presentTime: payload.payload.present,
-                              pastTime: payload.payload.past,
-                           }))
-                           openGraphTunnel(1)
-                        }
-                     },
-                     cursor: 'pointer',
+      <>
+         <Flex height="22rem">
+            <ResponsiveContainer width="100%" height="100%">
+               <LineChart
+                  width={500}
+                  height={300}
+                  data={dataForGraph}
+                  margin={{
+                     top: 5,
+                     right: 30,
+                     left: 20,
+                     bottom: 5,
                   }}
-               />
-               {!compare.isSkip && compare.data && (
+               >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis
+                     dataKey="present"
+                     tickFormatter={tick => moment(tick).format('YYYY-MM-DD')}
+                     ticks={dataForGraph.map(x => x.present)}
+                  />
+                  <YAxis />
+                  <Tooltip
+                     content={
+                        <CustomTooltip
+                           groupBy={groupBy[groupBy.length - 1]}
+                           dataOf={dataOf}
+                           currency={currency}
+                        />
+                     }
+                  />
+                  <Legend />
                   <Line
                      type="monotone"
-                     dataKey={dataOf + 'Compare'}
-                     stroke="#C9D8B6"
-                     activeDot={{ r: 4 }}
+                     name="Earning"
+                     dataKey={dataOf}
+                     stroke="#8884d8"
+                     activeDot={{
+                        onClick: (event, payload) => {
+                           if (
+                              payload.payload.orderRefspresent ||
+                              payload.payload.orderRefspast
+                           ) {
+                              setGraphTunnelData(prevState => ({
+                                 ...prevState,
+                                 title: graphTunnelTitle,
+                                 orderRefData: [
+                                    payload.payload.orderRefspresent,
+                                    payload.payload.orderRefspast,
+                                 ],
+                                 presentTime: payload.payload.present,
+                                 pastTime: payload.payload.past,
+                              }))
+                              openGraphTunnel(1)
+                           }
+                        },
+                        cursor: 'pointer',
+                     }}
                   />
-               )}
-            </LineChart>
-         </ResponsiveContainer>
-      </Flex>
+                  {!compare.isSkip && compare.data && (
+                     <Line
+                        type="monotone"
+                        dataKey={dataOf + 'Compare'}
+                        stroke="#C9D8B6"
+                        activeDot={{ r: 4 }}
+                     />
+                  )}
+               </LineChart>
+            </ResponsiveContainer>
+         </Flex>
+         <Spacer size="20px" />
+         <EarningTable data={insightAnalyticsData} />
+      </>
    )
 }
 const TunnelBody = styled.div`
