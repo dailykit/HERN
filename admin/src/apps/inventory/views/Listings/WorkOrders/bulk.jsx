@@ -20,6 +20,7 @@ import { logger } from '../../../../../shared/utils'
 import { dateFmt } from '../../../../../shared/utils/dateFmt'
 import { BULK_WORK_ORDERS_SUBSCRIPTION } from '../../../graphql'
 import tableOptions from '../tableOption'
+import './../tableStyle.css'
 
 export default function BulkWorkOrders() {
    const {
