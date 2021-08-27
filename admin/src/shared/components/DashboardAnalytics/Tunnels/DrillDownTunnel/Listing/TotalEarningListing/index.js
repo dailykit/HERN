@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import {
    ButtonGroup,
+   Dropdown,
    DropdownButton,
    Filler,
    Flex,
@@ -40,7 +41,6 @@ const DataTable = ({ data }) => {
    const totalCalc = values => {
       let total = 0
       values.forEach(value => (total += value))
-      console.log('totalis', total)
       return 'Total = ' + total.toFixed(2)
    }
    const downloadCsvData = () => {
@@ -52,45 +52,124 @@ const DataTable = ({ data }) => {
    }
 
    const downloadXlsxData = () => {
-      console.log('hell0')
       earningTableRef.current.table.download('xlsx', 'earning_table.xlsx')
    }
+
+   //dropdown options
+   const dropdownOptions = [
+      {
+         id: 1,
+         title: 'Orders',
+         payload: 'count',
+      },
+      {
+         id: 2,
+         title: 'Tax',
+         payload: 'totalTax',
+      },
+      {
+         id: 3,
+         title: 'Discount',
+         payload: 'totalDiscount',
+      },
+      {
+         id: 4,
+         title: 'Shipping',
+         payload: 'totalDeliveryPrice',
+      },
+   ]
+
+   //default ids for columns to be show dropdown
+   const defaultIds = () => {
+      const defaultShowColumns = localStorage.getItem(
+         'earning-table-show-columns'
+      )
+      const parseDefaultColumns = defaultShowColumns
+         ? JSON.parse(defaultShowColumns)
+         : [1, 2, 3, 4]
+      return parseDefaultColumns
+   }
+
+   //columns to be show dropdown selected option fn
+   const selectedOption = option => {
+      const ids = option.map(x => x.id)
+      localStorage.setItem('earning-table-show-columns', JSON.stringify(ids))
+      dropdownOptions.forEach(eachOption => {
+         if (ids.includes(eachOption.id)) {
+            earningTableRef.current.table.showColumn(eachOption.payload)
+         } else {
+            earningTableRef.current.table.hideColumn(eachOption.payload)
+         }
+      })
+   }
+
+   //columns to be show dropdown search option
+   const searchedOption = option => console.log(option)
+
+   //columns for table
    const columns = [
       {
          title: 'Time',
          field: 'date',
+         width: 270,
       },
       {
          title: 'Orders',
          field: 'count',
          bottomCalc: 'sum',
+         visible: true,
+         width: 120,
       },
       {
          title: `Tax (${analyticsApiArgState.currency})`,
          field: 'totalTax',
          bottomCalc: totalCalc,
+         visible: true,
+         width: 150,
       },
       {
          title: `Discount (${analyticsApiArgState.currency})`,
          field: 'totalDiscount',
          bottomCalc: totalCalc,
+         visible: true,
+         width: 150,
       },
       {
          title: `Shipping (${analyticsApiArgState.currency})`,
          field: 'totalDeliveryPrice',
          bottomCalc: totalCalc,
+         visible: true,
+         width: 150,
       },
       {
          title: `Net Sales (${analyticsApiArgState.currency})`,
          field: 'netSale',
          bottomCalc: totalCalc,
+         width: 150,
       },
       {
          title: `Total (${analyticsApiArgState.currency})`,
          field: 'total',
          bottomCalc: totalCalc,
+         width: 150,
       },
    ]
+
+   // fn run after table data loaded
+   const dataLoaded = () => {
+      const defaultShowColumns = localStorage.getItem(
+         'earning-table-show-columns'
+      )
+      const parseDefaultColumns = JSON.parse(defaultShowColumns)
+      if (parseDefaultColumns) {
+         dropdownOptions.forEach(eachOption => {
+            if (!parseDefaultColumns.includes(eachOption.id)) {
+               earningTableRef.current.table.hideColumn(eachOption.payload)
+            }
+         })
+      }
+   }
+
    const earningDataManipulation = data => {
       const manipulateData = data.map(each => {
          if (Object.keys(each).includes('hour')) {
@@ -100,7 +179,6 @@ const DataTable = ({ data }) => {
             const newDate = `${each.month}-${each.day}-${each.year}`
             each.date = moment(newDate).format('DD MMM YYYY')
          } else if (Object.keys(each).includes('week')) {
-            console.log('week', each.week)
             const newDate = moment(`${each.week} ${each.year}`, 'WW YYYY')
                .startOf('isoWeek')
                .format('DD MMM YYYY')
@@ -146,11 +224,23 @@ const DataTable = ({ data }) => {
                      </DropdownButton.Option>
                   </DropdownButton.Options>
                </DropdownButton>
+               <Spacer xAxis size="20px" />
+               <Dropdown
+                  type="multi"
+                  options={dropdownOptions}
+                  defaultIds={defaultIds()}
+                  searchedOption={searchedOption}
+                  selectedOption={selectedOption}
+                  placeholder="Columns to be show..."
+                  typeName="option"
+                  selectedOptionsVisible={false}
+               />
             </Flex>
          </Flex>
          <Spacer size="20px" />
          <ReactTabulator
             ref={earningTableRef}
+            dataLoaded={dataLoaded}
             data={data}
             columns={columns}
             options={TableOptions}
