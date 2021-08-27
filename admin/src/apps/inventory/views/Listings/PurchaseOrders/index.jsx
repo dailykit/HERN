@@ -17,6 +17,9 @@ import { ResponsiveFlex } from '../styled'
 import PackagingPurchaseOrders from './packaging'
 import SelectPurchaseOrderTypeTunnel from './SelectPurchaseOrderTypeTunnel'
 import ItemPurchaseOrders from './supplierItem'
+import { useSubscription } from '@apollo/react-hooks'
+import { PURCHASE_ORDERS_SUBSCRIPTION } from '../../../graphql'
+
 
 const address = 'apps.inventory.views.listings.purchaseorders.'
 
@@ -25,6 +28,18 @@ export default function PurchaseOrders() {
    const [view, setView] = useState('Supplier Items')
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
+
+   const {
+      data: { purchaseOrderItems : supplierItem = [] } = {},
+   } = useSubscription(PURCHASE_ORDERS_SUBSCRIPTION, {
+      variables: { type: 'SUPPLIER_ITEM' },
+   })
+   
+   const {
+      data: { purchaseOrderItems : packaging = [] } = {},
+   } = useSubscription(PURCHASE_ORDERS_SUBSCRIPTION, {
+      variables: { type: 'PACKAGING' },
+   })
 
    return (
       <>
@@ -37,7 +52,12 @@ export default function PurchaseOrders() {
             <Banner id="inventory-app-purchase-orders-listing-top" />
             <Flex container alignItems="center" justifyContent="space-between">
                <Flex container alignItems="center">
-                  <Text as="h2">{t(address.concat('purchase orders'))}</Text>
+                  {/* <Text as="h2">{t(address.concat('purchase orders'))}({purchaseSupplierItems.length})</Text> */}
+                  {view === 'Supplier Items' ? (
+               <Text as="h2">{t(address.concat('purchase orders'))}({supplierItem.length})</Text>
+            ) : (
+               <Text as="h2">{t(address.concat('purchase orders'))}({packaging.length})</Text>
+            )}
                   <Tooltip identifier="purchase-orders_listings_header_title" />
                </Flex>
                <Flex
