@@ -23,6 +23,7 @@ import { StyledWrapper } from '../styled'
 import tableOptions from '../tableOption'
 import PackagingTypeTunnel from './PackagingTypeTunnel'
 import { HeaderFlex, StyledFlex } from './styled'
+import './../tableStyle.css'
 
 export default function Packagings() {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
