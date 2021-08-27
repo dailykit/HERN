@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, DashboardTile } from '@dailykit/ui'
+import { Text, DashboardTile, Flex } from '@dailykit/ui'
 
 import { useTabs } from '../../../../shared/providers'
 import { StyledHome, StyledCardList, StyledHeader } from './styled'
@@ -32,13 +32,18 @@ const Home = () => {
                onClick={() => addTab('Recipe Insights', '/insights/recipe')}
             />
          </StyledCardList> */}
-         <DashboardAnalytics>
-            <TotalEarningAnalytics />
-            <OrderReceivedAnalytics />
-            <AcceptedAndRejectedAnalytics />
-            <SubscribedCustomerAnalytics />
-            <RegisteredCustomerAnalytics />
-         </DashboardAnalytics>
+         <Flex>
+            <Flex padding="0px 42px">
+               <Text as="h2">Dashboard</Text>
+            </Flex>
+            <DashboardAnalytics>
+               <TotalEarningAnalytics />
+               <OrderReceivedAnalytics />
+               <AcceptedAndRejectedAnalytics />
+               <SubscribedCustomerAnalytics />
+               <RegisteredCustomerAnalytics />
+            </DashboardAnalytics>
+         </Flex>
          <ReferralPlansListing />
          <Banner id="insights-app-home-bottom" />
       </StyledHome>
