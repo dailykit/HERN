@@ -9,6 +9,7 @@ import { useTabs } from '../../../../../shared/providers'
 import { InlineLoader, ErrorState } from '../../../../../shared/components'
 import { SUPPLIER_ITEMS_LISTINGS_BULK } from '../../../graphql'
 import tableOptions from '../tableOption'
+import './../tableStyle.css'
 
 export default function BulkItemsListings({ tableRef }) {
    const { addTab } = useTabs()
