@@ -36,6 +36,7 @@ export default function BulkItemsListings({ tableRef }) {
          headerFilter: false,
          hozAlign: 'left',
          headerHozAlign: 'left',
+         frozen:true,
          width: 150,
          cssClass: 'RowClick',
          cellClick: openForm,
