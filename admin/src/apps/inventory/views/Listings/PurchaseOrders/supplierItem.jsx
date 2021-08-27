@@ -18,6 +18,7 @@ import { dateFmt } from '../../../../../shared/utils/dateFmt'
 import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
 import { PURCHASE_ORDERS_SUBSCRIPTION } from '../../../graphql'
 import tableOptions from '../tableOption'
+import './../tableStyle.css'
 
 export default function ItemPurchaseOrders() {
    const { addTab } = useTabs()
