@@ -46,6 +46,8 @@ export default function PackagingPurchaseOrders() {
       {
          title: 'Id',
          field: 'id',
+         frozen: true,
+         width: 80,
          headerFilter: false,
          cssClass: 'RowClick',
          cellClick: openForm,
@@ -57,6 +59,10 @@ export default function PackagingPurchaseOrders() {
       {
          title: 'Packaging',
          field: 'packaging.name',
+         frozen: true,
+         width: 400,
+         cssClass: 'RowClick',
+         cellClick: openForm,
          headerFilter: true,
          headerTooltip: col => {
             const identifier = 'purchase_orders_listings_table_packaging_name'
