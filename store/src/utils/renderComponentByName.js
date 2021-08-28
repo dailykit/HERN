@@ -12,6 +12,9 @@ const Registration = dynamic(() =>
 const StepsNavbar = dynamic(() =>
    import('../components/steps_navbar').then(promise => promise.StepsNavbar)
 )
+const Delivery = dynamic(() =>
+   import('../sections/select-delivery').then(promise => promise.Delivery)
+)
 
 export const renderComponentByName = (componentName, options) => {
    const getProps = component => {
@@ -42,6 +45,11 @@ export const renderComponentByName = (componentName, options) => {
       */
       case 'Registration':
          return <Registration {...getProps('Registration')} />
+      /*ROUTES : 
+      [brand]/get-started/select-delivery
+      */
+      case 'Delivery':
+         return <Delivery />
       /*ROUTES : 
       [brand]/get-started/register
       [brand]/get-started/select-plan
