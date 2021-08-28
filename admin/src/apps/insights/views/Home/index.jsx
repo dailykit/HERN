@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, DashboardTile, Flex } from '@dailykit/ui'
+import { Text, DashboardTile, Flex, Spacer } from '@dailykit/ui'
 
 import { useTabs } from '../../../../shared/providers'
 import { StyledHome, StyledCardList, StyledHeader } from './styled'
@@ -14,6 +14,8 @@ import {
 } from '../../../../shared/components/DashboardAnalytics/Analytics'
 import DashboardAnalytics from '../../../../shared/components/DashboardAnalytics'
 import ReferralPlansListing from '../RecipeInsight'
+import TotalEarningReport from '../../../../shared/components/Reports/ReportTiles/TotalEarnings'
+import Reports from '../../../../shared/components/Reports'
 
 const Home = () => {
    const { addTab } = useTabs()
@@ -43,6 +45,15 @@ const Home = () => {
                <SubscribedCustomerAnalytics />
                <RegisteredCustomerAnalytics />
             </DashboardAnalytics>
+         </Flex>
+         <Spacer size="20px" />
+         <Flex>
+            <Flex padding="0px 42px">
+               <Text as="h2">Reports</Text>
+            </Flex>
+            <Reports>
+               <TotalEarningReport />
+            </Reports>
          </Flex>
          <ReferralPlansListing />
          <Banner id="insights-app-home-bottom" />
