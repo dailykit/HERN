@@ -1,17 +1,19 @@
-import tw, { styled, css } from 'twin.macro'
+import classNames from 'classnames'
 
-export const Button = styled.button(
-   ({ disabled, bg }) => css`
-      ${tw`h-10 rounded px-8 text-white bg-green-600`}
-      ${bg && `background-color: ${bg};`}
-      ${disabled && tw`cursor-not-allowed bg-gray-300`}
-      transition: all 0.3s ease-in-out;
-      :hover {
-         ${Boolean(!disabled) &&
-         css`
-            ${tw`shadow-lg`};
-            transform: translateY(-4px);
-         `}
-      }
-   `
-)
+export const Button = ({ children, disabled, bg, onClick, className }) => {
+   const buttonClasses = classNames('hern__btn', {
+      'hern__btn--disabled': disabled,
+   })
+   return (
+      <button
+         onClick={onClick}
+         style={{
+            backgroundColor: bg ? bg : 'rgba(5, 150, 105, 1)',
+         }}
+         className={`${buttonClasses} ${className ? className : ''}`}
+         disabled={disabled}
+      >
+         {children}
+      </button>
+   )
+}
