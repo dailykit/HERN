@@ -1171,9 +1171,15 @@ export const WEBSITE_PAGE = gql`
          published
          route
          linkedNavigationMenuId
-         websitePageModules(order_by: { position: desc_nulls_last }) {
-            fileId
+         websitePageModules(
+            order_by: { position: desc_nulls_last }
+            where: { isHidden: { _eq: false } }
+         ) {
             id
+            name
+            moduleType
+            isHidden
+            fileId
             position
             subscriptionDivFileId: file {
                path
