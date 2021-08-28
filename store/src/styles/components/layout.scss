@@ -1,0 +1,89 @@
+.hern-demo-mode {
+   padding: 0.5rem;
+   background-color: rgba(229, 231, 235, 1);
+   color: rgba(55, 65, 81, 1);
+   width: 100%;
+   display: -webkit-box;
+   display: -webkit-flex;
+   display: -ms-flexbox;
+   display: flex;
+   -webkit-flex-direction: column;
+   -ms-flex-direction: column;
+   flex-direction: column;
+   -webkit-align-items: center;
+   -webkit-box-align: center;
+   -ms-flex-align: center;
+   align-items: center;
+   -webkit-box-pack: center;
+   -webkit-justify-content: center;
+   -ms-flex-pack: center;
+   justify-content: center;
+   gap: 0.5rem;
+}
+.hern-layout__footer {
+   height: 320px;
+   padding: 24px 0;
+   background-size: 160px;
+   background-color: rgba(5, 150, 105, 1);
+   color: rgba(255, 255, 255, 1);
+   > div {
+      margin: 0 auto;
+      max-width: 980px;
+      width: calc(100% - 40px);
+      display: grid;
+      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+   }
+   @media (max-width: 768px) {
+      height: auto;
+   }
+}
+.hern-layout__footer__section-header {
+   font-size: 1.5rem;
+   line-height: 2rem;
+   margin-bottom: 1rem;
+   margin-top: 0.5rem;
+}
+.hern-layout__footer__contact__location {
+   margin-top: 0.5rem;
+   font-style: normal;
+}
+.hern-layout__footer__contact__location--email {
+   -webkit-text-decoration: underline;
+   text-decoration: underline;
+   margin-top: 1rem;
+   display: -webkit-box;
+   display: -webkit-flex;
+   display: -ms-flexbox;
+   display: flex;
+   -webkit-align-items: center;
+   -webkit-box-align: center;
+   -ms-flex-align: center;
+   align-items: center;
+   > svg {
+      stroke: currentColor;
+      margin-right: 0.5rem;
+   }
+}
+.hern-layout__footer__contact__location--phone {
+   margin-top: 1rem;
+   display: -webkit-box;
+   display: -webkit-flex;
+   display: -ms-flexbox;
+   display: flex;
+   -webkit-align-items: center;
+   -webkit-box-align: center;
+   -ms-flex-align: center;
+   align-items: center;
+   > svg {
+      stroke: currentColor;
+      margin-right: 0.5rem;
+   }
+}
+.hern-layout__footer__link {
+   margin-bottom: 0.75rem;
+   transition: all 0.3s ease;
+   &:hover {
+      opacity: 0.7;
+   }
+}

@@ -1,6 +1,5 @@
 import React from 'react'
 import Link from 'next/link'
-import tw, { styled, css } from 'twin.macro'
 
 import { Header } from './header'
 import { useUser } from '../context'
@@ -36,37 +35,48 @@ export const Layout = ({
             <Header settings={settings} navigationMenus={navigationMenus} />
          )}
          {children}
-         <div tw="p-2 bg-gray-200 text-gray-700 w-full flex flex-col items-center justify-center gap-2">
+         <div className="hern-demo-mode">
             {(user?.isTest === true || store?.isStoreLive === false) && (
                <p>Store running in test mode so payments will be bypassed</p>
             )}
             {user?.isDemo && <p>Logged in user is in demo mode.</p>}
          </div>
-         <Footer theme={theme}>
+         <footer
+            className="hern-layout__footer"
+            style={{
+               backgroundColor: `${
+                  theme?.accent ? theme?.accent : 'rgba(5, 150, 105, 1)'
+               }`,
+            }}
+         >
             <div>
                <section>
-                  <h4 tw="text-2xl mb-4 mt-2">Contact Us</h4>
-                  {location && <p tw="mt-2">{normalizeAddress(location)}</p>}
+                  <h4 className="hern-layout__footer__section-header">
+                     Contact Us
+                  </h4>
+                  {location && (
+                     <address className="hern-layout__footer__contact__location">
+                        {normalizeAddress(location)}
+                     </address>
+                  )}
 
                   {brand?.['Contact'] && (
                      <>
-                        <span tw="mt-4 flex items-center">
-                           <MailIcon size={18} tw="stroke-current mr-2" />
-                           <a
-                              href={`mailto:${brand['Contact'].email}`}
-                              tw="underline"
-                           >
-                              {brand['Contact'].email}
-                           </a>
-                        </span>
+                        <a
+                           href={`mailto:${brand['Contact'].email}`}
+                           className="hern-layout__footer__contact__location--email"
+                        >
+                           <MailIcon size={18} />
+                           {brand['Contact'].email}
+                        </a>
                         {brand?.['Contact']?.phoneNo && (
                            <a
                               target="_blank"
                               rel="noreferrer noopener"
-                              tw="mt-4 flex items-center"
+                              className="hern-layout__footer__contact__location--phone"
                               href={`https://api.whatsapp.com/send?phone=${brand?.['Contact']?.phoneNo}`}
                            >
-                              <PhoneIcon size={18} tw="stroke-current mr-2" />
+                              <PhoneIcon size={18} />
                               {brand?.['Contact']?.phoneNo}
                            </a>
                         )}
@@ -74,19 +84,21 @@ export const Layout = ({
                   )}
                </section>
                <section>
-                  <h4 tw="text-2xl mb-4 mt-2">Navigation</h4>
+                  <h4 className="hern-layout__footer__section-header">
+                     Navigation
+                  </h4>
                   <ul>
-                     <li tw="mb-3">
+                     <li className="hern-layout__footer__link">
                         <Link href={getRoute('/')}>Home</Link>
                      </li>
                      {isAuthenticated && (
-                        <li tw="mb-3">
+                        <li className="hern-layout__footer__link">
                            <Link href={getRoute('/account/profile/')}>
                               Profile
                            </Link>
                         </li>
                      )}
-                     <li tw="mb-3">
+                     <li className="hern-layout__footer__link">
                         <Link href={getRoute('/menu')}>Menu</Link>
                      </li>
                   </ul>
@@ -95,24 +107,26 @@ export const Layout = ({
                   isPrivacyPolicyAvailable ||
                   isRefundPolicyAvailable) && (
                   <section>
-                     <h4 tw="text-2xl mb-4 mt-2">Policy</h4>
+                     <h4 className="hern-layout__footer__section-header">
+                        Policy
+                     </h4>
                      <ul>
                         {isTermsAndConditionsAvailable && (
-                           <li tw="mb-3">
+                           <li className="hern-layout__footer__link">
                               <Link href={getRoute('/terms-and-conditions/')}>
                                  Terms and Conditions
                               </Link>
                            </li>
                         )}
                         {isPrivacyPolicyAvailable && (
-                           <li tw="mb-3">
+                           <li className="hern-layout__footer__link">
                               <Link href={getRoute('/privacy-policy/')}>
                                  Privacy Policy
                               </Link>
                            </li>
                         )}
                         {isRefundPolicyAvailable && (
-                           <li tw="mb-3">
+                           <li className="hern-layout__footer__link">
                               <Link href={getRoute('/refund-policy/')}>
                                  Refund Policy
                               </Link>
@@ -122,27 +136,7 @@ export const Layout = ({
                   </section>
                )}
             </div>
-         </Footer>
+         </footer>
       </>
    )
 }
-
-const Footer = styled.footer(
-   ({ theme }) => css`
-      height: 320px;
-      padding: 24px 0;
-      background-size: 160px;
-      ${tw`bg-green-600 text-white`}
-      ${theme?.accent && `background-color: ${theme.accent}`};
-      div {
-         margin: 0 auto;
-         max-width: 980px;
-         width: calc(100% - 40px);
-         ${tw`grid gap-6`}
-         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      }
-      @media (max-width: 768px) {
-         height: auto;
-      }
-   `
-)
