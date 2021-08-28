@@ -15,6 +15,9 @@ const StepsNavbar = dynamic(() =>
 const Delivery = dynamic(() =>
    import('../sections/select-delivery').then(promise => promise.Delivery)
 )
+const MenuSection = dynamic(() =>
+   import('../sections/select-menu').then(promise => promise.MenuSection)
+)
 
 export const renderComponentByName = (componentName, options) => {
    const getProps = component => {
@@ -50,6 +53,12 @@ export const renderComponentByName = (componentName, options) => {
       */
       case 'Delivery':
          return <Delivery />
+      /*ROUTES : 
+      [brand]/get-started/select-delivery
+      */
+      case 'MenuSection':
+         return <MenuSection />
+
       /*ROUTES : 
       [brand]/get-started/register
       [brand]/get-started/select-plan
