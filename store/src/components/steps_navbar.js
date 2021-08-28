@@ -10,20 +10,20 @@ import { useUser } from '../context'
 import { getRoute, isClient } from '../utils'
 
 const routes = {
-   '/get-started/register': { status: 'REGISTER', level: 0 },
-   '/get-started/select-plan': {
+   '/[brand]/get-started/register': { status: 'REGISTER', level: 0 },
+   '/[brand]/get-started/select-plan': {
       status: 'SELECT_PLAN',
       level: 25,
    },
-   '/get-started/select-delivery': {
+   '/[brand]/get-started/select-delivery': {
       status: 'SELECT_DELIVERY',
       level: 50,
    },
-   '/get-started/select-menu/': {
+   '/[brand]/get-started/select-menu': {
       status: 'SELECT_MENU',
       level: 75,
    },
-   '/get-started/checkout/': { status: 'CHECKOUT', level: 100 },
+   '/[brand]/get-started/checkout': { status: 'CHECKOUT', level: 100 },
 }
 
 export const StepsNavbar = () => {
