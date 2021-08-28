@@ -3,6 +3,9 @@ import dynamic from 'next/dynamic'
 const Plans = dynamic(() =>
    import('../sections/select-plan').then(promise => promise.Plans)
 )
+const Content = dynamic(() =>
+   import('../sections/our-menu/content').then(promise => promise.Content)
+)
 
 export const renderComponentByName = (componentName, options) => {
    const getProps = component => {
@@ -26,6 +29,8 @@ export const renderComponentByName = (componentName, options) => {
       /*ROUTES: 
       [brand]/our-menu
       */
+      case 'Content':
+         return <Content />
       default:
          return null
    }
