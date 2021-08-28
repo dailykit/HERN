@@ -8,6 +8,7 @@ export const GET_TOTAL_EARNING_ORDER_CUSTOMER_TOP_PRODUCT = gql`
          where: {
             isAccepted: { _eq: true }
             cart: { paymentStatus: { _eq: "SUCCEEDED" } }
+            isRejected: { _is_null: true }
          }
       ) {
          aggregate {
