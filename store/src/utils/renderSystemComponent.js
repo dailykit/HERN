@@ -1,10 +1,10 @@
 import ReactHtmlParser from 'react-html-parser'
 import { renderComponentByName } from '../utils'
 
-const renderComponent = fold => {
+const renderComponent = (fold, options) => {
    try {
       if (fold.component) {
-         return renderComponentByName(fold.component)
+         return renderComponentByName(fold.component, options)
       } else if (fold.content) {
          return ReactHtmlParser(fold.content)
       } else {
@@ -34,7 +34,7 @@ const renderComponent = fold => {
    }
 }
 
-export const renderPageContent = folds => {
+export const renderPageContent = (folds, options) => {
    return folds.map(fold => (
       <div
          key={fold.id}
@@ -42,7 +42,7 @@ export const renderPageContent = folds => {
          data-fold-position={fold.position}
          data-fold-type={fold.moduleType}
       >
-         {renderComponent(fold)}
+         {renderComponent(fold, options)}
       </div>
    ))
 }

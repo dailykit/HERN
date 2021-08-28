@@ -18,7 +18,12 @@ const SelectPlan = props => {
       <Layout settings={settings} navigationMenus={navigationMenus}>
          <SEO title="Plans" />
          <main className="hern-our-plans__main">
-            {renderPageContent(folds)}
+            {renderPageContent(folds, [
+               {
+                  component: 'Plans',
+                  props: { cameFrom: 'our-plans' },
+               },
+            ])}
          </main>
       </Layout>
    )
