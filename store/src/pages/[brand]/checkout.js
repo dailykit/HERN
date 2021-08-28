@@ -18,6 +18,7 @@ import {
 import { useUser } from '../../context'
 import * as QUERIES from '../../graphql'
 import { NAVIGATION_MENU, WEBSITE_PAGE } from '../../graphql'
+import { isEmpty } from 'lodash'
 
 const Checkout = props => {
    const router = useRouter()

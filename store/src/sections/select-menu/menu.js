@@ -6,6 +6,7 @@ import tw, { styled, css } from 'twin.macro'
 import { useQuery } from '@apollo/react-hooks'
 import ReactImageFallback from 'react-image-fallback'
 import { useToasts } from 'react-toast-notifications'
+import moment from 'moment'
 
 import { useMenu } from './state'
 import { useConfig } from '../../lib'
