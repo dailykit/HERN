@@ -18,6 +18,9 @@ const Delivery = dynamic(() =>
 const MenuSection = dynamic(() =>
    import('../sections/select-menu').then(promise => promise.MenuSection)
 )
+const CheckoutSection = dynamic(() =>
+   import('../sections/checkout').then(promise => promise.CheckoutSection)
+)
 
 export const renderComponentByName = (componentName, options) => {
    const getProps = component => {
@@ -58,6 +61,11 @@ export const renderComponentByName = (componentName, options) => {
       */
       case 'MenuSection':
          return <MenuSection />
+      /*ROUTES : 
+      [brand]/get-started/checkout
+      */
+      case 'CheckoutSection':
+         return <CheckoutSection />
 
       /*ROUTES : 
       [brand]/get-started/register
