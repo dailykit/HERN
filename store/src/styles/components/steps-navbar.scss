@@ -1,0 +1,105 @@
+.hern-steps-navbar {
+   height: 64px;
+   display: grid;
+   z-index: 1000;
+   grid-template-columns: auto 1fr auto;
+   width: 100%;
+   background: #fff;
+   position: fixed;
+   top: 0;
+   left: 0;
+   right: 0;
+   align-items: center;
+   border-bottom-width: 1px;
+   @media (max-width: 767px) {
+      display: flex;
+   }
+}
+.hern-steps-navbar__brand {
+   text-decoration: none;
+   height: 100%;
+   padding: 0 1.5rem;
+   display: flex;
+   align-items: center;
+   border-right-width: 1px;
+   color: rgba(31, 41, 55, 1);
+}
+.hern-steps-navbar__brand__img {
+   height: 4rem;
+}
+.hern-steps-navbar__brand__text {
+   margin-left: 0.5rem;
+}
+.hern-steps-navbar__progress {
+   min-width: 720px;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   margin: auto;
+   @media (max-width: 767px) {
+      display: none;
+   }
+}
+.hern-steps-navbar__progressbar {
+   margin: 8px auto;
+   width: calc(100% - 128px);
+   background-color: rgba(229, 231, 235, 1);
+   height: 0.5rem;
+   border-radius: 0.25rem;
+   position: relative;
+}
+.hern-steps-navbar__progressbar__before {
+   top: 0;
+   left: 0;
+   height: inherit;
+   position: absolute;
+   background-color: rgba(5, 150, 105, 1);
+   border-radius: 0.25rem;
+   -webkit-border-radius: 0.25rem;
+   -moz-border-radius: 0.25rem;
+   -ms-border-radius: 0.25rem;
+   -o-border-radius: 0.25rem;
+}
+.hern-steps-navbar__progressbar__after {
+   top: -4px;
+   width: 16px;
+   height: 16px;
+   position: absolute;
+   background-color: rgba(5, 150, 105, 1);
+   border-radius: 9999px;
+   -webkit-border-radius: 9999px;
+   -moz-border-radius: 9999px;
+   -ms-border-radius: 9999px;
+   -o-border-radius: 9999px;
+}
+
+.hern-steps-navbar__steps {
+   width: 100%;
+   display: grid;
+   grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+.hern-steps-navbar__step {
+   font-size: 0.875rem;
+   line-height: 1.25rem;
+   text-align: center;
+   color: rgba(156, 163, 175, 1);
+}
+.hern-steps-navbar__step--active {
+   @extend .hern-steps-navbar__step;
+   color: rgba(75, 85, 99, 1);
+   cursor: pointer;
+}
+
+.hern-steps-navbar__logout {
+   padding: 0 1rem;
+   margin-left: auto;
+}
+.hern-steps-navbar__logout__btn {
+   padding: 0.25rem 0.5rem;
+   color: rgba(220, 38, 38, 1);
+   border-radius: 0.25rem;
+   -webkit-border-radius: 0.25rem;
+   -moz-border-radius: 0.25rem;
+   -ms-border-radius: 0.25rem;
+   -o-border-radius: 0.25rem;
+}
