@@ -1,0 +1,22 @@
+.hern-form__text {
+   height: 2.5rem;
+   padding: 0 0.5rem;
+   border-width: 1px;
+}
+.hern-form__text--disabled {
+   background-color: rgba(243, 244, 246, 1);
+   display: flex;
+   align-items: center;
+   &:focus {
+      outline: none;
+   }
+}
+
+.hern-form__text-area {
+   padding: 0.5rem 0.5rem 0 0.5rem;
+   border-width: 1px;
+}
+.hern-form__field {
+   display: flex;
+   flex-direction: column;
+}
