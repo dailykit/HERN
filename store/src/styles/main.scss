@@ -23,3 +23,6 @@
 @use './sections/order-info';
 @use './sections/select-delivery';
 @use './sections/select-menu';
+@use './cart/cart_billing';
+@use './cart/fulfillment';
+@use './cart/payment_card.scss';

@@ -16,6 +16,7 @@ import { SkeletonProduct } from './skeletons'
 import { CheckIcon } from '../../assets/icons'
 import { OCCURENCE_PRODUCTS_BY_CATEGORIES } from '../../graphql'
 import classNames from 'classnames'
+import moment from 'moment'
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const Menu = () => {

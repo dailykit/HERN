@@ -1,11 +1,9 @@
 import React from 'react'
-import tw, { css, styled } from 'twin.macro'
 import { useMutation } from '@apollo/react-hooks'
 import { useToasts } from 'react-toast-notifications'
 import Countdown from 'react-countdown'
 
 import { useMenu } from '../../state'
-import { CartProducts } from '../styled'
 import { useUser } from '../../../../context'
 import { formatDate } from '../../../../utils'
 import { MUTATIONS } from '../../../../graphql'
@@ -78,44 +76,46 @@ const PlanProducts = ({ noSkip, isCheckout }) => {
 
    return (
       <div>
-         <header tw="mt-3 mb-2 pb-1 border-b flex items-center justify-between">
-            <h4 tw="text-lg text-gray-700">
+         <header className="hern-cart-plan-products__header">
+            <h4 className="hern-cart-plan-products__header__title">
                Your Box{' '}
                {state?.occurenceCustomer?.validStatus?.addedProductsCount}/
                {user?.subscription?.recipes?.count}
             </h4>
 
-            <section tw="sm:hidden md:block">
+            <section className="hern-cart-plan-products__saving-status">
                {state.cartState === 'SAVING' && (
-                  <span tw="text-sm bg-blue-200 text-blue-700  rounded-full px-3 font-medium">
+                  <span className="hern-cart-plan-products__saving-status__saving">
                      SAVING
                   </span>
                )}
                {state.cartState === 'SAVED' && (
-                  <span tw="text-sm bg-green-200 text-green-700 rounded-full px-3 font-medium">
+                  <span className="hern-cart-plan-products__saving-status__saved">
                      SAVED
                   </span>
                )}
             </section>
             {isSkippable && !state.occurenceCustomer?.betweenPause && (
-               <SkipWeek>
-                  <label htmlFor="skip" tw="mr-2 text-gray-600">
+               <span className="hern-cart-plan-products__skip-week">
+                  <label
+                     className="hern-cart-plan-products__skip-week__label"
+                     htmlFor="skip"
+                  >
                      Skip
                   </label>
                   <input
                      name="skip"
                      type="checkbox"
-                     className="toggle"
+                     className="hern-cart-plan-products__skip-week__toggle"
                      onChange={skipWeek}
                      checked={state?.occurenceCustomer?.isSkipped}
-                     tw="cursor-pointer appearance-none"
                   />
-               </SkipWeek>
+               </span>
             )}
          </header>
          {!isCheckout && state.week.cutoffTimeStamp && (
             <section
-               tw="block mb-3"
+               className="hern-cart-plan-products__count-down"
                title={formatDate(state.week.cutoffTimeStamp)}
             >
                Time remaining:{' '}
@@ -125,7 +125,7 @@ const PlanProducts = ({ noSkip, isCheckout }) => {
                />
             </section>
          )}
-         <CartProducts>
+         <ul className="hern-cart-plan-products__list">
             {state?.occurenceCustomer?.cart?.products?.map(
                product =>
                   !product.isAddOn && (
@@ -147,37 +147,9 @@ const PlanProducts = ({ noSkip, isCheckout }) => {
                   <ProductSkeleton key={index} />
                )
             )}
-         </CartProducts>
+         </ul>
       </div>
    )
 }
 
 export default PlanProducts
-
-const SkipWeek = styled.span(
-   () => css`
-      ${tw`flex items-center`}
-
-      .toggle {
-         height: 18px;
-         transition: all 0.2s ease;
-         ${tw`relative w-8 inline-block rounded-full border border-gray-400`}
-      }
-      .toggle:after {
-         content: '';
-         top: 1px;
-         left: 1px;
-         width: 14px;
-         height: 14px;
-         transition: all 0.2s cubic-bezier(0.5, 0.1, 0.75, 1.35);
-         ${tw`absolute bg-green-500 rounded-full`}
-      }
-      .toggle:checked {
-         ${tw`border-green-500 bg-green-500`}
-      }
-      .toggle:checked:after {
-         transform: translatex(14px);
-         ${tw`bg-white`}
-      }
-   `
-)
