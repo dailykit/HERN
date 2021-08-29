@@ -18,30 +18,36 @@ export const MenuSection = () => {
    const config = configOf('select-menu-header')
    return (
       <MenuProvider isCheckout>
-         <Main>
+         <main className="hern-select-menu__main">
             <div>
                <WeekPicker isFixed />
-               <Header
-                  url={
-                     !isEmpty(config?.header?.images)
-                        ? config?.header?.images[0]?.url
-                        : ''
-                  }
-               >
+               <header className="hern-select-menu__header">
+                  <div
+                     className="hern-select-menu__header__before"
+                     style={{
+                        backgroundImage: `url(
+                           ${
+                              !isEmpty(config?.header?.images)
+                                 ? config?.header?.images[0]?.url
+                                 : ''
+                           }
+                        )`,
+                     }}
+                  />
                   {config?.header?.heading && (
-                     <h1 css={tw`text-4xl text-white z-10`}>
+                     <h1 className="hern-select-menu__header__heading">
                         {config?.header?.heading}
                      </h1>
                   )}
                   {config?.header?.subHeading && (
-                     <h3 css={tw`text-xl text-gray-100 z-10`}>
+                     <h3 className="hern-select-menu__header__sub-heading">
                         {config?.header?.subHeading}
                      </h3>
                   )}
-               </Header>
+               </header>
             </div>
             <MenuContent />
-         </Main>
+         </main>
          <div id="select-menu-bottom-01"></div>
       </MenuProvider>
    )
@@ -94,14 +100,14 @@ const MenuContent = () => {
 
    if (state?.isOccurencesLoading || loading) {
       return (
-         <section tw="p-3">
+         <section className="hern-select-menu__loading">
             <Loader inline />
          </section>
       )
    }
    if (!state?.week?.id)
       return (
-         <section tw="p-3">
+         <section className="hern-select-menu__helper-bar">
             <HelperBar type="info">
                <HelperBar.SubTitle>
                   No menu available for this week!
@@ -110,46 +116,9 @@ const MenuContent = () => {
          </section>
       )
    return (
-      <Content>
+      <section className="hern-select-menu__content">
          <Menu />
          <CartPanel noSkip isCheckout />
-      </Content>
+      </section>
    )
 }
-
-const Main = styled.main`
-   margin: auto;
-   padding-bottom: 24px;
-   min-height: calc(100vh - 128px);
-`
-
-const Header = styled.header`
-   height: 480px;
-   position: relative;
-   ${tw`bg-gray-100 flex flex-col items-center justify-center`}
-   ::before {
-      content: '';
-      position: absolute;
-      height: 100%;
-      width: 100%;
-      z-index: 0;
-      background-image: url(${props => props.url});
-      ${tw`bg-no-repeat bg-center bg-cover`}
-   }
-   ::after {
-      content: '';
-      position: absolute;
-      height: 100%;
-      width: 100%;
-      z-index: 1;
-      ${tw`bg-black opacity-25`}
-   }
-`
-
-const Content = styled.section`
-   ${tw`px-4 grid gap-8`}
-   grid-template-columns: 1fr 400px;
-   @media (max-width: 768px) {
-      grid-template-columns: 1fr;
-   }
-`
