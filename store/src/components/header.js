@@ -1,7 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import tw, { styled, css } from 'twin.macro'
 import { signOut } from 'next-auth/client'
 
 import { useUser } from '../context'
@@ -37,90 +36,92 @@ export const Header = ({ settings, navigationMenus }) => {
    }, [])
    return (
       <>
-         <Wrapper>
+         <header className="hern-header">
             <Link
                href={getRoute('/')}
-               // title={brand?.name || 'Subscription Shop'}
+               title={brand?.name || 'Subscription Shop'}
             >
-               <Brand>
+               <div className="hern-header__brand">
                   {brand?.logo?.logoMark && (
                      <img
-                        tw="h-12 md:h-12"
                         src={brand?.logo?.logoMark}
                         alt={brand?.name || 'Subscription Shop'}
                      />
                   )}
-                  {brand?.name && <span tw="ml-2">{brand?.name}</span>}
-               </Brand>
+                  {brand?.name && <span>{brand?.name}</span>}
+               </div>
             </Link>
-            <section tw="hidden md:flex items-center justify-between">
+            <section className="hern-navigatin-menu__wrapper">
+               {' '}
                <NavigationBar Data={newNavigationMenus}>
-                  {/* <ul tw="ml-auto px-4 flex space-x-4"> */}
                   {isLoading ? (
                      <li>
                         <Loader inline={true} />
                      </li>
                   ) : isAuthenticated && user?.isSubscriber ? (
-                     <li tw="pl-2 text-gray-800 hidden hidden md:flex items-center">
+                     <li className="hern-navbar__list__item">
                         <Link href={getRoute('/menu')}>Select Menu</Link>
                      </li>
                   ) : (
-                     <li tw="pl-2 text-gray-800 hidden md:flex items-center">
+                     <li className="hern-navbar__list__item">
                         <Link href={getRoute('/our-menu')}>Our Menu</Link>
                      </li>
                   )}
                   {!user?.isSubscriber && (
-                     <li tw="pl-2 hidden md:flex items-center ">
+                     <li className="hern-navbar__list__item">
                         <Link href={getRoute('/our-plans')}>Get Started</Link>
                      </li>
                   )}
-                  {/* </ul> */}
                </NavigationBar>
             </section>
-            <section tw="px-2 ml-auto flex justify-center md:px-4">
+            <section className="hern-header__auth">
                {isLoading ? (
                   <Loader inline={true} />
                ) : isAuthenticated ? (
                   <>
                      {user?.platform_customer?.firstName &&
-                        (isClient && window.innerWidth > 786 ? (
-                           <Link
-                              href={getRoute('/account/profile/')}
-                              tw="mr-3 inline-flex items-center justify-center rounded-full h-10 w-10 bg-gray-200"
-                           >
-                              {getInitials(
-                                 `${user.platform_customer.firstName} ${user.platform_customer.lastName}`
-                              )}
-                           </Link>
+                        (isClient && window.innerWidth > 768 ? (
+                           <span className="hern-header__avatar">
+                              <Link href={getRoute('/account/profile/')}>
+                                 {getInitials(
+                                    `${user.platform_customer.firstName} ${user.platform_customer.lastName}`
+                                 )}
+                              </Link>
+                           </span>
                         ) : (
-                           <Link
-                              href="#"
-                              tw="mr-3 inline-flex items-center justify-center rounded-full h-10 w-10 bg-gray-200"
-                              onClick={() => setToggle(!toggle)}
-                           >
-                              {getInitials(
-                                 `${user.platform_customer.firstName} ${user.platform_customer.lastName}`
-                              )}
-                           </Link>
+                           <span className="hern-header__avatar">
+                              <Link href="#" onClick={() => setToggle(!toggle)}>
+                                 {getInitials(
+                                    `${user.platform_customer.firstName} ${user.platform_customer.lastName}`
+                                 )}
+                              </Link>
+                           </span>
                         ))}
 
                      <button
-                        css={tw`text-red-600 rounded px-2 py-1`}
+                        className="hern-header__logout-btn"
                         onClick={logout}
                      >
                         Logout
                      </button>
                   </>
                ) : (
-                  <Login
+                  <button
+                     className="hern-header__logout"
+                     style={{
+                        backgroundColor: `${
+                           theme?.accent
+                              ? theme?.accent
+                              : 'rgba(37, 99, 235, 1)'
+                        }`,
+                     }}
                      onClick={() => router.push(getRoute('/login'))}
-                     bg={theme?.accent}
                   >
                      Log In
-                  </Login>
+                  </button>
                )}
                <button
-                  css={tw`rounded px-2 py-1 inline-block md:hidden ml-2`}
+                  className="hern-header__menu-btn"
                   onClick={() => setIsMobileNavVisible(!isMobileNavVisible)}
                >
                   {isMobileNavVisible ? (
@@ -131,19 +132,19 @@ export const Header = ({ settings, navigationMenus }) => {
                </button>
             </section>
             {isMobileNavVisible && (
-               <section tw="absolute block px-0 md:hidden bg-white px-4 w-full top-16 list-none transition-all duration-200 ease-in-out">
+               <section className="hern-navigatin-menu__wrapper--mobile">
                   <NavigationBar Data={newNavigationMenus}>
                      {isAuthenticated && user?.isSubscriber ? (
-                        <li tw="text-gray-800 py-2">
+                        <li className="hern-navbar__list__item">
                            <Link href={getRoute('/menu')}>Select Menu</Link>
                         </li>
                      ) : (
-                        <li tw="text-gray-800 py-2">
+                        <li className="hern-navbar__list__item">
                            <Link href={getRoute('/our-menu')}>Our Menu</Link>
                         </li>
                      )}
                      {!user?.isSubscriber && (
-                        <li tw="text-gray-800 py-2">
+                        <li className="hern-navbar__list__item">
                            <Link href={getRoute('/our-plans')}>
                               Get Started
                            </Link>
@@ -152,31 +153,14 @@ export const Header = ({ settings, navigationMenus }) => {
                   </NavigationBar>
                </section>
             )}
-         </Wrapper>
-         {isClient && window.innerWidth < 786 && (
+         </header>
+         {isClient && window.innerWidth < 768 && (
             <ProfileSidebar toggle={toggle} logout={logout} />
          )}
       </>
    )
 }
 
-const Wrapper = styled.header`
-   height: 64px;
-   z-index: 1000;
-   grid-template-columns: auto 1fr auto;
-   ${tw`w-full grid top-0 bg-white fixed border-b items-center`}
-`
-
-const Brand = styled.div`
-   ${tw`h-full px-2 flex items-center border-r md:px-6`}
-`
-
-const Login = styled.button(
-   ({ bg }) => css`
-      ${tw`bg-blue-600 text-white rounded px-2 py-1 w-16 md:w-auto`}
-      ${bg && `background-color: ${bg};`}
-   `
-)
 const DataWithChildNodes = dataList => {
    dataList.map(each => {
       const newFilter = dataList.filter(
