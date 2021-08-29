@@ -66,13 +66,13 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
          ),
       })
 
-      // router.push(
-      //    getRoute(
-      //       `/get-started/${
-      //          cameFrom === 'our-plans' ? 'register' : 'select-delivery'
-      //       }`
-      //    )
-      // )
+      router.push(
+         getRoute(
+            `/get-started/${
+               cameFrom === 'our-plans' ? 'register' : 'select-delivery'
+            }`
+         )
+      )
    }
 
    const config = configOf('primary-labels')
