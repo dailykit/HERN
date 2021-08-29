@@ -7,6 +7,7 @@ import { useMenu } from '../sections/select-menu'
 import { Loader } from './loader'
 import { CloseIcon } from '../assets/icons'
 import classNames from 'classnames'
+import { isClient } from '../utils'
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const CouponsList = ({ createOrderCartRewards, closeTunnel }) => {
