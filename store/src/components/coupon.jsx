@@ -1,7 +1,6 @@
 import { useLazyQuery, useMutation, useSubscription } from '@apollo/react-hooks'
 import React from 'react'
 import { useToasts } from 'react-toast-notifications'
-import tw, { styled } from 'twin.macro'
 import { useUser } from '../context'
 import { CART_REWARDS, MUTATIONS, SEARCH_COUPONS } from '../graphql'
 import { useConfig } from '../lib'
@@ -141,33 +140,39 @@ export const Coupon = ({}) => {
    if (isCouponFormOpen) {
       return (
          <>
-            <Styles.Form onSubmit={handleSubmit}>
-               <Styles.GhostButton
-                  color={theme?.accent}
+            <form className="hern-coupon__form" onSubmit={handleSubmit}>
+               <button
+                  className="hern-coupon__see-all-btn"
+                  style={{ color: `${theme?.accent ? theme?.accent : 'teal'}` }}
                   type="reset"
                   onClick={() => setIsCouponListOpen(true)}
                >
                   See All Coupons
-               </Styles.GhostButton>
-               <Styles.InputWrapper>
-                  <Styles.Label> Coupon Code </Styles.Label>
-                  <Styles.Input
+               </button>
+               <div className="hern-coupon__input-wrapper">
+                  <label className="hern-coupon__input-label" htmlFor="coupon">
+                     Coupon Code
+                  </label>
+                  <input
+                     className="hern-coupon__input"
                      type="text"
+                     id="coupon"
                      required
                      value={typedCode}
                      onChange={e =>
                         setTypedCode(e.target.value.trim().toUpperCase())
                      }
                   />
-               </Styles.InputWrapper>
-               <Styles.Button
+               </div>
+               <button
+                  className="hern-coupon__form__apply-btn"
                   type="submit"
                   disabled={searching || applying}
                   color={theme?.accent}
                >
                   {searching || applying ? <Loader inline /> : 'Apply'}
-               </Styles.Button>
-            </Styles.Form>
+               </button>
+            </form>
             <Tunnel
                isOpen={isCouponListOpen}
                toggleTunnel={setIsCouponListOpen}
@@ -182,104 +187,36 @@ export const Coupon = ({}) => {
       )
    }
    return (
-      <Styles.Wrapper color={theme?.accent}>
+      <div
+         className="hern-coupon"
+         style={{ color: `${theme?.accent ? theme?.accent : 'teal'}` }}
+      >
          {data?.cartRewards?.length ? (
-            <Styles.CouponWrapper>
-               <Styles.CouponDetails>
-                  <Styles.CouponCode>
+            <div className="hern-coupon__wrapper">
+               <div>
+                  <div className="hern-coupon__coupon-code">
                      {data.cartRewards[0].reward.coupon.code}
-                  </Styles.CouponCode>
-                  <Styles.Comment>Coupon applied!</Styles.Comment>
-               </Styles.CouponDetails>
-               <Styles.Cross onClick={deleteCartRewards}>&times;</Styles.Cross>
-            </Styles.CouponWrapper>
+                  </div>
+                  <div className="hern-coupon__coupon-comment">
+                     Coupon applied!
+                  </div>
+               </div>
+               <button
+                  className="hern-coupon__coupon__cancel-btn"
+                  onClick={deleteCartRewards}
+               >
+                  &times;
+               </button>
+            </div>
          ) : (
-            <Styles.Button
+            <button
+               className="hern-coupon__apply-btn"
                onClick={() => setIsCouponFormOpen(true)}
-               color={theme?.accent}
+               style={{ color: `${theme?.accent ? theme?.accent : 'teal'}` }}
             >
                Apply Coupon
-            </Styles.Button>
+            </button>
          )}
-      </Styles.Wrapper>
+      </div>
    )
-}
-
-const Styles = {
-   Wrapper: styled.div`
-      ${tw`mt-2`}
-      border: 1px dashed ${props => props.color || 'teal'};
-      padding: 8px;
-      border-radius: 2px;
-   `,
-   Button: styled.button`
-      color: ${props => props.color || 'teal'};
-      padding: 4px;
-      text-transform: uppercase;
-      text-align: center;
-      width: 100%;
-   `,
-   Cross: styled.span`
-      font-size: 18px;
-      cursor: pointer;
-   `,
-   CouponWrapper: styled.div`
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-   `,
-   CouponDetails: styled.div``,
-   CouponCode: styled.h4`
-      font-weight: 700;
-      text-transform: uppercase;
-      padding-bottom: 0;
-   `,
-   Comment: styled.small`
-      color: gray;
-   `,
-   Form: styled.form`
-      ${tw`mt-2`}
-      border: 1px solid #efefef;
-      padding: 8px;
-      border-radius: 2px;
-      display: flex;
-      align-items: flex-end;
-      position: relative;
-   `,
-   InputWrapper: styled.div``,
-   Label: styled.label``,
-   Input: styled.input`
-      border: 1px solid #cacaca;
-      padding: 4px;
-      border-radius: 2px;
-      display: block;
-   `,
-   Help: styled.div`
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-   `,
-   Small: styled.small``,
-   Stat: styled.div`
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-   `,
-   Text: styled.span``,
-   Cross: styled.span`
-      color: #ff5a52;
-      font-size: 18px;
-      cursor: pointer;
-   `,
-   GhostButton: styled.button`
-      position: absolute;
-      top: 4px;
-      right: 4px;
-      font-size: 12px;
-      color: ${props => props.color || 'teal'};
-
-      &:hover {
-         text-decoration: underline;
-      }
-   `,
 }
