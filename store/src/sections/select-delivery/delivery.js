@@ -1,6 +1,5 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import tw, { styled, css } from 'twin.macro'
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import { useToasts } from 'react-toast-notifications'
 import { webRenderer } from '@dailykit/web-renderer'
@@ -118,47 +117,32 @@ const DeliveryContent = () => {
       return true
    }
    const theme = configOf('theme-color', 'Visual')
+   const brandTextColor = {
+      color: theme?.accent ? theme.accent : 'rgba(5, 150, 105, 1)',
+   }
    if (loading) return <Loader inline />
    return (
-      <Main>
-         <header css={tw`flex items-center justify-between border-b`}>
-            <Title theme={theme}>Delivery</Title>
+      <main className="hern-delivery__main">
+         <header className="hern-delivery__header">
+            <h2 className="hern-delivery__title" style={brandTextColor}>
+               Delivery
+            </h2>
          </header>
          <AddressSection />
-         <SectionTitle theme={theme}>Delivery Day</SectionTitle>
+         <h3 className="hern-delivery__section-title" style={brandTextColor}>
+            Delivery Day
+         </h3>
          <DeliverySection />
-         <SectionTitle theme={theme}>
+         <h3 className="hern-delivery__section-title" style={brandTextColor}>
             Select your first delivery date
-         </SectionTitle>
+         </h3>
          <DeliveryDateSection />
-         <div tw="mt-4 w-full flex items-center justify-center">
+         <div className="hern-delivery__continue">
             <Button bg={theme?.accent} onClick={nextStep} disabled={!isValid()}>
                Continue
             </Button>
          </div>
          <div id="select-delivery-bottom-01"></div>
-      </Main>
+      </main>
    )
 }
-
-const Main = styled.main`
-   margin: auto;
-   max-width: 980px;
-   padding-bottom: 24px;
-   width: calc(100vw - 40px);
-   min-height: calc(100vh - 128px);
-`
-
-const Title = styled.h2(
-   ({ theme }) => css`
-      ${tw`text-green-600 text-2xl py-3`}
-      ${theme?.accent && `color: ${theme.accent}`}
-   `
-)
-
-const SectionTitle = styled.h3(
-   ({ theme }) => css`
-      ${tw`my-3 text-green-600 text-lg`}
-      ${theme?.accent && `color: ${theme.accent}`}
-   `
-)

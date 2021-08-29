@@ -1,7 +1,6 @@
 import React from 'react'
 import { rrulestr } from 'rrule'
 import { isEmpty } from 'lodash'
-import tw, { styled, css } from 'twin.macro'
 import { useLazyQuery } from '@apollo/react-hooks'
 import { useToasts } from 'react-toast-notifications'
 
@@ -11,6 +10,7 @@ import { useUser } from '../../context'
 import { ITEM_COUNT } from '../../graphql'
 import { CheckIcon, TickIcon, CrossIcon } from '../../assets/icons'
 import { Loader, HelperBar } from '../../components'
+import classNames from 'classnames'
 
 export const DeliverySection = ({ planId }) => {
    const { user } = useUser()
@@ -94,181 +94,140 @@ export const DeliverySection = ({ planId }) => {
                </HelperBar.SubTitle>
             </HelperBar>
          )}
-         <DeliveryDays>
-            {itemCount?.valid?.map(day => (
-               <DeliveryDay
-                  key={day.id}
-                  onClick={() => daySelection(day)}
-                  className={`${
-                     state.delivery.selected?.id === day.id && 'active'
-                  }`}
-               >
-                  <DeliveryDayLeft>
-                     <CheckIcon
-                        size={18}
-                        css={[
-                           tw`stroke-current`,
-                           state.delivery.selected?.id === day.id
-                              ? tw`text-green-700`
-                              : tw`text-gray-400`,
-                        ]}
-                     />
-                  </DeliveryDayLeft>
-                  <section css={tw`py-2 flex flex-col space-y-2`}>
-                     <label css={tw`w-full cursor-pointer`}>
-                        {rrulestr(day.rrule).toText()}
-                     </label>
-                     {day.zipcodes.length > 0 && (
-                        <section css={tw`flex space-x-2 items-center`}>
-                           <Fulfillment>
-                              <span>
-                                 {day.zipcodes[0].isDeliveryActive ? (
-                                    <TickIcon
-                                       size={16}
-                                       tw="stroke-current text-green-600"
-                                    />
-                                 ) : (
-                                    <CrossIcon
-                                       size={16}
-                                       tw="stroke-current text-red-600"
-                                    />
-                                 )}
-                              </span>
-                              <p>
-                                 {day.zipcodes[0].deliveryPrice === 0
-                                    ? 'Free Delivery'
-                                    : `Delivery at ${formatCurrency(
-                                         day.zipcodes[0].deliveryPrice
-                                      )}`}
-                              </p>
-                           </Fulfillment>
-                           {day.zipcodes[0].isPickupActive && (
-                              <Fulfillment>
+         <ul className="hern-delivery__delivery-days__list">
+            {itemCount?.valid?.map(day => {
+               const iconClasses = classNames(
+                  'hern-delivery__delivery-days__check-icon',
+                  {
+                     'hern-delivery__delivery-days__check-icon--active':
+                        state.delivery.selected?.id === day.id,
+                  }
+               )
+               const dateClasses = classNames(
+                  'hern-delivery__delivery-days__list-item',
+                  {
+                     'hern-delivery__delivery-days__list-item--active':
+                        state.delivery.selected?.id === day.id,
+                  }
+               )
+               return (
+                  <li
+                     key={day.id}
+                     onClick={() => daySelection(day)}
+                     className={dateClasses}
+                  >
+                     <div className="hern-delivery__delivery-days__check-icon__wrapper">
+                        <CheckIcon className={iconClasses} size={18} />
+                     </div>
+                     <section className="hern-delivery__delivery-days__content">
+                        <label className="hern-delivery__delivery-days__label">
+                           {rrulestr(day.rrule).toText()}
+                        </label>
+                        {day.zipcodes.length > 0 && (
+                           <section className="hern-delivery__delivery-days__fulfillment">
+                              <section className="hern-delivery__delivery-days__fulfillment__delivery">
                                  <span>
-                                    <TickIcon
-                                       size={16}
-                                       tw="stroke-current text-green-600"
-                                    />
+                                    {day.zipcodes[0].isDeliveryActive ? (
+                                       <TickIcon
+                                          className="hern-delivery__delivery-days__tick-icon"
+                                          size={16}
+                                       />
+                                    ) : (
+                                       <CrossIcon
+                                          size={16}
+                                          className="hern-delivery__delivery-days__cross-icon"
+                                       />
+                                    )}
+                                 </span>
+                                 <p>
+                                    {day.zipcodes[0].deliveryPrice === 0
+                                       ? 'Free Delivery'
+                                       : `Delivery at ${formatCurrency(
+                                            day.zipcodes[0].deliveryPrice
+                                         )}`}
+                                 </p>
+                              </section>
+                              {day.zipcodes[0].isPickupActive && (
+                                 <section className="hern-delivery__delivery-days__fulfillment__pickup">
+                                    <span>
+                                       <TickIcon
+                                          className="hern-delivery__delivery-days__tick-icon"
+                                          size={16}
+                                       />
+                                    </span>
+                                    <p>Pickup</p>
+                                 </section>
+                              )}
+                           </section>
+                        )}
+                     </section>
+                  </li>
+               )
+            })}
+            {itemCount?.invalid?.map(day => {
+               return (
+                  <li
+                     key={day.id}
+                     className="hern-delivery__delivery-days__list-item hern-delivery__delivery-days__list-item--invalid"
+                     title="Not available on this zipcode"
+                  >
+                     <div className="hern-delivery__delivery-days__check-icon__wrapper">
+                        <CheckIcon
+                           className="hern-delivery__delivery-days__check-icon"
+                           size={18}
+                        />
+                     </div>
+                     <section className="hern-delivery__delivery-days__content">
+                        <label className="hern-delivery__delivery-days__label">
+                           {rrulestr(day.rrule).toText()}
+                        </label>
+                        {day.zipcodes.length > 0 && (
+                           <section className="hern-delivery__delivery-days__fulfillment">
+                              <section className="hern-delivery__delivery-days__fulfillment__delivery">
+                                 <span>
+                                    {day.zipcodes[0].isDeliveryActive ? (
+                                       <TickIcon
+                                          className="hern-delivery__delivery-days__tick-icon"
+                                          size={16}
+                                       />
+                                    ) : (
+                                       <CrossIcon
+                                          size={16}
+                                          className="hern-delivery__delivery-days__cross-icon"
+                                       />
+                                    )}
+                                 </span>
+                                 <p>
+                                    {day.zipcodes[0].deliveryPrice === 0
+                                       ? 'Free Delivery'
+                                       : `Delivery at ${formatCurrency(
+                                            day.zipcodes[0].deliveryPrice
+                                         )}`}
+                                 </p>
+                              </section>
+                              <section className="hern-delivery__delivery-days__fulfillment__pickup">
+                                 <span>
+                                    {day.zipcodes[0].isPickupActive ? (
+                                       <TickIcon
+                                          className="hern-delivery__delivery-days__tick-icon"
+                                          size={16}
+                                       />
+                                    ) : (
+                                       <CrossIcon
+                                          size={16}
+                                          className="hern-delivery__delivery-days__cross-icon"
+                                       />
+                                    )}
                                  </span>
                                  <p>Pickup</p>
-                              </Fulfillment>
-                           )}
-                        </section>
-                     )}
-                  </section>
-               </DeliveryDay>
-            ))}
-            {itemCount?.invalid?.map(day => (
-               <DeliveryDay
-                  key={day.id}
-                  className="invalid"
-                  title="Not available on this zipcode"
-               >
-                  <DeliveryDayLeft>
-                     <CheckIcon size={18} tw="stroke-current text-gray-400" />
-                  </DeliveryDayLeft>
-                  <section css={tw`py-2 flex flex-col space-y-2`}>
-                     <label css={tw`w-full cursor-pointer`}>
-                        {rrulestr(day.rrule).toText()}
-                     </label>
-                     {day.zipcodes.length > 0 && (
-                        <section css={tw`flex space-x-2 items-center`}>
-                           <Fulfillment>
-                              <span>
-                                 {day.zipcodes[0].isDeliveryActive ? (
-                                    <TickIcon
-                                       size={16}
-                                       tw="stroke-current text-green-600"
-                                    />
-                                 ) : (
-                                    <CrossIcon
-                                       size={16}
-                                       tw="stroke-current text-red-600"
-                                    />
-                                 )}
-                              </span>
-                              <p>
-                                 {day.zipcodes[0].deliveryPrice === 0
-                                    ? 'Free Delivery'
-                                    : `Delivery at ${formatCurrency(
-                                         day.zipcodes[0].deliveryPrice
-                                      )}`}
-                              </p>
-                           </Fulfillment>
-                           <Fulfillment>
-                              <span>
-                                 {day.zipcodes[0].isPickupActive ? (
-                                    <TickIcon
-                                       size={16}
-                                       tw="stroke-current text-green-600"
-                                    />
-                                 ) : (
-                                    <CrossIcon
-                                       size={16}
-                                       tw="stroke-current text-red-600"
-                                    />
-                                 )}
-                              </span>
-                              <p>Pickup</p>
-                           </Fulfillment>
-                        </section>
-                     )}
-                  </section>
-               </DeliveryDay>
-            ))}
-         </DeliveryDays>
+                              </section>
+                           </section>
+                        )}
+                     </section>
+                  </li>
+               )
+            })}
+         </ul>
       </>
    )
 }
-
-const DeliveryDays = styled.ul`
-   ${tw`
-      grid 
-      gap-2
-      sm:grid-cols-2 
-      md:grid-cols-3 
-   `}
-`
-
-const Fulfillment = styled.section`
-   ${tw`flex items-center space-x-1`}
-   span {
-      ${tw`h-5 w-5 flex items-center justify-center`}
-   }
-   p {
-      ${tw`text-gray-500`}
-   }
-`
-
-const DeliveryDayLeft = styled.aside(
-   () => css`
-      width: 48px;
-      height: 48px;
-      ${tw`h-full mr-2 flex flex-shrink-0 items-center justify-center`}
-   `
-)
-
-const DeliveryDay = styled.li`
-   height: auto;
-   min-height: 48px;
-   ${tw`cursor-pointer flex items-center border capitalize text-gray-700 rounded overflow-hidden border-gray-300 hover:(border-2 border-green-700)`}
-   &.invalid {
-      opacity: 0.6;
-      cursor: not-allowed;
-      position: relative;
-      :after {
-         top: 0;
-         left: 0;
-         content: '';
-         width: 100%;
-         height: 100%;
-         position: absolute;
-      }
-   }
-   :hover svg {
-      ${tw`text-green-700`}
-   }
-   &.active {
-      ${tw`border-2 border-green-700`}
-   }
-`

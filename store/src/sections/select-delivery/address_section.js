@@ -1,8 +1,7 @@
 import React from 'react'
 import { isEmpty } from 'lodash'
 import { useRouter } from 'next/router'
-import tw, { styled, css } from 'twin.macro'
-
+import classNames from 'classnames'
 import { useDelivery } from './state'
 import { useConfig } from '../../lib'
 import { useUser } from '../../context'
@@ -38,8 +37,15 @@ export const AddressSection = () => {
 
    return (
       <>
-         <header css={tw`mt-6 mb-3 flex items-center justify-between`}>
-            <SectionTitle theme={theme}>Select Address</SectionTitle>
+         <header className="hern-delivery__address-section__header">
+            <h3
+               className="hern-delivery__section-title"
+               style={{
+                  color: theme?.accent ? theme.accent : 'rgba(5, 150, 105, 1)',
+               }}
+            >
+               Select Address
+            </h3>
             {user?.platform_customer?.addresses.length > 0 && (
                <Button bg={theme?.accent} onClick={() => toggleTunnel(true)}>
                   Add Address
@@ -49,47 +55,53 @@ export const AddressSection = () => {
          {state.address.error && (
             <HelperBar type="error">
                <HelperBar.SubTitle>{state.address.error}</HelperBar.SubTitle>
-               <HelperBar.Buttom
+               <HelperBar.Button
                   onClick={() =>
                      router.push(getRoute('/get-started/select-plan'))
                   }
                >
                   Change Plan
-               </HelperBar.Buttom>
+               </HelperBar.Button>
             </HelperBar>
          )}
          {user?.platform_customer?.addresses.length > 0 ? (
-            <AddressList>
-               {user?.platform_customer?.addresses.map(address => (
-                  <AddressCard
-                     key={address.id}
-                     onClick={() => addressSelection(address)}
-                     className={`${
-                        state.address.selected?.id === address.id && 'active'
-                     }`}
-                  >
-                     <AddressCardLeft>
-                        <CheckIcon
-                           size={18}
-                           css={[
-                              tw`stroke-current`,
-                              state.address.selected?.id === address.id
-                                 ? tw`text-green-700`
-                                 : tw`text-gray-400`,
-                           ]}
-                        />
-                     </AddressCardLeft>
-                     <label onClick={() => addressSelection(address)}>
-                        <span>{address.line1}</span>
-                        <span>{address.line2}</span>
-                        <span>{address.city}</span>
-                        <span>{address.state}</span>
-                        <span>{address.country}</span>
-                        <span>{address.zipcode}</span>
-                     </label>
-                  </AddressCard>
-               ))}
-            </AddressList>
+            <ul className="hern-delivery__address-list">
+               {user?.platform_customer?.addresses.map(address => {
+                  const checkIconClasses = classNames(
+                     'hern-delivery__address-list-item__check-icon',
+                     {
+                        'hern-delivery__address-list-item__check-icon--active':
+                           state.address.selected?.id === address.id,
+                     }
+                  )
+                  const addressListItem = classNames(
+                     'hern-delivery__address-list-item',
+                     {
+                        'hern-delivery__address-list-item--active':
+                           state.address.selected?.id === address.id,
+                     }
+                  )
+                  return (
+                     <li
+                        key={address.id}
+                        onClick={() => addressSelection(address)}
+                        className={addressListItem}
+                     >
+                        <div className="hern-delivery__address-list-item__check-icon__wrapper">
+                           <CheckIcon size={18} className={checkIconClasses} />
+                        </div>
+                        <label onClick={() => addressSelection(address)}>
+                           <span>{address.line1}</span>
+                           <span>{address.line2}</span>
+                           <span>{address.city}</span>
+                           <span>{address.state}</span>
+                           <span>{address.country}</span>
+                           <span>{address.zipcode}</span>
+                        </label>
+                     </li>
+                  )
+               })}
+            </ul>
          ) : (
             <HelperBar type="info">
                <HelperBar.SubTitle>
@@ -104,43 +116,3 @@ export const AddressSection = () => {
       </>
    )
 }
-
-const AddressList = styled.ul`
-   ${tw`
-      grid 
-      gap-2
-      sm:grid-cols-1
-      md:grid-cols-2
-   `}
-   grid-auto-rows: minmax(130px, auto);
-`
-
-const SectionTitle = styled.h3(
-   ({ theme }) => css`
-      ${tw`text-green-600 text-xl`}
-      ${theme?.accent && `color: ${theme.accent}`}
-   `
-)
-
-const AddressCard = styled.li`
-   ${tw`flex border border-gray-300 text-gray-700 cursor-pointer rounded overflow-hidden hover:(border-2 border-green-700)`}
-   label {
-      ${tw`p-3 cursor-pointer`}
-   }
-   span {
-      ${tw`block`}
-   }
-   &.active {
-      ${tw`border-2 border-green-700`}
-   }
-   :hover svg {
-      ${tw`text-green-700`}
-   }
-`
-
-const AddressCardLeft = styled.aside(
-   () => css`
-      width: 48px;
-      ${tw`flex items-center justify-center h-full`}
-   `
-)
