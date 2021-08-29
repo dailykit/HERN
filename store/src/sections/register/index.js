@@ -2,7 +2,6 @@ import React from 'react'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import tw, { styled } from 'twin.macro'
 import Countdown from 'react-countdown'
 import { useToasts } from 'react-toast-notifications'
 import { useLazyQuery, useMutation, useSubscription } from '@apollo/react-hooks'
@@ -35,21 +34,25 @@ export const Registration = props => {
    const [isViaOtp, setIsViaOtp] = React.useState(false)
 
    return (
-      <Main tw="pt-8">
-         <TabList>
-            <Tab
-               className={current === 'LOGIN' ? 'active' : ''}
+      <section className="hern-register__wrapper">
+         <ul className="hern-register__tab-list">
+            <li
+               className={`hern-register__tab${
+                  current === 'LOGIN' ? '--active' : ''
+               }`}
                onClick={() => setCurrent('LOGIN')}
             >
                Login
-            </Tab>
-            <Tab
-               className={current === 'REGISTER' ? 'active' : ''}
+            </li>
+            <li
+               className={`hern-register__tab${
+                  current === 'REGISTER' ? '--active' : ''
+               }`}
                onClick={() => setCurrent('REGISTER')}
             >
                Register
-            </Tab>
-         </TabList>
+            </li>
+         </ul>
          {current === 'LOGIN' && <LoginPanel />}
          {current === 'REGISTER' && (
             <RegisterPanel
@@ -57,20 +60,21 @@ export const Registration = props => {
                providers={props.providers}
             />
          )}
-         <div tw=" mx-auto" style={{ width: 360 }}>
+         <div className="hern-register__providers">
             {props.providers &&
                Object.values(props.providers).map(provider => {
                   if (['Email', 'Credentials', 'OTP'].includes(provider.name)) {
                      return
                   }
                   return (
-                     <div key={provider.name} tw="w-full">
+                     <div
+                        className="hern-register__provider"
+                        key={provider.name}
+                     >
                         <button
-                           css={[
-                              tw`w-full bg-gray-100 h-10 rounded`,
-                              provider.name === 'Google' &&
-                                 tw`bg-blue-500 text-white`,
-                           ]}
+                           className={`hern-register__provider__btn${
+                              provider.name === 'Google' ? '--google' : ''
+                           }`}
                            onClick={() => signIn(provider.id)}
                         >
                            Sign in with {provider.name}
@@ -79,14 +83,14 @@ export const Registration = props => {
                   )
                })}
             <button
-               css={[tw`mt-3 w-full bg-green-500 text-white h-10 rounded`]}
+               className="hern-register__provider__btn--phone"
                onClick={() => setIsViaOtp(true)}
             >
                Sign in with Phone Number
             </button>
          </div>
          {isViaOtp && <OTP setIsViaOtp={setIsViaOtp} />}
-      </Main>
+      </section>
    )
 }
 
@@ -263,68 +267,89 @@ const OTP = ({ setIsViaOtp }) => {
    }
 
    return (
-      <div
-         tw="inset-0 fixed flex justify-center pt-12"
-         style={{ zIndex: 1000, background: 'rgba(0,0,0,0.2)' }}
-      >
-         <div
-            tw="h-auto bg-white rounded self-start p-3"
-            style={{ width: 380 }}
-         >
-            <header tw="mb-3 flex items-center justify-between">
-               <h3 tw="text-gray-600 text-xl font-medium">Sign In via OTP</h3>
+      <div className="hern-register__otp">
+         <div className="hern-register__otp__wrapper">
+            <header className="hern-register__otp__header">
+               <h3 className="hern-register__otp__header__title">
+                  Sign In via OTP
+               </h3>
                <button
+                  className="hern-register__otp__close"
                   onClick={() => setIsViaOtp(false)}
-                  tw="p-2 hover:bg-gray-200 rounded"
                >
                   <CloseIcon size={18} tw="stroke-current" />
                </button>
             </header>
             {!hasOtpSent ? (
                <>
-                  <FieldSet>
-                     <Label htmlFor="phone">Phone Number*</Label>
-                     <Input
+                  <fieldset className="hern-register__otp__fieldset">
+                     <label
+                        className="hern-register__otp__label"
+                        htmlFor="phone"
+                     >
+                        Phone Number*
+                     </label>
+                     <input
+                        className="hern-register__otp__input"
                         type="text"
                         name="phone"
                         value={form.phone}
                         onChange={onChange}
                         placeholder="Enter your phone number"
                      />
-                  </FieldSet>
-                  <Submit
+                  </fieldset>
+                  <button
+                     className={`hern-register__otp__submit${
+                        sendingOtp || !form.phone ? '--disabled' : ''
+                     }`}
                      onClick={sendOTP}
                      disabled={sendingOtp || !form.phone}
-                     className={sendingOtp || !form.phone ? 'disabled' : ''}
                   >
                      {sendingOtp ? 'Sending OTP...' : 'Send OTP'}
-                  </Submit>
+                  </button>
                </>
             ) : (
                <>
                   {isNewUser && (
-                     <FieldSet>
-                        <Label htmlFor="email">Email*</Label>
-                        <Input
+                     <fieldset className="hern-register__otp__fieldset">
+                        <label
+                           className="hern-register__otp__label"
+                           htmlFor="email"
+                        >
+                           Email*
+                        </label>
+                        <input
+                           className="hern-register__otp__input"
                            name="email"
                            type="text"
                            onChange={onChange}
                            value={form.email}
                            placeholder="Enter your email"
                         />
-                     </FieldSet>
+                     </fieldset>
                   )}
-                  <FieldSet>
-                     <Label htmlFor="otp">OTP*</Label>
-                     <Input
+                  <fieldset className="hern-register__otp__fieldset">
+                     <label className="hern-register__otp__label" htmlFor="otp">
+                        OTP*
+                     </label>
+                     <input
+                        className="hern-register__otp__input"
                         name="otp"
                         type="text"
                         onChange={onChange}
                         value={form.otp}
                         placeholder="Enter the otp"
                      />
-                  </FieldSet>
-                  <Submit
+                  </fieldset>
+                  <button
+                     className={`hern-register__otp__submit${
+                        resending ||
+                        loading ||
+                        !form.otp ||
+                        (isNewUser && !form.email)
+                           ? '--disabled'
+                           : ''
+                     }`}
                      onClick={submit}
                      disabled={
                         resending ||
@@ -334,7 +359,8 @@ const OTP = ({ setIsViaOtp }) => {
                      }
                   >
                      Submit
-                  </Submit>
+                  </button>
+
                   {time && (
                      <Countdown
                         date={time}
@@ -345,19 +371,16 @@ const OTP = ({ setIsViaOtp }) => {
                                  <button
                                     onClick={resend}
                                     disabled={resending}
-                                    className={resending ? 'disabled' : ''}
-                                    css={[
-                                       tw`mt-2 text-gray-800 hover:bg-gray-200 rounded w-full h-10 uppercase tracking-wider`,
-                                       resending &&
-                                          tw`cursor-not-allowed hover:bg-white`,
-                                    ]}
+                                    className={`hern-register__otp__resend${
+                                       resending ? '--disabled' : ''
+                                    }`}
                                  >
                                     Resend OTP
                                  </button>
                               )
                            }
                            return (
-                              <span tw="flex mt-2 text-center">
+                              <span className="hern-register__otp__resend__time">
                                  Resend OTP in 0{minutes}:
                                  {seconds <= 9 ? '0' : ''}
                                  {seconds}
@@ -369,7 +392,7 @@ const OTP = ({ setIsViaOtp }) => {
                </>
             )}
             {error && (
-               <span tw="self-start block text-red-500 mt-2">{error}</span>
+               <span className="hern-register__otp__error">{error}</span>
             )}
          </div>
       </div>
@@ -422,41 +445,49 @@ const LoginPanel = () => {
    }
 
    return (
-      <Panel>
-         <FieldSet>
-            <Label htmlFor="email">Email*</Label>
-            <Input
+      <section className="hern-register__login">
+         <fieldset className="hern-register__login__fieldset">
+            <label className="hern-register__login__label" htmlFor="email">
+               Email*
+            </label>
+            <input
+               className="hern-register__login__input"
                type="email"
                name="email"
                value={form.email}
                onChange={onChange}
                placeholder="Enter your email"
             />
-         </FieldSet>
-         <FieldSet>
-            <Label htmlFor="password">Password*</Label>
-            <Input
+         </fieldset>
+         <fieldset className="hern-register__login__fieldset">
+            <label className="hern-register__login__label" htmlFor="password">
+               Password*
+            </label>
+            <input
+               className="hern-register__login__input"
                name="password"
                type="password"
                onChange={onChange}
                value={form.password}
                placeholder="Enter your password"
             />
-         </FieldSet>
+         </fieldset>
          <button
-            tw="self-start mb-2 text-blue-500"
+            className="hern-register__login__forgot-btn"
             onClick={() => router.push(getRoute('/forgot-password'))}
          >
             Forgot password?
          </button>
-         <Submit
-            className={!isValid || loading ? 'disabled' : ''}
+         <button
+            className={`hern-register__login__submit${
+               !isValid || loading ? '--disabled' : ''
+            }`}
             onClick={() => isValid && submit()}
          >
             {loading ? 'Logging in...' : 'Login'}
-         </Submit>
-         {error && <span tw="self-start block text-red-500 mt-2">{error}</span>}
-      </Panel>
+         </button>
+         {error && <span className="hern-register__login__error">{error}</span>}
+      </section>
    )
 }
 
@@ -663,10 +694,16 @@ const RegisterPanel = ({ setCurrent }) => {
    }
 
    return (
-      <Panel>
-         <FieldSet css={[emailError && tw`mb-1`]}>
-            <Label htmlFor="email">Email*</Label>
-            <Input
+      <section className="hern-register__register">
+         <fieldset
+            className="hern-register__register__fieldset"
+            style={emailError ? { marginBottom: '0.25rem' } : null}
+         >
+            <label className="hern-register__register__label" htmlFor="email">
+               Email*
+            </label>
+            <input
+               className="hern-register__register__input"
                type="email"
                name="email"
                value={form.email}
@@ -674,15 +711,24 @@ const RegisterPanel = ({ setCurrent }) => {
                placeholder="Enter your email"
                onBlur={onEmailBlur}
             />
-         </FieldSet>
+         </fieldset>
          {emailError && (
-            <span tw="self-start block text-red-500 mb-2">{emailError}</span>
+            <span className="hern-register__register__error">{emailError}</span>
          )}
          {!emailExists ? (
             <>
-               <FieldSet css={[passwordError && tw`mb-1`]}>
-                  <Label htmlFor="password">Password*</Label>
-                  <Input
+               <fieldset
+                  className="hern-register__register__fieldset"
+                  style={passwordError ? { marginBottom: '0.25rem' } : null}
+               >
+                  <label
+                     className="hern-register__register__label"
+                     htmlFor="password"
+                  >
+                     Password*
+                  </label>
+                  <input
+                     className="hern-register__register__input"
                      name="password"
                      type="password"
                      onChange={onChange}
@@ -696,15 +742,24 @@ const RegisterPanel = ({ setCurrent }) => {
                            : setPasswordError('')
                      }
                   />
-               </FieldSet>
+               </fieldset>
                {passwordError && (
-                  <span tw="self-start block text-red-500 mb-2">
+                  <span className="hern-register__register__error">
                      {passwordError}
                   </span>
                )}
-               <FieldSet css={[phoneError && tw`mb-1`]}>
-                  <Label htmlFor="phone">Phone Number*</Label>
-                  <Input
+               <fieldset
+                  className="hern-register__register__fieldset"
+                  style={phoneError ? { marginBottom: '0.25rem' } : null}
+               >
+                  <label
+                     className="hern-register__register__label"
+                     htmlFor="phone"
+                  >
+                     Phone Number*
+                  </label>
+                  <input
+                     className="hern-register__register__input"
                      type="text"
                      name="phone"
                      value={form.phone}
@@ -716,56 +771,67 @@ const RegisterPanel = ({ setCurrent }) => {
                            : setPhoneError('')
                      }
                   />
-               </FieldSet>
+               </fieldset>
                {phoneError && (
-                  <span tw="self-start block text-red-500 mb-2">
+                  <span className="hern-register__register__error">
                      {phoneError}
                   </span>
                )}
                {isReferralFieldVisible ? (
-                  <FieldSet>
-                     <Label htmlFor="code">Referral Code</Label>
-                     <Input
+                  <fieldset className="hern-register__register__fieldset">
+                     <label
+                        className="hern-register__register__label"
+                        htmlFor="code"
+                     >
+                        Referral Code
+                     </label>
+                     <input
+                        className="hern-register__register__input"
                         name="code"
                         type="text"
                         onChange={onChange}
                         value={form.code}
                         placeholder="Enter referral code"
                      />
-                  </FieldSet>
+                  </fieldset>
                ) : (
                   <button
-                     tw="self-start mb-1 text-blue-500"
+                     className="hern-register__register__referral__btn"
                      onClick={() => setIsReferralFieldVisible(true)}
                   >
                      Got a referral code?
                   </button>
                )}
-               <section tw="self-start mt-2 mb-3">
+               <section className="hern-register__register__terms">
                   <input
-                     tw="mr-2"
+                     className="hern-register__register__terms__checkbox"
                      type="checkbox"
-                     name="terms&conditions"
-                     id="terms&conditions"
+                     name="terms&copy;conditions"
+                     id="terms&copy;conditions"
                      onChange={() => setHasAccepted(!hasAccepted)}
                   />
-                  <label htmlFor="terms&conditions" tw="text-gray-600">
+                  <label
+                     className="hern-register__register__label"
+                     htmlFor="terms&copy;conditions"
+                  >
                      I accept{' '}
                      <Link href={getRoute('/terms-and-conditions')}>
-                        <a tw="text-blue-500">terms and conditions.</a>
+                        <a className="hern-register__register__terms__link">
+                           terms and conditions.
+                        </a>
                      </Link>
                   </label>
                </section>
-               <Submit
-                  className={
-                     !hasAccepted || !isValid || loading ? 'disabled' : ''
-                  }
+               <button
+                  className={`hern-register__register__submit${
+                     !hasAccepted || !isValid || loading ? '--disabled' : ''
+                  }`}
                   onClick={() => isValid && submit()}
                >
                   {loading ? 'Registering' : 'Register'}
-               </Submit>
+               </button>
                <button
-                  tw="self-start mt-2 text-blue-500"
+                  className="hern-register__register__login-switch"
                   onClick={() => setCurrent('LOGIN')}
                >
                   Login instead?
@@ -773,18 +839,18 @@ const RegisterPanel = ({ setCurrent }) => {
             </>
          ) : (
             <>
-               <p tw="text-gray-600 mb-4">
+               <p className="hern-register__register__email-already-exits">
                   Looks like your email already exists. If you remember your
                   password then go to&nbsp;
                   <button
-                     tw="text-blue-500"
+                     className="hern-register__register__login-switch"
                      onClick={() => setCurrent('LOGIN')}
                   >
                      login
                   </button>
                   &nbsp;or
                </p>
-               <Submit
+               <button
                   onClick={() =>
                      forgotPassword({
                         variables: {
@@ -798,102 +864,24 @@ const RegisterPanel = ({ setCurrent }) => {
                         },
                      })
                   }
-                  className={
-                     !form.email || forgotPasswordLoading ? 'disabled' : ''
-                  }
+                  className={`hern-register__login__submit${
+                     !form.email || forgotPasswordLoading ? '--disabled' : ''
+                  }`}
                >
                   {forgotPasswordLoading
                      ? 'Sending email...'
                      : 'Send Login Email'}
-               </Submit>
+               </button>
                {forgotPasswordText && (
-                  <p tw="text-green-600 mt-3">{forgotPasswordText}</p>
+                  <p className="hern-register__register__forgot-text">
+                     {forgotPasswordText}
+                  </p>
                )}
             </>
          )}
-         {error && <span tw="self-start block text-red-500 mt-2">{error}</span>}
-      </Panel>
+         {error && (
+            <span className="hern-register__register__error">{error}</span>
+         )}
+      </section>
    )
-}
-
-const Main = styled.main`
-   margin: auto;
-   overflow-y: auto;
-   max-width: 1180px;
-   width: calc(100vw - 40px);
-   min-height: calc(100vh - 128px);
-   > section {
-      width: 100%;
-      max-width: 360px;
-   }
-`
-
-const Panel = styled.section`
-   ${tw`flex mx-auto justify-center items-center flex-col py-4`}
-`
-
-const TabList = styled.ul`
-   ${tw`border-b flex justify-center space-x-3`}
-`
-
-const Tab = styled.button`
-   ${tw`h-8 px-3`}
-   &.active {
-      ${tw`border-b border-green-500 border-b-2`}
-   }
-`
-
-const FieldSet = styled.fieldset`
-   ${tw`w-full flex flex-col mb-4`}
-`
-
-const Label = styled.label`
-   ${tw`text-gray-600 mb-1`}
-`
-
-const Input = styled.input`
-   ${tw`w-full block border h-10 rounded px-2 outline-none focus:border-2 focus:border-blue-400`}
-`
-
-const Submit = styled.button`
-   ${tw`bg-green-500 rounded w-full h-10 text-white uppercase tracking-wider`}
-   &[disabled] {
-      ${tw`cursor-not-allowed bg-gray-300 text-gray-700`}
-   }
-`
-export const getStaticProps = async context => {
-   const domain = 'test.dailykit.org'
-   const { seo, settings } = await getSettings(domain, '/get-started/register')
-
-   const { req, res } = context
-   const session = await getSession({ req })
-
-   if (session && res && session.accessToken) {
-      return {
-         props: {
-            session,
-            seo,
-            settings,
-            revalidate: 60,
-            providers: await providers(context),
-         },
-      }
-   }
-
-   return {
-      props: {
-         session: null,
-         seo,
-         settings,
-         revalidate: 60,
-         providers: await providers(context),
-      },
-   }
-}
-
-export const getStaticPaths = () => {
-   return {
-      paths: [],
-      fallback: 'blocking',
-   }
 }

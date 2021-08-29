@@ -1,0 +1,332 @@
+/*main section (wrapper)*/
+.hern-register__wrapper {
+   margin: auto;
+   overflow-y: auto;
+   max-width: 1180px;
+   width: calc(100vw - 40px);
+   min-height: calc(100vh - 128px);
+   padding-top: 2rem;
+   > section {
+      width: 100%;
+      max-width: 360px;
+   }
+}
+.hern-register__tab-list {
+   border-bottom-width: 1px;
+   display: flex;
+   justify-content: center;
+   margin-left: 0.75rem;
+}
+
+.hern-register__tab {
+   height: 2rem;
+   padding: 0 0.75rem;
+   cursor: pointer;
+}
+.hern-register__tab--active {
+   @extend .hern-register__tab;
+   border-color: rgba(16, 185, 129, 1);
+   border-bottom-width: 2px;
+}
+
+.hern-register__providers {
+   width: 360px;
+   margin: 0 auto;
+}
+.hern-register__provider {
+   width: 100%;
+}
+.hern-register__provider__btn {
+   width: 100%;
+   background-color: rgba(243, 244, 246, 1);
+   height: 2.5rem;
+   border-radius: 0.25rem;
+   -webkit-border-radius: 0.25rem;
+   -moz-border-radius: 0.25rem;
+   -ms-border-radius: 0.25rem;
+   -o-border-radius: 0.25rem;
+}
+.hern-register__provider__btn--google {
+   @extend .hern-register__provider__btn;
+   background-color: rgba(59, 130, 246, 1);
+   color: #fff;
+}
+.hern-register__provider__btn--phone {
+   @extend .hern-register__provider__btn;
+   margin: 0.75rem 0;
+   background-color: rgba(16, 185, 129, 1);
+   color: #fff;
+}
+
+/* Input*/
+.hern-register__fieldset {
+   width: 100%;
+   display: flex;
+   flex-direction: column;
+   margin-bottom: 1rem;
+}
+.hern-register__label {
+   color: rgba(75, 85, 99, 1);
+   margin-bottom: 0.25rem;
+}
+.hern-register__input {
+   width: 100%;
+   display: block;
+   border-width: 1px;
+   height: 2.5rem;
+   border-radius: 0.25rem;
+   padding: 0 0.5rem;
+   outline: none;
+   &:focus {
+      border-width: 2px;
+      border-color: rgba(96, 165, 250, 1);
+   }
+}
+
+/*OTP*/
+.hern-register__otp {
+   top: 0px;
+   right: 0px;
+   bottom: 0px;
+   left: 0px;
+   position: fixed;
+   display: flex;
+   justify-content: center;
+   padding-top: 3rem;
+   z-index: 1000;
+   background: rgba(0, 0, 0, 0.2);
+}
+.hern-register__otp__wrapper {
+   height: auto;
+   background: #fff;
+   align-self: flex-start;
+   padding: 0.75rem;
+   width: 380px;
+   border-radius: 0.25rem;
+   -webkit-border-radius: 0.25rem;
+   -moz-border-radius: 0.25rem;
+   -ms-border-radius: 0.25rem;
+   -o-border-radius: 0.25rem;
+}
+.hern-register__otp__header {
+   margin-bottom: 0.75rem;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+}
+.hern-register__otp__header__title {
+   color: rgba(75, 85, 99, 1);
+   font-size: 1.25rem;
+   line-height: 1.75rem;
+   font-weight: 500;
+   padding-top: 0.25rem;
+}
+
+.hern-register__otp__close {
+   padding: 0.5rem;
+   &:hover {
+      background-color: rgba(229, 231, 235, 1);
+      border-radius: 0.25rem;
+      -webkit-border-radius: 0.25rem;
+      -moz-border-radius: 0.25rem;
+      -ms-border-radius: 0.25rem;
+      -o-border-radius: 0.25rem;
+   }
+}
+.hern-register__otp__fieldset {
+   @extend .hern-register__fieldset;
+}
+.hern-register__otp__label {
+   @extend .hern-register__label;
+}
+.hern-register__otp__input {
+   @extend .hern-register__input;
+}
+
+.hern-register__otp__submit {
+   background-color: rgba(16, 185, 129, 1);
+   border-radius: 0.25rem;
+   width: 100%;
+   height: 2.5rem;
+   color: #fff;
+   text-transform: uppercase;
+   letter-spacing: 0.05em;
+}
+.hern-register__otp__submit--disabled {
+   @extend .hern-register__otp__submit;
+   cursor: not-allowed;
+   color: rgba(55, 65, 81, 1);
+   background-color: rgba(209, 213, 219, 1);
+}
+.hern-register__otp__resend {
+   margin-top: 0.5rem;
+   border-radius: 0.25rem;
+   width: 100%;
+   height: 2.5rem;
+   text-transform: uppercase;
+   color: rgba(31, 41, 55, 1);
+   letter-spacing: 0.05em;
+   &:hover {
+      background-color: rgba(229, 231, 235, 1);
+   }
+}
+.hern-register__otp__resend--disabled {
+   @extend .hern-register__otp__resend;
+   cursor: not-allowed;
+   &:hover {
+      background: #fff;
+   }
+}
+.hern-register__otp__resend__time {
+   display: flex;
+   margin-top: 0.5rem;
+   text-align: center;
+}
+
+.hern-register__otp__error {
+   align-self: center;
+   display: block;
+   margin-top: 0.5rem;
+   color: rgba(239, 68, 68, 1);
+}
+
+.hern-register__login {
+   margin: 0 auto;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   flex-direction: column;
+   padding: 1rem 0;
+}
+.hern-register__login__fieldset {
+   @extend .hern-register__fieldset;
+}
+.hern-register__login__label {
+   @extend .hern-register__label;
+}
+.hern-register__login__input {
+   @extend .hern-register__input;
+}
+.hern-register__login__forgot-btn {
+   align-self: flex-start;
+   margin-bottom: 0.5rem;
+   color: rgba(59, 130, 246, 1);
+}
+.hern-register__login__submit {
+   background-color: rgba(16, 185, 129, 1);
+   border-radius: 0.25rem;
+   width: 100%;
+   height: 2.5rem;
+   color: #fff;
+   text-transform: uppercase;
+   letter-spacing: 0.05em;
+   -webkit-border-radius: 0.25rem;
+   -moz-border-radius: 0.25rem;
+   -ms-border-radius: 0.25rem;
+   -o-border-radius: 0.25rem;
+}
+.hern-register__login__submit--disabled {
+   @extend .hern-register__login__submit;
+   cursor: not-allowed;
+   color: rgba(55, 65, 81, 1);
+   background-color: rgba(209, 213, 219, 1);
+}
+.hern-register__login__error {
+   align-self: center;
+   display: block;
+   margin-top: 0.5rem;
+   color: rgba(239, 68, 68, 1);
+}
+
+/*register*/
+.hern-register__register {
+   @extend .hern-register__login;
+}
+.hern-register__register__fieldset {
+   @extend .hern-register__fieldset;
+}
+.hern-register__register__label {
+   @extend .hern-register__label;
+}
+.hern-register__register__input {
+   @extend .hern-register__input;
+}
+
+.hern-register__register__error {
+   align-self: flex-start;
+   margin-bottom: 0.5rem;
+   display: block;
+   color: rgba(239, 68, 68, 1);
+}
+
+.hern-register__register__referral__btn {
+   align-self: flex-start;
+   margin-bottom: 0.25rem;
+   color: rgba(59, 130, 246, 1);
+}
+.hern-register__register__terms {
+   align-self: flex-start;
+   margin-top: 0.5rem;
+   margin-bottom: 0.75rem;
+}
+.hern-register__register__terms__checkbox {
+   margin-right: 0.5rem;
+}
+.hern-register__register__terms__label {
+   color: rgba(75, 85, 99, 1);
+}
+.hern-register__register__terms__link {
+   color: rgba(59, 130, 246, 1) !important;
+}
+
+.hern-register__register__submit {
+   background-color: rgba(16, 185, 129, 1);
+   border-radius: 0.25rem;
+   width: 100%;
+   height: 2.5rem;
+   color: #fff;
+   text-transform: uppercase;
+   letter-spacing: 0.05em;
+   -webkit-border-radius: 0.25rem;
+   -moz-border-radius: 0.25rem;
+   -ms-border-radius: 0.25rem;
+   -o-border-radius: 0.25rem;
+}
+.hern-register__register__submit--disabled {
+   @extend .hern-register__register__submit;
+   cursor: not-allowed;
+   color: rgba(55, 65, 81, 1);
+   background-color: rgba(209, 213, 219, 1);
+}
+.hern-register__register__login-switch {
+   align-self: flex-start;
+   margin-top: 0.5rem;
+   color: rgba(59, 130, 246, 1);
+}
+.hern-register__register__email-already-exits {
+   margin-bottom: 1rem;
+   color: rgba(75, 85, 99, 1);
+}
+.hern-register__register__forgot__btn {
+   background-color: rgba(16, 185, 129, 1);
+   border-radius: 0.25rem;
+   width: 100%;
+   height: 2.5rem;
+   color: #fff;
+   text-transform: uppercase;
+   letter-spacing: 0.05em;
+   -webkit-border-radius: 0.25rem;
+   -moz-border-radius: 0.25rem;
+   -ms-border-radius: 0.25rem;
+   -o-border-radius: 0.25rem;
+}
+.hern-register__register__register__forgot__btn--disabled {
+   @extend .hern-register__register__forgot__btn;
+   cursor: not-allowed;
+   color: rgba(55, 65, 81, 1);
+   background-color: rgba(209, 213, 219, 1);
+}
+.hern-register__register__forgot-text {
+   color: rgba(5, 150, 105, 1);
+   margin-top: 0.75rem;
+}
