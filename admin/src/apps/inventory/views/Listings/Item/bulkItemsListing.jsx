@@ -34,6 +34,7 @@ export default function BulkItemsListings({ tableRef }) {
          title: 'Processing',
          field: 'processingName',
          headerFilter: false,
+         frozen: true,
          hozAlign: 'left',
          headerHozAlign: 'left',
          width: 150,
