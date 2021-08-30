@@ -47,6 +47,8 @@ export default function SachetWorkOrders() {
       {
          title: 'Id',
          field: 'id',
+         width: 80,
+         frozen: true,
          headerFilter: false,
          cellClick: openForm,
          cssClass: 'RowClick',
@@ -59,6 +61,8 @@ export default function SachetWorkOrders() {
          title: 'Scheduled On',
          field: 'scheduledOn',
          headerFilter: false,
+         frozen: true,
+         width: 350,
          formatter: reactFormatter(<ShowDate />),
          hozAlign: 'left',
          headerHozAlign: 'left',
