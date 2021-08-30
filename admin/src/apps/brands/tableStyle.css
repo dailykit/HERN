@@ -7,14 +7,10 @@
 .tabulator-headers{
    height: 100%;
 }
-.kAzAFt > div {
-   margin: 0px auto;
-   max-width: 1180px;
+.tabulator-row .tabulator-frozen-left {
+   padding-left: 20px;
 }
-.kfJsK 
-{
-   width: 61px;
-}
+
 .formatterCell {
    width: 100%;
 }
