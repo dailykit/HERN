@@ -34,6 +34,8 @@ export default function SupplierItemsListings({ tableRef }) {
       {
          title: 'Item Name',
          field: 'name',
+         frozen: true,
+         width: 400,
          headerFilter: true,
          hozAlign: 'left',
          headerHozAlign: 'left',
