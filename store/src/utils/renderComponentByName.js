@@ -27,6 +27,11 @@ const ChangePlan = dynamic(() =>
 const Login = dynamic(() =>
    import('../sections/login').then(promise => promise.Login)
 )
+const TermsAndConditions = dynamic(() =>
+   import('../sections/terms-condition').then(
+      promise => promise.TermsAndConditions
+   )
+)
 
 export const renderComponentByName = (componentName, options) => {
    const getProps = component => {
@@ -82,6 +87,11 @@ export const renderComponentByName = (componentName, options) => {
       */
       case 'Login':
          return <Login />
+      /*ROUTES : 
+      [brand]/terms-and-condition
+      */
+      case 'TermsAndConditions':
+         return <TermsAndConditions />
 
       /*ROUTES : 
       [brand]/get-started/register
