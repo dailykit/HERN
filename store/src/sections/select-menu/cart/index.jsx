@@ -1,6 +1,7 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import { useMutation } from '@apollo/react-hooks'
+import classNames from 'classnames'
 
 import Billing from './billing'
 import Products from './products'
@@ -66,7 +67,12 @@ export const CartPanel = ({ noSkip, isCheckout }) => {
    return (
       <>
          <CartBar setIsCartPanelOpen={setIsCartPanelOpen} />
-         <div className="hern-select-menu__cart__cart-panel">
+         <div
+            isCartPanelOpen={isCartPanelOpen}
+            className={`hern-select-menu__cart__cart-panel${
+               isCartPanelOpen ? '' : '--hidden'
+            }`}
+         >
             <header className="hern-select-menu__cart__cart-panel__header">
                <h1 className="hern-select-menu__cart__cart-panel__header__title">
                   Cart Summary

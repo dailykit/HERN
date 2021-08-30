@@ -268,7 +268,7 @@
 
 /*cart*/
 .hern-select-menu__cart__cart-panel {
-   @media (max-width: 786px) {
+   @media (max-width: 768px) {
       position: fixed;
       background-color: #ffff;
       padding: 1rem 1rem 72px 1rem;
@@ -288,6 +288,9 @@
          }
       }
    }
+}
+.hern-select-menu__cart__cart-panel--hidden {
+   display: none;
 }
 .hern-select-menu__cart__cart-panel__header {
    display: flex;
