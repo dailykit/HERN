@@ -9,8 +9,10 @@ import {
    useTunnel,
 } from '@dailykit/ui'
 import React, { useEffect, useState } from 'react'
+import styled from 'styled-components'
 import BrandShopDate from '../../../BrandShopDateProvider'
 import { Tile } from '../../../DashboardTiles'
+import EarningByProduct from './Tunnels/earningByProduct'
 import EarningOverTime from './Tunnels/earningOverTime'
 
 const TotalEarningReport = () => {
@@ -34,6 +36,15 @@ const TotalEarningReport = () => {
                   close={() => closeReportTunnel(2)}
                   description="This is a description"
                />
+               <TunnelBody>
+                  <BrandShopDate
+                     brandProvider
+                     shopTypeProvider
+                     datePickerProvider
+                  >
+                     <EarningByProduct />
+                  </BrandShopDate>
+               </TunnelBody>
             </Tunnel>
             <Tunnel size="full" layer={3}>
                <TunnelHeader
@@ -180,4 +191,9 @@ const TotalEarningReport = () => {
       </>
    )
 }
+const TunnelBody = styled.div`
+   padding: 10px 16px 0px 32px;
+   height: calc(100% - 103px);
+   overflow: auto;
+`
 export default TotalEarningReport
