@@ -17,6 +17,12 @@ import { ResponsiveFlex } from '../styled'
 import PackagingPurchaseOrders from './packaging'
 import SelectPurchaseOrderTypeTunnel from './SelectPurchaseOrderTypeTunnel'
 import ItemPurchaseOrders from './supplierItem'
+import { useSubscription } from '@apollo/react-hooks'
+import { PURCHASE_ORDERS_SUBSCRIPTION } from '../../../graphql' 
+import { ErrorState, InlineLoader } from '../../../../../shared/components'
+import { logger } from '@sentry/utils'
+import { toast } from 'react-toastify'
+
 
 const address = 'apps.inventory.views.listings.purchaseorders.'
 
@@ -26,6 +32,32 @@ export default function PurchaseOrders() {
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
+   const {loading: supplierLoading,
+      data: { purchaseOrderItems : supplierItem = [] } = {},
+      error: supplierError,
+   } = useSubscription(PURCHASE_ORDERS_SUBSCRIPTION, {
+      variables: { type: 'SUPPLIER_ITEM' },
+   })
+
+   const {
+      loading: packagingLoading,
+      data: { purchaseOrderItems : packaging = [] } = {},
+      error: packagingError,
+   } = useSubscription(PURCHASE_ORDERS_SUBSCRIPTION, {
+      variables: { type: 'PACKAGING' },
+   })
+   if( supplierError || packagingError ){
+      if(supplierError){
+      toast.error( 'Failed to fetch supplier count')
+      logger(supplierError)
+      return <ErrorState message='Could not get Supplier Items data' />}
+      else{
+      toast.error( 'Failed to fetch supplier count')
+      logger(supplierError)
+      return <ErrorState message='Could not get Packagings data' />} 
+   }
+
+   if (packagingLoading || supplierLoading) return <InlineLoader />
    return (
       <>
          <Tunnels tunnels={tunnels}>
@@ -37,7 +69,11 @@ export default function PurchaseOrders() {
             <Banner id="inventory-app-purchase-orders-listing-top" />
             <Flex container alignItems="center" justifyContent="space-between">
                <Flex container alignItems="center">
-                  <Text as="h2">{t(address.concat('purchase orders'))}</Text>
+               {view === 'Supplier Items' ? (
+               <Text as="h2">{t(address.concat('purchase orders'))}({supplierItem.length})</Text>
+            ) : (
+               <Text as="h2">{t(address.concat('purchase orders'))}({packaging.length})</Text>
+            )}
                   <Tooltip identifier="purchase-orders_listings_header_title" />
                </Flex>
                <Flex
