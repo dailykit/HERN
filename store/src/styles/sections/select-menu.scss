@@ -290,7 +290,9 @@
    }
 }
 .hern-select-menu__cart__cart-panel--hidden {
-   display: none;
+   @media (max-width: 768px) {
+      display: none;
+   }
 }
 .hern-select-menu__cart__cart-panel__header {
    display: flex;
