@@ -46,6 +46,8 @@ export default function ItemPurchaseOrders() {
       {
          title: 'Id',
          field: 'id',
+         frozen: true,
+         width: 80,  
          headerFilter: false,
          cssClass: 'RowClick',
          cellClick: openForm,
@@ -57,6 +59,10 @@ export default function ItemPurchaseOrders() {
       {
          title: 'Item',
          field: 'supplierItem.name',
+         frozen: true,
+         width: 400,
+         cssClass: 'RowClick',
+         cellClick: openForm,
          headerFilter: false,
          headerTooltip: col => {
             const identifier = 'purchase_orders_listings_table_item_name'
