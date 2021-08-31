@@ -8,13 +8,26 @@ import {
    Spacer,
    Text,
    TextButton,
+   Tunnel,
+   TunnelHeader,
+   Tunnels,
+   useTunnel,
 } from '@dailykit/ui'
 
-import { ReactTabulator } from '@dailykit/react-tabulator'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import TableOptions from '../tableOptions'
 import { InlineLoader } from '../../../../../InlineLoader'
 import moment from 'moment'
 import { AnalyticsApiArgsContext } from '../../../../context/apiArgs'
+import { useTabs } from '../../../../../../providers'
+import styled from 'styled-components'
+import './../../../../tableStyle.css'
+//currencies
+const currency = {
+   USD: '$',
+   INR: '₹',
+   EUR: '€',
+}
 const EarningTable = ({ data }) => {
    return (
       <>
@@ -35,6 +48,11 @@ const EarningTable = ({ data }) => {
 
 const DataTable = ({ data }) => {
    const earningTableRef = React.useRef()
+   const [ordersTunnels, openOrderTunnel, closeOrderTunnel] = useTunnel(1)
+   const [orderTunnelData, setOrderTunnelData] = useState({
+      data: [],
+      timeRange: '',
+   })
    const { analyticsApiArgState } = React.useContext(AnalyticsApiArgsContext)
    const [earningTableData, setEarningTableData] = useState([])
    const [status, setStatus] = useState({ loading: true })
@@ -119,6 +137,17 @@ const DataTable = ({ data }) => {
          bottomCalc: 'sum',
          visible: true,
          width: 120,
+         cellClick: (e, cell) => {
+            setOrderTunnelData({
+               ...orderTunnelData,
+               data: cell._cell.row.data.orderRefs,
+               timeRange: cell._cell.row.data.date,
+            })
+
+            openOrderTunnel(1)
+         },
+         cssClass: 'colHover',
+         // formatter: reactFormatter(<OrderFormatter />),
       },
       {
          title: `Tax (${analyticsApiArgState.currency})`,
@@ -210,6 +239,21 @@ const DataTable = ({ data }) => {
    return (
       <>
          <Flex>
+            <Tunnels tunnels={ordersTunnels}>
+               <Tunnel size="full" layer={1}>
+                  <TunnelHeader
+                     title="Orders"
+                     close={() => closeOrderTunnel(1)}
+                     description="This is a description"
+                  />
+                  <TunnelBody>
+                     <OrderTunnel
+                        orderTableData={orderTunnelData.data}
+                        orderTunnelData={orderTunnelData}
+                     />
+                  </TunnelBody>
+               </Tunnel>
+            </Tunnels>
             <Flex container justifyContent="flex-end" alignItems="center">
                <DropdownButton title="Download" width="150px">
                   <DropdownButton.Options>
@@ -249,5 +293,61 @@ const DataTable = ({ data }) => {
       </>
    )
 }
-
+const OrderTunnel = props => {
+   const { orderTableData, orderTunnelData } = props
+   const { addTab, tab } = useTabs()
+   const CreatedAtFormatter = ({ cell }) => {
+      return (
+         <Text as="text2">
+            {moment(cell._cell.value.split('.')[0]).format(`ll`)}
+         </Text>
+      )
+   }
+   const columns = [
+      {
+         title: 'Order ID',
+         field: 'id',
+         headerSort: true,
+         headerFilter: true,
+         cellClick: (e, cell) => {
+            const { id } = cell._cell.row.data
+            addTab(`ORD${id}`, `/order/orders/${id}`)
+         },
+         cssClass: 'colHover',
+         width: 150,
+      },
+      {
+         title: `Amount Paid (${currency[window._env_.REACT_APP_CURRENCY]})`,
+         field: 'amount paid',
+         headerSort: true,
+         headerFilter: true,
+      },
+      {
+         title: 'Created At',
+         field: 'created_at',
+         headerSort: true,
+         headerFilter: true,
+         formatter: reactFormatter(<CreatedAtFormatter />),
+      },
+   ]
+   return (
+      <>
+         <Flex padding="0px 0px 0px 12px">
+            <Spacer size="10px" />
+            <Text as="h3"> Orders for {orderTunnelData.timeRange}</Text>
+            <Spacer size="10px" />
+            <ReactTabulator
+               data={orderTableData}
+               options={TableOptions}
+               columns={columns}
+            />
+         </Flex>
+      </>
+   )
+}
+const TunnelBody = styled.div`
+   padding: 10px 16px 0px 32px;
+   height: calc(100% - 103px);
+   overflow: auto;
+`
 export default EarningTable
