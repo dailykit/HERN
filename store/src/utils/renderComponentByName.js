@@ -41,6 +41,9 @@ const ResetPassword = dynamic(() =>
 const Home = dynamic(() =>
    import('../sections/home').then(promise => promise.Home)
 )
+const PageNotFound = dynamic(() =>
+   import('../sections/404').then(promise => promise.PageNotFound)
+)
 
 export const renderComponentByName = (componentName, options) => {
    const getProps = component => {
@@ -116,6 +119,11 @@ export const renderComponentByName = (componentName, options) => {
       */
       case 'Home':
          return <Home />
+      /*ROUTES : 
+      [brand]/404
+      */
+      case 'PageNotFound':
+         return <PageNotFound />
 
       /*ROUTES : 
       [brand]/get-started/register
