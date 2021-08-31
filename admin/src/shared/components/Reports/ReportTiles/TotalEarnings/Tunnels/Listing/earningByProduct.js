@@ -144,7 +144,9 @@ const EarningByProductTable = ({ earningByProductData }) => {
       <>
          <Spacer size="15px" />
          <Flex container flexDirection="column">
-            <Text as="h3">Earning By Product Table</Text>
+            <Text as="h3" style={{ padding: '0px 10px' }}>
+               Earning By Product Table
+            </Text>
             <Spacer size="10px" />
             <Flex container justifyContent="flex-end" alignItems="center">
                <DropdownButton title="Download" width="150px">

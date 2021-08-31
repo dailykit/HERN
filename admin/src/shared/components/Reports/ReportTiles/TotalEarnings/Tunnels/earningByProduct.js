@@ -91,16 +91,38 @@ const EarningByProduct = () => {
    return (
       <>
          <Flex>
+            <Spacer size="20px" />
             <Flex>
-               <Spacer size="1px" />
-               <EarningByProductChart
-                  earningByProductChartData={tableData.slice(0, 12)}
-               />
+               <div
+                  style={{
+                     background: '#FFFFFF',
+                     boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.2)',
+                     borderRadius: '10px',
+                     padding: '40px 40px 10px 0px',
+                  }}
+               >
+                  <EarningByProductChart
+                     earningByProductChartData={tableData.slice(0, 10)}
+                  />
+               </div>
             </Flex>
-            <EarningByProductTable
-               earningByProductData={tableData}
-               currency={brandShopDateState.currency}
-            />
+            <Spacer size="20px" />
+
+            <Flex>
+               <div
+                  style={{
+                     background: '#FFFFFF',
+                     boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.2)',
+                     borderRadius: '10px',
+                     padding: '10px 0px',
+                  }}
+               >
+                  <EarningByProductTable
+                     earningByProductData={tableData}
+                     currency={brandShopDateState.currency}
+                  />
+               </div>
+            </Flex>
          </Flex>
       </>
    )
