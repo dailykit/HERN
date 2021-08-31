@@ -8,8 +8,6 @@ const options = {
    placeholder: 'No Data Available',
    persistence: false,
    persistenceMode: 'cookie',
-   pagination: 'local',
-   paginationSize: 10,
 }
 
 export default options
