@@ -47,6 +47,9 @@ const PageNotFound = dynamic(() =>
 const ForgotPassword = dynamic(() =>
    import('../sections/forgot-password').then(promise => promise.ForgotPassword)
 )
+const Checkout = dynamic(() =>
+   import('../sections/checkout-page').then(promise => promise.Checkout)
+)
 
 export const renderComponentByName = (componentName, options) => {
    const getProps = component => {
@@ -132,6 +135,11 @@ export const renderComponentByName = (componentName, options) => {
       */
       case 'ForgotPassword':
          return <ForgotPassword />
+      /*ROUTES : 
+      [brand]/checkout
+      */
+      case 'Checkout':
+         return <Checkout />
 
       /*ROUTES : 
       [brand]/get-started/register
