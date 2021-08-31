@@ -30,6 +30,7 @@ const TopCustomer = () => {
                         ? `AND \"created_at\" >= '${dashboardTableState.from}' AND \"created_at\" <= '${dashboardTableState.to}'`
                         : ''
                   }`,
+                  limit: 'LIMIT 10',
                },
             },
          },
