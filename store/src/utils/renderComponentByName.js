@@ -38,6 +38,9 @@ const RefundPolicy = dynamic(() =>
 const ResetPassword = dynamic(() =>
    import('../sections/reset-password').then(promise => promise.ResetPassword)
 )
+const Home = dynamic(() =>
+   import('../sections/home').then(promise => promise.Home)
+)
 
 export const renderComponentByName = (componentName, options) => {
    const getProps = component => {
@@ -108,6 +111,11 @@ export const renderComponentByName = (componentName, options) => {
       */
       case 'ResetPassword':
          return <ResetPassword />
+      /*ROUTES : 
+      [brand]/
+      */
+      case 'Home':
+         return <Home />
 
       /*ROUTES : 
       [brand]/get-started/register
