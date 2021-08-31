@@ -114,7 +114,7 @@ const DashboardAnalytics = ({ children }) => {
    return (
       <>
          <Spacer size="10px" />
-         <Flex padding="0px 42px 0px 42px">
+         <Flex padding="0px 0px">
             <BrandAndShop
                brands={brands}
                setBrandShop={setBrandShop}

@@ -35,7 +35,7 @@ const Home = () => {
             />
          </StyledCardList> */}
          <Flex>
-            <Flex padding="0px 42px">
+            <Flex padding="0px 0px">
                <Text as="h2">Dashboard</Text>
             </Flex>
             <DashboardAnalytics>
@@ -48,7 +48,7 @@ const Home = () => {
          </Flex>
          <Spacer size="20px" />
          <Flex>
-            <Flex padding="0px 42px">
+            <Flex padding="0px 0px">
                <Text as="h2">Reports</Text>
             </Flex>
             <Reports>

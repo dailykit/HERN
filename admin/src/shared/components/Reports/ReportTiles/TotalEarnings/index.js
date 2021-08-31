@@ -94,7 +94,7 @@ const TotalEarningReport = () => {
                   width="100%"
                   alignItems="flex-start"
                >
-                  <Text as="text1" style={{ marginLeft: '20px' }}>
+                  <Text as="text1" style={{ marginLeft: '10px' }}>
                      Reports
                   </Text>
                   <Spacer size="10px" />
@@ -102,7 +102,7 @@ const TotalEarningReport = () => {
                      as="text2"
                      title="View earning overtime report"
                      style={{
-                        marginLeft: '20px',
+                        marginLeft: '10px',
                         fontWeight: '400',
                         cursor: 'pointer',
                         color: '#367bf5',
@@ -115,7 +115,7 @@ const TotalEarningReport = () => {
                   <Text
                      as="text2"
                      style={{
-                        marginLeft: '20px',
+                        marginLeft: '10px',
                         fontWeight: '400',
                         cursor: 'pointer',
                         color: '#367bf5',
@@ -129,7 +129,7 @@ const TotalEarningReport = () => {
                   <Text
                      as="text2"
                      style={{
-                        marginLeft: '20px',
+                        marginLeft: '10px',
                         fontWeight: '400',
                         cursor: 'pointer',
                         color: '#367bf5',
@@ -145,7 +145,7 @@ const TotalEarningReport = () => {
                         <Text
                            as="text2"
                            style={{
-                              marginLeft: '20px',
+                              marginLeft: '10px',
                               fontWeight: '400',
                               cursor: 'pointer',
                               color: '#367bf5',
@@ -159,7 +159,7 @@ const TotalEarningReport = () => {
                         <Text
                            as="text2"
                            style={{
-                              marginLeft: '20px',
+                              marginLeft: '10px',
                               fontWeight: '400',
                               cursor: 'pointer',
                               color: '#367bf5',
@@ -173,7 +173,7 @@ const TotalEarningReport = () => {
                         <Text
                            as="text2"
                            style={{
-                              marginLeft: '20px',
+                              marginLeft: '10px',
                               fontWeight: '400',
                               cursor: 'pointer',
                               color: '#367bf5',
@@ -189,7 +189,11 @@ const TotalEarningReport = () => {
                   <Flex container justifyContent="flex-end" width="100%">
                      <Text
                         as="helpText"
-                        style={{ color: '#367BF5', cursor: 'pointer' }}
+                        style={{
+                           color: '#367BF5',
+                           cursor: 'pointer',
+                           marginRight: '10px',
+                        }}
                         onClick={() => setShowMore(!showMore)}
                      >
                         Show {showMore ? 'less ▲' : 'more ▼'}
