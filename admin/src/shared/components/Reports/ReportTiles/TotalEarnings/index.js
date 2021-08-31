@@ -12,6 +12,7 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import BrandShopDate from '../../../BrandShopDateProvider'
 import { Tile } from '../../../DashboardTiles'
+import EarningByCustomer from './Tunnels/earningByCustomer'
 import EarningByProduct from './Tunnels/earningByProduct'
 import EarningOverTime from './Tunnels/earningOverTime'
 
@@ -48,10 +49,19 @@ const TotalEarningReport = () => {
             </Tunnel>
             <Tunnel size="full" layer={3}>
                <TunnelHeader
-                  title="Earning by vendor"
+                  title="Earning by customer"
                   close={() => closeReportTunnel(3)}
                   description="This is a description"
                />
+               <TunnelBody>
+                  <BrandShopDate
+                     brandProvider
+                     shopTypeProvider
+                     datePickerProvider
+                  >
+                     <EarningByCustomer />
+                  </BrandShopDate>
+               </TunnelBody>
             </Tunnel>
             <Tunnel size="full" layer={4}>
                <TunnelHeader
@@ -69,7 +79,7 @@ const TotalEarningReport = () => {
             </Tunnel>
             <Tunnel size="full" layer={6}>
                <TunnelHeader
-                  title="Earning by customer"
+                  title="Earning by vendor"
                   close={() => closeReportTunnel(6)}
                   description="This is a description"
                />
@@ -128,7 +138,7 @@ const TotalEarningReport = () => {
                      title="View earning by vendor report"
                      onClick={() => openReportTunnel(3)}
                   >
-                     Earnings by vendor
+                     Earnings by customer
                   </Text>
                   {showMore && (
                      <>
@@ -172,7 +182,7 @@ const TotalEarningReport = () => {
                            title="View earning by customer report"
                            onClick={() => openReportTunnel(6)}
                         >
-                           Earnings by customer
+                           Earnings by vendor
                         </Text>
                      </>
                   )}

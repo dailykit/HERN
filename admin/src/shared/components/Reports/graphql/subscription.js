@@ -9,3 +9,13 @@ export const EARNING_BY_PRODUCT = gql`
       }
    }
 `
+export const EARNING_BY_CUSTOMERS = gql`
+   subscription TOP_CUSTOMERS(
+      $earningByCustomerArg: insights_getTopCustomers_args!
+   ) {
+      insights_analytics {
+         getTopCustomers(args: $earningByCustomerArg)
+         id
+      }
+   }
+`
