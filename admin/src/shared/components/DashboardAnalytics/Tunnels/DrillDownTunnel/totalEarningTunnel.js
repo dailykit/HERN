@@ -37,8 +37,8 @@ import OrderRefTable from '../OrderRefTunnel/orderRefTunnel'
 import EarningTable from './Listing/TotalEarningListing'
 
 const TotalEarningTunnel = ({ currency }) => {
-   const [from, setFrom] = useState(moment().format('YYYY-MM-DD'))
-   const [to, setTo] = useState(moment().add(1, 'day').format('YYYY-MM-DD'))
+   const [from, setFrom] = useState(moment().startOf('y').format('YYYY-MM-DD'))
+   const [to, setTo] = useState(moment().format('YYYY-MM-DD'))
    const [compare, setCompare] = useState({
       isCompare: false,
       data: null,
@@ -623,6 +623,7 @@ const DrillDownLineChart = ({
                      name="Earning"
                      dataKey={dataOf}
                      stroke="#8884d8"
+                     strokeWidth={2}
                      activeDot={{
                         onClick: (event, payload) => {
                            if (
@@ -648,9 +649,11 @@ const DrillDownLineChart = ({
                   {!compare.isSkip && compare.data && (
                      <Line
                         type="monotone"
+                        name="Compare Earning"
                         dataKey={dataOf + 'Compare'}
                         stroke="#C9D8B6"
                         activeDot={{ r: 4 }}
+                        strokeWidth={2}
                      />
                   )}
                </LineChart>

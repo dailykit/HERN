@@ -11,8 +11,8 @@ const currency = {
 
 //initial State
 export const initialState = {
-   from: moment().format('YYYY-MM-DD'),
-   to: moment().add(1, 'd').format('YYYY-MM-DD'),
+   from: moment().startOf('y').format('YYYY-MM-DD'),
+   to: moment().format('YYYY-MM-DD'),
    compare: {
       isCompare: false,
       data: null,
