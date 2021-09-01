@@ -50,7 +50,7 @@ const MasterList = () => {
          },
       },
       {
-         title: t(address.concat('total inputs')),
+         title: 'Total Inputs',
          field: 'length',
          headerFilter: true,
          hozAlign: 'right',
@@ -147,7 +147,7 @@ const MasterList = () => {
             justifyContent="space-between"
          >
             <Flex as="section" container alignItems="center">
-               <Text as="h2">{t(address.concat('master lists'))}</Text>
+               <Text as="h2">{t(address.concat('master lists'))}({data.length})</Text>
                <Tooltip identifier="station_listing_heading" />
             </Flex>
          </Flex>
