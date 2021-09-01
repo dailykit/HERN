@@ -149,7 +149,7 @@ export default function Packagings() {
             <StyledFlex container justifyContent="space-between">
                <HeaderFlex container alignItems="center">
                   <Text as="h2" textAlign="left">
-                     Packagings
+                     Packagings({packagings.length})
                   </Text>
                   <Tooltip identifier="packagings_listings_header_title" />
                </HeaderFlex>
