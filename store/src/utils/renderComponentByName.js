@@ -50,6 +50,9 @@ const ForgotPassword = dynamic(() =>
 const Checkout = dynamic(() =>
    import('../sections/checkout-page').then(promise => promise.Checkout)
 )
+const MenuView = dynamic(() =>
+   import('../sections/menu').then(promise => promise.MenuView)
+)
 
 export const renderComponentByName = (componentName, options) => {
    const getProps = component => {
@@ -140,6 +143,11 @@ export const renderComponentByName = (componentName, options) => {
       */
       case 'Checkout':
          return <Checkout />
+      /*ROUTES : 
+      [brand]/menu
+      */
+      case 'MenuView':
+         return <MenuView />
 
       /*ROUTES : 
       [brand]/get-started/register
