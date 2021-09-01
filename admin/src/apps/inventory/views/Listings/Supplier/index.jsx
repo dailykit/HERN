@@ -157,7 +157,7 @@ export default function SupplierListing() {
                padding="16px 0"
             >
                <Flex container>
-                  <Text as="h2">{t(address.concat('suppliers'))}</Text>
+               <Text as="h2">{t(address.concat('suppliers'))}({suppliers.length})</Text>
                   <Tooltip identifier="suppliers_listings_heading" />
                </Flex>
                <Flex

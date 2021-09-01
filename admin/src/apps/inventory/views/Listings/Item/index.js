@@ -12,6 +12,9 @@ import { StyledTableActions, StyledTableHeader, StyledWrapper } from '../styled'
 import BulkItemsListings from './bulkItemsListing'
 import SupplierItemsListings from './supplierItemListing'
 import { Banner } from '../../../../../shared/components'
+import { SUPPLIER_ITEMS_LISTINGS_BULK, SUPPLIER_ITEM_LISTINGS } from '../../../graphql'
+import { useSubscription } from '@apollo/react-hooks'
+import { ErrorState, InlineLoader} from '../../../../../shared/components'
 
 export default function ItemListing() {
    const { addTab } = useTabs()
@@ -28,7 +31,16 @@ export default function ItemListing() {
          toast.error(GENERAL_ERROR_MESSAGE)
       },
    })
-
+   const {
+      loading: bulkLoading,
+      data: { bulkItems = [] } = {},
+      error: bulkError,
+   } = useSubscription(SUPPLIER_ITEMS_LISTINGS_BULK)
+   const {
+      loading: simpleLoading,
+      data: { supplierItems = [] } = {},
+      error: simpleError,
+   } = useSubscription(SUPPLIER_ITEM_LISTINGS)
    const options = [
       { id: 'supplierItems', title: 'Supplier Items' },
       { id: 'bulkItems', title: 'Bulk Items' },
@@ -60,13 +72,26 @@ export default function ItemListing() {
             break
       }
    }
-
+   if( bulkError || simpleError ){
+      if(bulkError){
+      toast.error( 'Failed to fetch supplier count')
+      logger(bulkError)
+      return <ErrorState message='Could not get Supplier Items data' />}
+      else{
+      toast.error( 'Failed to fetch supplier count')
+      logger(simpleError)
+      return <ErrorState message='Could not get Bulk items data' />} 
+   }
+   if (bulkLoading || simpleLoading) return <InlineLoader />
    return (
       <StyledWrapper>
          <Banner id="inventory-app-items-listing-top" />
          <StyledTableHeader>
             <Flex container alignItems="center">
-               <Text as="h2">Supplier Items</Text>
+            {
+               view === 'supplierItems' ? (<Text as="h2">Supplier Items({supplierItems.length})</Text>)
+               : (<Text as="h2">Supplier Items({bulkItems.length})</Text>)
+            }
                <Tooltip identifier="items_listings_header_title" />
             </Flex>
             <StyledTableActions>
