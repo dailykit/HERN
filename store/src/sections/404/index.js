@@ -6,16 +6,15 @@ import { getRoute } from '../../utils'
 
 export const PageNotFound = () => {
    return (
-      <Wrapper>
-         <Heading>Oops!</Heading>
-         <Text>We can't find the page that you are looking for..</Text>
-         <Link
-            href={getRoute('/subscription')}
-            tw="mt-4 text-blue-500 border-b border-blue-500"
-         >
-            Go to Home
-         </Link>
-      </Wrapper>
+      <div className="hern-404">
+         <h3 className="hern-404-heading">Oops!</h3>
+         <p className="hern-404-description">
+            We can't find the page that you are looking for..
+         </p>
+         <span className="hern-404-home-link">
+            <Link href={getRoute('/subscription')}>Go to Home</Link>
+         </span>
+      </div>
    )
 }
 const Wrapper = styled.div`

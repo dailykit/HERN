@@ -18,11 +18,12 @@
 @use './components/tunnel';
 @use './components/wallet_amount';
 @use './sections/register';
-@use './sections/our-plans.scss';
+@use './sections/our-plans';
 @use './sections/our-menu';
 @use './sections/order-info';
 @use './sections/select-delivery';
 @use './sections/select-menu';
 @use './cart/cart_billing';
 @use './cart/fulfillment';
-@use './cart/payment_card.scss';
+@use './cart/payment_card';
+@use './sections/not-found';
