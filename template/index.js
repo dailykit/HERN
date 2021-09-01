@@ -2,7 +2,7 @@ import puppeteer from 'puppeteer'
 import express from 'express'
 import path from 'path'
 import fs from 'fs'
-import { GraphQLClient } from 'graphql-request'
+import { GraphQLClient, gql } from 'graphql-request'
 
 import get_env from '../get_env'
 
@@ -97,8 +97,70 @@ export const download = async (req, res) => {
    }
 }
 
+export const hydrateFold = async (req, res) => {
+   try {
+      const { id, brandId } = req.body
+
+      const url = await get_env('DATA_HUB')
+      const secret = await get_env('HASURA_GRAPHQL_ADMIN_SECRET')
+      const client = new GraphQLClient(url, {
+         headers: { 'x-hasura-admin-secret': secret }
+      })
+
+      const { website_websitePageModule } = await client.request(PLUGIN, { id })
+      const [fold] = website_websitePageModule
+
+      const { path: pluginPath } = fold.subscriptionDivFileId
+
+      // make the call to existing API
+      const absolutePluginPath = `${path.join(
+         __dirname,
+         '..',
+         'templates'
+      )}/${pluginPath}`
+
+      const method = require(absolutePluginPath)
+
+      // html response
+      const result = method.default({ name: 'Grapes' })
+
+      console.log({ result })
+
+      return res.json({ success: true, message: 'File parsed.', data: result })
+   } catch (err) {
+      console.log(err)
+      return res.json({ success: false, message: err.message, data: null })
+   }
+}
+
 router.get('/', root)
+router.post('/hydrate-fold', hydrateFold)
 router.post('/download/:path(*)', download)
 router.use('/files', express.static(`${__dirname}../..` + `/templates`))
 
 export default router
+
+const PLUGIN = gql`
+   query PLUGIN($id: Int!) {
+      website_websitePageModule(where: { id: { _eq: $id } }) {
+         id
+         subscriptionDivFileId: file {
+            path
+            linkedCssFiles {
+               id
+               cssFile {
+                  id
+                  path
+               }
+            }
+            linkedJsFiles {
+               id
+               jsFile {
+                  id
+                  path
+               }
+            }
+         }
+      }
+   }
+`
