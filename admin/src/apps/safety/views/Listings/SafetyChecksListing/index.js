@@ -1,7 +1,7 @@
 import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
-import { IconButton, Loader } from '@dailykit/ui'
+import { Text, Loader, Flex, ComboButton } from '@dailykit/ui'
 import * as moment from 'moment'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
@@ -66,13 +66,26 @@ const SafetyChecksListing = () => {
    return (
       <StyledWrapper>
          <Banner id="safety-app-safety-checks-listing-top" />
-         <StyledHeader>
-            <h1>{t(address.concat('safety checks'))}</h1>
-            <IconButton type="solid" onClick={createSafetyCheck}>
-               <AddIcon color="#fff" size={24} />
-            </IconButton>
-         </StyledHeader>
+      
+         <Flex
+            container
+            as="header"
+            height="72px"
+            alignItems="center"
+            justifyContent="space-between"
+         >
+            <Flex as="section" container alignItems="center">
+            <Text as="h2">{t(address.concat('safety checks'))}({safety_safetyCheck.length})</Text>
 
+            </Flex>
+            <ComboButton
+               type="solid"
+               onClick={createSafetyCheck}
+            >
+               <AddIcon color="#fff" size={24} />
+               Add Safety Check
+            </ComboButton>
+         </Flex>
          <DataTable
             data={safety_safetyCheck}
             addTab={addTab}
@@ -98,20 +111,9 @@ function DataTable({ data, addTab, deleteCheck }) {
          title: t(address.concat('time')),
          field: 'created_at',
          headerFilter: false,
-         width: 150,
+         width: 350,
          formatter: reactFormatter(<ShowDate />),
       },
-      {
-         title: t(address.concat('users tested')),
-         field: 'SafetyCheckPerUsers',
-         headerFilter: false,
-         headerSort: false,
-         hozAlign: 'right',
-         headerHozAlign: 'right',
-         formatter: reactFormatter(<ShowCount />),
-         width: 150,
-      },
-
       {
          title: 'Actions',
          headerFilter: false,
@@ -125,7 +127,17 @@ function DataTable({ data, addTab, deleteCheck }) {
             })
          },
          formatter: reactFormatter(<DeleteCheck />),
-         width: 150,
+         width: 100,
+      },
+      {
+         title: t(address.concat('users tested')),
+         field: 'SafetyCheckPerUsers',
+         headerFilter: false,
+         headerSort: false,
+         hozAlign: 'left',
+         headerHozAlign: 'right',
+         formatter: reactFormatter(<ShowCount />),
+         
       },
    ]
 
