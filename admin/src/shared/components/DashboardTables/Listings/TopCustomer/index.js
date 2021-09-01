@@ -30,6 +30,7 @@ const TopCustomer = () => {
                         ? `AND \"created_at\" >= '${dashboardTableState.from}' AND \"created_at\" <= '${dashboardTableState.to}'`
                         : ''
                   }`,
+                  customerWhere: 'id IS NOT NULL',
                   limit: 'LIMIT 10',
                },
             },
@@ -86,7 +87,7 @@ const TopCustomer = () => {
          width: 90,
       },
    ]
-   if (subsLoading || status.loading) {
+   if (!subsError && (subsLoading || status.loading)) {
       return <InlineLoader />
    }
    if (subsError) {
