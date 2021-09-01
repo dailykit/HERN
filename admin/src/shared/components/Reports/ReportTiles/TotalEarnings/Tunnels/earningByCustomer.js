@@ -21,6 +21,7 @@ import EarningByCustomerTable from './Listing/earningByCustomer'
 
 const EarningByCustomer = () => {
    const [customerData, setCustomerData] = useState([])
+   const [compareCustomerData, setCompareCustomerData] = useState([])
    const [status, setStatus] = useState({ loading: true })
 
    const { brandShopDateState } = React.useContext(BrandShopDateContext)
@@ -44,6 +45,7 @@ const EarningByCustomer = () => {
                         ? `AND b.source = \'${brandShopDateState.brandShop.shopTitle}\'`
                         : ''
                   }`,
+                  customerWhere: 'id IS NOT NULL',
                },
             },
          },
@@ -52,6 +54,7 @@ const EarningByCustomer = () => {
                subscriptionData.data.insights_analytics[0].getTopCustomers.map(
                   customer => {
                      const newCustomer = {}
+                     newCustomer.id = customer.id
                      newCustomer.email = customer.email || 'N/A'
                      newCustomer.fullName = `${customer.firstName || 'N/A'} ${
                         customer.lastName || ''
@@ -77,6 +80,61 @@ const EarningByCustomer = () => {
       }
    )
 
+   const { loading: subsCompareLoading, error: subsCompareError } =
+      useSubscription(EARNING_BY_CUSTOMERS, {
+         variables: {
+            earningByCustomerArg: {
+               params: {
+                  where: `id IS NOT NULL ${
+                     brandShopDateState.compare.from &&
+                     brandShopDateState.compare.to
+                        ? `AND \"created_at\" >= '${brandShopDateState.compare.from}' AND \"created_at\" <= '${brandShopDateState.compare.to}'`
+                        : ''
+                  } ${
+                     brandShopDateState.brandShop.brandId
+                        ? `AND a."brandId" = ${brandShopDateState.brandShop.brandId}`
+                        : ''
+                  } ${
+                     brandShopDateState.brandShop.shopTitle
+                        ? `AND b.source = \'${brandShopDateState.brandShop.shopTitle}\'`
+                        : ''
+                  }`,
+                  customerWhere: `id IN (${customerData
+                     .slice(0, 10)
+                     .map(x => x.id)
+                     .toString()})`,
+               },
+            },
+         },
+         skip: brandShopDateState.compare.isSkip,
+         onSubscriptionData: ({ subscriptionData }) => {
+            const newCustomerData =
+               subscriptionData.data.insights_analytics[0].getTopCustomers.map(
+                  customer => {
+                     const newCustomer = {}
+                     newCustomer.id = customer.id
+                     newCustomer.email = customer.email || 'N/A'
+                     newCustomer.fullName = `${customer.firstName || 'N/A'} ${
+                        customer.lastName || ''
+                     }`
+                     newCustomer.phoneNumber = customer.phoneNumber || 'N/A'
+                     newCustomer.totalAmountPaid = customer.totalAmountPaid || 0
+                     newCustomer.orders = customer.totalOrders || 0
+                     newCustomer.totalTax = customer.totalTax || 0
+                     newCustomer.totalDiscount = customer.totalDiscount || 0
+                     newCustomer.netSale = parseFloat(
+                        (
+                           newCustomer.totalAmountPaid -
+                           newCustomer.totalTax -
+                           newCustomer.totalDiscount
+                        ).toFixed(2)
+                     )
+                     return newCustomer
+                  }
+               )
+            setCompareCustomerData(newCustomerData)
+         },
+      })
    useEffect(() => {
       if (subsLoading) {
          setStatus({ ...status, loading: true })
@@ -117,6 +175,7 @@ const EarningByCustomer = () => {
                >
                   <EarningByCustomerChart
                      earningByCustomerData={customerData.slice(0, 10)}
+                     earningByCompareCustomerData={compareCustomerData}
                   />
                </div>
             </Flex>
@@ -142,7 +201,9 @@ const EarningByCustomer = () => {
 }
 
 const EarningByCustomerChart = props => {
-   const { earningByCustomerData } = props
+   const { earningByCustomerData, earningByCompareCustomerData } = props
+   const [chartData, setChartData] = useState([])
+   const [isLoading, setIsLoading] = useState(true)
    const { brandShopDateState } = React.useContext(BrandShopDateContext)
    const CustomTooltip = ({ active, payload }) => {
       if (active && payload && payload.length) {
@@ -152,7 +213,6 @@ const EarningByCustomerChart = props => {
                   display: 'flex',
                   flexDirection: 'column',
                   background: '#f9f9f9',
-                  color: '#8884d8 !important',
                   width: '11rem',
                   height: 'auto',
                   margin: '2px 2px',
@@ -165,22 +225,82 @@ const EarningByCustomerChart = props => {
                   Customer Name: {payload[0].payload['fullName']}
                </Text>
                <Text as="text3">
-                  Earning: {brandShopDateState.currency}
-                  {payload[0].payload['total']}
+                  Earning:{' '}
+                  <span style={{ color: '#8884d8' }}>
+                     {brandShopDateState.currency}
+                     {payload[0].payload['totalAmountPaid']}
+                  </span>{' '}
+                  {!brandShopDateState.compare.isSkip &&
+                     earningByCompareCustomerData && (
+                        <span style={{ color: '#82ca9d' }}>
+                           {brandShopDateState.currency}
+                           {payload[0].payload['compareTotalAmountPaid']}
+                        </span>
+                     )}
                </Text>
                <Text as="text3">
-                  Tax: {brandShopDateState.currency}
-                  {payload[0].payload['totalTax']}
+                  Tax:
+                  <span style={{ color: '#8884d8' }}>
+                     {brandShopDateState.currency}
+                     {payload[0].payload['totalTax']}
+                  </span>{' '}
+                  {!brandShopDateState.compare.isSkip &&
+                     earningByCompareCustomerData && (
+                        <span style={{ color: '#82ca9d' }}>
+                           {brandShopDateState.currency}
+                           {payload[0].payload['totalTax']}
+                        </span>
+                     )}
                </Text>
                <Text as="text3">
-                  Discount: {brandShopDateState.currency}
-                  {payload[0].payload['totalDiscount']}
+                  Discount:
+                  <span style={{ color: '#8884d8' }}>
+                     {brandShopDateState.currency}
+                     {payload[0].payload['totalDiscount']}
+                  </span>{' '}
+                  {!brandShopDateState.compare.isSkip &&
+                     earningByCompareCustomerData && (
+                        <span style={{ color: '#82ca9d' }}>
+                           {brandShopDateState.currency}
+                           {payload[0].payload['totalDiscount']}
+                        </span>
+                     )}
                </Text>
             </div>
          )
       }
 
       return null
+   }
+   useEffect(() => {
+      if (earningByCompareCustomerData.length > 0) {
+         //present and past data merging
+         const customerDataWithCompareData = earningByCustomerData.map(
+            customer => {
+               customer.compareTotalAmountPaid =
+                  earningByCompareCustomerData.find(
+                     x => x.id == customer.id
+                  ).totalAmountPaid
+               customer.compareTotalTax = earningByCompareCustomerData.find(
+                  x => x.id == customer.id
+               ).totalTax
+               customer.compareTotalDiscount =
+                  earningByCompareCustomerData.find(
+                     x => x.id == customer.id
+                  ).totalDiscount
+               return customer
+            }
+         )
+         setChartData(customerDataWithCompareData)
+         setIsLoading(false)
+      } else {
+         setChartData(earningByCustomerData)
+         setIsLoading(false)
+      }
+   }, [earningByCompareCustomerData])
+   console.log('chartData', chartData)
+   if (isLoading) {
+      return <InlineLoader />
    }
    return (
       <>
@@ -189,7 +309,7 @@ const EarningByCustomerChart = props => {
                <LineChart
                   width={550}
                   height={300}
-                  data={earningByCustomerData}
+                  data={chartData}
                   margin={{
                      top: 5,
                      right: 0,
@@ -208,6 +328,15 @@ const EarningByCustomerChart = props => {
                      dataKey="totalAmountPaid"
                      stroke="#8884d8"
                   />
+                  {!brandShopDateState.compare.isSkip &&
+                     earningByCompareCustomerData && (
+                        <Line
+                           name="Compare Earning"
+                           type="monotone"
+                           dataKey="compareTotalAmountPaid"
+                           stroke="#82ca9d"
+                        />
+                     )}
                </LineChart>
             </ResponsiveContainer>
          </Flex>

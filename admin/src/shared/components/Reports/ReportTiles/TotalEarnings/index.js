@@ -58,6 +58,7 @@ const TotalEarningReport = () => {
                      brandProvider
                      shopTypeProvider
                      datePickerProvider
+                     compareProvider
                   >
                      <EarningByCustomer />
                   </BrandShopDate>
