@@ -38,13 +38,17 @@ export const root = async (req, res) => {
       let method
 
       if (template.path) {
-         method = require(`${path.join(__dirname, '..', 'templates')}/${
-            template.path
-         }`)
+         method = require(`${path.join(
+            __dirname,
+            '..',
+            'template/templates'
+         )}/${template.path}`)
       } else {
-         method = require(`${path.join(__dirname, '..', 'templates')}/${
-            template.type
-         }/${template.name}/index`)
+         method = require(`${path.join(
+            __dirname,
+            '..',
+            'template/templates'
+         )}/${template.type}/${template.name}/index`)
       }
 
       const url = await get_env('DATA_HUB')
