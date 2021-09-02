@@ -1,10 +1,9 @@
 import React from 'react'
-
-import tw, { styled, css } from 'twin.macro'
 import { useToasts } from 'react-toast-notifications'
+import { useMutation } from '@apollo/react-hooks'
+import classNames from 'classnames'
 
 import { isClient } from '../../utils'
-import { useMutation } from '@apollo/react-hooks'
 import { FORGOT_PASSWORD } from '../../graphql'
 import { useConfig } from '../../lib'
 
@@ -58,71 +57,46 @@ export const ForgotPassword = () => {
    }
 
    return (
-      <Main tw="pt-8">
-         <Title theme={theme}>Forgot Password</Title>
-         <Panel>
-            <FieldSet>
-               <Label htmlFor="email">Email*</Label>
-               <Input
+      <div className="hern-forgot-password">
+         <div
+            className="hern-forgot-password__heading"
+            style={{
+               color: `${
+                  theme?.accent ? theme?.accent : 'color: rgba(5, 150, 105, 1'
+               }`,
+            }}
+         >
+            Forgot Password
+         </div>
+         <div className="hern-forgot-password__wrapper">
+            <fieldset className="hern-forgot-password__field">
+               <label className="hern-forgot-password__label" htmlFor="email">
+                  Email*
+               </label>
+               <input
+                  className="hern-forgot-password__input"
                   type="email"
                   name="email"
+                  id="email"
                   value={form.email}
                   onChange={onChange}
                   placeholder="Enter your email"
                />
-            </FieldSet>
-            <Submit
-               className={!isValid || loading ? 'disabled' : ''}
+            </fieldset>
+            <button
+               className={classNames('hern-forgot-password__submit-btn', {
+                  'hern-forgot-password__submit-btn--disabled':
+                     !isValid || loading,
+               })}
+               disabled={!isValid || loading}
                onClick={() => isValid && submit()}
             >
                Send Email
-            </Submit>
+            </button>
             {error && (
-               <span tw="self-start block text-red-500 mt-2">{error}</span>
+               <span className="hern-forgot-password__error">{error}</span>
             )}
-         </Panel>
-      </Main>
+         </div>
+      </div>
    )
 }
-
-const Main = styled.main`
-   margin: auto;
-   overflow-y: auto;
-   max-width: 1180px;
-   width: calc(100vw - 40px);
-   min-height: calc(100vh - 128px);
-   > section {
-      width: 100%;
-      max-width: 360px;
-   }
-`
-
-const Panel = styled.section`
-   ${tw`flex mx-auto justify-center items-center flex-col py-4`}
-`
-
-const Title = styled.h2(
-   ({ theme }) => css`
-      ${tw`text-green-600 text-2xl text-center`}
-      ${theme?.accent && `color: ${theme.accent}`}
-   `
-)
-
-const FieldSet = styled.fieldset`
-   ${tw`w-full flex flex-col mb-4`}
-`
-
-const Label = styled.label`
-   ${tw`text-gray-600 mb-1`}
-`
-
-const Input = styled.input`
-   ${tw`w-full block border h-10 rounded px-2 outline-none focus:border-2 focus:border-blue-400`}
-`
-
-const Submit = styled.button`
-   ${tw`bg-green-500 rounded w-full h-10 text-white uppercase tracking-wider`}
-   &.disabled {
-      ${tw`cursor-not-allowed bg-gray-300 text-gray-700`}
-   }
-`
