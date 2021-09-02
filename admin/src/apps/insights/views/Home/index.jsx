@@ -16,6 +16,7 @@ import DashboardAnalytics from '../../../../shared/components/DashboardAnalytics
 import ReferralPlansListing from '../RecipeInsight'
 import TotalEarningReport from '../../../../shared/components/Reports/ReportTiles/TotalEarnings'
 import Reports from '../../../../shared/components/Reports'
+import OrdersReport from '../../../../shared/components/Reports/ReportTiles/TotalOrders'
 
 const Home = () => {
    const { addTab } = useTabs()
@@ -53,6 +54,7 @@ const Home = () => {
             </Flex>
             <Reports>
                <TotalEarningReport />
+               <OrdersReport />
             </Reports>
          </Flex>
          <ReferralPlansListing />
