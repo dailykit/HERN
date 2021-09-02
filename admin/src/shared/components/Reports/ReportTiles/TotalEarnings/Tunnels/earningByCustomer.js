@@ -16,7 +16,7 @@ import { logger } from '../../../../../utils'
 import { BrandShopDateContext } from '../../../../BrandShopDateProvider/context'
 import { ErrorState } from '../../../../ErrorState'
 import { InlineLoader } from '../../../../InlineLoader'
-import { EARNING_BY_CUSTOMERS } from '../../../graphql/subscription'
+import { EARNING_BY_CUSTOMERS } from '../graphql/subscription'
 import EarningByCustomerTable from './Listing/earningByCustomer'
 
 const EarningByCustomer = () => {
