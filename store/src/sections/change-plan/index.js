@@ -1,5 +1,4 @@
 import React from 'react'
-import tw, { css, styled } from 'twin.macro'
 import { useUser } from '../../context'
 import { useToasts } from 'react-toast-notifications'
 import { useConfig } from '../../lib'
@@ -14,7 +13,8 @@ import {
 } from '../../sections/select-delivery'
 import { BRAND } from '../../graphql'
 import { useMutation } from '@apollo/react-hooks'
-import { getRoute, isClient } from '../../utils'
+import { getRoute, isClient, useThemeStyle } from '../../utils'
+import { Button } from '../../components'
 
 export const ChangePlan = () => {
    return (
@@ -28,12 +28,11 @@ const ChangePlanSection = () => {
    const router = useRouter()
    const { user, isAuthenticated, isLoading } = useUser()
    const { addToast } = useToasts()
-   const { brand, configOf } = useConfig()
+   const { brand } = useConfig()
    const { state, dispatch } = useDelivery()
-   const theme = configOf('theme-color', 'Visual')
 
    const [selectedPlanId, setSelectedPlanId] = React.useState(null)
-
+   const themeColor = useThemeStyle('color')
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
          isClient && localStorage.setItem('landed_on', location.href)
@@ -90,23 +89,32 @@ const ChangePlanSection = () => {
 
    return (
       <>
-         <Title theme={theme}>Change Plan</Title>
+         <h2
+            className="hern-change-plan__heading"
+            style={useThemeStyle('color')}
+         >
+            Change Plan
+         </h2>
          <Plans handlePlanClick={handlePlanClick} />
          {!!selectedPlanId && (
-            <div tw="lg:w-8/12 w-11/12 m-auto">
+            <div className="hern-change-plan__other-info">
                <AddressSection />
-               <SectionTitle theme={theme}>Delivery Day</SectionTitle>
+               <h3
+                  className="hern-change-plan__section-title"
+                  style={themeColor}
+               >
+                  Delivery Day
+               </h3>
                <DeliverySection planId={selectedPlanId} />
-               <SectionTitle theme={theme}>
+               <h3
+                  className="hern-change-plan__section-title"
+                  style={themeColor}
+               >
                   Select your first delivery date
-               </SectionTitle>
+               </h3>
                <DeliveryDateSection />
-               <div tw="m-4 w-full flex items-center justify-center">
-                  <Button
-                     bg={theme?.accent}
-                     onClick={handleSubmit}
-                     disabled={!isValid()}
-                  >
+               <div className="hern-change-plan__continue-btn-wrapper">
+                  <Button onClick={handleSubmit} disabled={!isValid()}>
                      Continue
                   </Button>
                </div>
@@ -115,25 +123,3 @@ const ChangePlanSection = () => {
       </>
    )
 }
-
-const Title = styled.h2(
-   ({ theme }) => css`
-      ${tw`text-green-600 text-2xl text-center m-8`}
-      ${theme?.accent && `color: ${theme.accent}`}
-   `
-)
-
-const SectionTitle = styled.h3(
-   ({ theme }) => css`
-      ${tw`my-3 text-green-600 text-lg`}
-      ${theme?.accent && `color: ${theme.accent}`}
-   `
-)
-
-const Button = styled.button(
-   ({ disabled, bg }) => css`
-      ${tw`h-10 rounded px-8 text-white bg-green-600`}
-      ${disabled && tw`cursor-not-allowed bg-green-300`}
-      ${bg && `background-color: ${bg};`}
-   `
-)
