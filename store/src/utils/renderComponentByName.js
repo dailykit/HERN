@@ -71,6 +71,9 @@ const Profile = dynamic(() =>
 const Wallet = dynamic(() =>
    import('../sections/wallet').then(promise => promise.Wallet)
 )
+const Referrals = dynamic(() =>
+   import('../sections/referrals').then(promise => promise.Referrals)
+)
 
 export const renderComponentByName = (componentName, options) => {
    const getProps = component => {
@@ -196,6 +199,11 @@ export const renderComponentByName = (componentName, options) => {
       */
       case 'Wallet':
          return <Wallet />
+      /*ROUTES : 
+      [brand]/account/referrals
+      */
+      case 'Referrals':
+         return <Referrals />
 
       /*ROUTES : 
       [brand]/get-started/register
