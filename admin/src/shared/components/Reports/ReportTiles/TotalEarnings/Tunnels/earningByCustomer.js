@@ -226,13 +226,13 @@ const EarningByCustomerChart = props => {
                </Text>
                <Text as="text3">
                   Earning:{' '}
-                  <span style={{ color: '#8884d8' }}>
+                  <span style={{ color: '#2AC981' }}>
                      {brandShopDateState.currency}
                      {payload[0].payload['totalAmountPaid']}
                   </span>{' '}
                   {!brandShopDateState.compare.isSkip &&
                      earningByCompareCustomerData && (
-                        <span style={{ color: '#82ca9d' }}>
+                        <span style={{ color: '#8884d8' }}>
                            {brandShopDateState.currency}
                            {payload[0].payload['compareTotalAmountPaid']}
                         </span>
@@ -240,13 +240,13 @@ const EarningByCustomerChart = props => {
                </Text>
                <Text as="text3">
                   Tax:
-                  <span style={{ color: '#8884d8' }}>
+                  <span style={{ color: '#2AC981' }}>
                      {brandShopDateState.currency}
                      {payload[0].payload['totalTax']}
                   </span>{' '}
                   {!brandShopDateState.compare.isSkip &&
                      earningByCompareCustomerData && (
-                        <span style={{ color: '#82ca9d' }}>
+                        <span style={{ color: '#8884d8' }}>
                            {brandShopDateState.currency}
                            {payload[0].payload['totalTax']}
                         </span>
@@ -254,13 +254,13 @@ const EarningByCustomerChart = props => {
                </Text>
                <Text as="text3">
                   Discount:
-                  <span style={{ color: '#8884d8' }}>
+                  <span style={{ color: '#2AC981' }}>
                      {brandShopDateState.currency}
                      {payload[0].payload['totalDiscount']}
                   </span>{' '}
                   {!brandShopDateState.compare.isSkip &&
                      earningByCompareCustomerData && (
-                        <span style={{ color: '#82ca9d' }}>
+                        <span style={{ color: '#8884d8' }}>
                            {brandShopDateState.currency}
                            {payload[0].payload['totalDiscount']}
                         </span>
@@ -326,7 +326,8 @@ const EarningByCustomerChart = props => {
                      name="Earning"
                      type="monotone"
                      dataKey="totalAmountPaid"
-                     stroke="#8884d8"
+                     stroke="#2AC981"
+                     strokeWidth={2}
                   />
                   {!brandShopDateState.compare.isSkip &&
                      earningByCompareCustomerData && (
@@ -334,7 +335,8 @@ const EarningByCustomerChart = props => {
                            name="Compare Earning"
                            type="monotone"
                            dataKey="compareTotalAmountPaid"
-                           stroke="#82ca9d"
+                           stroke="#8884d8"
+                           strokeWidth={2}
                         />
                      )}
                </LineChart>
