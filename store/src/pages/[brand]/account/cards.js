@@ -218,10 +218,15 @@ export const PaymentTunnel = ({ tunnel, toggleTunnel }) => {
    const { user } = useUser()
    const { organization } = useConfig()
    const [intent, setIntent] = React.useState(null)
-
+   console.log('payment tunnel open')
    React.useEffect(() => {
+      console.log('payment tunnel useEffect', user)
       if (user?.platform_customer?.stripeCustomerId && isClient) {
          ;(async () => {
+            console.log('Calling createSetupIntent', {
+               stripeCustomerId: user?.platform_customer?.stripeCustomerId,
+               organization,
+            })
             const intent = await createSetupIntent(
                user?.platform_customer?.stripeCustomerId,
                organization
@@ -266,7 +271,7 @@ export const PaymentForm = ({ intent, toggleTunnel }) => {
       try {
          if (setupIntent.status === 'succeeded') {
             const DATAHUB = isClient ? get_env('DATA_HUB_HTTPS') : ''
-            let url = `${new URL(DATAHUB).origin}/api/payment-method/${setupIntent.payment_method}`
+            let url = `https://dailyos-backend.ngrok.io/server/api/payment-method/${setupIntent.payment_method}`
             if (
                organization.stripeAccountType === 'standard' &&
                organization.stripeAccountId
@@ -443,9 +448,11 @@ const createSetupIntent = async (customer, organization = {}) => {
       ) {
          stripeAccountId = organization?.stripeAccountId
       }
+      console.log({ customer, stripeAccountId })
       const DATAHUB = get_env('DATA_HUB_HTTPS')
-      const url = `${new URL(DATAHUB).origin}/api/setup-intent`
+      const url = `https://dailyos-backend.ngrok.io/server/api/setup-intent`
       const { data } = await axios.post(url, { customer, stripeAccountId })
+      console.log({ data })
       return data.data
    } catch (error) {
       return error
@@ -503,7 +510,7 @@ const Title = styled.h2(
 
 const PaymentMethods = styled.ul`
    ${tw`
-   grid 
+   grid
    gap-2
    sm:grid-cols-1
    md:grid-cols-2
