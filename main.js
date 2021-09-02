@@ -201,15 +201,13 @@ const serveSubscription = async (req, res, next) => {
    }
 }
 
-app.use('/:path(*)', serveSubscription)
-
 /*
 manages files in templates folder
 */
 const apolloserver = new ApolloServer({
    schema,
    playground: {
-      endpoint: `${get_env('ENDPOINT')}/template/graphql`
+      endpoint: `/template/graphql`
    },
    introspection: true,
    validationRules: [depthLimit(11)],
@@ -226,13 +224,13 @@ const apolloserver = new ApolloServer({
    }
 })
 
-apolloserver.applyMiddleware({ app })
+apolloserver.applyMiddleware({ app, path: `/template/graphql` })
 
 // ohyay remote schema integration
 const ohyayApolloserver = new ApolloServer({
    schema: ohyaySchema,
    playground: {
-      endpoint: `${get_env('ENDPOINT')}/ohyay/graphql`
+      endpoint: `/ohyay/graphql`
    },
    introspection: true,
    validationRules: [depthLimit(11)],
@@ -249,7 +247,9 @@ const ohyayApolloserver = new ApolloServer({
    }
 })
 
-ohyayApolloserver.applyMiddleware({ app })
+ohyayApolloserver.applyMiddleware({ app, path: '/ohyay/graphql' })
+
+app.use('/:path(*)', serveSubscription)
 
 app.listen(PORT, () => {
    console.log(`Server started on ${PORT}`)
