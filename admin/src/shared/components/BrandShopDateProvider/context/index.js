@@ -22,7 +22,7 @@ export const initialState = {
       compareResult: null,
       isSkip: true,
    },
-   groupBy: ['year', 'month', 'week', 'day', 'hour'],
+   groupBy: ['year', 'month', 'week'],
    brandShop: {
       brandId: undefined,
       shopTitle: false,
