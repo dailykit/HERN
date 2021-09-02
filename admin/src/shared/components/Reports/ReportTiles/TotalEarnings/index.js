@@ -137,7 +137,7 @@ const TotalEarningReport = () => {
                         color: '#367bf5',
                         lineHeight: '24px',
                      }}
-                     title="View earning by vendor report"
+                     title="View earning by customer report"
                      onClick={() => openReportTunnel(3)}
                   >
                      Earnings by customer
@@ -181,7 +181,7 @@ const TotalEarningReport = () => {
                               color: '#367bf5',
                               lineHeight: '24px',
                            }}
-                           title="View earning by customer report"
+                           title="View earning by vendor report"
                            onClick={() => openReportTunnel(6)}
                         >
                            Earnings by vendor
