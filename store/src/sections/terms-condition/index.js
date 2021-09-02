@@ -8,12 +8,14 @@ export const TermsAndConditions = () => {
    const { value } = useConfig('brand').configOf('Terms and Conditions')
 
    return (
-      <div tw="min-h-screen text-gray-600 md:mx-64 mx-10 mb-4">
-         <h1 tw="my-10  text-5xl text-gray-800 text-center py-2 border-gray-200 border-b-2">
+      <div className="hern-terms-condition">
+         <h1 className="hern-terms-condition__heading">
             Terms &amp; Conditions
          </h1>
-         <div tw="text-lg">
-            <StyledArticle>{ReactHtmlParser(value)}</StyledArticle>
+         <div className="hern-terms-condition__content">
+            <article className="hern-terms-condition__article">
+               {ReactHtmlParser(value)}
+            </article>
          </div>
       </div>
    )
