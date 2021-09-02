@@ -59,6 +59,9 @@ const Addresses = dynamic(() =>
 const ManageCards = dynamic(() =>
    import('../sections/cards').then(promise => promise.ManageCards)
 )
+const LoyaltyPoints = dynamic(() =>
+   import('../sections/loyalty-points').then(promise => promise.LoyaltyPoints)
+)
 
 export const renderComponentByName = (componentName, options) => {
    const getProps = component => {
@@ -164,6 +167,11 @@ export const renderComponentByName = (componentName, options) => {
       */
       case 'ManageCards':
          return <ManageCards />
+      /*ROUTES : 
+      [brand]/account/loyalty-points
+      */
+      case 'LoyaltyPoints':
+         return <LoyaltyPoints />
 
       /*ROUTES : 
       [brand]/get-started/register
