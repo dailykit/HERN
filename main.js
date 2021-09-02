@@ -56,7 +56,24 @@ const PORT = process.env.PORT || 4000
 app.use('/server', ServerRouter)
 /*
 serves build folder of admin
+
+For resource files, the first app.use(/apps) code is used.
+For later react router requests, app.use(/apps/:path(*)) is used
+
+Why and how it works? Tell us and win 1000 rs!
 */
+
+app.use('/apps', (req, res, next) => {
+   if (process.env.NODE_ENV === 'development') {
+      return createProxyMiddleware({
+         target: 'http://localhost:8000',
+         changeOrigin: true
+      })(req, res, next)
+   }
+
+   express.static('admin/build')(req, res, next)
+})
+
 app.use('/apps/:path(*)', (req, res, next) => {
    if (process.env.NODE_ENV === 'development') {
       return createProxyMiddleware({
@@ -64,6 +81,7 @@ app.use('/apps/:path(*)', (req, res, next) => {
          changeOrigin: true
       })(req, res, next)
    }
+   console.log(req.params)
 
    express.static('admin/build')(req, res, next)
 })
