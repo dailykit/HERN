@@ -32,17 +32,17 @@ const EarningByCustomer = () => {
          variables: {
             earningByCustomerArg: {
                params: {
-                  where: `id IS NOT NULL ${
+                  where: `o.id IS NOT NULL ${
                      brandShopDateState.from && brandShopDateState.to
-                        ? `AND \"created_at\" >= '${brandShopDateState.from}' AND \"created_at\" <= '${brandShopDateState.to}'`
+                        ? `AND o.created_at >= '${brandShopDateState.from}' AND o.created_at <= '${brandShopDateState.to}'`
                         : ''
                   } ${
                      brandShopDateState.brandShop.brandId
-                        ? `AND a."brandId" = ${brandShopDateState.brandShop.brandId}`
+                        ? `AND o."brandId" = ${brandShopDateState.brandShop.brandId}`
                         : ''
                   } ${
                      brandShopDateState.brandShop.shopTitle
-                        ? `AND b.source = \'${brandShopDateState.brandShop.shopTitle}\'`
+                        ? `AND oc.source = \'${brandShopDateState.brandShop.shopTitle}\'`
                         : ''
                   }`,
                   customerWhere: 'id IS NOT NULL',
@@ -74,7 +74,11 @@ const EarningByCustomer = () => {
                      return newCustomer
                   }
                )
-            setCustomerData(newCustomerData)
+            setCustomerData(
+               newCustomerData.sort(
+                  (a, b) => b.totalAmountPaid - a.totalAmountPaid
+               )
+            )
             setStatus({ ...status, loading: false })
          },
       }
@@ -85,18 +89,18 @@ const EarningByCustomer = () => {
          variables: {
             earningByCustomerArg: {
                params: {
-                  where: `id IS NOT NULL ${
+                  where: `o.id IS NOT NULL ${
                      brandShopDateState.compare.from &&
                      brandShopDateState.compare.to
-                        ? `AND \"created_at\" >= '${brandShopDateState.compare.from}' AND \"created_at\" <= '${brandShopDateState.compare.to}'`
+                        ? `AND o.created_at >= '${brandShopDateState.compare.from}' AND o.created_at <= '${brandShopDateState.compare.to}'`
                         : ''
                   } ${
                      brandShopDateState.brandShop.brandId
-                        ? `AND a."brandId" = ${brandShopDateState.brandShop.brandId}`
+                        ? `AND o."brandId" = ${brandShopDateState.brandShop.brandId}`
                         : ''
                   } ${
                      brandShopDateState.brandShop.shopTitle
-                        ? `AND b.source = \'${brandShopDateState.brandShop.shopTitle}\'`
+                        ? `AND oc.source = \'${brandShopDateState.brandShop.shopTitle}\'`
                         : ''
                   }`,
                   customerWhere: `id IN (${customerData
@@ -141,11 +145,11 @@ const EarningByCustomer = () => {
       }
    }, [subsLoading])
 
-   if (status.loading || (subsLoading && !subsError)) {
+   if (!subsError && !subsCompareError && (status.loading || subsLoading)) {
       return <InlineLoader />
    }
 
-   if (subsError) {
+   if (subsError || subsCompareError) {
       logger(subsError)
       toast.error('Could not get the Insight data')
       return (
@@ -248,7 +252,7 @@ const EarningByCustomerChart = props => {
                      earningByCompareCustomerData && (
                         <span style={{ color: '#8884d8' }}>
                            {brandShopDateState.currency}
-                           {payload[0].payload['totalTax']}
+                           {payload[0].payload['compareTotalTax']}
                         </span>
                      )}
                </Text>
@@ -262,7 +266,7 @@ const EarningByCustomerChart = props => {
                      earningByCompareCustomerData && (
                         <span style={{ color: '#8884d8' }}>
                            {brandShopDateState.currency}
-                           {payload[0].payload['totalDiscount']}
+                           {payload[0].payload['compareTotalDiscount']}
                         </span>
                      )}
                </Text>
@@ -278,16 +282,14 @@ const EarningByCustomerChart = props => {
          const customerDataWithCompareData = earningByCustomerData.map(
             customer => {
                customer.compareTotalAmountPaid =
-                  earningByCompareCustomerData.find(
-                     x => x.id == customer.id
-                  ).totalAmountPaid
-               customer.compareTotalTax = earningByCompareCustomerData.find(
-                  x => x.id == customer.id
-               ).totalTax
+                  earningByCompareCustomerData.find(x => x.id == customer.id)
+                     ?.totalAmountPaid || 0
+               customer.compareTotalTax =
+                  earningByCompareCustomerData.find(x => x.id == customer.id)
+                     ?.totalTax || 0
                customer.compareTotalDiscount =
-                  earningByCompareCustomerData.find(
-                     x => x.id == customer.id
-                  ).totalDiscount
+                  earningByCompareCustomerData.find(x => x.id == customer.id)
+                     ?.totalDiscount || 0
                return customer
             }
          )
