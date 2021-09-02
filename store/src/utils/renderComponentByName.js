@@ -68,6 +68,9 @@ const Orders = dynamic(() =>
 const Profile = dynamic(() =>
    import('../sections/profile').then(promise => promise.Profile)
 )
+const Wallet = dynamic(() =>
+   import('../sections/wallet').then(promise => promise.Wallet)
+)
 
 export const renderComponentByName = (componentName, options) => {
    const getProps = component => {
@@ -188,6 +191,11 @@ export const renderComponentByName = (componentName, options) => {
       */
       case 'Profile':
          return <Profile />
+      /*ROUTES : 
+      [brand]/account/wallet
+      */
+      case 'Wallet':
+         return <Wallet />
 
       /*ROUTES : 
       [brand]/get-started/register
