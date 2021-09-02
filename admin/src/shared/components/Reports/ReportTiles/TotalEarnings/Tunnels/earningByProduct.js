@@ -22,8 +22,11 @@ import { EARNING_BY_PRODUCT } from '../../../graphql/subscription'
 import EarningByProductTable from './Listing/earningByProduct'
 
 const EarningByProduct = () => {
-   const [tableData, setTableData] = useState([])
-   const { brandShopDateState } = React.useContext(BrandShopDateContext)
+   const [earningByProductData, setEarningByProductData] = useState([])
+   const [earningByProductCompareData, setEarningByProductCompareData] =
+      useState([])
+   const { brandShopDateState, brandShopDateDispatch } =
+      React.useContext(BrandShopDateContext)
    const [status, setStatus] = useState({ loading: true })
    //subscription for earning by product data
    const { loading: subsLoading, error: subsError } = useSubscription(
@@ -34,19 +37,20 @@ const EarningByProduct = () => {
                params: {
                   where: `"isAccepted" = true AND COALESCE("isRejected", false) = false AND "paymentStatus" = \'SUCCEEDED\' ${
                      brandShopDateState.from !== moment('2017 - 01 - 01') &&
-                     `AND a.created_at >= '${brandShopDateState.from}'`
+                     `AND o.created_at >= '${brandShopDateState.from}'`
                   } ${
                      brandShopDateState.from !== moment('2017 - 01 - 01') &&
-                     `AND a.created_at < '${brandShopDateState.to}'`
+                     `AND o.created_at < '${brandShopDateState.to}'`
                   } ${
                      brandShopDateState.brandShop.brandId
-                        ? `AND a."brandId" = ${brandShopDateState.brandShop.brandId}`
+                        ? `AND o."brandId" = ${brandShopDateState.brandShop.brandId}`
                         : ''
                   } ${
                      brandShopDateState.brandShop.shopTitle
-                        ? `AND b.source = \'${brandShopDateState.brandShop.shopTitle}\'`
+                        ? `AND c.source = \'${brandShopDateState.brandShop.shopTitle}\'`
                         : ''
                   }`,
+                  productWhere: 'id IS NOT NULL',
                },
             },
          },
@@ -54,28 +58,65 @@ const EarningByProduct = () => {
             const newData =
                subscriptionData.data.insights_analytics[0].getEarningsByProducts.map(
                   each => {
-                     each.netSale = parseFloat(
-                        (
-                           each.total -
-                           each.totalTax -
-                           each.totalDiscount
-                        ).toFixed(2)
-                     )
                      return each
                   }
                )
-            setTableData(newData)
+
+            setEarningByProductData(newData)
             setStatus({ ...status, loading: false })
          },
       }
    )
+
+   //subscription for earning by product compare data
+   const { loading: subsCompareLoading, error: subsCompareError } =
+      useSubscription(EARNING_BY_PRODUCT, {
+         variables: {
+            earningByProductArgs: {
+               params: {
+                  where: `"isAccepted" = true AND COALESCE("isRejected", false) = false AND "paymentStatus" = \'SUCCEEDED\' ${
+                     brandShopDateState.compare.from !==
+                        moment('2017 - 01 - 01') &&
+                     `AND o.created_at >= '${brandShopDateState.compare.from}'`
+                  } ${
+                     brandShopDateState.compare.from !==
+                        moment('2017 - 01 - 01') &&
+                     `AND o.created_at < '${brandShopDateState.compare.to}'`
+                  } ${
+                     brandShopDateState.brandShop.brandId
+                        ? `AND o."brandId" = ${brandShopDateState.brandShop.brandId}`
+                        : ''
+                  } ${
+                     brandShopDateState.brandShop.shopTitle
+                        ? `AND c.source = \'${brandShopDateState.brandShop.shopTitle}\'`
+                        : ''
+                  }`,
+                  productWhere: `id IN (${earningByProductData
+                     .slice(0, 10)
+                     .map(x => x.id)
+                     .toString()})`,
+               },
+            },
+         },
+         skip: brandShopDateState.compare.isSkip,
+         onSubscriptionData: ({ subscriptionData }) => {
+            const newData =
+               subscriptionData.data.insights_analytics[0].getEarningsByProducts.map(
+                  each => {
+                     return each
+                  }
+               )
+            setEarningByProductCompareData(newData)
+         },
+      })
+
    useEffect(() => {
       if (subsLoading) {
          setStatus({ ...status, loading: true })
       }
    }, [subsLoading])
 
-   if (status.loading || (subsLoading && !subsError)) {
+   if (!subsError && (status.loading || subsLoading)) {
       return <InlineLoader />
    }
    if (subsError) {
@@ -102,7 +143,11 @@ const EarningByProduct = () => {
                   }}
                >
                   <EarningByProductChart
-                     earningByProductChartData={tableData.slice(0, 10)}
+                     earningByProductChartData={earningByProductData.slice(
+                        0,
+                        10
+                     )}
+                     earningByProductCompareData={earningByProductCompareData}
                   />
                </div>
             </Flex>
@@ -118,7 +163,7 @@ const EarningByProduct = () => {
                   }}
                >
                   <EarningByProductTable
-                     earningByProductData={tableData}
+                     earningByProductData={earningByProductData}
                      currency={brandShopDateState.currency}
                   />
                </div>
@@ -128,8 +173,13 @@ const EarningByProduct = () => {
    )
 }
 
-const EarningByProductChart = ({ earningByProductChartData, currency }) => {
+const EarningByProductChart = ({
+   earningByProductChartData,
+   earningByProductCompareData,
+}) => {
    const { brandShopDateState } = React.useContext(BrandShopDateContext)
+   const [chartData, setChartData] = useState([])
+   const [isLoading, setIsLoading] = useState(true)
    const CustomTooltip = ({ active, payload }) => {
       if (active && payload && payload.length) {
          return (
@@ -138,7 +188,6 @@ const EarningByProductChart = ({ earningByProductChartData, currency }) => {
                   display: 'flex',
                   flexDirection: 'column',
                   background: '#f9f9f9',
-                  color: '#8884d8 !important',
                   width: '11rem',
                   height: 'auto',
                   margin: '2px 2px',
@@ -149,22 +198,45 @@ const EarningByProductChart = ({ earningByProductChartData, currency }) => {
                <Spacer size="3px" />
                <Text as="text3">Product: {payload[0].payload['name']}</Text>
                <Text as="text3">
-                  Earning: {brandShopDateState.currency}
-                  {payload[0].payload['total']}
-               </Text>
-               <Text as="text3">
-                  Tax: {brandShopDateState.currency}
-                  {payload[0].payload['totalTax']}
-               </Text>
-               <Text as="text3">
-                  Discount: {brandShopDateState.currency}
-                  {payload[0].payload['totalDiscount']}
+                  Earning:{' '}
+                  <span style={{ color: '#2AC981' }}>
+                     {brandShopDateState.currency}
+                     {payload[0].payload['total']}
+                  </span>{' '}
+                  {!brandShopDateState.compare.isSkip &&
+                     earningByProductCompareData && (
+                        <span style={{ color: '#8884d8' }}>
+                           {brandShopDateState.currency}
+                           {payload[0].payload['compareTotal']}
+                        </span>
+                     )}
                </Text>
             </div>
          )
       }
 
       return null
+   }
+   useEffect(() => {
+      if (earningByProductCompareData.length > 0) {
+         //present and past data merging
+         const productDataWithCompareData = earningByProductChartData.map(
+            product => {
+               product.compareTotal =
+                  earningByProductCompareData.find(x => x.id == product.id)
+                     ?.total || 0
+               return product
+            }
+         )
+         setChartData(productDataWithCompareData)
+         setIsLoading(false)
+      } else {
+         setChartData(earningByProductChartData)
+         setIsLoading(false)
+      }
+   }, [earningByProductCompareData])
+   if (isLoading) {
+      return <InlineLoader />
    }
    return (
       <>
@@ -173,7 +245,7 @@ const EarningByProductChart = ({ earningByProductChartData, currency }) => {
                <LineChart
                   width={550}
                   height={300}
-                  data={earningByProductChartData}
+                  data={chartData}
                   margin={{
                      top: 5,
                      right: 0,
@@ -195,8 +267,19 @@ const EarningByProductChart = ({ earningByProductChartData, currency }) => {
                      name="Earning"
                      type="monotone"
                      dataKey="total"
-                     stroke="#8884d8"
+                     stroke="#2AC981"
+                     strokeWidth={2}
                   />
+                  {!brandShopDateState.compare.isSkip &&
+                     earningByProductCompareData && (
+                        <Line
+                           name="Compare Earning"
+                           type="monotone"
+                           dataKey="compareTotal"
+                           stroke="#8884d8"
+                           strokeWidth={2}
+                        />
+                     )}
                </LineChart>
             </ResponsiveContainer>
          </Flex>

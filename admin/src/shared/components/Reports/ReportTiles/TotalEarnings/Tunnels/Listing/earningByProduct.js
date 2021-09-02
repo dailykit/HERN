@@ -42,16 +42,16 @@ const EarningByProductTable = ({ earningByProductData }) => {
          title: 'Product Type',
          payload: 'type',
       },
-      {
-         id: 2,
-         title: 'Tax',
-         payload: 'totalTax',
-      },
-      {
-         id: 3,
-         title: 'Discount',
-         payload: 'totalDiscount',
-      },
+      // {
+      //    id: 2,
+      //    title: 'Tax',
+      //    payload: 'totalTax',
+      // },
+      // {
+      //    id: 3,
+      //    title: 'Discount',
+      //    payload: 'totalDiscount',
+      // },
    ]
    const totalCalc = (values, data, calcParams) => {
       let total = 0
@@ -62,6 +62,10 @@ const EarningByProductTable = ({ earningByProductData }) => {
    }
    const columns = [
       {
+         title: 'Product Id',
+         field: 'id',
+      },
+      {
          title: 'Product Name',
          field: 'name',
          headerFilter: true,
@@ -71,22 +75,22 @@ const EarningByProductTable = ({ earningByProductData }) => {
          field: 'type',
          headerFilter: true,
       },
-      {
-         title: `Discount (${brandShopDateState.currency})`,
-         field: 'totalDiscount',
-         bottomCalc: totalCalc,
-      },
-      {
-         title: `Tax (${brandShopDateState.currency})`,
-         field: 'totalTax',
-         bottomCalc: totalCalc,
-      },
-      {
-         title: `Net Sales (${brandShopDateState.currency})`,
-         field: 'netSale',
-         bottomCalc: totalCalc,
-         width: 150,
-      },
+      // {
+      //    title: `Discount (${brandShopDateState.currency})`,
+      //    field: 'totalDiscount',
+      //    bottomCalc: totalCalc,
+      // },
+      // {
+      //    title: `Tax (${brandShopDateState.currency})`,
+      //    field: 'totalTax',
+      //    bottomCalc: totalCalc,
+      // },
+      // {
+      //    title: `Net Sales (${brandShopDateState.currency})`,
+      //    field: 'netSale',
+      //    bottomCalc: totalCalc,
+      //    width: 150,
+      // },
       {
          title: `Total (${brandShopDateState.currency})`,
          field: 'total',
@@ -100,7 +104,7 @@ const EarningByProductTable = ({ earningByProductData }) => {
       )
       const parseDefaultColumns = defaultShowColumns
          ? JSON.parse(defaultShowColumns)
-         : [1, 2, 3]
+         : [1]
       return parseDefaultColumns
    }
    //columns to be show dropdown selected option fn
@@ -148,7 +152,12 @@ const EarningByProductTable = ({ earningByProductData }) => {
                Earning By Product Table
             </Text>
             <Spacer size="10px" />
-            <Flex container justifyContent="flex-end" alignItems="center">
+            <Flex
+               container
+               justifyContent="flex-end"
+               alignItems="center"
+               padding="0px 10px"
+            >
                <DropdownButton title="Download" width="150px">
                   <DropdownButton.Options>
                      <DropdownButton.Option onClick={() => downloadCsvData()}>
