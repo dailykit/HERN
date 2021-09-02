@@ -56,6 +56,9 @@ const MenuView = dynamic(() =>
 const Addresses = dynamic(() =>
    import('../sections/addresses').then(promise => promise.Addresses)
 )
+const ManageCards = dynamic(() =>
+   import('../sections/cards').then(promise => promise.ManageCards)
+)
 
 export const renderComponentByName = (componentName, options) => {
    const getProps = component => {
@@ -156,6 +159,11 @@ export const renderComponentByName = (componentName, options) => {
       */
       case 'Addresses':
          return <Addresses />
+      /*ROUTES : 
+      [brand]/account/cards
+      */
+      case 'ManageCards':
+         return <ManageCards />
 
       /*ROUTES : 
       [brand]/get-started/register
