@@ -53,6 +53,9 @@ const Checkout = dynamic(() =>
 const MenuView = dynamic(() =>
    import('../sections/menu').then(promise => promise.MenuView)
 )
+const Addresses = dynamic(() =>
+   import('../sections/addresses').then(promise => promise.Addresses)
+)
 
 export const renderComponentByName = (componentName, options) => {
    const getProps = component => {
@@ -148,6 +151,11 @@ export const renderComponentByName = (componentName, options) => {
       */
       case 'MenuView':
          return <MenuView />
+      /*ROUTES : 
+      [brand]/account/addresses
+      */
+      case 'Addresses':
+         return <Addresses />
 
       /*ROUTES : 
       [brand]/get-started/register
