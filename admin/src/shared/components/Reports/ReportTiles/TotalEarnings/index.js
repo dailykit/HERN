@@ -1,3 +1,4 @@
+import { useSubscription } from '@apollo/react-hooks'
 import {
    ButtonGroup,
    Flex,
@@ -8,17 +9,63 @@ import {
    Tunnels,
    useTunnel,
 } from '@dailykit/ui'
+import moment from 'moment'
 import React, { useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
 import styled from 'styled-components'
+import { logger } from '../../../../utils'
 import BrandShopDate from '../../../BrandShopDateProvider'
 import { Tile } from '../../../DashboardTiles'
+import { ErrorState } from '../../../ErrorState'
+import { InlineLoader } from '../../../InlineLoader'
+import { TOTAL_EARNING } from './graphql/subscription'
 import EarningByCustomer from './Tunnels/earningByCustomer'
 import EarningByProduct from './Tunnels/earningByProduct'
 import EarningOverTime from './Tunnels/earningOverTime'
-
+//currencies
+const currency = {
+   USD: '$',
+   INR: '₹',
+   EUR: '€',
+}
 const TotalEarningReport = () => {
    const [reportTunnels, openReportTunnel, closeReportTunnel] = useTunnel(6)
    const [showMore, setShowMore] = useState(false)
+   const {
+      loading: subsLoading,
+      error: subsError,
+      data: { ordersAggregate = {} } = {},
+   } = useSubscription(TOTAL_EARNING, {
+      variables: {
+         where: {
+            _and: [
+               {
+                  created_at: {
+                     _gte: moment().subtract(30, 'days').format('YYYY MM DD'),
+                  },
+               },
+               { created_at: { _lte: moment().format('YYYY MM DD') } },
+            ],
+            isAccepted: { _eq: true },
+            cart: { paymentStatus: { _eq: 'SUCCEEDED' } },
+            isRejected: { _is_null: true },
+         },
+      },
+   })
+   console.log('ordersAggregate', ordersAggregate)
+   if (!subsError && subsLoading) {
+      return <InlineLoader />
+   }
+   if (subsError) {
+      logger(subsError)
+      toast.error('Could not total Earning in last 30 days')
+      return (
+         <ErrorState
+            height="320px"
+            message="Could not total Earning in last 30 days"
+         />
+      )
+   }
    return (
       <>
          <Tunnels tunnels={reportTunnels}>
@@ -90,116 +137,140 @@ const TotalEarningReport = () => {
          <Tile>
             <Tile.Head title="Earnings"></Tile.Head>
             <Tile.Body>
-               <Flex
-                  container
-                  flexDirection="column"
-                  width="100%"
-                  alignItems="flex-start"
-               >
-                  <Text as="text1" style={{ marginLeft: '10px' }}>
-                     Reports
-                  </Text>
-                  <Spacer size="10px" />
-                  <Text
-                     as="text2"
-                     title="View earning overtime report"
-                     style={{
-                        marginLeft: '10px',
-                        fontWeight: '400',
-                        cursor: 'pointer',
-                        color: '#367bf5',
-                        lineHeight: '24px',
-                     }}
-                     onClick={() => openReportTunnel(1)}
+               <Flex width="100%">
+                  <Flex
+                     container
+                     flexDirection="column"
+                     alignItems="flex-start"
+                     padding="0px 8px"
                   >
-                     Earnings over time
-                  </Text>
-                  <Text
-                     as="text2"
-                     style={{
-                        marginLeft: '10px',
-                        fontWeight: '400',
-                        cursor: 'pointer',
-                        color: '#367bf5',
-                        lineHeight: '24px',
-                     }}
-                     title="View earning by product report"
-                     onClick={() => openReportTunnel(2)}
-                  >
-                     Earnings by product
-                  </Text>
-                  <Text
-                     as="text2"
-                     style={{
-                        marginLeft: '10px',
-                        fontWeight: '400',
-                        cursor: 'pointer',
-                        color: '#367bf5',
-                        lineHeight: '24px',
-                     }}
-                     title="View earning by customer report"
-                     onClick={() => openReportTunnel(3)}
-                  >
-                     Earnings by customer
-                  </Text>
-                  {showMore && (
-                     <>
-                        <Text
-                           as="text2"
-                           style={{
-                              marginLeft: '10px',
-                              fontWeight: '400',
-                              cursor: 'pointer',
-                              color: '#367bf5',
-                              lineHeight: '24px',
-                           }}
-                           title="View earning by discounts report"
-                           onClick={() => openReportTunnel(4)}
-                        >
-                           Earnings by discounts
-                        </Text>
-                        <Text
-                           as="text2"
-                           style={{
-                              marginLeft: '10px',
-                              fontWeight: '400',
-                              cursor: 'pointer',
-                              color: '#367bf5',
-                              lineHeight: '24px',
-                           }}
-                           title="View earning by location report"
-                           onClick={() => openReportTunnel(5)}
-                        >
-                           Earnings by location
-                        </Text>
-                        <Text
-                           as="text2"
-                           style={{
-                              marginLeft: '10px',
-                              fontWeight: '400',
-                              cursor: 'pointer',
-                              color: '#367bf5',
-                              lineHeight: '24px',
-                           }}
-                           title="View earning by vendor report"
-                           onClick={() => openReportTunnel(6)}
-                        >
-                           Earnings by vendor
-                        </Text>
-                     </>
-                  )}
-                  <Flex container justifyContent="flex-end" width="100%">
-                     <Text
-                        as="helpText"
-                        style={{
-                           color: '#367BF5',
-                           cursor: 'pointer',
-                           marginRight: '10px',
-                        }}
-                        onClick={() => setShowMore(!showMore)}
-                     >
-                        Show {showMore ? 'less ▲' : 'more ▼'}
+                     <Text as="subtitle">TOTAL EARNING LAST 30 DAYS</Text>
+                     <Spacer size="7px" />
+
+                     <Text as="h3">
+                        {currency[window._env_.REACT_APP_CURRENCY]}
+                        {ordersAggregate.aggregate.sum.amountPaid}
                      </Text>
+                  </Flex>
+                  <div
+                     style={{
+                        borderBottom: '1px solid #e3e8ee',
+                        height: '2px',
+                        margin: '0px 8px',
+                     }}
+                  ></div>
+                  <Spacer size="11px" />
+                  <Flex
+                     container
+                     flexDirection="column"
+                     width="100%"
+                     alignItems="flex-start"
+                  >
+                     <Text as="text1" style={{ marginLeft: '8px' }}>
+                        Reports
+                     </Text>
+                     <Spacer size="5px" />
+                     <Text
+                        as="text2"
+                        title="View earning overtime report"
+                        style={{
+                           marginLeft: '8px',
+                           fontWeight: '400',
+                           cursor: 'pointer',
+                           color: '#367bf5',
+                           lineHeight: '24px',
+                        }}
+                        onClick={() => openReportTunnel(1)}
+                     >
+                        Earnings over time
+                     </Text>
+                     <Text
+                        as="text2"
+                        style={{
+                           marginLeft: '8px',
+                           fontWeight: '400',
+                           cursor: 'pointer',
+                           color: '#367bf5',
+                           lineHeight: '24px',
+                        }}
+                        title="View earning by product report"
+                        onClick={() => openReportTunnel(2)}
+                     >
+                        Earnings by product
+                     </Text>
+                     <Text
+                        as="text2"
+                        style={{
+                           marginLeft: '8px',
+                           fontWeight: '400',
+                           cursor: 'pointer',
+                           color: '#367bf5',
+                           lineHeight: '24px',
+                        }}
+                        title="View earning by customer report"
+                        onClick={() => openReportTunnel(3)}
+                     >
+                        Earnings by customer
+                     </Text>
+                     {showMore && (
+                        <>
+                           <Text
+                              as="text2"
+                              style={{
+                                 marginLeft: '8px',
+                                 fontWeight: '400',
+                                 cursor: 'pointer',
+                                 color: '#367bf5',
+                                 lineHeight: '24px',
+                              }}
+                              title="View earning by discounts report"
+                              onClick={() => openReportTunnel(4)}
+                           >
+                              Earnings by discounts
+                           </Text>
+                           <Text
+                              as="text2"
+                              style={{
+                                 marginLeft: '8px',
+                                 fontWeight: '400',
+                                 cursor: 'pointer',
+                                 color: '#367bf5',
+                                 lineHeight: '24px',
+                              }}
+                              title="View earning by location report"
+                              onClick={() => openReportTunnel(5)}
+                           >
+                              Earnings by location
+                           </Text>
+                           <Text
+                              as="text2"
+                              style={{
+                                 marginLeft: '8px',
+                                 fontWeight: '400',
+                                 cursor: 'pointer',
+                                 color: '#367bf5',
+                                 lineHeight: '24px',
+                              }}
+                              title="View earning by vendor report"
+                              onClick={() => openReportTunnel(6)}
+                           >
+                              Earnings by vendor
+                           </Text>
+                        </>
+                     )}
+                     <Flex container justifyContent="flex-end" width="100%">
+                        <Text
+                           as="helpText"
+                           style={{
+                              color: '#367BF5',
+                              cursor: 'pointer',
+                              marginRight: '8px',
+                           }}
+                           onClick={() => setShowMore(!showMore)}
+                        >
+                           Show {showMore ? 'less ▲' : 'more ▼'}
+                        </Text>
+                     </Flex>
                   </Flex>
                </Flex>
             </Tile.Body>

@@ -19,3 +19,14 @@ export const EARNING_BY_CUSTOMERS = gql`
       }
    }
 `
+export const TOTAL_EARNING = gql`
+   subscription TOTAL_EARNING($where: order_order_bool_exp!) {
+      ordersAggregate(where: $where) {
+         aggregate {
+            sum {
+               amountPaid
+            }
+         }
+      }
+   }
+`
