@@ -12,7 +12,7 @@
    -moz-transition: all 0.3s ease-in-out;
    -ms-transition: all 0.3s ease-in-out;
    -o-transition: all 0.3s ease-in-out;
-   &:hover {
+   &:not(.hern__btn--disabled):hover {
       transform: translateY(-4px);
       -webkit-transform: translateY(-4px);
       -moz-transform: translateY(-4px);
