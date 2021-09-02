@@ -65,6 +65,9 @@ const LoyaltyPoints = dynamic(() =>
 const Orders = dynamic(() =>
    import('../sections/orders').then(promise => promise.Orders)
 )
+const Profile = dynamic(() =>
+   import('../sections/profile').then(promise => promise.Profile)
+)
 
 export const renderComponentByName = (componentName, options) => {
    const getProps = component => {
@@ -180,6 +183,11 @@ export const renderComponentByName = (componentName, options) => {
       */
       case 'Orders':
          return <Orders />
+      /*ROUTES : 
+      [brand]/account/profile
+      */
+      case 'Profile':
+         return <Profile />
 
       /*ROUTES : 
       [brand]/get-started/register
