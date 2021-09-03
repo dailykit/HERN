@@ -14,6 +14,7 @@ import get_env from './get_env'
 import ServerRouter from './server'
 import schema from './template/schema'
 import TemplateRouter from './template'
+import { createEnvFiles } from './server/entities'
 
 require('dotenv').config()
 const { createProxyMiddleware } = require('http-proxy-middleware')
@@ -253,4 +254,5 @@ app.use('/:path(*)', serveSubscription)
 
 app.listen(PORT, () => {
    console.log(`Server started on ${PORT}`)
+   createEnvFiles()
 })
