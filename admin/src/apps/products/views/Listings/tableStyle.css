@@ -4,23 +4,28 @@
    border-bottom: 2px solid #d8d8d8;
 }
 
-.tabulator-col
-   .tabulator-sortable
-   .colHover
-   .tabulator-frozen
-   .tabulator-frozen-left {
-   height: 90px !important;
-   margin-top: -10px !important;
+.tabulator-frozen {
+   height: 100% !important;
+   margin-top: -8px;
 }
-
+.tabulator-row .tabulator-frozen {
+   top: 8px;
+}
+.tabulator .tabulator-header .tabulator-col {
+   margin-top: -8px;
+}
+.tabulator-col-content {
+   height: 100%;
+}
 .gIjFdD {
    justify-content: flex-end;
 }
-
+.formatterCell p {
+   margin-bottom: 0em;
+}
 .tabulator-headers {
    background-color: #f4f4f4;
-   /* height: 80px; */
-   /* padding-top: auto; */
+   height: 100% !important;
    font-weight: 500;
    line-height: 18px;
    letter-spacing: 0.44px;
