@@ -15,7 +15,7 @@ import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
 import { useLocation } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { StyledWrapper } from './styled'
-import NavigationMenuTunnel from './Tunnel'
+import NavigationMenuTunnel from './Tunnel' 
 import options from '../tableOption'
 import NavMenuContext from '../../../context/NavMenu'
 import BrandContext from '../../../context/Brand'
@@ -27,7 +27,7 @@ import {
 } from '../../../graphql'
 import { logger, randomSuffix } from '../../../../../shared/utils'
 import { Tooltip, InlineLoader, Banner } from '../../../../../shared/components'
-import { DeleteIcon } from '../../../../../shared/assets/icons'
+import { DeleteIcon, LeftIcon } from '../../../../../shared/assets/icons'
 import { useTooltip, useTabs } from '../../../../../shared/providers'
 
 const NavigationMenuListing = () => {
@@ -187,6 +187,7 @@ const NavigationMenuListing = () => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
+         width: 300,
       },
       {
          title: 'Publish',
@@ -208,17 +209,19 @@ const NavigationMenuListing = () => {
       {
          title: 'Action',
          field: 'action',
+         headerFilter: false,
+         headerSort: false,
          cellClick: (e, cell) => {
             e.stopPropagation()
             deleteHandler(e, cell._cell.row.data)
          },
          formatter: reactFormatter(<DeleteButton />),
-         hozAlign: 'center',
+         hozAlign: 'left',
          titleFormatter: cell => {
-            cell.getElement().style.textAlign = 'center'
+            cell.getElement().style.textAlign = 'left'
             return '' + cell.getValue()
          },
-         width: 200,
+         width: 100,
       },
    ]
 
@@ -249,7 +252,7 @@ const NavigationMenuListing = () => {
             justifyContent="space-between"
          >
             <Flex container alignItems="center">
-               <Text as="title">
+               <Text as="h2">
                   Navigation Menu(
                   {menuList?.length})
                </Text>

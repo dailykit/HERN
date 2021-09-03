@@ -18,7 +18,7 @@ import LinkFoldTunnel from './Tunnel'
 import options from '../tableOption'
 import FoldContext from '../../../context/Fold'
 import BrandContext from '../../../context/Brand'
-import {
+import {    
    GET_SUBSCRIPTION_FOLDS,
    DELETE_SUBSCRIPTION_FOLD,
 } from '../../../graphql'
@@ -141,8 +141,7 @@ const SubscriptionFoldListing = () => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
-
-         width: 200,
+         width: 300,
       },
       {
          title: 'File Id',
@@ -224,7 +223,7 @@ const SubscriptionFoldListing = () => {
             justifyContent="space-between"
          >
             <Flex container alignItems="center">
-               <Text as="title">
+               <Text as="h2">
                   Subscription Folds(
                   {foldList?.length})
                </Text>

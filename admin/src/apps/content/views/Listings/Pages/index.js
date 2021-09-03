@@ -19,7 +19,7 @@ import BrandContext from '../../../context/Brand'
 import {
    WEBSITE_PAGES_LISTING,
    WEBSITE_TOTAL_PAGES,
-   WEBPAGE_ARCHIVED,
+   WEBPAGE_ARCHIVED, 
    UPDATE_WEBPAGE,
 } from '../../../graphql'
 import { Tooltip, InlineLoader, Banner } from '../../../../../shared/components'
@@ -180,6 +180,7 @@ const PageListing = () => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
+         width: 300,
       },
       {
          title: 'URL',
@@ -264,7 +265,7 @@ const PageListing = () => {
             justifyContent="space-between"
          >
             <Flex container alignItems="center">
-               <Text as="title">
+               <Text as="h2">
                   Page(
                   {count})
                </Text>
