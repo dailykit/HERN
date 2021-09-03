@@ -584,7 +584,7 @@ const ActionBar = ({
             <Flex
                container
                as="header"
-               width="30%"
+               width="32%"
                alignItems="center"
                justifyContent="space-between"
             >
@@ -610,14 +610,14 @@ const ActionBar = ({
             <Flex
                container
                as="header"
-               width="70%"
+               width="71%"
                alignItems="center"
                justifyContent="space-around"
             >
                <Flex
                   container
                   as="header"
-                  width="70%"
+                  width="95%"
                   alignItems="center"
                   justifyContent="flex-end"
                >
