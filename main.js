@@ -56,7 +56,24 @@ const PORT = process.env.PORT || 4000
 app.use('/server', ServerRouter)
 /*
 serves build folder of admin
+
+For resource files, the first app.use(/apps) code is used.
+For later react router requests, app.use(/apps/:path(*)) is used
+
+Why and how it works? Tell us and win 1000 rs!
 */
+
+app.use('/apps', (req, res, next) => {
+   if (process.env.NODE_ENV === 'development') {
+      return createProxyMiddleware({
+         target: 'http://localhost:8000',
+         changeOrigin: true
+      })(req, res, next)
+   }
+
+   express.static('admin/build')(req, res, next)
+})
+
 app.use('/apps/:path(*)', (req, res, next) => {
    if (process.env.NODE_ENV === 'development') {
       return createProxyMiddleware({
@@ -64,6 +81,7 @@ app.use('/apps/:path(*)', (req, res, next) => {
          changeOrigin: true
       })(req, res, next)
    }
+   console.log(req.params)
 
    express.static('admin/build')(req, res, next)
 })
@@ -183,15 +201,13 @@ const serveSubscription = async (req, res, next) => {
    }
 }
 
-app.use('/:path(*)', serveSubscription)
-
 /*
 manages files in templates folder
 */
 const apolloserver = new ApolloServer({
    schema,
    playground: {
-      endpoint: `${get_env('ENDPOINT')}/template/graphql`
+      endpoint: `/template/graphql`
    },
    introspection: true,
    validationRules: [depthLimit(11)],
@@ -208,13 +224,13 @@ const apolloserver = new ApolloServer({
    }
 })
 
-apolloserver.applyMiddleware({ app })
+apolloserver.applyMiddleware({ app, path: `/template/graphql` })
 
 // ohyay remote schema integration
 const ohyayApolloserver = new ApolloServer({
    schema: ohyaySchema,
    playground: {
-      endpoint: `${get_env('ENDPOINT')}/ohyay/graphql`
+      endpoint: `/ohyay/graphql`
    },
    introspection: true,
    validationRules: [depthLimit(11)],
@@ -231,7 +247,9 @@ const ohyayApolloserver = new ApolloServer({
    }
 })
 
-ohyayApolloserver.applyMiddleware({ app })
+ohyayApolloserver.applyMiddleware({ app, path: '/ohyay/graphql' })
+
+app.use('/:path(*)', serveSubscription)
 
 app.listen(PORT, () => {
    console.log(`Server started on ${PORT}`)

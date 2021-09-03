@@ -9,7 +9,7 @@
       "install:packages": "yarn && cd store && yarn && cd ../admin && yarn",
       "dev": "concurrently \"nodemon -r esm index.js\" \"cd store && yarn dev\" \"cd admin && yarn start\"",
       "build": "cd store && yarn build && cd ../admin && yarn build",
-      "prod": "concurrently \"node -r esm index.js\" \"cd store && yarn start\"",
+      "prod": "concurrently \"nodemon -r esm index.js\" \"cd store && yarn start\"",
       "dev:server": "concurrently \"nodemon -r esm index.js\" \"cd store && yarn dev\""
    },
    "dependencies": {
