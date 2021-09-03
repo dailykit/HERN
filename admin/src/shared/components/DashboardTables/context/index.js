@@ -1,4 +1,5 @@
 import React from 'react'
+import { get_env } from '../../../utils'
 
 export const DashboardTableContext = React.createContext()
 
@@ -11,7 +12,7 @@ const currency = {
 const initialState = {
    from: false,
    to: false,
-   currency: currency[window._env_.REACT_APP_CURRENCY],
+   currency: currency[get_env('REACT_APP_CURRENCY')],
 }
 const reducer = (state = initialState, { type, payload }) => {
    switch (type) {
