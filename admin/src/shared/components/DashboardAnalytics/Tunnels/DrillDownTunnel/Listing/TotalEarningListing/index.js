@@ -22,6 +22,7 @@ import { AnalyticsApiArgsContext } from '../../../../context/apiArgs'
 import { useTabs } from '../../../../../../providers'
 import styled from 'styled-components'
 import './../../../../tableStyle.css'
+import { get_env } from '../../../../../../utils'
 //currencies
 const currency = {
    USD: '$',
@@ -317,7 +318,7 @@ const OrderTunnel = props => {
          width: 150,
       },
       {
-         title: `Amount Paid (${currency[window._env_.REACT_APP_CURRENCY]})`,
+         title: `Amount Paid (${currency[get_env('REACT_APP_CURRENCY')]})`,
          field: 'amount paid',
          headerSort: true,
          headerFilter: true,

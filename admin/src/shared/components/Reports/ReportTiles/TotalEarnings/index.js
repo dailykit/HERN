@@ -13,7 +13,7 @@ import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import styled from 'styled-components'
-import { logger } from '../../../../utils'
+import { get_env, logger } from '../../../../utils'
 import BrandShopDate from '../../../BrandShopDateProvider'
 import { Tile } from '../../../DashboardTiles'
 import { ErrorState } from '../../../ErrorState'
@@ -148,7 +148,7 @@ const TotalEarningReport = () => {
                      <Spacer size="7px" />
 
                      <Text as="h3">
-                        {currency[window._env_.REACT_APP_CURRENCY]}
+                        {currency[get_env('REACT_APP_CURRENCY')]}
                         {ordersAggregate.aggregate.sum.amountPaid}
                      </Text>
                   </Flex>
