@@ -1,5 +1,6 @@
 import React from 'react'
 import moment from 'moment'
+import { get_env } from '../../../../utils'
 export const AnalyticsApiArgsContext = React.createContext()
 
 //currencies
@@ -31,7 +32,7 @@ export const initialState = {
       shopTitle: false,
       brand: undefined,
    },
-   currency: currency[window._env_.REACT_APP_CURRENCY],
+   currency: currency[get_env('REACT_APP_CURRENCY')],
 }
 export const reducer = (state = initialState, { type, payload }) => {
    switch (type) {
