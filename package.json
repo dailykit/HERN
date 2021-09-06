@@ -68,7 +68,8 @@
    "nodemonConfig": {
       "ignore": [
          "store",
-         "admin"
+         "admin",
+         "config.js"
       ]
    }
 }

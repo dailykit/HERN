@@ -9,6 +9,7 @@ import {
    TextButton,
    ButtonGroup,
    Text,
+   DropdownButton,
 } from '@dailykit/ui'
 import moment from 'moment'
 import './tableStyle.css'
@@ -89,7 +90,7 @@ const FullOccurrenceReport = () => {
          title: 'Email',
          field: 'email',
          headerFilter: true,
-         width: 200,
+         width: 300,
          frozen: true,
       },
       {
@@ -349,6 +350,13 @@ const FullOccurrenceReport = () => {
          'full_subscription_occurrence_table.xlsx'
       )
    }
+   const clearCustomerPersistence= () =>
+      {
+         localStorage.removeItem('tabulator-full_occurrence_table-columns')
+         localStorage.removeItem('tabulator-full_occurrence_table-sort')
+         localStorage.removeItem('tabulator-full_occurrence_table-filter') 
+         localStorage.removeItem('tabulator-full_occurrence_table-group')
+      }
    const tableLoaded = () => {
       const occurrenceGroup = localStorage.getItem(
          'tabulator-full_occurrence_table-group'
@@ -470,14 +478,65 @@ const FullOccurrenceReport = () => {
                <Flex
                   container
                   height="80px"
+                  width= "100%"
                   alignItems="center"
                   justifyContent="space-between"
                >
-                  <Flex container>
-                     <Text as="title">Subscription Report</Text>
+                  <Flex
+                     container
+                     as="header"
+                     width="25%"
+                     alignItems="center"
+                     justifyContent="space-between"
+                   >
+                     <Text as="h2">Subscription Report</Text>
                      <Tooltip identifier="customer_list_heading" />
                   </Flex>
-                  <Flex container alignItems="center">
+                  <Flex
+                     container
+                     as="header"
+                     width="75%"
+                     alignItems="center"
+                     justifyContent="space-around"
+                  >
+                     <Flex
+                        container
+                        as="header"
+                        width="85%"
+                        alignItems="center"
+                        justifyContent="flex-end"
+                     >
+                        <TextButton
+                           onClick={() => {
+                              clearCustomerPersistence()
+                           }}
+                           type="ghost"
+                           size="sm"
+                        >
+                           Clear Persistence
+                        </TextButton>
+                        <Spacer size="15px" xAxis />
+                        <DropdownButton title="Download" width="150px">
+                           <DropdownButton.Options>
+                              <DropdownButton.Option
+                                 onClick={() => downloadCsvData()}
+                              >
+                                 CSV
+                              </DropdownButton.Option>
+                              <DropdownButton.Option
+                                 onClick={() => downloadPdfData()}
+                              >
+                                 PDF
+                              </DropdownButton.Option>
+                              <DropdownButton.Option
+                                 onClick={() => downloadXlsxData()}
+                              >
+                                 XLSX
+                              </DropdownButton.Option>
+                           </DropdownButton.Options>
+                        </DropdownButton>
+
+                     <Spacer size="15px" xAxis />
                      <Text as="text1">Group By:</Text>
                      <Spacer size="5px" xAxis />
                      <Dropdown
@@ -498,45 +557,25 @@ const FullOccurrenceReport = () => {
                         }}
                         typeName="groupBy"
                      />
-                     <ButtonGroup align="left">
-                        <TextButton
-                           type="ghost"
-                           size="sm"
-                           onClick={() => clearHeaderFilter()}
-                        >
-                           Clear All Filter
-                        </TextButton>
-                     </ButtonGroup>
-                     <Flex
-                        margin="10px 0"
-                        container
-                        alignItems="center"
-                        justifyContent="space-between"
-                     >
-                        <TextButton
-                           onClick={downloadCsvData}
-                           type="solid"
-                           size="sm"
-                        >
-                           CSV
-                        </TextButton>
-                        <Spacer size="10px" xAxis />
-                        <TextButton
-                           onClick={downloadPdfData}
-                           type="solid"
-                           size="sm"
-                        >
-                           PDF
-                        </TextButton>
-                        <Spacer size="10px" xAxis />
-                        <TextButton
-                           onClick={downloadXlsxData}
-                           type="solid"
-                           size="sm"
-                        >
-                           XLSX
-                        </TextButton>
-                     </Flex>
+                     
+                  </Flex>         
+                  <Flex
+                   container
+                   as="header"
+                   width="15%"
+                   alignItems="center"
+                   justifyContent="flex-end"
+               >
+                  <ButtonGroup align="left">
+                  <TextButton
+                     type="ghost"
+                     size="sm"
+                     onClick={() => clearHeaderFilter()}
+                  >
+                     Clear All Filter
+                  </TextButton>
+               </ButtonGroup>
+               </Flex>
                   </Flex>
                </Flex>
                <Spacer size="30px" />
