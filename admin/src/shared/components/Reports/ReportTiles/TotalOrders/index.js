@@ -11,13 +11,15 @@ import {
 import moment from 'moment'
 import React from 'react'
 import styled from 'styled-components'
+import BrandShopDate from '../../../BrandShopDateProvider'
 import { Tile } from '../../../DashboardTiles'
 import { ORDERS_COUNT } from './graphql/subscription'
+import OrderCancelOrRejectReport from './tunnels/orderReject'
 import OrderSummaryReport from './tunnels/orderSummary'
 
 const OrdersReport = () => {
    const [orderReportTunnels, openOrderReportTunnel, closeOrderReportTunnel] =
-      useTunnel(1)
+      useTunnel(2)
    const {
       loading: subsLoading,
       error: subsError,
@@ -51,6 +53,24 @@ const OrdersReport = () => {
                />
                <TunnelBody>
                   <OrderSummaryReport />
+               </TunnelBody>
+            </Tunnel>
+            <Tunnel size="full" layer={2}>
+               <TunnelHeader
+                  title="Rejected orders over time"
+                  close={() => closeOrderReportTunnel(2)}
+                  description="This is a description"
+               />
+               <TunnelBody>
+                  <BrandShopDate
+                     shopTypeProvider
+                     brandProvider
+                     datePickerProvider
+                     compareProvider
+                     groupTimeProvider
+                  >
+                     <OrderCancelOrRejectReport />
+                  </BrandShopDate>
                </TunnelBody>
             </Tunnel>
          </Tunnels>
@@ -106,6 +126,20 @@ const OrdersReport = () => {
                         onClick={() => openOrderReportTunnel(1)}
                      >
                         Order summary
+                     </Text>
+                     <Text
+                        as="text2"
+                        title="View order overtime report"
+                        style={{
+                           marginLeft: '8px',
+                           fontWeight: '400',
+                           cursor: 'pointer',
+                           color: '#367bf5',
+                           lineHeight: '24px',
+                        }}
+                        onClick={() => openOrderReportTunnel(2)}
+                     >
+                        Rejected orders over time
                      </Text>
                   </Flex>
                </Flex>

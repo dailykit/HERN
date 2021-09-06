@@ -23,6 +23,7 @@ export const ORDER_SUMMARY = gql`
          cart {
             status
          }
+         amountPaid
       }
    }
 `
