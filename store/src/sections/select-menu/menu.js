@@ -141,17 +141,27 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
       methods.products.add(item)
    }
 
+   const isActive = isAdded(node?.cartItem?.subscriptionOccurenceProductId)
    const canAdd = () => {
-      const conditions = [!node.isSingleSelect, state?.week?.isValid, !isActive]
-      return (
-         conditions.every(node => node) ||
+      if (!state?.week?.isValid) {
+         return false
+      }
+      if (
          ['CART_PENDING', undefined].includes(
             state.occurenceCustomer?.cart?.status
          )
-      )
+      ) {
+         let isMultiSelect = !node.isSingleSelect
+         let isSingleSelect = node.isSingleSelect
+
+         if (isMultiSelect) return true
+
+         if (isSingleSelect && !isActive) return true
+      }
+
+      return false
    }
 
-   const isActive = isAdded(node?.cartItem?.subscriptionOccurenceProductId)
    const product = {
       name: node?.productOption?.product?.name || '',
       label: node?.productOption?.label || '',
