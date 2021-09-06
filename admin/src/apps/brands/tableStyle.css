@@ -1,14 +1,23 @@
 .tabulator-header {
    font-size: 14px;
+   height: 78px;
+   background-color: #f4f4f4 !important;
    border-bottom: 2px solid #d8d8d8;
 }
+.tabulator-headers{
+   height: 100%;
+}
+.tabulator-row .tabulator-frozen-left {
+   padding-left: 20px;
+}
 
-.tabulator-row {
-   height: 40px;
-   font-size: 16px;
-   display: flex;
-   align-items: center;
-   border-bottom: 1px solid #d8d8d8;
+.formatterCell {
+   width: 100%;
+}
+.tabulator .tabulator-header .tabulator-col{
+   background-color: #f4f4f4 !important;
+   /* margin-top: -8px ; */
+   height: 100% !important;
 }
 
 .rowClick:hover {

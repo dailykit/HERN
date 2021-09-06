@@ -16,7 +16,7 @@ import {
    InlineLoader,
    Tooltip,
 } from '../../../../../../../shared/components'
-import { logger } from '../../../../../../../shared/utils'
+import { get_env, logger } from '../../../../../../../shared/utils'
 import { ERROR_UPDATING_ITEM_INFORMATION } from '../../../../../constants/errorMessages'
 import { useTabs } from '../../../../../../../shared/providers'
 import {
@@ -352,7 +352,7 @@ export default function InfoTunnel({ close, formState }) {
                         <Form.Label title="unit price" htmlFor="unitPrice">
                            <Flex container alignItems="center">
                               {t(address.concat('unit price'))} (in{' '}
-                              {window._env_.REACT_APP_CURRENCY})*
+                              {get_env('REACT_APP_CURRENCY')})* 
                               <Tooltip identifier="supplieritem_form_item_unit_pric_form_field" />
                            </Flex>
                         </Form.Label>
