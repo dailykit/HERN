@@ -7,7 +7,7 @@ This project consists of:
 3. Store: A nextjs app to run consumer oriented platform for subscribing to a plan, placing order weekly etc
 4. Template Service: Manages building email, sachet, label, reciept templates in html or pdf format.
 
-#### Contriubution Guide
+#### Contribution Guide
 
 1. Clone the repository in your local using:
 
