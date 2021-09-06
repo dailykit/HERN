@@ -88,24 +88,18 @@ const OrderSummaryTable = props => {
    )
 
    const downloadCsvData = () => {
-      orderSummaryTableRef.current.table.download(
-         'csv',
-         'earning-by-product-data.csv'
-      )
+      orderSummaryTableRef.current.table.download('csv', 'order-summary.csv')
    }
 
    const downloadPdfData = () => {
       orderSummaryTableRef.current.table.downloadToTab(
          'pdf',
-         'earning-by-product-data.pdf'
+         'order-summary.pdf'
       )
    }
 
    const downloadXlsxData = () => {
-      orderSummaryTableRef.current.table.download(
-         'xlsx',
-         'earning-by-product-data.xlsx'
-      )
+      orderSummaryTableRef.current.table.download('xlsx', 'order-summary.xlsx')
    }
    //default ids for columns to be show dropdown
    const defaultIds = () => {
@@ -184,10 +178,7 @@ const OrderSummaryTable = props => {
       logger(subsError)
       toast.error('Could not get the order summary')
       return (
-         <ErrorState
-            height="320px"
-            message="Could not get Earning by customer data"
-         />
+         <ErrorState height="320px" message="Could not get the order summary" />
       )
    }
 
