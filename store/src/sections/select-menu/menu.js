@@ -15,6 +15,8 @@ import { formatCurrency, getRoute, isClient } from '../../utils'
 import { SkeletonProduct } from './skeletons'
 import { CheckIcon } from '../../assets/icons'
 import { OCCURENCE_PRODUCTS_BY_CATEGORIES } from '../../graphql'
+import classNames from 'classnames'
+import moment from 'moment'
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const Menu = () => {
@@ -71,7 +73,7 @@ export const Menu = () => {
    if (loading) return <SkeletonProduct />
    if (isEmpty(categories))
       return (
-         <main tw="pt-4">
+         <main className="hern-select-menu__menu__helper-bar">
             <HelperBar>
                <HelperBar.SubTitle>
                   No products available yet!
@@ -82,8 +84,8 @@ export const Menu = () => {
    return (
       <main>
          {categories.map(category => (
-            <section key={category.name} css={tw`mb-8`}>
-               <h4 css={tw`text-lg text-gray-700 my-3 pb-1 border-b`}>
+            <section key={category.name} className="hern-select-menu__menu">
+               <h4 className="hern-select-menu__menu__category-name">
                   {category.name} (
                   {
                      uniqBy(category.productsAggregate.nodes, v =>
@@ -95,7 +97,7 @@ export const Menu = () => {
                   }
                   )
                </h4>
-               <Products>
+               <ul className="hern-select-menu__menu__products">
                   {uniqBy(category.productsAggregate.nodes, v =>
                      [
                         v?.cartItem?.productId,
@@ -111,7 +113,7 @@ export const Menu = () => {
                         noProductImage={noProductImage}
                      />
                   ))}
-               </Products>
+               </ul>
             </section>
          ))}
       </main>
@@ -162,11 +164,47 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
             : null,
       additionalText: node?.productOption?.product?.additionalText || '',
    }
+   const productClasses = classNames('hern-select-menu__menu__product', {
+      'hern-select-menu__menu__product--active': isActive,
+   })
+   const checkIconClasses = classNames(
+      'hern-select-menu__menu__product__link__check-icon',
+      { 'hern-select-menu__menu__product__link__check-icon--active': isActive }
+   )
+   const btnClasses = classNames('hern-select-menu__menu__product__btn', {
+      'hern-select-menu__menu__product__btn--disabled': !node.isAvailable,
+   })
+
+   React.useEffect(() => {
+      const elem = document.querySelector(
+         '[data-stylesheet="hern-select-menu__menu"]'
+      )
+      if (!elem) {
+         document.head.insertAdjacentHTML(
+            'beforeend',
+            `<style data-stylesheet="hern-select-menu__menu">
+            .hern-select-menu__menu__product__link>a:hover {
+                  color: ${theme?.accent || 'teal'}!important;
+            }
+            .hern-select-menu__menu__product__btn:hover{
+               background: ${theme?.accent || 'teal'};
+               color: white;
+               border-color: ${theme?.accent || 'teal'};
+            }
+            </style>`
+         )
+      }
+   }, [])
 
    return (
-      <Styles.Product theme={theme} className={`${isActive ? 'active' : ''}`}>
+      <li
+         className={productClasses}
+         style={{
+            borderColor: `${theme?.highlight ? theme.highlight : '#38a169'}`,
+         }}
+      >
          {!!product.type && (
-            <Styles.Type>
+            <span className="hern-select-menu__menu__product__type">
                <img
                   alt="Non-Veg Icon"
                   src={
@@ -175,12 +213,12 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
                         : '/imgs/veg.png'
                   }
                   title={product.type}
-                  tw="h-6 w-6"
+                  className="hern-select-menu__menu__product__type__img"
                />
-            </Styles.Type>
+            </span>
          )}
          <div
-            tw="flex items-center justify-center aspect-w-4 aspect-h-3 bg-gray-200 mb-2 rounded overflow-hidden cursor-pointer"
+            className="hern-select-menu__menu__product__img"
             onClick={openRecipe}
          >
             {product.image ? (
@@ -195,20 +233,23 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
                <img src={noProductImage} alt={product.name} />
             )}
          </div>
-         {node.addOnLabel && <Label>{node.addOnLabel}</Label>}
-         <section tw="flex items-center mb-1">
-            <Check
-               size={16}
-               tw="flex-shrink-0"
-               className={`${isActive ? 'active' : ''}`}
-            />
-            <Styles.GhostLink theme={theme} onClick={openRecipe}>
+         {node.addOnLabel && (
+            <span className="hern-select-menu__menu__product__add-on-label">
+               {node.addOnLabel}
+            </span>
+         )}
+         <section className="hern-select-menu__menu__product__link">
+            <CheckIcon size={16} className={checkIconClasses} />
+            <a theme={theme} onClick={openRecipe}>
                {product.name} - {product.label}
-            </Styles.GhostLink>
+            </a>
          </section>
-         <p tw="mb-1">{product?.additionalText}</p>
+         <p className="hern-select-menu__menu__product__link__additional-text">
+            {product?.additionalText}
+         </p>
          {canAdd() && (
-            <Styles.Button
+            <button
+               className={btnClasses}
                theme={theme}
                disabled={!node.isAvailable}
                onClick={() => add(node.cartItem)}
@@ -228,71 +269,8 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
                ) : (
                   'Out of Stock'
                )}
-            </Styles.Button>
+            </button>
          )}
-      </Styles.Product>
+      </li>
    )
 }
-
-const Styles = {
-   Product: styled.li(
-      ({ theme }) => css`
-         ${tw`relative border flex flex-col bg-white p-2 rounded overflow-hidden`}
-         &.active {
-            ${tw`border border-2 border-red-400`}
-            border-color: ${theme?.highlight ? theme.highlight : '#38a169'}
-         }
-      `
-   ),
-   Type: styled.span`
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      z-index: 1;
-   `,
-   GhostLink: styled.a(
-      ({ theme }) => css`
-         ${tw`text-gray-700 cursor-pointer`}
-         &:hover {
-            color: ${theme?.accent || 'teal'};
-         }
-      `
-   ),
-   Button: styled.button(
-      ({ theme, disabled }) => css`
-         ${tw`text-sm uppercase font-bold tracking-wider border border-2 border-gray-300 rounded p-2 text-gray-500 w-full`}
-         ${disabled && tw`cursor-not-allowed text-gray-400`}
-         transition: all 0.2s ease-in-out;
-         &:hover {
-            background: ${theme?.accent || 'teal'};
-            color: white;
-            border-color: ${theme?.accent || 'teal'};
-         }
-      `
-   ),
-}
-
-const Products = styled.ul`
-   ${tw`grid gap-3`}
-   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-`
-
-const Check = styled(CheckIcon)(
-   () => css`
-      ${tw`mr-2 stroke-current text-gray-300`}
-      &.active {
-         ${tw`text-green-700`}
-      }
-   `
-)
-
-const Label = styled.span`
-   top: 16px;
-   ${tw`
-      px-2
-      absolute
-      rounded-r
-      bg-green-500
-      text-sm uppercase font-medium tracking-wider text-white
-   `}
-`

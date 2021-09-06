@@ -219,10 +219,10 @@ const apolloserver = new ApolloServer({
       return isProd ? new Error(err) : err
    },
    debug: true,
-   context: {
-      root: get_env('FS_PATH'),
-      media: get_env('MEDIA_PATH')
-   }
+   context: async () => ({
+      root: await get_env('FS_PATH'),
+      media: await get_env('MEDIA_PATH')
+   })
 })
 
 apolloserver.applyMiddleware({ app, path: `/template/graphql` })
