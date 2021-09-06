@@ -10,8 +10,10 @@ import {
 } from '@dailykit/ui'
 import moment from 'moment'
 import React from 'react'
+import styled from 'styled-components'
 import { Tile } from '../../../DashboardTiles'
 import { ORDERS_COUNT } from './graphql/subscription'
+import OrderSummaryReport from './tunnels/orderSummary'
 
 const OrdersReport = () => {
    const [orderReportTunnels, openOrderReportTunnel, closeOrderReportTunnel] =
@@ -43,10 +45,13 @@ const OrdersReport = () => {
          <Tunnels tunnels={orderReportTunnels}>
             <Tunnel size="full" layer={1}>
                <TunnelHeader
-                  title="Order over time"
+                  title="Order Summary Report"
                   close={() => closeOrderReportTunnel(1)}
                   description="This is a description"
                />
+               <TunnelBody>
+                  <OrderSummaryReport />
+               </TunnelBody>
             </Tunnel>
          </Tunnels>
          <Tile>
@@ -100,7 +105,7 @@ const OrdersReport = () => {
                         }}
                         onClick={() => openOrderReportTunnel(1)}
                      >
-                        Order over time
+                        Order summary
                      </Text>
                   </Flex>
                </Flex>
@@ -109,4 +114,9 @@ const OrdersReport = () => {
       </>
    )
 }
+const TunnelBody = styled.div`
+   padding: 10px 16px 0px 32px;
+   height: calc(100% - 103px);
+   overflow: auto;
+`
 export default OrdersReport

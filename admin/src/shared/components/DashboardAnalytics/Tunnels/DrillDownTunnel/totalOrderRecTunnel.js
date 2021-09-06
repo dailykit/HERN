@@ -34,6 +34,7 @@ import { groupBy } from 'lodash'
 import { BrandAndShop, DateRangePicker } from '../..'
 import { BRANDS, TOTAL_ORDER_RECEIVED } from '../../graphQl/subscription'
 import OrderRefTable from '../OrderRefTunnel/orderRefTunnel'
+import OrderSummaryTable from '../../../Reports/ReportTiles/TotalOrders/tunnels/listing/orderSummary'
 
 const TotalOrderRecTunnel = ({ currency }) => {
    const [from, setFrom] = useState(moment().startOf('y').format('YYYY-MM-DD'))
@@ -213,6 +214,8 @@ const TotalOrderRecTunnel = ({ currency }) => {
             subsError={subsError}
             currency={currency}
          />
+         <Spacer size="20px" />
+         <OrderSummaryTable from={from} to={to} brandShop={brandShop} />
       </TunnelBody>
    )
 }

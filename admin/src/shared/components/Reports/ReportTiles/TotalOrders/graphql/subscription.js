@@ -9,3 +9,20 @@ export const ORDERS_COUNT = gql`
       }
    }
 `
+export const ORDER_SUMMARY = gql`
+   subscription ORDER_SUMMARY($where: order_order_bool_exp!) {
+      orders(where: $where) {
+         id
+         fulfillmentTimestamp
+         customer {
+            platform_customer_ {
+               fullName
+            }
+         }
+         created_at
+         cart {
+            status
+         }
+      }
+   }
+`
