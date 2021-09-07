@@ -60,6 +60,7 @@ export default ManageCards
 
 const Content = () => {
    const { user } = useUser()
+   console.log({ user })
    const { addToast } = useToasts()
    const { brand, configOf } = useConfig()
    const [tunnel, toggleTunnel] = React.useState(false)
@@ -398,7 +399,7 @@ const CardSetupForm = ({ intent, handleResult }) => {
                   tw="w-full bg-transparent border-b border-gray-800 h-10 text-white focus:outline-none"
                />
             </section>
-            <CardSection />
+            <CardSection setError={setError} />
          </div>
          <button
             disabled={!stripe || submitting}
@@ -427,7 +428,7 @@ const CARD_ELEMENT_OPTIONS = {
    },
 }
 
-const CardSection = () => {
+const CardSection = ({ setError }) => {
    return (
       <CardSectionWrapper>
          <span tw="block text-sm text-gray-500">Card Details</span>

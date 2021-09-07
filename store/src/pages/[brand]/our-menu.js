@@ -442,6 +442,7 @@ const Content = ({ data }) => {
                                     key={node.id}
                                     buildImageUrl={buildImageUrl}
                                     noProductImage={noProductImage}
+                                    imageRatio={imageRatio}
                                  />
                               ))}
                            </Products>
@@ -472,7 +473,13 @@ const Content = ({ data }) => {
    )
 }
 
-const Product = ({ node, theme, noProductImage, buildImageUrl }) => {
+const Product = ({
+   node,
+   theme,
+   noProductImage,
+   buildImageUrl,
+   imageRatio,
+}) => {
    const router = useRouter()
 
    const product = {
@@ -644,8 +651,8 @@ const SliderButton = styled.button`
       self-center
       rounded-full
       hover:bg-gray-100
-      border border-green-800 
-      flex items-center justify-center 
+      border border-green-800
+      flex items-center justify-center
    `}
    ${({ hasRightIcon }) =>
       hasRightIcon
@@ -669,10 +676,10 @@ const Label = styled.span`
    top: 16px;
    ${tw`
       px-2
-      absolute 
+      absolute
       rounded-r
-      bg-green-500 
-      text-sm uppercase font-medium tracking-wider text-white 
+      bg-green-500
+      text-sm uppercase font-medium tracking-wider text-white
    `}
 `
 export async function getStaticProps({ params }) {
