@@ -1,2 +1,3 @@
-export * from './initiate-payment'
-export * from './stripe-webhook'
+import NewPaymentRouter from './route'
+
+export { NewPaymentRouter }

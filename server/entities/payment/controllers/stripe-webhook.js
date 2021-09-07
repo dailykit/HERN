@@ -133,27 +133,29 @@ const handlePaymentIntent = async args => {
 }
 
 export const stripeWebhookEvents = async (req, res) => {
-   //    console.log('HERE,', req.body)
+   //    console.log('HERE,StripeWebhookEvents', req.body)
    try {
       const _stripe = await stripe()
       const signature = req.headers['stripe-signature']
       let event
-      //   console.log({ signature })
+      console.log({ signature })
       let SECRET = await get_env('WEBHOOK_STRIPE_SECRET')
-      //   console.log(req.rawBody)
+      console.log({ SECRET })
       const body = JSON.parse(req.rawBody)
-      //   console.log({ body })
+      console.log({ body })
       if ('account' in body && body.account) {
          SECRET = await get_env('WEBHOOK_STRIPE_CONNECT_SECRET')
       }
+      console.log({ SECRET })
 
       try {
-         console.log(stripe, signature, SECRET)
+         //  console.log(_stripe, signature, SECRET)
          event = await _stripe.webhooks.constructEvent(
             req.rawBody,
             signature,
             SECRET
          )
+         console.log({ event })
       } catch (err) {
          console.log(err)
          return res.status(400).send({
@@ -163,7 +165,7 @@ export const stripeWebhookEvents = async (req, res) => {
       }
 
       const node = event.data.object
-      console.log(node)
+      console.log({ node })
 
       if (!['invoice', 'payment_intent'].includes(node.object))
          return res.status(200).send({
@@ -174,6 +176,8 @@ export const stripeWebhookEvents = async (req, res) => {
       const { cartPayment } = await client.request(CART_PAYMENT, {
          id: Number(node.metadata.cartPaymentId)
       })
+
+      console.log({ cartPayment })
 
       if (get(cartPayment, 'id') && cartPayment.paymentStatus === 'SUCCEEDED') {
          return res.status(200).json({

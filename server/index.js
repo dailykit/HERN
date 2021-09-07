@@ -8,7 +8,7 @@ import {
    DeviceRouter,
    UploadRouter,
    RMKMenuRouter,
-   InitiatePaymentRouter,
+   NewPaymentRouter,
    OccurenceRouter,
    WorkOrderRouter,
    NotificationRouter,
@@ -40,8 +40,7 @@ import {
    sendSMS,
    // createCustomerPaymentIntent,
    updateDailyosStripeStatus,
-   getAccountDetails,
-   StripeWebhookRouter
+   getAccountDetails
 } from './entities'
 
 import { PrintRouter } from './entities/print'
@@ -93,12 +92,12 @@ router.use('/api/experience', ExperienceRouter)
 // NEW
 router.use('/api/cards', CardRouter)
 router.use('/api/refund', RefundRouter)
-router.use('/api/setup-intent', SetupIntentRouter)
-router.use('/api/payment-method', PaymentMethodRouter)
+// router.use('/api/setup-intent', SetupIntentRouter)
+// router.use('/api/payment-method', PaymentMethodRouter)
 router.use('/api/payment-intent', PaymentIntentRouter)
-router.use('/api/payment', PaymentRouter)
-router.use('/api/initiate-payment', InitiatePaymentRouter)
-router.use('/api/payment/stripe-webhook', StripeWebhookRouter)
+router.use('/api/payment', NewPaymentRouter)
+// router.use('/api/payment/initiate-payment', InitiatePaymentRouter)
+// router.use('/api/payment/stripe-webhook', StripeWebhookRouter)
 
 router.get('/api/account-details/:id', getAccountDetails)
 
