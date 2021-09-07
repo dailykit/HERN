@@ -66,7 +66,7 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
          ),
       })
       if (isAuthenticated) {
-         navigate('/get-started/select-delivery')
+         router.push('/get-started/select-delivery')
          return
       }
       router.push(
