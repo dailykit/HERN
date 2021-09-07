@@ -187,6 +187,17 @@ export const DELETE_PLAN_PRODUCT = gql`
       }
    }
 `
+export const DELETE_MULTIPLE_PRODUCT = gql`
+   mutation deletePlanProduct($_in: [Int!]!) {
+      delete_subscription_subscriptionOccurence_product(
+         where: { id: { _in: $_in } }
+      ) {
+         returning {
+            id
+         }
+      }
+   }
+`
 
 export const UPDATE_PLAN_PRODUCT = gql`
    mutation updatePlanProduct(
