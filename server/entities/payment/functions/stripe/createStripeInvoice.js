@@ -39,12 +39,12 @@ export const createStripeInvoice = async arg => {
             if (stripeInvoiceId) {
                previousInvoice = await _stripe.invoices.retrieve(
                   // stripeParams(stripeInvoiceId)
-                  stripeInvoiceId,
-                  (await isConnectedIntegration())
-                     ? {
-                          stripeAccount: stripeAccountId
-                       }
-                     : null
+                  stripeInvoiceId
+                  // (await isConnectedIntegration())
+                  //    ? {
+                  //         stripeAccount: stripeAccountId
+                  //      }
+                  //    : null
                )
                console.log({ previousInvoice })
                const isValidForReattempt = [
@@ -58,12 +58,12 @@ export const createStripeInvoice = async arg => {
                if (!requires3dSecure && isValidForReattempt) {
                   const invoice = await _stripe.invoices.pay(
                      stripeInvoiceId,
-                     { payment_method: paymentMethod },
-                     (await isConnectedIntegration())
-                        ? {
-                             stripeAccount: stripeAccountId
-                          }
-                        : null
+                     { payment_method: paymentMethod }
+                     // (await isConnectedIntegration())
+                     //    ? {
+                     //         stripeAccount: stripeAccountId
+                     //      }
+                     //    : null
                   )
                   console.log('invoice', invoice.id)
 
@@ -73,12 +73,12 @@ export const createStripeInvoice = async arg => {
                   // this is for express type stripe account
                   if (invoice.payment_intent) {
                      const intent = await _stripe.paymentIntents.retrieve(
-                        invoice.payment_intent,
-                        (await isConnectedIntegration())
-                           ? {
-                                stripeAccount: stripeAccountId
-                             }
-                           : null
+                        invoice.payment_intent
+                        // (await isConnectedIntegration())
+                        //    ? {
+                        //         stripeAccount: stripeAccountId
+                        //      }
+                        //    : null
                      )
                      console.log('intent', intent.id)
                      await handlePaymentIntent({
@@ -98,12 +98,12 @@ export const createStripeInvoice = async arg => {
             // or it requires 3d secure, then we make this invoice void and create new one.
             if (previousInvoice && stripeInvoiceId) {
                await _stripe.invoices.voidInvoice(
-                  stripeInvoiceId,
-                  (await isConnectedIntegration())
-                     ? {
-                          stripeAccount: stripeAccountId
-                       }
-                     : null
+                  stripeInvoiceId
+                  // (await isConnectedIntegration())
+                  //    ? {
+                  //         stripeAccount: stripeAccountId
+                  //      }
+                  //    : null
                )
             }
 
@@ -118,13 +118,13 @@ export const createStripeInvoice = async arg => {
                   currency: CURRENCY.toLowerCase(),
                   customer: stripeCustomerId,
                   description: 'Weekly Subscription'
-               },
+               }
 
-               (await isConnectedIntegration())
-                  ? {
-                       stripeAccount: stripeAccountId
-                    }
-                  : null
+               // (await isConnectedIntegration())
+               //    ? {
+               //         stripeAccount: stripeAccountId
+               //      }
+               //    : null
             )
             console.log('item', item.id)
 
@@ -151,12 +151,12 @@ export const createStripeInvoice = async arg => {
                      // customerPaymentIntentId: id,
                      stripeAccountId
                   }
-               },
-               (await isConnectedIntegration())
-                  ? {
-                       stripeAccount: stripeAccountId
-                    }
-                  : null
+               }
+               // (await isConnectedIntegration())
+               //    ? {
+               //         stripeAccount: stripeAccountId
+               //      }
+               //    : null
             )
             console.log('invoice', invoice.id)
 
@@ -165,12 +165,12 @@ export const createStripeInvoice = async arg => {
 
             // finalize the Invoice drafts before paying
             const finalizedInvoice = await _stripe.invoices.finalizeInvoice(
-               invoice.id,
-               (await isConnectedIntegration())
-                  ? {
-                       stripeAccount: stripeAccountId
-                    }
-                  : null
+               invoice.id
+               // (await isConnectedIntegration())
+               //    ? {
+               //         stripeAccount: stripeAccountId
+               //      }
+               //    : null
             )
             console.log('finalizedInvoice', finalizedInvoice.id)
 
@@ -179,12 +179,12 @@ export const createStripeInvoice = async arg => {
 
             // here we pay for the invoice that is been finalized
             const result = await _stripe.invoices.pay(
-               finalizedInvoice.id,
-               (await isConnectedIntegration())
-                  ? {
-                       stripeAccount: stripeAccountId
-                    }
-                  : null
+               finalizedInvoice.id
+               // (await isConnectedIntegration())
+               //    ? {
+               //         stripeAccount: stripeAccountId
+               //      }
+               //    : null
             )
             console.log('result', result.id)
 
@@ -192,12 +192,12 @@ export const createStripeInvoice = async arg => {
             await handleInvoice({ invoice: result })
             if (result.payment_intent) {
                const paymentIntent = await _stripe.paymentIntents.retrieve(
-                  result.payment_intent,
-                  (await isConnectedIntegration())
-                     ? {
-                          stripeAccount: stripeAccountId
-                       }
-                     : null
+                  result.payment_intent
+                  // (await isConnectedIntegration())
+                  //    ? {
+                  //         stripeAccount: stripeAccountId
+                  //      }
+                  //    : null
                )
                console.log('paymentIntent', paymentIntent.id)
                await handlePaymentIntent({
