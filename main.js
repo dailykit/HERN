@@ -14,6 +14,7 @@ import get_env from './get_env'
 import ServerRouter from './server'
 import schema from './template/schema'
 import TemplateRouter from './template'
+import { createEnvFiles } from './server/entities'
 
 require('dotenv').config()
 const { createProxyMiddleware } = require('http-proxy-middleware')
@@ -56,7 +57,13 @@ const PORT = process.env.PORT || 4000
 app.use('/server', ServerRouter)
 /*
 serves build folder of admin
+
+For resource files, the first app.use(/apps) code is used.
+For later react router requests, app.use(/apps/:path(*)) is used
+
+Why and how it works? Tell us and win 1000 rs!
 */
+
 app.use('/apps', (req, res, next) => {
    if (process.env.NODE_ENV === 'development') {
       return createProxyMiddleware({
@@ -64,6 +71,18 @@ app.use('/apps', (req, res, next) => {
          changeOrigin: true
       })(req, res, next)
    }
+
+   express.static('admin/build')(req, res, next)
+})
+
+app.use('/apps/:path(*)', (req, res, next) => {
+   if (process.env.NODE_ENV === 'development') {
+      return createProxyMiddleware({
+         target: 'http://localhost:8000',
+         changeOrigin: true
+      })(req, res, next)
+   }
+   console.log(req.params)
 
    express.static('admin/build')(req, res, next)
 })
@@ -200,13 +219,14 @@ const apolloserver = new ApolloServer({
       return isProd ? new Error(err) : err
    },
    debug: true,
-   context: {
-      root: get_env('FS_PATH'),
-      media: get_env('MEDIA_PATH')
-   }
+   context: async () => ({
+      root: await get_env('FS_PATH'),
+      media: await get_env('MEDIA_PATH')
+   })
 })
 
-apolloserver.applyMiddleware({ app, path: '/template/graphql' })
+apolloserver.applyMiddleware({ app, path: `/template/graphql` })
+
 // ohyay remote schema integration
 const ohyayApolloserver = new ApolloServer({
    schema: ohyaySchema,
@@ -228,10 +248,14 @@ const ohyayApolloserver = new ApolloServer({
    }
 })
 
-ohyayApolloserver.applyMiddleware({ app, path: `/ohyay/graphql` })
+ohyayApolloserver.applyMiddleware({ app, path: '/ohyay/graphql' })
 
 app.use('/:path(*)', serveSubscription)
 
 app.listen(PORT, () => {
    console.log(`Server started on ${PORT}`)
+
+   if (process.env.NODE_ENV !== 'development') {
+      createEnvFiles()
+   }
 })

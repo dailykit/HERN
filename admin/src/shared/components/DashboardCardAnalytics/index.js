@@ -2,7 +2,7 @@ import { useSubscription } from '@apollo/react-hooks'
 import { Text } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
-import { logger } from '../../utils'
+import { get_env, logger } from '../../utils'
 import { Card, CardContainer, Cards } from '../DashboardCards'
 import { ErrorState } from '../ErrorState'
 import { InlineLoader } from '../InlineLoader'
@@ -70,7 +70,7 @@ const DashboardCards = () => {
                <Card.AdditionalBox justifyContent="space-between">
                   <EarningIcon />
                </Card.AdditionalBox>
-               <Card.Value currency={currency[window._env_.REACT_APP_CURRENCY]}>
+               <Card.Value currency={currency[get_env('REACT_APP_CURRENCY')]}>
                   {analyticsData.totalEarnings}
                </Card.Value>
                <Card.Text>Total Revenue Generated So Far</Card.Text>

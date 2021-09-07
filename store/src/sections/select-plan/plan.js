@@ -1,7 +1,7 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import tw, { styled, css } from 'twin.macro'
 import { useToasts } from 'react-toast-notifications'
+import classNames from 'classnames'
 
 import { useConfig } from '../../lib'
 import { useUser } from '../../context'
@@ -10,7 +10,7 @@ import { isClient, formatCurrency, getRoute } from '../../utils'
 
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
-export const Plan = ({ cameFrom = '', plan, handlePlanClick }) => {
+export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
    const router = useRouter()
    const { user, isAuthenticated } = useUser()
    const { addToast } = useToasts()
@@ -91,73 +91,87 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick }) => {
    }
    const theme = configOf('theme-color', 'Visual')
    if (!defaultServing) return <Loader inline />
+
+   const planClasses = classNames('hern-our-plans__plan', {
+      'hern-our-plans_plan--count1': itemCount === 1,
+   })
+
    return (
-      <li css={[tw`border rounded-lg`, `height: fit-content`]}>
+      <li className={planClasses}>
          {plan.metaDetails?.coverImage && (
-            <CoverImage>
-               <img src={plan.metaDetails?.coverImage} tw="object-cover" />
-            </CoverImage>
+            <div className="hern-our-plans__img__wrapper">
+               <img
+                  src={plan.metaDetails?.coverImage}
+                  className="hern-our-plans__plan__img"
+               />
+            </div>
          )}
-         <div tw="px-4 pb-4 md:px-8 md:pb-8">
-            <Title theme={theme}>
+         <div className="hern-our-plans__plan__body">
+            <h2
+               className="hern-our-plans__plan__title"
+               style={{
+                  color: `${
+                     theme?.accent ? theme?.accent : 'rgba(5, 150, 105, 1)'
+                  }`,
+               }}
+            >
                {plan.title}
                {plan.metaDetails?.icon && (
                   <img
-                     tw="rounded-full float-right w-8 h-8 object-cover"
+                     className="hern-our-plans__plan__icon"
                      src={plan.metaDetails?.icon}
                   />
                )}
-            </Title>
+            </h2>
             {plan?.metaDetails?.description && (
-               <p tw="pb-2 mb-4 border-b-2">{plan?.metaDetails?.description}</p>
+               <p className="hern-our-plans__plan__description">
+                  {plan?.metaDetails?.description}
+               </p>
             )}
-            <section css={tw`w-full mb-4 flex items-center justify-between`}>
+            <section className="hern-our-plans__plan__servings">
                {plan.servings.length === 1 ? (
-                  <span
-                     css={tw`uppercase tracking-wider text-gray-600 text-sm font-medium`}
-                  >
+                  <span className="hern-our-plans__plan__servings__label">
                      {plan.servings[0].size}{' '}
                      {plan.servings[0].size > 1
                         ? yieldLabel.singular
                         : yieldLabel.plural}
                   </span>
                ) : (
-                  <div tw="w-full flex flex-col justify-evenly">
-                     <span
-                        css={tw`uppercase tracking-wider text-gray-600 text-sm font-medium mb-2`}
-                     >
+                  <div className="hern-our-plans__plan__servings__wrapper">
+                     <span className="hern-our-plans__plan__servings__label--multi">
                         No. of {yieldLabel.plural}
                      </span>
-                     <CountList>
-                        {plan.servings.map(serving => (
-                           <CountListItem
-                              key={serving.id}
-                              onClick={() => setDefaultServing(serving)}
-                              className={`${
-                                 serving.id === defaultServing?.id
-                                    ? 'active'
-                                    : ''
-                              }`}
-                           >
-                              <div tw="text-sm w-full flex justify-evenly items-center">
-                                 <div>{serving.size}</div>
-                                 {serving?.metaDetails?.label && (
-                                    <div>{serving?.metaDetails?.label}</div>
-                                 )}
-                              </div>
-                           </CountListItem>
-                        ))}
-                     </CountList>
+                     <ul className="hern-our-plans__plan__servings__count-list">
+                        {plan.servings.map(serving => {
+                           const countListClasses = classNames(
+                              'hern-our-plans__plan__servings__count-list-item',
+                              {
+                                 'hern-our-plans__plan__servings__count-list-item--active':
+                                    serving.id === defaultServing?.id,
+                              }
+                           )
+                           return (
+                              <li
+                                 className={countListClasses}
+                                 key={serving.id}
+                                 onClick={() => setDefaultServing(serving)}
+                              >
+                                 <div className="hern-our-plans__plan__servings-size">
+                                    <div>{serving.size}</div>
+                                    {serving?.metaDetails?.label && (
+                                       <div>{serving?.metaDetails?.label}</div>
+                                    )}
+                                 </div>
+                              </li>
+                           )
+                        })}
+                     </ul>
                   </div>
                )}
             </section>
-            <section
-               css={tw`w-full mb-4 flex items-center justify-between mt-3`}
-            >
+            <section className="hern-our-plans__plan__items-per-week">
                {defaultServing.itemCounts.length === 1 ? (
-                  <span
-                     css={tw`uppercase tracking-wider text-gray-600 text-sm font-medium my-2`}
-                  >
+                  <span className="hern-our-plans__plan__items-per-week__label">
                      {defaultServing.itemCounts[0].count}{' '}
                      {defaultServing.itemCounts[0].count === 1
                         ? itemCountLabel.singular
@@ -165,45 +179,58 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick }) => {
                      per week
                   </span>
                ) : (
-                  <div tw="w-full flex flex-col justify-evenly">
-                     <span
-                        css={tw`uppercase tracking-wider text-gray-600 text-sm font-medium mb-2`}
-                     >
+                  <div className="hern-our-plans__plan__items-per-week__wrapper">
+                     <span className="hern-our-plans__plan__items-per-week__label">
                         {itemCountLabel.singular} per week
                      </span>
-                     <CountList>
-                        {defaultServing?.itemCounts.map(item => (
-                           <CountListItem
-                              key={item.id}
-                              onClick={() => setDefaultItemCount(item)}
-                              className={`${
-                                 item.id === defaultItemCount?.id
-                                    ? 'active'
-                                    : ''
-                              }`}
-                           >
-                              <div tw="w-full text-sm flex justify-evenly items-center">
-                                 <div>{item.count}</div>
-                                 {item?.metaDetails?.label && (
-                                    <div>{item?.metaDetails?.label}</div>
-                                 )}
-                              </div>
-                           </CountListItem>
-                        ))}
-                     </CountList>
+                     <ul className="hern-our-plans__plan__items-per-week__count-list">
+                        {defaultServing?.itemCounts.map(item => {
+                           const countListClasses = classNames(
+                              'hern-our-plans__plan__items-per-week__count-list-item',
+                              {
+                                 'hern-our-plans__plan__items-per-week__count-list-item--active':
+                                    item.id === defaultItemCount?.id,
+                              }
+                           )
+
+                           return (
+                              <li
+                                 className={countListClasses}
+                                 key={item.id}
+                                 onClick={() => setDefaultItemCount(item)}
+                              >
+                                 <div className="hern-our-plans__plan__items-per-week__count">
+                                    <div>{item.count}</div>
+                                    {item?.metaDetails?.label && (
+                                       <div>{item?.metaDetails?.label}</div>
+                                    )}
+                                 </div>
+                              </li>
+                           )
+                        })}
+                     </ul>
                   </div>
                )}
             </section>
             <hr />
-            <div tw="py-3 flex flex-col items-center w-full">
+            <div className="hern-our-plans__price">
                {priceDisplay?.pricePerServing?.isVisible === true && (
-                  <section tw="h-full w-full flex justify-between">
+                  <section className="hern-our-plans__price-per-servings">
                      {priceDisplay?.pricePerServing?.prefix && (
-                        <span tw="text-gray-600">
+                        <span className="hern-our-plans__price-per-servings__prefix">
                            {priceDisplay?.pricePerServing?.prefix}{' '}
                         </span>
                      )}
-                     <Price theme={theme}>
+                     <span
+                        style={{
+                           color: `${
+                              theme?.accent
+                                 ? theme?.accent
+                                 : 'rgba(5, 150, 105, 1)'
+                           }`,
+                        }}
+                        className="hern-our-plans__price-per-servings__price"
+                     >
                         {formatCurrency(
                            Number.parseFloat(
                               (defaultItemCount?.price || 1) /
@@ -211,45 +238,65 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick }) => {
                                     (defaultServing?.size || 1))
                            ).toFixed(2)
                         )}{' '}
-                        <span tw="text-gray-600 text-xs">
+                        <span className="hern-our-plans__price-per-servings__suffix">
                            {priceDisplay?.pricePerServing?.suffix ||
                               `per ${yieldLabel.singular}`}
                         </span>
-                     </Price>
+                     </span>
                   </section>
                )}
+
                {priceDisplay?.totalServing?.isVisible === true && (
-                  <section tw="h-full w-full flex justify-between py-1">
+                  <section className="hern-our-plans__price-total-servings">
                      {priceDisplay?.totalServing?.prefix && (
-                        <span tw="text-gray-600">
+                        <span className="hern-our-plans__price-total-servings__prefix">
                            {priceDisplay?.totalServing?.prefix}{' '}
                         </span>
                      )}
-                     <Price theme={theme}>
+                     <span
+                        style={{
+                           color: `${
+                              theme?.accent
+                                 ? theme?.accent
+                                 : 'rgba(5, 150, 105, 1)'
+                           }`,
+                        }}
+                        className="hern-our-plans__price-total-servings__price"
+                     >
                         {Number.parseFloat(
                            (defaultItemCount?.count || 1) *
                               (defaultServing?.size || 1)
                         ).toFixed(0)}{' '}
-                     </Price>
+                     </span>
                   </section>
                )}
+
                {priceDisplay?.pricePerPlan?.isVisible === true && (
-                  <section tw="h-full w-full flex justify-between py-1">
+                  <section className="hern-our-plans__price-per-plan">
                      {priceDisplay?.pricePerPlan?.prefix && (
-                        <span tw="text-gray-600">
+                        <span className="hern-our-plans__price-total-servings__prefix">
                            {priceDisplay?.pricePerPlan?.prefix}{' '}
                         </span>
                      )}
-                     <div tw="flex flex-1 flex-col text-right">
-                        <TotalPrice theme={theme}>
+                     <div className="hern-our-plans__price-total-servings__wrapper">
+                        <span
+                           style={{
+                              color: `${
+                                 theme?.accent
+                                    ? theme?.accent
+                                    : 'rgba(5, 150, 105, 1)'
+                              }`,
+                           }}
+                           className="hern-our-plans__price-total-servings__price"
+                        >
                            {formatCurrency(defaultItemCount?.price)}
-                        </TotalPrice>
-                        <span tw="text-gray-600 italic text-sm">
+                        </span>
+                        <span className="hern-our-plans__price-total-servings__tax">
                            {defaultItemCount?.isTaxIncluded
                               ? 'Tax Inclusive'
                               : 'Tax Exclusive'}
                         </span>
-                        <span tw="text-gray-600">
+                        <span className="hern-our-plans__price-total-servings__suffix">
                            {priceDisplay?.pricePerPlan?.suffix ||
                               'Weekly total'}
                         </span>
@@ -257,74 +304,20 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick }) => {
                   </section>
                )}
             </div>
-            <Button bg={colorConfig?.accent} onClick={() => selectPlan()}>
+            <button
+               className="hern-our-plans__select-plan__btn"
+               onClick={() => selectPlan()}
+               style={{
+                  backgroundColor: `${
+                     colorConfig?.accent
+                        ? colorConfig?.accent
+                        : 'rgba(96, 165, 250, 1)'
+                  }`,
+               }}
+            >
                Select
-            </Button>
+            </button>
          </div>
       </li>
    )
 }
-
-const CoverImage = styled.div`
-   height: 200px;
-   width: 100%;
-   padding-bottom: 16px;
-   img {
-      height: 100%;
-      width: 100%;
-      object-fit: cover;
-      ${tw`rounded-t-lg`}
-   }
-`
-
-const Title = styled.h2(
-   ({ theme }) => css`
-      ${tw`mb-2 text-2xl font-medium tracking-wide text-green-600`}
-      ${theme?.accent && `color: ${theme?.accent}`}
-   `
-)
-
-const Price = styled.span(
-   ({ theme }) => css`
-      ${tw`font-medium text-green-600`}
-      ${theme?.accent && `color: ${theme?.accent}`}
-   `
-)
-
-const TotalPrice = styled.span(
-   ({ theme }) => css`
-      ${tw`text-2xl font-medium text-green-600`}
-      ${theme?.accent && `color: ${theme?.accent}`}
-   `
-)
-
-const CountList = styled.ul`
-   border-radius: 4px;
-   ${tw`
-      p-1
-      border
-      w-full
-      flex items-center justify-between
-   `}
-`
-
-const CountListItem = styled.li`
-   border-radius: 2px;
-   &.active {
-      ${tw`text-white bg-green-600`}
-   }
-   min-height: 3rem;
-   min-width: 7rem;
-   ${tw`
-      flex-1 cursor-pointer text-sm mr-1
-      flex items-center justify-center
-      hover:text-white hover:bg-green-300 hover:rounded
-   `}
-`
-
-const Button = styled.button(
-   ({ bg }) => css`
-      ${tw`w-full h-12 bg-blue-400 uppercase tracking-wider font-medium text-white rounded-full`};
-      ${bg && `background-color: ${bg};`}
-   `
-)

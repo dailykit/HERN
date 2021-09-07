@@ -267,82 +267,89 @@ const ENVS = `
 /*
 used to create env config files and populate with relevant envs
 */
-export const populate_env = async (req, res) => {
+export const populate_env = (req, res) => {
    try {
-      const { envs } = await client.request(ENVS)
-      if (isEmpty(envs)) {
+      const data = createEnvFiles()
+      if (!data) {
          throw Error('No envs found!')
-      } else {
-         const grouped = groupBy(envs, 'belongsTo')
+      }
+      return res.status(200).json({
+         success: true,
+         data: data
+      })
+   } catch (error) {
+      return res.status(404).json({ success: false, error: error.message })
+   }
+}
 
-         const server = {}
+export const createEnvFiles = async () => {
+   const { envs } = await client.request(ENVS)
+   if (isEmpty(envs)) {
+      return null
+   } else {
+      const grouped = groupBy(envs, 'belongsTo')
 
-         get(grouped, 'server', {}).forEach(node => {
-            server[node.title] = node.value
-         })
+      const server = {}
 
-         writeFileSync(
-            path.join(__dirname, '../../../', 'config.js'),
-            'module.exports = ' + JSON.stringify(server, null, 2)
-         )
+      get(grouped, 'server', {}).forEach(node => {
+         server[node.title] = node.value
+      })
 
-         const store = {}
+      writeFileSync(
+         path.join(__dirname, '../../../', 'config.js'),
+         'module.exports = ' + JSON.stringify(server, null, 2)
+      )
 
-         get(grouped, 'store', {}).forEach(node => {
-            store[node.title] = node.value
-         })
+      const store = {}
 
-         const PATH_TO_SUBS = path.join(
+      get(grouped, 'store', {}).forEach(node => {
+         store[node.title] = node.value
+      })
+
+      const PATH_TO_SUBS = path.join(
+         __dirname,
+         '../../../',
+         'store',
+         'public',
+         'env-config.js'
+      )
+
+      writeFileSync(
+         PATH_TO_SUBS,
+         'window._env_ = ' + JSON.stringify(store, null, 2)
+      )
+
+      const admin = {}
+
+      get(grouped, 'admin', []).forEach(node => {
+         admin[node.title] = node.value
+      })
+
+      if (process.env.NODE_ENV === 'development') {
+         const PATH_TO_ADMIN = path.join(
             __dirname,
             '../../../',
-            'store',
+            'admin',
             'public',
             'env-config.js'
          )
-
          writeFileSync(
-            PATH_TO_SUBS,
-            'window._env_ = ' + JSON.stringify(store, null, 2)
+            PATH_TO_ADMIN,
+            'window._env_ = ' + JSON.stringify(admin, null, 2)
          )
-
-         const admin = {}
-
-         get(grouped, 'admin', []).forEach(node => {
-            admin[node.title] = node.value
-         })
-
-         if (process.env.NODE_ENV === 'development') {
-            const PATH_TO_ADMIN = path.join(
-               __dirname,
-               '../../../',
-               'admin',
-               'public',
-               'env-config.js'
-            )
-            writeFileSync(
-               PATH_TO_ADMIN,
-               'window._env_ = ' + JSON.stringify(admin, null, 2)
-            )
-         } else {
-            const PATH_TO_ADMIN = path.join(
-               __dirname,
-               '../../../',
-               'admin',
-               'build',
-               'env-config.js'
-            )
-            writeFileSync(
-               PATH_TO_ADMIN,
-               'window._env_ = ' + JSON.stringify(admin, null, 2)
-            )
-         }
-
-         return res.status(200).json({
-            success: true,
-            data: { server, store, admin }
-         })
+      } else {
+         const PATH_TO_ADMIN = path.join(
+            __dirname,
+            '../../../',
+            'admin',
+            'build',
+            'env-config.js'
+         )
+         writeFileSync(
+            PATH_TO_ADMIN,
+            'window._env_ = ' + JSON.stringify(admin, null, 2)
+         )
       }
-   } catch (error) {
-      return res.status(404).json({ success: false, error: error.message })
+      return { server, store, admin }
    }
 }
