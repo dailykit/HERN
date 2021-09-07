@@ -13,26 +13,30 @@ export const WeekPicker = ({ isFixed }) => {
 
    if (state.isOccurencesLoading) return <Loader inline />
    if (!state?.week?.id) return null
-   if (isFixed)
+   if (isFixed) {
       return (
          <span
             css={tw`h-16 flex items-center justify-center text-base text-center md:text-lg text-indigo-800`}
          >
             Showing menu of:&nbsp;
             {moment(state?.week?.fulfillmentDate)
-               .subtract(7, 'days')
-               .format('MMM D')}
+               .weekday(1)
+               .format('ddd MMM D')}
             &nbsp;-&nbsp;
-            {moment(state?.week?.fulfillmentDate).format('MMM D')}
+            {moment(state?.week?.fulfillmentDate)
+               .add(7, 'day')
+               .weekday(0)
+               .format('ddd MMM D')}
          </span>
       )
+   }
    return (
       <Occurences>
          {state.occurences.map(occurence => (
             <Occurence
                key={occurence.id}
                onClick={() => {
-                  router.push(getRoute(`/menu?d=${occurence.fulfillmentDate}`))
+                  router.push(`/menu?d=${occurence.fulfillmentDate}`)
                   dispatch({ type: 'SET_WEEK', payload: occurence })
                }}
                className={
@@ -42,16 +46,18 @@ export const WeekPicker = ({ isFixed }) => {
                }
             >
                {moment(occurence?.fulfillmentDate)
-                  .subtract(7, 'days')
-                  .format('MMM D')}
+                  .weekday(1)
+                  .format('ddd MMM D')}
                &nbsp;-&nbsp;
-               {moment(occurence?.fulfillmentDate).format('MMM D')}
+               {moment(occurence?.fulfillmentDate)
+                  .add(7, 'day')
+                  .weekday(0)
+                  .format('ddd MMM D')}
             </Occurence>
          ))}
       </Occurences>
    )
 }
-
 const Occurences = styled.ul`
    height: 64px;
    max-width: 980px;
@@ -60,7 +66,6 @@ const Occurences = styled.ul`
       content: '';
    }
 `
-
 const Occurence = styled.li`
    ${tw`flex-shrink-0 px-3 rounded-full border cursor-pointer`}
    &.active {
