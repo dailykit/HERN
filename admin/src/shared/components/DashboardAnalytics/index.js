@@ -65,12 +65,9 @@ const DashboardAnalyticsProvider = ({ children }) => {
    )
 }
 const DashboardAnalytics = ({ children }) => {
-   const [from, setFrom] = useState(
-      localStorage.getItem('analyticsDateFrom') || moment().format('YYYY-MM-DD')
-   )
+   const [from, setFrom] = useState(moment().startOf('y').format('YYYY-MM-DD'))
    const [to, setTo] = useState(
-      localStorage.getItem('analyticsDateTo') ||
-         moment().add(1, 'd').format('YYYY-MM-DD')
+      localStorage.getItem('analyticsDateTo') || moment().format('YYYY-MM-DD')
    )
    const [compare, setCompare] = useState({
       isCompare: false,
@@ -114,7 +111,7 @@ const DashboardAnalytics = ({ children }) => {
    return (
       <>
          <Spacer size="10px" />
-         <Flex padding="0px 42px 0px 42px">
+         <Flex padding="0px 0px">
             <BrandAndShop
                brands={brands}
                setBrandShop={setBrandShop}

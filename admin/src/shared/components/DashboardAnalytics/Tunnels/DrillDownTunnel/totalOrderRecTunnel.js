@@ -34,10 +34,11 @@ import { groupBy } from 'lodash'
 import { BrandAndShop, DateRangePicker } from '../..'
 import { BRANDS, TOTAL_ORDER_RECEIVED } from '../../graphQl/subscription'
 import OrderRefTable from '../OrderRefTunnel/orderRefTunnel'
+import OrderSummaryTable from '../../../Reports/ReportTiles/TotalOrders/tunnels/listing/orderSummary'
 
 const TotalOrderRecTunnel = ({ currency }) => {
-   const [from, setFrom] = useState(moment().format('YYYY-MM-DD'))
-   const [to, setTo] = useState(moment().add(1, 'day').format('YYYY-MM-DD'))
+   const [from, setFrom] = useState(moment().startOf('y').format('YYYY-MM-DD'))
+   const [to, setTo] = useState(moment().format('YYYY-MM-DD'))
    const [compare, setCompare] = useState({
       isCompare: false,
       data: null,
@@ -46,13 +47,7 @@ const TotalOrderRecTunnel = ({ currency }) => {
       compareResult: null,
       isSkip: true,
    })
-   const [groupBy, setGroupBy] = useState([
-      'year',
-      'month',
-      'week',
-      'day',
-      'hour',
-   ])
+   const [groupBy, setGroupBy] = useState(['year', 'month', 'week'])
    const [graphTunnels, openGraphTunnel, closeGraphTunnel] = useTunnel(1)
    const [graphTunnelData, setGraphTunnelData] = useState({
       title: undefined,
@@ -219,6 +214,8 @@ const TotalOrderRecTunnel = ({ currency }) => {
             subsError={subsError}
             currency={currency}
          />
+         <Spacer size="20px" />
+         <OrderSummaryTable from={from} to={to} brandShop={brandShop} />
       </TunnelBody>
    )
 }
