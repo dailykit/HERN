@@ -7,7 +7,7 @@ import { useUser } from '../../context'
 import { Tunnel } from '../../components'
 import { PaymentForm } from './payment_form'
 import { CloseIcon } from '../../assets/icons'
-import { isClient } from '../../utils'
+import { isClient, get_env } from '../../utils'
 import { useConfig } from '../../lib'
 
 export const PaymentTunnel = () => {
@@ -26,13 +26,14 @@ export const PaymentTunnel = () => {
    }
 
    React.useEffect(() => {
+      console.log({ user })
       if (user?.platform_customer?.stripeCustomerId && isClient) {
          ;(async () => {
             const intent = await createSetupIntent(
                user?.platform_customer?.stripeCustomerId,
                organization
             )
-
+            console.log({ intent })
             setIntent(intent)
          })()
       }
@@ -68,9 +69,12 @@ const createSetupIntent = async (customer, organization = {}) => {
       ) {
          stripeAccountId = organization?.stripeAccountId
       }
+      console.log({ customer, organization })
       const DATAHUB = get_env('DATA_HUB_HTTPS')
-      const url = `${new URL(DATAHUB).origin}/api/setup-intent`
+      // const url = `${new URL(DATAHUB).origin}/api/setup-intent`
+      const url = `https://dailyos-backend.ngrok.io/server/api/payment/setup-intent`
       const { data } = await axios.post(url, { customer, stripeAccountId })
+      console.log({ data: data.data })
       return data.data
    } catch (error) {
       return error
