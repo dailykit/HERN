@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { toast } from 'react-toastify'
 import styled from 'styled-components'
 import { startCase, isEmpty } from 'lodash'
@@ -19,6 +19,10 @@ import {
    HorizontalTabList,
    HorizontalTabPanel,
    HorizontalTabPanels,
+   ButtonGroup,
+   TextButton,
+   Checkbox,
+   Text,
 } from '@dailykit/ui'
 
 import tableOptions from '../tableOption'
@@ -31,7 +35,9 @@ import {
    PRODUCT_CATEGORIES,
    DELETE_PLAN_PRODUCT,
    UPDATE_PLAN_PRODUCT,
+   DELETE_MULTIPLE_PRODUCT,
 } from '../graphql'
+import { Button } from 'react-scroll'
 
 export const PlanProductsTunnel = ({ tunnel, occurenceId, subscriptionId }) => {
    const { tooltip } = useTooltip()
@@ -224,8 +230,10 @@ export const PlanProductsTunnel = ({ tunnel, occurenceId, subscriptionId }) => {
    )
 }
 
-const AddedToOccurence = ({ columns, occurenceId }) => {
+const AddedToOccurence = ({ columns, occurenceId, remove }) => {
    const tableRef = React.useRef()
+   const [selectedRows, setSelectedRows] = useState([])
+   const [checked, setChecked] = useState(false)
    const { loading, data: { planProducts = {} } = {} } = useSubscription(
       PLAN_PRODUCTS,
       {
@@ -234,13 +242,129 @@ const AddedToOccurence = ({ columns, occurenceId }) => {
          },
       }
    )
+   const [removeMultipleProducts] = useMutation(DELETE_MULTIPLE_PRODUCT, {
+      onCompleted: () => toast.success('Deleted the product successfully!'),
+      onError: error => {
+         toast.error('Failed to delete the product!')
+         logger(error)
+      },
+   })
+
+   // delete multiple products
+   const handleOnDelete = () => {
+      const ids = selectedRows.map(each => each.id)
+      if (
+         window.confirm(
+            `Are your sure you want to delete this ${selectedRows.length} product?`
+         )
+      ) {
+         removeMultipleProducts({ variables: { _in: ids } })
+         setSelectedRows([])
+      }
+   }
+
+   const removeSelectedRecipes = () => {
+      setChecked(false)
+      setSelectedRows([])
+      tableRef.current.table.deselectRow()
+      localStorage.setItem('selected-rows-id-occurence', JSON.stringify([]))
+   }
+
+   const handleMultipleRowSelection = () => {
+      setChecked(!checked)
+
+      if (!checked) {
+         tableRef.current.table.selectRow('active')
+         let multipleRowData = tableRef.current.table.getSelectedData()
+
+         setSelectedRows(multipleRowData)
+         localStorage.setItem(
+            'selected-rows-id-occurence',
+            JSON.stringify(multipleRowData.map(row => row.id))
+         )
+      } else {
+         tableRef.current.table.deselectRow()
+         setSelectedRows([])
+         localStorage.setItem('selected-rows-id-occurence', JSON.stringify([]))
+      }
+   }
+
+   const handleRowSelection = ({ _row }) => {
+      const rowData = _row.getData()
+      const lastPersistence = localStorage.getItem('selected-rows-id-occurence')
+      const lastPersistenceParse =
+         lastPersistence !== undefined &&
+         lastPersistence !== null &&
+         lastPersistence.length !== 0
+            ? JSON.parse(lastPersistence)
+            : []
+      setSelectedRows(prevState => [...prevState, _row.getData()])
+      let newData = [...lastPersistenceParse, rowData.id]
+      localStorage.setItem(
+         'selected-rows-id-occurence',
+         JSON.stringify(newData)
+      )
+   }
+
+   const handleRowDeselection = ({ _row }) => {
+      const data = _row.getData()
+      const lastPersistence = localStorage.getItem('selected-rows-id-occurence')
+      const lastPersistenceParse =
+         lastPersistence !== undefined &&
+         lastPersistence !== null &&
+         lastPersistence.length !== 0
+            ? JSON.parse(lastPersistence)
+            : []
+      setSelectedRows(prevState => prevState.filter(row => row.id !== data.id))
+      const newLastPersistenceParse = lastPersistenceParse.filter(
+         id => id !== data.id
+      )
+      localStorage.setItem(
+         'selected-rows-id-occurence',
+         JSON.stringify(newLastPersistenceParse)
+      )
+   }
+
+   //change column according to selected rows
+   const selectionColumn =
+      selectedRows.length > 0 && selectedRows.length < planProducts.nodes.length
+         ? {
+              formatter: 'rowSelection',
+              titleFormatter: reactFormatter(
+                 <CrossBox removeSelectedRecipes={removeSelectedRecipes} />
+              ),
+              align: 'center',
+              hozAlign: 'center',
+              width: 10,
+              headerSort: false,
+              frozen: true,
+           }
+         : {
+              formatter: 'rowSelection',
+              titleFormatter: reactFormatter(
+                 <CheckBox
+                    checked={checked}
+                    handleMultipleRowSelection={handleMultipleRowSelection}
+                 />
+              ),
+              align: 'center',
+              hozAlign: 'center',
+              width: 20,
+              headerSort: false,
+              frozen: true,
+           }
 
    if (loading) return <InlineLoader />
    return (
       <div>
+         <ActionBar selectedRows={selectedRows} onDelete={handleOnDelete} />
+         <Spacer size="15px" />
          <ReactTabulator
-            columns={columns}
+            columns={[selectionColumn, ...columns]}
             ref={tableRef}
+            selectableCheck={() => true}
+            rowSelected={handleRowSelection}
+            rowDeselected={handleRowDeselection}
             data={planProducts.nodes || []}
             options={{
                ...tableOptions,
@@ -254,6 +378,8 @@ const AddedToOccurence = ({ columns, occurenceId }) => {
 
 const AddedToSubscription = ({ columns, subscriptionId }) => {
    const tableRef = React.useRef()
+   const [selectedRows, setSelectedRows] = useState([])
+   const [checked, setChecked] = useState(false)
    const { loading, data: { planProducts = {} } = {} } = useSubscription(
       PLAN_PRODUCTS,
       {
@@ -262,14 +388,134 @@ const AddedToSubscription = ({ columns, subscriptionId }) => {
          },
       }
    )
+   const [removeMultipleProducts] = useMutation(DELETE_MULTIPLE_PRODUCT, {
+      onCompleted: () => toast.success('Deleted the product successfully!'),
+      onError: error => {
+         toast.error('Failed to delete the product!')
+         logger(error)
+      },
+   })
 
+   // delete multiple products
+   const handleOnDelete = () => {
+      const ids = selectedRows.map(each => each.id)
+      if (
+         window.confirm(
+            `Are your sure you want to delete this ${selectedRows.length} product?`
+         )
+      ) {
+         removeMultipleProducts({ variables: { _in: ids } })
+         setSelectedRows([])
+      }
+   }
+
+   const removeSelectedRecipes = () => {
+      setChecked(false)
+      setSelectedRows([])
+      tableRef.current.table.deselectRow()
+      localStorage.setItem('selected-rows-id-subscription', JSON.stringify([]))
+   }
+
+   const handleMultipleRowSelection = () => {
+      setChecked(!checked)
+      if (!checked) {
+         tableRef.current.table.selectRow('active')
+         let multipleRowData = tableRef.current.table.getSelectedData()
+         setSelectedRows(multipleRowData)
+         localStorage.setItem(
+            'selected-rows-id-subscription',
+            JSON.stringify(multipleRowData.map(row => row.id))
+         )
+      } else {
+         tableRef.current.table.deselectRow()
+         setSelectedRows([])
+         localStorage.setItem(
+            'selected-rows-id-subscription',
+            JSON.stringify([])
+         )
+      }
+   }
+
+   const handleRowSelection = ({ _row }) => {
+      const rowData = _row.getData()
+      const lastPersistence = localStorage.getItem(
+         'selected-rows-id-subscription'
+      )
+      const lastPersistenceParse =
+         lastPersistence !== undefined &&
+         lastPersistence !== null &&
+         lastPersistence.length !== 0
+            ? JSON.parse(lastPersistence)
+            : []
+      setSelectedRows(prevState => [...prevState, _row.getData()])
+      let newData = [...lastPersistenceParse, rowData.id]
+      localStorage.setItem(
+         'selected-rows-id-subscription',
+         JSON.stringify(newData)
+      )
+   }
+
+   const handleRowDeselection = ({ _row }) => {
+      const data = _row.getData()
+      const lastPersistence = localStorage.getItem(
+         'selected-rows-id-subscription'
+      )
+      const lastPersistenceParse =
+         lastPersistence !== undefined &&
+         lastPersistence !== null &&
+         lastPersistence.length !== 0
+            ? JSON.parse(lastPersistence)
+            : []
+      setSelectedRows(prevState => prevState.filter(row => row.id !== data.id))
+      const newLastPersistenceParse = lastPersistenceParse.filter(
+         id => id !== data.id
+      )
+      localStorage.setItem(
+         'selected-rows-id-subscription',
+         JSON.stringify(newLastPersistenceParse)
+      )
+   }
+
+   //change column according to selected rows
+   const selectionColumn =
+      selectedRows.length > 0 && selectedRows.length < planProducts.nodes.length
+         ? {
+              formatter: 'rowSelection',
+              titleFormatter: reactFormatter(
+                 <CrossBox removeSelectedRecipes={removeSelectedRecipes} />
+              ),
+              align: 'center',
+              hozAlign: 'center',
+              width: 10,
+              headerSort: false,
+              frozen: true,
+           }
+         : {
+              formatter: 'rowSelection',
+              titleFormatter: reactFormatter(
+                 <CheckBox
+                    checked={checked}
+                    handleMultipleRowSelection={handleMultipleRowSelection}
+                 />
+              ),
+              align: 'center',
+              hozAlign: 'center',
+              width: 20,
+              headerSort: false,
+              frozen: true,
+           }
    if (loading) return <InlineLoader />
    return (
       <div>
+         <ActionBar selectedRows={selectedRows} onDelete={handleOnDelete} />
+         <Spacer size="15px" />
          <ReactTabulator
-            columns={columns}
+            columns={[selectionColumn, ...columns]}
             ref={tableRef}
             data={planProducts.nodes || []}
+            selectableCheck={() => true}
+            rowSelected={handleRowSelection}
+            rowDeselected={handleRowDeselection}
             options={{
                ...tableOptions,
                layout: 'fitColumns',
@@ -281,9 +527,8 @@ const AddedToSubscription = ({ columns, subscriptionId }) => {
 }
 
 const EditTunnel = ({ close, product = {} }) => {
-   const { data: { productCategories = [] } = {} } = useQuery(
-      PRODUCT_CATEGORIES
-   )
+   const { data: { productCategories = [] } = {} } =
+      useQuery(PRODUCT_CATEGORIES)
    const [updateProduct, { loading }] = useMutation(UPDATE_PLAN_PRODUCT, {
       onCompleted: () => {
          close(1)
@@ -449,3 +694,79 @@ const Tabs = styled(HorizontalTabs)`
       }
    }
 `
+const ActionBar = props => {
+   const { selectedRows, onDelete } = props
+   return (
+      <>
+         <Flex
+            container
+            as="header"
+            width="100%"
+            justifyContent="space-between"
+         >
+            <Flex
+               container
+               as="header"
+               width="25%"
+               alignItems="center"
+               justifyContent="space-between"
+            >
+               <Text as="subtitle">
+                  {selectedRows.length == 0
+                     ? 'No recipe'
+                     : selectedRows.length == 1
+                     ? `${selectedRows.length} recipe`
+                     : `${selectedRows.length} recipes`}{' '}
+                  selected
+               </Text>
+
+               {/* <ButtonGroup align="left">
+                  <TextButton
+                     type="ghost"
+                     size="sm"
+                     disabled={selectedRows.length === 0 ? true : false}
+                     onClick={() => openTunnel(1)}
+                  >
+                     APPLY BULK ACTIONS
+                  </TextButton>
+               </ButtonGroup> */}
+            </Flex>
+            <Flex>
+               <ButtonGroup align="left">
+                  <TextButton
+                     type="ghost"
+                     size="sm"
+                     disabled={selectedRows.length === 0 ? true : false}
+                     onClick={() => onDelete()}
+                  >
+                     Delete Selected Items
+                  </TextButton>
+               </ButtonGroup>
+            </Flex>
+         </Flex>
+      </>
+   )
+}
+
+const CrossBox = ({ removeSelectedRecipes }) => {
+   return (
+      <Checkbox
+         id="label"
+         checked={false}
+         onChange={removeSelectedRecipes}
+         isAllSelected={false}
+      />
+   )
+}
+const CheckBox = ({ handleMultipleRowSelection, checked }) => {
+   return (
+      <Checkbox
+         id="label"
+         checked={checked}
+         onChange={() => {
+            handleMultipleRowSelection()
+         }}
+         isAllSelected={null}
+      />
+   )
+}
