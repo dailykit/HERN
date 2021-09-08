@@ -160,7 +160,7 @@ const Fulfillment = () => {
                   ...(user?.subscriptionPaymentMethodId && {
                      paymentMethodId: user?.subscriptionPaymentMethodId,
                   }),
-                  stripeCustomerId: user?.platform_customer?.stripeCustomerId,
+                  paymentCustomerId: user?.platform_customer?.paymentCustomerId,
                },
             },
          }).then(() =>

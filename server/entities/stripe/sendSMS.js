@@ -11,7 +11,7 @@ export const sendSMS = async (req, res) => {
 
       const { paymentMethod: method = {} } = await client.request(
          PAYMENT_METHOD,
-         { stripePaymentMethodId: paymentMethod }
+         { customerPaymentMethodId: paymentMethod }
       )
 
       const customer = {
@@ -97,9 +97,9 @@ export const sendSMS = async (req, res) => {
             customer.name.trim() ? customer.name : 'customer'
          }, your payment requires additional action${
             orderId && ` for ORDER #${orderId}`
-         }, please use the following link to complete your payment. 
+         }, please use the following link to complete your payment.
 Link: ${action_url}
-         
+
 From,
 ${organization.name}
 `
@@ -126,12 +126,12 @@ const SEND_SMS = `
 `
 
 const PAYMENT_METHOD = `
-   query paymentMethod($stripePaymentMethodId: String!) {
-      paymentMethod: platform_stripePaymentMethod__by_pk(
-         stripePaymentMethodId: $stripePaymentMethodId
+   query paymentMethod($customerPaymentMethodId: String!) {
+      paymentMethod: platform_customerPaymentMethod_by_pk(
+         customerPaymentMethodId: $customerPaymentMethodId
       ) {
-         stripePaymentMethodId
-         customer: customer_ {
+         customerPaymentMethodId
+         customer: customer {
             phoneNumber
             firstName
             lastName

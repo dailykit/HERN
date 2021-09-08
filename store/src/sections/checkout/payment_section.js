@@ -57,18 +57,18 @@ export const PaymentSection = () => {
          <PaymentMethods>
             {user?.platform_customer?.paymentMethods.map(method => (
                <PaymentMethod
-                  key={method.stripePaymentMethodId}
+                  key={method.customerPaymentMethodId}
                   onClick={() =>
                      dispatch({
                         type: 'SET_PAYMENT_METHOD',
                         payload: {
-                           selected: { id: method.stripePaymentMethodId },
+                           selected: { id: method.customerPaymentMethodId },
                         },
                      })
                   }
                   className={`${
                      state.payment.selected?.id ===
-                        method.stripePaymentMethodId && 'active'
+                        method.customerPaymentMethodId && 'active'
                   }`}
                >
                   <PaymentMethodLeft>
@@ -77,7 +77,7 @@ export const PaymentSection = () => {
                         css={[
                            tw`stroke-current`,
                            state.payment.selected?.id ===
-                           method.stripePaymentMethodId
+                           method.customerPaymentMethodId
                               ? tw`text-green-700`
                               : tw`text-gray-400`,
                         ]}
@@ -85,7 +85,7 @@ export const PaymentSection = () => {
                   </PaymentMethodLeft>
                   <section tw="p-2 w-full">
                      {user.subscriptionPaymentMethodId ===
-                        method.stripePaymentMethodId && (
+                        method.customerPaymentMethodId && (
                         <span tw="rounded border bg-teal-200 border-teal-300 px-2 text-teal-700">
                            Default
                         </span>
@@ -112,7 +112,7 @@ export const PaymentSection = () => {
 
 const PaymentMethods = styled.ul`
    ${tw`
-   grid 
+   grid
    gap-2
    sm:grid-cols-1
    md:grid-cols-2

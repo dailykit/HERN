@@ -56,10 +56,10 @@ export const PaymentForm = ({ intent }) => {
                         expYear: data.card.exp_year,
                         cvcCheck: data.card.cvc_check,
                         expMonth: data.card.exp_month,
-                        stripePaymentMethodId: data.id,
+                        customerPaymentMethodId: data.id,
                         cardHolderName: data.billing_details.name,
-                        stripeCustomerId:
-                           user.platform_customer?.stripeCustomerId,
+                        paymentCustomerId:
+                           user.platform_customer?.paymentCustomerId,
                      },
                   },
                })

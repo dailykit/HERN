@@ -143,8 +143,8 @@ export const CustomerTunnel = () => {
 }
 
 const CUSTOMERS = `
-   query customers($where: platform_customer__bool_exp = {}) {
-      customers: platform_customer_(where: $where) {
+   query customers($where: platform_customer_bool_exp = {}) {
+      customers: platform_customer(where: $where) {
          id: keycloakId
          firstName
          lastName

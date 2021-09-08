@@ -79,7 +79,7 @@ const Content = () => {
          return
       }
       deleteStripePaymentMethod({
-         variables: { stripePaymentMethodId: id },
+         variables: { customerPaymentMethodId: id },
       })
    }
 
@@ -95,7 +95,7 @@ const Content = () => {
                },
             },
             _set: {
-               subscriptionPaymentMethodId: method.stripePaymentMethodId,
+               subscriptionPaymentMethodId: method.customerPaymentMethodId,
             },
          },
       })
@@ -120,13 +120,13 @@ const Content = () => {
                   <PaymentMethods>
                      {user?.platform_customer?.paymentMethods.map(method => (
                         <li
-                           key={method.stripePaymentMethodId}
+                           key={method.customerPaymentMethodId}
                            tw="flex border text-gray-700"
                         >
                            <section tw="p-2 w-full">
                               <header tw="mb-2 w-full flex justify-between items-center">
                                  {user.subscriptionPaymentMethodId ===
-                                 method.stripePaymentMethodId ? (
+                                 method.customerPaymentMethodId ? (
                                     <span tw="rounded border bg-teal-200 border-teal-300 px-2 text-teal-700">
                                        Default
                                     </span>
@@ -142,7 +142,7 @@ const Content = () => {
                                     className="group"
                                     onClick={() =>
                                        deletePaymentMethod(
-                                          method.stripePaymentMethodId
+                                          method.customerPaymentMethodId
                                        )
                                     }
                                     tw="flex items-center justify-center border border-red-400 rounded h-6 w-6 hover:bg-red-400"
@@ -200,10 +200,10 @@ export const PaymentTunnel = ({ tunnel, toggleTunnel }) => {
    const [intent, setIntent] = React.useState(null)
 
    React.useEffect(() => {
-      if (user?.platform_customer?.stripeCustomerId && isClient) {
+      if (user?.platform_customer?.paymentCustomerId && isClient) {
          ;(async () => {
             const intent = await createSetupIntent(
-               user?.platform_customer?.stripeCustomerId,
+               user?.platform_customer?.paymentCustomerId,
                organization
             )
             setIntent(intent)
@@ -270,10 +270,10 @@ export const PaymentForm = ({ intent, toggleTunnel }) => {
                         expYear: data.card.exp_year,
                         cvcCheck: data.card.cvc_check,
                         expMonth: data.card.exp_month,
-                        stripePaymentMethodId: data.id,
+                        customerPaymentMethodId: data.id,
                         cardHolderName: data.billing_details.name,
-                        stripeCustomerId:
-                           user.platform_customer?.stripeCustomerId,
+                        paymentCustomerId:
+                           user.platform_customer?.paymentCustomerId,
                      },
                   },
                })

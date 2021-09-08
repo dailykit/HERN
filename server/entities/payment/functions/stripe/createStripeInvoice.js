@@ -14,7 +14,7 @@ export const createStripeInvoice = async arg => {
          statementDescriptor,
          stripeInvoiceId,
          paymentMethodId: paymentMethod,
-         stripeCustomerId,
+         paymentCustomerId,
          requires3dSecure,
          amount,
          oldAmount
@@ -116,7 +116,7 @@ export const createStripeInvoice = async arg => {
                {
                   amount: chargeAmount,
                   currency: CURRENCY.toLowerCase(),
-                  customer: stripeCustomerId,
+                  customer: paymentCustomerId,
                   description: 'Weekly Subscription'
                }
 
@@ -131,7 +131,7 @@ export const createStripeInvoice = async arg => {
             // create a new invoice (detects the invoice items (draft invoices) and makes a new invoice using these invoice items)
             const invoice = await _stripe.invoices.create(
                {
-                  customer: stripeCustomerId,
+                  customer: paymentCustomerId,
                   default_payment_method: paymentMethod,
                   statement_descriptor: statementDescriptor || organizationName,
                   // days_until_due: 1,

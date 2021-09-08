@@ -42,7 +42,7 @@ query cart($id: Int!) {
     amount
     balancePayment
     paymentMethodId
-    stripeCustomerId
+    paymentCustomerId
     statementDescriptor
   }
 }

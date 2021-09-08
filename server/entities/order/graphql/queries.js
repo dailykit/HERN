@@ -31,7 +31,7 @@ export const FETCH_INVENTORY_PRODUCT = `
             operationConfig {
                stationId
                labelTemplateId
-            }            
+            }
          }
       }
    }
@@ -50,7 +50,7 @@ export const FETCH_SIMPLE_RECIPE_PRODUCT = `
          operationConfig {
             stationId
             labelTemplateId
-         }            
+         }
       }
    }
 `
@@ -117,7 +117,7 @@ export const FETCH_CART = `
          paymentStatus
          fulfillmentInfo
          paymentMethodId
-         stripeCustomerId
+         paymentCustomerId
          transactionRemark
       }
    }

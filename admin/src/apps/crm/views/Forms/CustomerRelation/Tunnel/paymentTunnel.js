@@ -48,7 +48,7 @@ const TunnelVision = ({ id, tunnels, closeTunnel }) => {
                   card => {
                      return (
                         <PaymentCard
-                           key={card.stripePaymentMethodId}
+                           key={card.customerPaymentMethodId}
                            cardData={card}
                            billingAddDisplay="none"
                            margin="16px 80px"

@@ -27,10 +27,10 @@ export const PaymentTunnel = () => {
 
    React.useEffect(() => {
       console.log({ user })
-      if (user?.platform_customer?.stripeCustomerId && isClient) {
+      if (user?.platform_customer?.paymentCustomerId && isClient) {
          ;(async () => {
             const intent = await createSetupIntent(
-               user?.platform_customer?.stripeCustomerId,
+               user?.platform_customer?.paymentCustomerId,
                organization
             )
             console.log({ intent })
