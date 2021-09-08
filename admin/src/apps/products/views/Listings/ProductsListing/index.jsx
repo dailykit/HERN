@@ -407,7 +407,7 @@ class DataTable extends React.Component {
    
    productType= `${this.props.view} product`
 
-   clearCustomozeProductPersistence = () =>{
+   clearCustomizeProductPersistence  = () =>{
       if (this.productType==='customizable product') {
          localStorage.removeItem('tabulator-customizable_product_table-columns')
          localStorage.removeItem('tabulator-customizable_product_table-sort')
@@ -473,7 +473,7 @@ class DataTable extends React.Component {
                         {!this.props.isProductOptionTableVisible && (
                            <>
                               <ActionBar
-                                 title={`${this.props.view}_product`}
+                                 title={`${this.props.view} product`}
                                  downloadPdfData={this.downloadPdfData}
                                  downloadCsvData={this.downloadCsvData}
                                  downloadXlsxData={this.downloadXlsxData}
@@ -521,11 +521,11 @@ class DataTable extends React.Component {
             {this.props.view !== 'simple' && (
                <>
                   <ActionBar
-                     title={`${this.props.view}_product`}
+                     title={`${this.props.view} product`}
                      downloadPdfData={this.downloadPdfData}
                      downloadCsvData={this.downloadCsvData}
                      downloadXlsxData={this.downloadXlsxData}
-                     clearPersistence={this.clearCustomozeProductPersistence}
+                     clearPersistence={this.clearCustomizeProductPersistence}
                      groupByOptions={this.groupByOptions}
                      selectedRows={this.props.selectedRows}
                      openTunnel={this.props.openTunnel}
@@ -658,7 +658,7 @@ const ActionBar = ({
             <Flex
                container
                as="header"
-               width="30%"
+               width="32%"
                alignItems="center"
                justifyContent="space-between"
             >
@@ -684,14 +684,14 @@ const ActionBar = ({
             <Flex
                container
                as="header"
-               width="70%"
+               width="71%"
                alignItems="center"
                justifyContent="space-around"
             >
                <Flex
                   container
                   as="header"
-                  width="70%"
+                  width="98%"
                   alignItems="center"
                   justifyContent="flex-end"
                >
@@ -812,8 +812,8 @@ const ProductOptions = forwardRef(
       const groupByOptions = [    
          {
             id: 1,
-            title: 'Label',
-            payload: 'label',
+            title: 'Product Name',
+            payload: 'name',
          },
          {
             id: 2,
@@ -833,11 +833,18 @@ const ProductOptions = forwardRef(
       })
       useEffect(() => {}, [])
       const columns = [
-
+         {
+            title: 'Label',
+            field: 'label',
+            visible:true,
+            frozen: true,
+            headerFilter: 'true',
+            headerHozAlign: 'center',
+         },
          {
             title: 'Product Name',
             field: 'name',
-            width: 400,
+            width: 350,
             frozen: true,
             headerFilter: true,
             headerHozAlign: 'center',
@@ -846,10 +853,10 @@ const ProductOptions = forwardRef(
                const { name, id } = cell._cell.row.data
                addTab(name, `/products/products/${id}`)
             },
-         cssClass: 'colHover',
-         resizable: 'true',
-         minWidth: 100,
-         maxWidth: 500,
+            cssClass: 'colHover',
+            resizable: 'true',
+            minWidth: 100,
+            maxWidth: 500,
          },
          {
             title: 'Actions',
@@ -905,7 +912,7 @@ const ProductOptions = forwardRef(
       
       const handleGroupBy = option => {
          
-         tableRef.current.table.setGroupBy(['name', ...option])
+         tableRef.current.table.setGroupBy(['label', ...option])
       }
       const handleRowSelection = ({ _row }) => {
          const rowData = _row.getData()
@@ -966,8 +973,8 @@ const ProductOptions = forwardRef(
                : null
          tableRef.current.table.setGroupBy(
             !!productOptionsGroupParse && productOptionsGroupParse.length > 0
-               ? ['name', ...productOptionsGroupParse]
-               : 'name'
+               ? ['label', ...productOptionsGroupParse]
+               : 'label'
          )
          tableRef.current.table.setGroupHeader(function (
             value,
@@ -1098,7 +1105,7 @@ const ProductOptions = forwardRef(
                downloadCsvData={downloadCsvData}
                downloadXlsxData={downloadXlsxData}
                clearPersistence={clearProductOptionPersistence}
-               title="Product_Option"
+               title="product option"
                groupByOptions={groupByOptions}
                selectedRows={selectedRows}
                openTunnel={openTunnel}

@@ -178,7 +178,13 @@ const BrandAndShop = ({ brands, shopTypeProvider, brandProvider }) => {
    }
    const searchedOption = option => console.log(option)
    return (
-      <Flex container flexDirection="row" width="40rem" alignItems="center">
+      <Flex
+         container
+         flexDirection="row"
+         width="40rem"
+         alignItems="center"
+         padding="0px 10px"
+      >
          {shopTypeProvider && (
             <>
                <Flex container flexDirection="column" width="30rem">
@@ -332,7 +338,12 @@ const DateRangePicker = ({ compareProvider, groupTimeProvider }) => {
    const searchedOption = option => console.log(option)
    return (
       <>
-         <Flex container justifyContent="space-between" alignItems="center">
+         <Flex
+            container
+            justifyContent="space-between"
+            alignItems="center"
+            padding="0px 10px"
+         >
             <Flex container alignItems="center">
                <Space direction="vertical" size={12}>
                   <RangePicker
