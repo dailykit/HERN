@@ -258,9 +258,9 @@ export const QUERIES = {
          ONE: gql`
             query paymentMethod($id: String!) {
                paymentMethod: platform_customerPaymentMethod_by_pk(
-                  customerPaymentMethodId: $id
+                  paymentMethodId: $id
                ) {
-                  id: customerPaymentMethodId
+                  id: paymentMethodId
                   last4
                   expMonth
                   expYear
@@ -273,7 +273,7 @@ export const QUERIES = {
                $where: platform_customerPaymentMethod_bool_exp = {}
             ) {
                paymentMethods: platform_customerPaymentMethod(where: $where) {
-                  id: customerPaymentMethodId
+                  id: paymentMethodId
                   last4
                   expMonth
                   expYear
