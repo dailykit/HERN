@@ -13,17 +13,21 @@ export const WeekPicker = ({ isFixed }) => {
 
    if (state.isOccurencesLoading) return <Loader inline />
    if (!state?.week?.id) return null
-   if (isFixed)
+   if (isFixed) {
       return (
          <span className="hern-select-menu__week-picker">
             Showing menu of:&nbsp;
             {moment(state?.week?.fulfillmentDate)
-               .subtract(7, 'days')
-               .format('MMM D')}
+               .weekday(1)
+               .format('ddd MMM D')}
             &nbsp;-&nbsp;
-            {moment(state?.week?.fulfillmentDate).format('MMM D')}
+            {moment(state?.week?.fulfillmentDate)
+               .add(7, 'day')
+               .weekday(0)
+               .format('ddd MMM D')}
          </span>
       )
+   }
    return (
       <ul className="hern-select-menu__week-picker__list">
          {state.occurences.map(occurence => (
@@ -38,15 +42,18 @@ export const WeekPicker = ({ isFixed }) => {
                )}
                key={occurence.id}
                onClick={() => {
-                  router.push(getRoute(`/menu?d=${occurence.fulfillmentDate}`))
+                  router.push(`/menu?d=${occurence.fulfillmentDate}`)
                   dispatch({ type: 'SET_WEEK', payload: occurence })
                }}
             >
                {moment(occurence?.fulfillmentDate)
-                  .subtract(7, 'days')
-                  .format('MMM D')}
+                  .weekday(1)
+                  .format('ddd MMM D')}
                &nbsp;-&nbsp;
-               {moment(occurence?.fulfillmentDate).format('MMM D')}
+               {moment(occurence?.fulfillmentDate)
+                  .add(7, 'day')
+                  .weekday(0)
+                  .format('ddd MMM D')}
             </li>
          ))}
       </ul>

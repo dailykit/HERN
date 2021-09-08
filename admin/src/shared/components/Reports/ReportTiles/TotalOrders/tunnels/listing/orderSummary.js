@@ -51,7 +51,7 @@ const OrderSummaryTable = props => {
                const flattenEachOrder = {}
                flattenEachOrder.orderId = eachOrder.id
                flattenEachOrder.customerName =
-                  eachOrder.customer?.platform_customer_?.fullName || 'N/A'
+                  eachOrder.customer?.platform_customer?.fullName || 'N/A'
                flattenEachOrder.created_at = moment(
                   eachOrder.created_at
                ).format('DD MMM YYYY')

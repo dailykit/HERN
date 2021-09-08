@@ -61,7 +61,7 @@ const OrderRejectTable = () => {
                      eachRejectedData.created_at
                   ).format('DD MM YYYY')
                   flattenData.customerName =
-                     eachRejectedData.customer?.platform_customer_?.fullName ||
+                     eachRejectedData.customer?.platform_customer?.fullName ||
                      'N/A'
                   flattenData.amountPaid = eachRejectedData.amountPaid
                   return flattenData

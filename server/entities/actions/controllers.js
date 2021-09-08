@@ -145,7 +145,7 @@ const FETCH_NUTRITION_INFO = `
          nutritionId
          nutritionalInfo
        }
-   } 
+   }
 `
 
 const UPDATE_NUTRITION_INFO = `
@@ -159,8 +159,8 @@ const UPDATE_NUTRITION_INFO = `
 `
 
 const PLATFORM_CUSTOMER = `
-   query platform_customers($where: platform_customer__bool_exp = {}) {
-      platform_customers: platform_customer_(where: $where) {
+   query platform_customers($where: platform_customer_bool_exp = {}) {
+      platform_customers: platform_customer(where: $where) {
          keycloakId
          firstName
          lastName
@@ -183,9 +183,9 @@ const SEND_EMAIL = `
 const UPDATE_PASSWORD = `
    mutation update_platform_customer(
       $keycloakId: String!
-      $_set: platform_customer__set_input = {}
+      $_set: platform_customer_set_input = {}
    ) {
-      update_platform_customer: update_platform_customer__by_pk(
+      update_platform_customer: update_platform_customer_by_pk(
          pk_columns: { keycloakId: $keycloakId }
          _set: $_set
       ) {

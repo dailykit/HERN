@@ -789,14 +789,14 @@ export const CUSTOMER = {
                   }
                }
             }
-            platform_customer: platform_customer_ {
+            platform_customer: platform_customer {
                email
                firstName
                lastName
                keycloakId
                phoneNumber
-               stripeCustomerId
-               addresses: customerAddresses_(order_by: { created_at: desc }) {
+               paymentCustomerId
+               addresses: customerAddresses(order_by: { created_at: desc }) {
                   id
                   lat
                   lng
@@ -809,7 +809,7 @@ export const CUSTOMER = {
                   label
                   notes
                }
-               paymentMethods: stripePaymentMethods_ {
+               paymentMethods: customerPaymentMethods {
                   brand
                   last4
                   country
@@ -818,7 +818,7 @@ export const CUSTOMER = {
                   funding
                   keycloakId
                   cardHolderName
-                  stripePaymentMethodId
+                  customerPaymentMethodId
                }
             }
          }
@@ -863,14 +863,14 @@ export const CUSTOMER = {
                   }
                }
             }
-            platform_customer: platform_customer_ {
+            platform_customer: platform_customer {
                email
                firstName
                lastName
                keycloakId
                phoneNumber
-               stripeCustomerId
-               addresses: customerAddresses_(order_by: { created_at: desc }) {
+               paymentCustomerId
+               addresses: customerAddresses(order_by: { created_at: desc }) {
                   id
                   lat
                   lng
@@ -883,7 +883,7 @@ export const CUSTOMER = {
                   label
                   notes
                }
-               paymentMethods: stripePaymentMethods_ {
+               paymentMethods: customerPaymentMethods {
                   brand
                   last4
                   country
@@ -892,7 +892,7 @@ export const CUSTOMER = {
                   funding
                   keycloakId
                   cardHolderName
-                  stripePaymentMethodId
+                  customerPaymentMethodId
                }
             }
          }
@@ -1045,7 +1045,7 @@ export const REFERRER = gql`
       ) {
          id
          customer {
-            platform_customer: platform_customer_ {
+            platform_customer: platform_customer {
                firstName
                lastName
             }
@@ -1104,7 +1104,7 @@ export const CUSTOMERS_REFERRED = gql`
       ) {
          id
          customer {
-            platform_customer: platform_customer_ {
+            platform_customer: platform_customer {
                firstName
                lastName
             }
@@ -1249,8 +1249,8 @@ export const OTPS = gql`
 `
 
 export const PLATFORM_CUSTOMERS = gql`
-   query customers($where: platform_customer__bool_exp = {}) {
-      customers: platform_customer_(where: $where) {
+   query customers($where: platform_customer_bool_exp = {}) {
+      customers: platform_customer(where: $where) {
          email
          password
          fullName

@@ -122,7 +122,7 @@ export const create = async (req, res) => {
                statementDescriptor,
                stripeInvoiceId,
                paymentMethodId: paymentMethod,
-               stripeCustomerId,
+               paymentCustomerId,
                requires3dSecure
             } = payload
 
@@ -191,7 +191,7 @@ export const create = async (req, res) => {
                   {
                      amount,
                      currency: CURRENCY.toLowerCase(),
-                     customer: stripeCustomerId,
+                     customer: paymentCustomerId,
                      description: 'Weekly Subscription'
                   },
                   { stripeAccount: organization.stripeAccountId }
@@ -203,7 +203,7 @@ export const create = async (req, res) => {
                }
                const invoice = await _stripe.invoices.create(
                   {
-                     customer: stripeCustomerId,
+                     customer: paymentCustomerId,
                      default_payment_method: paymentMethod,
                      statement_descriptor:
                         statementDescriptor || organization.organizationName,
@@ -265,7 +265,7 @@ export const create = async (req, res) => {
                   currency: CURRENCY.toLowerCase(),
                   confirm: true,
                   on_behalf_of: organization.stripeAccountId,
-                  customer: stripeCustomerId,
+                  customer: paymentCustomerId,
                   payment_method: paymentMethod,
                   transfer_group: transferGroup,
                   statement_descriptor:

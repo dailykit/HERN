@@ -20,12 +20,12 @@ const handleInvoice = async ({ invoice }) => {
       const _stripe = await stripe()
       if (invoice.payment_intent) {
          intent = await _stripe.paymentIntents.retrieve(
-            invoice.payment_intent,
-            (await isConnectedIntegration())
-               ? {
-                    stripeAccount: invoice.metadata.stripeAccountId
-                 }
-               : null
+            invoice.payment_intent
+            // (await isConnectedIntegration())
+            //    ? {
+            //         stripeAccount: invoice.metadata.stripeAccountId
+            //      }
+            //    : null
          )
       }
 

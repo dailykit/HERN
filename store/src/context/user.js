@@ -10,7 +10,7 @@ import {
    LOYALTY_POINTS,
    MUTATIONS,
    WALLETS,
-   BRAND,
+   UPDATE_BRAND_CUSTOMER,
 } from '../graphql'
 import { PageLoader } from '../components'
 import { isClient, processUser, get_env } from '../utils'
@@ -49,8 +49,8 @@ export const UserProvider = ({ children }) => {
    const [createCustomer] = useMutation(MUTATIONS.CUSTOMER.CREATE, {
       onError: error => console.log('createCustomer => error => ', error),
    })
-   const [updateBrandCustomer] = useMutation(BRAND.CUSTOMER.UPDATE, {
-      onError: error => console.log('createCustomer => error => ', error),
+   const [updateBrandCustomer] = useMutation(UPDATE_BRAND_CUSTOMER, {
+      onError: error => console.log('updateBrandCustomer => error => ', error),
    })
    const [state, dispatch] = React.useReducer(reducers, {
       isAuthenticated: false,

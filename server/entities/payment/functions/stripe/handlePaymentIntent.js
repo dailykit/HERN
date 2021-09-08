@@ -18,12 +18,12 @@ const handlePaymentIntent = async ({ intent, stripeAccountId }) => {
    try {
       const _stripe = await stripe()
       const invoice = await _stripe.invoices.retrieve(
-         intent.invoice,
-         (await isConnectedIntegration())
-            ? {
-                 stripeAccount: stripeAccountId
-              }
-            : null
+         intent.invoice
+         // (await isConnectedIntegration())
+         //    ? {
+         //         stripeAccount: stripeAccountId
+         //      }
+         //    : null
       )
 
       await client.request(UPDATE_CART_PAYMENT, {

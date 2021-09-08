@@ -245,8 +245,8 @@ const PROVIDERS = `
 `
 
 const CUSTOMERS = `
-   query customers($where: platform_customer__bool_exp = {}) {
-      customers: platform_customer_(where: $where) {
+   query customers($where: platform_customer_bool_exp = {}) {
+      customers: platform_customer(where: $where) {
          email
          password
          fullName
@@ -256,16 +256,16 @@ const CUSTOMERS = `
 `
 
 const INSERT_CUSTOMER = `
-   mutation insertCustomer($object: platform_customer__insert_input!) {
-      insertCustomer: insert_platform_customer__one(object: $object) {
+   mutation insertCustomer($object: platform_customer_insert_input!) {
+      insertCustomer: insert_platform_customer_one(object: $object) {
          id: keycloakId
       }
    }
 `
 
 const PLATFORM_CUSTOMER = `
-   query platform_customer($where: platform_customer__bool_exp = {}) {
-      platform_customer: platform_customer_(where: $where) {
+   query platform_customer($where: platform_customer_bool_exp = {}) {
+      platform_customer: platform_customer(where: $where) {
          id: keycloakId
       }
    }
