@@ -32,7 +32,8 @@ export const processUser = (customer, stripeAccountType = '') => {
       )
 
       sub.defaultPaymentMethod = rest?.platform_customer?.paymentMethods.find(
-         method => method.stripePaymentMethodId === subscriptionPaymentMethodId
+         method =>
+            method.customerPaymentMethodId === subscriptionPaymentMethodId
       )
    }
    return { ...rest, ...sub }

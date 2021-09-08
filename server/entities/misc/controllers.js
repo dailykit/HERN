@@ -267,89 +267,89 @@ const ENVS = `
 /*
 used to create env config files and populate with relevant envs
 */
-export const populate_env = (req, res) => {
-   try {
-      const data = createEnvFiles()
-      if (!data) {
-         throw Error('No envs found!')
-      }
-      return res.status(200).json({
-         success: true,
-         data: data
-      })
-   } catch (error) {
-      return res.status(404).json({ success: false, error: error.message })
-   }
-}
 
 export const createEnvFiles = async () => {
    const { envs } = await client.request(ENVS)
    if (isEmpty(envs)) {
       return null
-   } else {
-      const grouped = groupBy(envs, 'belongsTo')
+   }
+   const grouped = groupBy(envs, 'belongsTo')
 
-      const server = {}
+   const server = {}
 
-      get(grouped, 'server', {}).forEach(node => {
-         server[node.title] = node.value
-      })
+   get(grouped, 'server', {}).forEach(node => {
+      server[node.title] = node.value
+   })
 
-      writeFileSync(
-         path.join(__dirname, '../../../', 'config.js'),
-         'module.exports = ' + JSON.stringify(server, null, 2)
-      )
+   writeFileSync(
+      path.join(__dirname, '../../../', 'config.js'),
+      `module.exports = ${JSON.stringify(server, null, 2)}`
+   )
 
-      const store = {}
+   const store = {}
 
-      get(grouped, 'store', {}).forEach(node => {
-         store[node.title] = node.value
-      })
+   get(grouped, 'store', {}).forEach(node => {
+      store[node.title] = node.value
+   })
 
-      const PATH_TO_SUBS = path.join(
+   const PATH_TO_SUBS = path.join(
+      __dirname,
+      '../../../',
+      'store',
+      'public',
+      'env-config.js'
+   )
+
+   writeFileSync(
+      PATH_TO_SUBS,
+      `window._env_ = ${JSON.stringify(store, null, 2)}`
+   )
+
+   const admin = {}
+
+   get(grouped, 'admin', []).forEach(node => {
+      admin[node.title] = node.value
+   })
+
+   if (process.env.NODE_ENV === 'development') {
+      const PATH_TO_ADMIN = path.join(
          __dirname,
          '../../../',
-         'store',
+         'admin',
          'public',
          'env-config.js'
       )
-
       writeFileSync(
-         PATH_TO_SUBS,
-         'window._env_ = ' + JSON.stringify(store, null, 2)
+         PATH_TO_ADMIN,
+         `window._env_ = ${JSON.stringify(admin, null, 2)}`
       )
+   } else {
+      const PATH_TO_ADMIN = path.join(
+         __dirname,
+         '../../../',
+         'admin',
+         'build',
+         'env-config.js'
+      )
+      writeFileSync(
+         PATH_TO_ADMIN,
+         `window._env_ = ${JSON.stringify(admin, null, 2)}`
+      )
+   }
+   return { server, store, admin }
+}
 
-      const admin = {}
-
-      get(grouped, 'admin', []).forEach(node => {
-         admin[node.title] = node.value
-      })
-
-      if (process.env.NODE_ENV === 'development') {
-         const PATH_TO_ADMIN = path.join(
-            __dirname,
-            '../../../',
-            'admin',
-            'public',
-            'env-config.js'
-         )
-         writeFileSync(
-            PATH_TO_ADMIN,
-            'window._env_ = ' + JSON.stringify(admin, null, 2)
-         )
-      } else {
-         const PATH_TO_ADMIN = path.join(
-            __dirname,
-            '../../../',
-            'admin',
-            'build',
-            'env-config.js'
-         )
-         writeFileSync(
-            PATH_TO_ADMIN,
-            'window._env_ = ' + JSON.stringify(admin, null, 2)
-         )
+export const populate_env = async (req, res) => {
+   try {
+      const data = await createEnvFiles()
+      if (!data) {
+         throw Error('No envs found!')
       }
-      return { server, store, admin }
+      return res.status(200).json({
+         success: true,
+         data
+      })
+   } catch (error) {
+      return res.status(404).json({ success: false, error: error.message })
    }
 }

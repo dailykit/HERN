@@ -26,7 +26,7 @@ const CardList = ({ closeTunnel, onSelect }) => {
             <div
                className="hern-card-list__card"
                onClick={() => selectCard(card)}
-               key={card.stripePaymentMethodId}
+               key={card.customerPaymentMethodId}
             >
                <p className="hern-card-list__card__name">
                   {card.cardHolderName}

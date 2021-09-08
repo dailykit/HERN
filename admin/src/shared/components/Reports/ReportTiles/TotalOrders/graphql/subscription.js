@@ -15,7 +15,7 @@ export const ORDER_SUMMARY = gql`
          id
          fulfillmentTimestamp
          customer {
-            platform_customer_ {
+            platform_customer {
                fullName
             }
          }

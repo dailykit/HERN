@@ -317,7 +317,7 @@ export const SUBSCRIPTION_CUSTOMERS = gql`
                isSubscriptionCancelled
                customer {
                   email
-                  platform_customer: platform_customer_ {
+                  platform_customer: platform_customer {
                      lastName
                      firstName
                      phoneNumber

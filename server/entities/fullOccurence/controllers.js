@@ -221,8 +221,8 @@ export const actionFullOccurenceReport = async (req, res) => {
             }
             occurence.brandCustomerId = each.id
             occurence.email = each.customer.email
-            occurence.fullName = each.customer.platform_customer_
-               ? each.customer.platform_customer_.fullName
+            occurence.fullName = each.customer.platform_customer
+               ? each.customer.platform_customer.fullName
                : 'N/A'
             // occurence.fullName = 'Rahul'
             occurence.skipAtThisStage = skipAtThisStage

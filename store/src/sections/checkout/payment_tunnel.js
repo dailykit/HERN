@@ -7,7 +7,7 @@ import { useUser } from '../../context'
 import { Tunnel } from '../../components'
 import { PaymentForm } from './payment_form'
 import { CloseIcon } from '../../assets/icons'
-import { isClient } from '../../utils'
+import { isClient, get_env } from '../../utils'
 import { useConfig } from '../../lib'
 
 export const PaymentTunnel = () => {
@@ -26,13 +26,14 @@ export const PaymentTunnel = () => {
    }
 
    React.useEffect(() => {
-      if (user?.platform_customer?.stripeCustomerId && isClient) {
+      console.log({ user })
+      if (user?.platform_customer?.paymentCustomerId && isClient) {
          ;(async () => {
             const intent = await createSetupIntent(
-               user?.platform_customer?.stripeCustomerId,
+               user?.platform_customer?.paymentCustomerId,
                organization
             )
-
+            console.log({ intent })
             setIntent(intent)
          })()
       }
@@ -68,9 +69,11 @@ const createSetupIntent = async (customer, organization = {}) => {
       ) {
          stripeAccountId = organization?.stripeAccountId
       }
-      const DATAHUB = get_env('DATA_HUB_HTTPS')
-      const url = `${new URL(DATAHUB).origin}/api/setup-intent`
+      console.log({ customer, organization })
+      const origin = isClient ? window.location.origin : ''
+      const url = `${origin}/server/api/payment/setup-intent`
       const { data } = await axios.post(url, { customer, stripeAccountId })
+      console.log({ data: data.data })
       return data.data
    } catch (error) {
       return error

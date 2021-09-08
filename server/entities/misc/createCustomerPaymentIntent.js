@@ -58,7 +58,7 @@
 //                      transferGroup: `${cart.id}`,
 //                      paymentMethod: customer.paymentMethod,
 //                      onBehalfOf: organization.stripeAccountId,
-//                      stripeCustomerId: customer.stripeCustomerId,
+//                      paymentCustomerId: customer.paymentCustomerId,
 //                      currency: CURRENCY.toLowerCase(),
 //                      stripeAccountType: organization.stripeAccountType
 //                   }
@@ -141,7 +141,7 @@
 //          transferGroup
 //          paymentMethod
 //          stripeInvoiceId
-//          stripeCustomerId
+//          paymentCustomerId
 //          stripeAccountType
 //          invoiceSendAttempt
 //          paymentRetryAttempt
