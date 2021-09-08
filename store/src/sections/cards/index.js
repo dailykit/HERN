@@ -79,7 +79,7 @@ const Content = () => {
          return
       }
       deleteStripePaymentMethod({
-         variables: { stripePaymentMethodId: id },
+         variables: { paymentMethodId: id },
       })
    }
 
@@ -95,7 +95,7 @@ const Content = () => {
                },
             },
             _set: {
-               subscriptionPaymentMethodId: method.stripePaymentMethodId,
+               subscriptionPaymentMethodId: method.paymentMethodId,
             },
          },
       })
@@ -120,13 +120,13 @@ const Content = () => {
                   <PaymentMethods>
                      {user?.platform_customer?.paymentMethods.map(method => (
                         <li
-                           key={method.stripePaymentMethodId}
+                           key={method.paymentMethodId}
                            tw="flex border text-gray-700"
                         >
                            <section tw="p-2 w-full">
                               <header tw="mb-2 w-full flex justify-between items-center">
                                  {user.subscriptionPaymentMethodId ===
-                                 method.stripePaymentMethodId ? (
+                                 method.paymentMethodId ? (
                                     <span tw="rounded border bg-teal-200 border-teal-300 px-2 text-teal-700">
                                        Default
                                     </span>
@@ -142,7 +142,7 @@ const Content = () => {
                                     className="group"
                                     onClick={() =>
                                        deletePaymentMethod(
-                                          method.stripePaymentMethodId
+                                          method.paymentMethodId
                                        )
                                     }
                                     tw="flex items-center justify-center border border-red-400 rounded h-6 w-6 hover:bg-red-400"
@@ -200,10 +200,10 @@ export const PaymentTunnel = ({ tunnel, toggleTunnel }) => {
    const [intent, setIntent] = React.useState(null)
 
    React.useEffect(() => {
-      if (user?.platform_customer?.stripeCustomerId && isClient) {
+      if (user?.platform_customer?.paymentCustomerId && isClient) {
          ;(async () => {
             const intent = await createSetupIntent(
-               user?.platform_customer?.stripeCustomerId,
+               user?.platform_customer?.paymentCustomerId,
                organization
             )
             setIntent(intent)
@@ -245,10 +245,8 @@ export const PaymentForm = ({ intent, toggleTunnel }) => {
    const handleResult = async ({ setupIntent }) => {
       try {
          if (setupIntent.status === 'succeeded') {
-            const DATAHUB = isClient ? get_env('DATA_HUB_HTTPS') : ''
-            let url = `${new URL(DATAHUB).origin}/api/payment-method/${
-               setupIntent.payment_method
-            }`
+            const origin = isClient ? window.location.origin : ''
+            let url = `${origin}/server/api/payment/payment-method/${setupIntent.payment_method}`
             if (
                organization.stripeAccountType === 'standard' &&
                organization.stripeAccountId
@@ -269,10 +267,10 @@ export const PaymentForm = ({ intent, toggleTunnel }) => {
                         expYear: data.card.exp_year,
                         cvcCheck: data.card.cvc_check,
                         expMonth: data.card.exp_month,
-                        stripePaymentMethodId: data.id,
+                        paymentMethodId: data.id,
                         cardHolderName: data.billing_details.name,
-                        stripeCustomerId:
-                           user.platform_customer?.stripeCustomerId,
+                        paymentCustomerId:
+                           user.platform_customer?.paymentCustomerId,
                      },
                   },
                })
@@ -425,8 +423,8 @@ const createSetupIntent = async (customer, organization = {}) => {
       ) {
          stripeAccountId = organization?.stripeAccountId
       }
-      const DATAHUB = get_env('DATA_HUB_HTTPS')
-      const url = `${new URL(DATAHUB).origin}/api/setup-intent`
+      const origin = isClient ? window.location.origin : ''
+      const url = `${origin}/server/api/payment/setup-intent`
       const { data } = await axios.post(url, { customer, stripeAccountId })
       return data.data
    } catch (error) {
@@ -453,7 +451,7 @@ const Title = styled.h2(
 
 const PaymentMethods = styled.ul`
    ${tw`
-   grid 
+   grid
    gap-2
    sm:grid-cols-1
    md:grid-cols-2

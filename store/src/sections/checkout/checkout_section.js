@@ -124,7 +124,7 @@ const PaymentContent = () => {
                   }
                   setOverlayMessage(messages['SUCCEEDED'])
                   addToast(messages['SUCCEEDED'], { appearance: 'success' })
-                  navigate(`/get-started/placing-order?id=${cart.id}`)
+                  router.push(`/get-started/placing-order?id=${cart.id}`)
                } else if (status === 'PAYMENT_FAILED') {
                   toggleOverlay(false)
                   addToast(messages['PAYMENT_FAILED'], {
@@ -417,7 +417,6 @@ const PaymentContent = () => {
       </Main>
    )
 }
-
 
 const Overlay = styled.section`
    ${tw`fixed flex flex-col inset-0`};

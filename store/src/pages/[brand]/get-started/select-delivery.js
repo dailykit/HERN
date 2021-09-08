@@ -23,7 +23,7 @@ const SelectDelivery = props => {
 
    React.useEffect(() => {
       if (isClient && !localStorage.getItem('plan')) {
-         navigate('/get-started/select-plan')
+         router.push('/get-started/select-plan')
       }
    }, [])
 

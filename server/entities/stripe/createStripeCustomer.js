@@ -19,7 +19,7 @@ export const createStripeCustomer = async (req, res) => {
 
       await client.request(UPDATE_PLATFORM_CUSTOMER, {
          keycloakId,
-         _set: { stripeCustomerId: response.id }
+         _set: { paymentCustomerId: response.id }
       })
 
       return res.status(200).json({
@@ -34,7 +34,7 @@ export const createStripeCustomer = async (req, res) => {
 
 const CUSTOMER = `
    query customer($keycloakId: String!) {
-      customer: platform_customer__by_pk(keycloakId: $keycloakId) {
+      customer: platform_customer_by_pk(keycloakId: $keycloakId) {
          email
          firstName
          lastName
@@ -45,9 +45,9 @@ const CUSTOMER = `
 const UPDATE_PLATFORM_CUSTOMER = `
    mutation update_platform_customer(
       $keycloakId: String!
-      $_set: platform_customer__set_input = {}
+      $_set: platform_customer_set_input = {}
    ) {
-      update_platform_customer: update_platform_customer__by_pk(
+      update_platform_customer: update_platform_customer_by_pk(
          pk_columns: { keycloakId: $keycloakId }
          _set: $_set
       ) {

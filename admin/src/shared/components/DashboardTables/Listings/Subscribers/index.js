@@ -46,14 +46,13 @@ const SubscribersTable = () => {
                   subscriptionData.data.brandCustomers.map(customer => {
                      const flatCustomer = {}
                      flatCustomer.fullName =
-                        customer.customer.platform_customer_.fullName || 'N/A'
+                        customer.customer.platform_customer.fullName || 'N/A'
                      flatCustomer.created_at =
-                        customer.customer.platform_customer_.created_at || 'N/A'
+                        customer.customer.platform_customer.created_at || 'N/A'
                      flatCustomer.email =
-                        customer.customer.platform_customer_.email || 'N/A'
+                        customer.customer.platform_customer.email || 'N/A'
                      flatCustomer.phoneNumber =
-                        customer.customer.platform_customer_.phoneNumber ||
-                        'N/A'
+                        customer.customer.platform_customer.phoneNumber || 'N/A'
                      return flatCustomer
                   })
                setSubscriberList(flatBrandCustomerData)

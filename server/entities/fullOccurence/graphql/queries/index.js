@@ -37,7 +37,7 @@ query FullOccurenceReport {
           id
         }
       }
-      
+
       upcomingOccurences: activeSubscriptionOccurenceCustomers(where: {subscriptionOccurence: {cutoffTimeStamp: {_gte: "now()"}, startTimeStamp: {_lte: "now()"}}}) {
         subscriptionOccurence {
           id
@@ -119,7 +119,7 @@ export const HASURA_OPERATION = `
       }
       customer {
         email
-        platform_customer_ {
+        platform_customer {
           fullName
         }
       }
@@ -153,7 +153,7 @@ export const HASURA_OPERATION = `
         }
         customer {
           email
-          platform_customer_ {
+          platform_customer {
             fullName
           }
         }

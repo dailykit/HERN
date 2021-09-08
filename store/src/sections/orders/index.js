@@ -131,7 +131,7 @@ const Details = () => {
    }
 
    const paymentMethod = user?.platform_customer?.paymentMethods.find(
-      node => node.stripePaymentMethodId === order?.cart?.paymentMethodId
+      node => node.paymentMethodId === order?.cart?.paymentMethodId
    )
    const theme = configOf('theme-color', 'Visual')
 

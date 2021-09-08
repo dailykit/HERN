@@ -31,9 +31,10 @@ export const PaymentForm = ({ intent }) => {
 
    const handleResult = async ({ setupIntent }) => {
       try {
+         console.log({ setupIntent })
          if (setupIntent.status === 'succeeded') {
-            const DATAHUB = isClient ? get_env('DATA_HUB_HTTPS') : ''
-            let url = `${new URL(DATAHUB).origin}/api/payment-method/${setupIntent.payment_method}`
+            const origin = isClient ? window.location.origin : ''
+            let url = `${origin}/server/api/payment/payment-method/${setupIntent.payment_method}`
             if (
                organization.stripeAccountType === 'standard' &&
                organization.stripeAccountId
@@ -54,10 +55,10 @@ export const PaymentForm = ({ intent }) => {
                         expYear: data.card.exp_year,
                         cvcCheck: data.card.cvc_check,
                         expMonth: data.card.exp_month,
-                        stripePaymentMethodId: data.id,
+                        paymentMethodId: data.id,
                         cardHolderName: data.billing_details.name,
-                        stripeCustomerId:
-                           user.platform_customer?.stripeCustomerId,
+                        paymentCustomerId:
+                           user.platform_customer?.paymentCustomerId,
                      },
                   },
                })
@@ -121,6 +122,7 @@ export const PaymentForm = ({ intent }) => {
 }
 
 const CardSetupForm = ({ intent, handleResult }) => {
+   console.log('CardSetupForm', intent)
    const stripe = useStripe()
    const elements = useElements()
    const inputRef = React.useRef(null)

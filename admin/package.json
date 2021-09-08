@@ -78,11 +78,7 @@
       "start": "SET PORT=8000 && SET SKIP_PREFLIGHT_CHECK=true&&react-scripts start",
       "build": "react-scripts build",
       "test": "react-scripts test",
-      "eject": "react-scripts eject",
-      "lint:graphql": "eslint src/**/graphql/*.js"
-   },
-   "eslintConfig": {
-      "extends": "react-app"
+      "eject": "react-scripts eject"
    },
    "browserslist": {
       "production": [

@@ -12,8 +12,8 @@ import { isEmpty } from 'lodash'
 import Banner from '../Banner'
 
 const INSERT_ADDRESS = gql`
-   mutation insertAddress($object: platform_customerAddress__insert_input!) {
-      insertAddress: insert_platform_customerAddress__one(
+   mutation insertAddress($object: platform_customerAddress_insert_input!) {
+      insertAddress: insert_platform_customerAddress_one(
          object: $object
          on_conflict: {
             constraint: customerAddress__pkey
