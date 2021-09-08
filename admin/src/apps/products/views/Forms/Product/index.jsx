@@ -258,7 +258,7 @@ const Product = () => {
                      {state.isValid?.status ? (
                         <Flex container alignItems="center">
                            <TickIcon color="#00ff00" stroke={2} />
-                           <Text as="p">All good!</Text>
+                           <Text as="p" style={{marginBottom: '0'}}>All good!</Text>
                         </Flex>
                      ) : (
                         <Flex container alignItems="center">
