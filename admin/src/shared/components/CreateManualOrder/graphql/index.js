@@ -25,7 +25,7 @@ export const MUTATIONS = {
                   object: $object
                ) {
                   keycloakId
-                  customerPaymentMethodId
+                  paymentMethodId
                }
             }
          `,

@@ -3,6 +3,7 @@ node_modules
 .DS_Store
 .vscode
 todo*
-
+*.txt
+schema.json
 /config.js
 templates

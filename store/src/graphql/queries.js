@@ -818,7 +818,7 @@ export const CUSTOMER = {
                   funding
                   keycloakId
                   cardHolderName
-                  customerPaymentMethodId
+                  paymentMethodId
                }
             }
          }
@@ -892,7 +892,7 @@ export const CUSTOMER = {
                   funding
                   keycloakId
                   cardHolderName
-                  customerPaymentMethodId
+                  paymentMethodId
                }
             }
          }

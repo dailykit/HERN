@@ -52,7 +52,7 @@ const PaymentCard = () => {
       if (state.occurenceCustomer?.cart?.paymentMethodId) {
          const index = user?.platform_customer?.paymentMethods.findIndex(
             pm =>
-               pm.customerPaymentMethodId ===
+               pm.paymentMethodId ===
                state.occurenceCustomer?.cart?.paymentMethodId
          )
          if (index !== -1) {
@@ -126,7 +126,7 @@ const PaymentCard = () => {
                   updateCart({
                      variables: {
                         id: state.occurenceCustomer?.cart?.id,
-                        _set: { paymentMethodId: card.customerPaymentMethodId },
+                        _set: { paymentMethodId: card.paymentMethodId },
                      },
                   }).then(() => {
                      addToast('Payment card updated!', {

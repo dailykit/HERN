@@ -1007,7 +1007,7 @@ export const CUSTOMER_PAYMENT_METHODS = gql`
                expMonth
                country
                name: cardHolderName
-               id: customerPaymentMethodId
+               id: paymentMethodId
             }
          }
       }
