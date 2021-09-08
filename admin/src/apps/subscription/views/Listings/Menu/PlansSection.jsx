@@ -1,9 +1,18 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import moment from 'moment'
 import { isEmpty } from 'lodash'
 import styled from 'styled-components'
 import { useSubscription } from '@apollo/react-hooks'
-import { Text, Form, Flex, TextButton, useTunnel } from '@dailykit/ui'
+import {
+   Text,
+   Form,
+   Flex,
+   TextButton,
+   ButtonGroup,
+   useTunnel,
+   Checkbox,
+   Spacer,
+} from '@dailykit/ui'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 
 import { useMenu } from './state'
@@ -21,16 +30,19 @@ const PlansSection = () => {
    const [subscriptionId, setSubscriptionId] = React.useState(null)
    const [addOnTunnels, openAddOnTunnel, closeAddOnTunnel] = useTunnel(1)
    const [menuTunnels, openMenuTunnel, closeMenuTunnel] = useTunnel(1)
-   const {
-      loading,
-      data: { subscriptionOccurences = {} } = {},
-   } = useSubscription(SUBSCRIPTION_OCCURENCES, {
-      variables: {
-         fulfillmentDate: {
-            _in: state.dates.map(date => moment(date).format('YYYY-MM-DD')),
+   const [selectedRows, setSelectedRows] = useState([])
+   const [checked, setChecked] = useState(false)
+   const { loading, data: { subscriptionOccurences = {} } = {} } =
+      useSubscription(SUBSCRIPTION_OCCURENCES, {
+         variables: {
+            fulfillmentDate: {
+               _in: state.dates.map(date => moment(date).format('YYYY-MM-DD')),
+            },
          },
-      },
-   })
+         onSubscriptionData: () => {
+            setSelectedRows([])
+         },
+      })
 
    const editAddOns = (e, { _cell = {} }) => {
       const data = _cell.row.getData()
@@ -175,24 +187,18 @@ const PlansSection = () => {
       ],
       []
    )
-   const handleRowSelection = row => {
-      const data = row.getData()
-      if (row.isSelected()) {
-         dispatch({
-            type: 'SET_PLAN',
-            payload: {
-               occurence: { id: data.id },
-               subscription: { id: data.subscription.id },
-               item: { count: data.subscription.itemCount.count },
-               serving: { size: data.subscription.itemCount.serving.size },
-            },
-         })
-      } else {
-         dispatch({
-            type: 'REMOVE_PLAN',
-            payload: data.id,
-         })
-      }
+   const handleRowSelection = ({ _row }) => {
+      const data = _row.getData()
+      setSelectedRows(prevState => [...prevState, data])
+      dispatch({
+         type: 'SET_PLAN',
+         payload: {
+            occurence: { id: data.id },
+            subscription: { id: data.subscription.id },
+            item: { count: data.subscription.itemCount.count },
+            serving: { size: data.subscription.itemCount.serving.size },
+         },
+      })
    }
    const handleRowValidation = row => {
       if (!localStorage.getItem('serving_size')) return true
@@ -201,6 +207,78 @@ const PlansSection = () => {
          Number(localStorage.getItem('serving_size'))
       )
    }
+   const handleRowDeselection = ({ _row }) => {
+      const data = _row.getData()
+      setSelectedRows(prevState => prevState.filter(row => row.id !== data.id))
+      dispatch({
+         type: 'REMOVE_PLAN',
+         payload: data.id,
+      })
+   }
+   const handleMultipleRowSelection = () => {
+      setChecked(!checked)
+      if (!checked) {
+         tableRef.current.table.selectRow('active')
+         let multipleRowData = tableRef.current.table.getSelectedData()
+         let dataForDispatch = multipleRowData.map(data => ({
+            occurence: { id: data.id },
+            subscription: { id: data.subscription.id },
+            item: { count: data.subscription.itemCount.count },
+            serving: { size: data.subscription.itemCount.serving.size },
+         }))
+         dataForDispatch.forEach(data => {
+            dispatch({
+               type: 'SET_PLAN',
+               payload: data,
+            })
+         })
+         setSelectedRows(multipleRowData)
+      } else {
+         tableRef.current.table.deselectRow()
+         dispatch({
+            type: 'CLEAR_STATE',
+         })
+         setSelectedRows([])
+      }
+   }
+   const removeSelectedPlans = () => {
+      setChecked(false)
+      setSelectedRows([])
+      tableRef.current.table.deselectRow()
+      dispatch({
+         type: 'CLEAR_STATE',
+      })
+   }
+   //change column according to selected rows
+   const selectionColumn =
+      selectedRows.length > 0 &&
+      selectedRows.length < subscriptionOccurences.nodes.length
+         ? {
+              formatter: 'rowSelection',
+              titleFormatter: reactFormatter(
+                 <CrossBox removeSelectedPlans={removeSelectedPlans} />
+              ),
+              align: 'center',
+              hozAlign: 'center',
+              width: 10,
+              headerSort: false,
+              frozen: true,
+           }
+         : {
+              formatter: 'rowSelection',
+              titleFormatter: reactFormatter(
+                 <CheckBox
+                    checked={checked}
+                    handleMultipleRowSelection={handleMultipleRowSelection}
+                 />
+              ),
+              align: 'center',
+              hozAlign: 'center',
+              width: 20,
+              headerSort: false,
+              frozen: true,
+           }
+
    return (
       <Wrapper>
          <Flex
@@ -242,17 +320,37 @@ const PlansSection = () => {
             <Text as="h3">Select a date to view plans.</Text>
          )}
          {isEmpty(state.dates) && loading && <InlineLoader />}
+         <Flex container justifyContent="space-between" alignItems="center">
+            <Text as="helpText" style={{ marginBottom: '0em' }}>
+               {selectedRows.length > 0 &&
+                  `${selectedRows.length} ${
+                     selectedRows.length == 1 ? 'plan' : 'plans'
+                  } selected`}
+            </Text>
+            {state && !loading && subscriptionOccurences?.aggregate?.count > 0 && (
+               <ButtonGroup align="left">
+                  <TextButton
+                     type="ghost"
+                     size="sm"
+                     onClick={() => tableRef.current.table.clearHeaderFilter()}
+                  >
+                     Clear Filters
+                  </TextButton>
+               </ButtonGroup>
+            )}
+         </Flex>
+         <Spacer size="10px" />
          {state && !loading && subscriptionOccurences?.aggregate?.count > 0 && (
             <ReactTabulator
                ref={tableRef}
-               columns={columns}
+               columns={[selectionColumn, ...columns]}
+               selectableCheck={() => true}
                rowSelected={handleRowSelection}
-               rowDeselected={handleRowSelection}
+               rowDeselected={handleRowDeselection}
                data={subscriptionOccurences.nodes}
-               selectableCheck={handleRowValidation}
+               // selectableCheck={handleRowValidation}
                options={{
                   ...tableOptions,
-                  selectable: true,
                   reactiveData: true,
                   groupBy:
                      'subscription.itemCount.serving.subscriptionTitle.title',
@@ -307,3 +405,25 @@ const AddOnProductsCount = ({ cell: { _cell } }) => {
 const Wrapper = styled.main`
    padding: 0 16px;
 `
+const CrossBox = ({ removeSelectedPlans }) => {
+   return (
+      <Checkbox
+         id="label"
+         checked={false}
+         onChange={removeSelectedPlans}
+         isAllSelected={false}
+      />
+   )
+}
+const CheckBox = ({ handleMultipleRowSelection, checked }) => {
+   return (
+      <Checkbox
+         id="label"
+         checked={checked}
+         onChange={() => {
+            handleMultipleRowSelection()
+         }}
+         isAllSelected={null}
+      />
+   )
+}
