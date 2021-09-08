@@ -245,11 +245,8 @@ export const PaymentForm = ({ intent, toggleTunnel }) => {
    const handleResult = async ({ setupIntent }) => {
       try {
          if (setupIntent.status === 'succeeded') {
-            const DATAHUB = isClient ? get_env('DATA_HUB_HTTPS') : ''
-            // let url = `${new URL(DATAHUB).origin}/api/payment-method/${
-            //    setupIntent.payment_method
-            // }`
-            let url = `https://dailyos-backend.ngrok.io/server/api/payment/payment-method/${setupIntent.payment_method}`
+            const origin = isClient ? window.location.origin : ''
+            let url = `${origin}/server/api/payment/payment-method/${setupIntent.payment_method}`
             if (
                organization.stripeAccountType === 'standard' &&
                organization.stripeAccountId
@@ -426,9 +423,8 @@ const createSetupIntent = async (customer, organization = {}) => {
       ) {
          stripeAccountId = organization?.stripeAccountId
       }
-      const DATAHUB = get_env('DATA_HUB_HTTPS')
-      // const url = `${new URL(DATAHUB).origin}/api/setup-intent`
-      const url = `https://dailyos-backend.ngrok.io/server/api/payment/setup-intent`
+      const origin = isClient ? window.location.origin : ''
+      const url = `${origin}/server/api/payment/setup-intent`
       const { data } = await axios.post(url, { customer, stripeAccountId })
       return data.data
    } catch (error) {

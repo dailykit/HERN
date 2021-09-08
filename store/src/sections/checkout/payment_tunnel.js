@@ -70,9 +70,8 @@ const createSetupIntent = async (customer, organization = {}) => {
          stripeAccountId = organization?.stripeAccountId
       }
       console.log({ customer, organization })
-      const DATAHUB = get_env('DATA_HUB_HTTPS')
-      // const url = `${new URL(DATAHUB).origin}/api/setup-intent`
-      const url = `https://dailyos-backend.ngrok.io/server/api/payment/setup-intent`
+      const origin = isClient ? window.location.origin : ''
+      const url = `${origin}/server/api/payment/setup-intent`
       const { data } = await axios.post(url, { customer, stripeAccountId })
       console.log({ data: data.data })
       return data.data
