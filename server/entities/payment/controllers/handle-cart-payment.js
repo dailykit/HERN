@@ -109,6 +109,23 @@ export const handleCartPayment = async (req, res) => {
             console.log({ createCartPayment })
             res.status(200).json(createCartPayment)
          }
+      } else if (cart.balancePayment === 0) {
+         res.status(200).json({
+            success: true,
+            message: 'No balance payment'
+         })
+      } else if (cart.balancePayment < 0) {
+         res.status(200).json({
+            success: true,
+            message: 'This is a refund related case'
+         })
+         // handle refund initiate here
+      } else {
+         res.status(500).json({
+            success: false,
+            message: 'Invalid balance payment'
+         })
+         throw new Error('Invalid balance payment')
       }
    } catch (error) {
       console.log(error)
