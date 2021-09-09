@@ -263,7 +263,7 @@ const AddedToOccurence = ({ columns, occurenceId, remove }) => {
       }
    }
 
-   const removeSelectedRecipes = () => {
+   const removeSelectedProducts = () => {
       setChecked(false)
       setSelectedRows([])
       tableRef.current.table.deselectRow()
@@ -331,7 +331,7 @@ const AddedToOccurence = ({ columns, occurenceId, remove }) => {
          ? {
               formatter: 'rowSelection',
               titleFormatter: reactFormatter(
-                 <CrossBox removeSelectedRecipes={removeSelectedRecipes} />
+                 <CrossBox removeSelectedProducts={removeSelectedProducts} />
               ),
               align: 'center',
               hozAlign: 'center',
@@ -409,7 +409,7 @@ const AddedToSubscription = ({ columns, subscriptionId }) => {
       }
    }
 
-   const removeSelectedRecipes = () => {
+   const removeSelectedProducts = () => {
       setChecked(false)
       setSelectedRows([])
       tableRef.current.table.deselectRow()
@@ -482,7 +482,7 @@ const AddedToSubscription = ({ columns, subscriptionId }) => {
          ? {
               formatter: 'rowSelection',
               titleFormatter: reactFormatter(
-                 <CrossBox removeSelectedRecipes={removeSelectedRecipes} />
+                 <CrossBox removeSelectedProducts={removeSelectedProducts} />
               ),
               align: 'center',
               hozAlign: 'center',
@@ -713,10 +713,10 @@ const ActionBar = props => {
             >
                <Text as="subtitle">
                   {selectedRows.length == 0
-                     ? 'No recipe'
+                     ? 'No product'
                      : selectedRows.length == 1
-                     ? `${selectedRows.length} recipe`
-                     : `${selectedRows.length} recipes`}{' '}
+                     ? `${selectedRows.length} product`
+                     : `${selectedRows.length} products`}{' '}
                   selected
                </Text>
 
@@ -748,12 +748,12 @@ const ActionBar = props => {
    )
 }
 
-const CrossBox = ({ removeSelectedRecipes }) => {
+const CrossBox = ({ removeSelectedProducts }) => {
    return (
       <Checkbox
          id="label"
          checked={false}
-         onChange={removeSelectedRecipes}
+         onChange={removeSelectedProducts}
          isAllSelected={false}
       />
    )

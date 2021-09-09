@@ -209,7 +209,7 @@ export const CREATE_STRIPE_PAYMENT_METHOD = gql`
          object: $object
       ) {
          keycloakId
-         customerPaymentMethodId
+         paymentMethodId
       }
    }
 `
@@ -382,11 +382,11 @@ export const DELETE_CUSTOMER_ADDRESS = gql`
 `
 
 export const DELETE_STRIPE_PAYMENT_METHOD = gql`
-   mutation deletePaymentMethod($customerPaymentMethodId: String!) {
+   mutation deletePaymentMethod($paymentMethodId: String!) {
       deletePaymentMethod: delete_platform_customerPaymentMethod_by_pk(
-         customerPaymentMethodId: $customerPaymentMethodId
+         paymentMethodId: $paymentMethodId
       ) {
-         customerPaymentMethodId
+         paymentMethodId
       }
    }
 `

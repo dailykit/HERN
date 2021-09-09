@@ -79,7 +79,7 @@ const Content = () => {
          return
       }
       deleteStripePaymentMethod({
-         variables: { customerPaymentMethodId: id },
+         variables: { paymentMethodId: id },
       })
    }
 
@@ -95,7 +95,7 @@ const Content = () => {
                },
             },
             _set: {
-               subscriptionPaymentMethodId: method.customerPaymentMethodId,
+               subscriptionPaymentMethodId: method.paymentMethodId,
             },
          },
       })
@@ -120,13 +120,13 @@ const Content = () => {
                   <PaymentMethods>
                      {user?.platform_customer?.paymentMethods.map(method => (
                         <li
-                           key={method.customerPaymentMethodId}
+                           key={method.paymentMethodId}
                            tw="flex border text-gray-700"
                         >
                            <section tw="p-2 w-full">
                               <header tw="mb-2 w-full flex justify-between items-center">
                                  {user.subscriptionPaymentMethodId ===
-                                 method.customerPaymentMethodId ? (
+                                 method.paymentMethodId ? (
                                     <span tw="rounded border bg-teal-200 border-teal-300 px-2 text-teal-700">
                                        Default
                                     </span>
@@ -142,7 +142,7 @@ const Content = () => {
                                     className="group"
                                     onClick={() =>
                                        deletePaymentMethod(
-                                          method.customerPaymentMethodId
+                                          method.paymentMethodId
                                        )
                                     }
                                     tw="flex items-center justify-center border border-red-400 rounded h-6 w-6 hover:bg-red-400"
@@ -267,7 +267,7 @@ export const PaymentForm = ({ intent, toggleTunnel }) => {
                         expYear: data.card.exp_year,
                         cvcCheck: data.card.cvc_check,
                         expMonth: data.card.exp_month,
-                        customerPaymentMethodId: data.id,
+                        paymentMethodId: data.id,
                         cardHolderName: data.billing_details.name,
                         paymentCustomerId:
                            user.platform_customer?.paymentCustomerId,

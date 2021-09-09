@@ -262,7 +262,7 @@ export const ALL_DATA = gql`
                      keycloakId
                   }
                   stripePaymentMethods: customerPaymentMethods {
-                     customerPaymentMethodId
+                     paymentMethodId
                      brand
                      last4
                      expMonth

@@ -11,7 +11,7 @@ export const sendSMS = async (req, res) => {
 
       const { paymentMethod: method = {} } = await client.request(
          PAYMENT_METHOD,
-         { customerPaymentMethodId: paymentMethod }
+         { paymentMethodId: paymentMethod }
       )
 
       const customer = {
@@ -126,11 +126,11 @@ const SEND_SMS = `
 `
 
 const PAYMENT_METHOD = `
-   query paymentMethod($customerPaymentMethodId: String!) {
+   query paymentMethod($paymentMethodId: String!) {
       paymentMethod: platform_customerPaymentMethod_by_pk(
-         customerPaymentMethodId: $customerPaymentMethodId
+         paymentMethodId: $paymentMethodId
       ) {
-         customerPaymentMethodId
+         paymentMethodId
          customer: customer {
             phoneNumber
             firstName

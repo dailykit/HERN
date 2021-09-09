@@ -94,7 +94,7 @@ const FormWrapper = ({ intent, onSave, closeTunnel }) => {
                         expYear: data.card.exp_year,
                         cvcCheck: data.card.cvc_check,
                         expMonth: data.card.exp_month,
-                        customerPaymentMethodId: data.id,
+                        paymentMethodId: data.id,
                         cardHolderName: data.billing_details.name,
                         paymentCustomerId: customer?.paymentCustomerId,
                      },

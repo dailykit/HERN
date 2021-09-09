@@ -57,18 +57,18 @@ export const PaymentSection = () => {
          <PaymentMethods>
             {user?.platform_customer?.paymentMethods.map(method => (
                <PaymentMethod
-                  key={method.customerPaymentMethodId}
+                  key={method.paymentMethodId}
                   onClick={() =>
                      dispatch({
                         type: 'SET_PAYMENT_METHOD',
                         payload: {
-                           selected: { id: method.customerPaymentMethodId },
+                           selected: { id: method.paymentMethodId },
                         },
                      })
                   }
                   className={`${
-                     state.payment.selected?.id ===
-                        method.customerPaymentMethodId && 'active'
+                     state.payment.selected?.id === method.paymentMethodId &&
+                     'active'
                   }`}
                >
                   <PaymentMethodLeft>
@@ -76,8 +76,7 @@ export const PaymentSection = () => {
                         size={18}
                         css={[
                            tw`stroke-current`,
-                           state.payment.selected?.id ===
-                           method.customerPaymentMethodId
+                           state.payment.selected?.id === method.paymentMethodId
                               ? tw`text-green-700`
                               : tw`text-gray-400`,
                         ]}
@@ -85,7 +84,7 @@ export const PaymentSection = () => {
                   </PaymentMethodLeft>
                   <section tw="p-2 w-full">
                      {user.subscriptionPaymentMethodId ===
-                        method.customerPaymentMethodId && (
+                        method.paymentMethodId && (
                         <span tw="rounded border bg-teal-200 border-teal-300 px-2 text-teal-700">
                            Default
                         </span>
