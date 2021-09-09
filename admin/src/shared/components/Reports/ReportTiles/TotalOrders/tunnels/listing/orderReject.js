@@ -123,7 +123,7 @@ const OrderRejectTable = () => {
    // fn run after table data loaded
    const dataLoaded = () => {
       const defaultShowColumns =
-         localStorage.getItem('order-summary-table-show-columns') || []
+         localStorage.getItem('order-rejected-table-show-columns') || []
       const parseDefaultColumns = JSON.parse(defaultShowColumns)
       if (parseDefaultColumns) {
          columns.forEach(eachOption => {
