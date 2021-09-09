@@ -13,6 +13,8 @@ import moment from 'moment'
 import styled from 'styled-components'
 import { Tile } from '../../../DashboardTiles'
 import { CUSTOMERS_COUNT } from './graphql/subscription'
+import BrandShopDate from '../../../BrandShopDateProvider'
+import CustomerOverTime from './Tunnels/customerOverTime'
 
 const CustomerReport = () => {
    const [
@@ -47,7 +49,18 @@ const CustomerReport = () => {
                   close={() => closeCustomerReportTunnel(1)}
                   description="This is a description"
                />
-               <TunnelBody></TunnelBody>
+               <TunnelBody>
+                  <BrandShopDate
+                     brandProvider
+                     shop
+                     shopTypeProvider
+                     datePickerProvider
+                     compareProvider
+                     groupTimeProvider
+                  >
+                     <CustomerOverTime />
+                  </BrandShopDate>
+               </TunnelBody>
             </Tunnel>
          </Tunnels>
          <Tile>

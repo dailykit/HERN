@@ -9,3 +9,13 @@ export const CUSTOMERS_COUNT = gql`
       }
    }
 `
+
+export const CUSTOMERS_DATA_OVERTIME = gql`
+   subscription CUSTOMERS_DATA_OVERTIME(
+      $args: insights_getCustomerByGroupby_args!
+   ) {
+      insights_analytics {
+         getCustomersByGroupBy(args: $args)
+      }
+   }
+`
