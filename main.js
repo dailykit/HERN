@@ -28,7 +28,7 @@ const setupForStripeWebhooks = {
    verify: (req, res, buf) => {
       const url = req.originalUrl
       console.log({ url })
-      if (url.startsWith('/server/api/payment/stripe-webhook')) {
+      if (url.startsWith('/server/api/payment/handle-payment-webhook')) {
          req.rawBody = buf.toString()
       }
    }
