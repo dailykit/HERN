@@ -1,0 +1,36 @@
+.hern-change-plan__other-info {
+   width: 91.666667%;
+   margin: auto;
+   @media (min-width: 1024px) {
+      width: 66.666667%;
+   }
+}
+.hern-change-plan__heading {
+   font-size: 1.5rem;
+   line-height: 2rem;
+   text-align: center;
+   margin: 2rem;
+}
+.hern-change-plan__section-title {
+   margin-top: 0.75rem;
+   margin-bottom: 0.75rem;
+   color: rgba(5, 150, 105, 1);
+   font-size: 1.125rem;
+   line-height: 1.75rem;
+}
+.hern-change-plan__continue-btn-wrapper {
+   margin: 1rem;
+   width: 100%;
+   display: -webkit-box;
+   display: -webkit-flex;
+   display: -ms-flexbox;
+   display: flex;
+   -webkit-align-items: center;
+   -webkit-box-align: center;
+   -ms-flex-align: center;
+   align-items: center;
+   -webkit-box-pack: center;
+   -webkit-justify-content: center;
+   -ms-flex-pack: center;
+   justify-content: center;
+}

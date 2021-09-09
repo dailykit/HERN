@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/react-hooks'
+import classNames from 'classnames'
 import React from 'react'
 import { useToasts } from 'react-toast-notifications'
-import tw, { styled } from 'twin.macro'
 import { CloseIcon } from '../assets/icons'
 import { useUser } from '../context'
 import { ZIPCODE_AVAILABILITY } from '../graphql'
@@ -42,51 +42,40 @@ const AddressList = ({ closeTunnel, onSelect }) => {
 
    if (loading) return <Loader />
    return (
-      <Styles.Wrapper>
-         <Styles.ListHeader>
-            <Styles.Heading>Available Addresses</Styles.Heading>
-            <button tw="rounded-full border-2 border-green-400 h-6 w-8 flex items-center justify-center">
+      <div className="hern-address-list">
+         <div className="hern-address-list__header">
+            <h3 className="hern-address-list__heading">Available Addresses</h3>
+            <button className="hern-address-list__close-btn">
                <CloseIcon
                   size={16}
-                  tw="stroke-current text-green-400"
+                  color=" rgba(52,211,153,1)"
+                  stroke="currentColor"
                   onClick={closeTunnel}
                />
             </button>
-         </Styles.ListHeader>
-         {addresses.map(address => (
-            <div
-               css={[
-                  tw`border border-gray-300 border-2 p-2 mb-2 rounded-sm cursor-pointer hover:border-green-500`,
-                  !availableZipcodes.includes(address.zipcode) &&
-                     tw`text-gray-400 cursor-not-allowed hover:border-gray-300`,
-               ]}
-               onClick={() => selectAddress(address)}
-            >
-               <p>{address?.line1}</p>
-               <p>{address?.line2}</p>
-               <p>{address?.city}</p>
-               <p>{address?.state}</p>
-               <p>{address?.country}</p>
-               <p>{address?.zipcode}</p>
-            </div>
-         ))}
-      </Styles.Wrapper>
+         </div>
+         {addresses.map(address => {
+            const isNotClickable = !availableZipcodes.includes(address.zipcode)
+            const addressClasses = classNames('hern-address-list__address', {
+               'hern-address-list__address--not-clickable': isNotClickable,
+            })
+            return (
+               <address
+                  key={address.id}
+                  className={addressClasses}
+                  onClick={() => selectAddress(address)}
+               >
+                  <p>{address?.line1}</p>
+                  <p>{address?.line2}</p>
+                  <p>{address?.city}</p>
+                  <p>{address?.state}</p>
+                  <p>{address?.country}</p>
+                  <p>{address?.zipcode}</p>
+               </address>
+            )
+         })}
+      </div>
    )
 }
 
 export default AddressList
-
-const Styles = {
-   Wrapper: styled.div`
-      padding: 16px;
-   `,
-   ListHeader: styled.div`
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-   `,
-   Heading: styled.h3`
-      color: gray;
-   `,
-}

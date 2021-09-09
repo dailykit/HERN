@@ -22,10 +22,10 @@ const BRAND_CUSTOMER = `
             id
             email
             keycloakId
-            platform_customer: platform_customer_ {
+            platform_customer: platform_customer {
                firstName
                lastName
-               customerAddresses: customerAddresses_ {
+               customerAddresses: customerAddresses {
                   id
                   line1
                   line2
@@ -111,12 +111,12 @@ const GET_CUSTOMER_ORDER_DETAILS = `
                   id
                   keycloakId
                   email
-                  platform_customer: platform_customer_ {
+                  platform_customer: platform_customer {
                      firstName
                      lastName
                      phoneNumber
-                     stripeCustomerId
-                     customerAddresses: customerAddresses_ {
+                     paymentCustomerId
+                     customerAddresses: customerAddresses {
                         city
                         country
                         created_at
@@ -281,7 +281,7 @@ const createCart = async data => {
          //    id: ORGANIZATION_ID
          // })
 
-         const { stripeCustomerId } = platform_customer
+         const { paymentCustomerId } = platform_customer
          const { createCart } = await client.request(CREATE_CART, {
             object: {
                brandId,
@@ -294,7 +294,7 @@ const createCart = async data => {
                address: defaultAddress,
                customerKeycloakId: keycloakId,
                subscriptionOccurenceId,
-               ...(stripeCustomerId && { stripeCustomerId }),
+               ...(paymentCustomerId && { paymentCustomerId }),
                ...(subscriptionPaymentMethodId && {
                   paymentMethodId: subscriptionPaymentMethodId
                })

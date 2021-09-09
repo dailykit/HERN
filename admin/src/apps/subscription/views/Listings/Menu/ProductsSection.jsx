@@ -163,6 +163,13 @@ const ProductsSection = () => {
                Continue
             </TextButton>
          </Flex>
+         <Flex>
+            {state.plans.selected.length > 0 && (
+               <Text as="helpText">
+                  {state.products.selected.length} product selected
+               </Text>
+            )}
+         </Flex>
          <HorizontalTabs>
             <HorizontalTabList>
                <HorizontalTab>Ready To Eats</HorizontalTab>
@@ -392,9 +399,8 @@ const SaveTunnel = ({
       addOnPrice: '',
       productCategory: '',
    })
-   const { data: { productCategories = [] } = {} } = useQuery(
-      PRODUCT_CATEGORIES
-   )
+   const { data: { productCategories = [] } = {} } =
+      useQuery(PRODUCT_CATEGORIES)
    const [insertOccurenceProducts] = useMutation(INSERT_OCCURENCE_PRODUCTS, {
       onCompleted: () => {
          setForm({

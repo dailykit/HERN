@@ -20,7 +20,7 @@ export const SUBSCRIBERS_LIST = gql`
    subscription SUBSCRIBERS_LIST($where: crm_brand_customer_bool_exp = {}) {
       brandCustomers(where: $where, limit: 10) {
          customer {
-            platform_customer_ {
+            platform_customer {
                created_at
                fullName
                email

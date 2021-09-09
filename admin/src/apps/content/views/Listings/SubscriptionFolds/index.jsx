@@ -142,7 +142,7 @@ const SubscriptionFoldListing = () => {
             )
          },
 
-         width: 200,
+         width: 300,
       },
       {
          title: 'File Id',
@@ -224,7 +224,7 @@ const SubscriptionFoldListing = () => {
             justifyContent="space-between"
          >
             <Flex container alignItems="center">
-               <Text as="title">
+               <Text as="h2" style={{marginBottom:'0em'}}>
                   Subscription Folds(
                   {foldList?.length})
                </Text>

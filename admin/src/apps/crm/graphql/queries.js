@@ -30,7 +30,7 @@ export const CUSTOMERS_LISTING = gql`
                }
             }
          }
-         platform_customer: platform_customer_ {
+         platform_customer: platform_customer {
             firstName
             lastName
             email
@@ -58,7 +58,7 @@ export const CUSTOMER_DATA = gql`
                isTest
                email
                keycloakId
-               platform_customer: platform_customer_ {
+               platform_customer: platform_customer {
                   firstName
                   lastName
                   email
@@ -133,7 +133,7 @@ export const REFERRAL_LISTING = gql`
          }
       ) {
          customer {
-            platform_customer: platform_customer_ {
+            platform_customer: platform_customer {
                firstName
                lastName
                phoneNumber
@@ -246,8 +246,8 @@ export const ALL_DATA = gql`
       brand(id: $brandId) {
          brand_customers(where: { keycloakId: { _eq: $keycloakId } }) {
             customer {
-               platform_customer: platform_customer_ {
-                  customerAddresses: customerAddresses_ {
+               platform_customer: platform_customer {
+                  customerAddresses: customerAddresses {
                      id
                      line1
                      line2
@@ -261,8 +261,8 @@ export const ALL_DATA = gql`
                      landmark
                      keycloakId
                   }
-                  stripePaymentMethods: stripePaymentMethods_ {
-                     stripePaymentMethodId
+                  stripePaymentMethods: customerPaymentMethods {
+                     paymentMethodId
                      brand
                      last4
                      expMonth
@@ -432,7 +432,7 @@ export const CUSTOMERS_LISTING_2 = gql`
          customer {
             email
             source
-            platform_customer: platform_customer_ {
+            platform_customer: platform_customer {
                fullName
                phoneNumber
             }

@@ -317,7 +317,7 @@ export const SUBSCRIPTION_CUSTOMERS = gql`
                isSubscriptionCancelled
                customer {
                   email
-                  platform_customer: platform_customer_ {
+                  platform_customer: platform_customer {
                      lastName
                      firstName
                      phoneNumber
@@ -430,6 +430,77 @@ export const PLAN_PRODUCTS = gql`
                   id
                   name
                }
+            }
+         }
+      }
+   }
+`
+export const MENU_PRODUCT_BY_SUBSCRIPTION = gql`
+   subscription MENU_PRODUCT_BY_SUBSCRIPTION {
+      subscription_subscriptionOccurence_product(
+         where: { subscriptionId: { _is_null: false } }
+      ) {
+         id
+         isAutoSelectable
+         isAvailable
+         isSingleSelect
+         isVisible
+         addOnLabel
+         addOnPrice
+         productCategory
+         productOptionId
+         subscriptionId
+         subscription {
+            subscriptionServing {
+               servingSize
+            }
+            subscriptionTitle {
+               title
+            }
+            subscriptionItemCount {
+               count
+            }
+         }
+         productOption {
+            fullName
+            product {
+               name
+            }
+         }
+      }
+   }
+`
+export const MENU_PRODUCT_BY_SUBSCRIPTION_OCCURRENCE = gql`
+   subscription MENU_PRODUCT_BY_SUBSCRIPTION_OCCURRENCE {
+      subscription_subscriptionOccurence_product(
+         where: { subscriptionId: { _is_null: true } }
+      ) {
+         id
+         isAutoSelectable
+         isAvailable
+         isSingleSelect
+         isVisible
+         addOnLabel
+         addOnPrice
+         productCategory
+         productOptionId
+         subscriptionOccurenceId
+         subscriptionOccurence {
+            fulfillmentDate
+            subscriptionServing {
+               servingSize
+            }
+            subscriptionTitle {
+               title
+            }
+            subscriptionItemCount {
+               count
+            }
+         }
+         productOption {
+            fullName
+            product {
+               name
             }
          }
       }

@@ -1,7 +1,6 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import { isEmpty } from 'lodash'
-import tw, { styled, css } from 'twin.macro'
 import { useLazyQuery } from '@apollo/react-hooks'
 import { useToasts } from 'react-toast-notifications'
 
@@ -10,6 +9,7 @@ import { CheckIcon } from '../../assets/icons'
 import { Loader, HelperBar } from '../../components'
 import { OCCURENCES_BY_SUBSCRIPTION } from '../../graphql'
 import { formatDate, getRoute } from '../../utils'
+import classNames from 'classnames'
 
 export const DeliveryDateSection = () => {
    const router = useRouter()
@@ -82,80 +82,41 @@ export const DeliveryDateSection = () => {
       </HelperBar>
    }
    return (
-      <DeliveryDates>
-         {occurences.map(occurence => (
-            <DeliveryDate
-               key={occurence.id}
-               onClick={() => occurenceSelection(occurence)}
-               className={`${
-                  occurence.id === state.delivery_date.selected?.id && 'active'
-               }`}
-            >
-               <DeliveryDateLeft>
-                  <CheckIcon
-                     size={18}
-                     css={[
-                        tw`stroke-current`,
-                        occurence.id === state.delivery_date.selected?.id
-                           ? tw`text-green-700`
-                           : tw`text-gray-400`,
-                     ]}
-                  />
-               </DeliveryDateLeft>
-               <label css={tw`w-full cursor-pointer`}>
-                  {formatDate(occurence.fulfillmentDate, {
-                     year: 'numeric',
-                     month: 'short',
-                     day: 'numeric',
-                  })}
-               </label>
-            </DeliveryDate>
-         ))}
-      </DeliveryDates>
+      <ul className="hern-delivery__delivery-date__list">
+         {occurences.map(occurence => {
+            const iconClasses = classNames(
+               'hern-delivery__delivery-date__check-icon',
+               {
+                  'hern-delivery__delivery-date__check-icon--active':
+                     occurence.id === state.delivery_date.selected?.id,
+               }
+            )
+            const dateClasses = classNames(
+               'hern-delivery__delivery-date__list-item',
+               {
+                  'hern-delivery__delivery-date__list-item--active':
+                     occurence.id === state.delivery_date.selected?.id,
+               }
+            )
+            return (
+               <li
+                  className={dateClasses}
+                  key={occurence.id}
+                  onClick={() => occurenceSelection(occurence)}
+               >
+                  <div className="hern-delivery__delivery-date__check-icon__wrapper">
+                     <CheckIcon size={18} className={iconClasses} />
+                  </div>
+                  <label className="hern-delivery__delivery-date__list-item__label">
+                     {formatDate(occurence.fulfillmentDate, {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                     })}
+                  </label>
+               </li>
+            )
+         })}
+      </ul>
    )
 }
-
-const DeliveryDates = styled.ul`
-   ${tw`
-      grid 
-      gap-2
-      sm:grid-cols-2 
-      md:grid-cols-3 
-   `}
-`
-
-const DeliveryDateLeft = styled.aside(
-   () => css`
-      width: 48px;
-      height: 48px;
-      ${tw`h-full mr-2 flex flex-shrink-0 items-center justify-center`}
-      &.active {
-         svg {
-            ${tw`text-green-700`}
-         }
-      }
-   `
-)
-
-const DeliveryDate = styled.li`
-   height: 48px;
-   ${tw`cursor-pointer flex items-center border capitalize text-gray-700 rounded overflow-hidden border-gray-300 hover:(border-2 border-green-700)`}
-   &.invalid {
-      opacity: 0.6;
-      position: relative;
-      :after {
-         top: 0;
-         left: 0;
-         content: '';
-         width: 100%;
-         height: 100%;
-         position: absolute;
-      }
-   }
-   :hover svg {
-      ${tw`text-green-700`}
-   }
-   &.active {
-      ${tw`border-2 border-green-700`}
-   }
-`

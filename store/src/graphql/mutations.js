@@ -26,9 +26,9 @@ export const MUTATIONS = {
       ADDRESS: {
          CREATE: gql`
             mutation createCustomerAddress(
-               $object: platform_customerAddress__insert_input!
+               $object: platform_customerAddress_insert_input!
             ) {
-               createCustomerAddress: insert_platform_customerAddress__one(
+               createCustomerAddress: insert_platform_customerAddress_one(
                   object: $object
                ) {
                   id
@@ -190,9 +190,9 @@ export const MUTATIONS = {
 export const UPDATE_DAILYKEY_CUSTOMER = gql`
    mutation updateCustomers(
       $keycloakId: String!
-      $_set: platform_customer__set_input!
+      $_set: platform_customer_set_input!
    ) {
-      platform_updateCustomer: update_platform_customer__by_pk(
+      platform_updateCustomer: update_platform_customer_by_pk(
          pk_columns: { keycloakId: $keycloakId }
          _set: $_set
       ) {
@@ -203,11 +203,13 @@ export const UPDATE_DAILYKEY_CUSTOMER = gql`
 
 export const CREATE_STRIPE_PAYMENT_METHOD = gql`
    mutation paymentMethod(
-      $object: platform_stripePaymentMethod__insert_input!
+      $object: platform_customerPaymentMethod_insert_input!
    ) {
-      paymentMethod: insert_platform_stripePaymentMethod__one(object: $object) {
+      paymentMethod: insert_platform_customerPaymentMethod_one(
+         object: $object
+      ) {
          keycloakId
-         stripePaymentMethodId
+         paymentMethodId
       }
    }
 `
@@ -342,7 +344,7 @@ export const FORGOT_PASSWORD = gql`
       $origin: String!
       $redirectUrl: String
    ) {
-      forgotPassword: forgotPassword_(
+      forgotPassword: forgotPassword(
          type: $type
          email: $email
          origin: $origin
@@ -355,7 +357,7 @@ export const FORGOT_PASSWORD = gql`
 
 export const RESET_PASSWORD = gql`
    mutation ResetPassword($token: String!, $password: String!) {
-      resetPassword: resetPassword_(token: $token, password: $password) {
+      resetPassword: resetPassword(token: $token, password: $password) {
          success
          message
       }
@@ -363,8 +365,8 @@ export const RESET_PASSWORD = gql`
 `
 
 export const VERIFY_RESET_PASSWORD_TOKEN = gql`
-   mutation VerifyResetPasswordToken_($token: String!) {
-      verifyResetPasswordToken: verifyResetPasswordToken_(token: $token) {
+   mutation verifyResetPasswordToken($token: String!) {
+      verifyResetPasswordToken: verifyResetPasswordToken(token: $token) {
          success
          message
       }
@@ -373,25 +375,25 @@ export const VERIFY_RESET_PASSWORD_TOKEN = gql`
 
 export const DELETE_CUSTOMER_ADDRESS = gql`
    mutation deleteAddress($id: uuid!) {
-      deleteAddress: delete_platform_customerAddress__by_pk(id: $id) {
+      deleteAddress: delete_platform_customerAddress_by_pk(id: $id) {
          id
       }
    }
 `
 
 export const DELETE_STRIPE_PAYMENT_METHOD = gql`
-   mutation deletePaymentMethod($stripePaymentMethodId: String!) {
-      deletePaymentMethod: delete_platform_stripePaymentMethod__by_pk(
-         stripePaymentMethodId: $stripePaymentMethodId
+   mutation deletePaymentMethod($paymentMethodId: String!) {
+      deletePaymentMethod: delete_platform_customerPaymentMethod_by_pk(
+         paymentMethodId: $paymentMethodId
       ) {
-         stripePaymentMethodId
+         paymentMethodId
       }
    }
 `
 
 export const INSERT_PLATFORM_CUSTOMER = gql`
-   mutation insertCustomer($object: platform_customer__insert_input!) {
-      insertCustomer: insert_platform_customer__one(object: $object) {
+   mutation insertCustomer($object: platform_customer_insert_input!) {
+      insertCustomer: insert_platform_customer_one(object: $object) {
          email
          password
       }
