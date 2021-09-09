@@ -7,7 +7,7 @@ import get_env from '../../../../../get_env'
 // * isConnectedIntegration is a helper function that checks if the integration is "connected"
 // and return a boolean value so that we can add the stripeAccountId to the stripe Invoice conditionally.
 
-export const createStripeInvoice = async arg => {
+const initiatePayment = async arg => {
    try {
       const {
          id: transferGroup,
@@ -217,3 +217,5 @@ export const createStripeInvoice = async arg => {
       throw error
    }
 }
+
+export default initiatePayment
