@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 
 export const TabsWrapper = styled.div`
    display: flex;
-   align-items: center;
+   align-items: flex-start;
    > button {
       border: none;
       border-bottom: 1px solid #ebf1f4;

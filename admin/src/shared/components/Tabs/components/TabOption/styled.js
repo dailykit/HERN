@@ -5,13 +5,14 @@ export const Styles = {
       position: absolute;
       width: 254px;
       max-height: 534px;
-      top: 48px;
+      top: 32px;
       right: 0;
       background: rgba(255, 255, 255, 0.13);
       border: 1px solid #f2f3f3;
       backdrop-filter: blur(44.37px);
       border-radius: 10px;
       z-index: 99999;
+      padding-bottom: 8px;
       > span:nth-child(1) {
          margin: 8px;
       }
