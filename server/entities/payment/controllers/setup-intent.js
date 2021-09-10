@@ -3,17 +3,9 @@ import { isObjectValid, logger } from '../../../utils'
 
 export const createSetupIntent = async (req, res) => {
    try {
-      const { customer, stripeAccountId } = req.body
+      const { customer } = req.body
       const _stripe = await stripe()
-      let response = null
-      if (stripeAccountId) {
-         response = await _stripe.setupIntents.create(
-            { customer },
-            { stripeAccount: stripeAccountId }
-         )
-      } else {
-         response = await _stripe.setupIntents.create({ customer })
-      }
+      const response = await _stripe.setupIntents.create({ customer })
 
       if (isObjectValid(response)) {
          return res.json({ success: true, data: response })
