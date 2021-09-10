@@ -1028,16 +1028,6 @@ export const CART_REWARDS = gql`
    }
 `
 
-export const ORGANIZATION = gql`
-   query organizations {
-      organizations {
-         id
-         stripeAccountId
-         stripeAccountType
-      }
-   }
-`
-
 export const REFERRER = gql`
    query customerReferral($brandId: Int!, $code: String!) {
       customerReferrals(
