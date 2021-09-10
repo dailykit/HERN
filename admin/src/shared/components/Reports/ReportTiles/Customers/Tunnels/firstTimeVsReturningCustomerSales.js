@@ -1,5 +1,5 @@
 import { useSubscription } from '@apollo/react-hooks'
-import { Flex, Spacer } from '@dailykit/ui'
+import { Filler, Flex, Spacer } from '@dailykit/ui'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { BrandShopDateContext } from '../../../../BrandShopDateProvider/context'
@@ -19,6 +19,7 @@ import {
    YAxis,
    Tooltip,
 } from 'recharts'
+import CustomerSalesTable from './Listing/firstTimeVsReturningCustomer'
 const FirstTimeVsReturningCustomerSales = () => {
    const { brandShopDateState } = React.useContext(BrandShopDateContext)
    const [customerData, setCustomerData] = useState([])
@@ -61,10 +62,14 @@ const FirstTimeVsReturningCustomerSales = () => {
                   .map(each => {
                      if (each.count == 1) {
                         each.totalFirst = each.total
+                        each.countFirst = each.count
                         each.totalReturn = each.totalReturn || 0
+                        each.countReturn = each.countReturn || 0
                      } else {
                         each.totalReturn = each.total
+                        each.countReturn = each.count
                         each.totalFirst = each.totalFirst || 0
+                        each.countFirst = each.countFirst || 0
                      }
                      return each
                   })
@@ -75,11 +80,11 @@ const FirstTimeVsReturningCustomerSales = () => {
          },
       }
    )
-   console.log('this is error', subsError)
-   console.log('customerData', customerData)
+
    if (!subsError && (subsLoading || status === 'loading')) {
       return <InlineLoader />
    }
+
    if (subsError) {
       logger(subsError)
       toast.error('Could not get the Insight data')
@@ -87,6 +92,7 @@ const FirstTimeVsReturningCustomerSales = () => {
          <ErrorState height="320px" message="Could not get the Insight data" />
       )
    }
+
    return (
       <>
          <Spacer size="20px" />
@@ -99,6 +105,22 @@ const FirstTimeVsReturningCustomerSales = () => {
             }}
          >
             <CustomerSalesChart customerData={customerData} />
+         </div>
+         <Spacer size="20px" />
+
+         <div
+            style={{
+               background: '#FFFFFF',
+               boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.2)',
+               borderRadius: '10px',
+               padding: '10px 0px',
+            }}
+         >
+            {customerData.length == 0 ? (
+               <Filler message="No data found for the date range selected" />
+            ) : (
+               <CustomerSalesTable customerData={customerData} />
+            )}
          </div>
       </>
    )
