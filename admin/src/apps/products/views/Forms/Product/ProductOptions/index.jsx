@@ -667,7 +667,7 @@ const Option = ({
                   />
                </Flex>
                <Spacer xAxis size="32px" />
-               <Flex width="240px">
+               <Flex width="265px" style={{marginBottom:'22px'}}>
                   <Form.Label title="option-type">Type</Form.Label>
                   <Dropdown
                      type="single"

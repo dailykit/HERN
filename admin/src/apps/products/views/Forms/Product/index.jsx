@@ -230,6 +230,7 @@ const Product = () => {
          <ModifiersProvider>
             <InventoryBundleProvider>
                <Banner id="products-app-single-product-top" />
+              
                <ResponsiveFlex>
                   <Form.Group>
                      <Form.Label htmlFor="title" title="title">
@@ -253,8 +254,9 @@ const Product = () => {
                         ))}
                   </Form.Group>
                   <Spacer xAxis size="16px" />
-
-                  <div>
+                  
+               
+                  <div style={{marginTop: '28px'}}>
                      {state.isValid?.status ? (
                         <Flex container alignItems="center">
                            <TickIcon color="#00ff00" stroke={2} />
@@ -267,14 +269,17 @@ const Product = () => {
                         </Flex>
                      )}
                   </div>
-                  <Spacer size="16px" />
+                  {/* <Spacer size="16px" /> */}
 
-                  <Flex container alignItems="center">
+                  
+                 
+                     <Flex container alignItems="center" style={{marginTop: '29px', 
+                     marginRight:'5px'}}>
                      <Form.Checkbox
                         name="popup"
                         value={state.isPopupAllowed}
                         onChange={togglePopup}
-                     >
+                     >                        
                         <Flex container alignItems="center">
                            Popup Allowed
                            <Tooltip identifier="simple_recipe_product_popup_checkbox" />
@@ -300,17 +305,19 @@ const Product = () => {
                         value={state.isPublished}
                         onChange={togglePublish}
                      >
-                        <Flex container alignItems="center">
+                        <Flex container alignItems="center" style={{paddingRight: "0px"}}>
                            Published
-                           <Spacer xAxis size="16px" />
+                           {/* <Spacer xAxis size="12px" /> */}
                            <Tooltip identifier="simple_recipe_product_publish" />
                         </Flex>
                      </Form.Toggle>
-                  </Flex>
+                   </Flex>
                </ResponsiveFlex>
+               
+
                <Flex
                   as="main"
-                  padding="8px 32px"
+                  padding="8px 20px"
                   minHeight="calc(100vh - 130px)"
                >
                   <HorizontalTabs>
