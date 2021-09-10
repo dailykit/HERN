@@ -69,7 +69,7 @@ const DataGeneratorBetweenToDates = (
          //if match not found then matchIndex = -1 else...
          if (matchIndex >= 0) {
             dataKeys.forEach(x => {
-               hourBundle[matchIndex][x + type] = eachData[x]
+               hourBundle[matchIndex][x + type] += eachData[x]
             })
          }
       })
@@ -102,7 +102,7 @@ const DataGeneratorBetweenToDates = (
          )
          if (matchIndex >= 0) {
             dataKeys.forEach(x => {
-               daysBundle[matchIndex][x + type] = eachData[x]
+               daysBundle[matchIndex][x + type] += eachData[x]
             })
          }
       })
@@ -132,7 +132,7 @@ const DataGeneratorBetweenToDates = (
          )
          if (matchIndex >= 0) {
             dataKeys.forEach(x => {
-               weekBundle[matchIndex][x + type] = eachData[x]
+               weekBundle[matchIndex][x + type] += eachData[x]
             })
          }
       })
@@ -164,7 +164,7 @@ const DataGeneratorBetweenToDates = (
          )
          if (matchIndex >= 0) {
             dataKeys.forEach(x => {
-               monthsBundle[matchIndex][x + type] = eachData[x]
+               monthsBundle[matchIndex][x + type] += eachData[x]
             })
          }
       })
