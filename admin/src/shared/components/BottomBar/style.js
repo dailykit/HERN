@@ -16,10 +16,7 @@ const Styles = {
       display: flex;
       justify-content: center;
       cursor: pointer;
-      position: absolute;
-      top: -44px;
       z-index: 1009;
-      left: 45%;
    `,
 
    OptionsWrapper: styled.div`
@@ -49,6 +46,7 @@ const Styles = {
       padding: 10px 16px;
       display: flex;
       align-items: center;
+      margin: 0;
       img {
          width: 24px;
          height: 24px;
