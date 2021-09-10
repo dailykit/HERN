@@ -19,3 +19,10 @@ export const CUSTOMERS_DATA_OVERTIME = gql`
       }
    }
 `
+export const FIRST_TIME_VS_RETURNING_CUSTOMER_SALES = gql`
+   subscription firstTime($args: insights_getTotalEarnings_args!) {
+      insights_analytics {
+         getTotalEarnings(args: $args)
+      }
+   }
+`

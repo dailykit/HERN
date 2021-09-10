@@ -15,13 +15,14 @@ import { Tile } from '../../../DashboardTiles'
 import { CUSTOMERS_COUNT } from './graphql/subscription'
 import BrandShopDate from '../../../BrandShopDateProvider'
 import CustomerOverTime from './Tunnels/customerOverTime'
+import FirstTimeVsReturningCustomerSales from './Tunnels/firstTimeVsReturningCustomerSales'
 
 const CustomerReport = () => {
    const [
       customerReportTunnels,
       openCustomerReportTunnel,
       closeCustomerReportTunnel,
-   ] = useTunnel(1)
+   ] = useTunnel(2)
    const {
       loading: subsLoading,
       error: subsError,
@@ -52,13 +53,30 @@ const CustomerReport = () => {
                <TunnelBody>
                   <BrandShopDate
                      brandProvider
-                     shop
                      shopTypeProvider
                      datePickerProvider
                      compareProvider
                      groupTimeProvider
                   >
                      <CustomerOverTime />
+                  </BrandShopDate>
+               </TunnelBody>
+            </Tunnel>
+            <Tunnel size="full" layer={2}>
+               <TunnelHeader
+                  title="First-time vs returning customer sales"
+                  close={() => closeCustomerReportTunnel(2)}
+                  description="This is a description"
+               />
+               <TunnelBody>
+                  <BrandShopDate
+                     brandProvider
+                     shopTypeProvider
+                     datePickerProvider
+                     compareProvider
+                     groupTimeProvider
+                  >
+                     <FirstTimeVsReturningCustomerSales />
                   </BrandShopDate>
                </TunnelBody>
             </Tunnel>
@@ -106,7 +124,7 @@ const CustomerReport = () => {
                      <Spacer size="5px" />
                      <Text
                         as="text2"
-                        title="View order overtime report"
+                        title="View customer overtime report"
                         style={{
                            marginLeft: '8px',
                            fontWeight: '400',
@@ -117,6 +135,20 @@ const CustomerReport = () => {
                         onClick={() => openCustomerReportTunnel(1)}
                      >
                         Customer over time
+                     </Text>
+                     <Text
+                        as="text2"
+                        title="First-time vs returning customer sales"
+                        style={{
+                           marginLeft: '8px',
+                           fontWeight: '400',
+                           cursor: 'pointer',
+                           color: '#367bf5',
+                           lineHeight: '24px',
+                        }}
+                        onClick={() => openCustomerReportTunnel(2)}
+                     >
+                        First-time vs returning customer sales
                      </Text>
                   </Flex>
                </Flex>
