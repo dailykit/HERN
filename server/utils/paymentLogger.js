@@ -1,12 +1,26 @@
-import get from 'lodash/get'
-import stripe from '../../../lib/stripe'
-import { client } from '../../../lib/graphql'
-import get_env from '../../../../get_env'
-import {
-   CART_PAYMENT,
-   UPDATE_CART_PAYMENT,
-   DATAHUB_INSERT_STRIPE_PAYMENT_HISTORY
-} from '../graphql'
+import { client } from '../lib/graphql'
+
+const UPDATE_CART_PAYMENT = `
+mutation UPDATE_CART_PAYMENT($id: Int!, $_inc: order_cartPayment_inc_input, $_set: order_cartPayment_set_input) {
+   updateCartPayment(pk_columns: {id: $id}, _inc: $_inc, _set: $_set) {
+     cartId
+     id
+     paymentStatus
+     paymentRetryAttempt
+   }
+ }
+`
+const DATAHUB_INSERT_STRIPE_PAYMENT_HISTORY = `
+mutation insertStripePaymentHistory(
+   $objects: [order_stripePaymentHistory_insert_input!]!
+) {
+   insertStripePaymentHistory: insert_order_stripePaymentHistory(
+      objects: $objects
+   ) {
+      affected_rows
+   }
+}
+`
 
 const STATUS = {
    created: 'CREATED',
@@ -17,7 +31,6 @@ const STATUS = {
    requires_action: 'REQUIRES_ACTION',
    requires_payment_method: 'REQUIRES_PAYMENT_METHOD'
 }
-
 const handleInvoice = async args => {
    try {
       const _stripe = await stripe()
@@ -132,77 +145,15 @@ const handlePaymentIntent = async args => {
    }
 }
 
-export const stripeWebhookEvents = async (req, res) => {
-   //    console.log('HERE,StripeWebhookEvents', req.body)
+export const paymentLogger = async args => {
    try {
-      const _stripe = await stripe()
-      const signature = req.headers['stripe-signature']
-      let event
-      console.log({ signature })
-      let SECRET = await get_env('WEBHOOK_STRIPE_SECRET')
-      console.log({ SECRET })
-      const body = JSON.parse(req.rawBody)
-      console.log({ body })
-      if ('account' in body && body.account) {
-         SECRET = await get_env('WEBHOOK_STRIPE_CONNECT_SECRET')
+      if (args.event === 'invoice') {
+         await handleInvoice(args)
       }
-      console.log({ SECRET })
-
-      try {
-         //  console.log(_stripe, signature, SECRET)
-         event = await _stripe.webhooks.constructEvent(
-            req.rawBody,
-            signature,
-            SECRET
-         )
-         console.log({ event })
-      } catch (err) {
-         console.log(err)
-         return res.status(400).send({
-            success: false,
-            error: `Webhook Error: ${err.message}`
-         })
-      }
-
-      const node = event.data.object
-      console.log({ node })
-
-      if (!['invoice', 'payment_intent'].includes(node.object))
-         return res.status(200).send({
-            success: false,
-            error: `No such event has been mapped yet!`
-         })
-
-      const { cartPayment } = await client.request(CART_PAYMENT, {
-         id: Number(node.metadata.cartPaymentId)
-      })
-
-      console.log({ cartPayment })
-
-      if (get(cartPayment, 'id') && cartPayment.paymentStatus === 'SUCCEEDED') {
-         return res.status(200).json({
-            success: true,
-            message:
-               "Could not process invoice/intent webhook, since cart's payment has already succeeded"
-         })
-      }
-
-      if (node.object === 'invoice') {
-         await handleInvoice({
-            eventType: event.type,
-            invoice: event.data.object,
-            cartPaymentId: node.metadata.cartPaymentId
-         })
-         return res.status(200).json({ received: true })
-      }
-      if (node.object === 'payment_intent') {
-         await handlePaymentIntent({
-            intent: event.data.object,
-            cartPaymentId: node.metadata.cartPaymentId
-         })
-         return res.status(200).json({ received: true })
+      if (args.event === 'payment_intent') {
+         await handlePaymentIntent(args)
       }
    } catch (error) {
-      return res.status(500).json({ success: false, error })
+      console.error(error)
    }
 }

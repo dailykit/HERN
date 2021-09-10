@@ -1,6 +1,5 @@
 import { client } from '../../../lib/graphql'
 import { logger } from '../../../utils'
-import { createStripeInvoice } from '../functions'
 import { UPDATE_CART_PAYMENT } from '../graphql'
 
 export const initiatePaymentHandler = async (req, res) => {
@@ -42,19 +41,20 @@ export const initiatePaymentHandler = async (req, res) => {
          // only if amount is greater than 0 and not on test mode then only
          // further payment process will be done
 
-         if (payload.paymentType === 'stripe') {
-            // call the stripe invoice making method
-            const result = await createStripeInvoice({
-               ...payload,
-               oldAmount: req.body.event.data.old
-                  ? req.body.event.data.old.amount
-                  : 0
-            })
-            if (result.success) {
-               res.status(200).json(result)
-            } else {
-               res.status(500).json(result)
-            }
+         const functionFilePath = `../functions/${payload.paymentType}`
+         const method = await import(functionFilePath)
+         console.log({ method })
+         const data = {
+            ...payload,
+            oldAmount: req.body.event.data.old
+               ? req.body.event.data.old.amount
+               : 0
+         }
+         const result = await method.default(data, 'initialize')
+         if (result.success) {
+            res.status(200).json(result)
+         } else {
+            res.status(500).json(result)
          }
       }
    } catch (error) {

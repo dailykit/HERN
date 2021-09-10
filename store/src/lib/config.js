@@ -4,12 +4,11 @@ import { useQuery, useSubscription } from '@apollo/react-hooks'
 
 import { get_env, isClient } from '../utils'
 import { PageLoader } from '../components'
-import { ORGANIZATION, SETTINGS } from '../graphql/queries'
+import { SETTINGS } from '../graphql/queries'
 
 const ConfigContext = React.createContext()
 
 const initialState = {
-   organization: {},
    brand: {
       id: null,
    },
@@ -18,8 +17,6 @@ const initialState = {
 
 const reducers = (state, { type, payload }) => {
    switch (type) {
-      case 'SET_ORGANIZATION':
-         return { ...state, organization: payload }
       case 'SET_BRANDID':
          return { ...state, brand: payload }
       case 'SET_SETTINGS':
@@ -33,14 +30,6 @@ export const ConfigProvider = ({ children }) => {
    const [isLoading, setIsLoading] = React.useState(true)
    const [state, dispatch] = React.useReducer(reducers, initialState)
 
-   useQuery(ORGANIZATION, {
-      onCompleted: ({ organizations = [] } = {}) => {
-         if (!isEmpty(organizations)) {
-            const [organization] = organizations
-            dispatch({ type: 'SET_ORGANIZATION', payload: organization })
-         }
-      },
-   })
    const { loading, data: { settings = [] } = {} } = useSubscription(SETTINGS, {
       variables: {
          domain: {
@@ -72,7 +61,7 @@ export const ConfigProvider = ({ children }) => {
          }
          setIsLoading(false)
       }
-   }, [loading, , settings])
+   }, [loading, settings])
 
    const buildImageUrl = React.useCallback((size, url) => {
       const server_url = `${
@@ -146,6 +135,5 @@ export const useConfig = (globalType = '') => {
       noProductImage,
       imagePlaceholder,
       brand: state.brand,
-      organization: state.organization,
    }
 }

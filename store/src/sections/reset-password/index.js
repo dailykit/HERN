@@ -25,7 +25,7 @@ export const ResetPassword = () => {
    const router = useRouter()
    const { addToast } = useToasts()
    const { dispatch } = useUser()
-   const { brand, configOf, organization } = useConfig()
+   const { brand, configOf } = useConfig()
    const params = useQueryParams()
    const theme = configOf('theme-color', 'Visual')
 
@@ -84,10 +84,7 @@ export const ResetPassword = () => {
          }
          console.log('CUSTOMER EXISTS')
 
-         const user = await processUser(
-            customer,
-            organization?.stripeAccountType
-         )
+         const user = await processUser(customer)
          dispatch({ type: 'SET_USER', payload: user })
 
          const { brandCustomers = {} } = customer
