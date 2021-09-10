@@ -73,7 +73,6 @@ const CustomerReport = () => {
                      brandProvider
                      shopTypeProvider
                      datePickerProvider
-                     compareProvider
                      groupTimeProvider
                   >
                      <FirstTimeVsReturningCustomerSales />
