@@ -158,7 +158,11 @@ const Title = () => {
             <Header>
                <Form.Group>
                   <Form.Label htmlFor="title" title="title">
-                     <Flex container alignItems="center">
+                     <Flex
+                        container
+                        alignItems="center"
+                        style={{ marginLeft: '20px' }}
+                     >
                         Subscription Title*
                         <Tooltip identifier="form_subscription_field_title" />
                      </Flex>
@@ -173,6 +177,7 @@ const Title = () => {
                      hasError={
                         state.title.meta.isTouched && !state.title.meta.isValid
                      }
+                     style={{ marginLeft: '10px' }}
                   />
                   {state.title.meta.isTouched &&
                      !state.title.meta.isValid &&
@@ -181,7 +186,11 @@ const Title = () => {
                      ))}
                </Form.Group>
                {title?.isDemo && <Tag>Demo</Tag>}
-               <Flex container alignItems="center">
+               <Flex
+                  container
+                  alignItems="center"
+                  style={{ marginTop: '28px' }}
+               >
                   {title.isValid ? (
                      <Flex container flex="1" alignItems="center">
                         <TickIcon size={20} color="green" />
@@ -190,7 +199,9 @@ const Title = () => {
                      </Flex>
                   ) : (
                      <Flex container flex="1" alignItems="center">
-                        <CloseIcon size={20} color="red" />
+                        <span style={{ marginTop: '19px' }}>
+                           <CloseIcon size={20} color="red" />
+                        </span>
                         <Spacer size="8px" xAxis />
                         <Text as="subtitle">
                            Must have atleast one active servings!
