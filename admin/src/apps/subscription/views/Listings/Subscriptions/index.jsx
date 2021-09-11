@@ -58,7 +58,7 @@ export const Subscriptions = () => {
       {
          title: 'Title',
          field: 'title',
-         width:350,
+         width: 350,
          cssClass: 'cell',
          headerFilter: true,
          headerFilterPlaceholder: 'Search titles...',
@@ -110,9 +110,12 @@ export const Subscriptions = () => {
             height="80px"
             alignItems="center"
             justifyContent="space-between"
+            style={{ padding: '0px 7px' }}
          >
             <Flex container alignItems="center">
-               <Text as="h2">Subscriptions({titles.length})</Text>
+               <Text as="h2" style={{ marginBottom: '0px' }}>
+                  Subscriptions({titles.length})
+               </Text>
                <Tooltip identifier="listing_subscription_heading" />
             </Flex>
             <ComboButton type="solid" onClick={() => createTab()}>
@@ -128,6 +131,7 @@ export const Subscriptions = () => {
                columns={columns}
                rowClick={rowClick}
                options={{ ...options, layout: 'fitColumns', maxHeight: 480 }}
+               style={{ padding: '0px 7px' }}
             />
          )}
 
@@ -145,7 +149,7 @@ function DemoName({ cell, addTab }) {
    return (
       <>
          <IconButton type="ghost">
-                  {data.isDemo ? <PublishIcon /> : <UnPublishIcon />}
+            {data.isDemo ? <PublishIcon /> : <UnPublishIcon />}
          </IconButton>
       </>
    )
