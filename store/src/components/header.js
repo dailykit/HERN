@@ -89,12 +89,13 @@ export const Header = ({ settings, navigationMenus }) => {
                               </Link>
                            </span>
                         ) : (
-                           <span className="hern-header__avatar">
-                              <Link href="#" onClick={() => setToggle(!toggle)}>
-                                 {getInitials(
-                                    `${user.platform_customer.firstName} ${user.platform_customer.lastName}`
-                                 )}
-                              </Link>
+                           <span
+                              className="hern-header__avatar"
+                              onClick={() => setToggle(!toggle)}
+                           >
+                              {getInitials(
+                                 `${user.platform_customer.firstName} ${user.platform_customer.lastName}`
+                              )}
                            </span>
                         ))}
 
