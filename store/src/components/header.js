@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { signOut } from 'next-auth/client'
@@ -11,11 +11,13 @@ import { ProfileSidebar } from './profile_sidebar'
 import { CrossIcon } from '../assets/icons'
 import { Loader } from './loader'
 import NavigationBar from './navbar'
+import { useWindowSize } from '../utils/useWindowSize'
 
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const Header = ({ settings, navigationMenus }) => {
    const router = useRouter()
+   const { width } = useWindowSize()
    const { isAuthenticated, user, isLoading } = useUser()
    const logout = async () => {
       await signOut({ redirect: false })
@@ -52,7 +54,6 @@ export const Header = ({ settings, navigationMenus }) => {
                </div>
             </Link>
             <section className="hern-navigatin-menu__wrapper">
-               {' '}
                <NavigationBar Data={newNavigationMenus}>
                   {isLoading ? (
                      <li>
@@ -80,7 +81,7 @@ export const Header = ({ settings, navigationMenus }) => {
                ) : isAuthenticated ? (
                   <>
                      {user?.platform_customer?.firstName &&
-                        (isClient && window.innerWidth > 768 ? (
+                        (isClient && width > 768 ? (
                            <span className="hern-header__avatar">
                               <Link href={getRoute('/account/profile/')}>
                                  {getInitials(
@@ -89,12 +90,13 @@ export const Header = ({ settings, navigationMenus }) => {
                               </Link>
                            </span>
                         ) : (
-                           <span className="hern-header__avatar">
-                              <Link href="#" onClick={() => setToggle(!toggle)}>
-                                 {getInitials(
-                                    `${user.platform_customer.firstName} ${user.platform_customer.lastName}`
-                                 )}
-                              </Link>
+                           <span
+                              className="hern-header__avatar"
+                              onClick={() => setToggle(!toggle)}
+                           >
+                              {getInitials(
+                                 `${user.platform_customer.firstName} ${user.platform_customer.lastName}`
+                              )}
                            </span>
                         ))}
 
@@ -154,7 +156,7 @@ export const Header = ({ settings, navigationMenus }) => {
                </section>
             )}
          </header>
-         {isClient && window.innerWidth < 768 && (
+         {isClient && width < 768 && (
             <ProfileSidebar toggle={toggle} logout={logout} />
          )}
       </>
