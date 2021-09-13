@@ -2,12 +2,9 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import tw, { styled } from 'twin.macro'
 
-import { SEO, Layout } from '../../components'
-import { getRoute, isClient, getSettings } from '../../utils'
+import { getRoute, isClient } from '../../utils'
 import { signIn } from 'next-auth/client'
-import { WEBSITE_PAGE, NAVIGATION_MENU } from '../../graphql'
-import { graphQLClient } from '../../lib'
-import 'regenerator-runtime'
+
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const Login = () => {
@@ -167,38 +164,3 @@ const Submit = styled.button`
       ${tw`cursor-not-allowed bg-gray-300 text-gray-700`}
    }
 `
-export async function getStaticProps({ params }) {
-   const client = await graphQLClient()
-   // const data = await client.request(GET_FILES, {
-   //    divId: ['home-bottom-01'],
-   // })
-   const dataByRoute = await client.request(WEBSITE_PAGE, {
-      domain: params.brand,
-      route: '/login',
-   })
-   // const domain =
-   //    process.env.NODE_ENV === 'production'
-   //       ? params.domain
-   //       : 'test.dailykit.org'
-   const domain = 'test.dailykit.org'
-   const { seo, settings } = await getSettings(domain, '/login')
-
-   //navigation menu
-   const navigationMenu = await client.request(NAVIGATION_MENU, {
-      navigationMenuId:
-         dataByRoute.website_websitePage[0]['website']['navigationMenuId'],
-   })
-   const navigationMenus = navigationMenu.website_navigationMenuItem
-
-   return {
-      props: { seo, settings, navigationMenus },
-      revalidate: 60, // will be passed to the page component as props
-   }
-}
-
-export async function getStaticPaths() {
-   return {
-      paths: [],
-      fallback: 'blocking', // true -> build page if missing, false -> serve 404
-   }
-}
