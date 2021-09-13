@@ -1,4 +1,6 @@
 import { client } from '../lib/graphql'
+import get_env from '../../get_env'
+import stripe from '../lib/stripe'
 
 const UPDATE_CART_PAYMENT = `
 mutation UPDATE_CART_PAYMENT($id: Int!, $_inc: order_cartPayment_inc_input, $_set: order_cartPayment_set_input) {
@@ -33,8 +35,10 @@ const STATUS = {
 }
 const handleInvoice = async args => {
    try {
+      console.log('inside handleInvoice')
       const _stripe = await stripe()
-      const { cartPaymentId, invoice, eventType } = args
+      const { invoice, eventType = '' } = args
+      const cartPaymentId = invoice.metadata.cartPaymentId
       const stripeAccountId = await get_env('STRIPE_ACCOUNT_ID')
 
       let payment_intent = null
@@ -43,6 +47,7 @@ const handleInvoice = async args => {
             invoice.payment_intent,
             { stripeAccount: stripeAccountId }
          )
+         console.log({ payment_intent })
          // SEND ACTION REQUIRED SMS
          if (eventType === 'invoice.payment_action_required') {
             console.log('SEND ACTION URL SMS')
@@ -112,47 +117,9 @@ const handleInvoice = async args => {
    }
 }
 
-const handlePaymentIntent = async args => {
-   try {
-      const { cartPaymentId, intent } = args
-
-      await client.request(UPDATE_CART_PAYMENT, {
-         id: cartPaymentId,
-         _set: {
-            transactionId: intent.id,
-            transactionRemark: intent,
-            paymentStatus: STATUS[intent.status]
-         }
-      })
-
-      const datahub_history_objects = [
-         {
-            cartPaymentId,
-            status: intent.status,
-            type: 'PAYMENT_INTENT',
-            transactionId: intent.id,
-            transactionRemark: intent
-         }
-      ]
-
-      await client.request(DATAHUB_INSERT_STRIPE_PAYMENT_HISTORY, {
-         objects: datahub_history_objects
-      })
-      return
-   } catch (error) {
-      console.error(error)
-      throw error
-   }
-}
-
 export const paymentLogger = async args => {
    try {
-      if (args.event === 'invoice') {
-         await handleInvoice(args)
-      }
-      if (args.event === 'payment_intent') {
-         await handlePaymentIntent(args)
-      }
+      await handleInvoice(args)
    } catch (error) {
       console.error(error)
    }
