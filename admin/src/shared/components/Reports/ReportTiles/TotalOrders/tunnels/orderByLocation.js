@@ -19,6 +19,7 @@ import {
    YAxis,
 } from 'recharts'
 import moment from 'moment'
+import OrderByLocationTable from './listing/orderByLocation'
 const OrderByLocation = () => {
    const { brandShopDateState, brandShopDateDispatch } =
       React.useContext(BrandShopDateContext)
@@ -66,8 +67,8 @@ const OrderByLocation = () => {
                      customerPhone:
                         each.cart?.customerInfo?.customerPhone || 'N/A',
                      customerFullName:
-                        (each.customerInfo?.customerFirstName || 'N/A') +
-                        (each.customerInfo?.customerLastName || ''),
+                        (each.cart?.customerInfo?.customerFirstName || 'N/A') +
+                        (each.cart?.customerInfo?.customerLastName || ''),
                      created_at: moment(each.created_at).format('DD MMM YYYY'),
                      amountPaid: each.amountPaid || 0,
                   }
@@ -162,6 +163,17 @@ const OrderByLocation = () => {
             }}
          >
             <OrderByLocationChart orderByLocationData={orderByLocationData} />
+         </div>
+         <Spacer size="20px" />
+         <div
+            style={{
+               background: '#FFFFFF',
+               boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.2)',
+               borderRadius: '10px',
+               padding: '10px 0px',
+            }}
+         >
+            <OrderByLocationTable orderByLocationData={orderByLocationData} />
          </div>
       </Flex>
    )
