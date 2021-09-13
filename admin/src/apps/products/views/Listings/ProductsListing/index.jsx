@@ -154,16 +154,19 @@ const ProductsListing = () => {
                alignItems="center"
                justifyContent="space-between"
                height="72px"
+               padding = "7px"
             >
                <Banner id="products-app-products-listing-top" />
                <Flex container alignItems="center">
-                  <Text as="h2">{t(address.concat('products'))}</Text>
+                  <Text as="h2" style={{marginBottom: 0}}>{t(address.concat('products'))}</Text>
                   <Tooltip identifier="products_list_heading" />
                </Flex>
                <ComboButton type="solid" onClick={() => openTunnel(3)}>
                   <AddIcon color="#fff" size={24} /> Add Product
                </ComboButton>
             </Flex>
+
+            <Flex style={{marginLeft: 8}}>
             <RadioGroup
                options={options}
                active={view}
@@ -172,7 +175,7 @@ const ProductsListing = () => {
                   setIsProductOptionTableVisible(false)
                }}
             />
-
+            </Flex>
             <Spacer size="16px" />
             {loading ? (
                <InlineLoader />
@@ -520,6 +523,7 @@ class DataTable extends React.Component {
             )}
             {this.props.view !== 'simple' && (
                <>
+               <Flex style={{margin: '0px 7px' }}>
                   <ActionBar
                      title={`${this.props.view} product`}
                      downloadPdfData={this.downloadPdfData}
@@ -547,6 +551,7 @@ class DataTable extends React.Component {
                      data-custom-attr="test-custom-attribute"
                      className="custom-css-class"
                   />
+               </Flex>
                </>
             )}
          </>
@@ -658,7 +663,8 @@ const ActionBar = ({
             <Flex
                container
                as="header"
-               width="32%"
+               width="35%"
+               style={{marginLeft: 0}}
                alignItems="center"
                justifyContent="space-between"
             >
@@ -691,7 +697,7 @@ const ActionBar = ({
                <Flex
                   container
                   as="header"
-                  width="98%"
+                  width="87%"
                   alignItems="center"
                   justifyContent="flex-end"
                >
@@ -725,7 +731,7 @@ const ActionBar = ({
                      </DropdownButton.Options>
                   </DropdownButton>
                   <Spacer size="15px" xAxis />
-                  <Text as="text1">Group By:</Text>
+                  <Text as="text1" style={{fontSize: 14}}>Group By:</Text>
                   <Spacer size="5px" xAxis />
                   <Dropdown
                      type="multi"
@@ -741,11 +747,11 @@ const ActionBar = ({
                <Flex
                   container
                   as="header"
-                  width="30%"
+                  // width="30%"
                   alignItems="center"
                   justifyContent="flex-end"
                >
-                  <Text as="text1">Apply Filter:</Text>
+                  {/* <Text as="text1">Apply Filter:</Text>
                   <Spacer size="5px" xAxis />
                   <IconButton
                      type="ghost"
@@ -753,14 +759,15 @@ const ActionBar = ({
                      onClick={() => openTunnel(2)}
                   >
                      <FilterIcon />
-                  </IconButton>
+                  </IconButton> */}
                   <ButtonGroup align="left">
                      <TextButton
+                        style={{padding: 7}}
                         type="ghost"
                         size="sm"
                         onClick={() => clearHeaderFilter()}
                      >
-                        Clear
+                        Clear Filters
                      </TextButton>
                   </ButtonGroup>
                </Flex>

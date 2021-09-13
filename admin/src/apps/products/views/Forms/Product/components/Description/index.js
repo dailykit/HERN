@@ -36,7 +36,9 @@ const Description = ({ state }) => {
             {state.additionalText || state.description || state.tags?.length ? (
                <StyledContainer>
                   <StyledAction>
-                     <IconButton type="ghost" onClick={() => openTunnel(1)}>
+                     <IconButton 
+                     title="Edit" type="ghost" 
+                     onClick={() => openTunnel(1)}>
                         <EditIcon color="#00A7E1" />
                      </IconButton>
                   </StyledAction>
