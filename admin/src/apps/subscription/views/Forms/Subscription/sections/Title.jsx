@@ -189,7 +189,7 @@ const Title = () => {
                <Flex
                   container
                   alignItems="center"
-                  style={{ marginTop: '28px' }}
+                  style={{ padding: '26px 26px 0px' }}
                >
                   {title.isValid ? (
                      <Flex container flex="1" alignItems="center">
@@ -199,9 +199,7 @@ const Title = () => {
                      </Flex>
                   ) : (
                      <Flex container flex="1" alignItems="center">
-                        <span style={{ marginTop: '19px' }}>
-                           <CloseIcon size={20} color="red" />
-                        </span>
+                        <CloseIcon size={8} color="red" />
                         <Spacer size="8px" xAxis />
                         <Text as="subtitle">
                            Must have atleast one active servings!
@@ -232,6 +230,7 @@ const Title = () => {
                   height="48px"
                   alignItems="center"
                   justifyContent="space-between"
+                  style={{ padding: '0px 18px' }}
                >
                   <Flex container alignItems="center">
                      <Text as="title">Servings</Text>
@@ -241,6 +240,7 @@ const Title = () => {
                      size="sm"
                      type="outline"
                      onClick={() => toggleServingTunnel('ADD_SERVING')}
+                     style={{ marginTop: '4px', marginRight: '8px' }}
                   >
                      <PlusIcon />
                   </IconButton>
@@ -249,7 +249,10 @@ const Title = () => {
                   id="servingTabs"
                   onChange={index => setTabIndex(index)}
                >
-                  <SectionTabList id="servingTabList">
+                  <SectionTabList
+                     id="servingTabList"
+                     style={{ marginLeft: '10px' }}
+                  >
                      {title?.servings.map(serving => (
                         <SectionTab key={serving.id}>
                            <Text as="title">{serving.size}</Text>
