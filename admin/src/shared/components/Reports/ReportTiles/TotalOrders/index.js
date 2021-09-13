@@ -14,12 +14,13 @@ import styled from 'styled-components'
 import BrandShopDate from '../../../BrandShopDateProvider'
 import { Tile } from '../../../DashboardTiles'
 import { ORDERS_COUNT } from './graphql/subscription'
+import OrderByLocation from './tunnels/orderByLocation'
 import OrderCancelOrRejectReport from './tunnels/orderReject'
 import OrderSummaryReport from './tunnels/orderSummary'
 
 const OrdersReport = () => {
    const [orderReportTunnels, openOrderReportTunnel, closeOrderReportTunnel] =
-      useTunnel(2)
+      useTunnel(3)
    const {
       loading: subsLoading,
       error: subsError,
@@ -70,6 +71,23 @@ const OrdersReport = () => {
                      groupTimeProvider
                   >
                      <OrderCancelOrRejectReport />
+                  </BrandShopDate>
+               </TunnelBody>
+            </Tunnel>
+            <Tunnel size="full" layer={3}>
+               <TunnelHeader
+                  title="Order By Location"
+                  close={() => closeOrderReportTunnel(3)}
+                  description="This is a description"
+               />
+               <TunnelBody>
+                  <BrandShopDate
+                     shopTypeProvider
+                     brandProvider
+                     datePickerProvider
+                     compareProvider
+                  >
+                     <OrderByLocation />
                   </BrandShopDate>
                </TunnelBody>
             </Tunnel>
@@ -140,6 +158,20 @@ const OrdersReport = () => {
                         onClick={() => openOrderReportTunnel(2)}
                      >
                         Rejected orders over time
+                     </Text>
+                     <Text
+                        as="text2"
+                        title="View order by location"
+                        style={{
+                           marginLeft: '8px',
+                           fontWeight: '400',
+                           cursor: 'pointer',
+                           color: '#367bf5',
+                           lineHeight: '24px',
+                        }}
+                        onClick={() => openOrderReportTunnel(3)}
+                     >
+                        Order by location
                      </Text>
                   </Flex>
                </Flex>

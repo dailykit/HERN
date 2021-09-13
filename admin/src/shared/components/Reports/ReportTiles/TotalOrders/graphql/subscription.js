@@ -34,3 +34,16 @@ export const TOTAL_ORDER_RECEIVED = gql`
       }
    }
 `
+export const ORDER_BY_LOCATION = gql`
+   subscription ORDER_BY_LOCATION($where: order_order_bool_exp!) {
+      orders(where: $where) {
+         cart {
+            address
+            customerInfo
+         }
+         created_at
+         id
+         amountPaid
+      }
+   }
+`
