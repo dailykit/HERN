@@ -1,26 +1,28 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import tw, { styled } from 'twin.macro'
 
 import { getRoute, isClient } from '../../utils'
 import { signIn } from 'next-auth/client'
+import classNames from 'classnames'
 
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const Login = () => {
    const [current, setCurrent] = React.useState('LOGIN')
    return (
-      <Main tw="pt-8">
-         <TabList>
-            <Tab
-               className={current === 'LOGIN' ? 'active' : ''}
+      <main className="hern-login">
+         <ul className="hern-login__tab-list">
+            <li
+               className={classNames('hern-login__tab', {
+                  'hern-login__tab--active': current === 'LOGIN',
+               })}
                onClick={() => setCurrent('LOGIN')}
             >
                Login
-            </Tab>
-         </TabList>
+            </li>
+         </ul>
          {current === 'LOGIN' && <LoginPanel />}
-      </Main>
+      </main>
    )
 }
 
@@ -75,92 +77,56 @@ const LoginPanel = () => {
    }
 
    return (
-      <Panel>
-         <FieldSet>
-            <Label htmlFor="email">Email*</Label>
-            <Input
+      <section className="hern-login__panel">
+         <fieldset className="hern-login__fieldset">
+            <label className="hern-login__label" htmlFor="email">
+               Email*
+            </label>
+
+            <input
                type="email"
                name="email"
+               className="hern-login__input"
                value={form.email}
                onChange={onChange}
                placeholder="Enter your email"
             />
-         </FieldSet>
-         <FieldSet>
-            <Label htmlFor="password">Password*</Label>
-            <Input
+         </fieldset>
+         <fieldset className="hern-login__fieldset">
+            <label className="hern-login__label" htmlFor="password">
+               Password*
+            </label>
+            <input
                name="password"
                type="password"
+               className="hern-login__input"
                onChange={onChange}
                value={form.password}
                placeholder="Enter your password"
             />
-         </FieldSet>
+         </fieldset>
          <button
-            tw="self-start mb-2 text-blue-500"
+            className="hern-login__forgot-password-btn"
             onClick={() => router.push(getRoute('/forgot-password'))}
          >
             Forgot password?
          </button>
          <button
-            tw="self-start mb-2 text-blue-500"
+            className="hern-login__register-btn"
             onClick={() => router.push(getRoute('/get-started/register'))}
          >
             Register instead?
          </button>
-         <Submit
-            className={!isValid || loading ? 'disabled' : ''}
+         <button
+            disabled={!isValid || loading}
+            className={classNames('hern-login__submit-btn', {
+               'hern-login__submit-btn--disabled': !isValid || loading,
+            })}
             onClick={() => isValid && submit()}
          >
             {loading ? 'Logging in...' : 'Login'}
-         </Submit>
-         {error && <span tw="self-start block text-red-500 mt-2">{error}</span>}
-      </Panel>
+         </button>
+         {error && <span className="hern-login__error">{error}</span>}
+      </section>
    )
 }
-
-const Main = styled.main`
-   margin: auto;
-   overflow-y: auto;
-   max-width: 1180px;
-   width: calc(100vw - 40px);
-   min-height: calc(100vh - 128px);
-   > section {
-      width: 100%;
-      max-width: 360px;
-   }
-`
-
-const Panel = styled.section`
-   ${tw`flex mx-auto justify-center items-center flex-col py-4`}
-`
-
-const TabList = styled.ul`
-   ${tw`border-b flex justify-center space-x-3`}
-`
-
-const Tab = styled.button`
-   ${tw`h-8 px-3`}
-   &.active {
-      ${tw`border-b border-green-500 border-b-2`}
-   }
-`
-
-const FieldSet = styled.fieldset`
-   ${tw`w-full flex flex-col mb-4`}
-`
-
-const Label = styled.label`
-   ${tw`text-gray-600 mb-1`}
-`
-
-const Input = styled.input`
-   ${tw`w-full block border h-10 rounded px-2 outline-none focus:border-2 focus:border-blue-400`}
-`
-
-const Submit = styled.button`
-   ${tw`bg-green-500 rounded w-full h-10 text-white uppercase tracking-wider`}
-   &.disabled {
-      ${tw`cursor-not-allowed bg-gray-300 text-gray-700`}
-   }
-`
