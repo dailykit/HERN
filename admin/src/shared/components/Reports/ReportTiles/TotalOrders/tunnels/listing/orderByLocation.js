@@ -57,13 +57,21 @@ const OrderByLocationTable = props => {
       },
       {
          id: 6,
+         title: 'Zip Code',
+         field: 'orderZipcode',
+         toBeHide: false,
+         toBeGroupBy: false,
+         headerFilter: true,
+      },
+      {
+         id: 7,
          title: 'Created At',
          field: 'created_at',
          toBeHide: false,
          toBeGroupBy: true,
       },
       {
-         id: 7,
+         id: 8,
          title: `Amount Paid (${currency})`,
          field: 'amountPaid',
          toBeHide: true,
