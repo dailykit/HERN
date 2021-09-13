@@ -1,0 +1,49 @@
+.hern-profile-sidebar--toggle {
+   display: none;
+   @media (min-width: 768px) {
+      display: block;
+   }
+}
+.hern-profile-sidebar {
+   background-color: rgba(243, 244, 246, 1);
+   border-right-width: 1px;
+   z-index: 30;
+   display: block;
+   position: absolute;
+   top: 4rem;
+   right: 0px;
+   bottom: 0px;
+   left: 0;
+   @media (min-width: 768px) {
+      display: none;
+      position: static;
+   }
+}
+
+.hern-profile-sidebar__logout-btn {
+   color: rgba(220, 38, 38, 1);
+   border-radius: 0.25rem;
+   padding-left: 0.75rem;
+   padding-top: 0.25rem;
+   padding-bottom: 0.25rem;
+   display: block;
+   @media (min-width: 768px) {
+      display: none;
+   }
+}
+.hern-profile-sidebar__menu-link {
+   padding-left: 0.75rem;
+   display: -webkit-box;
+   display: -webkit-flex;
+   display: -ms-flexbox;
+   display: flex;
+   -webkit-align-items: center;
+   -webkit-box-align: center;
+   -ms-flex-align: center;
+   align-items: center;
+   width: 100%;
+   height: 3rem;
+}
+.hern-profile-sidebar__menu-link--active {
+   background-color: rgba(209, 213, 219, 1);
+}
