@@ -18,6 +18,7 @@ import TotalEarningReport from '../../../../shared/components/Reports/ReportTile
 import Reports from '../../../../shared/components/Reports'
 import OrdersReport from '../../../../shared/components/Reports/ReportTiles/TotalOrders'
 import CustomerReport from '../../../../shared/components/Reports/ReportTiles/Customers'
+import MarketingReport from '../../../../shared/components/Reports/ReportTiles/Marketing'
 
 const Home = () => {
    const { addTab } = useTabs()
@@ -57,6 +58,7 @@ const Home = () => {
                <TotalEarningReport />
                <OrdersReport />
                <CustomerReport />
+               <MarketingReport />
             </Reports>
          </Flex>
          <ReferralPlansListing />
