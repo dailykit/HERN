@@ -13,7 +13,7 @@ import { BrandShopDateContext } from '../../../../../BrandShopDateProvider/conte
 const OrderByLocationTable = props => {
    const { orderByLocationData } = props
    const { brandShopDateState } = React.useContext(BrandShopDateContext)
-   const { currency } = { brandShopDateState }
+   const { currency } = brandShopDateState
    const tableRef = React.useRef()
    const columns = [
       {
@@ -64,7 +64,7 @@ const OrderByLocationTable = props => {
       },
       {
          id: 7,
-         title: `Amount Paid ${currency}`,
+         title: `Amount Paid (${currency})`,
          field: 'amountPaid',
          toBeHide: true,
          toBeGroupBy: false,
