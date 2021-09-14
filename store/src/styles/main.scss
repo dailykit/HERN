@@ -32,7 +32,8 @@
 @use './sections/refund-policy';
 @use './sections/forgot-password';
 @use './sections/change-plan';
-@use './sections/account/addresses';
 @use './sections/login';
 @use './sections/inventory';
 @use './sections/recipes';
+@use './sections/account/addresses';
+@use './sections/account/cards';
