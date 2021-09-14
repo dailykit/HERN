@@ -9,8 +9,14 @@ const InlineLoader = () => (
    </div>
 )
 
-export const Loader = ({ inline }) => {
+export const Loader = ({ inline, component }) => {
    if (inline) return <InlineLoader />
+   if (component)
+      return (
+         <div className="hern-loader__component">
+            <InlineLoader />
+         </div>
+      )
    return (
       <div className="hern-loader__wrapper">
          <InlineLoader />

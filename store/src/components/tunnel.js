@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { useConfig } from '../lib'
-
+import classNames from 'classnames'
 import { isClient, useOnClickOutside } from '../utils'
 
 const portalRoot = isClient ? document.getElementById('portal') : null
@@ -36,16 +36,20 @@ export const Tunnel = ({
    toggleTunnel,
    size = 'sm',
    children,
+   direction = 'popup',
    ...props
 }) => {
    const ref = React.useRef()
    useOnClickOutside(ref, () => toggleTunnel(false))
-
+   const wrapperClasses = classNames(
+      'hern-tunnel__wrapper',
+      `hern-tunnel__${direction}--${size}`
+   )
    if (isOpen)
       return (
          <Portal>
             <div className="hern-tunnel" {...props}>
-               <div className={`hern-tunnel__content--${size}`} ref={ref}>
+               <div className={wrapperClasses} ref={ref}>
                   {children}
                </div>
             </div>
