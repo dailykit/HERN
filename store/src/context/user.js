@@ -205,7 +205,6 @@ export const UserProvider = ({ children }) => {
       }
    }, [keycloakId, loading, customer])
 
-   if (isLoading) return <PageLoader />
    return (
       <UserContext.Provider
          value={{

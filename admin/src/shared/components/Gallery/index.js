@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Tunnels, Tunnel, useTunnel, IconButton } from '@dailykit/ui'
+import { Tunnels, Tunnel, useTunnel, IconButton,TunnelHeader, Flex } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import AssetTunnel from './upload'
 import useGallery from './useGallery'
@@ -8,6 +8,7 @@ import SingleImage from './SingleImage'
 import { MainWrap, ImgWrapper, Trail, EditDiv, DeleteDiv } from './styled'
 import ErrorBoundary from '../ErrorBoundary'
 import { DeleteIcon, EditIcon } from '../../assets/icons'
+
 
 export default function ImageGallery({ list = [], isMulti = false, onChange }) {
    const {
@@ -56,12 +57,14 @@ export default function ImageGallery({ list = [], isMulti = false, onChange }) {
                      <img
                         src={list[current]}
                         alt="Product Preview"
-                        style={{ objectFit: 'contain' }}
+                        style={{ objectFit: 'contain', left:'95px' }}
                      />
-                     <EditDiv>
+                  <Flex>
+                   <EditDiv>
                         <IconButton
+                           title="Edit"
                            size="sm"
-                           type="solid"
+                           type="ghost"
                            onClick={() => editHandler(current, true)}
                         >
                            <EditIcon />
@@ -70,14 +73,16 @@ export default function ImageGallery({ list = [], isMulti = false, onChange }) {
 
                      <DeleteDiv>
                         <IconButton
+                           title="Delete"
                            size="sm"
-                           type="solid"
+                           type="ghost"
                            onClick={() => remove(current)}
                         >
-                           <DeleteIcon />
+                           <DeleteIcon color='red'/>
                         </IconButton>
                      </DeleteDiv>
-                  </ImgWrapper>
+                  </Flex> 
+                    </ImgWrapper>
                )}
                <Trail hasImage={images.length > 0}>
                   <PreviewImage

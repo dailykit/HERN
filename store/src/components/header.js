@@ -56,9 +56,7 @@ export const Header = ({ settings, navigationMenus }) => {
             <section className="hern-navigatin-menu__wrapper">
                <NavigationBar Data={newNavigationMenus}>
                   {isLoading ? (
-                     <li>
-                        <Loader inline={true} />
-                     </li>
+                     <li className="hern-navbar__list__item__skeleton" />
                   ) : isAuthenticated && user?.isSubscriber ? (
                      <li className="hern-navbar__list__item">
                         <Link href={getRoute('/menu')}>Select Menu</Link>
@@ -77,7 +75,10 @@ export const Header = ({ settings, navigationMenus }) => {
             </section>
             <section className="hern-header__auth">
                {isLoading ? (
-                  <Loader inline={true} />
+                  <>
+                     <span className="hern-navbar__list__item__skeleton" />
+                     <span className="hern-header__avatar__skeleton" />
+                  </>
                ) : isAuthenticated ? (
                   <>
                      {user?.platform_customer?.firstName &&

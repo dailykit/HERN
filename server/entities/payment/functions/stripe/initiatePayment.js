@@ -1,7 +1,9 @@
-import handleInvoice from './handleInvoice'
-import handlePaymentIntent from './handlePaymentIntent'
 import stripe from '../../../../lib/stripe'
-import { logger, isConnectedIntegration } from '../../../../utils'
+import {
+   logger,
+   isConnectedIntegration,
+   paymentLogger
+} from '../../../../utils'
 import get_env from '../../../../../get_env'
 
 // * isConnectedIntegration is a helper function that checks if the integration is "connected"
@@ -68,7 +70,7 @@ const initiatePayment = async arg => {
                   console.log('invoice', invoice.id)
 
                   // handleInvoice just updates the cartPayment and stripePaymentHistory table
-                  await handleInvoice({ invoice })
+                  await paymentLogger({ invoice })
 
                   // this is for express type stripe account
                   if (invoice.payment_intent) {
@@ -81,9 +83,8 @@ const initiatePayment = async arg => {
                         //    : null
                      )
                      console.log('intent', intent.id)
-                     await handlePaymentIntent({
-                        intent,
-                        stripeAccountId
+                     await paymentLogger({
+                        invoice
                      })
                   }
                   return {
@@ -161,7 +162,7 @@ const initiatePayment = async arg => {
             console.log('invoice', invoice.id)
 
             // handleInvoice just updates the cartPayment and stripePaymentHistory table
-            await handleInvoice({ invoice })
+            await paymentLogger({ invoice })
 
             // finalize the Invoice drafts before paying
             const finalizedInvoice = await _stripe.invoices.finalizeInvoice(
@@ -175,7 +176,7 @@ const initiatePayment = async arg => {
             console.log('finalizedInvoice', finalizedInvoice.id)
 
             // again here handleInvoice just updates the cartPayment and stripePaymentHistory table
-            await handleInvoice({ invoice: finalizedInvoice })
+            await paymentLogger({ invoice: finalizedInvoice })
 
             // here we pay for the invoice that is been finalized
             const result = await _stripe.invoices.pay(
@@ -189,22 +190,8 @@ const initiatePayment = async arg => {
             console.log('result', result.id)
 
             // again here handleInvoice just updates the cartPayment and stripePaymentHistory table
-            await handleInvoice({ invoice: result })
-            if (result.payment_intent) {
-               const paymentIntent = await _stripe.paymentIntents.retrieve(
-                  result.payment_intent
-                  // (await isConnectedIntegration())
-                  //    ? {
-                  //         stripeAccount: stripeAccountId
-                  //      }
-                  //    : null
-               )
-               console.log('paymentIntent', paymentIntent.id)
-               await handlePaymentIntent({
-                  intent: paymentIntent,
-                  stripeAccountId
-               })
-            }
+            await paymentLogger({ invoice: result })
+
             return {
                data: result,
                success: true,
