@@ -1,10 +1,21 @@
-import { Flex, Spacer, Text } from '@dailykit/ui'
+import {
+   Flex,
+   Spacer,
+   Text,
+   Tunnel,
+   TunnelHeader,
+   Tunnels,
+   useTunnel,
+} from '@dailykit/ui'
 import React from 'react'
 import { Tile } from '../../../DashboardTiles'
 import { useSubscription } from '@apollo/react-hooks'
 import moment from 'moment'
 import { MARKETING_EARNING } from './graphql/subscription'
 import { get_env } from '../../../../utils'
+import BrandShopDate from '../../../BrandShopDateProvider'
+import styled from 'styled-components'
+import SalesByCoupons from './Tunnels/salesByCoupons'
 //currencies
 const currency = {
    USD: '$',
@@ -12,6 +23,8 @@ const currency = {
    EUR: '€',
 }
 const MarketingReport = () => {
+   const [marketingTunnels, openMarketingTunnel, closeMarketingTunnel] =
+      useTunnel(1)
    const {
       loading: subsLoading,
       error: subsError,
@@ -34,6 +47,25 @@ const MarketingReport = () => {
 
    return (
       <>
+         <Tunnels tunnels={marketingTunnels}>
+            <Tunnel size="full" layer={1}>
+               <TunnelHeader
+                  title="Sales from coupons"
+                  close={() => closeMarketingTunnel(1)}
+                  description="This is a description"
+               />
+               <TunnelBody>
+                  <BrandShopDate
+                     brandProvider
+                     shopTypeProvider
+                     datePickerProvider
+                     compareProvider
+                  >
+                     <SalesByCoupons />
+                  </BrandShopDate>
+               </TunnelBody>
+            </Tunnel>
+         </Tunnels>
          <Tile>
             <Tile.Head title="Marketing"></Tile.Head>
             <Tile.Body>
@@ -57,10 +89,50 @@ const MarketingReport = () => {
                            : ordersAggregate.aggregate.sum.amountPaid || 0}
                      </Text>
                   </Flex>
+                  <div
+                     style={{
+                        borderBottom: '1px solid #e3e8ee',
+                        height: '2px',
+                        margin: '0px 8px',
+                     }}
+                  >
+                     <Spacer size="11px" />
+                  </div>
+                  <Spacer size="11px" />
+                  <Flex
+                     container
+                     flexDirection="column"
+                     width="100%"
+                     alignItems="flex-start"
+                  >
+                     <Text as="text1" style={{ marginLeft: '8px' }}>
+                        Reports
+                     </Text>
+                     <Spacer size="5px" />
+                     <Text
+                        as="text2"
+                        title="View sales from coupons"
+                        style={{
+                           marginLeft: '8px',
+                           fontWeight: '400',
+                           cursor: 'pointer',
+                           color: '#367bf5',
+                           lineHeight: '24px',
+                        }}
+                        onClick={() => openMarketingTunnel(1)}
+                     >
+                        Sales from coupons
+                     </Text>
+                  </Flex>
                </Flex>
             </Tile.Body>
          </Tile>
       </>
    )
 }
+const TunnelBody = styled.div`
+   padding: 10px 16px 0px 32px;
+   height: calc(100% - 103px);
+   overflow: auto;
+`
 export default MarketingReport

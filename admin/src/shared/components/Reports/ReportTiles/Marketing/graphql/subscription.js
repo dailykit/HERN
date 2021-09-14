@@ -11,3 +11,10 @@ export const MARKETING_EARNING = gql`
       }
    }
 `
+export const SALES_BY_COUPONS = gql`
+   subscription SALES_BY_COUPONS($args: insights_getEarningByCoupons_args!) {
+      insights_analytics {
+         getEarningByCoupons(args: $args)
+      }
+   }
+`
