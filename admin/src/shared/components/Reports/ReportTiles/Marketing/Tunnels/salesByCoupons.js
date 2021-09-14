@@ -4,6 +4,7 @@ import { BrandShopDateContext } from '../../../../BrandShopDateProvider/context'
 import { SALES_BY_COUPONS } from '../graphql/subscription'
 import moment from 'moment'
 import { Flex, Spacer } from '@dailykit/ui'
+import SalesByCouponsTable from './Listing/salesByCoupons'
 import {
    Bar,
    BarChart,
@@ -125,8 +126,8 @@ const SalesByCoupons = () => {
    }
    return (
       <>
-         <Spacer size="20px" />
          <Flex>
+            <Spacer size="20px" />
             <div
                style={{
                   background: '#FFFFFF',
@@ -142,6 +143,17 @@ const SalesByCoupons = () => {
                         ?.getEarningByCoupons || []
                   }
                />
+            </div>
+            <Spacer size="20px" />
+            <div
+               style={{
+                  background: '#FFFFFF',
+                  boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.2)',
+                  borderRadius: '10px',
+                  padding: '10px 0px',
+               }}
+            >
+               <SalesByCouponsTable salesByCouponsData={salesByCouponsData} />
             </div>
          </Flex>
       </>
