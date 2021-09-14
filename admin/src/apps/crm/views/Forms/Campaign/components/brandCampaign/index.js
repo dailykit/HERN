@@ -88,6 +88,7 @@ const BrandCampaign = () => {
                   ...options,
                   placeholder: 'No Brand Campaigns Data Available Yet !',
                }}
+               className='crmBrandTable'
             />
          )}
       </StyledWrapper>
