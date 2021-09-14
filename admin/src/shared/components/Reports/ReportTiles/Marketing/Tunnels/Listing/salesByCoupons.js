@@ -1,9 +1,16 @@
 import React from 'react'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import TableOptions from './tableOptions'
-import { DropdownButton, Flex, Spacer, Text, Dropdown } from '@dailykit/ui'
+import {
+   DropdownButton,
+   Flex,
+   Spacer,
+   Text,
+   Dropdown,
+   Filler,
+} from '@dailykit/ui'
 import { BrandShopDateContext } from '../../../../../BrandShopDateProvider/context'
-
+import './tableStyle.css'
 const SalesByCouponsTable = props => {
    const { salesByCouponsData } = props
    const { brandShopDateState } = React.useContext(BrandShopDateContext)
@@ -34,6 +41,7 @@ const SalesByCouponsTable = props => {
          toBeHide: false,
          headerFilter: true,
          width: 200,
+         hozAlign: 'center',
       },
       {
          id: 3,
@@ -51,7 +59,7 @@ const SalesByCouponsTable = props => {
          toBeGroupBy: false,
          toBeHide: false,
          width: 111,
-         hozAlign: 'right',
+         hozAlign: 'center',
          bottomCalc: totalCalc,
       },
       {
@@ -273,6 +281,7 @@ const SalesByCouponsTable = props => {
                   data={salesByCouponsData}
                   options={TableOptions}
                   dataLoaded={dataLoaded}
+                  className="sales-from-coupons"
                />
             )}
          </Flex>
