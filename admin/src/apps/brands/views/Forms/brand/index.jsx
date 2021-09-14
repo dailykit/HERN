@@ -46,27 +46,28 @@ export const Brand = () => {
          logger(error)
       },
    })
-   const { error, loading, data: { brand = {} } = {} } = useSubscription(
-      BRANDS.BRAND,
-      {
-         variables: {
-            id: params.id,
-         },
-         onSubscriptionData: ({
-            subscriptionData: { data: { brand = {} } = {} } = {},
-         }) => {
-            setTitle({
-               value: brand?.title || '',
-               meta: {
-                  isValid: brand?.title ? true : false,
-                  isTouched: false,
-                  errors: [],
-               },
-            })
-            setTabTitle(brand?.title || '')
-         },
-      }
-   )
+   const {
+      error,
+      loading,
+      data: { brand = {} } = {},
+   } = useSubscription(BRANDS.BRAND, {
+      variables: {
+         id: params.id,
+      },
+      onSubscriptionData: ({
+         subscriptionData: { data: { brand = {} } = {} } = {},
+      }) => {
+         setTitle({
+            value: brand?.title || '',
+            meta: {
+               isValid: brand?.title ? true : false,
+               isTouched: false,
+               errors: [],
+            },
+         })
+         setTabTitle(brand?.title || '')
+      },
+   })
 
    React.useEffect(() => {
       if (!tab && !loading && !isEmpty(brand)) {
@@ -111,11 +112,11 @@ export const Brand = () => {
          <Banner id="brands-app-brands-brand-details-top" />
          <Flex
             container
-            padding="0 16px"
+            padding="0 34px"
             alignItems="center"
             justifyContent="space-between"
          >
-            <Flex container alignItems="center">
+            <Flex container>
                <Form.Group>
                   <Flex container alignItems="flex-end">
                      <Form.Label htmlFor="name" title="Brand title">
@@ -147,7 +148,9 @@ export const Brand = () => {
                      <Label>Domain</Label>
                      <Tooltip identifier="brand_domain_info" />
                   </Flex>
-                  <Text as="h3">{brand?.domain}</Text>
+                  <Text as="h3" style={{ marginTop: '13px' }}>
+                     {brand?.domain}
+                  </Text>
                </section>
             </Flex>
 
@@ -162,6 +165,7 @@ export const Brand = () => {
                      },
                   })
                }
+               style={{ marginTop: '24px' }}
             >
                <Flex container alignItems="center">
                   Publish
