@@ -1,0 +1,235 @@
+.hern-recipe {
+   margin: auto;
+   max-width: 640px;
+   padding: 16px 0;
+   width: calc(100vw - 40px);
+}
+.hern-recipe__title {
+   padding-top: 1rem;
+   padding-bottom: 1rem;
+   font-size: 1.5rem;
+   line-height: 2rem;
+   -webkit-letter-spacing: 0.025em;
+   -moz-letter-spacing: 0.025em;
+   -ms-letter-spacing: 0.025em;
+   letter-spacing: 0.025em;
+   color: rgba(35, 78, 82, 1);
+   @media (min-width: 768px) {
+      font-size: 1.875rem;
+      line-height: 2.25rem;
+   }
+}
+.hern-recipe__img__wrapper {
+   height: 320px;
+   @media (max-width: 567px) {
+      height: 240px;
+   }
+}
+.hern-recipe__img {
+   width: 100%;
+   height: 100%;
+   border-color: rgba(243, 244, 246, 1);
+   object-fit: cover;
+   border-radius: 0.5rem;
+}
+
+.hern-recipe__description__heading {
+   padding-bottom: 0.5rem;
+   margin-top: 1rem;
+   border-bottom-width: 1px;
+   border-color: rgba(209, 213, 219, 1);
+   color: rgba(75, 85, 99, 1);
+   font-size: 1.125rem;
+   line-height: 1.75rem;
+   font-weight: 400;
+   margin-bottom: 0.5rem;
+}
+.hern-recipe__description {
+   color: rgba(35, 78, 82, 1);
+}
+.hern-recipe__details__heading {
+   padding-bottom: 0.5rem;
+   margin-top: 1rem;
+   border-bottom-width: 1px;
+   border-color: rgba(209, 213, 219, 1);
+   color: rgba(75, 85, 99, 1);
+   font-size: 1.125rem;
+   line-height: 1.75rem;
+   font-weight: 400;
+   margin-bottom: 1.5rem;
+}
+.hern-recipe__details {
+   display: grid;
+   grid-template-columns: repeat(4, minmax(0, 1fr));
+   gap: 0.5rem;
+   margin-bottom: 0.5rem;
+}
+
+%details-wrapper {
+   display: -webkit-box;
+   display: -webkit-flex;
+   display: -ms-flexbox;
+   display: flex;
+   -webkit-flex-direction: column;
+   -ms-flex-direction: column;
+   flex-direction: column;
+   -webkit-align-items: center;
+   -webkit-box-align: center;
+   -ms-flex-align: center;
+   align-items: center;
+}
+%detail-option-text {
+   color: rgba(35, 78, 82, 1);
+}
+
+.hern-recipe__details__cuisine {
+   @extend %details-wrapper;
+   > p {
+      @extend %detail-option-text;
+   }
+}
+.hern-recipe__details__cooking-time {
+   @extend %details-wrapper;
+   > p {
+      @extend %detail-option-text;
+   }
+}
+.hern-recipe__details__utensils {
+   @extend %details-wrapper;
+   > p {
+      @extend %detail-option-text;
+   }
+}
+.hern-recipe__details__author {
+   @extend %details-wrapper;
+   > p {
+      @extend %detail-option-text;
+   }
+}
+
+.hern-recipe__not-included {
+   margin-bottom: 0.5rem;
+}
+.hern-recipe__not-included__heading {
+   color: rgba(107, 114, 128, 1);
+   font-size: 0.875rem;
+   line-height: 1.25rem;
+   font-weight: 400;
+}
+.hern-recipe__not-included__item {
+   color: rgba(35, 78, 82, 1);
+}
+
+.hern-recipe__ingradients__heading {
+   padding-bottom: 0.5rem;
+   margin-top: 1rem;
+   border-bottom-width: 1px;
+   border-color: rgba(209, 213, 219, 1);
+   color: rgba(75, 85, 99, 1);
+   font-size: 1.125rem;
+   line-height: 1.75rem;
+   font-weight: 400;
+   margin-bottom: 1rem;
+}
+.hern-recipe__ingradients {
+   display: grid;
+   grid-template-columns: repeat(2, minmax(0, 1fr));
+   gap: 0.5rem;
+}
+.hern-recipe__ingradient__item {
+   justify-content: center;
+}
+.hern-recipe__ingradient__item--visible {
+   border-width: 1px;
+   height: 4rem;
+   padding-left: 0.5rem;
+   padding-right: 0.5rem;
+   border-radius: 0.125rem;
+   display: -webkit-box;
+   display: -webkit-flex;
+   display: -ms-flexbox;
+   display: flex;
+   -webkit-align-items: center;
+   -webkit-box-align: center;
+   -ms-flex-align: center;
+   align-items: center;
+   > img {
+      height: 3rem;
+      width: 3rem;
+      margin-right: 0.5rem;
+      border-radius: 0.125rem;
+   }
+}
+.hern-recipe__cooking-process__heading {
+   padding-bottom: 0.5rem;
+   margin-top: 1rem;
+   border-bottom-width: 1px;
+   border-color: rgba(209, 213, 219, 1);
+   color: rgba(107, 114, 128, 1);
+   margin-bottom: 0.75rem;
+   font-size: 1.125rem;
+   line-height: 1.75rem;
+   font-weight: 500;
+}
+.hern-recipe__cooking-instructions {
+   height: auto;
+   margin-bottom: 1rem;
+}
+.hern-recipe__cooking-setps {
+   list-style-type: decimal;
+}
+.hern-recipe__cooking-setps__heading {
+   font-size: 1.125rem;
+   line-height: 1.75rem;
+   font-weight: 500;
+   color: rgba(55, 65, 81, 1);
+}
+.hern-recipe__cooking-setps__step {
+   height: auto;
+   margin-bottom: 1rem;
+   margin-left: 1rem;
+   margin-top: 0.5rem;
+}
+.hern-recipe__cooking-setps__step--locked {
+   height: auto;
+   margin: 0.5rem 0 1rem 1rem;
+}
+.hern-recipe__cooking-setps__step__title {
+   color: rgba(31, 41, 55, 1);
+}
+.hern-recipe__cooking-setps__step__img {
+   max-width: 340px;
+   margin-top: 0.5rem;
+   margin-bottom: 0.5rem;
+   > img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      border-radius: 0.25rem;
+   }
+   @media (max-width: 567px) {
+      > img {
+         height: 160px;
+      }
+   }
+}
+.hern-recipe__cooking-setps__step__description {
+   margin-top: 0.25rem;
+   color: rgba(75, 85, 99, 1);
+}
+
+.hern-recipe__go-back-btn {
+   left: 50%;
+   bottom: 16px;
+   position: fixed;
+   background-color: rgba(5, 150, 105, 1);
+   border-radius: 0.25rem;
+   color: rgba(255, 255, 255, 1);
+   padding-left: 1rem;
+   padding-right: 1rem;
+   height: 2.5rem;
+   margin: 0 auto;
+   &:hover {
+      background-color: rgba(4, 120, 87, 1);
+   }
+}
