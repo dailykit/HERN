@@ -26,7 +26,7 @@ export const StyledWrapper = styled.div`
       width: calc(100vw - 11vw);
    }
    @media screen and (min-width: 768px) {
-      width: calc(100vw - 21vw);
+      width: calc(100vw - 64px);
    }
 `
 export const StyledPagination = styled.div`
