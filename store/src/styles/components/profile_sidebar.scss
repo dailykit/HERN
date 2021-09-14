@@ -1,5 +1,6 @@
 .hern-profile-sidebar--toggle {
    display: none;
+   background-color: rgba(243, 244, 246, 1);
    @media (min-width: 768px) {
       display: block;
    }
@@ -45,5 +46,7 @@
    height: 3rem;
 }
 .hern-profile-sidebar__menu-link--active {
-   background-color: rgba(209, 213, 219, 1);
+   @media (min-width: 768px) {
+      background-color: rgba(209, 213, 219, 1);
+   }
 }
