@@ -2,6 +2,7 @@ import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
 import {
    ButtonTile,
+   EditIcon,
    Flex,
    Text,
    Tunnel,
@@ -135,7 +136,7 @@ const Sachets = ({ state, openNutritionTunnel }) => {
                         </Text>
                         <Tooltip identifier="ingredient_form_sachets" />
                      </Flex>
-                     <span
+                     {/* <span
                         role="button"
                         tabIndex="0"
                         onClick={() => openSachetTunnel(1)}
@@ -144,7 +145,8 @@ const Sachets = ({ state, openNutritionTunnel }) => {
                         }
                      >
                         <AddIcon color="#555B6E" size="18" stroke="2.5" />
-                     </span>
+                     </span> */}
+                     {/* This is removed as we have same feature after the sachet tiles to add another sachets tile */}
                   </StyledListingHeader>
 
                   <StyledSection>
@@ -165,15 +167,29 @@ const Sachets = ({ state, openNutritionTunnel }) => {
                               <Actions
                                  active={ingredientState.sachetIndex === i}
                               >
+                                 {/* This is tunnel for add sachets which is added to sachets tiles */}
                                  <span
                                     role="button"
+                                    title='Edit sachet'
+                                    tabIndex="0"
+                                    onClick={() => openEditSachetTunnel(1)}
+                                    onKeyDown={e =>
+                                       e.charCode === 13 &&
+                                       openEditSachetTunnel(1)
+                                    }
+                                 >
+                                    <EditIcon color="#555B6E" />
+                                 </span>
+                                 <span
+                                    role="button"
+                                    title='Delete sachet'
                                     tabIndex="0"
                                     onClick={() => remove(sachet)}
                                     onKeyDown={e =>
                                        e.charCode === 13 && remove(sachet)
                                     }
                                  >
-                                    <DeleteIcon />
+                                    <DeleteIcon color="#FF5A52"/>
                                  </span>
                               </Actions>
                               <h3>{`${sachet.quantity} ${sachet.unit}`}</h3>
