@@ -175,7 +175,14 @@ const LoyaltyPointsUsage = ({ update }) => {
                   <Flex container alignItems="center" flexDirection="column">
                      <Form.Group>
                         <Flex container alignItems="center">
-                           <p>$</p>
+                           <p
+                              style={{
+                                 marginBottom: '0px',
+                                 marginRight: '6px',
+                              }}
+                           >
+                              $
+                           </p>
                            <Form.Number
                               id="conversionRate"
                               name="conversionRate"
@@ -227,7 +234,11 @@ const LoyaltyPointsUsage = ({ update }) => {
                               }
                               onBlur={onBlur}
                            />
-                           <p>%</p>
+                           <p
+                              style={{ marginBottom: '0px', marginLeft: '6px' }}
+                           >
+                              %
+                           </p>
                         </Flex>
                      </Form.Group>
                      {percentage.meta.isTouched &&
@@ -250,7 +261,14 @@ const LoyaltyPointsUsage = ({ update }) => {
                   <Flex container alignItems="center" flexDirection="column">
                      <Form.Group>
                         <Flex container alignItems="center">
-                           <p>$</p>
+                           <p
+                              style={{
+                                 marginBottom: '0px',
+                                 marginRight: '6px',
+                              }}
+                           >
+                              $
+                           </p>
                            <Form.Number
                               id="maxAmount"
                               name="maxAmount"
