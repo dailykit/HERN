@@ -76,10 +76,10 @@ export const ConfigProvider = ({ children }) => {
       return `${server_url}/http://${bucket}.s3-website.us-east-2.amazonaws.com\\${size}\\${name}`
    }, [])
 
-   if (isLoading) return <PageLoader />
    return (
       <ConfigContext.Provider
          value={{
+            isConfigLoading: isLoading,
             state,
             dispatch,
             buildImageUrl,
@@ -93,8 +93,13 @@ export const ConfigProvider = ({ children }) => {
 }
 
 export const useConfig = (globalType = '') => {
-   const { state, buildImageUrl, noProductImage, imagePlaceholder } =
-      React.useContext(ConfigContext)
+   const {
+      state,
+      buildImageUrl,
+      noProductImage,
+      imagePlaceholder,
+      isConfigLoading,
+   } = React.useContext(ConfigContext)
 
    const hasConfig = React.useCallback(
       (identifier = '', localType = '') => {
@@ -135,5 +140,6 @@ export const useConfig = (globalType = '') => {
       noProductImage,
       imagePlaceholder,
       brand: state.brand,
+      isConfigLoading,
    }
 }
