@@ -264,14 +264,17 @@ const SalesByCouponsTable = props => {
                </Flex>
             )}
             <Spacer size="10px" />
-
-            <ReactTabulator
-               ref={tableRef}
-               columns={columns}
-               data={salesByCouponsData}
-               options={TableOptions}
-               dataLoaded={dataLoaded}
-            />
+            {salesByCouponsData.length === 0 ? (
+               <Filler message="No sales from coupons" />
+            ) : (
+               <ReactTabulator
+                  ref={tableRef}
+                  columns={columns}
+                  data={salesByCouponsData}
+                  options={TableOptions}
+                  dataLoaded={dataLoaded}
+               />
+            )}
          </Flex>
       </>
    )
