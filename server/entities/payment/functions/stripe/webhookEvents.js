@@ -61,23 +61,11 @@ const stripeWebhookEvents = async arg => {
          }
       }
 
-      if (node.object === 'invoice') {
-         const data = {
-            event: node.object,
-            eventType: event.type,
-            invoice: event.data.object,
-            cartPaymentId: node.metadata.cartPaymentId
-         }
-         return { success: true, data, code: 200, received: true }
+      const data = {
+         eventType: event.type,
+         invoice: node
       }
-      if (node.object === 'payment_intent') {
-         const data = {
-            event: node.object,
-            intent: event.data.object,
-            cartPaymentId: node.metadata.cartPaymentId
-         }
-         return { success: true, code: 200, data, received: true }
-      }
+      return { success: true, data, code: 200, received: true }
    } catch (error) {
       return { success: false, code: 500, error }
    }
