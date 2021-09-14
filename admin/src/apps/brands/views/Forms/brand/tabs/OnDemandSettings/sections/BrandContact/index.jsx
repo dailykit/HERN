@@ -135,7 +135,7 @@ export const BrandContact = ({ update }) => {
             </Form.Group>
             <Spacer size="8px" xAxis />
             <TextButton
-               size="lg"
+               size="sm"
                type="outline"
                onClick={() => email.meta.isValid && updateSetting()}
             >
@@ -164,7 +164,7 @@ export const BrandContact = ({ update }) => {
             </Form.Group>
             <Spacer size="8px" xAxis />
             <TextButton
-               size="lg"
+               size="sm"
                type="outline"
                onClick={() => phone.meta.isValid && updateSetting()}
             >
