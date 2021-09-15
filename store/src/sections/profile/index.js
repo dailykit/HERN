@@ -11,6 +11,11 @@ import { getRoute, isClient } from '../../utils'
 import * as moment from 'moment'
 
 export const Profile = () => {
+   const { isConfigLoading } = useConfig()
+   const { isLoading } = useUser()
+   /**TODO:* Could be a skeleton*/
+   if (isConfigLoading || isLoading) return <Loader component />
+
    return (
       <Main>
          <ProfileSidebar />

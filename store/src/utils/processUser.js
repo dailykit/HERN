@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash'
 
-export const processUser = (customer, stripeAccountType = '') => {
+export const processUser = customer => {
    const sub = {}
    const { brandCustomers = [], ...rest } = customer
 

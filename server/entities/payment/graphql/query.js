@@ -15,7 +15,6 @@ query CART_PAYMENT($id: Int!) {
    id
    cartId
    paymentStatus
-   paymentId
    stripeInvoiceId
    paymentRetryAttempt
  }
@@ -27,7 +26,6 @@ query CART_PAYMENTS($where: order_cartPayment_bool_exp!) {
     id
     cartId
     amount
-    paymentId
     stripeInvoiceId
     paymentMethodId
     paymentStatus

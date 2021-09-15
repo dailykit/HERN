@@ -109,6 +109,7 @@ const Pricing = ({ state }) => {
    }
 
    return (
+
       <Flex width="50%">
          <Flex>
             <Form.Label htmlFor="price" title="price">
@@ -142,6 +143,7 @@ const Pricing = ({ state }) => {
             />
          </Flex>
       </Flex>
+   
    )
 }
 
