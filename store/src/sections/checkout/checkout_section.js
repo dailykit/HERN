@@ -24,13 +24,13 @@ const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const CheckoutSection = props => {
    const router = useRouter()
-   const { isAuthenticated } = useUser()
+   const { isAuthenticated, isLoading } = useUser()
    React.useEffect(() => {
-      if (!isAuthenticated) {
+      if (!isAuthenticated && !isLoading) {
          isClient && localStorage.setItem('landed_on', location.href)
          router.push(getRoute('/get-started/register'))
       }
-   }, [isAuthenticated])
+   }, [isAuthenticated, isLoading])
 
    return (
       <PaymentProvider>

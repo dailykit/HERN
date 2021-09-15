@@ -1,4 +1,5 @@
 import axios from 'axios'
+import twilio from 'twilio'
 import bcrypt from 'bcrypt'
 import * as jwt from 'jsonwebtoken'
 
@@ -136,6 +137,38 @@ export const resetPassword = async (req, res) => {
    } catch (error) {
       console.log(error)
       return res.status(200).json({ success: false, message: error.message })
+   }
+}
+
+// send sms action handler
+export const sendSMS = async (req, res) => {
+   try {
+      const { phone = '', message = '' } = req.body.input
+      if (!phone.trim())
+         return res
+            .status(200)
+            .json({ success: false, message: 'Phone number is required!' })
+      if (!message.trim())
+         return res
+            .status(200)
+            .json({ success: false, message: 'Message can not be empty!' })
+
+      const TWILIO_SMS_ACCOUNT_ID = await get_env('TWILIO_SMS_ACCOUNT_ID')
+      const TWILIO_SMS_AUTH_TOKEN = await get_env('TWILIO_SMS_AUTH_TOKEN')
+      const twilio_client = twilio(TWILIO_SMS_ACCOUNT_ID, TWILIO_SMS_AUTH_TOKEN)
+      await twilio_client.messages.create({
+         body: message,
+         from: '+1 312 313 7051',
+         to: phone.trim()
+      })
+
+      return res.status(200).json({
+         success: true,
+         message: 'SMS sent successfully!'
+      })
+   } catch (error) {
+      console.log({ error })
+      res.status(400).json({ success: false, message: 'Failed to send SMS!' })
    }
 }
 

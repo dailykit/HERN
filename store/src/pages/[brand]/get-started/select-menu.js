@@ -14,13 +14,13 @@ import {
 const SelectMenu = props => {
    const { settings, folds } = props
    const router = useRouter()
-   const { isAuthenticated } = useUser()
+   const { isAuthenticated, isLoading } = useUser()
    React.useEffect(() => {
-      if (!isAuthenticated) {
+      if (!isAuthenticated && !isLoading) {
          isClient && localStorage.setItem('landed_on', location.href)
          router.push(getRoute('/get-started/register'))
       }
-   }, [isAuthenticated])
+   }, [isAuthenticated, isLoading])
 
    React.useEffect(() => {
       try {

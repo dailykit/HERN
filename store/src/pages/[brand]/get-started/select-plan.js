@@ -13,13 +13,13 @@ import { useUser } from '../../../context'
 const SelectPlan = props => {
    const router = useRouter()
    const { settings, folds } = props
-   const { isAuthenticated } = useUser()
+   const { isAuthenticated, isLoading } = useUser()
    React.useEffect(() => {
-      if (!isAuthenticated) {
+      if (!isAuthenticated && !isLoading) {
          isClient && localStorage.setItem('landed_on', location.href)
          router.push(getRoute('/get-started/register'))
       }
-   }, [isAuthenticated])
+   }, [isAuthenticated, isLoading])
 
    React.useEffect(() => {
       if (isClient) {
