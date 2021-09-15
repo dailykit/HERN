@@ -12,14 +12,14 @@ import { useUser } from '../../../context'
 
 const Checkout = props => {
    const router = useRouter()
-   const { isAuthenticated } = useUser()
+   const { isAuthenticated, isLoading } = useUser()
    const { seo, settings, folds } = props
    React.useEffect(() => {
-      if (!isAuthenticated) {
+      if (!isAuthenticated && !isLoading) {
          isClient && localStorage.setItem('landed_on', location.href)
          router.push(getRoute('/get-started/register'))
       }
-   }, [isAuthenticated])
+   }, [isAuthenticated, isLoading])
 
    React.useEffect(() => {
       try {
