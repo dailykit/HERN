@@ -6,6 +6,7 @@ import {
    Spacer,
    Dropdown,
 } from '@dailykit/ui'
+import '../../../tableStyle.css'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import DataGeneratorBetweenToDates from '../../../../../../utils/dataBWtwoDate'
@@ -70,7 +71,7 @@ const CustomerSalesTable = props => {
    const totalCalc = values => {
       let total = 0
       values.forEach(value => (total += value))
-      return `Total = ${currency}` + total.toFixed(2)
+      return `Σ = ${currency}` + total.toFixed(2)
    }
    const downloadCsvData = () => {
       tableRef.current.table.download(
@@ -104,7 +105,13 @@ const CustomerSalesTable = props => {
       return parseDefaultColumns
    }
    const columns = [
-      { id: 1, title: 'Time', field: 'date', toBeHide: false },
+      {
+         id: 1,
+         title: 'Time',
+         field: 'date',
+         toBeHide: false,
+         hozAlign: 'center',
+      },
       {
          id: 2,
          title: '# of First Time Customer',
@@ -113,6 +120,7 @@ const CustomerSalesTable = props => {
          bottomCalc: totalCalc,
          width: 160,
          toBeHide: true,
+         hozAlign: 'center',
       },
       {
          id: 3,
@@ -122,6 +130,7 @@ const CustomerSalesTable = props => {
          bottomCalc: totalCalc,
          width: 160,
          toBeHide: true,
+         hozAlign: 'center',
       },
       {
          id: 4,
@@ -131,6 +140,7 @@ const CustomerSalesTable = props => {
          bottomCalc: totalCalc,
          width: 160,
          toBeHide: true,
+         hozAlign: 'center',
       },
       {
          id: 5,
@@ -140,6 +150,7 @@ const CustomerSalesTable = props => {
          bottomCalc: totalCalc,
          width: 160,
          toBeHide: true,
+         hozAlign: 'center',
       },
       {
          id: 6,
@@ -147,6 +158,7 @@ const CustomerSalesTable = props => {
          field: 'totalSale',
          bottomCalc: totalCalc,
          toBeHide: false,
+         hozAlign: 'center',
       },
    ]
    //columns to be show dropdown selected option fn

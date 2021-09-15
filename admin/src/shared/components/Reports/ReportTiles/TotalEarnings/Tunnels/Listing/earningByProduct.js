@@ -1,5 +1,6 @@
 import React from 'react'
 import { ReactTabulator } from '@dailykit/react-tabulator'
+import '../../../tableStyle.css'
 import {
    Dropdown,
    DropdownButton,
@@ -64,16 +65,19 @@ const EarningByProductTable = ({ earningByProductData }) => {
       {
          title: 'Product Id',
          field: 'id',
+         hozAlign: 'center',
       },
       {
          title: 'Product Name',
          field: 'name',
          headerFilter: true,
+         hozAlign: 'center',
       },
       {
          title: 'Product Type',
          field: 'type',
          headerFilter: true,
+         hozAlign: 'center',
       },
       // {
       //    title: `Discount (${brandShopDateState.currency})`,
@@ -95,6 +99,7 @@ const EarningByProductTable = ({ earningByProductData }) => {
          title: `Total (${brandShopDateState.currency})`,
          field: 'total',
          bottomCalc: totalCalc,
+         hozAlign: 'center',
       },
    ]
    //default ids for columns to be show dropdown

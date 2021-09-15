@@ -62,7 +62,7 @@ const DataTable = ({ data }) => {
    const totalCalc = values => {
       let total = 0
       values.forEach(value => (total += value))
-      return 'Total = ' + total.toFixed(2)
+      return 'Σ = ' + total.toFixed(2)
    }
    const downloadCsvData = () => {
       earningTableRef.current.table.download('csv', 'earning_table.csv')
@@ -82,21 +82,25 @@ const DataTable = ({ data }) => {
          id: 1,
          title: 'Orders',
          payload: 'count',
+         hozAlign: 'center',
       },
       {
          id: 2,
          title: 'Tax',
          payload: 'totalTax',
+         hozAlign: 'center',
       },
       {
          id: 3,
          title: 'Discount',
          payload: 'totalDiscount',
+         hozAlign: 'center',
       },
       {
          id: 4,
          title: 'Shipping',
          payload: 'totalDeliveryPrice',
+         hozAlign: 'center',
       },
    ]
 

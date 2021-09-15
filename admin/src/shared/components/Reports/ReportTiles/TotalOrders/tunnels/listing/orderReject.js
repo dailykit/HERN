@@ -8,6 +8,7 @@ import {
    Spacer,
    Text,
 } from '@dailykit/ui'
+import '../../../tableStyle.css'
 import moment from 'moment'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
@@ -54,7 +55,7 @@ const OrderRejectTable = () => {
                   flattenData.fulfillmentDate =
                      eachRejectedData.fulfillmentTimestamp
                         ? moment(eachRejectedData.fulfillmentTimestamp).format(
-                             'DD MM YYYY'
+                             'DD-MM-YYYY'
                           )
                         : 'N/A'
                   flattenData.created_at = moment(
@@ -136,26 +137,52 @@ const OrderRejectTable = () => {
          })
       }
    }
+   const totalCalc = (values, data, calcParams) => {
+      let total = 0
+      values.forEach(value => {
+         total += value
+      })
+      return `Σ = ${total.toFixed(2)}`
+   }
    const columns = [
       {
          id: 1,
          title: 'Order Id',
          field: 'orderId',
          toBeHide: false,
+         hozAlign: 'center',
       },
-      { id: 2, title: 'Customer Name', field: 'customerName', toBeHide: false },
-      { id: 3, title: 'Created At', field: 'created_at', toBeHide: true },
+      {
+         id: 2,
+         title: 'Customer Name',
+         field: 'customerName',
+         toBeHide: false,
+         hozAlign: 'center',
+         width: 200,
+      },
+      {
+         id: 3,
+         title: 'Created At',
+         field: 'created_at',
+         toBeHide: true,
+         hozAlign: 'center',
+         width: 200,
+      },
       {
          id: 4,
          title: 'Fulfillment Date',
          field: 'fulfillmentDate',
          toBeHide: true,
+         hozAlign: 'center',
+         width: 200,
       },
       {
          id: 5,
          title: `Amount Paid (${brandShopDateState.currency})`,
          field: 'amountPaid',
          toBeHide: false,
+         hozAlign: 'center',
+         bottomCalc: totalCalc,
       },
    ]
    if (!subsError && subsLoading) {

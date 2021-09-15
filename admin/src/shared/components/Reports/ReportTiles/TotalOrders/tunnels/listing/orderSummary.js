@@ -1,5 +1,6 @@
 import { useSubscription } from '@apollo/react-hooks'
 import { ReactTabulator } from '@dailykit/react-tabulator'
+import '../../../tableStyle.css'
 import {
    Dropdown,
    DropdownButton,
@@ -155,20 +156,35 @@ const OrderSummaryTable = props => {
          title: 'Order Id',
          field: 'orderId',
          toBeHide: false,
+         hozAlign: 'center',
       },
-      { id: 2, title: 'Customer Name', field: 'customerName', toBeHide: false },
-      { id: 3, title: 'Created At', field: 'created_at', toBeHide: true },
+      {
+         id: 2,
+         title: 'Customer Name',
+         field: 'customerName',
+         toBeHide: false,
+         hozAlign: 'center',
+      },
+      {
+         id: 3,
+         title: 'Created At',
+         field: 'created_at',
+         toBeHide: true,
+         hozAlign: 'center',
+      },
       {
          id: 4,
          title: 'Fulfillment Date',
          field: 'fulfillmentDate',
          toBeHide: true,
+         hozAlign: 'center',
       },
       {
          id: 5,
          title: 'Status',
          field: 'orderStatus',
          toBeHide: false,
+         hozAlign: 'center',
       },
    ]
    if (!subsError && subsLoading) {

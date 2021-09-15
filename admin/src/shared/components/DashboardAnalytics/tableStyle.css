@@ -100,3 +100,6 @@ input[type='checkbox'] {
 .tabulator-cell {
    padding-right: 20px !important;
 }
+.tabulator-col-title {
+   text-align: center;
+}

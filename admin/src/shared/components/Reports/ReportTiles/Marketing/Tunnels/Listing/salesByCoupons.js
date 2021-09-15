@@ -1,4 +1,5 @@
 import React from 'react'
+import '../../../tableStyle.css'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import TableOptions from './tableOptions'
 import {

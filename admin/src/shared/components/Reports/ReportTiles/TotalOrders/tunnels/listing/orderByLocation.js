@@ -7,6 +7,7 @@ import {
    Dropdown,
    Filler,
 } from '@dailykit/ui'
+import '../../../tableStyle.css'
 import React from 'react'
 import TableOptions from '../tableOptions'
 import { BrandShopDateContext } from '../../../../../BrandShopDateProvider/context'
@@ -15,6 +16,13 @@ const OrderByLocationTable = props => {
    const { brandShopDateState } = React.useContext(BrandShopDateContext)
    const { currency } = brandShopDateState
    const tableRef = React.useRef()
+   const totalCalc = (values, data, calcParams) => {
+      let total = 0
+      values.forEach(value => {
+         total += value
+      })
+      return `Σ = ${total.toFixed(2)}`
+   }
    const columns = [
       {
          id: 1,
@@ -22,6 +30,7 @@ const OrderByLocationTable = props => {
          field: 'orderId',
          toBeHide: false,
          toBeGroupBy: false,
+         hozAlign: 'center',
       },
       {
          id: 2,
@@ -30,6 +39,7 @@ const OrderByLocationTable = props => {
          toBeHide: false,
          toBeGroupBy: false,
          headerFilter: true,
+         hozAlign: 'center',
       },
       {
          id: 3,
@@ -38,6 +48,7 @@ const OrderByLocationTable = props => {
          toBeHide: false,
          toBeGroupBy: true,
          headerFilter: true,
+         hozAlign: 'center',
       },
       {
          id: 4,
@@ -46,6 +57,7 @@ const OrderByLocationTable = props => {
          toBeHide: true,
          toBeGroupBy: true,
          headerFilter: true,
+         hozAlign: 'center',
       },
       {
          id: 5,
@@ -54,6 +66,7 @@ const OrderByLocationTable = props => {
          toBeHide: true,
          toBeGroupBy: false,
          headerFilter: true,
+         hozAlign: 'center',
       },
       {
          id: 6,
@@ -62,6 +75,7 @@ const OrderByLocationTable = props => {
          toBeHide: false,
          toBeGroupBy: false,
          headerFilter: true,
+         hozAlign: 'center',
       },
       {
          id: 7,
@@ -69,6 +83,7 @@ const OrderByLocationTable = props => {
          field: 'created_at',
          toBeHide: false,
          toBeGroupBy: true,
+         hozAlign: 'center',
       },
       {
          id: 8,
@@ -76,6 +91,8 @@ const OrderByLocationTable = props => {
          field: 'amountPaid',
          toBeHide: true,
          toBeGroupBy: false,
+         hozAlign: 'center',
+         bottomCalc: totalCalc,
       },
    ]
    const downloadCsvData = () => {

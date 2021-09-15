@@ -1,6 +1,7 @@
 import { useSubscription } from '@apollo/react-hooks'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import moment from 'moment'
+import '../../../tableStyle.css'
 import React, { useEffect, useState } from 'react'
 import { BrandShopDateContext } from '../../../../../BrandShopDateProvider/context'
 import TableOptions from './tableOptions'
@@ -15,13 +16,15 @@ const CustomerOverTimeTable = props => {
    const [customerData, setCustomerData] = useState([])
 
    const columns = [
-      { id: 1, title: 'ID', field: 'id', toBeHide: false },
+      { id: 1, title: 'ID', field: 'id', toBeHide: false, hozAlign: 'center' },
       {
          id: 2,
          title: 'Email',
          field: 'email',
          headerFilter: true,
          toBeHide: false,
+         hozAlign: 'center',
+         width: 350,
       },
       {
          id: 3,
@@ -29,13 +32,23 @@ const CustomerOverTimeTable = props => {
          field: 'source',
          headerFilter: true,
          toBeHide: true,
+         hozAlign: 'center',
+         width: 200,
       },
-      { id: 4, title: 'Created at', field: 'date', toBeHide: false },
+      {
+         id: 4,
+         title: 'Created at',
+         field: 'date',
+         toBeHide: false,
+         hozAlign: 'center',
+         width: 200,
+      },
       {
          id: 5,
          title: 'Subscriber',
          field: 'isSubscriber',
          toBeHide: true,
+         hozAlign: 'center',
       },
    ]
    const dataManipulation = () => {
@@ -118,12 +131,7 @@ const CustomerOverTimeTable = props => {
                Customer Table ({tableData.count})
             </Text>
             <Spacer size="10px" />
-            <Flex
-               container
-               justifyContent="flex-end"
-               alignItems="center"
-               padding="0px 10px"
-            >
+            <Flex container justifyContent="flex-end" alignItems="center">
                <DropdownButton title="Download" width="150px">
                   <DropdownButton.Options>
                      <DropdownButton.Option onClick={() => downloadCsvData()}>

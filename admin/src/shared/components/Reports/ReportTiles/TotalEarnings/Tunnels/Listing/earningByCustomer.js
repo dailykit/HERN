@@ -1,11 +1,14 @@
 import React from 'react'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import TableOptions from '../tableOptions'
+import '../../../tableStyle.css'
 import { Dropdown, DropdownButton, Flex, Spacer, Text } from '@dailykit/ui'
+import { BrandShopDateContext } from '../../../../../BrandShopDateProvider/context'
 const EarningByCustomerTable = props => {
    const { earningByCustomerData } = props
    const earningByCustomerRef = React.useRef()
-
+   const { brandShopDateState } = React.useContext(BrandShopDateContext)
+   const { currency } = brandShopDateState
    const downloadCsvData = () => {
       earningByCustomerRef.current.table.download(
          'csv',
@@ -26,36 +29,54 @@ const EarningByCustomerTable = props => {
          'earning-by-product-data.xlsx'
       )
    }
-
+   const totalCalc = (values, data, calcParams) => {
+      let total = 0
+      values.forEach(value => {
+         total += value
+      })
+      return `Σ = ${total.toFixed(2)}`
+   }
    //columns for table
    const columns = [
       {
          title: 'Customer Name',
          field: 'fullName',
+         hozAlign: 'center',
       },
       {
          title: 'Customer Email',
          field: 'email',
+         hozAlign: 'center',
       },
       {
          title: 'Orders',
          field: 'orders',
+         hozAlign: 'center',
+         bottomCalc: 'sum',
       },
       {
-         title: 'Tax',
+         title: `Tax (${currency})`,
          field: 'totalTax',
+         hozAlign: 'center',
+         bottomCalc: totalCalc,
       },
       {
-         title: 'Discount',
+         title: `Discount (${currency})`,
          field: 'totalDiscount',
+         hozAlign: 'center',
+         bottomCalc: totalCalc,
       },
       {
-         title: 'Net Sale',
+         title: `Net Sale (${currency})`,
          field: 'netSale',
+         hozAlign: 'center',
+         bottomCalc: totalCalc,
       },
       {
-         title: 'Total Sale',
+         title: `Total Sale (${currency})`,
          field: 'totalAmountPaid',
+         hozAlign: 'center',
+         bottomCalc: totalCalc,
       },
    ]
 
