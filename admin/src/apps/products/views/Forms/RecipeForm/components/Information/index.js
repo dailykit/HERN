@@ -30,7 +30,7 @@ import {
 } from '../../../../../graphql'
 import validator from '../../validators'
 
-const Information = ({ state }) => {
+const    Information = ({ state }) => {
    //console.log(state, 'state')
    // State
    const [_state, _dispatch] = React.useReducer(reducer, initialState)
@@ -370,6 +370,7 @@ const Information = ({ state }) => {
                   <Text as="subtitle">Type</Text>
                   <Tooltip identifier="recipe_type" />
                </Flex>
+               <Spacer yAxis size="12px" />
                <RadioGroup
                   options={options}
                   active={_state.type.value}

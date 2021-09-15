@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, Form } from '@dailykit/ui'
+import { Text, Form, Spacer } from '@dailykit/ui'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    BRAND_COLLECTIONS,
@@ -36,11 +36,15 @@ const CollectionBrands = ({ state }) => {
          field: 'title',
          headerFilter: true,
          headerSort: false,
+         width: 200,
+
       },
       {
          title: 'Domain',
          field: 'domain',
          headerFilter: true,
+         width: 200,
+
       },
       {
          title: 'Collection Available',
@@ -58,16 +62,14 @@ const CollectionBrands = ({ state }) => {
 
    const options = {
       cellVertAlign: 'middle',
-      layout: 'fitColumns',
+      layout: 'fitDataStretch',
       autoResize: true,
       maxHeight: 420,
-      resizableColumns: false,
+      resizableColumns: true,
       virtualDomBuffer: 80,
       placeholder: 'No Data Available',
       persistence: true,
       persistenceMode: 'cookie',
-      pagination: 'local',
-      paginationSize: 10,
    }
 
    if (loading) return <InlineLoader />
@@ -79,6 +81,7 @@ const CollectionBrands = ({ state }) => {
                Brands
                <Tooltip identifier="collection_brands" />
             </Flex>
+            <Spacer size='16px' />
          </Text>
          {!loading && error ? (
             <Text as="p">Could not fetch brands!</Text>

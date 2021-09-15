@@ -22,4 +22,5 @@ export const StyledInfo = styled.span`
    display: inline;
    min-width: 298px;
    max-width: 350px;
+   width: 150%;
 `

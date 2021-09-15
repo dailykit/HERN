@@ -30,16 +30,16 @@ const HorizontalStyledCard = ({
                      <Card.Text>
                         {type && subheading && (
                            <Card.Stat>
-                              <Text as="title">{subheading || ''}:</Text>
-                              <Text as="subtitle">{type || ''}</Text>
+                              <Text as="h3">{subheading || ''}:</Text>
+                              <Text as='subtitle'>{type || ''}</Text>
                            </Card.Stat>
                         )}
                         <Card.Stat>
-                           <Text as="title">Title :</Text>
+                           <Text as="h3">Title :</Text>
                            <Text as="subtitle">{data.title}</Text>
                         </Card.Stat>
                         <Card.Stat>
-                           <Text as="title">Description :</Text>
+                           <Text as="h3">Description :</Text>
                            <Text as="subtitle">{data.description}</Text>
                         </Card.Stat>
                      </Card.Text>

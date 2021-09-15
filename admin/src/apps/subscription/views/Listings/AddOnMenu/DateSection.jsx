@@ -12,9 +12,8 @@ import { Tooltip } from '../../../../../shared/components'
 
 const DateSection = () => {
    const { state, dispatch } = useMenu()
-   const { data: { occurrences_dates = [] } = {} } = useSubscription(
-      OCCURRENCES_DATES
-   )
+   const { data: { occurrences_dates = [] } = {} } =
+      useSubscription(OCCURRENCES_DATES)
 
    function isDayDisabled(day) {
       return !occurrences_dates
@@ -39,7 +38,9 @@ const DateSection = () => {
    return (
       <aside>
          <Flex container height="48px" alignItems="center">
-            <Text as="h2">Date</Text>
+            <Text as="h2" style={{ marginLeft: '7px', marginBottom: '0px' }}>
+               Date
+            </Text>
             <Tooltip identifier="listing_menu_section_date_heading" />
          </Flex>
          <Spacer size="16px" />

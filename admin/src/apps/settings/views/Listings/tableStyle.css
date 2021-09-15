@@ -9,11 +9,15 @@
 }
 .tabulator .tabulator-header .tabulator-col{
    background-color: #f4f4f4 !important;
-   /* margin-top: -8px ; */
+   margin-top: -8px ;
+   left: -8px;
    height: 100% !important;
 }
 .tabulator .tabulator-header .tabulator-col .tabulator-col-content {
    height: 100%;
+}
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title{
+   text-align: left;
 }
 .tabulator-row {
    height: 48px;
