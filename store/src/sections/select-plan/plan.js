@@ -12,7 +12,7 @@ const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
    const router = useRouter()
-   const { user, isAuthenticated } = useUser()
+   const { user, isAuthenticated, isLoading } = useUser()
    const { addToast } = useToasts()
    const { configOf } = useConfig('conventions')
    const [defaultItemCount, setDefaultItemCount] = React.useState(null)
@@ -65,17 +65,18 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
             ).toFixed(2)
          ),
       })
-      if (isAuthenticated) {
-         router.push('/get-started/select-delivery')
-         return
+      if (!isAuthenticated && !isLoading) {
+         router.push(getRoute('/get-started/register'))
+      } else {
+         router.push(getRoute('/get-started/select-delivery'))
       }
-      router.push(
-         getRoute(
-            `/get-started/${
-               cameFrom === 'our-plans' ? 'register' : 'select-delivery'
-            }`
-         )
-      )
+      // router.push(
+      //    getRoute(
+      //       `/get-started/${
+      //          cameFrom === 'our-plans' ? 'register' : 'select-delivery'
+      //       }`
+      //    )
+      // )
    }
 
    const config = configOf('primary-labels')
