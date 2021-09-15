@@ -128,6 +128,7 @@ export default function BulkWorkOrders() {
                         col => col.status === 'COMPLETED'
                      )}
                      options={tableOptions}
+                     className='workPurchaseOrderTable'
                   />
                </HorizontalTabPanel>
                <HorizontalTabPanel>
@@ -137,6 +138,7 @@ export default function BulkWorkOrders() {
                         col => col.status === 'PENDING'
                      )}
                      options={tableOptions}
+                     className='workPurchaseOrderTable'
                   />
                </HorizontalTabPanel>
                <HorizontalTabPanel>
@@ -146,6 +148,7 @@ export default function BulkWorkOrders() {
                         col => col.status === 'CANCELLED'
                      )}
                      options={tableOptions}
+                     className='workPurchaseOrderTable'
                   />
                </HorizontalTabPanel>
                <HorizontalTabPanel>

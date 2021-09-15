@@ -1,5 +1,5 @@
 .tabulator-header {
-   height: 80px;
+   height: 78px;
    font-size: 14px;
    border-bottom: 2px solid #d8d8d8;
 }
@@ -29,9 +29,9 @@
    padding: 8px;
    text-align: center;
 }
-
 .tabulator-col {
    background: #f4f4f4 !important;
+   left:-8px;
 }
 
 .tabulator-row {

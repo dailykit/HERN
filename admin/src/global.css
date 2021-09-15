@@ -25,3 +25,6 @@ h1 {
 .Toastify__toast--success {
    background-color: #00a7e1;
 }
+h1, h2, h3, h4, h5, h6, p{
+   margin-bottom: 0em;
+}

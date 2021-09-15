@@ -175,7 +175,7 @@ const CollectionForm = () => {
                            <Form.Error key={index}>{error}</Form.Error>
                         ))}
                   </Form.Group>
-                  <Flex container alignItems="flex-end">
+                  <Flex container alignItems="flex-end" style={{position:'relative', top:'32px'}} >
                      <Text as="h2">{state.productCategories.length}</Text>
                      <Spacer xAxis size="8px" />
                      <Text as="subtitle">Categories</Text>

@@ -19,8 +19,12 @@ export const StyledListing = styled.div`
 `
 
 export const StyledDisplay = styled.div`
-   background: #fff;
-   padding: 0px 28px 28px 0px;
+   background: #FFFFFF;
+   border: 1px solid #F4F4F4;
+   box-sizing: border-box;
+   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+   border-radius: 20px;
+   padding: 28px;
    margin-top: 0;
    overflow-x: auto;
 `
@@ -44,13 +48,21 @@ export const StyledListingHeader = styled.div`
 `
 
 export const StyledListingTile = styled.div`
-   background: ${props => (props.active ? '#555B6E' : '#fff')};
-   color: ${props => (props.active ? '#fff' : '#555B6E')};
    padding: 20px 12px;
    cursor: pointer;
    position: relative;
    margin-bottom: 12px;
    min-width: fit-content;
+   background: #FFFFFF;
+   box-sizing: border-box;
+   border-radius: 20px;
+
+   :hover{
+      border: 2px solid rgba(54, 123, 245, 0.5);
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+   }
+   box-shadow: ${props => (props.active ? '1px 1px 2px rgba(255, 255, 255, 0.3), -1px -1px 2px rgba(204, 204, 204, 0.5), inset -6px 6px 12px rgba(204, 204, 204, 0.2), inset 6px -6px 12px rgba(204, 204, 204, 0.2), inset -6px -6px 12px rgba(255, 255, 255, 0.9), inset 6px 6px 15px rgba(204, 204, 204, 0.9)' : '0px 2px 4px rgba(0, 0, 0, 0.1)')};
+   border: ${props => (props.active ? '2px solid rgba(54, 123, 245, 0.5)' : '1px solid #F4F4F4' )};
 
    h3 {
       margin-bottom: 20px;

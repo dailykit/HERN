@@ -1,7 +1,7 @@
 import React, { useEffect, useContext, useRef } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
-import { useTunnel, Flex, Tunnels, Tunnel } from '@dailykit/ui'
+import { useTunnel, Flex, Tunnels, Tunnel, Spacer } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import {
    CUSTOMER_DATA,
@@ -322,6 +322,7 @@ const CustomerRelation = ({ match }) => {
                   </FlexContainer>
                   <StyledTable>
                      {renderTable()}
+                     <Spacer yAxis size="16px" />
                      <InsightDashboard
                         appTitle="CRM App"
                         moduleTitle="Customer Page"

@@ -6,7 +6,7 @@
    "dependencies": {
       "@apollo/react-hooks": "3.1.5",
       "@dailykit/react-tabulator": "0.13.6",
-      "@dailykit/ui": "^0.8.75",
+      "@dailykit/ui": "^0.8.77",
       "@dailykit/web-renderer": "1.0.7",
       "@monaco-editor/react": "^4.0.11",
       "@reach/tabs": "0.11.2",

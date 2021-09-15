@@ -213,9 +213,9 @@ const CampaignListing = () => {
          title: 'Active',
          field: 'active',
          formatter: reactFormatter(<ToggleButton />),
-         hozAlign: 'center',
+         hozAlign: 'left',
          titleFormatter: function (cell, formatterParams, onRendered) {
-            cell.getElement().style.textAlign = 'center'
+            cell.getElement().style.textAlign = 'left'
             return '' + cell.getValue()
          },
          width: 150,

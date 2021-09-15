@@ -729,7 +729,7 @@ const CustomerListing = () => {
                   persistenceID : 'customer_table'
                }}
                ref={tableRef}
-               className="crm-table"
+               className="crmCustomerTable"
             />
          )} 
          <InsightDashboard

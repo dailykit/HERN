@@ -59,10 +59,6 @@ const OrdersTable = ({ id }) => {
          headerFilter: true,
          hozAlign: 'right',
          cssClass: 'rowClick',
-         titleFormatter: function (cell) {
-            cell.getElement().style.textAlign = 'right'
-            return '' + cell.getValue()
-         },
          headerTooltip: function (column) {
             const identifier = 'order_listing_id_column'
             return (
@@ -78,10 +74,6 @@ const OrdersTable = ({ id }) => {
          title: 'Products',
          field: 'products',
          hozAlign: 'right',
-         titleFormatter: function (cell) {
-            cell.getElement().style.textAlign = 'right'
-            return '' + cell.getValue()
-         },
          headerTooltip: function (column) {
             const identifier = 'order_listing_products_column'
             return (
@@ -94,10 +86,6 @@ const OrdersTable = ({ id }) => {
          title: 'Loyalty Points Used',
          field: 'loyaltyPointsUsed',
          hozAlign: 'right',
-         titleFormatter: function (cell) {
-            cell.getElement().style.textAlign = 'right'
-            return '' + cell.getValue()
-         },
          headerTooltip: function (column) {
             const identifier = 'order_listing_loyalty_points_used_column'
             return (
@@ -111,10 +99,6 @@ const OrdersTable = ({ id }) => {
          title: 'Wallet Amount Used',
          field: 'walletAmountUsed',
          hozAlign: 'right',
-         titleFormatter: function (cell) {
-            cell.getElement().style.textAlign = 'right'
-            return '' + cell.getValue()
-         },
          headerTooltip: function (column) {
             const identifier = 'order_listing_wallet_used_column'
             return (
@@ -128,10 +112,6 @@ const OrdersTable = ({ id }) => {
          title: 'Discount',
          field: 'discount',
          hozAlign: 'right',
-         titleFormatter: function (cell) {
-            cell.getElement().style.textAlign = 'right'
-            return '' + cell.getValue()
-         },
          headerTooltip: function (column) {
             const identifier = 'order_listing_discount_column'
             return (
@@ -145,10 +125,6 @@ const OrdersTable = ({ id }) => {
          title: 'Total Paid',
          field: 'amountPaid',
          hozAlign: 'right',
-         titleFormatter: function (cell) {
-            cell.getElement().style.textAlign = 'right'
-            return '' + cell.getValue()
-         },
          headerTooltip: function (column) {
             const identifier = 'order_listing_paid_column'
             return (
@@ -175,10 +151,6 @@ const OrdersTable = ({ id }) => {
          title: 'Ordered On',
          field: 'orderedOn',
          hozAlign: 'right',
-         titleFormatter: function (cell) {
-            cell.getElement().style.textAlign = 'right'
-            return '' + cell.getValue()
-         },
          headerTooltip: function (column) {
             const identifier = 'order_listing_ordered_on_column'
             return (
@@ -191,10 +163,6 @@ const OrdersTable = ({ id }) => {
          title: 'Delivered On',
          field: 'deliveredOn',
          hozAlign: 'right',
-         titleFormatter: function (cell) {
-            cell.getElement().style.textAlign = 'right'
-            return '' + cell.getValue()
-         },
          headerTooltip: function (column) {
             const identifier = 'order_listing_delivered_on_column'
             return (

@@ -63,11 +63,12 @@ const Stats = ({ state }) => {
                <Flex
                   padding="0 16px 0 0"
                   style={{ borderRight: '1px solid #dddddd' }}
+                  title='Total number of Processings'
                >
                   <Text as="h1">{state.ingredientProcessings?.length}</Text>
                   <Text as="title">Processings</Text>
                </Flex>
-               <Flex padding="0 0 0 16px">
+               <Flex padding="0 0 0 16px" title='Total number of Sachets'>
                   <Text as="h1">{state.ingredientSachets?.length}</Text>
                   <Text as="title">Sachets</Text>
                </Flex>
@@ -106,7 +107,7 @@ const Stats = ({ state }) => {
                   />
                </Flex>
             )} */}
-            <Flex width="100%">
+            <Flex width="66%" title='Add image to ingredient'>
                {state?.assets?.images != null &&
                state?.assets?.images?.length ? (
                   <Gallery
