@@ -16,6 +16,7 @@ import { get_env } from '../../../../utils'
 import BrandShopDate from '../../../BrandShopDateProvider'
 import styled from 'styled-components'
 import SalesByCoupons from './Tunnels/salesByCoupons'
+import { MarketingIcon } from '../../../../assets/icons'
 //currencies
 const currency = {
    USD: '$',
@@ -67,7 +68,7 @@ const MarketingReport = () => {
             </Tunnel>
          </Tunnels>
          <Tile>
-            <Tile.Head title="Marketing"></Tile.Head>
+            <Tile.Head title="Marketing" svg={MarketingIcon}></Tile.Head>
             <Tile.Body>
                <Flex width="100%">
                   <Flex

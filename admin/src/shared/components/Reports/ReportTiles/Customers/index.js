@@ -16,6 +16,7 @@ import { CUSTOMERS_COUNT } from './graphql/subscription'
 import BrandShopDate from '../../../BrandShopDateProvider'
 import CustomerOverTime from './Tunnels/customerOverTime'
 import FirstTimeVsReturningCustomerSales from './Tunnels/firstTimeVsReturningCustomerSales'
+import { CustomerIcon } from '../../../../assets/icons'
 
 const CustomerReport = () => {
    const [
@@ -81,7 +82,7 @@ const CustomerReport = () => {
             </Tunnel>
          </Tunnels>
          <Tile>
-            <Tile.Head title="Customers"></Tile.Head>
+            <Tile.Head title="Customers" svg={CustomerIcon}></Tile.Head>
             <Tile.Body>
                <Flex width="100%">
                   <Flex

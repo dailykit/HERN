@@ -11,7 +11,7 @@ import { logger } from '../../../../utils'
 import { toast } from 'react-toastify'
 import { ErrorState } from '../../../ErrorState'
 import OrderRefTable from '../../Tunnels/OrderRefTunnel/orderRefTunnel'
-import { Expand } from '../../../../assets/icons'
+import { EarningIcon, Expand } from '../../../../assets/icons'
 import { InlineLoader } from '../../../InlineLoader'
 
 const TotalEarningAnalytics = () => {
@@ -186,8 +186,8 @@ const TotalEarningAnalytics = () => {
                <TotalEarningTunnel currency={analyticsApiArgState.currency} />
             </Tunnel>
          </Tunnels>
-         <Tile>
-            <Tile.Head title="Total Earning">
+         <Tile hasChart>
+            <Tile.Head title="Total Earning" svg={EarningIcon}>
                <Tile.Head.Actions>
                   <Tile.Head.Action
                      title="Expand"

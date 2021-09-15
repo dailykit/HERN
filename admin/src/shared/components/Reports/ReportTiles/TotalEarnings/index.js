@@ -13,6 +13,7 @@ import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import styled from 'styled-components'
+import { EarningIcon } from '../../../../assets/icons'
 import { get_env, logger } from '../../../../utils'
 import BrandShopDate from '../../../BrandShopDateProvider'
 import { Tile } from '../../../DashboardTiles'
@@ -135,7 +136,7 @@ const TotalEarningReport = () => {
             </Tunnel>
          </Tunnels>
          <Tile>
-            <Tile.Head title="Earnings"></Tile.Head>
+            <Tile.Head title="Earnings" svg={EarningIcon}></Tile.Head>
             <Tile.Body>
                <Flex width="100%">
                   <Flex
