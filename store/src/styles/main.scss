@@ -18,6 +18,7 @@
 @use './components/tunnel';
 @use './components/wallet_amount';
 @use './components/profile_sidebar';
+
 @use './sections/register';
 @use './sections/our-plans';
 @use './sections/our-menu';
@@ -35,9 +36,12 @@
 @use './sections/login';
 @use './sections/inventory';
 @use './sections/recipes';
+
+/*Account routes pages*/
 @use './sections/account/addresses';
 @use './sections/account/cards';
 @use './sections/account/loyalty-points';
 @use './sections/account/orders';
 @use './sections/account/referrals';
 @use './sections/account/wallet';
+@use './sections/account/profile';
