@@ -37,7 +37,7 @@ const getNestedFolders = async url => {
 const getFolderWithFiles = async url => {
    try {
       const data = await fs.readdirSync(url)
-      constFS_PATH = await get_env('FS_PATH')
+      const FS_PATH = await get_env('FS_PATH')
       const result = await data
          .filter(item => item !== '.git' && item !== 'schema')
          .map(async item => {
