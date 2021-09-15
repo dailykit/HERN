@@ -151,7 +151,9 @@ const ProductsSection = () => {
             justifyContent="space-between"
          >
             <Flex container alignItems="center">
-               <Text as="h2">Products</Text>
+               <Text as="h2" style={{ marginBottom: '0px' }}>
+                  Products
+               </Text>
                <Tooltip identifier="listing_menu_section_products_heading" />
             </Flex>
             <TextButton
@@ -159,6 +161,7 @@ const ProductsSection = () => {
                type="outline"
                disabled={!isValid}
                onClick={() => openTunnel(1)}
+               style={{ padding: '4px 20px 8px 20px' }}
             >
                Continue
             </TextButton>

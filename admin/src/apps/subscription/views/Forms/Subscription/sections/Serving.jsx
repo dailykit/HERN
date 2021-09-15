@@ -49,25 +49,26 @@ const Serving = ({ id, isActive, toggleServingTunnel }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [upsertServing] = useMutation(UPSERT_SUBSCRIPTION_SERVING)
    const [itemTunnelState, setItemTunnelState] = React.useState('')
-   const { error, loading, data: { serving = {} } = {} } = useSubscription(
-      SERVING,
-      {
-         variables: { id },
-         onSubscriptionData: ({
-            subscriptionData: { data: { serving: node = {} } = {} } = {},
-         }) => {
-            dispatch({
-               type: 'SET_SERVING',
-               payload: {
-                  id: node.id,
-                  size: Number(node.size),
-                  isActive: node.isActive,
-                  isDefault: state.title.defaultServing.id === node.id,
-               },
-            })
-         },
-      }
-   )
+   const {
+      error,
+      loading,
+      data: { serving = {} } = {},
+   } = useSubscription(SERVING, {
+      variables: { id },
+      onSubscriptionData: ({
+         subscriptionData: { data: { serving: node = {} } = {} } = {},
+      }) => {
+         dispatch({
+            type: 'SET_SERVING',
+            payload: {
+               id: node.id,
+               size: Number(node.size),
+               isActive: node.isActive,
+               isDefault: state.title.defaultServing.id === node.id,
+            },
+         })
+      },
+   })
 
    React.useEffect(() => {
       return () => {
@@ -126,7 +127,9 @@ const Serving = ({ id, isActive, toggleServingTunnel }) => {
             justifyContent="space-between"
          >
             <Stack xAxis>
-               <Text as="h2">Serving: {serving.size}</Text>
+               <Text as="h2" style={{ marginBottom: '0px' }}>
+                  Serving: {serving.size}
+               </Text>
                <Spacer size="14px" xAxis />
                {serving.id === state.title.defaultServing.id && (
                   <Tag>Default</Tag>
@@ -143,7 +146,7 @@ const Serving = ({ id, isActive, toggleServingTunnel }) => {
                   </Flex>
                ) : (
                   <Flex container flex="1" alignItems="center">
-                     <CloseIcon size={20} color="red" />
+                     <CloseIcon size={8} color="red" />
                      <Spacer size="8px" xAxis />
                      <Text as="subtitle">
                         Must have atleast one active item count!
@@ -175,7 +178,9 @@ const Serving = ({ id, isActive, toggleServingTunnel }) => {
          <Spacer size="8px" />
          <Flex container alignItems="center" justifyContent="space-between">
             <Flex container alignItems="center">
-               <Text as="h3">Items Counts</Text>
+               <Text as="h3" style={{ marginBottom: '0px' }}>
+                  Items Counts
+               </Text>
                <Tooltip identifier="form_subscription_section_item_count_heading" />
             </Flex>
             <IconButton
