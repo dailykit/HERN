@@ -208,16 +208,22 @@ const CouponForm = () => {
                            <Form.Error key={index}>{error}</Form.Error>
                         ))}
                   </Form.Group>
-                  <Flex container alignItems="center" height="100%">
+                  <Flex container alignItems="center" height="100%" style={{position:'relative', top:'13px'}}>
                      {state.isCouponValid?.status ? (
                         <>
-                           <TickIcon color="#00ff00" stroke={2} />
-                           <Text as="p">All good!</Text>
+                           <Flex >
+                              <TickIcon color="#00ff00" stroke={2}/>
+                           </Flex>
+                              <Text as="p">All good!</Text>
+                          
                         </>
                      ) : (
                         <>
-                           <CloseIcon color="#ff0000" />
-                           <Text as="p">{state.isCouponValid?.error}</Text>
+                           <Flex container alignItems="center" height="100%" style={{position:'relative', top:'4px'}}>
+                              <CloseIcon color="#ff0000" />
+                           </Flex>
+                              <Text as="p">{state.isCouponValid?.error}</Text>
+                           
                         </>
                      )}
                      <Spacer xAxis size="16px" />
@@ -226,8 +232,8 @@ const CouponForm = () => {
                         onChange={updatetoggle}
                         value={toggle}
                      >
-                        <Flex container alignItems="center">
-                           Publish
+                        <Flex container alignItems="center" style={{position:'relative', left:'12px'}}>
+                           <p>Publish</p>
                            <Tooltip identifier="coupon_publish_info" />
                         </Flex>
                      </Form.Toggle>

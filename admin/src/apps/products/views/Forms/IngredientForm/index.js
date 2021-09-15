@@ -252,8 +252,18 @@ const IngredientForm = () => {
                />
             </Tunnel>
          </Tunnels>
+         <Flex
+            container
+            as='header'
+            justifyContent='space-between'
+            width='100%'
+         >
          <HeaderWrapper>
             <InputTextWrapper>
+               <Flex 
+                  container
+                  width='50%'
+               >
                <Form.Group>
                   <Form.Label htmlFor="title" title="title">
                      Ingredient Name*
@@ -275,11 +285,19 @@ const IngredientForm = () => {
                         <Form.Error key={index}>{error}</Form.Error>
                      ))}
                </Form.Group>
+               
+               </Flex>
                <Spacer xAxis size="16px" />
+               <Flex
+                  container
+                  width='50%'
+                  height='100%'
+               >
                <Form.Group>
                   <Form.Label htmlFor="category" title="category">
                      Category
                   </Form.Label>
+                  <Flex height='40px' padding='10px 0 0 0 '> 
                   {options && (
                      <Dropdown
                         type="single"
@@ -296,16 +314,20 @@ const IngredientForm = () => {
                         typeName="category"
                      />
                   )}
+                  </Flex>
                </Form.Group>
-            </InputTextWrapper>
+            
+               </Flex>
+               </InputTextWrapper>
 
             <Flex
                container
                alignItems="center"
                justifyContent="flex-end"
                width="100%"
+               height='100%'
             >
-               <Flex container alignItems="center">
+               <Flex container alignItems="center" padding='6px 16px' margin='25px 0 0 0 '>
                   <InsightDashboard
                      appTitle="Products App"
                      moduleTitle="Ingredient Page"
@@ -314,24 +336,26 @@ const IngredientForm = () => {
                      }}
                   />
                </Flex>
-               <Spacer xAxis size="8px" />
-               <div>
+               <Spacer xAxis size="11px" />
+               <div style={{height:'77%'}}>
                   {state.isValid?.status ? (
-                     <Flex container alignItems="center">
+                     <Flex container alignItems="center" padding='6px 16px' margin='25px 0 0 0 '>
                         <TickIcon color="#00ff00" stroke={2} />
-                        <Text as="p">All good!</Text>
+                        <Text as="p" style={{margin:'0px'}}> All good!</Text>
                      </Flex>
                   ) : (
-                     <Flex container alignItems="center">
+                     <Flex container alignItems="center" padding='6px 16px' margin='25px 0 0 0 '>
                         <CloseIcon color="#ff0000" />
-                        <Text as="p">{state.isValid?.error}</Text>
+                        <Text as="p" style={{margin:'0px'}}>{state.isValid?.error}</Text>
                      </Flex>
                   )}
                </div>
-               <Spacer xAxis size="16px" />
+               <Spacer xAxis size="11px" />
                <ComboButton
                   type="ghost"
                   size="sm"
+                  title='Link this ingredient to other'
+                  style={{padding:'6px 16px', height:'63%', margin:'25px 0 0 0 '}}
                   onClick={() => openLinkedRecipesTunnel(1)}
                >
                   <EyeIcon color="#00A7E1" />
@@ -342,8 +366,9 @@ const IngredientForm = () => {
                   name="published"
                   value={state.isPublished}
                   onChange={togglePublish}
+                  style={{margin:'25px 0 0 0', height:'32px'}}
                >
-                  <Flex container alignItems="center">
+                  <Flex container title='Publish this ingredient' alignItems="center" padding='6px 0px 6px 16px' margin='0px -30px 0px 0px'>
                      Published
                      <Spacer xAxis size="16px" />
                      <Tooltip identifier="ingredient_publish" />
@@ -351,12 +376,16 @@ const IngredientForm = () => {
                </Form.Toggle>
             </Flex>
          </HeaderWrapper>
-         <Spacer size="32px" />
 
-         <Flex padding="32px" style={{ background: '#f3f3f3' }}>
-            <Stats state={state} />
+         </Flex>
+         <Flex padding="16px 32px 32px 32px" >
+            <Flex style={{ background: '#f3f3f3', padding:"32px", borderRadius:'20px' }}>
+               <Stats state={state} />
+            </Flex>
             <Spacer size="32px" />
-            <Processings state={state} />
+            <Flex style={{ background: '#ffffff' }}>
+            <  Processings state={state} />
+            </Flex>
          </Flex>
          <Banner id="products-app-single-ingredient-bottom" />
       </IngredientContext.Provider>

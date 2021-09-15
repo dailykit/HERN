@@ -51,7 +51,8 @@ const ConditionComp = () => {
                <Flex
                   container
                   justifyContent="space-between"
-                  margin="0 0 16px 0"
+                  margin="8px 0"
+                  alignItems="center"
                >
                   <Flex container alignItems="center">
                      <Text as="title">Coupon Condition</Text>
