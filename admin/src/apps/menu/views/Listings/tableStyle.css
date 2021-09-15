@@ -42,3 +42,7 @@ h2{
    background: #e5e5e5;
    cursor: pointer;
 }
+.menuTable .tabulator-header .tabulator-col{
+   height: 78px!important;
+   right: 8px;
+}

@@ -1,4 +1,4 @@
-import React from 'react'
+   import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import {
@@ -204,6 +204,7 @@ const CollectionsListing = () => {
                columns={columns}
                data={collections}
                options={tableOptions}
+               className='menuTable'
             />
          )}
          <InsightDashboard
