@@ -104,6 +104,7 @@ const MarketingReport = () => {
                      flexDirection="column"
                      width="100%"
                      alignItems="flex-start"
+                     padding="0px 0px 10px 0px"
                   >
                      <Text as="text1" style={{ marginLeft: '8px' }}>
                         Reports

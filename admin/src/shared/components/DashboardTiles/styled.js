@@ -162,5 +162,6 @@ export const Tile = styled.div(
       border: 1px solid #e3e8ee;
       flex: 0 0 calc(33.33% - 8px);
       flex-grow: 1;
+      max-width: 50%;
    `
 )
