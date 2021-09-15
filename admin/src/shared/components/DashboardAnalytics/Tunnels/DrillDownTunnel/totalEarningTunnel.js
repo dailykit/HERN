@@ -183,21 +183,23 @@ const TotalEarningTunnel = ({ currency }) => {
                />
             </Tunnel>
          </Tunnels>
-         <BrandAndShop
-            brands={brands}
-            setBrandShop={setBrandShop}
-            brandShop={brandShop}
-         />
-         <Spacer size="10px" />
-         <DateRangePicker
-            from={from}
-            setFrom={setFrom}
-            to={to}
-            setTo={setTo}
-            setGroupBy={setGroupBy}
-            compare={compare}
-            setCompare={setCompare}
-         />
+         <Flex padding="0 52px">
+            <BrandAndShop
+               brands={brands}
+               setBrandShop={setBrandShop}
+               brandShop={brandShop}
+            />
+            <Spacer size="10px" />
+            <DateRangePicker
+               from={from}
+               setFrom={setFrom}
+               to={to}
+               setTo={setTo}
+               setGroupBy={setGroupBy}
+               compare={compare}
+               setCompare={setCompare}
+            />
+         </Flex>
          <Spacer size="10px" />
          <DrillDownLineChart
             from={from}
@@ -588,80 +590,102 @@ const DrillDownLineChart = ({
    }
    return (
       <>
-         <Flex height="22rem">
-            <ResponsiveContainer width="100%" height="100%">
-               <LineChart
-                  width={500}
-                  height={300}
-                  data={dataForGraph}
-                  margin={{
-                     top: 5,
-                     right: 30,
-                     left: 20,
-                     bottom: 5,
-                  }}
-               >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis
-                     dataKey="present"
-                     tickFormatter={tick => moment(tick).format('YYYY-MM-DD')}
-                     ticks={dataForGraph.map(x => x.present)}
-                  />
-                  <YAxis />
-                  <Tooltip
-                     content={
-                        <CustomTooltip
-                           groupBy={groupBy[groupBy.length - 1]}
-                           dataOf={dataOf}
-                           currency={currency}
-                           isCompareSkip={compare.isSkip}
-                        />
-                     }
-                  />
-                  <Legend />
-                  <Line
-                     type="monotone"
-                     name="Earning"
-                     dataKey={dataOf}
-                     stroke="#2AC981"
-                     strokeWidth={2}
-                     activeDot={{
-                        onClick: (event, payload) => {
-                           if (
-                              payload.payload.orderRefspresent ||
-                              payload.payload.orderRefspast
-                           ) {
-                              setGraphTunnelData(prevState => ({
-                                 ...prevState,
-                                 title: graphTunnelTitle,
-                                 orderRefData: [
-                                    payload.payload.orderRefspresent,
-                                    payload.payload.orderRefspast,
-                                 ],
-                                 presentTime: payload.payload.present,
-                                 pastTime: payload.payload.past,
-                              }))
-                              openGraphTunnel(1)
-                           }
-                        },
-                        cursor: 'pointer',
+         <div
+            style={{
+               background: '#FFFFFF',
+               boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.2)',
+               borderRadius: '10px',
+               padding: '40px 40px 10px 0px',
+               margin: '0 42px',
+            }}
+         >
+            <Flex height="22rem">
+               <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                     width={500}
+                     height={300}
+                     data={dataForGraph}
+                     margin={{
+                        top: 5,
+                        right: 30,
+                        left: 20,
+                        bottom: 5,
                      }}
-                  />
-                  {!compare.isSkip && compare.data && (
+                  >
+                     <CartesianGrid strokeDasharray="3 3" />
+                     <XAxis
+                        dataKey="present"
+                        tickFormatter={tick =>
+                           moment(tick).format('YYYY-MM-DD')
+                        }
+                        ticks={dataForGraph.map(x => x.present)}
+                     />
+                     <YAxis />
+                     <Tooltip
+                        content={
+                           <CustomTooltip
+                              groupBy={groupBy[groupBy.length - 1]}
+                              dataOf={dataOf}
+                              currency={currency}
+                              isCompareSkip={compare.isSkip}
+                           />
+                        }
+                     />
+                     <Legend />
                      <Line
                         type="monotone"
-                        name="Compare Earning"
-                        dataKey={dataOf + 'Compare'}
-                        stroke="#8884d8"
-                        activeDot={{ r: 4 }}
+                        name="Earning"
+                        dataKey={dataOf}
+                        stroke="#2AC981"
                         strokeWidth={2}
+                        activeDot={{
+                           onClick: (event, payload) => {
+                              if (
+                                 payload.payload.orderRefspresent ||
+                                 payload.payload.orderRefspast
+                              ) {
+                                 setGraphTunnelData(prevState => ({
+                                    ...prevState,
+                                    title: graphTunnelTitle,
+                                    orderRefData: [
+                                       payload.payload.orderRefspresent,
+                                       payload.payload.orderRefspast,
+                                    ],
+                                    presentTime: payload.payload.present,
+                                    pastTime: payload.payload.past,
+                                 }))
+                                 openGraphTunnel(1)
+                              }
+                           },
+                           cursor: 'pointer',
+                        }}
                      />
-                  )}
-               </LineChart>
-            </ResponsiveContainer>
-         </Flex>
+                     {!compare.isSkip && compare.data && (
+                        <Line
+                           type="monotone"
+                           name="Compare Earning"
+                           dataKey={dataOf + 'Compare'}
+                           stroke="#8884d8"
+                           activeDot={{ r: 4 }}
+                           strokeWidth={2}
+                        />
+                     )}
+                  </LineChart>
+               </ResponsiveContainer>
+            </Flex>
+         </div>
          <Spacer size="20px" />
-         <EarningTable data={insightAnalyticsData} />
+         <div
+            style={{
+               background: '#FFFFFF',
+               boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.2)',
+               borderRadius: '10px',
+               padding: '10px 0px',
+               margin: '0 42px',
+            }}
+         >
+            <EarningTable data={insightAnalyticsData} />
+         </div>
       </>
    )
 }

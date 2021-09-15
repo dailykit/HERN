@@ -34,7 +34,9 @@ const EarningTable = ({ data }) => {
       <>
          <Flex>
             <Flex>
-               <Text as="h2">Earning Table</Text>
+               <Text as="h2" style={{ padding: '0px 10px' }}>
+                  Earning Table
+               </Text>
             </Flex>
             <Flex container>
                <Flex></Flex>
@@ -155,21 +157,21 @@ const DataTable = ({ data }) => {
          field: 'totalTax',
          bottomCalc: totalCalc,
          visible: true,
-         width: 150,
+         width: 120,
       },
       {
          title: `Discount (${analyticsApiArgState.currency})`,
          field: 'totalDiscount',
          bottomCalc: totalCalc,
          visible: true,
-         width: 150,
+         width: 120,
       },
       {
-         title: `Shipping (${analyticsApiArgState.currency})`,
+         title: `Delivery (${analyticsApiArgState.currency})`,
          field: 'totalDeliveryPrice',
          bottomCalc: totalCalc,
          visible: true,
-         width: 150,
+         width: 130,
       },
       {
          title: `Net Sales (${analyticsApiArgState.currency})`,
@@ -255,7 +257,12 @@ const DataTable = ({ data }) => {
                   </TunnelBody>
                </Tunnel>
             </Tunnels>
-            <Flex container justifyContent="flex-end" alignItems="center">
+            <Flex
+               container
+               justifyContent="flex-end"
+               alignItems="center"
+               padding="0px 10px"
+            >
                <DropdownButton title="Download" width="150px">
                   <DropdownButton.Options>
                      <DropdownButton.Option onClick={() => downloadCsvData()}>
