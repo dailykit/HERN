@@ -41,7 +41,7 @@ const reducers = (state, { type, payload }) => {
 }
 
 export const UserProvider = ({ children }) => {
-   const { brand, organization } = useConfig()
+   const { brand } = useConfig()
    const [isLoading, setIsLoading] = React.useState(true)
    const [keycloakId, setKeycloakId] = React.useState('')
    const [session, loadingSession] = useSession()
@@ -166,7 +166,7 @@ export const UserProvider = ({ children }) => {
 
    React.useEffect(() => {
       if (keycloakId && !loading && customer?.id) {
-         const user = processUser(customer, organization?.stripeAccountType)
+         const user = processUser(customer)
          // fb pixel initialization when user is logged in
          const pixelId = isClient && get_env('PIXEL_ID')
          const advancedMatching = {
@@ -205,7 +205,6 @@ export const UserProvider = ({ children }) => {
       }
    }, [keycloakId, loading, customer])
 
-   if (isLoading) return <PageLoader />
    return (
       <UserContext.Provider
          value={{

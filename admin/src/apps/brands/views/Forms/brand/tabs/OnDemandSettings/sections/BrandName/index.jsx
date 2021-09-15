@@ -107,7 +107,7 @@ export const BrandName = ({ update }) => {
                   ))}
             </Form.Group>
             <Spacer size="8px" xAxis />
-            <TextButton size="lg" type="outline" onClick={updateSetting}>
+            <TextButton size="sm" type="outline" onClick={updateSetting}>
                Update
             </TextButton>
          </Flex>

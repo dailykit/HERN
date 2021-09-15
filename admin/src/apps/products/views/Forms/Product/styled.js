@@ -79,7 +79,7 @@ export const StyledMeta = styled.div`
 `
 export const ResponsiveFlex = styled.header`
    display: flex;
-   padding: 16px 32px;
+   padding: 16px 35px;
    align-items: center;
    justify-content: space-between;
 

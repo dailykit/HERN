@@ -9,8 +9,9 @@ export const Images = styled.div`
 export const DeleteDiv = styled.div`
    position: absolute;
    right: 6px;
-   top: 6px;
+   top: 0px;
    cursor: pointer;
+   display:block;
    &:hover {
       box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
       transition: 0.3s;
@@ -18,9 +19,10 @@ export const DeleteDiv = styled.div`
 `
 export const EditDiv = styled.div`
    position: absolute;
-   right: 42px;
-   top: 6px;
+   right: 6px;
+   top: 36px;
    cursor: pointer;
+   display:block;
    &:hover {
       box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
       transition: 0.3s;
@@ -55,7 +57,7 @@ export const Wrapper = styled.div`
 `
 
 export const Trail = styled.div`
-   width: 100%;
+   width: 90%;
    margin: ${props => (props.hasImage ? '16px' : null)};
 `
 

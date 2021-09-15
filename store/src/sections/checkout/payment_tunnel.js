@@ -12,7 +12,6 @@ import { useConfig } from '../../lib'
 
 export const PaymentTunnel = () => {
    const { user } = useUser()
-   const { organization } = useConfig()
    const { state, dispatch } = usePayment()
    const [intent, setIntent] = React.useState(null)
 
@@ -27,17 +26,16 @@ export const PaymentTunnel = () => {
 
    React.useEffect(() => {
       console.log({ user })
-      if (user?.platform_customer?.paymentCustomerId && isClient) {
+      if (user?.platform_customer?.paymentCustomerId && isClient && !intent) {
          ;(async () => {
-            const intent = await createSetupIntent(
-               user?.platform_customer?.paymentCustomerId,
-               organization
+            const setup_intent = await createSetupIntent(
+               user?.platform_customer?.paymentCustomerId
             )
-            console.log({ intent })
-            setIntent(intent)
+            console.log({ setup_intent })
+            setIntent(setup_intent)
          })()
       }
-   }, [user, organization])
+   }, [user])
 
    return (
       <Tunnel
@@ -60,19 +58,14 @@ export const PaymentTunnel = () => {
    )
 }
 
-const createSetupIntent = async (customer, organization = {}) => {
+const createSetupIntent = async customer => {
    try {
-      let stripeAccountId = null
-      if (
-         organization?.stripeAccountType === 'standard' &&
-         organization?.stripeAccountId
-      ) {
-         stripeAccountId = organization?.stripeAccountId
-      }
-      console.log({ customer, organization })
+      console.log({ customer })
       const origin = isClient ? window.location.origin : ''
       const url = `${origin}/server/api/payment/setup-intent`
-      const { data } = await axios.post(url, { customer, stripeAccountId })
+      const { data } = await axios.post(url, {
+         customer,
+      })
       console.log({ data: data.data })
       return data.data
    } catch (error) {

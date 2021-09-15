@@ -20,7 +20,7 @@ import {
    ProfileSidebar,
 } from '../../components'
 import { useConfig } from '../../lib'
-import { get_env, isClient } from '../../utils'
+import { get_env, isClient, isConnectedIntegration } from '../../utils'
 import { useUser } from '../../context'
 import { CloseIcon, DeleteIcon } from '../../assets/icons'
 import {
@@ -196,20 +196,18 @@ const Content = () => {
 
 export const PaymentTunnel = ({ tunnel, toggleTunnel }) => {
    const { user } = useUser()
-   const { organization } = useConfig()
    const [intent, setIntent] = React.useState(null)
 
    React.useEffect(() => {
       if (user?.platform_customer?.paymentCustomerId && isClient) {
          ;(async () => {
-            const intent = await createSetupIntent(
-               user?.platform_customer?.paymentCustomerId,
-               organization
+            const setup_intent = await createSetupIntent(
+               user?.platform_customer?.paymentCustomerId
             )
-            setIntent(intent)
+            setIntent(setup_intent)
          })()
       }
-   }, [user, organization])
+   }, [user])
 
    return (
       <Tunnel size="sm" isOpen={tunnel} toggleTunnel={toggleTunnel}>
@@ -230,7 +228,9 @@ export const PaymentTunnel = ({ tunnel, toggleTunnel }) => {
 
 export const PaymentForm = ({ intent, toggleTunnel }) => {
    const { user } = useUser()
-   const { brand, organization } = useConfig()
+   const { brand } = useConfig()
+   const STRIPE_ACCOUNT_ID = get_env('STRIPE_ACCOUNT_ID')
+   const isConnected = isConnectedIntegration()
    const [updateBrandCustomer] = useMutation(BRAND.CUSTOMER.UPDATE, {
       onError: error => {
          console.error(error)
@@ -246,13 +246,8 @@ export const PaymentForm = ({ intent, toggleTunnel }) => {
       try {
          if (setupIntent.status === 'succeeded') {
             const origin = isClient ? window.location.origin : ''
-            let url = `${origin}/server/api/payment/payment-method/${setupIntent.payment_method}`
-            if (
-               organization.stripeAccountType === 'standard' &&
-               organization.stripeAccountId
-            ) {
-               url += `?accountId=${organization.stripeAccountId}`
-            }
+            const url = `${origin}/server/api/payment/payment-method/${setupIntent.payment_method}`
+
             const { data: { success, data = {} } = {} } = await axios.get(url)
 
             if (success) {
@@ -303,10 +298,9 @@ export const PaymentForm = ({ intent, toggleTunnel }) => {
    }
 
    const stripePromise = loadStripe(isClient ? get_env('STRIPE_KEY') : '', {
-      ...(organization.stripeAccountType === 'standard' &&
-         organization.stripeAccountId && {
-            stripeAccount: organization.stripeAccountId,
-         }),
+      ...(isConnected && {
+         stripeAccount: STRIPE_ACCOUNT_ID,
+      }),
    })
 
    if (!intent) return <Loader inline />
@@ -373,7 +367,7 @@ const CardSetupForm = ({ intent, handleResult }) => {
                   tw="w-full bg-transparent border-b border-gray-800 h-10 text-white focus:outline-none"
                />
             </section>
-            <CardSection />
+            <CardSection setError={setError} />
          </div>
          <button
             disabled={!stripe || submitting}
@@ -402,30 +396,21 @@ const CARD_ELEMENT_OPTIONS = {
    },
 }
 
-const CardSection = () => {
-   return (
-      <CardSectionWrapper>
-         <span tw="block text-sm text-gray-500">Card Details</span>
-         <CardElement
-            options={CARD_ELEMENT_OPTIONS}
-            onChange={({ error }) => setError(error?.message || '')}
-         />
-      </CardSectionWrapper>
-   )
-}
+const CardSection = ({ setError }) => (
+   <CardSectionWrapper>
+      <span tw="block text-sm text-gray-500">Card Details</span>
+      <CardElement
+         options={CARD_ELEMENT_OPTIONS}
+         onChange={({ error }) => setError(error?.message || '')}
+      />
+   </CardSectionWrapper>
+)
 
-const createSetupIntent = async (customer, organization = {}) => {
+const createSetupIntent = async customer => {
    try {
-      let stripeAccountId = null
-      if (
-         organization?.stripeAccountType === 'standard' &&
-         organization?.stripeAccountId
-      ) {
-         stripeAccountId = organization?.stripeAccountId
-      }
       const origin = isClient ? window.location.origin : ''
       const url = `${origin}/server/api/payment/setup-intent`
-      const { data } = await axios.post(url, { customer, stripeAccountId })
+      const { data } = await axios.post(url, { customer })
       return data.data
    } catch (error) {
       return error

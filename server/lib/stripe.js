@@ -1,5 +1,5 @@
 import Stripe from 'stripe'
-import { isConnectedIntegration } from '../utils'
+import { isConnectedIntegration } from '../utils/isConnectedIntegration'
 import get_env from '../../get_env'
 
 const stripe = async () => {

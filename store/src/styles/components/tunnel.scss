@@ -7,51 +7,125 @@
    bottom: 0px;
    left: 0px;
    background: rgba(0, 0, 0, 0.2);
-   @media screen and (max-width: 767px) {
-      margin-top: 0;
-   }
 }
 .hern-tunnel__body {
-   padding: 16px 16px 120px 16px;
+   padding: 16px 16px 80px 16px;
    overflow-y: auto;
-   height: calc(100vh - 128px);
 }
 
-.hern-tunnel__content {
-   float: right;
+.hern-tunnel__wrapper {
    background: #fff;
-   height: 100%;
+   position: absolute;
+   overflow-y: auto;
 }
-.hern-tunnel__content--sm {
-   @extend .hern-tunnel__content;
-   width: 25%;
-   @media (max-width: 980px) {
-      width: 75%;
+
+.hern-tunnel__popup--full {
+   top: 32px;
+   right: 32px;
+   bottom: 32px;
+   left: 32px;
+   border-radius: 12px;
+   @media only screen and (max-width: 568px) {
+      top: 32px;
+      right: 16px;
+      bottom: 16px;
+      left: 16px;
+      border-radius: 12px;
    }
-   @media (max-width: 767px) {
+}
+.hern-tunnel__popup--lg {
+   top: 32px;
+   right: 0;
+   bottom: 56px;
+   left: 0;
+   max-width: 850px;
+   margin: 0 auto;
+   border-radius: 12px;
+   @media only screen and (max-width: 1024px) {
+      max-width: 600px;
+   }
+   @media only screen and (max-width: 568px) {
+      top: 32px;
+      right: 16px;
+      bottom: 16px;
+      left: 16px;
+      border-radius: 12px;
+   }
+}
+.hern-tunnel__popup--md {
+   top: 32px;
+   right: 0;
+   bottom: 48px;
+   left: 0;
+   max-width: 600px;
+   margin: 0 auto;
+   border-radius: 12px;
+   @media only screen and (max-width: 568px) {
+      top: 80px;
+      right: 16px;
+      bottom: 16px;
+      left: 16px;
+      border-radius: 12px;
+   }
+}
+.hern-tunnel__popup--sm {
+   top: 32px;
+   right: 0;
+   bottom: 32px;
+   left: 0;
+   max-width: 380px;
+   margin: 0 auto;
+   border-radius: 12px;
+   @media only screen and (max-width: 568px) {
+      top: 32px;
+      right: 16px;
+      bottom: 16px;
+      left: 16px;
+      border-radius: 12px;
+   }
+}
+
+$variants: (
+   'full': 100%,
+   'lg': 75%,
+   'md': 50%,
+   'sm': 25%,
+);
+
+@each $name, $size in $variants {
+   .hern-tunnel__top--#{$name} {
+      right: 0;
+      left: 0;
       width: 100%;
+      height: $size;
    }
 }
-.hern-tunnel__content--md {
-   width: 50%;
-   @extend .hern-tunnel__content;
-   @media (max-width: 980px) {
-      width: 75%;
-   }
-   @media (max-width: 767px) {
+@each $name, $size in $variants {
+   .hern-tunnel__bottom--#{$name} {
+      right: 0;
+      left: 0;
+      bottom: 0;
       width: 100%;
+      height: $size;
    }
 }
-.hern-tunnel__content--lg {
-   width: 75%;
-   @extend .hern-tunnel__content;
-   @media (max-width: 767px) {
-      width: 100%;
+@each $name, $size in $variants {
+   .hern-tunnel__left--#{$name} {
+      top: 0;
+      bottom: 0;
+      left: 0;
+      height: 100%;
+      width: $size;
    }
 }
-.hern-tunnel__content--full {
-   width: 100%;
-   @extend .hern-tunnel__content;
+@each $name, $size in $variants {
+   .hern-tunnel__right--#{$name} {
+      top: 0;
+      bottom: 0;
+      right: 0;
+      height: 100%;
+      width: $size;
+   }
 }
 
 .hern-tunnel__header {
