@@ -145,7 +145,7 @@ export const Tiles = styled.section(
    `
 )
 export const Tile = styled.div(
-   () => css`
+   ({ hasChart }) => css`
       ${
          '' /* width: 340px;
       border: 1px solid #e3e8ee;
@@ -162,6 +162,6 @@ export const Tile = styled.div(
       border: 1px solid #e3e8ee;
       flex: 0 0 calc(33.33% - 8px);
       flex-grow: 1;
-      max-width: 50%;
+      max-width: ${hasChart ? '50%' : 'calc(33.33% - 8px)'};
    `
 )

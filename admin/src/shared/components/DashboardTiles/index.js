@@ -10,30 +10,39 @@ const Tiles = ({ children }) => {
    )
 }
 //tile
-const Tile = ({ children, columns }) => {
+const Tile = ({ children, columns, hasChart = false }) => {
    return (
       <>
-         <styles.Tile columns={columns}>{children}</styles.Tile>
+         <styles.Tile columns={columns} hasChart={hasChart}>
+            {children}
+         </styles.Tile>
       </>
    )
 }
 
 //tile head (title and full screen)
-const Head = ({ children, title }) => {
+const Head = ({ children, title, svg: Svg }) => {
    return (
       <>
          <styles.Head>
-            <span
-               style={{
-                  fontWeight: 400,
-                  fontSize: '16px',
-                  color: '#717171',
-                  lineHeight: '19px',
-                  fontStyle: 'Roboto',
-               }}
-            >
-               {title}
-            </span>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+               {Svg && (
+                  <div style={{ marginRight: '5px' }}>
+                     <Svg />
+                  </div>
+               )}
+               <span
+                  style={{
+                     fontWeight: 400,
+                     fontSize: '16px',
+                     color: '#000',
+                     lineHeight: '19px',
+                     fontStyle: 'Roboto',
+                  }}
+               >
+                  {title}
+               </span>
+            </div>
             {children}
          </styles.Head>
       </>
