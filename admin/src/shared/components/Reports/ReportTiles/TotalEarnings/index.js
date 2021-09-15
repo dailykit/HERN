@@ -212,7 +212,7 @@ const TotalEarningReport = () => {
                      >
                         Earnings by customer
                      </Text>
-                     {showMore && (
+                     {/* {showMore && (
                         <>
                            <Text
                               as="text2"
@@ -270,7 +270,7 @@ const TotalEarningReport = () => {
                         >
                            Show {showMore ? 'less ▲' : 'more ▼'}
                         </Text>
-                     </Flex>
+                     </Flex> */}
                   </Flex>
                </Flex>
             </Tile.Body>
