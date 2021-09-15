@@ -78,6 +78,7 @@ const EarningByProductTable = ({ earningByProductData }) => {
          field: 'type',
          headerFilter: true,
          hozAlign: 'center',
+         width: 300,
       },
       // {
       //    title: `Discount (${brandShopDateState.currency})`,

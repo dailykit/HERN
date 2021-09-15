@@ -129,7 +129,14 @@ const OrdersReport = () => {
                      alignItems="flex-start"
                      padding="0px 0px 10px 0px"
                   >
-                     <Text as="text1" style={{ marginLeft: '8px' }}>
+                     <Text
+                        as="text1"
+                        style={{
+                           marginLeft: '8px',
+                           color: '#555B6E',
+                           fontWeight: '400',
+                        }}
+                     >
                         Reports
                      </Text>
                      <Spacer size="5px" />

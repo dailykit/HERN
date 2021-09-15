@@ -82,25 +82,21 @@ const DataTable = ({ data }) => {
          id: 1,
          title: 'Orders',
          payload: 'count',
-         hozAlign: 'center',
       },
       {
          id: 2,
          title: 'Tax',
          payload: 'totalTax',
-         hozAlign: 'center',
       },
       {
          id: 3,
          title: 'Discount',
          payload: 'totalDiscount',
-         hozAlign: 'center',
       },
       {
          id: 4,
          title: 'Shipping',
          payload: 'totalDeliveryPrice',
-         hozAlign: 'center',
       },
    ]
 
@@ -137,6 +133,7 @@ const DataTable = ({ data }) => {
          title: 'Time',
          field: 'date',
          width: 270,
+         hozAlign: 'center',
       },
       {
          title: 'Orders',
@@ -154,6 +151,8 @@ const DataTable = ({ data }) => {
             openOrderTunnel(1)
          },
          cssClass: 'colHover',
+         hozAlign: 'center',
+
          // formatter: reactFormatter(<OrderFormatter />),
       },
       {
@@ -162,6 +161,7 @@ const DataTable = ({ data }) => {
          bottomCalc: totalCalc,
          visible: true,
          width: 120,
+         hozAlign: 'center',
       },
       {
          title: `Discount (${analyticsApiArgState.currency})`,
@@ -169,6 +169,7 @@ const DataTable = ({ data }) => {
          bottomCalc: totalCalc,
          visible: true,
          width: 120,
+         hozAlign: 'center',
       },
       {
          title: `Delivery (${analyticsApiArgState.currency})`,
@@ -176,18 +177,21 @@ const DataTable = ({ data }) => {
          bottomCalc: totalCalc,
          visible: true,
          width: 130,
+         hozAlign: 'center',
       },
       {
          title: `Net Sales (${analyticsApiArgState.currency})`,
          field: 'netSale',
          bottomCalc: totalCalc,
          width: 150,
+         hozAlign: 'center',
       },
       {
          title: `Total (${analyticsApiArgState.currency})`,
          field: 'total',
          bottomCalc: totalCalc,
          width: 150,
+         hozAlign: 'center',
       },
    ]
 
