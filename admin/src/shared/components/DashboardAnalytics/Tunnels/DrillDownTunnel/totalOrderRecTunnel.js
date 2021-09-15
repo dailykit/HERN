@@ -618,164 +618,175 @@ const DrillDownLineChart = ({
       )
    }
    return (
-      <Flex height="22rem">
-         <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-               width={500}
-               height={300}
-               data={dataForGraph}
-               margin={{
-                  top: 5,
-                  right: 30,
-                  left: 20,
-                  bottom: 5,
-               }}
-            >
-               <CartesianGrid strokeDasharray="3 3" />
-               <XAxis
-                  dataKey="uniqueId"
-                  tickFormatter={tick => {
-                     const eachTickData = dataForGraph.find(
-                        x => x.uniqueId == tick
-                     )
-                     const tickTime = eachTickData.present
-                     if (groupBy[groupBy.length - 1] == 'hour') {
-                        return moment(tickTime).format('LT')
-                     } else if (groupBy[groupBy.length - 1] == 'day') {
-                        return moment(tickTime).format('DD-MMM')
-                     } else if (groupBy[groupBy.length - 1] == 'week') {
-                        return moment(tickTime).format('DD-MMM')
-                     } else {
-                        return moment(tickTime).format('MMM-YYYY')
-                     }
+      <div
+         style={{
+            background: '#FFFFFF',
+            boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.2)',
+            borderRadius: '10px',
+            padding: '40px 40px 10px 0px',
+         }}
+      >
+         <Flex height="22rem">
+            <ResponsiveContainer width="100%" height="100%">
+               <BarChart
+                  width={500}
+                  height={300}
+                  data={dataForGraph}
+                  margin={{
+                     top: 5,
+                     right: 30,
+                     left: 20,
+                     bottom: 5,
                   }}
-               />
-               <YAxis />
-               <Tooltip
-                  labelFormatter={label => {
-                     const eachLabelData = dataForGraph.find(
-                        x => x.uniqueId == label
-                     )
-                     const labelTime = eachLabelData.present
-                     if (groupBy[groupBy.length - 1] == 'hour') {
-                        return moment(labelTime).format('LT')
-                     } else if (groupBy[groupBy.length - 1] == 'day') {
-                        return moment(labelTime).format('DD-MMM')
-                     } else if (groupBy[groupBy.length - 1] == 'week') {
-                        return (
-                           moment(labelTime).format('DD-MMM-YY') +
-                           ' to ' +
-                           moment(labelTime).add(1, 'week').format('DD-MMM-YY')
+               >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis
+                     dataKey="uniqueId"
+                     tickFormatter={tick => {
+                        const eachTickData = dataForGraph.find(
+                           x => x.uniqueId == tick
                         )
-                     } else {
-                        return moment(labelTime).format('MMM-YYYY')
-                     }
-                  }}
-               />
-               <Legend />
-               {!compare.isSkip && compare.data && (
+                        const tickTime = eachTickData.present
+                        if (groupBy[groupBy.length - 1] == 'hour') {
+                           return moment(tickTime).format('LT')
+                        } else if (groupBy[groupBy.length - 1] == 'day') {
+                           return moment(tickTime).format('DD-MMM')
+                        } else if (groupBy[groupBy.length - 1] == 'week') {
+                           return moment(tickTime).format('DD-MMM')
+                        } else {
+                           return moment(tickTime).format('MMM-YYYY')
+                        }
+                     }}
+                  />
+                  <YAxis />
+                  <Tooltip
+                     labelFormatter={label => {
+                        const eachLabelData = dataForGraph.find(
+                           x => x.uniqueId == label
+                        )
+                        const labelTime = eachLabelData.present
+                        if (groupBy[groupBy.length - 1] == 'hour') {
+                           return moment(labelTime).format('LT')
+                        } else if (groupBy[groupBy.length - 1] == 'day') {
+                           return moment(labelTime).format('DD-MMM')
+                        } else if (groupBy[groupBy.length - 1] == 'week') {
+                           return (
+                              moment(labelTime).format('DD-MMM-YY') +
+                              ' to ' +
+                              moment(labelTime)
+                                 .add(1, 'week')
+                                 .format('DD-MMM-YY')
+                           )
+                        } else {
+                           return moment(labelTime).format('MMM-YYYY')
+                        }
+                     }}
+                  />
+                  <Legend />
+                  {!compare.isSkip && compare.data && (
+                     <Bar
+                        type="monotone"
+                        name=" "
+                        dataKey="pendingCompare"
+                        stackId="b"
+                        fill="#619ED6"
+                        onClick={handleBarClick}
+                        cursor="pointer"
+                     />
+                  )}
                   <Bar
                      type="monotone"
-                     name=" "
-                     dataKey="pendingCompare"
-                     stackId="b"
+                     name="Pending"
+                     dataKey="pending"
+                     stackId="a"
                      fill="#619ED6"
                      onClick={handleBarClick}
                      cursor="pointer"
                   />
-               )}
-               <Bar
-                  type="monotone"
-                  name="Pending"
-                  dataKey="pending"
-                  stackId="a"
-                  fill="#619ED6"
-                  onClick={handleBarClick}
-                  cursor="pointer"
-               />
-               {!compare.isSkip && compare.data && (
+                  {!compare.isSkip && compare.data && (
+                     <Bar
+                        type="monotone"
+                        name=" "
+                        dataKey="deliveredCompare"
+                        stackId="b"
+                        fill="#6BA547"
+                        onClick={handleBarClick}
+                        cursor="pointer"
+                     />
+                  )}
                   <Bar
                      type="monotone"
-                     name=" "
-                     dataKey="deliveredCompare"
-                     stackId="b"
+                     name="Delivered"
+                     dataKey="delivered"
+                     stackId="a"
                      fill="#6BA547"
                      onClick={handleBarClick}
                      cursor="pointer"
                   />
-               )}
-               <Bar
-                  type="monotone"
-                  name="Delivered"
-                  dataKey="delivered"
-                  stackId="a"
-                  fill="#6BA547"
-                  onClick={handleBarClick}
-                  cursor="pointer"
-               />
-               {!compare.isSkip && compare.data && (
+                  {!compare.isSkip && compare.data && (
+                     <Bar
+                        type="monotone"
+                        name=" "
+                        dataKey="readyToAssembleCompare"
+                        stackId="b"
+                        fill="#F7D027"
+                        onClick={handleBarClick}
+                        cursor="pointer"
+                     />
+                  )}
                   <Bar
                      type="monotone"
-                     name=" "
-                     dataKey="readyToAssembleCompare"
-                     stackId="b"
+                     name="Ready To Assemble"
+                     dataKey="readyToAssemble"
+                     stackId="a"
                      fill="#F7D027"
                      onClick={handleBarClick}
                      cursor="pointer"
                   />
-               )}
-               <Bar
-                  type="monotone"
-                  name="Ready To Assemble"
-                  dataKey="readyToAssemble"
-                  stackId="a"
-                  fill="#F7D027"
-                  onClick={handleBarClick}
-                  cursor="pointer"
-               />
-               {!compare.isSkip && compare.data && (
+                  {!compare.isSkip && compare.data && (
+                     <Bar
+                        type="monotone"
+                        name=" "
+                        dataKey="readyToDispatchCompare"
+                        stackId="b"
+                        fill="#E48F1B"
+                        onClick={handleBarClick}
+                        cursor="pointer"
+                     />
+                  )}
                   <Bar
                      type="monotone"
-                     name=" "
-                     dataKey="readyToDispatchCompare"
-                     stackId="b"
+                     name="Ready To Dispatch"
+                     dataKey="readyToDispatch"
+                     stackId="a"
                      fill="#E48F1B"
                      onClick={handleBarClick}
                      cursor="pointer"
                   />
-               )}
-               <Bar
-                  type="monotone"
-                  name="Ready To Dispatch"
-                  dataKey="readyToDispatch"
-                  stackId="a"
-                  fill="#E48F1B"
-                  onClick={handleBarClick}
-                  cursor="pointer"
-               />
-               {!compare.isSkip && compare.data && (
+                  {!compare.isSkip && compare.data && (
+                     <Bar
+                        type="monotone"
+                        name=" "
+                        dataKey="underProcessingCompare"
+                        stackId="b"
+                        fill="#B77EA3"
+                        onClick={handleBarClick}
+                        cursor="pointer"
+                     />
+                  )}
                   <Bar
                      type="monotone"
-                     name=" "
-                     dataKey="underProcessingCompare"
-                     stackId="b"
+                     name="Under Processing"
+                     dataKey="underProcessing"
+                     stackId="a"
                      fill="#B77EA3"
                      onClick={handleBarClick}
                      cursor="pointer"
                   />
-               )}
-               <Bar
-                  type="monotone"
-                  name="Under Processing"
-                  dataKey="underProcessing"
-                  stackId="a"
-                  fill="#B77EA3"
-                  onClick={handleBarClick}
-                  cursor="pointer"
-               />
-            </BarChart>
-         </ResponsiveContainer>
-      </Flex>
+               </BarChart>
+            </ResponsiveContainer>
+         </Flex>
+      </div>
    )
 }
 const TunnelBody = styled.div`
