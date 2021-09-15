@@ -20,16 +20,14 @@ const PlansSection = () => {
    const [subscriptionId, setSubscriptionId] = React.useState(null)
    const [addOnTunnels, openAddOnTunnel, closeAddOnTunnel] = useTunnel(1)
    const [menuTunnels, openMenuTunnel, closeMenuTunnel] = useTunnel(1)
-   const {
-      loading,
-      data: { subscriptionOccurences = {} } = {},
-   } = useSubscription(SUBSCRIPTION_OCCURENCES, {
-      variables: {
-         fulfillmentDate: {
-            _in: state.dates.map(date => moment(date).format('YYYY-MM-DD')),
+   const { loading, data: { subscriptionOccurences = {} } = {} } =
+      useSubscription(SUBSCRIPTION_OCCURENCES, {
+         variables: {
+            fulfillmentDate: {
+               _in: state.dates.map(date => moment(date).format('YYYY-MM-DD')),
+            },
          },
-      },
-   })
+      })
 
    const editAddOns = (e, { _cell = {} }) => {
       const data = _cell.row.getData()
@@ -201,21 +199,26 @@ const PlansSection = () => {
          >
             <Flex container alignItems="center">
                <Flex container alignItems="center">
-                  <Text as="h2">Plans</Text>
+                  <Text as="h2" style={{ marginBottom: '0px' }}>
+                     Plans
+                  </Text>
                   <Tooltip identifier="listing_menu_section_plans_heading" />
                </Flex>
-               {state.date && (
-                  <TextButton
-                     size="sm"
-                     type="ghost"
-                     onClick={() => {
-                        dispatch({ type: 'SET_DATE', payload: null })
-                        localStorage.removeItem('serving_size')
-                     }}
-                  >
-                     Clear Selections
-                  </TextButton>
-               )}
+
+               <Flex style={{ marginLeft: '6px' }}>
+                  {state.date && (
+                     <TextButton
+                        size="sm"
+                        type="ghost"
+                        onClick={() => {
+                           dispatch({ type: 'SET_DATE', payload: null })
+                           localStorage.removeItem('serving_size')
+                        }}
+                     >
+                        Clear Selections
+                     </TextButton>
+                  )}
+               </Flex>
             </Flex>
             <Flex container alignItems="center">
                <Form.Toggle

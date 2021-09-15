@@ -9,7 +9,7 @@ import { InlineLoader, Tooltip } from '../../../../../../../shared/components'
 
 export const ThirdPartyIntegrations = ({ brand = {} }) => {
    return (
-      <Flex padding="16px">
+      <Flex padding="16px 16px 16px 34px">
          <Parseur id={brand?.parseurMailBoxId} />
       </Flex>
    )

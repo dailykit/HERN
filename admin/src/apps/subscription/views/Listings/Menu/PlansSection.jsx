@@ -289,21 +289,26 @@ const PlansSection = () => {
          >
             <Flex container alignItems="center">
                <Flex container alignItems="center">
-                  <Text as="h2">Plans</Text>
+                  <Text as="h2" style={{ marginBottom: '0px' }}>
+                     Plans
+                  </Text>
                   <Tooltip identifier="listing_menu_section_plans_heading" />
                </Flex>
-               {!isEmpty(state.dates) && (
-                  <TextButton
-                     size="sm"
-                     type="ghost"
-                     onClick={() => {
-                        dispatch({ type: 'SET_DATE', payload: [] })
-                        localStorage.removeItem('serving_size')
-                     }}
-                  >
-                     Clear Selections
-                  </TextButton>
-               )}
+
+               <Flex style={{ marginLeft: '6px' }}>
+                  {!isEmpty(state.dates) && (
+                     <TextButton
+                        size="sm"
+                        type="ghost"
+                        onClick={() => {
+                           dispatch({ type: 'SET_DATE', payload: [] })
+                           localStorage.removeItem('serving_size')
+                        }}
+                     >
+                        Clear Selections
+                     </TextButton>
+                  )}
+               </Flex>
             </Flex>
             <Flex container alignItems="center">
                <Form.Toggle

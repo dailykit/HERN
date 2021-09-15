@@ -115,7 +115,8 @@ const Tabs = () => {
          {tabs.length > 0 && (
             <>
                {firstIndex !== 0 && (
-                  <button onClick={() => handleTabPrev()}>
+                  <button 
+                     onClick={() => handleTabPrev()} >
                      <DoubleArrowIcon direction="left" />
                   </button>
                )}
@@ -134,14 +135,15 @@ const Tabs = () => {
          {tabs.length > 0 && (
             <>
                {numTabsToShow < tabs.length && tabs.length !== lastIndex && (
-                  <button onClick={() => handleTabForward()}>
+                  <button 
+                     onClick={() => handleTabForward()}>
                      <DoubleArrowIcon />
                   </button>
                )}
             </>
          )}
          {tabs.length > 0 && (
-            <div ref={buttonRef} style={{ position: 'relative' }}>
+            <div ref={buttonRef}>
                <StyledButton
                   open={open}
                   size="sm"
