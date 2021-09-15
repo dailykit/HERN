@@ -188,7 +188,7 @@ export default function SupplierForm() {
                      <Form.Error>{name.meta.errors[0]}</Form.Error>
                   )}
                </Form.Group>
-               <Flex>
+               <Flex style={{position:'relative', top:'13px'}}>
                   <ShowAvailability formState={formState} />
                </Flex>
             </ResponsiveFlex>

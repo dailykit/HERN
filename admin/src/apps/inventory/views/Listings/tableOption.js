@@ -1,6 +1,6 @@
 const options = {
    cellVertAlign: 'middle',
-   layout: 'fitColumns',
+   layout: 'fitDataStretch',
    autoResize: true,
    maxHeight: '420px',
    resizableColumns: true,

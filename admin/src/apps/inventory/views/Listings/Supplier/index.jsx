@@ -105,6 +105,7 @@ export default function SupplierListing() {
             const identifier = 'suppliers_listings_supplier_name'
             return tooltip(identifier)?.description || col.getDefinition().title
          },
+         width: 350,
       },
       {
          title: 'Person of Contact',
@@ -117,6 +118,7 @@ export default function SupplierListing() {
             const identifier = 'suppliers_listings_contact_person'
             return tooltip(identifier)?.description || col.getDefinition().title
          },
+         width: 250,
       },
       {
          title: 'Available',
