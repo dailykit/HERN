@@ -27,7 +27,6 @@ const setupForStripeWebhooks = {
    // Because Stripe needs the raw body, we compute it but only when hitting the Stripe callback URL.
    verify: (req, res, buf) => {
       const url = req.originalUrl
-      console.log({ url })
       if (url.startsWith('/server/api/payment/handle-payment-webhook')) {
          req.rawBody = buf.toString()
       }

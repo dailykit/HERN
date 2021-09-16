@@ -43,7 +43,6 @@ export const initiatePaymentHandler = async (req, res) => {
 
          const functionFilePath = `../functions/${payload.paymentType}`
          const method = await import(functionFilePath)
-         console.log({ method })
          const data = {
             ...payload,
             oldAmount: req.body.event.data.old
@@ -58,7 +57,7 @@ export const initiatePaymentHandler = async (req, res) => {
          }
       }
    } catch (error) {
-      logger('/api/payment-intent', error)
+      logger('/api/payment/initiate-payment', error)
       return res.status(500).json({ success: false, error })
    }
 }

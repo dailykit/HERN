@@ -113,6 +113,7 @@ const initiatePayment = async arg => {
             // but doesn't mean this create invoice item step is useless
             // since the stripe detect automatically the invoice items (draft invoices) at the time of
             // creating a new invoice.
+            console.log('invoice item creating')
             const item = await _stripe.invoiceItems.create(
                {
                   amount: chargeAmount,
@@ -127,9 +128,10 @@ const initiatePayment = async arg => {
                //      }
                //    : null
             )
-            console.log('item', item.id)
+            console.log('invoice item created', item.id)
 
             // create a new invoice (detects the invoice items (draft invoices) and makes a new invoice using these invoice items)
+            console.log('invoice creating')
             const invoice = await _stripe.invoices.create(
                {
                   customer: paymentCustomerId,
@@ -159,12 +161,15 @@ const initiatePayment = async arg => {
                //      }
                //    : null
             )
-            console.log('invoice', invoice.id)
+            console.log('invoice created', invoice.id)
 
             // handleInvoice just updates the cartPayment and stripePaymentHistory table
+            console.log('executing paymentLogger for invoice created')
             await paymentLogger({ invoice })
+            console.log('after executing paymentLogger for invoice created')
 
             // finalize the Invoice drafts before paying
+            console.log('finalizing Invoice')
             const finalizedInvoice = await _stripe.invoices.finalizeInvoice(
                invoice.id
                // (await isConnectedIntegration())
@@ -176,9 +181,12 @@ const initiatePayment = async arg => {
             console.log('finalizedInvoice', finalizedInvoice.id)
 
             // again here handleInvoice just updates the cartPayment and stripePaymentHistory table
+            console.log('executing paymentLogger for invoice finalized')
             await paymentLogger({ invoice: finalizedInvoice })
+            console.log('executing paymentLogger for after invoice finalized')
 
             // here we pay for the invoice that is been finalized
+            console.log('paying invoice')
             const result = await _stripe.invoices.pay(
                finalizedInvoice.id
                // (await isConnectedIntegration())
@@ -187,10 +195,12 @@ const initiatePayment = async arg => {
                //      }
                //    : null
             )
-            console.log('result', result.id)
+            console.log('paid invoice', result.id)
 
             // again here handleInvoice just updates the cartPayment and stripePaymentHistory table
+            console.log('executing paymentLogger for  invoice pay')
             await paymentLogger({ invoice: result })
+            console.log('executing paymentLogger for after invoice pay')
 
             return {
                data: result,
@@ -200,8 +210,12 @@ const initiatePayment = async arg => {
          }
       }
    } catch (error) {
+      console.log('error from stripe initiatePayment', error)
       logger('/api/payment-intent', error)
-      throw error
+      return {
+         success: false,
+         error: error.message
+      }
    }
 }
 

@@ -37,3 +37,11 @@ mutation insertStripePaymentHistory(
    }
 }
 `
+export const SEND_SMS = `
+   mutation sendSMS($message: String!, $phone: String!) {
+      sendSMS(message: $message, phone: $phone) {
+         success
+         message
+      }
+   }
+`
