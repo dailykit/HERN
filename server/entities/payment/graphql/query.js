@@ -38,11 +38,26 @@ query cart($id: Int!) {
     id
     isTest
     amount
+    orderId
     balancePayment
     paymentMethodId
     paymentCustomerId
     statementDescriptor
   }
 }
+`
 
+export const PAYMENT_METHOD = `
+   query paymentMethod($paymentMethodId: String!) {
+      paymentMethod: platform_customerPaymentMethod_by_pk(
+         paymentMethodId: $paymentMethodId
+      ) {
+         paymentMethodId
+         customer: customer {
+            phoneNumber
+            firstName
+            lastName
+         }
+      }
+   }
 `

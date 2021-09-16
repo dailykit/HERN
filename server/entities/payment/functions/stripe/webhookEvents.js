@@ -6,27 +6,26 @@ import { CART_PAYMENT } from '../../graphql'
 
 const stripeWebhookEvents = async arg => {
    try {
+      console.log('inside stripe webhookEvent function')
       const _stripe = await stripe()
       const signature = arg.headers['stripe-signature']
       let event
-      console.log({ signature })
       let SECRET = await get_env('WEBHOOK_STRIPE_SECRET')
-      console.log({ SECRET })
       const body = JSON.parse(arg.rawBody)
-      console.log({ body })
       if ('account' in body && body.account) {
          SECRET = await get_env('WEBHOOK_STRIPE_CONNECT_SECRET')
       }
-      console.log({ SECRET })
 
       try {
-         //  console.log(_stripe, signature, SECRET)
+         console.log('contructing event in stripe webhook function')
          event = await _stripe.webhooks.constructEvent(
             arg.rawBody,
             signature,
             SECRET
          )
-         console.log({ event })
+         console.log(
+            'successfully event constructed in stripe webhook function'
+         )
       } catch (err) {
          console.log(err)
          return {
@@ -37,7 +36,6 @@ const stripeWebhookEvents = async arg => {
       }
 
       const node = event.data.object
-      console.log({ node })
 
       if (!['invoice', 'payment_intent'].includes(node.object))
          return {
@@ -46,11 +44,11 @@ const stripeWebhookEvents = async arg => {
             error: `No such event has been mapped yet!`
          }
 
+      console.log('fetching for cartPaymentInfo in stripe webhook function')
       const { cartPayment } = await client.request(CART_PAYMENT, {
          id: Number(node.metadata.cartPaymentId)
       })
-
-      console.log({ cartPayment })
+      console.log('fetched for cartPaymentInfo in stripe webhook function')
 
       if (get(cartPayment, 'id') && cartPayment.paymentStatus === 'SUCCEEDED') {
          return {
