@@ -172,7 +172,7 @@ const OTP = ({ setIsViaOtp }) => {
             setOtpId(insertOtp?.id)
             await sendSms({
                variables: {
-                  phone: form.phone,
+                  phone: `+91${form.phone}`,
                   message: `Here's your OTP - ${insertOtp?.code}.`,
                },
             })
