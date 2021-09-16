@@ -1,6 +1,7 @@
 import { client } from '../lib/graphql'
 import get_env from '../../get_env'
 import stripe from '../lib/stripe'
+import { sendSMS } from '../entities/payment/functions/stripe/sendSms'
 
 const UPDATE_CART_PAYMENT = `
 mutation UPDATE_CART_PAYMENT($id: Int!, $_inc: order_cartPayment_inc_input, $_set: order_cartPayment_set_input) {
@@ -35,22 +36,23 @@ const STATUS = {
 }
 const handleInvoice = async args => {
    try {
-      console.log('inside handleInvoice')
       const _stripe = await stripe()
       const { invoice, eventType = '' } = args
+      console.log('inside paymentLogger of type', eventType)
       const cartPaymentId = invoice.metadata.cartPaymentId
-      const stripeAccountId = await get_env('STRIPE_ACCOUNT_ID')
 
       let payment_intent = null
       if (invoice.payment_intent) {
          payment_intent = await _stripe.paymentIntents.retrieve(
-            invoice.payment_intent,
-            { stripeAccount: stripeAccountId }
+            invoice.payment_intent
          )
-         console.log({ payment_intent })
+         console.log('retrieved invoice in paymentLogger', {
+            invoice: payment_intent
+         })
          // SEND ACTION REQUIRED SMS
          if (eventType === 'invoice.payment_action_required') {
-            console.log('SEND ACTION URL SMS')
+            console.log('Initiate SEND ACTION URL SMS')
+            sendSMS({ cartPaymentId, transactionRemark: payment_intent })
          }
          if (
             invoice.payment_settings.payment_method_options === null &&
