@@ -2,7 +2,6 @@ import React from 'react'
 import moment from 'moment'
 import { isEmpty } from 'lodash'
 import { useRouter } from 'next/router'
-import tw, { styled, css } from 'twin.macro'
 import { useSubscription } from '@apollo/react-hooks'
 
 import { useConfig } from '../../lib'
@@ -10,18 +9,19 @@ import { isClient, get_env } from '../../utils'
 import { useUser } from '../../context'
 import { CART_STATUS } from '../../graphql'
 import OrderInfo from '../../sections/OrderInfo'
-import { Loader, HelperBar } from '../../components'
+import { Loader, HelperBar, Spacer } from '../../components'
 import { PlacedOrderIllo, CartIllo, PaymentIllo } from '../../assets/icons'
+import classNames from 'classnames'
 
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const PlacingOrder = () => {
    return (
-      <Wrapper>
-         <Main tw="pt-4">
+      <div className="hern-placing-order__wrapper">
+         <main className="hern-placing-order__main">
             <ContentWrapper />
-         </Main>
-      </Wrapper>
+         </main>
+      </div>
    )
 }
 
@@ -77,113 +77,119 @@ const ContentWrapper = () => {
    if (loading) return <Loader inline />
    if (isClient && !new URLSearchParams(location.search).get('id')) {
       return (
-         <Main>
-            <div tw="p-4 w-full">
-               <HelperBar>
-                  <HelperBar.Title>
-                     Oh no! Looks like you've wandered on an unknown path, let's
-                     get you to home.
-                  </HelperBar.Title>
-                  <HelperBar.Button onClick={() => navigate('/')}>
-                     Go to Home
-                  </HelperBar.Button>
-               </HelperBar>
-            </div>
-         </Main>
+         <main className="hern-placing-order__main">
+            <HelperBar>
+               <HelperBar.Title>
+                  Oh no! Looks like you've wandered on an unknown path, let's
+                  get you to home.
+               </HelperBar.Title>
+               <HelperBar.Button onClick={() => navigate('/')}>
+                  Go to Home
+               </HelperBar.Button>
+            </HelperBar>
+         </main>
       )
    }
    if (error) {
       return (
-         <Main>
-            <div tw="p-4 w-full">
-               <HelperBar type="danger">
-                  <HelperBar.SubTitle>
-                     Looks like there was an issue fetching details, please
-                     refresh the page!
-                  </HelperBar.SubTitle>
-               </HelperBar>
-            </div>
-         </Main>
+         <main className="hern-placing-order__main">
+            <HelperBar type="danger">
+               <HelperBar.SubTitle>
+                  Looks like there was an issue fetching details, please refresh
+                  the page!
+               </HelperBar.SubTitle>
+            </HelperBar>
+         </main>
       )
    }
    if (isEmpty(cart)) {
       return (
-         <Main>
-            <div tw="p-4 w-full">
-               <HelperBar type="info">
-                  <HelperBar.Title>
-                     Looks like the page you're requesting is not available
-                     anymore, let's get you to home.
-                  </HelperBar.Title>
-                  <HelperBar.Button onClick={() => navigate('/')}>
-                     Go to Home
-                  </HelperBar.Button>
-               </HelperBar>
-            </div>
-         </Main>
+         <main className="hern-placing-order__main">
+            <HelperBar type="info">
+               <HelperBar.Title>
+                  Looks like the page you're requesting is not available
+                  anymore, let's get you to home.
+               </HelperBar.Title>
+               <HelperBar.Button onClick={() => navigate('/')}>
+                  Go to Home
+               </HelperBar.Button>
+            </HelperBar>
+         </main>
       )
    }
    if (user?.keycloakId !== cart?.customerKeycloakId) {
       return (
-         <Main>
-            <div tw="p-4 w-full">
-               <HelperBar type="warning">
-                  <HelperBar.SubTitle>
-                     Seems like, you do not have access to this page, let's get
-                     you to home.
-                  </HelperBar.SubTitle>
-                  <HelperBar.Button onClick={() => navigate('/')}>
-                     Go to Home
-                  </HelperBar.Button>
-               </HelperBar>
-            </div>
-         </Main>
+         <main className="hern-placing-order__main">
+            <HelperBar type="warning">
+               <HelperBar.SubTitle>
+                  Seems like, you do not have access to this page, let's get you
+                  to home.
+               </HelperBar.SubTitle>
+               <HelperBar.Button onClick={() => navigate('/')}>
+                  Go to Home
+               </HelperBar.Button>
+            </HelperBar>
+         </main>
       )
    }
    return (
-      <Content>
-         <header tw="w-full my-3 pb-1 border-b flex items-center justify-between">
-            <SectionTitle theme={theme}>Order Summary</SectionTitle>
+      <section className="hern-placing-order__content">
+         <header className="hern-placing-order__header">
+            <h2
+               style={{
+                  color: `${
+                     theme?.accent ? theme?.accent : 'rgba(5,150,105,1)'
+                  }`,
+               }}
+               className="hern-placing-order__header__title"
+               theme={theme}
+            >
+               Order Summary
+            </h2>
          </header>
          <OrderInfo cart={cart} />
-         <Steps>
-            <Step
-               className={`${cart.status !== 'CART_PENDING' ? 'active' : ''}`}
+         <ul className="hern-placing-order__steps">
+            <li
+               className={classNames('hern-placing-order__step', {
+                  'hern-placing-order__step--active':
+                     cart.status !== 'CART_PENDING',
+               })}
             >
-               <span tw="border rounded-full mb-3 shadow-md">
+               <span className="hern-placing-order__step__illustration">
                   <CartIllo />
                </span>
                Saving Cart
                {cart.status === 'CART_PENDING' && <Pulse />}
-            </Step>
-            <Step
-               className={`${
-                  cart.paymentStatus === 'SUCCEEDED' ? 'active' : ''
-               }`}
+            </li>
+            <li
+               className={classNames('hern-placing-order__step', {
+                  'hern-placing-order__step--active':
+                     cart.paymentStatus === 'SUCCEEDED',
+               })}
             >
-               <span tw="border rounded-full mb-3 shadow-md">
+               <span className="hern-placing-order__step__illustration">
                   <PaymentIllo />
                </span>
                Processing Payment
                {cart.paymentStatus !== 'SUCCEEDED' && <Pulse />}
-            </Step>
-            <Step
-               className={`${
-                  cart.status === 'ORDER_PENDING' && cart.orderId
-                     ? 'active'
-                     : 'null'
-               }`}
+            </li>
+            <li
+               className={classNames('hern-placing-order__step', {
+                  'hern-placing-order__step--active':
+                     cart.status === 'ORDER_PENDING' && cart.orderId,
+               })}
             >
-               <span tw="border rounded-full mb-3 shadow-md">
+               <span className="hern-placing-order__step__illustration">
                   <PlacedOrderIllo />
                </span>
                Order Placed
                {cart.status !== 'ORDER_PENDING' ||
                   (!Boolean(cart.orderId) && <Pulse />)}
-            </Step>
-         </Steps>
+            </li>
+         </ul>
+         <Spacer />
          {cart.status === 'ORDER_PENDING' && cart.orderId && (
-            <HelperBar type="success" tw="mt-3">
+            <HelperBar type="success">
                <HelperBar.Title>
                   <span role="img" aria-label="celebrate">
                      🎉
@@ -199,50 +205,13 @@ const ContentWrapper = () => {
                </HelperBar.Button>
             </HelperBar>
          )}
-      </Content>
+      </section>
    )
 }
 
 const Pulse = () => (
-   <span tw="mt-3 flex h-3 w-3 relative">
-      <span tw="animate-ping absolute inline-flex h-full w-full rounded-full bg-gray-400 opacity-75"></span>
-      <span tw="relative inline-flex rounded-full h-3 w-3 bg-gray-500"></span>
+   <span className="hern-placing-order__indicator-pulse">
+      <span></span>
+      <span></span>
    </span>
 )
-
-const Wrapper = styled.div`
-   ${tw`md:bg-gray-100`}
-`
-
-const SectionTitle = styled.h3(
-   ({ theme }) => css`
-      ${tw`text-green-600 text-lg`}
-      ${theme?.accent && `color: ${theme.accent}`}
-   `
-)
-
-const Main = styled.main`
-   margin: auto;
-   max-width: 980px;
-   background: #fff;
-   padding-bottom: 24px;
-   min-height: calc(100vh - 128px);
-`
-
-const Content = styled.section`
-   margin: auto;
-   max-width: 567px;
-   width: calc(100% - 40px);
-   ${tw`flex flex-col items-center`}
-`
-
-const Steps = styled.ul`
-   ${tw`w-full flex items-start justify-between`}
-`
-
-const Step = styled.li`
-   ${tw`flex flex-col items-center justify-center text-gray-600`}
-   &.active {
-      ${tw`text-green-600`}
-   }
-`

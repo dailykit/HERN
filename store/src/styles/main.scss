@@ -36,6 +36,7 @@
 @use './sections/login';
 @use './sections/inventory';
 @use './sections/recipes';
+@use './sections/placing-order';
 
 /*Account routes pages*/
 @use './sections/account/addresses';
