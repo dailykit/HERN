@@ -1,11 +1,14 @@
 import React from 'react'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import TableOptions from '../tableOptions'
+import '../../../tableStyle.css'
 import { Dropdown, DropdownButton, Flex, Spacer, Text } from '@dailykit/ui'
+import { BrandShopDateContext } from '../../../../../BrandShopDateProvider/context'
 const EarningByCustomerTable = props => {
    const { earningByCustomerData } = props
    const earningByCustomerRef = React.useRef()
-
+   const { brandShopDateState } = React.useContext(BrandShopDateContext)
+   const { currency } = brandShopDateState
    const downloadCsvData = () => {
       earningByCustomerRef.current.table.download(
          'csv',
@@ -26,36 +29,59 @@ const EarningByCustomerTable = props => {
          'earning-by-product-data.xlsx'
       )
    }
-
+   const totalCalc = (values, data, calcParams) => {
+      let total = 0
+      values.forEach(value => {
+         total += value
+      })
+      return `Σ = ${total.toFixed(2)}`
+   }
    //columns for table
    const columns = [
       {
          title: 'Customer Name',
          field: 'fullName',
+         hozAlign: 'left',
       },
       {
          title: 'Customer Email',
          field: 'email',
+         hozAlign: 'left',
       },
       {
          title: 'Orders',
          field: 'orders',
+         hozAlign: 'right',
+         bottomCalc: 'sum',
+         cssClass: 'digit-col',
       },
       {
-         title: 'Tax',
+         title: `Tax (${currency})`,
          field: 'totalTax',
+         hozAlign: 'right',
+         bottomCalc: totalCalc,
+         cssClass: 'digit-col',
       },
       {
-         title: 'Discount',
+         title: `Discount (${currency})`,
          field: 'totalDiscount',
+         hozAlign: 'right',
+         bottomCalc: totalCalc,
+         cssClass: 'digit-col',
       },
       {
-         title: 'Net Sale',
+         title: `Net Sale (${currency})`,
          field: 'netSale',
+         hozAlign: 'right',
+         bottomCalc: totalCalc,
+         cssClass: 'digit-col',
       },
       {
-         title: 'Total Sale',
+         title: `Total Sale (${currency})`,
          field: 'totalAmountPaid',
+         hozAlign: 'right',
+         bottomCalc: totalCalc,
+         cssClass: 'digit-col',
       },
    ]
 
@@ -111,7 +137,7 @@ const EarningByCustomerTable = props => {
    // fn run after table data loaded
    const dataLoaded = () => {
       const defaultShowColumns = localStorage.getItem(
-         'earning-by-product-table-show-columns'
+         'earning-by-customer-table-show-columns'
       )
       const parseDefaultColumns = JSON.parse(defaultShowColumns)
       if (parseDefaultColumns) {
@@ -167,6 +193,7 @@ const EarningByCustomerTable = props => {
                data={earningByCustomerData}
                columns={columns}
                options={TableOptions}
+               className="report-table earning-by-customer-table"
             />
          </Flex>
       </>

@@ -226,8 +226,6 @@ const SubscribedCustomerAnalytics = () => {
                               1
                            )
                         }
-                        setGraphTunnelData={setOrderRefTunnelData}
-                        openGraphTunnel={openTunnel}
                         graphTunnelTitle="Subscribed Customer"
                      />
                   </Tile.Chart>

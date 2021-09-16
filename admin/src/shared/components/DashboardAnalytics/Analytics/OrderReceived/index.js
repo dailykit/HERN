@@ -4,7 +4,7 @@ import moment from 'moment'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
 import { SparkChart } from '../..'
-import { Expand } from '../../../../assets/icons'
+import { Expand, OrderIcon } from '../../../../assets/icons'
 import { logger } from '../../../../utils'
 import { Tile } from '../../../DashboardTiles'
 import { ErrorState } from '../../../ErrorState'
@@ -210,8 +210,8 @@ const OrderReceivedAnalytics = () => {
                <TotalOrderRecTunnel currency={analyticsApiArgState.currency} />
             </Tunnel>
          </Tunnels>
-         <Tile>
-            <Tile.Head title="Order Received">
+         <Tile hasChart>
+            <Tile.Head title="Order Received" svg={OrderIcon}>
                <Tile.Head.Actions>
                   <Tile.Head.Action
                      title="Expand"

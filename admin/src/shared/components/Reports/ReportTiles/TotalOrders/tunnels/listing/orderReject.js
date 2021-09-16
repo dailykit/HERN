@@ -8,6 +8,7 @@ import {
    Spacer,
    Text,
 } from '@dailykit/ui'
+import '../../../tableStyle.css'
 import moment from 'moment'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
@@ -54,12 +55,12 @@ const OrderRejectTable = () => {
                   flattenData.fulfillmentDate =
                      eachRejectedData.fulfillmentTimestamp
                         ? moment(eachRejectedData.fulfillmentTimestamp).format(
-                             'DD MM YYYY'
+                             'DD-MM-YYYY'
                           )
                         : 'N/A'
                   flattenData.created_at = moment(
                      eachRejectedData.created_at
-                  ).format('DD MM YYYY')
+                  ).format('DD-MM-YYYY')
                   flattenData.customerName =
                      eachRejectedData.customer?.platform_customer?.fullName ||
                      'N/A'
@@ -123,7 +124,7 @@ const OrderRejectTable = () => {
    // fn run after table data loaded
    const dataLoaded = () => {
       const defaultShowColumns =
-         localStorage.getItem('order-summary-table-show-columns') || []
+         localStorage.getItem('order-rejected-table-show-columns') || []
       const parseDefaultColumns = JSON.parse(defaultShowColumns)
       if (parseDefaultColumns) {
          columns.forEach(eachOption => {
@@ -136,26 +137,53 @@ const OrderRejectTable = () => {
          })
       }
    }
+   const totalCalc = (values, data, calcParams) => {
+      let total = 0
+      values.forEach(value => {
+         total += value
+      })
+      return `Σ = ${total.toFixed(2)}`
+   }
    const columns = [
       {
          id: 1,
          title: 'Order Id',
          field: 'orderId',
          toBeHide: false,
+         hozAlign: 'center',
       },
-      { id: 2, title: 'Customer Name', field: 'customerName', toBeHide: false },
-      { id: 3, title: 'Created At', field: 'created_at', toBeHide: true },
+      {
+         id: 2,
+         title: 'Customer Name',
+         field: 'customerName',
+         toBeHide: false,
+         hozAlign: 'left',
+         width: 250,
+      },
+      {
+         id: 3,
+         title: 'Created At',
+         field: 'created_at',
+         toBeHide: true,
+         hozAlign: 'left',
+         width: 250,
+      },
       {
          id: 4,
          title: 'Fulfillment Date',
          field: 'fulfillmentDate',
          toBeHide: true,
+         hozAlign: 'left',
+         width: 250,
       },
       {
          id: 5,
          title: `Amount Paid (${brandShopDateState.currency})`,
          field: 'amountPaid',
          toBeHide: false,
+         hozAlign: 'right',
+         bottomCalc: totalCalc,
+         cssClass: 'digit-col',
       },
    ]
    if (!subsError && subsLoading) {
@@ -236,6 +264,7 @@ const OrderRejectTable = () => {
                      data={rejectedOrderData}
                      columns={columns}
                      options={TableOptions}
+                     className="report-table order-rejected-table"
                   />
                )}
             </div>
@@ -243,4 +272,4 @@ const OrderRejectTable = () => {
       </>
    )
 }
-export default OrderRejectTable
+export default React.memo(OrderRejectTable)

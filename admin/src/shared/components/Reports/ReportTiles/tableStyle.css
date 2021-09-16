@@ -1,0 +1,6 @@
+.report-table .tabulator-col-title {
+   text-align: left !important;
+}
+.report-table .tabulator-header .digit-col .tabulator-col-title {
+   text-align: right !important;
+}

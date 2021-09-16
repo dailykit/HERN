@@ -925,27 +925,31 @@ export const SparkChart = ({
                dataKey={dataOf}
                stroke="#8884d8"
                fill="#8884d8"
-               activeDot={{
-                  onClick: (event, payload) => {
-                     if (
-                        payload.payload.orderRefspresent ||
-                        payload.payload.orderRefspast
-                     ) {
-                        setGraphTunnelData(prevState => ({
-                           ...prevState,
-                           title: graphTunnelTitle,
-                           orderRefData: [
-                              payload.payload.orderRefspresent,
-                              payload.payload.orderRefspast,
-                           ],
-                           presentTime: payload.payload.present,
-                           pastTime: payload.payload.past,
-                        }))
-                        openGraphTunnel(1)
-                     }
-                  },
-                  cursor: 'pointer',
-               }}
+               activeDot={
+                  setGraphTunnelData
+                     ? {
+                          onClick: (event, payload) => {
+                             if (
+                                payload.payload.orderRefspresent ||
+                                payload.payload.orderRefspast
+                             ) {
+                                setGraphTunnelData(prevState => ({
+                                   ...prevState,
+                                   title: graphTunnelTitle,
+                                   orderRefData: [
+                                      payload.payload.orderRefspresent,
+                                      payload.payload.orderRefspast,
+                                   ],
+                                   presentTime: payload.payload.present,
+                                   pastTime: payload.payload.past,
+                                }))
+                                openGraphTunnel(1)
+                             }
+                          },
+                          cursor: 'pointer',
+                       }
+                     : true
+               }
             />
             {!compare.isSkip && compareInsightAnalyticsData && (
                <Area
