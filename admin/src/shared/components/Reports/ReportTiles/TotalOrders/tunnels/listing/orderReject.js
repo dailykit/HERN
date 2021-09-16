@@ -270,4 +270,4 @@ const OrderRejectTable = () => {
       </>
    )
 }
-export default OrderRejectTable
+export default React.memo(OrderRejectTable)

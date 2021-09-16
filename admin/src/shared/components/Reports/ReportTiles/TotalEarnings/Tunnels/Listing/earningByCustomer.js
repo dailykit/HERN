@@ -132,7 +132,7 @@ const EarningByCustomerTable = props => {
    // fn run after table data loaded
    const dataLoaded = () => {
       const defaultShowColumns = localStorage.getItem(
-         'earning-by-product-table-show-columns'
+         'earning-by-customer-table-show-columns'
       )
       const parseDefaultColumns = JSON.parse(defaultShowColumns)
       if (parseDefaultColumns) {

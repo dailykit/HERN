@@ -248,4 +248,4 @@ const OrderByLocationTable = props => {
       </>
    )
 }
-export default OrderByLocationTable
+export default React.memo(OrderByLocationTable)

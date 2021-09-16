@@ -271,4 +271,4 @@ const OrderSummaryTable = props => {
    )
 }
 
-export default OrderSummaryTable
+export default React.memo(OrderSummaryTable)

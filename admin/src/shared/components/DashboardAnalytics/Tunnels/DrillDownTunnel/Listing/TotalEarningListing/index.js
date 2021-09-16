@@ -366,4 +366,4 @@ const TunnelBody = styled.div`
    height: calc(100% - 103px);
    overflow: auto;
 `
-export default EarningTable
+export default React.memo(EarningTable)
