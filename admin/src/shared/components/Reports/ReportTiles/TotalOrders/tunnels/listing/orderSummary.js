@@ -55,9 +55,9 @@ const OrderSummaryTable = props => {
                   eachOrder.customer?.platform_customer?.fullName || 'N/A'
                flattenEachOrder.created_at = moment(
                   eachOrder.created_at
-               ).format('DD MMM YYYY')
+               ).format('DD-MM-YYYY')
                flattenEachOrder.fulfillmentDate = eachOrder.fulfillmentTimestamp
-                  ? moment(eachOrder.fulfillmentTimestamp).format('DD MM YYYY')
+                  ? moment(eachOrder.fulfillmentTimestamp).format('DD-MM-YYYY')
                   : 'N/A'
                switch (eachOrder.cart.status) {
                   case 'ORDER_PENDING':
@@ -163,28 +163,31 @@ const OrderSummaryTable = props => {
          title: 'Customer Name',
          field: 'customerName',
          toBeHide: false,
-         hozAlign: 'center',
+         hozAlign: 'left',
+         width: 250,
       },
       {
          id: 3,
          title: 'Created At',
          field: 'created_at',
          toBeHide: true,
-         hozAlign: 'center',
+         hozAlign: 'left',
+         width: 250,
       },
       {
          id: 4,
          title: 'Fulfillment Date',
          field: 'fulfillmentDate',
          toBeHide: true,
-         hozAlign: 'center',
+         hozAlign: 'left',
+         width: 250,
       },
       {
          id: 5,
          title: 'Status',
          field: 'orderStatus',
          toBeHide: false,
-         hozAlign: 'center',
+         hozAlign: 'left',
       },
    ]
    if (!subsError && subsLoading) {
@@ -262,6 +265,7 @@ const OrderSummaryTable = props => {
                         data={orderSummaryData}
                         columns={columns}
                         options={TableOptions}
+                        className="report-table order-summary-table"
                      />
                   )}
                </Flex>

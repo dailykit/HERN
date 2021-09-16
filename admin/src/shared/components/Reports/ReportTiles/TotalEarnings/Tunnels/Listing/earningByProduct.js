@@ -71,13 +71,13 @@ const EarningByProductTable = ({ earningByProductData }) => {
          title: 'Product Name',
          field: 'name',
          headerFilter: true,
-         hozAlign: 'center',
+         hozAlign: 'left',
       },
       {
          title: 'Product Type',
          field: 'type',
          headerFilter: true,
-         hozAlign: 'center',
+         hozAlign: 'left',
          width: 300,
       },
       // {
@@ -100,7 +100,8 @@ const EarningByProductTable = ({ earningByProductData }) => {
          title: `Total (${brandShopDateState.currency})`,
          field: 'total',
          bottomCalc: totalCalc,
-         hozAlign: 'center',
+         hozAlign: 'right',
+         cssClass: 'digit-col',
       },
    ]
    //default ids for columns to be show dropdown
@@ -196,6 +197,7 @@ const EarningByProductTable = ({ earningByProductData }) => {
                data={earningByProductData}
                columns={columns}
                options={TableOptions}
+               className="report-table earning-by-product-table"
             />
          </Flex>
       </>

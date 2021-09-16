@@ -42,7 +42,7 @@ const SalesByCouponsTable = props => {
          toBeHide: false,
          headerFilter: true,
          width: 200,
-         hozAlign: 'center',
+         hozAlign: 'left',
       },
       {
          id: 3,
@@ -60,8 +60,9 @@ const SalesByCouponsTable = props => {
          toBeGroupBy: false,
          toBeHide: false,
          width: 111,
-         hozAlign: 'center',
+         hozAlign: 'right',
          bottomCalc: totalCalc,
+         cssClass: 'digit-col',
       },
       {
          id: 5,
@@ -71,7 +72,7 @@ const SalesByCouponsTable = props => {
          toBeHide: true,
          headerFilter: true,
          width: 259,
-         hozAlign: 'center',
+         hozAlign: 'left',
       },
       {
          id: 6,
@@ -81,7 +82,7 @@ const SalesByCouponsTable = props => {
          toBeHide: true,
          headerFilter: true,
          width: 259,
-         hozAlign: 'center',
+         hozAlign: 'left',
       },
    ]
    const downloadCsvData = () => {
@@ -282,7 +283,7 @@ const SalesByCouponsTable = props => {
                   data={salesByCouponsData}
                   options={TableOptions}
                   dataLoaded={dataLoaded}
-                  className="sales-from-coupons"
+                  className="sales-from-coupons report-table"
                />
             )}
          </Flex>

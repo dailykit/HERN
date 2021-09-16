@@ -39,7 +39,7 @@ const OrderByLocationTable = props => {
          toBeHide: false,
          toBeGroupBy: false,
          headerFilter: true,
-         hozAlign: 'center',
+         hozAlign: 'left',
       },
       {
          id: 3,
@@ -48,7 +48,7 @@ const OrderByLocationTable = props => {
          toBeHide: false,
          toBeGroupBy: true,
          headerFilter: true,
-         hozAlign: 'center',
+         hozAlign: 'left',
       },
       {
          id: 4,
@@ -57,7 +57,7 @@ const OrderByLocationTable = props => {
          toBeHide: true,
          toBeGroupBy: true,
          headerFilter: true,
-         hozAlign: 'center',
+         hozAlign: 'left',
       },
       {
          id: 5,
@@ -66,7 +66,7 @@ const OrderByLocationTable = props => {
          toBeHide: true,
          toBeGroupBy: false,
          headerFilter: true,
-         hozAlign: 'center',
+         hozAlign: 'left',
       },
       {
          id: 6,
@@ -75,7 +75,7 @@ const OrderByLocationTable = props => {
          toBeHide: false,
          toBeGroupBy: false,
          headerFilter: true,
-         hozAlign: 'center',
+         hozAlign: 'left',
       },
       {
          id: 7,
@@ -83,7 +83,7 @@ const OrderByLocationTable = props => {
          field: 'created_at',
          toBeHide: false,
          toBeGroupBy: true,
-         hozAlign: 'center',
+         hozAlign: 'left',
       },
       {
          id: 8,
@@ -91,8 +91,9 @@ const OrderByLocationTable = props => {
          field: 'amountPaid',
          toBeHide: true,
          toBeGroupBy: false,
-         hozAlign: 'center',
+         hozAlign: 'right',
          bottomCalc: totalCalc,
+         cssClass: 'digit-col',
       },
    ]
    const downloadCsvData = () => {
@@ -242,6 +243,7 @@ const OrderByLocationTable = props => {
                   data={orderByLocationData}
                   columns={columns}
                   options={TableOptions}
+                  className="report-table order-by-location"
                />
             )}
          </Flex>

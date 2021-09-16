@@ -133,7 +133,7 @@ const DataTable = ({ data }) => {
          title: 'Time',
          field: 'date',
          width: 270,
-         hozAlign: 'center',
+         hozAlign: 'left',
       },
       {
          title: 'Orders',
@@ -151,7 +151,8 @@ const DataTable = ({ data }) => {
             openOrderTunnel(1)
          },
          cssClass: 'colHover',
-         hozAlign: 'center',
+         hozAlign: 'right',
+         cssClass: 'digit-col',
 
          // formatter: reactFormatter(<OrderFormatter />),
       },
@@ -161,7 +162,8 @@ const DataTable = ({ data }) => {
          bottomCalc: totalCalc,
          visible: true,
          width: 120,
-         hozAlign: 'center',
+         hozAlign: 'right',
+         cssClass: 'digit-col',
       },
       {
          title: `Discount (${analyticsApiArgState.currency})`,
@@ -169,7 +171,8 @@ const DataTable = ({ data }) => {
          bottomCalc: totalCalc,
          visible: true,
          width: 120,
-         hozAlign: 'center',
+         hozAlign: 'right',
+         cssClass: 'digit-col',
       },
       {
          title: `Delivery (${analyticsApiArgState.currency})`,
@@ -177,21 +180,24 @@ const DataTable = ({ data }) => {
          bottomCalc: totalCalc,
          visible: true,
          width: 130,
-         hozAlign: 'center',
+         hozAlign: 'right',
+         cssClass: 'digit-col',
       },
       {
          title: `Net Sales (${analyticsApiArgState.currency})`,
          field: 'netSale',
          bottomCalc: totalCalc,
          width: 150,
-         hozAlign: 'center',
+         hozAlign: 'right',
+         cssClass: 'digit-col',
       },
       {
          title: `Total (${analyticsApiArgState.currency})`,
          field: 'total',
          bottomCalc: totalCalc,
          width: 150,
-         hozAlign: 'center',
+         hozAlign: 'right',
+         cssClass: 'digit-col',
       },
    ]
 
@@ -304,6 +310,7 @@ const DataTable = ({ data }) => {
             data={data}
             columns={columns}
             options={TableOptions}
+            className="earning-table"
          />
          <Spacer size="20px" />
       </>

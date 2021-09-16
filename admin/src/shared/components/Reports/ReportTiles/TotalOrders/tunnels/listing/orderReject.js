@@ -60,7 +60,7 @@ const OrderRejectTable = () => {
                         : 'N/A'
                   flattenData.created_at = moment(
                      eachRejectedData.created_at
-                  ).format('DD MM YYYY')
+                  ).format('DD-MM-YYYY')
                   flattenData.customerName =
                      eachRejectedData.customer?.platform_customer?.fullName ||
                      'N/A'
@@ -157,32 +157,33 @@ const OrderRejectTable = () => {
          title: 'Customer Name',
          field: 'customerName',
          toBeHide: false,
-         hozAlign: 'center',
-         width: 200,
+         hozAlign: 'left',
+         width: 250,
       },
       {
          id: 3,
          title: 'Created At',
          field: 'created_at',
          toBeHide: true,
-         hozAlign: 'center',
-         width: 200,
+         hozAlign: 'left',
+         width: 250,
       },
       {
          id: 4,
          title: 'Fulfillment Date',
          field: 'fulfillmentDate',
          toBeHide: true,
-         hozAlign: 'center',
-         width: 200,
+         hozAlign: 'left',
+         width: 250,
       },
       {
          id: 5,
          title: `Amount Paid (${brandShopDateState.currency})`,
          field: 'amountPaid',
          toBeHide: false,
-         hozAlign: 'center',
+         hozAlign: 'right',
          bottomCalc: totalCalc,
+         cssClass: 'digit-col',
       },
    ]
    if (!subsError && subsLoading) {
@@ -263,6 +264,7 @@ const OrderRejectTable = () => {
                      data={rejectedOrderData}
                      columns={columns}
                      options={TableOptions}
+                     className="report-table order-rejected-table"
                   />
                )}
             </div>

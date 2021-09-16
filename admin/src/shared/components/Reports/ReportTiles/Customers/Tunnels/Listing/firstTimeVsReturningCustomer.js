@@ -117,20 +117,22 @@ const CustomerSalesTable = props => {
          title: '# of First Time Customer',
          field: 'countFirstpresent',
          headerTooltip: true,
-         bottomCalc: totalCalc,
+         bottomCalc: 'sum',
          width: 160,
          toBeHide: true,
-         hozAlign: 'center',
+         hozAlign: 'right',
+         cssClass: 'digit-col',
       },
       {
          id: 3,
          title: '# of Returning Customer',
          field: 'countReturnpresent',
          headerTooltip: true,
-         bottomCalc: totalCalc,
+         bottomCalc: 'sum',
          width: 160,
          toBeHide: true,
-         hozAlign: 'center',
+         hozAlign: 'right',
+         cssClass: 'digit-col',
       },
       {
          id: 4,
@@ -140,7 +142,8 @@ const CustomerSalesTable = props => {
          bottomCalc: totalCalc,
          width: 160,
          toBeHide: true,
-         hozAlign: 'center',
+         hozAlign: 'right',
+         cssClass: 'digit-col',
       },
       {
          id: 5,
@@ -150,7 +153,8 @@ const CustomerSalesTable = props => {
          bottomCalc: totalCalc,
          width: 160,
          toBeHide: true,
-         hozAlign: 'center',
+         hozAlign: 'right',
+         cssClass: 'digit-col',
       },
       {
          id: 6,
@@ -158,7 +162,8 @@ const CustomerSalesTable = props => {
          field: 'totalSale',
          bottomCalc: totalCalc,
          toBeHide: false,
-         hozAlign: 'center',
+         hozAlign: 'right',
+         cssClass: 'digit-col',
       },
    ]
    //columns to be show dropdown selected option fn
@@ -200,7 +205,7 @@ const CustomerSalesTable = props => {
          })
       }
    }
-   console.log('tableData', tableData)
+
    if (customerData.length === 0) {
       return <Filler message="No data found for the date range selected" />
    }
@@ -254,6 +259,7 @@ const CustomerSalesTable = props => {
                data={tableData}
                options={TableOptions}
                dataLoaded={dataLoaded}
+               className="report-table first-return-customer-table"
             />
          </Flex>
       </>

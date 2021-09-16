@@ -23,7 +23,7 @@ const CustomerOverTimeTable = props => {
          field: 'email',
          headerFilter: true,
          toBeHide: false,
-         hozAlign: 'center',
+         hozAlign: 'left',
          width: 350,
       },
       {
@@ -32,7 +32,7 @@ const CustomerOverTimeTable = props => {
          field: 'source',
          headerFilter: true,
          toBeHide: true,
-         hozAlign: 'center',
+         hozAlign: 'left',
          width: 200,
       },
       {
@@ -40,15 +40,15 @@ const CustomerOverTimeTable = props => {
          title: 'Created at',
          field: 'date',
          toBeHide: false,
-         hozAlign: 'center',
-         width: 200,
+         hozAlign: 'left',
+         width: 250,
       },
       {
          id: 5,
          title: 'Subscriber',
          field: 'isSubscriber',
          toBeHide: true,
-         hozAlign: 'center',
+         hozAlign: 'left',
       },
    ]
    const dataManipulation = () => {
@@ -131,7 +131,12 @@ const CustomerOverTimeTable = props => {
                Customer Table ({tableData.count})
             </Text>
             <Spacer size="10px" />
-            <Flex container justifyContent="flex-end" alignItems="center">
+            <Flex
+               container
+               justifyContent="flex-end"
+               alignItems="center"
+               padding="0 10px"
+            >
                <DropdownButton title="Download" width="150px">
                   <DropdownButton.Options>
                      <DropdownButton.Option onClick={() => downloadCsvData()}>

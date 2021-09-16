@@ -41,42 +41,47 @@ const EarningByCustomerTable = props => {
       {
          title: 'Customer Name',
          field: 'fullName',
-         hozAlign: 'center',
+         hozAlign: 'left',
       },
       {
          title: 'Customer Email',
          field: 'email',
-         hozAlign: 'center',
+         hozAlign: 'left',
       },
       {
          title: 'Orders',
          field: 'orders',
-         hozAlign: 'center',
+         hozAlign: 'right',
          bottomCalc: 'sum',
+         cssClass: 'digit-col',
       },
       {
          title: `Tax (${currency})`,
          field: 'totalTax',
-         hozAlign: 'center',
+         hozAlign: 'right',
          bottomCalc: totalCalc,
+         cssClass: 'digit-col',
       },
       {
          title: `Discount (${currency})`,
          field: 'totalDiscount',
-         hozAlign: 'center',
+         hozAlign: 'right',
          bottomCalc: totalCalc,
+         cssClass: 'digit-col',
       },
       {
          title: `Net Sale (${currency})`,
          field: 'netSale',
-         hozAlign: 'center',
+         hozAlign: 'right',
          bottomCalc: totalCalc,
+         cssClass: 'digit-col',
       },
       {
          title: `Total Sale (${currency})`,
          field: 'totalAmountPaid',
-         hozAlign: 'center',
+         hozAlign: 'right',
          bottomCalc: totalCalc,
+         cssClass: 'digit-col',
       },
    ]
 
@@ -188,6 +193,7 @@ const EarningByCustomerTable = props => {
                data={earningByCustomerData}
                columns={columns}
                options={TableOptions}
+               className="report-table earning-by-customer-table"
             />
          </Flex>
       </>
