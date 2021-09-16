@@ -1,0 +1,3 @@
+[/api/payment-intent] | [2021-09-16 15:09:98PM +05:30] | [This is error]
+[/api/payment-intent] | [2021-09-16 15:09:52PM +05:30] | [This is error]
+[/api/payment-intent] | [2021-09-16 15:09:78PM +05:30] | [Error: This payment requires additional user action before it can be completed successfully. Payment can be completed using the PaymentIntent associated with the invoice. For more details see: https://stripe.com/docs/billing/subscriptions/overview#requires-action]
