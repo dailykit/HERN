@@ -34,7 +34,9 @@ const EarningTable = ({ data }) => {
       <>
          <Flex>
             <Flex>
-               <Text as="h2">Earning Table</Text>
+               <Text as="h2" style={{ padding: '0px 10px' }}>
+                  Earning Table
+               </Text>
             </Flex>
             <Flex container>
                <Flex></Flex>
@@ -60,7 +62,7 @@ const DataTable = ({ data }) => {
    const totalCalc = values => {
       let total = 0
       values.forEach(value => (total += value))
-      return 'Total = ' + total.toFixed(2)
+      return 'Σ = ' + total.toFixed(2)
    }
    const downloadCsvData = () => {
       earningTableRef.current.table.download('csv', 'earning_table.csv')
@@ -131,6 +133,7 @@ const DataTable = ({ data }) => {
          title: 'Time',
          field: 'date',
          width: 270,
+         hozAlign: 'left',
       },
       {
          title: 'Orders',
@@ -148,6 +151,9 @@ const DataTable = ({ data }) => {
             openOrderTunnel(1)
          },
          cssClass: 'colHover',
+         hozAlign: 'right',
+         cssClass: 'digit-col',
+
          // formatter: reactFormatter(<OrderFormatter />),
       },
       {
@@ -155,33 +161,43 @@ const DataTable = ({ data }) => {
          field: 'totalTax',
          bottomCalc: totalCalc,
          visible: true,
-         width: 150,
+         width: 120,
+         hozAlign: 'right',
+         cssClass: 'digit-col',
       },
       {
          title: `Discount (${analyticsApiArgState.currency})`,
          field: 'totalDiscount',
          bottomCalc: totalCalc,
          visible: true,
-         width: 150,
+         width: 120,
+         hozAlign: 'right',
+         cssClass: 'digit-col',
       },
       {
-         title: `Shipping (${analyticsApiArgState.currency})`,
+         title: `Delivery (${analyticsApiArgState.currency})`,
          field: 'totalDeliveryPrice',
          bottomCalc: totalCalc,
          visible: true,
-         width: 150,
+         width: 130,
+         hozAlign: 'right',
+         cssClass: 'digit-col',
       },
       {
          title: `Net Sales (${analyticsApiArgState.currency})`,
          field: 'netSale',
          bottomCalc: totalCalc,
          width: 150,
+         hozAlign: 'right',
+         cssClass: 'digit-col',
       },
       {
          title: `Total (${analyticsApiArgState.currency})`,
          field: 'total',
          bottomCalc: totalCalc,
          width: 150,
+         hozAlign: 'right',
+         cssClass: 'digit-col',
       },
    ]
 
@@ -255,7 +271,12 @@ const DataTable = ({ data }) => {
                   </TunnelBody>
                </Tunnel>
             </Tunnels>
-            <Flex container justifyContent="flex-end" alignItems="center">
+            <Flex
+               container
+               justifyContent="flex-end"
+               alignItems="center"
+               padding="0px 10px"
+            >
                <DropdownButton title="Download" width="150px">
                   <DropdownButton.Options>
                      <DropdownButton.Option onClick={() => downloadCsvData()}>
@@ -289,6 +310,7 @@ const DataTable = ({ data }) => {
             data={data}
             columns={columns}
             options={TableOptions}
+            className="earning-table"
          />
          <Spacer size="20px" />
       </>
@@ -351,4 +373,4 @@ const TunnelBody = styled.div`
    height: calc(100% - 103px);
    overflow: auto;
 `
-export default EarningTable
+export default React.memo(EarningTable)

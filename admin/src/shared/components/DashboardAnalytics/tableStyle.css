@@ -100,3 +100,9 @@ input[type='checkbox'] {
 .tabulator-cell {
    padding-right: 20px !important;
 }
+.earning-table .tabulator-col-title {
+   text-align: left !important;
+}
+.earning-table .tabulator-header .digit-col .tabulator-col-title {
+   text-align: right !important;
+}

@@ -183,21 +183,23 @@ const TotalEarningTunnel = ({ currency }) => {
                />
             </Tunnel>
          </Tunnels>
-         <BrandAndShop
-            brands={brands}
-            setBrandShop={setBrandShop}
-            brandShop={brandShop}
-         />
-         <Spacer size="10px" />
-         <DateRangePicker
-            from={from}
-            setFrom={setFrom}
-            to={to}
-            setTo={setTo}
-            setGroupBy={setGroupBy}
-            compare={compare}
-            setCompare={setCompare}
-         />
+         <Flex padding="0 52px">
+            <BrandAndShop
+               brands={brands}
+               setBrandShop={setBrandShop}
+               brandShop={brandShop}
+            />
+            <Spacer size="10px" />
+            <DateRangePicker
+               from={from}
+               setFrom={setFrom}
+               to={to}
+               setTo={setTo}
+               setGroupBy={setGroupBy}
+               compare={compare}
+               setCompare={setCompare}
+            />
+         </Flex>
          <Spacer size="10px" />
          <DrillDownLineChart
             from={from}
@@ -588,79 +590,102 @@ const DrillDownLineChart = ({
    }
    return (
       <>
-         <Flex height="22rem">
-            <ResponsiveContainer width="100%" height="100%">
-               <LineChart
-                  width={500}
-                  height={300}
-                  data={dataForGraph}
-                  margin={{
-                     top: 5,
-                     right: 30,
-                     left: 20,
-                     bottom: 5,
-                  }}
-               >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis
-                     dataKey="present"
-                     tickFormatter={tick => moment(tick).format('YYYY-MM-DD')}
-                     ticks={dataForGraph.map(x => x.present)}
-                  />
-                  <YAxis />
-                  <Tooltip
-                     content={
-                        <CustomTooltip
-                           groupBy={groupBy[groupBy.length - 1]}
-                           dataOf={dataOf}
-                           currency={currency}
-                        />
-                     }
-                  />
-                  <Legend />
-                  <Line
-                     type="monotone"
-                     name="Earning"
-                     dataKey={dataOf}
-                     stroke="#8884d8"
-                     strokeWidth={2}
-                     activeDot={{
-                        onClick: (event, payload) => {
-                           if (
-                              payload.payload.orderRefspresent ||
-                              payload.payload.orderRefspast
-                           ) {
-                              setGraphTunnelData(prevState => ({
-                                 ...prevState,
-                                 title: graphTunnelTitle,
-                                 orderRefData: [
-                                    payload.payload.orderRefspresent,
-                                    payload.payload.orderRefspast,
-                                 ],
-                                 presentTime: payload.payload.present,
-                                 pastTime: payload.payload.past,
-                              }))
-                              openGraphTunnel(1)
-                           }
-                        },
-                        cursor: 'pointer',
+         <div
+            style={{
+               background: '#FFFFFF',
+               boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.2)',
+               borderRadius: '10px',
+               padding: '40px 40px 10px 0px',
+               margin: '0 42px',
+            }}
+         >
+            <Flex height="22rem">
+               <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                     width={500}
+                     height={300}
+                     data={dataForGraph}
+                     margin={{
+                        top: 5,
+                        right: 30,
+                        left: 20,
+                        bottom: 5,
                      }}
-                  />
-                  {!compare.isSkip && compare.data && (
+                  >
+                     <CartesianGrid strokeDasharray="3 3" />
+                     <XAxis
+                        dataKey="present"
+                        tickFormatter={tick =>
+                           moment(tick).format('YYYY-MM-DD')
+                        }
+                        ticks={dataForGraph.map(x => x.present)}
+                     />
+                     <YAxis />
+                     <Tooltip
+                        content={
+                           <CustomTooltip
+                              groupBy={groupBy[groupBy.length - 1]}
+                              dataOf={dataOf}
+                              currency={currency}
+                              isCompareSkip={compare.isSkip}
+                           />
+                        }
+                     />
+                     <Legend />
                      <Line
                         type="monotone"
-                        name="Compare Earning"
-                        dataKey={dataOf + 'Compare'}
-                        stroke="#C9D8B6"
-                        activeDot={{ r: 4 }}
+                        name="Earning"
+                        dataKey={dataOf}
+                        stroke="#2AC981"
                         strokeWidth={2}
+                        activeDot={{
+                           onClick: (event, payload) => {
+                              if (
+                                 payload.payload.orderRefspresent ||
+                                 payload.payload.orderRefspast
+                              ) {
+                                 setGraphTunnelData(prevState => ({
+                                    ...prevState,
+                                    title: graphTunnelTitle,
+                                    orderRefData: [
+                                       payload.payload.orderRefspresent,
+                                       payload.payload.orderRefspast,
+                                    ],
+                                    presentTime: payload.payload.present,
+                                    pastTime: payload.payload.past,
+                                 }))
+                                 openGraphTunnel(1)
+                              }
+                           },
+                           cursor: 'pointer',
+                        }}
                      />
-                  )}
-               </LineChart>
-            </ResponsiveContainer>
-         </Flex>
+                     {!compare.isSkip && compare.data && (
+                        <Line
+                           type="monotone"
+                           name="Compare Earning"
+                           dataKey={dataOf + 'Compare'}
+                           stroke="#8884d8"
+                           activeDot={{ r: 4 }}
+                           strokeWidth={2}
+                        />
+                     )}
+                  </LineChart>
+               </ResponsiveContainer>
+            </Flex>
+         </div>
          <Spacer size="20px" />
-         <EarningTable data={insightAnalyticsData} />
+         <div
+            style={{
+               background: '#FFFFFF',
+               boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.2)',
+               borderRadius: '10px',
+               padding: '10px 0px',
+               margin: '0 42px',
+            }}
+         >
+            <EarningTable data={insightAnalyticsData} />
+         </div>
       </>
    )
 }
@@ -669,8 +694,29 @@ const TunnelBody = styled.div`
    height: calc(100% - 103px);
    overflow: auto;
 `
-const CustomTooltip = ({ active, payload, dataOf, currency }) => {
+const CustomTooltip = ({
+   active,
+   payload,
+   dataOf,
+   currency,
+   isCompareSkip,
+   groupBy,
+}) => {
    if (active && payload && payload.length) {
+      const date = payload[0].payload['present']
+      let timeToBeShow = ''
+      if (groupBy == 'hour') {
+         timeToBeShow = moment(date).format('LT')
+      } else if (groupBy == 'day') {
+         timeToBeShow = moment(date).format('DD-MMM')
+      } else if (groupBy == 'week') {
+         timeToBeShow =
+            moment(date).format('DD-MMM-YY') +
+            ' to ' +
+            moment(date).add(1, 'week').format('DD-MMM-YY')
+      } else {
+         timeToBeShow = moment(date).format('MMM-YYYY')
+      }
       return (
          <div
             style={{
@@ -685,17 +731,46 @@ const CustomTooltip = ({ active, payload, dataOf, currency }) => {
             }}
          >
             <Spacer size="3px" />
-            <Text as="text3">{`${dataOf.toUpperCase()}: ${currency}${
-               payload[0].payload[dataOf]
-            }`}</Text>
-            <Text as="text3">
-               {`onDemand : ${currency}${payload[0].payload['onDemand'] || 0}`}
-            </Text>
-            <Text as="text3">
-               {`Subscription : ${currency}${
-                  payload[0].payload['subscription'] || 0
-               }`}
-            </Text>
+            <Text as="text3">{timeToBeShow}</Text>
+            <Flex>
+               {`${dataOf.toUpperCase()}: `}{' '}
+               <span style={{ color: '#2AC981' }}>
+                  {`${currency}${payload[0].payload[dataOf]} `}
+               </span>
+               {!isCompareSkip ? (
+                  <span style={{ color: '#8884d8' }}>
+                     {`${currency}${
+                        payload[0].payload[dataOf + 'Compare'] || 0
+                     }`}
+                  </span>
+               ) : null}
+            </Flex>
+            <Flex>
+               {`onDemand`}{' '}
+               <span style={{ color: '#2AC981' }}>
+                  {`${currency}${payload[0].payload['onDemand'] || 0} `}
+               </span>
+               {!isCompareSkip ? (
+                  <span style={{ color: '#8884d8' }}>
+                     {`${currency}${
+                        payload[0].payload['onDemand' + 'Compare'] || 0
+                     }`}
+                  </span>
+               ) : null}
+            </Flex>
+            <Flex>
+               {`Subscription`}{' '}
+               <span style={{ color: '#2AC981' }}>
+                  {`${currency}${payload[0].payload['subscription'] || 0} `}
+               </span>
+               {!isCompareSkip ? (
+                  <span style={{ color: '#8884d8' }}>
+                     {`${currency}${
+                        payload[0].payload['subscription' + 'Compare'] || 0
+                     }`}
+                  </span>
+               ) : null}
+            </Flex>
          </div>
       )
    }

@@ -1,3 +1,4 @@
+import React from 'react'
 import { useSubscription } from '@apollo/react-hooks'
 import {
    Flex,
@@ -9,24 +10,25 @@ import {
    Spacer,
 } from '@dailykit/ui'
 import moment from 'moment'
-import React from 'react'
 import styled from 'styled-components'
-import { OrderIcon } from '../../../../assets/icons'
-import BrandShopDate from '../../../BrandShopDateProvider'
 import { Tile } from '../../../DashboardTiles'
-import { ORDERS_COUNT } from './graphql/subscription'
-import OrderByLocation from './tunnels/orderByLocation'
-import OrderCancelOrRejectReport from './tunnels/orderReject'
-import OrderSummaryReport from './tunnels/orderSummary'
+import { CUSTOMERS_COUNT } from './graphql/subscription'
+import BrandShopDate from '../../../BrandShopDateProvider'
+import CustomerOverTime from './Tunnels/customerOverTime'
+import FirstTimeVsReturningCustomerSales from './Tunnels/firstTimeVsReturningCustomerSales'
+import { CustomerIcon } from '../../../../assets/icons'
 
-const OrdersReport = () => {
-   const [orderReportTunnels, openOrderReportTunnel, closeOrderReportTunnel] =
-      useTunnel(3)
+const CustomerReport = () => {
+   const [
+      customerReportTunnels,
+      openCustomerReportTunnel,
+      closeCustomerReportTunnel,
+   ] = useTunnel(2)
    const {
       loading: subsLoading,
       error: subsError,
-      data: { ordersAggregate } = {},
-   } = useSubscription(ORDERS_COUNT, {
+      data: { customers_aggregate } = {},
+   } = useSubscription(CUSTOMERS_COUNT, {
       variables: {
          where: {
             _and: [
@@ -37,64 +39,50 @@ const OrdersReport = () => {
                },
                { created_at: { _lte: moment().format('YYYY MM DD') } },
             ],
-            isAccepted: { _eq: true },
-            cart: { paymentStatus: { _eq: 'SUCCEEDED' } },
-            isRejected: { _is_null: true },
          },
       },
    })
-
    return (
       <>
-         <Tunnels tunnels={orderReportTunnels}>
+         <Tunnels tunnels={customerReportTunnels}>
             <Tunnel size="full" layer={1}>
                <TunnelHeader
-                  title="Order Summary Report"
-                  close={() => closeOrderReportTunnel(1)}
-                  description="This is a description"
-               />
-               <TunnelBody>
-                  <OrderSummaryReport />
-               </TunnelBody>
-            </Tunnel>
-            <Tunnel size="full" layer={2}>
-               <TunnelHeader
-                  title="Rejected orders over time"
-                  close={() => closeOrderReportTunnel(2)}
+                  title="Customer over time"
+                  close={() => closeCustomerReportTunnel(1)}
                   description="This is a description"
                />
                <TunnelBody>
                   <BrandShopDate
-                     shopTypeProvider
                      brandProvider
+                     shopTypeProvider
                      datePickerProvider
                      compareProvider
                      groupTimeProvider
                   >
-                     <OrderCancelOrRejectReport />
+                     <CustomerOverTime />
                   </BrandShopDate>
                </TunnelBody>
             </Tunnel>
-            <Tunnel size="full" layer={3}>
+            <Tunnel size="full" layer={2}>
                <TunnelHeader
-                  title="Order By Location"
-                  close={() => closeOrderReportTunnel(3)}
+                  title="First-time vs returning customer sales"
+                  close={() => closeCustomerReportTunnel(2)}
                   description="This is a description"
                />
                <TunnelBody>
                   <BrandShopDate
-                     shopTypeProvider
                      brandProvider
+                     shopTypeProvider
                      datePickerProvider
-                     compareProvider
+                     groupTimeProvider
                   >
-                     <OrderByLocation />
+                     <FirstTimeVsReturningCustomerSales />
                   </BrandShopDate>
                </TunnelBody>
             </Tunnel>
          </Tunnels>
          <Tile>
-            <Tile.Head title="Orders" svg={OrderIcon}></Tile.Head>
+            <Tile.Head title="Customers" svg={CustomerIcon}></Tile.Head>
             <Tile.Body>
                <Flex width="100%">
                   <Flex
@@ -103,14 +91,14 @@ const OrdersReport = () => {
                      alignItems="flex-start"
                      padding="0px 8px"
                   >
-                     <Text as="subtitle">ORDERS LAST 30 DAYS</Text>
+                     <Text as="subtitle">CUSTOMERS LAST 30 DAYS</Text>
                      <Spacer size="7px" />
                      <Text as="h3">
                         {subsLoading
                            ? '...'
                            : subsError
-                           ? 'Could not get orders'
-                           : ordersAggregate.aggregate.count}
+                           ? 'Could not get customers'
+                           : customers_aggregate.aggregate.count}
                      </Text>
                   </Flex>
                   <div
@@ -119,7 +107,9 @@ const OrdersReport = () => {
                         height: '2px',
                         margin: '0px 8px',
                      }}
-                  ></div>
+                  >
+                     <Spacer size="11px" />
+                  </div>
                   <Spacer size="11px" />
 
                   <Flex
@@ -142,7 +132,7 @@ const OrdersReport = () => {
                      <Spacer size="5px" />
                      <Text
                         as="text2"
-                        title="View order overtime report"
+                        title="View customer overtime report"
                         style={{
                            marginLeft: '8px',
                            fontWeight: '400',
@@ -150,13 +140,13 @@ const OrdersReport = () => {
                            color: '#367bf5',
                            lineHeight: '24px',
                         }}
-                        onClick={() => openOrderReportTunnel(1)}
+                        onClick={() => openCustomerReportTunnel(1)}
                      >
-                        Order summary
+                        Customer over time
                      </Text>
                      <Text
                         as="text2"
-                        title="View order overtime report"
+                        title="First-time vs returning customer sales"
                         style={{
                            marginLeft: '8px',
                            fontWeight: '400',
@@ -164,23 +154,9 @@ const OrdersReport = () => {
                            color: '#367bf5',
                            lineHeight: '24px',
                         }}
-                        onClick={() => openOrderReportTunnel(2)}
+                        onClick={() => openCustomerReportTunnel(2)}
                      >
-                        Rejected orders over time
-                     </Text>
-                     <Text
-                        as="text2"
-                        title="View order by location"
-                        style={{
-                           marginLeft: '8px',
-                           fontWeight: '400',
-                           cursor: 'pointer',
-                           color: '#367bf5',
-                           lineHeight: '24px',
-                        }}
-                        onClick={() => openOrderReportTunnel(3)}
-                     >
-                        Order by location
+                        First-time vs returning customer sales
                      </Text>
                   </Flex>
                </Flex>
@@ -194,4 +170,4 @@ const TunnelBody = styled.div`
    height: calc(100% - 103px);
    overflow: auto;
 `
-export default OrdersReport
+export default CustomerReport
