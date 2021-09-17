@@ -1,0 +1,190 @@
+.hern-account-addresses__main {
+   display: grid;
+   grid-template-rows: 1fr;
+   min-height: calc(100vh - 64px);
+   grid-template-columns: 240px 1fr;
+   @media (max-width: 768px) {
+      display: block;
+   }
+}
+.hern-account-addresses__content {
+   padding: 0 0.75rem;
+   margin-bottom: 0.75rem;
+}
+.hern-account-addresses__header {
+   margin: 1.5rem 0 0.75rem 0;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+}
+.hern-account-addresses__header__title {
+   color: rgba(5, 150, 105, 1);
+   font-size: 1.5rem;
+   line-height: 2rem;
+}
+.hern-account-addresses__address-list {
+   display: grid;
+   gap: 0.5rem;
+   grid-auto-rows: minmax(130px, auto);
+   @media (min-width: 640px) {
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+   }
+   @media (min-width: 768px) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+   }
+
+   @media (min-width: 1024px) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+   }
+}
+.hern-account-addresses__address-list-item {
+   padding: 0.5rem;
+   display: -webkit-box;
+   display: -webkit-flex;
+   display: -ms-flexbox;
+   display: flex;
+   -webkit-flex-direction: column;
+   -ms-flex-direction: column;
+   flex-direction: column;
+   -webkit-align-items: flex-start;
+   -webkit-box-align: flex-start;
+   -ms-flex-align: flex-start;
+   align-items: flex-start;
+   border-width: 1px;
+   color: rgba(55, 65, 81, 1);
+}
+
+.hern-account-addresses__address-list-item__header {
+   margin-bottom: 0.5rem;
+   width: 100%;
+   display: -webkit-box;
+   display: -webkit-flex;
+   display: -ms-flexbox;
+   display: flex;
+   -webkit-box-pack: justify;
+   -webkit-justify-content: space-between;
+   -ms-flex-pack: justify;
+   justify-content: space-between;
+   -webkit-align-items: center;
+   -webkit-box-align: center;
+   -ms-flex-align: center;
+   align-items: center;
+}
+.hern-account-addresses__address-list-item__btn--default {
+   border-radius: 0.25rem;
+   border-width: 1px;
+   background-color: rgba(178, 245, 234, 1);
+   border-color: rgba(129, 230, 217, 1);
+   padding-left: 0.5rem;
+   padding-right: 0.5rem;
+   color: rgba(44, 122, 123, 1);
+}
+.hern-account-addresses__address-list-item__btn--make-default {
+   border-radius: 0.25rem;
+   border-width: 1px;
+   border-color: rgba(251, 211, 141, 1);
+   padding-left: 0.5rem;
+   padding-right: 0.5rem;
+
+   color: rgba(44, 122, 123, 1);
+   cursor: pointer;
+   &:hover {
+      background-color: rgba(251, 211, 141, 1);
+
+      color: rgba(123, 52, 30, 1);
+   }
+}
+.hern-account-addresses__address-list-item__btn--delete {
+   display: -webkit-box;
+   display: -webkit-flex;
+   display: -ms-flexbox;
+   display: flex;
+   -webkit-align-items: center;
+   -webkit-box-align: center;
+   -ms-flex-align: center;
+   align-items: center;
+   -webkit-box-pack: center;
+   -webkit-justify-content: center;
+   -ms-flex-pack: center;
+   justify-content: center;
+   border-width: 1px;
+   border-color: rgba(248, 113, 113, 1);
+   border-radius: 0.25rem;
+   height: 1.5rem;
+   width: 1.5rem;
+   &:hover {
+      background-color: rgba(248, 113, 113, 1);
+      .hern-account-addresses__address-list-item__btn--delete-icon {
+         color: white;
+      }
+   }
+}
+.hern-account-addresses__address-list-item__btn--delete-icon {
+   stroke: currentColor;
+}
+.hern-account-addresses__address-search {
+   margin-bottom: 16px;
+   .google-places-autocomplete {
+      width: 100%;
+      position: relative;
+   }
+   .google-places-autocomplete__input {
+      border-bottom-width: 1px;
+      width: 100%;
+      height: 2rem;
+      &:focus {
+         outline: none;
+         border-color: rgba(55, 65, 81, 1);
+      }
+   }
+   .google-places-autocomplete__input:active,
+   .google-places-autocomplete__input:focus,
+   .google-places-autocomplete__input:hover {
+      outline: 0;
+      border: none;
+   }
+   .google-places-autocomplete__suggestions-container {
+      background: #fff;
+      border-radius: 0 0 5px 5px;
+      color: #000;
+      position: absolute;
+      width: 100%;
+      z-index: 2;
+      box-shadow: 0 1px 16px 0 rgba(0, 0, 0, 0.09);
+   }
+   .google-places-autocomplete__suggestion {
+      font-size: 1rem;
+      text-align: left;
+      padding: 10px;
+      cursor: pointer;
+   }
+   .google-places-autocomplete__suggestion:hover {
+      background: rgba(0, 0, 0, 0.1);
+   }
+   .google-places-autocomplete__suggestion--active {
+      background: #e0e3e7;
+   }
+}
+.hern-account-addresses__address-tunnel__country-zip-code {
+   display: -webkit-flex;
+   display: -moz-box;
+   display: flex;
+   -webkit-flex-direction: column;
+   -moz-box-orient: vertical;
+   -moz-box-direction: normal;
+   flex-direction: column;
+   grid-gap: 0.75rem;
+   gap: 0.75rem;
+   @media only screen and (min-width: 768px) {
+      -webkit-flex-direction: row;
+      -moz-box-orient: horizontal;
+      -moz-box-direction: normal;
+      flex-direction: row;
+   }
+   @media only screen and (min-width: 980px) {
+      -webkit-flex-direction: column;
+      -moz-box-orient: vertical;
+      -moz-box-direction: normal;
+      flex-direction: column;
+   }
+}

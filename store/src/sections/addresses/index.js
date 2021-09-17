@@ -1,6 +1,5 @@
 import React from 'react'
 import { isEmpty } from 'lodash'
-import tw, { styled, css } from 'twin.macro'
 import { useToasts } from 'react-toast-notifications'
 import { useMutation, useLazyQuery } from '@apollo/react-hooks'
 
@@ -27,10 +26,10 @@ import {
 
 export const Addresses = () => {
    return (
-      <Main>
+      <main className="hern-account-addresses__main">
          <ProfileSidebar />
          <Content />
-      </Main>
+      </main>
    )
 }
 
@@ -121,9 +120,16 @@ const Content = () => {
    const theme = configOf('theme-color', 'Visual')
 
    return (
-      <div tw="px-3 mb-3">
-         <header tw="mt-6 mb-3 flex items-center justify-between">
-            <Title theme={theme}>Addresses</Title>
+      <div className="hern-account-addresses__content">
+         <header className="hern-account-addresses__header">
+            <h2
+               className="hern-account-addresses__header__title"
+               style={{
+                  color: `${theme.accent ? theme.accent : 'rgba(5,150,105,1)'}`,
+               }}
+            >
+               Addresses
+            </h2>
             {user?.platform_customer?.addresses.length > 0 && (
                <Button bg={theme?.accent} onClick={() => toggleTunnel(true)}>
                   Add Address
@@ -135,33 +141,32 @@ const Content = () => {
          ) : (
             <>
                {user?.platform_customer?.addresses.length > 0 ? (
-                  <AddressList>
+                  <ul className="hern-account-addresses__address-list">
                      {user?.platform_customer?.addresses.map(address => (
                         <li
                            key={address.id}
-                           tw="p-2 flex flex-col items-start border text-gray-700"
+                           className="hern-account-addresses__address-list-item"
                         >
-                           <header tw="mb-2 w-full flex justify-between items-center">
+                           <header className="hern-account-addresses__address-list-item__header">
                               {address.id === user?.subscriptionAddressId ? (
-                                 <span tw="rounded border bg-teal-200 border-teal-300 px-2 text-teal-700">
+                                 <span className="hern-account-addresses__address-list-item__btn--default">
                                     Default
                                  </span>
                               ) : (
                                  <button
-                                    tw="rounded border border-orange-300 px-2 text-teal-700 cursor-pointer hover:(bg-orange-300 text-orange-900)"
+                                    className="hern-account-addresses__address-list-item__btn--make-default"
                                     onClick={() => makeDefault(address)}
                                  >
                                     Make Default
                                  </button>
                               )}
                               <button
-                                 className="group"
                                  onClick={() => deleteAddress(address.id)}
-                                 tw="flex items-center justify-center border border-red-400 rounded h-6 w-6 hover:bg-red-400"
+                                 className="hern-account-addresses__address-list-item__btn--delete"
                               >
                                  <DeleteIcon
                                     size={16}
-                                    tw="stroke-current group-hover:text-white"
+                                    className="hern-account-addresses__address-list-item__btn--delete-icon"
                                  />
                               </button>
                            </header>
@@ -173,7 +178,7 @@ const Content = () => {
                            <span>{address?.zipcode}</span>
                         </li>
                      ))}
-                  </AddressList>
+                  </ul>
                ) : (
                   <HelperBar type="info">
                      <HelperBar.SubTitle>
@@ -285,18 +290,18 @@ export const AddressTunnel = ({ theme, tunnel, toggleTunnel }) => {
       >
          <Tunnel.Header title="Add Address">
             <Button size="sm" onClick={() => toggleTunnel(false)}>
-               <CloseIcon size={20} tw="stroke-current" />
+               <CloseIcon size={20} stroke="currentColor" />
             </Button>
          </Tunnel.Header>
          <Tunnel.Body>
-            <AddressSearch>
+            <section className="hern-account-addresses__address-search">
                <Form.Label>Search Address</Form.Label>
                {loaded && !error && (
                   <GooglePlacesAutocomplete
                      onSelect={data => formatAddress(data)}
                   />
                )}
-            </AddressSearch>
+            </section>
             {address && (
                <>
                   <Form.Field>
@@ -334,31 +339,30 @@ export const AddressTunnel = ({ theme, tunnel, toggleTunnel }) => {
                         }
                      />
                   </Form.Field>
-                  <div tw="flex flex-col md:flex-row gap-3">
-                     <Form.Field>
-                        <Form.Label>City*</Form.Label>
-                        <Form.Text
-                           type="text"
-                           placeholder="Enter city"
-                           value={address.city || ''}
-                           onChange={e =>
-                              setAddress({ ...address, city: e.target.value })
-                           }
-                        />
-                     </Form.Field>
-                     <Form.Field>
-                        <Form.Label>State</Form.Label>
-                        <FormPlaceholder>{address.state}</FormPlaceholder>
-                     </Form.Field>
-                  </div>
-                  <div tw="flex flex-col md:flex-row gap-3">
+                  <Form.Field>
+                     <Form.Label>City*</Form.Label>
+                     <Form.Text
+                        type="text"
+                        placeholder="Enter city"
+                        value={address.city || ''}
+                        onChange={e =>
+                           setAddress({ ...address, city: e.target.value })
+                        }
+                     />
+                  </Form.Field>
+                  <Form.Field>
+                     <Form.Label>State</Form.Label>
+                     <Form.Text readOnly value={address.state} />
+                  </Form.Field>
+
+                  <div className="hern-account-addresses__address-tunnel__country-zip-code">
                      <Form.Field>
                         <Form.Label>Country</Form.Label>
-                        <FormPlaceholder>{address.country}</FormPlaceholder>
+                        <Form.Text readOnly value={address.country} />
                      </Form.Field>
                      <Form.Field>
                         <Form.Label>Zipcode</Form.Label>
-                        <FormPlaceholder>{address.zipcode}</FormPlaceholder>
+                        <Form.Text readOnly value={address.zipcode} />
                      </Form.Field>
                   </div>
                   <Form.Field>
@@ -401,73 +405,3 @@ export const AddressTunnel = ({ theme, tunnel, toggleTunnel }) => {
       </Tunnel>
    )
 }
-
-const Main = styled.main`
-   display: grid;
-   grid-template-rows: 1fr;
-   min-height: calc(100vh - 64px);
-   grid-template-columns: 240px 1fr;
-   @media (max-width: 768px) {
-      display: block;
-   }
-`
-
-const Title = styled.h2(
-   ({ theme }) => css`
-      ${tw`text-green-600 text-2xl`}
-      ${theme?.accent && `color: ${theme.accent}`}
-   `
-)
-
-const AddressSearch = styled.section`
-   margin-bottom: 16px;
-   .google-places-autocomplete {
-      width: 100%;
-      position: relative;
-   }
-   .google-places-autocomplete__input {
-      ${tw`border-b h-8 w-full focus:outline-none focus:border-gray-700`}
-   }
-   .google-places-autocomplete__input:active,
-   .google-places-autocomplete__input:focus,
-   .google-places-autocomplete__input:hover {
-      outline: 0;
-      border: none;
-   }
-   .google-places-autocomplete__suggestions-container {
-      background: #fff;
-      border-radius: 0 0 5px 5px;
-      color: #000;
-      position: absolute;
-      width: 100%;
-      z-index: 2;
-      box-shadow: 0 1px 16px 0 rgba(0, 0, 0, 0.09);
-   }
-   .google-places-autocomplete__suggestion {
-      font-size: 1rem;
-      text-align: left;
-      padding: 10px;
-      cursor: pointer;
-   }
-   .google-places-autocomplete__suggestion:hover {
-      background: rgba(0, 0, 0, 0.1);
-   }
-   .google-places-autocomplete__suggestion--active {
-      background: #e0e3e7;
-   }
-`
-
-const FormPlaceholder = styled.span`
-   ${tw`py-2 px-3 border bg-gray-100`}
-`
-
-const AddressList = styled.ul`
-   ${tw`
-      grid 
-      gap-2
-      sm:grid-cols-1
-      md:grid-cols-2
-      lg:grid-cols-3
-   `}
-   grid-auto-rows: minmax(130px, auto);
-`

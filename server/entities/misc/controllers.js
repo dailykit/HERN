@@ -4,19 +4,35 @@ import { createEvent } from 'ics'
 import { writeFileSync } from 'fs'
 import path from 'path'
 import { client } from '../../lib/graphql'
+import { globalTemplate } from '../../utils'
 import get_env from '../../../get_env'
 import { GET_SES_DOMAIN } from './graphql'
-const fetch = require('node-fetch')
 const AWS = require('aws-sdk')
 const nodemailer = require('nodemailer')
 
 AWS.config.update({ region: 'us-east-2' })
 
+const transportEmail = async (transporter, message) =>
+   new Promise((resolve, reject) => {
+      transporter.sendMail(message, (err, info) => {
+         if (err) {
+            reject(err)
+         } else {
+            resolve(info)
+         }
+      })
+   })
+
 export const sendMail = async (req, res) => {
    try {
       const { emailInput, inviteInput = {} } = req.body.input
       const inputDomain = emailInput.from.split('@')[1]
-      let updatedAttachments = []
+      const {
+         includeHeader = true,
+         includeFooter = true,
+         brandId = null
+      } = emailInput
+      const updatedAttachments = []
 
       console.log('InviteINput', inviteInput)
 
@@ -30,83 +46,101 @@ export const sendMail = async (req, res) => {
             success: false,
             message: `Domain ${inputDomain} is not registered. Cannot send emails.`
          })
-      } else {
-         // create nodemailer transport
-         const transport = nodemailer.createTransport({
-            SES: new AWS.SES({ apiVersion: '2010-12-01' }),
-            dkim: {
-               domainName: dkimDetails.aws_ses[0].domain,
-               keySelector: dkimDetails.aws_ses[0].keySelector,
-               privateKey: dkimDetails.aws_ses[0].privateKey.toString('binary')
-            }
-         })
+      }
+      // create nodemailer transport
+      const transport = nodemailer.createTransport({
+         SES: new AWS.SES({ apiVersion: '2010-12-01' }),
+         dkim: {
+            domainName: dkimDetails.aws_ses[0].domain,
+            keySelector: dkimDetails.aws_ses[0].keySelector,
+            privateKey: dkimDetails.aws_ses[0].privateKey.toString('binary')
+         }
+      })
 
-         //build the invite event
-         if (Object.keys(inviteInput).length) {
-            const event = {
-               start: inviteInput.start,
-               duration: inviteInput.duration,
-               title: inviteInput.title,
-               description: inviteInput.description,
-               location: inviteInput.location,
-               url: inviteInput.url,
-               geo: inviteInput.geo,
-               categories: inviteInput.categories,
-               status: inviteInput.status,
-               busyStatus: inviteInput.busyStatus,
-               organizer: inviteInput.organizer,
-               attendees: inviteInput.attendees
+      // build the invite event
+      if (Object.keys(inviteInput).length) {
+         const event = {
+            start: inviteInput.start,
+            duration: inviteInput.duration,
+            title: inviteInput.title,
+            description: inviteInput.description,
+            location: inviteInput.location,
+            url: inviteInput.url,
+            geo: inviteInput.geo,
+            categories: inviteInput.categories,
+            status: inviteInput.status,
+            busyStatus: inviteInput.busyStatus,
+            organizer: inviteInput.organizer,
+            attendees: inviteInput.attendees
+         }
+         createEvent(event, async (error, value) => {
+            if (error) {
+               console.log(error)
+               return
             }
-            createEvent(event, async (error, value) => {
-               if (error) {
-                  console.log(error)
-                  return
-               }
-               console.log('EVENT OUTPUT', value)
-               await writeFileSync(
-                  `${__dirname}/calendarInvite/${inviteInput.title.replace(
-                     ' ',
-                     '_'
-                  )}.ics`,
-                  value
-               )
-            })
-            updatedAttachments.push({
-               filename: `${inviteInput.title.replace(' ', '_')}.ics`,
-               path: `${__dirname}/calendarInvite/${inviteInput.title.replace(
+            console.log('EVENT OUTPUT', value)
+            await writeFileSync(
+               `${__dirname}/calendarInvite/${inviteInput.title.replace(
                   ' ',
                   '_'
                )}.ics`,
-               contentType: 'text/calendar'
-            })
-         }
-
-         emailInput.attachments.forEach(attachment => {
-            updatedAttachments.push(attachment)
-         })
-
-         // build and send the message
-         const message = {
-            from: emailInput.from,
-            to: emailInput.to,
-            subject: emailInput.subject,
-            html: emailInput.html,
-            attachments: updatedAttachments
-         }
-
-         if (dkimDetails.aws_ses[0].isVerified === true) {
-            await transportEmail(transport, message)
-         } else {
-            throw new Error(
-               `Domain - ${inputDomain} - is not verified. Cannot send emails.`
+               value
             )
-         }
-
-         return res.status(200).json({
-            success: true,
-            message: 'Email sent successfully!'
+         })
+         updatedAttachments.push({
+            filename: `${inviteInput.title.replace(' ', '_')}.ics`,
+            path: `${__dirname}/calendarInvite/${inviteInput.title.replace(
+               ' ',
+               '_'
+            )}.ics`,
+            contentType: 'text/calendar'
          })
       }
+
+      emailInput.attachments.forEach(attachment => {
+         updatedAttachments.push(attachment)
+      })
+
+      let html = emailInput.html
+
+      if (includeHeader) {
+         // getting the header html and concatenating it with the email html
+         const headerHtml = await globalTemplate({
+            brandId,
+            identifier: 'globalEmailHeader' // this identifier should also come from datahub and not hardcoded
+         })
+         html = headerHtml ? headerHtml + html : html
+      }
+      if (includeFooter) {
+         // getting the footer html and concatenating it with the email html
+         const footerHtml = await globalTemplate({
+            brandId,
+            identifier: 'globalEmailFooter'
+         })
+         html = footerHtml ? html + footerHtml : html
+      }
+
+      // build and send the message
+      const message = {
+         from: emailInput.from,
+         to: emailInput.to.split(','), // so that you can send to multiple recipients just pass mutiple emails separated by comma
+         subject: emailInput.subject,
+         html,
+         attachments: updatedAttachments
+      }
+
+      if (dkimDetails.aws_ses[0].isVerified === true) {
+         await transportEmail(transport, message)
+      } else {
+         throw new Error(
+            `Domain - ${inputDomain} - is not verified. Cannot send emails.`
+         )
+      }
+
+      return res.status(200).json({
+         success: true,
+         message: 'Email sent successfully!'
+      })
    } catch (error) {
       console.log(error)
       return res.status(400).json({
@@ -114,18 +148,6 @@ export const sendMail = async (req, res) => {
          message: error.message
       })
    }
-}
-
-const transportEmail = async (transporter, message) => {
-   return new Promise((resolve, reject) => {
-      transporter.sendMail(message, (err, info) => {
-         if (err) {
-            reject(err)
-         } else {
-            resolve(info)
-         }
-      })
-   })
 }
 
 export const placeAutoComplete = async (req, res) => {

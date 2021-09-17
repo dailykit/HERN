@@ -1,17 +1,16 @@
 import React from 'react'
-import tw, { styled, css } from 'twin.macro'
 import { useConfig } from '../../lib'
 import { useUser } from '../../context'
-import { ProfileSidebar, Form } from '../../components'
+import { Spacer, ProfileSidebar, Form } from '../../components'
 import { formatCurrency } from '../../utils'
 import * as moment from 'moment'
 
 export const Wallet = () => {
    return (
-      <Main>
+      <main className="hern-wallet__main">
          <ProfileSidebar />
          <Content />
-      </Main>
+      </main>
    )
 }
 
@@ -25,17 +24,26 @@ const Content = () => {
       'rewards'
    )
    return (
-      <section tw="px-6 w-full md:w-6/12">
-         <header tw="mt-6 mb-3 flex items-center justify-between">
-            <Title theme={theme}>{label}</Title>
+      <section className="hern-wallet__content">
+         <header className="hern-wallet__header">
+            <h2
+               style={{
+                  color: `${
+                     theme?.accent ? theme?.accent : 'rgba(5,150,105,1)'
+                  }`,
+               }}
+               className="hern-wallet__header__title"
+            >
+               {label}
+            </h2>
          </header>
          {isAvailable && !!user.wallet && (
             <>
                <Form.Label>Balance</Form.Label>
                {formatCurrency(user.wallet.amount)}
-               <div tw="h-4" />
+               <Spacer />
                <Form.Label>Transactions</Form.Label>
-               <Styles.Table>
+               <table className="hern-wallet__table">
                   <thead>
                      <tr>
                         <th>ID</th>
@@ -47,66 +55,29 @@ const Content = () => {
                   <tbody>
                      {user.wallet.walletTransactions.map(txn => (
                         <tr key={txn.id}>
-                           <Styles.Cell>{txn.id}</Styles.Cell>
-                           <Styles.Cell title={txn.type}>
+                           <td className="hern-wallet__table__cell">
+                              {txn.id}
+                           </td>
+                           <td
+                              className="hern-wallet__table__cell"
+                              title={txn.type}
+                           >
                               {txn.type}
-                           </Styles.Cell>
-                           <Styles.Cell>
+                           </td>
+                           <td className="hern-wallet__table__cell">
                               {formatCurrency(txn.amount)}
-                           </Styles.Cell>
-                           <Styles.Cell>
+                           </td>
+                           <td className="hern-wallet__table__cell">
                               {moment(txn.created_at).format(
                                  'MMMM Do YYYY, h:mm:ss a'
                               )}
-                           </Styles.Cell>
+                           </td>
                         </tr>
                      ))}
                   </tbody>
-               </Styles.Table>
+               </table>
             </>
          )}
       </section>
    )
-}
-
-const Title = styled.h2(
-   ({ theme }) => css`
-      ${tw`text-green-600 text-2xl`}
-      ${theme?.accent && `color: ${theme.accent}`}
-   `
-)
-
-const Main = styled.main`
-   display: grid;
-   grid-template-rows: 1fr;
-   min-height: calc(100vh - 64px);
-   grid-template-columns: 240px 1fr;
-   position: relative;
-   @media (max-width: 768px) {
-      display: block;
-   }
-`
-
-const Styles = {
-   Table: styled.table`
-      ${tw`my-2 w-full table-auto`}
-      th {
-         text-align: left;
-      }
-      tr:nth-of-type(even) {
-         ${tw`bg-gray-100`}
-      }
-      tr {
-         td:last-child {
-            text-align: right;
-         }
-      }
-   `,
-   Cell: styled.td`
-      ${tw`border px-2 py-1`}
-      min-width: 100px;
-   `,
-   Comment: styled.p`
-      ${tw`text-sm text-gray-600`}
-   `,
 }

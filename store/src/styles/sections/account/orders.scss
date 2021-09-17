@@ -1,0 +1,182 @@
+.hern-orders__main {
+   display: grid;
+   grid-template-rows: 1fr;
+   grid-template-columns: 240px 1fr;
+   @media (max-width: 768px) {
+      display: block;
+   }
+}
+.hern-orders__order-history {
+   display: grid;
+   background: #fff;
+   grid-template-columns: 280px 1fr;
+   > aside {
+      height: calc(100vh - 64px);
+   }
+   @media (max-width: 768px) {
+      display: block;
+      > aside {
+         height: max-content;
+      }
+   }
+}
+.hern-orders__list__skeleton {
+   aside {
+      border-right-width: 1px;
+      overflow-y: auto;
+   }
+   h2 {
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+      padding-top: 0.75rem;
+      padding-bottom: 0.25rem;
+      margin-bottom: 0.5rem;
+      color: rgba(5, 150, 105, 1);
+      font-size: 1.5rem;
+      line-height: 2rem;
+   }
+   ul {
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+      li:nth-of-type(1) {
+         background-color: rgba(209, 213, 219, 1);
+      }
+      li:nth-of-type(2) {
+         background-color: rgba(229, 231, 235, 1);
+      }
+      li:nth-of-type(3) {
+         background-color: rgba(243, 244, 246, 1);
+      }
+
+      li {
+         padding-left: 0.5rem;
+         padding-right: 0.5rem;
+         height: 2.5rem;
+         border-radius: 0.25rem;
+         margin: 0.5rem 0;
+      }
+   }
+}
+
+.hern-orders__order-listing {
+   border-right-width: 1px;
+   overflow-y: auto;
+}
+.hern-orders__order-listing__heading {
+   padding-left: 0.75rem;
+   padding-right: 0.75rem;
+   padding-top: 0.75rem;
+   padding-bottom: 0.25rem;
+   margin-bottom: 0.5rem;
+   color: rgba(5, 150, 105, 1);
+   font-size: 1.5rem;
+   line-height: 2rem;
+}
+.hern-orders__order-listing__list {
+   padding-left: 0.5rem;
+   padding-right: 0.5rem;
+}
+.hern-orders__order-listing__list-item {
+   margin: 0.5rem 0;
+   cursor: pointer;
+   padding-left: 0.5rem;
+   padding-right: 0.5rem;
+   padding-top: 0.5rem;
+   padding-bottom: 0.5rem;
+   border-radius: 0.25rem;
+   &:hover {
+      color: rgba(255, 255, 255, 1);
+      background-color: rgba(52, 211, 153, 1);
+   }
+}
+.hern-orders__order-listing__list-item--active {
+   color: rgba(255, 255, 255, 1);
+   background-color: rgba(5, 150, 105, 1);
+}
+.hern-orders__order-listing__view-more {
+   float: right;
+   font-size: 0.875rem;
+   line-height: 1.25rem;
+   color: rgba(37, 99, 235, 1);
+   display: block;
+   @media (min-width: 768px) {
+      display: none;
+   }
+}
+.hern-orders__order-details__skeleton {
+   margin: 0 0.5rem;
+   h2 {
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+      padding-top: 0.75rem;
+      padding-bottom: 0.25rem;
+      margin-bottom: 0.5rem;
+      color: rgba(5, 150, 105, 1);
+      font-size: 1.5rem;
+      line-height: 2rem;
+   }
+}
+.hern-orders__order-details {
+   margin-left: 0.75rem;
+   margin-right: 0.75rem;
+}
+.hern-orders__order-details__header {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+}
+.hern-orders__order-details__header__title {
+   padding: 0.75rem 0.75rem 0.25rem;
+   margin-bottom: 0.5rem;
+   font-size: 1.5rem;
+   line-height: 2rem;
+}
+.hern-orders__order-details__status {
+   color: #fff;
+   padding: 0.25rem 0.5rem;
+}
+.hern-orders__order-details__payment__heading {
+   font-size: 1.125rem;
+   line-height: 1.75rem;
+   margin: 1rem 0;
+   padding-bottom: 0.25rem;
+   border-bottom-width: 1px;
+   color: rgba(55, 65, 81, 1);
+}
+.hern-orders__order-details__payment__complete-payment {
+   border-radius: 0.25rem;
+   color: #fff;
+   margin-bottom: 0.75rem;
+   letter-spacing: 0.05em;
+   text-transform: uppercase;
+   background-color: rgba(239, 68, 68, 1);
+   padding: 0.5rem 1.5rem;
+}
+.hern-orders__order-details__payment-method {
+   margin-bottom: 0.75rem;
+   padding: 0.5rem;
+   width: 100%;
+   border-width: 1px;
+}
+.hern-orders__order-details__payment__card {
+   border-radius: 0.25rem;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   > div {
+      display: flex;
+      align-items: center;
+      > span {
+         font-weight: bold;
+      }
+   }
+   > span {
+      span {
+         color: rgba(107, 114, 128, 1);
+      }
+   }
+}
+.hern-orders__order-details__payment__card__name {
+   font-size: 1.25rem;
+   line-height: 1.75rem;
+}
