@@ -64,7 +64,7 @@ const MenuProductOccurenceTable = () => {
                   each => {
                      each.fulfillmentDate = moment(
                         each.subscriptionOccurence.fulfillmentDate
-                     ).format('DD MM YYYY')
+                     ).format('DD-MM-YYYY')
                      each.servingSize =
                         each.subscriptionOccurence.subscriptionServing.servingSize
                      each.title =
@@ -112,6 +112,12 @@ const MenuProductOccurenceTable = () => {
       {
          title: 'Product Category',
          field: 'productCategory',
+         headerFilter: true,
+         headerTooltip: true,
+      },
+      {
+         title: 'Fulfillment Date',
+         field: 'fulfillmentDate',
          headerFilter: true,
          headerTooltip: true,
       },
