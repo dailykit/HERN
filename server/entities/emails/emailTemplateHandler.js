@@ -8,7 +8,10 @@ export const emailTemplateHandler = async (req, res) => {
          const result = await emailTrigger({
             title: parsedPayload.emailTriggerTitle,
             variables: parsedPayload,
-            to: parsedPayload.email
+            to: parsedPayload.email,
+            brandId: parsedPayload.brandId,
+            includeHeader: parsedPayload.includeHeader,
+            includeFooter: parsedPayload.includeFooter
          })
          res.status(result.success ? 200 : 400).json(result)
       }
