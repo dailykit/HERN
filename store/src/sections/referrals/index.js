@@ -1,20 +1,19 @@
 import React from 'react'
-import tw, { styled, css } from 'twin.macro'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { useToasts } from 'react-toast-notifications'
 import { useQuery } from '@apollo/react-hooks'
 
 import { useConfig } from '../../lib'
 import { useUser } from '../../context'
-import { ProfileSidebar, Form, Button, Loader } from '../../components'
+import { Spacer, ProfileSidebar, Form, Button, Loader } from '../../components'
 import { CUSTOMERS_REFERRED } from '../../graphql'
 
 export const Referrals = () => {
    return (
-      <Main>
+      <main className="hern-referrals__main">
          <ProfileSidebar />
          <Content />
-      </Main>
+      </main>
    )
 }
 
@@ -40,14 +39,25 @@ const Content = () => {
 
    if (loading) return <Loader inline />
    return (
-      <section tw="px-6 w-full md:w-5/12">
-         <header tw="mt-6 mb-3 flex items-center justify-between">
-            <Title theme={theme}>Referrals</Title>
+      <section className="hern-referrals__content">
+         <header className="hern-referrals__header">
+            <h2
+               style={{
+                  color: `${
+                     theme?.accent ? theme?.accent : 'rgba(5,150,105,1)'
+                  }`,
+               }}
+               className="hern-referrals__header__title"
+            >
+               Referrals
+            </h2>
          </header>
          {referralsAllowed && !!user.customerReferral && (
             <>
                <Form.Label>Referral Code</Form.Label>
-               <Flex>{user.customerReferral.referralCode}</Flex>
+               <div className="hern-referrals__customer-referral-code">
+                  {user.customerReferral.referralCode}
+               </div>
                <CopyToClipboard
                   text={`${window.location.origin}/?invite-code=${user.customerReferral.referralCode}`}
                   onCopy={() =>
@@ -58,11 +68,11 @@ const Content = () => {
                >
                   <Button size="sm"> Copy invite link </Button>
                </CopyToClipboard>
-               <div tw="h-4" />
+               <Spacer />
                <Form.Label>
                   Customers Referred ({customerReferrals.length}){' '}
                </Form.Label>
-               <Styles.Table>
+               <table className="hern-referrals__table">
                   <thead>
                      <tr>
                         <th>First Name</th>
@@ -72,62 +82,18 @@ const Content = () => {
                   <tbody>
                      {customerReferrals.map(ref => (
                         <tr key={ref.id}>
-                           <Styles.Cell>
+                           <td className="hern-referrals__table__cell">
                               {ref.customer.platform_customer.firstName}
-                           </Styles.Cell>
-                           <Styles.Cell>
+                           </td>
+                           <td className="hern-referrals__table__cell">
                               {ref.customer.platform_customer.lastName}
-                           </Styles.Cell>
+                           </td>
                         </tr>
                      ))}
                   </tbody>
-               </Styles.Table>
+               </table>
             </>
          )}
       </section>
    )
-}
-
-const Title = styled.h2(
-   ({ theme }) => css`
-      ${tw`text-green-600 text-2xl`}
-      ${theme?.accent && `color: ${theme.accent}`}
-   `
-)
-
-const Main = styled.main`
-   display: grid;
-   grid-template-rows: 1fr;
-   min-height: calc(100vh - 64px);
-   grid-template-columns: 240px 1fr;
-   position: relative;
-   @media (max-width: 768px) {
-      display: block;
-   }
-`
-
-const Flex = styled.div`
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
-   margin-bottom: 10px;
-`
-
-const Styles = {
-   Table: styled.table`
-      ${tw`my-2 w-full table-auto`}
-      th {
-         text-align: left;
-      }
-      tr:nth-of-type(even) {
-         ${tw`bg-gray-100`}
-      }
-   `,
-   Cell: styled.td`
-      ${tw`border px-2 py-1`}
-      min-width: 100px;
-   `,
-   Comment: styled.p`
-      ${tw`text-sm text-gray-600`}
-   `,
 }

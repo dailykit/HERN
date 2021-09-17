@@ -9,7 +9,6 @@ import {
    CardElement,
 } from '@stripe/react-stripe-js'
 import { isEmpty } from 'lodash'
-import tw, { styled, css } from 'twin.macro'
 import { useToasts } from 'react-toast-notifications'
 
 import {
@@ -31,10 +30,10 @@ import {
 
 export const ManageCards = () => {
    return (
-      <Main>
+      <main className="hern-cards__main">
          <ProfileSidebar />
          <Content />
-      </Main>
+      </main>
    )
 }
 
@@ -103,9 +102,18 @@ const Content = () => {
    const theme = configOf('theme-color', 'Visual')
 
    return (
-      <div tw="px-3">
-         <header tw="mt-6 mb-3 flex items-center justify-between">
-            <Title theme={theme}>Cards</Title>
+      <div className="hern-cards__content">
+         <header className="hern-cards__header">
+            <h2
+               className="hern-cards__header__title"
+               style={{
+                  color: `${
+                     theme?.accent ? theme?.accent : 'rgba(5,150,105,1)'
+                  }`,
+               }}
+            >
+               Cards
+            </h2>
             {user?.platform_customer?.paymentMethods.length > 0 && (
                <Button bg={theme?.accent} onClick={() => toggleTunnel(true)}>
                   Add Card
@@ -117,22 +125,22 @@ const Content = () => {
          ) : (
             <>
                {user?.platform_customer?.paymentMethods.length > 0 ? (
-                  <PaymentMethods>
+                  <ul className="hern-cards__card-list">
                      {user?.platform_customer?.paymentMethods.map(method => (
                         <li
                            key={method.paymentMethodId}
-                           tw="flex border text-gray-700"
+                           className="hern-cards__card-list-item"
                         >
-                           <section tw="p-2 w-full">
-                              <header tw="mb-2 w-full flex justify-between items-center">
+                           <section className="hern-cards__card">
+                              <header className="hern-cards__card__header">
                                  {user.subscriptionPaymentMethodId ===
                                  method.paymentMethodId ? (
-                                    <span tw="rounded border bg-teal-200 border-teal-300 px-2 text-teal-700">
+                                    <span className="hern-cards__card__default-tag">
                                        Default
                                     </span>
                                  ) : (
                                     <button
-                                       tw="mb-2 rounded border border-orange-300 px-2 text-teal-700 cursor-pointer hover:(bg-orange-300 text-orange-900)"
+                                       className="hern-cards__card__makedefault-btn"
                                        onClick={() => makeDefault(method)}
                                     >
                                        Make Default
@@ -140,41 +148,38 @@ const Content = () => {
                                  )}
                                  <button
                                     className="group"
+                                    className="hern-cards__card__delete-btn"
                                     onClick={() =>
                                        deletePaymentMethod(
                                           method.paymentMethodId
                                        )
                                     }
-                                    tw="flex items-center justify-center border border-red-400 rounded h-6 w-6 hover:bg-red-400"
                                  >
-                                    <DeleteIcon
-                                       size={16}
-                                       tw="stroke-current group-hover:text-white"
-                                    />
+                                    <DeleteIcon size={16} />
                                  </button>
                               </header>
-                              <div tw="flex items-center justify-between">
-                                 <span tw="text-xl my-2">
+                              <div className="hern-cards__card__body">
+                                 <span className="hern-cards__card__name">
                                     {method.cardHolderName}
                                  </span>
-                                 <div tw="flex items-center">
-                                    <span tw="font-medium">
+                                 <div className="hern-cards__card__exp">
+                                    <span className="hern-cards__card__exp-month">
                                        {method.expMonth}
                                     </span>
                                     &nbsp;/&nbsp;
-                                    <span tw="font-medium">
+                                    <span className="hern-cards__card__exp-year">
                                        {method.expYear}
                                     </span>
                                  </div>
                               </div>
-                              <span>
-                                 <span tw="text-gray-500">Last 4:</span>{' '}
+                              <span className="hern-cards__card__last-4">
+                                 <span>Last 4:</span>
                                  {method.last4}
                               </span>
                            </section>
                         </li>
                      ))}
-                  </PaymentMethods>
+                  </ul>
                ) : (
                   <HelperBar type="info">
                      <HelperBar.SubTitle>
@@ -214,9 +219,9 @@ export const PaymentTunnel = ({ tunnel, toggleTunnel }) => {
          <Tunnel.Header title="Add Payment Method">
             <button
                onClick={() => toggleTunnel(false)}
-               css={tw`border w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100`}
+               className="hern-cards__payment-tunnel__close-btn"
             >
-               <CloseIcon size={20} tw="stroke-current text-green-800" />
+               <CloseIcon size={20} />
             </button>
          </Tunnel.Header>
          <Tunnel.Body>
@@ -351,31 +356,36 @@ const CardSetupForm = ({ intent, handleResult }) => {
    }
 
    return (
-      <form onSubmit={handleSubmit}>
-         <div tw="bg-gray-900 p-3 rounded-lg">
-            <section className="mb-3">
-               <label htmlFor="name" tw="block text-sm text-gray-500">
+      <form onSubmit={handleSubmit} className="hern-cards__setup-form">
+         <div className="hern-cards__setup-form__body">
+            <section className="hern-cards__setup-form__card-holder-name">
+               <label
+                  className="hern-cards__setup-form__card-holder-name__label"
+                  htmlFor="name"
+               >
                   Card Holder Name
                </label>
                <input
+                  className="hern-cards__setup-form__card-holder-name__input"
                   type="text"
                   name="name"
                   value={name}
                   ref={inputRef}
                   placeholder="Enter card holder's name"
                   onChange={e => setName(e.target.value)}
-                  tw="w-full bg-transparent border-b border-gray-800 h-10 text-white focus:outline-none"
                />
             </section>
             <CardSection setError={setError} />
          </div>
          <button
+            className="hern-cards__setup-form__submit-btn"
             disabled={!stripe || submitting}
-            tw="mt-3 w-full h-10 bg-blue-600 text-sm py-1 text-white uppercase font-medium tracking-wider rounded"
          >
             {submitting ? 'Saving...' : 'Save'}
          </button>
-         {error && <span tw="block text-red-500 mt-2">{error}</span>}
+         {error && (
+            <span className="hern-cards__setup-form__error">{error}</span>
+         )}
       </form>
    )
 }
@@ -397,13 +407,15 @@ const CARD_ELEMENT_OPTIONS = {
 }
 
 const CardSection = ({ setError }) => (
-   <CardSectionWrapper>
-      <span tw="block text-sm text-gray-500">Card Details</span>
+   <div className="hern-cards__payment-tunnel__card-section">
+      <h6 className="hern-cards__payment-tunnel__card-section__heading">
+         Card Details
+      </h6>
       <CardElement
          options={CARD_ELEMENT_OPTIONS}
          onChange={({ error }) => setError(error?.message || '')}
       />
-   </CardSectionWrapper>
+   </div>
 )
 
 const createSetupIntent = async customer => {
@@ -416,50 +428,3 @@ const createSetupIntent = async customer => {
       return error
    }
 }
-
-const Main = styled.main`
-   display: grid;
-   grid-template-rows: 1fr;
-   min-height: calc(100vh - 64px);
-   grid-template-columns: 240px 1fr;
-   @media (max-width: 768px) {
-      display: block;
-   }
-`
-
-const Title = styled.h2(
-   ({ theme }) => css`
-      ${tw`text-green-600 text-2xl`}
-      ${theme?.accent && `color: ${theme.accent}`}
-   `
-)
-
-const PaymentMethods = styled.ul`
-   ${tw`
-   grid
-   gap-2
-   sm:grid-cols-1
-   md:grid-cols-2
-   lg:grid-cols-3
-`}
-   grid-auto-rows: minmax(120px, auto);
-`
-
-const CardSectionWrapper = styled.div`
-   .StripeElement {
-      height: 40px;
-      width: 100%;
-      color: #fff;
-      padding: 10px 0;
-      background-color: #1a202c;
-      border-bottom: 1px solid #2d3748;
-   }
-
-   .StripeElement--invalid {
-      border-color: #fa755a;
-   }
-
-   .StripeElement--webkit-autofill {
-      background-color: #fefde5 !important;
-   }
-`

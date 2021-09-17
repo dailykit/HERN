@@ -77,6 +77,9 @@ const Referrals = dynamic(() =>
 const Inventory = dynamic(() =>
    import('../sections/inventory').then(promise => promise.Inventory)
 )
+const PlacingOrder = dynamic(() =>
+   import('../sections/placing-order').then(promise => promise.PlacingOrder)
+)
 
 export const renderComponentByName = (componentName, options) => {
    const getProps = component => {
@@ -212,6 +215,13 @@ export const renderComponentByName = (componentName, options) => {
       */
       case 'Inventory':
          return <Inventory />
+
+      /*ROUTES : 
+      [brand]/get-started/placing-order
+      [brand]/placing-order
+      */
+      case 'PlacingOrder':
+         return <PlacingOrder />
 
       /*ROUTES : 
       [brand]/get-started/register
