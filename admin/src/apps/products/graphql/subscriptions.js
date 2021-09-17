@@ -19,26 +19,29 @@ export const CUISINES_NAMES = gql`
 `
 export const S_INGREDIENTS = gql`
    subscription Ingredients {
-  ingredients(order_by: {createdAt: desc}, where: {isArchived: {_eq: false}}) {
-    id
-    name
-    category
-    image
-    isValid
-    isPublished
-    createdAt
-    ingredientProcessings_aggregate {
-      aggregate {
-        count
+      ingredients(
+         order_by: { createdAt: desc }
+         where: { isArchived: { _eq: false } }
+      ) {
+         id
+         name
+         category
+         image
+         isValid
+         isPublished
+         createdAt
+         ingredientProcessings_aggregate {
+            aggregate {
+               count
+            }
+         }
+         ingredientSachetViews_aggregate {
+            aggregate {
+               count
+            }
+         }
       }
-    }
-    ingredientSachetViews_aggregate {
-      aggregate {
-        count
-      }
-    }
-  }
-}
+   }
 `
 
 export const S_PROCESSINGS = gql`
@@ -508,6 +511,30 @@ export const PRODUCT_OPTIONS = gql`
             name
          }
          type
+      }
+   }
+`
+export const PRODUCT_EARNING_COUNT = gql`
+   subscription PRODUCT_EARNING_COUNT(
+      $earningAndCountProductArgs: insights_getEarningByProducts_args!
+   ) {
+      insights_analytics {
+         getEarningsByProducts(args: $earningAndCountProductArgs)
+      }
+   }
+`
+export const ORDERS_LIST_BY_PRODUCT = gql`
+   subscription ORDERS_LIST_BY_PRODUCT($where: order_order_bool_exp!) {
+      orders(
+         where: $where
+         order_by: { created_at: desc_nulls_last }
+         limit: 10
+      ) {
+         created_at
+         customer {
+            email
+         }
+         id
       }
    }
 `

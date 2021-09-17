@@ -1,0 +1,6 @@
+.product-insight-table .tabulator-tableHolder .click-col {
+   cursor: pointer !important;
+}
+.product-insight-table .tabulator-tableHolder .click-col:hover {
+   color: #367bf5;
+}
