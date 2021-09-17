@@ -20,6 +20,7 @@ export const StyledTabs = styled.ul(
       width: ${`calc(100vw - ${width})`};
       display: flex;
       align-items: center;
+      margin: 0;
    `
 )
 
