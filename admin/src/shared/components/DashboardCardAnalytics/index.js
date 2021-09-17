@@ -62,11 +62,7 @@ const DashboardCards = () => {
       <CardContainer bgColor="#F9F9F9" borderColor="#efefef">
          <CardContainer.Title>Here's your progress so far</CardContainer.Title>
          <Cards>
-            <Card
-               bgColor="#f9ebff"
-               borderColor="#9e10e0"
-               onClick={() => console.log('First')}
-            >
+            <Card>
                <Card.AdditionalBox justifyContent="space-between">
                   <EarningIcon />
                </Card.AdditionalBox>
@@ -75,21 +71,21 @@ const DashboardCards = () => {
                </Card.Value>
                <Card.Text>Total Revenue Generated So Far</Card.Text>
             </Card>
-            <Card bgColor="#FFF8EE" borderColor="#E08D10">
+            <Card>
                <Card.AdditionalBox justifyContent="space-between">
                   <OrderIcon />
                </Card.AdditionalBox>
                <Card.Value>{analyticsData.totalOrders}</Card.Value>
                <Card.Text>Total No. Of Orders So Far</Card.Text>
             </Card>
-            <Card bgColor="#F8ECEA" borderColor="#643A22">
+            <Card>
                <Card.AdditionalBox justifyContent="space-between">
                   <CustomerIcon />
                </Card.AdditionalBox>
                <Card.Value>{analyticsData.totalCustomers}</Card.Value>
                <Card.Text>Total No. Of Customer</Card.Text>
             </Card>
-            <Card bgColor="#EDFCD8" borderColor="#8AC03B">
+            <Card>
                <Card.AdditionalBox justifyContent="space-between">
                   <ProductIcon />
                   <Text as="text2">
