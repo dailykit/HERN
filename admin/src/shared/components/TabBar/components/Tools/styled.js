@@ -60,3 +60,8 @@ export const ToolbarMenu = styled(IconButton)`
       display: block;
    }
 `
+export const StyledTools = styled.div`
+   @media (min-width: 768px) {
+      width: ${isTabHidden => (isTabHidden ? '238px' : 'auto')};
+   }
+`
