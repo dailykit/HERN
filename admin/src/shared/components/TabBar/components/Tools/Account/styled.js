@@ -96,7 +96,6 @@ export const Styled = {
       display: flex;
       align-items: center;
       padding: 12px;
-      border-top: 1px solid #f2f3f3;
       cursor: pointer;
       > :first-child {
          padding-right: 24px;
@@ -146,5 +145,12 @@ export const Styled = {
       border: 1px solid #f2f3f3;
       backdrop-filter: blur(44.37px);
       border-radius: 10px;
+   `,
+   TabToggle: styled.div`
+      color: #919699 !important;
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      width: 100%;
    `,
 }

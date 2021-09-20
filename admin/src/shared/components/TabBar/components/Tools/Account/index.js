@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSubscription } from '@apollo/react-hooks'
-import { Avatar, IconButton, Spinner } from '@dailykit/ui'
+import { Avatar, Form, IconButton, Spinner } from '@dailykit/ui'
 import {
    ChevronRight,
    EditIcon,
@@ -14,7 +14,14 @@ import { Styled } from './styled'
 import { USERS } from './userQuery'
 import LanguageSelect from './LanguageSelect'
 
-const Account = ({ setIsMenuOpen, setOpen, lang, setLang }) => {
+const Account = ({
+   setIsMenuOpen,
+   setOpen,
+   lang,
+   setLang,
+   isTabHidden,
+   setIsTabHidden,
+}) => {
    const [isVisible, setIsVisible] = React.useState(true)
    const { user, logout } = useAuth()
    const { addTab } = useTabs()
@@ -122,6 +129,15 @@ const Account = ({ setIsMenuOpen, setOpen, lang, setLang }) => {
                            <ChevronRight color="#64696E" size="20px" />
                         </span>
                      </Styled.Language>
+                     <Styled.TabToggle>
+                        <Form.Toggle
+                           name="hide-tabs"
+                           value={isTabHidden}
+                           onChange={() => setIsTabHidden(!isTabHidden)}
+                        >
+                           Hide tabs
+                        </Form.Toggle>
+                     </Styled.TabToggle>
                      <Styled.Logout>
                         <button onClick={logout}>
                            <LogoutIcon />

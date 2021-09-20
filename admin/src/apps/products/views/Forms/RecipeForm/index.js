@@ -52,7 +52,7 @@ import { ResponsiveFlex, StyledFlex } from '../RecipeForm/styled'
 import { CloneIcon, PlusIcon } from '../../../../../shared/assets/icons'
 import { useDnd } from '../../../../../shared/components/DragNDrop/useDnd'
 import { CreateProductTunnel, LinkedProductsTunnel } from './tunnels'
-
+import RecipeInsights from './components/Insight'
 const RecipeForm = () => {
    // Context
    const { setTabTitle, tab, addTab } = useTabs()
@@ -313,59 +313,63 @@ const RecipeForm = () => {
                margin="0 auto"
                style={{ borderBottom: '1px solid #f3f3f3' }}
             >
-               <Flex 
+               <Flex
                   container
-                  as='header'
-                  justifyContent='space-between'
-                  width='100%'
-                  style={{marginLeft:'4px'}}
-               >  
-               <Form.Group >
-                  <Form.Text
-                     id="title"
-                     name="title"
-                     value={title.value}
-                     variant="revamp"
-                     placeholder="Enter recipe title"
-                     onChange={e =>
-                        setTitle({ ...title, value: e.target.value })
-                     }
-                     onBlur={updateName}
-                     hasError={!title.meta.isValid && title.meta.isTouched}
-                     style={{width:'150%', textAlign:'left'}}
-                  />
-                  {title.meta.isTouched &&
-                     !title.meta.isValid &&
-                     title.meta.errors.map((error, index) => (
-                        <Form.Error key={index}>{error}</Form.Error>
-                     ))}
-               </Form.Group>            
+                  as="header"
+                  justifyContent="space-between"
+                  width="100%"
+                  style={{ marginLeft: '4px' }}
+               >
+                  <Form.Group>
+                     <Form.Text
+                        id="title"
+                        name="title"
+                        value={title.value}
+                        variant="revamp"
+                        placeholder="Enter recipe title"
+                        onChange={e =>
+                           setTitle({ ...title, value: e.target.value })
+                        }
+                        onBlur={updateName}
+                        hasError={!title.meta.isValid && title.meta.isTouched}
+                        style={{ width: '150%', textAlign: 'left' }}
+                     />
+                     {title.meta.isTouched &&
+                        !title.meta.isValid &&
+                        title.meta.errors.map((error, index) => (
+                           <Form.Error key={index}>{error}</Form.Error>
+                        ))}
+                  </Form.Group>
                </Flex>
-               </ResponsiveFlex>
-               <ResponsiveFlex
+            </ResponsiveFlex>
+            <ResponsiveFlex
+               container
+               alignItems="center"
+               padding="16px 0"
+               maxWidth="1280px"
+               width="calc(100vw - 64px)"
+               margin="0 auto"
+               style={{ borderBottom: '1px solid #f3f3f3' }}
+            >
+               <Flex
                   container
                   alignItems="center"
-                  padding="16px 0"
-                  maxWidth="1280px"
-                  width="calc(100vw - 64px)"
-                  margin="0 auto"
-                  style={{ borderBottom: '1px solid #f3f3f3' }}
-               >
-               <Flex 
-                  container 
-                  alignItems="center" 
                   height="100%"
-                  style={{marginLeft:'4px'}} 
-                  >
+                  style={{ marginLeft: '4px' }}
+               >
                   {state.isValid?.status ? (
                      <>
                         <TickIcon color="#00ff00" stroke={2} />
-                        <Text as="p" style={{marginBottom:'0px '}}>All good!</Text>
+                        <Text as="p" style={{ marginBottom: '0px ' }}>
+                           All good!
+                        </Text>
                      </>
                   ) : (
                      <>
                         <CloseIcon color="#ff0000" />
-                        <Text as="p" style={{marginBottom:'0px '}}>{state.isValid?.error}</Text>
+                        <Text as="p" style={{ marginBottom: '0px ' }}>
+                           {state.isValid?.error}
+                        </Text>
                      </>
                   )}
                   <ComboButton
@@ -401,7 +405,11 @@ const RecipeForm = () => {
                      onChange={toggleSubRecipe}
                   >
                      {' '}
-                     <Flex container alignItems="center" style={{position:'relative' ,right:'-22px'}}>
+                     <Flex
+                        container
+                        alignItems="center"
+                        style={{ position: 'relative', right: '-22px' }}
+                     >
                         Sub Recipe
                         <Tooltip identifier="sub_publish" />
                      </Flex>
@@ -412,14 +420,17 @@ const RecipeForm = () => {
                      value={state.isPublished}
                      onChange={togglePublish}
                   >
-                     <Flex container alignItems="center" style={{position:'relative' ,right:'-22px'}}>
+                     <Flex
+                        container
+                        alignItems="center"
+                        style={{ position: 'relative', right: '-22px' }}
+                     >
                         Published
                         <Tooltip identifier="recipe_publish" />
                      </Flex>
                   </Form.Toggle>
                </Flex>
-            
-               </ResponsiveFlex>
+            </ResponsiveFlex>
             <Flex width="calc(100vw - 64px)" margin="0 auto" padding="32px 0">
                <HorizontalTabs>
                   <HorizontalTabList>
@@ -430,8 +441,8 @@ const RecipeForm = () => {
                   </HorizontalTabList>
                   <HorizontalTabPanels>
                      <HorizontalTabPanel>
-                        <Flex maxWidth="1280px" margin="0 auto" >
-                           <StyledFlex container >
+                        <Flex maxWidth="1280px" margin="0 auto">
+                           <StyledFlex container>
                               <Information state={state} />
                               <Spacer xAxis size="32px" />
                               <Photo state={state} />
@@ -448,14 +459,15 @@ const RecipeForm = () => {
                         <Banner id="products-app-single-ingredient-cooking-steps-tab-bottom" />
                      </HorizontalTabPanel>
                      <HorizontalTabPanel>
-                        <InsightDashboard
+                        <RecipeInsights recipeId={recipeId} />
+                        {/* <InsightDashboard
                            appTitle="Products App"
                            moduleTitle="Recipe Page"
                            variables={{
                               recipeId,
                            }}
                            showInTunnel={false}
-                        />
+                        /> */}
                      </HorizontalTabPanel>
                   </HorizontalTabPanels>
                </HorizontalTabs>

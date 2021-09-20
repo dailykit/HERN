@@ -5,6 +5,7 @@ const Styles = {
    Header: styled.header`
       display: flex;
       width: 100vw;
+      ${({ isTabHidden }) => isTabHidden && 'justify-content: space-between'}
    `,
    Logo: styled(IconButton)`
       position: relative;

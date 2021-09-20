@@ -64,7 +64,7 @@ const MenuProductOccurenceTable = () => {
                   each => {
                      each.fulfillmentDate = moment(
                         each.subscriptionOccurence.fulfillmentDate
-                     ).format('DD MM YYYY')
+                     ).format('DD-MM-YYYY')
                      each.servingSize =
                         each.subscriptionOccurence.subscriptionServing.servingSize
                      each.title =
@@ -110,8 +110,32 @@ const MenuProductOccurenceTable = () => {
          headerTooltip: true,
       },
       {
+         title: 'Plan Title',
+         field: 'title',
+         headerFilter: true,
+         headerTooltip: true,
+      },
+      {
+         title: 'Serving Size',
+         field: 'servingSize',
+         headerFilter: true,
+         headerTooltip: true,
+      },
+      {
+         title: 'Item Count',
+         field: 'ItemCount',
+         headerFilter: true,
+         headerTooltip: true,
+      },
+      {
          title: 'Product Category',
          field: 'productCategory',
+         headerFilter: true,
+         headerTooltip: true,
+      },
+      {
+         title: 'Fulfillment Date',
+         field: 'fulfillmentDate',
          headerFilter: true,
          headerTooltip: true,
       },
@@ -210,6 +234,24 @@ const MenuProductSubscriptionTable = () => {
       {
          title: 'Add On Label',
          field: 'addOnLabel',
+         headerFilter: true,
+         headerTooltip: true,
+      },
+      {
+         title: 'Plan Title',
+         field: 'title',
+         headerFilter: true,
+         headerTooltip: true,
+      },
+      {
+         title: 'Serving Size',
+         field: 'servingSize',
+         headerFilter: true,
+         headerTooltip: true,
+      },
+      {
+         title: 'Item Count',
+         field: 'ItemCount',
          headerFilter: true,
          headerTooltip: true,
       },

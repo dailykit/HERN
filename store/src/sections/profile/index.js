@@ -2,8 +2,7 @@ import { useMutation, useQuery } from '@apollo/react-hooks'
 import { useRouter } from 'next/router'
 import React from 'react'
 import { useToasts } from 'react-toast-notifications'
-import tw, { css, styled } from 'twin.macro'
-import { Button, Form, Loader, ProfileSidebar } from '../../components'
+import { Button, Form, Loader, ProfileSidebar, Spacer } from '../../components'
 import { useUser } from '../../context'
 import { BRAND, SUBSCRIPTION_PLAN } from '../../graphql'
 import { useConfig } from '../../lib'
@@ -13,17 +12,16 @@ import * as moment from 'moment'
 export const Profile = () => {
    const { isConfigLoading } = useConfig()
    const { isLoading } = useUser()
-   /**TODO:* Could be a skeleton*/
    if (isConfigLoading || isLoading) return <Loader component />
 
    return (
-      <Main>
+      <main className="hern-profile__main">
          <ProfileSidebar />
          <div>
             <ProfileForm />
             <CurrentPlan />
          </div>
-      </Main>
+      </main>
    )
 }
 
@@ -34,16 +32,23 @@ const ProfileForm = () => {
    const theme = configOf('theme-color', 'Visual')
 
    return (
-      <section tw="px-6 w-full md:w-5/12">
-         <header tw="mt-6 mb-3 flex items-center justify-between">
-            <Title theme={theme}>Profile</Title>
+      <section className="hern-profile__profile-form">
+         <header className="hern-profile__profile-form__header">
+            <h2
+               className="hern-profile__profile-form__header__title"
+               style={{
+                  color: `${theme.accent ? theme.accent : 'rgba(5,150,105,1)'}`,
+               }}
+            >
+               Profile
+            </h2>
          </header>
-         <Form.Field tw="mr-3">
+         <Form.Field>
             <Form.Label>Email</Form.Label>
             <Form.DisabledText value={user?.platform_customer?.email} />
          </Form.Field>
-         <div tw="flex flex-wrap md:flex-nowrap">
-            <Form.Field tw="mr-3">
+         <div className="hern-profile__profile-form__name">
+            <Form.Field>
                <Form.Label>First Name</Form.Label>
                <Form.Text
                   type="text"
@@ -222,33 +227,50 @@ const CurrentPlan = () => {
    if (loading) return <Loader inline />
    if (user?.isSubscriptionCancelled)
       return (
-         <CurrentPlanWrapper>
+         <div className="hern-profile_current-plan">
             <Button size="sm" onClick={handleReactivation}>
                Reactivate Subscription
             </Button>
-         </CurrentPlanWrapper>
+         </div>
       )
    return (
-      <CurrentPlanWrapper>
-         <Divider />
-         <div tw="h-8" />
-         <CurrentPlanHeading theme={theme}>
+      <div className="hern-profile__current-plan">
+         <hr className="hern-profile__divider" />
+         <Spacer size="xl" />
+         <h4
+            className="hern-profile__current-plan__heading"
+            style={{
+               color: `${theme.accent ? theme.accent : 'rgba(5,150,105,1)'}`,
+            }}
+         >
             Your current plan {isPlanPaused && `(PAUSED)`}
-         </CurrentPlanHeading>
-         <CurrentPlanCard>
-            <CurrentPlanStat>
-               <CurrentPlanStatKey>Name</CurrentPlanStatKey>
-               <CurrentPlanStatValue>{plan?.name}</CurrentPlanStatValue>
-            </CurrentPlanStat>
-            <CurrentPlanStat>
-               <CurrentPlanStatKey>Item Count</CurrentPlanStatKey>
-               <CurrentPlanStatValue>{plan?.itemCount}</CurrentPlanStatValue>
-            </CurrentPlanStat>
-            <CurrentPlanStat>
-               <CurrentPlanStatKey>Servings</CurrentPlanStatKey>
-               <CurrentPlanStatValue>{plan?.servings}</CurrentPlanStatValue>
-            </CurrentPlanStat>
-         </CurrentPlanCard>
+         </h4>
+         <div className="hern-profile__current-plan__card">
+            <div>
+               <small className="hern-profile__current-plan__card__changeplan-key">
+                  Name
+               </small>
+               <p className="hern-profile__current-plan__card__changeplan-value">
+                  {plan?.name}
+               </p>
+            </div>
+            <div>
+               <small className="hern-profile__current-plan__card__changeplan-key">
+                  Item Count
+               </small>
+               <p className="hern-profile__current-plan__card__changeplan-value">
+                  {plan?.itemCount}
+               </p>
+            </div>
+            <div>
+               <small className="hern-profile__current-plan__card__changeplan-key">
+                  Servings
+               </small>
+               <p className="hern-profile__current-plan__card__changeplan-value">
+                  {plan?.servings}
+               </p>
+            </div>
+         </div>
          <Button
             size="sm"
             theme={theme}
@@ -256,12 +278,15 @@ const CurrentPlan = () => {
          >
             Change Plan
          </Button>
-         <div tw="h-8" />
-         <Divider />
-         <div tw="h-8" />
+         <Spacer size="xl" />
+         <hr className="hern-profile__divider" />
+         <Spacer size="xl" />
          {isPauseFormVisible ? (
-            <PauseForm onSubmit={handlePausePlan}>
-               <Flex>
+            <form
+               className="hern-profile__pause-plan__form"
+               onSubmit={handlePausePlan}
+            >
+               <div className="hern-profile__pause-plan__form__wrapper">
                   <Form.Field>
                      <Form.Label>Start Date*</Form.Label>
                      <Form.Text
@@ -272,7 +297,7 @@ const CurrentPlan = () => {
                         required
                      />
                   </Form.Field>
-                  <span tw="w-4 inline-block" />
+                  <Spacer xAxis />
                   <Form.Field>
                      <Form.Label>End Date*</Form.Label>
                      <Form.Text
@@ -283,56 +308,61 @@ const CurrentPlan = () => {
                         required
                      />
                   </Form.Field>
-               </Flex>
-               <PauseConfirmButton size="sm" type="submit">
+               </div>
+               <Button variant="warn" size="sm" type="submit">
                   Yes! Pause my plan.
-               </PauseConfirmButton>
-               <span tw="w-2 inline-block" />
-               <DullButton
+               </Button>
+
+               <Spacer xAxis />
+               <Button
+                  variant="dull"
                   size="sm"
                   type="reset"
                   onClick={() => setIsPauseFormVisible(false)}
                >
                   No! I changed my mind.
-               </DullButton>
-            </PauseForm>
+               </Button>
+            </form>
          ) : (
             <>
                {!!user?.pausePeriod && Object.keys(user.pausePeriod).length ? (
                   <div>
-                     <p tw="mb-2 text-gray-500">
+                     <p className="hern-profile__pause-period-details">
                         Plan pause interval starts from{' '}
-                        <span tw="text-gray-800">
+                        <span>
                            {moment(user.pausePeriod.startDate).format(
                               'MMM Do YYYY'
                            )}
                         </span>{' '}
                         and ends on{' '}
-                        <span tw="text-gray-800">
+                        <span>
                            {moment(user.pausePeriod.endDate).format(
                               'MMM Do YYYY'
                            )}
                         </span>
-                        .{' '}
                      </p>
                      <Button size="sm" theme={theme} onClick={clearPausePeriod}>
                         Clear Pause Interval
                      </Button>
                   </div>
                ) : (
-                  <PausePlanButton
+                  <Button
+                     variant="warn"
                      size="sm"
                      theme={theme}
                      onClick={() => setIsPauseFormVisible(true)}
                   >
                      Pause Plan
-                  </PausePlanButton>
+                  </Button>
                )}
             </>
          )}
-         <div tw="h-3" />
+         <Spacer />
          {isCancelFormVisible ? (
-            <CancellationForm onSubmit={handleCancellation}>
+            <form
+               className="hern-profile__cancellation-form"
+               onSubmit={handleCancellation}
+            >
                <Form.Field>
                   <Form.Label>Reason(Optional)</Form.Label>
                   <Form.Text
@@ -343,139 +373,29 @@ const CurrentPlan = () => {
                      value={reason}
                   />
                </Form.Field>
-               <CancelConfirmButton size="sm" type="submit">
+               <Button variant="warn" size="sm" type="submit">
                   Yes! Cancel my subscription.
-               </CancelConfirmButton>
-               <span tw="w-2 inline-block" />
-               <DullButton
+               </Button>
+               <Spacer xAxis size="xm" />
+               <Button
+                  variant="dull"
                   size="sm"
                   type="reset"
                   onClick={() => setIsCancelFormVisible(false)}
                >
                   No! I changed my mind.
-               </DullButton>
-            </CancellationForm>
+               </Button>
+            </form>
          ) : (
-            <CancelButton
+            <Button
+               variant="danger"
                size="sm"
                theme={theme}
                onClick={() => setIsCancelFormVisible(true)}
             >
                Cancel Subscription
-            </CancelButton>
+            </Button>
          )}
-      </CurrentPlanWrapper>
+      </div>
    )
 }
-
-const CurrentPlanWrapper = styled.div`
-   padding: 1.5rem;
-`
-
-const Divider = styled.hr`
-   max-width: 420px;
-`
-
-const CurrentPlanHeading = styled.div(
-   ({ theme }) => css`
-      margin-bottom: 4px;
-      ${tw`text-green-600`}
-      ${theme?.accent && `color: ${theme.accent}`}
-   `
-)
-
-const CurrentPlanCard = styled.div`
-   padding: 1rem;
-   border: 1px solid #cacaca;
-   border-radius: 4px;
-   display: flex;
-   max-width: 420px;
-   justify-content: space-between;
-   margin-bottom: 24px;
-`
-
-const CurrentPlanStat = styled.div``
-
-const CurrentPlanStatKey = styled.small`
-   ${tw`block mb-1 text-gray-700 text-sm tracking-wide`}
-`
-
-const CurrentPlanStatValue = styled.p`
-   font-weight: 500;
-`
-
-const CancellationForm = styled.form`
-   border: 1px solid #cacaca;
-   padding: 1rem;
-   border-radius: 4px;
-   max-width: 680px;
-`
-
-const PauseConfirmButton = styled(Button)`
-   ${tw`bg-yellow-500 text-white border-yellow-500`}
-
-   &:hover {
-      ${tw`bg-yellow-500 text-white border-yellow-500`}
-   }
-`
-
-const PausePlanButton = styled(Button)`
-   ${tw`bg-yellow-200 text-yellow-500 border-yellow-200`}
-
-   &:hover {
-      ${tw`bg-yellow-500 text-white border-yellow-500`}
-   }
-`
-
-const CancelConfirmButton = styled(Button)`
-   ${tw`bg-red-500 text-white border-red-500`}
-
-   &:hover {
-      ${tw`bg-red-500 text-white border-red-500`}
-   }
-`
-
-const CancelButton = styled(Button)`
-   ${tw`bg-red-200 text-red-500 border-red-200`}
-
-   &:hover {
-      ${tw`bg-red-500 text-white`}
-   }
-`
-
-const DullButton = styled(Button)`
-   ${tw`bg-gray-200 text-gray-500 border-gray-200`}
-
-   &:hover {
-      ${tw`bg-gray-500 text-white`}
-   }
-`
-
-const PauseForm = styled.form`
-   border: 1px solid #cacaca;
-   padding: 1rem;
-   border-radius: 4px;
-   max-width: 680px;
-`
-
-const Flex = styled.div`
-   display: flex;
-`
-
-const Title = styled.h2(
-   ({ theme }) => css`
-      ${tw`text-green-600 text-2xl`}
-      ${theme?.accent && `color: ${theme.accent}`}
-   `
-)
-
-const Main = styled.main`
-   display: grid;
-   grid-template-rows: 1fr;
-   min-height: calc(100vh - 64px);
-   grid-template-columns: 240px 1fr;
-   position: relative;
-   @media (max-width: 768px) {
-      display: block;
-   }
-`
