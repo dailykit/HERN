@@ -538,3 +538,38 @@ export const ORDERS_LIST_BY_PRODUCT = gql`
       }
    }
 `
+export const INGREDIENT_ORDER_COUNT = gql`
+   subscription INGREDIENT_ORDER_COUNT($where: order_order_bool_exp!) {
+      ordersAggregate(where: $where) {
+         aggregate {
+            count
+         }
+      }
+   }
+`
+export const SALES_BY_INGREDIENT = gql`
+   subscription SALES_BY_INGREDIENT($where: order_cartItem_bool_exp!) {
+      cartItemsAggregate(where: $where) {
+         aggregate {
+            sum {
+               unitPrice
+            }
+         }
+      }
+   }
+`
+export const ORDER_LIST_FROM_INGREDIENT = gql`
+   subscription ORDER_LIST_FROM_INGREDIENT($where: order_order_bool_exp!) {
+      orders(
+         where: $where
+         limit: 10
+         order_by: { created_at: desc_nulls_last }
+      ) {
+         id
+         customer {
+            email
+         }
+         created_at
+      }
+   }
+`
