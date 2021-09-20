@@ -1,64 +1,44 @@
-import { useSubscription } from '@apollo/react-hooks'
-import { ReactTabulator } from '@dailykit/react-tabulator'
-import { Filler, Flex, Spacer, Text } from '@dailykit/ui'
 import React, { useState } from 'react'
-import './tableStyle.css'
-import { toast } from 'react-toastify'
+import { useSubscription } from '@apollo/react-hooks'
+import {
+   INGREDIENT_ORDER_COUNT,
+   SALES_BY_INGREDIENT,
+   ORDER_LIST_FROM_INGREDIENT,
+} from '../../../../../graphql'
+import { StyledFlex } from '../../../Product/styled'
 import styled from 'styled-components'
+import { Flex, Text, Spacer, Filler } from '@dailykit/ui'
+import moment from 'moment'
+import './tableStyle.css'
+import { get_env, logger } from '../../../../../../../shared/utils'
 import {
    ErrorState,
    InlineLoader,
 } from '../../../../../../../shared/components'
+import { toast } from 'react-toastify'
 import { useTabs } from '../../../../../../../shared/providers'
-import { get_env, logger } from '../../../../../../../shared/utils'
-import {
-   RECIPE_EARNING,
-   ORDER_BY_RECIPE,
-   RECIPE_COUNT,
-} from '../../../../../graphql'
-import { StyledFlex } from '../../../Product/styled'
-import moment from 'moment'
+import { ReactTabulator } from '@dailykit/react-tabulator'
+
 //currencies
 const currency = {
    USD: '$',
    INR: '₹',
    EUR: '€',
 }
-const RecipeInsights = props => {
-   const { recipeId } = props
+
+const IngredientInsight = props => {
+   const { ingredientId } = props
    const {
-      loading: subsLoading,
-      error: subsError,
-      data: { cartItemsAggregate = {} } = {},
-   } = useSubscription(RECIPE_EARNING, {
-      variables: {
-         cartItemWhere: {
-            level: { _eq: 3 },
-            simpleRecipeYield: { simpleRecipeId: { _eq: recipeId } },
-            cart: {
-               paymentStatus: { _eq: 'SUCCEEDED' },
-               order: {
-                  isAccepted: { _eq: true },
-                  _or: [
-                     { isRejected: { _eq: false } },
-                     { isRejected: { _is_null: true } },
-                  ],
-               },
-            },
-         },
-      },
-   })
-   const {
-      loading: orderAggLoading,
-      error: orderAggError,
+      loading: orderCountLoading,
+      error: orderCountError,
       data: { ordersAggregate = {} } = {},
-   } = useSubscription(RECIPE_COUNT, {
+   } = useSubscription(INGREDIENT_ORDER_COUNT, {
       variables: {
          where: {
             cart: {
                cartItems: {
-                  simpleRecipeYield: { simpleRecipeId: { _eq: recipeId } },
-                  level: { _eq: 3 },
+                  level: { _eq: 4 },
+                  ingredientSachet: { ingredientId: { _eq: ingredientId } },
                },
                paymentStatus: { _eq: 'SUCCEEDED' },
             },
@@ -70,7 +50,29 @@ const RecipeInsights = props => {
          },
       },
    })
-
+   const {
+      loading: salesLoading,
+      error: salesError,
+      data: { cartItemsAggregate = {} } = {},
+   } = useSubscription(SALES_BY_INGREDIENT, {
+      variables: {
+         where: {
+            cart: {
+               paymentStatus: { _eq: 'SUCCEEDED' },
+               order: {
+                  isAccepted: { _eq: true },
+                  _or: [
+                     { isRejected: { _eq: false } },
+                     { isRejected: { _is_null: true } },
+                  ],
+               },
+            },
+            ingredientSachet: { ingredientId: { _eq: ingredientId } },
+            level: { _eq: 4 },
+         },
+      },
+   })
+   console.log('ingredientInsight', ordersAggregate, cartItemsAggregate)
    return (
       <>
          <StyledFlex
@@ -79,7 +81,7 @@ const RecipeInsights = props => {
             alignItems="start"
             justifyContent="space-between"
          >
-            <Flex>
+            <Flex padding="3px 0 3px 37px ">
                <Styles.Card>
                   <span>Order Placed</span>
                   <br />
@@ -91,11 +93,11 @@ const RecipeInsights = props => {
                         lineHeight: '42px',
                      }}
                   >
-                     {orderAggLoading
+                     {orderCountLoading
                         ? '...'
-                        : orderAggError
+                        : orderCountError
                         ? 'Data not found'
-                        : ordersAggregate.aggregate.count}
+                        : ordersAggregate.aggregate.count || 0}
                   </span>
                </Styles.Card>
                <Styles.Card>
@@ -108,9 +110,9 @@ const RecipeInsights = props => {
                         lineHeight: '42px',
                      }}
                   >
-                     {subsLoading
+                     {salesLoading
                         ? '...'
-                        : subsError
+                        : salesError
                         ? 'Data not found'
                         : (currency[get_env('REACT_APP_CURRENCY')] ||
                              `${get_env('REACT_APP_CURRENCY')} `) +
@@ -118,31 +120,29 @@ const RecipeInsights = props => {
                   </span>
                </Styles.Card>
             </Flex>
-            <Flex width="100%">
-               <div style={{ width: '100%' }}>
-                  <DataTable recipeId={recipeId} />
-               </div>
+            <Flex width="100%" padding="3px 0">
+               <DataTable ingredientId={ingredientId} />
             </Flex>
          </StyledFlex>
       </>
    )
 }
+
 const DataTable = props => {
-   const { recipeId } = props
-   const { addTab } = useTabs()
+   const { ingredientId } = props
+   const { addTab, tab } = useTabs()
+
    const [orderData, setOrderData] = useState([])
    const [status, setStatus] = useState('loading')
-
-   //subscription for orders which includes this recipe
-   const { loading: orderSubsLoading, error: orderSubsError } = useSubscription(
-      ORDER_BY_RECIPE,
+   const { loading: orderListLoading, error: orderListError } = useSubscription(
+      ORDER_LIST_FROM_INGREDIENT,
       {
          variables: {
             where: {
                cart: {
                   cartItems: {
-                     level: { _eq: 3 },
-                     simpleRecipeYield: { simpleRecipeId: { _eq: recipeId } },
+                     level: { _eq: 4 },
+                     ingredientSachet: { ingredientId: { _eq: ingredientId } },
                   },
                   paymentStatus: { _eq: 'SUCCEEDED' },
                },
@@ -164,8 +164,6 @@ const DataTable = props => {
          },
       }
    )
-
-   //columns for table
    const columns = [
       {
          title: 'OrderId',
@@ -187,11 +185,12 @@ const DataTable = props => {
          field: 'createdAt',
       },
    ]
+
    //tableOptions
    const options = {
       cellVertAlign: 'middle',
       autoResize: true,
-      maxHeight: 420,
+      maxHeight: 400,
       resizableColumns: false,
       virtualDomBuffer: 20,
       placeholder: 'No Data Available',
@@ -201,50 +200,48 @@ const DataTable = props => {
       tooltips: true,
    }
 
-   //error handler
-   if (orderSubsError) {
-      logger(orderSubsError)
-      toast.error('Could not get recent orders for this recipe')
+   if (orderListError) {
+      logger(orderListError)
+      toast.error('Could not get recent orders for this ingredient')
       return (
          <ErrorState
             height="320px"
-            message="Could not get recent orders for this recipe"
+            message="Could not get recent orders for this ingredient"
          />
       )
    }
 
-   //loading
-   if (orderSubsLoading || status === 'loading') {
+   if (orderListLoading || status === 'loading') {
       return <InlineLoader />
    }
 
    return (
       <>
-         <Flex padding="0 0 0 16px">
-            <div
-               style={{
-                  background: '#FFFFFF',
-                  boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.2)',
-                  borderRadius: '10px',
-                  padding: '15px 0px',
-               }}
-            >
-               <Text as="h2" style={{ padding: '0px 15px' }}>
-                  Recent orders
-               </Text>
-               <Spacer size="10px" />
-               {orderData.length === 0 ? (
-                  <Filler message="No Orders For This Recipe" />
-               ) : (
-                  <ReactTabulator
-                     columns={columns}
-                     options={options}
-                     data={orderData}
-                     className="recipe-insight-table"
-                  />
-               )}
-            </div>
-         </Flex>
+         <div
+            style={{
+               background: '#FFFFFF',
+               boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.2)',
+               borderRadius: '10px',
+               padding: '15px 0',
+               margin: '0 16px',
+            }}
+         >
+            <Text as="h2" style={{ padding: '0px 15px' }}>
+               Recent orders
+            </Text>
+            <Spacer size="10px" />
+
+            {orderData.length === 0 ? (
+               <Filler message="No Orders For This Ingredient" />
+            ) : (
+               <ReactTabulator
+                  columns={columns}
+                  options={options}
+                  data={orderData}
+                  className="ingredient-insight-table"
+               />
+            )}
+         </div>
       </>
    )
 }
@@ -267,4 +264,4 @@ const Styles = {
       }
    `,
 }
-export default RecipeInsights
+export default IngredientInsight
