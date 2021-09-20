@@ -110,6 +110,24 @@ const MenuProductOccurenceTable = () => {
          headerTooltip: true,
       },
       {
+         title: 'Plan Title',
+         field: 'title',
+         headerFilter: true,
+         headerTooltip: true,
+      },
+      {
+         title: 'Serving Size',
+         field: 'servingSize',
+         headerFilter: true,
+         headerTooltip: true,
+      },
+      {
+         title: 'Item Count',
+         field: 'ItemCount',
+         headerFilter: true,
+         headerTooltip: true,
+      },
+      {
          title: 'Product Category',
          field: 'productCategory',
          headerFilter: true,
@@ -216,6 +234,24 @@ const MenuProductSubscriptionTable = () => {
       {
          title: 'Add On Label',
          field: 'addOnLabel',
+         headerFilter: true,
+         headerTooltip: true,
+      },
+      {
+         title: 'Plan Title',
+         field: 'title',
+         headerFilter: true,
+         headerTooltip: true,
+      },
+      {
+         title: 'Serving Size',
+         field: 'servingSize',
+         headerFilter: true,
+         headerTooltip: true,
+      },
+      {
+         title: 'Item Count',
+         field: 'ItemCount',
          headerFilter: true,
          headerTooltip: true,
       },
