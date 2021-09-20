@@ -91,13 +91,11 @@ const RecipeInsights = props => {
                         lineHeight: '42px',
                      }}
                   >
-                     {subsLoading
+                     {orderAggLoading
                         ? '...'
-                        : subsError
+                        : orderAggError
                         ? 'Data not found'
-                        : (currency[get_env('REACT_APP_CURRENCY')] ||
-                             `${get_env('REACT_APP_CURRENCY')} `) +
-                          (cartItemsAggregate.aggregate.sum.unitPrice || 0)}
+                        : ordersAggregate.aggregate.count}
                   </span>
                </Styles.Card>
                <Styles.Card>
@@ -110,11 +108,13 @@ const RecipeInsights = props => {
                         lineHeight: '42px',
                      }}
                   >
-                     {orderAggLoading
+                     {subsLoading
                         ? '...'
-                        : orderAggError
+                        : subsError
                         ? 'Data not found'
-                        : ordersAggregate.aggregate.count}
+                        : (currency[get_env('REACT_APP_CURRENCY')] ||
+                             `${get_env('REACT_APP_CURRENCY')} `) +
+                          (cartItemsAggregate.aggregate.sum.unitPrice || 0)}
                   </span>
                </Styles.Card>
             </Flex>
