@@ -1,13 +1,56 @@
 .tabulator-header {
+   height: 80px;
    font-size: 14px;
    border-bottom: 2px solid #d8d8d8;
 }
 
-.tabulator-row {
-   height: 32px;
+.tabulator-frozen {
+   height: 100% !important;
+   margin-top: -8px;
+}
+.tabulator-row .tabulator-frozen {
+   top: 8px;
+}
+.tabulator .tabulator-header .tabulator-col {
+   margin-top: -8px;
+}
+.tabulator-col-content {
+   height: 100%;
+}
+.gIjFdD {
+   justify-content: flex-end;
+}
+.formatterCell p {
+   margin-bottom: 0em;
+}
+.tabulator-headers {
+   background-color: #f4f4f4;
+   height: 100% !important;
+   /* padding-top: auto; */
+   font-weight: 500;
+   line-height: 18px;
+   letter-spacing: 0.44px;
    font-size: 14px;
+   /* padding-top: 10px; */
+   padding: 8px;
+   text-align: center;
+}
+
+.tabulator-col {
+   background: #f4f4f4 !important;
+}
+
+.tabulator-row {
+   height: 48px !important;
    display: flex;
+   font-family: Roboto !important;
+   font-style: normal;
+   font-weight: 500;
+   font-size: 16px;
+   line-height: 18px;
+   color: #202020;
    align-items: center;
+   letter-spacing: 0.44px;
    border-bottom: 1px solid #d8d8d8;
 }
 
@@ -25,10 +68,49 @@
    margin-top: 5px;
 }
 
-.linkCell {
-   cursor: pointer;
+.tabulator-row .colHover:hover {
+   color: #367bf5;
+   background-color: #f7f7f7;
+}
+.tabulator-row .tabulator-cell {
+   height: 48px;
+}
+.tabulator-row.tabulator-selected {
+   background-color: #ebf1f4 !important;
+   border: 1px solid #fff;
+}
+.tabulator-row.tabulator-selected:hover {
+   background-color: #ebf1f4 !important;
 }
 
-.linkCell:hover {
+.tabulator-header-filter input {
+   outline: none;
+   border-radius: 2px;
+   margin-top: 5px;
+}
+
+.tabulator-arrow {
+   border-bottom: 6px #202020 solid !important;
+}
+
+input[type='checkbox'] {
+   width: 18px;
+   height: 18px;
+}
+
+.formatterCell {
+   width: 100%;
+}
+
+.tabulator-cell {
+   padding-right: 20px !important;
+}
+.cart-table .linkCell:hover {
    background: #e5e5e5;
+   color: #367bf5;
+   cursor: pointer;
+}
+.cart-table .tabulator-cell {
+   display: flex;
+   align-items: center;
 }
