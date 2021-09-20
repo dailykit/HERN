@@ -2,6 +2,7 @@ import { useSubscription } from '@apollo/react-hooks'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { Filler, Flex, Spacer, Text } from '@dailykit/ui'
 import React, { useState } from 'react'
+import './tableStyle.css'
 import { toast } from 'react-toastify'
 import styled from 'styled-components'
 import {
