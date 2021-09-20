@@ -90,8 +90,9 @@ const Listing = () => {
                let name = customerInfo?.customerFirstName
                if (customerInfo?.customerLastName) {
                   name += ' ' + customerInfo?.customerLastName
+                  return name.trim()
                }
-               return name.trim() || 'N/A'
+               return 'N/A'
             },
             headerFilter: true,
             headerTooltip: column => {
@@ -108,6 +109,18 @@ const Listing = () => {
             headerFilter: true,
             headerTooltip: column => {
                const identifier = 'carts_listing_column_customerEmail'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+         },
+         {
+            title: 'Customer Email',
+            field: 'customerInfo.customerPhone',
+            headerFilter: true,
+            headerTooltip: column => {
+               const identifier = 'carts_listing_column_customerPhone'
                return (
                   tooltip(identifier)?.description ||
                   column.getDefinition().title
