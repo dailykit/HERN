@@ -17,6 +17,7 @@ import {
    RECIPE_COUNT,
 } from '../../../../../graphql'
 import { StyledFlex } from '../../../Product/styled'
+import moment from 'moment'
 //currencies
 const currency = {
    USD: '$',
@@ -155,7 +156,7 @@ const DataTable = props => {
          onSubscriptionData: ({ subscriptionData }) => {
             const newData = subscriptionData.data.orders.map(each => {
                each.customerEmail = each.customer?.email || 'N/A'
-               each.createdAt = each.created_at
+               each.createdAt = moment(each.created_at).format('DD-MM-YYYY')
                return each
             })
             setOrderData(newData)
@@ -233,7 +234,7 @@ const DataTable = props => {
                </Text>
                <Spacer size="10px" />
                {orderData.length === 0 ? (
-                  <Filler message="No Orders For This Product" />
+                  <Filler message="No Orders For This Recipe" />
                ) : (
                   <ReactTabulator
                      columns={columns}
