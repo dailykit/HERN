@@ -538,6 +538,41 @@ export const ORDERS_LIST_BY_PRODUCT = gql`
       }
    }
 `
+export const RECIPE_EARNING = gql`
+   subscription RECIPE_EARNING($cartItemWhere: order_cartItem_bool_exp!) {
+      cartItemsAggregate(where: $cartItemWhere) {
+         aggregate {
+            sum {
+               unitPrice
+            }
+         }
+      }
+   }
+`
+export const RECIPE_COUNT = gql`
+   subscription RECIPE_COUNT($where: order_order_bool_exp!) {
+      ordersAggregate(where: $where) {
+         aggregate {
+            count
+         }
+      }
+   }
+`
+export const ORDER_BY_RECIPE = gql`
+   subscription ORDER_BY_RECIPE($where: order_order_bool_exp!) {
+      orders(
+         where: $where
+         order_by: { created_at: desc_nulls_last }
+         limit: 10
+      ) {
+         id
+         customer {
+            email
+         }
+         created_at
+      }
+   }
+`
 export const INGREDIENT_ORDER_COUNT = gql`
    subscription INGREDIENT_ORDER_COUNT($where: order_order_bool_exp!) {
       ordersAggregate(where: $where) {
