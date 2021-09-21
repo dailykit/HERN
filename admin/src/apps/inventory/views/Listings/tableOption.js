@@ -8,6 +8,8 @@ const options = {
    placeholder: 'No Data Available',
    persistence: false,
    persistenceMode: 'cookie',
+   downloadDataFormatter: data => data,
+   downloadReady: (fileContents, blob) => blob,
 }
 
 export default options
