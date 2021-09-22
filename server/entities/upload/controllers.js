@@ -1,12 +1,10 @@
 import get_env from '../../../get_env'
+import aws from '../../lib/aws'
 
-const AWS = require('aws-sdk')
 const fs = require('fs')
 const fileType = require('file-type')
 const multiparty = require('multiparty')
 const { listS3Files, uploadFile, createUrl } = require('../../utils')
-
-const s3 = new AWS.S3()
 
 export const upload = (request, response) => {
    const form = new multiparty.Form()
@@ -81,8 +79,12 @@ const extractName = key =>
 export const list = async (req, res) => {
    try {
       const { type } = req.query
+      const AWS = await aws()
+      const s3 = new AWS.S3()
       const S3_BUCKET = await get_env('S3_BUCKET')
+      console.log('from /api/assets endpoint', { S3_BUCKET })
       const { Contents } = await listS3Files(S3_BUCKET, type)
+      console.log('from /api/assets endpoint', { Contents })
       const formatAssets = await Promise.all(
          Contents.map(async item => {
             try {
@@ -95,7 +97,7 @@ export const list = async (req, res) => {
                return {
                   key: item.Key,
                   size: item.Size,
-                  url: createUrl(item.Key),
+                  url: await createUrl(item.Key),
                   // metadata: result.Metadata,
                   name: extractName(item.Key)
                }
@@ -118,6 +120,8 @@ export const list = async (req, res) => {
 export const remove = async (req, res) => {
    try {
       const { key } = req.query
+      const AWS = await aws()
+      const s3 = new AWS.S3()
       const S3_BUCKET = await get_env('S3_BUCKET')
       const data = await s3
          .deleteObject({ Bucket: S3_BUCKET, Key: key })
