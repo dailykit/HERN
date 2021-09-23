@@ -2,11 +2,11 @@ import styled from 'styled-components'
 
 export const StyledHome = styled.div`
    margin: 0 auto;
-   max-width: 1180px;
-   padding: 0 16px 16px 16px;
+   max-width: 1280px;
+   padding-bottom: 20px;
    h1 {
       color: #555b6e;
-      margin: 60px 0;
+      margin: 30px 40px;
       font-size: 32px;
       font-weight: 500;
       line-height: 37px;
@@ -17,11 +17,10 @@ export const StyledHome = styled.div`
 `
 
 export const StyledCardList = styled.ul`
-   width: 780px;
    display: grid;
-   grid-gap: 24px;
-   margin: 0 auto;
-   grid-template-columns: 1fr 1fr;
+   grid-gap: 30px;
+   margin: 30px 40px;
+   grid-template-columns: 1fr 1fr 1fr;
    @media (max-width: 780px) {
       width: 100%;
    }
