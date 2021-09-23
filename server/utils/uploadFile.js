@@ -1,6 +1,6 @@
 import aws from '../lib/aws'
 import get_env from '../../get_env'
-import { minifyImage } from '../utils'
+import { minifyImage } from './minify-image'
 
 export const uploadFile = async (buffer, name, type) => {
    const AWS = await aws()
