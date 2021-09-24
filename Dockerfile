@@ -1,6 +1,6 @@
 # Dockerfile is used to build image which then can be used to build any number of containers.
 
-FROM node:alpine AS builder
+FROM node:14.4.0 AS builder
 RUN apk add --no-cache bash
 RUN apk add --no-cache libc6-compat
 WORKDIR /usr/src/app
@@ -56,8 +56,8 @@ COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY --from=builder /usr/src/app/get_env.js ./get_env.js
 
 RUN yarn add puppeteer
-RUN yarn add imagemin
-RUN yarn add imagemin-mozjpeg
+# RUN yarn add imagemin
+# RUN yarn add imagemin-mozjpeg
 
 # used to expose container level
 EXPOSE 4000
