@@ -56,6 +56,8 @@ COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY --from=builder /usr/src/app/get_env.js ./get_env.js
 
 RUN yarn add puppeteer
+RUN yarn add imagemin
+RUN yarn add imagemin-mozjpeg
 
 # used to expose container level
 EXPOSE 4000
