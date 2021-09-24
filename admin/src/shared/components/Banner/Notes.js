@@ -1,10 +1,9 @@
-import { Flex } from '@dailykit/ui'
 import React from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import { PlayIcon } from '../../assets/icons'
 import { Tutorials } from './assets/illustrations'
 import ActionButtons from './components/ActionButtons'
-import Styled, { Wrapper, Styleflex } from './styles.js'
+import Styled, { Wrapper, Styleflex } from './styles'
 
 const Notes = ({ data }) => {
    const [isOpen, setIsOpen] = React.useState(true)
