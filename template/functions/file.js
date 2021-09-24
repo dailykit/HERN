@@ -5,6 +5,7 @@ const { createFolder } = require('./folder')
 git.plugins.set('fs', fs)
 
 const createFile = (filePath, content) => {
+   console.log('init createFile function')
    return new Promise((resolve, reject) => {
       const parentDir = path.dirname(filePath)
       if (fs.existsSync(parentDir)) {

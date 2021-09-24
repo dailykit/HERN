@@ -5,8 +5,6 @@ import fs from 'fs'
 import path from 'path'
 import express from 'express'
 import morgan from 'morgan'
-import AWS from 'aws-sdk'
-import bluebird from 'bluebird'
 import depthLimit from 'graphql-depth-limit'
 
 import get_env from './get_env'
@@ -42,13 +40,6 @@ app.use(
       '[:status :method :url] :remote-user [:date[clf]] - [:user-agent] - :response-time ms'
    )
 )
-
-AWS.config.update({
-   accessKeyId: get_env('AWS_ACCESS_KEY_ID'),
-   secretAccessKey: get_env('AWS_SECRET_ACCESS_KEY')
-})
-
-AWS.config.setPromisesDependency(bluebird)
 
 const PORT = process.env.PORT || 4000
 

@@ -99,11 +99,12 @@ const linkJsMutation = gql`
 
 const createFileRecord = async path => {
    try {
+      console.log({ pathfromCreateFileRecord: path })
       const variables = {
          object: {
             fileType: nodePath.basename(path).split('.').pop(),
             fileName: nodePath.basename(path),
-            path: path,
+            path,
             lastSaved: new Date().toISOString()
          }
       }
@@ -198,6 +199,7 @@ const getFileId = async path => {
       path
    }
    const data = await graphQLClient.request(query, variables)
+   console.log({ dataFromFileId: data })
    if (
       // if fileId exist then return the file id
       Object.keys(data).length &&

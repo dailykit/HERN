@@ -7,10 +7,9 @@ import { client } from '../../lib/graphql'
 import { globalTemplate } from '../../utils'
 import get_env from '../../../get_env'
 import { GET_SES_DOMAIN } from './graphql'
-const AWS = require('aws-sdk')
-const nodemailer = require('nodemailer')
+import aws from '../../lib/aws'
 
-AWS.config.update({ region: 'us-east-2' })
+const nodemailer = require('nodemailer')
 
 const transportEmail = async (transporter, message) =>
    new Promise((resolve, reject) => {
@@ -26,6 +25,7 @@ const transportEmail = async (transporter, message) =>
 export const sendMail = async (req, res) => {
    try {
       const { emailInput, inviteInput = {} } = req.body.input
+      const AWS = await aws()
       const inputDomain = emailInput.from.split('@')[1]
       const {
          includeHeader = true,

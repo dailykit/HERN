@@ -1,0 +1,6 @@
+.ingredient-insight-table .tabulator-tableHolder .click-col {
+   cursor: pointer !important;
+}
+.ingredient-insight-table .tabulator-tableHolder .click-col:hover {
+   color: #367bf5;
+}
