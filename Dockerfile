@@ -3,17 +3,6 @@
 FROM node:alpine AS builder
 RUN apk add --no-cache bash
 RUN apk add --no-cache libc6-compat
-RUN apk add --no-cache \
-    autoconf \
-    automake \
-    bash \
-    g++ \
-    libc6-compat \
-    libjpeg-turbo-dev \
-    libpng-dev \
-    make \
-    nasm
-
 WORKDIR /usr/src/app
 COPY . .
 
@@ -67,8 +56,6 @@ COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY --from=builder /usr/src/app/get_env.js ./get_env.js
 
 RUN yarn add puppeteer
-# RUN yarn add imagemin
-# RUN yarn add imagemin-mozjpeg
 
 # used to expose container level
 EXPOSE 4000
