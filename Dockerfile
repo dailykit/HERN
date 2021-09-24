@@ -1,8 +1,19 @@
 # Dockerfile is used to build image which then can be used to build any number of containers.
 
-FROM node:14.4.0 AS builder
+FROM node:alpine AS builder
 RUN apk add --no-cache bash
 RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache \
+    autoconf \
+    automake \
+    bash \
+    g++ \
+    libc6-compat \
+    libjpeg-turbo-dev \
+    libpng-dev \
+    make \
+    nasm
+
 WORKDIR /usr/src/app
 COPY . .
 
