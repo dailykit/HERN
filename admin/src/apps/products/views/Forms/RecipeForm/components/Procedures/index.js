@@ -213,7 +213,7 @@ const InstructionSet = ({ id, title, steps }) => {
                onBlur={updateTitle}
             />
             <Spacer xAxis size="16px" />
-            <IconButton onClick={handleDelete} style={{ background: 'hover' }}>
+            <IconButton onClick={handleDelete} style={{ background: 'none' }}>
                <DeleteIcon />
             </IconButton>
          </Flex>
