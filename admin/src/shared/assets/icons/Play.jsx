@@ -22,6 +22,7 @@ const PlayIcon = () => {
 export default PlayIcon
 
 const StyleButton = styled.svg`
+   margin: 2px;
    &:hover {
       background: rgba(249, 249, 249, 1);
       border-radius: 100%;
