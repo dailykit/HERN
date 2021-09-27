@@ -81,7 +81,7 @@ export const ResponsiveFlex = styled.header`
    display: flex;
    padding: 16px 35px;
    align-items: center;
-   justify-content: space-between;
+   justify-content: flex-end;
 
    @media screen and (max-width: 767px) {
       flex-direction: column;

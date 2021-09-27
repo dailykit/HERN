@@ -13,7 +13,8 @@ export const DeleteDiv = styled.div`
    cursor: pointer;
    display:block;
    &:hover {
-      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
+      background: background: rgba(249, 249, 249, 1);
+      border-radius: 4px;
       transition: 0.3s;
    }
 `
@@ -22,9 +23,10 @@ export const EditDiv = styled.div`
    right: 6px;
    top: 36px;
    cursor: pointer;
-   display:block;
+   display: block;
    &:hover {
-      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
+      background: background: rgba(249, 249, 249, 1);
+      border-radius: 4px;
       transition: 0.3s;
    }
 `

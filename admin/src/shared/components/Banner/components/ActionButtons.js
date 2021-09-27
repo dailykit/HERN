@@ -6,7 +6,9 @@ import { StyledActions } from '../styles'
 const ActionButtons = ({ isMinimized, setIsMinimized }) => {
    return (
       <StyledActions>
-         <h4>{!isMinimized ? 'Show note' : 'Hide note'}</h4>
+         <h4 style={{ color: '#919699' }}>
+            {!isMinimized ? 'Show note' : 'Hide note'}
+         </h4>
          <IconButton
             type="ghost"
             size="sm"
