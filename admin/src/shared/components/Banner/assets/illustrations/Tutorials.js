@@ -9,6 +9,7 @@ const Tutorials = () => {
             viewBox="0 0 171 181"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
+            xlink="http://www.w3.org/1999/xlink"
          >
             <rect
                x="0.55957"

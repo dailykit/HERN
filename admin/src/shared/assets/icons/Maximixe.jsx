@@ -1,166 +1,41 @@
 import React from 'react'
+import styled from 'styled-components'
 
 const MaximizeIcon = () => {
    return (
-      <svg
-         width="34"
-         height="34"
-         viewBox="0 0 34 34"
+      <StyleButton
+         width="13"
+         height="14"
+         viewBox="0 0 13 14"
          fill="none"
          xmlns="http://www.w3.org/2000/svg"
       >
-         <g filter="url(#filter0_ddiiii)">
-            <circle cx="17" cy="17" r="14" fill="#F3F3F3" />
-         </g>
          <path
-            d="M21.8 12H23V15.6667H21.8V13.2222H19.4V12H21.8ZM12.2 12H14.6V13.2222H12.2V15.6667H11V12H12.2ZM21.8 21.7778V19.3333H23V23H19.4V21.7778H21.8ZM12.2 21.7778H14.6V23H11V19.3333H12.2V21.7778Z"
+            d="M10.0261 4.80569C10.0261 5.46843 10.5634 6.00568 11.2261 6.00567C11.8889 6.00566 12.4261 5.46839 12.4261 4.80565L12.4261 3.02834C12.4261 1.81334 11.4411 0.82839 10.2261 0.828381L8.44829 0.828369C7.78555 0.828365 7.24829 1.36562 7.24828 2.02836C7.24828 2.6911 7.78553 3.22836 8.44827 3.22837L10.0261 3.22838L10.0261 4.80569Z"
             fill="#919699"
          />
-         <defs>
-            <filter
-               id="filter0_ddiiii"
-               x="0"
-               y="0"
-               width="34"
-               height="34"
-               filterUnits="userSpaceOnUse"
-               colorInterpolationFilters="sRGB"
-            >
-               <feFlood floodOpacity="0" result="BackgroundImageFix" />
-               <feColorMatrix
-                  in="SourceAlpha"
-                  type="matrix"
-                  values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-               />
-               <feOffset dx="-1" dy="-1" />
-               <feGaussianBlur stdDeviation="1" />
-               <feColorMatrix
-                  type="matrix"
-                  values="0 0 0 0 0.807843 0 0 0 0 0.807843 0 0 0 0 0.803922 0 0 0 0.5 0"
-               />
-               <feBlend
-                  mode="normal"
-                  in2="BackgroundImageFix"
-                  result="effect1_dropShadow"
-               />
-               <feColorMatrix
-                  in="SourceAlpha"
-                  type="matrix"
-                  values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-               />
-               <feOffset dx="1" dy="1" />
-               <feGaussianBlur stdDeviation="1" />
-               <feColorMatrix
-                  type="matrix"
-                  values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.3 0"
-               />
-               <feBlend
-                  mode="normal"
-                  in2="effect1_dropShadow"
-                  result="effect2_dropShadow"
-               />
-               <feBlend
-                  mode="normal"
-                  in="SourceGraphic"
-                  in2="effect2_dropShadow"
-                  result="shape"
-               />
-               <feColorMatrix
-                  in="SourceAlpha"
-                  type="matrix"
-                  values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-                  result="hardAlpha"
-               />
-               <feOffset dx="1" dy="1" />
-               <feGaussianBlur stdDeviation="1.5" />
-               <feComposite
-                  in2="hardAlpha"
-                  operator="arithmetic"
-                  k2="-1"
-                  k3="1"
-               />
-               <feColorMatrix
-                  type="matrix"
-                  values="0 0 0 0 0.807843 0 0 0 0 0.807843 0 0 0 0 0.803922 0 0 0 0.9 0"
-               />
-               <feBlend
-                  mode="normal"
-                  in2="shape"
-                  result="effect3_innerShadow"
-               />
-               <feColorMatrix
-                  in="SourceAlpha"
-                  type="matrix"
-                  values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-                  result="hardAlpha"
-               />
-               <feOffset dx="-1" dy="-1" />
-               <feGaussianBlur stdDeviation="1" />
-               <feComposite
-                  in2="hardAlpha"
-                  operator="arithmetic"
-                  k2="-1"
-                  k3="1"
-               />
-               <feColorMatrix
-                  type="matrix"
-                  values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.9 0"
-               />
-               <feBlend
-                  mode="normal"
-                  in2="effect3_innerShadow"
-                  result="effect4_innerShadow"
-               />
-               <feColorMatrix
-                  in="SourceAlpha"
-                  type="matrix"
-                  values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-                  result="hardAlpha"
-               />
-               <feOffset dx="1" dy="-1" />
-               <feGaussianBlur stdDeviation="1" />
-               <feComposite
-                  in2="hardAlpha"
-                  operator="arithmetic"
-                  k2="-1"
-                  k3="1"
-               />
-               <feColorMatrix
-                  type="matrix"
-                  values="0 0 0 0 0.807843 0 0 0 0 0.807843 0 0 0 0 0.803922 0 0 0 0.2 0"
-               />
-               <feBlend
-                  mode="normal"
-                  in2="effect4_innerShadow"
-                  result="effect5_innerShadow"
-               />
-               <feColorMatrix
-                  in="SourceAlpha"
-                  type="matrix"
-                  values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-                  result="hardAlpha"
-               />
-               <feOffset dx="-1" dy="1" />
-               <feGaussianBlur stdDeviation="1" />
-               <feComposite
-                  in2="hardAlpha"
-                  operator="arithmetic"
-                  k2="-1"
-                  k3="1"
-               />
-               <feColorMatrix
-                  type="matrix"
-                  values="0 0 0 0 0.807843 0 0 0 0 0.807843 0 0 0 0 0.803922 0 0 0 0.2 0"
-               />
-               <feBlend
-                  mode="normal"
-                  in2="effect5_innerShadow"
-                  result="effect6_innerShadow"
-               />
-            </filter>
-         </defs>
-      </svg>
+         <path
+            d="M1.22635 6.00567C1.8891 6.00568 2.42636 5.46844 2.42637 4.8057L2.42638 3.22839L4.00419 3.22839C4.66693 3.22839 5.20418 2.69113 5.20417 2.02839C5.20417 1.36565 4.6669 0.828389 4.00416 0.828389L2.22636 0.828388C1.01135 0.828388 0.0263987 1.81333 0.0263859 3.02833L0.0263672 4.80564C0.0263602 5.46838 0.563613 6.00565 1.22635 6.00567Z"
+            fill="#919699"
+         />
+         <path
+            d="M2.42637 9.25046C2.42636 8.58772 1.8891 8.05048 1.22635 8.05049C0.563613 8.05051 0.0263602 8.58778 0.0263672 9.25052L0.0263859 11.0278C0.0263987 12.2428 1.01135 13.2278 2.22636 13.2278H4.00416C4.6669 13.2278 5.20417 12.6905 5.20417 12.0278C5.20418 11.365 4.66693 10.8278 4.00419 10.8278L2.42638 10.8278L2.42637 9.25046Z"
+            fill="#919699"
+         />
+         <path
+            d="M10.0261 9.25047C10.0261 8.58773 10.5634 8.05048 11.2261 8.05049C11.8889 8.0505 12.4261 8.58777 12.4261 9.25051L12.4261 11.0278C12.4261 12.2428 11.4411 13.2278 10.2261 13.2278L8.44829 13.2278C7.78555 13.2278 7.24829 12.6905 7.24828 12.0278C7.24828 11.3651 7.78553 10.8278 8.44827 10.8278L10.0261 10.8278L10.0261 9.25047Z"
+            fill="#919699"
+         />
+      </StyleButton>
    )
 }
 
 export default MaximizeIcon
+
+const StyleButton = styled.svg`
+   &:active {
+      > path {
+         fill: #367bf5;
+      }
+   }
+`
