@@ -19,6 +19,7 @@ import {
 } from '../../graphql/subscriptions/index'
 import { useTabs } from '../../../../shared/providers'
 import { Banner } from '../../../../shared/components'
+import { ItemsSvg, PackagingsSvg, PurchaseOrdersSvg, SupplierSvg, WorkOrdersSvg } from '../../../../shared/assets/illustrationTileSvg'
 
 const address = 'apps.inventory.views.home.'
 
@@ -73,11 +74,11 @@ const Home = () => {
             <DashboardTile
                title={t(address.concat('suppliers'))}
                count={suppliers?.suppliersAggregate?.aggregate?.count || '...'}
-               conf={`${
-                  availableSuppliers?.suppliersAggregate?.aggregate?.count ||
+               conf={`${availableSuppliers?.suppliersAggregate?.aggregate?.count ||
                   '...'
-               } available`}
+                  } available`}
                onClick={() => addTab('Suppliers', '/inventory/suppliers')}
+               tileSvg={<SupplierSvg />}
             />
             <DashboardTile
                title={t(address.concat('items'))}
@@ -87,21 +88,21 @@ const Home = () => {
                }
                conf="All available"
                onClick={() => addTab('Supplier Items', '/inventory/items')}
+               tileSvg={<ItemsSvg />}
             />
             <DashboardTile
                title={t(address.concat('work orders'))}
                count={
                   bulkOrders?.bulkWorkOrdersAggregate?.aggregate?.count +
-                     sachetOrders?.sachetWorkOrdersAggregate?.aggregate
-                        ?.count || '...'
+                  sachetOrders?.sachetWorkOrdersAggregate?.aggregate
+                     ?.count || '...'
                }
-               conf={`${
-                  bulkOrders?.bulkWorkOrdersAggregate?.aggregate?.count || '...'
-               } Bulk and ${
-                  sachetOrders?.sachetWorkOrdersAggregate?.aggregate?.count ||
+               conf={`${bulkOrders?.bulkWorkOrdersAggregate?.aggregate?.count || '...'
+                  } Bulk and ${sachetOrders?.sachetWorkOrdersAggregate?.aggregate?.count ||
                   '...'
-               } Sachets`}
+                  } Sachets`}
                onClick={() => addTab('Work Orders', '/inventory/work-orders')}
+               tileSvg={<WorkOrdersSvg />}
             />
             <DashboardTile
                title={t(address.concat('purchase orders'))}
@@ -112,11 +113,13 @@ const Home = () => {
                onClick={() =>
                   addTab('Purchase Orders', '/inventory/purchase-orders')
                }
+               tileSvg={<PurchaseOrdersSvg />}
             />
             <DashboardTile
                title="Packagings"
                count={packagings?.packagingAggregate?.aggregate?.count || '...'}
                onClick={() => addTab('Packagings', '/inventory/packagings')}
+               tileSvg={<PackagingsSvg />}
             />
          </StyledCardList>
          <Banner id="inventory-app-home-bottom" />

@@ -8,6 +8,7 @@ import { StyledHome, StyledCardList } from './styled'
 import { STATIONS, ROLES, USERS } from '../../graphql'
 import { useTabs } from '../../../../shared/providers'
 import { Banner } from '../../../../shared/components'
+import { DevicesSvg, MasterListSvg, RolesSvg, StationsSvg, UsersSvg } from '../../../../shared/assets/illustrationTileSvg'
 
 const address = 'apps.settings.views.home.'
 
@@ -44,30 +45,35 @@ const Home = () => {
                count={settings_user_aggregate.aggregate.count}
                conf="All available"
                onClick={() => addTab('Users', '/settings/users')}
+               tileSvg={<UsersSvg />}
             />
             <DashboardTile
                conf="All available"
                count={rolesAggregate.aggregate.count}
                title={t(address.concat('roles'))}
                onClick={() => addTab('Roles', '/settings/roles')}
+               tileSvg={<RolesSvg />}
             />
             <DashboardTile
                title={t(address.concat('devices'))}
                count="4"
                conf="All active"
                onClick={() => addTab('Devices', '/settings/devices')}
+               tileSvg={<DevicesSvg />}
             />
             <DashboardTile
                title={t(address.concat('stations'))}
                count={stationsAggregate.aggregate.count}
                conf="All active"
                onClick={() => addTab('Stations', '/settings/stations')}
+               tileSvg={<StationsSvg />}
             />
             <DashboardTile
                title={t(address.concat('master lists'))}
                count="5"
                conf="All active"
                onClick={() => addTab('Master Lists', '/settings/master-lists')}
+               tileSvg={<MasterListSvg />}
             />
          </StyledCardList>
          <Banner id="settings-app-home-bottom" />
