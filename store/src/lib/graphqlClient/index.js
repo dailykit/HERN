@@ -1,14 +1,14 @@
-import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { ApolloClient, InMemoryCache } from '@apollo/client'
 
 export const graphqlClient = new ApolloClient({
-  uri:
-    (process.browser && window?._env_?.NEXT_PUBLIC_DATAHUB_URL) ||
-    process.env.NEXT_PUBLIC_DATAHUB_URL,
-  cache: new InMemoryCache(),
-  headers: {
-    "x-hasura-admin-secret": `${
-      (process.browser && window?._env_?.NEXT_PUBLIC_DATAHUB_ADMIN_SECRET) ||
-      process.env.NEXT_PUBLIC_DATAHUB_ADMIN_SECRET
-    }`,
-  },
-});
+   uri:
+      (process.browser && window?._env_?.DATA_HUB_HTTPS) ||
+      process.env.DATA_HUB_HTTPS,
+   cache: new InMemoryCache(),
+   headers: {
+      'x-hasura-admin-secret': `${
+         (process.browser && window?._env_?.ADMIN_SECRET) ||
+         process.env.ADMIN_SECRET
+      }`
+   }
+})
