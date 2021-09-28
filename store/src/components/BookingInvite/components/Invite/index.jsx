@@ -18,7 +18,7 @@ import {
    SEND_SMS,
    CREATE_EXPERIENCE_BOOKING_PARTICIPANT
 } from '../../../../graphql'
-import { useWindowDimensions, getDate, isNumeric } from '../../../../utils'
+import { useWindowDimensions, get_env, isNumeric } from '../../../../utils'
 
 export default function Invite({ experienceBooking, isPollClosed }) {
    console.log('Check expBookingINfo', experienceBooking)
@@ -161,9 +161,7 @@ export default function Invite({ experienceBooking, isPollClosed }) {
                      emailInput: {
                         subject: `Invitation for ${experienceBooking?.experienceClass?.experience?.title} Experience.`,
                         to: inviteAddress,
-                        from:
-                           (process.browser && window?._env_?.NO_REPLY_EMAIL) ||
-                           process.env.NO_REPLY_EMAIL,
+                        from: get_env('NO_REPLY_EMAIL'),
                         html: `<h3>Hello ${user?.email} has invited you for ${experienceBooking?.experienceClass?.experience?.title} experience , Here are Invite details: Invite Url: ${window.location.origin}/bookingInviteResponse?token=${inviteToken}</h3>`,
                         attachments: []
                      }

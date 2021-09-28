@@ -1,4 +1,5 @@
 import moment from 'moment'
+import { get_env } from './get_env'
 
 export const getCurrencySymbol = () => {
    var currency_symbols = {
@@ -18,13 +19,9 @@ export const getCurrencySymbol = () => {
       UAH: '₴', // Ukrainian Hryvnia
       VND: '₫' // Vietnamese Dong
    }
-   return currency_symbols[
-      (process.browser && window?._env_?.CURRENCY) || process.env.CURRENCY
-   ]
+   return currency_symbols[get_env('CURRENCY')]
 }
-export const currency = getCurrencySymbol(
-   (process.browser && window?._env_?.CURRENCY) || process.env.CURRENCY
-)
+export const currency = getCurrencySymbol(get_env('CURRENCY'))
 
 export const getDate = date => {
    return moment.utc(date).format('MMM DD, YYYY')
@@ -215,9 +212,7 @@ export const isEmpty = value => {
 export const formatCurrency = (input = 0) => {
    return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: isClient
-         ? (process.browser && window?._env_?.CURRENCY) || process.env.CURRENCY
-         : 'USD'
+      currency: get_env('CURRENCY')
    }).format(input)
 }
 

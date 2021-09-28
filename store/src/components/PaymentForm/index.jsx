@@ -7,22 +7,20 @@ import { Wrapper } from './styles'
 import PaymentCardForm from './components/PaymentCardForm'
 import { useAuth } from '../../Providers'
 import { InlineLoader } from '../../components'
-import { isClient } from '../../utils'
+import { isClient, get_env } from '../../utils'
 import { CREATE_STRIPE_PAYMENT_METHOD } from '../../graphql'
 
 export default function PaymentForm({ intent, type = 'tunnel' }) {
    const { state, togglePaymentModal } = useAuth()
    const { user, organization } = state
+   const STRIPE_KEY = get_env('STRIPE_KEY')
 
-   const stripePromise = loadStripe(
-      (process.browser && window?._env_?.STRIPE_KEY) || process.env.STRIPE_KEY,
-      {
-         ...(organization.stripeAccountType === 'standard' &&
-            organization?.stripeAccountId && {
-               stripeAccount: organization.stripeAccountId
-            })
-      }
-   )
+   const stripePromise = loadStripe(STRIPE_KEY, {
+      ...(organization.stripeAccountType === 'standard' &&
+         organization?.stripeAccountId && {
+            stripeAccount: organization.stripeAccountId
+         })
+   })
 
    const [createPaymentMethod] = useMutation(CREATE_STRIPE_PAYMENT_METHOD, {
       refetchQueries: ['CUSTOMER_DETAILS']

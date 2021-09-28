@@ -1,14 +1,22 @@
+import fs from 'fs'
 import { ApolloClient, InMemoryCache } from '@apollo/client'
 
-export const graphqlClient = new ApolloClient({
-   uri:
-      (process.browser && window?._env_?.DATA_HUB_HTTPS) ||
-      process.env.DATA_HUB_HTTPS,
-   cache: new InMemoryCache(),
-   headers: {
-      'x-hasura-admin-secret': `${
-         (process.browser && window?._env_?.ADMIN_SECRET) ||
-         process.env.ADMIN_SECRET
-      }`
+export const graphQLClient = async () => {
+   try {
+      const content = await fs.readFileSync(
+         process.cwd() + '/public/env-config.js',
+         'utf-8'
+      )
+      const config = JSON.parse(content.replace('window._env_ = ', ''))
+
+      return new ApolloClient({
+         uri: config['DATA_HUB_HTTPS'],
+         cache: new InMemoryCache(),
+         headers: {
+            'x-hasura-admin-secret': config['ADMIN_SECRET']
+         }
+      })
+   } catch (error) {
+      console.error('error', error)
    }
-})
+}

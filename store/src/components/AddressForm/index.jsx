@@ -11,7 +11,7 @@ import Button from '../Button'
 import { useAuth } from '../../Providers'
 import { CREATE_ADDRESS } from '../../graphql'
 import { theme } from '../../theme'
-import { isClient } from '../../utils'
+import { isClient, get_env } from '../../utils'
 
 export default function AddressForm({
    defaultMutation = true,
@@ -172,10 +172,7 @@ export default function AddressForm({
             <label>Search Address</label>
 
             <GooglePlacesAutocomplete
-               apiKey={
-                  (process.browser && window?._env_?.MAPS_API_KEY) ||
-                  process.env.MAPS_API_KEY
-               }
+               apiKey={get_env('MAPS_API_KEY')}
                selectProps={{
                   address,
                   onChange: data => formatAddress(data),

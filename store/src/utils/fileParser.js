@@ -1,12 +1,11 @@
 const axios = require('axios')
+import { get_env } from './get_env'
 
 const fetchFile = fold => {
    return new Promise(async (resolve, reject) => {
       const { path, linkedCssFiles, linkedJsFiles } = fold.subscriptionDivFileId
 
-      const url =
-         (process.browser && window?._env_?.EXPRESS_URL) ||
-         process.env.EXPRESS_URL
+      const url = get_env('EXPRESS_URL')
       const { data } = await axios.get(`${url}/template/files${path}`)
 
       // add css links + html
