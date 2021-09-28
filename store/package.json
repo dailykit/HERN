@@ -55,6 +55,7 @@
       "react-google-places-autocomplete": "^2.1.0",
       "react-html-parser": "^2.0.2",
       "react-image-fallback": "^8.0.0",
+      "react-slideshow-image": "^3.5.1",
       "react-toast-notifications": "^2.4.0",
       "request": "^2.88.2",
       "rrule": "^2.6.6",

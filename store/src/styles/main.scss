@@ -18,6 +18,10 @@
 @use './components/tunnel';
 @use './components/wallet_amount';
 @use './components/profile_sidebar';
+@use './components/on_demand_menu.scss';
+@use './components/product_card.scss';
+@use './components/bottom_cart_bar.scss';
+@use './components/divider.scss';
 
 @use './sections/register';
 @use './sections/our-plans';
@@ -37,6 +41,7 @@
 @use './sections/inventory';
 @use './sections/recipes';
 @use './sections/placing-order';
+@use './sections/order';
 
 /*Account routes pages*/
 @use './sections/account/addresses';
