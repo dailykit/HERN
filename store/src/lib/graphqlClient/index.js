@@ -1,7 +1,7 @@
 import fs from 'fs'
 import { ApolloClient, InMemoryCache } from '@apollo/client'
 
-export const graphQLClient = async () => {
+export const graphqlClient = async () => {
    try {
       const content = await fs.readFileSync(
          process.cwd() + '/public/env-config.js',
