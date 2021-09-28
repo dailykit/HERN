@@ -97,7 +97,7 @@ export default function Modal({
                   width="100%"
                >
                   <h2>{optionMenu?.title || 'Title'}</h2>
-                  <Styles.CloseButton onClick={() => setIsModalOpen(false)}>
+                  <Styles.CloseButton onClick={() => setIsModalOpen(null)}>
                      <ClearIcon color="#fff" />
                   </Styles.CloseButton>
                </Flex>

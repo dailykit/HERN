@@ -23,7 +23,7 @@ import {
    HomeContainer,
    WelcomeNote,
 } from './styled'
-import BottomBar from './shared/components/BottomBar'
+
 import DashboardCards from './shared/components/DashboardCardAnalytics'
 import { useAuth } from './shared/providers'
 import DashboardTables from './shared/components/DashboardTables'
@@ -164,7 +164,7 @@ const App = () => {
             </Switch>
          </main>
          {/* {!isKeycloakSupported() && <RedirectBanner />} */}
-         <BottomBar />
+      
       </Layout>
    )
 }
