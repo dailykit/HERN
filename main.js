@@ -132,7 +132,7 @@ const serveSubscription = async (req, res, next) => {
       if (process.env.NODE_ENV === 'development') {
          const url = RESTRICTED_FILES.some(file => routePath.includes(file))
             ? `http://localhost:3000/${routePath}`
-            : `http://localhost:3000/${brand}/${routePath}`
+            : `http://localhost:3000/${routePath}`
          request(url, (error, _, body) => {
             if (error) {
                throw error
@@ -149,11 +149,11 @@ const serveSubscription = async (req, res, next) => {
                routePath === ''
                   ? path.join(
                        __dirname,
-                       `./store/.next/server/pages/${brand}.html`
+                       `./store/.next/server/pages/index.html`
                     )
                   : path.join(
                        __dirname,
-                       `./store/.next/server/pages/${brand}/${routePath}.html`
+                       `./store/.next/server/pages/${routePath}.html`
                     )
 
             /*
@@ -170,7 +170,7 @@ const serveSubscription = async (req, res, next) => {
                   routePath.includes(file)
                )
                   ? `http://localhost:3000/${routePath}`
-                  : `http://localhost:3000/${brand}/${routePath}`
+                  : `http://localhost:3000/${routePath}`
                request(url, (error, _, body) => {
                   if (error) {
                      console.log(error)
