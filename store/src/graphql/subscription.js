@@ -541,7 +541,7 @@ export const CART_SUBSCRIPTION = gql`
          transactionRemark
          stripeInvoiceId
          stripeInvoiceDetails
-         products: cartItemViews(where: { level: { _eq: 1 } }) {
+         products: cartItems(where: { level: { _eq: 1 } }) {
             id
             isAddOn
             unitPrice
@@ -1224,6 +1224,8 @@ export const CUSTOMER_DETAILS = gql`
             keycloakId
             phoneNumber
             paymentCustomerId
+            defaultPaymentMethodId
+            defaultCustomerAddressId
             addresses: customerAddresses(order_by: { created_at: desc }) {
                id
                lat

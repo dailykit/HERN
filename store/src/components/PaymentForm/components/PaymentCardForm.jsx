@@ -48,6 +48,7 @@ export default function PaymentCardForm({ intent, handleResult, type }) {
          setError(result.error.message)
          console.log('fail', result)
       } else {
+         setSubmitting(false)
          console.log('succcess', result)
          handleResult(result)
          setError('')

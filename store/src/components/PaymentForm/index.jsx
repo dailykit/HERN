@@ -7,19 +7,19 @@ import { Wrapper } from './styles'
 import PaymentCardForm from './components/PaymentCardForm'
 import { useUser } from '../../Providers'
 import { InlineLoader } from '../../components'
-import { isClient, get_env } from '../../utils'
+import { isClient, get_env, isConnectedIntegration } from '../../utils'
 import { CREATE_STRIPE_PAYMENT_METHOD } from '../../graphql'
 
 export default function PaymentForm({ intent, type = 'tunnel' }) {
    const { state, togglePaymentModal } = useUser()
    const { user, organization } = state
    const STRIPE_KEY = get_env('STRIPE_KEY')
-
-   const stripePromise = loadStripe(STRIPE_KEY, {
-      ...(organization.stripeAccountType === 'standard' &&
-         organization?.stripeAccountId && {
-            stripeAccount: organization.stripeAccountId
-         })
+   const STRIPE_ACCOUNT_ID = get_env('STRIPE_ACCOUNT_ID')
+   const isConnected = isConnectedIntegration()
+   const stripePromise = loadStripe(isClient ? STRIPE_KEY : '', {
+      ...(isConnected && {
+         stripeAccount: STRIPE_ACCOUNT_ID
+      })
    })
 
    const [createPaymentMethod] = useMutation(CREATE_STRIPE_PAYMENT_METHOD, {
@@ -29,22 +29,10 @@ export default function PaymentForm({ intent, type = 'tunnel' }) {
       try {
          console.log(setupIntent)
          if (setupIntent.status === 'succeeded') {
-            console.log(setupIntent)
-            const ORIGIN = isClient
-               ? (process.browser &&
-                    window?._env_?.NEXT_PUBLIC_PAYMENTS_API_URL) ||
-                 process.env.NEXT_PUBLIC_PAYMENTS_API_URL
-               : ''
-            let URL = `${ORIGIN}/api/payment-method/${setupIntent.payment_method}`
-            console.log(URL)
-            if (
-               organization.stripeAccountType === 'standard' &&
-               organization?.stripeAccountId
-            ) {
-               URL += `?accountId=${organization.stripeAccountId}`
-            }
-            const { data: { success, data = {} } = {} } = await axios.get(URL)
-            console.log(data)
+            const origin = isClient ? window.location.origin : ''
+            const url = `${origin}/server/api/payment/payment-method/${setupIntent.payment_method}`
+
+            const { data: { success, data = {} } = {} } = await axios.get(url)
 
             if (success) {
                await createPaymentMethod({
@@ -58,11 +46,10 @@ export default function PaymentForm({ intent, type = 'tunnel' }) {
                         expYear: data.card.exp_year,
                         cvcCheck: data.card.cvc_check,
                         expMonth: data.card.exp_month,
-                        stripePaymentMethodId: data.id,
+                        paymentMethodId: data.id,
                         cardHolderName: data.billing_details.name,
-                        organizationStripeCustomerId:
-                           user.CustomerByClients[0]
-                              ?.organizationStripeCustomerId
+                        paymentCustomerId:
+                           user.platform_customer?.paymentCustomerId
                      }
                   }
                })

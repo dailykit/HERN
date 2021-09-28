@@ -37,7 +37,7 @@ export default function Payment({
    const [intent, setIntent] = useState(null)
    const [contentIndex, setContentIndex] = useState(0)
    const { state } = useUser()
-   const { user = {}, organization = {} } = state
+   const { user = {}, isAuthenticated } = state
 
    const next = () => {
       if (contentIndex === 1) {
@@ -58,8 +58,9 @@ export default function Payment({
       UPDATE_PLATFORM_CUSTOMER,
       {
          refetchQueries: ['CUSTOMER_DETAILS'],
-         onCompleted: ({ platform_updateCustomer }) => {
-            const { defaultPaymentMethodId } = platform_updateCustomer
+         onCompleted: ({ update_platform_customer = {} }) => {
+            const { defaultPaymentMethodId } =
+               update_platform_customer?.returning[0]
             setDefaultPaymentMethodId(defaultPaymentMethodId)
          },
          onError: error => {
@@ -80,7 +81,11 @@ export default function Payment({
    const handleCheckboxClick = paymentMethodId => {
       updateDefaultPaymentMethodId({
          variables: {
-            keycloakId: user?.keycloakId,
+            where: {
+               keycloakId: {
+                  _eq: user?.keycloakId
+               }
+            },
             _set: {
                defaultPaymentMethodId: paymentMethodId
             }
@@ -92,7 +97,7 @@ export default function Payment({
       if (paymentMethodId !== defaultPaymentMethodId) {
          deleteStripePaymentMethod({
             variables: {
-               stripePaymentMethodId: paymentMethodId
+               paymentMethodId: paymentMethodId
             }
          })
       } else {
@@ -122,21 +127,21 @@ export default function Payment({
 
    useEffect(() => {
       if (
-         user?.CustomerByClients &&
-         user?.CustomerByClients.length &&
-         user?.CustomerByClients[0]?.organizationStripeCustomerId &&
-         isClient
+         isAuthenticated &&
+         isClient &&
+         !isEmpty(user) &&
+         user?.paymentCustomerId &&
+         !intent
       ) {
          ;(async () => {
-            const intent = await createSetupIntent(
-               user?.CustomerByClients[0]?.organizationStripeCustomerId,
-               organization
+            const setup_intent = await createSetupIntent(
+               user?.paymentCustomerId
             )
-            console.log('intent', intent)
-            setIntent(intent)
+            setIntent(setup_intent)
          })()
       }
-   }, [user, organization])
+   }, [user])
+
    if (type === 'tunnel') {
       return (
          <Wrapper isDeleting={isDeleting}>
@@ -164,7 +169,7 @@ export default function Payment({
                         {user?.stripePaymentMethods?.map(method => {
                            return (
                               <div
-                                 key={method?.stripePaymentMethodId}
+                                 key={method?.paymentMethodId}
                                  className="address-card"
                               >
                                  <label className="checkbox-wrap">
@@ -173,12 +178,12 @@ export default function Payment({
                                        customWidth="24px"
                                        customHeight="24px"
                                        checked={
-                                          method?.stripePaymentMethodId ===
+                                          method?.paymentMethodId ===
                                           defaultPaymentMethodId
                                        }
                                        onChange={() =>
                                           handleCheckboxClick(
-                                             method?.stripePaymentMethodId
+                                             method?.paymentMethodId
                                           )
                                        }
                                        disabled={isUpdating}
@@ -186,7 +191,7 @@ export default function Payment({
 
                                     <small>
                                        {getSmallContent(
-                                          method?.stripePaymentMethodId
+                                          method?.paymentMethodId
                                        )}
                                     </small>
                                  </label>
@@ -231,7 +236,7 @@ export default function Payment({
                                     className="delete-btn"
                                     onClick={() =>
                                        handleDeletePaymentCard(
-                                          method?.stripePaymentMethodId
+                                          method?.paymentMethodId
                                        )
                                     }
                                  >
@@ -283,10 +288,10 @@ export default function Payment({
                   <HorizontalTabPanels>
                      <HorizontalTabPanel>
                         <div className="grid-view">
-                           {user?.stripePaymentMethods?.map(method => {
+                           {user?.paymentMethods?.map(method => {
                               return (
                                  <div
-                                    key={method?.stripePaymentMethodId}
+                                    key={method?.paymentMethodId}
                                     className="address-card"
                                  >
                                     <label className="checkbox-wrap">
@@ -295,12 +300,12 @@ export default function Payment({
                                           customWidth="24px"
                                           customHeight="24px"
                                           checked={
-                                             method?.stripePaymentMethodId ===
+                                             method?.paymentMethodId ===
                                              defaultPaymentMethodId
                                           }
                                           onChange={() =>
                                              handleCheckboxClick(
-                                                method?.stripePaymentMethodId
+                                                method?.paymentMethodId
                                              )
                                           }
                                           disabled={isUpdating}
@@ -308,7 +313,7 @@ export default function Payment({
 
                                        <small>
                                           {getSmallContent(
-                                             method?.stripePaymentMethodId
+                                             method?.paymentMethodId
                                           )}
                                        </small>
                                     </label>
@@ -351,7 +356,7 @@ export default function Payment({
                                        className="delete-btn"
                                        onClick={() =>
                                           handleDeletePaymentCard(
-                                             method?.stripePaymentMethodId
+                                             method?.paymentMethodId
                                           )
                                        }
                                     >
@@ -385,21 +390,12 @@ export default function Payment({
    }
 }
 
-const createSetupIntent = async (customer, organization = {}) => {
+const createSetupIntent = async customer => {
    try {
-      let stripeAccountId = null
-      if (
-         organization?.stripeAccountType === 'standard' &&
-         organization?.stripeAccountId
-      ) {
-         stripeAccountId = organization?.stripeAccountId
-      }
-      const URL = `${
-         (process.browser && window?._env_?.NEXT_PUBLIC_PAYMENTS_API_URL) ||
-         process.env.NEXT_PUBLIC_PAYMENTS_API_URL
-      }/api/setup-intent`
-      const { data } = await axios.post(URL, { customer, stripeAccountId })
-      console.log('axios result', data)
+      const origin = isClient ? window.location.origin : ''
+      const url = `${origin}/server/api/payment/setup-intent` //need to be dynamic later
+      const { data } = await axios.post(url, { customer })
+      console.log({ setupIntent: data.data })
       return data.data
    } catch (error) {
       return error

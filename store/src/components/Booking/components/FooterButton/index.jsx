@@ -29,7 +29,7 @@ export default function FooterButton({ experienceId, confirmNPayHandler }) {
          defaultCustomerAddress,
          keycloakId,
          defaultPaymentMethodId,
-         stripeCustomerId
+         paymentCustomerId
       }
    } = userState
    const { getCart } = useCart()
@@ -71,6 +71,7 @@ export default function FooterButton({ experienceId, confirmNPayHandler }) {
                         customerKeycloakId:
                            i === 0 && isHostParticipant ? keycloakId : null,
                         address: i === 0 ? defaultCustomerAddress : null,
+                        paymentCustomerId: i === 0 ? paymentCustomerId : null,
                         experienceClassId:
                            selectedSlot?.selectedExperienceClassId,
                         experienceClassTypeId: classTypeInfo?.id,
@@ -106,6 +107,7 @@ export default function FooterButton({ experienceId, confirmNPayHandler }) {
                            parentCart: {
                               data: {
                                  customerKeycloakId: keycloakId,
+                                 paymentCustomerId,
                                  experienceClassId:
                                     selectedSlot?.selectedExperienceClassId,
                                  experienceClassTypeId: classTypeInfo?.id
