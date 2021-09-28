@@ -136,7 +136,10 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
                <div className="forDesktop">
                   {isAuthenticated ? (
                      <>
-                        <h1 className="greeting-name">Hey {user?.email}</h1>
+                        <h1 className="greeting-name">
+                           Hey {user?.firstName && user?.firstName}{' '}
+                           {user?.lastName && user?.lastName}
+                        </h1>
                         <p className="greeting-msg">
                            Check out these experiences we handpicked for you.
                            You can also manage your booked events below.

@@ -48,7 +48,7 @@ export default function Signup({ authBtnClassName, ...props }) {
          }
       } catch (error) {
          console.log(error)
-         if (error.includes('exists')) {
+         if (error?.message?.includes('exists')) {
             return setError('Email is already in use!')
          }
          setError('Failed to register, please try again!')
@@ -102,14 +102,8 @@ export default function Signup({ authBtnClassName, ...props }) {
             />
             {error && <Error>{error}</Error>}
             <div className={`signupBtnWrap ${authBtnClassName}`}>
-               <Button type="submit" className="signupBtn">
-                  {loading ||
-                  creatingCustomerLoading ||
-                  loadingCustomerDetails ? (
-                     <InlineLoader />
-                  ) : (
-                     'Sign Up'
-                  )}
+               <Button type="submit" className="signupBtn" disabled={loading}>
+                  {loading ? <InlineLoader /> : 'Sign Up'}
                </Button>
             </div>
          </FormWrap>
@@ -118,5 +112,5 @@ export default function Signup({ authBtnClassName, ...props }) {
 }
 
 const redirect = () => {
-   window.location.href = `${window.location.origin}/tags`
+   window.location.href = `${window.location.origin}/categoryTag`
 }

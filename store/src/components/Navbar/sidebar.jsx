@@ -1,6 +1,7 @@
 import React, { useRef } from 'react'
 import { Flex } from '@dailykit/ui'
 import NavLink from 'next/link'
+import { signOut } from 'next-auth/client'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { SidebarWrapper } from './styles'
@@ -56,8 +57,8 @@ export default function Sidebar({
       }
    ]
 
-   const logout = () => {
-      isClient && localStorage.removeItem('token')
+   const logout = async () => {
+      await signOut({ redirect: false })
       if (isClient) {
          window.location.href = window.location.origin + ''
       }

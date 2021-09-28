@@ -14,15 +14,10 @@ const INSERT_PLATFORM_CUSTOMER = gql`
 
 export default async function handler(req, res) {
    if (req.method === 'POST') {
-      const {
-         firstName = '',
-         lastName = '',
-         phoneNumber,
-         email = '',
-         password = ''
-      } = req.body
+      const { name = '', phoneNumber, email = '', password = '' } = req.body
       const hash = await bcrypt.hash(password, SALT_ROUNDS)
       const client = await graphqlClient()
+      const [firstName, lastName] = name.split(' ')
       //  create a new user entry in the platform customer table
       const {
          data: { insertCustomer }
