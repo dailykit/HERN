@@ -4,6 +4,7 @@ import { Link, useHistory } from 'react-router-dom'
 import { PlayIcon } from '../../assets/icons'
 import { Tutorials } from './assets/illustrations'
 import ActionButtons from './components/ActionButtons'
+import Styled, { Wrapper, Styleflex } from './styles'
 import Styled, { Wrapper, Styleflex } from './styles.js'
 
 const Notes = ({ data }) => {

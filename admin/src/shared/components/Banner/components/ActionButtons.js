@@ -10,6 +10,7 @@ const ActionButtons = ({ isMinimized, setIsMinimized }) => {
             {!isMinimized ? 'Show note' : 'Hide note'}
          </h4>
          <IconButton
+            style={{ borderRadius: '4px', marginLeft: '2px' }}
             type="ghost"
             size="sm"
             onClick={() => setIsMinimized(!isMinimized)}

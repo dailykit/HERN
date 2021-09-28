@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 export const StyledHome = styled.div`
-   width: 1180px;
+   width: 1280px;
    margin: 0 auto;
    padding-bottom: 20px;
 
@@ -10,11 +10,9 @@ export const StyledHome = styled.div`
    }
 `
 export const StyledHeader = styled.ul`
-   width: 100%;
    display: grid;
    grid-gap: 24px;
-   margin: 60px 0;
-   grid-template-columns: 2fr 1fr;
+   margin: 30px 40px;
    @media (max-width: 780px) {
       width: 100%;
    }
@@ -29,11 +27,10 @@ export const StyledHeader = styled.ul`
 `
 
 export const StyledCardList = styled.ul`
-   width: 780px;
    display: grid;
-   grid-gap: 24px;
-   margin: 0 auto;
-   grid-template-columns: 1fr 1fr;
+   grid-gap: 30px;
+   margin: 30px 40px;
+   grid-template-columns: 1fr 1fr 1fr;
    @media (max-width: 780px) {
       width: 100%;
    }

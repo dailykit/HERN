@@ -7,6 +7,7 @@ import { StyledHome, StyledCardList } from './styled'
 import { useTabs } from '../../../../shared/providers'
 import { COLLECTIONS_COUNT } from '../../graphql'
 import { Banner } from '../../../../shared/components'
+import { CollectionsSvg } from '../../../../shared/assets/illustrationTileSvg'
 
 const address = 'apps.menu.views.home.'
 
@@ -28,6 +29,7 @@ const Home = () => {
                }
                conf="All available"
                onClick={() => addTab('Collections', '/menu/collections')}
+               tileSvg={<CollectionsSvg />}
             />
          </StyledCardList>
          <Banner id="menu-app-home-bottom" />

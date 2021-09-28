@@ -37,17 +37,14 @@ const Styled = {
       font-weight: 500;
       color: #202020;
       line-height: 20px;
-      display: flex;
-      align-items: center;
+      display: inline-flex;
+      align-items: baseline;
    `,
    Count: styled.span`
       width: 16px;
       padding-right: 4px;
-      align-self: flex-start;
    `,
-   Text: styled.div`
-      align-self: flex-start;
-   `,
+   Text: styled.div``,
    Button: styled.button`
       border: none;
       outline: none;
