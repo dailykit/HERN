@@ -5,13 +5,13 @@ import { useMutation } from '@apollo/client'
 import { Elements } from '@stripe/react-stripe-js'
 import { Wrapper } from './styles'
 import PaymentCardForm from './components/PaymentCardForm'
-import { useAuth } from '../../Providers'
+import { useUser } from '../../Providers'
 import { InlineLoader } from '../../components'
 import { isClient, get_env } from '../../utils'
 import { CREATE_STRIPE_PAYMENT_METHOD } from '../../graphql'
 
 export default function PaymentForm({ intent, type = 'tunnel' }) {
-   const { state, togglePaymentModal } = useAuth()
+   const { state, togglePaymentModal } = useUser()
    const { user, organization } = state
    const STRIPE_KEY = get_env('STRIPE_KEY')
 

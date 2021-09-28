@@ -8,7 +8,7 @@ import GooglePlacesAutocomplete, {
 import { Wrapper, AddressSearch } from './styles'
 import Input from '../Input'
 import Button from '../Button'
-import { useAuth } from '../../Providers'
+import { useUser } from '../../Providers'
 import { CREATE_ADDRESS } from '../../graphql'
 import { theme } from '../../theme'
 import { isClient, get_env } from '../../utils'
@@ -21,7 +21,7 @@ export default function AddressForm({
    onSubmit,
    onChange = null
 }) {
-   const { state } = useAuth()
+   const { state } = useUser()
    const { user } = state
    const [isValid, setIsValid] = useState(false)
    const [formStatus, setFormStatus] = React.useState('PENDING')

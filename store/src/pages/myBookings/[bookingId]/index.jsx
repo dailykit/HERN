@@ -16,7 +16,7 @@ import {
    InlineLoader
 } from '../../../components'
 import { UPDATE_CART, CART_SUBSCRIPTION } from '../../../graphql'
-import { useAuth, useExperienceInfo } from '../../../Providers'
+import { useUser, useExperienceInfo } from '../../../Providers'
 import {
    getDateWithTime,
    getMinute,
@@ -31,7 +31,7 @@ export default function MyBooking({ navigationMenuItems, parsedData = [] }) {
    const { bookingId } = router.query
    const { width, height } = useWindowDimensions()
    const { addToast } = useToasts()
-   const { state: userState } = useAuth()
+   const { state: userState } = useUser()
    const { user = {} } = userState
    const [experienceInfo, setExperienceInfo] = useState(null)
    const [isCelebrating, setIsCelebrating] = useState(false)

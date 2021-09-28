@@ -12,7 +12,7 @@ import {
 } from '../../../../components'
 import useModal from '../../../useModal'
 import { theme } from '../../../../theme'
-import { useAuth } from '../../../../Providers'
+import { useUser } from '../../../../Providers'
 import {
    SEND_EMAIL,
    SEND_SMS,
@@ -25,7 +25,7 @@ export default function Invite({ experienceBooking, isPollClosed }) {
    const { ModalContainer, show, hide, isShow } = useModal()
    const { addToast } = useToasts()
    const { width } = useWindowDimensions()
-   const { state: userState } = useAuth()
+   const { state: userState } = useUser()
    const { user = {} } = userState
    const [inviteList, setInviteList] = useState([])
    const [isReset, setIsReset] = useState(false)
