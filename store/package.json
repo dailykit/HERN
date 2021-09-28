@@ -1,0 +1,78 @@
+{
+  "name": "stay-in-social",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@apollo/client": "^3.3.14",
+    "@dailykit/ui": "^0.8.40",
+    "@dailykit/web-renderer": "1.0.7",
+    "@reach/tabs": "^0.14.0",
+    "@sentry/react": "^6.2.5",
+    "@stripe/react-stripe-js": "^1.4.0",
+    "@stripe/stripe-js": "^1.14.0",
+    "@svgr/webpack": "^5.5.0",
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "axios": "^0.21.1",
+    "font-awesome": "^4.7.0",
+    "graphql": "^15.5.0",
+    "html-react-parser": "^1.2.5",
+    "jsonwebtoken": "^8.5.1",
+    "jwt-decode": "^3.1.2",
+    "keycloak-js": "^12.0.4",
+    "moment": "^2.29.1",
+    "next": "^11.0.1",
+    "plaiceholder": "^2.0.1",
+    "prop-types": "^15.7.2",
+    "react": "^17.0.2",
+    "react-confetti": "^6.0.1",
+    "react-content-loader": "^6.0.3",
+    "react-cool-portal": "^1.1.1",
+    "react-custom-scrollbars": "^4.2.1",
+    "react-datepicker": "^3.8.0",
+    "react-dom": "^17.0.2",
+    "react-google-places-autocomplete": "^3.3.0",
+    "react-html-parser": "^2.0.2",
+    "react-masonry-component": "^6.2.1",
+    "react-masonry-css": "^1.0.14",
+    "react-player": "^2.9.0",
+    "react-router-dom": "^5.2.0",
+    "react-router-hash-link": "^2.4.0",
+    "react-scripts": "4.0.3",
+    "react-scroll": "^1.8.2",
+    "react-share": "^4.4.0",
+    "react-toast-notifications": "^2.4.4",
+    "react-transition-group": "^4.4.1",
+    "styled-components": "^5.2.1",
+    "subscriptions-transport-ws": "^0.9.18",
+    "web-vitals": "^1.0.1"
+  },
+  "scripts": {
+    "dev": "SET SKIP_PREFLIGHT_CHECK=true&&next dev",
+    "build": "next build",
+    "start": "SKIP_PREFLIGHT_CHECK=true&&next start",
+    "init:config": "chmod +x ./script.sh && ./script.sh && cp env-config.js ./public"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "eslint-config-next": "^11.0.1"
+  }
+}

@@ -1,0 +1,84 @@
+@import url("https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;800&display=swap");
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Barlow", sans-serif;
+  outline: none;
+  font-family: "Barlow", sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* background-color: #101010; */
+  background-color: #15171f;
+  /* background-color: #2a4562; */
+  /* background-color: #212530; */
+}
+
+body {
+  overflow-x: hidden;
+}
+@media (max-width: 760px) {
+  body {
+    padding-top: 64px;
+  }
+}
+.special-underline {
+  position: relative;
+}
+
+.special-underline::after {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 0%;
+  content: "";
+  color: #7ab6d3;
+  background: #7ab6d3;
+  height: 2px;
+}
+.special-underline:hover {
+  color: #7ab6d3;
+  cursor: pointer;
+}
+.special-underline:hover::after {
+  width: 100%;
+}
+.special-underline,
+.special-underline::before,
+.special-underline::after {
+  transition: all 560ms;
+}
+
+.box-shadow-glow:hover {
+  cursor: pointer;
+  animation: box-shadow-drop-center 0.6s both;
+  @keyframes box-shadow-drop-center {
+    0% {
+      box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+    }
+    100% {
+      box-shadow: 0 0 18px rgba(255, 255, 255, 0.35);
+    }
+  }
+}
+
+.box-shadow-drop-center {
+  animation: box-shadow-drop-center 0.6s both;
+}
+@keyframes box-shadow-drop-center {
+  0% {
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 18px rgba(255, 255, 255, 0.35);
+  }
+}
+
+/* .app{
+   width:100vw;
+   height:100vh;
+ } */

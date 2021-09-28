@@ -1,0 +1,30 @@
+.wrapper-class {
+    display: -webkit-box; /* Not needed if autoprefixing */
+    display: -ms-flexbox; /* Not needed if autoprefixing */
+    display: flex;
+    margin-left: -30px; /* gutter size offset */
+    width: 100%;
+  }
+  .column_class {
+    padding-left: 30px; /* gutter size */
+    background-clip: padding-box;
+  }
+
+  /* Style your items */
+  .column_class > div { /* change div to reference your elements you put in <Masonry> */
+    background: grey;
+    margin-bottom: 30px;
+  }
+
+  /* Optional, different gutter size on mobile */
+@media (max-width: 800px) {
+    .wrapper-class {
+      margin-left: -15px; /* gutter size offset */
+    }
+    .column_class {
+      padding-left: 15px; /* gutter size offset */
+    }
+    .column_class > div {
+      margin-bottom: 15px; /* space between items */
+    }
+  }
