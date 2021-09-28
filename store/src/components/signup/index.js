@@ -1,103 +1,20 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
-import { useLazyQuery, useMutation } from '@apollo/client'
-import jwtDecode from 'jwt-decode'
+import { signIn } from 'next-auth/client'
+import axios from 'axios'
 import { Wrapper, FormWrap } from './styles'
 import Button from '../Button'
 import Error from '../Error'
 import Input from '../Input'
 import InlineLoader from '../InlineLoader'
-import { auth } from '../../authenticationApi'
-import { useUser } from '../../Providers'
-import { isClient, isEmpty, useWindowDimensions } from '../../utils'
-import { useConfig } from '../../lib'
-import {
-   CUSTOMER_DETAILS,
-   CREATE_CUSTOMER,
-   CREATE_BRAND_CUSTOMER
-} from '../../graphql'
 
 export default function Signup({ authBtnClassName, ...props }) {
-   const { width } = useWindowDimensions()
-   const { login, register } = auth
-   const { brand } = useConfig()
-   const { user, dispatch } = useUser()
    const [loading, setLoading] = useState(false)
    const [error, setError] = useState('')
    const [name, setName] = useState('')
    const [email, setEmail] = useState('')
    const [password, setPassword] = useState('')
    const [confirmPassword, setConfirmPassword] = useState('')
-
-   const [create_brand_customer] = useMutation(CREATE_BRAND_CUSTOMER, {
-      refetchQueries: ['CUSTOMER_DETAILS'],
-      onCompleted: () => {
-         if (isClient) {
-            // setIsCategoryDrawerOpen(true);
-            redirect()
-         }
-      },
-      onError: error => {
-         console.log(error)
-      }
-   })
-
-   const [create, { loading: creatingCustomerLoading }] = useMutation(
-      CREATE_CUSTOMER,
-      {
-         refetchQueries: ['CUSTOMER_DETAILS'],
-         onCompleted: () => {
-            dispatch({ type: 'SET_USER', payload: {} })
-            // setIsCategoryDrawerOpen(true);
-            redirect()
-         },
-         onError: error => console.log(error)
-      }
-   )
-
-   const [customer, { loading: loadingCustomerDetails }] = useLazyQuery(
-      CUSTOMER_DETAILS,
-      {
-         onCompleted: async ({ customer = {} }) => {
-            const { email = '', sub: keycloakId = '' } = jwtDecode(
-               localStorage.getItem('token')
-            )
-            if (isEmpty(customer)) {
-               console.log('CUSTOMER DOESNT EXISTS')
-               create({
-                  variables: {
-                     object: {
-                        email,
-                        keycloakId,
-                        clientId:
-                           isClient &&
-                           ((process.browser &&
-                              window?._env_?.NEXT_PUBLIC_CLIENTID) ||
-                              process.env.NEXT_PUBLIC_CLIENTID)
-                     }
-                  }
-               })
-               return
-            }
-            console.log('CUSTOMER EXISTS')
-
-            const user = {
-               ...customer,
-               ...customer?.platform_customer
-            }
-            dispatch({ type: 'SET_USER', payload: user })
-            const { brandCustomers = [] } = customer
-            if (brandCustomers.length) {
-               console.log('BRAND_CUSTOMER DOESNT EXISTS')
-               create_brand_customer({
-                  variables: {
-                     object: { keycloakId, brandId: brand.id }
-                  }
-               })
-            }
-         }
-      }
-   )
 
    const handleSubmit = async e => {
       try {
@@ -107,22 +24,26 @@ export default function Signup({ authBtnClassName, ...props }) {
          if (password !== confirmPassword) {
             throw new Error('Passwords do not match!')
          }
-         const result = await register({
-            name,
-            email,
-            password
-         })
-         if (result.success) {
-            const token = await login({
+         const options = {
+            url: `${window.location.origin}/api/register`,
+            method: 'POST',
+            data: {
+               name,
                email,
                password
+            }
+         }
+         const { data } = await axios(options)
+         if (data.success) {
+            const response = await signIn('email_password', {
+               email,
+               password,
+               redirect: false
             })
-            if (token?.sub) {
-               customer({
-                  variables: {
-                     keycloakId: token?.sub
-                  }
-               })
+            console.log({ responsefromSignup: response })
+            if (response?.status === 200) {
+               setLoading(false)
+               redirect()
             }
          }
       } catch (error) {
