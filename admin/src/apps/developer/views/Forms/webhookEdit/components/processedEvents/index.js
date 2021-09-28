@@ -1,19 +1,26 @@
-import React, {useRef, useState} from 'react';
+import React, {useRef, useState, useEffect} from 'react';
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import {Table, TableHead, TableBody, TableRow, TableCell, Flex, TextButton, Text, Spacer, DropdownButton, ButtonGroup, ComboButton, PlusIcon, useTunnel} from '@dailykit/ui';
 import options from '../../../../tableOptions'
-import { GET_PROCESSED_EVENTS } from '../../../../../graphql';
+import { GET_PROCESSED_EVENTS, GET_INVOCATIONS_OF_PROCESSED_EVENTS } from '../../../../../graphql';
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import {logger}  from '../../../../../../../shared/utils'
 import { StyledWrapper } from './styled'
+import InvocationTunnel from './tunnels/invocationTunnel';
 
 
 const ProcessedEvents = (props)=>{
 
     const [processedEvents, setProcessedEvents] = useState([])
 
+    const [invocationState, setInvocationState] = useState(false)
+
+    const [processedEventId, setProcessedEventId] = useState()
+
     const webhookUrl_EventId = props.webhookUrl_EventId
+
+    const [popupTunnels, openPopupTunnel, closePopupTunnel] = useTunnel(2)
 
     const { data, loading, error } = useSubscription(GET_PROCESSED_EVENTS, {
       variables:{
@@ -23,6 +30,7 @@ const ProcessedEvents = (props)=>{
            const processedEventsData = data.developer_webhookUrl_events[0]?.availableWebhookEvent.processedWebhookEvents.map((item)=>{
             if (item.processedWebhookEventsByUrls[0]){
             const newData =  { "created_at":item.created_at, 
+               "id":item.id,
                "statusCode":item.processedWebhookEventsByUrls[0].statusCode,
                "attemptedTime":item.processedWebhookEventsByUrls[0].attemptedTime}
                return newData;
@@ -36,10 +44,29 @@ const ProcessedEvents = (props)=>{
 
     if (error) {
       toast.error('Something went wrong')
+      console.log('processed')
       logger(error)
    }
 
+
+
     const tableRef = useRef()
+
+
+    useEffect(() => {
+       console.log(processedEventId)
+       if (processedEventId){
+         setInvocationState(true)
+       }
+      
+      console.log(invocationState)
+  }, [processedEventId]);
+
+
+    const rowClick = (e, cell) => {
+      const id = cell._cell.row.data.id
+      setProcessedEventId(id)  
+   }
 
     const columns = [
         {
@@ -51,9 +78,10 @@ const ProcessedEvents = (props)=>{
            headerSort:true,
            cssClass: 'rowClick',
            width: 300,
-        //    cellClick: (e, cell) => {
-        //       rowClick(e, cell)
-        //    }
+           cellClick: (e, cell) => {
+              rowClick(e, cell)
+            openPopupTunnel(1)
+           }
            // headerTooltip: function (column) {
            //    const identifier = 'webhook_listing_code_column'
            //    return (
@@ -85,6 +113,7 @@ const ProcessedEvents = (props)=>{
 
     return (
         <>
+         {invocationState && <InvocationTunnel openPopupTunnel={openPopupTunnel} closePopupTunnel={closePopupTunnel} popupTunnels={popupTunnels} webhookUrl_EventId={webhookUrl_EventId} processedEventId={processedEventId} />}
             <div className="App" >
             <StyledWrapper>
             <Flex container alignItems="center" justifyContent="space-between">

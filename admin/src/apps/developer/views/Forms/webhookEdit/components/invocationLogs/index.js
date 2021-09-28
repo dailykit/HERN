@@ -67,39 +67,39 @@ const InvocationLogs = (props)=>{
         <>
             <div className="App" >
             <StyledWrapper>
-            <Flex container alignItems="center" justifyContent="space-between">
-            <Flex container height="80px" alignItems="center">
-               <Text as="h2">
-                  Invocation Logs
-                  {/* (
-                  {webhookUrl_eventsCount || '...'}) */}
-               </Text>
-               {/* <Tooltip identifier="coupon_list_heading" /> */}
-            </Flex>
-                  
+               <Flex container alignItems="center" justifyContent="space-between">
+               <Flex container height="80px" alignItems="center">
+                  <Text as="h2">
+                     Invocation Logs
+                     {/* (
+                     {webhookUrl_eventsCount || '...'}) */}
+                  </Text>
+                  {/* <Tooltip identifier="coupon_list_heading" /> */}
+               </Flex>
+                     
 
-            <ButtonGroup>
-               {/* <ComboButton type="solid" 
-               onClick={()=>openTunnel(1)}
-               >
-                  <PlusIcon />
-                  Add Webhook
-               </ComboButton> */}
-            </ButtonGroup>
-         </Flex>
-         {Boolean(logs) && (
-            <ReactTabulator
-               columns={columns}
-               data={logs}
-               options={{
-                  ...options,
-                  placeholder: 'No logs Available Yet !',
-                  persistenceID : 'invocationLogs_table'
-               }}
-               ref={tableRef}
-               className = 'developer-webhooks-invocationLogs'
-            />
-         )}
+               <ButtonGroup>
+                  {/* <ComboButton type="solid" 
+                  onClick={()=>openTunnel(1)}
+                  >
+                     <PlusIcon />
+                     Add Webhook
+                  </ComboButton> */}
+               </ButtonGroup>
+            </Flex>
+            {Boolean(logs) && (
+               <ReactTabulator
+                  columns={columns}
+                  data={logs}
+                  options={{
+                     ...options,
+                     placeholder: 'No logs Available Yet !',
+                     persistenceID : 'invocationLogs_table'
+                  }}
+                  ref={tableRef}
+                  className = 'developer-webhooks-invocationLogs'
+               />
+            )}
          </StyledWrapper>
         </div>
         </>

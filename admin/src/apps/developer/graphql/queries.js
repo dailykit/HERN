@@ -89,6 +89,7 @@ export const  AVAILABLE_EVENTS = gql`
             statusCode
           }
           created_at
+          id
         }
       }
     }
@@ -104,6 +105,17 @@ export const  AVAILABLE_EVENTS = gql`
       }
       availableWebhookEvent {
         label
+      }
+    }
+  }
+  `
+  export const GET_INVOCATIONS_OF_PROCESSED_EVENTS = gql`
+  subscription MySubscription($processedWebhookEventsId: String, $webhookUrl_EventId: Int) {
+    developer_processedWebhookEventsByUrl(where: {processedWebhookEventsId: {_eq: $processedWebhookEventsId}, webhookUrl_eventsId: {_eq: $webhookUrl_EventId}}) {
+      webhookUrl_EventsLogs {
+        PayloadSent
+        Response
+        created_at
       }
     }
   }
