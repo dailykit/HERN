@@ -8,6 +8,7 @@ import Button from '../Button'
 import InlineLoader from '../InlineLoader'
 import Error from '../Error'
 import Input from '../Input'
+import { theme } from '../../theme'
 
 export default function LoginComp({ isClicked, authBtnClassName, ...rest }) {
    const [loading, setLoading] = useState(false)
@@ -81,7 +82,11 @@ export default function LoginComp({ isClicked, authBtnClassName, ...rest }) {
                         type="submit"
                         className="loginBtn"
                      >
-                        {loading ? <InlineLoader /> : 'Log in'}
+                        {loading ? (
+                           <InlineLoader color={theme.colors.textColor4} />
+                        ) : (
+                           'Log in'
+                        )}
                      </Button>
                   </div>
                </FormWrap>

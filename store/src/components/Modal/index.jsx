@@ -8,6 +8,7 @@ export default function Modal({
    children,
    type,
    close,
+   closeButtonType = 'cross',
    showActionButton = false,
    disabledActionButton = false,
    actionHandler,
@@ -33,8 +34,8 @@ export default function Modal({
          )}
       >
          <div className="modal-header">
-            <button className="closeBtn" onClick={close}>
-               <CrossIcon size="18" color={theme.colors.textColor} />
+            <button className={closeButtonType} onClick={close}>
+               <CrossIcon size="32" color={theme.colors.textColor} />
             </button>
             {showActionButton && (
                <Button

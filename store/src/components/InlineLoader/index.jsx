@@ -1,17 +1,17 @@
-import React from "react";
+import React from 'react'
 
-import { StyledLoader, StyledWrapper } from "./styled";
-const InlineLoader = () => {
-  return (
-    <StyledWrapper>
-      <StyledLoader>
-        <div />
-        <div />
-        <div />
-        <div />
-      </StyledLoader>
-    </StyledWrapper>
-  );
-};
+import { StyledLoader, StyledWrapper } from './styled'
+const InlineLoader = props => {
+   return (
+      <StyledWrapper {...props}>
+         <StyledLoader>
+            <div />
+            <div />
+            <div />
+            <div />
+         </StyledLoader>
+      </StyledWrapper>
+   )
+}
 
-export default InlineLoader;
+export default InlineLoader

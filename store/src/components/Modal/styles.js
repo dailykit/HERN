@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { theme } from '../../theme'
 export const ModalDiv = styled.div`
-   background: ${theme.colors.mainBackground};
+   background: ${theme.colors.textColor4};
    .modal-header {
       padding: 2rem 2rem 0 2rem;
       display: flex;
@@ -12,7 +12,52 @@ export const ModalDiv = styled.div`
          height: 40px;
          background: ${theme.colors.secondaryColor};
       }
-      .closeBtn {
+      .cross {
+         width: 40px;
+         height: 40px;
+         background: none;
+         border: none;
+         outline: none;
+         position: relative;
+         svg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: block;
+         }
+         &:hover {
+            cursor: pointer;
+            animation: scale-up-center 0.4s cubic-bezier(0.39, 0.575, 0.565, 1)
+               both;
+         }
+         &:active {
+            animation: scale-down-center 0.4s
+               cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+         }
+         @keyframes scale-up-center {
+            0% {
+               -webkit-transform: scale(0.5);
+               transform: scale(0.5);
+            }
+            100% {
+               -webkit-transform: scale(1);
+               transform: scale(1);
+            }
+         }
+
+         @keyframes scale-down-center {
+            0% {
+               -webkit-transform: scale(1);
+               transform: scale(1);
+            }
+            100% {
+               -webkit-transform: scale(0.5);
+               transform: scale(0.5);
+            }
+         }
+      }
+      .circular {
          width: 40px;
          height: 40px;
          background: ${theme.colors.mainBackground};

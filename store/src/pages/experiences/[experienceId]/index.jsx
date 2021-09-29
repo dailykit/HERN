@@ -173,16 +173,6 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
             isDesktopView={width > 769}
          >
             <Wrapper>
-               <div className="player-wrapper">
-                  <GridComponent data={gridComponentData} />
-               </div>
-               <div ref={experienceTop02} id="experience-top-02">
-                  {Boolean(parsedData.length) &&
-                     ReactHtmlParser(
-                        parsedData.find(fold => fold.id === 'experience-top-02')
-                           ?.content
-                     )}
-               </div>
                <Flex
                   container
                   alignItems="center"
@@ -229,6 +219,17 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
                      </span>
                   </Flex>
                </Flex>
+               <div className="player-wrapper">
+                  <GridComponent data={gridComponentData} />
+               </div>
+               <div ref={experienceTop02} id="experience-top-02">
+                  {Boolean(parsedData.length) &&
+                     ReactHtmlParser(
+                        parsedData.find(fold => fold.id === 'experience-top-02')
+                           ?.content
+                     )}
+               </div>
+
                <TabWrapper>
                   <div className="tabOptions">
                      <div>

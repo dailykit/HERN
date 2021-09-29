@@ -7,6 +7,7 @@ import Button from '../Button'
 import Error from '../Error'
 import Input from '../Input'
 import InlineLoader from '../InlineLoader'
+import { theme } from '../../theme'
 
 export default function Signup({ authBtnClassName, ...props }) {
    const [loading, setLoading] = useState(false)
@@ -103,7 +104,11 @@ export default function Signup({ authBtnClassName, ...props }) {
             {error && <Error>{error}</Error>}
             <div className={`signupBtnWrap ${authBtnClassName}`}>
                <Button type="submit" className="signupBtn" disabled={loading}>
-                  {loading ? <InlineLoader /> : 'Sign Up'}
+                  {loading ? (
+                     <InlineLoader color={theme.colors.textColor4} />
+                  ) : (
+                     'Sign Up'
+                  )}
                </Button>
             </div>
          </FormWrap>

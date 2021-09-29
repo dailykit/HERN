@@ -181,8 +181,8 @@ export default function NavBarComp({ navigationMenuItems }) {
                   <li onClick={showSignup} className="buttonWrapper">
                      <Button
                         className="customBtn"
-                        textColor={theme.colors.textColor4}
-                        backgroundColor={theme.colors.primaryColor}
+                        textColor={theme.colors.textColor}
+                        backgroundColor={theme.colors.textColor4}
                      >
                         Sign Up
                      </Button>
@@ -190,8 +190,8 @@ export default function NavBarComp({ navigationMenuItems }) {
                   <li onClick={showLogin} className="buttonWrapper">
                      <Button
                         className="customBtn"
-                        textColor={theme.colors.textColor4}
-                        backgroundColor={theme.colors.secondaryColor}
+                        textColor={theme.colors.textColor}
+                        backgroundColor={theme.colors.textColor4}
                      >
                         Log In
                      </Button>
