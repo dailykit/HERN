@@ -53,7 +53,6 @@ export const getStoreData = async (req, res, next) => {
                         object: {
                            keycloakId,
                            email,
-                           clientId,
                            source: 'online store',
                            sourceBrandId: brandId,
                            brandCustomers: {

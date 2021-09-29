@@ -136,12 +136,14 @@ export default function BulkActionsTunnel({
       setInitialBulkAction(prevState => ({
          ...prevState,
          isPublished: !prevState.isPublished,
-         dropdownDefaultOption: null,
          type: !prevState.type,
          author: '',
          cookingTime: '',
          utensils: '',
-         cuisineName: '',
+         cuisineName: {
+            defaultOption: null,
+            value: '',
+         },
          notIncluded: '',
          description: '',
          utensilsConcat: {
@@ -174,14 +176,14 @@ export default function BulkActionsTunnel({
       //positionSecondary use for another field
       concatType =
          concatType === 'concatData' ? 'concatData' : 'concatDataString'
-      console.log('this is new concat type', concatType)
+
       const nestedCheckPrepend = checkNested(
          bulkActions,
          concatType,
          column,
          positionSecondary
       )
-      console.log('im in', nestedCheckPrepend)
+
       if (nestedCheckPrepend) {
          const newBulkAction = { ...bulkActions }
          delete newBulkAction[concatType][column][positionPrimary]
@@ -205,7 +207,7 @@ export default function BulkActionsTunnel({
    const isSetVisible = (column, concatType) => {
       concatType =
          concatType === 'concatData' ? 'concatData' : 'concatDataString'
-      console.log('this is new concat type', concatType)
+
       const checkForColumnNull = initialBulkAction[column] == null
       if (checkForColumnNull) return checkForColumnNull
       const checkForAppendPrepend =
@@ -249,7 +251,6 @@ export default function BulkActionsTunnel({
                   type="ghost"
                   size="sm"
                   onClick={() => {
-                     console.log('publish clear')
                      setInitialBulkAction(prevState => ({
                         ...prevState,
                         isPublished: !prevState.isPublished,
@@ -270,7 +271,6 @@ export default function BulkActionsTunnel({
                   active={initialBulkAction.isPublished}
                   onChange={option => {
                      if (option !== null) {
-                        console.log(option.payload)
                         setBulkActions(prevState => ({
                            ...prevState,
                            ...option.payload,
@@ -292,7 +292,6 @@ export default function BulkActionsTunnel({
                   type="ghost"
                   size="sm"
                   onClick={() => {
-                     console.log('Type clear')
                      setInitialBulkAction(prevState => ({
                         ...prevState,
                         type: !prevState.type,
@@ -313,7 +312,6 @@ export default function BulkActionsTunnel({
                   active={initialBulkAction.type}
                   onChange={option => {
                      if (option !== null) {
-                        console.log(option.payload)
                         setBulkActions(prevState => ({
                            ...prevState,
                            ...option.payload,
@@ -335,10 +333,12 @@ export default function BulkActionsTunnel({
                   type="ghost"
                   size="sm"
                   onClick={() => {
-                     console.log('publish clear')
                      setInitialBulkAction(prevState => ({
                         ...prevState,
-                        dropdownDefaultOption: null,
+                        cuisineName: {
+                           ...prevState.cuisineName,
+                           defaultOption: null,
+                        },
                      }))
                      setBulkActions(prevState => {
                         delete prevState.cuisine
@@ -352,19 +352,25 @@ export default function BulkActionsTunnel({
             <Spacer size="10px" />
             <Dropdown
                type="single"
-               defaultValue={initialBulkAction.dropdownDefaultOption}
+               defaultValue={initialBulkAction.cuisineName.defaultOption}
                options={cuisineNames}
                addOption={() => createCuisine()}
                searchedOption={option =>
                   setInitialBulkAction({
                      ...initialBulkAction,
-                     cuisineName: option,
+                     cuisineName: {
+                        ...initialBulkAction.cuisineName,
+                        value: option,
+                     },
                   })
                }
                selectedOption={option => {
                   setInitialBulkAction(prevState => ({
                      ...prevState,
-                     dropdownDefaultOption: option,
+                     cuisineName: {
+                        ...prevState.cuisineName,
+                        defaultOption: option,
+                     },
                   }))
                   setBulkActions(prevState => ({
                      ...prevState,
@@ -483,18 +489,14 @@ export default function BulkActionsTunnel({
             </Flex>
             <Spacer size="10px" />
             <CollapsibleComponent heading="Utensils">
-               <HorizontalTabs
-                  onChange={index => console.log('changes', index)}
-               >
+               <HorizontalTabs>
                   <HorizontalTabList>
                      <HorizontalTab>
                         <TextButton
                            type="ghost"
                            size="sm"
                            disabled={isSetVisible('utensils', 'concatData')}
-                           onClick={() => {
-                              console.log('clear')
-                           }}
+                           onClick={() => {}}
                         >
                            Set Utensils
                         </TextButton>
@@ -507,9 +509,7 @@ export default function BulkActionsTunnel({
                               'utensils',
                               'concatData'
                            )}
-                           onClick={() => {
-                              console.log('clear')
-                           }}
+                           onClick={() => {}}
                         >
                            Append or Prepend
                         </TextButton>
@@ -519,9 +519,7 @@ export default function BulkActionsTunnel({
                            type="ghost"
                            size="sm"
                            disabled={isSetNullVisible('utensils', 'concatData')}
-                           onClick={() => {
-                              console.log('clear')
-                           }}
+                           onClick={() => {}}
                         >
                            Set Null
                         </TextButton>
@@ -565,12 +563,13 @@ export default function BulkActionsTunnel({
                               }
                               onBlur={() => {
                                  if (initialBulkAction.utensils) {
-                                    const newUtensils = initialBulkAction.utensils
-                                       .split(',')
-                                       .map(tag => {
-                                          const newTag = tag.trim()
-                                          return capitalize(newTag)
-                                       })
+                                    const newUtensils =
+                                       initialBulkAction.utensils
+                                          .split(',')
+                                          .map(tag => {
+                                             const newTag = tag.trim()
+                                             return capitalize(newTag)
+                                          })
                                     setBulkActions({
                                        ...bulkActions,
                                        utensils: newUtensils,
@@ -642,12 +641,13 @@ export default function BulkActionsTunnel({
                                  if (
                                     initialBulkAction.utensilsConcat.forAppend
                                  ) {
-                                    const newUtensils = initialBulkAction.utensilsConcat.forAppend
-                                       .split(',')
-                                       .map(tag => {
-                                          const newTag = tag.trim()
-                                          return capitalize(newTag)
-                                       })
+                                    const newUtensils =
+                                       initialBulkAction.utensilsConcat.forAppend
+                                          .split(',')
+                                          .map(tag => {
+                                             const newTag = tag.trim()
+                                             return capitalize(newTag)
+                                          })
                                     const concatData = {
                                        ...bulkActions.concatData,
                                     }
@@ -726,12 +726,13 @@ export default function BulkActionsTunnel({
                                  if (
                                     initialBulkAction.utensilsConcat.forPrepend
                                  ) {
-                                    const newUtensils = initialBulkAction.utensilsConcat.forPrepend
-                                       .split(',')
-                                       .map(tag => {
-                                          const newTag = tag.trim()
-                                          return capitalize(newTag)
-                                       })
+                                    const newUtensils =
+                                       initialBulkAction.utensilsConcat.forPrepend
+                                          .split(',')
+                                          .map(tag => {
+                                             const newTag = tag.trim()
+                                             return capitalize(newTag)
+                                          })
                                     const concatData = {
                                        ...bulkActions.concatData,
                                     }
@@ -829,9 +830,7 @@ export default function BulkActionsTunnel({
                               'description',
                               'concatDataString'
                            )}
-                           onClick={() => {
-                              console.log('clear')
-                           }}
+                           onClick={() => {}}
                         >
                            Set Description
                         </TextButton>
@@ -844,9 +843,7 @@ export default function BulkActionsTunnel({
                               'description',
                               'concatDataString'
                            )}
-                           onClick={() => {
-                              console.log('clear')
-                           }}
+                           onClick={() => {}}
                         >
                            Append or Prepend
                         </TextButton>
@@ -859,9 +856,7 @@ export default function BulkActionsTunnel({
                               'description',
                               'concatDataString'
                            )}
-                           onClick={() => {
-                              console.log('clear')
-                           }}
+                           onClick={() => {}}
                         >
                            Set Null
                         </TextButton>
@@ -995,10 +990,12 @@ export default function BulkActionsTunnel({
                                        ...concatDataString.description,
                                     }
                                     newDescription.columnname = 'description'
-                                    newDescription.appendvalue = newDescriptionAppend
+                                    newDescription.appendvalue =
+                                       newDescriptionAppend
                                     newDescription.schemaname = 'simpleRecipe'
                                     newDescription.tablename = 'simpleRecipe'
-                                    concatDataString.description = newDescription
+                                    concatDataString.description =
+                                       newDescription
                                     setBulkActions({
                                        ...bulkActions,
                                        concatDataString,
@@ -1078,10 +1075,12 @@ export default function BulkActionsTunnel({
                                        ...concatDataString.description,
                                     }
                                     newDescription.columnname = 'description'
-                                    newDescription.prependvalue = newDescriptionPrepend
+                                    newDescription.prependvalue =
+                                       newDescriptionPrepend
                                     newDescription.schemaname = 'simpleRecipe'
                                     newDescription.tablename = 'simpleRecipe'
-                                    concatDataString.description = newDescription
+                                    concatDataString.description =
+                                       newDescription
                                     setBulkActions({
                                        ...bulkActions,
                                        concatDataString,
@@ -1163,9 +1162,7 @@ export default function BulkActionsTunnel({
                            type="ghost"
                            size="sm"
                            disabled={isSetVisible('notIncluded', 'concatData')}
-                           onClick={() => {
-                              console.log('clear')
-                           }}
+                           onClick={() => {}}
                         >
                            Set What you'll need
                         </TextButton>
@@ -1178,9 +1175,7 @@ export default function BulkActionsTunnel({
                               'notIncluded',
                               'concatData'
                            )}
-                           onClick={() => {
-                              console.log('clear')
-                           }}
+                           onClick={() => {}}
                         >
                            Append or Prepend
                         </TextButton>
@@ -1193,9 +1188,7 @@ export default function BulkActionsTunnel({
                               'notIncluded',
                               'concatData'
                            )}
-                           onClick={() => {
-                              console.log('clear')
-                           }}
+                           onClick={() => {}}
                         >
                            Set Null
                         </TextButton>
@@ -1242,12 +1235,13 @@ export default function BulkActionsTunnel({
                               }
                               onBlur={() => {
                                  if (initialBulkAction.notIncluded) {
-                                    const newNotIncluded = initialBulkAction.notIncluded
-                                       .split(',')
-                                       .map(tag => {
-                                          const newTag = tag.trim()
-                                          return capitalize(newTag)
-                                       })
+                                    const newNotIncluded =
+                                       initialBulkAction.notIncluded
+                                          .split(',')
+                                          .map(tag => {
+                                             const newTag = tag.trim()
+                                             return capitalize(newTag)
+                                          })
                                     setBulkActions({
                                        ...bulkActions,
                                        notIncluded: newNotIncluded,
@@ -1325,12 +1319,13 @@ export default function BulkActionsTunnel({
                                     initialBulkAction.notIncludedConcat
                                        .forAppend
                                  ) {
-                                    const newNotIncludedAppend = initialBulkAction.notIncludedConcat.forAppend
-                                       .split(',')
-                                       .map(tag => {
-                                          const newTag = tag.trim()
-                                          return capitalize(newTag)
-                                       })
+                                    const newNotIncludedAppend =
+                                       initialBulkAction.notIncludedConcat.forAppend
+                                          .split(',')
+                                          .map(tag => {
+                                             const newTag = tag.trim()
+                                             return capitalize(newTag)
+                                          })
                                     const concatData = {
                                        ...bulkActions.concatData,
                                     }
@@ -1338,7 +1333,8 @@ export default function BulkActionsTunnel({
                                        ...concatData.notIncluded,
                                     }
                                     newNotIncluded.columnname = 'notIncluded'
-                                    newNotIncluded.appendvalue = newNotIncludedAppend
+                                    newNotIncluded.appendvalue =
+                                       newNotIncludedAppend
                                     newNotIncluded.schemaname = 'simpleRecipe'
                                     newNotIncluded.tablename = 'simpleRecipe'
                                     concatData.notIncluded = newNotIncluded
@@ -1415,12 +1411,13 @@ export default function BulkActionsTunnel({
                                     initialBulkAction.notIncludedConcat
                                        .forPrepend
                                  ) {
-                                    const newNotIncludedPrepend = initialBulkAction.notIncludedConcat.forPrepend
-                                       .split(',')
-                                       .map(tag => {
-                                          const newTag = tag.trim()
-                                          return capitalize(newTag)
-                                       })
+                                    const newNotIncludedPrepend =
+                                       initialBulkAction.notIncludedConcat.forPrepend
+                                          .split(',')
+                                          .map(tag => {
+                                             const newTag = tag.trim()
+                                             return capitalize(newTag)
+                                          })
                                     const concatData = {
                                        ...bulkActions.concatData,
                                     }
@@ -1428,7 +1425,8 @@ export default function BulkActionsTunnel({
                                        ...concatData.notIncluded,
                                     }
                                     newNotIncluded.columnname = 'notIncluded'
-                                    newNotIncluded.prependvalue = newNotIncludedPrepend
+                                    newNotIncluded.prependvalue =
+                                       newNotIncludedPrepend
                                     newNotIncluded.schemaname = 'simpleRecipe'
                                     newNotIncluded.tablename = 'simpleRecipe'
                                     concatData.notIncluded = newNotIncluded
@@ -1554,7 +1552,6 @@ const RadioAction = ({
                type="ghost"
                size="sm"
                onClick={() => {
-                  console.log('publish clear')
                   setSeedState(prevState => ({
                      ...prevState,
                      [keyName]: !prevState[keyName],
@@ -1575,7 +1572,6 @@ const RadioAction = ({
                active={seedState[keyName]}
                onChange={option => {
                   if (option !== null) {
-                     console.log(option.payload)
                      setBulkActions(prevState => ({
                         ...prevState,
                         ...option.payload,

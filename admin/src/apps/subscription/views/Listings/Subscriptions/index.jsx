@@ -1,8 +1,8 @@
 import React from 'react'
 import { v4 as uuid } from 'uuid'
 import { toast } from 'react-toastify'
-import { ReactTabulator } from '@dailykit/react-tabulator'
-import { Text, ComboButton, PlusIcon, Flex } from '@dailykit/ui'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
+import { Text, ComboButton, PlusIcon, Flex, IconButton } from '@dailykit/ui'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 
 import options from '../../../tableOption'
@@ -17,6 +17,7 @@ import {
    InsightDashboard,
 } from '../../../../../shared/components'
 import { ResponsiveFlex } from '../../../../../shared/components/ResponsiveFlex'
+import { PublishIcon, UnPublishIcon } from '../../../assets/icons'
 
 export const Subscriptions = () => {
    const { tooltip } = useTooltip()
@@ -57,6 +58,8 @@ export const Subscriptions = () => {
       {
          title: 'Title',
          field: 'title',
+         width: 350,
+         cssClass: 'cell',
          headerFilter: true,
          headerFilterPlaceholder: 'Search titles...',
          headerTooltip: column => {
@@ -67,11 +70,9 @@ export const Subscriptions = () => {
          },
       },
       {
-         width: 150,
          title: 'Demo',
          field: 'isDemo',
-         headerFilter: true,
-         formatter: 'tickCross',
+         formatter: reactFormatter(<DemoName />),
          headerTooltip: column => {
             const identifier = 'listing_subscription_column_isDemo'
             return (
@@ -109,13 +110,16 @@ export const Subscriptions = () => {
             height="80px"
             alignItems="center"
             justifyContent="space-between"
+            style={{ padding: '0px 7px' }}
          >
             <Flex container alignItems="center">
-               <Text as="title">Subscriptions</Text>
+               <Text as="h2" style={{ marginBottom: '0px' }}>
+                  Subscriptions({titles.length})
+               </Text>
                <Tooltip identifier="listing_subscription_heading" />
             </Flex>
-            <ComboButton type="outline" onClick={() => createTab()}>
-               <PlusIcon />
+            <ComboButton type="solid" onClick={() => createTab()}>
+               <PlusIcon color="#fff" size={24} />
                Create Subscription
             </ComboButton>
          </Flex>
@@ -127,6 +131,7 @@ export const Subscriptions = () => {
                columns={columns}
                rowClick={rowClick}
                options={{ ...options, layout: 'fitColumns', maxHeight: 480 }}
+               style={{ padding: '0px 7px' }}
             />
          )}
 
@@ -137,5 +142,15 @@ export const Subscriptions = () => {
          />
          <Banner id="subscription-app-subscriptions-listing-bottom" />
       </ResponsiveFlex>
+   )
+}
+function DemoName({ cell, addTab }) {
+   const data = cell.getData()
+   return (
+      <>
+         <IconButton type="ghost">
+            {data.isDemo ? <PublishIcon /> : <UnPublishIcon />}
+         </IconButton>
+      </>
    )
 }

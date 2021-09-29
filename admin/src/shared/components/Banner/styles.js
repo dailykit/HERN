@@ -1,3 +1,4 @@
+import { Flex } from '@dailykit/ui'
 import styled from 'styled-components'
 
 const Styled = {
@@ -9,7 +10,8 @@ const Styled = {
       margin: 16px 0;
    `,
    Header: styled.div`
-      font-weight: 700;
+      font-style: normal;
+      font-weight: 500;
       font-size: 28px;
       line-height: 32px;
       color: #202020;
@@ -18,16 +20,14 @@ const Styled = {
    Wrapper: styled.div`
       position: relative;
       padding: 24px 32px;
-      border: 1px solid #111b2b;
+      border: 2px solid #f4f4f4;
       box-sizing: border-box;
-      box-shadow: 0px 4px 10px rgba(96, 215, 122, 0.2);
-      border-radius: 4px;
-      max-width: 960px;
+      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
+      border-radius: 20px;
       margin-top: 100px;
       width: 100%;
    `,
    Item: styled.div`
-      background: #fafafa;
       border-radius: 4px;
       padding: 8px;
       margin-top: ${({ noMargin }) => (noMargin ? '0px' : '12px')};
@@ -37,24 +37,22 @@ const Styled = {
       font-weight: 500;
       color: #202020;
       line-height: 20px;
-      display: flex;
-      align-items: center;
+      display: inline-flex;
+      align-items: baseline;
    `,
    Count: styled.span`
       width: 16px;
       padding-right: 4px;
-      align-self: flex-start;
    `,
-   Text: styled.div`
-      align-self: flex-start;
-   `,
+   Text: styled.div``,
    Button: styled.button`
       border: none;
       outline: none;
       cursor: pointer;
       background: transparent;
       border-radius: 50%;
-      display: flex;
+      display: inline-flex;
+      vertical-align: middle;
       align-items: center;
       z-index: 1;
       > span {
@@ -72,28 +70,6 @@ const Styled = {
       font-size: 16px;
       font-weight: 700;
       cursor: pointer;
-   `,
-   Decorator: styled.div`
-      .plate {
-         position: absolute;
-         top: -95px;
-         right: 46px;
-      }
-      .glass {
-         position: absolute;
-         left: -12px;
-         bottom: -6px;
-      }
-      .plant1 {
-         position: absolute;
-         bottom: -8px;
-         right: -60px;
-      }
-      .plant2 {
-         position: absolute;
-         left: -134px;
-         top: -16px;
-      }
    `,
    Image: styled.div`
       position: fixed;
@@ -123,13 +99,25 @@ export default Styled
 export const StyledActions = styled.div`
    display: flex;
    align-items: center;
-   height: 40px;
+   height: 32px;
    position: absolute;
-   top: 40px;
-   right: 0;
-   padding-bottom: 20px;
+   top: 127px;
+   right: 23px;
    z-index: 10;
 `
 export const Wrapper = styled.div`
    position: relative;
+`
+export const Styleflex = styled(Flex)`
+   justify-content: space-between;
+
+   @media (max-width: 567px) {
+      display: grid;
+      justify-items: center;
+
+      @media (max-width: 768px) {
+         display: grid;
+         justify-items: center;
+      }
+   }
 `

@@ -1,28 +1,28 @@
 import React from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import tw, { styled, css } from 'twin.macro'
 import { findKey, has, isEmpty } from 'lodash'
+import { signOut } from 'next-auth/client'
 
 import { useConfig } from '../lib'
 import { useUser } from '../context'
 import { getRoute, isClient } from '../utils'
 
 const routes = {
-   '/get-started/register': { status: 'REGISTER', level: 0 },
-   '/get-started/select-plan': {
+   '/[brand]/get-started/register': { status: 'REGISTER', level: 0 },
+   '/[brand]/get-started/select-plan': {
       status: 'SELECT_PLAN',
       level: 25,
    },
-   '/get-started/select-delivery': {
+   '/[brand]/get-started/select-delivery': {
       status: 'SELECT_DELIVERY',
       level: 50,
    },
-   '/get-started/select-menu/': {
+   '/[brand]/get-started/select-menu': {
       status: 'SELECT_MENU',
       level: 75,
    },
-   '/get-started/checkout/': { status: 'CHECKOUT', level: 100 },
+   '/[brand]/get-started/checkout': { status: 'CHECKOUT', level: 100 },
 }
 
 export const StepsNavbar = () => {
@@ -56,11 +56,9 @@ export const StepsNavbar = () => {
    const brand = configOf('theme-brand', 'brand')
    const theme = configOf('theme-color', 'Visual')
 
-   const logout = () => {
-      isClient && localStorage.removeItem('token')
-      if (isClient) {
-         window.location.href = window.location.origin
-      }
+   const logout = async () => {
+      await signOut({ redirect: false })
+      window.location.href = window.location.origin + getRoute('/')
    }
 
    const canGoToStep = route => {
@@ -93,22 +91,26 @@ export const StepsNavbar = () => {
    }
 
    return (
-      <Navbar>
+      <div className="hern-steps-navbar">
          <Link href={getRoute('/')}>
-            <Brand>
+            <div className="hern-steps-navbar__brand">
                {brand?.logo?.logoMark && (
                   <img
-                     tw="h-12 md:h-12"
+                     className="hern-steps-navbar__brand__img"
                      src={brand?.logo?.logoMark}
                      alt={brand?.name || 'Subscription Shop'}
                   />
                )}
-               {brand?.name && <span tw="ml-2">{brand?.name}</span>}
-            </Brand>
+               {brand?.name && (
+                  <span className="hern-steps-navbar__brand__text">
+                     {brand?.name}
+                  </span>
+               )}
+            </div>
          </Link>
-         <Progress>
+         <section className="hern-steps-navbar__progress">
             <ProgressBar theme={theme} current={currentStep} />
-            <Steps>
+            <ul className="hern-steps-navbar__steps">
                <RenderStep
                   goToStep={goToStep}
                   canGoToStep={canGoToStep}
@@ -149,13 +151,13 @@ export const StepsNavbar = () => {
                >
                   {steps.checkout}
                </RenderStep>
-            </Steps>
-         </Progress>
-         <section tw="px-4 ml-auto">
+            </ul>
+         </section>
+         <section className="hern-steps-navbar__logout">
             {isAuthenticated ? (
                <button
                   onClick={logout}
-                  css={tw`text-red-600 rounded px-2 py-1`}
+                  className="hern-steps-navbar__logout__btn"
                >
                   Logout
                </button>
@@ -163,81 +165,38 @@ export const StepsNavbar = () => {
                <span />
             )}
          </section>
-      </Navbar>
+      </div>
    )
 }
 
 const RenderStep = ({ route, isActive, children, canGoToStep, goToStep }) => {
+   const active = canGoToStep(route) || isActive
    return (
-      <Step
-         css={[
-            canGoToStep(route) || isActive
-               ? tw`text-gray-600 cursor-pointer`
-               : tw`text-gray-400`,
-         ]}
+      <li
+         className={`hern-steps-navbar__step${active ? '--active' : ''}`}
          onClick={() => goToStep(route)}
       >
          {children}
-      </Step>
+      </li>
    )
 }
-
-const Navbar = styled.div`
-   height: 64px;
-   display: grid;
-   z-index: 1000;
-   grid-template-columns: auto 1fr auto;
-   ${tw`bg-white top-0 fixed w-full items-center border-b`}
-   @media (max-width: 767px) {
-      display: flex;
-   }
-`
-
-const Brand = styled.div`
-   text-decoration: none;
-   ${tw`h-full px-6 flex items-center border-r text-gray-800`}
-`
-
-const Progress = styled.section`
-   min-width: 720px;
-   ${tw`flex flex-col m-auto justify-center`}
-   @media (max-width: 767px) {
-      display: none;
-   }
-`
-
-const Steps = styled.ul`
-   ${tw`w-full grid grid-cols-5`}
-`
-
-const Step = styled.li`
-   ${tw`text-sm text-center`}
-`
-
-const ProgressBar = styled.span(
-   ({ current, theme }) => css`
-      margin: 8px auto;
-      width: calc(100% - 128px);
-      ${tw`bg-gray-200 h-2 rounded relative`};
-      :before {
-         top: 0;
-         left: 0;
-         content: '';
-         height: inherit;
-         position: absolute;
-         width: ${current}%;
-         ${tw`bg-green-600 rounded`}
-         ${theme.accent && `background-color: ${theme.accent};`};
-      }
-      :after {
-         top: -4px;
-         content: '';
-         width: 16px;
-         height: 16px;
-         position: absolute;
-         left: calc(${current}% - 8px);
-         ${tw`bg-green-600 rounded-full`}
-         ${theme.highlight && `background-color: ${theme.highlight};`};
-      }
-   `
-)
+const ProgressBar = ({ theme, current }) => {
+   return (
+      <span className="hern-steps-navbar__progressbar">
+         <span
+            style={{
+               width: `${current}%`,
+               backgroundColor: `${theme.accent}`,
+            }}
+            className="hern-steps-navbar__progressbar__before"
+         ></span>
+         <span
+            className="hern-steps-navbar__progressbar__after"
+            style={{
+               left: `calc(${current}% - 8px)`,
+               backgroundColor: `${theme.highlight}`,
+            }}
+         ></span>
+      </span>
+   )
+}

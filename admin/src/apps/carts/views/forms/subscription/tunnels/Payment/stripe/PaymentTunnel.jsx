@@ -23,28 +23,21 @@ const PaymentTunnel = ({ setCard, closeTunnel }) => {
    const { customer } = useManual()
    const [payment, setPayment] = React.useState(null)
    const [addTunnels, openAddTunnel, closeAddTunnel] = useTunnel(1)
-   const { loading, data: { paymentMethods = [] } = {}, refetch } = useQuery(
-      QUERIES.CUSTOMER.PAYMENT_METHODS.LIST,
-      {
-         skip: !customer?.keycloakId,
-         variables: {
-            where: {
-               keycloakId: { _eq: customer.keycloakId },
-               customerByClient: {
-                  clientId: {
-                     _in: [
-                        get_env('REACT_APP_KEYCLOAK_REALM'),
-                        `${get_env('REACT_APP_KEYCLOAK_REALM')}-subscription`,
-                     ],
-                  },
-               },
-            },
+   const {
+      loading,
+      data: { paymentMethods = [] } = {},
+      refetch,
+   } = useQuery(QUERIES.CUSTOMER.PAYMENT_METHODS.LIST, {
+      skip: !customer?.keycloakId,
+      variables: {
+         where: {
+            keycloakId: { _eq: customer.keycloakId },
          },
-         onError: () => {
-            toast.error('Failed to load addresses, please try again.')
-         },
-      }
-   )
+      },
+      onError: () => {
+         toast.error('Failed to load addresses, please try again.')
+      },
+   })
 
    return (
       <>

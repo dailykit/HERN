@@ -20,19 +20,17 @@ const NutritionTunnel = ({
    closeTunnel,
    value,
    onSave,
-   perDynamic=false,
+   onReset,
+   perDynamic = false,
 }) => {
    const [state, dispatch] = React.useReducer(reducer, initialState)
 
    const validate = e => {
       let isValid = true
       let errors = []
-      if (
-         e.target.value.indexOf(' ') >= 0 === true &&
-         e.target.value.indexOf(',') >= 0 === false
-      ) {
+      if (e.target.value === '') {
          isValid = false
-         errors = [...errors, 'Different values should be separated by a comma']
+         errors = [...errors, 'Empty Input!']
       } else if (Number.isNaN(e.target.value) || +e.target.value < 0) {
          isValid = false
          errors = [...errors, 'Invalid input!']
@@ -84,7 +82,7 @@ const NutritionTunnel = ({
       const isStateValid = Object.values(state).every(val => val.meta.isValid)
       if (isStateValid) {
          onSave({
-            per: +state.per.value,
+            per: perDynamic ? state.per.value || '100 gms' : '100 gms',
             calories: +state.calories.value || 0,
             totalFat: +state.totalFat.value || 0,
             saturatedFat: +state.saturatedFat.value || 0,
@@ -99,8 +97,12 @@ const NutritionTunnel = ({
             vitaminC: +state.vitaminC.value || 0,
             calcium: +state.calcium.value || 0,
             iron: +state.iron.value || 0,
-            excludes: state.excludes.value || '',
-            allergens: state.allergens.value || '',
+            excludes: Array.isArray(state.excludes.value)
+               ? state.excludes.value
+               : state.excludes.value!== null? state.excludes.value.replaceAll(", ", ",").replaceAll(" ,", ",").trim().split(',') : [],
+            allergens: Array.isArray(state.allergens.value)
+               ? state.allergens.value
+               : state.allergens.value!==null? state.allergens.value.replaceAll(", ", ",").replaceAll(" ,", ",").trim().split(',') : [],
          })
          closeTunnel(1)
       } else {
@@ -138,8 +140,11 @@ const NutritionTunnel = ({
                extraButtons={[
                   {
                      title: 'Reset',
-                     action: () => alert('Action2 triggered!')
-                  }
+                     action: () => {
+                        onReset(null)
+                        closeTunnel(1)
+                     },
+                  },
                ]}
                right={{ action: save, title: 'Save' }}
                close={() => closeTunnel(1)}
@@ -152,17 +157,14 @@ const NutritionTunnel = ({
                style={{ overflow: 'auto' }}
             >
                {!perDynamic ? (
-                  <HelperText
-                     type="hint"
-                     message={`Add values per 100 gms`}
-                  />
+                  <HelperText type="hint" message={`Add values per 100 gms`} />
                ) : (
                   <Flex container alignItems="end" margin="0 0 16px 0">
                      <Form.Group>
                         <Form.Label htmlFor="per" title="per">
                            Per
                         </Form.Label>
-                        <Form.Number
+                        <Form.Text
                            id="per"
                            name="per"
                            onChange={onChange}
@@ -610,6 +612,10 @@ const NutritionTunnel = ({
                            !state.excludes.meta.isValid
                         }
                      />
+                     <HelperText
+                        type="hint"
+                        message={`Enter comma separated values, for example: Boiled-Noodles-100 g, Julienne-Elaichi-10 Gal.`}
+                     />
                      {state.excludes.meta.isTouched &&
                         !state.excludes.meta.isValid &&
                         state.excludes.meta.errors.map((error, index) => (
@@ -634,6 +640,10 @@ const NutritionTunnel = ({
                            state.allergens.isTouched &&
                            !state.allergens.meta.isValid
                         }
+                     />
+                      <HelperText
+                        type="hint"
+                        message={`Enter comma separated values, for example: soy sauce, peanut allergy`}
                      />
                      {state.allergens.meta.isTouched &&
                         !state.allergens.meta.isValid &&

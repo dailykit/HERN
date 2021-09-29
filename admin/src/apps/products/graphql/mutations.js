@@ -164,13 +164,22 @@ export const CREATE_SIMPLE_RECIPE_YIELDS = gql`
 export const UPDATE_NUTRITIONINFO = gql`
    mutation UpdateNutritionInfo($simpleRecipeYieldIds: [Int!]!) {
       calculateNutitionalInfo(simpleRecipeYieldIds: $simpleRecipeYieldIds) {
-      message
-      success
+         message
+         success
       }
-   } 
+   }
 `
 
-
+export const UPDATE_SIMPLE_RECIPE_YIELD_USER_DEFINED_NUTRITION_INFO = gql`
+   mutation UpdateSimpleRecipeYieldUserDefinedNutritionInfo(
+      $pk_columns: simpleRecipe_simpleRecipeYield_pk_columns_input!
+      $_set: simpleRecipe_simpleRecipeYield_set_input!
+   ) {
+      updateSimpleRecipeYield_by_pk(pk_columns: $pk_columns, _set: $_set) {
+         id
+      }
+   }
+`
 
 export const DELETE_SIMPLE_RECIPE_YIELD = gql`
    mutation DeleteSimpleRecipeYield($id: Int!) {
@@ -187,12 +196,21 @@ export const DELETE_SIMPLE_RECIPE_YIELD = gql`
 
 export const DELETE_SIMPLE_RECIPE_INGREDIENT_PROCESSINGS = gql`
    mutation DeleteSimpleRecipeIngredientProcessings($ids: [Int!]!) {
-      deleteSimpleRecipeIngredientProcessings(
-         where: { id: { _in: $ids } }
-      ) {
+      deleteSimpleRecipeIngredientProcessings(where: { id: { _in: $ids } }) {
          returning {
             id
          }
+      }
+   }
+`
+
+export const UPDATE_SIMPLE_RECIPE_YIELD = gql`
+   mutation UpdateSimpleRecipeYield(
+      $_set: simpleRecipe_simpleRecipeYield_set_input!
+      $pk_columns: simpleRecipe_simpleRecipeYield_pk_columns_input!
+   ) {
+      updateSimpleRecipeYield_by_pk(pk_columns: $pk_columns, _set: $_set) {
+         id
       }
    }
 `
@@ -297,6 +315,16 @@ export const UPDATE_RECIPE = gql`
    }
 `
 
+export const CREATE_CUSINE_NAME = gql`
+   mutation CreateCuisineName($objects: [master_cuisineName_insert_input!]!) {
+      createCuisineName(objects: $objects) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
 export const CREATE_MODIFIER = gql`
    mutation CreateModifier($object: onDemand_modifier_insert_input!) {
       createModifier(object: $object) {
@@ -384,7 +412,6 @@ export const UPDATE_SIMPLE_RECIPE_INGREDIENT_PROCESSING = gql`
       }
    }
 `
-
 
 export const INSTRUCTION_SET = {
    CREATE: gql`

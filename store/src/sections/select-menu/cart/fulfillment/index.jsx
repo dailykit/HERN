@@ -1,9 +1,9 @@
 import React from 'react'
 import moment from 'moment'
 import { isEmpty } from 'lodash'
-import tw, { css, styled } from 'twin.macro'
 import { useToasts } from 'react-toast-notifications'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
+import classNames from 'classnames'
 
 import { useMenu } from '../../state'
 import { useConfig } from '../../../../lib'
@@ -160,7 +160,7 @@ const Fulfillment = () => {
                   ...(user?.subscriptionPaymentMethodId && {
                      paymentMethodId: user?.subscriptionPaymentMethodId,
                   }),
-                  stripeCustomerId: user?.platform_customer?.stripeCustomerId,
+                  paymentCustomerId: user?.platform_customer?.paymentCustomerId,
                },
             },
          }).then(() =>
@@ -171,127 +171,29 @@ const Fulfillment = () => {
       }
    }
    return (
-      <div>
-         <section tw="mt-3">
-            <h4 tw="text-lg text-gray-700 border-b mb-2">Fulfillment Mode</h4>
+      <>
+         <section className="hern-cart-fulfillment">
+            <h4 className="hern-cart-fulfillment__heading">Fulfillment Mode</h4>
             {loading ? (
                <Loader inline />
             ) : (
-               <section tw="space-y-2">
+               <section>
                   {zipcode.isDeliveryActive && (
-                     <Option
-                        onClick={() => setFulfillment('DELIVERY')}
-                        isActive={
-                           state.occurenceCustomer?.validStatus?.hasCart
-                              ? state.occurenceCustomer?.cart?.fulfillmentInfo?.type.includes(
-                                   'DELIVERY'
-                                )
-                              : state?.fulfillment?.type?.includes('DELIVERY')
-                        }
-                     >
-                        <aside>
-                           <CheckIcon
-                              size={18}
-                              css={[
-                                 tw`stroke-current`,
-                                 (
-                                    state.occurenceCustomer?.validStatus
-                                       ?.hasCart
-                                       ? state.occurenceCustomer?.cart?.fulfillmentInfo?.type.includes(
-                                            'DELIVERY'
-                                         )
-                                       : state?.fulfillment?.type?.includes(
-                                            'DELIVERY'
-                                         )
-                                 )
-                                    ? tw`text-green-700`
-                                    : tw`text-gray-400`,
-                              ]}
-                           />
-                        </aside>
-                        <main>
-                           {zipcode.deliveryPrice === 0 ? (
-                              <h3>Free Delivery</h3>
-                           ) : (
-                              <h3>
-                                 Delivery at{' '}
-                                 {formatCurrency(zipcode.deliveryPrice)}
-                              </h3>
-                           )}
-                           <p tw="text-gray-500 text-sm">
-                              Your box will be delivered on{' '}
-                              <span>
-                                 {moment(state?.week?.fulfillmentDate).format(
-                                    'MMM D'
-                                 )}
-                                 &nbsp;between {zipcode?.deliveryTime?.from}
-                                 &nbsp;-&nbsp;
-                                 {zipcode?.deliveryTime?.to}
-                              </span>{' '}
-                              at{' '}
-                              <span>
-                                 {normalizeAddress(
-                                    state?.occurenceCustomer?.cart?.address ||
-                                       user?.defaultAddress
-                                 )}
-                              </span>
-                           </p>
-                        </main>
-                        <span
-                           tw="text-green-700 absolute top-1 right-1 text-sm"
-                           onClick={e => {
-                              e.stopPropagation()
-                              setIsAddressListOpen(true)
-                           }}
-                        >
-                           Change
-                        </span>
-                     </Option>
+                     <FulfillmentOption
+                        type="DELIVERY"
+                        state={state}
+                        zipcode={zipcode}
+                        setFulfillment={setFulfillment}
+                        setIsAddressListOpen={setIsAddressListOpen}
+                     />
                   )}
                   {zipcode.isPickupActive && zipcode?.pickupOptionId && (
-                     <Option
-                        onClick={() => setFulfillment('PICKUP')}
-                        isActive={
-                           state.occurenceCustomer?.validStatus?.hasCart
-                              ? state.occurenceCustomer?.cart?.fulfillmentInfo?.type.includes(
-                                   'PICKUP'
-                                )
-                              : state?.fulfillment?.type?.includes('PICKUP')
-                        }
-                     >
-                        <aside>
-                           <CheckIcon
-                              size={18}
-                              css={[
-                                 tw`stroke-current`,
-                                 (
-                                    state.occurenceCustomer?.validStatus
-                                       ?.hasCart
-                                       ? state.occurenceCustomer?.cart?.fulfillmentInfo?.type.includes(
-                                            'PICKUP'
-                                         )
-                                       : state?.fulfillment?.type?.includes(
-                                            'PICKUP'
-                                         )
-                                 )
-                                    ? tw`text-green-700`
-                                    : tw`text-gray-400`,
-                              ]}
-                           />
-                        </aside>
-                        <main>
-                           <h3>Pick Up</h3>
-                           <p tw="text-gray-500 text-sm">
-                              Pickup your box in between{' '}
-                              {moment(state?.week?.fulfillmentDate).format(
-                                 'MMM D'
-                              )}
-                              , {zipcode?.pickupOption?.time?.from} -{' '}
-                              {zipcode?.pickupOption?.time?.to} from{' '}
-                              {normalizeAddress(zipcode?.pickupOption?.address)}
-                           </p>
-                        </main>
-                     </Option>
+                     <FulfillmentOption
+                        type="PICKUP"
+                        state={state}
+                        zipcode={zipcode}
+                        setFulfillment={setFulfillment}
+                     />
                   )}
                </section>
             )}
@@ -318,33 +220,87 @@ const Fulfillment = () => {
                }
             />
          </Tunnel>
-      </div>
+      </>
    )
 }
 
 export default Fulfillment
 
-const Option = styled.section`
-   ${tw`py-2 pr-2 rounded cursor-pointer flex items-center border text-gray-700 relative`}
-   aside {
-      ${tw`flex-shrink-0 h-10 w-10 flex items-center justify-center`}
-      ${({ isActive }) =>
-         isActive &&
-         css`
-            svg {
-               ${tw`text-green-700`}
-            }
-         `}
-   }
-   :hover {
-      ${tw`border-2 border-green-600`};
-      svg {
-         ${tw`text-green-700`}
-      }
-   }
-   ${({ isActive }) =>
-      isActive &&
-      css`
-         ${tw`border-2 border-green-600`}
-      `}
-`
+const FulfillmentOption = ({
+   state,
+   type,
+   zipcode,
+   user,
+   setFulfillment,
+   setIsAddressListOpen,
+}) => {
+   const isActive = state.occurenceCustomer?.validStatus?.hasCart
+      ? state.occurenceCustomer?.cart?.fulfillmentInfo?.type.includes(type)
+      : state?.fulfillment?.type?.includes(type)
+   const fulfillmentClasses = classNames(
+      'hern-cart-fulfillment__fulfillment-option',
+      { 'hern-cart-fulfillment__fulfillment-option--active': isActive }
+   )
+   return (
+      <section
+         className={fulfillmentClasses}
+         onClick={() => setFulfillment(type)}
+      >
+         <aside className="hern-cart-fulfillment__check-icon">
+            <CheckIcon size={18} stroke="currentColor" active={isActive} />
+         </aside>
+         <main>
+            {type === 'DELIVERY' && (
+               <>
+                  {zipcode.deliveryPrice === 0 ? (
+                     <h3>Free Delivery</h3>
+                  ) : (
+                     <h3>
+                        Delivery at {formatCurrency(zipcode.deliveryPrice)}
+                     </h3>
+                  )}
+                  <p className="hern-cart-fulfillment__delivery-details">
+                     Your box will be delivered on{' '}
+                     <span>
+                        {moment(state?.week?.fulfillmentDate).format('MMM D')}
+                        &nbsp;between {zipcode?.deliveryTime?.from}
+                        &nbsp;-&nbsp;
+                        {zipcode?.deliveryTime?.to}
+                     </span>{' '}
+                     at{' '}
+                     <span>
+                        {normalizeAddress(
+                           state?.occurenceCustomer?.cart?.address ||
+                              user?.defaultAddress
+                        )}
+                     </span>
+                  </p>
+               </>
+            )}
+            {type === 'PICKUP' && (
+               <>
+                  <h3>Pick Up</h3>
+                  <p className="hern-cart-fulfillment__pickup-details">
+                     Pickup your box in between{' '}
+                     {moment(state?.week?.fulfillmentDate).format('MMM D')},{' '}
+                     {zipcode?.pickupOption?.time?.from} -{' '}
+                     {zipcode?.pickupOption?.time?.to} from{' '}
+                     {normalizeAddress(zipcode?.pickupOption?.address)}
+                  </p>
+               </>
+            )}
+         </main>
+         {type === 'DELIVERY' && (
+            <span
+               className="hern-cart-fulfillment__change-btn"
+               onClick={e => {
+                  e.stopPropagation()
+                  setIsAddressListOpen(true)
+               }}
+            >
+               Change
+            </span>
+         )}
+      </section>
+   )
+}

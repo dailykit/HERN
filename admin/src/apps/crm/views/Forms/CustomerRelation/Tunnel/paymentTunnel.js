@@ -34,8 +34,8 @@ const TunnelVision = ({ id, tunnels, closeTunnel }) => {
          <Tunnel layer={1}>
             <TunnelHeader
                title={`Payment Cards(${
-                  allCards[0]?.customer?.platform_customers[0]
-                     ?.stripePaymentMethods?.length || 'N/A'
+                  allCards[0]?.customer?.platform_customer?.stripePaymentMethods
+                     ?.length || 'N/A'
                })`}
                close={() => closeTunnel(1)}
                tooltip={
@@ -44,11 +44,11 @@ const TunnelVision = ({ id, tunnels, closeTunnel }) => {
             />
             <Banner id="crm-app-customers-customer-details-payment-tunnel-top" />
             <TunnelHeaderContainer>
-               {allCards[0]?.customer?.platform_customers[0]?.stripePaymentMethods?.map(
+               {allCards[0]?.customer?.platform_customer?.stripePaymentMethods?.map(
                   card => {
                      return (
                         <PaymentCard
-                           key={card.stripePaymentMethodId}
+                           key={card.paymentMethodId}
                            cardData={card}
                            billingAddDisplay="none"
                            margin="16px 80px"

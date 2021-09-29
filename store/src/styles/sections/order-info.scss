@@ -1,0 +1,80 @@
+.hern-order-info__header {
+   margin-top: 0.75rem;
+   margin-bottom: 0.5rem;
+   padding-bottom: 0.25rem;
+   border-bottom-width: 1px;
+   display: -webkit-box;
+   display: -webkit-flex;
+   display: -ms-flexbox;
+   display: flex;
+   -webkit-align-items: center;
+   -webkit-box-align: center;
+   -ms-flex-align: center;
+   align-items: center;
+   -webkit-box-pack: justify;
+   -webkit-justify-content: space-between;
+   -ms-flex-pack: justify;
+   justify-content: space-between;
+}
+.hern-order-info__header__title {
+   font-size: 1.125rem;
+   line-height: 1.75rem;
+   color: rgba(55, 65, 81, 1);
+}
+.hern-order-info__add-on__header {
+   margin-top: 0.75rem;
+   margin-bottom: 0.5rem;
+   padding-bottom: 0.25rem;
+   border-bottom-width: 1px;
+   display: -webkit-box;
+   display: -webkit-flex;
+   display: -ms-flexbox;
+   display: flex;
+   -webkit-align-items: center;
+   -webkit-box-align: center;
+   -ms-flex-align: center;
+   align-items: center;
+   -webkit-box-pack: justify;
+   -webkit-justify-content: space-between;
+   -ms-flex-pack: justify;
+   justify-content: space-between;
+}
+.hern-order-info__add-on__header__title {
+   font-size: 1.125rem;
+   line-height: 1.75rem;
+   color: rgba(55, 65, 81, 1);
+}
+.hern-order-info__billings__title {
+   font-size: 1.125rem;
+   line-height: 1.75rem;
+   color: rgba(55, 65, 81, 1);
+   margin-top: 0.75rem;
+   margin-bottom: 0.75rem;
+   padding-bottom: 0.25rem;
+   border-bottom-width: 1px;
+}
+.hern-order-info__delivery {
+   margin: 0.75rem 0;
+}
+.hern-order-info__delivery__details {
+   color: rgba(107, 114, 128, 1);
+}
+.hern-order-info__go-to-order__btn {
+   width: 100%;
+   background-color: rgba(107, 114, 128, 1);
+}
+.hern-order-info__early-pay__btn {
+   height: 2.5rem;
+   width: 100%;
+   border-radius: 0.25rem;
+   text-align: center;
+   color: rgba(5, 150, 105, 1);
+   &:hover {
+      background-color: rgba(243, 244, 246, 1);
+   }
+}
+.hern-order-info__early-pay__btn--disabled {
+   @extend .hern-order-info__early-pay__btn;
+   color: rgba(75, 85, 99, 1);
+   cursor: not-allowed;
+}

@@ -7,7 +7,7 @@ This project consists of:
 3. Store: A nextjs app to run consumer oriented platform for subscribing to a plan, placing order weekly etc
 4. Template Service: Manages building email, sachet, label, reciept templates in html or pdf format.
 
-#### Contribution Guide
+#### Contriubution Guide
 
 1. Clone the repository in your local using:
 
@@ -40,7 +40,7 @@ yarn dev:server
 curl -XPOST 'http://localhost:4000/server/api/envs'
 ```
 
-7. To work in admin, switch to admin folder and do following and the your app will start running on port 3000:
+7. To work in admin, switch to admin folder and do following and the your app will start running on port 8000:
 
 ```bash
 cd admin && yarn start

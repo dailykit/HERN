@@ -104,4 +104,18 @@ const File = ({ linkedFiles, selectedOption, emptyOptions }) => {
 }
 export default File
 
-export const Wrapper = styled.div``
+export const Wrapper = styled.div`
+   width: 100%;
+   li {
+      margin-bottom: 8px;
+      div {
+         width: 100%;
+         h3 {
+            margin: 0;
+         }
+         p {
+            margin: 0;
+         }
+      }
+   }
+`

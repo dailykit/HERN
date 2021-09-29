@@ -1,6 +1,5 @@
 import React from 'react'
 import { isEmpty } from 'lodash'
-import tw, { css, styled } from 'twin.macro'
 import { useMutation } from '@apollo/react-hooks'
 import { useToasts } from 'react-toast-notifications'
 
@@ -9,6 +8,7 @@ import { useUser } from '../../../../context'
 import { Tunnel } from '../../../../components'
 import CardList from '../../../../components/card_list'
 import { MUTATIONS, UPDATE_CART } from '../../../../graphql'
+import classNames from 'classnames'
 
 const PaymentCard = () => {
    const { state, dispatch } = useMenu()
@@ -52,7 +52,7 @@ const PaymentCard = () => {
       if (state.occurenceCustomer?.cart?.paymentMethodId) {
          const index = user?.platform_customer?.paymentMethods.findIndex(
             pm =>
-               pm.stripePaymentMethodId ===
+               pm.paymentMethodId ===
                state.occurenceCustomer?.cart?.paymentMethodId
          )
          if (index !== -1) {
@@ -62,27 +62,31 @@ const PaymentCard = () => {
    }, [state.occurenceCustomer])
 
    if (!state.occurenceCustomer?.cart?.paymentMethodId) return null
+   const optionClasses = classNames('hern-cart-payment-card__option ', {
+      'hern-cart-payment-card__option--active': card && !isEmpty(card),
+   })
    return (
       <div>
-         <section tw="mt-3">
-            <h4 tw="text-lg text-gray-700 border-b mb-2">Payment Card</h4>
-
-            <section tw="space-y-2">
-               <Option isActive={card && !isEmpty(card)}>
+         <section className="hern-cart-payment-card">
+            <h4 className="hern-cart-payment-card__heading">Payment Card</h4>
+            <section>
+               <div className={optionClasses}>
                   {card && !isEmpty(card) ? (
                      <>
                         <main>
-                           <p tw="text-gray-500">{card?.cardHolderName}</p>
+                           <p className="hern-cart-payment-card__card-holder-name">
+                              {card?.cardHolderName}
+                           </p>
                            <p>XXXX XXXX XXXX {card?.last4}</p>
                            <p>
                               {card?.expMonth}/{card?.expYear}
                            </p>
-                           <p tw="text-sm text-gray-500 uppercase">
+                           <p className="hern-cart-payment-card__card-brand">
                               {card?.brand}
                            </p>
                         </main>
                         <span
-                           tw="text-green-700 absolute top-1 right-1 text-sm cursor-pointer"
+                           className="hern-cart-payment-card__change"
                            onClick={e => {
                               e.stopPropagation()
                               setIsCardListOpen(true)
@@ -93,12 +97,12 @@ const PaymentCard = () => {
                      </>
                   ) : (
                      <>
-                        <p tw="text-sm">
+                        <p className="hern-cart-payment-card__not-available">
                            Your linked payment method has been deleted. Please
                            change the payment method to avoid inconvenience.
                         </p>
                         <button
-                           tw="text-blue-500 text-sm cursor-pointer"
+                           className="hern-cart-payment-card__change-method-btn"
                            onClick={e => {
                               e.stopPropagation()
                               setIsCardListOpen(true)
@@ -108,7 +112,7 @@ const PaymentCard = () => {
                         </button>
                      </>
                   )}
-               </Option>
+               </div>
             </section>
          </section>
          <Tunnel
@@ -122,7 +126,7 @@ const PaymentCard = () => {
                   updateCart({
                      variables: {
                         id: state.occurenceCustomer?.cart?.id,
-                        _set: { paymentMethodId: card.stripePaymentMethodId },
+                        _set: { paymentMethodId: card.paymentMethodId },
                      },
                   }).then(() => {
                      addToast('Payment card updated!', {
@@ -138,13 +142,3 @@ const PaymentCard = () => {
 }
 
 export default PaymentCard
-
-const Option = styled.section`
-   ${tw`p-2 rounded border text-gray-700 relative`}
-
-   ${({ isActive }) =>
-      isActive &&
-      css`
-         ${tw`border-2 border-green-600`}
-      `}
-`

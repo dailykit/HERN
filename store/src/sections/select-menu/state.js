@@ -16,7 +16,9 @@ import {
    DELETE_CART_ITEM,
    OCCURENCES_BY_SUBSCRIPTION,
 } from '../../graphql'
-import { getRoute } from '../../utils'
+import { getRoute, isClient } from '../../utils'
+
+const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const MenuContext = React.createContext()
 
@@ -330,11 +332,13 @@ export const MenuProvider = ({ isCheckout, children }) => {
       dispatch({ type: 'CART_STATE', payload: 'SAVING' })
       deleteCartItem({
          variables: { id: item.id },
-      }).then(() =>
+      }).then(() => {
          addToast(`You've removed the product - ${item.name}.`, {
             appearance: 'info',
          })
-      )
+         // fb pixel custom event for removing product from cart
+         ReactPixel.trackCustom('removeFromCart', item)
+      })
    }
 
    const store = configOf('Store Availability', 'availability')
@@ -408,7 +412,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
                   ...(user?.subscriptionPaymentMethodId && {
                      paymentMethodId: user?.subscriptionPaymentMethodId,
                   }),
-                  stripeCustomerId: user?.platform_customer?.stripeCustomerId,
+                  paymentCustomerId: user?.platform_customer?.paymentCustomerId,
                },
             },
          })

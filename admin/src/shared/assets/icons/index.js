@@ -36,7 +36,11 @@ import MinimizeIcon from './Minimize'
 import PlayIcon from './Play'
 import ExternalLink from './ExternalLink'
 import SearchIcon from './Search'
-
+import Expand from './Expand'
+import EarningIcon from './Earning'
+import OrderIcon from './Order'
+import CustomerIcon from './Customer'
+import MarketingIcon from './Marketing'
 export {
    SearchIcon,
    AddIcon,
@@ -76,6 +80,11 @@ export {
    MinimizeIcon,
    PlayIcon,
    ExternalLink,
+   Expand,
+   EarningIcon,
+   OrderIcon,
+   CustomerIcon,
+   MarketingIcon,
 }
 
 export * from './Tick'

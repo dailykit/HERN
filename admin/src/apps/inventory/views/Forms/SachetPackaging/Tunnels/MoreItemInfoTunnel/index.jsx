@@ -4,7 +4,7 @@ import { Form, Spacer, TunnelHeader } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
 import { Banner, Tooltip } from '../../../../../../../shared/components'
-import { logger } from '../../../../../../../shared/utils'
+import { get_env, logger } from '../../../../../../../shared/utils'
 import { GENERAL_ERROR_MESSAGE } from '../../../../../constants/errorMessages'
 import { UPDATE_PACKAGING } from '../../../../../graphql'
 import { validators } from '../../../../../utils/validators'
@@ -143,7 +143,7 @@ export default function MoreItemInfoTunnel({ close, state }) {
                </Form.Group>
                <Form.Group>
                   <Form.Label htmlFor="unitPrice" title="unitPrice">
-                     Unit Price (in {window._env_.REACT_APP_CURRENCY})
+                     Unit Price (in {get_env('REACT_APP_CURRENCY')})
                   </Form.Label>
                   <Form.Number
                      id="unitPrice"

@@ -138,7 +138,7 @@ const Processings = ({ state }) => {
                         </Text>
                         <Tooltip identifier="ingredient_form_processings" />
                      </Flex>
-                     <span
+                     {/* <span
                         role="button"
                         tabIndex="0"
                         onClick={() => openProcessingTunnel(1)}
@@ -147,7 +147,7 @@ const Processings = ({ state }) => {
                         }
                      >
                         <AddIcon color="#555B6E" size="18" stroke="2.5" />
-                     </span>
+                     </span> */}
                   </StyledListingHeader>
                   <StyledSection>
                      <StyledListing>
@@ -167,16 +167,18 @@ const Processings = ({ state }) => {
                               >
                                  <span
                                     role="button"
+                                    title='Add cost to ingredient'
                                     tabIndex="0"
                                     onClick={() => openPriceTunnel(1)}
                                     onKeyDown={e =>
                                        e.charCode === 13 && openPriceTunnel(1)
                                     }
                                  >
-                                    <DollarIcon color="#fff" />
+                                    <DollarIcon color="#555B6E" />
                                  </span>
                                  <span
                                     role="button"
+                                    title='Add nutrition to ingredient'
                                     tabIndex="0"
                                     onClick={() => openNutritionTunnel(1)}
                                     onKeyDown={e =>
@@ -184,17 +186,18 @@ const Processings = ({ state }) => {
                                        openNutritionTunnel(1)
                                     }
                                  >
-                                    <FileIcon color="#fff" />
+                                    <FileIcon color="#555B6E" />
                                  </span>
                                  <span
                                     role="button"
+                                    title='Delete this ingredient'
                                     tabIndex="0"
                                     onClick={() => remove(processing)}
                                     onKeyDown={e =>
                                        e.charCode === 13 && remove(processing)
                                     }
                                  >
-                                    <DeleteIcon />
+                                    <DeleteIcon color="#FF5A52"/>
                                  </span>
                               </Actions>
                               <h3>{processing.processingName}</h3>

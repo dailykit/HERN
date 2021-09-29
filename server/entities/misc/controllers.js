@@ -1,112 +1,40 @@
-import fs from 'fs'
 import axios from 'axios'
 import { get, groupBy, isEmpty } from 'lodash'
+import { createEvent } from 'ics'
+import { writeFileSync } from 'fs'
+import path from 'path'
 import { client } from '../../lib/graphql'
-const fetch = require('node-fetch')
-const AWS = require('aws-sdk')
+import { globalTemplate } from '../../utils'
+import get_env from '../../../get_env'
+import { GET_SES_DOMAIN } from './graphql'
+import aws from '../../lib/aws'
+
 const nodemailer = require('nodemailer')
 
-import { GET_SES_DOMAIN, UPDATE_CART } from './graphql'
-import path from 'path'
-import get_env from '../../../get_env'
-
-AWS.config.update({ region: 'us-east-2' })
-
-const CART = `
-   query cart($id: Int!) {
-      cart(id: $id) {
-         id
-         isTest
-         amount
-         totalPrice
-         paymentStatus
-         paymentMethodId
-         stripeCustomerId
-         statementDescriptor
-      }
-   }
-`
-
-export const initiatePayment = async (req, res) => {
-   try {
-      const payload = req.body.event.data.new
-
-      const { cart = {} } = await client.request(CART, { id: payload.id })
-
-      if (cart.id && cart.paymentStatus === 'SUCCEEDED') {
-         return res.status(200).json({
-            success: true,
-            message:
-               'Payment attempt cancelled since cart has already been paid!'
-         })
-      }
-
-      await client.request(UPDATE_CART, {
-         id: cart.id,
-         set: { amount: cart.totalPrice }
-      })
-
-      if (cart.isTest || cart.totalPrice === 0) {
-         await client.request(UPDATE_CART, {
-            id: cart.id,
-            set: {
-               paymentStatus: 'SUCCEEDED',
-               isTest: true,
-               transactionId: 'NA',
-               transactionRemark: {
-                  id: 'NA',
-                  amount: cart.totalPrice * 100,
-                  message: 'payment bypassed',
-                  reason: cart.isTest ? 'test mode' : 'amount 0 - free'
-               }
-            }
-         })
-         return res.status(200).json({
-            success: true,
-            message: 'Payment succeeded!'
-         })
-      }
-      const ORGANIZATION_ID = await get_env('ORGANIZATION_ID')
-      if (cart.totalPrice > 0) {
-         const body = {
-            organizationId: ORGANIZATION_ID,
-            statementDescriptor: cart.statementDescriptor || '',
-            cart: {
-               id: cart.id,
-               amount: cart.totalPrice
-            },
-            customer: {
-               paymentMethod: cart.paymentMethodId,
-               stripeCustomerId: cart.stripeCustomerId
-            }
+const transportEmail = async (transporter, message) =>
+   new Promise((resolve, reject) => {
+      transporter.sendMail(message, (err, info) => {
+         if (err) {
+            reject(err)
+         } else {
+            resolve(info)
          }
-         const PAYMENTS_API = await get_env('PAYMENTS_API')
-         await fetch(`${PAYMENTS_API}/api/initiate-payment`, {
-            method: 'POST',
-            headers: {
-               'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(body)
-         })
-      }
-
-      res.status(200).json({
-         success: true,
-         message: 'Payment initiated!'
       })
-   } catch (error) {
-      console.log(error)
-      res.status(400).json({
-         success: false,
-         message: error.message
-      })
-   }
-}
+   })
 
 export const sendMail = async (req, res) => {
    try {
-      const { emailInput } = req.body.input
+      const { emailInput, inviteInput = {} } = req.body.input
+      const AWS = await aws()
       const inputDomain = emailInput.from.split('@')[1]
+      const {
+         includeHeader = true,
+         includeFooter = true,
+         brandId = null
+      } = emailInput
+      const updatedAttachments = []
+
+      console.log('InviteINput', inviteInput)
 
       // Get the DKIM details from dailycloak
       const dkimDetails = await client.request(GET_SES_DOMAIN, {
@@ -118,38 +46,101 @@ export const sendMail = async (req, res) => {
             success: false,
             message: `Domain ${inputDomain} is not registered. Cannot send emails.`
          })
-      } else {
-         // create nodemailer transport
-         const transport = nodemailer.createTransport({
-            SES: new AWS.SES({ apiVersion: '2010-12-01' }),
-            dkim: {
-               domainName: dkimDetails.aws_ses[0].domain,
-               keySelector: dkimDetails.aws_ses[0].keySelector,
-               privateKey: dkimDetails.aws_ses[0].privateKey.toString('binary')
+      }
+      // create nodemailer transport
+      const transport = nodemailer.createTransport({
+         SES: new AWS.SES({ apiVersion: '2010-12-01' }),
+         dkim: {
+            domainName: dkimDetails.aws_ses[0].domain,
+            keySelector: dkimDetails.aws_ses[0].keySelector,
+            privateKey: dkimDetails.aws_ses[0].privateKey.toString('binary')
+         }
+      })
+
+      // build the invite event
+      if (Object.keys(inviteInput).length) {
+         const event = {
+            start: inviteInput.start,
+            duration: inviteInput.duration,
+            title: inviteInput.title,
+            description: inviteInput.description,
+            location: inviteInput.location,
+            url: inviteInput.url,
+            geo: inviteInput.geo,
+            categories: inviteInput.categories,
+            status: inviteInput.status,
+            busyStatus: inviteInput.busyStatus,
+            organizer: inviteInput.organizer,
+            attendees: inviteInput.attendees
+         }
+         createEvent(event, async (error, value) => {
+            if (error) {
+               console.log(error)
+               return
             }
-         })
-         // build and send the message
-         const message = {
-            from: emailInput.from,
-            to: emailInput.to,
-            subject: emailInput.subject,
-            html: emailInput.html,
-            attachments: emailInput.attachments
-         }
-
-         if (dkimDetails.aws_ses[0].isVerified === true) {
-            await transportEmail(transport, message)
-         } else {
-            throw new Error(
-               `Domain - ${inputDomain} - is not verified. Cannot send emails.`
+            console.log('EVENT OUTPUT', value)
+            await writeFileSync(
+               `${__dirname}/calendarInvite/${inviteInput.title.replace(
+                  ' ',
+                  '_'
+               )}.ics`,
+               value
             )
-         }
-
-         return res.status(200).json({
-            success: true,
-            message: 'Email sent successfully!'
+         })
+         updatedAttachments.push({
+            filename: `${inviteInput.title.replace(' ', '_')}.ics`,
+            path: `${__dirname}/calendarInvite/${inviteInput.title.replace(
+               ' ',
+               '_'
+            )}.ics`,
+            contentType: 'text/calendar'
          })
       }
+
+      emailInput.attachments.forEach(attachment => {
+         updatedAttachments.push(attachment)
+      })
+
+      let html = emailInput.html
+
+      if (includeHeader) {
+         // getting the header html and concatenating it with the email html
+         const headerHtml = await globalTemplate({
+            brandId,
+            identifier: 'globalEmailHeader' // this identifier should also come from datahub and not hardcoded
+         })
+         html = headerHtml ? headerHtml + html : html
+      }
+      if (includeFooter) {
+         // getting the footer html and concatenating it with the email html
+         const footerHtml = await globalTemplate({
+            brandId,
+            identifier: 'globalEmailFooter'
+         })
+         html = footerHtml ? html + footerHtml : html
+      }
+
+      // build and send the message
+      const message = {
+         from: emailInput.from,
+         to: emailInput.to.split(','), // so that you can send to multiple recipients just pass mutiple emails separated by comma
+         subject: emailInput.subject,
+         html,
+         attachments: updatedAttachments
+      }
+
+      if (dkimDetails.aws_ses[0].isVerified === true) {
+         await transportEmail(transport, message)
+      } else {
+         throw new Error(
+            `Domain - ${inputDomain} - is not verified. Cannot send emails.`
+         )
+      }
+
+      return res.status(200).json({
+         success: true,
+         message: 'Email sent successfully!'
+      })
    } catch (error) {
       console.log(error)
       return res.status(400).json({
@@ -157,18 +148,6 @@ export const sendMail = async (req, res) => {
          message: error.message
       })
    }
-}
-
-const transportEmail = async (transporter, message) => {
-   return new Promise((resolve, reject) => {
-      transporter.sendMail(message, (err, info) => {
-         if (err) {
-            reject(err)
-         } else {
-            resolve(info)
-         }
-      })
-   })
 }
 
 export const placeAutoComplete = async (req, res) => {
@@ -296,7 +275,6 @@ export const authorizeRequest = async (req, res) => {
       return res.status(404).json({ success: false, error: error.message })
    }
 }
-
 const ENVS = `
    query envs {
       envs: settings_env {
@@ -311,81 +289,88 @@ const ENVS = `
 /*
 used to create env config files and populate with relevant envs
 */
+
+export const createEnvFiles = async () => {
+   const { envs } = await client.request(ENVS)
+   if (isEmpty(envs)) {
+      return null
+   }
+   const grouped = groupBy(envs, 'belongsTo')
+
+   const server = {}
+
+   get(grouped, 'server', {}).forEach(node => {
+      server[node.title] = node.value
+   })
+
+   writeFileSync(
+      path.join(__dirname, '../../../', 'config.js'),
+      `module.exports = ${JSON.stringify(server, null, 2)}`
+   )
+
+   const store = {}
+
+   get(grouped, 'store', {}).forEach(node => {
+      store[node.title] = node.value
+   })
+
+   const PATH_TO_SUBS = path.join(
+      __dirname,
+      '../../../',
+      'store',
+      'public',
+      'env-config.js'
+   )
+
+   writeFileSync(
+      PATH_TO_SUBS,
+      `window._env_ = ${JSON.stringify(store, null, 2)}`
+   )
+
+   const admin = {}
+
+   get(grouped, 'admin', []).forEach(node => {
+      admin[node.title] = node.value
+   })
+
+   if (process.env.NODE_ENV === 'development') {
+      const PATH_TO_ADMIN = path.join(
+         __dirname,
+         '../../../',
+         'admin',
+         'public',
+         'env-config.js'
+      )
+      writeFileSync(
+         PATH_TO_ADMIN,
+         `window._env_ = ${JSON.stringify(admin, null, 2)}`
+      )
+   } else {
+      const PATH_TO_ADMIN = path.join(
+         __dirname,
+         '../../../',
+         'admin',
+         'build',
+         'env-config.js'
+      )
+      writeFileSync(
+         PATH_TO_ADMIN,
+         `window._env_ = ${JSON.stringify(admin, null, 2)}`
+      )
+   }
+   return { server, store, admin }
+}
+
 export const populate_env = async (req, res) => {
    try {
-      const { envs } = await client.request(ENVS)
-      if (isEmpty(envs)) {
+      const data = await createEnvFiles()
+      if (!data) {
          throw Error('No envs found!')
-      } else {
-         const grouped = groupBy(envs, 'belongsTo')
-
-         const server = {}
-
-         get(grouped, 'server', []).forEach(node => {
-            server[node.title] = node.value
-         })
-
-         fs.writeFileSync(
-            path.join(__dirname, '../../../', 'config.js'),
-            'module.exports = ' + JSON.stringify(server, null, 2)
-         )
-
-         const subscription_shop = {}
-
-         get(grouped, 'subscription_shop', []).forEach(node => {
-            subscription_shop[node.title] = node.value
-         })
-
-         const PATH_TO_SUBS = path.join(
-            __dirname,
-            '../../../',
-            'store',
-            'public',
-            'env-config.js'
-         )
-
-         fs.writeFileSync(
-            PATH_TO_SUBS,
-            'window._env_ = ' + JSON.stringify(subscription_shop, null, 2)
-         )
-
-         const admin = {}
-
-         get(grouped, 'admin', []).forEach(node => {
-            admin[node.title] = node.value
-         })
-
-         if (process.env.NODE_ENV === 'development') {
-            const PATH_TO_ADMIN = path.join(
-               __dirname,
-               '../../../',
-               'admin',
-               'public',
-               'env-config.js'
-            )
-            fs.writeFileSync(
-               PATH_TO_ADMIN,
-               'window._env_ = ' + JSON.stringify(admin, null, 2)
-            )
-         } else {
-            const PATH_TO_ADMIN = path.join(
-               __dirname,
-               '../../../',
-               'admin',
-               'build',
-               'env-config.js'
-            )
-            fs.writeFileSync(
-               PATH_TO_ADMIN,
-               'window._env_ = ' + JSON.stringify(admin, null, 2)
-            )
-         }
-
-         return res.status(200).json({
-            success: true,
-            data: { server, subscription_shop, admin }
-         })
       }
+      return res.status(200).json({
+         success: true,
+         data
+      })
    } catch (error) {
       return res.status(404).json({ success: false, error: error.message })
    }

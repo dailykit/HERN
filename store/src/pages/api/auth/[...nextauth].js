@@ -1,8 +1,9 @@
 import fs from 'fs'
+import bcrypt from 'bcrypt'
+import { get } from 'lodash'
 import NextAuth from 'next-auth'
 import { GraphQLClient } from 'graphql-request'
 import Providers from 'next-auth/providers'
-import bcrypt from 'bcrypt'
 import { getRoute, get_env } from '../../../utils'
 
 const client = async () => {
@@ -22,33 +23,6 @@ const client = async () => {
       console.error('error', error)
    }
 }
-
-const PROVIDERS = `
-   query providers {
-      providers: settings_authProvider {
-         title
-         value
-      }
-   }
-`
-
-const CUSTOMERS = `
-   query customers($where: platform_customer__bool_exp = {}) {
-      customers: platform_customer_(where: $where) {
-         email
-         password
-         id: keycloakId
-      }
-   }
-`
-
-const INSERT_CUSTOMER = `
-   mutation insertCustomer($object: platform_customer__insert_input!) {
-      insertCustomer: insert_platform_customer__one(object: $object) {
-         id: keycloakId
-      }
-   }
-`
 
 const auth = {
    credentials: {
@@ -93,19 +67,37 @@ const auth = {
       },
       async authorize(credentials) {
          try {
-            const { otps = [] } = await client.request(OTPS, {
+            const _client = await client()
+            const { otps = [] } = await _client.request(OTPS, {
                where: { phoneNumber: { _eq: credentials.phone } },
             })
 
             if (otps.length > 0) {
                const [otp] = otps
                if (Number(credentials.otp) === otp.code) {
-                  const _client = await client()
-                  const { insertCustomer = {} } = await _client.request(
-                     INSERT_CUSTOMER,
-                     { object: { phoneNumber: credentials.phone } }
+                  const { platform_customer = [] } = await _client.request(
+                     PLATFORM_CUSTOMER,
+                     {
+                        where: { phoneNumber: { _eq: credentials.phone } },
+                     }
                   )
-                  return insertCustomer
+                  if (platform_customer.length > 0) {
+                     const [customer] = platform_customer
+                     return customer
+                  } else {
+                     const { insertCustomer = {} } = await _client.request(
+                        INSERT_CUSTOMER,
+                        {
+                           object: {
+                              ...(credentials.email && {
+                                 email: credentials.email,
+                              }),
+                              phoneNumber: credentials.phone,
+                           },
+                        }
+                     )
+                     return insertCustomer
+                  }
                }
                return null
             }
@@ -143,8 +135,21 @@ export default async (req, res) => {
       providers,
       pages: { signIn: getRoute('/login') },
       callbacks: {
-         async signIn(user, account, profile) {
+         async signIn(user, account) {
             try {
+               const _client = await client()
+
+               const { provider_customers = [] } = await _client.request(
+                  PROVIDER_CUSTOMERS,
+                  {
+                     where: { providerAccountId: { _eq: user.id } },
+                  }
+               )
+
+               if (provider_customers.length > 0) {
+                  return true
+               }
+
                let customer = {}
                if (account.type === 'oauth') {
                   const name = user.name.split(' ')
@@ -157,8 +162,6 @@ export default async (req, res) => {
                   customer.email = user.email
                   customer.avatar = user.image
                }
-
-               const _client = await client()
 
                await _client.request(INSERT_PROVIDER_CUSTOMER, {
                   object: {
@@ -187,7 +190,24 @@ export default async (req, res) => {
             }
          },
          async session(session, token) {
-            session.user.id = token.sub
+            const id = get(token, 'sub')
+            const _client = await client()
+            const { provider_customers = [] } = await _client.request(
+               PROVIDER_CUSTOMERS,
+               {
+                  where: {
+                     _or: [
+                        { providerAccountId: { _eq: id } },
+                        { customerId: { _eq: id } },
+                     ],
+                  },
+               }
+            )
+            if (provider_customers.length > 0) {
+               const [customer] = provider_customers
+               session.user.email = customer.customer.email
+               session.user.id = customer.customerId
+            }
             return session
          },
       },
@@ -212,6 +232,53 @@ const INSERT_PROVIDER_CUSTOMER = `
          object: $object
       ) {
          id
+      }
+   }
+`
+const PROVIDERS = `
+   query providers {
+      providers: settings_authProvider {
+         title
+         value
+      }
+   }
+`
+
+const CUSTOMERS = `
+   query customers($where: platform_customer_bool_exp = {}) {
+      customers: platform_customer(where: $where) {
+         email
+         password
+         fullName
+         id: keycloakId
+      }
+   }
+`
+
+const INSERT_CUSTOMER = `
+   mutation insertCustomer($object: platform_customer_insert_input!) {
+      insertCustomer: insert_platform_customer_one(object: $object) {
+         id: keycloakId
+      }
+   }
+`
+
+const PLATFORM_CUSTOMER = `
+   query platform_customer($where: platform_customer_bool_exp = {}) {
+      platform_customer: platform_customer(where: $where) {
+         id: keycloakId
+      }
+   }
+`
+
+const PROVIDER_CUSTOMERS = `
+   query provider_customers($where: platform_provider_customer_bool_exp = {}) {
+      provider_customers: platform_provider_customer(where: $where) {
+         id
+         customerId
+         customer {
+            email
+         }
       }
    }
 `

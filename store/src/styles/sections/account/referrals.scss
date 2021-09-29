@@ -1,0 +1,63 @@
+.hern-referrals__main {
+   display: grid;
+   grid-template-rows: 1fr;
+   min-height: calc(100vh - 64px);
+   grid-template-columns: 240px 1fr;
+   position: relative;
+   @media (max-width: 768px) {
+      display: block;
+   }
+}
+
+.hern-referrals__customer-referral-code {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   margin-bottom: 10px;
+}
+.hern-referrals__content {
+   padding-left: 1.5rem;
+   padding-right: 1.5rem;
+   width: 100%;
+   @media (min-width: 768px) {
+      width: 40%;
+   }
+}
+.hern-referrals__header {
+   margin-top: 1.5rem;
+   margin-bottom: 0.75rem;
+   display: -webkit-box;
+   display: -webkit-flex;
+   display: -ms-flexbox;
+   display: flex;
+   -webkit-align-items: center;
+   -webkit-box-align: center;
+   -ms-flex-align: center;
+   align-items: center;
+   -webkit-box-pack: justify;
+   -webkit-justify-content: space-between;
+   -ms-flex-pack: justify;
+   justify-content: space-between;
+}
+.hern-referrals__header__title {
+   color: rgba(5, 150, 105, 1);
+   font-size: 1.5rem;
+   line-height: 2rem;
+}
+.hern-referrals__table {
+   margin-top: 0.5rem;
+   margin-bottom: 0.5rem;
+   width: 100%;
+   table-layout: auto;
+   th {
+      text-align: left;
+   }
+   tr:nth-of-type(even) {
+      background-color: rgba(243, 244, 246, 1);
+   }
+}
+.hern-referrals__table__cell {
+   border-width: 1px;
+   padding: 0.25rem 0.5rem;
+   min-width: 100px;
+}

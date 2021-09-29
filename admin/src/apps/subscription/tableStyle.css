@@ -1,14 +1,31 @@
 .tabulator-header {
    font-size: 14px;
    border-bottom: 2px solid #d8d8d8;
+   height: 78px;
+   background-color: #f4f4f4 !important;
 }
-
+.tabulator-headers {
+   height: 100% !important;
+   text-align: left ;
+}
+.tabulator .tabulator-header .tabulator-col {
+   background-color: #f4f4f4;
+   height: 78px !important;
+}
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content {
+   padding: 9px;
+   height: 100%;
+}
 .tabulator-row {
-   height: 36px;
+   height: 48px;
    font-size: 16px;
    display: flex;
    align-items: center;
    border-bottom: 1px solid #d8d8d8;
+}
+
+.tabulator-cell.cell {
+   height: 48px !important;
 }
 
 .tabulator-row.tabulator-selected:hover {

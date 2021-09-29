@@ -14,3 +14,32 @@ query aws_ses($domain: String!) {
   }
 }
 `
+
+export const CART = `
+query cart($id: Int!) {
+  cart(id: $id) {
+    id
+    isTest
+    amount
+    totalPrice2(args: {params: "parentCart"})
+    balancePayment
+    paymentMethodId
+    paymentCustomerId
+    statementDescriptor
+  }
+}
+
+`
+export const CART_PAYMENT = `
+query CART_PAYMENT($where: order_cartPayment_bool_exp!) {
+  cartPayments(where: $where) {
+    id
+    cartId
+    amount
+    paymentId
+    paymentMethodId
+    paymentStatus
+  }
+}
+
+`

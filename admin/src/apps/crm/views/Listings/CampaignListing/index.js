@@ -14,6 +14,9 @@ import {
    Flex,
    ComboButton,
    Form,
+   Spacer,
+   DropdownButton,
+   TextButton,
 } from '@dailykit/ui'
 import {
    CAMPAIGN_LISTING,
@@ -162,17 +165,36 @@ const CampaignListing = () => {
          field: 'name',
          headerFilter: true,
          hozAlign: 'left',
-         width: 150,
+         frozen: true,
+         width: 300,
          headerTooltip: function (column) {
             const identifier = 'campaign_listing_name_column'
             return (
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
+         cssClass: 'colHover',
          cssClass: 'rowClick',
          cellClick: (e, cell) => {
             rowClick(e, cell)
          },
+      },
+      {
+         title: 'Action',
+         field: 'action',
+         headerHorzAlign: 'center',
+         frozen: true,
+         cellClick: (e, cell) => {
+            e.stopPropagation()
+            deleteHandler(e, cell._cell.row.data)
+         },
+         formatter: reactFormatter(<DeleteButton />),
+         hozAlign: 'center',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'center'
+            return '' + cell.getValue()
+         },
+         width: 100,
       },
       {
          title: 'Campaign Type',
@@ -191,9 +213,9 @@ const CampaignListing = () => {
          title: 'Active',
          field: 'active',
          formatter: reactFormatter(<ToggleButton />),
-         hozAlign: 'center',
+         hozAlign: 'left',
          titleFormatter: function (cell, formatterParams, onRendered) {
-            cell.getElement().style.textAlign = 'center'
+            cell.getElement().style.textAlign = 'left'
             return '' + cell.getValue()
          },
          width: 150,
@@ -204,28 +226,45 @@ const CampaignListing = () => {
             )
          },
       },
-      {
-         title: 'Action',
-         field: 'action',
-         cellClick: (e, cell) => {
-            e.stopPropagation()
-            deleteHandler(e, cell._cell.row.data)
-         },
-         formatter: reactFormatter(<DeleteButton />),
-         hozAlign: 'center',
-         titleFormatter: function (cell, formatterParams, onRendered) {
-            cell.getElement().style.textAlign = 'center'
-            return '' + cell.getValue()
-         },
-         width: 150,
-      },
+      
    ]
+   const downloadCsvData = () => {
+      tableRef.current.table.download('csv', 'campaign_table.csv')
+   }
+
+   const downloadPdfData = () => {
+      tableRef.current.table.downloadToTab('pdf', 'campaign_table.pdf')
+   }
+
+   const downloadXlsxData = () => {
+      tableRef.current.table.download('xlsx', 'campaign_table.xlsx')
+   }
+   const clearCampaignPersistence= () =>
+      {
+         localStorage.removeItem('tabulator-campaign_table-columns')
+         localStorage.removeItem('tabulator-campaign_table-sort')
+         localStorage.removeItem('tabulator-campaign_table-filter') 
+      }
+
    if (listLoading || loading) return <InlineLoader />
    return (
       <StyledWrapper>
          <Banner id="crm-app-campaigns-listing-top" />
-         <Flex container alignItems="center" justifyContent="space-between">
-            <Flex container height="80px" alignItems="center">
+         <Flex
+            container
+            height="80px"
+            width="100%"
+            alignItems="center"
+            justifyContent="space-between"
+             padding="15px 0 0 0"
+         >
+            <Flex
+               container
+               as="header"
+               width="25%"
+               alignItems="center"
+               justifyContent="space-between"
+             >
                <Text as="title">
                   Campaign(
                   {campaignTotal?.campaignsAggregate?.aggregate?.count || '...'}
@@ -233,13 +272,67 @@ const CampaignListing = () => {
                </Text>
                <Tooltip identifier="campaign_list_heading" />
             </Flex>
-            <ButtonGroup>
+            <Flex
+               container
+               as="header"
+               width="75%"
+               alignItems="center"
+               justifyContent="space-around"
+            >
+               <Flex
+                  container
+                  as="header"
+                  width="72%"
+                  alignItems="center"
+                  justifyContent="flex-end"
+               >
+                  <TextButton
+                     onClick={() => {
+                        clearCampaignPersistence()
+                     }}
+                     type="ghost"
+                     size="sm"
+                  >
+                     Clear Persistence
+                  </TextButton>
+                  <Spacer size="15px" xAxis />
+                  <DropdownButton title="Download" width="150px">
+                     <DropdownButton.Options>
+                        <DropdownButton.Option
+                           onClick={() => downloadCsvData()}
+                        >
+                           CSV
+                        </DropdownButton.Option>
+                        <DropdownButton.Option
+                           onClick={() => downloadPdfData()}
+                        >
+                           PDF
+                        </DropdownButton.Option>
+                        <DropdownButton.Option
+                           onClick={() => downloadXlsxData()}
+                        >
+                           XLSX
+                        </DropdownButton.Option>
+                     </DropdownButton.Options>
+                  </DropdownButton>          
+            </Flex>         
+               <Flex
+                   container
+                   as="header"
+                   width="28%"
+                   alignItems="center"
+                   justifyContent="flex-end"
+               >
+               <ButtonGroup>
                <ComboButton type="solid" onClick={() => openTunnel(1)}>
                   <PlusIcon />
                   Create Campaign
                </ComboButton>
             </ButtonGroup>
+               </Flex>
+            </Flex>
          </Flex>
+         <Spacer size="20px" />
          {Boolean(campaign) && (
             <ReactTabulator
                columns={columns}
@@ -247,8 +340,10 @@ const CampaignListing = () => {
                options={{
                   ...options,
                   placeholder: 'No Campaigns Available Yet !',
+                  persistenceID : 'campaign_table'
                }}
                ref={tableRef}
+               className = 'crm-campaign'
             />
          )}
          <InsightDashboard

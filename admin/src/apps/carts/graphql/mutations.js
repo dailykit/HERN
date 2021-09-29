@@ -81,13 +81,13 @@ export const MUTATIONS = {
       PAYMENT_METHOD: {
          CREATE: gql`
             mutation paymentMethod(
-               $object: platform_stripePaymentMethod_insert_input!
+               $object: platform_customerPaymentMethod_insert_input!
             ) {
-               paymentMethod: platform_createStripePaymentMethod(
+               paymentMethod: insert_platform_customerPaymentMethod_one(
                   object: $object
                ) {
                   keycloakId
-                  stripePaymentMethodId
+                  paymentMethodId
                }
             }
          `,

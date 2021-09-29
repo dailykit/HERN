@@ -1,6 +1,5 @@
 import { useMutation } from '@apollo/react-hooks'
 import React from 'react'
-import tw, { styled } from 'twin.macro'
 import { useUser } from '../context'
 import { MUTATIONS } from '../graphql'
 import { formatCurrency } from '../utils'
@@ -35,18 +34,19 @@ export const WalletAmount = ({ cart }) => {
 
    if (!cart.walletAmountUsable) return null
    return (
-      <Styles.Wrapper>
+      <div className="hern-wallet-amount">
          {cart.walletAmountUsed ? (
-            <Styles.Stat>
-               <Styles.Text>
+            <div className="hern-wallet-amount__status">
+               <span>
                   {' '}
                   ${walletSettings?.label
                      ? walletSettings.label
                      : 'Wallet'}{' '}
                   amount used:{' '}
-               </Styles.Text>
-               <Styles.Text>
-                  <Styles.Cross
+               </span>
+               <span>
+                  <span
+                     className="hern-card-list__card__close-btn "
                      role="button"
                      tabIndex={0}
                      onClick={() =>
@@ -61,33 +61,37 @@ export const WalletAmount = ({ cart }) => {
                      }
                   >
                      &times;{' '}
-                  </Styles.Cross>
+                  </span>
                   {formatCurrency(cart.walletAmountUsed)}
-               </Styles.Text>
-            </Styles.Stat>
+               </span>
+            </div>
          ) : (
             <>
-               <Styles.Form onSubmit={handleSubmit}>
-                  <Styles.InputWrapper>
-                     <Styles.Label>
+               <form
+                  onSubmit={handleSubmit}
+                  className="hern-wallet-amount__form"
+               >
+                  <div>
+                     <label className="hern-wallet-amount__form__label">
                         {' '}
                         $
                         {walletSettings?.label
                            ? walletSettings.label
                            : 'Wallet'}{' '}
                         amount{' '}
-                     </Styles.Label>
+                     </label>
                      {walletSettings?.description && (
-                        <Styles.Tooltip>
+                        <span className="hern-wallet-amount__tooltip">
                            <Info size={18} />
                            <p>
                               {walletSettings?.description
                                  ? walletSettings.description
                                  : 'Not Available'}
                            </p>
-                        </Styles.Tooltip>
+                        </span>
                      )}
-                     <Styles.Input
+                     <input
+                        className="hern-wallet-amount__form__input"
                         type="number"
                         min="0"
                         step="0.01"
@@ -96,76 +100,25 @@ export const WalletAmount = ({ cart }) => {
                         value={amount}
                         onChange={e => setAmount(e.target.value)}
                      />
-                  </Styles.InputWrapper>
-                  <Styles.Button type="submit"> Add </Styles.Button>
-               </Styles.Form>
-               <Styles.Help>
-                  <Styles.Small>
-                     Max usable: {formatCurrency(cart.walletAmountUsable)}
-                  </Styles.Small>
+                  </div>
+                  <button className="hern-wallet-amount__add-btn" type="submit">
+                     Add
+                  </button>
+               </form>
+               <div className="hern-wallet-amount__help">
+                  <small>
+                     Max usable:
+                     {formatCurrency(cart.walletAmountUsable)}
+                  </small>
                   {!!user.wallet && (
-                     <Styles.Small>
-                        Balance: {formatCurrency(user.wallet?.amount)}
-                     </Styles.Small>
+                     <small>
+                        Balance:
+                        {formatCurrency(user.wallet?.amount)}
+                     </small>
                   )}
-               </Styles.Help>
+               </div>
             </>
          )}
-      </Styles.Wrapper>
+      </div>
    )
-}
-
-const Styles = {
-   Wrapper: styled.div`
-      ${tw`m-1`}
-      border: 1px solid #efefef;
-      padding: 8px;
-      border-radius: 2px;
-   `,
-   Form: styled.form`
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-   `,
-   InputWrapper: styled.div``,
-   Label: styled.label``,
-   Input: styled.input`
-      border: 1px solid #cacaca;
-      padding: 4px;
-      border-radius: 2px;
-      display: block;
-   `,
-   Button: styled.button`
-      background: #b8238f;
-      color: #fff;
-      border-radius: 2px;
-      padding: 4px;
-   `,
-   Help: styled.div`
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-   `,
-   Small: styled.small``,
-   Stat: styled.div`
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-   `,
-   Text: styled.span``,
-   Cross: styled.span`
-      color: #ff5a52;
-      font-size: 18px;
-      cursor: pointer;
-   `,
-   Tooltip: styled.span`
-      ${tw`relative float-right ml-2 mt-1`}
-      p {
-         ${tw`hidden min-w-max bg-gray-200 p-1 absolute left-2 rounded`}
-         z-index: 1;
-      }
-      &:hover p {
-         ${tw`block`}
-      }
-   `,
 }

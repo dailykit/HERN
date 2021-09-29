@@ -65,9 +65,7 @@ const resolvers = {
       getFiles: async (_, args, { root }) => {
          try {
             const files = await getFilePaths(`${root}${args.path}`)
-            const pages = await files.map(item =>
-               item.replace(new RegExp(root), '')
-            )
+            pages = await files.map(item => item.replace(new RegExp(root), ''))
             if (
                'offset' in args &&
                args.offset &&

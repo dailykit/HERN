@@ -6,6 +6,7 @@ import { Route } from 'react-router-dom'
 import { useAccess } from '../../../../shared/providers'
 import { ErrorBoundary, Flex } from '../../../../shared/components'
 import { Home, AddOnMenu, Menu, Subscriptions, Subscription } from '../../views'
+import FullOccurrenceReport from '../../../../shared/components/FullOccurrenceReport'
 
 const Main = () => {
    return (
@@ -44,6 +45,9 @@ const Main = () => {
             >
                <Subscription />
             </AccessCheck>
+         </Route>
+         <Route path="/subscription/subscription-occurrences">
+            <FullOccurrenceReport />
          </Route>
       </>
    )

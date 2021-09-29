@@ -126,14 +126,26 @@ const Nutrition = ({ data, vertical = false }) => {
                {t(address.concat('iron'))} {data?.iron}%
             </span>
          </Row>
-         {data?.excludes?.length > 0 && (
-            <>
-               <h3>Excludes</h3>
-               {data?.excludes.map((item, index) => {
-                  return <h4>{item}</h4>
-               })}
-            </>
-         )}
+         <Row>
+            {data?.excludes?.length > 0 && (
+               <>
+                  <h3>Excludes</h3>
+                  {data?.excludes.map((item, index) => {
+                     return <h4>{item}</h4>
+                  })}
+               </>
+            )}
+         </Row>
+         <Row>
+            {data?.allergens?.length > 0 && (
+               <>
+                  <h3>Allergens</h3>
+                  {data?.allergens.map((item, index) => {
+                     return <h4>{item}</h4>
+                  })}
+               </>
+            )}
+         </Row>
       </Container>
    )
 }

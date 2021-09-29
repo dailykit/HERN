@@ -2,7 +2,9 @@ import axios from 'axios'
 import jwt_decode from 'jwt-decode'
 import { isEmpty } from 'lodash'
 
-import { isClient } from '../utils'
+import { isClient, get_env } from '../utils'
+
+const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 const AUTH_SERVER_URL =
    isClient &&
@@ -40,6 +42,14 @@ export const auth = {
             isClient &&
                localStorage.setItem('token', response.data.access_token)
             const token = jwt_decode(response.data.access_token)
+            // react fb pixel initialization
+            const pixelId = isClient && get_env('PIXEL_ID')
+            const advancedMatching = { em: email.trim() }
+            const options = {
+               autoConfig: true,
+               debug: false,
+            }
+            ReactPixel.init(pixelId, advancedMatching, options)
             return token
          }
          return {}

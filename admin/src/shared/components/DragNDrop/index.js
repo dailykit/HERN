@@ -27,7 +27,7 @@ export default function DragNDrop({
                   style.transform.length - 3
                )
             ) >=
-            height * (size - index)
+            height * (size - index+1)
          ) {
             axisLockY = `translate(0px, ${height * (size - index - 1)}px`
          } else if (
@@ -48,7 +48,7 @@ export default function DragNDrop({
                style.transform.length
             )}`
          }
-
+         //console.log(axisLockY,"axisLockY")
          return {
             ...style,
             cursor: `${snapshot.isDragging ? 'move' : 'default'}`,
@@ -60,7 +60,7 @@ export default function DragNDrop({
          cursor: `${snapshot.isDragging ? 'move' : 'default'}`,
       }
    }
-
+   
    const onDragEnd = result => {
       //return if item was dropped outside
       if (!result.destination) return

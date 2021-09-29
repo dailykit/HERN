@@ -210,24 +210,36 @@ export const actionFullOccurenceReport = async (req, res) => {
          )
          sortAllOccurence.map((occurence, index) => {
             let skipAtThisStage = 0
+            let pauseAtThisStage = 0
             for (let i = 0; i < index; i++) {
                if (sortAllOccurence[i]['isSkipped']) {
                   skipAtThisStage += 1
                }
+               if (sortAllOccurence[i]['isPaused']) {
+                  pauseAtThisStage += 1
+               }
             }
             occurence.brandCustomerId = each.id
             occurence.email = each.customer.email
+            occurence.fullName = each.customer.platform_customer
+               ? each.customer.platform_customer.fullName
+               : 'N/A'
+            // occurence.fullName = 'Rahul'
             occurence.skipAtThisStage = skipAtThisStage
             occurence.allTimeRank = index + 1
-            occurence.percentageOfSkipping = parseFloat(
+            ;(occurence.percentageOfSkipping = parseFloat(
                (skipAtThisStage / (index + 1)) * 100
-            ).toFixed(2)
+            ).toFixed(2)),
+               (occurence.percentagePaused = parseFloat(
+                  (pauseAtThisStage / (index + 1)) * 100
+               ).toFixed(2))
          })
          // console.log('this is sortallo', sortAllOccurence)
          sortAllOccurence.forEach(eachOccurence => {
             const flattenOccurence = {
                brand_customerId: eachOccurence.brandCustomerId,
                email: eachOccurence.email,
+               fullName: eachOccurence.fullName,
                subscriptionOccurenceId: eachOccurence.subscriptionOccurence.id,
                fulfillmentDate:
                   eachOccurence.subscriptionOccurence.fulfillmentDate,
@@ -250,6 +262,10 @@ export const actionFullOccurenceReport = async (req, res) => {
                      : null,
                cartId:
                   eachOccurence.cart !== null ? eachOccurence.cart.id : null,
+               orderId:
+                  eachOccurence.cart !== null
+                     ? eachOccurence.cart.orderId
+                     : null,
                paymentRetryAttempt:
                   eachOccurence.cart !== null
                      ? eachOccurence.cart.paymentRetryAttempt
@@ -279,7 +295,8 @@ export const actionFullOccurenceReport = async (req, res) => {
                isSkipped: eachOccurence.isSkipped,
                skippedAtThisStage: eachOccurence.skipAtThisStage,
                allTimeRank: eachOccurence.allTimeRank,
-               percentageSkipped: eachOccurence.percentageOfSkipping
+               percentageSkipped: eachOccurence.percentageOfSkipping,
+               percentagePaused: eachOccurence.percentagePaused
             }
             fullOccurenceReport = [...fullOccurenceReport, flattenOccurence]
          })

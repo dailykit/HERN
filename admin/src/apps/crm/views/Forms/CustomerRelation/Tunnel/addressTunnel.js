@@ -47,7 +47,7 @@ const AddressTunnel = ({ id, tunnels, closeTunnel }) => {
             <Tunnel layer={1}>
                <TunnelHeader
                   title={`Address Cards(${
-                     brand_customers[0]?.customer?.platform_customers[0]
+                     brand_customers[0]?.customer?.platform_customer
                         ?.customerAddresses?.length || 0
                   })`}
                   close={() => closeTunnel(1)}
@@ -57,7 +57,7 @@ const AddressTunnel = ({ id, tunnels, closeTunnel }) => {
                />
                <Banner id="crm-app-customers-customer-details-address-tunnel-top" />
                <TunnelHeaderContainer>
-                  {brand_customers[0]?.customer?.platform_customers[0]?.customerAddresses?.map(
+                  {brand_customers[0]?.customer?.platform_customer?.customerAddresses?.map(
                      address => {
                         return (
                            <CustomerAddress key={address.id}>

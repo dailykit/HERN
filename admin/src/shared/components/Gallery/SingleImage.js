@@ -39,7 +39,7 @@ const SingleImage = ({ imageUrl, openTunnel, removeImage, editImage }) => {
             </WrapperDiv>
          ) : (
             <ButtonTile
-               type="primary"
+               type="uploadImage"
                size="sm"
                text="Add a Photo"
                onClick={() => openTunnel(1)}

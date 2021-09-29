@@ -1,8 +1,24 @@
 .tabulator-header {
    font-size: 14px;
+   height: 78px;
+   background-color: #f4f4f4 !important;
    border-bottom: 2px solid #d8d8d8;
 }
-
+.tabulator-headers{
+   height: 100%;
+}
+.tabulator .tabulator-header .tabulator-col{
+   background-color: #f4f4f4 !important;
+   margin-top: -8px ;
+   left: -8px;
+   height: 100% !important;
+}
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content {
+   height: 100%;
+}
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title{
+   text-align: left;
+}
 .tabulator-row {
    height: 48px;
    font-size: 16px;
@@ -17,7 +33,7 @@
 
 .center-text {
    text-align: center !important;
-}
+} 
 
 .tabulator-arrow {
    border-bottom: 6px solid #bbb !important;

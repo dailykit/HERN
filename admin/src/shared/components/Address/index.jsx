@@ -13,10 +13,10 @@ import Banner from '../Banner'
 
 const INSERT_ADDRESS = gql`
    mutation insertAddress($object: platform_customerAddress_insert_input!) {
-      insertAddress: platform_createCustomerAddress(
+      insertAddress: insert_platform_customerAddress_one(
          object: $object
          on_conflict: {
-            constraint: customerAddress_id_key
+            constraint: customerAddress__pkey
             update_columns: [
                line1
                line2
@@ -52,7 +52,6 @@ export const AddressTunnel = ({
    onSave,
    closeTunnel,
    address = {},
-   clientId = null,
    keycloakId = '',
 }) => {
    const [form, setForm] = React.useState({
@@ -163,12 +162,12 @@ export const AddressTunnel = ({
       if (form?.id) {
          const { __typename, ...rest } = form
          upsert({
-            variables: { object: { ...rest, clientId } },
+            variables: { object: { ...rest } },
          })
       } else if (keycloakId) {
          const { __typename, ...rest } = form
          upsert({
-            variables: { object: { keycloakId, ...rest, clientId } },
+            variables: { object: { keycloakId, ...rest } },
          })
       } else {
          const { __typename, ...rest } = form

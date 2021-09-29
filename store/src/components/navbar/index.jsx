@@ -7,39 +7,30 @@ import { getRoute } from '../../utils'
 
 function NavigationBar({ children, Data }) {
    return (
-      <>
-         <Navbar>
-            {Data.map((menu, index) => {
+      <Navbar>
+         {Data.map((menu, index) => {
+            if (menu.parentNavigationMenuItemId == null) {
                return (
-                  <>
-                     {menu.parentNavigationMenuItemId == null && (
-                        <NavItem key={index} menu={menu}>
-                           {menu.childNodes.length > 0 && (
-                              <DropdownMenu
-                                 childMenu={menu}
-                                 Data={Data}
-                              ></DropdownMenu>
-                           )}
-                        </NavItem>
+                  <NavItem key={index} menu={menu}>
+                     {menu.childNodes.length > 0 && (
+                        <DropdownMenu
+                           childMenu={menu}
+                           Data={Data}
+                        ></DropdownMenu>
                      )}
-                  </>
+                  </NavItem>
                )
-            })}
-            {children}
-         </Navbar>
-      </>
+            }
+         })}
+         {children}
+      </Navbar>
    )
 }
 
 function Navbar(props) {
    return (
-      <nav className="navbar">
-         <ul
-            className="navbar-nav ul-class"
-            style={{ flexDirection: 'row', width: '100%' }}
-         >
-            {props.children}
-         </ul>
+      <nav className="hern-navbar">
+         <ul className="hern-navbar__list">{props.children}</ul>
       </nav>
    )
 }
@@ -48,23 +39,11 @@ function NavItem({ children, menu }) {
    const [open, setOpen] = useState(false)
 
    return (
-      <li className="nav-item">
+      <li className="hern-navbar__list__item">
          {menu.childNodes.length > 0 ? (
-            <span
-               className="span-class"
-               onClick={() => setOpen(!open)}
-               style={{ cursor: 'pointer' }}
-            >
-               {menu.label}
-            </span>
+            <span onClick={() => setOpen(!open)}>{menu.label}</span>
          ) : (
-            <Link
-               href={getRoute(menu.url)}
-               className="icon-button link-class"
-               style={{ cursor: 'pointer' }}
-            >
-               {menu.label}
-            </Link>
+            <Link href={getRoute(menu.url)}>{menu.label}</Link>
          )}
 
          {open && children}

@@ -13,7 +13,8 @@ import {
    InlineLoader,
    Banner,
 } from '../../../../shared/components'
-
+import OrdersAccounts from '../Listing/OrdersAccounts'
+import { OrdersSvg, PlannedSvg } from '../../../../shared/assets/illustrationTileSvg'
 const address = 'apps.order.views.home.'
 const Home = () => {
    const { t } = useTranslation()
@@ -53,6 +54,7 @@ const Home = () => {
                conf="All available"
                count={data?.ordersAggregate?.aggregate?.count}
                onClick={() => addTab('Orders', '/order/orders')}
+               tileSvg={<OrdersSvg />}
             />
             <Spacer size="16px" xAxis />
             <DashboardTile
@@ -60,7 +62,16 @@ const Home = () => {
                title="Planned"
                conf="All available"
                onClick={() => addTab('Planned', '/order/planned')}
+               tileSvg={<PlannedSvg />}
             />
+         </Flex>
+         <Flex
+            container
+            width="100%"
+            justifyContent="center"
+            margin="10px 0px 10px 10px"
+         >
+            <OrdersAccounts />
          </Flex>
          <Banner id="order-app-home-bottom" />
       </Flex>

@@ -481,6 +481,7 @@ export const CART_STATUS = gql`
          fulfillmentInfo
          billingDetails
          customerKeycloakId
+         amount
          products: cartItems(where: { level: { _eq: 1 } }) {
             id
             name: displayName
@@ -788,14 +789,14 @@ export const CUSTOMER = {
                   }
                }
             }
-            platform_customer: platform_customer_ {
+            platform_customer: platform_customer {
                email
                firstName
                lastName
                keycloakId
                phoneNumber
-               stripeCustomerId
-               addresses: customerAddresses_(order_by: { created_at: desc }) {
+               paymentCustomerId
+               addresses: customerAddresses(order_by: { created_at: desc }) {
                   id
                   lat
                   lng
@@ -808,7 +809,7 @@ export const CUSTOMER = {
                   label
                   notes
                }
-               paymentMethods: stripePaymentMethods_ {
+               paymentMethods: customerPaymentMethods {
                   brand
                   last4
                   country
@@ -817,8 +818,96 @@ export const CUSTOMER = {
                   funding
                   keycloakId
                   cardHolderName
-                  stripePaymentMethodId
+                  paymentMethodId
                }
+            }
+         }
+      }
+   `,
+   DETAILS_QUERY: gql`
+      query customer($keycloakId: String!, $brandId: Int!) {
+         customer(keycloakId: $keycloakId) {
+            id
+            keycloakId
+            isSubscriber
+            isTest
+            carts {
+               id
+               paymentStatus
+               subscriptionOccurence {
+                  fulfillmentDate
+               }
+            }
+            brandCustomers(where: { brandId: { _eq: $brandId } }) {
+               id
+               isDemo
+               brandId
+               keycloakId
+               isSubscriber
+               isSubscriptionCancelled
+               pausePeriod
+               subscriptionId
+               subscriptionAddressId
+               subscriptionPaymentMethodId
+               subscriptionOnboardStatus
+               subscription {
+                  recipes: subscriptionItemCount {
+                     count
+                     price
+                     tax
+                     isTaxIncluded
+                     servingId: subscriptionServingId
+                     serving: subscriptionServing {
+                        size: servingSize
+                     }
+                  }
+               }
+            }
+            platform_customer: platform_customer {
+               email
+               firstName
+               lastName
+               keycloakId
+               phoneNumber
+               paymentCustomerId
+               addresses: customerAddresses(order_by: { created_at: desc }) {
+                  id
+                  lat
+                  lng
+                  line1
+                  line2
+                  city
+                  state
+                  country
+                  zipcode
+                  label
+                  notes
+               }
+               paymentMethods: customerPaymentMethods {
+                  brand
+                  last4
+                  country
+                  expMonth
+                  expYear
+                  funding
+                  keycloakId
+                  cardHolderName
+                  paymentMethodId
+               }
+            }
+         }
+      }
+   `,
+   WITH_BRAND: gql`
+      query customers(
+         $where: crm_customer_bool_exp = {}
+         $brandId: Int_comparison_exp = {}
+      ) {
+         customers(where: $where) {
+            id
+            brandCustomers(where: { brandId: $brandId }) {
+               id
+               subscriptionOnboardStatus
             }
          }
       }
@@ -939,16 +1028,6 @@ export const CART_REWARDS = gql`
    }
 `
 
-export const ORGANIZATION = gql`
-   query organizations {
-      organizations {
-         id
-         stripeAccountId
-         stripeAccountType
-      }
-   }
-`
-
 export const REFERRER = gql`
    query customerReferral($brandId: Int!, $code: String!) {
       customerReferrals(
@@ -956,7 +1035,7 @@ export const REFERRER = gql`
       ) {
          id
          customer {
-            platform_customer: platform_customer_ {
+            platform_customer: platform_customer {
                firstName
                lastName
             }
@@ -1015,7 +1094,7 @@ export const CUSTOMERS_REFERRED = gql`
       ) {
          id
          customer {
-            platform_customer: platform_customer_ {
+            platform_customer: platform_customer {
                firstName
                lastName
             }
@@ -1082,9 +1161,15 @@ export const WEBSITE_PAGE = gql`
          published
          route
          linkedNavigationMenuId
-         websitePageModules(order_by: { position: desc_nulls_last }) {
-            fileId
+         websitePageModules(
+            order_by: { position: desc_nulls_last }
+            where: { isHidden: { _eq: false } }
+         ) {
             id
+            name
+            moduleType
+            isHidden
+            fileId
             position
             subscriptionDivFileId: file {
                path
@@ -1149,6 +1234,17 @@ export const OTPS = gql`
          validTill
          resendAttempts
          isResendAllowed
+      }
+   }
+`
+
+export const PLATFORM_CUSTOMERS = gql`
+   query customers($where: platform_customer_bool_exp = {}) {
+      customers: platform_customer(where: $where) {
+         email
+         password
+         fullName
+         id: keycloakId
       }
    }
 `

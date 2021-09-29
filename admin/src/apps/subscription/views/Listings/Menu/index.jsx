@@ -9,6 +9,7 @@ import PlansSection from './PlansSection'
 import ProductsSection from './ProductsSection'
 import { useTabs } from '../../../../../shared/providers'
 import { Banner } from '../../../../../shared/components'
+import MenuProductTables from './MenuProductTable'
 
 export const Menu = () => {
    const { tab, addTab } = useTabs()
@@ -30,6 +31,7 @@ export const Menu = () => {
                <ProductsSection />
             </div>
          </Wrapper>
+         <MenuProductTables />
          <Banner id="subscription-app-menu-listing-bottom" />
       </MenuProvider>
    )

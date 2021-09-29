@@ -1,9 +1,9 @@
 import express from 'express'
-import { getCustomer, create } from './controllers'
+import { getCustomer, createReferralProgramScheduledEvent } from './controllers'
 
 const router = express.Router()
 
-router.route('/create').post(create)
 router.route('/:email').get(getCustomer)
+router.route('/referralProgram').post(createReferralProgramScheduledEvent)
 
 export default router

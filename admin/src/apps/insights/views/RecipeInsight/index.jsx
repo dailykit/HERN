@@ -9,20 +9,19 @@ import { INSIGHTS } from '../../graphql'
 
 const ReferralPlansListing = () => {
    const { tab, addTab } = useTabs()
-   const {
-      data: { insights_insights: insights = [] } = {},
-      loading,
-   } = useQuery(INSIGHTS, {
-      onError: error => {
-         console.log(error)
-      },
-   })
+   const { data: { insights_insights: insights = [] } = {}, loading } =
+      useQuery(INSIGHTS, {
+         onError: error => {
+            console.log(error)
+         },
+      })
 
-   React.useEffect(() => {
-      if (!tab) {
-         addTab('Recipe Insights', '/insights/recipe')
-      }
-   }, [tab, addTab])
+   //add new tab
+   // React.useEffect(() => {
+   //    if (!tab) {
+   //       addTab('Recipe Insights', '/insights/recipe')
+   //    }
+   // }, [tab, addTab])
 
    if (loading) return <InlineLoader />
 

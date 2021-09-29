@@ -6,6 +6,7 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /usr/src/app
 COPY . .
 
+ENV SKIP_PREFLIGHT_CHECK=true
 RUN yarn install:packages && yarn build
 
 FROM node:14.4.0

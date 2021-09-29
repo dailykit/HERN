@@ -1,6 +1,9 @@
+import { isClient } from './isClient'
+
 export const getRoute = route => {
-   if (process.env.NODE_ENV === 'development') {
-      return `/localhost4000${route}`
+   const host = isClient ? window.location.host : ''
+   if (process.env.NODE_ENV === 'development' && host === 'localhost:3000') {
+      return `/test${route}`
    }
    return route
 }

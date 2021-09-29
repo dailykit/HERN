@@ -1,5 +1,4 @@
 import React from 'react'
-import tw, { styled } from 'twin.macro'
 import { useMutation } from '@apollo/react-hooks'
 import { useToasts } from 'react-toast-notifications'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
@@ -10,6 +9,7 @@ import { MUTATIONS } from '../../graphql'
 import { CloseIcon } from '../../assets/icons'
 import { useScript, isClient, get_env } from '../../utils'
 import { Tunnel, Button, Form, Spacer } from '../../components'
+const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const AddressTunnel = () => {
    const { user } = useUser()
@@ -25,6 +25,8 @@ export const AddressTunnel = () => {
             appearance: 'success',
          })
          dispatch({ type: 'SET_ADDRESS', payload: address })
+         // fb pixel custom event for adding a new address
+         ReactPixel.trackCustom('addAddress', address)
       },
       onError: error => {
          addToast(error.message, {
@@ -106,18 +108,21 @@ export const AddressTunnel = () => {
       >
          <Tunnel.Header title="Add Address">
             <Button size="sm" onClick={() => toggleTunnel(false)}>
-               <CloseIcon size={20} tw="stroke-current" />
+               <CloseIcon
+                  size={20}
+                  className="hern-delivery__address-tunnel__close-icon"
+               />
             </Button>
          </Tunnel.Header>
          <Tunnel.Body>
-            <AddressSearch>
+            <section className="hern-delivery__address-tunnel__address-search">
                <Form.Label>Search Address</Form.Label>
                {loaded && !error && (
                   <GooglePlacesAutocomplete
                      onSelect={data => formatAddress(data)}
                   />
                )}
-            </AddressSearch>
+            </section>
             {address && (
                <>
                   <Form.Field>
@@ -155,31 +160,31 @@ export const AddressTunnel = () => {
                         }
                      />
                   </Form.Field>
-                  <div tw="flex flex-col md:flex-row gap-3">
-                     <Form.Field>
-                        <Form.Label>City*</Form.Label>
-                        <Form.Text
-                           type="text"
-                           placeholder="Enter city"
-                           value={address.city || ''}
-                           onChange={e =>
-                              setAddress({ ...address, city: e.target.value })
-                           }
-                        />
-                     </Form.Field>
-                     <Form.Field>
-                        <Form.Label>State</Form.Label>
-                        <FormPlaceholder>{address.state}</FormPlaceholder>
-                     </Form.Field>
-                  </div>
-                  <div tw="flex flex-col md:flex-row gap-3">
+
+                  <Form.Field>
+                     <Form.Label>City*</Form.Label>
+                     <Form.Text
+                        type="text"
+                        placeholder="Enter city"
+                        value={address.city || ''}
+                        onChange={e =>
+                           setAddress({ ...address, city: e.target.value })
+                        }
+                     />
+                  </Form.Field>
+                  <Form.Field>
+                     <Form.Label>State</Form.Label>
+                     <Form.Text readOnly value={address.state} />
+                  </Form.Field>
+
+                  <div className="hern-delivery__address-tunnel__country-zip-code">
                      <Form.Field>
                         <Form.Label>Country</Form.Label>
-                        <FormPlaceholder>{address.country}</FormPlaceholder>
+                        <Form.Text readOnly value={address.country} />
                      </Form.Field>
                      <Form.Field>
                         <Form.Label>Zipcode</Form.Label>
-                        <FormPlaceholder>{address.zipcode}</FormPlaceholder>
+                        <Form.Text readOnly value={address.zipcode} />
                      </Form.Field>
                   </div>
                   <Form.Field>
@@ -222,45 +227,3 @@ export const AddressTunnel = () => {
       </Tunnel>
    )
 }
-
-const AddressSearch = styled.section`
-   margin-bottom: 16px;
-   .google-places-autocomplete {
-      width: 100%;
-      position: relative;
-   }
-   .google-places-autocomplete__input {
-      ${tw`border-b h-8 w-full focus:outline-none focus:border-gray-700`}
-   }
-   .google-places-autocomplete__input:active,
-   .google-places-autocomplete__input:focus,
-   .google-places-autocomplete__input:hover {
-      outline: 0;
-      border: none;
-   }
-   .google-places-autocomplete__suggestions-container {
-      background: #fff;
-      border-radius: 0 0 5px 5px;
-      color: #000;
-      position: absolute;
-      width: 100%;
-      z-index: 2;
-      box-shadow: 0 1px 16px 0 rgba(0, 0, 0, 0.09);
-   }
-   .google-places-autocomplete__suggestion {
-      font-size: 1rem;
-      text-align: left;
-      padding: 10px;
-      cursor: pointer;
-   }
-   .google-places-autocomplete__suggestion:hover {
-      background: rgba(0, 0, 0, 0.1);
-   }
-   .google-places-autocomplete__suggestion--active {
-      background: #e0e3e7;
-   }
-`
-
-const FormPlaceholder = styled.span`
-   ${tw`py-2 px-3 border bg-gray-100`}
-`

@@ -1,5 +1,4 @@
 import React from 'react'
-import tw, { styled } from 'twin.macro'
 import ReactImageFallback from 'react-image-fallback'
 
 import { formatCurrency } from '../utils'
@@ -10,8 +9,8 @@ import { Loader } from './loader'
 export const CartProduct = ({ product, isRemovable, onDelete }) => {
    const { buildImageUrl, noProductImage } = useConfig()
    return (
-      <Wrapper>
-         <aside tw="flex-shrink-0 relative aspect-w-4 aspect-h-3">
+      <li className="hern-cart-product">
+         <div className="hern-cart-product__img">
             {product.image ? (
                <ReactImageFallback
                   src={buildImageUrl('100x75', product.image)}
@@ -23,54 +22,40 @@ export const CartProduct = ({ product, isRemovable, onDelete }) => {
             ) : (
                <img src={noProductImage} alt={product.name} />
             )}
-         </aside>
-         <main tw="pl-3">
-            <p tw="text-gray-800" title={product.name}>
+         </div>
+         <main className="hern-cart-product__info">
+            <p className="hern-cart-product__name" title={product.name}>
                {product.name}
             </p>
-            <p tw="text-green-600">
+            <p className="hern-cart-product__quantity">
                {product.isAddOn && formatCurrency(product.unitPrice)} x
                {product?.quantity || 1}
             </p>
             {!product.isAddOn && product.isAutoAdded && (
-               <span tw="text-sm px-1 rounded bg-gray-200 text-gray-600 border border-gray-200">
-                  Auto Selected
-               </span>
+               <span className="hern-cart-product__tag">Auto Selected</span>
             )}
             {Boolean(product.addOnPrice) && (
-               <span tw="text-sm px-1 rounded bg-gray-200 text-gray-600 border border-gray-200">
+               <span className="hern-cart-product__tag">
                   {product.addOnLabel}&nbsp;
                   {formatCurrency(product.addOnPrice)}
                </span>
             )}
          </main>
          {isRemovable && (
-            <section>
-               <button onClick={() => onDelete(product)} title="Remove Product">
-                  <CloseIcon size={16} tw="stroke-current text-gray-700" />
+            <section className="hern-cart-product__remove">
+               <button
+                  className="hern-cart-product__remove__btn"
+                  onClick={() => onDelete(product)}
+                  title="Remove Product"
+               >
+                  <CloseIcon
+                     size={16}
+                     stroke="currentColor"
+                     color="rgba(55,65,81,1)"
+                  />
                </button>
             </section>
          )}
-      </Wrapper>
+      </li>
    )
 }
-
-const Wrapper = styled.li`
-   ${tw`h-auto py-2 bg-white border grid items-start px-2 rounded`}
-   grid-template-columns: 96px 1fr auto;
-   aside {
-      ${tw`w-full h-16 bg-gray-300 rounded flex items-start justify-center overflow-hidden`}
-
-      :hover {
-         span.remove_product {
-            display: flex;
-         }
-      }
-   }
-   section {
-      ${tw`h-full flex items-center justify-center`}
-      > button {
-         ${tw`cursor-pointer bg-gray-100 h-6 w-6 rounded-full flex items-center justify-center`}
-      }
-   }
-`

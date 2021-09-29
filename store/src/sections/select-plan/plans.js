@@ -1,7 +1,7 @@
 import React from 'react'
-import { styled, css } from 'twin.macro'
 import { useToasts } from 'react-toast-notifications'
 import { useSubscription } from '@apollo/react-hooks'
+import classNames from 'classnames'
 
 import { Plan } from './plan'
 import { PLANS } from '../../graphql'
@@ -47,10 +47,10 @@ export const Plans = ({ cameFrom = '', handlePlanClick }) => {
 
    if (isLoading)
       return (
-         <List>
+         <ul className="hern-select-plan__skeletons__wrapper">
             <SkeletonPlan />
             <SkeletonPlan />
-         </List>
+         </ul>
       )
    if (error) {
       setIsLoading(false)
@@ -58,68 +58,39 @@ export const Plans = ({ cameFrom = '', handlePlanClick }) => {
          appearance: 'error',
       })
       return (
-         <Wrapper tw="py-3">
+         <div className="hern-our-plans_plans__plans--padding">
             <HelperBar type="danger">
                <HelperBar.SubTitle>
                   Something went wrong, please refresh the page!
                </HelperBar.SubTitle>
             </HelperBar>
-         </Wrapper>
+         </div>
       )
    }
    if (list.length === 0) {
       return (
-         <Wrapper tw="py-3">
+         <div className="hern-our-plans_plans__plans--padding">
             <HelperBar type="info">
                <HelperBar.SubTitle>No plans available yet!</HelperBar.SubTitle>
             </HelperBar>
-         </Wrapper>
+         </div>
       )
    }
+   const listClasses = classNames('hern-our-plans_plans__list', {
+      'hern-our-plans_plans__list--count1': list.length === 1,
+   })
+
    return (
-      <List count={list.length}>
+      <ul className={listClasses}>
          {list.map(plan => (
             <Plan
                plan={plan}
                key={plan.id}
                cameFrom={cameFrom}
                handlePlanClick={handlePlanClick}
+               itemCount={list.length}
             />
          ))}
-      </List>
+      </ul>
    )
 }
-
-const Wrapper = styled.div`
-   margin: auto;
-   max-width: 980px;
-   width: calc(100vw - 40px);
-`
-
-const List = styled.ul(
-   ({ count }) => css`
-      margin: auto;
-      max-width: 980px;
-      width: calc(100vw - 40px);
-
-      ${count === 1
-         ? css`
-              display: flex;
-              justify-content: center;
-              > li {
-                 width: 100%;
-                 max-width: 490px;
-              }
-           `
-         : css`
-              display: grid;
-              grid-gap: 24px;
-              grid-template-columns: 1fr 1fr;
-           `}
-
-      padding: 24px 0;
-      @media (max-width: 768px) {
-         grid-template-columns: 1fr;
-      }
-   `
-)

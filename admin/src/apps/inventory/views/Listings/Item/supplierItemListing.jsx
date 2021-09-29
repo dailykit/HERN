@@ -43,6 +43,7 @@ export default function SupplierItemsListings({ tableRef }) {
             const identifier = 'items_listings_item_name'
             return tooltip(identifier)?.description || col.getDefinition().title
          },
+         width: 350,
       },
       {
          title: 'Supplier',
@@ -52,6 +53,7 @@ export default function SupplierItemsListings({ tableRef }) {
             const identifier = 'items_listings_supplier'
             return tooltip(identifier)?.description || col.getDefinition().title
          },
+         width: 350,
       },
       {
          title: 'Bulk Items count',
@@ -61,6 +63,7 @@ export default function SupplierItemsListings({ tableRef }) {
             const identifier = 'items_listings_supplier_item_bulkItemCount'
             return tooltip(identifier)?.description || col.getDefinition().title
          },
+         width: 350,
       },
    ]
 

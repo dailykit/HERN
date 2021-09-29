@@ -1,20 +1,20 @@
 import 'twin.macro'
 import React from 'react'
-import { isEmpty } from 'lodash'
-import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks'
-import { getSession } from 'next-auth/client'
+import { getSession, useSession } from 'next-auth/client'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 
 import { useConfig } from '../lib'
 import {
-   BRAND_CUSTOMER,
    CUSTOMER,
    CUSTOMER_REFERRALS,
    LOYALTY_POINTS,
-   UPDATE_BRAND_CUSTOMER,
+   MUTATIONS,
    WALLETS,
+   UPDATE_BRAND_CUSTOMER,
 } from '../graphql'
 import { PageLoader } from '../components'
-import { isClient, processUser } from '../utils'
+import { isClient, processUser, get_env } from '../utils'
+const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 const UserContext = React.createContext()
 
@@ -41,9 +41,14 @@ const reducers = (state, { type, payload }) => {
 }
 
 export const UserProvider = ({ children }) => {
-   const { brand, organization } = useConfig()
+   const { brand } = useConfig()
    const [isLoading, setIsLoading] = React.useState(true)
    const [keycloakId, setKeycloakId] = React.useState('')
+   const [session, loadingSession] = useSession()
+
+   const [createCustomer] = useMutation(MUTATIONS.CUSTOMER.CREATE, {
+      onError: error => console.log('createCustomer => error => ', error),
+   })
    const [updateBrandCustomer] = useMutation(UPDATE_BRAND_CUSTOMER, {
       onError: error => console.log('updateBrandCustomer => error => ', error),
    })
@@ -55,30 +60,37 @@ export const UserProvider = ({ children }) => {
          subscriptionOnboardStatus: 'REGISTER',
       },
    })
-   useSubscription(BRAND_CUSTOMER, {
-      skip: !state?.user?.brandCustomerId,
-      variables: { id: state?.user?.brandCustomerId },
-      onSubscriptionData: ({
-         subscriptionData: { data: { brandCustomer = {} } = {} } = {},
-      }) => {
-         if (isEmpty(brandCustomer)) return
-         dispatch({
-            type: 'SET_USER',
-            payload: {
-               subscriptionOnboardStatus:
-                  brandCustomer.subscriptionOnboardStatus,
-            },
-         })
-      },
-   })
+
    const { loading, data: { customer = {} } = {} } = useSubscription(
       CUSTOMER.DETAILS,
       {
-         skip: !keycloakId || !brand.id,
+         skip: session?.user?.id || !keycloakId || !brand.id,
          fetchPolicy: 'network-only',
          variables: {
             keycloakId,
             brandId: brand.id,
+         },
+         onSubscriptionData: async ({
+            subscriptionData: { data: { customer = {} } = {} } = {},
+         } = {}) => {
+            if (!customer?.id) {
+               await createCustomer({
+                  variables: {
+                     object: {
+                        email: session.user.email,
+                        keycloakId: session.user.id,
+                        source: 'subscription',
+                        sourceBrandId: brand.id,
+                        brandCustomers: {
+                           data: {
+                              brandId: brand.id,
+                              subscriptionOnboardStatus: 'SELECT_DELIVERY',
+                           },
+                        },
+                     },
+                  },
+               })
+            }
          },
          onError: () => {
             setIsLoading(false)
@@ -138,27 +150,37 @@ export const UserProvider = ({ children }) => {
    })
 
    React.useEffect(() => {
-      ;(async () => {
-         if (isClient) {
-            const session = await getSession()
-            if (session?.user?.id) {
-               setKeycloakId(session?.user?.id)
-               dispatch({
-                  type: 'SET_USER',
-                  payload: { keycloakId: session?.user?.id },
-               })
-            } else {
-               dispatch({ type: 'CLEAR_USER' })
-               setIsLoading(false)
-            }
+      if (!loadingSession) {
+         if (session?.user?.id) {
+            setKeycloakId(session?.user?.id)
+            dispatch({
+               type: 'SET_USER',
+               payload: { keycloakId: session?.user?.id },
+            })
+         } else {
+            dispatch({ type: 'CLEAR_USER' })
+            setIsLoading(false)
          }
-      })()
-   }, [])
+      }
+   }, [session, loadingSession])
 
    React.useEffect(() => {
-      if (!loading && customer?.id && organization?.id) {
-         const user = processUser(customer, organization?.stripeAccountType)
-
+      if (keycloakId && !loading && customer?.id) {
+         const user = processUser(customer)
+         // fb pixel initialization when user is logged in
+         const pixelId = isClient && get_env('PIXEL_ID')
+         const advancedMatching = {
+            em: user?.platform_customer?.email,
+            ph: user?.platform_customer?.phoneNumber,
+            fn: user?.platform_customer?.firstName,
+            ln: user?.platform_customer?.lastName,
+            external_id: user?.platform_customer?.keycloakId,
+         }
+         const options = {
+            autoConfig: true,
+            debug: true,
+         }
+         ReactPixel.init(pixelId, advancedMatching, options)
          if (Array.isArray(user?.carts) && user?.carts?.length > 0) {
             const index = user.carts.findIndex(
                node => node.paymentStatus === 'SUCCEEDED'
@@ -167,7 +189,11 @@ export const UserProvider = ({ children }) => {
                updateBrandCustomer({
                   skip: !user?.brandCustomerId,
                   variables: {
-                     id: user?.brandCustomerId,
+                     where: {
+                        id: {
+                           _eq: user?.brandCustomerId,
+                        },
+                     },
                      _set: { subscriptionOnboardStatus: 'ONBOARDED' },
                   },
                })
@@ -177,9 +203,8 @@ export const UserProvider = ({ children }) => {
          dispatch({ type: 'SET_USER', payload: user })
          setIsLoading(false)
       }
-   }, [loading, customer, organization])
+   }, [keycloakId, loading, customer])
 
-   if (isLoading) return <PageLoader />
    return (
       <UserContext.Provider
          value={{

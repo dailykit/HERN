@@ -3,7 +3,7 @@ import { client } from '../../lib/graphql'
 import { SEND_MAIL } from './graphql/mutations'
 import { CUSTOMER, EMAIL_SETTINGS, ORDER_BY_CART } from './graphql/queries'
 
-import { logger } from '../../utils'
+import { logger2 } from '../../utils'
 import { fetch_html } from './functions'
 
 export const handleStatusChange = async (req, res) => {
@@ -130,7 +130,7 @@ export const handleStatusChange = async (req, res) => {
       return res.status(200).json({ success: true, template, customer, html })
    } catch (error) {
       console.log(error)
-      // logger({
+      // logger2({
       //    meta: { order: { id } },
       //    endpoint: '/api/order/status',
       //    trace: error

@@ -105,6 +105,7 @@ export default function SupplierListing() {
             const identifier = 'suppliers_listings_supplier_name'
             return tooltip(identifier)?.description || col.getDefinition().title
          },
+         width: 350,
       },
       {
          title: 'Person of Contact',
@@ -117,6 +118,7 @@ export default function SupplierListing() {
             const identifier = 'suppliers_listings_contact_person'
             return tooltip(identifier)?.description || col.getDefinition().title
          },
+         width: 250,
       },
       {
          title: 'Available',
@@ -157,7 +159,7 @@ export default function SupplierListing() {
                padding="16px 0"
             >
                <Flex container>
-                  <Text as="h2">{t(address.concat('suppliers'))}</Text>
+               <Text as="h2">{t(address.concat('suppliers'))}({suppliers.length})</Text>
                   <Tooltip identifier="suppliers_listings_heading" />
                </Flex>
                <Flex

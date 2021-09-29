@@ -1,5 +1,6 @@
-require('dotenv').config()
 import { GraphQLClient } from 'graphql-request'
+
+require('dotenv').config()
 
 export const client = new GraphQLClient(process.env.DATA_HUB, {
    headers: {

@@ -218,21 +218,7 @@ const processCustomer = (user, organization) => {
    customer.lastName = user.customer.platform_customer?.lastName || ''
    customer.fullName = user.customer.platform_customer?.fullName || ''
    customer.phoneNumber = user.customer.platform_customer?.phoneNumber || ''
-   customer.stripeCustomerId =
-      user.customer.platform_customer?.stripeCustomerId || ''
-
-   if (
-      organization.id &&
-      organization?.stripeAccountType === 'standard' &&
-      organization?.stripeAccountId
-   ) {
-      if (user.customer.platform_customer?.customerByClients.length > 0) {
-         const [node = {}] =
-            user.customer.platform_customer?.customerByClients || []
-         if (node?.organizationStripeCustomerId) {
-            customer.stripeCustomerId = node?.organizationStripeCustomerId
-         }
-      }
-   }
+   customer.paymentCustomerId =
+      user.customer.platform_customer?.paymentCustomerId || ''
    return customer
 }

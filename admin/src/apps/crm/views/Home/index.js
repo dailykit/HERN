@@ -8,6 +8,11 @@ import { useTabs } from '../../../../shared/providers'
 import { StyledHome, StyledCardList, StyledHeader } from './styled'
 import { CUSTOMERS_COUNT, COUPON_TOTAL, CAMPAIGN_TOTAL } from '../../graphql'
 import { Banner } from '../../../../shared/components'
+import {
+   CampaignSvg,
+   CouponsSvg,
+   CustomersSvg,
+} from '../../../../shared/assets/illustrationTileSvg'
 
 const Home = () => {
    const [context, setContext] = useContext(BrandContext)
@@ -34,16 +39,19 @@ const Home = () => {
                title="Customers"
                count={customersCount?.customers_aggregate.aggregate.count || 0}
                onClick={() => addTab('Customers', '/crm/customers')}
+               tileSvg={<CustomersSvg />}
             />
             <DashboardTile
                title="All Coupons"
                count={couponTotal?.couponsAggregate?.aggregate?.count || 0}
                onClick={() => addTab('Coupons', '/crm/coupons')}
+               tileSvg={<CouponsSvg />}
             />
             <DashboardTile
                title="All Campaign"
                count={campaignTotal?.campaignsAggregate?.aggregate?.count || 0}
                onClick={() => addTab('Campaign', '/crm/campaign')}
+               tileSvg={<CampaignSvg />}
             />
          </StyledCardList>
          <Banner id="crm-app-home-bottom" />

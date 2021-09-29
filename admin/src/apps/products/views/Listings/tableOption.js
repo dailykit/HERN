@@ -1,18 +1,15 @@
 const options = {
    cellVertAlign: 'middle',
-   // layout: 'fitColumns',
    autoResize: true,
    maxHeight: 420,
-   resizableColumns: false,
    virtualDomBuffer: 20,
-   persistenceID: 'recipe_table',
    placeholder: 'No Data Available',
    index: 'id',
    persistence: true,
    persistenceMode: 'local',
    selectablePersistence: true,
    persistence: {
-      group: true,
+      group: false,
       sort: true, //persist column sorting
       filter: true, //persist filter sorting
       page: true, //persist page

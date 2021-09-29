@@ -92,7 +92,7 @@ const UsersListing = () => {
          title: 'Phone No.',
          field: 'phoneNo',
          headerFilter: true,
-         hozAlign: 'right',
+         hozAlign: 'left',
          headerHozAlign: 'right',
          width: 150,
          headerTooltip: column => {

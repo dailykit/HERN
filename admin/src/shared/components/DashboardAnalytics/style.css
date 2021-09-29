@@ -1,0 +1,16 @@
+.DayPickerInput input {
+   border-radius: 4px;
+   border: 1px solid rgb(227, 227, 227);
+   text-align: left;
+   font-size: 16px;
+   padding: 0px 12px;
+   height: 40px;
+   outline: none;
+}
+/* .ant-picker-dropdown-range {
+   position: relative !important;
+   top: 358px !important;
+} */
+.anticon-calendar svg {
+   fill: #1890ff;
+}

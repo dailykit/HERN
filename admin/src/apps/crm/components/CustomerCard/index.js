@@ -46,7 +46,7 @@ const CustomerCard = ({
          impersonateUser({
             variables: {
                keycloakId: customer?.keycloakId,
-               clientId: get_env(REACT_APP_SUBSCRIPTION_CLIENT_ID),
+               clientId: get_env('REACT_APP_SUBSCRIPTION_CLIENT_ID'),
             },
          })
       } else {

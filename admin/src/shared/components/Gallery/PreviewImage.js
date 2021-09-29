@@ -18,8 +18,8 @@ const PreviewImage = ({ images, current, openTunnel, setActive }) => {
             ))}
          </Images>
          <ButtonTile
-            type="primary"
-            size="sm"
+            type='uploadImage'
+            size='lg'
             text={!images.length ? 'Add a Photo' : null}
             onClick={() => openTunnel(1)}
             style={

@@ -52,6 +52,7 @@ export const StyledDiv = styled.div`
 export const Highlight = styled.p`
    color: #00a7e1;
    cursor: pointer;
+   margin: 0;
    &:hover {
       text-decoration: underline;
    }

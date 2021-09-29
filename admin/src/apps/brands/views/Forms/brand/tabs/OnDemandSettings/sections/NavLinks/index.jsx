@@ -104,7 +104,7 @@ export const NavLinks = ({ update }) => {
             </Form.Group>
             <Spacer size="8px" xAxis />
             <TextButton
-               size="lg"
+               size="sm"
                type="outline"
                onClick={() => aboutUs.meta.isValid && updateSetting()}
             >

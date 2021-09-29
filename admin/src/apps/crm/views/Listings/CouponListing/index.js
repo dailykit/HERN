@@ -11,6 +11,9 @@ import {
    PlusIcon,
    Flex,
    Form,
+   DropdownButton,
+   TextButton,
+   Spacer,
 } from '@dailykit/ui'
 import {
    COUPON_LISTING,
@@ -176,8 +179,9 @@ const CouponListing = () => {
          field: 'code',
          headerFilter: true,
          hozAlign: 'left',
+         frozen: true,
          cssClass: 'rowClick',
-         width: 150,
+         width: 300,
          cellClick: (e, cell) => {
             rowClick(e, cell)
          },
@@ -187,6 +191,24 @@ const CouponListing = () => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
+         cssClass: 'colHover',
+      },
+      {
+         title: 'Action',
+         field: 'action',
+         headerHorzAlign: 'center',
+         frozen: true,
+         cellClick: (e, cell) => {
+            e.stopPropagation()
+            deleteHandler(e, cell._cell.row.data)
+         },
+         formatter: reactFormatter(<DeleteButton />),
+         hozAlign: 'center',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'center'
+            return '' + cell.getValue()
+         },
+         width: 100,
       },
       {
          title: 'Used',
@@ -254,50 +276,123 @@ const CouponListing = () => {
          },
          width: 100,
       },
-      {
-         title: 'Action',
-         field: 'action',
-         cellClick: (e, cell) => {
-            e.stopPropagation()
-            deleteHandler(e, cell._cell.row.data)
-         },
-         formatter: reactFormatter(<DeleteButton />),
-         hozAlign: 'center',
-         titleFormatter: function (cell, formatterParams, onRendered) {
-            cell.getElement().style.textAlign = 'center'
-            return '' + cell.getValue()
-         },
-         width: 100,
-      },
+      
    ]
+   const downloadCsvData = () => {
+      tableRef.current.table.download('csv', 'coupons_table.csv')
+   }
+
+   const downloadPdfData = () => {
+      tableRef.current.table.downloadToTab('pdf', 'coupons_table.pdf')
+   }
+
+   const downloadXlsxData = () => {
+      tableRef.current.table.download('xlsx', 'coupons_table.xlsx')
+   }
+   const clearCouponsPersistence= () =>
+      {
+         localStorage.removeItem('tabulator-coupons_table-columns')
+         localStorage.removeItem('tabulator-coupons_table-sort')
+         localStorage.removeItem('tabulator-coupons_table-filter') 
+      }
+
    if (loading || listLoading) return <InlineLoader />
    return (
       <StyledWrapper>
          <Banner id="crm-app-coupons-listing-top" />
-         <Flex container alignItems="center" justifyContent="space-between">
-            <Flex container height="80px" alignItems="center">
+         <Flex
+            container
+            height="80px"
+            width="100%"
+            alignItems="center"
+            justifyContent="space-between"
+             padding="32px 0 0 0"
+         >
+            <Flex
+               container
+               as="header"
+               width="25%"
+               alignItems="center"
+               justifyContent="space-between"
+             >
                <Text as="h2">
                   Coupons(
                   {couponTotal?.couponsAggregate?.aggregate?.count || '...'})
                </Text>
                <Tooltip identifier="coupon_list_heading" />
             </Flex>
-            <ButtonGroup>
+            <Flex
+               container
+               as="header"
+               width="75%"
+               alignItems="center"
+               justifyContent="space-around"
+            >
+               <Flex
+                  container
+                  as="header"
+                  width="73%"
+                  alignItems="center"
+                  justifyContent="flex-end"
+               >
+                  <TextButton
+                     onClick={() => {
+                        clearCouponsPersistence()
+                     }}
+                     type="ghost"
+                     size="sm"
+                  >
+                     Clear Persistence
+                  </TextButton>
+                  <Spacer size="15px" xAxis />
+                  <DropdownButton title="Download" width="150px">
+                     <DropdownButton.Options>
+                        <DropdownButton.Option
+                           onClick={() => downloadCsvData()}
+                        >
+                           CSV
+                        </DropdownButton.Option>
+                        <DropdownButton.Option
+                           onClick={() => downloadPdfData()}
+                        >
+                           PDF
+                        </DropdownButton.Option>
+                        <DropdownButton.Option
+                           onClick={() => downloadXlsxData()}
+                        >
+                           XLSX
+                        </DropdownButton.Option>
+                     </DropdownButton.Options>
+                  </DropdownButton>          
+            </Flex>         
+               <Flex
+                   container
+                   as="header"
+                   width="27%"
+                   alignItems="center"
+                   justifyContent="flex-end"
+               >
+                              <ButtonGroup>
                <ComboButton type="solid" onClick={createCoupon}>
                   <PlusIcon />
                   Create Coupon
                </ComboButton>
             </ButtonGroup>
+               </Flex>
+            </Flex>
          </Flex>
-         {Boolean(coupons) && (
+            <Spacer size='20px' />
+            {Boolean(coupons) && (
             <ReactTabulator
                columns={columns}
                data={coupons}
                options={{
                   ...options,
                   placeholder: 'No Coupons Available Yet !',
+                  persistenceID : 'coupons_table'
                }}
                ref={tableRef}
+               className = 'crm-coupons'
             />
          )}
          <InsightDashboard

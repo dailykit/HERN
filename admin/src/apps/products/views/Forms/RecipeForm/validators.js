@@ -67,6 +67,16 @@ const validator = {
       }
       return { isValid, errors }
    },
+   yield: value =>{
+      const name = value.trim()
+      let isValid = true
+      let errors = []
+      if (!value.includes(' ')){
+         isValid = false
+         errors = [...errors, 'Quantity and Unit should be space separated!']
+      }
+         return { isValid, errors }
+   }
 }
 
 export default validator

@@ -1,0 +1,108 @@
+.tabulator-header {
+   height: 80px;
+   font-size: 14px;
+   border-bottom: 2px solid #d8d8d8;
+}
+
+.tabulator-col
+   .tabulator-sortable
+   .colHover
+   .tabulator-frozen
+   .tabulator-frozen-left {
+   height: 90px !important;
+   margin-top: -10px !important;
+}
+
+.gIjFdD {
+   justify-content: flex-end;
+}
+
+.tabulator-headers {
+   background-color: #f4f4f4;
+   /* height: 80px; */
+   /* padding-top: auto; */
+   font-weight: 500;
+   line-height: 18px;
+   letter-spacing: 0.44px;
+   font-size: 14px;
+   /* padding-top: 10px; */
+   padding: 8px;
+   text-align: center;
+}
+
+.tabulator-col {
+   background: #f4f4f4 !important;
+}
+
+.tabulator-row {
+   height: 48px;
+   display: flex;
+   font-family: Roboto !important;
+   font-style: normal;
+   font-weight: 500;
+   font-size: 16px;
+   line-height: 18px;
+   color: #202020;
+   align-items: center;
+   letter-spacing: 0.44px;
+   border-bottom: 1px solid #d8d8d8;
+}
+
+.center-text {
+   text-align: center !important;
+}
+
+.tabulator-arrow {
+   border-bottom: 6px solid #bbb !important;
+}
+
+.tabulator-header-filter input {
+   border: 1px solid #d8d8d8;
+   border-radius: 2px;
+   margin-top: 5px;
+}
+
+.tabulator-row .colHover:hover {
+   color: #367bf5;
+   background-color: #f7f7f7;
+   cursor: pointer;
+}
+.tabulator-row .tabulator-cell {
+   height: 48px;
+}
+.tabulator-row.tabulator-selected {
+   background-color: #ebf1f4 !important;
+   border: 1px solid #fff;
+}
+.tabulator-row.tabulator-selected:hover {
+   background-color: #ebf1f4 !important;
+}
+
+.tabulator-header-filter input {
+   outline: none;
+   border-radius: 2px;
+   margin-top: 5px;
+}
+
+.tabulator-arrow {
+   border-bottom: 6px #202020 solid !important;
+}
+
+input[type='checkbox'] {
+   width: 18px;
+   height: 18px;
+}
+
+.formatterCell {
+   width: 100%;
+}
+
+.tabulator-cell {
+   padding-right: 20px !important;
+}
+.earning-table .tabulator-col-title {
+   text-align: left !important;
+}
+.earning-table .tabulator-header .digit-col .tabulator-col-title {
+   text-align: right !important;
+}

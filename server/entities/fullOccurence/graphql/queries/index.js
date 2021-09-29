@@ -37,7 +37,7 @@ query FullOccurenceReport {
           id
         }
       }
-      
+
       upcomingOccurences: activeSubscriptionOccurenceCustomers(where: {subscriptionOccurence: {cutoffTimeStamp: {_gte: "now()"}, startTimeStamp: {_lte: "now()"}}}) {
         subscriptionOccurence {
           id
@@ -111,6 +111,7 @@ export const HASURA_OPERATION = `
           status
           totalPrice
           discount
+          orderId
         }
         validStatus
         isPaused
@@ -118,6 +119,9 @@ export const HASURA_OPERATION = `
       }
       customer {
         email
+        platform_customer {
+          fullName
+        }
       }
       subscription {
         subscriptionOccurences(where: {cutoffTimeStamp: {_gte: "now()"}, startTimeStamp: {_lte: "now()"}}) {
@@ -146,6 +150,12 @@ export const HASURA_OPERATION = `
           status
           totalPrice
           discount
+        }
+        customer {
+          email
+          platform_customer {
+            fullName
+          }
         }
         validStatus
         isPaused

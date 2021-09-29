@@ -1,14 +1,18 @@
+import aws from '../lib/aws'
 import get_env from '../../get_env'
-
-const AWS = require('aws-sdk')
-
-const s3 = new AWS.S3()
+import { minifyImage } from './minify-image'
 
 export const uploadFile = async (buffer, name, type) => {
+   const AWS = await aws()
+   const s3 = new AWS.S3()
    const S3_BUCKET = await get_env('S3_BUCKET')
+
+   // minify image buffer
+   const minifiedBuffer = await minifyImage(buffer)
+
    const params = {
       ACL: 'public-read',
-      Body: buffer,
+      Body: minifiedBuffer,
       Bucket: S3_BUCKET,
       ContentType: type.mime,
       Key: `${name}.${type.ext}`,

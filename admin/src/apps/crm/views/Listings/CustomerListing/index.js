@@ -11,6 +11,7 @@ import {
    ButtonGroup,
    TextButton,
    Collapsible,
+   DropdownButton,
 } from '@dailykit/ui'
 import { useSubscription, useQuery, useMutation } from '@apollo/react-hooks'
 import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
@@ -38,6 +39,7 @@ import { currencyFmt, logger } from '../../../../../shared/utils'
 import options from '../../tableOptions'
 import rRuleDay from '../../../Utils/rruleToText'
 import { TrueIcon, FalseIcon } from '../../../assets'
+
 const CustomerListing = () => {
    const location = useLocation()
    const [context, setContext] = useContext(BrandContext)
@@ -297,6 +299,13 @@ const CustomerListing = () => {
    const downloadXlsxData = () => {
       tableRef.current.table.download('xlsx', 'customers_table.xlsx')
    }
+   const clearCustomerPersistence= () =>
+      {
+         localStorage.removeItem('tabulator-customer_table-columns')
+         localStorage.removeItem('tabulator-customer_table-sort')
+         localStorage.removeItem('tabulator-customer_table-filter') 
+         localStorage.removeItem('tabulator-customer_table-group')
+      }
    const defaultIDS = () => {
       let arr = []
       const customerGroup = localStorage.getItem(
@@ -336,6 +345,24 @@ const CustomerListing = () => {
             )
          },
       },
+      {
+         title: 'Action',
+         field: 'action',
+         headerHorzAlign: 'center',
+         frozen: true,
+         hozAlign: 'center',      
+         cellClick: (e, cell) => {
+            e.stopPropagation()
+            deleteHandler(e, cell._cell.row.data)
+         },
+         formatter: reactFormatter(<DeleteButton />),
+         
+         titleFormatter: function (cell) {
+            cell.getElement().style.textAlign = 'center'
+            return '' + cell.getValue()
+         },
+         width: 100,
+      }, 
       {
          title: 'Personal Contact',
          columns: [
@@ -545,21 +572,7 @@ const CustomerListing = () => {
             },
          ],
       },
-      {
-         title: 'Action',
-         field: 'action',
-         cellClick: (e, cell) => {
-            e.stopPropagation()
-            deleteHandler(e, cell._cell.row.data)
-         },
-         formatter: reactFormatter(<DeleteButton />),
-         hozAlign: 'center',
-         titleFormatter: function (cell) {
-            cell.getElement().style.textAlign = 'center'
-            return '' + cell.getValue()
-         },
-         width: 150,
-      },
+      
       {
          title: 'Created',
          field: 'signUpOn',
@@ -600,17 +613,68 @@ const CustomerListing = () => {
          <Flex
             container
             height="80px"
+            width="100%"
             alignItems="center"
             justifyContent="space-between"
          >
-            <Flex container>
+            <Flex
+               container
+               as="header"
+               width="25%"
+               alignItems="center"
+               justifyContent="space-between"
+             >
                <Text as="title">
                   Customers(
                   {customerCount})
                </Text>
                <Tooltip identifier="customer_list_heading" />
             </Flex>
-            <Flex container alignItems="center">
+            <Flex
+               container
+               as="header"
+               width="75%"
+               alignItems="center"
+               justifyContent="space-around"
+            >
+               <Flex
+                  container
+                  as="header"
+                  width="80%"
+                  alignItems="center"
+                  justifyContent="flex-end"
+               >
+                  <TextButton
+                     onClick={() => {
+                        clearCustomerPersistence ()
+                     }}
+                     type="ghost"
+                     size="sm"
+                  >
+                     Clear Persistence
+                  </TextButton>
+                  <Spacer size="15px" xAxis />
+                  <DropdownButton title="Download" width="150px">
+                     <DropdownButton.Options>
+                        <DropdownButton.Option
+                           onClick={() => downloadCsvData()}
+                        >
+                           CSV
+                        </DropdownButton.Option>
+                        <DropdownButton.Option
+                           onClick={() => downloadPdfData()}
+                        >
+                           PDF
+                        </DropdownButton.Option>
+                        <DropdownButton.Option
+                           onClick={() => downloadXlsxData()}
+                        >
+                           XLSX
+                        </DropdownButton.Option>
+                     </DropdownButton.Options>
+                  </DropdownButton>
+
+               <Spacer size="15px" xAxis />
                <Text as="text1">Group By:</Text>
                <Spacer size="5px" xAxis />
                <Dropdown
@@ -631,7 +695,16 @@ const CustomerListing = () => {
                   }}
                   typeName="groupBy"
                />
-               <ButtonGroup align="left">
+               
+            </Flex>         
+               <Flex
+                   container
+                   as="header"
+                   width="20%"
+                   alignItems="center"
+                   justifyContent="flex-end"
+               >
+                  <ButtonGroup align="left">
                   <TextButton
                      type="ghost"
                      size="sm"
@@ -640,23 +713,6 @@ const CustomerListing = () => {
                      Clear All Filter
                   </TextButton>
                </ButtonGroup>
-               <Flex
-                  margin="10px 0"
-                  container
-                  alignItems="center"
-                  justifyContent="space-between"
-               >
-                  <TextButton onClick={downloadCsvData} type="solid" size="sm">
-                     CSV
-                  </TextButton>
-                  <Spacer size="10px" xAxis />
-                  <TextButton onClick={downloadPdfData} type="solid" size="sm">
-                     PDF
-                  </TextButton>
-                  <Spacer size="10px" xAxis />
-                  <TextButton onClick={downloadXlsxData} type="solid" size="sm">
-                     XLSX
-                  </TextButton>
                </Flex>
             </Flex>
          </Flex>
@@ -670,10 +726,12 @@ const CustomerListing = () => {
                   ...options,
                   placeholder: 'No Customers Available Yet !',
                   columnHeaderVertAlign: 'bottom',
+                  persistenceID : 'customer_table'
                }}
                ref={tableRef}
+               className="crmCustomerTable"
             />
-         )}
+         )} 
          <InsightDashboard
             appTitle="CRM App"
             moduleTitle="Customer Listing"
@@ -683,5 +741,4 @@ const CustomerListing = () => {
       </StyledWrapper>
    )
 }
-
 export default CustomerListing

@@ -1,5 +1,4 @@
 import express from 'express'
-
 import {
    MOFRouter,
    MenuRouter,
@@ -9,7 +8,7 @@ import {
    DeviceRouter,
    UploadRouter,
    RMKMenuRouter,
-   initiatePayment,
+   NewPaymentRouter,
    OccurenceRouter,
    WorkOrderRouter,
    NotificationRouter,
@@ -24,20 +23,36 @@ import {
    authorizeRequest,
    handleImage,
    GetFullOccurenceRouter,
-   CustomerRouter,
-   populate_env
+   populate_env,
+   ActionsRouter,
+   OhyayRouter,
+   ExperienceRouter,
+   LogRouter,
+   CardRouter,
+   RefundRouter,
+   createStripeCustomer,
+   sendStripeInvoice,
+   sendSMS,
+   updateDailyosStripeStatus,
+   getAccountDetails
 } from './entities'
+
 import { PrintRouter } from './entities/print'
 import {
    printKOT,
    getKOTUrls,
    printLabel,
-   handleThirdPartyOrder
+   handleThirdPartyOrder,
+   createCronEvent,
+   createScheduledEvent
 } from './entities/events'
 import {
    handleCustomerSignup,
-   handleSubscriptionCancelled
+   handleSubscriptionCancelled,
+   emailTemplateHandler
 } from './entities/emails'
+
+import './lib/stripe'
 
 const router = express.Router()
 
@@ -45,6 +60,7 @@ const router = express.Router()
 router.get('/api/about', (req, res) => {
    res.json({ about: 'This is express server API!' })
 })
+router.use('/api/logs', LogRouter)
 router.use('/api/mof', MOFRouter)
 router.use('/api/menu', MenuRouter)
 router.use('/api/order', OrderRouter)
@@ -52,7 +68,7 @@ router.use('/api/assets', UploadRouter)
 router.use('/api/printer', PrintRouter)
 router.use('/api/rmk-menu', RMKMenuRouter)
 router.use('/api/inventory', WorkOrderRouter)
-router.post('/api/initiate-payment', initiatePayment)
+
 router.get('/api/place/autocomplete/json', placeAutoComplete)
 router.get('/api/place/details/json', placeDetails)
 router.post('/api/distance-matrix', getDistance)
@@ -62,7 +78,22 @@ router.get('/api/kot-urls', getKOTUrls)
 router.use('/api/modifier', ModifierRouter)
 router.use('/api/parseur', ParseurRouter)
 router.use('/api/occurences', GetFullOccurenceRouter)
-router.use('/api/customer', CustomerRouter)
+router.use('/api/actions', ActionsRouter)
+router.use('/api/ohyay', OhyayRouter)
+router.use('/api/experience', ExperienceRouter)
+
+// NEW
+router.use('/api/cards', CardRouter)
+router.use('/api/refund', RefundRouter)
+router.use('/api/payment', NewPaymentRouter)
+
+router.get('/api/account-details/:id', getAccountDetails)
+
+router.post('/api/webhooks/dailyos-stripe-status', updateDailyosStripeStatus)
+router.post('/api/webhooks/stripe/customer', createStripeCustomer)
+router.post('/api/webhooks/stripe/send-invoice', sendStripeInvoice)
+router.post('/api/webhooks/stripe/send-sms', sendSMS)
+// NEW
 
 router.use('/webhook/user', UserRouter)
 router.use('/webhook/devices', DeviceRouter)
@@ -74,12 +105,15 @@ router.post('/webhook/authorize-request', authorizeRequest)
 router.post('/event/print-label', printLabel)
 router.post('/event/print-kot', printKOT)
 router.post('/event/order/third-party', handleThirdPartyOrder)
+router.post('/event/create-cron-event', createCronEvent)
+router.post('/event/create-new-scheduled-event', createScheduledEvent)
 
 router.post('/webhook/emails/handle-customer-signup', handleCustomerSignup)
 router.post(
    '/webhook/emails/handle-subscription-cancelled',
    handleSubscriptionCancelled
 )
+router.post('/webhook/email-template-handler', emailTemplateHandler)
 
 router.use('/api/store', StoreRouter)
 router.post('/api/envs', populate_env)

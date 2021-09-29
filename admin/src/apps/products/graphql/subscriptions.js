@@ -30,24 +30,15 @@ export const S_INGREDIENTS = gql`
          isValid
          isPublished
          createdAt
-         ingredientProcessings {
-            id
-            nutritionalInfo
-            processingName
-            ingredientSachets {
-               id
-               isValid
-               quantity
-               unit
-               nutritionalInfo
-               ingredient {
-                  id
-                  name
-               }
+         ingredientProcessings_aggregate {
+            aggregate {
+               count
             }
          }
-         ingredientSachets {
-            id
+         ingredientSachetViews_aggregate {
+            aggregate {
+               count
+            }
          }
       }
    }
@@ -233,6 +224,9 @@ export const S_RECIPE = gql`
          cookingTime
          notIncluded
          cuisine
+         cuisineNameId {
+            id
+         }
          utensils
          showIngredients
          showIngredientsQuantity
@@ -263,6 +257,8 @@ export const S_RECIPE = gql`
             processing: ingredientProcessing {
                id
                name: processingName
+               nutritionalInfo
+               cost
             }
             linkedSachets: simpleRecipeYield_ingredientSachets(
                where: { isArchived: { _eq: false } }
@@ -286,7 +282,7 @@ export const S_RECIPE = gql`
          }
          simpleRecipeYields(
             where: { isArchived: { _eq: false } }
-            order_by: { yield: asc }
+            order_by: { serving: asc }
          ) {
             id
             yield
@@ -515,6 +511,100 @@ export const PRODUCT_OPTIONS = gql`
             name
          }
          type
+      }
+   }
+`
+export const PRODUCT_EARNING_COUNT = gql`
+   subscription PRODUCT_EARNING_COUNT(
+      $earningAndCountProductArgs: insights_getEarningByProducts_args!
+   ) {
+      insights_analytics {
+         getEarningsByProducts(args: $earningAndCountProductArgs)
+      }
+   }
+`
+export const ORDERS_LIST_BY_PRODUCT = gql`
+   subscription ORDERS_LIST_BY_PRODUCT($where: order_order_bool_exp!) {
+      orders(
+         where: $where
+         order_by: { created_at: desc_nulls_last }
+         limit: 10
+      ) {
+         created_at
+         customer {
+            email
+         }
+         id
+      }
+   }
+`
+export const RECIPE_EARNING = gql`
+   subscription RECIPE_EARNING($cartItemWhere: order_cartItem_bool_exp!) {
+      cartItemsAggregate(where: $cartItemWhere) {
+         aggregate {
+            sum {
+               unitPrice
+            }
+         }
+      }
+   }
+`
+export const RECIPE_COUNT = gql`
+   subscription RECIPE_COUNT($where: order_order_bool_exp!) {
+      ordersAggregate(where: $where) {
+         aggregate {
+            count
+         }
+      }
+   }
+`
+export const ORDER_BY_RECIPE = gql`
+   subscription ORDER_BY_RECIPE($where: order_order_bool_exp!) {
+      orders(
+         where: $where
+         order_by: { created_at: desc_nulls_last }
+         limit: 10
+      ) {
+         id
+         customer {
+            email
+         }
+         created_at
+      }
+   }
+`
+export const INGREDIENT_ORDER_COUNT = gql`
+   subscription INGREDIENT_ORDER_COUNT($where: order_order_bool_exp!) {
+      ordersAggregate(where: $where) {
+         aggregate {
+            count
+         }
+      }
+   }
+`
+export const SALES_BY_INGREDIENT = gql`
+   subscription SALES_BY_INGREDIENT($where: order_cartItem_bool_exp!) {
+      cartItemsAggregate(where: $where) {
+         aggregate {
+            sum {
+               unitPrice
+            }
+         }
+      }
+   }
+`
+export const ORDER_LIST_FROM_INGREDIENT = gql`
+   subscription ORDER_LIST_FROM_INGREDIENT($where: order_order_bool_exp!) {
+      orders(
+         where: $where
+         limit: 10
+         order_by: { created_at: desc_nulls_last }
+      ) {
+         id
+         customer {
+            email
+         }
+         created_at
       }
    }
 `

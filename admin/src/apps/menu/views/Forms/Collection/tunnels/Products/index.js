@@ -106,7 +106,7 @@ const ProductsTunnel = ({ categoryId, closeTunnel }) => {
                address.concat('select and add products to the collection')
             )}
             right={{ action: save, title: inFlight ? 'Adding...' : 'Add' }}
-            close={() => closeTunnel(2)}
+            close={() => closeTunnel(1)}
             tooltip={<Tooltip identifier="collections_products_tunnel" />}
          />
          <Banner id="menu-app-collections-collection-details-collections-products-tunnel-top" />{' '}

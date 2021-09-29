@@ -66,17 +66,20 @@ const ContentSelection = () => {
    )
 
    // Create mutation
-   const [linkComponent] = useMutation(LINK_COMPONENT, {
-      onCompleted: () => {
-         toast.success(`Added to the "${pageName}" page successfully!!`)
-         setSelectedFileOptions([])
-      },
-      onError: error => {
-         toast.error('Something went wrong')
-         logger(error)
-         setSelectedFileOptions([])
-      },
-   })
+   const [linkComponent, { loading: isLinkingComponent }] = useMutation(
+      LINK_COMPONENT,
+      {
+         onCompleted: () => {
+            toast.success(`Added to the "${pageName}" page successfully!!`)
+            setSelectedFileOptions([])
+         },
+         onError: error => {
+            toast.error('Something went wrong')
+            logger(error)
+            setSelectedFileOptions([])
+         },
+      }
+   )
 
    // Update mutation
    const [updateLinkComponent] = useMutation(UPDATE_LINK_COMPONENT, {
@@ -85,7 +88,7 @@ const ContentSelection = () => {
          closeConfigTunnel(1)
       },
       onError: error => {
-         toast.error('Something went wrong')
+         toast.error('Something went wrong while updating link component')
          logger(error)
          closeConfigTunnel(1)
       },
@@ -98,7 +101,7 @@ const ContentSelection = () => {
          setSelectedFileOptions([])
       },
       onError: error => {
-         toast.error('Something went wrong')
+         toast.error('Something went wrong while deleting linked component')
          logger(error)
          setSelectedFileOptions([])
       },
@@ -125,7 +128,7 @@ const ContentSelection = () => {
          const result = selectedFileOptions.map(option => {
             return {
                websitePageId: +pageId,
-               moduleType: option.type==="html"?'block':'file',
+               moduleType: option.type === 'html' ? 'block' : 'file',
                fileId: option.id,
             }
          })
@@ -168,7 +171,10 @@ const ContentSelection = () => {
       return <InlineLoader />
    }
    if (subscriptionError) {
-      toast.error('Something went wrong')
+      console.log(subscriptionError)
+      toast.error(
+         'Something went wrong in subscription query for linked components'
+      )
       logger(subscriptionError)
    }
    return (
@@ -216,7 +222,12 @@ const ContentSelection = () => {
          </WrapDiv>
          <StyledWrapper>
             <Flex container justifyContent="flex-end">
-               <ComboButton type="solid" size="md" onClick={saveHandler}>
+               <ComboButton
+                  type="solid"
+                  size="md"
+                  isLoading={isLinkingComponent}
+                  onClick={saveHandler}
+               >
                   <PlusIcon color="#fff" /> Add
                </ComboButton>
             </Flex>

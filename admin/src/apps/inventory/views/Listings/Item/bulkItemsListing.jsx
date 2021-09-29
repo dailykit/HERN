@@ -60,7 +60,7 @@ export default function BulkItemsListings({ tableRef }) {
          title: 'Supplier',
          field: 'supplierItem.supplier.name',
          headerFilter: false,
-         hozAlign: 'center',
+         hozAlign: 'left',
          headerHozAlign: 'center',
          headerTooltip: col => {
             const identifier = 'items_listings_supplier'

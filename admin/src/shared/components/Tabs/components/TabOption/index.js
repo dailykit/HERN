@@ -4,8 +4,12 @@ import { Styles } from './styled'
 import { useTabs } from '../../../../providers'
 import { CloseIcon } from '../../../../assets/icons'
 
-const TabOption = () => {
+const TabOption = ({ setOpen }) => {
    const { tabs, removeTab, closeAllTabs, switchTab } = useTabs()
+   const handleCloseAllTabs = () => {
+      closeAllTabs()
+      setOpen(false)
+   }
    return (
       <>
          {tabs.length > 0 && (
@@ -33,7 +37,7 @@ const TabOption = () => {
                   <Styles.SmallText>
                      Opened tabs ({tabs.length})
                   </Styles.SmallText>
-                  <div onClick={() => closeAllTabs()}>Close All Tabs</div>
+                  <div onClick={handleCloseAllTabs}>Close All Tabs</div>
                </Styles.CloseTab>
                <Styles.TabContainer>
                   {tabs.map((tab, index) => (
