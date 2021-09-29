@@ -204,7 +204,7 @@ export default function NavBarComp({ navigationMenuItems }) {
           </ul>
         )} */}
             <LoginModalContainer isShow={isLoginShow}>
-               <Modal isOpen={isLoginShow} close={hideLogin} type="sideDrawer">
+               <Modal isOpen={isLoginShow} close={hideLogin} type="popup">
                   {showContent === 'login' ? (
                      <Login
                         isOpen={isLoginShow}
@@ -223,11 +223,7 @@ export default function NavBarComp({ navigationMenuItems }) {
             </LoginModalContainer>
 
             <SignupModalContainer isShow={isSignupShow}>
-               <Modal
-                  isOpen={isSignupShow}
-                  close={hideSignup}
-                  type="sideDrawer"
-               >
+               <Modal isOpen={isSignupShow} close={hideSignup} type="popup">
                   <Signup isOpen={isSignupShow} authBtnClassName="auth-btn" />
                </Modal>
             </SignupModalContainer>

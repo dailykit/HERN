@@ -370,11 +370,7 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
                   )}
             </div>
             <TagsModalContainer isShow={isTagsShow}>
-               <Modal
-                  type={width > 769 ? 'sideDrawer' : 'bottomDrawer'}
-                  isOpen={isTagsShow}
-                  close={hideTags}
-               >
+               <Modal type="popup" isOpen={isTagsShow} close={hideTags}>
                   <div style={{ padding: '1rem' }}>
                      <Tags onSubmit={hideTags} />
                   </div>
