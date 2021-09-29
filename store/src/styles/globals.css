@@ -1,27 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;800&display=swap');
-* {
-   box-sizing: border-box;
-   margin: 0;
-   padding: 0;
-   font-family: 'Barlow', sans-serif;
-   outline: none;
-   font-family: 'Barlow', sans-serif;
-}
-
-html {
-   scroll-behavior: smooth;
-   /* background-color: #101010; */
-   background-color: #061422;
-   /* background-color: #2a4562; */
-   /* background-color: #212530; */
-}
-
-/* font-families */
-@font-face {
-   font-family: League-Gothic;
-   src: url('/assets/fonts/League-Gothic/LeagueGothic-Regular.otf');
-}
-
 @font-face {
    font-family: Proxima Nova;
    src: url('/assets/fonts/Proxima Nova Font.otf');
@@ -39,6 +16,27 @@ html {
 }
 .Proxima-Nova {
    font-family: Proxima Nova;
+}
+* {
+   box-sizing: border-box;
+   margin: 0;
+   padding: 0;
+   font-family: League-Gothic, Proxima Nova, Barlow, sans-serif;
+   outline: none;
+}
+
+html {
+   scroll-behavior: smooth;
+   /* background-color: #101010; */
+   /* background-color: #061422; */
+   /* background-color: #2a4562; */
+   /* background-color: #212530; */
+}
+
+/* font-families */
+@font-face {
+   font-family: League-Gothic;
+   src: url('/assets/fonts/League-Gothic/LeagueGothic-Regular.otf');
 }
 
 body {
@@ -255,3 +253,68 @@ body {
 .btn__roundness2 {
    border-radius: 0.5rem;
 } */
+
+/* custom heading tag */
+
+.text1 {
+   font-size: 72px;
+   line-height: 88px;
+}
+@media screen and (max-width: 769px) {
+   .text1 {
+      font-size: 48px;
+      line-height: 58px;
+   }
+   .text2 {
+      font-size: 36px;
+      line-height: 36px;
+   }
+   .text3 {
+      font-size: 32px;
+      line-height: 39px;
+   }
+   .text4 {
+      font-size: 24px;
+      line-height: 28px;
+   }
+   .text5 {
+      font-size: 20px;
+      line-height: 24px;
+   }
+   .text6 {
+      font-size: 20px;
+      line-height: 24px;
+   }
+}
+.text2 {
+   font-size: 48px;
+   line-height: 58px;
+}
+.text3 {
+   font-size: 36px;
+   line-height: 36px;
+}
+.text4 {
+   font-size: 32px;
+   line-height: 39px;
+}
+.text5 {
+   font-size: 26px;
+   line-height: 32px;
+}
+.text6 {
+   font-size: 24px;
+   line-height: 28px;
+}
+.text7 {
+   font-size: 20px;
+   line-height: 24px;
+}
+.text8 {
+   font-size: 18px;
+   line-height: 18px;
+}
+.text9 {
+   font-size: 16px;
+   line-height: 16px;
+}

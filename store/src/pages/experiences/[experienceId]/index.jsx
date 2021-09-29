@@ -169,59 +169,167 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
                )}
          </div>
          <StyledWrapper
+            bgMode="light"
             isBookingPageOpen={isBookingPageOpen}
             isDesktopView={width > 769}
          >
-            <Wrapper>
+            <div className="player-wrapper">
+               <GridComponent data={gridComponentData} />
+            </div>
+            <Flex
+               container
+               alignItems="center"
+               justifyContent="space-between"
+               margin="16px"
+            >
+               <h1 className="exp-heading text2">
+                  {experienceInfo?.experience?.title}
+               </h1>
+               {width > 769 && (
+                  <Button onClick={show} className="customPollBtn text7">
+                     SEND POLL
+                  </Button>
+               )}
+            </Flex>
+            <Flex
+               container
+               alignItems="center"
+               justifyContent="space-between"
+               margin="0 16px 16px 16px"
+            >
+               <p className="category text7">
+                  {experienceInfo?.experienceCategoryTitle}
+               </p>
                <Flex
                   container
                   alignItems="center"
                   justifyContent="space-between"
-                  margin="0 0 25px 0"
-                  padding="0 40px"
                >
-                  <h1 className="exp-heading">
-                     {experienceInfo?.experience?.title}
-                  </h1>
-                  {width > 769 && (
-                     <Button onClick={show} className="customPollBtn">
-                        SEND POLL
-                     </Button>
-                  )}
+                  <Clock
+                     size={theme.sizes.h4}
+                     color={theme.colors.textColor5}
+                  />
+                  <span className="duration text7">
+                     {moment
+                        .duration(
+                           experienceInfo?.experience?.experienceClasses[0]
+                              ?.duration
+                        )
+                        .asMinutes()}
+                     min
+                  </span>
                </Flex>
-               <Flex
-                  container
-                  alignItems="center"
-                  justifyContent="space-between"
-                  margin="0 0 25px 0"
-                  padding="0 40px"
-               >
-                  <p className="category">
-                     {experienceInfo?.experienceCategoryTitle}
-                  </p>
-                  <Flex
-                     container
-                     alignItems="center"
-                     justifyContent="space-between"
+            </Flex>
+            <TabWrapper>
+               <div className="tabOptions">
+                  <span
+                     className="scrollBtn scrollLeftBtn"
+                     onClick={scrollLeftHandler}
                   >
-                     <Clock
-                        size={theme.sizes.h4}
-                        color={theme.colors.textColor4}
+                     <ChevronLeft
+                        size={theme.sizes.h3}
+                        color={theme.colors.textColor}
                      />
-                     <span className="duration">
-                        {moment
-                           .duration(
-                              experienceInfo?.experience?.experienceClasses[0]
-                                 ?.duration
-                           )
-                           .asMinutes()}
-                        min
-                     </span>
-                  </Flex>
-               </Flex>
-               <div className="player-wrapper">
-                  <GridComponent data={gridComponentData} />
+                  </span>
+
+                  <div className="tab" id="experienceTab">
+                     <CustomScrollbar>
+                        <ul>
+                           <li>
+                              <a href="#section-1">
+                                 <a
+                                    className={
+                                       router.asPath.includes('#section-1') &&
+                                       'activeHash'
+                                    }
+                                 >
+                                    About this Experience
+                                 </a>
+                              </a>
+                           </li>
+                           <li>
+                              <a href="#section-2">
+                                 <a
+                                    className={
+                                       router.asPath.includes('#section-2') &&
+                                       'activeHash'
+                                    }
+                                 >
+                                    About the Expert
+                                 </a>
+                              </a>
+                           </li>
+                           <li>
+                              <a href="#section-3">
+                                 <a
+                                    className={
+                                       router.asPath.includes('#section-4') &&
+                                       'activeHash'
+                                    }
+                                 >
+                                    Goodies in your Kit
+                                 </a>
+                              </a>
+                           </li>
+                           <li>
+                              <a href="#section-4">
+                                 <a
+                                    className={
+                                       router.asPath.includes('#section-3') &&
+                                       'activeHash'
+                                    }
+                                 >
+                                    Supplies & Ingredients
+                                 </a>
+                              </a>
+                           </li>
+                           {experienceInfo?.experience?.experience_headers.map(
+                              header => {
+                                 return (
+                                    <li key={header.id}>
+                                       <a href={`#${header.id}`}>
+                                          <a
+                                             className={
+                                                router.asPath.includes(
+                                                   `#${header.id}`
+                                                ) && 'activeHash'
+                                             }
+                                          >
+                                             {header?.title}
+                                          </a>
+                                       </a>
+                                    </li>
+                                 )
+                              }
+                           )}
+
+                           <li>
+                              <a href="#section-7">
+                                 <a
+                                    className={
+                                       router.asPath.includes('#section-7') &&
+                                       'activeHash'
+                                    }
+                                 >
+                                    Other Similar Experiences
+                                 </a>
+                              </a>
+                           </li>
+                        </ul>
+                     </CustomScrollbar>
+                  </div>
+                  <span
+                     className="scrollBtn scrollRightBtn"
+                     onClick={scrollRightHandler}
+                  >
+                     <ChevronRight
+                        size={theme.sizes.h3}
+                        color={theme.colors.textColor}
+                     />
+                  </span>
                </div>
+            </TabWrapper>
+            <Wrapper>
                <div ref={experienceTop02} id="experience-top-02">
                   {Boolean(parsedData.length) &&
                      ReactHtmlParser(
@@ -230,128 +338,14 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
                      )}
                </div>
 
-               <TabWrapper>
-                  <div className="tabOptions">
-                     <div>
-                        <span
-                           className="scrollBtn scrollLeftBtn"
-                           onClick={scrollLeftHandler}
-                        >
-                           <ChevronLeft
-                              size={theme.sizes.h7}
-                              color={theme.colors.textColor2}
-                           />
-                        </span>
-
-                        <div className="tab" id="experienceTab">
-                           <CustomScrollbar>
-                              <ul>
-                                 <li>
-                                    <a href="#section-1">
-                                       <a
-                                          className={
-                                             router.asPath.includes(
-                                                '#section-1'
-                                             ) && 'activeHash'
-                                          }
-                                       >
-                                          About Experience
-                                       </a>
-                                    </a>
-                                 </li>
-                                 <li>
-                                    <a href="#section-2">
-                                       <a
-                                          className={
-                                             router.asPath.includes(
-                                                '#section-2'
-                                             ) && 'activeHash'
-                                          }
-                                       >
-                                          About the Expert
-                                       </a>
-                                    </a>
-                                 </li>
-                                 <li>
-                                    <a href="#section-3">
-                                       <a
-                                          className={
-                                             router.asPath.includes(
-                                                '#section-3'
-                                             ) && 'activeHash'
-                                          }
-                                       >
-                                          Supplies & Ingredients
-                                       </a>
-                                    </a>
-                                 </li>
-                                 <li>
-                                    <a href="#section-4">
-                                       <a
-                                          className={
-                                             router.asPath.includes(
-                                                '#section-4'
-                                             ) && 'activeHash'
-                                          }
-                                       >
-                                          Goodies in your Kit
-                                       </a>
-                                    </a>
-                                 </li>
-                                 {experienceInfo?.experience?.experience_headers.map(
-                                    header => {
-                                       return (
-                                          <li key={header.id}>
-                                             <a href={`#${header.id}`}>
-                                                <a
-                                                   className={
-                                                      router.asPath.includes(
-                                                         `#${header.id}`
-                                                      ) && 'activeHash'
-                                                   }
-                                                >
-                                                   {header?.title}
-                                                </a>
-                                             </a>
-                                          </li>
-                                       )
-                                    }
-                                 )}
-
-                                 <li>
-                                    <a href="#section-7">
-                                       <a
-                                          className={
-                                             router.asPath.includes(
-                                                '#section-7'
-                                             ) && 'activeHash'
-                                          }
-                                       >
-                                          Other Similar Experiences
-                                       </a>
-                                    </a>
-                                 </li>
-                              </ul>
-                           </CustomScrollbar>
-                        </div>
-                        <span
-                           className="scrollBtn scrollRightBtn"
-                           onClick={scrollRightHandler}
-                        >
-                           <ChevronRight
-                              size={theme.sizes.h7}
-                              color={theme.colors.textColor2}
-                           />
-                        </span>
-                     </div>
-                  </div>
-               </TabWrapper>
                <div className="info-wrapper">
                   <div className="left-container">
                      <section id="section-1">
-                        <h1 className="sub-heading">About Experience</h1>
+                        <h1 className="sub-heading text1">
+                           About This Experience
+                        </h1>
                         <ReadMoreDiv>
-                           <p className="about-exp">
+                           <p className="about-exp text7">
                               {parse(
                                  experienceInfo?.experience?.description || ''
                               )}
@@ -363,7 +357,7 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
                            ?.experienceClassExpert
                      ) && (
                         <section id="section-2">
-                           <h1 className="sub-heading">About Expert</h1>
+                           <h1 className="sub-heading text1">About Expert</h1>
                            <AboutExpert
                               expert={
                                  experienceInfo?.experience
@@ -377,6 +371,12 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
                         </section>
                      )}
                      <div id="section-3">
+                        <Goodies
+                           products={products}
+                           title="Included in your Kit"
+                        />
+                     </div>
+                     <div id="section-4">
                         <GoodiesWrapper>
                            {products.map(product => {
                               return (
@@ -389,18 +389,12 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
                            })}
                         </GoodiesWrapper>
                      </div>
-                     <div id="section-4">
-                        <Goodies
-                           products={products}
-                           title="Goodies in your Kit"
-                        />
-                     </div>
 
                      {experienceInfo?.experience?.experience_headers.map(
                         header => {
                            return (
                               <section id={header.id}>
-                                 <h1 className="sub-heading">
+                                 <h1 className="sub-heading text1">
                                     {header?.title}
                                  </h1>
                                  {parse(header?.content || '')}
@@ -542,14 +536,21 @@ export const getStaticPaths = async () => {
 const StyledWrapper = styled.div`
    filter: ${({ isCelebrating }) => isCelebrating && 'blur(4px)'};
    display: ${({ isBookingPageOpen }) => (isBookingPageOpen ? 'none' : 'flex')};
-
+   flex-direction: column;
+   background: ${({ bgMode }) =>
+      bgMode === 'dark'
+         ? theme.colors.darkBackground.darkblue
+         : theme.colors.lightBackground.white};
    > main {
       height: 100%;
       width: 100%;
       text-align: left;
       padding: 1rem;
    }
-
+   .player-wrapper {
+      width: 100%;
+      height: 320px;
+   }
    .footerBtnWrapper {
       display: flex;
       align-items: center;
@@ -562,6 +563,26 @@ const StyledWrapper = styled.div`
       @media (min-width: 769px) {
          display: none;
       }
+   }
+   .exp-heading {
+      color: ${theme.colors.textColor5};
+      font-weight: 800;
+   }
+   .customPollBtn {
+      width: 150px;
+      background: ${theme.colors.textColor};
+      color: ${theme.colors.textColor4};
+      padding: 0 20px;
+      height: 32px;
+   }
+   .category {
+      font-style: italic;
+      color: ${theme.colors.textColor5};
+   }
+   .duration {
+      font-weight: 500;
+      color: ${theme.colors.textColor5};
+      margin-left: 8px;
    }
    a {
       margin: 1rem;
@@ -591,13 +612,7 @@ const Wrapper = styled.main`
    width: 100%;
    height: 100%;
 
-   .player-wrapper {
-      width: 100%;
-      height: 320px;
-      margin-bottom: 4rem;
-   }
    .info-wrapper {
-      padding: 0 40px;
       display: flex;
       justify-content: flex-start;
       width: 100%;
@@ -618,36 +633,8 @@ const Wrapper = styled.main`
          overflow-y: auto;
          padding: 1rem;
          flex-direction: column;
-         background: ${theme.colors.mainBackground};
-         box-shadow: -12px 12px 24px rgba(18, 21, 27, 0.2),
-            12px -12px 24px rgba(18, 21, 27, 0.2),
-            -12px -12px 24px rgba(48, 53, 69, 0.9),
-            12px 12px 30px rgba(18, 21, 27, 0.9),
-            inset 1px 1px 2px rgba(48, 53, 69, 0.3),
-            inset -1px -1px 2px rgba(18, 21, 27, 0.5);
+         background: ${theme.colors.lightBackground.grey};
       }
-   }
-   .exp-heading {
-      font-size: ${theme.sizes.h2};
-      color: ${theme.colors.textColor4};
-      font-weight: 800;
-   }
-   .customPollBtn {
-      width: auto;
-      background: ${theme.colors.secondaryColor};
-      padding: 0 20px;
-      height: 32px;
-   }
-   .category {
-      font-style: italic;
-      font-size: ${theme.sizes.h6};
-      color: ${theme.colors.textColor4};
-   }
-   .duration {
-      font-weight: 500;
-      font-size: ${theme.sizes.h8};
-      color: ${theme.colors.textColor4};
-      margin-left: 8px;
    }
 
    @media (min-width: 769px) {
@@ -656,12 +643,6 @@ const Wrapper = styled.main`
       }
       .exp-heading {
          font-size: ${theme.sizes.h1};
-      }
-      .category {
-         font-size: ${theme.sizes.h8};
-      }
-      .duration {
-         font-size: ${theme.sizes.h9};
       }
 
       .info-wrapper {
@@ -679,18 +660,18 @@ const Wrapper = styled.main`
       text-align: center;
       padding: 2rem 0;
       .sub-heading {
-         font-size: ${theme.sizes.h3};
-         color: ${theme.colors.textColor4};
+         color: ${theme.colors.textColor5};
          font-weight: 400;
-         text-align: center;
+         text-align: left;
          margin-bottom: 20px;
+         text-transform: uppercase;
       }
       .subsub-heading {
-         font-size: ${theme.sizes.h6};
-         color: ${theme.colors.textColor4};
+         color: ${theme.colors.textColor5};
          font-weight: 700;
-         text-align: center;
-         margin-bottom: 20px;
+         text-align: left;
+         text-transform: uppercase;
+         margin-bottom: 0.5rem;
       }
       .box-open-img {
          margin-bottom: 80px;
@@ -706,9 +687,10 @@ const Wrapper = styled.main`
       }
       .about-exp {
          text-align: justify;
-         font-size: ${theme.sizes.h6};
-         color: ${theme.colors.textColor4};
+         color: ${theme.colors.lightGreyText};
          font-weight: 400;
+         font-size: ${theme.sizes.h4};
+         margin-bottom: 0.5rem;
       }
       .readMore {
          border: none;
@@ -748,15 +730,6 @@ const Wrapper = styled.main`
          transition: all 560ms;
       }
       @media (min-width: 769px) {
-         .sub-heading {
-            font-size: ${theme.sizes.h2};
-         }
-         .subsub-heading {
-            font-size: ${theme.sizes.h9};
-         }
-         .about-exp {
-            font-size: ${theme.sizes.h9};
-         }
          .readMore {
             font-size: ${theme.sizes.h3};
          }
@@ -765,7 +738,7 @@ const Wrapper = styled.main`
 `
 
 const TabWrapper = styled.div`
-   background: ${theme.colors.mainBackground};
+   background: ${theme.colors.lightBackground.grey};
    position: sticky;
    top: 0;
    z-index: 4;
@@ -774,6 +747,8 @@ const TabWrapper = styled.div`
    }
    .tabOptions {
       position: relative;
+      display: flex;
+      align-items: center;
       .scrollBtn {
          position: absolute;
          padding: 8px;
@@ -781,6 +756,10 @@ const TabWrapper = styled.div`
          z-index: 4;
          margin: 0 -8px;
          top: 0;
+         height: 100%;
+         justify-content: center;
+         display: flex;
+         align-items: center;
       }
 
       .scrollLeftBtn {
@@ -806,15 +785,18 @@ const TabWrapper = styled.div`
             padding: 0;
             margin: 0;
             padding-left: 0;
+            height: 100%;
          }
          li {
             list-style: none;
-            font-size: ${theme.sizes.h6};
+            font-size: ${theme.sizes.h4};
+            font-weight: 500;
             padding: 8px;
             margin-right: 28px;
+            text-transform: uppercase;
             .activeHash {
-               border-bottom: 2px solid ${theme.colors.textColor};
-               color: ${theme.colors.textColor};
+               border-bottom: 2px solid ${theme.colors.textColor5};
+               color: ${theme.colors.textColor5};
                padding-bottom: 4px;
                &:after,
                &:before {
@@ -829,25 +811,11 @@ const TabWrapper = styled.div`
             a {
                position: relative;
                text-decoration: none;
-               color: ${theme.colors.textColor2};
+               color: ${theme.colors.textColor};
                padding: 4px 0;
-               &:after {
-                  position: absolute;
-                  bottom: 0;
-                  left: 0;
-                  right: 0;
-                  margin: auto;
-                  width: 0%;
-                  content: '';
-                  color: ${theme.colors.textColor};
-                  background: ${theme.colors.textColor};
-                  height: 2px;
-               }
+
                &:hover {
-                  color: ${theme.colors.textColor};
-                  &:after {
-                     width: 100%;
-                  }
+                  color: ${theme.colors.textColor5};
                }
             }
             a,

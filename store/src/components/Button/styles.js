@@ -5,10 +5,6 @@ export const StyledButton = styled.button`
    width: 100%;
    font-size: ${({ fontSize }) => fontSize};
    height: ${({ height }) => height || '38px'};
-   box-shadow: ${({ isMainShadow }) =>
-      isMainShadow
-         ? '-3px 3px 6px rgba(21, 23, 30, 0.2), 3px -3px 6px rgba(21, 23, 30, 0.2), -3px -3px 6px rgba(45, 51, 66, 0.9), 3px 3px 8px rgba(21, 23, 30, 0.9), inset 1px 1px 2px rgba(45, 51, 66, 0.3), inset -1px -1px 2px rgba(21, 23, 30, 0.5)'
-         : '0px 8px 20px rgba(0, 0, 0, 0.35)'};
    border-radius: 24px;
    text-align: center;
    text-transform: uppercase;

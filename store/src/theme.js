@@ -6,12 +6,14 @@ export const theme = {
       tertiaryColor: '#F44D4D',
       backDropColor:
          'linear-gradient(135deg, rgba(35, 39, 50, 0.5) 0%, rgba(31, 35, 46, 0.5) 100%);',
-      // mainBackground: "#2A4562",
-      // textColor4: "#f1f7ed",
-      // textColor2: "#91c7b1",
-      // mainBackground: "#212530",
-      // textColor4: "#fff",
-      // textColor2: "#fff",
+      lightBackground: {
+         white: '#fff',
+         grey: '#EEEEEE'
+      },
+      darkBackground: {
+         darkblue: '#061422',
+         lightblue: '#2A4663'
+      },
       mainBackground: '#061422',
       textColor: '#E64C85',
       textColor2: '#ECECEC',
@@ -27,6 +29,7 @@ export const theme = {
       textColor12: '#7AB6D3',
       textColor13: '#9A8EDF',
       textColor14: '#E4BC6D',
+      lightGreyText: '#A7A7A7',
       disableBackground: '#ccc',
 
       emptyCellColor:

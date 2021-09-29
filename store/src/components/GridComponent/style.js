@@ -4,11 +4,10 @@ import { theme } from '../../theme'
 export const StyledWrapper = styled.div`
    width: 100%;
    height: 100%;
-   padding: 0 24px;
+   padding: 0;
    .outter-div {
       width: 100%;
       height: 100%;
-      border-radius: 8px;
       overflow: hidden !important;
       position: relative !important;
       max-height: 440px !important;
@@ -34,15 +33,6 @@ export const StyledWrapper = styled.div`
       padding: 0 1rem;
       background: ${theme.colors.secondaryColor};
       height: 28px;
-   }
-   @media (min-width: 1128px) {
-      padding: 0 40px;
-   }
-   @media (min-width: 950px) {
-      padding: 0 16px;
-   }
-   @media (min-width: 744px) {
-      padding: 0 16px;
    }
 `
 
