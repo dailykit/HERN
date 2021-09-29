@@ -114,6 +114,7 @@ const serveSubscription = async (req, res, next) => {
    //     Subscription shop: Browser <-> Express <-> NextJS
    try {
       const { path: routePath } = req.params
+      const { originalUrl } = req
       const { preview } = req.query
       const { host } = req.headers
       const brand = host.replace(':', '')
@@ -131,15 +132,10 @@ const serveSubscription = async (req, res, next) => {
       */
       if (process.env.NODE_ENV === 'development') {
          const url = RESTRICTED_FILES.some(file => routePath.includes(file))
-            ? `http://localhost:3000/${routePath}`
-            : `http://localhost:3000/${routePath}`
-         request(url, (error, _, body) => {
-            if (error) {
-               throw error
-            } else {
-               res.send(body)
-            }
-         })
+            ? `http://localhost:3000${originalUrl}`
+            : `http://localhost:3000${originalUrl}`
+         console.log({ url })
+         request(url).pipe(res)
       } else {
          const isAllowed = !RESTRICTED_FILES.some(file =>
             routePath.includes(file)
