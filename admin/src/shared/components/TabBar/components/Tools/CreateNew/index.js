@@ -143,7 +143,7 @@ const CreateNew = ({
          />
          <CreateNewBtn
             title="Products"
-            onClick={() => handleCreate(() => openCreateProductTunnel(1))}
+            onClick={() => handleCreate(() => openCreateProductTunnel(3))}
          />
          <CreateNewBtn
             title="Recipe"
