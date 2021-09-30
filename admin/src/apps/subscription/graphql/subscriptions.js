@@ -166,6 +166,7 @@ export const TITLE = gql`
          isDemo
          isValid
          isActive
+         metaDetails
          defaultSubscriptionServingId
          servings: subscriptionServings(order_by: { servingSize: asc }) {
             id
