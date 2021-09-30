@@ -1,4 +1,7 @@
 const axios = require('axios')
+const {
+   default: AddArgumentsAsVariablesTransform
+} = require('graphql-tools/dist/transforms/AddArgumentsAsVariables')
 
 const resolver = {
    Mutation: {
@@ -20,6 +23,8 @@ const resolver = {
          }
       },
 
+      // Premium or Business Plan required on analyticsPost.
+
       analyticsPost: async (_, args, { ayrshare_api_key }) => {
          try {
             const response = await axios({
@@ -37,6 +42,8 @@ const resolver = {
             return error
          }
       },
+
+      // Premium or Business Plan required on analyticsSocialNetwork.
 
       analyticsSocialNetwork: async (_, args, { ayrshare_api_key }) => {
          try {
@@ -56,6 +63,8 @@ const resolver = {
          }
       },
 
+      // Premium or Business Plan required on postComment.
+
       postComment: async (_, args, { ayrshare_api_key }) => {
          try {
             const response = await axios({
@@ -73,6 +82,8 @@ const resolver = {
             return error
          }
       },
+
+      // Instagram doesn't support this feature
 
       deletePost: async (_, args, { ayrshare_api_key }) => {
          try {

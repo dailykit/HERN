@@ -3,7 +3,7 @@ const typeDefs = gql`
    type Query {
       # queryName: TypeName
       getUser: User
-      getAnalytics(lastDays: Int!): Analytics
+      getAnalytics(lastDays: Int): Analytics
       getComments(Id: String!): Comments
    }
 `

@@ -14,7 +14,7 @@ const mutations = gql`
          comment: String!
       ): postCommentResponse
       deletePost(
-         Id: String!
+         id: String!
          deleteAllScheduled: Boolean
          bulk: [String]
       ): deletePostResponse

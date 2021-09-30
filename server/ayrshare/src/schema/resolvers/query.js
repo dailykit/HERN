@@ -18,9 +18,11 @@ const resolver = {
          }
       },
 
+      // Premium or Business Plan required on getAnalytics.
+
       getAnalytics: async (_, args, { ayrshare_api_key }) => {
          try {
-            const { lastDays } = args
+            const { lastDays = 1 } = args
             const response = await axios({
                method: 'GET',
                headers: {
@@ -34,6 +36,8 @@ const resolver = {
             return error
          }
       },
+
+      // Premium or Business Plan required on getComments.
 
       getComments: async (_, args, { ayrshare_api_key }) => {
          try {
