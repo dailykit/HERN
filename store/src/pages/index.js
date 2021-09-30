@@ -395,7 +395,9 @@ export const getStaticProps = async () => {
    }
    const navigationMenuItems = await getNavigationMenuItems(domain)
    const bannerData = await getBannerData(where)
+   console.log({ bannerData })
    const parsedData = await fileParser(bannerData)
+   console.log({ parsedData })
 
    return {
       props: {

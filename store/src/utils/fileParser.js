@@ -1,19 +1,23 @@
-const axios = require('axios')
 import { get_env } from './get_env'
+const axios = require('axios')
 
 const fetchFile = fold => {
    return new Promise(async (resolve, reject) => {
       const { path, linkedCssFiles, linkedJsFiles } = fold.subscriptionDivFileId
 
-      const url = get_env('EXPRESS_URL')
+      // const url = get_env('EXPRESS_URL')  not working since get_env works only on client side
+      const url = 'https://testhern.dailykit.org'
+      console.log({ url: `${url}/template/files${path}` })
       const { data } = await axios.get(`${url}/template/files${path}`)
 
       // add css links + html
       const parsedData =
-         linkedCssFiles.map(
-            ({ cssFile }) =>
-               `<link rel="stylesheet" type="text/css" href="${url}/template/files${cssFile.path}" media="screen"/>`
-         ).join`` + data
+         linkedCssFiles.length > 0
+            ? linkedCssFiles.map(
+                 ({ cssFile }) =>
+                    `<link rel="stylesheet" type="text/css" href="${url}/template/files${cssFile.path}" media="screen"/>`
+              ).join`` + data
+            : data
 
       // script urls
       const scripts = linkedJsFiles.map(
@@ -21,7 +25,7 @@ const fetchFile = fold => {
       )
 
       if (data) {
-         resolve({ id: fold.id, content: parsedData, scripts })
+         resolve({ id: fold.id, content: data, scripts })
       } else {
          reject('Failed to load file')
       }
