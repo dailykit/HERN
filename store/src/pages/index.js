@@ -125,7 +125,7 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
    return (
       <Layout navigationMenuItems={navigationMenuItems}>
          <SEO title="StayInSocial" />
-         <StyledWrapper>
+         <StyledWrapper bgMode="dark">
             <div ref={homeTop01} id="home-top-01">
                {Boolean(parsedData.length) &&
                   ReactHtmlParser(
@@ -409,6 +409,10 @@ const StyledWrapper = styled.div`
    width: 100%;
    height: 100%;
    overflow: auto;
+   background: ${({ bgMode }) =>
+      bgMode === 'dark'
+         ? theme.colors.darkBackground.darkblue
+         : theme.colors.lightBackground.white};
    .skeleton-wrapper {
       display: grid;
       grid-template-columns: repeat(4, 1fr);

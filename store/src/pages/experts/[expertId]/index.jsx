@@ -136,14 +136,14 @@ export const getStaticProps = async ({ params }) => {
          query: EXPERT_INFO,
          variables: { expertId: +params.expertId }
       })
-   const category =
-      expert.experience_experts[0]?.experience
-         .experience_experienceCategories[0]?.experienceCategoryTitle || null
+   // const category =
+   //    expert.experience_experts[0]?.experience
+   //       .experience_experienceCategories[0]?.experienceCategoryTitle || null
    return {
       props: {
          navigationMenuItems,
          expert,
-         category,
+         category: null,
          parsedData
       }
    }

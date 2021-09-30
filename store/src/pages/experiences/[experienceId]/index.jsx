@@ -173,53 +173,55 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
             isBookingPageOpen={isBookingPageOpen}
             isDesktopView={width > 769}
          >
-            <div className="player-wrapper">
-               <GridComponent data={gridComponentData} />
-            </div>
-            <Flex
-               container
-               alignItems="center"
-               justifyContent="space-between"
-               margin="16px"
-            >
-               <h1 className="exp-heading text2">
-                  {experienceInfo?.experience?.title}
-               </h1>
-               {width > 769 && (
-                  <Button onClick={show} className="customPollBtn text7">
-                     SEND POLL
-                  </Button>
-               )}
-            </Flex>
-            <Flex
-               container
-               alignItems="center"
-               justifyContent="space-between"
-               margin="0 16px 16px 16px"
-            >
-               <p className="category text7">
-                  {experienceInfo?.experienceCategoryTitle}
-               </p>
+            <div className="experience-title-wrap">
                <Flex
                   container
                   alignItems="center"
                   justifyContent="space-between"
+                  margin="16px"
                >
-                  <Clock
-                     size={theme.sizes.h4}
-                     color={theme.colors.textColor5}
-                  />
-                  <span className="duration text7">
-                     {moment
-                        .duration(
-                           experienceInfo?.experience?.experienceClasses[0]
-                              ?.duration
-                        )
-                        .asMinutes()}
-                     min
-                  </span>
+                  <h1 className="exp-heading text1">
+                     {experienceInfo?.experience?.title}
+                  </h1>
+                  {width > 769 && (
+                     <Button onClick={show} className="customPollBtn text7">
+                        SEND POLL
+                     </Button>
+                  )}
                </Flex>
-            </Flex>
+               <Flex
+                  container
+                  alignItems="center"
+                  justifyContent="space-between"
+                  margin="0 16px 16px 16px"
+               >
+                  <p className="category text7">
+                     {experienceInfo?.experienceCategoryTitle}
+                  </p>
+                  <Flex
+                     container
+                     alignItems="center"
+                     justifyContent="space-between"
+                  >
+                     <Clock
+                        size={theme.sizes.h4}
+                        color={theme.colors.textColor5}
+                     />
+                     <span className="duration text7">
+                        {moment
+                           .duration(
+                              experienceInfo?.experience?.experienceClasses[0]
+                                 ?.duration
+                           )
+                           .asMinutes()}
+                        min
+                     </span>
+                  </Flex>
+               </Flex>
+            </div>
+            <div className="player-wrapper">
+               <GridComponent data={gridComponentData} />
+            </div>
             <TabWrapper>
                <div className="tabOptions">
                   <span
@@ -564,25 +566,27 @@ const StyledWrapper = styled.div`
          display: none;
       }
    }
-   .exp-heading {
-      color: ${theme.colors.textColor5};
-      font-weight: 800;
-   }
-   .customPollBtn {
-      width: 150px;
-      background: ${theme.colors.textColor};
-      color: ${theme.colors.textColor4};
-      padding: 0 20px;
-      height: 32px;
-   }
-   .category {
-      font-style: italic;
-      color: ${theme.colors.textColor5};
-   }
-   .duration {
-      font-weight: 500;
-      color: ${theme.colors.textColor5};
-      margin-left: 8px;
+   .experience-title-wrap {
+      background: ${theme.colors.darkBackground.darkblue};
+      .exp-heading {
+         color: ${theme.colors.textColor4};
+      }
+      .customPollBtn {
+         width: 150px;
+         background: ${theme.colors.textColor};
+         color: ${theme.colors.textColor4};
+         padding: 0 20px;
+         height: 32px;
+      }
+      .category {
+         font-style: italic;
+         color: ${theme.colors.textColor5};
+      }
+      .duration {
+         font-weight: 500;
+         color: ${theme.colors.textColor5};
+         margin-left: 8px;
+      }
    }
    a {
       margin: 1rem;
