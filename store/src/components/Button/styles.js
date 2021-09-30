@@ -12,7 +12,6 @@ export const StyledButton = styled.button`
    background: ${({ backgroundColor }) =>
       backgroundColor || theme.colors.textColor4};
    border: none;
-   font-weight: 800;
    cursor: pointer;
    position: relative;
    overflow: hidden;
