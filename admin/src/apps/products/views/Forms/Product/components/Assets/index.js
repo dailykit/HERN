@@ -32,7 +32,7 @@ const Assets = ({ state }) => {
    }
 
    return (
-      <Flex width="100%">
+      <Flex width="100%" style={{ position: 'relative', top: '22px' }}>
          {state?.assets?.images != null && state?.assets?.images?.length ? (
             <Gallery
                list={state.assets.images}

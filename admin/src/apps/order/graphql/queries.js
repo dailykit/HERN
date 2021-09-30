@@ -10,7 +10,7 @@ export const QUERIES = {
                totalPrice
                paymentStatus
                stripeInvoiceId
-               stripeCustomerId
+               paymentCustomerId
                transactionId
                customerKeycloakId
                transactionRemarkHistory: paymentHistories(
@@ -998,8 +998,8 @@ export const CUSTOMER_PAYMENT_METHODS = gql`
    query customer($keycloakId: String!) {
       customer(keycloakId: $keycloakId) {
          id
-         platform_customer: platform_customer_ {
-            payment_methods: stripePaymentMethods_ {
+         platform_customer: platform_customer {
+            payment_methods: customerPaymentMethods {
                brand
                last4
                funding
@@ -1007,9 +1007,29 @@ export const CUSTOMER_PAYMENT_METHODS = gql`
                expMonth
                country
                name: cardHolderName
-               id: stripePaymentMethodId
+               id: paymentMethodId
             }
          }
+      }
+   }
+`
+export const ORDERS_ACCOUNTS = gql`
+   subscription ORDERS_ACCOUNTS($where: order_cart_bool_exp = {}) {
+      carts(where: $where, order_by: { created_at: desc_nulls_last }) {
+         orderId
+         customerId
+         paymentStatus
+         tip
+         walletAmountUsed
+         couponDiscount
+         loyaltyPointsUsed
+         created_at
+         amount
+         loyaltyPointTransactions {
+            amountRedeemed
+         }
+         customerInfo
+         customerKeycloakId
       }
    }
 `

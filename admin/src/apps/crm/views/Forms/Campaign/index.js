@@ -215,15 +215,19 @@ const CampaignForm = () => {
                            <Form.Error key={index}>{error}</Form.Error>
                         ))}
                   </Form.Group>
-                  <Flex container alignItems="center" height="100%">
+                  <Flex container alignItems="center" height="100%" style={{position:'relative', top:'13px'}}>
                      {state.isCampaignValid?.status ? (
                         <>
-                           <TickIcon color="#00ff00" stroke={2} />
+                           <Flex>
+                              <TickIcon color="#00ff00" stroke={2} />
+                           </Flex>
                            <Text as="p">All good!</Text>
                         </>
                      ) : (
                         <>
-                           <CloseIcon color="#ff0000" />
+                           <Flex container alignItems="center" height="100%" style={{position:'relative', top:'4px'}}>
+                              <CloseIcon color="#ff0000" /> 
+                           </Flex>
                            <Text as="p">{state.isCampaignValid?.error}</Text>
                         </>
                      )}
@@ -233,8 +237,8 @@ const CampaignForm = () => {
                         onChange={updatetoggle}
                         value={toggle}
                      >
-                        <Flex container alignItems="center">
-                           Publish
+                        <Flex container alignItems="center" style={{position:'relative', left:'12px'}}>
+                           <p>Publish</p>
                            <Tooltip identifier="campaign_publish_info" />
                         </Flex>
                      </Form.Toggle>

@@ -9,20 +9,25 @@
       "install:packages": "yarn && cd store && yarn && cd ../admin && yarn",
       "dev": "concurrently \"nodemon -r esm index.js\" \"cd store && yarn dev\" \"cd admin && yarn start\"",
       "build": "cd store && yarn build && cd ../admin && yarn build",
-      "prod": "concurrently \"node -r esm index.js\" \"cd store && yarn start\"",
-      "dev:server": "concurrently \"nodemon -r esm index.js\" \"cd store && yarn dev\""
+      "prod": "concurrently \"nodemon -r esm index.js\" \"cd store && yarn start\"",
+      "dev:server": "concurrently \"nodemon -r esm index.js\" \"cd store && yarn dev\"",
+      "download-graphql": "chmod +x ./fetchgraphqlschema.sh && ./fetchgraphqlschema.sh",
+      "lint:graphql": "eslint **/graphql/*.js > graphqlerrors.txt"
    },
    "dependencies": {
       "add": "^2.0.6",
       "apollo-server-express": "^2.25.2",
       "aws-sdk": "^2.678.0",
       "axios": "^0.21.1",
+      "babel-eslint": "^10.1.0",
       "bcrypt": "^5.0.1",
       "bluebird": "^3.7.2",
       "concurrently": "^6.2.0",
       "cors": "^2.8.5",
       "debug": "^4.3.2",
       "dotenv": "^8.2.0",
+      "ejs": "^3.1.6",
+      "eslint-plugin-graphql": "^4.0.0",
       "esm": "^3.2.25",
       "express": "^4.17.1",
       "file-type": "^14.4.0",
@@ -50,9 +55,11 @@
       "request": "^2.88.2",
       "rimraf": "^3.0.0",
       "rrule": "2.6.4",
+      "sharp": "^0.29.1",
       "ssh2": "^0.8.9",
       "stripe": "^8.168.0",
       "tar-fs": "^2.1.1",
+      "twilio": "^3.67.2",
       "yarn": "^1.22.11",
       "zlib": "^1.0.5"
    },
@@ -67,7 +74,8 @@
    "nodemonConfig": {
       "ignore": [
          "store",
-         "admin"
+         "admin",
+         "config.js"
       ]
    }
 }

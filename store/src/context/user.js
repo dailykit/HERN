@@ -10,6 +10,7 @@ import {
    LOYALTY_POINTS,
    MUTATIONS,
    WALLETS,
+   UPDATE_BRAND_CUSTOMER,
 } from '../graphql'
 import { PageLoader } from '../components'
 import { isClient, processUser, get_env } from '../utils'
@@ -40,13 +41,16 @@ const reducers = (state, { type, payload }) => {
 }
 
 export const UserProvider = ({ children }) => {
-   const { brand, organization } = useConfig()
+   const { brand } = useConfig()
    const [isLoading, setIsLoading] = React.useState(true)
    const [keycloakId, setKeycloakId] = React.useState('')
    const [session, loadingSession] = useSession()
 
    const [createCustomer] = useMutation(MUTATIONS.CUSTOMER.CREATE, {
       onError: error => console.log('createCustomer => error => ', error),
+   })
+   const [updateBrandCustomer] = useMutation(UPDATE_BRAND_CUSTOMER, {
+      onError: error => console.log('updateBrandCustomer => error => ', error),
    })
    const [state, dispatch] = React.useReducer(reducers, {
       isAuthenticated: false,
@@ -162,7 +166,7 @@ export const UserProvider = ({ children }) => {
 
    React.useEffect(() => {
       if (keycloakId && !loading && customer?.id) {
-         const user = processUser(customer, organization?.stripeAccountType)
+         const user = processUser(customer)
          // fb pixel initialization when user is logged in
          const pixelId = isClient && get_env('PIXEL_ID')
          const advancedMatching = {
@@ -185,7 +189,11 @@ export const UserProvider = ({ children }) => {
                updateBrandCustomer({
                   skip: !user?.brandCustomerId,
                   variables: {
-                     id: user?.brandCustomerId,
+                     where: {
+                        id: {
+                           _eq: user?.brandCustomerId,
+                        },
+                     },
                      _set: { subscriptionOnboardStatus: 'ONBOARDED' },
                   },
                })
@@ -197,7 +205,6 @@ export const UserProvider = ({ children }) => {
       }
    }, [keycloakId, loading, customer])
 
-   if (isLoading) return <PageLoader />
    return (
       <UserContext.Provider
          value={{

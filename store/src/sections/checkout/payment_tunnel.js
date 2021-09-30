@@ -7,12 +7,11 @@ import { useUser } from '../../context'
 import { Tunnel } from '../../components'
 import { PaymentForm } from './payment_form'
 import { CloseIcon } from '../../assets/icons'
-import { isClient } from '../../utils'
+import { isClient, get_env } from '../../utils'
 import { useConfig } from '../../lib'
 
 export const PaymentTunnel = () => {
    const { user } = useUser()
-   const { organization } = useConfig()
    const { state, dispatch } = usePayment()
    const [intent, setIntent] = React.useState(null)
 
@@ -26,17 +25,17 @@ export const PaymentTunnel = () => {
    }
 
    React.useEffect(() => {
-      if (user?.platform_customer?.stripeCustomerId && isClient) {
+      console.log({ user })
+      if (user?.platform_customer?.paymentCustomerId && isClient && !intent) {
          ;(async () => {
-            const intent = await createSetupIntent(
-               user?.platform_customer?.stripeCustomerId,
-               organization
+            const setup_intent = await createSetupIntent(
+               user?.platform_customer?.paymentCustomerId
             )
-
-            setIntent(intent)
+            console.log({ setup_intent })
+            setIntent(setup_intent)
          })()
       }
-   }, [user, organization])
+   }, [user])
 
    return (
       <Tunnel
@@ -59,18 +58,15 @@ export const PaymentTunnel = () => {
    )
 }
 
-const createSetupIntent = async (customer, organization = {}) => {
+const createSetupIntent = async customer => {
    try {
-      let stripeAccountId = null
-      if (
-         organization?.stripeAccountType === 'standard' &&
-         organization?.stripeAccountId
-      ) {
-         stripeAccountId = organization?.stripeAccountId
-      }
-      const DATAHUB = get_env('DATA_HUB_HTTPS')
-      const url = `${new URL(DATAHUB).origin}/api/setup-intent`
-      const { data } = await axios.post(url, { customer, stripeAccountId })
+      console.log({ customer })
+      const origin = isClient ? window.location.origin : ''
+      const url = `${origin}/server/api/payment/setup-intent`
+      const { data } = await axios.post(url, {
+         customer,
+      })
+      console.log({ data: data.data })
       return data.data
    } catch (error) {
       return error

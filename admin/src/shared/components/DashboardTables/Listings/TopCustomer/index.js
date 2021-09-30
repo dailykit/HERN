@@ -25,11 +25,13 @@ const TopCustomer = () => {
          variables: {
             topCustomersArgs: {
                params: {
-                  where: `id IS NOT NULL ${
+                  where: `o.id IS NOT NULL ${
                      dashboardTableState.from && dashboardTableState.to
-                        ? `AND \"created_at\" >= '${dashboardTableState.from}' AND \"created_at\" <= '${dashboardTableState.to}'`
+                        ? `AND o.\"created_at\" >= '${dashboardTableState.from}' AND o.\"created_at\" <= '${dashboardTableState.to}'`
                         : ''
                   }`,
+                  customerWhere: 'id IS NOT NULL',
+                  limit: 'LIMIT 10',
                },
             },
          },
@@ -85,7 +87,7 @@ const TopCustomer = () => {
          width: 90,
       },
    ]
-   if (subsLoading || status.loading) {
+   if (!subsError && (subsLoading || status.loading)) {
       return <InlineLoader />
    }
    if (subsError) {

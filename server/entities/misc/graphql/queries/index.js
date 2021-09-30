@@ -24,7 +24,7 @@ query cart($id: Int!) {
     totalPrice2(args: {params: "parentCart"})
     balancePayment
     paymentMethodId
-    stripeCustomerId
+    paymentCustomerId
     statementDescriptor
   }
 }

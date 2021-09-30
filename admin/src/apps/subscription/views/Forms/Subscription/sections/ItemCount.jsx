@@ -59,27 +59,28 @@ const ItemCount = ({ id, toggleItemCountTunnel }) => {
          toast.error('Failed to update the item count!')
       },
    })
-   const { error, loading, data: { itemCount = {} } = {} } = useSubscription(
-      ITEM_COUNT,
-      {
-         variables: { id },
-         onSubscriptionData: ({
-            subscriptionData: { data: { itemCount: node = {} } = {} } = {},
-         }) => {
-            dispatch({
-               type: 'SET_ITEM',
-               payload: {
-                  id: node.id,
-                  tax: node.tax,
-                  count: node.count,
-                  price: node.price,
-                  isActive: node.isActive,
-                  isTaxIncluded: node.isTaxIncluded,
-               },
-            })
-         },
-      }
-   )
+   const {
+      error,
+      loading,
+      data: { itemCount = {} } = {},
+   } = useSubscription(ITEM_COUNT, {
+      variables: { id },
+      onSubscriptionData: ({
+         subscriptionData: { data: { itemCount: node = {} } = {} } = {},
+      }) => {
+         dispatch({
+            type: 'SET_ITEM',
+            payload: {
+               id: node.id,
+               tax: node.tax,
+               count: node.count,
+               price: node.price,
+               isActive: node.isActive,
+               isTaxIncluded: node.isTaxIncluded,
+            },
+         })
+      },
+   })
 
    React.useEffect(() => {
       return () => {
@@ -130,7 +131,9 @@ const ItemCount = ({ id, toggleItemCountTunnel }) => {
             justifyContent="space-between"
          >
             <Flex container alignItems="center">
-               <Text as="p">Price per week: {itemCount.price}</Text>
+               <Text as="p" style={{ marginBottom: '0px' }}>
+                  Price per week: {itemCount.price}
+               </Text>
                <Spacer size="14px" xAxis />
                {itemCount.isDemo && <Tag>Demo</Tag>}
             </Flex>
@@ -143,7 +146,7 @@ const ItemCount = ({ id, toggleItemCountTunnel }) => {
                   </Flex>
                ) : (
                   <Flex container flex="1" alignItems="center">
-                     <CloseIcon size={20} color="red" />
+                     <CloseIcon size={8} color="red" />
                      <Spacer size="8px" xAxis />
                      <Text as="subtitle">
                         Must have atleast one delivery day!
@@ -159,7 +162,7 @@ const ItemCount = ({ id, toggleItemCountTunnel }) => {
                   >
                      Publish
                   </Form.Toggle>
-                  <Tooltip identifier="form_subscription_sectioon_item_count_publish" />
+                  <Tooltip identifier="form_subscription_section_item_count_publish" />
                </Flex>
                <Spacer size="16px" xAxis />
                <IconButton
@@ -180,7 +183,9 @@ const ItemCount = ({ id, toggleItemCountTunnel }) => {
                justifyContent="space-between"
             >
                <Flex container alignItems="center">
-                  <Text as="title">Delivery Days</Text>
+                  <Text as="title" style={{ marginBottom: '0px' }}>
+                     Delivery Days
+                  </Text>
                   <Tooltip identifier="form_subscription_section_delivery_days_heading" />
                </Flex>
                <IconButton

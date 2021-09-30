@@ -222,13 +222,13 @@ export const QUERIES = {
                   id
                   email
                   isTest
-                  platform_customer: platform_customer_ {
+                  platform_customer: platform_customer {
                      id: keycloakId
                      firstName
                      lastName
                      phoneNumber
                      fullName
-                     stripeCustomerId
+                     paymentCustomerId
                   }
                }
             }
@@ -236,8 +236,8 @@ export const QUERIES = {
       `,
       ADDRESS: {
          LIST: gql`
-            query addresses($where: platform_customerAddress__bool_exp = {}) {
-               addresses: platform_customerAddress_(where: $where) {
+            query addresses($where: platform_customerAddress_bool_exp = {}) {
+               addresses: platform_customerAddress(where: $where) {
                   id
                   lat
                   lng
@@ -257,10 +257,10 @@ export const QUERIES = {
       PAYMENT_METHODS: {
          ONE: gql`
             query paymentMethod($id: String!) {
-               paymentMethod: platform_stripePaymentMethod__by_pk(
-                  stripePaymentMethodId: $id
+               paymentMethod: platform_customerPaymentMethod_by_pk(
+                  paymentMethodId: $id
                ) {
-                  id: stripePaymentMethodId
+                  id: paymentMethodId
                   last4
                   expMonth
                   expYear
@@ -270,10 +270,10 @@ export const QUERIES = {
          `,
          LIST: gql`
             query paymentMethods(
-               $where: platform_stripePaymentMethod__bool_exp = {}
+               $where: platform_customerPaymentMethod_bool_exp = {}
             ) {
-               paymentMethods: platform_stripePaymentMethod_(where: $where) {
-                  id: stripePaymentMethodId
+               paymentMethods: platform_customerPaymentMethod(where: $where) {
+                  id: paymentMethodId
                   last4
                   expMonth
                   expYear

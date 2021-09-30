@@ -1,10 +1,8 @@
 import React from 'react'
-import tw from 'twin.macro'
 import { useRouter } from 'next/router'
 import { useToasts } from 'react-toast-notifications'
 
 import { useMenu } from '../../state'
-import { SaveGhostButton } from '../styled'
 import { formatCurrency, getRoute } from '../../../../utils'
 import {
    Billing,
@@ -59,8 +57,8 @@ const BillingDetails = ({ isCheckout }) => {
                )}
             </>
          )}
-         <header tw="mt-3 mb-3 h-10 flex items-center justify-between">
-            <h4 tw="text-lg text-gray-700">
+         <header className="hern-cart-billing__header">
+            <h4 className="hern-cart-billing__heading">
                Your Weekly Total:{' '}
                {itemCountValid
                   ? formatCurrency(billing?.totalPrice?.value)
@@ -70,7 +68,12 @@ const BillingDetails = ({ isCheckout }) => {
          </header>
          {itemCountValid && open && <Billing billing={billing} />}
          {!isCheckout && itemCountValid && (
-            <SaveGhostButton onClick={payEarly}>EARLY PAY</SaveGhostButton>
+            <button
+               className="hern-cart-billing__early-pay-btn"
+               onClick={payEarly}
+            >
+               EARLY PAY
+            </button>
          )}
       </div>
    )
@@ -81,13 +84,21 @@ export default BillingDetails
 const Toggle = ({ open, toggle }) => {
    return (
       <button
+         className="hern-cart-billing__toggle-btn"
          onClick={() => toggle(!open)}
-         tw="focus:outline-none border w-8 h-6 rounded-full flex items-center justify-center border-green-500"
       >
          {open ? (
-            <MinusIcon tw="stroke-current text-green-700" size={18} />
+            <MinusIcon
+               color="rgba(4,120,87,1)"
+               stroke="currentColor"
+               size={18}
+            />
          ) : (
-            <PlusIcon tw="stroke-current text-green-700" size={18} />
+            <PlusIcon
+               color="rgba(4,120,87,1)"
+               stroke="currentColor"
+               size={18}
+            />
          )}
       </button>
    )

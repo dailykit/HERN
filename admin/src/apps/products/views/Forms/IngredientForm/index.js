@@ -10,6 +10,8 @@ import {
    Tunnels,
    useTunnel,
    Dropdown,
+   TextButton,
+   TunnelHeader,
 } from '@dailykit/ui'
 import { isEmpty } from 'lodash'
 import { useParams } from 'react-router-dom'
@@ -41,6 +43,8 @@ import {
 import { useTabs } from '../../../../../shared/providers'
 import { HeaderWrapper, InputTextWrapper } from './styled'
 import { LinkedRecipesTunnel } from './tunnels'
+import styled from 'styled-components'
+import IngredientInsight from './components/Insight'
 
 const IngredientForm = () => {
    const { setTabTitle, tab, addTab } = useTabs()
@@ -55,7 +59,7 @@ const IngredientForm = () => {
       openLinkedRecipesTunnel,
       closeLinkedRecipesTunnel,
    ] = useTunnel(1)
-
+   const [insightTunnels, openInsightTunnel, closeInsightTunnel] = useTunnel(1)
    const [title, setTitle] = React.useState({
       value: '',
       meta: {
@@ -252,115 +256,195 @@ const IngredientForm = () => {
                />
             </Tunnel>
          </Tunnels>
-         <HeaderWrapper>
-            <InputTextWrapper>
-               <Form.Group>
-                  <Form.Label htmlFor="title" title="title">
-                     Ingredient Name*
-                  </Form.Label>
-                  <Form.Text
-                     id="title"
-                     name="title"
-                     value={title.value}
-                     placeholder="Enter ingredient name"
-                     onChange={e =>
-                        setTitle({ ...title, value: e.target.value })
-                     }
-                     onBlur={updateName}
-                     hasError={!title.meta.isValid && title.meta.isTouched}
-                  />
-                  {title.meta.isTouched &&
-                     !title.meta.isValid &&
-                     title.meta.errors.map((error, index) => (
-                        <Form.Error key={index}>{error}</Form.Error>
-                     ))}
-               </Form.Group>
-               <Spacer xAxis size="16px" />
-               <Form.Group>
-                  <Form.Label htmlFor="category" title="category">
-                     Category
-                  </Form.Label>
-                  {options && (
-                     <Dropdown
-                        type="single"
-                        variant="revamp"
-                        addOption={addIngredientCategory}
-                        options={options}
-                        defaultOption={
-                           options.find(
-                              item => item.title === category.value
-                           ) || null
-                        }
-                        searchedOption={searchedOption}
-                        selectedOption={selectedOption}
-                        typeName="category"
-                     />
-                  )}
-               </Form.Group>
-            </InputTextWrapper>
+         <Tunnels tunnels={insightTunnels}>
+            <Tunnel layer={1} size="full">
+               <TunnelHeader
+                  title="Ingredient Insight"
+                  close={() => closeInsightTunnel(1)}
+                  description="This is a description"
+               />
+               <TunnelBody>
+                  <IngredientInsight ingredientId={ingredientId} />
+               </TunnelBody>
+            </Tunnel>
+         </Tunnels>
+         <Flex
+            container
+            as="header"
+            justifyContent="space-between"
+            width="100%"
+         >
+            <HeaderWrapper>
+               <InputTextWrapper>
+                  <Flex container width="50%">
+                     <Form.Group>
+                        <Form.Label htmlFor="title" title="title">
+                           Ingredient Name*
+                        </Form.Label>
+                        <Form.Text
+                           id="title"
+                           name="title"
+                           value={title.value}
+                           placeholder="Enter ingredient name"
+                           onChange={e =>
+                              setTitle({ ...title, value: e.target.value })
+                           }
+                           onBlur={updateName}
+                           hasError={
+                              !title.meta.isValid && title.meta.isTouched
+                           }
+                        />
+                        {title.meta.isTouched &&
+                           !title.meta.isValid &&
+                           title.meta.errors.map((error, index) => (
+                              <Form.Error key={index}>{error}</Form.Error>
+                           ))}
+                     </Form.Group>
+                  </Flex>
+                  <Spacer xAxis size="16px" />
+                  <Flex container width="50%" height="100%">
+                     <Form.Group>
+                        <Form.Label htmlFor="category" title="category">
+                           Category
+                        </Form.Label>
+                        <Flex height="40px" padding="10px 0 0 0 ">
+                           {options && (
+                              <Dropdown
+                                 type="single"
+                                 variant="revamp"
+                                 addOption={addIngredientCategory}
+                                 options={options}
+                                 defaultOption={
+                                    options.find(
+                                       item => item.title === category.value
+                                    ) || null
+                                 }
+                                 searchedOption={searchedOption}
+                                 selectedOption={selectedOption}
+                                 typeName="category"
+                              />
+                           )}
+                        </Flex>
+                     </Form.Group>
+                  </Flex>
+               </InputTextWrapper>
 
-            <Flex
-               container
-               alignItems="center"
-               justifyContent="flex-end"
-               width="100%"
-            >
-               <Flex container alignItems="center">
-                  <InsightDashboard
+               <Flex
+                  container
+                  alignItems="center"
+                  justifyContent="flex-end"
+                  width="100%"
+                  height="100%"
+               >
+                  <Flex
+                     container
+                     alignItems="center"
+                     padding="6px 16px"
+                     margin="25px 0 0 0 "
+                  >
+                     {/* <InsightDashboard
                      appTitle="Products App"
                      moduleTitle="Ingredient Page"
                      variables={{
                         ingredientId,
                      }}
-                  />
-               </Flex>
-               <Spacer xAxis size="8px" />
-               <div>
-                  {state.isValid?.status ? (
-                     <Flex container alignItems="center">
-                        <TickIcon color="#00ff00" stroke={2} />
-                        <Text as="p">All good!</Text>
-                     </Flex>
-                  ) : (
-                     <Flex container alignItems="center">
-                        <CloseIcon color="#ff0000" />
-                        <Text as="p">{state.isValid?.error}</Text>
-                     </Flex>
-                  )}
-               </div>
-               <Spacer xAxis size="16px" />
-               <ComboButton
-                  type="ghost"
-                  size="sm"
-                  onClick={() => openLinkedRecipesTunnel(1)}
-               >
-                  <EyeIcon color="#00A7E1" />
-                  {`Linked Recipes (${linkedRecipesCount})`}
-               </ComboButton>
-               <Spacer xAxis size="16px" />
-               <Form.Toggle
-                  name="published"
-                  value={state.isPublished}
-                  onChange={togglePublish}
-               >
-                  <Flex container alignItems="center">
-                     Published
-                     <Spacer xAxis size="16px" />
-                     <Tooltip identifier="ingredient_publish" />
+                  /> */}
+                     <TextButton
+                        type="outline"
+                        size="sm"
+                        onClick={() => openInsightTunnel(1)}
+                     >
+                        View Insight
+                     </TextButton>
                   </Flex>
-               </Form.Toggle>
+                  <Spacer xAxis size="11px" />
+                  <div style={{ height: '77%' }}>
+                     {state.isValid?.status ? (
+                        <Flex
+                           container
+                           alignItems="center"
+                           padding="6px 16px"
+                           margin="25px 0 0 0 "
+                        >
+                           <TickIcon color="#00ff00" stroke={2} />
+                           <Text as="p" style={{ margin: '0px' }}>
+                              {' '}
+                              All good!
+                           </Text>
+                        </Flex>
+                     ) : (
+                        <Flex
+                           container
+                           alignItems="center"
+                           padding="6px 16px"
+                           margin="25px 0 0 0 "
+                        >
+                           <CloseIcon color="#ff0000" />
+                           <Text as="p" style={{ margin: '0px' }}>
+                              {state.isValid?.error}
+                           </Text>
+                        </Flex>
+                     )}
+                  </div>
+                  <Spacer xAxis size="11px" />
+                  <ComboButton
+                     type="ghost"
+                     size="sm"
+                     title="Link this ingredient to other"
+                     style={{
+                        padding: '6px 16px',
+                        height: '63%',
+                        margin: '25px 0 0 0 ',
+                     }}
+                     onClick={() => openLinkedRecipesTunnel(1)}
+                  >
+                     <EyeIcon color="#00A7E1" />
+                     {`Linked Recipes (${linkedRecipesCount})`}
+                  </ComboButton>
+                  <Spacer xAxis size="16px" />
+                  <Form.Toggle
+                     name="published"
+                     value={state.isPublished}
+                     onChange={togglePublish}
+                     style={{ margin: '25px 0 0 0', height: '32px' }}
+                  >
+                     <Flex
+                        container
+                        title="Publish this ingredient"
+                        alignItems="center"
+                        padding="6px 0px 6px 16px"
+                        margin="0px -30px 0px 0px"
+                     >
+                        Published
+                        <Spacer xAxis size="16px" />
+                        <Tooltip identifier="ingredient_publish" />
+                     </Flex>
+                  </Form.Toggle>
+               </Flex>
+            </HeaderWrapper>
+         </Flex>
+         <Flex padding="16px 32px 32px 32px">
+            <Flex
+               style={{
+                  background: '#f3f3f3',
+                  padding: '32px',
+                  borderRadius: '20px',
+               }}
+            >
+               <Stats state={state} />
             </Flex>
-         </HeaderWrapper>
-         <Spacer size="32px" />
-
-         <Flex padding="32px" style={{ background: '#f3f3f3' }}>
-            <Stats state={state} />
             <Spacer size="32px" />
-            <Processings state={state} />
+            <Flex style={{ background: '#ffffff' }}>
+               <Processings state={state} />
+            </Flex>
          </Flex>
          <Banner id="products-app-single-ingredient-bottom" />
       </IngredientContext.Provider>
    )
 }
-
+const TunnelBody = styled.div`
+   padding: 10px 16px 0px 32px;
+   height: calc(100% - 103px);
+   overflow: auto;
+`
 export default IngredientForm

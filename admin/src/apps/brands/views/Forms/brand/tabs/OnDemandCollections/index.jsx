@@ -177,7 +177,7 @@ export const OnDemandCollections = () => {
    )
 
    return (
-      <Flex padding="16px">
+      <Flex padding="16px 16px 16px 34px">
          <Flex container alignItems="center">
             <Text as="h2">
                Collections ({collections?.aggregate?.count || 0})

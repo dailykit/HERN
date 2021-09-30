@@ -1,5 +1,6 @@
 import React from 'react'
 import moment from 'moment'
+import { get_env } from '../../../../utils'
 export const AnalyticsApiArgsContext = React.createContext()
 
 //currencies
@@ -10,12 +11,8 @@ const currency = {
 }
 
 export const initialState = {
-   from:
-      localStorage.getItem('analyticsDateFrom') ||
-      moment().format('YYYY-MM-DD'),
-   to:
-      localStorage.getItem('analyticsDateTo') ||
-      moment().add(1, 'd').format('YYYY-MM-DD'),
+   from: moment().startOf('y').format('YYYY-MM-DD'),
+   to: moment().format('YYYY-MM-DD'),
    compare: {
       isCompare: false,
       data: null,
@@ -25,13 +22,13 @@ export const initialState = {
       compareResult: null,
       isSkip: true,
    },
-   groupBy: ['year', 'month', 'week', 'day', 'hour'],
+   groupBy: ['year', 'month', 'week'],
    brandShop: {
       brandId: undefined,
       shopTitle: false,
       brand: undefined,
    },
-   currency: currency[window._env_.REACT_APP_CURRENCY],
+   currency: currency[get_env('REACT_APP_CURRENCY')],
 }
 export const reducer = (state = initialState, { type, payload }) => {
    switch (type) {

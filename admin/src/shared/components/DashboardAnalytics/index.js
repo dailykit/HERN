@@ -65,12 +65,9 @@ const DashboardAnalyticsProvider = ({ children }) => {
    )
 }
 const DashboardAnalytics = ({ children }) => {
-   const [from, setFrom] = useState(
-      localStorage.getItem('analyticsDateFrom') || moment().format('YYYY-MM-DD')
-   )
+   const [from, setFrom] = useState(moment().startOf('y').format('YYYY-MM-DD'))
    const [to, setTo] = useState(
-      localStorage.getItem('analyticsDateTo') ||
-         moment().add(1, 'd').format('YYYY-MM-DD')
+      localStorage.getItem('analyticsDateTo') || moment().format('YYYY-MM-DD')
    )
    const [compare, setCompare] = useState({
       isCompare: false,
@@ -114,7 +111,7 @@ const DashboardAnalytics = ({ children }) => {
    return (
       <>
          <Spacer size="10px" />
-         <Flex padding="0px 42px 0px 42px">
+         <Flex padding="0px 0px">
             <BrandAndShop
                brands={brands}
                setBrandShop={setBrandShop}
@@ -928,27 +925,31 @@ export const SparkChart = ({
                dataKey={dataOf}
                stroke="#8884d8"
                fill="#8884d8"
-               activeDot={{
-                  onClick: (event, payload) => {
-                     if (
-                        payload.payload.orderRefspresent ||
-                        payload.payload.orderRefspast
-                     ) {
-                        setGraphTunnelData(prevState => ({
-                           ...prevState,
-                           title: graphTunnelTitle,
-                           orderRefData: [
-                              payload.payload.orderRefspresent,
-                              payload.payload.orderRefspast,
-                           ],
-                           presentTime: payload.payload.present,
-                           pastTime: payload.payload.past,
-                        }))
-                        openGraphTunnel(1)
-                     }
-                  },
-                  cursor: 'pointer',
-               }}
+               activeDot={
+                  setGraphTunnelData
+                     ? {
+                          onClick: (event, payload) => {
+                             if (
+                                payload.payload.orderRefspresent ||
+                                payload.payload.orderRefspast
+                             ) {
+                                setGraphTunnelData(prevState => ({
+                                   ...prevState,
+                                   title: graphTunnelTitle,
+                                   orderRefData: [
+                                      payload.payload.orderRefspresent,
+                                      payload.payload.orderRefspast,
+                                   ],
+                                   presentTime: payload.payload.present,
+                                   pastTime: payload.payload.past,
+                                }))
+                                openGraphTunnel(1)
+                             }
+                          },
+                          cursor: 'pointer',
+                       }
+                     : true
+               }
             />
             {!compare.isSkip && compareInsightAnalyticsData && (
                <Area

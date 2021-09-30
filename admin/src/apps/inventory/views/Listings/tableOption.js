@@ -1,6 +1,6 @@
 const options = {
    cellVertAlign: 'middle',
-   layout: 'fitColumns',
+   layout: 'fitDataStretch',
    autoResize: true,
    maxHeight: '420px',
    resizableColumns: true,
@@ -8,8 +8,6 @@ const options = {
    placeholder: 'No Data Available',
    persistence: false,
    persistenceMode: 'cookie',
-   pagination: 'local',
-   paginationSize: 10,
 }
 
 export default options

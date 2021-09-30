@@ -1,6 +1,5 @@
 import { useMutation } from '@apollo/react-hooks'
 import React from 'react'
-import tw, { styled } from 'twin.macro'
 import { useUser } from '../context'
 import { MUTATIONS } from '../graphql'
 import { useConfig } from '../lib'
@@ -34,122 +33,80 @@ export const LoyaltyPoints = ({ cart }) => {
          })
       }
    }
+   const handleUpdateCart = () => {
+      updateCart({
+         variables: {
+            id: cart.id,
+            _set: {
+               loyaltyPointsUsed: 0,
+            },
+         },
+      })
+   }
 
    if (!cart.loyaltyPointsUsable) return null
    return (
-      <Styles.Wrapper>
+      <div className="hern-loyalty-points">
          {cart.loyaltyPointsUsed ? (
-            <Styles.Stat>
-               <Styles.Text> {label} used: </Styles.Text>
-               <Styles.Text>
-                  <Styles.Cross
+            <div className="hern-loyalty-points__status">
+               <span> {label} used: </span>
+               <span>
+                  <span
+                     className="hern-loyalty-points__close-btn"
                      role="button"
                      tabIndex={0}
-                     onClick={() =>
-                        updateCart({
-                           variables: {
-                              id: cart.id,
-                              _set: {
-                                 loyaltyPointsUsed: 0,
-                              },
-                           },
-                        })
-                     }
+                     onClick={handleUpdateCart}
                   >
-                     &times;{' '}
-                  </Styles.Cross>
+                     &times;
+                  </span>
                   {cart.loyaltyPointsUsed}
-               </Styles.Text>
-            </Styles.Stat>
+               </span>
+            </div>
          ) : (
             <>
-               <Styles.Form onSubmit={handleSubmit}>
-                  <Styles.InputWrapper>
-                     <Styles.Label>{label}</Styles.Label>
+               <form
+                  className="hern-loyalty-points__form"
+                  onSubmit={handleSubmit}
+               >
+                  <div>
+                     <label
+                        className="hern-loyalty-points__label"
+                        htmlFor="loyalty-points"
+                     >
+                        {label}
+                     </label>
                      {description && (
-                        <Styles.Tooltip>
+                        <span className="loyalty-points__tooltip">
                            <Info size={18} />
                            <p>{description}</p>
-                        </Styles.Tooltip>
+                        </span>
                      )}
-                     <Styles.Input
+                     <input
+                        className="hern-loyalty-points__input"
                         type="number"
                         min="0"
                         max={cart.loyaltyPointsUsable}
                         required
                         value={points}
+                        id="loyalty-points"
                         onChange={e => setPoints(e.target.value)}
                      />
-                  </Styles.InputWrapper>
-                  <Styles.Button type="submit"> Add </Styles.Button>
-               </Styles.Form>
-               <Styles.Help>
-                  <Styles.Small>
-                     Max usable: {cart.loyaltyPointsUsable}
-                  </Styles.Small>
+                  </div>
+                  <button
+                     className="hern-loyalty-points__submit-btn"
+                     type="submit"
+                  >
+                     Add
+                  </button>
+               </form>
+               <div className="hern-loyalty-points__help">
+                  <small>Max usable: {cart.loyaltyPointsUsable}</small>
                   {!!user.loyaltyPoint && (
-                     <Styles.Small>
-                        Balance: {user.loyaltyPoint?.points}
-                     </Styles.Small>
+                     <small>Balance: {user.loyaltyPoint?.points}</small>
                   )}
-               </Styles.Help>
+               </div>
             </>
          )}
-      </Styles.Wrapper>
+      </div>
    )
-}
-
-const Styles = {
-   Wrapper: styled.div`
-      ${tw`m-1`}
-      border: 1px solid #efefef;
-      padding: 8px;
-      border-radius: 2px;
-   `,
-   Form: styled.form`
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-   `,
-   InputWrapper: styled.div``,
-   Label: styled.label``,
-   Input: styled.input`
-      border: 1px solid #cacaca;
-      padding: 4px;
-      border-radius: 2px;
-      display: block;
-   `,
-   Button: styled.button`
-      background: #b8238f;
-      color: #fff;
-      border-radius: 2px;
-      padding: 4px;
-   `,
-   Help: styled.div`
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-   `,
-   Small: styled.small``,
-   Stat: styled.div`
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-   `,
-   Text: styled.span``,
-   Cross: styled.span`
-      color: #ff5a52;
-      font-size: 18px;
-      cursor: pointer;
-   `,
-   Tooltip: styled.span`
-      ${tw`relative float-right ml-2 mt-1`}
-      p {
-         ${tw`hidden min-w-max bg-gray-200 p-1 absolute left-2 rounded`}
-         z-index: 1;
-      }
-      &:hover p {
-         ${tw`block`}
-      }
-   `,
 }

@@ -16,12 +16,15 @@ import { get_env, isClient } from '../../utils'
 import { useUser } from '../../context'
 import { HelperBar, Loader } from '../../components'
 import { BRAND, CREATE_STRIPE_PAYMENT_METHOD } from '../../graphql'
+import { isConnectedIntegration } from '../../utils'
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const PaymentForm = ({ intent }) => {
    const { user } = useUser()
    const { dispatch } = usePayment()
-   const { brand, organization } = useConfig()
+   const { brand } = useConfig()
+   const STRIPE_ACCOUNT_ID = get_env('STRIPE_ACCOUNT_ID')
+   const isConnected = isConnectedIntegration()
    const [updateBrandCustomer] = useMutation(BRAND.CUSTOMER.UPDATE, {
       onError: error => console.error(error),
    })
@@ -32,14 +35,8 @@ export const PaymentForm = ({ intent }) => {
    const handleResult = async ({ setupIntent }) => {
       try {
          if (setupIntent.status === 'succeeded') {
-            const DATAHUB = isClient ? get_env('DATA_HUB_HTTPS') : ''
-            let url = `${new URL(DATAHUB).origin}/api/payment-method/${setupIntent.payment_method}`
-            if (
-               organization.stripeAccountType === 'standard' &&
-               organization.stripeAccountId
-            ) {
-               url += `?accountId=${organization.stripeAccountId}`
-            }
+            const origin = isClient ? window.location.origin : ''
+            const url = `${origin}/server/api/payment/payment-method/${setupIntent.payment_method}`
             const { data: { success, data = {} } = {} } = await axios.get(url)
 
             if (success) {
@@ -54,10 +51,10 @@ export const PaymentForm = ({ intent }) => {
                         expYear: data.card.exp_year,
                         cvcCheck: data.card.cvc_check,
                         expMonth: data.card.exp_month,
-                        stripePaymentMethodId: data.id,
+                        paymentMethodId: data.id,
                         cardHolderName: data.billing_details.name,
-                        stripeCustomerId:
-                           user.platform_customer?.stripeCustomerId,
+                        paymentCustomerId:
+                           user.platform_customer?.paymentCustomerId,
                      },
                   },
                })
@@ -93,12 +90,10 @@ export const PaymentForm = ({ intent }) => {
          console.log(error)
       }
    }
-
    const stripePromise = loadStripe(isClient ? get_env('STRIPE_KEY') : '', {
-      ...(organization.stripeAccountType === 'standard' &&
-         organization.stripeAccountId && {
-            stripeAccount: organization.stripeAccountId,
-         }),
+      ...(isConnected && {
+         stripeAccount: STRIPE_ACCOUNT_ID,
+      }),
    })
 
    if (!intent)
@@ -121,6 +116,7 @@ export const PaymentForm = ({ intent }) => {
 }
 
 const CardSetupForm = ({ intent, handleResult }) => {
+   console.log('CardSetupForm', intent)
    const stripe = useStripe()
    const elements = useElements()
    const inputRef = React.useRef(null)
@@ -140,7 +136,6 @@ const CardSetupForm = ({ intent, handleResult }) => {
       if (!stripe || !elements) {
          return
       }
-
       const result = await stripe.confirmCardSetup(intent.client_secret, {
          payment_method: {
             card: elements.getElement(CardElement),
@@ -149,7 +144,6 @@ const CardSetupForm = ({ intent, handleResult }) => {
             },
          },
       })
-
       if (result.error) {
          setSubmitting(false)
          setError(result.error.message)

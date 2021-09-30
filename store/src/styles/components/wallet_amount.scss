@@ -1,0 +1,94 @@
+.hern-wallet-amount {
+   margin: 0.25rem;
+   border: 1px solid #efefef;
+   padding: 8px;
+   border-radius: 2px;
+}
+.hern-wallet-amount__status {
+   display: -webkit-box;
+   display: -webkit-flex;
+   display: -ms-flexbox;
+   display: flex;
+   -webkit-align-items: center;
+   -webkit-box-align: center;
+   -ms-flex-align: center;
+   align-items: center;
+   -webkit-box-pack: justify;
+   -webkit-justify-content: space-between;
+   -ms-flex-pack: justify;
+   justify-content: space-between;
+}
+.hern-card-list__card__close-btn {
+   color: #ff5a52;
+   font-size: 18px;
+   cursor: pointer;
+}
+.hern-wallet-amount__form {
+   display: -webkit-box;
+   display: -webkit-flex;
+   display: -ms-flexbox;
+   display: flex;
+   -webkit-align-items: center;
+   -webkit-box-align: center;
+   -ms-flex-align: center;
+   align-items: center;
+   -webkit-box-pack: justify;
+   -webkit-justify-content: space-between;
+   -ms-flex-pack: justify;
+   justify-content: space-between;
+}
+.hern-wallet-amount__form__label {
+   display: block;
+}
+.hern-wallet-amount__form__input {
+   border: 1px solid #cacaca;
+   padding: 4px;
+   border-radius: 2px;
+   display: block;
+}
+.hern-wallet-amount__add-btn {
+   background: #b8238f;
+   color: #fff;
+   border-radius: 2px;
+   padding: 4px;
+}
+
+.hern-wallet-amount__help {
+   display: -webkit-box;
+   display: -webkit-flex;
+   display: -ms-flexbox;
+   display: flex;
+   -webkit-align-items: center;
+   -webkit-box-align: center;
+   -ms-flex-align: center;
+   align-items: center;
+   -webkit-box-pack: justify;
+   -webkit-justify-content: space-between;
+   -ms-flex-pack: justify;
+   justify-content: space-between;
+}
+.hern-wallet-amount__tooltip {
+   position: relative;
+   float: right;
+   margin-left: 0.5rem;
+   margin-top: 0.25rem;
+   p {
+      display: none;
+      min-width: -webkit-max-content;
+      min-width: -moz-max-content;
+      min-width: max-content;
+      background-color: rgba(229, 231, 235, 1);
+      padding: 0.25rem;
+      position: absolute;
+      left: 0.5rem;
+      border-radius: 0.25rem;
+      z-index: 1;
+      -webkit-border-radius: 0.25rem;
+      -moz-border-radius: 0.25rem;
+      -ms-border-radius: 0.25rem;
+      -o-border-radius: 0.25rem;
+   }
+   &:hover p {
+      display: block;
+   }
+}

@@ -1,0 +1,27 @@
+.hern-billing__table {
+   margin-top: 0.5rem;
+   margin-bottom: 0.5rem;
+   width: 100%;
+   table-layout: auto;
+   tr:nth-of-type(even) {
+      background-color: rgba(243, 244, 246, 1);
+   }
+   tr {
+      td:last-child {
+         text-align: right;
+      }
+   }
+}
+.hern-billing__table__cell {
+   border-width: 1px;
+   padding-left: 0.5rem;
+   padding-right: 0.5rem;
+   padding-top: 0.25rem;
+   padding-bottom: 0.25rem;
+}
+
+.hern-billing__table__cell__comment {
+   font-size: 0.875rem;
+   line-height: 1.25rem;
+   color: rgba(75, 85, 99, 1);
+}

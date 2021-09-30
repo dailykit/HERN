@@ -8,6 +8,11 @@ import { StyledHome, StyledCardList } from './styled'
 
 import { RECIPES_COUNT, PRODUCTS, INGREDIENTS_COUNT } from '../../graphql'
 import { Banner } from '../../../../shared/components'
+import {
+   IngredientsSvg,
+   ProductsSvg,
+   RecipesSvg,
+} from '../../../../shared/assets/illustrationTileSvg'
 
 const address = 'apps.products.views.home.'
 
@@ -29,6 +34,7 @@ const Home = () => {
                count={productsData?.productsAggregate.aggregate.count || '...'}
                conf="All available"
                onClick={() => addTab('Products', '/products/products')}
+               tileSvg={<ProductsSvg />}
             />
             <DashboardTile
                title={t(address.concat('recipes'))}
@@ -37,6 +43,7 @@ const Home = () => {
                }
                conf="All available"
                onClick={() => addTab('Recipes', '/products/recipes')}
+               tileSvg={<RecipesSvg />}
             />
             <DashboardTile
                title={t(address.concat('ingredients'))}
@@ -45,6 +52,7 @@ const Home = () => {
                }
                conf="All available"
                onClick={() => addTab('Ingredients', '/products/ingredients')}
+               tileSvg={<IngredientsSvg />}
             />
          </StyledCardList>
          <Banner id="products-app-home-bottom" />

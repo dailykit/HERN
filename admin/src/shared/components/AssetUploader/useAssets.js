@@ -1,9 +1,7 @@
 import React from 'react'
 import axios from 'axios'
 
-import { get_env } from '../../utils'
-
-const url = `${get_env('REACT_APP_DAILYOS_SERVER_URI')}/api/assets`
+const url = `${window.location.origin}/server/api/assets`
 
 const useAssets = type => {
    const [images, setImages] = React.useState([])

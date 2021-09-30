@@ -19,6 +19,7 @@ import { toast } from 'react-toastify'
 import BrandContext from '../../../context/Brand'
 import { OCCURENCES_REPORT } from '../../../graphql/queries'
 
+
 const SubscriptionTable = ({ brandCustomerId }) => {
    const [context, setContext] = useContext(BrandContext)
    const { dispatch, tab } = useTabs()
@@ -50,7 +51,7 @@ const SubscriptionTable = ({ brandCustomerId }) => {
       }
    }, [history, tab])
 
-   const columns = React.useMemo(
+   const columns = React.useMemo(   
       () => [
          {
             title: 'ID',
@@ -64,10 +65,6 @@ const SubscriptionTable = ({ brandCustomerId }) => {
                   setOccurenceId(data?.id)
                   openLogsTunnel(1)
                }
-            },
-            titleFormatter: function (cell) {
-               cell.getElement().style.textAlign = 'right'
-               return '' + cell.getValue()
             },
             headerTooltip: function (column) {
                const identifier = 'subscription_occurence_sub_id_column'
@@ -83,10 +80,6 @@ const SubscriptionTable = ({ brandCustomerId }) => {
             field: 'fulfillmentDate',
             hozAlign: 'left',
             frozen: true,
-            titleFormatter: function (cell) {
-               cell.getElement().style.textAlign = 'right'
-               return '' + cell.getValue()
-            },
             headerTooltip: function (column) {
                const identifier =
                   'subscription_occurence_fulfillment_date_column'
@@ -101,10 +94,6 @@ const SubscriptionTable = ({ brandCustomerId }) => {
             title: 'Cut-off Time',
             field: 'cutoffTimeStamp',
             hozAlign: 'left',
-            titleFormatter: function (cell) {
-               cell.getElement().style.textAlign = 'right'
-               return '' + cell.getValue()
-            },
             headerTooltip: function (column) {
                const identifier =
                   'subscription_occurence_fulfillment_date_column'
@@ -119,10 +108,6 @@ const SubscriptionTable = ({ brandCustomerId }) => {
             title: 'Item Count Valid',
             field: 'isItemCountValid',
             hozAlign: 'left',
-            titleFormatter: function (cell) {
-               cell.getElement().style.textAlign = 'right'
-               return '' + cell.getValue()
-            },
             headerTooltip: function (column) {
                const identifier =
                   'subscription_occurence_fulfillment_date_column'
@@ -137,10 +122,6 @@ const SubscriptionTable = ({ brandCustomerId }) => {
             title: 'Skipped',
             field: 'isSkipped',
             hozAlign: 'left',
-            titleFormatter: function (cell) {
-               cell.getElement().style.textAlign = 'right'
-               return '' + cell.getValue()
-            },
             headerTooltip: function (column) {
                const identifier =
                   'subscription_occurence_fulfillment_date_column'
@@ -155,10 +136,6 @@ const SubscriptionTable = ({ brandCustomerId }) => {
             title: 'Products Added',
             field: 'addedProductsCount',
             hozAlign: 'left',
-            titleFormatter: function (cell) {
-               cell.getElement().style.textAlign = 'right'
-               return '' + cell.getValue()
-            },
             headerTooltip: function (column) {
                const identifier =
                   'subscription_occurence_fulfillment_date_column'
@@ -173,10 +150,6 @@ const SubscriptionTable = ({ brandCustomerId }) => {
             title: 'Products to be Added',
             field: 'totalProductsToBeAdded',
             hozAlign: 'left',
-            titleFormatter: function (cell) {
-               cell.getElement().style.textAlign = 'right'
-               return '' + cell.getValue()
-            },
             headerTooltip: function (column) {
                const identifier =
                   'subscription_occurence_products_to_be_added_column'
@@ -191,10 +164,6 @@ const SubscriptionTable = ({ brandCustomerId }) => {
             title: 'Cart ID',
             field: 'cartId',
             hozAlign: 'right',
-            titleFormatter: function (cell) {
-               cell.getElement().style.textAlign = 'right'
-               return '' + cell.getValue()
-            },
             headerTooltip: function (column) {
                const identifier =
                   'subscription_occurence_fulfillment_date_column'
@@ -209,10 +178,6 @@ const SubscriptionTable = ({ brandCustomerId }) => {
             title: 'Between Pause',
             field: 'betweenPause',
             hozAlign: 'left',
-            titleFormatter: function (cell) {
-               cell.getElement().style.textAlign = 'right'
-               return '' + cell.getValue()
-            },
             headerTooltip: function (column) {
                const identifier =
                   'subscription_occurence_fulfillment_date_column'
@@ -227,10 +192,6 @@ const SubscriptionTable = ({ brandCustomerId }) => {
             title: 'All Time Rank',
             field: 'allTimeRank',
             hozAlign: 'left',
-            titleFormatter: function (cell) {
-               cell.getElement().style.textAlign = 'right'
-               return '' + cell.getValue()
-            },
             headerTooltip: function (column) {
                const identifier =
                   'subscription_occurence_fulfillment_date_column'
@@ -245,10 +206,6 @@ const SubscriptionTable = ({ brandCustomerId }) => {
             title: 'Payment Status',
             field: 'paymentStatus',
             hozAlign: 'left',
-            titleFormatter: function (cell) {
-               cell.getElement().style.textAlign = 'right'
-               return '' + cell.getValue()
-            },
             headerTooltip: function (column) {
                const identifier =
                   'subscription_occurence_fulfillment_date_column'
@@ -263,10 +220,6 @@ const SubscriptionTable = ({ brandCustomerId }) => {
             title: 'Cart Payment Status',
             field: 'cartPaymentStatus',
             hozAlign: 'left',
-            titleFormatter: function (cell) {
-               cell.getElement().style.textAlign = 'right'
-               return '' + cell.getValue()
-            },
             headerTooltip: function (column) {
                const identifier =
                   'subscription_occurence_fulfillment_date_column'
@@ -281,10 +234,6 @@ const SubscriptionTable = ({ brandCustomerId }) => {
             title: 'Cart Status',
             field: 'cartStatus',
             hozAlign: 'left',
-            titleFormatter: function (cell) {
-               cell.getElement().style.textAlign = 'right'
-               return '' + cell.getValue()
-            },
             headerTooltip: function (column) {
                const identifier =
                   'subscription_occurence_fulfillment_date_column'
@@ -299,10 +248,6 @@ const SubscriptionTable = ({ brandCustomerId }) => {
             title: 'Cart Amount',
             field: 'cartAmount',
             hozAlign: 'left',
-            titleFormatter: function (cell) {
-               cell.getElement().style.textAlign = 'right'
-               return '' + cell.getValue()
-            },
             headerTooltip: function (column) {
                const identifier =
                   'subscription_occurence_fulfillment_date_column'
@@ -317,10 +262,6 @@ const SubscriptionTable = ({ brandCustomerId }) => {
             title: 'Percentage Skipped',
             field: 'percentageSkipped',
             hozAlign: 'left',
-            titleFormatter: function (cell) {
-               cell.getElement().style.textAlign = 'right'
-               return '' + cell.getValue()
-            },
             headerTooltip: function (column) {
                const identifier =
                   'subscription_occurence_fulfillment_date_column'
@@ -335,10 +276,6 @@ const SubscriptionTable = ({ brandCustomerId }) => {
             title: 'Skipped at Stage',
             field: 'skippedAtThisStage',
             hozAlign: 'left',
-            titleFormatter: function (cell) {
-               cell.getElement().style.textAlign = 'right'
-               return '' + cell.getValue()
-            },
             headerTooltip: function (column) {
                const identifier =
                   'subscription_occurence_fulfillment_date_column'
@@ -353,10 +290,6 @@ const SubscriptionTable = ({ brandCustomerId }) => {
             title: 'Paused',
             field: 'isPaused',
             hozAlign: 'left',
-            titleFormatter: function (cell) {
-               cell.getElement().style.textAlign = 'right'
-               return '' + cell.getValue()
-            },
             headerTooltip: function (column) {
                const identifier =
                   'subscription_occurence_fulfillment_date_column'
@@ -371,10 +304,6 @@ const SubscriptionTable = ({ brandCustomerId }) => {
             title: 'Auto',
             field: 'isAuto',
             hozAlign: 'left',
-            titleFormatter: function (cell) {
-               cell.getElement().style.textAlign = 'right'
-               return '' + cell.getValue()
-            },
             headerTooltip: function (column) {
                const identifier =
                   'subscription_occurence_fulfillment_date_column'
@@ -443,6 +372,7 @@ const SubscriptionTable = ({ brandCustomerId }) => {
                placeholder: 'No Occurences Available Yet !',
             }}
             ref={tableRef}
+            className='crmCustomerTable'
          />
       )
    }, [occurencesData])

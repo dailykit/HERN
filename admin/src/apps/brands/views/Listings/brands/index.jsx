@@ -24,6 +24,7 @@ import {
 } from '../../../../../shared/components'
 import { useTooltip, useTabs } from '../../../../../shared/providers'
 import CreateBrandTunnel from './CreateBrandTunnel'
+import { PublishIcon, UnPublishIcon } from '../../../assets/icons'
 
 export const Brands = () => {
    const { tooltip } = useTooltip()
@@ -120,74 +121,60 @@ export const Brands = () => {
       }
    }
 
-   const columns = React.useMemo(
-      () => [
-         {
-            title: 'Brand',
-            field: 'title',
-            headerSort: true,
-            headerFilter: true,
-            formatter: cell => cell.getData().title || 'N/A',
-            headerTooltip: function (column) {
-               const identifier = 'brands_listing_brand_column'
-               return (
-                  tooltip(identifier)?.description ||
-                  column.getDefinition().title
-               )
-            },
-            cssClass: 'rowClick',
-            cellClick: (e, cell) => {
-               cellClick(cell.getData())
-            },
+   const columns = React.useMemo(() => [
+      {
+         title: 'Brand',
+         field: 'title',
+         frozen: true,
+         headerSort: true,
+         headerFilter: true,
+         formatter: reactFormatter(<BrandName />),
+         headerTooltip: function (column) {
+            const identifier = 'brands_listing_brand_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
          },
-         {
-            title: 'Domain',
-            field: 'domain',
-            headerSort: true,
-            headerFilter: true,
-            formatter: cell => cell.getData().domain || 'N/A',
-            headerTooltip: function (column) {
-               const identifier = 'brands_listing_domain_column'
-               return (
-                  tooltip(identifier)?.description ||
-                  column.getDefinition().title
-               )
-            },
+         cssClass: 'rowClick',
+         cellClick: (e, cell) => {
+            cellClick(cell.getData())
          },
-         {
-            title: 'Published',
-            headerSort: false,
-            hozAlign: 'center',
-            headerHozAlign: 'center',
-            field: 'isPublished',
-            formatter: 'tickCross',
-            headerTooltip: function (column) {
-               const identifier = 'brands_listing_publish_column'
-               return (
-                  tooltip(identifier)?.description ||
-                  column.getDefinition().title
-               )
-            },
+         width: 400,
+         resizable: 'true',
+         minWidth: 100,
+         maxWidth: 500,
+      },
+      {
+         title: 'Actions',
+         hozAlign: 'center',
+         headerSort: false,
+         frozen: true,
+         width: 80,
+         headerHozAlign: 'center',
+         formatter: reactFormatter(
+            <DeleteBrand deleteHandler={deleteHandler} />
+         ),
+         headerTooltip: function (column) {
+            const identifier = 'brands_listing_actions_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
          },
-         {
-            title: 'Actions',
-            hozAlign: 'center',
-            headerSort: false,
-            headerHozAlign: 'center',
-            formatter: reactFormatter(
-               <DeleteBrand deleteHandler={deleteHandler} />
-            ),
-            headerTooltip: function (column) {
-               const identifier = 'brands_listing_actions_column'
-               return (
-                  tooltip(identifier)?.description ||
-                  column.getDefinition().title
-               )
-            },
+      },
+      {
+         title: 'Domain',
+         field: 'domain',
+         headerSort: true,
+         headerFilter: true,
+         formatter: cell => cell.getData().domain || 'N/A',
+         headerTooltip: function (column) {
+            const identifier = 'brands_listing_domain_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
          },
-      ],
-      []
-   )
+      },
+   ])
 
    if (error) {
       toast.error('Something went wrong!')
@@ -199,12 +186,14 @@ export const Brands = () => {
          <Banner id="brands-app-brands-listing-top" />
          <StyledHeader>
             <Flex container alignItems="center">
-               <Text as="h2">Brands ({brands?.aggregate?.count || 0})</Text>
+               <Text as="h2" style={{ marginBottom: '0px' }}>
+                  Brands ({brands?.aggregate?.count || 0})
+               </Text>
                <Tooltip identifier="brands_listing_heading" />
             </Flex>
 
             <ComboButton type="solid" onClick={() => openTunnel(1)}>
-               <PlusIcon />
+               <PlusIcon color="white" />
                Create Brand
             </ComboButton>
          </StyledHeader>
@@ -240,5 +229,48 @@ const DeleteBrand = ({ cell, deleteHandler }) => {
       <IconButton type="ghost" size="sm" onClick={onClick}>
          <DeleteIcon color="#FF5A52" />
       </IconButton>
+   )
+}
+function BrandName({ cell, addTab }) {
+   const data = cell.getData()
+   return (
+      <>
+         <Flex
+            container
+            width="100%"
+            justifyContent="space-between"
+            alignItems="center"
+         >
+            <Flex
+               container
+               width="100%"
+               justifyContent="flex-end"
+               alignItems="center"
+            >
+               <p
+                  style={{
+                     width: '230px',
+                     whiteSpace: 'nowrap',
+                     overflow: 'hidden',
+                     textOverflow: 'ellipsis',
+                     marginBottom: '0px',
+                  }}
+               >
+                  {cell._cell.value}
+               </p>
+            </Flex>
+
+            <Flex
+               container
+               width="100%"
+               justifyContent="flex-end"
+               alignItems="center"
+            >
+               <IconButton type="ghost">
+                  {data.isPublished ? <PublishIcon /> : <UnPublishIcon />}
+               </IconButton>
+            </Flex>
+         </Flex>
+      </>
    )
 }

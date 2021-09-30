@@ -1,4 +1,4 @@
-import React from 'react'
+   import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import {
@@ -8,6 +8,7 @@ import {
    Spacer,
    Text,
    TextButton,
+   ButtonGroup,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
@@ -116,6 +117,17 @@ const CollectionsListing = () => {
          cssClass: 'colHover',
       },
       {
+         title: 'Actions',
+         headerFilter: false,
+         headerSort: false,
+         width: 100,
+         hozAlign: 'center',
+         formatter: reactFormatter(
+            <DeleteCollection onDelete={deleteCollectionHandler} />
+         ),
+         headerHozAlign: 'center',
+      },
+      {
          title: t(address.concat('categories')),
          field: 'categoriesCount',
          headerFilter: true,
@@ -134,19 +146,9 @@ const CollectionsListing = () => {
       {
          title: t(address.concat('availability')),
          field: 'rrule',
+         headerSort: true,
          hozAlign: 'left',
          headerHozAlign: 'left',
-      },
-      {
-         title: 'Actions',
-         headerFilter: false,
-         headerSort: false,
-         hozAlign: 'center',
-         formatter: reactFormatter(
-            <DeleteCollection onDelete={deleteCollectionHandler} />
-         ),
-         headerHozAlign: 'center',
-         width: 100,
       },
    ]
 
@@ -169,18 +171,30 @@ const CollectionsListing = () => {
                <Text as="h2">Collections({collections.length})</Text>
                <Tooltip identifier="collections_list_heading" />
             </Flex>
-         </Flex>
-         <Flex container alignItems="center" justifyContent="space-between">
-            <TextButton
-               type="outline"
-               onClick={() => tableRef.current.table.clearHeaderFilter()}
-            >
-               Clear Filters
-            </TextButton>
+            <Flex container alignItems="center" justifyContent="flex-end">
             <ComboButton type="solid" onClick={createCollection}>
                <AddIcon color="#fff" size={24} /> Create Collection
             </ComboButton>
+            </Flex>
          </Flex>
+         <Flex
+                   container
+                   as="header"
+                   width="100%"
+                   alignItems="center"
+                   justifyContent="flex-end"
+               >
+                  <ButtonGroup align="left">
+                  <TextButton
+                     type="ghost"
+                     size="sm"
+                     onClick={() => tableRef.current.table.clearHeaderFilter()}
+                     title='Clear all applied filter on table'
+                  >
+                     Clear All Filter
+                  </TextButton>
+               </ButtonGroup>
+               </Flex>
          <Spacer size="16px" />
          {loading ? (
             <InlineLoader />
@@ -190,6 +204,7 @@ const CollectionsListing = () => {
                columns={columns}
                data={collections}
                options={tableOptions}
+               className='menuTable'
             />
          )}
          <InsightDashboard

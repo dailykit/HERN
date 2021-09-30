@@ -122,6 +122,7 @@ export default function PackagingPurchaseOrders() {
                      col => col.status === 'COMPLETED'
                   )}
                   options={tableOptions}
+                  className='workPurchaseOrderTable'
                />
             </HorizontalTabPanel>
             <HorizontalTabPanel>
@@ -131,6 +132,7 @@ export default function PackagingPurchaseOrders() {
                      col => col.status === 'PENDING'
                   )}
                   options={tableOptions}
+                  className='workPurchaseOrderTable'
                />
             </HorizontalTabPanel>
             <HorizontalTabPanel>
@@ -140,6 +142,7 @@ export default function PackagingPurchaseOrders() {
                      col => col.status === 'CANCELLED'
                   )}
                   options={tableOptions}
+                  className='workPurchaseOrderTable'
                />
             </HorizontalTabPanel>
             <HorizontalTabPanel>
@@ -149,6 +152,7 @@ export default function PackagingPurchaseOrders() {
                      col => col.status === 'UNPUBLISHED'
                   )}
                   options={tableOptions}
+                  className='workPurchaseOrderTable'
                />
             </HorizontalTabPanel>
          </HorizontalTabPanels>

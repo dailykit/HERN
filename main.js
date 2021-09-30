@@ -14,6 +14,8 @@ import get_env from './get_env'
 import ServerRouter from './server'
 import schema from './template/schema'
 import TemplateRouter from './template'
+import { createEnvFiles } from './server/entities'
+import ayrshareSchema from './server/ayrshare/src/schema/index'
 
 require('dotenv').config()
 const { createProxyMiddleware } = require('http-proxy-middleware')
@@ -27,8 +29,7 @@ const setupForStripeWebhooks = {
    // Because Stripe needs the raw body, we compute it but only when hitting the Stripe callback URL.
    verify: (req, res, buf) => {
       const url = req.originalUrl
-      console.log({ url })
-      if (url.startsWith('/server/api/payment/stripe-webhook')) {
+      if (url.startsWith('/server/api/payment/handle-payment-webhook')) {
          req.rawBody = buf.toString()
       }
    }
@@ -57,7 +58,24 @@ const PORT = process.env.PORT || 4000
 app.use('/server', ServerRouter)
 /*
 serves build folder of admin
+
+For resource files, the first app.use(/apps) code is used.
+For later react router requests, app.use(/apps/:path(*)) is used
+
+Why and how it works? Tell us and win 1000 rs!
 */
+
+app.use('/apps', (req, res, next) => {
+   if (process.env.NODE_ENV === 'development') {
+      return createProxyMiddleware({
+         target: 'http://localhost:8000',
+         changeOrigin: true
+      })(req, res, next)
+   }
+
+   express.static('admin/build')(req, res, next)
+})
+
 app.use('/apps/:path(*)', (req, res, next) => {
    if (process.env.NODE_ENV === 'development') {
       return createProxyMiddleware({
@@ -65,6 +83,7 @@ app.use('/apps/:path(*)', (req, res, next) => {
          changeOrigin: true
       })(req, res, next)
    }
+   console.log(req.params)
 
    express.static('admin/build')(req, res, next)
 })
@@ -187,15 +206,13 @@ const serveSubscription = async (req, res, next) => {
    }
 }
 
-app.use('/:path(*)', serveSubscription)
-
 /*
 manages files in templates folder
 */
 const apolloserver = new ApolloServer({
    schema,
    playground: {
-      endpoint: `${get_env('ENDPOINT')}/template/graphql`
+      endpoint: `/template/graphql`
    },
    introspection: true,
    validationRules: [depthLimit(11)],
@@ -206,19 +223,19 @@ const apolloserver = new ApolloServer({
       return isProd ? new Error(err) : err
    },
    debug: true,
-   context: {
-      root: get_env('FS_PATH'),
-      media: get_env('MEDIA_PATH')
-   }
+   context: async () => ({
+      root: await get_env('FS_PATH'),
+      media: await get_env('MEDIA_PATH')
+   })
 })
 
-apolloserver.applyMiddleware({ app })
+apolloserver.applyMiddleware({ app, path: `/template/graphql` })
 
 // ohyay remote schema integration
 const ohyayApolloserver = new ApolloServer({
    schema: ohyaySchema,
    playground: {
-      endpoint: `${get_env('ENDPOINT')}/ohyay/graphql`
+      endpoint: `/ohyay/graphql`
    },
    introspection: true,
    validationRules: [depthLimit(11)],
@@ -235,8 +252,35 @@ const ohyayApolloserver = new ApolloServer({
    }
 })
 
-ohyayApolloserver.applyMiddleware({ app })
+ohyayApolloserver.applyMiddleware({ app, path: '/ohyay/graphql' })
+
+// ayrshare remote schema integration
+const ayrshareApolloserver = new ApolloServer({
+   schema: ayrshareSchema,
+   playground: {
+      endpoint: `/ayrshare/graphql`
+   },
+   introspection: true,
+   validationRules: [depthLimit(11)],
+   formatError: err => {
+      console.log(err)
+      return isProd ? new Error(err) : err
+   },
+   debug: true,
+   context: ({ req }) => {
+      const ayrshare_api_key = req.header('ayrshare_api_key')
+      return { ayrshare_api_key }
+   }
+})
+
+ayrshareApolloserver.applyMiddleware({ app, path: '/ayrshare/graphql' })
+
+app.use('/:path(*)', serveSubscription)
 
 app.listen(PORT, () => {
    console.log(`Server started on ${PORT}`)
+
+   if (process.env.NODE_ENV !== 'development') {
+      createEnvFiles()
+   }
 })

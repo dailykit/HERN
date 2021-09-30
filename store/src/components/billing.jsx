@@ -1,6 +1,4 @@
 import React from 'react'
-import tw, { styled } from 'twin.macro'
-
 import { formatCurrency } from '../utils'
 
 const parseText = (text = '') =>
@@ -10,110 +8,113 @@ const parseText = (text = '') =>
 
 export const Billing = ({ billing }) => {
    return (
-      <Styles.Table>
+      <table className="hern-billing__table">
          <tbody>
             <tr>
-               <Styles.Cell title={billing?.itemTotal?.description}>
+               <td
+                  className="hern-billing__table__cell"
+                  title={billing?.itemTotal?.description}
+               >
                   {billing?.itemTotal?.label}
-                  <Styles.Comment>
+                  <p className="hern-billing__table__cell__comment">
                      {parseText(billing?.itemTotal?.comment)}
-                  </Styles.Comment>
-               </Styles.Cell>
-               <Styles.Cell>
+                  </p>
+               </td>
+               <td className="hern-billing__table__cell">
                   {formatCurrency(billing?.itemTotal?.value)}
-               </Styles.Cell>
+               </td>
             </tr>
             <tr>
-               <Styles.Cell title={billing?.deliveryPrice?.description}>
+               <td
+                  className="hern-billing__table__cell"
+                  title={billing?.deliveryPrice?.description}
+               >
                   {billing?.deliveryPrice?.label}
-                  <Styles.Comment>
+                  <p className="hern-billing__table__cell__comment">
                      {parseText(billing?.deliveryPrice?.comment)}
-                  </Styles.Comment>
-               </Styles.Cell>
-               <Styles.Cell>
+                  </p>
+               </td>
+               <td className="hern-billing__table__cell">
                   {formatCurrency(billing?.deliveryPrice?.value)}
-               </Styles.Cell>
+               </td>
             </tr>
             {!billing?.isTaxIncluded && (
                <tr>
-                  <Styles.Cell title={billing?.subTotal?.description}>
+                  <td
+                     className="hern-billing__table__cell"
+                     title={billing?.subTotal?.description}
+                  >
                      {billing?.subTotal?.label}
-                     <Styles.Comment>
+                     <p className="hern-billing__table__cell__comment">
                         {parseText(billing?.subTotal?.comment)}
-                     </Styles.Comment>
-                  </Styles.Cell>
-                  <Styles.Cell>
+                     </p>
+                  </td>
+                  <td className="hern-billing__table__cell">
                      {formatCurrency(billing?.subTotal?.value)}
-                  </Styles.Cell>
+                  </td>
                </tr>
             )}
             {!billing?.isTaxIncluded && (
                <tr>
-                  <Styles.Cell title={billing?.tax?.description}>
+                  <td
+                     className="hern-billing__table__cell"
+                     title={billing?.tax?.description}
+                  >
                      {billing?.tax?.label}
-                     <Styles.Comment>
+                     <p className="hern-billing__table__cell__comment">
                         {parseText(billing?.tax?.comment)}
-                     </Styles.Comment>
-                  </Styles.Cell>
-                  <Styles.Cell>
+                     </p>
+                  </td>
+                  <td className="hern-billing__table__cell">
                      {formatCurrency(billing?.tax?.value)}
-                  </Styles.Cell>
+                  </td>
                </tr>
             )}
             {!!billing?.walletAmountUsed?.value && (
                <tr>
-                  <Styles.Cell>{billing?.walletAmountUsed?.label}</Styles.Cell>
-                  <Styles.Cell>
+                  <td className="hern-billing__table__cell">
+                     {billing?.walletAmountUsed?.label}
+                  </td>
+                  <td className="hern-billing__table__cell">
                      {formatCurrency(billing?.walletAmountUsed?.value)}
-                  </Styles.Cell>
+                  </td>
                </tr>
             )}
             {!!billing?.loyaltyPointsUsed?.value && (
                <tr>
-                  <Styles.Cell>{billing?.loyaltyPointsUsed?.label}</Styles.Cell>
-                  <Styles.Cell>{billing?.loyaltyPointsUsed?.value}</Styles.Cell>
+                  <td className="hern-billing__table__cell">
+                     {billing?.loyaltyPointsUsed?.label}
+                  </td>
+                  <td className="hern-billing__table__cell">
+                     {billing?.loyaltyPointsUsed?.value}
+                  </td>
                </tr>
             )}
             {!!billing?.discount?.value && (
                <tr>
-                  <Styles.Cell>{billing?.discount?.label}</Styles.Cell>
-                  <Styles.Cell>
+                  <td className="hern-billing__table__cell">
+                     {billing?.discount?.label}
+                  </td>
+                  <td className="hern-billing__table__cell">
                      {formatCurrency(billing?.discount?.value)}
-                  </Styles.Cell>
+                  </td>
                </tr>
             )}
             <tr>
-               <Styles.Cell title={billing?.totalPrice?.description}>
+               <td
+                  className="hern-billing__table__cell"
+                  title={billing?.totalPrice?.description}
+               >
                   {billing?.totalPrice?.label}
-                  <Styles.Comment>
+                  <p className="hern-billing__table__cell__comment">
                      {parseText(billing?.totalPrice?.comment)}
-                  </Styles.Comment>
-               </Styles.Cell>
-               <Styles.Cell>
+                  </p>
+               </td>
+               <td className="hern-billing__table__cell">
                   {formatCurrency(billing?.totalPrice?.value)}
-               </Styles.Cell>
+               </td>
             </tr>
          </tbody>
-      </Styles.Table>
+      </table>
    )
-}
-
-const Styles = {
-   Table: styled.table`
-      ${tw`my-2 w-full table-auto`}
-      tr:nth-of-type(even) {
-         ${tw`bg-gray-100`}
-      }
-      tr {
-         td:last-child {
-            text-align: right;
-         }
-      }
-   `,
-   Cell: styled.td`
-      ${tw`border px-2 py-1`}
-   `,
-   Comment: styled.p`
-      ${tw`text-sm text-gray-600`}
-   `,
 }

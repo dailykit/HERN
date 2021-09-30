@@ -11,6 +11,11 @@
 .crm-campaign .tabulator-headers .tabulator-col {
    height: 78px !important;
    margin-top: -8px !important;
+   left: -7px;
+}
+.crm-campaign .tabulator-row .tabulator-cell:last-of-type{
+   display: grid !important;
+   justify-content: start;
 }
 .gIjFdD {
    justify-content: flex-end;
@@ -99,43 +104,41 @@ input[type='checkbox'] {
    padding-right: 20px !important;
 }
 
-/* .tabulator-row.tabulator-group {
-   border: 1px solid #fff;
-} */
-
-/* .tabulator-col-content {
-   padding: 50px !important;
-} */
-
- 
-
- .crm-table .tabulator-header .tabulator-frozen .tabulator-frozen-left{
-   height: 100% !important;
-   padding-top: 0px !important;
- }
- .crm-table .tabulator-header .tabulator-col .tabulator-col-content{
-    padding: 0px;
- }
- .crm-table .tabulator-header .tabulator-col{
-   height: 100% !important;
-   padding-top: 4px !important;
-   padding-left: 2px !important;
- }
+/* customer text style */
+.kKnzcB{
+   font-size: 28px;
+   line-height: 32px;
+   font-family: 'Roboto',sans-serif;
+   letter-spacing: 0.44px;
+   color: #202020;
+}
  .tabulator-header-filter input{
-    border-radius: 3px; 
-    margin-top: 2px;
+    border-radius: 5px; 
+    margin-top: 0px;
  }
- .crm-table .tabulator-header{
-    margin-left: 0px;
-    padding: 0px !important;
+ .crmCustomerTable .tabulator-header .tabulator-frozen.tabulator-frozen-left{
+    height: 78px !important;
+    top: 0px !important;
+    margin-top: 0px;
+    padding-top: 0px !important;
  }
-
- .crm-table .tabulator-headers{
-    width: 125%;
-    height: 80px;
-    padding: 0px;
+ .crmCustomerTable .tabulator-header .tabulator-col{
+    height: 78px !important;
+    top: -7px;
+    /* left: -7px; */
+    /* padding-top: 7px; */
+    margin-top: 0px !important;
+    padding-top: 0px !important;
  }
- .crm-table .tabulator-header .tabulator-col .tabulator-sortable .tabulator-col-title{
-    padding-right: 25px;
-    text-align: left !important;
+ .crmCustomerTable .tabulator-header .tabulator-col .tabulator-col-content{
+    height: 25px !important;
+    /* top: -7px; */
+    /* height: 78px !important; */
+ }
+ .crmBrandTable .tabulator-header .tabulator-col .tabulator-col-content{
+    height: 100%;
+ }
+ .crmBrandTable .tabulator-header .tabulator-col{
+    height: 100%;
+    left: -8px;
  }

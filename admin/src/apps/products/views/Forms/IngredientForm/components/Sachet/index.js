@@ -226,7 +226,7 @@ const Sachet = ({
                <Flex
                   container
                   alignItems="center"
-                  justifyContent="space-between"
+                  justifyContent="flex-end"
                >
                   <Flex container alignItems="center">
                      <Text as="subtitle">Active: </Text>
@@ -238,12 +238,13 @@ const Sachet = ({
                         )}
                      </Text>
                   </Flex>
-                  <IconButton
+                  {/* <IconButton
                      type="ghost"
                      onClick={() => openEditSachetTunnel(1)}
                   >
                      <EditIcon color="#00A7E1" />
-                  </IconButton>
+                  </IconButton> */}
+                  {/* This feature of edit sachets is removed and added to sachets tile */}
                </Flex>
             </Grid>
          </Container>

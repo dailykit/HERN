@@ -1,0 +1,78 @@
+.hern-helper-bar {
+   padding: 0.5rem 0.75rem;
+   height: auto;
+   width: 100%;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   border-radius: 0.25rem;
+   -webkit-border-radius: 0.25rem;
+   -moz-border-radius: 0.25rem;
+   -ms-border-radius: 0.25rem;
+   -o-border-radius: 0.25rem;
+   margin-bottom: 0.75rem;
+}
+.hern-helper-bar--info {
+   @extend .hern-helper-bar;
+   background-color: rgba(199, 210, 254, 1);
+   color: rgba(55, 48, 163, 1);
+   button {
+      border-width: 1px;
+      border-color: rgba(55, 48, 163, 1);
+   }
+   button:hover {
+      background-color: rgba(165, 180, 252, 1);
+   }
+}
+
+.hern-helper-bar--success {
+   @extend .hern-helper-bar;
+   background-color: rgba(167, 243, 208, 1);
+   color: rgba(6, 95, 70, 1);
+   button {
+      border-width: 1px;
+      border-color: rgba(6, 95, 70, 1);
+   }
+   button:hover {
+      border-color: rgba(110, 231, 183, 1);
+   }
+}
+.hern-helper-bar--danger {
+   background-color: rgba(254, 202, 202, 1);
+   color: rgba(153, 27, 27, 1);
+   @extend .hern-helper-bar;
+   button {
+      border-width: 1px;
+      border-color: rgba(153, 27, 27, 1);
+   }
+   button:hover {
+      background-color: rgba(252, 165, 165, 1);
+   }
+}
+.hern-helper-bar--warning {
+   @extend .hern-helper-bar;
+   background-color: rgba(253, 230, 138, 1);
+   color: rgba(146, 64, 14, 1);
+   button {
+      border-width: 1px;
+      border-color: rgba(146, 64, 14, 1);
+   }
+   button:hover {
+      background-color: rgba(252, 211, 77, 1);
+   }
+}
+.hern-helper-bar__btn {
+   margin-top: 0.25rem;
+   padding: 0.25rem 0.5rem;
+   border-radius: 0.25rem;
+   font-size: 0.875rem;
+   line-height: 1.25rem;
+}
+.hern-helper-bar__title {
+   text-align: center;
+   font-size: 1.125rem;
+   line-height: 1.75rem;
+}
+.hern-helper-bar__subtitle {
+   text-align: center;
+}

@@ -191,6 +191,7 @@ const CouponListing = () => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
+         cssClass: 'colHover',
       },
       {
          title: 'Action',
@@ -299,16 +300,42 @@ const CouponListing = () => {
    return (
       <StyledWrapper>
          <Banner id="crm-app-coupons-listing-top" />
-         <Flex container alignItems="center" justifyContent="space-between">
-            <Flex container height="80px" alignItems="center">
+         <Flex
+            container
+            height="80px"
+            width="100%"
+            alignItems="center"
+            justifyContent="space-between"
+             padding="32px 0 0 0"
+         >
+            <Flex
+               container
+               as="header"
+               width="25%"
+               alignItems="center"
+               justifyContent="space-between"
+             >
                <Text as="h2">
                   Coupons(
                   {couponTotal?.couponsAggregate?.aggregate?.count || '...'})
                </Text>
                <Tooltip identifier="coupon_list_heading" />
             </Flex>
-
-            <TextButton
+            <Flex
+               container
+               as="header"
+               width="75%"
+               alignItems="center"
+               justifyContent="space-around"
+            >
+               <Flex
+                  container
+                  as="header"
+                  width="73%"
+                  alignItems="center"
+                  justifyContent="flex-end"
+               >
+                  <TextButton
                      onClick={() => {
                         clearCouponsPersistence()
                      }}
@@ -336,16 +363,26 @@ const CouponListing = () => {
                            XLSX
                         </DropdownButton.Option>
                      </DropdownButton.Options>
-                  </DropdownButton>
-
-            <ButtonGroup>
+                  </DropdownButton>          
+            </Flex>         
+               <Flex
+                   container
+                   as="header"
+                   width="27%"
+                   alignItems="center"
+                   justifyContent="flex-end"
+               >
+                              <ButtonGroup>
                <ComboButton type="solid" onClick={createCoupon}>
                   <PlusIcon />
                   Create Coupon
                </ComboButton>
             </ButtonGroup>
+               </Flex>
+            </Flex>
          </Flex>
-         {Boolean(coupons) && (
+            <Spacer size='20px' />
+            {Boolean(coupons) && (
             <ReactTabulator
                columns={columns}
                data={coupons}

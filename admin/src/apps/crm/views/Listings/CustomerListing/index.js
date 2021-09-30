@@ -299,7 +299,7 @@ const CustomerListing = () => {
    const downloadXlsxData = () => {
       tableRef.current.table.download('xlsx', 'customers_table.xlsx')
    }
-   const clearProductOptionPersistence= () =>
+   const clearCustomerPersistence= () =>
       {
          localStorage.removeItem('tabulator-customer_table-columns')
          localStorage.removeItem('tabulator-customer_table-sort')
@@ -633,20 +633,20 @@ const CustomerListing = () => {
             <Flex
                container
                as="header"
-               width="70%"
+               width="75%"
                alignItems="center"
                justifyContent="space-around"
             >
                <Flex
                   container
                   as="header"
-                  width="70%"
+                  width="80%"
                   alignItems="center"
-                  justifyContent="flex-around"
+                  justifyContent="flex-end"
                >
                   <TextButton
                      onClick={() => {
-                        clearProductOptionPersistence ()
+                        clearCustomerPersistence ()
                      }}
                      type="ghost"
                      size="sm"
@@ -700,7 +700,7 @@ const CustomerListing = () => {
                <Flex
                    container
                    as="header"
-                   width="30%"
+                   width="20%"
                    alignItems="center"
                    justifyContent="flex-end"
                >
@@ -729,7 +729,7 @@ const CustomerListing = () => {
                   persistenceID : 'customer_table'
                }}
                ref={tableRef}
-               className="crm-table"
+               className="crmCustomerTable"
             />
          )} 
          <InsightDashboard

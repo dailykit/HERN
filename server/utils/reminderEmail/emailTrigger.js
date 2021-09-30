@@ -17,33 +17,22 @@ export const GET_TEMPLATE_SETTINGS = `
             fileName
             path
          }
-         emailTemplateFile {
-            fileName
-            path
-         }
          fromEmail
       }
    }
 `
 
-const getHtml = async (
-   functionFile,
-   emailTemplateFileName,
-   variables,
-   subjectLineTemplate
-) => {
+const getHtml = async (functionFile, variables, subjectLineTemplate) => {
    try {
       const DATA_HUB = await get_env('DATA_HUB')
       const { origin } = new URL(DATA_HUB)
+      const template_variables = encodeURI(JSON.stringify({ ...variables }))
       if (subjectLineTemplate) {
-         const template_variables = encodeURI(
-            JSON.stringify({ ...variables, readVar: true })
-         )
          const template_options = encodeURI(
             JSON.stringify({
                path: functionFile.path,
-               emailTemplateFileName,
-               format: 'html'
+               format: 'html',
+               readVar: true
             })
          )
          const url = `${origin}/template/?template=${template_options}&data=${template_variables}`
@@ -53,11 +42,9 @@ const getHtml = async (
          return result
       }
       if (!subjectLineTemplate) {
-         const template_variables = encodeURI(JSON.stringify(variables))
          const template_options = encodeURI(
             JSON.stringify({
                path: functionFile.path,
-               emailTemplateFileName,
                format: 'html'
             })
          )
@@ -73,7 +60,14 @@ const getHtml = async (
    }
 }
 
-export const emailTrigger = async ({ title, variables = {}, to }) => {
+export const emailTrigger = async ({
+   title,
+   variables = {},
+   to,
+   brandId,
+   includeHeader,
+   includeFooter
+}) => {
    try {
       console.log('entering emailTrigger', { title, variables, to })
       const { templateSettings = [] } = await client.request(
@@ -88,8 +82,7 @@ export const emailTrigger = async ({ title, variables = {}, to }) => {
                requiredVar = [],
                subjectLineTemplate,
                fromEmail,
-               functionFile = {},
-               emailTemplateFile = {}
+               functionFile = {}
             }
          ] = templateSettings
 
@@ -99,15 +92,10 @@ export const emailTrigger = async ({ title, variables = {}, to }) => {
             return proceed
          })
          if (proceed) {
-            const html = await getHtml(
-               functionFile,
-               emailTemplateFile.fileName,
-               variables
-            )
+            const html = await getHtml(functionFile, variables)
             console.log('html', typeof html)
             const subjectLine = await getHtml(
                functionFile,
-               emailTemplateFile.fileName,
                variables,
                subjectLineTemplate
             )
@@ -119,7 +107,10 @@ export const emailTrigger = async ({ title, variables = {}, to }) => {
                   to,
                   subject: subjectLine,
                   attachments: [],
-                  html
+                  html,
+                  ...(brandId && { brandId }),
+                  ...(includeHeader && { includeHeader }),
+                  ...(includeFooter && { includeFooter })
                }
             })
             return sendEmail

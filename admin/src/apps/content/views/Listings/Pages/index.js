@@ -180,6 +180,7 @@ const PageListing = () => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
+         width: 300,
       },
       {
          title: 'URL',
@@ -264,7 +265,7 @@ const PageListing = () => {
             justifyContent="space-between"
          >
             <Flex container alignItems="center">
-               <Text as="title">
+               <Text as="h2" style={{marginBottom: '0em'}}  >
                   Page(
                   {count})
                </Text>

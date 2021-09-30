@@ -1,8 +1,19 @@
 .tabulator-header {
    font-size: 14px;
    border-bottom: 2px solid #d8d8d8;
+   height:78px;
+   background-color: #f4f4f4 !important;
 }
-
+.tabulator-headers{
+   height: 100%;
+}
+ .tabulator-col{
+   background-color: #f4f4f4 !important;
+   height: 100% !important;
+}
+.tabulator-col-content{
+   height: 100%;
+}
 .tabulator-row {
    height: 48px;
    font-size: 16px;
@@ -10,7 +21,9 @@
    align-items: center;
    border-bottom: 1px solid #d8d8d8;
 }
-
+h2{
+   margin-bottom: 0.0em !important;
+}
 .center-text {
    text-align: center !important;
 }
@@ -28,4 +41,8 @@
 .colHover:hover {
    background: #e5e5e5;
    cursor: pointer;
+}
+.menuTable .tabulator-header .tabulator-col{
+   height: 78px!important;
+   right: 8px;
 }

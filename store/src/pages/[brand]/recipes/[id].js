@@ -10,6 +10,7 @@ import TimeIcon from '../../../assets/icons/Time'
 import UtensilsIcon from '../../../assets/icons/Utensils'
 import CuisineIcon from '../../../assets/icons/Cuisine'
 import { graphQLClient, useConfig } from '../../../lib'
+import classNames from 'classnames'
 
 const Recipe = props => {
    const { productOption, seo, settings } = props
@@ -30,41 +31,39 @@ const Recipe = props => {
       return (
          <Layout settings={settings}>
             <SEO title="Not found" />
-            <h1 tw="py-4 text-2xl text-gray-600 text-center">
-               No such recipe exists!
-            </h1>
+            <main className="hern-recipe">
+               <HelperBar type="info">
+                  <HelperBar.Title> No such recipe exists!</HelperBar.Title>
+               </HelperBar>
+            </main>
          </Layout>
       )
    return (
       <Layout settings={settings}>
          <SEO title={recipe.name} richresult={recipe.richResult} />
-         <RecipeContainer>
-            <h1 tw="py-4 text-2xl md:text-3xl tracking-wide text-teal-900">
-               {recipe.name}
-            </h1>
-            <RecipeImage>
+         <main className="hern-recipe">
+            <h1 className="hern-recipe__title">{recipe.name}</h1>
+            <div className="hern-recipe__img__wrapper">
                {recipe?.assets?.images?.length ? (
                   <img
+                     className="hern-recipe__img"
                      src={recipe?.assets?.images[0]}
                      alt={recipe.name}
-                     tw="w-full h-full border-gray-100 object-cover rounded-lg"
                   />
                ) : (
                   'N/A'
                )}
-            </RecipeImage>
+            </div>
             {!!recipe.description && (
                <>
-                  <h2 tw="pb-2 mt-4 border-b border-gray-300 text-gray-600 text-lg font-normal mb-2">
-                     Description
-                  </h2>
-                  <p tw="text-teal-900">{recipe.description}</p>
+                  <h2>Description</h2>
+                  <p className="hern-recipe__description">
+                     {recipe.description}
+                  </p>
                </>
             )}
-            <h2 tw="pb-2 mt-4 border-b border-gray-300 text-gray-600 text-lg font-normal mb-6">
-               Details
-            </h2>
-            <div tw="grid grid-cols-4 gap-2 mb-2">
+            <h2 className="hern-recipe__details__heading">Details</h2>
+            <div className="hern-recipe__details">
                {/* {!!recipe.type && (
                   <div>
                      <h6 tw="text-gray-500 text-sm font-normal">Type</h6>
@@ -72,53 +71,58 @@ const Recipe = props => {
                   </div>
                )} */}
                {!!recipe.cuisine && (
-                  <div tw="flex flex-col items-center">
+                  <div className="hern-recipe__details__cuisine">
                      <CuisineIcon size={40} color={theme?.accent} />
-                     <p tw="text-teal-900">{recipe.cuisine}</p>
+                     <p>{recipe.cuisine}</p>
                   </div>
                )}
                {!!recipe.author && (
-                  <div tw="flex flex-col items-center">
+                  <div className="hern-recipe__details__author">
                      <ChefIcon size={40} color={theme?.accent} />
-                     <p tw="text-teal-900">{recipe.author}</p>
+                     <p>{recipe.author}</p>
                   </div>
                )}
                {!!recipe.cookingTime && (
-                  <div tw="flex flex-col items-center">
+                  <div className="hern-recipe__details__cooking-time">
                      <TimeIcon size={40} color={theme?.accent} />
-                     <p tw="text-teal-900">{recipe.cookingTime} mins.</p>
+                     <p>{recipe.cookingTime} mins.</p>
                   </div>
                )}
                {!!recipe.utensils?.length && (
-                  <div tw="flex flex-col items-center">
+                  <div className="hern-recipe__details__utelsils">
                      <UtensilsIcon size={40} color={theme?.accent} />
-                     <p tw="text-teal-900">{recipe.utensils.join(', ')}</p>
+                     <p>{recipe.utensils.join(', ')}</p>
                   </div>
                )}
             </div>
             {!!recipe.notIncluded?.length && (
-               <div tw="mb-2">
-                  <h6 tw="text-gray-500 text-sm font-normal">
+               <div className="hern-recipe__not-included">
+                  <h6 className="hern-recipe__not-included__heading">
                      What you'll need
                   </h6>
-                  <p tw="text-teal-900">{recipe.notIncluded.join(', ')}</p>
+                  <p className="hern-recipe__not-included__item">
+                     {recipe.notIncluded.join(', ')}
+                  </p>
                </div>
             )}
             {recipe.showIngredients &&
                Boolean(productOption.simpleRecipeYield.sachets.length) && (
                   <>
-                     <h2 tw="pb-2 mt-4 border-b border-gray-300 text-gray-600 text-lg font-normal mb-4">
+                     <h2 className="hern-recipe__ingradients__heading">
                         Ingredients
                      </h2>
-                     <div tw="grid grid-cols-2 gap-2">
+                     <div className="hern-recipe__ingradients">
                         {productOption.simpleRecipeYield.sachets.map(
                            ({ isVisible, slipName, sachet }, index) => (
                               <div
                                  key={index}
-                                 css={[
-                                    tw`border h-16 px-2 rounded-sm flex items-center`,
-                                    !isVisible && tw`justify-center`,
-                                 ]}
+                                 className={classNames(
+                                    'hern-recipe__ingradient__item--visible',
+                                    {
+                                       'hern-recipe__ingradient__item':
+                                          !isVisible,
+                                    }
+                                 )}
                               >
                                  {isVisible ? (
                                     <>
@@ -129,7 +133,6 @@ const Recipe = props => {
                                                 sachet.ingredient.assets
                                                    .images[0]
                                              }
-                                             tw="w-12 h-12 mr-2 rounded-sm"
                                           />
                                        )}
                                        {renderIngredientName(slipName, sachet)}
@@ -145,28 +148,31 @@ const Recipe = props => {
                )}
             {recipe.showProcedures && Boolean(recipe.instructionSets.length) && (
                <>
-                  <h2 tw="pb-2 mt-4 border-b border-gray-300 text-gray-500 mb-3 text-lg font-medium">
+                  <h2 className="hern-recipe__cooking-process__heading">
                      Cooking Process
                   </h2>
                   <ul>
                      {recipe.instructionSets.map(set => (
-                        <li tw="h-auto mb-4" key={set.id}>
-                           <ol tw="list-decimal">
-                              <span tw="text-lg font-medium text-gray-700">
+                        <li
+                           className="hern-recipe__cooking-instructions"
+                           key={set.id}
+                        >
+                           <ol className="hern-recipe__cooking-setps">
+                              <h4 className="hern-recipe__cooking-setps__heading">
                                  {set.title}
-                              </span>
+                              </h4>
                               {set.instructionSteps.map(step =>
                                  step.isVisible ? (
                                     <li
+                                       className="hern-recipe__cooking-setps__step"
                                        key={step.title}
-                                       tw="h-auto mb-4 ml-4 mt-2"
                                     >
                                        {step.title && (
-                                          <span tw="text-gray-800">
+                                          <span className="hern-recipe__cooking-setps__step__title">
                                              {step.title}
                                           </span>
                                        )}
-                                       <StepImage>
+                                       <div className="hern-recipe__cooking-setps__step__img">
                                           {step.assets.images.length > 0 && (
                                              <img
                                                 src={step.assets.images[0].url}
@@ -178,15 +184,15 @@ const Recipe = props => {
                                                 }
                                              />
                                           )}
-                                       </StepImage>
-                                       <p tw="mt-1 text-gray-600">
+                                       </div>
+                                       <p className="hern-recipe__cooking-setps__step__description">
                                           {step.description}
                                        </p>
                                     </li>
                                  ) : (
                                     <li
                                        key={step.title}
-                                       tw="h-auto mb-4 ml-4 mt-2"
+                                       className="hern-recipe__cooking-setps__step--locked"
                                     >
                                        <LockIcon />
                                     </li>
@@ -198,10 +204,13 @@ const Recipe = props => {
                   </ul>
                </>
             )}
-         </RecipeContainer>
-         <Button onClick={() => isClient && window.history.go(-1)}>
+         </main>
+         <button
+            className="hern-recipe__go-back-btn"
+            onClick={() => isClient && window.history.go(-1)}
+         >
             Go back to menu
-         </Button>
+         </button>
       </Layout>
    )
 }
@@ -234,36 +243,3 @@ export async function getStaticPaths() {
       fallback: 'blocking', // true -> build page if missing, false -> serve 404
    }
 }
-
-const RecipeContainer = styled.div`
-   margin: auto;
-   max-width: 640px;
-   padding: 16px 0;
-   width: calc(100vw - 40px);
-`
-
-const RecipeImage = styled.div`
-   height: 320px;
-   @media (max-width: 567px) {
-      height: 240px;
-   }
-`
-
-const StepImage = styled.div`
-   max-width: 340px;
-   ${tw`my-2`}
-   img {
-      width: 100%;
-      height: 220px;
-      ${tw`object-cover rounded`}
-      @media (max-width: 567px) {
-         height: 160px;
-      }
-   }
-`
-
-const Button = styled.button`
-   left: 50%;
-   bottom: 16px;
-   ${tw`fixed bg-green-600 rounded text-white px-4 h-10 hover:bg-green-700`}
-`

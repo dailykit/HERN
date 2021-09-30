@@ -4,6 +4,7 @@ import moment from 'moment'
 import React from 'react'
 import styled from 'styled-components'
 import { useTabs } from '../../../../providers'
+import { get_env } from '../../../../utils'
 import TableOptions from '../../tableOptions'
 //currencies
 const currency = {
@@ -37,7 +38,7 @@ const OrderRefTable = ({ graphTunnelData, groupBy }) => {
          width: 150,
       },
       {
-         title: `Amount Paid (${currency[window._env_.REACT_APP_CURRENCY]})`,
+         title: `Amount Paid (${currency[get_env('REACT_APP_CURRENCY')]})`,
          field: 'amount paid',
          headerSort: true,
          headerFilter: true,

@@ -1,4 +1,5 @@
 import axios from 'axios'
+import twilio from 'twilio'
 import bcrypt from 'bcrypt'
 import * as jwt from 'jsonwebtoken'
 
@@ -139,13 +140,45 @@ export const resetPassword = async (req, res) => {
    }
 }
 
+// send sms action handler
+export const sendSMS = async (req, res) => {
+   try {
+      const { phone = '', message = '' } = req.body.input
+      if (!phone.trim())
+         return res
+            .status(200)
+            .json({ success: false, message: 'Phone number is required!' })
+      if (!message.trim())
+         return res
+            .status(200)
+            .json({ success: false, message: 'Message can not be empty!' })
+
+      const TWILIO_SMS_ACCOUNT_ID = await get_env('TWILIO_SMS_ACCOUNT_ID')
+      const TWILIO_SMS_AUTH_TOKEN = await get_env('TWILIO_SMS_AUTH_TOKEN')
+      const twilio_client = twilio(TWILIO_SMS_ACCOUNT_ID, TWILIO_SMS_AUTH_TOKEN)
+      await twilio_client.messages.create({
+         body: message,
+         from: '+1 312 313 7051',
+         to: phone.trim()
+      })
+
+      return res.status(200).json({
+         success: true,
+         message: 'SMS sent successfully!'
+      })
+   } catch (error) {
+      console.log({ error })
+      res.status(400).json({ success: false, message: 'Failed to send SMS!' })
+   }
+}
+
 const FETCH_NUTRITION_INFO = `
    query fetchNutritionInfo($ids: [Int!]!){
       simpleRecipeYields(where: {id: {_in: $ids}}) {
          nutritionId
          nutritionalInfo
        }
-   } 
+   }
 `
 
 const UPDATE_NUTRITION_INFO = `
@@ -159,8 +192,8 @@ const UPDATE_NUTRITION_INFO = `
 `
 
 const PLATFORM_CUSTOMER = `
-   query platform_customers($where: platform_customer__bool_exp = {}) {
-      platform_customers: platform_customer_(where: $where) {
+   query platform_customers($where: platform_customer_bool_exp = {}) {
+      platform_customers: platform_customer(where: $where) {
          keycloakId
          firstName
          lastName
@@ -183,9 +216,9 @@ const SEND_EMAIL = `
 const UPDATE_PASSWORD = `
    mutation update_platform_customer(
       $keycloakId: String!
-      $_set: platform_customer__set_input = {}
+      $_set: platform_customer_set_input = {}
    ) {
-      update_platform_customer: update_platform_customer__by_pk(
+      update_platform_customer: update_platform_customer_by_pk(
          pk_columns: { keycloakId: $keycloakId }
          _set: $_set
       ) {

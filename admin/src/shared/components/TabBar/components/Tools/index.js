@@ -2,7 +2,7 @@ import React from 'react'
 import { useOnClickOutside, Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
 import { ChevronDown } from '../../../../assets/icons'
 import { TooltipProvider } from '../../../../providers'
-import { ToolbarMenu } from './styled'
+import { StyledTools, ToolbarMenu } from './styled'
 import CreateNew from './CreateNew'
 import CreateBrandTunnel from '../../../../../apps/brands/views/Listings/brands/CreateBrandTunnel'
 import { ProductTypeTunnel } from '../../../../../apps/products/views/Listings/ProductsListing/tunnels'
@@ -12,7 +12,7 @@ import Account from './Account'
 import Search from './Search'
 import MarketPlace from './MarketPlace'
 
-const Tools = () => {
+const Tools = ({ isTabHidden, setIsTabHidden }) => {
    const [lang, setLang] = React.useState(
       localStorage.getItem('i18nextLng') || 'en'
    )
@@ -26,11 +26,8 @@ const Tools = () => {
       openCreateProductTunnel,
       closeCreateProductTunnel,
    ] = useTunnel(1)
-   const [
-      createBrandTunnels,
-      openCreateBrandTunnel,
-      closeCreateBrandTunnel,
-   ] = useTunnel(1)
+   const [createBrandTunnels, openCreateBrandTunnel, closeCreateBrandTunnel] =
+      useTunnel(1)
    const tools = {
       createItem: 'create-item',
       profile: 'profile',
@@ -49,7 +46,7 @@ const Tools = () => {
    })
 
    return (
-      <div ref={toolbarRef} style={{ width: '238px' }}>
+      <StyledTools ref={toolbarRef} isTabHidden={isTabHidden}>
          {/* LIST OF TOOLS IN LARGE SCREEN */}
          <ToolList
             toolbarRef={toolbarRef}
@@ -97,6 +94,8 @@ const Tools = () => {
                setLang={setLang}
                setIsMenuOpen={setIsMenuOpen}
                setOpen={setOpen}
+               isTabHidden={isTabHidden}
+               setIsTabHidden={setIsTabHidden}
             />
          )}
          {open === search && <Search setOpen={setOpen} />}
@@ -119,7 +118,7 @@ const Tools = () => {
                </TooltipProvider>
             </Tunnel>
          </Tunnels>
-      </div>
+      </StyledTools>
    )
 }
 

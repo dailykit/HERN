@@ -1,12 +1,11 @@
 import React from 'react'
 import Link from 'next/link'
 import { uniqBy } from 'lodash'
-import tw, { css, styled } from 'twin.macro'
 import { useQuery, useSubscription } from '@apollo/react-hooks'
 import { useToasts } from 'react-toast-notifications'
+import classNames from 'classnames'
 
 import { useMenu } from '../../state'
-import { CartProducts } from '../styled'
 import { useConfig } from '../../../../lib'
 import { useUser } from '../../../../context'
 import { formatCurrency } from '../../../../utils'
@@ -55,22 +54,25 @@ const AddOnProducts = () => {
       <div>
          {hasAddOns && (
             <>
-               <header tw="my-3 pb-1 border-b flex items-center justify-between">
-                  <h4 tw="text-lg text-gray-700">Your Add Ons</h4>
+               <header className="hern-cart-add-on-products__header">
+                  <h4 className="hern-cart-add-on-products__header__title">
+                     Your Add Ons
+                  </h4>
                   <button
                      onClick={() => toggleTunnel(true)}
-                     tw="text-green-800 uppercase px-3 py-1 rounded-full border text-sm font-medium border-green-400 flex items-center"
+                     className="hern-cart-add-on-products__header__explore-btn"
                   >
                      Explore
-                     <span tw="pl-2">
+                     <span>
                         <PlusIcon
                            size={16}
-                           tw="stroke-current text-green-400"
+                           stroke="currentColor"
+                           color="rgba(52,211,153,1)"
                         />
                      </span>
                   </button>
                </header>
-               <CartProducts>
+               <ul className="hern-cart-add-on-products__list">
                   {state?.occurenceCustomer?.cart?.products?.map(
                      product =>
                         product.isAddOn && (
@@ -82,7 +84,7 @@ const AddOnProducts = () => {
                            />
                         )
                   )}
-               </CartProducts>
+               </ul>
             </>
          )}
          {tunnel && (
@@ -94,7 +96,7 @@ const AddOnProducts = () => {
             >
                <Tunnel.Header title="Add Ons">
                   <Button size="sm" onClick={() => toggleTunnel(false)}>
-                     <CloseIcon size={20} tw="stroke-current" />
+                     <CloseIcon size={20} stroke="currentColor" />
                   </Button>
                </Tunnel.Header>
                <Tunnel.Body>
@@ -144,8 +146,8 @@ const AddOns = () => {
    return (
       <div>
          {categories.map(category => (
-            <section key={category.name} css={tw`mb-8`}>
-               <h4 css={tw`text-lg text-gray-700 my-3 pb-1 border-b`}>
+            <section key={category.name} className="hern-cart-add-ons__section">
+               <h4 className="hern-cart-add-ons__section__title">
                   {category.name} (
                   {
                      uniqBy(category.productsAggregate.nodes, v =>
@@ -157,7 +159,7 @@ const AddOns = () => {
                   }
                   )
                </h4>
-               <ProductsWrapper>
+               <ul className="hern-add-ons__products__list">
                   {uniqBy(category.productsAggregate.nodes, v =>
                      [
                         v?.cartItem?.productId,
@@ -171,7 +173,7 @@ const AddOns = () => {
                         isAdded={isAdded}
                      />
                   ))}
-               </ProductsWrapper>
+               </ul>
             </section>
          ))}
       </div>
@@ -201,38 +203,39 @@ const AddOnProduct = ({ node, isAdded, theme }) => {
             : null,
       additionalText: node?.productOption?.product?.additionalText || '',
    }
-
+   const productListItem = classNames('hern-add-on__products__list-item', {
+      'hern-add-on__products__list-item--active': isActive,
+   })
+   const checkIconClasses = classNames(
+      'hern-add-on__products__list-item__check-icon',
+      { 'hern-add-on__products__list-item__check-icon--active': isActive }
+   )
    return (
-      <Styles.Product theme={theme} className={`${isActive ? 'active' : ''}`}>
-         <div
-            css={tw`flex items-center justify-center h-48 bg-gray-200 mb-2 rounded overflow-hidden`}
-         >
+      <li className={productListItem}>
+         <div className="hern-add-on__products__list-item__img">
             {product.image ? (
                <img
                   alt={product.name}
                   src={product.image}
                   title={product.name}
-                  css={tw`h-full w-full object-cover select-none`}
                />
             ) : (
                <span>No Photos</span>
             )}
          </div>
-         <div css={tw`flex items-center justify-between`}>
-            <section tw="flex items-center">
-               <Check
-                  size={16}
-                  tw="flex-shrink-0"
-                  className={`${isActive ? 'active' : ''}`}
-               />
-               <Link tw="text-gray-700" href={`#`}>
-                  {product.name} - {product.label}
+         <div className="hern-add-on__products__list-item__info">
+            <section className="hern-add-on__products__list-item__title">
+               <CheckIcon size={16} className={checkIconClasses} />
+               <Link href={`#`}>
+                  <>
+                     {product.name} - {product.label}
+                  </>
                </Link>
             </section>
             {canAdd() && (
                <button
                   onClick={() => methods.products.add(node.cartItem)}
-                  tw="text-sm uppercase font-medium tracking-wider border border-gray-300 rounded px-1 text-gray-500"
+                  className="hern-add-on__products__list-item__add-btn"
                >
                   {isActive ? 'REPEAT +' : 'ADD +'}
                   {formatCurrency(Number(node.cartItem.unitPrice) || 0)}
@@ -240,32 +243,6 @@ const AddOnProduct = ({ node, isAdded, theme }) => {
             )}
          </div>
          <p>{product.additionalText}</p>
-      </Styles.Product>
+      </li>
    )
-}
-
-const ProductsWrapper = styled.ul`
-   ${tw`grid gap-3`}
-   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-`
-
-const Check = styled(CheckIcon)(
-   () => css`
-      ${tw`mr-2 stroke-current text-gray-300`}
-      &.active {
-         ${tw`text-green-700`}
-      }
-   `
-)
-
-const Styles = {
-   Product: styled.li(
-      ({ theme }) => css`
-         ${tw`relative border flex flex-col bg-white p-2 rounded overflow-hidden`}
-         &.active {
-            ${tw`border border-2 border-red-400`}
-            border-color: ${theme?.highlight ? theme.highlight : '#38a169'}
-         }
-      `
-   ),
 }
