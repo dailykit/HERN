@@ -8,6 +8,7 @@
    "scripts": {
       "install:packages": "yarn && cd store && yarn && cd ../admin && yarn",
       "dev": "concurrently \"nodemon -r esm index.js\" \"cd store && yarn dev\" \"cd admin && yarn start\"",
+      "dev-mac": "concurrently \"nodemon -r esm index.js\" \"cd store && yarn dev\" \"cd admin && yarn start-mac\"",
       "build": "cd store && yarn build && cd ../admin && yarn build",
       "build:server": "cd store && yarn build",
       "prod": "concurrently \"nodemon -r esm index.js\" \"cd store && yarn start\"",
