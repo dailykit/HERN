@@ -1,17 +1,15 @@
 import { EditIcon, CloseIcon } from '../../../../../../shared/assets/icons'
-import { UPSERT_SUBSCRIPTION_TITLE } from '../../../../graphql'
+import { UPSERT_SUBSCRIPTION_METADATA_DETAILS } from '../../../../graphql'
 import {
    Flex,
    Tooltip,
-   ErrorState,
-   InlineLoader,
-   ErrorBoundary,
    Banner,
    AssetUploader,
 } from '../../../../../../shared/components'
 import { usePlan } from '../state'
 import React from 'react'
 import { toast } from 'react-toastify'
+import { logger } from '../../../../../../shared/utils'
 import { useMutation } from '@apollo/react-hooks'
 import {
    Tag,
@@ -27,6 +25,7 @@ import {
    TunnelHeader,
 } from '@dailykit/ui'
 import { MetadataDetailSection } from '../styled'
+
 export const MetaDataDetails = () => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [TunnelState, setTunnelState] = React.useState('')
@@ -48,7 +47,9 @@ export const MetaDataDetails = () => {
                size="sm"
                type="outline"
                style={{ marginLeft: '20px' }}
-               onClick={() => ToggleTunnel(`UPSERT_SUBSCRIPTION_TITLE`)}
+               onClick={() =>
+                  ToggleTunnel(`UPSERT_SUBSCRIPTION_METADATA_DETAILS`)
+               }
             >
                <EditIcon />
             </IconButton>
@@ -65,51 +66,53 @@ export const MetaDataDetails = () => {
 const MetadataTunnel = ({ tunnels, TunnelState, closeTunnel }) => {
    const { state } = usePlan()
    const [form, setForm] = React.useState({
-      id: null,
       icon: '',
       tags: '',
       coverImage: '',
    })
-   const [upsertMetaDetails] = useMutation(UPSERT_SUBSCRIPTION_TITLE, {
-      onCompleted: () => {
-         closeTunnel(1)
-         toast.success('Successfully added the metadata details')
-      },
-      onError: error => {
-         toast.error('Failed to add the metadata details')
-      },
-   })
-
+   const [upsertMetaDetails] = useMutation(
+      UPSERT_SUBSCRIPTION_METADATA_DETAILS,
+      {
+         onCompleted: () => {
+            closeTunnel(1)
+            toast.success('Successfully added the metadata details')
+         },
+         onError: error => {
+            logger(error)
+            toast.error('Failed to add the metadata details')
+         },
+      }
+   )
+   {
+      console.log(state, '🎀🎀🎄')
+   }
    React.useEffect(() => {
       if (TunnelState === 'EDIT_META_DETAILS') {
          setForm({
-            id: state.id,
-            icon: state.icon,
-            tags: state.tags,
-            coverImage: state.coverImage,
+            icon: state.meta.icon,
+            tags: state.meta.tags,
+            coverImage: state.meta.coverImage,
          })
       } else {
          setForm({
-            id: null,
             icon: '',
             tags: '',
             coverImage: '',
          })
       }
-   }, [TunnelState, state.item])
+   }, [TunnelState, state.meta])
 
    const save = () => {
-      const { tax, count, price, isTaxIncluded } = form
+      const { icon, tags, coverImage } = form
       upsertMetaDetails({
          variables: {
-            object: {
-               isTaxIncluded,
-               tax: Number(tax),
-               count: Number(count),
-               price: Number(price),
-               isActive: form.isActive,
-               subscriptionServingId: state.serving.id,
-               ...(form.id && { id: form.id }),
+            id: state.title.id,
+            _set: {
+               metaDetails: {
+                  icon: icon,
+                  tags: tags,
+                  coverImage: coverImage,
+               },
             },
          },
       })
@@ -120,7 +123,7 @@ const MetadataTunnel = ({ tunnels, TunnelState, closeTunnel }) => {
    }
    const updateSetting = (data = {}) => {
       if ('url' in data) {
-         console.log(`{ id: '', value: { url: data.url }`)
+         form.coverImage = data.url
       }
       closeTunnel(1)
    }
