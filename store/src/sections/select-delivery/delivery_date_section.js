@@ -70,16 +70,18 @@ export const DeliveryDateSection = () => {
          </>
       )
    if (isEmpty(occurences)) {
-      ;<HelperBar type="warning">
-         <HelperBar.SubTitle>
-            No dates are available for delivery on this address.
-         </HelperBar.SubTitle>
-         <HelperBar.Button
-            onClick={() => router.push(getRoute('/get-started/select-plan'))}
-         >
-            Select Plan
-         </HelperBar.Button>
-      </HelperBar>
+      return (
+         <HelperBar type="warning">
+            <HelperBar.SubTitle>
+               No dates are available for delivery on this address.
+            </HelperBar.SubTitle>
+            <HelperBar.Button
+               onClick={() => router.push(getRoute('/get-started/select-plan'))}
+            >
+               Select Plan
+            </HelperBar.Button>
+         </HelperBar>
+      )
    }
    return (
       <ul className="hern-delivery__delivery-date__list">
