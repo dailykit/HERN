@@ -91,3 +91,13 @@ export const ItemCountSection = styled.section`
    padding: 0 14px 14px 14px;
    height: calc(100% - 48px);
 `
+export const MetadataDetailSection = styled.section`
+padding: 14px;
+display: flex;
+background: #fff;
+align-items: center;
+justify-content: space-between;
+input[type='text'] {
+   width: 340px;
+}
+`

@@ -43,6 +43,7 @@ import {
    UPSERT_SUBSCRIPTION_TITLE,
    UPSERT_SUBSCRIPTION_SERVING,
 } from '../../../../graphql'
+import { MetaDataDetails } from './MetaDataDetails'
 
 const Title = () => {
    const params = useParams()
@@ -219,6 +220,9 @@ const Title = () => {
                   </Flex>
                </Flex>
             </Header>
+
+            <MetaDataDetails />
+
             <Flex
                as="section"
                height="calc(100% - 89px)"
