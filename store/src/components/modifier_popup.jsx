@@ -1,7 +1,7 @@
 import { each } from 'lodash'
 import React, { useState } from 'react'
 import { Button, ProductCard } from '.'
-import { ShowImageIcon } from '../assets/icons'
+import { RadioIcon, ShowImageIcon } from '../assets/icons'
 import { formatCurrency } from '../utils'
 import { CloseIcon, CheckBoxIcon } from '../assets/icons'
 import { useOnClickOutside } from '../utils/useOnClickOutisde'
@@ -260,7 +260,14 @@ export const ModifierPopup = props => {
                                                    x.modifierCategoryOptionsID ===
                                                       eachOption.id
                                              )
-                                          return Boolean(isOptionSelected) ? (
+                                          return eachCategory.type ===
+                                             'single' ? (
+                                             Boolean(isOptionSelected) ? (
+                                                <RadioIcon showTick={true} />
+                                             ) : (
+                                                <RadioIcon />
+                                             )
+                                          ) : Boolean(isOptionSelected) ? (
                                              <CheckBoxIcon showTick={true} />
                                           ) : (
                                              <CheckBoxIcon />
