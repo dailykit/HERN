@@ -1,4 +1,8 @@
-import { EditIcon, CloseIcon } from '../../../../../../shared/assets/icons'
+import {
+   EditIcon,
+   CloseIcon,
+   DeleteIcon,
+} from '../../../../../../shared/assets/icons'
 import { UPSERT_SUBSCRIPTION_METADATA_DETAILS } from '../../../../graphql'
 import {
    Flex,
@@ -23,7 +27,10 @@ import {
    IconButton,
    ComboButton,
    TunnelHeader,
+   ButtonTile,
+   HelperText,
 } from '@dailykit/ui'
+
 import { MetaDetailsSection, ImageContainer } from '../styled'
 
 export const MetaDetails = ({ metaDetails }) => {
@@ -32,6 +39,9 @@ export const MetaDetails = ({ metaDetails }) => {
    const ToggleTunnel = type => {
       openTunnel(1)
       setTunnelState(type)
+   }
+   {
+      console.log('METADETAILS', metaDetails)
    }
    return (
       <MetaDetailsSection>
@@ -68,9 +78,9 @@ const MetadataTunnel = ({ tunnels, TunnelState, closeTunnel, data }) => {
    const [tunnel1, openTunnel1, closeTunnel1] = useTunnel(1)
    const [tunnel2, openTunnel2, closeTunnel2] = useTunnel(1)
    const [form, setForm] = React.useState({
-      icon: data.icon,
-      tags: data.tags,
-      coverImage: data.coverImage,
+      icon: data?.icon,
+      tags: data?.tags,
+      coverImage: data?.coverImage,
    })
    const [upsertMetaDetails] = useMutation(
       UPSERT_SUBSCRIPTION_METADATA_DETAILS,
@@ -91,9 +101,9 @@ const MetadataTunnel = ({ tunnels, TunnelState, closeTunnel, data }) => {
    React.useEffect(() => {
       if (TunnelState === 'EDIT_META_DETAILS') {
          setForm({
-            icon: data.icon,
-            tags: data.tags,
-            coverImage: data.coverImage,
+            icon: data?.icon,
+            tags: data?.tags,
+            coverImage: data?.coverImage,
          })
       } else {
          setForm({
@@ -125,15 +135,18 @@ const MetadataTunnel = ({ tunnels, TunnelState, closeTunnel, data }) => {
    }
    const updateCoverImage = (data = {}) => {
       if ('url' in data) {
-         form.coverImage = data.url
+         form.coverImage = data?.url
       }
       closeTunnel2(1)
    }
    const updateIcon = (data = {}) => {
       if ('url' in data) {
-         form.icon = data.url
+         form.icon = data?.url
       }
       closeTunnel1(1)
+   }
+   const deleteImage = (name, value) => {
+      setForm(node => ({ ...node, [name]: value }))
    }
    return (
       <Tunnels tunnels={tunnels}>
@@ -148,47 +161,108 @@ const MetadataTunnel = ({ tunnels, TunnelState, closeTunnel, data }) => {
                right={{
                   title: 'Save',
                   action: () => save(),
-                  disabled: !form.icon || !form.coverImage,
                }}
                tooltip={
                   <Tooltip identifier="form_subscription_tunnel_item_create" />
                }
             />
             <Banner id="subscription-app-create-subscription-item-count-tunnel-top" />
-            <Flex padding="16px">
+            <Flex container flexWrap="wrap" padding="36.64px">
+               <div style={{ paddingRight: '15px', paddingBottom: '20px' }}>
+                  <Form.Group>
+                     <Form.Label htmlFor="tags" title="tags">
+                        <Flex container alignItems="center">
+                           <span
+                              style={{
+                                 fontWeight: '500',
+                                 fontSize: '15px',
+                                 lineHeight: '14px',
+                              }}
+                           >
+                              Tags
+                           </span>
+                           <Tooltip identifier="form_subscription_metadetails_tunnel_tags" />
+                        </Flex>
+                     </Form.Label>
+                     <Form.Text
+                        id="tags"
+                        name="tags"
+                        variant="revamp-sm"
+                        onChange={e =>
+                           handleChange(e.target.name, e.target.value)
+                        }
+                        style={{ marginTop: '4px', width: 'fit-content' }}
+                        value={form.tags}
+                        placeholder="enter tags"
+                     />
+                     <Spacer size="10px" />
+                     <HelperText
+                        fontSize="11px"
+                        style={{ fontSize: '11px' }}
+                        type="hint"
+                        message="enter comma separated values, for example: No-gluten, sugarless"
+                     />
+                  </Form.Group>
+               </div>
+               <Spacer size="16px" />
                <Form.Group>
                   <Form.Label htmlFor="icon" title="icon">
-                     <Flex container alignItems="center">
-                        Icon*
-                        <Tooltip identifier="form_subscription_tunnel_icon" />
-                     </Flex>
+                     <span
+                        style={{
+                           fontWeight: '500',
+                           fontSize: '15px',
+                           lineHeight: '14px',
+                        }}
+                     >
+                        Icon
+                     </span>
+                     <Tooltip identifier="form_subscription_tunnel_icon" />
                   </Form.Label>
-                  <Flex padding="16px">
+                  <Flex style={{ marginTop: '4px' }}>
                      {form.icon ? (
-                        <ImageContainer width="120px" height="120px">
-                           <div>
+                        <ImageContainer
+                           width="170px"
+                           height="120px"
+                           padding="0px"
+                        >
+                           <div
+                              style={{
+                                 width: 'min-content',
+                                 background: 'transparent',
+                              }}
+                           >
                               <IconButton
+                                 style={{ background: 'transparent' }}
                                  size="sm"
                                  type="solid"
                                  onClick={() => openTunnel1(1)}
                               >
                                  <EditIcon />
                               </IconButton>
-                           </div>
-                           <img src={form.icon} alt="icon" />
-                        </ImageContainer>
-                     ) : (
-                        <ImageContainer width="120px" height="120px" noThumb>
-                           <div>
+
                               <IconButton
+                                 style={{ background: 'transparent' }}
                                  size="sm"
                                  type="solid"
-                                 onClick={() => openTunnel1(1)}
+                                 onClick={() => deleteImage('icon', '')}
                               >
-                                 <PlusIcon />
+                                 <DeleteIcon />
                               </IconButton>
                            </div>
+                           <img
+                              src={form.icon}
+                              alt="icon"
+                              style={{ borderRadius: '8px' }}
+                           />
                         </ImageContainer>
+                     ) : (
+                        <ButtonTile
+                           type="uploadImage"
+                           size="sm"
+                           text="Upload Icon"
+                           onClick={() => openTunnel1(1)}
+                           style={{ width: '170px', height: '120px' }}
+                        />
                      )}
                      <Tunnels tunnels={tunnel1}>
                         <Tunnel layer={1} size="md">
@@ -209,55 +283,66 @@ const MetadataTunnel = ({ tunnels, TunnelState, closeTunnel, data }) => {
                   </Flex>
                </Form.Group>
                <Spacer size="16px" />
-               <Form.Group>
-                  <Form.Label htmlFor="tags" title="tags">
-                     <Flex container alignItems="center">
-                        Tags*
-                        <Tooltip identifier="form_subscription_tunnel_tags" />
-                     </Flex>
-                  </Form.Label>
-                  <Form.Text
-                     id="tags"
-                     name="tags"
-                     onChange={e => handleChange(e.target.name, e.target.value)}
-                     value={form.tags}
-                     placeholder="Enter tags"
-                  />
-               </Form.Group>
-               <Spacer size="16px" />
+
                <Form.Group>
                   <Form.Label htmlFor="coverImage" title="coverImage">
                      <Flex container alignItems="center">
-                        CoverImage*
+                        <span
+                           style={{
+                              fontWeight: '500',
+                              fontSize: '15px',
+                              lineHeight: '14px',
+                           }}
+                        >
+                           Cover Image
+                        </span>
                         <Tooltip identifier="form_subscription_tunnel_coverImage" />
                      </Flex>
                   </Form.Label>
-                  <Flex padding="16px">
+                  <Flex style={{ marginTop: '4px' }}>
                      {form.coverImage ? (
-                        <ImageContainer width="120px" height="120px">
-                           <div>
+                        <ImageContainer
+                           width="314px"
+                           height="190px"
+                           padding="0px"
+                        >
+                           <div
+                              style={{
+                                 width: 'min-content',
+                                 background: 'transparent',
+                              }}
+                           >
                               <IconButton
+                                 style={{ background: 'transparent' }}
                                  size="sm"
                                  type="solid"
                                  onClick={() => openTunnel2(1)}
                               >
                                  <EditIcon />
                               </IconButton>
-                           </div>
-                           <img src={form.coverImage} alt="Brand Logo" />
-                        </ImageContainer>
-                     ) : (
-                        <ImageContainer width="120px" height="120px" noThumb>
-                           <div>
                               <IconButton
+                                 style={{ background: 'transparent' }}
                                  size="sm"
                                  type="solid"
-                                 onClick={() => openTunnel2(1)}
+                                 onClick={() => deleteImage('coverImage', '')}
                               >
-                                 <PlusIcon />
+                                 <DeleteIcon />
                               </IconButton>
                            </div>
+                           <img
+                              src={form.coverImage}
+                              alt="Brand Logo"
+                              style={{ borderRadius: '8px' }}
+                           />
                         </ImageContainer>
+                     ) : (
+                        <ButtonTile
+                           type="uploadImage"
+                           size="sm"
+                           text="Upload Images"
+                           onClick={() => openTunnel2(1)}
+                           style={{ width: '314px', height: '190px' }}
+                        />
                      )}
                      <Tunnels tunnels={tunnel2}>
                         <Tunnel layer={1} size="md">

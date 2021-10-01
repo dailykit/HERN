@@ -102,7 +102,9 @@ input[type='text'] {
 }
 `
 export const ImageContainer = styled.div`
-   padding: 8px;
+   display: flex;
+   flex-direction: row-reverse;
+   padding: ${props => props.padding || '8px'};
    position: relative;
    border-radius: 2px;
    border: 1px solid #e3e3e3;
