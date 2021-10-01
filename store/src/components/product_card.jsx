@@ -31,16 +31,18 @@ export const ProductCard = props => {
       transitionDuration: 500,
       infinite: false,
       easing: 'ease',
-      ...(data.assets.images.length !== 1
+      ...(showImage && data.assets.images.length !== 1
          ? { arrows: showSliderArrows }
          : { arrows: false }),
-      ...(data.assets.images.length !== 1 &&
+      ...(showImage &&
+         data.assets.images.length !== 1 &&
          showSliderIndicators && {
             indicators: i => (
                <div className="hern-product-card-slider-indicator"></div>
             ),
          }),
-      ...(data.assets.images.length !== 1 &&
+      ...(showImage &&
+         data.assets.images.length !== 1 &&
          canSwipe && { canSwipe: canSwipe }),
    }
    return (
