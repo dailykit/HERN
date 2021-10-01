@@ -57,7 +57,13 @@ export const MetaDetails = ({ metaDetails }) => {
                type="outline"
                style={{ marginLeft: '20px' }}
                onClick={() =>
-                  ToggleTunnel(`UPSERT_SUBSCRIPTION_METADATA_DETAILS`)
+                  ToggleTunnel(
+                     (metaDetails.icon &&
+                        metaDetails.coverImage &&
+                        metaDetails.tags) == ''
+                        ? 'ADD_META_DETAILS'
+                        : 'EDIT_META_DETAILS'
+                  )
                }
             >
                <EditIcon />
@@ -65,7 +71,7 @@ export const MetaDetails = ({ metaDetails }) => {
          </Form.Group>
          <MetadataTunnel
             tunnels={tunnels}
-            TunnelState={'EDIT_META_DETAILS'}
+            TunnelState={TunnelState}
             closeTunnel={closeTunnel}
             data={metaDetails}
          />
