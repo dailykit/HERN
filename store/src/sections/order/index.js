@@ -5,6 +5,7 @@ import {
    BottomCartBar,
    Divider,
    ModifierPopup,
+   Button,
 } from '../../components'
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/react-hooks'
@@ -374,7 +375,31 @@ export const OnDemandOrder = () => {
          },
       }
    )
-   console.log('hydratedMenu', hydratedMenu)
+   const [productModifier, setProductModifier] = useState(null)
+   const CustomArea = props => {
+      const { data } = props
+      return (
+         <div className="hern-on-demand-product-custom-area">
+            <Button
+               className="hern-custom-area-add-btn"
+               onClick={() => {
+                  if (data.productOptions.length > 0) {
+                     setProductModifier(data)
+                  } else {
+                     console.log('product added to cart')
+                  }
+               }}
+            >
+               ADD
+            </Button>
+            {data.productOptions.length > 0 && <span>Customizable</span>}
+         </div>
+      )
+   }
+   const closeModifier = () => {
+      setProductModifier(null)
+   }
+
    if (productsError) {
       return <p>Error</p>
    }
@@ -405,6 +430,7 @@ export const OnDemandOrder = () => {
                                           ? true
                                           : false
                                     }
+                                    customAreaComponent={CustomArea}
                                  />
                               )
                            })}
@@ -415,7 +441,13 @@ export const OnDemandOrder = () => {
                </div>
                <OnDemandMenu />
                {false && <BottomCartBar />}
-               {false && <ModifierPopup productData={datas} />}
+               {productModifier && (
+                  <ModifierPopup
+                     productData={productModifier}
+                     closeModifier={closeModifier}
+                     height={productModifier ? '100%' : '0'}
+                  />
+               )}
             </div>
          </div>
       </>

@@ -22,6 +22,7 @@ export const ProductCard = props => {
       showProductAdditionalText = true,
       onShowImageIconClick,
       showCustomText = true,
+      customAreaComponent: CustomAreaComponent,
    } = props
 
    const slideRef = React.useRef()
@@ -140,6 +141,7 @@ export const ProductCard = props => {
                   )}
                </div>
                <div className="hern-product-card-custom-area">
+                  {CustomAreaComponent && <CustomAreaComponent data={data} />}
                   {showCustomText && (
                      <div className="hern-product-card-custom-text"></div>
                   )}

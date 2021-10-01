@@ -6,10 +6,10 @@ import { formatCurrency } from '../utils'
 import { CloseIcon, CheckBoxIcon } from '../assets/icons'
 import { useOnClickOutside } from '../utils/useOnClickOutisde'
 export const ModifierPopup = props => {
-   const { productData, showModifiers = true } = props
+   const { productData, showModifiers = true, closeModifier, height } = props
    const [productOption, setProductOption] = useState(
       productData.productOptions[0]
-   )
+   ) // for by default choose one product option
    const [selectedOptions, setSelectedOptions] = useState({
       single: [],
       multiple: [],
@@ -26,7 +26,7 @@ export const ModifierPopup = props => {
          src: null,
       })
    )
-   console.log('selectedOptions', selectedOptions)
+
    const onCheckClick = (eachOption, eachCategory) => {
       //selected option
       const selectedOption = {
@@ -108,8 +108,6 @@ export const ModifierPopup = props => {
 
       let allCatagories = productOption.modifier?.categories || []
 
-      let errorOccur = false
-
       let errorState = []
       for (let i = 0; i < allCatagories.length; i++) {
          const min = allCatagories[i]['limits']['min']
@@ -117,8 +115,7 @@ export const ModifierPopup = props => {
          const allFoundedOptionsLength = allSelectedOptions.filter(
             x => x.modifierCategoryID === allCatagories[i].id
          ).length
-         errorOccur
-         console.log('debug', min, allFoundedOptionsLength, max)
+
          if (allCatagories[i]['isRequired']) {
             if (
                allFoundedOptionsLength > 0 &&
@@ -127,20 +124,26 @@ export const ModifierPopup = props => {
             ) {
                console.log('hello')
             } else {
-               errorOccur = true
-               console.log('error', errorCategories)
                errorState.push(allCatagories[i].id)
                // setErrorCategories([...errorCategories, allCatagories[i].id])
             }
          }
       }
       setErrorCategories(errorState)
-      console.log('errorState', errorState)
+      if (errorState.length > 0) {
+         console.log('FAIL')
+         return
+      } else {
+         console.log('PASS')
+      }
    }
-   console.log('errorOccure', errorCategories)
+
    return (
       <>
-         <div className="hern-product-modifier-pop-up-container">
+         <div
+            className="hern-product-modifier-pop-up-container"
+            style={{ height: height }}
+         >
             <div className="hern-product-modifier-pop-up-product">
                <div className="hern-product-modifier-pop-up-product-details">
                   <ProductCard
@@ -286,7 +289,10 @@ export const ModifierPopup = props => {
                   </div>
                )}
             </div>
-            <div className="hern-product-modifier-pop-up-close-icon">
+            <div
+               className="hern-product-modifier-pop-up-close-icon"
+               onClick={closeModifier}
+            >
                <CloseIcon size={20} stroke="currentColor" />
             </div>
             <Button

@@ -72,7 +72,7 @@
 .hern-product-card-title {
    display: flex;
    .hern-product-card__name {
-      max-width: 17em;
+      max-width: 15em;
       font-weight: 600;
       font-size: 16px;
       line-height: 20px;
@@ -95,6 +95,7 @@
    font-size: 12px;
    line-height: 14px;
    color: rgba(64, 64, 64, 0.8);
+   max-width: 20em;
 }
 .hern-product-card-custom-area {
    position: absolute;
@@ -102,8 +103,7 @@
    flex-direction: column;
    height: auto;
    min-width: 60px;
-   top: 0;
-   right: 0;
+   right: 1em;
    align-items: center;
 }
 .hern-product-card-custom-text {
