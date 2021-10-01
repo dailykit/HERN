@@ -18,7 +18,8 @@ import {
    Layout,
    Tags,
    UpcomingExperience,
-   InvitePollFeed
+   InvitePollFeed,
+   Carousel
 } from '../components'
 import {
    PollRecyclerView,
@@ -118,6 +119,24 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
          }
       })
 
+   useEffect(() => {
+      if (parsedData.length && typeof document !== 'undefined') {
+         /*Filter undefined scripts*/
+         const scripts = parsedData.flatMap(fold => fold.scripts)
+         const filterScripts = scripts.filter(Boolean)
+         if (Boolean(filterScripts.length)) {
+            const fragment = document.createDocumentFragment()
+            filterScripts.forEach(script => {
+               const s = document.createElement('script')
+               s.setAttribute('type', 'text/javascript')
+               s.setAttribute('src', script)
+               fragment.appendChild(s)
+            })
+            document.body.appendChild(fragment)
+         }
+      }
+   }, [parsedData])
+
    if (error || expertByCategoryError || selectedTagsQueryError) {
       console.log(error || expertByCategoryError || selectedTagsQueryError)
    }
@@ -132,7 +151,7 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
                      parsedData.find(fold => fold.id === 'home-top-01')?.content
                   )}
             </div>
-            <GreetingDiv>
+            {/* <GreetingDiv>
                <div className="forDesktop">
                   {isAuthenticated ? (
                      <>
@@ -185,7 +204,7 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
                      </>
                   )}
                </div>
-            </GreetingDiv>
+            </GreetingDiv> */}
             <div ref={homeTop02} id="home-top-02">
                {Boolean(parsedData.length) &&
                   ReactHtmlParser(
@@ -212,6 +231,9 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
                      />
                   </Flex>
                )}
+               <Carousel
+                  data={categories[0]?.experience_experienceCategories}
+               />
                {categories.map(category => {
                   return (
                      <GridViewWrapper key={category.title}>
@@ -395,9 +417,7 @@ export const getStaticProps = async () => {
    }
    const navigationMenuItems = await getNavigationMenuItems(domain)
    const bannerData = await getBannerData(where)
-   console.log({ bannerData })
    const parsedData = await fileParser(bannerData)
-   console.log({ parsedData })
 
    return {
       props: {

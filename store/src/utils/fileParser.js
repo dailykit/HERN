@@ -7,7 +7,6 @@ const fetchFile = fold => {
 
       // const url = get_env('EXPRESS_URL')  not working since get_env works only on client side
       const url = 'https://testhern.dailykit.org'
-      console.log({ url: `${url}/template/files${path}` })
       const { data } = await axios.get(`${url}/template/files${path}`)
 
       // add css links + html
@@ -25,7 +24,7 @@ const fetchFile = fold => {
       )
 
       if (data) {
-         resolve({ id: fold.id, content: data, scripts })
+         resolve({ id: fold.id, content: parsedData, scripts })
       } else {
          reject('Failed to load file')
       }

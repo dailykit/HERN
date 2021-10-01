@@ -1,9 +1,16 @@
 module.exports = {
-   webpack: config => {
+   webpack: (config, { webpack }) => {
       config.module.rules.push({
          test: /\.svg$/,
          use: ['@svgr/webpack']
       })
+      config.plugins.push(
+         new webpack.ProvidePlugin({
+            $: 'jquery',
+            jQuery: 'jquery',
+            'window.jQuery': 'jquery'
+         })
+      )
       config.resolve.fallback = {
          ...config.resolve.fallback,
          fs: false

@@ -38,6 +38,7 @@
       "react-html-parser": "^2.0.2",
       "react-masonry-component": "^6.2.1",
       "react-masonry-css": "^1.0.14",
+      "react-owl-carousel": "^2.3.3",
       "react-player": "^2.9.0",
       "react-router-dom": "^5.2.0",
       "react-router-hash-link": "^2.4.0",
