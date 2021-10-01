@@ -169,12 +169,12 @@ const MetadataTunnel = ({ tunnels, TunnelState, closeTunnel, data }) => {
                   action: () => save(),
                }}
                tooltip={
-                  <Tooltip identifier="form_subscription_tunnel_item_create" />
+                  <Tooltip identifier="form_subscription_tunnel_metadetails_create" />
                }
             />
-            <Banner id="subscription-app-create-subscription-item-count-tunnel-top" />
-            <Flex container flexWrap="wrap" padding="36.64px">
-               <div style={{ paddingRight: '15px', paddingBottom: '20px' }}>
+            <Banner id="subscription-app-add-metadetails-tunnel-top" />
+            <Flex container flexWrap="wrap" padding="36.64px 0 36.64px 36.64px">
+               <div style={{ paddingRight: '33px', paddingBottom: '80px' }}>
                   <Form.Group>
                      <Form.Label htmlFor="tags" title="tags">
                         <Flex container alignItems="center">
@@ -224,19 +224,14 @@ const MetadataTunnel = ({ tunnels, TunnelState, closeTunnel, data }) => {
                      </span>
                      <Tooltip identifier="form_subscription_tunnel_icon" />
                   </Form.Label>
-                  <Flex style={{ marginTop: '4px' }}>
+                  <Flex style={{ marginTop: '6px' }}>
                      {form.icon ? (
                         <ImageContainer
-                           width="170px"
+                           border="none"
                            height="120px"
                            padding="0px"
                         >
-                           <div
-                              style={{
-                                 width: 'min-content',
-                                 background: 'transparent',
-                              }}
-                           >
+                           <div>
                               <IconButton
                                  style={{ background: 'transparent' }}
                                  size="sm"
@@ -305,19 +300,15 @@ const MetadataTunnel = ({ tunnels, TunnelState, closeTunnel, data }) => {
                         <Tooltip identifier="form_subscription_tunnel_coverImage" />
                      </Flex>
                   </Form.Label>
-                  <Flex style={{ marginTop: '4px' }}>
+                  <Flex style={{ marginTop: '6px' }}>
                      {form.coverImage ? (
                         <ImageContainer
+                           border="none"
                            width="314px"
                            height="190px"
                            padding="0px"
                         >
-                           <div
-                              style={{
-                                 width: 'min-content',
-                                 background: 'transparent',
-                              }}
-                           >
+                           <div>
                               <IconButton
                                  style={{ background: 'transparent' }}
                                  size="sm"
