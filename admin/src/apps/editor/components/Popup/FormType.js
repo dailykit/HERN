@@ -1,6 +1,7 @@
 import React from 'react'
 import { Flex, Spacer, TextButton, ButtonGroup, Form } from '@dailykit/ui'
 import { Popup } from '../../../../shared/components'
+import { get_env } from '../../../../shared/utils'
 import { TreeSelect } from 'antd'
 import 'antd/dist/antd.css'
 
@@ -43,7 +44,7 @@ export default function FormType({
          const result = [
             {
                title: 'Root',
-               value: './templates',
+               value: get_env('REACT_APP_ROOT_FOLDER'),
             },
             ...treeViewData,
          ]

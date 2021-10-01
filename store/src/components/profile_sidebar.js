@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import tw, { styled, css } from 'twin.macro'
 import { useConfig } from '../lib'
 import { getRoute } from '../utils'
+import classNames from 'classnames'
 
 export const ProfileSidebar = ({ toggle = true, logout }) => {
    const { configOf } = useConfig()
@@ -35,47 +35,29 @@ export const ProfileSidebar = ({ toggle = true, logout }) => {
    ])
 
    return (
-      <Aside toggle={toggle}>
+      <aside className={`hern-profile-sidebar${toggle ? '--toggle' : ''}`}>
          <ul>
-            {menu.map(node => (
-               <Link href={getRoute(node.href)} key={node.href} passHref>
-                  <MenuLink
-                     css={
-                        getRoute(node.href) === `${router.pathname}/` &&
-                        tw`bg-gray-300`
-                     }
-                  >
-                     {node.title}
-                  </MenuLink>
-               </Link>
-            ))}
+            {menu.map(node => {
+               const isActive =
+                  `/[brand]${getRoute(node.href)}` === `${router.pathname}/`
+
+               const manuItemClasses = classNames(
+                  'hern-profile-sidebar__menu-link',
+                  { 'hern-profile-sidebar__menu-link--active': isActive }
+               )
+               return (
+                  <Link href={getRoute(node.href)} key={node.href} passHref>
+                     <span className={manuItemClasses}>{node.title}</span>
+                  </Link>
+               )
+            })}
             <button
-               css={tw`text-red-600 rounded pl-3 py-1 md:hidden block`}
+               className="hern-profile-sidebar__logout-btn"
                onClick={logout}
             >
                Logout
             </button>
          </ul>
-      </Aside>
+      </aside>
    )
 }
-
-const MenuLink = styled.a`
-   ${tw`pl-3 flex items-center w-full h-12`}
-`
-const Aside = styled.aside(
-   ({ toggle }) => css`
-      ${tw`bg-gray-100 border-r block z-30`}
-      ${toggle
-         ? tw`hidden md:block`
-         : tw`block md:hidden md:static absolute top-16 right-0 bottom-0 left-0`}
-       ${!toggle &&
-      `
-            left: -100px;
-            animation: slide 0.5s forwards;
-            @keyframes slide {
-               100% { left: 0; }
-            }
-         `}
-   `
-)

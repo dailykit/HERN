@@ -12,6 +12,7 @@ import { StyledCardList, StyledHome } from './styled'
 import { Banner, InlineLoader } from '../../../../shared/components'
 import { logger } from '../../../../shared/utils'
 import { useTabs } from '../../../../shared/providers'
+import { BlocksSvg, NavbarMenuSvg, PagesSvg, SettingsSvg, SubscriptionSvg } from '../../../../shared/assets/illustrationTileSvg'
 
 export const Home = () => {
    const { addTab } = useTabs()
@@ -72,24 +73,29 @@ export const Home = () => {
                title="Pages"
                count={pageCount}
                onClick={() => addTab('Pages', '/content/pages')}
+               tileSvg={<PagesSvg />}
             />
             <DashboardTile
                title="Subscription"
                count={foldCount}
                onClick={() => addTab('Subscription', '/content/subscription')}
+               tileSvg={<SubscriptionSvg />}
             />
             <DashboardTile
                title="Navbar Menu"
                count={menuCount}
                onClick={() => addTab('Navbar Menu', '/content/navbarMenu')}
+               tileSvg={<NavbarMenuSvg />}
             />
             <DashboardTile
                title="Settings"
                onClick={() => addTab('Settings', '/content/settings')}
+               tileSvg={<SettingsSvg />}
             />
             <DashboardTile
                title="Blocks"
                onClick={() => addTab('Blocks', '/content/blocks')}
+               tileSvg={<BlocksSvg />}
             />
          </StyledCardList>
          <Banner id="content-app-home-bottom" />

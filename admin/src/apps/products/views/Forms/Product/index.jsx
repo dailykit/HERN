@@ -36,6 +36,7 @@ import validator from './validators'
 import ComboProductComponents from './ComboProductComponents'
 import { CloneIcon } from '../../../../../shared/assets/icons'
 import { InventoryBundleProvider } from '../../../context/product/inventoryBundle'
+import ProductInsight from './components/Insight'
 
 const Product = () => {
    const { id: productId } = useParams()
@@ -230,37 +231,80 @@ const Product = () => {
          <ModifiersProvider>
             <InventoryBundleProvider>
                <Banner id="products-app-single-product-top" />
-              
-               <ResponsiveFlex>
-                  <Form.Group>
-                     <Form.Label htmlFor="title" title="title">
-                        Product Name*
-                     </Form.Label>
-                     <Form.Text
-                        id="title"
-                        name="title"
-                        value={title.value}
-                        placeholder="Enter product name"
-                        onChange={e =>
-                           setTitle({ ...title, value: e.target.value })
-                        }
-                        onBlur={updateName}
-                        hasError={!title.meta.isValid && title.meta.isTouched}
-                     />
-                     {title.meta.isTouched &&
-                        !title.meta.isValid &&
-                        title.meta.errors.map((error, index) => (
-                           <Form.Error key={index}>{error}</Form.Error>
-                        ))}
-                  </Form.Group>
-                  <Spacer xAxis size="16px" />
-                  
-               
-                  <div style={{marginTop: '28px'}}>
+
+               <ResponsiveFlex
+                  container
+                  justifyContent="space-between"
+                  alignItems="center"
+                  padding="16px 0"
+                  maxWidth="1280px"
+                  width="calc(100vw - 64px)"
+                  margin="0 auto"
+                  style={{ borderBottom: '1px solid #f3f3f3' }}
+               >
+                  <Flex
+                     container
+                     as="header"
+                     justifyContent="space-between"
+                     width="100%"
+                     style={{ marginLeft: '4px' }}
+                  >
+                     <Form.Group>
+                        <Form.Text
+                           id="title"
+                           name="title"
+                           value={title.value}
+                           variant="revamp"
+                           placeholder="Enter product title"
+                           onChange={e =>
+                              setTitle({ ...title, value: e.target.value })
+                           }
+                           onBlur={updateName}
+                           hasError={
+                              !title.meta.isValid && title.meta.isTouched
+                           }
+                           style={{ width: '150%', textAlign: 'left' }}
+                        />
+                        {title.meta.isTouched &&
+                           !title.meta.isValid &&
+                           title.meta.errors.map((error, index) => (
+                              <Form.Error key={index}>{error}</Form.Error>
+                           ))}
+                     </Form.Group>
+
+                     <Form.Toggle
+                        name="published"
+                        value={state.isPublished}
+                        onChange={togglePublish}
+                     >
+                        <Flex
+                           container
+                           alignItems="center"
+                           style={{ paddingRight: '0px' }}
+                        >
+                           Published
+                           <Tooltip identifier="simple_recipe_product_publish" />
+                        </Flex>
+                     </Form.Toggle>
+                  </Flex>
+               </ResponsiveFlex>
+
+               <ResponsiveFlex
+                  container
+                  alignItems="center"
+                  padding="16px 0"
+                  maxWidth="1280px"
+                  width="calc(100vw - 64px)"
+                  margin="0 auto"
+                  style={{ borderBottom: '1px solid #f3f3f3' }}
+               >
+                  <Flex container alignItems="center" height="100%">
                      {state.isValid?.status ? (
                         <Flex container alignItems="center">
                            <TickIcon color="#00ff00" stroke={2} />
-                           <Text as="p" style={{marginBottom: '0'}}>All good!</Text>
+                           <Text as="p" style={{ marginBottom: '0' }}>
+                              All good!
+                           </Text>
                         </Flex>
                      ) : (
                         <Flex container alignItems="center">
@@ -268,18 +312,13 @@ const Product = () => {
                            <Text as="p">{state.isValid?.error}</Text>
                         </Flex>
                      )}
-                  </div>
-                  {/* <Spacer size="16px" /> */}
+                     <Spacer xAxis size="16px" />
 
-                  
-                 
-                     <Flex container alignItems="center" style={{marginTop: '29px', 
-                     marginRight:'5px'}}>
                      <Form.Checkbox
                         name="popup"
                         value={state.isPopupAllowed}
                         onChange={togglePopup}
-                     >                        
+                     >
                         <Flex container alignItems="center">
                            Popup Allowed
                            <Tooltip identifier="simple_recipe_product_popup_checkbox" />
@@ -287,33 +326,20 @@ const Product = () => {
                      </Form.Checkbox>
                      {state.type === 'simple' && (
                         <>
-                           <Spacer xAxis size="16px" />
                            <ComboButton
                               type="ghost"
                               size="sm"
                               onClick={clone}
                               isLoading={cloning}
+                              style={{ padding: '7px 0px 7px 16px' }}
                            >
                               <CloneIcon color="#00A7E1" />
                               Clone Product
                            </ComboButton>
                         </>
                      )}
-                     <Spacer xAxis size="16px" />
-                     <Form.Toggle
-                        name="published"
-                        value={state.isPublished}
-                        onChange={togglePublish}
-                     >
-                        <Flex container alignItems="center" style={{paddingRight: "0px"}}>
-                           Published
-                           {/* <Spacer xAxis size="12px" /> */}
-                           <Tooltip identifier="simple_recipe_product_publish" />
-                        </Flex>
-                     </Form.Toggle>
-                   </Flex>
+                  </Flex>
                </ResponsiveFlex>
-               
 
                <Flex
                   as="main"
@@ -346,14 +372,15 @@ const Product = () => {
                            <Banner id="products-app-create-product-options-tab-bottom" />
                         </HorizontalTabPanel>
                         <HorizontalTabPanel>
-                           <InsightDashboard
+                           <ProductInsight productId={productId} />
+                           {/* <InsightDashboard
                               appTitle="Products App"
                               moduleTitle="Product Page"
                               variables={{
                                  productId,
                               }}
                               showInTunnel={false}
-                           />
+                           /> */}
                         </HorizontalTabPanel>
                      </HorizontalTabPanels>
                   </HorizontalTabs>

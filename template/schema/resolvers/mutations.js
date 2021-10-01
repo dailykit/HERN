@@ -74,9 +74,9 @@ const resolvers = {
       },
       renameFolder: async (_, args, { root }) => {
          try {
-            const oldFiles = await getFilePaths(
-               `${root}${args.oldPath}`
-            ).map(path => path.replace(new RegExp(root), ''))
+            const oldFiles = await getFilePaths(`${root}${args.oldPath}`).map(
+               path => path.replace(new RegExp(root), '')
+            )
 
             console.log(oldFiles)
             // File System
@@ -86,9 +86,9 @@ const resolvers = {
             )
 
             // Git
-            const newFiles = await getFilePaths(
-               `${root}${args.newPath}`
-            ).map(path => path.replace(new RegExp(root), ''))
+            const newFiles = await getFilePaths(`${root}${args.newPath}`).map(
+               path => path.replace(new RegExp(root), '')
+            )
             const author = {
                name: 'placeholder',
                email: 'placeholder@example.com'
@@ -148,6 +148,7 @@ const resolvers = {
       },
       createFile: async (_, args, { root }) => {
          try {
+            console.log('from createFile mutation', { args })
             // Filesystem
             await dailygit.files.createFile(`${root}${args.path}`, args.content)
 

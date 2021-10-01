@@ -1,0 +1,255 @@
+.hern-cards__main {
+   display: grid;
+   grid-template-rows: 1fr;
+   min-height: calc(100vh - 64px);
+   grid-template-columns: 240px 1fr;
+   @media (max-width: 768px) {
+      display: block;
+   }
+}
+.hern-cards__content {
+   padding: 0 0.75rem;
+}
+.hern-cards__header {
+   margin-top: 1.5rem;
+   margin-bottom: 0.75rem;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+}
+.hern-cards__header__title {
+   color: rgba(5, 150, 105, 1);
+   font-size: 1.5rem;
+   line-height: 2rem;
+}
+.hern-cards__card-list {
+   @media (min-width: 640px) {
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+   }
+   @media (min-width: 768px) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+   }
+   @media (min-width: 1024px) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+   }
+   display: grid;
+   gap: 0.5rem;
+   grid-auto-rows: minmax(120px, auto);
+}
+.hern-cards__card-list-item {
+   display: -webkit-box;
+   display: -webkit-flex;
+   display: -ms-flexbox;
+   display: flex;
+   border-width: 1px;
+   color: rgba(55, 65, 81, 1);
+}
+
+.hern-cards__card {
+   padding: 0.5rem;
+   width: 100%;
+}
+.hern-cards__card__header {
+   margin-bottom: 0.5rem;
+   width: 100%;
+   display: -webkit-box;
+   display: -webkit-flex;
+   display: -ms-flexbox;
+   display: flex;
+   -webkit-box-pack: justify;
+   -webkit-justify-content: space-between;
+   -ms-flex-pack: justify;
+   justify-content: space-between;
+   -webkit-align-items: center;
+   -webkit-box-align: center;
+   -ms-flex-align: center;
+   align-items: center;
+}
+.hern-cards__card__default-tag {
+   border-radius: 0.25rem;
+   border-width: 1px;
+   background-color: rgba(178, 245, 234, 1);
+   border-color: rgba(129, 230, 217, 1);
+   padding-left: 0.5rem;
+   padding-right: 0.5rem;
+   color: rgba(44, 122, 123, 1);
+}
+.hern-cards__card__makedefault-btn {
+   margin-bottom: 0.5rem;
+   border-radius: 0.25rem;
+   border-width: 1px;
+   border-color: rgba(251, 211, 141, 1);
+   padding-left: 0.5rem;
+   padding-right: 0.5rem;
+   color: rgba(44, 122, 123, 1);
+   cursor: pointer;
+   &:hover {
+      background-color: rgba(251, 211, 141, 1);
+      color: rgba(123, 52, 30, 1);
+   }
+}
+.hern-cards__card__delete-btn {
+   display: -webkit-box;
+   display: -webkit-flex;
+   display: -ms-flexbox;
+   display: flex;
+   -webkit-align-items: center;
+   -webkit-box-align: center;
+   -ms-flex-align: center;
+   align-items: center;
+   -webkit-box-pack: center;
+   -webkit-justify-content: center;
+   -ms-flex-pack: center;
+   justify-content: center;
+   border-width: 1px;
+   border-color: rgba(248, 113, 113, 1);
+   border-radius: 0.25rem;
+   height: 1.5rem;
+   width: 1.5rem;
+   svg {
+      stroke: currentColor;
+   }
+   &:hover {
+      background-color: rgba(248, 113, 113, 1);
+      svg {
+         color: rgba(255, 255, 255, 1);
+      }
+   }
+}
+.hern-cards__card__body {
+   display: -webkit-box;
+   display: -webkit-flex;
+   display: -ms-flexbox;
+   display: flex;
+   -webkit-align-items: center;
+   -webkit-box-align: center;
+   -ms-flex-align: center;
+   align-items: center;
+   -webkit-box-pack: justify;
+   -webkit-justify-content: space-between;
+   -ms-flex-pack: justify;
+   justify-content: space-between;
+}
+.hern-cards__card__name {
+   font-size: 1.25rem;
+   line-height: 1.75rem;
+   margin-top: 0.5rem;
+   margin-bottom: 0.5rem;
+}
+.hern-cards__card__exp {
+   display: flex;
+   align-items: center;
+}
+.hern-cards__card__exp-month {
+   font-weight: 500;
+}
+.hern-cards__card__exp-year {
+   font-weight: 500;
+}
+.hern-cards__card__last-4 {
+   > span {
+      color: rgba(107, 114, 128, 1);
+   }
+}
+.hern-cards__payment-tunnel__close-btn {
+   border-width: 1px;
+   width: 2.5rem;
+   height: 2.5rem;
+   display: -webkit-box;
+   display: -webkit-flex;
+   display: -ms-flexbox;
+   display: flex;
+   -webkit-align-items: center;
+   -webkit-box-align: center;
+   -ms-flex-align: center;
+   align-items: center;
+   -webkit-box-pack: center;
+   -webkit-justify-content: center;
+   -ms-flex-pack: center;
+   justify-content: center;
+   border-radius: 9999px;
+   &:hover {
+      background-color: rgba(243, 244, 246, 1);
+   }
+   svg {
+      stroke: currentColor;
+      color: rgba(6, 95, 70, 1);
+   }
+}
+.hern-cards__setup-form {
+   display: block;
+}
+
+.hern-cards__setup-form__body {
+   background-color: rgba(17, 24, 39, 1);
+   padding: 0.75rem;
+   border-radius: 0.5rem;
+}
+.hern-cards__setup-form__card-holder-name {
+   margin-bottom: 0.75rem;
+}
+.hern-cards__setup-form__card-holder-name__label {
+   display: block;
+   font-size: 0.875rem;
+   line-height: 1.25rem;
+   color: rgba(107, 114, 128, 1);
+}
+.hern-cards__setup-form__card-holder-name__input {
+   width: 100%;
+   background-color: rgba(0, 0, 0, 0);
+   border-bottom-width: 1px;
+   border-color: rgba(31, 41, 55, 1);
+   height: 2.5rem;
+   color: rgba(255, 255, 255, 1);
+   &:focus {
+      outline: 2px solid transparent;
+      outline-offset: 2px;
+   }
+}
+.hern-cards__setup-form__submit-btn {
+   margin-top: 0.75rem;
+   width: 100%;
+   height: 2.5rem;
+   background-color: rgba(37, 99, 235, 1);
+   font-size: 0.875rem;
+   line-height: 1.25rem;
+   padding-top: 0.25rem;
+   padding-bottom: 0.25rem;
+   color: rgba(255, 255, 255, 1);
+   text-transform: uppercase;
+   font-weight: 500;
+   -webkit-letter-spacing: 0.05em;
+   -moz-letter-spacing: 0.05em;
+   -ms-letter-spacing: 0.05em;
+   letter-spacing: 0.05em;
+   border-radius: 0.25rem;
+}
+.hern-cards__setup-form__error {
+   display: block;
+   margin-top: 0.5rem;
+   color: rgba(239, 68, 68, 1);
+}
+
+.hern-cards__payment-tunnel__card-section {
+   .StripeElement {
+      height: 40px;
+      width: 100%;
+      color: #fff;
+      padding: 10px 0;
+      background-color: #1a202c;
+      border-bottom: 1px solid #2d3748;
+   }
+
+   .StripeElement--invalid {
+      border-color: #fa755a;
+   }
+
+   .StripeElement--webkit-autofill {
+      background-color: #fefde5 !important;
+   }
+}
+.hern-cards__payment-tunnel__card-section__heading {
+   font-size: 0.875rem;
+   line-height: 1.25rem;
+   color: rgba(107, 114, 128, 1);
+}

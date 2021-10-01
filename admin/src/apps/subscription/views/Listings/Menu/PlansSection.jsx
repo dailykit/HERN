@@ -353,10 +353,11 @@ const PlansSection = () => {
                rowSelected={handleRowSelection}
                rowDeselected={handleRowDeselection}
                data={subscriptionOccurences.nodes}
-               // selectableCheck={handleRowValidation}
+               selectableCheck={handleRowValidation}
                options={{
                   ...tableOptions,
                   reactiveData: true,
+                  selectable: true,
                   groupBy:
                      'subscription.itemCount.serving.subscriptionTitle.title',
                }}

@@ -40,8 +40,8 @@ const RecentOrderTable = () => {
                newOrder.id = order.id
                newOrder.created_at = moment(order.created_at).format('ll')
                newOrder.customerName = `${
-                  order.cart.customerInfo.customerFirstName || 'N/A'
-               } ${order.cart.customerInfo.customerLastName}`
+                  order.cart.customerInfo?.customerFirstName || 'N/A'
+               } ${order.cart.customerInfo?.customerLastName || ''}`
                switch (order.cart.status) {
                   case 'ORDER_PENDING':
                      newOrder.status = 'Pending'

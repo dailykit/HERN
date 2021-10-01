@@ -1,12 +1,11 @@
 import React from 'react'
-import tw, { styled } from 'twin.macro'
 import { useRouter } from 'next/router'
 import { useLazyQuery } from '@apollo/react-hooks'
 import { useToasts } from 'react-toast-notifications'
 
 import { isClient } from '../../utils'
 import { INVENTORY_DETAILS } from '../../graphql'
-import { Loader } from '../../components'
+import { HelperBar, Loader } from '../../components'
 
 export const Inventory = () => {
    const router = useRouter()
@@ -40,53 +39,37 @@ export const Inventory = () => {
 
    if (!inventory) {
       return (
-         <h1 tw="py-4 text-2xl text-gray-600 text-center">
-            No such inventory exists!
-         </h1>
+         <main className="hern-inventory">
+            <HelperBar type="info">
+               <HelperBar.Title>No such inventory exists!</HelperBar.Title>
+            </HelperBar>
+         </main>
       )
    }
    return (
       <>
-         <InventoryContainer>
-            <h1 tw="py-4 text-2xl md:text-3xl tracking-wide text-teal-900">
+         <main className="hern-inventory">
+            <h1 className="hern-inventory__title">
                {inventory?.cartItem?.name}
             </h1>
-            <InventoryImage>
+            <div className="hern-inventory__img__wrapper">
                {inventory?.cartItem.image ? (
                   <img
+                     className="hern-inventory__img"
                      src={inventory?.cartItem.image}
                      alt={inventory?.cartItem.name}
-                     tw="w-full h-full border-gray-100 object-cover rounded-lg"
                   />
                ) : (
                   'N/A'
                )}
-            </InventoryImage>
-         </InventoryContainer>
-         <Button onClick={() => isClient && window.history.go(-1)}>
+            </div>
+         </main>
+         <button
+            className="hern-inventory__go-back-btn"
+            onClick={() => isClient && window.history.go(-1)}
+         >
             Go back to menu
-         </Button>
+         </button>
       </>
    )
 }
-
-const InventoryContainer = styled.div`
-   margin: auto;
-   max-width: 640px;
-   padding: 16px 0;
-   width: calc(100vw - 40px);
-   min-height: calc(100vh - 128px);
-`
-
-const InventoryImage = styled.div`
-   height: 320px;
-   @media (max-width: 567px) {
-      height: 240px;
-   }
-`
-
-const Button = styled.button`
-   left: 50%;
-   bottom: 16px;
-   ${tw`fixed bg-green-600 rounded text-white px-4 h-10 hover:bg-green-700`}
-`
