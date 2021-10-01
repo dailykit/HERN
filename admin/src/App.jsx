@@ -16,6 +16,7 @@ import {
 import {
    AppItem,
    AppList,
+   AppIcon,
    Layout,
    InsightDiv,
    DashboardPanel,
@@ -27,6 +28,12 @@ import BottomBar from './shared/components/BottomBar'
 import DashboardCards from './shared/components/DashboardCardAnalytics'
 import { useAuth } from './shared/providers'
 import DashboardTables from './shared/components/DashboardTables'
+import {
+   BrandAppIcon, CartsAppIcon, CustomersAppIcon, HomeAppIcon, InventoryAppIcon, MenuAppIcon,
+   OrderAppIcon, ProductsAppIcon, ReportsAppIcon, SettingAppIcon, StoreAppIcon,
+   SubscriptionAppIcon
+} from '../src/shared/assets/navBarIcons'
+import { useLocation } from 'react-router-dom'
 
 const APPS = gql`
    subscription apps {
@@ -96,11 +103,77 @@ const Carts = Loadable({
    loader: () => import('./apps/carts'),
    loading: Loader,
 })
+const appIcons = {
 
+   "data": [
+      {
+         title: "Home",
+         icon: <HomeAppIcon active={() => {
+            const { pathname } = useLocation()
+            return pathname === '/'
+         }} />,
+         path: '/',
+      },
+      {
+         title: "Orders",
+         icon: <OrderAppIcon />,
+         path: '/order',
+      },
+      {
+         title: "Products",
+         icon: <ProductsAppIcon />,
+         path: '/products',
+      },
+      {
+         title: "Inventory",
+         icon: <InventoryAppIcon />,
+         path: '/inventory',
+      },
+      {
+         title: "Subscription",
+         icon: <SubscriptionAppIcon />,
+         path: '/subscription',
+      },
+      {
+         title: "Customer",
+         icon: <CustomersAppIcon />,
+         path: '/crm',
+      },
+      {
+         title: "Menu",
+         icon: <MenuAppIcon />,
+         path: '/menu',
+      },
+      {
+         title: "Brand",
+         icon: <BrandAppIcon />,
+         path: '/brands',
+      },
+      {
+         title: "Reports",
+         icon: <ReportsAppIcon />,
+         path: '/insights',
+      },
+      {
+         title: "Carts",
+         icon: <CartsAppIcon />,
+         path: '/carts',
+      },
+      {
+         title: "Settings",
+         icon: <SettingAppIcon />,
+         path: '/settings',
+      },
+      {
+         title: "View Store",
+         icon: <StoreAppIcon />
+      },
+   ]
+}
 const App = () => {
    // const location = useLocation()
    // const { routes, setRoutes } = useTabs()
-
+   const { pathname } = useLocation()
    const [open, toggle] = React.useState(false)
    const { loading, data: { apps = [] } = {} } = useSubscription(APPS)
    const { user } = useAuth()
@@ -115,12 +188,12 @@ const App = () => {
                   <HomeContainer>
                      <NavMenuPanel>
                         <AppList open={open}>
-                           {apps.map(app => (
-                              <AppItem key={app.id}>
-                                 <Link to={app.route}>
-                                    {app.icon && (
-                                       <img src={app.icon} alt={app.title} />
-                                    )}
+                           {appIcons.data.map(app => (
+                              <AppItem
+                                 active={app.title === 'Home'}
+                                 key={app.id}>
+                                 <Link to={app.path}>
+                                    <AppIcon>{app.icon}</AppIcon>
                                     <span>{app.title}</span>
                                  </Link>
                               </AppItem>
