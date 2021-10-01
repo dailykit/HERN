@@ -91,7 +91,7 @@ const Listing = () => {
                if (customerInfo?.customerLastName) {
                   name += ' ' + customerInfo?.customerLastName
                }
-               return name.trim() || 'N/A'
+               return name?.trim() || 'N/A'
             },
             headerFilter: true,
             headerTooltip: column => {
