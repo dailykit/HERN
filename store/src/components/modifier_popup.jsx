@@ -32,6 +32,7 @@ export const ModifierPopup = props => {
       const selectedOption = {
          modifierCategoryID: eachCategory.id,
          modifierCategoryOptionsID: eachOption.id,
+         modifierCategoryOptionsPrice: eachOption.price,
       }
       //modifierCategoryOptionID
       //modifierCategoryID
@@ -100,6 +101,10 @@ export const ModifierPopup = props => {
       }
    }
    const handleAddOnCartOn = () => {
+      if (!productOption.modifier) {
+         console.log('PASS')
+         return
+      }
       //check category fulfillment conditions
       const allSelectedOptions = [
          ...selectedOptions.single,
@@ -137,7 +142,20 @@ export const ModifierPopup = props => {
          console.log('PASS')
       }
    }
-
+   const totalAmount = () => {
+      const productOptionPrice = productOption.price
+      const allSelectedOptions = [
+         ...selectedOptions.single,
+         ...selectedOptions.multiple,
+      ]
+      let allSelectedOptionsPrice = 0
+      allSelectedOptions.forEach(
+         x => (allSelectedOptionsPrice += x?.modifierCategoryOptionsPrice || 0)
+      )
+      const totalPrice =
+         productOptionPrice + allSelectedOptionsPrice + productData.price
+      return formatCurrency(totalPrice)
+   }
    return (
       <>
          <div
@@ -299,7 +317,7 @@ export const ModifierPopup = props => {
                className="hern-product-modifier-pop-up-add-to-cart-btn"
                onClick={handleAddOnCartOn}
             >
-               Add To Cart
+               ADD TO CART {totalAmount()}
             </Button>
             {modifierImage.showImage && (
                <div className="hern-product-modifier-image-pop-up">
