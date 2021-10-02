@@ -110,7 +110,7 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
                data: { experiences_experienceCategory = [] } = {}
             } = {}
          } = {}) => {
-            setExperts(experiences_experienceCategory[0]?.experts)
+            setExperts(experiences_experienceCategory)
          }
       })
 
@@ -221,22 +221,18 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
                      keyname="experience_experienceCategories"
                   />
                )}
-               {/* {!isEmpty(experts) && (
+               {!isEmpty(experts) && (
                   <RenderCard
-                     data={categories
-                        .map(
-                           category => category?.experience_experienceCategories
-                        )
-                        .flat()}
-                     data={experts}
-                     type="experts"
+                     data={experts.map(expert => expert?.experts).flat()}
+                     // data={experts}
+                     type="expert"
                      layout="carousel"
                      showCategorywise={false}
                      keyname="expert"
                   />
-               )} */}
+               )}
 
-               <GridViewWrapper>
+               {/* <GridViewWrapper>
                   <Flex
                      container
                      flexDirection="column"
@@ -283,7 +279,7 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
                         color={theme.colors.textColor}
                      />
                   </Flex>
-               </GridViewWrapper>
+               </GridViewWrapper> */}
                {!isEmpty(customerSelectedTags) &&
                   !isEmpty(customerSelectedTags[0]?.tags) && (
                      <CategorySection>

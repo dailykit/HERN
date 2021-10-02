@@ -43,7 +43,7 @@ const Carousel = ({ data = [], type = 'experience' }) => {
                   return (
                      <div className="item" key={index}>
                         <Card
-                           boxShadow="true"
+                           boxShadow={false}
                            key={index}
                            type={type}
                            data={item}

@@ -20,6 +20,7 @@ module.exports = {
    images: {
       domains: [
          'dailykit-239-primanti.s3.us-east-2.amazonaws.com',
+         'dailykit-133-test.s3.us-east-2.amazonaws.com',
          'via.placeholder.com',
          'ui-avatars.com'
       ]

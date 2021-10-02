@@ -217,7 +217,7 @@ export default function Experiences({
                                                    `/experiences/${data?.experience?.id}`
                                                 )
                                              }
-                                             boxShadow="true"
+                                             boxShadow={true}
                                              key={`${data?.experience?.title}-${data?.experience?.id}`}
                                              type="experience"
                                              data={data}

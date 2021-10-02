@@ -56,9 +56,9 @@ const CategoryWise = ({
                               {category[keyname].map((item, index) => {
                                  return (
                                     <Card
-                                       boxShadow="true"
+                                       boxShadow={false}
                                        key={index}
-                                       type="experience"
+                                       type={type}
                                        data={item}
                                     />
                                  )
@@ -126,9 +126,9 @@ export default function RenderCard({
                      {data.map((item, index) => {
                         return (
                            <Card
-                              boxShadow="true"
+                              boxShadow={false}
                               key={index}
-                              type="experience"
+                              type={type}
                               data={item}
                            />
                         )

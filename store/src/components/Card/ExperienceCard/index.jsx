@@ -66,7 +66,7 @@ export default function ExperienceCard({ cardDetails, ...props }) {
             >
                {expert ? (
                   <div className="expertImgDiv">
-                     {Boolean(expert?.assets?.images.length) && (
+                     {/* {Boolean(expert?.assets?.images.length) && (
                         <Image
                            className="expert-img"
                            src={
@@ -74,8 +74,9 @@ export default function ExperienceCard({ cardDetails, ...props }) {
                               `https://ui-avatars.com/api/?name=${expert?.firstName}+${expert?.lastName}&background=fff&color=15171F&size=500&rounded=true`
                            }
                            alt="expert-img"
+                           layout="fill"
                         />
-                     )}
+                     )} */}
                      <p>{`${expert?.firstName} ${expert?.lastName}`}</p>
                   </div>
                ) : (
@@ -122,7 +123,7 @@ export default function ExperienceCard({ cardDetails, ...props }) {
                      ?.minimumBookingAmount || 0}
                </p>
             </Flex>
-            <p className="book-exp">Book</p>
+            {/* <p className="book-exp">Book</p> */}
          </CardBody>
       </Card>
    )

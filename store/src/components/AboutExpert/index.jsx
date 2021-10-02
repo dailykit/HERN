@@ -4,19 +4,21 @@ import parse from 'html-react-parser'
 import { Wrapper } from './styles'
 import ReadMoreDiv from '../ReadMoreDiv'
 import Button from '../Button'
+import Image from 'next/image'
 
 export default function AboutExpert({ expert, expertCategory }) {
    const router = useRouter()
    return (
       <Wrapper bg_mode="light">
          <div className="imageWrapper">
-            <img
+            <Image
                className="expertImg"
                src={
                   expert?.assets?.images[0] ||
                   `https://ui-avatars.com/api/?name=${expert?.firstName}+${expert?.lastName}&background=fff&color=15171F&size=500`
                }
                alt={`${expert?.firstName} ${expert?.lastName}-img`}
+               layout="fill"
             />
          </div>
          <div className="expertInfo">
