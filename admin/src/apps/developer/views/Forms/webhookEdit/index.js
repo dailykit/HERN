@@ -4,7 +4,7 @@ import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import {logger}  from '../../../../../shared/utils'
 import InvocationLogs from './components/invocationLogs'
-import ProcessedEvents from './components/processedEvents'
+// import ProcessedEvents from './components/processedEvents'
 import {Modify} from './components/modify'
 import {
    Flex,
@@ -73,9 +73,9 @@ const WebhookEdit = ()=>{
                      <HorizontalTabPanel>
                      <Modify webhookUrl_EventId={webhookUrl_EventId} />
                      </HorizontalTabPanel>
-                     <HorizontalTabPanel>
+                     {/* <HorizontalTabPanel>
                      <ProcessedEvents webhookUrl_EventId={webhookUrl_EventId} />
-                     </HorizontalTabPanel>
+                     </HorizontalTabPanel> */}
                      <HorizontalTabPanel>
                      <InvocationLogs webhookUrl_EventId={webhookUrl_EventId} />
                      </HorizontalTabPanel>

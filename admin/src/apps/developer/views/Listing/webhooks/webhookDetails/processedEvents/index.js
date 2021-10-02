@@ -7,10 +7,13 @@ import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import {logger}  from '../../../../../../../shared/utils'
 import { StyledWrapper } from './styled'
+import {useWebhook} from '../../state'
 import InvocationTunnel from './tunnels/invocationTunnel';
 
 
-const ProcessedEvents = (props)=>{
+const ProcessedEvents = ()=>{
+
+    const {state, dispatch} = useWebhook()
 
     const [processedEvents, setProcessedEvents] = useState([])
 
@@ -18,13 +21,13 @@ const ProcessedEvents = (props)=>{
 
     const [processedEventId, setProcessedEventId] = useState()
 
-    const webhookUrl_EventId = props.webhookUrl_EventId
+    const webhookUrl_EventId = state.webhookUrl_EventId
 
     const [popupTunnels, openPopupTunnel, closePopupTunnel] = useTunnel(2)
 
     const { data, loading, error } = useSubscription(GET_PROCESSED_EVENTS, {
       variables:{
-          webhookUrl_EventId: webhookUrl_EventId
+          webhookUrl_EventId: state.webhookUrl_EventId
        },
        onSubscriptionData:({ subscriptionData: { data = {} } = {} })=> {
            const processedEventsData = data.developer_webhookUrl_events[0]?.availableWebhookEvent.processedWebhookEvents.map((item)=>{
@@ -54,12 +57,9 @@ const ProcessedEvents = (props)=>{
 
 
     useEffect(() => {
-       console.log(processedEventId)
        if (processedEventId){
          setInvocationState(true)
        }
-      
-      console.log(invocationState)
   }, [processedEventId]);
 
 
@@ -97,7 +97,7 @@ const ProcessedEvents = (props)=>{
            resizable:true,
            headerSort:true,
            cssClass: 'rowClick',
-           width: 300
+           width: 150
         },
         {
             title: 'tries',
@@ -107,15 +107,16 @@ const ProcessedEvents = (props)=>{
             resizable:true,
             headerSort:true,
             cssClass: 'rowClick',
-            width: 300
+            width: 100
          }
      ]
 
     return (
         <>
          {invocationState && <InvocationTunnel openPopupTunnel={openPopupTunnel} closePopupTunnel={closePopupTunnel} popupTunnels={popupTunnels} webhookUrl_EventId={webhookUrl_EventId} processedEventId={processedEventId} />}
-            <div className="App" >
+            
             <StyledWrapper>
+            <div className="App" >
             <Flex container alignItems="center" justifyContent="space-between">
             <Flex container height="80px" alignItems="center">
                <Text as="h2">
@@ -149,8 +150,9 @@ const ProcessedEvents = (props)=>{
                className = 'developer-webhooks-processedEvents'
             />
          )}
+         </div>
          </StyledWrapper>
-        </div>
+
         </>
     )
 }

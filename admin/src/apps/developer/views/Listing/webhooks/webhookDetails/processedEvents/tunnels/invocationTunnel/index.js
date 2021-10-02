@@ -35,7 +35,7 @@ const InvocationTunnel = (props)=>{
        },
        onSubscriptionData:({ subscriptionData: { data = {} } = {} })=> {
           
-           const invocationData = data.developer_processedWebhookEventsByUrl[0].webhookUrl_EventsLogs.map((item)=>{
+           const invocationData = data.developer_processedWebhookEventsByUrl[0]?.webhookUrl_EventsLogs.map((item)=>{
               const newData = {
                  "created_at":item.created_at,
                  "status":item.Response.status,
@@ -95,7 +95,7 @@ const InvocationTunnel = (props)=>{
     return (
         <>
         <Tunnels tunnels={props.popupTunnels}>
-            <Tunnel size='full' popup={true} layer={1}>
+            <Tunnel size='lg' popup={true} layer={1}>
                <TunnelHeader
                   title='Invocation Logs'
                   close={() => props.closePopupTunnel(1)}
@@ -117,7 +117,7 @@ const InvocationTunnel = (props)=>{
             )}
             </Tunnel>
 
-            <Tunnel layer={2} popup={true} size='lg'>
+            <Tunnel layer={2} popup={true} size='md'>
                <TunnelHeader
                   title='Request Response'
                   close={() => props.closePopupTunnel(2)}
