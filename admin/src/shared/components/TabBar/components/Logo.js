@@ -10,7 +10,10 @@ const Logo = () => {
    useOnClickOutside(menuRef, () => setOpen(false))
 
    return (
-      <div ref={menuRef} style={{ padding: '5px 14px 0px 20px', height:'42px' }}>
+      <div
+         ref={menuRef}
+         style={{ padding: '5px 12px 0px 12px', height: '42px' }}
+      >
          {open && <Sidebar setOpen={setOpen} />}
          <Styles.Logo open={open} onClick={() => setOpen(!open)}>
             <DailykitIcon />
