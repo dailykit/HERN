@@ -40,6 +40,7 @@ import Filters from './Filters'
 import MultiRangeSlider from './MultiRangeSlider'
 import Wishlist from './Wishlist'
 import Carousel from './Carousel'
+import RenderCard from './RenderCard'
 
 export {
    Button,
@@ -83,7 +84,8 @@ export {
    Filters,
    MultiRangeSlider,
    Wishlist,
-   Carousel
+   Carousel,
+   RenderCard
 }
 export * from './Icons'
 export * from './Card'

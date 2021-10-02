@@ -1,6 +1,7 @@
 import React from 'react'
 import { Flex } from '@dailykit/ui'
 import Image from 'next/image'
+import { useRouter } from 'next/router'
 import moment from 'moment'
 import { Card, CardImage, CardBody } from './styles.js'
 import { Clock, UsersIcon, BookmarkIcon } from '../../Icons'
@@ -13,9 +14,13 @@ export default function ExperienceCard({ cardDetails, ...props }) {
    const { state: userState } = useUser()
    const { user = {} } = userState
    const expert = experience?.experienceClasses[0]?.experienceClassExpert
+   const router = useRouter()
+   const onClickHandler = () => {
+      router.push(`/experiences/${experience?.id}`)
+   }
    return (
       <Card {...props}>
-         <CardImage>
+         <CardImage onClick={onClickHandler}>
             <Image
                src={experience?.assets?.images[0]}
                alt="Picture of the experience"
@@ -50,7 +55,9 @@ export default function ExperienceCard({ cardDetails, ...props }) {
             />
          </CardImage>
          <CardBody>
-            <h2 className="exp-name">{experience?.title}</h2>
+            <h2 className="exp-name" onClick={onClickHandler}>
+               {experience?.title}
+            </h2>
             <Flex
                container
                alignItems="center"

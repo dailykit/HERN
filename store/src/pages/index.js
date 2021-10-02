@@ -11,23 +11,16 @@ import {
    ChevronRight,
    Button,
    EditIcon,
-   Masonry,
    Modal,
    useModal,
    SEO,
    Layout,
    Tags,
-   UpcomingExperience,
-   InvitePollFeed,
-   Carousel
+   RenderCard
 } from '../components'
-import {
-   PollRecyclerView,
-   BookingRecyclerView
-} from '../pageComponents/homeComponents'
 import { theme } from '../theme'
-import { getNavigationMenuItems, getWebPageModule } from '../lib'
-import { useUser, useCustomWebpageModuleQuery } from '../Providers'
+import { getNavigationMenuItems } from '../lib'
+import { useUser } from '../Providers'
 import { useWindowDimensions, isEmpty, fileParser } from '../utils'
 import {
    CATEGORY_EXPERIENCE,
@@ -46,13 +39,14 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
    } = useModal()
    const { state } = useUser()
 
-   const { isAuthenticated = false, user = {} } = state
+   const { user = {} } = state
    const router = useRouter()
    const { width } = useWindowDimensions()
    const [iconSize, setIconSize] = useState('14px')
    const [categories, setCategories] = useState([])
    const [experts, setExperts] = useState([])
    const [tagIds, setTagIds] = useState([])
+   const [isLoading, setIsLoading] = useState(true)
    const breakpointColumnsObj = {
       default: 4,
       1100: 3,
@@ -98,6 +92,7 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
          } = {}
       } = {}) => {
          setCategories(ExperienceCategories)
+         setIsLoading(false)
       }
    })
 
@@ -211,84 +206,36 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
                      parsedData.find(fold => fold.id === 'home-top-02')?.content
                   )}
             </div>
-            {/* <PollRecyclerView keycloakId={user?.keycloakId} />
-        <BookingRecyclerView keycloakId={user?.keycloakId} /> */}
             <div style={{ padding: '1rem' }}>
                {!isEmpty(categories) && (
-                  <Flex
-                     container
-                     flexDirection="column"
-                     alignItems="center"
-                     justifyContent="center"
-                     padding="1rem 0"
-                  >
-                     <h3 className="experienceHeading">
-                        Experiences we think you’d like.
-                     </h3>
-                     <ChevronDown
-                        size={iconSize}
-                        color={theme.colors.textColor4}
-                     />
-                  </Flex>
+                  <RenderCard
+                     // data={categories
+                     //    .map(
+                     //       category => category?.experience_experienceCategories
+                     //    )
+                     //    .flat()}
+                     data={categories}
+                     type="experience"
+                     layout="carousel"
+                     showCategorywise={true}
+                     keyname="experience_experienceCategories"
+                  />
                )}
-               <Carousel
-                  data={categories[0]?.experience_experienceCategories}
-               />
-               {categories.map(category => {
-                  return (
-                     <GridViewWrapper key={category.title}>
-                        <h3 className="experienceHeading2">{category.title}</h3>
+               {/* {!isEmpty(experts) && (
+                  <RenderCard
+                     data={categories
+                        .map(
+                           category => category?.experience_experienceCategories
+                        )
+                        .flat()}
+                     data={experts}
+                     type="experts"
+                     layout="carousel"
+                     showCategorywise={false}
+                     keyname="expert"
+                  />
+               )} */}
 
-                        <Masonry
-                           breakpointCols={breakpointColumnsObj}
-                           className="my-masonry-grid"
-                           columnClassName="my-masonry-grid_column"
-                        >
-                           {category?.experience_experienceCategories.map(
-                              (data, index) => {
-                                 return (
-                                    <Card
-                                       onClick={() =>
-                                          router.push(
-                                             `/experiences/${data?.experience?.id}`
-                                          )
-                                       }
-                                       boxShadow="true"
-                                       key={index}
-                                       type="experience"
-                                       data={data}
-                                    />
-                                 )
-                              }
-                           )}
-                        </Masonry>
-                        <Flex
-                           container
-                           alignItems="center"
-                           justifyContent="center"
-                           padding="1rem 0"
-                           margin="0 0 2rem 0"
-                        >
-                           <NavLink href="/experiences">
-                              <h1 className="explore">
-                                 Explore more Experiences
-                              </h1>
-                           </NavLink>
-                           <ChevronRight
-                              size={iconSize}
-                              color={theme.colors.textColor}
-                           />
-                        </Flex>
-                     </GridViewWrapper>
-                  )
-               })}
-               {loading && (
-                  <div className="skeleton-wrapper">
-                     {[1, 2, 3, 4].map((_, index) => {
-                        return <ExperienceSkeleton key={index} />
-                     })}
-                  </div>
-               )}
                <GridViewWrapper>
                   <Flex
                      container

@@ -5,14 +5,16 @@ import 'owl.carousel/dist/assets/owl.carousel.css'
 import 'owl.carousel/dist/assets/owl.theme.default.css'
 import { StyledDiv } from './styled'
 import { ChevronLeft, ChevronRight } from '../Icons'
-import Card from '../Card'
+import { Card } from '../Card'
+import { ExperienceSkeleton } from '../skeletonLoader'
+import Masonry from '../Masonry'
 import { theme } from '../../theme'
+import { isEmpty, useWindowDimensions } from '../../utils'
 const OwlCarousel = dynamic(import('react-owl-carousel'), {
    ssr: false
 })
 
-const Carousel = ({ data }) => {
-   console.log({ data })
+const Carousel = ({ data = [], type = 'experience' }) => {
    const owlCarouselRef = useRef()
    const router = useRouter()
    return (
@@ -27,29 +29,25 @@ const Carousel = ({ data }) => {
                owlCarouselRef.current = carousel.relatedTarget
             }}
             className="owl-theme"
-            items={3}
+            items={4}
             loop={false}
-            margin={16}
+            margin={32}
             nav={false}
             dots={false}
+            stagePadding={42}
+            mouseDrag={true}
+            touchDrag={true}
          >
-            {data &&
-               data.length &&
+            {!isEmpty(data) &&
                data.map((item, index) => {
                   return (
-                     <div class="item" key={item?.experience?.id}>
+                     <div className="item" key={index}>
                         <Card
-                           onClick={() =>
-                              router.push(
-                                 `/experiences/${item?.experience?.id}`
-                              )
-                           }
                            boxShadow="true"
                            key={index}
-                           type="experience"
+                           type={type}
                            data={item}
                         />
-                        {/* <img src={item} alt="img" /> */}
                      </div>
                   )
                })}
