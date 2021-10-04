@@ -96,9 +96,20 @@ padding: 14px;
 display: flex;
 background: #fff;
 align-items: center;
+padding-left: 33px;
 justify-content: space-between;
 input[type='text'] {
    width: 340px;
+}
+h6{
+   color: #367BF5;
+   display: inline-block;
+   font-size: 14px;
+   font-weight: 500;
+   padding: 6px;
+   white-space: nowrap;
+   overflow: hidden;
+   border:none;
 }
 `
 export const ImageContainer = styled.div`

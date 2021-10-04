@@ -1,5 +1,6 @@
 import {
    EditIcon,
+   AddIcon,
    CloseIcon,
    DeleteIcon,
 } from '../../../../../../shared/assets/icons'
@@ -48,26 +49,33 @@ export const MetaDetails = ({ metaDetails }) => {
          <Form.Group>
             <Form.Label htmlFor="title" title="title">
                <Flex container alignItems="center">
-                  <span style={{ marginLeft: '20px' }}>Metadata details</span>
-                  <Tooltip identifier="form_subscription_field_title" />
+                  <span>Metadata details</span>
+                  <Tooltip identifier="form_subscription_meta_details" />
                </Flex>
             </Form.Label>
-            <IconButton
-               size="sm"
-               type="outline"
-               style={{ marginLeft: '20px' }}
-               onClick={() =>
-                  ToggleTunnel(
-                     (metaDetails.icon &&
-                        metaDetails.coverImage &&
-                        metaDetails.tags) == ''
-                        ? 'ADD_META_DETAILS'
-                        : 'EDIT_META_DETAILS'
-                  )
-               }
-            >
-               <EditIcon />
-            </IconButton>
+            {metaDetails?.icon == '' &&
+            metaDetails?.coverImage == '' &&
+            metaDetails?.tags == '' ? (
+               <div
+                  style={{
+                     display: 'flex',
+                     alignItems: 'center',
+                     cursor: 'pointer',
+                  }}
+                  onClick={() => ToggleTunnel('ADD_META_DETAILS')}
+               >
+                  <AddIcon color="#367BF5" size={24} />
+                  <h6>Add Metadetails</h6>
+               </div>
+            ) : (
+               <IconButton
+                  size="sm"
+                  type="outline"
+                  onClick={() => ToggleTunnel('EDIT_META_DETAILS')}
+               >
+                  <EditIcon />
+               </IconButton>
+            )}
          </Form.Group>
          <MetadataTunnel
             tunnels={tunnels}
