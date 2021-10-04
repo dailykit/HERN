@@ -33,7 +33,6 @@ import AddAccompanimentTypesTunnel from '../../../apps/settings/views/Forms/Mast
 import { CREATE_SAFETY_CHECK } from '../../../apps/safety/graphql'
 import CampaignTypeTunnel from '../../../apps/crm/views/Listings/CampaignListing/Tunnel'
 import PrintTunnel from '../../../apps/settings/views/Listings/DevicesListing'
-import createRecipe from '../../CreateUtils/createRecipe'
 
 const APPS = gql`
    subscription apps {
