@@ -12,6 +12,7 @@ import {
    InsightDashboard,
    AddressTunnel,
    Banner,
+   Sidebar,
 } from './shared/components'
 import {
    AppItem,
@@ -103,103 +104,37 @@ const Carts = Loadable({
    loader: () => import('./apps/carts'),
    loading: Loader,
 })
-const appIcons = {
 
-   "data": [
-      {
-         title: "Home",
-         icon: <HomeAppIcon active={() => {
-            const { pathname } = useLocation()
-            return pathname === '/'
-         }} />,
-         path: '/',
-      },
-      {
-         title: "Orders",
-         icon: <OrderAppIcon />,
-         path: '/order',
-      },
-      {
-         title: "Products",
-         icon: <ProductsAppIcon />,
-         path: '/products',
-      },
-      {
-         title: "Inventory",
-         icon: <InventoryAppIcon />,
-         path: '/inventory',
-      },
-      {
-         title: "Subscription",
-         icon: <SubscriptionAppIcon />,
-         path: '/subscription',
-      },
-      {
-         title: "Customer",
-         icon: <CustomersAppIcon />,
-         path: '/crm',
-      },
-      {
-         title: "Menu",
-         icon: <MenuAppIcon />,
-         path: '/menu',
-      },
-      {
-         title: "Brand",
-         icon: <BrandAppIcon />,
-         path: '/brands',
-      },
-      {
-         title: "Reports",
-         icon: <ReportsAppIcon />,
-         path: '/insights',
-      },
-      {
-         title: "Carts",
-         icon: <CartsAppIcon />,
-         path: '/carts',
-      },
-      {
-         title: "Settings",
-         icon: <SettingAppIcon />,
-         path: '/settings',
-      },
-      {
-         title: "View Store",
-         icon: <StoreAppIcon />
-      },
-   ]
-}
 const App = () => {
    // const location = useLocation()
    // const { routes, setRoutes } = useTabs()
    const { pathname } = useLocation()
-   const [open, toggle] = React.useState(false)
    const { loading, data: { apps = [] } = {} } = useSubscription(APPS)
    const { user } = useAuth()
+   const [open, setOpen] = React.useState(false)
+
    if (loading) return <Loader />
    return (
       <Layout>
          <TabBar />
+         {/* <AppList open={open}>
+            {appIcons.data.map(app => (
+               <AppItem
+                  active={app.title === 'Home'}
+                  key={app.id}>
+                  <Link to={app.path}>
+                     <AppIcon>{app.icon}</AppIcon>
+                     <span>{app.title}</span>
+                  </Link>
+               </AppItem>
+            ))}
+         </AppList> */}
+         <Sidebar />
          <main>
             <Switch>
                <Route path="/" exact>
                   <Banner id="app-home-top" />
                   <HomeContainer>
-                     <NavMenuPanel>
-                        <AppList open={open}>
-                           {appIcons.data.map(app => (
-                              <AppItem
-                                 active={app.title === 'Home'}
-                                 key={app.id}>
-                                 <Link to={app.path}>
-                                    <AppIcon>{app.icon}</AppIcon>
-                                    <span>{app.title}</span>
-                                 </Link>
-                              </AppItem>
-                           ))}
-                        </AppList>
-                     </NavMenuPanel>
                      <DashboardPanel>
                         <WelcomeNote>
                            <p>

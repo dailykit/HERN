@@ -12,14 +12,14 @@ const Styles = {
          backdrop-filter: blur(44.37px);
          border: 1px solid #f2f3f3;
          border-radius: 10px;
-         width: 224px;
+         width: 52px;
          position: fixed;
          top: 46px;
          left: 0px;
          bottom: 7px;
          z-index: 10;
          overflow-y: auto;
-
+         overflow-x: hidden;
          ::-webkit-scrollbar {
             width: 6px;
          }
@@ -29,6 +29,11 @@ const Styles = {
          }
          @media only screen and (max-width: 767px) {
             width: 100vw;
+         }
+         :hover {
+            position: absolute;
+            width: 222px;
+            z-index: 1;
          }
       `
    ),
@@ -123,6 +128,7 @@ const Styles = {
    AppIcon: styled.svg`
       height: 16px;
       width: 16px;
+      overflow: visible !important;
       fill: black !important;
    `,
    Logout: styled.button`
@@ -140,7 +146,7 @@ const Styles = {
       padding-left: ${props => (props.active ? `15px` : `18px`)} !important;
       padding: 12px;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       color: ${props => (props.active ? `#367BF5` : `#202020`)};
       background: ${props => (props.active ? `#f9f9f9` : `#ffffff`)};
       border-left: ${props => (props.active ? `3px solid #367BF5` : `none`)};
