@@ -33,8 +33,7 @@ import AddAccompanimentTypesTunnel from '../../../apps/settings/views/Forms/Mast
 import { CREATE_SAFETY_CHECK } from '../../../apps/safety/graphql'
 import CampaignTypeTunnel from '../../../apps/crm/views/Listings/CampaignListing/Tunnel'
 import PrintTunnel from '../../../apps/settings/views/Listings/DevicesListing'
-
-
+import createRecipe from '../../CreateUtils/createRecipe'
 
 const APPS = gql`
    subscription apps {
@@ -385,13 +384,7 @@ export const Sidebar = ({ setOpen }) => {
       openCreateBrandTunnel,
       closeCreateBrandTunnel,
    ] = useTunnel(1)
-   const linking = (payload) => {
-      return (<div>
-         <a href="https://www.printnode.com/en/download">
-            downloaad
-         </a>
-      </div>)
-   }
+
    const appMenuItems = {
       "data": [
          {
@@ -830,6 +823,7 @@ export const Sidebar = ({ setOpen }) => {
          {
             title: "View Store",
             icon: StoreAppIcon,
+            path: './',
             'childs': []
          },
       ]
@@ -892,6 +886,7 @@ export const Sidebar = ({ setOpen }) => {
                                        <Styles.PageOneTitle
                                           onClick={() => {
                                              setIsChildrenOpen(null)
+                                             setIsOpen(null)
                                              addTab(child.title, child.path)
                                           }}
                                           active={(isChildOpen === child.title
@@ -906,13 +901,13 @@ export const Sidebar = ({ setOpen }) => {
                                              <Styles.Choices
                                                 onClick={() => {
                                                    setIsChildrenOpen(children.title)
-                                                   // setOpen(false)
+                                                   setIsOpen(null)
                                                    switch (children.payload) {
                                                       // case 'simple': return handleCreateProduct(children.payload);
                                                       // case 'combo': return handleCreateProduct(children.payload);
                                                       // case 'customizable': return handleCreateProduct(children.payload);
                                                       case 'product': return openCreateProductTunnel(3);
-                                                      case 'recipe': return createRecipeHandler();
+                                                      case 'recipe': return createRecipe();
                                                       case 'ingredient': return createIngredientHandler();
                                                       case 'supplier': return createSupplierHandler();
                                                       case 'item': return createItemHandler();
