@@ -27,7 +27,7 @@ const CategoryWise = ({
                   data.map(category => {
                      return (
                         <CategoryWiseDiv key={category?.title}>
-                           <h3 className="experienceHeading2">
+                           <h3 className="category__title text8">
                               {category?.title || 'N/A'}
                            </h3>
                            <Carousel
@@ -45,7 +45,7 @@ const CategoryWise = ({
                   data.map(category => {
                      return (
                         <CategoryWiseDiv key={category?.title}>
-                           <h3 className="experienceHeading2">
+                           <h3 className="category__title text8">
                               {category?.title || 'N/A'}
                            </h3>
                            <Masonry

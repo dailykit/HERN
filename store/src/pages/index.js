@@ -221,6 +221,11 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
                      keyname="experience_experienceCategories"
                   />
                )}
+               <h3 className="experienceHeading text2">Our Experts</h3>
+               <p className="experienceHeading2 text5">
+                  Our experiences will be lead by our qualified experts, who are
+                  professional, highly skilled and fun to work with.
+               </p>
                {!isEmpty(experts) && (
                   <RenderCard
                      data={experts.map(expert => expert?.experts).flat()}
@@ -384,42 +389,23 @@ const StyledWrapper = styled.div`
       padding: 0 2rem;
    }
    .experienceHeading {
-      font-size: ${theme.sizes.h8};
-      color: ${theme.colors.textColor4};
+      color: ${theme.colors.textColor};
       font-weight: 400;
       text-align: center;
       margin-bottom: 20px;
+      text-transform: uppercase;
+      font-family: League-Gothic;
    }
    .experienceHeading2 {
-      font-size: ${theme.sizes.h8};
       color: ${theme.colors.textColor4};
       font-weight: 400;
-      text-align: left;
-      margin-bottom: 2rem;
-      padding-left: 3rem;
+      text-align: center;
+      margin-bottom: 4rem;
    }
    .upcomingExperience-div {
       padding: 0;
       box-shadow: none;
       border-radius: 0;
-   }
-
-   @media (min-width: 769px) {
-      .experienceHeading,
-      .experienceHeading2 {
-         font-size: ${theme.sizes.h1};
-      }
-      .upcomingExperience-div {
-         padding: 1.5rem;
-         background: ${theme.colors.mainBackground};
-         box-shadow: 1px 1px 2px rgba(36, 41, 53, 0.3),
-            -1px -1px 2px rgba(30, 33, 43, 0.5),
-            inset -4px 4px 8px rgba(30, 33, 43, 0.2),
-            inset 4px -4px 8px rgba(30, 33, 43, 0.2),
-            inset -4px -4px 8px rgba(36, 41, 53, 0.9),
-            inset 4px 4px 10px rgba(30, 33, 43, 0.9);
-         border-radius: 4px;
-      }
    }
 `
 const CardWrapper = styled.div`

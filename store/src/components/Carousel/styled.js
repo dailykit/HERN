@@ -15,7 +15,7 @@ export const StyledDiv = styled.div`
    }
    .prev_btn,
    .next_btn {
-      width: 150px;
+      width: 64px;
       height: 100%;
       position: absolute;
       top: 0;

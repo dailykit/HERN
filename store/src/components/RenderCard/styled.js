@@ -23,8 +23,7 @@ export const StyledDiv = styled.div`
    }
 `
 export const CategoryWiseDiv = styled.div`
-   .experienceHeading2 {
-      font-size: ${theme.sizes.h8};
+   .category__title {
       color: ${theme.colors.textColor4};
       font-weight: 400;
       text-align: left;

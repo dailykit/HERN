@@ -261,32 +261,7 @@ body {
    font-size: 72px;
    line-height: 88px;
 }
-@media screen and (max-width: 769px) {
-   .text1 {
-      font-size: 48px;
-      line-height: 58px;
-   }
-   .text2 {
-      font-size: 36px;
-      line-height: 36px;
-   }
-   .text3 {
-      font-size: 32px;
-      line-height: 39px;
-   }
-   .text4 {
-      font-size: 24px;
-      line-height: 28px;
-   }
-   .text5 {
-      font-size: 20px;
-      line-height: 24px;
-   }
-   .text6 {
-      font-size: 20px;
-      line-height: 24px;
-   }
-}
+
 .text2 {
    font-size: 48px;
    line-height: 58px;
@@ -318,4 +293,31 @@ body {
 .text9 {
    font-size: 16px;
    line-height: 16px;
+}
+
+@media screen and (max-width: 769px) {
+   .text1 {
+      font-size: 48px;
+      line-height: 58px;
+   }
+   .text2 {
+      font-size: 36px;
+      line-height: 36px;
+   }
+   .text3 {
+      font-size: 32px;
+      line-height: 39px;
+   }
+   .text4 {
+      font-size: 24px;
+      line-height: 28px;
+   }
+   .text5 {
+      font-size: 20px;
+      line-height: 24px;
+   }
+   .text6 {
+      font-size: 20px;
+      line-height: 24px;
+   }
 }

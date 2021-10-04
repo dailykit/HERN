@@ -4,7 +4,6 @@ export const Card = styled.div`
    display: flex;
    flex-direction: column;
    align-items: flex-start;
-   background: ${theme.colors.mainBackground};
    box-shadow: ${({ boxShadow = true }) =>
       boxShadow
          ? '0px 8px 12px 2px rgba(0, 0, 0, 0.32)'

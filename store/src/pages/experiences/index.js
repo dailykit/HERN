@@ -157,7 +157,7 @@ export default function Experiences({
    return (
       <Layout navigationMenuItems={navigationMenuItems}>
          <SEO title="Experiences" />
-         <StyledWrapper>
+         <StyledWrapper bgMode="dark">
             <div ref={experiencesTop01} id="experiences-top-01">
                {Boolean(parsedData.length) &&
                   ReactHtmlParser(
@@ -294,6 +294,10 @@ const StyledWrapper = styled.div`
    width: 100%;
    height: 100%;
    overflow: auto;
+   background: ${({ bgMode }) =>
+      bgMode === 'dark'
+         ? theme.colors.darkBackground.darkblue
+         : theme.colors.lightBackground.white};
    .skeleton-wrapper {
       display: grid;
       grid-template-columns: repeat(4, 1fr);

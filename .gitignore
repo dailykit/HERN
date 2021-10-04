@@ -4,6 +4,7 @@ node_modules
 .vscode
 todo*
 *.txt
+test.html
 schema.json
 /config.js
 templates

@@ -34,7 +34,7 @@ const Carousel = ({ data = [], type = 'experience' }) => {
             margin={32}
             nav={false}
             dots={false}
-            stagePadding={42}
+            stagePadding={48}
             mouseDrag={true}
             touchDrag={true}
          >
