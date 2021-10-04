@@ -40,6 +40,7 @@ import {
 import {
    SERVING,
    UPSERT_ITEM_COUNT,
+   UPSERT_SUBSCRIPTION_TITLE,
    UPSERT_SUBSCRIPTION_SERVING,
 } from '../../../../graphql'
 
@@ -47,7 +48,11 @@ const Serving = ({ id, isActive, toggleServingTunnel }) => {
    const { state, dispatch } = usePlan()
    const [tabIndex, setTabIndex] = React.useState(0)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
+   const [upsertTitle] = useMutation(UPSERT_SUBSCRIPTION_TITLE)
    const [upsertServing] = useMutation(UPSERT_SUBSCRIPTION_SERVING)
+   const [servingId, setServingId] = React.useState(
+      state.title.defaultServing.id
+   )
    const [itemTunnelState, setItemTunnelState] = React.useState('')
    const {
       error,
@@ -111,12 +116,33 @@ const Serving = ({ id, isActive, toggleServingTunnel }) => {
          },
       })
    }
-
+   const IsDefaultServing = () => {
+      if (!state.serving.isActive && !serving.isValid) {
+         toast.error('Can not be published without any active item counts!', {
+            position: 'top-center',
+         })
+         return
+      }
+      setServingId(serving.id)
+      upsertTitle({
+         variables: {
+            object: {
+               id: state.title.id,
+               title: state.title.title,
+               isActive: !state.title.isActive,
+               defaultSubscriptionServingId: servingId,
+            },
+         },
+      })
+   }
    if (loading) return <InlineLoader />
    if (error) {
       toast.error('Failed to fetch item counts!')
       logger(error)
       return <ErrorState message="Failed to fetch item counts!" />
+   }
+   {
+      console.log('SERVINGID', state.title.defaultServing.id)
    }
    return (
       <>
@@ -131,9 +157,27 @@ const Serving = ({ id, isActive, toggleServingTunnel }) => {
                   Serving: {serving.size}
                </Text>
                <Spacer size="14px" xAxis />
-               {serving.id === state.title.defaultServing.id && (
+               {serving.id != state.title.defaultServing.id ? (
+                  <button
+                     type="outline"
+                     onClick={() => IsDefaultServing()}
+                     style={{
+                        cursor: 'pointer',
+                        color: '#367BF5',
+                        background: 'transparent',
+                        border: 'none',
+                     }}
+                  >
+                     Set as Default
+                  </button>
+               ) : (
                   <Tag>Default</Tag>
                )}
+               {/* {serving.id === state.title.defaultServing.id ? (
+                  <Tag>Default</Tag>
+               ) : (
+                  <Tag>Make Default</Tag>
+               )} */}
                <Spacer size="14px" xAxis />
                {serving.isDemo && <Tag>Demo</Tag>}
             </Stack>

@@ -257,6 +257,7 @@ const Title = () => {
                      id="servingTabList"
                      style={{ marginLeft: '10px' }}
                   >
+                     {console.log('SERVINGS', title)}
                      {title?.servings.map(serving => (
                         <SectionTab key={serving.id}>
                            <Text as="title">{serving.size}</Text>
