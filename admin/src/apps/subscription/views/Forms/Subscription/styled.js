@@ -146,5 +146,9 @@ export const TagContainer = styled.div`
    padding: 14px;
    span {
       padding: 5px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 11px;
    }
 `

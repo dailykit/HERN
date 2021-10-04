@@ -98,27 +98,26 @@ export const MetaDetails = ({ metaDetails }) => {
                         </span>
                      </TagContainer>
                   )}
-                  <IconButton
+                  <ComboButton
                      size="sm"
                      type="outline"
-                     style={{ border: 'none' }}
+                     style={{ border: 'none', marginTop: '14px' }}
                      onClick={() => ToggleTunnel('EDIT_META_DETAILS')}
                   >
-                     <EditIcon />
-                  </IconButton>
+                     <EditIcon color="#367BF5" size={24} />
+                     Edit Metadetails
+                  </ComboButton>
                </Flex>
             ) : (
-               <div
-                  style={{
-                     display: 'flex',
-                     alignItems: 'center',
-                     cursor: 'pointer',
-                  }}
+               <ComboButton
+                  size="sm"
+                  type="outline"
+                  style={{ border: 'none', padding: '0px' }}
                   onClick={() => ToggleTunnel('ADD_META_DETAILS')}
                >
                   <AddIcon color="#367BF5" size={24} />
-                  <h6>Add Metadetails</h6>
-               </div>
+                  Add Metadetails
+               </ComboButton>
             )}
          </Form.Group>
          <MetadataTunnel
