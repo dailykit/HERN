@@ -25,7 +25,7 @@ const Tools = ({ isTabHidden, setIsTabHidden }) => {
       createProductTunnels,
       openCreateProductTunnel,
       closeCreateProductTunnel,
-   ] = useTunnel(1)
+   ] = useTunnel(3)
    const [createBrandTunnels, openCreateBrandTunnel, closeCreateBrandTunnel] =
       useTunnel(1)
    const tools = {
@@ -112,7 +112,9 @@ const Tools = ({ isTabHidden, setIsTabHidden }) => {
             </Tunnel>
          </Tunnels>
          <Tunnels tunnels={createProductTunnels}>
-            <Tunnel layer={1}>
+            <Tunnel layer={1}></Tunnel>
+            <Tunnel layer={2}></Tunnel>
+            <Tunnel layer={3}>
                <TooltipProvider app="Products App">
                   <ProductTypeTunnel close={closeCreateProductTunnel} />
                </TooltipProvider>
