@@ -49,8 +49,7 @@ export const MetaDetails = ({ metaDetails }) => {
          <Form.Group>
             <Form.Label htmlFor="title" title="title">
                <Flex container alignItems="center">
-                  <span>Metadata details</span>
-                  <Tooltip identifier="form_subscription_meta_details" />
+                  <span>Metadetails</span>
                </Flex>
             </Form.Label>
             {Object.keys(metaDetails).length === 0 ||

@@ -185,6 +185,7 @@ export const SERVING = gql`
          isValid
          isActive
          size: servingSize
+         defaultSubscriptionItemCountId
          counts: subscriptionItemCounts(order_by: { count: asc }) {
             id
             count

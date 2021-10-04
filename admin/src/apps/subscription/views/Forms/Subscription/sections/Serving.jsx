@@ -12,6 +12,7 @@ import {
    useTunnel,
    IconButton,
    ComboButton,
+   TextButton,
    TunnelHeader,
    HorizontalTab,
    HorizontalTabs,
@@ -141,9 +142,6 @@ const Serving = ({ id, isActive, toggleServingTunnel }) => {
       logger(error)
       return <ErrorState message="Failed to fetch item counts!" />
    }
-   {
-      console.log('SERVINGID', state.title.defaultServing.id)
-   }
    return (
       <>
          <Flex
@@ -158,26 +156,20 @@ const Serving = ({ id, isActive, toggleServingTunnel }) => {
                </Text>
                <Spacer size="14px" xAxis />
                {serving.id != state.title.defaultServing.id ? (
-                  <button
+                  <TextButton
                      type="outline"
                      onClick={() => IsDefaultServing()}
                      style={{
-                        cursor: 'pointer',
-                        color: '#367BF5',
-                        background: 'transparent',
+                        padding: '12px 0px',
                         border: 'none',
+                        fontSize: '14px',
                      }}
                   >
                      Set as Default
-                  </button>
+                  </TextButton>
                ) : (
                   <Tag>Default</Tag>
                )}
-               {/* {serving.id === state.title.defaultServing.id ? (
-                  <Tag>Default</Tag>
-               ) : (
-                  <Tag>Make Default</Tag>
-               )} */}
                <Spacer size="14px" xAxis />
                {serving.isDemo && <Tag>Demo</Tag>}
             </Stack>
@@ -227,6 +219,7 @@ const Serving = ({ id, isActive, toggleServingTunnel }) => {
                </Text>
                <Tooltip identifier="form_subscription_section_item_count_heading" />
             </Flex>
+
             <IconButton
                size="sm"
                type="outline"
@@ -254,6 +247,9 @@ const Serving = ({ id, isActive, toggleServingTunnel }) => {
                         {index === tabIndex && (
                            <ItemCount
                               id={key}
+                              defaultSubscriptionItemCountId={
+                                 serving.defaultSubscriptionItemCountId
+                              }
                               toggleItemCountTunnel={toggleItemCountTunnel}
                               isActive={isActive && index === tabIndex}
                            />
