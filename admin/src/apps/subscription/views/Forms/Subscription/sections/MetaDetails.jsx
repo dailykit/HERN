@@ -53,9 +53,10 @@ export const MetaDetails = ({ metaDetails }) => {
                   <Tooltip identifier="form_subscription_meta_details" />
                </Flex>
             </Form.Label>
-            {metaDetails?.icon == '' &&
-            metaDetails?.coverImage == '' &&
-            metaDetails?.tags == '' ? (
+            {Object.keys(metaDetails).length === 0 ||
+            (metaDetails?.icon == '' &&
+               metaDetails?.coverImage == '' &&
+               metaDetails?.tags == '') ? (
                <div
                   style={{
                      display: 'flex',
@@ -69,7 +70,7 @@ export const MetaDetails = ({ metaDetails }) => {
                </div>
             ) : (
                <Flex container>
-                  {metaDetails.icon && (
+                  {metaDetails?.icon && (
                      <ImageContainer border="none" height="170px" padding="0px">
                         <img
                            src={metaDetails.icon}
@@ -78,7 +79,7 @@ export const MetaDetails = ({ metaDetails }) => {
                         />
                      </ImageContainer>
                   )}
-                  {metaDetails.coverImage && (
+                  {metaDetails?.coverImage && (
                      <ImageContainer
                         border="none"
                         width="314px"
@@ -96,7 +97,6 @@ export const MetaDetails = ({ metaDetails }) => {
                      <>
                         <h2 style={{ paddingLeft: '5px' }}>Tags: </h2>{' '}
                         <span style={{ paddingTop: '5px' }}>
-                           {' '}
                            {' ' + metaDetails.tags}
                         </span>
                      </>
