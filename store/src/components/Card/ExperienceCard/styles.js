@@ -74,6 +74,7 @@ export const CardBody = styled.div`
    color: ${theme.colors.textColor2};
    width: 100%;
    padding: 1rem 0.5rem;
+   font-family: Proxima Nova;
    &:hover {
       .book-exp {
          animation: tracking-in-contract 0.8s
@@ -95,7 +96,7 @@ export const CardBody = styled.div`
    }
    .book-exp {
       text-align: center;
-      font-weight: 800;
+      font-family: Proxima Nova;
       font-size: ${theme.sizes.h8};
       color: ${theme.colors.tertiaryColor};
       text-transform: uppercase;

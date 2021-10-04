@@ -28,7 +28,7 @@ export default async function handler(req, res) {
          }
       })
 
-      console.log({ insertCustomer })
+      // console.log({ insertCustomer })
       if (insertCustomer && insertCustomer.email) {
          return res
             .status(200)

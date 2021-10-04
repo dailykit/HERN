@@ -209,15 +209,15 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
             <div style={{ padding: '1rem' }}>
                {!isEmpty(categories) && (
                   <RenderCard
-                     // data={categories
-                     //    .map(
-                     //       category => category?.experience_experienceCategories
-                     //    )
-                     //    .flat()}
-                     data={categories}
+                     data={categories
+                        .map(
+                           category => category?.experience_experienceCategories
+                        )
+                        .flat()}
+                     // data={categories}
                      type="experience"
                      layout="carousel"
-                     showCategorywise={true}
+                     showCategorywise={false}
                      keyname="experience_experienceCategories"
                   />
                )}

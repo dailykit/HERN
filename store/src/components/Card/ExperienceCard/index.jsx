@@ -21,10 +21,10 @@ export default function ExperienceCard({ cardDetails, ...props }) {
    return (
       <Card {...props}>
          <CardImage onClick={onClickHandler}>
-            <Image
+            <img
                src={experience?.assets?.images[0]}
-               alt="Picture of the experience"
-               layout="fill"
+               alt="experience"
+               // layout="fill"
             />
             <Wishlist
                className="bookmark-icon"

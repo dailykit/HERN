@@ -15,14 +15,14 @@ export default function ExpertCard({ cardDetails, ...props }) {
    return (
       <Card {...props}>
          <CardImage onClick={onClickHandler}>
-            <Image
+            <img
                src={
                   expert?.assets
                      ? expert?.assets?.images[0]
                      : `https://ui-avatars.com/api/?name=${expert?.firstName}+${expert?.lastName}&background=fff&color=15171F&size=500&rounded=false`
                }
-               alt="Picture of the expert"
-               layout="fill"
+               alt="expert"
+               // layout="fill"
             />
             {/* <img src={expert?.assets?.images[0]} alt="card-img" /> */}
          </CardImage>

@@ -11,14 +11,13 @@ export default function AboutExpert({ expert, expertCategory }) {
    return (
       <Wrapper bg_mode="light">
          <div className="imageWrapper">
-            <Image
+            <img
                className="expertImg"
                src={
                   expert?.assets?.images[0] ||
-                  `https://ui-avatars.com/api/?name=${expert?.firstName}+${expert?.lastName}&background=fff&color=15171F&size=500`
+                  `https://ui-avatars.com/api/?name=${expert?.firstName}+${expert?.lastName}&background=fff&color=15171F&size=500&rounded=false`
                }
                alt={`${expert?.firstName} ${expert?.lastName}-img`}
-               layout="fill"
             />
          </div>
          <div className="expertInfo">

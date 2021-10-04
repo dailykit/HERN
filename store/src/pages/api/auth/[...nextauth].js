@@ -25,7 +25,7 @@ const auth = {
                }
             })
 
-            console.log('next-auth', { customers })
+            // console.log('next-auth', { customers })
 
             if (customers.length > 0) {
                const [customer] = customers
@@ -65,7 +65,7 @@ const auth = {
                }
             })
 
-            console.log('next-auth', { otps })
+            // console.log('next-auth', { otps })
 
             if (otps.length > 0) {
                const [otp] = otps
@@ -78,7 +78,7 @@ const auth = {
                         where: { phoneNumber: { _eq: credentials.phone } }
                      }
                   })
-                  console.log('next-auth', { platform_customer })
+                  // console.log('next-auth', { platform_customer })
                   if (platform_customer.length > 0) {
                      const [customer] = platform_customer
                      return customer
@@ -120,7 +120,7 @@ export default async (req, res) => {
       providers.push(Providers.Credentials(auth.otp))
       const client = await graphqlClient()
       const { data } = await client.query({ query: PROVIDERS })
-      console.log('next-auth', { providerData: data.providers })
+      // console.log('next-auth', { providerData: data.providers })
       if (data.providers.length > 0) {
          data.providers.forEach(provider => {
             if (provider.title === 'google') {
@@ -136,7 +136,7 @@ export default async (req, res) => {
       callbacks: {
          async signIn(user, account) {
             try {
-               console.log('from sigin callback', { user, account })
+               // console.log('from sigin callback', { user, account })
                const client = await graphqlClient()
                const {
                   data: { provider_customers = [] }
@@ -147,7 +147,7 @@ export default async (req, res) => {
                   }
                })
 
-               console.log('next-auth', { provider_customers })
+               // console.log('next-auth', { provider_customers })
 
                if (provider_customers.length > 0) {
                   return true
@@ -155,7 +155,7 @@ export default async (req, res) => {
 
                let customer = {}
                if (account.type === 'oauth') {
-                  console.log('next-auth', { user })
+                  // console.log('next-auth', { user })
                   const name = user.name.split(' ')
                   const {
                      0: firstName = '',
@@ -213,9 +213,9 @@ export default async (req, res) => {
                   }
                }
             })
-            console.log('next-auth', {
-               sessionProviderCustomer: provider_customers
-            })
+            // console.log('next-auth', {
+            //    sessionProviderCustomer: provider_customers
+            // })
             if (provider_customers.length > 0) {
                const [customer] = provider_customers
                session.user.email = customer.customer.email

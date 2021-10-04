@@ -46,6 +46,7 @@ export default function SelectClass({ experienceId, isMulti = false }) {
       participants,
       classDates,
       selectedSlot,
+      pricePerPerson,
       priceBreakDownDrawer,
       experienceClasses,
       isHostParticipant,
@@ -114,13 +115,10 @@ export default function SelectClass({ experienceId, isMulti = false }) {
 
    return (
       <Wrapper>
-         <h2 className="top-heading">Booking Experience</h2>
-         <h2 className="heading">
-            From $38<span>/person</span>
-         </h2>
+         <h2 className="heading text3">${pricePerPerson} Per Person</h2>
          <div style={{ position: 'relative' }}>
             <button
-               className="breakdown-head"
+               className="breakdown-head text8"
                onClick={() => toggleDetailBreakdown(prev => !prev)}
             >
                Detailed Breakdown
@@ -132,18 +130,23 @@ export default function SelectClass({ experienceId, isMulti = false }) {
          </div>
          <div className="sticky-container">
             <div className="select-option" ref={node}>
-               <div style={{ flex: '1' }}>
-                  <DateRange />
-               </div>
                {!isMulti && (
-                  <div style={{ flex: '1', borderLeft: '1px solid #fff' }}>
+                  <>
+                     {/* <div style={{ flex: '1' }}>
+                  <DateRange />
+               </div> */}
+                     {/* <div style={{ flex: '1', borderLeft: '1px solid #fff' }}> */}
                      <Participant experienceId={experienceId} />
-                  </div>
+                     {/* </div> */}
+                  </>
                )}
             </div>
          </div>
 
          <div className="availableDate">
+            <h1 className="availableDate_head text8">
+               SELECT AN AVAILABLE TIME SLOT
+            </h1>
             {classDates.map(classDate => {
                return (
                   <AvailableDate

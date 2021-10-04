@@ -238,83 +238,77 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
                      <CustomScrollbar>
                         <ul>
                            <li>
-                              <a href="#section-1">
-                                 <a
-                                    className={
-                                       router.asPath.includes('#section-1') &&
-                                       'activeHash'
-                                    }
-                                 >
-                                    About this Experience
-                                 </a>
+                              <a
+                                 href="#section-1"
+                                 className={
+                                    router.asPath.includes('#section-1') &&
+                                    'activeHash'
+                                 }
+                              >
+                                 About this Experience
                               </a>
                            </li>
                            <li>
-                              <a href="#section-2">
-                                 <a
-                                    className={
-                                       router.asPath.includes('#section-2') &&
-                                       'activeHash'
-                                    }
-                                 >
-                                    About the Expert
-                                 </a>
+                              <a
+                                 href="#section-2"
+                                 className={
+                                    router.asPath.includes('#section-4') &&
+                                    'activeHash'
+                                 }
+                              >
+                                 Included in your Kit
                               </a>
                            </li>
                            <li>
-                              <a href="#section-3">
-                                 <a
-                                    className={
-                                       router.asPath.includes('#section-4') &&
-                                       'activeHash'
-                                    }
-                                 >
-                                    Goodies in your Kit
-                                 </a>
-                              </a>
-                           </li>
-                           <li>
-                              <a href="#section-4">
-                                 <a
-                                    className={
-                                       router.asPath.includes('#section-3') &&
-                                       'activeHash'
-                                    }
-                                 >
-                                    Supplies & Ingredients
-                                 </a>
+                              <a
+                                 href="#section-3"
+                                 className={
+                                    router.asPath.includes('#section-3') &&
+                                    'activeHash'
+                                 }
+                              >
+                                 Supplies & Ingredients
                               </a>
                            </li>
                            {experienceInfo?.experience?.experience_headers.map(
                               header => {
                                  return (
                                     <li key={header.id}>
-                                       <a href={`#${header.id}`}>
-                                          <a
-                                             className={
-                                                router.asPath.includes(
-                                                   `#${header.id}`
-                                                ) && 'activeHash'
-                                             }
-                                          >
-                                             {header?.title}
-                                          </a>
+                                       <a
+                                          href={`#${header.id}`}
+                                          className={
+                                             router.asPath.includes(
+                                                `#${header.id}`
+                                             ) && 'activeHash'
+                                          }
+                                       >
+                                          {header?.title}
                                        </a>
                                     </li>
                                  )
                               }
                            )}
+                           <li>
+                              <a
+                                 href="#section-4"
+                                 className={
+                                    router.asPath.includes('#section-2') &&
+                                    'activeHash'
+                                 }
+                              >
+                                 About the Expert
+                              </a>
+                           </li>
 
                            <li>
-                              <a href="#section-7">
-                                 <a
-                                    className={
-                                       router.asPath.includes('#section-7') &&
-                                       'activeHash'
-                                    }
-                                 >
-                                    Other Similar Experiences
-                                 </a>
+                              <a
+                                 href="#section-5"
+                                 className={
+                                    router.asPath.includes('#section-7') &&
+                                    'activeHash'
+                                 }
+                              >
+                                 Other Similar Experiences
                               </a>
                            </li>
                         </ul>
@@ -354,31 +348,13 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
                            </p>
                         </ReadMoreDiv>
                      </section>
-                     {!isEmpty(
-                        experienceInfo?.experience?.experienceClasses[0]
-                           ?.experienceClassExpert
-                     ) && (
-                        <section id="section-2">
-                           <h1 className="sub-heading text1">About Expert</h1>
-                           <AboutExpert
-                              expert={
-                                 experienceInfo?.experience
-                                    ?.experienceClasses[0]
-                                    ?.experienceClassExpert
-                              }
-                              expertCategory={
-                                 experienceInfo?.experienceCategoryTitle
-                              }
-                           />
-                        </section>
-                     )}
-                     <div id="section-3">
+                     <div id="section-2">
                         <Goodies
                            products={products}
                            title="Included in your Kit"
                         />
                      </div>
-                     <div id="section-4">
+                     <div id="section-3">
                         <GoodiesWrapper>
                            {products.map(product => {
                               return (
@@ -404,8 +380,29 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
                            )
                         }
                      )}
+                     {!isEmpty(
+                        experienceInfo?.experience?.experienceClasses[0]
+                           ?.experienceClassExpert
+                     ) && (
+                        <section id="section-4">
+                           <h1 className="sub-heading text1">About Expert</h1>
+                           <AboutExpert
+                              expert={
+                                 experienceInfo?.experience
+                                    ?.experienceClasses[0]
+                                    ?.experienceClassExpert
+                              }
+                              expertCategory={
+                                 experienceInfo?.experienceCategoryTitle
+                              }
+                           />
+                        </section>
+                     )}
                   </div>
                   <div className="right-container">
+                     <h1 className="experienceTitleHead text2">
+                        {experienceInfo?.experience?.title}
+                     </h1>
                      <CustomScrollbar>
                         <Wrap>
                            <Booking experienceId={experienceId} />
@@ -638,6 +635,20 @@ const Wrapper = styled.main`
          padding: 1rem;
          flex-direction: column;
          background: ${theme.colors.lightBackground.grey};
+         border-radius: 80px 80px 0 0;
+         .experienceTitleHead {
+            color: ${theme.colors.textColor7};
+            font-family: League-Gothic;
+            margin: 1rem;
+         }
+      }
+      .sub-heading {
+         color: ${theme.colors.textColor5};
+         font-weight: 400;
+         text-align: left;
+         margin-bottom: 20px;
+         text-transform: uppercase;
+         font-family: League-Gothic;
       }
    }
 
@@ -669,6 +680,7 @@ const Wrapper = styled.main`
          text-align: left;
          margin-bottom: 20px;
          text-transform: uppercase;
+         font-family: League-Gothic;
       }
       .subsub-heading {
          color: ${theme.colors.textColor5};
@@ -692,9 +704,19 @@ const Wrapper = styled.main`
       .about-exp {
          text-align: justify;
          color: ${theme.colors.lightGreyText};
-         font-weight: 400;
+         font-weight: 500;
          font-size: ${theme.sizes.h4};
          margin-bottom: 0.5rem;
+         p {
+            text-align: justify;
+            color: ${theme.colors.lightGreyText};
+            font-weight: 600;
+            font-size: ${theme.sizes.h4};
+            margin-bottom: 0.5rem;
+            font-size: 20px;
+            line-height: 24px;
+            font-family: Futura;
+         }
       }
       .readMore {
          border: none;
@@ -817,7 +839,7 @@ const TabWrapper = styled.div`
                text-decoration: none;
                color: ${theme.colors.textColor};
                padding: 4px 0;
-
+               font-family: League-Gothic;
                &:hover {
                   color: ${theme.colors.textColor5};
                }

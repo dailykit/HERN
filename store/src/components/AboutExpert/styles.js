@@ -6,13 +6,15 @@ export const Wrapper = styled.div`
    flex-direction: column;
    align-items: center;
    border-radius: 60px;
+   padding: 1rem 2rem;
    background-color: ${({ bg_mode }) =>
       bg_mode === 'dark'
          ? theme.colors.darkBackground.darkblue
          : theme.colors.lightBackground.grey};
    .imageWrapper {
-      padding: 1rem;
+      padding: 0 1rem;
       height: 100%;
+      position: relative;
       .expertImg {
          width: 150px;
          height: 100%;
@@ -89,7 +91,7 @@ export const Wrapper = styled.div`
       flex-direction: row;
       .imageWrapper {
          .expertImg {
-            width: 250px;
+            width: 260px;
             height: 100%;
          }
       }
