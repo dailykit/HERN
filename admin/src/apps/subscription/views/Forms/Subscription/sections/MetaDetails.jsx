@@ -52,27 +52,14 @@ export const MetaDetails = ({ metaDetails }) => {
                   <span>Metadetails</span>
                </Flex>
             </Form.Label>
-            {Object.keys(metaDetails).length === 0 ||
-            (metaDetails?.icon == '' &&
-               metaDetails?.coverImage == '' &&
-               metaDetails?.tags == '') ? (
-               <div
-                  style={{
-                     display: 'flex',
-                     alignItems: 'center',
-                     cursor: 'pointer',
-                  }}
-                  onClick={() => ToggleTunnel('ADD_META_DETAILS')}
-               >
-                  <AddIcon color="#367BF5" size={24} />
-                  <h6>Add Metadetails</h6>
-               </div>
-            ) : (
+            {metaDetails?.icon ||
+            metaDetails?.coverImage ||
+            metaDetails?.tags ? (
                <Flex container>
                   {metaDetails?.icon && (
                      <ImageContainer border="none" height="170px" padding="0px">
                         <img
-                           src={metaDetails.icon}
+                           src={metaDetails?.icon}
                            alt="icon"
                            style={{ borderRadius: '8px' }}
                         />
@@ -86,17 +73,19 @@ export const MetaDetails = ({ metaDetails }) => {
                         padding="0px"
                      >
                         <img
-                           src={metaDetails.coverImage}
+                           src={metaDetails?.coverImage}
                            alt="icon"
                            style={{ borderRadius: '8px' }}
                         />
                      </ImageContainer>
                   )}
-                  {metaDetails.tags && (
+                  {metaDetails?.tags && (
                      <>
-                        <h2 style={{ paddingLeft: '5px' }}>Tags: </h2>{' '}
+                        <Text as="h3" style={{ margin: '0 10px' }}>
+                           Tags:
+                        </Text>
                         <span style={{ paddingTop: '5px' }}>
-                           {' ' + metaDetails.tags}
+                           {metaDetails?.tags}
                         </span>
                      </>
                   )}
@@ -109,6 +98,18 @@ export const MetaDetails = ({ metaDetails }) => {
                      <EditIcon />
                   </IconButton>
                </Flex>
+            ) : (
+               <div
+                  style={{
+                     display: 'flex',
+                     alignItems: 'center',
+                     cursor: 'pointer',
+                  }}
+                  onClick={() => ToggleTunnel('ADD_META_DETAILS')}
+               >
+                  <AddIcon color="#367BF5" size={24} />
+                  <h6>Add Metadetails</h6>
+               </div>
             )}
          </Form.Group>
          <MetadataTunnel
