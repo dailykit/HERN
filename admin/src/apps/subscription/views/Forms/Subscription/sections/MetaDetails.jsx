@@ -32,7 +32,7 @@ import {
    HelperText,
 } from '@dailykit/ui'
 
-import { MetaDetailsSection, ImageContainer } from '../styled'
+import { MetaDetailsSection, ImageContainer, TagContainer } from '../styled'
 
 export const MetaDetails = ({ metaDetails }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
@@ -55,9 +55,14 @@ export const MetaDetails = ({ metaDetails }) => {
             {metaDetails?.icon ||
             metaDetails?.coverImage ||
             metaDetails?.tags ? (
-               <Flex container>
+               <Flex className="metadetail_container" container>
                   {metaDetails?.icon && (
-                     <ImageContainer border="none" height="170px" padding="0px">
+                     <ImageContainer
+                        flex="1"
+                        border="none"
+                        height="170px"
+                        padding="14px"
+                     >
                         <img
                            src={metaDetails?.icon}
                            alt="icon"
@@ -70,7 +75,8 @@ export const MetaDetails = ({ metaDetails }) => {
                         border="none"
                         width="314px"
                         height="170px"
-                        padding="0px"
+                        padding="14px"
+                        flex="3"
                      >
                         <img
                            src={metaDetails?.coverImage}
@@ -80,14 +86,17 @@ export const MetaDetails = ({ metaDetails }) => {
                      </ImageContainer>
                   )}
                   {metaDetails?.tags && (
-                     <>
-                        <Text as="h3" style={{ margin: '0 10px' }}>
-                           Tags:
-                        </Text>
+                     <TagContainer>
                         <span style={{ paddingTop: '5px' }}>
-                           {metaDetails?.tags}
+                           {metaDetails?.tags.split(',').map(tag => {
+                              return (
+                                 <>
+                                    <Tag>{tag}</Tag>
+                                 </>
+                              )
+                           })}
                         </span>
-                     </>
+                     </TagContainer>
                   )}
                   <IconButton
                      size="sm"
