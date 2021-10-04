@@ -68,13 +68,48 @@ export const MetaDetails = ({ metaDetails }) => {
                   <h6>Add Metadetails</h6>
                </div>
             ) : (
-               <IconButton
-                  size="sm"
-                  type="outline"
-                  onClick={() => ToggleTunnel('EDIT_META_DETAILS')}
-               >
-                  <EditIcon />
-               </IconButton>
+               <Flex container>
+                  {metaDetails.icon && (
+                     <ImageContainer border="none" height="170px" padding="0px">
+                        <img
+                           src={metaDetails.icon}
+                           alt="icon"
+                           style={{ borderRadius: '8px' }}
+                        />
+                     </ImageContainer>
+                  )}
+                  {metaDetails.coverImage && (
+                     <ImageContainer
+                        border="none"
+                        width="314px"
+                        height="170px"
+                        padding="0px"
+                     >
+                        <img
+                           src={metaDetails.coverImage}
+                           alt="icon"
+                           style={{ borderRadius: '8px' }}
+                        />
+                     </ImageContainer>
+                  )}
+                  {metaDetails.tags && (
+                     <>
+                        <h2 style={{ paddingLeft: '5px' }}>Tags: </h2>{' '}
+                        <span style={{ paddingTop: '5px' }}>
+                           {' '}
+                           {' ' + metaDetails.tags}
+                        </span>
+                     </>
+                  )}
+                  <IconButton
+                     size="sm"
+                     type="outline"
+                     style={{ border: 'none' }}
+                     onClick={() => ToggleTunnel('EDIT_META_DETAILS')}
+                  >
+                     <EditIcon />
+                  </IconButton>
+               </Flex>
             )}
          </Form.Group>
          <MetadataTunnel
@@ -336,7 +371,7 @@ const MetadataTunnel = ({ tunnels, TunnelState, closeTunnel, data }) => {
                            </div>
                            <img
                               src={form.coverImage}
-                              alt="Brand Logo"
+                              alt="cover image"
                               style={{ borderRadius: '8px' }}
                            />
                         </ImageContainer>
