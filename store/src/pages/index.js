@@ -114,6 +114,11 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
          }
       })
 
+   // handler for experience-explore more button
+   const handleExperienceExploreMore = () => {
+      router.push('/experiences')
+   }
+
    useEffect(() => {
       if (parsedData.length && typeof document !== 'undefined') {
          /*Filter undefined scripts*/
@@ -215,7 +220,12 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
                      keyname="experience_experienceCategories"
                   />
                )}
-               <Button className="explore__btn text9">Explore More</Button>
+               <Button
+                  className="explore__btn text9"
+                  onClick={handleExperienceExploreMore}
+               >
+                  Explore More
+               </Button>
                <div ref={homeTop02} id="home-top-02">
                   {Boolean(parsedData.length) &&
                      ReactHtmlParser(
@@ -248,7 +258,7 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
                            justifyContent="center"
                            padding="1rem 0"
                         >
-                           <h3 className="experienceHeading">
+                           <h3 className="experienceHeading text2">
                               Your personalized tags
                            </h3>
                         </Flex>
@@ -256,12 +266,9 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
                            {customerSelectedTags[0]?.tags.map(tag => {
                               return (
                                  <Button
-                                    backgroundColor={
-                                       theme.colors.mainBackground
-                                    }
                                     key={tag?.id}
                                     isMainShadow
-                                    className="categoryTag"
+                                    className="categoryTag text8"
                                  >
                                     {tag?.title}
                                  </Button>
@@ -277,12 +284,7 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
                         )}
 
                         <div className="edit_tags">
-                           <h1
-                              onClick={() =>
-                                 width > 769 ? showTags() : router.push('/tags')
-                              }
-                              className="explore "
-                           >
+                           <h1 onClick={showTags} className="explore ">
                               Edit tags
                            </h1>
                            <EditIcon
@@ -295,9 +297,9 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
             </div>
             <TagsModalContainer isShow={isTagsShow}>
                <Modal type="popup" isOpen={isTagsShow} close={hideTags}>
-                  <div style={{ padding: '1rem' }}>
-                     <Tags onSubmit={hideTags} />
-                  </div>
+                  {/* <div style={{ padding: '1rem' }}> */}
+                  <Tags onSubmit={hideTags} />
+                  {/* </div> */}
                </Modal>
             </TagsModalContainer>
             <div ref={homeBottom01} id="home-bottom-01">
@@ -564,19 +566,29 @@ const CategoryTagWrap = styled.div`
    display: flex;
    flex-wrap: wrap;
    justify-content: center;
+   gap: 1rem;
    .categoryTag {
       height: 48px;
-      font-size: ${theme.sizes.h8};
       width: auto;
-      padding: 0 1rem;
-      margin: 0 0 1rem 1rem;
       text-transform: none;
       font-weight: 500;
+      background: ${theme.colors.textColor4};
+      font-family: Proxima Nova;
+      font-style: normal;
+      font-weight: 800;
+      color: ${theme.colors.textColor};
+      padding: 0 2rem;
+      letter-spacing: 0.16em;
+   }
+   @media screen and (min-width: 769px) {
+      .categoryTag {
+         letter-spacing: 0.3em;
+      }
    }
 `
 
 const CategorySection = styled.div`
-   margin-bottom: 6rem;
+   margin: 4rem 0;
    .explore {
       text-align: center;
       font-size: ${theme.sizes.h4};
