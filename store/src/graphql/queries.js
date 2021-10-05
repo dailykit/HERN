@@ -1367,6 +1367,7 @@ export const GET_CART_ON_DEMAND = gql`
                      }
                   }
                }
+               productId
             }
          }
       }

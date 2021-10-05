@@ -44,6 +44,7 @@
 @use './sections/recipes';
 @use './sections/placing-order';
 @use './sections/order';
+@use './sections/onDemandCart.scss';
 
 /*Account routes pages*/
 @use './sections/account/addresses';

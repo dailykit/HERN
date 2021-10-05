@@ -83,6 +83,9 @@ const PlacingOrder = dynamic(() =>
 const OnDemandOrder = dynamic(() =>
    import('../sections/order').then(promise => promise.OnDemandOrder)
 )
+const OnDemandCart = dynamic(() =>
+   import('../sections/cart').then(promise => promise.OnDemandCart)
+)
 export const renderComponentByName = (componentName, options) => {
    const getProps = component => {
       if (options) {
@@ -240,6 +243,12 @@ export const renderComponentByName = (componentName, options) => {
       */
       case 'OnDemandOrder':
          return <OnDemandOrder />
+
+      /*ROUTE :
+      [brand]/cart
+       */
+      case 'OnDemandCart':
+         return <OnDemandCart />
       default:
          return null
    }
