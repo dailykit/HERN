@@ -10,10 +10,9 @@ import qs from 'query-string'
 import useQueryParamState from './useQueryParamState'
 import { useHistory } from 'react-router-dom'
 
-const BottomBar = () => {
+const BottomBar = ({ setIsOpen, isOpen }) => {
    const history = useHistory()
    const [isModalOpen, setIsModalOpen] = React.useState(false)
-   const [isOpen, setIsOpen] = React.useState(true)
    const bottomBarRef = React.useRef()
    const { width } = useWindowSize()
    const { search } = useLocation()
@@ -46,7 +45,7 @@ const BottomBar = () => {
          navigationMenuItems: treeData,
       })
       setIsModalOpen(true)
-      setIsOpen(true)
+      // setIsOpen(false)
    }
 
    const getMenuItemAction = menuItem => {
@@ -123,13 +122,13 @@ const BottomBar = () => {
             // }}
             onClick={() => {
                setIsModalOpen(false)
-               setIsOpen(!isOpen)
+               setIsOpen(null)
             }}
          >
             <Styles.BottomBarMenu>
                <MenuIcon isOpen={isOpen} />
             </Styles.BottomBarMenu>
-            {isOpen && (
+            {isOpen === 'help' && (
                <Styles.OptionsWrapper ref={bottomBarRef}>
                   {state?.bottomBarOptions.map(option => {
                      return (
@@ -156,8 +155,8 @@ const BottomBar = () => {
          </Styles.Wrapper>
          {state?.clickedOption && (
             <Modal
-               isOpen={isModalOpen}
-               setIsOpen={setIsOpen}
+               isOpen={null}
+               setIsOpen={null}
                setIsModalOpen={setIsModalOpen}
                bottomBarRef={bottomBarRef}
                handleMenuItemClick={handleMenuItemClick}

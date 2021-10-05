@@ -88,7 +88,7 @@ const Listing = () => {
                   name += ' ' + customerInfo?.customerLastName
                   return name.trim()
                }
-               return 'N/A'
+               return name?.trim() || 'N/A'
             },
             headerFilter: true,
             headerTooltip: column => {

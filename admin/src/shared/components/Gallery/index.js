@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { Tunnels, Tunnel, useTunnel, IconButton,TunnelHeader, Flex } from '@dailykit/ui'
+import {
+   Tunnels,
+   Tunnel,
+   useTunnel,
+   IconButton,
+   TunnelHeader,
+   Flex,
+} from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import AssetTunnel from './upload'
 import useGallery from './useGallery'
@@ -9,16 +16,9 @@ import { MainWrap, ImgWrapper, Trail, EditDiv, DeleteDiv } from './styled'
 import ErrorBoundary from '../ErrorBoundary'
 import { DeleteIcon, EditIcon } from '../../assets/icons'
 
-
 export default function ImageGallery({ list = [], isMulti = false, onChange }) {
-   const {
-      current,
-      setActive,
-      removeImage,
-      addImage,
-      images,
-      editImage,
-   } = useGallery(list)
+   const { current, setActive, removeImage, addImage, images, editImage } =
+      useGallery(list)
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
    const [isEditMode, setIsEditMode] = useState({
       isReady: false,
@@ -57,32 +57,32 @@ export default function ImageGallery({ list = [], isMulti = false, onChange }) {
                      <img
                         src={list[current]}
                         alt="Product Preview"
-                        style={{ objectFit: 'contain', left:'95px' }}
+                        style={{ objectFit: 'contain' }}
                      />
-                  <Flex>
-                   <EditDiv>
-                        <IconButton
-                           title="Edit"
-                           size="sm"
-                           type="ghost"
-                           onClick={() => editHandler(current, true)}
-                        >
-                           <EditIcon />
-                        </IconButton>
-                     </EditDiv>
+                     <Flex>
+                        <EditDiv>
+                           <IconButton
+                              title="Edit"
+                              size="sm"
+                              type="ghost"
+                              onClick={() => editHandler(current, true)}
+                           >
+                              <EditIcon />
+                           </IconButton>
+                        </EditDiv>
 
-                     <DeleteDiv>
-                        <IconButton
-                           title="Delete"
-                           size="sm"
-                           type="ghost"
-                           onClick={() => remove(current)}
-                        >
-                           <DeleteIcon color='red'/>
-                        </IconButton>
-                     </DeleteDiv>
-                  </Flex> 
-                    </ImgWrapper>
+                        <DeleteDiv>
+                           <IconButton
+                              title="Delete"
+                              size="sm"
+                              type="ghost"
+                              onClick={() => remove(current)}
+                           >
+                              <DeleteIcon />
+                           </IconButton>
+                        </DeleteDiv>
+                     </Flex>
+                  </ImgWrapper>
                )}
                <Trail hasImage={images.length > 0}>
                   <PreviewImage

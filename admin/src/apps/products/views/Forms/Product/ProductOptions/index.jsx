@@ -55,16 +55,10 @@ const ProductOptions = ({ productId, productName, options }) => {
 
    const { initiatePriority } = useDnd()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
-   const [
-      inventoryTunnels,
-      openInventoryTunnel,
-      closeInventoryTunnel,
-   ] = useTunnel(5)
-   const [
-      modifiersTunnel,
-      openModifiersTunnel,
-      closeModifiersTunnel,
-   ] = useTunnel(6)
+   const [inventoryTunnels, openInventoryTunnel, closeInventoryTunnel] =
+      useTunnel(5)
+   const [modifiersTunnel, openModifiersTunnel, closeModifiersTunnel] =
+      useTunnel(6)
    const [
       operationConfigTunnels,
       openOperationConfigTunnel,
@@ -324,9 +318,8 @@ const Option = ({
    const [history, setHistory] = React.useState({
       ...option,
    })
-   const [selectedOptionTypeIndex, setSelectedOptionTypeIndex] = React.useState(
-      null
-   )
+   const [selectedOptionTypeIndex, setSelectedOptionTypeIndex] =
+      React.useState(null)
 
    const searchedOption = option => console.log(option)
 
@@ -545,6 +538,28 @@ const Option = ({
       })
    }
 
+   const handleDeleteModifier = () => {
+      updateProductOption({
+         variables: {
+            id: option.id,
+            _set: {
+               modifierId: null,
+            },
+         },
+      })
+   }
+
+   const handleDeleteOpConfig = () => {
+      updateProductOption({
+         variables: {
+            id: option.id,
+            _set: {
+               operationConfigId: null,
+            },
+         },
+      })
+   }
+
    const renderLinkedItem = () => {
       if (!option.type) return null
 
@@ -560,19 +575,46 @@ const Option = ({
       return (
          <>
             {option.simpleRecipeYield || option.inventoryProductBundle ? (
-               <Flex container alignItems="center">
-                  <Text as="title">{renderItemName()}</Text>
-                  <Spacer xAxis size="16px" />
-                  <IconButton type="ghost" onClick={handleEditOptionItem}>
-                     <EditIcon color="#00A7E1" />
-                  </IconButton>
-                  <Spacer xAxis size="8px" />
-                  <IconButton type="ghost" onClick={handleDeleteOptionItem}>
-                     <DeleteIcon color="#FF5A52" />
-                  </IconButton>
+               <Flex
+                  style={{
+                     background: ' #F4F4F4',
+                     borderRadius: '2px',
+                     marginBottom: '5px',
+                  }}
+                  width="100%"
+               >
+                  <Flex container justifyContent="space-between">
+                     <Flex style={{ padding: '10px 7px 0px' }}>
+                        <Form.Label>Serving</Form.Label>
+                     </Flex>
+                     <Flex container style={{ marginTop: '-2px' }}>
+                        <IconButton
+                           title="Edit Serving"
+                           type="ghost"
+                           onClick={handleEditOptionItem}
+                        >
+                           <EditIcon />
+                        </IconButton>
+                        <Spacer xAxis size="8px" />
+                        <IconButton
+                           title="Delete Serving"
+                           type="ghost"
+                           onClick={handleDeleteOptionItem}
+                        >
+                           <DeleteIcon />
+                        </IconButton>
+                     </Flex>
+                  </Flex>
+                  <Text as="title" style={{ padding: '0px 0px 5px 6px' }}>
+                     {renderItemName()}
+                  </Text>
                </Flex>
             ) : (
-               <IconButton type="ghost" onClick={handleAddOptionItem}>
+               <IconButton
+                  title="Select a serving"
+                  type="ghost"
+                  onClick={handleAddOptionItem}
+               >
                   <PlusIcon />
                </IconButton>
             )}
@@ -667,7 +709,7 @@ const Option = ({
                   />
                </Flex>
                <Spacer xAxis size="32px" />
-               <Flex width="265px" style={{marginBottom:'22px'}}>
+               <Flex width="265px" style={{ marginBottom: '22px' }}>
                   <Form.Label title="option-type">Type</Form.Label>
                   <Dropdown
                      type="single"
@@ -681,33 +723,15 @@ const Option = ({
                <Spacer xAxis size="32px" />
                {renderLinkedItem()}
             </Flex>
-            <IconButton type="ghost" onClick={handleDeleteOption}>
-               <DeleteIcon color="#FF5A52" />
+            <IconButton
+               title="Delete Option"
+               type="ghost"
+               onClick={handleDeleteOption}
+            >
+               <DeleteIcon />
             </IconButton>
          </Flex>
       )
-   }
-
-   const handleDeleteModifier = () => {
-      updateProductOption({
-         variables: {
-            id: option.id,
-            _set: {
-               modifierId: null,
-            },
-         },
-      })
-   }
-
-   const handleDeleteOpConfig = () => {
-      updateProductOption({
-         variables: {
-            id: option.id,
-            _set: {
-               operationConfigId: null,
-            },
-         },
-      })
    }
 
    const renderBody = () => {
@@ -721,12 +745,20 @@ const Option = ({
                         <Text as="p">{option.modifier.name}</Text>
                      </Flex>
                      <Spacer xAxis size="16px" />
-                     <IconButton type="ghost" onClick={handleEditModifier}>
-                        <EditIcon color="#00A7E1" />
+                     <IconButton
+                        title="Edit Modifier"
+                        type="ghost"
+                        onClick={handleEditModifier}
+                     >
+                        <EditIcon />
                      </IconButton>
-                     <Spacer xAxis size="8px" />
-                     <IconButton type="ghost" onClick={handleDeleteModifier}>
-                        <DeleteIcon color="#FF5A52" />
+
+                     <IconButton
+                        title="Delete Modifier"
+                        type="ghost"
+                        onClick={handleDeleteModifier}
+                     >
+                        <DeleteIcon />
                      </IconButton>
                   </Flex>
                ) : (
@@ -744,12 +776,20 @@ const Option = ({
                         <Text as="p">{option.operationConfig.name}</Text>
                      </Flex>
                      <Spacer xAxis size="16px" />
-                     <IconButton type="ghost" onClick={handleAddOpConfig}>
-                        <EditIcon color="#00A7E1" />
+                     <IconButton
+                        title="Edit Operation Configuration"
+                        type="ghost"
+                        onClick={handleAddOpConfig}
+                     >
+                        <EditIcon />
                      </IconButton>
-                     <Spacer xAxis size="8px" />
-                     <IconButton type="ghost" onClick={handleDeleteOpConfig}>
-                        <DeleteIcon color="#FF5A52" />
+
+                     <IconButton
+                        title="Delete Operation Configuration"
+                        type="ghost"
+                        onClick={handleDeleteOpConfig}
+                     >
+                        <DeleteIcon />
                      </IconButton>
                   </Flex>
                ) : (

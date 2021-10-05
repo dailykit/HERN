@@ -5,6 +5,7 @@ import {
    PlusIcon,
    SettingsIcon,
    StoreIcon,
+   HelpIcon,
 } from '../../../../assets/icons'
 import { StyledAvatar, Wrapper } from './styled'
 import { useAuth } from '../../../../providers'
@@ -12,7 +13,7 @@ import { useAuth } from '../../../../providers'
 const ToolList = ({ toolbarRef, handleOpen, open, tools }) => {
    const { user } = useAuth()
 
-   const { createItem, search, profile, marketPlace } = tools
+   const { createItem, search, profile, marketPlace, help } = tools
    return (
       <Wrapper ref={toolbarRef}>
          <IconButton
@@ -22,6 +23,15 @@ const ToolList = ({ toolbarRef, handleOpen, open, tools }) => {
          >
             <PlusIcon color={open === createItem ? '#367BF5' : '#45484C'} />
          </IconButton>
+
+         <IconButton
+            size="sm"
+            type="ghost"
+            onClick={() => handleOpen(help)}
+         >
+            <HelpIcon color={open === help ? '#367BF5' : '#45484C'} />
+         </IconButton>
+
          {/* <IconButton size="sm" type="ghost" onClick={() => handleOpen(search)}>
             <SearchIcon />
          </IconButton> */}
@@ -38,6 +48,7 @@ const ToolList = ({ toolbarRef, handleOpen, open, tools }) => {
          >
             <StoreIcon color={open === marketPlace ? '#367BF5' : '#45484C'} />
          </IconButton>
+
          <StyledAvatar
             onClick={() => handleOpen(profile)}
             url=""

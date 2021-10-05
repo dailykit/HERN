@@ -15,6 +15,7 @@ import ServerRouter from './server'
 import schema from './template/schema'
 import TemplateRouter from './template'
 import { createEnvFiles } from './server/entities'
+import ayrshareSchema from './server/ayrshare/src/schema/index'
 
 require('dotenv').config()
 const { createProxyMiddleware } = require('http-proxy-middleware')
@@ -248,6 +249,27 @@ const ohyayApolloserver = new ApolloServer({
 })
 
 ohyayApolloserver.applyMiddleware({ app, path: '/ohyay/graphql' })
+
+// ayrshare remote schema integration
+const ayrshareApolloserver = new ApolloServer({
+   schema: ayrshareSchema,
+   playground: {
+      endpoint: `/ayrshare/graphql`
+   },
+   introspection: true,
+   validationRules: [depthLimit(11)],
+   formatError: err => {
+      console.log(err)
+      return isProd ? new Error(err) : err
+   },
+   debug: true,
+   context: ({ req }) => {
+      const ayrshare_api_key = req.header('ayrshare_api_key')
+      return { ayrshare_api_key }
+   }
+})
+
+ayrshareApolloserver.applyMiddleware({ app, path: '/ayrshare/graphql' })
 
 app.use('/:path(*)', serveSubscription)
 
