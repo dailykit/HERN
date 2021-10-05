@@ -7,66 +7,11 @@ import {
    ModifierPopup,
    Button,
 } from '../../components'
-import gql from 'graphql-tag'
 import { useQuery } from '@apollo/react-hooks'
 import _ from 'lodash'
 import { onDemandMenuContext } from '../../context'
+import { PRODUCTS } from '../../graphql'
 
-//query
-const PRODUCTS = gql`
-   query Products($ids: [Int!]!) {
-      products(where: { isArchived: { _eq: false }, id: { _in: $ids } }) {
-         id
-         name
-         type
-         assets
-         tags
-         additionalText
-         description
-         price
-         discount
-         isPopupAllowed
-         isPublished
-         defaultProductOptionId
-         productOptions(
-            where: { isArchived: { _eq: false } }
-            order_by: { position: desc_nulls_last }
-         ) {
-            id
-            position
-            type
-            label
-            price
-            discount
-            cartItem
-            modifier {
-               id
-               name
-               categories(where: { isVisible: { _eq: true } }) {
-                  id
-                  name
-                  isRequired
-                  type
-                  limits
-                  options(where: { isVisible: { _eq: true } }) {
-                     id
-                     name
-                     price
-                     discount
-                     quantity
-                     image
-                     isActive
-
-                     sachetItemId
-                     ingredientSachetId
-                     cartItem
-                  }
-               }
-            }
-         }
-      }
-   }
-`
 const datas = {
    id: 1080,
    name: "Adrish's Special",

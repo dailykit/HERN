@@ -442,3 +442,12 @@ export const UPSERT_BRAND_CUSTOMER = gql`
       }
    }
 `
+export const CREATE_CART_ITEMS = gql`
+   mutation CREATE_CART_ITEMS($objects: [order_cartItem_insert_input!]!) {
+      createCartItems(objects: $objects) {
+         returning {
+            id
+         }
+      }
+   }
+`

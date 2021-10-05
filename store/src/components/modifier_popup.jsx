@@ -5,15 +5,20 @@ import { RadioIcon, ShowImageIcon } from '../assets/icons'
 import { formatCurrency } from '../utils'
 import { CloseIcon, CheckBoxIcon } from '../assets/icons'
 import { useOnClickOutside } from '../utils/useOnClickOutisde'
+import { CartContext } from '../context'
+import { CounterButton } from './counterBtn'
+
 export const ModifierPopup = props => {
    const { productData, showModifiers = true, closeModifier, height } = props
    const [productOption, setProductOption] = useState(
       productData.productOptions[0]
    ) // for by default choose one product option
+   const [quantity, setQuantity] = useState(1)
    const [selectedOptions, setSelectedOptions] = useState({
       single: [],
       multiple: [],
    })
+   const { addToCart } = React.useContext(CartContext)
    const [errorCategories, setErrorCategories] = useState([])
    const imagePopUpRef = React.useRef()
    const [modifierImage, setModifierImage] = useState({
@@ -33,6 +38,7 @@ export const ModifierPopup = props => {
          modifierCategoryID: eachCategory.id,
          modifierCategoryOptionsID: eachOption.id,
          modifierCategoryOptionsPrice: eachOption.price,
+         cartItem: eachOption.cartItem,
       }
       //modifierCategoryOptionID
       //modifierCategoryID
@@ -100,16 +106,28 @@ export const ModifierPopup = props => {
          }
       }
    }
+
+   //add to cart
    const handleAddOnCartOn = () => {
-      if (!productOption.modifier) {
-         console.log('PASS')
-         return
-      }
       //check category fulfillment conditions
       const allSelectedOptions = [
          ...selectedOptions.single,
          ...selectedOptions.multiple,
       ]
+
+      //no modifier available in product options
+      if (!productOption.modifier) {
+         console.log('PASS')
+         // addToCart({ ...productOption, quantity })
+         const cartItem = getCartItemWithModifiers(
+            productOption.cartItem,
+            allSelectedOptions.map(x => x.cartItem)
+         )
+         // const objects = new Array(quantity).fill({ ...cartItem })
+         // console.log('cartItem', objects)
+         addToCart(cartItem, quantity)
+         return
+      }
 
       let allCatagories = productOption.modifier?.categories || []
 
@@ -125,7 +143,9 @@ export const ModifierPopup = props => {
             if (
                allFoundedOptionsLength > 0 &&
                min <= allFoundedOptionsLength &&
-               allFoundedOptionsLength <= max
+               (max
+                  ? allFoundedOptionsLength <= max
+                  : allFoundedOptionsLength <= allCatagories[i].options.length)
             ) {
                console.log('hello')
             } else {
@@ -140,8 +160,17 @@ export const ModifierPopup = props => {
          return
       } else {
          console.log('PASS')
+         const cartItem = getCartItemWithModifiers(
+            productOption.cartItem,
+            allSelectedOptions.map(x => x.cartItem)
+         )
+         // const objects = new Array(quantity).fill({ ...cartItem })
+         // console.log('cartItem', objects)
+         addToCart(cartItem, quantity)
       }
    }
+
+   //total amount for this item
    const totalAmount = () => {
       const productOptionPrice = productOption.price
       const allSelectedOptions = [
@@ -154,7 +183,58 @@ export const ModifierPopup = props => {
       )
       const totalPrice =
          productOptionPrice + allSelectedOptionsPrice + productData.price
-      return formatCurrency(totalPrice)
+      return formatCurrency(totalPrice * quantity)
+   }
+
+   //render conditional text
+   const renderConditionText = category => {
+      if (category.type === 'single') {
+         return 'CHOOSE ONE*'
+      } else {
+         if (category.isRequired) {
+            if (category.limits.min) {
+               if (category.limits.max) {
+                  return `(CHOOSE AT LEAST ${category.limits.min} AND AT MOST ${category.limits.max})*`
+               } else {
+                  return `(CHOOSE AT LEAST ${category.limits.min})*`
+               }
+            } else {
+               if (category.limits.max) {
+                  return `(CHOOSE AT LEAST 1 AND AT MOST ${category.limits.max})*`
+               } else {
+                  return `(CHOOSE AT LEAST 1)*`
+               }
+            }
+         } else {
+            if (category.limits.max) {
+               return '(CHOOSE AS MANY AS YOU LIKE)'
+            } else {
+               return `(CHOOSE AS MANY AS YOU LIKE UPTO ${category.limits.max})`
+            }
+         }
+      }
+   }
+
+   //increment click
+   const incrementClick = () => {
+      setQuantity(quantity + 1)
+   }
+
+   //decrement click
+   const decrementClick = () => {
+      setQuantity(quantity - 1)
+   }
+   //custom area for product
+   const CustomArea = () => {
+      return (
+         <div className="hern-menu-popup-product-custom-area">
+            <CounterButton
+               count={quantity}
+               incrementClick={incrementClick}
+               decrementClick={decrementClick}
+            />
+         </div>
+      )
    }
    return (
       <>
@@ -168,6 +248,7 @@ export const ModifierPopup = props => {
                      data={productData}
                      showImage={false}
                      showCustomText={false}
+                     customAreaComponent={CustomArea}
                   />
                </div>
                <div className="hern-product-modifier-pop-up-product-option-list">
@@ -220,15 +301,7 @@ export const ModifierPopup = props => {
                                     fontSize: '11px',
                                  }}
                               >
-                                 {eachCategory.type === 'single'
-                                    ? `(You can select single add on)${
-                                         eachCategory.isRequired ? '*' : ''
-                                      }`
-                                    : `(You can select min ${
-                                         eachCategory.limits.min || 0
-                                      } and max ${
-                                         eachCategory.limits.max || 0
-                                      })${eachCategory.isRequired ? '*' : ''}`}
+                                 {renderConditionText(eachCategory)}
                               </span>
 
                               {errorCategories.includes(eachCategory.id) && (
@@ -342,4 +415,31 @@ export const ModifierPopup = props => {
          </div>
       </>
    )
+}
+const getCartItemWithModifiers = (cartItemInput, selectedModifiersInput) => {
+   const finalCartItem = { ...cartItemInput }
+
+   const combinedModifiers = selectedModifiersInput.reduce(
+      (acc, obj) => [...acc, ...obj.data],
+      []
+   )
+
+   const dataArr = finalCartItem?.childs?.data[0]?.childs?.data
+   const dataArrLength = dataArr.length
+
+   if (dataArrLength === 0) {
+      finalCartItem.childs.data[0].childs.data = combinedModifiers
+      return finalCartItem
+   } else {
+      for (let i = 0; i < dataArrLength; i++) {
+         const objWithModifiers = {
+            ...dataArr[i],
+            childs: {
+               data: combinedModifiers,
+            },
+         }
+         finalCartItem.childs.data[0].childs.data[i] = objWithModifiers
+      }
+      return finalCartItem
+   }
 }

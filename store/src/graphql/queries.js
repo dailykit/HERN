@@ -1257,3 +1257,118 @@ export const PRODUCTS_BY_CATEGORY = gql`
       }
    }
 `
+export const PRODUCTS = gql`
+   query Products($ids: [Int!]!) {
+      products(where: { isArchived: { _eq: false }, id: { _in: $ids } }) {
+         id
+         name
+         type
+         assets
+         tags
+         additionalText
+         description
+         price
+         discount
+         isPopupAllowed
+         isPublished
+         defaultProductOptionId
+         productOptions(
+            where: { isArchived: { _eq: false } }
+            order_by: { position: desc_nulls_last }
+         ) {
+            id
+            position
+            type
+            label
+            price
+            discount
+            cartItem
+            modifier {
+               id
+               name
+               categories(where: { isVisible: { _eq: true } }) {
+                  id
+                  name
+                  isRequired
+                  type
+                  limits
+                  options(where: { isVisible: { _eq: true } }) {
+                     id
+                     name
+                     price
+                     discount
+                     quantity
+                     image
+                     isActive
+
+                     sachetItemId
+                     ingredientSachetId
+                     cartItem
+                  }
+               }
+            }
+         }
+      }
+   }
+`
+export const GET_CART_ON_DEMAND = gql`
+   subscription cart($id: Int!) {
+      cart(id: $id) {
+         id
+         tax
+         orderId
+         discount
+         itemTotal
+         totalPrice
+         customerId
+         customerInfo
+         paymentStatus
+         deliveryPrice
+         fulfillmentInfo
+         paymentMethodId
+         walletAmountUsed
+         loyaltyPointsUsed
+         loyaltyPointsUsable
+         customerKeycloakId
+         billing: billingDetails
+         subscriptionOccurenceId
+         subscriptionOccurence {
+            id
+            fulfillmentDate
+         }
+         address
+         fulfillmentInfo
+         products: cartItems_aggregate(where: { level: { _eq: 1 } }) {
+            aggregate {
+               count
+            }
+            nodes {
+               id
+               addOnLabel
+               addOnPrice
+               price: unitPrice
+               name: displayName
+               image: displayImage
+               childs {
+                  id
+                  price: unitPrice
+                  name: displayName
+                  productOption {
+                     id
+                     label
+                  }
+                  childs {
+                     id
+                     displayName
+                     price: unitPrice
+                     modifierOption {
+                        id
+                        name
+                     }
+                  }
+               }
+            }
+         }
+      }
+   }
+`
