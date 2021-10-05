@@ -3,12 +3,17 @@ import styled from 'styled-components'
 export const Layout = styled.div`
    height: 100vh;
    > main {
+      position: absolute;
+      left: 52px;
       height: calc(100% - 48px);
       overflow-y: auto;
+      width: 96%;
    }
 `
 
 export const AppList = styled.ul`
+   position: absolute;
+   top: 71px;
    background: #ffffff;
    display: grid;
    margin-left: 1px !important;
@@ -30,11 +35,11 @@ export const AppList = styled.ul`
       outline: 1px solid #eeeeee;
       border-radius: 10px;
    }
-   :hover {
-      position: relative;
-      width: 222px;
-      z-index: 1;
-   }
+   // :hover {
+   //    position: absolute;
+   //    width: 222px;
+   //    z-index: 1;
+   // }
 `
 export const AppIcon = styled.svg`
    height: 16px;
