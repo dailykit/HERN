@@ -4,10 +4,11 @@ import styled from 'styled-components'
 const Styles = {
    ModalWrapper: styled.div`
       position: absolute;
-      padding: 0 8px;
-      top: 60px;
+      height: 100%;
+      width: 100%;
+      top: 0px;
       bottom: 42px;
-      ${'' /* left: 0; */}
+
       right: 0;
       display: flex;
       backdrop-filter: ${({ hasContent }) =>
@@ -33,10 +34,10 @@ const Styles = {
    `,
 
    MenuArea: styled.div`
+      display: ${({ isContentOpen }) => (isContentOpen ? 'none' : 'block')};
       min-width: 330px;
       width: 330px;
       background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(50px) sepia(1%);
       border: 1px solid #f3f3f3;
       box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
       border-radius: 10px;

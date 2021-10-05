@@ -1,5 +1,4 @@
 import React from 'react'
-import usePortal from 'react-cool-portal'
 import { useBottomBar } from '../../providers'
 import { getTreeViewArray } from '../../utils'
 import Modal from '../Modal'
@@ -22,7 +21,6 @@ const BottomBar = ({ setIsOpen, isOpen, setOpen, setIsMenuOpen }) => {
    const [filePaths, setfilePaths] = React.useState([])
    const [cssPaths, setCssPaths] = React.useState([])
    const [jsPaths, setJsPaths] = React.useState([])
-   // const { Portal } = usePortal()
 
    const [optionId, setOptionId, deleteOptionId] =
       useQueryParamState('optionId')
@@ -47,7 +45,6 @@ const BottomBar = ({ setIsOpen, isOpen, setOpen, setIsMenuOpen }) => {
          navigationMenuItems: treeData,
       })
       setIsModalOpen(true)
-      // setIsOpen(false)
    }
 
    const getMenuItemAction = menuItem => {
@@ -110,26 +107,14 @@ const BottomBar = ({ setIsOpen, isOpen, setOpen, setIsMenuOpen }) => {
 
    return (
       <>
-         <Styles.Wrapper
-            id="wrapper"
-            // onMouseOver={() => {
-            //    if (width > 565) {
-            //       setIsOpen(true)
-            //    }
-            // }}
-            // onMouseLeave={() => {
-            //    if (!isModalOpen) {
-            //       setIsOpen(false)
-            //    }
-            // }}
-            // onClick={() => {
-            //    setIsModalOpen(false)
-            //    setOpen(null)
-            // }}
-         >
-            <BackButton setOpen={setOpen} />
-            <span>Help</span>
-            <Styles.OptionsWrapper ref={bottomBarRef}>
+         <Styles.Wrapper isModalOpen={state?.clickedOption} id="wrapper" isContentOpen={isContentOpen}>
+            <Styles.OptionsWrapper
+               ref={bottomBarRef}
+               isModalOpen={state?.clickedOption}
+            >
+               <BackButton setOpen={setOpen} />
+               <span style={{padding: '9px'}}>Help</span>
+
                {state?.bottomBarOptions.map(option => {
                   return (
                      <Styles.Option
@@ -153,26 +138,25 @@ const BottomBar = ({ setIsOpen, isOpen, setOpen, setIsMenuOpen }) => {
             </Styles.OptionsWrapper>
 
             {state?.clickedOption && (
-             
-                  <Modal
-                     isOpen={null}
-                     setIsOpen={null}
-                     setIsModalOpen={setIsModalOpen}
-                     bottomBarRef={bottomBarRef}
-                     handleMenuItemClick={handleMenuItemClick}
-                     isContentOpen={isContentOpen}
-                     setIsContentOpen={setIsContentOpen}
-                     filePaths={filePaths}
-                     cssPaths={cssPaths}
-                     jsPaths={jsPaths}
-                     setJsPaths={setJsPaths}
-                     setCssPaths={setCssPaths}
-                     setfilePaths={setfilePaths}
-                     hasAction={hasAction}
-                     deleteNavigationMenuId={deleteNavigationMenuId}
-                     deleteOptionId={deleteOptionId}
-                     navigationMenuItemId={navigationMenuItemId}
-                  />
+               <Modal
+                  isOpen={null}
+                  setIsOpen={null}
+                  setIsModalOpen={setIsModalOpen}
+                  bottomBarRef={bottomBarRef}
+                  handleMenuItemClick={handleMenuItemClick}
+                  isContentOpen={isContentOpen}
+                  setIsContentOpen={setIsContentOpen}
+                  filePaths={filePaths}
+                  cssPaths={cssPaths}
+                  jsPaths={jsPaths}
+                  setJsPaths={setJsPaths}
+                  setCssPaths={setCssPaths}
+                  setfilePaths={setfilePaths}
+                  hasAction={hasAction}
+                  deleteNavigationMenuId={deleteNavigationMenuId}
+                  deleteOptionId={deleteOptionId}
+                  navigationMenuItemId={navigationMenuItemId}
+               />
             )}
          </Styles.Wrapper>
       </>

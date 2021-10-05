@@ -8,6 +8,7 @@ import { useOnClickOutside } from './useOnClickOutSide'
 import { get_env } from '../../utils'
 import CancelIcon from '../../assets/icons/Cancel'
 import styled from 'styled-components'
+import usePortal from 'react-cool-portal'
 
 export default function Modal({
    isOpen,
@@ -32,6 +33,7 @@ export default function Modal({
    const [optionMenu, setOptionMenu] = useState({})
    const ref = React.useRef()
    const contentRef = React.useRef()
+   const { Portal } = usePortal()
 
    useOnClickOutside([ref, bottomBarRef, contentRef], () => {
       setIsModalOpen(false)
@@ -90,8 +92,9 @@ export default function Modal({
       (isContentOpen && hasAction)
 
    return (
-      // <StyledWrapper>
+     
       <Styles.ModalWrapper show={isOpen} hasContent={hasContent} id="modal">
+    
          <Styles.ContentArea
             hasContent={hasContent}
             isContentOpen={isContentOpen}
@@ -108,20 +111,10 @@ export default function Modal({
                <CancelIcon />
             </StyledButton>
 
-            {/* <ComboButton
-               type="solid"
-               variant="secondary"
-               size="sm"
-               onClick={() => {
-                  deleteNavigationMenuId('navigationMenuItemId')
-                  setIsContentOpen(false)
-               }}
-            >
-               Close
-            </ComboButton> */}
             <div id="content_area" />
          </Styles.ContentArea>
-         <Styles.MenuArea ref={ref} hasContent={hasContent} id="menuarea">
+        
+         <Styles.MenuArea ref={ref} hasContent={hasContent} id="menuarea" isContentOpen={isContentOpen}>
             <Styles.MenuAreaHeader id="menuheader">
                <Flex
                   container
@@ -145,7 +138,7 @@ export default function Modal({
             </Styles.MenuBody>
          </Styles.MenuArea>
       </Styles.ModalWrapper>
-      // </StyledWrapper>
+      
    )
 }
 
@@ -156,16 +149,4 @@ const StyledButton = styled.button`
    background: transparent;
    border: none;
 `
-const StyledWrapper = styled.div`
-   position: relative;
-   top: 0;
-   display: flex;
-   flex-direction: row-reverse;
-   margin-left: -170vh;
-   margin-top: -95px;
-   backdrop-filter: blur(60px);
 
-    {
-      /* filter: blur(1px); */
-   }
-`

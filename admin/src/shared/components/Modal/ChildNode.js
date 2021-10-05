@@ -12,7 +12,6 @@ const ChildNode = ({ child, clickHandler, navigationMenuItemId }) => {
             e.stopPropagation()
             if (child?.action) {
                clickHandler(child)
-               // setToggleParent(true)
             } else {
                setToggleParent(!toggleParent)
             }
@@ -69,7 +68,7 @@ const StyledButton = styled.button`
    display: flex;
    align-items: center;
    justify-content: center;
-   color:#f5f5f5
+   color: #f5f5f5;
    background: ${({ isChildOpen }) => (isChildOpen ? '#f3f3f3' : '#FFFFFF')};
    border-radius: 18.6691px;
 `

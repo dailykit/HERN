@@ -60,7 +60,8 @@ export const StyledWrapper = styled.div`
    font-size: 14px;
    line-height: 16px;
    border-radius: 8px;
-   background: ${({ isChildOpen }) => (isChildOpen ? '#f3f3f3' : '#FFFFFF')};
+   background: ${({ isChildOpen }) =>
+      isChildOpen ? '#f3f3f3' : 'transparent'};
 
    &:hover {
       background: #f3f3f3;
@@ -77,6 +78,7 @@ const ButtonWrapper = styled.div`
    align-items: center;
    justify-content: space-between;
    margin-right: 0px !important;
+
    > p {
       color: ${({ isActive }) => (isActive ? '#367BF5' : '#202020')};
    }
@@ -87,7 +89,7 @@ const ButtonWrapper = styled.div`
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #ffffff;
+      background: transparent;
       border-radius: 18.6691px;
    }
 `

@@ -1,17 +1,23 @@
-import styled from 'styled-components'
-
+import styled, { css } from 'styled-components'
 
 const Styles = {
    Wrapper: styled.div`
-      left: 1090px;
       position: fixed;
       top: 46px;
-      width: 185px;
-      height: 102px;
+      right: 100px;
+      ${({ isContentOpen }) =>
+         isContentOpen &&
+         css`
+            left: 100px;
+         `};
+      width: ${({ isModalOpen, isContentOpen }) =>
+         isModalOpen ? (isContentOpen ? 'auto' : '330px') : '185px'};
+      height: ${({ isModalOpen }) => (isModalOpen ? '588px' : '100px')};
+
       background: rgba(255, 255, 255, 0.13);
       border: 1px solid #f2f3f3;
       backdrop-filter: blur(44.37px);
-      border-radius: 10px;
+      border-radius: 4px;
       z-index: 1010;
 
       @media only screen and (max-width: 565px) {
@@ -37,14 +43,8 @@ const Styles = {
    `,
 
    OptionsWrapper: styled.div`
-      display: flex;
-      flex-direction: column;
-
-      cursor: pointer;
-
-      @media only screen and (max-width: 565px) {
-         flex-direction: column;
-      }
+      display: ${({ isModalOpen }) => (isModalOpen ? 'none' : 'block')};
+      padding: 2px;
    `,
    Option: styled.p`
       font-family: Roboto;
