@@ -1,15 +1,30 @@
 import styled from 'styled-components'
-const colors = { primary: '#320E3B', secondary: '#373B48' }
+
 
 const Styles = {
    Wrapper: styled.div`
-      width: 100%;
+      left: 1090px;
       position: fixed;
+      top: 46px;
+      width: 185px;
+      height: 102px;
+      background: rgba(255, 255, 255, 0.13);
+      border: 1px solid #f2f3f3;
+      backdrop-filter: blur(44.37px);
+      border-radius: 10px;
       z-index: 1010;
-      bottom: 0;
-      left: 0;
+
       @media only screen and (max-width: 565px) {
          z-index: 0;
+      }
+      > span {
+         text-transform: uppercase;
+         padding: 0px 10px;
+         color: #919699;
+         font-style: normal;
+         font-weight: 500;
+         font-size: 10px;
+         line-height: 10px;
       }
    `,
    BottomBarMenu: styled.div`
@@ -19,36 +34,30 @@ const Styles = {
       position: absolute;
       top: -44px;
       z-index: 1009;
-      left: 45%;
    `,
 
    OptionsWrapper: styled.div`
       display: flex;
-      width: 100vw;
-      padding: 0 32px;
+      flex-direction: column;
+
       cursor: pointer;
-      background: #ffffff;
+
       @media only screen and (max-width: 565px) {
          flex-direction: column;
       }
-      box-shadow: -5px 5px 10px rgba(201, 201, 201, 0.2),
-         5px -5px 10px rgba(201, 201, 201, 0.2),
-         -5px -5px 10px rgba(255, 255, 255, 0.9),
-         5px 5px 13px rgba(201, 201, 201, 0.9),
-         inset 1px 1px 2px rgba(255, 255, 255, 0.3),
-         inset -1px -1px 2px rgba(201, 201, 201, 0.5);
    `,
    Option: styled.p`
       font-family: Roboto;
       font-style: normal;
-      font-weight: bold;
-      font-size: 12px;
-      line-height: 14px;
-      text-transform: uppercase;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 16px;
       cursor: pointer;
-      padding: 10px 16px;
+      padding: 10px 5px;
       display: flex;
       align-items: center;
+      margin-left: 5px;
+      width: 172px;
       img {
          width: 24px;
          height: 24px;
@@ -58,16 +67,10 @@ const Styles = {
          margin-right: 4px;
       }
 
-      color: ${colors.secondary};
-      background-color: #fff;
-      @media only screen and (min-width: 566px) {
-         color: ${({ active }) => (active ? `#fff` : `${colors.secondary}`)};
-         background-color: ${({ active }) =>
-            active ? `${colors.primary}` : `#fff`};
-         &:hover {
-            background: ${({ active }) =>
-               !active ? '#f4f4f4' : `${colors.primary}`};
-         }
+      &:hover {
+         background: #fff;
+         color: #367bf5;
+         border-radius: 4px;
       }
    `,
 }

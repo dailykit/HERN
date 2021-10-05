@@ -6,6 +6,8 @@ import TreeView from './treeView'
 import { useBottomBar } from '../../providers'
 import { useOnClickOutside } from './useOnClickOutSide'
 import { get_env } from '../../utils'
+import CancelIcon from '../../assets/icons/Cancel'
+import styled from 'styled-components'
 
 export default function Modal({
    isOpen,
@@ -24,6 +26,7 @@ export default function Modal({
    hasAction,
    deleteNavigationMenuId,
    deleteOptionId,
+   navigationMenuItemId,
 }) {
    const { state = {}, removeClickedOptionInfo } = useBottomBar()
    const [optionMenu, setOptionMenu] = useState({})
@@ -32,7 +35,7 @@ export default function Modal({
 
    useOnClickOutside([ref, bottomBarRef, contentRef], () => {
       setIsModalOpen(false)
-      setIsOpen(false)
+      // setIsOpen(null)
       removeClickedOptionInfo()
       deleteOptionId('optionId')
       deleteNavigationMenuId('navigationMenuItemId')
@@ -87,9 +90,39 @@ export default function Modal({
       (isContentOpen && hasAction)
 
    return (
-      <Styles.ModalWrapper show={isOpen} hasContent={hasContent}>
-         <Styles.MenuArea ref={ref}>
-            <Styles.MenuAreaHeader>
+      // <StyledWrapper>
+      <Styles.ModalWrapper show={isOpen} hasContent={hasContent} id="modal">
+         <Styles.ContentArea
+            hasContent={hasContent}
+            isContentOpen={isContentOpen}
+            ref={contentRef}
+            id="content area"
+         >
+            <StyledButton
+               onClick={() => {
+                  deleteNavigationMenuId('navigationMenuItemId')
+                  setIsContentOpen(false)
+                  deleteOptionId('optionId')
+               }}
+            >
+               <CancelIcon />
+            </StyledButton>
+
+            {/* <ComboButton
+               type="solid"
+               variant="secondary"
+               size="sm"
+               onClick={() => {
+                  deleteNavigationMenuId('navigationMenuItemId')
+                  setIsContentOpen(false)
+               }}
+            >
+               Close
+            </ComboButton> */}
+            <div id="content_area" />
+         </Styles.ContentArea>
+         <Styles.MenuArea ref={ref} hasContent={hasContent} id="menuarea">
+            <Styles.MenuAreaHeader id="menuheader">
                <Flex
                   container
                   alignItems="center"
@@ -103,32 +136,36 @@ export default function Modal({
                </Flex>
                <p>{optionMenu?.description || 'Description'}</p>
             </Styles.MenuAreaHeader>
-            <Styles.MenuBody>
+            <Styles.MenuBody id="menubody">
                <TreeView
                   data={optionMenu?.navigationMenuItems}
                   clickHandler={handleMenuItemClick}
+                  navigationMenuItemId={navigationMenuItemId}
                />
             </Styles.MenuBody>
          </Styles.MenuArea>
-         <Styles.ContentArea
-            hasContent={hasContent}
-            isContentOpen={isContentOpen}
-            ref={contentRef}
-         >
-            <ComboButton
-               type="solid"
-               variant="secondary"
-               size="sm"
-               onClick={() => {
-                  deleteNavigationMenuId('navigationMenuItemId')
-                  setIsContentOpen(false)
-               }}
-            >
-               <ClearIcon color="#45484C" />
-               Close
-            </ComboButton>
-            <div id="content_area" />
-         </Styles.ContentArea>
       </Styles.ModalWrapper>
+      // </StyledWrapper>
    )
 }
+
+const StyledButton = styled.button`
+   position: relative;
+   right: 10px;
+   top: -4px;
+   background: transparent;
+   border: none;
+`
+const StyledWrapper = styled.div`
+   position: relative;
+   top: 0;
+   display: flex;
+   flex-direction: row-reverse;
+   margin-left: -170vh;
+   margin-top: -95px;
+   backdrop-filter: blur(60px);
+
+    {
+      /* filter: blur(1px); */
+   }
+`

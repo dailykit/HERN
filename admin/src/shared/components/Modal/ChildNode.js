@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { ChevronDown, ChevronUp } from '../../assets/icons'
 
-const ChildNode = ({ child, clickHandler }) => {
+const ChildNode = ({ child, clickHandler, navigationMenuItemId }) => {
    const [toggleParent, setToggleParent] = React.useState(false)
    const [toggleChild, setToggleChild] = React.useState(false)
 
@@ -12,23 +12,24 @@ const ChildNode = ({ child, clickHandler }) => {
             e.stopPropagation()
             if (child?.action) {
                clickHandler(child)
+               // setToggleParent(true)
             } else {
                setToggleParent(!toggleParent)
             }
          }}
       >
-         <div>
+         <Child isActive={navigationMenuItemId === child?.id}>
             <p>{child.label}</p>
             {child?.childNodes?.length > 0 && (
                <StyledButton hasChild={child?.childNodes?.length > 0}>
                   {toggleParent ? (
-                     <ChevronUp size="16px" color="#fff" />
+                     <ChevronUp size="16px" color="#f9f9f9" />
                   ) : (
-                     <ChevronDown size="16px" color="#fff" />
+                     <ChevronDown size="16px" color="#f9f9f9" />
                   )}
                </StyledButton>
             )}
-         </div>
+         </Child>
          {toggleParent &&
             child?.childNodes?.map(c => {
                return (
@@ -46,9 +47,9 @@ const ChildNode = ({ child, clickHandler }) => {
                      {c?.childNodes?.length > 0 && (
                         <StyledButton hasChild={c?.childNodes?.length > 0}>
                            {toggleChild ? (
-                              <ChevronUp size="16px" color="#fff" />
+                              <ChevronUp size="16px" color="#f9f9f9" />
                            ) : (
-                              <ChevronDown size="16px" color="#fff" />
+                              <ChevronDown size="16px" color="#f9f9f9" />
                            )}
                         </StyledButton>
                      )}
@@ -68,34 +69,34 @@ const StyledButton = styled.button`
    display: flex;
    align-items: center;
    justify-content: center;
-   background: #3c1845;
-   box-shadow: ${({ hasChild }) =>
-      hasChild
-         ? `-5px 5px 10px rgba(37, 15, 43, 0.2),
-            5px -5px 10px rgba(37, 15, 43, 0.2),
-            -5px -5px 10px rgba(83, 33, 95, 0.9),
-            5px 5px 13px rgba(37, 15, 43, 0.9),
-            inset 1px 1px 2px rgba(83, 33, 95, 0.3),
-            inset -1px -1px 2px rgba(37, 15, 43, 0.5)`
-         : 'none'};
+   color:#f5f5f5
+   background: ${({ isChildOpen }) => (isChildOpen ? '#f3f3f3' : '#FFFFFF')};
    border-radius: 18.6691px;
 `
 const StyledChild = styled.div`
-   width: 100%;
+   width: 246px;
    font-style: normal;
    font-weight: 500;
    font-size: 12px;
    line-height: 14px;
    padding: 8px;
-   background: #3c1845;
+   margin: 4px 0px;
+
    &:hover {
-      background: #320e3b;
+      width: 246px;
+      background: #ffffff;
+      border-radius: 4px;
+      margin: 4px 0px;
    }
-   > div {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px;
-      text-transform: capitalize;
+`
+const Child = styled.div`
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   padding: 8px;
+   text-transform: capitalize;
+
+   > p {
+      color: ${({ isActive }) => (isActive ? '#367BF5' : '#202020')};
    }
 `

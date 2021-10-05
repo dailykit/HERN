@@ -20,15 +20,15 @@ export default function MenuItem({ menuItem = {}, clickHandler, ...props }) {
             }
          }}
       >
-         <ButtonWrapper>
+         <ButtonWrapper isActive={toggleMenu}>
             <p>{menuItem?.label}</p>
 
             {menuItem?.childNodes?.length > 0 && (
                <button>
                   {toggleMenu ? (
-                     <ChevronUp size="16px" color="#fff" />
+                     <ChevronUp size="16px" color="#919699" />
                   ) : (
-                     <ChevronDown size="16px" color="#fff" />
+                     <ChevronDown size="16px" color="#919699" />
                   )}
                </button>
             )}
@@ -40,6 +40,7 @@ export default function MenuItem({ menuItem = {}, clickHandler, ...props }) {
                      key={child.id}
                      child={child}
                      clickHandler={clickHandler}
+                     navigationMenuItemId={props?.navigationMenuItemId}
                   />
                ))}
             </StyledChildren>
@@ -58,16 +59,17 @@ export const StyledWrapper = styled.div`
    font-weight: 500;
    font-size: 14px;
    line-height: 16px;
-   background: ${({ isChildOpen }) => (isChildOpen ? '#3c1845' : '#320E3B')};
+   border-radius: 8px;
+   background: ${({ isChildOpen }) => (isChildOpen ? '#f3f3f3' : '#FFFFFF')};
+
    &:hover {
-      background: #3c1845;
-      border-radius: 2px;
+      background: #f3f3f3;
+      border-radius: 8px;
    }
    > div {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-right: 40px;
    }
 `
 const ButtonWrapper = styled.div`
@@ -75,6 +77,9 @@ const ButtonWrapper = styled.div`
    align-items: center;
    justify-content: space-between;
    margin-right: 0px !important;
+   > p {
+      color: ${({ isActive }) => (isActive ? '#367BF5' : '#202020')};
+   }
    > button {
       border: none;
       height: 24px;
@@ -82,12 +87,7 @@ const ButtonWrapper = styled.div`
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #320e3b;
-      box-shadow: -4px 4px 8px rgba(31, 9, 36, 0.2),
-         4px -4px 8px rgba(31, 9, 36, 0.2), -4px -4px 8px rgba(70, 19, 82, 0.9),
-         4px 4px 10px rgba(31, 9, 36, 0.9),
-         inset 1px 1px 2px rgba(70, 19, 82, 0.3),
-         inset -1px -1px 2px rgba(31, 9, 36, 0.5);
+      background: #ffffff;
       border-radius: 18.6691px;
    }
 `
@@ -97,6 +97,6 @@ const StyledChildren = styled.div`
    flex-direction: column;
    justify-content: space-between;
    margin-top: 16px;
-   border-radius: 4px;
-   border: 1px solid #320e3b;
+   border: 2px solid #ffffff;
+   border-radius: 8px;
 `
