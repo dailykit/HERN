@@ -365,10 +365,10 @@ export const OnDemandOrder = () => {
                            >
                               {eachCategory.name}
                            </p>
-                           {eachCategory.products.map(eachProduct => {
+                           {eachCategory.products.map((eachProduct, index) => {
                               return (
                                  <ProductCard
-                                    key={eachProduct.id}
+                                    key={index}
                                     data={eachProduct}
                                     showImage={
                                        eachProduct.assets.images.length > 0

@@ -52,9 +52,9 @@ export const ProductCard = props => {
             {showImage && (
                <div className="hern-product-card-image-container">
                   <Slide ref={slideRef} {...properties}>
-                     {data.assets.images.map(each => {
+                     {data.assets.images.map((each, index) => {
                         return (
-                           <>
+                           <div key={index}>
                               <div
                                  className="hern-product-card-image-background"
                                  style={{ backgroundImage: `url(${each})` }}
@@ -67,7 +67,7 @@ export const ProductCard = props => {
                                     onImageClick ? onImageClick() : null
                                  }}
                               />
-                           </>
+                           </div>
                         )
                      })}
                   </Slide>
