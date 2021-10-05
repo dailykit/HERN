@@ -21,7 +21,7 @@ const Carousel = ({ data = [], type = 'experience' }) => {
       <StyledDiv>
          <div className="prev_btn">
             <span onClick={() => owlCarouselRef.current.prev()}>
-               <ChevronLeft size={28} color={theme.colors.textColor7} />
+               <ChevronLeft size="64" color={theme.colors.textColor7} />
             </span>
          </div>
          <OwlCarousel
@@ -29,7 +29,7 @@ const Carousel = ({ data = [], type = 'experience' }) => {
                owlCarouselRef.current = carousel.relatedTarget
             }}
             className="owl-theme"
-            items={4}
+            items={3}
             loop={false}
             margin={32}
             nav={false}
@@ -41,7 +41,7 @@ const Carousel = ({ data = [], type = 'experience' }) => {
             {!isEmpty(data) &&
                data.map((item, index) => {
                   return (
-                     <div className="item" key={index}>
+                     <div className="owl_carousel_item" key={index}>
                         <Card
                            boxShadow={false}
                            key={index}
@@ -54,7 +54,7 @@ const Carousel = ({ data = [], type = 'experience' }) => {
          </OwlCarousel>
          <div className="next_btn">
             <span onClick={() => owlCarouselRef.current.next()}>
-               <ChevronRight size={28} color={theme.colors.textColor7} />
+               <ChevronRight size="64" color={theme.colors.textColor7} />
             </span>
          </div>
       </StyledDiv>

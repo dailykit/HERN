@@ -55,7 +55,7 @@ export default function ExperienceCard({ cardDetails, ...props }) {
             />
          </CardImage>
          <CardBody>
-            <h2 className="exp-name" onClick={onClickHandler}>
+            <h2 className="exp-name text6" onClick={onClickHandler}>
                {experience?.title}
             </h2>
             <Flex

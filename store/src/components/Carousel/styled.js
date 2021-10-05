@@ -3,11 +3,11 @@ import { theme } from '../../theme'
 
 export const StyledDiv = styled.div`
    position: relative;
-   .item {
-      height: 416px;
+   .owl_carousel_item {
+      height: 580px;
       border-radius: 16px;
    }
-   .item img {
+   .owl_carousel_item img {
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -61,6 +61,9 @@ export const StyledDiv = styled.div`
       margin: 0 0 40px 40px;
    }
    @media (max-width: 769px) {
+      .owl_carousel_item {
+         height: 480px;
+      }
       .my-masonry-grid {
          margin-right: 1rem;
       }

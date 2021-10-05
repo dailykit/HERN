@@ -28,11 +28,11 @@ export default function ExpertCard({ cardDetails, ...props }) {
          </CardImage>
          <CardBody>
             <h2
-               className="exp-name"
+               className="exp-name text6"
                onClick={onClickHandler}
             >{`${expert?.firstName} ${expert?.lastName}`}</h2>
             <Flex container alignItems="flex-start" flexDirection="column">
-               <p className="category">{experienceCategoryTitle}</p>
+               <p className="category text9">{experienceCategoryTitle}</p>
                {/* <p className="experience">
                   {expert?.expertTotalExperience || 1} Experiences
                </p>

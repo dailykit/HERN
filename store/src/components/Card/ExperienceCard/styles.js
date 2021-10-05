@@ -16,12 +16,16 @@ export const Card = styled.div`
          !boxShadow ? '0px 8px 12px 2px rgba(0, 0, 0, 0.32)' : 'none'};
       transform: translate3d(0px, -1.5px, 0px);
    }
+   height: 480px;
+   @media (min-width: 769px) {
+      height: 580px;
+   }
 `
 
 export const CardImage = styled.div`
    position: relative;
    width: 100%;
-   height: 280px;
+   height: 100%;
    border-radius: 16px;
    overflow: hidden;
    img {
@@ -118,9 +122,14 @@ export const CardBody = styled.div`
    }
    .exp-name {
       margin: 4px 0 4px 0;
-      font-size: ${theme.sizes.h8};
-      font-weight: 500;
+      font-family: Proxima Nova;
+      font-weight: 800;
       text-align: left;
+      color: ${theme.colors.textColor4};
+      letter-spacing: 0.16em;
+      :hover {
+         color: ${theme.colors.textColor6};
+      }
    }
    .exp-info {
       font-weight: 800;
@@ -149,6 +158,12 @@ export const CardBody = styled.div`
       width: 100%;
       display: flex;
       align-items: center;
+      p {
+         font-family: Proxima Nova;
+         color: ${theme.colors.textColor6};
+         font-weight: 800;
+         letter-spacing: 0.16em;
+      }
    }
    .expert-img {
       width: 14px;
@@ -159,7 +174,7 @@ export const CardBody = styled.div`
    @media (min-width: 769px) {
       .exp-name {
          margin: 0 0 0.5rem 0;
-         font-size: ${theme.sizes.h4};
+         font-family: Proxima Nova;
       }
       .exp-info {
          font-size: ${theme.sizes.h8};

@@ -200,13 +200,7 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
                   )}
                </div>
             </GreetingDiv> */}
-            <div ref={homeTop02} id="home-top-02">
-               {Boolean(parsedData.length) &&
-                  ReactHtmlParser(
-                     parsedData.find(fold => fold.id === 'home-top-02')?.content
-                  )}
-            </div>
-            <div style={{ padding: '1rem' }}>
+            <div style={{ margin: '2rem' }}>
                {!isEmpty(categories) && (
                   <RenderCard
                      data={categories
@@ -221,6 +215,14 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
                      keyname="experience_experienceCategories"
                   />
                )}
+               <Button className="explore__btn text9">Explore More</Button>
+               <div ref={homeTop02} id="home-top-02">
+                  {Boolean(parsedData.length) &&
+                     ReactHtmlParser(
+                        parsedData.find(fold => fold.id === 'home-top-02')
+                           ?.content
+                     )}
+               </div>
                <h3 className="experienceHeading text2">Our Experts</h3>
                <p className="experienceHeading2 text5">
                   Our experiences will be lead by our qualified experts, who are
@@ -237,54 +239,6 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
                   />
                )}
 
-               {/* <GridViewWrapper>
-                  <Flex
-                     container
-                     flexDirection="column"
-                     alignItems="center"
-                     justifyContent="center"
-                     padding="1rem 0"
-                  >
-                     <h3 className="experienceHeading">
-                        {experts.length} Experts you might like to explore
-                     </h3>
-                     <ChevronDown
-                        size={iconSize}
-                        color={theme.colors.textColor4}
-                     />
-                  </Flex>
-                  <GridViewForExpert>
-                     {experts.map((data, index) => {
-                        return (
-                           <CardWrapperForExpert key={index}>
-                              <Card type="expert" data={data} />
-                           </CardWrapperForExpert>
-                        )
-                     })}
-                  </GridViewForExpert>
-                  {expertByCategoryLoading && (
-                     <div className="skeleton-wrapper">
-                        {[1, 2, 3, 4].map((_, index) => {
-                           return <ExpertSkeleton key={index} />
-                        })}
-                     </div>
-                  )}
-                  <Flex
-                     container
-                     alignItems="center"
-                     justifyContent="center"
-                     padding="1rem 0"
-                     margin="0 0 2rem 0"
-                  >
-                     <NavLink href="/experts">
-                        <h1 className="explore ">Explore more Experts</h1>
-                     </NavLink>
-                     <ChevronRight
-                        size={iconSize}
-                        color={theme.colors.textColor}
-                     />
-                  </Flex>
-               </GridViewWrapper> */}
                {!isEmpty(customerSelectedTags) &&
                   !isEmpty(customerSelectedTags[0]?.tags) && (
                      <CategorySection>
@@ -383,6 +337,19 @@ const StyledWrapper = styled.div`
       bgMode === 'dark'
          ? theme.colors.darkBackground.darkblue
          : theme.colors.lightBackground.white};
+   .explore__btn {
+      width: auto;
+      margin: 4rem auto 6rem auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Proxima Nova;
+      font-style: normal;
+      font-weight: 800;
+      color: ${theme.colors.textColor};
+      padding: 24px 64px;
+      letter-spacing: 0.16em;
+   }
    .skeleton-wrapper {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -406,6 +373,12 @@ const StyledWrapper = styled.div`
       padding: 0;
       box-shadow: none;
       border-radius: 0;
+   }
+   @media screen and (min-width: 769px) {
+      .explore__btn {
+         padding: 24px 72px;
+         letter-spacing: 0.3em;
+      }
    }
 `
 const CardWrapper = styled.div`

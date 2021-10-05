@@ -173,52 +173,6 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
             isBookingPageOpen={isBookingPageOpen}
             isDesktopView={width > 769}
          >
-            <div className="experience-title-wrap">
-               <Flex
-                  container
-                  alignItems="center"
-                  justifyContent="space-between"
-                  margin="16px"
-               >
-                  <h1 className="exp-heading text1">
-                     {experienceInfo?.experience?.title}
-                  </h1>
-                  {width > 769 && (
-                     <Button onClick={show} className="customPollBtn text7">
-                        SEND POLL
-                     </Button>
-                  )}
-               </Flex>
-               <Flex
-                  container
-                  alignItems="center"
-                  justifyContent="space-between"
-                  margin="0 16px 16px 16px"
-               >
-                  <p className="category text7">
-                     {experienceInfo?.experienceCategoryTitle}
-                  </p>
-                  <Flex
-                     container
-                     alignItems="center"
-                     justifyContent="space-between"
-                  >
-                     <Clock
-                        size={theme.sizes.h4}
-                        color={theme.colors.textColor5}
-                     />
-                     <span className="duration text7">
-                        {moment
-                           .duration(
-                              experienceInfo?.experience?.experienceClasses[0]
-                                 ?.duration
-                           )
-                           .asMinutes()}
-                        min
-                     </span>
-                  </Flex>
-               </Flex>
-            </div>
             <div className="player-wrapper">
                <GridComponent data={gridComponentData} />
             </div>
@@ -325,6 +279,52 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
                   </span>
                </div>
             </TabWrapper>
+            {/* <div className="experience-title-wrap">
+               <Flex
+                  container
+                  alignItems="center"
+                  justifyContent="space-between"
+                  margin="16px"
+               >
+                  <h1 className="exp-heading text1">
+                     {experienceInfo?.experience?.title}
+                  </h1>
+                  {width > 769 && (
+                     <Button onClick={show} className="customPollBtn text7">
+                        SEND POLL
+                     </Button>
+                  )}
+               </Flex>
+               <Flex
+                  container
+                  alignItems="center"
+                  justifyContent="space-between"
+                  margin="0 16px 16px 16px"
+               >
+                  <p className="category text7">
+                     {experienceInfo?.experienceCategoryTitle}
+                  </p>
+                  <Flex
+                     container
+                     alignItems="center"
+                     justifyContent="space-between"
+                  >
+                     <Clock
+                        size={theme.sizes.h4}
+                        color={theme.colors.textColor5}
+                     />
+                     <span className="duration text7">
+                        {moment
+                           .duration(
+                              experienceInfo?.experience?.experienceClasses[0]
+                                 ?.duration
+                           )
+                           .asMinutes()}
+                        min
+                     </span>
+                  </Flex>
+               </Flex>
+            </div> */}
             <Wrapper>
                <div ref={experienceTop02} id="experience-top-02">
                   {Boolean(parsedData.length) &&
@@ -337,9 +337,25 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
                <div className="info-wrapper">
                   <div className="left-container">
                      <section id="section-1">
-                        <h1 className="sub-heading text1">
-                           About This Experience
-                        </h1>
+                        <Flex
+                           container
+                           alignItems="center"
+                           justifyContent="space-between"
+                           margin="16px"
+                        >
+                           <h1 className="sub-heading text1">
+                              {experienceInfo?.experience?.title}
+                           </h1>
+                           {width > 769 && (
+                              <Button
+                                 onClick={show}
+                                 className="customPollBtn text7"
+                              >
+                                 SEND POLL
+                              </Button>
+                           )}
+                        </Flex>
+
                         <ReadMoreDiv>
                            <p className="about-exp text7">
                               {parse(
@@ -563,8 +579,14 @@ const StyledWrapper = styled.div`
          display: none;
       }
    }
+   .customPollBtn {
+      width: 150px;
+      background: ${theme.colors.textColor};
+      color: ${theme.colors.textColor4};
+      padding: 0 20px;
+      height: 32px;
+   }
    .experience-title-wrap {
-      background: ${theme.colors.darkBackground.darkblue};
       .exp-heading {
          color: ${theme.colors.textColor4};
       }

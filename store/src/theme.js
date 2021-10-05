@@ -15,8 +15,8 @@ export const theme = {
          lightblue: '#2A4663'
       },
       mainBackground: '#061422',
-      textColor: '#E64C85',
-      textColor2: '#ECECEC',
+      textColor: '#DC2047',
+      textColor2: '#fff',
       textColor3: '#da2148',
       textColor4: '#ffffff',
       textColor5: '#2A4663',

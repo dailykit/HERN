@@ -21,7 +21,7 @@
    box-sizing: border-box;
    margin: 0;
    padding: 0;
-   font-family: Barlow, Proxima Nova, sans-serif, League-Gothic;
+   font-family: Futura, Proxima Nova, sans-serif, League-Gothic;
    outline: none;
    font-weight: 400;
 }
@@ -293,6 +293,10 @@ body {
 .text9 {
    font-size: 16px;
    line-height: 16px;
+}
+.text10 {
+   font-size: 14px;
+   line-height: 14px;
 }
 
 @media screen and (max-width: 769px) {

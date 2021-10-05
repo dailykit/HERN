@@ -15,12 +15,16 @@ export const Card = styled.div`
          !boxShadow ? '0px 8px 12px 2px rgba(0, 0, 0, 0.32)' : 'none'};
       transform: translate3d(0px, -1.5px, 0px);
    }
+   height: 480px;
+   @media (min-width: 769px) {
+      height: 580px;
+   }
 `
 
 export const CardImage = styled.div`
    position: relative;
    width: 100%;
-   height: 280px;
+   height: 100%;
    border-radius: 16px;
    overflow: hidden;
    img {
@@ -37,17 +41,24 @@ export const CardImage = styled.div`
 export const CardBody = styled.div`
    color: ${theme.colors.textColor2};
    width: 100%;
-   padding: 1rem 0.5rem;
+   padding: 0.75rem 0.5rem;
    .exp-name {
-      text-align: left;
-      font-weight: 500;
-      font-size: ${theme.sizes.h9};
       margin: 2px 0;
+      font-family: Proxima Nova;
+      color: ${theme.colors.textColor4};
+      font-weight: 700;
+      text-align: left;
+      letter-spacing: 0.16em;
+      :hover {
+         color: ${theme.colors.textColor6};
+      }
    }
    .category {
       text-align: left;
-      font-weight: 400;
-      font-size: ${theme.sizes.h7};
+      font-weight: 800;
+      font-family: Proxima Nova;
+      letter-spacing: 0.16em;
+      color: ${theme.colors.textColor6};
    }
    .experience {
       text-align: left;
@@ -65,13 +76,5 @@ export const CardBody = styled.div`
       color: ${theme.colors.textColor};
       background: none;
       cursor: pointer;
-   }
-   @media (min-width: 769px) {
-      .exp-name {
-         font-size: ${theme.sizes.h2};
-      }
-      .category {
-         font-size: ${theme.sizes.h8};
-      }
    }
 `
