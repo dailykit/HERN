@@ -147,7 +147,7 @@ export default function Experiences({
    }, [width])
 
    if (loading || isTagsLoading || isCategoriesLoading) {
-      return <InlineLoader />
+      return <InlineLoader type="full" />
    }
    if (error || hasTagsError || hasCategoriesError) {
       addToast('Something went wrong', { appearance: 'error' })

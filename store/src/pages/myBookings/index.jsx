@@ -96,7 +96,7 @@ export default function MyBookings({ navigationMenuItems, parsedData = [] }) {
    }
 
    if ((bookings.length > 0 && isLoading) || isBookingLoading)
-      return <InlineLoader />
+      return <InlineLoader type="full" />
 
    return (
       <Layout navigationMenuItems={navigationMenuItems}>

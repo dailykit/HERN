@@ -78,11 +78,10 @@ export default function NavBarComp({ navigationMenuItems }) {
       }
    })
 
-   //   const closeModal = () => {
-   //     setSignupModalOpen(false);
-   //     setLoginModalOpen(false);
-   //     setShowContent("login");
-   //   };
+   const closeModal = () => {
+      setShowContent('login')
+      hideLogin()
+   }
 
    if (cartsError) {
       addToast('Something went wrong!', { appearance: 'error' })
@@ -178,18 +177,18 @@ export default function NavBarComp({ navigationMenuItems }) {
                </>
             ) : (
                <ul className="nav-list">
-                  <li onClick={showSignup} className="buttonWrapper">
+                  {/* <li onClick={showSignup} className="buttonWrapper">
                      <Button
-                        className="customBtn"
+                        className="customBtn text10"
                         textColor={theme.colors.textColor}
                         backgroundColor={theme.colors.textColor4}
                      >
                         Sign Up
                      </Button>
-                  </li>
+                  </li> */}
                   <li onClick={showLogin} className="buttonWrapper">
                      <Button
-                        className="customBtn"
+                        className="customBtn text10"
                         textColor={theme.colors.textColor}
                         backgroundColor={theme.colors.textColor4}
                      >
@@ -203,7 +202,7 @@ export default function NavBarComp({ navigationMenuItems }) {
             <InlineLoader />
           </ul>
         )} */}
-            <LoginModalContainer isShow={isLoginShow}>
+            {/* <LoginModalContainer isShow={isLoginShow}>
                <Modal isOpen={isLoginShow} close={hideLogin} type="popup">
                   {showContent === 'login' ? (
                      <Login
@@ -220,13 +219,18 @@ export default function NavBarComp({ navigationMenuItems }) {
                      />
                   )}
                </Modal>
-            </LoginModalContainer>
+            </LoginModalContainer> */}
 
-            <SignupModalContainer isShow={isSignupShow}>
-               <Modal isOpen={isSignupShow} close={hideSignup} type="popup">
-                  <Signup isOpen={isSignupShow} authBtnClassName="auth-btn" />
+            <LoginModalContainer isShow={isLoginShow}>
+               <Modal isOpen={isLoginShow} close={closeModal} type="popup">
+                  <Login
+                     isOpen={isLoginShow}
+                     showContent={showContent}
+                     setShowContent={setShowContent}
+                     authBtnClassName="auth-btn"
+                  />
                </Modal>
-            </SignupModalContainer>
+            </LoginModalContainer>
          </NavBar>
       </>
    )

@@ -186,8 +186,14 @@ export const NavBar = styled.nav`
    }
    .customBtn {
       height: 38px;
-      font-size: ${theme.sizes.h6};
       min-width: 125px;
+      font-family: Proxima Nova;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      padding: 0 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
    }
    .auth-btn {
       position: absolute;

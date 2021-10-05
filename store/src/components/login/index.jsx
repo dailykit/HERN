@@ -8,6 +8,7 @@ import Button from '../Button'
 import InlineLoader from '../InlineLoader'
 import Error from '../Error'
 import Input from '../Input'
+import Signup from '../signup'
 import { theme } from '../../theme'
 
 export default function LoginComp({ isClicked, authBtnClassName, ...rest }) {
@@ -43,56 +44,78 @@ export default function LoginComp({ isClicked, authBtnClassName, ...rest }) {
 
    return (
       <>
-         {!isForgotPasswordClicked ? (
-            <Wrapper {...rest}>
-               <p className="redirectToSignup">
-                  Don't have an account?{' '}
-                  <Link href="/signup">
-                     <a>SIGN UP</a>
-                  </Link>
-               </p>
-               <h1 className="heading">Log In</h1>
-               <FormWrap {...rest} onSubmit={handleSubmit}>
-                  <Input
-                     type="email"
-                     placeholder="Your email"
-                     className="customInput"
-                     required
-                     value={email}
-                     onChange={e => setEmail(e.target.value)}
-                  />
-                  <Input
-                     type="password"
-                     placeholder="Enter password"
-                     className="customInput"
-                     value={password}
-                     onChange={e => setPassword(e.target.value)}
-                  />
-                  {error && <Error>{error}</Error>}
-                  <p
-                     onClick={() => setIsForgotPasswordClicked(true)}
-                     className="forgotPassword"
-                  >
-                     Forgot Password?
-                  </p>
-
-                  <div className={`loginBtnWrap ${authBtnClassName}`}>
-                     <Button
-                        disabled={loading}
-                        type="submit"
-                        className="loginBtn"
-                     >
-                        {loading ? (
-                           <InlineLoader color={theme.colors.textColor4} />
-                        ) : (
-                           'Log in'
-                        )}
-                     </Button>
-                  </div>
-               </FormWrap>
-            </Wrapper>
+         {/* <p className="redirectToSignup">
+            Don't have an account?{' '}
+            <Link href="/signup">
+            <a>SIGN UP</a>
+            </Link>
+         </p> */}
+         {rest.showContent === 'signup' ? (
+            <Signup setShowContent={rest.setShowContent} />
          ) : (
-            <ForgotPassword close={() => setIsForgotPasswordClicked(false)} />
+            <>
+               {rest.showContent === 'login' ? (
+                  <Wrapper {...rest}>
+                     <h1 className="heading text2">Log In</h1>
+                     <div className="center-div-wrapper">
+                        <FormWrap {...rest}>
+                           <Input
+                              type="email"
+                              placeholder="Your email"
+                              className="customInput"
+                              required
+                              value={email}
+                              onChange={e => setEmail(e.target.value)}
+                           />
+                           <Input
+                              type="password"
+                              placeholder="Enter password"
+                              className="customInput"
+                              value={password}
+                              onChange={e => setPassword(e.target.value)}
+                           />
+                           {error && <Error>{error}</Error>}
+                           <p
+                              onClick={() =>
+                                 rest.setShowContent('forgotPassword')
+                              }
+                              className="forgotPassword text9"
+                           >
+                              Forgot username / password?
+                           </p>
+                           <p className="signup_title text9">
+                              NOT SIGNED UP YET?{' '}
+                              <span
+                                 onClick={() => rest.setShowContent('signup')}
+                              >
+                                 SIGN UP HERE
+                              </span>
+                           </p>
+                        </FormWrap>
+
+                        <div className={`loginBtnWrap ${authBtnClassName}`}>
+                           <Button
+                              disabled={loading}
+                              onClick={handleSubmit}
+                              className="loginBtn text3"
+                           >
+                              {loading ? (
+                                 <InlineLoader
+                                    color={theme.colors.textColor4}
+                                 />
+                              ) : (
+                                 'Log in'
+                              )}
+                           </Button>
+                        </div>
+                     </div>
+                  </Wrapper>
+               ) : (
+                  <ForgotPassword
+                     close={() => setIsForgotPasswordClicked(false)}
+                  />
+               )}
+            </>
          )}
       </>
    )

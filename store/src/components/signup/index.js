@@ -9,7 +9,7 @@ import Input from '../Input'
 import InlineLoader from '../InlineLoader'
 import { theme } from '../../theme'
 
-export default function Signup({ authBtnClassName, ...props }) {
+export default function Signup({ authBtnClassName, ...rest }) {
    const [loading, setLoading] = useState(false)
    const [error, setError] = useState('')
    const [name, setName] = useState('')
@@ -59,51 +59,64 @@ export default function Signup({ authBtnClassName, ...props }) {
    }
 
    return (
-      <Wrapper {...props} onSubmit={handleSubmit}>
-         <p className="redirectToLogin">
+      <Wrapper {...rest} onSubmit={handleSubmit}>
+         {/* <p className="redirectToLogin">
             Already have an account?{' '}
             <Link href="/login">
                <a>Log In</a>
             </Link>
-         </p>
-         <h1 className="heading">Sign Up</h1>
-         <FormWrap {...props}>
-            <Input
-               type="text"
-               placeholder="Your name"
-               className="customInput"
-               required
-               value={name}
-               onChange={e => setName(e.target.value)}
-            />
-            <Input
-               type="email"
-               placeholder="Your email"
-               className="customInput"
-               required
-               value={email}
-               onChange={e => setEmail(e.target.value)}
-            />
-            <Input
-               type="password"
-               placeholder="Enter password"
-               className="customInput"
-               required
-               value={password}
-               onChange={e => setPassword(e.target.value)}
-               minLength={6}
-            />
-            <Input
-               type="password"
-               placeholder="Confirm password"
-               className="customInput"
-               required
-               value={confirmPassword}
-               onChange={e => setConfirmPassword(e.target.value)}
-            />
-            {error && <Error>{error}</Error>}
+         </p> */}
+         <h1 className="heading text2">Sign Up</h1>
+         <div className="center-div-wrapper">
+            <FormWrap {...rest}>
+               <Input
+                  type="text"
+                  placeholder="Your name"
+                  className="customInput text8"
+                  required
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+               />
+               <Input
+                  type="email"
+                  placeholder="Your email"
+                  className="customInput text8"
+                  required
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+               />
+               <Input
+                  type="password"
+                  placeholder="Enter password"
+                  className="customInput text8"
+                  required
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  minLength={6}
+               />
+               <Input
+                  type="password"
+                  placeholder="Confirm password"
+                  className="customInput text8"
+                  required
+                  value={confirmPassword}
+                  onChange={e => setConfirmPassword(e.target.value)}
+               />
+               {error && <Error>{error}</Error>}
+
+               <p className="login_title text9">
+                  ALREADY SIGNED UP?
+                  <span onClick={() => rest.setShowContent('login')}>
+                     LOGIN
+                  </span>
+               </p>
+            </FormWrap>
             <div className={`signupBtnWrap ${authBtnClassName}`}>
-               <Button type="submit" className="signupBtn" disabled={loading}>
+               <Button
+                  onClick={handleSubmit}
+                  className="signupBtn text3"
+                  disabled={loading}
+               >
                   {loading ? (
                      <InlineLoader color={theme.colors.textColor4} />
                   ) : (
@@ -111,7 +124,7 @@ export default function Signup({ authBtnClassName, ...props }) {
                   )}
                </Button>
             </div>
-         </FormWrap>
+         </div>
       </Wrapper>
    )
 }

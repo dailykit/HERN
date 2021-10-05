@@ -94,7 +94,7 @@ export const CartProvider = ({ children }) => {
       }
    }, [carts, isCartLoading])
 
-   if (isCartLoading) return <InlineLoader />
+   if (isCartLoading) return <InlineLoader type="full" />
 
    if (cartError) {
       addToast('Opps! Something went wrong!', { appearance: 'error' })

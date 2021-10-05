@@ -93,7 +93,7 @@ export default function MyBooking({ navigationMenuItems, parsedData = [] }) {
       startCelebration()
    }
 
-   if (loading) return <InlineLoader />
+   if (loading) return <InlineLoader type="full" />
    if (cartSubscriptionError) {
       setLoading(false)
       addToast('Opps! Something went wrong!', { appearance: 'error' })

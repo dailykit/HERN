@@ -63,10 +63,11 @@ export const Wrapper = styled.div`
    }
    .submitBtn {
       height: 48px;
-      font-size: ${theme.sizes.h8};
       background: ${theme.colors.textColor};
       color: ${theme.colors.textColor4};
       border-radius: 0px;
+      font-family: League-Gothic;
+      letter-spacing: 0.04em;
       &:disabled {
          background: ${theme.colors.textColor};
          height: 48px;

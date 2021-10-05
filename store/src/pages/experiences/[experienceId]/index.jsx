@@ -152,7 +152,7 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
    }, [experienceId])
 
    if (isLoading || loading || otherExperiencesLoading || isProductsLoading) {
-      return <InlineLoader />
+      return <InlineLoader type="full" />
    }
    if (error || otherExperiencesError || productsError) {
       console.log(error || otherExperiencesError || productsError)

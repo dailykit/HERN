@@ -95,22 +95,14 @@ export default function CategoryTagPage({ onSubmit }) {
                </a>
             </Link>
          </div> */}
-         <h1 className="heading text3">Tell us what you’re interested in.</h1>
+         <h1 className="heading text2">Tell us what you’re interested in.</h1>
          <div className="center-div-wrapper">
             <CategoryTagWrap>
                {tags.map(tag => {
                   return (
                      <Button
-                        backgroundColor={
-                           selectedTags.findIndex(
-                              selectedTag => selectedTag.id === tag.id
-                           ) !== -1
-                              ? theme.colors.textColor
-                              : theme.colors.textColor4
-                        }
                         onClick={() => tagSelection(tag)}
                         key={tag?.id}
-                        isMainShadow
                         className={
                            selectedTags.findIndex(
                               selectedTag => selectedTag.id === tag.id
@@ -128,7 +120,7 @@ export default function CategoryTagPage({ onSubmit }) {
                <Button
                   onClick={handleClick}
                   disabled={isValid || loading}
-                  className="submitBtn text8"
+                  className="submitBtn text3"
                >
                   {loading ? 'Wait...' : 'Submit'}
                </Button>

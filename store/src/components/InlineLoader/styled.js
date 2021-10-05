@@ -1,21 +1,20 @@
 import styled from 'styled-components'
 import { theme } from '../../theme'
 
-export const StyledWrapper = styled.div`
+export const InlineStyledWrapper = styled.div`
    width: 100%;
-   height: 100vh;
+   height: inherit;
    display: flex;
    align-items: center;
    justify-content: center;
+`
+export const StyledWrapper = styled(InlineStyledWrapper)`
+   height: 100vh;
    background: ${theme.colors.darkBackground.darkblue};
 `
-
-export const StyledLoader = styled.div`
-   display: block;
-   position: absolute;
-   top: 50%;
-   left: 50%;
-   transform: translate(-50%, -50%);
+export const InlineStyledLoader = styled.div`
+   display: inline-block;
+   position: relative;
    width: 80px;
    height: 80px;
    > div {
@@ -24,7 +23,7 @@ export const StyledLoader = styled.div`
       width: 13px;
       height: 13px;
       border-radius: 50%;
-      background: ${({ color = theme.colors.textColor }) => color};
+      background: ${({ color = '#95d3f3' }) => color};
       animation-timing-function: cubic-bezier(0, 1, 1, 0);
    }
    div:nth-child(1) {
@@ -66,5 +65,16 @@ export const StyledLoader = styled.div`
       100% {
          transform: translate(24px, 0);
       }
+   }
+`
+
+export const StyledLoader = styled(InlineStyledLoader)`
+   display: block;
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   > div {
+      background: ${({ color = theme.colors.textColor }) => color};
    }
 `

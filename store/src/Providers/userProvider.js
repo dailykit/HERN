@@ -159,7 +159,7 @@ export const UserProvider = ({ children }) => {
    }, [keycloakId, loading, customer])
 
    if (loading) {
-      return <InlineLoader />
+      return <InlineLoader type="full" />
    }
 
    return (

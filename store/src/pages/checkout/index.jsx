@@ -111,7 +111,7 @@ export default function Checkout({ navigationMenuItems, parsedData = [] }) {
       startCelebration()
    }
 
-   if (loading) return <InlineLoader />
+   if (loading) return <InlineLoader type="full" />
    if (error) {
       console.error(error)
       setLoading(false)

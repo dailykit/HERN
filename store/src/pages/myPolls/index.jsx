@@ -84,7 +84,7 @@ export default function MyPolls({ navigationMenuItems, parsedData = [] }) {
       addToast('Somthing went wrong!', { appearance: 'error' })
    }
    if ((polls.length > 0 && isLoading) || isPollsLoading)
-      return <InlineLoader />
+      return <InlineLoader type="full" />
    return (
       <Layout navigationMenuItems={navigationMenuItems}>
          <SEO title="Polls" />

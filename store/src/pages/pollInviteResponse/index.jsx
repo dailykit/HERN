@@ -91,7 +91,7 @@ export default function PollResponse({ navigationMenuItems }) {
       addToast('Something went wrong!', { appearance: 'error' })
    }
    if (isExperienceBookingLoading || isParticipantInfoLoading) {
-      return <InlineLoader />
+      return <InlineLoader type="full" />
    }
    return (
       <Layout navigationMenuItems={navigationMenuItems}>
