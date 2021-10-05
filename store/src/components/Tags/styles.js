@@ -57,8 +57,8 @@ export const Wrapper = styled.div`
       position: absolute;
       left: 0;
       bottom: 0;
-      padding: 0 1rem;
-      margin: 1rem 0;
+      padding: 0;
+      margin: 0;
       z-index: 3;
    }
    .submitBtn {
@@ -66,7 +66,7 @@ export const Wrapper = styled.div`
       font-size: ${theme.sizes.h8};
       background: ${theme.colors.textColor};
       color: ${theme.colors.textColor4};
-      border-radius: 8px;
+      border-radius: 0px;
       &:disabled {
          background: ${theme.colors.textColor};
          height: 48px;
@@ -86,6 +86,10 @@ export const Wrapper = styled.div`
       .submitBtnWrap {
          position: relative;
          padding: 0;
+         margin: 1rem 0;
+         .submitBtn {
+            border-radius: 8px;
+         }
       }
       .center-div-wrapper {
          width: 80%;
@@ -97,4 +101,8 @@ export const CategoryTagWrap = styled.div`
    display: flex;
    flex-wrap: wrap;
    justify-content: center;
+   margin-bottom: 4rem;
+   @media (min-width: 769px) {
+      margin: 0;
+   }
 `

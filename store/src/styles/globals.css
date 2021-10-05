@@ -138,8 +138,16 @@ body {
 .popup {
    width: 780px !important;
    height: 520px !important;
-   border-radius: 9px !important;
+   border-radius: 8px !important;
    align-items: center !important;
+}
+
+@media (max-width: 760px) {
+   .popup {
+      width: 100% !important;
+      height: 75% !important;
+      align-items: center !important;
+   }
 }
 
 .popup_open {

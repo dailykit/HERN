@@ -87,14 +87,14 @@ export default function CategoryTagPage({ onSubmit }) {
 
    return (
       <Wrapper>
-         <div className="skip">
+         {/* <div className="skip">
             <Link href="/">
                <a>
                   Skip{' '}
                   <ChevronRight size="14px" color={theme.colors.textColor} />{' '}
                </a>
             </Link>
-         </div>
+         </div> */}
          <h1 className="heading text3">Tell us what you’re interested in.</h1>
          <div className="center-div-wrapper">
             <CategoryTagWrap>
