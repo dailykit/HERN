@@ -9,7 +9,7 @@ import {
 } from '../../components'
 import { useQuery } from '@apollo/react-hooks'
 import _ from 'lodash'
-import { onDemandMenuContext } from '../../context'
+import { CartContext, onDemandMenuContext } from '../../context'
 import { PRODUCTS } from '../../graphql'
 
 const datas = {
@@ -282,6 +282,7 @@ export const OnDemandOrder = () => {
    const [hydratedMenu, setHydratedMenu] = React.useState([])
    const [status, setStatus] = useState('loading')
    const { onDemandMenu } = React.useContext(onDemandMenuContext)
+   const { cartState } = React.useContext(CartContext)
    const { isMenuLoading, allProductIds, categories } = onDemandMenu
    const { loading: productsLoading, error: productsError } = useQuery(
       PRODUCTS,
@@ -385,7 +386,7 @@ export const OnDemandOrder = () => {
                   })}
                </div>
                <OnDemandMenu />
-               {false && <BottomCartBar />}
+               {cartState && <BottomCartBar />}
                {productModifier && (
                   <ModifierPopup
                      productData={productModifier}
