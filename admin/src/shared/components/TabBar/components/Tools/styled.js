@@ -15,6 +15,9 @@ export const Wrapper = styled.div`
       inset 1px 1px 2px rgba(255, 255, 255, 0.3),
       inset -1px -1px 2px rgba(191, 191, 190, 0.5);
    border-radius: 0px 0px 0px 24px;
+   .Helpicon {
+      border-radius: 0px 0px 0px 24px;
+   }
    > button {
       border: none;
       outline: none;

@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import MenuItem from './menuItem'
 
-const TreeView = ({ data = [], clickHandler }) => {
+const TreeView = ({ data = [], clickHandler, navigationMenuItemId }) => {
    let treeData = data
    if (treeData.length === 0) {
       return <EmptyMsg>No Menu Item! Try adding one!</EmptyMsg>
@@ -13,7 +13,11 @@ const TreeView = ({ data = [], clickHandler }) => {
             return (
                node.id && (
                   <Parent key={node.id}>
-                     <MenuItem clickHandler={clickHandler} menuItem={node} />
+                     <MenuItem
+                        clickHandler={clickHandler}
+                        menuItem={node}
+                        navigationMenuItemId={navigationMenuItemId}
+                     />
                   </Parent>
                )
             )
@@ -29,6 +33,7 @@ export const Parent = styled.div`
    display: flex;
    flex-direction: column;
    align-items: flex-start;
+   margin-right: 5px;
 `
 
 export const Children = styled.div`

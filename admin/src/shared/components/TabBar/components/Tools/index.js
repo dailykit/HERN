@@ -1,4 +1,6 @@
 import React from 'react'
+import qs from 'query-string'
+import { useHistory } from 'react-router-dom'
 import { useOnClickOutside, Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
 import { ChevronDown } from '../../../../assets/icons'
 import { TooltipProvider } from '../../../../providers'
@@ -17,6 +19,7 @@ const Tools = ({ isTabHidden, setIsTabHidden }) => {
    const [lang, setLang] = React.useState(
       localStorage.getItem('i18nextLng') || 'en'
    )
+   const history = useHistory()
 
    const [open, setOpen] = React.useState(null)
    const [isMenuOpen, setIsMenuOpen] = React.useState(false)
@@ -41,11 +44,16 @@ const Tools = ({ isTabHidden, setIsTabHidden }) => {
    const { createItem, profile, search, marketPlace, help } = tools
 
    const handleOpen = item => {
+      console.log({ item })
       setOpen(open === null || open !== item ? item : null)
    }
    useOnClickOutside(toolbarRef, () => {
       setIsMenuOpen(false)
       setOpen(null)
+      const values = qs.parse(window.location.search)
+
+      const newQsValue = qs.stringify({ ...values, optionId: undefined })
+      history.push({ search: `?${newQsValue}` })
    })
 
    return (

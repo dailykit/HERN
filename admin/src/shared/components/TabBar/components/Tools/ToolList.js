@@ -28,6 +28,7 @@ const ToolList = ({ toolbarRef, handleOpen, open, tools }) => {
             size="sm"
             type="ghost"
             onClick={() => handleOpen(help)}
+            className="Helpicon"
          >
             <HelpIcon color={open === help ? '#367BF5' : '#45484C'} />
          </IconButton>

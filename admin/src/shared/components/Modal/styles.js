@@ -4,14 +4,12 @@ import styled from 'styled-components'
 const Styles = {
    ModalWrapper: styled.div`
       position: absolute;
-      padding: 0 8px;
-      top: 60px;
+      height: 100%;
+      width: 100%;
+      top: 0px;
       bottom: 42px;
-      left: 0;
       right: 0;
-      display: ${({ show }) => (show ? 'flex' : 'none')};
-      backdrop-filter: ${({ hasContent }) =>
-         hasContent ? 'blur(11.37px)' : 'none'};
+      display: flex;
       z-index: 99999999;
 
       @media only screen and (max-width: 565px) {
@@ -19,6 +17,7 @@ const Styles = {
          padding-bottom: 0;
       }
    `,
+
    ModalHeader: styled.div`
       position: absolute;
       right: 40px;
@@ -32,27 +31,30 @@ const Styles = {
    `,
 
    MenuArea: styled.div`
+      display: ${({ isContentOpen }) => (isContentOpen ? 'none' : 'block')};
       min-width: 330px;
       width: 330px;
-      background: #320e3b;
-      border-radius: 30px;
-      color: #fff;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid #f3f3f3;
+      box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      color: #202020;
       padding: 16px;
    `,
    MenuAreaHeader: styled.div`
-      color: #fff;
+      color: #202020;
       margin: 20px 16px 10px 16px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       h2 {
          text-align: center;
-         font-weight: 500;
+         font-weight: 600;
          font-size: 19px;
          line-height: 20px;
          text-transform: capitalize;
-         color: #fff;
+         color: #202020;
       }
       p {
-         color: #fff;
+         color: #202020;
          font-size: 12px;
          font-weight: normal;
          line-height: 17px;
@@ -60,6 +62,7 @@ const Styles = {
          letter-spacing: 0.02em;
          padding: 10px;
       }
+
       @media only screen and (max-width: 565px) {
          div {
             justify-content: space-between;
@@ -67,14 +70,14 @@ const Styles = {
       }
    `,
    MenuBody: styled.div`
-      height: calc(100% - 90px);
+      height: 480px;
       overflow-y: auto;
       ::-webkit-scrollbar {
-         width: 6px;
+         width: 8px;
       }
       ::-webkit-scrollbar-thumb {
-         background-color: rgba(196, 196, 196, 0.9);
-         border-radius: 4px;
+         background: #f3f3f3;
+         border-radius: 30px;
       }
    `,
 
@@ -84,26 +87,27 @@ const Styles = {
       overflow: auto;
       display: ${({ hasContent, isContentOpen }) =>
          hasContent && isContentOpen ? 'block' : 'none'};
-      margin-top: 16px;
+      ::-webkit-scrollbar {
+         width: 8px;
+      }
+      ::-webkit-scrollbar-thumb {
+         background: #f3f3f3;
+         border-radius: 30px;
+         height: 100px;
+      }
       @media only screen and (max-width: 565px) {
          position: absolute;
          bottom: 0;
          left: 0;
          top: 0;
          height: 100vh;
-         background: rgba(255, 255, 255, 0.13);
-         border: 1px solid #f2f3f3;
-         backdrop-filter: blur(11.37px);
-      }
-      > button {
-         color: #45484c;
-         text-transform: uppercase;
-         position: absolute;
-         top: 0;
-         right: 16px;
+         backdrop-filter: blur(44px);
       }
       div#content-area {
          overflow: auto;
+         h3 {
+            margin-top: 0px;
+         }
       }
    `,
    CloseButton: styled(IconButton)`

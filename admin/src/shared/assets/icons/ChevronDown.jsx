@@ -1,17 +1,19 @@
 import React from 'react'
 
-export const ChevronDown = ({ size = 18, color = '#000000' }) => (
+export const ChevronDown = () => (
    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
+      width="24"
+      height="25"
+      viewBox="0 0 24 25"
       fill="none"
-      stroke={color}
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      xmlns="http://www.w3.org/2000/svg"
    >
-      <path d="M6 9l6 6 6-6" />
+      <path
+         d="M17 10.6017L12 14.851L7 10.6017"
+         stroke="#919699"
+         stroke-width="2"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+      />
    </svg>
 )
