@@ -30,6 +30,7 @@ export const theme = {
       textColor13: '#9A8EDF',
       textColor14: '#E4BC6D',
       lightGreyText: '#A7A7A7',
+      lightestGrey: '#D5D5D5',
       disableBackground: '#ccc',
 
       emptyCellColor:

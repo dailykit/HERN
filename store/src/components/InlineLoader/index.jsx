@@ -10,7 +10,7 @@ const InlineLoader = ({ type = 'inline', ...props }) => {
    if (type === 'inline') {
       return (
          <InlineStyledWrapper {...props}>
-            <InlineStyledLoader>
+            <InlineStyledLoader {...props}>
                <div />
                <div />
                <div />
@@ -21,7 +21,7 @@ const InlineLoader = ({ type = 'inline', ...props }) => {
    }
    return (
       <StyledWrapper {...props}>
-         <StyledLoader>
+         <StyledLoader {...props}>
             <div />
             <div />
             <div />

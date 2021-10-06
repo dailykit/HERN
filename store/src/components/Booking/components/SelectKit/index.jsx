@@ -106,7 +106,7 @@ export default function SelectKit({ experienceId }) {
    }
    return (
       <Wrap>
-         <h1 className="kit_heading">Select your kit</h1>
+         <h1 className="kit_heading text6">Select your kit</h1>
          <div className="product_wrapper">
             {products.length > 0 &&
                products.map(product => {
@@ -114,6 +114,7 @@ export default function SelectKit({ experienceId }) {
                      <Card
                         key={product?.id}
                         type="product"
+                        boxShadow={false}
                         data={product}
                         onClick={() => cardClickHandler(product)}
                         isAdded={

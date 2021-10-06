@@ -30,12 +30,14 @@ export default function ProductCard({ cardDetails, ...props }) {
             />
          </CardImage>
          <CardBody>
-            <h2 className="exp-name">{name}</h2>
+            <h2 className="exp-name text8">{name}</h2>
             {additionalText && (
-               <p className="product_extra_info_text">{additionalText}</p>
+               <p className="product_extra_info_text text10">
+                  {additionalText}
+               </p>
             )}
             {description && (
-               <p className="product_extra_info_text">{description}</p>
+               <p className="product_extra_info_text text10">{description}</p>
             )}
             <TagGroup>
                {tags.length &&
@@ -44,7 +46,7 @@ export default function ProductCard({ cardDetails, ...props }) {
                   })}
             </TagGroup>
             {discount > 0 && (
-               <div class="product-discount-tag">{discount} off</div>
+               <div class="product-discount-tag text9">{discount} off</div>
             )}
 
             {/* {additionalText &&<p>{additionalText}</p>}  */}
@@ -54,14 +56,14 @@ export default function ProductCard({ cardDetails, ...props }) {
                justifyContent="space-between"
                margin="0 0 4px 0"
             >
-               <p className="exp-info">$ {price + productOptions[0]?.price}</p>
+               <p className="kit-price text9">
+                  $ {price + productOptions[0]?.price}
+               </p>
 
                <div className="product_add_wrap">
-                  {props.isAdded ? (
-                     <p className="booked-exp">ADDED</p>
-                  ) : (
-                     <p className="book-exp">ADD</p>
-                  )}
+                  <p className="booked-kit text9">
+                     {props.isAdded ? 'ADDED' : 'ADD'}
+                  </p>
                   {props.isAdded ? (
                      <span className="icon_wrap_1">
                         <CheckCircle
@@ -73,7 +75,7 @@ export default function ProductCard({ cardDetails, ...props }) {
                      <span className="icon_wrap">
                         <AddCircleIcon
                            size="20"
-                           color={theme.colors.tertiaryColor}
+                           color={theme.colors.textColor5}
                         />
                      </span>
                   )}

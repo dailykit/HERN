@@ -23,7 +23,7 @@ export const InlineStyledLoader = styled.div`
       width: 13px;
       height: 13px;
       border-radius: 50%;
-      background: ${({ color = '#95d3f3' }) => color};
+      background: ${({ color = theme.colors.textColor }) => color};
       animation-timing-function: cubic-bezier(0, 1, 1, 0);
    }
    div:nth-child(1) {
@@ -74,7 +74,4 @@ export const StyledLoader = styled(InlineStyledLoader)`
    top: 50%;
    left: 50%;
    transform: translate(-50%, -50%);
-   > div {
-      background: ${({ color = theme.colors.textColor }) => color};
-   }
 `

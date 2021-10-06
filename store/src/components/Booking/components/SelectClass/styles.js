@@ -27,7 +27,7 @@ export const Wrapper = styled.div`
       position: sticky;
       top: 0;
       z-index: 5;
-      background: none;
+      background: ${theme.colors.lightBackground.grey};
    }
    .select-option {
       display: flex;

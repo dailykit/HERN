@@ -259,12 +259,12 @@ export default function FooterButton({ experienceId, confirmNPayHandler }) {
       <FooterBtnWrap>
          {bookingStepsIndex === 0 && (
             <>
-               <button className="show-more special-underline">
+               {/* <button className="show-more special-underline">
                   Show More Dates
-               </button>
-               <button className="ghost-btn box-shadow-glow">
+               </button> */}
+               <Button className="ghost-btn text7 box-shadow-glow">
                   Not sure which date to choose?
-               </button>
+               </Button>
             </>
          )}
          {bookingStepsIndex === 1 && (
@@ -274,7 +274,7 @@ export default function FooterButton({ experienceId, confirmNPayHandler }) {
                   CART.create.loading ||
                   CHILD_CART.create.loading
                }
-               className="nextBtn"
+               className="nextBtn text3"
                onClick={handleNextButtonClick}
             >
                {/* <Flex container alignItems="center" justifyContent="space-between">

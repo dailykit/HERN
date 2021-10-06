@@ -419,11 +419,11 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
                      <h1 className="experienceTitleHead text2">
                         {experienceInfo?.experience?.title}
                      </h1>
-                     <CustomScrollbar>
-                        <Wrap>
-                           <Booking experienceId={experienceId} />
-                        </Wrap>
-                     </CustomScrollbar>
+                     <Wrap>
+                        {/* <CustomScrollbar> */}
+                        <Booking experienceId={experienceId} />
+                        {/* </CustomScrollbar> */}
+                     </Wrap>
                   </div>
                </div>
                <section id="section-7">
@@ -927,6 +927,7 @@ const GridViewWrapper = styled.div`
 `
 
 const Wrap = styled.div`
+   padding: 1rem;
    .booking-done {
       margin-top: 4rem;
       padding: 1rem;
