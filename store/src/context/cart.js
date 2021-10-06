@@ -1,7 +1,12 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import React, { useState } from 'react'
-import { CREATE_CART_ITEMS, GET_CART_ON_DEMAND, MUTATIONS } from '../graphql'
+import {
+   CREATE_CART_ITEMS,
+   GET_CART_ON_DEMAND,
+   MUTATIONS,
+   DELETE_CART_ITEMS,
+} from '../graphql'
 import { useUser } from '.'
 export const CartContext = React.createContext()
 
@@ -81,7 +86,15 @@ export const CartProvider = ({ children }) => {
       },
    })
    //update cart
-
+   const [deleteCartItems] = useMutation(DELETE_CART_ITEMS, {
+      onCompleted: () => {
+         console.log('item removed successfully')
+      },
+      onError: error => {
+         console.log(error)
+         // toast.error("Failed to add cart items!");
+      },
+   })
    //delete cart
 
    //create cartItems
@@ -137,6 +150,11 @@ export const CartProvider = ({ children }) => {
             cartState,
             cartReducer,
             addToCart,
+            methods: {
+               cartItems: {
+                  delete: deleteCartItems,
+               },
+            },
          }}
       >
          {children}

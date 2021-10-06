@@ -1,13 +1,57 @@
-import React from 'react'
-import { CartContext } from '../../context'
-import { Button, Divider, ProductCard } from '../../components'
+import React, { useState, useEffect } from 'react'
+import { CartContext, onDemandMenuContext } from '../../context'
+import {
+   Button,
+   Divider,
+   ProductCard,
+   ModifierPopup,
+   CounterButton,
+} from '../../components'
 import _ from 'lodash'
-import { formatCurrency } from '../../utils'
+import { combineCartItems, formatCurrency } from '../../utils'
 import { DeleteIcon, EditIcon } from '../../assets/icons'
+import { useQuery } from '@apollo/react-hooks'
+import { PRODUCTS } from '../../graphql'
 
 export const OnDemandCart = () => {
-   const { cartState } = React.useContext(CartContext)
+   //context
+   const { cartState, methods } = React.useContext(CartContext)
+   const { onDemandMenu } = React.useContext(onDemandMenuContext)
+
+   //context data
    const { cart } = cartState
+   const { isMenuLoading } = onDemandMenu
+
+   //component state
+   const [status, setStatus] = useState('loading')
+   const [combinedCartData, setCombinedCartData] = useState(null)
+   const [productForEdit, setProductForEdit] = useState(null)
+   const [productsInCart, setProductsInCart] = useState(null)
+
+   useEffect(() => {
+      if (!isMenuLoading) {
+         const combinedCartItems = combineCartItems(cart.products.nodes)
+         setCombinedCartData(combinedCartItems)
+         setStatus('success')
+      }
+   }, [cart, isMenuLoading])
+
+   //fetch all products available in cart detail
+   // const { loading: productsLoading, error: productsError } = useQuery(
+   //    PRODUCTS,
+   //    {
+   //       skip: isMenuLoading || !cart,
+   //       variables: {
+   //          ids: cart?.products?.nodes.map(x => x.productId),
+   //       },
+   //       // fetchPolicy: 'network-only',
+   //       onCompleted: data => {
+   //          setProductsInCart(data.products)
+   //       },
+   //    }
+   // )
+
+   //used to group by product id so be can show s
    const products = () => {
       const productsFromCart = _.chain(cart.products.nodes)
          .groupBy('productId')
@@ -20,26 +64,48 @@ export const OnDemandCart = () => {
       console.log(productsFromCart)
       return productsFromCart
    }
+
+   const editIconClick = () => {}
+
+   const removeCartItems = cartItemIds => {
+      console.log('removed id', cartItemIds)
+      methods.cartItems.delete({
+         variables: {
+            where: {
+               id: {
+                  _in: cartItemIds,
+               },
+            },
+         },
+      })
+   }
    const customArea = props => {
       const { data } = props
-      console.log('this is data', data)
+      console.log('this is data custom', data)
       const { productId } = data
-      const quantity = products().find(x => x.productId === productId).quantity
+
       return (
          <div className="hern-cart-product-custom-area">
             <div className="hern-cart-product-custom-area-quantity">
-               <span>X{quantity}</span>
+               {/* <span>X{quantity}</span> */}
+               <CounterButton
+                  count={data.ids.length}
+                  incrementClick={() => {}}
+                  decrementClick={() =>
+                     removeCartItems([data.ids[data.ids.length - 1]])
+                  }
+               />
             </div>
             <div className="hern-cart-product-custom-area-icons">
                <EditIcon
                   stroke={'#367BF5'}
-                  onClick={() => console.log(productId)}
+                  onClick={() => editIconClick(productId)}
                   style={{ cursor: 'pointer' }}
                   title="Edit"
                />
                <DeleteIcon
                   stroke={'red'}
-                  onClick={() => console.log(productId)}
+                  onClick={() => removeCartItems(data.ids)}
                   style={{ cursor: 'pointer' }}
                   title="Delete"
                />
@@ -47,14 +113,21 @@ export const OnDemandCart = () => {
          </div>
       )
    }
+
    const address = address => {
       if (!address) {
          return 'Address Not Available'
       }
    }
-   if (!cart) {
+
+   if (status === 'loading') {
+      return <p>Loading</p>
+   }
+
+   if (combinedCartData.length === 0) {
       return <p>Cart Not Available</p>
    }
+
    return (
       <div className="hern-cart-container">
          <div className="hern-cart-page">
@@ -71,16 +144,16 @@ export const OnDemandCart = () => {
                   </div>
                   {/*products*/}
                   <div className="hern-cart-products-product-list">
-                     {products().map((product, index) => {
+                     {combinedCartData.map((product, index) => {
                         return (
                            <div key={index}>
                               <ProductCard
-                                 data={product.products[0]}
+                                 data={product}
                                  showImage={false}
                                  showProductAdditionalText={false}
                                  customAreaComponent={customArea}
                               />
-                              <ModifiersList data={product.products[0]} />
+                              <ModifiersList data={product} />
                            </div>
                         )
                      })}
@@ -132,6 +205,7 @@ export const OnDemandCart = () => {
             <footer className="hern-cart-footer">
                <Button className="hern-cart-proceed-btn">PROCEED TO PAY</Button>
             </footer>
+            {productForEdit && <ModifierPopup />}
          </div>
       </div>
    )

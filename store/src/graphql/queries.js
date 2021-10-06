@@ -1350,7 +1350,6 @@ export const GET_CART_ON_DEMAND = gql`
                name: displayName
                image: displayImage
                childs {
-                  id
                   price: unitPrice
                   name: displayName
                   productOption {
@@ -1358,7 +1357,6 @@ export const GET_CART_ON_DEMAND = gql`
                      label
                   }
                   childs {
-                     id
                      displayName
                      price: unitPrice
                      modifierOption {

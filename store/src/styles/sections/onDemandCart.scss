@@ -116,6 +116,9 @@
 }
 
 .hern-cart-product-custom-area-quantity {
+   margin-right: 10px;
+   display: flex;
+   align-items: center;
    > span {
       font-style: italic;
       font-weight: normal;
@@ -148,7 +151,7 @@
       font-size: 14px;
       line-height: 16px;
       color: #555b6e;
-      margin: 12px 0;
+      margin: 10px 0;
    }
 }
 
@@ -164,7 +167,7 @@
       font-size: 14px;
       line-height: 16px;
       color: #555b6e;
-      margin: 12px 0;
+      margin: 10px 0;
    }
 }
 @media only screen and (min-width: 769px) {

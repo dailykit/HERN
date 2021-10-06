@@ -451,3 +451,12 @@ export const CREATE_CART_ITEMS = gql`
       }
    }
 `
+export const DELETE_CART_ITEMS = gql`
+   mutation DELETE_CART_ITEMS($where: order_cartItem_bool_exp!) {
+      deleteCartItems(where: $where) {
+         returning {
+            id
+         }
+      }
+   }
+`
