@@ -8,11 +8,8 @@ const Styles = {
       width: 100%;
       top: 0px;
       bottom: 42px;
-
       right: 0;
       display: flex;
-      backdrop-filter: ${({ hasContent }) =>
-         hasContent ? 'blur(11.37px)' : 'none'};
       z-index: 99999999;
 
       @media only screen and (max-width: 565px) {

@@ -12,7 +12,7 @@ const Styles = {
          `};
       width: ${({ isModalOpen, isContentOpen }) =>
          isModalOpen ? (isContentOpen ? 'auto' : '330px') : '185px'};
-      height: ${({ isModalOpen }) => (isModalOpen ? '588px' : '100px')};
+      height: ${({ isModalOpen }) => (isModalOpen ? '588px' : '105px')};
 
       background: rgba(255, 255, 255, 0.13);
       border: 1px solid #f2f3f3;

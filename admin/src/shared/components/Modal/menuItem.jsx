@@ -79,6 +79,12 @@ const ButtonWrapper = styled.div`
    justify-content: space-between;
    margin-right: 0px !important;
 
+   &:hover {
+      > button {
+         background: #ffffff;
+      }
+   }
+
    > p {
       color: ${({ isActive }) => (isActive ? '#367BF5' : '#202020')};
    }
