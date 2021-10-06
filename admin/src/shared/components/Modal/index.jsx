@@ -8,7 +8,6 @@ import { useOnClickOutside } from './useOnClickOutSide'
 import { get_env } from '../../utils'
 import CancelIcon from '../../assets/icons/Cancel'
 import styled from 'styled-components'
-import usePortal from 'react-cool-portal'
 
 export default function Modal({
    isOpen,
@@ -33,7 +32,6 @@ export default function Modal({
    const [optionMenu, setOptionMenu] = useState({})
    const ref = React.useRef()
    const contentRef = React.useRef()
-   const { Portal } = usePortal()
 
    useOnClickOutside([ref, bottomBarRef, contentRef], () => {
       setIsModalOpen(false)
@@ -92,9 +90,7 @@ export default function Modal({
       (isContentOpen && hasAction)
 
    return (
-     
       <Styles.ModalWrapper show={isOpen} hasContent={hasContent} id="modal">
-    
          <Styles.ContentArea
             hasContent={hasContent}
             isContentOpen={isContentOpen}
@@ -113,8 +109,13 @@ export default function Modal({
 
             <div id="content_area" />
          </Styles.ContentArea>
-        
-         <Styles.MenuArea ref={ref} hasContent={hasContent} id="menuarea" isContentOpen={isContentOpen}>
+
+         <Styles.MenuArea
+            ref={ref}
+            hasContent={hasContent}
+            id="menuarea"
+            isContentOpen={isContentOpen}
+         >
             <Styles.MenuAreaHeader id="menuheader">
                <Flex
                   container
@@ -138,7 +139,6 @@ export default function Modal({
             </Styles.MenuBody>
          </Styles.MenuArea>
       </Styles.ModalWrapper>
-      
    )
 }
 
@@ -149,4 +149,3 @@ const StyledButton = styled.button`
    background: transparent;
    border: none;
 `
-
