@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useContext, useRef } from 'react'
+import React, { useState, useEffect, useContext, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
    Flex,
    HorizontalTab,
@@ -32,6 +33,7 @@ const PageForm = () => {
    const { addTab, tab, setTabTitle, closeAllTabs } = useTabs()
    const [context, setContext] = useContext(BrandContext)
    const prevBrandId = useRef(context.brandId)
+   const { pathname } = useLocation()
    const { pageId, pageName } = useParams()
    const [pageTitle, setPageTitle] = useState({
       value: '',
@@ -41,6 +43,7 @@ const PageForm = () => {
          errors: [],
       },
    })
+
    const [pageRoute, setPageRoute] = useState({
       value: '',
       meta: {
@@ -51,6 +54,9 @@ const PageForm = () => {
    })
    const [state, setState] = useState({})
    const [toggle, setToggle] = useState(false)
+
+   //page route
+   const routeName = "/" + pathname.split('/').slice(-1)
 
    // form validation
    const validatePageName = (value, name) => {
@@ -81,23 +87,24 @@ const PageForm = () => {
       {
          variables: {
             pageId,
+            route: routeName
          },
          onSubscriptionData: ({
             subscriptionData: {
-               data: { website_websitePage_by_pk: websitePage = {} } = {},
+               data: { brands_brandPages_by_pk: brandPage = {} } = {},
             } = {},
          }) => {
-            setState(websitePage || {})
+            setState(brandPage || {})
             setPageTitle({
                ...pageTitle,
-               value: websitePage?.internalPageName || '',
+               value: brandPage?.internalPageName || '',
             })
 
             setPageRoute({
                ...pageRoute,
-               value: websitePage?.route || '',
+               value: brandPage?.route || '',
             })
-            setToggle(websitePage?.published)
+            setToggle(brandPage?.published)
          },
       }
    )
@@ -122,6 +129,7 @@ const PageForm = () => {
       updatePage({
          variables: {
             pageId: pageId,
+            route: routeName,
             set: {
                published: val,
             },
@@ -166,6 +174,7 @@ const PageForm = () => {
             updatePage({
                variables: {
                   pageId: pageId,
+                  route: routeName,
                   set: {
                      internalPageName: e.target.value,
                   },
@@ -189,6 +198,7 @@ const PageForm = () => {
             updatePage({
                variables: {
                   pageId: pageId,
+                  route: routeName,
                   set: {
                      route: e.target.value,
                   },
