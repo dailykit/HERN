@@ -1,5 +1,5 @@
 import { each } from 'lodash'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, ProductCard } from '.'
 import { RadioIcon, ShowImageIcon } from '../assets/icons'
 import { formatCurrency } from '../utils'
@@ -9,7 +9,19 @@ import { CartContext } from '../context'
 import { CounterButton } from './counterBtn'
 
 export const ModifierPopup = props => {
-   const { productData, showModifiers = true, closeModifier, height } = props
+   const {
+      productData,
+      showModifiers = true,
+      closeModifier,
+      height,
+      showCounterBtn = true,
+      forNewItem = false,
+      edit = false,
+      productCartDetail,
+   } = props
+   //context
+   const { addToCart, methods } = React.useContext(CartContext)
+
    const [productOption, setProductOption] = useState(
       productData.productOptions[0]
    ) // for by default choose one product option
@@ -18,7 +30,7 @@ export const ModifierPopup = props => {
       single: [],
       multiple: [],
    })
-   const { addToCart } = React.useContext(CartContext)
+   const [status, setStatus] = useState('loading')
    const [errorCategories, setErrorCategories] = useState([])
    const imagePopUpRef = React.useRef()
    const [modifierImage, setModifierImage] = useState({
@@ -114,7 +126,6 @@ export const ModifierPopup = props => {
          ...selectedOptions.single,
          ...selectedOptions.multiple,
       ]
-
       //no modifier available in product options
       if (!productOption.modifier) {
          console.log('PASS')
@@ -126,6 +137,18 @@ export const ModifierPopup = props => {
          // const objects = new Array(quantity).fill({ ...cartItem })
          // console.log('cartItem', objects)
          addToCart(cartItem, quantity)
+         if (edit) {
+            methods.cartItems.delete({
+               variables: {
+                  where: {
+                     id: {
+                        _in: productCartDetail.ids,
+                     },
+                  },
+               },
+            })
+         }
+         closeModifier()
          return
       }
 
@@ -147,7 +170,6 @@ export const ModifierPopup = props => {
                   ? allFoundedOptionsLength <= max
                   : allFoundedOptionsLength <= allCatagories[i].options.length)
             ) {
-               console.log('hello')
             } else {
                errorState.push(allCatagories[i].id)
                // setErrorCategories([...errorCategories, allCatagories[i].id])
@@ -166,7 +188,20 @@ export const ModifierPopup = props => {
          )
          // const objects = new Array(quantity).fill({ ...cartItem })
          // console.log('cartItem', objects)
+
          addToCart(cartItem, quantity)
+         if (edit) {
+            methods.cartItems.delete({
+               variables: {
+                  where: {
+                     id: {
+                        _in: productCartDetail.ids,
+                     },
+                  },
+               },
+            })
+         }
+         closeModifier()
       }
    }
 
@@ -228,13 +263,74 @@ export const ModifierPopup = props => {
    const CustomArea = () => {
       return (
          <div className="hern-menu-popup-product-custom-area">
-            <CounterButton
-               count={quantity}
-               incrementClick={incrementClick}
-               decrementClick={decrementClick}
-            />
+            {showCounterBtn && (
+               <CounterButton
+                  count={quantity}
+                  incrementClick={incrementClick}
+                  decrementClick={decrementClick}
+               />
+            )}
          </div>
       )
+   }
+
+   useEffect(() => {
+      if (forNewItem || edit) {
+         const productOptionId = productCartDetail.childs[0].productOption.id
+         const modifierCategoryOptionsIds =
+            productCartDetail.childs[0].childs.map(x => x?.modifierOption?.id)
+
+         //selected product option
+         const selectedProductOption = productData.productOptions.find(
+            x => x.id == productOptionId
+         )
+
+         //selected modifiers
+         let singleModifier = []
+         let multipleModifier = []
+         if (selectedProductOption.modifier) {
+            selectedProductOption.modifier.categories.forEach(category => {
+               category.options.forEach(option => {
+                  const selectedOption = {
+                     modifierCategoryID: category.id,
+                     modifierCategoryOptionsID: option.id,
+                     modifierCategoryOptionsPrice: option.price,
+                     cartItem: option.cartItem,
+                  }
+                  if (category.type === 'single') {
+                     if (modifierCategoryOptionsIds.includes(option.id)) {
+                        singleModifier = singleModifier.concat(selectedOption)
+                     }
+                  }
+                  if (category.type === 'multiple') {
+                     if (modifierCategoryOptionsIds.includes(option.id)) {
+                        multipleModifier =
+                           multipleModifier.concat(selectedOption)
+                     }
+                  }
+               })
+            })
+         }
+
+         setProductOption(selectedProductOption)
+         setSelectedOptions(prevState => ({
+            ...prevState,
+            single: singleModifier,
+            multiple: multipleModifier,
+         }))
+         if (edit) {
+            setQuantity(productCartDetail.ids.length)
+         }
+         setStatus('success')
+      } else {
+         setStatus('success')
+      }
+      return () => {
+         setProductOption(null)
+      }
+   }, [])
+   if (status === 'loading') {
+      return <p>Loading</p>
    }
    return (
       <>
@@ -423,23 +519,28 @@ const getCartItemWithModifiers = (cartItemInput, selectedModifiersInput) => {
       (acc, obj) => [...acc, ...obj.data],
       []
    )
-
+   console.log('combineMOdifiers', combinedModifiers)
    const dataArr = finalCartItem?.childs?.data[0]?.childs?.data
    const dataArrLength = dataArr.length
 
-   if (dataArrLength === 0) {
-      finalCartItem.childs.data[0].childs.data = combinedModifiers
-      return finalCartItem
-   } else {
-      for (let i = 0; i < dataArrLength; i++) {
-         const objWithModifiers = {
-            ...dataArr[i],
-            childs: {
-               data: combinedModifiers,
-            },
-         }
-         finalCartItem.childs.data[0].childs.data[i] = objWithModifiers
-      }
-      return finalCartItem
-   }
+   console.log('finalCartItemBefore', finalCartItem)
+   finalCartItem.childs.data[0].childs.data = combinedModifiers
+
+   return finalCartItem
+   // if (dataArrLength === 0) {
+   //    // finalCartItem.childs.data[0].childs.data = combinedModifiers
+   //    // return finalCartItem
+   // } else {
+   //    for (let i = 0; i < dataArrLength; i++) {
+   //       const objWithModifiers = {
+   //          ...dataArr[i],
+   //          childs: {
+   //             data: combinedModifiers,
+   //          },
+   //       }
+   //       finalCartItem.childs.data[0].childs.data[i] = objWithModifiers
+   //    }
+   //    console.log('finalcartItems', finalCartItem)
+   //    return finalCartItem
+   // }
 }

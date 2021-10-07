@@ -282,7 +282,7 @@ export const OnDemandOrder = () => {
    const [hydratedMenu, setHydratedMenu] = React.useState([])
    const [status, setStatus] = useState('loading')
    const { onDemandMenu } = React.useContext(onDemandMenuContext)
-   const { cartState } = React.useContext(CartContext)
+   const { cartState, addToCart } = React.useContext(CartContext)
    const { isMenuLoading, allProductIds, categories } = onDemandMenu
    const { loading: productsLoading, error: productsError } = useQuery(
       PRODUCTS,
@@ -332,7 +332,8 @@ export const OnDemandOrder = () => {
                   if (data.productOptions.length > 0) {
                      setProductModifier(data)
                   } else {
-                     console.log('product added to cart')
+                     console.log('product added to cart', data)
+                     addToCart({ productId: data.id }, 1)
                   }
                }}
             >

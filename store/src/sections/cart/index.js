@@ -10,12 +10,12 @@ import {
 import _ from 'lodash'
 import { combineCartItems, formatCurrency } from '../../utils'
 import { DeleteIcon, EditIcon } from '../../assets/icons'
-import { useQuery } from '@apollo/react-hooks'
+import { useLazyQuery, useQuery } from '@apollo/react-hooks'
 import { PRODUCTS } from '../../graphql'
 
 export const OnDemandCart = () => {
    //context
-   const { cartState, methods } = React.useContext(CartContext)
+   const { cartState, methods, addToCart } = React.useContext(CartContext)
    const { onDemandMenu } = React.useContext(onDemandMenuContext)
 
    //context data
@@ -25,8 +25,11 @@ export const OnDemandCart = () => {
    //component state
    const [status, setStatus] = useState('loading')
    const [combinedCartData, setCombinedCartData] = useState(null)
-   const [productForEdit, setProductForEdit] = useState(null)
-   const [productsInCart, setProductsInCart] = useState(null)
+   const [increaseProductId, setIncreaseProductId] = useState(null)
+   const [increaseProduct, setIncreaseProduct] = useState(null)
+   const [popUpType, setPopupType] = useState(null)
+   const [cartDetailSelectedProduct, setCartDetailSelectedProduct] =
+      useState(null)
 
    useEffect(() => {
       if (!isMenuLoading) {
@@ -36,37 +39,20 @@ export const OnDemandCart = () => {
       }
    }, [cart, isMenuLoading])
 
-   //fetch all products available in cart detail
-   // const { loading: productsLoading, error: productsError } = useQuery(
-   //    PRODUCTS,
-   //    {
-   //       skip: isMenuLoading || !cart,
-   //       variables: {
-   //          ids: cart?.products?.nodes.map(x => x.productId),
-   //       },
-   //       // fetchPolicy: 'network-only',
-   //       onCompleted: data => {
-   //          setProductsInCart(data.products)
-   //       },
-   //    }
-   // )
+   //fetch product detail which to be increase or edit
+   useQuery(PRODUCTS, {
+      skip: !increaseProductId,
+      variables: {
+         ids: increaseProductId,
+      },
+      onCompleted: data => {
+         if (data) {
+            setIncreaseProduct(data.products[0])
+         }
+      },
+   })
 
-   //used to group by product id so be can show s
-   const products = () => {
-      const productsFromCart = _.chain(cart.products.nodes)
-         .groupBy('productId')
-         .map((value, key) => ({
-            productId: parseInt(key),
-            products: value,
-            quantity: value.length,
-         }))
-         .value()
-      console.log(productsFromCart)
-      return productsFromCart
-   }
-
-   const editIconClick = () => {}
-
+   //remove cartItem or cartItems
    const removeCartItems = cartItemIds => {
       console.log('removed id', cartItemIds)
       methods.cartItems.delete({
@@ -79,9 +65,10 @@ export const OnDemandCart = () => {
          },
       })
    }
+
+   //custom area for product card
    const customArea = props => {
       const { data } = props
-      console.log('this is data custom', data)
       const { productId } = data
 
       return (
@@ -90,28 +77,48 @@ export const OnDemandCart = () => {
                {/* <span>X{quantity}</span> */}
                <CounterButton
                   count={data.ids.length}
-                  incrementClick={() => {}}
+                  incrementClick={() => {
+                     if (data.childs.length === 0) {
+                        addToCart({ productId: data.productId }, 1)
+                        return
+                     }
+                     setCartDetailSelectedProduct(data)
+                     setIncreaseProductId(productId)
+                     setPopupType('newItem')
+                  }}
                   decrementClick={() =>
                      removeCartItems([data.ids[data.ids.length - 1]])
                   }
                />
             </div>
             <div className="hern-cart-product-custom-area-icons">
-               <EditIcon
-                  stroke={'#367BF5'}
-                  onClick={() => editIconClick(productId)}
-                  style={{ cursor: 'pointer' }}
-                  title="Edit"
-               />
                <DeleteIcon
                   stroke={'red'}
                   onClick={() => removeCartItems(data.ids)}
                   style={{ cursor: 'pointer' }}
                   title="Delete"
                />
+               {data.childs.length > 0 && (
+                  <EditIcon
+                     stroke={'#367BF5'}
+                     onClick={() => {
+                        setCartDetailSelectedProduct(data)
+                        setIncreaseProductId(productId)
+                        setPopupType('edit')
+                     }}
+                     style={{ cursor: 'pointer' }}
+                     title="Edit"
+                  />
+               )}
             </div>
          </div>
       )
+   }
+
+   const closeModifier = () => {
+      setIncreaseProduct(null)
+      setCartDetailSelectedProduct(null)
+      setIncreaseProductId(null)
    }
 
    const address = address => {
@@ -153,7 +160,9 @@ export const OnDemandCart = () => {
                                  showProductAdditionalText={false}
                                  customAreaComponent={customArea}
                               />
-                              <ModifiersList data={product} />
+                              {product.childs.length > 0 && (
+                                 <ModifiersList data={product} />
+                              )}
                            </div>
                         )
                      })}
@@ -205,7 +214,17 @@ export const OnDemandCart = () => {
             <footer className="hern-cart-footer">
                <Button className="hern-cart-proceed-btn">PROCEED TO PAY</Button>
             </footer>
-            {productForEdit && <ModifierPopup />}
+            {increaseProduct && (
+               <ModifierPopup
+                  productData={increaseProduct}
+                  closeModifier={closeModifier}
+                  showCounterBtn={popUpType === 'edit'}
+                  forNewItem={popUpType === 'newItem'}
+                  edit={popUpType === 'edit'}
+                  productCartDetail={cartDetailSelectedProduct}
+                  height={increaseProduct ? '100%' : '0'}
+               />
+            )}
          </div>
       </div>
    )
