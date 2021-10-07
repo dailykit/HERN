@@ -419,11 +419,11 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
                      <h1 className="experienceTitleHead text2">
                         {experienceInfo?.experience?.title}
                      </h1>
-                     <Wrap>
-                        {/* <CustomScrollbar> */}
-                        <Booking experienceId={experienceId} />
-                        {/* </CustomScrollbar> */}
-                     </Wrap>
+                     {/* <Wrap> */}
+                     {/* <CustomScrollbar> */}
+                     <Booking experienceId={experienceId} />
+                     {/* </CustomScrollbar> */}
+                     {/* </Wrap> */}
                   </div>
                </div>
                <section id="section-7">
@@ -477,22 +477,20 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
             </div>
 
             <div className="footerBtnWrapper">
-               <Link href={`/sendPoll?experienceId=${experienceId}`}>
+               {/* <Link href={`/sendPoll?experienceId=${experienceId}`}>
                   <Button
                      backgroundColor={theme.colors.secondaryColor}
                      className="customFooterBtn"
                   >
                      Send Poll
                   </Button>
-               </Link>
+               </Link> */}
 
                <Button
-                  backgroundColor={theme.colors.primaryColor}
-                  isMainShadow
-                  className="customFooterBtn"
+                  className="customFooterBtn text2"
                   onClick={onBookClickHandler}
                >
-                  Book
+                  Book Now
                </Button>
             </div>
             {width > 769 && (
@@ -506,12 +504,8 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
             )}
          </StyledWrapper>
          {isBookingPageOpen && (
-            <div style={{ width: '100vw', height: '100vh' }}>
-               <CustomScrollbar>
-                  <Wrap>
-                     <Booking experienceId={experienceId} />
-                  </Wrap>
-               </CustomScrollbar>
+            <div style={{ height: '100vh' }}>
+               <Booking experienceId={experienceId} />
             </div>
          )}
       </Layout>
@@ -612,8 +606,13 @@ const StyledWrapper = styled.div`
       width: 100%;
    }
    .customFooterBtn {
-      height: 48px;
+      height: 64px;
       width: 100%;
+      background: ${theme.colors.textColor};
+      font-family: League-Gothic;
+      letter-spacing: 0.04em;
+      color: ${theme.colors.textColor4};
+      border-radius: 0;
    }
    .modal-content {
       padding: 1rem;
@@ -650,18 +649,18 @@ const Wrapper = styled.main`
          margin-top: 48px;
          top: 150px;
          position: sticky;
-         height: 700px;
-         width: 0%;
+         height: 580px;
+         width: 100%;
          display: none;
-         overflow-y: auto;
-         padding: 1rem;
-         flex-direction: column;
+         overflow: hidden;
          background: ${theme.colors.lightBackground.grey};
          border-radius: 80px 80px 0 0;
          .experienceTitleHead {
             color: ${theme.colors.textColor7};
             font-family: League-Gothic;
-            margin: 1rem;
+            margin: 1rem 0;
+            text-align: center;
+            height: 48px;
          }
       }
       .sub-heading {
@@ -928,6 +927,7 @@ const GridViewWrapper = styled.div`
 
 const Wrap = styled.div`
    padding: 1rem;
+   height: 580px;
    .booking-done {
       margin-top: 4rem;
       padding: 1rem;

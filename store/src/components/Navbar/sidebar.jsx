@@ -4,11 +4,12 @@ import NavLink from 'next/link'
 import { signOut } from 'next-auth/client'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
+import { Avatar, Badge } from 'antd'
 import { SidebarWrapper } from './styles'
 import DynamicMenu from './dynamicMenu'
 import Button from '../Button'
 import BackDrop from '../BackDrop'
-import { MenuIcon, CrossIcon } from '../Icons'
+import { MenuIcon, CrossIcon, CartIcon } from '../Icons'
 import { useUser } from '../../Providers'
 import { theme } from '../../theme.js'
 import { isClient } from '../../utils'
@@ -84,6 +85,27 @@ export default function Sidebar({
                      layout="fill"
                   />
                </div>
+
+               <Badge
+                  count={0}
+                  showZero
+                  color={theme.colors.textColor}
+                  size="small"
+               >
+                  <Avatar
+                     size={42}
+                     icon={
+                        <CartIcon size="28" color={theme.colors.textColor} />
+                     }
+                     style={{
+                        backgroundColor: theme.colors.textColor4,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        justifyItems: 'center'
+                     }}
+                  />
+               </Badge>
             </div>
             <div className="sidebar-main">
                <ul className="nav-list">

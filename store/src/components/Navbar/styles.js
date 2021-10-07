@@ -412,7 +412,6 @@ export const SidebarWrapper = styled.div`
          isSidebarButtonVisible
             ? `1px solid ${theme.colors.textColor4}`
             : 'none'};
-      border-radius: 4px;
       padding: ${({ isSidebarButtonVisible }) =>
          isSidebarButtonVisible ? '0' : '16px'};
       height: ${({ isSidebarButtonVisible }) =>
@@ -430,6 +429,7 @@ export const SidebarWrapper = styled.div`
          margin-right: 16px;
          position: relative;
       }
+
       @media (min-width: 769px) {
          display: none;
       }

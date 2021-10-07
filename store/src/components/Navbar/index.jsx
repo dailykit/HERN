@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useQuery, useSubscription } from '@apollo/client'
 import { useToasts } from 'react-toast-notifications'
+import { Avatar, Badge } from 'antd'
 import { NavBar, Wrapper } from './styles'
 import DynamicMenu from './dynamicMenu'
 import DropdownMenu from './dropdown'
@@ -141,38 +142,55 @@ export default function NavBarComp({ navigationMenuItems }) {
             {isAuthenticated ? (
                <>
                   <li className="cart">
-                     <CartIcon size="38" color={theme.colors.textColor} />
-                     {!isCartsLoading ? (
-                        <h3 className="cart-count-batch">{carts.length}</h3>
-                     ) : (
-                        <span className="cart-count-batch spinner">
-                           <SpinnerIcon
-                              size="32"
-                              color={theme.colors.textColor}
-                              backgroundColor="none"
-                           />
-                        </span>
-                     )}
+                     <Badge
+                        count={carts.length}
+                        color={theme.colors.textColor}
+                        size="small"
+                     >
+                        <Avatar
+                           size={42}
+                           icon={
+                              <CartIcon
+                                 size="28"
+                                 color={theme.colors.textColor}
+                              />
+                           }
+                           style={{
+                              backgroundColor: theme.colors.textColor4,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              justifyItems: 'center'
+                           }}
+                        />
+                     </Badge>
                      <CartDropdownMenu className="dropdown-div" carts={carts} />
                   </li>
                   <li className="profile">
-                     <span>
-                        <UserIcon
-                           size="40"
-                           backgroundColor={theme.colors.textColor}
-                           color="#fff"
-                        />
-                        {/* <Image
+                     <Avatar
+                        size={42}
+                        icon={
+                           <UserIcon size="32" color={theme.colors.textColor} />
+                        }
+                        style={{
+                           backgroundColor: theme.colors.textColor4,
+                           display: 'flex',
+                           alignItems: 'center',
+                           justifyContent: 'center',
+                           justifyItems: 'center'
+                        }}
+                     />
+
+                     {/* <Image
                   src={`https://ui-avatars.com/api/?name=${user?.email}&background=fff&color=15171F&size=500&rounded=true`}
                   alt="user"
                   layout="fill"
                 /> */}
-                        <ProfileDropdownMenu
-                           className="profile-dropdown-div"
-                           items={profileItems}
-                           user={user}
-                        />
-                     </span>
+                     <ProfileDropdownMenu
+                        className="profile-dropdown-div"
+                        items={profileItems}
+                        user={user}
+                     />
                   </li>
                </>
             ) : (

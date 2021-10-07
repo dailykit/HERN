@@ -64,6 +64,7 @@ export const CardBody = styled.div`
       text-transform: uppercase;
       color: ${theme.colors.textColor5};
       cursor: pointer;
+      margin: 0;
    }
 
    .duration {

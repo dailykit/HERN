@@ -10,6 +10,7 @@ import {
    PollProvider
 } from '../Providers'
 import { ConfigProvider } from '../lib'
+import 'antd/dist/antd.css'
 
 function MyApp({ Component, pageProps }) {
    return (

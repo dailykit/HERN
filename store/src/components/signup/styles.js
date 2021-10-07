@@ -84,7 +84,7 @@ export const Wrapper = styled.div`
    }
 
    @media (min-width: 769px) {
-      customInput {
+      .customInput {
          height: 74px;
       }
       .signupBtnWrap {

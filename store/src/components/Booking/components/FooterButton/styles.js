@@ -9,7 +9,7 @@ export const FooterBtnWrap = styled.div`
    left: 0;
    z-index: 5;
    width: 100%;
-   background: none;
+   background: ${theme.colors.lightBackground.grey};
    padding: 1rem 0;
    .show-more {
       font-size: ${theme.sizes.h8};

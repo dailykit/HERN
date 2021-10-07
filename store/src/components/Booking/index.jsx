@@ -138,35 +138,35 @@ export default function Booking({ experienceBookingId, experienceId }) {
    if (isEmpty(experienceState?.experienceClasses)) return <InlineLoader />
 
    return (
-      <div style={{ position: 'relative', height: '100%' }}>
-         <Wrapper isCelebrating={isCelebrating}>
-            {experienceInfo?.bookingStepsIndex > 0 && (
-               <span
-                  className="previousBtn"
-                  onClick={() =>
-                     previousBookingSteps(experienceInfo?.bookingStepsIndex)
-                  }
-               >
-                  <ChevronLeft size="20" color={theme.colors.textColor5} />
-               </span>
-            )}
+      // <div style={{ position: 'relative', height: '100%' }}>
+      <Wrapper isCelebrating={isCelebrating}>
+         {experienceInfo?.bookingStepsIndex > 0 && (
+            <span
+               className="previousBtn"
+               onClick={() =>
+                  previousBookingSteps(experienceInfo?.bookingStepsIndex)
+               }
+            >
+               <ChevronLeft size="20" color={theme.colors.textColor5} />
+            </span>
+         )}
 
-            {/* booking type form */}
-            {experienceInfo?.bookingStepsIndex === 0 && (
-               <SelectClass experienceId={experienceId} />
-            )}
+         {/* booking type form */}
+         {experienceInfo?.bookingStepsIndex === 0 && (
+            <SelectClass experienceId={experienceId} />
+         )}
 
-            {/* add kit form  */}
-            {experienceInfo?.bookingStepsIndex === 1 && (
-               <SelectKit experienceId={experienceId} />
-            )}
+         {/* add kit form  */}
+         {experienceInfo?.bookingStepsIndex === 1 && (
+            <SelectKit experienceId={experienceId} />
+         )}
 
-            {/* footer  */}
-            <FooterButton
-               experienceId={experienceId}
-               confirmNPayHandler={startCelebration}
-            />
-         </Wrapper>
-      </div>
+         {/* footer  */}
+         <FooterButton
+            experienceId={experienceId}
+            confirmNPayHandler={startCelebration}
+         />
+      </Wrapper>
+      // </div>
    )
 }
