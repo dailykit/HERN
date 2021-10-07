@@ -2,28 +2,29 @@ import gql from 'graphql-tag'
 
 
 export const ACTIVE_EVENTS_WEBHOOKS = gql`
-      subscription ACTIVE_EVENTS_WEBHOOKS {
-        developer_webhookUrl_events {
-          id
-          availableWebhookEvent {
-            description
-            id
-            isActive
-            label
-            samplePayload
-            schemaName
-            tableName
-            type
-          }
-          webhookUrl {
-            id
-            isActive
-            created_at
-            updated_at
-            urlEndpoint
-          }
-        }
-      }
+subscription ACTIVE_EVENTS_WEBHOOKS {
+  developer_webhookUrl_events {
+    id
+    availableWebhookEvent {
+      description
+      id
+      isActive
+      label
+      samplePayload
+      schemaName
+      tableName
+      type
+    }
+    webhookUrl {
+      id
+      isActive
+      created_at
+      updated_at
+      urlEndpoint
+    }
+    advanceConfig
+  }
+}
       
     `
   

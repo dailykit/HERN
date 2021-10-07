@@ -1,6 +1,6 @@
 import React, {useRef, useState} from 'react';
-import { Tunnel, TunnelHeader, Tunnels } from "@dailykit/ui"
-import { ReactTabulator } from '@dailykit/react-tabulator'
+import { TextButton, Tunnel, TunnelHeader, Tunnels } from "@dailykit/ui"
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import options from '../../../../../../tableOptions'
 import { toast } from 'react-toastify'
 import {  GET_INVOCATIONS_OF_PROCESSED_EVENTS } from '../../../../../../../graphql';
@@ -13,6 +13,8 @@ import {
    SectionTabPanel,
    SectionTabPanels,
 } from '@dailykit/ui'
+import { PublishIcon, UnPublishIcon } from '../../../../../../../../products/assets/icons';
+import { StyledWrapper } from './styled';
 
 
 
@@ -70,10 +72,6 @@ const InvocationTunnel = (props)=>{
            headerSort:true,
            cssClass: 'rowClick',
            width: 300,
-           cellClick: (e, cell) => {
-              rowClick(e, cell)
-              props.openPopupTunnel(2)
-           }
            // headerTooltip: function (column) {
            //    const identifier = 'webhook_listing_code_column'
            //    return (
@@ -89,8 +87,28 @@ const InvocationTunnel = (props)=>{
            resizable:true,
            headerSort:true,
            cssClass: 'rowClick',
+           formatter:reactFormatter(<StatusIcon />),
            width: 300
-        }
+        },
+        {
+         title: 'Payload',
+         field: 'Payload',
+         hozAlign: 'left',
+         resizable:true,
+         cssClass: 'rowClick',
+         width: 300,
+         formatter:reactFormatter(<TextButton type="ghost">view payload</TextButton>),
+         cellClick: (e, cell) => {
+            rowClick(e, cell)
+            props.openPopupTunnel(2)
+         }
+         // headerTooltip: function (column) {
+         //    const identifier = 'webhook_listing_code_column'
+         //    return (
+         //       tooltip(identifier)?.description || column.getDefinition().title
+         //    )
+         // },
+      },
      ]
     return (
         <>
@@ -102,6 +120,7 @@ const InvocationTunnel = (props)=>{
                   description='This is a description'
                 //   tooltip={<InfoIcon color='#a4a4a4' />}
                />
+               <StyledWrapper>
                {Boolean(logs) && (
                <ReactTabulator
                   columns={columns}
@@ -115,6 +134,7 @@ const InvocationTunnel = (props)=>{
                   className = 'developer-webhooks-invocationLogs'
                />
             )}
+            </StyledWrapper>
             </Tunnel>
 
             <Tunnel layer={2} popup={true} size='md'>
@@ -157,3 +177,13 @@ const InvocationTunnel = (props)=>{
 }
 
 export default InvocationTunnel
+
+const StatusIcon = ({cell})=>{
+   const data = cell.getData()
+   return (
+      <>
+         {data.status=="200" ? <PublishIcon /> : <UnPublishIcon />}
+      </>
+   
+   )
+}

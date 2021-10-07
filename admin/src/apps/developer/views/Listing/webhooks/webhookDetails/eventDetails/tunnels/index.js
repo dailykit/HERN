@@ -20,7 +20,7 @@ const EditRetryConfig = (props) => {
             webhookUrl_EventId: props.webhookUrl_EventId
          },
          onSubscriptionData:({ subscriptionData: { data = {} } = {} })=> {
-            const advanceConfiguration = data.developer_webhookUrl_events[0].advanceConfig
+            const advanceConfiguration = data.developer_webhookUrl_events[0]?.advanceConfig
             updatedadvanceConfig(advanceConfiguration)
               }
               

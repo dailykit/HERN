@@ -16,7 +16,3 @@ export const StyledWrapper = styled.div`
       width: calc(100vw - 21vw);
    }
 `
-
-export const Wrapper = styled.main`
-   padding: 5px 16px;
-`

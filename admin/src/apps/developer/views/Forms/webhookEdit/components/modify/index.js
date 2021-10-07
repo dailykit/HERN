@@ -4,7 +4,7 @@ import { useSubscription, useMutation , useQuery} from '@apollo/react-hooks'
 import { logger } from '../../../../../../../shared/utils';
 import { toast } from 'react-toastify';
 import { StyledTable , StyledWrapper } from './styled'
-import {TextInput , Text , Input , HelperText , TextButton , ButtonGroup, ComboButton, PlusIcon, useTunnel} from '@dailykit/ui';
+import { TextButton, useTunnel} from '@dailykit/ui';
 import EditRetryConfig from './tunnels'
 
 export const Modify = (props) => {

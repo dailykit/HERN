@@ -1,17 +1,29 @@
 import React from 'react'
+import { PayloadList } from 'twilio/lib/rest/api/v2010/account/recording/addOnResult/payload'
 
 const WebhookContext = React.createContext()
 
 const initialState = {
-    webhookUrl_EventId: undefined
+    webhookDetails: {
+       "webhookUrl_EventId":undefined,
+       "webhookUrl_EventLabel": undefined,
+       "webhookUrlEndpoint":undefined,
+       "advanceConfig":undefined
+    },
+    deleteFunction:undefined
  }
 
  const reducers = (state, { type, payload }) => {
     switch (type) {
-        case 'SET_WEBHOOK_URL_EVENT_ID':
+         case 'SET_WEBHOOK_DETAILS':
             return {
-                ...state,
-                webhookUrl_EventId:payload
+               ...state,
+               webhookDetails:payload
+            }
+         case 'SET_DELETE_FUNCTION':
+            return {
+               ...state,
+               deleteFunction:payload
             }
     }
  }
