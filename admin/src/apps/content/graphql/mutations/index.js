@@ -75,83 +75,76 @@ export const FAQ_ARCHIVED = gql`
    }
 `
 export const WEBPAGE_ARCHIVED = gql`
-   mutation WEBPAGE_ARCHIVED($websiteId: Int!, $pageId: Int!) {
-      update_website_websitePage(
-         where: { websiteId: { _eq: $websiteId }, id: { _eq: $pageId } }
-         _set: { isArchived: true }
-      ) {
-         returning {
-            internalPageName
-            id
-            route
-         }
+mutation WEBPAGE_ARCHIVED($brandId: Int!) {
+   update_brands_brandPages(
+      where: { brandId: { _eq: $brandId } }
+      _set: { isArchived: true }
+   ) {
+      returning {
+               brandId
+         internalPageName
+         route
       }
    }
+}
 `
 
 export const UPDATE_WEBPAGE = gql`
-   mutation UPDATE_WEBPAGE(
-      $pageId: Int!
-      $set: website_websitePage_set_input!
-   ) {
-      update_website_websitePage_by_pk(
-         pk_columns: { id: $pageId }
-         _set: $set
-      ) {
-         internalPageName
-         published
-         route
-         id
-      }
+mutation UPDATE_WEBPAGE($pageId: Int!,$set: brands_brandPages_set_input!, $route: String!) {
+   update_brands_brandPages_by_pk(pk_columns: {brandId: $pageId, route: $route}, _set: $set) {
+     internalPageName
+     published
+     route
    }
+ }
+ 
 `
 export const LINK_COMPONENT = gql`
-   mutation LINK_COMPONENT(
-      $objects: [website_websitePageModule_insert_input!]!
-   ) {
-      insert_website_websitePageModule(objects: $objects) {
-         returning {
-            fileId
-            websitePageId
-            moduleType
-            templateId
-            internalModuleIdentifier
-         }
-      }
+mutation LINK_COMPONENT($objects: [brands_brandPageModule_insert_input!]!) {
+   insert_brands_brandPageModule(objects: $objects) {
+     returning {
+       fileId
+       moduleType
+       templateId
+       internalModuleIdentifier
+       brandPageId
+     }
    }
+ }
+ 
 `
 export const UPDATE_LINK_COMPONENT = gql`
-   mutation UPDATED_LINK_COMPONENT(
-      $websitePageModuleId: Int!
-      $_set: website_websitePageModule_set_input!
+mutation UPDATED_LINK_COMPONENT(
+   $brandPageModuleId: Int!
+   $_set: brands_brandPageModule_set_input!
+) {
+   update_brands_brandPageModule(
+      where: { id: { _eq: $brandPageModuleId } }
+      _set: $_set
    ) {
-      update_website_websitePageModule(
-         where: { id: { _eq: $websitePageModuleId } }
-         _set: $_set
-      ) {
-         returning {
-            config
-            id
-         }
+      returning {
+         config
+         id
       }
    }
+}
 `
 export const DELETE_LINKED_COMPONENT = gql`
-   mutation DELETE_LINKED_COMPONENT(
-      $where: website_websitePageModule_bool_exp!
-   ) {
-      delete_website_websitePageModule(where: $where) {
-         returning {
-            fileId
-            id
-         }
+mutation DELETE_LINKED_COMPONENT(
+   $where: brands_brandPageModule_bool_exp!
+) {
+   delete_brands_brandPageModule(where: $where) {
+      returning {
+         fileId
+         id
       }
    }
+}
 `
 export const CREATE_WEBPAGE = gql`
-   mutation CREATE_WEBPAGE($object: website_websitePage_insert_input!) {
-      insert_website_websitePage_one(object: $object) {
-         id
+   mutation CREATE_WEBPAGE($object: brands_brandPages_insert_input!) {
+      insert_brands_brandPages_one(object: $object) {
+         brandId
          internalPageName
       }
    }
@@ -186,40 +179,40 @@ export const DELETE_SUBSCRIPTION_FOLD = gql`
 `
 
 export const INSERT_NAVIGATION_MENU = gql`
-   mutation INSERT_NAVIGATION_MENU($title: String!) {
-      insert_website_navigationMenu_one(object: { title: $title }) {
+mutation INSERT_NAVIGATION_MENU($title: String!) {
+   insert_brands_navigationMenu_one(object: { title: $title }) {
+      id
+      isPublished
+      title
+   }
+}
+`
+export const DELETE_NAVIGATION_MENU = gql`
+mutation DELETE_NAVIGATION_MENU($menuId: Int!) {
+   delete_brands_navigationMenu(where: { id: { _eq: $menuId } }) {
+      returning {
+         id
+         title
+      }
+   }
+}
+`
+export const UPDATE_NAVIGATION_MENU = gql`
+mutation UPDATE_NAVIGATION_MENU(
+   $_set: brands_navigationMenu_set_input!
+   $menuId: Int!
+) {
+   update_brands_navigationMenu(
+      where: { id: { _eq: $menuId } }
+      _set: $_set
+   ) {
+      returning {
          id
          isPublished
          title
       }
    }
-`
-export const DELETE_NAVIGATION_MENU = gql`
-   mutation DELETE_NAVIGATION_MENU($menuId: Int!) {
-      delete_website_navigationMenu(where: { id: { _eq: $menuId } }) {
-         returning {
-            id
-            title
-         }
-      }
-   }
-`
-export const UPDATE_NAVIGATION_MENU = gql`
-   mutation UPDATE_NAVIGATION_MENU(
-      $_set: website_navigationMenu_set_input!
-      $menuId: Int!
-   ) {
-      update_website_navigationMenu(
-         where: { id: { _eq: $menuId } }
-         _set: $_set
-      ) {
-         returning {
-            id
-            isPublished
-            title
-         }
-      }
-   }
+}
 `
 export const INSERT_NAVIGATION_MENU_ITEM = gql`
    mutation INSERT_NAVIGATION_MENU_ITEM(

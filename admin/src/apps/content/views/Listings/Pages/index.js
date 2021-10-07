@@ -17,8 +17,8 @@ import { useLocation } from 'react-router-dom'
 import { StyledWrapper } from './styled'
 import BrandContext from '../../../context/Brand'
 import {
-   WEBSITE_PAGES_LISTING,
-   WEBSITE_TOTAL_PAGES,
+   BRAND_PAGES_LISTING,
+   BRAND_TOTAL_PAGES,
    WEBPAGE_ARCHIVED,
    UPDATE_WEBPAGE,
 } from '../../../graphql'
@@ -42,15 +42,15 @@ const PageListing = () => {
    const prevBrandId = useRef(context.brandId)
 
    //    Subscription for page listing
-   const { loading, error } = useSubscription(WEBSITE_PAGES_LISTING, {
+   const { loading, error } = useSubscription(BRAND_PAGES_LISTING, {
       variables: {
-         websiteId: context.websiteId,
+         brandId: context.brandId,
       },
       onSubscriptionData: data => {
-         const result = data.subscriptionData.data.website_websitePage.map(
+         const result = data.subscriptionData.data.brands_brandPages.map(
             page => {
                return {
-                  id: page.id,
+                  id: page.brandId,
                   internalPageName: page.internalPageName,
                   url: `${context.brandDomain}${page.route}`,
                   pageVisit: 'N/A',
@@ -65,13 +65,13 @@ const PageListing = () => {
 
    const {
       data: {
-         website_websitePage_aggregate: { aggregate: { count = 0 } = {} } = {},
+         brands_brandPages_aggregate: { aggregate: { count = 0 } = {} } = {},
       } = {},
       loading: totalPagesLoading,
       error: totalPagesError,
-   } = useSubscription(WEBSITE_TOTAL_PAGES, {
+   } = useSubscription(BRAND_TOTAL_PAGES, {
       variables: {
-         websiteId: context.websiteId,
+         brandId: context.brandId,
       },
    })
 
@@ -113,8 +113,7 @@ const PageListing = () => {
       ) {
          deletePage({
             variables: {
-               websiteId: context.websiteId,
-               pageId: page.id,
+               brandId: context.brandId,
             },
          })
       }
@@ -128,7 +127,7 @@ const PageListing = () => {
    }
 
    // toggle handler
-   const toggleHandler = (toggle, id) => {
+   const toggleHandler = (toggle, id, route) => {
       const val = !toggle
       // if (val && !isvalid) {
       //    toast.error(`Coupon should be valid!`)
@@ -136,6 +135,7 @@ const PageListing = () => {
       updatePage({
          variables: {
             pageId: id,
+            route: route,
             set: {
                published: val,
             },
@@ -157,7 +157,7 @@ const PageListing = () => {
          <Form.Group>
             <Form.Toggle
                name={`[page_active${rowData.id}`}
-               onChange={() => toggleHandler(rowData.published, rowData.id)}
+               onChange={() => toggleHandler(rowData.published, rowData.id, rowData.route)}
                value={rowData.published}
             />
          </Form.Group>
@@ -265,7 +265,7 @@ const PageListing = () => {
             justifyContent="space-between"
          >
             <Flex container alignItems="center">
-               <Text as="h2" style={{marginBottom: '0em'}}  >
+               <Text as="h2" style={{ marginBottom: '0em' }}  >
                   Page(
                   {count})
                </Text>

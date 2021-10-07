@@ -77,7 +77,7 @@ const NavigationMenuTunnel = ({ close }) => {
          },
          onSubscriptionData: async ({
             subscriptionData: {
-               data: { website_navigationMenuItem: menuItems = [] } = {},
+               data: { brands_navigationMenuItem: menuItems = [] } = {},
             } = {},
          }) => {
             setMenuTitle({

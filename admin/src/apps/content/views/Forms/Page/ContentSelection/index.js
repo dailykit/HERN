@@ -48,7 +48,7 @@ const ContentSelection = () => {
          },
          onSubscriptionData: ({
             subscriptionData: {
-               data: { website_websitePageModule: pageModules = [] } = {},
+               data: { brands_brandPageModule: pageModules = [] } = {},
             } = {},
          }) => {
             const files = pageModules
@@ -56,8 +56,8 @@ const ContentSelection = () => {
             setLinkedFiles(files)
             if (files.length) {
                initiatePriority({
-                  tablename: 'websitePageModule',
-                  schemaname: 'website',
+                  tablename: 'brandPageModule',
+                  schemaname: 'brands',
                   data: files,
                })
             }
@@ -127,12 +127,12 @@ const ContentSelection = () => {
       if (selectedFileOptions.length) {
          const result = selectedFileOptions.map(option => {
             return {
-               websitePageId: +pageId,
+               brandPageId: +pageId,
                moduleType: option.type === 'html' ? 'block' : 'file',
                fileId: option.id,
             }
          })
-
+         console.log("RESULT😊😊👉👉😊😊", result)
          linkComponent({
             variables: {
                objects: result,
@@ -141,10 +141,10 @@ const ContentSelection = () => {
       }
    }
 
-   const updateHandler = (websitePageModuleId, updatedConfig) => {
+   const updateHandler = (brandPageModuleId, updatedConfig) => {
       updateLinkComponent({
          variables: {
-            websitePageModuleId,
+            brandPageModuleId,
             _set: {
                config: updatedConfig,
             },
@@ -156,7 +156,7 @@ const ContentSelection = () => {
       deleteLinkComponent({
          variables: {
             where: {
-               websitePageId: { _eq: pageId },
+               brandPageId: { _eq: pageId },
                fileId: { _eq: fileId },
             },
          },
@@ -185,8 +185,8 @@ const ContentSelection = () => {
                <DragNDrop
                   list={linkedFiles}
                   droppableId="linkFileDroppableId"
-                  tablename="websitePageModule"
-                  schemaname="website"
+                  tablename="brandPageModule"
+                  schemaname="brands"
                >
                   {linkedFiles.map(file => {
                      return (
@@ -262,8 +262,8 @@ const ContentSelection = () => {
                tunnels={configTunnels}
                openTunnel={openConfigTunnel}
                closeTunnel={closeConfigTunnel}
-               onSave={(websitePageModuleId, updatedConfig) =>
-                  updateHandler(websitePageModuleId, updatedConfig)
+               onSave={(brandPageModuleId, updatedConfig) =>
+                  updateHandler(brandPageModuleId, updatedConfig)
                }
                selectedOption={selectedFileOptions}
             />

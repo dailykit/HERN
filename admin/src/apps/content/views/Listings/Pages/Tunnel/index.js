@@ -12,6 +12,7 @@ import { Tooltip, Banner } from '../../../../../../shared/components'
 export default function PageCreationTunnel({ close }) {
    const { addTab } = useTabs()
    const [context, setContext] = useContext(BrandContext)
+   const { websiteId } = context
    const [types, setTypes] = useState([])
    const [pageTitle, setPageTitle] = useState({
       value: '',
@@ -55,7 +56,7 @@ export default function PageCreationTunnel({ close }) {
 
    //Mutation
    const [createPage, { loading }] = useMutation(CREATE_WEBPAGE, {
-      onCompleted: ({ insert_website_websitePage_one: webPage = {} }) => {
+      onCompleted: ({ insert_brands_brandPages_one: webPage = {} }) => {
          setPageRoute({
             value: '',
             meta: {
@@ -74,7 +75,7 @@ export default function PageCreationTunnel({ close }) {
          })
          addTab(
             webPage.internalPageName,
-            `/content/pages/${webPage.id}/${webPage.internalPageName}`
+            `/content/pages/${webPage.brandId}/${webPage.internalPageName}`
          )
          toast.success('Campaign created!')
       },
@@ -131,7 +132,7 @@ export default function PageCreationTunnel({ close }) {
          createPage({
             variables: {
                object: {
-                  websiteId: context.websiteId,
+                  brandId: context.brandId,
                   route: pageRoute.value,
                   internalPageName: pageTitle.value,
                },
