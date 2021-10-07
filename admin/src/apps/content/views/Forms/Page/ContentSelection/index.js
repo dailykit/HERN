@@ -132,7 +132,6 @@ const ContentSelection = () => {
                fileId: option.id,
             }
          })
-         console.log("RESULT😊😊👉👉😊😊", result)
          linkComponent({
             variables: {
                objects: result,

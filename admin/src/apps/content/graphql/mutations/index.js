@@ -216,55 +216,53 @@ mutation UPDATE_NAVIGATION_MENU(
 `
 export const INSERT_NAVIGATION_MENU_ITEM = gql`
    mutation INSERT_NAVIGATION_MENU_ITEM(
-      $label: String!
-      $navigationMenuId: Int
-      $parentNavigationMenuItemId: Int
-   ) {
-      insert_website_navigationMenuItem_one(
-         object: {
-            label: $label
-            navigationMenuId: $navigationMenuId
-            parentNavigationMenuItemId: $parentNavigationMenuItemId
-         }
-      ) {
-         id
-         navigationMenuId
-         parentNavigationMenuItemId
-         label
-         openInNewTab
-         position
-         url
+   $label: String!
+   $navigationMenuId: Int
+) {
+   insert_brands_navigationMenuItem_one(
+      object: {
+         label: $label
+         navigationMenuId: $navigationMenuId
       }
+   ) {
+      id
+      navigationMenuId
+      parentNavigationMenuItemId
+      label
+      openInNewTab
+      position
+      url
    }
+}
 `
 
 export const UPDATE_NAVIGATION_MENU_ITEM = gql`
-   mutation UPDATE_NAVIGATION_MENU_ITEM(
-      $menuItemId: Int!
-      $_set: website_navigationMenuItem_set_input!
+mutation UPDATE_NAVIGATION_MENU_ITEM(
+   $menuItemId: Int!
+   $_set: brands_navigationMenuItem_set_input!
+) {
+   update_brands_navigationMenuItem_by_pk(
+      pk_columns: { id: $menuItemId }
+      _set: $_set
    ) {
-      update_website_navigationMenuItem_by_pk(
-         pk_columns: { id: $menuItemId }
-         _set: $_set
-      ) {
-         id
-         label
-         navigationMenuId
-         openInNewTab
-         parentNavigationMenuItemId
-         position
-         url
-      }
+      id
+      label
+      navigationMenuId
+      openInNewTab
+      parentNavigationMenuItemId
+      position
+      url
    }
+}
 `
 
 export const DELETE_NAVIGATION_MENU_ITEM = gql`
-   mutation DELETE_NAVIGATION_MENU_ITEM($menuItemId: Int!) {
-      delete_website_navigationMenuItem_by_pk(id: $menuItemId) {
-         id
-         navigationMenuId
-         parentNavigationMenuItemId
-         label
-      }
+mutation DELETE_NAVIGATION_MENU_ITEM($menuItemId: Int!) {
+   delete_brands_navigationMenuItem_by_pk(id: $menuItemId) {
+      id
+      navigationMenuId
+      parentNavigationMenuItemId
+      label
    }
+}
 `
