@@ -218,11 +218,13 @@ export const INSERT_NAVIGATION_MENU_ITEM = gql`
    mutation INSERT_NAVIGATION_MENU_ITEM(
    $label: String!
    $navigationMenuId: Int
+   $parentNavigationMenuItemId: Int
 ) {
    insert_brands_navigationMenuItem_one(
       object: {
          label: $label
          navigationMenuId: $navigationMenuId
+         parentNavigationMenuItemId:$parentNavigationMenuItemId
       }
    ) {
       id
