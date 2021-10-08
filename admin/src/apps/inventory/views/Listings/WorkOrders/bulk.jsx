@@ -47,13 +47,14 @@ export default function BulkWorkOrders() {
       {
          title: 'Id',
          field: 'id',
-         headerFilter: false,
+         headerFilter: true,
          cellClick: openForm,
          cssClass: 'RowClick',
          headerTooltip: col => {
             const identifier = 'work-orders_listings_table_id'
             return tooltip(identifier)?.description || col.getDefinition().title
          },
+         width: 80,
       },
       {
          title: 'Scheduled On',
@@ -128,7 +129,7 @@ export default function BulkWorkOrders() {
                         col => col.status === 'COMPLETED'
                      )}
                      options={tableOptions}
-                     className='workPurchaseOrderTable'
+                     className="workPurchaseOrderTable"
                   />
                </HorizontalTabPanel>
                <HorizontalTabPanel>
@@ -138,7 +139,7 @@ export default function BulkWorkOrders() {
                         col => col.status === 'PENDING'
                      )}
                      options={tableOptions}
-                     className='workPurchaseOrderTable'
+                     className="workPurchaseOrderTable"
                   />
                </HorizontalTabPanel>
                <HorizontalTabPanel>
@@ -148,7 +149,7 @@ export default function BulkWorkOrders() {
                         col => col.status === 'CANCELLED'
                      )}
                      options={tableOptions}
-                     className='workPurchaseOrderTable'
+                     className="workPurchaseOrderTable"
                   />
                </HorizontalTabPanel>
                <HorizontalTabPanel>

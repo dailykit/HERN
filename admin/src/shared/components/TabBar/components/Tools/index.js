@@ -1,4 +1,6 @@
 import React from 'react'
+import qs from 'query-string'
+import { useHistory } from 'react-router-dom'
 import { useOnClickOutside, Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
 import { ChevronDown } from '../../../../assets/icons'
 import { TooltipProvider } from '../../../../providers'
@@ -11,21 +13,24 @@ import ToolList from './ToolList'
 import Account from './Account'
 import Search from './Search'
 import MarketPlace from './MarketPlace'
+import BottomBar from '../../../BottomBar'
 
 const Tools = ({ isTabHidden, setIsTabHidden }) => {
    const [lang, setLang] = React.useState(
       localStorage.getItem('i18nextLng') || 'en'
    )
+   const history = useHistory()
 
    const [open, setOpen] = React.useState(null)
    const [isMenuOpen, setIsMenuOpen] = React.useState(false)
    const toolbarRef = React.useRef()
+   const [isModalOpen, setIsModalOpen] = React.useState(false)
 
    const [
       createProductTunnels,
       openCreateProductTunnel,
       closeCreateProductTunnel,
-   ] = useTunnel(1)
+   ] = useTunnel(3)
    const [createBrandTunnels, openCreateBrandTunnel, closeCreateBrandTunnel] =
       useTunnel(1)
    const tools = {
@@ -33,16 +38,22 @@ const Tools = ({ isTabHidden, setIsTabHidden }) => {
       profile: 'profile',
       search: 'search',
       marketPlace: 'marketPlace',
+      help: 'help',
    }
 
-   const { createItem, profile, search, marketPlace } = tools
+   const { createItem, profile, search, marketPlace, help } = tools
 
    const handleOpen = item => {
+      console.log({ item })
       setOpen(open === null || open !== item ? item : null)
    }
    useOnClickOutside(toolbarRef, () => {
       setIsMenuOpen(false)
       setOpen(null)
+      const values = qs.parse(window.location.search)
+
+      const newQsValue = qs.stringify({ ...values, optionId: undefined })
+      history.push({ search: `?${newQsValue}` })
    })
 
    return (
@@ -88,6 +99,16 @@ const Tools = ({ isTabHidden, setIsTabHidden }) => {
                openCreateProductTunnel={openCreateProductTunnel}
             />
          )}
+
+         {open === help && (
+            <BottomBar
+               setOpen={setOpen}
+               setIsMenuOpen={setIsMenuOpen}
+               setIsModalOpen={setIsModalOpen}
+               isModalOpen={isModalOpen}
+            />
+         )}
+
          {open === profile && (
             <Account
                lang={lang}
@@ -112,7 +133,9 @@ const Tools = ({ isTabHidden, setIsTabHidden }) => {
             </Tunnel>
          </Tunnels>
          <Tunnels tunnels={createProductTunnels}>
-            <Tunnel layer={1}>
+            <Tunnel layer={1}></Tunnel>
+            <Tunnel layer={2}></Tunnel>
+            <Tunnel layer={3}>
                <TooltipProvider app="Products App">
                   <ProductTypeTunnel close={closeCreateProductTunnel} />
                </TooltipProvider>

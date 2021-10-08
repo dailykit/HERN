@@ -12,10 +12,12 @@ import {
    InsightDashboard,
    AddressTunnel,
    Banner,
+   Sidebar,
 } from './shared/components'
 import {
    AppItem,
    AppList,
+   AppIcon,
    Layout,
    InsightDiv,
    DashboardPanel,
@@ -23,10 +25,16 @@ import {
    HomeContainer,
    WelcomeNote,
 } from './styled'
-import BottomBar from './shared/components/BottomBar'
+
 import DashboardCards from './shared/components/DashboardCardAnalytics'
 import { useAuth } from './shared/providers'
 import DashboardTables from './shared/components/DashboardTables'
+import {
+   BrandAppIcon, CartsAppIcon, CustomersAppIcon, HomeAppIcon, InventoryAppIcon, MenuAppIcon,
+   OrderAppIcon, ProductsAppIcon, ReportsAppIcon, SettingAppIcon, StoreAppIcon,
+   SubscriptionAppIcon
+} from '../src/shared/assets/navBarIcons'
+import { useLocation } from 'react-router-dom'
 
 
 
@@ -108,14 +116,28 @@ const Developer = Loadable({
 const App = () => {
    // const location = useLocation()
    // const { routes, setRoutes } = useTabs()
-
-   const [open, toggle] = React.useState(false)
+   const { pathname } = useLocation()
    const { loading, data: { apps = [] } = {} } = useSubscription(APPS)
    const { user } = useAuth()
+   const [open, setOpen] = React.useState(false)
+
    if (loading) return <Loader />
    return (
       <Layout>
          <TabBar />
+         {/* <AppList open={open}>
+            {appIcons.data.map(app => (
+               <AppItem
+                  active={app.title === 'Home'}
+                  key={app.id}>
+                  <Link to={app.path}>
+                     <AppIcon>{app.icon}</AppIcon>
+                     <span>{app.title}</span>
+                  </Link>
+               </AppItem>
+            ))}
+         </AppList> */}
+         <Sidebar />
          <main>
             <Switch>
                <Route path="/" exact>
@@ -179,7 +201,7 @@ const App = () => {
             </Switch>
          </main>
          {/* {!isKeycloakSupported() && <RedirectBanner />} */}
-         <BottomBar />
+      
       </Layout>
    )
 }

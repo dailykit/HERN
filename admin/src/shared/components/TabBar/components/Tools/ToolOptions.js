@@ -14,6 +14,7 @@ import {
    NotificationIcon,
    SettingsIcon,
    StoreIcon,
+   HelpIcon,
 } from '../../../../assets/icons'
 import { useAuth } from '../../../../providers'
 
@@ -76,11 +77,8 @@ const ToolOptions = ({ setIsMenuOpen, handleOpen, tools, open }) => {
       openCreateProductTunnel,
       closeCreateProductTunnel,
    ] = useTunnel(1)
-   const [
-      createBrandTunnels,
-      openCreateBrandTunnel,
-      closeCreateBrandTunnel,
-   ] = useTunnel(1)
+   const [createBrandTunnels, openCreateBrandTunnel, closeCreateBrandTunnel] =
+      useTunnel(1)
 
    return (
       <Wrapper>
@@ -90,6 +88,14 @@ const ToolOptions = ({ setIsMenuOpen, handleOpen, tools, open }) => {
          <Tool onClick={() => handleOpen(tools.createItem)}>
             <PlusIcon />
             <Title>Create New</Title>
+            <Arrow type="ghost">
+               <ChevronRight size={12} color="#75787A" />
+            </Arrow>
+         </Tool>
+
+         <Tool onClick={() => handleOpen(tools.help)}>
+            <HelpIcon />
+            <Title>Help</Title>
             <Arrow type="ghost">
                <ChevronRight size={12} color="#75787A" />
             </Arrow>
