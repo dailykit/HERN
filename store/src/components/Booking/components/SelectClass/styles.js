@@ -1,7 +1,6 @@
 import styled from 'styled-components'
 import { theme } from '../../../../theme'
 export const Wrapper = styled.div`
-   padding: 1rem;
    .top-heading {
       font-size: ${theme.sizes.h3};
       font-weight: 400;
@@ -96,6 +95,11 @@ export const Wrapper = styled.div`
          color: ${theme.colors.textColor7};
          margin-bottom: 1rem;
       }
+   }
+   .flex_row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
    }
 `
 

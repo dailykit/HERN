@@ -19,6 +19,10 @@ export const Wrapper = styled.div`
          color: ${theme.colors.textColor7};
          font-family: Proxima Nova;
       }
+      .guest_para {
+         color: ${theme.colors.textColor5};
+         font-family: Proxima Nova;
+      }
    }
 `
 

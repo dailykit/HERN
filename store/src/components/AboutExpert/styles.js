@@ -5,7 +5,7 @@ export const Wrapper = styled.div`
    display: flex;
    flex-direction: column;
    align-items: center;
-   border-radius: 60px;
+   border-radius: 40px;
    padding: 1rem 2rem;
    background-color: ${({ bg_mode }) =>
       bg_mode === 'dark'
@@ -18,7 +18,7 @@ export const Wrapper = styled.div`
       .expertImg {
          width: 150px;
          height: 100%;
-         border-radius: 80px;
+         border-radius: 20px;
          object-fit: cover;
       }
    }

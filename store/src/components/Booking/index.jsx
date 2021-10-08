@@ -140,6 +140,7 @@ export default function Booking({ experienceBookingId, experienceId }) {
    return (
       // <div style={{ position: 'relative', height: '100%' }}>
       <Wrapper isCelebrating={isCelebrating}>
+         <h1 className="experienceTitleHead text2">Pink Daisies</h1>
          {experienceInfo?.bookingStepsIndex > 0 && (
             <span
                className="previousBtn"

@@ -89,7 +89,7 @@ const AvailableDate = ({
       return (
          <Wrapper>
             <div className="flexWrapper">
-               <p className="date text4">{data?.date}</p>
+               <p className="date text9">{data?.date}</p>
                <Flex
                   container
                   justifyContent="flex-start"

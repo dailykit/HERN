@@ -4,10 +4,17 @@ import { theme } from '../../theme'
 export const Wrapper = styled.div`
    height: calc(100% - 64px);
    filter: ${({ isCelebrating }) => isCelebrating && 'blur(4px)'};
-   padding: 0 1rem;
+   padding: 0 2rem;
    overflow: auto;
    position: relative;
    background-color: ${theme.colors.lightBackground.grey};
+   .experienceTitleHead {
+      color: ${theme.colors.textColor7};
+      font-family: League-Gothic;
+      margin: 1rem 0;
+      text-align: left;
+      height: 48px;
+   }
    .modal-content-div {
       font-size: ${theme.sizes.h8};
       font-weight: 600;
@@ -30,7 +37,7 @@ export const Wrapper = styled.div`
       top: -1px;
       cursor: pointer;
    }
-   @media (min-width: 769) {
-      height: calc(100% - 80px);
+   @media (min-width: 769px) {
+      height: 100%;
    }
 `

@@ -38,13 +38,13 @@ export default function Participant({ experienceId }) {
          >
             <Flex container alignItems="center" justifyContent="space-between">
                <div>
-                  <p className="head text8">GUESTS</p>
-                  <p className=" text8">{participants} guests</p>
+                  <p className="head text8">Select No. of guests</p>
+                  <p className="guest_para text6">{participants} guests</p>
                </div>
                {showPopup ? (
-                  <ChevronUp size="16" color={theme.colors.textColor7} />
+                  <ChevronUp size="24" color={theme.colors.textColor5} />
                ) : (
-                  <ChevronDown size="16" color={theme.colors.textColor7} />
+                  <ChevronDown size="24" color={theme.colors.textColor5} />
                )}
             </Flex>
          </button>

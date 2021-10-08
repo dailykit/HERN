@@ -115,18 +115,20 @@ export default function SelectClass({ experienceId, isMulti = false }) {
 
    return (
       <Wrapper>
-         <h2 className="heading text3">${pricePerPerson} Per Person</h2>
-         <div style={{ position: 'relative' }}>
-            <button
-               className="breakdown-head text8"
-               onClick={() => toggleDetailBreakdown(prev => !prev)}
-            >
-               Detailed Breakdown
-            </button>
-            <Popup show={priceBreakDownDrawer}>
-               <div className="pointer" />
-               <PriceBreakDown />
-            </Popup>
+         <div className="flex_row">
+            <h2 className="heading text3">${pricePerPerson} Per Person</h2>
+            <div style={{ position: 'relative' }}>
+               <button
+                  className="breakdown-head text8"
+                  onClick={() => toggleDetailBreakdown(prev => !prev)}
+               >
+                  Breakdown
+               </button>
+               <Popup show={priceBreakDownDrawer}>
+                  <div className="pointer" />
+                  <PriceBreakDown />
+               </Popup>
+            </div>
          </div>
          <div className="sticky-container">
             <div className="select-option" ref={node}>

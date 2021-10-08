@@ -416,9 +416,9 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
                      )}
                   </div>
                   <div className="right-container">
-                     <h1 className="experienceTitleHead text2">
+                     {/* <h1 className="experienceTitleHead text2">
                         {experienceInfo?.experience?.title}
-                     </h1>
+                     </h1> */}
                      {/* <Wrap> */}
                      {/* <CustomScrollbar> */}
                      <Booking experienceId={experienceId} />
@@ -654,12 +654,12 @@ const Wrapper = styled.main`
          display: none;
          overflow: hidden;
          background: ${theme.colors.lightBackground.grey};
-         border-radius: 80px 80px 0 0;
+         border-radius: 40px;
          .experienceTitleHead {
             color: ${theme.colors.textColor7};
             font-family: League-Gothic;
             margin: 1rem 0;
-            text-align: center;
+            text-align: left;
             height: 48px;
          }
       }
@@ -683,17 +683,16 @@ const Wrapper = styled.main`
 
       .info-wrapper {
          .left-container {
-            width: 70%;
+            width: 65%;
          }
          .right-container {
-            width: 30%;
+            width: 35%;
             display: block;
          }
       }
    }
    section {
       position: relative;
-      text-align: center;
       padding: 2rem 0;
       .sub-heading {
          color: ${theme.colors.textColor5};
