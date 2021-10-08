@@ -116,23 +116,24 @@ export const BRAND_PAGES_LISTING = gql`
 `
 
 export const BRAND_TOTAL_PAGES = gql`
-subscription BRAND_TOTAL_PAGES($brandId: Int!) {
-   brands_brandPages_aggregate(where: {brandId: {_eq: $brandId}, isArchived: {_eq: false}}) {
-     aggregate {
-       count
-     }
+   subscription BRAND_TOTAL_PAGES($brandId: Int!) {
+      brands_brandPages_aggregate(
+         where: { brandId: { _eq: $brandId }, isArchived: { _eq: false } }
+      ) {
+         aggregate {
+            count
+         }
+      }
    }
- }
 `
 export const PAGE_INFO = gql`
-subscription PAGE_INFO($pageId: Int!, $route: String!) {
-   brands_brandPages_by_pk(brandId: $pageId, route: $route) {
-     internalPageName
-     published
-     route
+   subscription PAGE_INFO($pageId: Int!, $route: String!) {
+      brands_brandPages_by_pk(brandId: $pageId, route: $route) {
+         internalPageName
+         published
+         route
+      }
    }
- }
- 
 `
 export const GET_FILES = gql`
    subscription GET_FILES($linkedFile: [Int!]!, $fileTypes: [String!]!) {
@@ -163,25 +164,25 @@ export const GET_TEMPLATES = gql`
 `
 
 export const LINKED_COMPONENT = gql`
-subscription LINKED_COMPONENT($pageId: Int!) {
-   brands_brandPageModule(
-      where: { brandPageId: { _eq: $pageId } }
-      order_by: { position: desc_nulls_last }
-   ) {
-      fileId
-      id
-      config
-      internalModuleIdentifier
-      moduleType
-      position
-      templateId
-      visibilityConditionId
-      file {
-         fileName
-         path
+   subscription LINKED_COMPONENT($pageId: Int!) {
+      brands_brandPageModule(
+         where: { brandPageId: { _eq: $pageId } }
+         order_by: { position: desc_nulls_last }
+      ) {
+         fileId
+         id
+         config
+         internalModuleIdentifier
+         moduleType
+         position
+         templateId
+         visibilityConditionId
+         file {
+            fileName
+            path
+         }
       }
    }
-}
 `
 export const GET_SUBSCRIPTION_FOLDS = gql`
    subscription GET_SUBSCRIPTION_FOLDS {
@@ -207,41 +208,41 @@ export const FOLD_AGGREGATE = gql`
    }
 `
 export const MENU_AGGREGATE = gql`
-subscription MENU_AGGREGATE {
-   brands_navigationMenu_aggregate {
-     aggregate {
-       count
-     }
-   }
+   subscription MENU_AGGREGATE {
+      brands_navigationMenu_aggregate {
+         aggregate {
+            count
+         }
+      }
    }
 `
 
 export const NAVIGATION_MENU = gql`
-subscription NAVIGATION_MENU {
-   brands_navigationMenu {
-      id
-      title
-      isPublished
-   }
-}
-`
-export const NAVIGATION_MENU_INFO = gql`
-subscription NAVIGATION_MENU_INFO($menuId: Int!) {
-   brands_navigationMenuItem(
-      where: { navigationMenuId: { _eq: $menuId } }
-      order_by: { position: desc_nulls_last }
-   ) {
-      id
-      label
-      navigationMenuId
-      openInNewTab
-      parentNavigationMenuItemId
-      position
-      url
-      navigationMenu {
-         isPublished
+   subscription NAVIGATION_MENU {
+      brands_navigationMenu {
+         id
          title
+         isPublished
       }
    }
-}
+`
+export const NAVIGATION_MENU_INFO = gql`
+   subscription NAVIGATION_MENU_INFO($menuId: Int!) {
+      brands_navigationMenuItem(
+         where: { navigationMenuId: { _eq: $menuId } }
+         order_by: { position: desc_nulls_last }
+      ) {
+         id
+         label
+         navigationMenuId
+         openInNewTab
+         parentNavigationMenuItemId
+         position
+         url
+         navigationMenu {
+            isPublished
+            title
+         }
+      }
+   }
 `

@@ -52,13 +52,14 @@ const PageListing = () => {
                return {
                   id: page.brandId,
                   internalPageName: page.internalPageName,
+                  route: page.route,
                   url: `${context.brandDomain}${page.route}`,
                   pageVisit: 'N/A',
                   published: page.published,
                }
             }
          )
-         console.log(result)
+
          setPageList(result)
       },
    })
@@ -105,6 +106,7 @@ const PageListing = () => {
 
    // delete Handler
    const deleteHandler = (e, page) => {
+
       e.stopPropagation()
       if (
          window.confirm(
@@ -113,7 +115,8 @@ const PageListing = () => {
       ) {
          deletePage({
             variables: {
-               brandId: context.brandId,
+               brandId: page.id,
+               route: page.route
             },
          })
       }
@@ -128,6 +131,7 @@ const PageListing = () => {
 
    // toggle handler
    const toggleHandler = (toggle, id, route) => {
+
       const val = !toggle
       // if (val && !isvalid) {
       //    toast.error(`Coupon should be valid!`)
