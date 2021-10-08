@@ -2,7 +2,7 @@
    font-size: 14px;
    border-bottom: 2px solid #d8d8d8;
    background-color: #f4f4f4;
-   height: 78px  ;
+   height: 78px;
 }
 .tabulator-headers {
    background-color: #f4f4f4 !important;
@@ -42,6 +42,9 @@
    border-radius: 2px;
    margin-top: 5px;
 }
-.workPurchaseOrderTable .tabulator-header .tabulator-col{
+.workPurchaseOrderTable .tabulator-header .tabulator-col {
    right: 0px !important;
+}
+.RowClick:hover {
+   color: #367bf5 !important;
 }
