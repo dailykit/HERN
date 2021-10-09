@@ -64,7 +64,7 @@ export default function DashboardPage({
    return (
       <Layout navigationMenuItems={navigationMenuItems}>
          <SEO title="Dashboard" />
-         <div id="tag-top-01">
+         <div id="dashboard-top-01">
             {Boolean(parsedData.length) &&
                ReactHtmlParser(
                   parsedData.find(fold => fold.id === 'dashboard-top-01')
@@ -72,7 +72,6 @@ export default function DashboardPage({
                )}
          </div>
          <Wrapper>
-            <h1 className="heading">Dashboard</h1>
             <div className="flex-wrapper">
                <div className="dashboard-left-div">
                   <h1 className="heading">User profile</h1>
@@ -133,7 +132,7 @@ export default function DashboardPage({
                </div>
             </div>
          </Wrapper>
-         <div id="tag-bottom-01">
+         <div id="dashboard-bottom-01">
             {Boolean(parsedData.length) &&
                ReactHtmlParser(
                   parsedData.find(fold => fold.id === 'dashboard-bottom-01')
