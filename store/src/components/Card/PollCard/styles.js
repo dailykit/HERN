@@ -88,6 +88,23 @@ export const CardBody = styled.div`
    .expert-name {
       margin-bottom: 0 !important;
    }
+   .slot-div-wrap {
+      margin: 0.5rem 0 0 0;
+   }
+   .book-slot {
+      margin: 0.5rem 0 0 0;
+      // width: auto;
+      // padding: 0 1rem;
+   }
+   .poll-expiry {
+      color: ${theme.colors.lightBackground};
+      margin-top: 0.5rem;
+      text-align: right;
+   }
+   .poll-option-divider {
+      color: ${theme.colors.textColor4};
+      border-top-color: ${theme.colors.textColor4};
+   }
    @media (min-width: 769px) {
       .exp-name {
          font-size: ${theme.sizes.h4};

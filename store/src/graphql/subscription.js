@@ -1025,7 +1025,10 @@ export const EXPERIENCE_BOOKING = gql`
 `
 
 export const YOUR_BOOKINGS = gql`
-   subscription YOUR_BOOKINGS($where: experiences_experienceBooking_bool_exp!) {
+   subscription YOUR_BOOKINGS(
+      $where: experiences_experienceBooking_bool_exp!
+      $pollOptionLimit: Int
+   ) {
       experienceBookings(where: $where) {
          id
          cutoffTime
@@ -1069,7 +1072,20 @@ export const YOUR_BOOKINGS = gql`
             deliveryPrice2(args: { params: { shareFor: "parent" } })
             billingDetails2(args: { params: { shareFor: "parent" } })
          }
-         experienceBookingOptions {
+         participants: experienceBookingParticipants {
+            email
+            id
+            keycloakId
+            phone
+            isArchived
+            rsvp
+         }
+         experienceBookingOptions(
+            limit: $pollOptionLimit
+            order_by: {
+               experienceBookingParticipantChoices_aggregate: { count: desc }
+            }
+         ) {
             id
             experienceClass {
                id
@@ -1104,14 +1120,6 @@ export const YOUR_BOOKINGS = gql`
                   count
                }
             }
-         }
-         participants: experienceBookingParticipants {
-            email
-            id
-            keycloakId
-            phone
-            isArchived
-            rsvp
          }
       }
    }

@@ -12,11 +12,11 @@ export const Card = styled.div`
    overflow: hidden;
    transition: all 0.3s ease-in-out;
    &:hover {
-      box-shadow: ${({ boxShadow = true }) =>
-         !boxShadow ? '0px 8px 12px 2px rgba(0, 0, 0, 0.32)' : 'none'};
       transform: translate3d(0px, -1.5px, 0px);
    }
    height: 480px;
+   border-radius: 16px 16px 0px 0px;
+   width: ${({ customWidth }) => customWidth};
    @media (min-width: 769px) {
       height: 580px;
    }
@@ -75,7 +75,10 @@ export const CardImage = styled.div`
 `
 
 export const CardBody = styled.div`
-   color: ${theme.colors.textColor2};
+   color: ${({ backgroundMode = 'dark' }) =>
+      backgroundMode === 'light'
+         ? theme.colors.textColor5
+         : theme.colors.textColor4};
    width: 100%;
    padding: 1rem 0.5rem;
    font-family: Proxima Nova;
@@ -125,10 +128,13 @@ export const CardBody = styled.div`
       font-family: Proxima Nova;
       font-weight: 800;
       text-align: left;
-      color: ${theme.colors.textColor4};
+      color: ${({ backgroundMode = 'dark' }) =>
+         backgroundMode === 'light'
+            ? theme.colors.textColor5
+            : theme.colors.textColor4};
       letter-spacing: 0.16em;
       :hover {
-         color: ${theme.colors.textColor6};
+         color: ${theme.colors.textColor};
       }
    }
    .exp-info {

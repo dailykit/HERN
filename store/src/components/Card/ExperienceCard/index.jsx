@@ -54,7 +54,7 @@ export default function ExperienceCard({ cardDetails, ...props }) {
                }
             />
          </CardImage>
-         <CardBody>
+         <CardBody {...props}>
             <h2 className="exp-name text6" onClick={onClickHandler}>
                {experience?.title}
             </h2>
@@ -85,7 +85,11 @@ export default function ExperienceCard({ cardDetails, ...props }) {
                <span className="duration">
                   <Clock
                      size={theme.sizes.h6}
-                     color={theme.colors.textColor4}
+                     color={
+                        props.backgroundMode === 'light'
+                           ? theme.colors.textColor5
+                           : theme.colors.textColor4
+                     }
                   />
                   <span>
                      {moment
@@ -105,7 +109,11 @@ export default function ExperienceCard({ cardDetails, ...props }) {
                   <span className="duration">
                      <UsersIcon
                         size={theme.sizes.h6}
-                        color={theme.colors.textColor4}
+                        color={
+                           props.backgroundMode === 'light'
+                              ? theme.colors.textColor5
+                              : theme.colors.textColor4
+                        }
                      />
                   </span>
                   <span className="exp-users-info">

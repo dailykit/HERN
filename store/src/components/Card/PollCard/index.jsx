@@ -1,19 +1,18 @@
 import React from 'react'
 import { Flex } from '@dailykit/ui'
 import { Card, CardImage, CardBody } from './styles.js'
-import { Clock, ChevronRight } from '../../Icons'
-import { theme } from '../../../theme'
-import { getDateWithTime, getMinute } from '../../../utils'
-import router from 'next/router'
-import { Badge } from 'antd'
+import { Clock } from '../../Icons'
+import { theme } from '../../../theme.js'
+import { getMinute, getDateWithTime } from '../../../utils'
 import Button from '../../Button'
+import { Divider, Badge } from 'antd'
 
-export default function UpcomingExperienceCard({ cardDetails, ...props }) {
-   const { experience, totalParticipants, totalRsvpCount } = cardDetails
+export default function NormalExperienceCard({ cardDetails, ...props }) {
+   const { experience, experienceBookingOptions = [], cutoffTime } = cardDetails
    return (
       <Badge.Ribbon
-         text={`${totalRsvpCount} out of ${totalParticipants} accepted`}
-         color={theme.colors.textColor}
+         text={`expires on ${cutoffTime ? getDateWithTime(cutoffTime) : 'N/A'}`}
+         color={theme.colors.darkBackground.darkblue}
          placement="start"
       >
          <Card {...props} onClick={props?.onCardClick}>
@@ -62,22 +61,42 @@ export default function UpcomingExperienceCard({ cardDetails, ...props }) {
                      </span>
                   </span>
                </Flex>
-               <Flex
-                  container
-                  alignItems="center"
-                  justifyContent="space-between"
-                  margin="8px 0 8px 0"
+               <Divider
+                  plain
+                  className="poll-option-divider"
+                  orientation="left"
                >
-                  <p>Booked at</p>
-                  <p>
-                     {getDateWithTime(
-                        experience?.experienceClasses[0]?.startTimeStamp
-                     )}
-                  </p>
-               </Flex>
-               <Button className="book-slot" onClick={props.onCardClick}>
-                  View Booking
-               </Button>
+                  Most Voted
+               </Divider>
+               <div className="slot-div-wrap">
+                  {experienceBookingOptions?.map(option => {
+                     return (
+                        <div key={option?.id} className="slot-div">
+                           <Flex
+                              container
+                              alignItems="center"
+                              justifyContent="space-between"
+                              margin="0 0 12px 0"
+                           >
+                              <p className="slot-info-time">
+                                 {getDateWithTime(
+                                    option?.experienceClass?.startTimeStamp
+                                 )}
+                              </p>
+                              <p className="vote-head">
+                                 {option?.voting?.aggregate?.count} votes
+                              </p>
+                           </Flex>
+                           <Button
+                              className="book-slot"
+                              onClick={() => props.bookingHandler({ option })}
+                           >
+                              Book Slot
+                           </Button>
+                        </div>
+                     )
+                  })}
+               </div>
             </CardBody>
          </Card>
       </Badge.Ribbon>

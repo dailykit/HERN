@@ -50,6 +50,7 @@ body {
 }
 .special-underline {
    position: relative;
+   color: #2a4663;
 }
 
 .special-underline::after {
@@ -60,12 +61,12 @@ body {
    margin: auto;
    width: 0%;
    content: '';
-   color: #7ab6d3;
-   background: #7ab6d3;
+   color: #dc2047;
+   background: #dc2047;
    height: 2px;
 }
 .special-underline:hover {
-   color: #7ab6d3;
+   color: #dc2047;
    cursor: pointer;
 }
 .special-underline:hover::after {

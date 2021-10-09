@@ -32,6 +32,7 @@ export const theme = {
       lightGreyText: '#A7A7A7',
       lightestGrey: '#D5D5D5',
       disableBackground: '#ccc',
+      creamColor: '#F2F1EB',
 
       emptyCellColor:
          'linear-gradient(89.74deg, rgba(68, 68, 68, 0.47) 0.21%, rgba(119, 119, 119, 0.09) 99.77%)'
