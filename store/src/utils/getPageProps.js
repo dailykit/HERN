@@ -18,15 +18,16 @@ export const getPageProps = async (params, route) => {
 
    //Module
    const parsedData = await foldsResolver(
-      dataByRoute.brands_brandPages[0]['websitePageModules']
+      dataByRoute.brands_brandPages[0]['brandPageModules']
    )
 
    //Navigation Menu
    const navigationMenu = await client.request(NAVIGATION_MENU, {
       navigationMenuId:
-         dataByRoute.brands_brandPages[0]['website']['navigationMenuId'],
+         dataByRoute.brands_brandPages[0]['brands']['navigationMenuId'],
    })
    const navigationMenus = navigationMenu.brands_navigationMenuItem
 
    return { parsedData, seo, settings, navigationMenus }
 }
+

@@ -1152,15 +1152,14 @@ query BRAND_PAGE($domain: String!, $route: String!) {
                ]
             }
          }
-      
    ) {
-      brandId
+      id
       internalPageName
       isArchived
       published
       route
       linkedNavigationMenuId
-      brandPageModule(
+      brandPageModules(
          order_by: { position: desc_nulls_last }
          where: { isHidden: { _eq: false } }
       ) {
