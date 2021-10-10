@@ -23,12 +23,12 @@ import {
 export const Home = () => {
    const { addTab } = useTabs()
    const [context, setContext] = useContext(BrandContext)
-   const { websiteId } = context
+   const { brandId } = context
 
    // page count subscription
    const {
       data: {
-         brand_brandPages_aggregate: {
+         brands_brandPages_aggregate: {
             aggregate: { count: pageCount = 0 } = {},
          } = {},
       } = {},
@@ -36,7 +36,7 @@ export const Home = () => {
       error: pageError,
    } = useSubscription(BRAND_TOTAL_PAGES, {
       variables: {
-         brandId: context.brandId,
+         brandId: brandId,
       },
    })
 
@@ -54,7 +54,7 @@ export const Home = () => {
    // menu count subscription
    const {
       data: {
-         brand_navigationMenu_aggregate: {
+         brands_navigationMenu_aggregate: {
             aggregate: { count: menuCount = 0 } = {},
          } = {},
       } = {},

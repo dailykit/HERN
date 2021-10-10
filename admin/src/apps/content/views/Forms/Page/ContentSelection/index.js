@@ -132,6 +132,7 @@ const ContentSelection = () => {
                fileId: option.id,
             }
          })
+
          linkComponent({
             variables: {
                objects: result,

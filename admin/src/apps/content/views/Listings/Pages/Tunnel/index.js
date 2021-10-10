@@ -12,7 +12,6 @@ import { Tooltip, Banner } from '../../../../../../shared/components'
 export default function PageCreationTunnel({ close }) {
    const { addTab } = useTabs()
    const [context, setContext] = useContext(BrandContext)
-   const { websiteId } = context
    const [types, setTypes] = useState([])
    const [pageTitle, setPageTitle] = useState({
       value: '',
@@ -75,7 +74,7 @@ export default function PageCreationTunnel({ close }) {
          })
          addTab(
             webPage.internalPageName,
-            `/content/pages/${webPage.brandId}/${webPage.internalPageName}`
+            `/content/pages/${webPage.id}/${webPage.internalPageName}`
          )
          toast.success('Campaign created!')
       },

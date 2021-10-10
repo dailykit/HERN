@@ -50,16 +50,15 @@ const PageListing = () => {
          const result = data.subscriptionData.data.brands_brandPages.map(
             page => {
                return {
-                  id: page.brandId,
+                  id: page.id,
                   internalPageName: page.internalPageName,
-                  route: page.route,
                   url: `${context.brandDomain}${page.route}`,
                   pageVisit: 'N/A',
                   published: page.published,
                }
             }
          )
-
+         console.log(result)
          setPageList(result)
       },
    })
@@ -106,7 +105,6 @@ const PageListing = () => {
 
    // delete Handler
    const deleteHandler = (e, page) => {
-
       e.stopPropagation()
       if (
          window.confirm(
@@ -115,8 +113,8 @@ const PageListing = () => {
       ) {
          deletePage({
             variables: {
-               brandId: page.id,
-               route: page.route
+               brandId: context.brandId,
+               pageId: page.id,
             },
          })
       }
@@ -130,8 +128,7 @@ const PageListing = () => {
    }
 
    // toggle handler
-   const toggleHandler = (toggle, id, route) => {
-
+   const toggleHandler = (toggle, id) => {
       const val = !toggle
       // if (val && !isvalid) {
       //    toast.error(`Coupon should be valid!`)
@@ -139,7 +136,6 @@ const PageListing = () => {
       updatePage({
          variables: {
             pageId: id,
-            route: route,
             set: {
                published: val,
             },
@@ -161,7 +157,7 @@ const PageListing = () => {
          <Form.Group>
             <Form.Toggle
                name={`[page_active${rowData.id}`}
-               onChange={() => toggleHandler(rowData.published, rowData.id, rowData.route)}
+               onChange={() => toggleHandler(rowData.published, rowData.id)}
                value={rowData.published}
             />
          </Form.Group>
