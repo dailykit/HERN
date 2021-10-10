@@ -61,7 +61,7 @@ export default function PollRecyclerView({ keycloakId }) {
          <div className="wrapper-div">
             <div className="recycler-heading-wrapper">
                <h3 className="recycler-heading text1">MY POLLS</h3>
-               <Link href="/myPolls">
+               <Link href="/dashboard/myPolls">
                   <a className="redirectClass">
                      <span className="special-underline">View All</span>
                   </a>

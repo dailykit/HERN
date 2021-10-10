@@ -93,11 +93,8 @@ const Wrapper = styled.div`
    }
    .flex-wrapper {
       display: flex;
-      position: relative;
       .dashboard-left-div {
          width: 20%;
-         height: 100%;
-         position: relative;
       }
       .dashboard-right-div {
          width: 80%;

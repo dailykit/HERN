@@ -7,7 +7,10 @@ import { useToasts } from 'react-toast-notifications'
 import styled from 'styled-components'
 import ReactHtmlParser from 'react-html-parser'
 import { Layout, SEO, Card } from '../../../components'
-import { PollRecyclerView } from '../../../pageComponents/homeComponents'
+import {
+   PollRecyclerView,
+   DashboardSideBar
+} from '../../../pageComponents/homeComponents'
 import { theme } from '../../../theme'
 import { useWindowDimensions, fileParser, isEmpty } from '../../../utils'
 import { useUser } from '../../../Providers'
@@ -28,7 +31,9 @@ export default function DashboardPage({
          <SEO title="Dashboard" />
          <Wrapper>
             <div className="flex-wrapper">
-           
+               <div className="dashboard-left-div">
+                  <DashboardSideBar user={user} />
+               </div>
                <div className="dashboard-right-div">
                   <div id="myPolls-top-01">
                      {Boolean(parsedData.length) &&
@@ -86,59 +91,6 @@ const Wrapper = styled.div`
       position: relative;
       .dashboard-left-div {
          width: 20%;
-         margin-right: 1rem;
-         padding-top: 2rem;
-         background: ${theme.colors.creamColor};
-         position: sticky;
-         height: 100vh;
-         overflow-y: auto;
-         top: 64px;
-         z-index: 4;
-         .image-wrapper {
-            width: 100%;
-            overflow: hidden;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            .user-email {
-               font-weight: 500;
-               color: ${theme.colors.textColor5};
-               text-align: center;
-               margin: 1rem;
-               line-height: 35px;
-            }
-         }
-         .nav-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            margin: 0;
-         }
-         .nav-list-item {
-            list-style: none;
-            font-size: ${theme.sizes.h4};
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            &:hover {
-               a {
-                  color: ${theme.colors.textColor};
-               }
-            }
-            &:last-child {
-               margin-bottom: 32px;
-            }
-            a {
-               position: relative;
-               padding: 8px;
-               text-decoration: none;
-               color: ${theme.colors.textColor5};
-               text-align: center;
-            }
-         }
       }
       .dashboard-right-div {
          width: 80%;

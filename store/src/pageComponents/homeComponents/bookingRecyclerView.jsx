@@ -86,7 +86,7 @@ export default function BookingRecyclerView({ keycloakId }) {
          <div className="wrapper-div">
             <div className="recycler-heading-wrapper">
                <h3 className="recycler-heading text1">MY Bookings</h3>
-               <Link href="/myBookings">
+               <Link href="/dashboard/myBookings">
                   <a className="redirectClass">
                      <span className="special-underline">View All</span>
                   </a>
