@@ -1,4 +1,4 @@
-   import React from 'react'
+import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import {
@@ -9,6 +9,9 @@ import {
    Text,
    TextButton,
    ButtonGroup,
+   useTunnel,
+   Tunnels,
+   Tunnel,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
@@ -29,6 +32,7 @@ import {
    S_COLLECTIONS,
 } from '../../../graphql'
 import tableOptions from '../tableOption'
+import CreateCollection from '../../../../../shared/CreateUtils/Menu/createCollection'
 
 const address = 'apps.menu.views.listings.collectionslisting.'
 
@@ -36,6 +40,8 @@ const CollectionsListing = () => {
    const { t } = useTranslation()
    const { tab, addTab } = useTabs()
    const { tooltip } = useTooltip()
+   const [collectionTunnels, openCollectionTunnel, closeCollectionTunnel] =
+      useTunnel(1)
 
    const tableRef = React.useRef()
 
@@ -53,24 +59,6 @@ const CollectionsListing = () => {
    }, [tab, addTab])
 
    // Mutation
-   const [createCollection] = useMutation(CREATE_COLLECTION, {
-      variables: {
-         object: {
-            name: `collection-${randomSuffix()}`,
-         },
-      },
-      onCompleted: data => {
-         addTab(
-            data.createCollection.name,
-            `/menu/collections/${data.createCollection.id}`
-         )
-         toast.success('Collection created!')
-      },
-      onError: error => {
-         toast.error('Something went wrong!')
-         logger(error)
-      },
-   })
 
    const [deleteCollection] = useMutation(DELETE_COLLECTION, {
       onCompleted: () => {
@@ -161,6 +149,11 @@ const CollectionsListing = () => {
    return (
       <ResponsiveFlex maxWidth="1280px" margin="0 auto">
          <Banner id="menu-app-collections-listing-top" />
+         <Tunnels tunnels={collectionTunnels}>
+            <Tunnel layer={1} size="md">
+               <CreateCollection closeTunnel={closeCollectionTunnel} />
+            </Tunnel>
+         </Tunnels>
          <Flex
             container
             alignItems="center"
@@ -172,29 +165,32 @@ const CollectionsListing = () => {
                <Tooltip identifier="collections_list_heading" />
             </Flex>
             <Flex container alignItems="center" justifyContent="flex-end">
-            <ComboButton type="solid" onClick={createCollection}>
-               <AddIcon color="#fff" size={24} /> Create Collection
-            </ComboButton>
+               <ComboButton
+                  type="solid"
+                  onClick={() => openCollectionTunnel(1)}
+               >
+                  <AddIcon color="#fff" size={24} /> Create Collection
+               </ComboButton>
             </Flex>
          </Flex>
          <Flex
-                   container
-                   as="header"
-                   width="100%"
-                   alignItems="center"
-                   justifyContent="flex-end"
+            container
+            as="header"
+            width="100%"
+            alignItems="center"
+            justifyContent="flex-end"
+         >
+            <ButtonGroup align="left">
+               <TextButton
+                  type="ghost"
+                  size="sm"
+                  onClick={() => tableRef.current.table.clearHeaderFilter()}
+                  title="Clear all applied filter on table"
                >
-                  <ButtonGroup align="left">
-                  <TextButton
-                     type="ghost"
-                     size="sm"
-                     onClick={() => tableRef.current.table.clearHeaderFilter()}
-                     title='Clear all applied filter on table'
-                  >
-                     Clear All Filter
-                  </TextButton>
-               </ButtonGroup>
-               </Flex>
+                  Clear All Filter
+               </TextButton>
+            </ButtonGroup>
+         </Flex>
          <Spacer size="16px" />
          {loading ? (
             <InlineLoader />
@@ -204,7 +200,7 @@ const CollectionsListing = () => {
                columns={columns}
                data={collections}
                options={tableOptions}
-               className='menuTable'
+               className="menuTable"
             />
          )}
          <InsightDashboard
