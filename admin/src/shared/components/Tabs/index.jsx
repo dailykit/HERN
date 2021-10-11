@@ -86,8 +86,8 @@ const Tabs = () => {
             firstIndex !== 0 ||
             (numTabsToShow < tabs.length && tabs.length !== lastIndex)
          )
-            return '415px'
-         return '380px'
+            return '365px'
+         return '400px'
       }
    }
 
@@ -109,14 +109,13 @@ const Tabs = () => {
 
    return (
       <TabsWrapper>
-         <HomeButton active={pathname === '/'} to="/">
+         {/* <HomeButton active={pathname === '/'} to="/">
             <HomeIcon color={pathname === '/' ? '#367BF5' : '#919699'} />
-         </HomeButton>
+         </HomeButton> */}
          {tabs.length > 0 && (
             <>
                {firstIndex !== 0 && (
-                  <button 
-                     onClick={() => handleTabPrev()} >
+                  <button onClick={() => handleTabPrev()}>
                      <DoubleArrowIcon direction="left" />
                   </button>
                )}
@@ -135,8 +134,7 @@ const Tabs = () => {
          {tabs.length > 0 && (
             <>
                {numTabsToShow < tabs.length && tabs.length !== lastIndex && (
-                  <button 
-                     onClick={() => handleTabForward()}>
+                  <button onClick={() => handleTabForward()}>
                      <DoubleArrowIcon />
                   </button>
                )}

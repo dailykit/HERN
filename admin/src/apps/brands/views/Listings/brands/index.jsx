@@ -25,6 +25,8 @@ import {
 import { useTooltip, useTabs } from '../../../../../shared/providers'
 import CreateBrandTunnel from './CreateBrandTunnel'
 import { PublishIcon, UnPublishIcon } from '../../../assets/icons'
+import moment from 'moment'
+import '../../../tableStyle.css'
 
 export const Brands = () => {
    const { tooltip } = useTooltip()
@@ -174,6 +176,12 @@ export const Brands = () => {
             )
          },
       },
+      {
+         title: 'Created At',
+         field: 'created_at',
+         headerFilter: true,
+         formatter: reactFormatter(<DateFormatter />),
+      },
    ])
 
    if (error) {
@@ -209,6 +217,7 @@ export const Brands = () => {
                      ...tableOptions,
                      placeholder: 'No Brands Available Yet !',
                   }}
+                  className="brands-table"
                />
             </>
          )}
@@ -248,6 +257,7 @@ function BrandName({ cell, addTab }) {
                alignItems="center"
             >
                <p
+                  title="Click to view this brand"
                   style={{
                      width: '230px',
                      whiteSpace: 'nowrap',
@@ -266,11 +276,22 @@ function BrandName({ cell, addTab }) {
                justifyContent="flex-end"
                alignItems="center"
             >
-               <IconButton type="ghost">
+               <span title={data.isPublished ? 'Published' : 'Unpublished'}>
                   {data.isPublished ? <PublishIcon /> : <UnPublishIcon />}
-               </IconButton>
+               </span>
             </Flex>
          </Flex>
+      </>
+   )
+}
+
+const DateFormatter = ({ cell }) => {
+   const data = cell.getData()
+   return (
+      <>
+         <Text as="text1">
+            {moment(data.created_at).format('DD-MM-YYYY hh:mm A')}
+         </Text>
       </>
    )
 }
