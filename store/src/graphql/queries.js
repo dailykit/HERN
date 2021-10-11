@@ -21,6 +21,10 @@ export const EXPERIENCE_CLASS_INFO = gql`
             minimumParticipant
             priceRanges
          }
+         experience {
+            id
+            title
+         }
       }
       publicClassType: experiences_experienceClass(
          where: {
@@ -34,12 +38,16 @@ export const EXPERIENCE_CLASS_INFO = gql`
          isActive
          isBooked
          duration
-         classTypeInfo: publicExperienceClassType {
+         classTypeInfo: privateExperienceClassType {
             id
             maximumParticipant
             minimumBookingAmount
             minimumParticipant
             priceRanges
+         }
+         experience {
+            id
+            title
          }
       }
    }

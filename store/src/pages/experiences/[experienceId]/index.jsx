@@ -416,14 +416,7 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
                      )}
                   </div>
                   <div className="right-container">
-                     {/* <h1 className="experienceTitleHead text2">
-                        {experienceInfo?.experience?.title}
-                     </h1> */}
-                     {/* <Wrap> */}
-                     {/* <CustomScrollbar> */}
                      <Booking experienceId={experienceId} />
-                     {/* </CustomScrollbar> */}
-                     {/* </Wrap> */}
                   </div>
                </div>
                <section id="section-7">
