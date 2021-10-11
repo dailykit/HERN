@@ -87,7 +87,7 @@ const Tabs = () => {
             (numTabsToShow < tabs.length && tabs.length !== lastIndex)
          )
             return '365px'
-         return '330px'
+         return '400px'
       }
    }
 
@@ -115,8 +115,7 @@ const Tabs = () => {
          {tabs.length > 0 && (
             <>
                {firstIndex !== 0 && (
-                  <button
-                     onClick={() => handleTabPrev()} >
+                  <button onClick={() => handleTabPrev()}>
                      <DoubleArrowIcon direction="left" />
                   </button>
                )}
@@ -135,8 +134,7 @@ const Tabs = () => {
          {tabs.length > 0 && (
             <>
                {numTabsToShow < tabs.length && tabs.length !== lastIndex && (
-                  <button
-                     onClick={() => handleTabForward()}>
+                  <button onClick={() => handleTabForward()}>
                      <DoubleArrowIcon />
                   </button>
                )}
