@@ -22,9 +22,9 @@ const ChildNode = ({ child, clickHandler, navigationMenuItemId }) => {
             {child?.childNodes?.length > 0 && (
                <StyledButton hasChild={child?.childNodes?.length > 0}>
                   {toggleParent ? (
-                     <ChevronUp size="16px" color="#f9f9f9" />
+                     <ChevronUp size="25px" color="#f9f9f9" />
                   ) : (
-                     <ChevronDown size="16px" color="#f9f9f9" />
+                     <ChevronDown size="25px" color="#f9f9f9" />
                   )}
                </StyledButton>
             )}
@@ -46,9 +46,9 @@ const ChildNode = ({ child, clickHandler, navigationMenuItemId }) => {
                      {c?.childNodes?.length > 0 && (
                         <StyledButton hasChild={c?.childNodes?.length > 0}>
                            {toggleChild ? (
-                              <ChevronUp size="16px" color="#f9f9f9" />
+                              <ChevronUp size="25px" color="#f9f9f9" />
                            ) : (
-                              <ChevronDown size="16px" color="#f9f9f9" />
+                              <ChevronDown size="25px" color="#f9f9f9" />
                            )}
                         </StyledButton>
                      )}

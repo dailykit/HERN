@@ -21,6 +21,7 @@ export const StyledTabs = styled.ul(
       display: flex;
       align-items: center;
       margin: 0;
+      padding-top: 7px;
    `
 )
 
@@ -32,20 +33,18 @@ export const StyledTab = styled.li(
       align-items: center;
       justify-content: space-between;
       cursor: pointer;
-      border-bottom: 1px solid #ebf1f4;
-      border-right: 1px solid #ebf1f4;
+      border-radius: 8px;
+      border: 1px solid #f3f3f3;
+
       :hover {
          background-color: #f4f4f4;
       }
 
       height: 42px;
       background: ${active ? '#F6F6F6' : 'transparent'};
-      box-shadow: ${active
-         ? '1px 1px 2px rgba(255, 255, 255, 0.3), -1px -1px 2px rgba(234, 234, 234, 0.5), inset -2px 2px 4px rgba(234, 234, 234, 0.2), inset 2px -2px 4px rgba(234, 234, 234, 0.2), inset -2px -2px 4px rgba(255, 255, 255, 0.9), inset 2px 2px 5px rgba(234, 234, 234, 0.9)'
-         : 'none'};
 
       span {
-         color: ${active ? '#367BF5' : '#919699'};
+         color: ${active ? '#367BF5' : '#555B6E'};
          display: inline-block;
          font-size: 14px;
          font-weight: 700;
