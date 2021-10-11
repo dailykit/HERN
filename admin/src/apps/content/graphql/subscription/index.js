@@ -96,9 +96,6 @@ export const BRAND_LISTING = gql`
          isDefault
          subscriptionRequested
          onDemandRequested
-         website {
-            id
-         }
       }
    }
 `
