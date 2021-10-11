@@ -107,14 +107,15 @@ export const handleIsActiveEventTrigger = async (req , res) => {
 const retrySendingPayload = async(processedWebhookEventsByUrlId , webhookUrl_eventsId , urlEndPoint , payload , numberOfRetries , retryInterval , leftOutTime) => {
     var res= await sendPayloadToUrlEndpoint(urlEndPoint , payload , leftOutTime)
     var response = {"status":res.status,"body":res.body,"headers":res.headers,"message":res.message,"data":res.data}
-    console.log(response , "response inserted")
+    console.log(res, response , "response inserted")
     // here the response will be added to invocation logs 
     insertInInvocationLogs(payload , response, processedWebhookEventsByUrlId , webhookUrl_eventsId )
+    console.log(numberOfRetries)
     if(res.status === 200 ||  numberOfRetries <= 0 ){
         return res ;
     }
     var numberOfRetries = numberOfRetries - 1
-    setTimeout(()=> { retrySendingPayload(urlEndPoint , payload , numberOfRetries , retryInterval  , leftOutTime) }, retryInterval*1000) 
+    setTimeout(()=> { retrySendingPayload(processedWebhookEventsByUrlId, webhookUrl_eventsId, urlEndPoint , payload , numberOfRetries , retryInterval  , leftOutTime) }, retryInterval*1000) 
     
 }
 
@@ -157,7 +158,7 @@ const insertInInvocationLogs = async(payloadSent , response , processedWebhookEv
         console.log('response_insert_invocationLogs' , response_insert_invocationLogs)
     }
     catch(error){
-        console.log("error in inserting log " , error.response.errors[0].extensions.internal)
+        console.log("error in inserting log " , error.response)
     }
 }
 
@@ -186,7 +187,7 @@ const handleEvents = {
                                    "name": tableName,
                                    "schema":schemaName
                                 },
-                                "webhook": "http://c76f-122-173-27-84.ngrok.io/server/api/developer/webhookEvents/processWebhookEvents",
+                                "webhook": "http://89f8-111-223-3-62.ngrok.io/server/api/developer/webhookEvents/processWebhookEvents",
                                 "insert": {
                                     "columns": "*",
                                     "payload": "*"
@@ -224,7 +225,7 @@ const handleEvents = {
                                    "name": tableName,
                                    "schema":schemaName
                                 },
-                                "webhook": "http://c76f-122-173-27-84.ngrok.io/server/api/developer/webhookEvents/processWebhookEvents",
+                                "webhook": "http://89f8-111-223-3-62.ngrok.io/server/api/developer/webhookEvents/processWebhookEvents",
                                 "insert": {
                                     "columns": "*",
                                     "payload": "*"
