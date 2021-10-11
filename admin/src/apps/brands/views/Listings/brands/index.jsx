@@ -23,57 +23,15 @@ import {
    Banner,
 } from '../../../../../shared/components'
 import { useTooltip, useTabs } from '../../../../../shared/providers'
-import CreateBrandTunnel from './CreateBrandTunnel'
+import CreateBrand from '../../../../../shared/CreateUtils/Brand/CreateBrand'
 import { PublishIcon, UnPublishIcon } from '../../../assets/icons'
 
 export const Brands = () => {
    const { tooltip } = useTooltip()
    const tableRef = React.useRef()
    const { tab, addTab } = useTabs()
-   const [form, setForm] = React.useState({
-      title: {
-         value: '',
-         meta: {
-            isValid: false,
-            isTouched: false,
-            errors: [],
-         },
-      },
-      domain: {
-         value: '',
-         meta: {
-            isValid: false,
-            isTouched: false,
-            errors: [],
-         },
-      },
-   })
-   const [create, { loading }] = useMutation(BRANDS.CREATE_BRAND, {
-      onCompleted: () => {
-         setForm({
-            title: {
-               value: '',
-               meta: {
-                  isValid: false,
-                  isTouched: false,
-                  errors: [],
-               },
-            },
-            domain: {
-               value: '',
-               meta: {
-                  isValid: false,
-                  isTouched: false,
-                  errors: [],
-               },
-            },
-         })
-         closeTunnel(1)
-         toast.success('Successfully created the brand!')
-      },
-      onError: () =>
-         toast.success('Failed to create the brand, please try again!'),
-   })
+   const { loading } = useMutation(BRANDS.CREATE_BRAND)
+
 
    const [deleteBrand] = useMutation(BRANDS.UPDATE_BRAND, {
       onCompleted: () => {
@@ -214,7 +172,7 @@ export const Brands = () => {
          )}
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1} size="md">
-               <CreateBrandTunnel closeTunnel={closeTunnel} />
+               <CreateBrand closeTunnel={closeTunnel} />
             </Tunnel>
          </Tunnels>
          <Banner id="brands-app-brands-listing-bottom" />

@@ -45,6 +45,17 @@ export const BRANDS = {
          }
       }
    `,
+   CREATE_BRANDS: gql`
+      mutation createBrands($objects: [brands_brand_insert_input!]!) {
+         createBrands(objects: $objects) {
+            returning {
+               id
+               domain
+            }
+            affected_rows
+         }
+      }
+   `,
    UPDATE_BRAND: gql`
       mutation updateBrand($id: Int!, $_set: brands_brand_set_input!) {
          updateBrand(pk_columns: { id: $id }, _set: $_set) {
