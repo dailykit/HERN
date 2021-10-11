@@ -24,13 +24,14 @@ export const AdvanceConfig = ()=>{
         <>
             <EditRetryConfig webhookUrl_EventId={state.webhookDetails.webhookUrl_EventId} advanceConfig={state.webhookDetails.advanceConfig} tunnels={tunnels} openTunnel={openTunnel} closeTunnel={closeTunnel} />
             <Flex container height="80px" alignItems="center">
-               <Text as="h2">
+               <Text as="h3">
                   Advance Configs
                </Text>
                {/* <Tooltip identifier="coupon_list_heading" /> */}
             </Flex>
-            <StyledTable >
+            
                 <Flex container alignItems="center" justifyContent="space-between">
+                <StyledTable >
                 <thead></thead>
                 <tbody>
                     <tr >
@@ -46,11 +47,12 @@ export const AdvanceConfig = ()=>{
                         <td>{state.webhookDetails.advanceConfig?.timeOut}</td>
                     </tr>
                 </tbody>
+                </StyledTable>
                 <TextButton type="solid" 
                onClick={()=>openTunnel(1)}
                >Edit</TextButton>
                </Flex>
-            </StyledTable>
+            
         </>
     )
 }

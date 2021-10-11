@@ -9,6 +9,7 @@ import {logger}  from '../../../../../../../shared/utils'
 import {useWebhook} from '../../state'
 import InvocationTunnel from './tunnels/invocationTunnel';
 import {PublishIcon, UnPublishIcon} from '../../../../../../products/assets/icons'
+import moment from 'moment'
 
 
 const ProcessedEvents = ()=>{
@@ -68,57 +69,52 @@ const ProcessedEvents = ()=>{
 
     const columns = [
         {
-           title: 'created at',
+           title: 'Created At',
            field: 'created_at',
            headerFilter: true,
            hozAlign: 'left',
            resizable:true,
            headerSort:true,
            cssClass: 'rowClick',
-           width: 300,
-           
-           // headerTooltip: function (column) {
-           //    const identifier = 'webhook_listing_code_column'
-           //    return (
-           //       tooltip(identifier)?.description || column.getDefinition().title
-           //    )
-           // },
+           formatter: ({ _cell: { value } }) =>
+               moment(value).format('MMM DD YYYY HH:mm:ss'),
+           headerTooltip: true
         },
         {
-           title: 'status',
+           title: 'Status',
            field: 'statusCode',
            headerFilter: true,
-           hozAlign: 'left',
+           hozAlign: 'center',
            resizable:true,
            headerSort:true,
+           headerTooltip: true,
            cssClass: 'rowClick',
            formatter: reactFormatter(<StatusIcon />),
-           width: 150
         },
         {
-            title: 'tries',
+            title: 'Tries',
             field: 'attemptedTime',
             headerFilter: true,
-            hozAlign: 'left',
+            hozAlign: 'center',
             resizable:true,
             headerSort:true,
+            headerTooltip: true,
             cssClass: 'rowClick',
-            width: 100
          },
          {
-            title: 'invocations',
+            title: 'Invocations',
             field: 'invocations',
-            headerFilter: true,
-            hozAlign: 'left',
+            hozAlign: 'center',
             resizable:true,
             headerSort:true,
+            headerHozAlign: 'center',
+            headerTooltip: true,
             cssClass: 'rowClick',
-            formatter:reactFormatter(<TextButton type="ghost">view invocations</TextButton>),
+            formatter:reactFormatter(<TextButton type="ghost">View Invocations</TextButton>),
             cellClick: (e, cell) => {
                rowClick(e, cell)
              openPopupTunnel(1)
             },
-            width: 200
          }
      ]
 
@@ -127,15 +123,14 @@ const ProcessedEvents = ()=>{
          {invocationState && <InvocationTunnel openPopupTunnel={openPopupTunnel} closePopupTunnel={closePopupTunnel} popupTunnels={popupTunnels} webhookUrl_EventId={state.webhookDetails.webhookUrl_EventId} processedEventId={processedEventId} />}
             
             
-            <div className="App" >
+            
             <Flex container alignItems="center" justifyContent="space-between">
             <Flex container height="80px" alignItems="center">
-               <Text as="h2">
+               <Text as="h3">
                   Procesed Events
-                  {/* (
-                  {webhookUrl_eventsCount || '...'}) */}
+                  (
+                  {processedEvents?.length || '...'})
                </Text>
-               {/* <Tooltip identifier="coupon_list_heading" /> */}
             </Flex>
             
          </Flex>
@@ -154,7 +149,7 @@ const ProcessedEvents = ()=>{
             />
          )}
          
-         </div>
+         
          
          
 

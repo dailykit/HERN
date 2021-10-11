@@ -1,14 +1,12 @@
 import React, {useRef, useState} from 'react';
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {ACTIVE_EVENTS_WEBHOOKS, DELETE_WEBHOOK_EVENT } from '../../../../graphql';
-import { IconButton, Loader } from '@dailykit/ui'
 import {logger}  from '../../../../../../shared/utils'
-import {Table, TableHead, TableBody, TableRow, TableCell, Flex, TextButton, Text, Spacer, DropdownButton, ButtonGroup, ComboButton, PlusIcon, useTunnel} from '@dailykit/ui';
+import {Flex, Text, ButtonGroup, ComboButton, PlusIcon, useTunnel} from '@dailykit/ui';
 import { toast } from 'react-toastify'
 import AddWebHook from '../../../../tunnels/addWebhookTunnel';
 import options from '../../../tableOptions'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
-import { useTooltip, useTabs } from '../../../../../../shared/providers'
 import { useWebhook } from '../state';
 import {DeleteIcon} from '../../../../../../shared/assets/icons'
 // third party imports
@@ -85,6 +83,7 @@ const WebhookListing = ()=>{
     }
 
     const columns = [
+       
       {
          title: 'Events',
          field: 'availableWebhookEvent.label',
@@ -94,24 +93,16 @@ const WebhookListing = ()=>{
          headerSort:true,
          frozen: true,
          cssClass: 'rowClick',
-         width: 300,
          cellClick: (e, cell) => {
             rowClick(e, cell)
-         }
-         // headerTooltip: function (column) {
-         //    const identifier = 'webhook_listing_code_column'
-         //    return (
-         //       tooltip(identifier)?.description || column.getDefinition().title
-         //    )
-         // },
+         },
+         headerTooltip: true
       },
       {
          title: 'Action',
          field: 'Action',
-         headerFilter: true,
          hozAlign: 'center',
          resizable:true,
-         headerSort:true,
          frozen: true,
          formatter:reactFormatter(<DeleteIcon />),
          cellClick: (e, cell) => {
@@ -130,7 +121,7 @@ const WebhookListing = ()=>{
             
          },
          cssClass: 'rowClick',
-         width: 100
+         headerTooltip: true
       },
       {
          title: 'Url',
@@ -139,15 +130,13 @@ const WebhookListing = ()=>{
          hozAlign: 'left',
          resizable:true,
          headerSort:true,
-         // frozen: true,
          cssClass: 'rowClick',
-         width: 300
+         headerTooltip: true
       }
    ]
 
     return (
        <Wrapper>
-        <div className="App" >
             <AddWebHook tunnels={tunnels} openTunnel={openTunnel} closeTunnel={closeTunnel} />
                   <Flex container alignItems="center" justifyContent="space-between">
                      <Flex container height="80px" alignItems="center">
@@ -168,7 +157,6 @@ const WebhookListing = ()=>{
                         </ComboButton>
                      </ButtonGroup>
                   </Flex>
-                  {/* <StyledWrapper> */}
                   {Boolean(webhookEvents) && (
                      <ReactTabulator
                         columns={columns}
@@ -177,14 +165,13 @@ const WebhookListing = ()=>{
                            ...options,
                            placeholder: 'No Webhooks Available Yet !',
                            persistenceID : 'webhooks_table',
-                           reactiveData: true
+                           reactiveData: true,
+                           selectable: true,
                         }}
                         ref={tableRef}
                         className = 'developer-webhooks'
                      />
                   )}
-                  {/* </StyledWrapper> */}
-            </div>
         </Wrapper>
 
     )

@@ -143,26 +143,6 @@ const App = () => {
                <Route path="/" exact>
                   <Banner id="app-home-top" />
                   <HomeContainer>
-                     <NavMenuPanel>
-                        <AppList open={open}>
-                           {apps.map(app => (
-                              <AppItem key={app.id}>
-                                 <Link to={app.route}>
-                                    {app.icon && (
-                                       <img src={app.icon} alt={app.title} />
-                                    )}
-                                    <span>{app.title}</span>
-                                 </Link>
-                              </AppItem>
-
-                           ))}
-                           <AppItem >
-                              <Link to='/developer'>
-                                 <span>Developer</span>
-                              </Link>
-                           </AppItem>
-                        </AppList>
-                     </NavMenuPanel>
                      <DashboardPanel>
                         <WelcomeNote>
                            <p>

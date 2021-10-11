@@ -3,14 +3,14 @@ const options = {
     // layout: 'fitColumns',
     autoResize: true,
     maxHeight: 420,
-    virtualDomBuffer: 20,
+    virtualDomBuffer: 80,
     placeholder: 'No Data Available',
     index: 'id',
     persistence: true,
     persistenceMode: 'local',
     selectablePersistence: true,
     persistence: {
-       group: false,
+       group: true,
        sort: true, //persist column sorting
        filter: true, //persist filter sorting
        page: true, //persist page

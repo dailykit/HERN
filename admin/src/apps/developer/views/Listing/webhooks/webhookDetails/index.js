@@ -3,18 +3,38 @@ import ProcessedEvents from './processedEvents';
 import { Wrapper } from './styled';
 import {EventDetails, AdvanceConfig} from './eventDetails';
 import { useWebhook } from '../state';
-import { Text, TextButton, AnchorNav, AnchorNavItem } from '@dailykit/ui';
+import { Text, TextButton, AnchorNav, AnchorNavItem, Flex } from '@dailykit/ui';
 import { Element } from 'react-scroll'
 
 const WebhookDetails = ()=>{
    const {state, dispatch} = useWebhook()
 
    return (
-      <Wrapper>
-      {!state.webhookDetails.webhookUrl_EventId && <Text as="h3">Select a Webhook event to see details</Text> }
-      {state.webhookDetails.webhookUrl_EventId && 
-      (<>
-         {/* <AnchorNav>
+      <Wrapper> 
+         <Flex container alignItems="center" justifyContent="space-between">
+            <Flex container height="80px" alignItems="center">
+               <Text as="h2">
+                  Webhook Details
+               </Text>
+            </Flex>
+            {state.webhookDetails.webhookUrl_EventId &&
+            <TextButton size="sm" type="ghost" style={{"color":"red"}} onClick={()=>{
+            if (window.confirm("Are you sure you wan to delete this webhook ?")){
+               state.deleteFunction(state.webhookDetails.webhookUrl_EventId)
+               dispatch({type:'SET_WEBHOOK_DETAILS', payload:{
+                  webhookDetails: {
+                     "webhookUrl_EventId":undefined,
+                     "webhookUrl_EventLabel": undefined,
+                     "webhookUrlEndpoint":undefined,
+                     "advanceConfig":undefined
+                  },
+                  deleteFunction:undefined
+               }})
+            }
+            
+         }}>Delete</TextButton>}
+         </Flex>
+         <AnchorNav>
             <AnchorNavItem
                targetElement='info'
                label='Info'
@@ -44,54 +64,43 @@ const WebhookDetails = ()=>{
          <Element
             name='info'
             style={{
-               height: '70px'
+               height: '600px'
             }}
          >
-            <EventDetails />
+            {state.webhookDetails.webhookUrl_EventId ?
+            <EventDetails />:
+            <Text as="h3">Select a Webhook event to see details</Text>}
          </Element>
 
          <Element
             name='processedEvents'
             style={{
-               height: '1000px'
+               height: '600px'
             }}
          >
-            <ProcessedEvents />
+            {state.webhookDetails.webhookUrl_EventId ?
+            <ProcessedEvents />:
+            <Text as="h3">Select a Webhook event to see details</Text>}
          </Element>
          <Element
             name='advanceConfigs'
             style={{
-               height: '1000px'
+               height: '600px'
             }}
          >
-            <AdvanceConfig />
+            {state.webhookDetails.webhookUrl_EventId ?
+            <AdvanceConfig />:
+            <Text as="h3">Select a Webhook event to see details</Text>}
          </Element>
-      </Element> */}
-      <EventDetails />
-      <ProcessedEvents />
-      <AdvanceConfig />
+      </Element>
+
          
          
          
 {/* Delete Webhook */}
-         <TextButton size="sm" type="ghost" onClick={()=>{
-            if (window.confirm("Are you sure you wan to delete this webhook ?")){
-               state.deleteFunction(state.webhookDetails.webhookUrl_EventId)
-               dispatch({type:'SET_WEBHOOK_DETAILS', payload:{
-                  webhookDetails: {
-                     "webhookUrl_EventId":undefined,
-                     "webhookUrl_EventLabel": undefined,
-                     "webhookUrlEndpoint":undefined,
-                     "advanceConfig":undefined
-                  },
-                  deleteFunction:undefined
-               }})
-            }
-            
-         }}>Delete</TextButton>
-      </>
-      )
-      }  
+         
+      
+        
       </Wrapper>
       
    )

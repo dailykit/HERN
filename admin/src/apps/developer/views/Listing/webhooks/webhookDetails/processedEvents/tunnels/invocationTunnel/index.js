@@ -14,7 +14,7 @@ import {
    SectionTabPanels,
 } from '@dailykit/ui'
 import { PublishIcon, UnPublishIcon } from '../../../../../../../../products/assets/icons';
-import { StyledWrapper } from './styled';
+import moment from 'moment';
 
 
 
@@ -64,77 +64,67 @@ const InvocationTunnel = (props)=>{
 
     const columns = [
         {
-           title: 'created at',
+           title: 'Created At',
            field: 'created_at',
            headerFilter: true,
            hozAlign: 'left',
            resizable:true,
            headerSort:true,
            cssClass: 'rowClick',
-           width: 300,
-           // headerTooltip: function (column) {
-           //    const identifier = 'webhook_listing_code_column'
-           //    return (
-           //       tooltip(identifier)?.description || column.getDefinition().title
-           //    )
-           // },
+           headerTooltip: true,
+           formatter: ({ _cell: { value } }) =>
+               moment(value).format('MMM DD YYYY HH:mm:ss'),
         },
         {
-           title: 'status',
+           title: 'Status',
            field: 'status',
            headerFilter: true,
-           hozAlign: 'left',
+           hozAlign: 'center',
            resizable:true,
            headerSort:true,
            cssClass: 'rowClick',
            formatter:reactFormatter(<StatusIcon />),
-           width: 300
+           headerTooltip: true,
         },
         {
          title: 'Payload',
          field: 'Payload',
-         hozAlign: 'left',
+         hozAlign: 'center',
          resizable:true,
          cssClass: 'rowClick',
-         width: 300,
-         formatter:reactFormatter(<TextButton type="ghost">view payload</TextButton>),
+         formatter:reactFormatter(<TextButton type="ghost">View Payload</TextButton>),
          cellClick: (e, cell) => {
             rowClick(e, cell)
             props.openPopupTunnel(2)
-         }
-         // headerTooltip: function (column) {
-         //    const identifier = 'webhook_listing_code_column'
-         //    return (
-         //       tooltip(identifier)?.description || column.getDefinition().title
-         //    )
-         // },
+         },
+         headerTooltip: true,
       },
      ]
     return (
         <>
         <Tunnels tunnels={props.popupTunnels}>
-            <Tunnel size='lg' popup={true} layer={1}>
+            <Tunnel size='md' popup={true} layer={1} style={{"padding":"5px 16px"}}>
                <TunnelHeader
                   title='Invocation Logs'
                   close={() => props.closePopupTunnel(1)}
                   description='This is a description'
                 //   tooltip={<InfoIcon color='#a4a4a4' />}
                />
-               <StyledWrapper>
-               {Boolean(logs) && (
-               <ReactTabulator
-                  columns={columns}
-                  data={logs}
-                  options={{
-                     ...options,
-                     placeholder: 'No logs Available Yet !',
-                     persistenceID : 'invocationLogs_table'
-                  }}
-                  ref={tableRef}
-                  className = 'developer-webhooks-invocationLogs'
-               />
-            )}
-            </StyledWrapper>
+               {/* <StyledWrapper> */}
+                  {Boolean(logs) && (
+                  <ReactTabulator
+                     columns={columns}
+                     data={logs}
+                     options={{
+                        ...options,
+                        placeholder: 'No logs Available Yet !',
+                        persistenceID : 'invocationLogs_table'
+                     }}
+                     ref={tableRef}
+                     className = 'developer-webhooks-invocationLogs'
+                  />
+               )}
+            {/* </StyledWrapper> */}
             </Tunnel>
 
             <Tunnel layer={2} popup={true} size='md'>
