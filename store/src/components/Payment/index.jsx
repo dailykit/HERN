@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+import { Tabs } from 'antd'
+
 import { PlusIcon, Flex, ComboButton } from '@dailykit/ui'
 import { useMutation } from '@apollo/client'
-import { Wrapper } from './styles'
+import { Wrapper, NewPaymentCard } from './styles'
 import {
    Input,
    Button,
@@ -78,7 +80,7 @@ export default function Payment({
       }
    )
 
-   const handleCheckboxClick = paymentMethodId => {
+   const handleCardClick = paymentMethodId => {
       updateDefaultPaymentMethodId({
          variables: {
             where: {
@@ -170,7 +172,7 @@ export default function Payment({
                            return (
                               <div
                                  key={method?.paymentMethodId}
-                                 className="address-card"
+                                 className="payment-card"
                               >
                                  <label className="checkbox-wrap">
                                     <Input
@@ -182,7 +184,7 @@ export default function Payment({
                                           defaultPaymentMethodId
                                        }
                                        onChange={() =>
-                                          handleCheckboxClick(
+                                          handleCardClick(
                                              method?.paymentMethodId
                                           )
                                        }
@@ -263,7 +265,7 @@ export default function Payment({
       return (
          <Wrapper isDeleting={isDeleting} type={type}>
             <div className="payment-div">
-               <h3>Pay With</h3>
+               <h3 className="h3_head text8">Pay With</h3>
                <div className="payment-icon-wrapper">
                   <span className="payment-icon">
                      <VisaIcon size="64px" />
@@ -279,109 +281,64 @@ export default function Payment({
                   </span>
                </div>
             </div>
-            <div>
-               <HorizontalTabs>
-                  <HorizontalTabList>
-                     <HorizontalTab>Saved Cards</HorizontalTab>
-                     <HorizontalTab>Add Card</HorizontalTab>
-                  </HorizontalTabList>
-                  <HorizontalTabPanels>
-                     <HorizontalTabPanel>
-                        <div className="grid-view">
-                           {user?.paymentMethods?.map(method => {
-                              return (
-                                 <div
-                                    key={method?.paymentMethodId}
-                                    className="address-card"
-                                 >
-                                    <label className="checkbox-wrap">
-                                       <Input
-                                          type="checkbox"
-                                          customWidth="24px"
-                                          customHeight="24px"
-                                          checked={
-                                             method?.paymentMethodId ===
-                                             defaultPaymentMethodId
-                                          }
-                                          onChange={() =>
-                                             handleCheckboxClick(
-                                                method?.paymentMethodId
-                                             )
-                                          }
-                                          disabled={isUpdating}
-                                       />
-
-                                       <small>
-                                          {getSmallContent(
-                                             method?.paymentMethodId
-                                          )}
-                                       </small>
-                                    </label>
-                                    <Flex
-                                       container
-                                       alignItems="flex-start"
-                                       flexDirection="column"
-                                       justifyContent="space-between"
-                                       flex="1"
-                                    >
-                                       <span className="checkbox-label">
-                                          <strong>
-                                             {`${capitalize(
-                                                method?.brand || ''
-                                             )} Card `}
-                                          </strong>
-                                          ending in {method?.last4}
-                                       </span>
-                                       <Flex container>
-                                          <span className="checkbox-label">
-                                             Name :
-                                          </span>
-                                          <span className="checkbox-label">
-                                             {capitalize(
-                                                method?.cardHolderName || ''
-                                             )}
-                                          </span>
-                                       </Flex>
-                                       <Flex container>
-                                          <span className="checkbox-label">
-                                             Expiry Date :
-                                          </span>
-                                          <span className="checkbox-label">
-                                             {method?.expMonth}/
-                                             {method?.expYear}
-                                          </span>
-                                       </Flex>
-                                    </Flex>
-                                    <span
-                                       className="delete-btn"
-                                       onClick={() =>
-                                          handleDeletePaymentCard(
-                                             method?.paymentMethodId
-                                          )
-                                       }
-                                    >
-                                       <DeleteIcon
-                                          size="16px"
-                                          color={theme.colors.textColor3}
-                                       />
-                                    </span>
+            <div className="card-container">
+               <Tabs type="card">
+                  <Tabs.TabPane tab="Saved Cards" key="1">
+                     <div className="grid-view">
+                        {user?.paymentMethods?.map(method => {
+                           return (
+                              <NewPaymentCard
+                                 key={method?.paymentMethodId}
+                                 isDefault={
+                                    getSmallContent(method?.paymentMethodId) ===
+                                    'Default'
+                                 }
+                                 onClick={() =>
+                                    handleCardClick(method?.paymentMethodId)
+                                 }
+                              >
+                                 <div className="flex-col">
+                                    <h2 className="title text9">
+                                       Cardholder name
+                                    </h2>
+                                    <h2 className="value text4">
+                                       {capitalize(
+                                          method?.cardHolderName || ''
+                                       )}
+                                    </h2>
                                  </div>
-                              )
-                           })}
-                        </div>
-                        <Button
-                           className="customButton"
-                           disabled={isOnPayDisabled}
-                           onClick={onPay}
-                        >
-                           Confirm and pay
-                        </Button>
-                     </HorizontalTabPanel>
-                     <HorizontalTabPanel>
-                        <PaymentForm intent={intent} type="checkout" />
-                     </HorizontalTabPanel>
-                  </HorizontalTabPanels>
-               </HorizontalTabs>
+                                 <div className="flex-row">
+                                    <div className="card-info">
+                                       <h2 className="title text9">
+                                          {capitalize(method?.brand || '')}
+                                       </h2>
+                                       <h2 className="value text4">
+                                          ****{method?.last4}
+                                       </h2>
+                                    </div>
+                                    <div className="card-info">
+                                       <h2 className="title text9">Expiry</h2>
+                                       <h2 className="value text4">
+                                          {method?.expMonth}/{method?.expYear}
+                                       </h2>
+                                    </div>
+                                 </div>
+                              </NewPaymentCard>
+                           )
+                        })}
+                     </div>
+                     <Button
+                        className="customButton text3"
+                        disabled={isOnPayDisabled}
+                        onClick={onPay}
+                     >
+                        Confirm and pay
+                     </Button>
+                  </Tabs.TabPane>
+                  <Tabs.TabPane tab="Add Card" key="2">
+                     <PaymentForm intent={intent} type="checkout" />
+                  </Tabs.TabPane>
+               </Tabs>
             </div>
 
             {/* {contentIndex === 1 && <PaymentForm intent={intent} />} */}

@@ -97,8 +97,9 @@ export default function NavBarComp({ navigationMenuItems }) {
             toggleSidebarButton={() => SetIsSidebarButtonVisible(prev => !prev)}
             showSidebarButton={() => SetIsSidebarButtonVisible(true)}
             hideSidebarButton={() => SetIsSidebarButtonVisible(false)}
+            cartCount={carts.length}
          />
-         <FloatingCartButton
+         {/* <FloatingCartButton
             carts={carts}
             isFloatingButtonVisible={isFloatingButtonVisible}
             toggleFloatingButton={() =>
@@ -106,7 +107,7 @@ export default function NavBarComp({ navigationMenuItems }) {
             }
             showFloatingButton={() => SetIsFloatingButtonVisible(true)}
             hideFloatingButton={() => SetIsFloatingButtonVisible(false)}
-         />
+         /> */}
          <NavBar cartCount={carts.lenth}>
             <div className="brand-logo-div">
                <Image
@@ -181,11 +182,6 @@ export default function NavBarComp({ navigationMenuItems }) {
                         }}
                      />
 
-                     {/* <Image
-                  src={`https://ui-avatars.com/api/?name=${user?.email}&background=fff&color=15171F&size=500&rounded=true`}
-                  alt="user"
-                  layout="fill"
-                /> */}
                      <ProfileDropdownMenu
                         className="profile-dropdown-div"
                         items={profileItems}
@@ -195,15 +191,6 @@ export default function NavBarComp({ navigationMenuItems }) {
                </>
             ) : (
                <ul className="nav-list">
-                  {/* <li onClick={showSignup} className="buttonWrapper">
-                     <Button
-                        className="customBtn text10"
-                        textColor={theme.colors.textColor}
-                        backgroundColor={theme.colors.textColor4}
-                     >
-                        Sign Up
-                     </Button>
-                  </li> */}
                   <li onClick={showLogin} className="buttonWrapper">
                      <Button
                         className="customBtn text10"
@@ -215,29 +202,6 @@ export default function NavBarComp({ navigationMenuItems }) {
                   </li>
                </ul>
             )}
-            {/* {loading && (
-          <ul className="nav-list">
-            <InlineLoader />
-          </ul>
-        )} */}
-            {/* <LoginModalContainer isShow={isLoginShow}>
-               <Modal isOpen={isLoginShow} close={hideLogin} type="popup">
-                  {showContent === 'login' ? (
-                     <Login
-                        isOpen={isLoginShow}
-                        authBtnClassName="auth-btn"
-                        isClicked={isClicked =>
-                           isClicked && setShowContent('forgotPassword')
-                        }
-                     />
-                  ) : (
-                     <ForgotPassword
-                        isOpen={isLoginShow}
-                        authBtnClassName="auth-btn"
-                     />
-                  )}
-               </Modal>
-            </LoginModalContainer> */}
 
             <LoginModalContainer isShow={isLoginShow}>
                <Modal isOpen={isLoginShow} close={closeModal} type="popup">

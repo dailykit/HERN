@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import Confetti from 'react-confetti'
 import { useToasts } from 'react-toast-notifications'
 import ReactHtmlParser from 'react-html-parser'
+import { Button, Tooltip } from 'antd'
 import { useSubscription, useMutation } from '@apollo/client'
 import { Card } from '../../pageComponents/checkoutComponent'
 import {
@@ -20,7 +21,12 @@ import Participant from '../../components/Booking/components/Participant'
 import { CART_SUBSCRIPTION, UPDATE_CART } from '../../graphql'
 import { theme } from '../../theme'
 import { useExperienceInfo, useUser, useCart } from '../../Providers'
-import { getDateWithTime, useWindowDimensions, fileParser } from '../../utils'
+import {
+   getDateWithTime,
+   getTime,
+   useWindowDimensions,
+   fileParser
+} from '../../utils'
 import { getNavigationMenuItems, getBannerData } from '../../lib'
 
 export default function Checkout({ navigationMenuItems, parsedData = [] }) {
@@ -127,33 +133,32 @@ export default function Checkout({ navigationMenuItems, parsedData = [] }) {
                      ?.content
                )}
          </div>
-         <Wrapper isCelebrating={isCelebrating}>
-            <div className="checkout-heading">
-               <span
-                  className="back-button"
-                  onClick={() =>
-                     router.push(`/experiences/${experienceInfo?.experienceId}`)
-                  }
-               >
-                  <ChevronLeft size="20" color={theme.colors.textColor4} />
-               </span>
-               <h1>Confirm and pay</h1>
-            </div>
-            <h2 className="experience-heading">Your Experience</h2>
-            <div className="experience-date">
-               <h4>Date</h4>
-               <p>
-                  {getDateWithTime(
-                     experienceInfo?.experienceClass?.startTimeStamp
-                  )}
-               </p>
-            </div>
+         <Wrapper
+            isCelebrating={isCelebrating}
+            bgMode="light"
+            bgImage={experienceInfo?.assets?.images[0]}
+         >
             <div className="container">
                <div className="left-side-container">
-                  <div className="select-participants">
-                     <Participant experienceId={experienceInfo?.experienceId} />
+                  <div className="checkout-heading">
+                     <Button
+                        shape="circle"
+                        icon={
+                           <ChevronLeft
+                              size="24"
+                              color={theme.colors.textColor5}
+                           />
+                        }
+                        size="middle"
+                        onClick={() =>
+                           router.push(
+                              `/experiences/${experienceInfo?.experienceId}`
+                           )
+                        }
+                     />
+                     <p className="go_back text10"> Back to experience </p>
                   </div>
-
+                  <h1 className="h1_head text1">Checkout</h1>
                   <Payment
                      type="checkout"
                      onPay={onPayHandler}
@@ -221,42 +226,49 @@ export const getStaticProps = async () => {
 const Wrapper = styled.div`
    width: 100%;
    color: ${theme.colors.textColor4};
-   padding: 0 80px;
+   padding: 64px 80px;
    filter: ${({ isCelebrating }) => isCelebrating && 'blur(4px)'};
+   background: ${({ bgMode }) =>
+      bgMode === 'dark'
+         ? theme.colors.darkBackground.darkblue
+         : theme.colors.lightBackground.white};
+   .h1_head {
+      color: ${theme.colors.textColor5};
+      font-weight: 400;
+      text-align: left;
+      text-transform: uppercase;
+      font-family: League-Gothic;
+      margin-bottom: 0 !important;
+   }
    .checkout-heading {
-      padding: 64px 0;
       display: flex;
       align-items: center;
-      .back-button {
-         width: 48px;
-         height: 48px;
-         border-radius: 50%;
-         background: ${theme.colors.mainBackground};
-         margin-right: 16px;
-         position: relative;
+      margin-bottom: 1rem;
+      .go_back {
+         color: ${theme.colors.textColor7};
+         font-family: Proxima Nova;
+         font-style: normal;
+         font-weight: 600;
+         letter-spacing: 0.3em;
+         margin-bottom: 0 !important;
+         margin-left: 1rem;
+      }
+      .ant-btn {
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         background: ${theme.colors.textColor4};
          &:hover {
-            cursor: pointer;
+            color: ${theme.colors.textColor5};
+            border-color: ${theme.colors.textColor5};
+            background: ${theme.colors.textColor4};
+            svg {
+               stroke: ${theme.colors.textColor5};
+            }
          }
-         svg {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-         }
       }
    }
-   .experience-heading {
-      font-size: ${theme.sizes.h4};
-      margin-bottom: 16px;
-   }
-   .experience-date {
-      h4 {
-         font-size: ${theme.sizes.h8};
-      }
-      p {
-         font-size: ${theme.sizes.h8};
-      }
-   }
+
    .container {
       width: 100%;
       display: flex;
@@ -297,17 +309,12 @@ const Wrapper = styled.div`
             display: inline-block !important;
             width: 100% !important;
             padding-right: 1px !important;
-            .card-wrapper {
-               padding: 24px;
-               border: 1px solid ${theme.colors.textColor4};
-               border-radius: 4px;
-            }
          }
       }
    }
 
    @media (max-width: 769px) {
-      padding: 0 26px;
+      padding: 32px 26px;
       .container {
          width: 100%;
          display: flex;

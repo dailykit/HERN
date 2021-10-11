@@ -59,10 +59,8 @@ export default function PaymentCardForm({ intent, handleResult, type }) {
       <StyledForm onSubmit={handleSubmit} type={type}>
          {type === 'tunnel' && <h3 className="greet-msg">Add Payment</h3>}
 
-         <Flex container flexDirection="column" margin="0 0 1rem 0">
-            <label htmlFor="name" className="card_label">
-               Card Holder Name
-            </label>
+         <div className="add-form-wrap">
+            <p className="card_label text8">Card Holder Name</p>
             <Input
                type="text"
                name="name"
@@ -73,8 +71,11 @@ export default function PaymentCardForm({ intent, handleResult, type }) {
                className="customInput"
             />
             <CardDetails />
-         </Flex>
-         <Button disabled={!stripe || submitting} className="customButton">
+         </div>
+         <Button
+            disabled={!stripe || submitting}
+            className="customButton text3"
+         >
             {submitting ? 'Saving...' : 'Save'}
          </Button>
          {error && <Error>{error}</Error>}
@@ -83,10 +84,19 @@ export default function PaymentCardForm({ intent, handleResult, type }) {
 }
 
 const StyledForm = styled.form`
-   .card_label {
-      font-size: ${theme.sizes.h8};
-      color: ${theme.colors.textColor4};
+   .add-form-wrap {
+      background: ${theme.colors.lightBackground.grey};
+      padding: 2rem;
+      border-radius: 24px;
       margin-bottom: 1rem;
+   }
+   .card_label {
+      font-family: Proxima Nova;
+      font-style: normal;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      margin-bottom: 1rem;
+      color: ${theme.colors.textColor7};
    }
    .greet-msg {
       font-size: 32px;
@@ -98,16 +108,23 @@ const StyledForm = styled.form`
    .customButton {
       padding: 0 1rem;
       margin-bottom: 20px;
-      background: ${theme.colors.secondaryColor};
+      background: ${theme.colors.textColor};
+      border-radius: 8px;
+      color: ${theme.colors.textColor4};
+      font-family: League-Gothic;
+      letter-spacing: 0.04em;
+      height: 64px;
    }
    .customInput {
-      color: ${theme.colors.textColor4};
+      color: ${theme.colors.textColor7};
       margin-bottom: 1rem;
+      border-radius: 0px;
    }
 
    @media (max-width: 769px) {
       .customButton {
          margin-bottom: 64px;
+         height: 48px;
       }
    }
 `

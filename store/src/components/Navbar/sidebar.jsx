@@ -19,7 +19,8 @@ export default function Sidebar({
    isSidebarButtonVisible,
    toggleSidebarButton,
    showSidebarButton,
-   hideSidebarButton
+   hideSidebarButton,
+   cartCount = 0
 }) {
    const node = useRef()
    const router = useRouter()
@@ -87,7 +88,7 @@ export default function Sidebar({
                </div>
 
                <Badge
-                  count={0}
+                  count={cartCount}
                   showZero
                   color={theme.colors.textColor}
                   size="small"
