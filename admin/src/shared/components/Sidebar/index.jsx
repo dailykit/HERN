@@ -619,6 +619,22 @@ export const Sidebar = ({ setOpen }) => {
                      },
                   ]
                },
+               {
+                  title: 'Pre-Order Delivery',
+                  path: '/menu/recurrences/PREORDER_DELIVERY',
+               },
+               {
+                  title: 'Pre-Order Pickup',
+                  path: '/menu/recurrences/PREORDER_PICKUP',
+               },
+               {
+                  title: 'On-Demand Delivery',
+                  path: '/menu/recurrences/ONDEMAND_DELIVERY',
+               },
+               {
+                  title: 'On-Demand Pickup',
+                  path: '/menu/recurrences/ONDEMAND_PICKUP',
+               }
             ],
          },
          {
