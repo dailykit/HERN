@@ -40,6 +40,26 @@
    }
 }
 
+.hern-cart-empty-cart {
+   display: flex;
+   height: calc(100vh - 60px);
+   align-items: center;
+   justify-content: center;
+   flex-direction: column;
+   > span {
+      font-style: normal;
+      font-weight: 600;
+      font-size: 28px;
+      line-height: 38px;
+      text-align: center;
+      margin: 4px 0;
+   }
+}
+
+.hern-cart-go-to-menu-btn {
+   margin: 2em 0;
+}
+
 .hern-cart-delivery-info {
    margin: 0 1em;
    > span {

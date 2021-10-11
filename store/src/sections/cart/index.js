@@ -6,12 +6,14 @@ import {
    ProductCard,
    ModifierPopup,
    CounterButton,
+   Loader,
 } from '../../components'
 import _ from 'lodash'
 import { combineCartItems, formatCurrency } from '../../utils'
-import { DeleteIcon, EditIcon } from '../../assets/icons'
+import { DeleteIcon, EditIcon, EmptyCart } from '../../assets/icons'
 import { useLazyQuery, useQuery } from '@apollo/react-hooks'
 import { PRODUCTS } from '../../graphql'
+import Link from 'next/link'
 
 export const OnDemandCart = () => {
    //context
@@ -33,8 +35,12 @@ export const OnDemandCart = () => {
 
    useEffect(() => {
       if (!isMenuLoading) {
-         const combinedCartItems = combineCartItems(cart.products.nodes)
-         setCombinedCartData(combinedCartItems)
+         if (cart) {
+            const combinedCartItems = combineCartItems(cart.products.nodes)
+            setCombinedCartData(combinedCartItems)
+         } else {
+            setCombinedCartData([])
+         }
          setStatus('success')
       }
    }, [cart, isMenuLoading])
@@ -128,11 +134,38 @@ export const OnDemandCart = () => {
    }
 
    if (status === 'loading') {
-      return <p>Loading</p>
+      return (
+         <div className="hern-cart-container">
+            <div className="hern-cart-page">
+               <div className="hern-cart-content">
+                  <header>Cart</header>
+                  <Loader />
+               </div>
+            </div>
+         </div>
+      )
    }
 
    if (combinedCartData.length === 0) {
-      return <p>Cart Not Available</p>
+      return (
+         <div className="hern-cart-container">
+            <div className="hern-cart-page" style={{ overflowY: 'hidden' }}>
+               <div className="hern-cart-content">
+                  <header>Cart</header>
+                  <div className="hern-cart-empty-cart">
+                     <EmptyCart />
+                     <span>Oops! Your cart is empty </span>
+                     <Button
+                        className="hern-cart-go-to-menu-btn"
+                        onClick={() => {}}
+                     >
+                        <Link href="/order">GO TO MENU</Link>
+                     </Button>
+                  </div>
+               </div>
+            </div>
+         </div>
+      )
    }
 
    return (

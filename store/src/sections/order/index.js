@@ -387,7 +387,10 @@ export const OnDemandOrder = () => {
                   })}
                </div>
                <OnDemandMenu />
-               {cartState && <BottomCartBar />}
+               {cartState &&
+                  cartState.cart?.products?.aggregate?.count !== 0 && (
+                     <BottomCartBar />
+                  )}
                {productModifier && (
                   <ModifierPopup
                      productData={productModifier}
