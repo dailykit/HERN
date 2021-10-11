@@ -54,6 +54,19 @@ export const CREATE_COUPON = gql`
       }
    }
 `
+
+export const CREATE_COUPONS = gql`
+   mutation CreateCoupons($objects: [crm_coupon_insert_input!]!) {
+      createCoupons(objects: $objects) {
+         affected_rows
+         returning {
+            id
+            code
+         }
+      }
+   }
+`
+
 export const CREATE_REWARD = gql`
    mutation CREATE_REWARD($objects: [crm_reward_insert_input!]!) {
       insert_crm_reward(objects: $objects) {

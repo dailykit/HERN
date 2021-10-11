@@ -14,6 +14,9 @@ import {
    DropdownButton,
    TextButton,
    Spacer,
+   Tunnels,
+   Tunnel,
+   useTunnel,
 } from '@dailykit/ui'
 import {
    COUPON_LISTING,
@@ -33,6 +36,7 @@ import {
 import { useTooltip, useTabs } from '../../../../../shared/providers'
 import { currencyFmt, logger, randomSuffix } from '../../../../../shared/utils'
 import options from '../../tableOptions'
+import CreateCoupon from '../../../../../shared/CreateUtils/crm/createCoupon'
 
 const CouponListing = () => {
    const location = useLocation()
@@ -40,6 +44,8 @@ const CouponListing = () => {
    const { tooltip } = useTooltip()
    const [coupons, setCoupons] = useState(undefined)
    const tableRef = useRef()
+   const [couponTunnels, openCouponTunnel, closeCouponTunnel] = useTunnel(1)
+
    // Subscription
    const { loading: listLoading, error } = useSubscription(COUPON_LISTING, {
       onSubscriptionData: data => {
@@ -276,7 +282,6 @@ const CouponListing = () => {
          },
          width: 100,
       },
-      
    ]
    const downloadCsvData = () => {
       tableRef.current.table.download('csv', 'coupons_table.csv')
@@ -289,24 +294,28 @@ const CouponListing = () => {
    const downloadXlsxData = () => {
       tableRef.current.table.download('xlsx', 'coupons_table.xlsx')
    }
-   const clearCouponsPersistence= () =>
-      {
-         localStorage.removeItem('tabulator-coupons_table-columns')
-         localStorage.removeItem('tabulator-coupons_table-sort')
-         localStorage.removeItem('tabulator-coupons_table-filter') 
-      }
+   const clearCouponsPersistence = () => {
+      localStorage.removeItem('tabulator-coupons_table-columns')
+      localStorage.removeItem('tabulator-coupons_table-sort')
+      localStorage.removeItem('tabulator-coupons_table-filter')
+   }
 
    if (loading || listLoading) return <InlineLoader />
    return (
       <StyledWrapper>
          <Banner id="crm-app-coupons-listing-top" />
+         <Tunnels tunnels={couponTunnels}>
+            <Tunnel layer={1} size="md">
+               <CreateCoupon closeTunnel={closeCouponTunnel} />
+            </Tunnel>
+         </Tunnels>
          <Flex
             container
             height="80px"
             width="100%"
             alignItems="center"
             justifyContent="space-between"
-             padding="32px 0 0 0"
+            padding="32px 0 0 0"
          >
             <Flex
                container
@@ -314,7 +323,7 @@ const CouponListing = () => {
                width="25%"
                alignItems="center"
                justifyContent="space-between"
-             >
+            >
                <Text as="h2">
                   Coupons(
                   {couponTotal?.couponsAggregate?.aggregate?.count || '...'})
@@ -363,36 +372,39 @@ const CouponListing = () => {
                            XLSX
                         </DropdownButton.Option>
                      </DropdownButton.Options>
-                  </DropdownButton>          
-            </Flex>         
+                  </DropdownButton>
+               </Flex>
                <Flex
-                   container
-                   as="header"
-                   width="27%"
-                   alignItems="center"
-                   justifyContent="flex-end"
+                  container
+                  as="header"
+                  width="27%"
+                  alignItems="center"
+                  justifyContent="flex-end"
                >
-                              <ButtonGroup>
-               <ComboButton type="solid" onClick={createCoupon}>
-                  <PlusIcon />
-                  Create Coupon
-               </ComboButton>
-            </ButtonGroup>
+                  <ButtonGroup>
+                     <ComboButton
+                        type="solid"
+                        onClick={() => openCouponTunnel(1)}
+                     >
+                        <PlusIcon />
+                        Create Coupon
+                     </ComboButton>
+                  </ButtonGroup>
                </Flex>
             </Flex>
          </Flex>
-            <Spacer size='20px' />
-            {Boolean(coupons) && (
+         <Spacer size="20px" />
+         {Boolean(coupons) && (
             <ReactTabulator
                columns={columns}
                data={coupons}
                options={{
                   ...options,
                   placeholder: 'No Coupons Available Yet !',
-                  persistenceID : 'coupons_table'
+                  persistenceID: 'coupons_table',
                }}
                ref={tableRef}
-               className = 'crm-coupons'
+               className="crm-coupons"
             />
          )}
          <InsightDashboard
