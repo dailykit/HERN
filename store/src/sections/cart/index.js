@@ -10,7 +10,7 @@ import {
 } from '../../components'
 import _ from 'lodash'
 import { combineCartItems, formatCurrency } from '../../utils'
-import { DeleteIcon, EditIcon, EmptyCart } from '../../assets/icons'
+import { DeleteIcon, EditIcon, EmptyCart, CloseIcon } from '../../assets/icons'
 import { useLazyQuery, useQuery } from '@apollo/react-hooks'
 import { PRODUCTS } from '../../graphql'
 import Link from 'next/link'
@@ -32,6 +32,7 @@ export const OnDemandCart = () => {
    const [popUpType, setPopupType] = useState(null)
    const [cartDetailSelectedProduct, setCartDetailSelectedProduct] =
       useState(null)
+   const [tip, setTip] = useState(null)
 
    useEffect(() => {
       if (!isMenuLoading) {
@@ -233,11 +234,19 @@ export const OnDemandCart = () => {
                               {formatCurrency(cart.billing.discount.value || 0)}
                            </span>
                         </li>
+                        {tip && tip !== 0 && (
+                           <li>
+                              <span>Tip</span>
+                              <span>{formatCurrency(tip)}</span>
+                           </li>
+                        )}
                      </ul>
                   </div>
-                  {/*
-                  tip
-                  */}
+                  {/* tip */}
+                  <Tips
+                     setTip={setTip}
+                     totalPrice={cart.billing.totalPrice.value}
+                  />
                   {/*
                   total
                   */}
@@ -288,6 +297,123 @@ const ModifiersList = props => {
                ))}
             </ul>
          </div>
+      </div>
+   )
+}
+
+const Tips = props => {
+   //props
+   const { totalPrice, setTip } = props
+
+   //component state
+   const [customPanel, setCustomPanel] = useState(false)
+   const [tipAmount, setTipAmount] = useState(0)
+   const [activeOption, setActiveOption] = useState(null)
+
+   const classesForTipOption = option => {
+      if (option === activeOption) {
+         return 'hern-cart__tip-tip-option hern-cart__tip-tip-option--active'
+      }
+      return 'hern-cart__tip-tip-option'
+   }
+
+   const predefinedTip = option => {
+      if (activeOption !== option) {
+         setActiveOption(option)
+         setTip((totalPrice * option) / 100)
+      } else {
+         setActiveOption(null)
+         setTip(null)
+      }
+   }
+   return (
+      <div className="hern-cart__tip">
+         <div className="hern-cart__tip-heading">
+            <span>Add a Tip</span>
+         </div>
+         {!customPanel && (
+            <div className="hern-cart__tip-tip-options-list">
+               <ul>
+                  {/* <li>0% {formatCurrency(0)}</li> */}
+                  <li
+                     className={classesForTipOption(5)}
+                     onClick={() => {
+                        predefinedTip(5)
+                     }}
+                  >
+                     <span>5%</span>{' '}
+                     <span>{formatCurrency(totalPrice * 0.05)}</span>
+                  </li>
+                  <li
+                     className={classesForTipOption(10)}
+                     onClick={() => {
+                        predefinedTip(10)
+                     }}
+                  >
+                     <span>10%</span>{' '}
+                     <span>{formatCurrency(totalPrice * 0.1)}</span>
+                  </li>
+                  <li
+                     className={classesForTipOption(15)}
+                     onClick={() => {
+                        predefinedTip(15)
+                     }}
+                  >
+                     <span>15%</span>{' '}
+                     <span> {formatCurrency(totalPrice * 0.15)}</span>
+                  </li>
+               </ul>
+
+               <button
+                  className="hern-cart__tip-add-custom-btn"
+                  onClick={() => {
+                     setCustomPanel(prevState => !prevState)
+                  }}
+               >
+                  Custom
+               </button>
+            </div>
+         )}
+         {customPanel && (
+            <div className="hern-cart__tip-custom-tip">
+               <div className="hern-cart__tip-input-field">
+                  <span>
+                     {formatCurrency(0)
+                        .replace(/\d/g, '')
+                        .replace(/\./g, '')
+                        .trim()}
+                  </span>
+                  <input
+                     // type="number"
+                     type="text"
+                     pattern="[0-9]*"
+                     placeholder="Enter amount..."
+                     value={tipAmount}
+                     onChange={e => {
+                        setTipAmount(e.target.value)
+                     }}
+                  />
+               </div>
+               <button
+                  className="hern-cart__tip-add-tip-btn"
+                  onClick={() => {
+                     setTip(parseFloat(tipAmount))
+                     setCustomPanel(prevState => !prevState)
+                  }}
+               >
+                  ADD
+               </button>
+               <CloseIcon
+                  title="Close"
+                  size={18}
+                  stroke={'#404040CC'}
+                  style={{ marginLeft: '10px', cursor: 'pointer' }}
+                  onClick={() => {
+                     setCustomPanel(prevState => !prevState)
+                  }}
+               />
+            </div>
+         )}
       </div>
    )
 }
