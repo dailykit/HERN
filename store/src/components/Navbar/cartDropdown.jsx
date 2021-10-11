@@ -69,7 +69,7 @@ export default function CartDropdownMenu({ carts, ...props }) {
                   carts.map(cart => {
                      return (
                         <DropdownMenuItem
-                           onClick={router.push(`/checkout?cartId=${cart?.id}`)}
+                           onClick={()=>router.push(`/checkout?cartId=${cart?.id}`)}
                         >
                            <img
                               src={
