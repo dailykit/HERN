@@ -97,11 +97,14 @@
    background-color: #367bf5 !important;
    transform: none !important;
    box-shadow: none !important;
+   color: '#ffffff' !important;
+   outline: none !important;
 }
 
 .hern-login-v1__login-btn--disabled {
    background: #367bf580 !important;
    cursor: not-allowed;
+   color: '#ffffff' !important;
 }
 
 .hern-login-v1-divider-bar {
@@ -142,6 +145,18 @@
    background: #367bf580;
 }
 
+.hern-login-v1__otp__error {
+   align-self: center;
+   display: block;
+   margin-top: 0.5rem;
+   color: rgba(239, 68, 68, 1);
+}
+
+.hern-login-v1__otp__resend__time {
+   display: flex;
+   margin-top: 0.5rem;
+   text-align: center;
+}
 .hern-login-v1__otp__resend {
    margin-top: 0.5rem;
    border-radius: 0.25rem;
@@ -205,6 +220,87 @@
    background: #367bf580 !important;
    cursor: not-allowed;
 }
+
+.hern-signup-v1 {
+   margin: 1em;
+}
+
+.hern-signup-v1__password-config {
+   display: flex;
+   align-items: center;
+   > span {
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 18px;
+      margin: 0 9px;
+   }
+}
+
+.hern-signup-v1__signup-error {
+   align-self: flex-start;
+   margin-bottom: 0.5rem;
+   display: block;
+   color: rgba(239, 68, 68, 1);
+   font-size: 12px;
+}
+
+.hern-signup__referral-code {
+   align-self: flex-start;
+   margin-bottom: 0.25rem;
+   color: #367bf5;
+}
+
+.hern-signup-v1__signup__term {
+   align-self: flex-start;
+   margin-top: 0.5rem;
+   margin-bottom: 0.75rem;
+}
+
+.hern-signup-v1__signup__term__checkbox {
+   margin-right: 0.5rem;
+}
+
+.hern-signup__signup__term__link {
+   color: #367bf5;
+}
+
+.hern-signup-v1__referral-code {
+   color: #367bf5;
+   cursor: pointer;
+   outline: none !important;
+}
+
+.hern-signup-v1__signup__submit {
+   width: 100%;
+   border-radius: 20px !important;
+   color: #ffffff;
+   height: 40px;
+   outline: none !important;
+   background-color: #367bf5 !important;
+}
+
+.hern-signup-v1__signup__submit--disabled {
+   background: #367bf580 !important;
+   cursor: not-allowed;
+}
+
+.hern-signup-v1__signup__email-already-exits {
+   margin-bottom: 1rem;
+   color: rgba(75, 85, 99, 1);
+}
+
+.hern-signup-v1__signup__login-switch {
+   align-self: flex-start;
+   margin-top: 0.5rem;
+   color: #367bf5;
+   outline: none !important;
+}
+
+.hern-signup-v1__signup__forgot-text {
+   color: rgba(5, 150, 105, 1);
+   margin-top: 0.75rem;
+}
+
 @media only screen and (min-width: 769px) {
    .hern-login-v1-container {
       background-color: rgb(251, 252, 246);

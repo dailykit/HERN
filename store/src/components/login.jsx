@@ -1,9 +1,12 @@
 import { Button } from '.'
+import Link from 'next/link'
+import { useConfig } from '../lib'
 import classNames from 'classnames'
 import React, { useState } from 'react'
 import Countdown from 'react-countdown'
 import { signIn } from 'next-auth/client'
-import { getRoute, isClient } from '../utils'
+import { getRoute, get_env, isClient } from '../utils'
+import { useToasts } from 'react-toast-notifications'
 import { CheckBoxIcon, CloseIcon } from '../assets/icons'
 import {
    FORGOT_PASSWORD,
@@ -16,13 +19,17 @@ import {
    SEND_SMS,
 } from '../graphql'
 import { useLazyQuery, useMutation, useSubscription } from '@apollo/react-hooks'
-import { useToasts } from 'react-toast-notifications'
-import { useConfig } from '../lib'
+import axios from 'axios'
+import {
+   deleteStoredReferralCode,
+   isReferralCodeValid,
+   setStoredReferralCode,
+} from '../utils/referrals'
 
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const Login = props => {
-   const { loginBy = 'otp' } = props
+   const { loginBy = 'otp', isSilentlyLogin = true, closeLoginPopup } = props
    const [defaultLogin, setDefaultLogin] = useState(loginBy)
    return (
       <div className="hern-login-v1-container">
@@ -34,20 +41,38 @@ export const Login = props => {
                {defaultLogin === 'forgotPassword' && (
                   <span>Forgot Password</span>
                )}
+               {defaultLogin === 'signup' && <span>Sign Up</span>}
 
                <CloseIcon
                   size={18}
                   stroke={'#404040'}
                   style={{ cursor: 'pointer' }}
+                  onClick={closeLoginPopup}
                />
             </header>
             <section>
                {/* email login  or phone number login*/}
                {defaultLogin === 'email' && (
-                  <Email setDefaultLogin={setDefaultLogin} />
+                  <Email
+                     setDefaultLogin={setDefaultLogin}
+                     isSilentlyLogin={isSilentlyLogin}
+                     closeLoginPopup={closeLoginPopup}
+                  />
                )}
-               {defaultLogin === 'otp' && <OTPLogin />}
+               {defaultLogin === 'otp' && (
+                  <OTPLogin
+                     closeLoginPopup={closeLoginPopup}
+                     isSilentlyLogin={isSilentlyLogin}
+                  />
+               )}
                {defaultLogin === 'forgotPassword' && <ForgotPassword />}
+               {defaultLogin === 'signup' && (
+                  <Signup
+                     setDefaultLogin={setDefaultLogin}
+                     isSilentlyLogin={isSilentlyLogin}
+                     closeLoginPopup={closeLoginPopup}
+                  />
+               )}
                {/* {defaultLogin === 'email' ? <Email /> : <OTPLogin />} */}
 
                <DividerBar />
@@ -68,12 +93,19 @@ export const Login = props => {
 
                {/* google or facebook */}
             </section>
-            <footer className="hern-login-v1__footer">
-               <span>No account? </span>{' '}
-               <button className="hern-login-v1__create-one-btn">
-                  Create one
-               </button>
-            </footer>
+            {defaultLogin !== 'signup' && (
+               <footer className="hern-login-v1__footer">
+                  <span>No account? </span>{' '}
+                  <button
+                     className="hern-login-v1__create-one-btn"
+                     onClick={() => {
+                        setDefaultLogin('signup')
+                     }}
+                  >
+                     Create one
+                  </button>
+               </footer>
+            )}
          </div>
       </div>
    )
@@ -82,7 +114,7 @@ export const Login = props => {
 //email log in
 const Email = props => {
    //props
-   const { setDefaultLogin } = props
+   const { setDefaultLogin, isSilentlyLogin, closeLoginPopup } = props
 
    //component state
    const [loading, setLoading] = React.useState(false)
@@ -124,11 +156,15 @@ const Email = props => {
                phone: form.phone,
             })
             const landedOn = isClient && localStorage.getItem('landed_on')
-            if (isClient && landedOn) {
-               localStorage.removeItem('landed_on')
-               window.location.href = landedOn
+            if (!isSilentlyLogin) {
+               if (isClient && landedOn) {
+                  localStorage.removeItem('landed_on')
+                  window.location.href = landedOn
+               } else {
+                  window.location.href = getRoute('/menu')
+               }
             } else {
-               window.location.href = getRoute('/menu')
+               closeLoginPopup()
             }
          }
       } catch (error) {
@@ -204,7 +240,11 @@ const Email = props => {
 }
 
 //  login with otp
-const OTPLogin = () => {
+const OTPLogin = props => {
+   //props
+   const { isSilentlyLogin } = props
+
+   //component state
    const [error, setError] = React.useState('')
    const [loading, setLoading] = React.useState(false)
    const [hasOtpSent, setHasOtpSent] = React.useState(false)
@@ -332,11 +372,15 @@ const OTPLogin = () => {
          })
          if (response?.status === 200) {
             const landedOn = localStorage.getItem('landed_on')
-            if (landedOn) {
-               localStorage.removeItem('landed_on')
-               window.location.href = landedOn
+            if (!isSilentlyLogin) {
+               if (landedOn) {
+                  localStorage.removeItem('landed_on')
+                  window.location.href = landedOn
+               } else {
+                  window.location.href = getRoute('/menu')
+               }
             } else {
-               window.location.href = getRoute('/menu')
+               closeLoginPopup()
             }
          } else {
             setLoading(false)
@@ -397,6 +441,7 @@ const OTPLogin = () => {
                         ? 'hern-register__otp__submit--disabled'
                         : ''
                   }`}
+                  onClick={sendOTP}
                   disabled={sendingOtp || !form.phone}
                >
                   {sendingOtp ? 'SENDING OTP...' : 'SEND OTP'}
@@ -456,7 +501,7 @@ const OTPLogin = () => {
                            )
                         }
                         return (
-                           <span className="hern-register__otp__resend__time">
+                           <span className="hern-login-v1__otp__resend__time">
                               Resend OTP in 0{minutes}:{seconds <= 9 ? '0' : ''}
                               {seconds}
                            </span>
@@ -466,7 +511,7 @@ const OTPLogin = () => {
                )}
             </>
          )}
-         {error && <span className="hern-register__otp__error">{error}</span>}
+         {error && <span className="hern-login-v1__otp__error">{error}</span>}
       </div>
    )
 }
@@ -563,6 +608,402 @@ const DividerBar = props => {
    return (
       <div className="hern-login-v1-divider-bar">
          <span>{text || 'or'}</span>
+      </div>
+   )
+}
+
+function validateEmail(email) {
+   const re =
+      /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+   return re.test(email)
+}
+
+//signup
+const Signup = props => {
+   //props
+   const { setDefaultLogin, isSilentlyLogin } = props
+
+   //component state
+   const [showPassword, setShowPassword] = useState(false)
+   const { addToast } = useToasts()
+   const { brand } = useConfig()
+
+   const [emailExists, setEmailExists] = React.useState(false)
+   const [hasAccepted, setHasAccepted] = React.useState(false)
+   const [isReferralFieldVisible, setIsReferralFieldVisible] =
+      React.useState(false)
+   const [error, setError] = React.useState('')
+   const [emailError, setEmailError] = React.useState('')
+   const [passwordError, setPasswordError] = React.useState('')
+   const [phoneError, setPhoneError] = React.useState('')
+   const [forgotPasswordText, setForgotPasswordText] = React.useState('')
+   const [loading, setLoading] = React.useState(false)
+   const [form, setForm] = React.useState({
+      email: '',
+      password: '',
+      phone: '',
+      code: '',
+   })
+
+   const [applyReferralCode] = useMutation(MUTATIONS.CUSTOMER_REFERRAL.UPDATE, {
+      onCompleted: () => {
+         addToast('Referral code applied!', { appearance: 'success' })
+         deleteStoredReferralCode()
+      },
+      onError: error => {
+         console.log(error)
+         addToast('Referral code not applied!', { appearance: 'error' })
+      },
+   })
+
+   const [insertPlatformCustomer] = useMutation(INSERT_PLATFORM_CUSTOMER, {
+      onCompleted: async ({ insertCustomer = {} } = {}) => {
+         try {
+            if (insertCustomer?.email) {
+               const response = await signIn('email_password', {
+                  email: form.email,
+                  password: form.password,
+                  redirect: false,
+               })
+               if (response?.status === 200) {
+                  const session = await getSession()
+                  const storedCode = getStoredReferralCode(null)
+                  if (storedCode && session?.user?.id) {
+                     await applyReferralCode({
+                        variables: {
+                           brandId: brand.id,
+                           keycloakId: session?.user?.id,
+                           _set: {
+                              referredByCode: storedCode,
+                           },
+                        },
+                     })
+                  }
+
+                  if (!isSilentlyLogin) {
+                     window.location.href =
+                        window.location.origin +
+                        getRoute('/get-started/select-plan')
+                  } else {
+                     closeLoginPopup()
+                  }
+                  setLoading(false)
+               } else {
+                  setLoading(false)
+                  setError('Failed to signup, please try again!')
+               }
+            }
+         } catch (error) {
+            console.error(error)
+         }
+      },
+      onError: error => {
+         setLoading(false)
+         console.error(error)
+      },
+   })
+
+   const [forgotPassword, { loading: forgotPasswordLoading }] = useMutation(
+      FORGOT_PASSWORD,
+      {
+         onCompleted: ({ forgotPassword = {} } = {}) => {
+            if (forgotPassword?.success) {
+               setForgotPasswordText(
+                  'An email has been sent to your provided email. Please check your  inbox.'
+               )
+               setTimeout(() => {
+                  setForgotPasswordText('')
+               }, 4000)
+            }
+            addToast('Successfully sent the set password email.', {
+               appearance: 'success',
+            })
+         },
+         onError: () => {
+            addToast('Failed to send the set password email.', {
+               appearance: 'error',
+            })
+         },
+      }
+   )
+
+   const isValid =
+      validateEmail(form.email) &&
+      form.password &&
+      form.password.length >= 6 &&
+      form.phone &&
+      form.phone.length > 0
+
+   const onEmailBlur = async e => {
+      const { value } = e.target
+      if (validateEmail(value)) {
+         setEmailError('')
+         const url =
+            new URL(get_env('DATA_HUB_HTTPS')).origin +
+            '/server/api/customer/' +
+            value
+         const { status, data } = await axios.get(url)
+         if (status === 200 && data?.success && data?.data?.id) {
+            setEmailExists(true)
+         } else {
+            setEmailExists(false)
+         }
+      } else {
+         setEmailError('Must be a valid email!')
+      }
+   }
+   console.log('email exist', emailExists)
+   const onChange = e => {
+      const { name, value } = e.target
+      if (name === 'email' && validateEmail(value) && emailError) {
+         setEmailError('')
+      }
+      if (name === 'password' && value.length >= 6 && passwordError) {
+         setPasswordError('')
+      }
+      if (name === 'phone' && value.length > 0 && phoneError) {
+         setPhoneError('')
+      }
+      setForm(form => ({
+         ...form,
+         [name]: value.trim(),
+      }))
+   }
+
+   const submit = async () => {
+      try {
+         setError('')
+         setLoading(true)
+         const isCodeValid = await isReferralCodeValid(
+            brand.id,
+            form.code,
+            true
+         )
+         if (!isCodeValid) {
+            deleteStoredReferralCode()
+            return setError('Referral code is not valid!')
+         }
+         if (form.code) {
+            setStoredReferralCode(form.code)
+         }
+
+         const url = `${window.location.origin}/api/hash`
+         const { data } = await axios.post(url, { password: form.password })
+
+         if (data?.success && data?.hash) {
+            // fb pixel integration after successfull registration
+            ReactPixel.trackCustom('signup', {
+               email: form.email,
+               phone: form.phone,
+               code: form.code,
+            })
+
+            await insertPlatformCustomer({
+               variables: {
+                  object: {
+                     password: data?.hash,
+                     email: form.email,
+                     phoneNumber: form.phone,
+                  },
+               },
+            })
+         }
+      } catch (error) {
+         console.log(error)
+         setLoading(false)
+         setError('Failed to register, please try again!')
+      }
+   }
+   return (
+      <div className="hern-signup-v1">
+         <fieldset className="hern-login-v1__fieldset">
+            <label className="hern-login-v1__label" htmlFor="email">
+               Email*
+            </label>
+            <input
+               name="email"
+               type="text"
+               className="hern-login-v1__input"
+               onChange={onChange}
+               value={form.email}
+               placeholder="Enter your email"
+               onBlur={onEmailBlur}
+               required
+            />
+         </fieldset>
+         {emailError && (
+            <span className="hern-signup-v1__signup-error">{emailError}</span>
+         )}
+         {/* !emailExists */}
+         {!emailExists ? (
+            <>
+               <fieldset
+                  className="hern-login-v1__fieldset"
+                  style={passwordError ? { marginBottom: '0.25rem' } : null}
+               >
+                  <label className="hern-login-v1__label" htmlFor="password">
+                     Password*
+                  </label>
+                  <input
+                     className="hern-login-v1__input"
+                     name="password"
+                     type={showPassword ? 'text' : 'password'}
+                     onChange={onChange}
+                     value={form.password}
+                     placeholder="Enter your password"
+                     onBlur={e =>
+                        e.target.value.length < 6
+                           ? setPasswordError(
+                                'Password must be at least 6 letters long!'
+                             )
+                           : setPasswordError('')
+                     }
+                  />
+               </fieldset>
+               <div className="hern-signup-v1__password-config">
+                  <CheckBoxIcon
+                     showTick={showPassword}
+                     size={18}
+                     onClick={() => {
+                        setShowPassword(prevState => !prevState)
+                     }}
+                     style={{ cursor: 'pointer' }}
+                  />
+                  <span>Show password</span>
+               </div>
+               {passwordError && (
+                  <span className="hern-signup-v1__signup-error">
+                     {passwordError}
+                  </span>
+               )}
+               <fieldset
+                  className="hern-login-v1__fieldset"
+                  style={phoneError ? { marginBottom: '0.25rem' } : null}
+               >
+                  <label className="hern-login-v1__label" htmlFor="phone">
+                     Phone Number*
+                  </label>
+                  <input
+                     className="hern-login-v1__input"
+                     type="text"
+                     name="phone"
+                     value={form.phone}
+                     onChange={onChange}
+                     placeholder="Eg. 9879879876"
+                     onBlur={e =>
+                        e.target.value.length === 0
+                           ? setPhoneError('Must be a valid phone number!')
+                           : setPhoneError('')
+                     }
+                  />
+               </fieldset>
+               {phoneError && (
+                  <span className="hern-signup-v1__signup-error">
+                     {phoneError}
+                  </span>
+               )}
+               {isReferralFieldVisible ? (
+                  <fieldset className="hern-login-v1__fieldset">
+                     <label className="hern-login-v1__label" htmlFor="code">
+                        Referral Code
+                     </label>
+                     <input
+                        className="hern-login-v1__input"
+                        name="code"
+                        type="text"
+                        onChange={onChange}
+                        value={form.code}
+                        placeholder="Enter referral code"
+                     />
+                  </fieldset>
+               ) : (
+                  <button
+                     className="hern-signup-v1__referral-code"
+                     onClick={() => setIsReferralFieldVisible(true)}
+                  >
+                     Got a referral code?
+                  </button>
+               )}
+               <section className="hern-signup-v1__signup__term">
+                  <input
+                     className="hern-signup__signup__term__checkbox"
+                     type="checkbox"
+                     name="terms&copy;conditions"
+                     id="terms&copy;conditions"
+                     onChange={() => setHasAccepted(!hasAccepted)}
+                  />
+                  <label
+                     className="hern-login-v1__label"
+                     htmlFor="terms&copy;conditions"
+                     style={{ marginLeft: '4px' }}
+                  >
+                     I accept{' '}
+                     <Link href={getRoute('/terms-and-conditions')}>
+                        <a className="hern-signup__signup__term__link">
+                           terms and conditions.
+                        </a>
+                     </Link>
+                  </label>
+               </section>
+               <button
+                  className={`hern-signup-v1__signup__submit ${
+                     !hasAccepted || !isValid || loading
+                        ? 'hern-signup-v1__signup__submit--disabled'
+                        : ''
+                  }`}
+                  onClick={() => isValid && submit()}
+               >
+                  {loading ? 'REGISTERING...' : 'REGISTER'}
+               </button>
+            </>
+         ) : (
+            <>
+               <p className="hern-signup-v1__signup__email-already-exits">
+                  Looks like your email already exists. If you remember your
+                  password then go to&nbsp;
+                  <button
+                     className="hern-signup-v1__signup__login-switch"
+                     onClick={() => setDefaultLogin('email')}
+                  >
+                     login
+                  </button>
+                  &nbsp;or
+               </p>
+               <button
+                  onClick={() =>
+                     forgotPassword({
+                        variables: {
+                           email: form.email,
+                           origin: location.origin,
+                           type: 'set_password',
+                           ...(isClient &&
+                              localStorage.getItem('landed_on') && {
+                                 redirectUrl: localStorage.getItem('landed_on'),
+                              }),
+                        },
+                     })
+                  }
+                  className={`hern-login-v1__login-btn ${
+                     !form.email || forgotPasswordLoading
+                        ? 'hern-login-v1__login-btn--disabled'
+                        : ''
+                  }`}
+                  style={{ height: '40px', margin: '0', color: '#ffffff' }}
+               >
+                  {forgotPasswordLoading
+                     ? 'SENDING EMAIL...'
+                     : 'SEND LOGIN EMAIL'}
+               </button>
+               {forgotPasswordText && (
+                  <p className="hern-signup-v1__signup__forgot-text">
+                     {forgotPasswordText}
+                  </p>
+               )}
+            </>
+         )}
+         {error && (
+            <span className="hern-signup-v1__signup-error">{error}</span>
+         )}
       </div>
    )
 }
