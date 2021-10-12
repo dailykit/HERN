@@ -222,7 +222,7 @@ export default function Invite({ experienceBooking, isPollClosed }) {
             <Modal
                isOpen={isShow}
                close={hide}
-               type={width > 769 ? 'sideDrawer' : 'bottomDrawer'}
+               type="popup"
                showActionButton={true}
                actionButtonTitle="Send Invite"
                actionHandler={sendInvitation}

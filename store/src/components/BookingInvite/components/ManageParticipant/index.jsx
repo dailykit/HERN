@@ -404,7 +404,7 @@ export default function ManageParticipant({ experienceBookingId }) {
          <ModalContainer isShow={isShow}>
             <Modal
                isOpen={isShow}
-               type={width > 769 ? 'sideDrawer' : 'bottomDrawer'}
+               type="popup"
                close={hide}
                showActionButton={true}
                actionButtonTitle="Save"

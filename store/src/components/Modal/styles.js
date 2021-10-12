@@ -10,7 +10,9 @@ export const ModalDiv = styled.div`
          width: auto;
          padding: 0 1rem;
          height: 40px;
-         background: ${theme.colors.secondaryColor};
+         border-radius: 8px;
+         background: ${theme.colors.textColor};
+         color: ${theme.colors.textColor4};
       }
       .cross {
          width: 40px;

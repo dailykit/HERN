@@ -143,9 +143,9 @@ body {
    align-items: center !important;
 }
 
-@media (max-width: 760px) {
+@media (max-width: 769px) {
    .popup {
-      width: 100% !important;
+      width: 90% !important;
       height: 75% !important;
       align-items: center !important;
    }
@@ -306,6 +306,14 @@ body {
 .text10 {
    font-size: 14px;
    line-height: 14px;
+}
+.text11 {
+   font-size: 12px;
+   line-height: 12px;
+}
+.text12 {
+   font-size: 10px;
+   line-height: 10px;
 }
 
 @media screen and (max-width: 769px) {
