@@ -25,7 +25,9 @@ export default function UpcomingExperience({ booking }) {
                   customWidth={width > 769 ? '371px' : 'auto'}
                   type="upcomingExperience"
                   data={cartDetails}
-                  onCardClick={() => router.push(`/myBookings/${booking?.id}`)}
+                  onCardClick={() =>
+                     router.push(`/dashboard/myBookings/${booking?.id}`)
+                  }
                />
             </div>
          </div>

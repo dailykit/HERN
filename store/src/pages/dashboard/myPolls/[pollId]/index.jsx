@@ -73,7 +73,7 @@ export default function MyBooking({ navigationMenuItems, parsedData = [] }) {
             <div className="checkout-heading">
                <span
                   className="back-button"
-                  onClick={() => router.push(`/myPolls`)}
+                  onClick={() => router.push(`/dashboard/myPolls`)}
                >
                   <ChevronLeft size="20" color={theme.colors.textColor4} />
                </span>

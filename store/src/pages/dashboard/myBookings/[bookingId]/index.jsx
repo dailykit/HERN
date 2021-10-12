@@ -114,7 +114,7 @@ export default function MyBooking({ navigationMenuItems, parsedData = [] }) {
             <div className="checkout-heading">
                <span
                   className="back-button"
-                  onClick={() => router.push(`/myBookings`)}
+                  onClick={() => router.push(`/dashboard/myBookings`)}
                >
                   <ChevronLeft size="20" color={theme.colors.textColor4} />
                </span>

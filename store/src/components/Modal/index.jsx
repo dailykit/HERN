@@ -6,7 +6,7 @@ import { ModalDiv } from './styles'
 
 export default function Modal({
    children,
-   type,
+   type = 'popup',
    close,
    closeButtonType = 'cross',
    showActionButton = false,
