@@ -151,7 +151,7 @@ const CollectionsListing = () => {
          <Banner id="menu-app-collections-listing-top" />
          <Tunnels tunnels={collectionTunnels}>
             <Tunnel layer={1} size="md">
-               <CreateCollection closeTunnel={closeCollectionTunnel} />
+               <CreateCollection close={closeCollectionTunnel} />
             </Tunnel>
          </Tunnels>
          <Flex
