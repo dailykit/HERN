@@ -1,0 +1,202 @@
+.hern-login-v1-container {
+   position: fixed;
+   top: 0;
+   bottom: 0;
+   left: 0;
+   right: 0;
+   height: 100vh;
+   width: 100vw;
+   z-index: 1000;
+   overflow: hidden;
+   background-color: #ffffff;
+}
+
+.hern-login-v1-content {
+   background-color: #ffffff;
+   height: 100vh;
+   width: 100vw;
+   padding: 0;
+}
+
+.hern-login-v1-header {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   margin: 1em;
+   > span {
+      font-style: normal;
+      font-weight: 600;
+      font-size: 20px;
+      line-height: 24px;
+   }
+}
+
+.hern-login-v1__email {
+   margin: 1em;
+}
+
+.hern-login-v1__fieldset {
+   display: flex;
+   flex-direction: column;
+   margin: 16px 0;
+}
+
+.hern-login-v1__label {
+   margin: 4px 0;
+}
+
+.hern-login-v1__input {
+   height: 40px;
+   background: #f4f4f4;
+   border-radius: 8px;
+   padding: 0 10px;
+   outline: none;
+   &:focus {
+      outline: 1px solid #367bf5;
+   }
+}
+
+.hern-login-v1__password-config {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+}
+
+.hern-login-v1__show-password {
+   display: flex;
+   align-items: center;
+   > span {
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 18px;
+      margin: 0 9px;
+   }
+}
+
+.hern-login-v1__forgot-password {
+   font-weight: 600;
+   font-size: 14px;
+   line-height: 18px;
+   color: #367bf5;
+   cursor: pointer;
+}
+
+.hern-login-v1__error {
+   -webkit-align-self: flex-start;
+   -ms-flex-item-align: start;
+   align-self: flex-start;
+   display: block;
+   color: rgba(239, 68, 68, 1);
+   margin-top: 0.5rem;
+}
+
+.hern-login-v1__login-btn {
+   margin-top: 2.5em;
+   width: 100%;
+   border-radius: 20px;
+   background-color: #367bf5 !important;
+   transform: none !important;
+   box-shadow: none !important;
+}
+
+.hern-login-v1__login-btn--disabled {
+   background: #367bf580 !important;
+   cursor: not-allowed;
+}
+
+.hern-login-v1-divider-bar {
+   display: flex;
+   width: 100%;
+   justify-content: center;
+   align-items: center;
+   > span {
+      font-weight: 600;
+      font-size: 18px;
+      line-height: 18px;
+      color: rgba(64, 64, 64, 0.25);
+   }
+}
+
+.hern-login-login-switcher-btn {
+   width: 100%;
+   background: #ffffff !important;
+   border: 1px solid #367bf5 !important;
+   box-sizing: border-box;
+   border-radius: 20px;
+   color: #367bf5;
+}
+
+.hern-login-v1__otp {
+   margin: 1em;
+}
+
+.hern-login-v1__otp-submit {
+   margin-top: 1.5em;
+   border-radius: 20px !important;
+   width: 100%;
+   background-color: #367bf5 !important;
+   color: #ffffff !important;
+}
+
+.hern-register__otp__submit--disabled {
+   background: #367bf580;
+}
+
+.hern-login-v1__otp__resend {
+   margin-top: 0.5rem;
+   border-radius: 0.25rem;
+   width: 100%;
+   height: 2.5rem;
+   // text-transform: uppercase;
+   color: #367bf5;
+   // letter-spacing: 0.05em;
+   border-radius: 20px;
+   outline: none !important;
+   &:hover {
+      border: 1px solid #367bf5 !important;
+   }
+}
+
+.hern-login-v1__otp__resend--disabled {
+   cursor: not-allowed;
+   &:hover {
+      background: #fff;
+   }
+}
+
+.hern-login-v1__footer {
+   margin-top: 3em;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   > span {
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 18px;
+      color: #404040;
+      font-weight: 400;
+   }
+}
+.hern-login-v1__create-one-btn {
+   color: #367bf5;
+   outline: none !important;
+   background: transparent;
+   font-size: 14px;
+   line-height: 18px;
+   font-weight: 600;
+   margin-left: 2px;
+}
+
+@media only screen and (min-width: 769px) {
+   .hern-login-v1-container {
+      background-color: rgb(251, 252, 246);
+      display: flex;
+      justify-content: center;
+   }
+   .hern-login-v1-content {
+      padding: 0;
+      width: 28em;
+      background-color: #ffffff;
+   }
+}
