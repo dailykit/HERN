@@ -30,6 +30,7 @@ import { logger } from '../../../../../../shared/utils'
 import { ConfigTunnel } from '../Tunnel'
 import File from './File'
 import Template from './Template'
+import SystemModule from './SystemModule'
 import ConfigContext from '../../../../context/Config'
 import { isConfigFileExist } from '../../../../utils'
 
@@ -40,6 +41,7 @@ const ContentSelection = () => {
    const [linkedFiles, setLinkedFiles] = useState([])
    const [selectedFileOptions, setSelectedFileOptions] = useState([])
    const [configContext, setConfigContext] = useContext(ConfigContext)
+
    const { loading, error: subscriptionError } = useSubscription(
       LINKED_COMPONENT,
       {
@@ -52,7 +54,6 @@ const ContentSelection = () => {
             } = {},
          }) => {
             const files = pageModules
-
             setLinkedFiles(files)
             if (files.length) {
                initiatePriority({
@@ -126,8 +127,15 @@ const ContentSelection = () => {
    const saveHandler = () => {
       if (selectedFileOptions.length) {
          const result = selectedFileOptions.map(option => {
+            if (option.type === 'system-defined') {
+               return {
+                  brandPageId: pageId,
+                  moduleType: 'system-defined',
+                  internalModuleIdentifier: option.identifier,
+               }
+            }
             return {
-               brandPageId: +pageId,
+               brandPageId: pageId,
                moduleType: option.type === 'html' ? 'block' : 'file',
                fileId: option.id,
             }
@@ -152,12 +160,11 @@ const ContentSelection = () => {
       })
    }
 
-   const deleteHandler = fileId => {
+   const deleteHandler = id => {
       deleteLinkComponent({
          variables: {
             where: {
-               brandPageId: { _eq: pageId },
-               fileId: { _eq: fileId },
+               id: { _eq: id },
             },
          },
       })
@@ -190,9 +197,11 @@ const ContentSelection = () => {
                >
                   {linkedFiles.map(file => {
                      return (
-                        <Child key={file.fileId}>
+                        <Child key={file.id}>
                            <div className="name">
-                              {file?.file?.fileName || ''}
+                              {file?.file?.fileName ||
+                                 file?.systemModule?.identifier ||
+                                 ''}
                            </div>
 
                            <IconButton
@@ -204,7 +213,7 @@ const ContentSelection = () => {
 
                            <IconButton
                               type="ghost"
-                              onClick={() => deleteHandler(file.fileId)}
+                              onClick={() => deleteHandler(file.id)}
                            >
                               <DeleteIcon color="#555b6e" size="20" />
                            </IconButton>
@@ -254,7 +263,15 @@ const ContentSelection = () => {
                   <HorizontalTabPanel>
                      <Template linkedTemplated={[]} />
                   </HorizontalTabPanel>
-                  <HorizontalTabPanel>Internal Module</HorizontalTabPanel>
+                  <HorizontalTabPanel>
+                     <SystemModule
+                        linkedFiles={linkedFiles}
+                        selectedOption={option =>
+                           setSelectedFileOptions(option)
+                        }
+                        emptyOptions={selectedFileOptions}
+                     />
+                  </HorizontalTabPanel>
                </HorizontalTabPanels>
             </HorizontalTabs>
 
