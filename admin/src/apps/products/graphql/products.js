@@ -43,6 +43,7 @@ export const PRODUCTS = {
             name
             title: name
             isPublished
+            price
          }
       }
    `,

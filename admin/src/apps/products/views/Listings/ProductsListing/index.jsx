@@ -42,13 +42,12 @@ import {
    ProductTypeTunnel,
    BulkActionsTunnel,
    ProductOptionsBulkAction,
-
 } from './tunnels'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { PRODUCTS, PRODUCT_OPTION, PRODUCT_OPTIONS } from '../../../graphql'
 import { toast } from 'react-toastify'
-import { logger } from '../../../../../shared/utils'
+import { get_env, logger } from '../../../../../shared/utils'
 import tableOptions from '../tableOption'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
 import FilterIcon from '../../../assets/icons/Filter'
@@ -56,6 +55,13 @@ import { ModifiersProvider } from './context/modifier'
 import { PublishIcon, UnPublishIcon } from '../../../assets/icons'
 import CreateProduct from '../../../../../shared/CreateUtils/Product/createProduct'
 const address = 'apps.menu.views.listings.productslisting.'
+
+//currencies
+const currency = {
+   USD: '$',
+   INR: '₹',
+   EUR: '€',
+}
 
 const ProductsListing = () => {
    const { t } = useTranslation()
@@ -160,7 +166,10 @@ const ProductsListing = () => {
             >
                <Banner id="products-app-products-listing-top" />
                <Flex container alignItems="center">
-                  <Text as="h2" style={{ marginBottom: 0 }}>{t(address.concat('products'))}</Text>
+
+                  <Text as="h2" style={{ marginBottom: 0 }}>
+                     {t(address.concat('products'))}
+                  </Text>
                   <Tooltip identifier="products_list_heading" />
                </Flex>
                <ComboButton type="solid" onClick={() => openTunnel(3)}>
@@ -231,7 +240,11 @@ class DataTable extends React.Component {
       super(props)
       this.state = {
          checked: false,
-         groups: [localStorage.getItem(`tabulator-${this.props.view}_product_table-group`)],
+         groups: [
+            localStorage.getItem(
+               `tabulator-${this.props.view}_product_table-group`
+            ),
+         ],
       }
       this.handleMultipleRowSelection =
          this.handleMultipleRowSelection.bind(this)
@@ -268,6 +281,13 @@ class DataTable extends React.Component {
    }
    newColumns = [
       {
+         title: 'Product ID',
+         field: 'id',
+         headerFilter: true,
+         frozen: true,
+         hozAlign: 'center',
+      },
+      {
          title: this.props.t(address.concat('product name')),
          field: 'name',
          width: 400,
@@ -282,6 +302,14 @@ class DataTable extends React.Component {
          resizable: 'true',
          minWidth: 100,
          maxWidth: 500,
+      },
+      {
+         title: `Price (${
+            currency[get_env('REACT_APP_CURRENCY')] ||
+            get_env('REACT_APP_CURRENCY')
+         })`,
+         field: 'price',
+         hozAlign: 'right',
       },
       {
          title: 'Actions',
@@ -342,7 +370,9 @@ class DataTable extends React.Component {
       this.tableRef.current.table.clearHeaderFilter()
    }
    selectRows = () => {
-      const productGroup = localStorage.getItem(`tabulator-${this.props.view}_product_table-group`)
+      const productGroup = localStorage.getItem(
+         `tabulator-${this.props.view}_product_table-group`
+      )
       const productGroupParse =
          productGroup !== undefined &&
             productGroup !== null &&
@@ -391,18 +421,25 @@ class DataTable extends React.Component {
       localStorage.setItem('selected-rows-id_product_table', JSON.stringify([]))
    }
    downloadCsvData = () => {
-      this.tableRef.current.table.download('csv', `${this.props.view}_product_table.csv`)
+      this.tableRef.current.table.download(
+         'csv',
+         `${this.props.view}_product_table.csv`
+      )
    }
 
    downloadPdfData = () => {
-      this.tableRef.current.table.downloadToTab('pdf', `${this.props.view}_product_table.pdf`)
+      this.tableRef.current.table.downloadToTab(
+         'pdf',
+         `${this.props.view}_product_table.pdf`
+      )
    }
 
    downloadXlsxData = () => {
-      this.tableRef.current.table.download('xlsx', `${this.props.view}_product_table.xlsx`)
+      this.tableRef.current.table.download(
+         'xlsx',
+         `${this.props.view}_product_table.xlsx`
+      )
    }
-
-
    clearProductPersistence = () => {
       localStorage.removeItem('tabulator-simple_product_table-columns')
       localStorage.removeItem('tabulator-simple_product_table-sort')
@@ -426,7 +463,6 @@ class DataTable extends React.Component {
       }
    }
    render() {
-
       const selectionColumn =
          this.props.selectedRows.length > 0 &&
             this.props.selectedRows.length < this.props.data.length
@@ -609,7 +645,10 @@ function ProductName({ cell, addTab }) {
                justifyContent="flex-end"
                alignItems="center"
             >
-               <IconButton type="ghost">
+               <IconButton
+                  type="ghost"
+                  title={data.isPublished ? 'Published' : 'Unpublished'}
+               >
                   {data.isPublished ? <PublishIcon /> : <UnPublishIcon />}
                </IconButton>
             </Flex>
@@ -631,8 +670,9 @@ const ActionBar = ({
 }) => {
    const defaultIDs = () => {
       let arr = []
-      const productGroup = localStorage.getItem(`tabulator-${title}_table-group`)
-
+      const productGroup = localStorage.getItem(
+         `tabulator-${title}_table-group`
+      )
       const productGroupParse =
          productGroup !== undefined &&
             productGroup !== null &&
@@ -737,7 +777,9 @@ const ActionBar = ({
                      </DropdownButton.Options>
                   </DropdownButton>
                   <Spacer size="15px" xAxis />
-                  <Text as="text1" style={{ fontSize: 14 }}>Group By:</Text>
+                  <Text as="text1" style={{ fontSize: 14 }}>
+                     Group By:
+                  </Text>
                   <Spacer size="5px" xAxis />
                   <Dropdown
                      type="multi"
@@ -789,12 +831,9 @@ const ProductOptions = forwardRef(
       const tableRef = React.useRef()
       const [productOptionsList, setProductOptionsList] = useState([])
       const [checked, setChecked] = useState(false) //me
-      const { addTab, tab } = useTabs()   //me
-
-
+      const { addTab, tab } = useTabs() //me
 
       const [deleteProductOption] = useMutation(PRODUCT_OPTION.DELETE, {
-
          onCompleted: () => {
             toast.success('Product deleted!')
          },
@@ -803,7 +842,6 @@ const ProductOptions = forwardRef(
             logger(error)
          },
       })
-
 
       // Handler
       const deleteProductOptionHandler = product => {
@@ -820,7 +858,6 @@ const ProductOptions = forwardRef(
          }
          console.log(product.id)
       }
-
 
       const groupByOptions = [
          {
@@ -944,7 +981,6 @@ const ProductOptions = forwardRef(
             'selected-rows-id_product_option_table',
             JSON.stringify(newData)
          )
-
       }
       const handleRowDeselection = ({ _row }) => {
          const data = _row.getData()
@@ -1033,17 +1069,19 @@ const ProductOptions = forwardRef(
          setChecked({ checked: false })
          setSelectedRows([])
          tableRef.current.table.deselectRow()
-         localStorage.setItem('selected-rows-id_product_option_table', JSON.stringify([]))
+         localStorage.setItem(
+            'selected-rows-id_product_option_table',
+            JSON.stringify([])
+         )
       }
 
       const handleMultipleRowSelection = () => {
          setChecked(!checked)
          if (!checked) {
             tableRef.current.table.selectRow('active')
-            let multipleRowData =
-               tableRef.current.table.getSelectedData()
+            let multipleRowData = tableRef.current.table.getSelectedData()
             setSelectedRows(multipleRowData)
-            console.log("first", selectedRows)
+            console.log('first', selectedRows)
             localStorage.setItem(
                'selected-rows-id_product_option-table',
                JSON.stringify(multipleRowData.map(row => row.id))
@@ -1051,7 +1089,7 @@ const ProductOptions = forwardRef(
          } else {
             tableRef.current.table.deselectRow()
             setSelectedRows([])
-            console.log("second", selectedRows)
+            console.log('second', selectedRows)
 
             localStorage.setItem(
                'selected-rows-id_product_option-table',
@@ -1079,37 +1117,32 @@ const ProductOptions = forwardRef(
       }
       const selectionColumn =
          selectedRows.length > 0 &&
-            selectedRows.length < productOptionsList.length  // 
+         selectedRows.length < productOptionsList.length //
             ? {
-               formatter: 'rowSelection',
-               titleFormatter: reactFormatter(
-                  <CrossBox
-                     removeSelectedProducts={removeSelectedProducts}
-                  />
-               ),
-               align: 'center',
-               hozAlign: 'center',
-               width: 10,
-               headerSort: false,
-               frozen: true,
-            }
+                 formatter: 'rowSelection',
+                 titleFormatter: reactFormatter(
+                    <CrossBox removeSelectedProducts={removeSelectedProducts} />
+                 ),
+                 align: 'center',
+                 hozAlign: 'center',
+                 width: 10,
+                 headerSort: false,
+                 frozen: true,
+              }
             : {
-               formatter: 'rowSelection',
-               titleFormatter: reactFormatter(
-                  <CheckBox
-                     checked={checked}
-                     handleMultipleRowSelection={
-                        handleMultipleRowSelection
-                     }
-                  />
-               ),
-               align: 'center',
-               hozAlign: 'center',
-               width: 20,
-               headerSort: false,
-               frozen: true,
-            }
-
+                 formatter: 'rowSelection',
+                 titleFormatter: reactFormatter(
+                    <CheckBox
+                       checked={checked}
+                       handleMultipleRowSelection={handleMultipleRowSelection}
+                    />
+                 ),
+                 align: 'center',
+                 hozAlign: 'center',
+                 width: 20,
+                 headerSort: false,
+                 frozen: true,
+              }
       return (
          <>
             <ActionBar
@@ -1136,8 +1169,9 @@ const ProductOptions = forwardRef(
                rowSelected={handleRowSelection}
                rowDeselected={handleRowDeselection}
                options={{
-                  ...tableOptions, persistenceID: 'product_option_table',
-                  reactiveData: true
+                  ...tableOptions,
+                  persistenceID: 'product_option_table',
+                  reactiveData: true,
                }}
                data-custom-attr="test-custom-attribute"
                className="custom-css-class"
