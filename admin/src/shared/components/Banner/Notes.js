@@ -5,7 +5,7 @@ import { PlayIcon } from '../../assets/icons'
 import { Tutorials } from './assets/illustrations'
 import ActionButtons from './components/ActionButtons'
 import Styled, { Wrapper, Styleflex } from './styles'
-import Styled, { Wrapper, Styleflex } from './styles.js'
+// import Styled, { Wrapper, Styleflex } from './styles.js'
 
 const Notes = ({ data }) => {
    const [isOpen, setIsOpen] = React.useState(true)
