@@ -188,6 +188,23 @@
    margin-left: 2px;
 }
 
+.hern-forgot-password-v1 {
+   margin: 1em;
+}
+
+.hern-forgot-password-v1__submit-btn {
+   margin-top: 2.5em;
+   width: 100%;
+   border-radius: 20px;
+   background-color: #367bf5 !important;
+   transform: none !important;
+   box-shadow: none !important;
+   color: #ffffff;
+}
+.hern-forgot-password-v1__submit-btn--disabled {
+   background: #367bf580 !important;
+   cursor: not-allowed;
+}
 @media only screen and (min-width: 769px) {
    .hern-login-v1-container {
       background-color: rgb(251, 252, 246);

@@ -16,6 +16,8 @@ import {
    SEND_SMS,
 } from '../graphql'
 import { useLazyQuery, useMutation, useSubscription } from '@apollo/react-hooks'
+import { useToasts } from 'react-toast-notifications'
+import { useConfig } from '../lib'
 
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
@@ -26,7 +28,13 @@ export const Login = props => {
       <div className="hern-login-v1-container">
          <div className="hern-login-v1-content">
             <header className="hern-login-v1-header">
-               <span>Log in</span>
+               {(defaultLogin === 'email' || defaultLogin === 'otp') && (
+                  <span>Log in</span>
+               )}
+               {defaultLogin === 'forgotPassword' && (
+                  <span>Forgot Password</span>
+               )}
+
                <CloseIcon
                   size={18}
                   stroke={'#404040'}
@@ -35,7 +43,13 @@ export const Login = props => {
             </header>
             <section>
                {/* email login  or phone number login*/}
-               {defaultLogin === 'email' ? <Email /> : <OTPLogin />}
+               {defaultLogin === 'email' && (
+                  <Email setDefaultLogin={setDefaultLogin} />
+               )}
+               {defaultLogin === 'otp' && <OTPLogin />}
+               {defaultLogin === 'forgotPassword' && <ForgotPassword />}
+               {/* {defaultLogin === 'email' ? <Email /> : <OTPLogin />} */}
+
                <DividerBar />
                <div style={{ margin: '1em' }}>
                   <Button
@@ -66,7 +80,11 @@ export const Login = props => {
 }
 
 //email log in
-const Email = () => {
+const Email = props => {
+   //props
+   const { setDefaultLogin } = props
+
+   //component state
    const [loading, setLoading] = React.useState(false)
    const [error, setError] = React.useState('')
    const [form, setForm] = React.useState({
@@ -162,7 +180,12 @@ const Email = () => {
                />
                <span>Show password</span>
             </div>
-            <span className="hern-login-v1__forgot-password">
+            <span
+               className="hern-login-v1__forgot-password"
+               onClick={() => {
+                  setDefaultLogin('forgotPassword')
+               }}
+            >
                Forgot password?{' '}
             </span>
          </div>
@@ -452,7 +475,87 @@ const OTPLogin = () => {
 const SocialLogin = () => {}
 
 //forgot password
-const ForgotPassword = () => {}
+const ForgotPassword = () => {
+   const { addToast } = useToasts()
+   const { configOf } = useConfig()
+
+   const theme = configOf('theme-color', 'Visual')
+
+   const [error, setError] = React.useState('')
+   const [form, setForm] = React.useState({
+      email: '',
+   })
+
+   const isValid = form.email
+
+   const [forgotPassword, { loading }] = useMutation(FORGOT_PASSWORD, {
+      onCompleted: () => {
+         addToast('Email sent!', { appearance: 'success' })
+      },
+      onError: error => {
+         addToast(error.message, { appearance: 'error' })
+      },
+   })
+
+   const onChange = e => {
+      const { name, value } = e.target
+      setForm(form => ({
+         ...form,
+         [name]: value,
+      }))
+   }
+
+   const submit = async () => {
+      try {
+         setError('')
+         if (isClient) {
+            const origin = window.location.origin
+            forgotPassword({
+               variables: {
+                  email: form.email,
+                  origin,
+               },
+            })
+         }
+      } catch (error) {
+         if (error?.code === 401) {
+            setError('Email or password is incorrect!')
+         }
+      }
+   }
+   return (
+      <div className="hern-forgot-password-v1">
+         <fieldset className="hern-login-v1__fieldset">
+            <label htmlFor="email" className="hern-login-v1__label">
+               Email*
+            </label>
+            <input
+               className="hern-login-v1__input"
+               type="email"
+               name="email"
+               id="email"
+               value={form.email}
+               onChange={onChange}
+               placeholder="Enter your email"
+            />
+         </fieldset>
+         <button
+            className={classNames('hern-forgot-password-v1__submit-btn', {
+               'hern-forgot-password-v1__submit-btn--disabled':
+                  !isValid || loading,
+            })}
+            disabled={!isValid || loading}
+            style={{ height: '40px' }}
+            onClick={() => isValid && submit()}
+         >
+            SEND EMAIL
+         </button>
+         {error && (
+            <span className="hern-forgot-password-v1__error">{error}</span>
+         )}
+      </div>
+   )
+}
 
 //divider bar
 const DividerBar = props => {
