@@ -14,7 +14,7 @@ export const Wrapper = styled.div`
       margin-bottom: 0 !important;
    }
    .main_container {
-      width: 90%;
+      width: 100%;
       margin: 2rem auto;
    }
    .label {
@@ -64,6 +64,9 @@ export const Wrapper = styled.div`
       }
       .small_text {
          margin-left: 8px;
+      }
+      .main_container {
+         width: 90%;
       }
    }
 `

@@ -3,8 +3,8 @@ import { theme } from '../../theme'
 export const StyledInput = styled.input`
    width: 100%;
    height: 48px;
-   background: ${theme.colors.textColor2};
-   border-radius: 9px;
+   background: ${theme.colors.textColor4};
+   border-radius: 8px;
    border: none;
    padding: 16px;
    font-size: ${theme.sizes.h9};
@@ -17,17 +17,16 @@ export const StyledInput = styled.input`
 `
 export const StyledTextArea = styled.textarea`
    width: 100%;
-   height: 60px;
-   background: ${theme.colors.mainBackground};
-   box-shadow: 1px 1px 2px rgba(50, 56, 72, 0.3),
-      -1px -1px 2px rgba(17, 19, 24, 0.5),
-      inset -5px 5px 10px rgba(17, 19, 24, 0.2),
-      inset 5px -5px 10px rgba(17, 19, 24, 0.2),
-      inset -5px -5px 10px rgba(50, 56, 72, 0.9),
-      inset 5px 5px 13px rgba(17, 19, 24, 0.9);
-   border-radius: 4px;
+   border-radius: 8px;
    border: none;
    padding: 16px;
+   height: 96px;
+   &::placeholder {
+      color: ${theme.colors.textColor7};
+   }
+   &:focus {
+      border: 1px solid ${theme.colors.textColor};
+   }
 `
 
 export const CheckboxContainer = styled.div`

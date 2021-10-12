@@ -2,7 +2,6 @@ import styled from 'styled-components'
 import { theme } from '../../../../theme'
 
 export const Wrapper = styled.div`
-   color: ${theme.colors.textColor4};
    .participant-email {
       font-family: Proxima Nova;
       font-style: normal;

@@ -207,10 +207,6 @@ const Wrapper = styled.div`
    color: ${theme.colors.textColor4};
    padding: 64px 80px;
    filter: ${({ isCelebrating }) => isCelebrating && 'blur(4px)'};
-   .experience-heading {
-      font-size: ${theme.sizes.h4};
-      margin-bottom: 16px;
-   }
    .experience-date {
       h4 {
          font-size: ${theme.sizes.h8};

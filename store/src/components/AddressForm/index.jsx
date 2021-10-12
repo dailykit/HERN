@@ -8,6 +8,7 @@ import GooglePlacesAutocomplete, {
 import { Wrapper, AddressSearch } from './styles'
 import Input from '../Input'
 import Button from '../Button'
+import Spacer from '../Spacer'
 import { useUser } from '../../Providers'
 import { CREATE_ADDRESS } from '../../graphql'
 import { theme } from '../../theme'
@@ -27,28 +28,35 @@ export default function AddressForm({
    const [formStatus, setFormStatus] = React.useState('PENDING')
    const [address, setAddress] = useState(null)
    const controlContainerCustomStyle = {
-      background: theme.colors.mainBackground,
-      marginTop: '8px',
-      borderRadius: '4px',
-      color: theme.colors.textColor4,
-      border: 'none',
-      boxShadow:
-         '1px 1px 2px rgba(50, 56, 72, 0.3),-1px -1px 2px rgba(17, 19, 24, 0.5),inset -5px 5px 10px rgba(17, 19, 24, 0.2),inset 5px -5px 10px rgba(17, 19, 24, 0.2),inset -5px -5px 10px rgba(50, 56, 72, 0.9),inset 5px 5px 13px rgba(17, 19, 24, 0.9)'
+      background: theme.colors.lightBackground.grey,
+      height: '48px',
+      borderRadius: '8px',
+      color: theme.colors.textColor5,
+      border: 'none'
    }
    const menuContainerCustomStyle = {
-      background: theme.colors.mainBackground,
+      background: theme.colors.lightBackground.grey,
       margin: '8px 0',
       borderRadius: '4px',
-      color: theme.colors.textColor4,
+      color: theme.colors.textColor5,
       border: 'none'
    }
    const optionCustomStyle = {
-      background: theme.colors.mainBackground,
+      background: theme.colors.lightBackground.grey,
+      fontFamily: 'Proxima Nova',
+      fontWeight: 600,
+      fontSize: theme.sizes.h8,
       '&:hover': {
-         background: theme.colors.secondaryColor,
-         color: theme.colors.textColor4,
+         background: theme.colors.lightestGrey,
+         color: theme.colors.textColor5,
          marginBottom: '8px'
       }
+   }
+   const customInputStyle = {
+      fontFamily: 'Proxima Nova',
+      fontWeight: 600,
+      fontSize: theme.sizes.h8,
+      color: theme.colors.textColor5
    }
 
    const [createAddress] = useMutation(CREATE_ADDRESS, {
@@ -169,8 +177,6 @@ export default function AddressForm({
    return (
       <Wrapper defaultActionButton={defaultActionButton}>
          <AddressSearch>
-            <label>Search Address</label>
-
             <GooglePlacesAutocomplete
                apiKey={get_env('MAPS_API_KEY')}
                selectProps={{
@@ -183,11 +189,11 @@ export default function AddressForm({
                      }),
                      input: provided => ({
                         ...provided,
-                        color: theme.colors.textColor4
+                        ...customInputStyle
                      }),
                      singleValue: provided => ({
                         ...provided,
-                        color: theme.colors.textColor4
+                        ...customInputStyle
                      }),
                      menu: provided => ({
                         ...provided,
@@ -251,6 +257,7 @@ export default function AddressForm({
                         required
                      />
                   </Flex>
+                  <Spacer xAxis="1rem" />
                   <Flex container flexDirection="column">
                      <label>State* </label>
                      <Input
@@ -277,6 +284,7 @@ export default function AddressForm({
                         required
                      />
                   </Flex>
+                  <Spacer xAxis="1rem" />
                   <Flex container flexDirection="column">
                      <label>Zipcode*</label>
                      <Input
@@ -310,6 +318,7 @@ export default function AddressForm({
                      placeholder="Enter dropoff instructions"
                      value={address?.notes || ''}
                      onChange={addressHandler}
+                     style={{ height: '6rem' }}
                   />
                </Flex>
 

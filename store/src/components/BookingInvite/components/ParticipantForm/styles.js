@@ -1,26 +1,56 @@
-import styled from "styled-components";
-import { theme } from "../../../../theme";
+import styled from 'styled-components'
+import { theme } from '../../../../theme'
 
 export const Wrapper = styled.div`
-  width: 100%;
-  height: 100%;
-  color: ${theme.colors.textColor4};
-  padding: 1rem;
-  .edit-tunnel-header {
-    color: ${theme.colors.textColor};
-    font-size: ${theme.sizes.h3};
-    font-weight: 600;
-    text-align: center;
-    margin: 1rem 0 2rem 0;
-  }
-  .input-label {
-    color: ${theme.colors.textColor4};
-    font-size: ${theme.sizes.h8};
-    font-weight: 600;
-    margin: 8px 4px;
-  }
-  .address-form-input {
-    color: ${theme.colors.textColor4};
-    margin-bottom: 1rem;
-  }
-`;
+   width: 100%;
+   height: 100%;
+   color: ${theme.colors.textColor4};
+   padding: 1rem;
+   .proxinova_text {
+      font-family: Proxima Nova;
+      font-style: normal;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      color: ${theme.colors.textColor5};
+      margin-bottom: 0 !important;
+   }
+   .main_container {
+      width: 100%;
+      margin: 2rem auto;
+   }
+   .edit-tunnel-header {
+      font-weight: 600;
+      color: ${theme.colors.textColor};
+      text-align: center;
+      margin-bottom: 1rem;
+      font-family: League-Gothic;
+   }
+   .input-label {
+      color: ${theme.colors.textColor7};
+      margin: 8px 4px;
+      font-family: Proxima Nova;
+      font-style: normal;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+   }
+   .address-form-input {
+      height: 48px;
+      margin: 1rem 0;
+      color: ${theme.colors.textColor5};
+      background: ${theme.colors.lightBackground.grey};
+      font-family: Proxima Nova;
+      font-weight: 700px;
+      letter-spacing: 0.3em;
+      ::placeholder {
+         font-weight: 700px;
+         letter-spacing: 0.3em;
+         text-transform: uppercase;
+      }
+   }
+
+   @media (min-width: 769px) {
+      .main_container {
+         width: 90%;
+      }
+   }
+`
