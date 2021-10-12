@@ -131,6 +131,10 @@ const Styles = {
       overflow: visible !important;
       fill: black !important;
    `,
+   IconText: styled.div`
+      display: flex;
+      align-items: flex-start;
+   `,
    Logout: styled.button`
       padding: 8px 0px;
       color: #202020;
@@ -146,7 +150,8 @@ const Styles = {
       padding-left: ${props => (props.active ? `15px` : `18px`)} !important;
       padding: 12px;
       display: flex;
-      align-items: flex-start;
+      align-items: center;
+      justify-content: space-between;
       color: ${props => (props.active ? `#367BF5` : `#202020`)};
       background: ${props => (props.active ? `#f9f9f9` : `#ffffff`)};
       border-left: ${props => (props.active ? `3px solid #367BF5` : `none`)};
