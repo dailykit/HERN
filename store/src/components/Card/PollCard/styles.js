@@ -93,8 +93,6 @@ export const CardBody = styled.div`
    }
    .book-slot {
       margin: 0.5rem 0 0 0;
-      // width: auto;
-      // padding: 0 1rem;
    }
    .poll-expiry {
       color: ${theme.colors.lightBackground};

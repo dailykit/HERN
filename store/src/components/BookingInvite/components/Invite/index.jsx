@@ -29,7 +29,7 @@ export default function Invite({ experienceBooking, isPollClosed }) {
    const { user = {} } = userState
    const [inviteList, setInviteList] = useState([])
    const [isReset, setIsReset] = useState(false)
-   const [copyBtnClasses, setCopyBtnClasses] = useState(['customBtn'])
+   const [copyBtnClasses, setCopyBtnClasses] = useState(['customBtn text6'])
    const payload = {
       experienceBookingId: experienceBooking?.id,
       experienceBookingCartId: experienceBooking?.cartId,
@@ -193,7 +193,7 @@ export default function Invite({ experienceBooking, isPollClosed }) {
                >
                   <span>
                      <CopyIcon
-                        size={theme.sizes.h6}
+                        size={theme.sizes.h4}
                         color={theme.colors.textColor4}
                      />
                   </span>
@@ -212,7 +212,7 @@ export default function Invite({ experienceBooking, isPollClosed }) {
             <Button
                disabled={isPollClosed}
                onClick={openDrawer}
-               className="customBtn"
+               className="customBtn text6"
             >
                Invite via Email & Phone
             </Button>

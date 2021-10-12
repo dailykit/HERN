@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import Confetti from 'react-confetti'
 import { useToasts } from 'react-toast-notifications'
 import ReactHtmlParser from 'react-html-parser'
-import { Button, Tooltip } from 'antd'
+import { Button } from 'antd'
 import { useSubscription, useMutation } from '@apollo/client'
 import { Card } from '../../pageComponents/checkoutComponent'
 import {
