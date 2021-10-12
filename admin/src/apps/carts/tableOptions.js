@@ -7,3 +7,4 @@ const tableOptions = {
    virtualDomBuffer: 80,
    persistence: false,
 }
+export default tableOptions

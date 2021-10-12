@@ -213,8 +213,8 @@ const InstructionSet = ({ id, title, steps }) => {
                onBlur={updateTitle}
             />
             <Spacer xAxis size="16px" />
-            <IconButton onClick={handleDelete}>
-               <DeleteIcon color="#FF5A52" />
+            <IconButton onClick={handleDelete} style={{ background: 'none' }}>
+               <DeleteIcon />
             </IconButton>
          </Flex>
          <Spacer size="16px" />
@@ -361,27 +361,37 @@ const InstructionStep = ({ id, title, description, assets, isVisible }) => {
                Visibility
             </Form.Toggle>
             <Spacer xAxis size="16px" />
-            <IconButton onClick={handleDelete}>
-               <DeleteIcon color="#FF5A52" />
+            <IconButton onClick={handleDelete} style={{ background: 'none' }}>
+               <DeleteIcon />
             </IconButton>
          </Flex>
          <Spacer size="16px" />
          <Flex maxWidth="400px">
             {assets.images.length ? (
                <ImageWrapper>
-                  <div>
-                     <IconButton onClick={() => openTunnel(1)}>
-                        <EditIcon color="#00A7E1" />
-                     </IconButton>
-                     <Spacer xAxis size="8px" />
-                     <IconButton onClick={removeImage}>
-                        <DeleteIcon color="#FF5A52" />
-                     </IconButton>
-                  </div>
                   <img
                      alt={assets.images[0].title}
                      src={assets.images[0].url}
                   />
+                  <Flex
+                     container
+                     flexDirection="column"
+                     style={{ left: '100%' }}
+                  >
+                     <IconButton
+                        onClick={() => openTunnel(1)}
+                        style={{ background: 'none' }}
+                     >
+                        <EditIcon />
+                     </IconButton>
+                     <Spacer xAxis size="8px" />
+                     <IconButton
+                        onClick={removeImage}
+                        style={{ background: 'none' }}
+                     >
+                        <DeleteIcon />
+                     </IconButton>
+                  </Flex>
                </ImageWrapper>
             ) : (
                <ButtonTile
