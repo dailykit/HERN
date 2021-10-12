@@ -35,7 +35,7 @@ export const Wrapper = styled.div`
    }
    .address-form-input {
       height: 48px;
-      margin: 1rem 0;
+      margin: 0.5rem 0;
       color: ${theme.colors.textColor5};
       background: ${theme.colors.lightBackground.grey};
       font-family: Proxima Nova;
@@ -51,6 +51,7 @@ export const Wrapper = styled.div`
    @media (min-width: 769px) {
       .main_container {
          width: 90%;
+         margin: 2rem auto;
       }
    }
 `
