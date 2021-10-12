@@ -55,6 +55,7 @@ const ToolList = ({ toolbarRef, handleOpen, open, tools }) => {
             url=""
             open={open === profile}
             title={user?.name || 'user'}
+            style={{ marginLeft: '10px' }}
          />
       </Wrapper>
    )

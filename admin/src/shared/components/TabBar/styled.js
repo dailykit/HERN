@@ -5,7 +5,7 @@ const Styles = {
    Header: styled.header`
       display: flex;
       width: 100vw;
-
+      align-items: center;
       justify-content: space-between;
 
    `,
