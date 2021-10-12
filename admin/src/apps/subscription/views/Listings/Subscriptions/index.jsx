@@ -2,7 +2,7 @@ import React from 'react'
 import { v4 as uuid } from 'uuid'
 import { toast } from 'react-toastify'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
-import { Text, ComboButton, PlusIcon, Flex, IconButton } from '@dailykit/ui'
+import { Text, ComboButton, PlusIcon, Flex, IconButton, useTunnel, Tunnel, Tunnels } from '@dailykit/ui'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 
 import options from '../../../tableOption'
@@ -18,11 +18,13 @@ import {
 } from '../../../../../shared/components'
 import { ResponsiveFlex } from '../../../../../shared/components/ResponsiveFlex'
 import { PublishIcon, UnPublishIcon } from '../../../assets/icons'
+import CreateSubscription from '../../../../../shared/CreateUtils/subscription/createSubscriptions'
 
 export const Subscriptions = () => {
    const { tooltip } = useTooltip()
    const tableRef = React.useRef()
    const { tab, addTab } = useTabs()
+   const [subscriptionTunnels, openSubscriptionTunnel, closeSubscriptionTunnel] = useTunnel(1)
    const {
       error,
       loading,
@@ -104,6 +106,11 @@ export const Subscriptions = () => {
    return (
       <ResponsiveFlex maxWidth="1280px" margin="0 auto">
          <Banner id="subscription-app-subscriptions-listing-top" />
+         <Tunnels tunnels={subscriptionTunnels}>
+            <Tunnel layer={1} size="md">
+               <CreateSubscription closeTunnel={closeSubscriptionTunnel} />
+            </Tunnel>
+         </Tunnels>
          <Flex
             container
             as="header"
@@ -118,7 +125,7 @@ export const Subscriptions = () => {
                </Text>
                <Tooltip identifier="listing_subscription_heading" />
             </Flex>
-            <ComboButton type="solid" onClick={() => createTab()}>
+            <ComboButton type="solid" onClick={() => openSubscriptionTunnel(1)}>
                <PlusIcon color="#fff" size={24} />
                Create Subscription
             </ComboButton>
