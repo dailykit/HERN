@@ -23,6 +23,8 @@ import {
    InsightDashboard,
    Banner,
 } from '../../../../../shared/components'
+import SocialShare from './SEO/SocialShare'
+import SEObasics from './SEO/SEObasics'
 import ContentSelection from './ContentSelection'
 import BrandContext from '../../../context/Brand'
 import { PagePreviewTunnel } from './Tunnel'
@@ -328,9 +330,12 @@ const PageForm = () => {
                         <ContentSelection />
                      </HorizontalTabPanel>
                   </div>
-                  <HorizontalTabPanel>
-                     <div className="styleTab">Meda data goes here</div>
-                  </HorizontalTabPanel>
+                  <div className="styleTab">
+                     <HorizontalTabPanel>
+                        <SEObasics />
+                        <SocialShare />
+                     </HorizontalTabPanel>
+                  </div>
                </HorizontalTabPanels>
             </HorizontalTabs>
          </StyledDiv>
