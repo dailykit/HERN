@@ -21,7 +21,7 @@ export const SocialShare = props => {
                         settings to displays image or text to your other social
                         networks
                     </Col>
-                    <Col span={4}>
+                    <Col span={4} style={{ padding: "0 4px" }}>
                         {' '}
                         <Button type="primary">Customize</Button>
                     </Col>
@@ -37,7 +37,7 @@ export const SocialShare = props => {
                         settings to displays image or text to your other social
                         networks
                     </Col>
-                    <Col span={4}>
+                    <Col span={4} style={{ padding: "0 4px" }}>
                         {' '}
                         <Button type="primary">Customize</Button>
                     </Col>
