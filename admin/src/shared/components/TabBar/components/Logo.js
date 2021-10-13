@@ -5,9 +5,9 @@ import { Sidebar } from '../../Sidebar'
 import Styles from '../styled'
 
 const Logo = () => {
-   const [open, setOpen] = React.useState(false)
+   const [open, setOpen] = React.useState(true)
    const menuRef = React.useRef()
-   useOnClickOutside(menuRef, () => setOpen(false))
+   // useOnClickOutside(menuRef, () => setOpen(false))
 
    return (
       <div

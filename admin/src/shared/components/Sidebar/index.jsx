@@ -9,7 +9,7 @@ import { has } from 'lodash'
 import {
    BrandAppIcon, CustomersAppIcon, HomeAppIcon, InventoryAppIcon, MenuAppIcon,
    OrderAppIcon, ProductsAppIcon, ReportsAppIcon, SettingAppIcon, StoreAppIcon,
-   SubscriptionAppIcon, CartsAppIcon
+   SubscriptionAppIcon, CartsAppIcon, ArrowUp, ArrowDown
 } from '../../assets/navBarIcons'
 import { toast } from 'react-toastify'
 import { logger, randomSuffix } from '../../utils'
@@ -774,10 +774,17 @@ export const Sidebar = ({ setOpen }) => {
                               app.title
                            }
                         >
-                           <Styles.AppIcon><app.icon active={isActive === app.title} /> </Styles.AppIcon>
-                           <Styles.AppTitle onClick={() => addTab(app.title, app.path)}>
-                              {app.title}
-                           </Styles.AppTitle>
+                           <Styles.IconText>
+                              <Styles.AppIcon><app.icon active={isActive === app.title} /> </Styles.AppIcon>
+                              <Styles.AppTitle onClick={(event) => {
+                                 event.stopPropagation()
+                                 setIsActive(app.title)
+                                 addTab(app.title, app.path)
+                              }}>
+                                 {app.title}
+                              </Styles.AppTitle>
+                           </Styles.IconText>
+                           {isOpen === app.title ? <ArrowUp /> : <ArrowDown />}
                         </Styles.Choices>
 
                         <Styles.Pages>
@@ -788,7 +795,10 @@ export const Sidebar = ({ setOpen }) => {
                                  >
                                     <Styles.Choices
                                        onClick={() => {
-                                          setIsChildOpen(child.title)
+                                          setIsChildOpen(
+                                             isChildOpen === null || isChildOpen !== child.title
+                                                ? child.title
+                                                : null)
                                           setIsChildrenOpen(null)
                                        }}
                                        active={isChildOpen === child.title && isChildrenOpen === null}
@@ -796,7 +806,6 @@ export const Sidebar = ({ setOpen }) => {
                                     >
                                        <Styles.PageOneTitle
                                           onClick={() => {
-                                             setIsChildrenOpen(null)
                                              setIsOpen(null)
                                              addTab(child.title, child.path)
                                           }}
@@ -804,6 +813,7 @@ export const Sidebar = ({ setOpen }) => {
                                              && isChildrenOpen === null)}
                                        >
                                           {child.title}</Styles.PageOneTitle>
+                                       {isChildOpen === child.title ? <ArrowUp /> : <ArrowDown />}
                                     </Styles.Choices>
 
                                     <Styles.Pages>
