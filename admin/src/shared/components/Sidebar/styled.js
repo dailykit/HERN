@@ -14,7 +14,7 @@ const Styles = {
          border-radius: 10px;
          width: 52px;
          position: fixed;
-         top: 55px;
+         top: 50px;
          left: 0px;
          bottom: 7px;
          z-index: 10;
