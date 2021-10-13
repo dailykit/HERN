@@ -26,9 +26,9 @@ export default function MenuItem({ menuItem = {}, clickHandler, ...props }) {
             {menuItem?.childNodes?.length > 0 && (
                <button>
                   {toggleMenu ? (
-                     <ChevronUp size="16px" color="#919699" />
+                     <ChevronUp size="25px" color="#919699" />
                   ) : (
-                     <ChevronDown size="16px" color="#919699" />
+                     <ChevronDown size="25px" color="#919699" />
                   )}
                </button>
             )}
