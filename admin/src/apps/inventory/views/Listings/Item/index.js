@@ -1,5 +1,14 @@
 import { useMutation } from '@apollo/react-hooks'
-import { ComboButton, Flex, RadioGroup, Text, TextButton } from '@dailykit/ui'
+import {
+   ComboButton,
+   Flex,
+   RadioGroup,
+   Text,
+   TextButton,
+   Tunnel,
+   Tunnels,
+   useTunnel,
+} from '@dailykit/ui'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
 import { Tooltip } from '../../../../../shared/components/Tooltip'
@@ -12,25 +21,19 @@ import { StyledTableActions, StyledTableHeader, StyledWrapper } from '../styled'
 import BulkItemsListings from './bulkItemsListing'
 import SupplierItemsListings from './supplierItemListing'
 import { Banner } from '../../../../../shared/components'
-import { SUPPLIER_ITEMS_LISTINGS_BULK, SUPPLIER_ITEM_LISTINGS } from '../../../graphql'
+import {
+   SUPPLIER_ITEMS_LISTINGS_BULK,
+   SUPPLIER_ITEM_LISTINGS,
+} from '../../../graphql'
 import { useSubscription } from '@apollo/react-hooks'
-import { ErrorState, InlineLoader} from '../../../../../shared/components'
+import { ErrorState, InlineLoader } from '../../../../../shared/components'
+import CreateItem from '../../../../../shared/CreateUtils/Inventory/createItem'
 
 export default function ItemListing() {
    const { addTab } = useTabs()
    const [view, setView] = useState('supplierItems')
+   const [itemTunnels, openItemTunnel, closeItemTunnel] = useTunnel(1)
 
-   const [createItem] = useMutation(CREATE_ITEM, {
-      onCompleted: input => {
-         const itemData = input.createSupplierItem.returning[0]
-         addTab(itemData.name, `/inventory/items/${itemData.id}`)
-         toast.success('Supplier Item Added!')
-      },
-      onError: error => {
-         logger(error)
-         toast.error(GENERAL_ERROR_MESSAGE)
-      },
-   })
    const {
       loading: bulkLoading,
       data: { bulkItems = [] } = {},
@@ -46,18 +49,6 @@ export default function ItemListing() {
       { id: 'bulkItems', title: 'Bulk Items' },
    ]
 
-   const createItemHandler = () => {
-      // create item in DB
-      const name = `item-${randomSuffix()}`
-      createItem({
-         variables: {
-            object: {
-               name,
-            },
-         },
-      })
-   }
-
    const tableRef = React.useRef()
 
    const renderTables = view => {
@@ -72,26 +63,33 @@ export default function ItemListing() {
             break
       }
    }
-   if( bulkError || simpleError ){
-      if(bulkError){
-      toast.error( 'Failed to fetch supplier count')
-      logger(bulkError)
-      return <ErrorState message='Could not get Supplier Items data' />}
-      else{
-      toast.error( 'Failed to fetch supplier count')
-      logger(simpleError)
-      return <ErrorState message='Could not get Bulk items data' />} 
+   if (bulkError || simpleError) {
+      if (bulkError) {
+         toast.error('Failed to fetch supplier count')
+         logger(bulkError)
+         return <ErrorState message="Could not get Supplier Items data" />
+      } else {
+         toast.error('Failed to fetch supplier count')
+         logger(simpleError)
+         return <ErrorState message="Could not get Bulk items data" />
+      }
    }
    if (bulkLoading || simpleLoading) return <InlineLoader />
    return (
       <StyledWrapper>
          <Banner id="inventory-app-items-listing-top" />
+         <Tunnels tunnels={itemTunnels}>
+            <Tunnel layer={1} size="md">
+               <CreateItem closeTunnel={closeItemTunnel} />
+            </Tunnel>
+         </Tunnels>
          <StyledTableHeader>
             <Flex container alignItems="center">
-            {
-               view === 'supplierItems' ? (<Text as="h2">Supplier Items({supplierItems.length})</Text>)
-               : (<Text as="h2">Supplier Items({bulkItems.length})</Text>)
-            }
+               {view === 'supplierItems' ? (
+                  <Text as="h2">Supplier Items({supplierItems.length})</Text>
+               ) : (
+                  <Text as="h2">Supplier Items({bulkItems.length})</Text>
+               )}
                <Tooltip identifier="items_listings_header_title" />
             </Flex>
             <StyledTableActions>
@@ -101,7 +99,7 @@ export default function ItemListing() {
                >
                   Clear Filters
                </TextButton>
-               <ComboButton type="solid" onClick={createItemHandler}>
+               <ComboButton type="solid" onClick={() => openItemTunnel(1)}>
                   <AddIcon color="#fff" size={24} /> Add Item
                </ComboButton>
             </StyledTableActions>

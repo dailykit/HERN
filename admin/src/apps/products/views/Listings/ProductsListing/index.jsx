@@ -53,6 +53,7 @@ import { DeleteIcon } from '../../../../../shared/assets/icons'
 import FilterIcon from '../../../assets/icons/Filter'
 import { ModifiersProvider } from './context/modifier'
 import { PublishIcon, UnPublishIcon } from '../../../assets/icons'
+import CreateProduct from '../../../../../shared/CreateUtils/Product/createProduct'
 const address = 'apps.menu.views.listings.productslisting.'
 
 //currencies
@@ -71,6 +72,7 @@ const ProductsListing = () => {
    const tableRefPO = React.useRef()
    const [view, setView] = React.useState('simple')
    const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
+
    const [selectedRows, setSelectedRows] = React.useState([])
    const [isProductOptionTableVisible, setIsProductOptionTableVisible] =
       React.useState(false)
@@ -150,7 +152,7 @@ const ProductsListing = () => {
             </Tunnel>
             <Tunnel layer={2}></Tunnel>
             <Tunnel layer={3}>
-               <ProductTypeTunnel close={closeTunnel} />
+               <CreateProduct close={closeTunnel} />
             </Tunnel>
          </Tunnels>
 
@@ -164,6 +166,7 @@ const ProductsListing = () => {
             >
                <Banner id="products-app-products-listing-top" />
                <Flex container alignItems="center">
+
                   <Text as="h2" style={{ marginBottom: 0 }}>
                      {t(address.concat('products'))}
                   </Text>
@@ -372,8 +375,8 @@ class DataTable extends React.Component {
       )
       const productGroupParse =
          productGroup !== undefined &&
-         productGroup !== null &&
-         productGroup.length !== 0
+            productGroup !== null &&
+            productGroup.length !== 0
             ? JSON.parse(productGroup)
             : null
       this.tableRef.current.table.setGroupBy(
@@ -437,7 +440,6 @@ class DataTable extends React.Component {
          `${this.props.view}_product_table.xlsx`
       )
    }
-
    clearProductPersistence = () => {
       localStorage.removeItem('tabulator-simple_product_table-columns')
       localStorage.removeItem('tabulator-simple_product_table-sort')
@@ -463,36 +465,36 @@ class DataTable extends React.Component {
    render() {
       const selectionColumn =
          this.props.selectedRows.length > 0 &&
-         this.props.selectedRows.length < this.props.data.length
+            this.props.selectedRows.length < this.props.data.length
             ? {
-                 formatter: 'rowSelection',
-                 titleFormatter: reactFormatter(
-                    <CrossBox
-                       removeSelectedProducts={this.removeSelectedProducts}
-                    />
-                 ),
-                 align: 'center',
-                 hozAlign: 'center',
-                 width: 10,
-                 headerSort: false,
-                 frozen: true,
-              }
+               formatter: 'rowSelection',
+               titleFormatter: reactFormatter(
+                  <CrossBox
+                     removeSelectedProducts={this.removeSelectedProducts}
+                  />
+               ),
+               align: 'center',
+               hozAlign: 'center',
+               width: 10,
+               headerSort: false,
+               frozen: true,
+            }
             : {
-                 formatter: 'rowSelection',
-                 titleFormatter: reactFormatter(
-                    <CheckBox
-                       checked={this.state.checked}
-                       handleMultipleRowSelection={
-                          this.handleMultipleRowSelection
-                       }
-                    />
-                 ),
-                 align: 'center',
-                 hozAlign: 'center',
-                 width: 20,
-                 headerSort: false,
-                 frozen: true,
-              }
+               formatter: 'rowSelection',
+               titleFormatter: reactFormatter(
+                  <CheckBox
+                     checked={this.state.checked}
+                     handleMultipleRowSelection={
+                        this.handleMultipleRowSelection
+                     }
+                  />
+               ),
+               align: 'center',
+               hozAlign: 'center',
+               width: 20,
+               headerSort: false,
+               frozen: true,
+            }
       return (
          <>
             {this.props.view == 'simple' && (
@@ -534,9 +536,8 @@ class DataTable extends React.Component {
                                  rowSelected={this.handleRowSelection}
                                  rowDeselected={this.handleDeSelection}
                                  options={{
-                                    ...tableOptions,
-                                    persistenceID: `${this.props.view}_product_table`,
-                                    reactiveData: true,
+                                    ...tableOptions, persistenceID: `${this.props.view}_product_table`,
+                                    reactiveData: true
                                  }}
                                  data-custom-attr="test-custom-attribute"
                                  className="custom-css-class"
@@ -586,9 +587,8 @@ class DataTable extends React.Component {
                         rowSelected={this.handleRowSelection}
                         rowDeselected={this.handleDeSelection}
                         options={{
-                           ...tableOptions,
-                           persistenceID: `${this.props.view}_product_table`,
-                           reactiveData: true,
+                           ...tableOptions, persistenceID: `${this.props.view}_product_table`,
+                           reactiveData: true
                         }}
                         data-custom-attr="test-custom-attribute"
                         className="custom-css-class"
@@ -673,11 +673,10 @@ const ActionBar = ({
       const productGroup = localStorage.getItem(
          `tabulator-${title}_table-group`
       )
-
       const productGroupParse =
          productGroup !== undefined &&
-         productGroup !== null &&
-         productGroup.length !== 0
+            productGroup !== null &&
+            productGroup.length !== 0
             ? JSON.parse(productGroup)
             : null
       if (productGroupParse !== null) {
@@ -719,8 +718,8 @@ const ActionBar = ({
                   {selectedRows.length == 0
                      ? `No ${title}`
                      : selectedRows.length == 1
-                     ? `${selectedRows.length} ${title}`
-                     : `${selectedRows.length} ${title}s`}{' '}
+                        ? `${selectedRows.length} ${title}`
+                        : `${selectedRows.length} ${title}s`}{' '}
                   selected
                </Text>
                <ButtonGroup align="left">
@@ -882,7 +881,7 @@ const ProductOptions = forwardRef(
             setProductOptionsList(newOptions)
          },
       })
-      useEffect(() => {}, [])
+      useEffect(() => { }, [])
       const columns = [
          {
             title: 'Label',
@@ -962,6 +961,7 @@ const ProductOptions = forwardRef(
       }
 
       const handleGroupBy = option => {
+
          tableRef.current.table.setGroupBy(['label', ...option])
       }
       const handleRowSelection = ({ _row }) => {
@@ -971,8 +971,8 @@ const ProductOptions = forwardRef(
          )
          const lastPersistenceParse =
             lastPersistence !== undefined &&
-            lastPersistence !== null &&
-            lastPersistence.length !== 0
+               lastPersistence !== null &&
+               lastPersistence.length !== 0
                ? JSON.parse(lastPersistence)
                : []
          setSelectedRows(prevState => [...prevState, _row.getData()])
@@ -989,8 +989,8 @@ const ProductOptions = forwardRef(
          )
          const lastPersistenceParse =
             lastPersistence !== undefined &&
-            lastPersistence !== null &&
-            lastPersistence.length !== 0
+               lastPersistence !== null &&
+               lastPersistence.length !== 0
                ? JSON.parse(lastPersistence)
                : []
          setSelectedRows(prevState =>
@@ -1016,8 +1016,8 @@ const ProductOptions = forwardRef(
          )
          const productOptionsGroupParse =
             productOptionsGroup !== undefined &&
-            productOptionsGroup !== null &&
-            productOptionsGroup.length !== 0
+               productOptionsGroup !== null &&
+               productOptionsGroup.length !== 0
                ? JSON.parse(productOptionsGroup)
                : null
          tableRef.current.table.setGroupBy(
@@ -1143,7 +1143,6 @@ const ProductOptions = forwardRef(
                  headerSort: false,
                  frozen: true,
               }
-
       return (
          <>
             <ActionBar

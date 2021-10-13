@@ -10,7 +10,18 @@ export const CREATE_INGREDIENT = gql`
       }
    }
 `
-
+export const CREATE_INGREDIENTS = gql`
+   mutation CreateIngredients(
+      $objects: [ingredient_ingredient_insert_input!]!
+   ) {
+      createIngredient(objects: $objects) {
+         returning {
+            id
+            name
+         }
+      }
+   }
+`
 export const DELETE_INGREDIENTS = gql`
    mutation DeleteIngredients($ids: [Int!]!) {
       updateIngredient(
