@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Flex, IconButton } from '@dailykit/ui'
+import { Flex } from '@dailykit/ui'
 import { useToasts } from 'react-toast-notifications'
 import { useMutation, useSubscription } from '@apollo/client'
 import { Tag, Button } from 'antd'
@@ -8,7 +8,6 @@ import ParticipantForm from '../ParticipantForm'
 import Modal from '../../../Modal'
 import InlineLoader from '../../../InlineLoader'
 
-import useModal from '../../../useModal'
 import {
    ChevronRight,
    ChevronDown,
@@ -25,16 +24,11 @@ import {
    DELETE_EXPERIENCE_PARTICIPANTS
 } from '../../../../graphql'
 import { theme } from '../../../../theme'
-import {
-   useWindowDimensions,
-   IsEmailValid,
-   isPhoneNumberValid
-} from '../../../../utils'
+import { IsEmailValid, isPhoneNumberValid } from '../../../../utils'
 
 export default function ManageParticipant({ experienceBookingId }) {
-   const { ModalContainer, isShow, show, hide } = useModal()
-   const { width } = useWindowDimensions()
    const { addToast } = useToasts()
+   const [isModalVisible, setIsModalVisible] = useState(false)
    const [activeParticipantId, setActiveParticipantId] = useState(null)
    const [selectedParticipant, setSelectedParticipant] = useState(null)
    const [isValid, setIsValid] = useState(false)
@@ -147,10 +141,16 @@ export default function ManageParticipant({ experienceBookingId }) {
       }
    }
 
-   // handler for onClick event on the edit icon
+   // handler for onClick event on the edit icon and open the modal
    const onClickEdit = participant => {
       setSelectedParticipant(participant)
-      show()
+      setIsModalVisible(true)
+   }
+
+   // handler for closing the modal
+
+   const closeModal = () => {
+      setIsModalVisible(false)
    }
 
    // mutation handler for updating the participant info
@@ -401,24 +401,23 @@ export default function ManageParticipant({ experienceBookingId }) {
          ) : (
             <h3>No participants yet</h3>
          )}
-         <ModalContainer isShow={isShow}>
-            <Modal
-               isOpen={isShow}
-               type="popup"
-               close={hide}
-               showActionButton={true}
-               actionButtonTitle="Save"
-               actionHandler={saveHandler}
-               disabledActionButton={isDisabled}
-            >
-               <ParticipantForm
-                  form={form}
-                  onChange={onFormChangeHandler}
-                  isValidFunc={valid => setIsValid(valid)}
-                  defaultAddress={selectedParticipant?.childCart?.address}
-               />
-            </Modal>
-         </ModalContainer>
+         <Modal
+            isOpen={isModalVisible}
+            title="Edit Participant Details"
+            type="popup"
+            close={closeModal}
+            showActionButton={true}
+            actionButtonTitle="Save"
+            actionHandler={saveHandler}
+            disabledActionButton={isDisabled}
+         >
+            <ParticipantForm
+               form={form}
+               onChange={onFormChangeHandler}
+               isValidFunc={valid => setIsValid(valid)}
+               defaultAddress={selectedParticipant?.childCart?.address}
+            />
+         </Modal>
       </Wrapper>
    )
 }

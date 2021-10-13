@@ -106,3 +106,11 @@ export const ModalDiv = styled.div`
       overflow: auto;
    }
 `
+
+export const StyledTitle = styled.h1`
+   font-weight: 400;
+   color: ${theme.colors.textColor};
+   font-family: League-Gothic;
+   font-size: 38px;
+   margin: 0;
+`

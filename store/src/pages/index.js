@@ -1,18 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
 import ReactHtmlParser from 'react-html-parser'
-import NavLink from 'next/link'
 import { useRouter } from 'next/router'
 import { useSubscription } from '@apollo/client'
 import { Flex } from '@dailykit/ui'
 import styled from 'styled-components'
 import {
-   Card,
-   ChevronDown,
-   ChevronRight,
    Button,
    EditIcon,
    Modal,
-   useModal,
    SEO,
    Layout,
    Tags,
@@ -21,38 +16,25 @@ import {
 import { theme } from '../theme'
 import { getNavigationMenuItems } from '../lib'
 import { useUser } from '../Providers'
-import { useWindowDimensions, isEmpty, fileParser } from '../utils'
+import { isEmpty, fileParser } from '../utils'
 import {
    CATEGORY_EXPERIENCE,
    EXPERT_BY_CATEGORY,
    CUSTOMER_SELECTED_TAGS
 } from '../graphql'
-import { ExperienceSkeleton, ExpertSkeleton } from '../components'
+import { ExperienceSkeleton } from '../components'
 import { getBannerData } from '../lib/getBannerData'
 
 export default function Home({ navigationMenuItems = [], parsedData = [] }) {
-   const {
-      ModalContainer: TagsModalContainer,
-      isShow: isTagsShow,
-      show: showTags,
-      hide: hideTags
-   } = useModal()
    const { state } = useUser()
-
    const { user = {} } = state
    const router = useRouter()
-   const { width } = useWindowDimensions()
+   const [isTagsModalVisible, setTagsModalVisible] = useState(false)
    const [iconSize, setIconSize] = useState('14px')
    const [categories, setCategories] = useState([])
    const [experts, setExperts] = useState([])
    const [tagIds, setTagIds] = useState([])
    const [isLoading, setIsLoading] = useState(true)
-   const breakpointColumnsObj = {
-      default: 4,
-      1100: 3,
-      700: 2,
-      500: 1
-   }
    const homeTop01 = useRef()
    const homeTop02 = useRef()
    const homeBottom01 = useRef()
@@ -119,6 +101,13 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
       router.push('/experiences')
    }
 
+   const openTagsModal = () => {
+      setTagsModalVisible(true)
+   }
+   const closeTagsModal = () => {
+      setTagsModalVisible(false)
+   }
+
    useEffect(() => {
       if (parsedData.length && typeof document !== 'undefined') {
          /*Filter undefined scripts*/
@@ -151,60 +140,6 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
                      parsedData.find(fold => fold.id === 'home-top-01')?.content
                   )}
             </div>
-            {/* <GreetingDiv>
-               <div className="forDesktop">
-                  {isAuthenticated ? (
-                     <>
-                        <h1 className="greeting-name">
-                           Hey {user?.firstName && user?.firstName}{' '}
-                           {user?.lastName && user?.lastName}
-                        </h1>
-                        <p className="greeting-msg">
-                           Check out these experiences we handpicked for you.
-                           You can also manage your booked events below.
-                        </p>
-                     </>
-                  ) : (
-                     <>
-                        <h1 className="greeting-name">
-                           Welcome to StayInSocial
-                        </h1>
-                        <p className="greeting-msg">
-                           Discover and book unique experiences hosted in your
-                           home.
-                        </p>
-                     </>
-                  )}
-               </div>
-               <div className="forMobile">
-                  {isAuthenticated ? (
-                     <>
-                        <h1 className="greeting-name">Hey {user?.email}</h1>
-                        <p className="greeting-msg">
-                           Check out these experiences we handpicked for you.
-                           You can also manage your booked events below.
-                        </p>
-                     </>
-                  ) : (
-                     <>
-                        <NavLink href="/login" className="buttonWrapper">
-                           <Button className="loginBtn">Log in</Button>
-                        </NavLink>
-                        <p className="separatorNote">
-                           Already have an account?
-                        </p>
-                        <NavLink href="/signup" className="buttonWrapper">
-                           <Button
-                              backgroundColor={theme.colors.secondaryColor}
-                              className="signupBtn"
-                           >
-                              Sign Up
-                           </Button>
-                        </NavLink>
-                     </>
-                  )}
-               </div>
-            </GreetingDiv> */}
             <div style={{ margin: '2rem' }}>
                {!isEmpty(categories) && (
                   <RenderCard
@@ -284,7 +219,7 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
                         )}
 
                         <div className="edit_tags">
-                           <h1 onClick={showTags} className="explore ">
+                           <h1 onClick={openTagsModal} className="explore ">
                               Edit tags
                            </h1>
                            <EditIcon
@@ -295,13 +230,13 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
                      </CategorySection>
                   )}
             </div>
-            <TagsModalContainer isShow={isTagsShow}>
-               <Modal type="popup" isOpen={isTagsShow} close={hideTags}>
-                  {/* <div style={{ padding: '1rem' }}> */}
-                  <Tags onSubmit={hideTags} />
-                  {/* </div> */}
-               </Modal>
-            </TagsModalContainer>
+            <Modal
+               type="popup"
+               isOpen={isTagsModalVisible}
+               close={closeTagsModal}
+            >
+               <Tags onSubmit={closeTagsModal} />
+            </Modal>
             <div ref={homeBottom01} id="home-bottom-01">
                {Boolean(parsedData.length) &&
                   ReactHtmlParser(

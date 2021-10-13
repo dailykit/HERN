@@ -63,7 +63,7 @@ export default function InviteThrough({ onChange, isReset = false }) {
    }, [isReset])
    return (
       <Wrapper>
-         <h1 className="invite-h1-head text2">Invite Participants</h1>
+         {/* <h1 className="invite-h1-head text2">Invite Participants</h1> */}
          <div className="main_container">
             <p className="proxinova_text label text8">Email/Phone</p>
             <small className="proxinova_text small_text text11">

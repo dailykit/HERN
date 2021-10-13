@@ -6,7 +6,6 @@ import { Wrapper } from './styles'
 import {
    Button,
    Modal,
-   useModal,
    InviteThrough,
    CopyIcon,
    SocialShare
@@ -21,11 +20,11 @@ import {
 import { useWindowDimensions, get_env, isNumeric } from '../../../../utils'
 
 export default function Invite({ experienceBooking, isPollClosed }) {
-   const { ModalContainer, isShow, show, hide } = useModal()
    const { addToast } = useToasts()
    const { width } = useWindowDimensions()
    const { state: userState } = useUser()
    const { user = {} } = userState
+   const [isModalVisible, setIsModalVisible] = useState(false)
    const [inviteList, setInviteList] = useState([])
    const [isReset, setIsReset] = useState(false)
    const [copyBtnClasses, setCopyBtnClasses] = useState(['customBtn'])
@@ -63,9 +62,9 @@ export default function Invite({ experienceBooking, isPollClosed }) {
       }
    })
 
-   const openDrawer = () => {
+   const openModal = () => {
       setIsReset(false)
-      show()
+      setIsModalVisible(true)
    }
 
    const copyHandler = async () => {
@@ -146,7 +145,7 @@ export default function Invite({ experienceBooking, isPollClosed }) {
          })
          setInviteList([])
          setIsReset(true)
-         hide()
+         setIsModalVisible(false)
       }
    }
 
@@ -183,30 +182,28 @@ export default function Invite({ experienceBooking, isPollClosed }) {
             <p className="or">OR</p>
             <Button
                disabled={isPollClosed}
-               onClick={openDrawer}
+               onClick={openModal}
                className="customBtn"
             >
                Invite via Email & Phone
             </Button>
          </div>
-         <ModalContainer isShow={isShow}>
-            <Modal
-               isOpen={isShow}
-               close={hide}
-               type={width > 769 ? 'sideDrawer' : 'bottomDrawer'}
-               showActionButton={true}
-               actionButtonTitle="Send Invite"
-               actionHandler={sendInvitation}
-               disabledActionButton={
-                  isSendingEmail || isSendingSms || inviteList.length === 0
-               }
-            >
-               <InviteThrough
-                  isReset={isReset}
-                  onChange={list => setInviteList(list)}
-               />
-            </Modal>
-         </ModalContainer>
+         <Modal
+            isOpen={isModalVisible}
+            close={() => setIsModalVisible(false)}
+            type={width > 769 ? 'sideDrawer' : 'bottomDrawer'}
+            showActionButton={true}
+            actionButtonTitle="Send Invite"
+            actionHandler={sendInvitation}
+            disabledActionButton={
+               isSendingEmail || isSendingSms || inviteList.length === 0
+            }
+         >
+            <InviteThrough
+               isReset={isReset}
+               onChange={list => setInviteList(list)}
+            />
+         </Modal>
       </Wrapper>
    )
 }

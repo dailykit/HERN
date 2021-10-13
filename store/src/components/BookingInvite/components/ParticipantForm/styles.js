@@ -5,7 +5,6 @@ export const Wrapper = styled.div`
    width: 100%;
    height: 100%;
    color: ${theme.colors.textColor4};
-   padding: 1rem;
    .proxinova_text {
       font-family: Proxima Nova;
       font-style: normal;
@@ -16,7 +15,7 @@ export const Wrapper = styled.div`
    }
    .main_container {
       width: 100%;
-      margin: 2rem auto;
+      margin: 0 auto;
    }
    .edit-tunnel-header {
       font-weight: 600;

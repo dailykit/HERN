@@ -20,7 +20,6 @@ import {
    GoodiesWrapper,
    Ingredients,
    Modal,
-   useModal,
    GridComponent,
    ReadMoreDiv,
    CustomScrollbar,
@@ -45,7 +44,6 @@ import SendPollComp from '../../../pageComponents/sendPollComponents'
 export default function Experience({ navigationMenuItems, parsedData = [] }) {
    const router = useRouter()
    const { experienceId } = router.query
-   const { ModalContainer, isShow, show, hide } = useModal()
    const experienceTop01 = useRef()
    const experienceTop02 = useRef()
    const experienceBottom01 = useRef()
@@ -54,6 +52,7 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
    const { getCart } = useCart()
    const cart = getCart(experienceId)
    const { width } = useWindowDimensions()
+   const [isSendPollModalVisible, setIsSendPollModalVisible] = useState(false)
    const [iconSize, setIconSize] = useState('14px')
    const [gridComponentData, setGridComponentData] = useState({
       videos: [],
@@ -135,6 +134,13 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
 
    const onBookClickHandler = () => {
       setIsBookingPageOpen(true)
+   }
+
+   const openSendPollModal = () => {
+      setIsSendPollModalVisible(true)
+   }
+   const closeSendPollModal = () => {
+      setIsSendPollModalVisible(false)
    }
 
    useEffect(() => {
@@ -348,7 +354,7 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
                            </h1>
                            {width > 769 && (
                               <Button
-                                 onClick={show}
+                                 onClick={openSendPollModal}
                                  className="customPollBtn text7"
                               >
                                  SEND POLL
@@ -487,13 +493,15 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
                </Button>
             </div>
             {width > 769 && (
-               <ModalContainer isShow={isShow}>
-                  <Modal type="sideDrawer" isOpen={isShow} close={hide}>
-                     <div className="modal-content">
-                        <SendPollComp experienceId={experienceId} />
-                     </div>
-                  </Modal>
-               </ModalContainer>
+               <Modal
+                  type="popup"
+                  isOpen={isSendPollModalVisible}
+                  close={closeSendPollModal}
+               >
+                  <div className="modal-content">
+                     <SendPollComp experienceId={experienceId} />
+                  </div>
+               </Modal>
             )}
          </StyledWrapper>
          {isBookingPageOpen && (

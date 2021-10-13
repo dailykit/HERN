@@ -1,53 +1,30 @@
-import React, { useState, useContext } from 'react'
-import { Flex, Loader } from '@dailykit/ui'
+import React, { useState } from 'react'
 import NavLink from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { useQuery, useSubscription } from '@apollo/client'
+import { useSubscription } from '@apollo/client'
 import { useToasts } from 'react-toast-notifications'
 import { Avatar, Badge } from 'antd'
-import { NavBar, Wrapper } from './styles'
+import { NavBar } from './styles'
 import DynamicMenu from './dynamicMenu'
-import DropdownMenu from './dropdown'
 import CartDropdownMenu from './cartDropdown'
 import ProfileDropdownMenu from './profileDropdown'
-import FloatingCartButton from './floatingCart'
 import Sidebar from './sidebar'
 import Button from '../Button'
-import InlineLoader from '../InlineLoader'
 import Modal from '../Modal'
-import { CartIcon, SpinnerIcon, UserIcon, MenuIcon, CrossIcon } from '../Icons'
-import useModal from '../useModal'
+import { CartIcon, UserIcon } from '../Icons'
 import { useUser } from '../../Providers'
-import { useConfig } from '../../lib'
-import { NAVBAR_MENU, CART_INFO } from '../../graphql'
+import { CART_INFO } from '../../graphql'
 import { theme } from '../../theme.js'
-import { isClient, useWindowDimensions } from '../../utils'
 import Login from '../login'
-import Signup from '../signup'
-import ForgotPassword from '../login/forgotPassword'
 
 export default function NavBarComp({ navigationMenuItems }) {
-   const { width } = useWindowDimensions()
-   const [isFloatingButtonVisible, SetIsFloatingButtonVisible] = useState(false)
    const [isSidebarButtonVisible, SetIsSidebarButtonVisible] = useState(false)
    const { pathname } = useRouter()
-   const {
-      ModalContainer: LoginModalContainer,
-      isShow: isLoginShow,
-      show: showLogin,
-      hide: hideLogin
-   } = useModal()
-   const {
-      ModalContainer: SignupModalContainer,
-      isShow: isSignupShow,
-      show: showSignup,
-      hide: hideSignup
-   } = useModal()
    const { addToast } = useToasts()
-   const { brand } = useConfig()
    const { state } = useUser()
    const { isAuthenticated = false, user = {}, loading } = state
+   const [isModalVisible, setIsModalVisible] = useState(false)
    const [showContent, setShowContent] = useState('login')
 
    const [profileItems] = useState([
@@ -79,9 +56,12 @@ export default function NavBarComp({ navigationMenuItems }) {
       }
    })
 
+   const openModal = () => {
+      setIsModalVisible(true)
+   }
    const closeModal = () => {
       setShowContent('login')
-      hideLogin()
+      setIsModalVisible(false)
    }
 
    if (cartsError) {
@@ -99,15 +79,6 @@ export default function NavBarComp({ navigationMenuItems }) {
             hideSidebarButton={() => SetIsSidebarButtonVisible(false)}
             cartCount={carts.length}
          />
-         {/* <FloatingCartButton
-            carts={carts}
-            isFloatingButtonVisible={isFloatingButtonVisible}
-            toggleFloatingButton={() =>
-               SetIsFloatingButtonVisible(prev => !prev)
-            }
-            showFloatingButton={() => SetIsFloatingButtonVisible(true)}
-            hideFloatingButton={() => SetIsFloatingButtonVisible(false)}
-         /> */}
          <NavBar cartCount={carts.lenth}>
             <div className="brand-logo-div">
                <Image
@@ -191,7 +162,7 @@ export default function NavBarComp({ navigationMenuItems }) {
                </>
             ) : (
                <ul className="nav-list">
-                  <li onClick={showLogin} className="buttonWrapper">
+                  <li onClick={openModal} className="buttonWrapper">
                      <Button
                         className="customBtn text10"
                         textColor={theme.colors.textColor}
@@ -203,16 +174,14 @@ export default function NavBarComp({ navigationMenuItems }) {
                </ul>
             )}
 
-            <LoginModalContainer isShow={isLoginShow}>
-               <Modal isOpen={isLoginShow} close={closeModal} type="popup">
-                  <Login
-                     isOpen={isLoginShow}
-                     showContent={showContent}
-                     setShowContent={setShowContent}
-                     authBtnClassName="auth-btn"
-                  />
-               </Modal>
-            </LoginModalContainer>
+            <Modal isOpen={isModalVisible} close={closeModal} type="popup">
+               <Login
+                  isOpen={isModalVisible}
+                  showContent={showContent}
+                  setShowContent={setShowContent}
+                  authBtnClassName="auth-btn"
+               />
+            </Modal>
          </NavBar>
       </>
    )

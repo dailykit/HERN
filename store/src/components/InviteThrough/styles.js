@@ -2,9 +2,7 @@ import styled from 'styled-components'
 import { theme } from '../../theme'
 
 export const Wrapper = styled.div`
-   padding: 1rem;
    color: ${theme.colors.textColor5};
-   margin-bottom: 5rem;
    .proxinova_text {
       font-family: Proxima Nova;
       font-style: normal;
@@ -15,7 +13,7 @@ export const Wrapper = styled.div`
    }
    .main_container {
       width: 100%;
-      margin: 2rem auto;
+      margin: 0 auto;
    }
    .label {
       color: ${theme.colors.textColor7};

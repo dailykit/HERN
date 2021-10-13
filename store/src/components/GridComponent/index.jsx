@@ -4,7 +4,6 @@ import { GridView, StyledWrapper } from './style.js'
 import ReactPlayer from 'react-player'
 import Modal from './modal'
 import Button from '../Button'
-import useModal from '../useModal'
 import { ChevronLeft, ChevronRight } from '../Icons/index.js'
 import { theme } from '../../theme'
 import { useWindowDimensions } from '../../utils'
@@ -16,8 +15,8 @@ const GridComp = ({
    },
    layout = 'single'
 }) => {
-   const { ModalContainer, isShow, show, hide } = useModal()
    const { width } = useWindowDimensions()
+   const [isModalVisible, setIsModalVisible] = React.useState(false)
    const [urls, setUrls] = React.useState([])
    const [showIndex, setShowIndex] = React.useState(0)
    const next = () => {
@@ -34,6 +33,14 @@ const GridComp = ({
          setShowIndex(prev => prev - 1)
       }
    }
+
+   const openModal = () => {
+      setIsModalVisible(true)
+   }
+   const closeModal = () => {
+      setIsModalVisible(false)
+   }
+
    React.useEffect(() => {
       const videoUrls = data?.videos.map(video => {
          return {
@@ -93,7 +100,7 @@ const GridComp = ({
                      )}
                   </GridView>
                   {width > 769 && (
-                     <Button onClick={show} className="show-all-btn">
+                     <Button onClick={openModal} className="show-all-btn">
                         Show All {urls.length} images
                      </Button>
                   )}
@@ -134,9 +141,7 @@ const GridComp = ({
                </>
             )}
          </StyledWrapper>
-         <ModalContainer isShow={isShow}>
-            <Modal open={show} close={hide} urls={urls} />
-         </ModalContainer>
+         <Modal open={isModalVisible} close={closeModal} urls={urls} />
       </>
    )
 }

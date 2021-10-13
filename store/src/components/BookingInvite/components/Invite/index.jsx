@@ -10,7 +10,6 @@ import {
    CopyIcon,
    SocialShare
 } from '../../../../components'
-import useModal from '../../../useModal'
 import { theme } from '../../../../theme'
 import { useUser } from '../../../../Providers'
 import {
@@ -18,13 +17,11 @@ import {
    SEND_SMS,
    CREATE_EXPERIENCE_BOOKING_PARTICIPANT
 } from '../../../../graphql'
-import { useWindowDimensions, get_env, isNumeric } from '../../../../utils'
+import { get_env, isNumeric } from '../../../../utils'
 
 export default function Invite({ experienceBooking, isPollClosed }) {
-   console.log('Check expBookingINfo', experienceBooking)
-   const { ModalContainer, show, hide, isShow } = useModal()
+   const [isInviteModalVisible, setIsInviteModalVisible] = useState(false)
    const { addToast } = useToasts()
-   const { width } = useWindowDimensions()
    const { state: userState } = useUser()
    const { user = {} } = userState
    const [inviteList, setInviteList] = useState([])
@@ -64,9 +61,9 @@ export default function Invite({ experienceBooking, isPollClosed }) {
       }
    })
 
-   const openDrawer = () => {
+   const openInviteModal = () => {
       setIsReset(false)
-      show()
+      setIsInviteModalVisible(true)
    }
 
    const copyHandler = async () => {
@@ -174,7 +171,7 @@ export default function Invite({ experienceBooking, isPollClosed }) {
          })
          setInviteList([])
          setIsReset(true)
-         hide()
+         setIsInviteModalVisible(false)
       }
    }
 
@@ -211,31 +208,30 @@ export default function Invite({ experienceBooking, isPollClosed }) {
             <p className="or">OR</p>
             <Button
                disabled={isPollClosed}
-               onClick={openDrawer}
+               onClick={openInviteModal}
                className="customBtn text6"
             >
                Invite via Email & Phone
             </Button>
          </div>
 
-         <ModalContainer isShow={isShow}>
-            <Modal
-               isOpen={isShow}
-               close={hide}
-               type="popup"
-               showActionButton={true}
-               actionButtonTitle="Send Invite"
-               actionHandler={sendInvitation}
-               disabledActionButton={
-                  isSendingEmail || isSendingSms || inviteList.length === 0
-               }
-            >
-               <InviteThrough
-                  isReset={isReset}
-                  onChange={list => setInviteList(list)}
-               />
-            </Modal>
-         </ModalContainer>
+         <Modal
+            isOpen={isInviteModalVisible}
+            title="Invite Participants"
+            close={() => setIsInviteModalVisible(false)}
+            type="popup"
+            showActionButton={true}
+            actionButtonTitle="Send Invite"
+            actionHandler={sendInvitation}
+            disabledActionButton={
+               isSendingEmail || isSendingSms || inviteList.length === 0
+            }
+         >
+            <InviteThrough
+               isReset={isReset}
+               onChange={list => setInviteList(list)}
+            />
+         </Modal>
       </Wrapper>
    )
 }

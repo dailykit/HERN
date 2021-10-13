@@ -21,7 +21,7 @@ export default function ParticipantForm({
 
    return (
       <Wrapper>
-         <h1 className="edit-tunnel-header text2">Edit Participant Details</h1>
+         {/* <h1 className="edit-tunnel-header text2">Edit Participant Details</h1> */}
          <div className="main_container">
             <p className="input-label text8">Email*</p>
             <Input
