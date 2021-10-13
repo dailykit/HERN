@@ -4,20 +4,17 @@ import { InlineLoader } from '../../../../../../../shared/components'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { DeleteIcon, EditIcon } from '../../../../../../../shared/assets/icons'
-import { StyledWrapper, WrapDiv, Child } from './styled'
+import { StyledWrapper } from './styled'
 
 import { logger } from '../../../../../../../shared/utils'
 import { Tooltip, Row, Col, Typography, Card } from 'antd'
 import { useTabs } from '../../../../../../../shared/providers'
-import { SEO_DETAILS, UPDATE_WEBPAGE, PAGE_INFO } from '../../../../../graphql'
-import ContentSelection from '../../ContentSelection'
+import { SEO_DETAILS, UPDATE_BRANDS_SEO } from '../../../../../graphql'
 import BrandContext from '../../../../../context/Brand'
-import { PagePreviewTunnel } from '../../Tunnel'
 import { Form, Input } from 'antd'
 import { InfoCircleOutlined } from '@ant-design/icons'
 
-const SEObasics = () => {
+const SEObasics = ({ routeName }) => {
     const { Text, Title } = Typography
     const { addTab, tab, setTabTitle, closeAllTabs } = useTabs()
     const [context, setContext] = useContext(BrandContext)
@@ -57,72 +54,34 @@ const SEObasics = () => {
     })
     const [state, setState] = useState({})
     const [metaDetailsState, setMetaDetailsState] = useState({})
-    const [toggle, setToggle] = useState(false)
-    const [editableStr, setEditableStr] = useState(pageRoute.value)
     const { TextArea } = Input
-    // form validation
-    const validatePageName = (value, name) => {
-        const text = value.trim()
-        let isValid = true
-        let errors = []
-        if (name === 'pageTitle') {
-            if (text.length < 2) {
-                isValid = false
-                errors = [...errors, 'Must have atleast two letters.']
-            }
-        } else {
-            if (text.length < 1) {
-                isValid = false
-                errors = [...errors, 'Must have atleast one letters.']
-            }
-            if (!text.includes('/')) {
-                isValid = false
-                errors = [...errors, 'Invalid route!Must start with ' / '.']
-            }
-        }
-        return { isValid, errors }
-    }
 
-    // Subscription
-
-    const { loading: pageLoading, error: pageLoadingError } = useSubscription(
-        PAGE_INFO,
-        {
-            variables: {
-                pageId,
-            },
-            onSubscriptionData: ({
-                subscriptionData: {
-                    data: { brands_brandPages_by_pk: brandPage = {} } = {},
-                } = {},
-            }) => {
-                setState(brandPage || {})
-                setPageTitle({
-                    ...pageTitle,
-                    value: brandPage?.internalPageName || '',
-                })
-
-                setPageRoute({
-                    ...pageRoute,
-                    value: brandPage?.route || '',
-                })
-                setToggle(brandPage?.published)
-            },
-        }
-    )
 
     // Mutation for page publish toggle
-    const [updatePage] = useMutation(UPDATE_WEBPAGE, {
+    const [updatePage] = useMutation(UPDATE_BRANDS_SEO, {
         onCompleted: () => {
             toast.success('Updated!')
         },
         onError: error => {
-            toast.error('Something went wrong with update_webpage')
+            toast.error('Something went wrong with UPDATE_BRANDS_SEO')
             console.log(error)
             logger(error)
         },
     })
-
+    const updateInfo = () => {
+        updatePage({
+            variables: {
+                pageId: pageId,
+                _set: {
+                    SEOBasics: {
+                        metaTitle: metaTitle.value,
+                        metaDescription: metaDescription.value,
+                        url: context.brandDomain + pageRoute.value
+                    }
+                },
+            },
+        })
+    }
 
     // whenever pageTitle value changes the pagetitle will be updated also
     useEffect(() => {
@@ -139,7 +98,7 @@ const SEObasics = () => {
         useSubscription(SEO_DETAILS, {
             variables: {
                 pageId: { _eq: pageId },
-                _route: pageRoute.value,
+                _route: routeName,
             },
             onSubscriptionData: ({
                 subscriptionData: {
@@ -149,25 +108,25 @@ const SEObasics = () => {
                 setMetaDetailsState(brandsSEO || {})
                 setMetaTitle({
                     ...metaTitle,
-                    value: brandsSEO[0]?.SEOBasics?.metaTitle || '',
+                    value: brandsSEO[0]?.SEOBasics?.metaTitle || metaTitle.value,
                 })
                 setMetaDescription({
                     ...metaDescription,
-                    value: brandsSEO[0]?.SEOBasics?.metaDescription || '',
+                    value: brandsSEO[0]?.SEOBasics?.metaDescription || metaDescription.value,
                 })
                 setPageRoute({
                     ...pageRoute,
-                    value: pageRoute.value || '',
+                    value: brandsSEO[0]?.route || '',
                 })
             },
         })
 
-    if (pageLoading || metaDetailsLoading) {
+    if (metaDetailsLoading) {
         return <InlineLoader />
     }
-    if (pageLoadingError || metaDetailsLoadingError) {
+    if (metaDetailsLoadingError) {
         toast.error('Something went wrong')
-        logger(pageLoadingError)
+        logger(metaDetailsLoadingError)
     }
 
     return (
@@ -205,7 +164,6 @@ const SEObasics = () => {
                                             fontWeight: '600',
                                         }}
                                     >
-                                        {' '}
                                         Meta Title and Meta Description
                                     </span>
                                 }
@@ -233,6 +191,14 @@ const SEObasics = () => {
                                     }}
                                     bordered={false}
                                     value={metaTitle.value}
+                                    onChange={e =>
+                                        setMetaTitle({
+                                            ...metaTitle,
+                                            value: e.target.value,
+                                        })
+                                    }
+                                    id="meta-title"
+                                    name="meta-title"
                                 />
                                 <TextArea
                                     strong
@@ -245,8 +211,16 @@ const SEObasics = () => {
                                         borderRadius: '4px',
                                     }}
                                     bordered={false}
+                                    name="meta-description"
+                                    id="meta-description"
                                     value={metaDescription.value}
                                     placeholder="Add Page Meta description in 120 words"
+                                    onChange={e =>
+                                        setMetaDescription({
+                                            ...metaDescription,
+                                            value: e.target.value,
+                                        })
+                                    }
                                 />
                             </Form.Item>
                             <Form.Item
@@ -277,12 +251,18 @@ const SEObasics = () => {
                                 <Input
                                     level={5}
                                     addonBefore={context.brandDomain}
-                                    defaultValue={pageRoute.value}
+                                    defaultValue={routeName}
                                     style={{
                                         width: 'fit-content',
                                         border: '2px solid #E4E4E4',
                                         borderRadius: '4px',
                                     }}
+                                    onChange={e =>
+                                        setPageRoute({
+                                            ...pageRoute,
+                                            value: e.target.value,
+                                        }), updateInfo
+                                    }
                                 />
                             </Form.Item>
                         </Form>
@@ -306,12 +286,6 @@ const SEObasics = () => {
                                     level={4}
                                     id="pageRoute"
                                     name="pageRoute"
-                                    onChange={e =>
-                                        setPageRoute({
-                                            ...pageRoute,
-                                            value: e.target.value,
-                                        })
-                                    }
                                 >
                                     {context.brandDomain + pageRoute.value}
                                 </Title>

@@ -332,7 +332,7 @@ const PageForm = () => {
                   </div>
                   <div className="styleTab">
                      <HorizontalTabPanel>
-                        <SEObasics />
+                        <SEObasics routeName={pageRoute.value} />
                         <SocialShare />
                      </HorizontalTabPanel>
                   </div>
