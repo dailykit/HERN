@@ -27,7 +27,7 @@ import {
 } from '../../../graphql'
 import { logger, randomSuffix } from '../../../../../shared/utils'
 import { Tooltip, InlineLoader, Banner } from '../../../../../shared/components'
-import { DeleteIcon, LeftIcon  } from '../../../../../shared/assets/icons'
+import { DeleteIcon, LeftIcon } from '../../../../../shared/assets/icons'
 import { useTooltip, useTabs } from '../../../../../shared/providers'
 
 const NavigationMenuListing = () => {
@@ -48,7 +48,7 @@ const NavigationMenuListing = () => {
       {
          onSubscriptionData: ({
             subscriptionData: {
-               data: { website_navigationMenu: navigationMenu = [] } = {},
+               data: { brands_navigationMenu: navigationMenu = [] } = {},
             } = {},
          } = {}) => {
             const result = navigationMenu.map(menu => {
@@ -82,7 +82,7 @@ const NavigationMenuListing = () => {
             title: `menu-${randomSuffix()}`,
          },
          onCompleted: ({
-            insert_website_navigationMenu_one: menu = {},
+            insert_brands_navigationMenu_one: menu = {},
          } = {}) => {
             const { title, id } = menu
             const path = `/content/navbarMenu/${id}`
@@ -252,7 +252,7 @@ const NavigationMenuListing = () => {
             justifyContent="space-between"
          >
             <Flex container alignItems="center">
-               <Text as="h2" style={{marginBottom: '0em'}}>
+               <Text as="h2" style={{ marginBottom: '0em' }}>
                   Navigation Menu(
                   {menuList?.length})
                </Text>
