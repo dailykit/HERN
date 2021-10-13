@@ -273,3 +273,12 @@ export const GET_SYSTEM_MODULES = gql`
       }
    }
 `
+export const UPDATE_BRANDS_SEO = gql`
+mutation UPDATE_BRANDS_SEO( $pageId: Int!,$_set:brands_SEO_set_input!) {
+   update_brands_SEO_by_pk(pk_columns: {pageId: $pageId}, _set: $_set) {
+     pageId
+     SEOBasics
+   }
+ }
+ `
+//  {"pageId": 1007,"_set": {"SEOBasics":{"metaDescription":"nnnnnnn"}}}

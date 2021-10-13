@@ -248,3 +248,15 @@ export const NAVIGATION_MENU_INFO = gql`
       }
    }
 `
+export const SEO_DETAILS = gql`
+query MyQuery($_route: String = "",$pageId:Int_comparison_exp!) {
+   brands_SEO(where: {route: {_eq: $_route}, pageId: $pageId}) {
+     SEOBasics
+     facebookPixel
+     googleAnalytics
+     pageId
+     route
+     socialShare
+     twitter
+   }
+ }`
