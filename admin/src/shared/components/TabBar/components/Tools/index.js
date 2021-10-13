@@ -11,6 +11,7 @@ import ToolList from './ToolList'
 import Account from './Account'
 import Search from './Search'
 import MarketPlace from './MarketPlace'
+import BottomBar from '../../../BottomBar'
 import CreateProduct from '../../../../CreateUtils/Product/createProduct'
 import CreateIngredient from '../../../../CreateUtils/Ingredient/CreateIngredient'
 import CreateRecipe from '../../../../CreateUtils/Recipe/createRecipe'
@@ -76,14 +77,14 @@ const Tools = ({ isTabHidden, setIsTabHidden }) => {
       console.log({ item })
       setOpen(open === null || open !== item ? item : null)
    }
-//    useOnClickOutside(toolbarRef, () => {
-//       setIsMenuOpen(false)
-//       setOpen(null)
-//       const values = qs.parse(window.location.search)
+   //    useOnClickOutside(toolbarRef, () => {
+   //       setIsMenuOpen(false)
+   //       setOpen(null)
+   //       const values = qs.parse(window.location.search)
 
-//       const newQsValue = qs.stringify({ ...values, optionId: undefined })
-//       history.push({ search: `?${newQsValue}` })
-//    })
+   //       const newQsValue = qs.stringify({ ...values, optionId: undefined })
+   //       history.push({ search: `?${newQsValue}` })
+   //    })
 
    return (
       <StyledTools ref={toolbarRef} isTabHidden={isTabHidden}>
