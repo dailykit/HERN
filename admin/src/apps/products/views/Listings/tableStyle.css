@@ -1,3 +1,25 @@
+.tabulator {
+   border: 1px solid #f3f3f3;
+   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+   border-radius: 6px;
+}
+
+.tabulator .tabulator-header .tabulator-frozen.tabulator-frozen-left {
+   border-right: none;
+}
+
+.tabulator-row .tabulator-frozen.tabulator-frozen-left {
+   border-right: none;
+}
+
+.tabulator .tabulator-header .tabulator-frozen.tabulator-frozen-right {
+   border-left: none;
+}
+
+.tabulator-row .tabulator-frozen.tabulator-frozen-right {
+   border-left: none;
+}
+
 .tabulator-header {
    height: 80px;
    font-size: 14px;
@@ -24,7 +46,7 @@
    margin-bottom: 0em;
 }
 .tabulator-headers {
-   background-color: #f4f4f4;
+   /* background-color: #f4f4f4; */
    height: 100% !important;
    /* padding-top: auto; */
    font-weight: 500;
@@ -36,9 +58,9 @@
    text-align: center;
 }
 
-.tabulator-col {
+/* .tabulator-col {
    background: #f4f4f4 !important;
-}
+} */
 
 .tabulator-row {
    height: 48px;
@@ -96,6 +118,44 @@
 input[type='checkbox'] {
    width: 18px;
    height: 18px;
+}
+
+.gwHbdL span:hover {
+   background: #f3f3f3;
+}
+
+.gwHbdL span {
+   width: 12px;
+   height: 12px;
+   display: flex;
+   cursor: pointer;
+   border-radius: 1px;
+   align-items: center;
+   justify-content: center;
+   border: 1.4px solid #919699;
+   border-radius: 2px;
+   background: #fff;
+}
+
+.eRDWSN span {
+   width: 12px;
+   height: 12px;
+   display: -webkit-box;
+   display: -webkit-flex;
+   display: -ms-flexbox;
+   display: flex;
+   cursor: pointer;
+   border-radius: 2px;
+   -webkit-align-items: center;
+   -webkit-box-align: center;
+   -ms-flex-align: center;
+   align-items: center;
+   -webkit-box-pack: center;
+   -webkit-justify-content: center;
+   -ms-flex-pack: center;
+   justify-content: center;
+   border: 1px solid #28c1f7;
+   background: linear-gradient(180deg, #28c1f7 -4.17%, #00a7e1 100%);
 }
 
 .formatterCell {
