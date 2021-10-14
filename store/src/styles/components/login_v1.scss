@@ -5,30 +5,30 @@
    left: 0;
    right: 0;
    z-index: 1000;
+   width: 100vw;
    overflow: hidden;
    background-color: #ffffff;
    transition: all 0.4s ease-in-out;
 }
 .hern-login-v1__css-transition-enter {
    height: 0;
-   width: 0;
+
    opacity: 0;
 }
 .hern-login-v1__css-transition-enter-active {
    transition: all 0.4s;
    height: 100vh;
-   width: 100vw;
+
    opacity: 1;
 }
 .hern-login-v1__css-transition-exit {
    opacity: 1;
    height: 100vh;
-   width: 100vw;
 }
 .hern-login-v1__css-transition-exit-active {
    transition: all 0.4s;
    height: 0;
-   width: 0;
+
    opacity: 0;
 }
 
@@ -352,14 +352,48 @@
 .hern-login-v1__social__login {
    margin: 1em;
 }
+
 .hern-login-v1__social__login__providers {
    display: flex;
    justify-content: center;
    align-items: center;
 }
+
 .hern-login-v1__social__login__provider {
    margin: 0 0.5em;
 }
+
+.hern-login-v1__social_login_skeleton {
+   animation: social-icon-skeleton-loading 1s linear infinite alternate;
+   margin-right: 0.75rem;
+   display: -webkit-inline-box;
+   display: -webkit-inline-flex;
+   display: -ms-inline-flexbox;
+   display: inline-flex;
+   -webkit-align-items: center;
+   -webkit-box-align: center;
+   -ms-flex-align: center;
+   align-items: center;
+   -webkit-box-pack: center;
+   -webkit-justify-content: center;
+   -ms-flex-pack: center;
+   justify-content: center;
+   border-radius: 9999px;
+   height: 2.5rem;
+   width: 2.5rem;
+   --tw-bg-opacity: 1;
+   background-color: rgba(229, 231, 235, var(--tw-bg-opacity));
+}
+
+@keyframes social-icon-skeleton-loading {
+   0% {
+      background-color: hsl(200, 20%, 80%);
+   }
+   100% {
+      background-color: hsl(200, 20%, 95%);
+   }
+}
+
 @media only screen and (min-width: 769px) {
    .hern-login-v1-container {
       background-color: rgb(251, 252, 246);

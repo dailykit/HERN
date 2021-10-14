@@ -53,7 +53,8 @@ export const Login = props => {
       forceLogin = false,
       isSilentlyLogin = true,
       singleLoginMethod = false,
-      showLoginPopup,
+      callbackURL,
+      socialLogin = true,
    } = props
 
    //loginBy --> initial login method ('email', 'otp' , 'signup', 'forgotPassword').
@@ -61,6 +62,8 @@ export const Login = props => {
    //closeLoginPopup --> fn to close popup.
    //forceLogin --> disable close icon and only close when successfully signup or login.
    //singleLoginMethod --> only use one method for log in either email or phone num. (based on loginBy).
+   //callbackURL --> callback url for signIn (string)
+   //socialLogin --> need social login or not
 
    //component state
    const [defaultLogin, setDefaultLogin] = useState(loginBy)
@@ -68,7 +71,7 @@ export const Login = props => {
    return (
       <div className={`hern-login-v1-container`}>
          <div className="hern-login-v1-content">
-            <header className="hern-login-v1-header">
+            <div className="hern-login-v1-header">
                {(defaultLogin === 'email' || defaultLogin === 'otp') && (
                   <span>Log in</span>
                )}
@@ -85,7 +88,7 @@ export const Login = props => {
                      onClick={closeLoginPopup}
                   />
                )}
-            </header>
+            </div>
             <section>
                {/* email login  or phone number login*/}
                {defaultLogin === 'email' && (
@@ -93,20 +96,25 @@ export const Login = props => {
                      setDefaultLogin={setDefaultLogin}
                      isSilentlyLogin={isSilentlyLogin}
                      closeLoginPopup={closeLoginPopup}
+                     callbackURL={callbackURL}
                   />
                )}
                {defaultLogin === 'otp' && (
                   <OTPLogin
                      closeLoginPopup={closeLoginPopup}
                      isSilentlyLogin={isSilentlyLogin}
+                     callbackURL={callbackURL}
                   />
                )}
-               {defaultLogin === 'forgotPassword' && <ForgotPassword />}
+               {defaultLogin === 'forgotPassword' && (
+                  <ForgotPassword closeLoginPopup={closeLoginPopup} />
+               )}
                {defaultLogin === 'signup' && (
                   <Signup
                      setDefaultLogin={setDefaultLogin}
                      isSilentlyLogin={isSilentlyLogin}
                      closeLoginPopup={closeLoginPopup}
+                     callbackURL={callbackURL}
                   />
                )}
                {/* {defaultLogin === 'email' ? <Email /> : <OTPLogin />} */}
@@ -132,8 +140,7 @@ export const Login = props => {
                )}
 
                {/* google or facebook */}
-               <DividerBar text={'or sign in with'} />
-               <SocialLogin />
+               {socialLogin && <SocialLogin callbackURL={callbackURL} />}
             </section>
             {defaultLogin !== 'signup' && (
                <footer className="hern-login-v1__footer">
@@ -156,7 +163,8 @@ export const Login = props => {
 //email log in
 const Email = props => {
    //props
-   const { setDefaultLogin, isSilentlyLogin, closeLoginPopup } = props
+   const { setDefaultLogin, isSilentlyLogin, closeLoginPopup, callbackURL } =
+      props
    const { addToast } = useToasts()
    //component state
    const [loading, setLoading] = React.useState(false)
@@ -187,6 +195,7 @@ const Email = props => {
             redirect: false,
             email: form.email,
             password: form.password,
+            ...(callbackURL && { callbackUrl: callbackURL }),
          })
          setLoading(false)
          if (response?.status !== 200) {
@@ -291,7 +300,7 @@ const Email = props => {
 //  login with otp
 const OTPLogin = props => {
    //props
-   const { isSilentlyLogin, closeLoginPopup } = props
+   const { isSilentlyLogin, closeLoginPopup, callbackURL } = props
    const { addToast } = useToasts()
 
    //component state
@@ -436,6 +445,7 @@ const OTPLogin = props => {
          const response = await signIn('otp', {
             redirect: false,
             ...form,
+            ...(callbackURL && { callbackUrl: callbackURL }),
          })
          if (response?.status === 200) {
             const landedOn = localStorage.getItem('landed_on')
@@ -628,7 +638,10 @@ const OTPLogin = props => {
 }
 
 // login with social media
-const SocialLogin = () => {
+const SocialLogin = props => {
+   //props
+   const { callbackURL } = props
+
    //fetch all available provider
    const {
       loading: providerLoading,
@@ -640,8 +653,8 @@ const SocialLogin = () => {
       return <p>Some went wrong</p>
    }
 
-   if (providerLoading) {
-      return <Loader />
+   if (!providerLoading && settings_authProvider.length === 0) {
+      return null
    }
 
    const handleSocialOnClick = option => {
@@ -649,35 +662,45 @@ const SocialLogin = () => {
    }
 
    return (
-      <div className="hern-login-v1__social__login">
-         <div className="hern-login-v1__social__login__providers">
-            {settings_authProvider.map((eachProvider, index) => {
-               return (
-                  <div
-                     className="hern-login-v1__social__login__provider"
-                     key={index}
-                  >
-                     {eachProvider.title === 'google' && (
-                        <GoogleIcon
-                           onClick={() => {
-                              handleSocialOnClick('google')
-                           }}
-                           style={{ cursor: 'pointer' }}
-                        />
-                     )}
-                     {eachProvider.title === 'facebook' && (
-                        <FacebookIcon
-                           onClick={() => {
-                              handleSocialOnClick('facebook')
-                           }}
-                           style={{ cursor: 'pointer' }}
-                        />
-                     )}
-                  </div>
-               )
-            })}
+      <>
+         <DividerBar text={'or sign in with'} />
+         <div className="hern-login-v1__social__login">
+            <div className="hern-login-v1__social__login__providers">
+               {providerLoading && (
+                  <>
+                     <span className="hern-login-v1__social_login_skeleton"></span>
+                     <span className="hern-login-v1__social_login_skeleton"></span>
+                  </>
+               )}
+               {!providerLoading &&
+                  settings_authProvider.map((eachProvider, index) => {
+                     return (
+                        <div
+                           className="hern-login-v1__social__login__provider"
+                           key={index}
+                        >
+                           {eachProvider.title === 'google' && (
+                              <GoogleIcon
+                                 onClick={() => {
+                                    handleSocialOnClick('google')
+                                 }}
+                                 style={{ cursor: 'pointer' }}
+                              />
+                           )}
+                           {eachProvider.title === 'facebook' && (
+                              <FacebookIcon
+                                 onClick={() => {
+                                    handleSocialOnClick('facebook')
+                                 }}
+                                 style={{ cursor: 'pointer' }}
+                              />
+                           )}
+                        </div>
+                     )
+                  })}
+            </div>
          </div>
-      </div>
+      </>
    )
 }
 
@@ -788,7 +811,8 @@ function validateEmail(email) {
 //signup
 const Signup = props => {
    //props
-   const { setDefaultLogin, isSilentlyLogin, closeLoginPopup } = props
+   const { setDefaultLogin, isSilentlyLogin, closeLoginPopup, callbackURL } =
+      props
 
    //component state
    const [showPassword, setShowPassword] = useState(false)
@@ -841,6 +865,7 @@ const Signup = props => {
                   email: form.email,
                   password: form.password,
                   redirect: false,
+                  ...(callbackURL && { callbackUrl: callbackURL }),
                })
                if (response?.status === 200) {
                   const session = await getSession()
@@ -936,7 +961,7 @@ const Signup = props => {
          setEmailError('Must be a valid email!')
       }
    }
-   console.log('email exist', emailExists)
+
    const onChange = e => {
       const { name, value } = e.target
       if (name === 'email' && validateEmail(value) && emailError) {

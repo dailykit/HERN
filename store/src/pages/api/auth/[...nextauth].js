@@ -210,6 +210,9 @@ export default async (req, res) => {
                const [customer] = provider_customers
                session.user.email = customer.customer.email
                session.user.id = customer.customerId
+               session.user.phoneNumber = customer.customer.phoneNumber || 'N/A'
+               session.user.firstName = customer.customer.firstName || 'N/A'
+               session.user.lastName = customer.customer.lastName || ''
             }
             return session
          },
@@ -281,6 +284,9 @@ const PROVIDER_CUSTOMERS = `
          customerId
          customer {
             email
+            phoneNumber
+            firstName
+            lastName
          }
       }
    }
