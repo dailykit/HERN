@@ -53,6 +53,7 @@ export const Login = props => {
       forceLogin = false,
       isSilentlyLogin = true,
       singleLoginMethod = false,
+      showLoginPopup,
    } = props
 
    //loginBy --> initial login method ('email', 'otp' , 'signup', 'forgotPassword').
@@ -65,7 +66,11 @@ export const Login = props => {
    const [defaultLogin, setDefaultLogin] = useState(loginBy)
 
    return (
-      <div className="hern-login-v1-container">
+      <div
+         className={`hern-login-v1-container ${
+            showLoginPopup ? 'hern-login-v1-container--show' : ''
+         }`}
+      >
          <div className="hern-login-v1-content">
             <header className="hern-login-v1-header">
                {(defaultLogin === 'email' || defaultLogin === 'otp') && (

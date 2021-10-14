@@ -4,11 +4,18 @@
    bottom: 0;
    left: 0;
    right: 0;
-   height: 100vh;
-   width: 100vw;
+   height: 0;
+   width: 0;
    z-index: 1000;
    overflow: hidden;
    background-color: #ffffff;
+   opacity: 0;
+   transition: all 0.4s ease-in-out;
+}
+.hern-login-v1-container--show {
+   height: 100vh;
+   width: 100vw;
+   opacity: 1;
 }
 
 .hern-login-v1-content {
