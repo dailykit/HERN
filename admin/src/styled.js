@@ -3,17 +3,25 @@ import styled from 'styled-components'
 export const Layout = styled.div`
    height: 100vh;
    > main {
+      position: absolute;
+      left: 52px;
       height: calc(100% - 48px);
       overflow-y: auto;
+      width: 96%;
    }
 `
 
 export const AppList = styled.ul`
+   position: absolute;
+   top: 71px;
+   background: #ffffff;
    display: grid;
-   margin: 0 !important;
-   grid-gap: 12px;
-   width: 236px;
+   margin-left: 1px !important;
+   margin: 8px;
+   grid-gap: 5px;
+   width: 52px;
    overflow-y: auto;
+   overflow-x: hidden;
    height: calc(100vh - 60px);
    grid-template-rows: repeat(auto-fill, minmax(40px, 1fr));
    &::-webkit-scrollbar {
@@ -27,33 +35,40 @@ export const AppList = styled.ul`
       outline: 1px solid #eeeeee;
       border-radius: 10px;
    }
+   // :hover {
+   //    position: absolute;
+   //    width: 222px;
+   //    z-index: 1;
+   // }
 `
-
+export const AppIcon = styled.svg`
+   height: 16px;
+   width: 16px;
+`
 export const AppItem = styled.li`
-   height: 48px;
+   height: 40px;
    list-style: none;
-   margin: 0px 12px;
+   margin: 0px 0px;
+   background: ${props => (props.active ? `#f9f9f9` : `#ffffff`)};
+   border-left: ${props => (props.active ? `3px solid #367BF5` : `none`)};
    a {
-      width: 100%;
-      color: #2f256f;
+      color: ${props => (props.active ? `#367BF5` : `#202020`)};
       height: 100%;
       display: flex;
-      padding: 0 8px;
-      border-radius: 2px;
+      padding: ${props => (props.active ? `15px` : `18px`)};
+      border-radius: 4px;
       align-items: center;
       text-decoration: none;
-      transition: 0.4s ease-in-out;
       font-weight: 500;
       font-size: 16px;
-      color: #202020;
-      line-height: 16px;
+      line-height: 19px;
       :hover {
-         background: #f2f2f2;
+         background: #f9f9f9;
+         border-radius: 4px;
+         color: ${props => (props.active ? `#367BF5` : `#202020`)};
       }
-      img {
-         height: 32px;
-         width: 32px;
-         margin-right: 14px;
+      svg {
+         margin-right: 19px;
          display: inline-block;
       }
    }
@@ -82,7 +97,7 @@ export const DashboardPanel = styled.div`
    }
 `
 export const NavMenuPanel = styled.div`
-   width: 236px;
+   width: 52px;
 `
 export const WelcomeNote = styled.div`
    p {

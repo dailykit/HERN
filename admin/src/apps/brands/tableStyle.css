@@ -38,7 +38,12 @@
    border-radius: 2px;
    margin-top: 5px;
 }
-.bttnbrand{
+.bttnbrand {
    margin: 0px 24px;
    height: 40px;
+}
+.brands-table .rowClick:hover {
+   background: #e5e5e5;
+   color: #367bf5;
+   cursor: pointer;
 }

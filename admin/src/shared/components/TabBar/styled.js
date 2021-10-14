@@ -5,7 +5,9 @@ const Styles = {
    Header: styled.header`
       display: flex;
       width: 100vw;
-      ${({ isTabHidden }) => isTabHidden && 'justify-content: space-between'}
+      align-items: center;
+      justify-content: space-between;
+
    `,
    Logo: styled(IconButton)`
       position: relative;
@@ -31,8 +33,6 @@ const Styles = {
          inset -1px -1px 2px rgba(189, 189, 189, 0.5)`};
       > svg {
          position: absolute;
-         top: 3px;
-         right: 3px;
       }
    `,
    TabStatus: styled.span`

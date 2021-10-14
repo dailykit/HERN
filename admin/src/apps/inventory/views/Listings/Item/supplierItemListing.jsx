@@ -48,7 +48,7 @@ export default function SupplierItemsListings({ tableRef }) {
       {
          title: 'Supplier',
          field: 'supplier.name',
-         headerFilter: false,
+         headerFilter: true,
          headerTooltip: col => {
             const identifier = 'items_listings_supplier'
             return tooltip(identifier)?.description || col.getDefinition().title
@@ -75,7 +75,7 @@ export default function SupplierItemsListings({ tableRef }) {
                ref={tableRef}
                columns={columns}
                data={supplierItems}
-               options={tableOptions}
+               options={{ ...tableOptions, tooltips: true }}
                style={{ marginTop: '16px' }}
             />
          </>
