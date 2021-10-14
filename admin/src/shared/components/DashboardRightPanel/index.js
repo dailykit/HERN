@@ -1,13 +1,23 @@
 import { Spacer, TextButton } from '@dailykit/ui'
 import React from 'react'
 import { useAuth } from '../../providers'
-import { ReportIcon } from './assets/icons'
+import {
+   CustomerIcon,
+   OrderIcon,
+   ProductIcon,
+   QuickNav,
+   ReportIcon,
+} from './assets/icons'
 import {
    DashboardReport,
    UserText,
    OptionTypes,
    SvgBoxReport,
    ViewBtn,
+   DashboardQuickNav,
+   SvgBoxQuickNav,
+   TextQuickNav,
+   AppItem,
 } from './styled'
 import { useLocation, useHistory } from 'react-router-dom'
 
@@ -36,7 +46,37 @@ const DashboardRightPanel = () => {
                </TextButton>
             </ViewBtn>
          </DashboardReport>
+         <Spacer yaxis size="20px" />
 
+         <DashboardQuickNav>
+            <SvgBoxQuickNav>
+               <QuickNav />
+            </SvgBoxQuickNav>
+            <TextQuickNav>Quick Navigation</TextQuickNav>
+            <AppItem>
+               <li
+                  onClick={() => history.push('/order/orders')}
+                  title="Go to Orders"
+               >
+                  <OrderIcon />
+                  Orders
+               </li>
+               <li
+                  onClick={() => history.push('/crm/customers')}
+                  title="Go to Customers List"
+               >
+                  <CustomerIcon />
+                  Customers
+               </li>
+               <li
+                  onClick={() => history.push('/products/products')}
+                  title="Go to Product List"
+               >
+                  <ProductIcon />
+                  Products
+               </li>
+            </AppItem>
+         </DashboardQuickNav>
          <Spacer yaxis size="20px" />
       </div>
    )

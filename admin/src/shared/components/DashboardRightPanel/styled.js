@@ -59,3 +59,51 @@ export const ViewBtn = styled.div`
    justify-content: flex-end;
    width: 100%;
 `
+export const DashboardQuickNav = styled.div`
+   display: flex;
+   flex-direction: column;
+   width: 300px;
+   height: 273px;
+   background: #ffffff;
+   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+   border-radius: 6px;
+`
+export const SvgBoxQuickNav = styled.div`
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   padding: 17px 9px 10px 11px;
+`
+export const TextQuickNav = styled.div`
+   font-family: Roboto;
+   font-style: normal;
+   font-weight: normal;
+   font-size: 14px;
+   line-height: 16px;
+   color: #555b6e;
+   padding: 7px 11px;
+`
+export const AppItem = styled.ul`
+   padding: 7px 11px 8px 11px;
+   list-style-type: none;
+   font-family: Roboto;
+   font-style: normal;
+   font-weight: normal;
+   font-size: 18px;
+   line-height: 21px;
+   color: ${props => (props.onclick ? `#367BF5` : `#202020`)};
+   li {
+      display: flex;
+      align-content: center;
+      flex-wrap: wrap;
+      background: #ffffff;
+      cursor: pointer;
+      border-radius: 4px;
+      height: 40px;
+      column-gap: 9px;
+      :hover {
+         background: #f9f9f9;
+         border-radius: 4px;
+      }
+   }
+`
