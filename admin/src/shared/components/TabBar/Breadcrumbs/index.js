@@ -1,7 +1,6 @@
 import React from 'react'
 import { useLocation, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
-import { ChevronRight } from '../../../assets/icons'
 
 const Breadcrumbs = () => {
    const { pathname } = useLocation()
@@ -52,7 +51,8 @@ const Styles = {
    Wrapper: styled.div`
       display: flex;
       align-items: center;
-      margin: 18px auto;
+      margin: 12px auto;
+      float: none;
       max-width: 1280px;
       width: calc(100vw - 130px);
       filter: drop-shadow(1px 0px 0px #f3f3f3) drop-shadow(0px 0px 0px #f3f3f3)
@@ -72,7 +72,7 @@ const Styles = {
       background: White;
       padding: ${({ isHome }) =>
          isHome ? '2px 12px 2px 4px' : '2px 12px 2px 14px'};
-      width: 87px;
+      width: 100px;
       clip-path: ${({ isHome }) =>
          isHome
             ? ` polygon(

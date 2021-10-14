@@ -34,8 +34,8 @@ import {
 } from '../../../../../shared/components'
 import { useTooltip, useTabs } from '../../../../../shared/providers'
 import { logger } from '../../../../../shared/utils'
-import CampaignTypeTunnel from './Tunnel'
 import options from '../../tableOptions'
+import CreateCampaign from '../../../../../shared/CreateUtils/crm/createCampaign'
 
 const CampaignListing = () => {
    const location = useLocation()
@@ -226,7 +226,6 @@ const CampaignListing = () => {
             )
          },
       },
-      
    ]
    const downloadCsvData = () => {
       tableRef.current.table.download('csv', 'campaign_table.csv')
@@ -239,12 +238,11 @@ const CampaignListing = () => {
    const downloadXlsxData = () => {
       tableRef.current.table.download('xlsx', 'campaign_table.xlsx')
    }
-   const clearCampaignPersistence= () =>
-      {
-         localStorage.removeItem('tabulator-campaign_table-columns')
-         localStorage.removeItem('tabulator-campaign_table-sort')
-         localStorage.removeItem('tabulator-campaign_table-filter') 
-      }
+   const clearCampaignPersistence = () => {
+      localStorage.removeItem('tabulator-campaign_table-columns')
+      localStorage.removeItem('tabulator-campaign_table-sort')
+      localStorage.removeItem('tabulator-campaign_table-filter')
+   }
 
    if (listLoading || loading) return <InlineLoader />
    return (
@@ -256,7 +254,7 @@ const CampaignListing = () => {
             width="100%"
             alignItems="center"
             justifyContent="space-between"
-             padding="15px 0 0 0"
+            padding="15px 0 0 0"
          >
             <Flex
                container
@@ -264,7 +262,7 @@ const CampaignListing = () => {
                width="25%"
                alignItems="center"
                justifyContent="space-between"
-             >
+            >
                <Text as="title">
                   Campaign(
                   {campaignTotal?.campaignsAggregate?.aggregate?.count || '...'}
@@ -314,21 +312,21 @@ const CampaignListing = () => {
                            XLSX
                         </DropdownButton.Option>
                      </DropdownButton.Options>
-                  </DropdownButton>          
-            </Flex>         
+                  </DropdownButton>
+               </Flex>
                <Flex
-                   container
-                   as="header"
-                   width="28%"
-                   alignItems="center"
-                   justifyContent="flex-end"
+                  container
+                  as="header"
+                  width="28%"
+                  alignItems="center"
+                  justifyContent="flex-end"
                >
-               <ButtonGroup>
-               <ComboButton type="solid" onClick={() => openTunnel(1)}>
-                  <PlusIcon />
-                  Create Campaign
-               </ComboButton>
-            </ButtonGroup>
+                  <ButtonGroup>
+                     <ComboButton type="solid" onClick={() => openTunnel(1)}>
+                        <PlusIcon />
+                        Create Campaign
+                     </ComboButton>
+                  </ButtonGroup>
                </Flex>
             </Flex>
          </Flex>
@@ -340,10 +338,10 @@ const CampaignListing = () => {
                options={{
                   ...options,
                   placeholder: 'No Campaigns Available Yet !',
-                  persistenceID : 'campaign_table'
+                  persistenceID: 'campaign_table',
                }}
                ref={tableRef}
-               className = 'crm-campaign'
+               className="crm-campaign"
             />
          )}
          <InsightDashboard
@@ -353,7 +351,7 @@ const CampaignListing = () => {
          />
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
-               <CampaignTypeTunnel close={closeTunnel} />
+               <CreateCampaign close={closeTunnel} />
             </Tunnel>
          </Tunnels>
          <Banner id="crm-app-campaigns-listing-bottom" />

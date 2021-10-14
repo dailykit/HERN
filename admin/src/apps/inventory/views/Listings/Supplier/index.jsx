@@ -8,6 +8,9 @@ import {
    Spacer,
    Text,
    TextButton,
+   Tunnel,
+   Tunnels,
+   useTunnel,
 } from '@dailykit/ui'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
@@ -33,6 +36,7 @@ import {
 } from '../../../graphql'
 import { StyledWrapper } from '../styled'
 import tableOptions from '../tableOption'
+import CreateSupplier from '../../../../../shared/CreateUtils/Inventory/createSupplier'
 
 const address = 'apps.inventory.views.listings.supplier.'
 
@@ -41,6 +45,7 @@ export default function SupplierListing() {
    const { addTab } = useTabs()
 
    const { tooltip } = useTooltip()
+   const [supplierTunnels, openSupplierTunnel, closeSupplierTunnel] = useTunnel(1)
 
    const {
       loading: listLoading,
@@ -152,6 +157,11 @@ export default function SupplierListing() {
       <>
          <StyledWrapper>
             <Banner id="inventory-app-suppliers-listing-top" />
+            <Tunnels tunnels={supplierTunnels}>
+               <Tunnel layer={1} size="md">
+                  <CreateSupplier closeTunnel={closeSupplierTunnel} />
+               </Tunnel>
+            </Tunnels>
             <Flex
                container
                alignItems="center"
@@ -159,7 +169,7 @@ export default function SupplierListing() {
                padding="16px 0"
             >
                <Flex container>
-               <Text as="h2">{t(address.concat('suppliers'))}({suppliers.length})</Text>
+                  <Text as="h2">{t(address.concat('suppliers'))}({suppliers.length})</Text>
                   <Tooltip identifier="suppliers_listings_heading" />
                </Flex>
                <Flex
@@ -174,7 +184,7 @@ export default function SupplierListing() {
                      Clear Filters
                   </TextButton>
                   <Spacer xAxis size="10px" />
-                  <ComboButton type="solid" onClick={createSupplierHandler}>
+                  <ComboButton type="solid" onClick={() => openSupplierTunnel(1)}>
                      <AddIcon color="#fff" size={24} /> Add Supplier
                   </ComboButton>
                </Flex>
