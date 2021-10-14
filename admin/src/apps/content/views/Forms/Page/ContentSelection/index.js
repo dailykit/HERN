@@ -200,14 +200,17 @@ const ContentSelection = () => {
                            {file?.file?.fileName ||
                               file?.systemModule?.identifier ||
                               ''}
+                           <small>({file.moduleType})</small>
                         </div>
 
-                        <IconButton
-                           type="ghost"
-                           onClick={() => openConfig(file)}
-                        >
-                           <EditIcon color="#555b6e" size="20" />
-                        </IconButton>
+                        {file.moduleType === 'system-defined' && (
+                           <IconButton
+                              type="ghost"
+                              onClick={() => openConfig(file)}
+                           >
+                              <EditIcon color="#555b6e" size="20" />
+                           </IconButton>
+                        )}
 
                         <IconButton
                            type="ghost"
@@ -238,15 +241,12 @@ const ContentSelection = () => {
                </ComboButton>
             </Flex>
             <HorizontalTabs>
-               {/* <div className="styleTab"> */}
                <HorizontalTabList>
                   <HorizontalTab>Add Files</HorizontalTab>
                   <HorizontalTab>Add Templates</HorizontalTab>
                   <HorizontalTab>Add Modules</HorizontalTab>
                </HorizontalTabList>
-               {/* </div> */}
                <HorizontalTabPanels>
-                  {/* <div className="styleTab"> */}
                   <HorizontalTabPanel>
                      <File
                         linkedFiles={linkedFiles}
@@ -256,7 +256,6 @@ const ContentSelection = () => {
                         emptyOptions={selectedFileOptions}
                      />
                   </HorizontalTabPanel>
-                  {/* </div> */}
                   <HorizontalTabPanel>
                      <Template linkedTemplated={[]} />
                   </HorizontalTabPanel>
