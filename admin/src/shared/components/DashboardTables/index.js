@@ -16,14 +16,14 @@ const { RangePicker } = DatePicker
 const DashboardTables = () => {
    return (
       <>
-         <DateRangePicker />
+         {/* <DateRangePicker /> */}
          <Tables>
             <RecentOrderTable />
-            <TopCustomerTable />
+            {/* <TopCustomerTable />
             <RecipeSummaryApp />
             <MenuSummary />
             <OrderOpportunityTable />
-            <SubscribersTable />
+            <SubscribersTable /> */}
          </Tables>
       </>
    )
@@ -76,9 +76,9 @@ const DateRangePicker = () => {
    )
 }
 const Tables = styled.div`
-   display: grid;
-   grid-template-columns: 50% 50%;
-   grid-gap: 7px;
-   grid-template-rows: repeat(500px);
+   // display: grid;
+   // grid-template-columns: 50% 50%;
+   // grid-gap: 7px;
+   // grid-template-rows: repeat(500px);
 `
 export default DashboardProvider
