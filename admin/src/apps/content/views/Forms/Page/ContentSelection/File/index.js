@@ -18,10 +18,10 @@ import styled from 'styled-components'
 const File = ({ linkedFiles, selectedOption, emptyOptions }) => {
    const [files, setFiles] = useState([])
    const [search, setSearch] = React.useState('')
-   let [list, selected, selectOption] = useMultiList(files)
-   const linkedIds = linkedFiles.map(file => {
-      return file.fileId
-   })
+   const [list, selected, selectOption] = useMultiList(files)
+
+   const filteredPlugnInFiles = linkedFiles.filter(file => file.fileId !== null)
+   const linkedIds = filteredPlugnInFiles.map(file => file.fileId)
    // subscription query for loading the files
    const { loading, error } = useSubscription(GET_FILES, {
       variables: {
