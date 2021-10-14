@@ -56,7 +56,7 @@ export default function LoginComp({ isClicked, authBtnClassName, ...rest }) {
             <>
                {rest.showContent === 'login' ? (
                   <Wrapper {...rest}>
-                     <h1 className="heading text2">Log In</h1>
+                     {/* <h1 className="heading text2">Log In</h1> */}
                      <div className="center-div-wrapper">
                         <FormWrap {...rest}>
                            <Input

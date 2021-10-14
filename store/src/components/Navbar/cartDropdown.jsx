@@ -18,21 +18,16 @@ export default function CartDropdownMenu({ carts, ...props }) {
    const dropdownRef = useRef(null)
 
    useEffect(() => {
-      console.log(
-         'dropdownRef.current',
-         dropdownRef.current.firstChild.offsetHeight
-      )
       setMenuHeight(dropdownRef.current?.firstChild.offsetHeight + 30)
    }, [])
 
    function calcHeight(el) {
-      console.log('CalcHeight......', el)
       const height = el.offsetHeight
-      console.log('height', height)
       setMenuHeight(height)
    }
 
    const deleteHandler = async cartId => {
+      console.log('CartId -->', cartId)
       await EXPERIENCE_BOOKINGS.delete.mutation({
          variables: {
             cartId: cartId
@@ -69,7 +64,9 @@ export default function CartDropdownMenu({ carts, ...props }) {
                   carts.map(cart => {
                      return (
                         <DropdownMenuItem
-                           onClick={()=>router.push(`/checkout?cartId=${cart?.id}`)}
+                           onClick={() =>
+                              router.push(`/checkout?cartId=${cart?.id}`)
+                           }
                         >
                            <img
                               src={

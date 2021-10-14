@@ -95,7 +95,7 @@ export default function CategoryTagPage({ onSubmit }) {
                </a>
             </Link>
          </div> */}
-         <h1 className="heading text2">Tell us what you’re interested in.</h1>
+         {/* <h1 className="heading text2">Tell us what you’re interested in.</h1> */}
          <div className="center-div-wrapper">
             <CategoryTagWrap>
                {tags.map(tag => {

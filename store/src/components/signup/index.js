@@ -66,7 +66,7 @@ export default function Signup({ authBtnClassName, ...rest }) {
                <a>Log In</a>
             </Link>
          </p> */}
-         <h1 className="heading text2">Sign Up</h1>
+         {/* <h1 className="heading text2">Sign Up</h1> */}
          <div className="center-div-wrapper">
             <FormWrap {...rest}>
                <Input

@@ -59,10 +59,18 @@ const AvailableDate = ({
                                     opt.selectedExperienceClassId === slot?.id
                               )
                                  ? theme.colors.secondaryColor
-                                 : theme.colors.mainBackground
+                                 : theme.colors.lightBackground.grey
                            }
-                           isMainShadow
-                           className="custom-slot-Btn"
+                           className={`custom-slot-Btn text6 poll_${dynamicButtonTitle(
+                              slot
+                           )
+                              .toLowerCase()
+                              .replace(' ', '_')} ${
+                              multiOptions.some(
+                                 opt =>
+                                    opt.selectedExperienceClassId === slot?.id
+                              ) && 'selected_poll_btn'
+                           }`}
                            onClick={() =>
                               clickHandler({
                                  date: data?.date,
@@ -72,7 +80,8 @@ const AvailableDate = ({
                            }
                            disabled={
                               slot?.isBooked ||
-                              isExpired(slot?.date, new Date())
+                              isExpired(slot?.date, new Date()) ||
+                              slot?.id === cart?.experienceClassId
                            }
                            title={dynamicButtonTitle(slot)}
                         >

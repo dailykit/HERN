@@ -41,25 +41,40 @@ export const Wrapper = styled.div`
          font-size: ${theme.sizes.h7};
          font-weight: 300;
          font-style: italic;
-         color: ${theme.colors.textColor4};
          margin-right: 4px;
       }
       .time {
          font-size: ${theme.sizes.h8};
          font-weight: 500;
-         color: ${theme.colors.textColor4};
       }
    }
+   .selected_poll_btn {
+      background: ${theme.colors.textColor} !important;
+      color: ${theme.colors.textColor4} !important;
+   }
+   .poll_sold_out,
+   .poll_expired,
+   .poll_checkout {
+      border: none;
+      color: ${theme.colors.textColor4};
+      background: ${theme.colors.disableBackground};
+   }
    .sold_out,
-   expired {
+   .expired {
       border: none;
       background: none;
       color: ${theme.colors.disableBackground};
+   }
+   .poll_choose {
+      border: 1px solid ${theme.colors.textColor};
+      background: ${theme.colors.textColor4};
+      color: ${theme.colors.textColor};
    }
    .choose {
       background: ${theme.colors.textColor4};
       color: ${theme.colors.textColor};
    }
+
    .checkout {
       background: ${theme.colors.textColor};
       color: ${theme.colors.textColor4};
@@ -77,7 +92,7 @@ export const Wrapper = styled.div`
    }
    .slot-wrapper {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: 1rem;
    }
 `

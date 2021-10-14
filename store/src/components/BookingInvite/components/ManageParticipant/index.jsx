@@ -75,7 +75,7 @@ export default function ManageParticipant({ experienceBookingId }) {
          addToast('Successfully updated participant!', {
             appearance: 'success'
          })
-         hide()
+         closeModal()
       },
       onError: error => {
          addToast('Somthing went wrong!', { appearance: 'error' })

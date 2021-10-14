@@ -231,6 +231,7 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
                   )}
             </div>
             <Modal
+               title="Tell us what you’re interested in"
                type="popup"
                isOpen={isTagsModalVisible}
                close={closeTagsModal}

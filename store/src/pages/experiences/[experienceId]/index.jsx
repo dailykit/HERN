@@ -494,13 +494,12 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
             </div>
             {width > 769 && (
                <Modal
+                  title="Send Poll"
                   type="popup"
                   isOpen={isSendPollModalVisible}
                   close={closeSendPollModal}
                >
-                  <div className="modal-content">
-                     <SendPollComp experienceId={experienceId} />
-                  </div>
+                  <SendPollComp experienceId={experienceId} />
                </Modal>
             )}
          </StyledWrapper>
@@ -615,10 +614,8 @@ const StyledWrapper = styled.div`
       color: ${theme.colors.textColor4};
       border-radius: 0;
    }
-   .modal-content {
       padding: 1rem;
-      height: 100%;
-      width: 100%;
+         width: 100%;
    }
 
    @media screen and (max-width: 769px) {

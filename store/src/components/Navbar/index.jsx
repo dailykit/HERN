@@ -174,7 +174,11 @@ export default function NavBarComp({ navigationMenuItems }) {
                </ul>
             )}
 
-            <Modal isOpen={isModalVisible} close={closeModal} type="popup">
+            <Modal
+               title={showContent === 'login' ? 'Log In' : 'Sign Up'}
+               isOpen={isModalVisible}
+               close={closeModal}
+            >
                <Login
                   isOpen={isModalVisible}
                   showContent={showContent}

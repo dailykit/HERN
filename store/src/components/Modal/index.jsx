@@ -1,9 +1,6 @@
-import React, { useEffect } from 'react'
-import { Modal } from 'antd'
-import { theme } from '../../theme'
-import { CrossIcon } from '../Icons'
+import React from 'react'
 import Button from '../Button'
-import { ModalDiv, StyledTitle } from './styles'
+import { ModalContainer, StyledTitle } from './styles'
 
 export default function ModalComp({
    children,
@@ -17,42 +14,29 @@ export default function ModalComp({
    ...props
 }) {
    return (
-      <Modal
-         title={<ModalTitle title={props?.title || 'Welcome'} />}
+      <ModalContainer
+         title={<StyledTitle>{props?.title || 'Welcome'}</StyledTitle>}
          visible={props.isOpen}
          onOk={actionHandler}
          onCancel={close}
          width={props?.width || 780}
-         height={props?.height || 520}
-         // {...props}
+         bodyStyle={{
+            maxHeight: props?.height || '520px',
+            overflowY: 'auto'
+         }}
+         footer={
+            showActionButton ? (
+               <Button
+                  className="actionBtn"
+                  onClick={actionHandler}
+                  disabled={disabledActionButton}
+               >
+                  {actionButtonTitle}
+               </Button>
+            ) : null
+         }
       >
          {children}
-      </Modal>
-
-      // <ModalDiv
-      //    id="modall"
-      //    {...props}
-      //    className={type.concat(
-      //       props.isOpen ? ` ${type}_open` : ` ${type}_close`
-      //    )}
-      // >
-      //    <div className="modal-header">
-      //       <button className={closeButtonType} onClick={close}>
-      //          <CrossIcon size="32" color={theme.colors.textColor} />
-      //       </button>
-      //       {showActionButton && (
-      //          <Button
-      //             className="actionBtn"
-      //             disabled={disabledActionButton}
-      //             onClick={actionHandler}
-      //          >
-      //             {actionButtonTitle}
-      //          </Button>
-      //       )}
-      //    </div>
-      //    <div className="modal-body">{children}</div>
-      // </ModalDiv>
+      </ModalContainer>
    )
 }
-
-const ModalTitle = ({ title }) => <StyledTitle>{title}</StyledTitle>
