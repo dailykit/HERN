@@ -62,14 +62,10 @@ export default function FooterButton({ confirmNPayHandler }) {
             disabled={
                pollingStepsIndex === 1 ? isDisabled : pollOptions.length === 0
             }
-            className="nextBtn"
+            className="nextBtn text3"
             onClick={handleNextButtonClick}
          >
-            <Flex container alignItems="center" justifyContent="center">
-               <div>
-                  {pollingStepsIndex === 1 ? 'SEND AVAILABILITY POLL' : 'Next'}
-               </div>
-            </Flex>
+            {pollingStepsIndex === 1 ? 'SEND AVAILABILITY POLL' : 'Next'}
          </Button>
       </FooterBtnWrap>
    )

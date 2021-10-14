@@ -614,9 +614,6 @@ const StyledWrapper = styled.div`
       color: ${theme.colors.textColor4};
       border-radius: 0;
    }
-      padding: 1rem;
-         width: 100%;
-   }
 
    @media screen and (max-width: 769px) {
       > main {
