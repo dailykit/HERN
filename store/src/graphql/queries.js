@@ -1158,6 +1158,10 @@ query BRAND_PAGE($domain: String!, $route: String!) {
       isArchived
       published
       route
+    brandPageSettings { 
+    value
+    brandPageSetting{ identifier}
+}
       linkedNavigationMenuId
       brandPageModules(
          order_by: { position: desc_nulls_last }
