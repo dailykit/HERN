@@ -3,6 +3,7 @@ import { useSubscription } from '@apollo/client'
 import { useRouter } from 'next/router'
 import { useToasts } from 'react-toast-notifications'
 import ReactHtmlParser from 'react-html-parser'
+import { Button } from 'antd'
 import styled from 'styled-components'
 import {
    PollInvite,
@@ -12,12 +13,12 @@ import {
    InlineLoader
 } from '../../../../components'
 import { EXPERIENCE_POLLS } from '../../../../graphql'
-import { theme } from '../../../theme'
+import { theme } from '../../../../theme'
 import { fileParser, getMinute, getDateWithTime } from '../../../../utils'
 import { getNavigationMenuItems, getBannerData } from '../../../../lib'
 import { useExperienceInfo } from '../../../../Providers'
 
-export default function MyBooking({ navigationMenuItems, parsedData = [] }) {
+export default function MyPoll({ navigationMenuItems, parsedData = [] }) {
    const router = useRouter()
    const { pollId } = router.query
    const { addToast } = useToasts()
@@ -71,14 +72,19 @@ export default function MyBooking({ navigationMenuItems, parsedData = [] }) {
          <SEO title={`Poll-${pollId}`} />
          <Wrapper>
             <div className="checkout-heading">
-               <span
-                  className="back-button"
-                  onClick={() => router.push(`/dashboard/myPolls`)}
-               >
-                  <ChevronLeft size="20" color={theme.colors.textColor4} />
-               </span>
-               <h1>My Poll</h1>
+               <Button
+                  shape="circle"
+                  icon={
+                     <ChevronLeft size="24" color={theme.colors.textColor5} />
+                  }
+                  size="middle"
+                  onClick={() =>
+                     router.push(`/experiences/${experienceInfo?.experienceId}`)
+                  }
+               />
+               <p className="go_back text10"> Back to bookings </p>
             </div>
+            <h1 className="h1_head text1">Manage Poll</h1>
             <div className="container">
                <div className="left-side-container">
                   <PollInvite experienceBooking={experienceInfo} />
@@ -132,12 +138,9 @@ export const getStaticPaths = async () => {
 const Wrapper = styled.div`
    width: 100%;
    color: ${theme.colors.textColor4};
-   padding: 0 80px;
+   padding: 64px 80px;
    filter: ${({ isCelebrating }) => isCelebrating && 'blur(4px)'};
-   .experience-heading {
-      font-size: ${theme.sizes.h4};
-      margin-bottom: 16px;
-   }
+
    .experience-date {
       h4 {
          font-size: ${theme.sizes.h8};
@@ -146,25 +149,39 @@ const Wrapper = styled.div`
          font-size: ${theme.sizes.h8};
       }
    }
+   .h1_head {
+      color: ${theme.colors.textColor5};
+      font-weight: 400;
+      text-align: left;
+      text-transform: uppercase;
+      font-family: League-Gothic;
+      margin-bottom: 0 !important;
+   }
    .checkout-heading {
-      padding: 64px 0;
       display: flex;
       align-items: center;
-      .back-button {
-         width: 48px;
-         height: 48px;
-         border-radius: 50%;
-         background: ${theme.colors.mainBackground};
-         margin-right: 16px;
-         position: relative;
+      margin-bottom: 2rem;
+      .go_back {
+         color: ${theme.colors.textColor7};
+         font-family: Proxima Nova;
+         font-style: normal;
+         font-weight: 600;
+         letter-spacing: 0.3em;
+         margin-bottom: 0 !important;
+         margin-left: 1rem;
+      }
+      .ant-btn {
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         background: ${theme.colors.textColor4};
          &:hover {
-            cursor: pointer;
-         }
-         svg {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            color: ${theme.colors.textColor5};
+            border-color: ${theme.colors.textColor5};
+            background: ${theme.colors.textColor4};
+            svg {
+               stroke: ${theme.colors.textColor5};
+            }
          }
       }
    }
@@ -213,25 +230,17 @@ const Wrapper = styled.div`
          margin-left: 8.33333% !important;
          margin-right: 0% !important;
          .sticky-card {
-            background: ${theme.colors.mainBackground};
             position: sticky !important;
             top: 80px !important;
             z-index: 1 !important;
             display: inline-block !important;
             width: 100% !important;
             padding-right: 1px !important;
-            .card-wrapper {
-               background: ${theme.colors.mainBackground};
-               padding: 24px;
-               border: 1px solid ${theme.colors.textColor4};
-               border-radius: 4px;
-               margin-bottom: 1rem;
-            }
          }
       }
    }
    @media (max-width: 769px) {
-      padding: 0 26px;
+      padding: 32px 26px;
       .container {
          width: 100%;
          display: flex;
@@ -263,45 +272,150 @@ const CardWrapper = styled.div`
    width: 100%;
    display: flex;
    flex-direction: column;
-   border-radius: 4px;
+   border-radius: 40px;
+   background: ${theme.colors.lightBackground.grey};
    .boldText {
       font-weight: 600;
    }
+   .proxinova_text {
+      font-family: Proxima Nova;
+      font-style: normal;
+      font-weight: 600;
+      letter-spacing: 0;
+      color: ${theme.colors.textColor5};
+      margin-bottom: 0 !important;
+   }
+   .exp_img {
+      width: 100%;
+      height: 180px;
+      border-radius: 40px 40px 0 0;
+      flex-grow: 0 !important;
+      flex-shrink: 0 !important;
+      overflow: hidden !important;
+      object-fit: cover;
+   }
+   .divider {
+      color: ${theme.colors.textColor7};
+      border-top-color: ${theme.colors.textColor7};
+      .ant-divider-inner-text {
+         font-family: Proxima Nova;
+         font-style: normal;
+         letter-spacing: 0.3em;
+         font-size: ${theme.sizes.h8};
+      }
+   }
    .experience-info {
       display: flex;
-      margin-top: 24px;
-      img {
-         width: 106px;
-         height: 106px;
-         border-radius: 4px;
-         flex-grow: 0 !important;
-         flex-shrink: 0 !important;
-         overflow: hidden !important;
-         object-fit: cover;
-      }
+      flex-direction: column;
       .experience-details {
-         padding-left: 16px;
          flex: 1;
-         color: ${theme.colors.textColor4};
+         color: ${theme.colors.textColor5};
+         .experience-heading {
+            font-family: Proxima Nova;
+            font-style: normal;
+            font-weight: 600;
+            letter-spacing: 0.3em;
+            margin: 8px 0;
+            color: ${theme.colors.textColor7};
+         }
+         .experience-date {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            h2 {
+               font-family: League-Gothic;
+               letter-spacing: 0.04em;
+               color: ${theme.colors.textColor5};
+               margin-bottom: 0;
+            }
+         }
       }
    }
    .price-details {
       display: flex;
       flex-direction: column;
-      margin-top: 24px;
       .pricing {
          display: flex;
          align-items: center;
          justify-content: space-between;
-         margin-top: 24px;
+         margin-top: 16px;
+      }
+      .estimate-billing-div {
+         display: flex;
+         flex-direction: column;
+         margin: 1rem 0 0 0;
+         cursor: pointer;
+         .billing-action {
+            color: ${theme.colors.textColor};
+         }
       }
    }
-   .full-payment-msg {
-      text-align: center;
-      font-size: ${theme.sizes.h8};
-      font-style: italic;
-      margin: 1rem;
+   .booking-done {
+      margin-top: 4rem;
+      padding: 1rem;
+      img {
+         width: 94px;
+         height: 94px;
+         display: block;
+         margin-left: auto;
+         margin-right: auto;
+      }
+   }
+   .ant-collapse {
+      background: none;
+   }
+   .ant-collapse {
+      border: none;
+      > .ant-collapse-item > .ant-collapse-header {
+         padding: 0;
+         font-family: Proxima Nova;
+         font-style: normal;
+         font-weight: 600;
+         letter-spacing: 0.3em;
+         color: ${theme.colors.textColor};
+         font-size: ${theme.sizes.h6};
+         border: none;
+      }
+   }
+   .ant-collapse-item {
+      font-family: Proxima Nova;
+      font-style: normal;
+      font-weight: 600;
+      letter-spacing: 0.3em;
       color: ${theme.colors.textColor};
+      font-size: ${theme.sizes.h6};
+      border: none;
+   }
+   .ant-collapse-arrow {
+      font-size: 18px;
+      svg {
+         color: ${theme.colors.textColor};
+      }
+   }
+
+   .ant-collapse-content {
+      background: none;
+      > .ant-collapse-content-box {
+         padding: 0;
+         .estimated-billing-details {
+            table {
+               width: 100%;
+               margin: 8px 0;
+               td {
+                  font-family: Proxima Nova;
+                  font-style: normal;
+                  font-weight: 600;
+                  letter-spacing: 0.3em;
+                  color: ${theme.colors.textColor5};
+                  font-size: ${theme.sizes.h8};
+               }
+               td:nth-child(2n) {
+                  text-align: right;
+                  padding: 8px;
+               }
+            }
+         }
+      }
    }
 `
 
@@ -325,31 +439,45 @@ export function Card({ experienceInfo = null }) {
 
    return (
       <CardWrapper>
-         <div className="experience-info">
-            <img src={experience?.assets?.images[0]} alt="experince-img" />
-            <div className="experience-details">
-               <p>Duration: {getMinute(experienceClass?.duration)} mins</p>
-               <p>{experience?.title}</p>
+         <img
+            className="exp_img"
+            src={experience?.assets?.images[0]}
+            alt="experince-img"
+         />
+         <div style={{ padding: '1rem 1rem 2rem 1rem' }}>
+            <div className="experience-info">
+               <div className="experience-details">
+                  <p className="proxinova_text text7">{experience?.title}</p>
+                  <h2 className="experience-heading text9">Poll expiring on</h2>
+                  <div className="experience-date">
+                     <h2 className="text4">
+                        {getDateWithTime(experienceInfo?.cutoffTime)}
+                     </h2>
+                  </div>
+               </div>
             </div>
-         </div>
-         <div className="price-details">
-            <h2>Poll details</h2>
-            <div className="pricing">
-               <p>Created at</p>
-               <p> {getDateWithTime(experienceInfo?.created_at)}</p>
-            </div>
-            <div className="pricing">
-               <p>Total poll options</p>
-               <p>{totalPollOptions}</p>
-            </div>
-            <div className="pricing">
-               <p>Most voted option</p>
-               <p>
-                  {getDateWithTime(
-                     mostVotedOption?.experienceClass?.startTimeStamp
-                  )}{' '}
-                  ({mostVotedOption?.voting?.aggregate?.count} votes)
-               </p>
+            <div className="price-details">
+               <h2>Poll details</h2>
+               <div className="pricing">
+                  <p className="proxinova_text text9">Created at</p>
+                  <p className="proxinova_text text9">
+                     {' '}
+                     {getDateWithTime(experienceInfo?.created_at)}
+                  </p>
+               </div>
+               <div className="pricing">
+                  <p className="proxinova_text text9">Total poll options</p>
+                  <p className="proxinova_text text9">{totalPollOptions}</p>
+               </div>
+               <div className="pricing">
+                  <p className="proxinova_text text9">Most voted option</p>
+                  <p className="proxinova_text text9">
+                     {getDateWithTime(
+                        mostVotedOption?.experienceClass?.startTimeStamp
+                     )}{' '}
+                     ({mostVotedOption?.voting?.aggregate?.count} votes)
+                  </p>
+               </div>
             </div>
          </div>
       </CardWrapper>

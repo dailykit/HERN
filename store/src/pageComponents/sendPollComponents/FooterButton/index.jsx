@@ -1,18 +1,35 @@
 import React, { useEffect, useState } from 'react'
-import { Flex } from '@dailykit/ui'
+import { useMutation } from '@apollo/client'
+import { useRouter } from 'next/router'
+import { useToasts } from 'react-toast-notifications'
 import { FooterBtnWrap } from './styles'
-import { useCustomMutation } from '../../../customMutations/useCustomMutation'
 import { Button } from '../../../components'
 import { usePoll, useUser } from '../../../Providers'
 import { getTimeStamp } from '../../../utils'
+import { CREATE_EXPERIENCE_BOOKING } from '../../../graphql'
 
 export default function FooterButton({ confirmNPayHandler }) {
-   const { EXPERIENCE_BOOKING } = useCustomMutation()
    const { state: pollState, nextPollingSteps } = usePoll()
    const [isDisabled, setIsDisabled] = useState(true)
    const { pollingStepsIndex, cutoffDate, pollOptions } = pollState
    const { state: userState } = useUser()
    const { user = {} } = userState
+   const { addToast } = useToasts()
+   const router = useRouter()
+   const [createExperienceBooking, { loading: isExperienceBookingCreating }] =
+      useMutation(CREATE_EXPERIENCE_BOOKING, {
+         refetchQueries: ['CART_INFO'],
+         onCompleted: ({ createExperienceBooking }) => {
+            addToast('Poll is created successfully', {
+               appearance: 'success'
+            })
+            router.push(`/dashboard/myPolls/${createExperienceBooking?.id}`)
+         },
+         onError: error => {
+            addToast('Opps! Something went wrong!', { appearance: 'error' })
+            console.log(error)
+         }
+      })
 
    const handleNextButtonClick = async () => {
       if (pollingStepsIndex === 1) {
@@ -22,7 +39,7 @@ export default function FooterButton({ confirmNPayHandler }) {
                   experienceClassId: opt?.selectedExperienceClassId
                }
             })
-            EXPERIENCE_BOOKING.create.mutation({
+            createExperienceBooking({
                variables: {
                   object: {
                      hostKeycloakId: user?.keycloakId,
@@ -48,13 +65,13 @@ export default function FooterButton({ confirmNPayHandler }) {
       if (
          !cutoffDate ||
          pollOptions.length === 0 ||
-         EXPERIENCE_BOOKING.create.loading
+         isExperienceBookingCreating
       ) {
          setIsDisabled(true)
       } else {
          setIsDisabled(false)
       }
-   }, [pollOptions, EXPERIENCE_BOOKING.create.loading, cutoffDate])
+   }, [pollOptions, isExperienceBookingCreating, cutoffDate])
 
    return (
       <FooterBtnWrap>

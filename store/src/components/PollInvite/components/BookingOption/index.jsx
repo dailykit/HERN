@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Button } from 'antd'
 import { OptionDiv, VotersDiv } from './styles'
 import Modal from '../../../Modal'
 import Filler from '../../../Filler'
@@ -64,15 +65,19 @@ export default function BookingOption({
       <OptionDiv>
          <div className="slot-div">
             <div className="slots-wrapper">
-               <p className="slot-info-time">
-                  {getDate(option?.experienceClass?.startTimeStamp)},{' '}
-                  {getTime(option?.experienceClass?.startTimeStamp)}
-               </p>
-               <button onClick={openParticipantsModal} className="vote-head">
-                  {option?.voting?.aggregate?.count} votes
-               </button>
-            </div>
-            <div className="booking-div">
+               <div>
+                  <p
+                     onClick={openParticipantsModal}
+                     className="proxinova_text vote-head text8"
+                  >
+                     {option?.voting?.aggregate?.count} votes{' '}
+                  </p>
+                  <span className="proxinova_text text8 slot-info-time">
+                     for {getDate(option?.experienceClass?.startTimeStamp)},{' '}
+                     {getTime(option?.experienceClass?.startTimeStamp)}
+                  </span>
+               </div>
+
                <button
                   disabled={isClassExpired}
                   title={isClassExpired && 'This class has expired'}
@@ -84,16 +89,14 @@ export default function BookingOption({
                   Book Slot
                </button>
             </div>
+            <div className="booking-div"></div>
          </div>
          <Modal
+            title="Participants Voted for this Option"
             isOpen={isParticipantsModalVisible}
-            type={width > 769 ? 'sideDrawer' : 'bottomDrawer'}
             close={closeParticipantsModal}
          >
             <VotersDiv>
-               <h1 className="heading-h1">
-                  Participants Voted for this Option
-               </h1>
                {option?.voters.length > 0 ? (
                   option?.voters.map((voter, index) => {
                      return (
@@ -110,6 +113,7 @@ export default function BookingOption({
                   <Filler
                      message="No one has voted for this option yet!"
                      messageSize="18px"
+                     textStyle="proxinova_text text8"
                   />
                )}
             </VotersDiv>

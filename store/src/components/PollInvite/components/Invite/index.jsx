@@ -27,7 +27,7 @@ export default function Invite({ experienceBooking, isPollClosed }) {
    const [isModalVisible, setIsModalVisible] = useState(false)
    const [inviteList, setInviteList] = useState([])
    const [isReset, setIsReset] = useState(false)
-   const [copyBtnClasses, setCopyBtnClasses] = useState(['customBtn'])
+   const [copyBtnClasses, setCopyBtnClasses] = useState(['customBtn text6'])
    const payload = {
       experienceBookingId: experienceBooking?.id,
       experienceBookingCartId: experienceBooking?.cartId,
@@ -157,14 +157,13 @@ export default function Invite({ experienceBooking, isPollClosed }) {
          <div className="invitation-div">
             <div className="invite-msg-div">
                <Button
-                  background={theme.colors.secondaryColor}
                   className={copyBtnClasses}
                   onClick={copyHandler}
                   disabled={isPollClosed}
                >
                   <span>
                      <CopyIcon
-                        size={theme.sizes.h6}
+                        size={theme.sizes.h4}
                         color={theme.colors.textColor4}
                      />
                   </span>
@@ -183,7 +182,7 @@ export default function Invite({ experienceBooking, isPollClosed }) {
             <Button
                disabled={isPollClosed}
                onClick={openModal}
-               className="customBtn"
+               className="customBtn text6"
             >
                Invite via Email & Phone
             </Button>
