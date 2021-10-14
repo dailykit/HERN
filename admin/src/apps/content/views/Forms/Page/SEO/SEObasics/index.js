@@ -7,11 +7,10 @@ import { toast } from 'react-toastify'
 import { StyledWrapper } from './styled'
 
 import { logger } from '../../../../../../../shared/utils'
-import { Tooltip, Row, Col, Typography, Card } from 'antd'
+import { Tooltip, Row, Col, Typography, Card, Form, Input } from 'antd'
 import { useTabs } from '../../../../../../../shared/providers'
 import { SEO_DETAILS, UPDATE_BRANDS_SEO } from '../../../../../graphql'
 import BrandContext from '../../../../../context/Brand'
-import { Form, Input } from 'antd'
 import { InfoCircleOutlined } from '@ant-design/icons'
 
 const SEObasics = ({ routeName }) => {
@@ -68,7 +67,21 @@ const SEObasics = ({ routeName }) => {
             logger(error)
         },
     })
+    //    // page name validation & update name handler
+    //    const onBlur = e => {
+    //        if (e.target.name === 'metaTitle') {
+    //            setMetaTitle({
+    //                ...metaTitle,
+    //                value: brandsSEO[0]?.SEOBasics?.metaTitle || '',
+    //            })
+    //            updateInfo(metaTitle.value)
+    //        }
+    //  }
+
+
+
     const updateInfo = () => {
+        console.log("UPDATED", metaDetailsState)
         updatePage({
             variables: {
                 pageId: pageId,
@@ -108,11 +121,11 @@ const SEObasics = ({ routeName }) => {
                 setMetaDetailsState(brandsSEO || {})
                 setMetaTitle({
                     ...metaTitle,
-                    value: brandsSEO[0]?.SEOBasics?.metaTitle || metaTitle.value,
+                    value: brandsSEO[0]?.SEOBasics?.metaTitle || '',
                 })
                 setMetaDescription({
                     ...metaDescription,
-                    value: brandsSEO[0]?.SEOBasics?.metaDescription || metaDescription.value,
+                    value: brandsSEO[0]?.SEOBasics?.metaDescription || '',
                 })
                 setPageRoute({
                     ...pageRoute,
@@ -261,16 +274,16 @@ const SEObasics = ({ routeName }) => {
                                         setPageRoute({
                                             ...pageRoute,
                                             value: e.target.value,
-                                        }), updateInfo
+                                        })
                                     }
                                 />
                             </Form.Item>
+                            {/* <Button type="primary" disabled={metaDescription.value == '' || metaTitle.value == ''} onClick={() => { updateInfo() }}>Save Changes</Button> */}
                         </Form>
                     </Col>
                     <Col span={12}>
                         <Text strong>Preview on Google</Text>
                         <Tooltip placement="top" title={'preview on google'}>
-                            {' '}
                             <InfoCircleOutlined
                                 style={{
                                     background: '#555B6E',
