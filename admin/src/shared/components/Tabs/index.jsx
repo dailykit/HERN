@@ -87,7 +87,7 @@ const Tabs = () => {
             (numTabsToShow < tabs.length && tabs.length !== lastIndex)
          )
             return '365px'
-         return '400px'
+         return '330px'
       }
    }
 

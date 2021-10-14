@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 
 export const TabsWrapper = styled.div`
    display: flex;
-   align-items: stretch;
+   align-items: center;
    > button {
       border: none;
       border-bottom: 1px solid #ebf1f4;
@@ -20,8 +20,7 @@ export const StyledTabs = styled.ul(
       width: ${`calc(100vw - ${width})`};
       display: flex;
       align-items: center;
-      margin: 0;
-      padding-top: 7px;
+      margin: 0px 0px 0px 5px;
    `
 )
 

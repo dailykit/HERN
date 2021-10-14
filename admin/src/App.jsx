@@ -29,11 +29,6 @@ import {
 import DashboardCards from './shared/components/DashboardCardAnalytics'
 import { useAuth } from './shared/providers'
 import DashboardTables from './shared/components/DashboardTables'
-import {
-   BrandAppIcon, CartsAppIcon, CustomersAppIcon, HomeAppIcon, InventoryAppIcon, MenuAppIcon,
-   OrderAppIcon, ProductsAppIcon, ReportsAppIcon, SettingAppIcon, StoreAppIcon,
-   SubscriptionAppIcon
-} from '../src/shared/assets/navBarIcons'
 import { useLocation } from 'react-router-dom'
 
 
@@ -119,7 +114,6 @@ const App = () => {
    const { pathname } = useLocation()
    const { loading, data: { apps = [] } = {} } = useSubscription(APPS)
    const { user } = useAuth()
-   const [open, setOpen] = React.useState(false)
 
    if (loading) return <Loader />
    return (
@@ -134,10 +128,10 @@ const App = () => {
                      <AppIcon>{app.icon}</AppIcon>
                      <span>{app.title}</span>
                   </Link>
-               </AppItem>
+               </AppItem>  
             ))}
          </AppList> */}
-         <Sidebar />
+         {/* <Sidebar /> */}
          <main>
             <Switch>
                <Route path="/" exact>
