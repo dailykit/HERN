@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext } from 'react'
+import React, { useState, useContext } from 'react'
 import {
    Flex,
    HorizontalTab,
@@ -32,7 +32,6 @@ import File from './File'
 import Template from './Template'
 import SystemModule from './SystemModule'
 import ConfigContext from '../../../../context/Config'
-import { isConfigFileExist } from '../../../../utils'
 
 const ContentSelection = () => {
    const [configTunnels, openConfigTunnel, closeConfigTunnel] = useTunnel()
@@ -40,7 +39,7 @@ const ContentSelection = () => {
    const { pageId, pageName } = useParams()
    const [linkedFiles, setLinkedFiles] = useState([])
    const [selectedFileOptions, setSelectedFileOptions] = useState([])
-   const [configContext, setConfigContext] = useContext(ConfigContext)
+   const [, setConfigContext] = useContext(ConfigContext)
 
    const { loading, error: subscriptionError } = useSubscription(
       LINKED_COMPONENT,
@@ -178,7 +177,7 @@ const ContentSelection = () => {
       return <InlineLoader />
    }
    if (subscriptionError) {
-      console.log(subscriptionError)
+      console.error(subscriptionError)
       toast.error(
          'Something went wrong in subscription query for linked components'
       )
@@ -195,31 +194,29 @@ const ContentSelection = () => {
                   tablename="brandPageModule"
                   schemaname="brands"
                >
-                  {linkedFiles.map(file => {
-                     return (
-                        <Child key={file.id}>
-                           <div className="name">
-                              {file?.file?.fileName ||
-                                 file?.systemModule?.identifier ||
-                                 ''}
-                           </div>
+                  {linkedFiles.map(file => (
+                     <Child key={file.id}>
+                        <div className="name">
+                           {file?.file?.fileName ||
+                              file?.systemModule?.identifier ||
+                              ''}
+                        </div>
 
-                           <IconButton
-                              type="ghost"
-                              onClick={() => openConfig(file)}
-                           >
-                              <EditIcon color="#555b6e" size="20" />
-                           </IconButton>
+                        <IconButton
+                           type="ghost"
+                           onClick={() => openConfig(file)}
+                        >
+                           <EditIcon color="#555b6e" size="20" />
+                        </IconButton>
 
-                           <IconButton
-                              type="ghost"
-                              onClick={() => deleteHandler(file.id)}
-                           >
-                              <DeleteIcon color="#555b6e" size="20" />
-                           </IconButton>
-                        </Child>
-                     )
-                  })}
+                        <IconButton
+                           type="ghost"
+                           onClick={() => deleteHandler(file.id)}
+                        >
+                           <DeleteIcon color="#555b6e" size="20" />
+                        </IconButton>
+                     </Child>
+                  ))}
                </DragNDrop>
             ) : (
                <Filler

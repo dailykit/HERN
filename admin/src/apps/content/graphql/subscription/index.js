@@ -182,6 +182,7 @@ export const LINKED_COMPONENT = gql`
          systemModule {
             identifier
             description
+            configTemplate
          }
       }
    }

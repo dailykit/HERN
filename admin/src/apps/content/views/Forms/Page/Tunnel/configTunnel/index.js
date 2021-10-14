@@ -1,29 +1,13 @@
 import React from 'react'
 import _ from 'lodash'
-import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks'
-import { toast } from 'react-toastify'
-import {
-   TunnelHeader,
-   Tunnel,
-   Tunnels,
-   Dropdown,
-   Form,
-   Flex,
-   Spacer,
-} from '@dailykit/ui'
-// import { GET_FILES, LINK_CSS_FILES } from '../../../graphql'
+
+import { TunnelHeader, Tunnel, Tunnels, Spacer } from '@dailykit/ui'
 import { TunnelBody } from './style'
 import ConfigContext from '../../../../../context/Config'
-import { isConfigFileExist, getFile } from '../../../../../utils'
 import { getFieldUi } from '../component'
-export default function ConfigTunnel({
-   tunnels,
-   openTunnel,
-   closeTunnel,
-   onSave,
-   selectedOption,
-}) {
-   const [configContext, setConfigContext] = React.useContext(ConfigContext)
+
+export default function ConfigTunnel({ tunnels, closeTunnel, onSave }) {
+   const [configContext] = React.useContext(ConfigContext)
    const [configJson, setConfigJson] = React.useState({})
    const [fields, setFields] = React.useState([])
    const elements = []
@@ -40,12 +24,10 @@ export default function ConfigTunnel({
             e.target.value
          )
       }
-      setConfigJson(prev => {
-         return {
-            ...prev,
-            ...updatedConfig,
-         }
-      })
+      setConfigJson(prev => ({
+         ...prev,
+         ...updatedConfig,
+      }))
    }
 
    const getHeaderUi = ({ title, fieldData, key }) => {
@@ -67,14 +49,6 @@ export default function ConfigTunnel({
             )}
          </div>
       )
-   }
-
-   const renderAllFields = (data, rootKey) => {
-      showConfigUi(data, rootKey)
-
-      console.log('elements', elements)
-
-      setFields([...elements])
    }
 
    const showConfigUi = (configData, rootKey) => {
@@ -105,25 +79,29 @@ export default function ConfigTunnel({
       })
    }
 
-   React.useEffect(() => {
-      const fetchFile = async () => {
-         const filePath = configContext?.file?.path
-            .replace('components', 'components/config')
-            .replace('ejs', 'json')
-         const response = await getFile(filePath)
-         if (response.status === 200) {
-            const configData = await response.json()
-            const updatedConfigData = _.defaultsDeep(
-               configContext.config,
-               configData
-            )
-            console.log('configJson', configData)
+   const renderAllFields = (data, rootKey) => {
+      showConfigUi(data, rootKey)
+      setFields([...elements])
+   }
 
-            console.log('updatedConfig', updatedConfigData)
+   React.useEffect(() => {
+      if (configContext.moduleType === 'system-defined') {
+         const hasConfigTemplate = Boolean(
+            configContext?.systemModule?.configTemplate
+         )
+
+         if (hasConfigTemplate) {
+            const updatedConfigData = _.defaultsDeep(
+               configContext?.config,
+               configContext?.systemModule?.configTemplate
+            )
+
             setConfigJson(updatedConfigData)
+         } else {
+            setConfigJson({})
+            setFields([])
          }
       }
-      fetchFile()
    }, [configContext])
 
    React.useEffect(() => {
@@ -145,16 +123,20 @@ export default function ConfigTunnel({
                   }}
                />
                <TunnelBody>
-                  <div>
-                     {fields.map((config, index) => {
-                        return (
+                  {fields.length > 0 ? (
+                     <div>
+                        {fields.map((config, index) => (
                            <div key={index}>
                               {config}
                               <Spacer size="16px" />
                            </div>
-                        )
-                     })}
-                  </div>
+                        ))}
+                     </div>
+                  ) : (
+                     <p style={{ textAlign: 'center', fontSize: '2rem' }}>
+                        There are no config related to this Module
+                     </p>
+                  )}
                </TunnelBody>
             </Tunnel>
          </Tunnels>
