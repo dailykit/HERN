@@ -161,7 +161,7 @@ export const Login = props => {
 const Email = props => {
    //props
    const { setDefaultLogin, isSilentlyLogin, closeLoginPopup } = props
-
+   const { addToast } = useToasts()
    //component state
    const [loading, setLoading] = React.useState(false)
    const [error, setError] = React.useState('')
@@ -195,12 +195,16 @@ const Email = props => {
          setLoading(false)
          if (response?.status !== 200) {
             setError('Email or password is incorrect!')
+            addToast('Email or password is incorrect!', {
+               appearance: 'error',
+            })
          } else if (response?.status === 200) {
             // fb pixel integration for tracking customer login
             ReactPixel.trackCustom('login', {
                email: form.email,
                phone: form.phone,
             })
+            addToast('Login successfully!', { appearance: 'success' })
             const landedOn = isClient && localStorage.getItem('landed_on')
             if (!isSilentlyLogin) {
                if (isClient && landedOn) {
@@ -215,6 +219,9 @@ const Email = props => {
          }
       } catch (error) {
          console.error(error)
+         addToast('Login failed', {
+            appearance: 'error',
+         })
       }
    }
 
@@ -289,6 +296,7 @@ const Email = props => {
 const OTPLogin = props => {
    //props
    const { isSilentlyLogin, closeLoginPopup } = props
+   const { addToast } = useToasts()
 
    //component state
    const [error, setError] = React.useState('')
@@ -302,6 +310,7 @@ const OTPLogin = props => {
    const [time, setTime] = React.useState(null)
    const [isNewUser, setIsNewUser] = React.useState(false)
 
+   //check user already exist
    const [checkCustomerExistence] = useLazyQuery(PLATFORM_CUSTOMERS, {
       onCompleted: ({ customers = [] }) => {
          if (customers.length === 0) {
@@ -311,13 +320,16 @@ const OTPLogin = props => {
       onError: () => {},
    })
 
+   //resend otp
    const [resendOTP] = useMutation(RESEND_OTP, {
       onCompleted: () => {
          setResending(false)
          setTime(Date.now() + 120000)
+         addToast('OTP has been sent!', { appearance: 'success' })
       },
       onError: error => {
          console.error(error)
+         addToast('Failed to send OTP!', { appearance: 'error' })
          setResending(false)
       },
    })
@@ -350,18 +362,23 @@ const OTPLogin = props => {
       }
    }, [otpId, otpsLoading, otps])
 
+   //send sms on valid phone number
    const [sendSms] = useMutation(SEND_SMS, {
       onCompleted: () => {
          setHasOtpSent(true)
          setSendingOtp(false)
          setTime(Date.now() + 120000)
+         addToast('OTP has been sent!', { appearance: 'success' })
       },
       onError: error => {
          console.error(error)
          setSendingOtp(false)
          setError('Failed to send otp, please try again!')
+         addToast('Failed to send OTP!', { appearance: 'error' })
       },
    })
+
+   //insert a entry of phone number in table and get otp code then send sms
    const [insertOtpTransaction] = useMutation(INSERT_OTP_TRANSACTION, {
       onCompleted: async ({ insertOtp = {} } = {}) => {
          if (insertOtp?.code) {
@@ -380,6 +397,7 @@ const OTPLogin = props => {
          console.error(error)
          setSendingOtp(false)
          setError('Failed to send otp, please try again!')
+         addToast('Failed to send OTP!', { appearance: 'error' })
       },
    })
 
@@ -394,12 +412,16 @@ const OTPLogin = props => {
       }))
    }
 
+   //handle submit btn to submit email(if new user) and otp
    const submit = async e => {
       try {
          e.preventDefault()
          setLoading(true)
          if (!form.otp) {
             setError('Please enter the OTP!')
+            addToast('Please enter the OTP!', {
+               appearance: 'error',
+            })
             setLoading(false)
             return
          }
@@ -407,6 +429,9 @@ const OTPLogin = props => {
             /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
          if (isNewUser && !emailRegex.test(form.email)) {
             setError('Please enter a valid email!')
+            addToast('Please enter a valid email!', {
+               appearance: 'error',
+            })
             setLoading(false)
             return
          }
@@ -418,6 +443,7 @@ const OTPLogin = props => {
          })
          if (response?.status === 200) {
             const landedOn = localStorage.getItem('landed_on')
+            addToast('Login successfully!', { appearance: 'success' })
             if (!isSilentlyLogin) {
                if (landedOn) {
                   localStorage.removeItem('landed_on')
@@ -431,14 +457,21 @@ const OTPLogin = props => {
          } else {
             setLoading(false)
             setError('Entered OTP is incorrect, please try again!')
+            addToast('Entered OTP is incorrect!', {
+               appearance: 'error',
+            })
          }
       } catch (error) {
          setLoading(false)
          console.error(error)
+         addToast('Failed to log in, please try again!', {
+            appearance: 'error',
+         })
          setError('Failed to log in, please try again!')
       }
    }
 
+   //handle send otp btn to send otp on phone number
    const sendOTP = async () => {
       try {
          if (!form.phone) {
@@ -458,16 +491,17 @@ const OTPLogin = props => {
          setSendingOtp(false)
          console.log('error is this', error)
          setError('Failed to send otp, please try again!')
+         addToast('Failed to send OTP!', { appearance: 'error' })
       }
    }
 
+   //handle resend otp btn
    const resend = async () => {
       setResending(true)
       setTime(null)
       await resendOTP({ variables: { id: otp?.id } })
    }
 
-   console.log('form is', form, isNewUser)
    return (
       <div className="hern-login-v1__otp">
          {!hasOtpSent ? (
@@ -503,12 +537,6 @@ const OTPLogin = props => {
                         ? 'hern-login-v1__otp-submit--disabled'
                         : ''
                   }`}
-                  // className={`hern-login-v1__otp-submit ${
-                  //    (sendingOtp || !form.phone) &&
-                  //    !isValidPhoneNumber(form.phone)
-                  //       ? 'hern-login-v1__otp-submit--disabled'
-                  //       : ''
-                  // }`}
                   onClick={sendOTP}
                   disabled={
                      !(
@@ -523,17 +551,19 @@ const OTPLogin = props => {
             </>
          ) : (
             <>
-               <fieldset className="hern-login-v1__fieldset">
-                  <label className="hern-login-v1__label">Email*</label>
-                  <input
-                     className="hern-login-v1__input"
-                     name="email"
-                     type="text"
-                     onChange={onChange}
-                     value={form.email}
-                     placeholder="Enter your email"
-                  />
-               </fieldset>
+               {isNewUser && (
+                  <fieldset className="hern-login-v1__fieldset">
+                     <label className="hern-login-v1__label">Email*</label>
+                     <input
+                        className="hern-login-v1__input"
+                        name="email"
+                        type="text"
+                        onChange={onChange}
+                        value={form.email}
+                        placeholder="Enter your email"
+                     />
+                  </fieldset>
+               )}
                <fieldset className="hern-login-v1__fieldset">
                   <label className="hern-login-v1__label">OTP*</label>
                   <input
@@ -705,6 +735,7 @@ const ForgotPassword = props => {
       } catch (error) {
          if (error?.code === 401) {
             setError('Email or password is incorrect!')
+            addToast('Email or password is incorrect!', { appearance: 'error' })
          }
       }
    }
@@ -785,6 +816,16 @@ const Signup = props => {
       code: '',
    })
 
+   const [checkCustomerExistence] = useLazyQuery(PLATFORM_CUSTOMERS, {
+      onCompleted: ({ customers = [] }) => {
+         if (customers.length > 0) {
+            setEmailExists(true)
+            addToast('User already exist', { appearance: 'info' })
+         }
+      },
+      onError: () => {},
+   })
+
    const [applyReferralCode] = useMutation(MUTATIONS.CUSTOMER_REFERRAL.UPDATE, {
       onCompleted: () => {
          addToast('Referral code applied!', { appearance: 'success' })
@@ -819,7 +860,7 @@ const Signup = props => {
                         },
                      })
                   }
-
+                  addToast('Login successfully', { appearance: 'success' })
                   if (!isSilentlyLogin) {
                      window.location.href =
                         window.location.origin +
@@ -831,10 +872,12 @@ const Signup = props => {
                } else {
                   setLoading(false)
                   setError('Failed to signup, please try again!')
+                  addToast('Failed to signup!', { appearance: 'error' })
                }
             }
          } catch (error) {
             console.error(error)
+            addToast('Failed to signup!', { appearance: 'error' })
          }
       },
       onError: error => {
@@ -879,17 +922,20 @@ const Signup = props => {
       const { value } = e.target
       if (validateEmail(value)) {
          setEmailError('')
-         const url =
-            new URL(get_env('DATA_HUB_HTTPS')).origin +
-            '/server/api/customer/' +
-            value
-         const { status, data } = await axios.get(url)
-         console.log('existStatus', status, url, typeof data, data)
-         if (status === 200 && data?.success && data?.data?.id) {
-            setEmailExists(true)
-         } else {
-            setEmailExists(false)
-         }
+         // const url =
+         //    new URL(get_env('DATA_HUB_HTTPS')).origin +
+         //    '/server/api/customer/' +
+         //    value
+         // const { status, data } = await axios.get(url)
+         // console.log('existStatus', status, url, typeof data, data)
+         // if (status === 200 && data?.success && data?.data?.id) {
+         //    setEmailExists(true)
+         // } else {
+         //    setEmailExists(false)
+         // }
+         checkCustomerExistence({
+            variables: { where: { email: { _eq: value } } },
+         })
       } else {
          setEmailError('Must be a valid email!')
       }
@@ -954,6 +1000,9 @@ const Signup = props => {
          console.log(error)
          setLoading(false)
          setError('Failed to register, please try again!')
+         addToast('Failed to register, please try again!', {
+            appearance: 'error',
+         })
       }
    }
    return (
