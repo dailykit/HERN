@@ -1,7 +1,7 @@
 import React from 'react'
 import gql from 'graphql-tag'
 import Loadable from 'react-loadable'
-import { Loader } from '@dailykit/ui'
+import { Loader, Spacer } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 import { Switch, Route, Link } from 'react-router-dom'
 import FullOccurrenceReport from './shared/components/FullOccurrenceReport'
@@ -24,18 +24,15 @@ import {
    NavMenuPanel,
    HomeContainer,
    WelcomeNote,
+   DashboardRight,
 } from './styled'
 
 import DashboardCards from './shared/components/DashboardCardAnalytics'
 import { useAuth } from './shared/providers'
 import DashboardTables from './shared/components/DashboardTables'
-import {
-   BrandAppIcon, CartsAppIcon, CustomersAppIcon, HomeAppIcon, InventoryAppIcon, MenuAppIcon,
-   OrderAppIcon, ProductsAppIcon, ReportsAppIcon, SettingAppIcon, StoreAppIcon,
-   SubscriptionAppIcon
-} from '../src/shared/assets/navBarIcons'
-import { useLocation } from 'react-router-dom'
 
+import { useLocation } from 'react-router-dom'
+import DashboardRightPanel from './shared/components/DashboardRightPanel'
 const APPS = gql`
    subscription apps {
       apps(order_by: { id: asc }) {
@@ -117,18 +114,6 @@ const App = () => {
    return (
       <Layout>
          <TabBar />
-         {/* <AppList open={open}>
-            {appIcons.data.map(app => (
-               <AppItem
-                  active={app.title === 'Home'}
-                  key={app.id}>
-                  <Link to={app.path}>
-                     <AppIcon>{app.icon}</AppIcon>
-                     <span>{app.title}</span>
-                  </Link>
-               </AppItem>
-            ))}
-         </AppList> */}
          <Sidebar />
          <main>
             <Switch>
@@ -137,12 +122,13 @@ const App = () => {
                   <HomeContainer>
                      <DashboardPanel>
                         <WelcomeNote>
-                           <p>
+                           {/* <p>
                               Welcome Back {user?.name || 'user'}
                               <span>👋</span>
-                           </p>
+                           </p> */}
                         </WelcomeNote>
                         <DashboardCards />
+                        <Spacer yaxis size='20px' />
                         <DashboardTables />
                         {/* <InsightDiv>
                      <InsightDashboard
@@ -151,9 +137,13 @@ const App = () => {
                         includeChart
                         showInTunnel={false}
                      />
-                  </InsightDiv> */}
+                     </InsightDiv> */}
                      </DashboardPanel>
+                     <DashboardRight>
+                        <DashboardRightPanel />
+                     </DashboardRight>
                   </HomeContainer>
+                  <Spacer yaxis size='70px' />
                   <Banner id="app-home-bottom" />
                </Route>
                <Route path="/inventory" component={Inventory} />
@@ -172,7 +162,7 @@ const App = () => {
             </Switch>
          </main>
          {/* {!isKeycloakSupported() && <RedirectBanner />} */}
-      
+
       </Layout>
    )
 }
