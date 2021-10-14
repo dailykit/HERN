@@ -1,4 +1,4 @@
-import { Button } from '.'
+import { Button, Loader } from '.'
 import Link from 'next/link'
 import { useConfig } from '../lib'
 import classNames from 'classnames'
@@ -6,8 +6,19 @@ import React, { useState } from 'react'
 import Countdown from 'react-countdown'
 import { signIn } from 'next-auth/client'
 import { getRoute, get_env, isClient } from '../utils'
+import PhoneInput, {
+   formatPhoneNumber,
+   formatPhoneNumberIntl,
+   isValidPhoneNumber,
+} from 'react-phone-number-input'
+import 'react-phone-number-input/style.css'
 import { useToasts } from 'react-toast-notifications'
-import { CheckBoxIcon, CloseIcon } from '../assets/icons'
+import {
+   CheckBoxIcon,
+   CloseIcon,
+   FacebookIcon,
+   GoogleIcon,
+} from '../assets/icons'
 import {
    FORGOT_PASSWORD,
    INSERT_OTP_TRANSACTION,
@@ -18,19 +29,41 @@ import {
    RESEND_OTP,
    SEND_SMS,
 } from '../graphql'
-import { useLazyQuery, useMutation, useSubscription } from '@apollo/react-hooks'
+import {
+   useLazyQuery,
+   useMutation,
+   useQuery,
+   useSubscription,
+} from '@apollo/react-hooks'
 import axios from 'axios'
 import {
    deleteStoredReferralCode,
    isReferralCodeValid,
    setStoredReferralCode,
 } from '../utils/referrals'
+import gql from 'graphql-tag'
 
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const Login = props => {
-   const { loginBy = 'otp', isSilentlyLogin = true, closeLoginPopup } = props
+   //props
+   const {
+      closeLoginPopup,
+      loginBy = 'email',
+      forceLogin = false,
+      isSilentlyLogin = true,
+      singleLoginMethod = false,
+   } = props
+
+   //loginBy --> initial login method ('email', 'otp' , 'signup', 'forgotPassword').
+   //isSilentlyLogin --> page not reload after login.
+   //closeLoginPopup --> fn to close popup.
+   //forceLogin --> disable close icon and only close when successfully signup or login.
+   //singleLoginMethod --> only use one method for log in either email or phone num. (based on loginBy).
+
+   //component state
    const [defaultLogin, setDefaultLogin] = useState(loginBy)
+
    return (
       <div className="hern-login-v1-container">
          <div className="hern-login-v1-content">
@@ -43,12 +76,14 @@ export const Login = props => {
                )}
                {defaultLogin === 'signup' && <span>Sign Up</span>}
 
-               <CloseIcon
-                  size={18}
-                  stroke={'#404040'}
-                  style={{ cursor: 'pointer' }}
-                  onClick={closeLoginPopup}
-               />
+               {!forceLogin && (
+                  <CloseIcon
+                     size={18}
+                     stroke={'#404040'}
+                     style={{ cursor: 'pointer' }}
+                     onClick={closeLoginPopup}
+                  />
+               )}
             </header>
             <section>
                {/* email login  or phone number login*/}
@@ -75,23 +110,29 @@ export const Login = props => {
                )}
                {/* {defaultLogin === 'email' ? <Email /> : <OTPLogin />} */}
 
-               <DividerBar />
-               <div style={{ margin: '1em' }}>
-                  <Button
-                     className="hern-login-login-switcher-btn"
-                     onClick={() => {
-                        defaultLogin === 'email'
-                           ? setDefaultLogin('otp')
-                           : setDefaultLogin('email')
-                     }}
-                  >
-                     {defaultLogin === 'email'
-                        ? 'Log in with Phone Number'
-                        : 'Log in with Email'}
-                  </Button>
-               </div>
+               {!singleLoginMethod && (
+                  <>
+                     <DividerBar />
+                     <div style={{ margin: '1em' }}>
+                        <Button
+                           className="hern-login-login-switcher-btn"
+                           onClick={() => {
+                              defaultLogin === 'email'
+                                 ? setDefaultLogin('otp')
+                                 : setDefaultLogin('email')
+                           }}
+                        >
+                           {defaultLogin === 'email'
+                              ? 'Log in with Phone Number'
+                              : 'Log in with Email'}
+                        </Button>
+                     </div>
+                  </>
+               )}
 
                {/* google or facebook */}
+               <DividerBar text={'or sign in with'} />
+               <SocialLogin />
             </section>
             {defaultLogin !== 'signup' && (
                <footer className="hern-login-v1__footer">
@@ -242,7 +283,7 @@ const Email = props => {
 //  login with otp
 const OTPLogin = props => {
    //props
-   const { isSilentlyLogin } = props
+   const { isSilentlyLogin, closeLoginPopup } = props
 
    //component state
    const [error, setError] = React.useState('')
@@ -322,7 +363,7 @@ const OTPLogin = props => {
             setOtpId(insertOtp?.id)
             await sendSms({
                variables: {
-                  phone: `+91${form.phone}`,
+                  phone: `${form.phone}`,
                   message: `Here's your OTP - ${insertOtp?.code}.`,
                },
             })
@@ -410,6 +451,7 @@ const OTPLogin = props => {
          })
       } catch (error) {
          setSendingOtp(false)
+         console.log('error is this', error)
          setError('Failed to send otp, please try again!')
       }
    }
@@ -420,35 +462,73 @@ const OTPLogin = props => {
       await resendOTP({ variables: { id: otp?.id } })
    }
 
+   console.log('form is', form, isNewUser)
    return (
       <div className="hern-login-v1__otp">
          {!hasOtpSent ? (
             <>
                <fieldset className="hern-login-v1__fieldset">
                   <label className="hern-login-v1__label">Phone Number*</label>
-                  <input
-                     className="hern-login-v1__input"
-                     type="text"
-                     name="phone"
+                  <PhoneInput
+                     className={`hern-login-v1__otp__phone__input hern-login-v1__otp__phone__input${
+                        !(
+                           (form.phone && isValidPhoneNumber(form.phone)) ||
+                           sendingOtp
+                        )
+                           ? '-invalid'
+                           : '-valid'
+                     }`}
+                     initialValueFormat="national"
                      value={form.phone}
-                     onChange={onChange}
+                     onChange={e => {
+                        setForm(form => ({
+                           ...form,
+                           ['phone']: e,
+                        }))
+                     }}
                      placeholder="Enter your phone number"
                   />
                </fieldset>
                <button
                   className={`hern-login-v1__otp-submit ${
-                     sendingOtp || !form.phone
-                        ? 'hern-register__otp__submit--disabled'
+                     !(
+                        (form.phone && isValidPhoneNumber(form.phone)) ||
+                        sendingOtp
+                     )
+                        ? 'hern-login-v1__otp-submit--disabled'
                         : ''
                   }`}
+                  // className={`hern-login-v1__otp-submit ${
+                  //    (sendingOtp || !form.phone) &&
+                  //    !isValidPhoneNumber(form.phone)
+                  //       ? 'hern-login-v1__otp-submit--disabled'
+                  //       : ''
+                  // }`}
                   onClick={sendOTP}
-                  disabled={sendingOtp || !form.phone}
+                  disabled={
+                     !(
+                        (form.phone && isValidPhoneNumber(form.phone)) ||
+                        sendingOtp
+                     )
+                  }
+                  style={{ height: '40px' }}
                >
                   {sendingOtp ? 'SENDING OTP...' : 'SEND OTP'}
                </button>
             </>
          ) : (
             <>
+               <fieldset className="hern-login-v1__fieldset">
+                  <label className="hern-login-v1__label">Email*</label>
+                  <input
+                     className="hern-login-v1__input"
+                     name="email"
+                     type="text"
+                     onChange={onChange}
+                     value={form.email}
+                     placeholder="Enter your email"
+                  />
+               </fieldset>
                <fieldset className="hern-login-v1__fieldset">
                   <label className="hern-login-v1__label">OTP*</label>
                   <input
@@ -517,10 +597,64 @@ const OTPLogin = props => {
 }
 
 // login with social media
-const SocialLogin = () => {}
+const SocialLogin = () => {
+   //fetch all available provider
+   const {
+      loading: providerLoading,
+      error: providerError,
+      data: { settings_authProvider = [] } = {},
+   } = useQuery(PROVIDERS)
+
+   if (providerError) {
+      return <p>Some went wrong</p>
+   }
+
+   if (providerLoading) {
+      return <Loader />
+   }
+
+   const handleSocialOnClick = option => {
+      signIn(option)
+   }
+
+   return (
+      <div className="hern-login-v1__social__login">
+         <div className="hern-login-v1__social__login__providers">
+            {settings_authProvider.map((eachProvider, index) => {
+               return (
+                  <div
+                     className="hern-login-v1__social__login__provider"
+                     key={index}
+                  >
+                     {eachProvider.title === 'google' && (
+                        <GoogleIcon
+                           onClick={() => {
+                              handleSocialOnClick('google')
+                           }}
+                           style={{ cursor: 'pointer' }}
+                        />
+                     )}
+                     {eachProvider.title === 'facebook' && (
+                        <FacebookIcon
+                           onClick={() => {
+                              handleSocialOnClick('facebook')
+                           }}
+                           style={{ cursor: 'pointer' }}
+                        />
+                     )}
+                  </div>
+               )
+            })}
+         </div>
+      </div>
+   )
+}
 
 //forgot password
-const ForgotPassword = () => {
+const ForgotPassword = props => {
+   //props
+   const { closeLoginPopup } = props
+
    const { addToast } = useToasts()
    const { configOf } = useConfig()
 
@@ -536,6 +670,7 @@ const ForgotPassword = () => {
    const [forgotPassword, { loading }] = useMutation(FORGOT_PASSWORD, {
       onCompleted: () => {
          addToast('Email sent!', { appearance: 'success' })
+         closeLoginPopup()
       },
       onError: error => {
          addToast(error.message, { appearance: 'error' })
@@ -621,7 +756,7 @@ function validateEmail(email) {
 //signup
 const Signup = props => {
    //props
-   const { setDefaultLogin, isSilentlyLogin } = props
+   const { setDefaultLogin, isSilentlyLogin, closeLoginPopup } = props
 
    //component state
    const [showPassword, setShowPassword] = useState(false)
@@ -718,6 +853,7 @@ const Signup = props => {
             addToast('Successfully sent the set password email.', {
                appearance: 'success',
             })
+            closeLoginPopup()
          },
          onError: () => {
             addToast('Failed to send the set password email.', {
@@ -743,6 +879,7 @@ const Signup = props => {
             '/server/api/customer/' +
             value
          const { status, data } = await axios.get(url)
+         console.log('existStatus', status, url, typeof data, data)
          if (status === 200 && data?.success && data?.data?.id) {
             setEmailExists(true)
          } else {
@@ -883,7 +1020,23 @@ const Signup = props => {
                   <label className="hern-login-v1__label" htmlFor="phone">
                      Phone Number*
                   </label>
-                  <input
+                  <PhoneInput
+                     className={`hern-login-v1__otp__phone__input hern-login-v1__otp__phone__input${
+                        !(form.phone && isValidPhoneNumber(form.phone))
+                           ? '-invalid'
+                           : '-valid'
+                     }`}
+                     initialValueFormat="national"
+                     value={form.phone}
+                     onChange={e => {
+                        setForm(form => ({
+                           ...form,
+                           ['phone']: e,
+                        }))
+                     }}
+                     placeholder="Enter your phone number"
+                  />
+                  {/* <input
                      className="hern-login-v1__input"
                      type="text"
                      name="phone"
@@ -895,7 +1048,7 @@ const Signup = props => {
                            ? setPhoneError('Must be a valid phone number!')
                            : setPhoneError('')
                      }
-                  />
+                  /> */}
                </fieldset>
                {phoneError && (
                   <span className="hern-signup-v1__signup-error">
@@ -977,6 +1130,7 @@ const Signup = props => {
                            origin: location.origin,
                            type: 'set_password',
                            ...(isClient &&
+                              !isSilentlyLogin &&
                               localStorage.getItem('landed_on') && {
                                  redirectUrl: localStorage.getItem('landed_on'),
                               }),
@@ -1007,3 +1161,12 @@ const Signup = props => {
       </div>
    )
 }
+
+const PROVIDERS = gql`
+   query PROVIDERS {
+      settings_authProvider {
+         title
+         value
+      }
+   }
+`

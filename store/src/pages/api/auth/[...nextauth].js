@@ -127,6 +127,9 @@ export default async (req, res) => {
             if (provider.title === 'google') {
                providers.push(Providers.Google(provider.value))
             }
+            if (provider.title === 'facebook') {
+               providers.push(Providers.Facebook(provider.value))
+            }
          })
       }
    }

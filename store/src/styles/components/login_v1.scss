@@ -141,10 +141,37 @@
    color: #ffffff !important;
 }
 
-.hern-register__otp__submit--disabled {
-   background: #367bf580;
+.hern-login-v1__otp-submit--disabled {
+   background-color: #367bf580 !important;
+   cursor: not-allowed;
 }
 
+.hern-login-v1__otp__phone__input {
+   input {
+      height: 40px;
+      background: #f4f4f4;
+      border-radius: 8px;
+      padding: 0 10px;
+      outline: none;
+      &:focus {
+         outline: 1px solid #367bf5;
+      }
+   }
+}
+.hern-login-v1__otp__phone__input-invalid {
+   input {
+      &:focus {
+         outline: 1px solid rgba(239, 68, 68, 1) !important;
+      }
+   }
+}
+.hern-login-v1__otp__phone__input-valid {
+   input {
+      &:focus {
+         outline: 1px solid #6ecb63 !important;
+      }
+   }
+}
 .hern-login-v1__otp__error {
    align-self: center;
    display: block;
@@ -301,6 +328,17 @@
    margin-top: 0.75rem;
 }
 
+.hern-login-v1__social__login {
+   margin: 1em;
+}
+.hern-login-v1__social__login__providers {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
+.hern-login-v1__social__login__provider {
+   margin: 0 0.5em;
+}
 @media only screen and (min-width: 769px) {
    .hern-login-v1-container {
       background-color: rgb(251, 252, 246);
