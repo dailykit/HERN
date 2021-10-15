@@ -66,37 +66,34 @@ export default function ResponseForm({ decodedToken }) {
 
    return (
       <Wrapper>
-         <div className="modal-content-div">
-            <h3 className="heading-before">Accept your Invitation.</h3>
-            <p className="sub-heading-before">
-               Please enter your details below and accept the invitation
-            </p>
+         <p className="League-Gothic text6 normal_heading">
+            Please enter your details below and accept the invitation
+         </p>
 
-            <Input
-               className="custom-response-input"
-               type="email"
-               name="email"
-               placeholder="Email"
-               value={form?.email?.value}
-               onChange={inputHandler}
-            />
-            {form?.email?.error ? (
-               <Error margin="8px 0 1rem 0">{form?.email?.error}</Error>
-            ) : (
-               <Spacer yAxis="0.5rem" />
-            )}
-            <Input
-               className="custom-response-input"
-               type="text"
-               name="phone"
-               placeholder="Phone Number"
-               value={form?.phone?.value}
-               onChange={inputHandler}
-            />
-            {form?.phone?.error && (
-               <Error margin="8px 0 1rem 0">{form?.phone?.error}</Error>
-            )}
-         </div>
+         <Input
+            className="custom-response-input"
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={form?.email?.value}
+            onChange={inputHandler}
+         />
+         {form?.email?.error ? (
+            <Error margin="8px 0 1rem 0">{form?.email?.error}</Error>
+         ) : (
+            <Spacer yAxis="0.5rem" />
+         )}
+         <Input
+            className="custom-response-input"
+            type="text"
+            name="phone"
+            placeholder="Phone Number"
+            value={form?.phone?.value}
+            onChange={inputHandler}
+         />
+         {form?.phone?.error && (
+            <Error margin="8px 0 1rem 0">{form?.phone?.error}</Error>
+         )}
       </Wrapper>
    )
 }

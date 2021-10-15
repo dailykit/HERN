@@ -31,17 +31,16 @@ export default function AddAddress() {
 
    return (
       <Wrapper>
-         <Flex container align="center" justifyContent="space-between"></Flex>
-         <div className="address-div">
-            <h1 className="address-header">Add Address Details</h1>
-            <AddressForm
-               defaultMutation={false}
-               defaultActionButton={false}
-               defaultAddress={responseDetails?.address}
-               isValidFunc={valid => setIsValid(valid)}
-               onChange={address => handleAddressChange(address)}
-            />
-         </div>
+         <h1 className="League-Gothic text3 address-header">
+            Add Address Details
+         </h1>
+         <AddressForm
+            defaultMutation={false}
+            defaultActionButton={false}
+            defaultAddress={responseDetails?.address}
+            isValidFunc={valid => setIsValid(valid)}
+            onChange={address => handleAddressChange(address)}
+         />
       </Wrapper>
    )
 }

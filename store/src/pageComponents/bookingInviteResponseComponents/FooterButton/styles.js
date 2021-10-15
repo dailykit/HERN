@@ -1,65 +1,30 @@
-import styled from "styled-components";
-import { theme } from "../../../theme";
+import styled from 'styled-components'
+import { theme } from '../../../theme'
 export const Wrapper = styled.div`
-  .modal-content-div {
-    color: ${theme.colors.textColor4};
-    .pinImg {
-      width: 50px;
-      height: 50px;
-      display: block;
-      margin: 1rem auto;
-    }
-    .response-sub-head {
-      font-size: ${theme.sizes.h8};
-      font-weight: 600;
-      color: ${theme.colors.textColor4};
-      margin-bottom: 2rem;
-      text-align: center;
-    }
-    .custom-response-input {
-      color: ${theme.colors.textColor4};
-    }
-    .custom-done-btn-wrapper {
-      background: ${theme.colors.mainBackground};
-      position: absolute;
-      bottom: 2rem;
-      left: 0;
-      z-index: 5;
-      padding: 1rem;
-      width: 100%;
-    }
-    .custom-done-btn {
-      height: 48px;
-    }
-  }
-  .slots-wrapper {
-    padding: 1rem;
-    margin-bottom: 1rem;
-  }
-
-  .footer-sticky-btn-div {
-    background: ${theme.colors.mainBackground};
-    box-shadow: 0px -6px 9px 3px rgba(0, 0, 0, 0.2);
-    position: sticky;
-    bottom: 0;
-    z-index: 5;
-    padding: 1rem;
-    width: 100%;
-    .poll-expiry-msg {
-      font-size: ${theme.sizes.h7};
-      font-weight: 400;
+   margin-top: 2rem;
+   background: ${theme.colors.lightBackground.grey};
+   position: unset;
+   bottom: 0;
+   z-index: 2;
+   width: 100%;
+   border-radius: 0 0 40px 40px;
+   .poll-expiry-msg {
       font-style: italic;
-      color: ${theme.colors.textColor4};
+      color: ${theme.colors.textColor5};
       text-align: center;
       margin-bottom: 8px;
-    }
-    .custom-submit-btn {
-      height: 48px;
-    }
-  }
-  @media (min-width: 769px) {
-    .footer-sticky-btn-div {
-      bottom: 2rem;
-    }
-  }
-`;
+   }
+   .custom-submit-btn {
+      height: 64px;
+      background: ${theme.colors.textColor};
+      color: ${theme.colors.textColor4};
+      border-radius: 0 0 40px 40px;
+      font-family: League-Gothic;
+      letter-spacing: 0.04em;
+   }
+   @media (min-width: 769px) {
+      .footer-sticky-btn-div {
+         bottom: 2rem;
+      }
+   }
+`

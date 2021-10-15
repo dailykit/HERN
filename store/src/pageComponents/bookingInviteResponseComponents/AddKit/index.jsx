@@ -79,6 +79,7 @@ export default function AddKit({ decodedToken }) {
                   products={products}
                   title="Whats included in my Kit?"
                   secondTitle="Ingredients"
+                  textClass="League-Gothic text3 text_center"
                />
             </div>
          ) : (

@@ -149,23 +149,21 @@ export default function SubmitResponse({ startCelebration }) {
    return (
       <>
          <Wrapper>
-            <div className="modal-content-div">
-               <Spacer yAxis="1rem" />
-               <div className="footer-sticky-btn-div">
-                  <p className="poll-expiry-msg">
-                     {rsvpStepIndex === 0
-                        ? '😇 Alex has already paid for your experience and kit.'
-                        : '😇 Your Invitation includes Kit delivery.'}
-                  </p>
-                  <Button
-                     onClick={submitResponseHandler}
-                     disabled={isDisabled}
-                     className="custom-submit-btn"
-                  >
-                     {rsvpStepIndex === 0 ? 'Next' : ' Accept Invitation'}
-                  </Button>
-               </div>
-            </div>
+            <p className="Proxima-Nova text9 poll-expiry-msg">
+               {rsvpStepIndex === 0
+                  ? `😇 ${
+                       decodedToken?.invitedBy?.name ||
+                       decodedToken?.invitedBy?.email
+                    } has already paid for your experience and kit.`
+                  : '😇 Your Invitation includes Kit delivery.'}
+            </p>
+            <Button
+               onClick={submitResponseHandler}
+               disabled={isDisabled}
+               className="custom-submit-btn text3"
+            >
+               {rsvpStepIndex === 0 ? 'Next' : ' Accept Invitation'}
+            </Button>
          </Wrapper>
       </>
    )

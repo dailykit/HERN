@@ -4,13 +4,13 @@ import { Wrapper } from './styles'
 
 export const GoodiesWrapper = ({ children }) => <Wrapper>{children}</Wrapper>
 
-export const Ingredients = ({ options, title }) => {
+export const Ingredients = ({ options, title, textClass = '' }) => {
    return (
       <>
          {options?.map(option => {
             return (
                <div key={option.id}>
-                  <h1 className="sub-heading text1">{title}</h1>
+                  <h1 className={`sub-heading text1 ${textClass}`}>{title}</h1>
                   <div className="ingredients_grid">
                      {option?.simpleRecipeYield?.simpleRecipe?.simpleRecipeIngredients.map(
                         ingredient => {
@@ -38,14 +38,14 @@ export const Ingredients = ({ options, title }) => {
       </>
    )
 }
-export const Goodies = ({ products, title, secondTitle }) => {
+export const Goodies = ({ products, title, secondTitle, textClass = '' }) => {
    console.log(products, 'llll')
    return (
       <GoodiesWrapper>
          {products.map(product => {
             return (
                <div key={product?.id}>
-                  <h1 className="sub-heading text1">{title}</h1>
+                  <h1 className={`sub-heading text1 ${textClass}`}>{title}</h1>
                   <img
                      className="box-open-img"
                      src="https://dailykit-239-primanti.s3.us-east-2.amazonaws.com/images/kits/Updated+Box+Image.png"
@@ -54,6 +54,7 @@ export const Goodies = ({ products, title, secondTitle }) => {
                   <Ingredients
                      options={product?.productOptions}
                      title={secondTitle}
+                     textClass={textClass}
                   />
                </div>
             )

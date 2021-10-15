@@ -187,37 +187,50 @@ export default function PollResponse({ navigationMenuItems }) {
    return (
       <Layout navigationMenuItems={navigationMenuItems}>
          <SEO title="Booking Rsvp" />
-         <StyledWrap>
+         <StyledWrap bgMode="dark">
             <Wrapper isCelebrating={isCelebrating || isPollClosed}>
-               {rsvpStepIndex === 0 ? (
-                  <>
-                     <Invite
-                        invitedBy={decodedToken?.invitedBy}
-                        cardData={experienceBooking?.experienceClass}
-                        isPollClosed={isPollClosed}
-                     />
-                     <ResponseForm decodedToken={decodedToken} />
-                  </>
-               ) : (
-                  <>
-                     <span
-                        className="previousBtn"
-                        onClick={() => previousRsvpStep(rsvpStepIndex)}
-                     >
-                        <ChevronLeft
-                           size={theme.sizes.h3}
-                           color={theme.colors.textColor4}
+               <h1 className="heading_h1 text2">
+                  You are invited by{' '}
+                  <span className="invited_by">
+                     {decodedToken.invitedBy?.name ||
+                        decodedToken.invitedBy?.email}
+                  </span>
+               </h1>
+               <div className="main_container">
+                  {rsvpStepIndex === 0 ? (
+                     <>
+                        <Invite
+                           invitedBy={decodedToken?.invitedBy}
+                           cardData={{
+                              ...experienceBooking?.experienceClass?.experience,
+                              experienceClass:
+                                 experienceBooking?.experienceClass
+                           }}
+                           isPollClosed={isPollClosed}
                         />
-                     </span>
-                     <AddKit decodedToken={decodedToken} />
-                     <AddAddress />
-                  </>
-               )}
+                        <ResponseForm decodedToken={decodedToken} />
+                     </>
+                  ) : (
+                     <>
+                        <span
+                           className="previousBtn"
+                           onClick={() => previousRsvpStep(rsvpStepIndex)}
+                        >
+                           <ChevronLeft
+                              size={theme.sizes.h3}
+                              color={theme.colors.textColor7}
+                           />
+                        </span>
+                        <AddKit decodedToken={decodedToken} />
+                        <AddAddress />
+                     </>
+                  )}
 
-               <FooterButton
-                  startCelebration={startCelebration}
-                  decodedToken={decodedToken}
-               />
+                  <FooterButton
+                     startCelebration={startCelebration}
+                     decodedToken={decodedToken}
+                  />
+               </div>
             </Wrapper>
 
             <BackDrop show={isCelebrating}>
@@ -262,18 +275,45 @@ export const getStaticProps = async () => {
 const Wrapper = styled.div`
    filter: ${({ isCelebrating }) => isCelebrating && 'blur(4px)'};
    position: relative;
-   .host-img {
-      width: 30px;
-      height: 30px;
-      object-fit: cover;
-      margin: 0 8px;
-      border-radius: 50%;
+   .proxinova_text {
+      font-family: Proxima Nova;
+      font-style: normal;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      color: ${theme.colors.textColor5};
    }
+   .normal-heading {
+      color: ${theme.colors.textColor5};
+      margin: 2rem 0;
+      padding: 0 1rem;
+   }
+   .heading_h1 {
+      font-family: League-Gothic;
+      font-style: normal;
+      font-weight: normal;
+      text-align: center;
+      color: ${theme.colors.textColor4};
+      .invited_by {
+         font-size: inherit;
+         font-family: League-Gothic;
+         font-style: normal;
+         font-weight: normal;
+         text-align: center;
+         color: ${theme.colors.textColor};
+      }
+   }
+
+   .main_container {
+      background: ${theme.colors.lightBackground.grey};
+      border-radius: 40px;
+      position: relative;
+   }
+
    .previousBtn {
       margin: 0;
-      position: -webkit-sticky;
-      position: sticky;
-      top: -1px;
+      position: absolute;
+      top: 2rem;
+      left: 1rem;
       cursor: pointer;
       &:hover {
          svg {
@@ -281,129 +321,11 @@ const Wrapper = styled.div`
          }
       }
    }
-   .invitation-head {
-      font-size: ${theme.sizes.h2};
-      font-weight: 600;
-      color: ${theme.colors.textColor4};
-      text-align: center;
-   }
-   .below-para {
-      font-size: ${theme.sizes.h7};
-      font-weight: 400;
-      color: ${theme.colors.textColor4};
-      text-align: center;
-   }
-   .normal-heading {
-      font-size: ${theme.sizes.h8};
-      color: ${theme.colors.textColor4};
-      margin-bottom: 20px;
-   }
-
-   .kit-includes-div {
-      padding: 1rem;
-      border-radius: 4px;
-      background: ${theme.colors.textColor9};
-      margin-bottom: 2rem;
-      .kit-img {
-         width: 50px;
-         height: 50px;
-      }
-      .kit-head {
-         font-size: ${theme.sizes.h8};
-         font-weight: 400;
-         font-style: italic;
-         color: ${theme.colors.textColor4};
-         margin-left: 8px;
-      }
-      .kit-info {
-         font-size: ${theme.sizes.h8};
-         font-weight: 700;
-         color: ${theme.colors.textColor};
-         text-align: center;
-      }
-   }
-   .heading-before {
-      font-size: ${theme.sizes.h4};
-      font-weight: 300;
-      color: ${theme.colors.textColor4};
-      text-align: center;
-      margin-bottom: 20px;
-   }
-   .sub-heading-before {
-      font-size: ${theme.sizes.h6};
-      font-weight: 500;
-      color: ${theme.colors.textColor4};
-      text-align: center;
-      margin-bottom: 12px;
-   }
-   .accept-form-div {
-      margin-bottom: 4rem;
-   }
-   .customInput {
-      margin-bottom: 20px;
-      color: ${theme.colors.textColor4};
-   }
-   .small-head {
-      font-size: ${theme.sizes.h7};
-      font-weight: 500;
-      color: ${theme.colors.textColor4};
-      margin-bottom: 12px;
-   }
-
-   .address-wrapper {
-      margin: 1rem 0;
-      margin-bottom: 2rem;
-      padding: 8px;
-      border: 1px solid ${theme.colors.textColor};
-      color: ${theme.colors.textColor};
-      cursor: pointer;
-   }
-
-   .slots-wrapper {
-      margin-bottom: 8rem;
-   }
-
-   .slot-div {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      color: ${theme.colors.textColor4};
-      background: ${theme.colors.mainBackground};
-      box-shadow: -3px 3px 6px rgba(21, 23, 30, 0.2),
-         3px -3px 6px rgba(21, 23, 30, 0.2), -3px -3px 6px rgba(45, 51, 66, 0.9),
-         3px 3px 8px rgba(21, 23, 30, 0.9),
-         inset 1px 1px 2px rgba(45, 51, 66, 0.3),
-         inset -1px -1px 2px rgba(21, 23, 30, 0.5);
-      border-radius: 4px;
-      padding: 1rem;
-      margin-bottom: 12px;
-      .slot-time {
-         font-size: ${theme.sizes.h6};
-         font-weight: 500;
-         color: ${theme.colors.textColor4};
-         margin-left: 8px;
-      }
-      .vote-count {
-         font-size: ${theme.sizes.h11};
-         font-weight: 400;
-         font-style: italic;
-         color: ${theme.colors.textColor4};
-      }
-   }
 
    @media (min-width: 769px) {
-      width: 60%;
+      width: 70%;
       height: 100%;
-      margin: 2rem auto;
-      background: #212530;
-      box-shadow: 1px 1px 2px rgba(38, 43, 56, 0.3),
-         -1px -1px 2px rgba(28, 31, 40, 0.5),
-         inset -16px 16px 32px rgba(28, 31, 40, 0.2),
-         inset 16px -16px 32px rgba(28, 31, 40, 0.2),
-         inset -16px -16px 32px rgba(38, 43, 56, 0.9),
-         inset 16px 16px 40px rgba(28, 31, 40, 0.9);
-      padding: 1rem;
-      position: relative;
+      margin: 0 auto;
       .footer-sticky-btn-div {
          bottom: 2rem;
       }
@@ -411,6 +333,11 @@ const Wrapper = styled.div`
 `
 
 const StyledWrap = styled.div`
+   background: ${({ bgMode }) =>
+      bgMode === 'dark'
+         ? theme.colors.darkBackground.darkblue
+         : theme.colors.lightBackground.white};
+   padding: 4rem 2rem;
    .response-done {
       margin-top: 4rem;
       padding: 1rem;
