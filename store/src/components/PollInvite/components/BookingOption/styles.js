@@ -2,12 +2,6 @@ import styled from 'styled-components'
 import { theme } from '../../../../theme'
 
 export const OptionDiv = styled.div`
-   .slot-div {
-      padding: 1rem;
-      margin: 1rem;
-      background: ${theme.colors.lightBackground.grey};
-      border-radius: 12px;
-   }
    .proxinova_text {
       font-family: Proxima Nova;
       font-style: normal;
@@ -18,10 +12,16 @@ export const OptionDiv = styled.div`
    }
 
    .slots-wrapper {
+      background: ${theme.colors.lightBackground.grey};
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 1rem;
+      height: 64px;
+      margin: 1rem;
+      border-radius: 12px;
+   }
+   .vote-info-div {
+      margin-left: 1rem;
    }
    .slot-info-time {
       font-weight: 500;
@@ -55,22 +55,22 @@ export const OptionDiv = styled.div`
    .vote-head:after {
       transition: all 560ms;
    }
-   .booking-div {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      .book-slot {
-         background: none;
-         border: 1px solid ${theme.colors.textColor4};
-         :hover {
-            border: 1px solid ${theme.colors.textColor};
-         }
-         span {
-            color: ${theme.colors.textColor};
-            font-family: Proxima Nova;
-            font-style: normal;
-            letter-spacing: 0;
-         }
+   .book-slot {
+      height: 100%;
+      background: ${theme.colors.textColor};
+      color: ${theme.colors.textColor4};
+      border-radius: 0 12px 12px 0;
+      :hover {
+         border: 1px solid ${theme.colors.textColor};
+      }
+      :focus {
+         border: none;
+      }
+      span {
+         color: ${theme.colors.textColor4};
+         font-family: Proxima Nova;
+         font-style: normal;
+         letter-spacing: 0;
       }
    }
 

@@ -457,7 +457,6 @@ export function Card({ experienceInfo = null }) {
                </div>
             </div>
             <div className="price-details">
-               <h2>Poll details</h2>
                <div className="pricing">
                   <p className="proxinova_text text9">Created at</p>
                   <p className="proxinova_text text9">

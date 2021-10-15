@@ -63,33 +63,30 @@ export default function BookingOption({
    }, [pollCutOffTime, option])
    return (
       <OptionDiv>
-         <div className="slot-div">
-            <div className="slots-wrapper">
-               <div>
-                  <p
-                     onClick={openParticipantsModal}
-                     className="proxinova_text vote-head text8"
-                  >
-                     {option?.voting?.aggregate?.count} votes{' '}
-                  </p>
-                  <span className="proxinova_text text8 slot-info-time">
-                     for {getDate(option?.experienceClass?.startTimeStamp)},{' '}
-                     {getTime(option?.experienceClass?.startTimeStamp)}
-                  </span>
-               </div>
-
-               <button
-                  disabled={isClassExpired}
-                  title={isClassExpired && 'This class has expired'}
-                  className="book-slot"
-                  onClick={() =>
-                     bookSlotHandler(option?.experienceClass, option?.voters)
-                  }
+         <div className="slots-wrapper">
+            <div className="vote-info-div">
+               <p
+                  onClick={openParticipantsModal}
+                  className="proxinova_text vote-head text8"
                >
-                  Book Slot
-               </button>
+                  {option?.voting?.aggregate?.count} votes{' '}
+               </p>
+               <span className="proxinova_text text8 slot-info-time">
+                  for {getDate(option?.experienceClass?.startTimeStamp)},{' '}
+                  {getTime(option?.experienceClass?.startTimeStamp)}
+               </span>
             </div>
-            <div className="booking-div"></div>
+
+            <Button
+               disabled={isClassExpired}
+               title={isClassExpired && 'This class has expired'}
+               className="book-slot"
+               onClick={() =>
+                  bookSlotHandler(option?.experienceClass, option?.voters)
+               }
+            >
+               Book Slot
+            </Button>
          </div>
          <Modal
             title="Participants Voted for this Option"
