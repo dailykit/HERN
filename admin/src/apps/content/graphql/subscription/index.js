@@ -96,30 +96,27 @@ export const BRAND_LISTING = gql`
          isDefault
          subscriptionRequested
          onDemandRequested
-         website {
-            id
-         }
       }
    }
 `
-export const WEBSITE_PAGES_LISTING = gql`
-   subscription WEBSITE_PAGES_LISTING($websiteId: Int!) {
-      website_websitePage(
-         where: { websiteId: { _eq: $websiteId }, isArchived: { _eq: false } }
+export const BRAND_PAGES_LISTING = gql`
+   subscription BRAND_PAGES_LISTING($brandId: Int!) {
+      brands_brandPages(
+         where: { brandId: { _eq: $brandId }, isArchived: { _eq: false } }
       ) {
          id
          internalPageName
          route
-         websiteId
+         brandId
          published
       }
    }
 `
 
-export const WEBSITE_TOTAL_PAGES = gql`
-   subscription WEBSITE_TOTAL_PAGES($websiteId: Int!) {
-      website_websitePage_aggregate(
-         where: { websiteId: { _eq: $websiteId }, isArchived: { _eq: false } }
+export const BRAND_TOTAL_PAGES = gql`
+   subscription BRAND_TOTAL_PAGES($brandId: Int!) {
+      brands_brandPages_aggregate(
+         where: { brandId: { _eq: $brandId }, isArchived: { _eq: false } }
       ) {
          aggregate {
             count
@@ -129,7 +126,7 @@ export const WEBSITE_TOTAL_PAGES = gql`
 `
 export const PAGE_INFO = gql`
    subscription PAGE_INFO($pageId: Int!) {
-      website_websitePage_by_pk(id: $pageId) {
+      brands_brandPages_by_pk(id: $pageId) {
          internalPageName
          published
          route
@@ -166,8 +163,8 @@ export const GET_TEMPLATES = gql`
 
 export const LINKED_COMPONENT = gql`
    subscription LINKED_COMPONENT($pageId: Int!) {
-      website_websitePageModule(
-         where: { websitePageId: { _eq: $pageId } }
+      brands_brandPageModule(
+         where: { brandPageId: { _eq: $pageId } }
          order_by: { position: desc_nulls_last }
       ) {
          fileId
@@ -181,6 +178,11 @@ export const LINKED_COMPONENT = gql`
          file {
             fileName
             path
+         }
+         systemModule {
+            identifier
+            description
+            configTemplate
          }
       }
    }
@@ -210,7 +212,7 @@ export const FOLD_AGGREGATE = gql`
 `
 export const MENU_AGGREGATE = gql`
    subscription MENU_AGGREGATE {
-      website_navigationMenu_aggregate {
+      brands_navigationMenu_aggregate {
          aggregate {
             count
          }
@@ -220,7 +222,7 @@ export const MENU_AGGREGATE = gql`
 
 export const NAVIGATION_MENU = gql`
    subscription NAVIGATION_MENU {
-      website_navigationMenu {
+      brands_navigationMenu {
          id
          title
          isPublished
@@ -229,7 +231,7 @@ export const NAVIGATION_MENU = gql`
 `
 export const NAVIGATION_MENU_INFO = gql`
    subscription NAVIGATION_MENU_INFO($menuId: Int!) {
-      website_navigationMenuItem(
+      brands_navigationMenuItem(
          where: { navigationMenuId: { _eq: $menuId } }
          order_by: { position: desc_nulls_last }
       ) {

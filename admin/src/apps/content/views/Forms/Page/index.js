@@ -84,20 +84,20 @@ const PageForm = () => {
          },
          onSubscriptionData: ({
             subscriptionData: {
-               data: { website_websitePage_by_pk: websitePage = {} } = {},
+               data: { brands_brandPages_by_pk: brandPage = {} } = {},
             } = {},
          }) => {
-            setState(websitePage || {})
+            setState(brandPage || {})
             setPageTitle({
                ...pageTitle,
-               value: websitePage?.internalPageName || '',
+               value: brandPage?.internalPageName || '',
             })
 
             setPageRoute({
                ...pageRoute,
-               value: websitePage?.route || '',
+               value: brandPage?.route || '',
             })
-            setToggle(websitePage?.published)
+            setToggle(brandPage?.published)
          },
       }
    )

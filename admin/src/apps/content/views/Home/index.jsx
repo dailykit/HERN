@@ -3,7 +3,7 @@ import { DashboardTile } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import {
-   WEBSITE_TOTAL_PAGES,
+   BRAND_TOTAL_PAGES,
    FOLD_AGGREGATE,
    MENU_AGGREGATE,
 } from '../../graphql'
@@ -12,25 +12,31 @@ import { StyledCardList, StyledHome } from './styled'
 import { Banner, InlineLoader } from '../../../../shared/components'
 import { logger } from '../../../../shared/utils'
 import { useTabs } from '../../../../shared/providers'
-import { BlocksSvg, NavbarMenuSvg, PagesSvg, SettingsSvg, SubscriptionSvg } from '../../../../shared/assets/illustrationTileSvg'
+import {
+   BlocksSvg,
+   NavbarMenuSvg,
+   PagesSvg,
+   SettingsSvg,
+   SubscriptionSvg,
+} from '../../../../shared/assets/illustrationTileSvg'
 
 export const Home = () => {
    const { addTab } = useTabs()
    const [context, setContext] = useContext(BrandContext)
-   const { websiteId } = context
+   const { brandId } = context
 
    // page count subscription
    const {
       data: {
-         website_websitePage_aggregate: {
+         brands_brandPages_aggregate: {
             aggregate: { count: pageCount = 0 } = {},
          } = {},
       } = {},
       loading: pageLoading,
       error: pageError,
-   } = useSubscription(WEBSITE_TOTAL_PAGES, {
+   } = useSubscription(BRAND_TOTAL_PAGES, {
       variables: {
-         websiteId,
+         brandId: brandId,
       },
    })
 
@@ -48,7 +54,7 @@ export const Home = () => {
    // menu count subscription
    const {
       data: {
-         website_navigationMenu_aggregate: {
+         brands_navigationMenu_aggregate: {
             aggregate: { count: menuCount = 0 } = {},
          } = {},
       } = {},

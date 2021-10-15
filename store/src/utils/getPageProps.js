@@ -1,12 +1,12 @@
 import { graphQLClient } from '../lib'
 import { getSettings, foldsResolver } from '.'
-import { NAVIGATION_MENU, WEBSITE_PAGE } from '../graphql'
+import { NAVIGATION_MENU, BRAND_PAGE } from '../graphql'
 
 export const getPageProps = async (params, route) => {
    const client = await graphQLClient()
 
    //Getting data by their router
-   const dataByRoute = await client.request(WEBSITE_PAGE, {
+   const dataByRoute = await client.request(BRAND_PAGE, {
       domain: params.brand,
       route,
    })
@@ -18,15 +18,16 @@ export const getPageProps = async (params, route) => {
 
    //Module
    const parsedData = await foldsResolver(
-      dataByRoute.website_websitePage[0]['websitePageModules']
+      dataByRoute.brands_brandPages[0]['brandPageModules']
    )
 
    //Navigation Menu
    const navigationMenu = await client.request(NAVIGATION_MENU, {
       navigationMenuId:
-         dataByRoute.website_websitePage[0]['website']['navigationMenuId'],
+         dataByRoute.brands_brandPages[0]['brands']['navigationMenuId'],
    })
-   const navigationMenus = navigationMenu.website_navigationMenuItem
+   const navigationMenus = navigationMenu.brands_navigationMenuItem
 
    return { parsedData, seo, settings, navigationMenus }
 }
+

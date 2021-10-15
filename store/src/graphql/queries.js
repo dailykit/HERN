@@ -1124,76 +1124,74 @@ export const SUBSCRIPTION_PLAN = gql`
    }
 `
 export const NAVIGATION_MENU = gql`
-   query NAVIGATION_MENU($navigationMenuId: Int!) {
-      website_navigationMenuItem(
-         where: { navigationMenuId: { _eq: $navigationMenuId } }
-      ) {
-         created_at
-         id
-         label
-         navigationMenuId
-         openInNewTab
-         position
-         updated_at
-         url
-         parentNavigationMenuItemId
-      }
+query NAVIGATION_MENU($navigationMenuId: Int!) {
+   brands_navigationMenuItem(
+      where: { navigationMenuId: { _eq: $navigationMenuId } }
+   ) {
+      created_at
+      id
+      label
+      navigationMenuId
+      openInNewTab
+      position
+      updated_at
+      url
+      parentNavigationMenuItemId
    }
+}
 `
-export const WEBSITE_PAGE = gql`
-   query WEBSITE_PAGE($domain: String!, $route: String!) {
-      website_websitePage(
-         where: {
-            route: { _eq: $route }
-            website: {
-               brand: {
-                  _or: [
-                     { isDefault: { _eq: true } }
-                     { domain: { _eq: $domain } }
-                  ]
-               }
+export const BRAND_PAGE = gql`
+query BRAND_PAGE($domain: String!, $route: String!) {
+   brands_brandPages(
+      where: {
+         route: { _eq: $route }
+            brand: {
+               _or: [
+                  { isDefault: { _eq: true } }
+                  { domain: { _eq: $domain } }
+               ]
             }
          }
+   ) {
+      id
+      internalPageName
+      isArchived
+      published
+      route
+      linkedNavigationMenuId
+      brandPageModules(
+         order_by: { position: desc_nulls_last }
+         where: { isHidden: { _eq: false } }
       ) {
          id
-         internalPageName
-         isArchived
-         published
-         route
-         linkedNavigationMenuId
-         websitePageModules(
-            order_by: { position: desc_nulls_last }
-            where: { isHidden: { _eq: false } }
-         ) {
-            id
-            name
-            moduleType
-            isHidden
-            fileId
-            position
-            subscriptionDivFileId: file {
-               path
-               linkedCssFiles {
+         name
+         moduleType
+         isHidden
+         fileId
+         position
+         subscriptionDivFileId: file {
+            path
+            linkedCssFiles {
+               id
+               cssFile {
                   id
-                  cssFile {
-                     id
-                     path
-                  }
+                  path
                }
-               linkedJsFiles {
+            }
+            linkedJsFiles {
+               id
+               jsFile {
                   id
-                  jsFile {
-                     id
-                     path
-                  }
+                  path
                }
             }
          }
-         website {
-            navigationMenuId
-         }
+      }
+      brand {
+         navigationMenuId
       }
    }
+}
 `
 
 // query MyQuery($navigationMenuId: Int!) {
@@ -1245,6 +1243,129 @@ export const PLATFORM_CUSTOMERS = gql`
          password
          fullName
          id: keycloakId
+      }
+   }
+`
+
+export const PRODUCTS_BY_CATEGORY = gql`
+   query PRODUCTS_BY_CATEGORY($params: jsonb!) {
+      onDemand_getMenuV2(args: { params: $params }) {
+         data
+         id
+      }
+   }
+`
+export const PRODUCTS = gql`
+   query Products($ids: [Int!]!) {
+      products(where: { isArchived: { _eq: false }, id: { _in: $ids } }) {
+         id
+         name
+         type
+         assets
+         tags
+         additionalText
+         description
+         price
+         discount
+         isPopupAllowed
+         isPublished
+         defaultProductOptionId
+         productOptions(
+            where: { isArchived: { _eq: false } }
+            order_by: { position: desc_nulls_last }
+         ) {
+            id
+            position
+            type
+            label
+            price
+            discount
+            cartItem
+            modifier {
+               id
+               name
+               categories(where: { isVisible: { _eq: true } }) {
+                  id
+                  name
+                  isRequired
+                  type
+                  limits
+                  options(where: { isVisible: { _eq: true } }) {
+                     id
+                     name
+                     price
+                     discount
+                     quantity
+                     image
+                     isActive
+
+                     sachetItemId
+                     ingredientSachetId
+                     cartItem
+                  }
+               }
+            }
+         }
+      }
+   }
+`
+export const GET_CART_ON_DEMAND = gql`
+   subscription cart($id: Int!) {
+      cart(id: $id) {
+         id
+         tax
+         orderId
+         discount
+         itemTotal
+         totalPrice
+         customerId
+         customerInfo
+         paymentStatus
+         deliveryPrice
+         fulfillmentInfo
+         paymentMethodId
+         walletAmountUsed
+         loyaltyPointsUsed
+         loyaltyPointsUsable
+         customerKeycloakId
+         billing: billingDetails
+         subscriptionOccurenceId
+         subscriptionOccurence {
+            id
+            fulfillmentDate
+         }
+         address
+         fulfillmentInfo
+         products: cartItems_aggregate(where: { level: { _eq: 1 } }) {
+            aggregate {
+               count
+            }
+            nodes {
+               id
+               addOnLabel
+               addOnPrice
+               price: unitPrice
+               name: displayName
+               image: displayImage
+               childs {
+                  price: unitPrice
+                  name: displayName
+                  productOption {
+                     id
+                     label
+                  }
+                  childs {
+                     displayName
+                     price: unitPrice
+                     modifierOption {
+                        id
+                        name
+                     }
+                  }
+               }
+               productId
+            }
+         }
       }
    }
 `
