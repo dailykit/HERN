@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import jwt from 'jsonwebtoken'
 import { useToasts } from 'react-toast-notifications'
 import { useMutation } from '@apollo/client'
+import { message } from 'antd'
 import { Wrapper } from './styles'
 import {
    Button,
@@ -26,7 +27,6 @@ export default function Invite({ experienceBooking, isPollClosed }) {
    const { user = {} } = userState
    const [inviteList, setInviteList] = useState([])
    const [isReset, setIsReset] = useState(false)
-   const [copyBtnClasses, setCopyBtnClasses] = useState(['customBtn text6'])
    const payload = {
       experienceBookingId: experienceBooking?.id,
       experienceBookingCartId: experienceBooking?.cartId,
@@ -68,17 +68,16 @@ export default function Invite({ experienceBooking, isPollClosed }) {
 
    const copyHandler = async () => {
       if (!isPollClosed) {
-         setCopyBtnClasses(prev => [...prev, 'blink_me'])
          navigator.clipboard
             .writeText(
                `${window.location.origin}/bookingInviteResponse?token=${token}`
             )
             .then(
                function () {
-                  console.log('Async: Copying to clipboard was successful!')
-                  setCopyBtnClasses(['customBtn'])
+                  message.success('Copied succesfully!')
                },
                function (err) {
+                  message.error('Fail to copy!')
                   console.error('Async: Could not copy text: ', err)
                }
             )
@@ -184,7 +183,7 @@ export default function Invite({ experienceBooking, isPollClosed }) {
             <div className="invite-msg-div">
                <Button
                   background={theme.colors.secondaryColor}
-                  className={copyBtnClasses}
+                  className="customBtn text6"
                   onClick={copyHandler}
                   disabled={isPollClosed}
                >

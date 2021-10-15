@@ -1,7 +1,8 @@
 import styled from 'styled-components'
 import { theme } from '../../theme'
+import { Button } from 'antd'
 
-export const StyledButton = styled.button`
+export const StyledButton = styled(Button)`
    width: 100%;
    font-size: ${({ fontSize }) => fontSize};
    height: ${({ height }) => height || '38px'};
@@ -13,7 +14,23 @@ export const StyledButton = styled.button`
       backgroundColor || theme.colors.textColor4};
    border: none;
    cursor: pointer;
-
+   :focus {
+      border: none;
+   }
+   :active {
+      border: none;
+   }
+   :hover {
+      border: none;
+   }
+   span {
+      font-size: inherit;
+      font-family: inherit;
+      color: inherit;
+      font-weight: inherit;
+      letter-spacing: inherit;
+      line-height: inherit;
+   }
    &:hover {
       cursor: pointer;
    }

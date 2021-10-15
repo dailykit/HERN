@@ -194,6 +194,7 @@ export const NavBar = styled.nav`
       display: flex;
       justify-content: center;
       align-items: center;
+      color: ${theme.colors.textColor};
    }
    .auth-btn {
       position: absolute;
