@@ -16,7 +16,8 @@ const CategoryWise = ({
    data,
    type,
    componentLayout = 'masonry',
-   keyname = 'experience_experienceCategories'
+   keyname = 'experience_experienceCategories',
+   showWishlist
 }) => {
    const router = useRouter()
    return (
@@ -33,6 +34,7 @@ const CategoryWise = ({
                            <Carousel
                               data={category[keyname] || []}
                               type={type}
+                              showWishlist={showWishlist}
                            />
                         </CategoryWiseDiv>
                      )
@@ -60,6 +62,7 @@ const CategoryWise = ({
                                        key={index}
                                        type={type}
                                        data={item}
+                                       showWishlist={showWishlist}
                                     />
                                  )
                               })}
@@ -78,6 +81,7 @@ export default function RenderCard({
    type = 'experience',
    layout = 'carousel',
    showCategorywise = true,
+   showWishlist = true,
    keyname = 'experience_experienceCategories'
 }) {
    const [componentLayout, setComponentLayout] = useState(layout)
@@ -102,9 +106,14 @@ export default function RenderCard({
                      type={type}
                      componentLayout={componentLayout}
                      keyname={keyname}
+                     showWishlist={showWishlist}
                   />
                ) : (
-                  <Carousel data={data} type={type} />
+                  <Carousel
+                     data={data}
+                     type={type}
+                     showWishlist={showWishlist}
+                  />
                )}
             </>
          )}
@@ -116,6 +125,7 @@ export default function RenderCard({
                      type={type}
                      componentLayout={componentLayout}
                      keyname={keyname}
+                     showWishlist={showWishlist}
                   />
                ) : (
                   <Masonry
@@ -130,6 +140,7 @@ export default function RenderCard({
                               key={index}
                               type={type}
                               data={item}
+                              showWishlist={showWishlist}
                            />
                         )
                      })}

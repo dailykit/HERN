@@ -9,7 +9,11 @@ import Wishlist from '../../Wishlist'
 import { theme } from '../../../theme.js'
 import { useUser } from '../../../Providers'
 
-export default function ExperienceCard({ cardDetails, ...props }) {
+export default function ExperienceCard({
+   cardDetails,
+   showWishlist = true,
+   ...props
+}) {
    const { experience } = cardDetails
    const { state: userState } = useUser()
    const { user = {} } = userState
@@ -26,33 +30,35 @@ export default function ExperienceCard({ cardDetails, ...props }) {
                alt="experience"
                // layout="fill"
             />
-            <Wishlist
-               className="bookmark-icon"
-               title={
-                  experience?.isSaved
-                     ? 'Click to remove from wishlist'
-                     : 'Click to add to wishlist'
-               }
-               method={experience?.isSaved ? 'delete' : 'create'}
-               variable={
-                  experience?.isSaved
-                     ? experience?.customer_savedEntities[0]?.id
-                     : {
-                          keycloakId: user?.keycloakId,
-                          experienceId: experience?.id
-                       }
-               }
-               icon={
-                  <BookmarkIcon
-                     size="24"
-                     color={
-                        experience?.isSaved
-                           ? theme.colors.tertiaryColor
-                           : theme.colors.textColor4
-                     }
-                  />
-               }
-            />
+            {showWishlist && (
+               <Wishlist
+                  className="bookmark-icon"
+                  title={
+                     experience?.isSaved
+                        ? 'Click to remove from wishlist'
+                        : 'Click to add to wishlist'
+                  }
+                  method={experience?.isSaved ? 'delete' : 'create'}
+                  variable={
+                     experience?.isSaved
+                        ? experience?.customer_savedEntities[0]?.id
+                        : {
+                             keycloakId: user?.keycloakId,
+                             experienceId: experience?.id
+                          }
+                  }
+                  icon={
+                     <BookmarkIcon
+                        size="24"
+                        color={
+                           experience?.isSaved
+                              ? theme.colors.tertiaryColor
+                              : theme.colors.textColor4
+                        }
+                     />
+                  }
+               />
+            )}
          </CardImage>
          <CardBody {...props}>
             <h2 className="exp-name text6" onClick={onClickHandler}>

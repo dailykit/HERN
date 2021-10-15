@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import ReactHtmlParser from 'react-html-parser'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { useToasts } from 'react-toast-notifications'
@@ -6,20 +7,33 @@ import jwt_decode from 'jwt-decode'
 import { useSubscription, useQuery } from '@apollo/client'
 import styled from 'styled-components'
 import { theme } from '../../theme'
+import { SIMILAR_CATEGORY_EXPERIENCE } from '../../graphql'
 import {
    Invite,
    SubmitResponse
 } from '../../pageComponents/pollInviteResponseComponents'
-import { BackDrop, SEO, Layout, InlineLoader } from '../../components'
+import {
+   BackDrop,
+   SEO,
+   Layout,
+   InlineLoader,
+   Button,
+   RenderCard
+} from '../../components'
 import { useUser } from '../../Providers'
-import { getNavigationMenuItems } from '../../lib'
-import { useWindowDimensions, isExpired, isEmpty } from '../../utils'
+import { getNavigationMenuItems, getBannerData } from '../../lib'
+import {
+   useWindowDimensions,
+   isExpired,
+   isEmpty,
+   fileParser
+} from '../../utils'
 import {
    EXPERIENCE_BOOKING_PARTICIPANT_INFO,
    EXPERIENCE_POLLS
 } from '../../graphql'
 
-export default function PollResponse({ navigationMenuItems }) {
+export default function PollResponse({ navigationMenuItems, parsedData = [] }) {
    const router = useRouter()
    const { token } = router.query // get encrypted token from query
    const { isAuthenticated } = useUser()
@@ -29,6 +43,7 @@ export default function PollResponse({ navigationMenuItems }) {
    const decodedToken = jwt_decode(token) // decode token to get most of the info.
    const [isCelebrating, setIsCelebrating] = useState(false)
    const [isPollClosed, setIsPollClosed] = useState(false)
+   const [categories, setCategories] = useState([])
    const participantInfo = localStorage.getItem('participantInfo')
    const localStorageData = JSON.parse(participantInfo)
 
@@ -41,6 +56,27 @@ export default function PollResponse({ navigationMenuItems }) {
          id: decodedToken?.experienceBookingId
       }
    })
+
+   // Similar experiences query
+   const { loading: isSimilarExperiencesLoading } = useQuery(
+      SIMILAR_CATEGORY_EXPERIENCE,
+      {
+         // skip: isEmpty(tagIds),
+         variables: {
+            tags: [1006]
+         },
+         onCompleted: ({
+            experiences_experienceCategory: ExperienceCategories = []
+         } = {}) => {
+            console.log('Similar Experiences', ExperienceCategories)
+            setCategories(ExperienceCategories)
+         },
+         onError: error => {
+            console.error(error)
+            addToast('Something went wrong!', { appearance: 'error' })
+         }
+      }
+   )
 
    const {
       data: { experienceBookingParticipant = {} } = {},
@@ -70,7 +106,9 @@ export default function PollResponse({ navigationMenuItems }) {
       setIsCelebrating(true)
       setTimeout(stopCelebration, 2000)
    }
-   console.log(decodedToken)
+   const handleExperienceExploreMore = () => {
+      router.push('/experiences')
+   }
 
    useEffect(() => {
       //setting poll closed to true when cut off time is reached or public url is not active
@@ -90,35 +128,76 @@ export default function PollResponse({ navigationMenuItems }) {
       console.log(hasExperienceBookingError)
       addToast('Something went wrong!', { appearance: 'error' })
    }
-   if (isExperienceBookingLoading || isParticipantInfoLoading) {
+   if (
+      isExperienceBookingLoading ||
+      isParticipantInfoLoading ||
+      isSimilarExperiencesLoading
+   ) {
       return <InlineLoader type="full" />
    }
    return (
       <Layout navigationMenuItems={navigationMenuItems}>
          <SEO title="Poll Rsvp" />
-         <StyledWrap>
+         <StyledWrap bgMode="dark">
             <Wrapper isCelebrating={isCelebrating || isPollClosed}>
-               <Invite
-                  invitedBy={decodedToken?.invitedBy}
-                  cardData={
-                     experienceBooking?.experienceBookingOptions[0]
-                        ?.experienceClass
-                  }
-                  isPollClosed={isPollClosed}
-               />
-               <p className="normal-heading">
-                  Select the dates and times that work for you.
-               </p>
+               <h1 className="heading_h1 text2">
+                  <span className="invited_by">
+                     {decodedToken.invitedBy?.name ||
+                        decodedToken.invitedBy?.email}
+                  </span>{' '}
+                  WANTS TO KNOW YOUR AVAILABILITY
+               </h1>
+               <div className="main_container">
+                  <Invite
+                     invitedBy={decodedToken?.invitedBy}
+                     cardData={experienceBooking}
+                     isPollClosed={isPollClosed}
+                  />
+                  <p className="League-Gothic text6 normal-heading">
+                     Select below the date and time slot that best suits your
+                     availability.
+                  </p>
 
-               <SubmitResponse
-                  decodedToken={decodedToken}
-                  startCelebration={startCelebration}
-                  options={experienceBooking?.experienceBookingOptions}
-                  isPollClosed={isPollClosed}
-                  localStorageData={localStorageData}
-                  experienceBookingParticipant={experienceBookingParticipant}
-               />
+                  <SubmitResponse
+                     decodedToken={decodedToken}
+                     startCelebration={startCelebration}
+                     options={experienceBooking?.experienceBookingOptions}
+                     isPollClosed={isPollClosed}
+                     localStorageData={localStorageData}
+                     experienceBookingParticipant={experienceBookingParticipant}
+                  />
+               </div>
             </Wrapper>
+            <div style={{ margin: '6rem 0' }}>
+               {!isEmpty(categories) && (
+                  <RenderCard
+                     data={categories
+                        .map(
+                           category => category?.experience_experienceCategories
+                        )
+                        .flat()}
+                     // data={categories}
+                     type="experience"
+                     layout="carousel"
+                     showCategorywise={false}
+                     showWishlist={false}
+                     keyname="experience_experienceCategories"
+                  />
+               )}
+               <Button
+                  className="explore__btn text9"
+                  onClick={handleExperienceExploreMore}
+               >
+                  Explore More
+               </Button>
+               <div id="pollInviteResponse-top-02">
+                  {Boolean(parsedData.length) &&
+                     ReactHtmlParser(
+                        parsedData.find(fold => fold.id === 'home-top-02')
+                           ?.content
+                     )}
+               </div>
+            </div>
 
             <BackDrop show={isCelebrating}>
                <div className="response-done">
@@ -149,10 +228,22 @@ export default function PollResponse({ navigationMenuItems }) {
 
 export const getStaticProps = async () => {
    const domain = 'primanti.dailykit.org'
+   const where = {
+      id: {
+         _in: [
+            'pollInviteResponse-top-01',
+            'pollInviteResponse-top-02',
+            'pollInviteResponse-bottom-01'
+         ]
+      }
+   }
    const navigationMenuItems = await getNavigationMenuItems(domain)
+   const bannerData = await getBannerData(where)
+   const parsedData = await fileParser(bannerData)
    return {
       props: {
-         navigationMenuItems
+         navigationMenuItems,
+         parsedData
       }
    }
 }
@@ -162,34 +253,53 @@ const Wrapper = styled.div`
    height: 100%;
    position: relative;
    filter: ${({ isCelebrating }) => isCelebrating && 'blur(4px)'};
-   .normal-heading {
-      font-size: ${theme.sizes.h8};
+   .proxinova_text {
+      font-family: Proxima Nova;
+      font-style: normal;
       font-weight: 600;
-      color: ${theme.colors.textColor4};
+      letter-spacing: 0.16em;
+      color: ${theme.colors.textColor5};
+   }
+   .normal-heading {
+      color: ${theme.colors.textColor5};
       margin: 2rem 0;
+      padding: 0 1rem;
+   }
+   .heading_h1 {
+      font-family: League-Gothic;
+      font-style: normal;
+      font-weight: normal;
       text-align: center;
+      color: ${theme.colors.textColor4};
+      .invited_by {
+         font-size: inherit;
+         font-family: League-Gothic;
+         font-style: normal;
+         font-weight: normal;
+         text-align: center;
+         color: ${theme.colors.textColor};
+      }
+   }
+
+   .main_container {
+      background: ${theme.colors.lightBackground.grey};
+      border-radius: 40px;
    }
 
    @media (min-width: 769px) {
-      width: 60%;
+      width: 70%;
       height: 100%;
-      margin: 2rem auto;
-      background: #212530;
-      box-shadow: 1px 1px 2px rgba(38, 43, 56, 0.3),
-         -1px -1px 2px rgba(28, 31, 40, 0.5),
-         inset -16px 16px 32px rgba(28, 31, 40, 0.2),
-         inset 16px -16px 32px rgba(28, 31, 40, 0.2),
-         inset -16px -16px 32px rgba(38, 43, 56, 0.9),
-         inset 16px 16px 40px rgba(28, 31, 40, 0.9);
-
-      position: relative;
-      .footer-sticky-btn-div {
-         bottom: 0;
-      }
+      margin: 0 auto;
    }
 `
 
 const StyledWrap = styled.div`
+   background: ${({ bgMode }) =>
+      bgMode === 'dark'
+         ? theme.colors.darkBackground.darkblue
+         : theme.colors.lightBackground.white};
+   padding: 4rem 2rem;
+
    .response-done {
       margin-top: 4rem;
       padding: 1rem;
@@ -258,5 +368,18 @@ const StyledWrap = styled.div`
       .linkToExperiences:after {
          transition: all 560ms;
       }
+   }
+   .explore__btn {
+      width: auto;
+      margin: 4rem auto 6rem auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Proxima Nova;
+      font-style: normal;
+      font-weight: 800;
+      color: ${theme.colors.textColor};
+      padding: 24px 64px;
+      letter-spacing: 0.16em;
    }
 `

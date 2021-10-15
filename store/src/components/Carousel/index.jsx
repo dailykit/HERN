@@ -14,7 +14,7 @@ const OwlCarousel = dynamic(import('react-owl-carousel'), {
    ssr: false
 })
 
-const Carousel = ({ data = [], type = 'experience' }) => {
+const Carousel = ({ data = [], type = 'experience', showWishlist = true }) => {
    const owlCarouselRef = useRef()
    const router = useRouter()
    return (
@@ -47,6 +47,7 @@ const Carousel = ({ data = [], type = 'experience' }) => {
                            key={index}
                            type={type}
                            data={item}
+                           showWishlist={showWishlist}
                         />
                      </div>
                   )

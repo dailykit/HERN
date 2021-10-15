@@ -273,3 +273,63 @@ export const EXPERT_INFO = gql`
       }
    }
 `
+
+export const SIMILAR_CATEGORY_EXPERIENCE = gql`
+   query CATEGORY_EXPERIENCE($tags: [Int!]!) {
+      experiences_experienceCategory(
+         where: {
+            experience_experienceCategories: {
+               experience: {
+                  experience_experienceTags: {
+                     experienceTag: { id: { _in: $tags } }
+                  }
+               }
+            }
+         }
+      ) {
+         title
+         description
+         assets
+         experience_experienceCategories {
+            experience {
+               assets
+               description
+               id
+               title
+               customer_savedEntities {
+                  id
+                  experienceId
+                  productId
+                  simpleRecipeId
+               }
+               experienceClasses {
+                  id
+                  isActive
+                  isBooked
+                  startTimeStamp
+                  duration
+
+                  experienceClassExpert {
+                     assets
+                     description
+                     email
+                     firstName
+                     id
+                     lastName
+                  }
+                  privateExperienceClassType {
+                     minimumBookingAmount
+                     minimumParticipant
+                     maximumParticipant
+                  }
+                  publicExperienceClassType {
+                     minimumBookingAmount
+                     minimumParticipant
+                     maximumParticipant
+                  }
+               }
+            }
+         }
+      }
+   }
+`

@@ -281,7 +281,7 @@ export default function SubmitResponse({
          </div>
          <div className="modal-content-div">
             <div style={{ padding: '1rem' }}>
-               <h3 className="response-sub-head">
+               <h3 className="League-Gothic text6 response-sub-head">
                   Enter your information below and we’ll send you and invite
                   with the date and time that{' '}
                   {decodedToken?.invitedBy?.name ||
@@ -319,18 +319,18 @@ export default function SubmitResponse({
             </div>
             <Spacer yAxis="1rem" />
             {/* sticky submit button  */}
-            <div className="footer-sticky-btn-div">
-               <p className="poll-expiry-msg">
-                  poll expires on {getDate(decodedToken?.cutoffDate)}
-               </p>
-               <Button
-                  onClick={submitResponseHandler}
-                  disabled={isDisabled}
-                  className="custom-submit-btn"
-               >
-                  Submit Response
-               </Button>
-            </div>
+         </div>
+         <div className="footer-sticky-btn-div">
+            {/* <p className="Proxima-Nova text8 poll-expiry-msg">
+               poll expires on {getDate(decodedToken?.cutoffDate)}
+            </p> */}
+            <Button
+               onClick={submitResponseHandler}
+               disabled={isDisabled}
+               className="custom-submit-btn text3"
+            >
+               Submit Response
+            </Button>
          </div>
       </Wrapper>
    )
