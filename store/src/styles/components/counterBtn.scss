@@ -1,0 +1,39 @@
+.hern-counter-button {
+   display: flex;
+   padding: 2px;
+   justify-content: space-between;
+   width: 5em;
+   border: 1px solid #367bf5e5;
+   box-sizing: border-box;
+   border-radius: 8px;
+   height: 28px;
+   align-items: center;
+   color: #367bf5;
+   border-radius: 14px !important;
+
+   button {
+      width: 20px;
+      //   height: 20px;
+      background: transparent;
+      border-radius: 10px !important;
+      border: none;
+      margin: 0 2px;
+      cursor: pointer;
+      font-weight: 400;
+      outline: none;
+   }
+   button:hover {
+      background: #f3f3f3;
+   }
+   button:active {
+      outline: none;
+   }
+   .hern-counter-count {
+      font-size: 14px;
+      line-height: 16px;
+      font-weight: bold;
+   }
+   .hern-counter-plus-button {
+      //   padding-top: 2.5px;
+   }
+}

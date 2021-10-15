@@ -21,20 +21,18 @@ export default function BrandListing() {
                setContext({
                   brandId: brand.id,
                   brandName: brand.title,
-                  websiteId: brand?.website?.id || 0,
                   brandDomain: brand.domain,
                })
             }
          })
       },
    })
-   const brandHandler = (brandId, title, websiteId, domain) => {
+   const brandHandler = (brandId, title, domain) => {
       toast.info(`Showing information for "${title}" brand`)
       setViewingFor(brandId)
       setContext({
          brandId: brandId,
          brandName: title,
-         websiteId: websiteId ?? 0,
          brandDomain: domain,
       })
    }
@@ -57,7 +55,6 @@ export default function BrandListing() {
                         brandHandler(
                            brand.id,
                            brand.title,
-                           brand?.website?.id,
                            brand.domain
                         )
                      }

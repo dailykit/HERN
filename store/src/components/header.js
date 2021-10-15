@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { signOut } from 'next-auth/client'
+import { LoginWrapper } from '../utils'
 
 import { useUser } from '../context'
 import { isClient, getInitials, getRoute } from '../utils'
@@ -21,7 +22,7 @@ export const Header = ({ settings, navigationMenus }) => {
    const { isAuthenticated, user, isLoading } = useUser()
    const logout = async () => {
       await signOut({ redirect: false })
-      window.location.href = window.location.origin + getRoute('/')
+      // window.location.href = window.location.origin + getRoute('/')
    }
 
    const brand = settings['brand']['theme-brand']
@@ -29,6 +30,7 @@ export const Header = ({ settings, navigationMenus }) => {
 
    const [toggle, setToggle] = React.useState(true)
    const [isMobileNavVisible, setIsMobileNavVisible] = React.useState(false)
+   const [showLoginPopup, setShowLoginPopup] = React.useState(false)
 
    const newNavigationMenus = DataWithChildNodes(navigationMenus)
 
@@ -118,7 +120,7 @@ export const Header = ({ settings, navigationMenus }) => {
                               : 'rgba(37, 99, 235, 1)'
                         }`,
                      }}
-                     onClick={() => router.push(getRoute('/login'))}
+                     onClick={() => setShowLoginPopup(true)}
                   >
                      Log In
                   </button>
@@ -160,6 +162,12 @@ export const Header = ({ settings, navigationMenus }) => {
          {isClient && width < 768 && (
             <ProfileSidebar toggle={toggle} logout={logout} />
          )}
+         <LoginWrapper
+            closeLoginPopup={() => {
+               setShowLoginPopup(false)
+            }}
+            showLoginPopup={showLoginPopup}
+         />
       </>
    )
 }
