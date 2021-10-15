@@ -476,6 +476,7 @@ const BulkActions = ({
                selectedRows={selectedRows}
                handleOnUpdate={handleOnUpdate}
                table={table}
+               setSelectedRows={setSelectedRows}
             />
             <Flex
                container
