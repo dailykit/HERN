@@ -217,3 +217,12 @@ export const PRIORITY_UPDATE = gql`
       }
    }
 `
+
+export const GET_FILE_ID = gql`
+   query MyQuery($where: editor_file_bool_exp!) {
+      editor_file(where: $where) {
+         id
+         path
+      }
+   }
+`

@@ -34,9 +34,11 @@ const Main = () => {
       renameFolder,
       deleteFile,
       deleteFolder,
+      addBlock,
    } = useDailyGit()
    const [name, setName] = React.useState('')
    const [path, setPath] = React.useState('')
+   const [object, setObject] = React.useState(null)
    const fileTypeRef = React.useRef('')
 
    const {
@@ -47,6 +49,9 @@ const Main = () => {
       onError: error => {
          toast.error('Something went wrong!!')
          logger(error)
+      },
+      onCompleted: data => {
+         console.log('DATA', data)
       },
    })
 
@@ -175,6 +180,15 @@ const Main = () => {
                },
             })
          }
+      } else if (type === 'block') {
+         if (nodeType === 'FILE') {
+            console.log('Object1', object)
+            await addBlock({
+               variable: {
+                  object,
+               },
+            })
+         }
       }
       setName('')
       closePopup()
@@ -205,6 +219,10 @@ const Main = () => {
                name={name}
                setName={updatedName => setName(updatedName)}
                setPath={updatedPath => setPath(updatedPath)}
+               setObject={incomingObject => {
+                  console.log('Object2', incomingObject)
+                  setObject(incomingObject)
+               }}
                mutationHandler={(action, nodeType) =>
                   mutationHandler(action, nodeType)
                }
