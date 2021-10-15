@@ -182,9 +182,8 @@ const Main = () => {
          }
       } else if (type === 'block') {
          if (nodeType === 'FILE') {
-            console.log('Object1', object)
             await addBlock({
-               variable: {
+               variables: {
                   object,
                },
             })

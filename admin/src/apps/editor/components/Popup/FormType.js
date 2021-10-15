@@ -60,18 +60,6 @@ export default function FormType({
       closePopup()
    }
    const mutationFunc = () => {
-      if (action == 'block') {
-         const object = {
-            name: blockName,
-            path: pathName,
-            assets: {
-               icon: iconUrl,
-            },
-            category,
-            fileId,
-         }
-         setObject(object)
-      }
       mutationHandler(action, nodeType.toUpperCase())
       nodePathRef.current = ''
    }
@@ -81,6 +69,17 @@ export default function FormType({
          e.preventDefault()
       }
    }
+   React.useEffect(() => {
+      setObject({
+         name: blockName,
+         path: pathName,
+         assets: {
+            icon: iconUrl,
+         },
+         category,
+         fileId,
+      })
+   }, [blockName, pathName, iconUrl, category, fileId])
 
    React.useEffect(() => {
       if (treeViewData !== undefined) {
@@ -251,11 +250,18 @@ export default function FormType({
                      disabled
                   />
                   <Spacer size="16px" />
-                  <ButtonGroup>
-                     <TextButton type="solid" onClick={() => setActive(true)}>
-                        Upload
-                     </TextButton>
-                  </ButtonGroup>
+                  {iconUrl ? (
+                     <img src={iconUrl}></img>
+                  ) : (
+                     <ButtonGroup>
+                        <TextButton
+                           type="solid"
+                           onClick={() => setActive(true)}
+                        >
+                           Upload
+                        </TextButton>
+                     </ButtonGroup>
+                  )}
                   {active && (
                      <AssetUploader
                         onImageSelect={data => {
