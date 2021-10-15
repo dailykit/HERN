@@ -23,6 +23,7 @@ import {
    UPDATE_PRODUCT_OPTIONS,
 } from './mutation'
 import { RecipeBulkAction } from './entities/recipe'
+import { IngredientBulkAction } from './entities/ingredients'
 
 const BulkActions = ({
    children,
@@ -66,6 +67,18 @@ const BulkActions = ({
          },
       }
    )
+   const [initialBulkActionIngredient, setInitialBulkActionIngredient] =
+      React.useState({
+         isPublished: false,
+         category: {
+            defaultOption: null,
+            value: '',
+         },
+         nameConcat: {
+            forAppend: '',
+            foePrepend: '',
+         },
+      })
    // need in bulk action component
    const [bulkActions, setBulkActions] = React.useState({})
    const [showPopup, setShowPopup] = React.useState(false)
@@ -73,35 +86,52 @@ const BulkActions = ({
 
    // clear all actions
    const clearAllActions = () => {
-      setInitialBulkActionRecipe(prevState => ({
-         ...prevState,
-         isPublished: !prevState.isPublished,
-         type: !prevState.type,
-         author: '',
-         cookingTime: '',
-         utensils: '',
-         cuisineName: {
-            defaultOption: null,
-            value: '',
-         },
-         notIncluded: '',
-         description: '',
-         utensilsConcat: {
-            forAppend: '',
-            forPrepend: '',
-         },
-         notIncludedConcat: {
-            forAppend: '',
-            forPrepend: '',
-         },
-         descriptionConcat: {
-            forAppend: '',
-            forPrepend: '',
-         },
-      }))
+      if (table === 'Recipe') {
+         setInitialBulkActionRecipe(prevState => ({
+            ...prevState,
+            isPublished: !prevState.isPublished,
+            type: !prevState.type,
+            author: '',
+            cookingTime: '',
+            utensils: '',
+            cuisineName: {
+               defaultOption: null,
+               value: '',
+            },
+            notIncluded: '',
+            description: '',
+            utensilsConcat: {
+               forAppend: '',
+               forPrepend: '',
+            },
+            notIncludedConcat: {
+               forAppend: '',
+               forPrepend: '',
+            },
+            descriptionConcat: {
+               forAppend: '',
+               forPrepend: '',
+            },
+         }))
+      } else if (table === 'Ingredient') {
+         setInitialBulkActionIngredient(prevState => ({
+            ...prevState,
+            isPublished: !prevState.isPublished,
+            category: {
+               defaultOption: null,
+               value: '',
+            },
+            nameConcat: {
+               forAppend: '',
+               foePrepend: '',
+            },
+         }))
+      } else {
+         console.log('not')
+      }
       setBulkActions({})
    }
-   //mutation
+   // mutation
    const [simpleRecipeUpdate] = useMutation(SIMPLE_RECIPE_UPDATE, {
       onCompleted: () => {
          toast.success('Update Successfully')
@@ -374,6 +404,14 @@ const BulkActions = ({
                         <RecipeBulkAction
                            initialBulkAction={initialBulkActionRecipe}
                            setInitialBulkAction={setInitialBulkActionRecipe}
+                           bulkActions={bulkActions}
+                           setBulkActions={setBulkActions}
+                        />
+                     )}
+                     {table === 'Ingredient' && (
+                        <IngredientBulkAction
+                           initialBulkAction={initialBulkActionIngredient}
+                           setInitialBulkAction={setInitialBulkActionIngredient}
                            bulkActions={bulkActions}
                            setBulkActions={setBulkActions}
                         />

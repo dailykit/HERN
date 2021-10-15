@@ -8,3 +8,17 @@ export const CUISINES_NAMES = gql`
       }
    }
 `
+export const INGREDIENT_CATEGORIES_INGREDIENTS_AGGREGATE = gql`
+   subscription IngredientCategoryIngredientsAggregate {
+      ingredientCategories {
+         name
+         title: name
+         ingredients_aggregate {
+            aggregate {
+               count
+               description: count
+            }
+         }
+      }
+   }
+`

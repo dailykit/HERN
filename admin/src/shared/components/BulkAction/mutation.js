@@ -61,3 +61,10 @@ export const CREATE_CUISINE_NAME = gql`
       }
    }
 `
+export const INGREDIENT_CATEGORY_CREATE = gql`
+   mutation insertIngredientCategory($name: String!) {
+      createIngredientCategory(object: { name: $name }) {
+         name
+      }
+   }
+`
