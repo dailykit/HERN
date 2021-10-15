@@ -280,6 +280,7 @@ class DataTable extends React.Component {
          }
       )
    }
+
    newColumns = [
       {
          title: 'Product ID',
@@ -349,6 +350,7 @@ class DataTable extends React.Component {
          JSON.stringify(this.props.selectedRows.map(row => row.id))
       )
    }
+
    removeSelectedRow = id => {
       if (this.props.isProductOptionTableVisible) {
          this.optionTableRef.current.removeSelectedRow(id)
@@ -356,6 +358,7 @@ class DataTable extends React.Component {
       }
       this.tableRef.current.table.deselectRow(id)
    }
+
    handleGroupBy = value => {
       this.setState(
          {
@@ -370,6 +373,7 @@ class DataTable extends React.Component {
    clearHeaderFilter = () => {
       this.tableRef.current.table.clearHeaderFilter()
    }
+
    selectRows = () => {
       const productGroup = localStorage.getItem(
          `tabulator-${this.props.view}_product_table-group`
@@ -415,12 +419,14 @@ class DataTable extends React.Component {
          this.props.setSelectedRows(newArr)
       }
    }
+
    removeSelectedProducts = () => {
       this.setState({ checked: false })
       this.props.setSelectedRows([])
       this.tableRef.current.table.deselectRow()
       localStorage.setItem('selected-rows-id_product_table', JSON.stringify([]))
    }
+
    downloadCsvData = () => {
       this.tableRef.current.table.download(
          'csv',
@@ -441,11 +447,13 @@ class DataTable extends React.Component {
          `${this.props.view}_product_table.xlsx`
       )
    }
+
    clearProductPersistence = () => {
       localStorage.removeItem('tabulator-simple_product_table-columns')
       localStorage.removeItem('tabulator-simple_product_table-sort')
       localStorage.removeItem('tabulator-simple_product_table-filter')
       localStorage.removeItem('tabulator-simple_product_table-group')
+      this.removeSelectedProducts()
    }
 
    productType = `${this.props.view} product`
@@ -462,7 +470,9 @@ class DataTable extends React.Component {
          localStorage.removeItem('tabulator-combo_product_table-filter')
          localStorage.removeItem('tabulator-combo_product_table-group')
       }
+      this.removeSelectedProducts()
    }
+
    render() {
       const selectionColumn =
          this.props.selectedRows.length > 0 &&
@@ -1105,6 +1115,7 @@ const ProductOptions = forwardRef(
          localStorage.removeItem('tabulator-product_option_table-sort')
          localStorage.removeItem('tabulator-product_option_table-filter')
          localStorage.removeItem('tabulator-Product_Option_table-group')
+         removeSelectedProducts()
       }
       const downloadCsvData = () => {
          tableRef.current.table.download('csv', 'product_option_table.csv')
