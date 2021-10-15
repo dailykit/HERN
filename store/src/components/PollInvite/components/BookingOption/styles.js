@@ -101,14 +101,12 @@ export const OptionDiv = styled.div`
 export const VotersDiv = styled.div`
    padding: 1rem 2rem;
    margin-bottom: 1rem;
-   .heading-h1 {
-      font-weight: 600;
-      font-size: ${theme.sizes.h3};
-      color: ${theme.colors.textColor};
-      margin-bottom: 1rem;
-      position: sticky;
-      top: 0;
-      background: ${theme.colors.mainBackground};
+   .proxinova_text {
+      font-family: Proxima Nova;
+      font-style: normal;
+      letter-spacing: 0;
+      color: ${theme.colors.textColor5};
+      margin-bottom: 0 !important;
    }
    .voter-info {
       font-size: ${theme.sizes.h8};

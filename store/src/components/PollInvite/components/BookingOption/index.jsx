@@ -98,11 +98,13 @@ export default function BookingOption({
                   option?.voters.map((voter, index) => {
                      return (
                         <div key={voter?.id} className="voter-info">
-                           <p>
+                           <p className="proxinova_text text8">
                               <span>{index + 1}.</span>
                               {voter?.participant?.email}
                            </p>
-                           <p>{voter?.participant?.phone}</p>
+                           <p className="proxinova_text text8">
+                              {voter?.participant?.phone}
+                           </p>
                         </div>
                      )
                   })
