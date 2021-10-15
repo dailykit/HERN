@@ -68,3 +68,17 @@ export const INGREDIENT_CATEGORY_CREATE = gql`
       }
    }
 `
+export const INCREASE_PRICE_AND_DISCOUNT = gql`
+   mutation increasePriceAndDiscount(
+      $price: numeric!
+      $discount: numeric!
+      $ids: [Int!]
+   ) {
+      updateProducts(
+         where: { id: { _in: $ids } }
+         _inc: { price: $price, discount: $discount }
+      ) {
+         affected_rows
+      }
+   }
+`

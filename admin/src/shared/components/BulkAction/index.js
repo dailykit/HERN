@@ -21,22 +21,19 @@ import {
    CONCATENATE_ARRAY_COLUMN,
    CONCATENATE_STRING_COLUMN,
    UPDATE_PRODUCT_OPTIONS,
+   INCREASE_PRICE_AND_DISCOUNT,
 } from './mutation'
 import { RecipeBulkAction } from './entities/recipe'
 import { IngredientBulkAction } from './entities/ingredients'
+import { ProductBulkAction } from './entities/products'
 
 const BulkActions = ({
-   children,
+   // children,
    table,
    selectedRows,
    removeSelectedRow,
-   // bulkActions,
-   // setBulkActions,
    setSelectedRows,
-   // clearAllActions,
    close,
-   additionalBulkAction = {},
-   additionalFunction,
 }) => {
    // initial state for recipe
    // need in bulk action component
@@ -79,6 +76,38 @@ const BulkActions = ({
             foePrepend: '',
          },
       })
+   const [initialBulkActionProduct, setInitialBulkActionProduct] =
+      React.useState({
+         isPublished: false,
+         additionalText: '',
+         description: '',
+         tags: '',
+         additionalTextConcat: {
+            forAppend: '',
+            forPrepend: '',
+         },
+         descriptionConcat: {
+            forAppend: '',
+            forPrepend: '',
+         },
+         tagsConcat: {
+            forAppend: '',
+            forPrepend: '',
+         },
+         price: {
+            set: 0,
+            increase: 0,
+            decrease: 0,
+         },
+         discount: {
+            set: 0,
+            increase: 0,
+            decrease: 0,
+         },
+      })
+
+   // additional bulk actions (actions which not to be set)
+   const [additionalBulkAction, setAdditionalBulkAction] = React.useState({})
    // need in bulk action component
    const [bulkActions, setBulkActions] = React.useState({})
    const [showPopup, setShowPopup] = React.useState(false)
@@ -124,6 +153,36 @@ const BulkActions = ({
             nameConcat: {
                forAppend: '',
                foePrepend: '',
+            },
+         }))
+      } else if (table === 'Product') {
+         setInitialBulkActionProduct(prevState => ({
+            ...prevState,
+            isPublished: !prevState.isPublished,
+            additionalText: '',
+            description: '',
+            tags: '',
+            additionalTextConcat: {
+               forAppend: '',
+               forPrepend: '',
+            },
+            descriptionConcat: {
+               forAppend: '',
+               forPrepend: '',
+            },
+            tagsConcat: {
+               forAppend: '',
+               forPrepend: '',
+            },
+            price: {
+               set: 0,
+               increase: 0,
+               decrease: 0,
+            },
+            discount: {
+               set: 0,
+               increase: 0,
+               decrease: 0,
             },
          }))
       } else {
@@ -194,6 +253,28 @@ const BulkActions = ({
          },
       }
    )
+   const [increasePriceAndDiscount] = useMutation(INCREASE_PRICE_AND_DISCOUNT, {
+      onCompleted: () => {
+         toast.success('Update Successfully')
+         //  close(1)
+      },
+      onError: () => {
+         toast.error('Something went wrong!')
+         //  logger(error)
+      },
+   })
+   // additional function
+   const additionalFunction = () => {
+      if (table === 'Product') {
+         increasePriceAndDiscount({
+            variables: {
+               price: additionalBulkAction.price || 0,
+               discount: additionalBulkAction.discount || 0,
+               ids: selectedRows.map(x => x.id),
+            },
+         })
+      }
+   }
 
    const getMutation = table => {
       switch (table) {
@@ -414,6 +495,16 @@ const BulkActions = ({
                            setInitialBulkAction={setInitialBulkActionIngredient}
                            bulkActions={bulkActions}
                            setBulkActions={setBulkActions}
+                        />
+                     )}
+                     {table === 'Product' && (
+                        <ProductBulkAction
+                           initialBulkAction={initialBulkActionProduct}
+                           setInitialBulkAction={setInitialBulkActionProduct}
+                           bulkActions={bulkActions}
+                           setBulkActions={setBulkActions}
+                           additionalBulkAction={additionalBulkAction}
+                           setAdditionalBulkAction={setAdditionalBulkAction}
                         />
                      )}
                   </Flex>
