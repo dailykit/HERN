@@ -54,3 +54,10 @@ export const UPDATE_PRODUCT_OPTIONS = gql`
       }
    }
 `
+export const CREATE_CUISINE_NAME = gql`
+   mutation CreateCuisineName($name: String) {
+      createCuisineName(objects: { name: $name }) {
+         affected_rows
+      }
+   }
+`
