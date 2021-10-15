@@ -22,21 +22,24 @@ import {
    CONCATENATE_STRING_COLUMN,
    UPDATE_PRODUCT_OPTIONS,
    INCREASE_PRICE_AND_DISCOUNT,
+   INCREMENTS_IN_PRODUCT_OPTIONS,
 } from './mutation'
 import { RecipeBulkAction } from './entities/recipe'
 import { IngredientBulkAction } from './entities/ingredients'
 import { ProductBulkAction } from './entities/products'
+import { ProductOptionsBulkAction } from './entities/productOptions'
 
 const BulkActions = ({
-   // children,
    table,
    selectedRows,
    removeSelectedRow,
    setSelectedRows,
    close,
 }) => {
-   // initial state for recipe
-   // need in bulk action component
+   // ref
+   const productOptionsTableRef = React.useRef()
+
+   // initial states for entities
    const [initialBulkActionRecipe, setInitialBulkActionRecipe] = React.useState(
       {
          isPublished: false,
@@ -105,13 +108,50 @@ const BulkActions = ({
             decrease: 0,
          },
       })
+   const [initialBulkActionProductOption, setInitialBulkActionProductOption] =
+      React.useState({
+         label: '',
+         modifierId: null,
+         operationConfigId: null,
+         labelConcat: {
+            forAppend: '',
+            forPrepend: '',
+         },
+         price: {
+            set: 0,
+            increase: 0,
+            decrease: 0,
+         },
+         discount: {
+            set: 0,
+            increase: 0,
+            decrease: 0,
+         },
+      })
 
    // additional bulk actions (actions which not to be set)
    const [additionalBulkAction, setAdditionalBulkAction] = React.useState({})
-   // need in bulk action component
+
+   // bulkAction consists changes to be set in entities
    const [bulkActions, setBulkActions] = React.useState({})
    const [showPopup, setShowPopup] = React.useState(false)
    const [popupHeading, setPopupHeading] = React.useState('')
+
+   // product options modifier
+   const handleModifierClear = () => {
+      productOptionsTableRef.current.clearModifier()
+      setInitialBulkActionProductOption(prevState => ({
+         ...prevState,
+         modifierId: null,
+      }))
+   }
+
+   const handleOperationConfigClear = () => {
+      setInitialBulkActionProductOption(prevState => ({
+         ...prevState,
+         operationConfigId: null,
+      }))
+   }
 
    // clear all actions
    const clearAllActions = () => {
@@ -186,7 +226,28 @@ const BulkActions = ({
             },
          }))
       } else {
-         console.log('not')
+         // for product options
+         handleModifierClear()
+         handleOperationConfigClear()
+         setInitialBulkActionProductOption({
+            label: '',
+            modifierId: null,
+            operationConfigId: null,
+            labelConcat: {
+               forAppend: '',
+               forPrepend: '',
+            },
+            price: {
+               set: 0,
+               increase: 0,
+               decrease: 0,
+            },
+            discount: {
+               set: 0,
+               increase: 0,
+               decrease: 0,
+            },
+         })
       }
       setBulkActions({})
    }
@@ -263,6 +324,20 @@ const BulkActions = ({
          //  logger(error)
       },
    })
+   const [incrementsInProductOptions] = useMutation(
+      INCREMENTS_IN_PRODUCT_OPTIONS,
+      {
+         onCompleted: () => {
+            toast.success('Update Successfully')
+            // close(1)
+         },
+         onError: () => {
+            toast.error('Something went wrong!')
+            //  logger(error)
+         },
+      }
+   )
+
    // additional function
    const additionalFunction = () => {
       if (table === 'Product') {
@@ -273,6 +348,16 @@ const BulkActions = ({
                ids: selectedRows.map(x => x.id),
             },
          })
+         close(1)
+      }
+      if (table === 'Product Options') {
+         incrementsInProductOptions({
+            variables: {
+               _inc: additionalBulkAction,
+               _in: selectedRows.map(row => row.id),
+            },
+         })
+         close(1)
       }
    }
 
@@ -366,6 +451,7 @@ const BulkActions = ({
          toast.error('Incorrect schema or table name!')
       }
    }
+
    return (
       <>
          <TunnelHeader
@@ -501,6 +587,19 @@ const BulkActions = ({
                         <ProductBulkAction
                            initialBulkAction={initialBulkActionProduct}
                            setInitialBulkAction={setInitialBulkActionProduct}
+                           bulkActions={bulkActions}
+                           setBulkActions={setBulkActions}
+                           additionalBulkAction={additionalBulkAction}
+                           setAdditionalBulkAction={setAdditionalBulkAction}
+                        />
+                     )}
+                     {table === 'Product Options' && (
+                        <ProductOptionsBulkAction
+                           ref={productOptionsTableRef}
+                           initialBulkAction={initialBulkActionProductOption}
+                           setInitialBulkAction={
+                              setInitialBulkActionProductOption
+                           }
                            bulkActions={bulkActions}
                            setBulkActions={setBulkActions}
                            additionalBulkAction={additionalBulkAction}

@@ -22,3 +22,14 @@ export const INGREDIENT_CATEGORIES_INGREDIENTS_AGGREGATE = gql`
       }
    }
 `
+export const PRODUCT_OPTION_TYPES = {
+   LIST: gql`
+      subscription ProductOptionTypes {
+         productOptionTypes {
+            id: title
+            title
+            orderMode
+         }
+      }
+   `,
+}

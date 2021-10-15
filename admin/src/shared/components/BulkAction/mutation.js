@@ -82,3 +82,13 @@ export const INCREASE_PRICE_AND_DISCOUNT = gql`
       }
    }
 `
+export const INCREMENTS_IN_PRODUCT_OPTIONS = gql`
+   mutation IncrementsInProductOptions(
+      $_inc: products_productOption_inc_input!
+      $_in: [Int!]
+   ) {
+      updateProductOptions(where: { id: { _in: $_in } }, _inc: $_inc) {
+         affected_rows
+      }
+   }
+`
