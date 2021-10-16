@@ -20,7 +20,7 @@ import {
    HorizontalTabList,
    HorizontalTabPanel,
    HorizontalTabPanels
-} from '..'
+} from '../../components'
 import { useUser } from '../../Providers'
 import { theme } from '../../theme'
 import { capitalize, isEmpty, isClient } from '../../utils'
