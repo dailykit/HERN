@@ -1,7 +1,6 @@
 import React from 'react'
 import { useLocation, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
-import { ChevronRight } from '../../../assets/icons'
 
 const Breadcrumbs = () => {
    const { pathname } = useLocation()
@@ -35,12 +34,12 @@ const Breadcrumbs = () => {
    const routes = getRoutes()
    return (
       <Styles.Wrapper>
-         <Styles.Crumb onClick={() => history.push('/')}>
-            Home <ChevronRight size={16} color="#919699" />
+         <Styles.Crumb onClick={() => history.push('/')} isHome={true}>
+            Home
          </Styles.Crumb>
          {routes.map(route => (
             <Styles.Crumb onClick={() => history.push(route.path)}>
-               {route.title} <ChevronRight size={16} color="#919699" />
+               {route.title}
             </Styles.Crumb>
          ))}
       </Styles.Wrapper>
@@ -52,9 +51,14 @@ const Styles = {
    Wrapper: styled.div`
       display: flex;
       align-items: center;
-      margin: 4px auto;
+      margin: 12px auto;
+      float: none;
       max-width: 1280px;
       width: calc(100vw - 130px);
+      filter: drop-shadow(1px 0px 0px #f3f3f3) drop-shadow(0px 0px 0px #f3f3f3)
+         drop-shadow(0px 0px 0px #f3f3f3) drop-shadow(0px 1px 0px #f3f3f3)
+         drop-shadow(1px 1px 0px #f3f3f3) drop-shadow(-1px -1px 0px #f3f3f3)
+         drop-shadow(-1px 1px 0px #f3f3f3) drop-shadow(1px -1px 0px #f3f3f3);
    `,
    Crumb: styled.button`
       display: flex;
@@ -62,16 +66,29 @@ const Styles = {
       font-size: 12px;
       border: none;
       outline: none;
-      color: #919699;
-      font-weight: bold;
+      color: #555b6e;
+      font-weight: 500;
       text-transform: capitalize;
-      padding: 4px 8px;
-      background: #f4f4f4;
+      background: White;
+      padding: ${({ isHome }) =>
+         isHome ? '2px 12px 2px 4px' : '2px 12px 2px 14px'};
+      width: 100px;
+      clip-path: ${({ isHome }) =>
+         isHome
+            ? ` polygon(
+      calc(100% - 16px) 0%,
+      0 0,
+      0 100%,
+      calc(100% - 16px) 100%,
+      100% 50%)`
+            : `polygon(80% 0%,100% 50%,80% 100%,0% 100%,15% 50%,0% 0%)`};
       &:last-child {
-         color: #555b6e;
-         > svg {
-            color: #555b6e;
-         }
+         color: #367bf5;
+         background: #f3f3f3;
+      }
+      &:hover {
+         background: #f3f3f3;
+         color: #202020;
       }
    `,
 }

@@ -8,7 +8,7 @@ import {
    ChevronLeft,
    AddressForm,
    DeleteIcon
-} from '../../components'
+} from '..'
 import { useUser } from '../../Providers'
 import { theme } from '../../theme'
 import { capitalize, isEmpty } from '../../utils'

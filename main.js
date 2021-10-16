@@ -5,6 +5,8 @@ import fs from 'fs'
 import path from 'path'
 import express from 'express'
 import morgan from 'morgan'
+import AWS from 'aws-sdk'
+import bluebird from 'bluebird'
 import depthLimit from 'graphql-depth-limit'
 
 import get_env from './get_env'
@@ -13,6 +15,7 @@ import ServerRouter from './server'
 import schema from './template/schema'
 import TemplateRouter from './template'
 import { createEnvFiles } from './server/entities'
+import ayrshareSchema from './server/ayrshare/src/schema/index'
 
 require('dotenv').config()
 const { createProxyMiddleware } = require('http-proxy-middleware')
@@ -40,6 +43,13 @@ app.use(
       '[:status :method :url] :remote-user [:date[clf]] - [:user-agent] - :response-time ms'
    )
 )
+
+AWS.config.update({
+   accessKeyId: get_env('AWS_ACCESS_KEY_ID'),
+   secretAccessKey: get_env('AWS_SECRET_ACCESS_KEY')
+})
+
+AWS.config.setPromisesDependency(bluebird)
 
 const PORT = process.env.PORT || 4000
 
@@ -235,6 +245,27 @@ const ohyayApolloserver = new ApolloServer({
 })
 
 ohyayApolloserver.applyMiddleware({ app, path: '/ohyay/graphql' })
+
+// ayrshare remote schema integration
+const ayrshareApolloserver = new ApolloServer({
+   schema: ayrshareSchema,
+   playground: {
+      endpoint: `/ayrshare/graphql`
+   },
+   introspection: true,
+   validationRules: [depthLimit(11)],
+   formatError: err => {
+      console.log(err)
+      return isProd ? new Error(err) : err
+   },
+   debug: true,
+   context: ({ req }) => {
+      const ayrshare_api_key = req.header('ayrshare_api_key')
+      return { ayrshare_api_key }
+   }
+})
+
+ayrshareApolloserver.applyMiddleware({ app, path: '/ayrshare/graphql' })
 
 app.use('/:path(*)', serveSubscription)
 

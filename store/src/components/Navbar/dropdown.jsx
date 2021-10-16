@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import NavLink from "next/link";
 import { CSSTransition } from "react-transition-group";
 import { DropdownWrapper } from "./styles";
-import { ChevronRight, ChevronLeft, CheckCircle } from "../../components/Icons";
+import { ChevronRight, ChevronLeft, CheckCircle } from "../Icons";
 
 export default function DropdownMenu({ items }) {
   const [activeMenu, setActiveMenu] = useState(items[0]?.label);

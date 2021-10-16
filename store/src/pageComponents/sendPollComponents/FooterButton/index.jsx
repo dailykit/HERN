@@ -39,6 +39,7 @@ export default function FooterButton({ confirmNPayHandler }) {
                   experienceClassId: opt?.selectedExperienceClassId
                }
             })
+            console.log('keycloakId', user?.keycloakId)
             createExperienceBooking({
                variables: {
                   object: {

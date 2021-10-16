@@ -3,7 +3,7 @@ import { useSubscription } from '@apollo/client'
 import { InlineLoader } from '../components'
 import { useToasts } from 'react-toast-notifications'
 import { CART_INFO } from '../graphql'
-import { useUser } from '../Providers'
+import { useUser } from '.'
 
 const initialState = {
    carts: [],

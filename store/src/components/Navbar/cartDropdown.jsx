@@ -5,8 +5,8 @@ import { useMutation } from '@apollo/client'
 import { useToasts } from 'react-toast-notifications'
 import { DropdownWrapper } from './styles'
 import { useCustomMutation } from './useCustomMutation'
-import { Filler } from '../../components'
-import { DeleteIcon } from '../../components/Icons'
+import { Filler } from '..'
+import { DeleteIcon } from '../Icons'
 import { DELETE_EXPERIENCE_BOOKINGS, DELETE_CART } from '../../graphql'
 
 export default function CartDropdownMenu({ carts, ...props }) {

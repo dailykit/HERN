@@ -31,16 +31,18 @@ import FilterIcon from '../../../assets/icons/Filter'
 
 import { useTooltip, useTabs } from '../../../../../shared/providers'
 import { logger, randomSuffix } from '../../../../../shared/utils'
-import { AddIcon, DeleteIcon, PublishIcon, UnPublishIcon } from '../../../assets/icons'
 import {
-   CREATE_INGREDIENT,
-   DELETE_INGREDIENTS,
-   S_INGREDIENTS,
-} from '../../../graphql'
+   AddIcon,
+   DeleteIcon,
+   PublishIcon,
+   UnPublishIcon,
+} from '../../../assets/icons'
+import { DELETE_INGREDIENTS, S_INGREDIENTS } from '../../../graphql'
 import Count from '../../../utils/countFormatter'
 import tableOptions from '../tableOption'
 import { ResponsiveFlex } from '../styled'
 import { BulkActionsTunnel, ApplyFilterTunnel } from './tunnels'
+import CreateIngredient from '../../../../../shared/CreateUtils/Ingredient/CreateIngredient'
 const address = 'apps.products.views.listings.ingredientslisting.'
 
 const IngredientsListing = () => {
@@ -48,35 +50,26 @@ const IngredientsListing = () => {
    const { addTab, tab } = useTabs()
    const [selectedRows, setSelectedRows] = React.useState([])
    const [tunnels, openTunnel, closeTunnel, visible] = useTunnel(2)
+   const [ingredientTunnels, openIngredientTunnel, closeIngredientTunnel] =
+      useTunnel(1)
+
    const dataTableRef = React.useRef()
    const [ingredientNew, setIngredientsNew] = React.useState([])
-   
+
    const { loading, error } = useSubscription(S_INGREDIENTS, {
-   onSubscriptionData : ({ subscriptionData }) => {
-      const newOption =subscriptionData.data.ingredients.map(x => {
-         const count1 = x.ingredientProcessings_aggregate.aggregate.count
-         x.ingredientProcessings_count = count1
-         const count2 = x.ingredientSachetViews_aggregate.aggregate.count
-         x.ingredientSachetViews_count = count2
-         return x
-      })
-      setIngredientsNew(newOption)
-   },
-})
-   // Mutations
-   const [createIngredient] = useMutation(CREATE_INGREDIENT, {
-      onCompleted: data => {
-         toast.success('Ingredient created!')
-         addTab(
-            data.createIngredient.returning[0].name,
-            `/products/ingredients/${data.createIngredient.returning[0].id}`
-         )
-      },
-      onError: error => {
-         toast.error('Something went wrong!')
-         logger(error)
+      onSubscriptionData: ({ subscriptionData }) => {
+         const newOption = subscriptionData.data.ingredients.map(x => {
+            const count1 = x.ingredientProcessings_aggregate.aggregate.count
+            x.ingredientProcessings_count = count1
+            const count2 = x.ingredientSachetViews_aggregate.aggregate.count
+            x.ingredientSachetViews_count = count2
+            return x
+         })
+         setIngredientsNew(newOption)
       },
    })
+   // Mutations
+
    const [deleteIngredients] = useMutation(DELETE_INGREDIENTS, {
       onCompleted: () => {
          toast.success('Ingredient deleted!')
@@ -92,12 +85,6 @@ const IngredientsListing = () => {
          addTab('Ingredients', '/products/ingredients')
       }
    }, [tab, addTab])
-
-   const createIngredientHandler = async () => {
-      const name = `ingredient-${randomSuffix()}`
-      createIngredient({ variables: { name } })
-   }
-
 
    const deleteIngredientHandler = ingredient => {
       if (
@@ -115,7 +102,7 @@ const IngredientsListing = () => {
    const removeSelectedRow = id => {
       dataTableRef.current.removeSelectedRow(id)
    }
-   if (loading){
+   if (loading) {
       return <InlineLoader />
    }
    if (!loading && error) {
@@ -123,9 +110,9 @@ const IngredientsListing = () => {
       logger(error)
       return <ErrorState />
    }
-if (ingredientNew.length == 0){
-   return <Filler message= "ingredient not available" />
-}
+   if (ingredientNew.length == 0) {
+      return <Filler message="ingredient not available" />
+   }
    return (
       <ResponsiveFlex maxWidth="1280px" margin="0 auto">
          <Banner id="products-app-ingredients-listing-top" />
@@ -142,6 +129,11 @@ if (ingredientNew.length == 0){
                <ApplyFilterTunnel close={closeTunnel} />
             </Tunnel>
          </Tunnels>
+         <Tunnels tunnels={ingredientTunnels}>
+            <Tunnel layer={1} size="md">
+               <CreateIngredient closeTunnel={closeIngredientTunnel} />
+            </Tunnel>
+         </Tunnels>
          <Flex
             container
             alignItems="center"
@@ -152,7 +144,7 @@ if (ingredientNew.length == 0){
                <Text as="h2">Ingredients({ingredientNew.length}) </Text>
                <Tooltip identifier="ingredients_list_heading" />
             </Flex>
-            <ComboButton type="solid" onClick={createIngredientHandler}>
+            <ComboButton type="solid" onClick={() => openIngredientTunnel(1)}>
                <AddIcon color="#fff" size={24} /> Add Ingredient
             </ComboButton>
          </Flex>
@@ -165,7 +157,6 @@ if (ingredientNew.length == 0){
                addTab={addTab}
                openTunnel={openTunnel}
                deleteIngredientHandler={deleteIngredientHandler}
-               createIngredientHandler={createIngredientHandler}
                selectedRows={selectedRows}
                setSelectedRows={setSelectedRows}
             />
@@ -213,7 +204,7 @@ class DataTable extends React.Component {
       this.setState(
          {
             checked: !this.state.checked,
-         }, 
+         },
          () => {
             if (this.state.checked) {
                this.tableRef.current.table.selectRow('active')
@@ -266,14 +257,15 @@ class DataTable extends React.Component {
          ),
          width: 80,
       },
-      { title: 'Category',
-        field: 'category',
-        headerFilter: true,
+      {
+         title: 'Category',
+         field: 'category',
+         headerFilter: true,
          hozAlign: 'left',
          headerHozAlign: 'right',
          minWidth: 100,
          width: 200,
-       },
+      },
       {
          title: 'Processings',
          field: 'ingredientProcessings_count',
@@ -288,12 +280,11 @@ class DataTable extends React.Component {
          hozAlign: 'right',
          width: 150,
       },
-      
    ]
 
    groupByOptions = [
       { id: 1, title: 'Published', payload: 'isPublished' },
-      { id: 2, title: 'Category', payload: 'category' }
+      { id: 2, title: 'Category', payload: 'category' },
    ]
    handleRowSelection = ({ _row }) => {
       this.props.setSelectedRows(prevState => [...prevState, _row.getData()])
@@ -343,7 +334,9 @@ class DataTable extends React.Component {
    }
 
    selectRows = () => {
-      const ingredientsGroup = localStorage.getItem('tabulator-ingredients_table-group')
+      const ingredientsGroup = localStorage.getItem(
+         'tabulator-ingredients_table-group'
+      )
       const ingredientsGroupParse =
          ingredientsGroup !== undefined &&
          ingredientsGroup !== null &&
@@ -393,16 +386,18 @@ class DataTable extends React.Component {
       this.setState({ checked: false })
       this.props.setSelectedRows([])
       this.tableRef.current.table.deselectRow()
-      localStorage.setItem('selected-rows-id_ingredients_table', JSON.stringify([]))
+      localStorage.setItem(
+         'selected-rows-id_ingredients_table',
+         JSON.stringify([])
+      )
    }
 
-   clearIngredientPersistance= () =>
-      {
-         localStorage.removeItem('tabulator-ingredient_table-columns')
-         localStorage.removeItem('tabulator-ingredient_table-sort')
-         localStorage.removeItem('tabulator-ingredient_table-filter')  
-         localStorage.removeItem('tabulator-ingredients_table-group')  
-      }
+   clearIngredientPersistance = () => {
+      localStorage.removeItem('tabulator-ingredient_table-columns')
+      localStorage.removeItem('tabulator-ingredient_table-sort')
+      localStorage.removeItem('tabulator-ingredient_table-filter')
+      localStorage.removeItem('tabulator-ingredients_table-group')
+   }
 
    render() {
       const selectionColumn =
@@ -412,7 +407,9 @@ class DataTable extends React.Component {
                  formatter: 'rowSelection',
                  titleFormatter: reactFormatter(
                     <CrossBox
-                       removeSelectedIngredients={this.removeSelectedIngredients}
+                       removeSelectedIngredients={
+                          this.removeSelectedIngredients
+                       }
                     />
                  ),
                  align: 'center',
@@ -461,7 +458,11 @@ class DataTable extends React.Component {
                selectableCheck={() => true}
                rowSelected={this.handleRowSelection}
                rowDeselected={this.handleDeSelection}
-               options={{ ...tableOptions, persistenceID: 'ingredient_table', reactiveData: true }}
+               options={{
+                  ...tableOptions,
+                  persistenceID: 'ingredient_table',
+                  reactiveData: true,
+               }}
                data-custom-attr="test-custom-attribute"
                className="custom-css-class"
             />
@@ -548,7 +549,9 @@ const ActionBar = ({
 }) => {
    const defaultIDs = () => {
       let arr = []
-      const ingredientGroup = localStorage.getItem('tabulator-ingredients_table-group')
+      const ingredientGroup = localStorage.getItem(
+         'tabulator-ingredients_table-group'
+      )
       const ingredientGroupParse =
          ingredientGroup !== undefined &&
          ingredientGroup !== null &&
@@ -677,7 +680,7 @@ const ActionBar = ({
                      type="ghost"
                      size="sm"
                      onClick={() => openTunnel(2)}
-                  > 
+                  >
                      <FilterIcon />
                   </IconButton>
                   <ButtonGroup align="left">

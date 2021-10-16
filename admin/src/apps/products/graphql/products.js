@@ -18,6 +18,17 @@ export const PRODUCTS = {
          }
       }
    `,
+   CREATE_PRODUCTS: gql`
+      mutation CreateProducts($objects: [products_product_insert_input!]!) {
+         createProducts(objects: $objects) {
+            affected_rows
+            returning {
+               id
+               name
+            }
+         }
+      }
+   `,
    DELETE: gql`
       mutation UpdateProduct($id: Int!) {
          updateProduct(pk_columns: { id: $id }, _set: { isArchived: true }) {
@@ -32,6 +43,7 @@ export const PRODUCTS = {
             name
             title: name
             isPublished
+            price
          }
       }
    `,

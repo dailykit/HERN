@@ -30,7 +30,6 @@ const AvailableDate = ({
    }
 
    const dynamicButtonTitle = slot => {
-      console.log('cartttt', cart)
       if (slot?.isBooked) {
          return 'Sold out'
       }

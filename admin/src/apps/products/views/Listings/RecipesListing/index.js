@@ -45,6 +45,7 @@ import tableOptions from '../tableOption'
 import { ResponsiveFlex } from '../styled'
 import { useRef } from 'react'
 import { FilterIcon, PublishIcon, UnPublishIcon } from '../../../assets/icons'
+import CreateRecipe from '../../../../../shared/CreateUtils/Recipe/createRecipe'
 
 const address = 'apps.products.views.listings.recipeslisting.'
 
@@ -55,6 +56,7 @@ const RecipesListing = () => {
    const [selectedRows, setSelectedRows] = React.useState([])
 
    const [tunnels, openTunnel, closeTunnel, visible] = useTunnel(2)
+   const [recipeTunnels, openRecipeTunnel, closeRecipeTunnel] = useTunnel(1)
    // Queries and Mutations
 
    // const [recipes, setRecipes] = React.useState([])
@@ -139,6 +141,11 @@ const RecipesListing = () => {
                <ApplyFilterTunnel close={closeTunnel} />
             </Tunnel>
          </Tunnels>
+         <Tunnels tunnels={recipeTunnels}>
+            <Tunnel layer={1} size="md">
+               <CreateRecipe closeTunnel={closeRecipeTunnel} />
+            </Tunnel>
+         </Tunnels>
          <Flex
             container
             alignItems="center"
@@ -151,7 +158,7 @@ const RecipesListing = () => {
                </Text>
                <Tooltip identifier="recipes_list_heading" />
             </Flex>
-            <ComboButton type="solid" onClick={createRecipeHandler}>
+            <ComboButton type="solid" onClick={() => openRecipeTunnel(1)}>
                <AddIcon color="#fff" size={24} /> Create Recipe
             </ComboButton>
          </Flex>
@@ -303,7 +310,7 @@ class DataTable extends React.Component {
          headerHozAlign: 'right',
          width: 80,
       },
-   ]  
+   ]
    handleRowSelection = ({ _row }) => {
       this.props.setSelectedRows(prevState => [...prevState, _row.getData()])
 
@@ -559,7 +566,7 @@ function Selection() {
    return (
       <Checkbox
          id="label"
-            checked={checked}
+         checked={checked}
          onChange={handleMultipleRowSelection}
       ></Checkbox>
    )
@@ -575,9 +582,9 @@ const ActionBar = ({
    clearHeaderFilter,
 }) => {
    const [groupByOptions] = React.useState([
-      { id: 1, title: 'Published', payload:'isPublished' },
+      { id: 1, title: 'Published', payload: 'isPublished' },
       { id: 2, title: 'Cuisine', payload: 'cuisine' },
-      { id: 3, title: 'Author', payload:'author' },
+      { id: 3, title: 'Author', payload: 'author' },
    ])
 
    const defaultIDs = () => {

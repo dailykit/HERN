@@ -55,7 +55,7 @@ export default function PageCreationTunnel({ close }) {
 
    //Mutation
    const [createPage, { loading }] = useMutation(CREATE_WEBPAGE, {
-      onCompleted: ({ insert_website_websitePage_one: webPage = {} }) => {
+      onCompleted: ({ insert_brands_brandPages_one: webPage = {} }) => {
          setPageRoute({
             value: '',
             meta: {
@@ -131,7 +131,7 @@ export default function PageCreationTunnel({ close }) {
          createPage({
             variables: {
                object: {
-                  websiteId: context.websiteId,
+                  brandId: context.brandId,
                   route: pageRoute.value,
                   internalPageName: pageTitle.value,
                },

@@ -4,7 +4,7 @@ import { signOut } from 'next-auth/client'
 import { CSSTransition } from 'react-transition-group'
 import { useToasts } from 'react-toast-notifications'
 import { DropdownWrapper } from './styles'
-import { Spacer } from '../../components'
+import { Spacer } from '..'
 import { theme } from '../../theme'
 import { isClient } from '../../utils'
 import {
@@ -12,7 +12,7 @@ import {
    BookingIcon,
    LogoutIcon,
    DashboardIcon
-} from '../../components/Icons'
+} from '../Icons'
 
 export default function ProfileDropdownMenu({ items, user, ...props }) {
    const router = useRouter()

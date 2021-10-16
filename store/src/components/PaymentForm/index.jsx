@@ -6,7 +6,7 @@ import { Elements } from '@stripe/react-stripe-js'
 import { Wrapper } from './styles'
 import PaymentCardForm from './components/PaymentCardForm'
 import { useUser } from '../../Providers'
-import { InlineLoader } from '../../components'
+import { InlineLoader } from '..'
 import { isClient, get_env, isConnectedIntegration } from '../../utils'
 import { CREATE_STRIPE_PAYMENT_METHOD } from '../../graphql'
 
