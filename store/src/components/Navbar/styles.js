@@ -1,18 +1,24 @@
 import styled from 'styled-components'
+import { Drawer } from 'antd'
 import { theme } from '../../theme'
 
 export const NavBar = styled.nav`
+   display: ${({ scroll }) => (scroll.direction === 'down' ? 'none' : 'flex')};
    height: 64px;
-   position: sticky;
+   position: fixed;
    top: 0;
    left: 0;
    width: 100%;
    z-index: 5;
-   display: flex;
    align-items: center;
    padding: 1rem 8rem;
    justify-content: space-around;
-   background: ${theme.colors.mainBackground};
+   background: ${({ scroll }) =>
+      scroll.direction === 'down'
+         ? theme.colors.darkBackground.darkblue
+         : scroll.y < 10
+         ? 'rgba(6, 20, 34,0.8)'
+         : theme.colors.darkBackground.darkblue};
    .brand-logo-div {
       width: 132px;
       height: 50px;
@@ -23,7 +29,7 @@ export const NavBar = styled.nav`
    }
 
    @media (max-width: 769px) {
-      display: none;
+      padding: 1rem;
    }
    .cart-count-batch {
       position: absolute;
@@ -396,44 +402,20 @@ export const FloatingWrapper = styled.div`
       }
    }
 `
-export const SidebarWrapper = styled.div`
-   .sidebar-icon {
-      width: ${({ isSidebarButtonVisible }) =>
-         isSidebarButtonVisible ? 'auto' : '100%'};
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      top: ${({ isSidebarButtonVisible }) =>
-         isSidebarButtonVisible ? '8px' : '0'};
-      left: ${({ isSidebarButtonVisible }) =>
-         isSidebarButtonVisible ? '8px' : '0'};
-      position: fixed;
-      z-index: 12;
-      border: ${({ isSidebarButtonVisible }) =>
-         isSidebarButtonVisible
-            ? `1px solid ${theme.colors.textColor4}`
-            : 'none'};
-      padding: ${({ isSidebarButtonVisible }) =>
-         isSidebarButtonVisible ? '0' : '16px'};
-      height: ${({ isSidebarButtonVisible }) =>
-         isSidebarButtonVisible ? 'auto' : '64px'};
-      margin: 0;
-      background: ${theme.colors.mainBackground};
-      &:hover {
-         cursor: pointer;
-      }
-      .brand-logo-div {
-         display: ${({ isSidebarButtonVisible }) =>
-            isSidebarButtonVisible ? 'none' : 'block'};
-         width: 100px;
-         height: 40px;
-         margin-right: 16px;
-         position: relative;
-      }
-
-      @media (min-width: 769px) {
-         display: none;
-      }
+export const SidebarWrapper = styled(Drawer)`
+   .ant-drawer-content {
+      background: ${theme.colors.darkBackground.darkblue};
+   }
+   .ant-drawer-header {
+      background: ${theme.colors.darkBackground.darkblue};
+   }
+   .ant-drawer-title {
+      color: ${theme.colors.textColor4};
+      font-size: ${theme.sizes.h4};
+      font-weight: 700;
+   }
+   .ant-drawer-close {
+      color: ${theme.colors.textColor4};
    }
    .custom-auth-btn {
       width: auto;
@@ -441,19 +423,6 @@ export const SidebarWrapper = styled.div`
       padding: 0 16px;
    }
    .sidebar-main {
-      width: 70%;
-      height: 100%;
-      padding: 64px 16px 16px 16px;
-      position: fixed;
-      top: 0;
-      left: ${({ isSidebarButtonVisible }) =>
-         isSidebarButtonVisible ? '0' : '-100%'};
-      z-index: 11;
-      box-shadow: -31px 31px 62px rgba(20, 23, 30, 0.2),
-         -31px 39px 78px rgba(20, 23, 30, 0.9);
-      color: ${theme.colors.textColor4};
-      background: ${theme.colors.mainBackground};
-      transition: 650ms;
       .nav-list {
          list-style: none;
          display: flex;
@@ -498,6 +467,8 @@ export const SidebarWrapper = styled.div`
             padding: 8px;
             text-decoration: none;
             color: ${theme.colors.textColor4};
+            font-family: Proxima Nova;
+            letter-spacing: 0.16em;
          }
          img {
             width: 100px;

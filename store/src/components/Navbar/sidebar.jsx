@@ -16,11 +16,9 @@ import { isClient } from '../../utils'
 
 export default function Sidebar({
    navigationMenuItems,
-   isSidebarButtonVisible,
-   toggleSidebarButton,
-   showSidebarButton,
-   hideSidebarButton,
-   cartCount = 0
+   isSidebarVisible,
+   closeSidebar,
+   user = 'Welcome'
 }) {
    const node = useRef()
    const router = useRouter()
@@ -69,46 +67,18 @@ export default function Sidebar({
    return (
       <>
          <SidebarWrapper
-            ref={node}
-            isSidebarButtonVisible={isSidebarButtonVisible}
+            title={`${user?.firstName && user?.firstName} ${
+               user?.lastName && user?.lastName
+            }`}
+            placement="left"
+            closable={true}
+            onClose={closeSidebar}
+            visible={isSidebarVisible}
          >
-            <div className="sidebar-icon" onClick={toggleSidebarButton}>
-               {isSidebarButtonVisible ? (
-                  <CrossIcon size="38" color={theme.colors.textColor4} />
-               ) : (
-                  <MenuIcon size="38" color={theme.colors.textColor4} />
-               )}
-               <div className="brand-logo-div">
-                  <Image
-                     className="logo-img-2"
-                     src="/assets/images/stayIn-logo-1.png"
-                     alt="stay-in-logo"
-                     layout="fill"
-                  />
-               </div>
-
-               <Badge
-                  count={cartCount}
-                  showZero
-                  color={theme.colors.textColor}
-                  size="small"
-               >
-                  <Avatar
-                     size={42}
-                     icon={
-                        <CartIcon size="28" color={theme.colors.textColor} />
-                     }
-                     style={{
-                        backgroundColor: theme.colors.textColor4,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        justifyItems: 'center'
-                     }}
-                  />
-               </Badge>
-            </div>
             <div className="sidebar-main">
+               {/* <span className="close_sidebar_icon" onClick={closeSidebar}>
+                  <CrossIcon size="32" color={theme.colors.textColor4} />
+               </span> */}
                <ul className="nav-list">
                   <>
                      <div className="brand-logo-div">
@@ -178,7 +148,7 @@ export default function Sidebar({
                </ul>
             </div>
          </SidebarWrapper>
-         <BackDrop show={isSidebarButtonVisible} close={hideSidebarButton} />
+         <BackDrop show={isSidebarVisible} close={closeSidebar} />
       </>
    )
 }

@@ -75,7 +75,7 @@ export default function ProfileDropdownMenu({ items, user, ...props }) {
                   <Spacer xAxis="16px" />
                   <p className="title profileFont">Dashboard</p>
                </DropdownMenuItem>
-               <DropdownMenuItem url="/myPolls">
+               <DropdownMenuItem url="/dashborad/myPolls">
                   <PollIcon
                      size="24"
                      backgroundColor={theme.colors.textColor4}
@@ -84,7 +84,7 @@ export default function ProfileDropdownMenu({ items, user, ...props }) {
                   <Spacer xAxis="16px" />
                   <p className="title profileFont">My Polls</p>
                </DropdownMenuItem>
-               <DropdownMenuItem url="/myBookings">
+               <DropdownMenuItem url="/dashboard/myBookings">
                   <BookingIcon
                      size="24"
                      backgroundColor={theme.colors.textColor4}
