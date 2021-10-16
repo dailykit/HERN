@@ -12,14 +12,17 @@ import ProfileDropdownMenu from './profileDropdown'
 import Sidebar from './sidebar'
 import Button from '../Button'
 import Modal from '../Modal'
-import { CartIcon, UserIcon } from '../Icons'
+import { CartIcon, UserIcon, MenuIcon } from '../Icons'
 import { useUser } from '../../Providers'
 import { CART_INFO } from '../../graphql'
 import { theme } from '../../theme.js'
 import Login from '../login'
+import { useScroll, useWindowDimensions } from '../../utils'
 
 export default function NavBarComp({ navigationMenuItems }) {
-   const [isSidebarButtonVisible, SetIsSidebarButtonVisible] = useState(false)
+   const [isSidebarVisible, SetIsSidebarVisible] = useState(false)
+   const scroll = useScroll()
+   const { width } = useWindowDimensions()
    const { pathname } = useRouter()
    const { addToast } = useToasts()
    const { state } = useUser()
@@ -73,13 +76,16 @@ export default function NavBarComp({ navigationMenuItems }) {
       <>
          <Sidebar
             navigationMenuItems={navigationMenuItems}
-            isSidebarButtonVisible={isSidebarButtonVisible}
-            toggleSidebarButton={() => SetIsSidebarButtonVisible(prev => !prev)}
-            showSidebarButton={() => SetIsSidebarButtonVisible(true)}
-            hideSidebarButton={() => SetIsSidebarButtonVisible(false)}
-            cartCount={carts.length}
+            isSidebarVisible={isSidebarVisible}
+            closeSidebar={() => SetIsSidebarVisible(false)}
+            user={user}
          />
-         <NavBar cartCount={carts.lenth}>
+         <NavBar cartCount={carts.lenth} scroll={scroll}>
+            {width < 769 && (
+               <span onClick={() => SetIsSidebarVisible(true)}>
+                  <MenuIcon size="38" color={theme.colors.textColor4} />
+               </span>
+            )}
             <div className="brand-logo-div">
                <Image
                   className="logo-img-2"
@@ -89,55 +95,71 @@ export default function NavBarComp({ navigationMenuItems }) {
                />
             </div>
 
-            <li className="nav-list-item">
-               <NavLink href="/">
-                  <a className={pathname === '/' && 'activeLink'}>Home</a>
-               </NavLink>
-            </li>
-            <li className="nav-list-item">
-               <NavLink href="/experiences">
-                  <a className={pathname === '/experiences' && 'activeLink'}>
-                     Experiences
-                  </a>
-               </NavLink>
-            </li>
-            <li className="nav-list-item">
-               <NavLink href="/experts">
-                  <a className={pathname === '/experts' && 'activeLink'}>
-                     Experts
-                  </a>
-               </NavLink>
-            </li>
+            {width > 769 && (
+               <>
+                  <li className="nav-list-item">
+                     <NavLink href="/">
+                        <a className={pathname === '/' && 'activeLink'}>Home</a>
+                     </NavLink>
+                  </li>
+                  <li className="nav-list-item">
+                     <NavLink href="/experiences">
+                        <a
+                           className={
+                              pathname === '/experiences' && 'activeLink'
+                           }
+                        >
+                           Experiences
+                        </a>
+                     </NavLink>
+                  </li>
+                  <li className="nav-list-item">
+                     <NavLink href="/experts">
+                        <a className={pathname === '/experts' && 'activeLink'}>
+                           Experts
+                        </a>
+                     </NavLink>
+                  </li>
 
-            <DynamicMenu pathname={pathname} menuItems={navigationMenuItems} />
-            <div className="spacer" />
+                  <DynamicMenu
+                     pathname={pathname}
+                     menuItems={navigationMenuItems}
+                  />
+                  <div className="spacer" />
+               </>
+            )}
             {isAuthenticated ? (
                <>
-                  <li className="cart">
-                     <Badge
-                        count={carts.length}
-                        color={theme.colors.textColor}
-                        size="small"
-                     >
-                        <Avatar
-                           size={42}
-                           icon={
-                              <CartIcon
-                                 size="28"
-                                 color={theme.colors.textColor}
-                              />
-                           }
-                           style={{
-                              backgroundColor: theme.colors.textColor4,
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              justifyItems: 'center'
-                           }}
+                  {width > 769 && (
+                     <li className="cart">
+                        <Badge
+                           count={carts.length}
+                           color={theme.colors.textColor}
+                           size="small"
+                        >
+                           <Avatar
+                              size={42}
+                              icon={
+                                 <CartIcon
+                                    size="28"
+                                    color={theme.colors.textColor}
+                                 />
+                              }
+                              style={{
+                                 backgroundColor: theme.colors.textColor4,
+                                 display: 'flex',
+                                 alignItems: 'center',
+                                 justifyContent: 'center',
+                                 justifyItems: 'center'
+                              }}
+                           />
+                        </Badge>
+                        <CartDropdownMenu
+                           className="dropdown-div"
+                           carts={carts}
                         />
-                     </Badge>
-                     <CartDropdownMenu className="dropdown-div" carts={carts} />
-                  </li>
+                     </li>
+                  )}
                   <li className="profile">
                      <Avatar
                         size={42}

@@ -26,6 +26,10 @@
    font-weight: 400;
 }
 
+svg:not(:root) {
+   overflow: unset !important;
+}
+
 html {
    scroll-behavior: smooth;
    /* background-color: #101010; */
@@ -43,11 +47,7 @@ html {
 body {
    overflow-x: hidden;
 }
-@media (max-width: 760px) {
-   body {
-      padding-top: 64px;
-   }
-}
+
 .special-underline {
    position: relative;
    color: #2a4663;
