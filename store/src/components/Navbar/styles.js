@@ -408,14 +408,60 @@ export const SidebarWrapper = styled(Drawer)`
    }
    .ant-drawer-header {
       background: ${theme.colors.darkBackground.darkblue};
+      border: none;
    }
    .ant-drawer-title {
       color: ${theme.colors.textColor4};
       font-size: ${theme.sizes.h4};
       font-weight: 700;
+      .brand-logo-div {
+         width: 100%;
+         height: 48px;
+         display: flex;
+         align-items: center;
+         .logo-img {
+            width: 100px;
+            height: 48px;
+            object-fit: contain;
+         }
+      }
    }
    .ant-drawer-close {
       color: ${theme.colors.textColor4};
+   }
+   .ant-layout-sider {
+      width: 100% !important;
+      min-width: 100% !important;
+      max-width: 100% !important;
+      height: 100% !important;
+   }
+   .ant-menu {
+      background: ${theme.colors.darkBackground.darkblue};
+      color: ${theme.colors.textColor4};
+   }
+   .ant-menu-item {
+      :hover {
+         color: inherit;
+      }
+   }
+   .ant-menu > .ant-menu-item > .ant-menu-title-content {
+      font-family: Proxima Nova;
+      font-size: ${theme.sizes.h8};
+      letter-spaceing: 0.16em;
+   }
+   .ant-menu-item-selected {
+      color: ${theme.colors.textColor4};
+      background: rgba(255, 255, 255, 0.1) !important;
+      .ant-menu-title-content {
+         svg path {
+            fill: ${theme.colors.textColor};
+         }
+      }
+   }
+   .ant-menu-inline .ant-menu-item::after {
+      left: 0;
+      right: unset;
+      border-right-color: ${theme.colors.textColor};
    }
    .custom-auth-btn {
       width: auto;
@@ -429,26 +475,6 @@ export const SidebarWrapper = styled(Drawer)`
          flex-direction: column;
          justify-content: flex-end;
          margin: 0;
-         .brand-logo-div {
-            width: 132px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            margin-bottom: 16px;
-            .logo-img-1 {
-               width: 100%;
-               height: 100%;
-            }
-            .logo-img-2 {
-               width: 60px;
-               height: 90px;
-               object-fit: cover;
-            }
-            .logo-img-3 {
-               width: 100%;
-               height: 40px;
-            }
-         }
       }
       .nav-list-item {
          list-style: none;

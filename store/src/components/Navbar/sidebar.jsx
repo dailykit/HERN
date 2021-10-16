@@ -4,7 +4,7 @@ import NavLink from 'next/link'
 import { signOut } from 'next-auth/client'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { Avatar, Badge } from 'antd'
+import { Layout, Menu } from 'antd'
 import { SidebarWrapper } from './styles'
 import DynamicMenu from './dynamicMenu'
 import Button from '../Button'
@@ -20,7 +20,6 @@ export default function Sidebar({
    closeSidebar,
    user = 'Welcome'
 }) {
-   const node = useRef()
    const router = useRouter()
    const { state } = useUser()
    const { isAuthenticated = false } = state
@@ -46,107 +45,73 @@ export default function Sidebar({
       {
          id: '/mp-id',
          label: 'My Polls',
-         url: '/myPolls',
+         url: '/dashboard/myPolls',
          isAllowedToShow: isAuthenticated
       },
       {
          id: '/mb-id',
          label: 'My Bookings',
-         url: '/myBookings',
+         url: '/dashboard/myBookings',
          isAllowedToShow: isAuthenticated
       }
    ]
 
-   const logout = async () => {
-      await signOut({ redirect: false })
-      if (isClient) {
-         window.location.href = window.location.origin + ''
+   const handleClick = async event => {
+      const { key } = event
+      if (key === 'logout') {
+         await signOut({ redirect: false })
+         if (isClient) {
+            window.location.href = window.location.origin + ''
+         }
+      } else {
+         router.push(key)
       }
    }
 
    return (
       <>
          <SidebarWrapper
-            title={`${user?.firstName && user?.firstName} ${
-               user?.lastName && user?.lastName
-            }`}
+            title={
+               <>
+                  <div className="brand-logo-div">
+                     <img
+                        className="logo-img"
+                        src="/assets/images/stayIn-logo-1.png"
+                        alt="stay-in-logo"
+                     />
+                  </div>
+               </>
+            }
             placement="left"
             closable={true}
             onClose={closeSidebar}
             visible={isSidebarVisible}
          >
-            <div className="sidebar-main">
-               {/* <span className="close_sidebar_icon" onClick={closeSidebar}>
-                  <CrossIcon size="32" color={theme.colors.textColor4} />
-               </span> */}
-               <ul className="nav-list">
-                  <>
-                     <div className="brand-logo-div">
-                        <img
-                           className="logo-img-2"
-                           src="/assets/images/stayIn-neon-1.png"
-                           alt="stay-in-logo"
-                        />
-                        <img
-                           className="logo-img-3"
-                           src="/assets/images/stayIn-logo-4.png"
-                           alt="stay-in-logo"
-                        />
-                     </div>
-                     {!isAuthenticated && (
-                        <Flex
-                           container
-                           alignItems="center"
-                           justifyContent="space-evenly"
-                           margin="16px 0 "
-                        >
-                           <Button
-                              className="custom-auth-btn"
-                              onClick={() => router.push('/login')}
-                           >
-                              Login
-                           </Button>
-                           <Button
-                              className="custom-auth-btn"
-                              onClick={() => router.push('/login')}
-                           >
-                              Signup
-                           </Button>
-                        </Flex>
-                     )}
-                     {routes.map(route => (
-                        <li className="nav-list-item" key={route.id}>
-                           {route.isAllowedToShow && (
-                              <NavLink href={route.url}>
-                                 <a
-                                    className={
-                                       router.pathname === route.url &&
-                                       'activeLink'
-                                    }
-                                 >
-                                    {route.label}
-                                 </a>
-                              </NavLink>
-                           )}
-                        </li>
-                     ))}
-
-                     <DynamicMenu
-                        pathname={router.pathname}
-                        menuItems={navigationMenuItems}
-                     />
-                     {isAuthenticated && (
-                        <li
-                           className="nav-list-item"
-                           style={{ padding: '8px' }}
-                           onClick={logout}
-                        >
-                           Logout
-                        </li>
-                     )}
-                  </>
-               </ul>
-            </div>
+            <Layout.Sider className="dashboard-sidebar">
+               <Menu
+                  onClick={handleClick}
+                  style={{ height: '100%', borderRight: 0 }}
+                  defaultSelectedKeys={[router.pathname]}
+                  mode="inline"
+               >
+                  {routes.map(
+                     route =>
+                        route.isAllowedToShow && (
+                           <Menu.Item key={route.url}>{route.label}</Menu.Item>
+                        )
+                  )}
+                  {navigationMenuItems.map(menuItem => {
+                     return (
+                        <Menu.Item key={menuItem?.url}>
+                           {menuItem?.label}
+                        </Menu.Item>
+                     )
+                  })}
+                  {isAuthenticated && (
+                     <Menu.Item key="logout">Logout</Menu.Item>
+                  )}
+               </Menu>
+            </Layout.Sider>
          </SidebarWrapper>
          <BackDrop show={isSidebarVisible} close={closeSidebar} />
       </>

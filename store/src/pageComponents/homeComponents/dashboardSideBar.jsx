@@ -126,8 +126,6 @@ const Wrapper = styled.div`
    }
 
    @media (max-width: 769px) {
-      .sidebar {
-         display: none;
-      }
+      display: none;
    }
 `
