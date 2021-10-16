@@ -311,6 +311,7 @@ class DataTable extends React.Component {
          width: 80,
       },
    ]
+
    handleRowSelection = ({ _row }) => {
       this.props.setSelectedRows(prevState => [...prevState, _row.getData()])
 
@@ -335,6 +336,7 @@ class DataTable extends React.Component {
    removeSelectedRow = id => {
       this.tableRef.current.table.deselectRow(id)
    }
+
    handleGroupBy = value => {
       this.setState(
          {
@@ -345,6 +347,7 @@ class DataTable extends React.Component {
          }
       )
    }
+
    clearHeaderFilter = () => {
       this.tableRef.current.table.clearHeaderFilter()
    }
@@ -418,6 +421,16 @@ class DataTable extends React.Component {
       localStorage.setItem('selected-rows-id_recipe_table', JSON.stringify([]))
    }
 
+   clearPersistence = () => {
+      localStorage.removeItem('tabulator-recipe_table-columns')
+      localStorage.removeItem('tabulator-recipe_table-sort')
+      localStorage.removeItem('tabulator-recipe_table-filter')
+      localStorage.removeItem('tabulator-recipe_table-group')
+      this.tableRef.current.table.setGroupBy([])
+
+      this.removeSelectedRecipes()
+   }
+
    render() {
       const selectionColumn =
          this.props.selectedRows.length > 0 &&
@@ -462,6 +475,7 @@ class DataTable extends React.Component {
                openTunnel={this.props.openTunnel}
                handleGroupBy={this.handleGroupBy}
                clearHeaderFilter={this.clearHeaderFilter}
+               clearPersistence={this.clearPersistence}
             />
 
             <Spacer size="40px" />
@@ -580,6 +594,7 @@ const ActionBar = ({
    openTunnel,
    handleGroupBy,
    clearHeaderFilter,
+   clearPersistence,
 }) => {
    const [groupByOptions] = React.useState([
       { id: 1, title: 'Published', payload: 'isPublished' },
@@ -587,7 +602,10 @@ const ActionBar = ({
       { id: 3, title: 'Author', payload: 'author' },
    ])
 
-   const defaultIDs = () => {
+   const defaultIDs = (isClearPersistence = false) => {
+      if (isClearPersistence) {
+         return []
+      }
       let arr = []
       const recipeGroup = localStorage.getItem('tabulator-recipe_table-group')
       const recipeGroupParse =
@@ -665,7 +683,7 @@ const ActionBar = ({
                >
                   <TextButton
                      onClick={() => {
-                        localStorage.clear()
+                        clearPersistence()
                      }}
                      type="ghost"
                      size="sm"

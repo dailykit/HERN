@@ -397,6 +397,7 @@ class DataTable extends React.Component {
       localStorage.removeItem('tabulator-ingredient_table-sort')
       localStorage.removeItem('tabulator-ingredient_table-filter')
       localStorage.removeItem('tabulator-ingredients_table-group')
+      this.removeSelectedIngredients()
    }
 
    render() {
