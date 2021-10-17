@@ -6,6 +6,7 @@ import {
    ButtonGroup,
    Form,
    Loader,
+   IconButton,
 } from '@dailykit/ui'
 import { Popup, AssetUploader } from '../../../../shared/components'
 import { get_env } from '../../../../shared/utils'
@@ -251,7 +252,13 @@ export default function FormType({
                   />
                   <Spacer size="16px" />
                   {iconUrl ? (
-                     <img src={iconUrl}></img>
+                     <>
+                        <img
+                           style={{ height: '50px', width: '50px' }}
+                           src={iconUrl}
+                        ></img>
+                        <IconButton></IconButton>
+                     </>
                   ) : (
                      <ButtonGroup>
                         <TextButton
@@ -262,17 +269,20 @@ export default function FormType({
                         </TextButton>
                      </ButtonGroup>
                   )}
+
                   {active && (
-                     <AssetUploader
-                        onImageSelect={data => {
-                           setActive(false)
-                           setIconUrl(data.url)
-                        }}
-                        onAssetUpload={data => {
-                           setActive(false)
-                           setIconUrl(data.url)
-                        }}
-                     ></AssetUploader>
+                     <Popup size="460px" show={show}>
+                        <AssetUploader
+                           onImageSelect={data => {
+                              setActive(false)
+                              setIconUrl(data.url)
+                           }}
+                           onAssetUpload={data => {
+                              setActive(false)
+                              setIconUrl(data.url)
+                           }}
+                        ></AssetUploader>
+                     </Popup>
                   )}
                </Form.Group>
                <Spacer size="16px" />
