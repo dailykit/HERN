@@ -5,17 +5,19 @@ import Styles from './styled'
 import Tools from './components/Tools'
 import { useLocalStorage } from '../../hooks'
 import Breadcrumbs from './Breadcrumbs'
+import { useTabs } from '../../providers'
 
 export const TabBar = () => {
    const [isTabHidden, setIsTabHidden] = useLocalStorage('isTabsHidden')
+   const { tabs } = useTabs()
    return (
       <>
          <Styles.Header isTabHidden={isTabHidden}>
             <Logo />
-            {!isTabHidden ? <Tabs /> : <Breadcrumbs />}
+            {tabs.length > 0 && !isTabHidden ? <Tabs /> : <Breadcrumbs />}
             <Tools isTabHidden={isTabHidden} setIsTabHidden={setIsTabHidden} />
          </Styles.Header>
-         {!isTabHidden && <Breadcrumbs />}
+         {tabs.length > 0 && !isTabHidden && <Breadcrumbs />}
       </>
    )
 }

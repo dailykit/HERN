@@ -41,10 +41,14 @@ import EarningIcon from './Earning'
 import OrderIcon from './Order'
 import CustomerIcon from './Customer'
 import MarketingIcon from './Marketing'
+import HelpIcon from './Help'
+import Close from './CloseIcon'
+
 export {
    SearchIcon,
    AddIcon,
    MenuIcon,
+   HelpIcon,
    CloseIcon,
    ChevronRight,
    ChevronLeft,
@@ -85,6 +89,7 @@ export {
    OrderIcon,
    CustomerIcon,
    MarketingIcon,
+   Close,
 }
 
 export * from './Tick'

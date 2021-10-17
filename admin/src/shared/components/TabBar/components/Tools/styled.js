@@ -5,7 +5,7 @@ export const Wrapper = styled.div`
    display: flex;
    align-items: center;
    justify-content: space-evenly;
-   height: 42px;
+   height: 44px;
    padding: 0px 14px 0px 20px;
    background: linear-gradient(135deg, #ffffff 0%, #f1f0ef 100%);
    box-shadow: -8px 8px 16px rgba(191, 191, 190, 0.2),
@@ -15,6 +15,9 @@ export const Wrapper = styled.div`
       inset 1px 1px 2px rgba(255, 255, 255, 0.3),
       inset -1px -1px 2px rgba(191, 191, 190, 0.5);
    border-radius: 0px 0px 0px 24px;
+   .Helpicon {
+      border-radius: 0px 0px 0px 24px;
+   }
    > button {
       border: none;
       outline: none;

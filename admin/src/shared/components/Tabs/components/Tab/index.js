@@ -2,7 +2,7 @@ import React from 'react'
 import { StyledTab } from '../../styled'
 import { useLocation } from 'react-router-dom'
 import { useTabs } from '../../../../providers'
-import { CloseIcon } from '@dailykit/ui'
+import { Close } from '../../../../assets/icons'
 
 const Tab = ({ index, tab, numTabs, ...props }) => {
    const location = useLocation()
@@ -25,7 +25,7 @@ const Tab = ({ index, tab, numTabs, ...props }) => {
                removeTab({ tab, index })
             }}
          >
-            <CloseIcon color={active ? '#367BF5' : '#919699'} size="12" />
+            <Close color={active ? '#367BF5' : '#555B6E'} size="12" />
          </button>
       </StyledTab>
    )

@@ -111,8 +111,8 @@ export const hydrateFold = async (req, res) => {
          headers: { 'x-hasura-admin-secret': secret }
       })
 
-      const { website_websitePageModule } = await client.request(PLUGIN, { id })
-      const [fold] = website_websitePageModule
+      const { brands_brandPageModule } = await client.request(PLUGIN, { id })
+      const [fold] = brands_brandPageModule
 
       const { path: pluginPath } = fold.subscriptionDivFileId
 
@@ -146,7 +146,7 @@ export default router
 
 const PLUGIN = gql`
    query PLUGIN($id: Int!) {
-      website_websitePageModule(where: { id: { _eq: $id } }) {
+      brands_brandPageModule(where: { id: { _eq: $id } }) {
          id
          subscriptionDivFileId: file {
             path
