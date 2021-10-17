@@ -20,7 +20,8 @@ import {
    Masonry,
    AboutExpert,
    SEO,
-   Layout
+   Layout,
+   RenderCard
 } from '../../../components'
 
 export default function Expert({
@@ -82,6 +83,18 @@ export default function Expert({
                      color={theme.colors.textColor4}
                   />
                </Flex>
+               {/* {!isEmpty(expert) && (
+                  <RenderCard
+                     // data={expert?.experience_experts
+                     //    .map(expert => expert?.experience)
+                     //    .flat()}
+                     data={expert?.experience_experts}
+                     type="expert"
+                     layout="carousel"
+                     showCategorywise={false}
+                     keyname="expert"
+                  />
+               )} */}
                <Masonry
                   breakpointCols={breakpointColumnsObj}
                   className="my-masonry-grid"
@@ -99,6 +112,8 @@ export default function Expert({
                               key={index}
                               type="experience"
                               data={data}
+                              backgroundMode="light"
+                              boxShadow={false}
                            />
                         )
                      })}
@@ -136,6 +151,11 @@ export const getStaticProps = async ({ params }) => {
          query: EXPERT_INFO,
          variables: { expertId: +params.expertId }
       })
+
+   console.log(
+      'experts',
+      expert?.experience_experts.map(expert => expert?.experience).flat()
+   )
    // const category =
    //    expert.experience_experts[0]?.experience
    //       .experience_experienceCategories[0]?.experienceCategoryTitle || null

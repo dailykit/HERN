@@ -25,7 +25,7 @@ export const Card = styled.div`
 export const CardImage = styled.div`
    position: relative;
    width: 100%;
-   height: 100%;
+   height: 360px;
    border-radius: 16px;
    overflow: hidden;
    img {
@@ -140,6 +140,7 @@ export const CardBody = styled.div`
    .exp-info {
       font-weight: 800;
       font-size: ${theme.sizes.h7};
+      margin-bottom: 0;
       span {
          font-weight: 400;
          font-size: ${theme.sizes.h7};
@@ -169,6 +170,7 @@ export const CardBody = styled.div`
          color: ${theme.colors.textColor};
          font-weight: 800;
          letter-spacing: 0.16em;
+         margin-bottom: 0;
       }
    }
    .expert-img {
