@@ -166,7 +166,7 @@ export const CardBody = styled.div`
       align-items: center;
       p {
          font-family: Proxima Nova;
-         color: ${theme.colors.textColor6};
+         color: ${theme.colors.textColor};
          font-weight: 800;
          letter-spacing: 0.16em;
       }

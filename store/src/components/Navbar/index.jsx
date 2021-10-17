@@ -172,7 +172,7 @@ export default function NavBarComp({ navigationMenuItems }) {
                </Menu>
                {isAuthenticated ? (
                   <div className="action-btn">
-                     {width < 769 && (
+                     {width > 769 && (
                         <Popover
                            content={<CartDropdownMenu carts={carts} />}
                            trigger="click"

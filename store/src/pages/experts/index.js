@@ -12,7 +12,8 @@ import {
    Layout,
    SEO,
    Filters,
-   InlineLoader
+   InlineLoader,
+   RenderCard
 } from '../../components'
 import {
    EXPERT_BY_CATEGORY,
@@ -20,7 +21,7 @@ import {
    GET_EXPERIENCE_CATEGORIES
 } from '../../graphql'
 import { theme } from '../../theme'
-import { useWindowDimensions, fileParser } from '../../utils'
+import { useWindowDimensions, fileParser, isEmpty } from '../../utils'
 import { getNavigationMenuItems, getBannerData } from '../../lib'
 
 export default function Experiences({ navigationMenuItems, parsedData = [] }) {
@@ -118,7 +119,7 @@ export default function Experiences({ navigationMenuItems, parsedData = [] }) {
    return (
       <Layout navigationMenuItems={navigationMenuItems}>
          <SEO title="Experts" />
-         <StyledWrapper>
+         <StyledWrapper bgMode="dark">
             <div ref={expertsTop01} id="experts-top-01">
                {Boolean(parsedData.length) &&
                   ReactHtmlParser(
@@ -127,7 +128,7 @@ export default function Experiences({ navigationMenuItems, parsedData = [] }) {
                   )}
             </div>
             <div className="centerDiv">
-               <h1 className="heading">Experts</h1>
+               <h1 className="heading text1">Experts</h1>
             </div>
             <Filters
                filterOptions={[
@@ -143,114 +144,20 @@ export default function Experiences({ navigationMenuItems, parsedData = [] }) {
                ]}
                resultCount={resultCount}
             >
-               {Boolean(expertsByCategory.length) &&
-                  expertsByCategory.map(category => {
-                     return (
-                        <div className="grid-class" key={category?.title}>
-                           <h3 className="experienceHeading">
-                              {category?.title}(
-                              {category.experts.length || 'coming soon'})
-                           </h3>
-                           {category.experts.length ? (
-                              <>
-                                 <div
-                                    className="gridView"
-                                    key={category?.title}
-                                 >
-                                    {category.experts.map(expert => {
-                                       return (
-                                          <Card
-                                             customWidth="250px"
-                                             customHeight="230px"
-                                             key={expert?.id}
-                                             type="expert"
-                                             data={expert}
-                                          />
-                                       )
-                                    })}
-                                 </div>
-                                 <Flex
-                                    container
-                                    alignItems="center"
-                                    justifyContent="center"
-                                    padding="1rem 0"
-                                    margin="0 0 2rem 0"
-                                 >
-                                    <h1 className="explore">View all</h1>
-                                    <ChevronRight
-                                       size={iconSize}
-                                       color={theme.colors.textColor}
-                                    />
-                                 </Flex>
-                              </>
-                           ) : (
-                              <div className="emptyCard">
-                                 <Card
-                                    type="empty"
-                                    data={{ name: 'Experts arriving soon..' }}
-                                 />
-                              </div>
-                           )}
-                        </div>
-                     )
-                  })}
-               {loading && (
-                  <div className="skeleton-wrapper">
-                     {[1, 2, 3, 4].map((_, index) => {
-                        return <ExpertSkeleton key={index} />
-                     })}
-                  </div>
+               {!isEmpty(expertsByCategory) && (
+                  <RenderCard
+                     data={expertsByCategory
+                        .map(expert => expert?.experts)
+                        .flat()}
+                     // data={experts}
+                     type="expert"
+                     layout="masonry"
+                     showCategorywise={false}
+                     keyname="expert"
+                  />
                )}
             </Filters>
-            <GridViewWrapper>
-               <Flex
-                  container
-                  flexDirection="column"
-                  alignItems="center"
-                  justifyContent="center"
-                  padding="1rem 0"
-               >
-                  <h3 className="experienceHeading">
-                     {Boolean(expertsByCategory.length) &&
-                        expertsByCategory[0].experts.length}{' '}
-                     Experts you might like to explore
-                  </h3>
-                  <ChevronDown
-                     size={iconSize}
-                     color={theme.colors.textColor4}
-                  />
-               </Flex>
-               <GridViewForExpert>
-                  {Boolean(expertsByCategory.length) &&
-                     expertsByCategory[0].experts.map((data, index) => {
-                        return (
-                           <CardWrapperForExpert key={index}>
-                              <Card type="expert" data={data} />
-                           </CardWrapperForExpert>
-                        )
-                     })}
-               </GridViewForExpert>
-               {loading && (
-                  <div className="skeleton-wrapper">
-                     {[1, 2, 3, 4].map((_, index) => {
-                        return <ExpertSkeleton key={index} />
-                     })}
-                  </div>
-               )}
-               <Flex
-                  container
-                  alignItems="center"
-                  justifyContent="center"
-                  padding="1rem 0"
-                  margin="0 0 2rem 0"
-               >
-                  <h1 className="explore ">Explore more Experts</h1>
-                  <ChevronRight
-                     size={iconSize}
-                     color={theme.colors.textColor}
-                  />
-               </Flex>
-            </GridViewWrapper>
+
             <div ref={expertsBottom01} id="experts-bottom-01">
                {Boolean(parsedData.length) &&
                   ReactHtmlParser(
@@ -283,7 +190,11 @@ export const getStaticProps = async () => {
 const StyledWrapper = styled.div`
    width: 100%;
    height: 100%;
-   overflow: auto;
+   overflow: hidden; /* might need to change in future */
+   background: ${({ bgMode }) =>
+      bgMode === 'dark'
+         ? theme.colors.darkBackground.darkblue
+         : theme.colors.lightBackground.white};
    .skeleton-wrapper {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -293,11 +204,15 @@ const StyledWrapper = styled.div`
       display: flex;
       flex-direction: column;
       align-items: center;
+      margin-top: 6rem;
       .heading {
-         font-size: ${theme.sizes.h1};
-         color: ${theme.colors.textColor4};
-         font-weight: 400;
-         margin-bottom: 80px;
+         font-family: League-Gothic;
+         font-style: normal;
+         font-weight: normal;
+         text-align: center;
+         letter-spacing: 0.16em;
+         color: ${theme.colors.textColor};
+         margin-bottom: 4rem;
       }
       .customInput {
          width: 80%;

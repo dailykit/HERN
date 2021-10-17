@@ -50,7 +50,7 @@ export const CardBody = styled.div`
       text-align: left;
       letter-spacing: 0.16em;
       :hover {
-         color: ${theme.colors.textColor6};
+         color: ${theme.colors.textColor};
       }
    }
    .category {
@@ -58,7 +58,7 @@ export const CardBody = styled.div`
       font-weight: 800;
       font-family: Proxima Nova;
       letter-spacing: 0.16em;
-      color: ${theme.colors.textColor6};
+      color: ${theme.colors.textColor};
    }
    .experience {
       text-align: left;
