@@ -11,7 +11,7 @@ export const NavBar = styled.header`
    width: 100%;
    z-index: 5;
    align-items: center;
-   padding: 1rem 2rem;
+   padding: 1rem 4rem;
    justify-content: space-between;
    background: ${({ scroll }) =>
       scroll.direction === 'down'
@@ -53,13 +53,10 @@ export const NavBar = styled.header`
       color: ${theme.colors.textColor};
       :after {
          border-bottom: 2px solid ${theme.colors.textColor};
-         bottom: -4px;
+         bottom: 0px;
       }
    }
 
-   @media (max-width: 769px) {
-      padding: 1rem;
-   }
    .cart-count-batch {
       position: absolute;
       top: 5px;
@@ -125,27 +122,22 @@ export const NavBar = styled.header`
          transition: all 560ms;
       }
    }
+   .menu-wrap {
+      width: 100%;
+      display: flex;
+      align-items: center;
+   }
+   .action-btn {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      column-gap: 1.5rem;
+      margin-left: 1rem;
+   }
    .cart,
    .profile {
-      list-style: none;
-      font-size: ${theme.sizes.h4};
-      padding: 8px;
-      margin-left: 1rem;
-      position: relative;
-      .dropdown-div {
-         display: none;
-      }
-      .profile-dropdown-div {
-         display: none;
-      }
-      &:hover {
-         cursor: pointer;
-         .dropdown-div {
-            display: block;
-         }
-         .profile-dropdown-div {
-            display: block;
-         }
+      .ant-menu-horizontal > .ant-menu-item-selected:after {
+         border: none;
       }
    }
    .brand {
@@ -234,6 +226,16 @@ export const NavBar = styled.header`
    .auth-btn {
       position: absolute;
    }
+
+   @media (max-width: 769px) {
+      padding: 1rem;
+      .menu-wrap {
+         width: auto;
+      }
+      .action-btn {
+         margin-left: 0;
+      }
+   }
 `
 
 export const DropdownWrapper = styled.div`
@@ -306,30 +308,6 @@ export const DropdownWrapper = styled.div`
    .menu-secondary-exit-active {
       transform: translateX(110%);
       transition: all 500ms ease;
-   }
-   .pointer {
-      position: absolute;
-      pointer-events: none;
-      border-style: solid;
-      border-right-style: solid;
-      border-bottom-style: solid;
-      border-width: 1px;
-      border-right-width: 1px;
-      border-bottom-width: 1px;
-      border-right: 1px solid rgb(203, 214, 226);
-      border-bottom: 1px solid rgb(203, 214, 226);
-      border-image: none 100% / 1 / 0 stretch;
-      clip-path: polygon(100% 100%, 0px 100%, 100% 0px);
-      border-top-left-radius: 100%;
-      border-top-color: transparent !important;
-      border-left-color: transparent !important;
-      width: 15px;
-      height: 15px;
-      background-color: inherit;
-      transform: rotate(-135deg);
-      top: -6px;
-      left: calc(50% - 10px);
-      background: #fff;
    }
 `
 

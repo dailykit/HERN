@@ -52,13 +52,13 @@ export default function CartDropdownMenu({ carts, ...props }) {
    return (
       <DropdownWrapper {...props} ref={dropdownRef}>
          <CSSTransition
-            in={activeMenu === carts[0]?.label}
+            in={activeMenu === carts[0]?.id}
             unmountOnExit
             timeout={500}
             classNames="menu-primary"
             onEnter={calcHeight}
          >
-            <div>
+            <div className="dropdown-menu">
                {carts.length > 0 ? (
                   carts.map(cart => {
                      return (

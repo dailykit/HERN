@@ -22,17 +22,11 @@ export default function ProfileDropdownMenu({ items, user, ...props }) {
    const dropdownRef = useRef(null)
 
    useEffect(() => {
-      console.log(
-         'dropdownRef.current',
-         dropdownRef.current.firstChild.offsetHeight
-      )
-      setMenuHeight(dropdownRef.current?.firstChild.offsetHeight + 30)
+      setMenuHeight(dropdownRef.current?.firstChild?.offsetHeight + 30)
    }, [])
 
    function calcHeight(el) {
-      console.log('CalcHeight......', el)
       const height = el.offsetHeight
-      console.log('height', height)
       setMenuHeight(height)
    }
 
@@ -57,10 +51,10 @@ export default function ProfileDropdownMenu({ items, user, ...props }) {
 
    return (
       <DropdownWrapper {...props} ref={dropdownRef}>
-         <p style={{ color: theme.colors.textColor4, textAlign: 'center' }}>
+         {/* <p style={{ color: theme.colors.textColor4, textAlign: 'center' }}>
             {user?.firstName && user?.firstName}{' '}
             {user?.lastName && user?.lastName}
-         </p>
+         </p> */}
          <CSSTransition
             in={activeMenu === items[0]?.id}
             unmountOnExit

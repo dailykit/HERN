@@ -144,39 +144,37 @@ export default function NavBarComp({ navigationMenuItems }) {
                src="/assets/images/stayIn-logo-1.png"
                alt="stay-in-logo"
             />
-
-            <Menu
-               onClick={handleMenuClick}
-               style={{ height: '100%', borderRight: 0 }}
-               defaultSelectedKeys={[router.pathname]}
-               mode="horizontal"
-            >
-               {width > 769 &&
-                  routes.map(
-                     route =>
-                        route.isAllowedToShow &&
-                        route.showInHeader && (
-                           <Menu.Item key={route.url}>{route.label}</Menu.Item>
+            <div className="menu-wrap">
+               <Menu
+                  onClick={handleMenuClick}
+                  style={{ height: '100%', borderRight: 0 }}
+                  defaultSelectedKeys={[router.pathname]}
+                  mode="horizontal"
+               >
+                  {width > 769 &&
+                     routes.map(
+                        route =>
+                           route.isAllowedToShow &&
+                           route.showInHeader && (
+                              <Menu.Item key={route.url}>
+                                 {route.label}
+                              </Menu.Item>
+                           )
+                     )}
+                  {width > 769 &&
+                     navigationMenuItems.map(menuItem => {
+                        return (
+                           <Menu.Item key={menuItem?.url}>
+                              {menuItem?.label}
+                           </Menu.Item>
                         )
-                  )}
-               {width > 769 &&
-                  navigationMenuItems.map(menuItem => {
-                     return (
-                        <Menu.Item key={menuItem?.url}>
-                           {menuItem?.label}
-                        </Menu.Item>
-                     )
-                  })}
+                     })}
+               </Menu>
                {isAuthenticated ? (
-                  <>
-                     <Menu.Item key="dnd1">
+                  <div className="action-btn">
+                     {width < 769 && (
                         <Popover
-                           content={
-                              <CartDropdownMenu
-                                 className="dropdown-div"
-                                 carts={carts}
-                              />
-                           }
+                           content={<CartDropdownMenu carts={carts} />}
                            trigger="click"
                            color={theme.colors.darkBackground.darkblue}
                         >
@@ -203,39 +201,37 @@ export default function NavBarComp({ navigationMenuItems }) {
                               />
                            </Badge>
                         </Popover>
-                     </Menu.Item>
+                     )}
 
-                     <Menu.Item key="dnd2">
-                        <Popover
-                           content={
-                              <ProfileDropdownMenu
-                                 className="profile-dropdown-div"
-                                 items={profileItems}
-                                 user={user}
+                     <Popover
+                        content={
+                           <ProfileDropdownMenu
+                              className="profile-dropdown-div"
+                              items={profileItems}
+                              user={user}
+                           />
+                        }
+                        trigger="click"
+                        color={theme.colors.darkBackground.darkblue}
+                     >
+                        <Avatar
+                           size={42}
+                           icon={
+                              <UserIcon
+                                 size="32"
+                                 color={theme.colors.textColor}
                               />
                            }
-                           trigger="click"
-                           color={theme.colors.darkBackground.darkblue}
-                        >
-                           <Avatar
-                              size={42}
-                              icon={
-                                 <UserIcon
-                                    size="32"
-                                    color={theme.colors.textColor}
-                                 />
-                              }
-                              style={{
-                                 backgroundColor: theme.colors.textColor4,
-                                 display: 'flex',
-                                 alignItems: 'center',
-                                 justifyContent: 'center',
-                                 justifyItems: 'center'
-                              }}
-                           />
-                        </Popover>
-                     </Menu.Item>
-                  </>
+                           style={{
+                              backgroundColor: theme.colors.textColor4,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              justifyItems: 'center'
+                           }}
+                        />
+                     </Popover>
+                  </div>
                ) : (
                   <Button
                      className="customBtn text10"
@@ -246,7 +242,7 @@ export default function NavBarComp({ navigationMenuItems }) {
                      Log In
                   </Button>
                )}
-            </Menu>
+            </div>
 
             <Modal
                title={showContent === 'login' ? 'Log In' : 'Sign Up'}
