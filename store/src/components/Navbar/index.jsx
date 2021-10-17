@@ -1,34 +1,71 @@
 import React, { useState } from 'react'
-import NavLink from 'next/link'
-import Image from 'next/image'
+import { signOut } from 'next-auth/client'
 import { useRouter } from 'next/router'
 import { useSubscription } from '@apollo/client'
 import { useToasts } from 'react-toast-notifications'
-import { Avatar, Badge } from 'antd'
+import { Avatar, Badge, Menu, Popover } from 'antd'
 import { NavBar } from './styles'
-import DynamicMenu from './dynamicMenu'
 import CartDropdownMenu from './cartDropdown'
 import ProfileDropdownMenu from './profileDropdown'
 import Sidebar from './sidebar'
 import Button from '../Button'
 import Modal from '../Modal'
+import Spacer from '../Spacer'
 import { CartIcon, UserIcon, MenuIcon } from '../Icons'
 import { useUser } from '../../Providers'
 import { CART_INFO } from '../../graphql'
 import { theme } from '../../theme.js'
 import Login from '../login'
-import { useScroll, useWindowDimensions } from '../../utils'
+import { useScroll, useWindowDimensions, isClient } from '../../utils'
 
 export default function NavBarComp({ navigationMenuItems }) {
    const [isSidebarVisible, SetIsSidebarVisible] = useState(false)
    const scroll = useScroll()
    const { width } = useWindowDimensions()
-   const { pathname } = useRouter()
+   const router = useRouter()
    const { addToast } = useToasts()
    const { state } = useUser()
    const { isAuthenticated = false, user = {}, loading } = state
    const [isModalVisible, setIsModalVisible] = useState(false)
    const [showContent, setShowContent] = useState('login')
+
+   const routes = [
+      {
+         id: '/h-id',
+         label: 'Home',
+         url: '/',
+         isAllowedToShow: true,
+         showInHeader: true
+      },
+      {
+         id: '/exp-id',
+         label: 'Experiences',
+         url: '/experiences',
+         isAllowedToShow: true,
+         showInHeader: true
+      },
+      {
+         id: '/exprt-id',
+         label: 'Experts',
+         url: '/experts',
+         isAllowedToShow: true,
+         showInHeader: true
+      },
+      {
+         id: '/mp-id',
+         label: 'My Polls',
+         url: '/dashboard/myPolls',
+         isAllowedToShow: isAuthenticated,
+         showInHeader: false
+      },
+      {
+         id: '/mb-id',
+         label: 'My Bookings',
+         url: '/dashboard/myBookings',
+         isAllowedToShow: isAuthenticated,
+         showInHeader: false
+      }
+   ]
 
    const [profileItems] = useState([
       {
@@ -67,6 +104,20 @@ export default function NavBarComp({ navigationMenuItems }) {
       setIsModalVisible(false)
    }
 
+   const handleMenuClick = async event => {
+      const { key } = event
+      if (key === 'logout') {
+         await signOut({ redirect: false })
+         if (isClient) {
+            window.location.href = window.location.origin + ''
+         }
+      } else if (!key.includes('dnd')) {
+         router.push(key)
+      } else {
+         return
+      }
+   }
+
    if (cartsError) {
       addToast('Something went wrong!', { appearance: 'error' })
       console.log(cartsError)
@@ -78,7 +129,9 @@ export default function NavBarComp({ navigationMenuItems }) {
             navigationMenuItems={navigationMenuItems}
             isSidebarVisible={isSidebarVisible}
             closeSidebar={() => SetIsSidebarVisible(false)}
+            handleMenuClick={handleMenuClick}
             user={user}
+            routes={routes}
          />
          <NavBar cartCount={carts.lenth} scroll={scroll}>
             {width < 769 && (
@@ -86,62 +139,89 @@ export default function NavBarComp({ navigationMenuItems }) {
                   <MenuIcon size="38" color={theme.colors.textColor4} />
                </span>
             )}
-            <div className="brand-logo-div">
-               <Image
-                  className="logo-img-2"
-                  src="/assets/images/stayIn-logo-1.png"
-                  alt="stay-in-logo"
-                  layout="fill"
-               />
-            </div>
+            <img
+               className="logo-img"
+               src="/assets/images/stayIn-logo-1.png"
+               alt="stay-in-logo"
+            />
 
-            {width > 769 && (
-               <>
-                  <li className="nav-list-item">
-                     <NavLink href="/">
-                        <a className={pathname === '/' && 'activeLink'}>Home</a>
-                     </NavLink>
-                  </li>
-                  <li className="nav-list-item">
-                     <NavLink href="/experiences">
-                        <a
-                           className={
-                              pathname === '/experiences' && 'activeLink'
+            <Menu
+               onClick={handleMenuClick}
+               style={{ height: '100%', borderRight: 0 }}
+               defaultSelectedKeys={[router.pathname]}
+               mode="horizontal"
+            >
+               {width > 769 &&
+                  routes.map(
+                     route =>
+                        route.isAllowedToShow &&
+                        route.showInHeader && (
+                           <Menu.Item key={route.url}>{route.label}</Menu.Item>
+                        )
+                  )}
+               {width > 769 &&
+                  navigationMenuItems.map(menuItem => {
+                     return (
+                        <Menu.Item key={menuItem?.url}>
+                           {menuItem?.label}
+                        </Menu.Item>
+                     )
+                  })}
+               {isAuthenticated ? (
+                  <>
+                     <Menu.Item key="dnd1">
+                        <Popover
+                           content={
+                              <CartDropdownMenu
+                                 className="dropdown-div"
+                                 carts={carts}
+                              />
                            }
+                           trigger="click"
+                           color={theme.colors.darkBackground.darkblue}
                         >
-                           Experiences
-                        </a>
-                     </NavLink>
-                  </li>
-                  <li className="nav-list-item">
-                     <NavLink href="/experts">
-                        <a className={pathname === '/experts' && 'activeLink'}>
-                           Experts
-                        </a>
-                     </NavLink>
-                  </li>
+                           <Badge
+                              count={carts.length}
+                              color={theme.colors.textColor}
+                              size="small"
+                           >
+                              <Avatar
+                                 size={42}
+                                 icon={
+                                    <CartIcon
+                                       size="28"
+                                       color={theme.colors.textColor}
+                                    />
+                                 }
+                                 style={{
+                                    backgroundColor: theme.colors.textColor4,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    justifyItems: 'center'
+                                 }}
+                              />
+                           </Badge>
+                        </Popover>
+                     </Menu.Item>
 
-                  <DynamicMenu
-                     pathname={pathname}
-                     menuItems={navigationMenuItems}
-                  />
-                  <div className="spacer" />
-               </>
-            )}
-            {isAuthenticated ? (
-               <>
-                  {width > 769 && (
-                     <li className="cart">
-                        <Badge
-                           count={carts.length}
-                           color={theme.colors.textColor}
-                           size="small"
+                     <Menu.Item key="dnd2">
+                        <Popover
+                           content={
+                              <ProfileDropdownMenu
+                                 className="profile-dropdown-div"
+                                 items={profileItems}
+                                 user={user}
+                              />
+                           }
+                           trigger="click"
+                           color={theme.colors.darkBackground.darkblue}
                         >
                            <Avatar
                               size={42}
                               icon={
-                                 <CartIcon
-                                    size="28"
+                                 <UserIcon
+                                    size="32"
                                     color={theme.colors.textColor}
                                  />
                               }
@@ -153,48 +233,20 @@ export default function NavBarComp({ navigationMenuItems }) {
                                  justifyItems: 'center'
                               }}
                            />
-                        </Badge>
-                        <CartDropdownMenu
-                           className="dropdown-div"
-                           carts={carts}
-                        />
-                     </li>
-                  )}
-                  <li className="profile">
-                     <Avatar
-                        size={42}
-                        icon={
-                           <UserIcon size="32" color={theme.colors.textColor} />
-                        }
-                        style={{
-                           backgroundColor: theme.colors.textColor4,
-                           display: 'flex',
-                           alignItems: 'center',
-                           justifyContent: 'center',
-                           justifyItems: 'center'
-                        }}
-                     />
-
-                     <ProfileDropdownMenu
-                        className="profile-dropdown-div"
-                        items={profileItems}
-                        user={user}
-                     />
-                  </li>
-               </>
-            ) : (
-               <ul className="nav-list">
-                  <li onClick={openModal} className="buttonWrapper">
-                     <Button
-                        className="customBtn text10"
-                        textColor={theme.colors.textColor}
-                        backgroundColor={theme.colors.textColor4}
-                     >
-                        Log In
-                     </Button>
-                  </li>
-               </ul>
-            )}
+                        </Popover>
+                     </Menu.Item>
+                  </>
+               ) : (
+                  <Button
+                     className="customBtn text10"
+                     textColor={theme.colors.textColor}
+                     backgroundColor={theme.colors.textColor4}
+                     onClick={openModal}
+                  >
+                     Log In
+                  </Button>
+               )}
+            </Menu>
 
             <Modal
                title={showContent === 'login' ? 'Log In' : 'Sign Up'}

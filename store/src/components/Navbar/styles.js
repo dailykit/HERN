@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { Drawer } from 'antd'
 import { theme } from '../../theme'
 
-export const NavBar = styled.nav`
+export const NavBar = styled.header`
    display: ${({ scroll }) => (scroll.direction === 'down' ? 'none' : 'flex')};
    height: 64px;
    position: fixed;
@@ -11,21 +11,50 @@ export const NavBar = styled.nav`
    width: 100%;
    z-index: 5;
    align-items: center;
-   padding: 1rem 8rem;
-   justify-content: space-around;
+   padding: 1rem 2rem;
+   justify-content: space-between;
    background: ${({ scroll }) =>
       scroll.direction === 'down'
          ? theme.colors.darkBackground.darkblue
          : scroll.y < 10
          ? 'rgba(6, 20, 34,0.8)'
          : theme.colors.darkBackground.darkblue};
-   .brand-logo-div {
-      width: 132px;
-      height: 50px;
+   .logo-img {
+      width: 100px;
+      height: 48px;
+      object-fit: contain;
+   }
+
+   .ant-menu-horizontal {
+      width: 100%;
+      margin-left: 1rem;
+      background: none;
+      border: none;
+      color: ${theme.colors.textColor4};
       display: flex;
-      margin-right: 8px;
-      align-items: center;
-      position: relative;
+      justify-content: flex-end;
+   }
+
+   .ant-menu-horizontal > .ant-menu-item {
+      :hover {
+         color: ${theme.colors.textColor};
+         ::after {
+            border-bottom: 2px solid ${theme.colors.textColor};
+         }
+      }
+   }
+   .ant-menu > .ant-menu-item > .ant-menu-title-content {
+      font-family: Proxima Nova;
+      font-size: ${theme.sizes.h8};
+      letter-spaceing: 0.16em;
+   }
+
+   .ant-menu-horizontal > .ant-menu-item-selected {
+      color: ${theme.colors.textColor};
+      :after {
+         border-bottom: 2px solid ${theme.colors.textColor};
+         bottom: -4px;
+      }
    }
 
    @media (max-width: 769px) {
@@ -208,15 +237,7 @@ export const NavBar = styled.nav`
 `
 
 export const DropdownWrapper = styled.div`
-   position: absolute;
-   top: 58px;
-   width: 300px;
-   z-index: 6;
-   transform: translateX(-45%);
-   background: ${theme.colors.mainBackground};
-   border: 1px solid #474a4d;
-   border-radius: 4px;
-   padding: 1rem;
+   width: 180px;
    overflow: hidden;
    transition: height 500ms ease;
    .dropdown-menu {
@@ -467,53 +488,5 @@ export const SidebarWrapper = styled(Drawer)`
       width: auto;
       height: 35px;
       padding: 0 16px;
-   }
-   .sidebar-main {
-      .nav-list {
-         list-style: none;
-         display: flex;
-         flex-direction: column;
-         justify-content: flex-end;
-         margin: 0;
-      }
-      .nav-list-item {
-         list-style: none;
-         font-size: ${theme.sizes.h4};
-         position: relative;
-         display: flex;
-         flex-direction: column;
-         &:hover {
-            background: ${theme.colors.secondaryColor};
-         }
-         &:last-child {
-            margin-bottom: 32px;
-         }
-         a {
-            position: relative;
-            padding: 8px;
-            text-decoration: none;
-            color: ${theme.colors.textColor4};
-            font-family: Proxima Nova;
-            letter-spacing: 0.16em;
-         }
-         img {
-            width: 100px;
-            height: 60px;
-            object-fit: cover;
-            margin-right: 8px;
-         }
-         .title {
-            font-size: ${theme.sizes.h8};
-            color: ${theme.colors.textColor4};
-            text-align: left;
-         }
-      }
-      .activeLink {
-         background: ${theme.colors.secondaryColor};
-      }
-
-      .delete-icon-onright {
-         margin-left: 6px;
-      }
    }
 `

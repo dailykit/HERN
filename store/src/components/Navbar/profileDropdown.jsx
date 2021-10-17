@@ -57,7 +57,6 @@ export default function ProfileDropdownMenu({ items, user, ...props }) {
 
    return (
       <DropdownWrapper {...props} ref={dropdownRef}>
-         <div className="pointer" />
          <p style={{ color: theme.colors.textColor4, textAlign: 'center' }}>
             {user?.firstName && user?.firstName}{' '}
             {user?.lastName && user?.lastName}

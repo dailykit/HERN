@@ -18,7 +18,7 @@ export default function CartDropdownMenu({ carts, ...props }) {
    const dropdownRef = useRef(null)
 
    useEffect(() => {
-      setMenuHeight(dropdownRef.current?.firstChild.offsetHeight + 30)
+      setMenuHeight(dropdownRef.current?.firstChild?.offsetHeight || 0 + 30)
    }, [])
 
    function calcHeight(el) {
@@ -51,7 +51,6 @@ export default function CartDropdownMenu({ carts, ...props }) {
 
    return (
       <DropdownWrapper {...props} ref={dropdownRef}>
-         <div className="pointer" />
          <CSSTransition
             in={activeMenu === carts[0]?.label}
             unmountOnExit
@@ -59,7 +58,7 @@ export default function CartDropdownMenu({ carts, ...props }) {
             classNames="menu-primary"
             onEnter={calcHeight}
          >
-            <div className="dropdown-menu">
+            <div>
                {carts.length > 0 ? (
                   carts.map(cart => {
                      return (
