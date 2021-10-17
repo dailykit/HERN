@@ -63,7 +63,7 @@ export default function PollResponse({ navigationMenuItems, parsedData = [] }) {
       {
          // skip: isEmpty(tagIds),
          variables: {
-            tags: [1006]
+            tags: [1006] // need to have this tagsIds  dynamic later on
          },
          onCompleted: ({
             experiences_experienceCategory: ExperienceCategories = []
@@ -96,11 +96,8 @@ export default function PollResponse({ navigationMenuItems, parsedData = [] }) {
 
    const stopCelebration = () => {
       setTimeout(setIsCelebrating(false), 2000)
-      if (isAuthenticated) {
-         router.push('/')
-      } else {
-         router.push('/intro')
-      }
+
+      router.push('/pollInviteResponse/thankyou')
    }
    const startCelebration = () => {
       setIsCelebrating(true)
@@ -253,6 +250,7 @@ const Wrapper = styled.div`
    height: 100%;
    position: relative;
    filter: ${({ isCelebrating }) => isCelebrating && 'blur(4px)'};
+   padding-top: 4rem;
    .proxinova_text {
       font-family: Proxima Nova;
       font-style: normal;

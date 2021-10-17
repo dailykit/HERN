@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
 import { signOut } from 'next-auth/client'
 import { CSSTransition } from 'react-transition-group'
-import { useToasts } from 'react-toast-notifications'
 import { DropdownWrapper } from './styles'
 import { Spacer } from '../../components'
 import { theme } from '../../theme'
@@ -14,10 +13,8 @@ import {
    DashboardIcon
 } from '../../components/Icons'
 
-export default function ProfileDropdownMenu({ items, user, ...props }) {
+export default function ProfileDropdownMenu({ user, ...props }) {
    const router = useRouter()
-   const { addToast } = useToasts()
-   const [activeMenu, setActiveMenu] = useState(items[0]?.id)
    const [menuHeight, setMenuHeight] = useState(null)
    const dropdownRef = useRef(null)
 
@@ -56,7 +53,7 @@ export default function ProfileDropdownMenu({ items, user, ...props }) {
             {user?.lastName && user?.lastName}
          </p> */}
          <CSSTransition
-            in={activeMenu === items[0]?.id}
+            in={true}
             unmountOnExit
             timeout={500}
             classNames="menu-primary"
@@ -68,7 +65,7 @@ export default function ProfileDropdownMenu({ items, user, ...props }) {
                   <Spacer xAxis="16px" />
                   <p className="title profileFont">Dashboard</p>
                </DropdownMenuItem>
-               <DropdownMenuItem url="/dashborad/myPolls">
+               <DropdownMenuItem url="/dashboard/myPolls">
                   <PollIcon
                      size="24"
                      backgroundColor={theme.colors.textColor4}

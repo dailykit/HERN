@@ -17,7 +17,8 @@ const CategoryWise = ({
    type,
    componentLayout = 'masonry',
    keyname = 'experience_experienceCategories',
-   showWishlist
+   showWishlist,
+   categoryTitleClass = ''
 }) => {
    const router = useRouter()
    return (
@@ -47,7 +48,9 @@ const CategoryWise = ({
                   data.map(category => {
                      return (
                         <CategoryWiseDiv key={category?.title}>
-                           <h3 className="category__title text8">
+                           <h3
+                              className={`category__title text3 ${categoryTitleClass}`}
+                           >
                               {category?.title || 'N/A'}
                            </h3>
                            <Masonry
@@ -82,7 +85,8 @@ export default function RenderCard({
    layout = 'carousel',
    showCategorywise = true,
    showWishlist = true,
-   keyname = 'experience_experienceCategories'
+   keyname = 'experience_experienceCategories',
+   categoryTitleClass = ''
 }) {
    const [componentLayout, setComponentLayout] = useState(layout)
    const { width } = useWindowDimensions()
@@ -107,6 +111,7 @@ export default function RenderCard({
                      componentLayout={componentLayout}
                      keyname={keyname}
                      showWishlist={showWishlist}
+                     categoryTitleClass={categoryTitleClass}
                   />
                ) : (
                   <Carousel
@@ -126,6 +131,7 @@ export default function RenderCard({
                      componentLayout={componentLayout}
                      keyname={keyname}
                      showWishlist={showWishlist}
+                     categoryTitleClass={categoryTitleClass}
                   />
                ) : (
                   <Masonry

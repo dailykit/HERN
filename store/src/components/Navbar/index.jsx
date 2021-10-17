@@ -67,21 +67,6 @@ export default function NavBarComp({ navigationMenuItems }) {
       }
    ]
 
-   const [profileItems] = useState([
-      {
-         id: 'my-polls-1',
-         label: 'My Polls',
-         url: '/myPolls',
-         childNavigationMenuItems: []
-      },
-      {
-         id: 'my-bookings-1',
-         label: 'My Bookings',
-         url: '/myBookings',
-         childNavigationMenuItems: []
-      }
-   ])
-
    //query for cart Count
    const {
       data: { carts = [] } = {},
@@ -207,7 +192,6 @@ export default function NavBarComp({ navigationMenuItems }) {
                         content={
                            <ProfileDropdownMenu
                               className="profile-dropdown-div"
-                              items={profileItems}
                               user={user}
                            />
                         }
@@ -233,14 +217,16 @@ export default function NavBarComp({ navigationMenuItems }) {
                      </Popover>
                   </div>
                ) : (
-                  <Button
-                     className="customBtn text10"
-                     textColor={theme.colors.textColor}
-                     backgroundColor={theme.colors.textColor4}
-                     onClick={openModal}
-                  >
-                     Log In
-                  </Button>
+                  <div className="action-btn">
+                     <Button
+                        className="customBtn text10"
+                        textColor={theme.colors.textColor}
+                        backgroundColor={theme.colors.textColor4}
+                        onClick={openModal}
+                     >
+                        Log In
+                     </Button>
+                  </div>
                )}
             </div>
 

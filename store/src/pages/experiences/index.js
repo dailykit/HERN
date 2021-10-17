@@ -17,10 +17,11 @@ import {
    SEO,
    Layout,
    Filters,
-   InlineLoader
+   InlineLoader,
+   RenderCard
 } from '../../components'
 import { theme } from '../../theme'
-import { useWindowDimensions, fileParser } from '../../utils'
+import { useWindowDimensions, fileParser, isEmpty } from '../../utils'
 import { ExperienceSkeleton } from '../../components'
 import { useUser } from '../../Providers'
 import { getNavigationMenuItems, getBannerData } from '../../lib'
@@ -167,7 +168,7 @@ export default function Experiences({
             </div>
 
             <div className="centerDiv">
-               <h1 className="heading">Experiences</h1>
+               <h1 className="heading text1">Experiences</h1>
             </div>
             <Filters
                filterOptions={[
@@ -191,66 +192,21 @@ export default function Experiences({
                ]}
                resultCount={resultCount}
             >
-               {categories.map(category => {
-                  return (
-                     <GridViewWrapper key={category.title}>
-                        {category.experience_experienceCategories.length >
-                           0 && (
-                           <>
-                              <h3 className="experienceHeading">
-                                 {category?.title}
-                                 {/* {category?.experience_experienceCategories?.length ||
-                "coming soon"}
-              ) */}
-                              </h3>
-                              <Masonry
-                                 breakpointCols={breakpointColumnsObj}
-                                 className="my-masonry-grid"
-                                 columnClassName="my-masonry-grid_column"
-                              >
-                                 {category?.experience_experienceCategories.map(
-                                    data => {
-                                       return (
-                                          <Card
-                                             onClick={() =>
-                                                router.push(
-                                                   `/experiences/${data?.experience?.id}`
-                                                )
-                                             }
-                                             boxShadow={true}
-                                             key={`${data?.experience?.title}-${data?.experience?.id}`}
-                                             type="experience"
-                                             data={data}
-                                          />
-                                       )
-                                    }
-                                 )}
-                              </Masonry>
-                              <Flex
-                                 container
-                                 alignItems="center"
-                                 justifyContent="center"
-                                 padding="1rem 0"
-                                 margin="0 0 2rem 0"
-                              >
-                                 <h1 className="explore">View all</h1>
-                                 <ChevronRight
-                                    size={iconSize}
-                                    color={theme.colors.textColor}
-                                 />
-                              </Flex>
-                           </>
-                           // ) : (
-                           //   <div className="emptyCard">
-                           //     <Card
-                           //       type="empty"
-                           //       data={{ name: "Experiences arriving soon.." }}
-                           //     />
-                           //   </div>
-                        )}
-                     </GridViewWrapper>
-                  )
-               })}
+               {!isEmpty(categories) && (
+                  <RenderCard
+                     // data={categories
+                     //    .map(
+                     //       category => category?.experience_experienceCategories
+                     //    )
+                     //    .flat()}
+                     data={categories}
+                     type="experience"
+                     layout="masonry"
+                     showCategorywise={true}
+                     keyname="experience_experienceCategories"
+                  />
+               )}
+
                {loading && (
                   <div className="skeleton-wrapper">
                      {[1, 2, 3, 4].map((_, index) => {
@@ -307,11 +263,15 @@ const StyledWrapper = styled.div`
       display: flex;
       flex-direction: column;
       align-items: center;
+      margin-top: 6rem;
       .heading {
-         font-size: ${theme.sizes.h1};
-         color: ${theme.colors.textColor4};
-         font-weight: 400;
-         margin-bottom: 80px;
+         font-family: League-Gothic;
+         font-style: normal;
+         font-weight: normal;
+         text-align: center;
+         letter-spacing: 0.16em;
+         color: ${theme.colors.textColor};
+         margin-bottom: 4rem;
       }
       .customInput {
          width: 80%;

@@ -72,11 +72,7 @@ export default function PollResponse({ navigationMenuItems }) {
 
    const stopCelebration = () => {
       setTimeout(setIsCelebrating(false), 2000)
-      if (isAuthenticated) {
-         router.push('/')
-      } else {
-         router.push('/intro')
-      }
+      router.push('/bookingInviteResponse/thankyou')
    }
    const startCelebration = () => {
       setIsCelebrating(true)
@@ -275,6 +271,7 @@ export const getStaticProps = async () => {
 const Wrapper = styled.div`
    filter: ${({ isCelebrating }) => isCelebrating && 'blur(4px)'};
    position: relative;
+   padding-top: 4rem;
    .proxinova_text {
       font-family: Proxima Nova;
       font-style: normal;

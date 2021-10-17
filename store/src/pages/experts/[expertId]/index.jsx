@@ -152,10 +152,6 @@ export const getStaticProps = async ({ params }) => {
          variables: { expertId: +params.expertId }
       })
 
-   console.log(
-      'experts',
-      expert?.experience_experts.map(expert => expert?.experience).flat()
-   )
    // const category =
    //    expert.experience_experts[0]?.experience
    //       .experience_experienceCategories[0]?.experienceCategoryTitle || null
