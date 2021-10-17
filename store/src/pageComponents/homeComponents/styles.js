@@ -36,7 +36,7 @@ export const Wrapper = styled.div`
    }
    .card-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 1rem;
    }
 
@@ -44,6 +44,9 @@ export const Wrapper = styled.div`
       .recycler-heading-wrapper {
          justify-content: unset;
          gap: 8rem;
+      }
+      .card-grid {
+         grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
       }
    }
 `

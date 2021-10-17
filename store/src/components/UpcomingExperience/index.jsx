@@ -22,7 +22,8 @@ export default function UpcomingExperience({ booking }) {
             <div className="card-wrap">
                <Card
                   // customHeight={width > 769 ? "331px" : "251px"}
-                  customWidth={width > 769 ? '371px' : 'auto'}
+                  customHeight={width > 769 ? '280px' : '204px'}
+                  customWidth={width > 769 ? '360px' : 'auto'}
                   type="upcomingExperience"
                   data={cartDetails}
                   onCardClick={() =>

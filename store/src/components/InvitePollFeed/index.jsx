@@ -35,7 +35,7 @@ export default function InvitePollFeed({ poll }) {
       <Wrapper>
          <Card
             customHeight={width > 769 ? '280px' : '204px'}
-            customWidth={width > 769 ? '380px' : '100%'}
+            customWidth={width > 769 ? '360px' : '100%'}
             type="poll"
             data={cartDetails}
             onCardClick={() => router.push(`/dashboard/myPolls/${poll?.id}`)}

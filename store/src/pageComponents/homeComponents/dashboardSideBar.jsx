@@ -58,12 +58,12 @@ export default function DashboardSideBar({ user }) {
 }
 
 const Wrapper = styled.div`
-   padding: 2rem 1rem 1rem 1rem;
+   padding: 4rem 1rem 1rem 1rem;
    background: ${theme.colors.creamColor};
    position: sticky;
    height: 100vh;
    overflow-y: auto;
-   top: 64px;
+   top: 0px;
    z-index: 4;
    .dashboard-sidebar {
       width: 100% !important;

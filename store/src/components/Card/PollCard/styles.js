@@ -17,7 +17,7 @@ export const Card = styled.div`
       box-shadow: rgba(0, 0, 0, 0.32) 0px 19px 43px;
       transform: translate3d(0px, -1.5px, 0px);
    }
-   width: ${({ customWidth }) => customWidth};
+   width: ${({ customWidth = '360px' }) => customWidth};
 `
 
 export const CardImage = styled.div`

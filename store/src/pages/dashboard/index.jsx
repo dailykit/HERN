@@ -98,6 +98,7 @@ const Wrapper = styled.div`
       }
       .dashboard-right-div {
          width: 80%;
+         padding-top: 2rem;
          .experienceHeading {
             font-size: ${theme.sizes.h4};
             color: ${theme.colors.textColor4};
