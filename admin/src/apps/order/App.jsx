@@ -129,7 +129,7 @@ const App = () => {
                </Tunnel>
             </Tunnels>
             <Tunnels tunnels={filterTunnels}>
-               <Tunnel layer="1" size="sm">
+               <Tunnel layer="1" size="md">
                   <FilterTunnel />
                </Tunnel>
             </Tunnels>
