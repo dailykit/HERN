@@ -1,67 +1,45 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Head from 'next/head'
-import { useConfig } from '../lib'
 import { useRouter } from 'next/router'
+import { useConfig } from '../lib'
+export const SEO = ({ seoSettings, richresult, children }) => {
 
-export const SEO = ({ description, title, image, richresult, children }) => {
-   const router = useRouter()
 
-   // const { site } = useStaticQuery(
-   //    graphql`
-   //       query {
-   //          site {
-   //             siteMetadata {
-   //                title
-   //                description
-   //             }
-   //          }
-   //       }
-   //    `
-   // )
-
+   const { pathname } = useRouter()
    const { favicon } = useConfig().configOf('theme-brand', 'brand')
-   const seo = useConfig().configOf('seo', 'App')
-
-   const path = router.pathname
-
-   const metaTitle =
-      title || seo[path]?.title || seo['/']?.title || 'Meal Kit Store'
-
-   const metaDescription =
-      description ||
-      seo[path]?.description ||
-      seo['/']?.description ||
-      'A subscription based meal kit store'
-
-   const metaImage =
-      image ||
-      seo[path]?.image ||
-      seo['/']?.image ||
-      'https://dailykit-133-test.s3.amazonaws.com/images/1596121558382.png'
+   //for basic SEO settings 
+   const basicSEO = seoSettings.find((setting) => setting?.brandPageSetting?.identifier === "basic-seo")
+   //for SEO settings for social networks like Facebook,Pinterest,LinkedIn or Twitter
+   const openGraphCard = seoSettings.find((setting) => setting?.brandPageSetting?.identifier === "og-card")
+   //specifically for Twitter
+   const twitterCard = seoSettings.find((setting) => setting?.brandPageSetting?.identifier === "twitter-card")
 
    return (
       <Head>
-         <title>{metaTitle}</title>
-         <link rel="icon" href={favicon} type="image/png" />
-         <meta property="og:title" content={metaTitle} title="og-title" />
+         <title>{basicSEO?.value?.metaTitle || pathname}</title>
+         <link rel="icon" href={basicSEO?.value?.favicon || favicon} type="image/png" />
+         <meta property="description" content={basicSEO?.value?.metaDescription || ''} name="description" />
+
+         <meta property="og:title" content={openGraphCard?.value?.metaTitle || basicSEO?.value?.metaTitle} title="og-title" />
          <meta
             property="og:description"
-            content={metaDescription}
+            content={openGraphCard?.value?.metaDescription || basicSEO?.value?.metaDescription}
             title="og-desc"
          />
-         <meta property="og:image" content={metaImage} title="og-image" />
+         <meta property="og:image" content={openGraphCard?.value?.image || ''} title="og-image" />
          <meta property="og:type" content="website" />
+
          <meta property="twitter:card" content="summary" />
-         <meta property="twitter:title" content={metaTitle} title="tw-title" />
+         <meta property="twitter:title" content={twitterCard?.value?.metaTitle || openGraphCard?.value?.metaTitle || basicSEO?.value?.metaTitle || ''} title="tw-title" />
          <meta
             property="twitter:description"
-            content={metaDescription}
+            content={twitterCard?.value?.metaDescription || openGraphCard?.value?.metaDescription || basicSEO?.value?.metaDescription || ''}
             title="tw-desc"
          />
          <meta
             property="twitter:image:src"
-            content={metaImage}
+            content={twitterCard?.value?.image || openGraphCard?.value?.image || basicSEO?.value?.metaDescription || ''}
             title="tw-image"
          />
          {richresult && (

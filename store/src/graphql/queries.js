@@ -1124,78 +1124,69 @@ export const SUBSCRIPTION_PLAN = gql`
    }
 `
 export const NAVIGATION_MENU = gql`
-query NAVIGATION_MENU($navigationMenuId: Int!) {
-   brands_navigationMenuItem(
-      where: { navigationMenuId: { _eq: $navigationMenuId } }
-   ) {
-      created_at
-      id
-      label
-      navigationMenuId
-      openInNewTab
-      position
-      updated_at
-      url
-      parentNavigationMenuItemId
+   query NAVIGATION_MENU($navigationMenuId: Int!) {
+      brands_navigationMenuItem(
+         where: { navigationMenuId: { _eq: $navigationMenuId } }
+      ) {
+         created_at
+         id
+         label
+         navigationMenuId
+         openInNewTab
+         position
+         updated_at
+         url
+         parentNavigationMenuItemId
+      }
    }
-}
 `
 export const BRAND_PAGE = gql`
 query BRAND_PAGE($domain: String!, $route: String!) {
-   brands_brandPages(
-      where: {
-         route: { _eq: $route }
-            brand: {
-               _or: [
-                  { isDefault: { _eq: true } }
-                  { domain: { _eq: $domain } }
-               ]
-            }
+   brands_brandPages(where: {route: {_eq: $route}, brand: {_or: [{isDefault: {_eq: true}}, {domain: {_eq: $domain}}]}}) {
+     id
+     internalPageName
+     isArchived
+     published
+     route
+     linkedNavigationMenuId
+     brandPageModules(order_by: {position: desc_nulls_last}, where: {isHidden: {_eq: false}}) {
+       id
+       name
+       moduleType
+       internalModuleIdentifier
+       isHidden
+       fileId
+       position
+       subscriptionDivFileId: file {
+         path
+         linkedCssFiles {
+           id
+           cssFile {
+             id
+             path
+           }
          }
-   ) {
-      id
-      internalPageName
-      isArchived
-      published
-      route
-    brandPageSettings { 
-    value
-    brandPageSetting{ identifier}
-}
-      linkedNavigationMenuId
-      brandPageModules(
-         order_by: { position: desc_nulls_last }
-         where: { isHidden: { _eq: false } }
-      ) {
-         id
-         name
-         moduleType
-         isHidden
-         fileId
-         position
-         subscriptionDivFileId: file {
-            path
-            linkedCssFiles {
-               id
-               cssFile {
-                  id
-                  path
-               }
-            }
-            linkedJsFiles {
-               id
-               jsFile {
-                  id
-                  path
-               }
-            }
+         linkedJsFiles {
+           id
+           jsFile {
+             id
+             path
+           }
          }
-      }
-      brand {
-         navigationMenuId
-      }
+       }
+     }
+     brand {
+       navigationMenuId
+     }
+     brandPageSettings {
+       value
+       brandPageSetting {
+         identifier
+         type
+       }
+     }
    }
-}
+ }
 `
 
 // query MyQuery($navigationMenuId: Int!) {
