@@ -1,20 +1,48 @@
 import React, { Children } from 'react'
 import gql from 'graphql-tag'
-import { Flex, IconButton, RoundedCloseIcon, Tunnel, Tunnels, useTunnel } from '@dailykit/ui'
+import {
+   Flex,
+   IconButton,
+   RoundedCloseIcon,
+   Tunnel,
+   Tunnels,
+   useTunnel,
+} from '@dailykit/ui'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import Styles from './styled'
 import { InlineLoader } from '../InlineLoader'
 import { TooltipProvider, useTabs } from '../../providers'
 import { has } from 'lodash'
 import {
-   BrandAppIcon, CustomersAppIcon, HomeAppIcon, InventoryAppIcon, MenuAppIcon,
-   OrderAppIcon, ProductsAppIcon, ReportsAppIcon, SettingAppIcon, StoreAppIcon,
-   SubscriptionAppIcon, CartsAppIcon
+   BrandAppIcon,
+   CustomersAppIcon,
+   HomeAppIcon,
+   InventoryAppIcon,
+   MenuAppIcon,
+   OrderAppIcon,
+   ProductsAppIcon,
+   ReportsAppIcon,
+   SettingAppIcon,
+   StoreAppIcon,
+   SubscriptionAppIcon,
+   CartsAppIcon,
 } from '../../assets/navBarIcons'
-import { CREATE_INGREDIENT, CREATE_SIMPLE_RECIPE, PRODUCTS } from '../../../apps/products/graphql'
+import {
+   CREATE_INGREDIENT,
+   CREATE_SIMPLE_RECIPE,
+   PRODUCTS,
+} from '../../../apps/products/graphql'
 import { toast } from 'react-toastify'
 import { logger, randomSuffix } from '../../utils'
-import { CREATE_BULK_WORK_ORDER, CREATE_ITEM, CREATE_ITEM_PURCHASE_ORDER, CREATE_PACKAGING, CREATE_PURCHASE_ORDER, CREATE_SACHET_WORK_ORDER, CREATE_SUPPLIER } from '../../../apps/inventory/graphql'
+import {
+   CREATE_BULK_WORK_ORDER,
+   CREATE_ITEM,
+   CREATE_ITEM_PURCHASE_ORDER,
+   CREATE_PACKAGING,
+   CREATE_PURCHASE_ORDER,
+   CREATE_SACHET_WORK_ORDER,
+   CREATE_SUPPLIER,
+} from '../../../apps/inventory/graphql'
 import { GENERAL_ERROR_MESSAGE } from '../../../apps/inventory/constants/errorMessages'
 import { v4 as uuid } from 'uuid'
 import { UPSERT_SUBSCRIPTION_TITLE } from '../../../apps/subscription/graphql'
@@ -160,26 +188,20 @@ export const Sidebar = ({ setOpen }) => {
       },
    })
    // Purchase Order
-   const [createPackagingOrder] = useMutation(
-      CREATE_PURCHASE_ORDER,
-      {
-         onCompleted: data => {
-            const { id } = data.item
-            const tabTitle = `Purchase Order-${uuid().substring(30)}`
-            addTab(tabTitle, `/inventory/purchase-orders/packaging/${id}`)
-         },
-      }
-   )
-   const [createItemPurchaseOrder] = useMutation(
-      CREATE_ITEM_PURCHASE_ORDER,
-      {
-         onCompleted: data => {
-            const { id } = data.item
-            const tabTitle = `Purchase Order-${uuid().substring(30)}`
-            addTab(tabTitle, `/inventory/purchase-orders/item/${id}`)
-         },
-      }
-   )
+   const [createPackagingOrder] = useMutation(CREATE_PURCHASE_ORDER, {
+      onCompleted: data => {
+         const { id } = data.item
+         const tabTitle = `Purchase Order-${uuid().substring(30)}`
+         addTab(tabTitle, `/inventory/purchase-orders/packaging/${id}`)
+      },
+   })
+   const [createItemPurchaseOrder] = useMutation(CREATE_ITEM_PURCHASE_ORDER, {
+      onCompleted: data => {
+         const { id } = data.item
+         const tabTitle = `Purchase Order-${uuid().substring(30)}`
+         addTab(tabTitle, `/inventory/purchase-orders/item/${id}`)
+      },
+   })
    // Packagings
    const [createPackaging] = useMutation(CREATE_PACKAGING, {
       onError: error => {
@@ -251,8 +273,8 @@ export const Sidebar = ({ setOpen }) => {
       },
    })
    // Campaign
-   const [createCampaigntunnels, openCampaignTunnel, closeCampaignTunnel] = useTunnel(1)
-
+   const [createCampaigntunnels, openCampaignTunnel, closeCampaignTunnel] =
+      useTunnel(1)
 
    // setting APP //
    // user /
@@ -288,7 +310,6 @@ export const Sidebar = ({ setOpen }) => {
       },
    })
    const createStationHandler = () => {
-
       createStation({
          variables: {
             object: {
@@ -299,11 +320,8 @@ export const Sidebar = ({ setOpen }) => {
    }
    //Master List/
    //unit
-   const [
-      createUnitTunnels,
-      openCreateUnitTunnel,
-      closeCreateUnitTunnel,
-   ] = useTunnel(1)
+   const [createUnitTunnels, openCreateUnitTunnel, closeCreateUnitTunnel] =
+      useTunnel(1)
    //processing
    const [
       createProcessingTunnels,
@@ -376,27 +394,24 @@ export const Sidebar = ({ setOpen }) => {
       },
    })
 
-   // Brand App 
+   // Brand App
    // Brand
-   const [
-      createBrandTunnels,
-      openCreateBrandTunnel,
-      closeCreateBrandTunnel,
-   ] = useTunnel(1)
+   const [createBrandTunnels, openCreateBrandTunnel, closeCreateBrandTunnel] =
+      useTunnel(1)
 
    const appMenuItems = {
-      "data": [
+      data: [
          {
-            title: "Home",
+            title: 'Home',
             path: '/',
             icon: HomeAppIcon,
-            'childs': []
+            childs: [],
          },
          {
-            title: "Order",
+            title: 'Order',
             path: '/order',
             icon: OrderAppIcon,
-            'childs': [
+            childs: [
                // {
                //    title: 'Home',
                //    path: '/order',
@@ -412,10 +427,10 @@ export const Sidebar = ({ setOpen }) => {
             ],
          },
          {
-            title: "Product",
+            title: 'Product',
             path: '/products',
             icon: ProductsAppIcon,
-            'childs': [
+            childs: [
                {
                   title: 'View Products',
                   path: '/products/products',
@@ -423,7 +438,7 @@ export const Sidebar = ({ setOpen }) => {
                      {
                         title: 'Create a Product',
                         path: '/products/views/Forms/Product',
-                        payload: 'product'
+                        payload: 'product',
                      },
                      // {
                      //    title: 'Create Combo Product',
@@ -435,7 +450,7 @@ export const Sidebar = ({ setOpen }) => {
                      //    path: '/products/recipes',
                      //    payload: 'customizable'
                      // },
-                  ]
+                  ],
                },
                {
                   title: 'View Recipes',
@@ -444,9 +459,9 @@ export const Sidebar = ({ setOpen }) => {
                      {
                         title: 'Create a Recipe',
                         path: '/products/recipes',
-                        payload: 'recipe'
+                        payload: 'recipe',
                      },
-                  ]
+                  ],
                },
                {
                   title: 'View Ingredients',
@@ -454,17 +469,17 @@ export const Sidebar = ({ setOpen }) => {
                   children: [
                      {
                         title: 'Add an Ingredient',
-                        payload: 'ingredient'
+                        payload: 'ingredient',
                      },
-                  ]
+                  ],
                },
             ],
          },
          {
-            title: "Inventory",
+            title: 'Inventory',
             path: '/inventory',
             icon: InventoryAppIcon,
-            'childs': [
+            childs: [
                // {
                //    title: 'Home',
                //    path: '/inventory',
@@ -476,9 +491,9 @@ export const Sidebar = ({ setOpen }) => {
                   children: [
                      {
                         title: 'Create a Supplier',
-                        payload: 'supplier'
-                     }
-                  ]
+                        payload: 'supplier',
+                     },
+                  ],
                },
                {
                   title: 'View Items',
@@ -486,13 +501,13 @@ export const Sidebar = ({ setOpen }) => {
                   children: [
                      {
                         title: 'Create an Item',
-                        payload: 'item'
+                        payload: 'item',
                      },
                      {
                         title: 'Create a Bulk Item',
-                        payload: ''
+                        payload: '',
                      },
-                  ]
+                  ],
                },
                {
                   title: 'View Work Orders',
@@ -500,13 +515,13 @@ export const Sidebar = ({ setOpen }) => {
                   children: [
                      {
                         title: 'Create a Bulk Order',
-                        payload: 'Work Order Bulk'
+                        payload: 'Work Order Bulk',
                      },
                      {
                         title: 'Create a Sachet Work Order',
-                        payload: 'Work Order Sachet'
+                        payload: 'Work Order Sachet',
                      },
-                  ]
+                  ],
                },
                {
                   title: 'View Purchase Orders',
@@ -514,13 +529,13 @@ export const Sidebar = ({ setOpen }) => {
                   children: [
                      {
                         title: 'Create a Purchase Order',
-                        payload: 'Purchase Order Purchase'
+                        payload: 'Purchase Order Purchase',
                      },
                      {
                         title: 'Create a Packaging Order',
-                        payload: 'Purchase Order Packaging'
+                        payload: 'Purchase Order Packaging',
                      },
-                  ]
+                  ],
                },
                {
                   title: 'View all Packagings',
@@ -528,21 +543,21 @@ export const Sidebar = ({ setOpen }) => {
                   children: [
                      {
                         title: 'Add Packaging',
-                        payload: 'SACHET_PACKAGE'
+                        payload: 'SACHET_PACKAGE',
                      },
                      {
                         title: 'Explore Packaging Hub',
-                        payload: 'EXPLORE PACKAGING HUB'
+                        payload: 'EXPLORE PACKAGING HUB',
                      },
-                  ]
+                  ],
                },
             ],
          },
          {
-            title: "Subscription",
+            title: 'Subscription',
             path: '/subscription',
             icon: SubscriptionAppIcon,
-            'childs': [
+            childs: [
                {
                   title: 'Menu',
                   path: '/subscription/menu',
@@ -553,9 +568,9 @@ export const Sidebar = ({ setOpen }) => {
                   children: [
                      {
                         title: 'Create an Add - On',
-                        payload: ''
+                        payload: '',
                      },
-                  ]
+                  ],
                },
                {
                   title: 'View Your Subscription Plans',
@@ -563,17 +578,17 @@ export const Sidebar = ({ setOpen }) => {
                   children: [
                      {
                         title: 'Create a New Subscription Plan',
-                        payload: 'Subscription'
+                        payload: 'Subscription',
                      },
-                  ]
+                  ],
                },
             ],
          },
          {
-            title: "Customers",
+            title: 'Customers',
             icon: CustomersAppIcon,
             path: '/crm',
-            'childs': [
+            childs: [
                {
                   title: 'View all Customers',
                   path: '/crm/customers',
@@ -584,9 +599,9 @@ export const Sidebar = ({ setOpen }) => {
                   children: [
                      {
                         title: 'Create a New Coupon',
-                        payload: 'coupon'
+                        payload: 'coupon',
                      },
-                  ]
+                  ],
                },
                {
                   title: 'Campaign',
@@ -594,17 +609,17 @@ export const Sidebar = ({ setOpen }) => {
                   children: [
                      {
                         title: 'Create a New Campaign',
-                        payload: 'Campaign'
+                        payload: 'Campaign',
                      },
-                  ]
+                  ],
                },
             ],
          },
          {
-            title: "Menu",
+            title: 'Menu',
             path: '/menu',
             icon: MenuAppIcon,
-            'childs': [
+            childs: [
                // {
                //    title: 'Home',
                //   ,
@@ -615,9 +630,9 @@ export const Sidebar = ({ setOpen }) => {
                   children: [
                      {
                         title: 'Create a New Collection',
-                        payload: 'collection'
+                        payload: 'collection',
                      },
-                  ]
+                  ],
                },
             ],
          },
@@ -625,7 +640,7 @@ export const Sidebar = ({ setOpen }) => {
             title: 'Brands',
             path: '/brands',
             icon: BrandAppIcon,
-            'childs': [
+            childs: [
                // {
                //    title: 'Home',
                //    path: '/brands',
@@ -636,17 +651,17 @@ export const Sidebar = ({ setOpen }) => {
                   children: [
                      {
                         title: 'Create a New Brand',
-                        payload: 'brand'
+                        payload: 'brand',
                      },
-                  ]
+                  ],
                },
             ],
          },
          {
-            title: "Reports",
+            title: 'Reports',
             path: '/insights',
             icon: ReportsAppIcon,
-            'childs': [
+            childs: [
                {
                   title: 'Home',
                   path: '/insights',
@@ -658,16 +673,16 @@ export const Sidebar = ({ setOpen }) => {
             ],
          },
          {
-            title: "Cart",
+            title: 'Cart',
             icon: CartsAppIcon,
             path: '/carts',
-            'childs': []
+            childs: [],
          },
          {
-            title: "Settings",
+            title: 'Settings',
             path: '/settings',
             icon: SettingAppIcon,
-            'childs': [
+            childs: [
                // {
                //    title: 'Home',
                //    path: '/settings',
@@ -678,9 +693,9 @@ export const Sidebar = ({ setOpen }) => {
                   children: [
                      {
                         title: 'Add a New User',
-                        payload: 'user'
+                        payload: 'user',
                      },
-                  ]
+                  ],
                },
                {
                   title: 'View all Roles',
@@ -689,19 +704,19 @@ export const Sidebar = ({ setOpen }) => {
                      {
                         id: 1,
                         title: 'Assign an Admin',
-                        payload: 'Admin'
+                        payload: 'Admin',
                      },
                      {
                         id: 2,
                         title: 'Assign Operators',
-                        payload: 'Operator'
+                        payload: 'Operator',
                      },
                      {
                         id: 3,
                         title: 'Assign Managers',
-                        payload: 'Manager'
+                        payload: 'Manager',
                      },
-                  ]
+                  ],
                },
                {
                   title: 'View all Devices',
@@ -709,29 +724,32 @@ export const Sidebar = ({ setOpen }) => {
                   children: [
                      {
                         title: 'Connect a Printer',
-                        payload: 'Print'
+                        payload: 'Print',
                      },
                      {
                         title: 'Download Printnode',
                         payload: 'Printnode',
-                        linking: "https://www.printnode.com/en/download"
+                        linking: 'https://www.printnode.com/en/download',
                      },
                      {
                         title: 'Installation',
                         payload: 'Installation',
-                        linking: "https://www.printnode.com/en/docs/installation"
+                        linking:
+                           'https://www.printnode.com/en/docs/installation',
                      },
                      {
                         title: 'Supported Printers',
                         payload: 'Printers',
-                        linking: "https://www.printnode.com/en/docs/supported-printers"
+                        linking:
+                           'https://www.printnode.com/en/docs/supported-printers',
                      },
                      {
                         title: 'Supported Scales',
                         payload: 'Scales',
-                        linking: "https://www.printnode.com/en/docs/supported-scales"
+                        linking:
+                           'https://www.printnode.com/en/docs/supported-scales',
                      },
-                  ]
+                  ],
                },
                {
                   title: 'View Stations',
@@ -739,9 +757,9 @@ export const Sidebar = ({ setOpen }) => {
                   children: [
                      {
                         title: 'Create a New Station',
-                        payload: 'station'
+                        payload: 'station',
                      },
-                  ]
+                  ],
                },
                {
                   title: 'Master Lists',
@@ -749,33 +767,33 @@ export const Sidebar = ({ setOpen }) => {
                   children: [
                      {
                         title: 'Create Units',
-                        payload: 'units'
+                        payload: 'units',
                      },
                      {
                         title: 'Create Processings',
-                        payload: 'processing'
+                        payload: 'processing',
                      },
                      {
                         title: 'Create Cuisines',
-                        payload: 'Cuisines'
+                        payload: 'Cuisines',
                      },
                      {
                         title: 'Create Product Categories',
-                        payload: 'ProductCategories'
+                        payload: 'ProductCategories',
                      },
                      {
                         title: 'Create Ingredient Categories',
-                        payload: 'IngredientCategories'
+                        payload: 'IngredientCategories',
                      },
                      {
                         title: 'Create Accompaniments Types',
-                        payload: 'AccompanimentTypes'
+                        payload: 'AccompanimentTypes',
                      },
                      {
                         title: 'Create Allergens',
-                        payload: 'Allergens'
+                        payload: 'Allergens',
                      },
-                  ]
+                  ],
                },
                {
                   title: 'Safety Checks',
@@ -783,9 +801,9 @@ export const Sidebar = ({ setOpen }) => {
                   children: [
                      {
                         title: 'Create a Safety Check',
-                        payload: 'Check'
+                        payload: 'Check',
                      },
-                  ]
+                  ],
                },
                {
                   title: 'Editor',
@@ -797,21 +815,21 @@ export const Sidebar = ({ setOpen }) => {
                   children: [
                      {
                         title: 'View Pages',
-                        payload: 'units'
+                        payload: 'units',
                      },
                      {
                         title: 'View Subscription',
-                        payload: 'processing'
+                        payload: 'processing',
                      },
                      {
                         title: 'Edit Navigation Bar',
-                        payload: 'Cuisines'
+                        payload: 'Cuisines',
                      },
                      {
                         title: 'Settings',
-                        payload: 'ProductCategories'
-                     }
-                  ]
+                        payload: 'ProductCategories',
+                     },
+                  ],
                },
                // {
                //    title: 'Apps',
@@ -820,12 +838,12 @@ export const Sidebar = ({ setOpen }) => {
             ],
          },
          {
-            title: "View Store",
+            title: 'View Store',
             icon: StoreAppIcon,
             path: './',
-            'childs': []
+            childs: [],
          },
-      ]
+      ],
    }
 
    return (
@@ -845,7 +863,8 @@ export const Sidebar = ({ setOpen }) => {
                         <Styles.Choices
                            type="ghost"
                            size="sm"
-                           container alignItems="center"
+                           container
+                           alignItems="center"
                            onClick={() => {
                               setIsOpen(
                                  isOpen === null || isOpen !== app.title
@@ -854,32 +873,41 @@ export const Sidebar = ({ setOpen }) => {
                               )
                               setIsChildOpen(null)
                               setIsActive(app.title)
-                           }
-                           }
-
-                           active={isChildOpen === null &&
+                           }}
+                           active={
+                              isChildOpen === null &&
                               isOpen === app.title &&
                               app.title
                            }
                         >
-                           <Styles.AppIcon><app.icon active={isActive === app.title} /> </Styles.AppIcon>
-                           <Styles.AppTitle onClick={() => addTab(app.title, app.path)}>
+                           <Styles.AppIcon>
+                              <app.icon active={isActive === app.title} />{' '}
+                           </Styles.AppIcon>
+                           <Styles.AppTitle
+                              onClick={() => addTab(app.title, app.path)}
+                           >
                               {app.title}
                            </Styles.AppTitle>
                         </Styles.Choices>
 
                         <Styles.Pages>
                            {isOpen === app.title &&
-                              app.childs.map((child) => (
+                              app.childs.map(child => (
                                  <Styles.PageBox
-                                    active={isChildOpen === child.title && isChildrenOpen === null}
+                                    active={
+                                       isChildOpen === child.title &&
+                                       isChildrenOpen === null
+                                    }
                                  >
                                     <Styles.Choices
                                        onClick={() => {
                                           setIsChildOpen(child.title)
                                           setIsChildrenOpen(null)
                                        }}
-                                       active={isChildOpen === child.title && isChildrenOpen === null}
+                                       active={
+                                          isChildOpen === child.title &&
+                                          isChildrenOpen === null
+                                       }
                                        key={child.path}
                                     >
                                        <Styles.PageOneTitle
@@ -888,70 +916,162 @@ export const Sidebar = ({ setOpen }) => {
                                              setIsOpen(null)
                                              addTab(child.title, child.path)
                                           }}
-                                          active={(isChildOpen === child.title
-                                             && isChildrenOpen === null)}
+                                          active={
+                                             isChildOpen === child.title &&
+                                             isChildrenOpen === null
+                                          }
                                        >
-                                          {child.title}</Styles.PageOneTitle>
+                                          {child.title}
+                                       </Styles.PageOneTitle>
                                     </Styles.Choices>
 
                                     <Styles.Pages>
-                                       {isChildOpen === child.title && child.children?.map((children) => {
-                                          return (
-                                             <Styles.Choices
-                                                onClick={() => {
-                                                   setIsChildrenOpen(children.title)
-                                                   setIsOpen(null)
-                                                   switch (children.payload) {
-                                                      // case 'simple': return handleCreateProduct(children.payload);
-                                                      // case 'combo': return handleCreateProduct(children.payload);
-                                                      // case 'customizable': return handleCreateProduct(children.payload);
-                                                      case 'product': return openCreateProductTunnel(3);
-                                                      case 'recipe': return createRecipe();
-                                                      case 'ingredient': return createIngredientHandler();
-                                                      case 'supplier': return createSupplierHandler();
-                                                      case 'item': return createItemHandler();
-                                                      case 'Work Order Bulk': return createBulkWorkOrder();
-                                                      case 'Work Order Sachet': return createSachetWorkOrder();
-                                                      case 'Purchase Order Packaging': return createPackagingOrder();
-                                                      case 'Purchase Order Purchase': return createItemPurchaseOrder();
-                                                      case 'SACHET_PACKAGE': return createPackagingHandler(children.payload);
-                                                      case 'EXPLORE PACKAGING HUB': return addTab('Packaging Hub', '/inventory/packaging-hub');
-                                                      case 'Subscription': return createTab();
-                                                      case 'coupon': return createCoupon();
-                                                      case 'Campaign': return openCampaignTunnel(1);
-                                                      case 'collection': return createCollection();
-                                                      case 'station': return createStationHandler();
-                                                      case 'brand': return openCreateBrandTunnel(1);
-                                                      case 'user': return addUser();
-                                                      case 'Admin': return addTab(children.payload, `/settings/roles/${children.id} `);
-                                                      case 'Operator': return addTab(children.payload, `/settings/roles/${children.id} `);
-                                                      case 'Manager': return addTab(children.payload, `/settings/roles/${children.id} `);
-                                                      case 'units': return openCreateUnitTunnel(1);
-                                                      case 'processing': return openCreateProcessingTunnel(1);
-                                                      case 'Cuisines': return openCreateCuisinesTunnel(1);
-                                                      case 'ProductCategories': return openCreateProductCategoriesTunnel(1);
-                                                      case 'IngredientCategories': return openCreateIngredientCategoriesTunnel(1);
-                                                      case 'AccompanimentTypes': return openCreateAccompanimentTypesTunnel(1);
-                                                      case 'Allergens': return openCreateAllergensTunnel(1);
-                                                      case 'Check': return createSafetyCheck();
-                                                      case 'Print': return openPrintTunnel(1);
+                                       {isChildOpen === child.title &&
+                                          child.children?.map(children => {
+                                             return (
+                                                <Styles.Choices
+                                                   onClick={() => {
+                                                      setIsChildrenOpen(
+                                                         children.title
+                                                      )
+                                                      setIsOpen(null)
+                                                      switch (
+                                                         children.payload
+                                                      ) {
+                                                         // case 'simple': return handleCreateProduct(children.payload);
+                                                         // case 'combo': return handleCreateProduct(children.payload);
+                                                         // case 'customizable': return handleCreateProduct(children.payload);
+                                                         case 'product':
+                                                            return openCreateProductTunnel(
+                                                               3
+                                                            )
+                                                         case 'recipe':
+                                                            return createRecipe()
+                                                         case 'ingredient':
+                                                            return createIngredientHandler()
+                                                         case 'supplier':
+                                                            return createSupplierHandler()
+                                                         case 'item':
+                                                            return createItemHandler()
+                                                         case 'Work Order Bulk':
+                                                            return createBulkWorkOrder()
+                                                         case 'Work Order Sachet':
+                                                            return createSachetWorkOrder()
+                                                         case 'Purchase Order Packaging':
+                                                            return createPackagingOrder()
+                                                         case 'Purchase Order Purchase':
+                                                            return createItemPurchaseOrder()
+                                                         case 'SACHET_PACKAGE':
+                                                            return createPackagingHandler(
+                                                               children.payload
+                                                            )
+                                                         case 'EXPLORE PACKAGING HUB':
+                                                            return addTab(
+                                                               'Packaging Hub',
+                                                               '/inventory/packaging-hub'
+                                                            )
+                                                         case 'Subscription':
+                                                            return createTab()
+                                                         case 'coupon':
+                                                            return createCoupon()
+                                                         case 'Campaign':
+                                                            return openCampaignTunnel(
+                                                               1
+                                                            )
+                                                         case 'collection':
+                                                            return createCollection()
+                                                         case 'station':
+                                                            return createStationHandler()
+                                                         case 'brand':
+                                                            return openCreateBrandTunnel(
+                                                               1
+                                                            )
+                                                         case 'user':
+                                                            return addUser()
+                                                         case 'Admin':
+                                                            return addTab(
+                                                               children.payload,
+                                                               `/settings/roles/${children.id} `
+                                                            )
+                                                         case 'Operator':
+                                                            return addTab(
+                                                               children.payload,
+                                                               `/settings/roles/${children.id} `
+                                                            )
+                                                         case 'Manager':
+                                                            return addTab(
+                                                               children.payload,
+                                                               `/settings/roles/${children.id} `
+                                                            )
+                                                         case 'units':
+                                                            return openCreateUnitTunnel(
+                                                               1
+                                                            )
+                                                         case 'processing':
+                                                            return openCreateProcessingTunnel(
+                                                               1
+                                                            )
+                                                         case 'Cuisines':
+                                                            return openCreateCuisinesTunnel(
+                                                               1
+                                                            )
+                                                         case 'ProductCategories':
+                                                            return openCreateProductCategoriesTunnel(
+                                                               1
+                                                            )
+                                                         case 'IngredientCategories':
+                                                            return openCreateIngredientCategoriesTunnel(
+                                                               1
+                                                            )
+                                                         case 'AccompanimentTypes':
+                                                            return openCreateAccompanimentTypesTunnel(
+                                                               1
+                                                            )
+                                                         case 'Allergens':
+                                                            return openCreateAllergensTunnel(
+                                                               1
+                                                            )
+                                                         case 'Check':
+                                                            return createSafetyCheck()
+                                                         case 'Print':
+                                                            return openPrintTunnel(
+                                                               1
+                                                            )
 
-                                                      default: return <h1>null</h1>
+                                                         default:
+                                                            return <h1>null</h1>
+                                                      }
+                                                   }}
+                                                   active={
+                                                      isChildrenOpen ===
+                                                      children.title
                                                    }
-                                                }}
-                                                active={
-                                                   isChildrenOpen === children.title
-                                                }>
-                                                {
-                                                   <Styles.PageTwoTitle active={isChildrenOpen === children.title}>
-                                                      {children.linking ? <a href={children.linking}>{children.title}</a> : children.title}</Styles.PageTwoTitle>
-                                                }
-
-                                             </Styles.Choices>
-                                          )
-                                       })}
+                                                >
+                                                   {
+                                                      <Styles.PageTwoTitle
+                                                         active={
+                                                            isChildrenOpen ===
+                                                            children.title
+                                                         }
+                                                      >
+                                                         {children.linking ? (
+                                                            <a
+                                                               href={
+                                                                  children.linking
+                                                               }
+                                                            >
+                                                               {children.title}
+                                                            </a>
+                                                         ) : (
+                                                            children.title
+                                                         )}
+                                                      </Styles.PageTwoTitle>
+                                                   }
+                                                </Styles.Choices>
+                                             )
+                                          })}
                                     </Styles.Pages>
-                                 </Styles.PageBox >
+                                 </Styles.PageBox>
                               ))}
                         </Styles.Pages>
                      </Styles.AppItem>
@@ -986,42 +1106,54 @@ export const Sidebar = ({ setOpen }) => {
             <Tunnels tunnels={createProcessingTunnels}>
                <Tunnel layer={1} size="md">
                   <TooltipProvider app="Settings App">
-                     <AddProcessingTunnel closeTunnel={closeCreateProcessingTunnel} />
+                     <AddProcessingTunnel
+                        closeTunnel={closeCreateProcessingTunnel}
+                     />
                   </TooltipProvider>
                </Tunnel>
             </Tunnels>
             <Tunnels tunnels={createCuisinesTunnels}>
                <Tunnel layer={1} size="md">
                   <TooltipProvider app="Settings App">
-                     <AddCuisinesTunnel closeTunnel={closeCreateCuisinesTunnel} />
+                     <AddCuisinesTunnel
+                        closeTunnel={closeCreateCuisinesTunnel}
+                     />
                   </TooltipProvider>
                </Tunnel>
             </Tunnels>
             <Tunnels tunnels={createProductCategoriesTunnels}>
                <Tunnel layer={1} size="md">
                   <TooltipProvider app="Settings App">
-                     <AddProductCategoriesTunnel closeTunnel={closeCreateProductCategoriesTunnel} />
+                     <AddProductCategoriesTunnel
+                        closeTunnel={closeCreateProductCategoriesTunnel}
+                     />
                   </TooltipProvider>
                </Tunnel>
             </Tunnels>
             <Tunnels tunnels={createIngredientCategoriesTunnels}>
                <Tunnel layer={1} size="md">
                   <TooltipProvider app="Settings App">
-                     <AddIngredientCategoriesTunnel closeTunnel={closeCreateIngredientCategoriesTunnel} />
+                     <AddIngredientCategoriesTunnel
+                        closeTunnel={closeCreateIngredientCategoriesTunnel}
+                     />
                   </TooltipProvider>
                </Tunnel>
             </Tunnels>
             <Tunnels tunnels={createAllergensTunnels}>
                <Tunnel layer={1} size="md">
                   <TooltipProvider app="Settings App">
-                     <AddAllergensTunnel closeTunnel={closeCreateAllergensTunnel} />
+                     <AddAllergensTunnel
+                        closeTunnel={closeCreateAllergensTunnel}
+                     />
                   </TooltipProvider>
                </Tunnel>
             </Tunnels>
             <Tunnels tunnels={createAccompanimentTypesTunnels}>
                <Tunnel layer={1} size="md">
                   <TooltipProvider app="Settings App">
-                     <AddAccompanimentTypesTunnel closeTunnel={closeCreateAccompanimentTypesTunnel} />
+                     <AddAccompanimentTypesTunnel
+                        closeTunnel={closeCreateAccompanimentTypesTunnel}
+                     />
                   </TooltipProvider>
                </Tunnel>
             </Tunnels>
@@ -1038,5 +1170,6 @@ export const Sidebar = ({ setOpen }) => {
                </Tunnel>
             </Tunnels>
          </div>
-      </div>)
+      </div>
+   )
 }
