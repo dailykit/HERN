@@ -21,24 +21,237 @@ import {
    CONCATENATE_ARRAY_COLUMN,
    CONCATENATE_STRING_COLUMN,
    UPDATE_PRODUCT_OPTIONS,
+   INCREASE_PRICE_AND_DISCOUNT,
+   INCREMENTS_IN_PRODUCT_OPTIONS,
 } from './mutation'
+import { RecipeBulkAction } from './entities/recipe'
+import { IngredientBulkAction } from './entities/ingredients'
+import { ProductBulkAction } from './entities/products'
+import { ProductOptionsBulkAction } from './entities/productOptions'
 
 const BulkActions = ({
-   children,
    table,
    selectedRows,
    removeSelectedRow,
-   bulkActions,
-   setBulkActions,
-   clearAllActions,
+   setSelectedRows,
    close,
-
-   additionalBulkAction = {},
-   additionalFunction,
 }) => {
+   // ref
+   const productOptionsTableRef = React.useRef()
+
+   // initial states for entities
+   const [initialBulkActionRecipe, setInitialBulkActionRecipe] = React.useState(
+      {
+         isPublished: false,
+         type: false,
+         cuisineName: {
+            defaultOption: null,
+            value: '',
+         },
+         author: '',
+         cookingTime: '',
+         utensils: '',
+         notIncluded: '',
+         description: '',
+         utensilsConcat: {
+            forAppend: '',
+            forPrepend: '',
+         },
+         notIncludedConcat: {
+            forAppend: '',
+            forPrepend: '',
+         },
+         descriptionConcat: {
+            forAppend: '',
+            forPrepend: '',
+         },
+      }
+   )
+   const [initialBulkActionIngredient, setInitialBulkActionIngredient] =
+      React.useState({
+         isPublished: false,
+         category: {
+            defaultOption: null,
+            value: '',
+         },
+         nameConcat: {
+            forAppend: '',
+            foePrepend: '',
+         },
+      })
+   const [initialBulkActionProduct, setInitialBulkActionProduct] =
+      React.useState({
+         isPublished: false,
+         additionalText: '',
+         description: '',
+         tags: '',
+         additionalTextConcat: {
+            forAppend: '',
+            forPrepend: '',
+         },
+         descriptionConcat: {
+            forAppend: '',
+            forPrepend: '',
+         },
+         tagsConcat: {
+            forAppend: '',
+            forPrepend: '',
+         },
+         price: {
+            set: 0,
+            increase: 0,
+            decrease: 0,
+         },
+         discount: {
+            set: 0,
+            increase: 0,
+            decrease: 0,
+         },
+      })
+   const [initialBulkActionProductOption, setInitialBulkActionProductOption] =
+      React.useState({
+         label: '',
+         modifierId: null,
+         operationConfigId: null,
+         labelConcat: {
+            forAppend: '',
+            forPrepend: '',
+         },
+         price: {
+            set: 0,
+            increase: 0,
+            decrease: 0,
+         },
+         discount: {
+            set: 0,
+            increase: 0,
+            decrease: 0,
+         },
+      })
+
+   // additional bulk actions (actions which not to be set)
+   const [additionalBulkAction, setAdditionalBulkAction] = React.useState({})
+
+   // bulkAction consists changes to be set in entities
+   const [bulkActions, setBulkActions] = React.useState({})
    const [showPopup, setShowPopup] = React.useState(false)
    const [popupHeading, setPopupHeading] = React.useState('')
-   //mutation
+
+   // product options modifier
+   const handleModifierClear = () => {
+      productOptionsTableRef.current.clearModifier()
+      setInitialBulkActionProductOption(prevState => ({
+         ...prevState,
+         modifierId: null,
+      }))
+   }
+
+   const handleOperationConfigClear = () => {
+      setInitialBulkActionProductOption(prevState => ({
+         ...prevState,
+         operationConfigId: null,
+      }))
+   }
+
+   // clear all actions
+   const clearAllActions = () => {
+      if (table === 'Recipe') {
+         setInitialBulkActionRecipe(prevState => ({
+            ...prevState,
+            isPublished: !prevState.isPublished,
+            type: !prevState.type,
+            author: '',
+            cookingTime: '',
+            utensils: '',
+            cuisineName: {
+               defaultOption: null,
+               value: '',
+            },
+            notIncluded: '',
+            description: '',
+            utensilsConcat: {
+               forAppend: '',
+               forPrepend: '',
+            },
+            notIncludedConcat: {
+               forAppend: '',
+               forPrepend: '',
+            },
+            descriptionConcat: {
+               forAppend: '',
+               forPrepend: '',
+            },
+         }))
+      } else if (table === 'Ingredient') {
+         setInitialBulkActionIngredient(prevState => ({
+            ...prevState,
+            isPublished: !prevState.isPublished,
+            category: {
+               defaultOption: null,
+               value: '',
+            },
+            nameConcat: {
+               forAppend: '',
+               foePrepend: '',
+            },
+         }))
+      } else if (table === 'Product') {
+         setInitialBulkActionProduct(prevState => ({
+            ...prevState,
+            isPublished: !prevState.isPublished,
+            additionalText: '',
+            description: '',
+            tags: '',
+            additionalTextConcat: {
+               forAppend: '',
+               forPrepend: '',
+            },
+            descriptionConcat: {
+               forAppend: '',
+               forPrepend: '',
+            },
+            tagsConcat: {
+               forAppend: '',
+               forPrepend: '',
+            },
+            price: {
+               set: 0,
+               increase: 0,
+               decrease: 0,
+            },
+            discount: {
+               set: 0,
+               increase: 0,
+               decrease: 0,
+            },
+         }))
+      } else {
+         // for product options
+         handleModifierClear()
+         handleOperationConfigClear()
+         setInitialBulkActionProductOption({
+            label: '',
+            modifierId: null,
+            operationConfigId: null,
+            labelConcat: {
+               forAppend: '',
+               forPrepend: '',
+            },
+            price: {
+               set: 0,
+               increase: 0,
+               decrease: 0,
+            },
+            discount: {
+               set: 0,
+               increase: 0,
+               decrease: 0,
+            },
+         })
+      }
+      setBulkActions({})
+   }
+   // mutation
    const [simpleRecipeUpdate] = useMutation(SIMPLE_RECIPE_UPDATE, {
       onCompleted: () => {
          toast.success('Update Successfully')
@@ -101,18 +314,61 @@ const BulkActions = ({
          },
       }
    )
+   const [increasePriceAndDiscount] = useMutation(INCREASE_PRICE_AND_DISCOUNT, {
+      onCompleted: () => {
+         toast.success('Update Successfully')
+         //  close(1)
+      },
+      onError: () => {
+         toast.error('Something went wrong!')
+         //  logger(error)
+      },
+   })
+   const [incrementsInProductOptions] = useMutation(
+      INCREMENTS_IN_PRODUCT_OPTIONS,
+      {
+         onCompleted: () => {
+            toast.success('Update Successfully')
+            // close(1)
+         },
+         onError: () => {
+            toast.error('Something went wrong!')
+            //  logger(error)
+         },
+      }
+   )
+
+   // additional function
+   const additionalFunction = () => {
+      if (table === 'Product') {
+         increasePriceAndDiscount({
+            variables: {
+               price: additionalBulkAction.price || 0,
+               discount: additionalBulkAction.discount || 0,
+               ids: selectedRows.map(x => x.id),
+            },
+         })
+         close(1)
+      }
+      if (table === 'Product Options') {
+         incrementsInProductOptions({
+            variables: {
+               _inc: additionalBulkAction,
+               _in: selectedRows.map(row => row.id),
+            },
+         })
+         close(1)
+      }
+   }
 
    const getMutation = table => {
       switch (table) {
          case 'Recipe':
             return simpleRecipeUpdate
-            break
          case 'Product':
             return updateProducts
-            break
          case 'Ingredient':
             return updateIngredients
-            break
          case 'Product Options':
             return updateProductOptions
       }
@@ -195,6 +451,7 @@ const BulkActions = ({
          toast.error('Incorrect schema or table name!')
       }
    }
+
    return (
       <>
          <TunnelHeader
@@ -219,6 +476,7 @@ const BulkActions = ({
                selectedRows={selectedRows}
                handleOnUpdate={handleOnUpdate}
                table={table}
+               setSelectedRows={setSelectedRows}
             />
             <Flex
                container
@@ -276,6 +534,11 @@ const BulkActions = ({
                                  type="ghost"
                                  onClick={() => {
                                     removeSelectedRow(item.id)
+                                    setSelectedRows(prevState =>
+                                       prevState.filter(
+                                          row => row.id !== item.id
+                                       )
+                                    )
                                  }}
                               >
                                  <RemoveIcon color="#FF5A52" />
@@ -304,7 +567,46 @@ const BulkActions = ({
                   </Flex>
                   <Spacer size="8px" />
                   <Flex height="44vh" overflowY="auto">
-                     {children}
+                     {/* {children} */}
+                     {table === 'Recipe' && (
+                        <RecipeBulkAction
+                           initialBulkAction={initialBulkActionRecipe}
+                           setInitialBulkAction={setInitialBulkActionRecipe}
+                           bulkActions={bulkActions}
+                           setBulkActions={setBulkActions}
+                        />
+                     )}
+                     {table === 'Ingredient' && (
+                        <IngredientBulkAction
+                           initialBulkAction={initialBulkActionIngredient}
+                           setInitialBulkAction={setInitialBulkActionIngredient}
+                           bulkActions={bulkActions}
+                           setBulkActions={setBulkActions}
+                        />
+                     )}
+                     {table === 'Product' && (
+                        <ProductBulkAction
+                           initialBulkAction={initialBulkActionProduct}
+                           setInitialBulkAction={setInitialBulkActionProduct}
+                           bulkActions={bulkActions}
+                           setBulkActions={setBulkActions}
+                           additionalBulkAction={additionalBulkAction}
+                           setAdditionalBulkAction={setAdditionalBulkAction}
+                        />
+                     )}
+                     {table === 'Product Options' && (
+                        <ProductOptionsBulkAction
+                           ref={productOptionsTableRef}
+                           initialBulkAction={initialBulkActionProductOption}
+                           setInitialBulkAction={
+                              setInitialBulkActionProductOption
+                           }
+                           bulkActions={bulkActions}
+                           setBulkActions={setBulkActions}
+                           additionalBulkAction={additionalBulkAction}
+                           setAdditionalBulkAction={setAdditionalBulkAction}
+                        />
+                     )}
                   </Flex>
                   <Spacer size="16px" />
                   <Flex container alignItems="center" justifyContent="flex-end">
