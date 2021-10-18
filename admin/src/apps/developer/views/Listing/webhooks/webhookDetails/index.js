@@ -1,7 +1,8 @@
 import React from 'react';
 import ProcessedEvents from './processedEvents';
 import { Wrapper } from './styled';
-import {EventDetails, AdvanceConfig} from './eventDetails';
+import {EventDetails} from './eventDetails';
+import { AdvanceConfig, Headers} from './advanceConfig';
 import { useWebhook } from '../state';
 import { Text, TextButton, AnchorNav, AnchorNavItem, Flex } from '@dailykit/ui';
 import { Element } from 'react-scroll'
@@ -85,11 +86,14 @@ const WebhookDetails = ()=>{
          <Element
             name='advanceConfigs'
             style={{
-               height: '600px'
+               height: '1000px'
             }}
          >
             {state.webhookDetails.webhookUrl_EventId ?
-            <AdvanceConfig />:
+            <>
+               <AdvanceConfig />
+               <Headers />
+            </>:
             <Text as="h3">Select a Webhook event to see details</Text>}
          </Element>
       </Element>

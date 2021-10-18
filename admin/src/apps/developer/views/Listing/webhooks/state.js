@@ -8,7 +8,8 @@ const initialState = {
        "webhookUrl_EventId":undefined,
        "webhookUrl_EventLabel": undefined,
        "webhookUrlEndpoint":undefined,
-       "advanceConfig":undefined
+       "advanceConfig":undefined,
+       "headers":[]
     },
     deleteFunction:undefined
  }

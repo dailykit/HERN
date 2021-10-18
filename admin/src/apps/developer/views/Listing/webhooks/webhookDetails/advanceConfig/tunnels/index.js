@@ -1,5 +1,5 @@
 import React , {useState, useEffect                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         } from 'react';
-import {UPDATE_RETRY_CONFIGURATION, GET_EVENT_WEBHOOK_INFO } from '../../../../../../graphql';
+import {UPDATE_RETRY_CONFIGURATION } from '../../../../../../graphql';
 import { Loader } from '@dailykit/ui'
 import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
 import {Form, Spacer, Text, Tunnel, TunnelHeader, Tunnels } from '@dailykit/ui'
@@ -11,26 +11,8 @@ import { logger } from '../../../../../../../../shared/utils';
 const EditRetryConfig = (props) => {
 
 
-    // console.log(props.advanceConfig.retryInterval , "from props")
-    const [advanceConfig, updatedadvanceConfig] = useState({})
-    console.log(advanceConfig , "in state")
+    const [advanceConfig, updatedadvanceConfig] = useState(props.advanceConfig)
 
-    const { data, loading, error } = useSubscription(GET_EVENT_WEBHOOK_INFO, {
-        variables:{
-            webhookUrl_EventId: props.webhookUrl_EventId
-         },
-         onSubscriptionData:({ subscriptionData: { data = {} } = {} })=> {
-            const advanceConfiguration = data.developer_webhookUrl_events[0]?.advanceConfig
-            updatedadvanceConfig(advanceConfiguration)
-              }
-              
-              
-          })
-  
-      if (error) {
-        toast.error('Something went wrong')
-        logger(error)
-     }
 
     const [updateRetryConfiguration] = useMutation(UPDATE_RETRY_CONFIGURATION, {
         onCompleted: () => {

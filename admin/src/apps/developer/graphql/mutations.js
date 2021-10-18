@@ -26,3 +26,10 @@ export const UPDATE_RETRY_CONFIGURATION = gql`
   }
 
 `
+export const UPDATE_REQUEST_HEADERS = gql`
+mutation UPDATE_REQUEST_HEADERS($id: Int, $headers: jsonb = "") {
+  update_developer_webhookUrl_events(where: {id: {_eq: $id}}, _set: {headers: $headers}) {
+    affected_rows
+  }
+}
+`

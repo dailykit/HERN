@@ -107,10 +107,8 @@ export const handleIsActiveEventTrigger = async (req , res) => {
 const retrySendingPayload = async(processedWebhookEventsByUrlId , webhookUrl_eventsId , urlEndPoint , payload , numberOfRetries , retryInterval , leftOutTime) => {
     var res= await sendPayloadToUrlEndpoint(urlEndPoint , payload , leftOutTime)
     var response = {"status":res.status,"body":res.body,"headers":res.headers,"message":res.message,"data":res.data}
-    console.log(res, response , "response inserted")
     // here the response will be added to invocation logs 
     insertInInvocationLogs(payload , response, processedWebhookEventsByUrlId , webhookUrl_eventsId )
-    console.log(numberOfRetries)
     if(res.status === 200 ||  numberOfRetries <= 0 ){
         return res ;
     }

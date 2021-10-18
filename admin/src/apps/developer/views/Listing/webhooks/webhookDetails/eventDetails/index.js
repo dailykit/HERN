@@ -1,9 +1,5 @@
 import React, {useRef, useState, useEffect} from 'react';
 import {useWebhook} from '../../state'
-import {StyledTable, Wrapper} from './styled'
-import { TextButton, useTunnel, Flex, Text } from '@dailykit/ui';
-import EditRetryConfig from './tunnels';
-import {EditIcon} from '../../../../../../../shared/assets/icons'
 
 export const EventDetails = ()=>{
     const {state, dispatch} = useWebhook()
@@ -17,42 +13,3 @@ export const EventDetails = ()=>{
     
 }
 
-export const AdvanceConfig = ()=>{
-    const {state, dispatch} = useWebhook()
-    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
-    return (
-        <>
-            <EditRetryConfig webhookUrl_EventId={state.webhookDetails.webhookUrl_EventId} advanceConfig={state.webhookDetails.advanceConfig} tunnels={tunnels} openTunnel={openTunnel} closeTunnel={closeTunnel} />
-            <Flex container height="80px" alignItems="center">
-               <Text as="h3">
-                  Advance Configs
-               </Text>
-               {/* <Tooltip identifier="coupon_list_heading" /> */}
-            </Flex>
-            
-                <Flex container alignItems="center" justifyContent="space-between">
-                <StyledTable >
-                <thead></thead>
-                <tbody>
-                    <tr >
-                        <td >Number of retries</td>
-                        <td>{state.webhookDetails.advanceConfig?.numberOfRetries}</td>
-                    </tr>
-                    <tr>
-                        <td >Retry Interval (sec)</td>
-                        <td>{state.webhookDetails.advanceConfig?.retryInterval}</td>
-                    </tr>
-                    <tr>
-                        <td >Timeout (sec)</td>
-                        <td>{state.webhookDetails.advanceConfig?.timeOut}</td>
-                    </tr>
-                </tbody>
-                </StyledTable>
-                <TextButton type="solid" 
-               onClick={()=>openTunnel(1)}
-               >Edit</TextButton>
-               </Flex>
-            
-        </>
-    )
-}

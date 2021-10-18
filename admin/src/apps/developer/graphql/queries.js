@@ -7,24 +7,17 @@ subscription ACTIVE_EVENTS_WEBHOOKS {
     id
     availableWebhookEvent {
       description
-      id
-      isActive
       label
-      samplePayload
-      schemaName
-      tableName
-      type
     }
     webhookUrl {
-      id
-      isActive
       created_at
-      updated_at
       urlEndpoint
     }
     advanceConfig
+    headers
   }
 }
+
       
     `
   
@@ -56,21 +49,16 @@ export const  AVAILABLE_EVENTS = gql`
   `
 
   export const GET_EVENT_URL_ADVANCE_CONFIGS = gql`
-  subscription MySubscription($webhookUrl_EventId: Int) {
+  subscription GET_EVENT_URL_ADVANCE_CONFIGS($webhookUrl_EventId: Int) {
     developer_webhookUrl_events(where: {id: {_eq: $webhookUrl_EventId}}) {
       advanceConfig
-      webhookUrl {
-        urlEndpoint
-      }
-      availableWebhookEvent {
-        label
-      }
+      headers
     }
   }
   `
 
   export const GET_EVENT_LOGS = gql`
-  subscription MySubscription($webhookUrl_EventId: Int) {
+  subscription GET_EVENT_LOGS($webhookUrl_EventId: Int) {
     developer_webhookUrl_events(where: {id: {_eq: $webhookUrl_EventId}}) {
       webhookUrl_EventsLogs {
         created_at
@@ -81,7 +69,7 @@ export const  AVAILABLE_EVENTS = gql`
   `
 
   export const GET_PROCESSED_EVENTS = gql`
-  subscription MySubscription($webhookUrl_EventId: Int) {
+  subscription GET_PROCESSED_EVENTS($webhookUrl_EventId: Int) {
     developer_webhookUrl_events(where: {id: {_eq: $webhookUrl_EventId}}) {
       availableWebhookEvent {
         processedWebhookEvents {
@@ -97,21 +85,8 @@ export const  AVAILABLE_EVENTS = gql`
   }
   `
 
-  export const GET_EVENT_WEBHOOK_INFO  = gql`
-  subscription GET_EVENT_WEBHOOK_INFO($webhookUrl_EventId: Int) {
-    developer_webhookUrl_events(where: {id: {_eq: $webhookUrl_EventId}}) {
-      advanceConfig
-      webhookUrl {
-        urlEndpoint
-      }
-      availableWebhookEvent {
-        label
-      }
-    }
-  }
-  `
   export const GET_INVOCATIONS_OF_PROCESSED_EVENTS = gql`
-  subscription MySubscription($processedWebhookEventsId: String, $webhookUrl_EventId: Int) {
+  subscription GET_INVOCATIONS_OF_PROCESSED_EVENTS($processedWebhookEventsId: String, $webhookUrl_EventId: Int) {
     developer_processedWebhookEventsByUrl(where: {processedWebhookEventsId: {_eq: $processedWebhookEventsId}, webhookUrl_eventsId: {_eq: $webhookUrl_EventId}}) {
       webhookUrl_EventsLogs {
         PayloadSent

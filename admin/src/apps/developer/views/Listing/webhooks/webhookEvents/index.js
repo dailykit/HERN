@@ -1,6 +1,6 @@
 import React, {useRef, useState} from 'react';
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import {ACTIVE_EVENTS_WEBHOOKS, DELETE_WEBHOOK_EVENT } from '../../../../graphql';
+import {ACTIVE_EVENTS_WEBHOOKS, DELETE_WEBHOOK_EVENT, GET_EVENT_URL_ADVANCE_CONFIGS } from '../../../../graphql';
 import {logger}  from '../../../../../../shared/utils'
 import {Flex, Text, ButtonGroup, ComboButton, PlusIcon, useTunnel} from '@dailykit/ui';
 import { toast } from 'react-toastify'
@@ -31,6 +31,8 @@ const WebhookListing = ()=>{
 
     const [webhookEvents, setWebhookEvents] = useState([])
 
+    
+
     // Query to fetch active webhook events
     const { data, loading, error } = useSubscription(ACTIVE_EVENTS_WEBHOOKS, {
        onSubscriptionData:({ subscriptionData: { data = {} } = {} })=> {
@@ -43,19 +45,32 @@ const WebhookListing = ()=>{
       logger(error)
    }
 
+   
+
     const webhookUrl_eventsCount = webhookEvents?.length
 
 
    const rowClick = (e, cell) => {
+      
       const { id } = cell._cell.row.data
       const webhookUrl_EventLabel = cell._cell.row.data.availableWebhookEvent.label
       const webhookUrlEndpoint = cell._cell.row.data.webhookUrl.urlEndpoint
-      const advanceConfig = cell._cell.row.data.advanceConfig
+      const advanceConfig = cell._cell.row.data.webhookUrl.advanceConfig
+      const headers = cell._cell.row.data.webhookUrl.headers
+      const headers_list = []
+      for (const header in headers){
+         headers_list.push({
+            'id': header,
+            'key': header,
+            'value': headers[header]
+         })
+      }
       const payload = {
          "webhookUrl_EventId": id,
          "webhookUrl_EventLabel": webhookUrl_EventLabel,
          "webhookUrlEndpoint":webhookUrlEndpoint,
-         "advanceConfig": advanceConfig
+         "advanceConfig": advanceConfig,
+         "headers": headers_list
       }
       dispatch({type:'SET_WEBHOOK_DETAILS', payload:payload})
       dispatch({type:'SET_DELETE_FUNCTION', payload:deleteEvent})
@@ -69,7 +84,7 @@ const WebhookListing = ()=>{
             variables:{
                 "eventId":eventId
             },
-            onComplete : (data) => {
+            onCompleted : (data) => {
                 console.log('request completed')
                 toast.success('webhook successfully deleted')
                 console.log(data)
