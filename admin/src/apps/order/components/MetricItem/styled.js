@@ -28,11 +28,13 @@ export const ListItem = styled.li(
       list-style: none;
       margin-bottom: 16px;
       border: 1px solid rgba(0, 0, 0, 0.09);
+      border-radius: 4px;
       border-left: 6px solid ${selectColor(variant)};
       &.active,
       &:hover {
          box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.09);
       }
+
       header {
          display: flex;
          align-items: center;

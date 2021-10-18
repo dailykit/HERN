@@ -6,6 +6,10 @@ export const Wrapper = styled.aside`
    padding: 0 12px 12px 12px;
    border-right: 1px solid #e7e7e7;
    border-left: 1px solid #e7e7e7;
+
+   h4 {
+      color: #367bf5;
+   }
 `
 
 export const FilterSection = styled.section`
@@ -28,7 +32,8 @@ export const Spacer = styled.div(
    `
 )
 export const StyledIconButton = styled(IconButton)`
-   display: none;
+   border-radius: 4px;
+
    @media (orientation: portrait) {
       display: block;
    }

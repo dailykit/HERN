@@ -105,28 +105,28 @@ const Footer = ({ openTunnel, setPosition }) => {
                        })
                }
             >
-               <SettingsIcon color="#000" size="20" />
+               <SettingsIcon color="#919699" size="20" />
             </button>
-            <button
+            {/* <button
                type="button"
                title="Notifications"
                onClick={() => openTunnel(1)}
             >
                <BellIcon color="#000" size="20" />
-            </button>
+            </button>  */}
             <button
                type="button"
                title="Panel on Left"
                onClick={() => setPosition('left')}
             >
-               <LeftPanelIcon color="#000" size="20" />
+               <LeftPanelIcon color="#919699" size="20" />
             </button>
             <button
                type="button"
                title="Panel on Right"
                onClick={() => setPosition('right')}
             >
-               <RightPanelIcon color="#000" size="20" />
+               <RightPanelIcon color="#919699" size="20" />
             </button>
          </StyledNav>
       </Wrapper>
