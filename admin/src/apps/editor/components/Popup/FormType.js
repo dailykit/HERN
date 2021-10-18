@@ -268,14 +268,14 @@ export default function FormType({
                         </div>
                         <div>
                            <ButtonGroup>
-                              <IconButton>
+                              <IconButton onClick={() => setActive(true)}>
                                  <EditIcon size="20px" />
                               </IconButton>
                            </ButtonGroup>
                         </div>
                         <div>
                            <ButtonGroup>
-                              <IconButton>
+                              <IconButton onClick={() => setIconUrl('')}>
                                  <DeleteIcon size="20px" />
                               </IconButton>
                            </ButtonGroup>
