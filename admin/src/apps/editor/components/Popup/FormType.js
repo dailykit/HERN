@@ -3,9 +3,9 @@ import {
    Flex,
    Spacer,
    TextButton,
-   ButtonGroup,
    Form,
    Loader,
+   ButtonGroup,
    IconButton,
 } from '@dailykit/ui'
 import { Popup, AssetUploader } from '../../../../shared/components'
@@ -14,6 +14,7 @@ import { TreeSelect } from 'antd'
 import 'antd/dist/antd.css'
 import { useQuery } from '@apollo/react-hooks'
 import { GET_FILE_ID } from '../../graphql'
+import { EditIcon, DeleteIcon } from '../../assets/Icons'
 
 export default function FormType({
    show,
@@ -252,13 +253,34 @@ export default function FormType({
                   />
                   <Spacer size="16px" />
                   {iconUrl ? (
-                     <>
-                        <img
-                           style={{ height: '50px', width: '50px' }}
-                           src={iconUrl}
-                        ></img>
-                        <IconButton></IconButton>
-                     </>
+                     <div
+                        style={{
+                           display: 'flex',
+                           justifyContent: 'center',
+                           alignItems: 'center',
+                        }}
+                     >
+                        <div>
+                           <img
+                              style={{ height: '50px', width: '50px' }}
+                              src={iconUrl}
+                           ></img>
+                        </div>
+                        <div>
+                           <ButtonGroup>
+                              <IconButton>
+                                 <EditIcon size="20px" />
+                              </IconButton>
+                           </ButtonGroup>
+                        </div>
+                        <div>
+                           <ButtonGroup>
+                              <IconButton>
+                                 <DeleteIcon size="20px" />
+                              </IconButton>
+                           </ButtonGroup>
+                        </div>
+                     </div>
                   ) : (
                      <ButtonGroup>
                         <TextButton
