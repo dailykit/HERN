@@ -15,7 +15,7 @@ const resolveComponent = fold => {
             // component exists in our codebase
             return resolve({
                id: fold.id,
-               component: fold.name,
+               component: fold.internalModuleIdentifier,
                moduleType: fold.moduleType,
                position: fold.position,
             })
