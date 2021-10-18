@@ -249,15 +249,25 @@ export const NAVIGATION_MENU_INFO = gql`
       }
    }
 `
+// export const SEO_DETAILS = gql`
+// query MyQuery($_route: String = "",$pageId:Int_comparison_exp!) {
+//    brands_SEO(where: {route: {_eq: $_route}, pageId: $pageId}) {
+//      SEOBasics
+//      facebookPixel
+//      googleAnalytics
+//      pageId
+//      route
+//      socialShare
+//      twitter
+//    }
+//  }`
 export const SEO_DETAILS = gql`
-query MyQuery($_route: String = "",$pageId:Int_comparison_exp!) {
-   brands_SEO(where: {route: {_eq: $_route}, pageId: $pageId}) {
-     SEOBasics
-     facebookPixel
-     googleAnalytics
-     pageId
-     route
-     socialShare
-     twitter
+query SEO_DETAILS($brandPageSettingId: Int!, $brandPageId: Int!) {
+   brands_brandPage_brandPageSetting_by_pk(brandPageSettingId: $brandPageSettingId, brandPageId: $brandPageId) {
+     value
+     brandPageSetting {
+       identifier
+     }
    }
- }`
+ }
+ `
