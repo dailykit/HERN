@@ -33,6 +33,7 @@ import DashboardTables from './shared/components/DashboardTables'
 
 import { useLocation } from 'react-router-dom'
 import DashboardRightPanel from './shared/components/DashboardRightPanel'
+import DashboardWeeklyAnalysis from './shared/components/dashboardWeeklyAnalysis'
 const APPS = gql`
    subscription apps {
       apps(order_by: { id: asc }) {
@@ -121,23 +122,9 @@ const App = () => {
                   <Banner id="app-home-top" />
                   <HomeContainer>
                      <DashboardPanel>
-                        <WelcomeNote>
-                           {/* <p>
-                              Welcome Back {user?.name || 'user'}
-                              <span>👋</span>
-                           </p> */}
-                        </WelcomeNote>
                         <DashboardCards />
-                        <Spacer yaxis size='20px' />
                         <DashboardTables />
-                        {/* <InsightDiv>
-                     <InsightDashboard
-                        appTitle="global"
-                        moduleTitle="dashboard"
-                        includeChart
-                        showInTunnel={false}
-                     />
-                     </InsightDiv> */}
+                        <DashboardWeeklyAnalysis />
                      </DashboardPanel>
                      <DashboardRight>
                         <DashboardRightPanel />

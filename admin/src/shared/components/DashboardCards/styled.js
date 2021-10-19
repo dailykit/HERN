@@ -10,6 +10,7 @@ export const CardContainer = styled.div(
       box-sizing: border-box;
       border-radius: 6px;
       padding: 0px 20px 20px 20px;
+      margin-bottom: 20px;
       width: 100%;
       box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
       @media (max-width: 768px) {
