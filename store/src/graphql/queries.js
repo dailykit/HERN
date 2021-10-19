@@ -1124,74 +1124,72 @@ export const SUBSCRIPTION_PLAN = gql`
    }
 `
 export const NAVIGATION_MENU = gql`
-query NAVIGATION_MENU($navigationMenuId: Int!) {
-   brands_navigationMenuItem(
-      where: { navigationMenuId: { _eq: $navigationMenuId } }
-   ) {
-      created_at
-      id
-      label
-      navigationMenuId
-      openInNewTab
-      position
-      updated_at
-      url
-      parentNavigationMenuItemId
+   query NAVIGATION_MENU($navigationMenuId: Int!) {
+      brands_navigationMenuItem(
+         where: { navigationMenuId: { _eq: $navigationMenuId } }
+      ) {
+         created_at
+         id
+         label
+         navigationMenuId
+         openInNewTab
+         position
+         updated_at
+         url
+         parentNavigationMenuItemId
+      }
    }
-}
 `
 export const BRAND_PAGE = gql`
-query BRAND_PAGE($domain: String!, $route: String!) {
-   brands_brandPages(
-      where: {
-         route: { _eq: $route }
+   query BRAND_PAGE($domain: String!, $route: String!) {
+      brands_brandPages(
+         where: {
+            route: { _eq: $route }
             brand: {
-               _or: [
-                  { isDefault: { _eq: true } }
-                  { domain: { _eq: $domain } }
-               ]
+               _or: [{ isDefault: { _eq: true } }, { domain: { _eq: $domain } }]
             }
          }
-   ) {
-      id
-      internalPageName
-      isArchived
-      published
-      route
-      linkedNavigationMenuId
-      brandPageModules(
-         order_by: { position: desc_nulls_last }
-         where: { isHidden: { _eq: false } }
       ) {
          id
-         name
-         moduleType
-         isHidden
-         fileId
-         position
-         subscriptionDivFileId: file {
-            path
-            linkedCssFiles {
-               id
-               cssFile {
+         internalPageName
+         isArchived
+         published
+         route
+         linkedNavigationMenuId
+         brandPageModules(
+            order_by: { position: desc_nulls_last }
+            where: { isHidden: { _eq: false } }
+         ) {
+            id
+            internalModuleIdentifier
+            moduleType
+            isHidden
+            fileId
+            position
+            config
+            subscriptionDivFileId: file {
+               path
+               linkedCssFiles {
                   id
-                  path
+                  cssFile {
+                     id
+                     path
+                  }
                }
-            }
-            linkedJsFiles {
-               id
-               jsFile {
+               linkedJsFiles {
                   id
-                  path
+                  jsFile {
+                     id
+                     path
+                  }
                }
             }
          }
-      }
-      brand {
-         navigationMenuId
+         brand {
+            navigationMenuId
+         }
       }
    }
-}
 `
 
 // query MyQuery($navigationMenuId: Int!) {

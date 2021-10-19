@@ -86,11 +86,16 @@ const OnDemandOrder = dynamic(() =>
 const OnDemandCart = dynamic(() =>
    import('../sections/cart').then(promise => promise.OnDemandCart)
 )
-export const renderComponentByName = (componentName, options) => {
+const FeaturedCollection = dynamic(() =>
+   import('../sections/featuredCollection').then(
+      promise => promise.FeaturedCollection
+   )
+)
+export const renderComponentByName = (fold, options) => {
    const getProps = component => {
       if (options) {
          const [props] = options.filter(
-            option => option.component === componentName
+            option => option.component === fold.component
          )
          if (props) {
             return component === props.component ? props.props : []
@@ -98,7 +103,7 @@ export const renderComponentByName = (componentName, options) => {
       }
    }
 
-   switch (componentName) {
+   switch (fold.component) {
       /*ROUTES: 
       [brand]/our-plans
       [brand]/get-started/select-plan
@@ -249,6 +254,8 @@ export const renderComponentByName = (componentName, options) => {
        */
       case 'OnDemandCart':
          return <OnDemandCart />
+      case 'FeaturedCollection':
+         return <FeaturedCollection config={fold.config} />
       default:
          return null
    }
