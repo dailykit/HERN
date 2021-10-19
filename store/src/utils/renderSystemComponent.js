@@ -4,7 +4,7 @@ import { renderComponentByName } from '../utils'
 const renderComponent = (fold, options) => {
    try {
       if (fold.component) {
-         return renderComponentByName(fold.component, options)
+         return renderComponentByName(fold, options)
       } else if (fold.content) {
          return ReactHtmlParser(fold.content)
       } else {
