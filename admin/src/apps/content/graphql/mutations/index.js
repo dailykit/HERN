@@ -273,12 +273,17 @@ export const GET_SYSTEM_MODULES = gql`
       }
    }
 `
-// export const UPDATE_BRANDS_SEO = gql`
-// mutation UPDATE_BRANDS_SEO( $pageId: Int!,$_set:brands_SEO_set_input!) {
-//    update_brands_SEO_by_pk(pk_columns: {pageId: $pageId}, _set: $_set) {
-//      pageId
-//      SEOBasics
-//    }
-//  }
-//  `
-//  {"pageId": 1007,"_set": {"SEOBasics":{"metaDescription":"nnnnnnn"}}}
+export const UPDATE_BRANDS_SEO = gql`
+mutation UPDATE_BRANDS_SEO($brandPageId: Int!, $brandPageSettingId: Int!, $value: jsonb) {
+   update_brands_brandPage_brandPageSetting_by_pk(pk_columns: {brandPageId: $brandPageId, brandPageSettingId: $brandPageSettingId}, _set: {value: $value}) {
+     brandPageSetting {
+       id
+       identifier
+       type
+     }
+     value
+   }
+ }`
+
+//  {"brandPageId": 1067,
+//  "brandPageSettingId": 2,"value": {"metaTitle":"homePage(twitter)","metadescription":"this is homePage description for twitter","image":"https://www.dailykit.org/_next/image?url=%2Fassets%2Fimages%2Fdailykit_logo.svg&w=64&q=75"}}
