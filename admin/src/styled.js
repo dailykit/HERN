@@ -5,6 +5,7 @@ export const Layout = styled.div`
    > main {
       position: absolute;
       left: 52px;
+      top: 52px;
       height: calc(100% - 48px);
       overflow-y: auto;
       width: 96%;

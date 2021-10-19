@@ -5,7 +5,7 @@ export const DashboardReport = styled.div`
    flex-direction: column;
    // position: absolute;
    width: 300px;
-   height: 296px;
+   height: 310px;
    // left: 998px;
    // top: 68.51px;
 
@@ -17,7 +17,7 @@ export const SvgBoxReport = styled.div`
    display: flex;
    align-items: center;
    justify-content: center;
-   padding: 8px 9px;
+   padding: 12px 9px;
 `
 export const UserText = styled.div`
    font-family: Roboto;
@@ -63,7 +63,7 @@ export const DashboardQuickNav = styled.div`
    display: flex;
    flex-direction: column;
    width: 300px;
-   height: 273px;
+   height: 290px;
    background: #ffffff;
    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
    border-radius: 6px;
@@ -72,7 +72,7 @@ export const SvgBoxQuickNav = styled.div`
    display: flex;
    align-items: center;
    justify-content: center;
-   padding: 17px 9px 10px 11px;
+   padding: 20px 9px 15px 11px;
 `
 export const TextQuickNav = styled.div`
    font-family: Roboto;

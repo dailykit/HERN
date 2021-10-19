@@ -1,7 +1,5 @@
 import React from 'react'
-import { Flex, useOnClickOutside } from '@dailykit/ui'
-import { DailykitIcon, ChevronDown, ChevronUp } from '../../../assets/icons'
-import { Sidebar } from '../../Sidebar'
+import { DailykitIcon } from '../../../assets/icons'
 import Styles from '../styled'
 
 const Logo = () => {
@@ -19,8 +17,8 @@ const Logo = () => {
             alignItems: 'center',
          }}
       >
-         {open && <Sidebar setOpen={setOpen} />}
-         <Styles.Logo open={open} onClick={() => setOpen(!open)}>
+         {/* {open && <Sidebar setOpen={setOpen} />} */}
+         <Styles.Logo>
             <DailykitIcon />
          </Styles.Logo>
       </div>
