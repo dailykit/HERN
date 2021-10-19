@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { StyledWrapper } from './styled'
 import { logger } from '../../../../../../../shared/utils'
-import { Tooltip, Row, Col, Typography, Card, Form, Input } from 'antd'
+import { Tooltip, Row, Col, Typography, Card, Form, Input, Button } from 'antd'
 import { useTabs } from '../../../../../../../shared/providers'
 import { SEO_DETAILS, UPDATE_BRANDS_SEO } from '../../../../../graphql'
 import BrandContext from '../../../../../context/Brand'
@@ -43,69 +43,26 @@ const SEObasics = ({ routeName }) => {
             },
         },
     })
+    const brandPageId = React.useMemo(() => parseInt(pageId), [])
 
-    // const brandPageId =, [pageId])
-
-    // Mutation for page publish toggle
-    // const [updatePage] = useMutation(UPDATE_BRANDS_SEO, {
-    //     onCompleted: () => {
-    //         toast.success('Updated!')
-    //     },
-    //     onError: error => {
-    //         toast.error('Something went wrong with UPDATE_BRANDS_SEO')
-    //         console.log(error)
-    //         logger(error)
-    //     },
-    // })
-    // page name validation & update name handler
-    // const onBlur = e => {
-    //     if (e.target.name === 'metaTitle') {
-    //         setForm((prev) => ({
-    //             metaTitle: {
-    //                 ...prev.metaTitle,
-    //                 value: e.target.value
-    //             }
-    //         }))
-    //     }
-    // }
-
-    // const updateInfo = () => {
-    //     console.log("UPDATED", metaDetailsState)
-    //     updatePage({
-    //         variables: {
-    //             pageId: pageId,
-    //             _set: {
-    //                 SEOBasics: {
-    //                     metaTitle: metaTitle.value,
-    //                     metaDescription: metaDescription.value,
-    //                     url: context.brandDomain + pageRoute.value
-    //                 }
-    //             },
-    //         },
-    //     })
-    // }
-
-    console.log({
-        brandPageId: parseInt(pageId),
-        brandPageSettingId: 1,
-    })
 
     const [seoDetails, { loading: metaDetailsLoading, brandsSEO }] =
         useLazyQuery(SEO_DETAILS, {
             onCompleted: brandsSEO => {
-                console.log('from subscription')
+                const seoSettings = brandsSEO.brands_brandPage_brandPageSetting_by_pk
+                console.log("from subscription", seoSettings)
                 setForm(prev => ({
                     metaTitle: {
                         ...prev.metaTitle,
-                        value: brandsSEO?.value?.metaTitle,
+                        value: seoSettings?.value?.metaTitle,
                     },
                     metaDescription: {
                         ...prev.metaDescription,
-                        value: brandsSEO?.value?.metaDescription,
+                        value: seoSettings?.value?.metaDescription,
                     },
                     favicon: {
                         ...prev.favicon,
-                        value: brandsSEO?.value?.favicon,
+                        value: seoSettings?.value?.favicon,
                     },
                 }))
             },
@@ -119,12 +76,37 @@ const SEObasics = ({ routeName }) => {
     React.useEffect(() => {
         seoDetails({
             variables: {
-                brandPageId: 1067,
+                brandPageId: brandPageId,
                 brandPageSettingId: 1,
             },
         })
     }, [])
+    // Mutation for update seo meta data
+    const [updateSEODetails] = useMutation(UPDATE_BRANDS_SEO, {
+        onCompleted: () => {
+            toast.success('Updated!')
+        },
+        onError: error => {
+            toast.error('Something went wrong with UPDATE_BRANDS_SEO')
+            console.log(error)
+            logger(error)
+        },
+    })
 
+    const updateInfo = () => {
+        console.log("UPDATED", form)
+        updateSEODetails({
+            variables: {
+                brandPageId: brandPageId,
+                brandPageSettingId: 1,
+                value: {
+                    metaTitle: form.metaTitle.value,
+                    metaDescription: form.metaDescription.value,
+                    favicon: "https://www.dailykit.org/_next/image?url=%2Fassets%2Fimages%2Fdailykit_logo.svg&w=64&q=75"
+                },
+            },
+        })
+    }
     if (metaDetailsLoading) return <InlineLoader />
 
     const onChangeHandler = e => {
@@ -205,13 +187,14 @@ const SEObasics = ({ routeName }) => {
                                         borderRadius: '4px',
                                     }}
                                     bordered={false}
-                                    name="meta-description"
+                                    name="metaDescription"
                                     id="metaDescription"
                                     value={form.metaDescription.value}
                                     onChange={onChangeHandler}
                                     placeholder="Add Page Meta description in 120 words"
                                 />
                             </Form.Item>
+                            <Button type="primary" onClick={() => updateInfo()}>Update</Button>
                         </Form>
                     </Col>
                     <Col span={12}>
