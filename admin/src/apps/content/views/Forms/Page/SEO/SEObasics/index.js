@@ -1,11 +1,10 @@
-import React, { useState, useRef, useContext, useEffect } from 'react'
+import React, { useState, useRef, useContext } from 'react'
 import 'antd/dist/antd.css'
 import { InlineLoader } from '../../../../../../../shared/components'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
+import { useSubscription, useMutation, useLazyQuery } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { StyledWrapper } from './styled'
-
 import { logger } from '../../../../../../../shared/utils'
 import { Tooltip, Row, Col, Typography, Card, Form, Input } from 'antd'
 import { useTabs } from '../../../../../../../shared/providers'
@@ -15,131 +14,129 @@ import { InfoCircleOutlined } from '@ant-design/icons'
 
 const SEObasics = ({ routeName }) => {
     const { Text, Title } = Typography
-    const { addTab, tab, setTabTitle, closeAllTabs } = useTabs()
     const [context, setContext] = useContext(BrandContext)
     const prevBrandId = useRef(context.brandId)
     const { pageId, pageName } = useParams()
-    const [pageTitle, setPageTitle] = useState({
-        value: '',
-        meta: {
-            isValid: false,
-            isTouched: false,
-            errors: [],
+    const [form, setForm] = useState({
+        metaTitle: {
+            value: '',
+            meta: {
+                isValid: false,
+                isTouched: false,
+                errors: [],
+            },
+        },
+        metaDescription: {
+            value: '',
+            meta: {
+                isValid: false,
+                isTouched: false,
+                errors: [],
+            },
+        },
+        favicon: {
+            value: '',
+            meta: {
+                isValid: false,
+                isTouched: false,
+                errors: [],
+            },
         },
     })
-    const [metaTitle, setMetaTitle] = useState({
-        value: '',
-        meta: {
-            isValid: false,
-            isTouched: false,
-            errors: [],
-        },
-    })
-    const [metaDescription, setMetaDescription] = useState({
-        value: '',
-        meta: {
-            isValid: false,
-            isTouched: false,
-            errors: [],
-        },
-    })
-    const [pageRoute, setPageRoute] = useState({
-        value: '',
-        meta: {
-            isValid: false,
-            isTouched: false,
-            errors: [],
-        },
-    })
-    const [state, setState] = useState({})
-    const [metaDetailsState, setMetaDetailsState] = useState({})
-    const { TextArea } = Input
 
+    // const brandPageId =, [pageId])
 
     // Mutation for page publish toggle
-    const [updatePage] = useMutation(UPDATE_BRANDS_SEO, {
-        onCompleted: () => {
-            toast.success('Updated!')
-        },
-        onError: error => {
-            toast.error('Something went wrong with UPDATE_BRANDS_SEO')
-            console.log(error)
-            logger(error)
-        },
+    // const [updatePage] = useMutation(UPDATE_BRANDS_SEO, {
+    //     onCompleted: () => {
+    //         toast.success('Updated!')
+    //     },
+    //     onError: error => {
+    //         toast.error('Something went wrong with UPDATE_BRANDS_SEO')
+    //         console.log(error)
+    //         logger(error)
+    //     },
+    // })
+    // page name validation & update name handler
+    // const onBlur = e => {
+    //     if (e.target.name === 'metaTitle') {
+    //         setForm((prev) => ({
+    //             metaTitle: {
+    //                 ...prev.metaTitle,
+    //                 value: e.target.value
+    //             }
+    //         }))
+    //     }
+    // }
+
+    // const updateInfo = () => {
+    //     console.log("UPDATED", metaDetailsState)
+    //     updatePage({
+    //         variables: {
+    //             pageId: pageId,
+    //             _set: {
+    //                 SEOBasics: {
+    //                     metaTitle: metaTitle.value,
+    //                     metaDescription: metaDescription.value,
+    //                     url: context.brandDomain + pageRoute.value
+    //                 }
+    //             },
+    //         },
+    //     })
+    // }
+
+    console.log({
+        brandPageId: parseInt(pageId),
+        brandPageSettingId: 1,
     })
-    //    // page name validation & update name handler
-    //    const onBlur = e => {
-    //        if (e.target.name === 'metaTitle') {
-    //            setMetaTitle({
-    //                ...metaTitle,
-    //                value: brandsSEO[0]?.SEOBasics?.metaTitle || '',
-    //            })
-    //            updateInfo(metaTitle.value)
-    //        }
-    //  }
 
-
-
-    const updateInfo = () => {
-        console.log("UPDATED", metaDetailsState)
-        updatePage({
-            variables: {
-                pageId: pageId,
-                _set: {
-                    SEOBasics: {
-                        metaTitle: metaTitle.value,
-                        metaDescription: metaDescription.value,
-                        url: context.brandDomain + pageRoute.value
-                    }
-                },
+    const [seoDetails, { loading: metaDetailsLoading, brandsSEO }] =
+        useLazyQuery(SEO_DETAILS, {
+            onCompleted: brandsSEO => {
+                console.log('from subscription')
+                setForm(prev => ({
+                    metaTitle: {
+                        ...prev.metaTitle,
+                        value: brandsSEO?.value?.metaTitle,
+                    },
+                    metaDescription: {
+                        ...prev.metaDescription,
+                        value: brandsSEO?.value?.metaDescription,
+                    },
+                    favicon: {
+                        ...prev.favicon,
+                        value: brandsSEO?.value?.favicon,
+                    },
+                }))
             },
-        })
-    }
-
-    // whenever pageTitle value changes the pagetitle will be updated also
-    useEffect(() => {
-        if (pageTitle.value && !Boolean(pageTitle.meta.errors.length)) {
-            setTabTitle(pageTitle.value)
-        }
-    }, [pageTitle])
-
-    if (context.brandId !== prevBrandId.current) {
-        closeAllTabs()
-    }
-
-    const { loading: metaDetailsLoading, error: metaDetailsLoadingError } =
-        useSubscription(SEO_DETAILS, {
-            variables: {
-                pageId: { _eq: pageId },
-                _route: routeName,
+            onError: error => {
+                toast.error('Something went wrong')
+                logger(error)
             },
-            onSubscriptionData: ({
-                subscriptionData: {
-                    data: { brands_SEO: brandsSEO = {} } = {},
-                } = {},
-            }) => {
-                setMetaDetailsState(brandsSEO || {})
-                setMetaTitle({
-                    ...metaTitle,
-                    value: brandsSEO[0]?.SEOBasics?.metaTitle || '',
-                })
-                setMetaDescription({
-                    ...metaDescription,
-                    value: brandsSEO[0]?.SEOBasics?.metaDescription || '',
-                })
-                setPageRoute({
-                    ...pageRoute,
-                    value: brandsSEO[0]?.route || '',
-                })
-            },
+            fetchPolicy: 'cache-and-network',
         })
 
-    if (metaDetailsLoading) {
-        return <InlineLoader />
-    }
-    if (metaDetailsLoadingError) {
-        toast.error('Something went wrong')
-        logger(metaDetailsLoadingError)
+    React.useEffect(() => {
+        seoDetails({
+            variables: {
+                brandPageId: 1067,
+                brandPageSettingId: 1,
+            },
+        })
+    })
+
+    if (loading || metaDetailsLoading) return <InlineLoader />
+
+    const onChangeHandler = e => {
+        const { name, value } = e.target
+        console.log(name, value)
+        setForm(prev => ({
+            ...prev,
+            [name]: {
+                ...prev[name],
+                value,
+            },
+        }))
     }
 
     return (
@@ -152,19 +149,8 @@ const SEObasics = ({ routeName }) => {
                         </Text>
                         <div style={{ marginTop: '7px' }} />
                         <Tooltip placement="bottom" title={'page_route_info'}>
-                            <Title
-                                strong
-                                level={4}
-                                id="pageRoute"
-                                name="pageRoute"
-                                onChange={e =>
-                                    setPageRoute({
-                                        ...pageRoute,
-                                        value: e.target.value,
-                                    })
-                                }
-                            >
-                                {context.brandDomain + pageRoute.value}
+                            <Title strong level={4} id="pageRoute" name="pageRoute">
+                                {context.brandDomain + routeName}
                             </Title>
                         </Tooltip>
                         <Form layout="vertical">
@@ -203,17 +189,12 @@ const SEObasics = ({ routeName }) => {
                                         borderRadius: '4px',
                                     }}
                                     bordered={false}
-                                    value={metaTitle.value}
-                                    onChange={e =>
-                                        setMetaTitle({
-                                            ...metaTitle,
-                                            value: e.target.value,
-                                        })
-                                    }
-                                    id="meta-title"
-                                    name="meta-title"
+                                    value={form.metaTitle.value}
+                                    onChange={onChangeHandler}
+                                    id="metaTitle"
+                                    name="metaTitle"
                                 />
-                                <TextArea
+                                <Input.TextArea
                                     strong
                                     level={5}
                                     style={{
@@ -225,60 +206,12 @@ const SEObasics = ({ routeName }) => {
                                     }}
                                     bordered={false}
                                     name="meta-description"
-                                    id="meta-description"
-                                    value={metaDescription.value}
+                                    id="metaDescription"
+                                    value={form.metaDescription.value}
+                                    onChange={onChangeHandler}
                                     placeholder="Add Page Meta description in 120 words"
-                                    onChange={e =>
-                                        setMetaDescription({
-                                            ...metaDescription,
-                                            value: e.target.value,
-                                        })
-                                    }
                                 />
                             </Form.Item>
-                            <Form.Item
-                                label={
-                                    <span
-                                        style={{
-                                            color: '#555B6E',
-                                            fontSize: '16px',
-                                            fontWeight: '600',
-                                        }}
-                                    >
-                                        Customize your URL
-                                    </span>
-                                }
-                                tooltip={{
-                                    title: 'Customize your URL',
-                                    icon: (
-                                        <InfoCircleOutlined
-                                            style={{
-                                                background: '#555B6E',
-                                                color: 'white',
-                                                borderRadius: '50%',
-                                            }}
-                                        />
-                                    ),
-                                }}
-                            >
-                                <Input
-                                    level={5}
-                                    addonBefore={context.brandDomain}
-                                    defaultValue={routeName}
-                                    style={{
-                                        width: 'fit-content',
-                                        border: '2px solid #E4E4E4',
-                                        borderRadius: '4px',
-                                    }}
-                                    onChange={e =>
-                                        setPageRoute({
-                                            ...pageRoute,
-                                            value: e.target.value,
-                                        })
-                                    }
-                                />
-                            </Form.Item>
-                            {/* <Button type="primary" disabled={metaDescription.value == '' || metaTitle.value == ''} onClick={() => { updateInfo() }}>Save Changes</Button> */}
                         </Form>
                     </Col>
                     <Col span={12}>
@@ -294,16 +227,18 @@ const SEObasics = ({ routeName }) => {
                         </Tooltip>
                         <Card>
                             <Tooltip placement="bottom" title={'google preview'}>
-                                <Title
-                                    strong
-                                    level={4}
-                                    id="pageRoute"
-                                    name="pageRoute"
-                                >
-                                    {context.brandDomain + pageRoute.value}
-                                </Title>
+                                <p>{context.brandDomain + routeName}</p>
                             </Tooltip>
-                            <p>{metaDescription.value}</p>
+                            <Title
+                                strong
+                                level={4}
+                                style={{ color: '#2014ad' }}
+                                id="pageRoute"
+                                name="pageRoute"
+                            >
+                                {form.metaTitle.value}
+                            </Title>
+                            <p>{form.metaDescription.value}</p>
                         </Card>
                     </Col>
                 </Row>
