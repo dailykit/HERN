@@ -45,6 +45,7 @@ import tableOptions from '../tableOption'
 import { ResponsiveFlex } from '../styled'
 import { useRef } from 'react'
 import { FilterIcon, PublishIcon, UnPublishIcon } from '../../../assets/icons'
+import CreateRecipe from '../../../../../shared/CreateUtils/Recipe/createRecipe'
 
 const address = 'apps.products.views.listings.recipeslisting.'
 
@@ -55,6 +56,7 @@ const RecipesListing = () => {
    const [selectedRows, setSelectedRows] = React.useState([])
 
    const [tunnels, openTunnel, closeTunnel, visible] = useTunnel(2)
+   const [recipeTunnels, openRecipeTunnel, closeRecipeTunnel] = useTunnel(1)
    // Queries and Mutations
 
    // const [recipes, setRecipes] = React.useState([])
@@ -139,6 +141,11 @@ const RecipesListing = () => {
                <ApplyFilterTunnel close={closeTunnel} />
             </Tunnel>
          </Tunnels>
+         <Tunnels tunnels={recipeTunnels}>
+            <Tunnel layer={1} size="md">
+               <CreateRecipe closeTunnel={closeRecipeTunnel} />
+            </Tunnel>
+         </Tunnels>
          <Flex
             container
             alignItems="center"
@@ -151,7 +158,7 @@ const RecipesListing = () => {
                </Text>
                <Tooltip identifier="recipes_list_heading" />
             </Flex>
-            <ComboButton type="solid" onClick={createRecipeHandler}>
+            <ComboButton type="solid" onClick={() => openRecipeTunnel(1)}>
                <AddIcon color="#fff" size={24} /> Create Recipe
             </ComboButton>
          </Flex>
@@ -303,7 +310,8 @@ class DataTable extends React.Component {
          headerHozAlign: 'right',
          width: 80,
       },
-   ]  
+   ]
+
    handleRowSelection = ({ _row }) => {
       this.props.setSelectedRows(prevState => [...prevState, _row.getData()])
 
@@ -328,6 +336,7 @@ class DataTable extends React.Component {
    removeSelectedRow = id => {
       this.tableRef.current.table.deselectRow(id)
    }
+
    handleGroupBy = value => {
       this.setState(
          {
@@ -338,6 +347,7 @@ class DataTable extends React.Component {
          }
       )
    }
+
    clearHeaderFilter = () => {
       this.tableRef.current.table.clearHeaderFilter()
    }
@@ -411,6 +421,16 @@ class DataTable extends React.Component {
       localStorage.setItem('selected-rows-id_recipe_table', JSON.stringify([]))
    }
 
+   clearPersistence = () => {
+      localStorage.removeItem('tabulator-recipe_table-columns')
+      localStorage.removeItem('tabulator-recipe_table-sort')
+      localStorage.removeItem('tabulator-recipe_table-filter')
+      localStorage.removeItem('tabulator-recipe_table-group')
+      this.tableRef.current.table.setGroupBy([])
+
+      this.removeSelectedRecipes()
+   }
+
    render() {
       const selectionColumn =
          this.props.selectedRows.length > 0 &&
@@ -455,6 +475,7 @@ class DataTable extends React.Component {
                openTunnel={this.props.openTunnel}
                handleGroupBy={this.handleGroupBy}
                clearHeaderFilter={this.clearHeaderFilter}
+               clearPersistence={this.clearPersistence}
             />
 
             <Spacer size="40px" />
@@ -559,7 +580,7 @@ function Selection() {
    return (
       <Checkbox
          id="label"
-            checked={checked}
+         checked={checked}
          onChange={handleMultipleRowSelection}
       ></Checkbox>
    )
@@ -573,14 +594,18 @@ const ActionBar = ({
    openTunnel,
    handleGroupBy,
    clearHeaderFilter,
+   clearPersistence,
 }) => {
    const [groupByOptions] = React.useState([
-      { id: 1, title: 'Published', payload:'isPublished' },
+      { id: 1, title: 'Published', payload: 'isPublished' },
       { id: 2, title: 'Cuisine', payload: 'cuisine' },
-      { id: 3, title: 'Author', payload:'author' },
+      { id: 3, title: 'Author', payload: 'author' },
    ])
 
-   const defaultIDs = () => {
+   const defaultIDs = (isClearPersistence = false) => {
+      if (isClearPersistence) {
+         return []
+      }
       let arr = []
       const recipeGroup = localStorage.getItem('tabulator-recipe_table-group')
       const recipeGroupParse =
@@ -658,7 +683,7 @@ const ActionBar = ({
                >
                   <TextButton
                      onClick={() => {
-                        localStorage.clear()
+                        clearPersistence()
                      }}
                      type="ghost"
                      size="sm"

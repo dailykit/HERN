@@ -54,3 +54,41 @@ export const UPDATE_PRODUCT_OPTIONS = gql`
       }
    }
 `
+export const CREATE_CUISINE_NAME = gql`
+   mutation CreateCuisineName($name: String) {
+      createCuisineName(objects: { name: $name }) {
+         affected_rows
+      }
+   }
+`
+export const INGREDIENT_CATEGORY_CREATE = gql`
+   mutation insertIngredientCategory($name: String!) {
+      createIngredientCategory(object: { name: $name }) {
+         name
+      }
+   }
+`
+export const INCREASE_PRICE_AND_DISCOUNT = gql`
+   mutation increasePriceAndDiscount(
+      $price: numeric!
+      $discount: numeric!
+      $ids: [Int!]
+   ) {
+      updateProducts(
+         where: { id: { _in: $ids } }
+         _inc: { price: $price, discount: $discount }
+      ) {
+         affected_rows
+      }
+   }
+`
+export const INCREMENTS_IN_PRODUCT_OPTIONS = gql`
+   mutation IncrementsInProductOptions(
+      $_inc: products_productOption_inc_input!
+      $_in: [Int!]
+   ) {
+      updateProductOptions(where: { id: { _in: $_in } }, _inc: $_inc) {
+         affected_rows
+      }
+   }
+`

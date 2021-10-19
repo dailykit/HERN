@@ -8,6 +8,16 @@ export const CREATE_COLLECTION = gql`
       }
    }
 `
+export const CREATE_COLLECTIONS = gql`
+   mutation CreateCollections($objects: [onDemand_collection_insert_input!]!) {
+      createCollections(objects: $objects) {
+         returning {
+            id
+            name
+         }
+      }
+   }
+`
 
 export const DELETE_COLLECTION = gql`
    mutation DeleteCollection($id: Int!) {

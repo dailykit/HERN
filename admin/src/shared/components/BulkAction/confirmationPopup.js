@@ -10,6 +10,7 @@ export default function ConfirmationPopup({
    setBulkActions,
    handleOnUpdate,
    table,
+   setSelectedRows,
 }) {
    const [isValid, setIsValid] = React.useState(false)
    const [inputValue, setInputValue] = React.useState('')
@@ -32,13 +33,23 @@ export default function ConfirmationPopup({
                case 'Product Options':
                   keyName = 'selected-rows-id_product_option_table'
                   break
+               case 'Recipe':
+                  keyName = 'selected-rows-id_recipe_table'
+                  break
+               case 'Product':
+                  keyName = 'selected-rows-id_product_table'
+                  break
+               default:
+                  keyName = 'selected-rows-id_ingredients_table'
             }
+            // remove selected rows ids after delete
             localStorage.removeItem(keyName)
          }
          handleOnUpdate()
          setBulkActions({})
          setInputValue('')
          setShowPopup(false)
+         setSelectedRows([])
       } else {
          setIsValid(true)
          console.log('invalid')

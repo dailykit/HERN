@@ -64,7 +64,7 @@ export const UserProvider = ({ children }) => {
    const { loading, data: { customer = {} } = {} } = useSubscription(
       CUSTOMER.DETAILS,
       {
-         skip: session?.user?.id || !keycloakId || !brand.id,
+         skip: !session?.user?.id || !keycloakId || !brand.id,
          fetchPolicy: 'network-only',
          variables: {
             keycloakId,
@@ -152,12 +152,15 @@ export const UserProvider = ({ children }) => {
    React.useEffect(() => {
       if (!loadingSession) {
          if (session?.user?.id) {
+            //login
             setKeycloakId(session?.user?.id)
             dispatch({
                type: 'SET_USER',
                payload: { keycloakId: session?.user?.id },
             })
+            setIsLoading(false)
          } else {
+            //logout
             dispatch({ type: 'CLEAR_USER' })
             setIsLoading(false)
          }

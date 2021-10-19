@@ -442,3 +442,21 @@ export const UPSERT_BRAND_CUSTOMER = gql`
       }
    }
 `
+export const CREATE_CART_ITEMS = gql`
+   mutation CREATE_CART_ITEMS($objects: [order_cartItem_insert_input!]!) {
+      createCartItems(objects: $objects) {
+         returning {
+            id
+         }
+      }
+   }
+`
+export const DELETE_CART_ITEMS = gql`
+   mutation DELETE_CART_ITEMS($where: order_cartItem_bool_exp!) {
+      deleteCartItems(where: $where) {
+         returning {
+            id
+         }
+      }
+   }
+`

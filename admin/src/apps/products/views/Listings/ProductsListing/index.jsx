@@ -53,6 +53,7 @@ import { DeleteIcon } from '../../../../../shared/assets/icons'
 import FilterIcon from '../../../assets/icons/Filter'
 import { ModifiersProvider } from './context/modifier'
 import { PublishIcon, UnPublishIcon } from '../../../assets/icons'
+import CreateProduct from '../../../../../shared/CreateUtils/Product/createProduct'
 const address = 'apps.menu.views.listings.productslisting.'
 
 //currencies
@@ -71,6 +72,7 @@ const ProductsListing = () => {
    const tableRefPO = React.useRef()
    const [view, setView] = React.useState('simple')
    const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
+
    const [selectedRows, setSelectedRows] = React.useState([])
    const [isProductOptionTableVisible, setIsProductOptionTableVisible] =
       React.useState(false)
@@ -137,6 +139,7 @@ const ProductsListing = () => {
                         close={closeTunnel}
                         selectedRows={selectedRows}
                         removeSelectedRow={removeSelectedRow}
+                        setSelectedRows={setSelectedRows}
                      />
                   </ModifiersProvider>
                ) : (
@@ -150,7 +153,7 @@ const ProductsListing = () => {
             </Tunnel>
             <Tunnel layer={2}></Tunnel>
             <Tunnel layer={3}>
-               <ProductTypeTunnel close={closeTunnel} />
+               <CreateProduct close={closeTunnel} />
             </Tunnel>
          </Tunnels>
 
@@ -246,6 +249,7 @@ class DataTable extends React.Component {
       this.handleMultipleRowSelection =
          this.handleMultipleRowSelection.bind(this)
       this.tableRef = React.createRef()
+      this.optionTableRef = React.createRef()
       this.handleRowSelection = this.handleRowSelection.bind(this)
    }
 
@@ -276,6 +280,7 @@ class DataTable extends React.Component {
          }
       )
    }
+
    newColumns = [
       {
          title: 'Product ID',
@@ -345,6 +350,7 @@ class DataTable extends React.Component {
          JSON.stringify(this.props.selectedRows.map(row => row.id))
       )
    }
+
    removeSelectedRow = id => {
       if (this.props.isProductOptionTableVisible) {
          this.optionTableRef.current.removeSelectedRow(id)
@@ -352,6 +358,7 @@ class DataTable extends React.Component {
       }
       this.tableRef.current.table.deselectRow(id)
    }
+
    handleGroupBy = value => {
       this.setState(
          {
@@ -366,6 +373,7 @@ class DataTable extends React.Component {
    clearHeaderFilter = () => {
       this.tableRef.current.table.clearHeaderFilter()
    }
+
    selectRows = () => {
       const productGroup = localStorage.getItem(
          `tabulator-${this.props.view}_product_table-group`
@@ -411,12 +419,14 @@ class DataTable extends React.Component {
          this.props.setSelectedRows(newArr)
       }
    }
+
    removeSelectedProducts = () => {
       this.setState({ checked: false })
       this.props.setSelectedRows([])
       this.tableRef.current.table.deselectRow()
       localStorage.setItem('selected-rows-id_product_table', JSON.stringify([]))
    }
+
    downloadCsvData = () => {
       this.tableRef.current.table.download(
          'csv',
@@ -443,6 +453,7 @@ class DataTable extends React.Component {
       localStorage.removeItem('tabulator-simple_product_table-sort')
       localStorage.removeItem('tabulator-simple_product_table-filter')
       localStorage.removeItem('tabulator-simple_product_table-group')
+      this.removeSelectedProducts()
    }
 
    productType = `${this.props.view} product`
@@ -459,7 +470,9 @@ class DataTable extends React.Component {
          localStorage.removeItem('tabulator-combo_product_table-filter')
          localStorage.removeItem('tabulator-combo_product_table-group')
       }
+      this.removeSelectedProducts()
    }
+
    render() {
       const selectionColumn =
          this.props.selectedRows.length > 0 &&
@@ -673,7 +686,6 @@ const ActionBar = ({
       const productGroup = localStorage.getItem(
          `tabulator-${title}_table-group`
       )
-
       const productGroupParse =
          productGroup !== undefined &&
          productGroup !== null &&
@@ -1103,6 +1115,7 @@ const ProductOptions = forwardRef(
          localStorage.removeItem('tabulator-product_option_table-sort')
          localStorage.removeItem('tabulator-product_option_table-filter')
          localStorage.removeItem('tabulator-Product_Option_table-group')
+         removeSelectedProducts()
       }
       const downloadCsvData = () => {
          tableRef.current.table.download('csv', 'product_option_table.csv')
@@ -1143,7 +1156,6 @@ const ProductOptions = forwardRef(
                  headerSort: false,
                  frozen: true,
               }
-
       return (
          <>
             <ActionBar
