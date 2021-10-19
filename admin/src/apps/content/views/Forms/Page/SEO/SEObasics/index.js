@@ -123,9 +123,9 @@ const SEObasics = ({ routeName }) => {
                 brandPageSettingId: 1,
             },
         })
-    })
+    }, [])
 
-    if (loading || metaDetailsLoading) return <InlineLoader />
+    if (metaDetailsLoading) return <InlineLoader />
 
     const onChangeHandler = e => {
         const { name, value } = e.target
