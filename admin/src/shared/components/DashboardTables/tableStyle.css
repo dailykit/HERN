@@ -16,9 +16,10 @@
 .dashboard-table .tabulator-header {
    height: 40px;
 }
-.tabulator-col .tabulator-col {
+.dashboard-table .tabulator-header .tabulator-col {
    background-color: #ffffff !important;
 }
 .dashboard-table .tabulator-headers {
    padding-top: 3px;
+   background-color: #ffffff;
 }
