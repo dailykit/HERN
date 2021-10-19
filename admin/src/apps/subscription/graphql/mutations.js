@@ -100,6 +100,19 @@ export const INSERT_SUBSCRIPTION = gql`
       }
    }
 `
+export const INSERT_SUBSCRIPTIONS = gql`
+   mutation insertSubscriptions(
+      $objects: [subscription_subscriptionTitle_insert_input!]!
+   ) {
+      insert_subscription_subscriptionTitle(objects: $objects) {
+         affected_rows
+         returning {
+            id
+            title
+         }
+      }
+   }
+`
 
 export const INSERT_SUBSCRIPTION_ZIPCODES = gql`
    mutation insertSubscriptionZipcodes(

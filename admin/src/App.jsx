@@ -30,7 +30,6 @@ import {
 import DashboardCards from './shared/components/DashboardCardAnalytics'
 import { useAuth } from './shared/providers'
 import DashboardTables from './shared/components/DashboardTables'
-
 import { useLocation } from 'react-router-dom'
 import DashboardRightPanel from './shared/components/DashboardRightPanel'
 import DashboardWeeklyAnalysis from './shared/components/dashboardWeeklyAnalysis'
@@ -109,13 +108,13 @@ const App = () => {
    const { pathname } = useLocation()
    const { loading, data: { apps = [] } = {} } = useSubscription(APPS)
    const { user } = useAuth()
-   const [open, setOpen] = React.useState(false)
 
    if (loading) return <Loader />
    return (
       <Layout>
          <TabBar />
          <Sidebar />
+
          <main>
             <Switch>
                <Route path="/" exact>

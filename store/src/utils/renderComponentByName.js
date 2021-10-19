@@ -80,7 +80,12 @@ const Inventory = dynamic(() =>
 const PlacingOrder = dynamic(() =>
    import('../sections/placing-order').then(promise => promise.PlacingOrder)
 )
-
+const OnDemandOrder = dynamic(() =>
+   import('../sections/order').then(promise => promise.OnDemandOrder)
+)
+const OnDemandCart = dynamic(() =>
+   import('../sections/cart').then(promise => promise.OnDemandCart)
+)
 export const renderComponentByName = (componentName, options) => {
    const getProps = component => {
       if (options) {
@@ -232,6 +237,18 @@ export const renderComponentByName = (componentName, options) => {
       */
       case 'StepsNavbar':
          return <StepsNavbar />
+
+      /* ROUTE :
+      [brand]/order
+      */
+      case 'OnDemandOrder':
+         return <OnDemandOrder />
+
+      /*ROUTE :
+      [brand]/cart
+       */
+      case 'OnDemandCart':
+         return <OnDemandCart />
       default:
          return null
    }
