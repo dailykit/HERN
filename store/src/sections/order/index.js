@@ -11,6 +11,7 @@ import { useQuery } from '@apollo/react-hooks'
 import _ from 'lodash'
 import { CartContext, onDemandMenuContext } from '../../context'
 import { PRODUCTS } from '../../graphql'
+import classNames from 'classnames'
 
 const datas = {
    id: 1080,
@@ -356,7 +357,11 @@ export const OnDemandOrder = () => {
    return (
       <>
          <div className="hern-on-demand-order-container">
-            <div className="hern-on-demand-page">
+            <div
+               className={classNames('hern-on-demand-page', {
+                  'hern-on-demand-page-pop-up--active': productModifier,
+               })}
+            >
                <div className="hern-on-demand-page-content">
                   {hydratedMenu.map((eachCategory, index) => {
                      return (
@@ -378,6 +383,11 @@ export const OnDemandOrder = () => {
                                           : false
                                     }
                                     customAreaComponent={CustomArea}
+                                    showModifier={
+                                       productModifier &&
+                                       productModifier.id === eachProduct.id
+                                    }
+                                    closeModifier={closeModifier}
                                  />
                               )
                            })}
@@ -391,13 +401,13 @@ export const OnDemandOrder = () => {
                   cartState.cart?.products?.aggregate?.count !== 0 && (
                      <BottomCartBar />
                   )}
-               {productModifier && (
+               {/* {productModifier && (
                   <ModifierPopup
                      productData={productModifier}
                      closeModifier={closeModifier}
                      height={productModifier ? '100%' : '0'}
                   />
-               )}
+               )} */}
             </div>
          </div>
       </>

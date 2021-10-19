@@ -345,6 +345,7 @@ export const ModifierPopup = props => {
                      showImage={false}
                      showCustomText={false}
                      customAreaComponent={CustomArea}
+                     showModifier={false}
                   />
                </div>
                <div className="hern-product-modifier-pop-up-product-option-list">

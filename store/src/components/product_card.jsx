@@ -2,6 +2,8 @@ import React from 'react'
 import { Slide } from 'react-slideshow-image'
 import 'react-slideshow-image/dist/styles.css'
 import { formatCurrency } from '../utils'
+import { ModifierPopup } from './index'
+
 export const ProductCard = props => {
    const {
       data,
@@ -23,6 +25,8 @@ export const ProductCard = props => {
       onShowImageIconClick,
       showCustomText = true,
       customAreaComponent: CustomAreaComponent,
+      showModifier = false,
+      closeModifier,
    } = props
 
    const slideRef = React.useRef()
@@ -136,7 +140,7 @@ export const ProductCard = props => {
                   )}
                   {showProductAdditionalText && (
                      <div className="hern-product-card__additional-text">
-                        {data.description}
+                        {data.additionalText}
                      </div>
                   )}
                </div>
@@ -148,6 +152,13 @@ export const ProductCard = props => {
                </div>
             </div>
          </div>
+         {showModifier && data && (
+            <ModifierPopup
+               productData={data}
+               closeModifier={closeModifier}
+               height={data ? '100%' : '0'}
+            />
+         )}
       </>
    )
 }
