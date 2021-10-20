@@ -277,7 +277,7 @@ const PageForm = () => {
                <div className="styleTab">
                   <HorizontalTabList>
                      <HorizontalTab>Details</HorizontalTab>
-                     <HorizontalTab>Page Preview Meta data</HorizontalTab>
+                     <HorizontalTab>SEO Tools</HorizontalTab>
                   </HorizontalTabList>
                </div>
                <HorizontalTabPanels>
