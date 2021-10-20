@@ -34,11 +34,11 @@ const OrdersAccounts = () => {
                   cart.loyaltyPointTransactions.amountRedeemed
                cart.created_at = moment(cart.created_at).format('ll')
                cart.customerFullName =
-                  (cart.customerInfo.customerFirstName || 'N/A') +
+                  (cart.customerInfo?.customerFirstName || 'N/A') +
                   ' ' +
-                  cart.customerInfo.customerLastName
-               cart.customerEmail = cart.customerInfo.customerEmail
-               cart.customerPhone = cart.customerInfo.customerPhone
+                  cart.customerInfo?.customerLastName
+               cart.customerEmail = cart.customerInfo?.customerEmail
+               cart.customerPhone = cart.customerInfo?.customerPhone
                return cart
             })
             setOrderData(cartData)
