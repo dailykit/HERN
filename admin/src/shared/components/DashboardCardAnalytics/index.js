@@ -8,8 +8,8 @@ import { ErrorState } from '../ErrorState'
 import { InlineLoader } from '../InlineLoader'
 import {
    CustomerIcon,
-   EarningIcon,
-   OrderIcon,
+   RevenueIcon,
+   OrdersIcon,
    ProductIcon,
 } from './assets/icons'
 import { GET_TOTAL_EARNING_ORDER_CUSTOMER_TOP_PRODUCT } from './graphql/subscription'
@@ -59,12 +59,12 @@ const DashboardCards = () => {
       )
    }
    return (
-      <CardContainer bgColor="#F9F9F9" borderColor="#efefef">
+      <CardContainer bgColor="#FFFFFF" borderColor="#efefef">
          <CardContainer.Title>Here's your progress so far</CardContainer.Title>
          <Cards>
             <Card>
                <Card.AdditionalBox justifyContent="space-between">
-                  <EarningIcon />
+                  <RevenueIcon />
                </Card.AdditionalBox>
                <Card.Value currency={currency[get_env('REACT_APP_CURRENCY')]}>
                   {analyticsData.totalEarnings}
@@ -73,7 +73,7 @@ const DashboardCards = () => {
             </Card>
             <Card>
                <Card.AdditionalBox justifyContent="space-between">
-                  <OrderIcon />
+                  <OrdersIcon />
                </Card.AdditionalBox>
                <Card.Value>{analyticsData.totalOrders}</Card.Value>
                <Card.Text>Total No. Of Orders So Far</Card.Text>
@@ -84,16 +84,6 @@ const DashboardCards = () => {
                </Card.AdditionalBox>
                <Card.Value>{analyticsData.totalCustomers}</Card.Value>
                <Card.Text>Total No. Of Customer</Card.Text>
-            </Card>
-            <Card>
-               <Card.AdditionalBox justifyContent="space-between">
-                  <ProductIcon />
-                  <Text as="text2">
-                     {analyticsData.topProduct.orderCount} Times
-                  </Text>
-               </Card.AdditionalBox>
-               <Card.Value string>{analyticsData.topProduct.name}</Card.Value>
-               <Card.Text>Most Sold Product</Card.Text>
             </Card>
          </Cards>
       </CardContainer>
