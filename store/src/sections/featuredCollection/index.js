@@ -1,7 +1,13 @@
 import { useQuery } from '@apollo/react-hooks'
 import classNames from 'classnames'
 import React, { useEffect, useState } from 'react'
-import { Button, ProductCard, Loader } from '../../components'
+import {
+   Button,
+   ProductCard,
+   Loader,
+   OnDemandMenu,
+   Divider,
+} from '../../components'
 import { PRODUCTS_BY_CATEGORY, PRODUCTS } from '../../graphql'
 import { useConfig } from '../../lib'
 export const FeaturedCollection = props => {
@@ -401,7 +407,15 @@ export const FeaturedCollection = props => {
                   'hern-on-demand-page-pop-up--active': productIdForModifier,
                })}
             >
-               <div className="hern-on-demand-page-content">
+               <div
+                  className={classNames('hern-on-demand-page-content', {
+                     'hern-on-demand-page-content--navigationAnchor--active':
+                        config?.informationVisibility?.menuCategories?.menu
+                           ?.value &&
+                        config?.informationVisibility?.menuCategories?.menuType
+                           ?.value?.value === 'navigationAnchorMenu',
+                  })}
+               >
                   {hydratedMenu.map((eachCategory, index) => {
                      return (
                         <div key={index}>
@@ -467,10 +481,20 @@ export const FeaturedCollection = props => {
                                  />
                               )
                            })}
+                           <Divider />
                         </div>
                      )
                   })}
                </div>
+               {config?.informationVisibility?.menuCategories?.menu?.value && (
+                  <OnDemandMenu
+                     categories={menuData.categories}
+                     menuType={
+                        config?.informationVisibility?.menuCategories?.menuType
+                           ?.value?.value
+                     }
+                  />
+               )}
             </div>
          </div>
       </>

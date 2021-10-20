@@ -363,7 +363,11 @@ export const OnDemandOrder = () => {
                   'hern-on-demand-page-pop-up--active': productModifier,
                })}
             >
-               <div className="hern-on-demand-page-content">
+               <div
+                  className={classNames('hern-on-demand-page-content', {
+                     'hern-on-demand-page-content--navigationAnchor--active': false,
+                  })}
+               >
                   {hydratedMenu.map((eachCategory, index) => {
                      return (
                         <div key={index}>
@@ -397,7 +401,7 @@ export const OnDemandOrder = () => {
                      )
                   })}
                </div>
-               <OnDemandMenu />
+               <OnDemandMenu categories={categories} />
                {cartState &&
                   cartState.cart?.products?.aggregate?.count !== 0 && (
                      <BottomCartBar />
