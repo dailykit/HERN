@@ -1164,7 +1164,8 @@ query BRAND_PAGE($domain: String!, $route: String!) {
          where: { isHidden: { _eq: false } }
       ) {
          id
-         name
+         internalModuleIdentifier
+         config
          moduleType
          isHidden
          fileId

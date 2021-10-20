@@ -1,7 +1,7 @@
 import React from 'react'
 import gql from 'graphql-tag'
 import Loadable from 'react-loadable'
-import { Loader } from '@dailykit/ui'
+import { Loader, Spacer } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 import { Switch, Route, Link } from 'react-router-dom'
 import FullOccurrenceReport from './shared/components/FullOccurrenceReport'
@@ -24,15 +24,15 @@ import {
    NavMenuPanel,
    HomeContainer,
    WelcomeNote,
+   DashboardRight,
 } from './styled'
 
 import DashboardCards from './shared/components/DashboardCardAnalytics'
 import { useAuth } from './shared/providers'
 import DashboardTables from './shared/components/DashboardTables'
 import { useLocation } from 'react-router-dom'
-
-
-
+import DashboardRightPanel from './shared/components/DashboardRightPanel'
+import DashboardWeeklyAnalysis from './shared/components/dashboardWeeklyAnalysis'
 const APPS = gql`
    subscription apps {
       apps(order_by: { id: asc }) {
@@ -119,43 +119,23 @@ const App = () => {
    return (
       <Layout>
          <TabBar />
-         {/* <AppList open={open}>
-            {appIcons.data.map(app => (
-               <AppItem
-                  active={app.title === 'Home'}
-                  key={app.id}>
-                  <Link to={app.path}>
-                     <AppIcon>{app.icon}</AppIcon>
-                     <span>{app.title}</span>
-                  </Link>
-               </AppItem>  
-            ))}
-         </AppList> */}
-         {/* <Sidebar /> */}
+         <Sidebar />
+
          <main>
             <Switch>
                <Route path="/" exact>
                   <Banner id="app-home-top" />
                   <HomeContainer>
                      <DashboardPanel>
-                        <WelcomeNote>
-                           <p>
-                              Welcome Back {user?.name || 'user'}
-                              <span>👋</span>
-                           </p>
-                        </WelcomeNote>
                         <DashboardCards />
                         <DashboardTables />
-                        {/* <InsightDiv>
-                     <InsightDashboard
-                        appTitle="global"
-                        moduleTitle="dashboard"
-                        includeChart
-                        showInTunnel={false}
-                     />
-                  </InsightDiv> */}
+                        <DashboardWeeklyAnalysis />
                      </DashboardPanel>
+                     <DashboardRight>
+                        <DashboardRightPanel />
+                     </DashboardRight>
                   </HomeContainer>
+                  <Spacer yaxis size='70px' />
                   <Banner id="app-home-bottom" />
                </Route>
                <Route path="/inventory" component={Inventory} />
@@ -175,7 +155,7 @@ const App = () => {
             </Switch>
          </main>
          {/* {!isKeycloakSupported() && <RedirectBanner />} */}
-      
+
       </Layout>
    )
 }

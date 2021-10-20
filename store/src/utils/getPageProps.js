@@ -24,7 +24,7 @@ export const getPageProps = async (params, route) => {
    //Navigation Menu
    const navigationMenu = await client.request(NAVIGATION_MENU, {
       navigationMenuId:
-         dataByRoute.brands_brandPages[0]['brands']['navigationMenuId'],
+         dataByRoute.brands_brandPages[0]['brand']['navigationMenuId'],
    })
    const navigationMenus = navigationMenu.brands_navigationMenuItem
 
