@@ -7,6 +7,7 @@ import { CloseIcon, CheckBoxIcon } from '../assets/icons'
 import { useOnClickOutside } from '../utils/useOnClickOutisde'
 import { CartContext } from '../context'
 import { CounterButton } from './counterBtn'
+import classNames from 'classnames'
 
 export const ModifierPopup = props => {
    const {
@@ -328,14 +329,25 @@ export const ModifierPopup = props => {
          setProductOption(null)
       }
    }, [])
+
+   useEffect(() => {
+      if (productData) {
+         document.querySelector('body').style.overflowY = 'hidden'
+      }
+      return () => {
+         document.querySelector('body').style.overflowY = 'auto'
+      }
+   }, [productData])
    if (status === 'loading') {
       return <p>Loading</p>
    }
    return (
       <>
          <div
-            className="hern-product-modifier-pop-up-container"
-            style={{ height: `${productData ? '168vh' : '0'}` }}
+            className={classNames('hern-product-modifier-pop-up-container', {
+               'hern-product-modifier-pop-up-container--show-modifier-pop-up':
+                  productData,
+            })}
          >
             <div className="hern-product-modifier-pop-up-product">
                <div className="hern-product-modifier-pop-up-product-details">

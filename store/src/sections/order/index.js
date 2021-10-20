@@ -6,6 +6,7 @@ import {
    Divider,
    ModifierPopup,
    Button,
+   Loader,
 } from '../../components'
 import { useQuery } from '@apollo/react-hooks'
 import _ from 'lodash'
@@ -352,7 +353,7 @@ export const OnDemandOrder = () => {
       return <p>Error</p>
    }
    if (isMenuLoading || status === 'loading' || productsLoading) {
-      return <p>loading</p>
+      return <Loader />
    }
    return (
       <>
