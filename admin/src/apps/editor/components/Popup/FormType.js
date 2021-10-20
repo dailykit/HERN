@@ -7,6 +7,12 @@ import {
    Loader,
    ButtonGroup,
    IconButton,
+   Tunnels,
+   Tunnel,
+   TunnelHeader,
+   useTunnel,
+   InfoIcon,
+   PlusIcon,
 } from '@dailykit/ui'
 import { Popup, AssetUploader } from '../../../../shared/components'
 import { get_env } from '../../../../shared/utils'
@@ -39,6 +45,7 @@ export default function FormType({
    const [selected, setSelected] = React.useState(null)
    const [treeViewNodes, setTreeViewNodes] = React.useState([])
    const [active, setActive] = React.useState(false)
+   const [popupTunnels, openPopupTunnel, closePopupTunnel] = useTunnel(1)
    const nodePathRef = React.useRef('')
    const { loading: isIdLoading } = useQuery(GET_FILE_ID, {
       skip: !pathName,
@@ -283,38 +290,43 @@ export default function FormType({
                      </div>
                   ) : (
                      <ButtonGroup>
-                        <TextButton
+                        <IconButton
                            type="solid"
-                           onClick={() => setActive(true)}
+                           onClick={() => openPopupTunnel(1)}
                         >
-                           Upload
-                        </TextButton>
+                           <PlusIcon color="#fff"></PlusIcon>
+                        </IconButton>
                      </ButtonGroup>
                   )}
 
-                  {active && (
-                     <Popup size="460px" show={show}>
+                  <Tunnels tunnels={popupTunnels}>
+                     <Tunnel size="460px" popup={true} layer={1}>
+                        <TunnelHeader
+                           title="Select an image"
+                           tooltip={<InfoIcon color="a4a4a4" />}
+                           close={() => closePopupTunnel(1)}
+                        />
                         <AssetUploader
                            onImageSelect={data => {
-                              setActive(false)
+                              closePopupTunnel(1)
                               setIconUrl(data.url)
                            }}
                            onAssetUpload={data => {
-                              setActive(false)
+                              closePopupTunnel(1)
                               setIconUrl(data.url)
                            }}
                         ></AssetUploader>
-                     </Popup>
-                  )}
+                     </Tunnel>
+                  </Tunnels>
                </Form.Group>
                <Spacer size="16px" />
                <Flex container justifyContent="flex-end">
                   <ButtonGroup>
-                     <TextButton type="solid" onClick={mutationFunc}>
-                        Save
-                     </TextButton>
                      <TextButton type="ghost" onClick={cancelPopupHandler}>
                         Cancel
+                     </TextButton>
+                     <TextButton type="solid" onClick={mutationFunc}>
+                        Save
                      </TextButton>
                   </ButtonGroup>
                </Flex>
