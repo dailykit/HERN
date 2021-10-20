@@ -1,8 +1,8 @@
 import React, {useRef, useState} from 'react';
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import {ACTIVE_EVENTS_WEBHOOKS, DELETE_WEBHOOK_EVENT, GET_EVENT_URL_ADVANCE_CONFIGS } from '../../../../graphql';
+import {ACTIVE_EVENTS_WEBHOOKS, DELETE_WEBHOOK_EVENT } from '../../../../graphql';
 import {logger}  from '../../../../../../shared/utils'
-import {Flex, Text, ButtonGroup, ComboButton, PlusIcon, useTunnel} from '@dailykit/ui';
+import {Flex, Text, ButtonGroup, ComboButton, PlusIcon, useTunnel, Spacer, Dropdown, TextButton} from '@dailykit/ui';
 import { toast } from 'react-toastify'
 import AddWebHook from '../../../../tunnels/addWebhookTunnel';
 import options from '../../../tableOptions'
@@ -31,12 +31,24 @@ const WebhookListing = ()=>{
 
     const [webhookEvents, setWebhookEvents] = useState([])
 
+    const [groupByState, setGroupByState] = useState({'groups': [localStorage.getItem('tabulator-webhook_table-group')]})
+
     
 
     // Query to fetch active webhook events
     const { data, loading, error } = useSubscription(ACTIVE_EVENTS_WEBHOOKS, {
        onSubscriptionData:({ subscriptionData: { data = {} } = {} })=> {
-         setWebhookEvents(data.developer_webhookUrl_events)
+          const eventsData = data.developer_webhookUrl_events.map(item=>{
+             const newData = {
+                "id": item.id,
+                "eventLabel": item.availableWebhookEvent.label,
+                "url": item.webhookUrl.urlEndpoint,
+                "advanceConfig": item.advanceConfig,
+                "headers": item.headers
+             }
+             return newData
+          })
+         setWebhookEvents(eventsData)
        },
       })
 
@@ -51,12 +63,12 @@ const WebhookListing = ()=>{
 
 
    const rowClick = (e, cell) => {
-      
+
       const { id } = cell._cell.row.data
-      const webhookUrl_EventLabel = cell._cell.row.data.availableWebhookEvent.label
-      const webhookUrlEndpoint = cell._cell.row.data.webhookUrl.urlEndpoint
-      const advanceConfig = cell._cell.row.data.webhookUrl.advanceConfig
-      const headers = cell._cell.row.data.webhookUrl.headers
+      const webhookUrl_EventLabel = cell._cell.row.data.eventLabel
+      const webhookUrlEndpoint = cell._cell.row.data.url
+      const advanceConfig = cell._cell.row.data.advanceConfig
+      const headers = cell._cell.row.data.headers
       const headers_list = []
       for (const header in headers){
          headers_list.push({
@@ -101,7 +113,7 @@ const WebhookListing = ()=>{
        
       {
          title: 'Events',
-         field: 'availableWebhookEvent.label',
+         field: 'eventLabel',
          headerFilter: true,
          hozAlign: 'left',
          resizable:true,
@@ -140,7 +152,7 @@ const WebhookListing = ()=>{
       },
       {
          title: 'Url',
-         field: 'webhookUrl.urlEndpoint',
+         field: 'url',
          headerFilter: true,
          hozAlign: 'left',
          resizable:true,
@@ -149,6 +161,63 @@ const WebhookListing = ()=>{
          headerTooltip: true
       }
    ]
+
+   const groupByOptions = [
+      { id: 1, title: 'Events', payload: 'eventLabel' },
+      { id: 2, title: 'Url', payload: 'url' },
+   ]
+
+   const handleGroupBy = value => {
+      setGroupByState(
+         {
+            groups: value,
+         }
+      )
+      tableRef.current.table.setGroupBy(value)
+   }
+
+   const dataLoaded = () => {
+      const webhookGroup = localStorage.getItem(
+         'tabulator-webhook_table-group'
+      )
+      const webhookGroupParse =
+         webhookGroup !== undefined &&
+         webhookGroup !== null &&
+         webhookGroup.length !== 0
+            ? JSON.parse(webhookGroup)
+            : null
+      tableRef.current.table.setGroupBy(
+         webhookGroupParse !== null && webhookGroupParse.length > 0
+            ? webhookGroupParse
+            : []
+      )
+
+      tableRef.current.table.setGroupHeader(function (
+         value,
+         count,
+         data1,
+         group
+      ) {
+         let newHeader
+         console.log('group header', group._group.field)
+         switch (group._group.field) {
+            case 'eventLabel':
+               newHeader = 'Events'
+               break
+            case 'url':
+               newHeader = 'Endpoint Urls'
+               break
+            default:
+               break
+         }
+         return `${newHeader} - ${value} || ${count} Webhooks`
+      })
+   }
+
+   const clearWebhookPersistance = () => {
+      localStorage.removeItem('tabulator-webhook_table-group')
+      tableRef.current.table.setGroupBy([])
+   }
 
     return (
        <Wrapper>
@@ -172,9 +241,17 @@ const WebhookListing = ()=>{
                         </ComboButton>
                      </ButtonGroup>
                   </Flex>
+                  <ActionBar
+                     title="webhook"
+                     groupByOptions={groupByOptions}
+                     handleGroupBy={handleGroupBy}
+                     clearPersistance={clearWebhookPersistance}
+                  />
                   {Boolean(webhookEvents) && (
                      <ReactTabulator
+                     ref={tableRef}
                         columns={columns}
+                        dataLoaded={dataLoaded}
                         data={webhookEvents}
                         options={{
                            ...options,
@@ -183,7 +260,7 @@ const WebhookListing = ()=>{
                            reactiveData: true,
                            selectable: true,
                         }}
-                        ref={tableRef}
+                        
                         className = 'developer-webhooks'
                      />
                   )}
@@ -191,6 +268,71 @@ const WebhookListing = ()=>{
 
     )
 
+}
+
+const ActionBar = ({
+   title,
+   groupByOptions,
+   handleGroupBy,
+   clearPersistance})=>{
+   
+      const defaultIDs = () => {
+         let arr = []
+         const webhookGroup = localStorage.getItem(
+            'tabulator-webhook_table-group'
+         )
+         const webhookGroupParse =
+            webhookGroup !== undefined &&
+            webhookGroup !== null &&
+            webhookGroup.length !== 0
+               ? JSON.parse(webhookGroup)
+               : null
+         if (webhookGroupParse !== null) {
+            console.log(webhookGroupParse, "yo")
+            webhookGroupParse.forEach(x => {
+               const foundGroup = groupByOptions.find(y => y.payload == x)
+               arr.push(foundGroup.id)
+            })
+         }
+         return arr.length == 0 ? [] : arr
+      }
+
+      const selectedOption = option => {
+         localStorage.setItem(
+            'tabulator-webhook_table-group',
+            JSON.stringify(option.map(val => val.payload))
+         )
+         const newOptions = option.map(x => x.payload)
+         handleGroupBy(newOptions)
+      }
+
+      const searchedOption = option => console.log(option)
+
+      return (
+         <Flex container alignItems="center">
+            <Text as="text1">Group By:</Text>
+            <Spacer size="30px" xAxis />
+            <Dropdown
+               type="multi"
+               variant="revamp"
+               disabled={true}
+               options={groupByOptions}
+               searchedOption={searchedOption}
+               selectedOption={selectedOption}
+               defaultIds={defaultIDs()}
+               typeName="cuisine"
+            />
+            <TextButton
+                     onClick={() => {
+                        clearPersistance()
+                     }}
+                     type="ghost"
+                     size="sm"
+                  >
+                     Clear Persistence
+                  </TextButton>
+         </Flex>
+      )
 }
 
 export default WebhookListing

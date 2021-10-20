@@ -1,8 +1,7 @@
 const options = {
     cellVertAlign: 'middle',
-    // layout: 'fitColumns',
     autoResize: true,
-    maxHeight: 420,
+    maxHeight: 500,
     virtualDomBuffer: 80,
     placeholder: 'No Data Available',
     index: 'id',
@@ -10,7 +9,7 @@ const options = {
     persistenceMode: 'local',
     selectablePersistence: true,
     persistence: {
-       group: true,
+       group: false,
        sort: true, //persist column sorting
        filter: true, //persist filter sorting
        page: true, //persist page
