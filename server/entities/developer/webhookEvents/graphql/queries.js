@@ -21,6 +21,7 @@ export const FETCH_PROCESSED_WEBHOOK_BY_URL = `query FETCH_PROCESSED_WEBHOOK_BY_
   developer_processedWebhookEventsByUrl(where: {processedWebhookEventsId: {_eq: $processedWebhookEventId}}) {
     webhookUrl_event {
       advanceConfig
+      headers
     }
     urlEndPoint
     id

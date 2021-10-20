@@ -104,8 +104,8 @@ export const handleIsActiveEventTrigger = async (req , res) => {
         .json({ success: false, message: `request failed` })}
 }
 
-const retrySendingPayload = async(processedWebhookEventsByUrlId , webhookUrl_eventsId , urlEndPoint , payload , numberOfRetries , retryInterval , leftOutTime) => {
-    var res= await sendPayloadToUrlEndpoint(urlEndPoint , payload , leftOutTime)
+const retrySendingPayload = async(processedWebhookEventsByUrlId , webhookUrl_eventsId , urlEndPoint, headers , payload , numberOfRetries , retryInterval , leftOutTime) => {
+    var res= await sendPayloadToUrlEndpoint(urlEndPoint, headers , payload , leftOutTime)
     var response = {"status":res.status,"body":res.body,"headers":res.headers,"message":res.message,"data":res.data}
     // here the response will be added to invocation logs 
     insertInInvocationLogs(payload , response, processedWebhookEventsByUrlId , webhookUrl_eventsId )
@@ -113,16 +113,17 @@ const retrySendingPayload = async(processedWebhookEventsByUrlId , webhookUrl_eve
         return res ;
     }
     var numberOfRetries = numberOfRetries - 1
-    setTimeout(()=> { retrySendingPayload(processedWebhookEventsByUrlId, webhookUrl_eventsId, urlEndPoint , payload , numberOfRetries , retryInterval  , leftOutTime) }, retryInterval*1000) 
+    setTimeout(()=> { retrySendingPayload(processedWebhookEventsByUrlId, webhookUrl_eventsId, urlEndPoint, headers , payload , numberOfRetries , retryInterval  , leftOutTime) }, retryInterval*1000) 
     
 }
 
-const sendPayloadToUrlEndpoint =  async (urlEndPoint , payload  , timeout) => {
+const sendPayloadToUrlEndpoint =  async (urlEndPoint, headers , payload  , timeout) => {
     try{
        const res = await axios({
             url : urlEndPoint ,
             method : 'POST' , 
             data : payload , 
+            headers : headers,
             timeout : timeout*1000
         })
         return res
@@ -136,11 +137,12 @@ const postpayload = async(i , webhookUrlArray , payload) =>{ // create a unique 
     var k = i
     var timeout = webhookUrlArray[k].webhookUrl_event.advanceConfig.timeOut
     var urlEndPoint = webhookUrlArray[k].urlEndPoint
+    var headers = webhookUrlArray[k].webhookUrl_event.headers
     var processedWebhookEventsByUrlId = webhookUrlArray[k].id
     var webhookUrl_eventsId = webhookUrlArray[k].webhookUrl_eventsId
     var retryInterval = webhookUrlArray[k].webhookUrl_event.advanceConfig.retryInterval
     var numberOfRetries = webhookUrlArray[k].webhookUrl_event.advanceConfig.numberOfRetries
-    retrySendingPayload(processedWebhookEventsByUrlId , webhookUrl_eventsId ,urlEndPoint , payload , numberOfRetries ,  retryInterval , timeout*1000) 
+    retrySendingPayload(processedWebhookEventsByUrlId , webhookUrl_eventsId ,urlEndPoint, headers , payload , numberOfRetries ,  retryInterval , timeout*1000) 
 }
 
 const insertInInvocationLogs = async(payloadSent , response , processedWebhookEventsByUrlId , webhookUrl_EventsId) =>{
@@ -185,7 +187,7 @@ const handleEvents = {
                                    "name": tableName,
                                    "schema":schemaName
                                 },
-                                "webhook": "http://89f8-111-223-3-62.ngrok.io/server/api/developer/webhookEvents/processWebhookEvents",
+                                "webhook": "http://0245-111-223-3-62.ngrok.io/server/api/developer/webhookEvents/processWebhookEvents",
                                 "insert": {
                                     "columns": "*",
                                     "payload": "*"
@@ -223,7 +225,7 @@ const handleEvents = {
                                    "name": tableName,
                                    "schema":schemaName
                                 },
-                                "webhook": "http://89f8-111-223-3-62.ngrok.io/server/api/developer/webhookEvents/processWebhookEvents",
+                                "webhook": "http://0245-111-223-3-62.ngrok.io/server/api/developer/webhookEvents/processWebhookEvents",
                                 "insert": {
                                     "columns": "*",
                                     "payload": "*"
