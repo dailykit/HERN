@@ -7,8 +7,7 @@ import { toast } from 'react-toastify'
 import { StyledWrapper } from './styled'
 import { logger } from '../../../../../../../shared/utils'
 import { Tooltip, Row, Col, Typography, Card, Form, Input, Button } from 'antd'
-import { useTabs } from '../../../../../../../shared/providers'
-import { SEO_DETAILS, UPDATE_BRANDS_SEO } from '../../../../../graphql'
+import { SEO_DETAILS, UPSERT_BRANDS_SEO } from '../../../../../graphql'
 import BrandContext from '../../../../../context/Brand'
 import { InfoCircleOutlined } from '@ant-design/icons'
 
@@ -82,12 +81,12 @@ const SEObasics = ({ routeName }) => {
         })
     }, [])
     // Mutation for update seo meta data
-    const [updateSEODetails] = useMutation(UPDATE_BRANDS_SEO, {
+    const [updateSEODetails] = useMutation(UPSERT_BRANDS_SEO, {
         onCompleted: () => {
             toast.success('Updated!')
         },
         onError: error => {
-            toast.error('Something went wrong with UPDATE_BRANDS_SEO')
+            toast.error('Something went wrong with UPSERT_BRANDS_SEO')
             console.log(error)
             logger(error)
         },
@@ -97,13 +96,15 @@ const SEObasics = ({ routeName }) => {
         console.log("UPDATED", form)
         updateSEODetails({
             variables: {
-                brandPageId: brandPageId,
-                brandPageSettingId: 1,
-                value: {
-                    metaTitle: form.metaTitle.value,
-                    metaDescription: form.metaDescription.value,
-                    favicon: "https://www.dailykit.org/_next/image?url=%2Fassets%2Fimages%2Fdailykit_logo.svg&w=64&q=75"
-                },
+                object: {
+                    brandPageId: brandPageId,
+                    brandPageSettingId: 1,
+                    value: {
+                        metaTitle: form.metaTitle.value,
+                        metaDescription: form.metaDescription.value,
+                        favicon: "https://www.dailykit.org/_next/image?url=%2Fassets%2Fimages%2Fdailykit_logo.svg&w=64&q=75"
+                    },
+                }
             },
         })
     }
