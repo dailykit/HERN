@@ -129,7 +129,6 @@ const App = () => {
                         <DashboardRightPanel />
                      </DashboardRight>
                   </HomeContainer>
-                  <Spacer yaxis size='70px' />
                   <Banner id="app-home-bottom" />
                </Route>
                <Route path="/inventory" component={Inventory} />
