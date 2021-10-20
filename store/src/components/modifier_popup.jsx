@@ -13,7 +13,6 @@ export const ModifierPopup = props => {
       productData,
       showModifiers = true,
       closeModifier,
-      height,
       showCounterBtn = true,
       forNewItem = false,
       edit = false,
@@ -336,7 +335,7 @@ export const ModifierPopup = props => {
       <>
          <div
             className="hern-product-modifier-pop-up-container"
-            style={{ height: height }}
+            style={{ height: `${productData ? '168vh' : '0'}` }}
          >
             <div className="hern-product-modifier-pop-up-product">
                <div className="hern-product-modifier-pop-up-product-details">

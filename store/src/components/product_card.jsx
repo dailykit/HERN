@@ -153,11 +153,7 @@ export const ProductCard = props => {
             </div>
          </div>
          {showModifier && data && (
-            <ModifierPopup
-               productData={data}
-               closeModifier={closeModifier}
-               height={data ? '100%' : '0'}
-            />
+            <ModifierPopup productData={data} closeModifier={closeModifier} />
          )}
       </>
    )

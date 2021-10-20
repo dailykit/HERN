@@ -264,7 +264,6 @@ export const OnDemandCart = () => {
                   forNewItem={popUpType === 'newItem'}
                   edit={popUpType === 'edit'}
                   productCartDetail={cartDetailSelectedProduct}
-                  height={increaseProduct ? '100%' : '0'}
                />
             )}
          </div>
