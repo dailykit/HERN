@@ -350,6 +350,7 @@ const SEObasics = ({ routeName }) => {
                                                     style={{
                                                         width: '170px',
                                                         height: '120px',
+                                                        marginBottom: '10px'
                                                     }}
                                                 />
                                             )}

@@ -222,7 +222,7 @@ export const SocialShare = ({ routeName }) => {
                                     onClick={() => Save()}
                                 >
                                     Save
-                                </Button>,
+                                </Button>
                             ]}
                         >
                             <Form layout="vertical">
@@ -387,6 +387,7 @@ export const SocialShare = ({ routeName }) => {
                                                     style={{
                                                         width: '170px',
                                                         height: '120px',
+                                                        marginBottom: '10px'
                                                     }}
                                                 />
                                             )}
