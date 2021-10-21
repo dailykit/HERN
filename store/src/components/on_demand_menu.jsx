@@ -1,5 +1,6 @@
 import classNames from 'classnames'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { MenuIcon } from '../assets/icons'
 import { onDemandMenuContext } from '../context'
 import { useOnClickOutside } from '../utils/useOnClickOutisde'
 export const OnDemandMenu = props => {
@@ -15,6 +16,15 @@ export const OnDemandMenu = props => {
    // if (isMenuLoading) {
    //    return <p>Loading</p>
    // }
+
+   useEffect(() => {
+      if (showMenuItems === '100%') {
+         document.querySelector('body').style.overflowY = 'hidden'
+      } else {
+         document.querySelector('body').style.overflowY = 'auto'
+      }
+   }, [showMenuItems])
+
    if (menuType && menuType === 'navigationAnchorMenu') {
       return (
          <div className={classNames('hern-on-demand-menu__navigationAnchor')}>
@@ -58,12 +68,14 @@ export const OnDemandMenu = props => {
          </div>
       )
    }
+
    return (
       <>
          <div
             className="hern-on-demand-menu"
             onClick={() => setShowMenuItems('100%')}
          >
+            <MenuIcon />
             <span className="hern-on-demand-menu-title">MENU</span>
          </div>
          {showMenuItems && (
@@ -75,7 +87,18 @@ export const OnDemandMenu = props => {
                   <ul>
                      {categories.map((each, index) => (
                         <li
-                           onClick={() => setShowMenuItems('0')}
+                           onClick={e => {
+                              setShowMenuItems('0')
+                              e.preventDefault()
+                              document
+                                 .getElementById(
+                                    `hern-product-category-${each.name}`
+                                 )
+                                 .scrollIntoView({
+                                    behavior: 'smooth',
+                                    block: 'start',
+                                 })
+                           }}
                            key={'menu-list' + index}
                         >
                            <a href={`#hern-product-category-${each.name}`}>
