@@ -8,6 +8,9 @@ export const StyledWrapper = styled.div`
    border: none;
    box-shadow: none;
 }
+.anticon {
+margin-left:5px;
+}
 .ant-form {
    margin-top: 50px;
 }
@@ -15,10 +18,8 @@ export const StyledWrapper = styled.div`
    display:none;
 }
 div.ant-typography,span.ant-typography{
-   font-weight: 500;
-   padding: 0px;
-   font-size: 16px;
-   color:#555B6E;
+   font-size: 14px;
+   color: #919699;
 }
 .ant-input-wrapper>.ant-input-group-addon{
    font-size: 16px;
@@ -30,10 +31,41 @@ div.ant-typography,span.ant-typography{
    border-radius:4px;
 }
 
-.ant-card-body>p{
+.ant-card-body>.link{
    color: #555B6E;
     font-size: 16px;
     font-weight: 500;
 }
+.ant-card-body>p{
+   color: #555B6E;
+    font-size: 15px;
+    font-weight: 400;
+}
+.ant-modal-content{
+   width: 50%;
+   height: auto;
+}
+`
+export const ImageContainer = styled.div`
+   width: 464px;
+   height: 128px;
+   position: relative;
+   margin-bottom: 16px;
+   img {
+      width: 464px;
+      height: 128px;
+      object-fit: cover;
+   }
+   div {
+      position: absolute;
+      padding: 12px;
+      right: 0;
+      left: 0;
+      text-align: right;
+      span {
+         margin-right: 16px;
+         cursor: pointer;
+      }
+   }
 `
 
