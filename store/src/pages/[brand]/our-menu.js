@@ -18,7 +18,7 @@ const OurMenu = props => {
 
    return (<>
       <Layout settings={settings} navigationMenus={navigationMenus}>
-         <SEO title="our-menu" seoSettings={seoSettings} />
+         <SEO seoSettings={seoSettings} />
          <main className="hern-our-menu">{renderPageContent(folds)}</main>
       </Layout>
    </>

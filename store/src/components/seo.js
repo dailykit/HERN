@@ -4,8 +4,6 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useConfig } from '../lib'
 export const SEO = ({ seoSettings, richresult, children }) => {
-
-
    const { pathname } = useRouter()
    const { favicon } = useConfig().configOf('theme-brand', 'brand')
    //for basic SEO settings 
@@ -21,25 +19,25 @@ export const SEO = ({ seoSettings, richresult, children }) => {
          <link rel="icon" href={basicSEO?.value?.favicon || favicon} type="image/png" />
          <meta property="description" content={basicSEO?.value?.metaDescription || ''} name="description" />
 
-         <meta property="og:title" content={openGraphCard?.value?.metaTitle || basicSEO?.value?.metaTitle} title="og-title" />
+         <meta property="og:title" content={openGraphCard?.value?.ogTitle || basicSEO?.value?.metaTitle} title="og-title" />
          <meta
             property="og:description"
-            content={openGraphCard?.value?.metaDescription || basicSEO?.value?.metaDescription}
+            content={openGraphCard?.value?.ogDescription || basicSEO?.value?.metaDescription}
             title="og-desc"
          />
-         <meta property="og:image" content={openGraphCard?.value?.image || ''} title="og-image" />
+         <meta property="og:image" content={openGraphCard?.value?.ogImage || ''} title="og-image" />
          <meta property="og:type" content="website" />
 
          <meta property="twitter:card" content="summary" />
-         <meta property="twitter:title" content={twitterCard?.value?.metaTitle || openGraphCard?.value?.metaTitle || basicSEO?.value?.metaTitle || ''} title="tw-title" />
+         <meta property="twitter:title" content={twitterCard?.value?.twitterTitle || openGraphCard?.value?.ogTitle || basicSEO?.value?.metaTitle || ''} title="tw-title" />
          <meta
             property="twitter:description"
-            content={twitterCard?.value?.metaDescription || openGraphCard?.value?.metaDescription || basicSEO?.value?.metaDescription || ''}
+            content={twitterCard?.value?.twitterDescription || openGraphCard?.value?.ogDescription || basicSEO?.value?.metaDescription || ''}
             title="tw-desc"
          />
          <meta
             property="twitter:image:src"
-            content={twitterCard?.value?.image || openGraphCard?.value?.image || basicSEO?.value?.metaDescription || ''}
+            content={twitterCard?.value?.twitterImage || openGraphCard?.value?.ogImage || basicSEO?.value?.favicon || ''}
             title="tw-image"
          />
          {richresult && (
