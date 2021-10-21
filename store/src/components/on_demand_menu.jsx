@@ -10,7 +10,7 @@ export const OnDemandMenu = props => {
    const [activeCategory, setActiveCategory] = useState(null)
    const ref = React.useRef()
    useOnClickOutside(ref, () => setShowMenuItems('0'))
-   const { onDemandMenu } = React.useContext(onDemandMenuContext)
+
    // const { isMenuLoading, categories } = onDemandMenu
    // if (isMenuLoading) {
    //    return <p>Loading</p>
@@ -29,8 +29,17 @@ export const OnDemandMenu = props => {
                                  each.name === activeCategory,
                            }
                         )}
-                        onClick={() => {
+                        onClick={e => {
+                           e.preventDefault()
                            setActiveCategory(each.name)
+                           document
+                              .getElementById(
+                                 `hern-product-category-${each.name}`
+                              )
+                              .scrollIntoView({
+                                 behavior: 'smooth',
+                                 block: 'start',
+                              })
                         }}
                         key={'menu-list' + index}
                      >
