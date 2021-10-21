@@ -91,7 +91,13 @@ export const SocialShare = ({ routeName }) => {
 
     // delete image
     const deleteImage = (name, value) => {
-        setForm(node => ({ ...node, [name]: value }))
+        setForm(prev => ({
+            ...prev,
+            [name]: {
+                ...prev[name],
+                value,
+            },
+        }))
     }
 
     const [seoDetails, { loading: metaDetailsLoading, brandsSEO }] =

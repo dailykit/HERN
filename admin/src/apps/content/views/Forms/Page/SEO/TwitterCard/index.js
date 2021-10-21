@@ -81,7 +81,13 @@ export const TwitterCard = ({ routeName }) => {
         closeTunnel1(1)
     }
     const deleteImage = (name, value) => {
-        setForm(node => ({ ...node, [name]: value }))
+        setForm(prev => ({
+            ...prev,
+            [name]: {
+                ...prev[name],
+                value,
+            },
+        }))
     }
 
     const [seoDetails, { loading: metaDetailsLoading, brandsSEO }] =
