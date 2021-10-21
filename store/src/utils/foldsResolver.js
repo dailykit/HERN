@@ -18,6 +18,7 @@ const resolveComponent = fold => {
                component: fold.internalModuleIdentifier,
                moduleType: fold.moduleType,
                position: fold.position,
+               config: fold.config
             })
          }
 
@@ -48,6 +49,7 @@ const resolveComponent = fold => {
                scripts,
                moduleType: fold.moduleType,
                position: fold.position,
+               config: fold.config
             })
          }
 
@@ -82,6 +84,7 @@ const resolveComponent = fold => {
                scripts,
                moduleType: fold.moduleType,
                position: fold.position,
+               config: fold.config
             })
          } else {
             return reject('Failed to load file')

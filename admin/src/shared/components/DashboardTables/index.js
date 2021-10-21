@@ -6,24 +6,19 @@ import { DashboardTableContext, DashboardTableProvider } from './context'
 import { DatePicker, Space } from 'antd'
 import moment from 'moment'
 import RecentOrderTable from './Listings/RecentOrder'
-import SubscribersTable from './Listings/Subscribers'
-import TopCustomerTable from './Listings/TopCustomer'
-import RecipeSummaryApp from './Listings/RecipeSummary'
-import OrderOpportunityTable from './Listings/OrderOpportunity'
-import MenuSummary from './Listings/MenuSummary'
 import 'antd/es/date-picker/style/css'
 const { RangePicker } = DatePicker
 const DashboardTables = () => {
    return (
       <>
-         <DateRangePicker />
+         {/* <DateRangePicker /> */}
          <Tables>
             <RecentOrderTable />
-            <TopCustomerTable />
+            {/* <TopCustomerTable />
             <RecipeSummaryApp />
             <MenuSummary />
             <OrderOpportunityTable />
-            <SubscribersTable />
+            <SubscribersTable /> */}
          </Tables>
       </>
    )
@@ -76,9 +71,10 @@ const DateRangePicker = () => {
    )
 }
 const Tables = styled.div`
-   display: grid;
-   grid-template-columns: 50% 50%;
-   grid-gap: 7px;
-   grid-template-rows: repeat(500px);
+   margin: 20px 0px;
+   // display: grid;
+   // grid-template-columns: 50% 50%;
+   // grid-gap: 7px;
+   // grid-template-rows: repeat(500px);
 `
 export default DashboardProvider

@@ -1166,12 +1166,40 @@ query BRAND_PAGE($domain: String!, $route: String!) {
              path
            }
          }
-         linkedJsFiles {
-           id
-           jsFile {
-             id
-             path
-           }
+   ) {
+      id
+      internalPageName
+      isArchived
+      published
+      route
+      linkedNavigationMenuId
+      brandPageModules(
+         order_by: { position: desc_nulls_last }
+         where: { isHidden: { _eq: false } }
+      ) {
+         id
+         internalModuleIdentifier
+         config
+         moduleType
+         isHidden
+         fileId
+         position
+         subscriptionDivFileId: file {
+            path
+            linkedCssFiles {
+               id
+               cssFile {
+                  id
+                  path
+               }
+            }
+            linkedJsFiles {
+               id
+               jsFile {
+                  id
+                  path
+               }
+            }
          }
        }
      }

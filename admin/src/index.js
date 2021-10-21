@@ -25,6 +25,9 @@ import { get_env } from './shared/utils'
 
 import './global.css'
 
+
+
+
 const languages = ['en', 'fr', 'es', 'he', 'de', 'el', 'hi', 'it']
 
 Sentry.init({

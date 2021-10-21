@@ -11,7 +11,7 @@ const options = {
    persistence: false,
    persistenceMode: 'local',
    selectablePersistence: false,
-   layout: 'fitDataStretch',
+   layout: 'fitColumns',
    resizableColumns: true,
    movableColumns: true,
    tooltips: true,
