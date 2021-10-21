@@ -15,21 +15,21 @@ export const SEO = ({ seoSettings, richresult, children }) => {
 
    return (
       <Head>
-         <title>{basicSEO?.value?.metaTitle || pathname}</title>
+         <title>{basicSEO?.value?.metaTitle || pathname.split('/').slice(-1)}</title>
          <link rel="icon" href={basicSEO?.value?.favicon || favicon} type="image/png" />
          <meta property="description" content={basicSEO?.value?.metaDescription || ''} name="description" />
 
-         <meta property="og:title" content={openGraphCard?.value?.ogTitle || basicSEO?.value?.metaTitle} title="og-title" />
+         <meta property="og:title" content={openGraphCard?.value?.ogTitle || basicSEO?.value?.metaTitle || pathname.split('/').slice(-1)} title="og-title" />
          <meta
             property="og:description"
-            content={openGraphCard?.value?.ogDescription || basicSEO?.value?.metaDescription}
+            content={openGraphCard?.value?.ogDescription || basicSEO?.value?.metaDescription || ''}
             title="og-desc"
          />
-         <meta property="og:image" content={openGraphCard?.value?.ogImage || ''} title="og-image" />
+         <meta property="og:image" content={openGraphCard?.value?.ogImage || favicon} title="og-image" />
          <meta property="og:type" content="website" />
 
          <meta property="twitter:card" content="summary" />
-         <meta property="twitter:title" content={twitterCard?.value?.twitterTitle || openGraphCard?.value?.ogTitle || basicSEO?.value?.metaTitle || ''} title="tw-title" />
+         <meta property="twitter:title" content={twitterCard?.value?.twitterTitle || openGraphCard?.value?.ogTitle || basicSEO?.value?.metaTitle || pathname.split('/').slice(-1)} title="tw-title" />
          <meta
             property="twitter:description"
             content={twitterCard?.value?.twitterDescription || openGraphCard?.value?.ogDescription || basicSEO?.value?.metaDescription || ''}
@@ -37,7 +37,7 @@ export const SEO = ({ seoSettings, richresult, children }) => {
          />
          <meta
             property="twitter:image:src"
-            content={twitterCard?.value?.twitterImage || openGraphCard?.value?.ogImage || basicSEO?.value?.favicon || ''}
+            content={twitterCard?.value?.twitterImage || openGraphCard?.value?.ogImage || basicSEO?.value?.favicon || favicon}
             title="tw-image"
          />
          {richresult && (
