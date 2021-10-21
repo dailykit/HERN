@@ -511,7 +511,9 @@ export const FeaturedCollection = props => {
                      }
                   />
                )}
-               {cartState &&
+               {(config?.informationVisibility?.cart?.bottomCartBar?.value ??
+                  true) &&
+                  cartState &&
                   cartState.cart?.products?.aggregate?.count !== 0 && (
                      <BottomCartBar />
                   )}
