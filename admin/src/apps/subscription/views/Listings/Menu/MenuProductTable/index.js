@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { forwardRef, useImperativeHandle, useState } from 'react'
 import {
    Flex,
    HorizontalTab,
@@ -9,6 +9,11 @@ import {
    Text,
    Filler,
    IconButton,
+   Checkbox,
+   Spacer,
+   ButtonGroup,
+   TextButton,
+   useTunnel,
 } from '@dailykit/ui'
 import moment from 'moment'
 import { toast } from 'react-toastify'
@@ -52,9 +57,41 @@ const MenuProductTables = () => {
       </>
    )
 }
-const MenuProductOccurenceTable = () => {
+const MenuProductOccurenceTable = forwardRef(ref => {
+   const [selectedRows, setSelectedRows] = React.useState([])
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
+
    const tableRef = React.useRef()
-   const [productOccurenceData, setProductOccurenceData] = useState([])
+   const [productOccurrenceData, setProductOccurrenceData] = useState([])
+   const [checked, setChecked] = React.useState(false)
+   const [occurrenceList, setOccurrenceList] = useState([])
+
+   // const removeSelectedRow = id => {
+   //    tableRef.current.removeSelectedRow(id)
+   // }
+   const CheckBox = ({ handleMultipleRowSelection, checked }) => {
+      return (
+         <Checkbox
+            id="label"
+            checked={checked}
+            onChange={() => {
+               handleMultipleRowSelection()
+            }}
+            isAllSelected={null}
+         />
+      )
+   }
+   const CrossBox = ({ removeSelectedRecipes }) => {
+      return (
+         <Checkbox
+            id="label"
+            checked={false}
+            onChange={removeSelectedRecipes}
+            isAllSelected={false}
+         />
+      )
+   }
+
    const { loading: subsLoading, error: subsError } = useSubscription(
       MENU_PRODUCT_BY_SUBSCRIPTION_OCCURRENCE,
       {
@@ -76,14 +113,14 @@ const MenuProductOccurenceTable = () => {
                      return each
                   }
                )
-            setProductOccurenceData(newData)
+            setProductOccurrenceData(newData)
          },
       }
    )
    const dataLoaded = () => {
       tableRef.current.table.setGroupBy('productCategory')
    }
-   console.log('productOccurenceData', productOccurenceData)
+   console.log('productOccurrenceData', productOccurrenceData)
    const columns = [
       {
          title: 'Product Name',
@@ -161,6 +198,163 @@ const MenuProductOccurenceTable = () => {
          width: 85,
       },
    ]
+   // const tableLoaded = () => {
+   //    const occurrenceGroup = localStorage.getItem(
+   //       'tabulator_occurrence_groupBy'
+   //    )
+   //    const occurrenceGroupParse =
+   //       occurrenceGroup !== undefined &&
+   //       occurrenceGroup !== null &&
+   //       occurrenceGroup.length !== 0
+   //          ? JSON.parse(occurrenceGroup)
+   //          : null
+   //    tableRef.current.table.setGroupBy(
+   //       !!occurrenceGroupParse && occurrenceGroupParse.length > 0
+   //          ? ['label', ...occurrenceGroupParse]
+   //          : 'label'
+   //    )
+   //    tableRef.current.table.setGroupHeader(function (
+   //       value,
+   //       count,
+   //       data1,
+   //       group
+   //    ) {
+   //       let newHeader
+   //       switch (group._group.field) {
+   //          case 'name':
+   //             newHeader = 'Product Name'
+   //             break
+   //          case 'label':
+   //             newHeader = 'Label'
+   //             break
+   //          case 'quantity':
+   //             newHeader = 'Quantity'
+   //             break
+   //          default:
+   //             break
+   //       }
+   //       return `${newHeader} - ${value} || ${count} Product`
+   //    })
+
+   //    const selectedRowsId =
+   //       localStorage.getItem('selected-rows-id_occurrence_table') || '[]'
+   //    if (JSON.parse(selectedRowsId).length > 0) {
+   //       tableRef.current.table.selectRow(JSON.parse(selectedRowsId))
+   //       let newArr = []
+   //       JSON.parse(selectedRowsId).forEach(rowID => {
+   //          const newFind = occurrenceList.find(option => option.id == rowID)
+   //          newArr = [...newArr, newFind]
+   //       })
+   //       setSelectedRows(newArr)
+   //    } else {
+   //       setSelectedRows([])
+   //    }
+   // }
+   const handleRowSelection = ({ _row }) => {
+      const rowData = _row.getData()
+      const lastPersistence = localStorage.getItem(
+         'selected-rows-id_occurrence_table'
+      )
+      const lastPersistenceParse =
+         lastPersistence !== undefined &&
+         lastPersistence !== null &&
+         lastPersistence.length !== 0
+            ? JSON.parse(lastPersistence)
+            : []
+      setSelectedRows(prevState => [...prevState, _row.getData()])
+      let newData = [...lastPersistenceParse, rowData.id]
+      localStorage.setItem(
+         'selected-rows-id_occurrence_table',
+         JSON.stringify(newData)
+      )
+   }
+   const handleRowDeselection = ({ _row }) => {
+      const data = _row.getData()
+      const lastPersistence = localStorage.getItem(
+         'selected-rows-id_occurrence_table'
+      )
+      const lastPersistenceParse =
+         lastPersistence !== undefined &&
+         lastPersistence !== null &&
+         lastPersistence.length !== 0
+            ? JSON.parse(lastPersistence)
+            : []
+      setSelectedRows(prevState => prevState.filter(row => row.id !== data.id))
+      const newLastPersistenceParse = lastPersistenceParse.filter(
+         id => id !== data.id
+      )
+      localStorage.setItem(
+         'selected-rows-id_occurrence_table',
+         JSON.stringify(newLastPersistenceParse)
+      )
+   }
+   useImperativeHandle(ref, () => ({
+      removeSelectedRow(id) {
+         tableRef.current.table.deselectRow(id)
+      },
+   }))
+
+   const removeSelectedProducts = () => {
+      setChecked({ checked: false })
+      setSelectedRows([])
+      tableRef.current.table.deselectRow()
+      localStorage.setItem(
+         'selected-rows-id_occurrence_table',
+         JSON.stringify([])
+      )
+   }
+
+   const handleMultipleRowSelection = () => {
+      setChecked(!checked)
+      if (!checked) {
+         tableRef.current.table.selectRow('active')
+         let multipleRowData = tableRef.current.table.getSelectedData()
+         setSelectedRows(multipleRowData)
+         console.log('first', selectedRows)
+         localStorage.setItem(
+            'selected-rows-id_occurrence-table',
+            JSON.stringify(multipleRowData.map(row => row.id))
+         )
+      } else {
+         tableRef.current.table.deselectRow()
+         setSelectedRows([])
+         console.log('second', selectedRows)
+
+         localStorage.setItem(
+            'selected-rows-id_occurrence-table',
+            JSON.stringify([])
+         )
+      }
+   }
+   console.log('selected row:::::', selectedRows)
+   const selectionColumn =
+      selectedRows.length > 0 && selectedRows.length < occurrenceList.length
+         ? {
+              formatter: 'rowSelection',
+              titleFormatter: reactFormatter(
+                 <CrossBox removeSelectedProducts={removeSelectedProducts} />
+              ),
+              align: 'center',
+              hozAlign: 'center',
+              width: 10,
+              headerSort: false,
+              frozen: true,
+           }
+         : {
+              formatter: 'rowSelection',
+              titleFormatter: reactFormatter(
+                 <CheckBox
+                    checked={checked}
+                    handleMultipleRowSelection={handleMultipleRowSelection}
+                 />
+              ),
+              align: 'center',
+              hozAlign: 'center',
+              width: 20,
+              headerSort: false,
+              frozen: true,
+           }
+
    if (subsLoading && !subsError) {
       return <InlineLoader />
    }
@@ -169,21 +363,68 @@ const MenuProductOccurenceTable = () => {
       logger(subsError)
       return <ErrorState />
    }
-   if (productOccurenceData.length == 0) {
+   if (productOccurrenceData.length == 0) {
       return <Filler message="Data not available" />
    }
+
    return (
       <>
+         <ActionBar
+            title="subscription occurrence"
+            selectedRows={selectedRows}
+            // defaultIDs={defaultIDs()}
+            openTunnel={openTunnel}
+         />
+         <Spacer size="30px" />
          <ReactTabulator
             ref={tableRef}
-            columns={columns}
-            data={productOccurenceData}
+            // dataLoaded={tableLoaded}
+            data={productOccurrenceData}
             options={TableOptions}
             dataLoaded={dataLoaded}
+            rowSelected={handleRowSelection}
+            rowDeselected={handleRowDeselection}
+            selectableCheck={() => true}
+            columns={[selectionColumn, ...columns]}
          />
       </>
    )
+})
+
+const ActionBar = ({ title, selectedRows, openTunnel }) => {
+   return (
+      <>
+         <Flex
+            container
+            as="header"
+            width="100%"
+            style={{ marginLeft: 0 }}
+            alignItems="center"
+            justifyContent="flex-start"
+         >
+            <Text as="subtitle">
+               {selectedRows.length == 0
+                  ? `No ${title}`
+                  : selectedRows.length == 1
+                  ? `${selectedRows.length} ${title}`
+                  : `${selectedRows.length} ${title}s`}{' '}
+               selected
+            </Text>
+            <ButtonGroup align="left">
+               <TextButton
+                  type="ghost"
+                  size="sm"
+                  disabled={selectedRows.length === 0 ? true : false}
+                  onClick={() => openTunnel(1)}
+               >
+                  APPLY BULK ACTIONS
+               </TextButton>
+            </ButtonGroup>
+         </Flex>
+      </>
+   )
 }
+
 const MenuProductSubscriptionTable = () => {
    const tableRef = React.useRef()
    const [productSubscriptionData, setProductSubscriptionData] = useState([])
