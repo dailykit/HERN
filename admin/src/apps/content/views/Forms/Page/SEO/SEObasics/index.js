@@ -368,7 +368,7 @@ const SEObasics = ({ routeName }) => {
                                                 </Tunnel>
                                             </Tunnels>
                                         </Col>
-                                        <Col span={12}>
+                                        <Col span={24}>
                                             <Text>
                                                 <span style={{ fontWeight: 'bold' }}>
                                                     Note :{' '}

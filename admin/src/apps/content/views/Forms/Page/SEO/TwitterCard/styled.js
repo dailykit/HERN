@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 export const StyledWrapper = styled.div`
-   margin-top: 52px;
+   margin-top: 50px;
    margin-bottom: 100px;
    h3.ant-typography {
       margin-bottom: 12px !important;
@@ -45,11 +45,6 @@ export const ImageContainer = styled.div`
       object-fit: cover;
    }
    div {
-      position: absolute;
-      padding: 12px;
-      right: 0;
-      left: 0;
-      text-align: right;
       span {
          margin-right: 16px;
          cursor: pointer;

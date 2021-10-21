@@ -328,7 +328,7 @@ export const TwitterCard = ({ routeName }) => {
                                 >
                                     {/* for image upload */}
                                     <Row>
-                                        <Col span={10}>
+                                        <Col span={12}>
                                             {form.twitterImage.value ? (
                                                 <ImageContainer
                                                     border="none"
@@ -403,7 +403,7 @@ export const TwitterCard = ({ routeName }) => {
                                                 </Tunnel>
                                             </Tunnels>
                                         </Col>
-                                        <Col span={14}>
+                                        <Col span={24}>
                                             <Text>
                                                 <span style={{ fontWeight: 'bold' }}>
                                                     Note:{' '}

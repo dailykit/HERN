@@ -330,7 +330,7 @@ export const SocialShare = ({ routeName }) => {
                                 >
                                     {/* for image upload */}
                                     <Row>
-                                        <Col span={10}>
+                                        <Col span={12}>
                                             {form.ogImage.value ? (
                                                 <ImageContainer
                                                     border="none"
@@ -405,7 +405,7 @@ export const SocialShare = ({ routeName }) => {
                                                 </Tunnel>
                                             </Tunnels>
                                         </Col>
-                                        <Col span={14}>
+                                        <Col span={24}>
                                             <Text>
                                                 <span style={{ fontWeight: 'bold' }}>
                                                     Note :{' '}

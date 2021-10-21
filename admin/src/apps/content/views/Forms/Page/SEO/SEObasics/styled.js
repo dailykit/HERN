@@ -60,11 +60,6 @@ display: flex;
       object-fit: cover;
    }
    div {
-      position: absolute;
-      padding: 12px;
-      right: 0;
-      left: 0;
-      text-align: right;
       span {
          margin-right: 16px;
          cursor: pointer;
