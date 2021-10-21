@@ -378,16 +378,24 @@ export const FeaturedCollection = props => {
             <Button
                className="hern-custom-area-add-btn"
                onClick={() => {
-                  if (data.productOptions.length > 0) {
+                  if (
+                     data.productOptions.length > 0 &&
+                     (config?.informationVisibility?.modifier?.showModifier
+                        ?.value ??
+                        true)
+                  ) {
                      setProductIdForModifier(data.id)
                   } else {
-                     addToCart({ productId: data.id }, 1)
+                     // console.log('defaultCartItem', data.defaultCartItem)
+                     addToCart(data.defaultCartItem, 1)
                   }
                }}
             >
                ADD
             </Button>
-            {data.productOptions.length > 0 && <span>Customizable</span>}
+            {data.productOptions.length > 0 &&
+               (config?.informationVisibility?.modifier?.showModifier?.value ??
+                  true) && <span>Customizable</span>}
          </div>
       )
    }

@@ -284,16 +284,21 @@ const ModifiersList = props => {
             <span>{formatCurrency(data.childs[0].price || 0)}</span>
          </div>
          <div className="hern-cart-product-modifiers-list">
-            <span className="hern-cart-product-modifiers-heading">
-               Add ons:
-            </span>
+            {data.childs[0].childs.some(each => each.modifierOption) && (
+               <span className="hern-cart-product-modifiers-heading">
+                  Add ons:
+               </span>
+            )}
             <ul>
-               {data.childs[0].childs.map((modifier, index) => (
-                  <li key={index}>
-                     <span>{modifier.modifierOption.name}</span>
-                     <span>{formatCurrency(modifier.price || 0)}</span>
-                  </li>
-               ))}
+               {data.childs.length > 0 &&
+                  data.childs[0].childs.map((modifier, index) =>
+                     modifier.modifierOption ? (
+                        <li key={index}>
+                           <span>{modifier.modifierOption.name}</span>
+                           <span>{formatCurrency(modifier.price || 0)}</span>
+                        </li>
+                     ) : null
+                  )}
             </ul>
          </div>
       </div>
