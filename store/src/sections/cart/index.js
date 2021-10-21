@@ -193,6 +193,20 @@ export const OnDemandCart = () => {
                                  showImage={false}
                                  showProductAdditionalText={false}
                                  customAreaComponent={customArea}
+                                 showModifier={Boolean(increaseProduct)}
+                                 closeModifier={closeModifier}
+                                 modifierPopupConfig={{
+                                    productData: increaseProduct,
+                                    showCounterBtn: Boolean(
+                                       popUpType === 'edit'
+                                    ),
+                                    forNewItem: Boolean(
+                                       popUpType === 'newItem'
+                                    ),
+                                    edit: Boolean(popUpType === 'edit'),
+                                    productCartDetail:
+                                       cartDetailSelectedProduct,
+                                 }}
                               />
                               {product.childs.length > 0 && (
                                  <ModifiersList data={product} />
@@ -256,16 +270,6 @@ export const OnDemandCart = () => {
             <footer className="hern-cart-footer">
                <Button className="hern-cart-proceed-btn">PROCEED TO PAY</Button>
             </footer>
-            {increaseProduct && (
-               <ModifierPopup
-                  productData={increaseProduct}
-                  closeModifier={closeModifier}
-                  showCounterBtn={popUpType === 'edit'}
-                  forNewItem={popUpType === 'newItem'}
-                  edit={popUpType === 'edit'}
-                  productCartDetail={cartDetailSelectedProduct}
-               />
-            )}
          </div>
       </div>
    )

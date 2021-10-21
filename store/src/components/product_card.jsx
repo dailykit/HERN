@@ -27,6 +27,7 @@ export const ProductCard = props => {
       customAreaComponent: CustomAreaComponent,
       showModifier = false,
       closeModifier,
+      modifierPopupConfig, //use for cart
    } = props
 
    const slideRef = React.useRef()
@@ -153,7 +154,16 @@ export const ProductCard = props => {
             </div>
          </div>
          {showModifier && data && (
-            <ModifierPopup productData={data} closeModifier={closeModifier} />
+            <ModifierPopup
+               productData={
+                  modifierPopupConfig ? modifierPopupConfig?.productData : data
+               }
+               closeModifier={closeModifier}
+               showCounterBtn={modifierPopupConfig?.showCounterBtn}
+               forNewItem={modifierPopupConfig?.forNewItem}
+               edit={modifierPopupConfig?.edit}
+               productCartDetail={modifierPopupConfig?.productCartDetail}
+            />
          )}
       </>
    )
