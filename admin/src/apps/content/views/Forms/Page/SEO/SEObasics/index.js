@@ -205,7 +205,7 @@ const SEObasics = ({ routeName }) => {
                             footer={[
                                 <Button type="primary" onClick={() => Save()}>
                                     Save
-                                </Button>,
+                                </Button>
                             ]}
                         >
                             <Form layout="vertical">
@@ -293,7 +293,7 @@ const SEObasics = ({ routeName }) => {
                                     }}
                                 >
                                     <Row>
-                                        <Col span={10}>
+                                        <Col span={12}>
                                             {form.favicon.value ? (
                                                 <ImageContainer
                                                     border="none"
@@ -368,7 +368,7 @@ const SEObasics = ({ routeName }) => {
                                                 </Tunnel>
                                             </Tunnels>
                                         </Col>
-                                        <Col span={14}>
+                                        <Col span={12}>
                                             <Text>
                                                 <span style={{ fontWeight: 'bold' }}>
                                                     Note :{' '}

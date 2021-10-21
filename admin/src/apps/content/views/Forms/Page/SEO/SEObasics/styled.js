@@ -47,6 +47,9 @@ div.ant-typography,span.ant-typography{
 }
 `
 export const ImageContainer = styled.div`
+display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
    width: 464px;
    height: 128px;
    position: relative;
