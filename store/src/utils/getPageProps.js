@@ -10,7 +10,9 @@ export const getPageProps = async (params, route) => {
       domain: params.brand,
       route
    })
-   const seoSettings = dataByRoute.brands_brandPages[0].brandPageSettings.filter((setting) => setting.brandPageSetting.type === 'seo')
+   console.log("dataByRoute😊👉", dataByRoute)
+   const seoSettings = await dataByRoute?.brands_brandPages[0]?.brandPageSettings.filter((setting) => setting?.brandPageSetting?.type === 'seo')
+
    const domain = 'test.dailykit.org'
    //Seo and settings
    const { seo, settings } = await getSettings(domain, route)
