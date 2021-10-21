@@ -384,7 +384,7 @@ const SEObasics = ({ routeName }) => {
                     </Col>
                     <Col span={12}>
                         <Text strong>Preview on Google</Text>
-                        <Tooltip placement="top" title={'preview on google'}>
+                        <Tooltip placement="top" title={'This is an example of a page in search results.'}>
                             <InfoCircleOutlined
                                 style={{
                                     marginLeft: '5px',
