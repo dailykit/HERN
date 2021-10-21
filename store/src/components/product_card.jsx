@@ -156,13 +156,16 @@ export const ProductCard = props => {
          {showModifier && data && (
             <ModifierPopup
                productData={
-                  modifierPopupConfig ? modifierPopupConfig?.productData : data
+                  modifierPopupConfig && modifierPopupConfig?.productData
+                     ? modifierPopupConfig?.productData
+                     : data
                }
                closeModifier={closeModifier}
                showCounterBtn={modifierPopupConfig?.showCounterBtn}
                forNewItem={modifierPopupConfig?.forNewItem}
                edit={modifierPopupConfig?.edit}
                productCartDetail={modifierPopupConfig?.productCartDetail}
+               showModifierImage={modifierPopupConfig?.showModifierImage}
             />
          )}
       </>

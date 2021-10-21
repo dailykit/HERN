@@ -20,7 +20,7 @@ export const OnDemandMenu = props => {
          <div className={classNames('hern-on-demand-menu__navigationAnchor')}>
             <ul>
                {categories.map((each, index) => (
-                  <>
+                  <React.Fragment key={index}>
                      <li
                         className={classNames(
                            'hern-on-demand-menu__navigationAnchor-li',
@@ -43,29 +43,7 @@ export const OnDemandMenu = props => {
                            </span>
                         </a>
                      </li>
-                     <li
-                        className={classNames(
-                           'hern-on-demand-menu__navigationAnchor-li',
-                           {
-                              'hern-on-demand-menu__navigationAnchor-li--active':
-                                 each.name === activeCategory,
-                           }
-                        )}
-                        onClick={() => {
-                           setActiveCategory(each.name)
-                        }}
-                        key={'menu-list' + index}
-                     >
-                        <a href={`#hern-product-category-${each.name}`}>
-                           <span>{each.name}</span>
-                           <span>
-                              {' ('}
-                              {each.products.length}
-                              {')'}
-                           </span>
-                        </a>
-                     </li>
-                  </>
+                  </React.Fragment>
                ))}
             </ul>
          </div>

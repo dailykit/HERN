@@ -18,10 +18,11 @@ export const ModifierPopup = props => {
       forNewItem = false,
       edit = false,
       productCartDetail,
+      showModifierImage = true,
    } = props
    //context
    const { addToCart, methods } = React.useContext(CartContext)
-
+   console.log('productData', productData)
    const [productOption, setProductOption] = useState(
       productData.productOptions[0]
    ) // for by default choose one product option
@@ -466,7 +467,8 @@ export const ModifierPopup = props => {
                                              showImage={false}
                                              showCustomText={false}
                                              showImageIcon={
-                                                eachOption.image
+                                                eachOption.image &&
+                                                showModifierImage
                                                    ? ShowImageIcon
                                                    : false
                                              }

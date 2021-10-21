@@ -488,6 +488,12 @@ export const FeaturedCollection = props => {
                                        productIdForModifier === eachProduct.id
                                     }
                                     closeModifier={closeModifier}
+                                    modifierPopupConfig={{
+                                       showModifierImage:
+                                          config?.informationVisibility
+                                             ?.modifier?.showModifierImage
+                                             ?.value ?? true,
+                                    }}
                                  />
                               )
                            })}
