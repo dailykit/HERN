@@ -36,9 +36,7 @@ import { logger } from '../../../../../../../shared/utils'
 import { EditIcon, DeleteIcon } from '../../../../../../../shared/assets/icons'
 import { InfoCircleOutlined } from '@ant-design/icons'
 import BrandContext from '../../../../../context/Brand'
-import { upperCase } from 'lodash-es'
 const { Title, Text } = Typography
-const { TextArea } = Input
 
 export const SocialShare = ({ routeName }) => {
     const [tunnel1, openTunnel1, closeTunnel1] = useTunnel(1)
@@ -218,7 +216,7 @@ export const SocialShare = ({ routeName }) => {
                                     onClick={() => Save()}
                                 >
                                     Save
-                                </Button>
+                                </Button>,
                             ]}
                         >
                             <Form layout="vertical">
@@ -288,7 +286,7 @@ export const SocialShare = ({ routeName }) => {
                                         ),
                                     }}
                                 >
-                                    <TextArea
+                                    <Input.TextArea
                                         strong
                                         level={5}
                                         style={{
@@ -415,8 +413,10 @@ export const SocialShare = ({ routeName }) => {
                                                 It can take time before you see these
                                                 changes on social networks.
                                                 <br />
-                                                <span style={{ fontWeight: 'bold' }}>Recommended : </span>{' '}Upload size should be 1,200 x 630
-                                                pixels.
+                                                <span style={{ fontWeight: 'bold' }}>
+                                                    Recommended :{' '}
+                                                </span>{' '}
+                                                Upload size should be 1,200 x 630 pixels.
                                             </Text>
                                         </Col>
                                     </Row>
@@ -426,7 +426,12 @@ export const SocialShare = ({ routeName }) => {
                     </Col>
                     <Col span={12}>
                         <Text strong>Preview on Social Networks</Text>
-                        <Tooltip placement="top" title={'This is an example of how a page looks when shared on social networks. '}>
+                        <Tooltip
+                            placement="top"
+                            title={
+                                'This is an example of how a page looks when shared on social networks. '
+                            }
+                        >
                             <InfoCircleOutlined
                                 style={{
                                     background: '#555B6E',
@@ -439,7 +444,7 @@ export const SocialShare = ({ routeName }) => {
                             hoverable
                             style={{ backgroundColor: '#f0f4f7' }}
                             cover={
-                                (form?.ogImage?.value) ? (
+                                form?.ogImage?.value ? (
                                     <img
                                         alt="example"
                                         src={form.ogImage.value}
@@ -463,13 +468,19 @@ export const SocialShare = ({ routeName }) => {
                                 )
                             }
                         >
-                            <Tooltip placement="bottom" title={'google preview'}>
-                                <p style={{ textTransform: "uppercase" }}> {context.brandDomain + routeName}</p>
+                            <Tooltip placement="bottom" title={'page link'}>
+                                <p style={{ textTransform: 'uppercase' }}>
+                                    {' '}
+                                    {context.brandDomain + routeName}
+                                </p>
                             </Tooltip>
                             <Title strong level={4}>
-                                {form.ogTitle.value || "Title Tag"}
+                                {form.ogTitle.value || 'Title Tag'}
                             </Title>
-                            <p>{form.ogDescription.value || "this is the og: description"}</p>
+                            <p>
+                                {form.ogDescription.value ||
+                                    'this is the og: description'}
+                            </p>
                         </Card>
                     </Col>
                 </Row>
