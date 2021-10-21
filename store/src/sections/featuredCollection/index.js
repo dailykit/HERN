@@ -7,7 +7,9 @@ import {
    Loader,
    OnDemandMenu,
    Divider,
+   BottomCartBar,
 } from '../../components'
+import { CartContext } from '../../context'
 import { PRODUCTS_BY_CATEGORY, PRODUCTS } from '../../graphql'
 import { useConfig } from '../../lib'
 export const FeaturedCollection = props => {
@@ -17,6 +19,7 @@ export const FeaturedCollection = props => {
 
    // context
    const { brand, isConfigLoading } = useConfig()
+   const { cartState, addToCart } = React.useContext(CartContext)
 
    // component state
    const [productIdForModifier, setProductIdForModifier] = useState(null)
@@ -378,7 +381,6 @@ export const FeaturedCollection = props => {
                   if (data.productOptions.length > 0) {
                      setProductIdForModifier(data.id)
                   } else {
-                     console.log('product added to cart', data)
                      addToCart({ productId: data.id }, 1)
                   }
                }}
@@ -392,7 +394,7 @@ export const FeaturedCollection = props => {
    const closeModifier = () => {
       setProductIdForModifier(null)
    }
-   console.log('hydretedMenu', hydratedMenu)
+
    if (status === 'error' || productsError || menuError) {
       return <p>Something went wrong</p>
    }
@@ -495,6 +497,10 @@ export const FeaturedCollection = props => {
                      }
                   />
                )}
+               {cartState &&
+                  cartState.cart?.products?.aggregate?.count !== 0 && (
+                     <BottomCartBar />
+                  )}
             </div>
          </div>
       </>
