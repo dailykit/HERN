@@ -12,7 +12,10 @@ import {
    PlusIcon,
    TextButton,
    CloseIcon,
+   Tag,
 } from '@dailykit/ui'
+
+import { Close } from '../../../../shared/assets/icons'
 
 import { useOrder } from '../../context'
 import { MetricItem } from '../MetricItem'
@@ -26,7 +29,10 @@ const address = 'apps.order.components.ordersummary.'
 export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
    const { t } = useTranslation()
    const { state, dispatch } = useOrder()
-   console.log('fliter', state.orders.where)
+   console.log(
+      'fliter',
+      state?.orders?.where?.cart?.order?.fulfillmentType?._eq
+   )
 
    const { data: { orders = {} } = {} } = useSubscription(
       QUERIES.ORDERS.AGGREGATE.TOTAL,
@@ -60,7 +66,12 @@ export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
    return (
       <Wrapper>
          <Spacer size="8px" />
-         <Flex container alignItems="center" justifyContent="space-between">
+         <Flex
+            container
+            alignItems="center"
+            justifyContent="space-between"
+            style={{ borderBottom: '1px solid #E5E5E5' }}
+         >
             {/* <Text as="h4">{t(address.concat('quick info'))}</Text>
             <StyledIconButton
                type="outline"
@@ -85,6 +96,7 @@ export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
                   <PlusIcon color="#919699" />
                </StyledIconButton>
                <Spacer size="8px" xAxis />
+
                {/* <TextButton
                   size="sm"
                   type="outline"
@@ -98,6 +110,22 @@ export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
                   View
                </TextButton> */}
             </Flex>
+         </Flex>
+         <Spacer size="6px" />
+         <Flex>
+            {state?.orders?.where?.cart?.order?.fulfillmentType?._eq && (
+               <Tag>
+                  {state?.orders?.where?.cart?.order?.fulfillmentType?._eq}
+                  <styledButton
+                     size="sm"
+                     type="ghost"
+                     onClick={() => clearFilters()}
+                     style={{ marginLeft: '5px' }}
+                  >
+                     <Close color="#919699" size="7" />
+                  </styledButton>
+               </Tag>
+            )}
          </Flex>
          <Spacer size="8px" />
          <MetricItem

@@ -134,7 +134,7 @@ const App = () => {
                </Tunnel>
             </Tunnels>
             <Tunnels tunnels={configTunnels}>
-               <Tunnel layer="1" size="full">
+               <Tunnel layer="1" size="md">
                   <ConfigTunnel />
                </Tunnel>
             </Tunnels>
