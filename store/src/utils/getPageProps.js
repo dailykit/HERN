@@ -31,4 +31,3 @@ export const getPageProps = async (params, route) => {
 
    return { parsedData, seo, settings, navigationMenus, seoSettings }
 }
-

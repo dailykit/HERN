@@ -86,8 +86,12 @@ const OnDemandOrder = dynamic(() =>
 const OnDemandCart = dynamic(() =>
    import('../sections/cart').then(promise => promise.OnDemandCart)
 )
+const FeaturedCollection = dynamic(() =>
+   import('../sections/featuredCollection').then(
+      promise => promise.FeaturedCollection
+   )
+)
 export const renderComponentByName = (fold, options) => {
-
    const getProps = component => {
       if (options) {
          const [props] = options.filter(
@@ -250,6 +254,8 @@ export const renderComponentByName = (fold, options) => {
        */
       case 'OnDemandCart':
          return <OnDemandCart />
+      case 'FeaturedCollection':
+         return <FeaturedCollection config={fold.config} />
       default:
          return null
    }

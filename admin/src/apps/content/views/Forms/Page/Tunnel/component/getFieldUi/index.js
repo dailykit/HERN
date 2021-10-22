@@ -13,6 +13,7 @@ import {
    TextWithSelect,
    NumberWithSelect,
    RichText,
+   CollectionSelector,
 } from '../uiComponent'
 
 export const getFieldUi = ({ key, configJson, onConfigChange }) => {
@@ -151,6 +152,15 @@ export const getFieldUi = ({ key, configJson, onConfigChange }) => {
    ) {
       configUi = (
          <RichText
+            fieldDetail={field}
+            marginLeft={indentation}
+            path={key}
+            onConfigChange={onConfigChange}
+         />
+      )
+   } else if (field.userInsertType === 'collectionSelector') {
+      configUi = (
+         <CollectionSelector
             fieldDetail={field}
             marginLeft={indentation}
             path={key}
