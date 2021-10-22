@@ -16,7 +16,7 @@ export const getPageProps = async (params, route) => {
 
    //Settings
    const domain = 'test.dailykit.org'
-   const { settings } = await getSettings(domain, route)
+   const { settings, seo } = await getSettings(domain, route)
 
    //pageModules
    const parsedData = await foldsResolver(
@@ -31,7 +31,6 @@ export const getPageProps = async (params, route) => {
             dataByRoute.brands_brandPages[0]['brand']['navigationMenuId'],
       }
    )
-   
 
-   return { parsedData, settings, navigationMenus, seoSettings }
+   return { parsedData, settings, navigationMenus, seoSettings, seo }
 }
