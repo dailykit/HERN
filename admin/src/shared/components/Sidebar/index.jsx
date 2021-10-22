@@ -36,6 +36,7 @@ import CreateCoupon from '../../CreateUtils/crm/createCoupon'
 import CreateCampaign from '../../CreateUtils/crm/createCampaign'
 import CreateCollection from '../../CreateUtils/Menu/createCollection'
 import CreateSubscription from '../../CreateUtils/subscription/createSubscriptions'
+import { StoreIcon } from '../../assets/icons'
 
 const APPS = gql`
    subscription apps {
@@ -737,6 +738,17 @@ export const Sidebar = ({ setOpen }) => {
             path: './',
             'childs': []
          },
+         {
+            title: "Developer",
+            icon: StoreAppIcon,
+            path: '/developer',
+            'childs': [
+               {
+                  title: 'Webhook',
+                  path: '/developer/webhook'
+               }
+            ]
+         }
       ]
    }
 

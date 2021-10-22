@@ -13,7 +13,7 @@ import {
 const CartPage = props => {
    const router = useRouter()
    const { isAuthenticated, isLoading } = useUser()
-   const { folds, settings, navigationMenus } = props
+   const { folds, settings, navigationMenus, seoSettings } = props
    React.useEffect(() => {
       try {
          processJsFile(folds)
@@ -24,7 +24,7 @@ const CartPage = props => {
 
    return (
       <Layout settings={settings} navigationMenus={navigationMenus}>
-         <SEO title="Cart" />
+         <SEO seoSettings={seoSettings} />
          <main>{renderPageContent(folds)}</main>
       </Layout>
    )
@@ -33,13 +33,13 @@ const CartPage = props => {
 export default CartPage
 
 export const getStaticProps = async ({ params }) => {
-   const { parsedData, seo, settings, navigationMenus } = await getPageProps(
+   const { parsedData, seo, settings, navigationMenus, seoSettings } = await getPageProps(
       params,
       '/on-demand-cart'
    )
 
    return {
-      props: { folds: parsedData, seo, settings, navigationMenus },
+      props: { folds: parsedData, seo, settings, navigationMenus, seoSettings },
       revalidate: 60, // will be passed to the page component as props
    }
 }

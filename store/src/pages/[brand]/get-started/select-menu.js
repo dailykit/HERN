@@ -12,7 +12,7 @@ import {
 } from '../../../utils'
 
 const SelectMenu = props => {
-   const { settings, folds } = props
+   const { settings, folds, seoSettings } = props
    const router = useRouter()
    const { isAuthenticated, isLoading } = useUser()
    React.useEffect(() => {
@@ -35,7 +35,7 @@ const SelectMenu = props => {
 
    return (
       <Layout settings={settings}>
-         <SEO title="Select Menu" />
+         <SEO seoSettings={seoSettings} />
          <main className="hern-select-menu">{renderPageContent(folds)}</main>
       </Layout>
    )
@@ -44,18 +44,15 @@ const SelectMenu = props => {
 export default SelectMenu
 
 export async function getStaticProps({ params }) {
-   // const domain =
-   //    process.env.NODE_ENV === 'production'
-   //       ? params.domain
-   //       : 'test.dailykit.org'
 
-   const { parsedData, seo, settings } = await getPageProps(
+
+   const { parsedData, seo, settings, seoSettings } = await getPageProps(
       params,
       '/get-started/select-menu'
    )
 
    return {
-      props: { folds: parsedData, seo, settings },
+      props: { folds: parsedData, seo, settings, seoSettings },
       revalidate: 60, // will be passed to the page component as props
    }
 }

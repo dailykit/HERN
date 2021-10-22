@@ -8,11 +8,12 @@ export const getPageProps = async (params, route) => {
    //Getting data by their router
    const dataByRoute = await client.request(BRAND_PAGE, {
       domain: params.brand,
-      route,
+      route
    })
+   console.log("dataByRoute😊👉", dataByRoute)
+   const seoSettings = await dataByRoute?.brands_brandPages[0]?.brandPageSettings.filter((setting) => setting?.brandPageSetting?.type === 'seo')
 
    const domain = 'test.dailykit.org'
-
    //Seo and settings
    const { seo, settings } = await getSettings(domain, route)
 
@@ -28,5 +29,5 @@ export const getPageProps = async (params, route) => {
    })
    const navigationMenus = navigationMenu.brands_navigationMenuItem
 
-   return { parsedData, seo, settings, navigationMenus }
+   return { parsedData, seo, settings, navigationMenus, seoSettings }
 }

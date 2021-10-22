@@ -4,7 +4,7 @@ import { processJsFile, renderPageContent, getPageProps } from '../../utils'
 import 'regenerator-runtime'
 
 const SelectPlan = props => {
-   const { folds, settings, navigationMenus } = props
+   const { folds, settings, navigationMenus, seoSettings } = props
 
    React.useEffect(() => {
       try {
@@ -16,7 +16,7 @@ const SelectPlan = props => {
 
    return (
       <Layout settings={settings} navigationMenus={navigationMenus}>
-         <SEO title="Plans" />
+         <SEO seoSettings={seoSettings} />
          <main className="hern-our-plans__main">
             {renderPageContent(folds, [
                {
@@ -32,13 +32,13 @@ const SelectPlan = props => {
 export default SelectPlan
 
 export const getStaticProps = async ({ params }) => {
-   const { parsedData, seo, settings, navigationMenus } = await getPageProps(
+   const { parsedData, seo, settings, navigationMenus, seoSettings } = await getPageProps(
       params,
       '/our-plans'
    )
 
    return {
-      props: { folds: parsedData, seo, settings, navigationMenus },
+      props: { folds: parsedData, seo, settings, navigationMenus, seoSettings },
       revalidate: 60, // will be passed to the page component as props
    }
 }

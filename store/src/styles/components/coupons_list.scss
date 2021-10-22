@@ -1,0 +1,78 @@
+.hern-coupons-list {
+   padding: 16px;
+}
+.hern-coupons-list__header {
+   margin-bottom: 16px;
+   display: -webkit-box;
+   display: -webkit-flex;
+   display: -ms-flexbox;
+   display: flex;
+   -webkit-align-items: center;
+   -webkit-box-align: center;
+   -ms-flex-align: center;
+   align-items: center;
+   -webkit-box-pack: justify;
+   -webkit-justify-content: space-between;
+   -ms-flex-pack: justify;
+   justify-content: space-between;
+}
+.hern-coupons-list__heading {
+   color: gray;
+}
+.hern-coupons-list__close-btn {
+   border-radius: 9999px;
+   border-width: 2px;
+   border-color: rgba(52, 211, 153, 1);
+   height: 1.5rem;
+   width: 2rem;
+   display: -webkit-box;
+   display: -webkit-flex;
+   display: -ms-flexbox;
+   display: flex;
+   -webkit-align-items: center;
+   -webkit-box-align: center;
+   -ms-flex-align: center;
+   align-items: center;
+   -webkit-box-pack: center;
+   -webkit-justify-content: center;
+   -ms-flex-pack: center;
+   justify-content: center;
+}
+.hern-coupons-list__close-btn__icon {
+   stroke: currentColor;
+   color: rgba(52, 211, 153, 1);
+}
+.hern-coupons-list__coupon {
+   padding: 8px;
+   border: 1px dashed #cacaca;
+   margin-bottom: 16px;
+   border-radius: 4px;
+}
+.hern-coupons-list__coupon__top {
+   display: -webkit-box;
+   display: -webkit-flex;
+   display: -ms-flexbox;
+   display: flex;
+   -webkit-align-items: center;
+   -webkit-box-align: center;
+   -ms-flex-align: center;
+   align-items: center;
+   -webkit-box-pack: justify;
+   -webkit-justify-content: space-between;
+   -ms-flex-pack: justify;
+   justify-content: space-between;
+   margin-bottom: 16px;
+}
+.hern-coupons-list__coupon__code {
+   text-transform: uppercase;
+   font-weight: 500;
+}
+.hern-coupons-list__coupon__apply-btn {
+   color: teal;
+}
+.hern-coupons-list__coupon__title {
+   display: block;
+}
+.hern-coupons-list__coupon__description {
+   display: block;
+}

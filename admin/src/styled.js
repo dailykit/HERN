@@ -5,6 +5,7 @@ export const Layout = styled.div`
    > main {
       position: absolute;
       left: 52px;
+      top: 97px;
       height: calc(100% - 48px);
       overflow-y: auto;
       width: 96%;
@@ -78,10 +79,27 @@ export const InsightDiv = styled.div`
 `
 export const HomeContainer = styled.div`
    display: flex;
+   width: 100%
    height: calc(100vh - 60px);
 `
 export const DashboardPanel = styled.div`
-   width: calc(100vw - 222px);
+   width: 75%;
+   overflow-y: auto;
+   padding: 0px 10px 0px 12px;
+   &::-webkit-scrollbar {
+      width: 5px;
+   }
+   &::-webkit-scrollbar-track {
+      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+   }
+   &::-webkit-scrollbar-thumb {
+      background-color: #787a91;
+      outline: 1px solid #eeeeee;
+      border-radius: 10px;
+   }
+`
+export const DashboardRight = styled.div`
+   width: 25%;
    overflow-y: auto;
    padding: 0px 7px;
    &::-webkit-scrollbar {
