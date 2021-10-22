@@ -1149,36 +1149,34 @@ export const BRAND_PAGE = gql`
                _or: [{ isDefault: { _eq: true } }, { domain: { _eq: $domain } }]
             }
          }
-   ) {
-      id
-      internalPageName
-      isArchived
-      published
-      route
-      brandPageSettings{
-         value
-         brandPageSetting {
-            identifier
-           type
-         }
-      }
-      linkedNavigationMenuId
-      brandPageModules(
-         order_by: { position: desc_nulls_last }
-         where: { isHidden: { _eq: false } }
       ) {
          id
-         internalModuleIdentifier
-         config
-         moduleType
-         isHidden
-         fileId
-         position
-         subscriptionDivFileId: file {
-            path
-            linkedCssFiles {
-               id
-               cssFile {
+         internalPageName
+         isArchived
+         published
+         route
+         brandPageSettings {
+            value
+            brandPageSetting {
+               identifier
+               type
+            }
+         }
+         linkedNavigationMenuId
+         brandPageModules(
+            order_by: { position: desc_nulls_last }
+            where: { isHidden: { _eq: false } }
+         ) {
+            id
+            internalModuleIdentifier
+            config
+            moduleType
+            isHidden
+            fileId
+            position
+            subscriptionDivFileId: file {
+               path
+               linkedCssFiles {
                   id
                   cssFile {
                      id
