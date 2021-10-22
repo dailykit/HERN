@@ -26,7 +26,6 @@ export const SEO = ({ seoSettings, richresult, children }) => {
       ) ||
       brandLevel.find(setting => setting?.meta?.identifier === 'twitter-card')
 
-   console.log('basicSEO', basicSEO, openGraphCard, twitterCard)
    return (
       <Head>
          <title>
