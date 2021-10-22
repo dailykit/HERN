@@ -6,7 +6,7 @@ import { Layout, SEO } from '../../components'
 import 'regenerator-runtime'
 
 const OurMenu = props => {
-   const { folds, settings, navigationMenus } = props
+   const { folds, settings, navigationMenus, seoSettings } = props
 
    React.useEffect(() => {
       try {
@@ -16,24 +16,25 @@ const OurMenu = props => {
       }
    }, [folds])
 
-   return (
+   return (<>
       <Layout settings={settings} navigationMenus={navigationMenus}>
-         <SEO title="Our Menu" />
+         <SEO seoSettings={seoSettings} />
          <main className="hern-our-menu">{renderPageContent(folds)}</main>
       </Layout>
+   </>
    )
 }
 
 export default OurMenu
 
 export async function getStaticProps({ params }) {
-   const { parsedData, seo, settings, navigationMenus } = await getPageProps(
+   const { parsedData, seo, settings, navigationMenus, seoSettings } = await getPageProps(
       params,
       '/our-menu'
    )
 
    return {
-      props: { folds: parsedData, seo, settings, navigationMenus },
+      props: { folds: parsedData, seo, settings, navigationMenus, seoSettings },
       revalidate: 60, // will be passed to the page component as props
    }
 }

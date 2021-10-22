@@ -13,7 +13,7 @@ import { useUser } from '../../../context'
 const Checkout = props => {
    const router = useRouter()
    const { isAuthenticated, isLoading } = useUser()
-   const { seo, settings, folds } = props
+   const { seo, settings, folds, seoSettings } = props
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
          isClient && localStorage.setItem('landed_on', location.href)
@@ -31,18 +31,14 @@ const Checkout = props => {
 
    return (
       <Layout noHeader settings={settings}>
-         <SEO title="Checkout" />
+         <SEO seoSettings={seoSettings} />
          <main className="hern-checkout">{renderPageContent(folds)}</main>
       </Layout>
    )
 }
 export const getStaticProps = async ({ params }) => {
-   // const domain =
-   //    process.env.NODE_ENV === 'production'
-   //       ? params.domain
-   //       : 'test.dailykit.org'
 
-   const { parsedData, seo, settings } = await getPageProps(
+   const { parsedData, seo, settings, seoSettings } = await getPageProps(
       params,
       '/get-started/checkout'
    )
@@ -51,6 +47,7 @@ export const getStaticProps = async ({ params }) => {
          folds: parsedData,
          seo,
          settings,
+         seoSettings
       },
       revalidate: 1,
    }
