@@ -1308,7 +1308,7 @@ export const PRODUCTS = gql`
       }
    }
 `
-export const GET_CART_ON_DEMAND = gql`
+export const GET_CART = gql`
    subscription cart($id: Int!) {
       cart(id: $id) {
          id
@@ -1365,6 +1365,13 @@ export const GET_CART_ON_DEMAND = gql`
                productId
             }
          }
+      }
+   }
+`
+export const GET_CARTS = gql`
+   subscription GET_CARTS($where: order_cart_bool_exp!) {
+      carts(where: $where) {
+         id
       }
    }
 `

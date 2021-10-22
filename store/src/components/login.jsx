@@ -4,7 +4,7 @@ import { useConfig } from '../lib'
 import classNames from 'classnames'
 import React, { useState } from 'react'
 import Countdown from 'react-countdown'
-import { signIn } from 'next-auth/client'
+import { signIn, getSession, providers } from 'next-auth/client'
 import { getRoute, get_env, isClient } from '../utils'
 import PhoneInput, {
    formatPhoneNumber,
@@ -40,6 +40,7 @@ import {
    deleteStoredReferralCode,
    isReferralCodeValid,
    setStoredReferralCode,
+   getStoredReferralCode,
 } from '../utils/referrals'
 import gql from 'graphql-tag'
 
