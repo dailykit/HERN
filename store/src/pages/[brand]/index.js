@@ -5,7 +5,7 @@ import { SEO, Layout } from '../../components'
 import { getPageProps, processJsFile, renderPageContent } from '../../utils'
 
 const IndexPage = props => {
-   const { folds, settings, navigationMenus } = props
+   const { folds, settings, navigationMenus, seoSettings } = props
 
    React.useEffect(() => {
       try {
@@ -17,7 +17,7 @@ const IndexPage = props => {
 
    return (
       <Layout settings={settings} navigationMenus={navigationMenus}>
-         <SEO title="Home" />
+         <SEO seoSettings={seoSettings} />
          {renderPageContent(folds)}
       </Layout>
    )
@@ -26,13 +26,13 @@ const IndexPage = props => {
 export default IndexPage
 
 export const getStaticProps = async ({ params }) => {
-   const { parsedData, seo, settings, navigationMenus } = await getPageProps(
+   const { parsedData, seo, settings, navigationMenus, seoSettings } = await getPageProps(
       params,
       '/'
    )
 
    return {
-      props: { folds: parsedData, seo, settings, navigationMenus },
+      props: { folds: parsedData, seo, settings, navigationMenus, seoSettings },
       revalidate: 60, // will be passed to the page component as props
    }
 }

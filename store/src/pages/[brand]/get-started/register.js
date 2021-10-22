@@ -6,7 +6,7 @@ import { SEO, Layout } from '../../../components'
 import 'regenerator-runtime'
 
 const Register = props => {
-   const { settings, folds } = props
+   const { settings, folds, seoSettings } = props
    React.useEffect(() => {
       try {
          processJsFile(folds)
@@ -17,7 +17,7 @@ const Register = props => {
 
    return (
       <Layout settings={settings}>
-         <SEO title="Register" />
+         <SEO seoSettings={seoSettings} />
          <main className="hern-register">
             {renderPageContent(folds, [
                {
@@ -32,7 +32,7 @@ const Register = props => {
 export default Register
 
 export const getStaticProps = async context => {
-   const { parsedData, seo, settings } = await getPageProps(
+   const { parsedData, seo, settings, seoSettings } = await getPageProps(
       context.params,
       '/get-started/register'
    )
@@ -47,6 +47,7 @@ export const getStaticProps = async context => {
             session,
             seo,
             settings,
+            seoSettings,
             revalidate: 60,
             providers: await providers(context),
          },

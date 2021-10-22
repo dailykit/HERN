@@ -4,7 +4,7 @@ import { processJsFile, renderPageContent, getPageProps } from '../../utils'
 import 'regenerator-runtime'
 
 const TermsAndConditionsPage = props => {
-   const { folds, settings } = props
+   const { folds, settings, seoSettings } = props
 
    React.useEffect(() => {
       try {
@@ -16,7 +16,7 @@ const TermsAndConditionsPage = props => {
 
    return (
       <Layout settings={settings}>
-         <SEO title="Terms and Conditions" />
+         <SEO seoSettings={seoSettings} />
          <main>{renderPageContent(folds)}</main>
       </Layout>
    )
@@ -25,13 +25,13 @@ const TermsAndConditionsPage = props => {
 export default TermsAndConditionsPage
 
 export const getStaticProps = async ({ params }) => {
-   const { parsedData, seo, settings, navigationMenus } = await getPageProps(
+   const { parsedData, seo, settings, navigationMenus, seoSettings } = await getPageProps(
       params,
       '/terms-and-conditions'
    )
 
    return {
-      props: { folds: parsedData, seo, settings, navigationMenus },
+      props: { folds: parsedData, seo, settings, navigationMenus, seoSettings },
       revalidate: 60, // will be passed to the page component as props
    }
 }

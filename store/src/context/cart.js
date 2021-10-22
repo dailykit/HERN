@@ -3,29 +3,17 @@ import gql from 'graphql-tag'
 import React, { useState } from 'react'
 import {
    CREATE_CART_ITEMS,
-   GET_CART_ON_DEMAND,
+   GET_CART,
    MUTATIONS,
    DELETE_CART_ITEMS,
+   GET_CARTS,
 } from '../graphql'
 import { useUser } from '.'
+import { useConfig } from '../lib'
+import { useToasts } from 'react-toast-notifications'
+
 export const CartContext = React.createContext()
 
-// const CREATE_CART = gql`
-//    mutation CREATE_CART($object: order_cart_insert_input!) {
-//       createCart(object: $object) {
-//          id
-//       }
-//    }
-// `
-// const CREATE_CART_ITEMS = gql`
-//    mutation CREATE_CART_ITEMS($objects: [order_cartItem_insert_input!]!) {
-//       createCartItems(objects: $objects) {
-//          returning {
-//             id
-//          }
-//       }
-//    }
-// `
 const initialState = {
    cart: null,
 }
@@ -40,7 +28,10 @@ const reducer = (state = initialState, { type, payload }) => {
 }
 
 export const CartProvider = ({ children }) => {
-   const { isAuthenticated } = useUser()
+   const { brand } = useConfig()
+   const { addToast } = useToasts()
+
+   const { isAuthenticated, user, isLoading } = useUser()
    const [cartState, cartReducer] = React.useReducer(reducer, initialState)
    const [storedCartId, setStoredCartId] = useState(null)
    React.useEffect(() => {
@@ -53,17 +44,16 @@ export const CartProvider = ({ children }) => {
          }
       }
    }, [])
-   console.log('storedCartId', storedCartId)
+
    //initial cart when no auth
-   const { error: getInitialCart } = useSubscription(GET_CART_ON_DEMAND, {
-      skip: isAuthenticated || !storedCartId,
+   const { error: getInitialCart } = useSubscription(GET_CART, {
+      skip: !storedCartId,
       variables: {
          id: storedCartId,
       },
       onSubscriptionData: ({
          subscriptionData: { data: { cart = {} } = {} } = {},
       } = {}) => {
-         console.log('🚀 🍟', cart)
          cartReducer({
             type: 'CART',
             payload: cart,
@@ -77,37 +67,56 @@ export const CartProvider = ({ children }) => {
          if (!isAuthenticated) {
             localStorage.setItem('cart-id', data.createCart.id)
             setStoredCartId(data.createCart.id)
-            console.log('product has been added', data.createCart.id)
          }
       },
       onError: error => {
          console.log(error)
-         toast.error('Failed to create cart!')
+         addToast('Failed to create cart!', {
+            appearance: 'error',
+         })
       },
    })
    //update cart
-   const [deleteCartItems] = useMutation(DELETE_CART_ITEMS, {
-      onCompleted: () => {
-         console.log('item removed successfully')
+   const [updateCart] = useMutation(MUTATIONS.CART.UPDATE, {
+      onCompleted: data => {
+         localStorage.removeItem('cart-id')
+         console.log('🍾 Cart updated with data!')
       },
       onError: error => {
          console.log(error)
-         // toast.error("Failed to add cart items!");
+         addToast('Failed to add cart items!', {
+            appearance: 'error',
+         })
       },
    })
+
    //delete cart
 
-   //create cartItems
+   // create cartItems
    const [createCartItems] = useMutation(CREATE_CART_ITEMS, {
       onCompleted: () => {
          console.log('items added successfully')
       },
       onError: error => {
          console.log(error)
-         // toast.error("Failed to add cart items!");
+         addToast('Failed to add cart items!', {
+            appearance: 'error',
+         })
       },
    })
 
+   // delete cartItems
+   const [deleteCartItems] = useMutation(DELETE_CART_ITEMS, {
+      onCompleted: () => {
+         console.log('item removed successfully')
+      },
+      onError: error => {
+         console.log(error)
+         addToast('Failed to add cart items!', {
+            appearance: 'error',
+         })
+      },
+   })
    //update cartItems
 
    //add to cart
@@ -141,8 +150,103 @@ export const CartProvider = ({ children }) => {
                },
             })
          }
+      } else {
+         // logged in
+         if (!cartState.cart) {
+            console.log('Login ✔ Cart ❌')
+            // new cart
+            const object = {
+               isTest: user.isTest,
+               // to be moved to headers
+               customerId: user.id,
+               paymentMethodId: user.platform_customer.defaultPaymentMethodId,
+               stripeCustomerId: user.platform_customer.stripeCustomerId,
+               address: user.platform_customer.defaultCustomerAddress,
+               cartItems: {
+                  data: cartItems,
+               },
+               ...(user.platform_customer.firstName && {
+                  customerInfo: {
+                     customerFirstName: user.platform_customer.firstName,
+                     customerLastName: user.platform_customer.lastName,
+                     customerEmail: user.platform_customer.email,
+                     customerPhone: user.platform_customer.phoneNumber,
+                  },
+               }),
+            }
+            createCart({
+               variables: {
+                  object,
+               },
+            })
+         } else {
+            // update existing cart
+            const cartItemsWithCartId = new Array(quantity).fill({
+               ...cartItem,
+               cartId: storedCartId,
+            })
+            createCartItems({
+               variables: {
+                  objects: cartItemsWithCartId,
+               },
+            })
+         }
       }
    }
+
+   // get user pending cart
+   const { loading: existingCartLoading, error: existingCartError } =
+      useSubscription(GET_CARTS, {
+         variables: {
+            where: {
+               paymentStatus: { _eq: 'PENDING' },
+               status: { _eq: 'CART_PENDING' },
+               customerKeycloakId: {
+                  _eq: user?.keycloakId,
+               },
+            },
+         },
+         skip: !(brand?.id && user?.keycloakId),
+         onSubscriptionData: ({ subscriptionData }) => {
+            // pending cart available
+            if (
+               subscriptionData.data.carts &&
+               subscriptionData.data.carts.length > 0
+            ) {
+               setStoredCartId(subscriptionData.data.carts[0].id)
+            } else {
+               // no pending cart
+               if (storedCartId) {
+                  updateCart({
+                     variables: {
+                        id: storedCartId,
+                        _set: {
+                           isTest: user.isTest,
+                           customerKeycloakId: user.keycloakId,
+                           paymentMethodId:
+                              user.platform_customer.defaultPaymentMethodId,
+                           stripeCustomerId:
+                              user.platform_customer?.stripeCustomerId,
+                           address:
+                              user.platform_customer.defaultCustomerAddress,
+                           ...(user.platform_customer.firstName && {
+                              customerInfo: {
+                                 customerFirstName:
+                                    user.platform_customer.firstName,
+                                 customerLastName:
+                                    user.platform_customer.lastName,
+                                 customerEmail: user.platform_customer.email,
+                                 customerPhone:
+                                    user.platform_customer.phoneNumber,
+                              },
+                           }),
+                        },
+                     },
+                  })
+               }
+            }
+         },
+      })
    console.log('cartState', cartState)
    return (
       <CartContext.Provider

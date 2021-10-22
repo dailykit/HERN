@@ -43,7 +43,7 @@ import CustomerIcon from './Customer'
 import MarketingIcon from './Marketing'
 import HelpIcon from './Help'
 import Close from './CloseIcon'
-
+import LinkIcon2 from './LinkIcon'
 export {
    SearchIcon,
    AddIcon,
@@ -90,6 +90,7 @@ export {
    CustomerIcon,
    MarketingIcon,
    Close,
+   LinkIcon2
 }
 
 export * from './Tick'

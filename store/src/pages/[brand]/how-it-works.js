@@ -4,7 +4,7 @@ import { processJsFile, renderPageContent, getPageProps } from '../../utils'
 import 'regenerator-runtime'
 
 const HowItWorks = props => {
-   const { folds, settings, navigationMenus } = props
+   const { folds, settings, navigationMenus, seoSettings } = props
 
    React.useEffect(() => {
       try {
@@ -16,7 +16,7 @@ const HowItWorks = props => {
 
    return (
       <Layout settings={settings}>
-         <SEO title="How it works" />
+         <SEO seoSettings={seoSettings} />
          <main>{renderPageContent(folds)}</main>
       </Layout>
    )
@@ -25,13 +25,13 @@ const HowItWorks = props => {
 export default HowItWorks
 
 export const getStaticProps = async ({ params }) => {
-   const { parsedData, seo, settings, navigationMenus } = await getPageProps(
+   const { parsedData, seo, settings, navigationMenus, seoSettings } = await getPageProps(
       params,
       '/how-it-works'
    )
 
    return {
-      props: { folds: parsedData, seo, settings, navigationMenus },
+      props: { folds: parsedData, seo, settings, navigationMenus, seoSettings },
       revalidate: 60, // will be passed to the page component as props
    }
 }
