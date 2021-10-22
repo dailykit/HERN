@@ -1,0 +1,326 @@
+.hern-cart-container {
+   height: calc(100vh - 64px);
+}
+.hern-cart-page {
+   padding: 0;
+   width: 100%;
+   background-color: #e5e5e5;
+   height: calc(100vh - 64px);
+   display: block;
+   overflow-y: auto;
+   box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%);
+   position: relative;
+   &::-webkit-scrollbar {
+      width: 0;
+   }
+}
+.hern-cart-content {
+   background-color: #fafafa;
+   min-height: 100vh;
+   //    height: 100%;
+   display: flex;
+   padding-bottom: 1em;
+   flex-direction: column;
+   position: relative;
+}
+.hern-cart-content {
+   > header {
+      font-weight: 600;
+      font-size: 20px;
+      line-height: 24px;
+      color: #202020;
+      height: 3em;
+      padding: 0 0.85em;
+      display: flex;
+      align-items: center;
+      box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
+   }
+   > section {
+      margin-top: 1em;
+   }
+}
+
+.hern-cart-empty-cart {
+   display: flex;
+   height: calc(100vh - 60px);
+   align-items: center;
+   justify-content: center;
+   flex-direction: column;
+   > span {
+      font-style: normal;
+      font-weight: 600;
+      font-size: 28px;
+      line-height: 38px;
+      text-align: center;
+      margin: 4px 0;
+   }
+}
+
+.hern-cart-go-to-menu-btn {
+   margin: 2em 0;
+}
+
+.hern-cart-delivery-info {
+   margin: 0 1em;
+   > span {
+      //   font-style: italic;
+      font-weight: normal;
+      font-size: 20px;
+      line-height: 24px;
+      color: #555b6e;
+   }
+}
+
+.hern-cart-delivery-details {
+   display: flex;
+   flex-direction: column;
+   margin-top: 0.5em;
+   > span:first-child {
+      font-style: normal;
+      font-weight: normal;
+      font-size: 12px;
+      line-height: 14px;
+      margin: 3px 0;
+      color: #555b6e;
+   }
+   > span:nth-child(2) {
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 16px;
+      margin: 3px 0;
+   }
+}
+
+.hern-cart-bill-details {
+   margin: 1em;
+}
+
+.hern-cart-bill-details-list {
+   li {
+      display: flex;
+      justify-content: space-between;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 16px;
+      color: #555b6e;
+      margin: 12px 0;
+   }
+}
+
+.hern-cart-products-product-list {
+   margin-bottom: 1em;
+}
+.hern-cart-product-modifiers-heading {
+   font-style: normal;
+   font-weight: normal;
+   font-size: 14px;
+   line-height: 16px;
+}
+.hern-cart-footer {
+   position: sticky;
+   bottom: 0;
+   width: inherit;
+}
+
+.hern-cart-proceed-btn {
+   width: inherit;
+}
+
+.hern-cart-product-custom-area {
+   display: flex;
+   width: 100%;
+   justify-content: space-between;
+   height: 45px;
+}
+
+.hern-cart-product-custom-area-quantity {
+   margin-right: 10px;
+   display: flex;
+   align-items: center;
+   > span {
+      font-style: italic;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 16px;
+   }
+}
+
+.hern-cart-product-custom-area-icons {
+   display: flex;
+   flex-direction: column-reverse;
+   justify-content: space-between;
+}
+
+.hern-cart-product-modifiers {
+   margin: 0 1em;
+   border: 1px solid rgba(64, 64, 64, 0.25);
+   box-sizing: border-box;
+   border-radius: 6px;
+   padding: 0 0.5em;
+}
+
+.hern-cart-product-modifiers-product-option {
+   display: flex;
+   justify-content: space-between;
+   margin-left: 1em;
+   > span {
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 16px;
+      color: #555b6e;
+      margin: 10px 0;
+   }
+}
+
+.hern-cart-product-modifiers-list {
+   ul {
+      margin-left: 1em;
+   }
+   li {
+      display: flex;
+      justify-content: space-between;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 16px;
+      color: #555b6e;
+      margin: 10px 0;
+   }
+}
+
+.hern-cart__tip {
+   margin: 0 1em;
+   display: flex;
+   flex-direction: column;
+   background: #f4f4f4;
+   border-radius: 6px;
+   padding: 0.45em;
+}
+
+.hern-cart__tip-heading {
+   > span {
+      font-style: normal;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 14px;
+   }
+}
+
+.hern-cart__tip-tip-options-list {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   margin: 4px 0;
+   > ul {
+      display: flex;
+      font-size: 12px;
+      margin: 0 0.65em;
+      margin-left: 0;
+   }
+}
+
+.hern-cart__tip-tip-option {
+   margin: 0 3px;
+   height: 2.2em;
+   display: flex;
+   background: white;
+   align-items: center;
+   width: 6.5em;
+   padding: 0 6px;
+   border-radius: 12px;
+   justify-content: space-between;
+   cursor: pointer;
+}
+.hern-cart__tip-tip-option--active {
+   border: 1px solid #367bf5;
+}
+
+.hern-cart__tip-add-custom-btn {
+   border: 1px solid #367bf5;
+   box-sizing: border-box;
+   border-radius: 12px;
+   font-style: normal;
+   font-weight: normal;
+   font-size: 10px;
+   color: #367bf5;
+   width: 6.5em;
+   height: 2.5em;
+   outline: none !important;
+}
+
+.hern-cart__tip-custom-tip {
+   display: flex;
+   // background: #ffffff;
+   align-items: center;
+   justify-content: space-between;
+}
+
+.hern-cart__tip-input-field {
+   background: #ffffff;
+   // margin: 0 0.65em;
+   padding: 0px 4px;
+   border-radius: 4px;
+   margin-right: 4px;
+   > span {
+      color: #20202066;
+   }
+   > input {
+      outline: none;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 16px;
+      color: #555b6e;
+      margin: 0 4px;
+   }
+}
+
+.hern-cart__tip-add-tip-btn {
+   color: #367bf5;
+   font-size: 14px;
+   line-height: 16px;
+   outline: none !important;
+}
+
+@media only screen and (min-width: 769px) {
+   .hern-cart-container {
+      background-color: rgb(251, 252, 246);
+      display: flex;
+      justify-content: center;
+   }
+   .hern-cart-page {
+      padding: 0;
+      width: 28em;
+      background-color: aliceblue;
+   }
+   .hern-cart__tip {
+      margin: 0 1em;
+      display: flex;
+      justify-content: space-between;
+      background: #f4f4f4;
+      height: 44px;
+      align-items: center;
+      border-radius: 6px;
+      padding: 0.45em;
+      flex-direction: row;
+   }
+   .hern-cart__tip-tip-options-list {
+      margin: 0;
+      > ul {
+         margin: 0 0.65em;
+      }
+   }
+   .hern-cart__tip-input-field {
+      background: #ffffff;
+      margin: 0 0.65em;
+      padding: 0px 4px;
+      border-radius: 4px;
+      margin: 0 4px;
+   }
+   .hern-cart__tip-custom-tip {
+      justify-content: unset;
+   }
+}

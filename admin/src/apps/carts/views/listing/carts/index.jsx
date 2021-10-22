@@ -22,7 +22,7 @@ export const Carts = () => {
    }, [tab, addTab])
 
    return (
-      <Flex padding="0 16px">
+      <Flex padding="0 32px">
          <Flex
             as="header"
             container
@@ -30,12 +30,8 @@ export const Carts = () => {
             alignItems="center"
             justifyContent="space-between"
          >
-            <Text as="h3">Carts</Text>
-            <TextButton
-               type="solid"
-               size="sm"
-               onClick={() => setIsModeTunnelOpen(true)}
-            >
+            <Text as="h2">Carts</Text>
+            <TextButton type="solid" onClick={() => setIsModeTunnelOpen(true)}>
                Create Order
             </TextButton>
          </Flex>
@@ -90,6 +86,7 @@ const Listing = () => {
                let name = customerInfo?.customerFirstName
                if (customerInfo?.customerLastName) {
                   name += ' ' + customerInfo?.customerLastName
+                  return name.trim()
                }
                return name?.trim() || 'N/A'
             },
@@ -113,6 +110,19 @@ const Listing = () => {
                   column.getDefinition().title
                )
             },
+         },
+         {
+            title: 'Customer Contact No.',
+            field: 'customerInfo.customerPhone',
+            headerFilter: true,
+            headerTooltip: column => {
+               const identifier = 'carts_listing_column_customerPhone'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+            hozAlign: 'center',
          },
          {
             title: 'Source',
@@ -178,6 +188,7 @@ const Listing = () => {
             ...tableOptions,
             placeholder: 'No carts available yet.',
          }}
+         className="cart-table"
       />
    )
 }

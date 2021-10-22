@@ -8,7 +8,7 @@ import 'regenerator-runtime'
 const ManageCardsPage = props => {
    const router = useRouter()
    const { isAuthenticated, isLoading } = useUser()
-   const { folds, seo, settings, navigationMenus } = props
+   const { folds, settings, navigationMenus, seoSettings } = props
 
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
@@ -27,7 +27,7 @@ const ManageCardsPage = props => {
 
    return (
       <Layout settings={settings} navigationMenus={navigationMenus}>
-         <SEO title="Manage Cards" />
+         <SEO seoSettings={seoSettings} />
          <main>{renderPageContent(folds)}</main>
       </Layout>
    )
@@ -36,13 +36,13 @@ const ManageCardsPage = props => {
 export default ManageCardsPage
 
 export const getStaticProps = async ({ params }) => {
-   const { parsedData, seo, settings, navigationMenus } = await getPageProps(
+   const { parsedData, seo, settings, navigationMenus, seoSettings } = await getPageProps(
       params,
       '/account/cards'
    )
 
    return {
-      props: { folds: parsedData, seo, settings, navigationMenus },
+      props: { folds: parsedData, seo, settings, navigationMenus, seoSettings },
       revalidate: 60, // will be passed to the page component as props
    }
 }

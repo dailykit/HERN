@@ -1,7 +1,7 @@
 import React from 'react'
 import gql from 'graphql-tag'
 import Loadable from 'react-loadable'
-import { Loader } from '@dailykit/ui'
+import { Loader, Spacer } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 import { Switch, Route, Link } from 'react-router-dom'
 import FullOccurrenceReport from './shared/components/FullOccurrenceReport'
@@ -24,18 +24,15 @@ import {
    NavMenuPanel,
    HomeContainer,
    WelcomeNote,
+   DashboardRight,
 } from './styled'
-import BottomBar from './shared/components/BottomBar'
+
 import DashboardCards from './shared/components/DashboardCardAnalytics'
 import { useAuth } from './shared/providers'
 import DashboardTables from './shared/components/DashboardTables'
-import {
-   BrandAppIcon, CartsAppIcon, CustomersAppIcon, HomeAppIcon, InventoryAppIcon, MenuAppIcon,
-   OrderAppIcon, ProductsAppIcon, ReportsAppIcon, SettingAppIcon, StoreAppIcon,
-   SubscriptionAppIcon
-} from '../src/shared/assets/navBarIcons'
 import { useLocation } from 'react-router-dom'
-
+import DashboardRightPanel from './shared/components/DashboardRightPanel'
+import DashboardWeeklyAnalysis from './shared/components/dashboardWeeklyAnalysis'
 const APPS = gql`
    subscription apps {
       apps(order_by: { id: asc }) {
@@ -105,54 +102,38 @@ const Carts = Loadable({
    loading: Loader,
 })
 
+// changes for webhooks 
+const Developer = Loadable({
+   loader: () => import('./apps/developer'),
+   loading: Loader,
+})
+
 const App = () => {
    // const location = useLocation()
    // const { routes, setRoutes } = useTabs()
    const { pathname } = useLocation()
    const { loading, data: { apps = [] } = {} } = useSubscription(APPS)
    const { user } = useAuth()
-   const [open, setOpen] = React.useState(false)
 
    if (loading) return <Loader />
    return (
       <Layout>
          <TabBar />
-         {/* <AppList open={open}>
-            {appIcons.data.map(app => (
-               <AppItem
-                  active={app.title === 'Home'}
-                  key={app.id}>
-                  <Link to={app.path}>
-                     <AppIcon>{app.icon}</AppIcon>
-                     <span>{app.title}</span>
-                  </Link>
-               </AppItem>
-            ))}
-         </AppList> */}
          <Sidebar />
+
          <main>
             <Switch>
                <Route path="/" exact>
                   <Banner id="app-home-top" />
                   <HomeContainer>
                      <DashboardPanel>
-                        <WelcomeNote>
-                           <p>
-                              Welcome Back {user?.name || 'user'}
-                              <span>👋</span>
-                           </p>
-                        </WelcomeNote>
                         <DashboardCards />
                         <DashboardTables />
-                        {/* <InsightDiv>
-                     <InsightDashboard
-                        appTitle="global"
-                        moduleTitle="dashboard"
-                        includeChart
-                        showInTunnel={false}
-                     />
-                  </InsightDiv> */}
+                        <DashboardWeeklyAnalysis />
                      </DashboardPanel>
+                     <DashboardRight>
+                        <DashboardRightPanel />
+                     </DashboardRight>
                   </HomeContainer>
                   <Banner id="app-home-bottom" />
                </Route>
@@ -169,10 +150,11 @@ const App = () => {
                <Route path="/content" component={Content} />
                <Route path="/editor" component={Editor} />
                <Route path="/carts" component={Carts} />
+               <Route path="/developer" component={Developer} />
             </Switch>
          </main>
          {/* {!isKeycloakSupported() && <RedirectBanner />} */}
-         <BottomBar />
+
       </Layout>
    )
 }

@@ -22,6 +22,7 @@ export const BRANDS = {
                title
                isDefault
                isPublished
+               created_at
             }
          }
       }
@@ -42,6 +43,17 @@ export const BRANDS = {
       mutation createBrand($object: brands_brand_insert_input!) {
          createBrand(object: $object) {
             id
+         }
+      }
+   `,
+   CREATE_BRANDS: gql`
+      mutation createBrands($objects: [brands_brand_insert_input!]!) {
+         createBrands(objects: $objects) {
+            returning {
+               id
+               domain
+            }
+            affected_rows
          }
       }
    `,

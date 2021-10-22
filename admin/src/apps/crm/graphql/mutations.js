@@ -45,7 +45,17 @@ export const CREATE_CAMPAIGN = gql`
       }
    }
 `
-
+export const CREATE_CAMPAIGNS = gql`
+   mutation MyMutation($objects: [crm_campaign_insert_input!]!) {
+      createCampaigns(objects: $objects) {
+         affected_rows
+         returning {
+            id
+            metaDetails
+         }
+      }
+   }
+`
 export const CREATE_COUPON = gql`
    mutation CREATE_COUPON($object: crm_coupon_insert_input!) {
       createCoupon(object: $object) {
@@ -54,6 +64,19 @@ export const CREATE_COUPON = gql`
       }
    }
 `
+
+export const CREATE_COUPONS = gql`
+   mutation CreateCoupons($objects: [crm_coupon_insert_input!]!) {
+      createCoupons(objects: $objects) {
+         affected_rows
+         returning {
+            id
+            code
+         }
+      }
+   }
+`
+
 export const CREATE_REWARD = gql`
    mutation CREATE_REWARD($objects: [crm_reward_insert_input!]!) {
       insert_crm_reward(objects: $objects) {

@@ -26,6 +26,10 @@ import {
 import ContentSelection from './ContentSelection'
 import BrandContext from '../../../context/Brand'
 import { PagePreviewTunnel } from './Tunnel'
+// for SEO Tools
+import SocialShare from './SEO/SocialShare'
+import SEObasics from './SEO/SEObasics'
+import TwitterCard from './SEO/TwitterCard'
 
 const PageForm = () => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
@@ -84,20 +88,20 @@ const PageForm = () => {
          },
          onSubscriptionData: ({
             subscriptionData: {
-               data: { website_websitePage_by_pk: websitePage = {} } = {},
+               data: { brands_brandPages_by_pk: brandPage = {} } = {},
             } = {},
          }) => {
-            setState(websitePage || {})
+            setState(brandPage || {})
             setPageTitle({
                ...pageTitle,
-               value: websitePage?.internalPageName || '',
+               value: brandPage?.internalPageName || '',
             })
 
             setPageRoute({
                ...pageRoute,
-               value: websitePage?.route || '',
+               value: brandPage?.route || '',
             })
-            setToggle(websitePage?.published)
+            setToggle(brandPage?.published)
          },
       }
    )
@@ -275,7 +279,7 @@ const PageForm = () => {
                <div className="styleTab">
                   <HorizontalTabList>
                      <HorizontalTab>Details</HorizontalTab>
-                     <HorizontalTab>Page Preview Meta data</HorizontalTab>
+                     <HorizontalTab>SEO Tools</HorizontalTab>
                   </HorizontalTabList>
                </div>
                <HorizontalTabPanels>
@@ -328,9 +332,13 @@ const PageForm = () => {
                         <ContentSelection />
                      </HorizontalTabPanel>
                   </div>
-                  <HorizontalTabPanel>
-                     <div className="styleTab">Meda data goes here</div>
-                  </HorizontalTabPanel>
+                  <div className="styleTab">
+                     <HorizontalTabPanel>
+                        <SEObasics routeName={pageRoute.value} />
+                        <SocialShare routeName={pageRoute.value} />
+                        <TwitterCard routeName={pageRoute.value} />
+                     </HorizontalTabPanel>
+                  </div>
                </HorizontalTabPanels>
             </HorizontalTabs>
          </StyledDiv>

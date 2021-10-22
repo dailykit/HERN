@@ -11,4 +11,15 @@
 }
 .dashboard-table {
    width: 100%;
+   max-height: 216px !important;
+}
+.dashboard-table .tabulator-header {
+   height: 40px;
+}
+.dashboard-table .tabulator-header .tabulator-col {
+   background-color: #ffffff !important;
+}
+.dashboard-table .tabulator-headers {
+   padding-top: 3px;
+   background-color: #ffffff;
 }

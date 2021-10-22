@@ -47,10 +47,10 @@ export default function BulkItemsListings({ tableRef }) {
       {
          title: 'Item Name',
          field: 'supplierItem.name',
-         headerFilter: false,
+         headerFilter: true,
          hozAlign: 'left',
          headerHozAlign: 'left',
-         width: 150,
+         width: 350,
          headerTooltip: col => {
             const identifier = 'items_listings_item_name'
             return tooltip(identifier)?.description || col.getDefinition().title
@@ -59,7 +59,7 @@ export default function BulkItemsListings({ tableRef }) {
       {
          title: 'Supplier',
          field: 'supplierItem.supplier.name',
-         headerFilter: false,
+         headerFilter: true,
          hozAlign: 'left',
          headerHozAlign: 'center',
          headerTooltip: col => {
@@ -141,6 +141,7 @@ export default function BulkItemsListings({ tableRef }) {
                   ...tableOptions,
                   groupBy: 'supplierItem.name',
                   selectable: true,
+                  tooltips: true,
                }}
                style={{ marginTop: '16px' }}
             />

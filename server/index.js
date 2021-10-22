@@ -25,6 +25,7 @@ import {
    GetFullOccurenceRouter,
    populate_env,
    ActionsRouter,
+   DeveloperRouter, // for hadling webhook events
    OhyayRouter,
    ExperienceRouter,
    LogRouter,
@@ -113,6 +114,8 @@ router.post(
    '/webhook/emails/handle-subscription-cancelled',
    handleSubscriptionCancelled
 )
+router.use('/api/developer',  DeveloperRouter);
+
 router.post('/webhook/email-template-handler', emailTemplateHandler)
 
 router.use('/api/store', StoreRouter)

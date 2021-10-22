@@ -3,7 +3,7 @@ import { SEO, Layout } from '../../components'
 import { getPageProps, processJsFile, renderPageContent } from '../../utils'
 
 const ForgotPasswordPage = props => {
-   const { folds, seo, settings, navigationMenus } = props
+   const { folds, seo, settings, navigationMenus, seoSettings } = props
 
    React.useEffect(() => {
       try {
@@ -15,20 +15,20 @@ const ForgotPasswordPage = props => {
 
    return (
       <Layout settings={settings} navigationMenus={navigationMenus}>
-         <SEO title="Login" />
+         <SEO seoSettings={seoSettings} />
          <main>{renderPageContent(folds)}</main>
       </Layout>
    )
 }
 
 export const getStaticProps = async ({ params }) => {
-   const { parsedData, seo, settings, navigationMenus } = await getPageProps(
+   const { parsedData, seo, settings, navigationMenus, seoSettings } = await getPageProps(
       params,
       '/forgot-password'
    )
 
    return {
-      props: { folds: parsedData, seo, settings, navigationMenus },
+      props: { folds: parsedData, seo, settings, navigationMenus, seoSettings },
       revalidate: 1, // will be passed to the page component as props
    }
 }

@@ -92,7 +92,7 @@ export const sendSMS = async (req, res) => {
       }
 
       const sms = await client.request(SEND_SMS, {
-         phone: `+91${customer.phoneNo}`,
+         phone: customer.phoneNo,
          message: `Dear ${
             customer.name.trim() ? customer.name : 'customer'
          }, your payment requires additional action${
