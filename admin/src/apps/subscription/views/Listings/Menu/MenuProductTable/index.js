@@ -14,6 +14,8 @@ import {
    ButtonGroup,
    TextButton,
    useTunnel,
+   Tunnels,
+   Tunnel,
 } from '@dailykit/ui'
 import moment from 'moment'
 import { toast } from 'react-toastify'
@@ -30,6 +32,8 @@ import {
    PublishIcon,
    UnPublishIcon,
 } from '../../../../../products/assets/icons'
+import OccurrenceBulkAction from './BulkActionTunnel'
+
 const MenuProductTables = () => {
    return (
       <>
@@ -57,18 +61,14 @@ const MenuProductTables = () => {
       </>
    )
 }
-const MenuProductOccurenceTable = forwardRef(ref => {
+const MenuProductOccurenceTable = () => {
    const [selectedRows, setSelectedRows] = React.useState([])
    const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
 
    const tableRef = React.useRef()
    const [productOccurrenceData, setProductOccurrenceData] = useState([])
    const [checked, setChecked] = React.useState(false)
-   const [occurrenceList, setOccurrenceList] = useState([])
 
-   // const removeSelectedRow = id => {
-   //    tableRef.current.removeSelectedRow(id)
-   // }
    const CheckBox = ({ handleMultipleRowSelection, checked }) => {
       return (
          <Checkbox
@@ -117,9 +117,7 @@ const MenuProductOccurenceTable = forwardRef(ref => {
          },
       }
    )
-   const dataLoaded = () => {
-      tableRef.current.table.setGroupBy('productCategory')
-   }
+
    console.log('productOccurrenceData', productOccurrenceData)
    const columns = [
       {
@@ -198,58 +196,7 @@ const MenuProductOccurenceTable = forwardRef(ref => {
          width: 85,
       },
    ]
-   // const tableLoaded = () => {
-   //    const occurrenceGroup = localStorage.getItem(
-   //       'tabulator_occurrence_groupBy'
-   //    )
-   //    const occurrenceGroupParse =
-   //       occurrenceGroup !== undefined &&
-   //       occurrenceGroup !== null &&
-   //       occurrenceGroup.length !== 0
-   //          ? JSON.parse(occurrenceGroup)
-   //          : null
-   //    tableRef.current.table.setGroupBy(
-   //       !!occurrenceGroupParse && occurrenceGroupParse.length > 0
-   //          ? ['label', ...occurrenceGroupParse]
-   //          : 'label'
-   //    )
-   //    tableRef.current.table.setGroupHeader(function (
-   //       value,
-   //       count,
-   //       data1,
-   //       group
-   //    ) {
-   //       let newHeader
-   //       switch (group._group.field) {
-   //          case 'name':
-   //             newHeader = 'Product Name'
-   //             break
-   //          case 'label':
-   //             newHeader = 'Label'
-   //             break
-   //          case 'quantity':
-   //             newHeader = 'Quantity'
-   //             break
-   //          default:
-   //             break
-   //       }
-   //       return `${newHeader} - ${value} || ${count} Product`
-   //    })
 
-   //    const selectedRowsId =
-   //       localStorage.getItem('selected-rows-id_occurrence_table') || '[]'
-   //    if (JSON.parse(selectedRowsId).length > 0) {
-   //       tableRef.current.table.selectRow(JSON.parse(selectedRowsId))
-   //       let newArr = []
-   //       JSON.parse(selectedRowsId).forEach(rowID => {
-   //          const newFind = occurrenceList.find(option => option.id == rowID)
-   //          newArr = [...newArr, newFind]
-   //       })
-   //       setSelectedRows(newArr)
-   //    } else {
-   //       setSelectedRows([])
-   //    }
-   // }
    const handleRowSelection = ({ _row }) => {
       const rowData = _row.getData()
       const lastPersistence = localStorage.getItem(
@@ -288,13 +235,8 @@ const MenuProductOccurenceTable = forwardRef(ref => {
          JSON.stringify(newLastPersistenceParse)
       )
    }
-   useImperativeHandle(ref, () => ({
-      removeSelectedRow(id) {
-         tableRef.current.table.deselectRow(id)
-      },
-   }))
 
-   const removeSelectedProducts = () => {
+   const removeSelectedOccurrence = () => {
       setChecked({ checked: false })
       setSelectedRows([])
       tableRef.current.table.deselectRow()
@@ -312,7 +254,7 @@ const MenuProductOccurenceTable = forwardRef(ref => {
          setSelectedRows(multipleRowData)
          console.log('first', selectedRows)
          localStorage.setItem(
-            'selected-rows-id_occurrence-table',
+            'selected-rows-id_occurrence_table',
             JSON.stringify(multipleRowData.map(row => row.id))
          )
       } else {
@@ -321,18 +263,21 @@ const MenuProductOccurenceTable = forwardRef(ref => {
          console.log('second', selectedRows)
 
          localStorage.setItem(
-            'selected-rows-id_occurrence-table',
+            'selected-rows-id_occurrence_table',
             JSON.stringify([])
          )
       }
    }
    console.log('selected row:::::', selectedRows)
    const selectionColumn =
-      selectedRows.length > 0 && selectedRows.length < occurrenceList.length
+      selectedRows.length > 0 &&
+      selectedRows.length < productOccurrenceData.length
          ? {
               formatter: 'rowSelection',
               titleFormatter: reactFormatter(
-                 <CrossBox removeSelectedProducts={removeSelectedProducts} />
+                 <CrossBox
+                    removeSelectedOccurrence={removeSelectedOccurrence}
+                 />
               ),
               align: 'center',
               hozAlign: 'center',
@@ -354,6 +299,9 @@ const MenuProductOccurenceTable = forwardRef(ref => {
               headerSort: false,
               frozen: true,
            }
+   const removeSelectedRow = id => {
+      tableRef.current.removeSelectedRow(id)
+   }
 
    if (subsLoading && !subsError) {
       return <InlineLoader />
@@ -369,6 +317,16 @@ const MenuProductOccurenceTable = forwardRef(ref => {
 
    return (
       <>
+         <Tunnels tunnels={tunnels}>
+            <Tunnel layer={1} size="full">
+               <OccurrenceBulkAction
+                  close={closeTunnel}
+                  selectedRows={selectedRows}
+                  removeSelectedRow={removeSelectedRow}
+                  setSelectedRows={setSelectedRows}
+               />
+            </Tunnel>
+         </Tunnels>
          <ActionBar
             title="subscription occurrence"
             selectedRows={selectedRows}
@@ -381,7 +339,6 @@ const MenuProductOccurenceTable = forwardRef(ref => {
             // dataLoaded={tableLoaded}
             data={productOccurrenceData}
             options={TableOptions}
-            dataLoaded={dataLoaded}
             rowSelected={handleRowSelection}
             rowDeselected={handleRowDeselection}
             selectableCheck={() => true}
@@ -389,7 +346,7 @@ const MenuProductOccurenceTable = forwardRef(ref => {
          />
       </>
    )
-})
+}
 
 const ActionBar = ({ title, selectedRows, openTunnel }) => {
    return (
