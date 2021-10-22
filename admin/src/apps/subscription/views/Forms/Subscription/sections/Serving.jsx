@@ -12,6 +12,7 @@ import {
    useTunnel,
    IconButton,
    ComboButton,
+   TextButton,
    TunnelHeader,
    HorizontalTab,
    HorizontalTabs,
@@ -40,6 +41,7 @@ import {
 import {
    SERVING,
    UPSERT_ITEM_COUNT,
+   UPSERT_SUBSCRIPTION_TITLE,
    UPSERT_SUBSCRIPTION_SERVING,
 } from '../../../../graphql'
 
@@ -47,7 +49,11 @@ const Serving = ({ id, isActive, toggleServingTunnel }) => {
    const { state, dispatch } = usePlan()
    const [tabIndex, setTabIndex] = React.useState(0)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
+   const [upsertTitle] = useMutation(UPSERT_SUBSCRIPTION_TITLE)
    const [upsertServing] = useMutation(UPSERT_SUBSCRIPTION_SERVING)
+   const [servingId, setServingId] = React.useState(
+      state.title.defaultServing.id
+   )
    const [itemTunnelState, setItemTunnelState] = React.useState('')
    const {
       error,
@@ -111,7 +117,25 @@ const Serving = ({ id, isActive, toggleServingTunnel }) => {
          },
       })
    }
-
+   const IsDefaultServing = () => {
+      if (!state.serving.isActive && !serving.isValid) {
+         toast.error('Can not be published without any active item counts!', {
+            position: 'top-center',
+         })
+         return
+      }
+      setServingId(serving.id)
+      upsertTitle({
+         variables: {
+            object: {
+               id: state.title.id,
+               title: state.title.title,
+               isActive: !state.title.isActive,
+               defaultSubscriptionServingId: servingId,
+            },
+         },
+      })
+   }
    if (loading) return <InlineLoader />
    if (error) {
       toast.error('Failed to fetch item counts!')
@@ -131,7 +155,19 @@ const Serving = ({ id, isActive, toggleServingTunnel }) => {
                   Serving: {serving.size}
                </Text>
                <Spacer size="14px" xAxis />
-               {serving.id === state.title.defaultServing.id && (
+               {serving.id != state.title.defaultServing.id ? (
+                  <TextButton
+                     type="outline"
+                     onClick={() => IsDefaultServing()}
+                     style={{
+                        padding: '12px 0px',
+                        border: 'none',
+                        fontSize: '14px',
+                     }}
+                  >
+                     Set as Default
+                  </TextButton>
+               ) : (
                   <Tag>Default</Tag>
                )}
                <Spacer size="14px" xAxis />
@@ -183,6 +219,7 @@ const Serving = ({ id, isActive, toggleServingTunnel }) => {
                </Text>
                <Tooltip identifier="form_subscription_section_item_count_heading" />
             </Flex>
+
             <IconButton
                size="sm"
                type="outline"
@@ -210,6 +247,9 @@ const Serving = ({ id, isActive, toggleServingTunnel }) => {
                         {index === tabIndex && (
                            <ItemCount
                               id={key}
+                              defaultSubscriptionItemCountId={
+                                 serving.defaultSubscriptionItemCountId
+                              }
                               toggleItemCountTunnel={toggleItemCountTunnel}
                               isActive={isActive && index === tabIndex}
                            />

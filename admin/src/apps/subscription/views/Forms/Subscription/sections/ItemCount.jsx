@@ -17,6 +17,7 @@ import {
    SectionTab,
    ComboButton,
    SectionTabs,
+   TextButton,
    TunnelHeader,
    SectionTabList,
    SectionTabPanel,
@@ -31,6 +32,7 @@ import {
    ITEM_COUNT,
    INSERT_SUBSCRIPTION,
    UPSERT_ITEM_COUNT,
+   UPSERT_SUBSCRIPTION_SERVING,
 } from '../../../../graphql'
 import { logger } from '../../../../../../shared/utils'
 import {
@@ -47,9 +49,17 @@ import {
    CloseIcon,
 } from '../../../../../../shared/assets/icons'
 
-const ItemCount = ({ id, toggleItemCountTunnel }) => {
+const ItemCount = ({
+   id,
+   toggleItemCountTunnel,
+   defaultSubscriptionItemCountId,
+}) => {
    const { state, dispatch } = usePlan()
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
+   const [upsertServing] = useMutation(UPSERT_SUBSCRIPTION_SERVING)
+   const [defaultItemCountId, setDefaultItemCountId] = React.useState(
+      defaultSubscriptionItemCountId
+   )
    const [upsertItemCount] = useMutation(UPSERT_ITEM_COUNT, {
       onCompleted: () => {
          toast.success('Successfully update the item count!')
@@ -82,6 +92,21 @@ const ItemCount = ({ id, toggleItemCountTunnel }) => {
       },
    })
 
+   const IsDefaultSubscriptionItemCount = () => {
+      setDefaultItemCountId(itemCount.id)
+      upsertServing({
+         variables: {
+            object: {
+               id: state.serving.id,
+               isActive: !state.serving.isActive,
+               subscriptionTitleId: state.title.id,
+               servingSize: Number(state.serving.size),
+               defaultSubscriptionItemCountId: defaultItemCountId,
+            },
+         },
+      })
+   }
+
    React.useEffect(() => {
       return () => {
          dispatch({
@@ -97,7 +122,9 @@ const ItemCount = ({ id, toggleItemCountTunnel }) => {
          })
       }
    }, [dispatch])
-
+   {
+      console.log('STATE_TITLE', state.title)
+   }
    const toggleIsActive = () => {
       if (!state.item.isActive && !itemCount.isValid) {
          toast.error('Can not be published without any subscriptions!', {
@@ -122,6 +149,14 @@ const ItemCount = ({ id, toggleItemCountTunnel }) => {
       logger(error)
       return <ErrorState message="Failed to fetch item count details!" />
    }
+   {
+      console.log(
+         'ITEMCOUNTID',
+         itemCount.id,
+         'DEFAULTITEMCOUNTID',
+         defaultItemCountId
+      )
+   }
    return (
       <>
          <Flex
@@ -134,6 +169,21 @@ const ItemCount = ({ id, toggleItemCountTunnel }) => {
                <Text as="p" style={{ marginBottom: '0px' }}>
                   Price per week: {itemCount.price}
                </Text>
+               {itemCount.id != defaultItemCountId ? (
+                  <TextButton
+                     type="outline"
+                     onClick={() => IsDefaultSubscriptionItemCount()}
+                     style={{
+                        padding: '12px 22px',
+                        border: 'none',
+                        fontSize: '14px',
+                     }}
+                  >
+                     Set as Default
+                  </TextButton>
+               ) : (
+                  <Tag style={{ marginLeft: '21px' }}>Default</Tag>
+               )}
                <Spacer size="14px" xAxis />
                {itemCount.isDemo && <Tag>Demo</Tag>}
             </Flex>
