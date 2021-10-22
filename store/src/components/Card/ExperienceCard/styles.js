@@ -14,11 +14,11 @@ export const Card = styled.div`
    &:hover {
       transform: translate3d(0px, -1.5px, 0px);
    }
-   height: 480px;
+   max-height: 480px;
    border-radius: 16px 16px 0px 0px;
    width: ${({ customWidth }) => customWidth};
    @media (min-width: 769px) {
-      height: 580px;
+      max-height: 580px;
    }
 `
 

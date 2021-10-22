@@ -41,6 +41,7 @@ import MultiRangeSlider from './MultiRangeSlider'
 import Wishlist from './Wishlist'
 import Carousel from './Carousel'
 import RenderCard from './RenderCard'
+import Review from './Review'
 
 export {
    Button,
@@ -85,7 +86,8 @@ export {
    MultiRangeSlider,
    Wishlist,
    Carousel,
-   RenderCard
+   RenderCard,
+   Review
 }
 export * from './Icons'
 export * from './Card'

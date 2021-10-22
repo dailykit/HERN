@@ -11,6 +11,9 @@
    font-family: Futura-bold;
    src: url('/assets/fonts/Futura/Futura Book font.ttf');
 }
+.Futura {
+   font-family: Futura;
+}
 .League-Gothic {
    font-family: League-Gothic;
 }

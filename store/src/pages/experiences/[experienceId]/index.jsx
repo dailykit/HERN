@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
 import ReactHtmlParser from 'react-html-parser'
 import styled from 'styled-components'
+import { Carousel } from 'antd'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import { useSubscription } from '@apollo/client'
-import moment from 'moment'
+import { useSubscription, useQuery } from '@apollo/client'
 import { Flex } from '@dailykit/ui'
 import parse from 'html-react-parser'
 import {
@@ -26,7 +26,9 @@ import {
    SEO,
    Layout,
    Booking,
-   InlineLoader
+   InlineLoader,
+   Review,
+   RenderCard
 } from '../../../components'
 // import Booking from "../../booking";
 import { theme } from '../../../theme'
@@ -36,13 +38,21 @@ import {
    EXPERIENCE,
    CATEGORY_EXPERIENCE,
    EXPERIENCE_PRODUCT,
-   EXPERIENCES_QUERY
+   EXPERIENCES_QUERY,
+   SIMILAR_CATEGORY_EXPERIENCE
 } from '../../../graphql'
-import { useWindowDimensions, fileParser, isEmpty } from '../../../utils'
+import {
+   useWindowDimensions,
+   fileParser,
+   isEmpty,
+   getDate,
+   useScroll
+} from '../../../utils'
 import SendPollComp from '../../../pageComponents/sendPollComponents'
 
 export default function Experience({ navigationMenuItems, parsedData = [] }) {
    const router = useRouter()
+   const scroll = useScroll()
    const { experienceId } = router.query
    const experienceTop01 = useRef()
    const experienceTop02 = useRef()
@@ -68,6 +78,61 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
       700: 1,
       500: 1
    }
+   const settings = {
+      arrows: true,
+      dots: false,
+      infinite: true,
+      slidesToShow: 3,
+      slidesToScroll: 3,
+      itemWidth: '96% !important',
+      nextArrow: <NextArrow color={theme.colors.textColor} size="48" />,
+      prevArrow: <PreviousArrow color={theme.colors.textColor} size="48" />,
+      appendDots: dots => (
+         <div>
+            <ul style={{ margin: '0px' }}> {dots} </ul>
+         </div>
+      ),
+      customPaging: i => (
+         <div
+            style={{
+               width: '50px',
+               height: '5px',
+               backgroundColor: 'rgb(196, 196, 196)',
+               margin: '8px'
+            }}
+         />
+      )
+   }
+   const customerReviews = [
+      {
+         id: 1,
+         review:
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,',
+         name: 'John Doe',
+         date: '2021-10-22T08:55:58.46131+00:00'
+      },
+      {
+         id: 2,
+         review:
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,',
+         name: 'Rachel M',
+         date: '2021-10-22T08:55:58.46131+00:00'
+      },
+      {
+         id: 3,
+         review:
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,',
+         name: 'Deepak Negi',
+         date: '2021-10-22T08:55:58.46131+00:00'
+      },
+      {
+         id: 4,
+         review:
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,',
+         name: 'Rishi Kumar',
+         date: '2021-10-22T08:55:58.46131+00:00'
+      }
+   ]
    const [isBookingPageOpen, setIsBookingPageOpen] = useState(false)
 
    const { loading, error } = useSubscription(EXPERIENCE, {
@@ -92,22 +157,25 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
       }
    })
 
-   const { loading: otherExperiencesLoading, error: otherExperiencesError } =
-      useSubscription(CATEGORY_EXPERIENCE, {
+   const { loading: isSimilarExperiencesLoading } = useQuery(
+      SIMILAR_CATEGORY_EXPERIENCE,
+      {
+         // skip: isEmpty(tagIds),
          variables: {
-            tags: [1007]
+            tags: [1006] // need to have this tagsIds  dynamic later on
          },
-         onSubscriptionData: ({
-            subscriptionData: {
-               data: {
-                  experiences_experienceCategory: ExperienceCategories = []
-               } = {}
-            } = {}
+         onCompleted: ({
+            experiences_experienceCategory: ExperienceCategories = []
          } = {}) => {
-            console.log('CATEGory', ExperienceCategories)
+            console.log('Similar Experiences', ExperienceCategories)
             setCategories(ExperienceCategories)
+         },
+         onError: error => {
+            console.error(error)
+            // addToast('Something went wrong!', { appearance: 'error' })
          }
-      })
+      }
+   )
 
    // subscription for products linked with experience
    const { loading: isProductsLoading, error: productsError } = useSubscription(
@@ -157,11 +225,16 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
       }
    }, [experienceId])
 
-   if (isLoading || loading || otherExperiencesLoading || isProductsLoading) {
+   if (
+      isLoading ||
+      loading ||
+      isSimilarExperiencesLoading ||
+      isProductsLoading
+   ) {
       return <InlineLoader type="full" />
    }
-   if (error || otherExperiencesError || productsError) {
-      console.log(error || otherExperiencesError || productsError)
+   if (error || productsError) {
+      console.log(error || productsError)
    }
 
    return (
@@ -182,7 +255,7 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
             <div className="player-wrapper">
                <GridComponent data={gridComponentData} />
             </div>
-            <TabWrapper>
+            <TabWrapper scroll={scroll}>
                <div className="tabOptions">
                   <span
                      className="scrollBtn scrollLeftBtn"
@@ -212,7 +285,7 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
                               <a
                                  href="#section-2"
                                  className={
-                                    router.asPath.includes('#section-4') &&
+                                    router.asPath.includes('#section-2') &&
                                     'activeHash'
                                  }
                               >
@@ -252,23 +325,34 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
                               <a
                                  href="#section-4"
                                  className={
-                                    router.asPath.includes('#section-2') &&
+                                    router.asPath.includes('#section-4') &&
                                     'activeHash'
                                  }
                               >
                                  About the Expert
                               </a>
                            </li>
+                           <li>
+                              <a
+                                 href="#section-6"
+                                 className={
+                                    router.asPath.includes('#section-6') &&
+                                    'activeHash'
+                                 }
+                              >
+                                 Reviews
+                              </a>
+                           </li>
 
                            <li>
                               <a
-                                 href="#section-5"
+                                 href="#section-7"
                                  className={
                                     router.asPath.includes('#section-7') &&
                                     'activeHash'
                                  }
                               >
-                                 Other Similar Experiences
+                                 Similar Experiences
                               </a>
                            </li>
                         </ul>
@@ -425,46 +509,90 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
                      <Booking experienceId={experienceId} />
                   </div>
                </div>
-               <section id="section-7">
-                  {categories.map(category => {
-                     return (
-                        <GridViewWrapper key={category?.title}>
-                           <Flex
-                              container
-                              flexDirection="column"
-                              alignItems="center"
-                              justifyContent="center"
-                              padding="1rem 0"
-                           >
-                              <h3 className="experienceHeading">
-                                 Other Similar Experiences
-                              </h3>
-                              <ChevronDown
-                                 size={iconSize}
-                                 color={theme.colors.textColor4}
-                              />
-                           </Flex>
-                           <Masonry
-                              breakpointCols={breakpointColumnsObj}
-                              className="my-masonry-grid"
-                              columnClassName="my-masonry-grid_column"
-                           >
-                              {category?.experience_experienceCategories.map(
-                                 (data, index) => {
-                                    return (
-                                       <Card
-                                          key={index}
-                                          type="experience"
-                                          data={data}
-                                       />
-                                    )
-                                 }
-                              )}
-                           </Masonry>
-                        </GridViewWrapper>
-                     )
-                  })}
-               </section>
+               <div style={{ padding: '1rem' }}>
+                  {!isEmpty(customerReviews) && (
+                     <section id="section-6">
+                        <h1 className="sub-heading text1">Reviews</h1>
+                        <CustomCarousel {...settings}>
+                           {customerReviews.map(customerReview => (
+                              <div className="item">
+                                 <Review key={customerReview.id}>
+                                    <Review.Content>
+                                       {customerReview.review}
+                                    </Review.Content>
+                                    <Review.Footer>
+                                       <p
+                                          className="text10 Futura"
+                                          style={{ fontWeight: '700' }}
+                                       >
+                                          {customerReview.name}
+                                       </p>
+                                       <p
+                                          className="text10 Proxima-Nova"
+                                          style={{
+                                             color: '#a7a7a7',
+                                             marginTop: '0.5rem',
+                                             fontWeight: '700'
+                                          }}
+                                       >
+                                          {getDate(customerReview.updated_at)}
+                                       </p>
+                                    </Review.Footer>
+                                 </Review>
+                              </div>
+                           ))}
+                        </CustomCarousel>
+                     </section>
+                  )}
+                  {!isEmpty(categories) && (
+                     <section id="section-7">
+                        <h1 className="sub-heading text1">
+                           Similar Experiences
+                        </h1>
+                        <CustomCarousel
+                           {...{
+                              ...settings,
+                              slidesToShow: 4,
+                              slidesToScroll: 4,
+                              itemWidth: '95% !important',
+                              itemHeight: '580px !important'
+                           }}
+                        >
+                           {categories
+                              .map(
+                                 category =>
+                                    category?.experience_experienceCategories
+                              )
+                              .flat()
+                              .map((data, index) => (
+                                 <div className="item">
+                                    <Card
+                                       key={index}
+                                       boxShadow={false}
+                                       backgroundMode="light"
+                                       type="experience"
+                                       data={data}
+                                    />
+                                 </div>
+                              ))}
+                           {/* <RenderCard
+                           data={categories
+                              .map(
+                                 category =>
+                                    category?.experience_experienceCategories
+                              )
+                              .flat()}
+                           // data={categories}
+                           type="experience"
+                           layout="carousel"
+                           showCategorywise={false}
+                           showWishlist={false}
+                           keyname="experience_experienceCategories"
+                        /> */}
+                        </CustomCarousel>
+                     </section>
+                  )}
+               </div>
             </Wrapper>
 
             <div ref={experienceBottom01} id="experience-bottom-01">
@@ -784,7 +912,7 @@ const TabWrapper = styled.div`
    top: 0;
    z-index: 4;
    @media (min-width: 769px) {
-      top: 64px;
+      top: ${({ scroll }) => (scroll.direction === 'down' ? '0px' : '64px')};
    }
    .tabOptions {
       position: relative;
@@ -812,7 +940,7 @@ const TabWrapper = styled.div`
       .tab {
          position: relative;
          overflow: auto;
-         width: 90%;
+         width: 96%;
          height: 56px;
          scrollbar-width: none;
          margin: 0 auto;
@@ -940,3 +1068,137 @@ const Wrap = styled.div`
       }
    }
 `
+
+const CustomCarousel = styled(Carousel)`
+   height: ${({ itemHeight = '296px' }) => itemHeight};
+   :hover {
+      .slick-next,
+      .slick-prev {
+         display: block !important;
+      }
+      .slick-prev {
+         background: linear-gradient(
+            -91.76deg,
+            rgba(255, 255, 255, 0) 26.86%,
+            #ffffff 98.63%
+         );
+      }
+      .slick-next {
+         background: linear-gradient(
+            91.76deg,
+            rgba(255, 255, 255, 0) 26.86%,
+            #ffffff 98.63%
+         );
+      }
+   }
+
+   .slick-slide:first-child {
+      .item {
+         width: 96% !important;
+      }
+   }
+
+   .text {
+      position: absolute;
+      top: 20%;
+      left: 6rem;
+      z-index: 5;
+      color: #fff;
+   }
+   .slick-prev {
+      left: 0 !important;
+      background: linear-gradient(
+         -91.76deg,
+         rgba(255, 255, 255, 0) 26.86%,
+         #ffffff 98.63%
+      );
+   }
+   .slick-next {
+      right: 0 !important;
+      background: linear-gradient(
+         91.76deg,
+         rgba(255, 255, 255, 0) 26.86%,
+         #ffffff 98.63%
+      );
+   }
+   .slick-next,
+   .slick-prev {
+      display: none !important;
+      height: 100%;
+      width: 48px;
+      top: 0;
+      margin: 0;
+      ::before {
+         content: none !important;
+      }
+   }
+   .item {
+      width: ${({ itemWidth = '100%' }) => itemWidth};
+      height: ${({ itemHeight = '296px' }) => itemHeight};
+      position: relative;
+   }
+
+   .item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+   }
+   ul li {
+      margin: 0 8px;
+      width: 50px;
+   }
+   ul li.slick-active div {
+      background-color: rgb(235, 90, 151) !important;
+   }
+`
+const NextArrow = props => {
+   const { className, style, onClick, size, color } = props
+   return (
+      <div
+         className={className}
+         style={{ ...style, position: 'absolute', right: '1rem', zIndex: '3' }}
+         onClick={onClick}
+      >
+         <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width={size}
+            height={size}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke={color}
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={{ position: 'absolute', top: '50%' }}
+         >
+            <path d="M9 18l6-6-6-6" />
+         </svg>
+      </div>
+   )
+}
+
+const PreviousArrow = props => {
+   const { className, style, onClick, size, color } = props
+   return (
+      <div
+         className={className}
+         style={{ ...style, position: 'absolute', left: '1rem', zIndex: '3' }}
+         onClick={onClick}
+      >
+         <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width={size}
+            height={size}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke={color}
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={{ position: 'absolute', top: '50%' }}
+         >
+            <path d="M15 18l-6-6 6-6" />
+         </svg>
+      </div>
+   )
+}
