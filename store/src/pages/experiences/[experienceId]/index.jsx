@@ -251,95 +251,95 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
                   </span>
 
                   <div className="tab" id="experienceTab">
-                     <CustomScrollbar>
-                        <ul>
-                           <li>
-                              <a
-                                 href="#section-1"
-                                 className={
-                                    router.asPath.includes('#section-1') &&
-                                    'activeHash'
-                                 }
-                              >
-                                 About this Experience
-                              </a>
-                           </li>
-                           <li>
-                              <a
-                                 href="#section-2"
-                                 className={
-                                    router.asPath.includes('#section-2') &&
-                                    'activeHash'
-                                 }
-                              >
-                                 Included in your Kit
-                              </a>
-                           </li>
-                           <li>
-                              <a
-                                 href="#section-3"
-                                 className={
-                                    router.asPath.includes('#section-3') &&
-                                    'activeHash'
-                                 }
-                              >
-                                 Supplies & Ingredients
-                              </a>
-                           </li>
-                           {experienceInfo?.experience?.experience_headers.map(
-                              header => {
-                                 return (
-                                    <li key={header.id}>
-                                       <a
-                                          href={`#${header.id}`}
-                                          className={
-                                             router.asPath.includes(
-                                                `#${header.id}`
-                                             ) && 'activeHash'
-                                          }
-                                       >
-                                          {header?.title}
-                                       </a>
-                                    </li>
-                                 )
+                     {/* <CustomScrollbar> */}
+                     <ul>
+                        <li>
+                           <a
+                              href="#section-1"
+                              className={
+                                 router.asPath.includes('#section-1') &&
+                                 'activeHash'
                               }
-                           )}
-                           <li>
-                              <a
-                                 href="#section-4"
-                                 className={
-                                    router.asPath.includes('#section-4') &&
-                                    'activeHash'
-                                 }
-                              >
-                                 About the Expert
-                              </a>
-                           </li>
-                           <li>
-                              <a
-                                 href="#section-6"
-                                 className={
-                                    router.asPath.includes('#section-6') &&
-                                    'activeHash'
-                                 }
-                              >
-                                 Reviews
-                              </a>
-                           </li>
+                           >
+                              About this Experience
+                           </a>
+                        </li>
+                        <li>
+                           <a
+                              href="#section-2"
+                              className={
+                                 router.asPath.includes('#section-2') &&
+                                 'activeHash'
+                              }
+                           >
+                              Included in your Kit
+                           </a>
+                        </li>
+                        <li>
+                           <a
+                              href="#section-3"
+                              className={
+                                 router.asPath.includes('#section-3') &&
+                                 'activeHash'
+                              }
+                           >
+                              Supplies & Ingredients
+                           </a>
+                        </li>
+                        {experienceInfo?.experience?.experience_headers.map(
+                           header => {
+                              return (
+                                 <li key={header.id}>
+                                    <a
+                                       href={`#${header.id}`}
+                                       className={
+                                          router.asPath.includes(
+                                             `#${header.id}`
+                                          ) && 'activeHash'
+                                       }
+                                    >
+                                       {header?.title}
+                                    </a>
+                                 </li>
+                              )
+                           }
+                        )}
+                        <li>
+                           <a
+                              href="#section-4"
+                              className={
+                                 router.asPath.includes('#section-4') &&
+                                 'activeHash'
+                              }
+                           >
+                              About the Expert
+                           </a>
+                        </li>
+                        <li>
+                           <a
+                              href="#section-6"
+                              className={
+                                 router.asPath.includes('#section-6') &&
+                                 'activeHash'
+                              }
+                           >
+                              Reviews
+                           </a>
+                        </li>
 
-                           <li>
-                              <a
-                                 href="#section-7"
-                                 className={
-                                    router.asPath.includes('#section-7') &&
-                                    'activeHash'
-                                 }
-                              >
-                                 Similar Experiences
-                              </a>
-                           </li>
-                        </ul>
-                     </CustomScrollbar>
+                        <li>
+                           <a
+                              href="#section-7"
+                              className={
+                                 router.asPath.includes('#section-7') &&
+                                 'activeHash'
+                              }
+                           >
+                              Similar Experiences
+                           </a>
+                        </li>
+                     </ul>
+                     {/* </CustomScrollbar> */}
                   </div>
                   <span
                      className="scrollBtn scrollRightBtn"
@@ -842,16 +842,13 @@ const TabWrapper = styled.div`
       display: flex;
       align-items: center;
       .scrollBtn {
-         position: absolute;
          padding: 8px;
          cursor: pointer;
-         z-index: 4;
-         margin: 0 -8px;
-         top: 0;
          height: 100%;
          justify-content: center;
          display: flex;
          align-items: center;
+         background: ${theme.colors.lightBackground.grey};
       }
 
       .scrollLeftBtn {
