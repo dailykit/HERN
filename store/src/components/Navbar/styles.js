@@ -3,7 +3,9 @@ import { Drawer } from 'antd'
 import { theme } from '../../theme'
 
 export const NavBar = styled.header`
-   display: ${({ scroll }) => (scroll.direction === 'down' ? 'none' : 'flex')};
+   transform: ${({ scroll }) =>
+      scroll.direction === 'down' ? 'translateY(-100%)' : 'translateY(0)'};
+   display: flex;
    height: 64px;
    position: fixed;
    top: 0;
@@ -13,6 +15,7 @@ export const NavBar = styled.header`
    align-items: center;
    padding: 1rem 6rem;
    justify-content: space-between;
+   transition: 0.2s ease-in;
    background: ${({ scroll }) =>
       scroll.direction === 'down'
          ? theme.colors.darkBackground.darkblue
