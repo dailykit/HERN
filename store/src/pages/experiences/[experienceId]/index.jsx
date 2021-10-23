@@ -463,10 +463,14 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
                                           className="text10 Futura"
                                           style={{
                                              fontWeight: '700',
-                                             margin: '0'
+                                             margin: '0',
+                                             textTransform: 'uppercase'
                                           }}
                                        >
-                                          {customerReview?.name || 'N/A'}
+                                          {customerReview?.customer
+                                             ?.platform_customer?.fullName ||
+                                             customerReview?.customerEmail ||
+                                             'N/A'}
                                        </p>
                                        <p
                                           className="text10 Proxima-Nova"

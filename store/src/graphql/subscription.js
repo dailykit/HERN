@@ -1282,6 +1282,11 @@ export const CUSTOMER_REVIEWS = gql`
          productId
          rating
          review
+         customer {
+            platform_customer {
+               fullName
+            }
+         }
       }
    }
 `
