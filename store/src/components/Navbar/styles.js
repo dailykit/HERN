@@ -65,6 +65,12 @@ export const NavBar = styled.header`
       }
    }
 
+   .ant-avatar {
+      :hover {
+         cursor: pointer;
+      }
+   }
+
    .cart-count-batch {
       position: absolute;
       top: 5px;
@@ -266,6 +272,7 @@ export const DropdownWrapper = styled.div`
          }
       }
       &:hover {
+         cursor: pointer;
          background-color: #525357;
       }
 
