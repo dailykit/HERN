@@ -18,7 +18,7 @@ import { theme } from '../../theme.js'
 import Login from '../login'
 import { useScroll, useWindowDimensions, isClient } from '../../utils'
 
-export default function NavBarComp({ navigationMenuItems }) {
+export default function NavBarComp({ navigationMenuItems, ...props }) {
    const [isSidebarVisible, SetIsSidebarVisible] = useState(false)
    const scroll = useScroll()
    const { width } = useWindowDimensions()
@@ -118,7 +118,7 @@ export default function NavBarComp({ navigationMenuItems }) {
             user={user}
             routes={routes}
          />
-         <NavBar cartCount={carts.lenth} scroll={scroll}>
+         <NavBar cartCount={carts.lenth} scroll={scroll} {...props}>
             {width < 769 && (
                <span onClick={() => SetIsSidebarVisible(true)}>
                   <MenuIcon size="38" color={theme.colors.textColor4} />

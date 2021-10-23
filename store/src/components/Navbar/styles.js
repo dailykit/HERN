@@ -3,11 +3,16 @@ import { Drawer } from 'antd'
 import { theme } from '../../theme'
 
 export const NavBar = styled.header`
-   transform: ${({ scroll }) =>
-      scroll.direction === 'down' ? 'translateY(-100%)' : 'translateY(0)'};
-   display: flex;
+   transform: ${({ floating = false, scroll }) =>
+      floating
+         ? scroll.direction === 'down'
+            ? 'translateY(-100%)'
+            : 'translateY(0)'
+         : 'unset'};
+   display: ${({ floating, scroll }) =>
+      floating ? (scroll.y < 64 ? 'none' : 'flex') : 'flex'};
    height: 64px;
-   position: fixed;
+   position: ${({ floating = false }) => (floating ? 'fixed' : 'unset')};
    top: 0;
    left: 0;
    width: 100%;
@@ -19,7 +24,7 @@ export const NavBar = styled.header`
    background: ${({ scroll }) =>
       scroll.direction === 'down'
          ? theme.colors.darkBackground.darkblue
-         : scroll.y < 10
+         : scroll.y < 64
          ? 'rgba(6, 20, 34,0.8)'
          : theme.colors.darkBackground.darkblue};
    .logo-img {

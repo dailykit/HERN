@@ -4,7 +4,6 @@ import { theme } from '../../theme'
 export const StyledDiv = styled.div`
    position: relative;
    .owl_carousel_item {
-      height: 580px;
       border-radius: 16px;
    }
    .owl_carousel_item img {
@@ -15,7 +14,7 @@ export const StyledDiv = styled.div`
    }
    .prev_btn,
    .next_btn {
-      width: 64px;
+      width: 120px;
       height: 100%;
       position: absolute;
       top: 0;
@@ -34,7 +33,7 @@ export const StyledDiv = styled.div`
    .prev_btn {
       left: 0;
       background: linear-gradient(
-         -91.76deg,
+         -90deg,
          rgba(30, 49, 74, 0) 1.59%,
          #061422 69.32%
       );
@@ -43,7 +42,7 @@ export const StyledDiv = styled.div`
    .next_btn {
       right: 0;
       background: linear-gradient(
-         91.76deg,
+         90deg,
          rgba(30, 49, 74, 0) 1.59%,
          #061422 69.32%
       );

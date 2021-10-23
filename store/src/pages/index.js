@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import ReactHtmlParser from 'react-html-parser'
 import { useRouter } from 'next/router'
-import { useSubscription } from '@apollo/client'
+import { useSubscription, useQuery } from '@apollo/client'
 import { Flex } from '@dailykit/ui'
 import styled from 'styled-components'
 import {
@@ -58,23 +58,21 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
       }
    })
 
-   const { loading, error } = useSubscription(CATEGORY_EXPERIENCE, {
-      skip: isEmpty(tagIds),
+   const { loading } = useQuery(CATEGORY_EXPERIENCE, {
       variables: {
-         tags: tagIds,
          params: {
             keycloakId: user?.keycloakId || null
          }
       },
-      onSubscriptionData: ({
-         subscriptionData: {
-            data: {
-               experiences_experienceCategory: ExperienceCategories = []
-            } = {}
-         } = {}
+      onCompleted: ({
+         experiences_experienceCategory: ExperienceCategories = []
       } = {}) => {
+         console.log({ ExperienceCategories })
          setCategories(ExperienceCategories)
          setIsLoading(false)
+      },
+      onError: error => {
+         console.log(error)
       }
    })
 
@@ -126,8 +124,8 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
       }
    }, [parsedData])
 
-   if (error || expertByCategoryError || selectedTagsQueryError) {
-      console.log(error || expertByCategoryError || selectedTagsQueryError)
+   if (expertByCategoryError || selectedTagsQueryError) {
+      console.log(expertByCategoryError || selectedTagsQueryError)
    }
 
    return (
@@ -178,7 +176,7 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
                      data={experts.map(expert => expert?.experts).flat()}
                      // data={experts}
                      type="expert"
-                     layout="carousel"
+                     layout="masonry"
                      showCategorywise={false}
                      keyname="expert"
                   />
