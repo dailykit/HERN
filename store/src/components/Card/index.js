@@ -5,6 +5,7 @@ import UpcomingExperienceCard from './UpcomingExperienceCard'
 import Normal from './Normal'
 import ProductCard from './ProductCard'
 import PollCard from './PollCard'
+import CustomExperience from './CustomExperience'
 
 export const Card = ({ type, data, ...props }) => {
    switch (type) {
@@ -22,6 +23,8 @@ export const Card = ({ type, data, ...props }) => {
          return <ProductCard cardDetails={data} {...props} />
       case 'poll':
          return <PollCard cardDetails={data} {...props} />
+      case 'customExperience':
+         return <CustomExperience cardDetails={data} {...props} />
       default:
          return <ExperienceCard cardDetails={data} {...props} />
    }

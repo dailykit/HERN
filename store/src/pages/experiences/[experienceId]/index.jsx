@@ -513,17 +513,42 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
                                     category?.experience_experienceCategories
                               )
                               .flat()
+                              .slice(0, 3)
                               .map((data, index) => (
-                                 <div className="item">
-                                    <Card
-                                       key={index}
-                                       boxShadow={false}
-                                       backgroundMode="light"
-                                       type="experience"
-                                       data={data}
-                                    />
-                                 </div>
+                                 <>
+                                    <div className="item">
+                                       <Card
+                                          key={index}
+                                          boxShadow={false}
+                                          backgroundMode="light"
+                                          type="experience"
+                                          data={data}
+                                       />
+                                    </div>
+                                 </>
                               ))}
+                           <div className="item">
+                              {/* <div
+                                 style={{
+                                    background: theme.colors.textColor,
+                                    height: '480px',
+                                    borderRadius: '16px',
+                                    padding: '2rem 1rem'
+                                 }}
+                              >
+                                 <h1
+                                    className="League-Gothic text1"
+                                    style={{
+                                       color: theme.colors.textColor4,
+                                       marginBottom: '1rem'
+                                    }}
+                                 >
+                                    Want to curate your own experience?
+                                 </h1>
+                                 <Button className="">Customize</Button>
+                              </div> */}
+                              <Card type="customExperience" />
+                           </div>
                         </CustomCarousel>
                      </section>
                   )}

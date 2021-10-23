@@ -10,5 +10,6 @@ window._env_ = {
   "STRIPE_ACCOUNT_ID": "acct_1J2utjId3txa6rdg",
   "STRIPE_INTEGRATION_TYPE": "connected",
   "NO_REPLY_EMAIL": "no-reply@dailykit.org",
-  "MAPS_API_KEY": "AIzaSyBc6yGKgFXj-zaOBs3fb_AYdw9h9Om4MlE"
+  "MAPS_API_KEY": "AIzaSyBc6yGKgFXj-zaOBs3fb_AYdw9h9Om4MlE",
+  "CUSTOM_EXPERIENCE_TYPEFORM_ID": "y76SY3pm"
 }
