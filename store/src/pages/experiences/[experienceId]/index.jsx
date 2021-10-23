@@ -10,10 +10,7 @@ import parse from 'html-react-parser'
 import {
    ChevronRight,
    ChevronLeft,
-   ChevronDown,
-   Clock,
    AboutExpert,
-   Masonry,
    Card,
    Button,
    Goodies,
@@ -27,8 +24,7 @@ import {
    Layout,
    Booking,
    InlineLoader,
-   Review,
-   RenderCard
+   Review
 } from '../../../components'
 // import Booking from "../../booking";
 import { theme } from '../../../theme'
@@ -36,10 +32,9 @@ import { getNavigationMenuItems, getBannerData } from '../../../lib'
 import { useExperienceInfo, useCart } from '../../../Providers'
 import {
    EXPERIENCE,
-   CATEGORY_EXPERIENCE,
    EXPERIENCE_PRODUCT,
-   EXPERIENCES_QUERY,
-   SIMILAR_CATEGORY_EXPERIENCE
+   SIMILAR_CATEGORY_EXPERIENCE,
+   CUSTOMER_REVIEWS
 } from '../../../graphql'
 import {
    useWindowDimensions,
@@ -71,13 +66,8 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
    const [experienceInfo, setExperienceInfo] = useState({})
    const [products, setProducts] = useState([])
    const [categories, setCategories] = useState([])
-   const breakpointColumnsObj = {
-      default: 3,
-      1320: 2,
-      1200: 1,
-      700: 1,
-      500: 1
-   }
+   const [customerReviews, setCustomerReviews] = useState([])
+   const [isBookingPageOpen, setIsBookingPageOpen] = useState(false)
    const settings = {
       arrows: true,
       dots: false,
@@ -87,53 +77,18 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
       itemWidth: '96% !important',
       nextArrow: <NextArrow color={theme.colors.textColor} size="48" />,
       prevArrow: <PreviousArrow color={theme.colors.textColor} size="48" />,
-      appendDots: dots => (
-         <div>
-            <ul style={{ margin: '0px' }}> {dots} </ul>
-         </div>
-      ),
-      customPaging: i => (
-         <div
-            style={{
-               width: '50px',
-               height: '5px',
-               backgroundColor: 'rgb(196, 196, 196)',
-               margin: '8px'
-            }}
-         />
-      )
+      responsive: [
+         {
+            breakpoint: 769,
+            settings: {
+               slidesToShow: 1,
+               slidesToScroll: 1,
+               arrows: false,
+               dots: true
+            }
+         }
+      ]
    }
-   const customerReviews = [
-      {
-         id: 1,
-         review:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,',
-         name: 'John Doe',
-         date: '2021-10-22T08:55:58.46131+00:00'
-      },
-      {
-         id: 2,
-         review:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,',
-         name: 'Rachel M',
-         date: '2021-10-22T08:55:58.46131+00:00'
-      },
-      {
-         id: 3,
-         review:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,',
-         name: 'Deepak Negi',
-         date: '2021-10-22T08:55:58.46131+00:00'
-      },
-      {
-         id: 4,
-         review:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,',
-         name: 'Rishi Kumar',
-         date: '2021-10-22T08:55:58.46131+00:00'
-      }
-   ]
-   const [isBookingPageOpen, setIsBookingPageOpen] = useState(false)
 
    const { loading, error } = useSubscription(EXPERIENCE, {
       variables: {
@@ -156,6 +111,33 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
          setGridComponentData(requiredData)
       }
    })
+   const { loading: isLoadingReviews, error: customerReviewsError } =
+      useSubscription(CUSTOMER_REVIEWS, {
+         variables: {
+            where: {
+               _or: [
+                  {
+                     experienceId: {
+                        _eq: experienceId
+                     },
+                     isShown: {
+                        _eq: true
+                     }
+                  },
+                  {
+                     isGlobal: {
+                        _eq: true
+                     }
+                  }
+               ]
+            }
+         },
+         onSubscriptionData: ({
+            subscriptionData: { data: { crm_customerReview = [] } = {} } = {}
+         } = {}) => {
+            setCustomerReviews(crm_customerReview)
+         }
+      })
 
    const { loading: isSimilarExperiencesLoading } = useQuery(
       SIMILAR_CATEGORY_EXPERIENCE,
@@ -229,12 +211,13 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
       isLoading ||
       loading ||
       isSimilarExperiencesLoading ||
-      isProductsLoading
+      isProductsLoading ||
+      isLoadingReviews
    ) {
       return <InlineLoader type="full" />
    }
-   if (error || productsError) {
-      console.log(error || productsError)
+   if (error || productsError || customerReviewsError) {
+      console.log(error || productsError || customerReviewsError)
    }
 
    return (
@@ -369,52 +352,7 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
                   </span>
                </div>
             </TabWrapper>
-            {/* <div className="experience-title-wrap">
-               <Flex
-                  container
-                  alignItems="center"
-                  justifyContent="space-between"
-                  margin="16px"
-               >
-                  <h1 className="exp-heading text1">
-                     {experienceInfo?.experience?.title}
-                  </h1>
-                  {width > 769 && (
-                     <Button onClick={show} className="customPollBtn text7">
-                        SEND POLL
-                     </Button>
-                  )}
-               </Flex>
-               <Flex
-                  container
-                  alignItems="center"
-                  justifyContent="space-between"
-                  margin="0 16px 16px 16px"
-               >
-                  <p className="category text7">
-                     {experienceInfo?.experienceCategoryTitle}
-                  </p>
-                  <Flex
-                     container
-                     alignItems="center"
-                     justifyContent="space-between"
-                  >
-                     <Clock
-                        size={theme.sizes.h4}
-                        color={theme.colors.textColor5}
-                     />
-                     <span className="duration text7">
-                        {moment
-                           .duration(
-                              experienceInfo?.experience?.experienceClasses[0]
-                                 ?.duration
-                           )
-                           .asMinutes()}
-                        min
-                     </span>
-                  </Flex>
-               </Flex>
-            </div> */}
+
             <Wrapper>
                <div ref={experienceTop02} id="experience-top-02">
                   {Boolean(parsedData.length) &&
@@ -523,9 +461,12 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
                                     <Review.Footer>
                                        <p
                                           className="text10 Futura"
-                                          style={{ fontWeight: '700' }}
+                                          style={{
+                                             fontWeight: '700',
+                                             margin: '0'
+                                          }}
                                        >
-                                          {customerReview.name}
+                                          {customerReview?.name || 'N/A'}
                                        </p>
                                        <p
                                           className="text10 Proxima-Nova"
@@ -535,7 +476,7 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
                                              fontWeight: '700'
                                           }}
                                        >
-                                          {getDate(customerReview.updated_at)}
+                                          {getDate(customerReview.created_at)}
                                        </p>
                                     </Review.Footer>
                                  </Review>
@@ -555,7 +496,8 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
                               slidesToShow: 4,
                               slidesToScroll: 4,
                               itemWidth: '95% !important',
-                              itemHeight: '580px !important'
+                              itemHeight: '580px',
+                              dotsBottom: '16px'
                            }}
                         >
                            {categories
@@ -575,20 +517,6 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
                                     />
                                  </div>
                               ))}
-                           {/* <RenderCard
-                           data={categories
-                              .map(
-                                 category =>
-                                    category?.experience_experienceCategories
-                              )
-                              .flat()}
-                           // data={categories}
-                           type="experience"
-                           layout="carousel"
-                           showCategorywise={false}
-                           showWishlist={false}
-                           keyname="experience_experienceCategories"
-                        /> */}
                         </CustomCarousel>
                      </section>
                   )}
@@ -604,15 +532,6 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
             </div>
 
             <div className="footerBtnWrapper">
-               {/* <Link href={`/sendPoll?experienceId=${experienceId}`}>
-                  <Button
-                     backgroundColor={theme.colors.secondaryColor}
-                     className="customFooterBtn"
-                  >
-                     Send Poll
-                  </Button>
-               </Link> */}
-
                <Button
                   className="customFooterBtn text2"
                   onClick={onBookClickHandler}
@@ -694,7 +613,7 @@ const StyledWrapper = styled.div`
       position: fixed;
       bottom: 0;
       left: 0;
-      z-index: 5;
+      z-index: 100;
       width: 100%;
       background: ${theme.colors.mainBackground};
       @media (min-width: 769px) {
@@ -910,7 +829,7 @@ const TabWrapper = styled.div`
    background: ${theme.colors.lightBackground.grey};
    position: sticky;
    top: 0;
-   z-index: 4;
+   z-index: 100;
    @media (min-width: 769px) {
       top: ${({ scroll }) => (scroll.direction === 'down' ? '0px' : '64px')};
    }
@@ -1070,7 +989,6 @@ const Wrap = styled.div`
 `
 
 const CustomCarousel = styled(Carousel)`
-   height: ${({ itemHeight = '296px' }) => itemHeight};
    :hover {
       .slick-next,
       .slick-prev {
@@ -1133,8 +1051,7 @@ const CustomCarousel = styled(Carousel)`
       }
    }
    .item {
-      width: ${({ itemWidth = '100%' }) => itemWidth};
-      height: ${({ itemHeight = '296px' }) => itemHeight};
+      width: 100% !important;
       position: relative;
    }
 
@@ -1143,12 +1060,39 @@ const CustomCarousel = styled(Carousel)`
       height: 100%;
       object-fit: cover;
    }
-   ul li {
-      margin: 0 8px;
-      width: 50px;
+   .slick-dots {
+      margin: 0;
+      padding: 0;
+      bottom: ${({ dotsBottom = '-24px' }) => dotsBottom};
    }
-   ul li.slick-active div {
-      background-color: rgb(235, 90, 151) !important;
+   .slick-dots li.slick-active {
+      width: 12px;
+   }
+   .slick-dots li,
+   .slick-dots li button {
+      width: 12px;
+      height: 12px;
+      cursor: pointer;
+      border-radius: 50%;
+   }
+   .slick-dots li {
+      position: relative;
+      display: inline-block;
+      margin: 0 5px;
+      padding: 0;
+   }
+   .slick-dots li button {
+      background: ${theme.colors.textColor7};
+   }
+   .slick-dots li.slick-active button {
+      background: ${theme.colors.textColor};
+   }
+
+   @media (min-width: 769px) {
+      .item {
+         width: ${({ itemWidth = '100%' }) => itemWidth};
+         position: relative;
+      }
    }
 `
 const NextArrow = props => {

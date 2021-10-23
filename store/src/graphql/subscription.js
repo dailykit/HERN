@@ -1266,3 +1266,22 @@ export const CUSTOMER_DETAILS = gql`
       }
    }
 `
+
+export const CUSTOMER_REVIEWS = gql`
+   subscription CUSTOMER_REVIEWS($where: crm_customerReview_bool_exp!) {
+      crm_customerReview(where: $where) {
+         assets
+         brandId
+         cartId
+         created_at
+         customerEmail
+         experienceId
+         isGlobal
+         id
+         isShown
+         productId
+         rating
+         review
+      }
+   }
+`

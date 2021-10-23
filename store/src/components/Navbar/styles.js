@@ -9,7 +9,7 @@ export const NavBar = styled.header`
    top: 0;
    left: 0;
    width: 100%;
-   z-index: 5;
+   z-index: 100;
    align-items: center;
    padding: 1rem 6rem;
    justify-content: space-between;

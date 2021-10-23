@@ -80,7 +80,7 @@ export const CardBody = styled.div`
          ? theme.colors.textColor5
          : theme.colors.textColor4};
    width: 100%;
-   padding: 1rem 0.5rem;
+   padding: 0.5rem;
    font-family: Proxima Nova;
    &:hover {
       .book-exp {

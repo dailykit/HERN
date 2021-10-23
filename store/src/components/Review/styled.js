@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { theme } from '../../theme'
 
 export const Wrapper = styled.div`
-   padding: 4rem;
+   padding: 0 2rem;
    height: 296px;
    max-width: 350px;
    background: ${theme.colors.lightBackground.grey};
@@ -13,6 +13,7 @@ export const Wrapper = styled.div`
    justify-content: center;
    @media (min-width: 769px) {
       max-width: 100%;
+      padding: 0 4rem;
    }
 `
 
@@ -26,6 +27,7 @@ export const StyledContent = styled.p`
    display: flex;
    align-items: center;
    text-align: center;
+   margin-bottom: 0;
 `
 
 export const StyledFooter = styled.div`
