@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { useSubscription } from '@apollo/client'
+import { Empty } from 'antd'
 import Link from 'next/link'
 import { useToasts } from 'react-toast-notifications'
 import { Wrapper } from './styles'
 import { useRouter } from 'next/router'
 import { useExperienceInfo } from '../../Providers'
+import { isEmpty } from '../../utils'
 import { WISHLISTED_EXPERIENCES } from '../../graphql'
 import { Masonry, Card } from '../../components'
 
@@ -50,21 +52,25 @@ export default function WishlistedExperience({ keycloakId }) {
                <h3 className="recycler-heading text1">MY Wishlist</h3>
             </div>
             <div className="card-grid">
-               {wishlistedExperience.map(experience => {
-                  return (
-                     <Card
-                        onClick={() =>
-                           router.push(`/experiences/${experience?.id}`)
-                        }
-                        boxShadow={false}
-                        key={`${experience?.title}-${experience?.id}`}
-                        type="experience"
-                        data={{ experience }}
-                        backgroundMode="light"
-                        customWidth=''
-                     />
-                  )
-               })}
+               {!isEmpty(wishlistedExperience) ? (
+                  wishlistedExperience.map(experience => {
+                     return (
+                        <Card
+                           onClick={() =>
+                              router.push(`/experiences/${experience?.id}`)
+                           }
+                           boxShadow={false}
+                           key={`${experience?.title}-${experience?.id}`}
+                           type="experience"
+                           data={{ experience }}
+                           backgroundMode="light"
+                           customWidth=""
+                        />
+                     )
+                  })
+               ) : (
+                  <Empty />
+               )}
             </div>
          </div>
       </Wrapper>

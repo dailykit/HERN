@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { useSubscription } from '@apollo/client'
+import { Empty } from 'antd'
 import Link from 'next/link'
 import { useToasts } from 'react-toast-notifications'
 import { Wrapper } from './styles'
 import { InvitePollFeed } from '../../components'
 import { useExperienceInfo } from '../../Providers'
+import { isEmpty } from '../../utils'
 import { YOUR_BOOKINGS } from '../../graphql'
 
 export default function PollRecyclerView({ keycloakId }) {
@@ -68,9 +70,13 @@ export default function PollRecyclerView({ keycloakId }) {
                </Link>
             </div>
             <div className="card-grid">
-               {polls.map(poll => (
-                  <InvitePollFeed key={poll?.id} poll={poll} />
-               ))}
+               {!isEmpty(polls) ? (
+                  polls.map(poll => (
+                     <InvitePollFeed key={poll?.id} poll={poll} />
+                  ))
+               ) : (
+                  <Empty />
+               )}
             </div>
          </div>
       </Wrapper>

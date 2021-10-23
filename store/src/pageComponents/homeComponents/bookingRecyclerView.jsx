@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { useSubscription } from '@apollo/client'
 import { useToasts } from 'react-toast-notifications'
+import { Empty } from 'antd'
 import Link from 'next/link'
 import { Wrapper } from './styles'
 import { YOUR_BOOKINGS } from '../../graphql'
 import { UpcomingExperience, InlineLoader } from '../../components'
 import { useExperienceInfo } from '../../Providers'
+import { isEmpty } from '../../utils'
 export default function BookingRecyclerView({ keycloakId }) {
    const { addToast } = useToasts()
    const [bookings, setBookings] = useState([])
@@ -93,9 +95,13 @@ export default function BookingRecyclerView({ keycloakId }) {
                </Link>
             </div>
             <div className="card-grid">
-               {bookings.map(booking => (
-                  <UpcomingExperience key={booking?.id} booking={booking} />
-               ))}
+               {!isEmpty(bookings) ? (
+                  bookings.map(booking => (
+                     <UpcomingExperience key={booking?.id} booking={booking} />
+                  ))
+               ) : (
+                  <Empty />
+               )}
             </div>
          </div>
       </Wrapper>
