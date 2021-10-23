@@ -153,7 +153,7 @@ export const EXPERIENCE_TAGS = gql`
 
 export const CUSTOMER_SELECTED_TAGS = gql`
    subscription CUSTOMER_SELECTED_TAGS($keycloakId: String!) {
-      crm_customer_experienceTags(where: { keycloakId: { _eq: $keycloakId } }) {
+      crm_customer_experienceTags_by_pk(keycloakId: $keycloakId) {
          keycloakId
          tags
       }

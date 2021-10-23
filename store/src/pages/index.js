@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import ReactHtmlParser from 'react-html-parser'
+import { Empty } from 'antd'
 import { useRouter } from 'next/router'
 import { useSubscription, useQuery } from '@apollo/client'
 import { Flex } from '@dailykit/ui'
@@ -33,30 +34,26 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
    const [iconSize, setIconSize] = useState('14px')
    const [categories, setCategories] = useState([])
    const [experts, setExperts] = useState([])
-   const [tagIds, setTagIds] = useState([])
+   const [selectedTags, setSelectedTags] = useState([])
    const [isLoading, setIsLoading] = useState(true)
    const homeTop01 = useRef()
    const homeTop02 = useRef()
    const homeBottom01 = useRef()
 
-   const {
-      loading: isSelectedTagsLoading,
-      error: selectedTagsQueryError,
-      data: { crm_customer_experienceTags: customerSelectedTags = [] } = {}
-   } = useSubscription(CUSTOMER_SELECTED_TAGS, {
-      skip: isEmpty(user) || isEmpty(user.keycloakId),
-      onSubscriptionData: ({
-         subscriptionData: {
-            data: { crm_customer_experienceTags = [] } = {}
-         } = {}
-      } = {}) => {
-         const result = crm_customer_experienceTags[0]?.tags.map(tag => tag.id)
-         setTagIds(result)
-      },
-      variables: {
-         keycloakId: user?.keycloakId
-      }
-   })
+   const { loading: isSelectedTagsLoading, error: selectedTagsQueryError } =
+      useSubscription(CUSTOMER_SELECTED_TAGS, {
+         skip: isEmpty(user) || isEmpty(user.keycloakId),
+         onSubscriptionData: ({
+            subscriptionData: {
+               data: { crm_customer_experienceTags_by_pk = {} } = {}
+            } = {}
+         } = {}) => {
+            setSelectedTags(crm_customer_experienceTags_by_pk?.tags)
+         },
+         variables: {
+            keycloakId: user?.keycloakId
+         }
+      })
 
    const { loading } = useQuery(CATEGORY_EXPERIENCE, {
       variables: {
@@ -181,52 +178,70 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
                      keyname="expert"
                   />
                )}
-
-               {!isEmpty(customerSelectedTags) &&
-                  !isEmpty(customerSelectedTags[0]?.tags) && (
-                     <CategorySection>
-                        <Flex
-                           container
-                           alignItems="center"
-                           justifyContent="center"
-                           padding="1rem 0"
-                        >
-                           <h3 className="experienceHeading text2">
-                              Your personalized tags
-                           </h3>
-                        </Flex>
-                        <CategoryTagWrap>
-                           {customerSelectedTags[0]?.tags.map(tag => {
-                              return (
-                                 <Button
-                                    key={tag?.id}
-                                    isMainShadow
-                                    className="categoryTag text8"
-                                 >
-                                    {tag?.title}
-                                 </Button>
-                              )
-                           })}
-                        </CategoryTagWrap>
-                        {isSelectedTagsLoading && (
-                           <div className="skeleton-wrapper">
-                              {[1, 2, 3, 4].map((_, index) => {
-                                 return <ExperienceSkeleton key={index} />
-                              })}
-                           </div>
-                        )}
-
-                        <div className="edit_tags">
-                           <h1 onClick={openTagsModal} className="explore ">
-                              Edit tags
-                           </h1>
-                           <EditIcon
-                              size={iconSize}
-                              color={theme.colors.textColor}
-                           />
-                        </div>
-                     </CategorySection>
+               <CategorySection>
+                  <Flex
+                     container
+                     alignItems="center"
+                     justifyContent="center"
+                     padding="1rem 0"
+                  >
+                     <h3 className="experienceHeading text2">
+                        {!isEmpty(selectedTags)
+                           ? 'Your personalized tags'
+                           : 'Choose your tags'}
+                     </h3>
+                  </Flex>
+                  {!isEmpty(selectedTags) ? (
+                     <CategoryTagWrap>
+                        {selectedTags.map(tag => {
+                           return (
+                              <Button
+                                 key={tag?.id}
+                                 isMainShadow
+                                 className="categoryTag text8"
+                              >
+                                 {tag?.title}
+                              </Button>
+                           )
+                        })}
+                     </CategoryTagWrap>
+                  ) : (
+                     <Empty
+                        image={Empty.PRESENTED_IMAGE_SIMPLE}
+                        description={
+                           <span className="experienceHeading2 text8">
+                              No tags selected yet.
+                           </span>
+                        }
+                     />
                   )}
+                  {isSelectedTagsLoading && (
+                     <div className="skeleton-wrapper">
+                        {[1, 2, 3, 4].map((_, index) => {
+                           return <ExperienceSkeleton key={index} />
+                        })}
+                     </div>
+                  )}
+
+                  {!isEmpty(selectedTags) ? (
+                     <div className="edit_tags">
+                        <h1 onClick={openTagsModal} className="explore ">
+                           Edit tags
+                        </h1>
+                        <EditIcon
+                           size={iconSize}
+                           color={theme.colors.textColor}
+                        />
+                     </div>
+                  ) : (
+                     <Button
+                        className="chooseTagBtn text8"
+                        onClick={openTagsModal}
+                     >
+                        Select Tags
+                     </Button>
+                  )}
+               </CategorySection>
             </div>
             <Modal
                title="Tell us what you’re interested in"
@@ -309,6 +324,23 @@ const StyledWrapper = styled.div`
       padding: 0;
       box-shadow: none;
       border-radius: 0;
+   }
+   .chooseTagBtn {
+      height: 48px;
+      width: auto;
+      text-transform: none;
+      font-weight: 500;
+      background: ${theme.colors.textColor4};
+      font-family: Proxima Nova;
+      font-style: normal;
+      font-weight: 800;
+      color: ${theme.colors.textColor};
+      padding: 0 2rem;
+      letter-spacing: 0.16em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
    }
    @media screen and (min-width: 769px) {
       .explore__btn {
@@ -563,5 +595,9 @@ const CategorySection = styled.div`
       padding: 1rem 0;
       margin: 0 0 2rem 0;
       cursor: pointer;
+   }
+
+   .ant-empty {
+      margin: 0 0 1rem 0;
    }
 `

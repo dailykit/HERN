@@ -7,6 +7,7 @@ import Button from '../Button'
 import InlineLoader from '../InlineLoader'
 import { theme } from '../../theme'
 import { useUser } from '../../Providers'
+import { isEmpty } from '../../utils'
 import {
    EXPERIENCE_TAGS,
    CUSTOMER_SELECTED_TAGS,
@@ -23,16 +24,22 @@ export default function CategoryTagPage({ onSubmit }) {
       error: tagsQueryError,
       data: { experiences_experienceTags: tags = [] } = {}
    } = useSubscription(EXPERIENCE_TAGS)
-   const {
-      loading: isSelectedTagsLoading,
-      error: selectedTagsQueryError,
-      data: { crm_customer_experienceTags: customerSelectedTags = [] } = {}
-   } = useSubscription(CUSTOMER_SELECTED_TAGS, {
-      skip: !user && !user.keycloakId,
-      variables: {
-         keycloakId: user?.keycloakId
-      }
-   })
+   const { loading: isSelectedTagsLoading, error: selectedTagsQueryError } =
+      useSubscription(CUSTOMER_SELECTED_TAGS, {
+         skip: !user && !user.keycloakId,
+         variables: {
+            keycloakId: user?.keycloakId
+         },
+         onSubscriptionData: ({
+            subscriptionData: {
+               data: { crm_customer_experienceTags_by_pk = {} } = {}
+            }
+         } = {}) => {
+            if (!isEmpty(crm_customer_experienceTags_by_pk?.tags)) {
+               setSelectedTags(crm_customer_experienceTags_by_pk?.tags)
+            }
+         }
+      })
 
    const [upsertCustomerTags, { loading }] = useMutation(UPSERT_CUSTOMER_TAGS, {
       onCompleted: () => {
@@ -72,11 +79,11 @@ export default function CategoryTagPage({ onSubmit }) {
       setIsValid(Boolean(selectedTags?.length === 0))
    }, [selectedTags])
 
-   useEffect(() => {
-      if (customerSelectedTags.length) {
-         setSelectedTags(customerSelectedTags[0]?.tags)
-      }
-   }, [customerSelectedTags])
+   // useEffect(() => {
+   //    if (customerSelectedTags.length) {
+   //       setSelectedTags(customerSelectedTags[0]?.tags)
+   //    }
+   // }, [customerSelectedTags])
 
    if (isTagsLoading || isSelectedTagsLoading) {
       return <InlineLoader />
