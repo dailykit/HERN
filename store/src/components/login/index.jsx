@@ -9,9 +9,11 @@ import InlineLoader from '../InlineLoader'
 import Error from '../Error'
 import Input from '../Input'
 import Signup from '../signup'
+import { useUser } from '../../Providers'
 import { theme } from '../../theme'
 
 export default function LoginComp({ isClicked, authBtnClassName, ...rest }) {
+   const { toggleAuthenticationModal } = useUser()
    const [loading, setLoading] = useState(false)
    const [isForgotPasswordClicked, setIsForgotPasswordClicked] =
       React.useState(false)
@@ -33,10 +35,12 @@ export default function LoginComp({ isClicked, authBtnClassName, ...rest }) {
             setError('Email or password is incorrect!')
          } else if (response?.status === 200) {
             console.log('logged in')
+            toggleAuthenticationModal(false)
             redirect()
          }
       } catch (err) {
          setLoading(false)
+         toggleAuthenticationModal(false)
          console.error(err)
          setError('Email or password is incorrect!')
       }

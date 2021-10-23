@@ -42,6 +42,7 @@ import Wishlist from './Wishlist'
 import Carousel from './Carousel'
 import RenderCard from './RenderCard'
 import Review from './Review'
+import SignupFold from './SignupFold'
 
 export {
    Button,
@@ -87,7 +88,8 @@ export {
    Wishlist,
    Carousel,
    RenderCard,
-   Review
+   Review,
+   SignupFold
 }
 export * from './Icons'
 export * from './Card'

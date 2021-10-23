@@ -9,6 +9,7 @@ const inititalState = {
    isAddressModalOpen: false,
    isPaymentModalOpen: false,
    isProductModalOpen: false,
+   isAuthenticationModalOpen: false,
    isAuthenticated: false,
    productModalType: 'booking',
    user: { name: '', keycloakId: '' }
@@ -43,6 +44,11 @@ const reducers = (state, { type, payload }) => {
          return {
             ...state,
             isProductModalOpen: payload
+         }
+      case 'Toggle_AUTHENTICATION_MODEL':
+         return {
+            ...state,
+            isAuthenticationModalOpen: payload
          }
 
       case 'SET_PRODUCT_MODAL_TYPE': {
@@ -122,6 +128,12 @@ export const UserProvider = ({ children }) => {
          payload: data
       })
    }
+   const toggleAuthenticationModal = data => {
+      dispatch({
+         type: 'Toggle_AUTHENTICATION_MODEL',
+         payload: data
+      })
+   }
 
    const setProductModalType = type => {
       dispatch({
@@ -170,6 +182,7 @@ export const UserProvider = ({ children }) => {
             toggleAddressModal,
             togglePaymentModal,
             toggleProductModal,
+            toggleAuthenticationModal,
             setProductModalType,
             isLoading
          }}

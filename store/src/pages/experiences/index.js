@@ -18,7 +18,8 @@ import {
    Layout,
    Filters,
    InlineLoader,
-   RenderCard
+   RenderCard,
+   SignupFold
 } from '../../components'
 import { theme } from '../../theme'
 import { useWindowDimensions, fileParser, isEmpty } from '../../utils'
@@ -33,7 +34,7 @@ export default function Experiences({
 }) {
    const { addToast } = useToasts()
    const { state: userState } = useUser()
-   const { user = {} } = userState
+   const { user = {}, isAuthenticated } = userState
    const router = useRouter()
    const experiencesTop01 = useRef()
    const experiencesBottom01 = useRef()
@@ -215,6 +216,11 @@ export default function Experiences({
                   </div>
                )}
             </Filters>
+            {!isAuthenticated && (
+               <div style={{ padding: '0 3rem', marginTop: '4rem' }}>
+                  <SignupFold bgMode="dark" />
+               </div>
+            )}
 
             <div ref={experiencesBottom01} id="experiences-bottom-01">
                {Boolean(parsedData.length) &&
@@ -263,7 +269,7 @@ const StyledWrapper = styled.div`
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: 6rem;
+      margin-top: 1rem;
       .heading {
          font-family: League-Gothic;
          font-style: normal;
@@ -293,123 +299,5 @@ const StyledWrapper = styled.div`
          text-transform: none;
          font-weight: 500;
       }
-   }
-`
-const CardWrapper = styled.div`
-   height: 267px;
-   width: 350px;
-   margin: 0 auto;
-`
-const CardWrapperForExpert = styled.div`
-   padding: 1rem;
-`
-
-const GridViewWrapper = styled.div`
-   margin-bottom: 1rem;
-   .experienceHeading {
-      font-size: ${theme.sizes.h2};
-      color: ${theme.colors.textColor4};
-      font-weight: 400;
-      margin-left: 40px;
-      margin-bottom: 20px;
-   }
-   .explore {
-      text-align: center;
-      font-size: ${theme.sizes.h4};
-      color: ${theme.colors.textColor};
-      font-weight: 800;
-      margin-right: 8px;
-   }
-   .customInput {
-      margin-bottom: 1.5rem;
-      color: ${theme.colors.textColor2};
-   }
-   .my-masonry-grid {
-      display: -webkit-box;
-      display: -ms-flexbox;
-      display: flex;
-      width: auto;
-      margin-right: 40px;
-   }
-
-   .my-masonry-grid_column > div {
-      margin: 0 0 40px 40px;
-   }
-   .emptyCard {
-      width: 100%;
-      padding: 1rem;
-   }
-
-   @media (min-width: 769px) {
-      .exploreExperience {
-         text-align: center;
-         font-size: ${theme.sizes.h1};
-         color: ${theme.colors.textColor};
-         font-weight: 800;
-      }
-      .experienceHeading {
-         margin-left: 40px;
-         font-size: ${theme.sizes.h1};
-      }
-   }
-   @media (max-width: 800px) {
-      .my-masonry-grid {
-         margin-right: 1rem;
-      }
-      .my-masonry-grid_column > div {
-         margin: 0 0 1rem 1rem;
-      }
-      .emptyCard {
-         margin-right: 1rem;
-      }
-   }
-`
-
-const GridView = styled.div`
-   display: grid;
-   grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
-   grid-auto-rows: 228px;
-   justify-content: space-evenly;
-   justify-items: center;
-   align-content: space-evenly;
-   align-items: center;
-   @media (min-width: 769px) {
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      grid-auto-rows: 283px;
-   }
-`
-const GridViewForExpert = styled.div`
-   display: flex;
-   width: 100%;
-   justify-content: flex-start;
-   justify-items: center;
-   align-content: space-evenly;
-   align-items: center;
-   overflow-y: auto;
-`
-
-const CategoryTagWrap = styled.div`
-   display: flex;
-   flex-wrap: wrap;
-   justify-content: center;
-   .categoryTag {
-      height: 48px;
-      font-size: ${theme.sizes.h8};
-      width: auto;
-      padding: 0 1rem;
-      margin: 0 0 1rem 1rem;
-      text-transform: none;
-      font-weight: 500;
-   }
-`
-
-const CategorySection = styled.div`
-   margin-bottom: 6rem;
-   .explore {
-      text-align: center;
-      font-size: ${theme.sizes.h4};
-      color: ${theme.colors.textColor};
-      font-weight: 800;
-      margin-right: 8px;
    }
 `

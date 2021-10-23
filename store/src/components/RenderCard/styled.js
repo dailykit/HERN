@@ -15,10 +15,10 @@ export const StyledDiv = styled.div`
    }
    @media (max-width: 769px) {
       .my-masonry-grid {
-         margin-right: 1rem;
+         margin-right: 0;
       }
       .my-masonry-grid_column > div {
-         margin: 0 0 1rem 1rem;
+         margin: 0;
       }
    }
 `

@@ -8,19 +8,23 @@ import { SIMILAR_CATEGORY_EXPERIENCE } from '../../graphql'
 import { getNavigationMenuItems, getBannerData } from '../../lib'
 import { fileParser, isEmpty } from '../../utils'
 import { theme } from '../../theme'
+import { useUser } from '../../Providers'
 import {
    BackDrop,
    SEO,
    Layout,
    InlineLoader,
    Button,
-   RenderCard
+   RenderCard,
+   SignupFold
 } from '../../components'
 
 export default function BookingInviteThankyou({
    navigationMenuItems = [],
    parsedData = []
 }) {
+   const { state } = useUser()
+   const { isAuthenticated } = state
    const router = useRouter()
    const { addToast } = useToasts()
    const [categories, setCategories] = useState([])
@@ -86,6 +90,9 @@ export default function BookingInviteThankyou({
             >
                Explore More
             </Button>
+
+            {!isAuthenticated && <SignupFold bgMode="dark" />}
+
             <div id="pollInviteResponseThankyou-bottom-01">
                {Boolean(parsedData.length) &&
                   ReactHtmlParser(

@@ -13,7 +13,8 @@ import {
    SEO,
    Filters,
    InlineLoader,
-   RenderCard
+   RenderCard,
+   SignupFold
 } from '../../components'
 import {
    EXPERT_BY_CATEGORY,
@@ -21,10 +22,13 @@ import {
    GET_EXPERIENCE_CATEGORIES
 } from '../../graphql'
 import { theme } from '../../theme'
+import { useUser } from '../../Providers'
 import { useWindowDimensions, fileParser, isEmpty } from '../../utils'
 import { getNavigationMenuItems, getBannerData } from '../../lib'
 
 export default function Experiences({ navigationMenuItems, parsedData = [] }) {
+   const { state } = useUser()
+   const { isAuthenticated } = state
    const expertsTop01 = useRef()
    const expertsBottom01 = useRef()
    const router = useRouter()
@@ -157,6 +161,12 @@ export default function Experiences({ navigationMenuItems, parsedData = [] }) {
                   />
                )}
             </Filters>
+
+            {!isAuthenticated && (
+               <div style={{ padding: '0 3rem', marginTop: '4rem' }}>
+                  <SignupFold bgMode="dark" />
+               </div>
+            )}
 
             <div ref={expertsBottom01} id="experts-bottom-01">
                {Boolean(parsedData.length) &&

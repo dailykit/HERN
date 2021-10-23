@@ -12,7 +12,8 @@ import {
    SEO,
    Layout,
    Tags,
-   RenderCard
+   RenderCard,
+   SignupFold
 } from '../components'
 import { theme } from '../theme'
 import { getNavigationMenuItems } from '../lib'
@@ -28,7 +29,7 @@ import { getBannerData } from '../lib/getBannerData'
 
 export default function Home({ navigationMenuItems = [], parsedData = [] }) {
    const { state } = useUser()
-   const { user = {} } = state
+   const { user = {}, isAuthenticated } = state
    const router = useRouter()
    const [isTagsModalVisible, setTagsModalVisible] = useState(false)
    const [iconSize, setIconSize] = useState('14px')
@@ -178,70 +179,70 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
                      keyname="expert"
                   />
                )}
-               <CategorySection>
-                  <Flex
-                     container
-                     alignItems="center"
-                     justifyContent="center"
-                     padding="1rem 0"
-                  >
-                     <h3 className="experienceHeading text2">
-                        {!isEmpty(selectedTags)
-                           ? 'Your personalized tags'
-                           : 'Choose your tags'}
-                     </h3>
-                  </Flex>
-                  {!isEmpty(selectedTags) ? (
-                     <CategoryTagWrap>
-                        {selectedTags.map(tag => {
-                           return (
-                              <Button
-                                 key={tag?.id}
-                                 isMainShadow
-                                 className="categoryTag text8"
-                              >
-                                 {tag?.title}
-                              </Button>
-                           )
-                        })}
-                     </CategoryTagWrap>
-                  ) : (
-                     <Empty
-                        image={Empty.PRESENTED_IMAGE_SIMPLE}
-                        description={
-                           <span className="experienceHeading2 text8">
-                              No tags selected yet.
-                           </span>
-                        }
-                     />
-                  )}
-                  {isSelectedTagsLoading && (
-                     <div className="skeleton-wrapper">
-                        {[1, 2, 3, 4].map((_, index) => {
-                           return <ExperienceSkeleton key={index} />
-                        })}
-                     </div>
-                  )}
-
-                  {!isEmpty(selectedTags) ? (
-                     <div className="edit_tags">
-                        <h1 onClick={openTagsModal} className="explore ">
-                           Edit tags
-                        </h1>
-                        <EditIcon
-                           size={iconSize}
-                           color={theme.colors.textColor}
-                        />
-                     </div>
-                  ) : (
-                     <Button
-                        className="chooseTagBtn text8"
-                        onClick={openTagsModal}
+               {isAuthenticated && (
+                  <CategorySection>
+                     <Flex
+                        container
+                        alignItems="center"
+                        justifyContent="center"
+                        padding="1rem 0"
                      >
-                        Select Tags
-                     </Button>
-                  )}
-               </CategorySection>
+                        <h3 className="experienceHeading text2">
+                           {!isEmpty(selectedTags)
+                              ? 'Your personalized tags'
+                              : 'Choose your tags'}
+                        </h3>
+                     </Flex>
+                     {!isEmpty(selectedTags) ? (
+                        <CategoryTagWrap>
+                           {selectedTags.map(tag => {
+                              return (
+                                 <Button
+                                    key={tag?.id}
+                                    isMainShadow
+                                    className="categoryTag text8"
+                                 >
+                                    {tag?.title}
+                                 </Button>
+                              )
+                           })}
+                        </CategoryTagWrap>
+                     ) : (
+                        <Empty
+                           image={Empty.PRESENTED_IMAGE_SIMPLE}
+                           description={
+                              <span className="experienceHeading2 text8">
+                                 No tags selected yet.
+                              </span>
+                           }
+                        />
+                     )}
+                     {isSelectedTagsLoading && (
+                        <div className="skeleton-wrapper">
+                           {[1, 2, 3, 4].map((_, index) => {
+                              return <ExperienceSkeleton key={index} />
+                           })}
+                        </div>
+                     )}
+
+                     {!isEmpty(selectedTags) ? (
+                        <div className="edit_tags">
+                           <EditIcon size="20" color={theme.colors.textColor} />
+                           <h1 onClick={openTagsModal} className="explore ">
+                              Edit tags
+                           </h1>
+                        </div>
+                     ) : (
+                        <Button
+                           className="chooseTagBtn text8"
+                           onClick={openTagsModal}
+                        >
+                           Select Tags
+                        </Button>
+                     )}
+                  </CategorySection>
+               )}
+               {!isAuthenticated && <SignupFold bgMode="dark" />}
             </div>
             <Modal
                title="Tell us what you’re interested in"
@@ -394,7 +395,8 @@ const GridViewWrapper = styled.div`
       font-size: ${theme.sizes.h4};
       color: ${theme.colors.textColor};
       font-weight: 800;
-      margin-right: 8px;
+      margin-left: 8px;
+      margin-bottom: 0;
    }
    .my-masonry-grid {
       display: -webkit-box; /* Not needed if autoprefixing */
@@ -560,10 +562,11 @@ const CategorySection = styled.div`
       font-size: ${theme.sizes.h4};
       color: ${theme.colors.textColor};
       font-weight: 800;
-      margin-right: 8px;
+      margin-left: 8px;
       position: relative;
       padding: 8px 0;
       text-decoration: none;
+      margin-bottom: 0;
       &:after {
          position: absolute;
          bottom: 0;

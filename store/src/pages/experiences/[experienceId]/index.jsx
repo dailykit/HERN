@@ -24,12 +24,13 @@ import {
    Layout,
    Booking,
    InlineLoader,
-   Review
+   Review,
+   SignupFold
 } from '../../../components'
 // import Booking from "../../booking";
 import { theme } from '../../../theme'
 import { getNavigationMenuItems, getBannerData } from '../../../lib'
-import { useExperienceInfo, useCart } from '../../../Providers'
+import { useExperienceInfo, useCart, useUser } from '../../../Providers'
 import {
    EXPERIENCE,
    EXPERIENCE_PRODUCT,
@@ -48,6 +49,8 @@ import SendPollComp from '../../../pageComponents/sendPollComponents'
 export default function Experience({ navigationMenuItems, parsedData = [] }) {
    const router = useRouter()
    const scroll = useScroll()
+   const { state } = useUser()
+   const { isAuthenticated } = state
    const { experienceId } = router.query
    const experienceTop01 = useRef()
    const experienceTop02 = useRef()
@@ -524,6 +527,9 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
                         </CustomCarousel>
                      </section>
                   )}
+                  <section id="section-8">
+                     {!isAuthenticated && <SignupFold bgMode="light" />}
+                  </section>
                </div>
             </Wrapper>
 
@@ -834,6 +840,7 @@ const TabWrapper = styled.div`
    position: sticky;
    top: 0;
    z-index: 100;
+   transition: all 150ms;
    @media (min-width: 769px) {
       top: ${({ scroll }) => (scroll.direction === 'down' ? '0px' : '64px')};
    }

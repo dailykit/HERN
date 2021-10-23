@@ -24,9 +24,12 @@ export default function NavBarComp({ navigationMenuItems, ...props }) {
    const { width } = useWindowDimensions()
    const router = useRouter()
    const { addToast } = useToasts()
-   const { state } = useUser()
-   const { isAuthenticated = false, user = {}, loading } = state
-   const [isModalVisible, setIsModalVisible] = useState(false)
+   const { state, toggleAuthenticationModal } = useUser()
+   const {
+      isAuthenticated = false,
+      user = {},
+      isAuthenticationModalOpen
+   } = state
    const [showContent, setShowContent] = useState('login')
 
    const routes = [
@@ -82,11 +85,11 @@ export default function NavBarComp({ navigationMenuItems, ...props }) {
    })
 
    const openModal = () => {
-      setIsModalVisible(true)
+      toggleAuthenticationModal(true)
    }
    const closeModal = () => {
       setShowContent('login')
-      setIsModalVisible(false)
+      toggleAuthenticationModal(false)
    }
 
    const handleMenuClick = async event => {
@@ -232,11 +235,11 @@ export default function NavBarComp({ navigationMenuItems, ...props }) {
 
             <Modal
                title={showContent === 'login' ? 'Log In' : 'Sign Up'}
-               isOpen={isModalVisible}
+               isOpen={isAuthenticationModalOpen}
                close={closeModal}
             >
                <Login
-                  isOpen={isModalVisible}
+                  isOpen={isAuthenticationModalOpen}
                   showContent={showContent}
                   setShowContent={setShowContent}
                   authBtnClassName="auth-btn"

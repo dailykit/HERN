@@ -6,10 +6,12 @@ import { Wrapper, FormWrap } from './styles'
 import Button from '../Button'
 import Error from '../Error'
 import Input from '../Input'
+import { useUser } from '../../Providers'
 import InlineLoader from '../InlineLoader'
 import { theme } from '../../theme'
 
 export default function Signup({ authBtnClassName, ...rest }) {
+   const { toggleAuthenticationModal } = useUser()
    const [loading, setLoading] = useState(false)
    const [error, setError] = useState('')
    const [name, setName] = useState('')
@@ -36,6 +38,7 @@ export default function Signup({ authBtnClassName, ...rest }) {
          }
          const { data } = await axios(options)
          if (data.success) {
+            toggleAuthenticationModal(false)
             const response = await signIn('email_password', {
                email,
                password,
@@ -49,6 +52,7 @@ export default function Signup({ authBtnClassName, ...rest }) {
          }
       } catch (error) {
          console.log(error)
+         toggleAuthenticationModal(false)
          if (error?.message?.includes('exists')) {
             return setError('Email is already in use!')
          }
