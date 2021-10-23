@@ -3,7 +3,6 @@ import { theme } from '../../theme'
 export const Wrapper = styled.div`
    width: 100%;
    height: 100%;
-   padding: 1rem;
    text-align: center;
    .info-div {
       width: 100%;

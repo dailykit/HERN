@@ -372,7 +372,7 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
                            container
                            alignItems="center"
                            justifyContent="space-between"
-                           margin="16px"
+                           margin="16px 0"
                         >
                            <h1 className="sub-heading text1">
                               {experienceInfo?.experience?.title}
@@ -719,7 +719,7 @@ const Wrapper = styled.main`
          color: ${theme.colors.textColor5};
          font-weight: 400;
          text-align: left;
-         margin-bottom: 20px;
+         margin-bottom: 0;
          text-transform: uppercase;
          font-family: League-Gothic;
       }
@@ -745,12 +745,12 @@ const Wrapper = styled.main`
    }
    section {
       position: relative;
-      padding: 2rem 0;
+      padding: 2rem 1rem;
       .sub-heading {
          color: ${theme.colors.textColor5};
          font-weight: 400;
          text-align: left;
-         margin-bottom: 20px;
+         margin-bottom: 0;
          text-transform: uppercase;
          font-family: League-Gothic;
       }

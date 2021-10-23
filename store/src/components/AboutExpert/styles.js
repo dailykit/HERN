@@ -6,23 +6,21 @@ export const Wrapper = styled.div`
    flex-direction: column;
    align-items: center;
    border-radius: 40px;
-   padding: 1rem 2rem;
    background-color: ${({ bg_mode }) =>
       bg_mode === 'dark'
          ? theme.colors.darkBackground.darkblue
          : theme.colors.lightBackground.grey};
    .imageWrapper {
-      padding: 0 1rem;
-      height: 100%;
+      width: 100%;
       position: relative;
       .expertImg {
-         width: 150px;
-         height: 100%;
-         border-radius: 20px;
+         width: 100%;
+         border-radius: 40px 40px 0 0;
          object-fit: cover;
       }
    }
    .expertInfo {
+      padding: 1rem;
       .expertName {
          color: ${theme.colors.textColor5};
          font-weight: 800;
@@ -42,6 +40,10 @@ export const Wrapper = styled.div`
          text-align: justify;
          color: ${theme.colors.textColor5};
          font-weight: 400;
+         margin-bottom: 0;
+         p {
+            margin-bottom: 0;
+         }
       }
       .readMore {
          border: none;
@@ -84,19 +86,23 @@ export const Wrapper = styled.div`
    .custom_btn {
       width: 250px;
       height: 48px;
-      margin-bottom: 2rem;
+      font-family: 'Proxima Nova';
+      letter-spacing: 0.16em;
+      color: ${theme.colors.textColor};
+      margin: 0.5rem auto;
+      display: block;
    }
 
    @media (min-width: 769px) {
       flex-direction: row;
       .imageWrapper {
+         width: 50%;
          .expertImg {
-            width: 260px;
-            height: 100%;
+            border-radius: 40px 0 0 40px;
          }
       }
-      .custom_btn {
-         margin: 0;
+      .expertInfo {
+         width: 50%;
       }
    }
 `

@@ -28,7 +28,7 @@ export default function AboutExpert({ expert, expertCategory }) {
                Experiences
             </p> */}
             <ReadMoreDiv>
-               <p className="expertDesc text7 ">
+               <p className="expertDesc text7">
                   {parse(expert?.description || '')}
                </p>
             </ReadMoreDiv>
