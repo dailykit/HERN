@@ -1,8 +1,9 @@
 import React from 'react'
-import { useRouter } from 'next/router'
 import ReactHtmlParser from 'react-html-parser'
 import { Layout, SEO } from '../../components'
+import { graphqlClient } from '../../lib'
 import { fileParser } from '../../utils'
+import { GET_PAGE_MODULES } from '../../graphql'
 import {
    getNavigationMenuItems,
    getWebPageModule,
@@ -12,12 +13,9 @@ import {
 const CustomPage = ({
    navigationMenuItems = [],
    parsedData = [],
+   internalPageName = 'StayIn Social',
    footerHtml = ''
 }) => {
-   const router = useRouter()
-   const seoTitle = navigationMenuItems.find(({ url }) =>
-      url.includes(router.asPath)
-   ).label
    React.useEffect(() => {
       try {
          if (parsedData.length && typeof document !== 'undefined') {
@@ -39,7 +37,7 @@ const CustomPage = ({
 
    return (
       <Layout navigationMenuItems={navigationMenuItems} footerHtml={footerHtml}>
-         <SEO title={seoTitle} />
+         <SEO title={internalPageName} />
          <div id="custom-page-div">
             {Boolean(parsedData.length) &&
                parsedData.map(fold => ReactHtmlParser(fold?.content))}
@@ -55,29 +53,39 @@ export const getStaticProps = async ({ params }) => {
    const route = `/${params.customPage[0]}`
    let parsedData = []
    const navigationMenuItems = await getNavigationMenuItems(domain)
-   const websitePages = await getWebPageModule({ domain, route })
+   const brandPages = await getWebPageModule({ domain, route })
    const footerHtml = await getGlobalFooter()
 
-   if (websitePages.length > 0) {
+   if (brandPages.length > 0) {
       //parsed data of page
-      parsedData = await fileParser(websitePages[0]['websitePageModules'])
+      parsedData = await fileParser(brandPages[0]['brandPageModules'])
    }
    return {
       props: {
          navigationMenuItems,
          parsedData,
+         internalPageName: brandPages[0]['internalPageName'],
          footerHtml
       }
    }
 }
 
 export const getStaticPaths = async () => {
-   const domain = 'primanti.dailykit.org'
-   const navigationMenuItems = await getNavigationMenuItems(domain)
-   const paths = navigationMenuItems.map(item => ({
-      params: { customPage: [item.url.substring(1)] }
+   const client = await graphqlClient()
+   const { data: { brands_brandPages: brandPages = [] } = {} } =
+      await client.query({
+         query: GET_PAGE_MODULES,
+         variables: {
+            where: {
+               brandId: {
+                  _eq: 1069 // hardcoded for now until we have a better way to get the brandId
+               }
+            }
+         }
+      })
+   const paths = brandPages.map(item => ({
+      params: { customPage: [item.route.substring(1)] }
    }))
-   console.log({ checkPath: paths })
    return {
       paths,
       fallback: false

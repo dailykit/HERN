@@ -62,18 +62,18 @@ export const EXPERIENCES_QUERY = gql`
    }
 `
 
-export const WEBSITE_PAGE_MODULE = gql`
-   query WEBSITE_PAGE_MODULE($where: content_experienceDivId_bool_exp!) {
+export const BRAND_PAGE_MODULE = gql`
+   query BRAND_PAGE_MODULE($where: content_experienceDivId_bool_exp!) {
       content_experienceDivId(where: $where) {
          experienceCategoryTitle
          experienceId
          expertId
          id
-         websitePageId
-         websitePage {
+         brandPageId
+         brandPage {
             id
             internalPageName
-            websitePageModules(order_by: { position: desc_nulls_last }) {
+            brandPageModules(order_by: { position: desc_nulls_last }) {
                id
                config
                position
@@ -105,27 +105,14 @@ export const WEBSITE_PAGE_MODULE = gql`
 `
 
 export const GET_PAGE_MODULES = gql`
-   query WEBSITE_PAGE($domain: String!, $route: String!) {
-      website_websitePage(
-         where: {
-            route: { _eq: $route }
-            website: {
-               brand: {
-                  _or: [
-                     { isDefault: { _eq: true } }
-                     { domain: { _eq: $domain } }
-                  ]
-               }
-            }
-         }
-      ) {
+   query GET_PAGE_MODULES($where: brands_brandPages_bool_exp!) {
+      brands_brandPages(where: $where) {
          id
          internalPageName
          isArchived
          published
          route
-
-         websitePageModules(order_by: { position: desc_nulls_last }) {
+         brandPageModules(order_by: { position: desc_nulls_last }) {
             id
             config
             position
@@ -151,7 +138,7 @@ export const GET_PAGE_MODULES = gql`
                }
             }
          }
-         website {
+         brand {
             navigationMenuId
          }
       }
@@ -159,16 +146,12 @@ export const GET_PAGE_MODULES = gql`
 `
 
 export const NAVBAR_MENU = gql`
-   query NAVBAR_MENU($domain: String!) {
-      website_navigationMenu(
+   query NAVBAR_MENU($domain: String!, $brandId: Int!) {
+      brands_navigationMenu(
          where: {
-            websites: {
-               brand: {
-                  _or: [
-                     { isDefault: { _eq: true } }
-                     { domain: { _eq: $domain } }
-                  ]
-               }
+            brands: {
+               id: { _eq: $brandId }
+               _or: [{ domain: { _eq: $domain } }, { isDefault: { _eq: true } }]
             }
          }
       ) {
