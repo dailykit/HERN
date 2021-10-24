@@ -1,27 +1,11 @@
-import React from "react";
-import NavLink from "next/link";
-import { FooterWrapper } from "./styles";
+import React from 'react'
+import ReactHtmlParser from 'react-html-parser'
+import { isEmpty } from '../../utils'
 
-export default function Footer() {
-  return (
-    <FooterWrapper id="main-footer">
-      <ul className="nav-list">
-        <li>
-          <NavLink href="/">
-            <div className="nav-list-item" />
-          </NavLink>
-        </li>
-        <li>
-          <NavLink href="/experiences">
-            <div className="nav-list-item" />
-          </NavLink>
-        </li>
-        <li>
-          <NavLink href="/experts">
-            <div className="nav-list-item" />
-          </NavLink>
-        </li>
-      </ul>
-    </FooterWrapper>
-  );
+export default function Footer({ footerHtml }) {
+   return (
+      <div id="stayin_footer">
+         {!isEmpty(footerHtml) && ReactHtmlParser(footerHtml)}
+      </div>
+   )
 }

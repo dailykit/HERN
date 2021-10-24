@@ -2,7 +2,12 @@ import React from 'react'
 import Footer from '../Footer'
 import Navbar from '../Navbar'
 
-const Layout = ({ children, noHeader, navigationMenuItems = [] }) => {
+const Layout = ({
+   children,
+   noHeader,
+   navigationMenuItems = [],
+   footerHtml = ''
+}) => {
    return (
       <>
          {!noHeader && (
@@ -15,7 +20,7 @@ const Layout = ({ children, noHeader, navigationMenuItems = [] }) => {
             <Navbar navigationMenuItems={navigationMenuItems} floating={true} />
          )}
          {children}
-         {/* <Footer /> */}
+         <Footer footerHtml={footerHtml} />
       </>
    )
 }

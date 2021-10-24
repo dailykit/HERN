@@ -394,3 +394,22 @@ export const CATEGORY_EXPERIENCE = gql`
       }
    }
 `
+
+export const GET_GLOBAL_FOOTER = gql`
+   query GET_GLOBAL_FOOTER($where: brands_brand_storeSetting_bool_exp!) {
+      brands_brand_storeSetting(where: $where) {
+         brandId
+         storeSettingId
+         value
+      }
+   }
+`
+
+export const GET_FILE_PATH = gql`
+   query GET_FILE_PATH($id: Int!) {
+      editor_file_by_pk(id: $id) {
+         id
+         path
+      }
+   }
+`

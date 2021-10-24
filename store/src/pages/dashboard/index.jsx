@@ -16,11 +16,16 @@ import {
 import { theme } from '../../theme'
 import { useWindowDimensions, fileParser, isEmpty } from '../../utils'
 import { useUser } from '../../Providers'
-import { getNavigationMenuItems, getBannerData } from '../../lib'
+import {
+   getNavigationMenuItems,
+   getBannerData,
+   getGlobalFooter
+} from '../../lib'
 
 export default function DashboardPage({
    navigationMenuItems,
-   parsedData = []
+   parsedData = [],
+   footerHtml = ''
 }) {
    const router = useRouter()
    const { addToast } = useToasts()
@@ -29,7 +34,7 @@ export default function DashboardPage({
    const { width } = useWindowDimensions()
 
    return (
-      <Layout navigationMenuItems={navigationMenuItems}>
+      <Layout navigationMenuItems={navigationMenuItems} footerHtml={footerHtml}>
          <SEO title="Dashboard" />
          <Wrapper>
             <div className="flex-wrapper">
@@ -73,11 +78,13 @@ export const getStaticProps = async () => {
    const navigationMenuItems = await getNavigationMenuItems(domain)
    const bannerData = await getBannerData(where)
    const parsedData = await fileParser(bannerData)
+   const footerHtml = await getGlobalFooter()
 
    return {
       props: {
          navigationMenuItems,
-         parsedData
+         parsedData,
+         footerHtml
       }
    }
 }

@@ -24,9 +24,17 @@ import {
 import { theme } from '../../theme'
 import { useUser } from '../../Providers'
 import { useWindowDimensions, fileParser, isEmpty } from '../../utils'
-import { getNavigationMenuItems, getBannerData } from '../../lib'
+import {
+   getNavigationMenuItems,
+   getBannerData,
+   getGlobalFooter
+} from '../../lib'
 
-export default function Experiences({ navigationMenuItems, parsedData = [] }) {
+export default function Experiences({
+   navigationMenuItems,
+   parsedData = [],
+   footerHtml = ''
+}) {
    const { state } = useUser()
    const { isAuthenticated } = state
    const expertsTop01 = useRef()
@@ -121,7 +129,7 @@ export default function Experiences({ navigationMenuItems, parsedData = [] }) {
       return <InlineLoader type="full" />
 
    return (
-      <Layout navigationMenuItems={navigationMenuItems}>
+      <Layout navigationMenuItems={navigationMenuItems} footerHtml={footerHtml}>
          <SEO title="Experts" />
          <StyledWrapper bgMode="dark">
             <div ref={expertsTop01} id="experts-top-01">
@@ -188,11 +196,12 @@ export const getStaticProps = async () => {
    const navigationMenuItems = await getNavigationMenuItems(domain)
    const bannerData = await getBannerData(where)
    const parsedData = await fileParser(bannerData)
-
+   const footerHtml = await getGlobalFooter()
    return {
       props: {
          navigationMenuItems,
-         parsedData
+         parsedData,
+         footerHtml
       }
    }
 }

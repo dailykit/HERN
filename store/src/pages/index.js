@@ -16,7 +16,7 @@ import {
    SignupFold
 } from '../components'
 import { theme } from '../theme'
-import { getNavigationMenuItems } from '../lib'
+import { getNavigationMenuItems, getBannerData, getGlobalFooter } from '../lib'
 import { useUser } from '../Providers'
 import { isEmpty, fileParser } from '../utils'
 import {
@@ -25,9 +25,12 @@ import {
    CUSTOMER_SELECTED_TAGS
 } from '../graphql'
 import { ExperienceSkeleton } from '../components'
-import { getBannerData } from '../lib/getBannerData'
 
-export default function Home({ navigationMenuItems = [], parsedData = [] }) {
+export default function Home({
+   navigationMenuItems = [],
+   parsedData = [],
+   footerHtml = ''
+}) {
    const { state } = useUser()
    const { user = {}, isAuthenticated } = state
    const router = useRouter()
@@ -127,7 +130,7 @@ export default function Home({ navigationMenuItems = [], parsedData = [] }) {
    }
 
    return (
-      <Layout navigationMenuItems={navigationMenuItems}>
+      <Layout navigationMenuItems={navigationMenuItems} footerHtml={footerHtml}>
          <SEO title="StayInSocial" />
          <StyledWrapper bgMode="dark">
             <div ref={homeTop01} id="home-top-01">
@@ -272,11 +275,13 @@ export const getStaticProps = async () => {
    const navigationMenuItems = await getNavigationMenuItems(domain)
    const bannerData = await getBannerData(where)
    const parsedData = await fileParser(bannerData)
+   const footerHtml = await getGlobalFooter()
 
    return {
       props: {
          navigationMenuItems,
-         parsedData
+         parsedData,
+         footerHtml
       }
    }
 }

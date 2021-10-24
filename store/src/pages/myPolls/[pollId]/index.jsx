@@ -14,10 +14,18 @@ import {
 import { EXPERIENCE_POLLS } from '../../../graphql'
 import { theme } from '../../../theme'
 import { fileParser, getMinute, getDateWithTime } from '../../../utils'
-import { getNavigationMenuItems, getBannerData } from '../../../lib'
+import {
+   getNavigationMenuItems,
+   getBannerData,
+   getGlobalFooter
+} from '../../../lib'
 import { useExperienceInfo } from '../../../Providers'
 
-export default function MyBooking({ navigationMenuItems, parsedData = [] }) {
+export default function MyBooking({
+   navigationMenuItems,
+   parsedData = [],
+   footerHtml = ''
+}) {
    const router = useRouter()
    const { pollId } = router.query
    const { addToast } = useToasts()
@@ -61,7 +69,7 @@ export default function MyBooking({ navigationMenuItems, parsedData = [] }) {
    }
 
    return (
-      <Layout navigationMenuItems={navigationMenuItems}>
+      <Layout navigationMenuItems={navigationMenuItems} footerHtml={footerHtml}>
          <div id="myPoll-top-01">
             {Boolean(parsedData.length) &&
                ReactHtmlParser(
@@ -113,11 +121,12 @@ export const getStaticProps = async () => {
    }
    const bannerData = await getBannerData(where)
    const parsedData = await fileParser(bannerData)
-
+   const footerHtml = await getGlobalFooter()
    return {
       props: {
          navigationMenuItems,
-         parsedData
+         parsedData,
+         footerHtml
       }
    }
 }

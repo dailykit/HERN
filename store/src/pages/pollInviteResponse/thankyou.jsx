@@ -5,7 +5,11 @@ import ReactHtmlParser from 'react-html-parser'
 import { useToasts } from 'react-toast-notifications'
 import styled from 'styled-components'
 import { SIMILAR_CATEGORY_EXPERIENCE } from '../../graphql'
-import { getNavigationMenuItems, getBannerData } from '../../lib'
+import {
+   getNavigationMenuItems,
+   getBannerData,
+   getGlobalFooter
+} from '../../lib'
 import { fileParser, isEmpty } from '../../utils'
 import { theme } from '../../theme'
 import { useUser } from '../../Providers'
@@ -21,7 +25,8 @@ import {
 
 export default function PollInviteThankyou({
    navigationMenuItems = [],
-   parsedData = []
+   parsedData = [],
+   footerHtml = ''
 }) {
    const { state } = useUser()
    const { isAuthenticated } = state
@@ -56,7 +61,7 @@ export default function PollInviteThankyou({
       return <InlineLoader type="full" />
    }
    return (
-      <Layout navigationMenuItems={navigationMenuItems}>
+      <Layout navigationMenuItems={navigationMenuItems} footerHtml={footerHtml}>
          <SEO title="Poll Rsvp" />
          <div id="pollInviteResponseThankyou-top-01">
             {Boolean(parsedData.length) &&
@@ -121,10 +126,12 @@ export const getStaticProps = async () => {
    const navigationMenuItems = await getNavigationMenuItems(domain)
    const bannerData = await getBannerData(where)
    const parsedData = await fileParser(bannerData)
+   const footerHtml = await getGlobalFooter()
    return {
       props: {
          navigationMenuItems,
-         parsedData
+         parsedData,
+         footerHtml
       }
    }
 }

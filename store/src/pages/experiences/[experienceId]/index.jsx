@@ -29,7 +29,11 @@ import {
 } from '../../../components'
 // import Booking from "../../booking";
 import { theme } from '../../../theme'
-import { getNavigationMenuItems, getBannerData } from '../../../lib'
+import {
+   getNavigationMenuItems,
+   getBannerData,
+   getGlobalFooter
+} from '../../../lib'
 import { useExperienceInfo, useCart, useUser } from '../../../Providers'
 import {
    EXPERIENCE,
@@ -46,7 +50,11 @@ import {
 } from '../../../utils'
 import SendPollComp from '../../../pageComponents/sendPollComponents'
 
-export default function Experience({ navigationMenuItems, parsedData = [] }) {
+export default function Experience({
+   navigationMenuItems,
+   parsedData = [],
+   footerHtml = ''
+}) {
    const router = useRouter()
    const scroll = useScroll()
    const { state } = useUser()
@@ -152,7 +160,6 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
          onCompleted: ({
             experiences_experienceCategory: ExperienceCategories = []
          } = {}) => {
-            console.log('Similar Experiences', ExperienceCategories)
             setCategories(ExperienceCategories)
          },
          onError: error => {
@@ -173,7 +180,6 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
             subscriptionData: { data: { products: results = [] } = {} } = {}
          } = {}) => {
             setProducts(results)
-            console.log('products', results)
          }
       }
    )
@@ -220,11 +226,11 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
       return <InlineLoader type="full" />
    }
    if (error || productsError || customerReviewsError) {
-      console.log(error || productsError || customerReviewsError)
+      console.error(error || productsError || customerReviewsError)
    }
 
    return (
-      <Layout navigationMenuItems={navigationMenuItems}>
+      <Layout navigationMenuItems={navigationMenuItems} footerHtml={footerHtml}>
          <SEO title={experienceInfo?.experience?.title} />
          <div ref={experienceTop01} id="experience-top-01">
             {Boolean(parsedData.length) &&
@@ -513,6 +519,9 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
                                     category?.experience_experienceCategories
                               )
                               .flat()
+                              .filter(
+                                 elem => elem?.experience?.id !== +experienceId
+                              )
                               .slice(0, 3)
                               .map((data, index) => (
                                  <>
@@ -528,25 +537,6 @@ export default function Experience({ navigationMenuItems, parsedData = [] }) {
                                  </>
                               ))}
                            <div className="item">
-                              {/* <div
-                                 style={{
-                                    background: theme.colors.textColor,
-                                    height: '480px',
-                                    borderRadius: '16px',
-                                    padding: '2rem 1rem'
-                                 }}
-                              >
-                                 <h1
-                                    className="League-Gothic text1"
-                                    style={{
-                                       color: theme.colors.textColor4,
-                                       marginBottom: '1rem'
-                                    }}
-                                 >
-                                    Want to curate your own experience?
-                                 </h1>
-                                 <Button className="">Customize</Button>
-                              </div> */}
                               <Card type="customExperience" />
                            </div>
                         </CustomCarousel>
@@ -608,11 +598,12 @@ export const getStaticProps = async ({ params }) => {
    }
    const bannerData = await getBannerData(where)
    const parsedData = await fileParser(bannerData)
-
+   const footerHtml = await getGlobalFooter()
    return {
       props: {
          navigationMenuItems,
-         parsedData
+         parsedData,
+         footerHtml
       }
    }
 }
@@ -640,7 +631,7 @@ const StyledWrapper = styled.div`
    }
    .player-wrapper {
       width: 100%;
-      height: 320px;
+      height: 380px;
    }
    .footerBtnWrapper {
       display: flex;

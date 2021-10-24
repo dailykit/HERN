@@ -22,14 +22,14 @@ import {
 import { useCustomMutation } from '../../customMutations/useBookingInviteResponseCustomMutation'
 import { useUser, useRsvp } from '../../Providers'
 import { isExpired, isEmpty } from '../../utils'
-import { getNavigationMenuItems } from '../../lib'
+import { getNavigationMenuItems, getGlobalFooter } from '../../lib'
 import { theme } from '../../theme'
 import {
    EXPERIENCE_BOOKING,
    EXPERIENCE_BOOKING_PARTICIPANT_INFO
 } from '../../graphql'
 
-export default function PollResponse({ navigationMenuItems }) {
+export default function PollResponse({ navigationMenuItems, footerHtml = '' }) {
    const { PARTICIPANT } = useCustomMutation()
    const router = useRouter()
    const { token } = router.query
@@ -181,7 +181,7 @@ export default function PollResponse({ navigationMenuItems }) {
       return <InlineLoader type="full" />
    }
    return (
-      <Layout navigationMenuItems={navigationMenuItems}>
+      <Layout navigationMenuItems={navigationMenuItems} footerHtml={footerHtml}>
          <SEO title="Booking Rsvp" />
          <StyledWrap bgMode="dark">
             <Wrapper isCelebrating={isCelebrating || isPollClosed}>
@@ -261,9 +261,11 @@ export default function PollResponse({ navigationMenuItems }) {
 export const getStaticProps = async () => {
    const domain = 'primanti.dailykit.org'
    const navigationMenuItems = await getNavigationMenuItems(domain)
+   const footerHtml = await getGlobalFooter()
    return {
       props: {
-         navigationMenuItems
+         navigationMenuItems,
+         footerHtml
       }
    }
 }

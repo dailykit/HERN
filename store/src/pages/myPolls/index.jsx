@@ -15,9 +15,17 @@ import {
    fileParser
 } from '../../utils'
 import { theme } from '../../theme'
-import { getNavigationMenuItems, getBannerData } from '../../lib'
+import {
+   getNavigationMenuItems,
+   getBannerData,
+   getGlobalFooter
+} from '../../lib'
 
-export default function MyPolls({ navigationMenuItems, parsedData = [] }) {
+export default function MyPolls({
+   navigationMenuItems,
+   parsedData = [],
+   footerHtml = ''
+}) {
    const router = useRouter()
    const pollId = new URLSearchParams(router.query).get('pollId')
    const { width } = useWindowDimensions()
@@ -86,7 +94,7 @@ export default function MyPolls({ navigationMenuItems, parsedData = [] }) {
    if ((polls.length > 0 && isLoading) || isPollsLoading)
       return <InlineLoader type="full" />
    return (
-      <Layout navigationMenuItems={navigationMenuItems}>
+      <Layout navigationMenuItems={navigationMenuItems} footerHtml={footerHtml}>
          <SEO title="Polls" />
          <div id="myPolls-top-01">
             {Boolean(parsedData.length) &&
@@ -257,11 +265,12 @@ export const getStaticProps = async () => {
    const navigationMenuItems = await getNavigationMenuItems(domain)
    const bannerData = await getBannerData(where)
    const parsedData = await fileParser(bannerData)
-
+   const footerHtml = await getGlobalFooter()
    return {
       props: {
          navigationMenuItems,
-         parsedData
+         parsedData,
+         footerHtml
       }
    }
 }

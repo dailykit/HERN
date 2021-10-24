@@ -8,7 +8,11 @@ import ReactHtmlParser from 'react-html-parser'
 import { Tags, Layout, SEO } from '../../components'
 import { theme } from '../../theme'
 import { useWindowDimensions, fileParser } from '../../utils'
-import { getNavigationMenuItems, getBannerData } from '../../lib'
+import {
+   getNavigationMenuItems,
+   getBannerData,
+   getGlobalFooter
+} from '../../lib'
 import { useUser } from '../../Providers'
 import {
    TAGS,
@@ -18,14 +22,15 @@ import {
 
 export default function CategoryTagPage({
    navigationMenuItems,
-   parsedData = []
+   parsedData = [],
+   footerHtml = ''
 }) {
    const { width } = useWindowDimensions()
    const tagTop01 = useRef()
    const tagBottom01 = useRef()
 
    return (
-      <Layout navigationMenuItems={navigationMenuItems}>
+      <Layout navigationMenuItems={navigationMenuItems} footerHtml={footerHtml}>
          {width < 769 && <SEO title="Tags" />}
          <div ref={tagTop01} id="tag-top-01">
             {Boolean(parsedData.length) &&
@@ -52,11 +57,13 @@ export const getStaticProps = async () => {
    const navigationMenuItems = await getNavigationMenuItems(domain)
    const bannerData = await getBannerData(where)
    const parsedData = await fileParser(bannerData)
+   const footerHtml = await getGlobalFooter()
 
    return {
       props: {
          navigationMenuItems,
-         parsedData
+         parsedData,
+         footerHtml
       }
    }
 }

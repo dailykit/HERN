@@ -26,9 +26,17 @@ import {
    fileParser
 } from '../../../../utils'
 import { theme } from '../../../../theme'
-import { getNavigationMenuItems, getBannerData } from '../../../../lib'
+import {
+   getNavigationMenuItems,
+   getBannerData,
+   getGlobalFooter
+} from '../../../../lib'
 
-export default function MyBooking({ navigationMenuItems, parsedData = [] }) {
+export default function MyBooking({
+   navigationMenuItems,
+   parsedData = [],
+   footerHtml = ''
+}) {
    const router = useRouter()
    const { bookingId } = router.query
    const { width, height } = useWindowDimensions()
@@ -103,7 +111,7 @@ export default function MyBooking({ navigationMenuItems, parsedData = [] }) {
    }
 
    return (
-      <Layout navigationMenuItems={navigationMenuItems}>
+      <Layout navigationMenuItems={navigationMenuItems} footerHtml={footerHtml}>
          <SEO title={`Booking-${bookingId}`} />
          <div id="myBooking-top-01">
             {Boolean(parsedData.length) &&
@@ -187,11 +195,12 @@ export const getStaticProps = async () => {
    }
    const bannerData = await getBannerData(where)
    const parsedData = await fileParser(bannerData)
-
+   const footerHtml = await getGlobalFooter()
    return {
       props: {
          navigationMenuItems,
-         parsedData
+         parsedData,
+         footerHtml
       }
    }
 }

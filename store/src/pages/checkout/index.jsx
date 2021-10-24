@@ -27,9 +27,17 @@ import {
    useWindowDimensions,
    fileParser
 } from '../../utils'
-import { getNavigationMenuItems, getBannerData } from '../../lib'
+import {
+   getNavigationMenuItems,
+   getBannerData,
+   getGlobalFooter
+} from '../../lib'
 
-export default function Checkout({ navigationMenuItems, parsedData = [] }) {
+export default function Checkout({
+   navigationMenuItems,
+   parsedData = [],
+   footerHtml = ''
+}) {
    const { width, height } = useWindowDimensions()
    const router = useRouter()
    console.log('Routerrrr', router)
@@ -124,7 +132,7 @@ export default function Checkout({ navigationMenuItems, parsedData = [] }) {
    }
 
    return (
-      <Layout navigationMenuItems={navigationMenuItems}>
+      <Layout navigationMenuItems={navigationMenuItems} footerHtml={footerHtml}>
          <SEO title="Checkout" />
          <div id="checkout-top-01">
             {Boolean(parsedData.length) &&
@@ -214,11 +222,13 @@ export const getStaticProps = async () => {
    const navigationMenuItems = await getNavigationMenuItems(domain)
    const bannerData = await getBannerData(where)
    const parsedData = await fileParser(bannerData)
+   const footerHtml = await getGlobalFooter()
 
    return {
       props: {
          navigationMenuItems,
-         parsedData
+         parsedData,
+         footerHtml
       }
    }
 }

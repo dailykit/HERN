@@ -25,12 +25,16 @@ import { theme } from '../../theme'
 import { useWindowDimensions, fileParser, isEmpty } from '../../utils'
 import { ExperienceSkeleton } from '../../components'
 import { useUser } from '../../Providers'
-import { getNavigationMenuItems, getBannerData } from '../../lib'
+import {
+   getNavigationMenuItems,
+   getBannerData,
+   getGlobalFooter
+} from '../../lib'
 
 export default function Experiences({
    navigationMenuItems = [],
    parsedData = [],
-   bannerId = ''
+   footerHtml = ''
 }) {
    const { addToast } = useToasts()
    const { state: userState } = useUser()
@@ -157,7 +161,7 @@ export default function Experiences({
    }
 
    return (
-      <Layout navigationMenuItems={navigationMenuItems}>
+      <Layout navigationMenuItems={navigationMenuItems} footerHtml={footerHtml}>
          <SEO title="Experiences" />
          <StyledWrapper bgMode="dark">
             <div ref={experiencesTop01} id="experiences-top-01">
@@ -243,11 +247,12 @@ export const getStaticProps = async () => {
    const navigationMenuItems = await getNavigationMenuItems(domain)
    const bannerData = await getBannerData(where)
    const parsedData = await fileParser(bannerData)
-
+   const footerHtml = await getGlobalFooter()
    return {
       props: {
          navigationMenuItems,
-         parsedData
+         parsedData,
+         footerHtml
       }
    }
 }

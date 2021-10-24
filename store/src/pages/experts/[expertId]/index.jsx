@@ -11,7 +11,8 @@ import { theme } from '../../../theme.js'
 import {
    getNavigationMenuItems,
    graphqlClient,
-   getBannerData
+   getBannerData,
+   getGlobalFooter
 } from '../../../lib'
 import {
    ChevronDown,
@@ -28,7 +29,8 @@ export default function Expert({
    navigationMenuItems,
    expert,
    category,
-   parsedData = []
+   parsedData = [],
+   footerHtml = ''
 }) {
    const router = useRouter()
    const expertTop01 = useRef()
@@ -54,7 +56,7 @@ export default function Expert({
    }, [width])
 
    return (
-      <Layout navigationMenuItems={navigationMenuItems}>
+      <Layout navigationMenuItems={navigationMenuItems} footerHtml={footerHtml}>
          <SEO title={`${expert?.firstName} ${expert?.lastName}`} />
          <Wrapper>
             <div ref={expertTop01} id="expert-top-01">
@@ -145,6 +147,7 @@ export const getStaticProps = async ({ params }) => {
    }
    const bannerData = await getBannerData(where)
    const parsedData = await fileParser(bannerData)
+   const footerHtml = await getGlobalFooter()
    const client = await graphqlClient()
    const { data: { experts_expert_by_pk: expert = {} } = {} } =
       await client.query({
@@ -160,7 +163,8 @@ export const getStaticProps = async ({ params }) => {
          navigationMenuItems,
          expert,
          category: null,
-         parsedData
+         parsedData,
+         footerHtml
       }
    }
 }

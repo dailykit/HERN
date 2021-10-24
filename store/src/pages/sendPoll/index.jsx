@@ -6,10 +6,18 @@ import SendPollComp from '../../pageComponents/sendPollComponents'
 import { SEO, Layout, InlineLoader } from '../../components'
 import { theme } from '../../theme'
 import { useExperienceInfo } from '../../Providers'
-import { getNavigationMenuItems, getBannerData } from '../../lib'
+import {
+   getNavigationMenuItems,
+   getBannerData,
+   getGlobalFooter
+} from '../../lib'
 import { useWindowDimensions, fileParser } from '../../utils'
 
-export default function SendPoll({ navigationMenuItems, parsedData = [] }) {
+export default function SendPoll({
+   navigationMenuItems,
+   parsedData = [],
+   footerHtml = ''
+}) {
    const { width } = useWindowDimensions()
    const router = useRouter()
    const { experienceId } = router.query
@@ -24,7 +32,7 @@ export default function SendPoll({ navigationMenuItems, parsedData = [] }) {
    if (isLoading) return <InlineLoader type="full" />
 
    return (
-      <Layout navigationMenuItems={navigationMenuItems}>
+      <Layout navigationMenuItems={navigationMenuItems} footerHtml={footerHtml}>
          <Wrapper>
             {width < 769 && <SEO title="Send poll" />}
             <div id="sendPoll-top-01">
@@ -55,11 +63,12 @@ export const getStaticProps = async () => {
    const navigationMenuItems = await getNavigationMenuItems(domain)
    const bannerData = await getBannerData(where)
    const parsedData = await fileParser(bannerData)
-
+   const footerHtml = await getGlobalFooter()
    return {
       props: {
          navigationMenuItems,
-         parsedData
+         parsedData,
+         footerHtml
       }
    }
 }
