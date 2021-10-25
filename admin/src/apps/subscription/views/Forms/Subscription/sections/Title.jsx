@@ -43,6 +43,7 @@ import {
    UPSERT_SUBSCRIPTION_TITLE,
    UPSERT_SUBSCRIPTION_SERVING,
 } from '../../../../graphql'
+import { MetaDetails } from './MetaDetails'
 
 const Title = () => {
    const params = useParams()
@@ -219,6 +220,9 @@ const Title = () => {
                   </Flex>
                </Flex>
             </Header>
+
+            <MetaDetails metaDetails={title.metaDetails} />
+
             <Flex
                as="section"
                height="calc(100% - 89px)"
@@ -253,6 +257,7 @@ const Title = () => {
                      id="servingTabList"
                      style={{ marginLeft: '10px' }}
                   >
+                     {console.log('SERVINGS', title)}
                      {title?.servings.map(serving => (
                         <SectionTab key={serving.id}>
                            <Text as="title">{serving.size}</Text>

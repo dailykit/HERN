@@ -23,17 +23,21 @@ import {
    UPDATE_PRODUCT_OPTIONS,
    INCREASE_PRICE_AND_DISCOUNT,
    INCREMENTS_IN_PRODUCT_OPTIONS,
+   UPDATE_SUBSCRIPTION_OCCURRENCE_PRODUCT,
+   INCREASE_PRICE_SUBSCRIPTION_OCCURRENCE_PRODUCT,
 } from './mutation'
 import { RecipeBulkAction } from './entities/recipe'
 import { IngredientBulkAction } from './entities/ingredients'
 import { ProductBulkAction } from './entities/products'
 import { ProductOptionsBulkAction } from './entities/productOptions'
+import { SubscriptionOccurrenceProductBulkAction } from './entities/subscriptionOccurenceProduct'
 
 const BulkActions = ({
    table,
    selectedRows,
    removeSelectedRow,
    setSelectedRows,
+   keyName = 'name',
    close,
 }) => {
    // ref
@@ -128,7 +132,24 @@ const BulkActions = ({
             decrease: 0,
          },
       })
+   const [
+      initialBulkActionSubscriptionOccurrenceProduct,
+      setInitialBulkActionSubscriptionOccurrenceProduct,
+   ] = React.useState({
+      addOnPrice: {
+         set: 0,
+         increase: 0,
+         decrease: 0,
+      },
+      // productCategory: {
+      //    defaultOption: null,
+      //    value: '',
+      // },
 
+      // planTitle: {
+      //    value: '',
+      // },
+   })
    // additional bulk actions (actions which not to be set)
    const [additionalBulkAction, setAdditionalBulkAction] = React.useState({})
 
@@ -225,6 +246,23 @@ const BulkActions = ({
                decrease: 0,
             },
          }))
+      } else if (table === 'Menu Product Occurrence') {
+         setInitialBulkActionSubscriptionOccurrenceProduct(prevState => ({
+            ...prevState,
+            addOnPrice: {
+               set: 0,
+               increase: 0,
+               decrease: 0,
+            },
+            // productCategory: {
+            //    defaultOption: null,
+            //    value: '',
+            // },
+
+            // planTitle: {
+            //    value: '',
+            // },
+         }))
       } else {
          // for product options
          handleModifierClear()
@@ -293,6 +331,19 @@ const BulkActions = ({
          toast.error('Something went wrong!')
       },
    })
+   const [updateSubscriptionOccurrenceProduct] = useMutation(
+      UPDATE_SUBSCRIPTION_OCCURRENCE_PRODUCT,
+      {
+         onCompleted: () => {
+            toast.success('Update Successfully')
+            close(1)
+         },
+         onError: error => {
+            toast.error('Something went wrong!')
+         },
+      }
+   )
+
    const [concatenateArrayColumn] = useLazyQuery(CONCATENATE_ARRAY_COLUMN, {
       onCompleted: () => {
          toast.success('Update Successfully')
@@ -337,6 +388,19 @@ const BulkActions = ({
          },
       }
    )
+   const [increasePriceSubscriptionOccurrenceProduct] = useMutation(
+      INCREASE_PRICE_SUBSCRIPTION_OCCURRENCE_PRODUCT,
+      {
+         onCompleted: () => {
+            toast.success('Update Successfully')
+            //  close(1)
+         },
+         onError: () => {
+            toast.error('Something went wrong!')
+            //  logger(error)
+         },
+      }
+   )
 
    // additional function
    const additionalFunction = () => {
@@ -359,8 +423,18 @@ const BulkActions = ({
          })
          close(1)
       }
+      if (table === 'Menu Product Occurrence') {
+         increasePriceSubscriptionOccurrenceProduct({
+            variables: {
+               addOnPrice: additionalBulkAction.addOnPrice || 0,
+               where: { id: { _in: selectedRows.map(row => row.id) } },
+            },
+         })
+         close(1)
+      }
    }
-
+   console.log('Additional Action:::', additionalBulkAction, bulkActions)
+   // This  function only use for bulk action mutation
    const getMutation = table => {
       switch (table) {
          case 'Recipe':
@@ -371,6 +445,10 @@ const BulkActions = ({
             return updateIngredients
          case 'Product Options':
             return updateProductOptions
+         case 'Menu Product Occurrence':
+            return updateSubscriptionOccurrenceProduct
+         default:
+            return null
       }
    }
    const handleOnUpdate = () => {
@@ -529,7 +607,7 @@ const BulkActions = ({
                               alignItems="center"
                               justifyContent="space-between"
                            >
-                              {item.name}
+                              {item[keyName]}
                               <IconButton
                                  type="ghost"
                                  onClick={() => {
@@ -600,6 +678,20 @@ const BulkActions = ({
                            initialBulkAction={initialBulkActionProductOption}
                            setInitialBulkAction={
                               setInitialBulkActionProductOption
+                           }
+                           bulkActions={bulkActions}
+                           setBulkActions={setBulkActions}
+                           additionalBulkAction={additionalBulkAction}
+                           setAdditionalBulkAction={setAdditionalBulkAction}
+                        />
+                     )}
+                     {table === 'Menu Product Occurrence' && (
+                        <SubscriptionOccurrenceProductBulkAction
+                           initialBulkAction={
+                              initialBulkActionSubscriptionOccurrenceProduct
+                           }
+                           setInitialBulkAction={
+                              setInitialBulkActionSubscriptionOccurrenceProduct
                            }
                            bulkActions={bulkActions}
                            setBulkActions={setBulkActions}

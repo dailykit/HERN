@@ -39,6 +39,9 @@ export default function ConfirmationPopup({
                case 'Product':
                   keyName = 'selected-rows-id_product_table'
                   break
+               case 'Menu Product Occurrence':
+                  keyName = 'selected-rows-id_occurrence_table'
+                  break
                default:
                   keyName = 'selected-rows-id_ingredients_table'
             }

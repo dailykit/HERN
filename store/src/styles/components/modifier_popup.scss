@@ -1,16 +1,19 @@
 .hern-product-modifier-pop-up-container {
-   position: sticky;
-   // height: 100%;
+   position: fixed;
+   top: 0;
+   bottom: 0;
+   width: 100%;
+   right: 0;
    height: 0;
-
    display: flex;
    flex-direction: column;
    justify-content: flex-end;
-   bottom: 0;
    background: #20202066;
-   width: inherit;
    z-index: 15;
-   transition: height 0.35s ease;
+   transition: height 0.45s ease;
+}
+.hern-product-modifier-pop-up-container--show-modifier-pop-up {
+   height: 100vh;
 }
 .hern-product-modifier-pop-up-product {
    // padding-top: 0.8em;
@@ -133,4 +136,11 @@
    position: absolute;
    right: 0;
    top: 21px;
+}
+
+@media screen and (min-width: 769px) {
+   .hern-product-modifier-pop-up-container {
+      width: 28em;
+      left: calc(50% - 14em);
+   }
 }

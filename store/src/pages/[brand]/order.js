@@ -14,7 +14,7 @@ import { OrderContent } from '../../sections/order'
 const OrderPage = props => {
    const router = useRouter()
    const { isAuthenticated, isLoading } = useUser()
-   const { folds, settings, navigationMenus } = props
+   const { folds, settings, navigationMenus, seoSettings } = props
    React.useEffect(() => {
       try {
          processJsFile(folds)
@@ -25,7 +25,7 @@ const OrderPage = props => {
 
    return (
       <Layout settings={settings} navigationMenus={navigationMenus}>
-         <SEO title="On Demand Store" />
+         <SEO seoSettings={seoSettings} />
          <main>{renderPageContent(folds)}</main>
       </Layout>
    )
@@ -34,13 +34,13 @@ const OrderPage = props => {
 export default OrderPage
 
 export const getStaticProps = async ({ params }) => {
-   const { parsedData, seo, settings, navigationMenus } = await getPageProps(
+   const { parsedData, seo, settings, navigationMenus, seoSettings } = await getPageProps(
       params,
       '/order'
    )
 
    return {
-      props: { folds: parsedData, seo, settings, navigationMenus },
+      props: { folds: parsedData, seo, settings, navigationMenus, seoSettings },
       revalidate: 60, // will be passed to the page component as props
    }
 }

@@ -14,7 +14,7 @@ import {
 const ReferralsPage = props => {
    const router = useRouter()
    const { isAuthenticated, isLoading } = useUser()
-   const { folds, seo, settings, navigationMenus } = props
+   const { folds, settings, navigationMenus, seoSettings } = props
 
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
@@ -33,7 +33,7 @@ const ReferralsPage = props => {
 
    return (
       <Layout settings={settings} navigationMenus={navigationMenus}>
-         <SEO title="Referral" />
+         <SEO seoSettings={seoSettings} />
          <main>{renderPageContent(folds)}</main>
       </Layout>
    )
@@ -41,13 +41,13 @@ const ReferralsPage = props => {
 export default ReferralsPage
 
 export const getStaticProps = async ({ params }) => {
-   const { parsedData, seo, settings, navigationMenus } = await getPageProps(
+   const { parsedData, settings, navigationMenus, seoSettings } = await getPageProps(
       params,
       '/account/referrals'
    )
 
    return {
-      props: { folds: parsedData, seo, settings, navigationMenus },
+      props: { folds: parsedData, settings, navigationMenus, seoSettings },
       revalidate: 60, // will be passed to the page component as props
    }
 }

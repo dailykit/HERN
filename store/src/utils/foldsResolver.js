@@ -9,6 +9,7 @@ There could be two type of fold[module]
  - This could be either html file or JS file
 */
 const resolveComponent = fold => {
+   console.log('fold', fold)
    return new Promise(async (resolve, reject) => {
       try {
          if (fold.moduleType === 'system-defined') {
@@ -18,7 +19,7 @@ const resolveComponent = fold => {
                component: fold.internalModuleIdentifier,
                moduleType: fold.moduleType,
                position: fold.position,
-               config: fold.config
+               config: fold.config,
             })
          }
 
@@ -49,7 +50,7 @@ const resolveComponent = fold => {
                scripts,
                moduleType: fold.moduleType,
                position: fold.position,
-               config: fold.config
+               config: fold.config,
             })
          }
 
@@ -84,7 +85,7 @@ const resolveComponent = fold => {
                scripts,
                moduleType: fold.moduleType,
                position: fold.position,
-               config: fold.config
+               config: fold.config,
             })
          } else {
             return reject('Failed to load file')

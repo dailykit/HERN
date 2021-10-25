@@ -28,15 +28,15 @@ const AppWrapper = ({ Component, pageProps }) => {
                <ScriptProvider>
                   <OnDemandMenuProvider>
                      <UserProvider>
-                        <CartProvider>
-                           <ToastProvider
-                              autoDismiss
-                              placement="bottom-center"
-                              autoDismissTimeout={3000}
-                           >
+                        <ToastProvider
+                           autoDismiss
+                           placement="bottom-center"
+                           autoDismissTimeout={3000}
+                        >
+                           <CartProvider>
                               <Component {...pageProps} />
-                           </ToastProvider>
-                        </CartProvider>
+                           </CartProvider>
+                        </ToastProvider>
                      </UserProvider>
                   </OnDemandMenuProvider>
                </ScriptProvider>

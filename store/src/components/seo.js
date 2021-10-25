@@ -1,67 +1,101 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Head from 'next/head'
-import { useConfig } from '../lib'
 import { useRouter } from 'next/router'
-
-export const SEO = ({ description, title, image, richresult, children }) => {
-   const router = useRouter()
-
-   // const { site } = useStaticQuery(
-   //    graphql`
-   //       query {
-   //          site {
-   //             siteMetadata {
-   //                title
-   //                description
-   //             }
-   //          }
-   //       }
-   //    `
-   // )
-
+import { useConfig } from '../lib'
+export const SEO = ({ seoSettings, richresult, children }) => {
+   const { pageLevel, brandLevel } = seoSettings
+   const { pathname } = useRouter()
    const { favicon } = useConfig().configOf('theme-brand', 'brand')
-   const seo = useConfig().configOf('seo', 'App')
 
-   const path = router.pathname
+   //for basic SEO settings
+   const basicSEO =
+      pageLevel.find(
+         setting => setting?.brandPageSetting?.identifier === 'basic-seo'
+      ) || brandLevel.find(setting => setting?.meta?.identifier === 'basic-seo')
 
-   const metaTitle =
-      title || seo[path]?.title || seo['/']?.title || 'Meal Kit Store'
-
-   const metaDescription =
-      description ||
-      seo[path]?.description ||
-      seo['/']?.description ||
-      'A subscription based meal kit store'
-
-   const metaImage =
-      image ||
-      seo[path]?.image ||
-      seo['/']?.image ||
-      'https://dailykit-133-test.s3.amazonaws.com/images/1596121558382.png'
+   //for SEO settings for social networks like Facebook,Pinterest,LinkedIn or Twitter
+   const openGraphCard =
+      pageLevel.find(
+         setting => setting?.brandPageSetting?.identifier === 'og-card'
+      ) || brandLevel.find(setting => setting?.meta?.identifier === 'og-card')
+   //specifically for Twitter
+   const twitterCard =
+      pageLevel.find(
+         setting => setting?.brandPageSetting?.identifier === 'twitter-card'
+      ) ||
+      brandLevel.find(setting => setting?.meta?.identifier === 'twitter-card')
 
    return (
       <Head>
-         <title>{metaTitle}</title>
-         <link rel="icon" href={favicon} type="image/png" />
-         <meta property="og:title" content={metaTitle} title="og-title" />
+         <title>
+            {basicSEO?.value?.metaTitle || pathname.split('/').slice(-1)}
+         </title>
+         <link
+            rel="icon"
+            href={basicSEO?.value?.favicon || favicon}
+            type="image/png"
+         />
+         <meta
+            property="description"
+            content={basicSEO?.value?.metaDescription || ''}
+            name="description"
+         />
+
+         <meta
+            property="og:title"
+            content={
+               openGraphCard?.value?.ogTitle ||
+               basicSEO?.value?.metaTitle ||
+               pathname.split('/').slice(-1)
+            }
+            title="og-title"
+         />
          <meta
             property="og:description"
-            content={metaDescription}
+            content={
+               openGraphCard?.value?.ogDescription ||
+               basicSEO?.value?.metaDescription ||
+               ''
+            }
             title="og-desc"
          />
-         <meta property="og:image" content={metaImage} title="og-image" />
+         <meta
+            property="og:image"
+            content={openGraphCard?.value?.ogImage || favicon}
+            title="og-image"
+         />
          <meta property="og:type" content="website" />
+
          <meta property="twitter:card" content="summary" />
-         <meta property="twitter:title" content={metaTitle} title="tw-title" />
+         <meta
+            property="twitter:title"
+            content={
+               twitterCard?.value?.twitterTitle ||
+               openGraphCard?.value?.ogTitle ||
+               basicSEO?.value?.metaTitle ||
+               pathname.split('/').slice(-1)
+            }
+            title="tw-title"
+         />
          <meta
             property="twitter:description"
-            content={metaDescription}
+            content={
+               twitterCard?.value?.twitterDescription ||
+               openGraphCard?.value?.ogDescription ||
+               basicSEO?.value?.metaDescription ||
+               ''
+            }
             title="tw-desc"
          />
          <meta
             property="twitter:image:src"
-            content={metaImage}
+            content={
+               twitterCard?.value?.twitterImage ||
+               openGraphCard?.value?.ogImage ||
+               basicSEO?.value?.favicon ||
+               favicon
+            }
             title="tw-image"
          />
          {richresult && (
