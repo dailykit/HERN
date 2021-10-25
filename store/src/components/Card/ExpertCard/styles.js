@@ -27,6 +27,9 @@ export const CardImage = styled.div`
    height: 100%;
    border-radius: 16px;
    overflow: hidden;
+   :hover {
+      cursor: pointer;
+   }
    img {
       width: 100%;
       height: 100%;
@@ -51,6 +54,7 @@ export const CardBody = styled.div`
       letter-spacing: 0.16em;
       :hover {
          color: ${theme.colors.textColor};
+         cursor: pointer;
       }
    }
    .category {

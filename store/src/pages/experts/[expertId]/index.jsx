@@ -58,7 +58,7 @@ export default function Expert({
    return (
       <Layout navigationMenuItems={navigationMenuItems} footerHtml={footerHtml}>
          <SEO title={`${expert?.firstName} ${expert?.lastName}`} />
-         <Wrapper>
+         <Wrapper coverImage={expert?.assets?.cover}>
             <div ref={expertTop01} id="expert-top-01">
                {Boolean(parsedData.length) &&
                   ReactHtmlParser(
@@ -66,26 +66,48 @@ export default function Expert({
                         ?.content
                   )}
             </div>
-            <AboutExpert expert={expert} expertCategory={category} />
-            <GridViewWrapper>
-               <Flex
-                  container
-                  flexDirection="column"
-                  alignItems="center"
-                  justifyContent="center"
-                  padding="1rem 0"
-               >
-                  <h3 className="experienceHeading">
-                     {Object.keys(expert).length &&
-                        expert.experience_experts.length}{' '}
-                     Experiences
-                  </h3>
-                  <ChevronDown
-                     size={iconSize}
-                     color={theme.colors.textColor4}
+            <div className="expert_coverBanner">
+               <div className="expert_info">
+                  <img
+                     className="expert_profileImg"
+                     src={
+                        !isEmpty(expert?.assets?.images)
+                           ? expert?.assets?.images[0]
+                           : `https://ui-avatars.com/api/?name=${expert?.firstName}+${expert?.lastName}&background=eee&color=15171F&size=250&rounded=false`
+                     }
+                     alt="expert-profile"
                   />
-               </Flex>
-               {/* {!isEmpty(expert) && (
+                  <h3
+                     className="expert_Heading text1"
+                     style={{
+                        marginBottom: '0'
+                     }}
+                  >{`${expert?.firstName} ${expert?.lastName}`}</h3>
+                  <p
+                     className="expert_para text6"
+                     style={{
+                        color: theme.colors.textColor5
+                     }}
+                  >
+                     {expert?.email}
+                  </p>
+               </div>
+            </div>
+            <div className="expert_main_div">
+               <div className="expert_aboutUs_div">
+                  <h3 className="expert_Heading text1">About the expert</h3>
+                  <p className="expert_para text7">
+                     {ReactHtmlParser(expert?.description)}
+                  </p>
+               </div>
+               <GridViewWrapper>
+                  <h3 className="expert_Heading text1">
+                     Experts Experiences(
+                     {Object.keys(expert).length &&
+                        expert.experience_experts.length}
+                     )
+                  </h3>
+                  {/* {!isEmpty(expert) && (
                   <RenderCard
                      // data={expert?.experience_experts
                      //    .map(expert => expert?.experience)
@@ -97,30 +119,31 @@ export default function Expert({
                      keyname="expert"
                   />
                )} */}
-               <Masonry
-                  breakpointCols={breakpointColumnsObj}
-                  className="my-masonry-grid"
-                  columnClassName="my-masonry-grid_column"
-               >
-                  {Object.keys(expert).length &&
-                     expert?.experience_experts.map((data, index) => {
-                        return (
-                           <Card
-                              onClick={() =>
-                                 router.push(
-                                    `/experiences/${data?.experience?.id}`
-                                 )
-                              }
-                              key={index}
-                              type="experience"
-                              data={data}
-                              backgroundMode="light"
-                              boxShadow={false}
-                           />
-                        )
-                     })}
-               </Masonry>
-            </GridViewWrapper>
+                  <Masonry
+                     breakpointCols={breakpointColumnsObj}
+                     className="my-masonry-grid"
+                     columnClassName="my-masonry-grid_column"
+                  >
+                     {Object.keys(expert).length &&
+                        expert?.experience_experts.map((data, index) => {
+                           return (
+                              <Card
+                                 onClick={() =>
+                                    router.push(
+                                       `/experiences/${data?.experience?.id}`
+                                    )
+                                 }
+                                 key={index}
+                                 type="experience"
+                                 data={data}
+                                 backgroundMode="light"
+                                 boxShadow={false}
+                              />
+                           )
+                        })}
+                  </Masonry>
+               </GridViewWrapper>
+            </div>
             <div ref={expertBottom01} id="expert-bottom-01">
                {Boolean(parsedData.length) &&
                   ReactHtmlParser(
@@ -179,20 +202,71 @@ export const getStaticPaths = async () => {
 const Wrapper = styled.div`
    width: 100%;
    height: 100%;
-   padding: 1rem;
    overflow: auto;
+   .expert_coverBanner {
+      background-image: url(${({ coverImage }) =>
+         coverImage ? coverImage : 'https://via.placeholder.com/1350x360'});
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      height: 360px;
+      margin-bottom: 220px;
+      position: relative;
+      .expert_info {
+         position: absolute;
+         bottom: -220px;
+         left: 50%;
+         transform: translate(-50%, 0);
+      }
+      .expert_profileImg {
+         width: 250px;
+         height: 250px;
+         border-radius: 50%;
+         object-fit: cover;
+      }
+   }
+   .expert_main_div {
+      padding: 4rem 2rem;
+   }
+   .expert_Heading {
+      color: ${theme.colors.textColor5};
+      font-weight: 400;
+      text-align: left;
+      margin-bottom: 0;
+      text-transform: uppercase;
+      font-family: League-Gothic;
+      margin-bottom: 2rem;
+   }
+   .expert_para {
+      font-family: Futura;
+      font-style: normal;
+      font-weight: 500;
+      color: ${theme.colors.textColor7};
+      margin-bottom: 0;
+   }
+   .expert_aboutUs_div {
+      margin-bottom: 4rem;
+   }
+   @media (min-width: 769px) {
+      .expert_main_div {
+         padding: 4rem;
+      }
+      .expert_coverBanner {
+         margin-bottom: 220px;
+         .expert_info {
+            bottom: -220px;
+            left: 64px;
+            transform: unset;
+         }
+         .expert_profileImg {
+            width: 250px;
+            height: 250px;
+         }
+      }
+   }
 `
 
 const GridViewWrapper = styled.div`
-   margin-bottom: 168px;
-   .experienceHeading {
-      font-size: ${theme.sizes.h3};
-      color: ${theme.colors.textColor4};
-      font-weight: 400;
-      text-align: center;
-      margin-bottom: 20px;
-   }
-
    .explore {
       text-align: center;
       font-size: ${theme.sizes.h4};
@@ -201,15 +275,14 @@ const GridViewWrapper = styled.div`
       margin-right: 8px;
    }
    .my-masonry-grid {
-      display: -webkit-box; /* Not needed if autoprefixing */
-      display: -ms-flexbox; /* Not needed if autoprefixing */
       display: flex;
       width: auto;
-      margin-right: 40px;
+      column-gap: 2rem;
+      ${'' /* margin-right: 40px; */}
    }
 
    .my-masonry-grid_column > div {
-      margin: 0 0 40px 40px;
+      margin: 0 0 2rem 0;
    }
 
    @media (min-width: 769px) {
@@ -225,10 +298,10 @@ const GridViewWrapper = styled.div`
    }
    @media (max-width: 800px) {
       .my-masonry-grid {
-         margin-right: 1rem;
+         margin-right: 0;
       }
       .my-masonry-grid_column > div {
-         margin: 0 0 1rem 1rem;
+         margin: 0;
       }
    }
 `
