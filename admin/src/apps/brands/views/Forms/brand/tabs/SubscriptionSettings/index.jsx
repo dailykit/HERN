@@ -31,7 +31,7 @@ import {
 export const SubscriptionSettings = () => {
    const params = useParams()
    const [settings, setSettings] = React.useState({})
-   const [updateSetting] = useMutation(BRANDS.UPDATE_SUBSCRIPTION_SETTING, {
+   const [updateSetting] = useMutation(BRANDS.UPDATE_BRAND_SETTING, {
       onCompleted: () => {
          toast.success('Successfully updated!')
       },
@@ -43,19 +43,19 @@ export const SubscriptionSettings = () => {
    const {
       loading,
       error,
-      data: { subscriptionSettings = [] } = {},
-   } = useSubscription(BRANDS.SUBSCRIPTION_SETTINGS_TYPES)
+      data: { brandSettings = [] } = {},
+   } = useSubscription(BRANDS.SETTINGS_TYPES)
 
    React.useEffect(() => {
-      if (!loading && !isEmpty(subscriptionSettings)) {
-         const grouped = groupBy(subscriptionSettings, 'type')
+      if (!loading && !isEmpty(brandSettings)) {
+         const grouped = groupBy(brandSettings, 'type')
 
          Object.keys(grouped).forEach(key => {
             grouped[key] = grouped[key].map(node => node.identifier)
          })
          setSettings(grouped)
       }
-   }, [loading, subscriptionSettings])
+   }, [loading, brandSettings])
 
    const update = ({ id, value }) => {
       updateSetting({
@@ -63,14 +63,14 @@ export const SubscriptionSettings = () => {
             object: {
                value,
                brandId: params.id,
-               subscriptionStoreSettingId: id,
+               brandSettingId: id,
             },
          },
       })
    }
 
    if (error) {
-      toast.error('Somthing went wrong!')
+      toast.error('Something went wrong!')
       logger(error)
    }
 

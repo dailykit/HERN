@@ -32,25 +32,25 @@ export const Favicon = ({ update }) => {
    const [settingId, setSettingId] = React.useState(null)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
-   const { loading, error } = useSubscription(BRANDS.ONDEMAND_SETTING, {
+   const { loading, error } = useSubscription(BRANDS.SETTING, {
       variables: {
          identifier: { _eq: 'Favicon' },
          type: { _eq: 'visual' },
       },
       onSubscriptionData: ({
-         subscriptionData: { data: { storeSettings = [] } = {} } = {},
+         subscriptionData: { data: { brandSettings = [] } = {} } = {},
       }) => {
-         if (!isEmpty(storeSettings)) {
-            const index = storeSettings.findIndex(
+         if (!isEmpty(brandSettings)) {
+            const index = brandSettings.findIndex(
                node => node?.brand?.brandId === Number(params.id)
             )
 
             if (index === -1) {
-               const { id } = storeSettings[0]
+               const { id } = brandSettings[0]
                setSettingId(id)
                return
             }
-            const { brand, id } = storeSettings[index]
+            const { brand, id } = brandSettings[index]
             setSettingId(id)
             if ('url' in brand.value) {
                setUrl(brand.value.url)
@@ -78,6 +78,7 @@ export const Favicon = ({ update }) => {
             <Text as="h3">Fav Icon</Text>
             <Tooltip identifier="brand_favicon_info" />
          </Flex>
+         {console.log('url', url)}
          <Spacer size="16px" />
          {url ? (
             <ImageContainer width="120px" height="120px">

@@ -35,25 +35,25 @@ export const DeliveryPage = ({ update }) => {
       backgroundImage: '',
    })
    const [settingId, setSettingId] = React.useState(null)
-   const { loading, error } = useSubscription(BRANDS.SUBSCRIPTION_SETTING, {
+   const { loading, error } = useSubscription(BRANDS.SETTING, {
       variables: {
          identifier: { _eq: 'select-delivery-background' },
          type: { _eq: 'Select-Delivery' },
       },
       onSubscriptionData: ({
-         subscriptionData: { data: { subscriptionSetting = [] } = {} } = {},
+         subscriptionData: { data: { brandSettings = [] } = {} } = {},
       }) => {
-         if (!isEmpty(subscriptionSetting)) {
-            const index = subscriptionSetting.findIndex(
+         if (!isEmpty(brandSettings)) {
+            const index = brandSettings.findIndex(
                node => node?.brand?.brandId === Number(params.id)
             )
 
             if (index === -1) {
-               const { id } = subscriptionSetting[0]
+               const { id } = brandSettings[0]
                setSettingId(id)
                return
             }
-            const { brand, id } = subscriptionSetting[index]
+            const { brand, id } = brandSettings[index]
             setSettingId(id)
             if (!isNull(brand) && !isEmpty(brand)) {
                setForm(form => ({

@@ -37,7 +37,7 @@ import { RefundPolicy } from './sections/RefundPolicy'
 export const OnDemandSettings = () => {
    const params = useParams()
    const [settings, setSettings] = React.useState({})
-   const [updateSetting] = useMutation(BRANDS.UPDATE_ONDEMAND_SETTING, {
+   const [updateSetting] = useMutation(BRANDS.UPDATE_BRAND_SETTING, {
       onCompleted: () => {
          toast.success('Successfully updated!')
       },
@@ -49,23 +49,23 @@ export const OnDemandSettings = () => {
    const {
       loading,
       error,
-      data: { storeSettings = [] } = {},
-   } = useSubscription(BRANDS.ON_DEMAND_SETTINGS_TYPES)
+      data: { brandSettings = [] } = {},
+   } = useSubscription(BRANDS.SETTINGS_TYPES)
    if (error) {
       toast.error('Something went wrong!')
       logger(error)
    }
 
    React.useEffect(() => {
-      if (!loading && !isEmpty(storeSettings)) {
-         const grouped = groupBy(storeSettings, 'type')
+      if (!loading && !isEmpty(brandSettings)) {
+         const grouped = groupBy(brandSettings, 'type')
 
          Object.keys(grouped).forEach(key => {
             grouped[key] = grouped[key].map(node => node.identifier)
          })
          setSettings(grouped)
       }
-   }, [loading, storeSettings])
+   }, [loading, brandSettings])
 
    const update = ({ id, value }) => {
       updateSetting({
@@ -73,15 +73,15 @@ export const OnDemandSettings = () => {
             object: {
                value,
                brandId: params.id,
-               storeSettingId: id,
+               brandSettingId: id,
             },
          },
       })
    }
 
    return (
-      <ScrollSection height="calc(100vh - 154px)">
-         <ScrollSection.Aside links={settings} />
+      <div height="calc(100vh - 154px)">
+         {/* <ScrollSection.Aside links={settings} /> */}
          <ScrollSection.Main>
             <ScrollSection.Section hash="brand" title="Brand">
                <BrandName update={update} />
@@ -144,6 +144,6 @@ export const OnDemandSettings = () => {
             </ScrollSection.Section>
             <Spacer size="48px" />
          </ScrollSection.Main>
-      </ScrollSection>
+      </div>
    )
 }
