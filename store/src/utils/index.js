@@ -20,4 +20,6 @@ export * from './isConnectedIntegration'
 export * from './useOnClickOutisde'
 export * from './cartItemsCombine'
 export * from './loginWrapper'
+export * from './detectCountry'
 export * from './getSEOSettings'
+

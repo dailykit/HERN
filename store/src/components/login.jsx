@@ -5,7 +5,7 @@ import classNames from 'classnames'
 import React, { useState } from 'react'
 import Countdown from 'react-countdown'
 import { signIn, getSession, providers } from 'next-auth/client'
-import { getRoute, get_env, isClient } from '../utils'
+import { detectCountry, getRoute, get_env, isClient } from '../utils'
 import PhoneInput, {
    formatPhoneNumber,
    formatPhoneNumberIntl,
@@ -68,7 +68,15 @@ export const Login = props => {
 
    //component state
    const [defaultLogin, setDefaultLogin] = useState(loginBy)
+   const [countryCode, setCountryCode] = useState(null)
 
+   React.useEffect(() => {
+      const detectedUserData = async () => {
+         const data = await detectCountry()
+         setCountryCode(data.countryCode)
+      }
+      detectedUserData()
+   }, [])
    return (
       <div className={`hern-login-v1-container`}>
          <div className="hern-login-v1-content">
@@ -105,6 +113,7 @@ export const Login = props => {
                      closeLoginPopup={closeLoginPopup}
                      isSilentlyLogin={isSilentlyLogin}
                      callbackURL={callbackURL}
+                     countryCode={countryCode}
                   />
                )}
                {defaultLogin === 'forgotPassword' && (
@@ -116,6 +125,7 @@ export const Login = props => {
                      isSilentlyLogin={isSilentlyLogin}
                      closeLoginPopup={closeLoginPopup}
                      callbackURL={callbackURL}
+                     countryCode={countryCode}
                   />
                )}
                {/* {defaultLogin === 'email' ? <Email /> : <OTPLogin />} */}
@@ -301,7 +311,7 @@ const Email = props => {
 //  login with otp
 const OTPLogin = props => {
    //props
-   const { isSilentlyLogin, closeLoginPopup, callbackURL } = props
+   const { isSilentlyLogin, closeLoginPopup, callbackURL, countryCode } = props
    const { addToast } = useToasts()
 
    //component state
@@ -532,6 +542,7 @@ const OTPLogin = props => {
                            ['phone']: e,
                         }))
                      }}
+                     defaultCountry={countryCode}
                      placeholder="Enter your phone number"
                   />
                </fieldset>
@@ -812,8 +823,13 @@ function validateEmail(email) {
 //signup
 const Signup = props => {
    //props
-   const { setDefaultLogin, isSilentlyLogin, closeLoginPopup, callbackURL } =
-      props
+   const {
+      setDefaultLogin,
+      isSilentlyLogin,
+      closeLoginPopup,
+      callbackURL,
+      countryCode,
+   } = props
 
    //component state
    const [showPassword, setShowPassword] = useState(false)
@@ -904,6 +920,9 @@ const Signup = props => {
       },
       onError: error => {
          setLoading(false)
+         if (error.message.includes('customer__phoneNumber_key')) {
+            setPhoneError('Phone no. already exist')
+         }
          console.error(error)
       },
    })
@@ -1027,6 +1046,7 @@ const Signup = props => {
          })
       }
    }
+
    return (
       <div className="hern-signup-v1">
          <fieldset className="hern-login-v1__fieldset">
@@ -1110,21 +1130,9 @@ const Signup = props => {
                            ['phone']: e,
                         }))
                      }}
+                     defaultCountry={countryCode}
                      placeholder="Enter your phone number"
                   />
-                  {/* <input
-                     className="hern-login-v1__input"
-                     type="text"
-                     name="phone"
-                     value={form.phone}
-                     onChange={onChange}
-                     placeholder="Eg. 9879879876"
-                     onBlur={e =>
-                        e.target.value.length === 0
-                           ? setPhoneError('Must be a valid phone number!')
-                           : setPhoneError('')
-                     }
-                  /> */}
                </fieldset>
                {phoneError && (
                   <span className="hern-signup-v1__signup-error">
