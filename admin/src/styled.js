@@ -7,7 +7,8 @@ export const Layout = styled.div`
       position: absolute;
       left: 52px;
       top: ${props => (props.TabShow ? `97px` : `50px`)};
-      height: calc(100% - 48px);
+      height: ${props =>
+         props.TabShow ? `calc(102% - 120px)` : `calc(112% - 130px)`};
       overflow-y: auto;
       width: 96%;
    }
