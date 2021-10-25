@@ -17,14 +17,11 @@ import { useUser } from '../../../Providers'
 import {
    getNavigationMenuItems,
    getBannerData,
-   getGlobalFooter
+   getGlobalFooter,
+   protectedRoute
 } from '../../../lib'
 
-export default function DashboardPage({
-   navigationMenuItems,
-   parsedData = [],
-   footerHtml = ''
-}) {
+function MyPolls({ navigationMenuItems, parsedData = [], footerHtml = '' }) {
    const router = useRouter()
    const { addToast } = useToasts()
    const { state: userState } = useUser()
@@ -64,6 +61,8 @@ export default function DashboardPage({
       </Layout>
    )
 }
+
+export default protectedRoute(MyPolls)
 
 export const getStaticProps = async () => {
    const domain = 'primanti.dailykit.org'

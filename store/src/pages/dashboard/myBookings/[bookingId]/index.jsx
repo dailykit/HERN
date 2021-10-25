@@ -29,10 +29,11 @@ import { theme } from '../../../../theme'
 import {
    getNavigationMenuItems,
    getBannerData,
-   getGlobalFooter
+   getGlobalFooter,
+   protectedRoute
 } from '../../../../lib'
 
-export default function MyBooking({
+function ManageBooking({
    navigationMenuItems,
    parsedData = [],
    footerHtml = ''
@@ -184,6 +185,8 @@ export default function MyBooking({
       </Layout>
    )
 }
+
+export default protectedRoute(ManageBooking)
 
 export const getStaticProps = async () => {
    const domain = 'primanti.dailykit.org'

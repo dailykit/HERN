@@ -19,15 +19,12 @@ import { fileParser, getMinute, getDateWithTime } from '../../../../utils'
 import {
    getNavigationMenuItems,
    getBannerData,
-   getGlobalFooter
+   getGlobalFooter,
+   protectedRoute
 } from '../../../../lib'
 import { useExperienceInfo } from '../../../../Providers'
 
-export default function MyPoll({
-   navigationMenuItems,
-   parsedData = [],
-   footerHtml = ''
-}) {
+function ManagePoll({ navigationMenuItems, parsedData = [], footerHtml = '' }) {
    const router = useRouter()
    const { pollId } = router.query
    const { addToast } = useToasts()
@@ -117,6 +114,8 @@ export default function MyPoll({
       </Layout>
    )
 }
+
+export default protectedRoute(ManagePoll)
 
 export const getStaticProps = async () => {
    const domain = 'primanti.dailykit.org'

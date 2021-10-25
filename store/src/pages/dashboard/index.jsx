@@ -19,10 +19,11 @@ import { useUser } from '../../Providers'
 import {
    getNavigationMenuItems,
    getBannerData,
-   getGlobalFooter
+   getGlobalFooter,
+   protectedRoute
 } from '../../lib'
 
-export default function DashboardPage({
+function DashboardPage({
    navigationMenuItems,
    parsedData = [],
    footerHtml = ''
@@ -69,6 +70,8 @@ export default function DashboardPage({
       </Layout>
    )
 }
+
+export default protectedRoute(DashboardPage)
 
 export const getStaticProps = async () => {
    const domain = 'primanti.dailykit.org'

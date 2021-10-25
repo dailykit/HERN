@@ -8,6 +8,5 @@ export const getNavigationMenuItems = async domain => {
    }
    const { data: { brands_navigationMenu: navigationMenu = [] } = {} } =
       await client.query({ query: NAVBAR_MENU, variables })
-   console.log('navigationMenu', navigationMenu)
    return navigationMenu[0]?.navigationMenuItems
 }

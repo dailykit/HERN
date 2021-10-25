@@ -30,14 +30,11 @@ import {
 import {
    getNavigationMenuItems,
    getBannerData,
-   getGlobalFooter
+   getGlobalFooter,
+   protectedRoute
 } from '../../lib'
 
-export default function Checkout({
-   navigationMenuItems,
-   parsedData = [],
-   footerHtml = ''
-}) {
+function Checkout({ navigationMenuItems, parsedData = [], footerHtml = '' }) {
    const { width, height } = useWindowDimensions()
    const router = useRouter()
    console.log('Routerrrr', router)
@@ -213,6 +210,8 @@ export default function Checkout({
       </Layout>
    )
 }
+
+export default protectedRoute(Checkout)
 
 export const getStaticProps = async () => {
    const domain = 'primanti.dailykit.org'

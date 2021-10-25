@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { signOut } from 'next-auth/client'
 import { useRouter } from 'next/router'
 import { useSubscription } from '@apollo/client'
 import { useToasts } from 'react-toast-notifications'
-import { Avatar, Badge, Menu, Popover } from 'antd'
+import { Avatar, Badge, Menu, Popover, message } from 'antd'
 import { NavBar } from './styles'
 import CartDropdownMenu from './cartDropdown'
 import ProfileDropdownMenu from './profileDropdown'
@@ -105,6 +105,14 @@ export default function NavBarComp({ navigationMenuItems, ...props }) {
          return
       }
    }
+
+   useEffect(() => {
+      if (isClient && localStorage.getItem('openLoginModal') === 'true') {
+         message.warning('Kindly login first!')
+         toggleAuthenticationModal(true)
+         localStorage.removeItem('openLoginModal')
+      }
+   }, [])
 
    if (cartsError) {
       addToast('Something went wrong!', { appearance: 'error' })
