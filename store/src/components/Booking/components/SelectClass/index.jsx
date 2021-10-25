@@ -1,43 +1,26 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react'
-import { Flex } from '@dailykit/ui'
+import React, { useEffect, useRef, useMemo } from 'react'
 import { Wrapper, Popup } from './styles'
-import DateRange from '../DateRange'
+import { message } from 'antd'
 import Participant from '../Participant'
 import PriceBreakDown from '../PriceBreakDown'
-import SelectParticipant from '../SelectParticipant'
-import { useCustomMutation } from '../../useCustomMutation'
 import AvailableDate from '../../../AvailableDate'
-import { ChevronUp, ChevronDown } from '../../../Icons'
-import { theme } from '../../../../theme'
-import { isEmpty, omitDate } from '../../../../utils'
 import {
    useExperienceInfo,
    useCart,
-   useProduct,
    useUser,
    usePoll
 } from '../../../../Providers'
 
 export default function SelectClass({ experienceId, isMulti = false }) {
    const node = useRef()
-   const { state: userState } = useUser()
-   const { state: productState } = useProduct()
-   const { selectedProductOption = {}, cartItems = [] } = productState
-   const {
-      user: {
-         defaultCustomerAddress,
-         keycloakId,
-         defaultPaymentMethodId,
-         stripeCustomerId
-      }
-   } = userState
+   const { state: userState, toggleAuthenticationModal } = useUser()
+   const { isAuthenticated } = userState
    const {
       state,
       updateExperienceInfo,
       toggleDetailBreakdown,
       nextBookingSteps
    } = useExperienceInfo()
-   const { CART, EXPERIENCE_BOOKING } = useCustomMutation()
    const { getCart } = useCart()
    const cart = getCart(experienceId)
    const {
@@ -62,6 +45,11 @@ export default function SelectClass({ experienceId, isMulti = false }) {
       removeFromPollOptions
    } = usePoll()
    const { pollOptions } = pollState
+
+   const showLoginModal = () => {
+      message.warning('Please login to continue')
+      toggleAuthenticationModal(true)
+   }
 
    const typeHandler = async type => {
       updateExperienceInfo({
@@ -160,7 +148,11 @@ export default function SelectClass({ experienceId, isMulti = false }) {
                      isMulti={isMulti}
                      multiOptions={pollOptions}
                      bookingType={bookingType}
-                     onClick={btnSelectionHandler}
+                     onClick={() =>
+                        isAuthenticated
+                           ? btnSelectionHandler()
+                           : showLoginModal()
+                     }
                      cart={cart}
                   />
                )

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import ReactHtmlParser from 'react-html-parser'
 import styled from 'styled-components'
-import { Carousel } from 'antd'
+import { Carousel, message } from 'antd'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { useSubscription, useQuery } from '@apollo/client'
@@ -57,7 +57,7 @@ export default function Experience({
 }) {
    const router = useRouter()
    const scroll = useScroll()
-   const { state } = useUser()
+   const { state, toggleAuthenticationModal } = useUser()
    const { isAuthenticated } = state
    const { experienceId } = router.query
    const experienceTop01 = useRef()
@@ -192,17 +192,30 @@ export default function Experience({
    }
 
    const openBookingModal = () => {
-      setIsBookingModalOpen(true)
+      if (isAuthenticated) {
+         setIsBookingModalOpen(true)
+      } else {
+         showLoginModal()
+      }
    }
    const closeBookingModal = () => {
       setIsBookingModalOpen(false)
    }
 
    const openSendPollModal = () => {
-      setIsSendPollModalVisible(true)
+      if (isAuthenticated) {
+         setIsSendPollModalVisible(true)
+      } else {
+         showLoginModal()
+      }
    }
    const closeSendPollModal = () => {
       setIsSendPollModalVisible(false)
+   }
+
+   const showLoginModal = () => {
+      message.warning('Please login to continue')
+      toggleAuthenticationModal(true)
    }
 
    useEffect(() => {
