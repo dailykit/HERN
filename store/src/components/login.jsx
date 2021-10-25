@@ -920,6 +920,9 @@ const Signup = props => {
       },
       onError: error => {
          setLoading(false)
+         if (error.message.includes('customer__phoneNumber_key')) {
+            setPhoneError('Phone no. already exist')
+         }
          console.error(error)
       },
    })
@@ -1130,19 +1133,6 @@ const Signup = props => {
                      defaultCountry={countryCode}
                      placeholder="Enter your phone number"
                   />
-                  {/* <input
-                     className="hern-login-v1__input"
-                     type="text"
-                     name="phone"
-                     value={form.phone}
-                     onChange={onChange}
-                     placeholder="Eg. 9879879876"
-                     onBlur={e =>
-                        e.target.value.length === 0
-                           ? setPhoneError('Must be a valid phone number!')
-                           : setPhoneError('')
-                     }
-                  /> */}
                </fieldset>
                {phoneError && (
                   <span className="hern-signup-v1__signup-error">
