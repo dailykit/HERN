@@ -148,9 +148,9 @@ export default function SelectClass({ experienceId, isMulti = false }) {
                      isMulti={isMulti}
                      multiOptions={pollOptions}
                      bookingType={bookingType}
-                     onClick={() =>
+                     onClick={data =>
                         isAuthenticated
-                           ? btnSelectionHandler()
+                           ? btnSelectionHandler(data)
                            : showLoginModal()
                      }
                      cart={cart}
