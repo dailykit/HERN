@@ -24,9 +24,10 @@ export const Wrapper = styled.div`
    }
    .sticky-container {
       position: sticky;
-      top: 0;
+      top: -25px;
       z-index: 5;
-      background: ${theme.colors.lightBackground.grey};
+      background: ${theme.colors.textColor4};
+      padding: 1rem 0;
    }
    .select-option {
       display: flex;
@@ -100,6 +101,13 @@ export const Wrapper = styled.div`
       display: flex;
       align-items: center;
       justify-content: space-between;
+   }
+
+   @media (min-width: 769px) {
+      .sticky-container {
+         top: -2rem;
+         background: ${theme.colors.lightBackground.grey};
+      }
    }
 `
 

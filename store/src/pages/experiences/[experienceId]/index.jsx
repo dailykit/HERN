@@ -78,7 +78,7 @@ export default function Experience({
    const [products, setProducts] = useState([])
    const [categories, setCategories] = useState([])
    const [customerReviews, setCustomerReviews] = useState([])
-   const [isBookingPageOpen, setIsBookingPageOpen] = useState(false)
+   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false)
    const settings = {
       arrows: true,
       dots: false,
@@ -191,8 +191,11 @@ export default function Experience({
       document.getElementById('experienceTab').scrollLeft -= 20
    }
 
-   const onBookClickHandler = () => {
-      setIsBookingPageOpen(true)
+   const openBookingModal = () => {
+      setIsBookingModalOpen(true)
+   }
+   const closeBookingModal = () => {
+      setIsBookingModalOpen(false)
    }
 
    const openSendPollModal = () => {
@@ -241,7 +244,7 @@ export default function Experience({
          </div>
          <StyledWrapper
             bgMode="light"
-            isBookingPageOpen={isBookingPageOpen}
+            // isBookingPageOpen={isBookingPageOpen}
             isDesktopView={width > 769}
          >
             <div className="player-wrapper">
@@ -453,7 +456,10 @@ export default function Experience({
                      )}
                   </div>
                   <div className="right-container">
-                     <Booking experienceId={experienceId} />
+                     <Booking
+                        experienceId={experienceId}
+                        sendPollHandler={openSendPollModal}
+                     />
                   </div>
                </div>
                <div style={{ padding: '1rem' }}>
@@ -559,27 +565,43 @@ export default function Experience({
             <div className="footerBtnWrapper">
                <Button
                   className="customFooterBtn text2"
-                  onClick={onBookClickHandler}
+                  onClick={openBookingModal}
                >
                   Book Now
                </Button>
             </div>
-            {width > 769 && (
+            {width < 769 && (
                <Modal
-                  title="Send Poll"
+                  title={
+                     experienceInfo?.experience?.title || 'Experience Booking'
+                  }
                   type="popup"
-                  isOpen={isSendPollModalVisible}
-                  close={closeSendPollModal}
+                  isOpen={isBookingModalOpen}
+                  close={closeBookingModal}
                >
-                  <SendPollComp experienceId={experienceId} />
+                  {/* <div style={{ height: '100vh' }}> */}
+                  <Booking
+                     experienceId={experienceId}
+                     sendPollHandler={openSendPollModal}
+                  />
+                  {/* </div> */}
                </Modal>
             )}
+
+            <Modal
+               title="Send Poll"
+               type="popup"
+               isOpen={isSendPollModalVisible}
+               close={closeSendPollModal}
+            >
+               <SendPollComp experienceId={experienceId} />
+            </Modal>
          </StyledWrapper>
-         {isBookingPageOpen && (
+         {/* {isBookingPageOpen && (
             <div style={{ height: '100vh' }}>
                <Booking experienceId={experienceId} />
             </div>
-         )}
+         )} */}
       </Layout>
    )
 }
@@ -617,7 +639,10 @@ export const getStaticPaths = async () => {
 
 const StyledWrapper = styled.div`
    filter: ${({ isCelebrating }) => isCelebrating && 'blur(4px)'};
-   display: ${({ isBookingPageOpen }) => (isBookingPageOpen ? 'none' : 'flex')};
+   display: flex;
+   ${
+      '' /* display: ${({ isBookingPageOpen }) => (isBookingPageOpen ? 'none' : 'flex')}; */
+   }
    flex-direction: column;
    background: ${({ bgMode }) =>
       bgMode === 'dark'

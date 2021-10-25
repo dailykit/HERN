@@ -4,10 +4,10 @@ import { theme } from '../../theme'
 export const Wrapper = styled.div`
    height: calc(100% - 64px);
    filter: ${({ isCelebrating }) => isCelebrating && 'blur(4px)'};
-   padding: 0 2rem;
-   overflow: auto;
+   padding: 0;
+   overflow: unset;
    position: relative;
-   background-color: ${theme.colors.lightBackground.grey};
+   background-color: ${theme.colors.textColor4};
    .experienceTitleHead {
       color: ${theme.colors.textColor7};
       font-family: League-Gothic;
@@ -39,5 +39,8 @@ export const Wrapper = styled.div`
    }
    @media (min-width: 769px) {
       height: 100%;
+      padding: 2rem;
+      background-color: ${theme.colors.lightBackground.grey};
+      overflow: auto;
    }
 `

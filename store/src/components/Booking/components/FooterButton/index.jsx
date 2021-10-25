@@ -12,7 +12,11 @@ import {
 } from '../../../../Providers'
 import { isEmpty, omitDate } from '../../../../utils'
 
-export default function FooterButton({ experienceId, confirmNPayHandler }) {
+export default function FooterButton({
+   experienceId,
+   confirmNPayHandler,
+   sendPollHandler
+}) {
    const router = useRouter()
    const {
       CART,
@@ -262,7 +266,10 @@ export default function FooterButton({ experienceId, confirmNPayHandler }) {
                {/* <button className="show-more special-underline">
                   Show More Dates
                </button> */}
-               <Button className="ghost-btn text7 box-shadow-glow">
+               <Button
+                  className="ghost-btn text4 box-shadow-glow"
+                  onClick={sendPollHandler}
+               >
                   Not sure which date to choose?
                </Button>
             </>

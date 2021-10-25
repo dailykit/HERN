@@ -9,7 +9,7 @@ export const FooterBtnWrap = styled.div`
    left: 0;
    z-index: 5;
    width: 100%;
-   background: ${theme.colors.lightBackground.grey};
+   background: ${theme.colors.textColor4};
    padding: 1rem 0;
    .show-more {
       font-size: ${theme.sizes.h8};
@@ -20,14 +20,17 @@ export const FooterBtnWrap = styled.div`
       margin: 8px 0;
    }
    .ghost-btn {
+      height: 48px;
       width: auto;
       padding: 0 1rem;
-      border-radius: 8px;
-      background: ${theme.colors.lightBackground.grey};
-      font-family: Proxima Nova;
+      border-radius: 0px;
+      background: ${theme.colors.textColor4};
+      font-family: League-Gothic;
+      letter-spacing: 0.04em;
+      padding: 0 8px;
       color: ${theme.colors.textColor};
       :hover {
-         background: ${theme.colors.textColor4};
+         background: ${theme.colors.lightBackground.grey};
       }
    }
    .nextBtn {
@@ -69,8 +72,17 @@ export const FooterBtnWrap = styled.div`
       font-weight: normal;
    }
    @media (min-width: 769px) {
+      bottom: -2rem;
+      background: ${theme.colors.lightBackground.grey};
+      padding: 1rem 0;
       .nextBtn {
          height: 64px;
+      }
+      .ghost-btn {
+         background: ${theme.colors.lightBackground.grey};
+         :hover {
+            background: ${theme.colors.textColor4};
+         }
       }
    }
 `

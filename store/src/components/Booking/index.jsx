@@ -7,13 +7,16 @@ import InlineLoader from '../InlineLoader'
 import { theme } from '../../theme'
 import { useCart, useExperienceInfo, useProduct } from '../../Providers'
 import { isEmpty } from '../../utils'
-export default function Booking({ experienceBookingId, experienceId }) {
+export default function Booking({
+   experienceBookingId,
+   experienceId,
+   sendPollHandler
+}) {
    // const { experienceId } = useParams();
    const [experienceInfo, setExperienceInfo] = useState({})
    const [cartInfo, setCartInfo] = useState({})
-   const { addProducts, addSelectedProduct, addSelectedProductOption } =
-      useProduct()
-   const { carts, getCart, addHostCart } = useCart()
+   const { addSelectedProduct, addSelectedProductOption } = useProduct()
+   const { addHostCart } = useCart()
    const {
       state: experienceState,
       previousBookingSteps,
@@ -40,19 +43,6 @@ export default function Booking({ experienceBookingId, experienceId }) {
          setExperienceInfo(experienceState)
       }
    }, [experienceState])
-
-   // useEffect(() => {
-   //   (async () => {
-   //     if (!isEmpty(carts)) {
-   //       const cart = await getCart(experienceId);
-   //       console.log("CART", cart);
-   //       if (!isEmpty(cart)) {
-   //         setCartInfo(cart);
-   //       }
-   //     }
-   //   })();
-   //   // eslint-disable-next-line react-hooks/exhaustive-deps
-   // }, [carts, experienceId]);
 
    useEffect(() => {
       if (!isEmpty(cartInfo) && !isEmpty(experienceInfo?.experienceClasses)) {
@@ -140,9 +130,6 @@ export default function Booking({ experienceBookingId, experienceId }) {
    return (
       // <div style={{ position: 'relative', height: '100%' }}>
       <Wrapper isCelebrating={isCelebrating}>
-         <h1 className="experienceTitleHead text2">
-            {experienceState?.experience?.title}
-         </h1>
          {experienceInfo?.bookingStepsIndex > 0 && (
             <span
                className="previousBtn"
@@ -168,6 +155,7 @@ export default function Booking({ experienceBookingId, experienceId }) {
          <FooterButton
             experienceId={experienceId}
             confirmNPayHandler={startCelebration}
+            sendPollHandler={sendPollHandler}
          />
       </Wrapper>
       // </div>
