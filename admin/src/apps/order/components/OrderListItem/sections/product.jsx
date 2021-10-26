@@ -10,13 +10,16 @@ import {
    StyledProductItem,
    StyledProductTitle,
 } from './styled'
-import { UserIcon } from '../../../assets/icons'
+import { UserIcon, Notes, PhoneIcon, EmailIcon,  HomeIcon } from '../../../assets/icons'
 import { Spacer } from '../../OrderSummary/styled'
+import { currencyFmt, parseAddress } from '../../../../../shared/utils'
+
 
 const address = 'apps.order.components.orderlistitem.'
 
 export const Products = ({ order }) => {
    const { t } = useTranslation()
+   const [currentPanel, setCurrentPanel] = React.useState('customer')
 
    if (order?.thirdPartyOrderId) {
       const { thirdPartyOrder: { products = [] } = {} } = order
@@ -61,6 +64,8 @@ export const Products = ({ order }) => {
                   </Styles.TabPanel>
                </Styles.TabPanels>
             </Styles.Tabs>
+
+     
          </Styles.Products>
       )
    }
@@ -96,11 +101,11 @@ export const Products = ({ order }) => {
                            </StyledProductTitle>
                         </div>
                         {/* <StyledServings>
-                              <span>
-                                 <UserIcon size={16} color="#555B6E" />
-                              </span>
-                              <span>{item?.productOption?.label}</span>
-                           </StyledServings> */}
+                           <span>
+                              <UserIcon size={16} color="#555B6E" />
+                           </span>
+                           <span>{item?.productOption?.label}</span>
+                        </StyledServings> */}
                         <span>
                            {item.assembledSachets?.aggregate?.count || 0} /{' '}
                            {item.packedSachets?.aggregate?.count || 0} /{' '}
@@ -137,4 +142,6 @@ export const Products = ({ order }) => {
          </Styles.Tabs>
       </Styles.Products>
    )
+
 }
+

@@ -5,7 +5,6 @@ export const formatDate = (
       hour: 'numeric',
       month: 'short',
       day: 'numeric',
-      year: 'numeric',
    }
 ) => {
    try {
