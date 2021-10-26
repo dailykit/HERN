@@ -1209,32 +1209,6 @@ export const BRAND_PAGE = gql`
    }
 `
 
-// query MyQuery($navigationMenuId: Int!) {
-//    website_navigationMenuItem(
-//       where: {
-//          navigationMenuId: { _eq: $navigationMenuId }
-//          parentNavigationMenuItemId: { _is_null: true }
-//       }
-//       order_by: { position: desc_nulls_last }
-//    ) {
-//       id
-//       position
-//       url
-//       label
-//       openInNewTab
-//       parentNavigationMenuItemId
-//       navigationMenuId
-//       childNavigationMenuItems(order_by: { position: desc_nulls_last }) {
-//          id
-//          label
-//          navigationMenuId
-//          url
-//          position
-//          parentNavigationMenuItemId
-//       }
-//    }
-// }
-
 export const OTPS = gql`
    subscription otps($where: platform_otp_transaction_bool_exp = {}) {
       otps: platform_otp_transaction(
@@ -1389,6 +1363,26 @@ export const GET_CARTS = gql`
    subscription GET_CARTS($where: order_cart_bool_exp!) {
       carts(where: $where) {
          id
+      }
+   }
+`
+export const BRAND_SETTINGS_BY_TYPE = gql`
+   query BRAND_SEO_SETTINGS($domain: String!, $type: String!) {
+      brands_brand_brandSetting(
+         where: {
+            brand: {
+               _or: [{ domain: { _eq: $domain } }, { isDefault: { _eq: true } }]
+            }
+            brandSetting: { type: { _eq: $type } }
+         }
+      ) {
+         brandId
+         meta: brandSetting {
+            id
+            type
+            identifier
+         }
+         value
       }
    }
 `
