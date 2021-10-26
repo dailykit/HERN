@@ -704,14 +704,14 @@ export const OUR_MENU = {
 
 export const SETTINGS = gql`
    subscription settings($domain: String_comparison_exp) {
-      settings: brands_brand_subscriptionStoreSetting(
+      settings: brands_brand_brandSetting(
          where: {
             brand: { _or: [{ domain: $domain }, { isDefault: { _eq: true } }] }
          }
       ) {
          value
          brandId
-         meta: subscriptionStoreSetting {
+         meta: brandSetting {
             id
             type
             identifier
@@ -722,7 +722,7 @@ export const SETTINGS = gql`
 
 export const SETTINGS_QUERY = gql`
    query settings($domain: String) {
-      settings: brands_brand_subscriptionStoreSetting(
+      settings: brands_brand_brandSetting(
          where: {
             brand: {
                _or: [{ domain: { _eq: $domain } }, { isDefault: { _eq: true } }]
@@ -731,7 +731,7 @@ export const SETTINGS_QUERY = gql`
       ) {
          value
          brandId
-         meta: subscriptionStoreSetting {
+         meta: brandSetting {
             id
             type
             identifier

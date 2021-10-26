@@ -68,6 +68,7 @@ export const OnDemandSettings = () => {
    }, [loading, brandSettings])
 
    const update = ({ id, value }) => {
+      console.log(id, value)
       updateSetting({
          variables: {
             object: {
