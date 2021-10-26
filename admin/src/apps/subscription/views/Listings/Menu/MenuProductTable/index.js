@@ -81,12 +81,12 @@ const MenuProductOccurenceTable = () => {
          />
       )
    }
-   const CrossBox = ({ removeSelectedRecipes }) => {
+   const CrossBox = ({ removeSelectedOccurrence }) => {
       return (
          <Checkbox
             id="label"
             checked={false}
-            onChange={removeSelectedRecipes}
+            onChange={removeSelectedOccurrence}
             isAllSelected={false}
          />
       )
@@ -120,6 +120,14 @@ const MenuProductOccurenceTable = () => {
 
    console.log('productOccurrenceData', productOccurrenceData)
    const columns = [
+      {
+         title: 'Label',
+         field: 'label',
+         visible: false,
+         frozen: true,
+         headerFilter: 'true',
+         headerHozAlign: 'center',
+      },
       {
          title: 'Product Name',
          field: 'productName',
