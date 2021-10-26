@@ -1201,8 +1201,9 @@ export const BRAND_PAGE = gql`
             fileType
             id
             linkedFile {
-               fileName
                id
+               fileName
+               path
             }
          }
       }
