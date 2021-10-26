@@ -295,6 +295,19 @@ export const UPSERT_BRANDS_SEO = gql`
       }
    }
 `
+export const LINK_PAGE_FILES = gql`
+   mutation LINK_PAGE_FILES(
+      $objects: [brands_pagesLinkedFiles_insert_input!]!
+   ) {
+      insert_brands_pagesLinkedFiles(objects: $objects) {
+         returning {
+            id
+            fileId
+            fileType
+         }
+      }
+   }
+`
 
 export const DELETE_PAGE_LINKED_FILES = gql`
    mutation DELETE_PAGE_LINKED_FILES($id: Int!) {

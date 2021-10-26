@@ -17,10 +17,10 @@ import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
 import LinkCSSFiles from './LinkCSSFiles'
 import LinkJSFiles from './LinkJSFIles'
-import { LINK_PAGE_FILES } from '../../../../../../editor/graphql'
 import {
    DELETE_PAGE_LINKED_FILES,
    PAGE_LINKED_FILES,
+   LINK_PAGE_FILES,
 } from '../../../../../graphql'
 import { DragNDrop } from '../../../../../../../shared/components'
 import {

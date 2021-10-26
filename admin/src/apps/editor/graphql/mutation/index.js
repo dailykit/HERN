@@ -187,16 +187,3 @@ export const UPDATE_LINK_CSS_FILES = gql`
       }
    }
 `
-export const LINK_PAGE_FILES = gql`
-   mutation LINK_PAGE_FILES(
-      $objects: [brands_pagesLinkedFiles_insert_input!]!
-   ) {
-      insert_brands_pagesLinkedFiles(objects: $objects) {
-         returning {
-            id
-            fileId
-            fileType
-         }
-      }
-   }
-`
