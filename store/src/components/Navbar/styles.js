@@ -253,7 +253,7 @@ export const NavBar = styled.header`
 `
 
 export const DropdownWrapper = styled.div`
-   width: 180px;
+   width: 240px;
    overflow: hidden;
    transition: height 500ms ease;
    .dropdown-menu {
@@ -261,6 +261,7 @@ export const DropdownWrapper = styled.div`
    }
    .dropdown-menu .dropdown-menu-item {
       display: flex;
+      align-items: center;
       border-radius: 4px;
       transition: background 500ms;
       padding: 4px;
@@ -278,6 +279,11 @@ export const DropdownWrapper = styled.div`
 
       .icon-right {
          margin-left: auto;
+         :hover {
+            svg {
+               stroke: ${theme.colors.textColor};
+            }
+         }
       }
 
       img {

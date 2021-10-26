@@ -2,9 +2,9 @@ import React, { useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
 import Confetti from 'react-confetti'
+import { Button, Result } from 'antd'
 import { useToasts } from 'react-toast-notifications'
 import ReactHtmlParser from 'react-html-parser'
-import { Button } from 'antd'
 import { useSubscription, useMutation } from '@apollo/client'
 import { Card } from '../../pageComponents/checkoutComponent'
 import {
@@ -15,7 +15,8 @@ import {
    SpinnerIcon,
    Layout,
    SEO,
-   InlineLoader
+   InlineLoader,
+   Button as ButtonComponent
 } from '../../components'
 import Participant from '../../components/Booking/components/Participant'
 import { CART_SUBSCRIPTION, UPDATE_CART } from '../../graphql'
@@ -25,7 +26,8 @@ import {
    getDateWithTime,
    getTime,
    useWindowDimensions,
-   fileParser
+   fileParser,
+   isEmpty
 } from '../../utils'
 import {
    getNavigationMenuItems,
@@ -37,7 +39,6 @@ import {
 function Checkout({ navigationMenuItems, parsedData = [], footerHtml = '' }) {
    const { width, height } = useWindowDimensions()
    const router = useRouter()
-   console.log('Routerrrr', router)
    const { addToast } = useToasts()
    const cartId = new URLSearchParams(router.query).get('cartId')
    const { state, addHostCart, addCurrentCart } = useCart()
@@ -60,30 +61,39 @@ function Checkout({ navigationMenuItems, parsedData = [], footerHtml = '' }) {
       onSubscriptionData: async ({
          subscriptionData: { data: { carts = [] } = {} } = {}
       } = {}) => {
-         const [cart] = carts
-         const hostCartObj = cart?.childCarts.find(
-            childCart => childCart?.isHostCart
-         )
-         const hostCart =
-            hostCartObj === undefined ? cart?.childCarts[0] : hostCartObj
-         setExperienceInfo({
-            ...cart,
-            ...cart?.experienceClass?.experience,
-            experienceClass: cart?.experienceClass,
-            experienceClassType: cart?.experienceClassType
-         })
-         console.log('from checkout ->cart', cart)
-         await updateExperienceInfo({
-            participants: cart?.totalParticipants,
-            totalPrice: cart?.balancePayment
-         })
-         await updateExperienceInfo({
-            participants: cart?.totalParticipants,
-            totalPrice: cart?.balancePayment,
-            isHostParticipant: cart?.isHostParticipant
-         })
-         await addCurrentCart(cart)
-         await addHostCart(hostCart)
+         console.log('on subscription data')
+
+         if (!isEmpty(carts)) {
+            const [cart] = carts
+            const hostCartObj = cart?.childCarts.find(
+               childCart => childCart?.isHostCart
+            )
+            const hostCart =
+               hostCartObj === undefined ? cart?.childCarts[0] : hostCartObj
+            setExperienceInfo({
+               ...cart,
+               ...cart?.experienceClass?.experience,
+               experienceClass: cart?.experienceClass,
+               experienceClassType: cart?.experienceClassType
+            })
+
+            await updateExperienceInfo({
+               participants: cart?.totalParticipants,
+               totalPrice: cart?.balancePayment,
+               isHostParticipant: cart?.isHostParticipant
+            })
+            await addCurrentCart(cart)
+            await addHostCart(hostCart)
+         } else {
+            setExperienceInfo(null)
+            await updateExperienceInfo({
+               participants: 1,
+               totalPrice: 0,
+               isHostParticipant: true
+            })
+            await addCurrentCart({})
+            await addHostCart({})
+         }
          setLoading(false)
       }
    })
@@ -92,7 +102,7 @@ function Checkout({ navigationMenuItems, parsedData = [], footerHtml = '' }) {
       refetchQueries: ['CART_INFO'],
       onError: error => {
          addToast('Opps! Something went wrong!', { appearance: 'error' })
-         console.log(error)
+         console.error(error)
       }
    })
 
@@ -106,7 +116,6 @@ function Checkout({ navigationMenuItems, parsedData = [], footerHtml = '' }) {
    }
 
    const onPayHandler = async () => {
-      console.log('onPayHandler function')
       await updateCart({
          variables: {
             cartId,
@@ -143,43 +152,54 @@ function Checkout({ navigationMenuItems, parsedData = [], footerHtml = '' }) {
             bgMode="light"
             bgImage={experienceInfo?.assets?.images[0]}
          >
-            <div className="container">
-               <div className="left-side-container">
-                  <div className="checkout-heading">
-                     <Button
-                        shape="circle"
-                        icon={
-                           <ChevronLeft
-                              size="24"
-                              color={theme.colors.textColor5}
-                           />
-                        }
-                        size="middle"
-                        onClick={() =>
-                           router.push(
-                              `/experiences/${experienceInfo?.experienceId}`
-                           )
-                        }
+            <div className="checkout-heading">
+               <Button
+                  shape="circle"
+                  icon={
+                     <ChevronLeft size="24" color={theme.colors.textColor5} />
+                  }
+                  size="middle"
+                  onClick={() =>
+                     router.push(`/experiences/${experienceInfo?.experienceId}`)
+                  }
+               />
+               <p className="go_back text10"> Back to experience </p>
+            </div>
+            <h1 className="h1_head text1">Checkout</h1>
+            {!isEmpty(experienceInfo) ? (
+               <div className="container">
+                  <div className="left-side-container">
+                     <Payment
+                        type="checkout"
+                        onPay={onPayHandler}
+                        isOnPayDisabled={Boolean(
+                           !user?.defaultPaymentMethodId || isCartUpdating
+                        )}
                      />
-                     <p className="go_back text10"> Back to experience </p>
                   </div>
-                  <h1 className="h1_head text1">Checkout</h1>
-                  <Payment
-                     type="checkout"
-                     onPay={onPayHandler}
-                     isOnPayDisabled={Boolean(
-                        !user?.defaultPaymentMethodId || isCartUpdating
-                     )}
-                  />
-               </div>
-               <div className="right-side-container">
-                  <div className="sticky-card">
-                     <div className="card-wrapper">
-                        <Card experienceInfo={experienceInfo} />
+                  <div className="right-side-container">
+                     <div className="sticky-card">
+                        <div className="card-wrapper">
+                           <Card experienceInfo={experienceInfo} />
+                        </div>
                      </div>
                   </div>
                </div>
-            </div>
+            ) : (
+               <Result
+                  status="404"
+                  title="404"
+                  subTitle="Sorry, the page you visited does not exist."
+                  extra={
+                     <ButtonComponent
+                        className="back_to_home_btn"
+                        onClick={() => router.push('/')}
+                     >
+                        Back Home
+                     </ButtonComponent>
+                  }
+               />
+            )}
          </Wrapper>
          <BackDrop show={isCelebrating}>
             <div className="booking-done">
@@ -276,6 +296,20 @@ const Wrapper = styled.div`
             }
          }
       }
+   }
+   .back_to_home_btn {
+      width: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: ${theme.colors.textColor};
+      color: ${theme.colors.textColor4};
+      font-family: Proxima Nova;
+      font-style: normal;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      margin: 0 auto;
+      padding: 0 2rem;
    }
 
    .container {
