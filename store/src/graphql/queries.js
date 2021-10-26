@@ -24,6 +24,11 @@ export const EXPERIENCE_CLASS_INFO = gql`
          experience {
             id
             title
+            experience_products_aggregate {
+               aggregate {
+                  count
+               }
+            }
          }
       }
       publicClassType: experiences_experienceClass(
@@ -48,6 +53,11 @@ export const EXPERIENCE_CLASS_INFO = gql`
          experience {
             id
             title
+            experience_products_aggregate {
+               aggregate {
+                  count
+               }
+            }
          }
       }
    }

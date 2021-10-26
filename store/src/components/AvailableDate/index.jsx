@@ -149,9 +149,15 @@ const AvailableDate = ({
                                  slot?.isBooked ||
                                  isExpired(slot?.date, new Date())
                               }
-                              title={dynamicButtonTitle(slot)}
+                              title={
+                                 selectedExperienceClassId === slot?.id
+                                    ? 'Selected'
+                                    : dynamicButtonTitle(slot)
+                              }
                            >
-                              {dynamicButtonTitle(slot)}
+                              {selectedExperienceClassId === slot?.id
+                                 ? 'Selected'
+                                 : dynamicButtonTitle(slot)}
                            </Button>
                         </Flex>
                      )

@@ -10,6 +10,7 @@ import {
    useUser,
    usePoll
 } from '../../../../Providers'
+import { isEmpty } from '../../../../utils'
 
 export default function SelectClass({ experienceId, isMulti = false }) {
    const node = useRef()
@@ -24,6 +25,7 @@ export default function SelectClass({ experienceId, isMulti = false }) {
    const { getCart } = useCart()
    const cart = getCart(experienceId)
    const {
+      experience,
       bookingType,
       bookingStepsIndex,
       participants,
@@ -79,7 +81,12 @@ export default function SelectClass({ experienceId, isMulti = false }) {
                classTypeInfo: result?.classTypeInfo,
                priceBreakDown: result?.classTypeInfo?.priceRanges
             })
-            nextBookingSteps(bookingStepsIndex)
+            if (
+               !isEmpty(experience) &&
+               experience?.experience_products_aggregate?.aggregate?.count > 0
+            ) {
+               nextBookingSteps(bookingStepsIndex)
+            }
          }
       }
    }
