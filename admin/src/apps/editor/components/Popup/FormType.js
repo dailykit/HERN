@@ -13,6 +13,8 @@ import {
    useTunnel,
    InfoIcon,
    PlusIcon,
+   ComboButton,
+   CameraIcon,
 } from '@dailykit/ui'
 import { Popup, AssetUploader } from '../../../../shared/components'
 import { get_env } from '../../../../shared/utils'
@@ -21,7 +23,7 @@ import 'antd/dist/antd.css'
 import { useQuery } from '@apollo/react-hooks'
 import { GET_FILE_ID } from '../../graphql'
 import { EditIcon, DeleteIcon } from '../../assets/Icons'
-
+import AddIcon from './Add.jsx'
 export default function FormType({
    show,
    closePopup,
@@ -290,12 +292,12 @@ export default function FormType({
                      </div>
                   ) : (
                      <ButtonGroup>
-                        <IconButton
-                           type="solid"
+                        <ComboButton
+                           type="outline"
                            onClick={() => openPopupTunnel(1)}
                         >
-                           <PlusIcon color="#fff"></PlusIcon>
-                        </IconButton>
+                           <CameraIcon size="18" /> Icon
+                        </ComboButton>
                      </ButtonGroup>
                   )}
 
