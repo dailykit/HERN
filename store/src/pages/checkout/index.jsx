@@ -1,8 +1,8 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
 import Confetti from 'react-confetti'
-import { Button, Result } from 'antd'
+import { Button, Result, Spin } from 'antd'
 import { useToasts } from 'react-toast-notifications'
 import ReactHtmlParser from 'react-html-parser'
 import { useSubscription, useMutation } from '@apollo/client'
@@ -49,6 +49,9 @@ function Checkout({ navigationMenuItems, parsedData = [], footerHtml = '' }) {
    }, [experienceState])
    const [experienceInfo, setExperienceInfo] = useState(null)
    const [isCelebrating, setIsCelebrating] = useState(false)
+   const [isBooking, setIsBooking] = useState(false)
+   const [cartPaymentStatus, setCartPaymentStatus] = useState('PENDING')
+   const [experienceBookingId, setExperienceBookingId] = useState(null)
    const [loading, setLoading] = useState(true)
    const { error } = useSubscription(CART_SUBSCRIPTION, {
       variables: {
@@ -61,15 +64,23 @@ function Checkout({ navigationMenuItems, parsedData = [], footerHtml = '' }) {
       onSubscriptionData: async ({
          subscriptionData: { data: { carts = [] } = {} } = {}
       } = {}) => {
-         console.log('on subscription data')
-
+         console.log('inside onsubscription data ')
          if (!isEmpty(carts)) {
+            console.log('carts not empty')
             const [cart] = carts
             const hostCartObj = cart?.childCarts.find(
                childCart => childCart?.isHostCart
             )
             const hostCart =
                hostCartObj === undefined ? cart?.childCarts[0] : hostCartObj
+            const cartPayment = cart?.cartPayments.find(
+               cartPayment => cartPayment?.cartId === cartId
+            )
+            console.log('setting cartPayment status', cartPayment)
+            setCartPaymentStatus(
+               !isEmpty(cartPayment) ? cartPayment?.paymentStatus : 'PENDING'
+            )
+            setExperienceBookingId(cart?.experienceBooking?.id)
             setExperienceInfo({
                ...cart,
                ...cart?.experienceClass?.experience,
@@ -99,23 +110,26 @@ function Checkout({ navigationMenuItems, parsedData = [], footerHtml = '' }) {
    })
 
    const [updateCart, { loading: isCartUpdating }] = useMutation(UPDATE_CART, {
-      refetchQueries: ['CART_INFO'],
+      refetchQueries: ['CART_INFO', 'CART_SUBSCRIPTION'],
       onError: error => {
+         setIsBooking(false)
          addToast('Opps! Something went wrong!', { appearance: 'error' })
          console.error(error)
       }
    })
 
    const stopCelebration = () => {
-      setTimeout(setIsCelebrating(false), 5000)
-      router.push('/myBookings')
+      router.push(`/dashboard/myBookings/${experienceBookingId}`)
    }
    const startCelebration = () => {
       setIsCelebrating(true)
-      setTimeout(stopCelebration, 30000)
+      setTimeout(stopCelebration, 5000)
    }
 
    const onPayHandler = async () => {
+      console.log('on payment handler')
+      setIsBooking(true)
+      console.log('initiating payment')
       await updateCart({
          variables: {
             cartId,
@@ -128,8 +142,21 @@ function Checkout({ navigationMenuItems, parsedData = [], footerHtml = '' }) {
             }
          }
       })
-      startCelebration()
    }
+
+   useEffect(() => {
+      console.log(
+         'inside useEffect for checking cartpayment status',
+         cartPaymentStatus
+      )
+      if (cartPaymentStatus === 'SUCCEEDED') {
+         console.log('initiating celebration')
+         startCelebration()
+      } else {
+         console.log('cart payment not succeeded so setting backdrop false')
+         setIsBooking(false)
+      }
+   }, [cartPaymentStatus])
 
    if (loading) return <InlineLoader type="full" />
    if (error) {
@@ -148,7 +175,7 @@ function Checkout({ navigationMenuItems, parsedData = [], footerHtml = '' }) {
                )}
          </div>
          <Wrapper
-            isCelebrating={isCelebrating}
+            isBooking={isBooking}
             bgMode="light"
             bgImage={experienceInfo?.assets?.images[0]}
          >
@@ -201,25 +228,31 @@ function Checkout({ navigationMenuItems, parsedData = [], footerHtml = '' }) {
                />
             )}
          </Wrapper>
-         <BackDrop show={isCelebrating}>
-            <div className="booking-done">
-               <img
-                  src="/assets/images/celebration.png"
-                  alt="celebration-emoji"
-               />
-               <p>Your're BOOKED!</p>
-               <div
-                  style={{
-                     display: 'flex',
-                     justifyContent: 'center',
-                     alignItems: 'center'
-                  }}
-               >
-                  <SpinnerIcon size="64" color="#fff" backgroundColor="none" />
+         <BackdropDiv>
+            <BackDrop show={isBooking} disabled={isBooking}>
+               <div className="booking-done">
+                  {isCelebrating ? (
+                     <Result status="success" />
+                  ) : (
+                     <div
+                        style={{
+                           display: 'flex',
+                           justifyContent: 'center',
+                           alignItems: 'center'
+                        }}
+                     >
+                        <Spin size="large" />
+                     </div>
+                  )}
+                  <p>
+                     {isCelebrating
+                        ? 'Successfully Booked the experience!'
+                        : 'Please wait while we book this experience...'}
+                  </p>
                </div>
-            </div>
-            <Confetti width={width} height={height} />
-         </BackDrop>
+               {isCelebrating && <Confetti width={width} height={height} />}
+            </BackDrop>
+         </BackdropDiv>
          <div id="checkout-bottom-01">
             {Boolean(parsedData.length) &&
                ReactHtmlParser(
@@ -256,7 +289,7 @@ const Wrapper = styled.div`
    width: 100%;
    color: ${theme.colors.textColor4};
    padding: 64px 80px;
-   filter: ${({ isCelebrating }) => isCelebrating && 'blur(4px)'};
+   filter: ${({ isBooking }) => isBooking && 'blur(4px)'};
    background: ${({ bgMode }) =>
       bgMode === 'dark'
          ? theme.colors.darkBackground.darkblue
@@ -380,6 +413,23 @@ const Wrapper = styled.div`
                }
             }
          }
+      }
+   }
+`
+export const BackdropDiv = styled.div`
+   .ant-result {
+      padding: 0 2rem;
+   }
+   .ant-result-success .ant-result-icon > .anticon {
+      color: ${theme.colors.textColor4};
+   }
+   .ant-spin .ant-spin-dot {
+      width: 2em;
+      height: 2em;
+      .ant-spin-dot-item {
+         background-color: ${theme.colors.textColor4};
+         width: 2rem;
+         height: 2rem;
       }
    }
 `

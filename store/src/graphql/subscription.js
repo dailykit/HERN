@@ -480,6 +480,10 @@ export const CART_SUBSCRIPTION = gql`
          transactionRemark
          stripeInvoiceId
          stripeInvoiceDetails
+         cartPayments {
+            cartId
+            paymentStatus
+         }
          products: cartItems(where: { level: { _eq: 1 } }) {
             id
             isAddOn

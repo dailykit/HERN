@@ -3,6 +3,7 @@ import { theme } from '../../theme'
 
 export const BackDropDiv = styled.div`
    background: ${theme.colors.backDropColor};
+   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'unset')};
    display: ${({ show }) => (show ? 'fixed' : 'none')};
    justify-content: center;
    align-items: center;

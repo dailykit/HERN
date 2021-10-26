@@ -73,6 +73,7 @@ export default function PaymentCardForm({ intent, handleResult, type }) {
             <CardDetails />
          </div>
          <Button
+            htmlType="submit"
             disabled={!stripe || submitting}
             className="customButton text3"
          >
