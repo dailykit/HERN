@@ -36,6 +36,7 @@ import {
     TermsAndConditions,
     PrivacyPolicy,
     TaxPercentage,
+    Brand
 } from './sections'
 import { RefundPolicy } from './sections/RefundPolicy'
 
@@ -95,20 +96,7 @@ export const BrandSettings = () => {
                 <div>SEO BASICS</div>
             </Card>
             <Spacer size="24px" />
-            <Card
-                title={<Text as="h3">Brands</Text>}
-                extra={
-                    <TextButton type="solid" size="sm">
-                        Save
-                    </TextButton>
-                }
-                style={{ width: '100%' }}
-            >
-                <Flex container justifyContent="space-between">
-                    <BrandContact update={update} />
-                    <BrandLogo update={update} />
-                </Flex>
-            </Card>
+            <Brand update={update} />
             <Spacer size="24px" />
             <Card
                 title={<Text as="h3">Availability</Text>}
