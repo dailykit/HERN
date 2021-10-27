@@ -1,12 +1,16 @@
 import React from 'react'
 import { Layout, SEO } from '../../components'
-import { getPageProps, processJsFile, renderPageContent } from '../../utils'
+import {
+   getPageProps,
+   processExternalFiles,
+   renderPageContent,
+} from '../../utils'
 
 const ChangePlanPage = props => {
-   const { settings, navigationMenus, folds, seoSettings } = props
+   const { settings, linkedFiles, navigationMenus, folds, seoSettings } = props
    React.useEffect(() => {
       try {
-         processJsFile(folds)
+         processExternalFiles(folds, linkedFiles)
       } catch (err) {
          console.log('Failed to render page: ', err)
       }
@@ -21,13 +25,17 @@ const ChangePlanPage = props => {
 }
 
 export const getStaticProps = async ({ params }) => {
-   const { parsedData, seo, settings, navigationMenus, seoSettings } = await getPageProps(
-      params,
-      '/change-plan'
-   )
+   const { parsedData, settings, navigationMenus, seoSettings, linkedFiles } =
+      await getPageProps(params, '/change-plan')
 
    return {
-      props: { folds: parsedData, seo, settings, navigationMenus, seoSettings },
+      props: {
+         folds: parsedData,
+         linkedFiles,
+         settings,
+         navigationMenus,
+         seoSettings,
+      },
       revalidate: 60, // will be passed to the page component as props
    }
 }

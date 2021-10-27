@@ -1,6 +1,10 @@
 import React from 'react'
 import { Layout, SEO } from '../../../components'
-import { getPageProps, processJsFile, renderPageContent } from '../../../utils'
+import {
+   getPageProps,
+   processExternalFiles,
+   renderPageContent,
+} from '../../../utils'
 import { useRouter } from 'next/router'
 import { useUser } from '../../../context'
 import 'regenerator-runtime'
@@ -8,7 +12,7 @@ import 'regenerator-runtime'
 const ManageCardsPage = props => {
    const router = useRouter()
    const { isAuthenticated, isLoading } = useUser()
-   const { folds, settings, navigationMenus, seoSettings } = props
+   const { folds, settings, navigationMenus, seoSettings, linkedFiles } = props
 
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
@@ -19,7 +23,7 @@ const ManageCardsPage = props => {
 
    React.useEffect(() => {
       try {
-         processJsFile(folds)
+         processExternalFiles(folds, linkedFiles)
       } catch (err) {
          console.log('Failed to render page: ', err)
       }
@@ -36,13 +40,17 @@ const ManageCardsPage = props => {
 export default ManageCardsPage
 
 export const getStaticProps = async ({ params }) => {
-   const { parsedData, seo, settings, navigationMenus, seoSettings } = await getPageProps(
-      params,
-      '/account/cards'
-   )
+   const { parsedData, settings, navigationMenus, seoSettings, linkedFiles } =
+      await getPageProps(params, '/account/cards')
 
    return {
-      props: { folds: parsedData, seo, settings, navigationMenus, seoSettings },
+      props: {
+         folds: parsedData,
+         linkedFiles,
+         settings,
+         navigationMenus,
+         seoSettings,
+      },
       revalidate: 60, // will be passed to the page component as props
    }
 }
