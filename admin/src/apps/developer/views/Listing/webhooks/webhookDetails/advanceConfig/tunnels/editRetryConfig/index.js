@@ -1,10 +1,10 @@
-import React , {useState, useEffect                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         } from 'react';
-import {UPDATE_RETRY_CONFIGURATION } from '../../../../../../graphql';
+import React , {useState, useEffect} from 'react';
+import {UPDATE_RETRY_CONFIGURATION } from '../../../../../../../graphql';
 import { Loader } from '@dailykit/ui'
 import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
 import {Form, Spacer, Text, Tunnel, TunnelHeader, Tunnels } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { logger } from '../../../../../../../../shared/utils';
+import { logger } from '../../../../../../../../../shared/utils';
 
 
 

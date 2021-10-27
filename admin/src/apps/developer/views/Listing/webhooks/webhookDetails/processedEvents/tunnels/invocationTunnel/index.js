@@ -70,7 +70,6 @@ const InvocationTunnel = (props)=>{
            hozAlign: 'left',
            resizable:true,
            headerSort:true,
-           cssClass: 'rowClick',
            headerTooltip: true,
            formatter: ({ _cell: { value } }) =>
                moment(value).format('MMM DD YYYY HH:mm:ss'),
@@ -82,7 +81,6 @@ const InvocationTunnel = (props)=>{
            hozAlign: 'center',
            resizable:true,
            headerSort:true,
-           cssClass: 'rowClick',
            formatter:reactFormatter(<StatusIcon />),
            headerTooltip: true,
         },
@@ -91,7 +89,6 @@ const InvocationTunnel = (props)=>{
          field: 'Payload',
          hozAlign: 'center',
          resizable:true,
-         cssClass: 'rowClick',
          formatter:reactFormatter(<TextButton type="ghost">View Payload</TextButton>),
          cellClick: (e, cell) => {
             rowClick(e, cell)

@@ -4,7 +4,7 @@ import { Wrapper } from './styled';
 import {EventDetails} from './eventDetails';
 import { AdvanceConfig, Headers} from './advanceConfig';
 import { useWebhook } from '../state';
-import { Text, TextButton, AnchorNav, AnchorNavItem, Flex } from '@dailykit/ui';
+import { Text, TextButton, Flex, HorizontalTab, HorizontalTabs, HorizontalTabList, HorizontalTabPanel, HorizontalTabPanels } from '@dailykit/ui';
 import { Element } from 'react-scroll'
 
 const WebhookDetails = ()=>{
@@ -35,76 +35,37 @@ const WebhookDetails = ()=>{
             
          }}>Delete</TextButton>}
          </Flex>
-         <AnchorNav>
-            <AnchorNavItem
-               targetElement='info'
-               label='Info'
-               containerId='containerElement'
-            />
-            <AnchorNavItem
-               targetElement='processedEvents'
-               label='Processed Events'
-               containerId='containerElement'
-            />
-            <AnchorNavItem
-               targetElement='advanceConfigs'
-               label='Advance Configs'
-               containerId='containerElement'
-            />
-      </AnchorNav>
-      <Element
-         id='containerElement'
-         style={{
-            position: 'relative',
-            height: '600px',
-            overflowY: 'auto',
-            overflowX: 'hidden',
-            width: '100%'
-         }}
-      >
-         <Element
-            name='info'
-            style={{
-               height: '600px'
-            }}
-         >
-            {state.webhookDetails.webhookUrl_EventId ?
-            <EventDetails />:
-            <Text as="h3">Select a Webhook event to see details</Text>}
-         </Element>
-
-         <Element
-            name='processedEvents'
-            style={{
-               height: '600px'
-            }}
-         >
-            {state.webhookDetails.webhookUrl_EventId ?
-            <ProcessedEvents />:
-            <Text as="h3">Select a Webhook event to see details</Text>}
-         </Element>
-         <Element
-            name='advanceConfigs'
-            style={{
-               height: '1000px'
-            }}
-         >
-            {state.webhookDetails.webhookUrl_EventId ?
-            <>
-               <AdvanceConfig />
-               <Headers />
-            </>:
-            <Text as="h3">Select a Webhook event to see details</Text>}
-         </Element>
-      </Element>
-
-         
-         
-         
-{/* Delete Webhook */}
-         
-      
-        
+         <div style={{
+               height: 'calc(100vh - 32px)'
+            }}>
+            <HorizontalTabs>
+               <HorizontalTabList>
+                  <HorizontalTab>Info</HorizontalTab>
+                  <HorizontalTab>Processed Events</HorizontalTab>
+                  <HorizontalTab>Advance Configs</HorizontalTab>
+               </HorizontalTabList>
+               <HorizontalTabPanels>
+                  <HorizontalTabPanel>
+                     {state.webhookDetails.webhookUrl_EventId ?
+                     <EventDetails />:
+                     <Text as="h3">Select a Webhook event to see details</Text>}
+                  </HorizontalTabPanel>
+                  <HorizontalTabPanel>
+                     {state.webhookDetails.webhookUrl_EventId ?
+                     <ProcessedEvents />:
+                     <Text as="h3">Select a Webhook event to see details</Text>}
+                  </HorizontalTabPanel>
+                  <HorizontalTabPanel>
+                     {state.webhookDetails.webhookUrl_EventId ?
+                     <>
+                        <AdvanceConfig />
+                        <Headers />
+                     </>:
+                     <Text as="h3">Select a Webhook event to see details</Text>}
+                  </HorizontalTabPanel>
+               </HorizontalTabPanels>
+            </HorizontalTabs>
+         </div>
       </Wrapper>
       
    )

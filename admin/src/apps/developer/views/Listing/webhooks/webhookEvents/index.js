@@ -11,7 +11,10 @@ import { useWebhook } from '../state';
 import {DeleteIcon} from '../../../../../../shared/assets/icons'
 // third party imports
 import { useTranslation } from 'react-i18next'
-import { Wrapper } from './styled'
+import { StyledWrapper } from './styled'
+import "../../../tableStyle.css"
+import {InlineLoader} from '../../../../../../shared/components';
+import { load } from 'dotenv';
 const address = 'apps.developer.views.listings.webhookslisting.'
 
 
@@ -56,7 +59,6 @@ const WebhookListing = ()=>{
       toast.error('Something went wrong')
       logger(error)
    }
-
    
 
     const webhookUrl_eventsCount = webhookEvents?.length
@@ -70,12 +72,14 @@ const WebhookListing = ()=>{
       const advanceConfig = cell._cell.row.data.advanceConfig
       const headers = cell._cell.row.data.headers
       const headers_list = []
+      let i=1
       for (const header in headers){
          headers_list.push({
-            'id': header,
+            'id': `header-${i}`,
             'key': header,
             'value': headers[header]
          })
+         i+=1
       }
       const payload = {
          "webhookUrl_EventId": id,
@@ -157,7 +161,6 @@ const WebhookListing = ()=>{
          hozAlign: 'left',
          resizable:true,
          headerSort:true,
-         cssClass: 'rowClick',
          headerTooltip: true
       }
    ]
@@ -191,6 +194,12 @@ const WebhookListing = ()=>{
             ? webhookGroupParse
             : []
       )
+      if (webhookGroup !== undefined && webhookGroup!=null && JSON.parse(webhookGroup).length===0){
+         localStorage.setItem(
+            'tabulator-webhook_table-group',
+            JSON.stringify(["eventLabel"]))
+         handleGroupBy(["eventLabel"])
+      }
 
       tableRef.current.table.setGroupHeader(function (
          value,
@@ -199,7 +208,6 @@ const WebhookListing = ()=>{
          group
       ) {
          let newHeader
-         console.log('group header', group._group.field)
          switch (group._group.field) {
             case 'eventLabel':
                newHeader = 'Events'
@@ -217,10 +225,17 @@ const WebhookListing = ()=>{
    const clearWebhookPersistance = () => {
       localStorage.removeItem('tabulator-webhook_table-group')
       tableRef.current.table.setGroupBy([])
+      setGroupByState(
+         {
+            groups: [],
+         }
+      )
    }
 
+   
+
     return (
-       <Wrapper>
+       <StyledWrapper>
             <AddWebHook tunnels={tunnels} openTunnel={openTunnel} closeTunnel={closeTunnel} />
                   <Flex container alignItems="center" justifyContent="space-between">
                      <Flex container height="80px" alignItems="center">
@@ -247,6 +262,7 @@ const WebhookListing = ()=>{
                      handleGroupBy={handleGroupBy}
                      clearPersistance={clearWebhookPersistance}
                   />
+                  <Spacer size="40px" />
                   {Boolean(webhookEvents) && (
                      <ReactTabulator
                      ref={tableRef}
@@ -264,7 +280,7 @@ const WebhookListing = ()=>{
                         className = 'developer-webhooks'
                      />
                   )}
-        </Wrapper>
+        </StyledWrapper>
 
     )
 
@@ -288,7 +304,6 @@ const ActionBar = ({
                ? JSON.parse(webhookGroup)
                : null
          if (webhookGroupParse !== null) {
-            console.log(webhookGroupParse, "yo")
             webhookGroupParse.forEach(x => {
                const foundGroup = groupByOptions.find(y => y.payload == x)
                arr.push(foundGroup.id)
@@ -329,7 +344,7 @@ const ActionBar = ({
                      type="ghost"
                      size="sm"
                   >
-                     Clear Persistence
+                     Clear
                   </TextButton>
          </Flex>
       )

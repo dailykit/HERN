@@ -1,6 +1,6 @@
 import React, {useRef, useState, useEffect} from 'react';
 import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
-import {Table, TableHead, TableBody, TableRow, TableCell, Flex, TextButton, Text, Spacer, DropdownButton, ButtonGroup, ComboButton, PlusIcon, useTunnel} from '@dailykit/ui';
+import {Table, TableHead, TableBody, TableRow, TableCell, Loader, Flex, TextButton, Text, useTunnel, IconButton} from '@dailykit/ui';
 import options from '../../../../tableOptions'
 import { GET_PROCESSED_EVENTS, GET_INVOCATIONS_OF_PROCESSED_EVENTS } from '../../../../../graphql';
 import { useSubscription, useMutation } from '@apollo/react-hooks'
@@ -10,6 +10,7 @@ import {useWebhook} from '../../state'
 import InvocationTunnel from './tunnels/invocationTunnel';
 import {PublishIcon, UnPublishIcon} from '../../../../../../products/assets/icons'
 import moment from 'moment'
+import { InlineLoader } from '../../../../../../../shared/components';
 
 
 const ProcessedEvents = ()=>{
@@ -43,6 +44,8 @@ const ProcessedEvents = ()=>{
          setProcessedEvents(processedEventsData)
        },
       })
+   
+      
 
     if (error) {
       toast.error('Something went wrong')
@@ -88,7 +91,6 @@ const ProcessedEvents = ()=>{
            resizable:true,
            headerSort:true,
            headerTooltip: true,
-           cssClass: 'rowClick',
            formatter: reactFormatter(<StatusIcon />),
         },
         {
@@ -99,7 +101,6 @@ const ProcessedEvents = ()=>{
             resizable:true,
             headerSort:true,
             headerTooltip: true,
-            cssClass: 'rowClick',
          },
          {
             title: 'Invocations',
@@ -109,12 +110,11 @@ const ProcessedEvents = ()=>{
             headerSort:true,
             headerHozAlign: 'center',
             headerTooltip: true,
-            cssClass: 'rowClick',
             formatter:reactFormatter(<TextButton type="ghost">View Invocations</TextButton>),
             cellClick: (e, cell) => {
                rowClick(e, cell)
              openPopupTunnel(1)
-            },
+            }
          }
      ]
 
@@ -148,11 +148,6 @@ const ProcessedEvents = ()=>{
                className = 'developer-webhooks-processedEvents'
             />
          )}
-         
-         
-         
-         
-
         </>
     )
 }
