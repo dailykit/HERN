@@ -307,10 +307,10 @@ const MenuProductOccurenceTable = () => {
               headerSort: false,
               frozen: true,
            }
-   const removeSelectedRow = id => {
-      tableRef.current.removeSelectedRow(id)
-   }
 
+   const removeSelectedRow = id => {
+      tableRef.current.table.deselectRow(id)
+   }
    if (subsLoading && !subsError) {
       return <InlineLoader />
    }

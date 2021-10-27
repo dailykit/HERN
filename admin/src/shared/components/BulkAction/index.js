@@ -145,10 +145,11 @@ const BulkActions = ({
          defaultOption: null,
          value: '',
       },
-
-      // planTitle: {
-      //    value: '',
-      // },
+      addOnLabel: '',
+      addOnLabelConcat: {
+         forAppend: '',
+         forPrepend: '',
+      },
    })
    // additional bulk actions (actions which not to be set)
    const [additionalBulkAction, setAdditionalBulkAction] = React.useState({})
@@ -258,10 +259,11 @@ const BulkActions = ({
                defaultOption: null,
                value: '',
             },
-
-            // planTitle: {
-            //    value: '',
-            // },
+            addOnLabel: '',
+            addOnLabelConcat: {
+               forAppend: '',
+               forPrepend: '',
+            },
          }))
       } else {
          // for product options
