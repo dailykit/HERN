@@ -32,7 +32,10 @@ import {
    PublishIcon,
    UnPublishIcon,
 } from '../../../../../products/assets/icons'
-import OccurrenceBulkAction from './BulkActionTunnel'
+import {
+   OccurrenceBulkAction,
+   SubscriptionBulkAction,
+} from './BulkActionTunnel'
 
 const MenuProductTables = () => {
    return (
@@ -621,11 +624,21 @@ const MenuProductSubscriptionTable = () => {
    }
    return (
       <>
+         <Tunnels tunnels={tunnels}>
+            <Tunnel layer={1} size="full">
+               <SubscriptionBulkAction
+                  close={closeTunnel}
+                  selectedRows={selectedRows}
+                  removeSelectedRow={removeSelectedRow}
+                  setSelectedRows={setSelectedRows}
+               />
+            </Tunnel>
+         </Tunnels>
          <ActionBar
             title="subscription"
             selectedRows={selectedRows}
             // defaultIDs={defaultIDs()}
-            // openTunnel={openTunnel}
+            openTunnel={openTunnel}
          />
          <Spacer size="30px" />
          <ReactTabulator
