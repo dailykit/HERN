@@ -7,21 +7,22 @@ import { CloseIcon, CheckBoxIcon } from '../assets/icons'
 import { useOnClickOutside } from '../utils/useOnClickOutisde'
 import { CartContext } from '../context'
 import { CounterButton } from './counterBtn'
+import classNames from 'classnames'
 
 export const ModifierPopup = props => {
    const {
       productData,
       showModifiers = true,
       closeModifier,
-      height,
       showCounterBtn = true,
       forNewItem = false,
       edit = false,
       productCartDetail,
+      showModifierImage = true,
    } = props
    //context
    const { addToCart, methods } = React.useContext(CartContext)
-
+   console.log('productData', productData)
    const [productOption, setProductOption] = useState(
       productData.productOptions[0]
    ) // for by default choose one product option
@@ -329,14 +330,25 @@ export const ModifierPopup = props => {
          setProductOption(null)
       }
    }, [])
+
+   useEffect(() => {
+      if (productData) {
+         document.querySelector('body').style.overflowY = 'hidden'
+      }
+      return () => {
+         document.querySelector('body').style.overflowY = 'auto'
+      }
+   }, [productData])
    if (status === 'loading') {
       return <p>Loading</p>
    }
    return (
       <>
          <div
-            className="hern-product-modifier-pop-up-container"
-            style={{ height: height }}
+            className={classNames('hern-product-modifier-pop-up-container', {
+               'hern-product-modifier-pop-up-container--show-modifier-pop-up':
+                  productData,
+            })}
          >
             <div className="hern-product-modifier-pop-up-product">
                <div className="hern-product-modifier-pop-up-product-details">
@@ -345,6 +357,7 @@ export const ModifierPopup = props => {
                      showImage={false}
                      showCustomText={false}
                      customAreaComponent={CustomArea}
+                     showModifier={false}
                   />
                </div>
                <div className="hern-product-modifier-pop-up-product-option-list">
@@ -454,7 +467,8 @@ export const ModifierPopup = props => {
                                              showImage={false}
                                              showCustomText={false}
                                              showImageIcon={
-                                                eachOption.image
+                                                eachOption.image &&
+                                                showModifierImage
                                                    ? ShowImageIcon
                                                    : false
                                              }
