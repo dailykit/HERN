@@ -69,29 +69,6 @@ const MenuProductOccurenceTable = () => {
    const [productOccurrenceData, setProductOccurrenceData] = useState([])
    const [checked, setChecked] = React.useState(false)
 
-   const CheckBox = ({ handleMultipleRowSelection, checked }) => {
-      return (
-         <Checkbox
-            id="label"
-            checked={checked}
-            onChange={() => {
-               handleMultipleRowSelection()
-            }}
-            isAllSelected={null}
-         />
-      )
-   }
-   const CrossBox = ({ removeSelectedOccurrence }) => {
-      return (
-         <Checkbox
-            id="label"
-            checked={false}
-            onChange={removeSelectedOccurrence}
-            isAllSelected={false}
-         />
-      )
-   }
-
    const { loading: subsLoading, error: subsError } = useSubscription(
       MENU_PRODUCT_BY_SUBSCRIPTION_OCCURRENCE,
       {
@@ -315,7 +292,7 @@ const MenuProductOccurenceTable = () => {
       return <InlineLoader />
    }
    if (subsError) {
-      toast.error('Failed to fetch Recipes!')
+      toast.error('Failed to fetch Occurrence!')
       logger(subsError)
       return <ErrorState />
    }
@@ -389,10 +366,36 @@ const ActionBar = ({ title, selectedRows, openTunnel }) => {
       </>
    )
 }
+const CheckBox = ({ handleMultipleRowSelection, checked }) => {
+   return (
+      <Checkbox
+         id="label"
+         checked={checked}
+         onChange={() => {
+            handleMultipleRowSelection()
+         }}
+         isAllSelected={null}
+      />
+   )
+}
+const CrossBox = ({ removeSelectedOccurrence }) => {
+   return (
+      <Checkbox
+         id="label"
+         checked={false}
+         onChange={removeSelectedOccurrence}
+         isAllSelected={false}
+      />
+   )
+}
 
 const MenuProductSubscriptionTable = () => {
    const tableRef = React.useRef()
    const [productSubscriptionData, setProductSubscriptionData] = useState([])
+   const [selectedRows, setSelectedRows] = React.useState([])
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
+
+   const [checked, setChecked] = React.useState(false)
    const { loading: subsLoading, error: subsError } = useSubscription(
       MENU_PRODUCT_BY_SUBSCRIPTION,
       {
@@ -414,11 +417,20 @@ const MenuProductSubscriptionTable = () => {
          },
       }
    )
+
    const dataLoaded = () => {
       tableRef.current.table.setGroupBy('productCategory')
    }
    console.log('productSubscriptionData', productSubscriptionData)
    const columns = [
+      {
+         title: 'Label',
+         field: 'label',
+         visible: false,
+         frozen: true,
+         headerFilter: 'true',
+         headerHozAlign: 'center',
+      },
       {
          title: 'Product Name',
          field: 'productName',
@@ -489,11 +501,118 @@ const MenuProductSubscriptionTable = () => {
          width: 85,
       },
    ]
+
+   const handleRowSelection = ({ _row }) => {
+      const rowData = _row.getData()
+      const lastPersistence = localStorage.getItem(
+         'selected-rows-id_subscription_table'
+      )
+      const lastPersistenceParse =
+         lastPersistence !== undefined &&
+         lastPersistence !== null &&
+         lastPersistence.length !== 0
+            ? JSON.parse(lastPersistence)
+            : []
+      setSelectedRows(prevState => [...prevState, _row.getData()])
+      let newData = [...lastPersistenceParse, rowData.id]
+      localStorage.setItem(
+         'selected-rows-id_subscription_table',
+         JSON.stringify(newData)
+      )
+   }
+   const handleRowDeselection = ({ _row }) => {
+      const data = _row.getData()
+      const lastPersistence = localStorage.getItem(
+         'selected-rows-id_subscription_table'
+      )
+      const lastPersistenceParse =
+         lastPersistence !== undefined &&
+         lastPersistence !== null &&
+         lastPersistence.length !== 0
+            ? JSON.parse(lastPersistence)
+            : []
+      setSelectedRows(prevState => prevState.filter(row => row.id !== data.id))
+      const newLastPersistenceParse = lastPersistenceParse.filter(
+         id => id !== data.id
+      )
+      localStorage.setItem(
+         'selected-rows-id_subscription_table',
+         JSON.stringify(newLastPersistenceParse)
+      )
+   }
+
+   const removeSelectedOccurrence = () => {
+      setChecked({ checked: false })
+      setSelectedRows([])
+      tableRef.current.table.deselectRow()
+      localStorage.setItem(
+         'selected-rows-id_subscription_table',
+         JSON.stringify([])
+      )
+   }
+
+   const handleMultipleRowSelection = () => {
+      setChecked(!checked)
+      if (!checked) {
+         tableRef.current.table.selectRow('active')
+         let multipleRowData = tableRef.current.table.getSelectedData()
+         setSelectedRows(multipleRowData)
+         console.log('first', selectedRows)
+         localStorage.setItem(
+            'selected-rows-id_subscription_table',
+            JSON.stringify(multipleRowData.map(row => row.id))
+         )
+      } else {
+         tableRef.current.table.deselectRow()
+         setSelectedRows([])
+         console.log('second', selectedRows)
+
+         localStorage.setItem(
+            'selected-rows-id_subscription_table',
+            JSON.stringify([])
+         )
+      }
+   }
+   console.log('selected row:::::', selectedRows)
+   const selectionColumn =
+      selectedRows.length > 0 &&
+      selectedRows.length < productSubscriptionData.length
+         ? {
+              formatter: 'rowSelection',
+              titleFormatter: reactFormatter(
+                 <CrossBox
+                    removeSelectedOccurrence={removeSelectedOccurrence}
+                 />
+              ),
+              align: 'center',
+              hozAlign: 'center',
+              width: 10,
+              headerSort: false,
+              frozen: true,
+           }
+         : {
+              formatter: 'rowSelection',
+              titleFormatter: reactFormatter(
+                 <CheckBox
+                    checked={checked}
+                    handleMultipleRowSelection={handleMultipleRowSelection}
+                 />
+              ),
+              align: 'center',
+              hozAlign: 'center',
+              width: 20,
+              headerSort: false,
+              frozen: true,
+           }
+
+   const removeSelectedRow = id => {
+      tableRef.current.table.deselectRow(id)
+   }
    if (subsLoading && !subsError) {
       return <InlineLoader />
    }
    if (subsError) {
-      toast.error('Failed to fetch Recipes!')
+      toast.error('Failed to fetch Subscription!')
       logger(subsError)
       return <ErrorState />
    }
@@ -502,12 +621,23 @@ const MenuProductSubscriptionTable = () => {
    }
    return (
       <>
+         <ActionBar
+            title="subscription"
+            selectedRows={selectedRows}
+            // defaultIDs={defaultIDs()}
+            // openTunnel={openTunnel}
+         />
+         <Spacer size="30px" />
          <ReactTabulator
             ref={tableRef}
             columns={columns}
             data={productSubscriptionData}
             options={TableOptions}
             dataLoaded={dataLoaded}
+            rowSelected={handleRowSelection}
+            rowDeselected={handleRowDeselection}
+            selectableCheck={() => true}
+            columns={[selectionColumn, ...columns]}
          />
       </>
    )
