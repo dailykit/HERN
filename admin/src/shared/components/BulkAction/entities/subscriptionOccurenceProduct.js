@@ -106,7 +106,6 @@ export const SubscriptionOccurrenceProductBulkAction = props => {
             placeholder="choose product type"
          />
          <Spacer size="20px" />
-
          {[{ heading: 'Add On Price', columnName: 'addOnPrice' }].map(
             (column, i) => (
                <CollapsibleComponent heading={column.heading} key={i}>
@@ -415,7 +414,7 @@ export const SubscriptionOccurrenceProductBulkAction = props => {
          )}
          <CollapsibleComponentWithTabs
             bulkActions={bulkActions}
-            columnName="Add On Label"
+            columnName="addOnLabel"
             title="Add On Label"
             concatType="concatDataString"
             columnConcat="addOnLabelConcat"
@@ -608,7 +607,7 @@ const CollapsibleComponentWithTabs = ({
                      />
                   </Form.Group>
                   <Form.Error>
-                     Changing {columnName} will overwrite already existing{' '}
+                     Changing {columnName} will overwrite already existing
                      {columnName}
                   </Form.Error>
                   {concatType == 'concatData' && (

@@ -247,7 +247,10 @@ const BulkActions = ({
                decrease: 0,
             },
          }))
-      } else if (table === 'Menu Product Occurrence') {
+      } else if (
+         table === 'Menu Product Occurrence' ||
+         table === 'Menu Product Subscription'
+      ) {
          setInitialBulkActionSubscriptionOccurrenceProduct(prevState => ({
             ...prevState,
             addOnPrice: {
@@ -425,7 +428,10 @@ const BulkActions = ({
          })
          close(1)
       }
-      if (table === 'Menu Product Occurrence') {
+      if (
+         table === 'Menu Product Occurrence ' ||
+         table === 'Menu Product Subscription'
+      ) {
          increasePriceSubscriptionOccurrenceProduct({
             variables: {
                addOnPrice: additionalBulkAction.addOnPrice || 0,
@@ -448,6 +454,8 @@ const BulkActions = ({
          case 'Product Options':
             return updateProductOptions
          case 'Menu Product Occurrence':
+            return updateSubscriptionOccurrenceProduct
+         case 'Menu Product Subscription':
             return updateSubscriptionOccurrenceProduct
          default:
             return null
@@ -687,7 +695,8 @@ const BulkActions = ({
                            setAdditionalBulkAction={setAdditionalBulkAction}
                         />
                      )}
-                     {table === 'Menu Product Occurrence' && (
+                     {(table === 'Menu Product Occurrence' ||
+                        table === 'Menu Product Subscription') && (
                         <SubscriptionOccurrenceProductBulkAction
                            initialBulkAction={
                               initialBulkActionSubscriptionOccurrenceProduct
