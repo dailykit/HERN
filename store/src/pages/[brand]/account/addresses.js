@@ -14,7 +14,7 @@ import { SEO, Layout } from '../../../components'
 const AddressesPage = props => {
    const router = useRouter()
    const { isAuthenticated, isLoading } = useUser()
-   const { folds, settings, navigationMenus } = props
+   const { folds, settings, navigationMenus, seoSettings } = props
 
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
@@ -33,7 +33,7 @@ const AddressesPage = props => {
 
    return (
       <Layout settings={settings} navigationMenus={navigationMenus}>
-         <SEO title="Addresses" />
+         <SEO seoSettings={seoSettings} />
          <main>{renderPageContent(folds)}</main>
       </Layout>
    )
@@ -42,13 +42,13 @@ const AddressesPage = props => {
 export default AddressesPage
 
 export const getStaticProps = async ({ params }) => {
-   const { parsedData, seo, settings, navigationMenus } = await getPageProps(
+   const { parsedData, seo, settings, navigationMenus, seoSettings } = await getPageProps(
       params,
       '/account/addresses'
    )
 
    return {
-      props: { folds: parsedData, seo, settings, navigationMenus },
+      props: { folds: parsedData, seo, settings, navigationMenus, seoSettings },
       revalidate: 60, // will be passed to the page component as props
    }
 }

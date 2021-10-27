@@ -164,6 +164,13 @@ export const MUTATIONS = {
             }
          }
       `,
+      DELETE: gql`
+         mutation deleteCart($id: Int!) {
+            deleteCart(id: $id) {
+               id
+            }
+         }
+      `,
    },
    CART_REWARDS: {
       CREATE: gql`
@@ -439,6 +446,34 @@ export const UPSERT_BRAND_CUSTOMER = gql`
          }
       ) {
          id
+      }
+   }
+`
+export const CREATE_CART_ITEMS = gql`
+   mutation CREATE_CART_ITEMS($objects: [order_cartItem_insert_input!]!) {
+      createCartItems(objects: $objects) {
+         returning {
+            id
+         }
+      }
+   }
+`
+export const DELETE_CART_ITEMS = gql`
+   mutation DELETE_CART_ITEMS($where: order_cartItem_bool_exp!) {
+      deleteCartItems(where: $where) {
+         returning {
+            id
+         }
+      }
+   }
+`
+export const UPDATE_CART_ITEMS = gql`
+   mutation UPDATE_CART_ITEMS(
+      $where: order_cartItem_bool_exp!
+      $_set: order_cartItem_set_input!
+   ) {
+      updateCartItems(where: $where, _set: $_set) {
+         affected_rows
       }
    }
 `

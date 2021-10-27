@@ -91,3 +91,64 @@ export const ItemCountSection = styled.section`
    padding: 0 14px 14px 14px;
    height: calc(100% - 48px);
 `
+export const MetaDetailsSection = styled.section`
+   padding: 14px;
+   display: flex;
+   background: #fff;
+   align-items: center;
+   padding-left: 33px;
+   justify-content: space-between;
+   input[type='text'] {
+      width: 340px;
+   }
+   h6 {
+      color: #367bf5;
+      display: inline-block;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      border: none;
+   }
+   .metadetail_container{
+      gap:25px;
+      border: 2px solid #F3F3F3;
+      border-radius: 8px;
+   }
+`
+export const ImageContainer = styled.div`
+   display: flex;
+   flex-direction: row-reverse;
+   flex: ${props => props.flex || 'none'};
+   padding: ${props => props.padding || '8px'};
+   position: relative;
+   border-radius: 2px;
+   border: ${props => props.border || '1px solid #e3e3e3'};
+   height: ${props => props.height || 'auto'};
+   width: ${props => props.width || 'auto'};
+   img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+   }
+   div {
+      width: min-content;
+      background: transparent;
+   }
+   button {
+      float: right;
+      margin: 4px 4px 0 0;
+   }
+`
+export const TagContainer = styled.div`
+   flex: 1;
+   padding: 14px;
+   span {
+      padding: 5px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 11px;
+   }
+`

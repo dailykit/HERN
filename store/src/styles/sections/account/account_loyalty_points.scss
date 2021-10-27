@@ -1,4 +1,4 @@
-.hern-loyalty-points__main {
+.hern-account-loyalty-points__main {
    display: grid;
    grid-template-rows: 1fr;
    min-height: calc(100vh - 64px);
@@ -8,7 +8,7 @@
       display: block;
    }
 }
-.hern-loyalty-points {
+.hern-account-loyalty-points {
    padding-left: 1.5rem;
    padding-right: 1.5rem;
    width: 100%;
@@ -16,7 +16,7 @@
       width: 50%;
    }
 }
-.hern-loyalty-points__header {
+.hern-account-loyalty-points__header {
    margin-top: 1.5rem;
    margin-bottom: 0.75rem;
    display: -webkit-box;
@@ -32,12 +32,12 @@
    -ms-flex-pack: justify;
    justify-content: space-between;
 }
-.hern-loyalty-points__header__title {
+.hern-account-loyalty-points__header__title {
    color: rgba(5, 150, 105, 1);
    font-size: 1.5rem;
    line-height: 2rem;
 }
-.hern-loyalty-points__table {
+.hern-account-loyalty-points__table {
    margin-top: 0.5rem;
    margin-bottom: 0.5rem;
    width: 100%;
@@ -54,12 +54,12 @@
       }
    }
 }
-.hern-loyalty-points__table__cell {
+.hern-account-loyalty-points__table__cell {
    min-width: 100px;
    border-width: 1px;
    padding: 0.25rem 0.5rem;
 }
-.hern-loyalty-points__table__comment {
+.hern-account-loyalty-points__table__comment {
    font-size: 0.875rem;
    line-height: 1.25rem;
    background-color: rgba(75, 85, 99, 1);

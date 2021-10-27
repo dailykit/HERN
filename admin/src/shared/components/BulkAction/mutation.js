@@ -28,6 +28,7 @@ export const UPDATE_INGREDIENTS = gql`
       }
    }
 `
+
 export const CONCATENATE_ARRAY_COLUMN = gql`
    query ConcatenateArrayColumn($concatData: concatenateArrayColumn_args!) {
       concatenateArrayColumn(args: $concatData) {
@@ -50,6 +51,71 @@ export const UPDATE_PRODUCT_OPTIONS = gql`
       $_set: products_productOption_set_input!
    ) {
       updateProductOptions(where: { id: { _in: $ids } }, _set: $_set) {
+         affected_rows
+      }
+   }
+`
+export const CREATE_CUISINE_NAME = gql`
+   mutation CreateCuisineName($name: String) {
+      createCuisineName(objects: { name: $name }) {
+         affected_rows
+      }
+   }
+`
+export const INGREDIENT_CATEGORY_CREATE = gql`
+   mutation insertIngredientCategory($name: String!) {
+      createIngredientCategory(object: { name: $name }) {
+         name
+      }
+   }
+`
+
+export const INCREASE_PRICE_AND_DISCOUNT = gql`
+   mutation increasePriceAndDiscount(
+      $price: numeric!
+      $discount: numeric!
+      $ids: [Int!]
+   ) {
+      updateProducts(
+         where: { id: { _in: $ids } }
+         _inc: { price: $price, discount: $discount }
+      ) {
+         affected_rows
+      }
+   }
+`
+export const INCREMENTS_IN_PRODUCT_OPTIONS = gql`
+   mutation IncrementsInProductOptions(
+      $_inc: products_productOption_inc_input!
+      $_in: [Int!]
+   ) {
+      updateProductOptions(where: { id: { _in: $_in } }, _inc: $_inc) {
+         affected_rows
+      }
+   }
+`
+export const UPDATE_SUBSCRIPTION_OCCURRENCE_PRODUCT = gql`
+   mutation update_subscription_subscriptionOccurence_products(
+      $ids: [Int!]
+      $_set: subscription_subscriptionOccurence_product_set_input!
+   ) {
+      update_subscription_subscriptionOccurence_product(
+         _set: $_set
+         where: { id: { _in: $ids } }
+      ) {
+         affected_rows
+      }
+   }
+`
+export const INCREASE_PRICE_SUBSCRIPTION_OCCURRENCE_PRODUCT = gql`
+   mutation increasePrice(
+      $addOnPrice: numeric!
+      $where: subscription_subscriptionOccurence_product_bool_exp!
+   ) {
+      update_subscription_subscriptionOccurence_product(
+         _inc: { addOnPrice: $addOnPrice }
+         where: $where
+      ) {
          affected_rows
       }
    }

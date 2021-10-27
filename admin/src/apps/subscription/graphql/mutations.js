@@ -54,7 +54,14 @@ export const UPSERT_SUBSCRIPTION_TITLE = gql`
       }
    }
 `
-
+export const UPSERT_SUBSCRIPTION_METADATA_DETAILS = gql`
+mutation upsertSubscriptionMetaDataDetails($id: Int!, $_set: subscription_subscriptionTitle_set_input!) {
+   update_subscription_subscriptionTitle_by_pk(pk_columns: {id: $id}, _set: $_set) {
+     id
+     metaDetails
+   }
+ } 
+`
 export const UPSERT_SUBSCRIPTION_SERVING = gql`
    mutation upsertSubscriptionServing(
       $object: subscription_subscriptionServing_insert_input!
@@ -97,6 +104,19 @@ export const INSERT_SUBSCRIPTION = gql`
    ) {
       insertSubscription: insert_subscription_subscription(objects: $objects) {
          affected_rows
+      }
+   }
+`
+export const INSERT_SUBSCRIPTIONS = gql`
+   mutation insertSubscriptions(
+      $objects: [subscription_subscriptionTitle_insert_input!]!
+   ) {
+      insert_subscription_subscriptionTitle(objects: $objects) {
+         affected_rows
+         returning {
+            id
+            title
+         }
       }
    }
 `

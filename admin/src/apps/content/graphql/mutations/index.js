@@ -75,14 +75,14 @@ export const FAQ_ARCHIVED = gql`
    }
 `
 export const WEBPAGE_ARCHIVED = gql`
-   mutation WEBPAGE_ARCHIVED($websiteId: Int!, $pageId: Int!) {
-      update_website_websitePage(
-         where: { websiteId: { _eq: $websiteId }, id: { _eq: $pageId } }
+   mutation WEBPAGE_ARCHIVED($pageId: Int!, $brandId: Int!) {
+      update_brands_brandPages(
+         where: { id: { _eq: $pageId }, brandId: { _eq: $brandId } }
          _set: { isArchived: true }
       ) {
          returning {
+            brandId
             internalPageName
-            id
             route
          }
       }
@@ -90,14 +90,8 @@ export const WEBPAGE_ARCHIVED = gql`
 `
 
 export const UPDATE_WEBPAGE = gql`
-   mutation UPDATE_WEBPAGE(
-      $pageId: Int!
-      $set: website_websitePage_set_input!
-   ) {
-      update_website_websitePage_by_pk(
-         pk_columns: { id: $pageId }
-         _set: $set
-      ) {
+   mutation UPDATE_WEBPAGE($pageId: Int!, $set: brands_brandPages_set_input!) {
+      update_brands_brandPages_by_pk(pk_columns: { id: $pageId }, _set: $set) {
          internalPageName
          published
          route
@@ -106,13 +100,11 @@ export const UPDATE_WEBPAGE = gql`
    }
 `
 export const LINK_COMPONENT = gql`
-   mutation LINK_COMPONENT(
-      $objects: [website_websitePageModule_insert_input!]!
-   ) {
-      insert_website_websitePageModule(objects: $objects) {
+   mutation LINK_COMPONENT($objects: [brands_brandPageModule_insert_input!]!) {
+      insert_brands_brandPageModule(objects: $objects) {
          returning {
             fileId
-            websitePageId
+            brandPageId
             moduleType
             templateId
             internalModuleIdentifier
@@ -122,11 +114,11 @@ export const LINK_COMPONENT = gql`
 `
 export const UPDATE_LINK_COMPONENT = gql`
    mutation UPDATED_LINK_COMPONENT(
-      $websitePageModuleId: Int!
-      $_set: website_websitePageModule_set_input!
+      $brandPageModuleId: Int!
+      $_set: brands_brandPageModule_set_input!
    ) {
-      update_website_websitePageModule(
-         where: { id: { _eq: $websitePageModuleId } }
+      update_brands_brandPageModule(
+         where: { id: { _eq: $brandPageModuleId } }
          _set: $_set
       ) {
          returning {
@@ -137,10 +129,8 @@ export const UPDATE_LINK_COMPONENT = gql`
    }
 `
 export const DELETE_LINKED_COMPONENT = gql`
-   mutation DELETE_LINKED_COMPONENT(
-      $where: website_websitePageModule_bool_exp!
-   ) {
-      delete_website_websitePageModule(where: $where) {
+   mutation DELETE_LINKED_COMPONENT($where: brands_brandPageModule_bool_exp!) {
+      delete_brands_brandPageModule(where: $where) {
          returning {
             fileId
             id
@@ -149,8 +139,8 @@ export const DELETE_LINKED_COMPONENT = gql`
    }
 `
 export const CREATE_WEBPAGE = gql`
-   mutation CREATE_WEBPAGE($object: website_websitePage_insert_input!) {
-      insert_website_websitePage_one(object: $object) {
+   mutation CREATE_WEBPAGE($object: brands_brandPages_insert_input!) {
+      insert_brands_brandPages_one(object: $object) {
          id
          internalPageName
       }
@@ -187,7 +177,7 @@ export const DELETE_SUBSCRIPTION_FOLD = gql`
 
 export const INSERT_NAVIGATION_MENU = gql`
    mutation INSERT_NAVIGATION_MENU($title: String!) {
-      insert_website_navigationMenu_one(object: { title: $title }) {
+      insert_brands_navigationMenu_one(object: { title: $title }) {
          id
          isPublished
          title
@@ -196,7 +186,7 @@ export const INSERT_NAVIGATION_MENU = gql`
 `
 export const DELETE_NAVIGATION_MENU = gql`
    mutation DELETE_NAVIGATION_MENU($menuId: Int!) {
-      delete_website_navigationMenu(where: { id: { _eq: $menuId } }) {
+      delete_brands_navigationMenu(where: { id: { _eq: $menuId } }) {
          returning {
             id
             title
@@ -206,10 +196,10 @@ export const DELETE_NAVIGATION_MENU = gql`
 `
 export const UPDATE_NAVIGATION_MENU = gql`
    mutation UPDATE_NAVIGATION_MENU(
-      $_set: website_navigationMenu_set_input!
+      $_set: brands_navigationMenu_set_input!
       $menuId: Int!
    ) {
-      update_website_navigationMenu(
+      update_brands_navigationMenu(
          where: { id: { _eq: $menuId } }
          _set: $_set
       ) {
@@ -227,7 +217,7 @@ export const INSERT_NAVIGATION_MENU_ITEM = gql`
       $navigationMenuId: Int
       $parentNavigationMenuItemId: Int
    ) {
-      insert_website_navigationMenuItem_one(
+      insert_brands_navigationMenuItem_one(
          object: {
             label: $label
             navigationMenuId: $navigationMenuId
@@ -248,9 +238,9 @@ export const INSERT_NAVIGATION_MENU_ITEM = gql`
 export const UPDATE_NAVIGATION_MENU_ITEM = gql`
    mutation UPDATE_NAVIGATION_MENU_ITEM(
       $menuItemId: Int!
-      $_set: website_navigationMenuItem_set_input!
+      $_set: brands_navigationMenuItem_set_input!
    ) {
-      update_website_navigationMenuItem_by_pk(
+      update_brands_navigationMenuItem_by_pk(
          pk_columns: { id: $menuItemId }
          _set: $_set
       ) {
@@ -267,7 +257,7 @@ export const UPDATE_NAVIGATION_MENU_ITEM = gql`
 
 export const DELETE_NAVIGATION_MENU_ITEM = gql`
    mutation DELETE_NAVIGATION_MENU_ITEM($menuItemId: Int!) {
-      delete_website_navigationMenuItem_by_pk(id: $menuItemId) {
+      delete_brands_navigationMenuItem_by_pk(id: $menuItemId) {
          id
          navigationMenuId
          parentNavigationMenuItemId
@@ -275,3 +265,26 @@ export const DELETE_NAVIGATION_MENU_ITEM = gql`
       }
    }
 `
+export const GET_SYSTEM_MODULES = gql`
+   subscription {
+      brands_systemModule {
+         identifier
+         description
+      }
+   }
+`
+export const UPSERT_BRANDS_SEO = gql`
+mutation upsertBrandsSeo($object: brands_brandPage_brandPageSetting_insert_input!) {
+   upsertBrandsSeo: insert_brands_brandPage_brandPageSetting_one(on_conflict: {constraint: brandPage_brandPageSetting_pkey, update_columns: [value]}, object: $object) {
+     value
+     brandPageId
+     brandPageSettingId
+     brandPageSetting {
+       id
+       identifier
+       type
+     }
+   }
+ }`
+
+//  {"object":{"brandPageId":1029,"brandPageSettingId": 2,"value": {"metaTitle":"is meta title","metaDescription":"this is metaDescription for register page"}}} 

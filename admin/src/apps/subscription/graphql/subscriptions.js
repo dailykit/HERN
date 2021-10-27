@@ -166,6 +166,7 @@ export const TITLE = gql`
          isDemo
          isValid
          isActive
+         metaDetails
          defaultSubscriptionServingId
          servings: subscriptionServings(order_by: { servingSize: asc }) {
             id
@@ -184,6 +185,7 @@ export const SERVING = gql`
          isValid
          isActive
          size: servingSize
+         defaultSubscriptionItemCountId
          counts: subscriptionItemCounts(order_by: { count: asc }) {
             id
             count

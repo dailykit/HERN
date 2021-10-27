@@ -8,6 +8,7 @@ import { ToastProvider } from 'react-toast-notifications'
 import GlobalStyles from '../styles/global'
 import '../styles/globals.css'
 import '../styles/main.scss'
+import { OnDemandMenuProvider, CartProvider } from '../context'
 
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 const pixelId = isClient && get_env('PIXEL_ID')
@@ -25,15 +26,19 @@ const AppWrapper = ({ Component, pageProps }) => {
             <GlobalStyles />
             <ConfigProvider>
                <ScriptProvider>
-                  <UserProvider>
-                     <ToastProvider
-                        autoDismiss
-                        placement="bottom-center"
-                        autoDismissTimeout={3000}
-                     >
-                        <Component {...pageProps} />
-                     </ToastProvider>
-                  </UserProvider>
+                  <OnDemandMenuProvider>
+                     <UserProvider>
+                        <ToastProvider
+                           autoDismiss
+                           placement="bottom-center"
+                           autoDismissTimeout={3000}
+                        >
+                           <CartProvider>
+                              <Component {...pageProps} />
+                           </CartProvider>
+                        </ToastProvider>
+                     </UserProvider>
+                  </OnDemandMenuProvider>
                </ScriptProvider>
             </ConfigProvider>
          </ApolloProvider>

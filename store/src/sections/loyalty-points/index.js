@@ -7,7 +7,7 @@ import * as moment from 'moment'
 
 export const LoyaltyPoints = () => {
    return (
-      <main className="hern-loyalty-points__main">
+      <main className="hern-account-loyalty-points__main">
          <ProfileSidebar />
          <Content />
       </main>
@@ -25,10 +25,10 @@ const Content = () => {
    )
 
    return (
-      <section className="hern-loyalty-points">
-         <header className="hern-loyalty-points__header">
+      <section className="hern-account-loyalty-points">
+         <header className="hern-account-loyalty-points__header">
             <h2
-               className="hern-loyalty-points__header__title"
+               className="hern-account-loyalty-points__header__title"
                style={{
                   color: `${theme.accent ? theme.accent : 'rgba(5,150,105,1)'}`,
                }}
@@ -43,7 +43,7 @@ const Content = () => {
                   {user.loyaltyPoint.points}
                </div>
                <Form.Label>Transactions</Form.Label>
-               <table className="hern-loyalty-points__table">
+               <table className="hern-account-loyalty-points__table">
                   <thead>
                      <tr>
                         <th>ID</th>
@@ -55,19 +55,19 @@ const Content = () => {
                   <tbody>
                      {user.loyaltyPoint.loyaltyPointTransactions.map(txn => (
                         <tr key={txn.id}>
-                           <td className="hern-loyalty-points__table__cell">
+                           <td className="hern-account-loyalty-points__table__cell">
                               {txn.id}
                            </td>
                            <td
-                              className="hern-loyalty-points__table__cell"
+                              className="hern-account-loyalty-points__table__cell"
                               title={txn.type}
                            >
                               {txn.type}
                            </td>
-                           <td className="hern-loyalty-points__table__cell">
+                           <td className="hern-account-loyalty-points__table__cell">
                               {txn.points}
                            </td>
-                           <td className="hern-loyalty-points__table__cell">
+                           <td className="hern-account-loyalty-points__table__cell">
                               {moment(txn.created_at).format(
                                  'MMMM Do YYYY, h:mm:ss a'
                               )}

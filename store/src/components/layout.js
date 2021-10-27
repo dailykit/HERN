@@ -34,7 +34,7 @@ export const Layout = ({
          {!noHeader && (
             <Header settings={settings} navigationMenus={navigationMenus} />
          )}
-         {children}
+         <div style={{ minHeight: '80vh' }}>{children}</div>
          <div className="hern-demo-mode">
             {(user?.isTest === true || store?.isStoreLive === false) && (
                <p>Store running in test mode so payments will be bypassed</p>
@@ -45,13 +45,25 @@ export const Layout = ({
             className="hern-layout__footer"
             style={{
                backgroundColor: `${
-                  theme?.accent ? theme?.accent : 'rgba(5, 150, 105, 1)'
+                  theme?.footerBg ? theme?.footerBg : 'rgba(5, 150, 105, 1)'
+               }`,
+               color: `${
+                  theme?.footerText ? theme?.footerText : 'rgba(5, 150, 105, 1)'
                }`,
             }}
          >
             <div>
                <section>
-                  <h4 className="hern-layout__footer__section-header">
+                  <h4
+                     style={{
+                        color: `${
+                           theme?.footerText
+                              ? theme?.footerText
+                              : 'rgba(5, 150, 105, 1)'
+                        }`,
+                     }}
+                     className="hern-layout__footer__section-header"
+                  >
                      Contact Us
                   </h4>
                   {location && (

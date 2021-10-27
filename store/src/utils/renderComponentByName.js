@@ -80,12 +80,22 @@ const Inventory = dynamic(() =>
 const PlacingOrder = dynamic(() =>
    import('../sections/placing-order').then(promise => promise.PlacingOrder)
 )
-
-export const renderComponentByName = (componentName, options) => {
+const OnDemandOrder = dynamic(() =>
+   import('../sections/order').then(promise => promise.OnDemandOrder)
+)
+const OnDemandCart = dynamic(() =>
+   import('../sections/cart').then(promise => promise.OnDemandCart)
+)
+const FeaturedCollection = dynamic(() =>
+   import('../sections/featuredCollection').then(
+      promise => promise.FeaturedCollection
+   )
+)
+export const renderComponentByName = (fold, options) => {
    const getProps = component => {
       if (options) {
          const [props] = options.filter(
-            option => option.component === componentName
+            option => option.component === fold.component
          )
          if (props) {
             return component === props.component ? props.props : []
@@ -93,7 +103,7 @@ export const renderComponentByName = (componentName, options) => {
       }
    }
 
-   switch (componentName) {
+   switch (fold.component) {
       /*ROUTES: 
       [brand]/our-plans
       [brand]/get-started/select-plan
@@ -232,6 +242,20 @@ export const renderComponentByName = (componentName, options) => {
       */
       case 'StepsNavbar':
          return <StepsNavbar />
+
+      /* ROUTE :
+      [brand]/order
+      */
+      case 'OnDemandOrder':
+         return <OnDemandOrder />
+
+      /*ROUTE :
+      [brand]/cart
+       */
+      case 'OnDemandCart':
+         return <OnDemandCart />
+      case 'FeaturedCollection':
+         return <FeaturedCollection config={fold.config} />
       default:
          return null
    }
