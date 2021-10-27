@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import classNames from 'classnames'
 import GoogleMapReact from 'google-map-react'
-import { CloseIcon, GPSIcon } from '../assets/icons'
+import {
+   CloseIcon,
+   DistanceIcon,
+   GPSIcon,
+   RadioIcon,
+   StoreIcon,
+} from '../assets/icons'
 import { useScript, isClient, get_env } from '../utils'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
 import { Loader } from './index'
@@ -314,7 +320,7 @@ const GET_BRAND_LOCATION = gql`
 `
 const StoreList = props => {
    // props
-   const { userCoordinate } = props
+   const { userCoordinate, selectType = 'radio' } = props
 
    // context
    const { brand } = useConfig()
@@ -322,6 +328,7 @@ const StoreList = props => {
    // component state
    const [brandLocation, setBrandLocation] = useState(storeStaticData)
    const [sortedBrandLocation, setSortedBrandLocation] = useState(null)
+   const [selectedStore, setSelectedStore] = useState(null)
 
    // get all store
    // const { loading: storeLoading, error: storeError } = useQuery(
@@ -396,33 +403,39 @@ const StoreList = props => {
 
    useEffect(() => {
       if (brandLocation) {
-         setSortedBrandLocation(getArialDistance(brandLocation, true))
+         setSortedBrandLocation(getaerialDistance(brandLocation, true))
       }
    }, [brandLocation])
 
-   const getArialDistance = (data, sorted = false) => {
+   useEffect(() => {
+      if (sortedBrandLocation) {
+         setSelectedStore(sortedBrandLocation[0])
+      }
+   }, [sortedBrandLocation])
+
+   const getaerialDistance = (data, sorted = false) => {
       const userLocation = JSON.parse(localStorage.getItem('userLocation'))
 
       // add arial distance
-      const dataWithArialDistance = data.map(eachStore => {
-         const arialDistance = getDistance(
+      const dataWithaerialDistance = data.map(eachStore => {
+         const aerialDistance = getDistance(
             userLocation,
             eachStore.location.locationAddress.locationCoordinates,
             0.1
          )
-         eachStore['arialDistance'] =
-            parseFloat((arialDistance / 1000).toFixed(1)) + ' km'
+         eachStore['aerialDistance'] =
+            parseFloat((aerialDistance / 1000).toFixed(1)) + ' km'
          return eachStore
       })
 
       // sort by distance
       if (sorted) {
-         const sortedDataWithArialDistance = _.sortBy(dataWithArialDistance, [
-            x => x.arialDistance.split(' ')[0],
+         const sortedDataWithaerialDistance = _.sortBy(dataWithaerialDistance, [
+            x => x.aerialDistance.split(' ')[0],
          ])
-         return sortedDataWithArialDistance
+         return sortedDataWithaerialDistance
       }
-      return dataWithArialDistance
+      return dataWithaerialDistance
    }
 
    if (sortedBrandLocation === null) {
@@ -435,44 +448,59 @@ const StoreList = props => {
       <div className="hern-location-selector__stores-list">
          {sortedBrandLocation.map((eachStore, index) => {
             const {
-               location: {
-                  label,
-                  locationAddress: {
-                     line1,
-                     line2,
-                     city,
-                     state,
-                     country,
-                     zipcode,
-                  },
-               },
-               arialDistance,
+               location: { label, id, locationAddress },
+               aerialDistance,
             } = eachStore
+            const { line1, line2, city, state, country, zipcode } =
+               locationAddress
             return (
                <div
                   key={index}
-                  className="hern-store-location-selector__each-store"
+                  className={classNames(
+                     'hern-store-location-selector__each-store',
+                     {
+                        'hern-store-location-selector__each-store--border':
+                           selectType === 'border' &&
+                           selectedStore &&
+                           id === selectedStore.id,
+                     }
+                  )}
+                  onClick={() => {
+                     setSelectedStore(eachStore)
+                  }}
                >
-                  {/* <div>Icon</div> */}
-                  <div className="hern-store-location-selector__store-location-details">
-                     <span className="hern-store-location__store-location-label">
-                        {label}
-                     </span>
-                     <span className="hern-store-location__store-location-address hern-store-location__store-location-address-line1">
-                        {line1}
-                     </span>
-                     <span className="hern-store-location__store-location-address hern-store-location__store-location-address-line2">
-                        {line2}
-                     </span>
-                     <span className="hern-store-location__store-location-address hern-store-location__store-location-address-c-s-c-z">
-                        {city} {state} {country}
-                        {' ('}
-                        {zipcode}
-                        {')'}
-                     </span>
-                     {/* <span>{arialDistance}</span> */}
+                  <div className="hern-store-location-selector__store-location-info-container">
+                     <StoreIcon />
+                     <div className="hern-store-location-selector__store-location-details">
+                        <span className="hern-store-location__store-location-label">
+                           {label}
+                        </span>
+                        <span className="hern-store-location__store-location-address hern-store-location__store-location-address-line1">
+                           {line1}
+                        </span>
+                        <span className="hern-store-location__store-location-address hern-store-location__store-location-address-line2">
+                           {line2}
+                        </span>
+                        <span className="hern-store-location__store-location-address hern-store-location__store-location-address-c-s-c-z">
+                           {city} {state} {country}
+                           {' ('}
+                           {zipcode}
+                           {')'}
+                        </span>
+                     </div>
                   </div>
-                  {/* <div>Select</div> */}
+                  {selectType === 'radio' && (
+                     <RadioIcon
+                        size={18}
+                        showTick={selectedStore && id === selectedStore.id}
+                     />
+                  )}
+                  <div className="hern-store-location-selector__time-distance">
+                     <div className="hern-store-location-selector__aerialDistance">
+                        <DistanceIcon />
+                        <span>{aerialDistance}</span>
+                     </div>
+                  </div>
                </div>
             )
          })}
