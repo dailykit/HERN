@@ -232,10 +232,8 @@ const OrderListSkeleton = () => {
 const OrderDetailsSkeleton = () => (
    <main classNames="hern-orders__order-details__skeleton">
       <h2>Order Details</h2>
-      <ProductCards>
-         <ProductSkeleton />
-         <ProductSkeleton />
-      </ProductCards>
+      <ProductSkeleton />
+      <ProductSkeleton />
    </main>
 )
 

@@ -50,7 +50,7 @@
 /*Account routes pages*/
 @use './sections/account/addresses';
 @use './sections/account/cards';
-@use './sections/account/loyalty-points';
+@use './sections/account/account_loyalty_points';
 @use './sections/account/orders';
 @use './sections/account/referrals';
 @use './sections/account/wallet';

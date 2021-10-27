@@ -1124,75 +1124,79 @@ export const SUBSCRIPTION_PLAN = gql`
    }
 `
 export const NAVIGATION_MENU = gql`
-query NAVIGATION_MENU($navigationMenuId: Int!) {
-   brands_navigationMenuItem(
-      where: { navigationMenuId: { _eq: $navigationMenuId } }
-   ) {
-      created_at
-      id
-      label
-      navigationMenuId
-      openInNewTab
-      position
-      updated_at
-      url
-      parentNavigationMenuItemId
+   query NAVIGATION_MENU($navigationMenuId: Int!) {
+      brands_navigationMenuItem(
+         where: { navigationMenuId: { _eq: $navigationMenuId } }
+      ) {
+         created_at
+         id
+         label
+         navigationMenuId
+         openInNewTab
+         position
+         updated_at
+         url
+         parentNavigationMenuItemId
+      }
    }
-}
 `
 export const BRAND_PAGE = gql`
-query BRAND_PAGE($domain: String!, $route: String!) {
-   brands_brandPages(
-      where: {
-         route: { _eq: $route }
+   query BRAND_PAGE($domain: String!, $route: String!) {
+      brands_brandPages(
+         where: {
+            route: { _eq: $route }
             brand: {
-               _or: [
-                  { isDefault: { _eq: true } }
-                  { domain: { _eq: $domain } }
-               ]
+               _or: [{ isDefault: { _eq: true } }, { domain: { _eq: $domain } }]
             }
          }
-   ) {
-      id
-      internalPageName
-      isArchived
-      published
-      route
-      linkedNavigationMenuId
-      brandPageModules(
-         order_by: { position: desc_nulls_last }
-         where: { isHidden: { _eq: false } }
       ) {
          id
-         internalModuleIdentifier
-         config
-         moduleType
-         isHidden
-         fileId
-         position
-         subscriptionDivFileId: file {
-            path
-            linkedCssFiles {
-               id
-               cssFile {
-                  id
-                  path
-               }
+         internalPageName
+         isArchived
+         published
+         route
+         brandPageSettings {
+            value
+            brandPageSetting {
+               identifier
+               type
             }
-            linkedJsFiles {
-               id
-               jsFile {
+         }
+         linkedNavigationMenuId
+         brandPageModules(
+            order_by: { position: desc_nulls_last }
+            where: { isHidden: { _eq: false } }
+         ) {
+            id
+            internalModuleIdentifier
+            config
+            moduleType
+            isHidden
+            fileId
+            position
+            subscriptionDivFileId: file {
+               path
+               linkedCssFiles {
                   id
-                  path
+                  cssFile {
+                     id
+                     path
+                  }
+               }
+               linkedJsFiles {
+                  id
+                  jsFile {
+                     id
+                     path
+                  }
                }
             }
          }
-      }
-      brand {
-         navigationMenuId
+         brand {
+            navigationMenuId
+         }
       }
    }
-}
 `
 
 // query MyQuery($navigationMenuId: Int!) {
@@ -1271,6 +1275,7 @@ export const PRODUCTS = gql`
          isPopupAllowed
          isPublished
          defaultProductOptionId
+         defaultCartItem
          productOptions(
             where: { isArchived: { _eq: false } }
             order_by: { position: desc_nulls_last }
@@ -1310,7 +1315,7 @@ export const PRODUCTS = gql`
       }
    }
 `
-export const GET_CART_ON_DEMAND = gql`
+export const GET_CART = gql`
    subscription cart($id: Int!) {
       cart(id: $id) {
          id
@@ -1367,6 +1372,13 @@ export const GET_CART_ON_DEMAND = gql`
                productId
             }
          }
+      }
+   }
+`
+export const GET_CARTS = gql`
+   subscription GET_CARTS($where: order_cart_bool_exp!) {
+      carts(where: $where) {
+         id
       }
    }
 `

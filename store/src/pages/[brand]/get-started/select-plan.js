@@ -12,7 +12,7 @@ import { useUser } from '../../../context'
 
 const SelectPlan = props => {
    const router = useRouter()
-   const { settings, folds } = props
+   const { settings, folds, seoSettings } = props
    const { isAuthenticated, isLoading } = useUser()
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
@@ -40,7 +40,7 @@ const SelectPlan = props => {
 
    return (
       <Layout settings={settings}>
-         <SEO title="Plans" />
+         <SEO seoSettings={seoSettings} />
          <main className="hern-get-started-select-plan__main">
             {renderPageContent(folds)}
          </main>
@@ -51,13 +51,13 @@ const SelectPlan = props => {
 export default SelectPlan
 
 export const getStaticProps = async ({ params }) => {
-   const { parsedData, seo, settings } = await getPageProps(
+   const { parsedData, seo, settings, seoSettings } = await getPageProps(
       params,
       '/get-started/select-plan'
    )
 
    return {
-      props: { folds: parsedData, seo, settings },
+      props: { folds: parsedData, seo, settings, seoSettings },
       revalidate: 60,
    }
 }

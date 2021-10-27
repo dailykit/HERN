@@ -102,6 +102,12 @@ const Carts = Loadable({
    loading: Loader,
 })
 
+// changes for webhooks 
+const Developer = Loadable({
+   loader: () => import('./apps/developer'),
+   loading: Loader,
+})
+
 const App = () => {
    // const location = useLocation()
    // const { routes, setRoutes } = useTabs()
@@ -144,6 +150,7 @@ const App = () => {
                <Route path="/content" component={Content} />
                <Route path="/editor" component={Editor} />
                <Route path="/carts" component={Carts} />
+               <Route path="/developer" component={Developer} />
             </Switch>
          </main>
          {/* {!isKeycloakSupported() && <RedirectBanner />} */}

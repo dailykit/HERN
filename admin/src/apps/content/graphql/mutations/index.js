@@ -273,3 +273,18 @@ export const GET_SYSTEM_MODULES = gql`
       }
    }
 `
+export const UPSERT_BRANDS_SEO = gql`
+mutation upsertBrandsSeo($object: brands_brandPage_brandPageSetting_insert_input!) {
+   upsertBrandsSeo: insert_brands_brandPage_brandPageSetting_one(on_conflict: {constraint: brandPage_brandPageSetting_pkey, update_columns: [value]}, object: $object) {
+     value
+     brandPageId
+     brandPageSettingId
+     brandPageSetting {
+       id
+       identifier
+       type
+     }
+   }
+ }`
+
+//  {"object":{"brandPageId":1029,"brandPageSettingId": 2,"value": {"metaTitle":"is meta title","metaDescription":"this is metaDescription for register page"}}} 

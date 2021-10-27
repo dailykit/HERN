@@ -3,7 +3,7 @@ import { SEO, Layout } from '../../components'
 import { processJsFile, renderPageContent, getPageProps } from '../../utils'
 
 const RefundPolicyPage = props => {
-   const { folds, settings } = props
+   const { folds, settings, seoSettings } = props
 
    React.useEffect(() => {
       try {
@@ -15,7 +15,7 @@ const RefundPolicyPage = props => {
 
    return (
       <Layout settings={settings}>
-         <SEO title="Refund Policy" />
+         <SEO seoSettings={seoSettings} />
          <main>{renderPageContent(folds)}</main>
       </Layout>
    )
@@ -24,13 +24,13 @@ const RefundPolicyPage = props => {
 export default RefundPolicyPage
 
 export const getStaticProps = async ({ params }) => {
-   const { parsedData, seo, settings, navigationMenus } = await getPageProps(
+   const { parsedData, seo, settings, navigationMenus, seoSettings } = await getPageProps(
       params,
       '/refund-policy'
    )
 
    return {
-      props: { folds: parsedData, seo, settings, navigationMenus },
+      props: { folds: parsedData, seo, settings, navigationMenus, seoSettings },
       revalidate: 60, // will be passed to the page component as props
    }
 }
