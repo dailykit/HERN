@@ -22,4 +22,5 @@ export * from './cartItemsCombine'
 export * from './loginWrapper'
 export * from './detectCountry'
 export * from './getSEOSettings'
-
+export * from './getPageLevelFile'
+export * from './processExternalFiles'
