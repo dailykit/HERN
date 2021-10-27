@@ -607,8 +607,8 @@ const CollapsibleComponentWithTabs = ({
                      />
                   </Form.Group>
                   <Form.Error>
-                     Changing {columnName} will overwrite already existing
-                     {columnName}
+                     Changing Add on Label will overwrite already existing
+                     Add on Label
                   </Form.Error>
                   {concatType == 'concatData' && (
                      <HelperText
