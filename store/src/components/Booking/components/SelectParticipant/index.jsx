@@ -51,10 +51,7 @@ export default function SelectParticipant({ experienceId }) {
          if (type === 'inc') {
             const updatedCartItems = {
                ...currentCart?.experienceClass?.experience
-                  ?.experience_products[0]?.product?.productOptions[0]
-                  ?.cartItem,
-               experienceClassId: currentCart?.experienceClassId,
-               experienceClassTypeId: currentCart?.experienceClassTypeId
+                  ?.experience_products[0]?.product?.productOptions[0]?.cartItem
             }
             await EXPERIENCE_PARTICIPANTS.create.mutation({
                variables: {
@@ -74,7 +71,12 @@ export default function SelectParticipant({ experienceId }) {
                                        experienceClassId:
                                           currentCart?.experienceClassId,
                                        experienceClassTypeId:
-                                          currentCart?.experienceClassTypeId
+                                          currentCart?.experienceClassTypeId,
+                                       taxSetting: {
+                                          taxPercentage: 10,
+                                          isTaxIncluded: true,
+                                          isTaxable: true
+                                       }
                                     }
                                  ]
                               }

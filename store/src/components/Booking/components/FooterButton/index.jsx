@@ -58,15 +58,7 @@ export default function FooterButton({
    const handleNextButtonClick = async () => {
       if (isEmpty(cart)) {
          const childCartArray = []
-         const updatedCartItems = cartItems.map(cartItem => {
-            return {
-               ...cartItem,
-               experienceClassId:
-                  selectedSlot?.selectedExperienceClassId || null,
-               experienceClassTypeId: classTypeInfo?.id
-            }
-         })
-         console.log(updatedCartItems)
+
          for (let i = 0; i < participants; i++) {
             childCartArray.push({
                rsvp: false,
@@ -81,12 +73,17 @@ export default function FooterButton({
 
                      cartItems: {
                         data: [
-                           ...updatedCartItems,
+                           ...cartItems,
                            {
                               experienceClassId:
                                  selectedSlot?.selectedExperienceClassId ||
                                  null,
-                              experienceClassTypeId: classTypeInfo?.id
+                              experienceClassTypeId: classTypeInfo?.id,
+                              taxSetting: {
+                                 taxPercentage: 10,
+                                 isTaxIncluded: true,
+                                 isTaxable: true
+                              }
                            }
                         ]
                      }

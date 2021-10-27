@@ -111,7 +111,9 @@ export default function SelectClass({ experienceId, isMulti = false }) {
    return (
       <Wrapper>
          <div className="flex_row">
-            <h2 className="heading text3">${pricePerPerson} Per Person</h2>
+            <h2 className="heading text3">
+               ${pricePerPerson.toFixed(2)} Per Person
+            </h2>
             <div style={{ position: 'relative' }}>
                <button
                   className="breakdown-head text8"
