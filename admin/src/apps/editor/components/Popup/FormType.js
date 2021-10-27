@@ -23,7 +23,6 @@ import 'antd/dist/antd.css'
 import { useQuery } from '@apollo/react-hooks'
 import { GET_FILE_ID } from '../../graphql'
 import { EditIcon, DeleteIcon } from '../../assets/Icons'
-import AddIcon from './Add.jsx'
 export default function FormType({
    show,
    closePopup,

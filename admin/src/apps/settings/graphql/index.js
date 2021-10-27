@@ -687,6 +687,11 @@ export const MASTER = {
          }
       `,
    },
+   VEG_NONVEG: {
+      // LIST:,
+      // CREATE:,
+      // DELETE:,
+   },
 }
 
 export const DEVICES = {
