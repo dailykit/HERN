@@ -141,10 +141,10 @@ const BulkActions = ({
          increase: 0,
          decrease: 0,
       },
-      // productCategory: {
-      //    defaultOption: null,
-      //    value: '',
-      // },
+      productCategory: {
+         defaultOption: null,
+         value: '',
+      },
 
       // planTitle: {
       //    value: '',
@@ -254,10 +254,10 @@ const BulkActions = ({
                increase: 0,
                decrease: 0,
             },
-            // productCategory: {
-            //    defaultOption: null,
-            //    value: '',
-            // },
+            productCategory: {
+               defaultOption: null,
+               value: '',
+            },
 
             // planTitle: {
             //    value: '',

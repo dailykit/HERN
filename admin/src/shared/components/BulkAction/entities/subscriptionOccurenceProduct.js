@@ -11,8 +11,13 @@ import {
    HorizontalTab,
    HorizontalTabs,
    Collapsible,
+   Dropdown,
 } from '@dailykit/ui'
 import { Tooltip } from '../..'
+import { toast } from 'react-toastify'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { PRODUCT_CATEGORY_SUBSCRIPTION_OCCURRENCE_PRODUCT } from '../mutation'
+import { PRODUCT_CATEGORY_OF_SUBSCRIPTION_OCCURRENCE_PRODUCT } from '../subscription'
 
 export const SubscriptionOccurrenceProductBulkAction = props => {
    const {
@@ -23,6 +28,25 @@ export const SubscriptionOccurrenceProductBulkAction = props => {
       additionalBulkAction,
       setAdditionalBulkAction,
    } = props
+   const [productCategories, setProductCategories] = React.useState([])
+
+   // subscription
+   useSubscription(PRODUCT_CATEGORY_OF_SUBSCRIPTION_OCCURRENCE_PRODUCT, {
+      onSubscriptionData: data => {
+         console.log(
+            'data.subscriptionData.data.productCategories.subscriptionOccurenceProducts::::::::',
+            data.subscriptionData.data.productCategories
+         )
+         const newProductCategories =
+            data.subscriptionData.data.productCategories.map((item, index) => ({
+               ...item,
+               id: index + 1,
+               payload: { productCategory: item.title },
+            }))
+         setProductCategories(newProductCategories)
+      },
+   })
+   const capitalize = string => string.charAt(0).toUpperCase() + string.slice(1)
 
    return (
       <>
@@ -332,6 +356,60 @@ export const SubscriptionOccurrenceProductBulkAction = props => {
                </CollapsibleComponent>
             )
          )}
+         <Flex container alignItems="center">
+            <Text as="text1">Product Category</Text>
+            <TextButton
+               type="ghost"
+               size="sm"
+               onClick={() => {
+                  setInitialBulkAction(prevState => ({
+                     ...prevState,
+                     productCategory: {
+                        defaultOption: null,
+                        value: '',
+                     },
+                  }))
+                  setBulkActions(prevState => {
+                     delete prevState['productCategory']
+                     return prevState
+                  })
+               }}
+            >
+               Clear
+            </TextButton>
+         </Flex>
+         <Spacer size="10px" />
+         <Dropdown
+            type="single"
+            defaultValue={initialBulkAction.productCategory.defaultOption}
+            options={productCategories}
+            // addOption={() => {
+            //    createProductCategory()
+            // }}
+            searchedOption={option =>
+               setInitialBulkAction({
+                  ...initialBulkAction,
+                  productCategory: {
+                     ...initialBulkAction.productCategory,
+                     value: option,
+                  },
+               })
+            }
+            selectedOption={option => {
+               setInitialBulkAction(prevState => ({
+                  ...prevState,
+                  productCategory: {
+                     ...prevState,
+                     defaultOption: option,
+                  },
+               }))
+               setBulkActions(prevState => ({
+                  ...prevState,
+                  ...option.payload,
+               }))
+            }}
+            placeholder="choose product type"
+         />
       </>
    )
 }
