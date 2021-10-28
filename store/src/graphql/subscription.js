@@ -467,7 +467,7 @@ export const CART_SUBSCRIPTION = gql`
          paidAmount: amount
          paymentStatus
          fulfillmentInfo
-         cartPayments {
+         activeCartPayment {
             cartId
             paymentStatus
             transactionRemark

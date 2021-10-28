@@ -75,11 +75,8 @@ function Checkout({ navigationMenuItems, parsedData = [], footerHtml = '' }) {
             const hostCart =
                hostCartObj === undefined ? cart?.childCarts[0] : hostCartObj
             console.log('cartsubscription', cart)
-            const updatedCartPayment = cart?.cartPayments.find(
-               cartPayment => cartPayment?.cartId === +cartId
-            )
-            if (!isEmpty(updatedCartPayment)) {
-               setCartPayment(updatedCartPayment)
+            if (!isEmpty(cart?.activeCartPayment)) {
+               setCartPayment(cart?.activeCartPayment)
             }
             setExperienceBookingId(cart?.experienceBooking?.id)
             setExperienceInfo({

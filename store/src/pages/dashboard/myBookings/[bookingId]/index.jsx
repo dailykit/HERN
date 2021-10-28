@@ -1,11 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Confetti from 'react-confetti'
 import { useSubscription, useMutation } from '@apollo/client'
 import { useRouter } from 'next/router'
 import { useToasts } from 'react-toast-notifications'
 import styled from 'styled-components'
 import ReactHtmlParser from 'react-html-parser'
-import { Button, Divider, Badge } from 'antd'
+import { Button, Result, Spin } from 'antd'
 import {
    BookingInvite,
    ChevronLeft,
@@ -14,17 +14,13 @@ import {
    SpinnerIcon,
    SEO,
    Layout,
-   InlineLoader
+   InlineLoader,
+   Button as ButtonComponent
 } from '../../../../components'
 import BookingCard from '../../../../pageComponents/BookingCard'
 import { UPDATE_CART, CART_SUBSCRIPTION } from '../../../../graphql'
 import { useUser, useExperienceInfo } from '../../../../Providers'
-import {
-   getDateWithTime,
-   getMinute,
-   useWindowDimensions,
-   fileParser
-} from '../../../../utils'
+import { useWindowDimensions, fileParser, isEmpty } from '../../../../utils'
 import { theme } from '../../../../theme'
 import {
    getNavigationMenuItems,
@@ -46,7 +42,11 @@ function ManageBooking({
    const { user = {} } = userState
    const [experienceInfo, setExperienceInfo] = useState(null)
    const [isCelebrating, setIsCelebrating] = useState(false)
+   const [isBooking, setIsBooking] = useState(false)
+   const [cartPayment, setCartPayment] = useState(null)
+   const [actionUrl, setActionUrl] = useState('')
    const [loading, setLoading] = useState(true)
+
    const { error: cartSubscriptionError } = useSubscription(CART_SUBSCRIPTION, {
       variables: {
          where: {
@@ -61,6 +61,9 @@ function ManageBooking({
          subscriptionData: { data: { carts = [] } = {} } = {}
       } = {}) => {
          const [cart] = carts
+         if (!isEmpty(cart?.activeCartPayment)) {
+            setCartPayment(cart?.activeCartPayment)
+         }
          setExperienceInfo({
             ...cart,
             ...cart?.experienceClass?.experience,
@@ -72,7 +75,7 @@ function ManageBooking({
       }
    })
    const [updateCart, { loading: isCartUpdating }] = useMutation(UPDATE_CART, {
-      refetchQueries: ['CART_INFO'],
+      refetchQueries: ['CART_INFO', 'CART_SUBSCRIPTION'],
       onError: error => {
          addToast('Opps! Something went wrong!', { appearance: 'error' })
          console.log(error)
@@ -80,7 +83,6 @@ function ManageBooking({
    })
 
    const stopCelebration = () => {
-      setTimeout(setIsCelebrating(false), 12000)
       router.push('/myBookings')
    }
    const startCelebration = () => {
@@ -89,6 +91,7 @@ function ManageBooking({
    }
 
    const onPayHandler = async () => {
+      setIsBooking(true)
       await updateCart({
          variables: {
             cartId: experienceInfo?.cartId,
@@ -101,8 +104,34 @@ function ManageBooking({
             }
          }
       })
-      startCelebration()
    }
+
+   useEffect(() => {
+      if (cartPayment?.paymentStatus === 'SUCCEEDED') {
+         console.log('initiating celebration')
+         startCelebration()
+      } else if (cartPayment?.paymentStatus === 'REQUIRES_ACTION') {
+         if (
+            cartPayment?.transactionRemark &&
+            Object.keys(cartPayment?.transactionRemark).length > 0 &&
+            cartPayment?.transactionRemark.next_action
+         ) {
+            if (
+               cartPayment?.transactionRemark.next_action.type ===
+               'use_stripe_sdk'
+            ) {
+               setActionUrl(
+                  cartPayment?.transactionRemark.next_action.use_stripe_sdk
+                     .stripe_js
+               )
+            } else {
+               setActionUrl(
+                  cartPayment?.transactionRemark.next_action.redirect_to_url.url
+               )
+            }
+         }
+      }
+   }, [cartPayment])
 
    if (loading) return <InlineLoader type="full" />
    if (cartSubscriptionError) {
@@ -121,7 +150,7 @@ function ManageBooking({
                      ?.content
                )}
          </div>
-         <Wrapper isCelebrating={isCelebrating}>
+         <Wrapper isBooking={isBooking}>
             <div className="checkout-heading">
                <Button
                   shape="circle"
@@ -136,45 +165,80 @@ function ManageBooking({
                <p className="go_back text10"> Back to bookings </p>
             </div>
             <h1 className="h1_head text1">Manage Booking</h1>
-            <div className="container">
-               <div className="left-side-container">
-                  <BookingInvite experienceBookingId={bookingId} />
-                  {experienceInfo?.balancePayment > 0 && (
-                     <Payment
-                        type="checkout"
-                        onPay={onPayHandler}
-                        isOnPayDisabled={Boolean(
-                           !user?.defaultPaymentMethodId || isCartUpdating
-                        )}
-                     />
-                  )}
-               </div>
-               <div className="right-side-container">
-                  <div className="sticky-card">
-                     <BookingCard experienceInfo={experienceInfo} />
+            {!isEmpty(experienceInfo) ? (
+               <div className="container">
+                  <div className="left-side-container">
+                     <BookingInvite experienceBookingId={bookingId} />
+                     {experienceInfo?.balancePayment > 0 && (
+                        <Payment
+                           type="checkout"
+                           onPay={onPayHandler}
+                           isOnPayDisabled={Boolean(
+                              !user?.defaultPaymentMethodId || isCartUpdating
+                           )}
+                        />
+                     )}
+                  </div>
+                  <div className="right-side-container">
+                     <div className="sticky-card">
+                        <BookingCard experienceInfo={experienceInfo} />
+                     </div>
                   </div>
                </div>
-            </div>
-         </Wrapper>
-         <BackDrop show={isCelebrating}>
-            <div className="booking-done">
-               <img
-                  src="/assets/images/celebration.png"
-                  alt="celebration-emoji"
+            ) : (
+               <Result
+                  status="404"
+                  title="Not Found!"
+                  subTitle="Sorry, the page you visited does not exist."
+                  extra={
+                     <ButtonComponent
+                        className="back_to_home_btn"
+                        onClick={() => router.push('/')}
+                     >
+                        Back Home
+                     </ButtonComponent>
+                  }
                />
-               <p>Your're BOOKED!</p>
-               <div
-                  style={{
-                     display: 'flex',
-                     justifyContent: 'center',
-                     alignItems: 'center'
-                  }}
-               >
-                  <SpinnerIcon size="64" color="#fff" backgroundColor="none" />
+            )}
+         </Wrapper>
+         <BackdropDiv>
+            <BackDrop show={isBooking}>
+               <div className="booking-done">
+                  {isCelebrating ? (
+                     <Result status="success" />
+                  ) : (
+                     <div
+                        style={{
+                           display: 'flex',
+                           justifyContent: 'center',
+                           alignItems: 'center'
+                        }}
+                     >
+                        <Spin size="large" />
+                     </div>
+                  )}
+                  {isCelebrating ? (
+                     <p>Successfully Booked the experience!</p>
+                  ) : isEmpty(actionUrl) ? (
+                     <p>Please wait while we book this experience...</p>
+                  ) : (
+                     <p>
+                        Looks like your card requires authentication for
+                        one-time payments.
+                        <a
+                           href={actionUrl}
+                           className="action_url"
+                           target="_blank"
+                           rel="noreferrer"
+                        >
+                           Please authenticate your self here
+                        </a>
+                     </p>
+                  )}
                </div>
-            </div>
-            <Confetti width={width} height={height} />
-         </BackDrop>
+               {isCelebrating && <Confetti width={width} height={height} />}
+            </BackDrop>
+         </BackdropDiv>
          <div id="myBooking-bottom-01">
             {Boolean(parsedData.length) &&
                ReactHtmlParser(
@@ -219,7 +283,7 @@ const Wrapper = styled.div`
    width: 100%;
    color: ${theme.colors.textColor4};
    padding: 64px 80px;
-   filter: ${({ isCelebrating }) => isCelebrating && 'blur(4px)'};
+   filter: ${({ isBooking }) => isBooking && 'blur(4px)'};
    .experience-date {
       h4 {
          font-size: ${theme.sizes.h8};
@@ -318,6 +382,20 @@ const Wrapper = styled.div`
          }
       }
    }
+   .back_to_home_btn {
+      width: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: ${theme.colors.textColor};
+      color: ${theme.colors.textColor4};
+      font-family: Proxima Nova;
+      font-style: normal;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      margin: 0 auto;
+      padding: 0 2rem;
+   }
    @media (max-width: 769px) {
       padding: 32px 26px;
       .container {
@@ -343,6 +421,28 @@ const Wrapper = styled.div`
                }
             }
          }
+      }
+   }
+`
+
+export const BackdropDiv = styled.div`
+   .action_url {
+      display: block;
+      text-decoration: underline;
+   }
+   .ant-result {
+      padding: 0 2rem;
+   }
+   .ant-result-success .ant-result-icon > .anticon {
+      color: ${theme.colors.textColor4};
+   }
+   .ant-spin .ant-spin-dot {
+      width: 2em;
+      height: 2em;
+      .ant-spin-dot-item {
+         background-color: ${theme.colors.textColor4};
+         width: 2rem;
+         height: 2rem;
       }
    }
 `
