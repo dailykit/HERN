@@ -4,7 +4,7 @@ import { useUser } from '../../../context'
 import {
    isClient,
    getRoute,
-   processJsFile,
+   processExternalFiles,
    getPageProps,
    renderPageContent,
 } from '../../../utils'
@@ -14,7 +14,7 @@ import { SEO, Layout } from '../../../components'
 const AddressesPage = props => {
    const router = useRouter()
    const { isAuthenticated, isLoading } = useUser()
-   const { folds, settings, navigationMenus, seoSettings } = props
+   const { folds, settings, navigationMenus, seoSettings, linkedFiles } = props
 
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
@@ -25,7 +25,7 @@ const AddressesPage = props => {
 
    React.useEffect(() => {
       try {
-         processJsFile(folds)
+         processExternalFiles(folds, linkedFiles)
       } catch (err) {
          console.log('Failed to render page: ', err)
       }
@@ -42,13 +42,17 @@ const AddressesPage = props => {
 export default AddressesPage
 
 export const getStaticProps = async ({ params }) => {
-   const { parsedData, seo, settings, navigationMenus, seoSettings } = await getPageProps(
-      params,
-      '/account/addresses'
-   )
+   const { parsedData, settings, navigationMenus, seoSettings, linkedFiles } =
+      await getPageProps(params, '/account/addresses')
 
    return {
-      props: { folds: parsedData, seo, settings, navigationMenus, seoSettings },
+      props: {
+         folds: parsedData,
+         linkedFiles,
+         settings,
+         navigationMenus,
+         seoSettings,
+      },
       revalidate: 60, // will be passed to the page component as props
    }
 }
