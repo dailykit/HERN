@@ -6,14 +6,14 @@ import {
    getPageProps,
    getRoute,
    isClient,
-   processJsFile,
+   processExternalFiles,
    renderPageContent,
 } from '../../utils'
 
 const MenuPage = props => {
    const router = useRouter()
    const { isAuthenticated, isLoading } = useUser()
-   const { folds, settings, navigationMenus, seoSettings } = props
+   const { folds, settings, navigationMenus, seoSettings, linkedFiles } = props
 
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
@@ -24,7 +24,7 @@ const MenuPage = props => {
 
    React.useEffect(() => {
       try {
-         processJsFile(folds)
+         processExternalFiles(folds, linkedFiles)
       } catch (err) {
          console.log('Failed to render page: ', err)
       }
@@ -41,13 +41,17 @@ const MenuPage = props => {
 export default MenuPage
 
 export const getStaticProps = async ({ params }) => {
-   const { parsedData, seo, settings, navigationMenus, seoSettings } = await getPageProps(
-      params,
-      '/menu'
-   )
+   const { parsedData, settings, navigationMenus, seoSettings, linkedFiles } =
+      await getPageProps(params, '/menu')
 
    return {
-      props: { folds: parsedData, seo, settings, navigationMenus, seoSettings },
+      props: {
+         folds: parsedData,
+         linkedFiles,
+         settings,
+         navigationMenus,
+         seoSettings,
+      },
       revalidate: 60, // will be passed to the page component as props
    }
 }

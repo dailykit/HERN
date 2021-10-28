@@ -274,17 +274,50 @@ export const GET_SYSTEM_MODULES = gql`
    }
 `
 export const UPSERT_BRANDS_SEO = gql`
-mutation upsertBrandsSeo($object: brands_brandPage_brandPageSetting_insert_input!) {
-   upsertBrandsSeo: insert_brands_brandPage_brandPageSetting_one(on_conflict: {constraint: brandPage_brandPageSetting_pkey, update_columns: [value]}, object: $object) {
-     value
-     brandPageId
-     brandPageSettingId
-     brandPageSetting {
-       id
-       identifier
-       type
-     }
+   mutation upsertBrandsSeo(
+      $object: brands_brandPage_brandPageSetting_insert_input!
+   ) {
+      upsertBrandsSeo: insert_brands_brandPage_brandPageSetting_one(
+         on_conflict: {
+            constraint: brandPage_brandPageSetting_pkey
+            update_columns: [value]
+         }
+         object: $object
+      ) {
+         value
+         brandPageId
+         brandPageSettingId
+         brandPageSetting {
+            id
+            identifier
+            type
+         }
+      }
    }
- }`
+`
+export const LINK_PAGE_FILES = gql`
+   mutation LINK_PAGE_FILES(
+      $objects: [brands_pagesLinkedFiles_insert_input!]!
+   ) {
+      insert_brands_pagesLinkedFiles(objects: $objects) {
+         returning {
+            id
+            fileId
+            fileType
+         }
+      }
+   }
+`
 
-//  {"object":{"brandPageId":1029,"brandPageSettingId": 2,"value": {"metaTitle":"is meta title","metaDescription":"this is metaDescription for register page"}}} 
+export const DELETE_PAGE_LINKED_FILES = gql`
+   mutation DELETE_PAGE_LINKED_FILES($id: Int!) {
+      delete_brands_pagesLinkedFiles(where: { id: { _eq: $id } }) {
+         returning {
+            fileId
+            linkedFile {
+               fileName
+            }
+         }
+      }
+   }
+`
