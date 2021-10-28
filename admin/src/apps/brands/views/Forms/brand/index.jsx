@@ -27,6 +27,7 @@ import {
    SubscriptionSettings,
    ThirdPartyIntegrations,
    BrandSettings,
+   SEOSettings,
 } from './tabs'
 
 export const Brand = () => {
@@ -178,16 +179,20 @@ export const Brand = () => {
          <HorizontalTabs>
             <HorizontalTabList>
                <HorizontalTab>Brand Settings</HorizontalTab>
+               <HorizontalTab>SEO Tools</HorizontalTab>
                <HorizontalTab>On Demand Settings</HorizontalTab>
                <HorizontalTab>On Demand Collections</HorizontalTab>
-               <HorizontalTab>Subscription Settings</HorizontalTab>
+               {/* <HorizontalTab>Subscription Settings</HorizontalTab>
                <HorizontalTab>Subscription Plans</HorizontalTab>
-               <HorizontalTab>Third Party Integration</HorizontalTab>
+               <HorizontalTab>Third Party Integration</HorizontalTab> */}
             </HorizontalTabList>
 
             <HorizontalTabPanels>
                <HorizontalTabPanel>
                   <BrandSettings />
+               </HorizontalTabPanel>
+               <HorizontalTabPanel>
+                  <SEOSettings />
                </HorizontalTabPanel>
                <HorizontalTabPanel>
                   <OnDemandSettings />

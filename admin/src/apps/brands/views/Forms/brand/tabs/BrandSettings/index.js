@@ -1,18 +1,18 @@
 import React from 'react'
-import { toast } from 'react-toastify'
 import { Card } from 'antd'
 import 'antd/dist/antd.css'
+import { toast } from 'react-toastify'
 import { isEmpty, groupBy } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Text, Spacer, TextButton } from '@dailykit/ui'
 import { BRANDS } from '../../../../../graphql'
+import { logger } from '../../../../../../../shared/utils'
+import { Text, Spacer, TextButton } from '@dailykit/ui'
 import {
     Flex,
     InlineLoader,
     Tooltip,
 } from '../../../../../../../shared/components'
-import { logger } from '../../../../../../../shared/utils'
 import {
     BrandName,
     BrandLogo,
@@ -38,7 +38,7 @@ import {
     TaxPercentage,
     Brand
 } from './sections'
-import { RefundPolicy } from './sections/RefundPolicy'
+// import { RefundPolicy } from './sections/RefundPolicy'
 
 export const BrandSettings = () => {
     const params = useParams()
@@ -91,10 +91,6 @@ export const BrandSettings = () => {
                 <Text as="h2">Brand Settings</Text>
                 <Tooltip identifier="brands_collection_listing_heading" />
             </Flex>
-            <Spacer size="24px" />
-            <Card style={{ width: '100%' }}>
-                <div>SEO BASICS</div>
-            </Card>
             <Spacer size="24px" />
             <Brand update={update} />
             <Spacer size="24px" />
