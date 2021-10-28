@@ -42,7 +42,8 @@ const EditRequestHeaders = (props)=>{
     }
 
     const addNewHeader = ()=>{
-        const headers_list = [...state.webhookDetails.headers, {"id": `header-${state.webhookDetails.headers.length+1}`, "key": "", "value": ""}]
+        const headerId = state.webhookDetails.headers
+        const headers_list = [...state.webhookDetails.headers, {"id": `header-${parseInt(state.webhookDetails.headers[state.webhookDetails.headers.length-1].id.slice(7))+1}`, "key": "", "value": ""}]
         console.log(headers_list)
         dispatch({type:'SET_WEBHOOK_DETAILS', payload:{...state.webhookDetails, headers:headers_list}})
     }

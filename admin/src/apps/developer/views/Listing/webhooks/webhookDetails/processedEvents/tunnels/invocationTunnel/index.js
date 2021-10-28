@@ -1,20 +1,15 @@
 import React, {useRef, useState} from 'react';
-import { TextButton, Tunnel, TunnelHeader, Tunnels } from "@dailykit/ui"
+import {  Tunnel, TunnelHeader, Tunnels } from "@dailykit/ui"
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import options from '../../../../../../tableOptions'
 import { toast } from 'react-toastify'
 import {  GET_INVOCATIONS_OF_PROCESSED_EVENTS } from '../../../../../../../graphql';
 import { useSubscription } from '@apollo/react-hooks'
 import {logger}  from '../../../../../../../../../shared/utils'
-import {
-   SectionTab,
-   SectionTabs,
-   SectionTabList,
-   SectionTabPanel,
-   SectionTabPanels,
-} from '@dailykit/ui'
+import { Text, TextButton, Flex, HorizontalTab, HorizontalTabs, HorizontalTabList, HorizontalTabPanel, HorizontalTabPanels } from '@dailykit/ui';
 import { PublishIcon, UnPublishIcon } from '../../../../../../../../products/assets/icons';
 import moment from 'moment';
+import ReactJson from 'react-json-view'
 
 
 
@@ -105,9 +100,7 @@ const InvocationTunnel = (props)=>{
                   title='Invocation Logs'
                   close={() => props.closePopupTunnel(1)}
                   description='This is a description'
-                //   tooltip={<InfoIcon color='#a4a4a4' />}
                />
-               {/* <StyledWrapper> */}
                   {Boolean(logs) && (
                   <ReactTabulator
                      columns={columns}
@@ -121,7 +114,6 @@ const InvocationTunnel = (props)=>{
                      className = 'developer-webhooks-invocationLogs'
                   />
                )}
-            {/* </StyledWrapper> */}
             </Tunnel>
 
             <Tunnel layer={2} popup={true} size='md'>
@@ -136,7 +128,22 @@ const InvocationTunnel = (props)=>{
                      background: 'rgb(237, 237, 237)'
                   }}
                >
-                  <SectionTabs>
+               <HorizontalTabs>
+               <HorizontalTabList>
+                  <HorizontalTab>Payload Sent</HorizontalTab>
+                  <HorizontalTab>Response</HorizontalTab>
+
+               </HorizontalTabList>
+               <HorizontalTabPanels>
+                  <HorizontalTabPanel>
+                     <ReactJson src={payloadData.payloadSent?JSON.parse(payloadData.payloadSent): {"message": "loading"}} />
+                  </HorizontalTabPanel>
+                  <HorizontalTabPanel>
+                     <ReactJson src={payloadData.response} />
+                  </HorizontalTabPanel>
+               </HorizontalTabPanels>
+            </HorizontalTabs>
+                  {/* <SectionTabs>
                      <SectionTabList>
                         <SectionTab>
                            <div style={containerStyle}>
@@ -150,10 +157,10 @@ const InvocationTunnel = (props)=>{
                         </SectionTab>
                      </SectionTabList>
                      <SectionTabPanels>
-                        <SectionTabPanel>{payloadData.payloadSent}</SectionTabPanel>
-                        <SectionTabPanel>{JSON.stringify(payloadData.response, null, 4)}</SectionTabPanel>
+                        <SectionTabPanel><ReactJson src={payloadData.payloadSent?JSON.parse(payloadData.payloadSent): {"message": "loading"}} /></SectionTabPanel>
+                        <SectionTabPanel><ReactJson src={payloadData.response} /></SectionTabPanel>
                      </SectionTabPanels>
-                  </SectionTabs>
+                  </SectionTabs> */}
                </div>
             </Tunnel>
 

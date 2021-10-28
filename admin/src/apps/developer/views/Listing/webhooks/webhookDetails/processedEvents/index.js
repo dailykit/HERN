@@ -10,7 +10,8 @@ import {useWebhook} from '../../state'
 import InvocationTunnel from './tunnels/invocationTunnel';
 import {PublishIcon, UnPublishIcon} from '../../../../../../products/assets/icons'
 import moment from 'moment'
-import { InlineLoader } from '../../../../../../../shared/components';
+import "../../../../tableStyle.css"
+import PayloadTunnel from './tunnels/payloadTunnel'
 
 
 const ProcessedEvents = ()=>{
@@ -23,7 +24,11 @@ const ProcessedEvents = ()=>{
 
     const [processedEventId, setProcessedEventId] = useState()
 
+    const [payloadData, setPayloadData] = useState()
+
     const [popupTunnels, openPopupTunnel, closePopupTunnel] = useTunnel(2)
+
+    const [payloadTunnels, openPayloadTunnel, closePayloadTunnel] = useTunnel(1)
 
     const { data, loading, error } = useSubscription(GET_PROCESSED_EVENTS, {
       variables:{
@@ -34,6 +39,7 @@ const ProcessedEvents = ()=>{
             if (item.processedWebhookEventsByUrls[0]){
             const newData =  { "created_at":item.created_at, 
                "id":item.id,
+               "payload": item.payload,
                "statusCode":item.processedWebhookEventsByUrls[0].statusCode,
                "attemptedTime":item.processedWebhookEventsByUrls[0].attemptedTime}
                return newData;
@@ -67,7 +73,9 @@ const ProcessedEvents = ()=>{
 
     const rowClick = (e, cell) => {
       const id = cell._cell.row.data.id
+      const payload = cell._cell.row.data.payload
       setProcessedEventId(id)  
+      setPayloadData(payload)
    }
 
     const columns = [
@@ -110,10 +118,26 @@ const ProcessedEvents = ()=>{
             headerSort:true,
             headerHozAlign: 'center',
             headerTooltip: true,
+            width: 170,
             formatter:reactFormatter(<TextButton type="ghost">View Invocations</TextButton>),
             cellClick: (e, cell) => {
                rowClick(e, cell)
              openPopupTunnel(1)
+            }
+         },
+         {
+            title: 'Payload Sent',
+            field: 'payload',
+            hozAlign: 'center',
+            resizable:true,
+            headerSort:true,
+            headerHozAlign: 'center',
+            headerTooltip: true,
+            width: 170,
+            formatter:reactFormatter(<TextButton type="ghost">View Payload</TextButton>),
+            cellClick: (e, cell) => {
+               rowClick(e, cell)
+             openPayloadTunnel(1)
             }
          }
      ]
@@ -121,7 +145,7 @@ const ProcessedEvents = ()=>{
     return (
         <>
          {invocationState && <InvocationTunnel openPopupTunnel={openPopupTunnel} closePopupTunnel={closePopupTunnel} popupTunnels={popupTunnels} webhookUrl_EventId={state.webhookDetails.webhookUrl_EventId} processedEventId={processedEventId} />}
-            
+         {invocationState && <PayloadTunnel openPayloadTunnel={openPayloadTunnel} closePayloadTunnel={closePayloadTunnel} payloadTunnels={payloadTunnels} payloadData={payloadData} />}
             
             
             <Flex container alignItems="center" justifyContent="space-between">
