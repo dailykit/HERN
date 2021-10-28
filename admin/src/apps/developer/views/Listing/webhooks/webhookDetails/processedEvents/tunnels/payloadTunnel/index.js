@@ -1,10 +1,5 @@
-import React, {useRef, useState} from 'react';
-import { Spacer, TextButton, Tunnel, TunnelHeader, Tunnels } from "@dailykit/ui"
-import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
-import options from '../../../../../../tableOptions'
-import { toast } from 'react-toastify'
-import {  GET_INVOCATIONS_OF_PROCESSED_EVENTS } from '../../../../../../../graphql';
-import { useSubscription } from '@apollo/react-hooks'
+import React from 'react';
+import { Spacer, Tunnel, TunnelHeader, Tunnels } from "@dailykit/ui"
 import ReactJson from 'react-json-view'
 
 

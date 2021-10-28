@@ -1,10 +1,9 @@
-import React , {useState, useEffect} from 'react';
-import {Form, Spacer, Text, Tunnel, TunnelHeader, Tunnels, IconButton } from '@dailykit/ui'
-import { useMutation, useSubscription } from '@apollo/react-hooks'
+import React from 'react';
+import {Form, Spacer, Tunnel, TunnelHeader, Tunnels, IconButton } from '@dailykit/ui'
+import { useMutation } from '@apollo/react-hooks'
 import { UPDATE_REQUEST_HEADERS } from '../../../../../../../graphql';
 import {
     ButtonTile,
-    Dropdown,
     Flex
  } from '@dailykit/ui'
 import {useWebhook} from '../../../../state'

@@ -1,9 +1,9 @@
 import React, {useRef, useState, useEffect} from 'react';
 import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
-import {Table, TableHead, TableBody, TableRow, TableCell, Loader, Flex, TextButton, Text, useTunnel, IconButton} from '@dailykit/ui';
+import { Flex, TextButton, Text, useTunnel} from '@dailykit/ui';
 import options from '../../../../tableOptions'
-import { GET_PROCESSED_EVENTS, GET_INVOCATIONS_OF_PROCESSED_EVENTS } from '../../../../../graphql';
-import { useSubscription, useMutation } from '@apollo/react-hooks'
+import { GET_PROCESSED_EVENTS } from '../../../../../graphql';
+import { useSubscription } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import {logger}  from '../../../../../../../shared/utils'
 import {useWebhook} from '../../state'
@@ -114,12 +114,12 @@ const ProcessedEvents = ()=>{
             title: 'Invocations',
             field: 'invocations',
             hozAlign: 'center',
+            tooltip: false,
             resizable:true,
             headerSort:true,
             headerHozAlign: 'center',
             headerTooltip: true,
-            width: 170,
-            formatter:reactFormatter(<TextButton type="ghost">View Invocations</TextButton>),
+            formatter:reactFormatter(<TextButton title="view invocation" type="ghost">View</TextButton>),
             cellClick: (e, cell) => {
                rowClick(e, cell)
              openPopupTunnel(1)
@@ -130,11 +130,11 @@ const ProcessedEvents = ()=>{
             field: 'payload',
             hozAlign: 'center',
             resizable:true,
+            tooltip: false,
             headerSort:true,
             headerHozAlign: 'center',
             headerTooltip: true,
-            width: 170,
-            formatter:reactFormatter(<TextButton type="ghost">View Payload</TextButton>),
+            formatter:reactFormatter(<TextButton title="view payload" type="ghost">View</TextButton>),
             cellClick: (e, cell) => {
                rowClick(e, cell)
              openPayloadTunnel(1)

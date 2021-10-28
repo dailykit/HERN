@@ -13,8 +13,6 @@ import {DeleteIcon} from '../../../../../../shared/assets/icons'
 import { useTranslation } from 'react-i18next'
 import { StyledWrapper } from './styled'
 import "../../../tableStyle.css"
-import {InlineLoader} from '../../../../../../shared/components';
-import { load } from 'dotenv';
 const address = 'apps.developer.views.listings.webhookslisting.'
 
 
@@ -47,6 +45,7 @@ const WebhookListing = ()=>{
                 "eventLabel": item.availableWebhookEvent.label,
                 "url": item.webhookUrl.urlEndpoint,
                 "advanceConfig": item.advanceConfig,
+                "description": item.availableWebhookEvent.description,
                 "headers": item.headers
              }
              return newData
@@ -84,6 +83,7 @@ const WebhookListing = ()=>{
       const payload = {
          "webhookUrl_EventId": id,
          "webhookUrl_EventLabel": webhookUrl_EventLabel,
+         "webhookUrl_EventDescription": cell._cell.row.data.description,
          "webhookUrlEndpoint":webhookUrlEndpoint,
          "advanceConfig": advanceConfig,
          "headers": headers_list
@@ -271,6 +271,7 @@ const WebhookListing = ()=>{
                         data={webhookEvents}
                         options={{
                            ...options,
+                           maxHeight: "480px",
                            placeholder: 'No Webhooks Available Yet !',
                            persistenceID : 'webhooks_table',
                            reactiveData: true,

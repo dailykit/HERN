@@ -27,3 +27,13 @@
     margin-bottom: 20px;
     transform: translatez(0);
 }
+
+.developer-webhooks-processedEvents .tabulator-header .tabulator-col {
+    display: inline-block;
+    position: relative;
+    box-sizing: border-box;
+    background-color: #fff;
+    text-align: left;
+    vertical-align: top;
+    overflow: hidden;
+}

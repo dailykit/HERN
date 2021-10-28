@@ -1,8 +1,7 @@
-import React , {useState, useEffect} from 'react';
+import React , {useState} from 'react';
 import {UPDATE_RETRY_CONFIGURATION } from '../../../../../../../graphql';
-import { Loader } from '@dailykit/ui'
-import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
-import {Form, Spacer, Text, Tunnel, TunnelHeader, Tunnels } from '@dailykit/ui'
+import { useMutation } from '@apollo/react-hooks'
+import {Form, Spacer, Tunnel, TunnelHeader, Tunnels } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { logger } from '../../../../../../../../../shared/utils';
 
@@ -44,38 +43,39 @@ const EditRetryConfig = (props) => {
                     description='Edit Retry Configuration'                   
                     right={{title: 'Save Changes', action: () => {submitForm()}}} />   
                     <Spacer size='16px' />
-
-                    <Form.Group>
-                        <Form.Label htmlFor='numberOfRetries' title='numberOfRetries'>
-                            Number of Retries
-                        </Form.Label>
-                        <Form.Number
-                            id='numberOfRetries'
-                            name='numberOfRetries'
-                            onChange={(e) => {updatedadvanceConfig({timeOut:advanceConfig.timeOut, retryInterval:advanceConfig.retryInterval, numberOfRetries:parseInt(e.target.value)})}}
-                            placeholder={props.advanceConfig?.numberOfRetries}
-                        />
-                        <Spacer size='16px' />
-                        <Form.Label htmlFor='retryInterval' title='retryInterval'>
-                            Retry Interval(sec)
-                        </Form.Label>
-                        <Form.Number
-                            id='retryInterval'
-                            name='retryInterval'
-                            onChange={(e) => {updatedadvanceConfig({timeOut:advanceConfig.timeOut, retryInterval:parseInt(e.target.value), numberOfRetries:advanceConfig.numberOfRetries})}}
-                            placeholder={props.advanceConfig?.retryInterval}
-                        />
-                        <Spacer size='16px' />
-                        <Form.Label htmlFor='timeOut' title='timeOut'>
-                            Timeout (sec)
-                        </Form.Label>
-                        <Form.Number
-                            id='timeOut'
-                            name='timeOut'
-                            onChange={(e) => {updatedadvanceConfig({timeOut:parseInt(e.target.value), retryInterval:advanceConfig.retryInterval, numberOfRetries:advanceConfig.numberOfRetries})}}
-                            placeholder={props.advanceConfig?.timeOut}
-                        />
-                    </Form.Group>
+                    <div style={{"padding":15}}>
+                        <Form.Group>
+                            <Form.Label htmlFor='numberOfRetries' title='numberOfRetries'>
+                                Number of Retries
+                            </Form.Label>
+                            <Form.Number
+                                id='numberOfRetries'
+                                name='numberOfRetries'
+                                onChange={(e) => {updatedadvanceConfig({timeOut:advanceConfig.timeOut, retryInterval:advanceConfig.retryInterval, numberOfRetries:parseInt(e.target.value)})}}
+                                placeholder={props.advanceConfig?.numberOfRetries}
+                            />
+                            <Spacer size='16px' />
+                            <Form.Label htmlFor='retryInterval' title='retryInterval'>
+                                Retry Interval(sec)
+                            </Form.Label>
+                            <Form.Number
+                                id='retryInterval'
+                                name='retryInterval'
+                                onChange={(e) => {updatedadvanceConfig({timeOut:advanceConfig.timeOut, retryInterval:parseInt(e.target.value), numberOfRetries:advanceConfig.numberOfRetries})}}
+                                placeholder={props.advanceConfig?.retryInterval}
+                            />
+                            <Spacer size='16px' />
+                            <Form.Label htmlFor='timeOut' title='timeOut'>
+                                Timeout (sec)
+                            </Form.Label>
+                            <Form.Number
+                                id='timeOut'
+                                name='timeOut'
+                                onChange={(e) => {updatedadvanceConfig({timeOut:parseInt(e.target.value), retryInterval:advanceConfig.retryInterval, numberOfRetries:advanceConfig.numberOfRetries})}}
+                                placeholder={props.advanceConfig?.timeOut}
+                            />
+                        </Form.Group>
+                    </div>
                 </Tunnel>
             </Tunnels>
         </>
