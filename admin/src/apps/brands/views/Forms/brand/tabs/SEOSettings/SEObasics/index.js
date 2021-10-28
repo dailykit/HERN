@@ -37,7 +37,7 @@ import { EditIcon, DeleteIcon } from '../../../../../../../../shared/assets/icon
 import { BRANDS } from '../../../../../../graphql'
 import { InfoCircleOutlined } from '@ant-design/icons'
 
-const SEObasics = ({ update }) => {
+const SEOBasics = ({ update }) => {
     const params = useParams()
     const [settingId, setSettingId] = React.useState(null)
     const { Text, Title } = Typography
@@ -94,9 +94,11 @@ const SEObasics = ({ update }) => {
             },
         }))
     }
-    const [seoDetails, { loading: metaDetailsLoading, brandsSEO }] =
+    const [seoDetails, { loading: metaDetailsLoading, brandSettings }] =
         useLazyQuery(BRANDS.SETTING, {
-            onCompleted: ({ data: { brandSettings = [] } = {} } = {}) => {
+            onCompleted: ({ brandSettings
+            }) => {
+                console.log("brandSettings", brandSettings)
                 if (!isEmpty(brandSettings)) {
                     const index = brandSettings.findIndex(
                         node => node?.brand?.brandId === Number(params.id)
@@ -152,16 +154,26 @@ const SEObasics = ({ update }) => {
             logger(error)
         },
     })
-
+    console.log({
+        object: {
+            value: {
+                metaTitle: form.metaTitle.value,
+                metaDescription: form.metaDescription.value,
+                favicon: form.favicon.value,
+            },
+            brandId: params.id,
+            brandSettingId: settingId,
+        },
+    })
     //save changes in metadetails
     const Save = () => {
         upsertSEODetails({
             variables: {
                 object: {
                     value: {
-                        ogTitle: form.ogTitle.value,
-                        ogDescription: form.ogDescription.value,
-                        ogImage: form.ogImage.value,
+                        metaTitle: form.metaTitle.value,
+                        metaDescription: form.metaDescription.value,
+                        favicon: form.favicon.value,
                     },
                     brandId: params.id,
                     brandSettingId: settingId,
@@ -171,9 +183,9 @@ const SEObasics = ({ update }) => {
         update({
             id: settingId,
             value: {
-                ogTitle: form.ogTitle.value,
-                ogDescription: form.ogDescription.value,
-                ogImage: form.ogImage.value,
+                metaTitle: form.metaTitle.value,
+                metaDescription: form.metaDescription.value,
+                favicon: form.favicon.value,
             },
         })
         setIsSEOBasicsModalVisible(false)
@@ -444,4 +456,4 @@ const SEObasics = ({ update }) => {
     )
 }
 
-export default SEObasics
+export default SEOBasics

@@ -98,7 +98,7 @@ export const BrandSettings = () => {
                 title={<Text as="h3">Availability</Text>}
                 extra={
                     <TextButton type="solid" size="sm">
-                        Save
+                        Manage
                     </TextButton>
                 }
                 style={{ width: '100%' }}

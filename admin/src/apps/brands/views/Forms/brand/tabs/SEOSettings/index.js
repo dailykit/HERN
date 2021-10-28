@@ -6,7 +6,7 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { BRANDS } from '../../../../../graphql'
 import { logger } from '../../../../../../../shared/utils'
 
-import SEObasics from './SEObasics'
+import SEOBasics from './SEOBasics'
 import SocialShare from './SocialShare'
 import TwitterCard from './TwitterCard'
 
@@ -56,11 +56,10 @@ export const SEOSettings = () => {
     }
     return (
         <div>
-
-            SEO BASICS component Disabled(due to graphql query error)
-            {/* <SEObasics update={update} /> */}
+            <SEOBasics update={update} />
             {/* <SocialShare />
             <TwitterCard /> */}
+
         </div>
     )
 }
