@@ -177,8 +177,8 @@ export const CART_INFO = gql`
          parentCartId
          isHostParticipant
          totalParticipants
-         totalKit(args: { params: $params })
-         totalKitPrice(args: { params: $params })
+         totalKit
+         totalKitPrice
          toPayByParent
          experienceClassId
          experienceClass {
@@ -458,31 +458,19 @@ export const CART_SUBSCRIPTION = gql`
          cartId: id
          experienceClassId
          experienceClassTypeId
-         tax2(args: { params: { shareFor: "parent" } })
-         tip
-         address
-         isHostParticipant
          totalParticipants
-         totalKitPrice(args: { params: { shareFor: "parent" } })
-         totalExperiencePrice(args: { params: { shareFor: "parent" } })
-         totalKit(args: { params: { shareFor: "parent" } })
-         totalPrice2(args: { params: { shareFor: "parent" } })
-         subTotal2(args: { params: { shareFor: "parent" } })
-         itemTotal2(args: { params: { shareFor: "parent" } })
+         totalKit
+         totalKitPrice
+         isHostParticipant
+         cartOwnerBilling
          balancePayment
-         toPayByParent
          paidAmount: amount
          paymentStatus
-         deliveryPrice2(args: { params: { shareFor: "parent" } })
-         billingDetails2(args: { params: { shareFor: "parent" } })
          fulfillmentInfo
-         transactionId
-         transactionRemark
-         stripeInvoiceId
-         stripeInvoiceDetails
          cartPayments {
             cartId
             paymentStatus
+            transactionRemark
          }
          products: cartItems(where: { level: { _eq: 1 } }) {
             id
@@ -531,6 +519,8 @@ export const CART_SUBSCRIPTION = gql`
             customerKeycloakId
             parentCartId
             isHostCart(args: { params: {} })
+            totalKit
+            totalKitPrice
             experienceClassId
             experienceClassTypeId
             cartItems(
@@ -1089,7 +1079,7 @@ export const MANAGE_PARTICIPANTS = gql`
          email
          childCart {
             address
-            totalKit(args: { params: $paramsForChild })
+            totalKit
             totalPriceForParent: totalPrice2(args: { params: $paramsForParent })
             totalPriceForChild: totalPrice2(args: { params: $paramsForChild })
             toPayByParent

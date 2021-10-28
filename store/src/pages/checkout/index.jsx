@@ -50,7 +50,8 @@ function Checkout({ navigationMenuItems, parsedData = [], footerHtml = '' }) {
    const [experienceInfo, setExperienceInfo] = useState(null)
    const [isCelebrating, setIsCelebrating] = useState(false)
    const [isBooking, setIsBooking] = useState(false)
-   const [cartPaymentStatus, setCartPaymentStatus] = useState('PENDING')
+   const [cartPayment, setCartPayment] = useState(null)
+   const [actionUrl, setActionUrl] = useState('')
    const [experienceBookingId, setExperienceBookingId] = useState(null)
    const [loading, setLoading] = useState(true)
    const { error } = useSubscription(CART_SUBSCRIPTION, {
@@ -73,13 +74,13 @@ function Checkout({ navigationMenuItems, parsedData = [], footerHtml = '' }) {
             )
             const hostCart =
                hostCartObj === undefined ? cart?.childCarts[0] : hostCartObj
-            const cartPayment = cart?.cartPayments.find(
-               cartPayment => cartPayment?.cartId === cartId
+            console.log('cartsubscription', cart)
+            const updatedCartPayment = cart?.cartPayments.find(
+               cartPayment => cartPayment?.cartId === +cartId
             )
-            console.log('setting cartPayment status', cartPayment)
-            setCartPaymentStatus(
-               !isEmpty(cartPayment) ? cartPayment?.paymentStatus : 'PENDING'
-            )
+            if (!isEmpty(updatedCartPayment)) {
+               setCartPayment(updatedCartPayment)
+            }
             setExperienceBookingId(cart?.experienceBooking?.id)
             setExperienceInfo({
                ...cart,
@@ -110,7 +111,10 @@ function Checkout({ navigationMenuItems, parsedData = [], footerHtml = '' }) {
    })
 
    const [updateCart, { loading: isCartUpdating }] = useMutation(UPDATE_CART, {
-      refetchQueries: ['CART_INFO', 'CART_SUBSCRIPTION'],
+      refetchQueries: ['CART_SUBSCRIPTION'],
+      onCompleted: () => {
+         console.log('cart updated....')
+      },
       onError: error => {
          setIsBooking(false)
          addToast('Opps! Something went wrong!', { appearance: 'error' })
@@ -145,18 +149,31 @@ function Checkout({ navigationMenuItems, parsedData = [], footerHtml = '' }) {
    }
 
    useEffect(() => {
-      console.log(
-         'inside useEffect for checking cartpayment status',
-         cartPaymentStatus
-      )
-      if (cartPaymentStatus === 'SUCCEEDED') {
+      if (cartPayment?.paymentStatus === 'SUCCEEDED') {
          console.log('initiating celebration')
          startCelebration()
-      } else {
-         console.log('cart payment not succeeded so setting backdrop false')
-         setIsBooking(false)
+      } else if (cartPayment?.paymentStatus === 'REQUIRES_ACTION') {
+         if (
+            cartPayment?.transactionRemark &&
+            Object.keys(cartPayment?.transactionRemark).length > 0 &&
+            cartPayment?.transactionRemark.next_action
+         ) {
+            if (
+               cartPayment?.transactionRemark.next_action.type ===
+               'use_stripe_sdk'
+            ) {
+               setActionUrl(
+                  cartPayment?.transactionRemark.next_action.use_stripe_sdk
+                     .stripe_js
+               )
+            } else {
+               setActionUrl(
+                  cartPayment?.transactionRemark.next_action.redirect_to_url.url
+               )
+            }
+         }
       }
-   }, [cartPaymentStatus])
+   }, [cartPayment])
 
    if (loading) return <InlineLoader type="full" />
    if (error) {
@@ -229,7 +246,7 @@ function Checkout({ navigationMenuItems, parsedData = [], footerHtml = '' }) {
             )}
          </Wrapper>
          <BackdropDiv>
-            <BackDrop show={isBooking} disabled={isBooking}>
+            <BackDrop show={isBooking}>
                <div className="booking-done">
                   {isCelebrating ? (
                      <Result status="success" />
@@ -244,11 +261,24 @@ function Checkout({ navigationMenuItems, parsedData = [], footerHtml = '' }) {
                         <Spin size="large" />
                      </div>
                   )}
-                  <p>
-                     {isCelebrating
-                        ? 'Successfully Booked the experience!'
-                        : 'Please wait while we book this experience...'}
-                  </p>
+                  {isCelebrating ? (
+                     <p>Successfully Booked the experience!</p>
+                  ) : isEmpty(actionUrl) ? (
+                     <p>Please wait while we book this experience...</p>
+                  ) : (
+                     <p>
+                        Looks like your card requires authentication for
+                        one-time payments.
+                        <a
+                           href={actionUrl}
+                           className="action_url"
+                           target="_blank"
+                           rel="noreferrer"
+                        >
+                           Please authenticate your self here
+                        </a>
+                     </p>
+                  )}
                </div>
                {isCelebrating && <Confetti width={width} height={height} />}
             </BackDrop>
@@ -417,6 +447,10 @@ const Wrapper = styled.div`
    }
 `
 export const BackdropDiv = styled.div`
+   .action_url {
+      display: block;
+      text-decoration: underline;
+   }
    .ant-result {
       padding: 0 2rem;
    }

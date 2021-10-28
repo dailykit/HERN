@@ -1,8 +1,7 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Collapse } from 'antd'
 import { CardWrapper } from './styles'
-import { ChevronDown, ChevronRight } from '../../components'
-import { getMinute, getDateWithTime } from '../../utils'
+import { getMinute, getDateWithTime, isEmpty } from '../../utils'
 import { theme } from '../../theme'
 import Participant from '../../components/Booking/components/Participant'
 
@@ -44,7 +43,12 @@ export default function Card({ experienceInfo }) {
                <div className="pricing">
                   <p className="proxinova_text text9">Overall Total amount</p>
                   <p className="proxinova_text text9">
-                     ${experienceInfo?.toPayByParent}
+                     $
+                     {!isEmpty(experienceInfo?.cartOwnerBilling?.totalToPay)
+                        ? (experienceInfo?.cartOwnerBilling?.totalToPay).toFixed(
+                             2
+                          )
+                        : 'N/A'}
                   </p>
                </div>
                <div className="estimate-billing-div">
@@ -59,7 +63,14 @@ export default function Card({ experienceInfo }) {
                               <tr>
                                  <td>Total experience price</td>
                                  <td>
-                                    ${experienceInfo?.totalExperiencePrice}
+                                    $
+                                    {experienceInfo?.experienceClassType?.priceRanges?.totalPriceBreak
+                                       .find(
+                                          item =>
+                                             item.person ===
+                                             experienceInfo?.totalParticipants
+                                       )
+                                       .totalPrice.toFixed(2)}
                                  </td>
                               </tr>
                               <tr>
@@ -69,6 +80,16 @@ export default function Card({ experienceInfo }) {
                               <tr>
                                  <td>Total kit price</td>
                                  <td>${experienceInfo?.totalKitPrice}</td>
+                              </tr>
+                              <tr>
+                                 <td>Total Tax</td>
+                                 <td>
+                                    $
+                                    {
+                                       experienceInfo?.cartOwnerBilling
+                                          ?.itemTotalTaxExcluded
+                                    }
+                                 </td>
                               </tr>
                            </table>
                         </div>
