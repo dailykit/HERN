@@ -3,7 +3,8 @@ import {
    UPDATE_CART_PAYMENT,
    CREATE_CART_PAYMENT,
    CART_PAYMENTS,
-   CART
+   CART,
+   UPDATE_CART
 } from '../graphql'
 export const handleCartPayment = async (req, res) => {
    try {
@@ -28,7 +29,7 @@ export const handleCartPayment = async (req, res) => {
                cartPayments.length > 1 ||
                cartPayments[0].amount !== cart.balancePayment
             ) {
-               //cancell all invalid previous cart...
+               // cancell all invalid previous cart...
                const cancelledCartPayments = await Promise.all(
                   cartPayments.map(async cartPayment => {
                      try {
@@ -66,6 +67,17 @@ export const handleCartPayment = async (req, res) => {
                      }
                   }
                )
+               if (
+                  Object.keys(createCartPayment).length > 0 &&
+                  createCartPayment.id
+               ) {
+                  await client.request(UPDATE_CART, {
+                     id: cart.id,
+                     set: {
+                        activeCartPaymentId: createCartPayment.id
+                     }
+                  })
+               }
                res.status(200).json(createCartPayment)
             } else {
                const updatedCartPayment = await Promise.all(
@@ -106,6 +118,17 @@ export const handleCartPayment = async (req, res) => {
                   }
                }
             )
+            if (
+               Object.keys(createCartPayment).length > 0 &&
+               createCartPayment.id
+            ) {
+               await client.request(UPDATE_CART, {
+                  id: cart.id,
+                  set: {
+                     activeCartPaymentId: createCartPayment.id
+                  }
+               })
+            }
             console.log({ createCartPayment })
             res.status(200).json(createCartPayment)
          }
