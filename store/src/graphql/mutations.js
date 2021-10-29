@@ -164,6 +164,13 @@ export const MUTATIONS = {
             }
          }
       `,
+      DELETE: gql`
+         mutation deleteCart($id: Int!) {
+            deleteCart(id: $id) {
+               id
+            }
+         }
+      `,
    },
    CART_REWARDS: {
       CREATE: gql`
@@ -457,6 +464,16 @@ export const DELETE_CART_ITEMS = gql`
          returning {
             id
          }
+      }
+   }
+`
+export const UPDATE_CART_ITEMS = gql`
+   mutation UPDATE_CART_ITEMS(
+      $where: order_cartItem_bool_exp!
+      $_set: order_cartItem_set_input!
+   ) {
+      updateCartItems(where: $where, _set: $_set) {
+         affected_rows
       }
    }
 `

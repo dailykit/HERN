@@ -7,6 +7,7 @@ import {
    MUTATIONS,
    DELETE_CART_ITEMS,
    GET_CARTS,
+   UPDATE_CART_ITEMS,
 } from '../graphql'
 import { useUser } from '.'
 import { useConfig } from '../lib'
@@ -91,6 +92,14 @@ export const CartProvider = ({ children }) => {
    })
 
    //delete cart
+   const [deleteCart] = useMutation(MUTATIONS.CART.DELETE, {
+      onCompleted: () => {
+         localStorage.removeItem('cart-id')
+      },
+      onError: error => {
+         console.log('delete cart error', error)
+      },
+   })
 
    // create cartItems
    const [createCartItems] = useMutation(CREATE_CART_ITEMS, {
@@ -117,8 +126,9 @@ export const CartProvider = ({ children }) => {
          })
       },
    })
-   //update cartItems
 
+   //update cartItems
+   const [updateCartItems] = useMutation(UPDATE_CART_ITEMS)
    //add to cart
    const addToCart = (cartItem, quantity) => {
       const cartItems = new Array(quantity).fill({ ...cartItem })
@@ -194,7 +204,7 @@ export const CartProvider = ({ children }) => {
       }
    }
 
-   // get user pending cart
+   // get user pending cart when logging in
    const { loading: existingCartLoading, error: existingCartError } =
       useSubscription(GET_CARTS, {
          variables: {
@@ -213,6 +223,22 @@ export const CartProvider = ({ children }) => {
                subscriptionData.data.carts &&
                subscriptionData.data.carts.length > 0
             ) {
+               const pendingCartId = localStorage.getItem('cart-id')
+               if (pendingCartId) {
+                  // merge
+                  updateCartItems({
+                     variables: {
+                        where: { cartId: { _eq: pendingCartId } },
+                        _set: { cartId: subscriptionData.data.carts[0].id },
+                     },
+                  })
+                  // delete last one
+                  deleteCart({
+                     variables: {
+                        id: pendingCartId,
+                     },
+                  })
+               }
                setStoredCartId(subscriptionData.data.carts[0].id)
             } else {
                // no pending cart

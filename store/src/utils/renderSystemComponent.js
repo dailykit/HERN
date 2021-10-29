@@ -1,8 +1,6 @@
 import axios from 'axios'
 import ReactHtmlParser from 'react-html-parser'
-
 import { renderComponentByName } from '../utils'
-
 const renderComponent = (fold, options) => {
    try {
       if (fold.component) {

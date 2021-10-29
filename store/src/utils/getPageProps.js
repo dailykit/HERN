@@ -1,5 +1,10 @@
 import { graphQLClient } from '../lib'
-import { getSettings, foldsResolver, getSEOSettings } from '.'
+import {
+   getPageLevelFiles,
+   getSettings,
+   foldsResolver,
+   getSEOSettings,
+} from '.'
 import { NAVIGATION_MENU, BRAND_PAGE } from '../graphql'
 
 export const getPageProps = async (params, route) => {
@@ -23,6 +28,9 @@ export const getPageProps = async (params, route) => {
       dataByRoute.brands_brandPages[0]['brandPageModules']
    )
 
+   //Linked files with page
+   const linkedFiles = await getPageLevelFiles(dataByRoute)
+
    //Navigation Menu
    const { brands_navigationMenuItem: navigationMenus } = await client.request(
       NAVIGATION_MENU,
@@ -32,5 +40,12 @@ export const getPageProps = async (params, route) => {
       }
    )
 
-   return { parsedData, settings, navigationMenus, seoSettings, seo }
+   return {
+      parsedData,
+      settings,
+      navigationMenus,
+      seoSettings,
+      seo,
+      linkedFiles,
+   }
 }
