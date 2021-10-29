@@ -83,9 +83,7 @@ export const CartProvider = ({ children }) => {
 
    React.useEffect(() => {
       if (!isCartLoading) {
-         console.log('CHECKING>>>> carts query works....', carts)
          if (carts.length) {
-            console.log('CHECKING>>>> carts query works....', carts)
             dispatch({
                type: 'SET_CARTS',
                payload: carts

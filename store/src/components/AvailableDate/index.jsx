@@ -30,7 +30,6 @@ const AvailableDate = ({
    }
 
    const dynamicButtonTitle = slot => {
-      console.log('cartttt', cart)
       if (slot?.isBooked) {
          return 'Sold out'
       }
@@ -149,15 +148,9 @@ const AvailableDate = ({
                                  slot?.isBooked ||
                                  isExpired(slot?.date, new Date())
                               }
-                              title={
-                                 selectedExperienceClassId === slot?.id
-                                    ? 'Selected'
-                                    : dynamicButtonTitle(slot)
-                              }
+                              title={dynamicButtonTitle(slot)}
                            >
-                              {selectedExperienceClassId === slot?.id
-                                 ? 'Selected'
-                                 : dynamicButtonTitle(slot)}
+                              {dynamicButtonTitle(slot)}
                            </Button>
                         </Flex>
                      )

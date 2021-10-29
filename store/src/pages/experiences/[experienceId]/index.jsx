@@ -34,7 +34,12 @@ import {
    getBannerData,
    getGlobalFooter
 } from '../../../lib'
-import { useExperienceInfo, useCart, useUser } from '../../../Providers'
+import {
+   useExperienceInfo,
+   useCart,
+   useUser,
+   useProduct
+} from '../../../Providers'
 import {
    EXPERIENCE,
    EXPERIENCE_PRODUCT,
@@ -66,6 +71,8 @@ export default function Experience({
 
    const { setExperienceId, isLoading } = useExperienceInfo()
    const { getCart } = useCart()
+   const { addProducts, addSelectedProduct, addSelectedProductOption } =
+      useProduct()
    const cart = getCart(experienceId)
    const { width } = useWindowDimensions()
    const [isSendPollModalVisible, setIsSendPollModalVisible] = useState(false)
@@ -176,10 +183,21 @@ export default function Experience({
          variables: {
             experienceId
          },
-         onSubscriptionData: ({
+         onSubscriptionData: async ({
             subscriptionData: { data: { products: results = [] } = {} } = {}
          } = {}) => {
-            setProducts(results)
+            if (results.length > 0) {
+               setProducts(results)
+               // adding all the products(linked with experience) to the product provider
+               await addProducts(results)
+               const [result] = results
+
+               // adding first product initially for selectedProduct to the product provider
+               await addSelectedProduct(result)
+
+               // adding first product option initially for selectedProductOption to the product provider
+               await addSelectedProductOption(result.productOptions[0])
+            }
          }
       }
    )

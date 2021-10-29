@@ -24,6 +24,7 @@ export const EXPERIENCE_CLASS_INFO = gql`
          experience {
             id
             title
+            isKitMandatory
             experience_products_aggregate {
                aggregate {
                   count

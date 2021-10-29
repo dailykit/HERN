@@ -65,6 +65,7 @@ export const EXPERIENCE = gql`
             id
             title
             metaData
+            isKitMandatory
             experience_headers {
                id
                title
@@ -87,6 +88,13 @@ export const EXPERIENCE = gql`
                      aggregate {
                         count
                      }
+                  }
+               }
+            }
+            experience_products {
+               product {
+                  productOptions {
+                     cartItem
                   }
                }
             }

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useMemo } from 'react'
 import { Wrapper, Popup } from './styles'
 import { message } from 'antd'
+import { useCheckoutHandler } from '../../checkoutHandler'
 import Participant from '../Participant'
 import PriceBreakDown from '../PriceBreakDown'
 import AvailableDate from '../../../AvailableDate'
@@ -15,6 +16,7 @@ import { isEmpty } from '../../../../utils'
 export default function SelectClass({ experienceId, isMulti = false }) {
    const node = useRef()
    const { state: userState, toggleAuthenticationModal } = useUser()
+   const { initiateCheckout } = useCheckoutHandler()
    const { isAuthenticated } = userState
    const {
       state,
@@ -28,21 +30,17 @@ export default function SelectClass({ experienceId, isMulti = false }) {
       experience,
       bookingType,
       bookingStepsIndex,
-      participants,
       classDates,
       selectedSlot,
       pricePerPerson,
       priceBreakDownDrawer,
-      experienceClasses,
-      isHostParticipant,
-      classTypeInfo
+      experienceClasses
    } = useMemo(() => {
       return state
    }, [state])
 
    const {
       state: pollState,
-      updatePollInfo,
       addToPollOptions,
       removeFromPollOptions
    } = usePoll()
@@ -51,12 +49,6 @@ export default function SelectClass({ experienceId, isMulti = false }) {
    const showLoginModal = () => {
       message.warning('Please login to continue')
       toggleAuthenticationModal(true)
-   }
-
-   const typeHandler = async type => {
-      updateExperienceInfo({
-         bookingType: type
-      })
    }
 
    const btnSelectionHandler = async info => {
@@ -83,9 +75,21 @@ export default function SelectClass({ experienceId, isMulti = false }) {
             })
             if (
                !isEmpty(experience) &&
-               experience?.experience_products_aggregate?.aggregate?.count > 0
+               (experience?.experience_products_aggregate?.aggregate?.count >
+                  1 ||
+                  (!experience?.isKitMandatory &&
+                     experience?.experience_products_aggregate?.aggregate
+                        ?.count === 1))
             ) {
                nextBookingSteps(bookingStepsIndex)
+            } else {
+               if (
+                  !isEmpty(experience) &&
+                  experience?.experience_products_aggregate?.aggregate?.count <=
+                     1
+               ) {
+                  initiateCheckout()
+               }
             }
          }
       }

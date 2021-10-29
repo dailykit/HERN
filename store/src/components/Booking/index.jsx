@@ -39,7 +39,6 @@ export default function Booking({
          !isEmpty(experienceState) &&
          !isEmpty(experienceState?.experienceClasses)
       ) {
-         console.log('ExperienceSTATE', experienceState)
          setExperienceInfo(experienceState)
       }
    }, [experienceState])
@@ -75,14 +74,7 @@ export default function Booking({
                   })
                }
             })
-            console.log(
-               'cart info checking',
-               cartInfo,
-               experienceInfo,
-               experienceInfo?.experienceClasses,
-               selectedClassTypeInfo,
-               alreadySelectedSlotInfo
-            )
+
             await updateExperienceInfo({
                isHostParticipant: cartInfo?.isHostParticipant,
                participants: cartInfo?.totalParticipants,

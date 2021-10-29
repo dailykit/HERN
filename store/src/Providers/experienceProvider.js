@@ -50,7 +50,6 @@ const reducers = (state, { type, payload }) => {
             ...state,
             ...payload
          }
-         console.log('UPDATE', payload, newState)
          return newState
       }
       case 'INCREMENT_BOOKING_STEP': {
@@ -107,7 +106,6 @@ export const ExperienceProvider = ({ children }) => {
          experienceId: experienceId
       },
       onCompleted: async ({ privateClassType, publicClassType }) => {
-         console.log('privateClassType', privateClassType)
          let initialDispatchData = {}
          let initialPollData = {}
          let experienceClasses = privateClassType
@@ -214,7 +212,6 @@ export const ExperienceProvider = ({ children }) => {
    })
 
    const updateExperienceInfo = data => {
-      console.log('price update>>>>>>', data)
       dispatch({
          type: 'UPDATE_EXPERIENCE_INFO',
          payload: data

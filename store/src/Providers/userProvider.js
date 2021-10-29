@@ -70,9 +70,8 @@ export const UserProvider = ({ children }) => {
    const [session, loadingSession] = useSession()
 
    const [createCustomer] = useMutation(CREATE_CUSTOMER, {
-      onError: error => console.log('createCustomer => error => ', error)
+      onError: error => console.error('createCustomer => error => ', error)
    })
-   console.log('UserProvider => session => ', session)
    const { loading, data: { customer = {} } = {} } = useSubscription(
       CUSTOMER_DETAILS,
       {
