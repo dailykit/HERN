@@ -5,6 +5,7 @@ import {
    CloseIcon,
    DistanceIcon,
    GPSIcon,
+   LocationMarker,
    RadioIcon,
    StoreIcon,
 } from '../assets/icons'
@@ -17,6 +18,7 @@ import { useConfig } from '../lib'
 import axios from 'axios'
 import _ from 'lodash'
 import { getDistance } from 'geolib'
+import { CSSTransition } from 'react-transition-group'
 
 // this Location selector is a pop up for mobile view so can user can select there location
 
@@ -61,7 +63,11 @@ export const LocationSelector = props => {
    // location by browser
    const locationByBrowser = () => {
       // if no location already exist in local and if browser not support geolocation api
-      setLocationSearching(prev => ({ ...prev, loading: !prev.loading }))
+      setLocationSearching(prev => ({
+         ...prev,
+         loading: !prev.loading,
+         error: false,
+      }))
       if (window.navigator.geolocation) {
          const success = position => {
             const latitude = position.coords.latitude
@@ -226,7 +232,7 @@ export const LocationSelector = props => {
             ) : null}
             {/* <RefineLocation setUserCoordinate={setUserCoordinate} /> */}
             {/* Footer */}
-            <StoreList userCoordinate={userCoordinate} />
+            {address && <StoreList userCoordinate={userCoordinate} />}
             <div className="hern-store-location-selector-footer"></div>
          </div>
       </div>
@@ -319,16 +325,14 @@ const GET_BRAND_LOCATION = gql`
    }
 `
 const StoreList = props => {
-   // props
    const { userCoordinate, selectType = 'radio' } = props
 
-   // context
    const { brand } = useConfig()
 
-   // component state
    const [brandLocation, setBrandLocation] = useState(storeStaticData)
    const [sortedBrandLocation, setSortedBrandLocation] = useState(null)
    const [selectedStore, setSelectedStore] = useState(null)
+   const [showStoreOnMap, setShowStoreOnMap] = useState(false)
 
    // get all store
    // const { loading: storeLoading, error: storeError } = useQuery(
@@ -446,6 +450,9 @@ const StoreList = props => {
    }
    return (
       <div className="hern-location-selector__stores-list">
+         <div className="hern-location-selector__view-on-map">
+            <span onClick={() => setShowStoreOnMap(true)}>View on map</span>
+         </div>
          {sortedBrandLocation.map((eachStore, index) => {
             const {
                location: { label, id, locationAddress },
@@ -504,6 +511,10 @@ const StoreList = props => {
                </div>
             )
          })}
+         <StoresOnMap
+            showStoreOnMap={showStoreOnMap}
+            setShowStoreOnMap={setShowStoreOnMap}
+         />
       </div>
    )
 }
@@ -514,6 +525,62 @@ const getDrivvaleData = async (postLocationData, url) => {
    return data
 }
 
+const StoresOnMap = props => {
+   const { storeData, showStoreOnMap, setShowStoreOnMap } = props
+
+   const defaultCenter = localStorage.getItem('userLocation')
+   const { latitude, longitude } = React.useMemo(
+      () => defaultCenter && JSON.parse(defaultCenter),
+      [defaultCenter]
+   )
+   // defaultProps for google map
+   const defaultProps = {
+      ...(JSON.parse(defaultCenter) && {
+         center: {
+            lat: latitude,
+            lng: longitude,
+         },
+      }),
+      zoom: 16,
+   }
+
+   const UserLocationMarker = () => {
+      return <LocationMarker />
+   }
+   return (
+      <CSSTransition
+         in={showStoreOnMap}
+         timeOut={300}
+         unmountOnExit
+         classNames="hern-store-location-selector__store-on-map-css-transition"
+      >
+         <div className="hern-store-location-selector__store-on-map-container">
+            <div className="hern-store-location-selector__store-on-map-header">
+               <div className="hern-store-location-selector__store-on-map-header-right">
+                  <CloseIcon
+                     size={16}
+                     color="#404040CC"
+                     stroke="currentColor"
+                     onClick={() => {
+                        setShowStoreOnMap(false)
+                     }}
+                  />
+                  <span>Stores on map</span>
+               </div>
+            </div>
+            <div className="hern-store-location-selector__store-on-map-map">
+               <GoogleMapReact
+                  bootstrapURLKeys={{ key: get_env('GOOGLE_API_KEY') }}
+                  defaultCenter={defaultProps.center}
+                  defaultZoom={defaultProps.zoom}
+               >
+                  <UserLocationMarker lat={latitude} lng={longitude} />
+               </GoogleMapReact>
+            </div>
+         </div>
+      </CSSTransition>
+   )
+}
 const storeStaticData = [
    {
       id: 1000,
