@@ -25,7 +25,7 @@
       "jwt-decode": "^3.1.2",
       "keycloak-js": "^12.0.4",
       "moment": "^2.29.1",
-      "next": "^11.0.1",
+      "next": "11.0.1",
       "next-auth": "^3.29.0",
       "plaiceholder": "^2.0.1",
       "prop-types": "^15.7.2",
@@ -55,7 +55,7 @@
    },
    "scripts": {
       "dev": "SET SKIP_PREFLIGHT_CHECK=true&&next dev",
-      "build": "next build",
+      "build": "NODE_OPTIONS='--openssl-legacy-provider --inspect'&&next build",
       "start": "next start",
       "init:config": "chmod +x ./script.sh && ./script.sh && cp env-config.js ./public"
    },
