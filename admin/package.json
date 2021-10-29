@@ -77,7 +77,7 @@
    "scripts": {
       "start": "SET PORT=8000 && SET SKIP_PREFLIGHT_CHECK=true&&react-scripts start",
       "start-mac": "SKIP_PREFLIGHT_CHECK=true&& PORT=8000 react-scripts start",
-      "build": "NODE_OPTIONS='--openssl-legacy-provider --inspect'&&react-scripts build",
+      "build": "react-scripts build",
       "test": "react-scripts test",
       "eject": "react-scripts eject"
    },

@@ -6,6 +6,7 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /usr/src/app
 COPY . .
 
+ENV NODE_OPTIONS=--openssl-legacy-provider
 ENV SKIP_PREFLIGHT_CHECK=true
 RUN yarn install:packages && yarn build
 
