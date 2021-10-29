@@ -56,7 +56,7 @@ export const SEOSettings = () => {
     }
     return (
         <div>
-            <SEOBasics update={update} />
+            {/* <SEOBasics update={update} /> */}
             {/* <SocialShare />
             <TwitterCard /> */}
 

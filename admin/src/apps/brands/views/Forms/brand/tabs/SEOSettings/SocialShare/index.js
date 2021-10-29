@@ -30,19 +30,17 @@
 // import { useMutation, useLazyQuery } from '@apollo/react-hooks'
 // import { useParams } from 'react-router-dom'
 // import { toast } from 'react-toastify'
-// import { BRANDS } from '../../../../../graphql'
 // import { StyledWrapper, ImageContainer } from './styled'
 // import { logger } from '../../../../../../../../shared/utils'
 // import { EditIcon, DeleteIcon } from '../../../../../../../../shared/assets/icons'
+// import { BRANDS } from '../../../../../../graphql'
 // import { InfoCircleOutlined } from '@ant-design/icons'
-// import BrandContext from '../../../../../../context/Brand'
 // const { Title, Text } = Typography
 
 // export const SocialShare = ({ routeName }) => {
 //     const [tunnel1, openTunnel1, closeTunnel1] = useTunnel(1)
-//     const { pageId } = useParams()
-//     const brandPageId = React.useMemo(() => parseInt(pageId), [])
-//     const [context] = useContext(BrandContext)
+//     const params = useParams()
+//     const [settingId, setSettingId] = React.useState(null)
 //     const [form, setForm] = useState({
 //         ogTitle: {
 //             value: '',
@@ -100,51 +98,62 @@
 //         }))
 //     }
 //     //query for getting metadetails
-//     const [seoDetails, { loading: metaDetailsLoading, brandsSEO }] =
-//         useLazyQuery(SEO_DETAILS, {
-//             onCompleted: brandsSEO => {
-//                 const seoSettings =
-//                     brandsSEO.brands_brandPage_brandPageSetting_by_pk
-//                 console.log('from subscription', seoSettings)
-//                 setForm(prev => ({
-//                     ogTitle: {
-//                         ...prev.ogTitle,
-//                         value: seoSettings?.value?.ogTitle,
-//                     },
-//                     ogDescription: {
-//                         ...prev.ogDescription,
-//                         value: seoSettings?.value?.ogDescription,
-//                     },
-//                     ogImage: {
-//                         ...prev.ogImage,
-//                         value: seoSettings?.value?.ogImage,
-//                     },
-//                 }))
+//     const [seoDetails, { loading: metaDetailsLoading, brandSettings }] =
+//         useLazyQuery(BRANDS.SETTING, {
+//             onCompleted: ({ brandSettings
+//             }) => {
+//                 console.log("brandSettings", brandSettings)
+//                 if (!isEmpty(brandSettings)) {
+//                     const index = brandSettings.findIndex(
+//                         node => node?.brand?.brandId === Number(params.id)
+//                     )
+//                     if (index === -1) {
+//                         const { id } = brandSettings[0]
+//                         setSettingId(id)
+//                         return
+//                     }
+//                     const { brand, id } = brandSettings[index]
+//                     setSettingId(id)
+//                     console.log("from social share", brand, id)
+//                     setForm(prev => ({
+//                         ogTitle: {
+//                             ...prev.ogTitle,
+//                             value: brand?.value?.ogTitle,
+//                         },
+//                         ogDescription: {
+//                             ...prev.ogDescription,
+//                             value: brand?.value?.ogDescription,
+//                         },
+//                         ogImage: {
+//                             ...prev.ogImage,
+//                             value: brand?.value?.ogImage,
+//                         },
+//                     }))
+//                 }
 //             },
 //             onError: error => {
-//                 toast.error('Something went wrong')
+//                 toast.error('Something went wrong with Social Share')
 //                 logger(error)
 //             },
 //             fetchPolicy: 'cache-and-network',
 //         })
 
 //     React.useEffect(() => {
-//         // brandPageSettingId: 2 for social share settings
 //         seoDetails({
 //             variables: {
-//                 brandPageId: brandPageId,
-//                 brandPageSettingId: 2,
-//             },
+//                 identifier: { _eq: 'og-card' },
+//                 type: { _eq: 'seo' },
+//             }
 //         })
 //     }, [])
 
 //     // Mutation for upserting seo meta data
-//     const [upsertSEODetails] = useMutation(UPSERT_BRANDS_SEO, {
+//     const [upsertSEODetails] = useMutation(BRANDS.UPDATE_BRAND_SETTING, {
 //         onCompleted: () => {
 //             toast.success('Updated!')
 //         },
 //         onError: error => {
-//             toast.error('Something went wrong with UPSERT_BRANDS_SEO')
+//             toast.error('Something went wrong with UPDATE_BRAND_SETTING')
 //             console.log(error)
 //             logger(error)
 //         },

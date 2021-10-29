@@ -90,7 +90,7 @@ export const BRANDS = {
    `,
 
    SETTING: gql`
-       query brandSettings(
+       subscription brandSettings(
          $identifier: String_comparison_exp!
          $type: String_comparison_exp!
       ) {
