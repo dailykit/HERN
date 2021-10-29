@@ -3,7 +3,11 @@ import { Form, Loader, Flex, Spacer, Dropdown } from '@dailykit/ui'
 import {
    Tooltip,
    RichTextEditor,
+   InlineLoader,
+   ErrorState,
 } from '../../../../../../../../shared/components'
+import gql from 'graphql-tag'
+import { useSubscription } from '@apollo/react-hooks'
 
 export const Text = ({ fieldDetail, marginLeft, path, onConfigChange }) => (
    <Flex
@@ -328,5 +332,65 @@ export const RichText = ({ fieldDetail, marginLeft, path, onConfigChange }) => {
             onChange={html => onEditorChange(html)}
          />
       </Flex>
+   )
+}
+const S_COLLECTIONS = gql`
+   subscription Collections {
+      collections: onDemand_collectionDetails(order_by: { created_at: desc }) {
+         id
+         title: name
+         value: name
+      }
+   }
+`
+export const CollectionSelector = props => {
+   // props
+   const { fieldDetail, marginLeft, path, onConfigChange } = props
+
+   const {
+      loading: subsLoading,
+      error: subsError,
+      data: { collections = [] } = {},
+   } = useSubscription(S_COLLECTIONS)
+   const selectedOptionHandler = options => {
+      const e = {
+         target: {
+            name: path,
+         },
+      }
+      onConfigChange(e, options)
+   }
+   if (subsLoading) {
+      return <InlineLoader />
+   }
+
+   if (subsError) {
+      return <ErrorState message="collections not found" />
+   }
+
+   return (
+      <>
+         <Flex
+            container
+            justifyContent="space-between"
+            alignItems="center"
+            margin={`0 0 0 ${marginLeft}`}
+         >
+            <Flex container alignItems="flex-end">
+               <Form.Label title={fieldDetail.label} htmlFor="select">
+                  {fieldDetail.label.toUpperCase()}
+               </Form.Label>
+               <Tooltip identifier="select_component_info" />
+            </Flex>
+            <Dropdown
+               type={fieldDetail?.type || 'single'}
+               options={collections}
+               defaultOption={fieldDetail?.value}
+               searchedOption={option => console.log(option)}
+               selectedOption={option => selectedOptionHandler(option)}
+               placeholder="choose collection..."
+            />
+         </Flex>
+      </>
    )
 }

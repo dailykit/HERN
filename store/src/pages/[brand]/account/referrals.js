@@ -7,14 +7,14 @@ import {
    getPageProps,
    getRoute,
    isClient,
-   processJsFile,
+   processExternalFiles,
    renderPageContent,
 } from '../../../utils'
 
 const ReferralsPage = props => {
    const router = useRouter()
    const { isAuthenticated, isLoading } = useUser()
-   const { folds, seo, settings, navigationMenus } = props
+   const { folds, settings, navigationMenus, seoSettings, linkedFiles } = props
 
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
@@ -25,7 +25,7 @@ const ReferralsPage = props => {
 
    React.useEffect(() => {
       try {
-         processJsFile(folds)
+         processExternalFiles(folds, linkedFiles)
       } catch (err) {
          console.log('Failed to render page: ', err)
       }
@@ -33,7 +33,7 @@ const ReferralsPage = props => {
 
    return (
       <Layout settings={settings} navigationMenus={navigationMenus}>
-         <SEO title="Referral" />
+         <SEO seoSettings={seoSettings} />
          <main>{renderPageContent(folds)}</main>
       </Layout>
    )
@@ -41,13 +41,17 @@ const ReferralsPage = props => {
 export default ReferralsPage
 
 export const getStaticProps = async ({ params }) => {
-   const { parsedData, seo, settings, navigationMenus } = await getPageProps(
-      params,
-      '/account/referrals'
-   )
+   const { parsedData, settings, navigationMenus, seoSettings, linkedFiles } =
+      await getPageProps(params, '/account/referrals')
 
    return {
-      props: { folds: parsedData, seo, settings, navigationMenus },
+      props: {
+         folds: parsedData,
+         linkedFiles,
+         settings,
+         navigationMenus,
+         seoSettings,
+      },
       revalidate: 60, // will be passed to the page component as props
    }
 }

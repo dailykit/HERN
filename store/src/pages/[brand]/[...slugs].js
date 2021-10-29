@@ -1,22 +1,26 @@
 import React from 'react'
 import { SEO, Layout } from '../../components'
-import { processJsFile, renderPageContent, getPageProps } from '../../utils'
+import {
+   processExternalFiles,
+   renderPageContent,
+   getPageProps,
+} from '../../utils'
 import 'regenerator-runtime'
 
 const Index = props => {
-   const { folds, settings, navigationMenus, params } = props
+   const { folds, settings, navigationMenus, seoSettings, linkedFiles } = props
 
    React.useEffect(() => {
       try {
-         processJsFile(folds)
+         processExternalFiles(folds, linkedFiles)
       } catch (err) {
          console.log('Failed to render page: ', err)
       }
-   }, [folds])
+   }, [folds, linkedFiles])
 
    return (
       <Layout settings={settings} navigationMenus={navigationMenus}>
-         <SEO title={params.slugs[0]} />
+         <SEO seoSettings={seoSettings} />
          <main>{renderPageContent(folds)}</main>
       </Layout>
    )
@@ -25,13 +29,25 @@ const Index = props => {
 export default Index
 
 export const getStaticProps = async ({ params }) => {
-   const { parsedData, seo, settings, navigationMenus } = await getPageProps(
-      params,
-      '/' + params.slugs.join('/')
-   )
+   const {
+      parsedData,
+      seo,
+      settings,
+      navigationMenus,
+      seoSettings,
+      linkedFiles,
+   } = await getPageProps(params, '/' + params.slugs.join('/'))
 
    return {
-      props: { params, folds: parsedData, seo, settings, navigationMenus },
+      props: {
+         params,
+         folds: parsedData,
+         seo,
+         settings,
+         navigationMenus,
+         seoSettings,
+         linkedFiles,
+      },
       revalidate: 60, // will be passed to the page component as props
    }
 }

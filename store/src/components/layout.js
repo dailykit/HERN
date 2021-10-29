@@ -34,7 +34,7 @@ export const Layout = ({
          {!noHeader && (
             <Header settings={settings} navigationMenus={navigationMenus} />
          )}
-         {children}
+         <div style={{ minHeight: '80vh' }}>{children}</div>
          <div className="hern-demo-mode">
             {(user?.isTest === true || store?.isStoreLive === false) && (
                <p>Store running in test mode so payments will be bypassed</p>

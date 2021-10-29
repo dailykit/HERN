@@ -1,14 +1,18 @@
 import React from 'react'
 import { SEO, Layout } from '../../components'
-import { processJsFile, renderPageContent, getPageProps } from '../../utils'
+import {
+   processExternalFiles,
+   renderPageContent,
+   getPageProps,
+} from '../../utils'
 import 'regenerator-runtime'
 
 const TermsAndConditionsPage = props => {
-   const { folds, settings } = props
+   const { folds, settings, seoSettings, linkedFiles } = props
 
    React.useEffect(() => {
       try {
-         processJsFile(folds)
+         processExternalFiles(folds, linkedFiles)
       } catch (err) {
          console.log('Failed to render page: ', err)
       }
@@ -16,7 +20,7 @@ const TermsAndConditionsPage = props => {
 
    return (
       <Layout settings={settings}>
-         <SEO title="Terms and Conditions" />
+         <SEO seoSettings={seoSettings} />
          <main>{renderPageContent(folds)}</main>
       </Layout>
    )
@@ -25,13 +29,17 @@ const TermsAndConditionsPage = props => {
 export default TermsAndConditionsPage
 
 export const getStaticProps = async ({ params }) => {
-   const { parsedData, seo, settings, navigationMenus } = await getPageProps(
-      params,
-      '/terms-and-conditions'
-   )
+   const { parsedData, settings, navigationMenus, seoSettings, linkedFiles } =
+      await getPageProps(params, '/terms-and-conditions')
 
    return {
-      props: { folds: parsedData, seo, settings, navigationMenus },
+      props: {
+         folds: parsedData,
+         linkedFiles,
+         settings,
+         navigationMenus,
+         seoSettings,
+      },
       revalidate: 60, // will be passed to the page component as props
    }
 }

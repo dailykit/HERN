@@ -6,7 +6,7 @@
    "dependencies": {
       "@apollo/react-hooks": "3.1.5",
       "@dailykit/react-tabulator": "0.13.6",
-      "@dailykit/ui": "^0.8.78",
+      "@dailykit/ui": "^0.8.81",
       "@dailykit/web-renderer": "1.0.7",
       "@monaco-editor/react": "^4.0.11",
       "@reach/tabs": "0.11.2",
@@ -18,7 +18,7 @@
       "@testing-library/jest-dom": "4.2.4",
       "@testing-library/react": "9.3.2",
       "@testing-library/user-event": "7.1.2",
-      "antd": "4.10.0",
+      "antd": "^4.16.13",
       "apollo-cache-inmemory": "1.6.5",
       "apollo-client": "2.6.8",
       "apollo-link": "1.2.14",

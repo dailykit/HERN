@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import {
    isClient,
    getRoute,
-   processJsFile,
+   processExternalFiles,
    renderPageContent,
    getPageProps,
 } from '../../../utils'
@@ -13,7 +13,7 @@ import { useUser } from '../../../context'
 const Checkout = props => {
    const router = useRouter()
    const { isAuthenticated, isLoading } = useUser()
-   const { seo, settings, folds } = props
+   const { settings, folds, seoSettings, linkedFiles } = props
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
          isClient && localStorage.setItem('landed_on', location.href)
@@ -23,7 +23,7 @@ const Checkout = props => {
 
    React.useEffect(() => {
       try {
-         processJsFile(folds)
+         processExternalFiles(folds, linkedFiles)
       } catch (err) {
          console.log('Failed to render page: ', err)
       }
@@ -31,26 +31,20 @@ const Checkout = props => {
 
    return (
       <Layout noHeader settings={settings}>
-         <SEO title="Checkout" />
+         <SEO seoSettings={seoSettings} />
          <main className="hern-checkout">{renderPageContent(folds)}</main>
       </Layout>
    )
 }
 export const getStaticProps = async ({ params }) => {
-   // const domain =
-   //    process.env.NODE_ENV === 'production'
-   //       ? params.domain
-   //       : 'test.dailykit.org'
-
-   const { parsedData, seo, settings } = await getPageProps(
-      params,
-      '/get-started/checkout'
-   )
+   const { parsedData, settings, seoSettings, linkedFiles } =
+      await getPageProps(params, '/get-started/checkout')
    return {
       props: {
          folds: parsedData,
-         seo,
          settings,
+         seoSettings,
+         linkedFiles,
       },
       revalidate: 1,
    }

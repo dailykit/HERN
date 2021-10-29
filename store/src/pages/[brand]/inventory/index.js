@@ -1,13 +1,17 @@
 import React from 'react'
 import { Layout, SEO } from '../../../components'
-import { getPageProps, processJsFile, renderPageContent } from '../../../utils'
+import {
+   getPageProps,
+   processExternalFiles,
+   renderPageContent,
+} from '../../../utils'
 
 const InventoryPage = props => {
-   const { folds, settings, navigationMenus } = props
+   const { folds, settings, navigationMenus, seoSettings, linkedFiles } = props
 
    React.useEffect(() => {
       try {
-         processJsFile(folds)
+         processExternalFiles(folds, linkedFiles)
       } catch (err) {
          console.log('Failed to render page: ', err)
       }
@@ -15,7 +19,7 @@ const InventoryPage = props => {
 
    return (
       <Layout settings={settings} navigationMenus={navigationMenus}>
-         <SEO title="Inventory" />
+         <SEO seoSettings={seoSettings} />
          <main>{renderPageContent(folds)}</main>
       </Layout>
    )
@@ -23,13 +27,17 @@ const InventoryPage = props => {
 export default InventoryPage
 
 export const getStaticProps = async ({ params }) => {
-   const { parsedData, seo, settings, navigationMenus } = await getPageProps(
-      params,
-      '/inventory'
-   )
+   const { parsedData, settings, navigationMenus, seoSettings, linkedFiles } =
+      await getPageProps(params, '/inventory')
 
    return {
-      props: { folds: parsedData, seo, settings, navigationMenus },
+      props: {
+         folds: parsedData,
+         linkedFiles,
+         settings,
+         navigationMenus,
+         seoSettings,
+      },
       revalidate: 60, // will be passed to the page component as props
    }
 }

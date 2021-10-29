@@ -1125,7 +1125,7 @@ export const SUBSCRIPTION_PLAN = gql`
 `
 export const NAVIGATION_MENU = gql`
    query NAVIGATION_MENU($navigationMenuId: Int!) {
-      website_navigationMenuItem(
+      brands_navigationMenuItem(
          where: { navigationMenuId: { _eq: $navigationMenuId } }
       ) {
          created_at
@@ -1140,18 +1140,13 @@ export const NAVIGATION_MENU = gql`
       }
    }
 `
-export const WEBSITE_PAGE = gql`
-   query WEBSITE_PAGE($domain: String!, $route: String!) {
-      website_websitePage(
+export const BRAND_PAGE = gql`
+   query BRAND_PAGE($domain: String!, $route: String!) {
+      brands_brandPages(
          where: {
             route: { _eq: $route }
-            website: {
-               brand: {
-                  _or: [
-                     { isDefault: { _eq: true } }
-                     { domain: { _eq: $domain } }
-                  ]
-               }
+            brand: {
+               _or: [{ isDefault: { _eq: true } }, { domain: { _eq: $domain } }]
             }
          }
       ) {
@@ -1160,13 +1155,21 @@ export const WEBSITE_PAGE = gql`
          isArchived
          published
          route
+         brandPageSettings {
+            value
+            brandPageSetting {
+               identifier
+               type
+            }
+         }
          linkedNavigationMenuId
-         websitePageModules(
+         brandPageModules(
             order_by: { position: desc_nulls_last }
             where: { isHidden: { _eq: false } }
          ) {
             id
-            name
+            internalModuleIdentifier
+            config
             moduleType
             isHidden
             fileId
@@ -1189,38 +1192,23 @@ export const WEBSITE_PAGE = gql`
                }
             }
          }
-         website {
+         brand {
             navigationMenuId
+         }
+         brandPagesLinkedFiles(order_by: { position: desc_nulls_last }) {
+            position
+            fileId
+            fileType
+            id
+            linkedFile {
+               id
+               fileName
+               path
+            }
          }
       }
    }
 `
-
-// query MyQuery($navigationMenuId: Int!) {
-//    website_navigationMenuItem(
-//       where: {
-//          navigationMenuId: { _eq: $navigationMenuId }
-//          parentNavigationMenuItemId: { _is_null: true }
-//       }
-//       order_by: { position: desc_nulls_last }
-//    ) {
-//       id
-//       position
-//       url
-//       label
-//       openInNewTab
-//       parentNavigationMenuItemId
-//       navigationMenuId
-//       childNavigationMenuItems(order_by: { position: desc_nulls_last }) {
-//          id
-//          label
-//          navigationMenuId
-//          url
-//          position
-//          parentNavigationMenuItemId
-//       }
-//    }
-// }
 
 export const OTPS = gql`
    subscription otps($where: platform_otp_transaction_bool_exp = {}) {
@@ -1245,6 +1233,157 @@ export const PLATFORM_CUSTOMERS = gql`
          password
          fullName
          id: keycloakId
+      }
+   }
+`
+
+export const PRODUCTS_BY_CATEGORY = gql`
+   query PRODUCTS_BY_CATEGORY($params: jsonb!) {
+      onDemand_getMenuV2(args: { params: $params }) {
+         data
+         id
+      }
+   }
+`
+export const PRODUCTS = gql`
+   query Products($ids: [Int!]!) {
+      products(where: { isArchived: { _eq: false }, id: { _in: $ids } }) {
+         id
+         name
+         type
+         assets
+         tags
+         additionalText
+         description
+         price
+         discount
+         isPopupAllowed
+         isPublished
+         defaultProductOptionId
+         defaultCartItem
+         productOptions(
+            where: { isArchived: { _eq: false } }
+            order_by: { position: desc_nulls_last }
+         ) {
+            id
+            position
+            type
+            label
+            price
+            discount
+            cartItem
+            modifier {
+               id
+               name
+               categories(where: { isVisible: { _eq: true } }) {
+                  id
+                  name
+                  isRequired
+                  type
+                  limits
+                  options(where: { isVisible: { _eq: true } }) {
+                     id
+                     name
+                     price
+                     discount
+                     quantity
+                     image
+                     isActive
+
+                     sachetItemId
+                     ingredientSachetId
+                     cartItem
+                  }
+               }
+            }
+         }
+      }
+   }
+`
+export const GET_CART = gql`
+   subscription cart($id: Int!) {
+      cart(id: $id) {
+         id
+         tax
+         orderId
+         discount
+         itemTotal
+         totalPrice
+         customerId
+         customerInfo
+         paymentStatus
+         deliveryPrice
+         fulfillmentInfo
+         paymentMethodId
+         walletAmountUsed
+         loyaltyPointsUsed
+         loyaltyPointsUsable
+         customerKeycloakId
+         billing: billingDetails
+         subscriptionOccurenceId
+         subscriptionOccurence {
+            id
+            fulfillmentDate
+         }
+         address
+         fulfillmentInfo
+         products: cartItems_aggregate(where: { level: { _eq: 1 } }) {
+            aggregate {
+               count
+            }
+            nodes {
+               id
+               addOnLabel
+               addOnPrice
+               price: unitPrice
+               name: displayName
+               image: displayImage
+               childs {
+                  price: unitPrice
+                  name: displayName
+                  productOption {
+                     id
+                     label
+                  }
+                  childs {
+                     displayName
+                     price: unitPrice
+                     modifierOption {
+                        id
+                        name
+                     }
+                  }
+               }
+               productId
+            }
+         }
+      }
+   }
+`
+export const GET_CARTS = gql`
+   subscription GET_CARTS($where: order_cart_bool_exp!) {
+      carts(where: $where) {
+         id
+      }
+   }
+`
+export const BRAND_SETTINGS_BY_TYPE = gql`
+   query BRAND_SEO_SETTINGS($domain: String!, $type: String!) {
+      brands_brand_brandSetting(
+         where: {
+            brand: {
+               _or: [{ domain: { _eq: $domain } }, { isDefault: { _eq: true } }]
+            }
+            brandSetting: { type: { _eq: $type } }
+         }
+      ) {
+         brandId
+         meta: brandSetting {
+            id
+            type
+            identifier
+         }
+         value
       }
    }
 `

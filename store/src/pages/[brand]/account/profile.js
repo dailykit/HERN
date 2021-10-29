@@ -6,14 +6,14 @@ import {
    getPageProps,
    getRoute,
    isClient,
-   processJsFile,
+   processExternalFiles,
    renderPageContent,
 } from '../../../utils'
 
 const ProfilePage = props => {
    const router = useRouter()
    const { isAuthenticated, isLoading } = useUser()
-   const { folds, seo, settings, navigationMenus } = props
+   const { folds, settings, navigationMenus, seoSettings, linkedFiles } = props
 
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
@@ -24,7 +24,7 @@ const ProfilePage = props => {
 
    React.useEffect(() => {
       try {
-         processJsFile(folds)
+         processExternalFiles(folds, linkedFiles)
       } catch (err) {
          console.log('Failed to render page: ', err)
       }
@@ -32,7 +32,7 @@ const ProfilePage = props => {
 
    return (
       <Layout settings={settings} navigationMenus={navigationMenus}>
-         <SEO title="Profile" />
+         <SEO seoSettings={seoSettings} />
          <main>{renderPageContent(folds)}</main>
       </Layout>
    )
@@ -41,13 +41,17 @@ const ProfilePage = props => {
 export default ProfilePage
 
 export const getStaticProps = async ({ params }) => {
-   const { parsedData, seo, settings, navigationMenus } = await getPageProps(
-      params,
-      '/account/profile'
-   )
+   const { parsedData, settings, navigationMenus, seoSettings, linkedFiles } =
+      await getPageProps(params, '/account/profile')
 
    return {
-      props: { folds: parsedData, seo, settings, navigationMenus },
+      props: {
+         folds: parsedData,
+         linkedFiles,
+         settings,
+         navigationMenus,
+         seoSettings,
+      },
       revalidate: 60, // will be passed to the page component as props
    }
 }

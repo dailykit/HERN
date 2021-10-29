@@ -1,14 +1,18 @@
 import React from 'react'
-import { processJsFile, renderPageContent, getPageProps } from '../../utils'
+import {
+   processExternalFiles,
+   renderPageContent,
+   getPageProps,
+} from '../../utils'
 import { Layout, SEO } from '../../components'
 import 'regenerator-runtime'
 
 const PraivacyPolicy = props => {
-   const { folds, settings, navigationMenus } = props
+   const { folds, settings, navigationMenus, seoSettings, linkedFiles } = props
 
    React.useEffect(() => {
       try {
-         processJsFile(folds)
+         processExternalFiles(folds, linkedFiles)
       } catch (err) {
          console.log('Failed to render page: ', err)
       }
@@ -16,7 +20,7 @@ const PraivacyPolicy = props => {
 
    return (
       <Layout settings={settings} navigationMenus={navigationMenus}>
-         <SEO title="Privacy Policy" />
+         <SEO seoSettings={seoSettings} />
          <main>{renderPageContent(folds)}</main>
       </Layout>
    )
@@ -25,13 +29,17 @@ const PraivacyPolicy = props => {
 export default PraivacyPolicy
 
 export async function getStaticProps({ params }) {
-   const { parsedData, seo, settings, navigationMenus } = await getPageProps(
-      params,
-      '/privacy-policy'
-   )
+   const { parsedData, settings, navigationMenus, seoSettings, linkedFiles } =
+      await getPageProps(params, '/privacy-policy')
 
    return {
-      props: { folds: parsedData, seo, settings, navigationMenus },
+      props: {
+         folds: parsedData,
+         linkedFiles,
+         settings,
+         navigationMenus,
+         seoSettings,
+      },
       revalidate: 60, // will be passed to the page component as props
    }
 }

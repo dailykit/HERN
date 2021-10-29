@@ -1,13 +1,17 @@
 import React from 'react'
 import { SEO, Layout } from '../../components'
-import { processJsFile, renderPageContent, getPageProps } from '../../utils'
+import {
+   processExternalFiles,
+   renderPageContent,
+   getPageProps,
+} from '../../utils'
 
 const RefundPolicyPage = props => {
-   const { folds, settings } = props
+   const { folds, settings, seoSettings, linkedFiles } = props
 
    React.useEffect(() => {
       try {
-         processJsFile(folds)
+         processExternalFiles(folds, linkedFiles)
       } catch (err) {
          console.log('Failed to render page: ', err)
       }
@@ -15,7 +19,7 @@ const RefundPolicyPage = props => {
 
    return (
       <Layout settings={settings}>
-         <SEO title="Refund Policy" />
+         <SEO seoSettings={seoSettings} />
          <main>{renderPageContent(folds)}</main>
       </Layout>
    )
@@ -24,13 +28,17 @@ const RefundPolicyPage = props => {
 export default RefundPolicyPage
 
 export const getStaticProps = async ({ params }) => {
-   const { parsedData, seo, settings, navigationMenus } = await getPageProps(
-      params,
-      '/refund-policy'
-   )
+   const { parsedData, settings, navigationMenus, seoSettings, linkedFiles } =
+      await getPageProps(params, '/refund-policy')
 
    return {
-      props: { folds: parsedData, seo, settings, navigationMenus },
+      props: {
+         folds: parsedData,
+         linkedFiles,
+         settings,
+         navigationMenus,
+         seoSettings,
+      },
       revalidate: 60, // will be passed to the page component as props
    }
 }

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext } from 'react'
+import React, { useState, useContext } from 'react'
 import {
    Flex,
    HorizontalTab,
@@ -30,8 +30,8 @@ import { logger } from '../../../../../../shared/utils'
 import { ConfigTunnel } from '../Tunnel'
 import File from './File'
 import Template from './Template'
+import SystemModule from './SystemModule'
 import ConfigContext from '../../../../context/Config'
-import { isConfigFileExist } from '../../../../utils'
 
 const ContentSelection = () => {
    const [configTunnels, openConfigTunnel, closeConfigTunnel] = useTunnel()
@@ -39,7 +39,8 @@ const ContentSelection = () => {
    const { pageId, pageName } = useParams()
    const [linkedFiles, setLinkedFiles] = useState([])
    const [selectedFileOptions, setSelectedFileOptions] = useState([])
-   const [configContext, setConfigContext] = useContext(ConfigContext)
+   const [, setConfigContext] = useContext(ConfigContext)
+
    const { loading, error: subscriptionError } = useSubscription(
       LINKED_COMPONENT,
       {
@@ -48,16 +49,15 @@ const ContentSelection = () => {
          },
          onSubscriptionData: ({
             subscriptionData: {
-               data: { website_websitePageModule: pageModules = [] } = {},
+               data: { brands_brandPageModule: pageModules = [] } = {},
             } = {},
          }) => {
             const files = pageModules
-
             setLinkedFiles(files)
             if (files.length) {
                initiatePriority({
-                  tablename: 'websitePageModule',
-                  schemaname: 'website',
+                  tablename: 'brandPageModule',
+                  schemaname: 'brands',
                   data: files,
                })
             }
@@ -126,8 +126,15 @@ const ContentSelection = () => {
    const saveHandler = () => {
       if (selectedFileOptions.length) {
          const result = selectedFileOptions.map(option => {
+            if (option.type === 'system-defined') {
+               return {
+                  brandPageId: pageId,
+                  moduleType: 'system-defined',
+                  internalModuleIdentifier: option.identifier,
+               }
+            }
             return {
-               websitePageId: +pageId,
+               brandPageId: pageId,
                moduleType: option.type === 'html' ? 'block' : 'file',
                fileId: option.id,
             }
@@ -141,10 +148,10 @@ const ContentSelection = () => {
       }
    }
 
-   const updateHandler = (websitePageModuleId, updatedConfig) => {
+   const updateHandler = (brandPageModuleId, updatedConfig) => {
       updateLinkComponent({
          variables: {
-            websitePageModuleId,
+            brandPageModuleId,
             _set: {
                config: updatedConfig,
             },
@@ -152,12 +159,11 @@ const ContentSelection = () => {
       })
    }
 
-   const deleteHandler = fileId => {
+   const deleteHandler = id => {
       deleteLinkComponent({
          variables: {
             where: {
-               websitePageId: { _eq: pageId },
-               fileId: { _eq: fileId },
+               id: { _eq: id },
             },
          },
       })
@@ -171,7 +177,7 @@ const ContentSelection = () => {
       return <InlineLoader />
    }
    if (subscriptionError) {
-      console.log(subscriptionError)
+      console.error(subscriptionError)
       toast.error(
          'Something went wrong in subscription query for linked components'
       )
@@ -185,32 +191,35 @@ const ContentSelection = () => {
                <DragNDrop
                   list={linkedFiles}
                   droppableId="linkFileDroppableId"
-                  tablename="websitePageModule"
-                  schemaname="website"
+                  tablename="brandPageModule"
+                  schemaname="brands"
                >
-                  {linkedFiles.map(file => {
-                     return (
-                        <Child key={file.fileId}>
-                           <div className="name">
-                              {file?.file?.fileName || ''}
-                           </div>
+                  {linkedFiles.map(file => (
+                     <Child key={file.id}>
+                        <div className="name">
+                           {file?.file?.fileName ||
+                              file?.systemModule?.identifier ||
+                              ''}
+                           <small>({file.moduleType})</small>
+                        </div>
 
+                        {file.moduleType === 'system-defined' && (
                            <IconButton
                               type="ghost"
                               onClick={() => openConfig(file)}
                            >
                               <EditIcon color="#555b6e" size="20" />
                            </IconButton>
+                        )}
 
-                           <IconButton
-                              type="ghost"
-                              onClick={() => deleteHandler(file.fileId)}
-                           >
-                              <DeleteIcon color="#555b6e" size="20" />
-                           </IconButton>
-                        </Child>
-                     )
-                  })}
+                        <IconButton
+                           type="ghost"
+                           onClick={() => deleteHandler(file.id)}
+                        >
+                           <DeleteIcon color="#555b6e" size="20" />
+                        </IconButton>
+                     </Child>
+                  ))}
                </DragNDrop>
             ) : (
                <Filler
@@ -232,15 +241,12 @@ const ContentSelection = () => {
                </ComboButton>
             </Flex>
             <HorizontalTabs>
-               {/* <div className="styleTab"> */}
                <HorizontalTabList>
                   <HorizontalTab>Add Files</HorizontalTab>
                   <HorizontalTab>Add Templates</HorizontalTab>
                   <HorizontalTab>Add Modules</HorizontalTab>
                </HorizontalTabList>
-               {/* </div> */}
                <HorizontalTabPanels>
-                  {/* <div className="styleTab"> */}
                   <HorizontalTabPanel>
                      <File
                         linkedFiles={linkedFiles}
@@ -250,11 +256,18 @@ const ContentSelection = () => {
                         emptyOptions={selectedFileOptions}
                      />
                   </HorizontalTabPanel>
-                  {/* </div> */}
                   <HorizontalTabPanel>
                      <Template linkedTemplated={[]} />
                   </HorizontalTabPanel>
-                  <HorizontalTabPanel>Internal Module</HorizontalTabPanel>
+                  <HorizontalTabPanel>
+                     <SystemModule
+                        linkedFiles={linkedFiles}
+                        selectedOption={option =>
+                           setSelectedFileOptions(option)
+                        }
+                        emptyOptions={selectedFileOptions}
+                     />
+                  </HorizontalTabPanel>
                </HorizontalTabPanels>
             </HorizontalTabs>
 
@@ -262,8 +275,8 @@ const ContentSelection = () => {
                tunnels={configTunnels}
                openTunnel={openConfigTunnel}
                closeTunnel={closeConfigTunnel}
-               onSave={(websitePageModuleId, updatedConfig) =>
-                  updateHandler(websitePageModuleId, updatedConfig)
+               onSave={(brandPageModuleId, updatedConfig) =>
+                  updateHandler(brandPageModuleId, updatedConfig)
                }
                selectedOption={selectedFileOptions}
             />

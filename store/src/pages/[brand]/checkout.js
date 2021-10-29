@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import {
    isClient,
    getRoute,
-   processJsFile,
+   processExternalFiles,
    renderPageContent,
    getPageProps,
 } from '../../utils'
@@ -13,7 +13,7 @@ import { useUser } from '../../context'
 const CheckoutPage = props => {
    const router = useRouter()
    const { isAuthenticated, isLoading } = useUser()
-   const { folds, settings, navigationMenus } = props
+   const { folds, settings, navigationMenus, seoSettings, linkedFiles } = props
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
          isClient && localStorage.setItem('landed_on', location.href)
@@ -23,7 +23,7 @@ const CheckoutPage = props => {
 
    React.useEffect(() => {
       try {
-         processJsFile(folds)
+         processExternalFiles(folds, linkedFiles)
       } catch (err) {
          console.log('Failed to render page: ', err)
       }
@@ -31,20 +31,24 @@ const CheckoutPage = props => {
 
    return (
       <Layout settings={settings} navigationMenus={navigationMenus}>
-         <SEO title="Checkout" />
+         <SEO seoSettings={seoSettings} />
          <main>{renderPageContent(folds)}</main>
       </Layout>
    )
 }
 
 export const getStaticProps = async ({ params }) => {
-   const { parsedData, seo, settings, navigationMenus } = await getPageProps(
-      params,
-      '/checkout'
-   )
+   const { parsedData, settings, navigationMenus, seoSettings, linkedFiles } =
+      await getPageProps(params, '/checkout')
 
    return {
-      props: { folds: parsedData, seo, settings, navigationMenus },
+      props: {
+         folds: parsedData,
+         linkedFiles,
+         settings,
+         navigationMenus,
+         seoSettings,
+      },
       revalidate: 1, // will be passed to the page component as props
    }
 }

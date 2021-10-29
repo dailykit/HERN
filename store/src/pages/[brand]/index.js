@@ -2,14 +2,18 @@ import React from 'react'
 import 'regenerator-runtime'
 
 import { SEO, Layout } from '../../components'
-import { getPageProps, processJsFile, renderPageContent } from '../../utils'
+import {
+   getPageProps,
+   processExternalFiles,
+   renderPageContent,
+} from '../../utils'
 
 const IndexPage = props => {
-   const { folds, settings, navigationMenus } = props
+   const { folds, settings, navigationMenus, seoSettings, linkedFiles } = props
 
    React.useEffect(() => {
       try {
-         processJsFile(folds)
+         processExternalFiles(folds, linkedFiles)
       } catch (err) {
          console.log('Failed to render page: ', err)
       }
@@ -17,7 +21,7 @@ const IndexPage = props => {
 
    return (
       <Layout settings={settings} navigationMenus={navigationMenus}>
-         <SEO title="Home" />
+         <SEO seoSettings={seoSettings} />
          {renderPageContent(folds)}
       </Layout>
    )
@@ -26,13 +30,17 @@ const IndexPage = props => {
 export default IndexPage
 
 export const getStaticProps = async ({ params }) => {
-   const { parsedData, seo, settings, navigationMenus } = await getPageProps(
-      params,
-      '/'
-   )
+   const { parsedData, settings, navigationMenus, seoSettings, linkedFiles } =
+      await getPageProps(params, '/')
 
    return {
-      props: { folds: parsedData, seo, settings, navigationMenus },
+      props: {
+         folds: parsedData,
+         linkedFiles,
+         settings,
+         navigationMenus,
+         seoSettings,
+      },
       revalidate: 60, // will be passed to the page component as props
    }
 }

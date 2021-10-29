@@ -6,14 +6,19 @@ import { ChevronDown } from '../../../../assets/icons'
 import { TooltipProvider } from '../../../../providers'
 import { StyledTools, ToolbarMenu } from './styled'
 import CreateNew from './CreateNew'
-import CreateBrandTunnel from '../../../../../apps/brands/views/Listings/brands/CreateBrandTunnel'
-import { ProductTypeTunnel } from '../../../../../apps/products/views/Listings/ProductsListing/tunnels'
 import ToolOptions from './ToolOptions'
 import ToolList from './ToolList'
 import Account from './Account'
 import Search from './Search'
 import MarketPlace from './MarketPlace'
 import BottomBar from '../../../BottomBar'
+import CreateProduct from '../../../../CreateUtils/Product/createProduct'
+import CreateIngredient from '../../../../CreateUtils/Ingredient/CreateIngredient'
+import CreateRecipe from '../../../../CreateUtils/Recipe/createRecipe'
+import CreateBrand from '../../../../CreateUtils/Brand/CreateBrand'
+import CreateCollection from '../../../../CreateUtils/Menu/createCollection'
+import CreateSupplier from '../../../../CreateUtils/Inventory/createSupplier'
+import CreateItem from '../../../../CreateUtils/Inventory/createItem'
 
 const Tools = ({ isTabHidden, setIsTabHidden }) => {
    const [lang, setLang] = React.useState(
@@ -27,12 +32,37 @@ const Tools = ({ isTabHidden, setIsTabHidden }) => {
    const [isModalOpen, setIsModalOpen] = React.useState(false)
 
    const [
+      createRecipeTunnels,
+      openCreateRecipeTunnel,
+      closeCreateRecipeTunnel,
+   ] = useTunnel(1)
+
+   const [
+      createIngredientTunnels,
+      openCreateIngredientTunnel,
+      closeCreateIngredientTunnel,
+   ] = useTunnel(1)
+   const [
       createProductTunnels,
       openCreateProductTunnel,
       closeCreateProductTunnel,
    ] = useTunnel(3)
    const [createBrandTunnels, openCreateBrandTunnel, closeCreateBrandTunnel] =
       useTunnel(1)
+   const [
+      createSupplierTunnels,
+      openCreateSupplierTunnel,
+      closeCreateSupplierTunnel,
+   ] = useTunnel(1)
+   /* Item */
+   const [createItemTunnels, openCreateItemTunnel, closeCreateItemTunnel] =
+      useTunnel(1)
+   const [
+      createCollectionTunnels,
+      openCollectionTunnel,
+      closeCollectionTunnel,
+   ] = useTunnel(1)
+
    const tools = {
       createItem: 'create-item',
       profile: 'profile',
@@ -47,14 +77,14 @@ const Tools = ({ isTabHidden, setIsTabHidden }) => {
       console.log({ item })
       setOpen(open === null || open !== item ? item : null)
    }
-//    useOnClickOutside(toolbarRef, () => {
-//       setIsMenuOpen(false)
-//       setOpen(null)
-//       const values = qs.parse(window.location.search)
+   //    useOnClickOutside(toolbarRef, () => {
+   //       setIsMenuOpen(false)
+   //       setOpen(null)
+   //       const values = qs.parse(window.location.search)
 
-//       const newQsValue = qs.stringify({ ...values, optionId: undefined })
-//       history.push({ search: `?${newQsValue}` })
-//    })
+   //       const newQsValue = qs.stringify({ ...values, optionId: undefined })
+   //       history.push({ search: `?${newQsValue}` })
+   //    })
 
    return (
       <StyledTools ref={toolbarRef} isTabHidden={isTabHidden}>
@@ -97,6 +127,11 @@ const Tools = ({ isTabHidden, setIsTabHidden }) => {
                setIsMenuOpen={setIsMenuOpen}
                openCreateBrandTunnel={openCreateBrandTunnel}
                openCreateProductTunnel={openCreateProductTunnel}
+               openCreateRecipeTunnel={openCreateRecipeTunnel}
+               openCreateIngredientTunnel={openCreateIngredientTunnel}
+               openCreateSupplierTunnel={openCreateSupplierTunnel}
+               openCreateItemTunnel={openCreateItemTunnel}
+               openCollectionTunnel={openCollectionTunnel}
             />
          )}
 
@@ -128,7 +163,28 @@ const Tools = ({ isTabHidden, setIsTabHidden }) => {
          <Tunnels tunnels={createBrandTunnels}>
             <Tunnel layer={1} size="md">
                <TooltipProvider app="Brand App">
-                  <CreateBrandTunnel closeTunnel={closeCreateBrandTunnel} />
+                  <CreateBrand closeTunnel={closeCreateBrandTunnel} />
+               </TooltipProvider>
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={createCollectionTunnels}>
+            <Tunnel layer={1} size="md">
+               <TooltipProvider app="Menu App">
+                  <CreateCollection close={closeCollectionTunnel} />
+               </TooltipProvider>
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={createRecipeTunnels}>
+            <Tunnel layer={1} size="md">
+               <TooltipProvider app="Products App">
+                  <CreateRecipe closeTunnel={closeCreateRecipeTunnel} />
+               </TooltipProvider>
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={createIngredientTunnels}>
+            <Tunnel layer={1} size="md">
+               <TooltipProvider app="Products App">
+                  <CreateIngredient closeTunnel={closeCreateIngredientTunnel} />
                </TooltipProvider>
             </Tunnel>
          </Tunnels>
@@ -137,7 +193,21 @@ const Tools = ({ isTabHidden, setIsTabHidden }) => {
             <Tunnel layer={2}></Tunnel>
             <Tunnel layer={3}>
                <TooltipProvider app="Products App">
-                  <ProductTypeTunnel close={closeCreateProductTunnel} />
+                  <CreateProduct close={closeCreateProductTunnel} />
+               </TooltipProvider>
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={createSupplierTunnels}>
+            <Tunnel layer={1} size="md">
+               <TooltipProvider app="Inventory App">
+                  <CreateSupplier closeTunnel={closeCreateSupplierTunnel} />
+               </TooltipProvider>
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={createItemTunnels}>
+            <Tunnel layer={1} size="md">
+               <TooltipProvider app="Inventory App">
+                  <CreateItem closeTunnel={closeCreateItemTunnel} />
                </TooltipProvider>
             </Tunnel>
          </Tunnels>

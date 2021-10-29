@@ -5,14 +5,14 @@ import {
    getRoute,
    isClient,
    renderPageContent,
-   processJsFile,
+   processExternalFiles,
 } from '../../../utils'
 import { SEO, Layout } from '../../../components'
 import { useUser } from '../../../context'
 
 const SelectPlan = props => {
    const router = useRouter()
-   const { settings, folds } = props
+   const { settings, linkedFiles, folds, seoSettings } = props
    const { isAuthenticated, isLoading } = useUser()
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
@@ -32,7 +32,7 @@ const SelectPlan = props => {
 
    React.useEffect(() => {
       try {
-         processJsFile(folds)
+         processExternalFiles(folds, linkedFiles)
       } catch (err) {
          console.log('Failed to render page: ', err)
       }
@@ -40,7 +40,7 @@ const SelectPlan = props => {
 
    return (
       <Layout settings={settings}>
-         <SEO title="Plans" />
+         <SEO seoSettings={seoSettings} />
          <main className="hern-get-started-select-plan__main">
             {renderPageContent(folds)}
          </main>
@@ -51,13 +51,11 @@ const SelectPlan = props => {
 export default SelectPlan
 
 export const getStaticProps = async ({ params }) => {
-   const { parsedData, seo, settings } = await getPageProps(
-      params,
-      '/get-started/select-plan'
-   )
+   const { parsedData, settings, seoSettings, linkedFiles } =
+      await getPageProps(params, '/get-started/select-plan')
 
    return {
-      props: { folds: parsedData, seo, settings },
+      props: { folds: parsedData, linkedFiles, settings, seoSettings },
       revalidate: 60,
    }
 }

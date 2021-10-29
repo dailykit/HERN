@@ -9,6 +9,11 @@ import {
    Form,
    Spacer,
    useTunnel,
+   Tunnels,
+   Tunnel,
+   TunnelHeader,
+   ComboButton,
+   PlusIcon,
 } from '@dailykit/ui'
 import { useSubscription, useMutation, useQuery } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
@@ -26,9 +31,16 @@ import {
 import ContentSelection from './ContentSelection'
 import BrandContext from '../../../context/Brand'
 import { PagePreviewTunnel } from './Tunnel'
+// for SEO Tools
+import SocialShare from './SEO/SocialShare'
+import SEObasics from './SEO/SEObasics'
+import TwitterCard from './SEO/TwitterCard'
+import LinkFilesTunnel from './Tunnel/LinkFiles'
 
 const PageForm = () => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
+   const [linkFilesTunnel, openLinkFilesTunnel, closeLinkFilesTunnel] =
+      useTunnel(1)
    const { addTab, tab, setTabTitle, closeAllTabs } = useTabs()
    const [context, setContext] = useContext(BrandContext)
    const prevBrandId = useRef(context.brandId)
@@ -84,20 +96,20 @@ const PageForm = () => {
          },
          onSubscriptionData: ({
             subscriptionData: {
-               data: { website_websitePage_by_pk: websitePage = {} } = {},
+               data: { brands_brandPages_by_pk: brandPage = {} } = {},
             } = {},
          }) => {
-            setState(websitePage || {})
+            setState(brandPage || {})
             setPageTitle({
                ...pageTitle,
-               value: websitePage?.internalPageName || '',
+               value: brandPage?.internalPageName || '',
             })
 
             setPageRoute({
                ...pageRoute,
-               value: websitePage?.route || '',
+               value: brandPage?.route || '',
             })
-            setToggle(websitePage?.published)
+            setToggle(brandPage?.published)
          },
       }
    )
@@ -257,6 +269,15 @@ const PageForm = () => {
                         </>
                      )} */}
                   <Spacer xAxis size="24px" />
+                  <ComboButton
+                     onClick={() => openLinkFilesTunnel(1)}
+                     type="outline"
+                     size="sm"
+                  >
+                     Add Files
+                     <PlusIcon color="#367BF5" />
+                  </ComboButton>
+                  <Spacer xAxis size="24px" />
                   <Form.Toggle
                      name="page_published"
                      onChange={updatetoggle}
@@ -275,7 +296,7 @@ const PageForm = () => {
                <div className="styleTab">
                   <HorizontalTabList>
                      <HorizontalTab>Details</HorizontalTab>
-                     <HorizontalTab>Page Preview Meta data</HorizontalTab>
+                     <HorizontalTab>SEO Tools</HorizontalTab>
                   </HorizontalTabList>
                </div>
                <HorizontalTabPanels>
@@ -328,9 +349,13 @@ const PageForm = () => {
                         <ContentSelection />
                      </HorizontalTabPanel>
                   </div>
-                  <HorizontalTabPanel>
-                     <div className="styleTab">Meda data goes here</div>
-                  </HorizontalTabPanel>
+                  <div className="styleTab">
+                     <HorizontalTabPanel>
+                        <SEObasics routeName={pageRoute.value} />
+                        <SocialShare routeName={pageRoute.value} />
+                        <TwitterCard routeName={pageRoute.value} />
+                     </HorizontalTabPanel>
+                  </div>
                </HorizontalTabPanels>
             </HorizontalTabs>
          </StyledDiv>
@@ -339,6 +364,10 @@ const PageForm = () => {
             openTunnel={openTunnel}
             closeTunnel={closeTunnel}
             pageRoute={pageRoute}
+         />
+         <LinkFilesTunnel
+            tunnels={linkFilesTunnel}
+            closeTunnel={closeLinkFilesTunnel}
          />
          <Banner id="content-app-pages-page-details-bottom" />
       </StyledWrapper>
