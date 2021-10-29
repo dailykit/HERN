@@ -92,7 +92,7 @@ const StyledForm = styled.form`
       margin-bottom: 1rem;
    }
    .card_label {
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-style: normal;
       font-weight: 600;
       letter-spacing: 0.3em;

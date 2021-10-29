@@ -21,12 +21,7 @@ export const NavBar = styled.header`
    padding: 1rem 6rem;
    justify-content: space-between;
    transition: 0.2s ease-in;
-   background: ${({ scroll }) =>
-      scroll.direction === 'down'
-         ? theme.colors.darkBackground.darkblue
-         : scroll.y < 64
-         ? 'rgba(6, 20, 34,0.8)'
-         : theme.colors.darkBackground.darkblue};
+   background: ${theme.colors.darkBackground.darkblue};
    .logo-img {
       width: 100px;
       height: 48px;
@@ -52,7 +47,7 @@ export const NavBar = styled.header`
       }
    }
    .ant-menu > .ant-menu-item > .ant-menu-title-content {
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-size: ${theme.sizes.h8};
       letter-spaceing: 0.16em;
    }
@@ -105,7 +100,7 @@ export const NavBar = styled.header`
          padding: 8px 0;
       }
       a {
-         font-family: Proxima Nova;
+         font-family: 'Maven Pro';
          position: relative;
          text-decoration: none;
          color: ${theme.colors.textColor4};
@@ -228,7 +223,7 @@ export const NavBar = styled.header`
    .customBtn {
       height: 38px;
       min-width: 125px;
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-weight: 600;
       letter-spacing: 0.3em;
       padding: 0 2rem;
@@ -465,7 +460,7 @@ export const SidebarWrapper = styled(Drawer)`
       }
    }
    .ant-menu > .ant-menu-item > .ant-menu-title-content {
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-size: ${theme.sizes.h8};
       letter-spaceing: 0.16em;
    }

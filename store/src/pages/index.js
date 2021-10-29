@@ -300,7 +300,7 @@ const StyledWrapper = styled.div`
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-style: normal;
       font-weight: 800;
       color: ${theme.colors.textColor};
@@ -337,7 +337,7 @@ const StyledWrapper = styled.div`
       text-transform: none;
       font-weight: 500;
       background: ${theme.colors.textColor4};
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-style: normal;
       font-weight: 800;
       color: ${theme.colors.textColor};
@@ -546,7 +546,7 @@ const CategoryTagWrap = styled.div`
       text-transform: none;
       font-weight: 500;
       background: ${theme.colors.textColor4};
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-style: normal;
       font-weight: 800;
       color: ${theme.colors.textColor};

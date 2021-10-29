@@ -3,7 +3,7 @@ import { theme } from '../../../../theme'
 
 export const OptionDiv = styled.div`
    .proxinova_text {
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-style: normal;
       font-weight: 600;
       letter-spacing: 0;
@@ -68,7 +68,7 @@ export const OptionDiv = styled.div`
       }
       span {
          color: ${theme.colors.textColor4};
-         font-family: Proxima Nova;
+         font-family: 'Maven Pro';
          font-style: normal;
          letter-spacing: 0;
       }
@@ -102,7 +102,7 @@ export const VotersDiv = styled.div`
    padding: 1rem 2rem;
    margin-bottom: 1rem;
    .proxinova_text {
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-style: normal;
       letter-spacing: 0;
       color: ${theme.colors.textColor5};

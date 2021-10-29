@@ -10,7 +10,7 @@ export const Wrapper = styled.div`
       border-bottom: 1px solid ${theme.colors.textColor4};
    }
    .date {
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-weight: 600;
       color: ${theme.colors.textColor5};
       margin-bottom: 12px;

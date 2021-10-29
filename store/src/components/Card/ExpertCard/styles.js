@@ -47,7 +47,7 @@ export const CardBody = styled.div`
    padding: 0.75rem 0.5rem;
    .exp-name {
       margin: 2px 0;
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       color: ${theme.colors.textColor4};
       font-weight: 700;
       text-align: left;
@@ -60,7 +60,7 @@ export const CardBody = styled.div`
    .category {
       text-align: left;
       font-weight: 800;
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       letter-spacing: 0.16em;
       color: ${theme.colors.textColor};
    }

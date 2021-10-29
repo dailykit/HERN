@@ -3,7 +3,7 @@ import { theme } from '../../../../theme'
 
 export const Wrapper = styled.div`
    .participant-email {
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-style: normal;
       font-weight: 600;
       letter-spacing: 0.1em;
@@ -17,7 +17,7 @@ export const Wrapper = styled.div`
       align-items: center;
       position: relative;
       text-decoration: none;
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-style: normal;
       font-weight: 600;
       letter-spacing: 0.1em;
@@ -76,7 +76,7 @@ export const Wrapper = styled.div`
          width: 100%;
          margin: 8px 0;
          td {
-            font-family: Proxima Nova;
+            font-family: 'Maven Pro';
             font-style: normal;
             letter-spacing: 0.1em;
             color: ${theme.colors.textColor5};

@@ -13,15 +13,15 @@ export const Wrapper = styled.div`
       p {
          text-align: left;
          color: ${theme.colors.textColor7};
-         font-family: Proxima Nova;
+         font-family: 'Maven Pro';
       }
       .head {
          color: ${theme.colors.textColor7};
-         font-family: Proxima Nova;
+         font-family: 'Maven Pro';
       }
       .guest_para {
          color: ${theme.colors.textColor5};
-         font-family: Proxima Nova;
+         font-family: 'Maven Pro';
       }
    }
 `

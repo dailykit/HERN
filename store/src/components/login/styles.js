@@ -13,7 +13,7 @@ export const Wrapper = styled.div`
       margin-bottom: 1.5rem;
       color: ${theme.colors.textColor5};
       background: ${theme.colors.lightBackground.grey};
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-weight: 700px;
       letter-spacing: 0.3em;
       ::placeholder {
@@ -54,7 +54,7 @@ export const Wrapper = styled.div`
    }
    .signup_title {
       color: ${theme.colors.textColor7};
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-style: normal;
       font-weight: 700;
       letter-spacing: 0.3em;
@@ -62,7 +62,7 @@ export const Wrapper = styled.div`
       margin: 1.5rem 0;
       span {
          color: ${theme.colors.textColor};
-         font-family: Proxima Nova;
+         font-family: 'Maven Pro';
          margin-left: 0.5rem;
          text-decoration: underline;
       }
@@ -70,7 +70,7 @@ export const Wrapper = styled.div`
    .forgotPassword {
       color: ${theme.colors.textColor};
       width: max-content;
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-style: normal;
       font-weight: 700;
       letter-spacing: 0.3em;

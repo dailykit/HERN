@@ -4,7 +4,7 @@ import { theme } from '../../theme'
 export const Wrapper = styled.div`
    color: ${theme.colors.textColor5};
    .proxinova_text {
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-style: normal;
       font-weight: 600;
       letter-spacing: 0.16em;
@@ -29,7 +29,7 @@ export const Wrapper = styled.div`
       margin: 1rem 0;
       color: ${theme.colors.textColor5};
       background: ${theme.colors.lightBackground.grey};
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-weight: 700px;
       letter-spacing: 0.3em;
       ::placeholder {

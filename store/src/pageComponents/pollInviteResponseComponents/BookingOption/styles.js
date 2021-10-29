@@ -3,7 +3,7 @@ import { theme } from '../../../theme'
 
 export const OptionDiv = styled.div`
    .proxinova_text {
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-style: normal;
       letter-spacing: 0;
       color: ${theme.colors.textColor5};

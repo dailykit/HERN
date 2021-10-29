@@ -34,7 +34,7 @@ export const Wrap = styled.div`
       margin: 1rem 0;
       text-align: center;
       color: ${theme.colors.textColor7};
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       letter-spacing: 0.16em;
       font-weight: 600;
       text-transform: uppercase;

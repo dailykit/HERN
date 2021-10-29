@@ -11,7 +11,7 @@ export const CardWrapper = styled.div`
       font-weight: 600;
    }
    .proxinova_text {
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-style: normal;
       font-weight: 600;
       letter-spacing: 0.3em;
@@ -31,7 +31,7 @@ export const CardWrapper = styled.div`
       color: ${theme.colors.textColor7};
       border-top-color: ${theme.colors.textColor7};
       .ant-divider-inner-text {
-         font-family: Proxima Nova;
+         font-family: 'Maven Pro';
          font-style: normal;
          letter-spacing: 0.3em;
          font-size: ${theme.sizes.h8};
@@ -44,7 +44,7 @@ export const CardWrapper = styled.div`
          flex: 1;
          color: ${theme.colors.textColor5};
          .experience-heading {
-            font-family: Proxima Nova;
+            font-family: 'Maven Pro';
             font-style: normal;
             font-weight: 600;
             letter-spacing: 0.3em;
@@ -101,7 +101,7 @@ export const CardWrapper = styled.div`
       border: none;
       > .ant-collapse-item > .ant-collapse-header {
          padding: 0;
-         font-family: Proxima Nova;
+         font-family: 'Maven Pro';
          font-style: normal;
          font-weight: 600;
          letter-spacing: 0.3em;
@@ -111,7 +111,7 @@ export const CardWrapper = styled.div`
       }
    }
    .ant-collapse-item {
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-style: normal;
       font-weight: 600;
       letter-spacing: 0.3em;
@@ -135,7 +135,7 @@ export const CardWrapper = styled.div`
                width: 100%;
                margin: 8px 0;
                td {
-                  font-family: Proxima Nova;
+                  font-family: 'Maven Pro';
                   font-style: normal;
                   font-weight: 600;
                   letter-spacing: 0.3em;

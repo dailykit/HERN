@@ -41,7 +41,7 @@ const Wrapper = styled.div`
       border-radius: 24px;
       text-align: center;
       text-transform: uppercase;
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-style: normal;
       font-weight: 800;
       letter-spacing: 0.16em;

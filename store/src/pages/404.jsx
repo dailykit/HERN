@@ -100,7 +100,7 @@ const Wrapper = styled.div`
          display: flex;
          align-items: center;
          justify-content: center;
-         font-family: Proxima Nova;
+         font-family: 'Maven Pro';
          font-style: normal;
          font-weight: 800;
          color: ${theme.colors.textColor};

@@ -74,7 +74,7 @@ const Wrapper = styled.div`
       }
       .ant-menu-item {
          font-weight: 500;
-         font-family: Proxima Nova;
+         font-family: 'Maven Pro';
          font-size: ${theme.sizes.h4};
          color: ${theme.colors.textColor5};
          :hover {
@@ -118,7 +118,7 @@ const Wrapper = styled.div`
       justify-content: center;
       .user-email {
          font-weight: 500;
-         font-family: Proxima Nova;
+         font-family: 'Maven Pro';
          color: ${theme.colors.textColor5};
          text-align: center;
          line-height: 35px;

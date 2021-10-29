@@ -92,7 +92,7 @@ export const Wrapper = styled.div`
          }
       }
       .checkbox-label {
-         font-family: Proxima Nova;
+         font-family: 'Maven Pro';
          font-weight: 800;
          letter-spacing: 0.6em;
          margin-left: 1rem;
@@ -125,7 +125,7 @@ export const Wrapper = styled.div`
    .payment-div {
       padding: 32px 0;
       .h3_head {
-         font-family: Proxima Nova;
+         font-family: 'Maven Pro';
          font-style: normal;
          font-weight: 600;
          letter-spacing: 0.3em;
@@ -200,7 +200,7 @@ export const NewPaymentCard = styled.div`
       }
    }
    .checkbox-label {
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-weight: 800;
       letter-spacing: 0.6em;
       margin-left: 1rem;
@@ -226,7 +226,7 @@ export const NewPaymentCard = styled.div`
    .default_text {
       color: ${({ isDefault }) =>
          isDefault ? theme.colors.textColor4 : theme.colors.textColor5};
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-weight: 800;
       letter-spacing: 0.6em;
    }
@@ -245,7 +245,7 @@ export const NewPaymentCard = styled.div`
       padding: 0 2rem;
    }
    .title {
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-weight: 600;
       letter-spacing: 0.3em;
       color: ${({ isDefault }) =>

@@ -32,7 +32,7 @@ export const StyledContent = styled.p`
 
 export const StyledFooter = styled.div`
    color: ${theme.colors.textColor5};
-   font-family: Proxima Nova;
+   font-family: 'Maven Pro';
    font-style: normal;
    font-weight: bold;
    font-size: 13px;

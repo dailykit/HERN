@@ -11,15 +11,15 @@ export const theme = {
          grey: '#EEEEEE'
       },
       darkBackground: {
-         darkblue: '#061422',
+         darkblue: '#000',
          lightblue: '#2A4663'
       },
-      mainBackground: '#061422',
+      mainBackground: '#000',
       textColor: '#DC2047',
       textColor2: '#fff',
       textColor3: '#da2148',
       textColor4: '#ffffff',
-      textColor5: '#2A4663',
+      textColor5: '#000',
       textColor6: '#EB5A97',
       textColor7: '#C5C5C5',
       textColor8: '#191d28',

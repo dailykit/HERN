@@ -11,7 +11,7 @@ export const Wrapper = styled.div`
       margin: 2rem 0;
    }
    .proxinova_text {
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-style: normal;
       font-weight: 600;
       letter-spacing: 0;

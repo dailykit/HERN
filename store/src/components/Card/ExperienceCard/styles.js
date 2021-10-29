@@ -81,7 +81,7 @@ export const CardBody = styled.div`
          : theme.colors.textColor4};
    width: 100%;
    padding: 0.5rem;
-   font-family: Proxima Nova;
+   font-family: 'Maven Pro';
    &:hover {
       .book-exp {
          animation: tracking-in-contract 0.8s
@@ -103,7 +103,7 @@ export const CardBody = styled.div`
    }
    .book-exp {
       text-align: center;
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-size: ${theme.sizes.h8};
       color: ${theme.colors.tertiaryColor};
       text-transform: uppercase;
@@ -125,7 +125,7 @@ export const CardBody = styled.div`
    }
    .exp-name {
       margin: 4px 0 4px 0;
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-weight: 800;
       text-align: left;
       color: ${({ backgroundMode = 'dark' }) =>
@@ -166,7 +166,7 @@ export const CardBody = styled.div`
       display: flex;
       align-items: center;
       p {
-         font-family: Proxima Nova;
+         font-family: 'Maven Pro';
          color: ${theme.colors.textColor};
          font-weight: 800;
          letter-spacing: 0.16em;
@@ -182,7 +182,7 @@ export const CardBody = styled.div`
    @media (min-width: 769px) {
       .exp-name {
          margin: 0 0 0.5rem 0;
-         font-family: Proxima Nova;
+         font-family: 'Maven Pro';
       }
       .exp-info {
          font-size: ${theme.sizes.h8};

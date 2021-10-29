@@ -262,7 +262,7 @@ const Wrapper = styled.div`
    filter: ${({ isCelebrating }) => isCelebrating && 'blur(4px)'};
    padding-top: 4rem;
    .proxinova_text {
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-style: normal;
       font-weight: 600;
       letter-spacing: 0.16em;
@@ -383,7 +383,7 @@ const StyledWrap = styled.div`
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-style: normal;
       font-weight: 800;
       color: ${theme.colors.textColor};

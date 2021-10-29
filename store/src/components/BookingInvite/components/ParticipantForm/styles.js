@@ -6,7 +6,7 @@ export const Wrapper = styled.div`
    height: 100%;
    color: ${theme.colors.textColor4};
    .proxinova_text {
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-style: normal;
       font-weight: 600;
       letter-spacing: 0.16em;
@@ -27,7 +27,7 @@ export const Wrapper = styled.div`
    .input-label {
       color: ${theme.colors.textColor7};
       margin: 8px 4px;
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-style: normal;
       font-weight: 600;
       letter-spacing: 0.16em;
@@ -37,7 +37,7 @@ export const Wrapper = styled.div`
       margin: 0.5rem 0;
       color: ${theme.colors.textColor5};
       background: ${theme.colors.lightBackground.grey};
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-weight: 700px;
       letter-spacing: 0.3em;
       ::placeholder {

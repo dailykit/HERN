@@ -86,7 +86,7 @@ export const Wrapper = styled.div`
    .custom_btn {
       width: 250px;
       height: 48px;
-      font-family: 'Proxima Nova';
+      font-family: 'Maven Pro';
       letter-spacing: 0.16em;
       color: ${theme.colors.textColor};
       margin: 0.5rem auto;

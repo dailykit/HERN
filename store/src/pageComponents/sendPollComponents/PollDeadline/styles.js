@@ -9,7 +9,7 @@ export const Wrap = styled.div`
       margin: 1rem auto;
    }
    .proxima_nova {
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-style: normal;
       font-weight: 600;
       letter-spacing: 0.1em;

@@ -43,7 +43,7 @@ export default function AddressForm({
    }
    const optionCustomStyle = {
       background: theme.colors.lightBackground.grey,
-      fontFamily: 'Proxima Nova',
+      fontFamily: 'Maven Pro',
       fontWeight: 600,
       fontSize: theme.sizes.h8,
       '&:hover': {
@@ -53,7 +53,7 @@ export default function AddressForm({
       }
    }
    const customInputStyle = {
-      fontFamily: 'Proxima Nova',
+      fontFamily: 'Maven Pro',
       fontWeight: 600,
       fontSize: theme.sizes.h8,
       color: theme.colors.textColor5

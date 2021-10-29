@@ -49,7 +49,7 @@ const CardSectionWrapper = styled.div`
       background-color: #fefde5 !important;
    }
    .card_label {
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-style: normal;
       font-weight: 600;
       letter-spacing: 0.3em;

@@ -83,7 +83,7 @@ export const Wrapper = styled.div`
    .breakdown-head {
       background: none;
       border: none;
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       color: ${theme.colors.textColor7};
       cursor: pointer;
       margin-bottom: 1rem;
@@ -91,7 +91,7 @@ export const Wrapper = styled.div`
    .availableDate {
       margin: 1rem 0;
       .availableDate_head {
-         font-family: Proxima Nova;
+         font-family: 'Maven Pro';
          font-weight: 600;
          color: ${theme.colors.textColor7};
          margin-bottom: 1rem;

@@ -335,7 +335,7 @@ const Wrapper = styled.div`
       margin-bottom: 1rem;
       .go_back {
          color: ${theme.colors.textColor7};
-         font-family: Proxima Nova;
+         font-family: 'Maven Pro';
          font-style: normal;
          font-weight: 600;
          letter-spacing: 0.3em;
@@ -364,7 +364,7 @@ const Wrapper = styled.div`
       justify-content: center;
       background: ${theme.colors.textColor};
       color: ${theme.colors.textColor4};
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-style: normal;
       font-weight: 800;
       letter-spacing: 0.16em;

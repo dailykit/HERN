@@ -19,7 +19,7 @@ export const Wrapper = styled.div`
          margin-bottom: 0;
          color: ${theme.colors.textColor5};
          background: ${theme.colors.lightBackground.white};
-         font-family: Proxima Nova;
+         font-family: 'Maven Pro';
          font-weight: 700px;
          letter-spacing: 0.3em;
          ::placeholder {

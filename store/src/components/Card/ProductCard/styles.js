@@ -39,7 +39,7 @@ export const CardBody = styled.div`
       margin: 4px 0 4px 0;
       font-weight: 500;
       text-align: left;
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       letter-spacing: 0.16em;
       font-weight: 500;
       text-transform: uppercase;
@@ -47,7 +47,7 @@ export const CardBody = styled.div`
    }
    .kit-price {
       font-weight: 800;
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       letter-spacing: 0.16em;
       text-transform: uppercase;
       color: ${theme.colors.textColor7};
@@ -59,7 +59,7 @@ export const CardBody = styled.div`
    .booked-kit {
       text-align: center;
       font-weight: 800;
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       letter-spacing: 0.16em;
       text-transform: uppercase;
       color: ${theme.colors.textColor5};
@@ -118,7 +118,7 @@ export const CardBody = styled.div`
 
    .product_extra_info_text {
       margin: 8px 0;
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       letter-spacing: 0.16em;
       font-weight: 500;
       text-transform: uppercase;

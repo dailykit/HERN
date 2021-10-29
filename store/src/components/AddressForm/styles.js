@@ -13,7 +13,7 @@ export const Wrapper = styled.div`
       padding: 0 1rem;
    }
    .proxinova_text {
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-style: normal;
       font-weight: 600;
       letter-spacing: 0.16em;
@@ -26,7 +26,7 @@ export const Wrapper = styled.div`
       height: 100%;
       margin-bottom: 1rem;
       label {
-         font-family: Proxima Nova;
+         font-family: 'Maven Pro';
          font-style: normal;
          font-weight: 600;
          letter-spacing: 0.16em;
@@ -39,7 +39,7 @@ export const Wrapper = styled.div`
       margin: 0.5rem 0;
       color: ${theme.colors.textColor5};
       background: ${theme.colors.lightBackground.grey};
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-weight: 600px;
       letter-spacing: 0.16em;
       ::placeholder {
@@ -78,7 +78,7 @@ export const AddressSearch = styled.section`
    margin-bottom: 16px;
    padding: 1rem 0;
    label {
-      font-family: Proxima Nova;
+      font-family: 'Maven Pro';
       font-style: normal;
       font-weight: 600;
       letter-spacing: 0.16em;
