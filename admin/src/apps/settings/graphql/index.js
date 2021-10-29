@@ -688,7 +688,15 @@ export const MASTER = {
       `,
    },
    VEG_NONVEG: {
-      // LIST:,
+      LIST: gql`
+         subscription VegNonVeg {
+            master_vegNonvegType {
+               description
+               icon
+               label
+            }
+         }
+      `,
       // CREATE:,
       // DELETE:,
    },

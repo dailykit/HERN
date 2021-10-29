@@ -9,16 +9,37 @@ import {
    Flex,
 } from '@dailykit/ui'
 import {
-   //    Tooltip,
-   //    ErrorState,
-   //    InlineLoader,
+   Tooltip,
+   ErrorState,
+   InlineLoader,
    Banner,
 } from '../../../../../../shared/components'
+import tableOptions from '../../../Listings/tableOption'
+import { MASTER } from '../../../../graphql'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { AddIcon, DeleteIcon } from '../../../../../../shared/assets/icons'
+import { logger } from '../../../../../../shared/utils'
+
+const address = 'apps.settings.views.forms.vegnonveg.'
 
 const VegNonVeg = () => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
-
+   const { loading, data, error } = useSubscription(MASTER.VEG_NONVEG.LIST)
+   const columns = [
+      {
+         title: 'Label',
+         field: 'label',
+      },
+   ]
+   if (!loading && error) {
+      logger(error)
+      toast.error('Failed to fetch cuisines!')
+      return <ErrorState />
+   }
+   if (loading) {
+      return <InlineLoader />
+   }
    return (
       <>
          <Flex width="calc(100% - 32px)" maxWidth="1280px" margin="0 auto">
@@ -36,6 +57,13 @@ const VegNonVeg = () => {
                <ComboButton type="solid" onClick={() => openTunnel(1)}>
                   <AddIcon size={24} /> Create new type
                </ComboButton>
+            </Flex>
+            <Flex>
+               <ReactTabulator
+                  columns={columns}
+                  data={data?.master_vegNonvegType}
+                  options={tableOptions}
+               ></ReactTabulator>
             </Flex>
             <Banner id="settings-app-master-lists-vegnonveg-bottom" />
          </Flex>
