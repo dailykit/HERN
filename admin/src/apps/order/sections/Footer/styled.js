@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components'
 export const Wrapper = styled.footer`
    display: flex;
    padding-left: 12px;
-   background: #d9e9f1;
+   background: #f3f3f3;
    align-items: center;
 `
 
@@ -14,9 +14,9 @@ export const StyledNav = styled.div(
       css`
          margin-left: auto;
       `}
-      border-left: 1px solid #b4d5e6;
+     
       button {
-         width: 40px;
+         width: 30px;
          height: 40px;
          border: none;
          cursor: pointer;
@@ -36,15 +36,21 @@ export const Section = styled.section`
    display: flex;
    font-size: 14px;
    align-items: center;
+   font-weight: 500;
+   line-height: 16px;
+   color: #555b6e;
+   margin-bottom: 7px;
    span:first-child {
-      height: 32px;
-      width: 32px;
+      height: 20px;
+      width: 20px;
+      margin-right: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
    }
    + section {
-      margin-left: 24px;
+      margin-left: 80px;
+      margin-bottom: 7px;
    }
 `
 
@@ -58,7 +64,7 @@ export const StatusBadge = styled.span(
    ${
       status === 'online'
          ? css`
-              background: #2fc64d;
+              background: #367bf5;
            `
          : css`
               background: #c2cac3;

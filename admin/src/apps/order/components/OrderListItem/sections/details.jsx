@@ -44,10 +44,8 @@ export const Details = ({ order }) => {
             order.cart.source === 'subscription' &&
             !isEmpty(order.cart?.brand.subscriptionSettings)
          ) {
-            const {
-               name = '',
-               logo = '',
-            } = order.cart?.brand.subscriptionSettings[0]
+            const { name = '', logo = '' } =
+               order.cart?.brand.subscriptionSettings[0]
             setBrand({ name, logo })
          }
       }
