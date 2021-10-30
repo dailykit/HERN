@@ -20,6 +20,8 @@ import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { AddIcon, DeleteIcon } from '../../../../../../shared/assets/icons'
 import { logger } from '../../../../../../shared/utils'
+import { toast } from 'react-toastify'
+import AddTypesTunnel from './tunnels/AddTypes/index'
 
 const address = 'apps.settings.views.forms.vegnonveg.'
 
@@ -65,6 +67,11 @@ const VegNonVeg = () => {
                   options={tableOptions}
                ></ReactTabulator>
             </Flex>
+            <Tunnels tunnels={tunnels}>
+               <Tunnel layer={1}>
+                  <AddTypesTunnel closeTunnel={closeTunnel} />
+               </Tunnel>
+            </Tunnels>
             <Banner id="settings-app-master-lists-vegnonveg-bottom" />
          </Flex>
       </>

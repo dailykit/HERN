@@ -697,7 +697,11 @@ export const MASTER = {
             }
          }
       `,
-      // CREATE:,
+      CREATE: gql`
+         mutation create_vegnonveg_type {
+            insert_master_vegNonvegType_one(object: { label: "" })
+         }
+      `,
       // DELETE:,
    },
 }
