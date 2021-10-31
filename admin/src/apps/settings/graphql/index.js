@@ -698,8 +698,12 @@ export const MASTER = {
          }
       `,
       CREATE: gql`
-         mutation create_vegnonveg_type {
-            insert_master_vegNonvegType_one(object: { label: "" })
+         mutation CREATE_VEG_NON_VEG_TYPE(
+            $object: master_vegNonvegType_insert_input!
+         ) {
+            insert_master_vegNonvegType_one(object: $object) {
+               label
+            }
          }
       `,
       // DELETE:,
