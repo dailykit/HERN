@@ -24,8 +24,8 @@ export const Card = styled.div`
 export const CardImage = styled.div`
    position: relative;
    width: 100%;
-   height: 100%;
-   border-radius: 16px;
+   height: 360px;
+   border-radius: 24px;
    overflow: hidden;
    :hover {
       cursor: pointer;

@@ -3,7 +3,11 @@ import { theme } from '../../theme'
 
 export const StyledDiv = styled.div`
    position: relative;
+   .owl-item {
+      width: 320px !important;
+   }
    .owl_carousel_item {
+      width: 320px;
       border-radius: 16px;
    }
    .owl_carousel_item img {
@@ -35,7 +39,7 @@ export const StyledDiv = styled.div`
       background: linear-gradient(
          -90deg,
          rgba(30, 49, 74, 0) 1.59%,
-         #061422 69.32%
+         #000 69.32%
       );
       justify-content: flex-start;
    }
@@ -44,7 +48,7 @@ export const StyledDiv = styled.div`
       background: linear-gradient(
          90deg,
          rgba(30, 49, 74, 0) 1.59%,
-         #061422 69.32%
+         #000 69.32%
       );
       justify-content: flex-end;
    }

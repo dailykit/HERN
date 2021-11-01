@@ -274,6 +274,10 @@ body {
    font-size: 72px !important;
    line-height: 88px !important;
 }
+.text1_secondary {
+   font-size: 56px !important;
+   line-height: 62px !important;
+}
 
 .text2 {
    font-size: 48px !important;
@@ -324,6 +328,10 @@ body {
    .text1 {
       font-size: 48px !important;
       line-height: 58px !important;
+   }
+   .text1_secondary {
+      font-size: 40px !important;
+      line-height: 40px !important;
    }
    .text2 {
       font-size: 36px !important;

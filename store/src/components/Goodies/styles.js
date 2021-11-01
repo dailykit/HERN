@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { theme } from '../../theme'
 
 export const Wrapper = styled.div`
-   padding: 2rem 1rem;
+   padding: 2rem 0;
    .sub-heading {
       color: ${theme.colors.textColor5};
       font-weight: 400;

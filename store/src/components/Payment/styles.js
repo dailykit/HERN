@@ -158,6 +158,14 @@ export const Wrapper = styled.div`
          font-family: League-Gothic;
       }
    }
+   .card-container > .ant-tabs-card .ant-tabs-tab-disabled {
+      background: ${theme.colors.lightBackground.grey};
+      > .ant-tabs-tab-btn {
+         color: ${theme.colors.textColor7};
+         font-size: ${theme.sizes.h4};
+         font-family: League-Gothic;
+      }
+   }
    .card-container > .ant-tabs-card .ant-tabs-tab-active {
       background: ${theme.colors.textColor};
       > .ant-tabs-tab-btn {

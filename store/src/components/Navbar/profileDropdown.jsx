@@ -81,7 +81,7 @@ export default function ProfileDropdownMenu({ user, ...props }) {
                      color={theme.colors.mainBackground}
                   />
                   <Spacer xAxis="16px" />
-                  <p className="title profileFont ">My Bookings</p>
+                  <p className="title profileFont ">My Booked Experiences</p>
                </DropdownMenuItem>
                <DropdownMenuItem url="logout">
                   <LogoutIcon

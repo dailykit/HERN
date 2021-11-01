@@ -7,11 +7,12 @@ export const StyledDiv = styled.div`
       display: -ms-flexbox; /* Not needed if autoprefixing */
       display: flex;
       width: auto;
-      margin-right: 40px;
+      gap: 3rem;
+      margin-right: 0;
    }
 
    .my-masonry-grid_column > div {
-      margin: 0 0 40px 40px;
+      margin: 0 0 2rem 0;
    }
    @media (max-width: 769px) {
       .my-masonry-grid {
@@ -28,6 +29,5 @@ export const CategoryWiseDiv = styled.div`
       font-weight: 400;
       text-align: left;
       margin-bottom: 2rem;
-      padding-left: 3rem;
    }
 `

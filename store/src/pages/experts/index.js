@@ -142,7 +142,7 @@ export default function Experiences({
             <div className="centerDiv">
                <h1 className="heading text1">Experts</h1>
             </div>
-            <Filters
+            {/* <Filters
                filterOptions={[
                   { title: 'tags', type: 'checkbox', options: tags },
                   {
@@ -155,20 +155,18 @@ export default function Experiences({
                   }
                ]}
                resultCount={resultCount}
-            >
-               {!isEmpty(expertsByCategory) && (
-                  <RenderCard
-                     data={expertsByCategory
-                        .map(expert => expert?.experts)
-                        .flat()}
-                     // data={experts}
-                     type="expert"
-                     layout="masonry"
-                     showCategorywise={false}
-                     keyname="expert"
-                  />
-               )}
-            </Filters>
+            > */}
+            {!isEmpty(expertsByCategory) && (
+               <RenderCard
+                  data={expertsByCategory.map(expert => expert?.experts).flat()}
+                  // data={experts}
+                  type="expert"
+                  layout="masonry"
+                  showCategorywise={false}
+                  keyname="expert"
+               />
+            )}
+            {/* </Filters> */}
 
             {!isAuthenticated && (
                <div style={{ padding: '0 3rem', marginTop: '4rem' }}>
@@ -209,7 +207,9 @@ export const getStaticProps = async () => {
 const StyledWrapper = styled.div`
    width: 100%;
    height: 100%;
-   overflow: hidden; /* might need to change in future */
+   overflow: auto; /* might need to change in future */
+   padding: 0 6rem;
+   padding-bottom: 4rem;
    background: ${({ bgMode }) =>
       bgMode === 'dark'
          ? theme.colors.darkBackground.darkblue
@@ -223,7 +223,7 @@ const StyledWrapper = styled.div`
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: 6rem;
+      margin-top: 1rem;
       .heading {
          font-family: League-Gothic;
          font-style: normal;
@@ -300,6 +300,11 @@ const StyledWrapper = styled.div`
             font-size: ${theme.sizes.h1};
          }
       }
+   }
+
+   @media (max-width: 769px) {
+      padding: 0 2rem;
+      padding-bottom: 4rem;
    }
 `
 const CardWrapper = styled.div`

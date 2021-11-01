@@ -87,7 +87,7 @@ export default function BookingRecyclerView({ keycloakId }) {
       <Wrapper shouldVisible={Boolean(bookings.length)}>
          <div className="wrapper-div">
             <div className="recycler-heading-wrapper">
-               <h3 className="recycler-heading text1">MY Bookings</h3>
+               <h3 className="recycler-heading text1">My Booked Experiences</h3>
                <Link href="/dashboard/myBookings">
                   <a className="redirectClass">
                      <span className="special-underline">View All</span>

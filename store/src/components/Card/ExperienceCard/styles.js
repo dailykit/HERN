@@ -15,7 +15,7 @@ export const Card = styled.div`
       transform: translate3d(0px, -1.5px, 0px);
    }
    max-height: 480px;
-   border-radius: 16px 16px 0px 0px;
+   border-radius: 24px 24px 0px 0px;
    width: ${({ customWidth }) => customWidth};
    @media (min-width: 769px) {
       max-height: 580px;
@@ -26,7 +26,7 @@ export const CardImage = styled.div`
    position: relative;
    width: 100%;
    height: 360px;
-   border-radius: 16px;
+   border-radius: 24px;
    overflow: hidden;
    img {
       width: 100%;

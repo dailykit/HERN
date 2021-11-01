@@ -291,6 +291,7 @@ export const DropdownWrapper = styled.div`
          font-size: ${theme.sizes.h8};
          color: ${theme.colors.textColor4};
          text-align: left;
+         margin-bottom: 0;
       }
       .profileFont {
          font-size: ${theme.sizes.h9};

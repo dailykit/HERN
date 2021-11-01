@@ -139,7 +139,7 @@ export default function Home({
                      parsedData.find(fold => fold.id === 'home-top-01')?.content
                   )}
             </div>
-            <div style={{ margin: '2rem' }}>
+            <div style={{ margin: '2rem 6rem' }}>
                {!isEmpty(categories) && (
                   <RenderCard
                      data={categories
@@ -167,7 +167,7 @@ export default function Home({
                            ?.content
                      )}
                </div>
-               <h3 className="experienceHeading text2">Our Experts</h3>
+               <h3 className="experienceHeading text1_secondary">Experts</h3>
                <p className="experienceHeading2 text5">
                   Our experiences will be lead by our qualified experts, who are
                   professional, highly skilled and fun to work with.
@@ -182,7 +182,10 @@ export default function Home({
                      keyname="expert"
                   />
                )}
-               {isAuthenticated && (
+
+               {/* // tag selection part */}
+
+               {/* {isAuthenticated && (
                   <CategorySection>
                      <Flex
                         container
@@ -190,7 +193,7 @@ export default function Home({
                         justifyContent="center"
                         padding="1rem 0"
                      >
-                        <h3 className="experienceHeading text2">
+                        <h3 className="experienceHeading text1_secondary">
                            {!isEmpty(selectedTags)
                               ? 'Your personalized tags'
                               : 'Choose your tags'}
@@ -231,7 +234,10 @@ export default function Home({
                      {!isEmpty(selectedTags) ? (
                         <div className="edit_tags">
                            <EditIcon size="20" color={theme.colors.textColor} />
-                           <h1 onClick={openTagsModal} className="explore ">
+                           <h1
+                              onClick={openTagsModal}
+                              className="explore text6"
+                           >
                               Edit tags
                            </h1>
                         </div>
@@ -244,7 +250,7 @@ export default function Home({
                         </Button>
                      )}
                   </CategorySection>
-               )}
+               )} */}
                {!isAuthenticated && <SignupFold bgMode="dark" />}
             </div>
             <Modal
@@ -355,185 +361,6 @@ const StyledWrapper = styled.div`
       }
    }
 `
-const CardWrapper = styled.div`
-   height: 267px;
-   width: 350px;
-   margin: 0 auto;
-`
-const CardWrapperForExpert = styled.div`
-   padding: 1rem;
-`
-
-const GridViewWrapper = styled.div`
-   margin-bottom: 4rem;
-   a {
-      position: relative;
-      padding: 8px 0;
-      text-decoration: none;
-      &:after {
-         position: absolute;
-         bottom: 0;
-         left: 0;
-         right: 0;
-         margin: auto;
-         width: 0%;
-         content: '';
-         color: ${theme.colors.textColor};
-         background: ${theme.colors.textColor};
-         height: 2px;
-      }
-      &:hover {
-         color: ${theme.colors.textColor};
-         &:after {
-            width: 100%;
-         }
-      }
-   }
-   a,
-   a:before,
-   a:after {
-      transition: all 560ms;
-   }
-
-   .explore {
-      text-align: center;
-      font-size: ${theme.sizes.h4};
-      color: ${theme.colors.textColor};
-      font-weight: 800;
-      margin-left: 8px;
-      margin-bottom: 0;
-   }
-   .my-masonry-grid {
-      display: -webkit-box; /* Not needed if autoprefixing */
-      display: -ms-flexbox; /* Not needed if autoprefixing */
-      display: flex;
-      width: auto;
-      margin-right: 40px;
-   }
-
-   .my-masonry-grid_column > div {
-      margin: 0 0 40px 40px;
-   }
-
-   @media (min-width: 769px) {
-      .exploreExperience {
-         text-align: center;
-         font-size: ${theme.sizes.h1};
-         color: ${theme.colors.textColor};
-         font-weight: 800;
-      }
-   }
-   @media (max-width: 800px) {
-      .my-masonry-grid {
-         margin-right: 1rem;
-      }
-      .my-masonry-grid_column > div {
-         margin: 0 0 1rem 1rem;
-      }
-   }
-`
-
-const GridView = styled.div`
-   display: grid;
-   grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
-   grid-auto-rows: 228px;
-   justify-content: space-evenly;
-   justify-items: center;
-   align-content: space-evenly;
-   align-items: center;
-   @media (min-width: 769px) {
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      grid-auto-rows: 283px;
-   }
-`
-const GridViewForExpert = styled.div`
-   display: flex;
-   width: 100%;
-   justify-content: flex-start;
-   justify-items: center;
-   align-content: space-evenly;
-   align-items: center;
-   overflow-y: auto;
-`
-
-const GreetingDiv = styled.div`
-   position: relative;
-   width: 100%;
-   height: 400px;
-   color: ${theme.colors.textColor4};
-   padding: 30% 1rem;
-   overflow: hidden;
-   margin-bottom: 80px;
-   &:after {
-      width: 100%;
-      height: 400px;
-      content: '';
-      background: url('/assets/images/Hero.png');
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: cover;
-      opacity: 0.2;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      right: 0;
-      position: absolute;
-      z-index: -1;
-   }
-   .greeting-name {
-      font-size: ${theme.sizes.h2};
-      font-weight: 800;
-   }
-   .greeting-msg {
-      width: 90%;
-      margin: 2rem auto 2rem 0;
-      font-size: ${theme.sizes.h9};
-   }
-   .buttonWrapper {
-      cursor: pointer;
-   }
-   .loginBtn {
-      height: 48px;
-      font-size: ${theme.sizes.h8};
-   }
-   .signupBtn {
-      height: 48px;
-      font-size: ${theme.sizes.h8};
-   }
-   .separatorNote {
-      margin: 1rem 0;
-      text-align: center;
-      font-size: ${theme.sizes.h6};
-      font-weight: 400;
-      color: ${theme.colors.textColor4};
-   }
-   .forDesktop {
-      display: none;
-   }
-   .forMobile {
-      display: block;
-   }
-   @media (min-width: 769px) {
-      height: 324px;
-      padding: 4rem 1rem;
-      &:after {
-         height: 324px;
-         padding: 15% 1rem;
-      }
-      .forDesktop {
-         display: block;
-      }
-      .forMobile {
-         display: none;
-      }
-      .greeting-name {
-         font-size: ${theme.sizes.h10};
-      }
-      .greeting-msg {
-         font-size: ${theme.sizes.h2};
-      }
-   }
-`
 
 const CategoryTagWrap = styled.div`
    display: flex;
@@ -564,7 +391,6 @@ const CategorySection = styled.div`
    margin: 4rem 0;
    .explore {
       text-align: center;
-      font-size: ${theme.sizes.h4};
       color: ${theme.colors.textColor};
       font-weight: 800;
       margin-left: 8px;

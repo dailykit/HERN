@@ -283,7 +283,7 @@ export default function Experience({
             </div>
             <TabWrapper scroll={scroll}>
                <div className="tabOptions">
-                  <span
+                  {/* <span
                      className="scrollBtn scrollLeftBtn"
                      onClick={scrollLeftHandler}
                   >
@@ -291,7 +291,7 @@ export default function Experience({
                         size={theme.sizes.h3}
                         color={theme.colors.textColor}
                      />
-                  </span>
+                  </span> */}
 
                   <div className="tab" id="experienceTab">
                      {/* <CustomScrollbar> */}
@@ -384,7 +384,7 @@ export default function Experience({
                      </ul>
                      {/* </CustomScrollbar> */}
                   </div>
-                  <span
+                  {/* <span
                      className="scrollBtn scrollRightBtn"
                      onClick={scrollRightHandler}
                   >
@@ -392,7 +392,7 @@ export default function Experience({
                         size={theme.sizes.h3}
                         color={theme.colors.textColor}
                      />
-                  </span>
+                  </span> */}
                </div>
             </TabWrapper>
 
@@ -408,24 +408,24 @@ export default function Experience({
                <div className="info-wrapper">
                   <div className="left-container">
                      <section id="section-1">
-                        <Flex
+                        {/* <Flex
                            container
                            alignItems="center"
                            justifyContent="space-between"
                            margin="16px 0"
-                        >
-                           <h1 className="sub-heading text1">
-                              {experienceInfo?.experience?.title}
-                           </h1>
-                           {width > 769 && (
+                        > */}
+                        <h1 className="sub-heading text1">
+                           {experienceInfo?.experience?.title}
+                        </h1>
+                        {/* {width > 769 && (
                               <Button
                                  onClick={openSendPollModal}
                                  className="customPollBtn text7"
                               >
                                  SEND POLL
                               </Button>
-                           )}
-                        </Flex>
+                           )} */}
+                        {/* </Flex> */}
 
                         <ReadMoreDiv>
                            <p className="about-exp text7">
@@ -493,7 +493,7 @@ export default function Experience({
                      />
                   </div>
                </div>
-               <div style={{ padding: '1rem' }}>
+               <div style={{ padding: '2rem 0' }}>
                   {!isEmpty(customerReviews) && (
                      <section id="section-6">
                         <h1 className="sub-heading text1">Reviews</h1>
@@ -683,7 +683,7 @@ const StyledWrapper = styled.div`
       height: 100%;
       width: 100%;
       text-align: left;
-      padding: 1rem;
+      padding: 1rem 6rem;
    }
    .player-wrapper {
       width: 100%;
@@ -747,6 +747,7 @@ const StyledWrapper = styled.div`
    @media screen and (max-width: 769px) {
       > main {
          width: 100%;
+         padding: 1rem 2rem;
       }
       > aside {
          display: none;
@@ -766,7 +767,6 @@ const Wrapper = styled.main`
          height: 100%;
          width: 100%;
          text-align: left;
-         padding: 1rem;
          margin-right: 1rem;
       }
       .right-container {
@@ -817,7 +817,7 @@ const Wrapper = styled.main`
    }
    section {
       position: relative;
-      padding: 2rem 1rem;
+      padding: 2rem 0;
       .sub-heading {
          color: ${theme.colors.textColor5};
          font-weight: 400;
@@ -913,9 +913,7 @@ const TabWrapper = styled.div`
    top: 0;
    z-index: 100;
    transition: all 150ms;
-   @media (min-width: 769px) {
-      top: ${({ scroll }) => (scroll.direction === 'down' ? '0px' : '64px')};
-   }
+
    .tabOptions {
       position: relative;
       display: flex;
@@ -938,30 +936,33 @@ const TabWrapper = styled.div`
       }
       .tab {
          position: relative;
-         overflow: auto;
-         width: 96%;
+         overflow-x: auto;
+         width: 100%;
          height: 56px;
          scrollbar-width: none;
-         margin: 0 auto;
+         margin: 0 2rem;
          padding-left: 0;
          ul {
-            width: max-content;
+            width: 100%;
             list-style: none;
             display: flex;
-            justify-content: space-between;
+            justify-content: normal;
             align-items: center;
             padding: 0;
             margin: 0;
             padding-left: 0;
             height: 100%;
+            white-space: nowrap;
          }
          li {
             list-style: none;
             font-size: ${theme.sizes.h4};
             font-weight: 500;
-            padding: 8px;
-            margin-right: 28px;
             text-transform: uppercase;
+            margin-right: 5.8rem;
+            :last-child {
+               margin-right: 0;
+            }
             .activeHash {
                border-bottom: 2px solid ${theme.colors.textColor5};
                color: ${theme.colors.textColor5};
@@ -980,7 +981,8 @@ const TabWrapper = styled.div`
                position: relative;
                text-decoration: none;
                color: ${theme.colors.textColor};
-               padding: 4px 0;
+               padding: 0;
+               margin: 0;
                font-family: League-Gothic;
                &:hover {
                   color: ${theme.colors.textColor5};
@@ -991,6 +993,14 @@ const TabWrapper = styled.div`
             a:after {
                transition: all 560ms;
             }
+         }
+      }
+   }
+   @media (min-width: 769px) {
+      top: ${({ scroll }) => (scroll.direction === 'down' ? '0px' : '64px')};
+      .tabOptions {
+         .tab {
+            margin: 0 6rem;
          }
       }
    }

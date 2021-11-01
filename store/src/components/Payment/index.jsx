@@ -286,7 +286,11 @@ export default function Payment({
                   defaultActiveKey={!isEmpty(user?.paymentMethods) ? '1' : '2'}
                   type="card"
                >
-                  <Tabs.TabPane tab="Saved Cards" key="1">
+                  <Tabs.TabPane
+                     tab="Saved Cards"
+                     disabled={isEmpty(user?.paymentMethods)}
+                     key="1"
+                  >
                      <div className="grid-view">
                         {user?.paymentMethods?.map(method => {
                            return (

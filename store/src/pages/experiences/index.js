@@ -175,7 +175,7 @@ export default function Experiences({
             <div className="centerDiv">
                <h1 className="heading text1">Experiences</h1>
             </div>
-            <Filters
+            {/* <Filters
                filterOptions={[
                   { title: 'tags', type: 'checkbox', options: tags },
                   {
@@ -196,30 +196,30 @@ export default function Experiences({
                   }
                ]}
                resultCount={resultCount}
-            >
-               {!isEmpty(categories) && (
-                  <RenderCard
-                     // data={categories
-                     //    .map(
-                     //       category => category?.experience_experienceCategories
-                     //    )
-                     //    .flat()}
-                     data={categories}
-                     type="experience"
-                     layout="masonry"
-                     showCategorywise={true}
-                     keyname="experience_experienceCategories"
-                  />
-               )}
+            > */}
+            {!isEmpty(categories) && (
+               <RenderCard
+                  // data={categories
+                  //    .map(
+                  //       category => category?.experience_experienceCategories
+                  //    )
+                  //    .flat()}
+                  data={categories}
+                  type="experience"
+                  layout="masonry"
+                  showCategorywise={true}
+                  keyname="experience_experienceCategories"
+               />
+            )}
 
-               {loading && (
-                  <div className="skeleton-wrapper">
-                     {[1, 2, 3, 4].map((_, index) => {
-                        return <ExperienceSkeleton key={index} />
-                     })}
-                  </div>
-               )}
-            </Filters>
+            {loading && (
+               <div className="skeleton-wrapper">
+                  {[1, 2, 3, 4].map((_, index) => {
+                     return <ExperienceSkeleton key={index} />
+                  })}
+               </div>
+            )}
+            {/* </Filters> */}
             {!isAuthenticated && (
                <div style={{ padding: '0 3rem', marginTop: '4rem' }}>
                   <SignupFold bgMode="dark" />
@@ -261,6 +261,8 @@ const StyledWrapper = styled.div`
    width: 100%;
    height: 100%;
    overflow: auto;
+   padding: 0 6rem;
+   padding-bottom: 4rem;
    background: ${({ bgMode }) =>
       bgMode === 'dark'
          ? theme.colors.darkBackground.darkblue
@@ -304,5 +306,10 @@ const StyledWrapper = styled.div`
          text-transform: none;
          font-weight: 500;
       }
+   }
+
+   @media (max-width: 769px) {
+      padding: 0 2rem;
+      padding-bottom: 4rem;
    }
 `

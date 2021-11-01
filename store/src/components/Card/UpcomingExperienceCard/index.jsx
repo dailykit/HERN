@@ -75,7 +75,7 @@ export default function UpcomingExperienceCard({ cardDetails, ...props }) {
                      )}
                   </p>
                </Flex>
-               <Button className="book-slot" onClick={props.onCardClick}>
+               <Button className="book-exp" onClick={props.onCardClick}>
                   View Booking
                </Button>
             </CardBody>
