@@ -10,12 +10,15 @@ import validator from '../../../../../../validator'
 import { logger } from '../../../../../../../../../shared/utils'
 import { Form, Spacer, Text, TextButton } from '@dailykit/ui'
 import { Flex } from '../../../../../../../../../shared/components'
-import { BrandLogo } from '../../sections'
 
-export const Brand = () => {
+import ConfigTemplateUI from '../../../../../../../../../shared/components/ConfigTemplateUI'
+
+
+export const Brand = ({ update }) => {
     const params = useParams()
     const [settings, setSettings] = React.useState({})
     const [settingId, setSettingId] = React.useState(null)
+    const [configTemplate, setConfigTemplate] = React.useState({})
     const [form, setForm] = React.useState({
         brandEmail: {
             value: '',
@@ -57,13 +60,17 @@ export const Brand = () => {
                 const index = brandSettings.findIndex(
                     node => node?.brand?.brandId === Number(params.id)
                 )
+
                 if (index === -1) {
-                    const { id } = brandSettings[0]
+                    const { id, configTemplate } = brandSettings[0]
+                    setConfigTemplate(configTemplate)
                     setSettingId(id)
                     return
                 }
-                const { brand, id } = brandSettings[index]
+                const { brand, id, configTemplate } = brandSettings[index]
+                setConfigTemplate(configTemplate)
                 setSettingId(id)
+
                 if ('email' in brand.value || 'phoneNo' in brand.value) {
                     setForm({
                         ...form,
@@ -83,7 +90,6 @@ export const Brand = () => {
         toast.error('Something went wrong!')
         logger(error)
     }
-
     React.useEffect(() => {
         if (!loading && !isEmpty(brandSettings)) {
             const grouped = groupBy(brandSettings, 'type')
@@ -154,67 +160,11 @@ export const Brand = () => {
             }
         })
     }
-    console.log('settings🎪🎪🎪', settings)
-    return (
-        <>
-            <Card
-                title={<Text as="h3">Brands</Text>}
-                extra={
-                    <TextButton type="solid" size="sm" onClick={() => saveInfo()}>
-                        Save
-                    </TextButton>
-                }
-                style={{ width: '100%' }}
-            >
-                <Flex container justifyContent="space-between">
-                    <Flex container alignItems="flex-end">
-                        <Form.Group>
-                            <Form.Label htmlFor="email" title="email">
-                                Email
-                            </Form.Label>
-                            <Form.Text
-                                id="email"
-                                name="brandEmail"
-                                value={form.brandEmail.value}
-                                placeholder="Enter brand email"
-                                onChange={e => onChangeHandler(e)}
-                                onBlur={e => onBlur(e.target)}
-                            />
-                            {/* {form.brandEmail
-                                .meta.isTouched &&
-                                !form.brandEmail
-                                    .meta.isValid &&
-                                form.brandEmail.meta.errors.map((error, index) => (
-                                    <Form.Error key={index}>{error}</Form.Error>
-                                ))} */}
-                        </Form.Group>
-                        <Spacer size="8px" xAxis />
-                    </Flex>
-                    <Spacer size="4px" />
-                    <Flex container alignItems="flex-end">
-                        <Form.Group>
-                            <Form.Label htmlFor="phone" title="phone">
-                                Phone
-                            </Form.Label>
-                            <Form.Text
-                                id="phone"
-                                name="brandPhoneNo"
-                                value={form.brandPhoneNo.value}
-                                placeholder="Enter brand phone number"
-                                onChange={e => onChangeHandler(e)}
-                                onBlur={e => onBlur(e.target)}
-                            />
-                            {/* {form.brandPhoneNo.meta.isTouched &&
-                                !form.brandPhoneNo.meta.isValid &&
-                                form.brandPhoneNo.meta.errors.map((error, index) => (
-                                    <Form.Error key={index}>{error}</Form.Error>
-                                ))} */}
-                        </Form.Group>
 
-                    </Flex>
-                    <BrandLogo />
-                </Flex>
-            </Card>
-        </>
+    return (
+        <div>
+            {console.log("configTemplate", configTemplate)}
+            <ConfigTemplateUI config={configTemplate} />
+        </div>
     )
 }

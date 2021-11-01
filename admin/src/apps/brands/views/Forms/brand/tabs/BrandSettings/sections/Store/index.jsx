@@ -12,9 +12,11 @@ import {
 } from '../../../../../../../../../shared/components'
 import { toast } from 'react-toastify'
 import { logger } from '../../../../../../../../../shared/utils'
+import ConfigTemplateUI from '../../../../../../../../../shared/components/ConfigTemplateUI'
 
 export const Store = ({ update }) => {
    const params = useParams()
+   const [configTemplate, setConfigTemplate] = React.useState({})
    const [settingId, setSettingId] = React.useState(null)
    const [isOpen, setIsOpen] = React.useState(false)
    const [from, setFrom] = React.useState({
@@ -55,12 +57,14 @@ export const Store = ({ update }) => {
             )
 
             if (index === -1) {
-               const { id } = brandSettings[0]
+               const { id, configTemplate } = brandSettings[0]
                setSettingId(id)
+               setConfigTemplate(configTemplate)
                return
             }
-            const { brand, id } = brandSettings[index]
+            const { brand, id, configTemplate } = brandSettings[index]
             setSettingId(id)
+            setConfigTemplate(configTemplate)
             if ('isOpen' in brand.value) {
                setIsOpen(brand.value.isOpen)
             }
@@ -158,100 +162,7 @@ export const Store = ({ update }) => {
 
    return (
       <div id="Store Availability">
-         <Flex container alignItems="flex-start">
-            <Text as="h3">Store Availability</Text>
-            <Tooltip identifier="brand_store_availability_info" />
-         </Flex>
-         <Spacer size="8px" />
-         <Flex container alignItems="start" justifyContent="space-between">
-            <Flex>
-               <Form.Toggle
-                  name="open"
-                  value={isOpen}
-                  onChange={() => setIsOpen(!isOpen)}
-               >
-                  <Flex container alignItems="center">
-                     Open
-                     <Tooltip identifier="brand_store_open_info" />
-                  </Flex>
-               </Form.Toggle>
-               <Spacer size="16px" />
-               <Flex container alignItems="center">
-                  <Flex>
-                     <Form.Group>
-                        <Form.Label htmlFor="time" title="time">
-                           <Flex container alignItems="center">
-                              From
-                              <Tooltip identifier="brand_store_open_from_info" />
-                           </Flex>
-                        </Form.Label>
-                        <Form.Time
-                           id="fromTime"
-                           name="fromTime"
-                           onChange={e =>
-                              setFrom({ ...from, value: e.target.value })
-                           }
-                           value={from.value}
-                           onBlur={onBlur}
-                        />
-                        {from.meta.isTouched &&
-                           !from.meta.isValid &&
-                           from.meta.errors.map((error, index) => (
-                              <Form.Error key={index}>{error}</Form.Error>
-                           ))}
-                     </Form.Group>
-                  </Flex>
-                  <Spacer size="24px" xAxis />
-                  <Flex>
-                     <Form.Group>
-                        <Form.Label htmlFor="time" title="time">
-                           <Flex container alignItems="center">
-                              To
-                              <Tooltip identifier="brand_store_open_to_info" />
-                           </Flex>
-                        </Form.Label>
-                        <Form.Time
-                           id="toTime"
-                           name="toTime"
-                           value={to.value}
-                           onChange={e =>
-                              setTo({ ...to, value: e.target.value })
-                           }
-                           onBlur={onBlur}
-                        />
-                        {to.meta.isTouched &&
-                           !to.meta.isValid &&
-                           to.meta.errors.map((error, index) => (
-                              <Form.Error key={index}>{error}</Form.Error>
-                           ))}
-                     </Form.Group>
-                  </Flex>
-               </Flex>
-               <Spacer size="16px" />
-               <Form.Group>
-                  <Form.Label htmlFor="time" title="time">
-                     Text to show when store's closed
-                  </Form.Label>
-                  <Form.Text
-                     value={message.value}
-                     name="shut-message"
-                     onChange={e =>
-                        setMessage({ ...message, value: e.target.value })
-                     }
-                     placeholder="Enter the closed store message"
-                     onBlur={onBlur}
-                  />
-                  {message.meta.isTouched &&
-                     !message.meta.isValid &&
-                     message.meta.errors.map((error, index) => (
-                        <Form.Error key={index}>{error}</Form.Error>
-                     ))}
-               </Form.Group>
-            </Flex>
-            <TextButton size="sm" type="outline" onClick={updateSetting}>
-               Update
-            </TextButton>
-         </Flex>
+         <ConfigTemplateUI config={configTemplate} />
       </div>
    )
 }

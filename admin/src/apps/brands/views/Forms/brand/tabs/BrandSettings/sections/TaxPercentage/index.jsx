@@ -13,10 +13,11 @@ import {
    InlineLoader,
 } from '../../../../../../../../../shared/components'
 import { logger } from '../../../../../../../../../shared/utils'
+import ConfigTemplateUI from '../../../../../../../../../shared/components/ConfigTemplateUI'
 
 export const TaxPercentage = ({ update }) => {
    const params = useParams()
-
+   const [configTemplate, setConfigTemplate] = React.useState({})
    const [tax, setTax] = React.useState({
       value: '',
       meta: {
@@ -41,12 +42,14 @@ export const TaxPercentage = ({ update }) => {
             )
 
             if (index === -1) {
-               const { id } = brandSettings[0]
+               const { id, configTemplate } = brandSettings[0]
                setSettingId(id)
+               setConfigTemplate(configTemplate)
                return
             }
-            const { brand, id } = brandSettings[index]
+            const { brand, id, configTemplate } = brandSettings[index]
             setSettingId(id)
+            setConfigTemplate(configTemplate)
             if ('value' in brand.value) {
                setTax({
                   ...tax,
@@ -88,39 +91,7 @@ export const TaxPercentage = ({ update }) => {
 
    return (
       <div id="Tax Percentage">
-         <Flex container alignItems="flex-start">
-            <Text as="h3">Tax Percentage</Text>
-            <Tooltip identifier="sales_tax_percentage" />
-         </Flex>
-         <Spacer size="4px" />
-         <Flex container alignItems="flex-start" justifyContent="space-between">
-            <Form.Group>
-               <Form.Label htmlFor="tax" title="tax">
-                  How much % of order value should be charged as tax?
-               </Form.Label>
-               <Form.Text
-                  id="tax"
-                  name="tax"
-                  value={tax.value}
-                  placeholder="Enter tax"
-                  onChange={e => setTax({ ...tax, value: e.target.value })}
-                  onBlur={e => onBlur(e.target)}
-               />
-               {tax.meta.isTouched &&
-                  !tax.meta.isValid &&
-                  tax.meta.errors.map((error, index) => (
-                     <Form.Error key={index}>{error}</Form.Error>
-                  ))}
-            </Form.Group>
-            <Spacer size="8px" xAxis />
-            <TextButton
-               size="sm"
-               type="outline"
-               onClick={() => tax.meta.isValid && updateSetting()}
-            >
-               Update
-            </TextButton>
-         </Flex>
+         <ConfigTemplateUI config={configTemplate} />
       </div>
    )
 }

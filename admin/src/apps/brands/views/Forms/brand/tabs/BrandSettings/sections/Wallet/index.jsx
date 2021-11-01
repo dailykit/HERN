@@ -12,11 +12,13 @@ import {
 } from '../../../../../../../../../shared/components'
 import { toast } from 'react-toastify'
 import { logger } from '../../../../../../../../../shared/utils'
+import ConfigTemplateUI from '../../../../../../../../../shared/components/ConfigTemplateUI'
 
 export const Wallet = ({ update }) => {
    const params = useParams()
    const [settingId, setSettingId] = React.useState(null)
    const [isAvailable, setIsAvailable] = React.useState(false)
+   const [configTemplate, setConfigTemplate] = React.useState({})
    const { loading, error } = useSubscription(BRANDS.SETTING, {
       variables: {
          identifier: { _eq: 'Wallet Availability' },
@@ -31,12 +33,14 @@ export const Wallet = ({ update }) => {
             )
 
             if (index === -1) {
-               const { id } = brandSettings[0]
+               const { id, configTemplate } = brandSettings[0]
                setSettingId(id)
+               setConfigTemplate(configTemplate)
                return
             }
-            const { brand, id } = brandSettings[index]
+            const { brand, id, configTemplate } = brandSettings[index]
             setSettingId(id)
+            setConfigTemplate(configTemplate)
             if ('isAvailable' in brand.value) {
                setIsAvailable(brand.value.isAvailable)
             }
@@ -56,26 +60,7 @@ export const Wallet = ({ update }) => {
 
    return (
       <div id="Wallet Availability">
-         <Flex container alignItems="center">
-            <Text as="h3">Wallet</Text>
-            <Tooltip identifier="brand_wallet_info" />
-         </Flex>
-         <Spacer size="8px" />
-         <Flex container alignItems="center" justifyContent="space-between">
-            <Form.Toggle
-               name="wallet"
-               value={isAvailable}
-               onChange={() => setIsAvailable(!isAvailable)}
-            >
-               <Flex container alignItems="center">
-                  Available
-                  <Tooltip identifier="brand_wallet_available_info" />
-               </Flex>
-            </Form.Toggle>
-            <TextButton size="sm" type="outline" onClick={updateSetting}>
-               Update
-            </TextButton>
-         </Flex>
+         <ConfigTemplateUI config={configTemplate} />
       </div>
    )
 }

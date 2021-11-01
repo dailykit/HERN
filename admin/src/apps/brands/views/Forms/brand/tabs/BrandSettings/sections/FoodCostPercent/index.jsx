@@ -13,9 +13,11 @@ import {
    InlineLoader,
 } from '../../../../../../../../../shared/components'
 import { logger } from '../../../../../../../../../shared/utils'
+import ConfigTemplateUI from '../../../../../../../../../shared/components/ConfigTemplateUI'
 
 export const FoodCostPercent = ({ update }) => {
    const params = useParams()
+   const [configTemplate, setConfigTemplate] = React.useState({})
    const [lowerLimit, setLowerLimit] = React.useState({
       value: '',
       meta: {
@@ -47,12 +49,14 @@ export const FoodCostPercent = ({ update }) => {
             )
 
             if (index === -1) {
-               const { id } = brandSettings[0]
+               const { id, configTemplate } = brandSettings[0]
+               setConfigTemplate(configTemplate)
                setSettingId(id)
                return
             }
-            const { brand, id } = brandSettings[index]
+            const { brand, id, configTemplate } = brandSettings[index]
             setSettingId(id)
+            setConfigTemplate(configTemplate)
             if ('lowerLimit' in brand.value || 'upperLimit' in brand.value) {
                setLowerLimit({
                   ...lowerLimit,
@@ -111,66 +115,7 @@ export const FoodCostPercent = ({ update }) => {
 
    return (
       <div id="Food Cost Percent">
-         <Flex container alignItems="flex-start">
-            <Text as="h3">Food Cost Percentage</Text>
-            <Tooltip identifier="sales_food_cost_percentage" />
-         </Flex>
-         <Spacer size="4px" />
-         <Flex container alignItems="flex-start">
-            <Form.Group>
-               <Form.Label htmlFor="lowerLimit" title="lowerLimit">
-                  Lower Limit(%)
-               </Form.Label>
-               <Form.Text
-                  id="lowerLimit"
-                  name="lowerLimit"
-                  value={lowerLimit.value}
-                  placeholder="Enter lower limit"
-                  onChange={e =>
-                     setLowerLimit({ ...lowerLimit, value: e.target.value })
-                  }
-                  onBlur={e => onBlur(e.target)}
-               />
-               {lowerLimit.meta.isTouched &&
-                  !lowerLimit.meta.isValid &&
-                  lowerLimit.meta.errors.map((error, index) => (
-                     <Form.Error key={index}>{error}</Form.Error>
-                  ))}
-            </Form.Group>
-            <Spacer size="4px" xAxis />
-            <Form.Group>
-               <Form.Label htmlFor="upperLimit" title="upperLimit">
-                  Upper Limit(%)
-               </Form.Label>
-               <Form.Text
-                  id="upperLimit"
-                  name="upperLimit"
-                  value={upperLimit.value}
-                  placeholder="Enter upper limit"
-                  onChange={e =>
-                     setUpperLimit({ ...upperLimit, value: e.target.value })
-                  }
-                  onBlur={e => onBlur(e.target)}
-               />
-               {upperLimit.meta.isTouched &&
-                  !upperLimit.meta.isValid &&
-                  upperLimit.meta.errors.map((error, index) => (
-                     <Form.Error key={index}>{error}</Form.Error>
-                  ))}
-            </Form.Group>
-            <Spacer size="8px" xAxis />
-            <TextButton
-               size="sm"
-               type="outline"
-               onClick={() =>
-                  lowerLimit.meta.isValid &&
-                  upperLimit.meta.isValid &&
-                  updateSetting()
-               }
-            >
-               Update
-            </TextButton>
-         </Flex>
+         <ConfigTemplateUI config={configTemplate} />
       </div>
    )
 }

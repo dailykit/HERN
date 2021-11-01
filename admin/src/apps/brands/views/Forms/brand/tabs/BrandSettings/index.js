@@ -38,6 +38,7 @@ import {
     TaxPercentage,
     Brand
 } from './sections'
+
 // import { RefundPolicy } from './sections/RefundPolicy'
 
 export const BrandSettings = () => {
@@ -92,13 +93,26 @@ export const BrandSettings = () => {
                 <Tooltip identifier="brands_collection_listing_heading" />
             </Flex>
             <Spacer size="24px" />
-            <Brand update={update} />
+            <Card
+                title={<Text as="h3">Brands</Text>}
+                extra={
+                    <TextButton type="solid" size="sm">
+                        Save
+                    </TextButton>
+                }
+                style={{ width: '100%' }}
+            ><Flex container justifyContent="space-between">
+                    <Brand update={update} />
+                    <Spacer size="24px" />
+                    <BrandLogo update={update} />
+                </Flex>
+            </Card>
             <Spacer size="24px" />
             <Card
                 title={<Text as="h3">Availability</Text>}
                 extra={
                     <TextButton type="solid" size="sm">
-                        Manage
+                        Save
                     </TextButton>
                 }
                 style={{ width: '100%' }}
@@ -145,8 +159,6 @@ export const BrandSettings = () => {
                 <Spacer size="24px" />
                 <TaxPercentage update={update} />
             </Card>
-            <Spacer size="24px" />
-            {/* </ScrollSection.Section> */}
             <Spacer size="48px" />
         </Flex>
     )

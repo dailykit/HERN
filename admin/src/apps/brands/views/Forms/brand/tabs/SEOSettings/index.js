@@ -6,9 +6,9 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { BRANDS } from '../../../../../graphql'
 import { logger } from '../../../../../../../shared/utils'
 
-import SEOBasics from './SEOBasics'
-import SocialShare from './SocialShare'
-import TwitterCard from './TwitterCard'
+// import SEOBasics from './SEOBasics'
+// import SocialShare from './SocialShare'
+// import TwitterCard from './TwitterCard'
 
 export const SEOSettings = () => {
     const params = useParams()

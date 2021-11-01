@@ -12,11 +12,13 @@ import {
 } from '../../../../../../../../../shared/components'
 import { toast } from 'react-toastify'
 import { logger } from '../../../../../../../../../shared/utils'
+import ConfigTemplateUI from '../../../../../../../../../shared/components/ConfigTemplateUI'
 
 export const Payments = ({ update }) => {
    const params = useParams()
    const [settingId, setSettingId] = React.useState(null)
    const [isStoreLive, setIsStoreLive] = React.useState(false)
+   const [configTemplate, setConfigTemplate] = React.useState({})
    const [isStripeConfigured, setIsStripeConfigured] = React.useState(false)
    const { loading, error } = useSubscription(BRANDS.SETTING, {
       variables: {
@@ -32,11 +34,13 @@ export const Payments = ({ update }) => {
             )
 
             if (index === -1) {
-               const { id } = brandSettings[0]
+               const { id, configTemplate } = brandSettings[0]
+               setConfigTemplate(configTemplate)
                setSettingId(id)
                return
             }
-            const { brand, id } = brandSettings[index]
+            const { brand, id, configTemplate } = brandSettings[index]
+            setConfigTemplate(configTemplate)
             setSettingId(id)
             if ('isStoreLive' in brand.value) {
                setIsStoreLive(brand.value.isStoreLive)
@@ -60,40 +64,7 @@ export const Payments = ({ update }) => {
 
    return (
       <div id="Store Live">
-         <Flex container alignItems="flex-start">
-            <Text as="h4" style={{ textTransform: 'none' }}>
-               Payments
-            </Text>
-            <Tooltip identifier="brand_payments_info" />
-         </Flex>
-         <Spacer size="4px" />
-         <Flex container alignItems="center" justifyContent="space-between">
-            <Form.Toggle
-               name="stripe"
-               isDisabled
-               value={isStripeConfigured}
-               onChange={() => {}}
-            >
-               <Flex container alignItems="center">
-                  Stripe Configured
-                  <Tooltip identifier="brand_payments_stripeConfig_info" />
-               </Flex>
-            </Form.Toggle>
-            <Form.Toggle
-               name="livePayment"
-               value={isStoreLive}
-               onChange={() => setIsStoreLive(!isStoreLive)}
-            >
-               <Flex container alignItems="center">
-                  Accept Live Payments
-                  <Tooltip identifier="brand_payments_livePayment_info" />
-               </Flex>
-            </Form.Toggle>
-
-            <TextButton size="sm" type="outline" onClick={updateSetting}>
-               Update
-            </TextButton>
-         </Flex>
+         <ConfigTemplateUI config={configTemplate} />
       </div>
    )
 }
