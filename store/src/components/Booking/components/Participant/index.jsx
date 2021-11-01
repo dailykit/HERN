@@ -17,7 +17,8 @@ export default function Participant({ experienceId }) {
 
    return (
       <Wrapper ref={node}>
-         <Popover
+         <SelectParticipant experienceId={experienceId} />
+         {/* <Popover
             placement="bottom"
             arrowPointAtCenter
             content={<SelectParticipant experienceId={experienceId} />}
@@ -34,7 +35,7 @@ export default function Participant({ experienceId }) {
                >
                   <div>
                      <p className="head text8">Select No. of guests</p>
-                     <p className="guest_para text6">{participants} guests</p>
+                     <p className="guest_para text6">{participants}</p>
                   </div>
                   {showPopup ? (
                      <ChevronUp size="24" color={theme.colors.textColor5} />
@@ -43,7 +44,7 @@ export default function Participant({ experienceId }) {
                   )}
                </Flex>
             </button>
-         </Popover>
+         </Popover> */}
       </Wrapper>
    )
 }

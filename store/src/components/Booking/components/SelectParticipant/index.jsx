@@ -4,7 +4,7 @@ import { Wrap } from './styles'
 import addParticipantsFunc from '../../addParticipants'
 import { useCustomMutation } from '../../useCustomMutation'
 import Button from '../../../Button'
-import { AddIcon, MinusIcon, SpinnerIcon } from '../../../Icons'
+import { ChevronDown, ChevronUp, SpinnerIcon } from '../../../Icons'
 import Input from '../../../Input'
 import { useExperienceInfo, useCart, useUser } from '../../../../Providers'
 import { isEmpty } from '../../../../utils'
@@ -131,18 +131,30 @@ export default function SelectParticipant({ experienceId }) {
    return (
       <Wrap>
          <div className="counter-wrap">
-            <Flex container alignItems="center" justifyContent="space-around">
-               <Button
-                  className="customCounterBtn"
-                  onClick={() => addParticipantsHandler('dec')}
-                  btnType="circle"
-                  disabled={participants <= 1}
+            <div className="flex-row">
+               <span
+                  style={{
+                     cursor: participants <= 1 ? 'not-allowed' : 'pointer'
+                  }}
                >
-                  <MinusIcon
-                     size={theme.sizes.h4}
-                     color={theme.colors.textColor4}
-                  />
-               </Button>
+                  <span
+                     className={
+                        participants <= 1
+                           ? 'counter-btn disabled'
+                           : 'counter-btn'
+                     }
+                     onClick={() => addParticipantsHandler('dec')}
+                  >
+                     <ChevronDown
+                        size={theme.sizes.h3}
+                        color={
+                           participants <= 1
+                              ? theme.colors.textColor4
+                              : theme.colors.textColor7
+                        }
+                     />
+                  </span>
+               </span>
 
                <input
                   className="participant_input"
@@ -152,20 +164,36 @@ export default function SelectParticipant({ experienceId }) {
                   value={participants}
                   onChange={event => addParticipantsHandler('input', event)}
                />
-               <Button
-                  className="customCounterBtn"
-                  onClick={() => addParticipantsHandler('inc')}
-                  btnType="circle"
-                  disabled={participants >= classTypeInfo?.maximumParticipant}
+
+               <span
+                  style={{
+                     cursor:
+                        participants >= classTypeInfo?.maximumParticipant
+                           ? 'not-allowed'
+                           : 'pointer'
+                  }}
                >
-                  <AddIcon
-                     size={theme.sizes.h4}
-                     color={theme.colors.textColor4}
-                  />
-               </Button>
-            </Flex>
+                  <span
+                     className={
+                        participants >= classTypeInfo?.maximumParticipant
+                           ? 'counter-btn disabled'
+                           : 'counter-btn'
+                     }
+                     onClick={() => addParticipantsHandler('inc')}
+                  >
+                     <ChevronUp
+                        size={theme.sizes.h4}
+                        color={
+                           participants >= classTypeInfo?.maximumParticipant
+                              ? theme.colors.textColor4
+                              : theme.colors.textColor7
+                        }
+                     />
+                  </span>
+               </span>
+            </div>
          </div>
-         <p className="discount-info">20% per ticket</p>
+         {/* <p className="discount-info">20% per ticket</p> */}
          <label className="checkbox-wrap">
             {!CART.update.loading ? (
                <Input
@@ -182,7 +210,9 @@ export default function SelectParticipant({ experienceId }) {
                   color={theme.colors.textColor4}
                />
             )}
-            <span className="checkbox-label">Add myself as participant</span>
+            <span className="checkbox-label text9">
+               Add myself as participant
+            </span>
          </label>
       </Wrap>
    )

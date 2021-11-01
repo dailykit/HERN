@@ -32,10 +32,10 @@ export default function FooterButton({
       <FooterBtnWrap>
          {bookingStepsIndex === 0 && (
             <Button
-               className="ghost-btn text4 box-shadow-glow"
+               className="ghost-btn text6 box-shadow-glow"
                onClick={sendPollHandler}
             >
-               Not sure which date to choose?
+               Poll your guests before you book
             </Button>
          )}
          {bookingStepsIndex === 1 && (

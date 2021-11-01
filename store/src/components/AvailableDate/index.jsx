@@ -120,7 +120,7 @@ const AvailableDate = ({
                                     .toLowerCase()
                                     .replace(' ', '_')}_text`}
                               >
-                                 {slot?.date},{slot?.time}
+                                 {slot?.time}
                               </span>
                               {/* <span className="time-info">{bookingType}</span> */}
                            </Flex>

@@ -24,7 +24,7 @@ export const getCurrencySymbol = () => {
 export const currency = getCurrencySymbol(get_env('CURRENCY'))
 
 export const getDate = date => {
-   return moment.utc(date).format('MMM DD, YYYY')
+   return moment.utc(date).format('MMM D, YYYY')
 }
 
 export const getTime = time => {
