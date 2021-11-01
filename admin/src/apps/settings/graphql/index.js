@@ -706,7 +706,15 @@ export const MASTER = {
             }
          }
       `,
-      // DELETE:,
+      DELETE: gql`
+         mutation MyMutation($where: master_vegNonvegType_bool_exp!) {
+            delete_master_vegNonvegType(where: $where) {
+               returning {
+                  label
+               }
+            }
+         }
+      `,
    },
 }
 

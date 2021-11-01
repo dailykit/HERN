@@ -28,14 +28,14 @@ const AddTypesTunnel = ({ closeTunnel }) => {
          const object = {
             label: type,
          }
+         if (type.length == 0) {
+            throw Error('Nothing to add')
+         }
          addType({
             variables: {
                object,
             },
          })
-         if (!object.length) {
-            throw Error('Nothing to add')
-         }
       } catch (error) {
          toast.error(error.message)
       }
@@ -48,6 +48,7 @@ const AddTypesTunnel = ({ closeTunnel }) => {
                action: add,
                title: 'Add',
                isLoading: addingVegNonVegType,
+               disabled: type.length == 0,
             }}
             close={() => closeTunnel(1)}
          />
@@ -58,7 +59,7 @@ const AddTypesTunnel = ({ closeTunnel }) => {
                <Form.Text
                   value={type}
                   onChange={e => {
-                     setType(e.target.value.trim())
+                     setType(e.target.value)
                   }}
                   placeholder="Enter the type of dish"
                ></Form.Text>

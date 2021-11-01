@@ -28,10 +28,40 @@ const address = 'apps.settings.views.forms.vegnonveg.'
 const VegNonVeg = () => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
    const { loading, data, error } = useSubscription(MASTER.VEG_NONVEG.LIST)
+   const [deleteElement] = useMutation(MASTER.VEG_NONVEG.DELETE, {
+      onCompleted: () => {
+         toast.success('Successfully deleted the cuisine!')
+      },
+      onError: error => {
+         toast.error('Failed to delete the cuisine')
+         console.log(error)
+      },
+   })
+   const remove = lbl => {
+      deleteElement({
+         variables: {
+            where: {
+               label: {
+                  _eq: lbl,
+               },
+            },
+         },
+      })
+   }
+
    const columns = [
       {
          title: 'Label',
          field: 'label',
+         headerFilter: true,
+      },
+      {
+         title: 'Actions',
+         headerFilter: false,
+         headerSort: false,
+         hozAlign: 'center',
+         cssClass: 'center-text',
+         formatter: reactFormatter(<Delete remove={remove} />),
       },
    ]
    if (!loading && error) {
@@ -79,3 +109,18 @@ const VegNonVeg = () => {
 }
 
 export default VegNonVeg
+
+const Delete = ({ cell, remove }) => {
+   const removeItem = () => {
+      const { label = '' } = cell.getData()
+      if (window.confirm(`Are your sure you want to delete - ${label}?`)) {
+         remove(label)
+      }
+   }
+
+   return (
+      <IconButton size="sm" type="ghost" onClick={removeItem}>
+         <DeleteIcon color="#FF5A52" />
+      </IconButton>
+   )
+}
