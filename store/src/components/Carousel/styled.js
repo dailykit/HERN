@@ -3,8 +3,21 @@ import { theme } from '../../theme'
 
 export const StyledDiv = styled.div`
    position: relative;
+
    .owl-item {
       width: 320px !important;
+   }
+   .owl-carousel .owl-nav.disabled + .owl-dots {
+      margin-top: 2rem;
+   }
+   .owl-carousel .owl-dots .owl-dot span {
+      width: 10px !important;
+      height: 10px !important;
+      border-radius: 50%;
+      background-color: ${theme.colors.textColor4} !important;
+   }
+   .owl-carousel .owl-dots .active span {
+      background-color: ${theme.colors.textColor} !important;
    }
    .owl_carousel_item {
       width: 320px;
@@ -25,6 +38,7 @@ export const StyledDiv = styled.div`
       z-index: 2;
       display: flex;
       align-items: center;
+      display: none;
    }
    .prev_btn:hover,
    .next_btn:hover {

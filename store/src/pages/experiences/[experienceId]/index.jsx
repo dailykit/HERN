@@ -767,7 +767,6 @@ const Wrapper = styled.main`
          height: 100%;
          width: 100%;
          text-align: left;
-         margin-right: 1rem;
       }
       .right-container {
          margin-top: 48px;
@@ -808,6 +807,7 @@ const Wrapper = styled.main`
       .info-wrapper {
          .left-container {
             width: 65%;
+            margin-right: 4rem;
          }
          .right-container {
             width: 35%;
@@ -1002,78 +1002,6 @@ const TabWrapper = styled.div`
          .tab {
             margin: 0 6rem;
          }
-      }
-   }
-`
-
-const GridViewWrapper = styled.div`
-   margin-bottom: 1rem;
-   .experienceHeading {
-      font-size: ${theme.sizes.h3};
-      color: ${theme.colors.textColor4};
-      font-weight: 700;
-      text-align: center;
-      margin-bottom: 20px;
-   }
-
-   .explore {
-      text-align: center;
-      font-size: ${theme.sizes.h4};
-      color: ${theme.colors.textColor};
-      font-weight: 800;
-      margin-right: 8px;
-   }
-   .my-masonry-grid {
-      display: -webkit-box; /* Not needed if autoprefixing */
-      display: -ms-flexbox; /* Not needed if autoprefixing */
-      display: flex;
-      width: auto;
-      margin-right: 40px;
-   }
-
-   .my-masonry-grid_column > div {
-      margin: 0 0 40px 40px;
-   }
-
-   @media (min-width: 769px) {
-      .exploreExperience {
-         text-align: center;
-         font-size: ${theme.sizes.h1};
-         color: ${theme.colors.textColor};
-         font-weight: 800;
-      }
-      .experienceHeading {
-         font-size: ${theme.sizes.h1};
-      }
-   }
-   @media (max-width: 769px) {
-      .my-masonry-grid {
-         margin-right: 1rem;
-      }
-      .my-masonry-grid_column > div {
-         margin: 0 0 1rem 1rem;
-      }
-   }
-`
-
-const Wrap = styled.div`
-   padding: 1rem;
-   height: 580px;
-   .booking-done {
-      margin-top: 4rem;
-      padding: 1rem;
-      img {
-         width: 94px;
-         height: 94px;
-         display: block;
-         margin-left: auto;
-         margin-right: auto;
-      }
-      p {
-         font-size: ${theme.sizes.h3};
-         font-weight: 700;
-         color: ${theme.colors.textColor4};
-         text-align: center;
       }
    }
 `

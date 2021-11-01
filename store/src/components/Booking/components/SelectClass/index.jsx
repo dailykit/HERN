@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useMemo } from 'react'
-import { Wrapper, Popup } from './styles'
-import { message } from 'antd'
+import React, { useMemo } from 'react'
+import { Wrapper } from './styles'
+import { message, Popover } from 'antd'
 import { useCheckoutHandler } from '../../checkoutHandler'
 import Participant from '../Participant'
 import PriceBreakDown from '../PriceBreakDown'
@@ -14,16 +14,10 @@ import {
 import { isEmpty } from '../../../../utils'
 
 export default function SelectClass({ experienceId, isMulti = false }) {
-   const node = useRef()
    const { state: userState, toggleAuthenticationModal } = useUser()
    const { initiateCheckout } = useCheckoutHandler()
    const { isAuthenticated } = userState
-   const {
-      state,
-      updateExperienceInfo,
-      toggleDetailBreakdown,
-      nextBookingSteps
-   } = useExperienceInfo()
+   const { state, updateExperienceInfo, nextBookingSteps } = useExperienceInfo()
    const { getCart } = useCart()
    const cart = getCart(experienceId)
    const {
@@ -33,7 +27,6 @@ export default function SelectClass({ experienceId, isMulti = false }) {
       classDates,
       selectedSlot,
       pricePerPerson,
-      priceBreakDownDrawer,
       experienceClasses
    } = useMemo(() => {
       return state
@@ -95,56 +88,27 @@ export default function SelectClass({ experienceId, isMulti = false }) {
       }
    }
 
-   const handleClick = e => {
-      if (node.current.contains(e.target)) {
-         // inside click
-         return
-      }
-      // outside click
-      toggleDetailBreakdown(false)
-   }
-
-   useEffect(() => {
-      document.addEventListener('mousedown', handleClick)
-
-      return () => {
-         document.removeEventListener('mousedown', handleClick)
-      }
-   }, [])
-
    return (
       <Wrapper>
          <div className="flex_row">
             <h2 className="heading text3">
-               ${pricePerPerson.toFixed(2)} Per Person
+               Starting at ${pricePerPerson.toFixed(2)} Per Person
             </h2>
-            <div style={{ position: 'relative' }}>
-               <button
-                  className="breakdown-head text8"
-                  onClick={() => toggleDetailBreakdown(prev => !prev)}
-               >
-                  Breakdown
-               </button>
-               <Popup show={priceBreakDownDrawer}>
-                  <div className="pointer" />
-                  <PriceBreakDown />
-               </Popup>
-            </div>
+            <Popover
+               placement="bottom"
+               trigger="click"
+               content={<PriceBreakDown />}
+            >
+               <button className="breakdown-head text8">Breakdown</button>
+            </Popover>
          </div>
-         <div className="sticky-container">
-            <div className="select-option" ref={node}>
-               {!isMulti && (
-                  <>
-                     {/* <div style={{ flex: '1' }}>
-                  <DateRange />
-               </div> */}
-                     {/* <div style={{ flex: '1', borderLeft: '1px solid #fff' }}> */}
-                     <Participant experienceId={experienceId} />
-                     {/* </div> */}
-                  </>
-               )}
+         {!isMulti && (
+            <div className="sticky-container">
+               <div className="select-option">
+                  <Participant experienceId={experienceId} />
+               </div>
             </div>
-         </div>
+         )}
 
          <div className="availableDate">
             <h1 className="availableDate_head text8">
