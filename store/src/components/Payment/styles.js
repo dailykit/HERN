@@ -4,7 +4,6 @@ export const Wrapper = styled.div`
    width: 100%;
    margin-bottom: 1rem;
    padding: ${({ type }) => (type === 'tunnel' ? '1rem' : '0')};
-   height: 100%;
    overflow-y: auto;
    .ghost {
       color: ${theme.colors.textColor4};

@@ -3,19 +3,20 @@ import { useSubscription } from '@apollo/client'
 import { useRouter } from 'next/router'
 import { useToasts } from 'react-toast-notifications'
 import ReactHtmlParser from 'react-html-parser'
-import { Button } from 'antd'
+import { Button, Result } from 'antd'
 import styled from 'styled-components'
 import {
    PollInvite,
    ChevronLeft,
    SEO,
    Layout,
-   InlineLoader
+   InlineLoader,
+   Button as ButtonComponent
 } from '../../../../components'
 import PollCard from '../../../../pageComponents/PollCard'
 import { EXPERIENCE_POLLS } from '../../../../graphql'
 import { theme } from '../../../../theme'
-import { fileParser, getMinute, getDateWithTime } from '../../../../utils'
+import { fileParser, isEmpty } from '../../../../utils'
 import {
    getNavigationMenuItems,
    getBannerData,
@@ -43,10 +44,9 @@ function ManagePoll({ navigationMenuItems, parsedData = [], footerHtml = '' }) {
                data: { experienceBooking: bookingData = {} } = {}
             } = {}
          } = {}) => {
-            if (bookingData && Object.keys(bookingData).length) {
+            if (!isEmpty(bookingData)) {
                setExperienceInfo(bookingData)
             }
-            console.log('bookingData', bookingData)
             setLoading(false)
          }
       }
@@ -91,18 +91,34 @@ function ManagePoll({ navigationMenuItems, parsedData = [], footerHtml = '' }) {
                <p className="go_back text10"> Back to bookings </p>
             </div>
             <h1 className="h1_head text1">Manage Poll</h1>
-            <div className="container">
-               <div className="left-side-container">
-                  <PollInvite experienceBooking={experienceInfo} />
-               </div>
-               <div className="right-side-container">
-                  <div className="sticky-card">
-                     <div className="card-wrapper">
-                        <PollCard experienceInfo={experienceInfo} />
+            {!isEmpty(experienceInfo) ? (
+               <div className="container">
+                  <div className="left-side-container">
+                     <PollInvite experienceBooking={experienceInfo} />
+                  </div>
+                  <div className="right-side-container">
+                     <div className="sticky-card">
+                        <div className="card-wrapper">
+                           <PollCard experienceInfo={experienceInfo} />
+                        </div>
                      </div>
                   </div>
                </div>
-            </div>
+            ) : (
+               <Result
+                  status="404"
+                  title="Not Found!"
+                  subTitle="Sorry, the page you visited does not exist."
+                  extra={
+                     <ButtonComponent
+                        className="back_to_home_btn"
+                        onClick={() => router.push('/')}
+                     >
+                        Back Home
+                     </ButtonComponent>
+                  }
+               />
+            )}
          </Wrapper>
          <div id="myPoll-bottom-01">
             {Boolean(parsedData.length) &&

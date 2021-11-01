@@ -61,15 +61,17 @@ function ManageBooking({
          subscriptionData: { data: { carts = [] } = {} } = {}
       } = {}) => {
          const [cart] = carts
-         if (!isEmpty(cart?.activeCartPayment)) {
-            setCartPayment(cart?.activeCartPayment)
+         if (!isEmpty(carts)) {
+            if (!isEmpty(cart?.activeCartPayment)) {
+               setCartPayment(cart?.activeCartPayment)
+            }
+            setExperienceInfo({
+               ...cart,
+               ...cart?.experienceClass?.experience,
+               experienceClass: cart?.experienceClass,
+               experienceClassType: cart?.experienceClassType
+            })
          }
-         setExperienceInfo({
-            ...cart,
-            ...cart?.experienceClass?.experience,
-            experienceClass: cart?.experienceClass,
-            experienceClassType: cart?.experienceClassType
-         })
 
          setLoading(false)
       }
@@ -282,7 +284,7 @@ export const getStaticPaths = async () => {
 const Wrapper = styled.div`
    width: 100%;
    color: ${theme.colors.textColor4};
-   padding: 64px 80px;
+   padding: 64px 6rem;
    filter: ${({ isBooking }) => isBooking && 'blur(4px)'};
    .experience-date {
       h4 {
