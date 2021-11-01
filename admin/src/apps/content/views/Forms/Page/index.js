@@ -9,6 +9,11 @@ import {
    Form,
    Spacer,
    useTunnel,
+   Tunnels,
+   Tunnel,
+   TunnelHeader,
+   ComboButton,
+   PlusIcon,
 } from '@dailykit/ui'
 import { useSubscription, useMutation, useQuery } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
@@ -30,9 +35,12 @@ import { PagePreviewTunnel } from './Tunnel'
 import SocialShare from './SEO/SocialShare'
 import SEObasics from './SEO/SEObasics'
 import TwitterCard from './SEO/TwitterCard'
+import LinkFilesTunnel from './Tunnel/LinkFiles'
 
 const PageForm = () => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
+   const [linkFilesTunnel, openLinkFilesTunnel, closeLinkFilesTunnel] =
+      useTunnel(1)
    const { addTab, tab, setTabTitle, closeAllTabs } = useTabs()
    const [context, setContext] = useContext(BrandContext)
    const prevBrandId = useRef(context.brandId)
@@ -261,6 +269,15 @@ const PageForm = () => {
                         </>
                      )} */}
                   <Spacer xAxis size="24px" />
+                  <ComboButton
+                     onClick={() => openLinkFilesTunnel(1)}
+                     type="outline"
+                     size="sm"
+                  >
+                     Add Files
+                     <PlusIcon color="#367BF5" />
+                  </ComboButton>
+                  <Spacer xAxis size="24px" />
                   <Form.Toggle
                      name="page_published"
                      onChange={updatetoggle}
@@ -347,6 +364,10 @@ const PageForm = () => {
             openTunnel={openTunnel}
             closeTunnel={closeTunnel}
             pageRoute={pageRoute}
+         />
+         <LinkFilesTunnel
+            tunnels={linkFilesTunnel}
+            closeTunnel={closeLinkFilesTunnel}
          />
          <Banner id="content-app-pages-page-details-bottom" />
       </StyledWrapper>

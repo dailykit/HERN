@@ -127,7 +127,7 @@ const Orders = () => {
             as="section"
             overflowY="auto"
             height="calc(100vh - 128px)"
-            style={{ scrollBehavior: 'smooth' }}
+            style={{ scrollBehavior: 'smooth', padding: '0px 16px' }}
          >
             {orders.length > 0 ? (
                orders.map((order, index) => (

@@ -45,25 +45,13 @@ export const Layout = ({
             className="hern-layout__footer"
             style={{
                backgroundColor: `${
-                  theme?.footerBg ? theme?.footerBg : 'rgba(5, 150, 105, 1)'
-               }`,
-               color: `${
-                  theme?.footerText ? theme?.footerText : 'rgba(5, 150, 105, 1)'
+                  theme?.accent ? theme?.accent : 'rgba(5, 150, 105, 1)'
                }`,
             }}
          >
             <div>
                <section>
-                  <h4
-                     style={{
-                        color: `${
-                           theme?.footerText
-                              ? theme?.footerText
-                              : 'rgba(5, 150, 105, 1)'
-                        }`,
-                     }}
-                     className="hern-layout__footer__section-header"
-                  >
+                  <h4 className="hern-layout__footer__section-header">
                      Contact Us
                   </h4>
                   {location && (

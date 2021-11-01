@@ -28,11 +28,12 @@ import {
 } from './styled'
 
 import DashboardCards from './shared/components/DashboardCardAnalytics'
-import { useAuth } from './shared/providers'
+import { useAuth, useTabs } from './shared/providers'
 import DashboardTables from './shared/components/DashboardTables'
 import { useLocation } from 'react-router-dom'
 import DashboardRightPanel from './shared/components/DashboardRightPanel'
 import DashboardWeeklyAnalysis from './shared/components/dashboardWeeklyAnalysis'
+import { useLocalStorage } from './shared/hooks'
 const APPS = gql`
    subscription apps {
       apps(order_by: { id: asc }) {
@@ -114,14 +115,16 @@ const App = () => {
    const { pathname } = useLocation()
    const { loading, data: { apps = [] } = {} } = useSubscription(APPS)
    const { user } = useAuth()
+   const { tabs } = useTabs()
+
 
    if (loading) return <Loader />
    return (
-      <Layout>
+      <Layout TabShow={tabs.length > 0}>
          <TabBar />
          <Sidebar />
 
-         <main>
+         <main >
             <Switch>
                <Route path="/" exact>
                   <Banner id="app-home-top" />

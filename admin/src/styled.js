@@ -2,11 +2,13 @@ import styled from 'styled-components'
 
 export const Layout = styled.div`
    height: 100vh;
+
    > main {
       position: absolute;
       left: 52px;
-      top: 97px;
-      height: calc(100% - 48px);
+      top: ${props => (props.TabShow ? `97px` : `50px`)};
+      height: ${props =>
+         props.TabShow ? `calc(102% - 120px)` : `calc(112% - 130px)`};
       overflow-y: auto;
       width: 96%;
    }

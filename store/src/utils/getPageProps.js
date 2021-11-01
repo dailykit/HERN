@@ -1,5 +1,10 @@
 import { graphQLClient } from '../lib'
-import { getSettings, foldsResolver } from '.'
+import {
+   getPageLevelFiles,
+   getSettings,
+   foldsResolver,
+   getSEOSettings,
+} from '.'
 import { NAVIGATION_MENU, BRAND_PAGE } from '../graphql'
 
 export const getPageProps = async (params, route) => {
@@ -8,26 +13,39 @@ export const getPageProps = async (params, route) => {
    //Getting data by their router
    const dataByRoute = await client.request(BRAND_PAGE, {
       domain: params.brand,
-      route
+      route,
    })
-   console.log("dataByRoute😊👉", dataByRoute)
-   const seoSettings = await dataByRoute?.brands_brandPages[0]?.brandPageSettings.filter((setting) => setting?.brandPageSetting?.type === 'seo')
 
-   const domain = 'test.dailykit.org'
    //Seo and settings
-   const { seo, settings } = await getSettings(domain, route)
+   const seoSettings = await getSEOSettings(params.brand, dataByRoute)
 
-   //Module
+   //Settings
+   const domain = 'test.dailykit.org'
+   const { settings, seo } = await getSettings(domain, route)
+
+   //pageModules
    const parsedData = await foldsResolver(
       dataByRoute.brands_brandPages[0]['brandPageModules']
    )
 
-   //Navigation Menu
-   const navigationMenu = await client.request(NAVIGATION_MENU, {
-      navigationMenuId:
-         dataByRoute.brands_brandPages[0]['brand']['navigationMenuId'],
-   })
-   const navigationMenus = navigationMenu.brands_navigationMenuItem
+   //Linked files with page
+   const linkedFiles = await getPageLevelFiles(dataByRoute)
 
-   return { parsedData, seo, settings, navigationMenus, seoSettings }
+   //Navigation Menu
+   const { brands_navigationMenuItem: navigationMenus } = await client.request(
+      NAVIGATION_MENU,
+      {
+         navigationMenuId:
+            dataByRoute.brands_brandPages[0]['brand']['navigationMenuId'],
+      }
+   )
+
+   return {
+      parsedData,
+      settings,
+      navigationMenus,
+      seoSettings,
+      seo,
+      linkedFiles,
+   }
 }

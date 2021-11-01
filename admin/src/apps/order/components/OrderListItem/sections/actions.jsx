@@ -2,16 +2,38 @@ import React from 'react'
 import { toast } from 'react-toastify'
 import usePortal from 'react-useportal'
 import { useMutation } from '@apollo/react-hooks'
-import { Flex, TextButton, ComboButton, Popup, ButtonGroup } from '@dailykit/ui'
-
+import {
+   Flex,
+   TextButton,
+   ComboButton,
+   Popup,
+   ButtonGroup,
+   Spacer,
+} from '@dailykit/ui'
+import { useTranslation } from 'react-i18next'
 import { MUTATIONS } from '../../../graphql'
+
 import { useOrder } from '../../../context'
-import { CardIcon } from '../../../assets/icons'
+
+// import { CardIcon } from '../../../assets/icons'
+
+import { useTabs } from '../../../../../shared/providers'
+import { Tick, Cross } from '../../../assets/icons'
 import { logger } from '../../../../../shared/utils'
-import { ResponsiveFlex, StyledText } from './styled'
+import { formatDate } from '../../../utils'
+import { ResponsiveFlex, StyledText, StyledStatus } from './styled'
+
+const address = 'apps.order.components.orderlistitem.'
+
+const isPickup = value => ['ONDEMAND_PICKUP', 'PREORDER_PICKUP'].includes(value)
 
 export const Actions = ({ order }) => {
+   const { addTab } = useTabs()
    const { dispatch } = useOrder()
+   const createTab = () => {
+      addTab(`ORD${order.id}`, `/order/orders/${order.id}`)
+   }
+   const { t } = useTranslation()
    const { openPortal, closePortal, isOpen, Portal } = usePortal({
       bindTo: document && document.getElementById('popups'),
    })
@@ -25,17 +47,52 @@ export const Actions = ({ order }) => {
       },
    })
    return (
-      <Flex
-         as="aside"
-         padding="0 14px"
-         style={{
-            borderLeft: '1px solid #ececec',
-         }}
-      >
-         <StyledText as="h3">Actions</StyledText>
+      <Flex as="aside">
+         <Flex>
+            <Flex as="section" container alignItems="center">
+               <StyledStatus>
+                  <span>{t(address.concat('ordered on'))} &nbsp;</span>
+                  <span>{formatDate(order?.created_at)}</span>
+               </StyledStatus>
+               {!order.thirdPartyOrderId && (
+                  <>
+                     <Spacer size="16px" xAxis />
+                     <TimeSlot
+                        type={order.fulfillmentType}
+                        time={order.cart.fulfillmentInfo?.slot}
+                     />
+                  </>
+               )}
+            </Flex>
+         </Flex>
+         <Spacer size="50px" />
+         {/* <StyledText as="h3">Actions</StyledText> */}
+         <TextButton
+            size="md"
+            type="solid"
+            style={{ width: '196px' }}
+            onClick={() => createTab(order.id)}
+         >
+            <span>Go to Order</span>
+         </TextButton>
+         <Spacer size="16px" />
+         {!order.paymentId && (
+            <TextButton
+               type="outline"
+               size="md"
+               style={{ width: '196px' }}
+               onClick={() =>
+                  dispatch({ type: 'SET_CART_ID', payload: order.cart.id })
+               }
+            >
+               {order.cart.paymentStatus}
+            </TextButton>
+         )}
+         <Spacer size="16px" />
          <ResponsiveFlex container>
             <TextButton
                type="solid"
+               variant="secondary"
                disabled={order.isAccepted}
                size="sm"
                onClick={() =>
@@ -49,25 +106,36 @@ export const Actions = ({ order }) => {
                      },
                   })
                }
+               style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  columnGap: '2px',
+               }}
             >
+               <Tick />
+
+               <Spacer size="6px" />
                {order.isAccepted ? 'Accepted' : 'Accept'}
             </TextButton>
-            <TextButton type="ghost" onClick={openPortal} size="sm">
-               {order.isRejected ? 'Un Reject' : 'Reject'}
+
+            <Spacer size="8px" xAxis />
+
+            <TextButton
+               type="solid"
+               variant="secondary"
+               onClick={openPortal}
+               size="sm"
+               style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  columnGap: '2px',
+               }}
+            >
+               <Cross />
+
+               {order.isRejected ? 'UnReject' : 'Reject'}
             </TextButton>
          </ResponsiveFlex>
-         {!order.paymentId && (
-            <ComboButton
-               type="outline"
-               size="sm"
-               onClick={() =>
-                  dispatch({ type: 'SET_CART_ID', payload: order.cart.id })
-               }
-            >
-               <CardIcon />
-               {order.cart.paymentStatus}
-            </ComboButton>
-         )}
          <Portal>
             <Popup show={isOpen}>
                <Popup.Text type="danger">
@@ -109,5 +177,41 @@ export const Actions = ({ order }) => {
             </Popup>
          </Portal>
       </Flex>
+   )
+}
+
+const TimeSlot = ({ type, time = {} }) => {
+   const { t } = useTranslation()
+   return (
+      <StyledStatus>
+         <span>
+            {isPickup(type)
+               ? t(address.concat('pickup'))
+               : t(address.concat('Delivery'))}
+            &nbsp;
+         </span>
+         <span>
+            {time?.from
+               ? formatDate(time.from, {
+                    month: 'short',
+                    day: 'numeric',
+                 })
+               : 'N/A'}
+            |&nbsp;
+            {time.from
+               ? formatDate(time.from, {
+                    minute: 'numeric',
+                    hour: 'numeric',
+                 })
+               : 'N/A'}
+            {/* -
+            {time.to
+               ? formatDate(time.to, {
+                    minute: 'numeric',
+                    hour: 'numeric',
+                 })
+               : 'N/A'} */}
+         </span>
+      </StyledStatus>
    )
 }

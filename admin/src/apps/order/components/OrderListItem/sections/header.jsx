@@ -1,9 +1,11 @@
 import React from 'react'
-import { useTranslation } from 'react-i18next'
-import { Flex, Spacer, IconButton, TextButton, ComboButton } from '@dailykit/ui'
+// import { useTranslation } from 'react-i18next'
+import { Flex, Spacer, IconButton, TextButton } from '@dailykit/ui'
 
-import { StyledStatus, HeaderFlex } from './styled'
-import { formatDate } from '../../../utils'
+import { HeaderFlex } from './styled'
+
+// import { formatDate } from '../../../utils'
+
 import { useOrder } from '../../../context'
 import pickUpIcon from '../../../assets/svgs/pickup.png'
 import deliveryIcon from '../../../assets/svgs/delivery.png'
@@ -11,13 +13,13 @@ import { NewTabIcon, PrintIcon } from '../../../assets/icons'
 import { useTabs } from '../../../../../shared/providers'
 import { get_env } from '../../../../../shared/utils'
 
-const address = 'apps.order.components.orderlistitem.'
+// const address = 'apps.order.components.orderlistitem.'
 
 const isPickup = value => ['ONDEMAND_PICKUP', 'PREORDER_PICKUP'].includes(value)
 
 export const Header = ({ order }) => {
    const { addTab } = useTabs()
-   const { t } = useTranslation()
+   // const { t } = useTranslation()
    const { dispatch } = useOrder()
    const createTab = () => {
       addTab(`ORD${order.id}`, `/order/orders/${order.id}`)
@@ -65,14 +67,14 @@ export const Header = ({ order }) => {
                   <Spacer size="8px" xAxis />
                </>
             )}
-            <ComboButton
+            <TextButton
                size="sm"
                type="outline"
                onClick={() => createTab(order.id)}
             >
                {`ORD${order.id} ${order?.cart?.isTest ? '(Test)' : ''}`}
                <NewTabIcon size={14} />
-            </ComboButton>
+            </TextButton>
             <Spacer size="8px" xAxis />
             {!order.thirdPartyOrderId && (
                <IconButton size="sm" type="outline" onClick={() => print()}>
@@ -100,7 +102,7 @@ export const Header = ({ order }) => {
             )}
          </Flex>
          <Spacer size="24px" xAxis />
-         <HeaderFlex as="section" container alignItems="center">
+         {/* <HeaderFlex as="section" container alignItems="center">
             <StyledStatus>
                <span>{t(address.concat('ordered on'))}:&nbsp;</span>
                <span>{formatDate(order?.created_at)}</span>
@@ -114,44 +116,43 @@ export const Header = ({ order }) => {
                   />
                </>
             )}
-         </HeaderFlex>
+         </HeaderFlex> */}
       </HeaderFlex>
    )
 }
 
-const TimeSlot = ({ type, time = {} }) => {
-   const { t } = useTranslation()
-   return (
-      <StyledStatus>
-         <span>
-            {isPickup(type)
-               ? t(address.concat('pickup'))
-               : t(address.concat('Delivery'))}
-            :&nbsp;
-         </span>
-         <span>
-            {time?.from
-               ? formatDate(time.from, {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric',
-                 })
-               : 'N/A'}
-            ,&nbsp;
-            {time.from
-               ? formatDate(time.from, {
-                    minute: 'numeric',
-                    hour: 'numeric',
-                 })
-               : 'N/A'}
-            -
-            {time.to
-               ? formatDate(time.to, {
-                    minute: 'numeric',
-                    hour: 'numeric',
-                 })
-               : 'N/A'}
-         </span>
-      </StyledStatus>
-   )
-}
+// const TimeSlot = ({ type, time = {} }) => {
+//    const { t } = useTranslation()
+//    return (
+//       <StyledStatus>
+//          <span>
+//             {isPickup(type)
+//                ? t(address.concat('pickup'))
+//                : t(address.concat('Delivery'))}
+//             :&nbsp;
+//          </span>
+//          <span>
+//             {time?.from
+//                ? formatDate(time.from, {
+//                     month: 'short',
+//                     day: 'numeric',
+//                  })
+//                : 'N/A'}
+//             |&nbsp;
+//             {time.from
+//                ? formatDate(time.from, {
+//                     minute: 'numeric',
+//                     hour: 'numeric',
+//                  })
+//                : 'N/A'}
+//             {/* -
+//             {time.to
+//                ? formatDate(time.to, {
+//                     minute: 'numeric',
+//                     hour: 'numeric',
+//                  })
+//                : 'N/A'} */}
+//          </span>
+//       </StyledStatus>
+//    )
+// }

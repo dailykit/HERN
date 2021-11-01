@@ -402,7 +402,7 @@ export const OnDemandOrder = () => {
                   })}
                </div>
                <OnDemandMenu categories={categories} />
-               {cartState &&
+               {cartState.cart &&
                   cartState.cart?.products?.aggregate?.count !== 0 && (
                      <BottomCartBar />
                   )}
