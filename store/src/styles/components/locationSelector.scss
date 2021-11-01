@@ -227,7 +227,95 @@
 .hern-store-location-selector__store-on-map-map {
    height: calc(100vh - 60px);
 }
-
+.hern-store-selector__store-location-map-store-marker {
+   height: 32px;
+   width: 32px;
+   position: relative;
+}
+.hern-store-selector__store-location-map-store-icon {
+   width: 32px;
+   height: 32px;
+   position: absolute;
+   top: -16px;
+   left: -16px;
+   cursor: pointer;
+}
+.hern-store-selector__store-location-map-store-detail-pop {
+   position: absolute;
+   bottom: 32px;
+   left: 0;
+   height: auto;
+   width: 200px;
+   display: none;
+   background: #ffffff;
+   z-index: 10000;
+   padding: 1em;
+   line-height: 16px;
+   flex-direction: column;
+   border-radius: 4px;
+   width: max-content;
+}
+.hern-store-selector__store-location-map-store-detail-pop--active {
+   display: flex;
+}
+.hern-store-selector__store-location-map-store-detail-pop-content {
+   position: relative;
+}
+.hern-store-selector__store-location-map-store-detail-pop__store {
+   display: flex;
+   flex-direction: column;
+}
+.hern-store-selector__store-location-map-store-detail-pop__store-label {
+   font-weight: 600;
+   font-size: 18px;
+   line-height: 18px;
+   letter-spacing: 0.0044em;
+   text-transform: uppercase;
+   color: #202020;
+   margin: 0.3em 0;
+}
+.hern-store-selector__store-location-map-store-detail-pop__address {
+   display: flex;
+   flex-direction: column;
+   margin: 0 0 0.8em 0;
+}
+.hern-store-selector__store-location-map-store-detail-pop__info-label {
+   font-weight: 500;
+   font-size: 11px;
+   line-height: 13px;
+   color: #404040;
+   margin: 0 0 0.25em 0;
+}
+.hern-store-selector__store-location-map-store-detail-pop__address__info {
+   font-weight: 500;
+   font-size: 10px;
+   line-height: 12px;
+   color: rgba(64, 64, 64, 0.6);
+   font-size: 12px;
+   line-height: 16px;
+}
+.hern-store-selector__store-location-map-store-detail-pop__timing {
+   display: flex;
+   flex-direction: column;
+}
+.hern-store-selector__store-location-map-store-detail-pop__timing-timing {
+   font-weight: 500;
+   font-size: 10px;
+   line-height: 12px;
+   color: rgba(64, 64, 64, 0.6);
+   font-size: 12px;
+   line-height: 14px;
+}
+.hern-store-selector__store-location-map-store-detail-pop-close-icon {
+   position: absolute;
+   right: 0;
+   top: 0.5 em;
+}
+.hern-store-selector__store-location-map-store-detail__store-btn {
+   margin: 1em 0 0 0;
+   width: 100%;
+   height: 2.5em;
+}
 @media only screen and (min-width: 769px) {
    .hern-store-location-selector {
       background-color: rgb(251, 252, 246);

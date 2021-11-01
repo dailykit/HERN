@@ -19,14 +19,15 @@ import axios from 'axios'
 import _ from 'lodash'
 import { getDistance } from 'geolib'
 import { CSSTransition } from 'react-transition-group'
+import LocationSelectorConfig from './locatoinSeletorConfig.json'
+import { Button } from './button'
 
 // this Location selector is a pop up for mobile view so can user can select there location
 
 export const LocationSelector = props => {
-   // props
-   const { setShowLocationSelectionPopup } = props
+   // WARNING this component using settings so whenever using this component make sure this component can access settings
+   const { setShowLocationSelectionPopup, settings } = props
 
-   // component state
    const [userCoordinate, setUserCoordinate] = useState({
       latitude: null,
       longitude: null,
@@ -42,7 +43,6 @@ export const LocationSelector = props => {
       document.querySelector('body').style.overflowY = 'hidden'
       return () => (document.querySelector('body').style.overflowY = 'auto')
    })
-
    React.useEffect(() => {
       const userLocation = JSON.parse(localStorage.getItem('userLocation'))
       if (userLocation && userLocation.address) {
@@ -51,7 +51,6 @@ export const LocationSelector = props => {
          setLocationSearching(prev => ({ ...prev, loading: !prev.loading }))
       }
    }, [])
-
    const [loaded, error] = useScript(
       isClient
          ? `https://maps.googleapis.com/maps/api/js?key=${get_env(
@@ -187,6 +186,7 @@ export const LocationSelector = props => {
                      size={16}
                      color="#404040CC"
                      stroke="currentColor"
+                     onClick={() => setShowLocationSelectionPopup(false)}
                   />
                   <span>Location</span>
                </div>
@@ -197,12 +197,20 @@ export const LocationSelector = props => {
             {/* get location */}
             <div className="hern-store-location-selector-main">
                <div className="hern-store-location-selector-main__location-field">
-                  {loaded && !error && (
-                     <GooglePlacesAutocomplete
-                        inputClassName="hern-store-location-selector-main__location-input"
-                        onSelect={data => formatAddress(data)}
-                     />
-                  )}
+                  {loaded &&
+                     !error &&
+                     LocationSelectorConfig.informationVisibility
+                        .deliverySettings.userAddressInput.value && (
+                        <GooglePlacesAutocomplete
+                           inputClassName="hern-store-location-selector-main__location-input"
+                           onSelect={data => formatAddress(data)}
+                           placeholder={
+                              LocationSelectorConfig.informationVisibility
+                                 .deliverySettings.userAddressInputPlaceHolder
+                                 .value || 'Enter your delivery location'
+                           }
+                        />
+                     )}
 
                   <div
                      className="hern-store-location-selector-main__get-current-location"
@@ -227,12 +235,19 @@ export const LocationSelector = props => {
                <p>unable to find location</p>
             ) : address ? (
                <div className="hern-store-location-selector__user-location">
-                  <AddressInfo address={address} />
+                  {LocationSelectorConfig.informationVisibility.deliverySettings
+                     .userAddress.value && <AddressInfo address={address} />}
                </div>
             ) : null}
             {/* <RefineLocation setUserCoordinate={setUserCoordinate} /> */}
             {/* Footer */}
-            {address && <StoreList userCoordinate={userCoordinate} />}
+            {address && (
+               <StoreList
+                  userCoordinate={userCoordinate}
+                  setShowLocationSelectionPopup={setShowLocationSelectionPopup}
+                  settings={settings}
+               />
+            )}
             <div className="hern-store-location-selector-footer"></div>
          </div>
       </div>
@@ -325,9 +340,20 @@ const GET_BRAND_LOCATION = gql`
    }
 `
 const StoreList = props => {
-   const { userCoordinate, selectType = 'radio' } = props
+   const { userCoordinate, setShowLocationSelectionPopup, settings } = props
+   console.log('settings', settings)
 
    const { brand } = useConfig()
+
+   const {
+      showAerialDistance,
+      showStoreAddress,
+      showLocationLabel,
+      cardSelectionStyle,
+      selectionButtonLabel,
+   } = LocationSelectorConfig.informationVisibility.deliveryLocationCard
+   const { showStoresOnMap } =
+      LocationSelectorConfig.informationVisibility.deliverySettings
 
    const [brandLocation, setBrandLocation] = useState(storeStaticData)
    const [sortedBrandLocation, setSortedBrandLocation] = useState(null)
@@ -394,16 +420,6 @@ const StoreList = props => {
          console.log('getDataWithDrivableDistance', error)
       }
    }
-   console.log('new brandLocation', brandLocation)
-   console.log('sortedArray')
-
-   // useEffect(() => {
-   //    setSortedBrandLocation(
-   //       _.sortBy(brandLocation, [
-   //          x => x.drivableDistanceDetails.distance.text.split(' ')[0],
-   //       ])
-   //    )
-   // }, [brandLocation])
 
    useEffect(() => {
       if (brandLocation) {
@@ -414,6 +430,14 @@ const StoreList = props => {
    useEffect(() => {
       if (sortedBrandLocation) {
          setSelectedStore(sortedBrandLocation[0])
+         if (
+            LocationSelectorConfig.informationVisibility.deliverySettings
+               .storeLocationSelectionMethod.value.value === 'auto'
+         ) {
+            // select automatically first store form sorted array
+            console.log('your automatic store is', sortedBrandLocation[0])
+            setShowLocationSelectionPopup(false)
+         }
       }
    }, [sortedBrandLocation])
 
@@ -441,7 +465,12 @@ const StoreList = props => {
       }
       return dataWithaerialDistance
    }
-
+   if (
+      LocationSelectorConfig.informationVisibility.deliverySettings
+         .storeLocationSelectionMethod.value.value === 'auto'
+   ) {
+      return null
+   }
    if (sortedBrandLocation === null) {
       return <Loader />
    }
@@ -450,16 +479,25 @@ const StoreList = props => {
    }
    return (
       <div className="hern-location-selector__stores-list">
-         <div className="hern-location-selector__view-on-map">
-            <span onClick={() => setShowStoreOnMap(true)}>View on map</span>
-         </div>
+         {showStoresOnMap.value && (
+            <div className="hern-location-selector__view-on-map">
+               <span onClick={() => setShowStoreOnMap(true)}>View on map</span>
+            </div>
+         )}
          {sortedBrandLocation.map((eachStore, index) => {
             const {
-               location: { label, id, locationAddress },
+               location: {
+                  label,
+                  id,
+                  locationAddress,
+                  city,
+                  state,
+                  country,
+                  zipcode,
+               },
                aerialDistance,
             } = eachStore
-            const { line1, line2, city, state, country, zipcode } =
-               locationAddress
+            const { line1, line2 } = locationAddress
             return (
                <div
                   key={index}
@@ -467,7 +505,7 @@ const StoreList = props => {
                      'hern-store-location-selector__each-store',
                      {
                         'hern-store-location-selector__each-store--border':
-                           selectType === 'border' &&
+                           cardSelectionStyle.value?.value === 'border' &&
                            selectedStore &&
                            id === selectedStore.id,
                      }
@@ -479,34 +517,42 @@ const StoreList = props => {
                   <div className="hern-store-location-selector__store-location-info-container">
                      <StoreIcon />
                      <div className="hern-store-location-selector__store-location-details">
-                        <span className="hern-store-location__store-location-label">
-                           {label}
-                        </span>
-                        <span className="hern-store-location__store-location-address hern-store-location__store-location-address-line1">
-                           {line1}
-                        </span>
-                        <span className="hern-store-location__store-location-address hern-store-location__store-location-address-line2">
-                           {line2}
-                        </span>
-                        <span className="hern-store-location__store-location-address hern-store-location__store-location-address-c-s-c-z">
-                           {city} {state} {country}
-                           {' ('}
-                           {zipcode}
-                           {')'}
-                        </span>
+                        {showLocationLabel.value && (
+                           <span className="hern-store-location__store-location-label">
+                              {label}
+                           </span>
+                        )}
+                        {showStoreAddress.value && (
+                           <>
+                              <span className="hern-store-location__store-location-address hern-store-location__store-location-address-line1">
+                                 {line1}
+                              </span>
+                              <span className="hern-store-location__store-location-address hern-store-location__store-location-address-line2">
+                                 {line2}
+                              </span>
+                              <span className="hern-store-location__store-location-address hern-store-location__store-location-address-c-s-c-z">
+                                 {city} {state} {country}
+                                 {' ('}
+                                 {zipcode}
+                                 {')'}
+                              </span>
+                           </>
+                        )}
                      </div>
                   </div>
-                  {selectType === 'radio' && (
+                  {cardSelectionStyle.value?.value === 'radio' && (
                      <RadioIcon
                         size={18}
                         showTick={selectedStore && id === selectedStore.id}
                      />
                   )}
                   <div className="hern-store-location-selector__time-distance">
-                     <div className="hern-store-location-selector__aerialDistance">
-                        <DistanceIcon />
-                        <span>{aerialDistance}</span>
-                     </div>
+                     {showAerialDistance.value && (
+                        <div className="hern-store-location-selector__aerialDistance">
+                           <DistanceIcon />
+                           <span>{aerialDistance}</span>
+                        </div>
+                     )}
                   </div>
                </div>
             )
@@ -514,6 +560,8 @@ const StoreList = props => {
          <StoresOnMap
             showStoreOnMap={showStoreOnMap}
             setShowStoreOnMap={setShowStoreOnMap}
+            brandLocation={brandLocation}
+            settings={settings}
          />
       </div>
    )
@@ -526,13 +574,14 @@ const getDrivvaleData = async (postLocationData, url) => {
 }
 
 const StoresOnMap = props => {
-   const { storeData, showStoreOnMap, setShowStoreOnMap } = props
+   const { brandLocation, settings, showStoreOnMap, setShowStoreOnMap } = props
 
    const defaultCenter = localStorage.getItem('userLocation')
    const { latitude, longitude } = React.useMemo(
       () => defaultCenter && JSON.parse(defaultCenter),
       [defaultCenter]
    )
+
    // defaultProps for google map
    const defaultProps = {
       ...(JSON.parse(defaultCenter) && {
@@ -545,12 +594,93 @@ const StoresOnMap = props => {
    }
 
    const UserLocationMarker = () => {
-      return <LocationMarker />
+      return (
+         <div style={{ position: 'relative', width: '48px', height: '48px' }}>
+            <LocationMarker
+               size={48}
+               style={{
+                  position: 'absolute',
+                  top: '-48px',
+                  left: '-24px',
+               }}
+            />
+         </div>
+      )
+   }
+
+   const StoreLocationMarker = props => {
+      const { settings, storeDetails } = props
+
+      const [clickedStoreId, setClickedStoreId] = useState(null)
+      return (
+         <div className="hern-store-selector__store-location-map-store-marker">
+            <div
+               className={classNames(
+                  'hern-store-selector__store-location-map-store-detail-pop',
+                  {
+                     'hern-store-selector__store-location-map-store-detail-pop--active':
+                        clickedStoreId === storeDetails.id,
+                  }
+               )}
+            >
+               <div className="hern-store-selector__store-location-map-store-detail-pop-content">
+                  <div className="hern-store-selector__store-location-map-store-detail-pop-close-icon">
+                     <CloseIcon
+                        size={16}
+                        color="#404040CC"
+                        stroke="currentColor"
+                        onClick={() => {
+                           setClickedStoreId(null)
+                        }}
+                     />
+                  </div>
+                  <div className="hern-store-selector__store-location-map-store-detail-pop__store">
+                     <span className="hern-store-selector__store-location-map-store-detail-pop__store-label">
+                        Chitrakoot
+                     </span>
+                     <div className="hern-store-selector__store-location-map-store-detail-pop__address">
+                        <label className="hern-store-selector__store-location-map-store-detail-pop__address-label hern-store-selector__store-location-map-store-detail-pop__info-label">
+                           Address
+                        </label>
+                        <span className="hern-store-selector__store-location-map-store-detail-pop__address-line1 hern-store-selector__store-location-map-store-detail-pop__address__info">
+                           WP2Q+QG7
+                        </span>
+                        <span className="hern-store-selector__store-location-map-store-detail-pop__address-line2 hern-store-selector__store-location-map-store-detail-pop__address__info">
+                           Akruti Appartments, Chitrakoot
+                        </span>
+                        <span className="hern-store-selector__store-location-map-store-detail-pop__address-C-S-C hern-store-selector__store-location-map-store-detail-pop__address__info">
+                           Jaipur, Rajasthan (India)
+                        </span>
+                     </div>
+                     <div className="hern-store-selector__store-location-map-store-detail-pop__timing">
+                        <label className="hern-store-selector__store-location-map-store-detail-pop__timing-label hern-store-selector__store-location-map-store-detail-pop__info-label">
+                           Today’s Delivery Hours
+                        </label>
+                        <span className="hern-store-selector__store-location-map-store-detail-pop__timing-timing">
+                           Mon-Sun : 12:00PM-10:00PM
+                        </span>
+                     </div>
+                  </div>
+                  <Button className="hern-store-selector__store-location-map-store-detail__store-btn">
+                     View Store
+                  </Button>
+               </div>
+            </div>
+            <img
+               className={'hern-store-selector__store-location-map-store-icon'}
+               src={settings.brand['theme-brand'].logo.url}
+               onClick={() => {
+                  setClickedStoreId(storeDetails.id)
+                  console.log(storeDetails)
+               }}
+            />
+         </div>
+      )
    }
    return (
       <CSSTransition
          in={showStoreOnMap}
-         timeOut={300}
+         timeout={300}
          unmountOnExit
          classNames="hern-store-location-selector__store-on-map-css-transition"
       >
@@ -575,6 +705,19 @@ const StoresOnMap = props => {
                   defaultZoom={defaultProps.zoom}
                >
                   <UserLocationMarker lat={latitude} lng={longitude} />
+                  {brandLocation.map((eachBrand, index) => {
+                     const { latitude, longitude } =
+                        eachBrand.location.locationAddress.locationCoordinates
+                     return (
+                        <StoreLocationMarker
+                           key={index}
+                           lat={latitude}
+                           lng={longitude}
+                           storeDetails={eachBrand}
+                           settings={settings}
+                        />
+                     )
+                  })}
                </GoogleMapReact>
             </div>
          </div>
@@ -594,11 +737,11 @@ const storeStaticData = [
             },
             line1: '404',
             line2: 'Vaishali Nagar',
-            city: 'Jaipur',
-            state: 'Rajasthan',
-            country: 'India',
-            zipcode: '302021',
          },
+         city: 'Jaipur',
+         state: 'Rajasthan',
+         country: 'India',
+         zipcode: '302021',
          label: 'Vaishali Nagar',
          __typename: 'brands_location',
       },
@@ -616,11 +759,11 @@ const storeStaticData = [
             },
             line1: 'WP2Q+QG7',
             line2: 'Akruti Apartments, Chitrakoot',
-            city: 'Jaipur',
-            state: 'Rajasthan',
-            country: 'India',
-            zipcode: '302021',
          },
+         city: 'Jaipur',
+         state: 'Rajasthan',
+         country: 'India',
+         zipcode: '302021',
          label: 'Chitrakoot',
          __typename: 'brands_location',
       },
@@ -638,11 +781,11 @@ const storeStaticData = [
             },
             line1: 'SD 183 Shanti Nagar Hatwara Rod',
             line2: 'near by ESI Hospital, Shanti Nagar, Civil Lines',
-            city: 'Jaipur',
-            state: 'Rajasthan',
-            country: 'India',
-            zipcode: '302006',
          },
+         city: 'Jaipur',
+         state: 'Rajasthan',
+         country: 'India',
+         zipcode: '302006',
          label: 'Sodala',
          __typename: 'brands_location',
       },
@@ -660,11 +803,11 @@ const storeStaticData = [
             },
             line1: '43, Everest Colony',
             line2: 'Vidhayak Nagar, Lalkothi',
-            city: 'Jaipur',
-            state: 'Rajasthan',
-            country: 'India',
-            zipcode: '302015',
          },
+         city: 'Jaipur',
+         state: 'Rajasthan',
+         country: 'India',
+         zipcode: '302015',
          label: 'Tonk Road',
          __typename: 'brands_location',
       },
@@ -682,11 +825,11 @@ const storeStaticData = [
             },
             line1: '320, Laxmi Colony, Adarsh Bazar',
             line2: 'Barkat Nagar, Tonk Phatak',
-            city: 'Jaipur',
-            state: 'Rajasthan',
-            country: 'India',
-            zipcode: '302007',
          },
+         city: 'Jaipur',
+         state: 'Rajasthan',
+         country: 'India',
+         zipcode: '302007',
          label: 'Gandhi Nagar',
          __typename: 'brands_location',
       },
