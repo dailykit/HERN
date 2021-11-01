@@ -41,6 +41,5 @@ export const Wrapper = styled.div`
       height: 100%;
       padding: 2rem;
       background-color: ${theme.colors.lightBackground.grey};
-      overflow: auto;
    }
 `

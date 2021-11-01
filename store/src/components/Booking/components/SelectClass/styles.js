@@ -89,12 +89,14 @@ export const Wrapper = styled.div`
       margin-bottom: 1rem;
    }
    .availableDate {
-      margin: 1rem 0;
+      height: 230px;
+      overflow-y: auto;
+      margin-top: 1rem;
       .availableDate_head {
          font-family: 'Maven Pro';
          font-weight: 600;
          color: ${theme.colors.textColor7};
-         margin-bottom: 1rem;
+         margin-bottom: 2rem;
       }
    }
    .flex_row {

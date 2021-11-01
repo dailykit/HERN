@@ -72,7 +72,7 @@ export const FooterBtnWrap = styled.div`
       font-weight: normal;
    }
    @media (min-width: 769px) {
-      bottom: -2rem;
+      bottom: 0;
       background: ${theme.colors.lightBackground.grey};
       padding: 1rem 0;
       .nextBtn {

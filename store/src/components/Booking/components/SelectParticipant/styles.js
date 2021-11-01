@@ -3,7 +3,7 @@ import { theme } from '../../../../theme'
 
 export const Wrap = styled.div`
    width: 100%;
-   padding: 1rem;
+   padding: 0;
    .top-heading {
       font-size: ${theme.sizes.h3};
       font-weight: 400;
@@ -174,6 +174,33 @@ export const Wrap = styled.div`
       }
       40% {
          box-shadow: 0 2.5em 0 0;
+      }
+   }
+
+   @media (max-width: 769px) {
+      ${
+         '' /* .counter-wrap {
+
+      .flex-row {
+
+         .counter-btn {
+
+            svg {
+               stroke-width: 5px;
+               stroke: ${theme.colors.textColor7}
+            }
+            :hover {
+               cursor: pointer;
+               svg {
+                  stroke: ${theme.colors.textColor};
+               }
+            }
+         }
+         .disabled {
+            pointer-events: none;
+         }
+
+      } */
       }
    }
 `

@@ -149,8 +149,8 @@ export default function SelectParticipant({ experienceId }) {
                         size={theme.sizes.h3}
                         color={
                            participants <= 1
-                              ? theme.colors.textColor4
-                              : theme.colors.textColor7
+                              ? theme.colors.textColor7
+                              : theme.colors.textColor
                         }
                      />
                   </span>
@@ -185,8 +185,8 @@ export default function SelectParticipant({ experienceId }) {
                         size={theme.sizes.h4}
                         color={
                            participants >= classTypeInfo?.maximumParticipant
-                              ? theme.colors.textColor4
-                              : theme.colors.textColor7
+                              ? theme.colors.textColor7
+                              : theme.colors.textColor
                         }
                      />
                   </span>

@@ -5,6 +5,8 @@ import { useCheckoutHandler } from '../../checkoutHandler'
 import Participant from '../Participant'
 import PriceBreakDown from '../PriceBreakDown'
 import AvailableDate from '../../../AvailableDate'
+import CustomScrollbar from '../../../CustomScrollbar'
+import { HelpCircle } from '../../../Icons'
 import {
    useExperienceInfo,
    useCart,
@@ -12,6 +14,7 @@ import {
    usePoll
 } from '../../../../Providers'
 import { isEmpty } from '../../../../utils'
+import { theme } from '../../../../theme'
 
 export default function SelectClass({ experienceId, isMulti = false }) {
    const { state: userState, toggleAuthenticationModal } = useUser()
@@ -99,7 +102,9 @@ export default function SelectClass({ experienceId, isMulti = false }) {
                trigger="click"
                content={<PriceBreakDown />}
             >
-               <button className="breakdown-head text8">Breakdown</button>
+               <span>
+                  <HelpCircle size={24} color={theme.colors.textColor7} />
+               </span>
             </Popover>
          </div>
          {!isMulti && (
@@ -109,8 +114,8 @@ export default function SelectClass({ experienceId, isMulti = false }) {
                </div>
             </div>
          )}
-
          <div className="availableDate">
+            {/* <CustomScrollbar> */}
             <h1 className="availableDate_head text8">
                SELECT AN AVAILABLE TIME SLOT
             </h1>
@@ -134,6 +139,7 @@ export default function SelectClass({ experienceId, isMulti = false }) {
                   />
                )
             })}
+            {/* </CustomScrollbar> */}
          </div>
       </Wrapper>
    )
