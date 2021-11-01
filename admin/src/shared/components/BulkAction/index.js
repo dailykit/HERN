@@ -25,12 +25,15 @@ import {
    INCREMENTS_IN_PRODUCT_OPTIONS,
    UPDATE_SUBSCRIPTION_OCCURRENCE_PRODUCT,
    INCREASE_PRICE_SUBSCRIPTION_OCCURRENCE_PRODUCT,
+   UPDATE_SUBSCRIPTION_OCCURRENCES,
+   MODIFY_TIMESTAMP,
 } from './mutation'
 import { RecipeBulkAction } from './entities/recipe'
 import { IngredientBulkAction } from './entities/ingredients'
 import { ProductBulkAction } from './entities/products'
 import { ProductOptionsBulkAction } from './entities/productOptions'
 import { SubscriptionOccurrenceProductBulkAction } from './entities/subscriptionOccurenceProduct'
+import { SubscriptionOccurrence } from './entities/subscriptionOccurrence'
 
 const BulkActions = ({
    table,
@@ -151,6 +154,21 @@ const BulkActions = ({
          forPrepend: '',
       },
    })
+   const [
+      initialBulkActionSubscriptionOccurrence,
+      setInitialBulkActionSubscriptionOccurrence,
+   ] = React.useState({
+      cutoffTime: '',
+      startTime: '',
+      cutoffTimeStamp: {
+         forIncrease: '',
+         forDecrease: '',
+      },
+      startTimeStamp: {
+         forIncrease: '',
+         forDecrease: '',
+      },
+   })
    // additional bulk actions (actions which not to be set)
    const [additionalBulkAction, setAdditionalBulkAction] = React.useState({})
 
@@ -268,6 +286,20 @@ const BulkActions = ({
                forPrepend: '',
             },
          }))
+      } else if (table === 'Subscription Occurrence') {
+         setInitialBulkActionSubscriptionOccurrence(prevState => ({
+            ...prevState,
+            cutoffTime: '',
+            startTime: '',
+            cutoffTimeStamp: {
+               forIncrease: '',
+               forDecrease: '',
+            },
+            startTimeStamp: {
+               forIncrease: '',
+               forDecrease: '',
+            },
+         }))
       } else {
          // for product options
          handleModifierClear()
@@ -308,7 +340,7 @@ const BulkActions = ({
 
    const [updateProducts] = useMutation(UPDATE_PRODUCTS, {
       onCompleted: () => {
-         toast.success('Update Successfully')
+         toast.success('Update product Successfully')
          close(1)
       },
       onError: error => {
@@ -348,7 +380,18 @@ const BulkActions = ({
          },
       }
    )
-
+   // const [updateSubscriptionOccurrence] = useMutation(
+   //    UPDATE_SUBSCRIPTION_OCCURRENCES,
+   //    {
+   //       onCompleted: () => {
+   //          toast.success('Update Successfully')
+   //          close(1)
+   //       },
+   //       onError: error => {
+   //          toast.error('Something main update went wrong!')
+   //       },
+   //    }
+   // )
    const [concatenateArrayColumn] = useLazyQuery(CONCATENATE_ARRAY_COLUMN, {
       onCompleted: () => {
          toast.success('Update Successfully')
@@ -370,9 +413,18 @@ const BulkActions = ({
          },
       }
    )
-   const [increasePriceAndDiscount] = useMutation(INCREASE_PRICE_AND_DISCOUNT, {
+   const [concatenateTimeStamp] = useLazyQuery(MODIFY_TIMESTAMP, {
       onCompleted: () => {
          toast.success('Update Successfully')
+         close(1)
+      },
+      onError: () => {
+         toast.error('Something went wrong!')
+      },
+   })
+   const [increasePriceAndDiscount] = useMutation(INCREASE_PRICE_AND_DISCOUNT, {
+      onCompleted: () => {
+         toast.success('Update price increase Successfully')
          //  close(1)
       },
       onError: () => {
@@ -441,7 +493,7 @@ const BulkActions = ({
          close(1)
       }
    }
-   console.log('Additional Action:::', additionalBulkAction, bulkActions)
+   console.log('bulk  Action:::', bulkActions)
    // This  function only use for bulk action mutation
    const getMutation = table => {
       switch (table) {
@@ -455,8 +507,8 @@ const BulkActions = ({
             return updateProductOptions
          case 'Menu Product Occurrence':
             return updateSubscriptionOccurrenceProduct
-         case 'Menu Product Subscription':
-            return updateSubscriptionOccurrenceProduct
+         // case 'Menu Product Subscription':
+         //    return updateSubscriptionOccurrenceProduct
          default:
             return null
       }
@@ -514,6 +566,29 @@ const BulkActions = ({
             })
          }
       }
+      if ('timeStamp' in bulkActions) {
+         const toBeConcat = Object.keys(bulkActions.timeStamp)
+         if (toBeConcat.length > 0) {
+            const newConcatData = { ...bulkActions.timeStamp }
+            toBeConcat.forEach(data => {
+               newConcatData[data].arrayofids =
+                  '(' + selectedRows.map(idx => idx.id).join(',') + ')'
+               newConcatData[data].intervalincrementvalue = newConcatData[data]
+                  .intervalincrementvalue
+                  ? newConcatData[data].intervalincrementvalue
+                  : null
+               newConcatData[data].intervaldecrementvalue = newConcatData[data]
+                  .intervaldecrementvalue
+                  ? newConcatData[data].intervaldecrementvalue
+                  : null
+               concatenateTimeStamp({
+                  variables: {
+                     timeStamp: newConcatData[data],
+                  },
+               })
+            })
+         }
+      }
       //additional action use for those action which not to be set.(increment)
       if (additionalFunction) {
          console.log('in additional')
@@ -527,6 +602,7 @@ const BulkActions = ({
          if ('concatDataString' in bulkActions) {
             delete newBulkAction.concatDataString
          }
+
          if (Object.keys(newBulkAction).length !== 0) {
             fn({
                variables: {
@@ -535,6 +611,9 @@ const BulkActions = ({
                },
             })
          }
+      }
+      if (fn === null) {
+         return
       } else {
          toast.error('Incorrect schema or table name!')
       }
@@ -708,6 +787,18 @@ const BulkActions = ({
                            setBulkActions={setBulkActions}
                            additionalBulkAction={additionalBulkAction}
                            setAdditionalBulkAction={setAdditionalBulkAction}
+                        />
+                     )}
+                     {table === 'Subscription Occurrence' && (
+                        <SubscriptionOccurrence
+                           initialBulkAction={
+                              initialBulkActionSubscriptionOccurrence
+                           }
+                           setInitialBulkAction={
+                              setInitialBulkActionSubscriptionOccurrence
+                           }
+                           bulkActions={bulkActions}
+                           setBulkActions={setBulkActions}
                         />
                      )}
                   </Flex>

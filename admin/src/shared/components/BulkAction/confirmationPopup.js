@@ -45,6 +45,9 @@ export default function ConfirmationPopup({
                case 'Menu Product Subscription':
                   keyName = 'selected-rows-id_subscription_table'
                   break
+               case 'Subscription Occurrence':
+                  keyName = 'selected-rows-id_subscription_occurrence_table'
+                  break
                default:
                   keyName = 'selected-rows-id_ingredients_table'
             }
