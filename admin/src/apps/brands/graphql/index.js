@@ -74,32 +74,33 @@ export const BRANDS = {
       }
    `,
    UPDATE_BRAND_SETTING: gql`
-   mutation upsertBrandSetting(
-      $object: brands_brand_brandSetting_insert_input!
-   ) {
-      upsertBrandSetting: insert_brands_brand_brandSetting_one(
-         object: $object
-         on_conflict: {
-            constraint: brand_brandSetting_pkey
-            update_columns: value
-         }
+      mutation upsertBrandSetting(
+         $object: brands_brand_brandSetting_insert_input!
       ) {
-         value
+         upsertBrandSetting: insert_brands_brand_brandSetting_one(
+            object: $object
+            on_conflict: {
+               constraint: brand_brandSetting_pkey
+               update_columns: value
+            }
+         ) {
+            value
+         }
       }
-   }
    `,
 
    SETTING: gql`
-       subscription brandSettings(
+      subscription brandSettings(
          $identifier: String_comparison_exp!
          $type: String_comparison_exp!
       ) {
          brandSettings(where: { identifier: $identifier, type: $type }) {
             id
-            brand:brand_brandSetting {
+            brand: brand_brandSetting {
                brandId
                value
             }
+            configTemplate
          }
       }
    `,
