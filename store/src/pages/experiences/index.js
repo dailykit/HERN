@@ -221,7 +221,7 @@ export default function Experiences({
             )}
             {/* </Filters> */}
             {!isAuthenticated && (
-               <div style={{ padding: '0 3rem', marginTop: '4rem' }}>
+               <div className="signup-wrapper">
                   <SignupFold bgMode="dark" />
                </div>
             )}
@@ -306,6 +306,11 @@ const StyledWrapper = styled.div`
          text-transform: none;
          font-weight: 500;
       }
+   }
+
+   .signup-wrapper {
+      margin-top: 4rem;
+      padding: 0;
    }
 
    @media (max-width: 769px) {

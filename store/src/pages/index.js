@@ -139,7 +139,7 @@ export default function Home({
                      parsedData.find(fold => fold.id === 'home-top-01')?.content
                   )}
             </div>
-            <div style={{ margin: '2rem 6rem' }}>
+            <div className="content-container">
                {!isEmpty(categories) && (
                   <RenderCard
                      data={categories
@@ -300,6 +300,9 @@ const StyledWrapper = styled.div`
       bgMode === 'dark'
          ? theme.colors.darkBackground.darkblue
          : theme.colors.lightBackground.white};
+   .content-container {
+      margin: 2rem;
+   }
    .explore__btn {
       width: auto;
       margin: 4rem auto 6rem auto;
@@ -355,6 +358,9 @@ const StyledWrapper = styled.div`
       margin: 0 auto;
    }
    @media screen and (min-width: 769px) {
+      .content-container {
+         margin: 2rem 6rem;
+      }
       .explore__btn {
          padding: 24px 72px;
          letter-spacing: 0.3em;
