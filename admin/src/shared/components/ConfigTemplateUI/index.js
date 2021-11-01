@@ -1,15 +1,15 @@
-import React from "react"
-import _ from "lodash"
-import styled from "styled-components"
-import { getFieldUI } from "./getFieldUI"
-const ConfigTemplateUI = ({ config }) => {
+import React from 'react'
+import _ from 'lodash'
+import { getFieldUI } from './getFieldUI'
+
+const ConfigTemplateUI = ({ config, configSaveHandler, setConfigTemplate }) => {
    const [configJSON, setConfigJSON] = React.useState({})
    const [fields, setFields] = React.useState([])
    const elements = []
    const onConfigChange = (e, value) => {
       let updatedConfig
       const type = _.get(configJSON, `${e.target.name}.dataType`)
-      if (type === "boolean" || type === "html" || type === "select") {
+      if (type === 'boolean' || type === 'html' || type === 'select') {
          updatedConfig = _.set(configJSON, `${e.target.name}.value`, value)
       } else {
          updatedConfig = _.set(
@@ -18,13 +18,13 @@ const ConfigTemplateUI = ({ config }) => {
             e.target.value
          )
       }
-      setConfigJSON((prev) => ({
+      setConfigJSON(prev => ({
          ...prev,
          ...updatedConfig,
       }))
    }
    const getHeaderUI = ({ title, fieldData, key }) => {
-      const indentation = `${key.split(".").length * 8}px`
+      const indentation = `${key.split('.').length * 8}px`
       return (
          <div
             id={key}
@@ -39,7 +39,7 @@ const ConfigTemplateUI = ({ config }) => {
    }
    const showConfigUI = (configData, rootKey) => {
       _.forOwn(configData, (value, key) => {
-         const isFieldObject = _.has(value, "value")
+         const isFieldObject = _.has(value, 'value')
          if (isFieldObject) {
             const updatedRootkey = rootKey ? `${rootKey}.${key}` : key
             elements.push(
@@ -51,7 +51,7 @@ const ConfigTemplateUI = ({ config }) => {
             )
          } else {
             const updatedRootkey = rootKey ? `${rootKey}.${key}` : key
-            if (typeof value === "object" && value !== null) {
+            if (typeof value === 'object' && value !== null) {
                elements.push(
                   getHeaderUI({
                      title: key,
@@ -68,17 +68,25 @@ const ConfigTemplateUI = ({ config }) => {
       showConfigUI(data, rootKey)
       setFields([...elements])
    }
-   React.useEffect(() => {
-      setConfigJSON(config)
-   }, [config])
+
    React.useEffect(() => {
       if (Object.keys(configJSON).length) {
-         renderAllFields(configJSON, "")
+         renderAllFields(configJSON, '')
       }
    }, [configJSON])
+
+   React.useEffect(() => {
+      const updatedConfigData = _.defaultsDeep(config, configJSON)
+      setConfigJSON(updatedConfigData)
+      setConfigTemplate(updatedConfigData)
+      setFields([])
+   }, [config])
+
    return (
       <>
-         <button onClick={() => console.log("Saving")}>Save</button>
+         <button type="button" onClick={() => configSaveHandler(configJSON)}>
+            Save
+         </button>
          <div>
             {fields.length > 0 ? (
                <div>
@@ -87,7 +95,7 @@ const ConfigTemplateUI = ({ config }) => {
                   ))}
                </div>
             ) : (
-               <p style={{ textAlign: "center", fontSize: "2rem" }}>
+               <p style={{ textAlign: 'center', fontSize: '2rem' }}>
                   There are no config related to this Module
                </p>
             )}
@@ -96,13 +104,3 @@ const ConfigTemplateUI = ({ config }) => {
    )
 }
 export default ConfigTemplateUI
-const StyledConfig = styled.div`
-  border: 1px solid rgb(196, 196, 196);
-  height: 100%;
-  box-sizing: border-box;
-  border-radius: 4px;
-  padding: 8px 8px 0px;
-  margin-top: 24px;
-  margin-bottom: 8px;
-  position: relative;
-`
