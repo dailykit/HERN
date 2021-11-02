@@ -187,7 +187,7 @@ const handleEvents = {
                                    "name": tableName,
                                    "schema":schemaName
                                 },
-                                "webhook": "http://0245-111-223-3-62.ngrok.io/server/api/developer/webhookEvents/processWebhookEvents",
+                                "webhook": "{{DAILYOS_SERVER_URL}}/api/developer/webhookEvents/processWebhookEvents",
                                 "insert": {
                                     "columns": "*",
                                     "payload": "*"
@@ -225,7 +225,7 @@ const handleEvents = {
                                    "name": tableName,
                                    "schema":schemaName
                                 },
-                                "webhook": "http://0245-111-223-3-62.ngrok.io/server/api/developer/webhookEvents/processWebhookEvents",
+                                "webhook": "{{DAILYOS_SERVER_URL}}/api/developer/webhookEvents/processWebhookEvents",
                                 "insert": {
                                     "columns": "*",
                                     "payload": "*"

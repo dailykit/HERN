@@ -72,13 +72,14 @@ export const  AVAILABLE_EVENTS = gql`
   subscription GET_PROCESSED_EVENTS($webhookUrl_EventId: Int) {
     developer_webhookUrl_events(where: {id: {_eq: $webhookUrl_EventId}}) {
       availableWebhookEvent {
-        processedWebhookEvents {
+        processedWebhookEvents(order_by: {created_at: desc}) {
           processedWebhookEventsByUrls(where: {webhookUrl_eventsId: {_eq: $webhookUrl_EventId}}) {
             attemptedTime
             statusCode
           }
           created_at
           id
+          payload
         }
       }
     }
@@ -88,7 +89,7 @@ export const  AVAILABLE_EVENTS = gql`
   export const GET_INVOCATIONS_OF_PROCESSED_EVENTS = gql`
   subscription GET_INVOCATIONS_OF_PROCESSED_EVENTS($processedWebhookEventsId: String, $webhookUrl_EventId: Int) {
     developer_processedWebhookEventsByUrl(where: {processedWebhookEventsId: {_eq: $processedWebhookEventsId}, webhookUrl_eventsId: {_eq: $webhookUrl_EventId}}) {
-      webhookUrl_EventsLogs {
+      webhookUrl_EventsLogs(order_by: {created_at: desc}) {
         PayloadSent
         Response
         created_at
