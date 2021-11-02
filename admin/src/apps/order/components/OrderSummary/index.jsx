@@ -9,9 +9,13 @@ import {
    Spacer,
    ClearIcon,
    IconButton,
+   PlusIcon,
    TextButton,
    CloseIcon,
+   Tag,
 } from '@dailykit/ui'
+
+import { Close } from '../../../../shared/assets/icons'
 
 import { useOrder } from '../../context'
 import { MetricItem } from '../MetricItem'
@@ -25,6 +29,10 @@ const address = 'apps.order.components.ordersummary.'
 export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
    const { t } = useTranslation()
    const { state, dispatch } = useOrder()
+   console.log(
+      'fliter',
+      state?.orders?.where?.cart?.order?.fulfillmentType?._eq
+   )
 
    const { data: { orders = {} } = {} } = useSubscription(
       QUERIES.ORDERS.AGGREGATE.TOTAL,
@@ -58,15 +66,66 @@ export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
    return (
       <Wrapper>
          <Spacer size="8px" />
-         <Flex container alignItems="center" justifyContent="space-between">
-            <Text as="h4">{t(address.concat('quick info'))}</Text>
+         <Flex
+            container
+            alignItems="center"
+            justifyContent="space-between"
+            style={{ borderBottom: '1px solid #E5E5E5' }}
+         >
+            {/* <Text as="h4">{t(address.concat('quick info'))}</Text>
             <StyledIconButton
                type="outline"
                size="sm"
                onClick={() => closeOrderSummaryTunnel(1)}
             >
                <CloseIcon />
-            </StyledIconButton>
+            </StyledIconButton> */}
+
+            <Text as="h4">Advanced Filters</Text>
+            <Flex container alignItems="center">
+               <StyledIconButton
+                  size="sm"
+                  type="ghost"
+                  onClick={() =>
+                     dispatch({
+                        type: 'TOGGLE_FILTER_TUNNEL',
+                        payload: { tunnel: true },
+                     })
+                  }
+               >
+                  <PlusIcon color="#919699" />
+               </StyledIconButton>
+               <Spacer size="8px" xAxis />
+
+               {/* <TextButton
+                  size="sm"
+                  type="outline"
+                  onClick={() =>
+                     dispatch({
+                        type: 'TOGGLE_FILTER_TUNNEL',
+                        payload: { tunnel: true },
+                     })
+                  }
+               >
+                  View
+               </TextButton> */}
+            </Flex>
+         </Flex>
+         <Spacer size="6px" />
+         <Flex>
+            {state?.orders?.where?.cart?.order?.fulfillmentType?._eq && (
+               <Tag>
+                  {state?.orders?.where?.cart?.order?.fulfillmentType?._eq}
+                  <styledButton
+                     size="sm"
+                     type="ghost"
+                     onClick={() => clearFilters()}
+                     style={{ marginLeft: '5px' }}
+                  >
+                     <Close color="#919699" size="7" />
+                  </styledButton>
+               </Tag>
+            )}
          </Flex>
          <Spacer size="8px" />
          <MetricItem
@@ -98,7 +157,7 @@ export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
             average={cancelledOrders?.aggregate?.avg?.amountPaid}
             closeOrderSummaryTunnel={closeOrderSummaryTunnel}
          />
-         <Flex container alignItems="center" justifyContent="space-between">
+         {/* <Flex container alignItems="center" justifyContent="space-between">
             <Text as="h4">Advanced Filters</Text>
             <Flex container alignItems="center">
                <IconButton
@@ -122,7 +181,7 @@ export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
                   View
                </TextButton>
             </Flex>
-         </Flex>
+         </Flex> */}
          <Spacer size="16px" />
          {state.orders.where?.readyByTimestamp &&
             Object.keys(state.orders.where?.readyByTimestamp).length > 0 && (

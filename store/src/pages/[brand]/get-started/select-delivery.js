@@ -6,14 +6,14 @@ import {
    getPageProps,
    getRoute,
    isClient,
-   processJsFile,
+   processExternalFiles,
    renderPageContent,
 } from '../../../utils'
 
 const SelectDelivery = props => {
    const router = useRouter()
    const { isAuthenticated, isLoading } = useUser()
-   const { settings, folds, seoSettings } = props
+   const { settings, linkedFiles, folds, seoSettings } = props
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
          isClient && localStorage.setItem('landed_on', location.href)
@@ -29,7 +29,7 @@ const SelectDelivery = props => {
 
    React.useEffect(() => {
       try {
-         processJsFile(folds)
+         processExternalFiles(folds, linkedFiles)
       } catch (err) {
          console.log('Failed to render page: ', err)
       }
@@ -45,18 +45,15 @@ const SelectDelivery = props => {
    )
 }
 export const getStaticProps = async ({ params }) => {
-
-   const { parsedData, seo, settings, seoSettings } = await getPageProps(
-      params,
-      '/get-started/select-delivery'
-   )
+   const { parsedData, settings, seoSettings, linkedFiles } =
+      await getPageProps(params, '/get-started/select-delivery')
 
    return {
       props: {
          folds: parsedData,
-         seo,
          settings,
-         seoSettings
+         seoSettings,
+         linkedFiles,
       },
       revalidate: 1,
    }

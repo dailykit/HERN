@@ -187,3 +187,14 @@ export const UPDATE_LINK_CSS_FILES = gql`
       }
    }
 `
+
+export const CREATE_BLOCK = gql`
+   mutation CREATE_BLOCK($object: editor_block_insert_input!) {
+      insert_editor_block_one(object: $object) {
+         fileId
+         id
+         name
+         category
+      }
+   }
+`

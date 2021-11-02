@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 export const StyledWrapper = styled.div(
    ({ position }) => css`
       display: grid;
-      height: calc(100vh - 40px);
+      height: calc(100vh - 85px);
       overflow: hidden;
       grid-template-rows: 1fr 40px;
       grid-template-areas: ${position === 'left'
@@ -15,6 +15,13 @@ export const StyledWrapper = styled.div(
       > aside {
          grid-area: aside;
          overflow-y: auto;
+         ::-webkit-scrollbar {
+            width: 9px;
+         }
+         ::-webkit-scrollbar-thumb {
+            background: rgba(145, 150, 153, 0.6);
+            border-radius: 6px;
+         }
       }
       > button {
          grid-area: bottomBar;

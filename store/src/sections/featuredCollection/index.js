@@ -513,7 +513,7 @@ export const FeaturedCollection = props => {
                )}
                {(config?.informationVisibility?.cart?.bottomCartBar?.value ??
                   true) &&
-                  cartState &&
+                  cartState.cart &&
                   cartState.cart?.products?.aggregate?.count !== 0 && (
                      <BottomCartBar />
                   )}

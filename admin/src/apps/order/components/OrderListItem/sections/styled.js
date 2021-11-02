@@ -99,7 +99,9 @@ export const StyledCount = styled.span`
 
 export const StyledProductItem = styled.div`
    height: 32px;
-   display: grid;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
    grid-gap: 24px;
    padding: 0 12px;
    margin-bottom: 4px;
@@ -181,20 +183,21 @@ export const StyledStat = styled.div`
 `
 
 export const StyledStatus = styled.div`
-   display: flex;
+   display: grid;
    margin-right: 16px;
    align-items: center;
    span {
       :first-child {
-         color: #a7a8a6;
+         color: #919699;
          display: block;
-         font-size: 14px;
-         font-weight: 500;
+         font-size: 12px;
+         font-weight: 400;
       }
       :last-child {
+         color: #919699;
          display: block;
-         font-size: 14px;
-         font-weight: 500;
+         font-size: 12px;
+         font-weight: 700;
       }
    }
 `
@@ -213,7 +216,7 @@ export const StyledText = styled(Text)`
 `
 export const ResponsiveFlex = styled(Flex)`
    @media only screen and (min-width: 1024px) {
-      flex-direction: column;
+      flex-direction: row;
       align-items: flex-start;
    }
 `
