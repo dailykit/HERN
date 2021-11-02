@@ -78,13 +78,13 @@ export default function Expert({
                      alt="expert-profile"
                   />
                   <h3
-                     className="expert_Heading text1"
+                     className="expert_Heading text_align text1"
                      style={{
                         marginBottom: '0'
                      }}
                   >{`${expert?.firstName} ${expert?.lastName}`}</h3>
                   <p
-                     className="expert_para text6"
+                     className="expert_para text_align text6"
                      style={{
                         color: theme.colors.textColor5
                      }}
@@ -236,6 +236,11 @@ const Wrapper = styled.div`
       text-transform: uppercase;
       font-family: League-Gothic;
       margin-bottom: 2rem;
+   }
+   .text_align {
+      @media (max-width: 769px) {
+         text-align: center;
+      }
    }
    .expert_para {
       font-family: Futura;

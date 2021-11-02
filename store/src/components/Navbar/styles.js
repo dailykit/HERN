@@ -22,10 +22,18 @@ export const NavBar = styled.header`
    justify-content: space-between;
    transition: 0.2s ease-in;
    background: ${theme.colors.darkBackground.darkblue};
-   .logo-img {
+   .logo-img-wrapper {
       width: 100px;
       height: 48px;
+      :hover {
+         cursor: pointer;
+      }
       object-fit: contain;
+      .logo-img {
+         width: 100%;
+         height: 100%;
+         object-fit: contain;
+      }
    }
 
    .ant-menu-horizontal {

@@ -34,13 +34,6 @@ export default function NavBarComp({ navigationMenuItems, ...props }) {
 
    const routes = [
       {
-         id: '/h-id',
-         label: 'Home',
-         url: '/',
-         isAllowedToShow: true,
-         showInHeader: true
-      },
-      {
          id: '/exp-id',
          label: 'Experiences',
          url: '/experiences',
@@ -135,11 +128,13 @@ export default function NavBarComp({ navigationMenuItems, ...props }) {
                   <MenuIcon size="38" color={theme.colors.textColor4} />
                </span>
             )}
-            <img
-               className="logo-img"
-               src="/assets/images/stayIn-logo-1.png"
-               alt="stay-in-logo"
-            />
+            <span className="logo-img-wrapper" onClick={() => router.push('/')}>
+               <img
+                  className="logo-img"
+                  src="/assets/images/stayIn-logo-1.png"
+                  alt="stay-in-logo"
+               />
+            </span>
             <div className="menu-wrap">
                <Menu
                   onClick={handleMenuClick}
