@@ -14,7 +14,7 @@ export const CardWrapper = styled.div`
       font-family: 'Maven Pro';
       font-style: normal;
       font-weight: 600;
-      letter-spacing: 0.3em;
+      letter-spacing: 0.16em;
       color: ${theme.colors.textColor5};
       margin-bottom: 0 !important;
    }
@@ -93,6 +93,15 @@ export const CardWrapper = styled.div`
          margin-left: auto;
          margin-right: auto;
       }
+   }
+   .full-payment-msg {
+      font-family: League-Gothic;
+      font-style: normal;
+      letter-spacing: 0.04em;
+      color: ${theme.colors.textColor};
+      margin-top: 1rem;
+      text-align: center;
+      margin-bottom: 0;
    }
    .ant-collapse {
       background: none;

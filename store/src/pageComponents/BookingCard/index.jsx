@@ -2,7 +2,7 @@ import React from 'react'
 import { CardWrapper } from './styled'
 import { Divider } from 'antd'
 import { getDateWithTime } from '../../utils'
-import { getMinute } from '../../utils'
+import { getMinute, isEmpty } from '../../utils'
 
 export default function Card({ experienceInfo, showPaymentDetails = true }) {
    return (
@@ -42,13 +42,20 @@ export default function Card({ experienceInfo, showPaymentDetails = true }) {
                      <div className="pricing">
                         <p className="proxinova_text text9">Total Amount</p>
                         <p className="proxinova_text text9">
-                           ${experienceInfo?.toPayByParent}
+                           $
+                           {!isEmpty(
+                              experienceInfo?.cartOwnerBilling?.totalToPay
+                           )
+                              ? (experienceInfo?.cartOwnerBilling?.totalToPay).toFixed(
+                                   2
+                                )
+                              : 'N/A'}
                         </p>
                      </div>
                      <div className="pricing">
                         <p className="proxinova_text text9">Paid Amount</p>
                         <p className="proxinova_text text9">
-                           ${experienceInfo?.paidAmount}
+                           ${experienceInfo?.paidAmount.toFixed(2)}
                         </p>
                      </div>
                      {experienceInfo?.balancePayment > 0 ? (
@@ -57,11 +64,11 @@ export default function Card({ experienceInfo, showPaymentDetails = true }) {
                               Net Balance(USD)
                            </p>
                            <p className="proxinova_text text8">
-                              ${experienceInfo?.balancePayment}
+                              ${experienceInfo?.balancePayment.toFixed(2)}
                            </p>
                         </div>
                      ) : (
-                        <h2 className="full-payment-msg">
+                        <h2 className="full-payment-msg text5">
                            Hurray!! Enjoy the experience
                         </h2>
                      )}
