@@ -160,11 +160,7 @@ const BulkActions = ({
       initialBulkActionSubscriptionOccurrence,
       setInitialBulkActionSubscriptionOccurrence,
    ] = React.useState({
-      addOnPrice: {
-         set: 0,
-         increase: 0,
-         decrease: 0,
-      },
+      cutoffTime: '',
       startTime: '',
       cutoffTimeStamp: {
          forIncrease: '',
@@ -178,6 +174,28 @@ const BulkActions = ({
    const [
       initialBulkActionAddedToSubscription,
       setInitialBulkActionAddedToSubscription,
+   ] = React.useState({
+      addOnPrice: {
+         set: 0,
+         increase: 0,
+         decrease: 0,
+      },
+      productCategory: {
+         defaultOption: null,
+         value: '',
+      },
+      addOnLabel: '',
+      addOnLabelConcat: {
+         forAppend: '',
+         forPrepend: '',
+      },
+      isVisible: false,
+      isAvailable: false,
+      isSingleSelect: false,
+   })
+   const [
+      initialBulkActionAddedToOccurrence,
+      setInitialBulkActionAddedToOccurrence,
    ] = React.useState({
       addOnPrice: {
          set: 0,
@@ -350,6 +368,27 @@ const BulkActions = ({
             isAvailable: !prevState.isAvailable,
             isSingleSelect: !prevState.isSingleSelect,
          }))
+      } else if (table === 'Add To Occurrence') {
+         setInitialBulkActionAddedToOccurrence(prevState => ({
+            ...prevState,
+            addOnPrice: {
+               set: 0,
+               increase: 0,
+               decrease: 0,
+            },
+            productCategory: {
+               defaultOption: null,
+               value: '',
+            },
+            addOnLabel: '',
+            addOnLabelConcat: {
+               forAppend: '',
+               forPrepend: '',
+            },
+            isVisible: !prevState.isVisible,
+            isAvailable: !prevState.isAvailable,
+            isSingleSelect: !prevState.isSingleSelect,
+         }))
       } else {
          // for product options
          handleModifierClear()
@@ -431,6 +470,15 @@ const BulkActions = ({
       }
    )
    const [updateAddToSubscription] = useMutation(ADD_TO_SUBSCRIPTION, {
+      onCompleted: () => {
+         toast.success('Update Successfully')
+         close(1)
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+      },
+   })
+   const [updateAddToOccurrence] = useMutation(ADD_TO_SUBSCRIPTION, {
       onCompleted: () => {
          toast.success('Update Successfully')
          close(1)
@@ -542,7 +590,9 @@ const BulkActions = ({
       if (
          table === 'Menu Product Occurrence ' ||
          table === 'Menu Product Subscription' ||
-         table === 'Add To Subscription'
+         table === 'Add To Subscription' ||
+         table === 'Add To Occurrence' ||
+         table === 'Manage Add To Occurrence'
       ) {
          increasePriceSubscriptionOccurrenceProduct({
             variables: {
@@ -571,6 +621,8 @@ const BulkActions = ({
          //    return updateSubscriptionOccurrenceProduct
          case 'Add To Subscription':
             return updateAddToSubscription
+         case 'Add To Occurrence':
+            return updateAddToOccurrence
          default:
             return null
       }
@@ -872,6 +924,20 @@ const BulkActions = ({
                            }
                            setInitialBulkAction={
                               setInitialBulkActionAddedToSubscription
+                           }
+                           bulkActions={bulkActions}
+                           setBulkActions={setBulkActions}
+                           additionalBulkAction={additionalBulkAction}
+                           setAdditionalBulkAction={setAdditionalBulkAction}
+                        />
+                     )}
+                     {table === 'Add To Occurrence' && (
+                        <AddToSubscriptionMenu
+                           initialBulkAction={
+                              initialBulkActionAddedToOccurrence
+                           }
+                           setInitialBulkAction={
+                              setInitialBulkActionAddedToOccurrence
                            }
                            bulkActions={bulkActions}
                            setBulkActions={setBulkActions}
