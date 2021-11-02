@@ -555,6 +555,18 @@ export const CART_SUBSCRIPTION = gql`
       }
    }
 `
+export const ACTIVE_CARTPAYMENT_SUBSCRIPTION = gql`
+   subscription CART_SUBSCRIPTION($where: order_cart_bool_exp!) {
+      carts(where: $where) {
+         cartId: id
+         activeCartPayment {
+            cartId
+            paymentStatus
+            transactionRemark
+         }
+      }
+   }
+`
 
 export const EXPERIENCE_PRODUCT = gql`
    subscription EXPERIENCE_PRODUCT($experienceId: Int!) {

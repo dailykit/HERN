@@ -1,26 +1,24 @@
-import React, { useState, useEffect } from 'react'
-import Confetti from 'react-confetti'
+import React, { useState } from 'react'
 import { useSubscription, useMutation } from '@apollo/client'
 import { useRouter } from 'next/router'
 import { useToasts } from 'react-toast-notifications'
 import styled from 'styled-components'
 import ReactHtmlParser from 'react-html-parser'
-import { Button, Result, Spin } from 'antd'
+import { Button, Result } from 'antd'
 import {
    BookingInvite,
    ChevronLeft,
-   BackDrop,
    Payment,
-   SpinnerIcon,
    SEO,
    Layout,
    InlineLoader,
-   Button as ButtonComponent
+   Button as ButtonComponent,
+   PaymentProcessingModal
 } from '../../../../components'
 import BookingCard from '../../../../pageComponents/BookingCard'
 import { UPDATE_CART, CART_SUBSCRIPTION } from '../../../../graphql'
-import { useUser, useExperienceInfo } from '../../../../Providers'
-import { useWindowDimensions, fileParser, isEmpty } from '../../../../utils'
+import { useUser } from '../../../../Providers'
+import { fileParser, isEmpty } from '../../../../utils'
 import { theme } from '../../../../theme'
 import {
    getNavigationMenuItems,
@@ -36,15 +34,11 @@ function ManageBooking({
 }) {
    const router = useRouter()
    const { bookingId } = router.query
-   const { width, height } = useWindowDimensions()
    const { addToast } = useToasts()
    const { state: userState } = useUser()
    const { user = {} } = userState
    const [experienceInfo, setExperienceInfo] = useState(null)
-   const [isCelebrating, setIsCelebrating] = useState(false)
-   const [isBooking, setIsBooking] = useState(false)
-   const [cartPayment, setCartPayment] = useState(null)
-   const [actionUrl, setActionUrl] = useState('')
+   const [isProcessingPayment, setIsProcessingPayment] = useState(false)
    const [loading, setLoading] = useState(true)
 
    const { error: cartSubscriptionError } = useSubscription(CART_SUBSCRIPTION, {
@@ -62,9 +56,6 @@ function ManageBooking({
       } = {}) => {
          const [cart] = carts
          if (!isEmpty(carts)) {
-            if (!isEmpty(cart?.activeCartPayment)) {
-               setCartPayment(cart?.activeCartPayment)
-            }
             setExperienceInfo({
                ...cart,
                ...cart?.experienceClass?.experience,
@@ -76,6 +67,7 @@ function ManageBooking({
          setLoading(false)
       }
    })
+
    const [updateCart, { loading: isCartUpdating }] = useMutation(UPDATE_CART, {
       refetchQueries: ['CART_INFO', 'CART_SUBSCRIPTION'],
       onError: error => {
@@ -84,16 +76,8 @@ function ManageBooking({
       }
    })
 
-   const stopCelebration = () => {
-      router.push('/myBookings')
-   }
-   const startCelebration = () => {
-      setIsCelebrating(true)
-      setTimeout(stopCelebration, 5000)
-   }
-
    const onPayHandler = async () => {
-      setIsBooking(true)
+      setIsProcessingPayment(true)
       await updateCart({
          variables: {
             cartId: experienceInfo?.cartId,
@@ -107,33 +91,6 @@ function ManageBooking({
          }
       })
    }
-
-   useEffect(() => {
-      if (cartPayment?.paymentStatus === 'SUCCEEDED') {
-         console.log('initiating celebration')
-         startCelebration()
-      } else if (cartPayment?.paymentStatus === 'REQUIRES_ACTION') {
-         if (
-            cartPayment?.transactionRemark &&
-            Object.keys(cartPayment?.transactionRemark).length > 0 &&
-            cartPayment?.transactionRemark.next_action
-         ) {
-            if (
-               cartPayment?.transactionRemark.next_action.type ===
-               'use_stripe_sdk'
-            ) {
-               setActionUrl(
-                  cartPayment?.transactionRemark.next_action.use_stripe_sdk
-                     .stripe_js
-               )
-            } else {
-               setActionUrl(
-                  cartPayment?.transactionRemark.next_action.redirect_to_url.url
-               )
-            }
-         }
-      }
-   }, [cartPayment])
 
    if (loading) return <InlineLoader type="full" />
    if (cartSubscriptionError) {
@@ -152,7 +109,7 @@ function ManageBooking({
                      ?.content
                )}
          </div>
-         <Wrapper isBooking={isBooking}>
+         <Wrapper isProcessingPayment={isProcessingPayment}>
             <div className="checkout-heading">
                <Button
                   shape="circle"
@@ -203,44 +160,11 @@ function ManageBooking({
                />
             )}
          </Wrapper>
-         <BackdropDiv>
-            <BackDrop show={isBooking}>
-               <div className="booking-done">
-                  {isCelebrating ? (
-                     <Result status="success" />
-                  ) : (
-                     <div
-                        style={{
-                           display: 'flex',
-                           justifyContent: 'center',
-                           alignItems: 'center'
-                        }}
-                     >
-                        <Spin size="large" />
-                     </div>
-                  )}
-                  {isCelebrating ? (
-                     <p>Successfully Booked the experience!</p>
-                  ) : isEmpty(actionUrl) ? (
-                     <p>Please wait while we book this experience...</p>
-                  ) : (
-                     <p>
-                        Looks like your card requires authentication for
-                        one-time payments.
-                        <a
-                           href={actionUrl}
-                           className="action_url"
-                           target="_blank"
-                           rel="noreferrer"
-                        >
-                           Please authenticate your self here
-                        </a>
-                     </p>
-                  )}
-               </div>
-               {isCelebrating && <Confetti width={width} height={height} />}
-            </BackDrop>
-         </BackdropDiv>
+         <PaymentProcessingModal
+            isOpen={isProcessingPayment}
+            bookingId={bookingId}
+         />
+
          <div id="myBooking-bottom-01">
             {Boolean(parsedData.length) &&
                ReactHtmlParser(
@@ -285,7 +209,7 @@ const Wrapper = styled.div`
    width: 100%;
    color: ${theme.colors.textColor4};
    padding: 64px 6rem;
-   filter: ${({ isBooking }) => isBooking && 'blur(4px)'};
+   filter: ${({ isProcessingPayment }) => isProcessingPayment && 'blur(4px)'};
    .experience-date {
       h4 {
          font-size: ${theme.sizes.h8};
@@ -398,6 +322,7 @@ const Wrapper = styled.div`
       margin: 0 auto;
       padding: 0 2rem;
    }
+
    @media (max-width: 769px) {
       padding: 32px 26px;
       .container {
@@ -423,28 +348,6 @@ const Wrapper = styled.div`
                }
             }
          }
-      }
-   }
-`
-
-export const BackdropDiv = styled.div`
-   .action_url {
-      display: block;
-      text-decoration: underline;
-   }
-   .ant-result {
-      padding: 0 2rem;
-   }
-   .ant-result-success .ant-result-icon > .anticon {
-      color: ${theme.colors.textColor4};
-   }
-   .ant-spin .ant-spin-dot {
-      width: 2em;
-      height: 2em;
-      .ant-spin-dot-item {
-         background-color: ${theme.colors.textColor4};
-         width: 2rem;
-         height: 2rem;
       }
    }
 `

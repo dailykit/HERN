@@ -43,6 +43,7 @@ import Carousel from './Carousel'
 import RenderCard from './RenderCard'
 import Review from './Review'
 import SignupFold from './SignupFold'
+import PaymentProcessingModal from './PaymentProcessingModal'
 
 export {
    Button,
@@ -89,7 +90,8 @@ export {
    Carousel,
    RenderCard,
    Review,
-   SignupFold
+   SignupFold,
+   PaymentProcessingModal
 }
 export * from './Icons'
 export * from './Card'

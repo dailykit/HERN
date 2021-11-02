@@ -35,6 +35,7 @@ export default function ModalComp({
                </Button>
             ) : null
          }
+         closable={props?.closable || true}
       >
          {children}
       </ModalContainer>
