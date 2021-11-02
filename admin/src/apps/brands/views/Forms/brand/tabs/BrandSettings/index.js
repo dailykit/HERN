@@ -85,7 +85,7 @@ export const BrandSettings = () => {
          },
       })
    }
-
+   { console.log(settings, "settings") }
    return (
       <Flex padding="16px 16px 16px 34px">
          <Flex container alignItems="center">
@@ -95,72 +95,53 @@ export const BrandSettings = () => {
          <Spacer size="24px" />
          <Card
             title={<Text as="h3">Brands</Text>}
-            extra={
-               <TextButton type="solid" size="sm">
-                  Save
-               </TextButton>
-            }
             style={{ width: '100%' }}
          >
             <Flex container justifyContent="space-between">
-               <Brand update={update} />
+               <Brand />
                <Spacer size="24px" />
                <BrandLogo update={update} />
             </Flex>
          </Card>
-         {/* <Spacer size="24px" />
-            <Card
-                title={<Text as="h3">Availability</Text>}
-                extra={
-                    <TextButton type="solid" size="sm">
-                        Save
-                    </TextButton>
-                }
-                style={{ width: '100%' }}
-            >
-                <Payments update={update} />
-                <Spacer size="24px" />
-                <Address update={update} />
-                <Spacer size="24px" />
-                <Store update={update} />
-                <Spacer size="24px" />
-                <Pickup update={update} />
-                <Spacer size="24px" />
-                <Delivery update={update} />
-            </Card>
-            <Spacer size="48px" />
-            <Card
-                title={<Text as="h3">Rewards</Text>}
-                extra={
-                    <TextButton type="solid" size="sm">
-                        Save
-                    </TextButton>
-                }
-                style={{ width: '100%' }}
-            >
-                <Referral update={update} />
-                <Spacer size="24px" />
-                <Coupons update={update} />
-                <Spacer size="24px" />
-                <Wallet update={update} />
-                <Spacer size="24px" />
-                <LoyaltyPoints update={update} />
-            </Card>
-            <Spacer size="48px" />
-            <Card
-                title={<Text as="h3">Sales</Text>}
-                extra={
-                    <TextButton type="solid" size="sm">
-                        Save
-                    </TextButton>
-                }
-                style={{ width: '100%' }}
-            >
-                <FoodCostPercent update={update} />
-                <Spacer size="24px" />
-                <TaxPercentage update={update} />
-            </Card>
-            <Spacer size="48px" /> */}
+
+         <Spacer size="24px" />
+         <Card
+            title={<Text as="h3">Availability</Text>}
+            style={{ width: '100%' }}
+         >
+            <Payments />
+            <Spacer size="24px" />
+            <Address />
+            <Spacer size="24px" />
+            <Store />
+            <Spacer size="24px" />
+            <Pickup update={update} />
+            <Spacer size="24px" />
+            <Delivery update={update} />
+         </Card>
+         <Spacer size="48px" />
+         <Card
+            title={<Text as="h3">Rewards</Text>}
+            style={{ width: '100%' }}
+         >
+            <Referral update={update} />
+            <Spacer size="24px" />
+            <Coupons update={update} />
+            <Spacer size="24px" />
+            <Wallet update={update} />
+            <Spacer size="24px" />
+            <LoyaltyPoints update={update} />
+         </Card>
+         <Spacer size="48px" />
+         <Card
+            title={<Text as="h3">Sales</Text>}
+            style={{ width: '100%' }}
+         >
+            <FoodCostPercent update={update} />
+            <Spacer size="24px" />
+            <TaxPercentage update={update} />
+         </Card>
+         <Spacer size="48px" />
       </Flex>
    )
 }

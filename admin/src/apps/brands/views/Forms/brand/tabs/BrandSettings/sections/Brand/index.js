@@ -86,16 +86,16 @@ export const Brand = () => {
       toast.error('Something went wrong!')
       logger(error)
    }
-   React.useEffect(() => {
-      if (!loading && !isEmpty(brandSettings)) {
-         const grouped = groupBy(brandSettings, 'type')
+   // React.useEffect(() => {
+   //    if (!loading && !isEmpty(brandSettings)) {
+   //       const grouped = groupBy(brandSettings, 'type')
 
-         Object.keys(grouped).forEach(key => {
-            grouped[key] = grouped[key].map(node => node.identifier)
-         })
-         setSettings(grouped)
-      }
-   }, [loading, brandSettings])
+   //       Object.keys(grouped).forEach(key => {
+   //          grouped[key] = grouped[key].map(node => node.identifier)
+   //       })
+   //       setSettings(grouped)
+   //    }
+   // }, [loading, brandSettings])
 
    //    React.useEffect(() => {
    //     updateSetting({

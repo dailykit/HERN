@@ -1,6 +1,8 @@
 import React from 'react'
 import _ from 'lodash'
 import { getFieldUI } from './getFieldUI'
+import { TextButton } from '@dailykit/ui'
+import styled from 'styled-components'
 
 const ConfigTemplateUI = ({ config, setConfig, configSaveHandler }) => {
    const [configJSON, setConfigJSON] = React.useState({})
@@ -84,15 +86,31 @@ const ConfigTemplateUI = ({ config, setConfig, configSaveHandler }) => {
 
    return (
       <>
-         <button type="button" onClick={() => configSaveHandler(configJSON)}>
-            Save
-         </button>
          <div>
-            {fields.map((config, index) => (
-               <div key={index}>{config}</div>
-            ))}
+            {fields.length > 0 ? (
+               <div>
+                  {fields.map((field, index) => (
+                     <div key={index}>{field}</div>
+                  ))}
+                  <TextButton size="sm" type="outline" onClick={() => configSaveHandler(configJSON)}>Save</TextButton>
+               </div>
+            ) : (
+               <p style={{ textAlign: "center", fontSize: "2rem" }}>
+                  There are no config related to this Module
+               </p>
+            )}
          </div>
       </>
    )
 }
 export default ConfigTemplateUI
+const StyledConfig = styled.div`
+  border: 1px solid rgb(196, 196, 196);
+  height: 100%;
+  box-sizing: border-box;
+  border-radius: 4px;
+  padding: 8px 8px 0px;
+  margin-top: 24px;
+  margin-bottom: 8px;
+  position: relative;
+`

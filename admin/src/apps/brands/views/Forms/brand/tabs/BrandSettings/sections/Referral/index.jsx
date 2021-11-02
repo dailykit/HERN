@@ -1,25 +1,30 @@
 import React from 'react'
 import { isEmpty } from 'lodash'
 import { useParams } from 'react-router-dom'
-import { useSubscription } from '@apollo/react-hooks'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { TextButton, Text, Spacer, Form } from '@dailykit/ui'
 
 import { BRANDS } from '../../../../../../../graphql'
-import {
-   Flex,
-   Tooltip,
-   InlineLoader,
-} from '../../../../../../../../../shared/components'
 import { toast } from 'react-toastify'
 import { logger } from '../../../../../../../../../shared/utils'
 import ConfigTemplateUI from '../../../../../../../../../shared/components/ConfigTemplateUI'
 
-export const Referral = ({ update }) => {
+export const Referral = () => {
    const params = useParams()
    const [settingId, setSettingId] = React.useState(null)
-   const [isAvailable, setIsAvailable] = React.useState(false)
-   const [configTemplate, setConfigTemplate] = React.useState({})
-   const { loading, error } = useSubscription(BRANDS.SETTING, {
+   const [config, setConfig] = React.useState({})
+
+   const [updateSetting] = useMutation(BRANDS.UPDATE_BRAND_SETTING, {
+      onCompleted: () => {
+         toast.success('Successfully updated!')
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         console.log('error', error)
+         logger(error)
+      },
+   })
+   const { loading: loadingSettings } = useSubscription(BRANDS.SETTING, {
       variables: {
          identifier: { _eq: 'Referral Availability' },
          type: { _eq: 'rewards' },
@@ -31,36 +36,54 @@ export const Referral = ({ update }) => {
             const index = brandSettings.findIndex(
                node => node?.brand?.brandId === Number(params.id)
             )
-
-            if (index === -1) {
-               const { id, configTemplate } = brandSettings[0]
-               setSettingId(id)
-               setConfigTemplate(configTemplate)
-               return
-            }
             const { brand, id, configTemplate } = brandSettings[index]
             setSettingId(id)
-            setConfigTemplate(configTemplate)
-            if ('isAvailable' in brand.value) {
-               setIsAvailable(brand.value.isAvailable)
+            if (configTemplate !== null && brand.value === null) {
+               updateSetting({
+                  variables: {
+                     object: {
+                        brandId: params.id,
+                        brandSettingId: id,
+                        value: configTemplate,
+                     },
+                  },
+               })
+               setConfig(brand.value)
+            } else {
+               setConfig(brand.value)
             }
          }
       },
    })
 
-   const updateSetting = React.useCallback(() => {
-      update({ id: settingId, value: { isAvailable } })
-   }, [isAvailable, settingId])
-
-   if (loading) return <InlineLoader />
+   const {
+      loading,
+      error,
+      data: { brandSettings = [] } = {},
+   } = useSubscription(BRANDS.SETTINGS_TYPES)
    if (error) {
-      toast.error('Something went wrong')
+      toast.error('Something went wrong!')
       logger(error)
+   }
+   const saveInfo = () => {
+      updateSetting({
+         variables: {
+            object: {
+               brandId: params?.id,
+               brandSettingId: settingId,
+               value: config,
+            },
+         },
+      })
    }
 
    return (
       <div id="Referral Availability">
-         <ConfigTemplateUI config={configTemplate} />
+         <ConfigTemplateUI
+            config={config}
+            setConfig={setConfig}
+            configSaveHandler={saveInfo}
+         />
       </div>
    )
 }

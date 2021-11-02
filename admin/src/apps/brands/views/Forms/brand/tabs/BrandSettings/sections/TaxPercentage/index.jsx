@@ -2,7 +2,7 @@ import React from 'react'
 import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
-import { useSubscription } from '@apollo/react-hooks'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { TextButton, Text, Spacer, Form } from '@dailykit/ui'
 import validator from '../../../../../../validator'
 
@@ -15,20 +15,23 @@ import {
 import { logger } from '../../../../../../../../../shared/utils'
 import ConfigTemplateUI from '../../../../../../../../../shared/components/ConfigTemplateUI'
 
-export const TaxPercentage = ({ update }) => {
+export const TaxPercentage = () => {
    const params = useParams()
-   const [configTemplate, setConfigTemplate] = React.useState({})
-   const [tax, setTax] = React.useState({
-      value: '',
-      meta: {
-         isValid: false,
-         isTouched: false,
-         errors: [],
+   const [config, setConfig] = React.useState({})
+
+   const [settingId, setSettingId] = React.useState(null)
+   const [updateSetting] = useMutation(BRANDS.UPDATE_BRAND_SETTING, {
+      onCompleted: () => {
+         toast.success('Successfully updated!')
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         console.log('error', error)
+         logger(error)
       },
    })
 
-   const [settingId, setSettingId] = React.useState(null)
-   const { loading, error } = useSubscription(BRANDS.SETTING, {
+   const { loading: loadingSettings } = useSubscription(BRANDS.SETTING, {
       variables: {
          identifier: { _eq: 'Tax Percentage' },
          type: { _eq: 'sales' },
@@ -40,58 +43,53 @@ export const TaxPercentage = ({ update }) => {
             const index = brandSettings.findIndex(
                node => node?.brand?.brandId === Number(params.id)
             )
-
-            if (index === -1) {
-               const { id, configTemplate } = brandSettings[0]
-               setSettingId(id)
-               setConfigTemplate(configTemplate)
-               return
-            }
             const { brand, id, configTemplate } = brandSettings[index]
             setSettingId(id)
-            setConfigTemplate(configTemplate)
-            if ('value' in brand.value) {
-               setTax({
-                  ...tax,
-                  value: brand.value.value,
+            if (configTemplate !== null && brand.value === null) {
+               updateSetting({
+                  variables: {
+                     object: {
+                        brandId: params.id,
+                        brandSettingId: id,
+                        value: configTemplate,
+                     },
+                  },
                })
+               setConfig(brand.value)
+            } else {
+               setConfig(brand.value)
             }
          }
       },
    })
 
-   const updateSetting = React.useCallback(() => {
-      if (!settingId) return
-      update({
-         id: settingId,
-         value: {
-            value: +tax.value,
-         },
-      })
-   }, [tax, settingId])
-
-   const onBlur = target => {
-      const { value } = target
-      const { isValid, errors } = validator.percentage(value)
-      setTax({
-         ...tax,
-         meta: {
-            isTouched: true,
-            isValid,
-            errors,
-         },
-      })
-   }
-
-   if (loading) return <InlineLoader />
+   const {
+      loading,
+      error,
+      data: { brandSettings = [] } = {},
+   } = useSubscription(BRANDS.SETTINGS_TYPES)
    if (error) {
-      toast.error('Something went wrong')
+      toast.error('Something went wrong!')
       logger(error)
    }
-
+   const saveInfo = () => {
+      updateSetting({
+         variables: {
+            object: {
+               brandId: params?.id,
+               brandSettingId: settingId,
+               value: config,
+            },
+         },
+      })
+   }
    return (
       <div id="Tax Percentage">
-         <ConfigTemplateUI config={configTemplate} />
+         <ConfigTemplateUI
+            config={config}
+            setConfig={setConfig}
+            configSaveHandler={saveInfo}
+         />
       </div>
    )
 }
