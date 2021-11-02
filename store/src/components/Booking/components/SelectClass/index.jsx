@@ -2,6 +2,7 @@ import React, { useMemo } from 'react'
 import { Wrapper } from './styles'
 import { message, Popover } from 'antd'
 import { useCheckoutHandler } from '../../checkoutHandler'
+import { useKitSelection } from '../../handleKitSelection'
 import Participant from '../Participant'
 import PriceBreakDown from '../PriceBreakDown'
 import AvailableDate from '../../../AvailableDate'
@@ -11,7 +12,8 @@ import {
    useExperienceInfo,
    useCart,
    useUser,
-   usePoll
+   usePoll,
+   useProduct
 } from '../../../../Providers'
 import { isEmpty } from '../../../../utils'
 import { theme } from '../../../../theme'
@@ -19,6 +21,9 @@ import { theme } from '../../../../theme'
 export default function SelectClass({ experienceId, isMulti = false }) {
    const { state: userState, toggleAuthenticationModal } = useUser()
    const { initiateCheckout } = useCheckoutHandler()
+   const { handleKitSelection } = useKitSelection()
+   const { state: productState, removeSelectedProduct } = useProduct()
+   const { selectedProductOption } = productState
    const { isAuthenticated } = userState
    const { state, updateExperienceInfo, nextBookingSteps } = useExperienceInfo()
    const { getCart } = useCart()
@@ -69,23 +74,17 @@ export default function SelectClass({ experienceId, isMulti = false }) {
                classTypeInfo: result?.classTypeInfo,
                priceBreakDown: result?.classTypeInfo?.priceRanges
             })
-            if (
-               !isEmpty(experience) &&
-               (experience?.experience_products_aggregate?.aggregate?.count >
-                  1 ||
-                  (!experience?.isKitMandatory &&
-                     experience?.experience_products_aggregate?.aggregate
-                        ?.count === 1))
-            ) {
+            const { goToKitSelection } = handleKitSelection({
+               kitCount:
+                  experience?.experience_products_aggregate?.aggregate?.count,
+               isKitMandatory: experience?.isKitMandatory,
+               isKitAdded: !isEmpty(selectedProductOption)
+            })
+            if (goToKitSelection) {
+               await removeSelectedProduct()
                nextBookingSteps(bookingStepsIndex)
             } else {
-               if (
-                  !isEmpty(experience) &&
-                  experience?.experience_products_aggregate?.aggregate?.count <=
-                     1
-               ) {
-                  initiateCheckout()
-               }
+               initiateCheckout()
             }
          }
       }

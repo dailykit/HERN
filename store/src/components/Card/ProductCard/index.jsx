@@ -61,7 +61,10 @@ export default function ProductCard({ cardDetails, ...props }) {
                </p>
 
                <div className="product_add_wrap">
-                  <p className="booked-kit text9">
+                  <p
+                     className="booked-kit text9"
+                     title={props.isAdded ? 'click to remove' : 'click to add'}
+                  >
                      {props.isAdded ? 'ADDED' : 'ADD'}
                   </p>
                   {props.isAdded ? (

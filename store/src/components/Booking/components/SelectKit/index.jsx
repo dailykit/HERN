@@ -6,6 +6,7 @@ import { Card } from '../../../Card'
 import InlineLoader from '../../../InlineLoader'
 import { useUser, useExperienceInfo, useProduct } from '../../../../Providers'
 import { EXPERIENCE_PRODUCT } from '../../../../graphql'
+import { isEmpty } from '../../../../utils'
 
 export default function SelectKit({ experienceId }) {
    const {
@@ -18,7 +19,8 @@ export default function SelectKit({ experienceId }) {
       state: productState,
       addProducts,
       addSelectedProduct,
-      addSelectedProductOption
+      addSelectedProductOption,
+      removeSelectedProduct
    } = useProduct()
    const { selectedProductOption } = productState
    const { kit, isHostParticipant, kitPrice } = experienceState
@@ -55,16 +57,16 @@ export default function SelectKit({ experienceId }) {
       console.log('Product', product)
       switch (product?.type) {
          case 'simple':
-            console.log('in simple')
             await addSelectedProduct(product)
-            console.log('in simple1')
             if (product?.productOptions.length > 1) {
-               console.log('in simple2 if')
                await setProductModalType('booking')
                await toggleProductModal(true)
             } else {
-               console.log('in simple2 else')
-               await addSelectedProductOption(product.productOptions[0])
+               if (!isEmpty(selectedProductOption)) {
+                  await removeSelectedProduct()
+               } else {
+                  await addSelectedProductOption(product.productOptions[0])
+               }
             }
             break
          case 'customizable':

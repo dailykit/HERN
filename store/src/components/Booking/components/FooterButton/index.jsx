@@ -1,5 +1,6 @@
 import React from 'react'
 import { FooterBtnWrap } from './styles'
+import { useKitSelection } from '../../handleKitSelection'
 import Button from '../../../Button'
 import { useCustomMutation } from '../../useCustomMutation'
 import { useCheckoutHandler } from '../../checkoutHandler'
@@ -14,6 +15,7 @@ export default function FooterButton({
    const { CART, CHILD_CART } = useCustomMutation()
    const { initiateCheckout } = useCheckoutHandler()
    const { state: productState } = useProduct()
+   const { handleKitSelection } = useKitSelection()
    const { selectedProductOption = {} } = productState
    const { state: experienceState } = useExperienceInfo()
    const { bookingStepsIndex, experience } = experienceState
@@ -21,12 +23,16 @@ export default function FooterButton({
       initiateCheckout()
    }
 
-   // const isCheckoutDisabled = ()=>{
-   //    if((!isEmpty(experience) && experience?.isKitMandatory) && isEmpty(selectedProductOption) ||
-   //    CART.create.loading ||
-   //    CHILD_CART.create.loading) return true
-
-   // }
+   const isCheckoutDisabled = () => {
+      const { footerDisable } = handleKitSelection({
+         kitCount: experience?.experience_products_aggregate?.aggregate?.count,
+         isKitMandatory: experience?.isKitMandatory,
+         isKitAdded: !isEmpty(selectedProductOption)
+      })
+      if (footerDisable || CART.create.loading || CHILD_CART.create.loading)
+         return true
+      return false
+   }
 
    return (
       <FooterBtnWrap>
@@ -40,11 +46,7 @@ export default function FooterButton({
          )}
          {bookingStepsIndex === 1 && (
             <Button
-               disabled={
-                  isEmpty(selectedProductOption) ||
-                  CART.create.loading ||
-                  CHILD_CART.create.loading
-               }
+               disabled={isCheckoutDisabled()}
                className="nextBtn text3"
                onClick={handleNextButtonClick}
             >

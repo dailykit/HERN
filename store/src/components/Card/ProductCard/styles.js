@@ -10,6 +10,7 @@ export const Card = styled.div`
          ? '0px 8px 12px 2px rgba(0, 0, 0, 0.32)'
          : 'none' || '0px 8px 12px 2px rgba(0, 0, 0, 0.32)'};
    cursor: pointer;
+   height: 380px;
    position: relative;
    overflow: hidden;
    transition: all 0.3s ease-in-out;
@@ -17,12 +18,12 @@ export const Card = styled.div`
 
 export const CardImage = styled.div`
    width: 100%;
-   height: 100%;
+   height: 180px;
    overflow: hidden;
-   border-radius: 16px;
+   border-radius: 24px;
    img {
       width: 100%;
-      height: 280px;
+      height: 100%;
       object-fit: cover;
       transition: transform 650ms;
       &:hover {

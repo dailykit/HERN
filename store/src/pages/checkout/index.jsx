@@ -201,7 +201,13 @@ function Checkout({ navigationMenuItems, parsedData = [], footerHtml = '' }) {
                   }
                   size="middle"
                   onClick={() =>
-                     router.push(`/experiences/${experienceInfo?.experienceId}`)
+                     router.push(
+                        `/experiences/${
+                           !isEmpty(experienceInfo)
+                              ? experienceInfo?.experienceId
+                              : ''
+                        }`
+                     )
                   }
                />
                <p className="go_back text10"> Back to experience </p>
