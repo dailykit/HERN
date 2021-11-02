@@ -2,7 +2,7 @@ import React from 'react'
 import _ from 'lodash'
 import { getFieldUI } from './getFieldUI'
 
-const ConfigTemplateUI = ({ config, configSaveHandler, setConfigTemplate }) => {
+const ConfigTemplateUI = ({ config, setConfig, configSaveHandler }) => {
    const [configJSON, setConfigJSON] = React.useState({})
    const [fields, setFields] = React.useState([])
    const elements = []
@@ -78,7 +78,7 @@ const ConfigTemplateUI = ({ config, configSaveHandler, setConfigTemplate }) => {
    React.useEffect(() => {
       const updatedConfigData = _.defaultsDeep(config, configJSON)
       setConfigJSON(updatedConfigData)
-      setConfigTemplate(updatedConfigData)
+      setConfig(updatedConfigData)
       setFields([])
    }, [config])
 
@@ -88,17 +88,9 @@ const ConfigTemplateUI = ({ config, configSaveHandler, setConfigTemplate }) => {
             Save
          </button>
          <div>
-            {fields.length > 0 ? (
-               <div>
-                  {fields.map((config, index) => (
-                     <div key={index}>{config}</div>
-                  ))}
-               </div>
-            ) : (
-               <p style={{ textAlign: 'center', fontSize: '2rem' }}>
-                  There are no config related to this Module
-               </p>
-            )}
+            {fields.map((config, index) => (
+               <div key={index}>{config}</div>
+            ))}
          </div>
       </>
    )

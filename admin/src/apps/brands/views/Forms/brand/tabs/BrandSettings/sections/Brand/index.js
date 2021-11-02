@@ -14,29 +14,7 @@ export const Brand = () => {
    const params = useParams()
    const [settings, setSettings] = React.useState({})
    const [settingId, setSettingId] = React.useState(null)
-   const [brandId, setBrandId] = React.useState(null)
-   const [configTemplate, setConfigTemplate] = React.useState({})
    const [config, setConfig] = React.useState({})
-
-   // const {setConfigTemplate} = useConfigTemplateUI()
-   const [form, setForm] = React.useState({
-      brandEmail: {
-         value: '',
-         meta: {
-            isValid: false,
-            isTouched: false,
-            errors: [],
-         },
-      },
-      brandPhoneNo: {
-         value: '',
-         meta: {
-            isValid: false,
-            isTouched: false,
-            errors: [],
-         },
-      },
-   })
 
    const [updateSetting] = useMutation(BRANDS.UPDATE_BRAND_SETTING, {
       onCompleted: () => {
@@ -62,25 +40,39 @@ export const Brand = () => {
             )
 
             if (index === -1) {
-               const { id, configTemplate, brand } = brandSettings[0]
-               setConfigTemplate(configTemplate)
-               setConfig(brand.value)
+               const { id, brand } = brandSettings[0]
+               if (brand.value === null) {
+                  updateSetting({
+                     variables: {
+                        object: {
+                           brandId: params.id,
+                           brandSettingId: id,
+                           value: config,
+                        },
+                     },
+                  })
+                  setConfig(brand.value)
+               } else {
+                  setConfig(brand.value)
+               }
                setSettingId(id)
-               setBrandId(brand.id)
                return
             }
             const { brand, id, configTemplate } = brandSettings[index]
-            setConfigTemplate(configTemplate)
             setSettingId(id)
-            setConfig(brand.value)
-            setBrandId(brand.id)
-
-            if ('email' in brand.value || 'phoneNo' in brand.value) {
-               setForm({
-                  ...form,
-                  brandEmail: { value: brand.value.email },
-                  brandPhoneNo: { value: brand.value.phoneNo },
+            if (configTemplate !== null && brand.value === null) {
+               updateSetting({
+                  variables: {
+                     object: {
+                        brandId: params.id,
+                        brandSettingId: id,
+                        value: configTemplate,
+                     },
+                  },
                })
+               setConfig(brand.value)
+            } else {
+               setConfig(brand.value)
             }
          }
       },
@@ -105,68 +97,23 @@ export const Brand = () => {
       }
    }, [loading, brandSettings])
 
-   const onChangeHandler = e => {
-      const { name, value } = e.target
-      console.log(name, value)
-      setForm({
-         ...form,
-         [name]: {
-            ...form[name],
-            value,
-         },
-      })
-   }
-
-   const onBlur = target => {
-      const { name, value } = target
-      if (name === 'brandEmail') {
-         const { isValid, errors } = validator.email(value)
-         setForm({
-            ...form,
-            brandEmail: {
-               value,
-               meta: {
-                  isTouched: true,
-                  isValid,
-                  errors,
-               },
-            },
-         })
-      }
-      if (name === 'brandPhoneNo') {
-         const { isValid, errors } = validator.phone(value)
-         setForm({
-            ...form,
-            brandPhoneNo: {
-               value,
-               meta: {
-                  isTouched: true,
-                  isValid,
-                  errors,
-               },
-            },
-         })
-      }
-   }
    //    React.useEffect(() => {
-   //       if (brandId && settingId) {
-   //          updateSetting({
-   //             variables: {
-   //                object: {
-   //                   brandId,
-   //                   brandSettingId: settingId,
-   //                   value: configTemplate,
-   //                },
-   //             },
-   //          })
-   //       }
-   //    }, [settingId, brandId])
+   //     updateSetting({
+   //         variables: {
+   //            object: {
+   //               brandId: params?.id,
+   //               brandSettingId: settingId,
+   //               value: config,
+   //            },
+   //         },
+   //      })
+   //    }, [])
 
    const saveInfo = () => {
       updateSetting({
          variables: {
             object: {
-               brandId: 1,
+               brandId: params?.id,
                brandSettingId: settingId,
                value: config,
             },
@@ -178,7 +125,7 @@ export const Brand = () => {
       <div>
          <ConfigTemplateUI
             config={config}
-            setConfigTemplate={setConfig}
+            setConfig={setConfig}
             configSaveHandler={saveInfo}
          />
       </div>
