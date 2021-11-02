@@ -146,3 +146,16 @@ export const MODIFY_TIMESTAMP = gql`
       }
    }
 `
+export const ADD_TO_SUBSCRIPTION = gql`
+   mutation addToSubscription(
+      $ids: [Int!]
+      $_set: subscription_subscriptionOccurence_product_set_input!
+   ) {
+      update_subscription_subscriptionOccurence_product(
+         where: { id: { _in: $ids } }
+         _set: $_set
+      ) {
+         affected_rows
+      }
+   }
+`

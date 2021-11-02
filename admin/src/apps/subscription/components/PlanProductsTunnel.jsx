@@ -38,6 +38,7 @@ import {
    DELETE_MULTIPLE_PRODUCT,
 } from '../graphql'
 import { Button } from 'react-scroll'
+import { AddToSubscription } from './BulkActionTunnel'
 
 export const PlanProductsTunnel = ({ tunnel, occurenceId, subscriptionId }) => {
    const { tooltip } = useTooltip()
@@ -56,7 +57,6 @@ export const PlanProductsTunnel = ({ tunnel, occurenceId, subscriptionId }) => {
       setSelectedProduct(data)
       openTunnel(1)
    }
-
    const columns = React.useMemo(
       () => [
          {
@@ -294,8 +294,8 @@ const AddedToOccurence = ({ columns, occurenceId, remove }) => {
       const lastPersistence = localStorage.getItem('selected-rows-id-occurence')
       const lastPersistenceParse =
          lastPersistence !== undefined &&
-         lastPersistence !== null &&
-         lastPersistence.length !== 0
+            lastPersistence !== null &&
+            lastPersistence.length !== 0
             ? JSON.parse(lastPersistence)
             : []
       setSelectedRows(prevState => [...prevState, _row.getData()])
@@ -311,8 +311,8 @@ const AddedToOccurence = ({ columns, occurenceId, remove }) => {
       const lastPersistence = localStorage.getItem('selected-rows-id-occurence')
       const lastPersistenceParse =
          lastPersistence !== undefined &&
-         lastPersistence !== null &&
-         lastPersistence.length !== 0
+            lastPersistence !== null &&
+            lastPersistence.length !== 0
             ? JSON.parse(lastPersistence)
             : []
       setSelectedRows(prevState => prevState.filter(row => row.id !== data.id))
@@ -329,30 +329,30 @@ const AddedToOccurence = ({ columns, occurenceId, remove }) => {
    const selectionColumn =
       selectedRows.length > 0 && selectedRows.length < planProducts.nodes.length
          ? {
-              formatter: 'rowSelection',
-              titleFormatter: reactFormatter(
-                 <CrossBox removeSelectedProducts={removeSelectedProducts} />
-              ),
-              align: 'center',
-              hozAlign: 'center',
-              width: 10,
-              headerSort: false,
-              frozen: true,
-           }
+            formatter: 'rowSelection',
+            titleFormatter: reactFormatter(
+               <CrossBox removeSelectedProducts={removeSelectedProducts} />
+            ),
+            align: 'center',
+            hozAlign: 'center',
+            width: 10,
+            headerSort: false,
+            frozen: true,
+         }
          : {
-              formatter: 'rowSelection',
-              titleFormatter: reactFormatter(
-                 <CheckBox
-                    checked={checked}
-                    handleMultipleRowSelection={handleMultipleRowSelection}
-                 />
-              ),
-              align: 'center',
-              hozAlign: 'center',
-              width: 20,
-              headerSort: false,
-              frozen: true,
-           }
+            formatter: 'rowSelection',
+            titleFormatter: reactFormatter(
+               <CheckBox
+                  checked={checked}
+                  handleMultipleRowSelection={handleMultipleRowSelection}
+               />
+            ),
+            align: 'center',
+            hozAlign: 'center',
+            width: 20,
+            headerSort: false,
+            frozen: true,
+         }
 
    if (loading) return <InlineLoader />
    return (
@@ -380,6 +380,9 @@ const AddedToSubscription = ({ columns, subscriptionId }) => {
    const tableRef = React.useRef()
    const [selectedRows, setSelectedRows] = useState([])
    const [checked, setChecked] = useState(false)
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
+
+
    const { loading, data: { planProducts = {} } = {} } = useSubscription(
       PLAN_PRODUCTS,
       {
@@ -443,8 +446,8 @@ const AddedToSubscription = ({ columns, subscriptionId }) => {
       )
       const lastPersistenceParse =
          lastPersistence !== undefined &&
-         lastPersistence !== null &&
-         lastPersistence.length !== 0
+            lastPersistence !== null &&
+            lastPersistence.length !== 0
             ? JSON.parse(lastPersistence)
             : []
       setSelectedRows(prevState => [...prevState, _row.getData()])
@@ -462,8 +465,8 @@ const AddedToSubscription = ({ columns, subscriptionId }) => {
       )
       const lastPersistenceParse =
          lastPersistence !== undefined &&
-         lastPersistence !== null &&
-         lastPersistence.length !== 0
+            lastPersistence !== null &&
+            lastPersistence.length !== 0
             ? JSON.parse(lastPersistence)
             : []
       setSelectedRows(prevState => prevState.filter(row => row.id !== data.id))
@@ -475,39 +478,63 @@ const AddedToSubscription = ({ columns, subscriptionId }) => {
          JSON.stringify(newLastPersistenceParse)
       )
    }
+   const removeSelectedRow = () => {
+      tableRef.current.table.deselectRow()
 
+   }
    //change column according to selected rows
    const selectionColumn =
-      selectedRows.length > 0 && selectedRows.length < planProducts.nodes.length
+      selectedRows.length > 0 && selectedRows.length < planProducts.nodes.
+         length
          ? {
-              formatter: 'rowSelection',
-              titleFormatter: reactFormatter(
-                 <CrossBox removeSelectedProducts={removeSelectedProducts} />
-              ),
-              align: 'center',
-              hozAlign: 'center',
-              width: 10,
-              headerSort: false,
-              frozen: true,
-           }
+            formatter: 'rowSelection',
+            titleFormatter: reactFormatter(
+               <CrossBox removeSelectedProducts={removeSelectedProducts} />
+            ),
+            align: 'center',
+            hozAlign: 'center',
+            width: 10,
+            headerSort: false,
+            frozen: true,
+         }
          : {
-              formatter: 'rowSelection',
-              titleFormatter: reactFormatter(
-                 <CheckBox
-                    checked={checked}
-                    handleMultipleRowSelection={handleMultipleRowSelection}
-                 />
-              ),
-              align: 'center',
-              hozAlign: 'center',
-              width: 20,
-              headerSort: false,
-              frozen: true,
-           }
+            formatter: 'rowSelection',
+            titleFormatter: reactFormatter(
+               <CheckBox
+                  checked={checked}
+                  handleMultipleRowSelection={handleMultipleRowSelection}
+               />
+            ),
+            align: 'center',
+            hozAlign: 'center',
+            width: 20,
+            headerSort: false,
+            frozen: true,
+         }
+
    if (loading) return <InlineLoader />
    return (
       <div>
-         <ActionBar selectedRows={selectedRows} onDelete={handleOnDelete} />
+         <Tunnels tunnels={tunnels}>
+            <Tunnel layer={1} size="full">
+               <AddToSubscription
+                  close={closeTunnel}
+                  selectedRows={selectedRows.map(row => {
+                     return {
+                        ...row,
+                        productName: row?.productOption?.product?.name || "N/A"
+                     }
+                  })}
+                  removeSelectedRow={removeSelectedRow}
+                  setSelectedRows={setSelectedRows}
+               />
+            </Tunnel>
+         </Tunnels>
+         <ActionBar
+            selectedRows={selectedRows}
+            onDelete={handleOnDelete}
+            openTunnel={openTunnel}
+         />
          <Spacer size="15px" />
          <ReactTabulator
             columns={[selectionColumn, ...columns]}
@@ -653,7 +680,7 @@ const EditTunnel = ({ close, product = {} }) => {
             <Spacer size="24px" />
             <Dropdown
                type="single"
-               searchedOption={() => {}}
+               searchedOption={() => { }}
                options={productCategories}
                placeholder="search for a product category"
                selectedOption={option =>
@@ -695,7 +722,7 @@ const Tabs = styled(HorizontalTabs)`
    }
 `
 const ActionBar = props => {
-   const { selectedRows, onDelete } = props
+   const { selectedRows, onDelete, openTunnel } = props
    return (
       <>
          <Flex
@@ -715,12 +742,12 @@ const ActionBar = props => {
                   {selectedRows.length == 0
                      ? 'No product'
                      : selectedRows.length == 1
-                     ? `${selectedRows.length} product`
-                     : `${selectedRows.length} products`}{' '}
+                        ? `${selectedRows.length} product`
+                        : `${selectedRows.length} products`}{' '}
                   selected
                </Text>
 
-               {/* <ButtonGroup align="left">
+               <ButtonGroup align="left">
                   <TextButton
                      type="ghost"
                      size="sm"
@@ -729,7 +756,7 @@ const ActionBar = props => {
                   >
                      APPLY BULK ACTIONS
                   </TextButton>
-               </ButtonGroup> */}
+               </ButtonGroup>
             </Flex>
             <Flex>
                <ButtonGroup align="left">

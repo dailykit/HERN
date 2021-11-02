@@ -27,6 +27,7 @@ import {
    INCREASE_PRICE_SUBSCRIPTION_OCCURRENCE_PRODUCT,
    UPDATE_SUBSCRIPTION_OCCURRENCES,
    MODIFY_TIMESTAMP,
+   ADD_TO_SUBSCRIPTION,
 } from './mutation'
 import { RecipeBulkAction } from './entities/recipe'
 import { IngredientBulkAction } from './entities/ingredients'
@@ -34,6 +35,7 @@ import { ProductBulkAction } from './entities/products'
 import { ProductOptionsBulkAction } from './entities/productOptions'
 import { SubscriptionOccurrenceProductBulkAction } from './entities/subscriptionOccurenceProduct'
 import { SubscriptionOccurrence } from './entities/subscriptionOccurrence'
+import { AddToSubscriptionMenu } from './entities/addToSubscriptionMenu'
 
 const BulkActions = ({
    table,
@@ -158,7 +160,11 @@ const BulkActions = ({
       initialBulkActionSubscriptionOccurrence,
       setInitialBulkActionSubscriptionOccurrence,
    ] = React.useState({
-      cutoffTime: '',
+      addOnPrice: {
+         set: 0,
+         increase: 0,
+         decrease: 0,
+      },
       startTime: '',
       cutoffTimeStamp: {
          forIncrease: '',
@@ -169,6 +175,29 @@ const BulkActions = ({
          forDecrease: '',
       },
    })
+   const [
+      initialBulkActionAddedToSubscription,
+      setInitialBulkActionAddedToSubscription,
+   ] = React.useState({
+      addOnPrice: {
+         set: 0,
+         increase: 0,
+         decrease: 0,
+      },
+      productCategory: {
+         defaultOption: null,
+         value: '',
+      },
+      addOnLabel: '',
+      addOnLabelConcat: {
+         forAppend: '',
+         forPrepend: '',
+      },
+      isVisible: false,
+      isAvailable: false,
+      isSingleSelect: false,
+   })
+
    // additional bulk actions (actions which not to be set)
    const [additionalBulkAction, setAdditionalBulkAction] = React.useState({})
 
@@ -300,6 +329,27 @@ const BulkActions = ({
                forDecrease: '',
             },
          }))
+      } else if (table === 'Add To Subscription') {
+         setInitialBulkActionAddedToSubscription(prevState => ({
+            ...prevState,
+            addOnPrice: {
+               set: 0,
+               increase: 0,
+               decrease: 0,
+            },
+            productCategory: {
+               defaultOption: null,
+               value: '',
+            },
+            addOnLabel: '',
+            addOnLabelConcat: {
+               forAppend: '',
+               forPrepend: '',
+            },
+            isVisible: !prevState.isVisible,
+            isAvailable: !prevState.isAvailable,
+            isSingleSelect: !prevState.isSingleSelect,
+         }))
       } else {
          // for product options
          handleModifierClear()
@@ -380,6 +430,15 @@ const BulkActions = ({
          },
       }
    )
+   const [updateAddToSubscription] = useMutation(ADD_TO_SUBSCRIPTION, {
+      onCompleted: () => {
+         toast.success('Update Successfully')
+         close(1)
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+      },
+   })
    // const [updateSubscriptionOccurrence] = useMutation(
    //    UPDATE_SUBSCRIPTION_OCCURRENCES,
    //    {
@@ -482,7 +541,8 @@ const BulkActions = ({
       }
       if (
          table === 'Menu Product Occurrence ' ||
-         table === 'Menu Product Subscription'
+         table === 'Menu Product Subscription' ||
+         table === 'Add To Subscription'
       ) {
          increasePriceSubscriptionOccurrenceProduct({
             variables: {
@@ -509,6 +569,8 @@ const BulkActions = ({
             return updateSubscriptionOccurrenceProduct
          // case 'Menu Product Subscription':
          //    return updateSubscriptionOccurrenceProduct
+         case 'Add To Subscription':
+            return updateAddToSubscription
          default:
             return null
       }
@@ -801,6 +863,20 @@ const BulkActions = ({
                            }
                            bulkActions={bulkActions}
                            setBulkActions={setBulkActions}
+                        />
+                     )}
+                     {table === 'Add To Subscription' && (
+                        <AddToSubscriptionMenu
+                           initialBulkAction={
+                              initialBulkActionAddedToSubscription
+                           }
+                           setInitialBulkAction={
+                              setInitialBulkActionAddedToSubscription
+                           }
+                           bulkActions={bulkActions}
+                           setBulkActions={setBulkActions}
+                           additionalBulkAction={additionalBulkAction}
+                           setAdditionalBulkAction={setAdditionalBulkAction}
                         />
                      )}
                   </Flex>
