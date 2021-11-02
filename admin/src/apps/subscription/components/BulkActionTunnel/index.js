@@ -20,3 +20,22 @@ export const AddToSubscription = ({
       </>
    )
 }
+export const AddToOccurrence = ({
+   close,
+   selectedRows,
+   removeSelectedRow,
+   setSelectedRows,
+}) => {
+   return (
+      <>
+         <BulkActions
+            close={close}
+            removeSelectedRow={removeSelectedRow}
+            selectedRows={selectedRows}
+            setSelectedRows={setSelectedRows}
+            table="Add To Occurrence"
+            keyName="productName"
+         />
+      </>
+   )
+}

@@ -38,7 +38,7 @@ import {
    DELETE_MULTIPLE_PRODUCT,
 } from '../graphql'
 import { Button } from 'react-scroll'
-import { AddToSubscription } from './BulkActionTunnel'
+import { AddToOccurrence, AddToSubscription } from './BulkActionTunnel'
 
 export const PlanProductsTunnel = ({ tunnel, occurenceId, subscriptionId }) => {
    const { tooltip } = useTooltip()
@@ -234,6 +234,8 @@ const AddedToOccurence = ({ columns, occurenceId, remove }) => {
    const tableRef = React.useRef()
    const [selectedRows, setSelectedRows] = useState([])
    const [checked, setChecked] = useState(false)
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
+
    const { loading, data: { planProducts = {} } = {} } = useSubscription(
       PLAN_PRODUCTS,
       {
@@ -324,7 +326,9 @@ const AddedToOccurence = ({ columns, occurenceId, remove }) => {
          JSON.stringify(newLastPersistenceParse)
       )
    }
-
+   const removeSelectedRow = () => {
+      tableRef.current.table.deselectRow()
+   }
    //change column according to selected rows
    const selectionColumn =
       selectedRows.length > 0 && selectedRows.length < planProducts.nodes.length
@@ -357,7 +361,26 @@ const AddedToOccurence = ({ columns, occurenceId, remove }) => {
    if (loading) return <InlineLoader />
    return (
       <div>
-         <ActionBar selectedRows={selectedRows} onDelete={handleOnDelete} />
+         <Tunnels tunnels={tunnels}>
+            <Tunnel layer={1} size="full">
+               <AddToOccurrence
+                  close={closeTunnel}
+                  selectedRows={selectedRows.map(row => {
+                     return {
+                        ...row,
+                        productName: row?.productOption?.product?.name || "N/A"
+                     }
+                  })}
+                  removeSelectedRow={removeSelectedRow}
+                  setSelectedRows={setSelectedRows}
+               />
+            </Tunnel>
+         </Tunnels>
+         <ActionBar
+            selectedRows={selectedRows}
+            onDelete={handleOnDelete}
+            openTunnel={openTunnel}
+         />
          <Spacer size="15px" />
          <ReactTabulator
             columns={[selectionColumn, ...columns]}
