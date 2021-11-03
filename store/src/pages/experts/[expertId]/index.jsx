@@ -254,13 +254,13 @@ const Wrapper = styled.div`
    }
    @media (min-width: 769px) {
       .expert_main_div {
-         padding: 4rem;
+         padding: 6rem;
       }
       .expert_coverBanner {
          margin-bottom: 220px;
          .expert_info {
             bottom: -220px;
-            left: 64px;
+            left: 6rem;
             transform: unset;
          }
          .expert_profileImg {

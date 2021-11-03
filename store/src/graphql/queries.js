@@ -247,7 +247,16 @@ export const EXPERT_INFO = gql`
                   isBooked
                   startTimeStamp
                   duration
-
+                  privateExperienceClassType {
+                     minimumBookingAmount
+                     minimumParticipant
+                     maximumParticipant
+                  }
+                  publicExperienceClassType {
+                     minimumBookingAmount
+                     minimumParticipant
+                     maximumParticipant
+                  }
                   experienceClassExpert {
                      assets
                      description
