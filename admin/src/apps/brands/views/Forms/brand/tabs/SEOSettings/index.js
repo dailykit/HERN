@@ -6,11 +6,11 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { BRANDS } from '../../../../../graphql'
 import { logger } from '../../../../../../../shared/utils'
 
-// import SEOBasics from './SEOBasics'
-// import SocialShare from './SocialShare'
-// import TwitterCard from './TwitterCard'
+import SEOBasics from './SEObasics'
+import SocialShare from './SocialShare'
+import TwitterCard from './TwitterCard'
 
-export const SEOSettings = () => {
+export const SEOSettings = ({ domain }) => {
     const params = useParams()
     const [settings, setSettings] = React.useState({})
     const [updateSetting] = useMutation(BRANDS.UPDATE_BRAND_SETTING, {
@@ -55,10 +55,10 @@ export const SEOSettings = () => {
         })
     }
     return (
-        <div>
-            {/* <SEOBasics update={update} /> */}
-            {/* <SocialShare />
-            <TwitterCard /> */}
+        <div style={{ margin: "35px 0 35px 35px" }}>
+            <SEOBasics update={update} domain={domain} />
+            <SocialShare update={update} domain={domain} />
+            <TwitterCard update={update} domain={domain} />
 
         </div>
     )

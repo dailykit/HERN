@@ -192,7 +192,7 @@ export const Brand = () => {
                   <BrandSettings />
                </HorizontalTabPanel>
                <HorizontalTabPanel>
-                  <SEOSettings />
+                  <SEOSettings domain={brand?.domain} />
                </HorizontalTabPanel>
                <HorizontalTabPanel>
                   <OnDemandSettings />
