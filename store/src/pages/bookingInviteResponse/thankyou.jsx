@@ -137,7 +137,7 @@ export const getStaticProps = async () => {
 }
 
 const Wrapper = styled.div`
-   padding: 6rem 2rem;
+   padding: 2rem 6rem;
    background: ${({ bgMode }) =>
       bgMode === 'dark'
          ? theme.colors.darkBackground.darkblue
@@ -149,7 +149,7 @@ const Wrapper = styled.div`
       text-align: center;
       letter-spacing: 0.08em;
       width: 80%;
-      margin: 4rem auto;
+      margin: 2rem auto;
       color: ${theme.colors.textColor};
    }
    .explore__btn {
@@ -164,5 +164,8 @@ const Wrapper = styled.div`
       color: ${theme.colors.textColor};
       padding: 24px 64px;
       letter-spacing: 0.16em;
+   }
+   @media (max-width: 769px) {
+      padding: 2rem 2rem;
    }
 `

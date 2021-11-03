@@ -53,13 +53,7 @@ export default function ManageParticipant({ experienceBookingId }) {
       data: { experienceBookingParticipants: participants = [] } = {}
    } = useSubscription(MANAGE_PARTICIPANTS, {
       variables: {
-         experienceBookingId,
-         paramsForParent: {
-            shareFor: 'parent'
-         },
-         paramsForChild: {
-            shareFor: 'child'
-         }
+         experienceBookingId
       }
    })
 
@@ -356,24 +350,24 @@ export default function ManageParticipant({ experienceBookingId }) {
                            <tr>
                               <td>For</td>
                               <td>To Pay by Parent</td>
-                              <td>To Pay by Child</td>
+                              <td>To Pay by Self</td>
                            </tr>
                            <tr>
                               <td>Booking</td>
                               <td>
                                  $
-                                 {participant?.childCart?.totalExperiencePriceForParent.toFixed(
+                                 {participant?.childCart?.cartBillingForParent?.totalToPay.toFixed(
                                     2
                                  )}
                               </td>
                               <td>
                                  $
-                                 {participant?.childCart?.totalExperiencePriceForChild.toFixed(
+                                 {participant?.childCart?.cartBillingForSelf?.totalToPay.toFixed(
                                     2
                                  )}
                               </td>
                            </tr>
-                           <tr>
+                           {/* <tr>
                               <td>
                                  Kit ({participant?.childCart?.totalKit} {'* '}
                                  {participant?.childCart?.itemTotalForParent /
@@ -392,7 +386,7 @@ export default function ManageParticipant({ experienceBookingId }) {
                                     2
                                  )}
                               </td>
-                           </tr>
+                           </tr> */}
                         </table>
                      </div>
                   </div>

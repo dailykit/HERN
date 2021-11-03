@@ -1079,11 +1079,7 @@ export const YOUR_BOOKINGS = gql`
 `
 
 export const MANAGE_PARTICIPANTS = gql`
-   subscription MANAGE_PARTICIPANTS(
-      $experienceBookingId: Int!
-      $paramsForParent: jsonb!
-      $paramsForChild: jsonb!
-   ) {
+   subscription MANAGE_PARTICIPANTS($experienceBookingId: Int!) {
       experienceBookingParticipants(
          where: {
             experienceBookingId: { _eq: $experienceBookingId }
@@ -1100,17 +1096,8 @@ export const MANAGE_PARTICIPANTS = gql`
          childCart {
             address
             totalKit
-            totalPriceForParent: totalPrice2(args: { params: $paramsForParent })
-            totalPriceForChild: totalPrice2(args: { params: $paramsForChild })
-            toPayByParent
-            totalExperiencePriceForParent: totalExperiencePrice(
-               args: { params: $paramsForParent }
-            )
-            totalExperiencePriceForChild: totalExperiencePrice(
-               args: { params: $paramsForChild }
-            )
-            itemTotalForParent: itemTotal2(args: { params: $paramsForParent })
-            itemTotalForChild: itemTotal2(args: { params: $paramsForChild })
+            cartBillingForSelf
+            cartBillingForParent
          }
       }
    }
