@@ -18,8 +18,8 @@ export const getSettings = async (domain, path = '/') => {
             settings[setting.meta.type][setting.meta.identifier] = setting.value
          }
       })
-
-      const seoSetting = settings['App']['seo']
+      console.log(settings['seo'], "settings👀👉😊👉")
+      const seoSetting = settings['seo']
 
       if (seoSetting) {
          const title =
@@ -34,7 +34,7 @@ export const getSettings = async (domain, path = '/') => {
 
          const image =
             seoSetting[path]?.image ||
-            seoSetting['/'].image ||
+            seoSetting['/']?.image ||
             'https://dailykit-133-test.s3.amazonaws.com/images/1596121558382.png'
 
          return { seo: { title, description, image }, settings }
