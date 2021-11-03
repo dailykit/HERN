@@ -39,3 +39,41 @@ export const AddToOccurrence = ({
       </>
    )
 }
+export const ManageAddToSubscription = ({
+   close,
+   selectedRows,
+   removeSelectedRow,
+   setSelectedRows,
+}) => {
+   return (
+      <>
+         <BulkActions
+            close={close}
+            removeSelectedRow={removeSelectedRow}
+            selectedRows={selectedRows}
+            setSelectedRows={setSelectedRows}
+            table="Manage Add To Subscription"
+            keyName="productName"
+         />
+      </>
+   )
+}
+export const ManageAddToOccurrence = ({
+   close,
+   selectedRows,
+   removeSelectedRow,
+   setSelectedRows,
+}) => {
+   return (
+      <>
+         <BulkActions
+            close={close}
+            removeSelectedRow={removeSelectedRow}
+            selectedRows={selectedRows}
+            setSelectedRows={setSelectedRows}
+            table="Manage Add To Occurrence"
+            keyName="productName"
+         />
+      </>
+   )
+}
