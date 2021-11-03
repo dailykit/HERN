@@ -159,3 +159,29 @@ export const ADD_TO_SUBSCRIPTION = gql`
       }
    }
 `
+export const MANAGE_ADD_TO_SUBSCRIPTION = gql`
+   mutation manageAddToSubscription(
+      $ids: [Int!]
+      $_set: subscription_subscriptionOccurence_addOn_set_input!
+   ) {
+      update_subscription_subscriptionOccurence_addOn(
+         where: { id: { _in: $ids } }
+         _set: $_set
+      ) {
+         affected_rows
+      }
+   }
+`
+export const INCREASE_PRICE_MANAGE_ADDON_SUBSCRIPTION_PRODUCT = gql`
+   mutation increaseUnitPrice(
+      $where: subscription_subscriptionOccurence_addOn_bool_exp!
+      $unitPrice: numeric!
+   ) {
+      update_subscription_subscriptionOccurence_addOn(
+         _inc: { unitPrice: $unitPrice }
+         where: $where
+      ) {
+         affected_rows
+      }
+   }
+`
