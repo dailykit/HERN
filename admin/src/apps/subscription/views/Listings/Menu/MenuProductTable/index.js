@@ -165,21 +165,21 @@ const MenuProductOccurenceTable = () => {
       {
          title: 'Visibility',
          field: 'isVisible',
-         formatter: reactFormatter(<BooleanIcon />),
+         formatter: reactFormatter(<BooleanIcon check={'visible'} />),
          headerTooltip: true,
          width: 85,
       },
       {
          title: 'Availability',
          field: 'isAvailable',
-         formatter: reactFormatter(<BooleanIcon />),
+         formatter: reactFormatter(<BooleanIcon check={'available'} />),
          headerTooltip: true,
          width: 85,
       },
       {
          title: 'Single Select',
          field: 'isSingleSelect',
-         formatter: reactFormatter(<BooleanIcon />),
+         formatter: reactFormatter(<BooleanIcon check={'singleSelect'} />),
          headerTooltip: true,
          width: 85,
       },
@@ -485,21 +485,21 @@ const MenuProductSubscriptionTable = () => {
       {
          title: 'Visibility',
          field: 'isVisible',
-         formatter: reactFormatter(<BooleanIcon />),
+         formatter: reactFormatter(<BooleanIcon check={'visible'} />),
          headerTooltip: true,
          width: 85,
       },
       {
          title: 'Availability',
          field: 'isAvailable',
-         formatter: reactFormatter(<BooleanIcon />),
+         formatter: reactFormatter(<BooleanIcon check={'available'} />),
          headerTooltip: true,
          width: 85,
       },
       {
          title: 'Single Select',
          field: 'isSingleSelect',
-         formatter: reactFormatter(<BooleanIcon />),
+         formatter: reactFormatter(<BooleanIcon check={'singleSelect'} />),
          headerTooltip: true,
          width: 85,
       },
@@ -655,8 +655,19 @@ const MenuProductSubscriptionTable = () => {
       </>
    )
 }
-function BooleanIcon({ cell }) {
+const BooleanIcon = ({ cell, check }) => {
    const data = cell.getData()
+   let isCheck = false
+   if (check === 'visible') {
+      isCheck = data.isVisible
+   }
+   if (check === 'available') {
+      isCheck = data.isAvailable
+   }
+   if (check === 'singleSelect') {
+      isCheck = data.isSingleSelect
+   }
+   console.log('isCheck', isCheck)
    return (
       <Flex
          container
@@ -665,7 +676,7 @@ function BooleanIcon({ cell }) {
          alignItems="center"
       >
          <IconButton type="ghost">
-            {data.isPublished ? <PublishIcon /> : <UnPublishIcon />}
+            {isCheck ? <PublishIcon /> : <UnPublishIcon />}
          </IconButton>
       </Flex>
    )
