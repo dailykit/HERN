@@ -18,7 +18,7 @@ export const getSettings = async (domain, path = '/') => {
             settings[setting.meta.type][setting.meta.identifier] = setting.value
          }
       })
-      console.log(settings['seo'], "settings👀👉😊👉")
+
       const seoSetting = settings['seo']
 
       if (seoSetting) {
