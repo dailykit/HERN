@@ -158,6 +158,9 @@ const BulkActions = ({
          forAppend: '',
          forPrepend: '',
       },
+      isVisible: false,
+      isAvailable: false,
+      isSingleSelect: false,
    })
    const [
       initialBulkActionSubscriptionOccurrence,
@@ -368,6 +371,9 @@ const BulkActions = ({
                forAppend: '',
                forPrepend: '',
             },
+            isVisible: !prevState.isVisible,
+            isAvailable: !prevState.isAvailable,
+            isSingleSelect: !prevState.isSingleSelect,
          }))
       } else if (table === 'Subscription Occurrence') {
          setInitialBulkActionSubscriptionOccurrence(prevState => ({
@@ -731,6 +737,8 @@ const BulkActions = ({
          case 'Product Options':
             return updateProductOptions
          case 'Menu Product Occurrence':
+            return updateSubscriptionOccurrenceProduct
+         case 'Menu Product Subscription':
             return updateSubscriptionOccurrenceProduct
          case 'Add To Subscription':
             return updateAddToSubscription

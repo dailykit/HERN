@@ -30,7 +30,6 @@ export const SubscriptionOccurrenceProductBulkAction = props => {
       setAdditionalBulkAction,
    } = props
    const [productCategories, setProductCategories] = React.useState([])
-   const [addOnLabels, setAddOnLabel] = React.useState([])
 
    // subscription
    useSubscription(PRODUCT_CATEGORY_OF_SUBSCRIPTION_OCCURRENCE_PRODUCT, {
@@ -423,6 +422,75 @@ export const SubscriptionOccurrenceProductBulkAction = props => {
             setInitialBulkAction={setInitialBulkAction}
             isNullable={false}
          />
+         <Spacer size="20px" />
+
+         <Form.Group>
+            <Form.Toggle
+               name="isVisible"
+               onChange={() => {
+                  setInitialBulkAction(() => ({
+                     ...initialBulkAction,
+                     isVisible: {
+                        ...initialBulkAction.isVisible,
+                        isVisible: !initialBulkAction.isVisible,
+                     },
+                  }))
+                  setBulkActions({
+                     ...bulkActions,
+                     isVisible: !bulkActions.isVisible,
+                  })
+               }}
+               value={initialBulkAction.isVisible.value}
+            >
+               Visibility
+            </Form.Toggle>
+         </Form.Group>
+         <Spacer size="20px" />
+
+         <Form.Group>
+            <Form.Toggle
+               name="isAvailable"
+               onChange={() => {
+                  setInitialBulkAction(() => ({
+                     ...initialBulkAction,
+                     isAvailable: {
+                        ...initialBulkAction.isAvailable,
+                        isAvailable: !initialBulkAction.isAvailable,
+                     },
+                  }))
+                  setBulkActions({
+                     ...bulkActions,
+                     isAvailable: !bulkActions.isAvailable,
+                  })
+               }}
+               value={initialBulkAction.isAvailable.value}
+            >
+               Availability
+            </Form.Toggle>
+         </Form.Group>
+         <Spacer size="20px" />
+
+         <Form.Group>
+            <Form.Toggle
+               name="isSingleSelect"
+               onChange={() => {
+                  setInitialBulkAction(() => ({
+                     ...initialBulkAction,
+                     isSingleSelect: {
+                        ...initialBulkAction.isSingleSelect,
+                        isSingleSelect: !initialBulkAction.isSingleSelect,
+                     },
+                  }))
+                  setBulkActions({
+                     ...bulkActions,
+                     isSingleSelect: !bulkActions.isSingleSelect,
+                  })
+               }}
+               value={initialBulkAction.isSingleSelect.value}
+            >
+               Single Select
+            </Form.Toggle>
+         </Form.Group>
       </>
    )
 }
@@ -607,8 +675,8 @@ const CollapsibleComponentWithTabs = ({
                      />
                   </Form.Group>
                   <Form.Error>
-                     Changing Add on Label will overwrite already existing
-                     Add on Label
+                     Changing Add on Label will overwrite already existing Add
+                     on Label
                   </Form.Error>
                   {concatType == 'concatData' && (
                      <HelperText
