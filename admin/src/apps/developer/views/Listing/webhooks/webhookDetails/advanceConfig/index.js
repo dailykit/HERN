@@ -96,7 +96,7 @@ export const Headers = ()=>{
                     Edit
                 </ComboButton>
             </Flex>
-            {headerState ?
+            {headerState.length ?
                 <StyledTable >
                         <thead>
                         <tr>
@@ -118,7 +118,7 @@ export const Headers = ()=>{
                             
                         </tbody>
                 </StyledTable>
-            : <Text as="h4" >No headers available</Text>
+            : <Text as="text2" >No headers available</Text>
                         }
         </>
     )

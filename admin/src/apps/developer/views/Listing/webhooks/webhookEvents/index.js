@@ -271,7 +271,7 @@ const WebhookListing = ()=>{
                         data={webhookEvents}
                         options={{
                            ...options,
-                           maxHeight: "480px",
+                           maxHeight: "75%",
                            placeholder: 'No Webhooks Available Yet !',
                            persistenceID : 'webhooks_table',
                            reactiveData: true,
