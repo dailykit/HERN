@@ -192,10 +192,12 @@ function Checkout({ navigationMenuItems, parsedData = [], footerHtml = '' }) {
                />
             )}
          </Wrapper>
-         <PaymentProcessingModal
-            isOpen={isProcessingPayment}
-            bookingId={experienceBookingId}
-         />
+         {isProcessingPayment && (
+            <PaymentProcessingModal
+               isOpen={isProcessingPayment}
+               bookingId={experienceBookingId}
+            />
+         )}
          <div id="checkout-bottom-01">
             {Boolean(parsedData.length) &&
                ReactHtmlParser(
