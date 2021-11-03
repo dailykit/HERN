@@ -70,14 +70,17 @@ function ManageBooking({
 
    const [updateCart, { loading: isCartUpdating }] = useMutation(UPDATE_CART, {
       refetchQueries: ['CART_INFO', 'CART_SUBSCRIPTION'],
+      onCompleted: () => {
+         setIsProcessingPayment(true)
+      },
       onError: error => {
+         setIsProcessingPayment(false)
          addToast('Opps! Something went wrong!', { appearance: 'error' })
          console.log(error)
       }
    })
 
    const onPayHandler = async () => {
-      setIsProcessingPayment(true)
       await updateCart({
          variables: {
             cartId: experienceInfo?.cartId,
@@ -160,10 +163,12 @@ function ManageBooking({
                />
             )}
          </Wrapper>
-         <PaymentProcessingModal
-            isOpen={isProcessingPayment}
-            bookingId={bookingId}
-         />
+         {isProcessingPayment && (
+            <PaymentProcessingModal
+               isOpen={isProcessingPayment}
+               bookingId={bookingId}
+            />
+         )}
 
          <div id="myBooking-bottom-01">
             {Boolean(parsedData.length) &&

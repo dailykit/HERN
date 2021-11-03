@@ -17,6 +17,7 @@ const PaymentProcessingModal = ({ isOpen, bookingId }) => {
    const [loading, setLoading] = useState(true)
    const { width, height } = useWindowDimensions()
    const { error } = useSubscription(ACTIVE_CARTPAYMENT_SUBSCRIPTION, {
+      skip: !isOpen,
       variables: {
          where: {
             experienceBooking: {

@@ -18,7 +18,12 @@ import {
    SEND_SMS,
    CREATE_EXPERIENCE_BOOKING_PARTICIPANT
 } from '../../../../graphql'
-import { useWindowDimensions, get_env, isNumeric } from '../../../../utils'
+import {
+   useWindowDimensions,
+   get_env,
+   isNumeric,
+   isClient
+} from '../../../../utils'
 
 export default function Invite({ experienceBooking, isPollClosed }) {
    const { addToast } = useToasts()
@@ -171,7 +176,9 @@ export default function Invite({ experienceBooking, isPollClosed }) {
             </div>
             <div style={{ margin: '1rem 0' }}>
                <SocialShare
-                  url={`https://primanti.dailykit.org/pollInviteResponse?token=${token}`}
+                  url={`${
+                     isClient ? window.location.origin : ''
+                  }/pollInviteResponse?token=${token}`}
                   title="Poll Invitation"
                   quote={`${experienceBooking?.experienceBookingOptions[0]?.experienceClass?.experience?.title} Poll Invite`}
                   hashtag="#pollInvite"

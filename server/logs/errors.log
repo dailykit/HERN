@@ -14,3 +14,7 @@
 [/api/payment-intent] | [2021-11-02 19:11:35PM +05:30] | [Error: Invoice is already paid]
 [/api/payment-intent] | [2021-11-02 20:11:98PM +05:30] | [Error: Invoice is already paid]
 [/api/payment-intent] | [2021-11-02 21:11:04PM +05:30] | [Error: Invoice is already paid]
+[/api/payment-intent] | [2021-11-03 12:11:69PM +05:30] | [Error: This payment requires additional user action before it can be completed successfully. Payment can be completed using the PaymentIntent associated with the invoice. For more details see: https://stripe.com/docs/billing/subscriptions/overview#requires-action]
+[/api/payment-intent] | [2021-11-03 13:11:60PM +05:30] | [Error: Invoice is already paid]
+[/api/payment-intent] | [2021-11-03 14:11:59PM +05:30] | [Error: You cannot combine currencies on a single customer. This customer has had a subscription, coupon, or invoice item with currency inr]
+[/api/payment-intent] | [2021-11-03 15:11:70PM +05:30] | [Error: This payment requires additional user action before it can be completed successfully. Payment can be completed using the PaymentIntent associated with the invoice. For more details see: https://stripe.com/docs/billing/subscriptions/overview#requires-action]
