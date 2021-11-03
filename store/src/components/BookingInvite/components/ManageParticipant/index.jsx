@@ -172,7 +172,11 @@ export default function ManageParticipant({ experienceBookingId }) {
    const deleteHandler = async participant => {
       setSelectedParticipant(participant)
       if (
-         window.confirm(`Do you really want to remove ${participant?.email} ?`)
+         window.confirm(
+            `Do you really want to remove ${
+               participant?.email || 'this User'
+            } ?`
+         )
       ) {
          await deleteExperienceParticipant({
             variables: {
@@ -269,6 +273,23 @@ export default function ManageParticipant({ experienceBookingId }) {
                               </span>
                               {participant?.email || 'Unassigned user'}
                            </h3>
+                           <span
+                              className="svg-edit-icon"
+                              onClick={() => onClickEdit(participant)}
+                           >
+                              <Button
+                                 loading={
+                                    isUpdatingParticipant || isUpdatingCart
+                                 }
+                                 ghost
+                                 icon={
+                                    <EditIcon
+                                       size="16"
+                                       color={theme.colors.textColor5}
+                                    />
+                                 }
+                              />
+                           </span>
                            <span style={{ marginLeft: '8px' }}>
                               {participant?.rsvp && (
                                  <Tag color={theme.colors.textColor7}>
@@ -294,23 +315,6 @@ export default function ManageParticipant({ experienceBookingId }) {
                                     color={theme.colors.textColor7}
                                  />
                               )}
-                           </span>
-                           <span
-                              className="svg-edit-icon"
-                              onClick={() => onClickEdit(participant)}
-                           >
-                              <Button
-                                 loading={
-                                    isUpdatingParticipant || isUpdatingCart
-                                 }
-                                 ghost
-                                 icon={
-                                    <EditIcon
-                                       size="16"
-                                       color={theme.colors.textColor5}
-                                    />
-                                 }
-                              />
                            </span>
 
                            <span
@@ -349,8 +353,8 @@ export default function ManageParticipant({ experienceBookingId }) {
                         <table>
                            <tr>
                               <td>For</td>
-                              <td>To Pay by Parent</td>
-                              <td>To Pay by Self</td>
+                              <td>Host Share</td>
+                              <td>Participant Share</td>
                            </tr>
                            <tr>
                               <td>Booking</td>

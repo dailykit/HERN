@@ -7,6 +7,7 @@ export const Wrapper = styled.div`
       font-style: normal;
       font-weight: 600;
       letter-spacing: 0.1em;
+      margin-bottom: 0;
       color: ${theme.colors.textColor7};
       span {
          color: ${theme.colors.textColor7};

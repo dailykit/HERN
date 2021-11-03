@@ -5,7 +5,7 @@ export const Wrapper = styled.div`
    display: flex;
    flex-direction: column;
    align-items: center;
-   border-radius: 40px;
+   border-radius: 24px;
    background-color: ${({ bg_mode }) =>
       bg_mode === 'dark'
          ? theme.colors.darkBackground.darkblue
@@ -13,14 +13,18 @@ export const Wrapper = styled.div`
    .imageWrapper {
       width: 100%;
       position: relative;
+      max-height: 320px;
+      overflow: hidden;
+      border-radius: 24px 24px 0 0;
       .expertImg {
          width: 100%;
-         border-radius: 40px 40px 0 0;
          object-fit: cover;
       }
    }
    .expertInfo {
       padding: 1rem;
+      max-height: 320px;
+      overflow-y: auto;
       .expertName {
          color: ${theme.colors.textColor5};
          font-weight: 800;
@@ -39,9 +43,15 @@ export const Wrapper = styled.div`
       .expertDesc {
          text-align: justify;
          color: ${theme.colors.textColor5};
-         font-weight: 400;
+         font-family: 'Maven Pro';
+         letter-spacing: 0.16em;
          margin-bottom: 0;
          p {
+            text-align: justify;
+            color: ${theme.colors.textColor5};
+            font-family: 'Maven Pro';
+            letter-spacing: 0.16em;
+            margin-bottom: 0;
             margin-bottom: 0;
          }
       }
@@ -97,9 +107,7 @@ export const Wrapper = styled.div`
       flex-direction: row;
       .imageWrapper {
          width: 50%;
-         .expertImg {
-            border-radius: 40px 0 0 40px;
-         }
+         border-radius: 24px 0 0 24px;
       }
       .expertInfo {
          width: 50%;

@@ -84,9 +84,7 @@ function ManagePoll({ navigationMenuItems, parsedData = [], footerHtml = '' }) {
                      <ChevronLeft size="24" color={theme.colors.textColor5} />
                   }
                   size="middle"
-                  onClick={() =>
-                     router.push(`/experiences/${experienceInfo?.experienceId}`)
-                  }
+                  onClick={() => router.push(`/dashboard/myPolls`)}
                />
                <p className="go_back text10"> Back to bookings </p>
             </div>
