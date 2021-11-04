@@ -608,3 +608,10 @@ export const ORDER_LIST_FROM_INGREDIENT = gql`
       }
    }
 `
+export const OPTIONS_FROM_VEG_NONVEG = gql`
+   subscription OPTIONS_FROM_VEG_NONVEG {
+      master_vegNonvegType {
+         label
+      }
+   }
+`

@@ -29,7 +29,7 @@ const MasterList = () => {
    const { data: ingredientCategories } = useSubscription(
       MASTER.INGREDIENT_CATEGORY.AGGREGATE
    )
-   // const { data: vegNonVeg } = useSubscription(MASTER.VEG_NONVEG.LIST)
+   const { data: vegNonVeg } = useSubscription(MASTER.VEG_NONVEG.AGGREGATE)
 
    const rowClick = (e, cell) => {
       const { _click } = cell.getData()
@@ -131,6 +131,9 @@ const MasterList = () => {
       },
       {
          listName: 'Veg Non-Veg',
+         length:
+            vegNonVeg?.master_vegNonvegType_aggregate?.aggregate?.count ||
+            '...',
          _click() {
             addTab('vegNonVeg-type', '/settings/master-lists/vegnonveg')
          },

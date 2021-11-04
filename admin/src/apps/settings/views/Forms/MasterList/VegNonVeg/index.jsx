@@ -27,7 +27,11 @@ const address = 'apps.settings.views.forms.vegnonveg.'
 
 const VegNonVeg = () => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
+   //subscription
    const { loading, data, error } = useSubscription(MASTER.VEG_NONVEG.LIST)
+   const { data: vegNonVeg } = useSubscription(MASTER.VEG_NONVEG.AGGREGATE)
+
+   //mutation
    const [deleteElement] = useMutation(MASTER.VEG_NONVEG.DELETE, {
       onCompleted: () => {
          toast.success('Successfully deleted the cuisine!')
@@ -84,7 +88,14 @@ const VegNonVeg = () => {
                justifyContent="space-between"
             >
                <Flex container alignItems="center">
-                  <Text as="h2">Veg-NonVeg (0)</Text>
+                  <Text as="h2">
+                     Veg-NonVeg (
+                     {
+                        vegNonVeg?.master_vegNonvegType_aggregate?.aggregate
+                           ?.count
+                     }
+                     )
+                  </Text>
                </Flex>
                <ComboButton type="solid" onClick={() => openTunnel(1)}>
                   <AddIcon size={24} /> Create new type

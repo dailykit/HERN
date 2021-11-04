@@ -707,10 +707,19 @@ export const MASTER = {
          }
       `,
       DELETE: gql`
-         mutation MyMutation($where: master_vegNonvegType_bool_exp!) {
+         mutation delete_veg_nonveg($where: master_vegNonvegType_bool_exp!) {
             delete_master_vegNonvegType(where: $where) {
                returning {
                   label
+               }
+            }
+         }
+      `,
+      AGGREGATE: gql`
+         subscription vegnonvegAggregate {
+            master_vegNonvegType_aggregate {
+               aggregate {
+                  count
                }
             }
          }
