@@ -44,6 +44,8 @@ import MarketingIcon from './Marketing'
 import HelpIcon from './Help'
 import Close from './CloseIcon'
 import LinkIcon2 from './LinkIcon'
+import FacebookIcon from './FacebookIcon'
+import GoogleAnalyticsIcon from './GoogleAnalyticsIcon'
 export {
    SearchIcon,
    AddIcon,
@@ -90,7 +92,9 @@ export {
    CustomerIcon,
    MarketingIcon,
    Close,
-   LinkIcon2
+   LinkIcon2,
+   FacebookIcon,
+   GoogleAnalyticsIcon
 }
 
 export * from './Tick'

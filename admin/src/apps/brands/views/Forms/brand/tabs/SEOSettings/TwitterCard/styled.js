@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 export const StyledWrapper = styled.div`
    margin-top: 50px;
-   margin-bottom: 100px;
+   margin-bottom: 50px;
    h3.ant-typography {
       margin-bottom: 12px !important;
    }
@@ -10,7 +10,6 @@ export const StyledWrapper = styled.div`
       color: #919699;
       font-size: 14px;
    }
-
    .anticon {
       margin-left: 5px;
    }

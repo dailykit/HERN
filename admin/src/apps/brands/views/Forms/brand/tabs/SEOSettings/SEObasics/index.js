@@ -206,251 +206,253 @@ const SEOBasics = ({ update, domain }) => {
 
     return (
         <StyledWrapper>
-            <div className="metaDetails">
-                <Row>
-                    <Col span={12}>
-                        <Title level={4}>SEO Basics</Title>
-                        <HelperText
-                            type="hint"
-                            message="Edit your default SEO settings for search results"
-                        />
-                        <ComboButton
-                            size="sm"
-                            type="outline"
-                            style={{
-                                marginTop: '14px',
-                                color: '#202020',
-                                border: '1px solid #E5E5E5',
-                                borderRadius: '2px',
-                                boxShadow: '0px 2px 0px rgba(0, 0, 0, 0.016)',
-                            }}
-                            onClick={showSEOBasicsModal}
-                        >
-                            <EditIcon color="#202020" size={24} />
-                            Edit Meta details
-                        </ComboButton>
-                        {/* modal content */}
-                        <Modal
-                            title="Customize SEO Basics settings"
-                            visible={isSEOBasicsModalVisible}
-                            onOk={handleSEOBasicsOk}
-                            onCancel={handleSEOBasicsCancel}
-                            footer={[
-                                <Button type="primary" onClick={() => Save()}>
-                                    Save
-                                </Button>
-                            ]}
-                        >
-                            <Form layout="vertical">
-                                <Form.Item
-                                    label={
-                                        <span
-                                            style={{
-                                                color: '#555B6E',
-                                                fontSize: '16px',
-                                                fontWeight: '600',
-                                            }}
-                                        >
-                                            Meta Title and Meta Description
-                                        </span>
-                                    }
-                                    tooltip={{
-                                        title: 'Your meta description displays below the title tag in search results.',
-                                        icon: (
-                                            <InfoCircleOutlined
+            <Card style={{ width: '100%' }}>
+                <div className="metaDetails">
+                    <Row>
+                        <Col span={12}>
+                            <Title level={4}>SEO Basics</Title>
+                            <HelperText
+                                type="hint"
+                                message="Edit your default SEO settings for search results"
+                            />
+                            <ComboButton
+                                size="sm"
+                                type="outline"
+                                style={{
+                                    marginTop: '14px',
+                                    color: '#202020',
+                                    border: '1px solid #E5E5E5',
+                                    borderRadius: '2px',
+                                    boxShadow: '0px 2px 0px rgba(0, 0, 0, 0.016)',
+                                }}
+                                onClick={showSEOBasicsModal}
+                            >
+                                <EditIcon color="#202020" size={24} />
+                                Edit Meta details
+                            </ComboButton>
+                            {/* modal content */}
+                            <Modal
+                                title="Customize SEO Basics settings"
+                                visible={isSEOBasicsModalVisible}
+                                onOk={handleSEOBasicsOk}
+                                onCancel={handleSEOBasicsCancel}
+                                footer={[
+                                    <Button type="primary" onClick={() => Save()}>
+                                        Save
+                                    </Button>
+                                ]}
+                            >
+                                <Form layout="vertical">
+                                    <Form.Item
+                                        label={
+                                            <span
                                                 style={{
-                                                    background: '#555B6E',
-                                                    color: 'white',
-                                                    borderRadius: '50%',
+                                                    color: '#555B6E',
+                                                    fontSize: '16px',
+                                                    fontWeight: '600',
                                                 }}
-                                            />
-                                        ),
-                                    }}
-                                >
-                                    <Input
-                                        strong
-                                        level={5}
-                                        placeholder="Enter Page Meta Title"
-                                        style={{
-                                            width: '30%',
-                                            border: '2px solid #E4E4E4',
-                                            borderRadius: '4px',
-                                        }}
-                                        bordered={false}
-                                        value={form.metaTitle.value}
-                                        onChange={onChangeHandler}
-                                        id="metaTitle"
-                                        name="metaTitle"
-                                    />
-                                    <Input.TextArea
-                                        strong
-                                        level={5}
-                                        style={{
-                                            display: 'block',
-                                            marginTop: '29px',
-                                            width: '60%',
-                                            border: '2px solid #E4E4E4',
-                                            borderRadius: '4px',
-                                        }}
-                                        bordered={false}
-                                        name="metaDescription"
-                                        id="metaDescription"
-                                        value={form.metaDescription.value}
-                                        onChange={onChangeHandler}
-                                        placeholder="Add Page Meta description in 120 words"
-                                    />
-                                </Form.Item>
-                                <Form.Item
-                                    label={
-                                        <span
-                                            style={{
-                                                color: '#555B6E',
-                                                fontSize: '16px',
-                                                fontWeight: '600',
-                                            }}
-                                        >
-                                            Favicon
-                                        </span>
-                                    }
-                                    tooltip={{
-                                        title: 'A favicon is a small icon next to your site title',
-                                        icon: (
-                                            <InfoCircleOutlined
-                                                style={{
-                                                    background: '#555B6E',
-                                                    color: 'white',
-                                                    borderRadius: '50%',
-                                                }}
-                                            />
-                                        ),
-                                    }}
-                                >
-                                    <Row>
-                                        <Col span={12}>
-                                            {form.favicon.value ? (
-                                                <ImageContainer
-                                                    border="none"
-                                                    height="120px"
-                                                    padding="0px"
-                                                >
-                                                    <div>
-                                                        <IconButton
-                                                            style={{
-                                                                background: 'transparent',
-                                                            }}
-                                                            size="sm"
-                                                            type="solid"
-                                                            onClick={() => openTunnel1(1)}
-                                                        >
-                                                            <EditIcon />
-                                                        </IconButton>
-
-                                                        <IconButton
-                                                            style={{
-                                                                background: 'transparent',
-                                                            }}
-                                                            size="sm"
-                                                            type="solid"
-                                                            onClick={() =>
-                                                                deleteImage('favicon', '')
-                                                            }
-                                                        >
-                                                            <DeleteIcon />
-                                                        </IconButton>
-                                                    </div>
-                                                    <img
-                                                        src={form.favicon.value}
-                                                        alt="icon"
-                                                        style={{
-                                                            borderRadius: '8px',
-                                                            width: '170px',
-                                                            height: '120px',
-                                                        }}
-                                                    />
-                                                </ImageContainer>
-                                            ) : (
-                                                <ButtonTile
-                                                    type="uploadImage"
-                                                    size="sm"
-                                                    text=""
-                                                    onClick={() => openTunnel1(1)}
+                                            >
+                                                Meta Title and Meta Description
+                                            </span>
+                                        }
+                                        tooltip={{
+                                            title: 'Your meta description displays below the title tag in search results.',
+                                            icon: (
+                                                <InfoCircleOutlined
                                                     style={{
-                                                        width: '170px',
-                                                        height: '120px',
-                                                        marginBottom: '10px'
+                                                        background: '#555B6E',
+                                                        color: 'white',
+                                                        borderRadius: '50%',
                                                     }}
                                                 />
-                                            )}
-                                            <Tunnels tunnels={tunnel1}>
-                                                <Tunnel layer={1} size="md">
-                                                    <TunnelHeader
-                                                        title="Add favicon"
-                                                        close={() => closeTunnel1(1)}
-                                                    />
-                                                    <Banner id="metadetails-image-tunnel-top" />
-                                                    <Flex padding="16px">
-                                                        <AssetUploader
-                                                            onAssetUpload={data =>
-                                                                updateFavicon(data)
-                                                            }
-                                                            onImageSelect={data =>
-                                                                updateFavicon(data)
-                                                            }
+                                            ),
+                                        }}
+                                    >
+                                        <Input
+                                            strong
+                                            level={5}
+                                            placeholder="Enter Page Meta Title"
+                                            style={{
+                                                width: '30%',
+                                                border: '2px solid #E4E4E4',
+                                                borderRadius: '4px',
+                                            }}
+                                            bordered={false}
+                                            value={form.metaTitle.value}
+                                            onChange={onChangeHandler}
+                                            id="metaTitle"
+                                            name="metaTitle"
+                                        />
+                                        <Input.TextArea
+                                            strong
+                                            level={5}
+                                            style={{
+                                                display: 'block',
+                                                marginTop: '29px',
+                                                width: '60%',
+                                                border: '2px solid #E4E4E4',
+                                                borderRadius: '4px',
+                                            }}
+                                            bordered={false}
+                                            name="metaDescription"
+                                            id="metaDescription"
+                                            value={form.metaDescription.value}
+                                            onChange={onChangeHandler}
+                                            placeholder="Add Page Meta description in 120 words"
+                                        />
+                                    </Form.Item>
+                                    <Form.Item
+                                        label={
+                                            <span
+                                                style={{
+                                                    color: '#555B6E',
+                                                    fontSize: '16px',
+                                                    fontWeight: '600',
+                                                }}
+                                            >
+                                                Favicon
+                                            </span>
+                                        }
+                                        tooltip={{
+                                            title: 'A favicon is a small icon next to your site title',
+                                            icon: (
+                                                <InfoCircleOutlined
+                                                    style={{
+                                                        background: '#555B6E',
+                                                        color: 'white',
+                                                        borderRadius: '50%',
+                                                    }}
+                                                />
+                                            ),
+                                        }}
+                                    >
+                                        <Row>
+                                            <Col span={12}>
+                                                {form.favicon.value ? (
+                                                    <ImageContainer
+                                                        border="none"
+                                                        height="120px"
+                                                        padding="0px"
+                                                    >
+                                                        <div>
+                                                            <IconButton
+                                                                style={{
+                                                                    background: 'transparent',
+                                                                }}
+                                                                size="sm"
+                                                                type="solid"
+                                                                onClick={() => openTunnel1(1)}
+                                                            >
+                                                                <EditIcon />
+                                                            </IconButton>
+
+                                                            <IconButton
+                                                                style={{
+                                                                    background: 'transparent',
+                                                                }}
+                                                                size="sm"
+                                                                type="solid"
+                                                                onClick={() =>
+                                                                    deleteImage('favicon', '')
+                                                                }
+                                                            >
+                                                                <DeleteIcon />
+                                                            </IconButton>
+                                                        </div>
+                                                        <img
+                                                            src={form.favicon.value}
+                                                            alt="icon"
+                                                            style={{
+                                                                borderRadius: '8px',
+                                                                width: '170px',
+                                                                height: '120px',
+                                                            }}
                                                         />
-                                                    </Flex>
-                                                    <Banner id="metadetails-image-tunnel-top" />
-                                                </Tunnel>
-                                            </Tunnels>
-                                        </Col>
-                                        <Col span={24}>
-                                            <Text>
-                                                <span style={{ fontWeight: 'bold' }}>
-                                                    Note :{' '}
-                                                </span>{' '}
-                                                It can take time before you see these
-                                                changes.{' '}
-                                            </Text>
-                                        </Col>
-                                    </Row>
-                                </Form.Item>
-                            </Form>
-                        </Modal>
-                    </Col>
-                    <Col span={12}>
-                        <Text strong>Preview on Google</Text>
-                        <Tooltip placement="top" title={'This is an example of a page in search results.'}>
-                            <InfoCircleOutlined
-                                style={{
-                                    marginLeft: '5px',
-                                    background: '#555B6E',
-                                    color: 'white',
-                                    borderRadius: '50%',
-                                }}
-                            />
-                        </Tooltip>
-                        <Card>
-                            <Tooltip placement="bottom" title={'google preview'}>
-                                <p className="link">
-                                    {'https://' + domain}
-                                </p>
+                                                    </ImageContainer>
+                                                ) : (
+                                                    <ButtonTile
+                                                        type="uploadImage"
+                                                        size="sm"
+                                                        text=""
+                                                        onClick={() => openTunnel1(1)}
+                                                        style={{
+                                                            width: '170px',
+                                                            height: '120px',
+                                                            marginBottom: '10px'
+                                                        }}
+                                                    />
+                                                )}
+                                                <Tunnels tunnels={tunnel1}>
+                                                    <Tunnel layer={1} size="md">
+                                                        <TunnelHeader
+                                                            title="Add favicon"
+                                                            close={() => closeTunnel1(1)}
+                                                        />
+                                                        <Banner id="metadetails-image-tunnel-top" />
+                                                        <Flex padding="16px">
+                                                            <AssetUploader
+                                                                onAssetUpload={data =>
+                                                                    updateFavicon(data)
+                                                                }
+                                                                onImageSelect={data =>
+                                                                    updateFavicon(data)
+                                                                }
+                                                            />
+                                                        </Flex>
+                                                        <Banner id="metadetails-image-tunnel-top" />
+                                                    </Tunnel>
+                                                </Tunnels>
+                                            </Col>
+                                            <Col span={24}>
+                                                <Text>
+                                                    <span style={{ fontWeight: 'bold' }}>
+                                                        Note :{' '}
+                                                    </span>{' '}
+                                                    It can take time before you see these
+                                                    changes.{' '}
+                                                </Text>
+                                            </Col>
+                                        </Row>
+                                    </Form.Item>
+                                </Form>
+                            </Modal>
+                        </Col>
+                        <Col span={12}>
+                            <Text strong>Preview on Google</Text>
+                            <Tooltip placement="top" title={'This is an example of a page in search results.'}>
+                                <InfoCircleOutlined
+                                    style={{
+                                        marginLeft: '5px',
+                                        background: '#555B6E',
+                                        color: 'white',
+                                        borderRadius: '50%',
+                                    }}
+                                />
                             </Tooltip>
-                            <Title
-                                strong
-                                level={4}
-                                style={{ color: '#2014ad' }}
-                                id="pageRoute"
-                                name="pageRoute"
-                            >
-                                {form.metaTitle.value || 'Page Name | Site Name'}
-                            </Title>
-                            <p>
-                                {form.metaDescription.value ||
-                                    'this is the meta description'}
-                            </p>
-                        </Card>
-                    </Col>
-                </Row>
-            </div>
+                            <Card>
+                                <Tooltip placement="bottom" title={'google preview'}>
+                                    <p className="link">
+                                        {'https://' + domain}
+                                    </p>
+                                </Tooltip>
+                                <Title
+                                    strong
+                                    level={4}
+                                    style={{ color: '#2014ad' }}
+                                    id="pageRoute"
+                                    name="pageRoute"
+                                >
+                                    {form.metaTitle.value || 'Page Name | Site Name'}
+                                </Title>
+                                <p>
+                                    {form.metaDescription.value ||
+                                        'this is the meta description'}
+                                </p>
+                            </Card>
+                        </Col>
+                    </Row>
+                </div>
+            </Card>
         </StyledWrapper>
     )
 }
