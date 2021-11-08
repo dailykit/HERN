@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import {
    Flex,
    HorizontalTab,
@@ -11,7 +11,6 @@ import {
    PlusIcon,
    Text,
    Filler,
-   useTunnel,
 } from '@dailykit/ui'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
@@ -19,7 +18,7 @@ import { toast } from 'react-toastify'
 import { DeleteIcon, EditIcon } from '../../../../../../shared/assets/icons'
 import { DragNDrop, InlineLoader } from '../../../../../../shared/components'
 import { useDnd } from '../../../../../../shared/components/DragNDrop/useDnd'
-import { StyledWrapper, WrapDiv, Child } from './styled'
+import { Child, Styles } from './styled'
 import {
    LINKED_COMPONENT,
    UPDATE_LINK_COMPONENT,
@@ -27,20 +26,20 @@ import {
    DELETE_LINKED_COMPONENT,
 } from '../../../../graphql'
 import { logger } from '../../../../../../shared/utils'
-import { ConfigTunnel } from '../Tunnel'
 import File from './File'
 import Template from './Template'
 import SystemModule from './SystemModule'
-import ConfigContext from '../../../../context/Config'
+import ConfigTemplateUI from '../../../../../../shared/components/ConfigTemplateUI'
+import styled from 'styled-components'
+import LinkFiles from './components/LinkFiles'
 
 const ContentSelection = () => {
-   const [configTunnels, openConfigTunnel, closeConfigTunnel] = useTunnel()
    const { initiatePriority } = useDnd()
    const { pageId, pageName } = useParams()
    const [linkedFiles, setLinkedFiles] = useState([])
-   const [selectedFileOptions, setSelectedFileOptions] = useState([])
-   const [, setConfigContext] = useContext(ConfigContext)
-
+   const [linkedModuleId, setLinkedModuleId] = useState(null)
+   const [config, setConfig] = useState({})
+   const [seletedModules, setSeletedModules] = useState([])
    const { loading, error: subscriptionError } = useSubscription(
       LINKED_COMPONENT,
       {
@@ -64,19 +63,19 @@ const ContentSelection = () => {
          },
       }
    )
-
+   console.log('SELECTED FILE OPTIONS', seletedModules)
    // Create mutation
    const [linkComponent, { loading: isLinkingComponent }] = useMutation(
       LINK_COMPONENT,
       {
          onCompleted: () => {
             toast.success(`Added to the "${pageName}" page successfully!!`)
-            setSelectedFileOptions([])
+            setSeletedModules([])
          },
          onError: error => {
             toast.error('Something went wrong')
             logger(error)
-            setSelectedFileOptions([])
+            setSeletedModules([])
          },
       }
    )
@@ -85,12 +84,11 @@ const ContentSelection = () => {
    const [updateLinkComponent] = useMutation(UPDATE_LINK_COMPONENT, {
       onCompleted: () => {
          toast.success(`Updated "${pageName}" page successfully!!`)
-         closeConfigTunnel(1)
       },
       onError: error => {
          toast.error('Something went wrong while updating link component')
+         console.error(error)
          logger(error)
-         closeConfigTunnel(1)
       },
    })
 
@@ -98,34 +96,18 @@ const ContentSelection = () => {
    const [deleteLinkComponent] = useMutation(DELETE_LINKED_COMPONENT, {
       onCompleted: () => {
          toast.success(`Linked component successfully deleted!`)
-         setSelectedFileOptions([])
+         setSeletedModules([])
       },
       onError: error => {
          toast.error('Something went wrong while deleting linked component')
          logger(error)
-         setSelectedFileOptions([])
+         setSeletedModules([])
       },
    })
 
-   // const updatetoggle = () => {
-   //    const val = !toggle
-   //    // if (val && !state.isCouponValid.status) {
-   //    //    toast.error('Coupon should be valid!')
-   //    // } else {
-   //    updatePage({
-   //       variables: {
-   //          pageId: pageId,
-   //          set: {
-   //             published: val,
-   //          },
-   //       },
-   //    })
-   //    // }
-   // }
-
    const saveHandler = () => {
-      if (selectedFileOptions.length) {
-         const result = selectedFileOptions.map(option => {
+      if (seletedModules.length) {
+         const result = seletedModules.map(option => {
             if (option.type === 'system-defined') {
                return {
                   brandPageId: pageId,
@@ -148,10 +130,10 @@ const ContentSelection = () => {
       }
    }
 
-   const updateHandler = (brandPageModuleId, updatedConfig) => {
+   const updateHandler = updatedConfig => {
       updateLinkComponent({
          variables: {
-            brandPageModuleId,
+            brandPageModuleId: linkedModuleId,
             _set: {
                config: updatedConfig,
             },
@@ -169,8 +151,21 @@ const ContentSelection = () => {
       })
    }
    const openConfig = data => {
-      setConfigContext(data)
-      openConfigTunnel(1)
+      setLinkedModuleId(prev => (data.id === prev ? null : data.id))
+      if (data.config === null && data?.systemModule?.configTemplate !== null) {
+         updateLinkComponent({
+            variables: {
+               brandPageModuleId: data.id,
+               _set: {
+                  config: data?.systemModule?.configTemplate,
+               },
+            },
+         })
+         setConfig(data?.systemModule?.configTemplate)
+      }
+      if (data.config !== null) {
+         setConfig(data.config)
+      }
    }
 
    if (loading) {
@@ -183,10 +178,62 @@ const ContentSelection = () => {
       )
       logger(subscriptionError)
    }
+   console.log('Selected ', seletedModules)
    return (
-      <Flex container justifyContent="space-between">
-         <WrapDiv>
-            <Text as="title">Linked Components </Text>
+      <Styles.Wrapper>
+         <Styles.ModulesWrapper>
+            <Flex container padding="16px 8px" justifyContent="space-between">
+               <Text as="text1">Page Modules</Text>
+               <ComboButton
+                  type="solid"
+                  size="sm"
+                  isLoading={isLinkingComponent}
+                  onClick={saveHandler}
+                  disabled={!seletedModules.length}
+               >
+                  <PlusIcon color="#fff" /> Add
+               </ComboButton>
+            </Flex>
+
+            <Styles.Tabs>
+               <HorizontalTabs>
+                  <HorizontalTabList>
+                     <HorizontalTab>Files</HorizontalTab>
+                     <HorizontalTab>Modules</HorizontalTab>
+                     <HorizontalTab>Templates</HorizontalTab>
+                  </HorizontalTabList>
+                  <HorizontalTabPanels>
+                     <StyledHorizontalTabPanel>
+                        <File
+                           linkedFiles={linkedFiles}
+                           seletedModules={seletedModules}
+                           setSeletedModules={setSeletedModules}
+                           emptyOptions={seletedModules}
+                        />
+                     </StyledHorizontalTabPanel>
+                     <StyledHorizontalTabPanel>
+                        <SystemModule
+                           seletedModules={seletedModules}
+                           setSeletedModules={setSeletedModules}
+                           emptyOptions={seletedModules}
+                        />
+                     </StyledHorizontalTabPanel>
+                     <HorizontalTabPanel>
+                        <Template linkedTemplated={[]} />
+                     </HorizontalTabPanel>
+                  </HorizontalTabPanels>
+               </HorizontalTabs>
+            </Styles.Tabs>
+         </Styles.ModulesWrapper>
+         <Styles.PreviewWrapper>
+            <Flex padding="0 8px 16px 8px">
+               <Text as="h3">
+                  Selected Components
+                  {linkedFiles.length > 0 && (
+                     <span>({linkedFiles.length})</span>
+                  )}
+               </Text>
+            </Flex>
             {linkedFiles.length ? (
                <DragNDrop
                   list={linkedFiles}
@@ -195,7 +242,7 @@ const ContentSelection = () => {
                   schemaname="brands"
                >
                   {linkedFiles.map(file => (
-                     <Child key={file.id}>
+                     <Child isActive={linkedModuleId === file.id} key={file.id}>
                         <div className="name">
                            {file?.file?.fileName ||
                               file?.systemModule?.identifier ||
@@ -228,61 +275,44 @@ const ContentSelection = () => {
                   height="80%"
                />
             )}
-         </WrapDiv>
-         <StyledWrapper>
-            <Flex container justifyContent="flex-end">
-               <ComboButton
-                  type="solid"
-                  size="md"
-                  isLoading={isLinkingComponent}
-                  onClick={saveHandler}
-               >
-                  <PlusIcon color="#fff" /> Add
-               </ComboButton>
-            </Flex>
-            <HorizontalTabs>
-               <HorizontalTabList>
-                  <HorizontalTab>Add Files</HorizontalTab>
-                  <HorizontalTab>Add Templates</HorizontalTab>
-                  <HorizontalTab>Add Modules</HorizontalTab>
-               </HorizontalTabList>
-               <HorizontalTabPanels>
-                  <HorizontalTabPanel>
-                     <File
-                        linkedFiles={linkedFiles}
-                        selectedOption={option =>
-                           setSelectedFileOptions(option)
-                        }
-                        emptyOptions={selectedFileOptions}
-                     />
-                  </HorizontalTabPanel>
-                  <HorizontalTabPanel>
-                     <Template linkedTemplated={[]} />
-                  </HorizontalTabPanel>
-                  <HorizontalTabPanel>
-                     <SystemModule
-                        linkedFiles={linkedFiles}
-                        selectedOption={option =>
-                           setSelectedFileOptions(option)
-                        }
-                        emptyOptions={selectedFileOptions}
-                     />
-                  </HorizontalTabPanel>
-               </HorizontalTabPanels>
-            </HorizontalTabs>
-
-            <ConfigTunnel
-               tunnels={configTunnels}
-               openTunnel={openConfigTunnel}
-               closeTunnel={closeConfigTunnel}
-               onSave={(brandPageModuleId, updatedConfig) =>
-                  updateHandler(brandPageModuleId, updatedConfig)
-               }
-               selectedOption={selectedFileOptions}
-            />
-         </StyledWrapper>
-      </Flex>
+         </Styles.PreviewWrapper>
+         <Styles.ConfigWrapper>
+            {linkedModuleId ? (
+               <ConfigTemplateUI
+                  config={config}
+                  setConfig={setConfig}
+                  configSaveHandler={updateHandler}
+               />
+            ) : (
+               <LinkFiles />
+            )}
+         </Styles.ConfigWrapper>
+      </Styles.Wrapper>
    )
 }
 
 export default ContentSelection
+
+const StyledHorizontalTabPanel = styled(HorizontalTabPanel)`
+   /* width */
+   ::-webkit-scrollbar {
+      width: 6px;
+   }
+
+   /* Track */
+   ::-webkit-scrollbar-track {
+      background: #f4f4f4;
+   }
+
+   /* Handle */
+   ::-webkit-scrollbar-thumb {
+      background: #919699;
+      opacity: 0.5;
+      border-radius: 20px;
+   }
+
+   /* Handle on hover */
+   ::-webkit-scrollbar-thumb:hover {
+      background: #919699;
+   }
+`

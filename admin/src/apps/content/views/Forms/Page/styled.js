@@ -3,6 +3,27 @@ import styled from 'styled-components'
 export const StyledWrapper = styled.div`
    background-color: #e5e5e5;
    margin: 0;
+   /* width */
+   ::-webkit-scrollbar {
+      width: 6px;
+   }
+
+   /* Track */
+   ::-webkit-scrollbar-track {
+      background: #f4f4f4;
+   }
+
+   /* Handle */
+   ::-webkit-scrollbar-thumb {
+      background: #919699;
+      opacity: 0.5;
+      border-radius: 20px;
+   }
+
+   /* Handle on hover */
+   ::-webkit-scrollbar-thumb:hover {
+      background: #919699;
+   }
    h1 {
       color: #555b6e;
       font-size: 20px;

@@ -3,45 +3,42 @@ import { useSubscription } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import { Dropdown, Loader } from '@dailykit/ui'
 import { useParams } from 'react-router-dom'
-import { GET_FILES } from '../../../../../../editor/graphql'
+import { GET_FILES } from '../../../../../../../editor/graphql'
 
-const LinkCSSFiles = ({ setSelectedCSSFiles }) => {
-   const [CSSOptions, setCSSOptions] = React.useState([])
+const LinkJSFiles = ({ setSelectedJSFiles }) => {
+   const [JSOptions, setJSOptions] = React.useState([])
    const [searchOption, setSearchOption] = React.useState('')
    const [searchResult, setSearchResult] = React.useState([])
    const { pageId } = useParams()
-
    const { loading, error } = useSubscription(GET_FILES, {
       variables: {
-         fileType: 'css',
+         fileType: 'js',
          linkedFiles: [],
       },
       onSubscriptionData: ({
          subscriptionData: { data: { editor_file_aggregate = [] } = {} } = {},
       }) => {
-         const CSSResult = editor_file_aggregate?.nodes.map(file => ({
+         const JSResult = editor_file_aggregate?.nodes.map(file => ({
             id: file.id,
             title: file.fileName,
             value: file.path,
             type: file.fileType,
          }))
-         setCSSOptions(CSSResult)
-         setSearchResult(CSSResult)
+         setJSOptions(JSResult)
+         setSearchResult(JSResult)
       },
    })
-
    const selectedOptionHandler = options => {
-      console.log('OPTION', options)
-      const cssFiles = options.map(option => ({
+      const jsFiles = options.map(option => ({
          fileId: option.id,
-         fileType: 'css',
+         fileType: 'js',
          pageId,
       }))
-      setSelectedCSSFiles(cssFiles)
+      setSelectedJSFiles(jsFiles)
    }
 
    React.useEffect(() => {
-      const result = CSSOptions.filter(option =>
+      const result = JSOptions.filter(option =>
          option.title.toLowerCase().includes(searchOption)
       )
       setSearchResult(result)
@@ -50,6 +47,7 @@ const LinkCSSFiles = ({ setSelectedCSSFiles }) => {
       toast.error('Something went wrong!')
       return <p>Something we wrong ! </p>
    }
+
    if (loading) return <Loader />
    return (
       <Dropdown
@@ -62,4 +60,4 @@ const LinkCSSFiles = ({ setSelectedCSSFiles }) => {
    )
 }
 
-export default LinkCSSFiles
+export default LinkJSFiles
