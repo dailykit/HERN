@@ -10,11 +10,11 @@ export const CardWrapper = styled.div`
    .boldText {
       font-weight: 600;
    }
-   .proxinova_text {
+   .mavenPro_text {
       font-family: 'Maven Pro';
       font-style: normal;
       font-weight: 600;
-      letter-spacing: 0;
+      letter-spacing: 0.05em;
       color: ${theme.colors.textColor5};
       margin-bottom: 0 !important;
    }
@@ -33,7 +33,7 @@ export const CardWrapper = styled.div`
       .ant-divider-inner-text {
          font-family: 'Maven Pro';
          font-style: normal;
-         letter-spacing: 0.3em;
+         letter-spacing: 0.05em;
          font-size: ${theme.sizes.h8};
       }
    }
@@ -47,7 +47,7 @@ export const CardWrapper = styled.div`
             font-family: 'Maven Pro';
             font-style: normal;
             font-weight: 600;
-            letter-spacing: 0.3em;
+            letter-spacing: 0.05em;
             margin: 8px 0;
             color: ${theme.colors.textColor7};
          }
@@ -104,7 +104,7 @@ export const CardWrapper = styled.div`
          font-family: 'Maven Pro';
          font-style: normal;
          font-weight: 600;
-         letter-spacing: 0.3em;
+         letter-spacing: 0.05em;
          color: ${theme.colors.textColor};
          font-size: ${theme.sizes.h6};
          border: none;
@@ -114,7 +114,7 @@ export const CardWrapper = styled.div`
       font-family: 'Maven Pro';
       font-style: normal;
       font-weight: 600;
-      letter-spacing: 0.3em;
+      letter-spacing: 0.05em;
       color: ${theme.colors.textColor};
       font-size: ${theme.sizes.h6};
       border: none;
@@ -138,7 +138,7 @@ export const CardWrapper = styled.div`
                   font-family: 'Maven Pro';
                   font-style: normal;
                   font-weight: 600;
-                  letter-spacing: 0.3em;
+                  letter-spacing: 0.05em;
                   color: ${theme.colors.textColor5};
                   font-size: ${theme.sizes.h8};
                }

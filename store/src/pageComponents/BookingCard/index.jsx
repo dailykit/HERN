@@ -15,9 +15,7 @@ export default function Card({ experienceInfo, showPaymentDetails = true }) {
          <div style={{ padding: '1rem 1rem 2rem 1rem' }}>
             <div className="experience-info">
                <div className="experience-details">
-                  <p className="proxinova_text text7">
-                     {experienceInfo?.title}
-                  </p>
+                  <p className="mavenPro_text text7">{experienceInfo?.title}</p>
                   <h2 className="experience-heading text9">Be ready on</h2>
                   <div className="experience-date">
                      <h2 className="text4">
@@ -40,8 +38,8 @@ export default function Card({ experienceInfo, showPaymentDetails = true }) {
                   </Divider>
                   <div className="price-details">
                      <div className="pricing">
-                        <p className="proxinova_text text9">Total Amount</p>
-                        <p className="proxinova_text text9">
+                        <p className="mavenPro_text text9">Total Amount</p>
+                        <p className="mavenPro_text text9">
                            $
                            {!isEmpty(
                               experienceInfo?.cartOwnerBilling?.totalToPay
@@ -53,17 +51,17 @@ export default function Card({ experienceInfo, showPaymentDetails = true }) {
                         </p>
                      </div>
                      <div className="pricing">
-                        <p className="proxinova_text text9">Paid Amount</p>
-                        <p className="proxinova_text text9">
+                        <p className="mavenPro_text text9">Paid Amount</p>
+                        <p className="mavenPro_text text9">
                            ${experienceInfo?.paidAmount.toFixed(2)}
                         </p>
                      </div>
                      {experienceInfo?.balancePayment > 0 ? (
                         <div className="pricing">
-                           <p className="proxinova_text text8">
+                           <p className="mavenPro_text text8">
                               Net Balance(USD)
                            </p>
-                           <p className="proxinova_text text8">
+                           <p className="mavenPro_text text8">
                               ${experienceInfo?.balancePayment.toFixed(2)}
                            </p>
                         </div>

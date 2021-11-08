@@ -18,9 +18,7 @@ export default function Card({ experienceInfo }) {
             <div className="experience-info">
                <div className="experience-details">
                   {/* <h2 className="experience-heading text8">Your Experience</h2> */}
-                  <p className="proxinova_text text7">
-                     {experienceInfo?.title}
-                  </p>
+                  <p className="mavenPro_text text7">{experienceInfo?.title}</p>
                   <h2 className="experience-heading text9">Be ready on</h2>
                   <div className="experience-date">
                      <h2 className="text4">
@@ -41,8 +39,8 @@ export default function Card({ experienceInfo }) {
 
             <div className="price-details">
                <div className="pricing">
-                  <p className="proxinova_text text9">Overall Total amount</p>
-                  <p className="proxinova_text text9">
+                  <p className="mavenPro_text text9">Overall Total amount</p>
+                  <p className="mavenPro_text text9">
                      $
                      {!isEmpty(experienceInfo?.cartOwnerBilling?.totalToPay)
                         ? (experienceInfo?.cartOwnerBilling?.totalToPay).toFixed(
@@ -98,14 +96,14 @@ export default function Card({ experienceInfo }) {
                </div>
 
                <div className="pricing">
-                  <p className="proxinova_text text9">Booking Amount</p>
-                  <p className="proxinova_text text9">
+                  <p className="mavenPro_text text9">Booking Amount</p>
+                  <p className="mavenPro_text text9">
                      ${experienceInfo?.balancePayment}
                   </p>
                </div>
                <div className="pricing boldText">
-                  <p className="proxinova_text text9">Payable Now(USD)</p>
-                  <p className="proxinova_text text9">
+                  <p className="mavenPro_text text9">Payable Now(USD)</p>
+                  <p className="mavenPro_text text9">
                      ${experienceInfo?.balancePayment}
                   </p>
                </div>

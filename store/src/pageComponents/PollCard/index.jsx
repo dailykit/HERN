@@ -30,7 +30,7 @@ export default function Card({ experienceInfo = null }) {
          <div style={{ padding: '1rem 1rem 2rem 1rem' }}>
             <div className="experience-info">
                <div className="experience-details">
-                  <p className="proxinova_text text7">{experience?.title}</p>
+                  <p className="mavenPro_text text7">{experience?.title}</p>
                   <h2 className="experience-heading text9">Poll expiring on</h2>
                   <div className="experience-date">
                      <h2 className="text4">
@@ -41,19 +41,19 @@ export default function Card({ experienceInfo = null }) {
             </div>
             <div className="price-details">
                <div className="pricing">
-                  <p className="proxinova_text text9">Created at</p>
-                  <p className="proxinova_text text9">
+                  <p className="mavenPro_text text9">Created at</p>
+                  <p className="mavenPro_text text9">
                      {' '}
                      {getDateWithTime(experienceInfo?.created_at)}
                   </p>
                </div>
                <div className="pricing">
-                  <p className="proxinova_text text9">Total poll options</p>
-                  <p className="proxinova_text text9">{totalPollOptions}</p>
+                  <p className="mavenPro_text text9">Total poll options</p>
+                  <p className="mavenPro_text text9">{totalPollOptions}</p>
                </div>
                <div className="pricing">
-                  <p className="proxinova_text text9">Most voted option</p>
-                  <p className="proxinova_text text9">
+                  <p className="mavenPro_text text9">Most voted option</p>
+                  <p className="mavenPro_text text9">
                      {getDateWithTime(
                         mostVotedOption?.experienceClass?.startTimeStamp
                      )}{' '}
