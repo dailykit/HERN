@@ -1,19 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import {
-   ListHeader,
-   ListItem,
-   List,
-   ListOptions,
-   useMultiList,
-   ListSearch,
-   TagGroup,
-   Tag,
-   Loader,
-} from '@dailykit/ui'
-import { GET_SYSTEM_MODULES } from '../../../../../graphql'
+import { List, useMultiList, ListSearch, Loader } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
+import _ from 'lodash'
+import { GET_SYSTEM_MODULES } from '../../../../../graphql'
+import { StyledOptions } from '../styled'
+import { PageModuleCard } from '../components/PageModuleCard'
 
-const SystemModule = ({ selectedOption, emptyOptions }) => {
+const SystemModule = ({ emptyOptions, seletedModules, setSeletedModules }) => {
    const [systemModules, setSystemModules] = useState([])
    const [search, setSearch] = useState('')
    const [list, selected, selectOption] = useMultiList(systemModules)
@@ -37,7 +30,8 @@ const SystemModule = ({ selectedOption, emptyOptions }) => {
    })
 
    useEffect(() => {
-      selectedOption(selected)
+      const modules = _.unionWith(selected, seletedModules, _.isEqual)
+      setSeletedModules(modules)
    }, [selected])
 
    useEffect(() => {
@@ -58,44 +52,27 @@ const SystemModule = ({ selectedOption, emptyOptions }) => {
             onChange={value => setSearch(value)}
             placeholder="type what you’re looking for..."
          />
-         {selected.length > 0 && (
-            <TagGroup style={{ margin: '8px 0' }}>
-               {selected.map(option => (
-                  <Tag
-                     key={option.identifier}
-                     title={option.identifier}
-                     onClick={() =>
-                        selectOption('identifier', option.identifier)
-                     }
-                  >
-                     {option.identifier}
-                  </Tag>
-               ))}
-            </TagGroup>
-         )}
-         <ListHeader type="MSL2" label="System Modules" />
-         <ListOptions>
+         <StyledOptions>
             {list
                .filter(option =>
                   option.identifier.toLowerCase().includes(search)
                )
                .map(option => (
-                  <ListItem
-                     type="MSL2"
+                  <PageModuleCard
                      key={option.identifier}
-                     content={{
-                        title: option.identifier,
-                        description: option.description,
-                     }}
                      onClick={() =>
                         selectOption('identifier', option.identifier)
                      }
                      isActive={selected.find(
                         item => item.identifier === option.identifier
                      )}
+                     content={{
+                        title: option.identifier,
+                        description: option.description,
+                     }}
                   />
                ))}
-         </ListOptions>
+         </StyledOptions>
       </List>
    )
 }
