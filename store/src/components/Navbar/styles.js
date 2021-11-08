@@ -275,14 +275,22 @@ export const DropdownWrapper = styled.div`
             filter: none;
          }
       }
-      &:hover {
-         cursor: pointer;
-         background-color: #525357;
-      }
 
-      .icon-right {
-         margin-left: auto;
+      .cart-info-wrap {
+         display: flex;
+         flex-direction: column;
+         width: 100%;
+         .cart-action-btn-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+         }
+      }
+      .cart-action-icon {
+         color: ${theme.colors.textColor4};
          :hover {
+            cursor: pointer;
+            color: ${theme.colors.textColor};
             svg {
                stroke: ${theme.colors.textColor};
             }
