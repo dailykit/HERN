@@ -5,7 +5,6 @@ import { isEmpty, groupBy } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { BRANDS } from '../../../../../../../graphql'
-import validator from '../../../../../../validator'
 import { logger } from '../../../../../../../../../shared/utils'
 
 import ConfigTemplateUI from '../../../../../../../../../shared/components/ConfigTemplateUI'
@@ -86,28 +85,6 @@ export const Brand = () => {
       toast.error('Something went wrong!')
       logger(error)
    }
-   // React.useEffect(() => {
-   //    if (!loading && !isEmpty(brandSettings)) {
-   //       const grouped = groupBy(brandSettings, 'type')
-
-   //       Object.keys(grouped).forEach(key => {
-   //          grouped[key] = grouped[key].map(node => node.identifier)
-   //       })
-   //       setSettings(grouped)
-   //    }
-   // }, [loading, brandSettings])
-
-   //    React.useEffect(() => {
-   //     updateSetting({
-   //         variables: {
-   //            object: {
-   //               brandId: params?.id,
-   //               brandSettingId: settingId,
-   //               value: config,
-   //            },
-   //         },
-   //      })
-   //    }, [])
 
    const saveInfo = () => {
       updateSetting({
