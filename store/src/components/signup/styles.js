@@ -7,7 +7,7 @@ export const Wrapper = styled.div`
       color: ${theme.colors.textColor};
       text-align: center;
       margin: 2rem 4rem;
-      font-family: League-Gothic;
+      font-family: 'Barlow Condensed';
    }
    .customInput {
       height: 48px;
@@ -42,7 +42,7 @@ export const Wrapper = styled.div`
       background: ${theme.colors.textColor};
       color: ${theme.colors.textColor4};
       border-radius: 0px;
-      font-family: League-Gothic;
+      font-family: 'Barlow Condensed';
       letter-spacing: 0.04em;
       &:disabled {
          background: ${theme.colors.textColor};

@@ -158,7 +158,7 @@ export default function PollResponse({
                      cardData={experienceBooking}
                      isPollClosed={isPollClosed}
                   />
-                  <p className="League-Gothic text6 normal-heading">
+                  <p className="Barlow-Condensed text6 normal-heading">
                      Select below the date and time slot that best suits your
                      availability.
                   </p>
@@ -274,14 +274,14 @@ const Wrapper = styled.div`
       padding: 0 1rem;
    }
    .heading_h1 {
-      font-family: League-Gothic;
+      font-family: 'Barlow Condensed';
       font-style: normal;
       font-weight: normal;
       text-align: center;
       color: ${theme.colors.textColor4};
       .invited_by {
          font-size: inherit;
-         font-family: League-Gothic;
+         font-family: 'Barlow Condensed';
          font-style: normal;
          font-weight: normal;
          text-align: center;

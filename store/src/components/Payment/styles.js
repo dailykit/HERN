@@ -43,7 +43,7 @@ export const Wrapper = styled.div`
       background: ${theme.colors.textColor};
       border-radius: 24px;
       color: ${theme.colors.textColor4};
-      font-family: League-Gothic;
+      font-family: 'Barlow Condensed';
       letter-spacing: 0.04em;
       height: 64px;
    }
@@ -59,7 +59,7 @@ export const Wrapper = styled.div`
       background: ${theme.colors.textColor};
       border-radius: 8px;
       color: ${theme.colors.textColor4};
-      font-family: League-Gothic;
+      font-family: 'Barlow Condensed';
       letter-spacing: 0.04em;
       height: 64px;
    }
@@ -154,7 +154,7 @@ export const Wrapper = styled.div`
       > .ant-tabs-tab-btn {
          color: ${theme.colors.textColor};
          font-size: ${theme.sizes.h4};
-         font-family: League-Gothic;
+         font-family: 'Barlow Condensed';
       }
    }
    .card-container > .ant-tabs-card .ant-tabs-tab-disabled {
@@ -162,7 +162,7 @@ export const Wrapper = styled.div`
       > .ant-tabs-tab-btn {
          color: ${theme.colors.textColor7};
          font-size: ${theme.sizes.h4};
-         font-family: League-Gothic;
+         font-family: 'Barlow Condensed';
       }
    }
    .card-container > .ant-tabs-card .ant-tabs-tab-active {
@@ -259,7 +259,7 @@ export const NewPaymentCard = styled.div`
          isDefault ? theme.colors.textColor4 : theme.colors.textColor5};
    }
    .value {
-      font-family: League-Gothic;
+      font-family: 'Barlow Condensed';
       color: ${({ isDefault }) =>
          isDefault ? theme.colors.textColor4 : theme.colors.textColor5};
    }

@@ -10,7 +10,7 @@ export const Wrapper = styled.div`
    background-color: ${theme.colors.textColor4};
    .experienceTitleHead {
       color: ${theme.colors.textColor7};
-      font-family: League-Gothic;
+      font-family: 'Barlow Condensed';
       margin: 1rem 0;
       text-align: left;
       height: 48px;

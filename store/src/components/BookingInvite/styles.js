@@ -102,7 +102,7 @@ export const Wrapper = styled.div`
       > .ant-tabs-tab-btn {
          color: ${theme.colors.textColor};
          font-size: ${theme.sizes.h4};
-         font-family: League-Gothic;
+         font-family: 'Barlow Condensed';
       }
    }
    .card-container > .ant-tabs-card .ant-tabs-tab-active {

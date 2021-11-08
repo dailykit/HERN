@@ -88,7 +88,7 @@ export default function NormalExperienceCard({ cardDetails, ...props }) {
                               </p>
                            </Flex>
                            <Button
-                              className="book-slot Proxima-Nova text8"
+                              className="book-slot Maven-Pro text8"
                               onClick={() => props.bookingHandler({ option })}
                            >
                               Book Slot

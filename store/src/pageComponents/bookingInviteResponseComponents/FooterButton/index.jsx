@@ -149,7 +149,7 @@ export default function SubmitResponse({ startCelebration }) {
    return (
       <>
          <Wrapper>
-            <p className="Proxima-Nova text9 poll-expiry-msg">
+            <p className="Maven-Pro text9 poll-expiry-msg">
                {rsvpStepIndex === 0
                   ? `😇 ${
                        decodedToken?.invitedBy?.name ||

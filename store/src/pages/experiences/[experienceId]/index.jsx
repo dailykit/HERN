@@ -483,7 +483,7 @@ export default function Experience({
                                              'N/A'}
                                        </p>
                                        <p
-                                          className="text10 Proxima-Nova"
+                                          className="text10 Maven-Pro"
                                           style={{
                                              color: '#a7a7a7',
                                              marginTop: '0.5rem',
@@ -702,7 +702,7 @@ const StyledWrapper = styled.div`
       height: 64px;
       width: 100%;
       background: ${theme.colors.textColor};
-      font-family: League-Gothic;
+      font-family: 'Barlow Condensed';
       letter-spacing: 0.04em;
       color: ${theme.colors.textColor4};
       border-radius: 0;
@@ -744,7 +744,7 @@ const Wrapper = styled.main`
          border-radius: 40px;
          .experienceTitleHead {
             color: ${theme.colors.textColor7};
-            font-family: League-Gothic;
+            font-family: 'Barlow Condensed';
             margin: 1rem 0;
             text-align: left;
             height: 48px;
@@ -756,7 +756,7 @@ const Wrapper = styled.main`
          text-align: left;
          margin-bottom: 0;
          text-transform: uppercase;
-         font-family: League-Gothic;
+         font-family: 'Barlow Condensed';
       }
    }
 
@@ -788,7 +788,7 @@ const Wrapper = styled.main`
          text-align: left;
          margin-bottom: 0;
          text-transform: uppercase;
-         font-family: League-Gothic;
+         font-family: 'Barlow Condensed';
       }
       .subsub-heading {
          color: ${theme.colors.textColor5};
@@ -947,7 +947,7 @@ const TabWrapper = styled.div`
                color: ${theme.colors.textColor};
                padding: 0;
                margin: 0;
-               font-family: League-Gothic;
+               font-family: 'Barlow Condensed';
                &:hover {
                   color: ${theme.colors.textColor5};
                }

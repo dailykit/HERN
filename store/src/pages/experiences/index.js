@@ -278,7 +278,7 @@ const StyledWrapper = styled.div`
       align-items: center;
       margin-top: 1rem;
       .heading {
-         font-family: League-Gothic;
+         font-family: 'Barlow Condensed';
          font-style: normal;
          font-weight: normal;
          text-align: center;

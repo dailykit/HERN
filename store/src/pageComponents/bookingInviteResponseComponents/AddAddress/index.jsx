@@ -31,7 +31,7 @@ export default function AddAddress() {
 
    return (
       <Wrapper>
-         <h1 className="League-Gothic text3 address-header">
+         <h1 className="Barlow-Condensed text3 address-header">
             Add Address Details
          </h1>
          <AddressForm

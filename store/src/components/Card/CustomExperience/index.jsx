@@ -9,7 +9,7 @@ export default function CustomExperience() {
    )
    return (
       <Wrapper>
-         <h1 className="customExperience_heading League-Gothic text1">
+         <h1 className="customExperience_heading Barlow-Condensed text1">
             Want to curate your own experience?
          </h1>
          <PopupButton

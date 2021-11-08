@@ -82,7 +82,7 @@ const Wrapper = styled.div`
    .info_wrapper {
       padding: 4rem 6rem;
       .custom404_heading {
-         font-family: League-Gothic;
+         font-family: 'Barlow Condensed';
          font-style: normal;
          font-weight: normal;
          color: ${theme.colors.textColor4};
@@ -90,7 +90,7 @@ const Wrapper = styled.div`
       }
       .custom404_para {
          color: ${theme.colors.textColor4};
-         font-family: League-Gothic;
+         font-family: 'Barlow Condensed';
          font-style: normal;
          font-weight: normal;
          margin-bottom: 0;

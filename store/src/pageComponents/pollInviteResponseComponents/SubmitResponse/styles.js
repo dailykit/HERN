@@ -64,7 +64,7 @@ export const Wrapper = styled.div`
          background: ${theme.colors.textColor};
          color: ${theme.colors.textColor4};
          border-radius: 0 0 40px 40px;
-         font-family: League-Gothic;
+         font-family: 'Barlow Condensed';
          letter-spacing: 0.04em;
       }
    }

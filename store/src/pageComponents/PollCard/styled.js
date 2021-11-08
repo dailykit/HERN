@@ -56,7 +56,7 @@ export const CardWrapper = styled.div`
             align-items: center;
             justify-content: space-between;
             h2 {
-               font-family: League-Gothic;
+               font-family: 'Barlow Condensed';
                letter-spacing: 0.04em;
                color: ${theme.colors.textColor5};
                margin-bottom: 0;

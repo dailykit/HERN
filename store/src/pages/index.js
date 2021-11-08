@@ -327,7 +327,7 @@ const StyledWrapper = styled.div`
       text-align: center;
       margin-bottom: 20px;
       text-transform: uppercase;
-      font-family: League-Gothic;
+      font-family: 'Barlow Condensed';
    }
    .experienceHeading2 {
       color: ${theme.colors.textColor4};

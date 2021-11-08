@@ -8,7 +8,7 @@ export const Wrapper = styled.div`
       text-align: center;
       margin-bottom: 20px;
       text-transform: uppercase;
-      font-family: League-Gothic;
+      font-family: 'Barlow Condensed';
    }
    .signupFold_para {
       color: ${({ bgMode = 'light' }) =>

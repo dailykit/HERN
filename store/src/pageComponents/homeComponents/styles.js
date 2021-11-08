@@ -32,7 +32,7 @@ export const Wrapper = styled.div`
       text-align: left;
       margin-bottom: 20px;
       text-transform: uppercase;
-      font-family: League-Gothic;
+      font-family: 'Barlow Condensed';
    }
    .card-grid {
       display: grid;

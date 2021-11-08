@@ -22,7 +22,7 @@ export const Wrapper = styled.div`
       color: ${theme.colors.textColor};
       text-align: center;
       margin-bottom: 1rem;
-      font-family: League-Gothic;
+      font-family: 'Barlow Condensed';
    }
    .input-label {
       color: ${theme.colors.textColor7};

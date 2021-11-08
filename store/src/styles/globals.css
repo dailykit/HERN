@@ -1,5 +1,7 @@
+/* import fonts */
 @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Maven+Pro&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed&family=Roboto:wght@300&display=swap');
 
 @font-face {
    font-family: Futura;
@@ -12,17 +14,18 @@
 .Futura {
    font-family: Futura;
 }
-.League-Gothic {
-   font-family: League-Gothic;
+.Barlow-Condensed {
+   font-family: 'Barlow Condensed';
 }
-.Proxima-Nova {
+.Maven-Pro {
    font-family: 'Maven Pro';
 }
+
 * {
    box-sizing: border-box;
    margin: 0;
    padding: 0;
-   font-family: Futura, 'Maven Pro', sans-serif, League-Gothic;
+   font-family: Futura, 'Maven Pro', sans-serif, 'Barlow Condensed';
    outline: none;
    font-weight: 400;
 }
@@ -37,12 +40,6 @@ html {
    /* background-color: #061422; */
    /* background-color: #2a4562; */
    /* background-color: #212530; */
-}
-
-/* font-families */
-@font-face {
-   font-family: League-Gothic;
-   src: url('/assets/fonts/League-Gothic/LeagueGothic-Regular.otf');
 }
 
 body {
@@ -268,8 +265,8 @@ body {
 /* custom heading tag */
 
 .text1 {
-   font-size: 72px !important;
-   line-height: 88px !important;
+   font-size: 64px !important;
+   line-height: 72px !important;
 }
 .text1_secondary {
    font-size: 56px !important;

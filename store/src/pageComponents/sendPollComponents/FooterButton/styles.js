@@ -16,7 +16,7 @@ export const FooterBtnWrap = styled.div`
       background: ${theme.colors.textColor};
       color: ${theme.colors.textColor4};
       border-radius: 8px;
-      font-family: League-Gothic;
+      font-family: 'Barlow Condensed';
       letter-spacing: 0.04em;
       &:disabled {
          background: ${theme.colors.textColor};

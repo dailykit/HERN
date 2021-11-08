@@ -26,7 +26,7 @@ export const Wrapper = styled.div`
       background: ${theme.colors.textColor};
       border-radius: 8px;
       color: ${theme.colors.textColor4};
-      font-family: League-Gothic;
+      font-family: 'Barlow Condensed';
       letter-spacing: 0.04em;
       height: 48px;
       span {

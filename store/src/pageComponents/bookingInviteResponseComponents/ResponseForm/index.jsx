@@ -66,7 +66,7 @@ export default function ResponseForm({ decodedToken }) {
 
    return (
       <Wrapper>
-         <p className="League-Gothic text6 normal_heading">
+         <p className="Barlow-Condensed text6 normal_heading">
             Please enter your details below and accept the invitation
          </p>
 

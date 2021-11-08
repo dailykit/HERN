@@ -16,7 +16,7 @@ export const ModalContainer = styled(Modal)`
 export const StyledTitle = styled.h1`
    font-weight: 400;
    color: ${theme.colors.textColor};
-   font-family: League-Gothic;
+   font-family: 'Barlow Condensed';
    font-size: 38px;
    margin: 0;
 `

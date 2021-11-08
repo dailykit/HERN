@@ -143,7 +143,7 @@ const Wrapper = styled.div`
          ? theme.colors.darkBackground.darkblue
          : theme.colors.lightBackground.white};
    .heading {
-      font-family: League-Gothic;
+      font-family: 'Barlow Condensed';
       font-style: normal;
       font-weight: normal;
       text-align: center;

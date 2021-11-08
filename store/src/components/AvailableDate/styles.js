@@ -21,7 +21,7 @@ export const Wrapper = styled.div`
       width: auto;
       text-transform: uppercase;
       padding: 0 1rem;
-      font-family: League-Gothic;
+      font-family: 'Barlow Condensed';
       letter-spacing: 0.04em;
       &:active {
          animation: scale-down-center 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)
@@ -80,7 +80,7 @@ export const Wrapper = styled.div`
       color: ${theme.colors.textColor4};
    }
    .time-info {
-      font-family: League-Gothic;
+      font-family: 'Barlow Condensed';
       font-weight: 500;
       color: ${theme.colors.textColor5};
       text-transform: capitalize;

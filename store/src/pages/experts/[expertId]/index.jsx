@@ -234,7 +234,7 @@ const Wrapper = styled.div`
       text-align: left;
       margin-bottom: 0;
       text-transform: uppercase;
-      font-family: League-Gothic;
+      font-family: 'Barlow Condensed';
       margin-bottom: 2rem;
    }
    .text_align {

@@ -25,7 +25,7 @@ export const FooterBtnWrap = styled.div`
       padding: 0 1rem;
       border-radius: 0px;
       background: ${theme.colors.textColor4};
-      font-family: League-Gothic;
+      font-family: 'Barlow Condensed';
       letter-spacing: 0.04em;
       padding: 0 8px;
       color: ${theme.colors.textColor};
@@ -38,7 +38,7 @@ export const FooterBtnWrap = styled.div`
       border-radius: 0px;
       background: ${theme.colors.textColor};
       color: ${theme.colors.textColor4};
-      font-family: League-Gothic;
+      font-family: 'Barlow Condensed';
       letter-spacing: 0.04em;
       padding: 0 8px;
       &:disabled {

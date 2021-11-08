@@ -287,14 +287,14 @@ const Wrapper = styled.div`
       padding: 0 1rem;
    }
    .heading_h1 {
-      font-family: League-Gothic;
+      font-family: 'Barlow Condensed';
       font-style: normal;
       font-weight: normal;
       text-align: center;
       color: ${theme.colors.textColor4};
       .invited_by {
          font-size: inherit;
-         font-family: League-Gothic;
+         font-family: 'Barlow Condensed';
          font-style: normal;
          font-weight: normal;
          text-align: center;

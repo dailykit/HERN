@@ -10,7 +10,7 @@ export const Wrapper = styled.div`
       text-align: center;
    }
    .heading {
-      font-family: League-Gothic;
+      font-family: 'Barlow Condensed';
       color: ${theme.colors.textColor5};
       text-transform: uppercase;
       margin-bottom: 8px;

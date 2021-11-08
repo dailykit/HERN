@@ -178,7 +178,7 @@ const Wrapper = styled.div`
       font-weight: 400;
       text-align: left;
       text-transform: uppercase;
-      font-family: League-Gothic;
+      font-family: 'Barlow Condensed';
       margin-bottom: 0 !important;
    }
    .checkout-heading {
