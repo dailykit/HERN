@@ -1,36 +1,86 @@
 import React, { useState } from 'react'
-import { Form, Loader, Flex, Spacer, Dropdown } from '@dailykit/ui'
+import styled from 'styled-components'
+
+import {
+   Form,
+   Loader,
+   Flex,
+   IconButton,
+   Spacer,
+   Dropdown,
+   PlusIcon,
+   Tunnels,
+   Tunnel,
+   TunnelHeader,
+   useTunnel,
+} from '@dailykit/ui'
 import {
    Tooltip,
    RichTextEditor,
+   AssetUploader,
    InlineLoader,
+   Banner,
    ErrorState,
 } from '../../../components'
+import { EditIcon } from '../../../assets/icons'
+import PhoneInput, {
+   formatPhoneNumber,
+   formatPhoneNumberIntl,
+   isValidPhoneNumber,
+} from 'react-phone-number-input'
+import 'react-phone-number-input/style.css'
 import gql from 'graphql-tag'
 import { useSubscription } from '@apollo/react-hooks'
+import validator from '../../../../apps/brands/views/validator'
+export const Text = ({
+   fieldDetail,
+   marginLeft,
+   path,
+   onConfigChange,
+   isValid,
+   setIsValid,
+   validationType = null,
+}) => {
+   const [errorMessage, setErrorMessage] = React.useState([])
+   return (
+      <Flex
+         container
+         justifyContent="space-between"
+         alignItems="center"
+         margin={`0 0 0 ${marginLeft}`}
+      >
+         <Flex container alignItems="flex-end">
+            <Form.Label title={fieldDetail.label} htmlFor="text">
+               {fieldDetail.label.toUpperCase()}
+            </Form.Label>
+            <Tooltip identifier="text_component_info" />
+         </Flex>
+         <Form.Group>
+            <Form.Text
+               id={path}
+               name={path}
+               onBlur={e => {
+                  if (validationType == 'email') {
+                     const { isValid: isValidEmail, errors } = validator.email(
+                        e.target.value
+                     )
+                     setIsValid(isValidEmail)
+                     setErrorMessage(errors)
+                     return
+                  }
+               }}
+               onChange={onConfigChange}
+               value={fieldDetail?.value || fieldDetail.default}
+               placeholder="Enter the orientation"
+            />
 
-export const Text = ({ fieldDetail, marginLeft, path, onConfigChange }) => (
-   <Flex
-      container
-      justifyContent="space-between"
-      alignItems="center"
-      margin={`0 0 0 ${marginLeft}`}
-   >
-      <Flex container alignItems="flex-end">
-         <Form.Label title={fieldDetail.label} htmlFor="text">
-            {fieldDetail.label.toUpperCase()}
-         </Form.Label>
-         <Tooltip identifier="text_component_info" />
+            {errorMessage.length !== 0 && (
+               <Form.Error> {errorMessage[0]}</Form.Error>
+            )}
+         </Form.Group>
       </Flex>
-      <Form.Text
-         id={path}
-         name={path}
-         onChange={onConfigChange}
-         value={fieldDetail?.value || fieldDetail.default}
-         placeholder="Enter the orientation"
-      />
-   </Flex>
-)
+   )
+}
 
 export const Toggle = ({ fieldDetail, marginLeft, path, onConfigChange }) => (
    <Flex
@@ -296,7 +346,7 @@ export const NumberWithSelect = ({
             name={path}
             onChange={onConfigChange}
             placeholder="Enter integer value"
-            value={fieldDetail?.number.value || fieldDetail.number.default}
+            value={fieldDetail?.number.value || fieldDetail?.number.default}
          />
          <Form.Select
             id={path}
@@ -394,3 +444,143 @@ export const CollectionSelector = props => {
       </>
    )
 }
+
+export const PhoneNumberSelector = ({
+   setIsValid,
+   fieldDetail,
+   marginLeft,
+   path,
+   onConfigChange,
+}) => {
+   return (
+      <>
+         <Flex
+            container
+            justifyContent="space-between"
+            alignItems="center"
+            margin={`0 0 0 ${marginLeft}`}
+         >
+            <Flex container alignItems="flex-end">
+               <Form.Label title={fieldDetail.label} htmlFor="textArea">
+                  {fieldDetail.label.toUpperCase()}
+               </Form.Label>
+               <Tooltip identifier="textArea_component_info" />
+            </Flex>
+            <PhoneInput
+               id={path}
+               name={path}
+               initialValueFormat="national"
+               value={fieldDetail?.value}
+               onChange={result => {
+                  const e = { target: { name: path, value: result } }
+                  onConfigChange(e, result)
+                  console.log(result, 'result')
+                  if (result) {
+                     const isValid = isValidPhoneNumber(result)
+                     isValid ? setIsValid(true) : setIsValid(false)
+                  }
+               }}
+               placeholder="Enter your phone number"
+            />
+         </Flex>
+      </>
+   )
+}
+export const ImageUpload = props => {
+   // props
+   const { fieldDetail, path, onConfigChange, configSaveHandler, configJSON } = props
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
+
+   const updateSetting = (data = {}) => {
+      if ('url' in data) {
+         const e = { target: { name: path, value: data.url } }
+         onConfigChange(e, data.url)
+         configSaveHandler(configJSON)
+      }
+      closeTunnel(1)
+   }
+   return (
+      <>
+         {console.log(fieldDetail, 'url from file')}
+         <Flex container alignItems="flex-start">
+            <Form.Label title={fieldDetail.label} htmlFor="textArea">
+               {fieldDetail.label.toUpperCase()}
+            </Form.Label>
+            <Tooltip identifier="textArea_component_info" />
+         </Flex>
+         <Spacer size="16px" />
+         {fieldDetail?.value ? (
+            <ImageContainer width="120px" height="120px">
+               <div>
+                  <IconButton
+                     size="sm"
+                     type="solid"
+                     onClick={() => openTunnel(1)}
+                  >
+                     <EditIcon />
+                  </IconButton>
+               </div>
+               <img src={fieldDetail?.value} alt="Brand Logo" />
+            </ImageContainer>
+         ) : (
+            <ImageContainer width="120px" height="120px" noThumb>
+               <div>
+                  <IconButton
+                     size="sm"
+                     type="solid"
+                     onClick={() => openTunnel(1)}
+                  >
+                     <PlusIcon />
+                  </IconButton>
+               </div>
+            </ImageContainer>
+         )}
+         <Tunnels tunnels={tunnels}>
+            <Tunnel layer={1} size="md">
+               <TunnelHeader
+                  title="Add Brand Logo"
+                  close={() => closeTunnel(1)}
+               />
+               <Banner id="brands-app-brands-brand-details-brand-logo-tunnel-top" />
+               <Flex padding="16px">
+                  <AssetUploader
+                     onAssetUpload={data => updateSetting(data)}
+                     onImageSelect={data => updateSetting(data)}
+                  />
+               </Flex>
+               <Banner id="brands-app-brands-brand-details-brand-logo-tunnel-bottom" />
+            </Tunnel>
+         </Tunnels>
+      </>
+   )
+}
+
+export const ImageContainer = styled.div`
+   padding: 8px;
+   position: relative;
+   border-radius: 2px;
+   border: 1px solid #e3e3e3;
+   height: ${props => props.height || 'auto'};
+   width: ${props => props.width || 'auto'};
+   img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+   }
+   div {
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      position: absolute;
+      background: linear-gradient(
+         212deg,
+         rgba(0, 0, 0, 1) 0%,
+         rgba(255, 255, 255, 0) 29%
+      );
+   }
+   button {
+      float: right;
+      margin: 4px 4px 0 0;
+   }
+`

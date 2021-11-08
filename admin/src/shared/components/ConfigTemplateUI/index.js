@@ -7,6 +7,8 @@ import styled from 'styled-components'
 const ConfigTemplateUI = ({ config, setConfig, configSaveHandler }) => {
    const [configJSON, setConfigJSON] = React.useState({})
    const [fields, setFields] = React.useState([])
+   const [isValid, setIsValid] = React.useState(true)
+
    const elements = []
    const onConfigChange = (e, value) => {
       let updatedConfig
@@ -49,6 +51,8 @@ const ConfigTemplateUI = ({ config, setConfig, configSaveHandler }) => {
                   key: updatedRootkey,
                   configJSON,
                   onConfigChange,
+                  configSaveHandler,
+                  isValid, setIsValid
                })
             )
          } else {
@@ -92,7 +96,7 @@ const ConfigTemplateUI = ({ config, setConfig, configSaveHandler }) => {
                   {fields.map((field, index) => (
                      <div key={index}>{field}</div>
                   ))}
-                  <TextButton size="sm" type="outline" onClick={() => configSaveHandler(configJSON)}>Save</TextButton>
+                  {!(fields[0]?.props?.fieldDetail?.showModal) && <TextButton size="sm" type="outline" disabled={!isValid} onClick={() => configSaveHandler(configJSON)}>Save</TextButton>}
                </div>
             ) : (
                <p style={{ textAlign: "center", fontSize: "2rem" }}>
@@ -104,6 +108,8 @@ const ConfigTemplateUI = ({ config, setConfig, configSaveHandler }) => {
    )
 }
 export default ConfigTemplateUI
+
+
 const StyledConfig = styled.div`
   border: 1px solid rgb(196, 196, 196);
   height: 100%;

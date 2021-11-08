@@ -12,9 +12,11 @@ import {
     TextArea,
     TextWithSelect,
     NumberWithSelect,
+    PhoneNumberSelector,
+    ImageUpload
 } from "./UIComponents"
-
-export const getFieldUI = ({ key, configJSON, onConfigChange }) => {
+import { Address } from "./UIComponents/Address"
+export const getFieldUI = ({ key, configJSON, onConfigChange, isValid, setIsValid, configSaveHandler }) => {
     const field = _.get(configJSON, key)
     const indentation = `${key.split(".").length * 8}px`
     let configUi
@@ -48,6 +50,9 @@ export const getFieldUI = ({ key, configJSON, onConfigChange }) => {
                 fieldDetail={field}
                 marginLeft={indentation}
                 path={key}
+                validationType={field?.validationType}
+                isValid={isValid}
+                setIsValid={setIsValid}
                 onConfigChange={onConfigChange}
             />
         )
@@ -142,5 +147,52 @@ export const getFieldUI = ({ key, configJSON, onConfigChange }) => {
             />
         )
     }
+    else if (
+        field.dataType === "phoneNumber" &&
+        field.userInsertType === "phoneNumber"
+    ) {
+        configUi = (
+            <PhoneNumberSelector
+                setIsValid={setIsValid}
+                isValid={isValid}
+                fieldDetail={field}
+                marginLeft={indentation}
+                path={key}
+                onConfigChange={onConfigChange}
+            />
+        )
+    }
+
+    else if (
+        field.dataType === "address" &&
+        field.userInsertType === "addressField"
+    ) {
+        configUi = (
+            <Address
+                fieldDetail={field}
+                marginLeft={indentation}
+                path={key}
+                onConfigChange={onConfigChange}
+                configSaveHandler={configSaveHandler}
+                configJSON={configJSON}
+            />
+        )
+    }
+    else if (
+        field.dataType === "imageUpload" &&
+        field.userInsertType === "imageUpload"
+    ) {
+        configUi = (
+            <ImageUpload
+                fieldDetail={field}
+                marginLeft={indentation}
+                path={key}
+                onConfigChange={onConfigChange}
+                configSaveHandler={configSaveHandler}
+                configJSON={configJSON}
+            />
+        )
+    }
+
     return configUi
 }
