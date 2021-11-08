@@ -392,7 +392,10 @@ export default function Experience({
                         </div>
 
                         <ReadMoreDiv>
-                           <p className="about-exp text7">
+                           <p
+                              className="about-exp text7"
+                              style={{ marginBottom: '0' }}
+                           >
                               {parse(
                                  experienceInfo?.experience?.description || ''
                               )}
@@ -426,7 +429,9 @@ export default function Experience({
                                  <h1 className="sub-heading text1">
                                     {header?.title}
                                  </h1>
-                                 {parse(header?.content || '')}
+                                 <p className="about-exp text7">
+                                    {parse(header?.content || '')}
+                                 </p>
                               </section>
                            )
                         }
@@ -754,9 +759,9 @@ const Wrapper = styled.main`
          color: ${theme.colors.textColor5};
          font-weight: 400;
          text-align: left;
-         margin-bottom: 0;
          text-transform: uppercase;
          font-family: 'Barlow Condensed';
+         margin-bottom: 1rem;
       }
    }
 
@@ -789,6 +794,7 @@ const Wrapper = styled.main`
          margin-bottom: 0;
          text-transform: uppercase;
          font-family: 'Barlow Condensed';
+         margin-bottom: 1rem;
       }
       .subsub-heading {
          color: ${theme.colors.textColor5};
@@ -809,22 +815,15 @@ const Wrapper = styled.main`
             text-align: center;
          }
       }
-      .about-exp {
-         text-align: justify;
+      .about-exp,
+      .about-exp p {
+         text-align: left;
          color: ${theme.colors.lightGreyText};
          font-weight: 500;
-         font-size: ${theme.sizes.h4};
-         margin-bottom: 0.5rem;
-         p {
-            text-align: justify;
-            color: ${theme.colors.lightGreyText};
-            font-weight: 600;
-            font-size: ${theme.sizes.h4};
-            margin-bottom: 0.5rem;
-            font-size: 20px;
-            line-height: 24px;
-            font-family: Futura;
-         }
+         margin-bottom: 1rem;
+      }
+      .about-exp p i {
+         margin-right: 0.5rem;
       }
       .readMore {
          border: none;

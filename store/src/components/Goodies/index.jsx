@@ -1,10 +1,14 @@
 import React from 'react'
-import { Flex } from '@dailykit/ui'
 import { Wrapper } from './styles'
+import { isEmpty } from '../../utils'
 
-export const GoodiesWrapper = ({ children }) => <Wrapper>{children}</Wrapper>
+export const GoodiesWrapper = ({ children }) => {
+   if (isEmpty(children)) return null
+   return <Wrapper>{children}</Wrapper>
+}
 
 export const Ingredients = ({ options, title, textClass = '' }) => {
+   if (isEmpty(options)) return null
    return (
       <>
          {options?.map(option => {
@@ -39,7 +43,7 @@ export const Ingredients = ({ options, title, textClass = '' }) => {
    )
 }
 export const Goodies = ({ products, title, secondTitle, textClass = '' }) => {
-   console.log(products, 'llll')
+   if (isEmpty(products)) return null
    return (
       <GoodiesWrapper>
          {products.map(product => {

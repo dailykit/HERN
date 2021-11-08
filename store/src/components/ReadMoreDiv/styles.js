@@ -3,23 +3,21 @@ import { theme } from '../../theme'
 export const Wrapper = styled.div`
    width: 100%;
    height: 100%;
-   text-align: center;
    .info-div {
       width: 100%;
-      height: 50px;
+      height: 25px;
       transition: height 0.3s;
       overflow: hidden;
+      text-align: center;
    }
    .read-more-btn {
       border: none;
-      text-align: center;
+      text-align: left;
       text-transform: uppercase;
-      font-weight: 800;
-      font-size: 20px;
+      font-weight: 600;
       color: ${theme.colors.textColor};
       background: none;
       cursor: pointer;
-      margin-top: 1rem;
       position: relative;
       -webkit-text-decoration: none;
       text-decoration: none;
