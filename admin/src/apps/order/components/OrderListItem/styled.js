@@ -35,19 +35,17 @@ export const Styles = {
       `
    ),
    Order: styled.div(
-      () => css`
-         background: #f9f9f9;
-         border-radius: 8px;
+      ({ status }) => css`
          padding: 16px;
          display: grid;
          grid-gap: 14px;
-         margin-bottom: 18px;
+
          position: relative;
          border-left-width: 8px;
          border-right-width: 8px;
-         ${'' /* border-bottom: 1px solid #ececec; */}
-         grid-template-columns: 220px 1fr 220px;
-         ${'' /* border: 3px solid ${selectColor(status)}; */}
+         border-bottom: 1px solid #ececec;
+         grid-template-columns: 220px 1fr 140px;
+         border: 3px solid ${selectColor(status)};
          grid-template-areas:
             'left header right'
             'left section right';
@@ -56,7 +54,6 @@ export const Styles = {
          }
          > aside:nth-of-type(2) {
             grid-area: right;
-            width: 235px;
          }
          > header {
             grid-area: header;
@@ -78,13 +75,13 @@ export const Styles = {
                margin-top: 16px;
             }
          }
-         @media only screen and (min-width: 1439px) and (max-width: 1024px) {
+         @media only screen and (max-width: 1439px) and (min-width: 1024px) {
             grid-template-areas:
                'left header right'
                'left section section';
-            /* > aside:nth-of-type(2) {
+            > aside:nth-of-type(2) {
                margin-top: 16px;
-            } */
+            }
          }
          @media only screen and (min-width: 768px) and (orientation: portrait) {
             grid-template-columns: auto auto;

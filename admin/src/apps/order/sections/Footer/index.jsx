@@ -29,7 +29,7 @@ const Footer = ({ openTunnel, setPosition }) => {
       )
    return (
       <Wrapper>
-         {/* <Section title="Station">Station: {station.name}</Section>
+         <Section title="Station">Station: {station.name}</Section>
          {station?.defaultKotPrinterId ? (
             <Section title="KOT Printer">
                <span>
@@ -88,7 +88,7 @@ const Footer = ({ openTunnel, setPosition }) => {
                   status={station.assignedScales[0].active && 'online'}
                />
             </Section>
-         ) : null} */}
+         ) : null}
          <StyledNav align="right">
             <button
                type="button"
@@ -105,28 +105,28 @@ const Footer = ({ openTunnel, setPosition }) => {
                        })
                }
             >
-               <SettingsIcon color="#919699" size="20" />
+               <SettingsIcon color="#000" size="20" />
             </button>
-            <button
+            {/* <button
                type="button"
                title="Notifications"
                onClick={() => openTunnel(1)}
             >
                <BellIcon color="#000" size="20" />
-            </button>
+            </button> */}
             <button
                type="button"
                title="Panel on Left"
                onClick={() => setPosition('left')}
             >
-               <LeftPanelIcon color="#919699" size="20" />
+               <LeftPanelIcon color="#000" size="20" />
             </button>
             <button
                type="button"
                title="Panel on Right"
                onClick={() => setPosition('right')}
             >
-               <RightPanelIcon color="#919699" size="20" />
+               <RightPanelIcon color="#000" size="20" />
             </button>
          </StyledNav>
       </Wrapper>

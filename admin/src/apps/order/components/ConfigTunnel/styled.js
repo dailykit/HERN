@@ -2,36 +2,33 @@ import styled from 'styled-components'
 
 export const Main = styled.main`
    overflow: hidden;
-
-   ${'' /* grid-template-columns: 240px 1fr; */}
-   display: block;
-   width: 300px;
-   padding: 20px 27px;
+   display: grid;
+   grid-template-columns: 240px 1fr;
 `
 
-// export const Sidebar = styled.aside`
-//    padding: 6px;
-//    border-radius: 2px;
-//    background: #d9e9f1;
-//    margin: 0 0 14px 14px;
-//    li {
-//       list-style: none;
-//       margin-bottom: 4px;
-//    }
-//    a {
-//       height: 40px;
-//       display: flex;
-//       padding: 0 12px;
-//       align-items: center;
-//       border-radius: 2px;
-//       text-decoration: none;
-//       :hover,
-//       &.active {
-//          color: #fff;
-//          background: #1bb9f0;
-//       }
-//    }
-// `
+export const Sidebar = styled.aside`
+   padding: 6px;
+   border-radius: 2px;
+   background: #d9e9f1;
+   margin: 0 0 14px 14px;
+   li {
+      list-style: none;
+      margin-bottom: 4px;
+   }
+   a {
+      height: 40px;
+      display: flex;
+      padding: 0 12px;
+      align-items: center;
+      border-radius: 2px;
+      text-decoration: none;
+      :hover,
+      &.active {
+         color: #fff;
+         background: #1bb9f0;
+      }
+   }
+`
 
 export const Content = styled.main`
    padding: 16px;
@@ -54,5 +51,3 @@ export const Content = styled.main`
       }
    }
 `
-
-

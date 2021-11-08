@@ -23,3 +23,7 @@
    padding-top: 3px;
    background-color: #ffffff;
 }
+
+.tabulator .tabulator-tableHolder {
+   overflow-x: hidden;
+}

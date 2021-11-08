@@ -20,6 +20,8 @@ const Styles = {
          z-index: 10;
          overflow-y: auto;
          overflow-x: hidden;
+         transition: width 1s;
+         justify-content: space-between;
          ::-webkit-scrollbar {
             width: 6px;
          }
@@ -27,9 +29,10 @@ const Styles = {
             background-color: rgba(196, 196, 196, 0.9);
             border-radius: 4px;
          }
-         @media only screen and (max-width: 767px) {
-            width: 100vw;
+         @media only screen (max-width: 767px) and (min-width: 400px) {
+            width: 9vw;
          }
+
          :hover {
             position: absolute;
             width: 222px;
@@ -148,7 +151,7 @@ const Styles = {
    Choices: styled.div`
       width: 100%;
       padding-left: ${props => (props.active ? `15px` : `18px`)} !important;
-      padding: 12px;
+      padding: 11px;
       display: flex;
       align-items: center;
       justify-content: space-between;
