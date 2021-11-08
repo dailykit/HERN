@@ -40,20 +40,13 @@ export const Wrapper = styled.div`
          font-weight: 400;
          margin-bottom: 43px;
       }
-      .expertDesc {
-         text-align: justify;
+      .expertDesc,
+      .expertDesc p {
+         text-align: left;
          color: ${theme.colors.textColor5};
          font-family: 'Maven Pro';
-         letter-spacing: 0.16em;
+         letter-spacing: 0.06em;
          margin-bottom: 0;
-         p {
-            text-align: justify;
-            color: ${theme.colors.textColor5};
-            font-family: 'Maven Pro';
-            letter-spacing: 0.16em;
-            margin-bottom: 0;
-            margin-bottom: 0;
-         }
       }
       .readMore {
          border: none;

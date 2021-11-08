@@ -285,6 +285,7 @@ const StyledWrapper = styled.div`
          letter-spacing: 0.16em;
          color: ${theme.colors.textColor};
          margin-bottom: 4rem;
+         text-transform: uppercase;
       }
       .customInput {
          width: 80%;

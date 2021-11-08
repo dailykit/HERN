@@ -283,16 +283,6 @@ export default function Experience({
             </div>
             <TabWrapper scroll={scroll}>
                <div className="tabOptions">
-                  {/* <span
-                     className="scrollBtn scrollLeftBtn"
-                     onClick={scrollLeftHandler}
-                  >
-                     <ChevronLeft
-                        size={theme.sizes.h3}
-                        color={theme.colors.textColor}
-                     />
-                  </span> */}
-
                   <div className="tab" id="experienceTab">
                      {/* <CustomScrollbar> */}
                      <ul>
@@ -369,30 +359,9 @@ export default function Experience({
                               Reviews
                            </a>
                         </li>
-
-                        <li>
-                           <a
-                              href="#section-7"
-                              className={
-                                 router.asPath.includes('#section-7') &&
-                                 'activeHash'
-                              }
-                           >
-                              Similar Experiences
-                           </a>
-                        </li>
                      </ul>
                      {/* </CustomScrollbar> */}
                   </div>
-                  {/* <span
-                     className="scrollBtn scrollRightBtn"
-                     onClick={scrollRightHandler}
-                  >
-                     <ChevronRight
-                        size={theme.sizes.h3}
-                        color={theme.colors.textColor}
-                     />
-                  </span> */}
                </div>
             </TabWrapper>
 
@@ -408,16 +377,11 @@ export default function Experience({
                <div className="info-wrapper">
                   <div className="left-container">
                      <section id="section-1">
-                        {/* <Flex
-                           container
-                           alignItems="center"
-                           justifyContent="space-between"
-                           margin="16px 0"
-                        > */}
-                        <h1 className="sub-heading text1">
-                           {experienceInfo?.experience?.title}
-                        </h1>
-                        {/* {width > 769 && (
+                        <div style={{ margin: '16px 0' }}>
+                           <h1 className="sub-heading text1">
+                              {experienceInfo?.experience?.title}
+                           </h1>
+                           {/* {width > 769 && (
                               <Button
                                  onClick={openSendPollModal}
                                  className="customPollBtn text7"
@@ -425,7 +389,7 @@ export default function Experience({
                                  SEND POLL
                               </Button>
                            )} */}
-                        {/* </Flex> */}
+                        </div>
 
                         <ReadMoreDiv>
                            <p className="about-exp text7">
@@ -959,7 +923,7 @@ const TabWrapper = styled.div`
             font-size: ${theme.sizes.h4};
             font-weight: 500;
             text-transform: uppercase;
-            margin-right: 5.8rem;
+            margin-right: 8.4rem;
             :last-child {
                margin-right: 0;
             }
