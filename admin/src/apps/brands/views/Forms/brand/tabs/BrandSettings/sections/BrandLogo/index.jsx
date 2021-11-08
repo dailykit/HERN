@@ -2,11 +2,9 @@ import React from 'react'
 import { isEmpty } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
-
-import { ImageContainer } from './styled'
 import { BRANDS } from '../../../../../../../graphql'
-import { EditIcon } from '../../../../../../../../../shared/assets/icons'
 
+import { InlineLoader } from '../../../../../../../../../shared/components'
 import { toast } from 'react-toastify'
 import { logger } from '../../../../../../../../../shared/utils'
 import ConfigTemplateUI from '../../../../../../../../../shared/components/ConfigTemplateUI'
