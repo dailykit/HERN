@@ -1376,3 +1376,63 @@ export const BRAND_SETTINGS_BY_TYPE = gql`
       }
    }
 `
+export const BRAND_ONDEMAND_DELIVERY_RECURRENCES = gql`
+   query BRAND_ONDEMAND_DELIVERY_RECURRENCES(
+      $where: fulfilment_brand_recurrence_bool_exp!
+   ) {
+      brandRecurrences(where: $where) {
+         brandId
+         brandLocationId
+         recurrenceId
+         recurrence {
+            id
+            rrule
+            type
+            timeSlots {
+               from
+               to
+               pickUpPrepTime
+               mileRanges {
+                  from
+                  city
+                  distanceType
+                  to
+                  zipcodes
+                  state
+                  prepTime
+                  geoBoundary
+                  isExcluded
+               }
+            }
+         }
+      }
+   }
+`
+export const ORDER_TAB = gql`
+   query ORDER_TAB($where: brands_orderTab_bool_exp!) {
+      brands_orderTab(where: $where) {
+         orderFulfillmentTypeLabel
+         label
+         orderType
+         availableOrderInterfaceLabel
+      }
+   }
+`
+export const BRAND_LOCATIONS = gql`
+   query BRAND_LOCATIONS($where: brands_brand_location_bool_exp!) {
+      brands_brand_location_aggregate(where: $where) {
+         aggregate {
+            count
+         }
+         nodes {
+            brandId
+            locationId
+            id
+            orderExperienceId
+            orderExperienceOptionType
+            doesDeliverOutsideCity
+            doesDeliverOutsideState
+         }
+      }
+   }
+`

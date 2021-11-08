@@ -9,7 +9,12 @@ import {
    RadioIcon,
    StoreIcon,
 } from '../assets/icons'
-import { useScript, isClient, get_env } from '../utils'
+import {
+   useScript,
+   isClient,
+   get_env,
+   isStoreDeliveryAvailable,
+} from '../utils'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
 import { Loader } from './index'
 import gql from 'graphql-tag'
@@ -17,16 +22,22 @@ import { useQuery } from '@apollo/react-hooks'
 import { useConfig } from '../lib'
 import axios from 'axios'
 import _ from 'lodash'
-import { getDistance } from 'geolib'
+import { getDistance, convertDistance } from 'geolib'
 import { CSSTransition } from 'react-transition-group'
 import LocationSelectorConfig from './locatoinSeletorConfig.json'
 import { Button } from './button'
+import {
+   BRAND_LOCATIONS,
+   BRAND_ONDEMAND_DELIVERY_RECURRENCES,
+} from '../graphql'
 
 // this Location selector is a pop up for mobile view so can user can select there location
 
 export const LocationSelector = props => {
    // WARNING this component using settings so whenever using this component make sure this component can access settings
    const { setShowLocationSelectionPopup, settings } = props
+
+   const { brand } = useConfig()
 
    const [userCoordinate, setUserCoordinate] = useState({
       latitude: null,
@@ -38,6 +49,7 @@ export const LocationSelector = props => {
       errorType: '',
    })
    const [address, setAddress] = useState(null)
+   const [brandRecurrences, setBrandRecurrences] = useState(null)
 
    React.useEffect(() => {
       document.querySelector('body').style.overflowY = 'hidden'
@@ -58,7 +70,7 @@ export const LocationSelector = props => {
            )}&libraries=places`
          : ''
    )
-   console.log('locationSearching', locationSearching)
+   // console.log('locationSearching', locationSearching)
    // location by browser
    const locationByBrowser = () => {
       // if no location already exist in local and if browser not support geolocation api
@@ -82,7 +94,6 @@ export const LocationSelector = props => {
             // )
          }
          const error = () => {
-            console.log('unable to get user location')
             setLocationSearching(prev => ({
                ...prev,
                loading: !prev.loading,
@@ -95,7 +106,6 @@ export const LocationSelector = props => {
    }
 
    const formatAddress = async input => {
-      console.log('input', input)
       if (!isClient) return 'Runs only on client side.'
       const response = await fetch(
          `https://maps.googleapis.com/maps/api/geocode/json?key=${
@@ -127,6 +137,74 @@ export const LocationSelector = props => {
       }
    }
 
+   // get all store when user address available
+   const {
+      loading: brandLocationLoading,
+      data: { brands_brand_location_aggregate = {} } = {},
+   } = useQuery(BRAND_LOCATIONS, {
+      skip: !address?.city || !address?.state || !brand || !brand?.id,
+      variables: {
+         where: {
+            _or: [
+               {
+                  location: {
+                     city: { _eq: address?.city },
+                     state: { _eq: address?.state },
+                  },
+               },
+               {
+                  _or: [
+                     { doesDeliverOutsideCity: { _eq: true } },
+                     { doesDeliverOutsideState: { _eq: true } },
+                  ],
+               },
+            ],
+            brandId: { _eq: brand.id },
+         },
+      },
+      onCompleted: data => {
+         // console.log('brandLocationDataa', data)
+      },
+      onError: error => {
+         console.log(error)
+      },
+   })
+
+   const { loading: brandRecurrencesLoading } = useQuery(
+      BRAND_ONDEMAND_DELIVERY_RECURRENCES,
+      {
+         skip:
+            !brands_brand_location_aggregate?.nodes ||
+            !brands_brand_location_aggregate?.nodes.length > 0 ||
+            !brand ||
+            !brand.id,
+         variables: {
+            where: {
+               recurrence: {
+                  isActive: { _eq: true },
+                  type: { _eq: 'ONDEMAND_DELIVERY' },
+               },
+               _or: [
+                  {
+                     brandLocationId: {
+                        _in: brands_brand_location_aggregate?.nodes?.map(
+                           x => x.id
+                        ),
+                     },
+                  },
+                  { brandId: { _eq: brand.id } },
+               ],
+               isActive: { _eq: true },
+            },
+         },
+         onCompleted: data => {
+            console.log('this is recurrences data', data)
+            if (data) {
+               setBrandRecurrences(data.brandRecurrences)
+            }
+         },
+      }
+   )
    // get address by coordinates
    useEffect(() => {
       if (userCoordinate.latitude && userCoordinate.longitude) {
@@ -146,7 +224,27 @@ export const LocationSelector = props => {
                   const secondaryText = formatted_address
                      .slice(formatted_address.length - 3)
                      .join(',')
-                  setAddress(prev => ({ ...prev, mainText, secondaryText }))
+                  const address = {}
+                  data.results[0].address_components.forEach(node => {
+                     if (node.types.includes('locality')) {
+                        address.city = node.long_name
+                     }
+                     if (node.types.includes('administrative_area_level_1')) {
+                        address.state = node.long_name
+                     }
+                     if (node.types.includes('country')) {
+                        address.country = node.long_name
+                     }
+                     if (node.types.includes('postal_code')) {
+                        address.zipcode = node.long_name
+                     }
+                  })
+                  setAddress(prev => ({
+                     ...prev,
+                     mainText,
+                     secondaryText,
+                     ...address,
+                  }))
                   localStorage.setItem(
                      'userLocation',
                      JSON.stringify({
@@ -155,6 +253,7 @@ export const LocationSelector = props => {
                         address: {
                            mainText,
                            secondaryText,
+                           ...address,
                         },
                      })
                   )
@@ -246,6 +345,7 @@ export const LocationSelector = props => {
                   userCoordinate={userCoordinate}
                   setShowLocationSelectionPopup={setShowLocationSelectionPopup}
                   settings={settings}
+                  brandRecurrences={brandRecurrences}
                />
             )}
             <div className="hern-store-location-selector-footer"></div>
@@ -292,7 +392,7 @@ const RefineLocation = props => {
    }
 
    const onChangeMap = (center, zoom, bounds, marginBounds) => {
-      console.log('onChange', center, zoom, bounds, marginBounds)
+      // console.log('onChange', center, zoom, bounds, marginBounds)
       setCenterCoordinate(prev => ({
          ...prev,
          latitude: center.lat,
@@ -335,13 +435,24 @@ const GET_BRAND_LOCATION = gql`
             id
             locationAddress
             label
+            zipcode
+            city
+            state
+            lat
+            lng
+            country
          }
       }
    }
 `
 const StoreList = props => {
-   const { userCoordinate, setShowLocationSelectionPopup, settings } = props
-   console.log('settings', settings)
+   const {
+      userCoordinate,
+      setShowLocationSelectionPopup,
+      settings,
+      brandRecurrences,
+   } = props
+   // console.log('settings', settings)
 
    const { brand } = useConfig()
 
@@ -352,37 +463,40 @@ const StoreList = props => {
       cardSelectionStyle,
       selectionButtonLabel,
    } = LocationSelectorConfig.informationVisibility.deliveryLocationCard
-   const { showStoresOnMap } =
+   const { showStoresOnMap, disabledLocationDisplayStyle } =
       LocationSelectorConfig.informationVisibility.deliverySettings
 
-   const [brandLocation, setBrandLocation] = useState(storeStaticData)
+   const [brandLocation, setBrandLocation] = useState(null)
    const [sortedBrandLocation, setSortedBrandLocation] = useState(null)
    const [selectedStore, setSelectedStore] = useState(null)
    const [showStoreOnMap, setShowStoreOnMap] = useState(false)
+   const [status, setStatus] = useState('loading')
 
    // get all store
-   // const { loading: storeLoading, error: storeError } = useQuery(
-   //    GET_BRAND_LOCATION,
-   //    {
-   //       variables: {
-   //          where: {
-   //             brandId: {
-   //                _eq: brand.id,
-   //             },
-   //          },
-   //       },
-   //       onCompleted: ({ brands_brand_location = [] }) => {
-   //          setBrandLocation(brands_brand_location)
-   //          if (brands_brand_location.length !== 0) {
-   //             getDataWithDrivableDistance(brands_brand_location)
-   //          }
-   //          console.log('completed')
-   //       },
-   //       onError: error => {
-   //          console.log('getBrandLocationError', error)
-   //       },
-   //    }
-   // )
+   const { loading: storeLoading, error: storeError } = useQuery(
+      GET_BRAND_LOCATION,
+      {
+         skip: !(brand || brand.id),
+         variables: {
+            where: {
+               brandId: {
+                  _eq: brand.id,
+               },
+            },
+         },
+         onCompleted: ({ brands_brand_location = [] }) => {
+            setBrandLocation(brands_brand_location)
+            if (brands_brand_location.length !== 0) {
+               setBrandLocation(brands_brand_location)
+               // getDataWithDrivableDistance(brands_brand_location)
+               console.log('brands_brand_location', brands_brand_location)
+            }
+         },
+         onError: error => {
+            console.log('getBrandLocationError', error)
+         },
+      }
+   )
 
    // get distance
    const getDataWithDrivableDistance = async brandLocation => {
@@ -402,7 +516,7 @@ const StoreList = props => {
                lon2: eachLocation.location.locationAddress.locationCoordinates
                   .longitude,
             }
-            const data = await getDrivvaleData(postLocationData, url)
+            const data = await getDrivableData(postLocationData, url)
             const mapData = data.map(x => {
                x['distance'] = x.rows[0].elements[0].distance
                x['duration'] = x.rows[0].elements[0].duration
@@ -423,60 +537,125 @@ const StoreList = props => {
 
    useEffect(() => {
       if (brandLocation) {
-         setSortedBrandLocation(getaerialDistance(brandLocation, true))
+         setSortedBrandLocation(getAerialDistance(brandLocation, true))
       }
-   }, [brandLocation])
+   }, [brandLocation, brandRecurrences])
 
    useEffect(() => {
-      if (sortedBrandLocation) {
-         setSelectedStore(sortedBrandLocation[0])
+      if (
+         sortedBrandLocation &&
+         sortedBrandLocation.every(eachStore =>
+            Boolean(eachStore.deliveryStatus)
+         )
+      ) {
+         setSelectedStore(
+            sortedBrandLocation.filter(
+               eachStore => eachStore.deliveryStatus.status
+            )[0]
+         )
          if (
             LocationSelectorConfig.informationVisibility.deliverySettings
                .storeLocationSelectionMethod.value.value === 'auto'
          ) {
             // select automatically first store form sorted array
-            console.log('your automatic store is', sortedBrandLocation[0])
+            console.log(
+               'your automatic store is',
+               sortedBrandLocation.filter(
+                  eachStore => eachStore.deliveryStatus.status
+               )[0]
+            )
             setShowLocationSelectionPopup(false)
          }
       }
    }, [sortedBrandLocation])
 
-   const getaerialDistance = (data, sorted = false) => {
+   const getAerialDistance = (data, sorted = false) => {
       const userLocation = JSON.parse(localStorage.getItem('userLocation'))
 
       // add arial distance
-      const dataWithaerialDistance = data.map(eachStore => {
+      const dataWithAerialDistance = data.map(eachStore => {
          const aerialDistance = getDistance(
             userLocation,
             eachStore.location.locationAddress.locationCoordinates,
             0.1
          )
-         eachStore['aerialDistance'] =
-            parseFloat((aerialDistance / 1000).toFixed(1)) + ' km'
+         const aerialDistanceInMiles = convertDistance(aerialDistance, 'mi')
+         eachStore['aerialDistance'] = parseFloat(
+            aerialDistanceInMiles.toFixed(2)
+         )
+         eachStore['distanceUnit'] = 'mi'
+         if (brandRecurrences) {
+            const deliveryStatus = isStoreDeliveryAvailable(
+               brandRecurrences,
+               eachStore
+            )
+            eachStore['deliveryStatus'] = deliveryStatus
+         }
          return eachStore
       })
-
       // sort by distance
       if (sorted) {
-         const sortedDataWithaerialDistance = _.sortBy(dataWithaerialDistance, [
-            x => x.aerialDistance.split(' ')[0],
+         const sortedDataWithAerialDistance = _.sortBy(dataWithAerialDistance, [
+            x => x.aerialDistance,
          ])
-         return sortedDataWithaerialDistance
+         if (brandRecurrences) {
+            setStatus('success')
+         }
+         return sortedDataWithAerialDistance
       }
-      return dataWithaerialDistance
+      return dataWithAerialDistance
    }
+
+   // auto select mode
    if (
       LocationSelectorConfig.informationVisibility.deliverySettings
          .storeLocationSelectionMethod.value.value === 'auto'
    ) {
       return null
    }
-   if (sortedBrandLocation === null) {
+
+   // sorted and location calculating
+   if (
+      brandRecurrences === null ||
+      sortedBrandLocation === null ||
+      status === 'loading'
+   ) {
       return <Loader />
    }
+
+   // when no store available on user location
    if (sortedBrandLocation.length === 0) {
       return <p>No Store Available</p>
    }
+
+   // when there is no stores which do not fulfill delivery time and mile range for brandRecurrences
+   if (!sortedBrandLocation.some(store => store.deliveryStatus.status)) {
+      return (
+         <div className="hern-location-selector__stores-list">
+            {sortedBrandLocation[0].deliveryStatus.message}
+         </div>
+      )
+   }
+
+   // when there is no stores which do not fulfill timing but does not fulfill delivery conditions (aerial distance, zipcodes, geoboundry)
+   if (
+      !sortedBrandLocation.some(store => {
+         const sortedStatus = store.deliveryStatus.result
+         if (sortedStatus) {
+            const { aerial, zipcode, geoBoundary } = sortedStatus
+            return aerial && zipcode && geoBoundary
+         }
+         return false
+      })
+   ) {
+      return (
+         <div className="hern-location-selector__stores-list">
+            NO store Available on this location
+         </div>
+      )
+   }
+
+   // some store fulfill all conditions (not all store )
    return (
       <div className="hern-location-selector__stores-list">
          {showStoresOnMap.value && (
@@ -496,8 +675,15 @@ const StoreList = props => {
                   zipcode,
                },
                aerialDistance,
+               distanceUnit,
             } = eachStore
             const { line1, line2 } = locationAddress
+            if (
+               !eachStore.deliveryStatus.status &&
+               disabledLocationDisplayStyle.value?.value === 'noShow'
+            ) {
+               return null
+            }
             return (
                <div
                   key={index}
@@ -508,10 +694,16 @@ const StoreList = props => {
                            cardSelectionStyle.value?.value === 'border' &&
                            selectedStore &&
                            id === selectedStore.id,
+                     },
+                     {
+                        'hern-store-location-selector__each-store--disabled':
+                           disabledLocationDisplayStyle.value?.value ===
+                              'disabled' && !eachStore.deliveryStatus.status,
                      }
                   )}
                   onClick={() => {
-                     setSelectedStore(eachStore)
+                     eachStore.deliveryStatus.status &&
+                        setSelectedStore(eachStore)
                   }}
                >
                   <div className="hern-store-location-selector__store-location-info-container">
@@ -540,17 +732,21 @@ const StoreList = props => {
                         )}
                      </div>
                   </div>
-                  {cardSelectionStyle.value?.value === 'radio' && (
-                     <RadioIcon
-                        size={18}
-                        showTick={selectedStore && id === selectedStore.id}
-                     />
-                  )}
+                  {cardSelectionStyle.value?.value === 'radio' &&
+                     disabledLocationDisplayStyle.value?.value === 'disabled' &&
+                     !eachStore.deliveryStatus.status(
+                        <RadioIcon
+                           size={18}
+                           showTick={selectedStore && id === selectedStore.id}
+                        />
+                     )}
                   <div className="hern-store-location-selector__time-distance">
                      {showAerialDistance.value && (
                         <div className="hern-store-location-selector__aerialDistance">
                            <DistanceIcon />
-                           <span>{aerialDistance}</span>
+                           <span>
+                              {aerialDistance} {distanceUnit}
+                           </span>
                         </div>
                      )}
                   </div>
@@ -567,7 +763,7 @@ const StoreList = props => {
    )
 }
 
-const getDrivvaleData = async (postLocationData, url) => {
+const getDrivableData = async (postLocationData, url) => {
    const { data } = await axios.post(url, postLocationData)
    console.log('this is data with drivable distance', data)
    return data
@@ -724,115 +920,3 @@ const StoresOnMap = props => {
       </CSSTransition>
    )
 }
-const storeStaticData = [
-   {
-      id: 1000,
-      brandId: 1,
-      location: {
-         id: 1000,
-         locationAddress: {
-            locationCoordinates: {
-               latitude: 26.90316230216457,
-               longitude: 75.73522352265464,
-            },
-            line1: '404',
-            line2: 'Vaishali Nagar',
-         },
-         city: 'Jaipur',
-         state: 'Rajasthan',
-         country: 'India',
-         zipcode: '302021',
-         label: 'Vaishali Nagar',
-         __typename: 'brands_location',
-      },
-      __typename: 'brands_brand_location',
-   },
-   {
-      id: 1001,
-      brandId: 1,
-      location: {
-         id: 1001,
-         locationAddress: {
-            locationCoordinates: {
-               latitude: 26.901937228096937,
-               longitude: 75.73881399859978,
-            },
-            line1: 'WP2Q+QG7',
-            line2: 'Akruti Apartments, Chitrakoot',
-         },
-         city: 'Jaipur',
-         state: 'Rajasthan',
-         country: 'India',
-         zipcode: '302021',
-         label: 'Chitrakoot',
-         __typename: 'brands_location',
-      },
-      __typename: 'brands_brand_location',
-   },
-   {
-      id: 1002,
-      brandId: 1,
-      location: {
-         id: 1002,
-         locationAddress: {
-            locationCoordinates: {
-               latitude: 26.909911628518344,
-               longitude: 75.77575138297402,
-            },
-            line1: 'SD 183 Shanti Nagar Hatwara Rod',
-            line2: 'near by ESI Hospital, Shanti Nagar, Civil Lines',
-         },
-         city: 'Jaipur',
-         state: 'Rajasthan',
-         country: 'India',
-         zipcode: '302006',
-         label: 'Sodala',
-         __typename: 'brands_location',
-      },
-      __typename: 'brands_brand_location',
-   },
-   {
-      id: 1003,
-      brandId: 1,
-      location: {
-         id: 1003,
-         locationAddress: {
-            locationCoordinates: {
-               latitude: 26.89192841928747,
-               longitude: 75.80403170257227,
-            },
-            line1: '43, Everest Colony',
-            line2: 'Vidhayak Nagar, Lalkothi',
-         },
-         city: 'Jaipur',
-         state: 'Rajasthan',
-         country: 'India',
-         zipcode: '302015',
-         label: 'Tonk Road',
-         __typename: 'brands_location',
-      },
-      __typename: 'brands_brand_location',
-   },
-   {
-      id: 1004,
-      brandId: 1,
-      location: {
-         id: 1004,
-         locationAddress: {
-            locationCoordinates: {
-               latitude: 26.881315679510156,
-               longitude: 75.79800985516759,
-            },
-            line1: '320, Laxmi Colony, Adarsh Bazar',
-            line2: 'Barkat Nagar, Tonk Phatak',
-         },
-         city: 'Jaipur',
-         state: 'Rajasthan',
-         country: 'India',
-         zipcode: '302007',
-         label: 'Gandhi Nagar',
-         __typename: 'brands_location',
-      },
-      __typename: 'brands_brand_location',
-   },
-]
