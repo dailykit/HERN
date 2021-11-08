@@ -11,6 +11,30 @@ export const FooterBtnWrap = styled.div`
    width: 100%;
    background: ${theme.colors.textColor4};
    padding: 1rem 0;
+   .flex-row-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 48px;
+      width: auto;
+      border-radius: 0px;
+      background: ${theme.colors.textColor4};
+      padding: 0 8px;
+      color: ${theme.colors.textColor};
+      :hover {
+         background: ${theme.colors.lightBackground.grey};
+      }
+      .ghost-btn {
+         width: auto;
+         padding: 0 1rem;
+         border-radius: 0px;
+         background: transparent;
+         font-family: 'Barlow Condensed';
+         letter-spacing: 0.04em;
+         padding: 0 8px;
+         color: ${theme.colors.textColor};
+      }
+   }
    .show-more {
       font-size: ${theme.sizes.h8};
       padding: 8px 0;
@@ -19,20 +43,7 @@ export const FooterBtnWrap = styled.div`
       color: ${theme.colors.textColor};
       margin: 8px 0;
    }
-   .ghost-btn {
-      height: 48px;
-      width: auto;
-      padding: 0 1rem;
-      border-radius: 0px;
-      background: ${theme.colors.textColor4};
-      font-family: 'Barlow Condensed';
-      letter-spacing: 0.04em;
-      padding: 0 8px;
-      color: ${theme.colors.textColor};
-      :hover {
-         background: ${theme.colors.lightBackground.grey};
-      }
-   }
+
    .nextBtn {
       height: 48px;
       border-radius: 0px;
@@ -78,7 +89,7 @@ export const FooterBtnWrap = styled.div`
       .nextBtn {
          height: 64px;
       }
-      .ghost-btn {
+      .flex-row-wrap {
          background: ${theme.colors.lightBackground.grey};
          :hover {
             background: ${theme.colors.textColor4};

@@ -4,25 +4,15 @@ import { theme } from '../../../../theme'
 export const Wrapper = styled.div`
    width: 100%;
    position: relative;
-   .select-participant {
-      width: 100%;
+   .head {
       color: ${theme.colors.textColor7};
-      border: 0;
-      background: none;
-      cursor: pointer;
-      p {
-         text-align: left;
-         color: ${theme.colors.textColor7};
-         font-family: 'Maven Pro';
-      }
-      .head {
-         color: ${theme.colors.textColor7};
-         font-family: 'Maven Pro';
-      }
-      .guest_para {
-         color: ${theme.colors.textColor5};
-         font-family: 'Maven Pro';
-      }
+      font-family: 'Maven Pro';
+      margin-bottom: 0;
+   }
+   .flex-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
    }
 `
 

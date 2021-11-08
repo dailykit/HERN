@@ -44,6 +44,7 @@ import RenderCard from './RenderCard'
 import Review from './Review'
 import SignupFold from './SignupFold'
 import PaymentProcessingModal from './PaymentProcessingModal'
+import CustomTooltip from './CustomTooltip'
 
 export {
    Button,
@@ -91,7 +92,8 @@ export {
    RenderCard,
    Review,
    SignupFold,
-   PaymentProcessingModal
+   PaymentProcessingModal,
+   CustomTooltip
 }
 export * from './Icons'
 export * from './Card'
