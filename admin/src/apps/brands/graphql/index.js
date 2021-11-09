@@ -90,7 +90,28 @@ export const BRANDS = {
    `,
 
    SETTING: gql`
-      subscription brandSettings(
+      subscription brandSettings($brandId: Int!, $identifiers: [String!]) {
+         brands_brand_brandSetting(
+            where: {
+               _and: {
+                  brandId: { _eq: $brandId }
+                  brandSetting: { identifier: { _in: $identifiers } }
+               }
+            }
+         ) {
+            brandId
+            value
+            brandSetting {
+               id
+               identifier
+            }
+         }
+      }
+   `,
+
+   //for seo settings(lazy query)
+   SETTINGS: gql`
+      query brandSettings(
          $identifier: String_comparison_exp!
          $type: String_comparison_exp!
       ) {
@@ -104,22 +125,6 @@ export const BRANDS = {
          }
       }
    `,
-   //for seo settings(lazy query)
-   SETTINGS: gql`
-    query brandSettings(
-       $identifier: String_comparison_exp!
-       $type: String_comparison_exp!
-    ) {
-       brandSettings(where: { identifier: $identifier, type: $type }) {
-          id
-          brand: brand_brandSetting {
-             brandId
-             value
-          }
-          configTemplate
-       }
-    }
- `,
    UPSERT_BRAND_COLLECTION: gql`
       mutation upsertBrandCollection(
          $object: onDemand_brand_collection_insert_input!

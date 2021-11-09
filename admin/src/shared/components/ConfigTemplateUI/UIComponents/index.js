@@ -500,7 +500,6 @@ export const ImageUpload = props => {
    }
    return (
       <>
-         {console.log(fieldDetail, 'url from file')}
          <Flex container alignItems="flex-start">
             <Form.Label title={fieldDetail.label} htmlFor="textArea">
                {fieldDetail.label.toUpperCase()}

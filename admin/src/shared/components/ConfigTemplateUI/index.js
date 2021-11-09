@@ -15,7 +15,7 @@ const ConfigTemplateUI = ({ config, setConfig, configSaveHandler }) => {
    const [configJSON, setConfigJSON] = React.useState({})
    const [fields, setFields] = React.useState([])
    const [isValid, setIsValid] = React.useState(true)
-
+   console.log("config", config)
    const elements = []
    const onConfigChange = (e, value) => {
       let updatedConfig
@@ -138,15 +138,16 @@ const ConfigTemplateUI = ({ config, setConfig, configSaveHandler }) => {
    return (
       <Styles.ConfigTemplateUI>
          <Styles.Header>
-            <Styles.Heading>Edit Component</Styles.Heading>
-            {!(fields[0]?.props?.fieldDetail?.showModal) && <ComboButton
+            {/* <Styles.Heading>Edit Component</Styles.Heading> */}
+            {console.log(fields[0]?.props, "👉👉🥩✌")}
+            {!(fields[0]?.props?.fieldDetail?.showModal) ? <ComboButton
                type="solid"
                size="sm"
                onClick={() => configSaveHandler(configJSON)}
             >
                <PlusIcon color="#fff" />
                Save
-            </ComboButton>}
+            </ComboButton> : ''}
          </Styles.Header>
 
          <div>
