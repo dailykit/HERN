@@ -359,16 +359,6 @@ export const MODIFIERS = gql`
    }
 `
 
-// used for food cost percent
-export const STORE_SETTINGS = gql`
-   subscription StoreSettings($type: String!) {
-      storeSettings(where: { type: { _eq: $type } }) {
-         value
-         identifier
-      }
-   }
-`
-
 export const S_SUPPLIER_ITEMS = gql`
    subscription SupplierItems {
       supplierItems(where: { isArchived: { _eq: false } }) {

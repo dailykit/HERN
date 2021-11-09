@@ -104,7 +104,7 @@ export const BRANDS = {
          }
       }
    `,
-   //for seo settings(error-lazy query)
+   //for seo settings(lazy query)
    SETTINGS: gql`
     query brandSettings(
        $identifier: String_comparison_exp!

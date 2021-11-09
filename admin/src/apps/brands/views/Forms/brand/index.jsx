@@ -21,10 +21,8 @@ import { logger } from '../../../../../shared/utils'
 import { useTabs } from '../../../../../shared/providers'
 import { Banner, InlineLoader, Tooltip } from '../../../../../shared/components'
 import {
-   OnDemandSettings,
    OnDemandCollections,
    SubscriptionPlans,
-   SubscriptionSettings,
    ThirdPartyIntegrations,
    BrandSettings,
    SEOSettings,
@@ -180,13 +178,10 @@ export const Brand = () => {
             <HorizontalTabList>
                <HorizontalTab>Brand Settings</HorizontalTab>
                <HorizontalTab>SEO Tools</HorizontalTab>
-               <HorizontalTab>On Demand Settings</HorizontalTab>
                <HorizontalTab>On Demand Collections</HorizontalTab>
-               {/* <HorizontalTab>Subscription Settings</HorizontalTab>
                <HorizontalTab>Subscription Plans</HorizontalTab>
-               <HorizontalTab>Third Party Integration</HorizontalTab> */}
+               {/* <HorizontalTab>Third Party Integration</HorizontalTab> */}
             </HorizontalTabList>
-
             <HorizontalTabPanels>
                <HorizontalTabPanel>
                   <BrandSettings />
@@ -195,20 +190,14 @@ export const Brand = () => {
                   <SEOSettings domain={brand?.domain} />
                </HorizontalTabPanel>
                <HorizontalTabPanel>
-                  <OnDemandSettings />
-               </HorizontalTabPanel>
-               <HorizontalTabPanel>
                   <OnDemandCollections />
-               </HorizontalTabPanel>
-               <HorizontalTabPanel>
-                  <SubscriptionSettings />
                </HorizontalTabPanel>
                <HorizontalTabPanel>
                   <SubscriptionPlans />
                </HorizontalTabPanel>
-               <HorizontalTabPanel>
+               {/* <HorizontalTabPanel>
                   <ThirdPartyIntegrations brand={brand} />
-               </HorizontalTabPanel>
+               </HorizontalTabPanel> */}
             </HorizontalTabPanels>
          </HorizontalTabs>
          <Banner id="brands-app-brands-brand-details-bottom" />
