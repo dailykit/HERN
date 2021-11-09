@@ -740,7 +740,7 @@ export const MASTER = {
             }
          }
       `,
-      CREATE: gql`
+      AGGREGATE: gql`
          subscription CREATE {
             master_recipeComponent_aggregate {
                aggregate {
