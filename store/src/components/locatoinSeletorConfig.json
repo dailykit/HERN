@@ -1,9 +1,42 @@
 {
     "informationVisibility": {
         "defaultFulfillmentType": {
-            "type": "single",
+            "type": "multi",
             "label": "Select menu type for jump on categories of products.",
-            "value": {},
+            "value": [
+                {
+                    "id": 1,
+                    "title": "Delivery",
+                    "value": "DELIVERY"
+                },
+                {
+                    "id": 2,
+                    "title": "Pick Up",
+                    "value": "PICKUP"
+                },
+                {
+                    "id": 3,
+                    "title": "Dine In",
+                    "value": "DINEIN"
+                }
+            ],
+            "default": [
+                {
+                    "id": 1,
+                    "title": "Delivery",
+                    "value": "delivery"
+                },
+                {
+                    "id": 2,
+                    "title": "Pick Up",
+                    "value": "pickUp"
+                },
+                {
+                    "id": 3,
+                    "title": "Dine In",
+                    "value": "dineIn"
+                }
+            ],
             "options": [
                 {
                     "id": 1,
@@ -32,6 +65,48 @@
                 "dataType": "boolean",
                 "description": "This will show or hide delivery section in location selection popup.",
                 "userInsertType": "checkbox"
+            },
+            "deliveryType": {
+                "type": "multi",
+                "label": "Select style for card selection.",
+                "default": [
+                    {
+                        "id": 1,
+                        "title": "Now (On Demand)",
+                        "value": "ONDEMAND"
+                    },
+                    {
+                        "id": 2,
+                        "title": "Later",
+                        "value": "PREORDER"
+                    }
+                ],
+                "value": [
+                    {
+                        "id": 1,
+                        "title": "Now (On Demand)",
+                        "value": "ONDEMAND"
+                    },
+                    {
+                        "id": 2,
+                        "title": "Later",
+                        "value": "PREORDER"
+                    }
+                ],
+                "options": [
+                    {
+                        "id": 1,
+                        "title": "Now (On Demand)",
+                        "value": "ONDEMAND"
+                    },
+                    {
+                        "id": 2,
+                        "title": "Later",
+                        "value": "PREORDER"
+                    }
+                ],
+                "dataType": "select",
+                "userInsertType": "dropdown"
             },
             "storeLocationSelectionMethod": {
                 "type": "single",

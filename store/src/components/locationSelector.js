@@ -29,7 +29,10 @@ import { Button } from './button'
 import {
    BRAND_LOCATIONS,
    BRAND_ONDEMAND_DELIVERY_RECURRENCES,
+   PREORDER_DELIVERY_BRAND_RECURRENCES,
 } from '../graphql'
+import { TimePicker, Divider, Radio } from 'antd'
+import 'antd/dist/antd.css'
 
 // this Location selector is a pop up for mobile view so can user can select there location
 
@@ -38,6 +41,13 @@ export const LocationSelector = props => {
    const { setShowLocationSelectionPopup, settings } = props
 
    const { brand } = useConfig()
+
+   const { defaultFulfillmentType: storeFulfillmentType } =
+      LocationSelectorConfig.informationVisibility
+   const availableFulFillmentType =
+      storeFulfillmentType.value.length > 0
+         ? storeFulfillmentType.value.map(x => x.value)
+         : storeFulfillmentType.default.map(x => x.value)
 
    const [userCoordinate, setUserCoordinate] = useState({
       latitude: null,
@@ -49,12 +59,19 @@ export const LocationSelector = props => {
       errorType: '',
    })
    const [address, setAddress] = useState(null)
-   const [brandRecurrences, setBrandRecurrences] = useState(null)
+
+   const [fulfillmentType, setFulfillmentType] = useState(
+      Boolean(availableFulFillmentType.find(x => x === 'DELIVERY'))
+         ? 'DELIVERY'
+         : availableFulFillmentType[0]
+   )
 
    React.useEffect(() => {
       document.querySelector('body').style.overflowY = 'hidden'
       return () => (document.querySelector('body').style.overflowY = 'auto')
    })
+
+   // use local storage user address
    React.useEffect(() => {
       const userLocation = JSON.parse(localStorage.getItem('userLocation'))
       if (userLocation && userLocation.address) {
@@ -63,79 +80,6 @@ export const LocationSelector = props => {
          setLocationSearching(prev => ({ ...prev, loading: !prev.loading }))
       }
    }, [])
-   const [loaded, error] = useScript(
-      isClient
-         ? `https://maps.googleapis.com/maps/api/js?key=${get_env(
-              'GOOGLE_API_KEY'
-           )}&libraries=places`
-         : ''
-   )
-   // console.log('locationSearching', locationSearching)
-   // location by browser
-   const locationByBrowser = () => {
-      // if no location already exist in local and if browser not support geolocation api
-      setLocationSearching(prev => ({
-         ...prev,
-         loading: !prev.loading,
-         error: false,
-      }))
-      if (window.navigator.geolocation) {
-         const success = position => {
-            const latitude = position.coords.latitude
-            const longitude = position.coords.longitude
-            const userLocationInfo = {
-               latitude,
-               longitude,
-            }
-            setUserCoordinate(prev => ({ ...prev, latitude, longitude }))
-            // localStorage.setItem(
-            //    'userLocation',
-            //    JSON.stringify(userLocationInfo)
-            // )
-         }
-         const error = () => {
-            setLocationSearching(prev => ({
-               ...prev,
-               loading: !prev.loading,
-               error: true,
-               errorType: 'blockByBrowser',
-            }))
-         }
-         window.navigator.geolocation.getCurrentPosition(success, error)
-      }
-   }
-
-   const formatAddress = async input => {
-      if (!isClient) return 'Runs only on client side.'
-      const response = await fetch(
-         `https://maps.googleapis.com/maps/api/geocode/json?key=${
-            isClient ? get_env('GOOGLE_API_KEY') : ''
-         }&address=${encodeURIComponent(input.description)}`
-      )
-      const data = await response.json()
-      if (data.status === 'OK' && data.results.length > 0) {
-         const [result] = data.results
-         const userLocation = {
-            latitude: result.geometry.location.lat,
-            longitude: result.geometry.location.lng,
-         }
-         setUserCoordinate(prev => ({ ...prev, ...userLocation }))
-         const address = {
-            mainText: input.structured_formatting.main_text,
-            secondaryText: input.structured_formatting.secondary_text,
-         }
-         result.address_components.forEach(node => {
-            if (node.types.includes('postal_code')) {
-               address.zipcode = node.long_name
-            }
-         })
-         setAddress(address)
-         localStorage.setItem(
-            'userLocation',
-            JSON.stringify({ ...userLocation, address })
-         )
-      }
-   }
 
    // get all store when user address available
    const {
@@ -170,41 +114,6 @@ export const LocationSelector = props => {
       },
    })
 
-   const { loading: brandRecurrencesLoading } = useQuery(
-      BRAND_ONDEMAND_DELIVERY_RECURRENCES,
-      {
-         skip:
-            !brands_brand_location_aggregate?.nodes ||
-            !brands_brand_location_aggregate?.nodes.length > 0 ||
-            !brand ||
-            !brand.id,
-         variables: {
-            where: {
-               recurrence: {
-                  isActive: { _eq: true },
-                  type: { _eq: 'ONDEMAND_DELIVERY' },
-               },
-               _or: [
-                  {
-                     brandLocationId: {
-                        _in: brands_brand_location_aggregate?.nodes?.map(
-                           x => x.id
-                        ),
-                     },
-                  },
-                  { brandId: { _eq: brand.id } },
-               ],
-               isActive: { _eq: true },
-            },
-         },
-         onCompleted: data => {
-            console.log('this is recurrences data', data)
-            if (data) {
-               setBrandRecurrences(data.brandRecurrences)
-            }
-         },
-      }
-   )
    // get address by coordinates
    useEffect(() => {
       if (userCoordinate.latitude && userCoordinate.longitude) {
@@ -293,67 +202,420 @@ export const LocationSelector = props => {
                   <span>Skip</span>
                </div>
             </div>
-            {/* get location */}
-            <div className="hern-store-location-selector-main">
-               <div className="hern-store-location-selector-main__location-field">
-                  {loaded &&
-                     !error &&
-                     LocationSelectorConfig.informationVisibility
-                        .deliverySettings.userAddressInput.value && (
-                        <GooglePlacesAutocomplete
-                           inputClassName="hern-store-location-selector-main__location-input"
-                           onSelect={data => formatAddress(data)}
-                           placeholder={
-                              LocationSelectorConfig.informationVisibility
-                                 .deliverySettings.userAddressInputPlaceHolder
-                                 .value || 'Enter your delivery location'
-                           }
-                        />
+            {/* fulfillment type*/}
+            <div className="hern-store-location-selector__fulfillment-selector">
+               {availableFulFillmentType.includes('DELIVERY') && (
+                  <button
+                     className={classNames(
+                        'hern-store-location-selector__fulfillment-selector-button',
+                        {
+                           'hern-store-location-selector__fulfillment-selector-button--active':
+                              fulfillmentType === 'DELIVERY',
+                        }
                      )}
-
-                  <div
-                     className="hern-store-location-selector-main__get-current-location"
-                     onClick={locationByBrowser}
+                     onClick={() => setFulfillmentType('DELIVERY')}
                   >
-                     <GPSIcon />
-                     <span>Get Current Location</span>
-                  </div>
-                  {locationSearching.error &&
-                     locationSearching.errorType === 'blockByBrowser' && (
-                        <span className="hern-store-location-selector-main__get-current-location-error-message">
-                           You have blocked this site from tracking your
-                           location. To use this, change your location settings
-                           in browser.
-                        </span>
+                     Delivery
+                  </button>
+               )}
+               {availableFulFillmentType.includes('PICKUP') && (
+                  <button
+                     className={classNames(
+                        'hern-store-location-selector__fulfillment-selector-button',
+                        {
+                           'hern-store-location-selector__fulfillment-selector-button--active':
+                              fulfillmentType === 'PICKUP',
+                        }
                      )}
-               </div>
+                     onClick={() => setFulfillmentType('PICKUP')}
+                  >
+                     Pickup
+                  </button>
+               )}
+               {availableFulFillmentType.includes('DINEIN') && (
+                  <button
+                     className={classNames(
+                        'hern-store-location-selector__fulfillment-selector-button',
+                        {
+                           'hern-store-location-selector__fulfillment-selector-button--active':
+                              fulfillmentType === 'DINEIN',
+                        }
+                     )}
+                     onClick={() => setFulfillmentType('DINEIN')}
+                  >
+                     Dine In
+                  </button>
+               )}
             </div>
-            {locationSearching.loading ? (
-               <Loader />
-            ) : locationSearching.error ? (
-               <p>unable to find location</p>
-            ) : address ? (
-               <div className="hern-store-location-selector__user-location">
-                  {LocationSelectorConfig.informationVisibility.deliverySettings
-                     .userAddress.value && <AddressInfo address={address} />}
-               </div>
-            ) : null}
-            {/* <RefineLocation setUserCoordinate={setUserCoordinate} /> */}
-            {/* Footer */}
-            {address && (
-               <StoreList
-                  userCoordinate={userCoordinate}
+            <Divider style={{ margin: '1em 0' }} />
+            {fulfillmentType === 'DELIVERY' && (
+               <Delivery
                   setShowLocationSelectionPopup={setShowLocationSelectionPopup}
                   settings={settings}
-                  brandRecurrences={brandRecurrences}
+                  brands_brand_location_aggregate={
+                     brands_brand_location_aggregate
+                  }
                />
             )}
+            {fulfillmentType === 'PICKUP' && <Pickup />}
+            {fulfillmentType === 'DINEIN' && <DineIn />}
             <div className="hern-store-location-selector-footer"></div>
          </div>
       </div>
    )
 }
 
+const Delivery = props => {
+   const { deliveryType: storeDeliveryType } =
+      LocationSelectorConfig.informationVisibility.deliverySettings
+
+   const availableStoreType =
+      storeDeliveryType.value.length > 0
+         ? storeDeliveryType.value.map(x => x.value)
+         : storeDeliveryType.default.map(x => x.value)
+
+   const {
+      setShowLocationSelectionPopup,
+      settings,
+      brands_brand_location_aggregate,
+   } = props
+
+   const { brand } = useConfig()
+
+   const [deliveryType, setDeliveryType] = useState(
+      Boolean(availableStoreType.find(x => x === 'ONDEMAND'))
+         ? 'ONDEMAND'
+         : availableStoreType[0]
+   )
+   const [deliveryRadioOptions] = useState([
+      {
+         label: 'Now',
+         value: 'ONDEMAND',
+         disabled: !Boolean(availableStoreType.find(x => x === 'ONDEMAND')),
+      },
+      {
+         label: 'Later',
+         value: 'PREORDER',
+         disabled: !Boolean(availableStoreType.find(x => x === 'PREORDER')),
+      },
+   ])
+   const [deliveryTypeChanging, setDeliveryTyeChanging] = useState(false)
+   const [onDemandBrandRecurrence, setOnDemandBrandReoccurrence] =
+      useState(null)
+   const [preOrderBrandRecurrence, setPreOrderBrandReoccurrence] =
+      useState(null)
+   const [userCoordinate, setUserCoordinate] = useState({
+      latitude: null,
+      longitude: null,
+   })
+   const [locationSearching, setLocationSearching] = useState({
+      error: false,
+      loading: false,
+      errorType: '',
+   })
+   const [address, setAddress] = useState(null)
+
+   // location by browser
+   const locationByBrowser = () => {
+      // if no location already exist in local and if browser not support geolocation api
+      setLocationSearching(prev => ({
+         ...prev,
+         loading: !prev.loading,
+         error: false,
+      }))
+      if (window.navigator.geolocation) {
+         const success = position => {
+            const latitude = position.coords.latitude
+            const longitude = position.coords.longitude
+            const userLocationInfo = {
+               latitude,
+               longitude,
+            }
+            setUserCoordinate(prev => ({ ...prev, latitude, longitude }))
+            // localStorage.setItem(
+            //    'userLocation',
+            //    JSON.stringify(userLocationInfo)
+            // )
+         }
+         const error = () => {
+            setLocationSearching(prev => ({
+               ...prev,
+               loading: !prev.loading,
+               error: true,
+               errorType: 'blockByBrowser',
+            }))
+         }
+         window.navigator.geolocation.getCurrentPosition(success, error)
+      }
+   }
+
+   // get address by coordinates
+   useEffect(() => {
+      if (userCoordinate.latitude && userCoordinate.longitude) {
+         fetch(
+            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${
+               userCoordinate.latitude
+            },${userCoordinate.longitude}&key=${get_env('GOOGLE_API_KEY')}`
+         )
+            .then(res => res.json())
+            .then(data => {
+               if (data.status === 'OK' && data.results.length > 0) {
+                  const formatted_address =
+                     data.results[0].formatted_address.split(',')
+                  const mainText = formatted_address
+                     .slice(0, formatted_address.length - 3)
+                     .join(',')
+                  const secondaryText = formatted_address
+                     .slice(formatted_address.length - 3)
+                     .join(',')
+                  const address = {}
+                  data.results[0].address_components.forEach(node => {
+                     if (node.types.includes('locality')) {
+                        address.city = node.long_name
+                     }
+                     if (node.types.includes('administrative_area_level_1')) {
+                        address.state = node.long_name
+                     }
+                     if (node.types.includes('country')) {
+                        address.country = node.long_name
+                     }
+                     if (node.types.includes('postal_code')) {
+                        address.zipcode = node.long_name
+                     }
+                  })
+                  setAddress(prev => ({
+                     ...prev,
+                     mainText,
+                     secondaryText,
+                     ...address,
+                  }))
+                  localStorage.setItem(
+                     'userLocation',
+                     JSON.stringify({
+                        latitude: userCoordinate.latitude,
+                        longitude: userCoordinate.longitude,
+                        address: {
+                           mainText,
+                           secondaryText,
+                           ...address,
+                        },
+                     })
+                  )
+                  setLocationSearching(prev => ({
+                     ...prev,
+                     loading: !prev.loading,
+                  }))
+               }
+            })
+            .catch(e => {
+               console.log('error', e)
+               setLocationSearching(prev => ({
+                  ...prev,
+                  loading: !prev.loading,
+                  error: true,
+                  errorType: 'fetchAddress',
+               }))
+            })
+      }
+   }, [userCoordinate])
+
+   // use local storage user address
+   React.useEffect(() => {
+      const userLocation = JSON.parse(localStorage.getItem('userLocation'))
+      if (userLocation && userLocation.address) {
+         setLocationSearching(prev => ({ ...prev, loading: !prev.loading }))
+         setAddress(userLocation.address)
+         setLocationSearching(prev => ({ ...prev, loading: !prev.loading }))
+      }
+   }, [])
+
+   React.useEffect(() => {
+      return () => {
+         setDeliveryTyeChanging(false)
+         setDeliveryType('ONDEMAND')
+      }
+   }, [])
+
+   // onDemand delivery
+   const { loading: brandRecurrencesLoading } = useQuery(
+      BRAND_ONDEMAND_DELIVERY_RECURRENCES,
+      {
+         skip:
+            !brands_brand_location_aggregate?.nodes ||
+            !brands_brand_location_aggregate?.nodes.length > 0 ||
+            !brand ||
+            !brand.id ||
+            !(deliveryType === 'ONDEMAND'),
+         variables: {
+            where: {
+               recurrence: {
+                  isActive: { _eq: true },
+                  type: { _eq: 'ONDEMAND_DELIVERY' },
+               },
+               _or: [
+                  {
+                     brandLocationId: {
+                        _in: brands_brand_location_aggregate?.nodes?.map(
+                           x => x.id
+                        ),
+                     },
+                  },
+                  { brandId: { _eq: brand.id } },
+               ],
+               isActive: { _eq: true },
+            },
+         },
+         fetchPolicy: 'network-only',
+         onCompleted: data => {
+            if (data) {
+               setOnDemandBrandReoccurrence(data.brandRecurrences)
+            }
+         },
+         onError: e => {
+            console.log('Ondemand brand recurrences error:::', e)
+         },
+      }
+   )
+
+   // preOrderDelivery
+   const { loading: preOrderBrandRecurrencesLoading } = useQuery(
+      PREORDER_DELIVERY_BRAND_RECURRENCES,
+      {
+         skip:
+            !brands_brand_location_aggregate?.nodes ||
+            !brands_brand_location_aggregate?.nodes.length > 0 ||
+            !brand ||
+            !brand.id ||
+            !(deliveryType === 'PREORDER'),
+         variables: {
+            where: {
+               recurrence: {
+                  isActive: { _eq: true },
+                  type: { _eq: 'PREORDER_DELIVERY' },
+               },
+               _or: [
+                  {
+                     brandLocationId: {
+                        _in: brands_brand_location_aggregate?.nodes?.map(
+                           x => x.id
+                        ),
+                     },
+                  },
+                  { brandId: { _eq: brand.id } },
+               ],
+               isActive: { _eq: true },
+            },
+         },
+         fetchPolicy: 'network-only',
+         onCompleted: data => {
+            if (data) {
+               setPreOrderBrandReoccurrence(data.brandRecurrences)
+            }
+         },
+         onError: e => {
+            console.log('preOrder brand recurrences error:::', e)
+         },
+      }
+   )
+
+   const [loaded, error] = useScript(
+      isClient
+         ? `https://maps.googleapis.com/maps/api/js?key=${get_env(
+              'GOOGLE_API_KEY'
+           )}&libraries=places`
+         : ''
+   )
+
+   return (
+      <>
+         {/* get location */}
+         <div
+            className={classNames(
+               'hern-store-location__preOrder-time-selection'
+            )}
+         >
+            <Radio.Group
+               options={deliveryRadioOptions}
+               onChange={e => {
+                  setDeliveryTyeChanging(prev => !prev)
+                  setDeliveryType(e.target.value)
+                  setTimeout(() => {
+                     setDeliveryTyeChanging(prev => !prev)
+                  }, 500)
+               }}
+               value={deliveryType}
+            />
+         </div>
+         <div className="hern-store-location-selector-main">
+            <div className="hern-store-location-selector-main__location-field">
+               {loaded &&
+                  !error &&
+                  LocationSelectorConfig.informationVisibility.deliverySettings
+                     .userAddressInput.value && (
+                     <GooglePlacesAutocomplete
+                        inputClassName="hern-store-location-selector-main__location-input"
+                        onSelect={data => formatAddress(data)}
+                        placeholder={
+                           LocationSelectorConfig.informationVisibility
+                              .deliverySettings.userAddressInputPlaceHolder
+                              .value || 'Enter your delivery location'
+                        }
+                     />
+                  )}
+
+               <div
+                  className="hern-store-location-selector-main__get-current-location"
+                  onClick={locationByBrowser}
+               >
+                  <GPSIcon />
+                  <span>Get Current Location</span>
+               </div>
+               {locationSearching.error &&
+                  locationSearching.errorType === 'blockByBrowser' && (
+                     <span className="hern-store-location-selector-main__get-current-location-error-message">
+                        You have blocked this site from tracking your location.
+                        To use this, change your location settings in browser.
+                     </span>
+                  )}
+            </div>
+         </div>
+
+         {locationSearching.loading ? (
+            <Loader />
+         ) : locationSearching.error ? (
+            <p>unable to find location</p>
+         ) : address ? (
+            <div className="hern-store-location-selector__user-location">
+               {LocationSelectorConfig.informationVisibility.deliverySettings
+                  .userAddress.value && <AddressInfo address={address} />}
+            </div>
+         ) : null}
+         {/* <RefineLocation setUserCoordinate={setUserCoordinate} /> */}
+         {/* Footer */}
+         {address &&
+            (deliveryTypeChanging ? (
+               <Loader />
+            ) : (
+               <StoreList
+                  userCoordinate={userCoordinate}
+                  setShowLocationSelectionPopup={setShowLocationSelectionPopup}
+                  settings={settings}
+                  brandRecurrences={
+                     deliveryType === 'ONDEMAND'
+                        ? onDemandBrandRecurrence
+                        : preOrderBrandRecurrence
+                  }
+               />
+            ))}
+      </>
+   )
+}
+const Pickup = () => {
+   return <p>Work under process for pick up</p>
+}
+const DineIn = () => {
+   return <p>Work under process DineIn</p>
+}
 const AddressInfo = props => {
    const { address } = props
    return (
@@ -489,7 +751,6 @@ const StoreList = props => {
             if (brands_brand_location.length !== 0) {
                setBrandLocation(brands_brand_location)
                // getDataWithDrivableDistance(brands_brand_location)
-               console.log('brands_brand_location', brands_brand_location)
             }
          },
          onError: error => {
@@ -733,8 +994,10 @@ const StoreList = props => {
                      </div>
                   </div>
                   {cardSelectionStyle.value?.value === 'radio' &&
-                     disabledLocationDisplayStyle.value?.value === 'disabled' &&
-                     !eachStore.deliveryStatus.status(
+                     !(
+                        disabledLocationDisplayStyle.value?.value ===
+                           'disabled' && !eachStore.deliveryStatus.status
+                     ) && (
                         <RadioIcon
                            size={18}
                            showTick={selectedStore && id === selectedStore.id}

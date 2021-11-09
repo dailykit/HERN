@@ -1436,3 +1436,34 @@ export const BRAND_LOCATIONS = gql`
       }
    }
 `
+export const PREORDER_DELIVERY_BRAND_RECURRENCES = gql`
+   query BRAND_ONDEMAND_DELIVERY_RECURRENCES(
+      $where: fulfilment_brand_recurrence_bool_exp!
+   ) {
+      brandRecurrences(where: $where) {
+         brandId
+         brandLocationId
+         recurrenceId
+         recurrence {
+            id
+            rrule
+            type
+            timeSlots {
+               from
+               to
+               mileRanges {
+                  from
+                  city
+                  distanceType
+                  to
+                  zipcodes
+                  state
+                  geoBoundary
+                  isExcluded
+                  leadTime
+               }
+            }
+         }
+      }
+   }
+`

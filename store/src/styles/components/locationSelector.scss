@@ -54,6 +54,18 @@
    }
 }
 
+.hern-store-location-selector__fulfillment-selector {
+   display: flex;
+   padding: 1em 1em 0 1em;
+   justify-content: center;
+   outline: none;
+}
+.hern-store-location-selector__fulfillment-selector-button {
+   margin: 0 1em;
+}
+.hern-store-location-selector__fulfillment-selector-button--active {
+   border-bottom: 2px solid #367bf5;
+}
 .hern-store-location-selector-main__location-field {
    display: grid;
    gap: 1em;
@@ -101,6 +113,12 @@
    font-size: 14px;
    line-height: 14px;
    color: #404040;
+}
+
+.hern-store-location__preOrder-time-selection {
+   display: flex;
+   justify-content: center;
+   padding: 0 1em;
 }
 
 .hern-location-selector__stores-list {
