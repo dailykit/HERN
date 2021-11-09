@@ -1,5 +1,5 @@
 import { client } from '../../lib/graphql'
-import BrandContext from '../../../admin/src/apps/content/context'
+
 const BRAND_SETTINGS = `
 query settings($identifier: String_comparison_exp!) {
    settings: brandSettings(where: {identifier: $identifier}) {
@@ -7,6 +7,7 @@ query settings($identifier: String_comparison_exp!) {
      type
      brand_brandSetting {
        value
+       brandId
      }
    }
  }
@@ -31,7 +32,7 @@ mutation updateBrand_BrandSetting($brandId: Int!, $identifier: String_comparison
 `
 
 export const updateDailyosStripeStatus = async (req, res) => {
-   const [context, setContext] = React.useContext(BrandContext)
+
    try {
       const {
          stripeAccountId = '',
@@ -53,7 +54,7 @@ export const updateDailyosStripeStatus = async (req, res) => {
             type: 'availability',
             brand_brandSettings: {
                data: [{
-                  brandId: context.brandId,
+                  brandId: settings[0].brand_brandSetting.brandId,
                   value: {
                      isStoreLive: false,
                      isStripeConfigured: true
@@ -66,7 +67,7 @@ export const updateDailyosStripeStatus = async (req, res) => {
             identifier: {
                _eq: 'Store Live'
             },
-            brandId: context.brandId,
+            brandId: settings[0].brand_brandSetting.brandId,
             _set: {
                value: {
                   ...settings[0].brand_brandSetting.value,
