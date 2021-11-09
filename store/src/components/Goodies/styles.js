@@ -34,4 +34,13 @@ export const IngredientGrid = styled.div`
    .ant-tag-has-color {
       color: ${theme.colors.lightGreyText};
    }
+   @media (max-width: 769px) {
+      grid-template-columns: repeat(auto-fill, minmax(130px, 165px));
+      .goodiesCard {
+         .goodiesImg {
+            width: 165px;
+            height: 205px;
+         }
+      }
+   }
 `

@@ -732,7 +732,7 @@ const Wrapper = styled.main`
          margin-top: 48px;
          top: 150px;
          position: sticky;
-         height: 580px;
+         height: 610px;
          width: 100%;
          display: none;
          overflow: hidden;
