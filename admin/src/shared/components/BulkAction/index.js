@@ -30,6 +30,8 @@ import {
    ADD_TO_SUBSCRIPTION,
    MANAGE_ADD_TO_SUBSCRIPTION,
    INCREASE_PRICE_MANAGE_ADDON_SUBSCRIPTION_PRODUCT,
+   UPDATE_SUBSCRIPTION_DELIVERY_AREA,
+   INCREASE_SUBSCRIPTION_DELIVERY_PRICE,
 } from './mutation'
 import { RecipeBulkAction } from './entities/recipe'
 import { IngredientBulkAction } from './entities/ingredients'
@@ -39,6 +41,7 @@ import { SubscriptionOccurrenceProductBulkAction } from './entities/subscription
 import { SubscriptionOccurrence } from './entities/subscriptionOccurrence'
 import { AddToSubscriptionMenu } from './entities/addToSubscriptionMenu'
 import { ManageAddToSubscriptionMenu } from './entities/manageAddToSubscriptionMenu'
+import { SubscriptionDeliveryArea } from './entities/subscriptionDeliveryArea'
 
 const BulkActions = ({
    table,
@@ -255,6 +258,23 @@ const BulkActions = ({
       isAvailable: false,
       isSingleSelect: false,
    })
+   const [
+      initialBulkActionSubscriptionDeliveryArea,
+      setInitialBulkActionSubscriptionDeliveryArea,
+   ] = React.useState({
+      deliveryPrice: {
+         set: 0,
+         increase: 0,
+         decrease: 0,
+      },
+      deliveryTime: {
+         from: '',
+         to: '',
+      },
+      isDeliveryActive: false,
+      isPickupActive: false,
+      subscriptionPickupOptionId: null,
+   })
    // additional bulk actions (actions which not to be set)
    const [additionalBulkAction, setAdditionalBulkAction] = React.useState({})
 
@@ -463,6 +483,22 @@ const BulkActions = ({
             isAvailable: !prevState.isAvailable,
             isSingleSelect: !prevState.isSingleSelect,
          }))
+      } else if (table === 'Delivery Area') {
+         setInitialBulkActionSubscriptionDeliveryArea(prevState => ({
+            ...prevState,
+            deliveryPrice: {
+               set: 0,
+               increase: 0,
+               decrease: 0,
+            },
+            deliveryTime: {
+               from: '',
+               to: '',
+            },
+            isDeliveryActive: !prevState.isDeliveryActive,
+            isPickupActive: !prevState.isPickupActive,
+            subscriptionPickupOptionId: null,
+         }))
       } else {
          // for product options
          handleModifierClear()
@@ -585,6 +621,18 @@ const BulkActions = ({
          },
       }
    )
+   const [updateSubscriptionDeliveryArea] = useMutation(
+      UPDATE_SUBSCRIPTION_DELIVERY_AREA,
+      {
+         onCompleted: () => {
+            toast.success('Update delivery Successfully')
+            close(1)
+         },
+         onError: e => {
+            toast.error('Something delivery went wrong!')
+         },
+      }
+   )
    // const [updateSubscriptionOccurrence] = useMutation(
    //    UPDATE_SUBSCRIPTION_OCCURRENCES,
    //    {
@@ -676,6 +724,19 @@ const BulkActions = ({
          },
       }
    )
+   const [increaseSubscriptionDeliveryPrice] = useMutation(
+      INCREASE_SUBSCRIPTION_DELIVERY_PRICE,
+      {
+         onCompleted: () => {
+            toast.success('Update increase Successfully')
+            //  close(1)
+         },
+         onError: e => {
+            toast.error('Something increase went wrong!')
+            //  logger(error)
+         },
+      }
+   )
    // additional function
    const additionalFunction = () => {
       if (table === 'Product') {
@@ -723,6 +784,17 @@ const BulkActions = ({
          })
          close(1)
       }
+      if (table === 'Delivery Area') {
+         increaseSubscriptionDeliveryPrice({
+            variables: {
+               deliveryPrice: additionalBulkAction.deliveryPrice || 0,
+               where: {
+                  zipcode: { _in: selectedRows.map(row => row.zipcode) },
+               },
+            },
+         })
+         close(1)
+      }
    }
    console.log('bulk  Action:::', bulkActions)
    // This  function only use for bulk action mutation
@@ -748,6 +820,8 @@ const BulkActions = ({
             return updateManageAddToSubscription
          case 'Manage Add To Occurrence':
             return updateManageAddToOccurrence
+         case 'Delivery Area':
+            return updateSubscriptionDeliveryArea
          default:
             return null
       }
@@ -843,16 +917,22 @@ const BulkActions = ({
          }
 
          if (Object.keys(newBulkAction).length !== 0) {
-            fn({
-               variables: {
-                  ids: selectedRows.map(idx => idx.id),
-                  _set: newBulkAction,
-               },
-            })
+            if (table === 'Delivery Area') {
+               fn({
+                  variables: {
+                     zipcode: selectedRows.map(idx => idx.zipcode),
+                     _set: newBulkAction,
+                  },
+               })
+            } else {
+               fn({
+                  variables: {
+                     ids: selectedRows.map(idx => idx.id),
+                     _set: newBulkAction,
+                  },
+               })
+            }
          }
-      }
-      if (fn === null) {
-         return
       } else {
          toast.error('Incorrect schema or table name!')
       }
@@ -1091,6 +1171,20 @@ const BulkActions = ({
                            }
                            setInitialBulkAction={
                               setInitialBulkActionManageAddedToOccurrence
+                           }
+                           bulkActions={bulkActions}
+                           setBulkActions={setBulkActions}
+                           additionalBulkAction={additionalBulkAction}
+                           setAdditionalBulkAction={setAdditionalBulkAction}
+                        />
+                     )}
+                     {table === 'Delivery Area' && (
+                        <SubscriptionDeliveryArea
+                           initialBulkAction={
+                              initialBulkActionSubscriptionDeliveryArea
+                           }
+                           setInitialBulkAction={
+                              setInitialBulkActionSubscriptionDeliveryArea
                            }
                            bulkActions={bulkActions}
                            setBulkActions={setBulkActions}

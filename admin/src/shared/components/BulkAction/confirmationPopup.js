@@ -59,6 +59,8 @@ export default function ConfirmationPopup({
                   break
                case 'Manage Add To Occurrence':
                   keyName = 'selected-rows-id-manage-occurence'
+               case 'Delivery Area':
+                  keyName = 'selected-rows-id-delivery-area-table'
                   break
                default:
                   keyName = 'selected-rows-id_ingredients_table'

@@ -185,3 +185,29 @@ export const INCREASE_PRICE_MANAGE_ADDON_SUBSCRIPTION_PRODUCT = gql`
       }
    }
 `
+export const UPDATE_SUBSCRIPTION_DELIVERY_AREA = gql`
+   mutation deliveryArea(
+      $_set: subscription_subscription_zipcode_set_input!
+      $zipcode: [String!]!
+   ) {
+      update_subscription_subscription_zipcode(
+         where: { zipcode: { _in: $zipcode } }
+         _set: $_set
+      ) {
+         affected_rows
+      }
+   }
+`
+export const INCREASE_SUBSCRIPTION_DELIVERY_PRICE = gql`
+   mutation deliveryPrice(
+      $where: subscription_subscription_zipcode_bool_exp!
+      $deliveryPrice: numeric!
+   ) {
+      update_subscription_subscription_zipcode(
+         where: $where
+         _inc: { deliveryPrice: $deliveryPrice }
+      ) {
+         affected_rows
+      }
+   }
+`
