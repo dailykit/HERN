@@ -281,9 +281,9 @@ export default function Experience({
                      <ul>
                         <li>
                            <a
-                              href="#section-1"
+                              href="#about-experience"
                               className={
-                                 router.asPath.includes('#section-1') &&
+                                 router.asPath.includes('#about-experience') &&
                                  'activeHash'
                               }
                            >
@@ -292,10 +292,11 @@ export default function Experience({
                         </li>
                         <li>
                            <a
-                              href="#section-2"
+                              href="#included-in-your-kit"
                               className={
-                                 router.asPath.includes('#section-2') &&
-                                 'activeHash'
+                                 router.asPath.includes(
+                                    '#included-in-your-kit'
+                                 ) && 'activeHash'
                               }
                            >
                               Included in your Kit
@@ -303,10 +304,11 @@ export default function Experience({
                         </li>
                         <li>
                            <a
-                              href="#section-3"
+                              href="#supplies-&-ingredients"
                               className={
-                                 router.asPath.includes('#section-3') &&
-                                 'activeHash'
+                                 router.asPath.includes(
+                                    '#supplies-&-ingredients'
+                                 ) && 'activeHash'
                               }
                            >
                               Supplies & Ingredients
@@ -317,10 +319,10 @@ export default function Experience({
                               return (
                                  <li key={header.id}>
                                     <a
-                                       href={`#${header.id}`}
+                                       href={`#${header?.title}`}
                                        className={
                                           router.asPath.includes(
-                                             `#${header.id}`
+                                             `#${header?.title}`
                                           ) && 'activeHash'
                                        }
                                     >
@@ -332,9 +334,9 @@ export default function Experience({
                         )}
                         <li>
                            <a
-                              href="#section-4"
+                              href="#about-expert"
                               className={
-                                 router.asPath.includes('#section-4') &&
+                                 router.asPath.includes('#about-expert') &&
                                  'activeHash'
                               }
                            >
@@ -343,9 +345,9 @@ export default function Experience({
                         </li>
                         <li>
                            <a
-                              href="#section-6"
+                              href="#reviews"
                               className={
-                                 router.asPath.includes('#section-6') &&
+                                 router.asPath.includes('#reviews') &&
                                  'activeHash'
                               }
                            >
@@ -369,7 +371,7 @@ export default function Experience({
 
                <div className="info-wrapper">
                   <div className="left-container">
-                     <section id="section-1">
+                     <section id="about-experience">
                         <div style={{ margin: '16px 0' }}>
                            <h1 className="sub-heading text1">
                               {experienceInfo?.experience?.title}
@@ -395,14 +397,14 @@ export default function Experience({
                            </p>
                         </ReadMoreDiv>
                      </section>
-                     <div id="section-2">
+                     <div id="included-in-your-kit">
                         <Goodies
                            products={products}
                            title="Included in your Kit"
                            ingredientView="includedWithProduct"
                         />
                      </div>
-                     <div id="section-3">
+                     <div id="supplies-&-ingredients">
                         <Goodies
                            products={products}
                            title="Supplies & Ingredients"
@@ -414,7 +416,7 @@ export default function Experience({
                      {experienceInfo?.experience?.experience_headers.map(
                         header => {
                            return (
-                              <section id={header.id}>
+                              <section id={header?.title}>
                                  <h1 className="sub-heading text1">
                                     {header?.title}
                                  </h1>
@@ -429,7 +431,7 @@ export default function Experience({
                         experienceInfo?.experience?.experienceClasses[0]
                            ?.experienceClassExpert
                      ) && (
-                        <section id="section-4">
+                        <section id="about-expert">
                            <h1 className="sub-heading text1">About Expert</h1>
                            <AboutExpert
                               expert={
@@ -453,7 +455,7 @@ export default function Experience({
                </div>
                <div style={{ padding: '2rem 0' }}>
                   {!isEmpty(customerReviews) && (
-                     <section id="section-6">
+                     <section id="reviews">
                         <h1 className="sub-heading text1">Reviews</h1>
                         <CustomCarousel {...settings}>
                            {customerReviews.map(customerReview => (
