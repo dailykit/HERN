@@ -13,15 +13,17 @@ import {
     TextWithSelect,
     NumberWithSelect,
     PhoneNumberSelector,
-    ImageUpload
+    ImageUpload,
+    RichText,
+    CollectionSelector
 } from "./UIComponents"
 import { Address } from "./UIComponents/Address"
 export const getFieldUI = ({ key, configJSON, onConfigChange, isValid, setIsValid, configSaveHandler }) => {
     const field = _.get(configJSON, key)
     const indentation = `${key.split(".").length * 8}px`
-    let configUi
+    let configUI
     if (field.dataType === "boolean" && field.userInsertType === "toggle") {
-        configUi = (
+        configUI = (
             <Toggle
                 fieldDetail={field}
                 marginLeft={indentation}
@@ -33,7 +35,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange, isValid, setIsVali
         field.dataType === "color" &&
         field.userInsertType === "colorPicker"
     ) {
-        configUi = (
+        configUI = (
             <ColorPicker
                 fieldDetail={field}
                 marginLeft={indentation}
@@ -45,7 +47,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange, isValid, setIsVali
         field.dataType === "text" &&
         field.userInsertType === "textField"
     ) {
-        configUi = (
+        configUI = (
             <Text
                 fieldDetail={field}
                 marginLeft={indentation}
@@ -60,7 +62,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange, isValid, setIsVali
         field.dataType === "number" &&
         field.userInsertType === "numberField"
     ) {
-        configUi = (
+        configUI = (
             <Number
                 fieldDetail={field}
                 marginLeft={indentation}
@@ -72,7 +74,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange, isValid, setIsVali
         field.dataType === "boolean" &&
         field.userInsertType === "checkbox"
     ) {
-        configUi = (
+        configUI = (
             <Checkbox
                 fieldDetail={field}
                 marginLeft={indentation}
@@ -84,7 +86,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange, isValid, setIsVali
         field.dataType === "date" &&
         field.userInsertType === "datePicker"
     ) {
-        configUi = (
+        configUI = (
             <Date
                 fieldDetail={field}
                 marginLeft={indentation}
@@ -93,7 +95,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange, isValid, setIsVali
             />
         )
     } else if (field.dataType === "time" && field.userInsertType === "time") {
-        configUi = (
+        configUI = (
             <Time
                 fieldDetail={field}
                 marginLeft={indentation}
@@ -105,7 +107,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange, isValid, setIsVali
         field.dataType === "select" &&
         field.userInsertType === "dropdown"
     ) {
-        configUi = (
+        configUI = (
             <Select
                 fieldDetail={field}
                 marginLeft={indentation}
@@ -114,7 +116,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange, isValid, setIsVali
             />
         )
     } else if (field.dataType === "text" && field.userInsertType === "textArea") {
-        configUi = (
+        configUI = (
             <TextArea
                 fieldDetail={field}
                 marginLeft={indentation}
@@ -126,7 +128,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange, isValid, setIsVali
         field.dataType === "text" &&
         field.userInsertType === "textWithSelect"
     ) {
-        configUi = (
+        configUI = (
             <TextWithSelect
                 fieldDetail={field}
                 marginLeft={indentation}
@@ -138,7 +140,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange, isValid, setIsVali
         field.dataType === "number" &&
         field.userInsertType === "numberWithSelect"
     ) {
-        configUi = (
+        configUI = (
             <NumberWithSelect
                 fieldDetail={field}
                 marginLeft={indentation}
@@ -151,7 +153,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange, isValid, setIsVali
         field.dataType === "phoneNumber" &&
         field.userInsertType === "phoneNumber"
     ) {
-        configUi = (
+        configUI = (
             <PhoneNumberSelector
                 setIsValid={setIsValid}
                 isValid={isValid}
@@ -167,7 +169,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange, isValid, setIsVali
         field.dataType === "address" &&
         field.userInsertType === "addressField"
     ) {
-        configUi = (
+        configUI = (
             <Address
                 fieldDetail={field}
                 marginLeft={indentation}
@@ -182,7 +184,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange, isValid, setIsVali
         field.dataType === "imageUpload" &&
         field.userInsertType === "imageUpload"
     ) {
-        configUi = (
+        configUI = (
             <ImageUpload
                 fieldDetail={field}
                 marginLeft={indentation}
@@ -193,6 +195,27 @@ export const getFieldUI = ({ key, configJSON, onConfigChange, isValid, setIsVali
             />
         )
     }
-
-    return configUi
+    else if (
+        field.dataType === 'html' &&
+        field.userInsertType === 'richTextEditor'
+    ) {
+        configUI = (
+            <RichText
+                fieldDetail={field}
+                marginLeft={indentation}
+                path={key}
+                onConfigChange={onConfigChange}
+            />
+        )
+    } else if (field.userInsertType === 'collectionSelector') {
+        configUI = (
+            <CollectionSelector
+                fieldDetail={field}
+                marginLeft={indentation}
+                path={key}
+                onConfigChange={onConfigChange}
+            />
+        )
+    }
+    return <div data-config-path={key}>{configUI}</div>
 }

@@ -1,15 +1,17 @@
 import React, {useRef, useState, useEffect} from 'react';
 import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
-import {Table, TableHead, TableBody, TableRow, TableCell, Flex, TextButton, Text, Spacer, DropdownButton, ButtonGroup, ComboButton, PlusIcon, useTunnel} from '@dailykit/ui';
+import { Flex, TextButton, Text, useTunnel} from '@dailykit/ui';
 import options from '../../../../tableOptions'
-import { GET_PROCESSED_EVENTS, GET_INVOCATIONS_OF_PROCESSED_EVENTS } from '../../../../../graphql';
-import { useSubscription, useMutation } from '@apollo/react-hooks'
+import { GET_PROCESSED_EVENTS } from '../../../../../graphql';
+import { useSubscription } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import {logger}  from '../../../../../../../shared/utils'
 import {useWebhook} from '../../state'
 import InvocationTunnel from './tunnels/invocationTunnel';
 import {PublishIcon, UnPublishIcon} from '../../../../../../products/assets/icons'
 import moment from 'moment'
+import "../../../../tableStyle.css"
+import PayloadTunnel from './tunnels/payloadTunnel'
 
 
 const ProcessedEvents = ()=>{
@@ -22,7 +24,11 @@ const ProcessedEvents = ()=>{
 
     const [processedEventId, setProcessedEventId] = useState()
 
+    const [payloadData, setPayloadData] = useState()
+
     const [popupTunnels, openPopupTunnel, closePopupTunnel] = useTunnel(2)
+
+    const [payloadTunnels, openPayloadTunnel, closePayloadTunnel] = useTunnel(1)
 
     const { data, loading, error } = useSubscription(GET_PROCESSED_EVENTS, {
       variables:{
@@ -33,6 +39,7 @@ const ProcessedEvents = ()=>{
             if (item.processedWebhookEventsByUrls[0]){
             const newData =  { "created_at":item.created_at, 
                "id":item.id,
+               "payload": item.payload,
                "statusCode":item.processedWebhookEventsByUrls[0].statusCode,
                "attemptedTime":item.processedWebhookEventsByUrls[0].attemptedTime}
                return newData;
@@ -43,6 +50,8 @@ const ProcessedEvents = ()=>{
          setProcessedEvents(processedEventsData)
        },
       })
+   
+      
 
     if (error) {
       toast.error('Something went wrong')
@@ -64,7 +73,9 @@ const ProcessedEvents = ()=>{
 
     const rowClick = (e, cell) => {
       const id = cell._cell.row.data.id
+      const payload = cell._cell.row.data.payload
       setProcessedEventId(id)  
+      setPayloadData(payload)
    }
 
     const columns = [
@@ -88,7 +99,6 @@ const ProcessedEvents = ()=>{
            resizable:true,
            headerSort:true,
            headerTooltip: true,
-           cssClass: 'rowClick',
            formatter: reactFormatter(<StatusIcon />),
         },
         {
@@ -99,29 +109,43 @@ const ProcessedEvents = ()=>{
             resizable:true,
             headerSort:true,
             headerTooltip: true,
-            cssClass: 'rowClick',
          },
          {
             title: 'Invocations',
             field: 'invocations',
             hozAlign: 'center',
+            tooltip: false,
             resizable:true,
             headerSort:true,
             headerHozAlign: 'center',
             headerTooltip: true,
-            cssClass: 'rowClick',
-            formatter:reactFormatter(<TextButton type="ghost">View Invocations</TextButton>),
+            formatter:reactFormatter(<TextButton title="view invocation" type="ghost">View</TextButton>),
             cellClick: (e, cell) => {
                rowClick(e, cell)
              openPopupTunnel(1)
-            },
+            }
+         },
+         {
+            title: 'Payload Sent',
+            field: 'payload',
+            hozAlign: 'center',
+            resizable:true,
+            tooltip: false,
+            headerSort:true,
+            headerHozAlign: 'center',
+            headerTooltip: true,
+            formatter:reactFormatter(<TextButton title="view payload" type="ghost">View</TextButton>),
+            cellClick: (e, cell) => {
+               rowClick(e, cell)
+             openPayloadTunnel(1)
+            }
          }
      ]
 
     return (
         <>
          {invocationState && <InvocationTunnel openPopupTunnel={openPopupTunnel} closePopupTunnel={closePopupTunnel} popupTunnels={popupTunnels} webhookUrl_EventId={state.webhookDetails.webhookUrl_EventId} processedEventId={processedEventId} />}
-            
+         {invocationState && <PayloadTunnel openPayloadTunnel={openPayloadTunnel} closePayloadTunnel={closePayloadTunnel} payloadTunnels={payloadTunnels} payloadData={payloadData} />}
             
             
             <Flex container alignItems="center" justifyContent="space-between">
@@ -148,11 +172,6 @@ const ProcessedEvents = ()=>{
                className = 'developer-webhooks-processedEvents'
             />
          )}
-         
-         
-         
-         
-
         </>
     )
 }

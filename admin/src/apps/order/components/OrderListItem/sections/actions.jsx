@@ -2,16 +2,29 @@ import React from 'react'
 import { toast } from 'react-toastify'
 import usePortal from 'react-useportal'
 import { useMutation } from '@apollo/react-hooks'
-import { Flex, TextButton, ComboButton, Popup, ButtonGroup } from '@dailykit/ui'
+import {
+   Flex,
+   TextButton,
+   ComboButton,
+   Popup,
+   ButtonGroup,
+   Spacer,
+} from '@dailykit/ui'
 
 import { MUTATIONS } from '../../../graphql'
+
 import { useOrder } from '../../../context'
+
 import { CardIcon } from '../../../assets/icons'
+
+
 import { logger } from '../../../../../shared/utils'
+
 import { ResponsiveFlex, StyledText } from './styled'
 
 export const Actions = ({ order }) => {
    const { dispatch } = useOrder()
+
    const { openPortal, closePortal, isOpen, Portal } = usePortal({
       bindTo: document && document.getElementById('popups'),
    })

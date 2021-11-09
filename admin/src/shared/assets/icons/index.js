@@ -46,6 +46,7 @@ import Close from './CloseIcon'
 import LinkIcon2 from './LinkIcon'
 import FacebookIcon from './FacebookIcon'
 import GoogleAnalyticsIcon from './GoogleAnalyticsIcon'
+import PlaceHolderImgIcon from './PlaceHolderImg'
 export {
    SearchIcon,
    AddIcon,
@@ -94,7 +95,8 @@ export {
    Close,
    LinkIcon2,
    FacebookIcon,
-   GoogleAnalyticsIcon
+   GoogleAnalyticsIcon,
+   PlaceHolderImgIcon,
 }
 
 export * from './Tick'

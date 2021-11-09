@@ -1,15 +1,19 @@
 import React from 'react'
 import { providers, getSession } from 'next-auth/client'
 
-import { getPageProps, processJsFile, renderPageContent } from '../../../utils'
+import {
+   getPageProps,
+   processExternalFiles,
+   renderPageContent,
+} from '../../../utils'
 import { SEO, Layout } from '../../../components'
 import 'regenerator-runtime'
 
 const Register = props => {
-   const { settings, folds, seoSettings } = props
+   const { settings, linkedFiles, folds, seoSettings } = props
    React.useEffect(() => {
       try {
-         processJsFile(folds)
+         processExternalFiles(folds, linkedFiles)
       } catch (err) {
          console.log('Failed to render page: ', err)
       }
@@ -32,10 +36,8 @@ const Register = props => {
 export default Register
 
 export const getStaticProps = async context => {
-   const { parsedData, seo, settings, seoSettings } = await getPageProps(
-      context.params,
-      '/get-started/register'
-   )
+   const { parsedData, settings, seoSettings, linkedFiles } =
+      await getPageProps(context.params, '/get-started/register')
    console.log(context)
    const { req, res } = context
    const session = await getSession({ req })
@@ -45,10 +47,10 @@ export const getStaticProps = async context => {
          props: {
             folds: parsedData,
             session,
-            seo,
             settings,
             seoSettings,
             revalidate: 60,
+            linkedFiles,
             providers: await providers(context),
          },
       }
@@ -58,8 +60,8 @@ export const getStaticProps = async context => {
       props: {
          folds: parsedData,
          session: null,
-         seo,
          settings,
+         linkedFiles,
          revalidate: 60,
          providers: await providers(context),
       },

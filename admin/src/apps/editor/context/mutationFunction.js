@@ -9,6 +9,7 @@ import {
    UPDATE_RECORD,
    INSERT_RECORD,
    DELETE_RECORD,
+   CREATE_BLOCK,
 } from '../graphql'
 import { toast } from 'react-toastify'
 
@@ -110,6 +111,16 @@ export const useDailyGit = () => {
       refetchQueries: ['getFolderWithFiles', 'getNestedFolders'],
    })
 
+   const [addBlock] = useMutation(CREATE_BLOCK, {
+      onCompleted: () => {
+         toast.success('File added to the block')
+      },
+      onError: error => {
+         toast.error('Something is Wrong')
+         console.log(error)
+      },
+   })
+
    return {
       createFile,
       createFolder,
@@ -120,5 +131,6 @@ export const useDailyGit = () => {
       recordFile,
       updateRecoredFile,
       deleteRecoredFile,
+      addBlock,
    }
 }

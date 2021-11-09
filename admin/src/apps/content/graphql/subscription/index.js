@@ -133,6 +133,25 @@ export const PAGE_INFO = gql`
       }
    }
 `
+export const PAGE_LINKED_FILES = gql`
+   subscription PAGE_LINKED_FILES($pageId: Int!) {
+      brands_pagesLinkedFiles(
+         where: { pageId: { _eq: $pageId } }
+         order_by: { position: desc }
+      ) {
+         id
+         fileId
+         fileType
+         position
+         linkedFile {
+            id
+            fileType
+            fileName
+         }
+      }
+   }
+`
+
 export const GET_FILES = gql`
    subscription GET_FILES($linkedFile: [Int!]!, $fileTypes: [String!]!) {
       editor_file_aggregate(
@@ -250,12 +269,15 @@ export const NAVIGATION_MENU_INFO = gql`
    }
 `
 export const SEO_DETAILS = gql`
-query SEO_DETAILS($brandPageSettingId: Int!, $brandPageId: Int!) {
-   brands_brandPage_brandPageSetting_by_pk(brandPageSettingId: $brandPageSettingId, brandPageId: $brandPageId) {
-     value
-     brandPageSetting {
-       identifier
-     }
+   query SEO_DETAILS($brandPageSettingId: Int!, $brandPageId: Int!) {
+      brands_brandPage_brandPageSetting_by_pk(
+         brandPageSettingId: $brandPageSettingId
+         brandPageId: $brandPageId
+      ) {
+         value
+         brandPageSetting {
+            identifier
+         }
+      }
    }
- }
- `
+`

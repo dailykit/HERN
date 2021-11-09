@@ -537,6 +537,8 @@ const BulkActions = ({
             close={() => close(1)}
             right={{
                title: 'Delete Selected Data',
+               type: 'outline',
+               variant: 'danger',
                action: function () {
                   setShowPopup(true)
                   setPopupHeading(`Delete Selected ${table}`)

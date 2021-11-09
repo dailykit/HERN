@@ -1,8 +1,15 @@
 import React from 'react'
 import _ from 'lodash'
-import { getFieldUI } from './getFieldUI'
-import { TextButton } from '@dailykit/ui'
 import styled from 'styled-components'
+import {
+   ComboButton,
+   TextButton,
+   PlusIcon,
+   IconButton,
+   ArrowDownIcon,
+   ArrowUpIcon,
+} from '@dailykit/ui'
+import { getFieldUI } from './getFieldUI'
 
 const ConfigTemplateUI = ({ config, setConfig, configSaveHandler }) => {
    const [configJSON, setConfigJSON] = React.useState({})
@@ -27,20 +34,60 @@ const ConfigTemplateUI = ({ config, setConfig, configSaveHandler }) => {
          ...updatedConfig,
       }))
    }
+
+   const handleToggle = key => {
+      const up = document.querySelector(`[data-arrow-diretion='down-${key}']`)
+      const down = document.querySelector(`[data-arrow-diretion='up-${key}']`)
+      up.classList.toggle('display-none')
+      down.classList.toggle('display-none')
+      const upArrows = document.querySelectorAll(
+         `[data-arrow-diretion^='up-${key}.']`
+      )
+      const downArrows = document.querySelectorAll(
+         `[data-arrow-diretion^='down-${key}.']`
+      )
+      const elements = document.querySelectorAll(
+         `[data-config-path^="${key}."]`
+      )
+      const isOpen = up.classList.contains('display-none')
+      elements.forEach(dom => {
+         dom.classList.remove('display-none')
+         if (isOpen) {
+            dom.classList.add('display-none')
+            upArrows.forEach(node => node.classList.add('display-none'))
+            downArrows.forEach(node => node.classList.remove('display-none'))
+         }
+      })
+   }
    const getHeaderUI = ({ title, fieldData, key }) => {
       const indentation = `${key.split('.').length * 8}px`
       return (
-         <div
+         <Styles.ConfigTemplateHeader
             id={key}
-            style={{
-               marginLeft: indentation,
-            }}
+            data-config-path={key}
+            indentation={indentation}
          >
-            <h1>{title.toUpperCase()}</h1>
+            <h3>{title}</h3>
+            <button
+               type="button"
+               className="display-none"
+               onClick={() => handleToggle(key)}
+               data-arrow-diretion={`up-${key}`}
+            >
+               <ArrowUpIcon />
+            </button>
+            <button
+               type="button"
+               onClick={() => handleToggle(key)}
+               data-arrow-diretion={`down-${key}`}
+            >
+               <ArrowDownIcon color="#367BF5" />
+            </button>
             {fieldData.description && <p>{fieldData.description}</p>}
-         </div>
+         </Styles.ConfigTemplateHeader>
       )
    }
+
    const showConfigUI = (configData, rootKey) => {
       _.forOwn(configData, (value, key) => {
          const isFieldObject = _.has(value, 'value')
@@ -89,34 +136,65 @@ const ConfigTemplateUI = ({ config, setConfig, configSaveHandler }) => {
    }, [config])
 
    return (
-      <>
+      <Styles.ConfigTemplateUI>
+         <Styles.Header>
+            <Styles.Heading>Edit Component</Styles.Heading>
+            {!(fields[0]?.props?.fieldDetail?.showModal) && <ComboButton
+               type="solid"
+               size="sm"
+               onClick={() => configSaveHandler(configJSON)}
+            >
+               <PlusIcon color="#fff" />
+               Save
+            </ComboButton>}
+         </Styles.Header>
+
          <div>
-            {fields.length > 0 ? (
-               <div>
-                  {fields.map((field, index) => (
-                     <div key={index}>{field}</div>
-                  ))}
-                  {!(fields[0]?.props?.fieldDetail?.showModal) && <TextButton size="sm" type="outline" disabled={!isValid} onClick={() => configSaveHandler(configJSON)}>Save</TextButton>}
-               </div>
-            ) : (
-               <p style={{ textAlign: "center", fontSize: "2rem" }}>
-                  There are no config related to this Module
-               </p>
-            )}
+            {fields.map((config, index) => (
+               <div key={index}>{config}</div>
+            ))}
          </div>
-      </>
+      </Styles.ConfigTemplateUI>
    )
 }
 export default ConfigTemplateUI
 
-
-const StyledConfig = styled.div`
-  border: 1px solid rgb(196, 196, 196);
-  height: 100%;
-  box-sizing: border-box;
-  border-radius: 4px;
-  padding: 8px 8px 0px;
-  margin-top: 24px;
-  margin-bottom: 8px;
-  position: relative;
-`
+const Styles = {
+   ConfigTemplateUI: styled.div`
+      .display-none {
+         display: none;
+      }
+      padding: 16px;
+   `,
+   Header: styled.div`
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+   `,
+   Heading: styled.div`
+      color: #202020;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 500;
+      padding: 0 0 16px 0;
+   `,
+   ConfigTemplateHeader: styled.div`
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      > button {
+         border: none;
+         background: transparent;
+      }
+      > h3 {
+         font-weight: 500;
+         font-size: 14px;
+         line-height: 16px;
+         letter-spacing: 0.16px;
+         color: #919699;
+         text-transform: capitalize;
+         padding: 4px;
+         margin-left: ${({ indentation }) => indentation};
+      }
+   `,
+}
