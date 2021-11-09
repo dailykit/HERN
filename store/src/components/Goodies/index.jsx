@@ -1,48 +1,69 @@
 import React from 'react'
-import { Wrapper } from './styles'
+import { GoodiesWrapper, IngredientGrid } from './styles'
 import { isEmpty } from '../../utils'
+import { theme } from '../../theme'
+import { Tag } from 'antd'
 
-export const GoodiesWrapper = ({ children }) => {
-   if (isEmpty(children)) return null
-   return <Wrapper>{children}</Wrapper>
-}
+export const Ingredients = ({
+   ingredients = [],
+   ingredientView,
+   showTag,
+   textClass = ''
+}) => {
+   const [requiredIngredients, setRequiredIngredients] =
+      React.useState(ingredients)
 
-export const Ingredients = ({ options, title, textClass = '' }) => {
-   if (isEmpty(options)) return null
+   React.useEffect(() => {
+      let newIngredients = ingredients
+      if (ingredientView === 'includedWithProduct') {
+         newIngredients = ingredients.filter(
+            ingredient => ingredient?.includedWithProduct
+         )
+      } else if (ingredientView === 'excludedWithProduct') {
+         newIngredients = ingredients.filter(
+            ingredient => !ingredient?.includedWithProduct
+         )
+      }
+      setRequiredIngredients(newIngredients)
+   }, [ingredients])
+
+   if (isEmpty(ingredients) || isEmpty(requiredIngredients)) return null
    return (
       <>
-         {options?.map(option => {
-            return (
-               <div key={option.id}>
-                  <h1 className={`sub-heading text1 ${textClass}`}>{title}</h1>
-                  <div className="ingredients_grid">
-                     {option?.simpleRecipeYield?.simpleRecipe?.simpleRecipeIngredients.map(
-                        ingredient => {
-                           return (
-                              <div
-                                 key={ingredient?.ingredient?.id}
-                                 className="goodiesImgWrapper"
-                              >
-                                 <img
-                                    className="goodiesImg"
-                                    src={ingredient?.ingredient?.image}
-                                    alt=""
-                                 />
-                                 <p className="goodieName text5">
-                                    {ingredient?.ingredient?.name}
-                                 </p>
-                              </div>
-                           )
-                        }
-                     )}
+         <IngredientGrid>
+            {requiredIngredients?.map(item => {
+               return (
+                  <div className="goodiesCard" key={item.id}>
+                     <img
+                        className="goodiesImg"
+                        src={item?.ingredient?.assets?.images[0]}
+                        alt=""
+                     />
+                     <p className="goodieName text7">
+                        {item?.ingredient?.name}
+                        {showTag && (
+                           <Tag color={theme.colors.lightBackground.grey}>
+                              {item?.includedWithProduct
+                                 ? 'Included with kit'
+                                 : 'Not included with kit'}
+                           </Tag>
+                        )}
+                     </p>
                   </div>
-               </div>
-            )
-         })}
+               )
+            })}
+         </IngredientGrid>
       </>
    )
 }
-export const Goodies = ({ products, title, secondTitle, textClass = '' }) => {
+export const Goodies = ({
+   products,
+   title,
+   secondTitle,
+   textClass = '',
+   ingredientView = 'all',
+   showTag = false
+}) => {
    if (isEmpty(products)) return null
    return (
       <GoodiesWrapper>
@@ -50,15 +71,15 @@ export const Goodies = ({ products, title, secondTitle, textClass = '' }) => {
             return (
                <div key={product?.id}>
                   <h1 className={`sub-heading text1 ${textClass}`}>{title}</h1>
-                  <img
-                     className="box-open-img"
-                     src="https://dailykit-239-primanti.s3.us-east-2.amazonaws.com/images/kits/Updated+Box+Image.png"
-                     alt="open-box-img"
-                  />
                   <Ingredients
-                     options={product?.productOptions}
+                     ingredients={
+                        product?.productOptions[0]?.simpleRecipeYield
+                           ?.simpleRecipe?.simpleRecipeIngredients
+                     }
                      title={secondTitle}
                      textClass={textClass}
+                     ingredientView={ingredientView}
+                     showTag={showTag}
                   />
                </div>
             )

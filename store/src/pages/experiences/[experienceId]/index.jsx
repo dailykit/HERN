@@ -3,23 +3,16 @@ import ReactHtmlParser from 'react-html-parser'
 import styled from 'styled-components'
 import { Carousel, message } from 'antd'
 import { useRouter } from 'next/router'
-import Link from 'next/link'
 import { useSubscription, useQuery } from '@apollo/client'
-import { Flex } from '@dailykit/ui'
 import parse from 'html-react-parser'
 import {
-   ChevronRight,
-   ChevronLeft,
    AboutExpert,
    Card,
    Button,
    Goodies,
-   GoodiesWrapper,
-   Ingredients,
    Modal,
    GridComponent,
    ReadMoreDiv,
-   CustomScrollbar,
    SEO,
    Layout,
    Booking,
@@ -406,20 +399,16 @@ export default function Experience({
                         <Goodies
                            products={products}
                            title="Included in your Kit"
+                           ingredientView="includedWithProduct"
                         />
                      </div>
                      <div id="section-3">
-                        <GoodiesWrapper>
-                           {products.map(product => {
-                              return (
-                                 <Ingredients
-                                    key={product.id}
-                                    options={product?.productOptions}
-                                    title="Supplies & Ingredients"
-                                 />
-                              )
-                           })}
-                        </GoodiesWrapper>
+                        <Goodies
+                           products={products}
+                           title="Supplies & Ingredients"
+                           ingredientView="all"
+                           showTag={true}
+                        />
                      </div>
 
                      {experienceInfo?.experience?.experience_headers.map(

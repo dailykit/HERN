@@ -31,21 +31,21 @@ export default function ProductCard({ cardDetails, ...props }) {
          </CardImage>
          <CardBody>
             <h2 className="exp-name text8">{name}</h2>
-            {additionalText && (
+            {!isEmpty(additionalText) && (
                <p className="product_extra_info_text text10">
                   {additionalText}
                </p>
             )}
-            {description && (
+            {!isEmpty(description) && (
                <p className="product_extra_info_text text10">{description}</p>
             )}
             <TagGroup>
-               {tags.length &&
+               {!isEmpty(tags) &&
                   tags.map(tag => {
                      return <Tag>{tag}</Tag>
                   })}
             </TagGroup>
-            {discount > 0 && (
+            {!isEmpty(discount) && discount > 0 && (
                <div class="product-discount-tag text9">{discount} off</div>
             )}
 
