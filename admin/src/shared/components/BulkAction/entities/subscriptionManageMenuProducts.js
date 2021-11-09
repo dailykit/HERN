@@ -19,7 +19,7 @@ import { Tooltip } from '../..'
 import { PRODUCT_CATEGORY_OF_SUBSCRIPTION_OCCURRENCE_PRODUCT } from '../subscription'
 import { useSubscription } from '@apollo/react-hooks'
 
-export const AddToSubscriptionMenu = props => {
+export const ManageMenuProducts = props => {
    const {
       initialBulkAction,
       setInitialBulkAction,
@@ -119,7 +119,7 @@ export const AddToSubscriptionMenu = props => {
                                  console.log('clear')
                               }}
                            >
-                              Set {column.columnName}
+                              Set {column.heading}
                            </TextButton>
                         </HorizontalTab>
                         <HorizontalTab>

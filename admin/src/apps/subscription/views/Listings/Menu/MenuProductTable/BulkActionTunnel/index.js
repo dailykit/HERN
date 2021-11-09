@@ -1,7 +1,7 @@
 import React from 'react'
 import BulkActions from '../../../../../../../shared/components/BulkAction'
 
-export const OccurrenceBulkAction = ({
+export const MenuProduct = ({
    close,
    selectedRows,
    removeSelectedRow,
@@ -13,25 +13,7 @@ export const OccurrenceBulkAction = ({
          removeSelectedRow={removeSelectedRow}
          selectedRows={selectedRows}
          setSelectedRows={setSelectedRows}
-         table="Menu Product Occurrence"
-         keyName="productName"
-      />
-   </>
-)
-
-export const SubscriptionBulkAction = ({
-   close,
-   selectedRows,
-   removeSelectedRow,
-   setSelectedRows,
-}) => (
-   <>
-      <BulkActions
-         close={close}
-         removeSelectedRow={removeSelectedRow}
-         selectedRows={selectedRows}
-         setSelectedRows={setSelectedRows}
-         table="Menu Product Subscription"
+         table="Menu Product"
          keyName="productName"
       />
    </>

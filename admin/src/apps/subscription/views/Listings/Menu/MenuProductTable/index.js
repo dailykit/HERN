@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useState } from 'react'
+import React, { useState } from 'react'
 import {
    Flex,
    HorizontalTab,
@@ -32,10 +32,7 @@ import {
    PublishIcon,
    UnPublishIcon,
 } from '../../../../../products/assets/icons'
-import {
-   OccurrenceBulkAction,
-   SubscriptionBulkAction,
-} from './BulkActionTunnel'
+import { MenuProduct } from './BulkActionTunnel'
 
 const MenuProductTables = () => {
    return (
@@ -307,7 +304,7 @@ const MenuProductOccurenceTable = () => {
       <>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1} size="full">
-               <OccurrenceBulkAction
+               <MenuProduct
                   close={closeTunnel}
                   selectedRows={selectedRows}
                   removeSelectedRow={removeSelectedRow}
@@ -626,7 +623,7 @@ const MenuProductSubscriptionTable = () => {
       <>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1} size="full">
-               <SubscriptionBulkAction
+               <MenuProduct
                   close={closeTunnel}
                   selectedRows={selectedRows}
                   removeSelectedRow={removeSelectedRow}

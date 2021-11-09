@@ -38,7 +38,7 @@ import {
    DELETE_MULTIPLE_PRODUCT,
 } from '../graphql'
 import { Button } from 'react-scroll'
-import { AddToOccurrence, AddToSubscription } from './BulkActionTunnel'
+import { MenuProducts } from './BulkActionTunnel'
 
 export const PlanProductsTunnel = ({ tunnel, occurenceId, subscriptionId }) => {
    const { tooltip } = useTooltip()
@@ -363,7 +363,7 @@ const AddedToOccurence = ({ columns, occurenceId, remove }) => {
       <div>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1} size="full">
-               <AddToOccurrence
+               <MenuProducts
                   close={closeTunnel}
                   selectedRows={selectedRows.map(row => {
                      return {
@@ -540,7 +540,7 @@ const AddedToSubscription = ({ columns, subscriptionId }) => {
       <div>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1} size="full">
-               <AddToSubscription
+               <MenuProducts
                   close={closeTunnel}
                   selectedRows={selectedRows.map(row => {
                      return {

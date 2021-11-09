@@ -127,7 +127,7 @@ const CollapsibleComponentWithTabs = ({
                   <Form.Group>
                      <Form.Label htmlFor={columnName} title={title}>
                         <Flex container alignItems="center">
-                           <Text as="text1">{title} Increase</Text>
+                           <Text as="text1">Increase {title}</Text>
                            <TextButton
                               type="ghost"
                               size="sm"
@@ -197,14 +197,14 @@ const CollapsibleComponentWithTabs = ({
                               'intervaldecrementvalue'
                            )
                         }}
-                        placeholder={`Enter Increase ${columnName}`}
+                        placeholder={`Enter Increase Time`}
                      />
                   </Form.Group>
 
                   <Form.Group>
                      <Form.Label htmlFor={columnName} title={title}>
                         <Flex container alignItems="center">
-                           <Text as="text1">{title} Decrease TimeStamp</Text>
+                           <Text as="text1">Decrease {title}</Text>
                            <TextButton
                               type="ghost"
                               size="sm"
@@ -274,7 +274,7 @@ const CollapsibleComponentWithTabs = ({
                               'intervaldecrementvalue'
                            )
                         }}
-                        placeholder={`Enter ${columnName} decrease`}
+                        placeholder={`Enter decrease Time`}
                      />
                   </Form.Group>
                </HorizontalTabPanel>
