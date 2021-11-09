@@ -59,21 +59,20 @@ const Content = ({ panel }) => {
    const storedDistance = React.useRef()
 
    React.useEffect(() => {
-      if (brand?.onDemandSettings?.length) {
+      if (brand?.brand_brandSettings?.length) {
          const types = []
 
-         const deliverySetting = brand.onDemandSettings.find(
+         const deliverySetting = brand.brand_brandSettings.find(
             setting =>
-               setting.onDemandSetting.identifier === 'Delivery Availability'
+               setting.brandSetting.identifier === 'Delivery Availability'
          )
          const { value: deliveryAvailability } = deliverySetting
 
          if (deliveryAvailability?.isAvailable)
             types.push({ id: 'DELIVERY', title: 'Delivery' })
 
-         const pickupSetting = brand.onDemandSettings.find(
-            setting =>
-               setting.onDemandSetting.identifier === 'Pickup Availability'
+         const pickupSetting = brand.brand_brandSettings.find(
+            setting => setting.brandSetting.identifier === 'Pickup Availability'
          )
          const { value: pickupAvailability } = pickupSetting
 
@@ -82,7 +81,7 @@ const Content = ({ panel }) => {
 
          setTypeOptions(types)
       }
-   }, [brand?.onDemandSettings?.length])
+   }, [brand?.brand_brandSettings?.length])
 
    // Mutation
    const [updateCart, { loading }] = useMutation(MUTATIONS.CART.UPDATE, {
@@ -97,53 +96,45 @@ const Content = ({ panel }) => {
    })
 
    // Subscriptions
-   const {
-      data: { preOrderPickup = [] } = {},
-      loading: PPLoading,
-   } = useSubscription(QUERIES.FULFILLMENT.PREORDER.PICKUP, {
-      variables: {
-         brandId: brand?.id,
-      },
-   })
+   const { data: { preOrderPickup = [] } = {}, loading: PPLoading } =
+      useSubscription(QUERIES.FULFILLMENT.PREORDER.PICKUP, {
+         variables: {
+            brandId: brand?.id,
+         },
+      })
 
-   const {
-      data: { onDemandPickup = [] } = {},
-      loading: OPLoading,
-   } = useSubscription(QUERIES.FULFILLMENT.ONDEMAND.PICKUP, {
-      variables: {
-         brandId: brand?.id,
-      },
-   })
+   const { data: { onDemandPickup = [] } = {}, loading: OPLoading } =
+      useSubscription(QUERIES.FULFILLMENT.ONDEMAND.PICKUP, {
+         variables: {
+            brandId: brand?.id,
+         },
+      })
 
-   const {
-      data: { preOrderDelivery = [] } = {},
-      loading: PDLoading,
-   } = useSubscription(QUERIES.FULFILLMENT.PREORDER.DELIVERY, {
-      skip: distance === null,
-      variables: {
-         distance,
-         brandId: brand?.id,
-      },
-   })
+   const { data: { preOrderDelivery = [] } = {}, loading: PDLoading } =
+      useSubscription(QUERIES.FULFILLMENT.PREORDER.DELIVERY, {
+         skip: distance === null,
+         variables: {
+            distance,
+            brandId: brand?.id,
+         },
+      })
 
-   const {
-      data: { onDemandDelivery = [] } = {},
-      loading: ODLoading,
-   } = useSubscription(QUERIES.FULFILLMENT.ONDEMAND.DELIVERY, {
-      skip: distance === null,
-      variables: {
-         distance,
-         brandId: brand?.id,
-      },
-   })
+   const { data: { onDemandDelivery = [] } = {}, loading: ODLoading } =
+      useSubscription(QUERIES.FULFILLMENT.ONDEMAND.DELIVERY, {
+         skip: distance === null,
+         variables: {
+            distance,
+            brandId: brand?.id,
+         },
+      })
 
    React.useEffect(() => {
       setTime('')
       setError('')
 
-      if (brand.onDemandSettings.length) {
-         const addressSetting = brand.onDemandSettings.find(
-            setting => setting.onDemandSetting.identifier === 'Location'
+      if (brand.brand_brandSettings.length) {
+         const addressSetting = brand.brand_brandSettings.find(
+            setting => setting.brandSetting.identifier === 'Location'
          )
          const { value: storeAddress } = addressSetting
 
@@ -198,19 +189,17 @@ const Content = ({ panel }) => {
          if (time && type) {
             setError('')
 
-            if (brand.onDemandSettings.length) {
-               const deliverySetting = brand.onDemandSettings.find(
+            if (brand.brand_brandSettings.length) {
+               const deliverySetting = brand.brand_brandSettings.find(
                   setting =>
-                     setting.onDemandSetting.identifier ===
-                     'Delivery Availability'
+                     setting.brandSetting.identifier === 'Delivery Availability'
                )
                const { value: deliveryAvailability } = deliverySetting
                console.log('🚀 deliveryAvailability', deliveryAvailability)
 
-               const pickupSetting = brand.onDemandSettings.find(
+               const pickupSetting = brand.brand_brandSettings.find(
                   setting =>
-                     setting.onDemandSetting.identifier ===
-                     'Pickup Availability'
+                     setting.brandSetting.identifier === 'Pickup Availability'
                )
                const { value: pickupAvailability } = pickupSetting
                console.log('🚀 pickupAvailability', pickupAvailability)
