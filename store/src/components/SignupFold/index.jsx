@@ -12,10 +12,9 @@ export default function SignupFold(props) {
       <Wrapper {...props}>
          <h1 className="signupFold_heading text1_secondary">Sign up</h1>
          <p className="signupFold_para text5">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
-            officia deserunt anim id est laborum.
+            Get access to your personal dashboard and easily manage several
+            events at one time. Be the first to know about new experiences
+            curated to fit your needs.
          </p>
          <Button
             className="signupFold_signupBtn text9"

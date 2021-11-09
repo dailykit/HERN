@@ -140,20 +140,23 @@ export default function Home({
                   )}
             </div>
             <div className="content-container">
-               {!isEmpty(categories) && (
-                  <RenderCard
-                     data={categories
-                        .map(
-                           category => category?.experience_experienceCategories
-                        )
-                        .flat()}
-                     // data={categories}
-                     type="experience"
-                     layout="carousel"
-                     showCategorywise={false}
-                     keyname="experience_experienceCategories"
-                  />
-               )}
+               <section id="explore-experiences">
+                  {!isEmpty(categories) && (
+                     <RenderCard
+                        data={categories
+                           .map(
+                              category =>
+                                 category?.experience_experienceCategories
+                           )
+                           .flat()}
+                        // data={categories}
+                        type="experience"
+                        layout="carousel"
+                        showCategorywise={false}
+                        keyname="experience_experienceCategories"
+                     />
+                  )}
+               </section>
                <Button
                   className="explore__btn text9"
                   onClick={handleExperienceExploreMore}
@@ -167,21 +170,25 @@ export default function Home({
                            ?.content
                      )}
                </div>
-               <h3 className="experienceHeading text1_secondary">Experts</h3>
+               <h3 className="experienceHeading text1_secondary">
+                  Virtual Experience Creators & Industry Experts
+               </h3>
                <p className="experienceHeading2 text5">
                   Our experiences will be lead by our qualified experts, who are
                   professional, highly skilled and fun to work with.
                </p>
-               {!isEmpty(experts) && (
-                  <RenderCard
-                     data={experts.map(expert => expert?.experts).flat()}
-                     // data={experts}
-                     type="expert"
-                     layout="masonry"
-                     showCategorywise={false}
-                     keyname="expert"
-                  />
-               )}
+               <section id="explore-expert">
+                  {!isEmpty(experts) && (
+                     <RenderCard
+                        data={experts.map(expert => expert?.experts).flat()}
+                        // data={experts}
+                        type="expert"
+                        layout="masonry"
+                        showCategorywise={false}
+                        keyname="expert"
+                     />
+                  )}
+               </section>
 
                {/* // tag selection part */}
 

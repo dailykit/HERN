@@ -44,7 +44,6 @@ export const Wrapper = styled.div`
          margin-right: 4px;
       }
       .time {
-         font-size: ${theme.sizes.h8};
          font-weight: 500;
       }
    }

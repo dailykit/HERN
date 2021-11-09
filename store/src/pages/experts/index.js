@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
-import { Flex } from '@dailykit/ui'
 import ReactHtmlParser from 'react-html-parser'
 import { useSubscription } from '@apollo/client'
 import styled from 'styled-components'
@@ -131,16 +130,15 @@ export default function Experiences({
    return (
       <Layout navigationMenuItems={navigationMenuItems} footerHtml={footerHtml}>
          <SEO title="Experts" />
+         <div ref={expertsTop01} id="experts-top-01">
+            {Boolean(parsedData.length) &&
+               ReactHtmlParser(
+                  parsedData.find(fold => fold.id === 'experts-top-01')?.content
+               )}
+         </div>
          <StyledWrapper bgMode="dark">
-            <div ref={expertsTop01} id="experts-top-01">
-               {Boolean(parsedData.length) &&
-                  ReactHtmlParser(
-                     parsedData.find(fold => fold.id === 'experts-top-01')
-                        ?.content
-                  )}
-            </div>
             <div className="centerDiv">
-               <h1 className="heading text1">Experts</h1>
+               <h1 className="heading text1">EXPERTS & CREATORS</h1>
             </div>
             {/* <Filters
                filterOptions={[
@@ -223,7 +221,7 @@ const StyledWrapper = styled.div`
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: 1rem;
+      margin-top: 4rem;
       .heading {
          font-family: 'Barlow Condensed';
          font-style: normal;

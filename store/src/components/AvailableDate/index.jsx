@@ -84,8 +84,7 @@ const AvailableDate = ({
                            }
                            title={dynamicButtonTitle(slot)}
                         >
-                           <span className="spanText">starts at</span>
-                           <span className="time">{slot?.time}</span>
+                           <span className="time text8">{slot?.time}</span>
                         </Button>
                      )
                   })}
