@@ -37,7 +37,7 @@ import {
    UPDATE_ADDON_PRODUCT,
    DELETE_MULTIPLE_PRODUCT,
 } from '../graphql'
-import { AddToOccurrence, AddToSubscription, ManageAddToOccurrence, ManageAddToSubscription } from './BulkActionTunnel'
+import { AddOnProducts } from './BulkActionTunnel'
 
 export const AddOnProductsTunnel = ({
    tunnel,
@@ -366,7 +366,7 @@ const AddedToOccurence = ({ columns, occurenceId }) => {
       <div>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1} size="full">
-               <ManageAddToOccurrence
+               <AddOnProducts
                   close={closeTunnel}
                   selectedRows={selectedRows.map(row => {
                      return {
@@ -535,7 +535,7 @@ const AddedToSubscription = ({ columns, subscriptionId }) => {
       <div>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1} size="full">
-               <ManageAddToSubscription
+               <AddOnProducts
                   close={closeTunnel}
                   selectedRows={selectedRows.map(row => {
                      return {

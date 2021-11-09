@@ -146,7 +146,7 @@ export const MODIFY_TIMESTAMP = gql`
       }
    }
 `
-export const ADD_TO_SUBSCRIPTION = gql`
+export const MANAGE_MENU_PRODUCTS_SUBSCRIPTION = gql`
    mutation addToSubscription(
       $ids: [Int!]
       $_set: subscription_subscriptionOccurence_product_set_input!
@@ -159,7 +159,7 @@ export const ADD_TO_SUBSCRIPTION = gql`
       }
    }
 `
-export const MANAGE_ADD_TO_SUBSCRIPTION = gql`
+export const MANAGE_ADD_ON_PRODUCTS_SUBSCRIPTION = gql`
    mutation manageAddToSubscription(
       $ids: [Int!]
       $_set: subscription_subscriptionOccurence_addOn_set_input!

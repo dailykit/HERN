@@ -1,7 +1,7 @@
 import React from 'react'
 import BulkActions from '../../../../shared/components/BulkAction'
 
-export const AddToSubscription = ({
+export const AddOnProducts = ({
    close,
    selectedRows,
    removeSelectedRow,
@@ -14,13 +14,14 @@ export const AddToSubscription = ({
             removeSelectedRow={removeSelectedRow}
             selectedRows={selectedRows}
             setSelectedRows={setSelectedRows}
-            table="Add To Subscription"
+            table="Manage Add On Products"
             keyName="productName"
          />
       </>
    )
 }
-export const AddToOccurrence = ({
+
+export const MenuProducts = ({
    close,
    selectedRows,
    removeSelectedRow,
@@ -33,45 +34,7 @@ export const AddToOccurrence = ({
             removeSelectedRow={removeSelectedRow}
             selectedRows={selectedRows}
             setSelectedRows={setSelectedRows}
-            table="Add To Occurrence"
-            keyName="productName"
-         />
-      </>
-   )
-}
-export const ManageAddToSubscription = ({
-   close,
-   selectedRows,
-   removeSelectedRow,
-   setSelectedRows,
-}) => {
-   return (
-      <>
-         <BulkActions
-            close={close}
-            removeSelectedRow={removeSelectedRow}
-            selectedRows={selectedRows}
-            setSelectedRows={setSelectedRows}
-            table="Manage Add To Subscription"
-            keyName="productName"
-         />
-      </>
-   )
-}
-export const ManageAddToOccurrence = ({
-   close,
-   selectedRows,
-   removeSelectedRow,
-   setSelectedRows,
-}) => {
-   return (
-      <>
-         <BulkActions
-            close={close}
-            removeSelectedRow={removeSelectedRow}
-            selectedRows={selectedRows}
-            setSelectedRows={setSelectedRows}
-            table="Manage Add To Occurrence"
+            table="Manage Menu Products"
             keyName="productName"
          />
       </>
