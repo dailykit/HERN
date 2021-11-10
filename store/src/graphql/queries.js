@@ -1467,3 +1467,65 @@ export const PREORDER_DELIVERY_BRAND_RECURRENCES = gql`
       }
    }
 `
+export const ONDEMAND_PICKUP_BRAND_RECURRENCES = gql`
+   query ONDEMAND_PICKUP_BRAND_RECURRENCES(
+      $where: fulfilment_brand_recurrence_bool_exp!
+   ) {
+      brandRecurrences(where: $where) {
+         brandId
+         recurrenceId
+         recurrence {
+            id
+            rrule
+            type
+            timeSlots {
+               from
+               to
+               mileRanges {
+                  from
+                  city
+                  distanceType
+                  to
+                  zipcodes
+                  state
+                  geoBoundary
+                  isExcluded
+                  leadTime
+               }
+            }
+         }
+         brandLocationId
+      }
+   }
+`
+export const PREORDER_PICKUP_BRAND_RECURRENCES = gql`
+   query PREORDER_PICKUP_BRAND_RECURRENCES(
+      $where: fulfilment_brand_recurrence_bool_exp!
+   ) {
+      brandRecurrences(where: $where) {
+         brandId
+         recurrenceId
+         brandLocationId
+         recurrence {
+            id
+            rrule
+            type
+            timeSlots {
+               from
+               to
+               mileRanges {
+                  from
+                  city
+                  distanceType
+                  to
+                  zipcodes
+                  state
+                  geoBoundary
+                  isExcluded
+                  leadTime
+               }
+            }
+         }
+      }
+   }
+`

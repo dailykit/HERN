@@ -14,7 +14,7 @@ const initialState = {
       id: null,
    },
    settings: {},
-   orderTabs: [],
+   orderTabs: null,
 }
 
 const reducers = (state, { type, payload }) => {

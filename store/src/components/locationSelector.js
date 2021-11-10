@@ -14,6 +14,7 @@ import {
    isClient,
    get_env,
    isStoreDeliveryAvailable,
+   isStorePickupAvailable,
 } from '../utils'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
 import { Loader } from './index'
@@ -29,7 +30,9 @@ import { Button } from './button'
 import {
    BRAND_LOCATIONS,
    BRAND_ONDEMAND_DELIVERY_RECURRENCES,
+   ONDEMAND_PICKUP_BRAND_RECURRENCES,
    PREORDER_DELIVERY_BRAND_RECURRENCES,
+   PREORDER_PICKUP_BRAND_RECURRENCES,
 } from '../graphql'
 import { TimePicker, Divider, Radio } from 'antd'
 import 'antd/dist/antd.css'
@@ -40,10 +43,19 @@ export const LocationSelector = props => {
    // WARNING this component using settings so whenever using this component make sure this component can access settings
    const { setShowLocationSelectionPopup, settings } = props
 
-   const { brand } = useConfig()
+   const { brand, orderTabs } = useConfig()
 
-   const { defaultFulfillmentType: storeFulfillmentType } =
-      LocationSelectorConfig.informationVisibility
+   const orderTabFulfillmentType = React.useMemo(
+      () =>
+         orderTabs
+            ? orderTabs.map(eachTab => eachTab.orderFulfillmentTypeLabel)
+            : null,
+      [orderTabs]
+   )
+   const {
+      availableFulfillmentType: storeFulfillmentType,
+      defaultFulfillmentType,
+   } = LocationSelectorConfig.informationVisibility
    const availableFulFillmentType =
       storeFulfillmentType.value.length > 0
          ? storeFulfillmentType.value.map(x => x.value)
@@ -61,9 +73,8 @@ export const LocationSelector = props => {
    const [address, setAddress] = useState(null)
 
    const [fulfillmentType, setFulfillmentType] = useState(
-      Boolean(availableFulFillmentType.find(x => x === 'DELIVERY'))
-         ? 'DELIVERY'
-         : availableFulFillmentType[0]
+      defaultFulfillmentType.value?.value ||
+         defaultFulfillmentType.default?.value
    )
 
    React.useEffect(() => {
@@ -184,6 +195,10 @@ export const LocationSelector = props => {
       }
    }, [userCoordinate])
 
+   if (!orderTabFulfillmentType) {
+      return <Loader />
+   }
+
    return (
       <div className={classNames('hern-store-location-selector')}>
          <div className="hern-store-location-selector-container">
@@ -204,48 +219,54 @@ export const LocationSelector = props => {
             </div>
             {/* fulfillment type*/}
             <div className="hern-store-location-selector__fulfillment-selector">
-               {availableFulFillmentType.includes('DELIVERY') && (
-                  <button
-                     className={classNames(
-                        'hern-store-location-selector__fulfillment-selector-button',
-                        {
-                           'hern-store-location-selector__fulfillment-selector-button--active':
-                              fulfillmentType === 'DELIVERY',
-                        }
-                     )}
-                     onClick={() => setFulfillmentType('DELIVERY')}
-                  >
-                     Delivery
-                  </button>
-               )}
-               {availableFulFillmentType.includes('PICKUP') && (
-                  <button
-                     className={classNames(
-                        'hern-store-location-selector__fulfillment-selector-button',
-                        {
-                           'hern-store-location-selector__fulfillment-selector-button--active':
-                              fulfillmentType === 'PICKUP',
-                        }
-                     )}
-                     onClick={() => setFulfillmentType('PICKUP')}
-                  >
-                     Pickup
-                  </button>
-               )}
-               {availableFulFillmentType.includes('DINEIN') && (
-                  <button
-                     className={classNames(
-                        'hern-store-location-selector__fulfillment-selector-button',
-                        {
-                           'hern-store-location-selector__fulfillment-selector-button--active':
-                              fulfillmentType === 'DINEIN',
-                        }
-                     )}
-                     onClick={() => setFulfillmentType('DINEIN')}
-                  >
-                     Dine In
-                  </button>
-               )}
+               {(orderTabFulfillmentType.includes('ONDEMAND_DELIVERY') ||
+                  orderTabFulfillmentType.includes('PREORDER_DELIVERY')) &&
+                  availableFulFillmentType.includes('DELIVERY') && (
+                     <button
+                        className={classNames(
+                           'hern-store-location-selector__fulfillment-selector-button',
+                           {
+                              'hern-store-location-selector__fulfillment-selector-button--active':
+                                 fulfillmentType === 'DELIVERY',
+                           }
+                        )}
+                        onClick={() => setFulfillmentType('DELIVERY')}
+                     >
+                        Delivery
+                     </button>
+                  )}
+               {(orderTabFulfillmentType.includes('ONDEMAND_PICKUP') ||
+                  orderTabFulfillmentType.includes('PREORDER_PICKUP')) &&
+                  availableFulFillmentType.includes('PICKUP') && (
+                     <button
+                        className={classNames(
+                           'hern-store-location-selector__fulfillment-selector-button',
+                           {
+                              'hern-store-location-selector__fulfillment-selector-button--active':
+                                 fulfillmentType === 'PICKUP',
+                           }
+                        )}
+                        onClick={() => setFulfillmentType('PICKUP')}
+                     >
+                        Pickup
+                     </button>
+                  )}
+               {(orderTabFulfillmentType.includes('ONDEMAND_DINEIN') ||
+                  orderTabFulfillmentType.includes('PREORDER_DINEIN')) &&
+                  availableFulFillmentType.includes('DINEIN') && (
+                     <button
+                        className={classNames(
+                           'hern-store-location-selector__fulfillment-selector-button',
+                           {
+                              'hern-store-location-selector__fulfillment-selector-button--active':
+                                 fulfillmentType === 'DINEIN',
+                           }
+                        )}
+                        onClick={() => setFulfillmentType('DINEIN')}
+                     >
+                        Dine In
+                     </button>
+                  )}
             </div>
             <Divider style={{ margin: '1em 0' }} />
             {fulfillmentType === 'DELIVERY' && (
@@ -257,7 +278,12 @@ export const LocationSelector = props => {
                   }
                />
             )}
-            {fulfillmentType === 'PICKUP' && <Pickup />}
+            {fulfillmentType === 'PICKUP' && (
+               <Pickup
+                  setShowLocationSelectionPopup={setShowLocationSelectionPopup}
+                  settings={settings}
+               />
+            )}
             {fulfillmentType === 'DINEIN' && <DineIn />}
             <div className="hern-store-location-selector-footer"></div>
          </div>
@@ -280,7 +306,15 @@ const Delivery = props => {
       brands_brand_location_aggregate,
    } = props
 
-   const { brand } = useConfig()
+   const { brand, orderTabs } = useConfig()
+
+   const orderTabFulfillmentType = React.useMemo(
+      () =>
+         orderTabs
+            ? orderTabs.map(eachTab => eachTab.orderFulfillmentTypeLabel)
+            : null,
+      [orderTabs]
+   )
 
    const [deliveryType, setDeliveryType] = useState(
       Boolean(availableStoreType.find(x => x === 'ONDEMAND'))
@@ -291,12 +325,18 @@ const Delivery = props => {
       {
          label: 'Now',
          value: 'ONDEMAND',
-         disabled: !Boolean(availableStoreType.find(x => x === 'ONDEMAND')),
+         disabled:
+            orderTabFulfillmentType &&
+            !orderTabFulfillmentType.includes('ONDEMAND_DELIVERY') &&
+            !Boolean(availableStoreType.find(x => x === 'ONDEMAND')),
       },
       {
          label: 'Later',
          value: 'PREORDER',
-         disabled: !Boolean(availableStoreType.find(x => x === 'PREORDER')),
+         disabled:
+            orderTabFulfillmentType &&
+            !orderTabFulfillmentType.includes('PREORDER_DELIVERY') &&
+            !Boolean(availableStoreType.find(x => x === 'PREORDER')),
       },
    ])
    const [deliveryTypeChanging, setDeliveryTyeChanging] = useState(false)
@@ -526,6 +566,10 @@ const Delivery = props => {
          : ''
    )
 
+   if (!orderTabFulfillmentType) {
+      return <Loader />
+   }
+
    return (
       <>
          {/* get location */}
@@ -605,13 +649,324 @@ const Delivery = props => {
                         ? onDemandBrandRecurrence
                         : preOrderBrandRecurrence
                   }
+                  storeDistanceValidation={true}
                />
             ))}
       </>
    )
 }
-const Pickup = () => {
-   return <p>Work under process for pick up</p>
+const Pickup = props => {
+   // user location need only for show distance from user location
+
+   // if there is no user location we will show all store which available for pickup
+   const { pickupType: storePickupType, userAddress } =
+      LocationSelectorConfig.informationVisibility.pickupSettings
+
+   const availableStoreType =
+      storePickupType.value.length > 0
+         ? storePickupType.value.map(x => x.value)
+         : storePickupType.default.map(x => x.value)
+
+   const { setShowLocationSelectionPopup, settings } = props
+
+   const { brand, orderTabs } = useConfig()
+
+   const orderTabFulfillmentType = React.useMemo(
+      () =>
+         orderTabs
+            ? orderTabs.map(eachTab => eachTab.orderFulfillmentTypeLabel)
+            : null,
+      [orderTabs]
+   )
+   const [pickupType, setPickupType] = useState(
+      Boolean(availableStoreType.find(x => x === 'ONDEMAND'))
+         ? 'ONDEMAND'
+         : availableStoreType[0]
+   )
+   const [deliveryRadioOptions] = useState([
+      {
+         label: 'Now',
+         value: 'ONDEMAND',
+         disabled:
+            (orderTabFulfillmentType &&
+               !orderTabFulfillmentType.includes('ONDEMAND_PICKUP')) ||
+            !Boolean(availableStoreType.find(x => x === 'ONDEMAND')),
+      },
+      {
+         label: 'Later',
+         value: 'PREORDER',
+         disabled:
+            (orderTabFulfillmentType &&
+               !orderTabFulfillmentType.includes('PREORDER_PICKUP')) ||
+            !Boolean(availableStoreType.find(x => x === 'PREORDER')),
+      },
+   ])
+   const [pickupTypeChanging, setPickupTyeChanging] = useState(false)
+   const [onDemandBrandRecurrence, setOnDemandBrandReoccurrence] =
+      useState(null)
+   const [preOrderBrandRecurrence, setPreOrderBrandReoccurrence] =
+      useState(null)
+   const [userCoordinate, setUserCoordinate] = useState({
+      latitude: null,
+      longitude: null,
+   })
+   const [locationSearching, setLocationSearching] = useState({
+      error: false,
+      loading: false,
+      errorType: '',
+   })
+   const [address, setAddress] = useState(null)
+
+   // use local storage user address
+   React.useEffect(() => {
+      const userLocation = JSON.parse(localStorage.getItem('userLocation'))
+      if (userLocation && userLocation.address) {
+         setLocationSearching(prev => ({ ...prev, loading: !prev.loading }))
+         setAddress(userLocation.address)
+         setLocationSearching(prev => ({ ...prev, loading: !prev.loading }))
+      }
+   }, [])
+
+   // location by browser
+   const locationByBrowser = () => {
+      // if no location already exist in local and if browser not support geolocation api
+      setLocationSearching(prev => ({
+         ...prev,
+         loading: !prev.loading,
+         error: false,
+      }))
+      if (window.navigator.geolocation) {
+         const success = position => {
+            const latitude = position.coords.latitude
+            const longitude = position.coords.longitude
+            const userLocationInfo = {
+               latitude,
+               longitude,
+            }
+            setUserCoordinate(prev => ({ ...prev, latitude, longitude }))
+            // localStorage.setItem(
+            //    'userLocation',
+            //    JSON.stringify(userLocationInfo)
+            // )
+         }
+         const error = () => {
+            setLocationSearching(prev => ({
+               ...prev,
+               loading: !prev.loading,
+               error: true,
+               errorType: 'blockByBrowser',
+            }))
+         }
+         window.navigator.geolocation.getCurrentPosition(success, error)
+      }
+   }
+   // get address by coordinates
+   useEffect(() => {
+      if (userCoordinate.latitude && userCoordinate.longitude) {
+         fetch(
+            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${
+               userCoordinate.latitude
+            },${userCoordinate.longitude}&key=${get_env('GOOGLE_API_KEY')}`
+         )
+            .then(res => res.json())
+            .then(data => {
+               if (data.status === 'OK' && data.results.length > 0) {
+                  const formatted_address =
+                     data.results[0].formatted_address.split(',')
+                  const mainText = formatted_address
+                     .slice(0, formatted_address.length - 3)
+                     .join(',')
+                  const secondaryText = formatted_address
+                     .slice(formatted_address.length - 3)
+                     .join(',')
+                  const address = {}
+                  data.results[0].address_components.forEach(node => {
+                     if (node.types.includes('locality')) {
+                        address.city = node.long_name
+                     }
+                     if (node.types.includes('administrative_area_level_1')) {
+                        address.state = node.long_name
+                     }
+                     if (node.types.includes('country')) {
+                        address.country = node.long_name
+                     }
+                     if (node.types.includes('postal_code')) {
+                        address.zipcode = node.long_name
+                     }
+                  })
+                  setAddress(prev => ({
+                     ...prev,
+                     mainText,
+                     secondaryText,
+                     ...address,
+                  }))
+                  localStorage.setItem(
+                     'userLocation',
+                     JSON.stringify({
+                        latitude: userCoordinate.latitude,
+                        longitude: userCoordinate.longitude,
+                        address: {
+                           mainText,
+                           secondaryText,
+                           ...address,
+                        },
+                     })
+                  )
+                  setLocationSearching(prev => ({
+                     ...prev,
+                     loading: !prev.loading,
+                  }))
+               }
+            })
+            .catch(e => {
+               console.log('error', e)
+               setLocationSearching(prev => ({
+                  ...prev,
+                  loading: !prev.loading,
+                  error: true,
+                  errorType: 'fetchAddress',
+               }))
+            })
+      }
+   }, [userCoordinate])
+   const [loaded, error] = useScript(
+      isClient
+         ? `https://maps.googleapis.com/maps/api/js?key=${get_env(
+              'GOOGLE_API_KEY'
+           )}&libraries=places`
+         : ''
+   )
+   const { loading: onDemandPickupRecurrenceLoading } = useQuery(
+      ONDEMAND_PICKUP_BRAND_RECURRENCES,
+      {
+         skip: !brand || !brand.id,
+         variables: {
+            where: {
+               isActive: { _eq: true },
+               recurrence: {
+                  isActive: { _eq: true },
+                  type: { _eq: 'ONDEMAND_PICKUP' },
+               },
+               brandId: { _eq: brand.id },
+            },
+         },
+         onCompleted: data => {
+            console.log('ondemandPickup', data)
+            if (data) {
+               setOnDemandBrandReoccurrence(data.brandRecurrences)
+            }
+         },
+      }
+   )
+   const { loading: preOrderPickRecurrencesLoading } = useQuery(
+      PREORDER_PICKUP_BRAND_RECURRENCES,
+      {
+         skip: !brand || !brand.id,
+         variables: {
+            where: {
+               isActive: { _eq: true },
+               recurrence: {
+                  isActive: { _eq: true },
+                  type: { _eq: 'PREORDER_PICKUP' },
+               },
+               brandId: { _eq: brand.id },
+            },
+         },
+         onCompleted: data => {
+            console.log('PREoRDER', data)
+            if (data) {
+               setPreOrderBrandReoccurrence(data.brandRecurrences)
+            }
+         },
+      }
+   )
+
+   if (!orderTabFulfillmentType) {
+      return <Loader />
+   }
+   return (
+      <>
+         <div
+            className={classNames(
+               'hern-store-location__preOrder-time-selection'
+            )}
+         >
+            <Radio.Group
+               options={deliveryRadioOptions}
+               onChange={e => {
+                  setPickupTyeChanging(prev => !prev)
+                  setPickupType(e.target.value)
+                  setTimeout(() => {
+                     setPickupTyeChanging(prev => !prev)
+                  }, 500)
+               }}
+               value={pickupType}
+            />
+         </div>
+         <div className="hern-store-location-selector-main">
+            <div className="hern-store-location-selector-main__location-field">
+               {loaded &&
+                  !error &&
+                  LocationSelectorConfig.informationVisibility.deliverySettings
+                     .userAddressInput.value && (
+                     <GooglePlacesAutocomplete
+                        inputClassName="hern-store-location-selector-main__location-input"
+                        onSelect={data => formatAddress(data)}
+                        placeholder={
+                           LocationSelectorConfig.informationVisibility
+                              .deliverySettings.userAddressInputPlaceHolder
+                              .value || 'Enter your delivery location'
+                        }
+                     />
+                  )}
+
+               <div
+                  className="hern-store-location-selector-main__get-current-location"
+                  onClick={locationByBrowser}
+               >
+                  <GPSIcon />
+                  <span>Get Current Location</span>
+               </div>
+               {locationSearching.error &&
+                  locationSearching.errorType === 'blockByBrowser' && (
+                     <span className="hern-store-location-selector-main__get-current-location-error-message">
+                        You have blocked this site from tracking your location.
+                        To use this, change your location settings in browser.
+                     </span>
+                  )}
+            </div>
+         </div>
+         {locationSearching.loading ? (
+            <Loader />
+         ) : locationSearching.error ? (
+            <p>unable to find location</p>
+         ) : address ? (
+            <div className="hern-store-location-selector__user-location">
+               {userAddress.value && <AddressInfo address={address} />}
+            </div>
+         ) : null}
+         {address &&
+            (pickupTypeChanging ? (
+               <Loader />
+            ) : (
+               <StoreList
+                  userCoordinate={userCoordinate}
+                  setShowLocationSelectionPopup={setShowLocationSelectionPopup}
+                  settings={settings}
+                  brandRecurrences={
+                     pickupType === 'ONDEMAND'
+                        ? onDemandBrandRecurrence
+                        : preOrderBrandRecurrence
+                  }
+                  fulfillmentType={
+                     pickupType === 'ONDEMAND'
+                        ? 'ONDEMAND_PICKUP'
+                        : 'PREORDER_PICKUP'
+                  }
+               />
+            ))}
+      </>
+   )
 }
 const DineIn = () => {
    return <p>Work under process DineIn</p>
@@ -713,10 +1068,30 @@ const StoreList = props => {
       setShowLocationSelectionPopup,
       settings,
       brandRecurrences,
+      storeDistanceValidation = false,
+      fulfillmentType,
    } = props
    // console.log('settings', settings)
-
+   console.log('brandRecurrencesPick', brandRecurrences)
    const { brand } = useConfig()
+
+   const fulfillmentStatus = React.useMemo(() => {
+      let type
+      if (
+         fulfillmentType === 'ONDEMAND_PICKUP' ||
+         fulfillmentType === 'PREORDER_PICKUP'
+      ) {
+         type = 'pickupStatus'
+         return type
+      }
+      if (
+         fulfillmentType === 'ONDEMAND_DELIVERY' ||
+         fulfillmentType === 'PREORDER_DELIVERY'
+      ) {
+         type = 'deliveryStatus'
+         return type
+      }
+   }, [fulfillmentType])
 
    const {
       showAerialDistance,
@@ -806,12 +1181,12 @@ const StoreList = props => {
       if (
          sortedBrandLocation &&
          sortedBrandLocation.every(eachStore =>
-            Boolean(eachStore.deliveryStatus)
+            Boolean(eachStore[fulfillmentStatus])
          )
       ) {
          setSelectedStore(
             sortedBrandLocation.filter(
-               eachStore => eachStore.deliveryStatus.status
+               eachStore => eachStore[fulfillmentStatus].status
             )[0]
          )
          if (
@@ -822,7 +1197,7 @@ const StoreList = props => {
             console.log(
                'your automatic store is',
                sortedBrandLocation.filter(
-                  eachStore => eachStore.deliveryStatus.status
+                  eachStore => eachStore[fulfillmentStatus].status
                )[0]
             )
             setShowLocationSelectionPopup(false)
@@ -845,12 +1220,25 @@ const StoreList = props => {
             aerialDistanceInMiles.toFixed(2)
          )
          eachStore['distanceUnit'] = 'mi'
-         if (brandRecurrences) {
+         if (storeDistanceValidation && brandRecurrences) {
             const deliveryStatus = isStoreDeliveryAvailable(
                brandRecurrences,
                eachStore
             )
-            eachStore['deliveryStatus'] = deliveryStatus
+            eachStore[fulfillmentStatus] = deliveryStatus
+         }
+         if (fulfillmentType === 'ONDEMAND_PICKUP' && brandRecurrences) {
+            const pickupStatus = isStorePickupAvailable(
+               brandRecurrences,
+               eachStore
+            )
+            eachStore[fulfillmentStatus] = pickupStatus
+         }
+         if (fulfillmentType === 'PREORDER_PICKUP' && brandRecurrences) {
+            eachStore[fulfillmentStatus] = {
+               status: true,
+               message: 'Store available for pre order pickup.',
+            }
          }
          return eachStore
       })
@@ -859,6 +1247,7 @@ const StoreList = props => {
          const sortedDataWithAerialDistance = _.sortBy(dataWithAerialDistance, [
             x => x.aerialDistance,
          ])
+         console.log('brandReccurenceBefore', brandRecurrences)
          if (brandRecurrences) {
             setStatus('success')
          }
@@ -890,18 +1279,22 @@ const StoreList = props => {
    }
 
    // when there is no stores which do not fulfill delivery time and mile range for brandRecurrences
-   if (!sortedBrandLocation.some(store => store.deliveryStatus.status)) {
+   if (
+      storeDistanceValidation &&
+      !sortedBrandLocation.some(store => store[fulfillmentStatus].status)
+   ) {
       return (
          <div className="hern-location-selector__stores-list">
-            {sortedBrandLocation[0].deliveryStatus.message}
+            {sortedBrandLocation[0][fulfillmentStatus].message}
          </div>
       )
    }
 
    // when there is no stores which do not fulfill timing but does not fulfill delivery conditions (aerial distance, zipcodes, geoboundry)
    if (
+      storeDistanceValidation &&
       !sortedBrandLocation.some(store => {
-         const sortedStatus = store.deliveryStatus.result
+         const sortedStatus = store[fulfillmentStatus].result
          if (sortedStatus) {
             const { aerial, zipcode, geoBoundary } = sortedStatus
             return aerial && zipcode && geoBoundary
@@ -940,7 +1333,7 @@ const StoreList = props => {
             } = eachStore
             const { line1, line2 } = locationAddress
             if (
-               !eachStore.deliveryStatus.status &&
+               !eachStore[fulfillmentStatus].status &&
                disabledLocationDisplayStyle.value?.value === 'noShow'
             ) {
                return null
@@ -959,11 +1352,12 @@ const StoreList = props => {
                      {
                         'hern-store-location-selector__each-store--disabled':
                            disabledLocationDisplayStyle.value?.value ===
-                              'disabled' && !eachStore.deliveryStatus.status,
+                              'disabled' &&
+                           !eachStore[fulfillmentStatus].status,
                      }
                   )}
                   onClick={() => {
-                     eachStore.deliveryStatus.status &&
+                     eachStore[fulfillmentStatus].status &&
                         setSelectedStore(eachStore)
                   }}
                >
@@ -994,10 +1388,13 @@ const StoreList = props => {
                      </div>
                   </div>
                   {cardSelectionStyle.value?.value === 'radio' &&
-                     !(
-                        disabledLocationDisplayStyle.value?.value ===
-                           'disabled' && !eachStore.deliveryStatus.status
-                     ) && (
+                     (storeDistanceValidation
+                        ? !(
+                             disabledLocationDisplayStyle.value?.value ===
+                                'disabled' &&
+                             !eachStore[fulfillmentStatus].status
+                          )
+                        : true) && (
                         <RadioIcon
                            size={18}
                            showTick={selectedStore && id === selectedStore.id}

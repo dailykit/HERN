@@ -1,6 +1,39 @@
 {
     "informationVisibility": {
         "defaultFulfillmentType": {
+            "type": "single",
+            "label": "Select menu type for jump on categories of products.",
+            "value": {
+                "id": 2,
+                "title": "Pick Up",
+                "value": "PICKUP"
+            },
+            "default": {
+                "id": 1,
+                "title": "Delivery",
+                "value": "DELIVERY"
+            },
+            "options": [
+                {
+                    "id": 1,
+                    "title": "Delivery",
+                    "value": "DELIVERY"
+                },
+                {
+                    "id": 2,
+                    "title": "Pick Up",
+                    "value": "PICKUP"
+                },
+                {
+                    "id": 3,
+                    "title": "Dine In",
+                    "value": "DINEIN"
+                }
+            ],
+            "dataType": "select",
+            "userInsertType": "dropdown"
+        },
+        "availableFulfillmentType": {
             "type": "multi",
             "label": "Select menu type for jump on categories of products.",
             "value": [
@@ -24,34 +57,34 @@
                 {
                     "id": 1,
                     "title": "Delivery",
-                    "value": "delivery"
+                    "value": "DELIVERY"
                 },
                 {
                     "id": 2,
                     "title": "Pick Up",
-                    "value": "pickUp"
+                    "value": "PICKUP"
                 },
                 {
                     "id": 3,
                     "title": "Dine In",
-                    "value": "dineIn"
+                    "value": "DINEIN"
                 }
             ],
             "options": [
                 {
                     "id": 1,
                     "title": "Delivery",
-                    "value": "delivery"
+                    "value": "DELIVERY"
                 },
                 {
                     "id": 2,
                     "title": "Pick Up",
-                    "value": "pickUp"
+                    "value": "PICKUP"
                 },
                 {
                     "id": 3,
                     "title": "Dine In",
-                    "value": "dineIn"
+                    "value": "DINEIN"
                 }
             ],
             "dataType": "select",
@@ -67,6 +100,144 @@
                 "userInsertType": "checkbox"
             },
             "deliveryType": {
+                "type": "multi",
+                "label": "Select style for card selection.",
+                "default": [
+                    {
+                        "id": 1,
+                        "title": "Now (On Demand)",
+                        "value": "ONDEMAND"
+                    },
+                    {
+                        "id": 2,
+                        "title": "Later",
+                        "value": "PREORDER"
+                    }
+                ],
+                "value": [
+                    {
+                        "id": 1,
+                        "title": "Now (On Demand)",
+                        "value": "ONDEMAND"
+                    },
+                    {
+                        "id": 2,
+                        "title": "Later",
+                        "value": "PREORDER"
+                    }
+                ],
+                "options": [
+                    {
+                        "id": 1,
+                        "title": "Now (On Demand)",
+                        "value": "ONDEMAND"
+                    },
+                    {
+                        "id": 2,
+                        "title": "Later",
+                        "value": "PREORDER"
+                    }
+                ],
+                "dataType": "select",
+                "userInsertType": "dropdown"
+            },
+            "storeLocationSelectionMethod": {
+                "type": "single",
+                "label": "Select store location method to pick store after get user's location.",
+                "value": {
+                    "id": 2,
+                    "title": "Manual",
+                    "value": "manual"
+                },
+                "options": [
+                    {
+                        "id": 1,
+                        "title": "Auto",
+                        "value": "auto"
+                    },
+                    {
+                        "id": 2,
+                        "title": "Manual",
+                        "value": "manual"
+                    }
+                ],
+                "dataType": "select",
+                "userInsertType": "dropdown"
+            },
+            "disabledLocationDisplayStyle": {
+                "type": "single",
+                "label": "Manage disabled locations.",
+                "value": {
+                    "id": 1,
+                    "title": "Not Show",
+                    "value": "noShow"
+                },
+                "options": [
+                    {
+                        "id": 1,
+                        "title": "Not Show",
+                        "value": "noShow"
+                    },
+                    {
+                        "id": 2,
+                        "title": "Show but disabled (not selectable)",
+                        "value": "disabled"
+                    }
+                ],
+                "dataType": "select",
+                "userInsertType": "dropdown"
+            },
+            "showAllLocations": {
+                "label": "Show All Store Location",
+                "value": true,
+                "default": true,
+                "dataType": "boolean",
+                "description": "This will show or hide all store location list in location selection popup.",
+                "userInsertType": "checkbox"
+            },
+            "userAddressInput": {
+                "label": "Show User Address Input Field",
+                "value": true,
+                "default": true,
+                "dataType": "boolean",
+                "description": "This will show or hide user address input field in location selection popup.",
+                "userInsertType": "checkbox"
+            },
+            "userAddressInputPlaceHolder": {
+                "label": "Show User Address Input Field",
+                "value": "",
+                "default": "",
+                "dataType": "text",
+                "description": "This will show or hide user address input field in location selection popup.",
+                "userInsertType": "textField"
+            },
+            "userAddress": {
+                "label": "Show user's location",
+                "value": true,
+                "default": true,
+                "dataType": "boolean",
+                "description": "This will show or hide user address input field in location selection popup.",
+                "userInsertType": "checkbox"
+            },
+            "noDeliveryLocationMessage": {
+                "label": "Message for not delivery location available.",
+                "value": "",
+                "default": "",
+                "dataType": "text",
+                "description": "This will show or hide user address input field in location selection popup.",
+                "userInsertType": "textField"
+            },
+            "showStoresOnMap": {
+                "label": "Show stores on map.",
+                "value": true,
+                "default": true,
+                "dataType": "boolean",
+                "description": "This will show or hide view store on map in location selection popup.",
+                "userInsertType": "checkbox"
+            }
+        },
+        "pickupSettings": {
+            "pickupType": {
                 "type": "multi",
                 "label": "Select style for card selection.",
                 "default": [
@@ -203,7 +374,6 @@
                 "userInsertType": "checkbox"
             }
         },
-        "pickupSettings": {},
         "dineInSettings": {},
         "deliveryLocationCard": {
             "showLocationLabel": {
@@ -234,9 +404,9 @@
                 "type": "single",
                 "label": "Select style for card selection.",
                 "value": {
-                    "id": 1,
-                    "title": "Colored outline",
-                    "value": "border"
+                    "id": 2,
+                    "title": "Radio button",
+                    "value": "radio"
                 },
                 "options": [
                     {

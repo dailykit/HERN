@@ -184,3 +184,89 @@ const isStoreDeliveryAvailableByDistance = (mileRanges, eachStore) => {
       result: isStoreDeliveryAvailableByDistanceStatus,
    }
 }
+
+export const isStorePickupAvailable = (brandRecurrences, eachStore) => {
+   const storeLocationRecurrences = brandRecurrences.filter(
+      x => x.brandLocationId === eachStore.id
+   )
+
+   const storeRecurrencesLength = storeLocationRecurrences.length
+
+   const finalRecurrences =
+      storeRecurrencesLength === 0
+         ? brandRecurrences.filter(x => x.brandLocationId === null)
+         : storeLocationRecurrences
+   console.log('finalReccurencesPickup', finalRecurrences)
+   if (finalRecurrences.length === 0) {
+      return {
+         status: false,
+         message: 'Sorry, there is no store available for pickup.',
+      }
+   } else {
+      for (let rec in finalRecurrences) {
+         const now = new Date() // now
+         const start = new Date(now.getTime() - 1000 * 60 * 60 * 24) // yesterday
+         const end = new Date(now.getTime() + 1000 * 60 * 60 * 24) // tomorrow
+         const dates = rrulestr(finalRecurrences[rec].recurrence.rrule).between(
+            start,
+            now
+         )
+         console.log('dateSlot', dates)
+         if (dates.length) {
+            if (brandRecurrences[rec].recurrence.timeSlots.length) {
+               for (let timeslot of brandRecurrences[rec].recurrence
+                  .timeSlots) {
+                  const timeslotFromArr = timeslot.from.split(':')
+                  const timeslotToArr = timeslot.to.split(':')
+                  const fromTimeStamp = new Date(now.getTime())
+                  fromTimeStamp.setHours(
+                     timeslotFromArr[0],
+                     timeslotFromArr[1],
+                     timeslotFromArr[2]
+                  )
+                  const toTimeStamp = new Date(now.getTime())
+                  toTimeStamp.setHours(
+                     timeslotToArr[0],
+                     timeslotToArr[1],
+                     timeslotToArr[2]
+                  )
+                  // check if current time falls within time slot
+                  if (
+                     now.getTime() > fromTimeStamp.getTime() &&
+                     now.getTime() < toTimeStamp.getTime()
+                  ) {
+                     if (rec == finalRecurrences.length - 1) {
+                        return {
+                           status: true,
+                           message: 'Store available for pickup.',
+                        }
+                     }
+                  } else {
+                     if (rec == finalRecurrences.length - 1) {
+                        return {
+                           status: false,
+                           message:
+                              'Sorry, We do not offer Delivery at this time.',
+                        }
+                     }
+                  }
+               }
+            } else {
+               if (rec == finalRecurrences.length - 1) {
+                  return {
+                     status: false,
+                     message: 'Sorry, We do not offer Delivery at this time.',
+                  }
+               }
+            }
+         } else {
+            if (rec == finalRecurrences.length - 1) {
+               return {
+                  status: false,
+                  message: 'Sorry, We do not offer Delivery on this day.',
+               }
+            }
+         }
+      }
+   }
+}
