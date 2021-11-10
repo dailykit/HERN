@@ -232,7 +232,15 @@ export const LocationSelector = props => {
                         )}
                         onClick={() => setFulfillmentType('DELIVERY')}
                      >
-                        Delivery
+                        {
+                           orderTabs.find(
+                              x =>
+                                 x.orderFulfillmentTypeLabel ===
+                                    'ONDEMAND_DELIVERY' ||
+                                 x.orderFulfillmentTypeLabel ===
+                                    'PREORDER_DELIVERY'
+                           ).label
+                        }
                      </button>
                   )}
                {(orderTabFulfillmentType.includes('ONDEMAND_PICKUP') ||
@@ -248,7 +256,15 @@ export const LocationSelector = props => {
                         )}
                         onClick={() => setFulfillmentType('PICKUP')}
                      >
-                        Pickup
+                        {
+                           orderTabs.find(
+                              x =>
+                                 x.orderFulfillmentTypeLabel ===
+                                    'ONDEMAND_PICKUP' ||
+                                 x.orderFulfillmentTypeLabel ===
+                                    'PREORDER_PICKUP'
+                           ).label
+                        }
                      </button>
                   )}
                {(orderTabFulfillmentType.includes('ONDEMAND_DINEIN') ||
@@ -264,7 +280,15 @@ export const LocationSelector = props => {
                         )}
                         onClick={() => setFulfillmentType('DINEIN')}
                      >
-                        Dine In
+                        {
+                           orderTabs.find(
+                              x =>
+                                 x.orderFulfillmentTypeLabel ===
+                                    'ONDEMAND_DINEIN' ||
+                                 x.orderFulfillmentTypeLabel ===
+                                    'PREORDER_DINEIN'
+                           ).label
+                        }
                      </button>
                   )}
             </div>
@@ -326,16 +350,16 @@ const Delivery = props => {
          label: 'Now',
          value: 'ONDEMAND',
          disabled:
-            orderTabFulfillmentType &&
-            !orderTabFulfillmentType.includes('ONDEMAND_DELIVERY') &&
+            (orderTabFulfillmentType &&
+               !orderTabFulfillmentType.includes('ONDEMAND_DELIVERY')) ||
             !Boolean(availableStoreType.find(x => x === 'ONDEMAND')),
       },
       {
          label: 'Later',
          value: 'PREORDER',
          disabled:
-            orderTabFulfillmentType &&
-            !orderTabFulfillmentType.includes('PREORDER_DELIVERY') &&
+            (orderTabFulfillmentType &&
+               !orderTabFulfillmentType.includes('PREORDER_DELIVERY')) ||
             !Boolean(availableStoreType.find(x => x === 'PREORDER')),
       },
    ])
