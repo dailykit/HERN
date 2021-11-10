@@ -112,7 +112,8 @@ export const Wrap = styled.div`
       width: 100%;
       .checkbox-label {
          margin-left: 1rem;
-         color: ${theme.colors.textColor5};
+         color: ${theme.colors.textColor7};
+         font-weight: 700;
          margin-bottom: 0;
          font-family: 'Maven Pro';
       }

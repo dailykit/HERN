@@ -44,7 +44,8 @@ import {
    fileParser,
    isEmpty,
    getDate,
-   useScroll
+   useScroll,
+   isClient
 } from '../../../utils'
 import SendPollComp from '../../../pageComponents/sendPollComponents'
 
@@ -283,7 +284,10 @@ export default function Experience({
                            <a
                               href="#about-experience"
                               className={
-                                 router.asPath.includes('#about-experience') &&
+                                 isClient &&
+                                 window.location.hash.includes(
+                                    '#about-experience'
+                                 ) &&
                                  'activeHash'
                               }
                            >
@@ -294,9 +298,11 @@ export default function Experience({
                            <a
                               href="#included-in-your-kit"
                               className={
-                                 router.asPath.includes(
+                                 isClient &&
+                                 window.location.hash.includes(
                                     '#included-in-your-kit'
-                                 ) && 'activeHash'
+                                 ) &&
+                                 'activeHash'
                               }
                            >
                               Included in your Kit
@@ -306,9 +312,11 @@ export default function Experience({
                            <a
                               href="#supplies-&-ingredients"
                               className={
-                                 router.asPath.includes(
+                                 isClient &&
+                                 window.location.hash.includes(
                                     '#supplies-&-ingredients'
-                                 ) && 'activeHash'
+                                 ) &&
+                                 'activeHash'
                               }
                            >
                               Supplies & Ingredients
@@ -321,9 +329,11 @@ export default function Experience({
                                     <a
                                        href={`#${header?.title}`}
                                        className={
-                                          router.asPath.includes(
-                                             `#${header?.title}`
-                                          ) && 'activeHash'
+                                          isClient &&
+                                          window.location.hash.includes(
+                                             `#${encodeURI(header?.title)}`
+                                          ) &&
+                                          'activeHash'
                                        }
                                     >
                                        {header?.title}
@@ -336,7 +346,10 @@ export default function Experience({
                            <a
                               href="#about-expert"
                               className={
-                                 router.asPath.includes('#about-expert') &&
+                                 isClient &&
+                                 window.location.hash.includes(
+                                    '#about-expert'
+                                 ) &&
                                  'activeHash'
                               }
                            >
@@ -347,7 +360,8 @@ export default function Experience({
                            <a
                               href="#reviews"
                               className={
-                                 router.asPath.includes('#reviews') &&
+                                 isClient &&
+                                 window.location.hash.includes('#reviews') &&
                                  'activeHash'
                               }
                            >
@@ -748,7 +762,7 @@ const Wrapper = styled.main`
       }
       .sub-heading {
          color: ${theme.colors.textColor5};
-         font-weight: 400;
+         font-weight: 600;
          text-align: left;
          text-transform: uppercase;
          font-family: 'Barlow Condensed';
@@ -780,7 +794,7 @@ const Wrapper = styled.main`
       padding: 2rem 0;
       .sub-heading {
          color: ${theme.colors.textColor5};
-         font-weight: 400;
+         font-weight: 600;
          text-align: left;
          margin-bottom: 0;
          text-transform: uppercase;
@@ -921,6 +935,7 @@ const TabWrapper = styled.div`
                border-bottom: 2px solid ${theme.colors.textColor5};
                color: ${theme.colors.textColor5};
                padding-bottom: 4px;
+               font-weight: 800;
                &:after,
                &:before {
                   content: none;
@@ -938,6 +953,7 @@ const TabWrapper = styled.div`
                padding: 0;
                margin: 0;
                font-family: 'Barlow Condensed';
+               font-weight: 600;
                &:hover {
                   color: ${theme.colors.textColor5};
                }

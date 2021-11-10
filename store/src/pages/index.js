@@ -170,7 +170,7 @@ export default function Home({
                            ?.content
                      )}
                </div>
-               <h3 className="experienceHeading text1_secondary">
+               <h3 className="heading_black_bg">
                   Virtual Experience Creators & Industry Experts
                </h3>
                <p className="experienceHeading2 text5">
@@ -190,74 +190,7 @@ export default function Home({
                   )}
                </section>
 
-               {/* // tag selection part */}
-
-               {/* {isAuthenticated && (
-                  <CategorySection>
-                     <Flex
-                        container
-                        alignItems="center"
-                        justifyContent="center"
-                        padding="1rem 0"
-                     >
-                        <h3 className="experienceHeading text1_secondary">
-                           {!isEmpty(selectedTags)
-                              ? 'Your personalized tags'
-                              : 'Choose your tags'}
-                        </h3>
-                     </Flex>
-                     {!isEmpty(selectedTags) ? (
-                        <CategoryTagWrap>
-                           {selectedTags.map(tag => {
-                              return (
-                                 <Button
-                                    key={tag?.id}
-                                    isMainShadow
-                                    className="categoryTag text8"
-                                 >
-                                    {tag?.title}
-                                 </Button>
-                              )
-                           })}
-                        </CategoryTagWrap>
-                     ) : (
-                        <Empty
-                           image={Empty.PRESENTED_IMAGE_SIMPLE}
-                           description={
-                              <span className="experienceHeading2 text8">
-                                 No tags selected yet.
-                              </span>
-                           }
-                        />
-                     )}
-                     {isSelectedTagsLoading && (
-                        <div className="skeleton-wrapper">
-                           {[1, 2, 3, 4].map((_, index) => {
-                              return <ExperienceSkeleton key={index} />
-                           })}
-                        </div>
-                     )}
-
-                     {!isEmpty(selectedTags) ? (
-                        <div className="edit_tags">
-                           <EditIcon size="20" color={theme.colors.textColor} />
-                           <h1
-                              onClick={openTagsModal}
-                              className="explore text6"
-                           >
-                              Edit tags
-                           </h1>
-                        </div>
-                     ) : (
-                        <Button
-                           className="chooseTagBtn text8"
-                           onClick={openTagsModal}
-                        >
-                           Select Tags
-                        </Button>
-                     )}
-                  </CategorySection>
-               )} */}
+               {/* signup fold */}
                {!isAuthenticated && <SignupFold bgMode="dark" />}
             </div>
             <Modal

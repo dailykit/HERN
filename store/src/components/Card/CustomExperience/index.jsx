@@ -8,24 +8,45 @@ export default function CustomExperience() {
       'CUSTOM_EXPERIENCE_TYPEFORM_ID'
    )
    return (
-      <Wrapper>
-         <h1 className="customExperience_heading Barlow-Condensed text1">
-            Want to curate your own experience?
-         </h1>
-         <PopupButton
-            id={CUSTOM_EXPERIENCE_TYPEFORM_ID}
-            className="customExperience_customBtn text7"
-         >
-            Customize
-         </PopupButton>
-      </Wrapper>
+      <StyledWrapper bgMode="light">
+         <Wrapper>
+            <h1 className="customExperience_heading Barlow-Condensed text2">
+               Want to curate your own experience?
+            </h1>
+            <PopupButton
+               id={CUSTOM_EXPERIENCE_TYPEFORM_ID}
+               className="customExperience_customBtn text7"
+            >
+               Customize
+            </PopupButton>
+         </Wrapper>
+         <h2 className="customExperience_subHeading text6">
+            We'll help you create a custom experience for your event.
+         </h2>
+      </StyledWrapper>
    )
 }
-
-const Wrapper = styled.div`
+const StyledWrapper = styled.div`
    height: 480px;
+   .customExperience_subHeading {
+      padding: 0.5rem;
+      font-family: 'Barlow Condensed';
+      font-weight: 700;
+      text-align: left;
+      color: ${({ bgMode = 'dark' }) =>
+         bgMode === 'light'
+            ? theme.colors.textColor5
+            : theme.colors.textColor4};
+      letter-spacing: 0.16em;
+      :hover {
+         color: ${theme.colors.textColor};
+      }
+   }
+`
+const Wrapper = styled.div`
+   height: 360px;
    border-radius: 16px;
-   padding: 2rem 1rem;
+   padding: 2rem;
    background: ${theme.colors.textColor};
    display: flex;
    flex-direction: column;

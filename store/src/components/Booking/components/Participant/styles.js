@@ -8,6 +8,7 @@ export const Wrapper = styled.div`
       color: ${theme.colors.textColor7};
       font-family: 'Maven Pro';
       margin-bottom: 0;
+      text-transform: uppercase;
    }
    .flex-row {
       display: flex;

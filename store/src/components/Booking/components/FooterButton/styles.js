@@ -30,7 +30,8 @@ export const FooterBtnWrap = styled.div`
          border-radius: 0px;
          background: transparent;
          font-family: 'Barlow Condensed';
-         letter-spacing: 0.04em;
+         font-weight: 700;
+         letter-spacing: 0.09em;
          padding: 0 8px;
          color: ${theme.colors.textColor};
       }

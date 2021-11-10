@@ -173,7 +173,7 @@ export default function Experiences({
             </div>
 
             <div className="centerDiv">
-               <h1 className="heading text1">Experiences</h1>
+               <h1 className="heading_black_bg">Experiences</h1>
             </div>
             {/* <Filters
                filterOptions={[
@@ -276,7 +276,7 @@ const StyledWrapper = styled.div`
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: 1rem;
+      margin: 4rem 0;
       .heading {
          font-family: 'Barlow Condensed';
          font-style: normal;

@@ -15,6 +15,9 @@ export const Wrapper = styled.div`
       text-transform: uppercase;
       margin-bottom: 8px;
       text-align: left;
+      text-transform: uppercase;
+      font-weight: 700;
+
       span {
          font-size: ${theme.sizes.h6};
          font-weight: 500;
@@ -94,9 +97,9 @@ export const Wrapper = styled.div`
       margin-top: 1rem;
       .availableDate_head {
          font-family: 'Maven Pro';
-         font-weight: 600;
          color: ${theme.colors.textColor7};
          margin-bottom: 2rem;
+         text-transform: uppercase;
       }
    }
    .flex_row {

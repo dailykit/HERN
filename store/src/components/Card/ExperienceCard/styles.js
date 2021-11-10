@@ -125,8 +125,8 @@ export const CardBody = styled.div`
    }
    .exp-name {
       margin: 4px 0 4px 0;
-      font-family: 'Maven Pro';
-      font-weight: 800;
+      font-family: 'Barlow Condensed';
+      font-weight: 700;
       text-align: left;
       color: ${({ backgroundMode = 'dark' }) =>
          backgroundMode === 'light'
@@ -156,8 +156,9 @@ export const CardBody = styled.div`
       display: flex;
       align-items: center;
       span {
+         font-weight: 600;
+         font-size: ${theme.sizes.h6};
          margin-left: 8px;
-         font-size: ${theme.sizes.h7};
       }
    }
    .expertImgDiv {
@@ -182,7 +183,6 @@ export const CardBody = styled.div`
    @media (min-width: 769px) {
       .exp-name {
          margin: 0 0 0.5rem 0;
-         font-family: 'Maven Pro';
       }
       .exp-info {
          font-size: ${theme.sizes.h8};

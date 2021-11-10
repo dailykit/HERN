@@ -11,18 +11,23 @@ export const Wrapper = styled.div`
    }
    .date {
       font-family: 'Maven Pro';
-      font-weight: 600;
-      color: ${theme.colors.textColor5};
+      font-weight: 700;
+      color: ${theme.colors.textColor7};
       margin-bottom: 12px;
       text-align: left;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
    }
    .custom-slot-Btn {
       height: 36px;
       width: auto;
       text-transform: uppercase;
-      padding: 0 1rem;
+      padding: 0 1.5rem;
       font-family: 'Barlow Condensed';
-      letter-spacing: 0.04em;
+      letter-spacing: 0.09em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       &:active {
          animation: scale-down-center 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)
             both;
@@ -80,10 +85,10 @@ export const Wrapper = styled.div`
    }
    .time-info {
       font-family: 'Barlow Condensed';
-      font-weight: 500;
+      font-weight: 600;
       color: ${theme.colors.textColor5};
       text-transform: capitalize;
-      letter-spacing: 0.04em;
+      letter-spacing: 0em;
    }
    .sold_out_text,
    expired_text {

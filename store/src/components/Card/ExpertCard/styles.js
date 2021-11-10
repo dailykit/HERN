@@ -47,7 +47,8 @@ export const CardBody = styled.div`
    padding: 0.75rem 0.5rem;
    .exp-name {
       margin: 2px 0;
-      font-family: 'Maven Pro';
+      font-family: 'Barlow Condensed';
+      font-weight: 700;
       color: ${theme.colors.textColor4};
       font-weight: 700;
       text-align: left;

@@ -96,7 +96,7 @@ const AvailableDate = ({
       return (
          <Wrapper>
             <div className="flexWrapper">
-               <p className="date text9">{data?.date}</p>
+               <p className="date text8">{data?.date}</p>
                <Flex
                   container
                   justifyContent="flex-start"
@@ -131,7 +131,7 @@ const AvailableDate = ({
                               //     : theme.colors.mainBackground
                               // }
 
-                              className={`custom-slot-Btn text6 ${dynamicButtonTitle(
+                              className={`custom-slot-Btn text8 ${dynamicButtonTitle(
                                  slot
                               )
                                  .toLowerCase()

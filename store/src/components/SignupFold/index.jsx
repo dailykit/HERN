@@ -10,7 +10,7 @@ export default function SignupFold(props) {
    }
    return (
       <Wrapper {...props}>
-         <h1 className="signupFold_heading text1_secondary">Sign up</h1>
+         <h1 className="heading_black_bg">Sign up</h1>
          <p className="signupFold_para text5">
             Get access to your personal dashboard and easily manage several
             events at one time. Be the first to know about new experiences

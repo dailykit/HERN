@@ -46,6 +46,17 @@ body {
    overflow-x: hidden;
 }
 
+.heading_black_bg {
+   font-family: 'Barlow Condensed';
+   font-size: 56px;
+   font-weight: 700;
+   letter-spacing: 0.09em;
+   line-height: 60px;
+   color: #dc2047;
+   text-align: center;
+   text-transform: uppercase;
+}
+
 .special-underline {
    position: relative;
    color: #2a4663;
@@ -284,6 +295,10 @@ body {
 .text4 {
    font-size: 32px !important;
    line-height: 39px !important;
+}
+.text4_secondary {
+   font-size: 28px !important;
+   line-height: 32px !important;
 }
 .text5 {
    font-size: 26px !important;

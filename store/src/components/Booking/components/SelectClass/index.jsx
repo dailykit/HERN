@@ -93,7 +93,7 @@ export default function SelectClass({ experienceId, isMulti = false }) {
    return (
       <Wrapper>
          <div className="flex_row">
-            <h2 className="heading text3">
+            <h2 className="heading text4_secondary">
                Starting at ${pricePerPerson.toFixed(2)} Per Person
             </h2>
             <Popover

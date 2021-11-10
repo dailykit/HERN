@@ -22,13 +22,15 @@ export const Wrapper = styled.div`
       }
    }
    .expertInfo {
-      padding: 1rem;
+      padding: 2rem;
       max-height: 320px;
       overflow-y: auto;
       .expertName {
          color: ${theme.colors.textColor5};
          font-weight: 800;
          margin-bottom: 8px;
+         font-family: 'Barlow Condensed';
+         text-transform: uppercase;
       }
       .expertCategory {
          color: ${theme.colors.textColor5};
@@ -45,8 +47,9 @@ export const Wrapper = styled.div`
          text-align: left;
          color: ${theme.colors.textColor5};
          font-family: 'Maven Pro';
-         letter-spacing: 0.06em;
          margin-bottom: 0;
+         overflow: hidden;
+         text-overflow: ellipsis;
       }
       .readMore {
          border: none;
@@ -87,12 +90,12 @@ export const Wrapper = styled.div`
    }
 
    .custom_btn {
-      width: 250px;
+      width: 90%;
       height: 48px;
       font-family: 'Maven Pro';
       letter-spacing: 0.16em;
       color: ${theme.colors.textColor};
-      margin: 0.5rem auto;
+      margin: 1rem auto;
       display: block;
    }
 

@@ -8,6 +8,9 @@ import Image from 'next/image'
 
 export default function AboutExpert({ expert, expertCategory }) {
    const router = useRouter()
+   const truncate = str => {
+      return str.length > 200 ? str.substring(0, 120) + '...' : str
+   }
    return (
       <Wrapper bg_mode="light">
          <div className="imageWrapper">
@@ -22,18 +25,16 @@ export default function AboutExpert({ expert, expertCategory }) {
          </div>
          <div className="expertInfo">
             <h1 className="expertName text2">{`${expert?.firstName} ${expert?.lastName}`}</h1>
-            {/* <p className="expertCategory text7">{expertCategory || 'N/A'}</p>
-            <p className="expertExp">
-               {expert?.experience_experts_aggregate?.aggregate?.count || 0}{' '}
-               Experiences
-            </p> */}
-            <ReadMoreDiv>
-               <p className="expertDesc text7">
-                  {parse(expert?.description || '')}
-               </p>
-            </ReadMoreDiv>
+
+            <p className="expertDesc text7">
+               {parse(expert?.description || '', {
+                  replace: domNode => {
+                     return <p>{truncate(domNode?.firstChild?.data)}</p>
+                  }
+               })}
+            </p>
             <Button
-               className="custom_btn text7"
+               className="custom_btn text8"
                onClick={() => router.push(`/experts/${expert?.id}`)}
             >
                View Profile

@@ -14,6 +14,8 @@ export const StyledButton = styled(Button)`
       backgroundColor || theme.colors.textColor4};
    border: none;
    cursor: pointer;
+   font-famaily: 'Maven Pro';
+   font-weight: 700;
    :focus {
       border: none;
    }
