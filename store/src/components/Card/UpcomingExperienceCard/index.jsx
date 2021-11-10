@@ -21,7 +21,7 @@ export default function UpcomingExperienceCard({ cardDetails, ...props }) {
                <img src={experience?.assets?.images[0]} alt="card-img" />
             </CardImage>
             <CardBody>
-               <h2 className="exp-name">{experience?.title}</h2>
+               <h2 className="exp-name text7">{experience?.title}</h2>
                <Flex
                   container
                   alignItems="center"
@@ -38,7 +38,7 @@ export default function UpcomingExperienceCard({ cardDetails, ...props }) {
                         }
                         alt="expert-img"
                      />
-                     <p className="expert-name">
+                     <p className="expert-name text10">
                         {
                            experience?.experienceClasses[0]
                               ?.experienceClassExpert?.firstName
@@ -51,12 +51,12 @@ export default function UpcomingExperienceCard({ cardDetails, ...props }) {
                   </div>
 
                   {/* </div> */}
-                  <span className="duration">
+                  <span className="duration expert-name text10">
                      <Clock
                         size={theme.sizes.h6}
                         color={theme.colors.textColor4}
                      />
-                     <span>
+                     <span className="expert-name text10">
                         {getMinute(experience?.experienceClasses[0]?.duration)}
                         min
                      </span>
@@ -66,10 +66,10 @@ export default function UpcomingExperienceCard({ cardDetails, ...props }) {
                   container
                   alignItems="center"
                   justifyContent="space-between"
-                  margin="8px 0 8px 0"
+                  margin="8px 0 1rem 0"
                >
-                  <p>Booked at</p>
-                  <p>
+                  <p className="expert-name text10">Be Ready at</p>
+                  <p className="expert-name text10">
                      {getDateWithTime(
                         experience?.experienceClasses[0]?.startTimeStamp
                      )}

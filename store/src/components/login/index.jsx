@@ -27,8 +27,8 @@ export default function LoginComp({ isClicked, authBtnClassName, ...rest }) {
          setLoading(true)
          const response = await signIn('email_password', {
             redirect: false,
-            email,
-            password
+            email: email.value,
+            password: password.value
          })
          setLoading(false)
          if (response?.status !== 200) {

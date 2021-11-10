@@ -44,10 +44,10 @@ export const CardBody = styled.div`
    padding: 1rem;
    .exp-name {
       margin: 4px 0 4px 0;
-      font-size: ${theme.sizes.h8};
-      font-weight: 500;
+      font-weight: 700;
       text-align: left;
       color: ${theme.colors.textColor2};
+      font-family: 'Barlow Condensed';
    }
    .exp-info {
       font-weight: 800;
@@ -61,16 +61,24 @@ export const CardBody = styled.div`
       text-align: center;
       font-weight: 800;
       font-size: ${theme.sizes.h8};
-      color: ${theme.colors.tertiaryColor};
+      color: ${theme.colors.textColor};
+      background: ${theme.colors.textColor4};
       text-transform: uppercase;
       cursor: pointer;
+      :hover {
+         border: none;
+         background: ${theme.colors.textColor};
+         color: ${theme.colors.textColor4};
+      }
    }
    .duration {
       display: flex;
       align-items: center;
       span {
+         font-weight: 600;
+         font-size: ${theme.sizes.h6};
          margin-left: 8px;
-         font-size: ${theme.sizes.h7};
+         text-transform: uppercase;
       }
    }
    .expertImgDiv {
@@ -87,13 +95,13 @@ export const CardBody = styled.div`
    }
    .expert-name {
       margin-bottom: 0 !important;
+      font-family: 'Maven Pro';
+      font-weight: 800;
+      margin-bottom: 0;
+      text-transform: uppercase;
    }
    @media (min-width: 769px) {
-      .exp-name {
-         font-size: ${theme.sizes.h4};
-      }
       .exp-info {
-         font-size: ${theme.sizes.h8};
          font-weight: 600;
       }
       .duration {

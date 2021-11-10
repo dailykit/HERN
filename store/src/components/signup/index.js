@@ -27,7 +27,7 @@ export default function Signup({ authBtnClassName, ...rest }) {
          e.preventDefault()
          setLoading(true)
          setError('')
-         if (password !== confirmPassword) {
+         if (password.value !== confirmPassword.value) {
             throw new Error('Passwords do not match!')
          }
          const options = {
@@ -36,7 +36,7 @@ export default function Signup({ authBtnClassName, ...rest }) {
             data: {
                name,
                email,
-               password
+               password: password.value
             }
          }
          const { data } = await axios(options)
@@ -44,7 +44,7 @@ export default function Signup({ authBtnClassName, ...rest }) {
             toggleAuthenticationModal(false)
             const response = await signIn('email_password', {
                email,
-               password,
+               password: password.value,
                redirect: false
             })
             console.log({ responsefromSignup: response })
