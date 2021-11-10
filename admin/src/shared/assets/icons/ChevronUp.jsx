@@ -1,6 +1,6 @@
 import React from 'react'
 
-export const ChevronUp = ({ size = 18, color = '#000000' }) => (
+export const ChevronUp = ({ size = 18, color = '#367BF5' }) => (
    <svg
       width="24"
       height="24"
@@ -11,7 +11,7 @@ export const ChevronUp = ({ size = 18, color = '#000000' }) => (
       <circle cx="12" cy="12" r="12" fill="white" />
       <path
          d="M17 13.8442L12 9.59485L7 13.8442"
-         stroke="#367BF5"
+         stroke={color}
          stroke-width="2"
          stroke-linecap="round"
          stroke-linejoin="round"

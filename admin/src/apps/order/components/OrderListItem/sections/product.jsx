@@ -96,11 +96,11 @@ export const Products = ({ order }) => {
                            </StyledProductTitle>
                         </div>
                         {/* <StyledServings>
-                              <span>
-                                 <UserIcon size={16} color="#555B6E" />
-                              </span>
-                              <span>{item?.productOption?.label}</span>
-                           </StyledServings> */}
+                           <span>
+                              <UserIcon size={16} color="#555B6E" />
+                           </span>
+                           <span>{item?.productOption?.label}</span>
+                        </StyledServings> */}
                         <span>
                            {item.assembledSachets?.aggregate?.count || 0} /{' '}
                            {item.packedSachets?.aggregate?.count || 0} /{' '}

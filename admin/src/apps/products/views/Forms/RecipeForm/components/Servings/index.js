@@ -934,7 +934,7 @@ const SachetDetails = ({
 
          <NutritionAndCostSachetWrapper>
             <div
-            id='calCount'
+               id="calCount"
                onClick={() => {
                   setShowNutritionalInfoSachet(!showNutritionalInfoSachet)
                   if (Object.keys(nutritionalInfo).length !== 0) {
@@ -949,9 +949,7 @@ const SachetDetails = ({
                   ? 'N/A'
                   : `${nutritionalInfo.calories} cal`}
             </div>
-            <div
-            id='foodCost'
-            >
+            <div id="foodCost">
                <FoodCost /> {cost === null ? 'N/A' : `${cost} $`}
             </div>
          </NutritionAndCostSachetWrapper>

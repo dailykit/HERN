@@ -1195,6 +1195,17 @@ export const BRAND_PAGE = gql`
          brand {
             navigationMenuId
          }
+         brandPagesLinkedFiles(order_by: { position: desc_nulls_last }) {
+            position
+            fileId
+            fileType
+            id
+            linkedFile {
+               id
+               fileName
+               path
+            }
+         }
       }
    }
 `

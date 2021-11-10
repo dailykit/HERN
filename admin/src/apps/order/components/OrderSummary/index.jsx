@@ -68,6 +68,22 @@ export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
                <CloseIcon />
             </StyledIconButton>
          </Flex>
+         {/* <Spacer size="6px" />
+         <Flex>
+            {state?.orders?.where?.cart?.order?.fulfillmentType?._eq && (
+               <Tag>
+                  {state?.orders?.where?.cart?.order?.fulfillmentType?._eq}
+                  <styledButton
+                     size="sm"
+                     type="ghost"
+                     onClick={() => clearFilters()}
+                     style={{ marginLeft: '5px' }}
+                  >
+                     <Close color="#919699" size="7" />
+                  </styledButton>
+               </Tag>
+            )}
+         </Flex> */}
          <Spacer size="8px" />
          <MetricItem
             title="All"

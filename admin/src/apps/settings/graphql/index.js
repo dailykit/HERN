@@ -687,6 +687,44 @@ export const MASTER = {
          }
       `,
    },
+   VEG_NONVEG: {
+      LIST: gql`
+         subscription VegNonVeg {
+            master_vegNonvegType {
+               description
+               icon
+               label
+            }
+         }
+      `,
+      CREATE: gql`
+         mutation CREATE_VEG_NON_VEG_TYPE(
+            $object: master_vegNonvegType_insert_input!
+         ) {
+            insert_master_vegNonvegType_one(object: $object) {
+               label
+            }
+         }
+      `,
+      DELETE: gql`
+         mutation delete_veg_nonveg($where: master_vegNonvegType_bool_exp!) {
+            delete_master_vegNonvegType(where: $where) {
+               returning {
+                  label
+               }
+            }
+         }
+      `,
+      AGGREGATE: gql`
+         subscription vegnonvegAggregate {
+            master_vegNonvegType_aggregate {
+               aggregate {
+                  count
+               }
+            }
+         }
+      `,
+   },
 }
 
 export const DEVICES = {
