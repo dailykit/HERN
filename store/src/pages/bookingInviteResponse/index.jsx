@@ -80,6 +80,7 @@ export default function PollResponse({ navigationMenuItems, footerHtml = '' }) {
    }
 
    useEffect(() => {
+      console.log('in useEffect 1')
       if (decodedToken?.cutoffDate && !isEmpty(experienceBooking)) {
          if (
             !experienceBooking?.isPublicUrlActive ||
@@ -94,6 +95,7 @@ export default function PollResponse({ navigationMenuItems, footerHtml = '' }) {
 
    // ask for login only when parent share is not 100 (percent) and if not authenticated
    useEffect(() => {
+      console.log('in useEffect 2')
       const setUrlToLocalStorage = async () => {
          localStorage.setItem('bookingInviteUrl', `${window.location.href}`)
       }
@@ -104,6 +106,8 @@ export default function PollResponse({ navigationMenuItems, footerHtml = '' }) {
    }, [])
 
    useEffect(() => {
+      console.log('in useEffect 3')
+
       if (!isExperienceBookingLoading && !isParticipantInfoLoading) {
          updateRsvpInfo({
             experienceBooking,
@@ -142,6 +146,8 @@ export default function PollResponse({ navigationMenuItems, footerHtml = '' }) {
    ])
 
    useEffect(() => {
+      console.log('in useEffect 4')
+
       if (!isPollClosed) {
          if (
             !localStorageData?.participantId &&
@@ -303,7 +309,7 @@ const Wrapper = styled.div`
    }
 
    .main_container {
-      background: ${theme.colors.lightBackground.grey};
+      background: ${theme.colors.lightBackground.white};
       border-radius: 40px;
       position: relative;
    }

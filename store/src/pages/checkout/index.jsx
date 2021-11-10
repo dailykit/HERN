@@ -241,7 +241,7 @@ const Wrapper = styled.div`
          : theme.colors.lightBackground.white};
    .h1_head {
       color: ${theme.colors.textColor5};
-      font-weight: 400;
+      font-weight: 600;
       text-align: left;
       text-transform: uppercase;
       font-family: 'Barlow Condensed';

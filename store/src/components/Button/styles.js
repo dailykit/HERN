@@ -24,6 +24,8 @@ export const StyledButton = styled(Button)`
    }
    :hover {
       border: none;
+      background: ${theme.colors.textColor};
+      color: ${theme.colors.textColor4};
    }
    span {
       font-size: inherit;

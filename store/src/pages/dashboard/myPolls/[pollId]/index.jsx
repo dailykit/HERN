@@ -175,7 +175,7 @@ const Wrapper = styled.div`
    }
    .h1_head {
       color: ${theme.colors.textColor5};
-      font-weight: 400;
+      font-weight: 600;
       text-align: left;
       text-transform: uppercase;
       font-family: 'Barlow Condensed';

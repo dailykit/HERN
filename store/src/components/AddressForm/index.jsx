@@ -58,6 +58,13 @@ export default function AddressForm({
       fontSize: theme.sizes.h8,
       color: theme.colors.textColor5
    }
+   const customPlaceholder = {
+      fontFamily: 'Maven Pro',
+      fontWeight: 600,
+      fontSize: theme.sizes.h8,
+      color: theme.colors.textColor7,
+      textTransform: 'uppercase'
+   }
 
    const [createAddress] = useMutation(CREATE_ADDRESS, {
       refetchQueries: ['CUSTOMER_DETAILS'],
@@ -183,6 +190,10 @@ export default function AddressForm({
                   address,
                   onChange: data => formatAddress(data),
                   styles: {
+                     placeholder: provided => ({
+                        ...provided,
+                        ...customPlaceholder
+                     }),
                      control: provided => ({
                         ...provided,
                         ...controlContainerCustomStyle

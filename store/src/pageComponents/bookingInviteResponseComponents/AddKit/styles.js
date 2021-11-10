@@ -7,8 +7,17 @@ export const Wrap = styled.div`
       grid-template-columns: repeat(1, 1fr);
       grid-gap: 1rem;
    }
+   .kit-includes-div {
+      padding: 2rem;
+   }
    .text_center {
       text-align: center;
+   }
+   .title-head {
+      font-weight: 700;
+      font-family: 'Barlow Condensed';
+      text-align: center;
+      text-transform: uppercase;
    }
    .checkbox-wrap {
       display: flex;

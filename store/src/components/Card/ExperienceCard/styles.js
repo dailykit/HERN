@@ -128,6 +128,7 @@ export const CardBody = styled.div`
       font-family: 'Barlow Condensed';
       font-weight: 700;
       text-align: left;
+      text-transform: uppercase;
       color: ${({ backgroundMode = 'dark' }) =>
          backgroundMode === 'light'
             ? theme.colors.textColor5
@@ -159,6 +160,7 @@ export const CardBody = styled.div`
          font-weight: 600;
          font-size: ${theme.sizes.h6};
          margin-left: 8px;
+         text-transform: uppercase;
       }
    }
    .expertImgDiv {
@@ -172,6 +174,7 @@ export const CardBody = styled.div`
          font-weight: 800;
          letter-spacing: 0.16em;
          margin-bottom: 0;
+         text-transform: uppercase;
       }
    }
    .expert-img {

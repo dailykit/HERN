@@ -255,6 +255,11 @@ const StyledWrapper = styled.div`
       color: ${theme.colors.textColor};
       padding: 24px 64px;
       letter-spacing: 0.16em;
+      :hover {
+         border: none;
+         background: ${theme.colors.textColor};
+         color: ${theme.colors.textColor4};
+      }
    }
    .skeleton-wrapper {
       display: grid;

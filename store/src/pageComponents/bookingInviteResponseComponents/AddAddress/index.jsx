@@ -40,6 +40,7 @@ export default function AddAddress() {
             defaultAddress={responseDetails?.address}
             isValidFunc={valid => setIsValid(valid)}
             onChange={address => handleAddressChange(address)}
+            titleClass="title-head text3"
          />
       </Wrapper>
    )

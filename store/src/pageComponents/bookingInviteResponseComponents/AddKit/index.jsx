@@ -78,8 +78,8 @@ export default function AddKit({ decodedToken }) {
                <Goodies
                   products={products}
                   title="Whats included in my Kit?"
-                  secondTitle="Ingredients"
-                  textClass="Barlow-Condensed text3 text_center"
+                  ingredientView="includedWithProduct"
+                  textClass="title-head text3"
                />
             </div>
          ) : (

@@ -239,6 +239,11 @@ export const NavBar = styled.header`
       justify-content: center;
       align-items: center;
       color: ${theme.colors.textColor};
+      :hover {
+         border: none;
+         background: ${theme.colors.textColor};
+         color: ${theme.colors.textColor4};
+      }
    }
    .auth-btn {
       position: absolute;

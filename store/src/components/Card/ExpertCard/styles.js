@@ -46,13 +46,14 @@ export const CardBody = styled.div`
    width: 100%;
    padding: 0.75rem 0.5rem;
    .exp-name {
-      margin: 2px 0;
+      margin: 2px 0 8px 0;
       font-family: 'Barlow Condensed';
       font-weight: 700;
       color: ${theme.colors.textColor4};
       font-weight: 700;
       text-align: left;
       letter-spacing: 0.16em;
+      text-transform: uppercase;
       :hover {
          color: ${theme.colors.textColor};
          cursor: pointer;
@@ -64,6 +65,7 @@ export const CardBody = styled.div`
       font-family: 'Maven Pro';
       letter-spacing: 0.16em;
       color: ${theme.colors.textColor};
+      text-transform: uppercase;
    }
    .experience {
       text-align: left;

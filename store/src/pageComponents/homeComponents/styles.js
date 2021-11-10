@@ -28,7 +28,7 @@ export const Wrapper = styled.div`
    }
    .recycler-heading {
       color: ${theme.colors.textColor5};
-      font-weight: 400;
+      font-weight: 600;
       text-align: left;
       margin-bottom: 20px;
       text-transform: uppercase;

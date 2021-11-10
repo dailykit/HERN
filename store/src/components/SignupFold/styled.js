@@ -34,5 +34,19 @@ export const Wrapper = styled.div`
       letter-spacing: 0.16em;
       background: ${({ bgMode = 'light' }) =>
          bgMode === 'light' ? theme.colors.textColor : theme.colors.textColor4};
+      :hover {
+         border: ${({ bgMode = 'light' }) =>
+            bgMode === 'light'
+               ? `1px solid ${theme.colors.textColor}`
+               : 'none'};
+         background: ${({ bgMode = 'light' }) =>
+            bgMode === 'light'
+               ? theme.colors.textColor4
+               : theme.colors.textColor};
+         color: ${({ bgMode = 'light' }) =>
+            bgMode === 'light'
+               ? theme.colors.textColor
+               : theme.colors.textColor4};
+      }
    }
 `

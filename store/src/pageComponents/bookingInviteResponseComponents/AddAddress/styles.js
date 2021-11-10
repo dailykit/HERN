@@ -6,5 +6,7 @@ export const Wrapper = styled.div`
    .address-header {
       color: ${theme.colors.textColor5};
       text-align: center;
+      font-weight: 700;
+      text-transform: uppercase;
    }
 `
