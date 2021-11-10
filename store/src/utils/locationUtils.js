@@ -24,8 +24,6 @@ export const isStoreDeliveryAvailable = (brandRecurrences, eachStore) => {
          start,
          now
       )
-      console.log('dates', dates)
-      console.log('dates', finalRecurrences)
       if (dates.length) {
          if (brandRecurrences[rec].recurrence.timeSlots.length) {
             for (let timeslot of brandRecurrences[rec].recurrence.timeSlots) {
@@ -104,6 +102,58 @@ export const isStoreDeliveryAvailable = (brandRecurrences, eachStore) => {
             return {
                status: false,
                message: 'Sorry, We do not offer Delivery on this day.',
+            }
+         }
+      }
+   }
+}
+
+export const isPreOrderDeliveryAvailable = (brandRecurrences, eachStore) => {
+   // this fn use for pre order delivery
+   // bcz in pre order we need not to validate time (check either store available by distance or not)
+   const storeLocationRecurrences = brandRecurrences.filter(
+      x => x.brandLocationId === eachStore.id
+   )
+
+   // getting brand recurrence by location [consist different brandLocation ids]
+
+   const storeRecurrencesLength = storeLocationRecurrences.length
+
+   // if there is brandLocationId in brandRecurrences we use only those brandRecurrences which has eachStore.id for particular eachStore other wise (brand level recurrences) we use reoccurrences which as brandLocationId == null
+   const finalRecurrences =
+      storeRecurrencesLength === 0
+         ? brandRecurrences.filter(x => x.brandLocationId === null)
+         : storeLocationRecurrences
+   if (finalRecurrences.length === 0) {
+      return {
+         status: false,
+         message: 'Sorry, there is no store available for pickup.',
+      }
+   } else {
+      for (let rec in finalRecurrences) {
+         for (let timeslot of brandRecurrences[rec].recurrence.timeSlots) {
+            if (timeslot.mileRanges.length) {
+               const distanceDeliveryStatus =
+                  isStoreDeliveryAvailableByDistance(
+                     timeslot.mileRanges,
+                     eachStore
+                  )
+               const { aerial, geoBoundary, zipcode } = distanceDeliveryStatus
+
+               if (
+                  (aerial && geoBoundary && zipcode) ||
+                  rec == finalRecurrences.length - 1
+               ) {
+                  return distanceDeliveryStatus
+               }
+            } else {
+               if (rec == finalRecurrences.length - 1) {
+                  return {
+                     status: false,
+                     message:
+                        'Sorry, you seem to be placed far out of our delivery range.',
+                  }
+               }
             }
          }
       }

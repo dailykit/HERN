@@ -15,6 +15,7 @@ import {
    get_env,
    isStoreDeliveryAvailable,
    isStorePickupAvailable,
+   isPreOrderDeliveryAvailable,
 } from '../utils'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
 import { Loader } from './index'
@@ -673,6 +674,11 @@ const Delivery = props => {
                         ? onDemandBrandRecurrence
                         : preOrderBrandRecurrence
                   }
+                  fulfillmentType={
+                     deliveryType === 'ONDEMAND'
+                        ? 'ONDEMAND_DELIVERY'
+                        : 'PREORDER_DELIVERY'
+                  }
                   storeDistanceValidation={true}
                />
             ))}
@@ -1096,7 +1102,6 @@ const StoreList = props => {
       fulfillmentType,
    } = props
    // console.log('settings', settings)
-   console.log('brandRecurrencesPick', brandRecurrences)
    const { brand } = useConfig()
 
    const fulfillmentStatus = React.useMemo(() => {
@@ -1244,8 +1249,23 @@ const StoreList = props => {
             aerialDistanceInMiles.toFixed(2)
          )
          eachStore['distanceUnit'] = 'mi'
-         if (storeDistanceValidation && brandRecurrences) {
+         if (
+            storeDistanceValidation &&
+            brandRecurrences &&
+            fulfillmentType === 'ONDEMAND_DELIVERY'
+         ) {
             const deliveryStatus = isStoreDeliveryAvailable(
+               brandRecurrences,
+               eachStore
+            )
+            eachStore[fulfillmentStatus] = deliveryStatus
+         }
+         if (
+            storeDistanceValidation &&
+            brandRecurrences &&
+            fulfillmentType === 'PREORDER_DELIVERY'
+         ) {
+            const deliveryStatus = isPreOrderDeliveryAvailable(
                brandRecurrences,
                eachStore
             )
@@ -1271,7 +1291,6 @@ const StoreList = props => {
          const sortedDataWithAerialDistance = _.sortBy(dataWithAerialDistance, [
             x => x.aerialDistance,
          ])
-         console.log('brandReccurenceBefore', brandRecurrences)
          if (brandRecurrences) {
             setStatus('success')
          }
@@ -1301,7 +1320,7 @@ const StoreList = props => {
    if (sortedBrandLocation.length === 0) {
       return <p>No Store Available</p>
    }
-
+   console.log('sortedBrandLocation', sortedBrandLocation)
    // when there is no stores which do not fulfill delivery time and mile range for brandRecurrences
    if (
       storeDistanceValidation &&
