@@ -498,7 +498,7 @@ const Delivery = props => {
    }
 
    return (
-      <>
+      <div className="hern-store-location__fulfillment-type-wrapper">
          {/* get location */}
          <div
             className={classNames(
@@ -580,7 +580,7 @@ const Delivery = props => {
                address={address}
             />
          )}
-      </>
+      </div>
    )
 }
 const Pickup = props => {
@@ -812,7 +812,7 @@ const Pickup = props => {
       return <Loader />
    }
    return (
-      <>
+      <div className="hern-store-location__fulfillment-type-wrapper">
          <div
             className={classNames(
                'hern-store-location__preOrder-time-selection'
@@ -888,7 +888,7 @@ const Pickup = props => {
                address={address}
             />
          )}
-      </>
+      </div>
    )
 }
 const DineIn = () => {
