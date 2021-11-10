@@ -1,16 +1,20 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import parse from 'html-react-parser'
 import { Wrapper } from './styles'
-import ReadMoreDiv from '../ReadMoreDiv'
 import Button from '../Button'
-import Image from 'next/image'
+import { isEmpty } from '../../utils'
 
 export default function AboutExpert({ expert, expertCategory }) {
    const router = useRouter()
-   const truncate = str => {
-      return str.length > 200 ? str.substring(0, 120) + '...' : str
-   }
+   const [description, setDescription] = React.useState('')
+
+   React.useEffect(() => {
+      let truncatedString = expert?.description || ''
+      if (!isEmpty(truncatedString) && truncatedString.length > 200) {
+         truncatedString = truncatedString.substring(0, 120) + '...'
+      }
+      setDescription(truncatedString)
+   }, [expert?.description])
    return (
       <Wrapper bg_mode="light">
          <div className="imageWrapper">
@@ -26,13 +30,7 @@ export default function AboutExpert({ expert, expertCategory }) {
          <div className="expertInfo">
             <h1 className="expertName text2">{`${expert?.firstName} ${expert?.lastName}`}</h1>
 
-            <p className="expertDesc text7">
-               {parse(expert?.description || '', {
-                  replace: domNode => {
-                     return <p>{truncate(domNode?.firstChild?.data)}</p>
-                  }
-               })}
-            </p>
+            <p className="expertDesc text7">{description}</p>
             <Button
                className="custom_btn text8"
                onClick={() => router.push(`/experts/${expert?.id}`)}

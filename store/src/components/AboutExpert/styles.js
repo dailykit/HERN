@@ -97,6 +97,10 @@ export const Wrapper = styled.div`
       color: ${theme.colors.textColor};
       margin: 1rem auto;
       display: block;
+      :hover {
+         background: ${theme.colors.textColor};
+         color: ${theme.colors.textColor4};
+      }
    }
 
    @media (min-width: 769px) {
