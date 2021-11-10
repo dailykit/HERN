@@ -16,8 +16,11 @@ export default function Signup({ authBtnClassName, ...rest }) {
    const [error, setError] = useState('')
    const [name, setName] = useState('')
    const [email, setEmail] = useState('')
-   const [password, setPassword] = useState('')
-   const [confirmPassword, setConfirmPassword] = useState('')
+   const [password, setPassword] = useState({ value: '', showPassword: false })
+   const [confirmPassword, setConfirmPassword] = useState({
+      value: '',
+      showPassword: false
+   })
 
    const handleSubmit = async e => {
       try {
@@ -89,23 +92,71 @@ export default function Signup({ authBtnClassName, ...rest }) {
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                />
-               <Input
-                  type="password"
-                  placeholder="Enter password"
-                  className="customInput text8"
-                  required
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  minLength={6}
-               />
-               <Input
-                  type="password"
-                  placeholder="Confirm password"
-                  className="customInput text8"
-                  required
-                  value={confirmPassword}
-                  onChange={e => setConfirmPassword(e.target.value)}
-               />
+               <div className="password-wrap">
+                  <Input
+                     type={password?.showPassword ? 'text' : 'password'}
+                     placeholder="Enter password"
+                     className="customInput text8"
+                     required
+                     value={password.value}
+                     onChange={e =>
+                        setPassword(prev => ({
+                           ...prev,
+                           value: e.target.value
+                        }))
+                     }
+                     minLength={6}
+                  />
+                  <span
+                     className="eye-icon"
+                     onClick={() =>
+                        setPassword(prev => ({
+                           ...prev,
+                           showPassword: !prev.showPassword
+                        }))
+                     }
+                  >
+                     <i
+                        class={
+                           password.showPassword
+                              ? 'fas fa-eye'
+                              : 'fas fa-eye-slash'
+                        }
+                     ></i>
+                  </span>
+               </div>
+               <div className="password-wrap">
+                  <Input
+                     type={confirmPassword?.showPassword ? 'text' : 'password'}
+                     placeholder="Confirm password"
+                     className="customInput text8"
+                     required
+                     value={confirmPassword.value}
+                     onChange={e =>
+                        setConfirmPassword(prev => ({
+                           ...prev,
+                           value: e.target.value
+                        }))
+                     }
+                  />
+                  <span
+                     className="eye-icon"
+                     onClick={() =>
+                        setConfirmPassword(prev => ({
+                           ...prev,
+                           showPassword: !prev.showPassword
+                        }))
+                     }
+                  >
+                     <i
+                        class={
+                           confirmPassword.showPassword
+                              ? 'fas fa-eye'
+                              : 'fas fa-eye-slash'
+                        }
+                     ></i>
+                  </span>
+               </div>
                {error && <Error>{error}</Error>}
 
                <p className="login_title text9">

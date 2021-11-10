@@ -14,6 +14,9 @@ export const StyledInput = styled.input`
    &:focus {
       border: 1px solid ${theme.colors.textColor};
    }
+   & :-webkit-autofill {
+      background: ${theme.colors.textColor4};
+   }
 `
 export const StyledTextArea = styled.textarea`
    width: 100%;

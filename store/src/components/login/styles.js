@@ -8,6 +8,19 @@ export const Wrapper = styled.div`
       margin: 2rem 4rem;
       font-family: 'Barlow Condensed';
    }
+   .password-wrap {
+      height: 74px;
+      margin-bottom: 1.5rem;
+      position: relative;
+      .eye-icon {
+         background: ${theme.colors.lightBackground.grey};
+         padding-left: 1rem;
+         position: absolute;
+         right: 1rem;
+         top: 50%;
+         transform: translateY(-50%);
+      }
+   }
    .customInput {
       height: 74px;
       margin-bottom: 1.5rem;
@@ -21,7 +34,15 @@ export const Wrapper = styled.div`
          letter-spacing: 0.3em;
          text-transform: uppercase;
       }
+      &:-webkit-autofill,
+      -webkit-autofill:hover,
+      -webkit-autofill:focus,
+      -webkit-autofill:active {
+         -webkit-box-shadow: 0 0 0 40px ${theme.colors.lightBackground.grey}
+            inset !important;
+      }
    }
+
    .center-div-wrapper {
       width: 100%;
       margin: auto;

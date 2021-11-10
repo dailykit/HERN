@@ -18,8 +18,8 @@ export default function LoginComp({ isClicked, authBtnClassName, ...rest }) {
    const [isForgotPasswordClicked, setIsForgotPasswordClicked] =
       React.useState(false)
    const [error, setError] = useState('')
-   const [email, setEmail] = useState('')
-   const [password, setPassword] = useState('')
+   const [email, setEmail] = useState({ value: '' })
+   const [password, setPassword] = useState({ value: '', showPassword: false })
 
    const handleSubmit = async e => {
       try {
@@ -67,17 +67,50 @@ export default function LoginComp({ isClicked, authBtnClassName, ...rest }) {
                               type="email"
                               placeholder="Your email"
                               className="customInput"
+                              autocomplete="off"
                               required
-                              value={email}
-                              onChange={e => setEmail(e.target.value)}
+                              value={email.value}
+                              onChange={e =>
+                                 setEmail(prev => ({
+                                    ...prev,
+                                    value: e.target.value
+                                 }))
+                              }
                            />
-                           <Input
-                              type="password"
-                              placeholder="Enter password"
-                              className="customInput"
-                              value={password}
-                              onChange={e => setPassword(e.target.value)}
-                           />
+                           <div className="password-wrap">
+                              <Input
+                                 type={
+                                    password?.showPassword ? 'text' : 'password'
+                                 }
+                                 autocomplete="off"
+                                 placeholder="Enter password"
+                                 className="customInput"
+                                 value={password.value}
+                                 onChange={e =>
+                                    setPassword(prev => ({
+                                       ...prev,
+                                       value: e.target.value
+                                    }))
+                                 }
+                              />
+                              <span
+                                 className="eye-icon"
+                                 onClick={() =>
+                                    setPassword(prev => ({
+                                       ...prev,
+                                       showPassword: !prev.showPassword
+                                    }))
+                                 }
+                              >
+                                 <i
+                                    class={
+                                       password.showPassword
+                                          ? 'fas fa-eye'
+                                          : 'fas fa-eye-slash'
+                                    }
+                                 ></i>
+                              </span>
+                           </div>
                            {error && <Error>{error}</Error>}
                            <p
                               onClick={() =>
