@@ -15,11 +15,21 @@ export const Wrapper = styled.div`
       position: relative;
       .eye-icon {
          background: ${theme.colors.lightBackground.grey};
-         padding-left: 1rem;
          position: absolute;
          right: 1rem;
          top: 50%;
+         background: ${theme.colors.lightBackground.grey};
          transform: translateY(-50%);
+         border-radius: 50%;
+         width: 30px;
+         height: 30px;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         :hover {
+            background: ${theme.colors.textColor7};
+            cursor: pointer;
+         }
       }
    }
    .customInput {
