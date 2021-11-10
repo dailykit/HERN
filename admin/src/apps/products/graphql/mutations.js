@@ -554,7 +554,7 @@ export const MOF = {
 }
 
 export const UPDATE_SIMPLE_RECIPE_INGREDIENT_PROCESSING_INCLUDED_WITH_PRODUCT = gql`
-   mutation MyMutation(
+   mutation updateSimpleRecipeIngredientIncludedWithProduct(
       $id: Int!
       $_set: simpleRecipe_simpleRecipe_ingredient_processing_set_input!
    ) {
@@ -563,6 +563,21 @@ export const UPDATE_SIMPLE_RECIPE_INGREDIENT_PROCESSING_INCLUDED_WITH_PRODUCT = 
          _set: $_set
       ) {
          includedWithProduct
+      }
+   }
+`
+export const UPDATE_PRODUCT_OPTION_SELECTION_STATEMENT = gql`
+   mutation updatedProductOptionSelectionStatement(
+      $id: Int!
+      $productionOptionSelectionStatement: String!
+   ) {
+      updateProduct(
+         pk_columns: { id: $id }
+         _set: {
+            productionOptionSelectionStatement: $productionOptionSelectionStatement
+         }
+      ) {
+         productionOptionSelectionStatement
       }
    }
 `
