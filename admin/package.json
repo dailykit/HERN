@@ -76,7 +76,7 @@
       "uuid": "8.1.0"
    },
    "scripts": {
-      "start": "SET PORT=8000 && SET SKIP_PREFLIGHT_CHECK=true&&react-scripts start",
+      "start": "export PORT=8000 && export SKIP_PREFLIGHT_CHECK=true&&react-scripts start",
       "start-mac": "SKIP_PREFLIGHT_CHECK=true&& PORT=8000 react-scripts start",
       "build": "react-scripts build",
       "test": "react-scripts test",

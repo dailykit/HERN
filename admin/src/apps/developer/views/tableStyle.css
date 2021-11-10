@@ -37,3 +37,12 @@
     vertical-align: top;
     overflow: hidden;
 }
+
+.developer-apiKey .tabulator-header .tabulator-frozen {
+    display: inline-block;
+    position: absolute;
+    z-index: 10;
+    margin-top: -10px;
+    padding-top: 10px;
+    height: 100% !important;
+}

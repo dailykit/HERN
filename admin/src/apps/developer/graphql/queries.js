@@ -97,3 +97,19 @@ export const  AVAILABLE_EVENTS = gql`
     }
   }
   `
+
+  export const GET_ALL_API_KEYS = gql`
+  subscription GET_ALL_API_KEYS {
+    developer_apiKey(order_by: {created_at: desc}) {
+      apiKey
+      canAddProducts
+      canUpdateProducts
+      isDeactivated
+      created_at
+      updated_at
+      label
+      createdBy
+    }
+  }
+  
+  `

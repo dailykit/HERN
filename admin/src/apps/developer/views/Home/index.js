@@ -37,6 +37,13 @@ const Home = () => {
                             count={webhookUrl_eventsCount || "..."}
                             onClick={() => addTab('Webhook', '/developer/webhook')}
                         />
+                        <DashboardTile
+                            // title={t(address.concat('webhook'))}
+                            title="Api Key"
+                            conf="Add Api Key"
+                            // count={webhookUrl_eventsCount || "..."}
+                            onClick={() => addTab('Api Key', '/developer/apiKey')}
+                        />
                     </StyledCardList>
                     {/* <Banner id="developer-app-home-bottom" />    */}
                 </StyledHome>
