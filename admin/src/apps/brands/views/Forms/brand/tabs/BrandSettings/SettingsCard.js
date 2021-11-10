@@ -48,6 +48,7 @@ export const SettingsCard = ({ setting, title }) => {
             },
         })
     }
+
     return (
         <Card
             title={<Text as="h3">{title}</Text>}

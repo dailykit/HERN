@@ -8,14 +8,16 @@ import {
    IconButton,
    ArrowDownIcon,
    ArrowUpIcon,
+   HelperText,
 } from '@dailykit/ui'
 import { getFieldUI } from './getFieldUI'
 
 const ConfigTemplateUI = ({ config, setConfig, configSaveHandler }) => {
    const [configJSON, setConfigJSON] = React.useState({})
    const [fields, setFields] = React.useState([])
+   const [description, setDescription] = React.useState("")
    const [isValid, setIsValid] = React.useState(true)
-   console.log("config", config)
+
    const elements = []
    const onConfigChange = (e, value) => {
       let updatedConfig
@@ -84,6 +86,7 @@ const ConfigTemplateUI = ({ config, setConfig, configSaveHandler }) => {
                <ArrowDownIcon color="#367BF5" />
             </button>
             {fieldData.description && <p>{fieldData.description}</p>}
+            {setDescription(fieldData.description)}
          </Styles.ConfigTemplateHeader>
       )
    }
@@ -137,24 +140,25 @@ const ConfigTemplateUI = ({ config, setConfig, configSaveHandler }) => {
 
    return (
       <Styles.ConfigTemplateUI>
-         <Styles.Header>
-            {/* <Styles.Heading>Edit Component</Styles.Heading> */}
-            {console.log(fields[0]?.props, "👉👉🥩✌")}
-            {!(fields[0]?.props?.fieldDetail?.showModal) ? <ComboButton
-               type="solid"
-               size="sm"
-               onClick={() => configSaveHandler(configJSON)}
-            >
-               <PlusIcon color="#fff" />
-               Save
-            </ComboButton> : ''}
-         </Styles.Header>
-
          <div>
             {fields.map((config, index) => (
                <div key={index}>{config}</div>
             ))}
          </div>
+         <Styles.Header>
+            <HelperText type="hint" message={description || fields[0]?.props?.children?.props?.fieldDetail?.description || "This is brand setting."} />
+            {/* {(!fields[0]?.props?.children?.props?.fieldDetail?.showModal) ? */}
+            <ComboButton
+               type="solid"
+               size="sm"
+               onClick={() => configSaveHandler(configJSON)}
+               style={{ marginTop: "5px" }}
+            >
+               <PlusIcon color="#fff" />
+               Save
+            </ComboButton>
+            {/* : ''} */}
+         </Styles.Header>
       </Styles.ConfigTemplateUI>
    )
 }
