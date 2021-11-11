@@ -47,24 +47,51 @@ export const NavBar = styled.header`
    }
 
    .ant-menu-horizontal > .ant-menu-item {
+      :first-child {
+         ::before {
+            content: '';
+            margin-right: 0;
+         }
+      }
+      ::before {
+         content: '.';
+         color: #dc2047;
+         font-weight: bold;
+         font-size: 42px;
+         vertical-align: text-bottom;
+         align-items: center;
+         text-align: center;
+         margin: 0 20px;
+      }
       :hover {
          color: ${theme.colors.textColor};
          ::after {
+            border: none;
+         }
+         .ant-menu-title-content {
             border-bottom: 2px solid ${theme.colors.textColor};
+            padding-bottom: 8px;
          }
       }
    }
    .ant-menu > .ant-menu-item > .ant-menu-title-content {
       font-family: 'Maven Pro';
+      font-weight: 700;
       font-size: ${theme.sizes.h8};
-      letter-spaceing: 0.16em;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
    }
 
    .ant-menu-horizontal > .ant-menu-item-selected {
       color: ${theme.colors.textColor};
       :after {
+         border: none;
+         bottom: 0px;
+      }
+      .ant-menu-title-content {
          border-bottom: 2px solid ${theme.colors.textColor};
          bottom: 0px;
+         padding-bottom: 8px;
       }
    }
 
