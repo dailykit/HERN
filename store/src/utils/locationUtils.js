@@ -1,7 +1,10 @@
 import { rrulestr } from 'rrule'
 import { isPointInPolygon } from 'geolib'
 
-export const isStoreDeliveryAvailable = (brandRecurrences, eachStore) => {
+export const isStoreOnDemandDeliveryAvailable = (
+   brandRecurrences,
+   eachStore
+) => {
    const storeLocationRecurrences = brandRecurrences.filter(
       x => x.brandLocationId === eachStore.id
    )
@@ -43,11 +46,7 @@ export const isStoreDeliveryAvailable = (brandRecurrences, eachStore) => {
                      timeslotToArr[2]
                   )
                   // check if current time falls within time slot
-                  console.log(
-                     'dates',
-                     now.getTime() > fromTimeStamp.getTime() &&
-                        now.getTime() < toTimeStamp.getTime()
-                  )
+
                   if (
                      now.getTime() > fromTimeStamp.getTime() &&
                      now.getTime() < toTimeStamp.getTime()
@@ -59,11 +58,7 @@ export const isStoreDeliveryAvailable = (brandRecurrences, eachStore) => {
                         )
                      const { aerial, geoBoundary, zipcode } =
                         distanceDeliveryStatus
-                     console.log(
-                        (aerial && geoBoundary && zipcode) ||
-                           rec == finalRecurrences.length - 1,
-                        'dele'
-                     )
+
                      if (
                         (aerial && geoBoundary && zipcode) ||
                         rec == finalRecurrences.length - 1
@@ -206,13 +201,9 @@ const isStoreDeliveryAvailableByDistance = (mileRanges, eachStore) => {
          mileRanges[mileRange].geoBoundary
       ) {
          // assuming null as true
-         console.log('inGeoBoundryBefore')
          if (mileRanges[mileRange].geoBoundary === null) {
-            console.log('inGeoBoundry')
             isStoreDeliveryAvailableByDistanceStatus['geoBoundary'] = true
          } else {
-            console.log('inGeoBoundryElse')
-
             const geoBoundaries =
                mileRanges[mileRange].geoBoundary.geoBoundaries
             const storeValidationForGeoBoundaries = isPointInPolygon(
@@ -235,18 +226,25 @@ const isStoreDeliveryAvailableByDistance = (mileRanges, eachStore) => {
    }
 }
 
-export const isStorePickupAvailable = (brandRecurrences, eachStore) => {
+export const isStoreOnDemandPickupAvailable = (brandRecurrences, eachStore) => {
+   // there is no need for checking validation for store mile ranges bcz user will pick up form store
+
+   // only store timing will matter
+
+   // filter store which as there specific brandRecurrences (those brand recurrences where location id not null)
    const storeLocationRecurrences = brandRecurrences.filter(
       x => x.brandLocationId === eachStore.id
    )
 
    const storeRecurrencesLength = storeLocationRecurrences.length
 
+   // if there is no brandRecurrences where brandLocation is not null then take available brandRecurrences for brand
    const finalRecurrences =
       storeRecurrencesLength === 0
          ? brandRecurrences.filter(x => x.brandLocationId === null)
          : storeLocationRecurrences
-   console.log('finalReccurencesPickup', finalRecurrences)
+
+   // there is no recurrences available for store
    if (finalRecurrences.length === 0) {
       return {
          status: false,
@@ -261,7 +259,6 @@ export const isStorePickupAvailable = (brandRecurrences, eachStore) => {
             start,
             now
          )
-         console.log('dateSlot', dates)
          if (dates.length) {
             if (brandRecurrences[rec].recurrence.timeSlots.length) {
                for (let timeslot of brandRecurrences[rec].recurrence
@@ -296,7 +293,7 @@ export const isStorePickupAvailable = (brandRecurrences, eachStore) => {
                         return {
                            status: false,
                            message:
-                              'Sorry, We do not offer Delivery at this time.',
+                              'Sorry, We do not offer Pickup at this time.',
                         }
                      }
                   }
@@ -305,7 +302,7 @@ export const isStorePickupAvailable = (brandRecurrences, eachStore) => {
                if (rec == finalRecurrences.length - 1) {
                   return {
                      status: false,
-                     message: 'Sorry, We do not offer Delivery at this time.',
+                     message: 'Sorry, We do not offer Pickup at this time.',
                   }
                }
             }
@@ -313,10 +310,147 @@ export const isStorePickupAvailable = (brandRecurrences, eachStore) => {
             if (rec == finalRecurrences.length - 1) {
                return {
                   status: false,
-                  message: 'Sorry, We do not offer Delivery on this day.',
+                  message: 'Sorry, We do not offer Pickup on this day.',
                }
             }
          }
+      }
+   }
+}
+export const isStorePreOrderPickupAvailable = (brandRecurrences, eachStore) => {
+   // there is no need for check mile ranges as well as timing
+
+   // recurrences for specific location
+   const storeLocationRecurrences = brandRecurrences.filter(
+      x => x.brandLocationId === eachStore.id
+   )
+
+   const storeRecurrencesLength = storeLocationRecurrences.length
+
+   // final recurrences by specific location or brand recurrences
+   const finalRecurrences =
+      storeRecurrencesLength === 0
+         ? brandRecurrences.filter(x => x.brandLocationId === null)
+         : storeLocationRecurrences
+
+   if (finalRecurrences.length === 0) {
+      return {
+         status: false,
+         message: 'Sorry, there is no store available for pre order pickup.',
+      }
+   } else {
+      return {
+         status: true,
+         message: 'Store available for pre order pre order pickup.',
+      }
+   }
+}
+export const isStoreOnDemandDineInAvailable = (brandRecurrences, eachStore) => {
+   // same as onDemand pick up
+   const storeLocationRecurrences = brandRecurrences.filter(
+      x => x.brandLocationId === eachStore.id
+   )
+
+   const storeRecurrencesLength = storeLocationRecurrences.length
+
+   const finalRecurrences =
+      storeRecurrencesLength === 0
+         ? brandRecurrences.filter(x => x.brandLocationId === null)
+         : storeLocationRecurrences
+   if (finalRecurrences.length === 0) {
+      return {
+         status: false,
+         message: 'Sorry, there is no store available for dine in.',
+      }
+   } else {
+      for (let rec in finalRecurrences) {
+         const now = new Date() // now
+         const start = new Date(now.getTime() - 1000 * 60 * 60 * 24) // yesterday
+         const end = new Date(now.getTime() + 1000 * 60 * 60 * 24) // tomorrow
+         const dates = rrulestr(finalRecurrences[rec].recurrence.rrule).between(
+            start,
+            now
+         )
+         if (dates.length) {
+            if (brandRecurrences[rec].recurrence.timeSlots.length) {
+               for (let timeslot of brandRecurrences[rec].recurrence
+                  .timeSlots) {
+                  const timeslotFromArr = timeslot.from.split(':')
+                  const timeslotToArr = timeslot.to.split(':')
+                  const fromTimeStamp = new Date(now.getTime())
+                  fromTimeStamp.setHours(
+                     timeslotFromArr[0],
+                     timeslotFromArr[1],
+                     timeslotFromArr[2]
+                  )
+                  const toTimeStamp = new Date(now.getTime())
+                  toTimeStamp.setHours(
+                     timeslotToArr[0],
+                     timeslotToArr[1],
+                     timeslotToArr[2]
+                  )
+                  // check if current time falls within time slot
+                  if (
+                     now.getTime() > fromTimeStamp.getTime() &&
+                     now.getTime() < toTimeStamp.getTime()
+                  ) {
+                     if (rec == finalRecurrences.length - 1) {
+                        return {
+                           status: true,
+                           message: 'Store available for Dine In.',
+                        }
+                     }
+                  } else {
+                     if (rec == finalRecurrences.length - 1) {
+                        return {
+                           status: false,
+                           message:
+                              'Sorry, We do not offer Dine In at this time.',
+                        }
+                     }
+                  }
+               }
+            } else {
+               if (rec == finalRecurrences.length - 1) {
+                  return {
+                     status: false,
+                     message: 'Sorry, We do not offer Dine In at this time.',
+                  }
+               }
+            }
+         } else {
+            if (rec == finalRecurrences.length - 1) {
+               return {
+                  status: false,
+                  message: 'Sorry, We do not offer Dine In on this day.',
+               }
+            }
+         }
+      }
+   }
+}
+
+export const isStorePreOrderDineInAvailable = (brandRecurrences, eachStore) => {
+   // same as preOrder pickup
+   const storeLocationRecurrences = brandRecurrences.filter(
+      x => x.brandLocationId === eachStore.id
+   )
+
+   const storeRecurrencesLength = storeLocationRecurrences.length
+
+   const finalRecurrences =
+      storeRecurrencesLength === 0
+         ? brandRecurrences.filter(x => x.brandLocationId === null)
+         : storeLocationRecurrences
+   if (finalRecurrences.length === 0) {
+      return {
+         status: false,
+         message: 'Sorry, there is no store available for dine in.',
+      }
+   } else {
+      return {
+         status: true,
+         message: 'Store available for pre order dine in.',
       }
    }
 }

@@ -1501,7 +1501,7 @@ export const ONDEMAND_PICKUP_BRAND_RECURRENCES = gql`
                   state
                   geoBoundary
                   isExcluded
-                  leadTime
+                  prepTime
                }
             }
          }
@@ -1536,6 +1536,87 @@ export const PREORDER_PICKUP_BRAND_RECURRENCES = gql`
                   leadTime
                }
             }
+         }
+      }
+   }
+`
+export const ONDEMAND_DINE_BRAND_RECURRENCES = gql`
+   query ONDEMAND_DINE_BRAND_RECURRENCES(
+      $where: fulfilment_brand_recurrence_bool_exp!
+   ) {
+      brandRecurrences(where: $where) {
+         brandId
+         recurrenceId
+         recurrence {
+            id
+            rrule
+            type
+            timeSlots {
+               from
+               to
+               mileRanges {
+                  from
+                  city
+                  distanceType
+                  to
+                  zipcodes
+                  state
+                  geoBoundary
+                  isExcluded
+                  prepTime
+               }
+            }
+         }
+         brandLocationId
+      }
+   }
+`
+export const SCHEDULED_DINEIN_BRAND_RECURRENCES = gql`
+   query SCHEDULED_DINEIN_BRAND_RECURRENCES(
+      $where: fulfilment_brand_recurrence_bool_exp!
+   ) {
+      brandRecurrences(where: $where) {
+         brandId
+         recurrenceId
+         recurrence {
+            id
+            rrule
+            type
+            timeSlots {
+               from
+               to
+               mileRanges {
+                  from
+                  city
+                  distanceType
+                  to
+                  zipcodes
+                  state
+                  geoBoundary
+                  isExcluded
+                  leadTime
+               }
+            }
+         }
+         brandLocationId
+      }
+   }
+`
+export const GET_BRAND_LOCATION = gql`
+   query GET_BRAND_LOCATION($where: brands_brand_location_bool_exp!) {
+      brands_brand_location(where: $where) {
+         id
+         brandId
+         location {
+            id
+            locationAddress
+            label
+            zipcode
+            city
+            state
+            lat
+            lng
+            country
          }
       }
    }
