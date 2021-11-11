@@ -162,8 +162,7 @@ const ContentSelection = () => {
             },
          })
          setConfig(data?.systemModule?.configTemplate)
-      }
-      if (data.config !== null) {
+      } else {
          setConfig(data.config)
       }
    }
@@ -178,7 +177,6 @@ const ContentSelection = () => {
       )
       logger(subscriptionError)
    }
-   console.log('Selected ', seletedModules)
    return (
       <Styles.Wrapper>
          <Styles.ModulesWrapper>
@@ -280,7 +278,6 @@ const ContentSelection = () => {
             {linkedModuleId ? (
                <ConfigTemplateUI
                   config={config}
-                  setConfig={setConfig}
                   configSaveHandler={updateHandler}
                />
             ) : (

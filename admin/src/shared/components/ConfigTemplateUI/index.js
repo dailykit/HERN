@@ -1,16 +1,10 @@
 import React from 'react'
 import _ from 'lodash'
 import styled from 'styled-components'
-import {
-   ComboButton,
-   PlusIcon,
-   IconButton,
-   ArrowDownIcon,
-   ArrowUpIcon,
-} from '@dailykit/ui'
+import { ComboButton, PlusIcon, ArrowDownIcon, ArrowUpIcon } from '@dailykit/ui'
 import { getFieldUI } from './getFieldUI'
 
-const ConfigTemplateUI = ({ config, setConfig, configSaveHandler }) => {
+const ConfigTemplateUI = ({ config, configSaveHandler }) => {
    const [configJSON, setConfigJSON] = React.useState({})
    const [fields, setFields] = React.useState([])
    const elements = []
@@ -124,21 +118,24 @@ const ConfigTemplateUI = ({ config, setConfig, configSaveHandler }) => {
    }, [configJSON])
 
    React.useEffect(() => {
-      const updatedConfigData = _.defaultsDeep(config, configJSON)
-      setConfigJSON(updatedConfigData)
-      setConfig(updatedConfigData)
+      if (config) {
+         setConfigJSON(config)
+      } else {
+         setConfigJSON({})
+      }
       setFields([])
    }, [config])
+
+   const handleConfigSave = () => {
+      const updatedConfig = _.defaultsDeep(config, configJSON)
+      configSaveHandler(updatedConfig)
+   }
 
    return (
       <Styles.ConfigTemplateUI>
          <Styles.Header>
             <Styles.Heading>Edit Component</Styles.Heading>
-            <ComboButton
-               type="solid"
-               size="sm"
-               onClick={() => configSaveHandler(configJSON)}
-            >
+            <ComboButton type="solid" size="sm" onClick={handleConfigSave}>
                <PlusIcon color="#fff" />
                Save
             </ComboButton>
