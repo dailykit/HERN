@@ -22,7 +22,6 @@ export const getFieldUI = (
    editMode,
    value
 ) => {
-   console.log(value)
    const field = _.get(configJSON, fieldKey)
    const indentation = `${fieldKey.split('.').length * 8}px`
    let configUI

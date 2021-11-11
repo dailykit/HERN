@@ -18,7 +18,7 @@ import { toast } from 'react-toastify'
 import { DeleteIcon, EditIcon } from '../../../../../../shared/assets/icons'
 import { DragNDrop, InlineLoader } from '../../../../../../shared/components'
 import { useDnd } from '../../../../../../shared/components/DragNDrop/useDnd'
-import { Child, Styles } from './styled'
+import { Child, Styles, StyledHorizontalTabPanel } from './styled'
 import {
    LINKED_COMPONENT,
    UPDATE_LINK_COMPONENT,
@@ -63,7 +63,7 @@ const ContentSelection = () => {
          },
       }
    )
-   console.log('SELECTED FILE OPTIONS', seletedModules)
+
    // Create mutation
    const [linkComponent, { loading: isLinkingComponent }] = useMutation(
       LINK_COMPONENT,
@@ -289,27 +289,3 @@ const ContentSelection = () => {
 }
 
 export default ContentSelection
-
-const StyledHorizontalTabPanel = styled(HorizontalTabPanel)`
-   /* width */
-   ::-webkit-scrollbar {
-      width: 6px;
-   }
-
-   /* Track */
-   ::-webkit-scrollbar-track {
-      background: #f4f4f4;
-   }
-
-   /* Handle */
-   ::-webkit-scrollbar-thumb {
-      background: #919699;
-      opacity: 0.5;
-      border-radius: 20px;
-   }
-
-   /* Handle on hover */
-   ::-webkit-scrollbar-thumb:hover {
-      background: #919699;
-   }
-`
