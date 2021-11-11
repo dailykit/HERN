@@ -14,35 +14,53 @@ export const Address = ({
    onConfigChange,
    configSaveHandler,
    configJSON,
+   editMode,
 }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    return (
       <>
-         <Flex container alignItems="center" justifyContent="space-between">
-            <Flex container alignItems="flex-end">
-               <Form.Label title={fieldDetail.label} htmlFor="address">
-                  {fieldDetail.label.toUpperCase()}
-               </Form.Label>
-               <Tooltip identifier="textArea_component_info" />
-            </Flex>
-            <Text as="p">{normalizeAddress(fieldDetail.value)}</Text>
-            <TextButton size="sm" type="outline" onClick={() => openTunnel(1)}>
-               Add Location
-            </TextButton>
-         </Flex>
-         <Tunnels tunnels={tunnels}>
-            <Tunnel layer={1} size="md">
-               <AddressTunnel
-                  path={path}
-                  onConfigChange={onConfigChange}
-                  address={fieldDetail.value}
-                  settingId={'49'}
-                  closeTunnel={closeTunnel}
-                  configSaveHandler={configSaveHandler}
-                  configJSON={configJSON}
-               />
-            </Tunnel>
-         </Tunnels>
+         {editMode ? (
+            <>
+               <Flex
+                  container
+                  alignItems="center"
+                  justifyContent="space-between"
+               >
+                  <Flex container alignItems="flex-end">
+                     <Form.Label title={fieldDetail.label} htmlFor="address">
+                        {fieldDetail.label.toUpperCase()}
+                     </Form.Label>
+                     <Tooltip identifier="textArea_component_info" />
+                  </Flex>
+                  <Text as="p">{normalizeAddress(fieldDetail.value)}</Text>
+                  <TextButton
+                     size="sm"
+                     type="outline"
+                     onClick={() => openTunnel(1)}
+                  >
+                     Add Location
+                  </TextButton>
+               </Flex>
+               <Tunnels tunnels={tunnels}>
+                  <Tunnel layer={1} size="md">
+                     <AddressTunnel
+                        path={path}
+                        onConfigChange={onConfigChange}
+                        address={fieldDetail.value}
+                        settingId={'49'}
+                        closeTunnel={closeTunnel}
+                        configSaveHandler={configSaveHandler}
+                        configJSON={configJSON}
+                     />
+                  </Tunnel>
+               </Tunnels>
+            </>
+         ) : (
+            <Text as="p">
+               <span style={{ fontSize: '15px' }}> Address: </span>{' '}
+               {normalizeAddress(fieldDetail.value)}
+            </Text>
+         )}
       </>
    )
 }

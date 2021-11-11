@@ -2,13 +2,13 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import {
    Form,
-   Loader,
    Flex,
    IconButton,
    Spacer,
    Dropdown,
    PlusIcon,
    Tunnels,
+   Text,
    Tunnel,
    TunnelHeader,
    useTunnel,
@@ -31,7 +31,7 @@ import 'react-phone-number-input/style.css'
 import gql from 'graphql-tag'
 import { useSubscription } from '@apollo/react-hooks'
 import validator from '../../../../apps/brands/views/validator'
-export const Text = ({
+export const TextBox = ({
    fieldDetail,
    marginLeft,
    path,
@@ -39,6 +39,7 @@ export const Text = ({
    isValid,
    setIsValid,
    validationType = null,
+   editMode
 }) => {
    const [errorMessage, setErrorMessage] = React.useState([])
    return (
@@ -55,7 +56,7 @@ export const Text = ({
             <Tooltip identifier="text_component_info" />
          </Flex>
          <Form.Group>
-            <Form.Text
+            {editMode ? <Form.Text
                id={path}
                name={path}
                onBlur={e => {
@@ -71,7 +72,7 @@ export const Text = ({
                onChange={onConfigChange}
                value={fieldDetail?.value || fieldDetail.default}
                placeholder="Enter the orientation"
-            />
+            /> : <Text as="h3">{fieldDetail?.value || fieldDetail.default}</Text>}
 
             {errorMessage.length !== 0 && (
                <Form.Error> {errorMessage[0]}</Form.Error>
@@ -131,7 +132,7 @@ export const ColorPicker = ({
    </Flex>
 )
 
-export const Number = ({ fieldDetail, marginLeft, path, onConfigChange }) => (
+export const Number = ({ fieldDetail, marginLeft, path, onConfigChange, editMode }) => (
    <Flex
       container
       justifyContent="space-between"
@@ -144,13 +145,13 @@ export const Number = ({ fieldDetail, marginLeft, path, onConfigChange }) => (
          </Form.Label>
          <Tooltip identifier="number_component_info" />
       </Flex>
-      <Form.Number
+      {editMode ? <Form.Number
          id={path}
          name={path}
          onChange={onConfigChange}
          value={fieldDetail?.value || fieldDetail.default}
          placeholder="Enter integer value"
-      />
+      /> : <Text as="h4">{fieldDetail?.value || fieldDetail.default}</Text>}
    </Flex>
 )
 
@@ -175,7 +176,7 @@ export const Checkbox = ({ fieldDetail, marginLeft, path, onConfigChange }) => (
       />
    </Flex>
 )
-export const Date = ({ fieldDetail, marginLeft, path, onConfigChange }) => (
+export const Date = ({ fieldDetail, marginLeft, path, onConfigChange, editMode }) => (
    <Flex
       container
       justifyContent="space-between"
@@ -188,15 +189,15 @@ export const Date = ({ fieldDetail, marginLeft, path, onConfigChange }) => (
          </Form.Label>
          <Tooltip identifier="date_component_info" />
       </Flex>
-      <Form.Date
+      {editMode ? <Form.Date
          id={path}
          name={path}
          onChange={onConfigChange}
          value={fieldDetail?.value || fieldDetail.default}
-      />
+      /> : <Text as="h4">{fieldDetail?.value || fieldDetail.default}</Text>}
    </Flex>
 )
-export const Time = ({ fieldDetail, marginLeft, path, onConfigChange }) => (
+export const Time = ({ fieldDetail, marginLeft, path, onConfigChange, editMode }) => (
    <Flex
       container
       justifyContent="space-between"
@@ -209,12 +210,12 @@ export const Time = ({ fieldDetail, marginLeft, path, onConfigChange }) => (
          </Form.Label>
          <Tooltip identifier="time_component_info" />
       </Flex>
-      <Form.Time
+      {editMode ? <Form.Time
          id={path}
          name={path}
          onChange={onConfigChange}
          value={fieldDetail?.value || fieldDetail.default}
-      />
+      /> : <Text as="h4">{fieldDetail?.value || fieldDetail.default}</Text>}
    </Flex>
 )
 export const Select = ({ fieldDetail, marginLeft, path, onConfigChange }) => {
@@ -263,7 +264,7 @@ export const Select = ({ fieldDetail, marginLeft, path, onConfigChange }) => {
    )
 }
 
-export const TextArea = ({ fieldDetail, marginLeft, path, onConfigChange }) => (
+export const TextArea = ({ fieldDetail, marginLeft, path, onConfigChange, editMode }) => (
    <Flex
       container
       justifyContent="space-between"
@@ -276,12 +277,12 @@ export const TextArea = ({ fieldDetail, marginLeft, path, onConfigChange }) => (
          </Form.Label>
          <Tooltip identifier="textArea_component_info" />
       </Flex>
-      <Form.TextArea
+      {editMode ? <Form.TextArea
          id={path}
          name={path}
          onChange={onConfigChange}
          value={fieldDetail?.value || fieldDetail.default}
-      />
+      /> : <Text as="h4">{fieldDetail?.value || fieldDetail.default}</Text>}
    </Flex>
 )
 export const TextWithSelect = ({
@@ -359,7 +360,7 @@ export const NumberWithSelect = ({
    </Flex>
 )
 
-export const RichText = ({ fieldDetail, marginLeft, path, onConfigChange }) => {
+export const RichText = ({ fieldDetail, marginLeft, path, onConfigChange, editMode }) => {
    const onEditorChange = html => {
       const e = {
          target: {
@@ -375,11 +376,12 @@ export const RichText = ({ fieldDetail, marginLeft, path, onConfigChange }) => {
                {fieldDetail.label.toUpperCase()}
             </Form.Label>
             <Tooltip identifier="RichText_component_info" />
-         </Flex>
-         <RichTextEditor
-            defaultValue={fieldDetail?.value || fieldDetail.default}
-            onChange={html => onEditorChange(html)}
-         />
+         </Flex><>
+            {editMode ? <RichTextEditor
+               defaultValue={fieldDetail?.value || fieldDetail.default}
+               onChange={html => onEditorChange(html)}
+            /> : <p>{fieldDetail?.value}</p>}
+         </>
       </Flex>
    )
 }
@@ -450,6 +452,7 @@ export const PhoneNumberSelector = ({
    marginLeft,
    path,
    onConfigChange,
+   editMode
 }) => {
    return (
       <>
@@ -465,7 +468,7 @@ export const PhoneNumberSelector = ({
                </Form.Label>
                <Tooltip identifier="textArea_component_info" />
             </Flex>
-            <PhoneInput
+            {editMode ? <PhoneInput
                id={path}
                name={path}
                initialValueFormat="national"
@@ -480,14 +483,14 @@ export const PhoneNumberSelector = ({
                   }
                }}
                placeholder="Enter your phone number"
-            />
+            /> : <Text as="h4">{fieldDetail?.value}</Text>}
          </Flex>
       </>
    )
 }
 export const ImageUpload = props => {
    // props
-   const { fieldDetail, path, onConfigChange, configSaveHandler, configJSON } = props
+   const { fieldDetail, path, onConfigChange, configSaveHandler, configJSON, editMode } = props
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
    const updateSetting = (data = {}) => {
@@ -499,7 +502,7 @@ export const ImageUpload = props => {
       closeTunnel(1)
    }
    return (
-      <>
+      <>{editMode ? <>
          <Flex container alignItems="flex-start">
             <Form.Label title={fieldDetail.label} htmlFor="textArea">
                {fieldDetail.label.toUpperCase()}
@@ -549,6 +552,7 @@ export const ImageUpload = props => {
                <Banner id="brands-app-brands-brand-details-brand-logo-tunnel-bottom" />
             </Tunnel>
          </Tunnels>
+      </> : (<ImageContainer width="120px" height="120px">  {fieldDetail?.value ? <img src={fieldDetail?.value} alt="Brand Logo" /> : <p>No Image selected</p>}</ImageContainer>)}
       </>
    )
 }

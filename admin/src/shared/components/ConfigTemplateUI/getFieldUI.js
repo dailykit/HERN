@@ -6,7 +6,7 @@ import {
 } from '@dailykit/ui'
 import {
     ColorPicker,
-    Text,
+    TextBox,
     Toggle,
     Number,
     Checkbox,
@@ -28,7 +28,7 @@ export const getFieldUI = (fieldKey, configJSON, onConfigChange, isValid, setIsV
     const field = _.get(configJSON, fieldKey)
     const indentation = `${fieldKey.split(".").length * 8}px`
     let configUI
-    console.log(value, "VALUE")
+
     if (field.dataType === "boolean" && field.userInsertType === "toggle") {
         configUI = (
             <>{editMode ? <Toggle
@@ -68,7 +68,7 @@ export const getFieldUI = (fieldKey, configJSON, onConfigChange, isValid, setIsV
         field.userInsertType === "textField"
     ) {
         configUI = (
-            <Text
+            <TextBox
                 fieldDetail={field}
                 marginLeft={indentation}
                 path={fieldKey}
@@ -76,6 +76,7 @@ export const getFieldUI = (fieldKey, configJSON, onConfigChange, isValid, setIsV
                 isValid={isValid}
                 setIsValid={setIsValid}
                 onConfigChange={onConfigChange}
+                editMode={editMode}
             />
         )
     } else if (
@@ -88,6 +89,7 @@ export const getFieldUI = (fieldKey, configJSON, onConfigChange, isValid, setIsV
                 marginLeft={indentation}
                 path={fieldKey}
                 onConfigChange={onConfigChange}
+                editMode={editMode}
             />
         )
     } else if (
@@ -120,6 +122,7 @@ export const getFieldUI = (fieldKey, configJSON, onConfigChange, isValid, setIsV
                 marginLeft={indentation}
                 path={fieldKey}
                 onConfigChange={onConfigChange}
+                editMode={editMode}
             />
         )
     } else if (field.dataType === "time" && field.userInsertType === "time") {
@@ -129,6 +132,7 @@ export const getFieldUI = (fieldKey, configJSON, onConfigChange, isValid, setIsV
                 marginLeft={indentation}
                 path={fieldKey}
                 onConfigChange={onConfigChange}
+                editMode={editMode}
             />
         )
     } else if (
@@ -150,6 +154,7 @@ export const getFieldUI = (fieldKey, configJSON, onConfigChange, isValid, setIsV
                 marginLeft={indentation}
                 path={fieldKey}
                 onConfigChange={onConfigChange}
+                editMode={editMode}
             />
         )
     } else if (
@@ -189,6 +194,7 @@ export const getFieldUI = (fieldKey, configJSON, onConfigChange, isValid, setIsV
                 marginLeft={indentation}
                 path={fieldKey}
                 onConfigChange={onConfigChange}
+                editMode={editMode}
             />
         )
     }
@@ -205,6 +211,7 @@ export const getFieldUI = (fieldKey, configJSON, onConfigChange, isValid, setIsV
                 onConfigChange={onConfigChange}
                 configSaveHandler={configSaveHandler}
                 configJSON={configJSON}
+                editMode={editMode}
             />
         )
     }
@@ -220,6 +227,7 @@ export const getFieldUI = (fieldKey, configJSON, onConfigChange, isValid, setIsV
                 onConfigChange={onConfigChange}
                 configSaveHandler={configSaveHandler}
                 configJSON={configJSON}
+                editMode={editMode}
             />
         )
     }
@@ -233,6 +241,7 @@ export const getFieldUI = (fieldKey, configJSON, onConfigChange, isValid, setIsV
                 marginLeft={indentation}
                 path={fieldKey}
                 onConfigChange={onConfigChange}
+                editMode={editMode}
             />
         )
     } else if (field.userInsertType === 'collectionSelector') {
