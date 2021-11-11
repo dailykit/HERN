@@ -18,7 +18,7 @@ import { toast } from 'react-toastify'
 import { DeleteIcon, EditIcon } from '../../../../../../shared/assets/icons'
 import { DragNDrop, InlineLoader } from '../../../../../../shared/components'
 import { useDnd } from '../../../../../../shared/components/DragNDrop/useDnd'
-import { Child, Styles } from './styled'
+import { Child, Styles, StyledHorizontalTabPanel } from './styled'
 import {
    LINKED_COMPONENT,
    UPDATE_LINK_COMPONENT,
@@ -30,7 +30,6 @@ import File from './File'
 import Template from './Template'
 import SystemModule from './SystemModule'
 import ConfigTemplateUI from '../../../../../../shared/components/ConfigTemplateUI'
-import styled from 'styled-components'
 import LinkFiles from './components/LinkFiles'
 
 const ContentSelection = () => {
@@ -63,7 +62,7 @@ const ContentSelection = () => {
          },
       }
    )
-   console.log('SELECTED FILE OPTIONS', seletedModules)
+
    // Create mutation
    const [linkComponent, { loading: isLinkingComponent }] = useMutation(
       LINK_COMPONENT,
@@ -162,8 +161,7 @@ const ContentSelection = () => {
             },
          })
          setConfig(data?.systemModule?.configTemplate)
-      }
-      if (data.config !== null) {
+      } else {
          setConfig(data.config)
       }
    }
@@ -178,7 +176,6 @@ const ContentSelection = () => {
       )
       logger(subscriptionError)
    }
-   console.log('Selected ', seletedModules)
    return (
       <Styles.Wrapper>
          <Styles.ModulesWrapper>
@@ -319,27 +316,3 @@ const ContentSelection = () => {
 }
 
 export default ContentSelection
-
-const StyledHorizontalTabPanel = styled(HorizontalTabPanel)`
-   /* width */
-   ::-webkit-scrollbar {
-      width: 6px;
-   }
-
-   /* Track */
-   ::-webkit-scrollbar-track {
-      background: #f4f4f4;
-   }
-
-   /* Handle */
-   ::-webkit-scrollbar-thumb {
-      background: #919699;
-      opacity: 0.5;
-      border-radius: 20px;
-   }
-
-   /* Handle on hover */
-   ::-webkit-scrollbar-thumb:hover {
-      background: #919699;
-   }
-`
