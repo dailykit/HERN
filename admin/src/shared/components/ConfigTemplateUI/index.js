@@ -19,7 +19,7 @@ const ConfigTemplateUI = props => {
    )
 }
 
-const ConfigUI = ({ config, configSaveHandler }) => {
+const ConfigUI = ({ config, setConfig, configSaveHandler }) => {
    const [configJSON, setConfigJSON] = React.useState({})
    const [fields, setFields] = React.useState([])
    const { editMode, setEditMode } = useEditMode()
