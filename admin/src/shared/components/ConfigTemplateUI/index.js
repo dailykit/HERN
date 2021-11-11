@@ -7,7 +7,7 @@ import {
    PlusIcon,
    ArrowDownIcon,
    ArrowUpIcon,
-   EditIcon,
+   EditIcon, HelperText
 } from '@dailykit/ui'
 import { FieldUI } from './getFieldUI'
 import { EditModeProvider, useEditMode } from './EditModeContext'

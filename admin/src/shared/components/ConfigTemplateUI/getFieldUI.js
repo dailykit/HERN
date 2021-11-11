@@ -1,6 +1,10 @@
 import React from "react"
 import _ from "lodash"
 import {
+    Form,
+    Flex
+} from '@dailykit/ui'
+import {
     ColorPicker,
     Text,
     Toggle,
@@ -18,11 +22,13 @@ import {
     CollectionSelector
 } from "./UIComponents"
 import { Address } from "./UIComponents/Address"
+import { useEditMode } from './EditModeContext'
 
-export const getFieldUI = ({ fieldKey, configJSON, onConfigChange, isValid, setIsValid, configSaveHandler, value }) => {
-    const field = _.get(configJSON, key)
-    const indentation = `${key.split(".").length * 8}px`
+export const getFieldUI = (fieldKey, configJSON, onConfigChange, isValid, setIsValid, configSaveHandler, editMode, value) => {
+    const field = _.get(configJSON, fieldKey)
+    const indentation = `${fieldKey.split(".").length * 8}px`
     let configUI
+    console.log(value, "VALUE")
     if (field.dataType === "boolean" && field.userInsertType === "toggle") {
         configUI = (
             <>{editMode ? <Toggle
@@ -242,11 +248,15 @@ export const getFieldUI = ({ fieldKey, configJSON, onConfigChange, isValid, setI
     return <div data-config-path={fieldKey}>{configUI}</div>
 }
 
-export const FieldUI = ({ fieldKey, configJSON, onConfigChange, value }) => {
+export const FieldUI = ({ fieldKey, configJSON,
+    onConfigChange,
+    value,
+    configSaveHandler,
+    isValid, setIsValid }) => {
     const { editMode } = useEditMode()
     return (
         <div>
-            {getFieldUI(fieldKey, configJSON, onConfigChange, editMode, value)}
+            {getFieldUI(fieldKey, configJSON, onConfigChange, isValid, setIsValid, configSaveHandler, editMode, value)}
         </div>
     )
 }
