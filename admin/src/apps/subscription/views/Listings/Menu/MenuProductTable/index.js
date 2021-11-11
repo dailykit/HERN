@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useState } from 'react'
+import React, { useState } from 'react'
 import {
    Flex,
    HorizontalTab,
@@ -32,7 +32,7 @@ import {
    PublishIcon,
    UnPublishIcon,
 } from '../../../../../products/assets/icons'
-import OccurrenceBulkAction from './BulkActionTunnel'
+import { MenuProduct } from './BulkActionTunnel'
 
 const MenuProductTables = () => {
    return (
@@ -69,29 +69,6 @@ const MenuProductOccurenceTable = () => {
    const [productOccurrenceData, setProductOccurrenceData] = useState([])
    const [checked, setChecked] = React.useState(false)
 
-   const CheckBox = ({ handleMultipleRowSelection, checked }) => {
-      return (
-         <Checkbox
-            id="label"
-            checked={checked}
-            onChange={() => {
-               handleMultipleRowSelection()
-            }}
-            isAllSelected={null}
-         />
-      )
-   }
-   const CrossBox = ({ removeSelectedRecipes }) => {
-      return (
-         <Checkbox
-            id="label"
-            checked={false}
-            onChange={removeSelectedRecipes}
-            isAllSelected={false}
-         />
-      )
-   }
-
    const { loading: subsLoading, error: subsError } = useSubscription(
       MENU_PRODUCT_BY_SUBSCRIPTION_OCCURRENCE,
       {
@@ -120,6 +97,14 @@ const MenuProductOccurenceTable = () => {
 
    console.log('productOccurrenceData', productOccurrenceData)
    const columns = [
+      {
+         title: 'Label',
+         field: 'label',
+         visible: false,
+         frozen: true,
+         headerFilter: 'true',
+         headerHozAlign: 'center',
+      },
       {
          title: 'Product Name',
          field: 'productName',
@@ -177,21 +162,21 @@ const MenuProductOccurenceTable = () => {
       {
          title: 'Visibility',
          field: 'isVisible',
-         formatter: reactFormatter(<BooleanIcon />),
+         formatter: reactFormatter(<BooleanIcon check={'visible'} />),
          headerTooltip: true,
          width: 85,
       },
       {
          title: 'Availability',
          field: 'isAvailable',
-         formatter: reactFormatter(<BooleanIcon />),
+         formatter: reactFormatter(<BooleanIcon check={'available'} />),
          headerTooltip: true,
          width: 85,
       },
       {
          title: 'Single Select',
          field: 'isSingleSelect',
-         formatter: reactFormatter(<BooleanIcon />),
+         formatter: reactFormatter(<BooleanIcon check={'singleSelect'} />),
          headerTooltip: true,
          width: 85,
       },
@@ -299,15 +284,15 @@ const MenuProductOccurenceTable = () => {
               headerSort: false,
               frozen: true,
            }
-   const removeSelectedRow = id => {
-      tableRef.current.removeSelectedRow(id)
-   }
 
+   const removeSelectedRow = id => {
+      tableRef.current.table.deselectRow(id)
+   }
    if (subsLoading && !subsError) {
       return <InlineLoader />
    }
    if (subsError) {
-      toast.error('Failed to fetch Recipes!')
+      toast.error('Failed to fetch Occurrence!')
       logger(subsError)
       return <ErrorState />
    }
@@ -319,7 +304,7 @@ const MenuProductOccurenceTable = () => {
       <>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1} size="full">
-               <OccurrenceBulkAction
+               <MenuProduct
                   close={closeTunnel}
                   selectedRows={selectedRows}
                   removeSelectedRow={removeSelectedRow}
@@ -381,10 +366,36 @@ const ActionBar = ({ title, selectedRows, openTunnel }) => {
       </>
    )
 }
+const CheckBox = ({ handleMultipleRowSelection, checked }) => {
+   return (
+      <Checkbox
+         id="label"
+         checked={checked}
+         onChange={() => {
+            handleMultipleRowSelection()
+         }}
+         isAllSelected={null}
+      />
+   )
+}
+const CrossBox = ({ removeSelectedOccurrence }) => {
+   return (
+      <Checkbox
+         id="label"
+         checked={false}
+         onChange={removeSelectedOccurrence}
+         isAllSelected={false}
+      />
+   )
+}
 
 const MenuProductSubscriptionTable = () => {
    const tableRef = React.useRef()
    const [productSubscriptionData, setProductSubscriptionData] = useState([])
+   const [selectedRows, setSelectedRows] = React.useState([])
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
+
+   const [checked, setChecked] = React.useState(false)
    const { loading: subsLoading, error: subsError } = useSubscription(
       MENU_PRODUCT_BY_SUBSCRIPTION,
       {
@@ -406,11 +417,20 @@ const MenuProductSubscriptionTable = () => {
          },
       }
    )
+
    const dataLoaded = () => {
       tableRef.current.table.setGroupBy('productCategory')
    }
    console.log('productSubscriptionData', productSubscriptionData)
    const columns = [
+      {
+         title: 'Label',
+         field: 'label',
+         visible: false,
+         frozen: true,
+         headerFilter: 'true',
+         headerHozAlign: 'center',
+      },
       {
          title: 'Product Name',
          field: 'productName',
@@ -462,30 +482,137 @@ const MenuProductSubscriptionTable = () => {
       {
          title: 'Visibility',
          field: 'isVisible',
-         formatter: reactFormatter(<BooleanIcon />),
+         formatter: reactFormatter(<BooleanIcon check={'visible'} />),
          headerTooltip: true,
          width: 85,
       },
       {
          title: 'Availability',
          field: 'isAvailable',
-         formatter: reactFormatter(<BooleanIcon />),
+         formatter: reactFormatter(<BooleanIcon check={'available'} />),
          headerTooltip: true,
          width: 85,
       },
       {
          title: 'Single Select',
          field: 'isSingleSelect',
-         formatter: reactFormatter(<BooleanIcon />),
+         formatter: reactFormatter(<BooleanIcon check={'singleSelect'} />),
          headerTooltip: true,
          width: 85,
       },
    ]
+
+   const handleRowSelection = ({ _row }) => {
+      const rowData = _row.getData()
+      const lastPersistence = localStorage.getItem(
+         'selected-rows-id_subscription_table'
+      )
+      const lastPersistenceParse =
+         lastPersistence !== undefined &&
+         lastPersistence !== null &&
+         lastPersistence.length !== 0
+            ? JSON.parse(lastPersistence)
+            : []
+      setSelectedRows(prevState => [...prevState, _row.getData()])
+      let newData = [...lastPersistenceParse, rowData.id]
+      localStorage.setItem(
+         'selected-rows-id_subscription_table',
+         JSON.stringify(newData)
+      )
+   }
+   const handleRowDeselection = ({ _row }) => {
+      const data = _row.getData()
+      const lastPersistence = localStorage.getItem(
+         'selected-rows-id_subscription_table'
+      )
+      const lastPersistenceParse =
+         lastPersistence !== undefined &&
+         lastPersistence !== null &&
+         lastPersistence.length !== 0
+            ? JSON.parse(lastPersistence)
+            : []
+      setSelectedRows(prevState => prevState.filter(row => row.id !== data.id))
+      const newLastPersistenceParse = lastPersistenceParse.filter(
+         id => id !== data.id
+      )
+      localStorage.setItem(
+         'selected-rows-id_subscription_table',
+         JSON.stringify(newLastPersistenceParse)
+      )
+   }
+
+   const removeSelectedOccurrence = () => {
+      setChecked({ checked: false })
+      setSelectedRows([])
+      tableRef.current.table.deselectRow()
+      localStorage.setItem(
+         'selected-rows-id_subscription_table',
+         JSON.stringify([])
+      )
+   }
+
+   const handleMultipleRowSelection = () => {
+      setChecked(!checked)
+      if (!checked) {
+         tableRef.current.table.selectRow('active')
+         let multipleRowData = tableRef.current.table.getSelectedData()
+         setSelectedRows(multipleRowData)
+         console.log('first', selectedRows)
+         localStorage.setItem(
+            'selected-rows-id_subscription_table',
+            JSON.stringify(multipleRowData.map(row => row.id))
+         )
+      } else {
+         tableRef.current.table.deselectRow()
+         setSelectedRows([])
+         console.log('second', selectedRows)
+
+         localStorage.setItem(
+            'selected-rows-id_subscription_table',
+            JSON.stringify([])
+         )
+      }
+   }
+   console.log('selected row:::::', selectedRows)
+   const selectionColumn =
+      selectedRows.length > 0 &&
+      selectedRows.length < productSubscriptionData.length
+         ? {
+              formatter: 'rowSelection',
+              titleFormatter: reactFormatter(
+                 <CrossBox
+                    removeSelectedOccurrence={removeSelectedOccurrence}
+                 />
+              ),
+              align: 'center',
+              hozAlign: 'center',
+              width: 10,
+              headerSort: false,
+              frozen: true,
+           }
+         : {
+              formatter: 'rowSelection',
+              titleFormatter: reactFormatter(
+                 <CheckBox
+                    checked={checked}
+                    handleMultipleRowSelection={handleMultipleRowSelection}
+                 />
+              ),
+              align: 'center',
+              hozAlign: 'center',
+              width: 20,
+              headerSort: false,
+              frozen: true,
+           }
+
+   const removeSelectedRow = id => {
+      tableRef.current.table.deselectRow(id)
+   }
    if (subsLoading && !subsError) {
       return <InlineLoader />
    }
    if (subsError) {
-      toast.error('Failed to fetch Recipes!')
+      toast.error('Failed to fetch Subscription!')
       logger(subsError)
       return <ErrorState />
    }
@@ -494,18 +621,50 @@ const MenuProductSubscriptionTable = () => {
    }
    return (
       <>
+         <Tunnels tunnels={tunnels}>
+            <Tunnel layer={1} size="full">
+               <MenuProduct
+                  close={closeTunnel}
+                  selectedRows={selectedRows}
+                  removeSelectedRow={removeSelectedRow}
+                  setSelectedRows={setSelectedRows}
+               />
+            </Tunnel>
+         </Tunnels>
+         <ActionBar
+            title="subscription"
+            selectedRows={selectedRows}
+            // defaultIDs={defaultIDs()}
+            openTunnel={openTunnel}
+         />
+         <Spacer size="30px" />
          <ReactTabulator
             ref={tableRef}
             columns={columns}
             data={productSubscriptionData}
             options={TableOptions}
             dataLoaded={dataLoaded}
+            rowSelected={handleRowSelection}
+            rowDeselected={handleRowDeselection}
+            selectableCheck={() => true}
+            columns={[selectionColumn, ...columns]}
          />
       </>
    )
 }
-function BooleanIcon({ cell }) {
+const BooleanIcon = ({ cell, check }) => {
    const data = cell.getData()
+   let isCheck = false
+   if (check === 'visible') {
+      isCheck = data.isVisible
+   }
+   if (check === 'available') {
+      isCheck = data.isAvailable
+   }
+   if (check === 'singleSelect') {
+      isCheck = data.isSingleSelect
+   }
+   console.log('isCheck', isCheck)
    return (
       <Flex
          container
@@ -514,7 +673,7 @@ function BooleanIcon({ cell }) {
          alignItems="center"
       >
          <IconButton type="ghost">
-            {data.isPublished ? <PublishIcon /> : <UnPublishIcon />}
+            {isCheck ? <PublishIcon /> : <UnPublishIcon />}
          </IconButton>
       </Flex>
    )

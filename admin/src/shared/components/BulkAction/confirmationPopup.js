@@ -42,6 +42,27 @@ export default function ConfirmationPopup({
                case 'Menu Product Occurrence':
                   keyName = 'selected-rows-id_occurrence_table'
                   break
+               case 'Menu Product Subscription':
+                  keyName = 'selected-rows-id_subscription_table'
+                  break
+               case 'Subscription Occurrence':
+                  keyName = 'selected-rows-id_subscription_occurrence_table'
+                  break
+               case 'Add To Subscription':
+                  keyName = 'selected-rows-id-subscription'
+                  break
+               case 'Add To Occurrence':
+                  keyName = 'selected-rows-id-occurence'
+                  break
+               case 'Manage Add To Subscription':
+                  keyName = 'selected-rows-id-manage-subscription'
+                  break
+               case 'Manage Add To Occurrence':
+                  keyName = 'selected-rows-id-manage-occurence'
+                  break
+               case 'Delivery Area':
+                  keyName = 'selected-rows-id-delivery-area-table'
+                  break
                default:
                   keyName = 'selected-rows-id_ingredients_table'
             }
