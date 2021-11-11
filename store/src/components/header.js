@@ -5,7 +5,12 @@ import { signOut } from 'next-auth/client'
 import { LoginWrapper } from '../utils'
 
 import { useUser } from '../context'
-import { isClient, getInitials, getRoute } from '../utils'
+import {
+   isClient,
+   getInitials,
+   getRoute,
+   LocationSelectorWrapper,
+} from '../utils'
 import MenuIcon from '../assets/icons/Menu'
 
 import { ProfileSidebar } from './profile_sidebar'
@@ -31,6 +36,8 @@ export const Header = ({ settings, navigationMenus }) => {
    const [toggle, setToggle] = React.useState(true)
    const [isMobileNavVisible, setIsMobileNavVisible] = React.useState(false)
    const [showLoginPopup, setShowLoginPopup] = React.useState(false)
+   const [showLocationSelectorPopup, setShowLocationSelectionPopup] =
+      React.useState(true)
 
    const newNavigationMenus = DataWithChildNodes(navigationMenus)
 
@@ -55,6 +62,9 @@ export const Header = ({ settings, navigationMenus }) => {
                   {brand?.name && <span>{brand?.name}</span>}
                </div>
             </Link>
+            <button onClick={() => setShowLocationSelectionPopup(true)}>
+               Loc
+            </button>
             <section className="hern-navigatin-menu__wrapper">
                <NavigationBar Data={newNavigationMenus}>
                   {isLoading ? (
@@ -159,6 +169,11 @@ export const Header = ({ settings, navigationMenus }) => {
                </section>
             )}
          </header>
+         <LocationSelectorWrapper
+            showLocationSelectorPopup={showLocationSelectorPopup}
+            setShowLocationSelectionPopup={setShowLocationSelectionPopup}
+            settings={settings}
+         />
          {isClient && width < 768 && (
             <ProfileSidebar toggle={toggle} logout={logout} />
          )}
