@@ -5,9 +5,9 @@ import {
    PlusIcon,
    ArrowDownIcon,
    ArrowUpIcon,
-   EditIcon,
+   EditIcon, HelperText,
    Flex,
-   Text,
+   Text
 } from '@dailykit/ui'
 import { FieldUI } from './getFieldUI'
 import { EditModeProvider, useEditMode } from './EditModeContext'
@@ -24,6 +24,9 @@ const ConfigTemplateUI = props => {
 const ConfigUI = ({ config, configSaveHandler }) => {
    const [configJSON, setConfigJSON] = React.useState({})
    const [fields, setFields] = React.useState([])
+   const [description, setDescription] = React.useState("")
+   const [isValid, setIsValid] = React.useState(true)
+
    const { editMode, setEditMode } = useEditMode()
    const elements = []
    const onConfigChange = (e, value) => {
@@ -93,6 +96,7 @@ const ConfigUI = ({ config, configSaveHandler }) => {
                <ArrowDownIcon color="#367BF5" />
             </button>
             {fieldData.description && <p>{fieldData.description}</p>}
+            {setDescription(fieldData.description)}
          </Styles.ConfigTemplateHeader>
       )
    }
@@ -108,6 +112,9 @@ const ConfigUI = ({ config, configSaveHandler }) => {
                   configJSON={configJSON}
                   onConfigChange={onConfigChange}
                   value={value}
+                  configSaveHandler={configSaveHandler}
+                  isValid={isValid}
+                  setIsValid={setIsValid}
                />
             )
          } else {
@@ -155,34 +162,34 @@ const ConfigUI = ({ config, configSaveHandler }) => {
    }
    return (
       <Styles.ConfigTemplateUI>
-         {config ? (
-            <>
-               <Styles.Header>
-                  <Styles.Heading>Edit Component</Styles.Heading>
-                  {editMode ? (
-                     <ComboButton type="solid" size="sm" onClick={handleEdit}>
-                        Save
-                        <PlusIcon color="#fff" />
-                     </ComboButton>
-                  ) : (
+         {config ? (<>
+            <Styles.Header>
+               {editMode ? (<>
+                  <Styles.Heading>Save your changes</Styles.Heading>
+                  <ComboButton type="solid" size="sm" disabled={!isValid} onClick={handleEdit}>
+                     Save
+                     <PlusIcon color="#fff" />
+                  </ComboButton></>
+               ) : (
+                  <>
+                     <Styles.Heading>Edit your brandsetting</Styles.Heading>
                      <ComboButton type="ghost" size="sm" onClick={handleEdit}>
                         Edit <EditIcon color="#367bf5" />
-                     </ComboButton>
-                  )}
-               </Styles.Header>
-
-               <div>
-                  {fields.map((config, index) => (
-                     <div key={index}>{config}</div>
-                  ))}
-               </div>
-            </>
-         ) : (
+                     </ComboButton></>
+               )}
+            </Styles.Header >
+            <div>
+               {fields.map((config, index) => (
+                  <div key={index}>{config}</div>
+               ))}
+            </div>
+            <HelperText type="hint" message={description || fields[0]?.props?.children?.props?.fieldDetail?.description || "This is brand setting."} />
+         </>) : (
             <Flex container justifyContent="center" padding="16px">
                <Text as="subtitle">(No config found)</Text>
             </Flex>
          )}
-      </Styles.ConfigTemplateUI>
+      </Styles.ConfigTemplateUI >
    )
 }
 

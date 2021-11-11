@@ -181,7 +181,6 @@ const SEObasics = ({ routeName }) => {
             <div className="metaDetails">
                 <Row>
                     <Col span={12}>
-                        <div style={{ marginTop: '7px' }} />
                         <Title level={4}>SEO Basics</Title>
                         <HelperText
                             type="hint"

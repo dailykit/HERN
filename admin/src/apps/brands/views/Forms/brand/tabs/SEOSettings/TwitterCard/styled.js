@@ -2,13 +2,7 @@ import styled from 'styled-components'
 
 export const StyledWrapper = styled.div`
    margin-top: 50px;
-   button.edit-button {
-      margin-top: 14px;
-      color: rgb(32, 32, 32);
-      border: 1px solid rgb(229, 229, 229);
-      border-radius: 2px;
-      box-shadow: rgb(0 0 0 / 2%) 0px 2px 0px;
-   }
+   margin-bottom: 50px;
    h3.ant-typography {
       margin-bottom: 12px !important;
    }
@@ -24,15 +18,17 @@ export const StyledWrapper = styled.div`
       margin-top: 10px;
       border: 1px solid #e4e4e4;
       border-radius: 4px;
-
-      .ant-card-body > p,
-      h4.ant-typography {
+      .ant-card-body > p {
          white-space: nowrap;
          overflow: hidden;
          text-overflow: ellipsis;
+         font-size: 14px;
+         font-weight: 400;
+         span {
+            color: #32536a;
+         }
       }
    }
-
    .ant-card-cover > button {
       width: 100%;
       box-shadow: none;
@@ -49,18 +45,14 @@ export const ImageContainer = styled.div`
    position: relative;
    margin-bottom: 16px;
    img {
+      width: 464px;
+      height: 128px;
       object-fit: cover;
-      border-radius: 8px;
-      width: 170px;
-      height: 120px;
    }
    div {
       span {
          margin-right: 16px;
          cursor: pointer;
       }
-   }
-   .iconButton > button {
-      background: transparent;
    }
 `

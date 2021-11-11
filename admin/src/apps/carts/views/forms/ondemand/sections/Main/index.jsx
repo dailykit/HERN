@@ -79,7 +79,7 @@ export const Main = () => {
    useQuery(QUERIES.MENU, {
       skip: !brand?.id,
       variables: {
-         params: { brandId: brand.id, date: moment().format('YYYY-MM-DD') },
+         params: { brandId: brand?.id, date: moment().format('YYYY-MM-DD') },
       },
       onCompleted: async (data = {}) => {
          try {

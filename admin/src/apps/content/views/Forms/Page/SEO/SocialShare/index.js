@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useContext } from 'react'
 import 'antd/dist/antd.css'
 import {
     Typography,
@@ -40,9 +40,9 @@ const { Title, Text } = Typography
 
 export const SocialShare = ({ routeName }) => {
     const [tunnel1, openTunnel1, closeTunnel1] = useTunnel(1)
-    const { pageId, pageName } = useParams()
+    const { pageId } = useParams()
     const brandPageId = React.useMemo(() => parseInt(pageId), [])
-    const [context, setContext] = useContext(BrandContext)
+    const [context] = useContext(BrandContext)
     const [form, setForm] = useState({
         ogTitle: {
             value: '',
@@ -70,15 +70,15 @@ export const SocialShare = ({ routeName }) => {
         },
     })
     //for modal
-    const [isFacebookModalVisible, setIsFacebookModalVisible] = useState(false)
-    const showFacebookModal = () => {
-        setIsFacebookModalVisible(true)
+    const [isOgModalVisible, setIsOgModalVisible] = useState(false)
+    const showOgModal = () => {
+        setIsOgModalVisible(true)
     }
-    const handleFacebookOk = () => {
-        setIsFacebookModalVisible(false)
+    const handleOgOk = () => {
+        setIsOgModalVisible(false)
     }
-    const handleFacebookCancel = () => {
-        setIsFacebookModalVisible(false)
+    const handleOgCancel = () => {
+        setIsOgModalVisible(false)
     }
 
     //update Image
@@ -99,7 +99,7 @@ export const SocialShare = ({ routeName }) => {
             },
         }))
     }
-
+    //query for getting metadetails
     const [seoDetails, { loading: metaDetailsLoading, brandsSEO }] =
         useLazyQuery(SEO_DETAILS, {
             onCompleted: brandsSEO => {
@@ -166,10 +166,11 @@ export const SocialShare = ({ routeName }) => {
                 },
             },
         })
-        handleFacebookOk()
+        handleOgOk()
     }
     if (metaDetailsLoading) return <InlineLoader />
 
+    //for every change in data will update the field(form)
     const onChangeHandler = e => {
         const { name, value } = e.target
         console.log(name, value)
@@ -186,35 +187,27 @@ export const SocialShare = ({ routeName }) => {
         <StyledWrapper>
             <div className="metaDetails">
                 <Row>
-                    <Col span={12}>
-                        <div style={{ marginTop: '7px' }} />
+                    <Col span={24}>
                         <Title level={4}>Social Share</Title>
                         <HelperText
                             type="hint"
                             message=" Enhance how your main site pages look when shared on social networks like Facebook, LinkedIn, Twitter and Pinterest."
                         />
-
                         <ComboButton
                             size="sm"
                             type="outline"
-                            style={{
-                                marginTop: '14px',
-                                color: '#202020',
-                                border: '1px solid #E5E5E5',
-                                borderRadius: '2px',
-                                boxShadow: '0px 2px 0px rgba(0, 0, 0, 0.016)',
-                            }}
-                            onClick={showFacebookModal}
+                            className="edit-button"
+                            onClick={showOgModal}
                         >
                             <EditIcon color="#202020" size={24} />
                             Edit
                         </ComboButton>
-
+                        {/* modal for editing */}
                         <Modal
                             title="Customize Open Graph settings"
-                            visible={isFacebookModalVisible}
-                            onOk={handleFacebookOk}
-                            onCancel={handleFacebookCancel}
+                            visible={isOgModalVisible}
+                            onOk={handleOgOk}
+                            onCancel={handleOgCancel}
                             footer={[
                                 <Button
                                     key="submit"
@@ -260,6 +253,7 @@ export const SocialShare = ({ routeName }) => {
                                             border: '2px solid #E4E4E4',
                                             borderRadius: '4px',
                                         }}
+                                        className="text-box"
                                         bordered={false}
                                         value={form.ogTitle.value}
                                         onChange={onChangeHandler}
@@ -301,6 +295,7 @@ export const SocialShare = ({ routeName }) => {
                                             border: '2px solid #E4E4E4',
                                             borderRadius: '4px',
                                         }}
+                                        className="text-area"
                                         bordered={false}
                                         value={form.ogDescription.value}
                                         onChange={onChangeHandler}
@@ -334,20 +329,17 @@ export const SocialShare = ({ routeName }) => {
                                         ),
                                     }}
                                 >
-                                    {/* for image upload */}
+                                    {/* for image upload (modal)*/}
                                     <Row>
-                                        <Col span={12}>
+                                        <Col span={12} className="imageModal">
                                             {form.ogImage.value ? (
                                                 <ImageContainer
                                                     border="none"
                                                     height="120px"
                                                     padding="0px"
                                                 >
-                                                    <div>
+                                                    <div className="iconButton">
                                                         <IconButton
-                                                            style={{
-                                                                background: 'transparent',
-                                                            }}
                                                             size="sm"
                                                             type="solid"
                                                             onClick={() => openTunnel1(1)}
@@ -356,9 +348,6 @@ export const SocialShare = ({ routeName }) => {
                                                         </IconButton>
 
                                                         <IconButton
-                                                            style={{
-                                                                background: 'transparent',
-                                                            }}
                                                             size="sm"
                                                             type="solid"
                                                             onClick={() =>
@@ -371,23 +360,19 @@ export const SocialShare = ({ routeName }) => {
                                                     <img
                                                         src={form.ogImage.value}
                                                         alt="og-image"
-                                                        style={{
-                                                            borderRadius: '8px',
-                                                            width: '170px',
-                                                            height: '120px',
-                                                        }}
                                                     />
                                                 </ImageContainer>
                                             ) : (
+                                                //inside modal
                                                 <ButtonTile
                                                     type="uploadImage"
                                                     size="sm"
-                                                    text=""
+                                                    text="Add Image"
                                                     onClick={() => openTunnel1(1)}
                                                     style={{
                                                         width: '170px',
                                                         height: '120px',
-                                                        marginBottom: '10px'
+                                                        marginBottom: '10px',
                                                     }}
                                                 />
                                             )}
@@ -415,14 +400,14 @@ export const SocialShare = ({ routeName }) => {
                                         <Col span={24}>
                                             <Text>
                                                 <span style={{ fontWeight: 'bold' }}>
-                                                    Note :{' '}
-                                                </span>{' '}
+                                                    Note :
+                                                </span>
                                                 It can take time before you see these
                                                 changes on social networks.
                                                 <br />
                                                 <span style={{ fontWeight: 'bold' }}>
-                                                    Recommended :{' '}
-                                                </span>{' '}
+                                                    Recommended :
+                                                </span>
                                                 Upload size should be 1,200 x 630 pixels.
                                             </Text>
                                         </Col>
@@ -431,6 +416,7 @@ export const SocialShare = ({ routeName }) => {
                             </Form>
                         </Modal>
                     </Col>
+                    {/* outside modal */}
                     <Col span={12}>
                         <Text strong>Preview on Social Networks</Text>
                         <Tooltip
@@ -449,6 +435,7 @@ export const SocialShare = ({ routeName }) => {
                         </Tooltip>
                         <Card
                             hoverable
+                            onClick={showOgModal}
                             style={{ backgroundColor: '#f0f4f7' }}
                             cover={
                                 form?.ogImage?.value ? (
@@ -464,20 +451,13 @@ export const SocialShare = ({ routeName }) => {
                                     <ButtonTile
                                         type="uploadImage"
                                         size="lg"
-                                        text=""
-                                        style={{
-                                            width: '100%',
-                                            boxShadow: 'none',
-                                            border: '1px solid #e4e4e4',
-                                            borderRadius: '0px',
-                                        }}
+                                        text="Add Image"
                                     />
                                 )
                             }
                         >
                             <Tooltip placement="bottom" title={'page link'}>
                                 <p style={{ textTransform: 'uppercase' }}>
-                                    {' '}
                                     {context.brandDomain + routeName}
                                 </p>
                             </Tooltip>
