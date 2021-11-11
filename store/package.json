@@ -54,7 +54,7 @@
       "web-vitals": "^1.0.1"
    },
    "scripts": {
-      "dev": "SKIP_PREFLIGHT_CHECK=true&&next dev",
+      "dev": "SET SKIP_PREFLIGHT_CHECK=true&&next dev",
       "build": "next build",
       "start": "next start",
       "init:config": "chmod +x ./script.sh && ./script.sh && cp env-config.js ./public"

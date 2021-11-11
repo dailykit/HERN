@@ -192,7 +192,7 @@ function Checkout({ navigationMenuItems, parsedData = [], footerHtml = '' }) {
                />
             )}
          </Wrapper>
-         {!isProcessingPayment && (
+         {isProcessingPayment && (
             <PaymentProcessingModal
                isOpen={isProcessingPayment}
                bookingId={experienceBookingId}

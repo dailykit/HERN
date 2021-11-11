@@ -460,6 +460,62 @@ export const CART_INFO = gql`
    }
 `
 
+export const CART_PROVIDER_INFO = gql`
+   subscription CART_INFO($keycloakId: String!, $params: jsonb!) {
+      carts(
+         where: {
+            customerKeycloakId: { _eq: $keycloakId }
+            parentCartId: { _is_null: true }
+            experienceClass: {
+               experienceBookingId: { _is_null: true }
+               isBooked: { _eq: false }
+            }
+         }
+      ) {
+         id
+         isHostParticipant
+         experienceClass {
+            experienceId
+            startTimeStamp
+            duration
+            experience {
+               title
+               assets
+            }
+         }
+         childCarts {
+            id
+            isHostCart(args: { params: $params })
+            cartItems {
+               cartId
+               id
+               experienceClassId
+               experienceClassTypeId
+               productId
+               productOptionId
+               product {
+                  id
+                  productOptions(
+                     where: { isArchived: { _eq: false } }
+                     order_by: { position: desc_nulls_last }
+                  ) {
+                     id
+                     cartItem
+                  }
+               }
+            }
+            cartItems {
+               cartId
+               id
+               experienceClassId
+               experienceClassTypeId
+               productId
+            }
+         }
+      }
+   }
+`
+
 export const CART_SUBSCRIPTION = gql`
    subscription CART_SUBSCRIPTION($where: order_cart_bool_exp!) {
       carts(where: $where) {

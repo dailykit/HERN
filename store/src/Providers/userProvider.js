@@ -2,8 +2,8 @@ import React from 'react'
 import { useSession } from 'next-auth/client'
 import { useMutation, useSubscription } from '@apollo/client'
 import { InlineLoader } from '../components'
-import { useConfig } from '../lib'
-import { CUSTOMER_DETAILS, CREATE_CUSTOMER } from '../graphql'
+// import { useConfig } from '../lib'
+import { CUSTOMER_DETAILS, CREATE_CUSTOMER, GET_BRAND_INFO } from '../graphql'
 
 const inititalState = {
    isAddressModalOpen: false,
@@ -12,7 +12,12 @@ const inititalState = {
    isAuthenticationModalOpen: false,
    isAuthenticated: false,
    productModalType: 'booking',
-   user: { name: '', keycloakId: '' }
+   user: { name: '', keycloakId: '' },
+   brand: {
+      id: null,
+      domain: '',
+      isDefault: ''
+   }
 }
 const UserContext = React.createContext()
 
@@ -24,6 +29,8 @@ const reducers = (state, { type, payload }) => {
             isAuthenticated: true,
             user: { ...state.user, ...payload }
          }
+      case 'SET_BRAND_INFO':
+         return { ...state, brand: payload }
       case 'CLEAR_USER':
          return {
             ...state,
@@ -63,8 +70,9 @@ const reducers = (state, { type, payload }) => {
 }
 
 export const UserProvider = ({ children }) => {
-   const { brand } = useConfig()
+   // const { brand } = useConfig()
    const [keycloakId, setKeycloakId] = React.useState('')
+   const [brandId, setBrandId] = React.useState(null)
    const [isLoading, setIsLoading] = React.useState(true)
    const [state, dispatch] = React.useReducer(reducers, inititalState)
    const [session, loadingSession] = useSession()
@@ -72,10 +80,23 @@ export const UserProvider = ({ children }) => {
    const [createCustomer] = useMutation(CREATE_CUSTOMER, {
       onError: error => console.error('createCustomer => error => ', error)
    })
+
+   // subscription to get the brand details
+   const {
+      loading: isBrandInfoQueryLoading,
+      error: hasBrandInfoQueryError,
+      data: { brands = [] } = {}
+   } = useSubscription(GET_BRAND_INFO, {
+      variables: {
+         domain: process.browser && window.location.hostname
+      }
+   })
+
+   //  subscription to get the user details
    const { loading, data: { customer = {} } = {} } = useSubscription(
       CUSTOMER_DETAILS,
       {
-         skip: session?.user?.id || !keycloakId,
+         skip: !session?.user?.id || !keycloakId || !brandId,
          fetchPolicy: 'network-only',
          variables: {
             keycloakId
@@ -91,10 +112,10 @@ export const UserProvider = ({ children }) => {
                         email: session.user.email,
                         keycloakId: session.user.id,
                         source: 'stay-in-social',
-                        sourceBrandId: brand.id,
+                        sourceBrandId: brandId,
                         brandCustomers: {
                            data: {
-                              brandId: brand.id,
+                              brandId: brandId,
                               subscriptionOnboardStatus: 'SELECT_DELIVERY'
                            }
                         }
@@ -140,6 +161,24 @@ export const UserProvider = ({ children }) => {
          payload: type
       })
    }
+
+   React.useEffect(() => {
+      if (!isBrandInfoQueryLoading) {
+         if (brands.length) {
+            setBrandId(brands[0]?.id)
+            dispatch({
+               type: 'SET_BRAND_INFO',
+               payload: {
+                  id: brands[0]?.id,
+                  domain: brands[0]?.domain,
+                  isDefault: brands[0]?.isDefault
+               }
+            })
+         }
+
+         setIsLoading(false)
+      }
+   }, [isBrandInfoQueryLoading, brands])
 
    React.useEffect(() => {
       if (!loadingSession) {
@@ -191,3 +230,7 @@ export const UserProvider = ({ children }) => {
    )
 }
 export const useUser = () => React.useContext(UserContext)
+export const useConfig = () => {
+   const { state } = React.useContext(UserContext)
+   return { brand: state.brand }
+}

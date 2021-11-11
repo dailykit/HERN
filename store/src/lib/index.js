@@ -1,6 +1,4 @@
 import protectedRoute from './protectedRoute'
-
-export * from './config'
 export * from './graphqlClient'
 export * from './getNavigationMenuItems'
 export * from './getWebPageModule'

@@ -5,9 +5,10 @@ import {
    useExperienceInfo,
    useCart,
    useUser,
-   useProduct
+   useProduct,
+   useConfig
 } from '../../Providers'
-import { useConfig } from '../../lib'
+// import { useConfig } from '../../lib'
 
 export const useCheckoutHandler = () => {
    const router = useRouter()

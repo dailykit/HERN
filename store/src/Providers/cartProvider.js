@@ -2,7 +2,7 @@ import React from 'react'
 import { useSubscription } from '@apollo/client'
 import { InlineLoader } from '../components'
 import { useToasts } from 'react-toast-notifications'
-import { CART_INFO } from '../graphql'
+import { CART_PROVIDER_INFO } from '../graphql'
 import { useUser } from '../Providers'
 
 const initialState = {
@@ -51,7 +51,7 @@ export const CartProvider = ({ children }) => {
       loading: isCartLoading,
       error: cartError,
       data: { carts = [] } = {}
-   } = useSubscription(CART_INFO, {
+   } = useSubscription(CART_PROVIDER_INFO, {
       variables: {
          keycloakId: user?.keycloakId,
          params: {
@@ -92,7 +92,9 @@ export const CartProvider = ({ children }) => {
       }
    }, [carts, isCartLoading])
 
-   if (isCartLoading) return <InlineLoader type="full" />
+   if (isCartLoading) {
+      return <InlineLoader type="full" />
+   }
 
    if (cartError) {
       addToast('Opps! Something went wrong!', { appearance: 'error' })
@@ -106,10 +108,11 @@ export const CartProvider = ({ children }) => {
             getCart,
             addHostCart,
             addCurrentCart,
-            dispatch
+            dispatch,
+            isCartLoading
          }}
       >
-         {children}
+         {!isCartLoading && children}
       </CartContext.Provider>
    )
 }
