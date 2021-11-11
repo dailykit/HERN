@@ -87,6 +87,7 @@ const PaymentProcessingModal = ({ isOpen, bookingId }) => {
          isOpen={isOpen}
          footer={null}
          closable={false}
+         keyboard={false}
          centered
       >
          <Wrapper>

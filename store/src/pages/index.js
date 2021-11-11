@@ -140,6 +140,7 @@ export default function Home({
                   )}
             </div>
             <div className="content-container">
+               {/* experience carousel */}
                <section id="explore-experiences">
                   {!isEmpty(categories) && (
                      <RenderCard
@@ -177,6 +178,8 @@ export default function Home({
                   Our experiences will be lead by our qualified experts, who are
                   professional, highly skilled and fun to work with.
                </p>
+
+               {/* experts carousel */}
                <section id="explore-expert">
                   {!isEmpty(experts) && (
                      <RenderCard
@@ -190,6 +193,14 @@ export default function Home({
                   )}
                </section>
 
+               <div id="home-bottom-01">
+                  {Boolean(parsedData.length) &&
+                     ReactHtmlParser(
+                        parsedData.find(fold => fold.id === 'home-bottom-01')
+                           ?.content
+                     )}
+               </div>
+
                {/* signup fold */}
                {!isAuthenticated && <SignupFold bgMode="dark" />}
             </div>
@@ -201,10 +212,10 @@ export default function Home({
             >
                <Tags onSubmit={closeTagsModal} />
             </Modal>
-            <div ref={homeBottom01} id="home-bottom-01">
+            <div ref={homeBottom01} id="home-bottom-02">
                {Boolean(parsedData.length) &&
                   ReactHtmlParser(
-                     parsedData.find(fold => fold.id === 'home-bottom-01')
+                     parsedData.find(fold => fold.id === 'home-bottom-02')
                         ?.content
                   )}
             </div>

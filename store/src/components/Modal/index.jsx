@@ -6,6 +6,8 @@ export default function ModalComp({
    children,
    type = 'popup',
    close,
+   closable = true,
+   keyboard = true,
    closeButtonType = 'cross',
    showActionButton = false,
    disabledActionButton = false,
@@ -35,7 +37,8 @@ export default function ModalComp({
                </Button>
             ) : null
          }
-         closable={props?.closable || true}
+         closable={closable}
+         keyboard={keyboard}
       >
          {children}
       </ModalContainer>

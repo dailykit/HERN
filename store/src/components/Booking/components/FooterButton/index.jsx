@@ -40,7 +40,7 @@ export default function FooterButton({
          {bookingStepsIndex === 0 && (
             <div className="flex-row-wrap">
                <Button
-                  className="ghost-btn text8 box-shadow-glow"
+                  className="ghost-btn text6 box-shadow-glow"
                   onClick={sendPollHandler}
                >
                   Poll your guests before you book
