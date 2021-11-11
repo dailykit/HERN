@@ -1,15 +1,17 @@
 import React from 'react'
 import _ from 'lodash'
-import styled from 'styled-components'
 import {
    ComboButton,
    PlusIcon,
    ArrowDownIcon,
    ArrowUpIcon,
    EditIcon,
+   Flex,
+   Text,
 } from '@dailykit/ui'
 import { FieldUI } from './getFieldUI'
 import { EditModeProvider, useEditMode } from './EditModeContext'
+import { Styles } from './styled'
 
 const ConfigTemplateUI = props => {
    return (
@@ -153,66 +155,35 @@ const ConfigUI = ({ config, configSaveHandler }) => {
    }
    return (
       <Styles.ConfigTemplateUI>
-         <Styles.Header>
-            <Styles.Heading>Edit Component</Styles.Heading>
-            {editMode ? (
-               <ComboButton type="solid" size="sm" onClick={handleEdit}>
-                  Save
-                  <PlusIcon color="#fff" />
-               </ComboButton>
-            ) : (
-               <ComboButton type="ghost" size="sm" onClick={handleEdit}>
-                  Edit <EditIcon color="#367bf5" />
-               </ComboButton>
-            )}
-         </Styles.Header>
+         {config ? (
+            <>
+               <Styles.Header>
+                  <Styles.Heading>Edit Component</Styles.Heading>
+                  {editMode ? (
+                     <ComboButton type="solid" size="sm" onClick={handleEdit}>
+                        Save
+                        <PlusIcon color="#fff" />
+                     </ComboButton>
+                  ) : (
+                     <ComboButton type="ghost" size="sm" onClick={handleEdit}>
+                        Edit <EditIcon color="#367bf5" />
+                     </ComboButton>
+                  )}
+               </Styles.Header>
 
-         <div>
-            {fields.map((config, index) => (
-               <div key={index}>{config}</div>
-            ))}
-         </div>
+               <div>
+                  {fields.map((config, index) => (
+                     <div key={index}>{config}</div>
+                  ))}
+               </div>
+            </>
+         ) : (
+            <Flex container justifyContent="center" padding="16px">
+               <Text as="subtitle">(No config found)</Text>
+            </Flex>
+         )}
       </Styles.ConfigTemplateUI>
    )
 }
 
-const Styles = {
-   ConfigTemplateUI: styled.div`
-      .display-none {
-         display: none;
-      }
-      padding: 16px;
-   `,
-   Header: styled.div`
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-   `,
-   Heading: styled.div`
-      color: #202020;
-      font-size: 16px;
-      font-style: normal;
-      font-weight: 500;
-      padding: 0 0 16px 0;
-   `,
-   ConfigTemplateHeader: styled.div`
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      > button {
-         border: none;
-         background: transparent;
-      }
-      > h3 {
-         font-weight: 500;
-         font-size: 14px;
-         line-height: 16px;
-         letter-spacing: 0.16px;
-         color: #919699;
-         text-transform: capitalize;
-         padding: 4px;
-         margin-left: ${({ indentation }) => indentation};
-      }
-   `,
-}
 export default ConfigTemplateUI
