@@ -278,13 +278,40 @@ const ContentSelection = () => {
          </Styles.PreviewWrapper>
          <Styles.ConfigWrapper>
             {linkedModuleId ? (
-               <ConfigTemplateUI
-                  config={config}
-                  setConfig={setConfig}
-                  configSaveHandler={updateHandler}
-               />
+               <>
+                  <ConfigTemplateUI
+                     config={config}
+                     setConfig={setConfig}
+                     configSaveHandler={updateHandler}
+                  />
+                  <LinkFiles
+                     title="Linked CSS file with this Module"
+                     fileType="css"
+                     entityId={linkedModuleId}
+                     scope="page-module"
+                  />
+                  <LinkFiles
+                     title="Linked JS file with this Module"
+                     fileType="js"
+                     entityId={linkedModuleId}
+                     scope="page-module"
+                  />
+               </>
             ) : (
-               <LinkFiles />
+               <>
+                  <LinkFiles
+                     title="Linked CSS file with this Page"
+                     fileType="css"
+                     entityId={pageId}
+                     scope="page"
+                  />
+                  <LinkFiles
+                     title="Linked JS file with this Page"
+                     fileType="js"
+                     entityId={pageId}
+                     scope="page"
+                  />
+               </>
             )}
          </Styles.ConfigWrapper>
       </Styles.Wrapper>
