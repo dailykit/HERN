@@ -77,6 +77,7 @@ export const getFieldUI = (fieldKey, configJSON, onConfigChange, isValid, setIsV
                 setIsValid={setIsValid}
                 onConfigChange={onConfigChange}
                 editMode={editMode}
+                value={value}
             />
         )
     } else if (
@@ -195,6 +196,8 @@ export const getFieldUI = (fieldKey, configJSON, onConfigChange, isValid, setIsV
                 path={fieldKey}
                 onConfigChange={onConfigChange}
                 editMode={editMode}
+                value={value}
+                configJSON={configJSON}
             />
         )
     }

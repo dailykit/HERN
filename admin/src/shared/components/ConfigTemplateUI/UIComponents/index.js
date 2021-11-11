@@ -28,6 +28,7 @@ import PhoneInput, {
    isValidPhoneNumber,
 } from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
+import ReactHTMLParser from 'react-html-parser'
 import gql from 'graphql-tag'
 import { useSubscription } from '@apollo/react-hooks'
 import validator from '../../../../apps/brands/views/validator'
@@ -42,6 +43,20 @@ export const TextBox = ({
    editMode
 }) => {
    const [errorMessage, setErrorMessage] = React.useState([])
+   const [emailValid, setEmailValid] = React.useState(true)
+
+   React.useEffect(
+      () => {
+
+         if (!emailValid) {
+            setIsValid(false)
+         } else {
+            setIsValid((prev) => prev === false ? false : true)
+         }
+      },
+      [emailValid]
+   )
+
    return (
       <Flex
          container
@@ -64,7 +79,7 @@ export const TextBox = ({
                      const { isValid: isValidEmail, errors } = validator.email(
                         e.target.value
                      )
-                     setIsValid(isValidEmail)
+                     setEmailValid(isValidEmail)
                      setErrorMessage(errors)
                      return
                   }
@@ -380,7 +395,7 @@ export const RichText = ({ fieldDetail, marginLeft, path, onConfigChange, editMo
             {editMode ? <RichTextEditor
                defaultValue={fieldDetail?.value || fieldDetail.default}
                onChange={html => onEditorChange(html)}
-            /> : <p>{fieldDetail?.value}</p>}
+            /> : <div>{ReactHTMLParser(fieldDetail?.value)}</div>}
          </>
       </Flex>
    )
@@ -447,13 +462,22 @@ export const CollectionSelector = props => {
 }
 
 export const PhoneNumberSelector = ({
+   isValid,
    setIsValid,
    fieldDetail,
    marginLeft,
    path,
    onConfigChange,
-   editMode
+   editMode,
+   value,
+   configJSON
 }) => {
+   React.useEffect(() => {
+      if (isValidPhoneNumber(value.value)) {
+         setIsValid(true)
+      } else { setIsValid(false) }
+   }, [configJSON])
+
    return (
       <>
          <Flex
@@ -476,11 +500,6 @@ export const PhoneNumberSelector = ({
                onChange={result => {
                   const e = { target: { name: path, value: result } }
                   onConfigChange(e, result)
-                  console.log(result, 'result')
-                  if (result) {
-                     const isValid = isValidPhoneNumber(result)
-                     isValid ? setIsValid(true) : setIsValid(false)
-                  }
                }}
                placeholder="Enter your phone number"
             /> : <Text as="h4">{fieldDetail?.value}</Text>}
