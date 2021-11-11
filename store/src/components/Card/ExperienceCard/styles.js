@@ -129,6 +129,8 @@ export const CardBody = styled.div`
       font-weight: 700;
       text-align: left;
       text-transform: uppercase;
+      line-height: 25px !important;
+      letter-spacing: 0.16em !important;
       color: ${({ backgroundMode = 'dark' }) =>
          backgroundMode === 'light'
             ? theme.colors.textColor5
@@ -142,15 +144,22 @@ export const CardBody = styled.div`
       font-weight: 800;
       font-size: ${theme.sizes.h7};
       margin-bottom: 0;
+      font-family: 'Maven Pro';
       span {
-         font-weight: 400;
+         font-weight: 700;
          font-size: ${theme.sizes.h7};
+         line-height: 16px;
+         letter-spacing: 0.26em;
+         font-family: 'Maven Pro';
       }
    }
    .exp-users-info {
-      font-weight: 600;
+      font-weight: 700;
       font-size: ${theme.sizes.h6};
       margin-left: 8px;
+      line-height: 16px;
+      letter-spacing: 0.26em;
+      font-family: 'Maven Pro';
    }
 
    .duration {
@@ -161,6 +170,15 @@ export const CardBody = styled.div`
          font-size: ${theme.sizes.h6};
          margin-left: 8px;
          text-transform: uppercase;
+         font-family: 'Maven Pro';
+         font-weight: bold;
+         letter-spacing: 0.26em;
+         margin-bottom: 0;
+         text-transform: uppercase;
+         line-height: 16px;
+      }
+      svg {
+         stroke-width: 4px;
       }
    }
    .expertImgDiv {
@@ -170,11 +188,12 @@ export const CardBody = styled.div`
       align-items: center;
       p {
          font-family: 'Maven Pro';
-         color: ${theme.colors.textColor};
-         font-weight: 800;
-         letter-spacing: 0.16em;
+         color: ${theme.colors.textColor_1};
+         font-weight: bold;
+         letter-spacing: 0.26em;
          margin-bottom: 0;
          text-transform: uppercase;
+         line-height: 16px;
       }
    }
    .expert-img {
@@ -185,11 +204,11 @@ export const CardBody = styled.div`
    }
    @media (min-width: 769px) {
       .exp-name {
-         margin: 0 0 0.5rem 0;
+         margin: 0.5em 0;
       }
       .exp-info {
          font-size: ${theme.sizes.h8};
-         font-weight: 600;
+         font-weight: 700;
       }
       .duration {
          span {

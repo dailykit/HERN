@@ -387,7 +387,7 @@ export default function Experience({
                   <div className="left-container">
                      <section id="about-experience">
                         <div style={{ margin: '16px 0' }}>
-                           <h1 className="sub-heading text1">
+                           <h1 className="sub-heading text1_secondary">
                               {experienceInfo?.experience?.title}
                            </h1>
                            {/* {width > 769 && (
@@ -431,7 +431,7 @@ export default function Experience({
                         header => {
                            return (
                               <section id={header?.title}>
-                                 <h1 className="sub-heading text1">
+                                 <h1 className="sub-heading text1_secondary">
                                     {header?.title}
                                  </h1>
                                  <p className="about-exp text7">
@@ -446,7 +446,9 @@ export default function Experience({
                            ?.experienceClassExpert
                      ) && (
                         <section id="about-expert">
-                           <h1 className="sub-heading text1">About Expert</h1>
+                           <h1 className="sub-heading text1_secondary">
+                              About Expert
+                           </h1>
                            <AboutExpert
                               expert={
                                  experienceInfo?.experience
@@ -470,7 +472,7 @@ export default function Experience({
                <div style={{ padding: '2rem 0' }}>
                   {!isEmpty(customerReviews) && (
                      <section id="reviews">
-                        <h1 className="sub-heading text1">Reviews</h1>
+                        <h1 className="sub-heading text1_secondary">Reviews</h1>
                         <CustomCarousel {...settings}>
                            {customerReviews.map(customerReview => (
                               <div className="item">
@@ -511,7 +513,7 @@ export default function Experience({
                   )}
                   {!isEmpty(categories) && (
                      <section id="section-7">
-                        <h1 className="sub-heading text1">
+                        <h1 className="sub-heading text1_secondary">
                            Similar Experiences
                         </h1>
                         <CustomCarousel
@@ -762,11 +764,12 @@ const Wrapper = styled.main`
       }
       .sub-heading {
          color: ${theme.colors.textColor5};
-         font-weight: 600;
+         font-weight: 700;
          text-align: left;
          text-transform: uppercase;
          font-family: 'Barlow Condensed';
          margin-bottom: 1rem;
+         letter-spacing: 0.08em;
       }
    }
 

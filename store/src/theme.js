@@ -16,6 +16,8 @@ export const theme = {
       },
       mainBackground: '#000',
       textColor: '#DC2047',
+      textColor_1: '#D4002E',
+      textColor_2: '#DB0049',
       textColor2: '#fff',
       textColor3: '#da2148',
       textColor4: '#ffffff',

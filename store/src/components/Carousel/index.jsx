@@ -30,7 +30,7 @@ const Carousel = ({ data = [], type = 'experience', showWishlist = true }) => {
             }}
             className="owl-theme"
             items={3}
-            loop={false}
+            loop={true}
             margin={32}
             nav={false}
             dots={true}

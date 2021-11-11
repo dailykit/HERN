@@ -70,7 +70,7 @@ export const Goodies = ({
          {products.map(product => {
             return (
                <div key={product?.id}>
-                  <h1 className={`sub-heading text1 ${textClass}`}>{title}</h1>
+                  <h1 className={`sub-heading text1_secondary ${textClass}`}>{title}</h1>
                   <Ingredients
                      ingredients={
                         product?.productOptions[0]?.simpleRecipeYield

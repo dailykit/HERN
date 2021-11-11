@@ -54,6 +54,7 @@ export const CardBody = styled.div`
       text-align: left;
       letter-spacing: 0.16em;
       text-transform: uppercase;
+      line-height: 25px;
       :hover {
          color: ${theme.colors.textColor};
          cursor: pointer;

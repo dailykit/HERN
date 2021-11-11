@@ -27,10 +27,11 @@ export const Wrapper = styled.div`
       overflow-y: auto;
       .expertName {
          color: ${theme.colors.textColor5};
-         font-weight: 800;
+         font-weight: 700;
          margin-bottom: 8px;
          font-family: 'Barlow Condensed';
          text-transform: uppercase;
+         
       }
       .expertCategory {
          color: ${theme.colors.textColor5};
