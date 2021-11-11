@@ -28,8 +28,8 @@ export const isStoreOnDemandDeliveryAvailable = (
          now
       )
       if (dates.length) {
-         if (brandRecurrences[rec].recurrence.timeSlots.length) {
-            for (let timeslot of brandRecurrences[rec].recurrence.timeSlots) {
+         if (finalRecurrences[rec].recurrence.timeSlots.length) {
+            for (let timeslot of finalRecurrences[rec].recurrence.timeSlots) {
                if (timeslot.mileRanges.length) {
                   const timeslotFromArr = timeslot.from.split(':')
                   const timeslotToArr = timeslot.to.split(':')
@@ -56,13 +56,9 @@ export const isStoreOnDemandDeliveryAvailable = (
                            timeslot.mileRanges,
                            eachStore
                         )
-                     const { aerial, geoBoundary, zipcode } =
-                        distanceDeliveryStatus
+                     const status = distanceDeliveryStatus.status
 
-                     if (
-                        (aerial && geoBoundary && zipcode) ||
-                        rec == finalRecurrences.length - 1
-                     ) {
+                     if (status || rec == finalRecurrences.length - 1) {
                         return distanceDeliveryStatus
                      }
                   } else {
@@ -126,19 +122,16 @@ export const isPreOrderDeliveryAvailable = (brandRecurrences, eachStore) => {
       }
    } else {
       for (let rec in finalRecurrences) {
-         for (let timeslot of brandRecurrences[rec].recurrence.timeSlots) {
+         for (let timeslot of finalRecurrences[rec].recurrence.timeSlots) {
             if (timeslot.mileRanges.length) {
                const distanceDeliveryStatus =
                   isStoreDeliveryAvailableByDistance(
                      timeslot.mileRanges,
                      eachStore
                   )
-               const { aerial, geoBoundary, zipcode } = distanceDeliveryStatus
+               const status = distanceDeliveryStatus.status
 
-               if (
-                  (aerial && geoBoundary && zipcode) ||
-                  rec == finalRecurrences.length - 1
-               ) {
+               if (status || rec == finalRecurrences.length - 1) {
                   return distanceDeliveryStatus
                }
             } else {
@@ -156,13 +149,13 @@ export const isPreOrderDeliveryAvailable = (brandRecurrences, eachStore) => {
 }
 
 const isStoreDeliveryAvailableByDistance = (mileRanges, eachStore) => {
+   const userLocation = JSON.parse(localStorage.getItem('userLocation'))
    let isStoreDeliveryAvailableByDistanceStatus = {
       aerial: false,
       //   drivable: false,
       zipcode: false,
       geoBoundary: false,
    }
-
    for (let mileRange in mileRanges) {
       // aerial distance
       if (mileRanges[mileRange].distanceType === 'aerial') {
@@ -208,11 +201,15 @@ const isStoreDeliveryAvailableByDistance = (mileRanges, eachStore) => {
                mileRanges[mileRange].geoBoundary.geoBoundaries
             const storeValidationForGeoBoundaries = isPointInPolygon(
                {
-                  latitude: eachStore.location.lat,
-                  longitude: eachStore.location.lng,
+                  latitude: userLocation.latitude,
+                  longitude: userLocation.longitude,
                },
                geoBoundaries
             )
+
+            let result =
+               storeValidationForGeoBoundaries &&
+               !mileRanges[mileRange].isExcluded
             if (storeValidationForGeoBoundaries) {
                result = !mileRanges[mileRange].isExcluded
                isStoreDeliveryAvailableByDistanceStatus['geoBoundary'] = result
@@ -221,7 +218,10 @@ const isStoreDeliveryAvailableByDistance = (mileRanges, eachStore) => {
       }
    }
    return {
-      status: true,
+      status:
+         isStoreDeliveryAvailableByDistanceStatus.aerial &&
+         isStoreDeliveryAvailableByDistanceStatus.geoBoundary &&
+         isStoreDeliveryAvailableByDistanceStatus.zipcode,
       result: isStoreDeliveryAvailableByDistanceStatus,
    }
 }
@@ -260,8 +260,8 @@ export const isStoreOnDemandPickupAvailable = (brandRecurrences, eachStore) => {
             now
          )
          if (dates.length) {
-            if (brandRecurrences[rec].recurrence.timeSlots.length) {
-               for (let timeslot of brandRecurrences[rec].recurrence
+            if (finalRecurrences[rec].recurrence.timeSlots.length) {
+               for (let timeslot of finalRecurrences[rec].recurrence
                   .timeSlots) {
                   const timeslotFromArr = timeslot.from.split(':')
                   const timeslotToArr = timeslot.to.split(':')
@@ -372,8 +372,8 @@ export const isStoreOnDemandDineInAvailable = (brandRecurrences, eachStore) => {
             now
          )
          if (dates.length) {
-            if (brandRecurrences[rec].recurrence.timeSlots.length) {
-               for (let timeslot of brandRecurrences[rec].recurrence
+            if (finalRecurrences[rec].recurrence.timeSlots.length) {
+               for (let timeslot of finalRecurrences[rec].recurrence
                   .timeSlots) {
                   const timeslotFromArr = timeslot.from.split(':')
                   const timeslotToArr = timeslot.to.split(':')

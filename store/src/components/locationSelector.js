@@ -344,7 +344,7 @@ const Delivery = props => {
                   )
                   setLocationSearching(prev => ({
                      ...prev,
-                     loading: !prev.loading,
+                     loading: false,
                   }))
                }
             })
@@ -352,7 +352,7 @@ const Delivery = props => {
                console.log('error', e)
                setLocationSearching(prev => ({
                   ...prev,
-                  loading: !prev.loading,
+                  loading: false,
                   error: true,
                   errorType: 'fetchAddress',
                }))
@@ -479,7 +479,37 @@ const Delivery = props => {
            )}&libraries=places`
          : ''
    )
-
+   const formatAddress = async input => {
+      if (!isClient) return 'Runs only on client side.'
+      const response = await fetch(
+         `https://maps.googleapis.com/maps/api/geocode/json?key=${
+            isClient ? get_env('GOOGLE_API_KEY') : ''
+         }&address=${encodeURIComponent(input.description)}`
+      )
+      const data = await response.json()
+      if (data.status === 'OK' && data.results.length > 0) {
+         const [result] = data.results
+         const userLocation = {
+            latitude: result.geometry.location.lat,
+            longitude: result.geometry.location.lng,
+         }
+         setUserCoordinate(prev => ({ ...prev, ...userLocation }))
+         const address = {
+            mainText: input.structured_formatting.main_text,
+            secondaryText: input.structured_formatting.secondary_text,
+         }
+         result.address_components.forEach(node => {
+            if (node.types.includes('postal_code')) {
+               address.zipcode = node.long_name
+            }
+         })
+         setAddress(address)
+         localStorage.setItem(
+            'userLocation',
+            JSON.stringify({ ...userLocation, address })
+         )
+      }
+   }
    if (!orderTabFulfillmentType) {
       return <Loader />
    }
@@ -786,7 +816,37 @@ const Pickup = props => {
          },
       }
    )
-
+   const formatAddress = async input => {
+      if (!isClient) return 'Runs only on client side.'
+      const response = await fetch(
+         `https://maps.googleapis.com/maps/api/geocode/json?key=${
+            isClient ? get_env('GOOGLE_API_KEY') : ''
+         }&address=${encodeURIComponent(input.description)}`
+      )
+      const data = await response.json()
+      if (data.status === 'OK' && data.results.length > 0) {
+         const [result] = data.results
+         const userLocation = {
+            latitude: result.geometry.location.lat,
+            longitude: result.geometry.location.lng,
+         }
+         setUserCoordinate(prev => ({ ...prev, ...userLocation }))
+         const address = {
+            mainText: input.structured_formatting.main_text,
+            secondaryText: input.structured_formatting.secondary_text,
+         }
+         result.address_components.forEach(node => {
+            if (node.types.includes('postal_code')) {
+               address.zipcode = node.long_name
+            }
+         })
+         setAddress(address)
+         localStorage.setItem(
+            'userLocation',
+            JSON.stringify({ ...userLocation, address })
+         )
+      }
+   }
    if (!orderTabFulfillmentType) {
       return <Loader />
    }
@@ -1085,6 +1145,37 @@ const DineIn = props => {
          },
       }
    )
+   const formatAddress = async input => {
+      if (!isClient) return 'Runs only on client side.'
+      const response = await fetch(
+         `https://maps.googleapis.com/maps/api/geocode/json?key=${
+            isClient ? get_env('GOOGLE_API_KEY') : ''
+         }&address=${encodeURIComponent(input.description)}`
+      )
+      const data = await response.json()
+      if (data.status === 'OK' && data.results.length > 0) {
+         const [result] = data.results
+         const userLocation = {
+            latitude: result.geometry.location.lat,
+            longitude: result.geometry.location.lng,
+         }
+         setUserCoordinate(prev => ({ ...prev, ...userLocation }))
+         const address = {
+            mainText: input.structured_formatting.main_text,
+            secondaryText: input.structured_formatting.secondary_text,
+         }
+         result.address_components.forEach(node => {
+            if (node.types.includes('postal_code')) {
+               address.zipcode = node.long_name
+            }
+         })
+         setAddress(address)
+         localStorage.setItem(
+            'userLocation',
+            JSON.stringify({ ...userLocation, address })
+         )
+      }
+   }
 
    if (!orderTabFulfillmentType) {
       return <Loader />
