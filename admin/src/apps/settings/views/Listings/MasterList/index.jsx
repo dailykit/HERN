@@ -138,6 +138,12 @@ const MasterList = () => {
             addTab('vegNonVeg-type', '/settings/master-lists/vegnonveg')
          },
       },
+      {
+         listName: 'Recipe',
+         _click() {
+            addTab('recipe-type', '/settings/master-lists/recipe')
+         },
+      },
    ]
 
    React.useEffect(() => {

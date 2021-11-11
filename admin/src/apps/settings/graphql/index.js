@@ -725,6 +725,40 @@ export const MASTER = {
          }
       `,
    },
+   RECIPE_COMPONENT: {
+      LIST: gql`
+         subscription LIST {
+            master_recipeComponent {
+               label
+            }
+         }
+      `,
+      CREATE: gql`
+         mutation CREATE($object: master_recipeComponent_insert_input!) {
+            insert_master_recipeComponent_one(object: $object) {
+               label
+            }
+         }
+      `,
+      AGGREGATE: gql`
+         subscription CREATE {
+            master_recipeComponent_aggregate {
+               aggregate {
+                  count
+               }
+            }
+         }
+      `,
+      DELETE: gql`
+         mutation DELETE($where: master_recipeComponent_bool_exp!) {
+            delete_master_recipeComponent(where: $where) {
+               returning {
+                  label
+               }
+            }
+         }
+      `,
+   },
 }
 
 export const DEVICES = {

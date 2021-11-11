@@ -249,6 +249,7 @@ export const S_RECIPE = gql`
             order_by: { position: desc_nulls_last }
          ) {
             id
+            includedWithProduct
             position
             ingredient {
                id
@@ -601,6 +602,13 @@ export const ORDER_LIST_FROM_INGREDIENT = gql`
 export const OPTIONS_FROM_VEG_NONVEG = gql`
    subscription OPTIONS_FROM_VEG_NONVEG {
       master_vegNonvegType {
+         label
+      }
+   }
+`
+export const OPTIONS_FROM_RECIPE_COMPONENT = gql`
+   subscription OPTIONS_FROM_VEG_NONVEG {
+      master_recipeComponent {
          label
       }
    }
