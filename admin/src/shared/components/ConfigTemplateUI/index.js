@@ -163,7 +163,7 @@ const ConfigUI = ({ config, setConfig, configSaveHandler }) => {
 
             {editMode ? (<>
                <Styles.Heading>Save your changes</Styles.Heading>
-               <ComboButton type="solid" size="sm" onClick={handleEdit}>
+               <ComboButton type="solid" size="sm" disabled={!isValid} onClick={handleEdit}>
                   Save
                   <PlusIcon color="#fff" />
                </ComboButton></>
