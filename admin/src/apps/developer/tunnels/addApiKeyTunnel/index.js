@@ -97,7 +97,7 @@ const AddApiKeyTunnel = (props)=>{
                                 <Spacer size="7px" />
                                 <Form.Text
                                     id={`label`}
-                                    name={`headerKey`}
+                                    name={`label`}
                                     value={state.label}
                                     placeholder="Enter Label"
                                     onChange={e => dispatch({type:'SET_API_LABEL', payload: e.target.value})}

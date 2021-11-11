@@ -1,7 +1,7 @@
 import React, {useRef, useState} from 'react';
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import {Flex, Text, ButtonGroup, ComboButton, PlusIcon, useTunnel, Spacer, Dropdown, TextButton, Toggle} from '@dailykit/ui';
-import {GET_ALL_API_KEYS, DELETE_API_KEY} from '../../../graphql'
+import {Flex, Text, ButtonGroup, ComboButton, PlusIcon, useTunnel, Spacer, Dropdown, TextButton, Toggle, Form} from '@dailykit/ui';
+import {GET_ALL_API_KEYS, DELETE_API_KEY, UPDATE_API_KEY} from '../../../graphql'
 import {logger}  from '../../../../../shared/utils'
 import { toast } from 'react-toastify'
 import {StyledWrapper} from './styled'
@@ -19,19 +19,13 @@ export const ApiKeyListing = ()=>{
 
     const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
-    const [activationStatusChecked, setactivationStatusChecked] = useState(true)
-
-    const [canAddProductsChecked, setcanAddProductsChecked] = useState(false)
-
-    const [canUpdateProductsChecked, setcanUpdateProductsChecked] = useState(false)
-
-
-
     const tableRef = useRef()
 
     const [groupByState, setGroupByState] = useState({'groups': [localStorage.getItem('tabulator-apiKey_table-group')]})
 
     const [deleteApiKey, {loading: deletingApiKeyLoading}] = useMutation(DELETE_API_KEY);
+
+    const [updateApiKey, {loading: updateApiKeyLoading}] = useMutation(UPDATE_API_KEY);
 
     const { data, loading, error } = useSubscription(GET_ALL_API_KEYS, {
         onSubscriptionData:({ subscriptionData: { data = {} } = {} })=> {
@@ -56,13 +50,10 @@ export const ApiKeyListing = ()=>{
        logger(error)
     }
 
-    const delete_apiKey = (apiKey)=>{
-        deleteApiKey({
-            variables: {
-                "apiKey": apiKey
-            }
-        })
-    }
+   //  const rowDataEditor = (cell, onRendered, success, cancel)=> {
+   //      console.log(cell)
+   //      return true
+   //  }
 
     const apiKeysCount = apiKeys?.length
 
@@ -76,7 +67,8 @@ export const ApiKeyListing = ()=>{
            resizable:true,
            headerSort:true,
            frozen: true,
-           headerTooltip: true
+           headerTooltip: true,
+           editor: "input"
         },
         {
             title: 'Api Key',
@@ -103,7 +95,6 @@ export const ApiKeyListing = ()=>{
                     }
                 })
               }
-              
            },
            cssClass: 'rowClick',
            headerTooltip: true
@@ -115,14 +106,10 @@ export const ApiKeyListing = ()=>{
             hozAlign: 'center',
             resizable:true,
             width: 100,
-            formatter:reactFormatter(
-                <Toggle
-                checked={activationStatusChecked}
-                setChecked={setactivationStatusChecked}
-                />
-            ),
+            formatter:reactFormatter(<ToggleCheck apiKeys={apiKeys} setApiKeys={setApiKeys} updateApiKey={updateApiKey} type="activationStatus" />),
             headerSort:true,
-            headerTooltip: true
+            headerTooltip: true,
+            editor: true
         },
         {
            title: 'Permissions',
@@ -135,14 +122,10 @@ export const ApiKeyListing = ()=>{
                     headerFilter: true,
                     hozAlign: 'center',
                     resizable:true,
-                    formatter:reactFormatter(
-                        <Toggle
-                        checked={canAddProductsChecked}
-                        setChecked={setcanAddProductsChecked}
-                        />
-                    ),
+                     formatter:reactFormatter(<ToggleCheck apiKeys={apiKeys} setApiKeys={setApiKeys} updateApiKey={updateApiKey} type="canAddProducts" />),
                     headerSort:true,
-                    headerTooltip: true
+                    headerTooltip: true,
+                    editor: true
                 },
                 {
                     title: 'Update Product',
@@ -150,14 +133,10 @@ export const ApiKeyListing = ()=>{
                     headerFilter: true,
                     hozAlign: 'center',
                     resizable:true,
-                    formatter:reactFormatter(
-                        <Toggle
-                        checked={canUpdateProductsChecked}
-                        setChecked={setcanUpdateProductsChecked}
-                        />
-                    ),
+                    formatter:reactFormatter(<ToggleCheck apiKeys={apiKeys} setApiKeys={setApiKeys} updateApiKey={updateApiKey} type="canUpdateProducts" />),
                     headerSort:true,
-                    headerTooltip: true
+                    headerTooltip: true,
+                    editor: true
                 },
            ]
         }
@@ -218,6 +197,10 @@ export const ApiKeyListing = ()=>{
               groups: [],
            }
         )
+     }
+
+     if (deletingApiKeyLoading || updateApiKeyLoading){
+        return <Loader />
      }
 
 
@@ -337,4 +320,58 @@ const ActionBar = ({
                    </TextButton>
           </Flex>
        )
+ }
+
+ const ToggleCheck = ({cell, apiKeys, setApiKeys, updateApiKey, type}) => {
+   const apiKey = cell._cell.row.data.apiKey
+   const toggleName = type + "-" + apiKey
+   var value
+   if (type=="activationStatus"){
+      value = cell._cell.row.data.activationStatus
+   }
+   if (type=="canAddProducts"){
+      value = cell._cell.row.data.canAddProducts
+   }
+   if (type=="canUpdateProducts"){
+      value = cell._cell.row.data.canUpdateProducts
+   }
+
+   return (
+      <>
+         <Form.Group>
+            <Form.Toggle
+            name={toggleName}
+            onChange={e => {
+               const newApiKeys = apiKeys.map(item=>{
+                  if (item.apiKey==apiKey){
+                     if (type=="activationStatus"){
+                        item.activationStatus = !item.activationStatus
+                     }
+                     if (type=="canAddProducts"){
+                        item.canAddProducts = !item.canAddProducts
+                     }
+                     if (type=="canUpdateProducts"){
+                        item.canUpdateProducts = !item.canUpdateProducts
+                     }
+                     
+                     updateApiKey({
+                        variables: {
+                           "apiKey": item.apiKey,
+                           "canAddProducts":item.canAddProducts,
+                           "canUpdateProducts": item.canUpdateProducts,
+                           "isDeactivated": !item.activationStatus
+                        }
+                     })
+                  }
+                  return item
+               })
+               setApiKeys(newApiKeys)
+            }}
+            value={value}
+            size={40}
+            >
+            </Form.Toggle>
+         </Form.Group>
+      </>
+   )
  }
