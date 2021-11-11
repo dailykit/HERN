@@ -31,7 +31,6 @@ export const Wrapper = styled.div`
          margin-bottom: 8px;
          font-family: 'Barlow Condensed';
          text-transform: uppercase;
-         
       }
       .expertCategory {
          color: ${theme.colors.textColor5};
@@ -107,11 +106,11 @@ export const Wrapper = styled.div`
    @media (min-width: 769px) {
       flex-direction: row;
       .imageWrapper {
-         width: 50%;
+         width: 40%;
          border-radius: 24px 0 0 24px;
       }
       .expertInfo {
-         width: 50%;
+         width: 60%;
       }
    }
 `

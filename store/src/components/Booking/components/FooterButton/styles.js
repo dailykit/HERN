@@ -10,6 +10,7 @@ export const FooterBtnWrap = styled.div`
    z-index: 5;
    width: 100%;
    background: ${theme.colors.textColor4};
+   box-shadow: 0px -4px 10px rgba(0, 0, 0, 0.1);
    padding: 1rem 0;
    .flex-row-wrap {
       display: flex;
@@ -92,9 +93,6 @@ export const FooterBtnWrap = styled.div`
       }
       .flex-row-wrap {
          background: ${theme.colors.lightBackground.grey};
-         :hover {
-            background: ${theme.colors.textColor4};
-         }
       }
    }
 `

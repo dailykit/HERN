@@ -783,11 +783,11 @@ const Wrapper = styled.main`
 
       .info-wrapper {
          .left-container {
-            width: 65%;
+            width: 55%;
             margin-right: 4rem;
          }
          .right-container {
-            width: 35%;
+            width: 45%;
             display: block;
          }
       }
@@ -935,10 +935,10 @@ const TabWrapper = styled.div`
                margin-right: 0;
             }
             .activeHash {
-               border-bottom: 2px solid ${theme.colors.textColor5};
+               border-bottom: 5px solid ${theme.colors.textColor};
                color: ${theme.colors.textColor5};
-               padding-bottom: 4px;
-               font-weight: 800;
+               padding-bottom: 10px;
+               font-weight: 700;
                &:after,
                &:before {
                   content: none;
@@ -956,7 +956,7 @@ const TabWrapper = styled.div`
                padding: 0;
                margin: 0;
                font-family: 'Barlow Condensed';
-               font-weight: 600;
+               font-weight: 500;
                &:hover {
                   color: ${theme.colors.textColor5};
                }

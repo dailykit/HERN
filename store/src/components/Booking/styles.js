@@ -39,7 +39,6 @@ export const Wrapper = styled.div`
    }
    @media (min-width: 769px) {
       height: 100%;
-      padding: 2rem;
       background-color: ${theme.colors.lightBackground.grey};
    }
 `

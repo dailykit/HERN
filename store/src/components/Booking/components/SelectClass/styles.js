@@ -16,7 +16,7 @@ export const Wrapper = styled.div`
       margin-bottom: 8px;
       text-align: left;
       text-transform: uppercase;
-      font-weight: 700;
+      font-weight: 600;
 
       span {
          font-size: ${theme.sizes.h6};
@@ -31,6 +31,10 @@ export const Wrapper = styled.div`
       z-index: 5;
       background: ${theme.colors.textColor4};
       padding: 1rem 0;
+   }
+   .first_section_wrapper {
+      padding: 2rem 2rem 0.5rem 2rem;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
    }
    .select-option {
       display: flex;
@@ -95,6 +99,7 @@ export const Wrapper = styled.div`
       height: 230px;
       overflow-y: auto;
       margin-top: 1rem;
+      padding: 0 2rem;
       .availableDate_head {
          font-family: 'Maven Pro';
          color: ${theme.colors.textColor7};

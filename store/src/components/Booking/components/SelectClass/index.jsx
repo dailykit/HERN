@@ -92,32 +92,35 @@ export default function SelectClass({ experienceId, isMulti = false }) {
 
    return (
       <Wrapper>
-         <div className="flex_row">
-            <h2 className="heading text4_secondary">
-               Starting at ${pricePerPerson.toFixed(2)} Per Person
-            </h2>
-            <Popover
-               placement="bottom"
-               trigger="click"
-               content={<PriceBreakDown />}
-            >
-               <span>
-                  <HelpCircle size={24} color={theme.colors.textColor7} />
-               </span>
-            </Popover>
-         </div>
-         {!isMulti && (
-            <div className="sticky-container">
-               <div className="select-option">
-                  <Participant experienceId={experienceId} />
-               </div>
+         <div className="first_section_wrapper">
+            <div className="flex_row">
+               <h2 className="heading text4_secondary">
+                  Starting at ${pricePerPerson.toFixed(2)} Per Person
+               </h2>
+               <Popover
+                  placement="bottom"
+                  trigger="click"
+                  content={<PriceBreakDown />}
+               >
+                  <span>
+                     <HelpCircle size={24} color={theme.colors.textColor7} />
+                  </span>
+               </Popover>
             </div>
-         )}
-         <div className="availableDate">
-            {/* <CustomScrollbar> */}
+            {!isMulti && (
+               <div className="sticky-container">
+                  <div className="select-option">
+                     <Participant experienceId={experienceId} />
+                  </div>
+               </div>
+            )}
             <h1 className="availableDate_head text8">
                SELECT AN AVAILABLE TIME SLOT
             </h1>
+         </div>
+         <div className="availableDate">
+            {/* <CustomScrollbar> */}
+
             {classDates.map(classDate => {
                return (
                   <AvailableDate
