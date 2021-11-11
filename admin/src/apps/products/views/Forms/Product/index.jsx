@@ -408,15 +408,18 @@ const Product = () => {
                            </StyledFlex>
                            <Spacer size="32px" />
                            <Description state={state} />
-                           <Dropdown
-                              typeName="type"
-                              variant="revamp"
-                              options={dropDownOptions}
-                              addOption={addDropDownOptions}
-                              type="single"
-                              searchedOption={searchOptions}
-                              selectedOption={selectedOption}
-                           />
+                           <Form.Group>
+                              <Form.Label>Type</Form.Label>
+                              <Dropdown
+                                 typeName="type"
+                                 variant="revamp"
+                                 options={dropDownOptions}
+                                 addOption={addDropDownOptions}
+                                 type="single"
+                                 searchedOption={searchOptions}
+                                 selectedOption={selectedOption}
+                              />
+                           </Form.Group>
                         </HorizontalTabPanel>
                         <HorizontalTabPanel>
                            {renderOptions()}
