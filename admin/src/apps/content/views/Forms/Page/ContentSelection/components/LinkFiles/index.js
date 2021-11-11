@@ -32,6 +32,7 @@ const LinkFiles = ({ title, fileType, entityId, scope }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [selectedFiles, setSelectedFiles] = React.useState([])
    const [isOpen, setIsOpen] = React.useState(true)
+   const [linkedFilesId, setLinkedFilesId] = React.useState([])
 
    const getWhereObj = scope => {
       switch (scope) {
@@ -75,12 +76,10 @@ const LinkFiles = ({ title, fileType, entityId, scope }) => {
          onCompleted: () => {
             toast.success('Files linked successfully!')
             closeTunnel(1)
-            setSelectedFiles([])
          },
          onError: error => {
             console.error(error)
             toast.error('Something went wrong!!')
-            setSelectedFiles([])
          },
       }
    )
@@ -131,7 +130,13 @@ const LinkFiles = ({ title, fileType, entityId, scope }) => {
          console.error(error)
       },
    })
-   console.log(selectedFiles)
+
+   React.useEffect(() => {
+      const fileIds = selectedFiles.map(file => file?.file.id)
+      if (fileIds.length > 0) {
+         setLinkedFilesId(fileIds)
+      }
+   }, [selectedFiles])
 
    if (linkLoading) return <Loader />
 
@@ -215,6 +220,7 @@ const LinkFiles = ({ title, fileType, entityId, scope }) => {
                <LinkFilesTunnel
                   fileType={fileType}
                   setSelectedFiles={setSelectedFiles}
+                  linkedFilesId={linkedFilesId}
                />
             </Tunnel>
          </Tunnels>

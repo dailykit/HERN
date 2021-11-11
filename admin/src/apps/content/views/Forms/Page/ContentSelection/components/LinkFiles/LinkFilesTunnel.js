@@ -4,15 +4,14 @@ import { toast } from 'react-toastify'
 import { Dropdown, Loader } from '@dailykit/ui'
 import { GET_FILES } from '../../../../../../../editor/graphql'
 
-const LinkFilesTunnel = ({ setSelectedFiles, fileType }) => {
+const LinkFilesTunnel = ({ setSelectedFiles, fileType, linkedFilesId }) => {
    const [options, setOptions] = React.useState([])
    const [searchOption, setSearchOption] = React.useState('')
    const [searchResult, setSearchResult] = React.useState([])
-
    const { loading, error } = useSubscription(GET_FILES, {
       variables: {
          fileType: fileType,
-         linkedFiles: [],
+         linkedFiles: linkedFilesId,
       },
       onSubscriptionData: ({
          subscriptionData: { data: { editor_file_aggregate = [] } = {} } = {},
