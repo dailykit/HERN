@@ -18,18 +18,32 @@ import {
     CollectionSelector
 } from "./UIComponents"
 import { Address } from "./UIComponents/Address"
-export const getFieldUI = ({ key, configJSON, onConfigChange, isValid, setIsValid, configSaveHandler }) => {
+
+export const getFieldUI = ({ fieldKey, configJSON, onConfigChange, isValid, setIsValid, configSaveHandler, value }) => {
     const field = _.get(configJSON, key)
     const indentation = `${key.split(".").length * 8}px`
     let configUI
     if (field.dataType === "boolean" && field.userInsertType === "toggle") {
         configUI = (
-            <Toggle
+            <>{editMode ? <Toggle
                 fieldDetail={field}
                 marginLeft={indentation}
-                path={key}
+                path={fieldKey}
                 onConfigChange={(name, value) => onConfigChange(name, value)}
-            />
+            /> : (<Flex
+                container
+                justifyContent="space-between"
+                alignItems="center"
+                margin={`0 0 0 ${indentation}`}
+            >
+                <Flex container alignItems="flex-end">
+                    <Form.Label title={value.label} htmlFor="toggleValue">
+                        {value.label.toUpperCase()}
+                    </Form.Label>
+                </Flex>
+                <p>{value.value && value.default ? 'TRUE' : 'FALSE'}</p>
+            </Flex>)}</>
+
         )
     } else if (
         field.dataType === "color" &&
@@ -39,7 +53,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange, isValid, setIsVali
             <ColorPicker
                 fieldDetail={field}
                 marginLeft={indentation}
-                path={key}
+                path={fieldKey}
                 onConfigChange={onConfigChange}
             />
         )
@@ -51,7 +65,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange, isValid, setIsVali
             <Text
                 fieldDetail={field}
                 marginLeft={indentation}
-                path={key}
+                path={fieldKey}
                 validationType={field?.validationType}
                 isValid={isValid}
                 setIsValid={setIsValid}
@@ -66,7 +80,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange, isValid, setIsVali
             <Number
                 fieldDetail={field}
                 marginLeft={indentation}
-                path={key}
+                path={fieldKey}
                 onConfigChange={onConfigChange}
             />
         )
@@ -75,12 +89,20 @@ export const getFieldUI = ({ key, configJSON, onConfigChange, isValid, setIsVali
         field.userInsertType === "checkbox"
     ) {
         configUI = (
-            <Checkbox
-                fieldDetail={field}
-                marginLeft={indentation}
-                path={key}
-                onConfigChange={onConfigChange}
-            />
+            <>
+                {editMode ? (
+                    <Checkbox
+                        fieldDetail={field}
+                        marginLeft={indentation}
+                        path={fieldKey}
+                        onConfigChange={onConfigChange}
+                    />
+                ) : (
+                    <p>
+                        {value.label} {value.value === true ? 'YES' : 'NO'}
+                    </p>
+                )}
+            </>
         )
     } else if (
         field.dataType === "date" &&
@@ -90,7 +112,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange, isValid, setIsVali
             <Date
                 fieldDetail={field}
                 marginLeft={indentation}
-                path={key}
+                path={fieldKey}
                 onConfigChange={onConfigChange}
             />
         )
@@ -99,7 +121,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange, isValid, setIsVali
             <Time
                 fieldDetail={field}
                 marginLeft={indentation}
-                path={key}
+                path={fieldKey}
                 onConfigChange={onConfigChange}
             />
         )
@@ -111,7 +133,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange, isValid, setIsVali
             <Select
                 fieldDetail={field}
                 marginLeft={indentation}
-                path={key}
+                path={fieldKey}
                 onConfigChange={onConfigChange}
             />
         )
@@ -120,7 +142,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange, isValid, setIsVali
             <TextArea
                 fieldDetail={field}
                 marginLeft={indentation}
-                path={key}
+                path={fieldKey}
                 onConfigChange={onConfigChange}
             />
         )
@@ -132,7 +154,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange, isValid, setIsVali
             <TextWithSelect
                 fieldDetail={field}
                 marginLeft={indentation}
-                path={key}
+                path={fieldKey}
                 onConfigChange={onConfigChange}
             />
         )
@@ -144,7 +166,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange, isValid, setIsVali
             <NumberWithSelect
                 fieldDetail={field}
                 marginLeft={indentation}
-                path={key}
+                path={fieldKey}
                 onConfigChange={onConfigChange}
             />
         )
@@ -159,7 +181,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange, isValid, setIsVali
                 isValid={isValid}
                 fieldDetail={field}
                 marginLeft={indentation}
-                path={key}
+                path={fieldKey}
                 onConfigChange={onConfigChange}
             />
         )
@@ -173,7 +195,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange, isValid, setIsVali
             <Address
                 fieldDetail={field}
                 marginLeft={indentation}
-                path={key}
+                path={fieldKey}
                 onConfigChange={onConfigChange}
                 configSaveHandler={configSaveHandler}
                 configJSON={configJSON}
@@ -188,7 +210,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange, isValid, setIsVali
             <ImageUpload
                 fieldDetail={field}
                 marginLeft={indentation}
-                path={key}
+                path={fieldKey}
                 onConfigChange={onConfigChange}
                 configSaveHandler={configSaveHandler}
                 configJSON={configJSON}
@@ -203,7 +225,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange, isValid, setIsVali
             <RichText
                 fieldDetail={field}
                 marginLeft={indentation}
-                path={key}
+                path={fieldKey}
                 onConfigChange={onConfigChange}
             />
         )
@@ -212,10 +234,19 @@ export const getFieldUI = ({ key, configJSON, onConfigChange, isValid, setIsVali
             <CollectionSelector
                 fieldDetail={field}
                 marginLeft={indentation}
-                path={key}
+                path={fieldKey}
                 onConfigChange={onConfigChange}
             />
         )
     }
-    return <div data-config-path={key}>{configUI}</div>
+    return <div data-config-path={fieldKey}>{configUI}</div>
+}
+
+export const FieldUI = ({ fieldKey, configJSON, onConfigChange, value }) => {
+    const { editMode } = useEditMode()
+    return (
+        <div>
+            {getFieldUI(fieldKey, configJSON, onConfigChange, editMode, value)}
+        </div>
+    )
 }

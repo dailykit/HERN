@@ -5,19 +5,28 @@ import {
    ComboButton,
    TextButton,
    PlusIcon,
-   IconButton,
    ArrowDownIcon,
    ArrowUpIcon,
-   HelperText,
+   EditIcon,
 } from '@dailykit/ui'
-import { getFieldUI } from './getFieldUI'
+import { FieldUI } from './getFieldUI'
+import { EditModeProvider, useEditMode } from './EditModeContext'
 
-const ConfigTemplateUI = ({ config, setConfig, configSaveHandler }) => {
+const ConfigTemplateUI = props => {
+   return (
+      <EditModeProvider>
+         <ConfigUI {...props} />
+      </EditModeProvider>
+   )
+}
+
+const ConfigUI = ({ config, setConfig, configSaveHandler }) => {
    const [configJSON, setConfigJSON] = React.useState({})
    const [fields, setFields] = React.useState([])
    const [description, setDescription] = React.useState("")
    const [isValid, setIsValid] = React.useState(true)
 
+   const { editMode, setEditMode } = useEditMode()
    const elements = []
    const onConfigChange = (e, value) => {
       let updatedConfig
@@ -97,13 +106,15 @@ const ConfigTemplateUI = ({ config, setConfig, configSaveHandler }) => {
          if (isFieldObject) {
             const updatedRootkey = rootKey ? `${rootKey}.${key}` : key
             elements.push(
-               getFieldUI({
-                  key: updatedRootkey,
-                  configJSON,
-                  onConfigChange,
-                  configSaveHandler,
-                  isValid, setIsValid
-               })
+               <FieldUI
+                  fieldKey={updatedRootkey}
+                  configJSON={configJSON}
+                  onConfigChange={onConfigChange}
+                  value={value}
+                  configSaveHandler={configSaveHandler}
+                  isValid={isValid}
+                  setIsValid={setIsValid}
+               />
             )
          } else {
             const updatedRootkey = rootKey ? `${rootKey}.${key}` : key
@@ -138,31 +149,41 @@ const ConfigTemplateUI = ({ config, setConfig, configSaveHandler }) => {
       setFields([])
    }, [config])
 
+   const handleEdit = () => {
+      if (editMode) {
+         configSaveHandler(configJSON)
+         setEditMode(false)
+      } else {
+         setEditMode(true)
+      }
+   }
    return (
       <Styles.ConfigTemplateUI>
+         <Styles.Header>
+
+            {editMode ? (<>
+               <Styles.Heading>Save your changes</Styles.Heading>
+               <ComboButton type="solid" size="sm" onClick={handleEdit}>
+                  Save
+                  <PlusIcon color="#fff" />
+               </ComboButton></>
+            ) : (
+               <>
+                  <Styles.Heading>Edit your brandsetting</Styles.Heading>
+                  <ComboButton type="ghost" size="sm" onClick={handleEdit}>
+                     Edit <EditIcon color="#367bf5" />
+                  </ComboButton></>
+            )}
+         </Styles.Header >
          <div>
             {fields.map((config, index) => (
                <div key={index}>{config}</div>
             ))}
          </div>
-         <Styles.Header>
-            <HelperText type="hint" message={description || fields[0]?.props?.children?.props?.fieldDetail?.description || "This is brand setting."} />
-            {/* {(!fields[0]?.props?.children?.props?.fieldDetail?.showModal) ? */}
-            <ComboButton
-               type="solid"
-               size="sm"
-               onClick={() => configSaveHandler(configJSON)}
-               style={{ marginTop: "5px" }}
-            >
-               <PlusIcon color="#fff" />
-               Save
-            </ComboButton>
-            {/* : ''} */}
-         </Styles.Header>
-      </Styles.ConfigTemplateUI>
+         <HelperText type="hint" message={description || fields[0]?.props?.children?.props?.fieldDetail?.description || "This is brand setting."} />
+      </Styles.ConfigTemplateUI >
    )
 }
-export default ConfigTemplateUI
 
 const Styles = {
    ConfigTemplateUI: styled.div`
@@ -203,3 +224,4 @@ const Styles = {
       }
    `,
 }
+export default ConfigTemplateUI
