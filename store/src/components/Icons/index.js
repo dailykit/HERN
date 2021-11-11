@@ -1159,11 +1159,11 @@ export const HeartIcon = ({ size = 24, color = '#000' }) => (
    </svg>
 )
 
-export const BookmarkIcon = ({ size = 24, color = '#000' }) => (
+export const BookmarkIcon = ({ width = 24, height = 24, color = '#000' }) => (
    <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={size}
-      height={size}
+      width={width}
+      height={height}
       viewBox="0 0 32 32"
       fill={color}
       stroke={color}
