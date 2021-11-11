@@ -13,17 +13,24 @@ import {
    TextWithSelect,
    NumberWithSelect,
 } from './UIComponents'
+import { useEditMode } from './EditModeContext'
 
-export const getFieldUI = ({ key, configJSON, onConfigChange }) => {
-   const field = _.get(configJSON, key)
-   const indentation = `${key.split('.').length * 8}px`
+export const getFieldUI = (
+   fieldKey,
+   configJSON,
+   onConfigChange,
+   editMode,
+   value
+) => {
+   const field = _.get(configJSON, fieldKey)
+   const indentation = `${fieldKey.split('.').length * 8}px`
    let configUI
    if (field.dataType === 'boolean' && field.userInsertType === 'toggle') {
       configUI = (
          <Toggle
             fieldDetail={field}
             marginLeft={indentation}
-            path={key}
+            path={fieldKey}
             onConfigChange={(name, value) => onConfigChange(name, value)}
          />
       )
@@ -35,7 +42,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange }) => {
          <ColorPicker
             fieldDetail={field}
             marginLeft={indentation}
-            path={key}
+            path={fieldKey}
             onConfigChange={onConfigChange}
          />
       )
@@ -47,7 +54,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange }) => {
          <Text
             fieldDetail={field}
             marginLeft={indentation}
-            path={key}
+            path={fieldKey}
             onConfigChange={onConfigChange}
          />
       )
@@ -59,7 +66,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange }) => {
          <Number
             fieldDetail={field}
             marginLeft={indentation}
-            path={key}
+            path={fieldKey}
             onConfigChange={onConfigChange}
          />
       )
@@ -68,12 +75,20 @@ export const getFieldUI = ({ key, configJSON, onConfigChange }) => {
       field.userInsertType === 'checkbox'
    ) {
       configUI = (
-         <Checkbox
-            fieldDetail={field}
-            marginLeft={indentation}
-            path={key}
-            onConfigChange={onConfigChange}
-         />
+         <>
+            {editMode ? (
+               <Checkbox
+                  fieldDetail={field}
+                  marginLeft={indentation}
+                  path={fieldKey}
+                  onConfigChange={onConfigChange}
+               />
+            ) : (
+               <p>
+                  {value.label} {value.value === true ? 'YES' : 'NO'}
+               </p>
+            )}
+         </>
       )
    } else if (
       field.dataType === 'date' &&
@@ -83,7 +98,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange }) => {
          <Date
             fieldDetail={field}
             marginLeft={indentation}
-            path={key}
+            path={fieldKey}
             onConfigChange={onConfigChange}
          />
       )
@@ -92,7 +107,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange }) => {
          <Time
             fieldDetail={field}
             marginLeft={indentation}
-            path={key}
+            path={fieldKey}
             onConfigChange={onConfigChange}
          />
       )
@@ -104,7 +119,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange }) => {
          <Select
             fieldDetail={field}
             marginLeft={indentation}
-            path={key}
+            path={fieldKey}
             onConfigChange={onConfigChange}
          />
       )
@@ -116,7 +131,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange }) => {
          <TextArea
             fieldDetail={field}
             marginLeft={indentation}
-            path={key}
+            path={fieldKey}
             onConfigChange={onConfigChange}
          />
       )
@@ -128,7 +143,7 @@ export const getFieldUI = ({ key, configJSON, onConfigChange }) => {
          <TextWithSelect
             fieldDetail={field}
             marginLeft={indentation}
-            path={key}
+            path={fieldKey}
             onConfigChange={onConfigChange}
          />
       )
@@ -140,10 +155,18 @@ export const getFieldUI = ({ key, configJSON, onConfigChange }) => {
          <NumberWithSelect
             fieldDetail={field}
             marginLeft={indentation}
-            path={key}
+            path={fieldKey}
             onConfigChange={onConfigChange}
          />
       )
    }
-   return <div data-config-path={key}>{configUI}</div>
+   return <div data-config-path={fieldKey}>{configUI}</div>
+}
+export const FieldUI = ({ fieldKey, configJSON, onConfigChange, value }) => {
+   const { editMode } = useEditMode()
+   return (
+      <div>
+         {getFieldUI(fieldKey, configJSON, onConfigChange, editMode, value)}
+      </div>
+   )
 }
