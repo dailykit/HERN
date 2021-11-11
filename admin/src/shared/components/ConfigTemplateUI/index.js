@@ -4,15 +4,25 @@ import styled from 'styled-components'
 import {
    ComboButton,
    PlusIcon,
-   IconButton,
    ArrowDownIcon,
    ArrowUpIcon,
+   EditIcon,
 } from '@dailykit/ui'
-import { getFieldUI } from './getFieldUI'
+import { FieldUI } from './getFieldUI'
+import { EditModeProvider, useEditMode } from './EditModeContext'
 
-const ConfigTemplateUI = ({ config, setConfig, configSaveHandler }) => {
+const ConfigTemplateUI = props => {
+   return (
+      <EditModeProvider>
+         <ConfigUI {...props} />
+      </EditModeProvider>
+   )
+}
+
+const ConfigUI = ({ config, configSaveHandler }) => {
    const [configJSON, setConfigJSON] = React.useState({})
    const [fields, setFields] = React.useState([])
+   const { editMode, setEditMode } = useEditMode()
    const elements = []
    const onConfigChange = (e, value) => {
       let updatedConfig
@@ -91,11 +101,12 @@ const ConfigTemplateUI = ({ config, setConfig, configSaveHandler }) => {
          if (isFieldObject) {
             const updatedRootkey = rootKey ? `${rootKey}.${key}` : key
             elements.push(
-               getFieldUI({
-                  key: updatedRootkey,
-                  configJSON,
-                  onConfigChange,
-               })
+               <FieldUI
+                  fieldKey={updatedRootkey}
+                  configJSON={configJSON}
+                  onConfigChange={onConfigChange}
+                  value={value}
+               />
             )
          } else {
             const updatedRootkey = rootKey ? `${rootKey}.${key}` : key
@@ -130,18 +141,28 @@ const ConfigTemplateUI = ({ config, setConfig, configSaveHandler }) => {
       setFields([])
    }, [config])
 
+   const handleEdit = () => {
+      if (editMode) {
+         configSaveHandler(configJSON)
+         setEditMode(false)
+      } else {
+         setEditMode(true)
+      }
+   }
    return (
       <Styles.ConfigTemplateUI>
          <Styles.Header>
             <Styles.Heading>Edit Component</Styles.Heading>
-            <ComboButton
-               type="solid"
-               size="sm"
-               onClick={() => configSaveHandler(configJSON)}
-            >
-               <PlusIcon color="#fff" />
-               Save
-            </ComboButton>
+            {editMode ? (
+               <ComboButton type="solid" size="sm" onClick={handleEdit}>
+                  Save
+                  <PlusIcon color="#fff" />
+               </ComboButton>
+            ) : (
+               <ComboButton type="ghost" size="sm" onClick={handleEdit}>
+                  Edit <EditIcon color="#367bf5" />
+               </ComboButton>
+            )}
          </Styles.Header>
 
          <div>
@@ -152,7 +173,6 @@ const ConfigTemplateUI = ({ config, setConfig, configSaveHandler }) => {
       </Styles.ConfigTemplateUI>
    )
 }
-export default ConfigTemplateUI
 
 const Styles = {
    ConfigTemplateUI: styled.div`
@@ -193,3 +213,4 @@ const Styles = {
       }
    `,
 }
+export default ConfigTemplateUI
