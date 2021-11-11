@@ -39,12 +39,12 @@ export const CardImage = styled.div`
    }
    .bookmark-icon {
       position: absolute;
-      top: -4px;
+      top: -12px;
       right: 16px;
       z-index: 3;
       &:hover {
          svg {
-            height: 32px;
+            height: 58px;
          }
       }
    }

@@ -49,7 +49,8 @@ export default function ExperienceCard({
                   }
                   icon={
                      <BookmarkIcon
-                        size="24"
+                        width="32"
+                        height="54"
                         color={
                            experience?.isSaved
                               ? theme.colors.tertiaryColor
