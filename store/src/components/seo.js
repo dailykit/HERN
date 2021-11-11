@@ -19,12 +19,23 @@ export const SEO = ({ seoSettings, richresult, children }) => {
       pageLevel.find(
          setting => setting?.brandPageSetting?.identifier === 'og-card'
       ) || brandLevel.find(setting => setting?.meta?.identifier === 'og-card')
+
    //specifically for Twitter
    const twitterCard =
       pageLevel.find(
          setting => setting?.brandPageSetting?.identifier === 'twitter-card'
       ) ||
       brandLevel.find(setting => setting?.meta?.identifier === 'twitter-card')
+
+   // for googleAnalyticsId
+   const googleAnalyticsId = brandLevel.find(
+      setting => setting?.meta?.identifier === 'googleAnalyticsId'
+   )?.value?.value
+
+   //for facebookpixel code
+   const facebookPixelId = brandLevel.find(
+      setting => setting?.meta?.identifier === 'facebookPixelId'
+   )?.value?.value
 
    return (
       <Head>
@@ -98,6 +109,23 @@ export const SEO = ({ seoSettings, richresult, children }) => {
             }
             title="tw-image"
          />
+         {/* <!-- Global site tag (gtag.js) - Google Analytics --> */}
+         {googleAnalyticsId && (
+            <script
+               async
+               src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`}
+            ></script>
+         )}
+
+         {/* facebook pixel */}
+         {facebookPixelId && (<noscript>
+            <img
+               src={`https://www.facebook.com/tr?id=${facebookPixelId}&ev=PageView&noscript=1`}
+               height="1"
+               width="1"
+               style={{ display: 'none' }}
+            />
+         </noscript>)}
          {richresult && (
             <script type="application/ld+json"> {richresult} </script>
          )}

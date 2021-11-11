@@ -26,11 +26,11 @@ const RecentOrderTable = () => {
             where:
                dashboardTableState.from && dashboardTableState.to
                   ? {
-                       created_at: {
-                          _gte: dashboardTableState.from,
-                          _lte: dashboardTableState.to,
-                       },
-                    }
+                     created_at: {
+                        _gte: dashboardTableState.from,
+                        _lte: dashboardTableState.to,
+                     },
+                  }
                   : {},
          },
          onSubscriptionData: ({ subscriptionData }) => {
@@ -39,9 +39,8 @@ const RecentOrderTable = () => {
                const newOrder = {}
                newOrder.id = order.id
                newOrder.created_at = moment(order.created_at).format('ll')
-               newOrder.customerName = `${
-                  order.cart?.customerInfo?.customerFirstName || 'N/A'
-               } ${order.cart?.customerInfo?.customerLastName || ''}`
+               newOrder.customerName = `${order.cart?.customerInfo?.customerFirstName || 'N/A'
+                  } ${order.cart?.customerInfo?.customerLastName || ''}`
                switch (order.cart?.status) {
                   case 'ORDER_PENDING':
                      newOrder.status = 'Pending'

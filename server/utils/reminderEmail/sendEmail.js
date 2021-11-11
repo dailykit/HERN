@@ -29,13 +29,13 @@ export const sendEmail = async ({
          return
 
       const {
-         brands_brand_subscriptionStoreSetting = []
+         brands_brand_brandSetting = []
       } = await client.request(GET_TEMPLATE_SETTINGS, {
          identifier: template
       })
 
-      if (brands_brand_subscriptionStoreSetting.length === 0) return
-      const { value } = brands_brand_subscriptionStoreSetting[0]
+      if (brands_brand_brandSetting.length === 0) return
+      const { value } = brands_brand_brandSetting[0]
 
       let html = await getHtml(value.template, {
          data: {
@@ -81,13 +81,13 @@ const GET_CUSTOMER_EMAIL = `
 `
 
 export const GET_TEMPLATE_SETTINGS = `
-   query brands_brand_subscriptionStoreSetting($identifier: String!) {
-      brands_brand_subscriptionStoreSetting(
-         where: {
-            subscriptionStoreSetting: { identifier: { _eq: $identifier } }
-         }
-      ) {
-         value
+query brands_brand_brandSetting($identifier: String!) {
+   brands_brand_brandSetting(
+      where: {
+         brandSetting: { identifier: { _eq: $identifier } }
       }
+   ) {
+      value
    }
+}
 `
