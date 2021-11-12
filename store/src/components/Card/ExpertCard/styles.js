@@ -16,6 +16,7 @@ export const Card = styled.div`
       transform: translate3d(0px, -1.5px, 0px);
    }
    height: 480px;
+   width: clamp(250px, 320px, 350px);
    @media (min-width: 769px) {
       height: 580px;
    }
