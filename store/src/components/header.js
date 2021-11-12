@@ -37,7 +37,7 @@ export const Header = ({ settings, navigationMenus }) => {
    const [isMobileNavVisible, setIsMobileNavVisible] = React.useState(false)
    const [showLoginPopup, setShowLoginPopup] = React.useState(false)
    const [showLocationSelectorPopup, setShowLocationSelectionPopup] =
-      React.useState(true)
+      React.useState(false)
 
    const newNavigationMenus = DataWithChildNodes(navigationMenus)
 
