@@ -217,9 +217,9 @@ const isStoreDeliveryAvailableByDistance = async (mileRanges, eachStore) => {
             isStoreDeliveryAvailableByDistanceStatus['zipcode'] = true
          } else {
             const zipcodes = mileRanges[mileRange].zipcodes.zipcodes
-            let result =
-               Boolean(zipcodes.find(x => x == eachStore.location.zipcode)) &&
-               !mileRanges[mileRange].isExcluded
+            let result = Boolean(
+               zipcodes.find(x => x == parseInt(userLocation.address.zipcode))
+            )
             if (result) {
                result = !mileRanges[mileRange].isExcluded
                isStoreDeliveryAvailableByDistanceStatus['zipcode'] = result
