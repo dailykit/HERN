@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react'
 import Confetti from 'react-confetti'
 import { useSubscription } from '@apollo/client'
 import { useRouter } from 'next/router'
-import { Result, Spin } from 'antd'
+import { Result, Spin, Button } from 'antd'
 import { Wrapper } from './styles'
 import Modal from '../Modal'
 import InlineLoader from '../InlineLoader'
 import { ACTIVE_CARTPAYMENT_SUBSCRIPTION } from '../../graphql'
 import { useWindowDimensions, isEmpty } from '../../utils'
 
-const PaymentProcessingModal = ({ isOpen, bookingId }) => {
+const PaymentProcessingModal = ({ isOpen, bookingId, closeModal }) => {
    const router = useRouter()
    const [cartPayment, setCartPayment] = useState(null)
    const [actionUrl, setActionUrl] = useState('')
@@ -49,6 +49,61 @@ const PaymentProcessingModal = ({ isOpen, bookingId }) => {
       setTimeout(stopCelebration, 5000)
    }
 
+   const ShowPaymentStatusInfo = () => {
+      let icon = (
+         <Spin size="large" wrapperClassName="payment_processing_modal" />
+      )
+      let title = 'Processing your payment'
+      let subtitle = 'Please wait while we process your payment'
+      let extra = null
+      if (cartPayment?.paymentStatus === 'SUCCEEDED') {
+         icon = <Result status="success" />
+         title = 'Successfully Booked the experience!'
+         subtitle = 'You will be redirected to your booking page shortly'
+      } else if (cartPayment?.paymentStatus === 'REQUIRES_ACTION') {
+         icon = <Result status="info" />
+         title = 'Looks like your card requires authentication'
+         subtitle =
+            'An additional verification step which direct you to an authentication page on your bank’s website'
+         extra = [
+            <Button
+               type="primary"
+               key="console"
+               href={actionUrl}
+               target="_blank"
+            >
+               Authenticate Here
+            </Button>
+         ]
+      } else if (cartPayment?.paymentStatus === 'PAYMENT_FAILED') {
+         icon = <Result status="error" />
+         title = 'Payment Failed'
+         subtitle = 'Something went wrong'
+         extra = [
+            <Button type="primary" key="console" onClick={closeModal}>
+               Close Modal
+            </Button>
+         ]
+      } else if (cartPayment?.paymentStatus === 'REQUIRES_PAYMENT_METHOD') {
+         icon = <Result status="error" />
+         title = 'Payment Failed'
+         subtitle =
+            "Your payment is failed since your bank doesn't authenticate you"
+         extra = [
+            <Button type="primary" key="console" onClick={closeModal}>
+               Close Modal
+            </Button>
+         ]
+      }
+
+      return {
+         icon,
+         title,
+         subtitle,
+         extra
+      }
+   }
+
    useEffect(() => {
       if (cartPayment?.paymentStatus === 'SUCCEEDED') {
          console.log('initiating celebration')
@@ -73,6 +128,10 @@ const PaymentProcessingModal = ({ isOpen, bookingId }) => {
                )
             }
          }
+      } else if (cartPayment?.paymentStatus === 'PAYMENT_FAILED') {
+         setActionUrl('')
+      } else if (cartPayment?.paymentStatus === 'REQUIRES_PAYMENT_METHOD') {
+         setActionUrl('')
       }
    }, [cartPayment])
 
@@ -92,39 +151,10 @@ const PaymentProcessingModal = ({ isOpen, bookingId }) => {
       >
          <Wrapper>
             <Result
-               icon={
-                  isCelebrating ? (
-                     <Result status="success" />
-                  ) : (
-                     <Spin
-                        size="large"
-                        wrapperClassName="payment_processing_modal"
-                     />
-                  )
-               }
-               title={
-                  isCelebrating
-                     ? 'Successfully Booked the experience!'
-                     : !isEmpty(actionUrl)
-                     ? 'Looks like your card requires authentication'
-                     : 'Processing your payment'
-               }
-               subTitle={
-                  isCelebrating ? (
-                     'You will be redirected to your booking page shortly'
-                  ) : !isEmpty(actionUrl) ? (
-                     <a
-                        href={actionUrl}
-                        className="action_url"
-                        target="_blank"
-                        rel="noreferrer"
-                     >
-                        Please authenticate your self here
-                     </a>
-                  ) : (
-                     'Please wait while we process your payment'
-                  )
-               }
+               icon={ShowPaymentStatusInfo().icon}
+               title={ShowPaymentStatusInfo().title}
+               subTitle={ShowPaymentStatusInfo().subtitle}
+               extra={ShowPaymentStatusInfo().extra}
             />
             {isCelebrating && <Confetti />}
          </Wrapper>

@@ -38,7 +38,7 @@ export const NavBar = styled.header`
 
    .ant-menu-horizontal {
       width: 100%;
-      margin-left: 1rem;
+      margin: 0 20px;
       background: none;
       border: none;
       color: ${theme.colors.textColor4};
@@ -47,13 +47,19 @@ export const NavBar = styled.header`
    }
 
    .ant-menu-horizontal > .ant-menu-item {
+      padding: 0;
+      display: flex;
+      align-items: center;
+      position: relative;
+      padding: 0 20px;
       :first-child {
          ::before {
             content: '';
             margin-right: 0;
          }
       }
-      ::before {
+      ${
+         '' /* ::before {
          content: '.';
          color: #dc2047;
          font-weight: bold;
@@ -61,37 +67,40 @@ export const NavBar = styled.header`
          vertical-align: text-bottom;
          align-items: center;
          text-align: center;
-         margin: 0 20px;
+      } */
       }
       :hover {
          color: ${theme.colors.textColor};
+         border: none;
          ::after {
+            content: none;
             border: none;
          }
          .ant-menu-title-content {
             border-bottom: 2px solid ${theme.colors.textColor};
-            padding-bottom: 8px;
          }
       }
    }
    .ant-menu > .ant-menu-item > .ant-menu-title-content {
       font-family: 'Maven Pro';
       font-weight: 700;
-      font-size: ${theme.sizes.h8};
+      font-size: 13px;
+      line-height: 15px;
       letter-spacing: 0.3em;
       text-transform: uppercase;
+      padding: 8px 0;
    }
 
    .ant-menu-horizontal > .ant-menu-item-selected {
       color: ${theme.colors.textColor};
       :after {
+         content: none;
          border: none;
          bottom: 0px;
       }
       .ant-menu-title-content {
          border-bottom: 2px solid ${theme.colors.textColor};
          bottom: 0px;
-         padding-bottom: 8px;
       }
    }
 

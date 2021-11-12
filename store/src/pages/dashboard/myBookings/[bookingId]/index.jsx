@@ -165,6 +165,7 @@ function ManageBooking({
             <PaymentProcessingModal
                isOpen={isProcessingPayment}
                bookingId={bookingId}
+               closeModal={() => setIsProcessingPayment(false)}
             />
          )}
 

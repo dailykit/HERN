@@ -1,9 +1,8 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
 import { useToasts } from 'react-toast-notifications'
 import ReactHtmlParser from 'react-html-parser'
-import { Flex } from '@dailykit/ui'
 import { useSubscription } from '@apollo/client'
 import {
    EXPERIENCES,
@@ -11,9 +10,6 @@ import {
    GET_EXPERIENCE_CATEGORIES
 } from '../../graphql'
 import {
-   Card,
-   ChevronRight,
-   Masonry,
    SEO,
    Layout,
    Filters,
@@ -40,8 +36,6 @@ export default function Experiences({
    const { state: userState } = useUser()
    const { user = {}, isAuthenticated } = userState
    const router = useRouter()
-   const experiencesTop01 = useRef()
-   const experiencesBottom01 = useRef()
    const {
       tags: queryTags,
       category: queryCategory,
@@ -163,15 +157,14 @@ export default function Experiences({
    return (
       <Layout navigationMenuItems={navigationMenuItems} footerHtml={footerHtml}>
          <SEO title="Experiences" />
+         <div id="experiences-top-01">
+            {Boolean(parsedData.length) &&
+               ReactHtmlParser(
+                  parsedData.find(fold => fold.id === 'experiences-top-01')
+                     ?.content
+               )}
+         </div>
          <StyledWrapper bgMode="dark">
-            <div ref={experiencesTop01} id="experiences-top-01">
-               {Boolean(parsedData.length) &&
-                  ReactHtmlParser(
-                     parsedData.find(fold => fold.id === 'experiences-top-01')
-                        ?.content
-                  )}
-            </div>
-
             <div className="centerDiv">
                <h1 className="heading_black_bg">Experiences</h1>
             </div>
@@ -226,7 +219,7 @@ export default function Experiences({
                </div>
             )}
 
-            <div ref={experiencesBottom01} id="experiences-bottom-01">
+            <div id="experiences-bottom-01">
                {Boolean(parsedData.length) &&
                   ReactHtmlParser(
                      parsedData.find(

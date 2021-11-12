@@ -1,12 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useSubscription } from '@apollo/client'
 import { useRouter } from 'next/router'
-import { Flex, Loader } from '@dailykit/ui'
 import ReactHtmlParser from 'react-html-parser'
 import styled from 'styled-components'
-import { EXPERT_INFO, EXPERTS } from '../../../graphql'
+import { EXPERT_INFO } from '../../../graphql'
 import { useWindowDimensions, isEmpty, fileParser } from '../../../utils'
-import { useCustomWebpageModuleQuery } from '../../../Providers'
 import { theme } from '../../../theme.js'
 import {
    getNavigationMenuItems,
@@ -15,14 +12,14 @@ import {
    getGlobalFooter
 } from '../../../lib'
 import {
-   ChevronDown,
-   ChevronRight,
    Card,
    Masonry,
-   AboutExpert,
    SEO,
    Layout,
-   RenderCard
+   InstagramCircle,
+   FacebookCircle,
+   TwitterCircle,
+   LinkedinCircle
 } from '../../../components'
 
 export default function Expert({
@@ -78,30 +75,71 @@ export default function Expert({
                      alt="expert-profile"
                   />
                   <h3
-                     className="expert_Heading text_align text1"
+                     className="expert_Heading text_align text1_secondary"
                      style={{
                         marginBottom: '0'
                      }}
                   >{`${expert?.firstName} ${expert?.lastName}`}</h3>
-                  <p
-                     className="expert_para text_align text6"
-                     style={{
-                        color: theme.colors.textColor5
-                     }}
-                  >
-                     {expert?.email}
-                  </p>
+
+                  <div className="expert_social">
+                     <a
+                        href={expert?.instaUrl || 'https://www.instagram.com/'}
+                        target="_blank"
+                        rel="noreferrer"
+                     >
+                        <InstagramCircle
+                           size={theme.sizes.h1}
+                           color={theme.colors.textColor}
+                        />
+                     </a>
+                     <a
+                        href={
+                           expert?.facebookUrl || 'https://www.facebook.com/'
+                        }
+                        target="_blank"
+                        rel="noreferrer"
+                     >
+                        <FacebookCircle
+                           size={theme.sizes.h1}
+                           color={theme.colors.textColor}
+                        />
+                     </a>
+                     <a
+                        href={expert?.twitterUrl || 'https://www.twitter.com/'}
+                        target="_blank"
+                        rel="noreferrer"
+                     >
+                        <TwitterCircle
+                           size={theme.sizes.h1}
+                           color={theme.colors.textColor}
+                        />
+                     </a>
+                     <a
+                        href={
+                           expert?.linkedinUrl || 'https://www.linkedin.com/'
+                        }
+                        target="_blank"
+                        rel="noreferrer"
+                     >
+                        <LinkedinCircle
+                           size={theme.sizes.h1}
+                           color={theme.colors.textColor}
+                        />
+                     </a>
+                  </div>
                </div>
             </div>
             <div className="expert_main_div">
                <div className="expert_aboutUs_div">
-                  <h3 className="expert_Heading text1">About the expert</h3>
+                  <h3 className="expert_Heading text1_secondary">
+                     About the expert
+                  </h3>
                   <p className="expert_para text7">
                      {ReactHtmlParser(expert?.description)}
                   </p>
                </div>
                <GridViewWrapper>
-                  <h3 className="expert_Heading text1">
+                  <h3 className="expert_Heading text1_secondary">
                      Experts Experiences(
                      {Object.keys(expert).length &&
                         expert.experience_experts.length}
@@ -214,7 +252,7 @@ const Wrapper = styled.div`
       position: relative;
       .expert_info {
          position: absolute;
-         bottom: -220px;
+         bottom: -240px;
          left: 50%;
          transform: translate(-50%, 0);
       }
@@ -230,12 +268,13 @@ const Wrapper = styled.div`
    }
    .expert_Heading {
       color: ${theme.colors.textColor5};
-      font-weight: 400;
+      font-weight: 600;
       text-align: left;
       margin-bottom: 0;
       text-transform: uppercase;
       font-family: 'Barlow Condensed';
       margin-bottom: 2rem;
+      letter-spacing: 0.08em;
    }
    .text_align {
       @media (max-width: 769px) {
@@ -249,6 +288,17 @@ const Wrapper = styled.div`
       color: ${theme.colors.textColor7};
       margin-bottom: 0;
    }
+   .expert_social {
+      margin: 1rem 0;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      svg {
+         :hover {
+            cursor: pointer;
+         }
+      }
+   }
    .expert_aboutUs_div {
       margin-bottom: 4rem;
    }
@@ -259,7 +309,7 @@ const Wrapper = styled.div`
       .expert_coverBanner {
          margin-bottom: 220px;
          .expert_info {
-            bottom: -220px;
+            bottom: -240px;
             left: 6rem;
             transform: unset;
          }
