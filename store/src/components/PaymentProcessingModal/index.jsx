@@ -49,6 +49,13 @@ const PaymentProcessingModal = ({ isOpen, bookingId, closeModal }) => {
       setTimeout(stopCelebration, 5000)
    }
 
+   const closeModalHandler = () => {
+      setCartPayment(null)
+      setActionUrl('')
+      setIsCelebrating(false)
+      closeModal()
+   }
+
    const ShowPaymentStatusInfo = () => {
       let icon = (
          <Spin size="large" wrapperClassName="payment_processing_modal" />
@@ -80,7 +87,7 @@ const PaymentProcessingModal = ({ isOpen, bookingId, closeModal }) => {
          title = 'Payment Failed'
          subtitle = 'Something went wrong'
          extra = [
-            <Button type="primary" key="console" onClick={closeModal}>
+            <Button type="primary" key="console" onClick={closeModalHandler}>
                Close Modal
             </Button>
          ]
@@ -90,7 +97,7 @@ const PaymentProcessingModal = ({ isOpen, bookingId, closeModal }) => {
          subtitle =
             "Your payment is failed since your bank doesn't authenticate you"
          extra = [
-            <Button type="primary" key="console" onClick={closeModal}>
+            <Button type="primary" key="console" onClick={closeModalHandler}>
                Close Modal
             </Button>
          ]
