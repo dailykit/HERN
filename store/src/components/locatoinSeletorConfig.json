@@ -374,7 +374,144 @@
                 "userInsertType": "checkbox"
             }
         },
-        "dineInSettings": {},
+        "dineInSettings": {
+            "dineInType": {
+                "type": "multi",
+                "label": "Select style for card selection.",
+                "default": [
+                    {
+                        "id": 1,
+                        "title": "Now (On Demand)",
+                        "value": "ONDEMAND"
+                    },
+                    {
+                        "id": 2,
+                        "title": "Later",
+                        "value": "PREORDER"
+                    }
+                ],
+                "value": [
+                    {
+                        "id": 1,
+                        "title": "Now (On Demand)",
+                        "value": "ONDEMAND"
+                    },
+                    {
+                        "id": 2,
+                        "title": "Later",
+                        "value": "PREORDER"
+                    }
+                ],
+                "options": [
+                    {
+                        "id": 1,
+                        "title": "Now (On Demand)",
+                        "value": "ONDEMAND"
+                    },
+                    {
+                        "id": 2,
+                        "title": "Later",
+                        "value": "PREORDER"
+                    }
+                ],
+                "dataType": "select",
+                "userInsertType": "dropdown"
+            },
+            "storeLocationSelectionMethod": {
+                "type": "single",
+                "label": "Select store location method to pick store after get user's location.",
+                "value": {
+                    "id": 2,
+                    "title": "Manual",
+                    "value": "manual"
+                },
+                "options": [
+                    {
+                        "id": 1,
+                        "title": "Auto",
+                        "value": "auto"
+                    },
+                    {
+                        "id": 2,
+                        "title": "Manual",
+                        "value": "manual"
+                    }
+                ],
+                "dataType": "select",
+                "userInsertType": "dropdown"
+            },
+            "disabledLocationDisplayStyle": {
+                "type": "single",
+                "label": "Manage disabled locations.",
+                "value": {
+                    "id": 2,
+                    "title": "Show but disabled (not selectable)",
+                    "value": "disabled"
+                },
+                "options": [
+                    {
+                        "id": 1,
+                        "title": "Not Show",
+                        "value": "noShow"
+                    },
+                    {
+                        "id": 2,
+                        "title": "Show but disabled (not selectable)",
+                        "value": "disabled"
+                    }
+                ],
+                "dataType": "select",
+                "userInsertType": "dropdown"
+            },
+            "showAllLocations": {
+                "label": "Show All Store Location",
+                "value": true,
+                "default": true,
+                "dataType": "boolean",
+                "description": "This will show or hide all store location list in location selection popup.",
+                "userInsertType": "checkbox"
+            },
+            "userAddressInput": {
+                "label": "Show User Address Input Field",
+                "value": true,
+                "default": true,
+                "dataType": "boolean",
+                "description": "This will show or hide user address input field in location selection popup.",
+                "userInsertType": "checkbox"
+            },
+            "userAddressInputPlaceHolder": {
+                "label": "Show User Address Input Field",
+                "value": "",
+                "default": "",
+                "dataType": "text",
+                "description": "This will show or hide user address input field in location selection popup.",
+                "userInsertType": "textField"
+            },
+            "userAddress": {
+                "label": "Show user's location",
+                "value": true,
+                "default": true,
+                "dataType": "boolean",
+                "description": "This will show or hide user address input field in location selection popup.",
+                "userInsertType": "checkbox"
+            },
+            "noDeliveryLocationMessage": {
+                "label": "Message for not delivery location available.",
+                "value": "",
+                "default": "",
+                "dataType": "text",
+                "description": "This will show or hide user address input field in location selection popup.",
+                "userInsertType": "textField"
+            },
+            "showStoresOnMap": {
+                "label": "Show stores on map.",
+                "value": true,
+                "default": true,
+                "dataType": "boolean",
+                "description": "This will show or hide view store on map in location selection popup.",
+                "userInsertType": "checkbox"
+            }
+        },
         "deliveryLocationCard": {
             "showLocationLabel": {
                 "label": "Show location label.",
