@@ -131,12 +131,12 @@ const LinkFiles = ({ title, fileType, entityId, scope }) => {
       },
    })
 
-   React.useEffect(() => {
-      const fileIds = selectedFiles.map(file => file?.file.id)
-      if (fileIds.length > 0) {
-         setLinkedFilesId(fileIds)
-      }
-   }, [selectedFiles])
+   // React.useEffect(() => {
+   //    const fileIds = selectedFiles.map(file => file?.file?.id)
+   //    if (fileIds.length > 0) {
+   //       setLinkedFilesId(fileIds)
+   //    }
+   // }, [selectedFiles])
 
    if (linkLoading) return <Loader />
 
