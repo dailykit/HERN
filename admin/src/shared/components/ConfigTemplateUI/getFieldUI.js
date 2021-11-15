@@ -2,7 +2,8 @@ import React from "react"
 import _ from "lodash"
 import {
     Form,
-    Flex
+    Flex,
+    IconButton
 } from '@dailykit/ui'
 import {
     ColorPicker,
@@ -23,6 +24,7 @@ import {
 } from "./UIComponents"
 import { Address } from "./UIComponents/Address"
 import { useEditMode } from './EditModeContext'
+import { AvailableIcon, UnavailableIcon } from "../../assets/icons"
 
 export const getFieldUI = (fieldKey, configJSON, onConfigChange, isValid, setIsValid, configSaveHandler, editMode, value) => {
     const field = _.get(configJSON, fieldKey)
@@ -47,8 +49,15 @@ export const getFieldUI = (fieldKey, configJSON, onConfigChange, isValid, setIsV
                         {value.label.toUpperCase()}
                     </Form.Label>
                 </Flex>
-                <p>{value.value && value.default ? 'TRUE' : 'FALSE'}</p>
-            </Flex>)}</>
+                <IconButton
+                    type="ghost"
+                    style={{ marginRight: "-20px" }}
+                    title={value.value && value.default ? 'available' : 'unavailable'}
+                >
+                    {value.value && value.default ? <AvailableIcon /> : <UnavailableIcon />}
+                </IconButton>
+            </Flex>
+            )}</>
 
         )
     } else if (

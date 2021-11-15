@@ -166,15 +166,14 @@ const ConfigUI = ({ config, configSaveHandler }) => {
             <Styles.Header>
                {editMode ? (<>
                   <Styles.Heading>Save your changes</Styles.Heading>
-                  <ComboButton type="solid" size="sm" disabled={!isValid} onClick={handleEdit}>
-                     Save
-                     <PlusIcon color="#fff" />
+                  <ComboButton style={{ marginRight: "-26px" }} type="solid" size="sm" disabled={!isValid} onClick={handleEdit}>
+                     <PlusIcon color="#fff" />  Save
                   </ComboButton></>
                ) : (
                   <>
                      <Styles.Heading>Edit your brandsetting</Styles.Heading>
-                     <ComboButton type="ghost" size="sm" onClick={handleEdit}>
-                        Edit <EditIcon color="#367bf5" />
+                     <ComboButton style={{ marginRight: "-26px" }} type="ghost" size="sm" onClick={handleEdit}>
+                        <EditIcon color="#367bf5" /> Edit
                      </ComboButton></>
                )}
             </Styles.Header >
