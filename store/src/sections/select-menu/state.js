@@ -15,6 +15,7 @@ import {
    INSERT_CART_ITEM,
    DELETE_CART_ITEM,
    OCCURENCES_BY_SUBSCRIPTION,
+   CART_BY_WEEK_SUBSCRIPTION,
 } from '../../graphql'
 import { getRoute, isClient } from '../../utils'
 
@@ -94,18 +95,52 @@ export const MenuProvider = ({ isCheckout, children }) => {
       error: occurenceCustomerError,
       loading: occurenceCustomerLoading,
       data: { subscriptionOccurenceCustomer: occurenceCustomer = {} } = {},
-   } = useSubscription(CART_BY_WEEK, {
+      subscribeToMore,
+   } = useQuery(CART_BY_WEEK, {
       skip: !state.week.id || !user.keycloakId || !user.brandCustomerId,
       variables: {
          weekId: state.week.id,
          keycloakId: user?.keycloakId,
          brand_customerId: user?.brandCustomerId,
       },
-      onSubscriptionData: () => {
+      onCompleted: () => {
          dispatch({ type: 'IS_CART_FULL', payload: false })
          setIsCustomerLoading(false)
       },
    })
+
+   React.useEffect(() => {
+      if (
+         !isCustomerLoading &&
+         user?.brandCustomerId &&
+         state.week.id &&
+         user?.brandCustomerId
+      ) {
+         subscribeToMore({
+            document: CART_BY_WEEK_SUBSCRIPTION,
+            variables: {
+               weekId: state.week.id,
+               keycloakId: user?.keycloakId,
+               brand_customerId: user?.brandCustomerId,
+            },
+            onError: error => {
+               console.log('Error in subscribeToMore: ', error)
+            },
+            updateQuery: (prev, { subscriptionData }) => {
+               if (!subscriptionData.data) {
+                  return prev
+               }
+
+               return JSON.parse(JSON.stringify(subscriptionData.data))
+            },
+         })
+      }
+   }, [
+      isCustomerLoading,
+      state.week.id,
+      user?.keycloakId,
+      user?.brandCustomerId,
+   ])
 
    if (!occurenceCustomerLoading && occurenceCustomerError) {
       setIsCustomerLoading(false)
@@ -342,7 +377,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
    }
 
    const store = configOf('Store Availability', 'availability')
-   const addProduct = item => {
+   const addProduct = (item, product) => {
       dispatch({ type: 'CART_STATE', payload: 'SAVING' })
 
       const isSkipped = occurenceCustomer?.isSkipped
@@ -350,6 +385,77 @@ export const MenuProvider = ({ isCheckout, children }) => {
          const cart = insertCartId(item, occurenceCustomer?.cart?.id)
          insertCartItem({
             variables: { object: cart },
+            optimisticResponse: {
+               __typename: 'Mutation',
+               createCartItem: {
+                  __typename: 'order_cartItem',
+                  id: 'temp-id',
+                  name: product.name || 'Adding product...',
+                  image: product.assets?.images?.length
+                     ? product.assets.images[0]
+                     : '',
+                  isAddOn: false,
+                  unitPrice: item.unitPrice,
+                  addOnLabel: item.addOnLabel,
+                  addOnPrice: item.addOnPrice,
+                  isAutoAdded: false,
+                  subscriptionOccurenceProductId:
+                     item.subscriptionOccurenceProductId,
+                  subscriptionOccurenceAddOnProductId:
+                     item.subscriptionOccurenceAddOnProductId || null,
+               },
+            },
+            update: (cache, { data: { createCartItem } }) => {
+               const data = cache.readQuery({
+                  query: CART_BY_WEEK,
+                  variables: {
+                     weekId: state.week.id,
+                     keycloakId: user?.keycloakId,
+                     brand_customerId: user?.brandCustomerId,
+                  },
+               })
+
+               const cloneData = JSON.parse(JSON.stringify(data))
+
+               const updatedData = {
+                  ...cloneData,
+                  subscriptionOccurenceCustomer: {
+                     ...cloneData.subscriptionOccurenceCustomer,
+                     validStatus: {
+                        addedProductsCount:
+                           cloneData.subscriptionOccurenceCustomer.validStatus
+                              .addedProductsCount + 1,
+                        hasCart: true,
+                        itemCountValid:
+                           cloneData.subscriptionOccurenceCustomer.validStatus
+                              .pendingProductsCount === 1,
+                        itemCountValidComment: 'Loading...',
+                        pendingProductsCount:
+                           cloneData.subscriptionOccurenceCustomer.validStatus
+                              .pendingProductsCount - 1,
+                     },
+                     cart: {
+                        ...cloneData.subscriptionOccurenceCustomer.cart,
+                        products: [
+                           ...cloneData.subscriptionOccurenceCustomer.cart
+                              .products,
+                           JSON.parse(JSON.stringify(createCartItem)),
+                        ],
+                     },
+                  },
+               }
+
+               cache.writeQuery({
+                  query: CART_BY_WEEK,
+                  variables: {
+                     weekId: state.week.id,
+                     keycloakId: user?.keycloakId,
+                     brand_customerId: user?.brandCustomerId,
+                  },
+                  data: updatedData,
+                  broadcast: true,
+               })
+            },
          })
             .then(({ data: { createCartItem = {} } = {} } = {}) => {
                addToast(`Successfully added the product.`, {
@@ -365,7 +471,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
                      },
                      _set: {
                         isSkipped: false,
-                        cartId: createCartItem?.cart?.id,
+                        cartId: createCartItem?.cartId,
                      },
                   },
                }).then(({ data: { updateOccurenceCustomer = {} } = {} }) => {
@@ -433,7 +539,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
                         },
                         _set: {
                            isSkipped: false,
-                           cartId: createCartItem?.cart?.id,
+                           cartId: createCartItem?.cartId,
                         },
                      },
                   }).then(({ data: { updateOccurenceCustomer = {} } = {} }) => {

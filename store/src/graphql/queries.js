@@ -338,6 +338,50 @@ export const INVENTORY_DETAILS = gql`
 `
 
 export const CART_BY_WEEK = gql`
+   query subscriptionOccurenceCustomer(
+      $keycloakId: String!
+      $weekId: Int!
+      $brand_customerId: Int!
+   ) {
+      subscriptionOccurenceCustomer: subscription_subscriptionOccurence_customer_by_pk(
+         keycloakId: $keycloakId
+         subscriptionOccurenceId: $weekId
+         brand_customerId: $brand_customerId
+      ) {
+         isAuto
+         isSkipped
+         betweenPause
+         validStatus
+         cart {
+            id
+            status
+            address
+            paymentStatus
+            walletAmountUsable
+            loyaltyPointsUsable
+            walletAmountUsed
+            loyaltyPointsUsed
+            billingDetails
+            fulfillmentInfo
+            transactionId
+            paymentMethodId
+            products: cartItems(where: { level: { _eq: 1 } }) {
+               id
+               name: displayName
+               image: displayImage
+               isAddOn
+               unitPrice
+               addOnLabel
+               addOnPrice
+               isAutoAdded
+               subscriptionOccurenceProductId
+               subscriptionOccurenceAddOnProductId
+            }
+         }
+      }
+   }
+`
+export const CART_BY_WEEK_SUBSCRIPTION = gql`
    subscription subscriptionOccurenceCustomer(
       $keycloakId: String!
       $weekId: Int!

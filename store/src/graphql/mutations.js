@@ -275,13 +275,16 @@ export const INSERT_CART_ITEM = gql`
    mutation createCartItem($object: order_cartItem_insert_input!) {
       createCartItem(object: $object) {
          id
-         cart {
-            id
-            subscriptionOccurenceCustomer {
-               isSkipped
-               validStatus
-            }
-         }
+         cartId
+         name: displayName
+         image: displayImage
+         isAddOn
+         unitPrice
+         addOnLabel
+         addOnPrice
+         isAutoAdded
+         subscriptionOccurenceProductId
+         subscriptionOccurenceAddOnProductId
       }
    }
 `
