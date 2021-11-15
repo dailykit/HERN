@@ -28,7 +28,7 @@ import {
     Banner,
     AssetUploader,
 } from '../../../../../../../../shared/components'
-import { useMutation, useLazyQuery } from '@apollo/react-hooks'
+import { useLazyQuery } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { StyledWrapper, ImageContainer } from './styled'
@@ -103,29 +103,22 @@ export const SocialShare = ({ update, domain }) => {
         useLazyQuery(BRANDS.SETTINGS, {
             onCompleted: ({ brandSettings
             }) => {
+                console.log(brandSettings, "from social Share")
                 if (!isEmpty(brandSettings)) {
-                    const index = brandSettings.findIndex(
-                        node => node?.brand?.brandId === Number(params.id)
-                    )
-                    if (index === -1) {
-                        const { id } = brandSettings[0]
-                        setSettingId(id)
-                        return
-                    }
-                    const { brand, id } = brandSettings[index]
+                    const { id, brand } = brandSettings[0]
                     setSettingId(id)
                     setForm(prev => ({
                         ogTitle: {
                             ...prev.ogTitle,
-                            value: brand?.value?.ogTitle,
+                            value: brand[0]?.value?.ogTitle,
                         },
                         ogDescription: {
                             ...prev.ogDescription,
-                            value: brand?.value?.ogDescription,
+                            value: brand[0]?.value?.ogDescription,
                         },
                         ogImage: {
                             ...prev.ogImage,
-                            value: brand?.value?.ogImage,
+                            value: brand[0]?.value?.ogImage,
                         },
                     }))
                 }
@@ -142,39 +135,18 @@ export const SocialShare = ({ update, domain }) => {
             variables: {
                 identifier: { _eq: 'og-card' },
                 type: { _eq: 'seo' },
+                brandId: { _eq: Number(params?.id) }
             }
         })
     }, [])
 
-    // Mutation for upserting seo meta data
-    const [upsertSEODetails] = useMutation(BRANDS.UPDATE_BRAND_SETTING, {
-        onCompleted: () => {
-            toast.success('Updated!')
-        },
-        onError: error => {
-            toast.error('Something went wrong with UPDATE_BRAND_SETTING')
-            console.log(error)
-            logger(error)
-        },
-    })
+
 
     //save changes in metadetails
     const Save = () => {
-        upsertSEODetails({
-            variables: {
-                object: {
-                    brandId: params.id,
-                    brandSettingId: settingId,
-                    value: {
-                        ogTitle: form.ogTitle.value,
-                        ogDescription: form.ogDescription.value,
-                        ogImage: form.ogImage.value,
-                    },
-                },
-            },
-        })
         update({
             id: settingId,
+            brandId: params.id,
             value: {
                 ogTitle: form.ogTitle.value,
                 ogDescription: form.ogDescription.value,

@@ -28,7 +28,7 @@ import {
     Input,
     Tooltip,
 } from 'antd'
-import { useMutation, useLazyQuery } from '@apollo/react-hooks'
+import { useLazyQuery } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { StyledWrapper, ImageContainer } from './styled'
@@ -95,28 +95,20 @@ export const TwitterCard = ({ update, domain }) => {
             onCompleted: ({ brandSettings
             }) => {
                 if (!isEmpty(brandSettings)) {
-                    const index = brandSettings.findIndex(
-                        node => node?.brand?.brandId === Number(params.id)
-                    )
-                    if (index === -1) {
-                        const { id } = brandSettings[0]
-                        setSettingId(id)
-                        return
-                    }
-                    const { brand, id } = brandSettings[index]
+                    const { brand, id } = brandSettings[0]
                     setSettingId(id)
                     setForm(prev => ({
                         twitterTitle: {
                             ...prev.twitterTitle,
-                            value: brand?.value?.twitterTitle,
+                            value: brand[0]?.value?.twitterTitle,
                         },
                         twitterDescription: {
                             ...prev.twitterDescription,
-                            value: brand?.value?.twitterDescription,
+                            value: brand[0]?.value?.twitterDescription,
                         },
                         twitterImage: {
                             ...prev.twitterImage,
-                            value: brand?.value?.twitterImage,
+                            value: brand[0]?.value?.twitterImage,
                         },
                     }))
                 }
@@ -133,40 +125,16 @@ export const TwitterCard = ({ update, domain }) => {
             variables: {
                 identifier: { _eq: 'twitter-card' },
                 type: { _eq: 'seo' },
+                brandId: { _eq: Number(params?.id) }
             }
         })
     }, [])
 
-
-    // Mutation for upserting seo meta data
-    const [upsertSEODetails] = useMutation(BRANDS.UPDATE_BRAND_SETTING, {
-        onCompleted: () => {
-            toast.success('Updated!')
-        },
-        onError: error => {
-            toast.error('Something went wrong with UPDATE_BRAND_SETTING')
-            console.log(error)
-            logger(error)
-        },
-    })
-
     //save changes in metadetails
     const Save = () => {
-        upsertSEODetails({
-            variables: {
-                object: {
-                    brandId: params.id,
-                    brandSettingId: settingId,
-                    value: {
-                        twitterTitle: form.twitterTitle.value,
-                        twitterDescription: form.twitterDescription.value,
-                        twitterImage: form.twitterImage.value,
-                    },
-                },
-            },
-        })
         update({
             id: settingId,
+            brandId: params.id,
             value: {
                 twitterTitle: form.twitterTitle.value,
                 twitterDescription: form.twitterDescription.value,

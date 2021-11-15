@@ -13,7 +13,8 @@ import MarketingIntegration from './MarketingIntegration'
 
 export const SEOSettings = ({ domain }) => {
    const params = useParams()
-   const [settings, setSettings] = React.useState({})
+
+
    const [updateSetting] = useMutation(BRANDS.UPDATE_BRAND_SETTING, {
       onCompleted: () => {
          toast.success('Successfully updated!')
@@ -23,26 +24,7 @@ export const SEOSettings = ({ domain }) => {
          logger(error)
       },
    })
-   const {
-      loading,
-      error,
-      data: { brandSettings = [] } = {},
-   } = useSubscription(BRANDS.SETTINGS_TYPES)
-   if (error) {
-      toast.error('Something went wrong!')
-      logger(error)
-   }
 
-   React.useEffect(() => {
-      if (!loading && !isEmpty(brandSettings)) {
-         const grouped = groupBy(brandSettings, 'type')
-
-         Object.keys(grouped).forEach(key => {
-            grouped[key] = grouped[key].map(node => node.identifier)
-         })
-         setSettings(grouped)
-      }
-   }, [loading, brandSettings])
 
    const update = ({ id, value }) => {
       updateSetting({

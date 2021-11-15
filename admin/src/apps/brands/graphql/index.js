@@ -111,19 +111,16 @@ export const BRANDS = {
 
    //for seo settings(lazy query)
    SETTINGS: gql`
-      query brandSettings(
-         $identifier: String_comparison_exp!
-         $type: String_comparison_exp!
-      ) {
-         brandSettings(where: { identifier: $identifier, type: $type }) {
-            id
-            brand: brand_brandSetting {
-               brandId
-               value
-            }
-            configTemplate
-         }
-      }
+      query brandSettings($identifier: String_comparison_exp!, $type: String_comparison_exp!, $brandId: Int_comparison_exp!) {
+  brandSettings(where: {identifier: $identifier, type: $type}) {
+    id
+    brand: brand_brandSettings(where: {brandId: $brandId}) {
+      brandId
+      value
+    }
+    configTemplate
+  }
+}
    `,
    UPSERT_BRAND_COLLECTION: gql`
       mutation upsertBrandCollection(
