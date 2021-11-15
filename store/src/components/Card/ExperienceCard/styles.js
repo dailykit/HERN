@@ -16,7 +16,6 @@ export const Card = styled.div`
    }
    max-height: 480px;
    border-radius: 24px 24px 0px 0px;
-   width: clamp(250px, 320px, 350px);
    width: ${({ customWidth }) => customWidth};
    @media (min-width: 769px) {
       max-height: 580px;
