@@ -9,11 +9,7 @@ import {
    Form,
    Spacer,
    useTunnel,
-   Tunnels,
-   Tunnel,
-   TunnelHeader,
-   ComboButton,
-   PlusIcon,
+   TextButton,
 } from '@dailykit/ui'
 import { useSubscription, useMutation, useQuery } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
@@ -35,12 +31,9 @@ import { PagePreviewTunnel } from './Tunnel'
 import SocialShare from './SEO/SocialShare'
 import SEObasics from './SEO/SEObasics'
 import TwitterCard from './SEO/TwitterCard'
-import LinkFilesTunnel from './Tunnel/LinkFiles'
 
 const PageForm = () => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
-   const [linkFilesTunnel, openLinkFilesTunnel, closeLinkFilesTunnel] =
-      useTunnel(1)
    const { addTab, tab, setTabTitle, closeAllTabs } = useTabs()
    const [context, setContext] = useContext(BrandContext)
    const prevBrandId = useRef(context.brandId)
@@ -228,16 +221,11 @@ const PageForm = () => {
                padding="0 0 16px 0"
             >
                <Form.Group>
-                  <Flex container alignItems="flex-end">
-                     <Form.Label htmlFor="name" title="Page Name">
-                        Page Name*
-                     </Form.Label>
-                     <Tooltip identifier="page_name_info" />
-                  </Flex>
                   <Form.Text
                      id="pageTitle"
                      name="pageTitle"
                      value={pageTitle.value}
+                     variant="revamp"
                      placeholder="Enter the Page Name "
                      onBlur={onBlur}
                      onChange={e =>
@@ -254,29 +242,9 @@ const PageForm = () => {
                      ))}
                </Form.Group>
                <Flex container alignItems="center" height="100%">
-                  <Highlight onClick={() => openTunnel(1)}>
-                     Preview Page
-                  </Highlight>
-                  {/* {state.isCouponValid?.status ? (
-                        <>
-                           <TickIcon color="#00ff00" stroke={2} />
-                           <Text as="p">All good!</Text>
-                        </>
-                     ) : (
-                        <>
-                           <CloseIcon color="#ff0000" />
-                           <Text as="p">{state.isCouponValid?.error}</Text>
-                        </>
-                     )} */}
-                  <Spacer xAxis size="24px" />
-                  <ComboButton
-                     onClick={() => openLinkFilesTunnel(1)}
-                     type="outline"
-                     size="sm"
-                  >
-                     Add Files
-                     <PlusIcon color="#367BF5" />
-                  </ComboButton>
+                  <TextButton onClick={() => openTunnel(1)} type="ghost">
+                     PREVIEW PAGE
+                  </TextButton>
                   <Spacer xAxis size="24px" />
                   <Form.Toggle
                      name="page_published"
@@ -302,50 +270,42 @@ const PageForm = () => {
                <HorizontalTabPanels>
                   <div className="styleTab">
                      <HorizontalTabPanel>
-                        <div className="pageDetails">
-                           <Flex container>
-                              <Form.Group>
-                                 <Flex container alignItems="flex-end">
-                                    <Form.Label htmlFor="name" title="Page URL">
-                                       Page Route*
-                                    </Form.Label>
-                                    <Tooltip identifier="page_route_info" />
-                                 </Flex>
-                                 <Flex container>
-                                    <Form.Text
-                                       id="domain"
-                                       name="domain"
-                                       value={context.brandDomain}
-                                       disabled
-                                    />
-                                    <Form.Text
-                                       id="pageRoute"
-                                       name="pageRoute"
-                                       value={pageRoute.value}
-                                       placeholder="Enter the Page Route "
-                                       onBlur={onBlur}
-                                       onChange={e =>
-                                          setPageRoute({
-                                             ...pageRoute,
-                                             value: e.target.value,
-                                          })
-                                       }
-                                    />
-                                 </Flex>
-                                 {pageRoute.meta.isTouched &&
-                                    !pageRoute.meta.isValid &&
-                                    pageRoute.meta.errors.map(
-                                       (error, index) => (
-                                          <Form.Error key={index}>
-                                             {error}
-                                          </Form.Error>
-                                       )
-                                    )}
-                              </Form.Group>
-                           </Flex>
-                        </div>
-                        <Spacer size="16px" />
-                        <hr style={{ color: '#e9e9e9' }} />
+                        <Flex container padding="16px 0">
+                           <Form.Group>
+                              <Flex container alignItems="flex-end">
+                                 <Form.Label htmlFor="name" title="Page URL">
+                                    Page Route*
+                                 </Form.Label>
+                                 <Tooltip identifier="page_route_info" />
+                              </Flex>
+                              <Flex container>
+                                 <Form.Text
+                                    id="domain"
+                                    name="domain"
+                                    value={context.brandDomain}
+                                    disabled
+                                 />
+                                 <Form.Text
+                                    id="pageRoute"
+                                    name="pageRoute"
+                                    value={pageRoute.value}
+                                    placeholder="Enter the Page Route "
+                                    onBlur={onBlur}
+                                    onChange={e =>
+                                       setPageRoute({
+                                          ...pageRoute,
+                                          value: e.target.value,
+                                       })
+                                    }
+                                 />
+                              </Flex>
+                              {pageRoute.meta.isTouched &&
+                                 !pageRoute.meta.isValid &&
+                                 pageRoute.meta.errors.map((error, index) => (
+                                    <Form.Error key={index}>{error}</Form.Error>
+                                 ))}
+                           </Form.Group>
+                        </Flex>
                         <ContentSelection />
                      </HorizontalTabPanel>
                   </div>
@@ -364,10 +324,6 @@ const PageForm = () => {
             openTunnel={openTunnel}
             closeTunnel={closeTunnel}
             pageRoute={pageRoute}
-         />
-         <LinkFilesTunnel
-            tunnels={linkFilesTunnel}
-            closeTunnel={closeLinkFilesTunnel}
          />
          <Banner id="content-app-pages-page-details-bottom" />
       </StyledWrapper>

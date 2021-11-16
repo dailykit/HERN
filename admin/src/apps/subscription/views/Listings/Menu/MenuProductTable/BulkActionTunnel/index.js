@@ -1,7 +1,7 @@
 import React from 'react'
 import BulkActions from '../../../../../../../shared/components/BulkAction'
 
-const OccurrenceBulkAction = ({
+export const MenuProduct = ({
    close,
    selectedRows,
    removeSelectedRow,
@@ -13,10 +13,8 @@ const OccurrenceBulkAction = ({
          removeSelectedRow={removeSelectedRow}
          selectedRows={selectedRows}
          setSelectedRows={setSelectedRows}
-         table="Menu Product Occurrence"
+         table="Menu Product"
          keyName="productName"
       />
    </>
 )
-
-export default OccurrenceBulkAction

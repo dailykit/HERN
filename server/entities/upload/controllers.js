@@ -1,5 +1,6 @@
 import get_env from '../../../get_env'
 import aws from '../../lib/aws'
+import { removeBackgroundFromImageUrl } from "remove.bg"
 
 const fs = require('fs')
 const fileType = require('file-type')
@@ -131,6 +132,53 @@ export const remove = async (req, res) => {
             .status(200)
             .json({ success: true, message: 'Succesfully deleted!' })
       }
+   } catch (error) {
+      console.log(error)
+      return res.status(400).send(error)
+   }
+}
+
+// to do in future :- send mail to customers in case monthly free tries have been used using remove.bg apiKey
+// for our customers :-  company api key will be used
+export const serveImage = async (req, res) => {
+
+   try{
+      
+      // get the src url of the original image from the url query string
+      const url = req.query.src
+      // const removebg = req.query.removebg // for future application
+
+      // api key of remove.bg
+      const api_key = await get_env('REMOVE_BG_API_KEY')
+
+      // directory to store output image after altering the image
+      const outputFile = `${__dirname}/image.png`;
+      const responseImage = await removeBackgroundFromImageUrl({
+         url,
+         apiKey: api_key, 
+         size: "regular",
+         outputFile
+       });
+
+      // to get the image name and alter it from /images/ to /images-rb/
+      const IndexFromString = url.indexOf('/images/');
+      var imageName = url.slice(IndexFromString)
+      
+      // imageName example --> /images-rb/xyz
+      imageName = imageName.replace('/images/' , 'images-rb/')
+      // remove format from image name
+      imageName = imageName.replace('.jpg' , '');
+      imageName = imageName.replace('.jpeg' , '');
+      imageName = imageName.replace('.png' , '');
+
+      // now upload it to aws
+      const buffer = fs.readFileSync(outputFile);
+      let type = await fileType.fromBuffer(buffer)
+      const data = await uploadFile(buffer, imageName, type)
+
+      // send altered image as response 
+      res.sendFile(outputFile);
+
    } catch (error) {
       console.log(error)
       return res.status(400).send(error)

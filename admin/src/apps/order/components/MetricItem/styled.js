@@ -27,37 +27,28 @@ export const ListItem = styled.li(
       cursor: pointer;
       list-style: none;
       margin-bottom: 16px;
-      border: 1px solid #e5e5e5;
-      border-radius: 4px;
+      border: 1px solid rgba(0, 0, 0, 0.09);
+
       border-right: 6px solid ${selectColor(variant)};
       &.active {
          box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.09);
-         border-width: 1px 6px 1px 1px;
-         border-style: solid;
-         border-color: rgba(54, 123, 245, 1) ${selectColor(variant)}
-            rgba(54, 123, 245, 1) rgba(54, 123, 245, 1);
-         border-image: initial;
-      }
-      &:hover {
-         background: #f9f9f9;
       }
 
       header {
          display: flex;
          align-items: center;
          justify-content: space-between;
-         color: ${selectColor(variant)};
+
          h2 {
             font-weight: 500;
             font-size: 14px;
-            color: ${selectColor(variant)};
          }
       }
       main {
          display: flex;
          margin-top: 8px;
          justify-content: space-between;
-         color: ${selectColor(variant)};
+
          span {
             font-size: 20px;
          }

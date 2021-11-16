@@ -31,13 +31,9 @@ export const StripeTunnel = ({ closeViaTunnel }) => {
    const { data: { settings = [] } = {} } = useQuery(QUERIES.BRAND.SETTINGS, {
       skip: !brand?.id,
       variables: {
-         where: {
-            brandId: { _eq: brand?.id },
-            subscriptionStoreSetting: {
-               identifier: { _eq: 'Contact' },
-               type: { _eq: 'brand' },
-            },
-         },
+         brandId: brand?.id,
+         identifier: { _eq: 'Contact' },
+         type: { _eq: 'brand' },
       },
    })
    const [update] = useMutation(MUTATIONS.CART.UPDATE, {

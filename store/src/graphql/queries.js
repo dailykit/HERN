@@ -704,14 +704,14 @@ export const OUR_MENU = {
 
 export const SETTINGS = gql`
    subscription settings($domain: String_comparison_exp) {
-      settings: brands_brand_subscriptionStoreSetting(
+      settings: brands_brand_brandSetting(
          where: {
             brand: { _or: [{ domain: $domain }, { isDefault: { _eq: true } }] }
          }
       ) {
          value
          brandId
-         meta: subscriptionStoreSetting {
+         meta: brandSetting {
             id
             type
             identifier
@@ -722,7 +722,7 @@ export const SETTINGS = gql`
 
 export const SETTINGS_QUERY = gql`
    query settings($domain: String) {
-      settings: brands_brand_subscriptionStoreSetting(
+      settings: brands_brand_brandSetting(
          where: {
             brand: {
                _or: [{ domain: { _eq: $domain } }, { isDefault: { _eq: true } }]
@@ -731,7 +731,7 @@ export const SETTINGS_QUERY = gql`
       ) {
          value
          brandId
-         meta: subscriptionStoreSetting {
+         meta: brandSetting {
             id
             type
             identifier
@@ -1384,6 +1384,240 @@ export const BRAND_SETTINGS_BY_TYPE = gql`
             identifier
          }
          value
+      }
+   }
+`
+export const BRAND_ONDEMAND_DELIVERY_RECURRENCES = gql`
+   query BRAND_ONDEMAND_DELIVERY_RECURRENCES(
+      $where: fulfilment_brand_recurrence_bool_exp!
+   ) {
+      brandRecurrences(where: $where) {
+         brandId
+         brandLocationId
+         recurrenceId
+         recurrence {
+            id
+            rrule
+            type
+            timeSlots {
+               from
+               to
+               pickUpPrepTime
+               mileRanges {
+                  from
+                  city
+                  distanceType
+                  to
+                  zipcodes
+                  state
+                  prepTime
+                  geoBoundary
+                  isExcluded
+               }
+            }
+         }
+      }
+   }
+`
+export const ORDER_TAB = gql`
+   query ORDER_TAB($where: brands_orderTab_bool_exp!) {
+      brands_orderTab(where: $where) {
+         orderFulfillmentTypeLabel
+         label
+         orderType
+         availableOrderInterfaceLabel
+      }
+   }
+`
+export const BRAND_LOCATIONS = gql`
+   query BRAND_LOCATIONS($where: brands_brand_location_bool_exp!) {
+      brands_brand_location_aggregate(where: $where) {
+         aggregate {
+            count
+         }
+         nodes {
+            brandId
+            locationId
+            id
+            orderExperienceId
+            orderExperienceOptionType
+            doesDeliverOutsideCity
+            doesDeliverOutsideState
+         }
+      }
+   }
+`
+export const PREORDER_DELIVERY_BRAND_RECURRENCES = gql`
+   query BRAND_ONDEMAND_DELIVERY_RECURRENCES(
+      $where: fulfilment_brand_recurrence_bool_exp!
+   ) {
+      brandRecurrences(where: $where) {
+         brandId
+         brandLocationId
+         recurrenceId
+         recurrence {
+            id
+            rrule
+            type
+            timeSlots {
+               from
+               to
+               mileRanges {
+                  from
+                  city
+                  distanceType
+                  to
+                  zipcodes
+                  state
+                  geoBoundary
+                  isExcluded
+                  leadTime
+               }
+            }
+         }
+      }
+   }
+`
+export const ONDEMAND_PICKUP_BRAND_RECURRENCES = gql`
+   query ONDEMAND_PICKUP_BRAND_RECURRENCES(
+      $where: fulfilment_brand_recurrence_bool_exp!
+   ) {
+      brandRecurrences(where: $where) {
+         brandId
+         recurrenceId
+         recurrence {
+            id
+            rrule
+            type
+            timeSlots {
+               from
+               to
+               mileRanges {
+                  from
+                  city
+                  distanceType
+                  to
+                  zipcodes
+                  state
+                  geoBoundary
+                  isExcluded
+                  prepTime
+               }
+            }
+         }
+         brandLocationId
+      }
+   }
+`
+export const PREORDER_PICKUP_BRAND_RECURRENCES = gql`
+   query PREORDER_PICKUP_BRAND_RECURRENCES(
+      $where: fulfilment_brand_recurrence_bool_exp!
+   ) {
+      brandRecurrences(where: $where) {
+         brandId
+         recurrenceId
+         brandLocationId
+         recurrence {
+            id
+            rrule
+            type
+            timeSlots {
+               from
+               to
+               mileRanges {
+                  from
+                  city
+                  distanceType
+                  to
+                  zipcodes
+                  state
+                  geoBoundary
+                  isExcluded
+                  leadTime
+               }
+            }
+         }
+      }
+   }
+`
+export const ONDEMAND_DINE_BRAND_RECURRENCES = gql`
+   query ONDEMAND_DINE_BRAND_RECURRENCES(
+      $where: fulfilment_brand_recurrence_bool_exp!
+   ) {
+      brandRecurrences(where: $where) {
+         brandId
+         recurrenceId
+         recurrence {
+            id
+            rrule
+            type
+            timeSlots {
+               from
+               to
+               mileRanges {
+                  from
+                  city
+                  distanceType
+                  to
+                  zipcodes
+                  state
+                  geoBoundary
+                  isExcluded
+                  prepTime
+               }
+            }
+         }
+         brandLocationId
+      }
+   }
+`
+export const SCHEDULED_DINEIN_BRAND_RECURRENCES = gql`
+   query SCHEDULED_DINEIN_BRAND_RECURRENCES(
+      $where: fulfilment_brand_recurrence_bool_exp!
+   ) {
+      brandRecurrences(where: $where) {
+         brandId
+         recurrenceId
+         recurrence {
+            id
+            rrule
+            type
+            timeSlots {
+               from
+               to
+               mileRanges {
+                  from
+                  city
+                  distanceType
+                  to
+                  zipcodes
+                  state
+                  geoBoundary
+                  isExcluded
+                  leadTime
+               }
+            }
+         }
+         brandLocationId
+      }
+   }
+`
+export const GET_BRAND_LOCATION = gql`
+   query GET_BRAND_LOCATION($where: brands_brand_location_bool_exp!) {
+      brands_brand_location(where: $where) {
+         id
+         brandId
+         location {
+            id
+            locationAddress
+            label
+            zipcode
+            city
+            state
+            lat
+            lng
+            country
+         }
       }
    }
 `
