@@ -264,7 +264,9 @@ const Delivery = props => {
          loading: !prev.loading,
          error: false,
       }))
-      if (window.navigator.geolocation) {
+      const geolocation = isClient ? window.navigator.geolocation : false
+
+      if (geolocation) {
          const success = position => {
             const latitude = position.coords.latitude
             const longitude = position.coords.longitude
@@ -286,7 +288,7 @@ const Delivery = props => {
                errorType: 'blockByBrowser',
             }))
          }
-         window.navigator.geolocation.getCurrentPosition(success, error)
+         geolocation.getCurrentPosition(success, error)
       }
    }
 
@@ -671,7 +673,9 @@ const Pickup = props => {
          loading: !prev.loading,
          error: false,
       }))
-      if (window.navigator.geolocation) {
+      const geolocation = isClient ? window.navigator.geolocation : false
+
+      if (geolocation) {
          const success = position => {
             const latitude = position.coords.latitude
             const longitude = position.coords.longitude
@@ -693,7 +697,7 @@ const Pickup = props => {
                errorType: 'blockByBrowser',
             }))
          }
-         window.navigator.geolocation.getCurrentPosition(success, error)
+         geolocation.getCurrentPosition(success, error)
       }
    }
    // get address by coordinates
@@ -1006,7 +1010,9 @@ const DineIn = props => {
          loading: !prev.loading,
          error: false,
       }))
-      if (window.navigator.geolocation) {
+      const geolocation = isClient ? window.navigator.geolocation : false
+
+      if (geolocation) {
          const success = position => {
             const latitude = position.coords.latitude
             const longitude = position.coords.longitude
@@ -1028,7 +1034,7 @@ const DineIn = props => {
                errorType: 'blockByBrowser',
             }))
          }
-         window.navigator.geolocation.getCurrentPosition(success, error)
+         geolocation.getCurrentPosition(success, error)
       }
    }
    // get address by coordinates
