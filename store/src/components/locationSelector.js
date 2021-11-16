@@ -13,9 +13,12 @@ import {
    useScript,
    isClient,
    get_env,
-   isStoreDeliveryAvailable,
-   isStorePickupAvailable,
+   isStoreOnDemandDeliveryAvailable,
+   isStoreOnDemandPickupAvailable,
    isPreOrderDeliveryAvailable,
+   isStoreOnDemandDineInAvailable,
+   isStorePreOrderDineInAvailable,
+   isStorePreOrderPickupAvailable,
 } from '../utils'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
 import { Loader } from './index'
@@ -31,9 +34,12 @@ import { Button } from './button'
 import {
    BRAND_LOCATIONS,
    BRAND_ONDEMAND_DELIVERY_RECURRENCES,
+   ONDEMAND_DINE_BRAND_RECURRENCES,
    ONDEMAND_PICKUP_BRAND_RECURRENCES,
    PREORDER_DELIVERY_BRAND_RECURRENCES,
+   SCHEDULED_DINEIN_BRAND_RECURRENCES,
    PREORDER_PICKUP_BRAND_RECURRENCES,
+   GET_BRAND_LOCATION,
 } from '../graphql'
 import { TimePicker, Divider, Radio } from 'antd'
 import 'antd/dist/antd.css'
@@ -72,16 +78,6 @@ export const LocationSelector = props => {
       document.querySelector('body').style.overflowY = 'hidden'
       return () => (document.querySelector('body').style.overflowY = 'auto')
    }, [])
-
-   // use local storage user address
-   // React.useEffect(() => {
-   //    const userLocation = JSON.parse(localStorage.getItem('userLocation'))
-   //    if (userLocation && userLocation.address) {
-   //       setLocationSearching(prev => ({ ...prev, loading: !prev.loading }))
-   //       setAddress(userLocation.address)
-   //       setLocationSearching(prev => ({ ...prev, loading: !prev.loading }))
-   //    }
-   // }, [])
 
    if (!orderTabFulfillmentType) {
       return <Loader />
@@ -156,7 +152,7 @@ export const LocationSelector = props => {
                      </button>
                   )}
                {(orderTabFulfillmentType.includes('ONDEMAND_DINEIN') ||
-                  orderTabFulfillmentType.includes('PREORDER_DINEIN')) &&
+                  orderTabFulfillmentType.includes('SCHEDULED_DINEIN')) &&
                   availableFulFillmentType.includes('DINEIN') && (
                      <button
                         className={classNames(
@@ -174,7 +170,7 @@ export const LocationSelector = props => {
                                  x.orderFulfillmentTypeLabel ===
                                     'ONDEMAND_DINEIN' ||
                                  x.orderFulfillmentTypeLabel ===
-                                    'PREORDER_DINEIN'
+                                    'SCHEDULED_DINEIN'
                            ).label
                         }
                      </button>
@@ -200,6 +196,7 @@ export const LocationSelector = props => {
    )
 }
 
+// delivery section
 const Delivery = props => {
    const { deliveryType: storeDeliveryType } =
       LocationSelectorConfig.informationVisibility.deliverySettings
@@ -347,7 +344,7 @@ const Delivery = props => {
                   )
                   setLocationSearching(prev => ({
                      ...prev,
-                     loading: !prev.loading,
+                     loading: false,
                   }))
                }
             })
@@ -355,23 +352,13 @@ const Delivery = props => {
                console.log('error', e)
                setLocationSearching(prev => ({
                   ...prev,
-                  loading: !prev.loading,
+                  loading: false,
                   error: true,
                   errorType: 'fetchAddress',
                }))
             })
       }
    }, [userCoordinate])
-
-   // use local storage user address
-   // React.useEffect(() => {
-   //    const userLocation = JSON.parse(localStorage.getItem('userLocation'))
-   //    if (userLocation && userLocation.address) {
-   //       setLocationSearching(prev => ({ ...prev, loading: !prev.loading }))
-   //       setAddress(userLocation.address)
-   //       setLocationSearching(prev => ({ ...prev, loading: !prev.loading }))
-   //    }
-   // }, [])
 
    // get all store when user address available
    const {
@@ -492,7 +479,37 @@ const Delivery = props => {
            )}&libraries=places`
          : ''
    )
-
+   const formatAddress = async input => {
+      if (!isClient) return 'Runs only on client side.'
+      const response = await fetch(
+         `https://maps.googleapis.com/maps/api/geocode/json?key=${
+            isClient ? get_env('GOOGLE_API_KEY') : ''
+         }&address=${encodeURIComponent(input.description)}`
+      )
+      const data = await response.json()
+      if (data.status === 'OK' && data.results.length > 0) {
+         const [result] = data.results
+         const userLocation = {
+            latitude: result.geometry.location.lat,
+            longitude: result.geometry.location.lng,
+         }
+         setUserCoordinate(prev => ({ ...prev, ...userLocation }))
+         const address = {
+            mainText: input.structured_formatting.main_text,
+            secondaryText: input.structured_formatting.secondary_text,
+         }
+         result.address_components.forEach(node => {
+            if (node.types.includes('postal_code')) {
+               address.zipcode = node.long_name
+            }
+         })
+         setAddress(address)
+         localStorage.setItem(
+            'userLocation',
+            JSON.stringify({ ...userLocation, address })
+         )
+      }
+   }
    if (!orderTabFulfillmentType) {
       return <Loader />
    }
@@ -583,6 +600,8 @@ const Delivery = props => {
       </div>
    )
 }
+
+// pickup section
 const Pickup = props => {
    // user location need only for show distance from user location
 
@@ -643,16 +662,6 @@ const Pickup = props => {
       errorType: '',
    })
    const [address, setAddress] = useState(null)
-
-   // use local storage user address
-   // React.useEffect(() => {
-   //    const userLocation = JSON.parse(localStorage.getItem('userLocation'))
-   //    if (userLocation && userLocation.address) {
-   //       setLocationSearching(prev => ({ ...prev, loading: !prev.loading }))
-   //       setAddress(userLocation.address)
-   //       setLocationSearching(prev => ({ ...prev, loading: !prev.loading }))
-   //    }
-   // }, [])
 
    // location by browser
    const locationByBrowser = () => {
@@ -807,7 +816,37 @@ const Pickup = props => {
          },
       }
    )
-
+   const formatAddress = async input => {
+      if (!isClient) return 'Runs only on client side.'
+      const response = await fetch(
+         `https://maps.googleapis.com/maps/api/geocode/json?key=${
+            isClient ? get_env('GOOGLE_API_KEY') : ''
+         }&address=${encodeURIComponent(input.description)}`
+      )
+      const data = await response.json()
+      if (data.status === 'OK' && data.results.length > 0) {
+         const [result] = data.results
+         const userLocation = {
+            latitude: result.geometry.location.lat,
+            longitude: result.geometry.location.lng,
+         }
+         setUserCoordinate(prev => ({ ...prev, ...userLocation }))
+         const address = {
+            mainText: input.structured_formatting.main_text,
+            secondaryText: input.structured_formatting.secondary_text,
+         }
+         result.address_components.forEach(node => {
+            if (node.types.includes('postal_code')) {
+               address.zipcode = node.long_name
+            }
+         })
+         setAddress(address)
+         localStorage.setItem(
+            'userLocation',
+            JSON.stringify({ ...userLocation, address })
+         )
+      }
+   }
    if (!orderTabFulfillmentType) {
       return <Loader />
    }
@@ -830,7 +869,7 @@ const Pickup = props => {
             <div className="hern-store-location-selector-main__location-field">
                {loaded &&
                   !error &&
-                  LocationSelectorConfig.informationVisibility.deliverySettings
+                  LocationSelectorConfig.informationVisibility.pickupSettings
                      .userAddressInput.value && (
                      <GooglePlacesAutocomplete
                         inputClassName="hern-store-location-selector-main__location-input"
@@ -891,9 +930,339 @@ const Pickup = props => {
       </div>
    )
 }
-const DineIn = () => {
-   return <p>Work under process DineIn</p>
+
+// dine in section
+const DineIn = props => {
+   const { setShowLocationSelectionPopup, settings } = props
+
+   const { dineInType: storeDineInType, userAddress } =
+      LocationSelectorConfig.informationVisibility.dineInSettings
+
+   const availableStoreType =
+      storeDineInType.value.length > 0
+         ? storeDineInType.value.map(x => x.value)
+         : storeDineInType.default.map(x => x.value)
+
+   const { brand, orderTabs } = useConfig()
+
+   const orderTabFulfillmentType = React.useMemo(
+      () =>
+         orderTabs
+            ? orderTabs.map(eachTab => eachTab.orderFulfillmentTypeLabel)
+            : null,
+      [orderTabs]
+   )
+
+   const [dineInType, setDineInType] = useState(
+      Boolean(availableStoreType.find(x => x === 'ONDEMAND'))
+         ? 'ONDEMAND'
+         : availableStoreType[0]
+   )
+   const [onDemandBrandRecurrence, setOnDemandBrandReoccurrence] =
+      useState(null)
+   const [preOrderBrandRecurrence, setPreOrderBrandReoccurrence] =
+      useState(null)
+   const [userCoordinate, setUserCoordinate] = useState({
+      latitude: null,
+      longitude: null,
+   })
+   const [locationSearching, setLocationSearching] = useState({
+      error: false,
+      loading: false,
+      errorType: '',
+   })
+   const [address, setAddress] = useState(null)
+
+   const [dineInRadioOptions] = useState([
+      {
+         label: 'Now',
+         value: 'ONDEMAND',
+         disabled:
+            (orderTabFulfillmentType &&
+               !orderTabFulfillmentType.includes('ONDEMAND_DINEIN')) ||
+            !Boolean(availableStoreType.find(x => x === 'ONDEMAND')),
+      },
+      {
+         label: 'Later',
+         value: 'PREORDER',
+         disabled:
+            (orderTabFulfillmentType &&
+               !orderTabFulfillmentType.includes('SCHEDULED_DINEIN')) ||
+            !Boolean(availableStoreType.find(x => x === 'PREORDER')),
+      },
+   ])
+   const [loaded, error] = useScript(
+      isClient
+         ? `https://maps.googleapis.com/maps/api/js?key=${get_env(
+              'GOOGLE_API_KEY'
+           )}&libraries=places`
+         : ''
+   )
+   // location by browser
+   const locationByBrowser = () => {
+      // if no location already exist in local and if browser not support geolocation api
+      setLocationSearching(prev => ({
+         ...prev,
+         loading: !prev.loading,
+         error: false,
+      }))
+      if (window.navigator.geolocation) {
+         const success = position => {
+            const latitude = position.coords.latitude
+            const longitude = position.coords.longitude
+            const userLocationInfo = {
+               latitude,
+               longitude,
+            }
+            setUserCoordinate(prev => ({ ...prev, latitude, longitude }))
+            // localStorage.setItem(
+            //    'userLocation',
+            //    JSON.stringify(userLocationInfo)
+            // )
+         }
+         const error = () => {
+            setLocationSearching(prev => ({
+               ...prev,
+               loading: !prev.loading,
+               error: true,
+               errorType: 'blockByBrowser',
+            }))
+         }
+         window.navigator.geolocation.getCurrentPosition(success, error)
+      }
+   }
+   // get address by coordinates
+   useEffect(() => {
+      if (userCoordinate.latitude && userCoordinate.longitude) {
+         fetch(
+            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${
+               userCoordinate.latitude
+            },${userCoordinate.longitude}&key=${get_env('GOOGLE_API_KEY')}`
+         )
+            .then(res => res.json())
+            .then(data => {
+               if (data.status === 'OK' && data.results.length > 0) {
+                  const formatted_address =
+                     data.results[0].formatted_address.split(',')
+                  const mainText = formatted_address
+                     .slice(0, formatted_address.length - 3)
+                     .join(',')
+                  const secondaryText = formatted_address
+                     .slice(formatted_address.length - 3)
+                     .join(',')
+                  const address = {}
+                  data.results[0].address_components.forEach(node => {
+                     if (node.types.includes('locality')) {
+                        address.city = node.long_name
+                     }
+                     if (node.types.includes('administrative_area_level_1')) {
+                        address.state = node.long_name
+                     }
+                     if (node.types.includes('country')) {
+                        address.country = node.long_name
+                     }
+                     if (node.types.includes('postal_code')) {
+                        address.zipcode = node.long_name
+                     }
+                  })
+                  setAddress(prev => ({
+                     ...prev,
+                     mainText,
+                     secondaryText,
+                     ...address,
+                  }))
+                  localStorage.setItem(
+                     'userLocation',
+                     JSON.stringify({
+                        latitude: userCoordinate.latitude,
+                        longitude: userCoordinate.longitude,
+                        address: {
+                           mainText,
+                           secondaryText,
+                           ...address,
+                        },
+                     })
+                  )
+                  setLocationSearching(prev => ({
+                     ...prev,
+                     loading: !prev.loading,
+                  }))
+               }
+            })
+            .catch(e => {
+               console.log('error', e)
+               setLocationSearching(prev => ({
+                  ...prev,
+                  loading: !prev.loading,
+                  error: true,
+                  errorType: 'fetchAddress',
+               }))
+            })
+      }
+   }, [userCoordinate])
+
+   const { loading: onDemandPickupRecurrenceLoading } = useQuery(
+      ONDEMAND_DINE_BRAND_RECURRENCES,
+      {
+         skip: !brand || !brand.id,
+         variables: {
+            where: {
+               isActive: { _eq: true },
+               recurrence: {
+                  isActive: { _eq: true },
+                  type: { _eq: 'ONDEMAND_DINEIN' },
+               },
+               brandId: { _eq: brand.id },
+            },
+         },
+         onCompleted: data => {
+            console.log('ondemandDineIn', data)
+            if (data) {
+               setOnDemandBrandReoccurrence(data.brandRecurrences)
+            }
+         },
+      }
+   )
+   const { loading: preOrderPickRecurrencesLoading } = useQuery(
+      SCHEDULED_DINEIN_BRAND_RECURRENCES,
+      {
+         skip: !brand || !brand.id,
+         variables: {
+            where: {
+               isActive: { _eq: true },
+               recurrence: {
+                  isActive: { _eq: true },
+                  type: { _eq: 'SCHEDULED_DINEIN' },
+               },
+               brandId: { _eq: brand.id },
+            },
+         },
+         onCompleted: data => {
+            console.log('preorderDineIn', data)
+            if (data) {
+               setPreOrderBrandReoccurrence(data.brandRecurrences)
+            }
+         },
+      }
+   )
+   const formatAddress = async input => {
+      if (!isClient) return 'Runs only on client side.'
+      const response = await fetch(
+         `https://maps.googleapis.com/maps/api/geocode/json?key=${
+            isClient ? get_env('GOOGLE_API_KEY') : ''
+         }&address=${encodeURIComponent(input.description)}`
+      )
+      const data = await response.json()
+      if (data.status === 'OK' && data.results.length > 0) {
+         const [result] = data.results
+         const userLocation = {
+            latitude: result.geometry.location.lat,
+            longitude: result.geometry.location.lng,
+         }
+         setUserCoordinate(prev => ({ ...prev, ...userLocation }))
+         const address = {
+            mainText: input.structured_formatting.main_text,
+            secondaryText: input.structured_formatting.secondary_text,
+         }
+         result.address_components.forEach(node => {
+            if (node.types.includes('postal_code')) {
+               address.zipcode = node.long_name
+            }
+         })
+         setAddress(address)
+         localStorage.setItem(
+            'userLocation',
+            JSON.stringify({ ...userLocation, address })
+         )
+      }
+   }
+
+   if (!orderTabFulfillmentType) {
+      return <Loader />
+   }
+
+   return (
+      <div className="hern-store-location__fulfillment-type-wrapper">
+         <div
+            className={classNames(
+               'hern-store-location__preOrder-time-selection'
+            )}
+         >
+            <Radio.Group
+               options={dineInRadioOptions}
+               onChange={e => {
+                  setDineInType(e.target.value)
+               }}
+               value={dineInType}
+            />
+         </div>
+         <div className="hern-store-location-selector-main">
+            <div className="hern-store-location-selector-main__location-field">
+               {loaded &&
+                  !error &&
+                  LocationSelectorConfig.informationVisibility.dineInSettings
+                     .userAddressInput.value && (
+                     <GooglePlacesAutocomplete
+                        inputClassName="hern-store-location-selector-main__location-input"
+                        onSelect={data => formatAddress(data)}
+                        placeholder={
+                           LocationSelectorConfig.informationVisibility
+                              .pickupSettings.userAddressInputPlaceHolder
+                              .value || 'Enter your address'
+                        }
+                     />
+                  )}
+
+               <div
+                  className="hern-store-location-selector-main__get-current-location"
+                  onClick={locationByBrowser}
+               >
+                  <GPSIcon />
+                  <span>Get Current Location</span>
+               </div>
+               {locationSearching.error &&
+                  locationSearching.errorType === 'blockByBrowser' && (
+                     <span className="hern-store-location-selector-main__get-current-location-error-message">
+                        You have blocked this site from tracking your location.
+                        To use this, change your location settings in browser.
+                     </span>
+                  )}
+            </div>
+         </div>
+         {locationSearching.loading ? (
+            <Loader />
+         ) : locationSearching.error ? (
+            <p>unable to find location</p>
+         ) : address ? (
+            <div className="hern-store-location-selector__user-location">
+               {userAddress.value && <AddressInfo address={address} />}
+            </div>
+         ) : null}
+         {onDemandPickupRecurrenceLoading || preOrderPickRecurrencesLoading ? (
+            <Loader />
+         ) : (
+            <StoreList
+               userCoordinate={userCoordinate}
+               setShowLocationSelectionPopup={setShowLocationSelectionPopup}
+               settings={settings}
+               brandRecurrences={
+                  dineInType === 'ONDEMAND'
+                     ? onDemandBrandRecurrence
+                     : preOrderBrandRecurrence
+               }
+               fulfillmentType={
+                  dineInType === 'ONDEMAND'
+                     ? 'ONDEMAND_DINEIN'
+                     : 'SCHEDULED_DINEIN'
+               }
+               address={address}
+            />
+         )}
+      </div>
+   )
 }
+
+// user's address
 const AddressInfo = props => {
    const { address } = props
    return (
@@ -966,25 +1335,8 @@ const RefineLocation = props => {
       </>
    )
 }
-const GET_BRAND_LOCATION = gql`
-   query GET_BRAND_LOCATION($where: brands_brand_location_bool_exp!) {
-      brands_brand_location(where: $where) {
-         id
-         brandId
-         location {
-            id
-            locationAddress
-            label
-            zipcode
-            city
-            state
-            lat
-            lng
-            country
-         }
-      }
-   }
-`
+
+// render all available stores
 const StoreList = props => {
    const {
       userCoordinate,
@@ -1013,6 +1365,13 @@ const StoreList = props => {
          fulfillmentType === 'PREORDER_DELIVERY'
       ) {
          type = 'deliveryStatus'
+         return type
+      }
+      if (
+         fulfillmentType === 'ONDEMAND_DINEIN' ||
+         fulfillmentType === 'SCHEDULED_DINEIN'
+      ) {
+         type = 'dineInStatus'
          return type
       }
    }, [fulfillmentType])
@@ -1097,7 +1456,10 @@ const StoreList = props => {
 
    useEffect(() => {
       if (brandLocation && address) {
-         setSortedBrandLocation(getAerialDistance(brandLocation, true))
+         ;(async () => {
+            const bar = await getAerialDistance(brandLocation, true)
+            setSortedBrandLocation(bar)
+         })()
       }
    }, [brandLocation, brandRecurrences, address])
 
@@ -1130,58 +1492,75 @@ const StoreList = props => {
       }
    }, [sortedBrandLocation, address])
 
-   const getAerialDistance = (data, sorted = false) => {
+   const getAerialDistance = async (data, sorted = false) => {
       const userLocation = JSON.parse(localStorage.getItem('userLocation'))
 
       // add arial distance
-      const dataWithAerialDistance = data.map(eachStore => {
-         const aerialDistance = getDistance(
-            userLocation,
-            eachStore.location.locationAddress.locationCoordinates,
-            0.1
-         )
-         const aerialDistanceInMiles = convertDistance(aerialDistance, 'mi')
-         eachStore['aerialDistance'] = parseFloat(
-            aerialDistanceInMiles.toFixed(2)
-         )
-         eachStore['distanceUnit'] = 'mi'
-         if (
-            storeDistanceValidation &&
-            brandRecurrences &&
-            fulfillmentType === 'ONDEMAND_DELIVERY'
-         ) {
-            const deliveryStatus = isStoreDeliveryAvailable(
-               brandRecurrences,
-               eachStore
+      const dataWithAerialDistance = await Promise.all(
+         data.map(async eachStore => {
+            const aerialDistance = getDistance(
+               userLocation,
+               eachStore.location.locationAddress.locationCoordinates,
+               0.1
             )
-            eachStore[fulfillmentStatus] = deliveryStatus
-         }
-         if (
-            storeDistanceValidation &&
-            brandRecurrences &&
-            fulfillmentType === 'PREORDER_DELIVERY'
-         ) {
-            const deliveryStatus = isPreOrderDeliveryAvailable(
-               brandRecurrences,
-               eachStore
+            const aerialDistanceInMiles = convertDistance(aerialDistance, 'mi')
+            eachStore['aerialDistance'] = parseFloat(
+               aerialDistanceInMiles.toFixed(2)
             )
-            eachStore[fulfillmentStatus] = deliveryStatus
-         }
-         if (fulfillmentType === 'ONDEMAND_PICKUP' && brandRecurrences) {
-            const pickupStatus = isStorePickupAvailable(
-               brandRecurrences,
-               eachStore
-            )
-            eachStore[fulfillmentStatus] = pickupStatus
-         }
-         if (fulfillmentType === 'PREORDER_PICKUP' && brandRecurrences) {
-            eachStore[fulfillmentStatus] = {
-               status: true,
-               message: 'Store available for pre order pickup.',
+            eachStore['distanceUnit'] = 'mi'
+            if (
+               storeDistanceValidation &&
+               brandRecurrences &&
+               fulfillmentType === 'ONDEMAND_DELIVERY'
+            ) {
+               const deliveryStatus = await isStoreOnDemandDeliveryAvailable(
+                  brandRecurrences,
+                  eachStore
+               )
+               eachStore[fulfillmentStatus] = deliveryStatus
             }
-         }
-         return eachStore
-      })
+            if (
+               storeDistanceValidation &&
+               brandRecurrences &&
+               fulfillmentType === 'PREORDER_DELIVERY'
+            ) {
+               const deliveryStatus = await isPreOrderDeliveryAvailable(
+                  brandRecurrences,
+                  eachStore
+               )
+               eachStore[fulfillmentStatus] = deliveryStatus
+            }
+            if (fulfillmentType === 'ONDEMAND_PICKUP' && brandRecurrences) {
+               const pickupStatus = isStoreOnDemandPickupAvailable(
+                  brandRecurrences,
+                  eachStore
+               )
+               eachStore[fulfillmentStatus] = pickupStatus
+            }
+            if (fulfillmentType === 'PREORDER_PICKUP' && brandRecurrences) {
+               const pickupStatus = isStorePreOrderPickupAvailable(
+                  brandRecurrences,
+                  eachStore
+               )
+               eachStore[fulfillmentStatus] = pickupStatus
+            }
+            if (fulfillmentType === 'ONDEMAND_DINEIN' && brandRecurrences) {
+               const dineInStatus = isStoreOnDemandDineInAvailable(
+                  brandRecurrences,
+                  eachStore
+               )
+               eachStore[fulfillmentStatus] = dineInStatus
+            }
+            if (fulfillmentType === 'SCHEDULED_DINEIN' && brandRecurrences) {
+               const dineInStatus = isStorePreOrderDineInAvailable(
+                  brandRecurrences,
+                  eachStore
+               )
+               eachStore[fulfillmentStatus] = dineInStatus
+            }
+            return eachStore
+         })
+      )
       // sort by distance
       if (sorted) {
          const sortedDataWithAerialDistance = _.sortBy(dataWithAerialDistance, [
@@ -1295,10 +1674,7 @@ const StoreList = props => {
    }
    console.log('sortedBrandLocation', sortedBrandLocation)
    // when there is no stores which do not fulfill delivery time and mile range for brandRecurrences
-   if (
-      storeDistanceValidation &&
-      !sortedBrandLocation.some(store => store[fulfillmentStatus].status)
-   ) {
+   if (!sortedBrandLocation.some(store => store[fulfillmentStatus].status)) {
       return (
          <div className="hern-location-selector__stores-list">
             {sortedBrandLocation[0][fulfillmentStatus].message}
@@ -1312,8 +1688,7 @@ const StoreList = props => {
       !sortedBrandLocation.some(store => {
          const sortedStatus = store[fulfillmentStatus].result
          if (sortedStatus) {
-            const { aerial, zipcode, geoBoundary } = sortedStatus
-            return aerial && zipcode && geoBoundary
+            return store[fulfillmentStatus].status
          }
          return false
       })
