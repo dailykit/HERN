@@ -90,12 +90,12 @@ export const BRANDS = {
    `,
 
    SETTING: gql`
-      subscription brandSettings($brandId: Int!, $identifiers: [String!]) {
+      subscription brandSettings($brandId: Int!) {
          brands_brand_brandSetting(
             where: {
                _and: {
                   brandId: { _eq: $brandId }
-                  brandSetting: { identifier: { _in: $identifiers } }
+                  brandSetting: { isDynamicForm: { _eq: true } }
                }
             }
          ) {
@@ -104,6 +104,8 @@ export const BRANDS = {
             brandSetting {
                id
                identifier
+               type
+               isDynamicForm
             }
          }
       }
@@ -111,16 +113,20 @@ export const BRANDS = {
 
    //for seo settings(lazy query)
    SETTINGS: gql`
-      query brandSettings($identifier: String_comparison_exp!, $type: String_comparison_exp!, $brandId: Int_comparison_exp!) {
-  brandSettings(where: {identifier: $identifier, type: $type}) {
-    id
-    brand: brand_brandSettings(where: {brandId: $brandId}) {
-      brandId
-      value
-    }
-    configTemplate
-  }
-}
+      query brandSettings(
+         $identifier: String_comparison_exp!
+         $type: String_comparison_exp!
+         $brandId: Int_comparison_exp!
+      ) {
+         brandSettings(where: { identifier: $identifier, type: $type }) {
+            id
+            brand: brand_brandSettings(where: { brandId: $brandId }) {
+               brandId
+               value
+            }
+            configTemplate
+         }
+      }
    `,
    UPSERT_BRAND_COLLECTION: gql`
       mutation upsertBrandCollection(
