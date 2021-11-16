@@ -62,9 +62,10 @@ export const StepsNavbar = () => {
 
    const canGoToStep = route => {
       if (!has(routes, route) || !has(routes, router.pathname)) return
-      const status = user?.subscriptionOnboardStatus || 'REGISTER'
-      const statusKey = findKey(routes, { status })
-      const completedRoute = routes[statusKey]
+      // const status = user?.subscriptionOnboardStatus || 'REGISTER'
+      // const status = router.pathname
+      // const statusKey = findKey(routes, { status })
+      const completedRoute = routes[route]
       if (routes[route].level <= completedRoute?.level) {
          return true
       }
@@ -75,7 +76,7 @@ export const StepsNavbar = () => {
       if (route.includes('select-plan') && isClient) {
          localStorage.removeItem('plan')
       }
-      let path = route
+      let path = route.replace('/[brand]', '')
       if (canGoToStep(route)) {
          if (!isEmpty(user?.carts)) {
             const [cart] = user?.carts
@@ -114,7 +115,7 @@ export const StepsNavbar = () => {
                   goToStep={goToStep}
                   canGoToStep={canGoToStep}
                   isActive={currentStep === 0}
-                  route="/get-started/select-plan"
+                  route="/[brand]/get-started/select-plan"
                >
                   Select Plan
                </RenderStep>
@@ -122,7 +123,7 @@ export const StepsNavbar = () => {
                   goToStep={goToStep}
                   canGoToStep={canGoToStep}
                   isActive={currentStep === 33}
-                  route="/get-started/select-delivery"
+                  route="/[brand]/get-started/select-delivery"
                >
                   {steps.selectDelivery}
                </RenderStep>
@@ -130,7 +131,7 @@ export const StepsNavbar = () => {
                   goToStep={goToStep}
                   canGoToStep={canGoToStep}
                   isActive={currentStep === 66}
-                  route="/get-started/select-menu/"
+                  route="/[brand]/get-started/select-menu/"
                >
                   {steps.selectMenu}
                </RenderStep>
@@ -138,7 +139,7 @@ export const StepsNavbar = () => {
                   goToStep={goToStep}
                   canGoToStep={canGoToStep}
                   isActive={currentStep === 100}
-                  route="/get-started/checkout/"
+                  route="/[brand]/get-started/checkout/"
                >
                   {steps.checkout}
                </RenderStep>
