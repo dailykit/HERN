@@ -1,7 +1,6 @@
 import React from 'react'
-import { isEmpty } from 'lodash'
 import { useParams } from 'react-router-dom'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
+import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import { Card } from 'antd'
 import { Text } from '@dailykit/ui'
@@ -18,14 +17,13 @@ export const SettingsCard = ({ setting, title }) => {
         },
         onError: error => {
             toast.error('Something went wrong!')
-            console.log('error', error)
+            console.log('error in BRANDS.UPDATE_BRAND_SETTING', error)
             logger(error)
         },
     })
-
     React.useEffect(() => setConfig(setting?.value), [config])
     React.useEffect(() => {
-        if (setting?.value == null) {
+        if (setting == [] && setting?.value == null) {
             updateSetting({
                 variables: {
                     object: {
@@ -48,10 +46,10 @@ export const SettingsCard = ({ setting, title }) => {
             },
         })
     }
-
+    console.log(setting?.brandSetting?.id, setting?.value, title, "from setting Card")
     return (
         <Card
-            title={<Text as="h3">{title}</Text>}
+            title={title ? <Text as="h3">{title}</Text> : <Text as="h3" style={{ textAlign: "center" }}>Select a brand's setting to edit.</Text>}
             style={{ width: '100%' }}
         >
             <ConfigTemplateUI
