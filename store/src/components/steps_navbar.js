@@ -9,18 +9,17 @@ import { useUser } from '../context'
 import { getRoute, isClient } from '../utils'
 
 const routes = {
-   '/[brand]/get-started/register': { status: 'REGISTER', level: 0 },
    '/[brand]/get-started/select-plan': {
       status: 'SELECT_PLAN',
-      level: 25,
+      level: 0,
    },
    '/[brand]/get-started/select-delivery': {
       status: 'SELECT_DELIVERY',
-      level: 50,
+      level: 33,
    },
    '/[brand]/get-started/select-menu': {
       status: 'SELECT_MENU',
-      level: 75,
+      level: 66,
    },
    '/[brand]/get-started/checkout': { status: 'CHECKOUT', level: 100 },
 }
@@ -115,14 +114,6 @@ export const StepsNavbar = () => {
                   goToStep={goToStep}
                   canGoToStep={canGoToStep}
                   isActive={currentStep === 0}
-                  route="/get-started/register"
-               >
-                  {steps.register}
-               </RenderStep>
-               <RenderStep
-                  goToStep={goToStep}
-                  canGoToStep={canGoToStep}
-                  isActive={currentStep === 25}
                   route="/get-started/select-plan"
                >
                   Select Plan
@@ -130,7 +121,7 @@ export const StepsNavbar = () => {
                <RenderStep
                   goToStep={goToStep}
                   canGoToStep={canGoToStep}
-                  isActive={currentStep === 50}
+                  isActive={currentStep === 33}
                   route="/get-started/select-delivery"
                >
                   {steps.selectDelivery}
@@ -138,7 +129,7 @@ export const StepsNavbar = () => {
                <RenderStep
                   goToStep={goToStep}
                   canGoToStep={canGoToStep}
-                  isActive={currentStep === 75}
+                  isActive={currentStep === 66}
                   route="/get-started/select-menu/"
                >
                   {steps.selectMenu}
