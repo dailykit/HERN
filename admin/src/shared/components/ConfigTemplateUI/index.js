@@ -5,9 +5,8 @@ import {
    PlusIcon,
    ArrowDownIcon,
    ArrowUpIcon,
-   EditIcon, HelperText,
-   Flex,
-   Text
+   EditIcon,
+   Flex, Filler
 } from '@dailykit/ui'
 import { FieldUI } from './getFieldUI'
 import { EditModeProvider, useEditMode } from './EditModeContext'
@@ -182,10 +181,14 @@ const ConfigUI = ({ config, configSaveHandler }) => {
                   <div key={index}>{config}</div>
                ))}
             </div>
-            <HelperText type="hint" message={description || fields[0]?.props?.children?.props?.fieldDetail?.description || "This is brand setting."} />
+            {/* <HelperText type="hint" message={description || fields[0]?.props?.children?.props?.fieldDetail?.description} /> */}
          </>) : (
             <Flex container justifyContent="center" padding="16px">
-               <Text as="subtitle">(No config found)</Text>
+               <Filler
+                  message="No brand's setting selected yet"
+                  width="60%"
+                  height="60%"
+               />
             </Flex>
          )}
       </Styles.ConfigTemplateUI >
