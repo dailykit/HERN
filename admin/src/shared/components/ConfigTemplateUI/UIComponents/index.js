@@ -113,6 +113,7 @@ export const Toggle = ({ fieldDetail, marginLeft, path, onConfigChange }) => (
       </Flex>
       <Form.Toggle
          name={path}
+         style={{ marginRight: "-12px" }}
          onChange={e => onConfigChange(e, !fieldDetail.value)}
          value={fieldDetail.value}
          children={fieldDetail.value ? 'ON' : 'OFF'}
@@ -473,14 +474,15 @@ export const PhoneNumberSelector = ({
    value,
    configJSON
 }) => {
+   const [errorMessage, setErrorMessage] = React.useState([])
    React.useEffect(() => {
       if (isValidPhoneNumber(value.value)) {
-         setIsValid(true)
-      } else { setIsValid(false) }
+         setIsValid(true); setErrorMessage([])
+      } else { setIsValid(false); setErrorMessage(['Invalid number']) }
    }, [configJSON])
 
    return (
-      <>
+      <PhoneNumSelector>
          <Flex
             container
             justifyContent="space-between"
@@ -493,19 +495,26 @@ export const PhoneNumberSelector = ({
                </Form.Label>
                <Tooltip identifier="textArea_component_info" />
             </Flex>
-            {editMode ? <PhoneInput
-               id={path}
-               name={path}
-               initialValueFormat="national"
-               value={fieldDetail?.value}
-               onChange={result => {
-                  const e = { target: { name: path, value: result } }
-                  onConfigChange(e, result)
-               }}
-               placeholder="Enter your phone number"
-            /> : <Text as="h4">{fieldDetail?.value}</Text>}
+            <Form.Group>
+               {editMode ? <PhoneInput
+                  id={path}
+                  name={path}
+                  initialValueFormat="national"
+                  value={fieldDetail?.value}
+
+                  onChange={result => {
+                     const e = { target: { name: path, value: result } }
+                     onConfigChange(e, result)
+                  }}
+                  placeholder="Enter your phone number"
+               /> : <Text as="h4">{fieldDetail?.value}</Text>}
+               {errorMessage.length !== 0 && (
+                  <Form.Error> {errorMessage[0]}</Form.Error>
+               )}
+            </Form.Group>
          </Flex>
-      </>
+
+      </PhoneNumSelector>
    )
 }
 export const ImageUpload = props => {
@@ -622,4 +631,14 @@ export const ImageContainer = styled.div`
       float: right;
       margin: 4px 4px 0 0;
    }
+`
+export const PhoneNumSelector = styled.div`
+.PhoneInputInput{
+   border-radius: 6px;
+   border: 1px solid #e3e3e3;
+   text-align: left;
+   font-size: 16px;
+   padding: 0 12px;
+   height: 40px;
+}
 `
