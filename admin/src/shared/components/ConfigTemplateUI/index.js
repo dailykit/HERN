@@ -78,7 +78,10 @@ const ConfigUI = ({ config, configSaveHandler }) => {
             data-config-path={key}
             indentation={indentation}
          >
-            <h3>{title}</h3>
+            <div className="header">
+               <h2>{title}</h2>
+               {fieldData.description && <p>{fieldData.description}</p>}
+            </div>
             <button
                type="button"
                className="display-none"
@@ -94,7 +97,6 @@ const ConfigUI = ({ config, configSaveHandler }) => {
             >
                <ArrowDownIcon color="#367BF5" />
             </button>
-            {fieldData.description && <p>{fieldData.description}</p>}
             {setDescription(fieldData.description)}
          </Styles.ConfigTemplateHeader>
       )

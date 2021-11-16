@@ -393,12 +393,12 @@ export const RichText = ({ fieldDetail, marginLeft, path, onConfigChange, editMo
                {fieldDetail.label.toUpperCase()}
             </Form.Label>
             <Tooltip identifier="RichText_component_info" />
-         </Flex><>
+         </Flex><Form.Group>
             {editMode ? <RichTextEditor
                defaultValue={fieldDetail?.value || fieldDetail.default}
                onChange={html => onEditorChange(html)}
-            /> : <div>{ReactHTMLParser(fieldDetail?.value)}</div>}
-         </>
+            /> : <div style={{ background: "#f9f9f9", padding: "6px" }}>{ReactHTMLParser(fieldDetail?.value)}</div>}
+         </Form.Group>
       </Flex>
    )
 }
