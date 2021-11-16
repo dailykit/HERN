@@ -28,7 +28,7 @@ import { AvailableIcon, UnavailableIcon } from "../../assets/icons"
 
 export const getFieldUI = (fieldKey, configJSON, onConfigChange, isValid, setIsValid, configSaveHandler, editMode, value) => {
     const field = _.get(configJSON, fieldKey)
-    const indentation = `${fieldKey.split(".").length * 8}px`
+    const indentation = `${fieldKey.split(".").length * 6}px`
     let configUI
 
     if (field.dataType === "boolean" && field.userInsertType === "toggle") {
