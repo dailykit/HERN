@@ -215,7 +215,14 @@ export const CREATE_STRIPE_PAYMENT_METHOD = gql`
       paymentMethod: insert_platform_customerPaymentMethod_one(
          object: $object
       ) {
+         brand
+         last4
+         country
+         expMonth
+         expYear
+         funding
          keycloakId
+         cardHolderName
          paymentMethodId
       }
    }
