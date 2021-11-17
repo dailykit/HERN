@@ -35,7 +35,7 @@ export const Styles = {
       height: 480px;
    `,
    SettingsWrapper: styled.div`
-      width: 30%;
+      width: 25%;
       height: 100%;
       overflow:scroll;
       padding:16px;
@@ -51,9 +51,9 @@ export const Styles = {
    SettingWrapper: styled.div`
       background: #fff;
       border-radius: 4px;
-      width: 60%;
+      width: 50%;
       height: 100%;
-      margin: 8px;
+      margin: 16px 8px;
       padding: 16px 20px;
       height: calc(100% - 16px);
       overflow-y: auto;
@@ -71,6 +71,16 @@ export const Styles = {
       ::-webkit-scrollbar-thumb:hover {
          background: #919699;
       }
-   `
+   ` , LinkWrapper: styled.div`
+   width: 25%;
+   height: 100%;
+   overflow:scroll;
+   padding:16px;
+   text-align:center;
+   align-items:center;
+   ::-webkit-scrollbar {
+      display: none;
+  }
+`,
 }
 
