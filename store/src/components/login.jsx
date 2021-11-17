@@ -104,18 +104,16 @@ export const Login = props => {
             {forceLogin && (
                <div className="hern-login-v1__custom-warning">
                   You must login first to access this page.
-                  <Link href={getRoute('/')}>
-                     <span
-                     // onClick={() => {
-                     //    if (isClient) {
-                     //       window.location.href =
-                     //          window.location.origin + getRoute('/')
-                     //    }
-                     // }}
-                     >
-                        Go To Home
-                     </span>
-                  </Link>
+                  <span
+                     onClick={() => {
+                        if (isClient) {
+                           window.location.href =
+                              window.location.origin + getRoute('/')
+                        }
+                     }}
+                  >
+                     Go To Home
+                  </span>
                </div>
             )}
             <section>
