@@ -159,18 +159,18 @@ export const GET_FILE = gql`
          fileName
          fileType
          id
-         linkedCssFiles {
+         linkedCssFiles: attachedCSSFiles {
             position
-            cssFile {
+            cssFile: file {
                path
                fileName
                fileType
                id
             }
          }
-         linkedJsFiles {
+         linkedJsFiles: attachedJSFiles {
             position
-            jsFile {
+            jsFile: file {
                path
                fileName
                fileType

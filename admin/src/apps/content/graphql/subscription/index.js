@@ -133,20 +133,21 @@ export const PAGE_INFO = gql`
       }
    }
 `
-export const PAGE_LINKED_FILES = gql`
-   subscription PAGE_LINKED_FILES($pageId: Int!) {
-      brands_pagesLinkedFiles(
-         where: { pageId: { _eq: $pageId } }
-         order_by: { position: desc }
-      ) {
+export const LINKED_CSS_JS_FILES = gql`
+   subscription LINKED_CSS_JS_FILES($where: brands_jsCssFileLinks_bool_exp!) {
+      brands_jsCssFileLinks(where: $where) {
          id
-         fileId
-         fileType
+         brandId
+         brandPageId
+         brandPageModuleId
+         htmlFileId
+         linkedFileId
+         type
          position
-         linkedFile {
+         file {
             id
-            fileType
             fileName
+            path
          }
       }
    }
