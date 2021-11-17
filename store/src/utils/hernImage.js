@@ -2,7 +2,7 @@ import { React } from "react";
 import ReactImageFallback from "react-image-fallback";
 import { get_env } from './get_env'
 
-export const HernImage = (props) => {
+export const hernImage = (props) => {
   const imageSrc = props.imageSrc
   const isRemovebg = props.removeBg
   if(isRemovebg === false){

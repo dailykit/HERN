@@ -295,28 +295,30 @@ export const UPSERT_BRANDS_SEO = gql`
       }
    }
 `
-export const LINK_PAGE_FILES = gql`
-   mutation LINK_PAGE_FILES(
-      $objects: [brands_pagesLinkedFiles_insert_input!]!
+export const LINK_CSS_JS_FILES = gql`
+   mutation LINK_CSS_JS_FILES(
+      $objects: [brands_jsCssFileLinks_insert_input!]!
    ) {
-      insert_brands_pagesLinkedFiles(objects: $objects) {
+      insert_brands_jsCssFileLinks(objects: $objects) {
          returning {
-            id
-            fileId
-            fileType
+            htmlFileId
+            linkedFileId
+            position
+            brandPageId
+            brandId
          }
       }
    }
 `
 
-export const DELETE_PAGE_LINKED_FILES = gql`
-   mutation DELETE_PAGE_LINKED_FILES($id: Int!) {
-      delete_brands_pagesLinkedFiles(where: { id: { _eq: $id } }) {
+export const DELETE_LINKED_FILE = gql`
+   mutation DELETE_LINKED_FILE($id: Int!) {
+      delete_brands_jsCssFileLinks(where: { id: { _eq: $id } }) {
          returning {
-            fileId
-            linkedFile {
-               fileName
-            }
+            brandId
+            brandPageId
+            brandPageModuleId
+            htmlFileId
          }
       }
    }
