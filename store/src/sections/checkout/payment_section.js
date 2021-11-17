@@ -7,11 +7,15 @@ import { useUser } from '../../context'
 import { HelperBar } from '../../components'
 import { CheckIcon } from '../../assets/icons'
 import { PaymentTunnel } from './payment_tunnel'
+import { PaymentForm } from './payment_form'
+import { isClient, get_env } from '../../utils'
+import axios from 'axios'
 
 export const PaymentSection = () => {
    const { user } = useUser()
    const { configOf } = useConfig()
    const { state, dispatch } = usePayment()
+   const [intent, setIntent] = React.useState(null)
 
    React.useEffect(() => {
       if (user.subscriptionPaymentMethodId) {
@@ -23,6 +27,18 @@ export const PaymentSection = () => {
          })
       }
    }, [user, dispatch])
+
+   React.useEffect(() => {
+      if (user?.platform_customer?.paymentCustomerId && isClient && !intent) {
+         ;(async () => {
+            const setup_intent = await createSetupIntent(
+               user?.platform_customer?.paymentCustomerId
+            )
+            console.log({ setup_intent })
+            setIntent(setup_intent)
+         })()
+      }
+   }, [user])
 
    const toggleTunnel = value => {
       dispatch({
@@ -45,14 +61,9 @@ export const PaymentSection = () => {
             )}
          </header>
          {user?.platform_customer?.paymentMethods.length === 0 && (
-            <HelperBar type="info">
-               <HelperBar.SubTitle>
-                  Let's start with adding a payment method.
-               </HelperBar.SubTitle>
-               <HelperBar.Button onClick={() => toggleTunnel(true)}>
-                  Add Payment Method
-               </HelperBar.Button>
-            </HelperBar>
+            <div tw="w-full md:w-1/2">
+               <PaymentForm intent={intent} />
+            </div>
          )}
          <PaymentMethods>
             {user?.platform_customer?.paymentMethods.map(method => (
@@ -162,3 +173,17 @@ const Button = styled.button(
 const OutlineButton = styled(Button)`
    ${tw`bg-transparent hover:bg-green-600 text-green-600 border border-green-600 hover:text-white`}
 `
+const createSetupIntent = async customer => {
+   try {
+      console.log({ customer })
+      const origin = isClient ? window.location.origin : ''
+      const url = `${origin}/server/api/payment/setup-intent`
+      const { data } = await axios.post(url, {
+         customer,
+      })
+      console.log({ data: data.data })
+      return data.data
+   } catch (error) {
+      return error
+   }
+}

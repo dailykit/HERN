@@ -2,7 +2,7 @@ import React from 'react'
 import { useRouter } from 'next/router'
 
 import { useUser } from '../../../context'
-import { SEO, Layout } from '../../../components'
+import { SEO, Layout, LoginWarning } from '../../../components'
 import {
    getPageProps,
    getRoute,
@@ -19,7 +19,7 @@ const ReferralsPage = props => {
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
          isClient && localStorage.setItem('landed_on', location.href)
-         router.push(getRoute('/get-started/register'))
+         // router.push(getRoute('/get-started/register'))
       }
    }, [isAuthenticated, isLoading])
 
@@ -34,7 +34,11 @@ const ReferralsPage = props => {
    return (
       <Layout settings={settings} navigationMenus={navigationMenus}>
          <SEO seoSettings={seoSettings} />
-         <main>{renderPageContent(folds)}</main>
+         {!isAuthenticated && !isLoading ? (
+            <LoginWarning />
+         ) : (
+            <main>{renderPageContent(folds)}</main>
+         )}
       </Layout>
    )
 }

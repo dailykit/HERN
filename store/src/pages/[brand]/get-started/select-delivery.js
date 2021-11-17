@@ -1,7 +1,7 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import { useUser } from '../../../context'
-import { SEO, Layout } from '../../../components'
+import { SEO, Layout, LoginWarning } from '../../../components'
 import {
    getPageProps,
    getRoute,
@@ -17,7 +17,7 @@ const SelectDelivery = props => {
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
          isClient && localStorage.setItem('landed_on', location.href)
-         router.push(getRoute('/get-started/register'))
+         // router.push(getRoute('/get-started/register'))
       }
    }, [isAuthenticated, isLoading])
 
@@ -38,9 +38,11 @@ const SelectDelivery = props => {
    return (
       <Layout noHeader settings={settings}>
          <SEO seoSettings={seoSettings} />
-         <main className="hern-select-delivery">
-            {renderPageContent(folds)}
-         </main>
+         {!isAuthenticated && !isLoading ? (
+            <LoginWarning />
+         ) : (
+            <main>{renderPageContent(folds)}</main>
+         )}
       </Layout>
    )
 }

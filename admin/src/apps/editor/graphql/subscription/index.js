@@ -4,20 +4,24 @@ export const FILE_LINKS = gql`
    subscription FILE_LINKS($path: String!) {
       editor_file(where: { path: { _eq: $path } }) {
          fileId: id
-         linkedCssFiles(order_by: { position: desc_nulls_last }) {
+         linkedCssFiles: attachedJSFiles(
+            order_by: { position: desc_nulls_last }
+         ) {
             position
             id
-            cssFile {
+            cssFile: file {
                path
                fileName
                fileType
                cssFileId: id
             }
          }
-         linkedJsFiles(order_by: { position: desc_nulls_last }) {
+         linkedJsFiles: attachedJSFiles(
+            order_by: { position: desc_nulls_last }
+         ) {
             position
             id
-            jsFile {
+            jsFile: file {
                path
                fileName
                fileType
@@ -39,6 +43,14 @@ export const GET_FILES = gql`
             fileType
             path
          }
+      }
+   }
+`
+export const GET_FILE_ID_BY_PATH = gql`
+   subscription MyQuery($where: editor_file_bool_exp!) {
+      editor_file(where: $where) {
+         id
+         path
       }
    }
 `

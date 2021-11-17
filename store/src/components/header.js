@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { signOut } from 'next-auth/client'
-import { LoginWrapper } from '../utils'
+import { getProtectedRoutes, LoginWrapper } from '../utils'
 
 import { useUser } from '../context'
 import {
@@ -26,8 +26,18 @@ export const Header = ({ settings, navigationMenus }) => {
    const { width } = useWindowSize()
    const { isAuthenticated, user, isLoading } = useUser()
    const logout = async () => {
-      await signOut({ redirect: false })
-      // window.location.href = window.location.origin + getRoute('/')
+      const currentPathName = router.pathname
+      const isRouteProtected = Boolean(
+         getProtectedRoutes(true).find(x => x === currentPathName)
+      )
+      await signOut({
+         redirect: false,
+      })
+
+      if (isRouteProtected) {
+         // router.push(signOutData.url)
+         window.location.href = window.location.origin + getRoute('/')
+      }
    }
 
    const brand = settings['brand']['theme-brand']

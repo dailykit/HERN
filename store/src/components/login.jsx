@@ -43,6 +43,7 @@ import {
    getStoredReferralCode,
 } from '../utils/referrals'
 import gql from 'graphql-tag'
+import { useRouter } from 'next/router'
 
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
@@ -65,6 +66,7 @@ export const Login = props => {
    //singleLoginMethod --> only use one method for log in either email or phone num. (based on loginBy).
    //callbackURL --> callback url for signIn (string)
    //socialLogin --> need social login or not
+   const router = useRouter()
 
    //component state
    const [defaultLogin, setDefaultLogin] = useState(loginBy)
@@ -84,6 +86,7 @@ export const Login = props => {
                {(defaultLogin === 'email' || defaultLogin === 'otp') && (
                   <span>Log in</span>
                )}
+
                {defaultLogin === 'forgotPassword' && (
                   <span>Forgot Password</span>
                )}
@@ -98,6 +101,21 @@ export const Login = props => {
                   />
                )}
             </div>
+            {forceLogin && (
+               <div className="hern-login-v1__custom-warning">
+                  You must login first to access this page.
+                  <span
+                     onClick={() => {
+                        if (isClient) {
+                           window.location.href =
+                              window.location.origin + getRoute('/')
+                        }
+                     }}
+                  >
+                     Go To Home
+                  </span>
+               </div>
+            )}
             <section>
                {/* email login  or phone number login*/}
                {defaultLogin === 'email' && (

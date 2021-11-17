@@ -1665,3 +1665,21 @@ export const GET_BRAND_LOCATION = gql`
       }
    }
 `
+export const GET_JS_CSS_FILES = gql`
+   query GET_CSS_JS_FILES($where: brands_jsCssFileLinks_bool_exp!) {
+      brands_jsCssFileLinks(where: $where) {
+         id
+         brandId
+         brandPageId
+         brandPageModuleId
+         htmlFileId
+         position
+         file {
+            fileName
+            fileType
+            id
+            path
+         }
+      }
+   }
+`

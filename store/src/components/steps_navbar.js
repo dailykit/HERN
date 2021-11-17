@@ -6,21 +6,20 @@ import { signOut } from 'next-auth/client'
 
 import { useConfig } from '../lib'
 import { useUser } from '../context'
-import { getRoute, isClient } from '../utils'
+import { getProtectedRoutes, getRoute, isClient } from '../utils'
 
 const routes = {
-   '/[brand]/get-started/register': { status: 'REGISTER', level: 0 },
    '/[brand]/get-started/select-plan': {
       status: 'SELECT_PLAN',
-      level: 25,
+      level: 0,
    },
    '/[brand]/get-started/select-delivery': {
       status: 'SELECT_DELIVERY',
-      level: 50,
+      level: 33,
    },
    '/[brand]/get-started/select-menu': {
       status: 'SELECT_MENU',
-      level: 75,
+      level: 66,
    },
    '/[brand]/get-started/checkout': { status: 'CHECKOUT', level: 100 },
 }
@@ -58,14 +57,19 @@ export const StepsNavbar = () => {
 
    const logout = async () => {
       await signOut({ redirect: false })
-      window.location.href = window.location.origin + getRoute('/')
+      const currentPathName = router.pathname
+      if (getProtectedRoutes(true).find(x => x === currentPathName)) {
+         // router.push(getRoute('/'))
+         window.location.href = window.location.origin + getRoute('/')
+      }
    }
 
    const canGoToStep = route => {
       if (!has(routes, route) || !has(routes, router.pathname)) return
-      const status = user?.subscriptionOnboardStatus || 'REGISTER'
-      const statusKey = findKey(routes, { status })
-      const completedRoute = routes[statusKey]
+      // const status = user?.subscriptionOnboardStatus || 'REGISTER'
+      // const status = router.pathname
+      // const statusKey = findKey(routes, { status })
+      const completedRoute = routes[route]
       if (routes[route].level <= completedRoute?.level) {
          return true
       }
@@ -76,7 +80,7 @@ export const StepsNavbar = () => {
       if (route.includes('select-plan') && isClient) {
          localStorage.removeItem('plan')
       }
-      let path = route
+      let path = route.replace('/[brand]', '')
       if (canGoToStep(route)) {
          if (!isEmpty(user?.carts)) {
             const [cart] = user?.carts
@@ -115,31 +119,23 @@ export const StepsNavbar = () => {
                   goToStep={goToStep}
                   canGoToStep={canGoToStep}
                   isActive={currentStep === 0}
-                  route="/get-started/register"
-               >
-                  {steps.register}
-               </RenderStep>
-               <RenderStep
-                  goToStep={goToStep}
-                  canGoToStep={canGoToStep}
-                  isActive={currentStep === 25}
-                  route="/get-started/select-plan"
+                  route="/[brand]/get-started/select-plan"
                >
                   Select Plan
                </RenderStep>
                <RenderStep
                   goToStep={goToStep}
                   canGoToStep={canGoToStep}
-                  isActive={currentStep === 50}
-                  route="/get-started/select-delivery"
+                  isActive={currentStep === 33}
+                  route="/[brand]/get-started/select-delivery"
                >
                   {steps.selectDelivery}
                </RenderStep>
                <RenderStep
                   goToStep={goToStep}
                   canGoToStep={canGoToStep}
-                  isActive={currentStep === 75}
-                  route="/get-started/select-menu/"
+                  isActive={currentStep === 66}
+                  route="/[brand]/get-started/select-menu/"
                >
                   {steps.selectMenu}
                </RenderStep>
@@ -147,7 +143,7 @@ export const StepsNavbar = () => {
                   goToStep={goToStep}
                   canGoToStep={canGoToStep}
                   isActive={currentStep === 100}
-                  route="/get-started/checkout/"
+                  route="/[brand]/get-started/checkout/"
                >
                   {steps.checkout}
                </RenderStep>
