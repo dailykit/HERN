@@ -1,6 +1,6 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import { SEO, Layout } from '../../components'
+import { SEO, Layout, LoginWarning } from '../../components'
 import { useUser } from '../../context'
 import {
    getPageProps,
@@ -18,7 +18,7 @@ const MenuPage = props => {
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
          isClient && localStorage.setItem('landed_on', location.href)
-         router.push(getRoute('/get-started/register'))
+         // router.push(getRoute('/get-started/register'))
       }
    }, [isAuthenticated, isLoading])
 
@@ -33,7 +33,11 @@ const MenuPage = props => {
    return (
       <Layout settings={settings} navigationMenus={navigationMenus}>
          <SEO seoSettings={seoSettings} />
-         <main>{renderPageContent(folds)}</main>
+         {!isAuthenticated && !isLoading ? (
+            <LoginWarning />
+         ) : (
+            <main>{renderPageContent(folds)}</main>
+         )}
       </Layout>
    )
 }

@@ -7,7 +7,7 @@ import {
    renderPageContent,
    getPageProps,
 } from '../../../utils'
-import { SEO, Layout } from '../../../components'
+import { SEO, Layout, LoginWarning } from '../../../components'
 import { useUser } from '../../../context'
 
 const Checkout = props => {
@@ -17,7 +17,7 @@ const Checkout = props => {
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
          isClient && localStorage.setItem('landed_on', location.href)
-         router.push(getRoute('/get-started/register'))
+         // router.push(getRoute('/get-started/register'))
       }
    }, [isAuthenticated, isLoading])
 
@@ -32,7 +32,11 @@ const Checkout = props => {
    return (
       <Layout noHeader settings={settings}>
          <SEO seoSettings={seoSettings} />
-         <main className="hern-checkout">{renderPageContent(folds)}</main>
+         {!isAuthenticated && !isLoading ? (
+            <LoginWarning />
+         ) : (
+            <main>{renderPageContent(folds)}</main>
+         )}
       </Layout>
    )
 }

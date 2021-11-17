@@ -9,7 +9,7 @@ import {
    processExternalFiles,
    renderPageContent,
 } from '../../../utils'
-import { SEO, Layout } from '../../../components'
+import { SEO, Layout, LoginWarning } from '../../../components'
 
 const OrdersPage = props => {
    const router = useRouter()
@@ -19,7 +19,7 @@ const OrdersPage = props => {
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
          isClient && localStorage.setItem('landed_on', location.href)
-         router.push(getRoute('/get-started/register'))
+         // router.push(getRoute('/get-started/register'))
       }
    }, [isAuthenticated, isLoading])
 
@@ -34,7 +34,11 @@ const OrdersPage = props => {
    return (
       <Layout settings={settings} navigationMenus={navigationMenus}>
          <SEO seoSettings={seoSettings} />
-         <main>{renderPageContent(folds)}</main>
+         {!isAuthenticated && !isLoading ? (
+            <LoginWarning />
+         ) : (
+            <main>{renderPageContent(folds)}</main>
+         )}
       </Layout>
    )
 }
