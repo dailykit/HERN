@@ -82,7 +82,7 @@ export const TextBox = ({
                      }
                   }}
                   onChange={onConfigChange}
-                  value={fieldDetail?.value || fieldDetail.default}
+                  value={fieldDetail?.value}
                   placeholder={`Enter the ${fieldDetail.label.toLowerCase()}`}
                />
             ) : (
@@ -533,7 +533,6 @@ export const PhoneNumberSelector = ({
 
    React.useEffect(() => {
       const phoneNo = value.value || ""
-      console.log("phoneNo", phoneNo)
       if (isValidPhoneNumber(phoneNo)) {
          setIsValid(true)
          setErrorMessage([])
