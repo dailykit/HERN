@@ -383,6 +383,7 @@ const Servings = ({ state }) => {
                            overflow: 'hidden',
                            textOverflow: 'ellipsis',
                            color: '#367BF5',
+                           marginTop: '8px',
                         }}
                         to={`/products/ingredients/${option.ingredient.id}`}
                      >
@@ -511,6 +512,7 @@ const Servings = ({ state }) => {
                                        : false
                                  }
                                  index={index}
+                                 style={{ marginTop: '10px' }}
                               />
                            </div>
                         </SatchetCard>
@@ -793,7 +795,7 @@ const Servings = ({ state }) => {
                            </ServingRow>
                            {
                               <>
-                                 <Spacer size="40px" />
+                                 {/* <Spacer size="40px" /> */}
                                  <DragNDrop
                                     list={state.simpleRecipeIngredients}
                                     droppableId="simpleRecipeIngredientsDroppableId"
