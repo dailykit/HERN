@@ -6,7 +6,7 @@ import { signOut } from 'next-auth/client'
 
 import { useConfig } from '../lib'
 import { useUser } from '../context'
-import { getRoute, isClient } from '../utils'
+import { getProtectedRoutes, getRoute, isClient } from '../utils'
 
 const routes = {
    '/[brand]/get-started/select-plan': {
@@ -57,7 +57,11 @@ export const StepsNavbar = () => {
 
    const logout = async () => {
       await signOut({ redirect: false })
-      window.location.href = window.location.origin + getRoute('/')
+      const currentPathName = router.pathname
+      if (getProtectedRoutes(true).find(x => x === currentPathName)) {
+         // router.push(getRoute('/'))
+         window.location.href = window.location.origin + getRoute('/')
+      }
    }
 
    const canGoToStep = route => {
