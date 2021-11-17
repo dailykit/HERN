@@ -87,8 +87,8 @@ export const TextBox = ({
                }}
                onChange={onConfigChange}
                value={fieldDetail?.value || fieldDetail.default}
-               placeholder="Enter the orientation"
-            /> : <Text as="h3">{fieldDetail?.value || fieldDetail.default}</Text>}
+               placeholder={`Enter the ${fieldDetail.label.toLowerCase()}`}
+            /> : <Text as="h3" style={{ fontSize: "16px" }}>{fieldDetail?.value || fieldDetail.default}</Text>}
 
             {errorMessage.length !== 0 && (
                <Form.Error> {errorMessage[0]}</Form.Error>
@@ -640,5 +640,8 @@ export const PhoneNumSelector = styled.div`
    font-size: 16px;
    padding: 0 12px;
    height: 40px;
+}
+h4{
+   font-size:15px;
 }
 `
