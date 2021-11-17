@@ -57,3 +57,18 @@ mutation DELETE_API_KEY($apiKey: String) {
   }
 }
 `
+export const UPDATE_API_KEY_PERMISSIONS = gql`
+mutation UPDATE_API_KEY_PERMISSIONS($apiKey: String, $canAddProducts: Boolean, $canUpdateProducts: Boolean) {
+  update_developer_apiKey(where: {apiKey: {_eq: $apiKey}}, _set: {canAddProducts: $canAddProducts, canUpdateProducts: $canUpdateProducts}) {
+    affected_rows
+  }
+}
+`
+
+export const UPDATE_API_KEY_ACTIVATION_STATUS = gql`
+mutation UPDATE_API_KEY_ACTIVATION_STATUS($isDeactivated: Boolean, $apiKey: String) {
+  update_developer_apiKey(where: {apiKey: {_eq: $apiKey}}, _set: {isDeactivated: $isDeactivated}) {
+    affected_rows
+  }
+}
+`

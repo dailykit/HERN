@@ -113,3 +113,13 @@ export const  AVAILABLE_EVENTS = gql`
   }
   
   `
+
+  export const GET_API_KEY = gql`
+  subscription GET_API_KEY($apiKey: String = "") {
+    developer_apiKey(where: {apiKey: {_eq: $apiKey}}) {
+      canAddProducts
+      canUpdateProducts
+    }
+  }
+  `
+ 

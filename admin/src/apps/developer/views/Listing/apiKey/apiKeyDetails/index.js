@@ -3,7 +3,7 @@ import { Wrapper } from './styled';
 import { useApiKey } from '../state';
 import { Text, TextButton, Flex, HorizontalTab, HorizontalTabs, HorizontalTabList, HorizontalTabPanel, HorizontalTabPanels } from '@dailykit/ui';
 import { ApiKeyInfo } from './info';
-// import { ApiKeyPermissions } from './permissions';
+import { ApiKeyPermissions } from './permissions';
 
 
 const ApiKeyDetails = () => {
@@ -41,11 +41,11 @@ const ApiKeyDetails = () => {
                             <ApiKeyInfo />:
                             <Text as="h3">Select an api key to see details</Text>}
                         </HorizontalTabPanel>
-                        {/* <HorizontalTabPanel>
+                        <HorizontalTabPanel>
                             {state.apiKeySelected ?
                             <ApiKeyPermissions />:
                             <Text as="h3">Select an api key to see details</Text>}
-                        </HorizontalTabPanel> */}
+                        </HorizontalTabPanel>
                     </HorizontalTabPanels>
                     </HorizontalTabs>
                 </div>
