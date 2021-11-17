@@ -1,11 +1,11 @@
 import { graphQLClient } from '../lib'
 import {
-   getPageLevelFiles,
+   resolveCSSJSFiles,
    getSettings,
    foldsResolver,
    getSEOSettings,
 } from '.'
-import { NAVIGATION_MENU, BRAND_PAGE } from '../graphql'
+import { NAVIGATION_MENU, BRAND_PAGE, GET_JS_CSS_FILES } from '../graphql'
 
 export const getPageProps = async (params, route) => {
    const client = await graphQLClient()
@@ -28,8 +28,37 @@ export const getPageProps = async (params, route) => {
       dataByRoute.brands_brandPages[0]['brandPageModules']
    )
 
+   //All the linked CSS and JS files
+   const pageModules = dataByRoute.brands_brandPages[0]['brandPageModules']
+   const fileIds = {
+      htmlFileIds: pageModules
+         .filter(file => file.fileId !== null)
+         .map(file => file.fileId),
+      pageModules: pageModules.map(module => module.id),
+   }
+   const { brands_jsCssFileLinks: linkedCSSJSFiles } = await client.request(
+      GET_JS_CSS_FILES,
+      {
+         where: {
+            _or: [
+               { brandPage: { route: { _eq: route } } },
+               { brandPageModuleId: { _in: fileIds.htmlFileIds } },
+               { htmlFileId: { _in: fileIds.pageModules } },
+               {
+                  brand: {
+                     _or: [
+                        { isDefault: { _eq: true } },
+                        { domain: { _eq: params.brand } },
+                     ],
+                  },
+               },
+            ],
+         },
+      }
+   )
+
    //Linked files with page
-   const linkedFiles = await getPageLevelFiles(dataByRoute)
+   const linkedFiles = await resolveCSSJSFiles(linkedCSSJSFiles)
 
    //Navigation Menu
    const { brands_navigationMenuItem: navigationMenus } = await client.request(
