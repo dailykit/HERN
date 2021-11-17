@@ -46,7 +46,9 @@ export const Address = ({ fieldDetail, path, onConfigChange, editMode }) => {
                </Flex>
                <Form.Group>
                   <Text as="h3" style={{ fontSize: '15px' }}>
-                     {normalizeAddress(fieldDetail.value)}
+                     {normalizeAddress(fieldDetail.value)
+                        .slice(0, 28)
+                        .concat('...')}
                   </Text>
                </Form.Group>
             </Flex>
