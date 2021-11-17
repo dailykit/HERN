@@ -115,7 +115,6 @@ export const Toggle = ({ fieldDetail, marginLeft, path, onConfigChange }) => (
       </Flex>
       <Form.Toggle
          name={path}
-         style={{ marginRight: '-12px' }}
          onChange={e => onConfigChange(e, !fieldDetail.value)}
          value={fieldDetail.value}
          children={fieldDetail.value ? 'ON' : 'OFF'}

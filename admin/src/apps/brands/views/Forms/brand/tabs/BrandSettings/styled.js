@@ -7,25 +7,31 @@ export const Child = styled.div`
    align-items: center;
    justify-content: space-between;
    background: #ffffff;
+   cursor:pointer;
    border: 1px solid #f3f3f3;
    border: ${({ isActive }) =>
       isActive ? '2px solid #367BF5' : '1px solid #f3f3f3'};
    box-sizing: border-box;
    box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.13);
    color: #555b6e;
-   width: 80%;
+   width: 98%;
    font-size: 16px;
    border-radius: 2px;
    padding: 6px;
    margin-bottom: 10px;
    &:hover {
       box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+      background: #F9F9F9;
    }
    .identifier_name{
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      padding: 9px 12px;
       width: 100%;
+      font-weight: 500;
+      color: #555B6E;
+      letter-spacing: 0.44px;
+  }
+   .identifier_name:focus,.identifier_name:active{
+      color:#367BF5
    }
 `
 export const Styles = {
@@ -39,7 +45,6 @@ export const Styles = {
       height: 100%;
       overflow:scroll;
       padding:16px;
-      text-align:center;
       align-items:center;
       ::-webkit-scrollbar {
          display: none;
@@ -84,3 +89,20 @@ export const Styles = {
 `,
 }
 
+export const CollapsibleWrapper = styled.div`
+background: #F9F9F9;
+>div{
+   background: #F9F9F9;
+   :hover{
+      background: #fff;
+   }
+}
+button{
+   border-radius: 15px;
+   width: 22px;
+   height: 22px;
+   :hover{
+      background: #F3F3F3;
+   }
+}
+`

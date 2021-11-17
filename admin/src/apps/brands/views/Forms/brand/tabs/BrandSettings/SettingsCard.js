@@ -2,8 +2,6 @@ import React from 'react'
 import { useParams } from 'react-router-dom'
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
-import { Card } from 'antd'
-import { Text } from '@dailykit/ui'
 import { BRANDS } from '../../../../../graphql'
 import { logger } from '../../../../../../../shared/utils'
 import ConfigTemplateUI from '../../../../../../../shared/components/ConfigTemplateUI'
@@ -46,17 +44,13 @@ export const SettingsCard = ({ setting, title }) => {
             },
         })
     }
-    console.log(setting?.brandSetting?.id, setting?.value, title, "from setting Card")
+
     return (
-        <Card
-            title={title ? <Text as="h3">{title}</Text> : <Text as="h3" style={{ textAlign: "center" }}>Select a brand's setting to edit.</Text>}
-            style={{ width: '100%' }}
-        >
-            <ConfigTemplateUI
-                config={config}
-                setConfig={setConfig}
-                configSaveHandler={saveInfo}
-            />
-        </Card>
+        <ConfigTemplateUI
+            config={config}
+            setConfig={setConfig}
+            configSaveHandler={saveInfo}
+            identifier={title}
+        />
     )
 }

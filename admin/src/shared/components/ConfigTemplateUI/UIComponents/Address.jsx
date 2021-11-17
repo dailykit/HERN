@@ -1,9 +1,10 @@
 import React from 'react'
 import { isEmpty } from 'lodash'
 import styled from 'styled-components'
+import { Tooltip } from 'antd'
 import { Spacer, Text, Form } from '@dailykit/ui'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
-import { Flex, Tooltip } from '../../index'
+import { Flex } from '../../index'
 import { useScript } from '../../../utils/useScript'
 import { get_env } from '../../../utils'
 
@@ -21,7 +22,6 @@ export const Address = ({ fieldDetail, path, onConfigChange, editMode }) => {
                   <Form.Label title={fieldDetail.label} htmlFor="address">
                      {fieldDetail.label.toUpperCase()}
                   </Form.Label>
-                  <Tooltip identifier="textArea_component_info" />
                </Flex>
                <Text as="p">{normalizeAddress(fieldDetail.value)}</Text>
                <AddressForm
@@ -42,14 +42,18 @@ export const Address = ({ fieldDetail, path, onConfigChange, editMode }) => {
                   <Form.Label title={fieldDetail.label} htmlFor="text">
                      {fieldDetail.label.toUpperCase()}
                   </Form.Label>
-                  <Tooltip identifier="text_component_info" />
                </Flex>
                <Form.Group>
-                  <Text as="h3" style={{ fontSize: '15px' }}>
-                     {normalizeAddress(fieldDetail.value)
-                        .slice(0, 28)
-                        .concat('...')}
-                  </Text>
+                  <Tooltip
+                     placement="bottom"
+                     title={normalizeAddress(fieldDetail.value)}
+                  >
+                     <Text as="h3" style={{ fontSize: '15px' }}>
+                        {normalizeAddress(fieldDetail.value)
+                           .slice(0, 28)
+                           .concat('...')}
+                     </Text>
+                  </Tooltip>
                </Form.Group>
             </Flex>
          )}
@@ -149,7 +153,6 @@ export const AddressForm = ({ path, address, onConfigChange }) => {
                            <Form.Label htmlFor="search" title="search">
                               <Flex container alignItems="center">
                                  Search on Google
-                                 <Tooltip identifier="brand_address_googleSearch" />
                               </Flex>
                            </Form.Label>
                            <Form.Text id="search" name="search" {...props} />
@@ -166,7 +169,6 @@ export const AddressForm = ({ path, address, onConfigChange }) => {
                      <Form.Label htmlFor="line1" title="line1">
                         <Flex container alignItems="center">
                            Line 1
-                           <Tooltip identifier="brand_address_line1" />
                         </Flex>
                      </Form.Label>
                      <Form.Text
@@ -187,7 +189,6 @@ export const AddressForm = ({ path, address, onConfigChange }) => {
                      <Form.Label htmlFor="line2" title="line2">
                         <Flex container alignItems="center">
                            Line 2
-                           <Tooltip identifier="brand_address_line2" />
                         </Flex>
                      </Form.Label>
                      <Form.Text
@@ -209,7 +210,6 @@ export const AddressForm = ({ path, address, onConfigChange }) => {
                      <Form.Label htmlFor="city" title="city">
                         <Flex container alignItems="center">
                            City
-                           <Tooltip identifier="brand_address_city" />
                         </Flex>
                      </Form.Label>
                      <Form.Text
@@ -230,7 +230,6 @@ export const AddressForm = ({ path, address, onConfigChange }) => {
                      <Form.Label htmlFor="state" title="state">
                         <Flex container alignItems="center">
                            State
-                           <Tooltip identifier="brand_address_state" />
                         </Flex>
                      </Form.Label>
                      <Form.Text
@@ -251,7 +250,6 @@ export const AddressForm = ({ path, address, onConfigChange }) => {
                      <Form.Label htmlFor="country" title="country">
                         <Flex container alignItems="center">
                            Country
-                           <Tooltip identifier="brand_address_country" />
                         </Flex>
                      </Form.Label>
                      <Form.Text
@@ -272,7 +270,6 @@ export const AddressForm = ({ path, address, onConfigChange }) => {
                      <Form.Label htmlFor="zipcode" title="zipcode">
                         <Flex container alignItems="center">
                            ZIP
-                           <Tooltip identifier="brand_address_zip" />
                         </Flex>
                      </Form.Label>
                      <Form.Text

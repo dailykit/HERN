@@ -11,7 +11,7 @@ import {
 import {
    Flex, Tooltip
 } from '../../../../../../../shared/components'
-import { Child, Styles } from './styled'
+import { Child, Styles, CollapsibleWrapper } from './styled'
 import { SettingsCard } from './SettingsCard'
 import { Card } from 'antd'
 import LinkFiles from '../../../../../../content/views/Forms/Page/ContentSelection/components/LinkFiles'
@@ -53,7 +53,7 @@ export const BrandSettings = () => {
 
    if (error) {
       toast.error('Something went wrong')
-      console.log("error in Brands.Setting query", error)
+      console.log("error in Brands.Setting", error)
    }
    const openConfig = data => {
       setSetting(data)
@@ -79,16 +79,16 @@ export const BrandSettings = () => {
                      return (<CollapsibleComponent key={type} heading={(type).charAt(0).toUpperCase() + (type).slice(1)}>
                         {settings[type].map((item) => {
                            return (
-                              <Child key={item.brandSetting.id}>
-                                 <div className="identifier_name">
+                              <Child key={item.brandSetting.id} onClick={() => openConfig(item)}>
+                                 <div className="identifier_name" tabindex="1">
                                     {item?.brandSetting?.identifier || ''}
                                  </div>
-                                 <IconButton
+                                 {/* <IconButton
                                     type="ghost"
-                                    onClick={() => openConfig(item)}
+                                 // style={{background: 'transparent'}} size="sm" type="solid"
                                  >
                                     <PlusIcon color="#555b6e" size="20" />
-                                 </IconButton>
+                                 </IconButton> */}
                               </Child>)
                         })}
                      </CollapsibleComponent>)
@@ -133,25 +133,28 @@ export const BrandSettings = () => {
 
 
 const CollapsibleComponent = ({ children, heading }) => (
-   <Collapsible
-      isHeadClickable={true}
-      head={
-         <Flex
-            margin="10px 0"
-            container
-            alignItems="center"
-            justifyContent="center"
-            width="100%"
-         >
-            <Text as="title" style={{ color: "#575b5d" }}> {heading} </Text>
-         </Flex>
-      }
-      body={
-         <Flex margin="10px 0" container flexDirection="column" alignItems="center">
-            {children}
-         </Flex>
-      }
-      defaultOpen={false}
-      isDraggable={false}
-   />
+   <CollapsibleWrapper>
+      <Collapsible
+         className="collapsible"
+         isHeadClickable={true}
+         head={
+            <Flex
+               margin="10px 0"
+               container
+               alignItems="center"
+               width="100%"
+               className="collapsible_head"
+            >
+               <Text as="title" style={{ color: "#555B6E", padding: "8px" }}> {heading} </Text>
+            </Flex>
+         }
+         body={
+            <Flex margin="10px 0" container flexDirection="column" >
+               {children}
+            </Flex>
+         }
+         defaultOpen={false}
+         isDraggable={false}
+      />
+   </CollapsibleWrapper>
 )
