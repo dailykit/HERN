@@ -7,7 +7,7 @@ import {
    renderPageContent,
    processExternalFiles,
 } from '../../../utils'
-import { SEO, Layout } from '../../../components'
+import { SEO, Layout, LoginWarning } from '../../../components'
 import { useUser } from '../../../context'
 
 const SelectPlan = props => {
@@ -17,7 +17,7 @@ const SelectPlan = props => {
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
          isClient && localStorage.setItem('landed_on', location.href)
-         router.push(getRoute('/get-started/register'))
+         // router.push(getRoute('/get-started/register'))
       }
    }, [isAuthenticated, isLoading])
 
@@ -41,9 +41,11 @@ const SelectPlan = props => {
    return (
       <Layout settings={settings}>
          <SEO seoSettings={seoSettings} />
-         <main className="hern-get-started-select-plan__main">
-            {renderPageContent(folds)}
-         </main>
+         {!isAuthenticated && !isLoading ? (
+            <LoginWarning />
+         ) : (
+            <main>{renderPageContent(folds)}</main>
+         )}
       </Layout>
    )
 }

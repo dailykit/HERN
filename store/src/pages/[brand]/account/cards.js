@@ -1,5 +1,5 @@
 import React from 'react'
-import { Layout, SEO } from '../../../components'
+import { Layout, LoginWarning, SEO } from '../../../components'
 import {
    getPageProps,
    processExternalFiles,
@@ -17,7 +17,7 @@ const ManageCardsPage = props => {
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
          isClient && localStorage.setItem('landed_on', location.href)
-         router.push(getRoute('/get-started/register'))
+         // router.push(getRoute('/get-started/register'))
       }
    }, [isAuthenticated, isLoading])
 
@@ -32,7 +32,11 @@ const ManageCardsPage = props => {
    return (
       <Layout settings={settings} navigationMenus={navigationMenus}>
          <SEO seoSettings={seoSettings} />
-         <main>{renderPageContent(folds)}</main>
+         {!isAuthenticated && !isLoading ? (
+            <LoginWarning />
+         ) : (
+            <main>{renderPageContent(folds)}</main>
+         )}
       </Layout>
    )
 }

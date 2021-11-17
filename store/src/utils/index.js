@@ -26,4 +26,6 @@ export * from './locationSelectorWrapper'
 export * from './locationUtils'
 export * from './getPageLevelFile'
 export * from './processExternalFiles'
+export * from './getProtectedRoutes'
 export * from './resolveCSSJSFiles'
+

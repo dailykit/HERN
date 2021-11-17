@@ -37,6 +37,20 @@ const reducers = (state, { type, payload }) => {
                subscriptionOnboardStatus: 'REGISTER',
             },
          }
+      case 'SET_PAYMENT_METHOD':
+         return {
+            ...state,
+            user: {
+               ...state.user,
+               platform_customer: {
+                  ...state.user.platform_customer,
+                  paymentMethods: [
+                     ...state.user.platform_customer.paymentMethods,
+                     payload,
+                  ],
+               },
+            },
+         }
    }
 }
 
@@ -97,7 +111,6 @@ export const UserProvider = ({ children }) => {
          },
       }
    )
-
    useSubscription(LOYALTY_POINTS, {
       skip: !(brand.id && state.user?.keycloakId),
       variables: {
