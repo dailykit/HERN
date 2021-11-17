@@ -1,10 +1,32 @@
 import React from 'react'
 import _ from 'lodash'
-import { getFieldUI } from './getFieldUI'
+import {
+   ComboButton,
+   PlusIcon,
+   ArrowDownIcon,
+   ArrowUpIcon,
+   EditIcon,
+   Flex, Filler
+} from '@dailykit/ui'
+import { FieldUI } from './getFieldUI'
+import { EditModeProvider, useEditMode } from './EditModeContext'
+import { Styles } from './styled'
 
-const ConfigTemplateUI = ({ config, setConfig, configSaveHandler }) => {
+const ConfigTemplateUI = props => {
+   return (
+      <EditModeProvider>
+         <ConfigUI {...props} />
+      </EditModeProvider>
+   )
+}
+
+const ConfigUI = ({ config, configSaveHandler }) => {
    const [configJSON, setConfigJSON] = React.useState({})
    const [fields, setFields] = React.useState([])
+   const [description, setDescription] = React.useState("")
+   const [isValid, setIsValid] = React.useState(true)
+
+   const { editMode, setEditMode } = useEditMode()
    const elements = []
    const onConfigChange = (e, value) => {
       let updatedConfig
@@ -23,31 +45,78 @@ const ConfigTemplateUI = ({ config, setConfig, configSaveHandler }) => {
          ...updatedConfig,
       }))
    }
+
+   const handleToggle = key => {
+      const up = document.querySelector(`[data-arrow-diretion='down-${key}']`)
+      const down = document.querySelector(`[data-arrow-diretion='up-${key}']`)
+      up.classList.toggle('display-none')
+      down.classList.toggle('display-none')
+      const upArrows = document.querySelectorAll(
+         `[data-arrow-diretion^='up-${key}.']`
+      )
+      const downArrows = document.querySelectorAll(
+         `[data-arrow-diretion^='down-${key}.']`
+      )
+      const elements = document.querySelectorAll(
+         `[data-config-path^="${key}."]`
+      )
+      const isOpen = up.classList.contains('display-none')
+      elements.forEach(dom => {
+         dom.classList.remove('display-none')
+         if (isOpen) {
+            dom.classList.add('display-none')
+            upArrows.forEach(node => node.classList.add('display-none'))
+            downArrows.forEach(node => node.classList.remove('display-none'))
+         }
+      })
+   }
    const getHeaderUI = ({ title, fieldData, key }) => {
       const indentation = `${key.split('.').length * 8}px`
       return (
-         <div
+         <Styles.ConfigTemplateHeader
             id={key}
-            style={{
-               marginLeft: indentation,
-            }}
+            data-config-path={key}
+            indentation={indentation}
          >
-            <h1>{title.toUpperCase()}</h1>
-            {fieldData.description && <p>{fieldData.description}</p>}
-         </div>
+            <div className="header">
+               <h2>{title}</h2>
+               {fieldData.description && <p>{fieldData.description}</p>}
+            </div>
+            <button
+               type="button"
+               className="display-none"
+               onClick={() => handleToggle(key)}
+               data-arrow-diretion={`up-${key}`}
+            >
+               <ArrowUpIcon />
+            </button>
+            <button
+               type="button"
+               onClick={() => handleToggle(key)}
+               data-arrow-diretion={`down-${key}`}
+            >
+               <ArrowDownIcon color="#367BF5" />
+            </button>
+            {setDescription(fieldData.description)}
+         </Styles.ConfigTemplateHeader>
       )
    }
+
    const showConfigUI = (configData, rootKey) => {
       _.forOwn(configData, (value, key) => {
          const isFieldObject = _.has(value, 'value')
          if (isFieldObject) {
             const updatedRootkey = rootKey ? `${rootKey}.${key}` : key
             elements.push(
-               getFieldUI({
-                  key: updatedRootkey,
-                  configJSON,
-                  onConfigChange,
-               })
+               <FieldUI
+                  fieldKey={updatedRootkey}
+                  configJSON={configJSON}
+                  onConfigChange={onConfigChange}
+                  value={value}
+                  configSaveHandler={configSaveHandler}
+                  isValid={isValid}
+                  setIsValid={setIsValid}
+               />
             )
          } else {
             const updatedRootkey = rootKey ? `${rootKey}.${key}` : key
@@ -76,23 +145,56 @@ const ConfigTemplateUI = ({ config, setConfig, configSaveHandler }) => {
    }, [configJSON])
 
    React.useEffect(() => {
-      const updatedConfigData = _.defaultsDeep(config, configJSON)
-      setConfigJSON(updatedConfigData)
-      setConfig(updatedConfigData)
+      if (config) {
+         setConfigJSON(config)
+      } else {
+         setConfigJSON({})
+      }
       setFields([])
    }, [config])
 
+   const handleEdit = () => {
+      if (editMode) {
+         configSaveHandler(configJSON)
+         setEditMode(false)
+      } else {
+         setEditMode(true)
+      }
+   }
    return (
-      <>
-         <button type="button" onClick={() => configSaveHandler(configJSON)}>
-            Save
-         </button>
-         <div>
-            {fields.map((config, index) => (
-               <div key={index}>{config}</div>
-            ))}
-         </div>
-      </>
+      <Styles.ConfigTemplateUI>
+         {config ? (<>
+            <Styles.Header>
+               {editMode ? (<>
+                  <Styles.Heading>Save your changes</Styles.Heading>
+                  <ComboButton style={{ marginRight: "-26px" }} type="solid" size="sm" disabled={!isValid} onClick={handleEdit}>
+                     <PlusIcon color="#fff" />  Save
+                  </ComboButton></>
+               ) : (
+                  <>
+                     <Styles.Heading>Edit your brandsetting</Styles.Heading>
+                     <ComboButton style={{ marginRight: "-26px" }} type="ghost" size="sm" onClick={handleEdit}>
+                        <EditIcon color="#367bf5" /> Edit
+                     </ComboButton></>
+               )}
+            </Styles.Header >
+            <div>
+               {fields.map((config, index) => (
+                  <div key={index}>{config}</div>
+               ))}
+            </div>
+            {/* <HelperText type="hint" message={description || fields[0]?.props?.children?.props?.fieldDetail?.description} /> */}
+         </>) : (
+            <Flex container justifyContent="center" padding="16px">
+               <Filler
+                  message="No brand's setting selected yet"
+                  width="60%"
+                  height="60%"
+               />
+            </Flex>
+         )}
+      </Styles.ConfigTemplateUI >
    )
 }
+
 export default ConfigTemplateUI

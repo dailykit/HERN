@@ -25,20 +25,20 @@ export const ConfigTunnel = () => {
          payload: { tunnel: false },
       })
 
-   // const links = React.useMemo(
-   //    () => ({
-   //       scale: ['weight simulation'],
-   //       print: ['print simulation'],
-   //       kot: [
-   //          'group by stations',
-   //          'group by product type',
-   //          'print automatically',
-   //          'default kot printer',
-   //       ],
-   //       station: ['selected station'],
-   //    }),
-   //    []
-   // )
+   const links = React.useMemo(
+      () => ({
+         scale: ['weight simulation'],
+         print: ['print simulation'],
+         kot: [
+            'group by stations',
+            'group by product type',
+            'print automatically',
+            'default kot printer',
+         ],
+         station: ['selected station'],
+      }),
+      []
+   )
 
    return (
       <>
@@ -53,8 +53,8 @@ export const ConfigTunnel = () => {
          />
          <Main>
             <ScrollSection height="calc(100vh - 104px)" width="100vw">
-               {/* <ScrollSection.Aside links={links} /> */}
-               <Main>
+               <ScrollSection.Aside links={links} />
+               <ScrollSection.Main>
                   <ScrollSection.Section hash="scale" title="Scale">
                      <section id="weight simulation">
                         <WeightSimulation />
@@ -90,7 +90,7 @@ export const ConfigTunnel = () => {
                         <Station />
                      </section>
                   </ScrollSection.Section>
-               </Main>
+               </ScrollSection.Main>
             </ScrollSection>
          </Main>
       </>

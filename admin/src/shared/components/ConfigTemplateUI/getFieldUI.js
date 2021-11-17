@@ -1,8 +1,13 @@
 import React from "react"
 import _ from "lodash"
 import {
+    Form,
+    Flex,
+    IconButton
+} from '@dailykit/ui'
+import {
     ColorPicker,
-    Text,
+    TextBox,
     Toggle,
     Number,
     Checkbox,
@@ -12,30 +17,58 @@ import {
     TextArea,
     TextWithSelect,
     NumberWithSelect,
+    PhoneNumberSelector,
+    ImageUpload,
+    RichText,
+    CollectionSelector
 } from "./UIComponents"
+import { Address } from "./UIComponents/Address"
+import { useEditMode } from './EditModeContext'
+import { AvailableIcon, UnavailableIcon } from "../../assets/icons"
 
-export const getFieldUI = ({ key, configJSON, onConfigChange }) => {
-    const field = _.get(configJSON, key)
-    const indentation = `${key.split(".").length * 8}px`
-    let configUi
+export const getFieldUI = (fieldKey, configJSON, onConfigChange, isValid, setIsValid, configSaveHandler, editMode, value) => {
+    const field = _.get(configJSON, fieldKey)
+    const indentation = `${fieldKey.split(".").length * 6}px`
+    let configUI
+
     if (field.dataType === "boolean" && field.userInsertType === "toggle") {
-        configUi = (
-            <Toggle
+        configUI = (
+            <>{editMode ? <Toggle
                 fieldDetail={field}
                 marginLeft={indentation}
-                path={key}
+                path={fieldKey}
                 onConfigChange={(name, value) => onConfigChange(name, value)}
-            />
+            /> : (<Flex
+                container
+                justifyContent="space-between"
+                alignItems="center"
+                margin={`0 0 0 ${indentation}`}
+            >
+                <Flex container alignItems="flex-end">
+                    <Form.Label title={value.label} htmlFor="toggleValue">
+                        {value.label.toUpperCase()}
+                    </Form.Label>
+                </Flex>
+                <IconButton
+                    type="ghost"
+                    style={{ marginRight: "-20px" }}
+                    title={value.value && value.default ? 'available' : 'unavailable'}
+                >
+                    {value.value && value.default ? <AvailableIcon /> : <UnavailableIcon />}
+                </IconButton>
+            </Flex>
+            )}</>
+
         )
     } else if (
         field.dataType === "color" &&
         field.userInsertType === "colorPicker"
     ) {
-        configUi = (
+        configUI = (
             <ColorPicker
                 fieldDetail={field}
                 marginLeft={indentation}
-                path={key}
+                path={fieldKey}
                 onConfigChange={onConfigChange}
             />
         )
@@ -43,89 +76,106 @@ export const getFieldUI = ({ key, configJSON, onConfigChange }) => {
         field.dataType === "text" &&
         field.userInsertType === "textField"
     ) {
-        configUi = (
-            <Text
+        configUI = (
+            <TextBox
                 fieldDetail={field}
                 marginLeft={indentation}
-                path={key}
+                path={fieldKey}
+                validationType={field?.validationType}
+                isValid={isValid}
+                setIsValid={setIsValid}
                 onConfigChange={onConfigChange}
+                editMode={editMode}
+                value={value}
             />
         )
     } else if (
         field.dataType === "number" &&
         field.userInsertType === "numberField"
     ) {
-        configUi = (
+        configUI = (
             <Number
                 fieldDetail={field}
                 marginLeft={indentation}
-                path={key}
+                path={fieldKey}
                 onConfigChange={onConfigChange}
+                editMode={editMode}
             />
         )
     } else if (
         field.dataType === "boolean" &&
         field.userInsertType === "checkbox"
     ) {
-        configUi = (
-            <Checkbox
-                fieldDetail={field}
-                marginLeft={indentation}
-                path={key}
-                onConfigChange={onConfigChange}
-            />
+        configUI = (
+            <>
+                {editMode ? (
+                    <Checkbox
+                        fieldDetail={field}
+                        marginLeft={indentation}
+                        path={fieldKey}
+                        onConfigChange={onConfigChange}
+                    />
+                ) : (
+                    <p>
+                        {value.label} {value.value === true ? 'YES' : 'NO'}
+                    </p>
+                )}
+            </>
         )
     } else if (
         field.dataType === "date" &&
         field.userInsertType === "datePicker"
     ) {
-        configUi = (
+        configUI = (
             <Date
                 fieldDetail={field}
                 marginLeft={indentation}
-                path={key}
+                path={fieldKey}
                 onConfigChange={onConfigChange}
+                editMode={editMode}
             />
         )
     } else if (field.dataType === "time" && field.userInsertType === "time") {
-        configUi = (
+        configUI = (
             <Time
                 fieldDetail={field}
                 marginLeft={indentation}
-                path={key}
+                path={fieldKey}
                 onConfigChange={onConfigChange}
+                editMode={editMode}
             />
         )
     } else if (
         field.dataType === "select" &&
         field.userInsertType === "dropdown"
     ) {
-        configUi = (
+        configUI = (
             <Select
                 fieldDetail={field}
                 marginLeft={indentation}
-                path={key}
+                path={fieldKey}
                 onConfigChange={onConfigChange}
             />
         )
     } else if (field.dataType === "text" && field.userInsertType === "textArea") {
-        configUi = (
+        configUI = (
             <TextArea
                 fieldDetail={field}
                 marginLeft={indentation}
-                path={key}
+                path={fieldKey}
                 onConfigChange={onConfigChange}
+                editMode={editMode}
             />
         )
     } else if (
         field.dataType === "text" &&
         field.userInsertType === "textWithSelect"
     ) {
-        configUi = (
+        configUI = (
             <TextWithSelect
                 fieldDetail={field}
                 marginLeft={indentation}
-                path={key}
+                path={fieldKey}
                 onConfigChange={onConfigChange}
             />
         )
@@ -133,14 +183,101 @@ export const getFieldUI = ({ key, configJSON, onConfigChange }) => {
         field.dataType === "number" &&
         field.userInsertType === "numberWithSelect"
     ) {
-        configUi = (
+        configUI = (
             <NumberWithSelect
                 fieldDetail={field}
                 marginLeft={indentation}
-                path={key}
+                path={fieldKey}
                 onConfigChange={onConfigChange}
             />
         )
     }
-    return configUi
+    else if (
+        field.dataType === "phoneNumber" &&
+        field.userInsertType === "phoneNumber"
+    ) {
+        configUI = (
+            <PhoneNumberSelector
+                setIsValid={setIsValid}
+                isValid={isValid}
+                fieldDetail={field}
+                marginLeft={indentation}
+                path={fieldKey}
+                onConfigChange={onConfigChange}
+                editMode={editMode}
+                value={value}
+                configJSON={configJSON}
+            />
+        )
+    }
+
+    else if (
+        field.dataType === "address" &&
+        field.userInsertType === "addressField"
+    ) {
+        configUI = (
+            <Address
+                fieldDetail={field}
+                marginLeft={indentation}
+                path={fieldKey}
+                onConfigChange={onConfigChange}
+                configSaveHandler={configSaveHandler}
+                configJSON={configJSON}
+                editMode={editMode}
+            />
+        )
+    }
+    else if (
+        field.dataType === "imageUpload" &&
+        field.userInsertType === "imageUpload"
+    ) {
+        configUI = (
+            <ImageUpload
+                fieldDetail={field}
+                marginLeft={indentation}
+                path={fieldKey}
+                onConfigChange={onConfigChange}
+                configSaveHandler={configSaveHandler}
+                configJSON={configJSON}
+                editMode={editMode}
+            />
+        )
+    }
+    else if (
+        field.dataType === 'html' &&
+        field.userInsertType === 'richTextEditor'
+    ) {
+        configUI = (
+            <RichText
+                fieldDetail={field}
+                marginLeft={indentation}
+                path={fieldKey}
+                onConfigChange={onConfigChange}
+                editMode={editMode}
+            />
+        )
+    } else if (field.userInsertType === 'collectionSelector') {
+        configUI = (
+            <CollectionSelector
+                fieldDetail={field}
+                marginLeft={indentation}
+                path={fieldKey}
+                onConfigChange={onConfigChange}
+            />
+        )
+    }
+    return <div data-config-path={fieldKey}>{configUI}</div>
+}
+
+export const FieldUI = ({ fieldKey, configJSON,
+    onConfigChange,
+    value,
+    configSaveHandler,
+    isValid, setIsValid }) => {
+    const { editMode } = useEditMode()
+    return (
+        <div>
+            {getFieldUI(fieldKey, configJSON, onConfigChange, isValid, setIsValid, configSaveHandler, editMode, value)}
+        </div>
+    )
 }

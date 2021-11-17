@@ -2,15 +2,14 @@ import axios from 'axios'
 import { client } from '../lib/graphql'
 import get_env from '../../get_env'
 
-const GET_STORE_SETTING = `
-query GET_STORE_SETTING($brandId: Int, $identifier: String!) {
-   brands_brand_subscriptionStoreSetting(where: {subscriptionStoreSetting: {identifier: {_eq: $identifier}}, _or: {brandId: {_eq: $brandId}, brand: {isDefault: {_eq: true}}}}) {
+const GET_BRAND_SETTING = `
+query GET_BRAND_SETTING($brandId: Int, $identifier: String!) {
+   brands_brand_brandSetting(where: {brandSetting: {identifier: {_eq: $identifier}}, _or: {brandId: {_eq: $brandId}, brand: {isDefault: {_eq: true}}}}) {
      brandId
-     subscriptionStoreSettingId
+     brandSettingId
      value
    }
  }
-
  `
 const GET_FILE_PATH = `
 query GET_FILE_PATH($id: Int!) {
@@ -23,8 +22,8 @@ query GET_FILE_PATH($id: Int!) {
 
 export const globalTemplate = async ({ brandId, identifier }) => {
    try {
-      const { brands_brand_subscriptionStoreSetting: settings } =
-         await client.request(GET_STORE_SETTING, { brandId, identifier })
+      const { brands_brand_brandSetting: settings } =
+         await client.request(GET_BRAND_SETTING, { brandId, identifier })
       console.log({ settings })
       if (settings.length > 0) {
          const [setting] = settings

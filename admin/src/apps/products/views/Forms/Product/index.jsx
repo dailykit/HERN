@@ -11,6 +11,7 @@ import {
    HorizontalTabs,
    Spacer,
    Text,
+   Dropdown,
 } from '@dailykit/ui'
 import { isEmpty } from 'lodash'
 import { useParams } from 'react-router-dom'
@@ -27,7 +28,7 @@ import { logger, randomSuffix } from '../../../../../shared/utils'
 import { CloseIcon, TickIcon } from '../../../assets/icons'
 import { ProductProvider } from '../../../context/product'
 import { ModifiersProvider } from '../../../context/product/modifiers'
-import { PRODUCT, PRODUCTS } from '../../../graphql'
+import { OPTIONS_FROM_VEG_NONVEG, PRODUCT, PRODUCTS } from '../../../graphql'
 import { Assets, Description, Pricing } from './components'
 import CustomizableProductComponents from './CustomizableProductComponents'
 import ProductOptions from './ProductOptions'
@@ -37,7 +38,7 @@ import ComboProductComponents from './ComboProductComponents'
 import { CloneIcon } from '../../../../../shared/assets/icons'
 import { InventoryBundleProvider } from '../../../context/product/inventoryBundle'
 import ProductInsight from './components/Insight'
-
+import { MASTER } from '../../../../settings/graphql/index'
 const Product = () => {
    const { id: productId } = useParams()
 
@@ -52,7 +53,8 @@ const Product = () => {
       },
    })
    const [state, setState] = React.useState({})
-
+   const [dropDownOptions, setDropDownOptions] = React.useState([])
+   const [searchedOptions, setSearchedOption] = React.useState(null)
    // Subscription
    const { loading, error } = useSubscription(PRODUCT.VIEW, {
       variables: {
@@ -68,7 +70,31 @@ const Product = () => {
       },
    })
 
+   useSubscription(OPTIONS_FROM_VEG_NONVEG, {
+      onSubscriptionData: data => {
+         let newOptions = []
+         data.subscriptionData.data.master_vegNonvegType.forEach(item => {
+            newOptions = [
+               ...newOptions,
+               { id: Math.random(), title: item.label },
+            ]
+         })
+         setDropDownOptions(newOptions)
+      },
+   })
+
    // Mutation
+
+   const [addType] = useMutation(MASTER.VEG_NONVEG.CREATE, {
+      onCompleted: () => {
+         toast.success('Type added')
+      },
+      onError: error => {
+         toast.error('Failed to add vegNonVeg type')
+         logger(error)
+      },
+   })
+
    const [createProduct, { loading: cloning }] = useMutation(PRODUCTS.CREATE, {
       onCompleted: data => {
          toast.success('Product cloned!')
@@ -226,6 +252,22 @@ const Product = () => {
       return <ErrorState />
    }
 
+   const searchOptions = option => {
+      setSearchedOption(option)
+   }
+   const selectedOption = option => console.log(option)
+
+   const addDropDownOptions = () => {
+      const object = {
+         label: searchedOptions,
+      }
+      addType({
+         variables: {
+            object,
+         },
+      })
+   }
+
    return (
       <ProductProvider>
          <ModifiersProvider>
@@ -366,6 +408,18 @@ const Product = () => {
                            </StyledFlex>
                            <Spacer size="32px" />
                            <Description state={state} />
+                           <Form.Group>
+                              <Form.Label>Type</Form.Label>
+                              <Dropdown
+                                 typeName="type"
+                                 variant="revamp"
+                                 options={dropDownOptions}
+                                 addOption={addDropDownOptions}
+                                 type="single"
+                                 searchedOption={searchOptions}
+                                 selectedOption={selectedOption}
+                              />
+                           </Form.Group>
                         </HorizontalTabPanel>
                         <HorizontalTabPanel>
                            {renderOptions()}

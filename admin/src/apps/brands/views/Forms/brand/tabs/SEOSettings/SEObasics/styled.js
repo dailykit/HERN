@@ -40,6 +40,10 @@ div.ant-typography,span.ant-typography{
    color: #555B6E;
     font-size: 15px;
     font-weight: 400;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
 }
 .ant-modal-content{
    width: 50%;

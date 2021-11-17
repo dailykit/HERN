@@ -42,8 +42,14 @@ const EditRequestHeaders = (props)=>{
 
     const addNewHeader = ()=>{
         const headerId = state.webhookDetails.headers
-        const headers_list = [...state.webhookDetails.headers, {"id": `header-${parseInt(state.webhookDetails.headers[state.webhookDetails.headers.length-1].id.slice(7))+1}`, "key": "", "value": ""}]
-        console.log(headers_list)
+        let newId
+        if (state.webhookDetails.headers.length){
+            newId = parseInt(state.webhookDetails.headers[state.webhookDetails.headers.length-1].id.slice(7))+1
+        }
+        else{
+            newId = 1
+        }
+        const headers_list = [...state.webhookDetails.headers, {"id": `header-${newId}`, "key": "", "value": ""}]
         dispatch({type:'SET_WEBHOOK_DETAILS', payload:{...state.webhookDetails, headers:headers_list}})
     }
 
@@ -78,7 +84,7 @@ const EditRequestHeaders = (props)=>{
     return (
         <>
             <Tunnels tunnels={props.tunnels}>
-                <Tunnel style={{padding:10}} layer={1}>
+                <Tunnel style={{padding:10}} size='md' layer={1}>
                     <TunnelHeader
                     title="Edit Request Headers"
                     close={() => {props.closeTunnel(1)}}

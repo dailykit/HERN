@@ -187,7 +187,7 @@ export const SocialShare = ({ routeName }) => {
         <StyledWrapper>
             <div className="metaDetails">
                 <Row>
-                    <Col span={24}>
+                    <Col span={12}>
                         <Title level={4}>Social Share</Title>
                         <HelperText
                             type="hint"

@@ -10,16 +10,13 @@ import {
    StyledProductItem,
    StyledProductTitle,
 } from './styled'
-import { UserIcon, Notes, PhoneIcon, EmailIcon,  HomeIcon } from '../../../assets/icons'
+import { UserIcon } from '../../../assets/icons'
 import { Spacer } from '../../OrderSummary/styled'
-import { currencyFmt, parseAddress } from '../../../../../shared/utils'
-
 
 const address = 'apps.order.components.orderlistitem.'
 
 export const Products = ({ order }) => {
    const { t } = useTranslation()
-   const [currentPanel, setCurrentPanel] = React.useState('customer')
 
    if (order?.thirdPartyOrderId) {
       const { thirdPartyOrder: { products = [] } = {} } = order
@@ -64,8 +61,6 @@ export const Products = ({ order }) => {
                   </Styles.TabPanel>
                </Styles.TabPanels>
             </Styles.Tabs>
-
-     
          </Styles.Products>
       )
    }
@@ -142,6 +137,4 @@ export const Products = ({ order }) => {
          </Styles.Tabs>
       </Styles.Products>
    )
-
 }
-

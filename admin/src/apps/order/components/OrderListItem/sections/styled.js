@@ -183,21 +183,20 @@ export const StyledStat = styled.div`
 `
 
 export const StyledStatus = styled.div`
-   display: grid;
+   display: flex;
    margin-right: 16px;
    align-items: center;
    span {
       :first-child {
-         color: #919699;
+         color: #a7a8a6;
          display: block;
-         font-size: 12px;
-         font-weight: 400;
+         font-size: 14px;
+         font-weight: 500;
       }
       :last-child {
-         color: #919699;
          display: block;
-         font-size: 12px;
-         font-weight: 700;
+         font-size: 14px;
+         font-weight: 500;
       }
    }
 `
@@ -216,7 +215,7 @@ export const StyledText = styled(Text)`
 `
 export const ResponsiveFlex = styled(Flex)`
    @media only screen and (min-width: 1024px) {
-      flex-direction: row;
+      flex-direction: column;
       align-items: flex-start;
    }
 `

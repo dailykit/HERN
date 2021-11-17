@@ -1,166 +1,133 @@
 import React from 'react'
-import { Card } from 'antd'
-import 'antd/dist/antd.css'
-import { toast } from 'react-toastify'
-import { isEmpty, groupBy } from 'lodash'
+import { isEmpty } from 'lodash'
 import { useParams } from 'react-router-dom'
-import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
 import { BRANDS } from '../../../../../graphql'
-import { logger } from '../../../../../../../shared/utils'
-import { Text, Spacer, TextButton } from '@dailykit/ui'
 import {
-   Flex,
-   InlineLoader,
-   Tooltip,
+   Text, Filler, IconButton,
+   PlusIcon, Collapsible
+} from '@dailykit/ui'
+import {
+   Flex, Tooltip
 } from '../../../../../../../shared/components'
-import {
-   BrandName,
-   BrandLogo,
-   BrandContact,
-   AppTitle,
-   Favicon,
-   Slides,
-   PrimaryColor,
-   Payments,
-   Pickup,
-   Delivery,
-   Store,
-   Address,
-   Coupons,
-   Wallet,
-   LoyaltyPoints,
-   Scripts,
-   NavLinks,
-   Referral,
-   FoodCostPercent,
-   TermsAndConditions,
-   PrivacyPolicy,
-   TaxPercentage,
-   Brand,
-} from './sections'
-
-// import { RefundPolicy } from './sections/RefundPolicy'
+import { Child, Styles } from './styled'
+import { SettingsCard } from './SettingsCard'
 
 export const BrandSettings = () => {
    const params = useParams()
-   const [settings, setSettings] = React.useState({})
-   const [updateSetting] = useMutation(BRANDS.UPDATE_BRAND_SETTING, {
-      onCompleted: () => {
-         toast.success('Successfully updated!')
+   const [setting, setSetting] = React.useState([])
+   const [settings, setSettings] = React.useState([])
+   const [typeActive, setTypeActive] = React.useState(null)
+
+   const groupingBrandSettings = (array, key) => {
+      return array.reduce((obj, item) => {
+         let objKey = item[key].type;
+         console.log(key, item)
+         if (!obj[objKey]) {
+            obj[objKey] = [];
+         }
+         obj[objKey].push(item);
+         return obj;
+      }, {});
+   };
+
+   const { loading: loadingSettings, error } = useSubscription(BRANDS.SETTING, {
+      variables: {
+         brandId: Number(params.id)
       },
-      onError: error => {
-         toast.error('Something went wrong!')
-         logger(error)
+      onSubscriptionData: ({
+         subscriptionData: { data: { brands_brand_brandSetting = [] } = {} } = {},
+      }) => {
+         if (!isEmpty(brands_brand_brandSetting)) {
+            const result = groupingBrandSettings(brands_brand_brandSetting, 'brandSetting')
+            setSettings(result)
+         } else {
+            setSettings([])
+         }
       },
    })
-   const {
-      loading,
-      error,
-      data: { brandSettings = [] } = {},
-   } = useSubscription(BRANDS.SETTINGS_TYPES)
+
    if (error) {
-      toast.error('Something went wrong!')
-      logger(error)
+      toast.error('Something went wrong')
+      console.log("error in Brands.Setting query", error)
    }
-
-   React.useEffect(() => {
-      if (!loading && !isEmpty(brandSettings)) {
-         const grouped = groupBy(brandSettings, 'type')
-
-         Object.keys(grouped).forEach(key => {
-            grouped[key] = grouped[key].map(node => node.identifier)
-         })
-         setSettings(grouped)
-      }
-   }, [loading, brandSettings])
-
-   const update = ({ id, value }) => {
-      updateSetting({
-         variables: {
-            object: {
-               value,
-               brandId: params.id,
-               brandSettingId: id,
-            },
-         },
-      })
+   const openConfig = data => {
+      setSetting(data)
+      console.log(data, "openConfig")
    }
-
+   const types = Object.keys(settings)
+   console.log(settings, types, "SETTINGS")
    return (
-      <Flex padding="16px 16px 16px 34px">
-         <Flex container alignItems="center">
-            <Text as="h2">Brand Settings</Text>
-            <Tooltip identifier="brands_collection_listing_heading" />
-         </Flex>
-         <Spacer size="24px" />
-         <Card
-            title={<Text as="h3">Brands</Text>}
-            extra={
-               <TextButton type="solid" size="sm">
-                  Save
-               </TextButton>
-            }
-            style={{ width: '100%' }}
-         >
-            <Flex container justifyContent="space-between">
-               <Brand update={update} />
-               <Spacer size="24px" />
-               <BrandLogo update={update} />
+      <Styles.Wrapper>
+         {/* contain all settings */}
+         <Styles.SettingsWrapper>
+            <Flex padding="0 8px 16px 8px">
+               <Text as="h3">
+                  Brand Settings&nbsp;
+                  {settings.length > 0 && (
+                     <span>({settings.length})</span>
+                  )}
+               </Text>
             </Flex>
-         </Card>
-         {/* <Spacer size="24px" />
-            <Card
-                title={<Text as="h3">Availability</Text>}
-                extra={
-                    <TextButton type="solid" size="sm">
-                        Save
-                    </TextButton>
-                }
-                style={{ width: '100%' }}
-            >
-                <Payments update={update} />
-                <Spacer size="24px" />
-                <Address update={update} />
-                <Spacer size="24px" />
-                <Store update={update} />
-                <Spacer size="24px" />
-                <Pickup update={update} />
-                <Spacer size="24px" />
-                <Delivery update={update} />
-            </Card>
-            <Spacer size="48px" />
-            <Card
-                title={<Text as="h3">Rewards</Text>}
-                extra={
-                    <TextButton type="solid" size="sm">
-                        Save
-                    </TextButton>
-                }
-                style={{ width: '100%' }}
-            >
-                <Referral update={update} />
-                <Spacer size="24px" />
-                <Coupons update={update} />
-                <Spacer size="24px" />
-                <Wallet update={update} />
-                <Spacer size="24px" />
-                <LoyaltyPoints update={update} />
-            </Card>
-            <Spacer size="48px" />
-            <Card
-                title={<Text as="h3">Sales</Text>}
-                extra={
-                    <TextButton type="solid" size="sm">
-                        Save
-                    </TextButton>
-                }
-                style={{ width: '100%' }}
-            >
-                <FoodCostPercent update={update} />
-                <Spacer size="24px" />
-                <TaxPercentage update={update} />
-            </Card>
-            <Spacer size="48px" /> */}
-      </Flex>
+            {types.length > 0 ? (
+               types.map((type) => {
+                  return (<CollapsibleComponent key={type} heading={(type).charAt(0).toUpperCase() + (type).slice(1)}>
+                     {settings[type].map((item) => {
+                        return (
+                           <Child key={item.brandSetting.id}>
+                              <div className="identifier_name">
+                                 {item?.brandSetting?.identifier || ''}
+                              </div>
+                              <IconButton
+                                 type="ghost"
+                                 onClick={() => openConfig(item)}
+                              >
+                                 <PlusIcon color="#555b6e" size="20" />
+                              </IconButton>
+                           </Child>)
+                     })}
+                  </CollapsibleComponent>)
+               }
+               )) : (
+               <Filler
+                  message="No brandSettings"
+                  width="80%"
+                  height="80%"
+               />
+            )}
+         </Styles.SettingsWrapper>
+         {/* contain selected setting */}
+         <Styles.SettingWrapper>
+            <Flex>
+               <SettingsCard setting={setting} key={setting?.brandSetting?.id} title={setting?.brandSetting?.identifier} />
+            </Flex>
+         </Styles.SettingWrapper>
+      </Styles.Wrapper>
    )
 }
+
+
+const CollapsibleComponent = ({ children, heading }) => (
+   <Collapsible
+      isHeadClickable={true}
+      head={
+         <Flex
+            margin="10px 0"
+            container
+            alignItems="center"
+            justifyContent="center"
+            width="100%"
+         >
+            <Text as="title" style={{ color: "#575b5d" }}> {heading} </Text>
+         </Flex>
+      }
+      body={
+         <Flex margin="10px 0" container flexDirection="column" alignItems="center">
+            {children}
+         </Flex>
+      }
+      defaultOpen={false}
+      isDraggable={false}
+   />
+)
