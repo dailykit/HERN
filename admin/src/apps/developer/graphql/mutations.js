@@ -34,8 +34,8 @@ mutation UPDATE_REQUEST_HEADERS($id: Int, $headers: jsonb = "") {
 }
 `
 
-export const Add_Api_Key = gql`
-mutation Add_Api_Key($canAddProducts: Boolean, $canUpdateProducts: Boolean, $isDeactivated: Boolean, $label: String) {
+export const ADD_API_KEY = gql`
+mutation ADD_API_KEY($canAddProducts: Boolean, $canUpdateProducts: Boolean, $isDeactivated: Boolean, $label: String) {
   insert_developer_apiKey(objects: {canAddProducts: $canAddProducts, canUpdateProducts: $canUpdateProducts, isDeactivated: $isDeactivated, label: $label}) {
     affected_rows
   }
