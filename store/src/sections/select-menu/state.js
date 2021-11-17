@@ -375,22 +375,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
          ReactPixel.trackCustom('removeFromCart', item)
       })
    }
-   const res = {
-      __typename: 'Mutation',
-      createCartItem: {
-         __typename: 'order_cartItem',
-         id: moment(),
-         name: 'Adding product...',
-         image: '',
-         isAddOn: false,
-         unitPrice: 120,
-         addOnLabel: 'Addon Label ',
-         addOnPrice: 100,
-         isAutoAdded: false,
-         subscriptionOccurenceProductId: 120,
-         subscriptionOccurenceAddOnProductId: null,
-      },
-   }
+
    const store = configOf('Store Availability', 'availability')
    const addProduct = (item, product) => {
       dispatch({ type: 'CART_STATE', payload: 'SAVING' })
@@ -400,7 +385,26 @@ export const MenuProvider = ({ isCheckout, children }) => {
          const cart = insertCartId(item, occurenceCustomer?.cart?.id)
          insertCartItem({
             variables: { object: cart },
-            optimisticResponse: res,
+            optimisticResponse: {
+               __typename: 'Mutation',
+               createCartItem: {
+                  __typename: 'order_cartItem',
+                  id: moment(),
+                  name: product.name || 'Adding product...',
+                  image: product.assets?.images?.length
+                     ? product.assets.images[0]
+                     : '',
+                  isAddOn: false,
+                  unitPrice: item.unitPrice,
+                  addOnLabel: item.addOnLabel,
+                  addOnPrice: item.addOnPrice,
+                  isAutoAdded: false,
+                  subscriptionOccurenceProductId:
+                     item.subscriptionOccurenceProductId,
+                  subscriptionOccurenceAddOnProductId:
+                     item.subscriptionOccurenceAddOnProductId || null,
+               },
+            },
             update: (cache, { data: { createCartItem } }) => {
                const data = cache.readQuery({
                   query: CART_BY_WEEK,
@@ -517,7 +521,26 @@ export const MenuProvider = ({ isCheckout, children }) => {
                   paymentCustomerId: user?.platform_customer?.paymentCustomerId,
                },
             },
-            optimisticResponse: res,
+            optimisticResponse: {
+               __typename: 'Mutation',
+               createCartItem: {
+                  __typename: 'order_cartItem',
+                  id: moment(),
+                  name: product.name || 'Adding product...',
+                  image: product.assets?.images?.length
+                     ? product.assets.images[0]
+                     : '',
+                  isAddOn: false,
+                  unitPrice: item.unitPrice,
+                  addOnLabel: item.addOnLabel,
+                  addOnPrice: item.addOnPrice,
+                  isAutoAdded: false,
+                  subscriptionOccurenceProductId:
+                     item.subscriptionOccurenceProductId,
+                  subscriptionOccurenceAddOnProductId:
+                     item.subscriptionOccurenceAddOnProductId || null,
+               },
+            },
             update: (cache, { data: { createCartItem } }) => {
                const data = cache.readQuery({
                   query: CART_BY_WEEK,
