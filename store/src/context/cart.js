@@ -273,7 +273,6 @@ export const CartProvider = ({ children }) => {
             }
          },
       })
-   console.log('cartState', cartState)
    return (
       <CartContext.Provider
          value={{

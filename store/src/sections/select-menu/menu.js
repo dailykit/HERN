@@ -126,16 +126,29 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
    const openRecipe = () =>
       router.push(getRoute(`/recipes/${node?.productOption?.id}`))
 
-   const add = debounce(function (item, node) {
+   // const add = debounce(function (item, node) {
+   //    if (state.occurenceCustomer?.betweenPause) {
+   //       return addToast('You have paused your plan!', {
+   //          appearance: 'warning',
+   //       })
+   //       return
+   //    }
+   //    methods.products.add(item, node?.productOption?.product)
+   // }, 500)
+   const add = (item, node) => {
       if (state.occurenceCustomer?.betweenPause) {
          return addToast('You have paused your plan!', {
+            appearance: 'warning',
+         })
+      }
+      if (state.occurenceCustomer?.validStatus?.itemCountValid) {
+         addToast("You're cart is already full!", {
             appearance: 'warning',
          })
          return
       }
       methods.products.add(item, node?.productOption?.product)
-   }, 500)
-
+   }
    const isActive = isAdded(node?.cartItem?.subscriptionOccurenceProductId)
    const canAdd = () => {
       if (!state?.week?.isValid) {
@@ -250,11 +263,15 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
          <p className="hern-select-menu__menu__product__link__additional-text">
             {product?.additionalText}
          </p>
+         {console.log(state.occurenceCustomer?.validStatus?.itemCountValid)}
          {canAdd() && (
             <button
                className={btnClasses}
                theme={theme}
-               disabled={!node.isAvailable}
+               disabled={
+                  !node.isAvailable &&
+                  state.occurenceCustomer?.validStatus?.itemCountValid
+               }
                onClick={() => add(node.cartItem, node)}
                title={
                   node.isAvailable

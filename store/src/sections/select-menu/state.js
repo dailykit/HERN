@@ -90,7 +90,6 @@ export const MenuProvider = ({ isCheckout, children }) => {
    const [fulfillment, setFulfillment] = React.useState({})
    const [isCustomerLoading, setIsCustomerLoading] = React.useState(true)
    const [state, dispatch] = React.useReducer(reducers, initialState)
-
    const {
       error: occurenceCustomerError,
       loading: occurenceCustomerLoading,
@@ -109,6 +108,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
       },
    })
 
+   console.log(cart, 'Cart')
    React.useEffect(() => {
       if (
          !isCustomerLoading &&
@@ -375,7 +375,22 @@ export const MenuProvider = ({ isCheckout, children }) => {
          ReactPixel.trackCustom('removeFromCart', item)
       })
    }
-
+   const res = {
+      __typename: 'Mutation',
+      createCartItem: {
+         __typename: 'order_cartItem',
+         id: moment(),
+         name: 'Adding product...',
+         image: '',
+         isAddOn: false,
+         unitPrice: 120,
+         addOnLabel: 'Addon Label ',
+         addOnPrice: 100,
+         isAutoAdded: false,
+         subscriptionOccurenceProductId: 120,
+         subscriptionOccurenceAddOnProductId: null,
+      },
+   }
    const store = configOf('Store Availability', 'availability')
    const addProduct = (item, product) => {
       dispatch({ type: 'CART_STATE', payload: 'SAVING' })
@@ -385,26 +400,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
          const cart = insertCartId(item, occurenceCustomer?.cart?.id)
          insertCartItem({
             variables: { object: cart },
-            optimisticResponse: {
-               __typename: 'Mutation',
-               createCartItem: {
-                  __typename: 'order_cartItem',
-                  id: 'temp-id',
-                  name: product.name || 'Adding product...',
-                  image: product.assets?.images?.length
-                     ? product.assets.images[0]
-                     : '',
-                  isAddOn: false,
-                  unitPrice: item.unitPrice,
-                  addOnLabel: item.addOnLabel,
-                  addOnPrice: item.addOnPrice,
-                  isAutoAdded: false,
-                  subscriptionOccurenceProductId:
-                     item.subscriptionOccurenceProductId,
-                  subscriptionOccurenceAddOnProductId:
-                     item.subscriptionOccurenceAddOnProductId || null,
-               },
-            },
+            optimisticResponse: res,
             update: (cache, { data: { createCartItem } }) => {
                const data = cache.readQuery({
                   query: CART_BY_WEEK,
@@ -521,6 +517,58 @@ export const MenuProvider = ({ isCheckout, children }) => {
                   paymentCustomerId: user?.platform_customer?.paymentCustomerId,
                },
             },
+            optimisticResponse: res,
+            update: (cache, { data: { createCartItem } }) => {
+               const data = cache.readQuery({
+                  query: CART_BY_WEEK,
+                  variables: {
+                     weekId: state.week.id,
+                     keycloakId: user?.keycloakId,
+                     brand_customerId: user?.brandCustomerId,
+                  },
+               })
+
+               const cloneData = JSON.parse(JSON.stringify(data))
+
+               const updatedData = {
+                  ...cloneData,
+                  subscriptionOccurenceCustomer: {
+                     ...cloneData.subscriptionOccurenceCustomer,
+                     validStatus: {
+                        addedProductsCount:
+                           cloneData.subscriptionOccurenceCustomer.validStatus
+                              .addedProductsCount + 1,
+                        hasCart: true,
+                        itemCountValid:
+                           cloneData.subscriptionOccurenceCustomer.validStatus
+                              .pendingProductsCount === 1,
+                        itemCountValidComment: 'Loading...',
+                        pendingProductsCount:
+                           cloneData.subscriptionOccurenceCustomer.validStatus
+                              .pendingProductsCount - 1,
+                     },
+                     cart: {
+                        ...cloneData.subscriptionOccurenceCustomer.cart,
+                        products: [
+                           ...cloneData.subscriptionOccurenceCustomer.cart
+                              .products,
+                           JSON.parse(JSON.stringify(createCartItem)),
+                        ],
+                     },
+                  },
+               }
+
+               cache.writeQuery({
+                  query: CART_BY_WEEK,
+                  variables: {
+                     weekId: state.week.id,
+                     keycloakId: user?.keycloakId,
+                     brand_customerId: user?.brandCustomerId,
+                  },
+                  data: updatedData,
+                  broadcast: true,
+               })
+            },
          })
             .then(({ data: { createCart = {} } = {} }) => {
                const cart = insertCartId(item, createCart?.id)
@@ -564,7 +612,6 @@ export const MenuProvider = ({ isCheckout, children }) => {
             .catch(error => console.log('addProduct -> createCart ->', error))
       }
    }
-
    if (
       [
          state.isOccurencesLoading,
