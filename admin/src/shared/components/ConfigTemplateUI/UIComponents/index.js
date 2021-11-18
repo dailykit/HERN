@@ -588,7 +588,6 @@ export const ImageUpload = props => {
       if ('url' in data) {
          const e = { target: { name: path, value: data.url } }
          onConfigChange(e, data.url)
-         // configSaveHandler(configJSON)
       }
       closeTunnel(1)
    }
@@ -694,7 +693,7 @@ export const ImageContainer = styled.div`
    }
    button {
       float: right;
-      margin: 4px 4px 0 0;
+      margin: 4px 4px 0 4px;
    }
 `
 export const PhoneNumSelector = styled.div`
