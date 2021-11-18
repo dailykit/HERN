@@ -31,6 +31,7 @@ import {
    CartsAppIcon,
    ArrowUp,
    ArrowDown,
+   DeveloperAppIcon
 } from '../../assets/navBarIcons'
 import { toast } from 'react-toastify'
 import { logger, randomSuffix } from '../../utils'
@@ -778,12 +779,16 @@ export const Sidebar = ({ setOpen }) => {
          },
          {
             title: 'Developer',
-            icon: StoreAppIcon,
+            icon: DeveloperAppIcon,
             path: '/developer',
             childs: [
                {
                   title: 'Webhook',
                   path: '/developer/webhook',
+               },
+               {
+                  title: 'Api Key',
+                  path: '/developer/apiKey',
                },
             ],
          },

@@ -6,7 +6,7 @@ import path from 'path'
 import { client } from '../../lib/graphql'
 import { globalTemplate } from '../../utils'
 import get_env from '../../../get_env'
-import { GET_SES_DOMAIN } from './graphql'
+import { GET_SES_DOMAIN, API_KEYS } from './graphql'
 import aws from '../../lib/aws'
 
 const nodemailer = require('nodemailer')
@@ -236,7 +236,18 @@ export const authorizeRequest = async (req, res) => {
       const brandCustomerId = req.body.headers['Brand-Customer-Id']
       const source = req.body.headers['Source']
 
+      const apiKey = req.body.headers['api-key']
+      
+      let apiKeyExists = false
       let staffUserExists = false
+      if (apiKey){
+         const apiKeys = await client.request(API_KEYS, {
+            "apiKey": apiKey
+         })
+         if (apiKeys.developer_apiKey && apiKeys.developer_apiKey[0].isDeactivated==false){
+            apiKeyExists = true
+         }
+      }
       if (staffId) {
          const { users = [] } = await client.request(STAFF_USERS, {
             email: { _eq: staffEmail }
@@ -269,6 +280,12 @@ export const authorizeRequest = async (req, res) => {
                'X-Hasura-Role': 'admin',
                'X-Hasura-Staff-Id': staffId,
                'X-Hasura-Email-Id': staffEmail
+            }),
+         ...(apiKey &&
+            apiKeyExists &&
+            {
+               'X-Hasura-Role': 'apiKey',
+               'X-Hasura-Api-Key': apiKey
             })
       })
    } catch (error) {

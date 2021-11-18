@@ -1,8 +1,8 @@
 import React , {useState} from 'react';
-import {AVAILABLE_EVENTS, INSERT_WEBHOOK_EVENTS } from '../../graphql';
+import {AVAILABLE_EVENTS, INSERT_WEBHOOK_EVENTS } from '../../../../graphql';
 import { Loader } from '@dailykit/ui'
 import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
-import {logger}  from '../../../../shared/utils'
+import {logger}  from '../../../../../../shared/utils'
 import {Form, Spacer, Text, Tunnel, TunnelHeader, Tunnels, useSingleList } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import {
@@ -13,7 +13,7 @@ import {
     ListSearch
  } from '@dailykit/ui'
 
-const AddWebHook = (props)=>{
+export const AddWebHook = (props)=>{
 
     // react states for reference to values of selected event and input url Endpoint
     const [options, updateOptions] = useState([])
@@ -223,7 +223,3 @@ const AddWebHook = (props)=>{
         )
     }
 
-    
-
-
-export default AddWebHook;
