@@ -84,9 +84,9 @@ export const StepsNavbar = () => {
       if (canGoToStep(route)) {
          if (!isEmpty(user?.carts)) {
             const [cart] = user?.carts
-            if (route === '/get-started/checkout/') {
+            if (route === '/get-started/checkout') {
                path += `?id=${cart.id}`
-            } else if (route === '/get-started/select-menu/') {
+            } else if (route === '/get-started/select-menu') {
                path += `?date=${cart.subscriptionOccurence?.fulfillmentDate}`
             }
          }
@@ -135,7 +135,7 @@ export const StepsNavbar = () => {
                   goToStep={goToStep}
                   canGoToStep={canGoToStep}
                   isActive={currentStep === 66}
-                  route="/[brand]/get-started/select-menu/"
+                  route="/[brand]/get-started/select-menu"
                >
                   {steps.selectMenu}
                </RenderStep>
@@ -143,7 +143,7 @@ export const StepsNavbar = () => {
                   goToStep={goToStep}
                   canGoToStep={canGoToStep}
                   isActive={currentStep === 100}
-                  route="/[brand]/get-started/checkout/"
+                  route="/[brand]/get-started/checkout"
                >
                   {steps.checkout}
                </RenderStep>
@@ -167,6 +167,7 @@ export const StepsNavbar = () => {
 
 const RenderStep = ({ route, isActive, children, canGoToStep, goToStep }) => {
    const active = canGoToStep(route) || isActive
+
    return (
       <li
          className={`hern-steps-navbar__step${active ? '--active' : ''}`}
