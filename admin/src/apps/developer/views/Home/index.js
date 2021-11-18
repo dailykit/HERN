@@ -6,21 +6,27 @@ import { StyledHome, StyledCardList } from './styled'
 import { Banner } from '../../../../shared/components'
 import {logger}  from '../../../../shared/utils'
 import { useQuery, useSubscription } from '@apollo/react-hooks';
-import { GET_WEBHOOK_URL_EVENTS_COUNT } from '../../graphql';
+import { GET_WEBHOOK_URL_EVENTS_COUNT, GET_API_KEY_COUNT } from '../../graphql';
 
 const address = 'apps.developer.views.home.';
 
 const Home = () => {
     const { addTab } = useTabs();
     const { t } = useTranslation();
-    const {loading, error, data} = useSubscription(GET_WEBHOOK_URL_EVENTS_COUNT)
-    if(loading) return <Loader />
-    if(error) {
-        logger(error)
+    const {loading:webhookUrlCountLoading, error:webhookUrlCountError, data:webhookUrlCountData} = useSubscription(GET_WEBHOOK_URL_EVENTS_COUNT)
+    const {loading:apiKeyCountLoading, error:apiKeyCountError, data:apiKeyCountData} = useSubscription(GET_API_KEY_COUNT)
+    if(webhookUrlCountLoading||apiKeyCountLoading) return <Loader />
+    if(webhookUrlCountError) {
+        logger(webhookUrlCountError)
+        return null
+    }
+    if(apiKeyCountError) {
+        logger(apiKeyCountError)
         return null
     }
 
-    const webhookUrl_eventsCount = data.developer_webhookUrl_events_aggregate.aggregate.count
+    const webhookUrl_eventsCount = webhookUrlCountData.developer_webhookUrl_events_aggregate.aggregate.count
+    const apiKey_Count = apiKeyCountData.developer_apiKey_aggregate.aggregate.count
 
     return (
             <>
@@ -41,7 +47,7 @@ const Home = () => {
                             // title={t(address.concat('webhook'))}
                             title="Api Key"
                             conf="Add Api Key"
-                            // count={webhookUrl_eventsCount || "..."}
+                            count={apiKey_Count || "..."}
                             onClick={() => addTab('Api Key', '/developer/apiKey')}
                         />
                     </StyledCardList>

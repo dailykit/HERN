@@ -15,7 +15,15 @@ const EditRequestHeaders = (props)=>{
 
     const {state, dispatch} = useWebhook()
 
-    const [updateHeaders, {loading: updateheadersLoading}] = useMutation(UPDATE_REQUEST_HEADERS);
+    const [updateHeaders, {loading: updateheadersLoading}] = useMutation(UPDATE_REQUEST_HEADERS, {
+        onCompleted: () => {
+            toast.success('Successfully updated!')
+         },
+         onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
+         }
+    });
 
     const onChange = (e, i)=>{
         const {name, value, id} = e.target

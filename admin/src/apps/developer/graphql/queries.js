@@ -123,3 +123,12 @@ export const  AVAILABLE_EVENTS = gql`
   }
   `
  
+  export const GET_API_KEY_COUNT = gql`
+  subscription GET_API_KEY_COUNT {
+    developer_apiKey_aggregate {
+      aggregate {
+        count
+      }
+    }
+  }
+  `
