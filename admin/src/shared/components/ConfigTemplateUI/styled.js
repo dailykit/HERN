@@ -32,6 +32,8 @@ export const Styles = {
          flex-direction: column;
          p{padding: 4px;
             margin-left: ${({ indentation }) => indentation};
+            padding-top:0px;
+            padding-bottom:8px;
          }
       }
       > .header > h2 {
