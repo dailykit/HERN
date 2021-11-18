@@ -20,6 +20,7 @@ export const BrandSettings = () => {
    const params = useParams()
    const [setting, setSetting] = React.useState([])
    const [settings, setSettings] = React.useState([])
+   const [isChangeSaved, setIsSavedChange] = React.useState(true)
 
    const groupingBrandSettings = (array, key) => {
       return array.reduce((obj, item) => {
@@ -56,8 +57,12 @@ export const BrandSettings = () => {
       console.log("error in Brands.Setting", error)
    }
    const openConfig = data => {
-      setSetting(data)
-      console.log(data, "openConfig")
+      if (isChangeSaved) {
+         setSetting(data)
+      }
+      else {
+         toast.warning('Changes will be lost if not saved. Click on save button to save your changes.')
+      }
    }
    const types = Object.keys(settings)
    if (loadingSettings) return <Loader />
@@ -105,7 +110,7 @@ export const BrandSettings = () => {
          {/* contain selected setting */}
          < Styles.SettingWrapper >
             <Flex>
-               <SettingsCard setting={setting} key={setting?.brandSetting?.id} title={setting?.brandSetting?.identifier} />
+               <SettingsCard setting={setting} key={setting?.brandSetting?.id} title={setting?.brandSetting?.identifier} isChangeSaved={isChangeSaved} setIsSavedChange={setIsSavedChange} />
             </Flex>
          </Styles.SettingWrapper >
          <Styles.LinkWrapper >

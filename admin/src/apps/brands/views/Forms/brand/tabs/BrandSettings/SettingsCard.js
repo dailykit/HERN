@@ -6,7 +6,7 @@ import { BRANDS } from '../../../../../graphql'
 import { logger } from '../../../../../../../shared/utils'
 import ConfigTemplateUI from '../../../../../../../shared/components/ConfigTemplateUI'
 
-export const SettingsCard = ({ setting, title }) => {
+export const SettingsCard = ({ setting, title, isChangeSaved, setIsSavedChange }) => {
     const [config, setConfig] = React.useState({})
     const params = useParams()
     const [updateSetting] = useMutation(BRANDS.UPDATE_BRAND_SETTING, {
@@ -51,6 +51,8 @@ export const SettingsCard = ({ setting, title }) => {
             setConfig={setConfig}
             configSaveHandler={saveInfo}
             identifier={title}
+            isChangeSaved={isChangeSaved}
+            setIsSavedChange={setIsSavedChange}
         />
     )
 }

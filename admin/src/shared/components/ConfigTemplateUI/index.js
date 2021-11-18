@@ -24,15 +24,20 @@ const ConfigTemplateUI = props => {
    )
 }
 
-const ConfigUI = ({ config, configSaveHandler, identifier }) => {
+const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsSavedChange }) => {
    const [configJSON, setConfigJSON] = React.useState({})
    const [fields, setFields] = React.useState([])
-   const [isChangeSaved, setIsSavedChange] = React.useState('')
    const [description, setDescription] = React.useState('')
    const [isValid, setIsValid] = React.useState(true)
    const { editMode, setEditMode } = useEditMode()
+
    const elements = []
+
+   //when there is any change in data
    const onConfigChange = (e, value) => {
+
+      setIsSavedChange(false)
+
       let updatedConfig
       const type = _.get(configJSON, `${e.target.name}.dataType`)
       if (type === 'boolean' || type === 'html' || type === 'select') {
@@ -48,6 +53,7 @@ const ConfigUI = ({ config, configSaveHandler, identifier }) => {
          ...prev,
          ...updatedConfig,
       }))
+      console.log({ updatedConfig }, "updatedConfig")
    }
 
    const handleToggle = key => {
@@ -165,7 +171,6 @@ const ConfigUI = ({ config, configSaveHandler, identifier }) => {
          setIsSavedChange(true)
       } else {
          setEditMode(true)
-         setIsSavedChange(false)
       }
    }
    return (
