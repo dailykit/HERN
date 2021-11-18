@@ -6,6 +6,15 @@ export const Styles = {
          display: none;
       }
       padding: 16px;
+      .edit_button{
+      margin-right: -20px;
+      display:none;
+      }
+      &:hover{
+         .edit_button{
+            display:flex
+         }
+      }
    `,
    Header: styled.div`
       display: flex;

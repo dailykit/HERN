@@ -200,10 +200,10 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
                         </TextButton>
                      ) : (
                         <ComboButton
+                           className="edit_button"
                            type="ghost"
                            size="sm"
                            onClick={handleEdit}
-                           style={{ marginRight: "-16px" }}
                         >
                            <EditIcon color="#367bf5" /> Edit
                         </ComboButton>
