@@ -43,7 +43,7 @@ const SEOBasics = ({ update, domain }) => {
     const { Text, Title } = Typography
     const [tunnel1, openTunnel1, closeTunnel1] = useTunnel(1)
     const [isSEOBasicsModalVisible, setIsSEOBasicsModalVisible] = useState(false)
-    console.log("domain", domain)
+
     const [form, setForm] = useState({
         metaTitle: {
             value: '',
@@ -100,28 +100,20 @@ const SEOBasics = ({ update, domain }) => {
             onCompleted: ({ brandSettings
             }) => {
                 if (!isEmpty(brandSettings)) {
-                    const index = brandSettings.findIndex(
-                        node => node?.brand?.brandId === Number(params.id)
-                    )
-                    if (index === -1) {
-                        const { id } = brandSettings[0]
-                        setSettingId(id)
-                        return
-                    }
-                    const { brand, id } = brandSettings[index]
+                    const { brand, id } = brandSettings[0]
                     setSettingId(id)
                     setForm(prev => ({
                         metaTitle: {
                             ...prev.metaTitle,
-                            value: brand?.value?.metaTitle,
+                            value: brand[0]?.value?.metaTitle,
                         },
                         metaDescription: {
                             ...prev.metaDescription,
-                            value: brand?.value?.metaDescription,
+                            value: brand[0]?.value?.metaDescription,
                         },
                         favicon: {
                             ...prev.favicon,
-                            value: brand?.value?.favicon,
+                            value: brand[0]?.value?.favicon,
                         },
                     }))
                 }
@@ -138,49 +130,16 @@ const SEOBasics = ({ update, domain }) => {
             variables: {
                 identifier: { _eq: 'basic-seo' },
                 type: { _eq: 'seo' },
+                brandId: { _eq: Number(params?.id) }
             }
         })
     }, [])
 
-    // Mutation for upserting seo meta data
-    const [upsertSEODetails] = useMutation(BRANDS.UPDATE_BRAND_SETTING, {
-        onCompleted: () => {
-            toast.success('Updated!')
-        },
-        onError: error => {
-            toast.error('Something went wrong with UPDATE_BRAND_SETTING')
-            console.log(error)
-            logger(error)
-        },
-    })
-    console.log({
-        object: {
-            value: {
-                metaTitle: form.metaTitle.value,
-                metaDescription: form.metaDescription.value,
-                favicon: form.favicon.value,
-            },
-            brandId: params.id,
-            brandSettingId: settingId,
-        },
-    })
     //save changes in metadetails
     const Save = () => {
-        upsertSEODetails({
-            variables: {
-                object: {
-                    value: {
-                        metaTitle: form.metaTitle.value,
-                        metaDescription: form.metaDescription.value,
-                        favicon: form.favicon.value,
-                    },
-                    brandId: params.id,
-                    brandSettingId: settingId,
-                },
-            },
-        })
         update({
             id: settingId,
+            brandId: params.id,
             value: {
                 metaTitle: form.metaTitle.value,
                 metaDescription: form.metaDescription.value,

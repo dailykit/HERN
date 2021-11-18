@@ -5,10 +5,13 @@ import {
    PlusIcon,
    ArrowDownIcon,
    ArrowUpIcon,
-   EditIcon, HelperText,
+   EditIcon,
    Flex,
-   Text
+   Filler,
+   TextButton,
 } from '@dailykit/ui'
+import { Card } from 'antd'
+import { Text } from '@dailykit/ui'
 import { FieldUI } from './getFieldUI'
 import { EditModeProvider, useEditMode } from './EditModeContext'
 import { Styles } from './styled'
@@ -21,15 +24,20 @@ const ConfigTemplateUI = props => {
    )
 }
 
-const ConfigUI = ({ config, configSaveHandler }) => {
+const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsSavedChange }) => {
    const [configJSON, setConfigJSON] = React.useState({})
    const [fields, setFields] = React.useState([])
-   const [description, setDescription] = React.useState("")
+   const [description, setDescription] = React.useState('')
    const [isValid, setIsValid] = React.useState(true)
-
    const { editMode, setEditMode } = useEditMode()
+
    const elements = []
+
+   //when there is any change in data
    const onConfigChange = (e, value) => {
+
+      setIsSavedChange(false)
+
       let updatedConfig
       const type = _.get(configJSON, `${e.target.name}.dataType`)
       if (type === 'boolean' || type === 'html' || type === 'select') {
@@ -45,6 +53,7 @@ const ConfigUI = ({ config, configSaveHandler }) => {
          ...prev,
          ...updatedConfig,
       }))
+      console.log({ updatedConfig }, "updatedConfig")
    }
 
    const handleToggle = key => {
@@ -79,7 +88,10 @@ const ConfigUI = ({ config, configSaveHandler }) => {
             data-config-path={key}
             indentation={indentation}
          >
-            <h3>{title}</h3>
+            <div className="header">
+               <h2>{title}</h2>
+               {fieldData.description && <p>{fieldData.description}</p>}
+            </div>
             <button
                type="button"
                className="display-none"
@@ -95,7 +107,6 @@ const ConfigUI = ({ config, configSaveHandler }) => {
             >
                <ArrowDownIcon color="#367BF5" />
             </button>
-            {fieldData.description && <p>{fieldData.description}</p>}
             {setDescription(fieldData.description)}
          </Styles.ConfigTemplateHeader>
       )
@@ -106,6 +117,7 @@ const ConfigUI = ({ config, configSaveHandler }) => {
          const isFieldObject = _.has(value, 'value')
          if (isFieldObject) {
             const updatedRootkey = rootKey ? `${rootKey}.${key}` : key
+
             elements.push(
                <FieldUI
                   fieldKey={updatedRootkey}
@@ -154,42 +166,65 @@ const ConfigUI = ({ config, configSaveHandler }) => {
 
    const handleEdit = () => {
       if (editMode) {
-         configSaveHandler(configJSON)
+         configSaveHandler(isChangeSaved)
          setEditMode(false)
+         setIsSavedChange(true)
       } else {
          setEditMode(true)
       }
    }
    return (
       <Styles.ConfigTemplateUI>
-         {config ? (<>
-            <Styles.Header>
-               {editMode ? (<>
-                  <Styles.Heading>Save your changes</Styles.Heading>
-                  <ComboButton type="solid" size="sm" disabled={!isValid} onClick={handleEdit}>
-                     Save
-                     <PlusIcon color="#fff" />
-                  </ComboButton></>
-               ) : (
-                  <>
-                     <Styles.Heading>Edit your brandsetting</Styles.Heading>
-                     <ComboButton type="ghost" size="sm" onClick={handleEdit}>
-                        Edit <EditIcon color="#367bf5" />
-                     </ComboButton></>
-               )}
-            </Styles.Header >
-            <div>
-               {fields.map((config, index) => (
-                  <div key={index}>{config}</div>
-               ))}
-            </div>
-            <HelperText type="hint" message={description || fields[0]?.props?.children?.props?.fieldDetail?.description || "This is brand setting."} />
-         </>) : (
+         {config ? (
+            <>
+               <Card
+                  title={
+                     identifier ? (
+                        <Text as="h3">{identifier}</Text>
+                     ) : (
+                        <Text as="h3" style={{ textAlign: 'center' }}>
+                           Select a brand's setting to edit.
+                        </Text>
+                     )
+                  }
+                  style={{ width: '100%' }}
+                  extra={
+                     editMode ? (
+                        <TextButton
+                           type="solid"
+                           size="sm"
+                           disabled={!isValid}
+                           onClick={handleEdit}
+                        >
+                           Save
+                        </TextButton>
+                     ) : (
+                        <ComboButton
+                           type="ghost"
+                           size="sm"
+                           onClick={handleEdit}
+                           style={{ marginRight: "-16px" }}
+                        >
+                           <EditIcon color="#367bf5" /> Edit
+                        </ComboButton>
+                     )
+                  }
+               >
+                  {fields.map((config, index) => (
+                     <div key={index}>{config}</div>
+                  ))}
+               </Card>
+            </>
+         ) : (
             <Flex container justifyContent="center" padding="16px">
-               <Text as="subtitle">(No config found)</Text>
+               <Filler
+                  message="No brand's setting selected yet"
+                  width="60%"
+                  height="60%"
+               />
             </Flex>
          )}
-      </Styles.ConfigTemplateUI >
+      </Styles.ConfigTemplateUI>
    )
 }
 

@@ -183,7 +183,7 @@ export const Brand = () => {
                {/* <HorizontalTab>Third Party Integration</HorizontalTab> */}
             </HorizontalTabList>
             <HorizontalTabPanels>
-               <HorizontalTabPanel>
+               <HorizontalTabPanel style={{ height: 'auto' }}>
                   <BrandSettings />
                </HorizontalTabPanel>
                <HorizontalTabPanel>

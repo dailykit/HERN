@@ -27,9 +27,16 @@ export const Styles = {
          border: none;
          background: transparent;
       }
-      > h3 {
+      > .header{
+         display: flex;
+         flex-direction: column;
+         p{padding: 4px;
+            margin-left: ${({ indentation }) => indentation};
+         }
+      }
+      > .header > h2 {
          font-weight: 500;
-         font-size: 14px;
+         font-size: 16px;
          line-height: 16px;
          letter-spacing: 0.16px;
          color: #919699;

@@ -1,15 +1,12 @@
 import React from 'react'
-import { isEmpty } from 'lodash'
 import { useParams } from 'react-router-dom'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
+import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
-import { Card } from 'antd'
-import { Text } from '@dailykit/ui'
 import { BRANDS } from '../../../../../graphql'
 import { logger } from '../../../../../../../shared/utils'
 import ConfigTemplateUI from '../../../../../../../shared/components/ConfigTemplateUI'
 
-export const SettingsCard = ({ setting, title }) => {
+export const SettingsCard = ({ setting, title, isChangeSaved, setIsSavedChange }) => {
     const [config, setConfig] = React.useState({})
     const params = useParams()
     const [updateSetting] = useMutation(BRANDS.UPDATE_BRAND_SETTING, {
@@ -18,14 +15,13 @@ export const SettingsCard = ({ setting, title }) => {
         },
         onError: error => {
             toast.error('Something went wrong!')
-            console.log('error', error)
+            console.log('error in BRANDS.UPDATE_BRAND_SETTING', error)
             logger(error)
         },
     })
-
     React.useEffect(() => setConfig(setting?.value), [config])
     React.useEffect(() => {
-        if (setting?.value == null) {
+        if (setting == [] && setting?.value == null) {
             updateSetting({
                 variables: {
                     object: {
@@ -50,15 +46,13 @@ export const SettingsCard = ({ setting, title }) => {
     }
 
     return (
-        <Card
-            title={<Text as="h3">{title}</Text>}
-            style={{ width: '100%' }}
-        >
-            <ConfigTemplateUI
-                config={config}
-                setConfig={setConfig}
-                configSaveHandler={saveInfo}
-            />
-        </Card>
+        <ConfigTemplateUI
+            config={config}
+            setConfig={setConfig}
+            configSaveHandler={saveInfo}
+            identifier={title}
+            isChangeSaved={isChangeSaved}
+            setIsSavedChange={setIsSavedChange}
+        />
     )
 }

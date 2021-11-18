@@ -3,7 +3,7 @@ import 'antd/dist/antd.css'
 import { HelperText } from '@dailykit/ui'
 import { isEmpty } from 'lodash'
 import { InlineLoader } from '../../../../../../../../shared/components'
-import { useMutation, useLazyQuery } from '@apollo/react-hooks'
+import { useLazyQuery } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { logger } from '../../../../../../../../shared/utils'
@@ -43,20 +43,12 @@ const FacebookPixelId = ({ update }) => {
         useLazyQuery(BRANDS.SETTINGS, {
             onCompleted: ({ brandSettings }) => {
                 if (!isEmpty(brandSettings)) {
-                    const index = brandSettings.findIndex(
-                        node => node?.brand?.brandId === Number(params.id)
-                    )
-                    if (index === -1) {
-                        const { id } = brandSettings[0]
-                        setSettingId(id)
-                        return
-                    }
-                    const { brand, id } = brandSettings[index]
+                    const { brand, id } = brandSettings[0]
                     setSettingId(id)
                     setForm(prev => ({
                         fbPixelId: {
                             ...prev.fbPixelId,
-                            value: brand?.value?.fbPixelId,
+                            value: brand[0]?.value?.fbPixelId,
                         },
                     }))
                 }
@@ -73,46 +65,16 @@ const FacebookPixelId = ({ update }) => {
             variables: {
                 identifier: { _eq: 'facebookPixelId' },
                 type: { _eq: 'seo' },
+                brandId: { _eq: params?.id }
             },
         })
     }, [])
 
-    // Mutation for upserting seo meta data
-    const [upsertSEODetails] = useMutation(BRANDS.UPDATE_BRAND_SETTING, {
-        onCompleted: () => {
-            toast.success('Updated!')
-        },
-        onError: error => {
-            toast.error('Something went wrong with UPDATE_BRAND_SETTING')
-            console.log(error)
-            logger(error)
-        },
-    })
-    console.log({
-        object: {
-            value: {
-                fbPixelId: form.fbPixelId.value,
-            },
-            brandId: params.id,
-            brandSettingId: settingId,
-        },
-    })
-
     //save changes
     const Save = () => {
-        upsertSEODetails({
-            variables: {
-                object: {
-                    value: {
-                        fbPixelId: form.fbPixelId.value,
-                    },
-                    brandId: params.id,
-                    brandSettingId: settingId,
-                },
-            },
-        })
         update({
             id: settingId,
+            brandId: params.id,
             value: {
                 fbPixelId: form.fbPixelId.value,
             },

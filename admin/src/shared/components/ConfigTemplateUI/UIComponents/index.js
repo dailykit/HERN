@@ -6,13 +6,14 @@ import {
    IconButton,
    Spacer,
    Dropdown,
-   PlusIcon,
+   ButtonTile,
    Tunnels,
    Text,
    Tunnel,
    TunnelHeader,
    useTunnel,
 } from '@dailykit/ui'
+import { Image } from 'antd'
 import {
    Tooltip,
    RichTextEditor,
@@ -21,7 +22,7 @@ import {
    Banner,
    ErrorState,
 } from '../../../components'
-import { EditIcon } from '../../../assets/icons'
+import { EditIcon, DeleteIcon } from '../../../assets/icons'
 import PhoneInput, {
    formatPhoneNumber,
    formatPhoneNumberIntl,
@@ -40,22 +41,18 @@ export const TextBox = ({
    isValid,
    setIsValid,
    validationType = null,
-   editMode
+   editMode,
 }) => {
    const [errorMessage, setErrorMessage] = React.useState([])
    const [emailValid, setEmailValid] = React.useState(true)
 
-   React.useEffect(
-      () => {
-
-         if (!emailValid) {
-            setIsValid(false)
-         } else {
-            setIsValid((prev) => prev === false ? false : true)
-         }
-      },
-      [emailValid]
-   )
+   React.useEffect(() => {
+      if (!emailValid) {
+         setIsValid(false)
+      } else {
+         setIsValid(prev => (prev === false ? false : true))
+      }
+   }, [emailValid])
 
    return (
       <Flex
@@ -71,23 +68,29 @@ export const TextBox = ({
             <Tooltip identifier="text_component_info" />
          </Flex>
          <Form.Group>
-            {editMode ? <Form.Text
-               id={path}
-               name={path}
-               onBlur={e => {
-                  if (validationType == 'email') {
-                     const { isValid: isValidEmail, errors } = validator.email(
-                        e.target.value
-                     )
-                     setEmailValid(isValidEmail)
-                     setErrorMessage(errors)
-                     return
-                  }
-               }}
-               onChange={onConfigChange}
-               value={fieldDetail?.value || fieldDetail.default}
-               placeholder="Enter the orientation"
-            /> : <Text as="h3">{fieldDetail?.value || fieldDetail.default}</Text>}
+            {editMode ? (
+               <Form.Text
+                  id={path}
+                  name={path}
+                  onBlur={e => {
+                     if (validationType == 'email') {
+                        const { isValid: isValidEmail, errors } =
+                           validator.email(e.target.value)
+                        setEmailValid(isValidEmail)
+                        setErrorMessage(errors)
+                        return
+                     }
+                  }}
+                  onChange={onConfigChange}
+                  value={fieldDetail?.value}
+                  placeholder={`Enter the ${fieldDetail.label.toLowerCase()}`}
+               />
+            ) : (
+               <Text as="h3" style={{ fontSize: '16px' }}>
+                  {fieldDetail?.value || fieldDetail.default}
+                  {(fieldDetail?.value == "" && fieldDetail.default == "") && <NoValueSpan>Not specified</NoValueSpan>}
+               </Text>
+            )}
 
             {errorMessage.length !== 0 && (
                <Form.Error> {errorMessage[0]}</Form.Error>
@@ -147,7 +150,13 @@ export const ColorPicker = ({
    </Flex>
 )
 
-export const Number = ({ fieldDetail, marginLeft, path, onConfigChange, editMode }) => (
+export const Number = ({
+   fieldDetail,
+   marginLeft,
+   path,
+   onConfigChange,
+   editMode,
+}) => (
    <Flex
       container
       justifyContent="space-between"
@@ -160,13 +169,17 @@ export const Number = ({ fieldDetail, marginLeft, path, onConfigChange, editMode
          </Form.Label>
          <Tooltip identifier="number_component_info" />
       </Flex>
-      {editMode ? <Form.Number
-         id={path}
-         name={path}
-         onChange={onConfigChange}
-         value={fieldDetail?.value || fieldDetail.default}
-         placeholder="Enter integer value"
-      /> : <Text as="h4">{fieldDetail?.value || fieldDetail.default}</Text>}
+      {editMode ? (
+         <Form.Number
+            id={path}
+            name={path}
+            onChange={onConfigChange}
+            value={fieldDetail?.value || fieldDetail.default}
+            placeholder="Enter integer value"
+         />
+      ) : (
+         <Text as="h4">{fieldDetail?.value || fieldDetail.default}</Text>
+      )}
    </Flex>
 )
 
@@ -191,7 +204,13 @@ export const Checkbox = ({ fieldDetail, marginLeft, path, onConfigChange }) => (
       />
    </Flex>
 )
-export const Date = ({ fieldDetail, marginLeft, path, onConfigChange, editMode }) => (
+export const Date = ({
+   fieldDetail,
+   marginLeft,
+   path,
+   onConfigChange,
+   editMode,
+}) => (
    <Flex
       container
       justifyContent="space-between"
@@ -204,15 +223,25 @@ export const Date = ({ fieldDetail, marginLeft, path, onConfigChange, editMode }
          </Form.Label>
          <Tooltip identifier="date_component_info" />
       </Flex>
-      {editMode ? <Form.Date
-         id={path}
-         name={path}
-         onChange={onConfigChange}
-         value={fieldDetail?.value || fieldDetail.default}
-      /> : <Text as="h4">{fieldDetail?.value || fieldDetail.default}</Text>}
+      {editMode ? (
+         <Form.Date
+            id={path}
+            name={path}
+            onChange={onConfigChange}
+            value={fieldDetail?.value || fieldDetail.default}
+         />
+      ) : (
+         <Text as="h4">{fieldDetail?.value || fieldDetail.default}</Text>
+      )}
    </Flex>
 )
-export const Time = ({ fieldDetail, marginLeft, path, onConfigChange, editMode }) => (
+export const Time = ({
+   fieldDetail,
+   marginLeft,
+   path,
+   onConfigChange,
+   editMode,
+}) => (
    <Flex
       container
       justifyContent="space-between"
@@ -225,12 +254,16 @@ export const Time = ({ fieldDetail, marginLeft, path, onConfigChange, editMode }
          </Form.Label>
          <Tooltip identifier="time_component_info" />
       </Flex>
-      {editMode ? <Form.Time
-         id={path}
-         name={path}
-         onChange={onConfigChange}
-         value={fieldDetail?.value || fieldDetail.default}
-      /> : <Text as="h4">{fieldDetail?.value || fieldDetail.default}</Text>}
+      {editMode ? (
+         <Form.Time
+            id={path}
+            name={path}
+            onChange={onConfigChange}
+            value={fieldDetail?.value || fieldDetail.default}
+         />
+      ) : (
+         <Text as="h4">{fieldDetail?.value || fieldDetail.default}</Text>
+      )}
    </Flex>
 )
 export const Select = ({ fieldDetail, marginLeft, path, onConfigChange }) => {
@@ -279,7 +312,13 @@ export const Select = ({ fieldDetail, marginLeft, path, onConfigChange }) => {
    )
 }
 
-export const TextArea = ({ fieldDetail, marginLeft, path, onConfigChange, editMode }) => (
+export const TextArea = ({
+   fieldDetail,
+   marginLeft,
+   path,
+   onConfigChange,
+   editMode,
+}) => (
    <Flex
       container
       justifyContent="space-between"
@@ -292,12 +331,16 @@ export const TextArea = ({ fieldDetail, marginLeft, path, onConfigChange, editMo
          </Form.Label>
          <Tooltip identifier="textArea_component_info" />
       </Flex>
-      {editMode ? <Form.TextArea
-         id={path}
-         name={path}
-         onChange={onConfigChange}
-         value={fieldDetail?.value || fieldDetail.default}
-      /> : <Text as="h4">{fieldDetail?.value || fieldDetail.default}</Text>}
+      {editMode ? (
+         <Form.TextArea
+            id={path}
+            name={path}
+            onChange={onConfigChange}
+            value={fieldDetail?.value || fieldDetail.default}
+         />
+      ) : (
+         <Text as="h4">{fieldDetail?.value || fieldDetail.default}</Text>
+      )}
    </Flex>
 )
 export const TextWithSelect = ({
@@ -375,7 +418,13 @@ export const NumberWithSelect = ({
    </Flex>
 )
 
-export const RichText = ({ fieldDetail, marginLeft, path, onConfigChange, editMode }) => {
+export const RichText = ({
+   fieldDetail,
+   marginLeft,
+   path,
+   onConfigChange,
+   editMode,
+}) => {
    const onEditorChange = html => {
       const e = {
          target: {
@@ -391,12 +440,19 @@ export const RichText = ({ fieldDetail, marginLeft, path, onConfigChange, editMo
                {fieldDetail.label.toUpperCase()}
             </Form.Label>
             <Tooltip identifier="RichText_component_info" />
-         </Flex><>
-            {editMode ? <RichTextEditor
-               defaultValue={fieldDetail?.value || fieldDetail.default}
-               onChange={html => onEditorChange(html)}
-            /> : <div>{ReactHTMLParser(fieldDetail?.value)}</div>}
-         </>
+         </Flex>
+         <Form.Group>
+            {editMode ? (
+               <RichTextEditor
+                  defaultValue={fieldDetail?.value || fieldDetail.default}
+                  onChange={html => onEditorChange(html)}
+               />
+            ) : (
+               <div style={{ background: '#f9f9f9', padding: '6px' }}>
+                  {ReactHTMLParser(fieldDetail?.value)}
+               </div>
+            )}
+         </Form.Group>
       </Flex>
    )
 }
@@ -470,16 +526,23 @@ export const PhoneNumberSelector = ({
    onConfigChange,
    editMode,
    value,
-   configJSON
+   configJSON,
 }) => {
+   const [errorMessage, setErrorMessage] = React.useState([])
+
    React.useEffect(() => {
-      if (isValidPhoneNumber(value.value)) {
+      const phoneNo = value.value || ""
+      if (isValidPhoneNumber(phoneNo)) {
          setIsValid(true)
-      } else { setIsValid(false) }
+         setErrorMessage([])
+      } else {
+         setIsValid(false)
+         setErrorMessage(['Invalid number'])
+      }
    }, [configJSON])
 
    return (
-      <>
+      <PhoneNumSelector>
          <Flex
             container
             justifyContent="space-between"
@@ -492,116 +555,163 @@ export const PhoneNumberSelector = ({
                </Form.Label>
                <Tooltip identifier="textArea_component_info" />
             </Flex>
-            {editMode ? <PhoneInput
-               id={path}
-               name={path}
-               initialValueFormat="national"
-               value={fieldDetail?.value}
-               onChange={result => {
-                  const e = { target: { name: path, value: result } }
-                  onConfigChange(e, result)
-               }}
-               placeholder="Enter your phone number"
-            /> : <Text as="h4">{fieldDetail?.value}</Text>}
+            <Form.Group>
+               {editMode ? (
+                  <PhoneInput
+                     id={path}
+                     name={path}
+                     initialValueFormat="national"
+                     value={fieldDetail?.value}
+                     onChange={result => {
+                        const e = { target: { name: path, value: result } }
+                        onConfigChange(e, result)
+                     }}
+                     placeholder="Enter your phone number"
+                  />
+               ) : (
+                  <Text as="h4">{fieldDetail?.value}</Text>
+               )}
+               {errorMessage.length !== 0 && (
+                  <Form.Error> {errorMessage[0]}</Form.Error>
+               )}
+            </Form.Group>
          </Flex>
-      </>
+      </PhoneNumSelector>
    )
 }
 export const ImageUpload = props => {
    // props
-   const { fieldDetail, path, onConfigChange, configSaveHandler, configJSON, editMode } = props
+   const { fieldDetail, path, onConfigChange, editMode } = props
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
    const updateSetting = (data = {}) => {
       if ('url' in data) {
          const e = { target: { name: path, value: data.url } }
          onConfigChange(e, data.url)
-         configSaveHandler(configJSON)
+         // configSaveHandler(configJSON)
       }
       closeTunnel(1)
    }
    return (
-      <>{editMode ? <>
-         <Flex container alignItems="flex-start">
-            <Form.Label title={fieldDetail.label} htmlFor="textArea">
-               {fieldDetail.label.toUpperCase()}
-            </Form.Label>
-            <Tooltip identifier="textArea_component_info" />
-         </Flex>
-         <Spacer size="16px" />
-         {fieldDetail?.value ? (
-            <ImageContainer width="120px" height="120px">
-               <div>
-                  <IconButton
+      <>
+         {editMode ? (
+            <>
+               <Flex container alignItems="flex-start">
+                  <Form.Label title={fieldDetail.label} htmlFor="textArea">
+                     YOUR {fieldDetail.label.toUpperCase()}
+                  </Form.Label>
+                  <Tooltip identifier="textArea_component_info" />
+               </Flex>
+               <Spacer size="16px" />
+               {fieldDetail?.value ? (
+                  <ImageContainer width="120px" height="120px">
+                     <div>
+                        <IconButton
+                           style={{ background: 'transparent' }}
+                           size="sm"
+                           type="solid"
+                           onClick={() => openTunnel(1)}
+                        >
+                           <EditIcon />
+                        </IconButton>
+                        <IconButton
+                           style={{
+                              background: 'transparent',
+                           }}
+                           size="sm"
+                           type="solid"
+                           onClick={() => updateSetting({ url: '' })}
+                        >
+                           <DeleteIcon />
+                        </IconButton>
+                     </div>
+                     <img src={fieldDetail?.value} alt="Brand Logo" />
+                  </ImageContainer>
+               ) : (
+                  <ButtonTile
+                     type="uploadImage"
                      size="sm"
-                     type="solid"
+                     text="Upload"
                      onClick={() => openTunnel(1)}
-                  >
-                     <EditIcon />
-                  </IconButton>
-               </div>
-               <img src={fieldDetail?.value} alt="Brand Logo" />
-            </ImageContainer>
+                     style={{
+                        width: '170px',
+                        height: '120px',
+                        marginBottom: '10px',
+                     }}
+                  />
+               )}
+               <Tunnels tunnels={tunnels}>
+                  <Tunnel layer={1} size="md">
+                     <TunnelHeader
+                        title="Add Brand Logo"
+                        close={() => closeTunnel(1)}
+                     />
+                     <Banner id="brands-app-brands-brand-details-brand-logo-tunnel-top" />
+                     <Flex padding="16px">
+                        <AssetUploader
+                           onAssetUpload={data => updateSetting(data)}
+                           onImageSelect={data => updateSetting(data)}
+                        />
+                     </Flex>
+                     <Banner id="brands-app-brands-brand-details-brand-logo-tunnel-bottom" />
+                  </Tunnel>
+               </Tunnels>
+            </>
          ) : (
-            <ImageContainer width="120px" height="120px" noThumb>
-               <div>
-                  <IconButton
-                     size="sm"
-                     type="solid"
-                     onClick={() => openTunnel(1)}
-                  >
-                     <PlusIcon />
-                  </IconButton>
-               </div>
+            <ImageContainer width="120px" height="120px">
+               {' '}
+               {fieldDetail?.value ? (
+                  <img src={fieldDetail?.value} alt="Brand Logo" />
+               ) : (
+                  <div style={{ display: 'flex' }}>
+                     <Image
+                        width={170}
+                        height={120}
+                        src="error"
+                        fallback="data:image/png;base64,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"
+                     />{' '}
+                     <Text as="p">You haven't uploaded an image yet.</Text>
+                  </div>
+               )}
             </ImageContainer>
          )}
-         <Tunnels tunnels={tunnels}>
-            <Tunnel layer={1} size="md">
-               <TunnelHeader
-                  title="Add Brand Logo"
-                  close={() => closeTunnel(1)}
-               />
-               <Banner id="brands-app-brands-brand-details-brand-logo-tunnel-top" />
-               <Flex padding="16px">
-                  <AssetUploader
-                     onAssetUpload={data => updateSetting(data)}
-                     onImageSelect={data => updateSetting(data)}
-                  />
-               </Flex>
-               <Banner id="brands-app-brands-brand-details-brand-logo-tunnel-bottom" />
-            </Tunnel>
-         </Tunnels>
-      </> : (<ImageContainer width="120px" height="120px">  {fieldDetail?.value ? <img src={fieldDetail?.value} alt="Brand Logo" /> : <p>No Image selected</p>}</ImageContainer>)}
       </>
    )
 }
 
 export const ImageContainer = styled.div`
-   padding: 8px;
-   position: relative;
-   border-radius: 2px;
-   border: 1px solid #e3e3e3;
+   display: flex;
+   flex-direction: row-reverse;
+   justify-content: flex-end;
    height: ${props => props.height || 'auto'};
    width: ${props => props.width || 'auto'};
+   position: relative;
+   margin-bottom: 16px;
    img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-   }
-   div {
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      position: absolute;
-      background: linear-gradient(
-         212deg,
-         rgba(0, 0, 0, 1) 0%,
-         rgba(255, 255, 255, 0) 29%
-      );
    }
    button {
       float: right;
       margin: 4px 4px 0 0;
    }
 `
+export const PhoneNumSelector = styled.div`
+   .PhoneInputInput {
+      border-radius: 6px;
+      border: 1px solid #e3e3e3;
+      text-align: left;
+      font-size: 16px;
+      padding: 0 12px;
+      height: 40px;
+   }
+   h4 {
+      font-size: 15px;
+   }
+`
+export const NoValueSpan = styled.span`
+color: #919699;
+    font-size: 14px;
+    font-weight: 400;
+    `
