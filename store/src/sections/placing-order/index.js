@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { useSubscription } from '@apollo/react-hooks'
 
 import { useConfig } from '../../lib'
-import { isClient, get_env } from '../../utils'
+import { isClient, get_env, getRoute } from '../../utils'
 import { useUser } from '../../context'
 import { CART_STATUS } from '../../graphql'
 import OrderInfo from '../../sections/OrderInfo'
@@ -28,7 +28,7 @@ export const PlacingOrder = () => {
 const ContentWrapper = () => {
    const { user } = useUser()
    const { configOf } = useConfig()
-   const { pathname } = useRouter()
+   const router = useRouter()
    const {
       error,
       loading,
@@ -41,7 +41,8 @@ const ContentWrapper = () => {
       onSubscriptionData: ({
          subscriptionData: { data: { cart = {} } = {} } = {},
       } = {}) => {
-         const isNotFirstTimeOrder = pathname === '/[brand]/placing-order'
+         const isNotFirstTimeOrder =
+            router.pathname === '/[brand]/placing-order'
          if (isNotFirstTimeOrder) {
             ReactPixel.trackCustom('earlyPay', {
                ...cart,
@@ -83,7 +84,12 @@ const ContentWrapper = () => {
                   Oh no! Looks like you've wandered on an unknown path, let's
                   get you to home.
                </HelperBar.Title>
-               <HelperBar.Button onClick={() => navigate('/')}>
+               <HelperBar.Button
+                  onClick={() =>
+                     (window.location.href =
+                        window.location.origin + getRoute('/'))
+                  }
+               >
                   Go to Home
                </HelperBar.Button>
             </HelperBar>
@@ -110,7 +116,12 @@ const ContentWrapper = () => {
                   Looks like the page you're requesting is not available
                   anymore, let's get you to home.
                </HelperBar.Title>
-               <HelperBar.Button onClick={() => navigate('/')}>
+               <HelperBar.Button
+                  onClick={() =>
+                     (window.location.href =
+                        window.location.origin + getRoute('/'))
+                  }
+               >
                   Go to Home
                </HelperBar.Button>
             </HelperBar>
@@ -125,7 +136,12 @@ const ContentWrapper = () => {
                   Seems like, you do not have access to this page, let's get you
                   to home.
                </HelperBar.SubTitle>
-               <HelperBar.Button onClick={() => navigate('/')}>
+               <HelperBar.Button
+                  onClick={() =>
+                     (window.location.href =
+                        window.location.origin + getRoute('/'))
+                  }
+               >
                   Go to Home
                </HelperBar.Button>
             </HelperBar>

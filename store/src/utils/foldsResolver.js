@@ -9,7 +9,6 @@ There could be two type of fold[module]
  - This could be either html file or JS file
 */
 const resolveComponent = fold => {
-   console.log('fold', fold)
    return new Promise(async (resolve, reject) => {
       try {
          if (fold.moduleType === 'system-defined') {

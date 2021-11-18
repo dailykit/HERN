@@ -4,7 +4,6 @@ import { CSSTransition } from 'react-transition-group'
 
 export const LoginWrapper = ({ ...props }) => {
    const { showLoginPopup } = props
-   console.log('showLoginPopup', showLoginPopup)
    return (
       <CSSTransition
          in={showLoginPopup}
