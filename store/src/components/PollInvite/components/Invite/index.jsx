@@ -166,12 +166,7 @@ export default function Invite({ experienceBooking, isPollClosed }) {
                            format: 'html'
                         })
                      )
-                     const body_template_options2 = encodeURI(
-                        JSON.stringify({
-                           path: '/emails/PollInvitation/index.js',
-                           format: 'html'
-                        })
-                     )
+
                      const footer_template_options = encodeURI(
                         JSON.stringify({
                            path: '/stayin-folds/emails/GlobalEmailFooter/index.js',
@@ -179,9 +174,8 @@ export default function Invite({ experienceBooking, isPollClosed }) {
                         })
                      )
                      const base_url = 'https://testhern.dailykit.org'
-                     const base_url2 = window.location.origin
                      const templateHeaderUrl = `${base_url}/template/?template=${header_template_options}&data=${template_variables}`
-                     const templatebodyUrl = `${base_url2}/template/?template=${body_template_options2}&data=${template_variables}`
+                     const templatebodyUrl = `${base_url}/template/?template=${body_template_options}&data=${template_variables}`
                      const templateFooterUrl = `${base_url}/template/?template=${footer_template_options}&data=${template_variables}`
 
                      const { data: headerHtml } = await axios.get(
