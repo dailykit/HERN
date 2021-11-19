@@ -105,7 +105,7 @@ export const Toggle = ({ fieldDetail, marginLeft, path, onConfigChange }) => (
       container
       justifyContent="space-between"
       alignItems="center"
-      margin={`0 0 0 ${marginLeft}`}
+      margin={`${marginLeft} 0 0 ${marginLeft}`}
    >
       <Flex container alignItems="flex-end">
          <Form.Label title={fieldDetail.label} htmlFor="toggle">
@@ -704,6 +704,7 @@ export const PhoneNumSelector = styled.div`
       font-size: 16px;
       padding: 0 12px;
       height: 40px;
+      margin-top:12px;
    }
    h4 {
       font-size: 15px;

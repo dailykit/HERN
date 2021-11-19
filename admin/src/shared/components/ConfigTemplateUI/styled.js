@@ -12,8 +12,12 @@ export const Styles = {
       }
       &:hover{
          .edit_button{
-            display:flex
+            display:flex;
+            background:transparent;
          }
+      }
+      .ant-card-head {
+         max-height:58px;
       }
    `,
    Header: styled.div`

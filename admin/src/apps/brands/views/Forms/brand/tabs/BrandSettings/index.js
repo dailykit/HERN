@@ -18,6 +18,7 @@ import LinkFiles from '../../../../../../content/views/Forms/Page/ContentSelecti
 
 export const BrandSettings = () => {
    const params = useParams()
+   const [allSettings, setAllSettings] = React.useState([])
    const [setting, setSetting] = React.useState([])
    const [settings, setSettings] = React.useState([])
    const [isChangeSaved, setIsSavedChange] = React.useState(true)
@@ -44,6 +45,7 @@ export const BrandSettings = () => {
          } = {},
       }) => {
          if (!isEmpty(brands_brand_brandSetting)) {
+            setAllSettings(brands_brand_brandSetting)
             const result = groupingBrandSettings(brands_brand_brandSetting, 'brandSetting')
             setSettings(result)
          } else {
@@ -110,8 +112,15 @@ export const BrandSettings = () => {
          {/* contain selected setting */}
          < Styles.SettingWrapper >
             <Flex>
-               <SettingsCard setting={setting} key={setting?.brandSetting?.id} title={setting?.brandSetting?.identifier} isChangeSaved={isChangeSaved} setIsSavedChange={setIsSavedChange} />
-            </Flex>
+               {types.length > 0 && (
+                  types.map((type) => {
+                     return (<><Text as="h2">{(type).charAt(0).toUpperCase() + (type).slice(1)}</Text>
+                        {settings[type].map((setting) => {
+                           return (
+                              <SettingsCard setting={setting} key={setting?.brandSetting?.id} title={setting?.brandSetting?.identifier} isChangeSaved={isChangeSaved} setIsSavedChange={setIsSavedChange} />
+                           )
+                        })}</>)
+                  }))}</Flex>
          </Styles.SettingWrapper >
          <Styles.LinkWrapper >
             <Card
