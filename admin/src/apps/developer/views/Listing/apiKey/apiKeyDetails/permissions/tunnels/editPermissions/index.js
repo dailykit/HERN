@@ -10,7 +10,15 @@ const EditPermissionsTunnel = (props) => {
     
     const {state, dispatch} = useApiKey()
 
-    const [updateApiKeyPermissions, {loading: updateApiKeyPermissionsLoading, error}] = useMutation(UPDATE_API_KEY_PERMISSIONS);
+    const [updateApiKeyPermissions, {loading: updateApiKeyPermissionsLoading, error}] = useMutation(UPDATE_API_KEY_PERMISSIONS, {
+        onCompleted: () => {
+            toast.success('Successfully updated!')
+         },
+         onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
+         }
+    });
 
     const submitForm = () => {
         const canAddProducts = state.apiKeyPermissions?.filter(item=>item[Object.keys(item)[0]].label=="Add Products")[0].canAddProducts.value
@@ -20,11 +28,6 @@ const EditPermissionsTunnel = (props) => {
                 'apiKey': state.apiKeyDetails.apiKey,
                 'canAddProducts': canAddProducts,
                 'canUpdateProducts': canUpdateProducts
-            },
-            onError : (error) =>{
-
-                toast.error('Something went wrong')
-                logger(error)
             }
         })
         

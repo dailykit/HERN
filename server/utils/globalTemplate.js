@@ -8,6 +8,8 @@ query GET_BRAND_SETTING($brandId: Int, $identifier: String!) {
      brandId
      brandSettingId
      value
+     brandSettingId
+     brandId
    }
  }
  `
@@ -22,9 +24,10 @@ query GET_FILE_PATH($id: Int!) {
 
 export const globalTemplate = async ({ brandId, identifier }) => {
    try {
-      const { brands_brand_brandSetting: settings } =
-         await client.request(GET_BRAND_SETTING, { brandId, identifier })
-      console.log({ settings })
+      const { brands_brand_brandSetting: settings } = await client.request(
+         GET_BRAND_SETTING,
+         { brandId, identifier }
+      )
       if (settings.length > 0) {
          const [setting] = settings
          const { editor_file_by_pk: file } = await client.request(
@@ -47,7 +50,7 @@ export const globalTemplate = async ({ brandId, identifier }) => {
       }
       return null
    } catch (error) {
-      console.log(error)
+      console.error(error)
       throw error
    }
 }

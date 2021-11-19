@@ -4,7 +4,7 @@ import {ACTIVE_EVENTS_WEBHOOKS, DELETE_WEBHOOK_EVENT } from '../../../../graphql
 import {logger}  from '../../../../../../shared/utils'
 import {Flex, Text, ButtonGroup, ComboButton, PlusIcon, useTunnel, Spacer, Dropdown, TextButton} from '@dailykit/ui';
 import { toast } from 'react-toastify'
-import AddWebHook from '../../../../tunnels/addWebhookTunnel';
+import {AddWebHook} from '../../../Forms/Webhooks/tunnels';
 import options from '../../../tableOptions'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { useWebhook } from '../state';
