@@ -104,7 +104,7 @@ const ApiKeyListing = ()=>{
            resizable:true,
            formatter:reactFormatter(<DeleteIcon />),
            cellClick: (e, cell) => {
-              if (window.confirm("Are you sure you wan to delete this webhook ?")){
+              if (window.confirm("Are you sure you wan to delete this api key ?")){
                 deleteApiKey({
                     variables: {
                         "apiKey": cell._cell.row.data.apiKey
@@ -157,6 +157,13 @@ const ApiKeyListing = ()=>{
               ? apiKeyGroupParse
               : []
         )
+
+      if (apiKeyGroup !== undefined && apiKeyGroup!=null && JSON.parse(apiKeyGroup).length===0){
+         localStorage.setItem(
+            'tabulator-apiKey_table-group',
+            JSON.stringify(["activationStatus"]))
+         handleGroupBy(["activationStatus"])
+      }
   
         tableRef.current.table.setGroupHeader(function (
            value,
