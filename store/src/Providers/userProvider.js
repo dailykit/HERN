@@ -78,6 +78,9 @@ export const UserProvider = ({ children }) => {
    const [session, loadingSession] = useSession()
 
    const [createCustomer] = useMutation(CREATE_CUSTOMER, {
+      onCompleted: data => {
+         console.log('customer created', data)
+      },
       onError: error => console.error('createCustomer => error => ', error)
    })
 
@@ -105,7 +108,9 @@ export const UserProvider = ({ children }) => {
          onSubscriptionData: async ({
             subscriptionData: { data: { customer = {} } = {} } = {}
          } = {}) => {
+            console.log('customer details subscription', customer)
             if (!customer?.id) {
+               console.log("customer doesn't exist in crm")
                await createCustomer({
                   variables: {
                      object: {

@@ -816,6 +816,9 @@ export const EXPERIENCE_BOOKING = gql`
             duration
             isActive
             isBooked
+            expert: experienceClassExpert {
+               fullName
+            }
             experience {
                assets
                description
@@ -1082,6 +1085,7 @@ export const CUSTOMER_DETAILS = gql`
             email
             firstName
             lastName
+            fullName
             keycloakId
             phoneNumber
             paymentCustomerId

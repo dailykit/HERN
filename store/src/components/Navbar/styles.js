@@ -310,6 +310,10 @@ export const DropdownWrapper = styled.div`
       transition: background 500ms;
       padding: 4px;
       margin: 12px 0;
+      &:hover {
+         cursor: pointer;
+         background-color: #525357;
+      }
       .icon-button {
          margin-right: 0.5rem;
          &:hover {

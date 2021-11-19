@@ -35,14 +35,18 @@ export const root = async (req, res) => {
 
       const template = await JSON.parse(req.query.template)
       const data = await JSON.parse(req.query.data)
+      console.log(data)
       let method
 
       if (template.path) {
+         console.log('step 1')
          method = require(`${path.join(
             __dirname,
             '..',
-            'template/templates'
-         )}/${template.path}`)
+            'template/templates',
+            template.path
+         )}`)
+         console.log('step 2')
       } else {
          method = require(`${path.join(
             __dirname,

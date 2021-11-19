@@ -1,15 +1,17 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import jwt from 'jsonwebtoken'
 import { useToasts } from 'react-toast-notifications'
 import { useMutation } from '@apollo/client'
-import { message } from 'antd'
+import { message, Result, Spin } from 'antd'
+import axios from 'axios'
 import { Wrapper } from './styles'
 import {
    Button,
    Modal,
    InviteThrough,
    CopyIcon,
-   SocialShare
+   SocialShare,
+   SpinnerIcon
 } from '../../../../components'
 import { theme } from '../../../../theme'
 import { useUser } from '../../../../Providers'
@@ -18,7 +20,12 @@ import {
    SEND_SMS,
    CREATE_EXPERIENCE_BOOKING_PARTICIPANT
 } from '../../../../graphql'
-import { get_env, isNumeric, isClient } from '../../../../utils'
+import {
+   get_env,
+   isNumeric,
+   isClient,
+   getDateWithTime
+} from '../../../../utils'
 
 export default function Invite({ experienceBooking, isPollClosed }) {
    const [isInviteModalVisible, setIsInviteModalVisible] = useState(false)
@@ -27,11 +34,14 @@ export default function Invite({ experienceBooking, isPollClosed }) {
    const { user = {} } = userState
    const [inviteList, setInviteList] = useState([])
    const [isReset, setIsReset] = useState(false)
+   const [isSendingEmail, setIsSendingEmail] = useState(false)
+   const [emailTemplate, setEmailTemplate] = useState('')
+   const [invitationToken, setInvitationToken] = useState('')
    const payload = {
       experienceBookingId: experienceBooking?.id,
       experienceBookingCartId: experienceBooking?.cartId,
       invitedBy: {
-         name: user?.name,
+         name: user?.fullName,
          email: user?.email
       },
       cutoffDate: experienceBooking?.cutoffTime,
@@ -45,12 +55,20 @@ export default function Invite({ experienceBooking, isPollClosed }) {
       {
          onError: error => {
             console.error(error)
+            setInviteList([])
+            setIsReset(true)
+            setIsSendingEmail(false)
+            setIsInviteModalVisible(false)
          }
       }
    )
-   const [sendEmail, { loading: isSendingEmail }] = useMutation(SEND_EMAIL, {
+   const [sendEmail] = useMutation(SEND_EMAIL, {
       onError: error => {
          console.log(error)
+         setInviteList([])
+         setIsReset(true)
+         setIsSendingEmail(false)
+         setIsInviteModalVisible(false)
          addToast('Something went wrong!', { appearance: 'error' })
       }
    })
@@ -85,91 +103,159 @@ export default function Invite({ experienceBooking, isPollClosed }) {
    }
 
    const sendInvitation = async () => {
-      if (!isPollClosed) {
-         const updatedCartItems = {
-            ...experienceBooking?.experienceClass?.experience
-               ?.experience_products[0]?.product?.productOptions[0]?.cartItem,
-            experienceClassId: experienceBooking?.parentCart?.experienceClassId,
-            experienceClassTypeId:
-               experienceBooking?.parentCart?.experienceClassTypeId
-         }
-         inviteList.forEach(async inviteAddress => {
-            const email = isNumeric(inviteAddress) ? null : inviteAddress
-            const phone = isNumeric(inviteAddress) ? inviteAddress : null
-            const { data: { createExperienceBookingParticipant = {} } = {} } =
-               await createParticipant({
-                  variables: {
-                     object: {
-                        experienceBookingId: experienceBooking?.id,
-                        email,
-                        phone,
-                        childCart: {
-                           data: {
-                              parentCartId: experienceBooking?.parentCart?.id,
-                              experienceClassId:
-                                 experienceBooking?.parentCart
-                                    ?.experienceClassId,
-                              experienceClassTypeId:
-                                 experienceBooking?.parentCart
-                                    ?.experienceClassTypeId,
-                              cartItems: {
-                                 data: [
-                                    updatedCartItems,
-                                    {
-                                       experienceClassId:
-                                          experienceBooking?.parentCart
-                                             ?.experienceClassId,
-                                       experienceClassTypeId:
-                                          experienceBooking?.parentCart
-                                             ?.experienceClassTypeId
-                                    }
-                                 ]
+      try {
+         if (!isPollClosed) {
+            const updatedCartItems = {
+               ...experienceBooking?.experienceClass?.experience
+                  ?.experience_products[0]?.product?.productOptions[0]
+                  ?.cartItem,
+               experienceClassId:
+                  experienceBooking?.parentCart?.experienceClassId,
+               experienceClassTypeId:
+                  experienceBooking?.parentCart?.experienceClassTypeId
+            }
+            setIsSendingEmail(true)
+            await Promise.all(
+               inviteList.map(async inviteAddress => {
+                  const email = isNumeric(inviteAddress) ? null : inviteAddress
+                  const phone = isNumeric(inviteAddress) ? inviteAddress : null
+                  const {
+                     data: { createExperienceBookingParticipant = {} } = {}
+                  } = await createParticipant({
+                     variables: {
+                        object: {
+                           experienceBookingId: experienceBooking?.id,
+                           email,
+                           phone,
+                           childCart: {
+                              data: {
+                                 parentCartId:
+                                    experienceBooking?.parentCart?.id,
+                                 experienceClassId:
+                                    experienceBooking?.parentCart
+                                       ?.experienceClassId,
+                                 experienceClassTypeId:
+                                    experienceBooking?.parentCart
+                                       ?.experienceClassTypeId,
+                                 cartItems: {
+                                    data: [
+                                       updatedCartItems,
+                                       {
+                                          experienceClassId:
+                                             experienceBooking?.parentCart
+                                                ?.experienceClassId,
+                                          experienceClassTypeId:
+                                             experienceBooking?.parentCart
+                                                ?.experienceClassTypeId
+                                       }
+                                    ]
+                                 }
                               }
                            }
                         }
                      }
-                  }
-               })
+                  })
 
-            const inviteToken = jwt.sign(
-               {
-                  ...payload,
-                  participantId: createExperienceBookingParticipant?.id,
-                  cartId: createExperienceBookingParticipant?.cartId,
-                  invitee: {
-                     name: '',
-                     email,
-                     phone
+                  const inviteToken = jwt.sign(
+                     {
+                        ...payload,
+                        participantId: createExperienceBookingParticipant?.id,
+                        cartId: createExperienceBookingParticipant?.cartId,
+                        invitee: {
+                           name: '',
+                           email,
+                           phone
+                        }
+                     },
+                     'secret-key'
+                  )
+                  setInvitationToken(inviteToken)
+                  if (isNumeric(inviteAddress)) {
+                     await sendSms({
+                        variables: {
+                           message: `Hey ${user?.email} has invited you, Here are Invite details: Invite Url: ${window.location.origin}/bookingInviteResponse?token=${inviteToken}`,
+                           phone: `+91${inviteAddress}`
+                        }
+                     })
+                  } else {
+                     // getting header, main body and footer email template from template service
+                     const template_variables = encodeURI(
+                        JSON.stringify({
+                           brandCustomerId: user?.brandCustomers[0].id,
+                           bookingId: experienceBooking?.id,
+                           rsvpUrl: `${window.location.origin}/bookingInviteResponse?token=${inviteToken}`
+                        })
+                     )
+                     const header_template_options = encodeURI(
+                        JSON.stringify({
+                           path: '/stayin-folds/emails/GlobalEmailHeader/index.js',
+                           format: 'html'
+                        })
+                     )
+                     const body_template_options = encodeURI(
+                        JSON.stringify({
+                           path: '/stayin-folds/emails/ExperienceInvitation/index.js',
+                           format: 'html'
+                        })
+                     )
+                     const footer_template_options = encodeURI(
+                        JSON.stringify({
+                           path: '/stayin-folds/emails/GlobalEmailFooter/index.js',
+                           format: 'html'
+                        })
+                     )
+                     const base_url = 'https://testhern.dailykit.org'
+                     const templateHeaderUrl = `${base_url}/template/?template=${header_template_options}&data=${template_variables}`
+                     const templatebodyUrl = `${base_url}/template/?template=${body_template_options}&data=${template_variables}`
+                     const templateFooterUrl = `${base_url}/template/?template=${footer_template_options}&data=${template_variables}`
+
+                     const { data: headerHtml } = await axios.get(
+                        templateHeaderUrl
+                     )
+                     const { data: bodyHtml } = await axios.get(templatebodyUrl)
+                     const { data: FooterHtml } = await axios.get(
+                        templateFooterUrl
+                     )
+                     const html = `${headerHtml}${bodyHtml}${FooterHtml}`
+
+                     // send email mutation
+                     await sendEmail({
+                        variables: {
+                           emailInput: {
+                              subject: `${user.fullName} HAS INVITED YOU TO ${
+                                 experienceBooking?.experienceClass?.experience
+                                    ?.title
+                              } ON ${getDateWithTime(
+                                 experienceBooking?.experienceClass
+                                    ?.startTimeStamp
+                              )} WITH ${
+                                 experienceBooking?.experienceClass?.expert
+                                    ?.fullName
+                              } ON STAYIN SOCIAL ${
+                                 window.location.origin
+                              }/bookingInviteResponse?token=${inviteToken}`,
+                              to: inviteAddress,
+                              from: get_env('NO_REPLY_EMAIL'),
+                              html,
+                              attachments: []
+                           }
+                        }
+                     })
                   }
-               },
-               'secret-key'
+               })
             )
-            if (isNumeric(inviteAddress)) {
-               await sendSms({
-                  variables: {
-                     message: `Hey ${user?.email} has invited you, Here are Invite details: Invite Url: ${window.location.origin}/bookingInviteResponse?token=${inviteToken}`,
-                     phone: `+91${inviteAddress}`
-                  }
-               })
-            } else {
-               await sendEmail({
-                  variables: {
-                     emailInput: {
-                        subject: `Invitation for ${experienceBooking?.experienceClass?.experience?.title} Experience.`,
-                        to: inviteAddress,
-                        from: get_env('NO_REPLY_EMAIL'),
-                        html: `<h3>Hello ${user?.email} has invited you for ${experienceBooking?.experienceClass?.experience?.title} experience , Here are Invite details: Invite Url: ${window.location.origin}/bookingInviteResponse?token=${inviteToken}</h3>`,
-                        attachments: []
-                     }
-                  }
-               })
-            }
-         })
-         addToast('Booking Invitation successfully send.', {
-            appearance: 'success'
-         })
+            addToast('Booking Invitation successfully send.', {
+               appearance: 'success'
+            })
+            setInviteList([])
+            setIsReset(true)
+            setIsSendingEmail(false)
+            setIsInviteModalVisible(false)
+         }
+      } catch (error) {
          setInviteList([])
          setIsReset(true)
+         setIsSendingEmail(false)
          setIsInviteModalVisible(false)
       }
    }
@@ -221,17 +307,25 @@ export default function Invite({ experienceBooking, isPollClosed }) {
             title="Invite Participants"
             close={() => setIsInviteModalVisible(false)}
             type="popup"
-            showActionButton={true}
+            showActionButton={!isSendingEmail || !isSendingSms}
             actionButtonTitle="Send Invite"
             actionHandler={sendInvitation}
             disabledActionButton={
                isSendingEmail || isSendingSms || inviteList.length === 0
             }
          >
-            <InviteThrough
-               isReset={isReset}
-               onChange={list => setInviteList(list)}
-            />
+            {isSendingEmail || isSendingSms ? (
+               <Result
+                  icon={<Spin size="large" />}
+                  title="Processing"
+                  subTitle="Please wait while we are sending your email."
+               />
+            ) : (
+               <InviteThrough
+                  isReset={isReset}
+                  onChange={list => setInviteList(list)}
+               />
+            )}
          </Modal>
       </Wrapper>
    )
