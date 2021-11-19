@@ -730,6 +730,19 @@ export const EXPERIENCE_POLLS = gql`
          cutoffTime
          created_at
          isPublicUrlActive
+         experience {
+            assets
+            description
+            experienceId: id
+            metaData
+            ohyay_wsid
+            title
+            experience_experts {
+               expert {
+                  fullName
+               }
+            }
+         }
          experienceBookingOptions {
             id
             experienceClass {

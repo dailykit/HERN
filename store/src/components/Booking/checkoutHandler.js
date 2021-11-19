@@ -85,6 +85,7 @@ export const useCheckoutHandler = () => {
                      object: {
                         experienceClassId:
                            selectedSlot?.selectedExperienceClassId,
+                        experienceId: experience?.id,
                         cutoffTime: omitDate(selectedSlot?.date, 10, 'days'),
                         hostKeycloakId: keycloakId,
                         parentCart: {

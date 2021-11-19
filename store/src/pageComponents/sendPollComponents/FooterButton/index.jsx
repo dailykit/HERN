@@ -4,12 +4,14 @@ import { useRouter } from 'next/router'
 import { useToasts } from 'react-toast-notifications'
 import { FooterBtnWrap } from './styles'
 import { Button } from '../../../components'
-import { usePoll, useUser } from '../../../Providers'
+import { usePoll, useUser, useExperienceInfo } from '../../../Providers'
 import { getTimeStamp } from '../../../utils'
 import { CREATE_EXPERIENCE_BOOKING } from '../../../graphql'
 
 export default function FooterButton({ confirmNPayHandler }) {
    const { state: pollState, nextPollingSteps } = usePoll()
+   const { state: experienceState } = useExperienceInfo()
+   const { experience } = experienceState
    const [isDisabled, setIsDisabled] = useState(true)
    const { pollingStepsIndex, cutoffDate, pollOptions } = pollState
    const { state: userState } = useUser()
@@ -44,6 +46,7 @@ export default function FooterButton({ confirmNPayHandler }) {
                   object: {
                      hostKeycloakId: user?.keycloakId,
                      cutoffTime: getTimeStamp(cutoffDate),
+                     experienceId: experience?.id,
                      experienceBookingOptions: {
                         data: bookingOptions
                      },

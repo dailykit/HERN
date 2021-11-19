@@ -35,8 +35,6 @@ export default function Invite({ experienceBooking, isPollClosed }) {
    const [inviteList, setInviteList] = useState([])
    const [isReset, setIsReset] = useState(false)
    const [isSendingEmail, setIsSendingEmail] = useState(false)
-   const [emailTemplate, setEmailTemplate] = useState('')
-   const [invitationToken, setInvitationToken] = useState('')
    const payload = {
       experienceBookingId: experienceBooking?.id,
       experienceBookingCartId: experienceBooking?.cartId,
@@ -169,7 +167,6 @@ export default function Invite({ experienceBooking, isPollClosed }) {
                      },
                      'secret-key'
                   )
-                  setInvitationToken(inviteToken)
                   if (isNumeric(inviteAddress)) {
                      await sendSms({
                         variables: {
@@ -231,9 +228,7 @@ export default function Invite({ experienceBooking, isPollClosed }) {
                               )} WITH ${
                                  experienceBooking?.experienceClass?.expert
                                     ?.fullName
-                              } ON STAYIN SOCIAL ${
-                                 window.location.origin
-                              }/bookingInviteResponse?token=${inviteToken}`,
+                              } ON STAYIN SOCIAL`,
                               to: inviteAddress,
                               from: get_env('NO_REPLY_EMAIL'),
                               html,
