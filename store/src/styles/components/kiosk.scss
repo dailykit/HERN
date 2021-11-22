@@ -1,0 +1,27 @@
+.hern-kiosk__idle-screen-container {
+   height: 100vh;
+   overflow: hidden;
+   > footer {
+      height: 12em;
+      display: flex;
+      padding: 0 1em;
+      align-items: center;
+      justify-content: space-around;
+   }
+}
+.hern-kiosk__idle-screen-image-slider {
+}
+.hern-kiosk__idle-screen-image {
+   height: calc(100vh - 12em);
+}
+.hern-kiosk__idle-screen-footer-logo {
+   height: 8em;
+   width: 8em;
+}
+.hern-kiosk__idle-screen-page-text {
+   font-style: normal;
+   font-weight: 700;
+   font-size: 3em;
+
+   // line-height: 93px;
+}
