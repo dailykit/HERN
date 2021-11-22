@@ -4,16 +4,19 @@ import { Loader } from '@dailykit/ui'
 const AuthContext = React.createContext()
 
 export const AuthProvider = ({ keycloak, children }) => {
-   const [initialized, setInitialized] = React.useState(false)
+   const [initialized, setInitialized] = React.useState(true)
 
    React.useEffect(() => {
-      ;(async () => {
-         await keycloak.init({
+      if (process.env.NODE_ENV == 'development') {
+         setInitialized(true)
+      }
+      else {
+         keycloak.init({
             onLoad: 'login-required',
             promiseType: 'native',
          })
          setInitialized(true)
-      })()
+      }
    }, [])
 
    if (!initialized) return <Loader />
@@ -30,7 +33,7 @@ export const useAuth = () => {
 
    React.useEffect(() => {
       if (keycloak.authenticated) {
-         ;(async () => {
+         ; (async () => {
             const profile = await keycloak.loadUserInfo()
             setUser(profile)
          })()

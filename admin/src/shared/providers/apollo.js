@@ -19,8 +19,8 @@ export const DataProvider = ({ children }) => {
       return {
          headers: {
             ...headers,
-            'Staff-Id': `${user.sub}`,
-            'Staff-Email': `${user.email}`,
+            'Staff-Id': `${user.sub || '1253dc8d-09d9-4574-aeb8-fed6bb15c9ef'}`,
+            'Staff-Email': `${user.email || 'test@dailykit.org'}`,
          },
       }
    })
@@ -31,8 +31,8 @@ export const DataProvider = ({ children }) => {
          reconnect: true,
          connectionParams: {
             headers: {
-               'Staff-Id': `${user.sub}`,
-               'Staff-Email': `${user.email}`,
+               'Staff-Id': `${user.sub || '1253dc8d-09d9-4574-aeb8-fed6bb15c9ef'}`,
+               'Staff-Email': `${user.email || 'test@dailykit.org'}`,
             },
          },
       },
