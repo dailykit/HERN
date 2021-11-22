@@ -1,20 +1,23 @@
 import React from 'react'
 import { Loader } from '@dailykit/ui'
-
+import { get_env } from '../utils'
 const AuthContext = React.createContext()
 
 export const AuthProvider = ({ keycloak, children }) => {
-   const [initialized, setInitialized] = React.useState(true)
+   const [initialized, setInitialized] = React.useState(false)
+
+   const isByPassKeycloak = get_env('BYPASS_KEYCLOAK')
 
    React.useEffect(() => {
-      if (process.env.NODE_ENV == 'development') {
-         setInitialized(true)
-      }
-      else {
-         keycloak.init({
-            onLoad: 'login-required',
-            promiseType: 'native',
-         })
+      if (isByPassKeycloak !== "true") {
+         (async () => {
+            await keycloak.init({
+               onLoad: 'login-required',
+               promiseType: 'native',
+            })
+            setInitialized(true)
+         })()
+      } else {
          setInitialized(true)
       }
    }, [])
