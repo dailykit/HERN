@@ -70,8 +70,11 @@ export const BrandSettings = () => {
    if (loadingSettings) return <Loader />
    return (
       <Styles.Wrapper>
-         {/* contain all settings */}
+
+         {/* navigation bar */}
          <Styles.SettingsWrapper>
+
+            {/* heading */}
             <Flex padding="0 8px 16px 8px">
                <Text as="h3">
                   Brand Settings&nbsp;
@@ -80,36 +83,33 @@ export const BrandSettings = () => {
                   )}
                </Text>
             </Flex>
-            {
-               types.length > 0 ? (
-                  types.map((type) => {
-                     return (<CollapsibleComponent key={type} heading={(type).charAt(0).toUpperCase() + (type).slice(1)}>
-                        {settings[type].map((item) => {
-                           return (
-                              <Child key={item.brandSetting.id} onClick={() => openConfig(item)}>
-                                 <div className="identifier_name" tabindex="1">
-                                    {item?.brandSetting?.identifier || ''}
-                                 </div>
-                                 {/* <IconButton
-                                    type="ghost"
-                                 // style={{background: 'transparent'}} size="sm" type="solid"
-                                 >
-                                    <PlusIcon color="#555b6e" size="20" />
-                                 </IconButton> */}
-                              </Child>)
-                        })}
-                     </CollapsibleComponent>)
-                  }
-                  )) : (
-                  <Filler
-                     message="No brandSettings"
-                     width="80%"
-                     height="80%"
-                  />
-               )
+
+            {/* types and identifiers */}
+            {types.length > 0 ? (
+               types.map((type) => {
+                  return (<NavComponent key={type} heading={(type).charAt(0).toUpperCase() + (type).slice(1)}>
+                     {settings[type].map((item) => {
+                        return (
+                           <Child key={item.brandSetting.id} onClick={() => openConfig(item)} >
+                              <div className="identifier_name" tabindex="1">
+                                 {item?.brandSetting?.identifier || ''}
+                              </div>
+                           </Child>)
+                     })}
+                  </NavComponent>)
+               }
+               )) : (
+               <Filler
+                  message="No brandSettings"
+                  width="80%"
+                  height="80%"
+               />
+            )
             }
          </Styles.SettingsWrapper >
-         {/* contain selected setting */}
+
+
+         {/* contain all settings */}
          < Styles.SettingWrapper >
             <Flex>
                {types.length > 0 && (
@@ -122,6 +122,8 @@ export const BrandSettings = () => {
                         })}</>)
                   }))}</Flex>
          </Styles.SettingWrapper >
+
+         {/* linked component */}
          <Styles.LinkWrapper >
             <Card
                title={<Text as="h3">Link JS and CSS file</Text>}
@@ -146,29 +148,19 @@ export const BrandSettings = () => {
 }
 
 
-const CollapsibleComponent = ({ children, heading }) => (
+const NavComponent = ({ children, heading }) => (
    <CollapsibleWrapper>
-      <Collapsible
-         className="collapsible"
-         isHeadClickable={true}
-         head={
-            <Flex
-               margin="10px 0"
-               container
-               alignItems="center"
-               width="100%"
-               className="collapsible_head"
-            >
-               <Text as="title" style={{ color: "#555B6E", padding: "8px" }}> {heading} </Text>
-            </Flex>
-         }
-         body={
-            <Flex margin="10px 0" container flexDirection="column" >
-               {children}
-            </Flex>
-         }
-         defaultOpen={false}
-         isDraggable={false}
-      />
+      <Flex
+         margin="10px 0"
+         container
+         alignItems="center"
+         width="100%"
+         className="collapsible_head"
+      >
+         <Text as="title" style={{ color: "#555B6E", padding: "8px" }}> {heading} </Text>
+      </Flex>
+      <Flex margin="10px 0" container flexDirection="column" >
+         {children}
+      </Flex>
    </CollapsibleWrapper>
 )
