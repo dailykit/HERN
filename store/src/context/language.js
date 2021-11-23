@@ -39,9 +39,24 @@ export const useTranslation = () => {
       React.useContext(LanguageContext)
 
    const locales = [
-      { langCode: 'en', title: 'English' },
-      { langCode: 'ar', title: 'عربي' },
-      { langCode: 'fr', title: 'français' },
+      {
+         langCode: 'en',
+         title: 'English',
+         default: true,
+         flagIcon: 'https://flagicons.lipis.dev/flags/4x3/um.svg',
+      },
+      {
+         langCode: 'ar',
+         title: 'عربي',
+         default: false,
+         flagIcon: 'https://flagicons.lipis.dev/flags/4x3/sa.svg',
+      },
+      {
+         langCode: 'fr',
+         title: 'français',
+         default: false,
+         flagIcon: 'https://flagicons.lipis.dev/flags/4x3/fr.svg',
+      },
    ]
 
    const t = text => {
