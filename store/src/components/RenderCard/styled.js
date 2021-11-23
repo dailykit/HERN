@@ -19,7 +19,7 @@ export const StyledDiv = styled.div`
          margin-right: 0;
       }
       .my-masonry-grid_column > div {
-         margin: 0;
+         margin: 1rem 0;
       }
    }
 `

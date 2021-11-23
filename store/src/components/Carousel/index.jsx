@@ -1,63 +1,46 @@
-import React, { useRef } from 'react'
-import { useRouter } from 'next/router'
-import dynamic from 'next/dynamic'
-import 'owl.carousel/dist/assets/owl.carousel.css'
-import 'owl.carousel/dist/assets/owl.theme.default.css'
-import { StyledDiv } from './styled'
-import { ChevronLeft, ChevronRight } from '../Icons'
+import React from 'react'
+import { CarouselWrapper } from './styled'
 import { Card } from '../Card'
-import { ExperienceSkeleton } from '../skeletonLoader'
-import Masonry from '../Masonry'
-import { theme } from '../../theme'
-import { isEmpty, useWindowDimensions } from '../../utils'
-const OwlCarousel = dynamic(import('react-owl-carousel'), {
-   ssr: false
-})
+import { isEmpty } from '../../utils'
+import 'slick-carousel/slick/slick.css'
+import 'slick-carousel/slick/slick-theme.css'
 
 const Carousel = ({ data = [], type = 'experience', showWishlist = true }) => {
-   const owlCarouselRef = useRef()
-   const router = useRouter()
+   const settings = {
+      dots: true,
+      speed: 500,
+      slidesToShow: 3,
+      slidesToScroll: 3,
+      arrows: false,
+      infinite: true,
+      appendDots: dots => <ul>{dots}</ul>,
+      responsive: [
+         {
+            breakpoint: 769,
+            settings: {
+               slidesToShow: 1,
+               slidesToScroll: 1,
+               dots: false,
+               arrows: false
+            }
+         }
+      ]
+   }
    return (
-      <StyledDiv>
-         <div className="prev_btn">
-            <span onClick={() => owlCarouselRef.current.prev()}>
-               <ChevronLeft size="64" color={theme.colors.textColor7} />
-            </span>
-         </div>
-         <OwlCarousel
-            onInitialize={carousel => {
-               owlCarouselRef.current = carousel.relatedTarget
-            }}
-            className="owl-theme"
-            items={3}
-            loop={true}
-            margin={32}
-            nav={false}
-            dots={true}
-            mouseDrag={true}
-            touchDrag={true}
-         >
-            {!isEmpty(data) &&
-               data.map((item, index) => {
-                  return (
-                     <div className="owl_carousel_item" key={index}>
-                        <Card
-                           boxShadow={false}
-                           key={index}
-                           type={type}
-                           data={item}
-                           showWishlist={showWishlist}
-                        />
-                     </div>
-                  )
-               })}
-         </OwlCarousel>
-         <div className="next_btn">
-            <span onClick={() => owlCarouselRef.current.next()}>
-               <ChevronRight size="64" color={theme.colors.textColor7} />
-            </span>
-         </div>
-      </StyledDiv>
+      <CarouselWrapper {...settings}>
+         {!isEmpty(data) &&
+            data.map((item, index) => {
+               return (
+                  <Card
+                     boxShadow={false}
+                     key={index}
+                     type={type}
+                     data={item}
+                     showWishlist={showWishlist}
+                  />
+               )
+            })}
+      </CarouselWrapper>
    )
 }
 export default Carousel

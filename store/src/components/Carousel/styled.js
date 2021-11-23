@@ -1,91 +1,68 @@
+import dynamic from 'next/dynamic'
 import styled from 'styled-components'
-import { theme } from '../../theme'
+import Slider from 'react-slick'
 
-export const StyledDiv = styled.div`
-   position: relative;
-
-   .owl-item {
+export const CarouselWrapper = styled(Slider)`
+   :hover {
+      .slick-next,
+      .slick-prev {
+         display: block !important;
+      }
+   }
+   .text {
+      position: absolute;
+      top: 20%;
+      left: 6rem;
+      z-index: 5;
+      color: #fff;
+   }
+   .slick-slide {
+      margin: 0 24px;
       width: 320px !important;
    }
-   .owl-carousel .owl-nav.disabled + .owl-dots {
-      margin-top: 2rem;
+   /* the parent */
+   .slick-list {
+      margin: 0 -24px;
    }
-   .owl-carousel .owl-dots .owl-dot span {
-      width: 10px !important;
-      height: 10px !important;
-      border-radius: 50%;
-      background-color: ${theme.colors.textColor4} !important;
+   .slick-next,
+   .slick-prev {
+      display: none !important;
+      ::before {
+         content: none !important;
+      }
    }
-   .owl-carousel .owl-dots .active span {
-      background-color: ${theme.colors.textColor} !important;
+   .item {
+      width: 100%;
+      height: 480px;
+      position: relative;
    }
-   .owl_carousel_item {
-      width: 320px;
-      border-radius: 16px;
-   }
-   .owl_carousel_item img {
+
+   .item img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      border-radius: 16px;
    }
-   .prev_btn,
-   .next_btn {
-      width: 120px;
-      height: 100%;
-      position: absolute;
-      top: 0;
-      z-index: 2;
-      display: flex;
-      align-items: center;
-      display: none;
+   ul {
+      list-style: none;
    }
-   .prev_btn:hover,
-   .next_btn:hover {
-      cursor: pointer;
+   ul li {
+      margin: 0 8px;
+      width: 12px;
+      height: 12px;
+      background: #fff;
+      border-radius: 50%;
    }
-   .prev_btn svg:hover,
-   .next_btn svg:hover {
-      stroke: ${theme.colors.textColor};
+   ul li button::before {
+      content: none !important;
+      opacity: unset;
+      color: unset;
    }
-   .prev_btn {
-      left: 0;
-      background: linear-gradient(
-         -90deg,
-         rgba(30, 49, 74, 0) 1.59%,
-         #000 69.32%
-      );
-      justify-content: flex-start;
+   ul li.slick-active button::before {
+      content: none !important;
+      opacity: unset;
+      color: unset;
    }
-   .next_btn {
-      right: 0;
-      background: linear-gradient(
-         90deg,
-         rgba(30, 49, 74, 0) 1.59%,
-         #000 69.32%
-      );
-      justify-content: flex-end;
-   }
-   .my-masonry-grid {
-      display: -webkit-box; /* Not needed if autoprefixing */
-      display: -ms-flexbox; /* Not needed if autoprefixing */
-      display: flex;
-      width: auto;
-      margin-right: 40px;
-   }
-
-   .my-masonry-grid_column > div {
-      margin: 0 0 40px 40px;
-   }
-   @media (max-width: 769px) {
-      .owl_carousel_item {
-         height: 480px;
-      }
-      .my-masonry-grid {
-         margin-right: 1rem;
-      }
-      .my-masonry-grid_column > div {
-         margin: 0 0 1rem 1rem;
-      }
+   ul li.slick-active {
+      background: #dc2047 !important;
    }
 `

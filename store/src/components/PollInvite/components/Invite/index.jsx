@@ -189,7 +189,7 @@ export default function Invite({ experienceBooking, isPollClosed }) {
                      await sendEmail({
                         variables: {
                            emailInput: {
-                              subject: `${user.fullName} SEND YOU A POLL FOR ${experienceBooking?.experience?.title} WITH ${experienceBooking?.experience?.experience_experts[0]?.expert?.fullName} ON STAYIN SOCIAL`,
+                              subject: `${user.fullName} SENT YOU A POLL FOR ${experienceBooking?.experience?.title} WITH ${experienceBooking?.experience?.experience_experts[0]?.expert?.fullName} ON STAYIN SOCIAL`,
                               to: inviteAddress,
                               from: get_env('NO_REPLY_EMAIL'),
                               html,
