@@ -86,7 +86,7 @@ export const TextBox = ({
                   placeholder={`Enter the ${fieldDetail.label.toLowerCase()}`}
                />
             ) : (
-               <Text as="h3" style={{ fontSize: '16px' }}>
+               <Text as="h3" style={{ fontSize: '16px', color: '#555B6E' }}>
                   {fieldDetail?.value || fieldDetail.default}
                   {fieldDetail?.value == '' && fieldDetail.default == '' && (
                      <NoValueSpan>Not specified</NoValueSpan>
@@ -180,7 +180,7 @@ export const Number = ({
             placeholder="Enter integer value"
          />
       ) : (
-         <Text as="h4">{fieldDetail?.value || fieldDetail.default}</Text>
+         <Text as="h4" style={{ color: '#555B6E' }}>{fieldDetail?.value || fieldDetail.default}</Text>
       )}
    </Flex>
 )
@@ -233,7 +233,7 @@ export const Date = ({
             value={fieldDetail?.value || fieldDetail.default}
          />
       ) : (
-         <Text as="h4">{fieldDetail?.value || fieldDetail.default}</Text>
+         <Text as="h4" style={{ color: '#555B6E' }}>{fieldDetail?.value || fieldDetail.default}</Text>
       )}
    </Flex>
 )
@@ -264,7 +264,7 @@ export const Time = ({
             value={fieldDetail?.value || fieldDetail.default}
          />
       ) : (
-         <Text as="h4">{fieldDetail?.value || fieldDetail.default}</Text>
+         <Text as="h4" style={{ color: '#555B6E' }}>{fieldDetail?.value || fieldDetail.default}</Text>
       )}
    </Flex>
 )
@@ -341,7 +341,7 @@ export const TextArea = ({
             value={fieldDetail?.value || fieldDetail.default}
          />
       ) : (
-         <Text as="h4">{fieldDetail?.value || fieldDetail.default}</Text>
+         <Text as="h4" style={{ color: '#555B6E' }}>{fieldDetail?.value || fieldDetail.default}</Text>
       )}
    </Flex>
 )
@@ -571,7 +571,9 @@ export const PhoneNumberSelector = ({
                      placeholder="Enter your phone number"
                   />
                ) : (
-                  <Text as="h4">{fieldDetail?.value}</Text>
+                  <Text as="h4" className="showPhoneNumber">
+                     {fieldDetail?.value}
+                  </Text>
                )}
                {errorMessage.length !== 0 && (
                   <Form.Error> {errorMessage[0]}</Form.Error>
@@ -699,6 +701,9 @@ export const ImageContainer = styled.div`
    }
 `
 export const PhoneNumSelector = styled.div`
+   .showPhoneNumber {
+      color: #555b6e;
+   }
    .PhoneInput {
       border-radius: 6px;
       border: 1px solid #e3e3e3;
