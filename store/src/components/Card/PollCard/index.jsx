@@ -3,30 +3,31 @@ import { Flex } from '@dailykit/ui'
 import { Card, CardImage, CardBody } from './styles.js'
 import { Clock } from '../../Icons'
 import { theme } from '../../../theme.js'
-import { getMinute, getDateWithTime } from '../../../utils'
+import { getMinute, getDateWithTime, getTime, getDate } from '../../../utils'
 import Button from '../../Button'
 import { Divider, Badge } from 'antd'
+import router from 'next/router'
 
 export default function NormalExperienceCard({ cardDetails, ...props }) {
-   const { experience, experienceBookingOptions = [], cutoffTime } = cardDetails
+   const {
+      experience,
+      experienceBookingOptions = [],
+      cutoffTime,
+      id
+   } = cardDetails
    return (
       <Badge.Ribbon
          text={`expires on ${cutoffTime ? getDateWithTime(cutoffTime) : 'N/A'}`}
          color={theme.colors.darkBackground.darkblue}
          placement="start"
       >
-         <Card {...props} onClick={props?.onCardClick}>
+         <Card {...props}>
             <CardImage>
                <img src={experience?.assets?.images[0]} alt="card-img" />
             </CardImage>
             <CardBody>
                <h2 className="exp-name">{experience?.title}</h2>
-               <Flex
-                  container
-                  alignItems="center"
-                  justifyContent="space-between"
-                  margin=".5rem 0 0 0"
-               >
+               <div className="flex-div" style={{ margin: '.5rem 0 0 0' }}>
                   {/* <div className="expert-info-wrapper"> */}
                   <div className="expertImgDiv">
                      <img
@@ -60,44 +61,45 @@ export default function NormalExperienceCard({ cardDetails, ...props }) {
                         min
                      </span>
                   </span>
-               </Flex>
-               <Divider
-                  plain
-                  className="poll-option-divider"
-                  orientation="left"
-               >
-                  Most Voted
-               </Divider>
+               </div>
+               <Divider plain className="poll-option-divider" />
+
+               <p className="most-voted">Most Voted</p>
                <div className="slot-div-wrap">
                   {experienceBookingOptions?.map(option => {
                      return (
-                        <div key={option?.id} className="slot-div">
-                           <Flex
-                              container
-                              alignItems="center"
-                              justifyContent="space-between"
-                              margin="0 0 12px 0"
-                           >
-                              <p className="slot-info-time">
-                                 {getDateWithTime(
-                                    option?.experienceClass?.startTimeStamp
-                                 )}
-                              </p>
-                              <p className="vote-head">
-                                 {option?.voting?.aggregate?.count} votes
-                              </p>
-                           </Flex>
-                           <Button
-                              className="book-slot Maven-Pro text8"
-                              onClick={() => props.bookingHandler({ option })}
-                           >
-                              Book Slot
-                           </Button>
-                        </div>
+                        <>
+                           <div key={option?.id} className="slot-div">
+                              <div className="flex-div">
+                                 <p className="most-voted-info">
+                                    {getDate(
+                                       option?.experienceClass?.startTimeStamp
+                                    )}
+                                    <br />
+                                    {getTime(
+                                       option?.experienceClass?.startTimeStamp
+                                    )}
+                                 </p>
+                                 <p
+                                    className="most-voted-info"
+                                    style={{ textAlign: 'right' }}
+                                 >
+                                    {option?.voting?.aggregate?.count} <br />
+                                    votes
+                                 </p>
+                              </div>
+                           </div>
+                        </>
                      )
                   })}
                </div>
             </CardBody>
+            <Button
+               className="book-exp Maven-Pro text8"
+               onClick={() => router.push(`/dashboard/myPolls/${id}`)}
+            >
+               View Votes
+            </Button>
          </Card>
       </Badge.Ribbon>
    )

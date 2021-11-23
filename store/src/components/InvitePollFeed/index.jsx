@@ -38,7 +38,6 @@ export default function InvitePollFeed({ poll }) {
             customWidth={width > 769 ? '360px' : '100%'}
             type="poll"
             data={cartDetails}
-            onCardClick={() => router.push(`/dashboard/myPolls/${poll?.id}`)}
             bookingHandler={onClickHandler}
          />
 

@@ -4,7 +4,13 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { Layout, Menu, Breadcrumb } from 'antd'
 import { theme } from '../../theme'
-import { PollIcon, BookingIcon } from '../../components'
+import {
+   PollIcon,
+   BookingIcon,
+   OverviewIcon,
+   PastBookingIcon,
+   SettingIcon
+} from '../../components'
 
 export default function DashboardSideBar({ user }) {
    const router = useRouter()
@@ -34,22 +40,25 @@ export default function DashboardSideBar({ user }) {
                defaultSelectedKeys={[router.pathname]}
                mode="inline"
             >
-               <Menu.Item key="/dashboard">Overview</Menu.Item>
+               <Menu.Item key="/dashboard">
+                  <OverviewIcon size="26" color={theme.colors.textColor} />
+                  Overview
+               </Menu.Item>
                <Menu.Item key="/dashboard/myPolls">
-                  <PollIcon
-                     size="24"
-                     backgroundColor={theme.colors.textColor5}
-                     color={theme.colors.textColor4}
-                  />
+                  <PollIcon size="24" color={theme.colors.textColor} />
                   My Polls
                </Menu.Item>
                <Menu.Item key="/dashboard/myBookings">
-                  <BookingIcon
-                     size="24"
-                     backgroundColor={theme.colors.textColor5}
-                     color={theme.colors.textColor4}
-                  />
+                  <BookingIcon size="26" color={theme.colors.textColor} />
                   My Bookings
+               </Menu.Item>
+               <Menu.Item key="/dashboard/myBookings">
+                  <PastBookingIcon size="24" color={theme.colors.textColor} />
+                  Past Bookings
+               </Menu.Item>
+               <Menu.Item key="/dashboard/myBookings">
+                  <SettingIcon size="24" color={theme.colors.textColor} />
+                  Settings
                </Menu.Item>
             </Menu>
          </Layout.Sider>
@@ -73,39 +82,37 @@ const Wrapper = styled.div`
          background: ${theme.colors.creamColor};
       }
       .ant-menu-item {
-         font-weight: 500;
-         font-family: 'Maven Pro';
-         font-size: ${theme.sizes.h4};
-         color: ${theme.colors.textColor5};
+         .ant-menu-title-content {
+            color: ${theme.colors.textColor5};
+            font-family: 'Barlow Condensed';
+            font-style: normal;
+            font-weight: bold;
+            font-size: 24px;
+            line-height: 62px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+         }
          :hover {
-            color: ${theme.colors.textColor};
             .ant-menu-title-content {
-               svg path {
-                  fill: ${theme.colors.textColor};
-               }
+               color: ${theme.colors.textColor};
             }
          }
          .ant-menu-title-content {
             display: flex;
             align-items: center;
             svg {
-               margin-right: 8px;
+               margin-right: 12px;
             }
          }
       }
       .ant-menu-item-selected {
          color: ${theme.colors.textColor};
          background: ${theme.colors.textColor4} !important;
-         .ant-menu-title-content {
-            svg path {
-               fill: ${theme.colors.textColor};
-            }
-         }
       }
       .ant-menu-inline .ant-menu-item::after {
          left: 0;
          right: unset;
-         border-right-color: ${theme.colors.textColor};
+         border-right: 5px solid ${theme.colors.textColor};
       }
    }
    .image-wrapper {
@@ -117,11 +124,14 @@ const Wrapper = styled.div`
       align-items: center;
       justify-content: center;
       .user-email {
-         font-weight: 500;
-         font-family: 'Maven Pro';
          color: ${theme.colors.textColor5};
+         font-family: Barlow Condensed;
+         font-style: normal;
+         font-weight: bold;
+         font-size: 24px;
+         line-height: 62px;
          text-align: center;
-         line-height: 35px;
+         letter-spacing: 0.08em;
       }
    }
 

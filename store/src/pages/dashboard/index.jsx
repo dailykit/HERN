@@ -104,10 +104,10 @@ const Wrapper = styled.div`
    .flex-wrapper {
       display: flex;
       .dashboard-left-div {
-         width: 20%;
+         width: 400px;
       }
       .dashboard-right-div {
-         width: 80%;
+         width: calc(100% - 400px);
          padding-top: 2rem;
          .experienceHeading {
             font-size: ${theme.sizes.h4};

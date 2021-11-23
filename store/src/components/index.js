@@ -45,6 +45,7 @@ import Review from './Review'
 import SignupFold from './SignupFold'
 import PaymentProcessingModal from './PaymentProcessingModal'
 import CustomTooltip from './CustomTooltip'
+import NoData from './NoData'
 
 export {
    Button,
@@ -93,7 +94,8 @@ export {
    Review,
    SignupFold,
    PaymentProcessingModal,
-   CustomTooltip
+   CustomTooltip,
+   NoData
 }
 export * from './Icons'
 export * from './Card'

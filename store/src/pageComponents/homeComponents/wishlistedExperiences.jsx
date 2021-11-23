@@ -8,7 +8,7 @@ import { useRouter } from 'next/router'
 import { useExperienceInfo } from '../../Providers'
 import { isEmpty } from '../../utils'
 import { WISHLISTED_EXPERIENCES } from '../../graphql'
-import { Masonry, Card } from '../../components'
+import { NoData, Card } from '../../components'
 
 export default function WishlistedExperience({ keycloakId }) {
    const router = useRouter()
@@ -69,7 +69,7 @@ export default function WishlistedExperience({ keycloakId }) {
                      )
                   })
                ) : (
-                  <Empty />
+                  <NoData message="No Wishlist" />
                )}
             </div>
          </div>

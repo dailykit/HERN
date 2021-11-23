@@ -5,7 +5,7 @@ import { Empty } from 'antd'
 import Link from 'next/link'
 import { Wrapper } from './styles'
 import { YOUR_BOOKINGS } from '../../graphql'
-import { UpcomingExperience, InlineLoader } from '../../components'
+import { UpcomingExperience, InlineLoader, NoData } from '../../components'
 import { useExperienceInfo } from '../../Providers'
 import { isEmpty } from '../../utils'
 export default function BookingRecyclerView({ keycloakId }) {
@@ -100,7 +100,7 @@ export default function BookingRecyclerView({ keycloakId }) {
                      <UpcomingExperience key={booking?.id} booking={booking} />
                   ))
                ) : (
-                  <Empty />
+                  <NoData message="No Booking" />
                )}
             </div>
          </div>

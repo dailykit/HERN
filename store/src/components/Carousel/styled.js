@@ -17,8 +17,8 @@ export const CarouselWrapper = styled(Slider)`
       color: #fff;
    }
    .slick-slide {
-      margin: 0 24px;
-      width: 320px !important;
+      margin: 0 18px;
+      width: 300px !important;
    }
    /* the parent */
    .slick-list {

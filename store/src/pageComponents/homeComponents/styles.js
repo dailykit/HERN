@@ -5,14 +5,17 @@ export const Wrapper = styled.div`
    width: 100%;
    height: 100%;
    .redirectClass {
-      color: ${theme.colors.textColor};
       text-decoration: none;
-      text-align: center;
       display: block;
       margin: 0;
-      font-size: 20px;
-      font-weight: 800;
       span {
+         color: ${theme.colors.textColor};
+         font-family: Barlow Condensed;
+         font-style: normal;
+         font-weight: bold;
+         font-size: 24px;
+         line-height: 62px;
+         letter-spacing: 0.08em;
          padding: 8px 0;
       }
    }

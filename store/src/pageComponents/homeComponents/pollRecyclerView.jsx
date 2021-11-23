@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useSubscription } from '@apollo/client'
-import { Empty } from 'antd'
 import Link from 'next/link'
 import { useToasts } from 'react-toast-notifications'
 import { Wrapper } from './styles'
-import { InvitePollFeed } from '../../components'
+import { InvitePollFeed, NoData } from '../../components'
 import { useExperienceInfo } from '../../Providers'
 import { isEmpty } from '../../utils'
 import { YOUR_BOOKINGS } from '../../graphql'
@@ -75,7 +74,7 @@ export default function PollRecyclerView({ keycloakId }) {
                      <InvitePollFeed key={poll?.id} poll={poll} />
                   ))
                ) : (
-                  <Empty />
+                  <NoData message="No Polls" />
                )}
             </div>
          </div>

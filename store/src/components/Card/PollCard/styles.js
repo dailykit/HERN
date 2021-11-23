@@ -13,11 +13,29 @@ export const Card = styled.div`
    cursor: pointer;
    overflow: hidden;
    transition: all 0.3s ease-in-out;
+   position: relative;
    &:hover {
       box-shadow: rgba(0, 0, 0, 0.32) 0px 19px 43px;
       transform: translate3d(0px, -1.5px, 0px);
    }
    width: ${({ customWidth = '360px' }) => customWidth};
+   .book-exp {
+      color: ${theme.colors.textColor4};
+      background: ${theme.colors.textColor};
+      text-transform: uppercase;
+      font-family: Barlow Condensed;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 18px;
+      line-height: 25px;
+      text-align: center;
+      letter-spacing: 0.16em;
+      height: 45px;
+      border-radius: 0 0 16px 16px;
+      position: absolute;
+      left: 0;
+      bottom: 0;
+   }
 `
 
 export const CardImage = styled.div`
@@ -41,36 +59,48 @@ export const CardImage = styled.div`
 export const CardBody = styled.div`
    color: ${theme.colors.textColor2};
    width: 100%;
-   padding: 1rem;
+   padding: 1rem 1rem 4rem 1rem;
+   .flex-div {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+   }
    .exp-name {
       margin: 4px 0 4px 0;
-      font-size: ${theme.sizes.h8};
-      font-weight: 500;
-      text-align: left;
-      color: ${theme.colors.textColor2};
+      font-family: 'Barlow Condensed';
+      font-style: normal;
+      font-weight: bold;
+      font-size: 24px;
+      line-height: 25px;
+      letter-spacing: 0.16em;
+      color: ${theme.colors.textColor4};
+      text-transform: uppercase;
    }
    .exp-info {
       font-weight: 800;
       font-size: ${theme.sizes.h7};
+      text-transform: uppercase;
       span {
          font-weight: 400;
          font-size: ${theme.sizes.h7};
+         text-transform: uppercase;
       }
    }
-   .book-exp {
-      text-align: center;
-      font-weight: 800;
-      font-size: ${theme.sizes.h8};
-      color: ${theme.colors.tertiaryColor};
-      text-transform: uppercase;
-      cursor: pointer;
-   }
+
    .duration {
       display: flex;
       align-items: center;
       span {
          margin-left: 8px;
-         font-size: ${theme.sizes.h7};
+         font-family: 'Maven Pro';
+         font-style: normal;
+         font-weight: bold;
+         font-size: 12px;
+         line-height: 14px;
+         text-align: right;
+         letter-spacing: 0.24em;
+         color: ${theme.colors.textColor4};
+         text-transform: uppercase;
       }
    }
    .expertImgDiv {
@@ -87,6 +117,14 @@ export const CardBody = styled.div`
    }
    .expert-name {
       margin-bottom: 0 !important;
+      font-family: 'Maven Pro';
+      font-style: normal;
+      font-weight: bold;
+      font-size: 12px;
+      line-height: 14px;
+      letter-spacing: 0.26em;
+      color: ${theme.colors.textColor};
+      text-transform: uppercase;
    }
    .slot-div-wrap {
       margin: 0.5rem 0 0 0;
@@ -102,7 +140,29 @@ export const CardBody = styled.div`
    }
    .poll-option-divider {
       color: ${theme.colors.textColor4};
-      border-top-color: ${theme.colors.textColor4};
+      border-top: 2px solid ${theme.colors.textColor4};
+      margin: 1rem 0;
+   }
+   .most-voted {
+      font-family: 'Maven Pro';
+      font-style: normal;
+      font-weight: 900;
+      font-size: 14px;
+      line-height: 16px;
+      letter-spacing: 0.26em;
+      color: ${theme.colors.textColor4};
+      text-transform: uppercase;
+   }
+   .most-voted-info {
+      font-family: 'Maven Pro';
+      font-style: normal;
+      font-weight: bold;
+      font-size: 12px;
+      line-height: 14px;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: ${theme.colors.textColor4};
+      margin: 0;
    }
    @media (min-width: 769px) {
       .exp-name {
@@ -116,9 +176,6 @@ export const CardBody = styled.div`
          span {
             font-size: ${theme.sizes.h8};
          }
-      }
-      .book-exp {
-         font-size: ${theme.sizes.h8};
       }
    }
 `
