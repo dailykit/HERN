@@ -88,7 +88,9 @@ export const TextBox = ({
             ) : (
                <Text as="h3" style={{ fontSize: '16px' }}>
                   {fieldDetail?.value || fieldDetail.default}
-                  {(fieldDetail?.value == "" && fieldDetail.default == "") && <NoValueSpan>Not specified</NoValueSpan>}
+                  {fieldDetail?.value == '' && fieldDetail.default == '' && (
+                     <NoValueSpan>Not specified</NoValueSpan>
+                  )}
                </Text>
             )}
 
@@ -531,7 +533,7 @@ export const PhoneNumberSelector = ({
    const [errorMessage, setErrorMessage] = React.useState([])
 
    React.useEffect(() => {
-      const phoneNo = value.value || ""
+      const phoneNo = value.value || ''
       if (isValidPhoneNumber(phoneNo)) {
          setIsValid(true)
          setErrorMessage([])
@@ -697,21 +699,29 @@ export const ImageContainer = styled.div`
    }
 `
 export const PhoneNumSelector = styled.div`
-   .PhoneInputInput {
+   .PhoneInput {
       border-radius: 6px;
       border: 1px solid #e3e3e3;
+      margin-top: 12px;
+      width: 13rem;
+   }
+   .PhoneInputCountry {
+      padding-left: 12px;
+   }
+   .PhoneInputInput {
       text-align: left;
       font-size: 16px;
       padding: 0 12px;
       height: 40px;
-      margin-top:12px;
+      border: none;
+      border-left: 1px solid #e3e3e3;
    }
    h4 {
       font-size: 15px;
    }
 `
 export const NoValueSpan = styled.span`
-color: #919699;
-    font-size: 14px;
-    font-weight: 400;
-    `
+   color: #919699;
+   font-size: 14px;
+   font-weight: 400;
+`
