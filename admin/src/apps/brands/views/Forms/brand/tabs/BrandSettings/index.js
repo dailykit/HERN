@@ -5,15 +5,15 @@ import { useSubscription } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import { BRANDS } from '../../../../../graphql'
 import {
-   Text, Filler, IconButton,
-   PlusIcon, Collapsible, Spacer, Loader
+   Text, Filler, Loader
 } from '@dailykit/ui'
 import {
-   Flex, Tooltip
+   Flex
 } from '../../../../../../../shared/components'
 import { Child, Styles, CollapsibleWrapper } from './styled'
 import { SettingsCard } from './SettingsCard'
 import { Card } from 'antd'
+import { useInView } from "react-intersection-observer";
 import LinkFiles from '../../../../../../content/views/Forms/Page/ContentSelection/components/LinkFiles'
 
 export const BrandSettings = () => {
@@ -21,8 +21,16 @@ export const BrandSettings = () => {
    const [allSettings, setAllSettings] = React.useState([])
    const [setting, setSetting] = React.useState([])
    const [settings, setSettings] = React.useState([])
+   const [active, setActive] = React.useState('')
    const [isChangeSaved, setIsSavedChange] = React.useState(true)
-
+   // const mapped = allSettings.length > 0 && allSettings.map((item) => {
+   //    const tabName = item.brandSetting.identifier.split(" ").join("")
+   //    const { ref, inView } = useInView({
+   //       threshold: 0
+   //    });
+   //    return { tab: tabName, ref, inView };
+   // });
+   // console.log(mapped, "mapped");
    const groupingBrandSettings = (array, key) => {
       return array.reduce((obj, item) => {
          let objKey = item[key].type;
@@ -58,14 +66,15 @@ export const BrandSettings = () => {
       toast.error('Something went wrong')
       console.log("error in Brands.Setting", error)
    }
-   const openConfig = data => {
-      if (isChangeSaved) {
-         setSetting(data)
-      }
-      else {
-         toast.warning('Changes will be lost if not saved. Click on save button to save your changes.')
-      }
-   }
+
+   // const openConfig = data => {
+   //    if (isChangeSaved) {
+   //       setSetting(data)
+   //    }
+   //    else {
+   //       toast.warning('Changes will be lost if not saved. Click on save button to save your changes.')
+   //    }
+   // }
    const types = Object.keys(settings)
    if (loadingSettings) return <Loader />
    return (
@@ -84,17 +93,21 @@ export const BrandSettings = () => {
                </Text>
             </Flex>
 
-            {/* types and identifiers */}
+            {/* (Navigation) types and identifiers */}
             {types.length > 0 ? (
                types.map((type) => {
                   return (<NavComponent key={type} heading={(type).charAt(0).toUpperCase() + (type).slice(1)}>
                      {settings[type].map((item) => {
                         return (
-                           <Child key={item.brandSetting.id} onClick={() => openConfig(item)} >
-                              <div className="identifier_name" tabindex="1">
-                                 {item?.brandSetting?.identifier || ''}
-                              </div>
-                           </Child>)
+                           <>
+                              <a href={`#${item?.brandSetting?.identifier}`}>
+                                 <Child key={item?.brandSetting?.id} onClick={() => setActive(item?.brandSetting?.identifier)}>
+                                    <div tabindex="1" className={active == item?.brandSetting?.identifier ? "active-link identifier_name" : "identifier_name"}>
+                                       {item?.brandSetting?.identifier || ''}
+                                    </div>
+                                 </Child>
+                              </a>
+                           </>)
                      })}
                   </NavComponent>)
                }
@@ -109,19 +122,20 @@ export const BrandSettings = () => {
          </Styles.SettingsWrapper >
 
 
-         {/* contain all settings */}
+         {/* contain all settings middle-segment */}
          < Styles.SettingWrapper >
             <Flex>
                {types.length > 0 && (
                   types.map((type) => {
                      return (<><Text as="h2">{(type).charAt(0).toUpperCase() + (type).slice(1)}</Text>
                         {settings[type].map((setting) => {
-                           return (
+                           return (<><a name={setting?.brandSetting?.identifier}></a>
                               <SettingsCard setting={setting} key={setting?.brandSetting?.id} title={setting?.brandSetting?.identifier} isChangeSaved={isChangeSaved} setIsSavedChange={setIsSavedChange} />
-                           )
+                           </>)
                         })}</>)
                   }))}</Flex>
          </Styles.SettingWrapper >
+
 
          {/* linked component */}
          <Styles.LinkWrapper >
