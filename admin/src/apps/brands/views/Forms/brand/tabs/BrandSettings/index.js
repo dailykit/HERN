@@ -13,24 +13,17 @@ import {
 import { Child, Styles, CollapsibleWrapper } from './styled'
 import { SettingsCard } from './SettingsCard'
 import { Card } from 'antd'
-import { useInView } from "react-intersection-observer";
 import LinkFiles from '../../../../../../content/views/Forms/Page/ContentSelection/components/LinkFiles'
 
 export const BrandSettings = () => {
    const params = useParams()
    const [allSettings, setAllSettings] = React.useState([])
-   const [setting, setSetting] = React.useState([])
    const [settings, setSettings] = React.useState([])
    const [active, setActive] = React.useState('')
    const [isChangeSaved, setIsSavedChange] = React.useState(true)
-   // const mapped = allSettings.length > 0 && allSettings.map((item) => {
-   //    const tabName = item.brandSetting.identifier.split(" ").join("")
-   //    const { ref, inView } = useInView({
-   //       threshold: 0
-   //    });
-   //    return { tab: tabName, ref, inView };
-   // });
-   // console.log(mapped, "mapped");
+   const [componentIsOnView, setIsComponentIsOnView] = React.useState([]);
+
+
    const groupingBrandSettings = (array, key) => {
       return array.reduce((obj, item) => {
          let objKey = item[key].type;
@@ -102,7 +95,7 @@ export const BrandSettings = () => {
                            <>
                               <a href={`#${item?.brandSetting?.identifier}`}>
                                  <Child key={item?.brandSetting?.id} onClick={() => setActive(item?.brandSetting?.identifier)}>
-                                    <div tabindex="1" className={active == item?.brandSetting?.identifier ? "active-link identifier_name" : "identifier_name"}>
+                                    <div tabindex="1" className={(active == item?.brandSetting?.identifier || componentIsOnView.includes(item?.brandSetting?.identifier)) ? "active-link identifier_name" : "identifier_name"}>
                                        {item?.brandSetting?.identifier || ''}
                                     </div>
                                  </Child>
@@ -130,7 +123,9 @@ export const BrandSettings = () => {
                      return (<><Text as="h2">{(type).charAt(0).toUpperCase() + (type).slice(1)}</Text>
                         {settings[type].map((setting) => {
                            return (<><a name={setting?.brandSetting?.identifier}></a>
-                              <SettingsCard setting={setting} key={setting?.brandSetting?.id} title={setting?.brandSetting?.identifier} isChangeSaved={isChangeSaved} setIsSavedChange={setIsSavedChange} />
+                              <SettingsCard setting={setting} key={setting?.brandSetting?.id} title={setting?.brandSetting?.identifier}
+                                 isChangeSaved={isChangeSaved} setIsSavedChange={setIsSavedChange} setIsComponentIsOnView={setIsComponentIsOnView}
+                                 componentIsOnView={componentIsOnView} />
                            </>)
                         })}</>)
                   }))}</Flex>

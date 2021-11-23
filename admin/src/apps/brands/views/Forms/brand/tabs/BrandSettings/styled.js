@@ -34,8 +34,6 @@ export const Child = styled.div`
    }
    .active-link{
       border-left:2px solid #367BF5;
-      color:#367BF5;
-      box-shadow: 0px 0.5px 2px rgba(0, 0, 0, 0.1);
       background: #F9F9F9;
    }
   
