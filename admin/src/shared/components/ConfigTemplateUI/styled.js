@@ -2,6 +2,9 @@ import styled from 'styled-components'
 
 export const Styles = {
    ConfigTemplateUI: styled.div`
+      .title{
+      color: #555B6E;
+      }
       .display-none {
          display: none;
       }

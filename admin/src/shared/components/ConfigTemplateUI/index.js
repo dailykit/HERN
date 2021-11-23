@@ -180,7 +180,7 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
                <Card
                   title={
                      identifier ? (
-                        <Text as="h3">{identifier}</Text>
+                        <Text as="h3" className="title">{identifier}</Text>
                      ) : (
                         <Text as="h3" style={{ textAlign: 'center' }}>
                            Select a brand's setting to edit.

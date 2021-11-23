@@ -144,7 +144,7 @@ const LinkFiles = ({ title, fileType, entityId, scope }) => {
       <Wrapper>
          <div style={{ padding: '16px', borderBottom: '1px solid #E5E5E5' }}>
             <Flex container alignItems="center" justifyContent="space-between">
-               <Text as="text2">{title}</Text>
+               <Text as="text2" className="title">{title}</Text>
                <IconButton
                   onClick={() => setIsOpen(!isOpen)}
                   type="ghost"
@@ -164,12 +164,7 @@ const LinkFiles = ({ title, fileType, entityId, scope }) => {
                         schemaname="brands"
                      >
                         {selectedFiles.map(file => (
-                           <div
-                              style={{
-                                 display: 'flex',
-                                 alignItems: 'center',
-                                 justifyContent: 'space-between',
-                              }}
+                           <div className="selected_file"
                               title={file.file?.path}
                               key={file.id}
                            >
@@ -196,14 +191,16 @@ const LinkFiles = ({ title, fileType, entityId, scope }) => {
                         <Text as="subtitle">(No file linked)</Text>
                      </Flex>
                   )}
-                  <ComboButton
-                     type="ghost"
-                     size="sm"
-                     onClick={() => openTunnel(1)}
-                  >
-                     <PlusIcon color="#367BF5" />
-                     Add more files
-                  </ComboButton>
+                  <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                     <ComboButton
+                        type="ghost"
+                        size="sm"
+                        onClick={() => openTunnel(1)}
+                     >
+                        <PlusIcon color="#367BF5" />
+                        Add more files
+                     </ComboButton>
+                  </div>
                </Flex>
             )}
          </div>
