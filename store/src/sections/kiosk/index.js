@@ -5,6 +5,10 @@ import { IdleScreen } from '../../components/kiosk/idleScreen'
 import 'antd/dist/antd.css'
 import { Carousel, Layout } from 'antd'
 import { KioskHeader } from '../../components/kiosk/header'
+import { FulfillmentSection } from '../../components/kiosk/fulfillment'
+import { useTranslation } from '../../context'
+import { useConfig } from '../../lib'
+
 // idle screen component
 // fulfillment component
 // header
@@ -16,6 +20,7 @@ import { KioskHeader } from '../../components/kiosk/header'
 const { Header, Content } = Layout
 const Kiosk = () => {
    const componentsTabRef = React.useRef()
+   const { direction } = useTranslation()
 
    const [isIdle, setIsIdle] = useState(false)
 
@@ -51,6 +56,15 @@ const Kiosk = () => {
    function onChange(a, b, c) {
       console.log(a, b, c)
    }
+
+   // for go to next carousal
+   const goNext = () => {
+      componentsTabRef.current.next()
+   }
+   // for go to last carousal
+   const goLast = () => {
+      componentsTabRef.current.prev()
+   }
    useEffect(() => {
       const b = document.querySelector('body')
       b.style.padding = 0
@@ -59,7 +73,7 @@ const Kiosk = () => {
       return <IdleScreen config={KioskConfig} />
    }
    return (
-      <div>
+      <div dir={direction}>
          <Layout>
             {' '}
             <Header
@@ -70,25 +84,13 @@ const Kiosk = () => {
             >
                <KioskHeader config={KioskConfig} />
             </Header>
-            <Layout>
+            <Layout className="hern-kiosk__content-layout">
                <Carousel afterChange={onChange} ref={componentsTabRef}>
-                  <Content>This is fulfillment selection page</Content>
+                  <Content>
+                     <FulfillmentSection config={KioskConfig} goNext={goNext} />
+                  </Content>
                   <Content>Menu</Content>
                </Carousel>
-               <button
-                  onClick={() => {
-                     componentsTabRef.current.next()
-                  }}
-               >
-                  next
-               </button>
-               <button
-                  onClick={() => {
-                     componentsTabRef.current.prev()
-                  }}
-               >
-                  last
-               </button>
             </Layout>
          </Layout>
       </div>

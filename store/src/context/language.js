@@ -51,12 +51,12 @@ export const useTranslation = () => {
          default: false,
          flagIcon: 'https://flagicons.lipis.dev/flags/4x3/sa.svg',
       },
-      {
-         langCode: 'fr',
-         title: 'français',
-         default: false,
-         flagIcon: 'https://flagicons.lipis.dev/flags/4x3/fr.svg',
-      },
+      // {
+      //    langCode: 'fr',
+      //    title: 'français',
+      //    default: false,
+      //    flagIcon: 'https://flagicons.lipis.dev/flags/4x3/fr.svg',
+      // },
    ]
 
    const t = text => {

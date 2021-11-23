@@ -5,6 +5,7 @@ import { useTranslation } from '../../context'
 
 export const KioskHeader = props => {
    const { config } = props
+   const { direction } = useTranslation()
    return (
       <div className="hern-kiosk__kiosk-header-container">
          <img
@@ -30,6 +31,7 @@ const LanguageSelector = props => {
             buttonStyle="solid"
             onChange={e => {
                setLang(e.target.value)
+               changeLocale(e.target.value)
             }}
             style={{ display: 'flex' }}
             size="large"
