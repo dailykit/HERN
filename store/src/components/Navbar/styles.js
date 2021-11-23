@@ -11,14 +11,14 @@ export const NavBar = styled.header`
          : 'unset'};
    display: ${({ floating, scroll }) =>
       floating ? (scroll.y < 64 ? 'none' : 'flex') : 'flex'};
-   height: 64px;
+   height: 72px;
    position: ${({ floating = false }) => (floating ? 'fixed' : 'unset')};
    top: 0;
    left: 0;
    width: 100%;
    z-index: 100;
    align-items: center;
-   padding: 1rem 6rem;
+   padding: 2rem 6rem;
    justify-content: space-between;
    transition: 0.2s ease-in;
    background: ${theme.colors.darkBackground.darkblue};

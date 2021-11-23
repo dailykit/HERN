@@ -66,20 +66,12 @@ export default function ProfileDropdownMenu({ user, ...props }) {
                   <p className="title profileFont">Dashboard</p>
                </DropdownMenuItem>
                <DropdownMenuItem url="/dashboard/myPolls">
-                  <PollIcon
-                     size="24"
-                     backgroundColor={theme.colors.textColor4}
-                     color={theme.colors.mainBackground}
-                  />
+                  <PollIcon size="24" color={theme.colors.textColor4} />
                   <Spacer xAxis="16px" />
                   <p className="title profileFont">My Polls</p>
                </DropdownMenuItem>
                <DropdownMenuItem url="/dashboard/myBookings">
-                  <BookingIcon
-                     size="24"
-                     backgroundColor={theme.colors.textColor4}
-                     color={theme.colors.mainBackground}
-                  />
+                  <BookingIcon size="24" color={theme.colors.textColor4} />
                   <Spacer xAxis="16px" />
                   <p className="title profileFont ">My Booked Experiences</p>
                </DropdownMenuItem>
