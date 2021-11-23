@@ -16,6 +16,7 @@ export default function DashboardSideBar({ user }) {
    const router = useRouter()
    const handleClick = event => {
       const { key } = event
+      if (key === 'no-action') return null
       router.push(key)
    }
 
@@ -24,14 +25,16 @@ export default function DashboardSideBar({ user }) {
          <Layout.Sider className="dashboard-sidebar">
             <div className="image-wrapper">
                <Image
-                  src={`https://ui-avatars.com/api/?name=${user?.email}&background=fff&color=15171F&size=500&rounded=true`}
+                  src={`https://ui-avatars.com/api/?name=${
+                     user?.fullName || user?.email
+                  }&background=fff&color=15171F&size=500&rounded=true`}
                   alt="user-profile"
                   width={100}
                   height={100}
                   objectFit="cover"
                />
                <h5 className="user-email text7">
-                  {user?.name || user?.email || 'User'}
+                  {user?.fullName || user?.email || 'User'}
                </h5>
             </div>
             <Menu
@@ -52,14 +55,14 @@ export default function DashboardSideBar({ user }) {
                   <BookingIcon size="26" color={theme.colors.textColor} />
                   My Bookings
                </Menu.Item>
-               <Menu.Item key="/dashboard/myBookings">
+               {/* <Menu.Item key="no-action" title="no action mapped yet">
                   <PastBookingIcon size="24" color={theme.colors.textColor} />
                   Past Bookings
                </Menu.Item>
-               <Menu.Item key="/dashboard/myBookings">
+               <Menu.Item key="no-action" title="no action mapped yet">
                   <SettingIcon size="24" color={theme.colors.textColor} />
                   Settings
-               </Menu.Item>
+               </Menu.Item> */}
             </Menu>
          </Layout.Sider>
       </Wrapper>
@@ -132,6 +135,7 @@ const Wrapper = styled.div`
          line-height: 62px;
          text-align: center;
          letter-spacing: 0.08em;
+         margin: 0.5rem 0;
       }
    }
 

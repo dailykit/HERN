@@ -100,7 +100,7 @@ export default function BookingRecyclerView({ keycloakId }) {
                      <UpcomingExperience key={booking?.id} booking={booking} />
                   ))
                ) : (
-                  <NoData message="No Booking" />
+                  <NoData message="No Bookings" />
                )}
             </div>
          </div>
