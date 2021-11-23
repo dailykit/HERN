@@ -56,8 +56,7 @@ COPY --from=builder /usr/src/app/package.json ./package.json
 COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY --from=builder /usr/src/app/get_env.js ./get_env.js
 
-RUN yarn add puppeteer
-
+RUN yarn add puppeteer --ignore-engines
 # used to expose container level
 EXPOSE 4000
 EXPOSE 3000
