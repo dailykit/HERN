@@ -7,12 +7,31 @@
       padding: 0 1em;
       align-items: center;
       justify-content: space-around;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 9999;
    }
 }
 .hern-kiosk__idle-screen-image-slider {
 }
 .hern-kiosk__idle-screen-image {
    height: calc(100vh - 12em);
+}
+.hern-kiosk__idle-screen-video__background {
+   filter: blur(8px);
+   -webkit-filter: blur(15px);
+   height: 100%;
+   position: absolute;
+   top: 0;
+   bottom: 0;
+   left: 0;
+   right: 0;
+   z-index: -1;
+   background-position: center;
+   background-repeat: no-repeat;
+   background-size: cover;
 }
 .hern-kiosk__idle-screen-footer-logo {
    height: 8em;

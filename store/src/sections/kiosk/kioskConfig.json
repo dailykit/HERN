@@ -1,0 +1,99 @@
+{
+   "idlePageSettings": {
+      "idleTime": {
+         "label": "Time for become screen idle(in seconds).",
+         "value": 10,
+         "default": 30,
+         "dataType": "number",
+         "description": "This is use for make screen inactive.",
+         "userInsertType": "numberField"
+      },
+      "idlePageText": {
+         "label": "Text to show on idle screen.",
+         "value": "Touch to start ordering.",
+         "default": "Touch to start ordering.",
+         "dataType": "text",
+         "description": "This is show text on idle screen.",
+         "userInsertType": "textField"
+      },
+      "idlePageTextColor": {
+         "label": "Color of ext to show on idle screen.",
+         "value": "#ffffff",
+         "default": "#ffffff",
+         "dataType": "color",
+         "userInsertType": "colorPicker"
+      },
+      "idlePageImage": {
+         "label": "Image on idle page.",
+         "value": {
+            "assets": {
+               "images": [
+                  "https://images.unsplash.com/photo-1530554764233-e79e16c91d08?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8YnVyZ2VyfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=60",
+                  "https://images.unsplash.com/photo-1565299507177-b0ac66763828?ixid=MnwxMjA3fDB8MHxzZWFyY2h8N3x8YnVyZ2VyfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=60",
+                  "https://images.unsplash.com/photo-1589302168068-964664d93dc0?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8YmlyeWFuaXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=60",
+                  "https://images.unsplash.com/photo-1557681140-20615626dcb3?ixid=MnwxMjA3fDB8MHxzZWFyY2h8N3x8ZWdnJTIwcm9sbHxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=60"
+               ]
+            }
+         },
+         "default": {
+            "assets": {
+               "images": [
+                  "https://images.unsplash.com/photo-1530554764233-e79e16c91d08?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8YnVyZ2VyfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=60",
+                  "https://images.unsplash.com/photo-1565299507177-b0ac66763828?ixid=MnwxMjA3fDB8MHxzZWFyY2h8N3x8YnVyZ2VyfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=60",
+                  "https://images.unsplash.com/photo-1589302168068-964664d93dc0?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8YmlyeWFuaXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=60",
+                  "https://images.unsplash.com/photo-1557681140-20615626dcb3?ixid=MnwxMjA3fDB8MHxzZWFyY2h8N3x8ZWdnJTIwcm9sbHxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=60"
+               ]
+            }
+         },
+         "dataType": "imageUpload",
+         "description": "This will show image on idle page.",
+         "userInsertType": "imageUpload"
+      },
+      "idlePageVideo": {
+         "label": "Video  on idle page",
+         "value": {
+            "assets": {
+               "urls": [
+                  "https://res.cloudinary.com/dqv2g1wux/video/upload/v1637681851/herfy/pexels-nicola-barts-7930811.mp4",
+                  "https://res.cloudinary.com/dqv2g1wux/video/upload/v1637678144/herfy/pexels-vlada-karpovich-7015436_SparkVideo.mp4",
+                  "https://res.cloudinary.com/dqv2g1wux/video/upload/v1637680474/herfy/pexels-anna-shvets-5930369.mp4"
+               ],
+               "backgroundImage": "https://images.unsplash.com/photo-1530554764233-e79e16c91d08?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8YnVyZ2VyfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=60"
+            }
+         },
+         "default": {
+            "assets": {
+               "urls": [
+                  "https://res.cloudinary.com/dqv2g1wux/video/upload/v1637681851/herfy/pexels-nicola-barts-7930811.mp4",
+                  "https://res.cloudinary.com/dqv2g1wux/video/upload/v1637678144/herfy/pexels-vlada-karpovich-7015436_SparkVideo.mp4",
+                  "https://res.cloudinary.com/dqv2g1wux/video/upload/v1637680474/herfy/pexels-anna-shvets-5930369.mp4"
+               ],
+               "backgroundImage": "https://images.unsplash.com/photo-1530554764233-e79e16c91d08?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8YnVyZ2VyfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=60"
+            }
+         },
+         "dataType": "imageUpload",
+         "description": "This will show videos  on idle page.",
+         "userInsertType": "imageUpload"
+      }
+   },
+   "kioskSettings": {
+      "theme": {
+         "primaryColor": {
+            "id": "pr-col",
+            "label": "Primary Color",
+            "value": "#0F6BB1",
+            "default": "#0F6BB1",
+            "dataType": "color",
+            "userInsertType": "colorPicker"
+         }
+      },
+      "logo": {
+         "label": "brand Logo",
+         "value": "https://storage.sg.content-cdn.io/in-resources/8e6b2cb0-d95c-421b-9265-715d6b149ba8/Images/userimages/Herfy%20Logo.svg",
+         "defaultValue": "https://storage.sg.content-cdn.io/in-resources/8e6b2cb0-d95c-421b-9265-715d6b149ba8/Images/userimages/Herfy%20Logo.svg",
+         "dataType": "imageUpload",
+         "description": "Logo for brand.",
+         "userInsertType": "imageUpload"
+      }
+   }
+}
