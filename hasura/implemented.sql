@@ -33,3 +33,14 @@ CREATE SCHEMA sqldemo;
 CREATE SCHEMA subscription;
 CREATE SCHEMA ux;
 CREATE SCHEMA website;
+
+
+
+CREATE TYPE public.summary AS (
+   pending jsonb,
+   underprocessing jsonb,
+   readytodispatch jsonb,
+   outfordelivery jsonb,
+   delivered jsonb,
+   rejectedcancelled jsonb
+);
