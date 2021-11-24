@@ -8,6 +8,7 @@ import PriceBreakDown from '../PriceBreakDown'
 import AvailableDate from '../../../AvailableDate'
 import CustomScrollbar from '../../../CustomScrollbar'
 import { HelpCircle } from '../../../Icons'
+import CustomTooltip from '../../../CustomTooltip'
 import {
    useExperienceInfo,
    useCart,
@@ -97,7 +98,7 @@ export default function SelectClass({ experienceId, isMulti = false }) {
                <h2 className="heading text4_secondary">
                   Starting at ${pricePerPerson.toFixed(2)} Per Person
                </h2>
-               <Popover
+               {/* <Popover
                   placement="bottom"
                   trigger="click"
                   content={<PriceBreakDown />}
@@ -105,7 +106,8 @@ export default function SelectClass({ experienceId, isMulti = false }) {
                   <span>
                      <HelpCircle size={24} color={theme.colors.textColor7} />
                   </span>
-               </Popover>
+               </Popover> */}
+               <CustomTooltip title={<PriceBreakDown />} />
             </div>
             {!isMulti && (
                <div className="sticky-container">

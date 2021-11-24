@@ -111,6 +111,9 @@ const Wrapper = styled.div`
       .ant-menu-item-selected {
          color: ${theme.colors.textColor};
          background: ${theme.colors.textColor4} !important;
+         .ant-menu-title-content {
+            color: ${theme.colors.textColor};
+         }
       }
       .ant-menu-inline .ant-menu-item::after {
          left: 0;

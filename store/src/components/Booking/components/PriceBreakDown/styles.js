@@ -1,18 +1,34 @@
-import styled from "styled-components";
-import { theme } from "../../../../theme";
+import styled from 'styled-components'
+import { theme } from '../../../../theme'
 export const Wrap = styled.div`
-  .modal-content-div {
-    font-size: ${theme.sizes.h8};
-    font-weight: 600;
-    color: ${theme.colors.textColor4};
-    background: ${theme.colors.mainBackground};
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    box-sizing: border-box;
-    border-radius: 4px;
-    padding: 1rem;
-    margin: 1rem;
-    small {
-      font-size: ${theme.sizes.h12};
-    }
-  }
-`;
+   .price-breakdown-info {
+      font-family: Maven Pro;
+      font-style: normal;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 16px;
+      color: ${theme.colors.textColor5};
+      text-transform: uppercase;
+      margin: 0;
+      flex: 1;
+   }
+   .text-right {
+      text-align: right;
+   }
+   .text-left {
+      text-align: left;
+   }
+   .bold {
+      font-weight: 900;
+   }
+   .red {
+      color: ${theme.colors.textColor};
+   }
+   .flex-div {
+      display: flex;
+      justify-content: space-between;
+   }
+   .column {
+      flex-direction: column;
+   }
+`

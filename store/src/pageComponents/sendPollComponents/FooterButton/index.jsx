@@ -8,7 +8,10 @@ import { usePoll, useUser, useExperienceInfo } from '../../../Providers'
 import { getTimeStamp } from '../../../utils'
 import { CREATE_EXPERIENCE_BOOKING } from '../../../graphql'
 
-export default function FooterButton({ confirmNPayHandler }) {
+export default function FooterButton({
+   confirmNPayHandler,
+   closeSendPollModal
+}) {
    const { state: pollState, nextPollingSteps } = usePoll()
    const { state: experienceState } = useExperienceInfo()
    const { experience } = experienceState
@@ -25,6 +28,9 @@ export default function FooterButton({ confirmNPayHandler }) {
             addToast('Poll is created successfully', {
                appearance: 'success'
             })
+            if (closeSendPollModal === 'function') {
+               closeSendPollModal()
+            }
             router.push(`/dashboard/myPolls/${createExperienceBooking?.id}`)
          },
          onError: error => {

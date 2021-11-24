@@ -9,7 +9,7 @@ import { useWindowDimensions } from '../../utils'
 
 import { usePoll } from '../../Providers'
 
-export default function SendPollComp({ experienceId }) {
+export default function SendPollComp({ experienceId, closeSendPollModal }) {
    console.log('SendPollComp', experienceId)
    const { width } = useWindowDimensions()
    const { state: pollState, previousPollingSteps } = usePoll()
@@ -41,7 +41,7 @@ export default function SendPollComp({ experienceId }) {
          {pollingStepsIndex === 1 && <PollDeadline />}
 
          {/* footer  */}
-         <FooterButton />
+         <FooterButton closeSendPollModal={closeSendPollModal} />
       </Wrapper>
    )
 }

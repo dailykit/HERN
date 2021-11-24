@@ -601,7 +601,10 @@ export default function Experience({
                isOpen={isSendPollModalVisible}
                close={closeSendPollModal}
             >
-               <SendPollComp experienceId={experienceId} />
+               <SendPollComp
+                  experienceId={experienceId}
+                  closeSendPollModal={closeSendPollModal}
+               />
             </Modal>
          </StyledWrapper>
          {/* {isBookingPageOpen && (

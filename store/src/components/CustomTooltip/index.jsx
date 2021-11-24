@@ -15,11 +15,12 @@ export default function CustomTooltip({
          color={color}
          overlayInnerStyle={{
             textAlign: 'center',
-            borderRadius: ' 8px',
+            borderRadius: '8px',
             padding: '2rem',
             color: theme.colors.textColor5,
             fontFamily: 'Barlow Condensed',
-            fontWeight: '700'
+            fontWeight: '500',
+            background: '#ddd !important'
          }}
          {...props}
       >
