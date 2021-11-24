@@ -14,7 +14,7 @@ const initialState = {
       id: null,
    },
    settings: {},
-   orderTabs: null,
+   orderTabs: [],
 }
 
 const reducers = (state, { type, payload }) => {
@@ -107,36 +107,31 @@ export const ConfigProvider = ({ children }) => {
    React.useEffect(() => {
       const oiType = JSON.parse(localStorage.getItem('orderInterfaceType'))
       const oiTypeId = JSON.parse(localStorage.getItem('orderInterfaceTypeId'))
-      if (!oiType) {
-         const urlSearchParams = new URLSearchParams(window.location.search)
-         const params = Object.fromEntries(urlSearchParams.entries())
-         if (params && params.oiType) {
+
+      const urlSearchParams = new URLSearchParams(window.location.search)
+      const params = Object.fromEntries(urlSearchParams.entries())
+      console.log('these are params', params)
+      if (params && params.oiType) {
+         localStorage.setItem(
+            'orderInterfaceType',
+            JSON.stringify(params.oiType)
+         )
+         setOrderInterfaceType(prev => ({ ...prev, oiType: params.oiType }))
+         if (params.oiTypeId) {
             localStorage.setItem(
-               'orderInterfaceType',
-               JSON.stringify(params.oiType)
+               'orderInterfaceTypeId',
+               JSON.stringify(params.oiTypeId)
             )
-            setOrderInterfaceType(prev => ({ ...prev, oiType: params.oiType }))
-            if (params.oiTypeId) {
-               localStorage.setItem(
-                  'orderInterfaceTypeId',
-                  JSON.stringify(params.oiTypeId)
-               )
-               setOrderInterfaceType(prev => ({
-                  ...prev,
-                  oiTypeId: params.oiTypeId,
-               }))
-            }
-         } else {
-            localStorage.setItem(
-               'orderInterfaceType',
-               JSON.stringify('Website')
-            )
-            setOrderInterfaceType(prev => ({ ...prev, oiType: 'Website' }))
+            setOrderInterfaceType(prev => ({
+               ...prev,
+               oiTypeId: params.oiTypeId,
+            }))
          }
       } else {
+         localStorage.setItem('orderInterfaceType', JSON.stringify('Website'))
          setOrderInterfaceType(prev => ({
             ...prev,
-            oiType,
+            oiType: 'Website',
             ...(oiTypeId && { oiTypeId }),
          }))
       }

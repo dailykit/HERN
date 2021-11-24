@@ -2,7 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 
 import { Header } from './header'
-import { useUser } from '../context'
+import { useTranslation, useUser } from '../context'
 import { getRoute, normalizeAddress } from '../utils'
 import { MailIcon, PhoneIcon } from '../assets/icons'
 
@@ -28,9 +28,10 @@ export const Layout = ({
    const location = settings['availability']['Location']
 
    const theme = settings['Visual']['theme-color']
+   const { direction } = useTranslation()
 
    return (
-      <>
+      <div dir={direction}>
          {!noHeader && (
             <Header settings={settings} navigationMenus={navigationMenus} />
          )}
@@ -137,6 +138,6 @@ export const Layout = ({
                )}
             </div>
          </footer>
-      </>
+      </div>
    )
 }
