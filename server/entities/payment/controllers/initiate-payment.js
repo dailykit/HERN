@@ -1,6 +1,7 @@
 import { client } from '../../../lib/graphql'
 import { logger } from '../../../utils'
 import { UPDATE_CART_PAYMENT } from '../graphql'
+// import abc from '../functions/stripe'
 
 export const initiatePaymentHandler = async (req, res) => {
    // this handler is called on update of paymentRetryAttempt in cartPayment table
@@ -42,13 +43,16 @@ export const initiatePaymentHandler = async (req, res) => {
          // further payment process will be done
 
          const functionFilePath = `../functions/${payload.paymentType}`
+         console.log(functionFilePath)
          const method = await import(functionFilePath)
+         console.log(method)
          const data = {
             ...payload,
             oldAmount: req.body.event.data.old
                ? req.body.event.data.old.amount
                : 0
          }
+         console.log('about to run default function')
          const result = await method.default(data, 'initialize')
          if (result.success) {
             res.status(200).json(result)

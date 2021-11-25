@@ -118,10 +118,45 @@ const handleInvoice = async args => {
       throw error
    }
 }
+const handleRazorPayResponse = async args => {
+   try {
+      const { response, cartPaymentId } = args
+      await client.request(UPDATE_CART_PAYMENT, {
+         id: cartPaymentId,
+         _set: {
+            paymentStatus: STATUS[response.status],
+            transactionRemark: response
+         }
+      })
+      let datahub_history_objects = []
+      datahub_history_objects.push({
+         cartPaymentId,
+         type: 'RAZORPAY_ORDER',
+         status: STATUS[response.status],
+         transactionId: response.id,
+         transactionRemark: response
+      })
+
+      await client.request(DATAHUB_INSERT_STRIPE_PAYMENT_HISTORY, {
+         objects: datahub_history_objects
+      })
+      return
+   } catch (error) {
+      console.error(error)
+      throw error
+   }
+}
 
 export const paymentLogger = async args => {
    try {
-      await handleInvoice(args)
+      console.log('inside paymentLogger', args)
+      const { paymentType = '' } = args
+      if (paymentType === 'razorpay') {
+         console.log('razor', args)
+         await handleRazorPayResponse(args)
+      } else {
+         await handleInvoice(args)
+      }
    } catch (error) {
       console.error(error)
    }

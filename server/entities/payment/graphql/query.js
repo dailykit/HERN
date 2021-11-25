@@ -40,6 +40,7 @@ query cart($id: Int!) {
     amount
     orderId
     balancePayment
+    retryPaymentMethod
     paymentMethodId
     paymentCustomerId
     statementDescriptor

@@ -2,6 +2,7 @@ import { paymentLogger } from '../../../utils'
 
 export const handlePaymentWebhook = async (req, res) => {
    try {
+      console.log('req body', req.body)
       const paymentType = 'stripe' // need to figure out how to get this from the request
       const functionFilePath = `../functions/${paymentType}`
       const method = await import(functionFilePath)

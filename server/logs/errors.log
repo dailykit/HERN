@@ -1,3 +1,30 @@
 [/api/payment-intent] | [2021-09-16 15:09:98PM +05:30] | [This is error]
 [/api/payment-intent] | [2021-09-16 15:09:52PM +05:30] | [This is error]
 [/api/payment-intent] | [2021-09-16 15:09:78PM +05:30] | [Error: This payment requires additional user action before it can be completed successfully. Payment can be completed using the PaymentIntent associated with the invoice. For more details see: https://stripe.com/docs/billing/subscriptions/overview#requires-action]
+[/api/payment/initiate-payment] | [2021-11-25 20:11:95PM +05:30] | [Error [ERR_REQUIRE_ESM]: Must use import to load ES Module: C:\Users\Deepak Negi\Desktop\DailyKit\HERN\node_modules\lodash-es\lodash.js
+require() of ES modules is not supported.
+require() of C:\Users\Deepak Negi\Desktop\DailyKit\HERN\node_modules\lodash-es\lodash.js from C:\Users\Deepak Negi\Desktop\DailyKit\HERN\server\entities\payment\functions\razorpay\initiatePayment.js is an ES module file as it is a .js file whose nearest parent package.json contains "type": "module" which defines all .js files in that package scope as ES modules.
+Instead rename lodash.js to end in .cjs, change the requiring code to use import(), or remove "type": "module" from C:\Users\Deepak Negi\Desktop\DailyKit\HERN\node_modules\lodash-es\package.json.
+]
+[/api/payment/initiate-payment] | [2021-11-25 20:11:61PM +05:30] | [Error [ERR_REQUIRE_ESM]: Must use import to load ES Module: C:\Users\Deepak Negi\Desktop\DailyKit\HERN\node_modules\lodash-es\lodash.js
+require() of ES modules is not supported.
+require() of C:\Users\Deepak Negi\Desktop\DailyKit\HERN\node_modules\lodash-es\lodash.js from C:\Users\Deepak Negi\Desktop\DailyKit\HERN\server\entities\payment\functions\razorpay\initiatePayment.js is an ES module file as it is a .js file whose nearest parent package.json contains "type": "module" which defines all .js files in that package scope as ES modules.
+Instead rename lodash.js to end in .cjs, change the requiring code to use import(), or remove "type": "module" from C:\Users\Deepak Negi\Desktop\DailyKit\HERN\node_modules\lodash-es\package.json.
+]
+[/api/payment/initiate-payment] | [2021-11-25 20:11:31PM +05:30] | [Error [ERR_REQUIRE_ESM]: Must use import to load ES Module: C:\Users\Deepak Negi\Desktop\DailyKit\HERN\node_modules\lodash-es\lodash.js
+require() of ES modules is not supported.
+require() of C:\Users\Deepak Negi\Desktop\DailyKit\HERN\node_modules\lodash-es\lodash.js from C:\Users\Deepak Negi\Desktop\DailyKit\HERN\server\entities\payment\functions\razorpay\initiatePayment.js is an ES module file as it is a .js file whose nearest parent package.json contains "type": "module" which defines all .js files in that package scope as ES modules.
+Instead rename lodash.js to end in .cjs, change the requiring code to use import(), or remove "type": "module" from C:\Users\Deepak Negi\Desktop\DailyKit\HERN\node_modules\lodash-es\package.json.
+]
+[/api/payment/initiate-payment] | [2021-11-25 20:11:22PM +05:30] | [Error [ERR_REQUIRE_ESM]: Must use import to load ES Module: C:\Users\Deepak Negi\Desktop\DailyKit\HERN\node_modules\lodash-es\lodash.js
+require() of ES modules is not supported.
+require() of C:\Users\Deepak Negi\Desktop\DailyKit\HERN\node_modules\lodash-es\lodash.js from C:\Users\Deepak Negi\Desktop\DailyKit\HERN\server\entities\payment\functions\razorpay\initiatePayment.js is an ES module file as it is a .js file whose nearest parent package.json contains "type": "module" which defines all .js files in that package scope as ES modules.
+Instead rename lodash.js to end in .cjs, change the requiring code to use import(), or remove "type": "module" from C:\Users\Deepak Negi\Desktop\DailyKit\HERN\node_modules\lodash-es\package.json.
+]
+[/api/payment-intent] | [2021-11-25 20:11:31PM +05:30] | [Error: `key_id` is mandatory]
+[/api/payment-intent] | [2021-11-25 20:11:41PM +05:30] | [ReferenceError: id is not defined]
+[/api/payment/initiate-payment] | [2021-11-25 20:11:02PM +05:30] | [TypeError: Cannot read property 'success' of undefined]
+[/api/payment/initiate-payment] | [2021-11-25 21:11:59PM +05:30] | [TypeError: Cannot read property 'success' of undefined]
+[/api/payment/initiate-payment] | [2021-11-25 23:11:62PM +05:30] | [SyntaxError: Invalid or unexpected token]
+[/api/payment/initiate-payment] | [2021-11-25 23:11:72PM +05:30] | [SyntaxError: Invalid or unexpected token]
+[/api/payment/initiate-payment] | [2021-11-25 23:11:13PM +05:30] | [SyntaxError: Invalid or unexpected token]

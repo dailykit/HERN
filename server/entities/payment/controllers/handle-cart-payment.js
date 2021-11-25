@@ -59,7 +59,8 @@ export const handleCartPayment = async (req, res) => {
                         amount: cart.balancePayment,
                         isTest: cart.isTest,
                         paymentMethodId: cart.paymentMethodId,
-                        paymentCustomerId: cart.paymentCustomerId
+                        paymentCustomerId: cart.paymentCustomerId,
+                        paymentType: cart.retryPaymentMethod
                      }
                   }
                )
@@ -110,7 +111,8 @@ export const handleCartPayment = async (req, res) => {
                      amount: cart.balancePayment,
                      isTest: cart.isTest,
                      paymentMethodId: cart.paymentMethodId,
-                     paymentCustomerId: cart.paymentCustomerId
+                     paymentCustomerId: cart.paymentCustomerId,
+                     paymentType: cart.retryPaymentMethod
                   }
                }
             )
