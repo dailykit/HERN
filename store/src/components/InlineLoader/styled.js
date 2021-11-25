@@ -75,3 +75,12 @@ export const StyledLoader = styled(InlineStyledLoader)`
    left: 50%;
    transform: translate(-50%, -50%);
 `
+
+export const FlamingoLoader = styled.img`
+   display: block;
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   width: 260px;
+`

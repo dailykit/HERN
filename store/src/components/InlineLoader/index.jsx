@@ -4,7 +4,8 @@ import {
    StyledLoader,
    StyledWrapper,
    InlineStyledWrapper,
-   InlineStyledLoader
+   InlineStyledLoader,
+   FlamingoLoader
 } from './styled'
 const InlineLoader = ({ type = 'inline', ...props }) => {
    if (type === 'inline') {
@@ -21,12 +22,14 @@ const InlineLoader = ({ type = 'inline', ...props }) => {
    }
    return (
       <StyledWrapper {...props}>
-         <StyledLoader {...props}>
+         {/* three horizontal dots loader */}
+         {/* <StyledLoader {...props}>
             <div />
             <div />
             <div />
             <div />
-         </StyledLoader>
+         </StyledLoader> */}
+         <FlamingoLoader src="/assets/gifs/Stayin_Loader.gif" alt="loader" />
       </StyledWrapper>
    )
 }
