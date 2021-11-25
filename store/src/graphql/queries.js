@@ -496,6 +496,14 @@ export const CART_SUBSCRIPTION = gql`
          stripeInvoiceId
          stripeInvoiceDetails
          customerKeycloakId
+         retryPaymentMethod
+         activeCartPaymentId
+         activeCartPayment {
+            id
+            paymentStatus
+            cancelAttempt
+            transactionRemark
+         }
          products: cartItems(where: { level: { _eq: 1 } }) {
             id
             isAddOn

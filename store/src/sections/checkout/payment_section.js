@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import tw, { styled, css } from 'twin.macro'
+import { useToasts } from 'react-toast-notifications'
 
 import { usePayment } from './state'
 import { useConfig } from '../../lib'
@@ -11,7 +12,8 @@ import { PaymentForm } from './payment_form'
 import { isClient, get_env } from '../../utils'
 import axios from 'axios'
 
-export const PaymentSection = () => {
+export const PaymentSection = ({ cart }) => {
+   const { addToast } = useToasts()
    const { user } = useUser()
    const { configOf } = useConfig()
    const { state, dispatch } = usePayment()
@@ -60,6 +62,7 @@ export const PaymentSection = () => {
                </OutlineButton>
             )}
          </header>
+
          {user?.platform_customer?.paymentMethods.length === 0 && (
             <div tw="w-full md:w-1/2">
                <PaymentForm intent={intent} />

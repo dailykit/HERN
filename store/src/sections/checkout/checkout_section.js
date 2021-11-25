@@ -4,12 +4,20 @@ import { useRouter } from 'next/router'
 import tw, { styled, css } from 'twin.macro'
 import { useToasts } from 'react-toast-notifications'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { Menu, Dropdown } from 'antd'
 
 import { useConfig } from '../../lib'
 import * as QUERIES from '../../graphql'
 import * as Icon from '../../assets/icons'
 import OrderInfo from '../../sections/OrderInfo'
-import { isClient, formatCurrency, getSettings, getRoute } from '../../utils'
+import {
+   isClient,
+   formatCurrency,
+   getSettings,
+   getRoute,
+   useRazorPay,
+   get_env,
+} from '../../utils'
 import { Loader, Button, HelperBar } from '../../components'
 import {
    usePayment,
@@ -55,11 +63,20 @@ const PaymentContent = () => {
    const { user } = useUser()
    const { state } = usePayment()
    const { addToast } = useToasts()
+   const { displayRazorpay } = useRazorPay()
    const authTabRef = React.useRef()
    const { brand, configOf } = useConfig()
    const [otpPageUrl, setOtpPageUrl] = React.useState('')
    const [isOverlayOpen, toggleOverlay] = React.useState(false)
    const [overlayMessage, setOverlayMessage] = React.useState('')
+   const [selectedPaymentMethod, setSelectedPaymentMethod] =
+      React.useState('stripe')
+   const [submitting, setSubmitting] = React.useState(false)
+   const [paymentMethods, setPaymentMethods] = React.useState([
+      'stripe',
+      'razorpay',
+   ])
+
    const [updateBrandCustomer] = useMutation(UPDATE_BRAND_CUSTOMER, {
       skip: !user?.brandCustomerId,
       onError: error => {
@@ -131,6 +148,7 @@ const PaymentContent = () => {
                      appearance: 'error',
                   })
                }
+               setSelectedPaymentMethod(cart?.retryPaymentMethod)
             } catch (error) {
                console.log('on succeeded -> error -> ', error)
             }
@@ -245,7 +263,10 @@ const PaymentContent = () => {
                   id: cart.id,
                   _inc: { paymentRetryAttempt: 1 },
                   _set: {
-                     paymentMethodId: state.payment.selected.id,
+                     paymentMethodId:
+                        selectedPaymentMethod === 'stripe'
+                           ? state.payment.selected.id
+                           : null,
                      customerInfo: {
                         customerEmail: user?.platform_customer?.email,
                         customerPhone: state?.profile?.phoneNumber,
@@ -266,7 +287,11 @@ const PaymentContent = () => {
    )
 
    const handleSubmit = () => {
-      toggleOverlay(true)
+      if (selectedPaymentMethod === 'stripe') {
+         toggleOverlay(true)
+      } else {
+         setSubmitting(true)
+      }
       updatePlatformCustomer({
          variables: {
             keycloakId: user.keycloakId,
@@ -276,13 +301,21 @@ const PaymentContent = () => {
    }
 
    const isValid = () => {
-      return (
-         state.profile.firstName &&
-         state.profile.lastName &&
-         state.profile.phoneNumber &&
-         state.payment.selected?.id &&
-         state.code.isValid
-      )
+      if (selectedPaymentMethod === 'stripe') {
+         return (
+            state.profile.firstName &&
+            state.profile.lastName &&
+            state.profile.phoneNumber &&
+            state.payment.selected?.id &&
+            state.code.isValid
+         )
+      } else {
+         return (
+            state.profile.firstName &&
+            state.profile.lastName &&
+            state.profile.phoneNumber
+         )
+      }
    }
    const onOverlayClose = () => {
       setOtpPageUrl('')
@@ -291,6 +324,78 @@ const PaymentContent = () => {
    }
 
    const theme = configOf('theme-color', 'Visual')
+   const paymentMethodSelectionHandler = value => {
+      setSelectedPaymentMethod(value)
+      console.log('handler', cart)
+      if (cart && cart?.id) {
+         updateCart({
+            variables: {
+               id: cart?.id,
+               _set: {
+                  retryPaymentMethod: value,
+               },
+            },
+         })
+      }
+   }
+   const PaymentMethodMenu = (
+      <Menu>
+         {paymentMethods.map(method => (
+            <Menu.Item onClick={() => paymentMethodSelectionHandler(method)}>
+               {method.toUpperCase()}
+            </Menu.Item>
+         ))}
+      </Menu>
+   )
+
+   React.useEffect(() => {
+      ;(async () => {
+         console.log('inside useEffect', cart)
+         if (
+            cart &&
+            cart?.activeCartPaymentId &&
+            cart?.activeCartPayment?.transactionRemark
+         ) {
+            const {
+               id: razorpay_order_id,
+               notes,
+               amount,
+               status,
+               receipt,
+               currency,
+            } = cart?.activeCartPayment?.transactionRemark
+            if (cart?.activeCartPayment?.paymentStatus === 'CREATED') {
+               const RAZORPAY_KEY_ID = get_env('RAZORPAY_KEY_ID')
+               console.log('razorpay key id', RAZORPAY_KEY_ID)
+               const options = {
+                  key: RAZORPAY_KEY_ID,
+                  amount: amount.toString(),
+                  currency,
+                  name: 'Test Hern',
+                  order_id: razorpay_order_id,
+                  notes,
+                  prefill: {
+                     name: `${state.profile.firstName} ${state.profile.lastName}`,
+                     email: user?.platform_customer?.email || '',
+                     contact: state.profile.phoneNumber,
+                  },
+                  handler: function (response) {
+                     const responseData = {
+                        razorpayPaymentId: response.razorpay_payment_id,
+                        razorpayOrderId: response.razorpay_order_id,
+                        razorpaySignature: response.razorpay_signature,
+                     }
+                     if (response && response?.razorpay_payment_id) {
+                        console.log('razorpay response', responseData)
+                        setSubmitting(false)
+                     }
+                  },
+               }
+               await displayRazorpay(options)
+            }
+         }
+      })()
+   }, [cart.activeCartPayment])
 
    if (loading) return <Loader inline />
    if (isClient && !new URLSearchParams(location.search).get('id')) {
@@ -373,6 +478,7 @@ const PaymentContent = () => {
          </Main>
       )
    }
+
    return (
       <Main>
          <Form>
@@ -380,7 +486,19 @@ const PaymentContent = () => {
                <SectionTitle theme={theme}>Profile Details</SectionTitle>
             </header>
             <ProfileSection />
-            <PaymentSection />
+            <Dropdown overlay={PaymentMethodMenu}>
+               <a
+                  className="ant-dropdown-link"
+                  onClick={e => e.preventDefault()}
+               >
+                  {selectedPaymentMethod
+                     ? selectedPaymentMethod.toUpperCase()
+                     : 'Select Payment Method'}
+               </a>
+            </Dropdown>
+            {selectedPaymentMethod === 'stripe' && (
+               <PaymentSection cart={cart} />
+            )}
          </Form>
          {cart?.products?.length > 0 && (
             <CartDetails>
@@ -390,7 +508,7 @@ const PaymentContent = () => {
                      tw="w-full"
                      bg={theme?.accent}
                      onClick={handleSubmit}
-                     disabled={!Boolean(isValid())}
+                     disabled={submitting || !Boolean(isValid())}
                   >
                      Confirm & Pay {formatCurrency(cart.totalPrice)}
                   </Button>

@@ -278,7 +278,7 @@ const PaymentContent = () => {
                <SectionTitle theme={theme}>Profile Details</SectionTitle>
             </header>
             <ProfileSection />
-            <PaymentSection />
+            <PaymentSection cart={cart} />
          </Form>
          {cart?.products?.length > 0 && (
             <CartDetails>
