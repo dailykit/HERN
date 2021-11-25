@@ -2,7 +2,7 @@
    "idlePageSettings": {
       "idleTime": {
          "label": "Time for become screen idle(in seconds).",
-         "value": 10,
+         "value": 600,
          "default": 30,
          "dataType": "number",
          "description": "This is use for make screen inactive.",
@@ -93,6 +93,28 @@
          "defaultValue": "https://storage.sg.content-cdn.io/in-resources/8e6b2cb0-d95c-421b-9265-715d6b149ba8/Images/userimages/Herfy%20Logo.svg",
          "dataType": "imageUpload",
          "description": "Logo for brand.",
+         "userInsertType": "imageUpload"
+      }
+   },
+   "fulfillmentPageSettings": {
+      "backgroundImage": {
+         "label": "Image on idle page.",
+         "value": {
+            "assets": {
+               "images": [
+                  "https://images.unsplash.com/photo-1610440042657-612c34d95e9f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTJ8fGJ1cmdlcnN8ZW58MHx8MHx8&auto=format&fit=crop&w=600&q=60"
+               ]
+            }
+         },
+         "default": {
+            "assets": {
+               "images": [
+                  "https://images.unsplash.com/photo-1610440042657-612c34d95e9f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTJ8fGJ1cmdlcnN8ZW58MHx8MHx8&auto=format&fit=crop&w=600&q=60"
+               ]
+            }
+         },
+         "dataType": "imageUpload",
+         "description": "This will show image on idle page.",
          "userInsertType": "imageUpload"
       }
    }

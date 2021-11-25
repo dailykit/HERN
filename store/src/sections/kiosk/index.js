@@ -8,7 +8,8 @@ import { KioskHeader } from '../../components/kiosk/header'
 import { FulfillmentSection } from '../../components/kiosk/fulfillment'
 import { useTranslation } from '../../context'
 import { useConfig } from '../../lib'
-import { useQueryParamState } from '../../utils'
+import { isClient, useQueryParamState } from '../../utils'
+import { MenuSection } from '../../components/kiosk/menu'
 // idle screen component
 // fulfillment component
 // header
@@ -23,14 +24,17 @@ const Kiosk = () => {
    const { direction } = useTranslation()
 
    const [isIdle, setIsIdle] = useState(false)
-   const [currentPage, setCurrentPage, deleteCurrentPage] = useQueryParamState(
-      'currentPage',
-      'fulfillmentPage'
-   )
 
    const handleOnIdle = event => {
       console.log('user is idle', event)
       setIsIdle(true)
+      deleteCurrentPage('currentPage')
+      // productCategoryId
+      // Replace current querystring with the new one
+      const search = isClient ? window.location.search : ''
+      let queryParams = new URLSearchParams(search)
+      queryParams.delete('productCategoryId')
+      history.replaceState(null, null, '?' + queryParams.toString())
       console.log('last active', getLastActiveTime())
    }
 
@@ -59,11 +63,14 @@ const Kiosk = () => {
       const b = document.querySelector('body')
       b.style.padding = 0
    }, [])
-
+   const [currentPage, setCurrentPage, deleteCurrentPage] = useQueryParamState(
+      'currentPage',
+      'fulfillmentPage'
+   )
    if (isIdle) {
       return <IdleScreen config={KioskConfig} />
    }
-
+   console.log('this is cureent page', currentPage)
    return (
       <div dir={direction}>
          <Layout>
@@ -85,7 +92,14 @@ const Kiosk = () => {
                      />
                   </Content>
                )}
-               {currentPage === 'menuPage' && <Content>Menu</Content>}
+               {currentPage === 'menuPage' && (
+                  <Content>
+                     <MenuSection
+                        config={KioskConfig}
+                        setCurrentPage={setCurrentPage}
+                     />
+                  </Content>
+               )}
             </Layout>
          </Layout>
       </div>
