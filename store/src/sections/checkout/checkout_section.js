@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import tw, { styled, css } from 'twin.macro'
 import { useToasts } from 'react-toast-notifications'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Menu, Dropdown } from 'antd'
+import { Select } from 'antd'
 
 import { useConfig } from '../../lib'
 import * as QUERIES from '../../graphql'
@@ -338,15 +338,6 @@ const PaymentContent = () => {
          })
       }
    }
-   const PaymentMethodMenu = (
-      <Menu>
-         {paymentMethods.map(method => (
-            <Menu.Item onClick={() => paymentMethodSelectionHandler(method)}>
-               {method.toUpperCase()}
-            </Menu.Item>
-         ))}
-      </Menu>
-   )
 
    React.useEffect(() => {
       ;(async () => {
@@ -388,6 +379,7 @@ const PaymentContent = () => {
                      if (response && response?.razorpay_payment_id) {
                         console.log('razorpay response', responseData)
                         setSubmitting(false)
+                        toggleOverlay(true)
                      }
                   },
                }
@@ -486,7 +478,8 @@ const PaymentContent = () => {
                <SectionTitle theme={theme}>Profile Details</SectionTitle>
             </header>
             <ProfileSection />
-            <Dropdown overlay={PaymentMethodMenu}>
+            <SectionTitle theme={theme}>Select Payment Method</SectionTitle>
+            {/* <Dropdown overlay={PaymentMethodMenu}>
                <a
                   className="ant-dropdown-link"
                   onClick={e => e.preventDefault()}
@@ -495,7 +488,17 @@ const PaymentContent = () => {
                      ? selectedPaymentMethod.toUpperCase()
                      : 'Select Payment Method'}
                </a>
-            </Dropdown>
+            </Dropdown> */}
+            <Select
+               defaultValue={selectedPaymentMethod}
+               onChange={paymentMethodSelectionHandler}
+            >
+               {paymentMethods.map(method => (
+                  <Select.Option value={method}>
+                     {method.toUpperCase()}
+                  </Select.Option>
+               ))}
+            </Select>
             {selectedPaymentMethod === 'stripe' && (
                <PaymentSection cart={cart} />
             )}
