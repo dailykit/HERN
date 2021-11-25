@@ -8,7 +8,7 @@ import { KioskHeader } from '../../components/kiosk/header'
 import { FulfillmentSection } from '../../components/kiosk/fulfillment'
 import { useTranslation } from '../../context'
 import { useConfig } from '../../lib'
-
+import { useQueryParamState } from '../../utils'
 // idle screen component
 // fulfillment component
 // header
@@ -23,6 +23,10 @@ const Kiosk = () => {
    const { direction } = useTranslation()
 
    const [isIdle, setIsIdle] = useState(false)
+   const [currentPage, setCurrentPage, deleteCurrentPage] = useQueryParamState(
+      'currentPage',
+      'fulfillmentPage'
+   )
 
    const handleOnIdle = event => {
       console.log('user is idle', event)
@@ -46,32 +50,20 @@ const Kiosk = () => {
       debounce: 500,
       ...(isIdle && { onActive: handleOnActive, onAction: handleOnAction }),
    })
-   const contentStyle = {
-      height: '160px',
-      color: '#fff',
-      lineHeight: '160px',
-      textAlign: 'center',
-      background: '#364d79',
-   }
+
    function onChange(a, b, c) {
       console.log(a, b, c)
    }
 
-   // for go to next carousal
-   const goNext = () => {
-      componentsTabRef.current.next()
-   }
-   // for go to last carousal
-   const goLast = () => {
-      componentsTabRef.current.prev()
-   }
    useEffect(() => {
       const b = document.querySelector('body')
       b.style.padding = 0
    }, [])
+
    if (isIdle) {
       return <IdleScreen config={KioskConfig} />
    }
+
    return (
       <div dir={direction}>
          <Layout>
@@ -85,12 +77,15 @@ const Kiosk = () => {
                <KioskHeader config={KioskConfig} />
             </Header>
             <Layout className="hern-kiosk__content-layout">
-               <Carousel afterChange={onChange} ref={componentsTabRef}>
+               {currentPage === 'fulfillmentPage' && (
                   <Content>
-                     <FulfillmentSection config={KioskConfig} goNext={goNext} />
+                     <FulfillmentSection
+                        config={KioskConfig}
+                        setCurrentPage={setCurrentPage}
+                     />
                   </Content>
-                  <Content>Menu</Content>
-               </Carousel>
+               )}
+               {currentPage === 'menuPage' && <Content>Menu</Content>}
             </Layout>
          </Layout>
       </div>

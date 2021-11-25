@@ -5,7 +5,7 @@ import { DineInIcon, TakeOutIcon } from '../../assets/icons'
 import { useConfig } from '../../lib'
 
 export const FulfillmentSection = props => {
-   const { config, goNext } = props
+   const { config, setCurrentPage } = props
    const { orderTabs, isConfigLoading } = useConfig()
    const { t, direction } = useTranslation()
 
@@ -51,7 +51,7 @@ export const FulfillmentSection = props => {
                         fulfillmentIcon={IconType}
                         buttonText={eachTab?.label}
                         key={index}
-                        goNext={goNext}
+                        setCurrentPage={setCurrentPage}
                      />
                   )
                })
@@ -76,7 +76,7 @@ const FulfillmentOption = props => {
       config,
       fulfillmentIcon: FulfillmentIcon,
       buttonText,
-      goNext,
+      setCurrentPage,
       fulfillment,
    } = props
 
@@ -84,7 +84,7 @@ const FulfillmentOption = props => {
 
    const onFulfillmentClick = () => {
       console.log('fulfillment', fulfillment)
-      goNext()
+      setCurrentPage('menuPage')
    }
 
    return (
