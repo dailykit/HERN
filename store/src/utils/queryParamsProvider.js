@@ -29,6 +29,7 @@ export const useQueryParamState = (key, initialValue) => {
          // const newQsValue = qs.stringify({ ...values, [key]: undefined })
          // router.push({ search: `?${newQsValue}` })
          // Set new or modify existing page value
+         setValue(initialValue)
          queryParams.delete(key)
          // Replace current querystring with the new one
          history.replaceState(null, null, '?' + queryParams.toString())
