@@ -338,6 +338,23 @@ const PaymentContent = () => {
          })
       }
    }
+   const cancelCartPayment = () => {
+      console.log('dismissed')
+      // if (cart && cart?.id) {
+      //    updateCart({
+      //       variables: {
+      //          id: cart?.id,
+      //          _set: {
+      //             status: 'CANCELLED',
+      //             // _inc:{
+
+      //             // }
+      //          },
+      //       },
+      //    })
+      // }
+      setSubmitting(false)
+   }
 
    React.useEffect(() => {
       ;(async () => {
@@ -369,6 +386,9 @@ const PaymentContent = () => {
                      name: `${state.profile.firstName} ${state.profile.lastName}`,
                      email: user?.platform_customer?.email || '',
                      contact: state.profile.phoneNumber,
+                  },
+                  modal: {
+                     ondismiss: cancelCartPayment(),
                   },
                   handler: function (response) {
                      const responseData = {
