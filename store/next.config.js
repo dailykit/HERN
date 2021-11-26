@@ -11,9 +11,13 @@ module.exports = {
             'window.jQuery': 'jquery'
          })
       )
-      config.resolve.fallback = {
-         ...config.resolve.fallback,
-         fs: false
+      config: {
+         resolve: {
+            fallback = {
+               ...config.resolve.fallback,
+               fs: false
+            }
+         }
       }
       return config
    },

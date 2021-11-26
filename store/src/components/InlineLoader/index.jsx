@@ -29,7 +29,7 @@ const InlineLoader = ({ type = 'inline', ...props }) => {
             <div />
             <div />
          </StyledLoader> */}
-         <FlamingoLoader src="/assets/gifs/Stayin_Loader.gif" alt="loader" />
+         <FlamingoLoader src="/assets/gifs/StayIn_Loader.gif" alt="loader" />
       </StyledWrapper>
    )
 }
