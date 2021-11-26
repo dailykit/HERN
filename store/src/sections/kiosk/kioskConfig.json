@@ -117,5 +117,15 @@
          "description": "This will show image on idle page.",
          "userInsertType": "imageUpload"
       }
+   },
+   "productSettings": {
+      "defaultImage": {
+         "label": "Default Image for product.",
+         "value": "https://order.herfy.com/assets/imgs/default/default.png",
+         "default": "",
+         "dataType": "imageUpload",
+         "description": "This will show as product image if specific product image is not exists.",
+         "userInsertType": "imageUpload"
+      }
    }
 }

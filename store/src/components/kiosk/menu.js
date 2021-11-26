@@ -1,13 +1,16 @@
 import React, { useState } from 'react'
-import { Layout, Menu } from 'antd'
+import { Col, Layout, Menu, Row } from 'antd'
 import { useQueryParamState } from '../../utils'
+import { useTranslation } from '../../context'
+import { KioskProduct } from './component'
 
-const { Content, Sider } = Layout
+const { Content, Sider, Header } = Layout
 
 export const MenuSection = props => {
    const { config } = props
    const [category, changeCategory, deleteCategory] =
       useQueryParamState('productCategoryId')
+   console.log('fromMenuSection')
    return (
       <Layout>
          <Content style={{ height: '40em' }}>
@@ -64,13 +67,21 @@ const categories = [
    },
 ]
 const KioskMenu = props => {
-   const { config, categoryId, changeCategory } = props
-   const [selectedCategory, setSelectedCategory] = useState(null)
+   const { config } = props
+   const { categoryId, changeCategory } = props
+   const [selectedCategory, setSelectedCategory] = useState(
+      (categoryId && categoryId.toString()) || categories[0]['id'].toString()
+   )
+   console.log('categoriesId', categoryId)
+   console.log('KioskMenu')
+   const { t } = useTranslation()
 
    const onCategorySelect = e => {
       setSelectedCategory(e.key)
       changeCategory(e.key)
    }
+   const products = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+   const options = ['option1', 'option2', 'option3', 'option4']
    return (
       <Layout style={{ height: 'calc(100vh - 50em)' }}>
          <Sider
@@ -82,15 +93,19 @@ const KioskMenu = props => {
                theme={'light'}
                mode={'vertical'}
                onSelect={onCategorySelect}
-               defaultSelectedKeys={[categoryId || categories[0]['id']]}
+               defaultSelectedKeys={[selectedCategory]}
             >
                {categories.map((eachCategory, index) => {
                   return (
-                     <Menu.Item key={index} style={{ height: '13em' }}>
+                     <Menu.Item
+                        key={eachCategory.id}
+                        style={{ height: '13em' }}
+                     >
                         <div
                            className="hern-kiosk__menu-page-product-category"
                            style={{
-                              ...(index == selectedCategory && {
+                              ...((eachCategory.id == selectedCategory ||
+                                 eachCategory.id == categoryId) && {
                                  border: ` 4px solid ${config.kioskSettings.theme.primaryColor.value}`,
                               }),
                            }}
@@ -104,7 +119,8 @@ const KioskMenu = props => {
                            <span
                               className="hern-kiosk__menu-page-product-category-title"
                               style={{
-                                 ...(index == selectedCategory && {
+                                 ...((eachCategory.id == selectedCategory ||
+                                    eachCategory.id == categoryId) && {
                                     color: `${config.kioskSettings.theme.primaryColor.value}`,
                                  }),
                               }}
@@ -117,7 +133,53 @@ const KioskMenu = props => {
                })}
             </Menu>
          </Sider>
-         <Content> This is Content</Content>
+         <Content>
+            <Layout style={{ height: '100%', backgroundColor: '#fff' }}>
+               <Header theme={'light'} className="hern-kiosk__menu-header">
+                  <Row className="hern-kiosk__menu-header-row">
+                     <Col span={21} className="hern-kiosk__menu-header-col-1">
+                        <Row>
+                           <Col
+                              span={24}
+                              className="hern-kiosk__menu-header-heading"
+                              style={{
+                                 color: `${config.kioskSettings.theme.primaryColor.value}`,
+                              }}
+                           >
+                              {t('Menu')}
+                           </Col>
+                        </Row>
+                        <Row>
+                           {options.map((eachOption, index) => {
+                              const forSpan = 24 / options.length
+                              return (
+                                 <Col
+                                    key={index}
+                                    span={forSpan}
+                                    className="hern-kiosk__menu-header-additional-options"
+                                 >
+                                    <span>{eachOption}</span>
+                                 </Col>
+                              )
+                           })}
+                        </Row>
+                     </Col>
+                     <Col span={3} className="hern-kiosk__menu-header-col-2">
+                        col-6
+                     </Col>
+                  </Row>
+               </Header>
+               <Content class="hern-kiosk__menu-product-list">
+                  <Row gutter={[16, 16]}>
+                     {products.map((eachProduct, index) => (
+                        <Col span={8} className="gutter-row" key={index}>
+                           <KioskProduct config={config} />
+                        </Col>
+                     ))}
+                  </Row>
+               </Content>
+            </Layout>
+         </Content>
       </Layout>
    )
 }

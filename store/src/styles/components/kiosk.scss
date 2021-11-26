@@ -131,6 +131,7 @@
 .hern-kiosk__menu-category-side-bar {
    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
    overflow: auto;
+   padding-top: 1em;
    &::-webkit-scrollbar {
       width: 6px;
    }
@@ -167,4 +168,98 @@
 .hern-kiosk__menu-page-product-category-image {
    width: 12em;
    height: 12em;
+}
+
+// menu part where products are being show
+.hern-kiosk__menu-header {
+   height: 9em;
+   background: transparent;
+}
+
+.hern-kiosk__menu-header-row {
+   height: 100%;
+}
+.hern-kiosk__menu-header-heading {
+   text-align: center;
+   font-size: 3.5em;
+   font-weight: 700;
+}
+.hern-kiosk__menu-header-additional-options {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
+
+// menu product list
+.hern-kiosk__menu-product-list {
+   padding: 0 1.5em 0 1em;
+   overflow: auto;
+   &::-webkit-scrollbar {
+      width: 6px;
+   }
+   &::-webkit-scrollbar-thumb {
+      background: #e5f0f7;
+      border-radius: 4px;
+   }
+}
+// product
+.hern-kiosk__menu-product {
+   background-color: #ffffff;
+   // filter: drop-shadow(0px 2.64912px 13.2456px rgba(0, 107, 177, 0.4));
+   filter: drop-shadow(0px 0.64912px 3.2456px rgba(0, 107, 177, 0.4));
+   height: 26em;
+   padding: 0.5em;
+   border-radius: 0.5em;
+}
+.hern-kiosk__menu-product-header {
+   height: 16em;
+   position: relative;
+   background-color: #ffffff;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
+.hern-kiosk__menu-product-background-shadow {
+   position: absolute;
+   top: 0;
+   height: 100%;
+   left: 0;
+   width: 100%;
+   border-radius: 0.5em;
+   background: linear-gradient(180deg, #e5f0f7 0%, rgba(229, 240, 247, 0) 100%);
+}
+.hern-kiosk__kiosk-product-images-carousal {
+   width: 100%;
+   height: 100%;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
+
+.hern-kiosk__menu-product-content {
+   display: flex;
+   flex-direction: column;
+}
+.hern-kiosk__menu-product-name {
+   font-size: 1.3em;
+   font-weight: 700;
+}
+.hern-kiosk__menu-product-description {
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   font-size: 1.1em;
+}
+
+.hern-kiosk__kiosk-button {
+   background: linear-gradient(90deg, #ffd45f -3.04%, #f7b502 104.56%);
+   border-radius: 0.2em;
+   //   width: 14em;
+   // height: 5em;
+   font-style: normal;
+   font-weight: 800;
+   font-size: 1.2em;
+   line-height: 2em;
+   text-transform: uppercase;
+   color: #5a5a5a;
 }
