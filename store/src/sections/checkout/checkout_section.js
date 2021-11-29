@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import tw, { styled, css } from 'twin.macro'
 import { useToasts } from 'react-toast-notifications'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Select } from 'antd'
+import { Select, Menu, Dropdown } from 'antd'
 
 import { useConfig } from '../../lib'
 import * as QUERIES from '../../graphql'
@@ -26,7 +26,7 @@ import {
    PaymentSection,
 } from '../../sections/checkout'
 import { useUser } from '../../context'
-import { UPDATE_BRAND_CUSTOMER } from '../../graphql'
+import { UPDATE_BRAND_CUSTOMER, UPDATE_CART_PAYMENT } from '../../graphql'
 
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
@@ -165,6 +165,12 @@ const PaymentContent = () => {
          },
       }
    )
+   const [updateCartPayment] = useMutation(UPDATE_CART_PAYMENT, {
+      onError: error => {
+         console.log(error)
+         addToast('Something went wrong!', { appearance: 'error' })
+      },
+   })
 
    const [insertOccurenceCustomers] = useMutation(
       QUERIES.MUTATIONS.OCCURENCE.CUSTOMER.CREATE.MULTIPLE,
@@ -300,6 +306,16 @@ const PaymentContent = () => {
       })
    }
 
+   const PaymentMethodMenu = (
+      <Menu>
+         {paymentMethods.map(method => (
+            <Menu.Item onClick={() => paymentMethodSelectionHandler(method)}>
+               {method.toUpperCase()}
+            </Menu.Item>
+         ))}
+      </Menu>
+   )
+
    const isValid = () => {
       if (selectedPaymentMethod === 'stripe') {
          return (
@@ -340,19 +356,19 @@ const PaymentContent = () => {
    }
    const cancelCartPayment = () => {
       console.log('dismissed')
-      // if (cart && cart?.id) {
-      //    updateCart({
-      //       variables: {
-      //          id: cart?.id,
-      //          _set: {
-      //             status: 'CANCELLED',
-      //             // _inc:{
-
-      //             // }
-      //          },
-      //       },
-      //    })
-      // }
+      if (cart && cart?.activeCartPaymentId) {
+         updateCartPayment({
+            variables: {
+               id: cart?.activeCartPaymentId,
+               _set: {
+                  paymentStatus: 'CANCELLED',
+               },
+               _inc: {
+                  cancelAttempt: 1,
+               },
+            },
+         })
+      }
       setSubmitting(false)
    }
 
@@ -386,9 +402,55 @@ const PaymentContent = () => {
                      name: `${state.profile.firstName} ${state.profile.lastName}`,
                      email: user?.platform_customer?.email || '',
                      contact: state.profile.phoneNumber,
+                     method: 'upi',
+                     vpa: 'abc@ybl',
+                  },
+                  theme: {
+                     hide_topbar: true,
+                  },
+                  readonly: {
+                     email: '1',
+                     contact: '1',
+                     name: '1',
+                  },
+                  config: {
+                     display: {
+                        blocks: {
+                           banks: {
+                              name: 'Google Pay',
+                              instruments: [
+                                 {
+                                    method: 'upi',
+                                    flows: ['collect'],
+                                    apps: ['google_pay'],
+                                 },
+                              ],
+                           },
+                        },
+                        sequence: ['block.banks'],
+                        preferences: {
+                           show_default_blocks: false,
+                        },
+                     },
                   },
                   modal: {
-                     ondismiss: cancelCartPayment(),
+                     ondismiss: () => {
+                        console.log('dismissed')
+                        if (cart && cart?.activeCartPaymentId) {
+                           updateCartPayment({
+                              variables: {
+                                 id: cart?.activeCartPaymentId,
+                                 _set: {
+                                    paymentStatus: 'CANCELLED',
+                                 },
+                                 _inc: {
+                                    cancelAttempt: 1,
+                                 },
+                              },
+                           })
+                        }
+                        setSubmitting(false)
+                     },
                   },
                   handler: function (response) {
                      const responseData = {
@@ -499,7 +561,7 @@ const PaymentContent = () => {
             </header>
             <ProfileSection />
             <SectionTitle theme={theme}>Select Payment Method</SectionTitle>
-            {/* <Dropdown overlay={PaymentMethodMenu}>
+            <Dropdown overlay={PaymentMethodMenu}>
                <a
                   className="ant-dropdown-link"
                   onClick={e => e.preventDefault()}
@@ -508,7 +570,7 @@ const PaymentContent = () => {
                      ? selectedPaymentMethod.toUpperCase()
                      : 'Select Payment Method'}
                </a>
-            </Dropdown> */}
+            </Dropdown>
             <Select
                defaultValue={selectedPaymentMethod}
                onChange={paymentMethodSelectionHandler}
