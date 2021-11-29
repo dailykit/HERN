@@ -41,7 +41,8 @@ export const OnDemandMenuProvider = ({ children }) => {
       variables: {
          params: {
             brandId: brand?.id,
-            date,
+            // date,
+            locationId: 1000,
          },
       },
       onCompleted: data => {

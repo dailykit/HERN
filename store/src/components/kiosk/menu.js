@@ -81,7 +81,7 @@ const KioskMenu = props => {
       changeCategory(e.key)
    }
    const products = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-   const options = ['option1', 'option2', 'option3', 'option4']
+
    return (
       <Layout style={{ height: 'calc(100vh - 50em)' }}>
          <Sider
@@ -148,20 +148,6 @@ const KioskMenu = props => {
                            >
                               {t('Menu')}
                            </Col>
-                        </Row>
-                        <Row>
-                           {options.map((eachOption, index) => {
-                              const forSpan = 24 / options.length
-                              return (
-                                 <Col
-                                    key={index}
-                                    span={forSpan}
-                                    className="hern-kiosk__menu-header-additional-options"
-                                 >
-                                    <span>{eachOption}</span>
-                                 </Col>
-                              )
-                           })}
                         </Row>
                      </Col>
                      <Col span={3} className="hern-kiosk__menu-header-col-2">

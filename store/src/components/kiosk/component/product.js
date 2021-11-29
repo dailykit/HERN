@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Carousel, Layout } from 'antd'
 import KioskButton from './button'
 import { useTranslation } from '../../../context'
 import { formatCurrency } from '../../../utils'
+import { KioskModifier } from '.'
 
 const { Header, Content, Footer } = Layout
 
@@ -20,14 +21,16 @@ const demoProduct = {
 export const KioskProduct = props => {
    const { config } = props
    const { t } = useTranslation()
+   const [showModifier, setShowModifier] = useState(false)
    return (
-      <div className="hern-kiosk__menu-product">
-         <Layout style={{ height: '100%' }}>
-            <Header className="hern-kiosk__menu-product-header">
-               <div className="hern-kiosk__menu-product-background-shadow"></div>
-               <img src={config.productSettings.defaultImage.value} />
+      <>
+         <div className="hern-kiosk__menu-product">
+            <Layout style={{ height: '100%' }}>
+               <Header className="hern-kiosk__menu-product-header">
+                  <div className="hern-kiosk__menu-product-background-shadow"></div>
+                  <img src={config.productSettings.defaultImage.value} />
 
-               {/* {demoProduct.assets.images.length === 0 ? (
+                  {/* {demoProduct.assets.images.length === 0 ? (
                   <img src={config.productSettings.defaultImage.value} />
                ) : (
                   <Carousel
@@ -43,32 +46,42 @@ export const KioskProduct = props => {
                      ))}
                   </Carousel>
                )} */}
-            </Header>
-            <Content
-               style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  backgroundColor: '#ffffff',
-                  justifyContent: 'space-between',
-               }}
-            >
-               <div className="hern-kiosk__menu-product-content">
-                  <span className="hern-kiosk__menu-product-name">
-                     Herfy Original Tortilla
+               </Header>
+               <Content
+                  style={{
+                     display: 'flex',
+                     flexDirection: 'column',
+                     backgroundColor: '#ffffff',
+                     justifyContent: 'space-between',
+                  }}
+               >
+                  <div className="hern-kiosk__menu-product-content">
+                     <span className="hern-kiosk__menu-product-name">
+                        Herfy Original Tortilla
+                     </span>
+                     <span className="hern-kiosk__menu-product-description">
+                        Nicely wrapped golden strips of fried chicken, fresh
+                        tomato, and crispy lettuce, in the warm embrace of our
+                        special tortilla bread
+                     </span>
+                  </div>
+                  <span className="hern-kiosk__menu-product-price">
+                     {/* <sup></sup> */}
+                     {formatCurrency(45)}
                   </span>
-                  <span className="hern-kiosk__menu-product-description">
-                     Nicely wrapped golden strips of fried chicken, fresh
-                     tomato, and crispy lettuce, in the warm embrace of our
-                     special tortilla bread
-                  </span>
-               </div>
-               <span className="hern-kiosk__menu-product-price">
-                  {/* <sup></sup> */}
-                  {formatCurrency(45)}
-               </span>
-               <KioskButton>{t('Add To Cart')}</KioskButton>
-            </Content>
-         </Layout>
-      </div>
+                  <KioskButton
+                     onClick={() => {
+                        setShowModifier(true)
+                     }}
+                  >
+                     {t('Add To Cart')}
+                  </KioskButton>
+               </Content>
+            </Layout>
+         </div>
+         {showModifier && (
+            <KioskModifier config={config} setShowModifier={setShowModifier} />
+         )}
+      </>
    )
 }

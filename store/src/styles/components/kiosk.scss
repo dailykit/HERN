@@ -210,6 +210,7 @@
    height: 26em;
    padding: 0.5em;
    border-radius: 0.5em;
+   position: relative;
 }
 .hern-kiosk__menu-product-header {
    height: 16em;
@@ -262,4 +263,81 @@
    line-height: 2em;
    text-transform: uppercase;
    color: #5a5a5a;
+}
+
+// kiosk modifier
+.hern-kiosk__menu-product-modifier-popup {
+   position: fixed;
+   top: 0;
+   left: 0;
+   height: 100vh;
+   width: 100vw;
+   background: #00406ae5;
+   z-index: 100000000;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
+.hern-kiosk__menu-product-modifier-pop-up-container {
+   height: 80vh;
+   width: 80vw;
+   background-color: red;
+   margin: 5em 0 0 0;
+   border-radius: 2.5em;
+}
+.hern-kiosk__menu-product-modifier-header {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   margin: 2em;
+}
+.hern-kiosk__menu-product-modifier-customize-text {
+   font-size: 3em;
+   font-weight: 700;
+}
+.hern-kiosk__modifier-popup-product-options {
+   display: flex;
+   justify-content: center;
+}
+.hern-kiosk__modifier-product-option {
+   margin: 0 0.5em;
+   font-weight: 700;
+   border-radius: 0.4em;
+}
+
+.hern-kiosk__modifier-popup-modifiers-list {
+   margin: 2em;
+}
+.hern-kiosk__modifier-popup-modifier-category {
+}
+
+.hern-kiosk__modifier-category-label {
+   display: flex;
+   align-items: center;
+   margin-bottom: 1em;
+   .hern-kiosk__modifier-category-mark {
+   }
+   .hern-kiosk__modifier-category-label-text {
+      text-transform: capitalize;
+      margin-left: 1em;
+      font-size: 1.1em;
+      font-weight: 600;
+   }
+}
+.hern-kiosk__modifier-category-option {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   .hern-kiosk__modifier-category-right {
+      display: flex;
+      align-items: center;
+   }
+}
+.hern-kiosk__modifier-category-option-image {
+   width: 92px;
+   height: 92px;
+}
+.hern-kiosk__modifier--option-name {
+   margin-left: 1em;
 }

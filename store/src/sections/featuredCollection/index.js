@@ -402,7 +402,7 @@ export const FeaturedCollection = props => {
    const closeModifier = () => {
       setProductIdForModifier(null)
    }
-
+   console.log('featuredError', productsError, menuError)
    if (status === 'error' || productsError || menuError) {
       return <p>Something went wrong</p>
    }

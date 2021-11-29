@@ -85,6 +85,14 @@
             "default": "#0F6BB1",
             "dataType": "color",
             "userInsertType": "colorPicker"
+         },
+         "primaryColorDark": {
+            "id": "prd-col",
+            "label": "Primary Color",
+            "value": "#05578C",
+            "default": "#05578C",
+            "dataType": "color",
+            "userInsertType": "colorPicker"
          }
       },
       "logo": {
