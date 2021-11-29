@@ -2,6 +2,8 @@ import React from 'react'
 import { Steps, Form, Input, Button, Radio, Space } from 'antd'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { useToasts } from 'react-toast-notifications'
+import _has from 'lodash/has'
+import _isEmpty from 'lodash/isEmpty'
 
 import { Wrapper } from './styles.js'
 import * as QUERIES from '../../graphql'
@@ -20,13 +22,15 @@ import {
 
 export function CartPaymentComponent({ cartId = null }) {
    const {
+      isPaymentLoading,
+      isPaymentProcessing,
       paymentInfo,
       profileInfo,
       setPaymentInfo,
       setProfileInfo,
-      isPaymentLoading,
+      setCartPaymentId,
+      updatePaymentState,
    } = usePayment()
-   console.log('profileInfo', profileInfo)
    const { addToast } = useToasts()
    const { displayRazorpay } = useRazorPay()
    const [cart, setCart] = React.useState(null)
@@ -64,13 +68,19 @@ export function CartPaymentComponent({ cartId = null }) {
          subscriptionData: { data: { cart: requiredCart = {} } = {} } = {},
       } = {}) => {
          setCart(requiredCart)
+         if (
+            !_isEmpty(requiredCart) &&
+            _has(requiredCart, 'activeCartPaymentId')
+         ) {
+            setCartPaymentId(requiredCart.activeCartPaymentId)
+         }
          setLoading(false)
       },
    })
 
    const [updateCartPayment] = useMutation(QUERIES.UPDATE_CART_PAYMENT, {
       onError: error => {
-         console.log(error)
+         console.error(error)
          addToast('Something went wrong!', { appearance: 'error' })
       },
    })
@@ -90,13 +100,14 @@ export function CartPaymentComponent({ cartId = null }) {
 
    const onPaymentMethodChange = event => {
       const { value } = event.target
-      console.log(value)
       setPaymentInfo(value)
    }
 
    const confirmPayHandler = () => {
       if (paymentInfo) {
-         setIsDisabled(true)
+         updatePaymentState({
+            isPaymentProcessing: true,
+         })
          updateCart({
             variables: {
                id: cartId,
@@ -112,61 +123,9 @@ export function CartPaymentComponent({ cartId = null }) {
       }
    }
 
-   const ondismissHandler = () => {
-      console.log('dismissed')
-      if (cart && cart?.activeCartPaymentId) {
-         updateCartPayment({
-            variables: {
-               id: cart?.activeCartPaymentId,
-               _set: {
-                  paymentStatus: 'CANCELLED',
-               },
-               _inc: {
-                  cancelAttempt: 1,
-               },
-            },
-         })
-      }
-      setIsDisabled(false)
-   }
-
-   const eventHandler = response => {
-      const responseData = {
-         razorpayPaymentId: response.razorpay_payment_id,
-         razorpayOrderId: response.razorpay_order_id,
-         razorpaySignature: response.razorpay_signature,
-      }
-      if (response && response?.razorpay_payment_id) {
-         console.log('razorpay response', responseData)
-         setIsDisabled(false)
-      }
-   }
-
-   React.useEffect(() => {
-      ;(async () => {
-         console.log('inside useEffect', cart)
-         // right now only handle the razorpay method.
-         if (
-            cart &&
-            cart?.activeCartPaymentId &&
-            cart?.activeCartPayment?.transactionRemark
-         ) {
-            if (cart?.activeCartPayment?.paymentStatus === 'CREATED') {
-               const options = getRazorpayOptions({
-                  orderDetails: cart?.activeCartPayment?.transactionRemark,
-                  paymentInfo,
-                  ondismissHandler,
-                  eventHandler,
-               })
-               await displayRazorpay(options)
-            }
-         }
-      })()
-   }, [cart?.activeCartPayment])
-
-   if (loading) return <Loader inline />
+   if (loading || isPaymentLoading) return <Loader inline />
    if (hasCartError) {
-      console.log(hasCartError)
+      console.error(hasCartError)
       addToast('Error fetching cart', { appearance: 'error' })
    }
 
@@ -178,8 +137,6 @@ export function CartPaymentComponent({ cartId = null }) {
             wrapperCol={{ span: 16 }}
             initialValues={profileInfo}
             layout="vertical"
-            onFinish={onFinish}
-            onFinishFailed={onFinishFailed}
             onValuesChange={onFormValuesChange}
             autoComplete="off"
          >
@@ -223,7 +180,7 @@ export function CartPaymentComponent({ cartId = null }) {
             </Space>
          </Radio.Group>
          <Button
-            disabled={isDisabled}
+            disabled={isPaymentProcessing}
             type="primary"
             size="large"
             block

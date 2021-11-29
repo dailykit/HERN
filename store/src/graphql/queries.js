@@ -1691,3 +1691,16 @@ export const GET_JS_CSS_FILES = gql`
       }
    }
 `
+export const GET_CART_PAYMENT_INFO = gql`
+   subscription GET_CART_PAYMENT_INFO($id: Int!) {
+      cartPayment(id: $id) {
+         amount
+         cancelAttempt
+         cartId
+         isTest
+         paymentStatus
+         paymentType
+         transactionRemark
+      }
+   }
+`
