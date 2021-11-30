@@ -1,0 +1,73 @@
+table:
+  name: customizableProductComponent
+  schema: products
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteCustomizableProductComponents
+    delete_by_pk: deleteCustomizableProductComponent
+    insert: createCustomizableProductComponents
+    insert_one: createCustomizableProductComponent
+    select: customizableProductComponents
+    select_aggregate: customizableProductComponentsAggregate
+    select_by_pk: customizableProductComponent
+    update: updateCustomizableProductComponents
+    update_by_pk: updateCustomizableProductComponent
+object_relationships:
+- name: linkedProduct
+  using:
+    foreign_key_constraint_on: linkedProductId
+- name: product
+  using:
+    foreign_key_constraint_on: productId
+array_relationships:
+- name: cartItems
+  using:
+    foreign_key_constraint_on:
+      column: customizableProductComponentId
+      table:
+        name: cartItem
+        schema: order
+- name: selectedOptions
+  using:
+    manual_configuration:
+      column_mapping:
+        id: customizableComponentId
+      insertion_order: null
+      remote_table:
+        name: customizableComponentOptions
+        schema: products
+computed_fields:
+- comment: ""
+  definition:
+    function:
+      name: customizableProductComponentFullName
+      schema: products
+  name: fullName
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - id
+    - created_at
+    - updated_at
+    - isArchived
+    - options
+    - position
+    - productId
+    - linkedProductId
+    filter: {}
+  role: consumer
+- permission:
+    allow_aggregations: true
+    columns:
+    - isArchived
+    - id
+    - linkedProductId
+    - productId
+    - options
+    - position
+    - created_at
+    - updated_at
+    filter: {}
+  role: guest-consumer

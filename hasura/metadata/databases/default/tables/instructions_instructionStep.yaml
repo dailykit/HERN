@@ -1,0 +1,15 @@
+table:
+  name: instructionStep
+  schema: instructions
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteInstructionSteps
+    delete_by_pk: deleteInstructionStep
+    insert: createInstructionSteps
+    insert_one: createInstructionStep
+    select: instructionSteps
+    select_aggregate: instructionStepsAggregate
+    select_by_pk: instructionStep
+    update: updateInstructionSteps
+    update_by_pk: updateInstructionStep

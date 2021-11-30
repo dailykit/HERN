@@ -1,0 +1,12 @@
+- name: dailygit
+  definition:
+    url: https://testhern.dailykit.org/template/graphql
+    timeout_seconds: 60
+- name: ohyay
+  definition:
+    url: https://testhern.dailykit.org/ohyay/graphql
+    timeout_seconds: 60
+    headers:
+    - value: 5a74e2ef-9a5d-4282-b058-c6ad56d2ec83
+      name: ohyay_api_key
+    forward_client_headers: true

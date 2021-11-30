@@ -1,0 +1,13 @@
+table:
+  name: collectionDetails
+  schema: onDemand
+object_relationships:
+- name: collection
+  using:
+    manual_configuration:
+      column_mapping:
+        id: id
+      insertion_order: null
+      remote_table:
+        name: collection
+        schema: onDemand

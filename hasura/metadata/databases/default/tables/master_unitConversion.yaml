@@ -1,0 +1,34 @@
+table:
+  name: unitConversion
+  schema: master
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteUnitConversion
+    insert: createUnitConversion
+    select: unitConversions
+    select_aggregate: unitConversionsAggregate
+    select_by_pk: unitConversion
+    update: updateUnitConversion
+object_relationships:
+- name: inputUnit
+  using:
+    foreign_key_constraint_on: outputUnitName
+- name: outputUnit
+  using:
+    foreign_key_constraint_on: inputUnitName
+array_relationships:
+- name: bulkItem_unitConversions
+  using:
+    foreign_key_constraint_on:
+      column: unitConversionId
+      table:
+        name: bulkItem_unitConversion
+        schema: inventory
+- name: unitConversionByBulkItems
+  using:
+    foreign_key_constraint_on:
+      column: unitConversionId
+      table:
+        name: unitConversionByBulkItem
+        schema: inventory

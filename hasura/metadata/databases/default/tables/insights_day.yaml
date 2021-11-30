@@ -1,0 +1,11 @@
+table:
+  name: day
+  schema: insights
+array_relationships:
+- name: dates
+  using:
+    foreign_key_constraint_on:
+      column: day
+      table:
+        name: date
+        schema: insights

@@ -1,0 +1,27 @@
+table:
+  name: charge
+  schema: fulfilment
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteCharge
+    delete_by_pk: deleteChargeByPK
+    insert: createCharges
+    insert_one: createCharge
+    select: charges
+    select_aggregate: chargesAggregate
+    select_by_pk: chargeByPK
+    update: updateCharge
+    update_by_pk: updateChargeByPK
+object_relationships:
+- name: mileRange
+  using:
+    foreign_key_constraint_on: mileRangeId
+array_relationships:
+- name: deliveryOptions
+  using:
+    foreign_key_constraint_on:
+      column: chargeId
+      table:
+        name: deliveryPreferenceByCharge
+        schema: fulfilment

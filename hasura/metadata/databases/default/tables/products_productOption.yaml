@@ -1,0 +1,126 @@
+table:
+  name: productOption
+  schema: products
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteProductOptions
+    delete_by_pk: deleteProductOption
+    insert: createProductOptions
+    insert_one: createProductOption
+    select: productOptions
+    select_aggregate: productOptionsAggregate
+    select_by_pk: productOption
+    update: updateProductOptions
+    update_by_pk: updateProductOption
+object_relationships:
+- name: inventoryProductBundle
+  using:
+    foreign_key_constraint_on: inventoryProductBundleId
+- name: modifier
+  using:
+    foreign_key_constraint_on: modifierId
+- name: operationConfig
+  using:
+    foreign_key_constraint_on: operationConfigId
+- name: product
+  using:
+    foreign_key_constraint_on: productId
+- name: productOptionType
+  using:
+    manual_configuration:
+      column_mapping:
+        type: title
+      insertion_order: null
+      remote_table:
+        name: productOptionType
+        schema: products
+- name: sachetItem
+  using:
+    foreign_key_constraint_on: sachetItemId
+- name: simpleRecipeYield
+  using:
+    foreign_key_constraint_on: simpleRecipeYieldId
+- name: supplierItem
+  using:
+    foreign_key_constraint_on: supplierItemId
+computed_fields:
+- comment: ""
+  definition:
+    function:
+      name: productOptionCartItem
+      schema: products
+  name: cartItem
+- comment: ""
+  definition:
+    function:
+      name: productOptionCartItemByLocation
+      schema: products
+  name: cartItemByLocation
+- comment: ""
+  definition:
+    function:
+      name: productOptionDiscountByLocation
+      schema: products
+  name: discountByLocation
+- comment: ""
+  definition:
+    function:
+      name: productOptionFullName
+      schema: products
+  name: fullName
+- comment: ""
+  definition:
+    function:
+      name: productOptionUnitPriceByLocation
+      schema: products
+  name: priceByLocation
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - id
+    - productId
+    - label
+    - modifierId
+    - operationConfigId
+    - simpleRecipeYieldId
+    - supplierItemId
+    - sachetItemId
+    - position
+    - created_at
+    - updated_at
+    - price
+    - discount
+    - quantity
+    - type
+    - isArchived
+    - inventoryProductBundleId
+    computed_fields:
+    - cartItem
+    filter: {}
+  role: consumer
+- permission:
+    allow_aggregations: true
+    columns:
+    - isArchived
+    - id
+    - inventoryProductBundleId
+    - modifierId
+    - operationConfigId
+    - productId
+    - quantity
+    - sachetItemId
+    - simpleRecipeYieldId
+    - supplierItemId
+    - discount
+    - position
+    - price
+    - label
+    - type
+    - created_at
+    - updated_at
+    computed_fields:
+    - cartItem
+    filter: {}
+  role: guest-consumer

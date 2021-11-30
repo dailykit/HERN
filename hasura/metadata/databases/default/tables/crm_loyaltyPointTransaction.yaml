@@ -1,0 +1,33 @@
+table:
+  name: loyaltyPointTransaction
+  schema: crm
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteLoyaltyPointsTransactions
+    delete_by_pk: deleteLoyaltyPointsTransaction
+    insert: createLoyaltyPointsTransactions
+    insert_one: createLoyaltyPointsTransaction
+    select: loyaltyPointsTransactions
+    select_aggregate: loyaltyPointsTransactionsAggregate
+    select_by_pk: loyaltyPointsTransaction
+    update: updateLoyaltyPointsTransactions
+    update_by_pk: updateLoyaltyPointsTransaction
+object_relationships:
+- name: cart
+  using:
+    foreign_key_constraint_on: orderCartId
+- name: customerReferral
+  using:
+    foreign_key_constraint_on: customerReferralId
+- name: loyaltyPoint
+  using:
+    foreign_key_constraint_on: loyaltyPointId
+array_relationships:
+- name: rewardHistories
+  using:
+    foreign_key_constraint_on:
+      column: loyaltyPointTransactionId
+      table:
+        name: rewardHistory
+        schema: crm

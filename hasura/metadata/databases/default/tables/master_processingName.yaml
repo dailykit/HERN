@@ -1,0 +1,27 @@
+table:
+  name: processingName
+  schema: master
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteMasterProcessing
+    insert: createMasterProcessing
+    select: masterProcessings
+    select_aggregate: masterProcessingsAggregate
+    select_by_pk: masterProcessing
+    update: updateMasterProcessing
+array_relationships:
+- name: bulkItems
+  using:
+    foreign_key_constraint_on:
+      column: processingName
+      table:
+        name: bulkItem
+        schema: inventory
+- name: ingredientProcessings
+  using:
+    foreign_key_constraint_on:
+      column: processingName
+      table:
+        name: ingredientProcessing
+        schema: ingredient

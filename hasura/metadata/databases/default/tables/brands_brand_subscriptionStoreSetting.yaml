@@ -1,0 +1,27 @@
+table:
+  name: brand_subscriptionStoreSetting
+  schema: brands
+object_relationships:
+- name: brand
+  using:
+    foreign_key_constraint_on: brandId
+- name: subscriptionStoreSetting
+  using:
+    foreign_key_constraint_on: subscriptionStoreSettingId
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - brandId
+    - subscriptionStoreSettingId
+    - value
+    filter: {}
+  role: consumer
+- permission:
+    allow_aggregations: true
+    columns:
+    - brandId
+    - subscriptionStoreSettingId
+    - value
+    filter: {}
+  role: guest-consumer

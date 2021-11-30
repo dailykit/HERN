@@ -1,0 +1,10 @@
+table:
+  name: emailTriggers
+  schema: notifications
+object_relationships:
+- name: emailTemplateFile
+  using:
+    foreign_key_constraint_on: emailTemplateFileId
+- name: functionFile
+  using:
+    foreign_key_constraint_on: functionFileId

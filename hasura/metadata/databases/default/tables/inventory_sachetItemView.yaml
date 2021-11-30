@@ -1,0 +1,13 @@
+table:
+  name: sachetItemView
+  schema: inventory
+array_relationships:
+- name: cartItems
+  using:
+    manual_configuration:
+      column_mapping:
+        id: sachetItemId
+      insertion_order: null
+      remote_table:
+        name: cartItem
+        schema: order

@@ -1,0 +1,64 @@
+table:
+  name: customizableComponentOptions
+  schema: products
+object_relationships:
+- name: linkedProduct
+  using:
+    manual_configuration:
+      column_mapping:
+        linkedProductId: id
+      insertion_order: null
+      remote_table:
+        name: product
+        schema: products
+- name: productOption
+  using:
+    manual_configuration:
+      column_mapping:
+        productOptionId: id
+      insertion_order: null
+      remote_table:
+        name: productOption
+        schema: products
+computed_fields:
+- comment: ""
+  definition:
+    function:
+      name: customizableProductComponentOptionCartItem
+      schema: products
+  name: cartItem
+- comment: ""
+  definition:
+    function:
+      name: comboProductComponentCustomizableCartItem
+      schema: products
+  name: comboCartItem
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - customizableComponentId
+    - linkedProductId
+    - productOptionId
+    - price
+    - discount
+    - productId
+    computed_fields:
+    - cartItem
+    - comboCartItem
+    filter: {}
+  role: consumer
+- permission:
+    allow_aggregations: true
+    columns:
+    - customizableComponentId
+    - linkedProductId
+    - productId
+    - productOptionId
+    - discount
+    - price
+    computed_fields:
+    - cartItem
+    - comboCartItem
+    filter: {}
+  role: guest-consumer

@@ -1,0 +1,7 @@
+table:
+  name: webhookUrl_EventsLog
+  schema: developer
+object_relationships:
+- name: processedWebhookEventsByUrl
+  using:
+    foreign_key_constraint_on: processedWebhookEventsByUrlId
