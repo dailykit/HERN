@@ -267,22 +267,24 @@
    cursor: pointer;
 }
 .hern-store-selector__store-location-map-store-detail-pop {
-   position: absolute;
-   bottom: 32px;
-   left: 0;
-   height: auto;
-   width: 200px;
+   position: fixed;
+   top: -14em;
+   bottom: 0;
+   right: 0;
+   left: -50%;
+   height: 75vh;
+   width: 100vw;
    display: none;
    background: #ffffff;
-   z-index: 10000;
+   z-index: 100000;
    padding: 1em;
    line-height: 16px;
    flex-direction: column;
    border-radius: 4px;
-   width: max-content;
 }
 .hern-store-selector__store-location-map-store-detail-pop--active {
    display: flex;
+   cursor: default;
 }
 .hern-store-selector__store-location-map-store-detail-pop-content {
    position: relative;
@@ -331,6 +333,11 @@
    color: rgba(64, 64, 64, 0.6);
    font-size: 12px;
    line-height: 14px;
+}
+.hern-store-selector__store-location-map-store-detail-pop__timing-timing-grid {
+   display: grid;
+   grid-template-columns: 7em 12em;
+   line-height: 16px;
 }
 .hern-store-selector__store-location-map-store-detail-pop-close-icon {
    position: absolute;
