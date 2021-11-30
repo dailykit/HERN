@@ -24,13 +24,12 @@ const ohyaySchema = require('./server/streaming/ohyay/src/schema/schema')
 
 const app = express()
 
-
 const setupForStripeWebhooks = {
    // Because Stripe needs the raw body, we compute it but only when hitting the Stripe callback URL.
-   verify: (req, res, buf) => {
+   verify: (req, res, buf, encoding) => {
       const url = req.originalUrl
       if (url.startsWith('/server/api/payment/handle-payment-webhook')) {
-         req.rawBody = buf.toString()
+         req.rawBody = buf.toString(encoding || 'utf8')
       }
    }
 }
@@ -87,8 +86,6 @@ app.use('/apps/:path(*)', (req, res, next) => {
 
    express.static('admin/build')(req, res, next)
 })
-
-
 
 /*
 handles template endpoints for ex. serving labels, sachets, emails in pdf or html format

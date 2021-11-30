@@ -1,5 +1,5 @@
 import initiatePayment from './initiatePayment'
-// import webhookEvents from './webhookEvents'
+import webhookEvents from './webhookEvents'
 
 const razorpay = async (data, methodType) => {
    console.log('inside razorpay', methodType)
@@ -8,7 +8,7 @@ const razorpay = async (data, methodType) => {
       return await initiatePayment(data)
    }
    if (methodType === 'webhook') {
-      //   return webhookEvents(data)
+      return webhookEvents(data)
    }
    return null
 }
