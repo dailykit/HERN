@@ -272,9 +272,9 @@ const productData = {
    __typename: 'products_product',
 }
 export const KioskModifier = props => {
-   const { config, setShowModifier } = props
+   const { config, setShowModifier, productData } = props
    const { t } = useTranslation()
-
+   console.log('productData', productData)
    // component state
    const [selectedProductOption, setSelectedProductOption] = useState(
       productData.productOptions[0]
@@ -282,20 +282,26 @@ export const KioskModifier = props => {
    return (
       <div className="hern-kiosk__menu-product-modifier-popup">
          <div className="hern-kiosk__menu-product-modifier-popup--bg"></div>
-         <div
-            onClick={() => {
-               setShowModifier(false)
-            }}
-            style={{
-               position: 'absolute',
-            }}
-         >
-            <CloseIcon size={30} stroke={'#fffffF'} />
-         </div>
+
          <div
             className="hern-kiosk__menu-product-modifier-pop-up-container"
             style={{ background: '#0F6BB1' }}
          >
+            <div
+               onClick={() => {
+                  setShowModifier(false)
+               }}
+               style={{
+                  position: 'absolute',
+                  right: '2em',
+                  top: '2em',
+                  background: `${config.kioskSettings.theme.primaryColorDark.value}}`,
+                  borderRadius: '50%',
+                  padding: '.5em',
+               }}
+            >
+               <CloseIcon size={30} stroke={'#fffffF'} />
+            </div>
             <div className="hern-kiosk__menu-product-modifier-header">
                <span
                   className="hern-kiosk__menu-product-modifier-customize-text"
@@ -380,11 +386,22 @@ export const KioskModifier = props => {
                                              className="hern-kiosk__modifier-category-option"
                                           >
                                              <div className="hern-kiosk__modifier-category-right">
-                                                <img
-                                                   className="hern-kiosk__modifier-category-option-image"
-                                                   alt="modifier image"
-                                                   src={eachOption.image}
-                                                />
+                                                {eachOption.image ? (
+                                                   <img
+                                                      className="hern-kiosk__modifier-category-option-image"
+                                                      alt="modifier image"
+                                                      src={eachOption.image}
+                                                   />
+                                                ) : (
+                                                   <img
+                                                      className="hern-kiosk__modifier-category-option-image"
+                                                      alt="modifier image"
+                                                      src={
+                                                         config.productSettings
+                                                            .defaultImage.value
+                                                      }
+                                                   />
+                                                )}
                                                 <span className="hern-kiosk__modifier--option-name">
                                                    {eachOption.name}
                                                 </span>

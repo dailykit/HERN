@@ -135,5 +135,21 @@
          "description": "This will show as product image if specific product image is not exists.",
          "userInsertType": "imageUpload"
       }
+   },
+   "data": {
+      "collectionData": {
+         "type": "multi",
+         "label": "Collections",
+         "value": [
+            {
+               "id": 1306,
+               "title": "herfys",
+               "value": "herfys"
+            }
+         ],
+         "dataType": "select",
+         "isRequired": "false",
+         "userInsertType": "collectionSelector"
+      }
    }
 }

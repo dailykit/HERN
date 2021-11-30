@@ -1283,14 +1283,25 @@ export const PLATFORM_CUSTOMERS = gql`
 
 export const PRODUCTS_BY_CATEGORY = gql`
    query PRODUCTS_BY_CATEGORY($params: jsonb!) {
-      onDemand_getMenuV2(args: { params: $params }) {
+      onDemand_getMenuV2copy(args: { params: $params }) {
          data
          id
       }
    }
 `
 export const PRODUCTS = gql`
-   query Products($ids: [Int!]!) {
+   query Products(
+      $ids: [Int!]!
+      $priceArgs: products_priceByLocation_args!
+      $discountArgs: products_productDiscountByLocation_args!
+      $defaultCartItemArgs: products_defaultCartItemByLocation_args!
+      $productOptionCartItemArgs: products_productOptionCartItemByLocation_args!
+      $productOptionDiscountArgs: products_productOptionDiscountByLocation_args!
+      $productOptionPriceArgs: products_productOptionUnitPriceByLocation_args!
+      $modifierCategoryOptionCartItemArgs: onDemand_modifierCategoryOptionCartItemByLocation_args!
+      $modifierCategoryOptionDiscountArgs: onDemand_modifierCategoryOptionDiscountByLocation_args!
+      $modifierCategoryOptionPriceArgs: onDemand_modifierCategoryOptionPriceByLocation_args!
+   ) {
       products(where: { isArchived: { _eq: false }, id: { _in: $ids } }) {
          id
          name
@@ -1299,12 +1310,12 @@ export const PRODUCTS = gql`
          tags
          additionalText
          description
-         price
-         discount
+         price: priceByLocation(args: $priceArgs)
+         discount: discountByLocation(args: $discountArgs)
          isPopupAllowed
          isPublished
          defaultProductOptionId
-         defaultCartItem
+         defaultCartItem: defaultCartItemByLocation(args: $defaultCartItemArgs)
          productOptions(
             where: { isArchived: { _eq: false } }
             order_by: { position: desc_nulls_last }
@@ -1313,9 +1324,9 @@ export const PRODUCTS = gql`
             position
             type
             label
-            price
-            discount
-            cartItem
+            price: priceByLocation(args: $productOptionPriceArgs)
+            discount: discountByLocation(args: $productOptionDiscountArgs)
+            cartItem: cartItemByLocation(args: $productOptionCartItemArgs)
             modifier {
                id
                name
@@ -1328,15 +1339,21 @@ export const PRODUCTS = gql`
                   options(where: { isVisible: { _eq: true } }) {
                      id
                      name
-                     price
-                     discount
+                     price: priceByLocation(
+                        args: $modifierCategoryOptionPriceArgs
+                     )
+                     discount: discountByLocation(
+                        args: $modifierCategoryOptionDiscountArgs
+                     )
                      quantity
                      image
                      isActive
 
                      sachetItemId
                      ingredientSachetId
-                     cartItem
+                     cartItem: cartItemByLocation(
+                        args: $modifierCategoryOptionCartItemArgs
+                     )
                   }
                }
             }

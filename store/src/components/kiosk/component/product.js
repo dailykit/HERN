@@ -19,7 +19,7 @@ const demoProduct = {
 }
 
 export const KioskProduct = props => {
-   const { config } = props
+   const { config, productData } = props
    const { t } = useTranslation()
    const [showModifier, setShowModifier] = useState(false)
    return (
@@ -28,8 +28,20 @@ export const KioskProduct = props => {
             <Layout style={{ height: '100%' }}>
                <Header className="hern-kiosk__menu-product-header">
                   <div className="hern-kiosk__menu-product-background-shadow"></div>
-                  <img src={config.productSettings.defaultImage.value} />
 
+                  {productData.assets.images.length === 0 ? (
+                     <img src={config.productSettings.defaultImage.value} />
+                  ) : (
+                     <Carousel style={{ height: '20em', width: '20em' }}>
+                        {productData.assets.images.map((eachImage, index) => (
+                           <img
+                              src={eachImage}
+                              key={index}
+                              style={{ height: '100%', width: '100%' }}
+                           />
+                        ))}
+                     </Carousel>
+                  )}
                   {/* {demoProduct.assets.images.length === 0 ? (
                   <img src={config.productSettings.defaultImage.value} />
                ) : (
@@ -57,17 +69,15 @@ export const KioskProduct = props => {
                >
                   <div className="hern-kiosk__menu-product-content">
                      <span className="hern-kiosk__menu-product-name">
-                        Herfy Original Tortilla
+                        {productData.name}
                      </span>
                      <span className="hern-kiosk__menu-product-description">
-                        Nicely wrapped golden strips of fried chicken, fresh
-                        tomato, and crispy lettuce, in the warm embrace of our
-                        special tortilla bread
+                        {productData.additionalText}
                      </span>
                   </div>
                   <span className="hern-kiosk__menu-product-price">
                      {/* <sup></sup> */}
-                     {formatCurrency(45)}
+                     {formatCurrency(productData.price)}
                   </span>
                   <KioskButton
                      onClick={() => {
@@ -80,7 +90,11 @@ export const KioskProduct = props => {
             </Layout>
          </div>
          {showModifier && (
-            <KioskModifier config={config} setShowModifier={setShowModifier} />
+            <KioskModifier
+               config={config}
+               setShowModifier={setShowModifier}
+               productData={productData}
+            />
          )}
       </>
    )

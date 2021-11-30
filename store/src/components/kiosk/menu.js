@@ -3,14 +3,132 @@ import { Col, Layout, Menu, Row } from 'antd'
 import { useQueryParamState } from '../../utils'
 import { useTranslation } from '../../context'
 import { KioskProduct } from './component'
+import { PRODUCTS_BY_CATEGORY, PRODUCTS } from '../../graphql'
+import { useConfig } from '../../lib'
+import { useQuery } from '@apollo/react-hooks'
 
 const { Content, Sider, Header } = Layout
 
 export const MenuSection = props => {
+   const { brand, isConfigLoading } = useConfig()
+
    const { config } = props
    const [category, changeCategory, deleteCategory] =
       useQueryParamState('productCategoryId')
    console.log('fromMenuSection')
+
+   const [menuData, setMenuData] = useState({
+      categories: [],
+      allProductIds: [],
+      isMenuLoading: true,
+   })
+   const [status, setStatus] = useState('loading')
+   const [hydratedMenu, setHydratedMenu] = React.useState([])
+
+   const argsForByLocation = React.useMemo(
+      () => ({
+         params: {
+            brandId: brand?.id,
+            locationId: 1000,
+         },
+      }),
+      [brand]
+   )
+
+   const date = React.useMemo(() => new Date(Date.now()).toISOString(), [])
+   // get all categories by locationId, brandId and collection(s) provide to kiosk(by config)
+   const { error: menuError } = useQuery(PRODUCTS_BY_CATEGORY, {
+      skip: isConfigLoading || !brand?.id,
+      variables: {
+         params: {
+            brandId: brand?.id,
+            date,
+            ...(config.data.collectionData.value.length > 0 && {
+               collectionIdArray: config.data.collectionData.value.map(
+                  each => each.id
+               ),
+            }),
+            locationId: 1000,
+         },
+      },
+      onCompleted: data => {
+         console.log('v2Data', data)
+         if (data?.onDemand_getMenuV2copy?.length) {
+            const [res] = data.onDemand_getMenuV2copy
+            const { menu } = res.data
+            const ids = menu.map(category => category.products).flat()
+            setMenuData(prev => ({
+               ...prev,
+               allProductIds: ids,
+               categories: menu,
+               isMenuLoading: false,
+            }))
+         }
+      },
+      onError: error => {
+         setMenuData(prev => ({
+            ...prev,
+            isMenuLoading: false,
+         }))
+         setStatus('error')
+         console.log(error)
+      },
+   })
+
+   // get all products from productIds getting from PRODUCT_BY_CATEGORY
+   const { loading: productsLoading, error: productsError } = useQuery(
+      PRODUCTS,
+      {
+         skip: menuData.isMenuLoading,
+         variables: {
+            ids: menuData.allProductIds,
+            priceArgs: argsForByLocation,
+            discountArgs: argsForByLocation,
+            defaultCartItemArgs: argsForByLocation,
+            productOptionPriceArgs: argsForByLocation,
+            productOptionDiscountArgs: argsForByLocation,
+            productOptionCartItemArgs: argsForByLocation,
+            modifierCategoryOptionPriceArgs: argsForByLocation,
+            modifierCategoryOptionDiscountArgs: argsForByLocation,
+            modifierCategoryOptionCartItemArgs: argsForByLocation,
+         },
+         // fetchPolicy: 'network-only',
+         onCompleted: data => {
+            if (data && data.products.length) {
+               const updatedMenu = menuData.categories.map(category => {
+                  const updatedProducts = category.products
+                     .map(productId => {
+                        const found = data.products.find(
+                           ({ id }) => id === productId
+                        )
+                        if (found) {
+                           return found
+                        }
+                        return null
+                     })
+                     .filter(Boolean)
+                  return {
+                     ...category,
+                     products: updatedProducts,
+                  }
+               })
+               setStatus('success')
+               setHydratedMenu(updatedMenu)
+            }
+         },
+         onError: error => {
+            setStatus('error')
+            console.log('Error: ', error)
+         },
+      }
+   )
+
+   if (status === 'loading') {
+      return <div>Loading</div>
+   }
+   if (status === 'error') {
+      return <div>Somthing went wring</div>
+   }
    return (
       <Layout>
          <Content style={{ height: '40em' }}>
@@ -20,67 +138,27 @@ export const MenuSection = props => {
             config={config}
             categoryId={category}
             changeCategory={changeCategory}
+            kioskMenus={hydratedMenu}
          />
       </Layout>
    )
 }
-const categories = [
-   {
-      id: 1,
-      image: 'https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/userimages/SUPER%20HERFY%20+%20SUPER%20CKN%20MEAL_%20(2).png',
-      title: 'Combos',
-   },
-   {
-      id: 2,
-      image: 'https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/userimages/ckn%20tortilla,and%20mudabbla%20ckn%203rd%20option.png',
-      title: 'Sandwich',
-   },
-   {
-      id: 3,
-      image: 'https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/userimages/SPECIAL%20OFFER%20%20ENGLISH%20RED%20copy.png',
-      title: 'Special Offers',
-   },
-   {
-      id: 4,
-      image: 'https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/userimages/TEEN%20TITANS%20KDM%20BOX.png',
-      title: 'Kiddie Meals',
-   },
-   {
-      id: 5,
-      image: 'https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/userimages/,%20nuggets,sauce,%20plain%20cz%20cake%201st%20option.png',
-      title: 'Side Orders',
-   },
-   {
-      id: 6,
-      image: 'https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/userimages/TEEN%20TITANS%20KDM%20BOX.png',
-      title: 'Milkshakes',
-   },
-   {
-      id: 7,
-      image: "https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/userimages/Pepsi%20in%20Glass%20with%204%20logo's.png",
-      title: 'Beverage',
-   },
-   {
-      id: 8,
-      image: 'https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/userimages/250-X-250--KAFU-en-ar.png',
-      title: 'Kafu Menu',
-   },
-]
+
 const KioskMenu = props => {
-   const { config } = props
+   const { config, kioskMenus } = props
    const { categoryId, changeCategory } = props
+
+   const menuRef = React.useRef()
    const [selectedCategory, setSelectedCategory] = useState(
-      (categoryId && categoryId.toString()) || categories[0]['id'].toString()
+      (categoryId && categoryId.toString()) || '0'
    )
-   console.log('categoriesId', categoryId)
-   console.log('KioskMenu')
+
    const { t } = useTranslation()
 
    const onCategorySelect = e => {
       setSelectedCategory(e.key)
       changeCategory(e.key)
    }
-   const products = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
    return (
       <Layout style={{ height: 'calc(100vh - 50em)' }}>
@@ -95,39 +173,58 @@ const KioskMenu = props => {
                onSelect={onCategorySelect}
                defaultSelectedKeys={[selectedCategory]}
             >
-               {categories.map((eachCategory, index) => {
+               {kioskMenus.map((eachCategory, index) => {
                   return (
-                     <Menu.Item
-                        key={eachCategory.id}
-                        style={{ height: '13em' }}
-                     >
-                        <div
-                           className="hern-kiosk__menu-page-product-category"
-                           style={{
-                              ...((eachCategory.id == selectedCategory ||
-                                 eachCategory.id == categoryId) && {
-                                 border: ` 4px solid ${config.kioskSettings.theme.primaryColor.value}`,
-                              }),
+                     <Menu.Item key={index} style={{ height: '13em' }}>
+                        <a
+                           href={`#${eachCategory.name}`}
+                           onClick={() => {
+                              // document
+                              //    .getElementById(`#${eachCategory.name}`)
+                              // .scrollIntoView({
+                              //    behavior: 'smooth',
+                              //    block: 'start',
+                              // })
+                              console.log(
+                                 document.getElementById(
+                                    `#${menuRef.current.id}`
+                                 )
+                              )
+                              // menuRef.current.id.scrollIntoView({
+                              //    behavior: 'smooth',
+                              //    block: 'start',
+                              // })
+                              console.log(menuRef.current.id)
                            }}
                         >
-                           <img
-                              src={eachCategory.image}
-                              alt="category image"
-                              style={{ width: '100px', height: '100px' }}
-                              className="hern-kiosk__menu-page-product-category-image"
-                           />
-                           <span
-                              className="hern-kiosk__menu-page-product-category-title"
+                           <div
+                              className="hern-kiosk__menu-page-product-category"
                               style={{
-                                 ...((eachCategory.id == selectedCategory ||
-                                    eachCategory.id == categoryId) && {
-                                    color: `${config.kioskSettings.theme.primaryColor.value}`,
+                                 ...((index == selectedCategory ||
+                                    index == categoryId) && {
+                                    border: ` 4px solid ${config.kioskSettings.theme.primaryColor.value}`,
                                  }),
                               }}
                            >
-                              {eachCategory.title}
-                           </span>
-                        </div>
+                              <img
+                                 src={config.productSettings.defaultImage.value}
+                                 alt="category image"
+                                 style={{ width: '100px', height: '100px' }}
+                                 className="hern-kiosk__menu-page-product-category-image"
+                              />
+                              <span
+                                 className="hern-kiosk__menu-page-product-category-title"
+                                 style={{
+                                    ...((index == selectedCategory ||
+                                       index == categoryId) && {
+                                       color: `${config.kioskSettings.theme.primaryColor.value}`,
+                                    }),
+                                 }}
+                              >
+                                 {eachCategory.name}
+                              </span>
+                           </div>
+                        </a>
                      </Menu.Item>
                   )
                })}
@@ -157,11 +254,29 @@ const KioskMenu = props => {
                </Header>
                <Content class="hern-kiosk__menu-product-list">
                   <Row gutter={[16, 16]}>
-                     {products.map((eachProduct, index) => (
-                        <Col span={8} className="gutter-row" key={index}>
-                           <KioskProduct config={config} />
-                        </Col>
-                     ))}
+                     {kioskMenus.map((eachCategory, index) => {
+                        return (
+                           <>
+                              <div id={eachCategory.name} ref={menuRef}></div>
+                              {eachCategory.products.map(
+                                 (eachProduct, index2) => {
+                                    return (
+                                       <Col
+                                          span={8}
+                                          className="gutter-row"
+                                          key={index2}
+                                       >
+                                          <KioskProduct
+                                             config={config}
+                                             productData={eachProduct}
+                                          />
+                                       </Col>
+                                    )
+                                 }
+                              )}
+                           </>
+                        )
+                     })}
                   </Row>
                </Content>
             </Layout>
