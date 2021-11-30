@@ -232,14 +232,13 @@ export const authorizeRequest = async (req, res) => {
       const brandId = req.body.headers['Brand-Id']
       const brandCustomerId = req.body.headers['Brand-Customer-Id']
       const source = req.body.headers['Source']
+      const apiKeyHeaderValue = req.body.headers['Api-Key']
 
-      const apiKey = req.body.headers['api-key']
-      
       let apiKeyExists = false
       let staffUserExists = false
-      if (apiKey){
+      if (apiKeyHeaderValue){
          const apiKeys = await client.request(API_KEYS, {
-            "apiKey": apiKey
+            "apiKey": apiKeyHeaderValue
          })
          if (apiKeys.developer_apiKey && apiKeys.developer_apiKey[0].isDeactivated==false){
             apiKeyExists = true
@@ -278,11 +277,11 @@ export const authorizeRequest = async (req, res) => {
                'X-Hasura-Staff-Id': staffId,
                'X-Hasura-Email-Id': staffEmail
             }),
-         ...(apiKey &&
+         ...(apiKeyHeaderValue &&
             apiKeyExists &&
             {
-               'X-Hasura-Role': 'apiKey',
-               'X-Hasura-Api-Key': apiKey
+               'X-Hasura-Role': 'apiKeyRole',
+               'X-Hasura-Api-Key': apiKeyHeaderValue
             })
       })
    } catch (error) {
