@@ -16,6 +16,24 @@ export const getRazorpayOptions = ({
          receipt,
          currency,
       } = orderDetails
+      let checkout_option = {}
+      if (paymentInfo.method === 'netbanking') {
+         checkout_option = {
+            bank: paymentInfo?.bank,
+         }
+      } else if (paymentInfo.method === 'upi') {
+         checkout_option = {
+            vpa: paymentInfo?.vpa,
+         }
+      } else if (paymentInfo.method === 'card') {
+         checkout_option = {
+            'card[name]': paymentInfo?.cardName,
+            'card[number]': paymentInfo?.cardNumber,
+            'card[expiry]': paymentInfo?.expiry,
+            'card[cvv]': paymentInfo?.cvv,
+         }
+      }
+
       const options = {
          key: RAZORPAY_KEY_ID,
          amount: amount.toString(),
@@ -28,7 +46,7 @@ export const getRazorpayOptions = ({
             email: `${profileInfo?.email}`,
             contact: `${profileInfo?.phone}`,
             method: paymentInfo?.method,
-            bank: paymentInfo?.bank,
+            ...checkout_option,
          },
          theme: {
             hide_topbar: true,
@@ -38,26 +56,26 @@ export const getRazorpayOptions = ({
             contact: '1',
             name: '1',
          },
-         config: {
-            display: {
-               blocks: {
-                  banks: {
-                     name: 'Google Pay',
-                     instruments: [
-                        {
-                           method: 'upi',
-                           flows: ['collect'],
-                           apps: ['google_pay'],
-                        },
-                     ],
-                  },
-               },
-               sequence: ['block.banks'],
-               preferences: {
-                  show_default_blocks: false,
-               },
-            },
-         },
+         // config: {
+         //    display: {
+         //       blocks: {
+         //          banks: {
+         //             name: 'Google Pay',
+         //             instruments: [
+         //                {
+         //                   method: 'upi',
+         //                   flows: ['collect'],
+         //                   apps: ['google_pay'],
+         //                },
+         //             ],
+         //          },
+         //       },
+         //       sequence: ['block.banks'],
+         //       preferences: {
+         //          show_default_blocks: false,
+         //       },
+         //    },
+         // },
          modal: {
             ondismiss: ondismissHandler,
          },

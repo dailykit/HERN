@@ -17,7 +17,7 @@ export const handleCartPayment = async (req, res) => {
                   _eq: cart.id
                },
                paymentStatus: {
-                  _neq: 'SUCCEEDED'
+                  _nin: ['SUCCEEDED', 'CANCELLED']
                }
             }
          })
@@ -60,7 +60,8 @@ export const handleCartPayment = async (req, res) => {
                         isTest: cart.isTest,
                         paymentMethodId: cart.paymentMethodId,
                         paymentCustomerId: cart.paymentCustomerId,
-                        paymentType: cart.retryPaymentMethod
+                        usedAvailablePaymentOptionId:
+                           cart.toUseAvailablePaymentOptionId
                      }
                   }
                )
@@ -112,7 +113,8 @@ export const handleCartPayment = async (req, res) => {
                      isTest: cart.isTest,
                      paymentMethodId: cart.paymentMethodId,
                      paymentCustomerId: cart.paymentCustomerId,
-                     paymentType: cart.retryPaymentMethod
+                     usedAvailablePaymentOptionId:
+                        cart.toUseAvailablePaymentOptionId
                   }
                }
             )

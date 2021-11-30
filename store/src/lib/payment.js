@@ -9,10 +9,11 @@ import _has from 'lodash/has'
 import _isEmpty from 'lodash/isEmpty'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { useToasts } from 'react-toast-notifications'
+import axios from 'axios'
 
 import { GET_CART_PAYMENT_INFO, UPDATE_CART_PAYMENT } from '../graphql'
 import { useUser } from '../context'
-import { getRazorpayOptions, useRazorPay } from '../utils'
+import { getRazorpayOptions, isClient, useRazorPay } from '../utils'
 
 const PaymentContext = createContext()
 const inititalState = {
@@ -138,21 +139,19 @@ export const PaymentProvider = ({ children }) => {
       })
    }
 
-   const eventHandler = response => {
-      const responseData = {
-         razorpayPaymentId: response.razorpay_payment_id,
-         razorpayOrderId: response.razorpay_order_id,
-         razorpaySignature: response.razorpay_signature,
-      }
-      if (response && response?.razorpay_payment_id) {
-         console.log('razorpay response', responseData)
-         dispatch({
-            type: 'UPDATE_PAYMENT_STATE',
-            payload: {
-               isPaymentProcessing: false,
-            },
-         })
-      }
+   const eventHandler = async response => {
+      dispatch({
+         type: 'UPDATE_PAYMENT_STATE',
+         payload: {
+            isPaymentProcessing: false,
+         },
+      })
+      const url = isClient ? window.location.origin : ''
+      const result = await axios.post(
+         `${url}/server/api/payment/handle-payment-webhook`,
+         response
+      )
+      console.log('result', result)
    }
 
    // setting user related info in payment provider context
@@ -183,18 +182,20 @@ export const PaymentProvider = ({ children }) => {
          !isCartPaymentLoading
       ) {
          // right now only handle the razorpay method.
-         if (cartPayment.paymentStatus === 'CREATED') {
-            ;(async () => {
-               const options = getRazorpayOptions({
-                  orderDetails: cartPayment.transactionRemark,
-                  paymentInfo: state.paymentInfo,
-                  profileInfo: state.profileInfo,
-                  ondismissHandler: () => ondismissHandler(cartPaymentId),
-                  eventHandler,
-               })
-               console.log('options', options)
-               await displayRazorpay(options)
-            })()
+         if (cartPayment.paymentType === 'razorpay') {
+            if (cartPayment.paymentStatus === 'CREATED') {
+               ;(async () => {
+                  const options = getRazorpayOptions({
+                     orderDetails: cartPayment.transactionRemark,
+                     paymentInfo: state.paymentInfo,
+                     profileInfo: state.profileInfo,
+                     ondismissHandler: () => ondismissHandler(cartPaymentId),
+                     eventHandler,
+                  })
+                  console.log('options', options)
+                  await displayRazorpay(options)
+               })()
+            }
          }
       }
    }, [cartPayment?.paymentStatus])

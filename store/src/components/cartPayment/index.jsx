@@ -41,7 +41,11 @@ export function CartPaymentComponent({ cartId = null }) {
          id: 1,
          label: 'Credit/Debit Card',
          method: 'card',
-         company: 'stripe',
+         company: 'razorpay',
+         cardName: 'Gaurav Kumar',
+         cardNumber: '4111111111111111',
+         expiry: '12/21',
+         cvv: '123',
       },
       {
          id: 2,
@@ -55,7 +59,7 @@ export function CartPaymentComponent({ cartId = null }) {
          label: 'UPI',
          method: 'upi',
          company: 'razorpay',
-         vpa: 'abc@ybl',
+         vpa: 'deepak@ybl',
       },
    ])
 
