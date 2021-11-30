@@ -13,7 +13,9 @@ import axios from 'axios'
 
 import { GET_CART_PAYMENT_INFO, UPDATE_CART_PAYMENT } from '../graphql'
 import { useUser } from '../context'
+import { useConfig } from '../lib'
 import { getRazorpayOptions, isClient, useRazorPay } from '../utils'
+import { CartPaymentComponent } from '../components'
 
 const PaymentContext = createContext()
 const inititalState = {
@@ -25,6 +27,7 @@ const inititalState = {
    },
    paymentInfo: null,
    paymentLoading: false,
+   paymentLifeCycleState: '',
    isPaymentProcessing: false,
    isPaymentSuccess: false,
    isPaymentFailure: false,
@@ -56,28 +59,80 @@ const reducer = (state, action) => {
 export const PaymentProvider = ({ children }) => {
    const [state, dispatch] = useReducer(reducer, inititalState)
    const [isPaymentLoading, setIsPaymentLoading] = useState(true)
-   const [cartPaymentId, setCartPaymentId] = useState(null)
+   const [cartId, setCartId] = useState(null)
    const [cartPayment, setCartPayment] = useState(null)
    const { user, isAuthenticated, isLoading } = useUser()
+   const { brand } = useConfig()
    const { displayRazorpay } = useRazorPay()
    const { addToast } = useToasts()
 
    // subscription to get cart payment info
    const { error: hasCartPaymentError, loading: isCartPaymentLoading } =
       useSubscription(GET_CART_PAYMENT_INFO, {
-         skip: !cartPaymentId,
          variables: {
-            id: cartPaymentId,
+            where: {
+               _and: [
+                  {
+                     isResultShown: {
+                        _eq: false,
+                     },
+                  },
+                  {
+                     _or: [
+                        {
+                           cartId: {
+                              _eq: cartId,
+                           },
+                        },
+                        {
+                           cart: {
+                              brandId: {
+                                 _eq: brand?.id,
+                              },
+                              customerKeycloakId: {
+                                 _eq: user?.keycloakId,
+                              },
+                           },
+                        },
+                     ],
+                  },
+               ],
+            },
          },
          onSubscriptionData: ({
             subscriptionData: {
-               data: { cartPayment: requiredCartPayment = {} } = {},
+               data: { cartPayments: requiredCartPayments = [] } = {},
             } = {},
          } = {}) => {
+            const [requiredCartPayment] = requiredCartPayments
             console.log(
                'cartPayment from payment----->>>>',
                requiredCartPayment
             )
+            switch (requiredCartPayment.paymentStatus) {
+               case 'SUCCEEDED':
+                  dispatch({
+                     type: 'UPDATE_PAYMENT_STATE',
+                     payload: {
+                        paymentLifeCycleState: 'INITIALIZE',
+                     },
+                  })
+               case 'CANCELLED':
+                  dispatch({
+                     type: 'UPDATE_PAYMENT_STATE',
+                     payload: {
+                        paymentLifeCycleState: 'CANCELLED',
+                     },
+                  })
+               case 'FAILED':
+                  dispatch({
+                     type: 'UPDATE_PAYMENT_STATE',
+                     payload: {
+                        paymentLifeCycleState: 'FAILED',
+                     },
+                  })
+            }
+
             setCartPayment(requiredCartPayment)
          },
       })
@@ -117,19 +172,20 @@ export const PaymentProvider = ({ children }) => {
       })
    }
 
-   const ondismissHandler = id => {
-      console.log('dismissed', id)
-      updateCartPayment({
-         variables: {
-            id,
-            _set: {
-               paymentStatus: 'CANCELLED',
+   const onCancelledHandler = () => {
+      if (!_isEmpty(cartPayment)) {
+         updateCartPayment({
+            variables: {
+               id: cartPayment?.id,
+               _set: {
+                  paymentStatus: 'CANCELLED',
+               },
+               _inc: {
+                  cancelAttempt: 1,
+               },
             },
-            _inc: {
-               cancelAttempt: 1,
-            },
-         },
-      })
+         })
+      }
       dispatch({
          type: 'UPDATE_PAYMENT_STATE',
          payload: {
@@ -147,12 +203,33 @@ export const PaymentProvider = ({ children }) => {
          },
       })
       const url = isClient ? window.location.origin : ''
-      const result = await axios.post(
+      const { data } = await axios.post(
          `${url}/server/api/payment/handle-payment-webhook`,
          response
       )
-      console.log('result', result)
+      console.log('result', data)
    }
+
+   const initializePayment = requiredCartId => {
+      setCartId(requiredCartId)
+      dispatch({
+         type: 'UPDATE_PAYMENT_STATE',
+         payload: {
+            paymentLifeCycleState: 'INITIALIZE',
+         },
+      })
+   }
+
+   // useEffect(() => {
+   //    if (cartId) {
+   //       dispatch({
+   //          type: 'UPDATE_PAYMENT_STATE',
+   //          payload: {
+   //             paymentLifeCycleState: 'INITIALIZE',
+   //          },
+   //       })
+   //    }
+   // }, [cartId])
 
    // setting user related info in payment provider context
    useEffect(() => {
@@ -181,15 +258,17 @@ export const PaymentProvider = ({ children }) => {
          !_isEmpty(cartPayment.transactionRemark) &&
          !isCartPaymentLoading
       ) {
+         console.log('inside payment provider useEffect')
          // right now only handle the razorpay method.
          if (cartPayment.paymentType === 'razorpay') {
+            console.log('inside payment provider useEffect 1', cartPayment)
             if (cartPayment.paymentStatus === 'CREATED') {
                ;(async () => {
                   const options = getRazorpayOptions({
                      orderDetails: cartPayment.transactionRemark,
                      paymentInfo: state.paymentInfo,
                      profileInfo: state.profileInfo,
-                     ondismissHandler: () => ondismissHandler(cartPaymentId),
+                     ondismissHandler: () => onCancelledHandler(),
                      eventHandler,
                   })
                   console.log('options', options)
@@ -207,11 +286,15 @@ export const PaymentProvider = ({ children }) => {
             paymentLoading: isPaymentLoading,
             setPaymentInfo,
             setProfileInfo,
-            setCartPaymentId,
             updatePaymentState,
+            initializePayment,
          }}
       >
-         {children}
+         {state.paymentLifeCycleState === 'INITIALIZE' ? (
+            <CartPaymentComponent cartId={cartId} />
+         ) : (
+            children
+         )}
       </PaymentContext.Provider>
    )
 }
@@ -222,19 +305,20 @@ export const usePayment = () => {
       paymentLoading,
       setPaymentInfo,
       setProfileInfo,
-      setCartPaymentId,
       updatePaymentState,
+      initializePayment,
    } = useContext(PaymentContext)
    return {
       isPaymentLoading: paymentLoading,
       isPaymentProcessing: state.isPaymentProcessing,
       isPaymentSuccess: state.isPaymentSuccess,
       isPaymentDismissed: state.isPaymentDismissed,
+      paymentLifeCycleState: state.paymentLifeCycleState,
       profileInfo: state.profileInfo,
       paymentInfo: state.paymentInfo,
       setPaymentInfo: setPaymentInfo,
       setProfileInfo: setProfileInfo,
-      setCartPaymentId,
       updatePaymentState,
+      initializePayment,
    }
 }

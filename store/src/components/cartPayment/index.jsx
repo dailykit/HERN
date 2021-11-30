@@ -23,12 +23,11 @@ import {
 export function CartPaymentComponent({ cartId = null }) {
    const {
       isPaymentLoading,
-      isPaymentProcessing,
+      paymentLifeCycleState,
       paymentInfo,
       profileInfo,
       setPaymentInfo,
       setProfileInfo,
-      setCartPaymentId,
       updatePaymentState,
    } = usePayment()
    const { addToast } = useToasts()
@@ -72,12 +71,6 @@ export function CartPaymentComponent({ cartId = null }) {
          subscriptionData: { data: { cart: requiredCart = {} } = {} } = {},
       } = {}) => {
          setCart(requiredCart)
-         if (
-            !_isEmpty(requiredCart) &&
-            _has(requiredCart, 'activeCartPaymentId')
-         ) {
-            setCartPaymentId(requiredCart.activeCartPaymentId)
-         }
          setLoading(false)
       },
    })
@@ -90,7 +83,15 @@ export function CartPaymentComponent({ cartId = null }) {
    })
 
    const [updateCart] = useMutation(QUERIES.UPDATE_CART, {
+      onCompleted: () => {
+         updatePaymentState({
+            paymentLifeCycleState: 'PROCESSING',
+         })
+      },
       onError: error => {
+         updatePaymentState({
+            paymentLifeCycleState: 'FAILED',
+         })
          addToast(error.message, { appearance: 'error' })
       },
    })
@@ -110,7 +111,7 @@ export function CartPaymentComponent({ cartId = null }) {
    const confirmPayHandler = () => {
       if (paymentInfo) {
          updatePaymentState({
-            isPaymentProcessing: true,
+            paymentLifeCycleState: 'INCREMENT_PAYMENT_RETRY_ATTEMPT',
          })
          updateCart({
             variables: {
@@ -184,7 +185,7 @@ export function CartPaymentComponent({ cartId = null }) {
             </Space>
          </Radio.Group>
          <Button
-            disabled={isPaymentProcessing}
+            disabled={paymentLifeCycleState !== 'INITIALIZE'}
             type="primary"
             size="large"
             block
