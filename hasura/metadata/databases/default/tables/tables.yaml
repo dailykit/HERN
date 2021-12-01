@@ -223,6 +223,7 @@
 - "!include public_geometry_columns.yaml"
 - "!include public_response.yaml"
 - "!include public_spatial_ref_sys.yaml"
+- "!include public_test.yaml"
 - "!include rules_conditions.yaml"
 - "!include rules_facts.yaml"
 - "!include safety_safetyCheck.yaml"
