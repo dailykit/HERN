@@ -104,36 +104,38 @@ export const PaymentProvider = ({ children }) => {
                data: { cartPayments: requiredCartPayments = [] } = {},
             } = {},
          } = {}) => {
-            const [requiredCartPayment] = requiredCartPayments
             console.log(
                'cartPayment from payment----->>>>',
-               requiredCartPayment
+               requiredCartPayments
             )
-            switch (requiredCartPayment.paymentStatus) {
-               case 'SUCCEEDED':
-                  dispatch({
-                     type: 'UPDATE_PAYMENT_STATE',
-                     payload: {
-                        paymentLifeCycleState: 'INITIALIZE',
-                     },
-                  })
-               case 'CANCELLED':
-                  dispatch({
-                     type: 'UPDATE_PAYMENT_STATE',
-                     payload: {
-                        paymentLifeCycleState: 'CANCELLED',
-                     },
-                  })
-               case 'FAILED':
-                  dispatch({
-                     type: 'UPDATE_PAYMENT_STATE',
-                     payload: {
-                        paymentLifeCycleState: 'FAILED',
-                     },
-                  })
-            }
+            if (!_isEmpty(requiredCartPayments)) {
+               const [requiredCartPayment] = requiredCartPayments
+               switch (requiredCartPayment.paymentStatus) {
+                  case 'SUCCEEDED':
+                     dispatch({
+                        type: 'UPDATE_PAYMENT_STATE',
+                        payload: {
+                           paymentLifeCycleState: 'INITIALIZE',
+                        },
+                     })
+                  case 'CANCELLED':
+                     dispatch({
+                        type: 'UPDATE_PAYMENT_STATE',
+                        payload: {
+                           paymentLifeCycleState: 'CANCELLED',
+                        },
+                     })
+                  case 'FAILED':
+                     dispatch({
+                        type: 'UPDATE_PAYMENT_STATE',
+                        payload: {
+                           paymentLifeCycleState: 'FAILED',
+                        },
+                     })
+               }
 
-            setCartPayment(requiredCartPayment)
+               setCartPayment(requiredCartPayment)
+            }
          },
       })
 
@@ -260,7 +262,14 @@ export const PaymentProvider = ({ children }) => {
       ) {
          console.log('inside payment provider useEffect')
          // right now only handle the razorpay method.
-         if (cartPayment.paymentType === 'razorpay') {
+         if (
+            _has(
+               cart,
+               'availablePaymentOption.supportedPaymentOption.supportedPaymentCompany.label'
+            ) &&
+            cartPayment.availablePaymentOption.supportedPaymentOption
+               .supportedPaymentCompany.label === 'razorpay'
+         ) {
             console.log('inside payment provider useEffect 1', cartPayment)
             if (cartPayment.paymentStatus === 'CREATED') {
                ;(async () => {

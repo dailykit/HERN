@@ -9,16 +9,7 @@ import { Wrapper } from './styles.js'
 import * as QUERIES from '../../graphql'
 import { Loader } from '../../components'
 import { usePayment } from '../../lib'
-import { useUser, isAuthenticated } from '../../context'
-import {
-   isClient,
-   formatCurrency,
-   getSettings,
-   getRoute,
-   useRazorPay,
-   get_env,
-   getRazorpayOptions,
-} from '../../utils'
+import { isClient } from '../../utils'
 
 export function CartPaymentComponent({ cartId = null }) {
    const {
@@ -31,36 +22,8 @@ export function CartPaymentComponent({ cartId = null }) {
       updatePaymentState,
    } = usePayment()
    const { addToast } = useToasts()
-   const { displayRazorpay } = useRazorPay()
    const [cart, setCart] = React.useState(null)
    const [loading, setLoading] = React.useState(true)
-   const [isDisabled, setIsDisabled] = React.useState(false)
-   const [paymentMethods, setPaymentMethods] = React.useState([
-      {
-         id: 1,
-         label: 'Credit/Debit Card',
-         method: 'card',
-         company: 'razorpay',
-         cardName: 'Gaurav Kumar',
-         cardNumber: '4111111111111111',
-         expiry: '12/21',
-         cvv: '123',
-      },
-      {
-         id: 2,
-         label: 'Net Banking',
-         method: 'netbanking',
-         company: 'razorpay',
-         bank: 'HDFC',
-      },
-      {
-         id: 3,
-         label: 'UPI',
-         method: 'upi',
-         company: 'razorpay',
-         vpa: 'deepak@ybl',
-      },
-   ])
 
    const { error: hasCartError } = useSubscription(QUERIES.CART_SUBSCRIPTION, {
       skip: !isClient || cartId,
@@ -105,11 +68,24 @@ export function CartPaymentComponent({ cartId = null }) {
 
    const onPaymentMethodChange = event => {
       const { value } = event.target
-      setPaymentInfo(value)
+      if (value) {
+         console.log(value, typeof value)
+         const availablePaymentOptionToCart =
+            cart.availablePaymentOptionToCart.find(
+               option => option.id === value
+            )
+         console.log(availablePaymentOptionToCart)
+         setPaymentInfo({
+            selectedAvailablePaymentOption: availablePaymentOptionToCart,
+         })
+      }
    }
 
    const confirmPayHandler = () => {
-      if (paymentInfo) {
+      if (
+         !_isEmpty(paymentInfo) &&
+         !_isEmpty(paymentInfo.selectedAvailablePaymentOption)
+      ) {
          updatePaymentState({
             paymentLifeCycleState: 'INCREMENT_PAYMENT_RETRY_ATTEMPT',
          })
@@ -119,7 +95,8 @@ export function CartPaymentComponent({ cartId = null }) {
                _inc: { paymentRetryAttempt: 1 },
                _set: {
                   paymentMethodId: null,
-                  retryPaymentMethod: paymentInfo?.company,
+                  toUseAvailablePaymentOptionId:
+                     paymentInfo?.selectedAvailablePaymentOption?.id,
                },
             },
          })
@@ -179,9 +156,13 @@ export function CartPaymentComponent({ cartId = null }) {
          <h1>Select Payment Method</h1>
          <Radio.Group onChange={onPaymentMethodChange}>
             <Space direction="vertical">
-               {paymentMethods.map(method => (
-                  <Radio value={method}>{method.label}</Radio>
-               ))}
+               {!_isEmpty(cart) &&
+                  cart.availablePaymentOptionToCart.map(option => (
+                     <Radio value={option?.id} key={option?.id}>
+                        {option?.label ||
+                           option?.supportedPaymentOption?.paymentOptionLabel}
+                     </Radio>
+                  ))}
             </Space>
          </Radio.Group>
          <Button

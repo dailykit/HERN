@@ -1,4 +1,5 @@
 import { get_env } from './get_env'
+import _isEmpty from 'lodash/isEmpty'
 export const getRazorpayOptions = ({
    orderDetails = null,
    paymentInfo = null,
@@ -6,7 +7,7 @@ export const getRazorpayOptions = ({
    ondismissHandler = () => null,
    eventHandler = () => null,
 }) => {
-   if (orderDetails && paymentInfo) {
+   if (!_isEmpty(orderDetails) && !_isEmpty(paymentInfo)) {
       const RAZORPAY_KEY_ID = get_env('RAZORPAY_KEY_ID')
       const {
          id: razorpay_order_id,
@@ -17,20 +18,29 @@ export const getRazorpayOptions = ({
          currency,
       } = orderDetails
       let checkout_option = {}
-      if (paymentInfo.method === 'netbanking') {
+      if (
+         paymentInfo?.selectedAvailablePaymentOption?.supportedPaymentOption
+            ?.paymentOptionLabel === 'NETBANKING'
+      ) {
          checkout_option = {
-            bank: paymentInfo?.bank,
+            bank: paymentInfo?.selectedAvailablePaymentOption?.bank || '',
          }
-      } else if (paymentInfo.method === 'upi') {
+      } else if (paymentInfo?.selectedAvailablePaymentOption.method === 'UPI') {
          checkout_option = {
-            vpa: paymentInfo?.vpa,
+            vpa: paymentInfo?.selectedAvailablePaymentOption?.vpa || '',
          }
-      } else if (paymentInfo.method === 'card') {
+      } else if (
+         paymentInfo?.selectedAvailablePaymentOption.method ===
+         'CREDIT_CARD/DEBIT_CARD(ONE_TIME)'
+      ) {
          checkout_option = {
-            'card[name]': paymentInfo?.cardName,
-            'card[number]': paymentInfo?.cardNumber,
-            'card[expiry]': paymentInfo?.expiry,
-            'card[cvv]': paymentInfo?.cvv,
+            'card[name]':
+               paymentInfo?.selectedAvailablePaymentOption?.cardName || '',
+            'card[number]':
+               paymentInfo?.selectedAvailablePaymentOption?.cardNumber || '',
+            'card[expiry]':
+               paymentInfo?.selectedAvailablePaymentOption?.expiry || '',
+            'card[cvv]': paymentInfo?.selectedAvailablePaymentOption?.cvv || '',
          }
       }
 

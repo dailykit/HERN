@@ -504,6 +504,31 @@ export const CART_SUBSCRIPTION = gql`
             cancelAttempt
             transactionRemark
          }
+         availablePaymentOptionToCart(
+            where: { isActive: { _eq: true } }
+            order_by: { position: desc_nulls_last }
+         ) {
+            id
+            isActive
+            isDown
+            isRecommended
+            isValid
+            label
+            position
+            publicCreds
+            privateCreds
+            showCompanyName
+            supportedPaymentOption {
+               id
+               country
+               supportedPaymentCompanyId
+               paymentOptionLabel
+               supportedPaymentCompany {
+                  id
+                  label
+               }
+            }
+         }
          products: cartItems(where: { level: { _eq: 1 } }) {
             id
             isAddOn
@@ -1702,6 +1727,18 @@ export const GET_CART_PAYMENT_INFO = gql`
          paymentType
          transactionRemark
          isResultShown
+         availablePaymentOption {
+            id
+            label
+            supportedPaymentOption {
+               paymentOptionLabel
+               id
+               supportedPaymentCompany {
+                  label
+                  id
+               }
+            }
+         }
       }
    }
 `
