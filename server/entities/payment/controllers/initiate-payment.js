@@ -1,6 +1,6 @@
 import { client } from '../../../lib/graphql'
 import { logger } from '../../../utils'
-import { UPDATE_CART_PAYMENT } from '../graphql'
+import { UPDATE_CART_PAYMENT, AVAILABLE_PAYMENT_OPTION } from '../graphql'
 // import abc from '../functions/stripe'
 
 export const initiatePaymentHandler = async (req, res) => {
@@ -41,8 +41,21 @@ export const initiatePaymentHandler = async (req, res) => {
       if (payload.amount > 0) {
          // only if amount is greater than 0 and not on test mode then only
          // further payment process will be done
+         console.log('1', payload)
+         const { availablePaymentOption = {} } = await client.request(
+            AVAILABLE_PAYMENT_OPTION,
+            {
+               id: payload.usedAvailablePaymentOptionId
+            }
+         )
+         console.log('2', availablePaymentOption)
 
-         const functionFilePath = `../functions/${payload.paymentType}`
+         const company =
+            availablePaymentOption.supportedPaymentOption
+               .supportedPaymentCompany.label
+
+         console.log('3', company)
+         const functionFilePath = `../functions/${company}`
          console.log(functionFilePath)
          const method = await import(functionFilePath)
          console.log(method)

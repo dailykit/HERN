@@ -118,6 +118,7 @@ export const handleCartPayment = async (req, res) => {
                   }
                }
             )
+            console.log('createCartPayment', createCartPayment)
             if (
                Object.keys(createCartPayment).length > 0 &&
                createCartPayment.id

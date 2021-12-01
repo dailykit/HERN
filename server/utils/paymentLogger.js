@@ -4,8 +4,8 @@ import stripe from '../lib/stripe'
 import { sendSMS } from '../entities/payment/functions/stripe/sendSms'
 
 const UPDATE_CART_PAYMENT = `
-mutation UPDATE_CART_PAYMENT($id: Int!, $_inc: order_cartPayment_inc_input, $_set: order_cartPayment_set_input) {
-   updateCartPayment(pk_columns: {id: $id}, _inc: $_inc, _set: $_set) {
+mutation UPDATE_CART_PAYMENT($id: Int!, $_set: order_cartPayment_set_input!) {
+   updateCartPayment(pk_columns: {id: $id}, _set: $_set) {
      cartId
      id
      paymentStatus
