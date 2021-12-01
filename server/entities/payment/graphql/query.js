@@ -61,3 +61,30 @@ export const PAYMENT_METHOD = `
       }
    }
 `
+
+export const AVAILABLE_PAYMENT_OPTION = `
+query AVAILABLE_PAYMENT_OPTION($id: Int!) {
+   availablePaymentOption:brands_availablePaymentOption_by_pk(id: $id) {
+     id
+     isActive
+     isDown
+     isRecommended
+     isValid
+     label
+     position
+     privateCreds
+     publicCreds
+     showCompanyName
+     supportedPaymentOption {
+       id
+       paymentOptionLabel
+       country
+       supportedPaymentCompany {
+         id
+         label
+       }
+     }
+   }
+ }
+
+ `

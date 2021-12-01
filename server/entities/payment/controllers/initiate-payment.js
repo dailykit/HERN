@@ -40,6 +40,18 @@ export const initiatePaymentHandler = async (req, res) => {
       if (payload.amount > 0) {
          // only if amount is greater than 0 and not on test mode then only
          // further payment process will be done
+         console.log('1', payload)
+         const { availablePaymentOption = {} } = await client.request(
+            AVAILABLE_PAYMENT_OPTION,
+            {
+               id: payload.usedAvailablePaymentOptionId
+            }
+         )
+         console.log('2', availablePaymentOption)
+
+         const company =
+            availablePaymentOption.supportedPaymentOption
+               .supportedPaymentCompany.label
 
          const functionFilePath = `../functions/${payload.paymentType}`
          const method = await import(functionFilePath)
