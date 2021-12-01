@@ -59,7 +59,6 @@
 - "!include crm_walletTransaction.yaml"
 - "!include developer_apiKey.yaml"
 - "!include developer_availableWebhookEvent.yaml"
-- "!include developer_permissions.yaml"
 - "!include developer_processedWebhookEvents.yaml"
 - "!include developer_processedWebhookEventsByUrl.yaml"
 - "!include developer_webhookUrl.yaml"
