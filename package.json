@@ -13,7 +13,8 @@
       "prod": "concurrently \"nodemon -r esm index.js\" \"cd store && yarn start\"",
       "dev:server": "concurrently \"nodemon -r esm index.js\" \"cd store && yarn dev\"",
       "download-graphql": "chmod +x ./fetchgraphqlschema.sh && ./fetchgraphqlschema.sh",
-      "lint:graphql": "eslint **/graphql/*.js > graphqlerrors.txt"
+      "lint:graphql": "eslint **/graphql/*.js > graphqlerrors.txt",
+      "start-hasura": "cd hasura && hasura console"
    },
    "dependencies": {
       "add": "^2.0.6",

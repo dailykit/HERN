@@ -1,0 +1,85 @@
+table:
+  name: subscriptionOccurence_customer
+  schema: subscription
+object_relationships:
+- name: brand_customer
+  using:
+    foreign_key_constraint_on: brand_customerId
+- name: cart
+  using:
+    foreign_key_constraint_on: cartId
+- name: customer
+  using:
+    foreign_key_constraint_on: keycloakId
+- name: subscriptionOccurence
+  using:
+    foreign_key_constraint_on: subscriptionOccurenceId
+computed_fields:
+- comment: ""
+  definition:
+    function:
+      name: betweenPause
+      schema: subscription
+  name: betweenPause
+- comment: ""
+  definition:
+    function:
+      name: isCartValid
+      schema: subscription
+  name: validStatus
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      keycloakId:
+        _eq: X-Hasura-Keycloak-Id
+    columns:
+    - subscriptionOccurenceId
+    - keycloakId
+    - cartId
+    - isSkipped
+    - isAuto
+    - brand_customerId
+    set:
+      keycloakId: x-hasura-Keycloak-Id
+  role: consumer
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - isAuto
+    - isSkipped
+    - brand_customerId
+    - cartId
+    - subscriptionOccurenceId
+    - keycloakId
+    computed_fields:
+    - validStatus
+    filter:
+      keycloakId:
+        _eq: X-Hasura-Keycloak-Id
+  role: consumer
+update_permissions:
+- permission:
+    check:
+      keycloakId:
+        _eq: X-Hasura-Keycloak-Id
+    columns:
+    - isAuto
+    - isSkipped
+    - brand_customerId
+    - cartId
+    - subscriptionOccurenceId
+    - keycloakId
+    filter:
+      keycloakId:
+        _eq: X-Hasura-Keycloak-Id
+    set:
+      keycloakId: x-hasura-Keycloak-Id
+  role: consumer
+delete_permissions:
+- permission:
+    filter:
+      keycloakId:
+        _eq: X-Hasura-Keycloak-Id
+  role: consumer

@@ -1,0 +1,22 @@
+table:
+  name: cart_rewards
+  schema: order
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteCartRewards
+    delete_by_pk: deleteCartReward
+    insert: createCartRewards
+    insert_one: createCartReward
+    select: cartRewards
+    select_aggregate: cartRewardsAggregate
+    select_by_pk: cartReward
+    update: updateCartRewards
+    update_by_pk: updateCartReward
+object_relationships:
+- name: cart
+  using:
+    foreign_key_constraint_on: cartId
+- name: reward
+  using:
+    foreign_key_constraint_on: rewardId

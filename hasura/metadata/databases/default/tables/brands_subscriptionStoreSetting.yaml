@@ -1,0 +1,23 @@
+table:
+  name: subscriptionStoreSetting
+  schema: brands
+object_relationships:
+- name: brand
+  using:
+    manual_configuration:
+      column_mapping:
+        id: subscriptionStoreSettingId
+      insertion_order: null
+      remote_table:
+        name: brand_subscriptionStoreSetting
+        schema: brands
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - id
+    - identifier
+    - value
+    - type
+    filter: {}
+  role: consumer

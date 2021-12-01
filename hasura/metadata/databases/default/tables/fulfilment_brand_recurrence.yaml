@@ -1,0 +1,25 @@
+table:
+  name: brand_recurrence
+  schema: fulfilment
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteBrandRecurrences
+    delete_by_pk: deleteBrandRecurrence
+    insert: createBrandRecurrences
+    insert_one: createBrandRecurrence
+    select: brandRecurrences
+    select_aggregate: brandRecurrencesAggregate
+    select_by_pk: brandRecurrence
+    update: updateBrandRecurrences
+    update_by_pk: updateBrandRecurrence
+object_relationships:
+- name: brand
+  using:
+    foreign_key_constraint_on: brandId
+- name: brand_location
+  using:
+    foreign_key_constraint_on: brandLocationId
+- name: recurrence
+  using:
+    foreign_key_constraint_on: recurrenceId

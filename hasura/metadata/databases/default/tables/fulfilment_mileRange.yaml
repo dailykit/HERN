@@ -1,0 +1,34 @@
+table:
+  name: mileRange
+  schema: fulfilment
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteMileRange
+    delete_by_pk: deleteMileRangeByPK
+    insert: createMileRanges
+    insert_one: createMileRange
+    select: mileRanges
+    select_aggregate: mileRangesAggregate
+    select_by_pk: mileRangeByPK
+    update: updateMileRange
+    update_by_pk: updateMileRangeByPK
+object_relationships:
+- name: timeSlot
+  using:
+    foreign_key_constraint_on: timeSlotId
+array_relationships:
+- name: charges
+  using:
+    foreign_key_constraint_on:
+      column: mileRangeId
+      table:
+        name: charge
+        schema: fulfilment
+computed_fields:
+- comment: ""
+  definition:
+    function:
+      name: preOrderDeliveryValidity
+      schema: fulfilment
+  name: preOrderDeliveryValidity

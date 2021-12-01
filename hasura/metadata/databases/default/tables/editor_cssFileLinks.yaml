@@ -1,0 +1,43 @@
+table:
+  name: cssFileLinks
+  schema: editor
+object_relationships:
+- name: cssFile
+  using:
+    manual_configuration:
+      column_mapping:
+        cssFileId: id
+      insertion_order: null
+      remote_table:
+        name: file
+        schema: editor
+- name: parentFile
+  using:
+    manual_configuration:
+      column_mapping:
+        guiFileId: id
+      insertion_order: null
+      remote_table:
+        name: file
+        schema: editor
+select_permissions:
+- permission:
+    columns:
+    - guiFileId
+    - cssFileId
+    - position
+    - created_at
+    - updated_at
+    - id
+    filter: {}
+  role: consumer
+- permission:
+    columns:
+    - cssFileId
+    - guiFileId
+    - id
+    - position
+    - created_at
+    - updated_at
+    filter: {}
+  role: guest-consumer

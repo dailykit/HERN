@@ -1,0 +1,10 @@
+table:
+  name: station_kot_printer
+  schema: settings
+object_relationships:
+- name: kotPrinter
+  using:
+    foreign_key_constraint_on: printNodeId
+- name: station
+  using:
+    foreign_key_constraint_on: stationId

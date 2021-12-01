@@ -1,0 +1,11 @@
+table:
+  name: safetyCheck
+  schema: safety
+array_relationships:
+- name: SafetyCheckPerUsers
+  using:
+    foreign_key_constraint_on:
+      column: SafetyCheckId
+      table:
+        name: safetyCheckPerUser
+        schema: safety

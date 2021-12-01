@@ -1,0 +1,13 @@
+table:
+  name: dailyosDivIdFiles
+  schema: ux
+object_relationships:
+- name: condition
+  using:
+    foreign_key_constraint_on: conditionId
+- name: dailyosDivId
+  using:
+    foreign_key_constraint_on: divId
+- name: file
+  using:
+    foreign_key_constraint_on: fileId

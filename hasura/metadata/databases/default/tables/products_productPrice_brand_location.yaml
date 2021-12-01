@@ -1,0 +1,3 @@
+table:
+  name: productPrice_brand_location
+  schema: products

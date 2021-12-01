@@ -1,0 +1,22 @@
+table:
+  name: brand_campaign
+  schema: crm
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteBrandCampaigns
+    delete_by_pk: deleteBrandCampaign
+    insert: createBrandCampaigns
+    insert_one: createBrandCampaign
+    select: brandCampaigns
+    select_aggregate: brandCampaignsAggregate
+    select_by_pk: brandCampaign
+    update: updateBrandCampaigns
+    update_by_pk: updateBrandCampaign
+object_relationships:
+- name: brand
+  using:
+    foreign_key_constraint_on: brandId
+- name: campaign
+  using:
+    foreign_key_constraint_on: campaignId

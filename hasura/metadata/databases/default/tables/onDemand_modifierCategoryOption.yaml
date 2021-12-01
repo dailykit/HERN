@@ -1,0 +1,98 @@
+table:
+  name: modifierCategoryOption
+  schema: onDemand
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteModifierOptions
+    delete_by_pk: deleteModifierOption
+    insert: createModifierOptions
+    insert_one: createModifierOption
+    select: modifierOptions
+    select_aggregate: modifierOptionsAggregate
+    select_by_pk: modifierOption
+    update: updateModifierOptions
+    update_by_pk: updateModifierOption
+object_relationships:
+- name: ingredientSachet
+  using:
+    foreign_key_constraint_on: ingredientSachetId
+- name: modifierCategory
+  using:
+    foreign_key_constraint_on: modifierCategoryId
+- name: operationConfig
+  using:
+    foreign_key_constraint_on: operationConfigId
+- name: sachetItem
+  using:
+    foreign_key_constraint_on: sachetItemId
+computed_fields:
+- comment: ""
+  definition:
+    function:
+      name: modifierCategoryOptionCartItem
+      schema: onDemand
+  name: cartItem
+- comment: ""
+  definition:
+    function:
+      name: modifierCategoryOptionCartItemByLocation
+      schema: onDemand
+  name: cartItemByLocation
+- comment: ""
+  definition:
+    function:
+      name: modifierCategoryOptionDiscountByLocation
+      schema: onDemand
+  name: discountByLocation
+- comment: ""
+  definition:
+    function:
+      name: modifierCategoryOptionPriceByLocation
+      schema: onDemand
+  name: priceByLocation
+select_permissions:
+- permission:
+    columns:
+    - id
+    - name
+    - originalName
+    - price
+    - discount
+    - quantity
+    - image
+    - isActive
+    - isVisible
+    - operationConfigId
+    - modifierCategoryId
+    - sachetItemId
+    - ingredientSachetId
+    - simpleRecipeYieldId
+    - created_at
+    - updated_at
+    computed_fields:
+    - cartItem
+    filter: {}
+  role: consumer
+- permission:
+    columns:
+    - isActive
+    - isVisible
+    - id
+    - ingredientSachetId
+    - modifierCategoryId
+    - operationConfigId
+    - quantity
+    - sachetItemId
+    - simpleRecipeYieldId
+    - discount
+    - price
+    - image
+    - name
+    - originalName
+    - created_at
+    - updated_at
+    computed_fields:
+    - cartItem
+    filter: {}
+  role: guest-consumer

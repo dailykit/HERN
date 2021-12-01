@@ -103,7 +103,7 @@ const Carts = Loadable({
    loading: Loader,
 })
 
-// changes for webhooks 
+// changes for webhooks
 const Developer = Loadable({
    loader: () => import('./apps/developer'),
    loading: Loader,
@@ -117,6 +117,10 @@ const App = () => {
    const { user } = useAuth()
    const { tabs } = useTabs()
 
+   const ViewStore = Loadable({
+      loader: () => import('./apps/viewStore'),
+      loading: Loader,
+   })
 
    if (loading) return <Loader />
    return (
@@ -124,7 +128,7 @@ const App = () => {
          <TabBar />
          <Sidebar />
 
-         <main >
+         <main>
             <Switch>
                <Route path="/" exact>
                   <Banner id="app-home-top" />
@@ -154,10 +158,10 @@ const App = () => {
                <Route path="/editor" component={Editor} />
                <Route path="/carts" component={Carts} />
                <Route path="/developer" component={Developer} />
+               <Route path="/viewStore" component={ViewStore} />
             </Switch>
          </main>
          {/* {!isKeycloakSupported() && <RedirectBanner />} */}
-
       </Layout>
    )
 }

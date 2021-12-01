@@ -1,0 +1,90 @@
+table:
+  name: supplierItem
+  schema: inventory
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteSupplierItem
+    insert: createSupplierItem
+    select: supplierItems
+    select_aggregate: supplierItemsAggregate
+    select_by_pk: supplierItem
+    update: updateSupplierItem
+object_relationships:
+- name: bulkItemAsShipped
+  using:
+    manual_configuration:
+      column_mapping:
+        bulkItemAsShippedId: id
+      insertion_order: null
+      remote_table:
+        name: bulkItem
+        schema: inventory
+- name: importHistory
+  using:
+    foreign_key_constraint_on: importId
+- name: supplier
+  using:
+    foreign_key_constraint_on: supplierId
+- name: unitId
+  using:
+    foreign_key_constraint_on: unit
+array_relationships:
+- name: bulkItems
+  using:
+    foreign_key_constraint_on:
+      column: supplierItemId
+      table:
+        name: bulkItem
+        schema: inventory
+- name: purchaseOrderItems
+  using:
+    foreign_key_constraint_on:
+      column: supplierItemId
+      table:
+        name: purchaseOrderItem
+        schema: inventory
+- name: supplierItemUnitConversions
+  using:
+    foreign_key_constraint_on:
+      column: entityId
+      table:
+        name: supplierItem_unitConversion
+        schema: inventory
+computed_fields:
+- comment: ""
+  definition:
+    function:
+      name: unit_conversions_supplier_item
+      schema: inventory
+  name: unit_conversions
+event_triggers:
+- definition:
+    delete:
+      columns: "*"
+    enable_manual: true
+    insert:
+      columns: "*"
+    update:
+      columns:
+      - isArchived
+      - bulkItemAsShippedId
+      - id
+      - importId
+      - supplierId
+      - unitSize
+      - certificates
+      - leadTime
+      - prices
+      - name
+      - sku
+      - unit
+  headers:
+  - name: organizationid
+    value_from_env: HEADER_REMOTE_SCHEMA_ORGANIZATIONID
+  name: supplierItemModified
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: https://8cb6ae38d5ed.ngrok.io/match/check

@@ -1,0 +1,10 @@
+table:
+  name: printConfig
+  schema: notifications
+object_relationships:
+- name: printer
+  using:
+    foreign_key_constraint_on: printerPrintNodeId
+- name: type
+  using:
+    foreign_key_constraint_on: typeId

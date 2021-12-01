@@ -1,0 +1,161 @@
+table:
+  name: subscriptionOccurence
+  schema: subscription
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteSubscriptionOccurences
+    delete_by_pk: deleteSubscriptionOccurence
+    insert: insertSubscriptionOccurences
+    insert_one: insertSubscriptionOccurence
+    select: subscriptionOccurences
+    select_aggregate: subscriptionOccurencesAggregate
+    select_by_pk: subscriptionOccurence
+    update: updateSubscriptionOccurences
+    update_by_pk: updateSubscriptionOccurence
+object_relationships:
+- name: subscription
+  using:
+    foreign_key_constraint_on: subscriptionId
+- name: subscriptionItemCount
+  using:
+    manual_configuration:
+      column_mapping:
+        subscriptionItemCountId: id
+      insertion_order: null
+      remote_table:
+        name: subscriptionItemCount
+        schema: subscription
+- name: subscriptionOccurenceView
+  using:
+    manual_configuration:
+      column_mapping:
+        id: id
+      insertion_order: null
+      remote_table:
+        name: subscriptionOccurenceView
+        schema: subscription
+- name: subscriptionServing
+  using:
+    manual_configuration:
+      column_mapping:
+        subscriptionServingId: id
+      insertion_order: null
+      remote_table:
+        name: subscriptionServing
+        schema: subscription
+- name: subscriptionTitle
+  using:
+    manual_configuration:
+      column_mapping:
+        subscriptionTitleId: id
+      insertion_order: null
+      remote_table:
+        name: subscriptionTitle
+        schema: subscription
+- name: view_subscription
+  using:
+    manual_configuration:
+      column_mapping:
+        subscriptionId: id
+      insertion_order: null
+      remote_table:
+        name: view_subscription
+        schema: subscription
+array_relationships:
+- name: addOnProducts
+  using:
+    manual_configuration:
+      column_mapping:
+        id: subscriptionOccurenceId
+      insertion_order: null
+      remote_table:
+        name: subscriptionOccurence_addOn
+        schema: subscription
+- name: brand_subscriptionOccurences
+  using:
+    manual_configuration:
+      column_mapping:
+        id: id
+      insertion_order: null
+      remote_table:
+        name: brand
+        schema: brands
+- name: customers
+  using:
+    foreign_key_constraint_on:
+      column: subscriptionOccurenceId
+      table:
+        name: subscriptionOccurence_customer
+        schema: subscription
+- name: products
+  using:
+    foreign_key_constraint_on:
+      column: subscriptionOccurenceId
+      table:
+        name: subscriptionOccurence_product
+        schema: subscription
+computed_fields:
+- comment: ""
+  definition:
+    function:
+      name: calculateIsValid
+      schema: subscription
+  name: isValid
+- comment: ""
+  definition:
+    function:
+      name: calculateIsVisible
+      schema: subscription
+  name: isVisible
+- comment: ""
+  definition:
+    function:
+      name: subscriptionOccurenceWeekRank
+      schema: subscription
+  name: subscriptionOccurenceWeekRank
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - id
+    - fulfillmentDate
+    - cutoffTimeStamp
+    - subscriptionId
+    - startTimeStamp
+    - assets
+    - subscriptionAutoSelectOption
+    computed_fields:
+    - isValid
+    - isVisible
+    filter: {}
+  role: consumer
+- permission:
+    allow_aggregations: true
+    columns:
+    - fulfillmentDate
+    - id
+    - subscriptionId
+    - assets
+    - subscriptionAutoSelectOption
+    - cutoffTimeStamp
+    - startTimeStamp
+    computed_fields:
+    - isValid
+    - isVisible
+    filter: {}
+  role: guest-consumer
+event_triggers:
+- definition:
+    enable_manual: true
+    insert:
+      columns: "*"
+    update:
+      columns:
+      - cutoffTimeStamp
+  name: createOccurenceScheduledEvent
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: "{{DAILYOS_SERVER_URL}}/webhook/occurence/schedule/create"

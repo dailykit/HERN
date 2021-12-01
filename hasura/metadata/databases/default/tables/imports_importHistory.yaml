@@ -1,0 +1,26 @@
+table:
+  name: importHistory
+  schema: imports
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    insert: createImportHistory
+object_relationships:
+- name: import
+  using:
+    foreign_key_constraint_on: importId
+array_relationships:
+- name: supplierItems
+  using:
+    foreign_key_constraint_on:
+      column: importId
+      table:
+        name: supplierItem
+        schema: inventory
+- name: suppliers
+  using:
+    foreign_key_constraint_on:
+      column: importId
+      table:
+        name: supplier
+        schema: inventory

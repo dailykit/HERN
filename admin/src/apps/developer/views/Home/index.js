@@ -7,6 +7,7 @@ import { Banner } from '../../../../shared/components'
 import {logger}  from '../../../../shared/utils'
 import { useQuery, useSubscription } from '@apollo/react-hooks';
 import { GET_WEBHOOK_URL_EVENTS_COUNT, GET_API_KEY_COUNT } from '../../graphql';
+import { WebhookSvg, ApiKeySvg } from '../../../../shared/assets/illustrationTileSvg';
 
 const address = 'apps.developer.views.home.';
 
@@ -42,6 +43,7 @@ const Home = () => {
                             conf="Add Webhooks"
                             count={webhookUrl_eventsCount || "..."}
                             onClick={() => addTab('Webhook', '/developer/webhook')}
+                            tileSvg={<WebhookSvg />}
                         />
                         <DashboardTile
                             // title={t(address.concat('webhook'))}
@@ -49,6 +51,7 @@ const Home = () => {
                             conf="Add Api Key"
                             count={apiKey_Count || "..."}
                             onClick={() => addTab('Api Key', '/developer/apiKey')}
+                            tileSvg={<ApiKeySvg />}
                         />
                     </StyledCardList>
                     {/* <Banner id="developer-app-home-bottom" />    */}

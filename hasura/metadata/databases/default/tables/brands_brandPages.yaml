@@ -1,0 +1,38 @@
+table:
+  name: brandPages
+  schema: brands
+object_relationships:
+- name: brand
+  using:
+    foreign_key_constraint_on: brandId
+array_relationships:
+- name: brandPageModules
+  using:
+    foreign_key_constraint_on:
+      column: brandPageId
+      table:
+        name: brandPageModule
+        schema: brands
+- name: brandPageSettings
+  using:
+    foreign_key_constraint_on:
+      column: brandPageId
+      table:
+        name: brandPage_brandPageSetting
+        schema: brands
+- name: brandPagesLinkedFiles
+  using:
+    manual_configuration:
+      column_mapping:
+        id: pageId
+      insertion_order: null
+      remote_table:
+        name: pagesLinkedFiles
+        schema: brands
+computed_fields:
+- comment: ""
+  definition:
+    function:
+      name: getValidNavigationMenu
+      schema: brands
+  name: linkedNavigationMenuId

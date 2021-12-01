@@ -1,0 +1,67 @@
+table:
+  name: experience
+  schema: experiences
+array_relationships:
+- name: customer_savedEntities
+  using:
+    foreign_key_constraint_on:
+      column: experienceId
+      table:
+        name: customer_savedEntities
+        schema: crm
+- name: experienceClasses
+  using:
+    foreign_key_constraint_on:
+      column: experienceId
+      table:
+        name: experienceClass
+        schema: experiences
+- name: experienceDivIds
+  using:
+    foreign_key_constraint_on:
+      column: experienceId
+      table:
+        name: experienceDivId
+        schema: content
+- name: experience_experienceCategories
+  using:
+    foreign_key_constraint_on:
+      column: experienceId
+      table:
+        name: experience_experienceCategory
+        schema: experiences
+- name: experience_experienceTags
+  using:
+    foreign_key_constraint_on:
+      column: experienceId
+      table:
+        name: experience_experienceTags
+        schema: experiences
+- name: experience_experts
+  using:
+    foreign_key_constraint_on:
+      column: experienceId
+      table:
+        name: experience_expert
+        schema: experiences
+- name: experience_headers
+  using:
+    foreign_key_constraint_on:
+      column: experienceId
+      table:
+        name: experience_headers
+        schema: experiences
+- name: experience_products
+  using:
+    foreign_key_constraint_on:
+      column: experienceId
+      table:
+        name: experience_products
+        schema: experiences
+computed_fields:
+- comment: This will give a boolean result if the experience is saved by the user i.e. if it is present in the customer_savedEntities table 
+  definition:
+    function:
+      name: isSaved
+      schema: experiences
+  name: isSaved
