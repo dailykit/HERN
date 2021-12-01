@@ -2,12 +2,12 @@ import gql from 'graphql-tag'
 
 export const INSIGHT_ANALYTICS = gql`
    subscription INSIGHT_ANALYTICS(
-      $args: insights_getTotalEarnings_args!
-      $args1: insights_getAcceptedVsRejectedOrders_args!
-      $args2: insights_getOrdersByStatus_args!
-      $args3: insights_getOrdersRecieved_args!
-      $args4: insights_getRegisteredCustomers_args!
-      $args5: insights_getSubscribedCustomers_args!
+      $args: getTotalEarnings_insights_analytics_args!
+      $args1: getAcceptedVsRejectedOrders_insights_analytics_args!
+      $args2: getOrdersByStatus_insights_analytics_args!
+      $args3: getOrdersRecieved_insights_args!
+      $args4: getRegisteredCustomers_insights_analytics_args!
+      $args5: getSubscribedCustomers_insights_analytics_args!
    ) {
       insights_analytics {
          id
