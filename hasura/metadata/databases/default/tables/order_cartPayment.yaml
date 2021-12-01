@@ -14,6 +14,9 @@ configuration:
     update: updateCartPayments
     update_by_pk: updateCartPayment
 object_relationships:
+- name: availablePaymentOption
+  using:
+    foreign_key_constraint_on: usedAvailablePaymentOptionId
 - name: cart
   using:
     foreign_key_constraint_on: cartId

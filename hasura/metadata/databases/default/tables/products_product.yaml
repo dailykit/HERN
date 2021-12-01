@@ -257,3 +257,10 @@ update_permissions:
     set:
       updatedByApiKey: x-hasura-Api-Key
   role: apiKeyRole
+delete_permissions:
+- permission:
+    filter:
+      updatedByApiKeyReference:
+        canDeleteProducts:
+          _eq: true
+  role: apiKeyRole
