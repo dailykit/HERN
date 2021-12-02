@@ -9,6 +9,7 @@ import { Wrapper } from './styles.js'
 import * as QUERIES from '../../graphql'
 import { Loader } from '../../components'
 import { usePayment } from '../../lib'
+import { useUser } from '../../context'
 import { isClient } from '../../utils'
 
 export function CartPaymentComponent({ cartId = null }) {
@@ -21,9 +22,12 @@ export function CartPaymentComponent({ cartId = null }) {
       setProfileInfo,
       updatePaymentState,
    } = usePayment()
+   const { user } = useUser()
    const { addToast } = useToasts()
    const [cart, setCart] = React.useState(null)
    const [loading, setLoading] = React.useState(true)
+   const [selectCustomerPaymentMethodId, setSelectedCustomerPaymentMethodId] =
+      React.useState('')
 
    const { error: hasCartError } = useSubscription(QUERIES.CART_SUBSCRIPTION, {
       skip: !isClient || cartId,
@@ -37,6 +41,73 @@ export function CartPaymentComponent({ cartId = null }) {
          setLoading(false)
       },
    })
+
+   const [createCustomerPaymentMethod] = useMutation(
+      QUERIES.CREATE_CUSTOMER_PAYMENT_METHOD,
+      {
+         onCompleted: () => {
+            updateCart({
+               variables: {
+                  id: cartId,
+                  _inc: { paymentRetryAttempt: 1 },
+                  _set: {
+                     paymentMethodId: null,
+                     toUseAvailablePaymentOptionId:
+                        paymentInfo?.selectedAvailablePaymentOption?.id,
+                     customerInfo: {
+                        customerEmail: profileInfo?.email,
+                        customerPhone: profileInfo?.phone,
+                        customerLastName: profileInfo?.lastName,
+                        customerFirstName: profileInfo?.firstName,
+                     },
+                  },
+               },
+            })
+         },
+         onError: error => {
+            console.error(error)
+            addToast(' ', { appearance: 'error' })
+         },
+      }
+   )
+
+   const [updatePlatformCustomer] = useMutation(
+      QUERIES.UPDATE_PLATFORM_CUSTOMER,
+      {
+         onCompleted: () => {
+            // if(!_isEmpty(paymentInfo.paymentMethods)){
+            //    updateCustomerPaymentMethod({
+            //       variables: {
+            //          set: {
+            //             keycloakId: user.keycloakId,
+            //             paymentMethodId: selectCustomerPaymentMethodId,
+            //             supportedPaymentOptionId:
+            //                paymentInfo.selectedAvailablePaymentOption
+            //                   .supportedPaymentOption.id,
+            //          },
+            //       },
+            //    })
+            // }
+            createCustomerPaymentMethod({
+               variables: {
+                  object: {
+                     keycloakId: user.keycloakId,
+                     paymentMethodId: selectCustomerPaymentMethodId,
+                     supportedPaymentOptionId:
+                        paymentInfo.selectedAvailablePaymentOption
+                           .supportedPaymentOption.id,
+                  },
+               },
+            })
+         },
+         onError: error => {
+            console.log('updatePlatformCustomer -> error -> ', error)
+            addToast('Failed to update the user profile!', {
+               appearance: 'success',
+            })
+         },
+      }
+   )
 
    const [updateCartPayment] = useMutation(QUERIES.UPDATE_CART_PAYMENT, {
       onError: error => {
@@ -83,20 +154,20 @@ export function CartPaymentComponent({ cartId = null }) {
 
    const confirmPayHandler = () => {
       if (
+         !_isEmpty(profileInfo) &&
          !_isEmpty(paymentInfo) &&
          !_isEmpty(paymentInfo.selectedAvailablePaymentOption)
       ) {
          updatePaymentState({
             paymentLifeCycleState: 'INCREMENT_PAYMENT_RETRY_ATTEMPT',
          })
-         updateCart({
+         updatePlatformCustomer({
             variables: {
-               id: cartId,
-               _inc: { paymentRetryAttempt: 1 },
+               keycloakId: user.keycloakId,
                _set: {
-                  paymentMethodId: null,
-                  toUseAvailablePaymentOptionId:
-                     paymentInfo?.selectedAvailablePaymentOption?.id,
+                  firstName: profileInfo.firstName,
+                  lastName: profileInfo.lastName,
+                  phoneNumber: profileInfo.phone,
                },
             },
          })
@@ -150,7 +221,13 @@ export function CartPaymentComponent({ cartId = null }) {
                   },
                ]}
             >
-               <Input placeholder="Enter your phone numer" />
+               <Input
+                  placeholder="Enter your phone numer"
+                  value={selectCustomerPaymentMethodId}
+                  onChange={e =>
+                     setSelectedCustomerPaymentMethodId(e.target.value)
+                  }
+               />
             </Form.Item>
          </Form>
          <h1>Select Payment Method</h1>
@@ -158,10 +235,17 @@ export function CartPaymentComponent({ cartId = null }) {
             <Space direction="vertical">
                {!_isEmpty(cart) &&
                   cart.availablePaymentOptionToCart.map(option => (
-                     <Radio value={option?.id} key={option?.id}>
-                        {option?.label ||
-                           option?.supportedPaymentOption?.paymentOptionLabel}
-                     </Radio>
+                     <>
+                        <Radio value={option?.id} key={option?.id}>
+                           {option?.label ||
+                              option?.supportedPaymentOption
+                                 ?.paymentOptionLabel}
+                        </Radio>
+                        {paymentInfo?.selectedAvailablePaymentOption?.id ===
+                           option?.id && (
+                           <Input placeholder="Enter your phone numer" />
+                        )}
+                     </>
                   ))}
             </Space>
          </Radio.Group>

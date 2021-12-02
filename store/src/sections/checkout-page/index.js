@@ -136,7 +136,7 @@ const PaymentContent = () => {
    })
 
    const [updatePlatformCustomer] = useMutation(
-      QUERIES.UPDATE_DAILYKEY_CUSTOMER,
+      QUERIES.UPDATE_PLATFORM_CUSTOMER,
       {
          onCompleted: () => {
             updateCart({

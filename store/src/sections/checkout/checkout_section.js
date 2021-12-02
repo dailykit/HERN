@@ -261,7 +261,7 @@ const PaymentContent = () => {
    })
 
    const [updatePlatformCustomer] = useMutation(
-      QUERIES.UPDATE_DAILYKEY_CUSTOMER,
+      QUERIES.UPDATE_PLATFORM_CUSTOMER,
       {
          onCompleted: () => {
             updateCart({
@@ -269,10 +269,7 @@ const PaymentContent = () => {
                   id: cart.id,
                   _inc: { paymentRetryAttempt: 1 },
                   _set: {
-                     paymentMethodId:
-                        selectedPaymentMethod === 'stripe'
-                           ? state.payment.selected.id
-                           : null,
+                     paymentMethodId: state.payment.selected.id,
                      customerInfo: {
                         customerEmail: user?.platform_customer?.email,
                         customerPhone: state?.profile?.phoneNumber,

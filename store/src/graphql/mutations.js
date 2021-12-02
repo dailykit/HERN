@@ -194,7 +194,7 @@ export const MUTATIONS = {
    },
 }
 
-export const UPDATE_DAILYKEY_CUSTOMER = gql`
+export const UPDATE_PLATFORM_CUSTOMER = gql`
    mutation updateCustomers(
       $keycloakId: String!
       $_set: platform_customer_set_input!
@@ -208,7 +208,7 @@ export const UPDATE_DAILYKEY_CUSTOMER = gql`
    }
 `
 
-export const CREATE_STRIPE_PAYMENT_METHOD = gql`
+export const CREATE_CUSTOMER_PAYMENT_METHOD = gql`
    mutation paymentMethod(
       $object: platform_customerPaymentMethod_insert_input!
    ) {

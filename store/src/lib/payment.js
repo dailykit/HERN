@@ -44,7 +44,10 @@ const reducer = (state, action) => {
       case 'SET_PAYMENT_INFO':
          return {
             ...state,
-            paymentInfo: action.payload,
+            paymentInfo: {
+               ...state.paymentInfo,
+               ...action.payload,
+            },
          }
       case 'UPDATE_PAYMENT_STATE':
          return {
@@ -79,11 +82,13 @@ export const PaymentProvider = ({ children }) => {
                   },
                   {
                      _or: [
-                        {
-                           cartId: {
-                              _eq: cartId,
-                           },
-                        },
+                        cartId
+                           ? {
+                                cartId: {
+                                   _eq: cartId,
+                                },
+                             }
+                           : {},
                         {
                            cart: {
                               brandId: {
@@ -110,6 +115,13 @@ export const PaymentProvider = ({ children }) => {
             )
             if (!_isEmpty(requiredCartPayments)) {
                const [requiredCartPayment] = requiredCartPayments
+               dispatch({
+                  type: 'SET_PAYMENT_INFO',
+                  payload: {
+                     selectedAvailablePaymentOption:
+                        requiredCartPayment.availablePaymentOption,
+                  },
+               })
                switch (requiredCartPayment.paymentStatus) {
                   case 'SUCCEEDED':
                      dispatch({
@@ -244,10 +256,17 @@ export const PaymentProvider = ({ children }) => {
          dispatch({
             type: 'SET_PROFILE_INFO',
             payload: {
-               firstName: user?.platform_customer?.firstName || '',
-               lastName: user?.platform_customer?.lastName || '',
-               email: user?.platform_customer?.email || '',
-               phone: user?.platform_customer?.phoneNumber || '',
+               firstName: user.platform_customer?.firstName || '',
+               lastName: user.platform_customer?.lastName || '',
+               email: user.platform_customer?.email || '',
+               phone: user.platform_customer?.phoneNumber || '',
+            },
+         })
+
+         dispatch({
+            type: 'SET_PAYMENT_INFO',
+            payload: {
+               paymentMethods: user.platform_customer?.paymentMethods,
             },
          })
          setIsPaymentLoading(false)
@@ -264,13 +283,14 @@ export const PaymentProvider = ({ children }) => {
          // right now only handle the razorpay method.
          if (
             _has(
-               cart,
+               cartPayment,
                'availablePaymentOption.supportedPaymentOption.supportedPaymentCompany.label'
             ) &&
             cartPayment.availablePaymentOption.supportedPaymentOption
                .supportedPaymentCompany.label === 'razorpay'
          ) {
             console.log('inside payment provider useEffect 1', cartPayment)
+
             if (cartPayment.paymentStatus === 'CREATED') {
                ;(async () => {
                   const options = getRazorpayOptions({

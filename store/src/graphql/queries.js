@@ -896,6 +896,8 @@ export const CUSTOMER = {
                   keycloakId
                   cardHolderName
                   paymentMethodId
+                  paymentCustomerId
+                  supportedPaymentOptionId
                }
             }
          }
@@ -1719,6 +1721,7 @@ export const GET_JS_CSS_FILES = gql`
 export const GET_CART_PAYMENT_INFO = gql`
    subscription GET_CART_PAYMENT_INFO($where: order_cartPayment_bool_exp!) {
       cartPayments(where: $where, limit: 1, order_by: { updated_at: desc }) {
+         id
          amount
          cancelAttempt
          cartId
