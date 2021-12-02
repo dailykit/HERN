@@ -1292,15 +1292,15 @@ export const PRODUCTS_BY_CATEGORY = gql`
 export const PRODUCTS = gql`
    query Products(
       $ids: [Int!]!
-      $priceArgs: products_priceByLocation_args!
-      $discountArgs: products_productDiscountByLocation_args!
-      $defaultCartItemArgs: products_defaultCartItemByLocation_args!
-      $productOptionCartItemArgs: products_productOptionCartItemByLocation_args!
-      $productOptionDiscountArgs: products_productOptionDiscountByLocation_args!
-      $productOptionPriceArgs: products_productOptionUnitPriceByLocation_args!
-      $modifierCategoryOptionCartItemArgs: onDemand_modifierCategoryOptionCartItemByLocation_args!
-      $modifierCategoryOptionDiscountArgs: onDemand_modifierCategoryOptionDiscountByLocation_args!
-      $modifierCategoryOptionPriceArgs: onDemand_modifierCategoryOptionPriceByLocation_args!
+      $priceArgs: priceByLocation_products_product_args!
+      $discountArgs: discountByLocation_products_product_args!
+      $defaultCartItemArgs: defaultCartItemByLocation_products_product_args!
+      $productOptionCartItemArgs: cartItemByLocation_products_productOption_args!
+      $productOptionDiscountArgs: discountByLocation_products_productOption_args!
+      $productOptionPriceArgs: priceByLocation_products_productOption_args!
+      $modifierCategoryOptionCartItemArgs: cartItemByLocation_onDemand_modifierCategoryOption_args!
+      $modifierCategoryOptionDiscountArgs: discountByLocation_onDemand_modifierCategoryOption_args!
+      $modifierCategoryOptionPriceArgs: priceByLocation_onDemand_modifierCategoryOption_args!
    ) {
       products(where: { isArchived: { _eq: false }, id: { _in: $ids } }) {
          id
