@@ -3807,6 +3807,11 @@ path-type@^4.0.0:
   resolved "https://registry.yarnpkg.com/path-type/-/path-type-4.0.0.tgz#84ed01c0a7ba380afe09d90a8c180dcd9d03043b"
   integrity sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==
 
+paytmchecksum@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/paytmchecksum/-/paytmchecksum-1.5.0.tgz#15662a204a49603f13341d1f6f8f44d10f0df6f0"
+  integrity sha512-TQZn/YKEJ6P+OwJGmKXMKkkgUA0VxDISPcQTKre9ZWVLjp7EzVjB+ITGSChnAUpMn23QXCgAXO8JQDVncqcA5w==
+
 peek-readable@^4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/peek-readable/-/peek-readable-4.0.1.tgz#9a045f291db254111c3412c1ce4fec27ddd4d202"

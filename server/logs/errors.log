@@ -34,3 +34,8 @@ Instead rename lodash.js to end in .cjs, change the requiring code to use import
 [/api/payment/initiate-payment] | [2021-12-01 16:12:68PM +05:30] | [ReferenceError: AVAILABLE_PAYMENT_OPTION is not defined]
 [/api/payment/initiate-payment] | [2021-12-01 17:12:48PM +05:30] | [ReferenceError: AVAILABLE_PAYMENT_OPTION is not defined]
 [/api/payment/initiate-payment] | [2021-12-01 17:12:13PM +05:30] | [ReferenceError: AVAILABLE_PAYMENT_OPTION is not defined]
+[/api/payment/initiate-payment] | [2021-12-02 19:12:82PM +05:30] | [SyntaxError: Invalid or unexpected token]
+[/api/payment/initiate-payment] | [2021-12-02 19:12:46PM +05:30] | [SyntaxError: Invalid or unexpected token]
+[/api/payment/initiate-payment] | [2021-12-02 19:12:64PM +05:30] | [SyntaxError: Invalid or unexpected token]
+[/api/payment/initiate-payment] | [2021-12-02 19:12:18PM +05:30] | [SyntaxError: Invalid or unexpected token]
+[/api/payment-intent] | [2021-12-02 19:12:81PM +05:30] | [ReferenceError: response is not defined]

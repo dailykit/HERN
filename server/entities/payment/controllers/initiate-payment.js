@@ -1,7 +1,6 @@
 import { client } from '../../../lib/graphql'
 import { logger } from '../../../utils'
 import { UPDATE_CART_PAYMENT, AVAILABLE_PAYMENT_OPTION } from '../graphql'
-// import abc from '../functions/stripe'
 
 export const initiatePaymentHandler = async (req, res) => {
    // this handler is called on update of paymentRetryAttempt in cartPayment table
@@ -74,6 +73,7 @@ export const initiatePaymentHandler = async (req, res) => {
          }
       }
    } catch (error) {
+      console.error(error)
       logger('/api/payment/initiate-payment', error)
       return res.status(500).json({ success: false, error })
    }
