@@ -1,0 +1,15 @@
+table:
+  name: dailyosDivId
+  schema: ux
+object_relationships:
+- name: file
+  using:
+    foreign_key_constraint_on: fileId
+array_relationships:
+- name: dailyosDivIdFiles
+  using:
+    foreign_key_constraint_on:
+      column: divId
+      table:
+        name: dailyosDivIdFiles
+        schema: ux

@@ -1,0 +1,3 @@
+table:
+  name: orderAnalytics
+  schema: order

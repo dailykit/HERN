@@ -1,0 +1,10 @@
+table:
+  name: brand_brandSetting
+  schema: brands
+object_relationships:
+- name: brand
+  using:
+    foreign_key_constraint_on: brandId
+- name: brandSetting
+  using:
+    foreign_key_constraint_on: brandSettingId

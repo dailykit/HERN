@@ -1,0 +1,3 @@
+table:
+  name: ingredientProcessingView
+  schema: ingredient

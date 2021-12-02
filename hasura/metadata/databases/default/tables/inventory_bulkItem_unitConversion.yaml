@@ -1,0 +1,10 @@
+table:
+  name: bulkItem_unitConversion
+  schema: inventory
+object_relationships:
+- name: bulkItem
+  using:
+    foreign_key_constraint_on: entityId
+- name: unitConversion
+  using:
+    foreign_key_constraint_on: unitConversionId

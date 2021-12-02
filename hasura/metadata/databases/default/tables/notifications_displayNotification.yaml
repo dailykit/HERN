@@ -1,0 +1,19 @@
+table:
+  name: displayNotification
+  schema: notifications
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteDisplayNotifications
+    delete_by_pk: deleteDisplayNotification
+    insert: createDisplayNotifications
+    insert_one: createDisplayNotification
+    select: displayNotifications
+    select_aggregate: displayNotificationsAggregate
+    select_by_pk: displayNotification
+    update: updateDisplayNotifications
+    update_by_pk: updateDisplayNotification
+object_relationships:
+- name: type
+  using:
+    foreign_key_constraint_on: typeId

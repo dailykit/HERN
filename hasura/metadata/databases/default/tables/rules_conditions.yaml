@@ -1,0 +1,41 @@
+table:
+  name: conditions
+  schema: rules
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteConditions
+    delete_by_pk: deleteCondition
+    insert: createConditions
+    insert_one: createCondition
+    select: conditions
+    select_aggregate: conditionsAggregate
+    select_by_pk: condition
+    update: updateConditions
+    update_by_pk: updateCondition
+computed_fields:
+- comment: ""
+  definition:
+    function:
+      name: isConditionValid
+      schema: rules
+  name: isValid
+select_permissions:
+- permission:
+    columns:
+    - id
+    - condition
+    - app
+    computed_fields:
+    - isValid
+    filter: {}
+  role: consumer
+- permission:
+    columns:
+    - id
+    - condition
+    - app
+    computed_fields:
+    - isValid
+    filter: {}
+  role: guest-consumer

@@ -1,0 +1,22 @@
+table:
+  name: env
+  schema: settings
+event_triggers:
+- definition:
+    delete:
+      columns: "*"
+    enable_manual: true
+    insert:
+      columns: "*"
+    update:
+      columns:
+      - id
+      - belongsTo
+      - title
+      - value
+  name: onEnvChange
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: "{{DAILYOS_SERVER_URL}}/api/envs"

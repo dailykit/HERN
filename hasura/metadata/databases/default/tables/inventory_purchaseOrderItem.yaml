@@ -1,0 +1,57 @@
+table:
+  name: purchaseOrderItem
+  schema: inventory
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deletePurchaseOrderItem
+    insert: createPurchaseOrderItem
+    select: purchaseOrderItems
+    select_aggregate: purchaseOrderItemsAggregate
+    select_by_pk: purchaseOrderItem
+    update: updatePurchaseOrderItem
+object_relationships:
+- name: bulkItem
+  using:
+    foreign_key_constraint_on: bulkItemId
+- name: packaging
+  using:
+    foreign_key_constraint_on: packagingId
+- name: supplier
+  using:
+    foreign_key_constraint_on: supplierId
+- name: supplierItem
+  using:
+    foreign_key_constraint_on: supplierItemId
+- name: unitId
+  using:
+    foreign_key_constraint_on: unit
+array_relationships:
+- name: packagingHistories
+  using:
+    foreign_key_constraint_on:
+      column: purchaseOrderItemId
+      table:
+        name: packagingHistory
+        schema: inventory
+event_triggers:
+- definition:
+    enable_manual: true
+    update:
+      columns:
+      - bulkItemId
+      - id
+      - mandiPurchaseOrderItemId
+      - packagingId
+      - supplierId
+      - supplierItemId
+      - details
+      - orderQuantity
+      - status
+      - unit
+  name: purchaseOrderItemCreateUpdate
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: "{{DAILYOS_SERVER_URL}}/api/inventory/purchase-order-upsert"

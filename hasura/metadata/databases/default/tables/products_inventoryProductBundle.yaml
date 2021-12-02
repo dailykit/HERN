@@ -1,0 +1,23 @@
+table:
+  name: inventoryProductBundle
+  schema: products
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteInventoryProductBundles
+    delete_by_pk: deleteInventoryProductBundle
+    insert: createInventoryProductBundles
+    insert_one: createInventoryProductBundle
+    select: inventoryProductBundles
+    select_aggregate: inventoryProductBundlesAggregate
+    select_by_pk: inventoryProductBundle
+    update: updateInventoryProductBundles
+    update_by_pk: updateInventoryProductBundle
+array_relationships:
+- name: inventoryProductBundleSachets
+  using:
+    foreign_key_constraint_on:
+      column: inventoryProductBundleId
+      table:
+        name: inventoryProductBundleSachet
+        schema: products

@@ -1,0 +1,49 @@
+table:
+  name: experienceBookingParticipant
+  schema: experiences
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteExperienceBookingParticipants
+    delete_by_pk: deleteExperienceBookingParticipant
+    insert: createExperienceBookingParticipants
+    insert_one: createExperienceBookingParticipant
+    select: experienceBookingParticipants
+    select_by_pk: experienceBookingParticipant
+    update: updateExperienceBookingParticipants
+    update_by_pk: updateExperienceBookingParticipant
+object_relationships:
+- name: childCart
+  using:
+    foreign_key_constraint_on: cartId
+- name: customer
+  using:
+    foreign_key_constraint_on: keycloakId
+- name: experienceBooking
+  using:
+    foreign_key_constraint_on: experienceBookingId
+array_relationships:
+- name: experienceBookingParticipantChoices
+  using:
+    foreign_key_constraint_on:
+      column: experienceBookingParticipantId
+      table:
+        name: experienceBookingParticipantChoice
+        schema: experiences
+event_triggers:
+- definition:
+    enable_manual: false
+    update:
+      columns:
+      - rsvp
+  headers:
+  - name: ohyay_userId
+    value: u_AVUK0yYAfWbfd9dFtJhW7Aen2Fw2
+  - name: no_reply_email
+    value: no-reply@dailykit.org
+  name: sendExperinceBookingEmail
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: https://dailyos-backend.ngrok.io/api/experience/booking/sendUrl

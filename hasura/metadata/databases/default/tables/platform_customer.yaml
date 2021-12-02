@@ -1,0 +1,39 @@
+table:
+  name: customer
+  schema: platform
+array_relationships:
+- name: customerAddresses
+  using:
+    foreign_key_constraint_on:
+      column: keycloakId
+      table:
+        name: customerAddress
+        schema: platform
+- name: customerPaymentMethods
+  using:
+    foreign_key_constraint_on:
+      column: keycloakId
+      table:
+        name: customerPaymentMethod
+        schema: platform
+computed_fields:
+- comment: ""
+  definition:
+    function:
+      name: full_name
+      schema: platform
+  name: fullName
+event_triggers:
+- definition:
+    enable_manual: true
+    insert:
+      columns: "*"
+  headers:
+  - name: OrganizationId
+    value_from_env: HEADER_REMOTE_SCHEMA_ORGANIZATIONID
+  name: createStripeCustomer
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: https://testhern.dailykit.org/server/api/webhooks/stripe/customer

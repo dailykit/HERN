@@ -1,0 +1,41 @@
+table:
+  name: availableWebhookEvent
+  schema: developer
+array_relationships:
+- name: processedWebhookEvents
+  using:
+    foreign_key_constraint_on:
+      column: availableWebhookEventId
+      table:
+        name: processedWebhookEvents
+        schema: developer
+- name: webhookUrl_events
+  using:
+    foreign_key_constraint_on:
+      column: availableWebhookEventId
+      table:
+        name: webhookUrl_events
+        schema: developer
+event_triggers:
+- definition:
+    enable_manual: false
+    update:
+      columns:
+      - isActive
+  name: handleWebhookEventCreation
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: https://url.com/handleWebhookEventCreation
+- definition:
+    enable_manual: false
+    update:
+      columns:
+      - isActive
+  name: handleisActiveEventTrigger
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: "{{DAILYOS_SERVER_URL}}/api/developer/webhookEvents/create-delete-event-trigger"

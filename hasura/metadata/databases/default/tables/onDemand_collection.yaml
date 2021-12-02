@@ -1,0 +1,40 @@
+table:
+  name: collection
+  schema: onDemand
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteCollections
+    delete_by_pk: deleteCollection
+    insert: createCollections
+    insert_one: createCollection
+    select: collections
+    select_aggregate: collectionsAggregate
+    select_by_pk: collection
+    update: updateCollections
+    update_by_pk: updateCollection
+object_relationships:
+- name: details
+  using:
+    manual_configuration:
+      column_mapping:
+        id: id
+      insertion_order: null
+      remote_table:
+        name: collectionDetails
+        schema: onDemand
+array_relationships:
+- name: brands
+  using:
+    foreign_key_constraint_on:
+      column: collectionId
+      table:
+        name: brand_collection
+        schema: onDemand
+- name: productCategories
+  using:
+    foreign_key_constraint_on:
+      column: collectionId
+      table:
+        name: collection_productCategory
+        schema: onDemand
