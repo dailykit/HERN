@@ -14,7 +14,13 @@ import axios from 'axios'
 import { GET_CART_PAYMENT_INFO, UPDATE_CART_PAYMENT } from '../graphql'
 import { useUser } from '../context'
 import { useConfig } from '../lib'
-import { getRazorpayOptions, isClient, useRazorPay } from '../utils'
+import {
+   getRazorpayOptions,
+   isClient,
+   useRazorPay,
+   usePaytm,
+   getPaytmOptions,
+} from '../utils'
 import { CartPaymentComponent } from '../components'
 
 const PaymentContext = createContext()
@@ -67,6 +73,7 @@ export const PaymentProvider = ({ children }) => {
    const { user, isAuthenticated, isLoading } = useUser()
    const { brand } = useConfig()
    const { displayRazorpay } = useRazorPay()
+   const { displayPaytm } = usePaytm()
    const { addToast } = useToasts()
 
    // subscription to get cart payment info
@@ -277,15 +284,15 @@ export const PaymentProvider = ({ children }) => {
       if (
          !_isEmpty(cartPayment) &&
          !_isEmpty(cartPayment.transactionRemark) &&
+         _has(
+            cartPayment,
+            'availablePaymentOption.supportedPaymentOption.supportedPaymentCompany.label'
+         ) &&
          !isCartPaymentLoading
       ) {
          console.log('inside payment provider useEffect')
          // right now only handle the razorpay method.
          if (
-            _has(
-               cartPayment,
-               'availablePaymentOption.supportedPaymentOption.supportedPaymentCompany.label'
-            ) &&
             cartPayment.availablePaymentOption.supportedPaymentOption
                .supportedPaymentCompany.label === 'razorpay'
          ) {
@@ -302,6 +309,25 @@ export const PaymentProvider = ({ children }) => {
                   })
                   console.log('options', options)
                   await displayRazorpay(options)
+               })()
+            }
+         } else if (
+            cartPayment.availablePaymentOption.supportedPaymentOption
+               .supportedPaymentCompany.label === 'paytm'
+         ) {
+            console.log('inside payment provider useEffect 1', cartPayment)
+
+            if (cartPayment.paymentStatus === 'PENDING') {
+               ;(async () => {
+                  const options = getPaytmOptions({
+                     orderDetails: cartPayment.transactionRemark,
+                     paymentInfo: state.paymentInfo,
+                     profileInfo: state.profileInfo,
+                     ondismissHandler: () => onCancelledHandler(),
+                     eventHandler,
+                  })
+                  console.log('options', options)
+                  await displayPaytm(options)
                })()
             }
          }
