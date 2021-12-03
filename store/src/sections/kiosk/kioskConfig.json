@@ -93,6 +93,22 @@
             "default": "#05578C",
             "dataType": "color",
             "userInsertType": "colorPicker"
+         },
+         "secondaryColor": {
+            "id": "secondary-col",
+            "label": "Secondary Color",
+            "value": "#F7B502",
+            "default": "#F7B502",
+            "dataType": "color",
+            "userInsertType": "colorPicker"
+         },
+         "categorySelectionWarningColor": {
+            "id": "category-selector-warning-col",
+            "label": "Category Selector warning Color",
+            "value": "#ffffff",
+            "default": "#ffffff",
+            "dataType": "color",
+            "userInsertType": "colorPicker"
          }
       },
       "logo": {
@@ -102,6 +118,24 @@
          "dataType": "imageUpload",
          "description": "Logo for brand.",
          "userInsertType": "imageUpload"
+      },
+      "tickBox": {
+         "tickBoxBGonCheck": {
+            "id": "tick-bg-on-check-col",
+            "label": "Tick box background color on check",
+            "value": "#6CB20D",
+            "default": "#6CB20D",
+            "dataType": "color",
+            "userInsertType": "colorPicker"
+         },
+         "tickColor": {
+            "id": "tick-color",
+            "label": "Tick color in tick box",
+            "value": "#FFFFFF",
+            "default": "#ffffff",
+            "dataType": "color",
+            "userInsertType": "colorPicker"
+         }
       }
    },
    "fulfillmentPageSettings": {

@@ -309,6 +309,8 @@
 
 .hern-kiosk__modifier-popup-modifiers-list {
    margin: 2em;
+   height: 70em;
+   overflow-y: auto;
 }
 .hern-kiosk__modifier-popup-modifier-category {
 }
@@ -325,11 +327,16 @@
       font-size: 1.1em;
       font-weight: 600;
    }
+   .hern-kiosk__modifier-category-selection-condition {
+      color: #ffffff;
+      margin: 0 1em;
+   }
 }
 .hern-kiosk__modifier-category-option {
    display: flex;
    justify-content: space-between;
    align-items: center;
+   margin: 1em 0;
    .hern-kiosk__modifier-category-right {
       display: flex;
       align-items: center;
@@ -341,4 +348,36 @@
 }
 .hern-kiosk__modifier--option-name {
    margin-left: 1em;
+}
+.hern-kiosk__modifier-popup-footer {
+   display: flex;
+   margin: 2em;
+   justify-content: space-between;
+   align-items: center;
+}
+.hern-kiosk__modifier-add-to-cart {
+   padding: 1em;
+   font-weight: 700;
+   font-size: 1.5em;
+   border-radius: 1em;
+   // margin: 0 2em;
+   justify-content: space-between;
+   align-items: center;
+   width: 20em;
+}
+.hern-kiosk__modifier--option-name {
+   margin-left: 1em;
+   font-size: 2em;
+   font-weight: bold;
+   color: #ffffff;
+}
+.hern-kiosk__modifier-total-label {
+   font-size: 2em;
+   font-weight: bold;
+   text-transform: capitalize;
+}
+.hern-kiosk__modifier-total-price {
+   margin: 0 1em;
+   color: #ffffff;
+   font-size: 2em;
 }
