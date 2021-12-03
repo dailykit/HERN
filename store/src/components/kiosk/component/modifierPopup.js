@@ -10,280 +10,13 @@ import {
 } from '../../../assets/icons'
 import KioskButton from './button'
 import { formatCurrency } from '../../../utils'
-const productData = {
-   id: 1080,
-   name: "Adrish's Special",
-   type: 'simple',
-   assets: {
-      images: [
-         'https://storage.eu.content-cdn.io/cdn-cgi/image/height=170,width=180,quality=100/https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/ProductImages/Large/NewBeefMudabal.png',
-         'https://storage.eu.content-cdn.io/cdn-cgi/image/height=170,width=180,quality=100/https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/ProductImages/Large/250x250pix-ckn-tortilla-jalapeno-meal-with-NEW-icon.png',
-         'https://storage.eu.content-cdn.io/cdn-cgi/image/height=170,width=180,quality=100/https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/ProductImages/Large/NewSuper-HERFYcopy.png',
-      ],
-      videos: [],
-   },
-   tags: ['Hot', 'New', 'Trending', 'Trending', 'Final'],
-   additionalText: 'comes with Ketchup',
-   description: 'SLdhasldha',
-   price: 5,
-   discount: 50,
-   isPopupAllowed: true,
-   isPublished: true,
-   defaultProductOptionId: null,
-   productOptions: [
-      {
-         id: 1203,
-         position: 1000000,
-         type: 'readyToEat',
-         label: 'Regular',
-         price: 10,
-         discount: 0,
-         cartItem: {
-            childs: {
-               data: [
-                  {
-                     childs: {
-                        data: [],
-                     },
-                     unitPrice: 10,
-                     productOptionId: 1203,
-                  },
-               ],
-            },
-            productId: 1080,
-            unitPrice: 2.5,
-         },
-         modifier: {
-            id: 1003,
-            name: 'modifier-sGh3i',
-            categories: [
-               {
-                  id: 1003,
-                  name: 'category-IOSqx',
-                  isRequired: true,
-                  type: 'single',
-                  limits: {
-                     max: null,
-                     min: 1,
-                  },
-                  options: [],
-                  __typename: 'onDemand_modifierCategory',
-               },
-            ],
-            __typename: 'onDemand_modifier',
-         },
-         __typename: 'products_productOption',
-      },
-      {
-         id: 1206,
-         position: 500000,
-         type: 'mealKit',
-         label: 'Medium',
-         price: 20,
-         discount: 0,
-         cartItem: {
-            childs: {
-               data: [
-                  {
-                     childs: {
-                        data: [
-                           {
-                              simpleRecipeYieldId: 1025,
-                           },
-                           {
-                              simpleRecipeYieldId: 1025,
-                           },
-                           {
-                              simpleRecipeYieldId: 1025,
-                           },
-                           {
-                              simpleRecipeYieldId: 1025,
-                           },
-                           {
-                              simpleRecipeYieldId: 1025,
-                           },
-                           {
-                              simpleRecipeYieldId: 1025,
-                           },
-                        ],
-                     },
-                     unitPrice: 20,
-                     productOptionId: 1206,
-                  },
-               ],
-            },
-            productId: 1080,
-            unitPrice: 2.5,
-         },
-         modifier: null,
-         __typename: 'products_productOption',
-      },
-      {
-         id: 1237,
-         position: 0,
-         type: null,
-         label: 'Large',
-         price: 5,
-         discount: 0,
-         cartItem: {
-            childs: {
-               data: [
-                  {
-                     childs: {
-                        data: [],
-                     },
-                     unitPrice: 5,
-                     productOptionId: 1237,
-                  },
-               ],
-            },
-            productId: 1080,
-            unitPrice: 2.5,
-         },
-         modifier: {
-            id: 1002,
-            name: 'Pizza options',
-            categories: [
-               {
-                  id: 1002,
-                  name: 'choose your crust',
-                  isRequired: true,
-                  type: 'multiple',
-                  limits: {
-                     max: 2,
-                     min: 1,
-                  },
-                  options: [
-                     {
-                        id: 1004,
-                        name: 'Cheese burst',
-                        price: 100,
-                        discount: 0,
-                        quantity: 1,
-                        image: 'https://storage.eu.content-cdn.io/cdn-cgi/image/height=92,quality=100/https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/ProductImages/Large/sideFriesReg.png',
-                        isActive: true,
-                        sachetItemId: null,
-                        ingredientSachetId: null,
-                        cartItem: {
-                           data: [
-                              {
-                                 unitPrice: 100,
-                                 modifierOptionId: 1004,
-                              },
-                           ],
-                        },
-                        __typename: 'onDemand_modifierCategoryOption',
-                     },
-                     {
-                        id: 1016,
-                        name: 'Mushroom Soba Noodles - 2 servings',
-                        price: 0,
-                        discount: 0,
-                        quantity: 1,
-                        image: 'https://storage.eu.content-cdn.io/cdn-cgi/image/height=92,quality=100/https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/ProductImages/Large/sideFriesReg.png',
-                        isActive: false,
-                        sachetItemId: null,
-                        ingredientSachetId: null,
-                        cartItem: {
-                           data: [
-                              {
-                                 unitPrice: 0,
-                                 modifierOptionId: 1016,
-                              },
-                           ],
-                        },
-                        __typename: 'onDemand_modifierCategoryOption',
-                     },
-                     {
-                        id: 1021,
-                        name: 'option-UzL0q',
-                        price: 0,
-                        discount: 0,
-                        quantity: 1,
-                        image: 'https://storage.eu.content-cdn.io/cdn-cgi/image/height=92,quality=100/https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/ProductImages/Large/sideFriesReg.png',
-                        isActive: true,
-                        sachetItemId: null,
-                        ingredientSachetId: null,
-                        cartItem: {
-                           data: [
-                              {
-                                 unitPrice: 0,
-                                 modifierOptionId: 1021,
-                              },
-                           ],
-                        },
-                        __typename: 'onDemand_modifierCategoryOption',
-                     },
-                  ],
-                  __typename: 'onDemand_modifierCategory',
-               },
-               {
-                  id: 1022,
-                  name: 'Another one',
-                  isRequired: true,
-                  type: 'single',
-                  limits: {
-                     max: 1,
-                     min: 1,
-                  },
-                  options: [
-                     {
-                        id: 1017,
-                        name: 'Beans',
-                        price: 1,
-                        discount: 50,
-                        quantity: 1,
-                        image: 'https://dailykit-133-test.s3.amazonaws.com/images/21814-mac-cheese.jpg',
-                        isActive: true,
-                        sachetItemId: null,
-                        ingredientSachetId: null,
-                        cartItem: {
-                           data: [
-                              {
-                                 unitPrice: 0.5,
-                                 modifierOptionId: 1017,
-                              },
-                           ],
-                        },
-                        __typename: 'onDemand_modifierCategoryOption',
-                     },
-                     {
-                        id: 10171,
-                        name: 'Beans Return',
-                        price: 1,
-                        discount: 50,
-                        quantity: 1,
-                        image: 'https://dailykit-133-test.s3.amazonaws.com/images/21814-mac-cheese.jpg',
-                        isActive: true,
-                        sachetItemId: null,
-                        ingredientSachetId: null,
-                        cartItem: {
-                           data: [
-                              {
-                                 unitPrice: 0.5,
-                                 modifierOptionId: 1017,
-                              },
-                           ],
-                        },
-                        __typename: 'onDemand_modifierCategoryOption',
-                     },
-                  ],
-                  __typename: 'onDemand_modifierCategory',
-               },
-            ],
-            __typename: 'onDemand_modifier',
-         },
-         __typename: 'products_productOption',
-      },
-   ],
-   __typename: 'products_product',
-}
+
 export const KioskModifier = props => {
    const { config, setShowModifier, productData, edit = false } = props
    const { t } = useTranslation()
    //context
    const { addToCart, methods } = React.useContext(CartContext)
-   console.log('productData', productData)
+
    // component state
    const [selectedProductOption, setSelectedProductOption] = useState(
       productData.productOptions[0]
@@ -555,7 +288,9 @@ export const KioskModifier = props => {
             <div className="hern-kiosk__menu-product-modifier-header">
                <span
                   className="hern-kiosk__menu-product-modifier-customize-text"
-                  style={{ color: '#ffffff' }}
+                  style={{
+                     color: `${config.kioskSettings.theme.modifierTextColor.value}`,
+                  }}
                >
                   {t('Customize')}
                </span>
@@ -580,7 +315,24 @@ export const KioskModifier = props => {
                   style={{ margin: '2em 0 0 0' }}
                />
             </div>
-            <div className="hern-kiosk__menu-product-modifier-brief"></div>
+            <div className="hern-kiosk__menu-product-modifier-brief">
+               <span
+                  className="hern-kiosk__menu-product-modifier-p-name"
+                  style={{
+                     color: `${config.kioskSettings.theme.modifierTextColor.value}`,
+                  }}
+               >
+                  {productData.name}
+               </span>
+               <span
+                  className="hern-kiosk__menu-product-modifier-p-price"
+                  style={{
+                     color: `${config.kioskSettings.theme.modifierTextColor.value}`,
+                  }}
+               >
+                  {formatCurrency(productData.price - productData.discount)}
+               </span>
+            </div>
             <div className="hern-kiosk__modifier-popup-product-options">
                <Radio.Group
                   defaultValue={productData.productOptions[0].id}
@@ -614,7 +366,15 @@ export const KioskModifier = props => {
                   ))}
                </Radio.Group>
             </div>
-
+            <div className="hern-kiosk__product-modifier-p-additional-text">
+               <span
+                  style={{
+                     color: `${config.kioskSettings.theme.modifierTextColor.value}`,
+                  }}
+               >
+                  {productData.additionalText}
+               </span>
+            </div>
             <div className="hern-kiosk__modifier-popup-modifiers-list">
                {selectedProductOption.modifier &&
                   selectedProductOption.modifier.categories.map(
@@ -632,7 +392,9 @@ export const KioskModifier = props => {
                                  />
                                  <span
                                     className="hern-kiosk__modifier-category-label-text"
-                                    style={{ color: '#ffffff' }}
+                                    style={{
+                                       color: `${config.kioskSettings.theme.modifierTextColor.value}`,
+                                    }}
                                  >
                                     {eachModifierCategory.name}
                                  </span>

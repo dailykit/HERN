@@ -109,6 +109,14 @@
             "default": "#ffffff",
             "dataType": "color",
             "userInsertType": "colorPicker"
+         },
+         "modifierTextColor": {
+            "id": "modifier-text-col",
+            "label": "Modifier Text Color",
+            "value": "#ffffff",
+            "default": "#ffffff",
+            "dataType": "color",
+            "userInsertType": "colorPicker"
          }
       },
       "logo": {

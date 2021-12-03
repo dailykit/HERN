@@ -297,6 +297,25 @@
    font-size: 3em;
    font-weight: 700;
 }
+.hern-kiosk__menu-product-modifier-brief {
+   margin: 0 2em 1em 2em;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+}
+.hern-kiosk__menu-product-modifier-p-name {
+   font-size: 2em;
+   font-weight: 700;
+}
+.hern-kiosk__menu-product-modifier-p-price {
+   font-size: 2em;
+   font-weight: 700;
+}
+.hern-kiosk__product-modifier-p-additional-text {
+   margin: 2em;
+   > span {
+   }
+}
 .hern-kiosk__modifier-popup-product-options {
    display: flex;
    justify-content: center;
