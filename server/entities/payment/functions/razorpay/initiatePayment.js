@@ -31,9 +31,10 @@ const initiatePayment = async arg => {
       if (response) {
          console.log('razorpayOrder', response)
          await paymentLogger({
-            response,
             cartPaymentId,
-            paymentType: 'razorpay'
+            transactionRemark: response,
+            requestId: response.id,
+            paymentStatus: response.status
          })
          return {
             success: true,

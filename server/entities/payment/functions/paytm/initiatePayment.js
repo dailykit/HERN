@@ -27,23 +27,25 @@ const initiatePayment = async arg => {
          ORDER_ID: 'TEST_' + new Date().getTime(), // order id
          CUST_ID: 'DEEPAK_' + new Date().getTime(), // customer id
          TXN_AMOUNT: (amount * 100).toFixed(0), // transaction amount
-         CALLBACK_URL: 'http://localhost:1234/callback', // callback url
+         CALLBACK_URL: 'http://localhost:4000/callback', // callback url
          EMAIL: 'zackRyan18@gmail.com', // customer email id
          MOBILE_NO: '8767677672' // customer mobile number
       }
       console.log({ options })
-      const generateSignature = await paytmchecksum.generateSignature(
+      const generatedChecksumHash = await paytmchecksum.generateSignature(
          options,
          '' // merchant key
       )
 
-      if (generateSignature) {
-         console.log('generateSignature Returns: ', generateSignature)
-         // await paymentLogger({
-         //    response,
-         //    cartPaymentId,
-         //    paymentType: 'razorpay'
-         // })
+      if (generatedChecksumHash) {
+         console.log('generateSignature Returns: ', generatedChecksumHash)
+         const response = { ...options, CHECKSUMHASH: generatedChecksumHash }
+         await paymentLogger({
+            cartPaymentId,
+            transactionRemark: response,
+            requestId: response.ORDER_ID,
+            paymentStatus: 'PENDING'
+         })
          return {
             success: true,
             data: response,
