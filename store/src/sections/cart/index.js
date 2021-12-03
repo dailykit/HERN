@@ -14,11 +14,13 @@ import { DeleteIcon, EditIcon, EmptyCart, CloseIcon } from '../../assets/icons'
 import { useLazyQuery, useQuery } from '@apollo/react-hooks'
 import { PRODUCTS } from '../../graphql'
 import Link from 'next/link'
+import { useConfig } from '../../lib'
 
 export const OnDemandCart = () => {
    //context
    const { cartState, methods, addToCart } = React.useContext(CartContext)
    const { onDemandMenu } = React.useContext(onDemandMenuContext)
+   const { brand, isConfigLoading } = useConfig()
 
    //context data
    const { cart } = cartState
@@ -38,6 +40,7 @@ export const OnDemandCart = () => {
       if (!isMenuLoading) {
          if (cart) {
             const combinedCartItems = combineCartItems(cart.products.nodes)
+            console.log('thisISCOmbinedCart', combinedCartItems)
             setCombinedCartData(combinedCartItems)
          } else {
             setCombinedCartData([])
@@ -46,11 +49,30 @@ export const OnDemandCart = () => {
       }
    }, [cart, isMenuLoading])
 
+   const argsForByLocation = React.useMemo(
+      () => ({
+         params: {
+            brandId: brand?.id,
+            locationId: 1000,
+         },
+      }),
+      [brand]
+   )
+
    //fetch product detail which to be increase or edit
    useQuery(PRODUCTS, {
       skip: !increaseProductId,
       variables: {
          ids: increaseProductId,
+         priceArgs: argsForByLocation,
+         discountArgs: argsForByLocation,
+         defaultCartItemArgs: argsForByLocation,
+         productOptionPriceArgs: argsForByLocation,
+         productOptionDiscountArgs: argsForByLocation,
+         productOptionCartItemArgs: argsForByLocation,
+         modifierCategoryOptionPriceArgs: argsForByLocation,
+         modifierCategoryOptionDiscountArgs: argsForByLocation,
+         modifierCategoryOptionCartItemArgs: argsForByLocation,
       },
       onCompleted: data => {
          if (data) {
