@@ -1,0 +1,43 @@
+table:
+  name: productCategory
+  schema: master
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteProductCategory
+    delete_by_pk: deleteProductCategories
+    insert: insertProductCategories
+    insert_one: insertProductCategory
+    select: productCategories
+    select_aggregate: productCategoriesAggregate
+    select_by_pk: productCategory
+    update: updateProductCategories
+    update_by_pk: updateProductCategory
+object_relationships:
+- name: importHistory
+  using:
+    foreign_key_constraint_on: importHistoryId
+array_relationships:
+- name: collections
+  using:
+    foreign_key_constraint_on:
+      column: productCategoryName
+      table:
+        name: collection_productCategory
+        schema: onDemand
+- name: subscriptionOccurenceAddOnProducts
+  using:
+    manual_configuration:
+      column_mapping:
+        name: productCategory
+      insertion_order: null
+      remote_table:
+        name: subscriptionOccurence_addOn
+        schema: subscription
+- name: subscriptionOccurenceProducts
+  using:
+    foreign_key_constraint_on:
+      column: productCategory
+      table:
+        name: subscriptionOccurence_product
+        schema: subscription

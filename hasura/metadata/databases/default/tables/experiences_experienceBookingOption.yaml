@@ -1,0 +1,18 @@
+table:
+  name: experienceBookingOption
+  schema: experiences
+object_relationships:
+- name: experienceBooking
+  using:
+    foreign_key_constraint_on: experienceBookingId
+- name: experienceClass
+  using:
+    foreign_key_constraint_on: experienceClassId
+array_relationships:
+- name: experienceBookingParticipantChoices
+  using:
+    foreign_key_constraint_on:
+      column: experienceBookingOptionId
+      table:
+        name: experienceBookingParticipantChoice
+        schema: experiences

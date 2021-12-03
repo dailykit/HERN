@@ -1,0 +1,13 @@
+table:
+  name: customerReview
+  schema: crm
+object_relationships:
+- name: customer
+  using:
+    manual_configuration:
+      column_mapping:
+        customerEmail: email
+      insertion_order: null
+      remote_table:
+        name: customer
+        schema: crm

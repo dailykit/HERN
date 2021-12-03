@@ -1,0 +1,301 @@
+table:
+  name: cartItem
+  schema: order
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteCartItems
+    delete_by_pk: deleteCartItem
+    insert: createCartItems
+    insert_one: createCartItem
+    select: cartItems
+    select_aggregate: cartItemsAggregate
+    select_by_pk: cartItem
+    update: updateCartItems
+    update_by_pk: updateCartItem
+object_relationships:
+- name: bulkItem
+  using:
+    manual_configuration:
+      column_mapping:
+        bulkItemId: id
+      insertion_order: null
+      remote_table:
+        name: bulkItemView
+        schema: inventory
+- name: cart
+  using:
+    foreign_key_constraint_on: cartId
+- name: comboProductComponent
+  using:
+    foreign_key_constraint_on: comboProductComponentId
+- name: customizableProductComponent
+  using:
+    foreign_key_constraint_on: customizableProductComponentId
+- name: ingredientSachet
+  using:
+    foreign_key_constraint_on: ingredientSachetId
+- name: labelTemplate
+  using:
+    foreign_key_constraint_on: labelTemplateId
+- name: modifierOption
+  using:
+    foreign_key_constraint_on: modifierOptionId
+- name: operationConfig
+  using:
+    manual_configuration:
+      column_mapping:
+        operationConfigId: id
+      insertion_order: null
+      remote_table:
+        name: operationConfig
+        schema: settings
+- name: parent
+  using:
+    foreign_key_constraint_on: parentCartItemId
+- name: product
+  using:
+    foreign_key_constraint_on: productId
+- name: productOption
+  using:
+    foreign_key_constraint_on: productOptionId
+- name: productOptionView
+  using:
+    manual_configuration:
+      column_mapping:
+        productOptionId: id
+      insertion_order: null
+      remote_table:
+        name: productOptionView
+        schema: products
+- name: sachetItem
+  using:
+    foreign_key_constraint_on: sachetItemId
+- name: simpleRecipeYield
+  using:
+    foreign_key_constraint_on: simpleRecipeYieldId
+- name: subscriptionOccurenceProduct
+  using:
+    foreign_key_constraint_on: subscriptionOccurenceProductId
+- name: supplierItem
+  using:
+    manual_configuration:
+      column_mapping:
+        supplierItemId: id
+      insertion_order: null
+      remote_table:
+        name: supplierItemView
+        schema: inventory
+array_relationships:
+- name: childs
+  using:
+    foreign_key_constraint_on:
+      column: parentCartItemId
+      table:
+        name: cartItem
+        schema: order
+computed_fields:
+- comment: ""
+  definition:
+    function:
+      name: cartItemTaxBreakDown
+      schema: cartFunctions
+  name: cartItemTaxBreakDown
+- comment: ""
+  definition:
+    function:
+      name: experiencePrice
+      schema: order
+  name: experiencePrice
+- comment: ""
+  definition:
+    function:
+      name: unitPricePaidByParent
+      schema: cartFunctions
+  name: unitPricePaidByParent
+- comment: ""
+  definition:
+    function:
+      name: unitPricePaidBySelf
+      schema: cartFunctions
+  name: unitPricePaidBySelf
+insert_permissions:
+- permission:
+    backend_only: false
+    check: {}
+    columns:
+    - accuracy
+    - addOnLabel
+    - addOnPrice
+    - comboProductComponentId
+    - customizableProductComponentId
+    - ingredientSachetId
+    - instructionCardTemplateId
+    - inventoryProductBundleId
+    - isAddOn
+    - isAutoAdded
+    - isModifier
+    - labelTemplateId
+    - modifierOptionId
+    - packagingId
+    - parentCartItemId
+    - position
+    - productId
+    - productOptionId
+    - refundPrice
+    - sachetItemId
+    - simpleRecipeYieldId
+    - stationId
+    - status
+    - subRecipeYieldId
+    - subscriptionOccurenceAddOnProductId
+    - subscriptionOccurenceProductId
+    - unitPrice
+    set:
+      cartId: x-hasura-Cart-Id
+  role: guest-consumer
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - accuracy
+    - addOnLabel
+    - addOnPrice
+    - cartId
+    - comboProductComponentId
+    - created_at
+    - customizableProductComponentId
+    - id
+    - ingredientSachetId
+    - instructionCardTemplateId
+    - inventoryProductBundleId
+    - isAddOn
+    - isAssembled
+    - isAutoAdded
+    - isModifier
+    - labelTemplateId
+    - modifierOptionId
+    - packagingId
+    - parentCartItemId
+    - position
+    - productId
+    - productOptionId
+    - refundPrice
+    - sachetItemId
+    - simpleRecipeYieldId
+    - stationId
+    - status
+    - subRecipeYieldId
+    - subscriptionOccurenceAddOnProductId
+    - subscriptionOccurenceProductId
+    - unitPrice
+    - updated_at
+    filter: {}
+  role: guest-consumer
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - accuracy
+    - addOnLabel
+    - addOnPrice
+    - cartId
+    - comboProductComponentId
+    - created_at
+    - customizableProductComponentId
+    - id
+    - ingredientSachetId
+    - instructionCardTemplateId
+    - inventoryProductBundleId
+    - isAddOn
+    - isAutoAdded
+    - isModifier
+    - labelTemplateId
+    - modifierOptionId
+    - packagingId
+    - parentCartItemId
+    - position
+    - productId
+    - productOptionId
+    - refundPrice
+    - sachetItemId
+    - simpleRecipeYieldId
+    - stationId
+    - status
+    - subRecipeYieldId
+    - subscriptionOccurenceAddOnProductId
+    - subscriptionOccurenceProductId
+    - unitPrice
+    - updated_at
+    filter: {}
+  role: consumer
+- permission:
+    check: null
+    columns:
+    - accuracy
+    - addOnLabel
+    - addOnPrice
+    - comboProductComponentId
+    - customizableProductComponentId
+    - ingredientSachetId
+    - instructionCardTemplateId
+    - inventoryProductBundleId
+    - isAddOn
+    - isAutoAdded
+    - isModifier
+    - labelTemplateId
+    - modifierOptionId
+    - packagingId
+    - parentCartItemId
+    - position
+    - productId
+    - productOptionId
+    - refundPrice
+    - sachetItemId
+    - simpleRecipeYieldId
+    - stationId
+    - status
+    - subRecipeYieldId
+    - subscriptionOccurenceAddOnProductId
+    - subscriptionOccurenceProductId
+    - unitPrice
+    filter:
+      cartId:
+        _eq: X-Hasura-Cart-Id
+  role: guest-consumer
+delete_permissions:
+- permission:
+    filter:
+      cartId:
+        _eq: X-Hasura-Cart-Id
+  role: consumer
+- permission:
+    filter:
+      cartId:
+        _eq: X-Hasura-Cart-Id
+  role: guest-consumer
+event_triggers:
+- definition:
+    enable_manual: false
+    insert:
+      columns: "*"
+    update:
+      columns:
+      - status
+  name: orderSachetUpsert
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: http://1884da1b60b3.ngrok.io/api/inventory/order-sachet-upsert
+- definition:
+    enable_manual: true
+    update:
+      columns:
+      - status
+  name: printLabel
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: "{{DAILYOS_SERVER_URL}}/event/print-label"

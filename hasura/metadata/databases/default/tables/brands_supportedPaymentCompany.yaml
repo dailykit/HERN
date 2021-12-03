@@ -1,0 +1,3 @@
+table:
+  name: supportedPaymentCompany
+  schema: brands

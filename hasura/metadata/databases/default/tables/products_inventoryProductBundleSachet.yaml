@@ -1,0 +1,19 @@
+table:
+  name: inventoryProductBundleSachet
+  schema: products
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteInventoryProductBundleSachets
+    delete_by_pk: deleteInventoryProductBundleSachet
+    insert: createInventoryProductBundleSachets
+    insert_one: createInventoryProductBundleSachet
+    select: inventoryProductBundleSachets
+    select_aggregate: inventoryProductBundleSachetsAggregate
+    select_by_pk: inventoryProductBundleSachet
+    update: updateInventoryProductBundleSachets
+    update_by_pk: updateInventoryProductBundleSachet
+object_relationships:
+- name: sachetItem
+  using:
+    foreign_key_constraint_on: sachetItemId

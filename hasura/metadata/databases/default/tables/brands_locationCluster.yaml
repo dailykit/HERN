@@ -1,0 +1,15 @@
+table:
+  name: locationCluster
+  schema: brands
+object_relationships:
+- name: parentLocationCluster
+  using:
+    foreign_key_constraint_on: parentLocationClusterId
+array_relationships:
+- name: childLocationClusters
+  using:
+    foreign_key_constraint_on:
+      column: parentLocationClusterId
+      table:
+        name: locationCluster
+        schema: brands

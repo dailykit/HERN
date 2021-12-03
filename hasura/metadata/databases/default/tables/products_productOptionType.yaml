@@ -1,0 +1,34 @@
+table:
+  name: productOptionType
+  schema: products
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteProductOptionTypes
+    delete_by_pk: deleteProductOptionType
+    insert: createProductOptionTypes
+    insert_one: createProductOptionType
+    select: productOptionTypes
+    select_aggregate: productOptionTypesAggregate
+    select_by_pk: productOptionType
+    update: updateProductOptionTypes
+    update_by_pk: updateProductOptionType
+array_relationships:
+- name: cartItems
+  using:
+    manual_configuration:
+      column_mapping:
+        title: productOptionType
+      insertion_order: null
+      remote_table:
+        name: cartItem
+        schema: order
+- name: productOptions
+  using:
+    manual_configuration:
+      column_mapping:
+        title: type
+      insertion_order: null
+      remote_table:
+        name: productOption
+        schema: products

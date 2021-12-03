@@ -1,0 +1,33 @@
+table:
+  name: walletTransaction
+  schema: crm
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteWalletTransactions
+    delete_by_pk: deleteWalletTransaction
+    insert: createWalletTransactions
+    insert_one: createWalletTransaction
+    select: walletTransactions
+    select_aggregate: walletTransactionsAggregate
+    select_by_pk: walletTransaction
+    update: updateWalletTransactions
+    update_by_pk: updateWalletTransaction
+object_relationships:
+- name: customerReferral
+  using:
+    foreign_key_constraint_on: customerReferralId
+- name: orderCart
+  using:
+    foreign_key_constraint_on: orderCartId
+- name: wallet
+  using:
+    foreign_key_constraint_on: walletId
+array_relationships:
+- name: rewardHistories
+  using:
+    foreign_key_constraint_on:
+      column: walletTransactionId
+      table:
+        name: rewardHistory
+        schema: crm

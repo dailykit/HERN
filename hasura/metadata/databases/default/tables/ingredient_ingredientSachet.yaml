@@ -1,0 +1,98 @@
+table:
+  name: ingredientSachet
+  schema: ingredient
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteIngredientSachet
+    insert: createIngredientSachet
+    select: ingredientSachets
+    select_aggregate: ingredientSachetsAggregate
+    select_by_pk: ingredientSachet
+    update: updateIngredientSachet
+object_relationships:
+- name: ingredient
+  using:
+    foreign_key_constraint_on: ingredientId
+- name: ingredientProcessing
+  using:
+    foreign_key_constraint_on: ingredientProcessingId
+- name: liveModeOfFulfillment
+  using:
+    foreign_key_constraint_on: liveMOF
+- name: unitId
+  using:
+    foreign_key_constraint_on: unit
+array_relationships:
+- name: cartItems
+  using:
+    foreign_key_constraint_on:
+      column: ingredientSachetId
+      table:
+        name: cartItem
+        schema: order
+- name: modeOfFulfillments
+  using:
+    foreign_key_constraint_on:
+      column: ingredientSachetId
+      table:
+        name: modeOfFulfillment
+        schema: ingredient
+- name: recipeYields
+  using:
+    foreign_key_constraint_on:
+      column: ingredientSachetId
+      table:
+        name: simpleRecipeYield_ingredientSachet
+        schema: simpleRecipe
+computed_fields:
+- comment: ""
+  definition:
+    function:
+      name: cost
+      schema: ingredient
+  name: cost
+- comment: ""
+  definition:
+    function:
+      name: issachetvalid
+      schema: ingredient
+  name: isValid
+- comment: ""
+  definition:
+    function:
+      name: nutritionalInfo
+      schema: ingredient
+  name: nutritionalInfo
+- comment: ""
+  definition:
+    function:
+      name: unit_conversions_ingredient_sachet
+      schema: ingredient
+  name: unit_conversions
+event_triggers:
+- definition:
+    delete:
+      columns: "*"
+    enable_manual: false
+    insert:
+      columns: "*"
+    update:
+      columns:
+      - isArchived
+      - tracking
+      - visibility
+      - id
+      - ingredientId
+      - ingredientProcessingId
+      - liveMOF
+      - quantity
+      - unit
+      - createdAt
+      - updatedAt
+  name: ingredientSachetModified
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: https://8cb6ae38d5ed.ngrok.io/match/check

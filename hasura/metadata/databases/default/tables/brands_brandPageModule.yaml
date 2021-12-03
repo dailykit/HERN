@@ -1,0 +1,22 @@
+table:
+  name: brandPageModule
+  schema: brands
+object_relationships:
+- name: brandPage
+  using:
+    foreign_key_constraint_on: brandPageId
+- name: file
+  using:
+    foreign_key_constraint_on: fileId
+- name: systemModule
+  using:
+    manual_configuration:
+      column_mapping:
+        internalModuleIdentifier: identifier
+      insertion_order: null
+      remote_table:
+        name: systemModule
+        schema: brands
+- name: template
+  using:
+    foreign_key_constraint_on: templateId

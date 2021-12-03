@@ -1,0 +1,11 @@
+table:
+  name: webhookUrl
+  schema: developer
+array_relationships:
+- name: webhookUrl_events
+  using:
+    foreign_key_constraint_on:
+      column: webhookUrlId
+      table:
+        name: webhookUrl_events
+        schema: developer

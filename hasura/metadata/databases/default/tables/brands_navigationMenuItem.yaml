@@ -1,0 +1,21 @@
+table:
+  name: navigationMenuItem
+  schema: brands
+object_relationships:
+- name: action
+  using:
+    foreign_key_constraint_on: actionId
+- name: navigationMenu
+  using:
+    foreign_key_constraint_on: navigationMenuId
+- name: parentNavigationMenuItem
+  using:
+    foreign_key_constraint_on: parentNavigationMenuItemId
+array_relationships:
+- name: childNavigationMenuItems
+  using:
+    foreign_key_constraint_on:
+      column: parentNavigationMenuItemId
+      table:
+        name: navigationMenuItem
+        schema: brands

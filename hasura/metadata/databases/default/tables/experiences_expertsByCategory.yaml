@@ -1,0 +1,13 @@
+table:
+  name: expertsByCategory
+  schema: experiences
+object_relationships:
+- name: expert
+  using:
+    manual_configuration:
+      column_mapping:
+        expertId: id
+      insertion_order: null
+      remote_table:
+        name: expert
+        schema: experts

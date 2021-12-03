@@ -1,0 +1,60 @@
+table:
+  name: bulkWorkOrder
+  schema: inventory
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteBulkWorkOrder
+    insert: createBulkWorkOrder
+    select: bulkWorkOrders
+    select_aggregate: bulkWorkOrdersAggregate
+    select_by_pk: bulkWorkOrder
+    update: updateBulkWorkOrder
+object_relationships:
+- name: inputBulkItem
+  using:
+    foreign_key_constraint_on: inputBulkItemId
+- name: inputQuantityUnitId
+  using:
+    foreign_key_constraint_on: inputQuantityUnit
+- name: outputBulkItem
+  using:
+    foreign_key_constraint_on: outputBulkItemId
+- name: station
+  using:
+    foreign_key_constraint_on: stationId
+- name: supplierItem
+  using:
+    foreign_key_constraint_on: supplierItemId
+- name: user
+  using:
+    foreign_key_constraint_on: userId
+array_relationships:
+- name: bulkItemHistories
+  using:
+    foreign_key_constraint_on:
+      column: bulkWorkOrderId
+      table:
+        name: bulkItemHistory
+        schema: inventory
+event_triggers:
+- definition:
+    enable_manual: true
+    insert:
+      columns: "*"
+    update:
+      columns:
+      - id
+      - inputBulkItemId
+      - outputBulkItemId
+      - userId
+      - inputQuantity
+      - outputQuantity
+      - inputQuantityUnit
+      - status
+  name: BulkWorkOrderCreateUpdate
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: "{{DAILYOS_SERVER_URL}}/api/inventory/bulk-work-order-upsert"

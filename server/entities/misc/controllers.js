@@ -280,7 +280,7 @@ export const authorizeRequest = async (req, res) => {
          ...(apiKeyHeaderValue &&
             apiKeyExists &&
             {
-               'X-Hasura-Role': 'apiKey',
+               'X-Hasura-Role': 'apiKeyRole',
                'X-Hasura-Api-Key': apiKeyHeaderValue
             })
       })

@@ -1,0 +1,83 @@
+table:
+  name: station
+  schema: settings
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteStations
+    delete_by_pk: deleteStation
+    insert: insertStations
+    insert_one: insertStation
+    select: stations
+    select_aggregate: stationsAggregate
+    select_by_pk: station
+    update: updateStations
+    update_by_pk: updateStation
+object_relationships:
+- name: defaultKotPrinter
+  using:
+    foreign_key_constraint_on: defaultKotPrinterId
+- name: defaultLabelPrinter
+  using:
+    foreign_key_constraint_on: defaultLabelPrinterId
+- name: defaultScale
+  using:
+    manual_configuration:
+      column_mapping:
+        defaultScaleId: id
+      insertion_order: null
+      remote_table:
+        name: scale
+        schema: deviceHub
+array_relationships:
+- name: assignedScales
+  using:
+    manual_configuration:
+      column_mapping:
+        id: stationId
+      insertion_order: null
+      remote_table:
+        name: scale
+        schema: deviceHub
+- name: assignedUsers
+  using:
+    foreign_key_constraint_on:
+      column: stationId
+      table:
+        name: station_user
+        schema: settings
+- name: attachedKotPrinters
+  using:
+    foreign_key_constraint_on:
+      column: stationId
+      table:
+        name: station_kot_printer
+        schema: settings
+- name: attachedLabelPrinters
+  using:
+    foreign_key_constraint_on:
+      column: stationId
+      table:
+        name: station_label_printer
+        schema: settings
+- name: bulkWorkOrders
+  using:
+    foreign_key_constraint_on:
+      column: stationId
+      table:
+        name: bulkWorkOrder
+        schema: inventory
+- name: modeOfFulfillments
+  using:
+    foreign_key_constraint_on:
+      column: stationId
+      table:
+        name: modeOfFulfillment
+        schema: ingredient
+- name: sachetWorkOrders
+  using:
+    foreign_key_constraint_on:
+      column: stationId
+      table:
+        name: sachetWorkOrder
+        schema: inventory

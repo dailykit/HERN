@@ -1,0 +1,7 @@
+table:
+  name: payment_
+  schema: paymentHub
+object_relationships:
+- name: paymentPartnership_
+  using:
+    foreign_key_constraint_on: paymentPartnershipId

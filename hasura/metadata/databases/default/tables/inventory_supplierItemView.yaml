@@ -1,0 +1,13 @@
+table:
+  name: supplierItemView
+  schema: inventory
+object_relationships:
+- name: supplier
+  using:
+    manual_configuration:
+      column_mapping:
+        supplierId: id
+      insertion_order: null
+      remote_table:
+        name: supplier
+        schema: inventory

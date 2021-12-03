@@ -1,0 +1,19 @@
+table:
+  name: unitConversionByBulkItem
+  schema: inventory
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteUnitConversionByBulkItem
+    insert: createUnitConversionByBulkItem
+    select: unitConversionByBulkItems
+    select_aggregate: unitConversionByBulkItemsAggregate
+    select_by_pk: unitConversionByBulkItem
+    update: updateUnitConversionByBulkItem
+object_relationships:
+- name: bulkItem
+  using:
+    foreign_key_constraint_on: bulkItemId
+- name: unitConversion
+  using:
+    foreign_key_constraint_on: unitConversionId

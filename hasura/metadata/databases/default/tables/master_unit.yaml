@@ -1,0 +1,76 @@
+table:
+  name: unit
+  schema: master
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteUnit
+    insert: createUnit
+    select: units
+    select_aggregate: unitsAggregate
+    select_by_pk: unit
+    update: updateUnit
+array_relationships:
+- name: bulkItemHistories
+  using:
+    foreign_key_constraint_on:
+      column: unit
+      table:
+        name: bulkItemHistory
+        schema: inventory
+- name: bulkItems
+  using:
+    foreign_key_constraint_on:
+      column: unit
+      table:
+        name: bulkItem
+        schema: inventory
+- name: bulkWorkOrders
+  using:
+    foreign_key_constraint_on:
+      column: inputQuantityUnit
+      table:
+        name: bulkWorkOrder
+        schema: inventory
+- name: ingredientSachets
+  using:
+    foreign_key_constraint_on:
+      column: unit
+      table:
+        name: ingredientSachet
+        schema: ingredient
+- name: inputUnitConversions
+  using:
+    foreign_key_constraint_on:
+      column: inputUnitName
+      table:
+        name: unitConversion
+        schema: master
+- name: outputUnitConversions
+  using:
+    foreign_key_constraint_on:
+      column: outputUnitName
+      table:
+        name: unitConversion
+        schema: master
+- name: purchaseOrderItems
+  using:
+    foreign_key_constraint_on:
+      column: unit
+      table:
+        name: purchaseOrderItem
+        schema: inventory
+- name: sachetItems
+  using:
+    foreign_key_constraint_on:
+      column: unit
+      table:
+        name: sachetItem
+        schema: inventory
+- name: supplierItems
+  using:
+    foreign_key_constraint_on:
+      column: unit
+      table:
+        name: supplierItem
+        schema: inventory

@@ -774,7 +774,7 @@ export const Sidebar = ({ setOpen }) => {
          {
             title: 'View Store',
             icon: StoreAppIcon,
-            path: './',
+            path: '/viewStore',
             childs: [],
          },
          {

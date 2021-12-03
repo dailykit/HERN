@@ -1,0 +1,22 @@
+table:
+  name: insights
+  schema: insights
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    select_by_pk: insight
+array_relationships:
+- name: apps_modules
+  using:
+    foreign_key_constraint_on:
+      column: insightIdentifier
+      table:
+        name: app_module_insight
+        schema: insights
+- name: charts
+  using:
+    foreign_key_constraint_on:
+      column: insightIdentifier
+      table:
+        name: chart
+        schema: insights

@@ -1,0 +1,10 @@
+table:
+  name: experience_experienceTags
+  schema: experiences
+object_relationships:
+- name: experience
+  using:
+    foreign_key_constraint_on: experienceId
+- name: experienceTag
+  using:
+    foreign_key_constraint_on: experienceTagId

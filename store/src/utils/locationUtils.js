@@ -2,6 +2,7 @@ import { rrulestr } from 'rrule'
 import { isPointInPolygon } from 'geolib'
 import { isClient, get_env } from './index'
 import axios from 'axios'
+import { each } from 'lodash'
 
 export const isStoreOnDemandDeliveryAvailable = async (
    brandRecurrences,
@@ -486,5 +487,36 @@ export const isStorePreOrderDineInAvailable = (brandRecurrences, eachStore) => {
          status: true,
          message: 'Store available for pre order dine in.',
       }
+   }
+}
+
+export const combineRecurrenceAndBrandLocation = (
+   eachStore,
+   brandRecurrences
+) => {
+   const storeLocationRecurrence = brandRecurrences.filter(
+      x => x.brandLocationId === eachStore.id
+   )
+
+   // getting brand recurrence by location [consist different brandLocation ids]
+
+   const storeRecurrencesLength = storeLocationRecurrence.length
+
+   // if there is brandLocationId in brandRecurrences we use only those brandRecurrences which has eachStore.id for particular eachStore other wise (brand level recurrences) we use reoccurrences which as brandLocationId == null
+   const finalBrandLocationRecurrence =
+      storeRecurrencesLength === 0
+         ? brandRecurrences.filter(x => x.brandLocationId === null)
+         : storeLocationRecurrence
+
+   const finalBrandRecurrence = brandRecurrences.filter(
+      x => x.brandId === eachStore.brandId
+   )
+
+   if (finalBrandLocationRecurrence.length === 0) {
+      eachStore.recurrences = finalBrandRecurrence
+      return eachStore.recurrences[0].recurrence
+   } else {
+      eachStore.recurrences = finalBrandLocationRecurrence
+      return eachStore.recurrences[0].recurrence
    }
 }

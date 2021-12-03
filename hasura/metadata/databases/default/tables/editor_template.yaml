@@ -1,0 +1,24 @@
+table:
+  name: template
+  schema: editor
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - id
+    - name
+    - route
+    - thumbnail
+    - type
+    filter: {}
+  role: consumer
+- permission:
+    allow_aggregations: true
+    columns:
+    - id
+    - name
+    - route
+    - thumbnail
+    - type
+    filter: {}
+  role: guest-consumer

@@ -1,0 +1,68 @@
+table:
+  name: comboProductComponent
+  schema: products
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteComboProductComponents
+    delete_by_pk: deleteComboProductComponent
+    insert: createComboProductComponents
+    insert_one: createComboProductComponent
+    select: comboProductComponents
+    select_aggregate: comboProductComponentsAggregate
+    select_by_pk: comboProductComponent
+    update: updateComboProductComponents
+    update_by_pk: updateComboProductComponent
+object_relationships:
+- name: linkedProduct
+  using:
+    foreign_key_constraint_on: linkedProductId
+- name: product
+  using:
+    foreign_key_constraint_on: productId
+array_relationships:
+- name: selectedOptions
+  using:
+    manual_configuration:
+      column_mapping:
+        id: comboComponentId
+      insertion_order: null
+      remote_table:
+        name: comboComponentOptions
+        schema: products
+computed_fields:
+- comment: ""
+  definition:
+    function:
+      name: comboProductComponentFullName
+      schema: products
+  name: fullName
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - id
+    - label
+    - created_at
+    - updated_at
+    - isArchived
+    - options
+    - position
+    - productId
+    - linkedProductId
+    filter: {}
+  role: consumer
+- permission:
+    allow_aggregations: true
+    columns:
+    - isArchived
+    - id
+    - linkedProductId
+    - productId
+    - options
+    - position
+    - label
+    - created_at
+    - updated_at
+    filter: {}
+  role: guest-consumer

@@ -1,0 +1,45 @@
+table:
+  name: ingredientProcessing
+  schema: ingredient
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteIngredientProcessing
+    insert: createIngredientProcessing
+    select: ingredientProcessings
+    select_aggregate: ingredientProcessingsAggregate
+    select_by_pk: ingredientProcessing
+    update: updateIngredientProcessing
+object_relationships:
+- name: ingredient
+  using:
+    foreign_key_constraint_on: ingredientId
+- name: processing
+  using:
+    foreign_key_constraint_on: processingName
+array_relationships:
+- name: cartItems
+  using:
+    manual_configuration:
+      column_mapping:
+        id: ingredientProcessingId
+      insertion_order: null
+      remote_table:
+        name: cartItem
+        schema: order
+- name: ingredientSachetViews
+  using:
+    manual_configuration:
+      column_mapping:
+        id: ingredientProcessingId
+      insertion_order: null
+      remote_table:
+        name: ingredientSachetView
+        schema: ingredient
+- name: ingredientSachets
+  using:
+    foreign_key_constraint_on:
+      column: ingredientProcessingId
+      table:
+        name: ingredientSachet
+        schema: ingredient

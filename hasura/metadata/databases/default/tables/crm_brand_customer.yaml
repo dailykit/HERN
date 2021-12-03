@@ -1,0 +1,111 @@
+table:
+  name: brand_customer
+  schema: crm
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteBrandCustomers
+    delete_by_pk: deleteBrandCustomer
+    insert: createBrandCustomers
+    insert_one: createBrandCustomer
+    select: brandCustomers
+    select_aggregate: brandCustomersAggregate
+    select_by_pk: brandCustomer
+    update: updateBrandCustomers
+    update_by_pk: updateBrandCustomer
+object_relationships:
+- name: brand
+  using:
+    foreign_key_constraint_on: brandId
+- name: customer
+  using:
+    foreign_key_constraint_on: keycloakId
+- name: subscription
+  using:
+    foreign_key_constraint_on: subscriptionId
+- name: subscriptionItemCount
+  using:
+    foreign_key_constraint_on: subscriptionItemCountId
+- name: subscriptionServing
+  using:
+    foreign_key_constraint_on: subscriptionServingId
+- name: subscriptionTitle
+  using:
+    foreign_key_constraint_on: subscriptionTitleId
+array_relationships:
+- name: activeSubscriptionOccurenceCustomers
+  using:
+    manual_configuration:
+      column_mapping:
+        id: brand_customerId
+        subscriptionId: subscriptionId
+      insertion_order: null
+      remote_table:
+        name: subscriptionOccurence_customer
+        schema: subscription
+- name: orders
+  using:
+    manual_configuration:
+      column_mapping:
+        brandId: brandId
+        keycloakId: keycloakId
+      insertion_order: null
+      remote_table:
+        name: order
+        schema: order
+- name: subscriptionOccurences
+  using:
+    foreign_key_constraint_on:
+      column: brand_customerId
+      table:
+        name: subscriptionOccurence_customer
+        schema: subscription
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - id
+    - keycloakId
+    - brandId
+    - created_at
+    - updated_at
+    - isSubscriber
+    - subscriptionId
+    - subscriptionAddressId
+    - subscriptionPaymentMethodId
+    - isAutoSelectOptOut
+    filter: {}
+  role: consumer
+event_triggers:
+- definition:
+    enable_manual: true
+    insert:
+      columns: "*"
+  name: handleCustomerSignup
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: https://dailyos-server.ngrok.io/webhook/emails/handle-customer-signup
+- definition:
+    enable_manual: true
+    update:
+      columns:
+      - isSubscriptionCancelled
+  name: handleSubscriptionCancelled
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: https://dailyos-server.ngrok.io/webhook/emails/handle-subscription-cancelled
+- definition:
+    enable_manual: false
+    update:
+      columns:
+      - isSubscriber
+  name: handle_isSubscriber_update
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: https://85366775c585.ngrok.io/server/api/customer/referralProgram

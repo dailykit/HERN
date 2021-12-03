@@ -1,0 +1,19 @@
+table:
+  name: emailConfig
+  schema: notifications
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteNotificationEmailConfigs
+    delete_by_pk: deleteNotificationEmailConfig
+    insert: createNotificationEmailConfigs
+    insert_one: createNotificationEmailConfig
+    select: notificationEmailConfigs
+    select_aggregate: notificationEmailConfigsAggregate
+    select_by_pk: notificationEmailConfig
+    update: updateNotificationEmailConfigs
+    update_by_pk: updateNotificationEmailConfig
+object_relationships:
+- name: type
+  using:
+    foreign_key_constraint_on: typeId

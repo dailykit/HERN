@@ -1,0 +1,11 @@
+table:
+  name: rewardType
+  schema: crm
+array_relationships:
+- name: campaignTypes
+  using:
+    foreign_key_constraint_on:
+      column: rewardTypeId
+      table:
+        name: rewardType_campaignType
+        schema: crm

@@ -1,0 +1,11 @@
+table:
+  name: printerType
+  schema: deviceHub
+array_relationships:
+- name: printers
+  using:
+    foreign_key_constraint_on:
+      column: printerType
+      table:
+        name: printer
+        schema: deviceHub

@@ -1,0 +1,15 @@
+table:
+  name: appPermission
+  schema: settings
+object_relationships:
+- name: app
+  using:
+    foreign_key_constraint_on: appId
+array_relationships:
+- name: role_appPermissions
+  using:
+    foreign_key_constraint_on:
+      column: appPermissionId
+      table:
+        name: role_appPermission
+        schema: settings

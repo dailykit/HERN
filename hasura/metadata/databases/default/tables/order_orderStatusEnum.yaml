@@ -1,0 +1,13 @@
+table:
+  name: orderStatusEnum
+  schema: order
+array_relationships:
+- name: carts
+  using:
+    manual_configuration:
+      column_mapping:
+        value: status
+      insertion_order: null
+      remote_table:
+        name: cart
+        schema: order

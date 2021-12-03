@@ -1,0 +1,90 @@
+table:
+  name: simpleRecipeYield
+  schema: simpleRecipe
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteSimpleRecipeYield
+    insert: createSimpleRecipeYield
+    select: simpleRecipeYields
+    select_aggregate: simpleRecipeYieldsAggregate
+    select_by_pk: simpleRecipeYield
+    update: updateSimpleRecipeYield
+    update_by_pk: updateSimpleRecipeYield_by_pk
+object_relationships:
+- name: nutritionInfo
+  using:
+    manual_configuration:
+      column_mapping:
+        nutritionId: id
+      insertion_order: null
+      remote_table:
+        name: nutritionInfo
+        schema: products
+- name: simpleRecipe
+  using:
+    foreign_key_constraint_on: simpleRecipeId
+array_relationships:
+- name: cartItems
+  using:
+    foreign_key_constraint_on:
+      column: simpleRecipeYieldId
+      table:
+        name: cartItem
+        schema: order
+- name: ingredientSachets
+  using:
+    foreign_key_constraint_on:
+      column: recipeYieldId
+      table:
+        name: simpleRecipeYield_ingredientSachet
+        schema: simpleRecipe
+- name: simpleRecipeCartItems
+  using:
+    manual_configuration:
+      column_mapping:
+        id: simpleRecipeYieldId
+      insertion_order: null
+      remote_table:
+        name: cartItem
+        schema: order
+- name: subRecipeCartItems
+  using:
+    manual_configuration:
+      column_mapping:
+        id: subRecipeYieldId
+      insertion_order: null
+      remote_table:
+        name: cartItem
+        schema: order
+computed_fields:
+- comment: ""
+  definition:
+    function:
+      name: yieldAllergens
+      schema: simpleRecipe
+  name: allergens
+- comment: ""
+  definition:
+    function:
+      name: yieldCost
+      schema: simpleRecipe
+  name: cost
+- comment: ""
+  definition:
+    function:
+      name: isUserDefinedNutritionInfo
+      schema: simpleRecipe
+  name: isUserDefinedNutritionInfo
+- comment: ""
+  definition:
+    function:
+      name: yieldNutritionalInfoIsSync
+      schema: simpleRecipe
+  name: nutritionIsInSync
+- comment: ""
+  definition:
+    function:
+      name: yieldNutritionalInfo
+      schema: simpleRecipe
+  name: nutritionalInfo
