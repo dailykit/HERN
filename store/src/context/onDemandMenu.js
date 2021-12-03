@@ -41,13 +41,14 @@ export const OnDemandMenuProvider = ({ children }) => {
       variables: {
          params: {
             brandId: brand?.id,
-            // date,
+            date,
             locationId: 1000,
          },
       },
       onCompleted: data => {
-         if (data?.onDemand_getMenuV2?.length) {
-            const [res] = data.onDemand_getMenuV2
+         console.log('dataProduct', data)
+         if (data?.onDemand_getMenuV2copy?.length) {
+            const [res] = data.onDemand_getMenuV2copy
             const { menu } = res.data
             onDemandMenuDispatch({
                type: 'SEED',
