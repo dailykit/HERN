@@ -1,3 +1,97 @@
 table:
   name: nutritionInfo
   schema: products
+object_relationships:
+- name: addedByApiKeyReference
+  using:
+    foreign_key_constraint_on: addedByApiKey
+- name: updatedByApiKeyReference
+  using:
+    foreign_key_constraint_on: updatedByApiKey
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      addedByApiKeyReference:
+        canAddProducts:
+          _eq: true
+    columns:
+    - allergens
+    - calcium
+    - calories
+    - cholesterol
+    - dietaryFibre
+    - excludes
+    - iron
+    - isDynamic
+    - per
+    - protein
+    - saturatedFat
+    - sodium
+    - sugars
+    - totalCarbohydrates
+    - totalFat
+    - transFat
+    - vitaminA
+    - vitaminC
+    set:
+      addedByApiKey: x-hasura-Api-Key
+  role: apiKeyRole
+select_permissions:
+- permission:
+    columns:
+    - isDynamic
+    - id
+    - allergens
+    - excludes
+    - calcium
+    - calories
+    - cholesterol
+    - dietaryFibre
+    - iron
+    - protein
+    - saturatedFat
+    - sodium
+    - sugars
+    - totalCarbohydrates
+    - totalFat
+    - transFat
+    - vitaminA
+    - vitaminC
+    - addedByApiKey
+    - per
+    - updatedByApiKey
+    filter: {}
+  role: apiKeyRole
+update_permissions:
+- permission:
+    check:
+      addedByApiKeyReference:
+        canAddProducts:
+          _eq: true
+    columns:
+    - allergens
+    - calcium
+    - calories
+    - cholesterol
+    - dietaryFibre
+    - excludes
+    - iron
+    - isDynamic
+    - per
+    - protein
+    - saturatedFat
+    - sodium
+    - sugars
+    - totalCarbohydrates
+    - totalFat
+    - transFat
+    - vitaminA
+    - vitaminC
+    filter:
+      addedByApiKeyReference:
+        canAddProducts:
+          _eq: true
+    set:
+      addedByApiKey: x-hasura-Api-Key
+  role: apiKeyRole

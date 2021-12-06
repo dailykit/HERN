@@ -214,6 +214,7 @@
 - "!include products_productOption.yaml"
 - "!include products_productOptionType.yaml"
 - "!include products_productOptionView.yaml"
+- "!include products_productOption_modifier.yaml"
 - "!include products_productPrice_brand_location.yaml"
 - "!include products_productType.yaml"
 - "!include products_product_category.yaml"
