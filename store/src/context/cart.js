@@ -118,6 +118,9 @@ export const CartProvider = ({ children }) => {
    const [deleteCartItems] = useMutation(DELETE_CART_ITEMS, {
       onCompleted: () => {
          console.log('item removed successfully')
+         addToast('Item removed!', {
+            appearance: 'success',
+         })
       },
       onError: error => {
          console.log(error)

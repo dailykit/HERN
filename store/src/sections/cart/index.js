@@ -39,7 +39,7 @@ export const OnDemandCart = () => {
    useEffect(() => {
       if (!isMenuLoading) {
          if (cart) {
-            const combinedCartItems = combineCartItems(cart.products.nodes)
+            const combinedCartItems = combineCartItems(cart.products)
             console.log('thisISCOmbinedCart', combinedCartItems)
             setCombinedCartData(combinedCartItems)
          } else {

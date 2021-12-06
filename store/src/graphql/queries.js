@@ -1388,34 +1388,34 @@ export const GET_CART = gql`
          }
          address
          fulfillmentInfo
-         products: cartItems_aggregate(where: { level: { _eq: 1 } }) {
-            aggregate {
-               count
-            }
-            nodes {
-               id
-               addOnLabel
-               addOnPrice
+         products: cartItems(where: { level: { _eq: 1 } }) {
+            id
+            addOnLabel
+            addOnPrice
+            price: unitPrice
+            name: displayName
+            image: displayImage
+            childs {
                price: unitPrice
                name: displayName
-               image: displayImage
+               productOption {
+                  id
+                  label
+               }
                childs {
+                  displayName
                   price: unitPrice
-                  name: displayName
-                  productOption {
+                  modifierOption {
                      id
-                     label
-                  }
-                  childs {
-                     displayName
-                     price: unitPrice
-                     modifierOption {
-                        id
-                        name
-                     }
+                     name
                   }
                }
-               productId
+            }
+            productId
+         }
+         cartItems_aggregate(where: { level: { _eq: 1 } }) {
+            aggregate {
+               count
             }
          }
       }

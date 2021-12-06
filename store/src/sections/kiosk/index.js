@@ -6,10 +6,11 @@ import 'antd/dist/antd.css'
 import { Carousel, Layout } from 'antd'
 import { KioskHeader } from '../../components/kiosk/header'
 import { FulfillmentSection } from '../../components/kiosk/fulfillment'
-import { useTranslation } from '../../context'
+import { CartContext, useTranslation } from '../../context'
 import { useConfig } from '../../lib'
-import { isClient, useQueryParamState } from '../../utils'
+import { combineCartItems, isClient, useQueryParamState } from '../../utils'
 import { MenuSection } from '../../components/kiosk/menu'
+import { KioskCart } from '../../components/kiosk/cart'
 // idle screen component
 // fulfillment component
 // header
@@ -20,10 +21,26 @@ import { MenuSection } from '../../components/kiosk/menu'
 
 const { Header, Content } = Layout
 const Kiosk = () => {
+   // context
+   const { cartState, methods, addToCart } = React.useContext(CartContext)
+
    const componentsTabRef = React.useRef()
    const { direction } = useTranslation()
 
    const [isIdle, setIsIdle] = useState(false)
+   const [combinedCartItems, setCombinedCartData] = useState(null)
+
+   useEffect(() => {
+      if (cartState.cart) {
+         console.log('cartState.cart', cartState.cart)
+
+         const combinedCartItems = combineCartItems(cartState.cart.products)
+         console.log('thisISCOmbinedCartFromKiosk', combinedCartItems)
+         setCombinedCartData(combinedCartItems)
+      } else {
+         setCombinedCartData([])
+      }
+   }, [cartState.cart])
 
    const handleOnIdle = event => {
       console.log('user is idle', event)
@@ -97,6 +114,16 @@ const Kiosk = () => {
                      <MenuSection
                         config={KioskConfig}
                         setCurrentPage={setCurrentPage}
+                        combinedCartItems={combinedCartItems}
+                     />
+                  </Content>
+               )}
+               {currentPage === 'cartPage' && (
+                  <Content>
+                     <KioskCart
+                        config={KioskConfig}
+                        setCurrentPage={setCurrentPage}
+                        combinedCartItems={combinedCartItems}
                      />
                   </Content>
                )}
