@@ -180,7 +180,7 @@ export const paymentLogger = async args => {
             paymentStatus: STATUS[paymentStatus],
             transactionRemark,
             transactionId,
-            PaymentRequestId: requestId,
+            stripeInvoiceId: requestId,
             actionUrl,
             actionRequired
          }

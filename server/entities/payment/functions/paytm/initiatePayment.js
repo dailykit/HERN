@@ -1,10 +1,6 @@
-import paytmchecksum from 'paytmchecksum'
-import {
-   logger,
-   isConnectedIntegration,
-   paymentLogger
-} from '../../../../utils'
-import get_env from '../../../../../get_env'
+import _isEmtpy from 'lodash/isEmpty'
+import paytm from '../../../../lib/paytm'
+import { logger, paymentLogger } from '../../../../utils'
 
 const initiatePayment = async arg => {
    try {
@@ -18,48 +14,51 @@ const initiatePayment = async arg => {
          amount,
          oldAmount
       } = arg
-      console.log('initiating razorpay instance')
-      var options = {
-         MID: '', // merchant id
-         WEBSITE: 'WEBSTAGING', // website
-         CHANNEL_ID: 'WEB', // channel id
-         INDUSTRY_TYPE_ID: 'Retail', // industry type id
-         ORDER_ID: 'TEST_' + new Date().getTime(), // order id
-         CUST_ID: 'DEEPAK_' + new Date().getTime(), // customer id
-         TXN_AMOUNT: (amount * 100).toFixed(0), // transaction amount
-         CALLBACK_URL: 'http://localhost:4000/callback', // callback url
-         EMAIL: 'zackRyan18@gmail.com', // customer email id
-         MOBILE_NO: '8767677672' // customer mobile number
-      }
-      console.log({ options })
-      const generatedChecksumHash = await paytmchecksum.generateSignature(
-         options,
-         '' // merchant key
+      console.log('initiating paytm instance')
+      const _Paytm = await paytm()
+      const channelId = _Paytm.EChannelId.WEB
+      const orderId = `ORDERID_${cartPaymentId}`
+      const txnAmount = _Paytm.Money.constructWithCurrencyAndValue(
+         _Paytm.EnumCurrency.INR,
+         amount.toFixed(2)
       )
-
-      if (generatedChecksumHash) {
-         console.log('generateSignature Returns: ', generatedChecksumHash)
-         const response = { ...options, CHECKSUMHASH: generatedChecksumHash }
-         await paymentLogger({
-            cartPaymentId,
-            transactionRemark: response,
-            requestId: response.ORDER_ID,
-            paymentStatus: 'PENDING'
-         })
-         return {
-            success: true,
-            data: response,
-            message: 'Order created via paytm'
-         }
-      } else {
+      const userInfo = new _Paytm.UserInfo(`CUST_${new Date().getTime()}`)
+      userInfo.setAddress('CUSTOMER_ADDRESS')
+      userInfo.setEmail('deepak@yopmail.com')
+      userInfo.setFirstName('Deepak')
+      userInfo.setLastName('Negi')
+      userInfo.setMobile('9934270925')
+      userInfo.setPincode('110023')
+      const paymentDetailBuilder = new _Paytm.PaymentDetailBuilder(
+         channelId,
+         orderId,
+         txnAmount,
+         userInfo
+      )
+      const paymentDetail = paymentDetailBuilder.build()
+      const response = await _Paytm.Payment.createTxnToken(paymentDetail)
+      const { txnToken } = response.responseObject.body
+      console.log('txnToken', txnToken, response.responseObject.body)
+      if (_isEmtpy(response) && _isEmtpy(response.responseObject)) {
          return {
             success: false,
-            data: error,
             message: 'Failed to create order'
          }
       }
+      await paymentLogger({
+         cartPaymentId,
+         transactionRemark: response.responseObject,
+         requestId: orderId,
+         paymentStatus: 'PENDING',
+         transactionId: txnToken
+      })
+      return {
+         success: true,
+         data: response,
+         message: 'Order created via paytm'
+      }
    } catch (error) {
-      console.log('error from stripe initiatePayment', error)
+      console.log('error from paytm initiatePayment', error)
       logger('/api/payment-intent', error)
       return {
          success: false,
