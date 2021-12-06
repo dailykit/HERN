@@ -75,30 +75,37 @@ export function CartPaymentComponent({ cartId = null }) {
       QUERIES.UPDATE_PLATFORM_CUSTOMER,
       {
          onCompleted: () => {
-            // if(!_isEmpty(paymentInfo.paymentMethods)){
-            //    updateCustomerPaymentMethod({
-            //       variables: {
-            //          set: {
-            //             keycloakId: user.keycloakId,
-            //             paymentMethodId: selectCustomerPaymentMethodId,
-            //             supportedPaymentOptionId:
-            //                paymentInfo.selectedAvailablePaymentOption
-            //                   .supportedPaymentOption.id,
-            //          },
-            //       },
-            //    })
-            // }
-            createCustomerPaymentMethod({
-               variables: {
-                  object: {
-                     keycloakId: user.keycloakId,
-                     paymentMethodId: selectCustomerPaymentMethodId,
-                     supportedPaymentOptionId:
-                        paymentInfo.selectedAvailablePaymentOption
-                           .supportedPaymentOption.id,
+            if (selectCustomerPaymentMethodId) {
+               createCustomerPaymentMethod({
+                  variables: {
+                     object: {
+                        keycloakId: user.keycloakId,
+                        paymentMethodId: selectCustomerPaymentMethodId,
+                        supportedPaymentOptionId:
+                           paymentInfo.selectedAvailablePaymentOption
+                              .supportedPaymentOption.id,
+                     },
                   },
-               },
-            })
+               })
+            } else {
+               updateCart({
+                  variables: {
+                     id: cartId,
+                     _inc: { paymentRetryAttempt: 1 },
+                     _set: {
+                        paymentMethodId: null,
+                        toUseAvailablePaymentOptionId:
+                           paymentInfo?.selectedAvailablePaymentOption?.id,
+                        customerInfo: {
+                           customerEmail: profileInfo?.email,
+                           customerPhone: profileInfo?.phone,
+                           customerLastName: profileInfo?.lastName,
+                           customerFirstName: profileInfo?.firstName,
+                        },
+                     },
+                  },
+               })
+            }
          },
          onError: error => {
             console.log('updatePlatformCustomer -> error -> ', error)
@@ -242,9 +249,10 @@ export function CartPaymentComponent({ cartId = null }) {
                                  ?.paymentOptionLabel}
                         </Radio>
                         {paymentInfo?.selectedAvailablePaymentOption?.id ===
-                           option?.id && (
-                           <Input placeholder="Enter your phone numer" />
-                        )}
+                           option?.id &&
+                           option?.label !== 'Paytm Page' && (
+                              <Input placeholder="Enter your phone numer" />
+                           )}
                      </>
                   ))}
             </Space>

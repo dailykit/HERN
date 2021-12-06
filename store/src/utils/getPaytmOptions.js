@@ -15,21 +15,21 @@ export const getPaytmOptions = ({
    eventHandler = () => null,
 }) => {
    if (!_isEmpty(orderDetails) && !_isEmpty(paymentInfo)) {
-      const RAZORPAY_KEY_ID = get_env('RAZORPAY_KEY_ID')
-      const {
-         id: razorpay_order_id,
-         notes,
-         amount,
-         status,
-         receipt,
-         currency,
-      } = orderDetails
-      const selectedCustomerPaymentMethod = paymentInfo?.paymentMethods.find(
-         method =>
-            method.supportedPaymentOptionId ===
-            paymentInfo?.selectedAvailablePaymentOption?.supportedPaymentOption
-               ?.id
-      )
+      // const RAZORPAY_KEY_ID = get_env('RAZORPAY_KEY_ID')
+      // const {
+      //    id: razorpay_order_id,
+      //    notes,
+      //    amount,
+      //    status,
+      //    receipt,
+      //    currency,
+      // } = orderDetails
+      // const selectedCustomerPaymentMethod = paymentInfo?.paymentMethods.find(
+      //    method =>
+      //       method.supportedPaymentOptionId ===
+      //       paymentInfo?.selectedAvailablePaymentOption?.supportedPaymentOption
+      //          ?.id
+      // )
       let checkout_option = {}
       // if (
       //    paymentInfo?.selectedAvailablePaymentOption?.supportedPaymentOption
@@ -75,7 +75,7 @@ export const getPaytmOptions = ({
       //    }
       // }
 
-      var options = {
+      const options = {
          root: '',
          flow: 'DEFAULT',
          data: {
@@ -85,7 +85,7 @@ export const getPaytmOptions = ({
             amount: '100' /* update amount */,
          },
          handler: {
-            notifyMerchant: function (eventName, data) {
+            notifyMerchant(eventName, data) {
                console.log('notifyMerchant handler function called')
                console.log('eventName => ', eventName)
                console.log('data => ', data)

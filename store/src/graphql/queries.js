@@ -1730,6 +1730,8 @@ export const GET_CART_PAYMENT_INFO = gql`
          paymentType
          transactionRemark
          isResultShown
+         stripeInvoiceId
+         transactionId
          availablePaymentOption {
             id
             label

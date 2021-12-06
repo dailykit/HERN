@@ -281,6 +281,16 @@ export const PaymentProvider = ({ children }) => {
    }, [user])
 
    useEffect(() => {
+      console.log(
+         'inside top of useEffect',
+         !_isEmpty(cartPayment),
+         !_isEmpty(cartPayment?.transactionRemark),
+         _has(
+            cartPayment,
+            'availablePaymentOption.supportedPaymentOption.supportedPaymentCompany.label'
+         ),
+         !isCartPaymentLoading
+      )
       if (
          !_isEmpty(cartPayment) &&
          !_isEmpty(cartPayment.transactionRemark) &&
@@ -318,21 +328,17 @@ export const PaymentProvider = ({ children }) => {
             console.log('inside payment provider useEffect 1', cartPayment)
 
             if (cartPayment.paymentStatus === 'PENDING') {
-               ;(async () => {
-                  const options = getPaytmOptions({
-                     orderDetails: cartPayment.transactionRemark,
-                     paymentInfo: state.paymentInfo,
-                     profileInfo: state.profileInfo,
-                     ondismissHandler: () => onCancelledHandler(),
-                     eventHandler,
-                  })
-                  console.log('options', options)
-                  await displayPaytm(options)
-               })()
+               const PAYTM_MERCHANT_ID = 'AEiAMj13465280943458'
+               const PAYTM_ORDER_ID = cartPayment?.stripeInvoiceId
+               const PAYTM_TXN_TOKEN = cartPayment?.transactionId
+               if (PAYTM_ORDER_ID && PAYTM_TXN_TOKEN && isClient) {
+                  const paymentUrl = `https://securegw.paytm.in/theia/api/v1/showPaymentPage?mid=${PAYTM_MERCHANT_ID}&orderId=${PAYTM_ORDER_ID}&txnToken=${PAYTM_TXN_TOKEN}`
+                  window.location.href = paymentUrl
+               }
             }
          }
       }
-   }, [cartPayment?.paymentStatus])
+   }, [cartPayment?.paymentStatus, cartPayment?.transactionRemark])
 
    return (
       <PaymentContext.Provider
