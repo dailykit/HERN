@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Badge, Carousel, Radio } from 'antd'
 import { KioskCounterButton } from '.'
 import { CartContext, useTranslation } from '../../../context'
@@ -12,7 +12,14 @@ import KioskButton from './button'
 import { formatCurrency } from '../../../utils'
 
 export const KioskModifier = props => {
-   const { config, setShowModifier, productData, edit = false } = props
+   const {
+      config,
+      onCloseModifier,
+      productData,
+      edit = false,
+      forNewItem = false,
+      productCartDetail,
+   } = props
    const { t } = useTranslation()
    //context
    const { addToCart, methods } = React.useContext(CartContext)
@@ -144,7 +151,8 @@ export const KioskModifier = props => {
                },
             })
          }
-         setShowModifier(false)
+
+         onCloseModifier()
          return
       }
 
@@ -196,7 +204,8 @@ export const KioskModifier = props => {
                },
             })
          }
-         setShowModifier(false)
+
+         onCloseModifier()
       }
    }
 
@@ -262,6 +271,62 @@ export const KioskModifier = props => {
          productOptionDiscount
       return totalPrice * quantity
    }
+
+   useEffect(() => {
+      if (forNewItem || edit) {
+         const productOptionId = productCartDetail.childs[0].productOption.id
+         const modifierCategoryOptionsIds =
+            productCartDetail.childs[0].childs.map(x => x?.modifierOption?.id)
+
+         //selected product option
+         const selectedProductOption = productData.productOptions.find(
+            x => x.id == productOptionId
+         )
+
+         //selected modifiers
+         let singleModifier = []
+         let multipleModifier = []
+         if (selectedProductOption.modifier) {
+            selectedProductOption.modifier.categories.forEach(category => {
+               category.options.forEach(option => {
+                  const selectedOption = {
+                     modifierCategoryID: category.id,
+                     modifierCategoryOptionsID: option.id,
+                     modifierCategoryOptionsPrice: option.price,
+                     cartItem: option.cartItem,
+                  }
+                  if (category.type === 'single') {
+                     if (modifierCategoryOptionsIds.includes(option.id)) {
+                        singleModifier = singleModifier.concat(selectedOption)
+                     }
+                  }
+                  if (category.type === 'multiple') {
+                     if (modifierCategoryOptionsIds.includes(option.id)) {
+                        multipleModifier =
+                           multipleModifier.concat(selectedOption)
+                     }
+                  }
+               })
+            })
+         }
+
+         setSelectedProductOption(selectedProductOption)
+         setSelectedOptions(prevState => ({
+            ...prevState,
+            single: singleModifier,
+            multiple: multipleModifier,
+         }))
+         if (edit) {
+            setQuantity(productCartDetail.ids.length)
+         }
+         setStatus('success')
+      } else {
+         setStatus('success')
+      }
+      return () => {
+         setSelectedProductOption(null)
+      }
+   }, [])
    return (
       <div className="hern-kiosk__menu-product-modifier-popup">
          <div className="hern-kiosk__menu-product-modifier-popup--bg"></div>
@@ -272,7 +337,7 @@ export const KioskModifier = props => {
          >
             <div
                onClick={() => {
-                  setShowModifier(false)
+                  onCloseModifier()
                }}
                style={{
                   position: 'absolute',

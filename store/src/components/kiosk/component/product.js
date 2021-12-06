@@ -1,27 +1,96 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Carousel, Layout } from 'antd'
 import KioskButton from './button'
-import { useTranslation } from '../../../context'
-import { formatCurrency } from '../../../utils'
-import { KioskModifier } from '.'
+import { CartContext, useTranslation } from '../../../context'
+import { combineCartItems, formatCurrency } from '../../../utils'
+import { KioskModifier, KioskCounterButton } from '.'
 
 const { Header, Content, Footer } = Layout
 
-const demoProduct = {
-   assets: {
-      images: [
-         'https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/userimages/ckn%20tortilla,and%20mudabbla%20ckn%203rd%20option.png',
-         'https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/userimages/SPECIAL%20OFFER%20%20ENGLISH%20RED%20copy.png',
-         'https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/userimages/SUPER%20HERFY%20+%20SUPER%20CKN%20MEAL_%20(2).png',
-      ],
-      videos: [''],
-   },
-}
-
 export const KioskProduct = props => {
+   // context
+   const { cartState, methods, addToCart } = React.useContext(CartContext)
+
    const { config, productData } = props
-   const { t } = useTranslation()
+   const { t, locale } = useTranslation()
    const [showModifier, setShowModifier] = useState(false)
+   const [availableQuantityInCart, setAvailableQuantityInCart] = useState(0)
+   const [lLang, setLLang] = useState(locale)
+
+   const [combinedCartItems, setCombinedCartData] = useState(null)
+
+   const trans = strings => {
+      console.log('locale', lLang)
+      // const regFetcher = () => {
+      //    switch (lLang) {
+      //       case 'en':
+      //          return /\##EN##(.*?)\##EN##/g
+      //       case 'ar':
+      //          return /\##AR##(.*?)\##AR##/g
+      //       default:
+      //          return /\##DEF##(.*?)\##DEF##/g
+      //    }
+      // }
+      // const regFetcher2 = () => {
+      //    switch (lLang) {
+      //       case 'en':
+      //          return '##EN##'
+      //       case 'ar':
+      //          return '##AR##'
+      //       default:
+      //          return '##DEF##'
+      //    }
+      // }
+      // let reg = regFetcher()
+      // let reg2 = regFetcher2()
+      // console.log(reg, reg2, 'hello')
+
+      strings.forEach(x => {
+         if (lLang === 'en') {
+            if (x.innerHTML.match(/\##EN##(.*?)\##EN##/g)) {
+               x.innerHTML = x.innerHTML[0].replaceAll('##EN##', '')
+            }
+         }
+         if (lLang === 'ar') {
+            if (x.innerHTML.match(/\##AR##(.*?)\##AR##/g)) {
+               x.innerHTML = x.innerHTML[0].replaceAll('##AR##', '')
+            }
+         }
+      })
+   }
+   // useEffect(() => {
+   //    const translateString = document.querySelectorAll('span')
+   //    trans(translateString)
+   // }, [])
+
+   useEffect(() => {
+      if (cartState.cart) {
+         const combinedCartItemsUF = combineCartItems(cartState.cart.products)
+         console.log('combinedCartItemsUF', combinedCartItemsUF)
+         const allCartItemsIdsForThisProducts = combinedCartItemsUF
+            .filter(x => x.productId === productData.id)
+            .map(x => x.ids)
+            .flat().length
+         setAvailableQuantityInCart(allCartItemsIdsForThisProducts)
+         setCombinedCartData(combinedCartItemsUF)
+      } else {
+         setCombinedCartData([])
+      }
+   }, [cartState.cart])
+
+   // counter button (-) delete last cartItem
+   const onMinusClick = cartItemIds => {
+      methods.cartItems.delete({
+         variables: {
+            where: {
+               id: {
+                  _in: cartItemIds,
+               },
+            },
+         },
+      })
+   }
+
    return (
       <>
          <div className="hern-kiosk__menu-product">
@@ -42,22 +111,6 @@ export const KioskProduct = props => {
                         ))}
                      </Carousel>
                   )}
-                  {/* {demoProduct.assets.images.length === 0 ? (
-                  <img src={config.productSettings.defaultImage.value} />
-               ) : (
-                  <Carousel
-                     className="hern-kiosk__kiosk-product-images-carousal"
-                     //  style={{ height: '100%', width: '100%' }}
-                  >
-                     {demoProduct.assets.images.map((eachImage, index) => (
-                        <img
-                           src={eachImage}
-                           key={index}
-                           style={{ height: '100%', width: '100%' }}
-                        />
-                     ))}
-                  </Carousel>
-               )} */}
                </Header>
                <Content
                   style={{
@@ -79,20 +132,41 @@ export const KioskProduct = props => {
                      {/* <sup></sup> */}
                      {formatCurrency(productData.price)}
                   </span>
-                  <KioskButton
-                     onClick={() => {
-                        setShowModifier(true)
-                     }}
-                  >
-                     {t('Add To Cart')}
-                  </KioskButton>
+                  {availableQuantityInCart === 0 ? (
+                     <KioskButton
+                        onClick={() => {
+                           setShowModifier(true)
+                        }}
+                     >
+                        {t('Add To Cart')}
+                     </KioskButton>
+                  ) : (
+                     <KioskCounterButton
+                        config={config}
+                        onMinusClick={() => {
+                           console.log(
+                              'combinedCartItems',
+                              combinedCartItems.ids,
+                              combinedCartItems
+                           )
+                           onMinusClick([
+                              combinedCartItems.ids[
+                                 combinedCartItems.ids.length - 1
+                              ],
+                           ])
+                        }}
+                        quantity={availableQuantityInCart}
+                     />
+                  )}
                </Content>
             </Layout>
          </div>
          {showModifier && (
             <KioskModifier
                config={config}
-               setShowModifier={setShowModifier}
+               onCloseModifier={() => {
+                  setShowModifier(false)
+               }}
                productData={productData}
             />
          )}

@@ -1,7 +1,12 @@
 import React from 'react'
 
 export const ArrowLeftIconBG = props => {
-   const { bgColor = '#0F6BB1', size = 56, arrowColor = 'white' } = props
+   const {
+      bgColor = '#0F6BB1',
+      size = 56,
+      arrowColor = 'white',
+      ...rest
+   } = props
    return (
       <svg
          width={size}
@@ -9,6 +14,7 @@ export const ArrowLeftIconBG = props => {
          viewBox="0 0 56 56"
          fill="none"
          xmlns="http://www.w3.org/2000/svg"
+         {...rest}
       >
          <rect
             width="56"

@@ -1,18 +1,20 @@
-import React, { useState } from 'react'
-import { Col, Layout, Menu, Row } from 'antd'
+import React, { useEffect, useState } from 'react'
+import { Col, Layout, Menu, Row, Badge } from 'antd'
 import { useQueryParamState } from '../../utils'
-import { useTranslation } from '../../context'
+import { CartContext, useTranslation } from '../../context'
 import { KioskProduct } from './component'
 import { PRODUCTS_BY_CATEGORY, PRODUCTS } from '../../graphql'
 import { useConfig } from '../../lib'
 import { useQuery } from '@apollo/react-hooks'
+import { CartIcon } from '../../assets/icons'
+import { Divider } from '../../components'
 
 const { Content, Sider, Header } = Layout
 
 export const MenuSection = props => {
    const { brand, isConfigLoading } = useConfig()
 
-   const { config } = props
+   const { config, setCurrentPage } = props
    const [category, changeCategory, deleteCategory] =
       useQueryParamState('productCategoryId')
    console.log('fromMenuSection')
@@ -34,6 +36,11 @@ export const MenuSection = props => {
       }),
       [brand]
    )
+   // useEffect(() => {
+   //    const translateString = document.querySelectorAll("span");
+   //    t(translateString);
+
+   //  }, []);
 
    const date = React.useMemo(() => new Date(Date.now()).toISOString(), [])
    // get all categories by locationId, brandId and collection(s) provide to kiosk(by config)
@@ -139,14 +146,18 @@ export const MenuSection = props => {
             categoryId={category}
             changeCategory={changeCategory}
             kioskMenus={hydratedMenu}
+            setCurrentPage={setCurrentPage}
          />
       </Layout>
    )
 }
 
 const KioskMenu = props => {
-   const { config, kioskMenus } = props
+   const { config, kioskMenus, setCurrentPage } = props
    const { categoryId, changeCategory } = props
+
+   const { cartState } = React.useContext(CartContext)
+   const { cart } = cartState
 
    const menuRef = React.useRef()
    const [selectedCategory, setSelectedCategory] = useState(
@@ -248,16 +259,41 @@ const KioskMenu = props => {
                         </Row>
                      </Col>
                      <Col span={3} className="hern-kiosk__menu-header-col-2">
-                        col-6
+                        <CartIcon
+                           onClick={() => {
+                              setCurrentPage('cartPage')
+                           }}
+                           size={43}
+                        />
+                        <div
+                           style={{
+                              position: 'absolute',
+                              top: '-2em',
+                              right: '1.5em',
+                           }}
+                        >
+                           <Badge
+                              count={
+                                 cart?.cartItems_aggregate?.aggregate?.count ||
+                                 0
+                              }
+                           />
+                        </div>
                      </Col>
                   </Row>
                </Header>
                <Content class="hern-kiosk__menu-product-list">
-                  <Row gutter={[16, 16]}>
-                     {kioskMenus.map((eachCategory, index) => {
-                        return (
-                           <>
-                              <div id={eachCategory.name} ref={menuRef}></div>
+                  {kioskMenus.map((eachCategory, index) => {
+                     return (
+                        <>
+                           <div id={eachCategory.name} ref={menuRef}></div>
+                           <p className="hern-kiosk__menu-category-name">
+                              {eachCategory.name}
+                           </p>
+                           <Row
+                              gutter={[16, 16]}
+                              style={{ marginBottom: '2em' }}
+                           >
                               {eachCategory.products.map(
                                  (eachProduct, index2) => {
                                     return (
@@ -274,10 +310,11 @@ const KioskMenu = props => {
                                     )
                                  }
                               )}
-                           </>
-                        )
-                     })}
-                  </Row>
+                           </Row>
+                           <Divider />
+                        </>
+                     )
+                  })}
                </Content>
             </Layout>
          </Content>

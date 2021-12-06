@@ -1,14 +1,21 @@
 import { Col, Layout, Row } from 'antd'
-import React from 'react'
+import React, { useState } from 'react'
 import { ArrowLeftIconBG, DeleteIcon, EditIcon } from '../../assets/icons'
 import { useTranslation, CartContext } from '../../context'
 import { KioskCounterButton } from './component'
 import { formatCurrency } from '../../utils'
+import { PRODUCTS } from '../../graphql'
+import { useConfig } from '../../lib'
+import { KioskModifier } from './component'
+import { useLazyQuery, useQuery } from '@apollo/react-hooks'
+
 const { Header, Content, Footer } = Layout
+
 export const KioskCart = props => {
    //context
    const { cartState, methods, addToCart } = React.useContext(CartContext)
-   const { config, combinedCartItems } = props
+   const { cart } = cartState
+   const { config, combinedCartItems, setCurrentPage } = props
    const { t } = useTranslation()
 
    console.log('combinedCartItems', combinedCartItems)
@@ -35,6 +42,9 @@ export const KioskCart = props => {
                <Col span={4}>
                   <ArrowLeftIconBG
                      bgColor={config.kioskSettings.theme.primaryColor.value}
+                     onClick={() => {
+                        setCurrentPage('menuPage')
+                     }}
                   />
                </Col>
                <Col
@@ -83,7 +93,41 @@ export const KioskCart = props => {
             <Layout>
                <Header className="hern-kiosk__cart-page-offer">Offers</Header>
                <Content className="hern-kiosk__cart-page-price-detail">
-                  Price
+                  <div className="hern-kiosk-cart-bill-details">
+                     <span>BILL DETAILS</span>
+                     <ul className="hern-kiosk-cart-bill-details-list">
+                        <li>
+                           <span style={{ fontWeight: 'bold' }}>
+                              {cart.billing.itemTotal.label}
+                           </span>
+                           <span style={{ fontWeight: 'bold' }}>
+                              {formatCurrency(
+                                 cart.billing.itemTotal.value || 0
+                              )}
+                           </span>
+                        </li>
+                        <li>
+                           <span>{cart.billing.deliveryPrice.label}</span>
+                           <span>
+                              {formatCurrency(
+                                 cart.billing.deliveryPrice.value || 0
+                              )}
+                           </span>
+                        </li>
+                        <li>
+                           <span>{cart.billing.tax.label}</span>
+                           <span>
+                              {formatCurrency(cart.billing.tax.value || 0)}
+                           </span>
+                        </li>
+                        <li>
+                           <span>{cart.billing.discount.label}</span>
+                           <span>
+                              {formatCurrency(cart.billing.discount.value || 0)}
+                           </span>
+                        </li>
+                     </ul>
+                  </div>
                </Content>
                <Footer className="hern-kiosk__cart-page-proceed-to-checkout">
                   Procced
@@ -96,7 +140,50 @@ export const KioskCart = props => {
 
 const CartCard = props => {
    const { config, productData, removeCartItems } = props
+   const { brand, isConfigLoading } = useConfig()
 
+   const [modifyProductId, setModifyProductId] = useState(null)
+   const [modifyProduct, setModifyProduct] = useState(null)
+   const [modifierType, setModifierType] = useState(null)
+   const [cartDetailSelectedProduct, setCartDetailSelectedProduct] =
+      useState(null)
+
+   const argsForByLocation = React.useMemo(
+      () => ({
+         params: {
+            brandId: brand?.id,
+            locationId: 1000,
+         },
+      }),
+      [brand]
+   )
+
+   //fetch product detail which to be increase or edit
+   useQuery(PRODUCTS, {
+      skip: !modifyProductId,
+      variables: {
+         ids: modifyProductId,
+         priceArgs: argsForByLocation,
+         discountArgs: argsForByLocation,
+         defaultCartItemArgs: argsForByLocation,
+         productOptionPriceArgs: argsForByLocation,
+         productOptionDiscountArgs: argsForByLocation,
+         productOptionCartItemArgs: argsForByLocation,
+         modifierCategoryOptionPriceArgs: argsForByLocation,
+         modifierCategoryOptionDiscountArgs: argsForByLocation,
+         modifierCategoryOptionCartItemArgs: argsForByLocation,
+      },
+      onCompleted: data => {
+         if (data) {
+            setModifyProduct(data.products[0])
+         }
+      },
+   })
+
+   const onCloseModifier = () => {
+      setModifyProduct(null)
+      setModifyProductId(null)
+   }
    return (
       <div className="hern-kiosk__cart-card">
          <img
@@ -116,6 +203,12 @@ const CartCard = props => {
                quantity={productData.ids.length}
                onMinusClick={() => {
                   removeCartItems([productData.ids[productData.ids.length - 1]])
+               }}
+               onPlusClick={() => {
+                  console.log('hello')
+                  setModifierType('newItem')
+                  setCartDetailSelectedProduct(productData)
+                  setModifyProductId(productData.productId)
                }}
                style={{
                   border: '1px solid #0F6BB1',
@@ -137,12 +230,25 @@ const CartCard = props => {
                   style={{ cursor: 'pointer', margin: '0 0 0 .5em' }}
                   title="Delete"
                   size={50}
+                  onCLick={() => {
+                     removeCartItems(productData.ids)
+                  }}
                />
             </div>
             <span className="hern-kiosk__cart-cards-price">
                {formatCurrency(productData.price)}
             </span>
          </div>
+         {modifyProduct && (
+            <KioskModifier
+               config={config}
+               onCloseModifier={onCloseModifier}
+               productData={modifyProduct}
+               forNewItem={Boolean(modifierType === 'newItem')}
+               edit={Boolean(modifierType === 'edit')}
+               productCartDetail={cartDetailSelectedProduct}
+            />
+         )}
       </div>
    )
 }
