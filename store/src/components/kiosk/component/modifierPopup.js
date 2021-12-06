@@ -9,7 +9,7 @@ import {
    RoundCheckBoxIcon,
 } from '../../../assets/icons'
 import KioskButton from './button'
-import { formatCurrency } from '../../../utils'
+import { formatCurrency, useOnClickOutside } from '../../../utils'
 
 export const KioskModifier = props => {
    const {
@@ -35,6 +35,9 @@ export const KioskModifier = props => {
    })
    const [status, setStatus] = useState('loading')
    const [errorCategories, setErrorCategories] = useState([])
+
+   const modifierPopRef = React.useRef()
+   useOnClickOutside(modifierPopRef, () => onCloseModifier())
 
    // increase product by one
    const onPlusClick = () => {
@@ -334,6 +337,7 @@ export const KioskModifier = props => {
          <div
             className="hern-kiosk__menu-product-modifier-pop-up-container"
             style={{ background: '#0F6BB1' }}
+            ref={modifierPopRef}
          >
             <div
                onClick={() => {
