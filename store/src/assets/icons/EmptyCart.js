@@ -1,11 +1,12 @@
 import React from 'react'
 
-export const EmptyCart = () => {
+export const EmptyCart = props => {
+   const { width = '186', height = '160' } = props
    return (
       <>
          <svg
-            width="186"
-            height="160"
+            width={width}
+            height={height}
             viewBox="0 0 186 160"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"

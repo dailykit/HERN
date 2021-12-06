@@ -85,7 +85,7 @@ export const CartProvider = ({ children }) => {
       },
       onError: error => {
          console.log(error)
-         addToast('Failed to add cart items!', {
+         addToast('Failed to update items!', {
             appearance: 'error',
          })
       },
@@ -108,7 +108,7 @@ export const CartProvider = ({ children }) => {
       },
       onError: error => {
          console.log(error)
-         addToast('Failed to add cart items!', {
+         addToast('Failed to create items!', {
             appearance: 'error',
          })
       },
@@ -124,7 +124,7 @@ export const CartProvider = ({ children }) => {
       },
       onError: error => {
          console.log(error)
-         addToast('Failed to add cart items!', {
+         addToast('Failed to delete items!', {
             appearance: 'error',
          })
       },

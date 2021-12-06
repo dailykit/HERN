@@ -13,5 +13,7 @@
    "CHECKOUT": "CHECKOUT",
    "SEE MENU": "SEE MENU",
    "REVIEW ORDER": "REVIEW ORDER",
-   "CLEAR CART": "CLEAR CART"
+   "CLEAR CART": "CLEAR CART",
+   "Oops! Your cart is empty": "Oops! Your cart is empty.",
+   "GO TO MENU": "GO TO MENU"
 }

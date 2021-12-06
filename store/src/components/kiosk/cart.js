@@ -5,6 +5,7 @@ import {
    DeleteIcon,
    DownVector,
    EditIcon,
+   EmptyCart,
    UpVector,
 } from '../../assets/icons'
 import { useTranslation, CartContext } from '../../context'
@@ -70,76 +71,109 @@ export const KioskCart = props => {
                </Col>
             </Row>
          </Header>
-         <Content style={{ backgroundColor: '#ffffff' }}>
-            <div className="hern-kiosk__cart-cards-container">
-               <div className="hern-kiosk__cart-cards-container-header">
-                  <span>{t('REVIEW ORDER')}</span>
-                  <span
-                     style={{
-                        color: `${config.kioskSettings.theme.primaryColor.value}`,
-                     }}
-                  >
-                     {t('CLEAR CART')}
-                  </span>
-               </div>
-               <div className="hern-kiosk__cart-cards">
-                  {combinedCartItems.map((product, index) => {
-                     return (
-                        <CartCard
-                           config={config}
-                           productData={product}
-                           removeCartItems={removeCartItems}
-                        />
-                     )
-                  })}
-               </div>
+         {combinedCartItems.length === 0 && (
+            <div className="hern-cart-empty-cart">
+               <EmptyCart width={558} height={480} />
+               <span>{t('Oops! Your cart is empty')} </span>
+               <span
+                  onClick={() => {
+                     setCurrentPage('menuPage')
+                  }}
+                  style={{
+                     color: `${config.kioskSettings.theme.primaryColor.value}`,
+                  }}
+               >
+                  {t('GO TO MENU')}
+               </span>
             </div>
-         </Content>
-         <Footer className="hern-kiosk__cart-page-footer">
-            <Layout>
-               <Header className="hern-kiosk__cart-page-offer">Offers</Header>
-               <Content className="hern-kiosk__cart-page-price-detail">
-                  <div className="hern-kiosk-cart-bill-details">
-                     <span>BILL DETAILS</span>
-                     <ul className="hern-kiosk-cart-bill-details-list">
-                        <li>
-                           <span style={{ fontWeight: 'bold' }}>
-                              {cart.billing.itemTotal.label}
-                           </span>
-                           <span style={{ fontWeight: 'bold' }}>
-                              {formatCurrency(
-                                 cart.billing.itemTotal.value || 0
-                              )}
-                           </span>
-                        </li>
-                        <li>
-                           <span>{cart.billing.deliveryPrice.label}</span>
-                           <span>
-                              {formatCurrency(
-                                 cart.billing.deliveryPrice.value || 0
-                              )}
-                           </span>
-                        </li>
-                        <li>
-                           <span>{cart.billing.tax.label}</span>
-                           <span>
-                              {formatCurrency(cart.billing.tax.value || 0)}
-                           </span>
-                        </li>
-                        <li>
-                           <span>{cart.billing.discount.label}</span>
-                           <span>
-                              {formatCurrency(cart.billing.discount.value || 0)}
-                           </span>
-                        </li>
-                     </ul>
+         )}
+         {combinedCartItems.length > 0 && (
+            <>
+               <Content style={{ backgroundColor: '#ffffff' }}>
+                  <div className="hern-kiosk__cart-cards-container">
+                     <div className="hern-kiosk__cart-cards-container-header">
+                        <span>{t('REVIEW ORDER')}</span>
+                        <span
+                           style={{
+                              color: `${config.kioskSettings.theme.primaryColor.value}`,
+                              cursor: 'pointer',
+                           }}
+                           onClick={() => {
+                              const cartItemsIds = combinedCartItems
+                                 .map(each => each.ids)
+                                 .flat()
+                              removeCartItems(cartItemsIds)
+                           }}
+                        >
+                           {t('CLEAR CART')}
+                        </span>
+                     </div>
+                     <div className="hern-kiosk__cart-cards">
+                        {combinedCartItems.map((product, index) => {
+                           return (
+                              <CartCard
+                                 config={config}
+                                 productData={product}
+                                 removeCartItems={removeCartItems}
+                              />
+                           )
+                        })}
+                     </div>
                   </div>
                </Content>
-               <Footer className="hern-kiosk__cart-page-proceed-to-checkout">
-                  Procced
+               <Footer className="hern-kiosk__cart-page-footer">
+                  <Layout>
+                     <Header className="hern-kiosk__cart-page-offer">
+                        Offers
+                     </Header>
+                     <Content className="hern-kiosk__cart-page-price-detail">
+                        <div className="hern-kiosk-cart-bill-details">
+                           <span>BILL DETAILS</span>
+                           <ul className="hern-kiosk-cart-bill-details-list">
+                              <li>
+                                 <span style={{ fontWeight: 'bold' }}>
+                                    {cart.billing.itemTotal.label}
+                                 </span>
+                                 <span style={{ fontWeight: 'bold' }}>
+                                    {formatCurrency(
+                                       cart.billing.itemTotal.value || 0
+                                    )}
+                                 </span>
+                              </li>
+                              <li>
+                                 <span>{cart.billing.deliveryPrice.label}</span>
+                                 <span>
+                                    {formatCurrency(
+                                       cart.billing.deliveryPrice.value || 0
+                                    )}
+                                 </span>
+                              </li>
+                              <li>
+                                 <span>{cart.billing.tax.label}</span>
+                                 <span>
+                                    {formatCurrency(
+                                       cart.billing.tax.value || 0
+                                    )}
+                                 </span>
+                              </li>
+                              <li>
+                                 <span>{cart.billing.discount.label}</span>
+                                 <span>
+                                    {formatCurrency(
+                                       cart.billing.discount.value || 0
+                                    )}
+                                 </span>
+                              </li>
+                           </ul>
+                        </div>
+                     </Content>
+                     <Footer className="hern-kiosk__cart-page-proceed-to-checkout">
+                        Procced
+                     </Footer>
+                  </Layout>
                </Footer>
-            </Layout>
-         </Footer>
+            </>
+         )}
       </Layout>
    )
 }
@@ -283,7 +317,6 @@ const CartCard = props => {
                   removeCartItems([productData.ids[productData.ids.length - 1]])
                }}
                onPlusClick={() => {
-                  console.log('hello')
                   setModifierType('newItem')
                   setCartDetailSelectedProduct(productData)
                   setModifyProductId(productData.productId)
@@ -302,13 +335,18 @@ const CartCard = props => {
                   style={{ cursor: 'pointer', margin: '0 .5em' }}
                   title="Edit"
                   size={50}
+                  onClick={() => {
+                     setModifierType('edit')
+                     setCartDetailSelectedProduct(productData)
+                     setModifyProductId(productData.productId)
+                  }}
                />
                <DeleteIcon
                   stroke={config.kioskSettings.theme.primaryColor.value}
                   style={{ cursor: 'pointer', margin: '0 0 0 .5em' }}
                   title="Delete"
                   size={50}
-                  onCLick={() => {
+                  onClick={() => {
                      removeCartItems(productData.ids)
                   }}
                />
