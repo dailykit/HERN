@@ -455,15 +455,6 @@
    font-weight: 500;
 }
 .hern-kiosk__cart-cards {
-}
-.hern-kiosk__cart-card {
-   display: flex;
-   justify-content: space-between;
-   align-items: center;
-   box-shadow: 0px 1px 4px 2px #cfcfcf;
-   padding: 1em 2em;
-   margin: 2em 0;
-   overflow-y: auto;
    &::-webkit-scrollbar {
       width: 6px;
    }
@@ -472,12 +463,21 @@
       border-radius: 4px;
    }
 }
+.hern-kiosk__cart-card {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   box-shadow: 0px 1px 4px 2px #cfcfcf;
+   padding: 1em 2em;
+   min-height: 20em;
+   margin: 2em 2em;
+}
 .hern-kiosk__cart-card-p-image {
    width: 25%;
 }
 .hern-kiosk__cart-card-p-mid {
    width: 60%;
-   height: 10em;
+
    display: flex;
    margin: 0 2em;
    flex-direction: column;
@@ -492,6 +492,9 @@
 .hern-kiosk__cart-card-p-name {
    font-size: 2.5em;
    font-weight: 700;
+}
+.hern-kiosk__cart-card-p-details {
+   margin: 0 0 2em 0;
 }
 .hern-kiosk__cart-card-actions {
    width: 20%;
@@ -538,4 +541,53 @@
       color: #555b6e;
       margin: 12px 0;
    }
+}
+
+.hern-kiosk-cart-product-modifiers {
+   margin: 1em 0;
+   border: 1px solid rgba(64, 64, 64, 0.25);
+   box-sizing: border-box;
+   border-radius: 6px;
+   padding: 0 0.5em;
+}
+.hern-kiosk-cart-product-modifiers-heading {
+   font-style: normal;
+   font-weight: normal;
+   font-size: 14px;
+   line-height: 16px;
+}
+
+.hern-kiosk-cart-product-modifiers-product-option {
+   display: flex;
+   justify-content: space-between;
+   margin-left: 1em;
+   > span {
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 16px;
+      color: #555b6e;
+      margin: 10px 0;
+   }
+}
+.hern-kiosk-cart-product-modifiers-list {
+   ul {
+      margin-left: 1em;
+   }
+   li {
+      display: flex;
+      justify-content: space-between;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 1.2em;
+      line-height: 1em;
+      color: #555b6e;
+      margin: 0.6em 0;
+   }
+}
+.hern-kiosk-cart-product-modifiers-heading {
+   font-style: normal;
+   font-weight: normal;
+   font-size: 14px;
+   line-height: 16px;
 }

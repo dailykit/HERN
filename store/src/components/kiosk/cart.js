@@ -1,6 +1,12 @@
 import { Col, Layout, Row } from 'antd'
 import React, { useState } from 'react'
-import { ArrowLeftIconBG, DeleteIcon, EditIcon } from '../../assets/icons'
+import {
+   ArrowLeftIconBG,
+   DeleteIcon,
+   DownVector,
+   EditIcon,
+   UpVector,
+} from '../../assets/icons'
 import { useTranslation, CartContext } from '../../context'
 import { KioskCounterButton } from './component'
 import { formatCurrency } from '../../utils'
@@ -64,7 +70,7 @@ export const KioskCart = props => {
                </Col>
             </Row>
          </Header>
-         <Content>
+         <Content style={{ backgroundColor: '#ffffff' }}>
             <div className="hern-kiosk__cart-cards-container">
                <div className="hern-kiosk__cart-cards-container-header">
                   <span>{t('REVIEW ORDER')}</span>
@@ -147,6 +153,8 @@ const CartCard = props => {
    const [modifierType, setModifierType] = useState(null)
    const [cartDetailSelectedProduct, setCartDetailSelectedProduct] =
       useState(null)
+   const [showAdditionalDetailsOnCard, setShowAdditionalDetailsOnCard] =
+      useState(false)
 
    const argsForByLocation = React.useMemo(
       () => ({
@@ -193,10 +201,80 @@ const CartCard = props => {
          />
          <div className="hern-kiosk__cart-card-p-mid">
             <div className="hern-kiosk__cart-card-p-details">
-               <span className="hern-kiosk__cart-card-p-name">
-                  {productData.name}
-               </span>{' '}
-               <div></div>
+               <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <span
+                     className="hern-kiosk__cart-card-p-name"
+                     style={{ color: '#5A5A5A' }}
+                  >
+                     {productData.name}
+                  </span>{' '}
+                  {showAdditionalDetailsOnCard ? (
+                     <UpVector
+                        style={{ marginLeft: '1em' }}
+                        onClick={() => {
+                           setShowAdditionalDetailsOnCard(
+                              !showAdditionalDetailsOnCard
+                           )
+                        }}
+                     />
+                  ) : (
+                     <DownVector
+                        style={{ marginLeft: '1em' }}
+                        onClick={() => {
+                           setShowAdditionalDetailsOnCard(
+                              !showAdditionalDetailsOnCard
+                           )
+                        }}
+                     />
+                  )}
+               </div>
+               {showAdditionalDetailsOnCard && (
+                  <div className="hern-kiosk-cart-product-modifiers">
+                     {/* <span className="hern-kiosk-cart-product-modifiers-heading">
+                        Product Option:
+                     </span> */}
+                     <div className="hern-kiosk-cart-product-modifiers-product-option">
+                        <span>
+                           {productData.childs[0].productOption.label || 'N/A'}
+                        </span>{' '}
+                        <span>
+                           {formatCurrency(productData.childs[0].price || 0)}
+                        </span>
+                     </div>
+                     <div className="hern-kiosk-cart-product-modifiers-list">
+                        {productData.childs[0].childs.some(
+                           each => each.modifierOption
+                        ) && (
+                           <>
+                              {/* <span className="hern-kiosk-cart-product-modifiers-heading">
+                              Add ons:
+                           </span> */}
+                              <ul>
+                                 {productData.childs.length > 0 &&
+                                    productData.childs[0].childs.map(
+                                       (modifier, index) =>
+                                          modifier.modifierOption ? (
+                                             <li key={index}>
+                                                <span>
+                                                   {
+                                                      modifier.modifierOption
+                                                         .name
+                                                   }
+                                                </span>
+                                                <span>
+                                                   {formatCurrency(
+                                                      modifier.price || 0
+                                                   )}
+                                                </span>
+                                             </li>
+                                          ) : null
+                                    )}
+                              </ul>
+                           </>
+                        )}
+                     </div>
+                  </div>
+               )}
             </div>
             <KioskCounterButton
                config={config}
@@ -235,7 +313,10 @@ const CartCard = props => {
                   }}
                />
             </div>
-            <span className="hern-kiosk__cart-cards-price">
+            <span
+               className="hern-kiosk__cart-cards-price"
+               style={{ color: '#5A5A5A' }}
+            >
                {formatCurrency(productData.price)}
             </span>
          </div>
