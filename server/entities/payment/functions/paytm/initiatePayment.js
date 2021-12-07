@@ -17,7 +17,7 @@ const initiatePayment = async arg => {
       console.log('initiating paytm instance')
       const _Paytm = await paytm()
       const channelId = _Paytm.EChannelId.WEB
-      const orderId = `ORDERID_${cartPaymentId}`
+      const orderId = cartPaymentId.toString()
       const txnAmount = _Paytm.Money.constructWithCurrencyAndValue(
          _Paytm.EnumCurrency.INR,
          amount.toFixed(2)

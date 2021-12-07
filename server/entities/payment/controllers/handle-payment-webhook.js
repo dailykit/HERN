@@ -2,14 +2,22 @@ import { paymentLogger } from '../../../utils'
 
 export const handlePaymentWebhook = async (req, res) => {
    try {
+      console.log('request body from webhook', req.body, req.headers['origin'])
       const stripeSignature = req.headers['stripe-signature']
       const razorpaySignature =
          req.headers['x-razorpay-signature'] || req.body.razorpay_signature
+      const isPaytmWebhook = [
+         'https://securegw-stage.paytm.in',
+         'https://securegw.paytm.in'
+      ].includes(req.headers['origin'])
+      console.log('isPaytmWebhook', isPaytmWebhook)
       let paymentType
       if (stripeSignature) {
          paymentType = 'stripe'
       } else if (razorpaySignature) {
          paymentType = 'razorpay'
+      } else if (isPaytmWebhook) {
+         paymentType = 'paytm'
       } else {
          return
       }
