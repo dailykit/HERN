@@ -20,6 +20,7 @@ import {
    useRazorPay,
    usePaytm,
    getPaytmOptions,
+   get_env,
 } from '../utils'
 import { CartPaymentComponent } from '../components'
 
@@ -328,11 +329,11 @@ export const PaymentProvider = ({ children }) => {
             console.log('inside payment provider useEffect 1', cartPayment)
 
             if (cartPayment.paymentStatus === 'PENDING') {
-               const PAYTM_MERCHANT_ID = 'AEiAMj13465280943458'
-               const PAYTM_ORDER_ID = cartPayment?.stripeInvoiceId
+               const PAYTM_MERCHANT_ID = get_env('PAYTM_MERCHANT_ID')
+               const PAYTM_ORDER_ID = cartPayment?.id
                const PAYTM_TXN_TOKEN = cartPayment?.transactionId
                if (PAYTM_ORDER_ID && PAYTM_TXN_TOKEN && isClient) {
-                  const paymentUrl = `https://securegw.paytm.in/theia/api/v1/showPaymentPage?mid=${PAYTM_MERCHANT_ID}&orderId=${PAYTM_ORDER_ID}&txnToken=${PAYTM_TXN_TOKEN}`
+                  const paymentUrl = `https://securegw-stage.paytm.in/theia/api/v1/showPaymentPage?mid=${PAYTM_MERCHANT_ID}&orderId=${PAYTM_ORDER_ID}&txnToken=${PAYTM_TXN_TOKEN}`
                   window.location.href = paymentUrl
                }
             }

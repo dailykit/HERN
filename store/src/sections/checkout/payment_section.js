@@ -55,7 +55,7 @@ export const PaymentSection = ({ cart }) => {
    return (
       <>
          <header tw="my-3 pb-1 border-b flex items-center justify-between">
-            {/* <SectionTitle theme={theme}>Select Payment Method</SectionTitle> */}
+            <SectionTitle theme={theme}>Select Payment Method</SectionTitle>
             {user?.platform_customer?.paymentMethods.length > 0 && (
                <OutlineButton onClick={() => toggleTunnel(true)}>
                   Add Card

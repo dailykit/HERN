@@ -4,13 +4,13 @@ import tw, { styled, css } from 'twin.macro'
 import { useToasts } from 'react-toast-notifications'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 
-import { useConfig } from '../../lib'
+import { useConfig, usePayment } from '../../lib'
 import * as Icon from '../../assets/icons'
 import OrderInfo from '../../sections/OrderInfo'
 import { isClient, formatCurrency, getRoute } from '../../utils'
 import { Loader, Button, HelperBar } from '../../components'
 import {
-   usePayment,
+   // usePayment,
    ProfileSection,
    PaymentProvider,
    PaymentSection,
@@ -50,7 +50,16 @@ const messages = {
 const PaymentContent = () => {
    const router = useRouter()
    const { user } = useUser()
-   const { state } = usePayment()
+   // const { state } = usePayment()
+   const {
+      isPaymentLoading,
+      paymentLifeCycleState,
+      paymentInfo,
+      profileInfo,
+      setPaymentInfo,
+      setProfileInfo,
+      updatePaymentState,
+   } = usePayment()
    const { addToast } = useToasts()
    const authTabRef = React.useRef()
    const { configOf } = useConfig()
@@ -130,7 +139,15 @@ const PaymentContent = () => {
    }, [loading, cart])
 
    const [updateCart] = useMutation(QUERIES.UPDATE_CART, {
+      onCompleted: () => {
+         updatePaymentState({
+            paymentLifeCycleState: 'PROCESSING',
+         })
+      },
       onError: error => {
+         updatePaymentState({
+            paymentLifeCycleState: 'FAILED',
+         })
          addToast(error.message, { appearance: 'error' })
       },
    })
@@ -144,12 +161,15 @@ const PaymentContent = () => {
                   id: cart.id,
                   _inc: { paymentRetryAttempt: 1 },
                   _set: {
-                     paymentMethodId: state.payment.selected.id,
+                     paymentMethodId:
+                        paymentInfo?.selectedAvailablePaymentOption?.id.toString(),
+                     toUseAvailablePaymentOptionId:
+                        paymentInfo?.selectedAvailablePaymentOption?.id,
                      customerInfo: {
-                        customerEmail: user?.platform_customer?.email,
-                        customerPhone: state?.profile?.phoneNumber,
-                        customerLastName: state?.profile?.lastName,
-                        customerFirstName: state?.profile?.firstName,
+                        customerEmail: profileInfo?.email,
+                        customerPhone: profileInfo?.phone,
+                        customerLastName: profileInfo?.lastName,
+                        customerFirstName: profileInfo?.firstName,
                      },
                   },
                },
@@ -166,20 +186,30 @@ const PaymentContent = () => {
 
    const handleSubmit = () => {
       toggleOverlay(true)
-      updatePlatformCustomer({
-         variables: {
-            keycloakId: user.keycloakId,
-            _set: { ...state.profile },
-         },
-      })
+      if (!isEmpty(profileInfo)) {
+         updatePaymentState({
+            paymentLifeCycleState: 'INCREMENT_PAYMENT_RETRY_ATTEMPT',
+         })
+         updatePlatformCustomer({
+            variables: {
+               keycloakId: user.keycloakId,
+               _set: {
+                  firstName: profileInfo.firstName,
+                  lastName: profileInfo.lastName,
+                  phoneNumber: profileInfo.phone,
+               },
+            },
+         })
+      }
    }
 
    const isValid = () => {
       return (
-         state.profile.firstName &&
-         state.profile.lastName &&
-         state.profile.phoneNumber &&
-         state.payment.selected?.id
+         profileInfo.firstName &&
+         profileInfo.lastName &&
+         profileInfo.phone &&
+         paymentInfo &&
+         paymentInfo.selectedAvailablePaymentOption?.id
       )
    }
    const onOverlayClose = () => {
@@ -190,7 +220,21 @@ const PaymentContent = () => {
 
    const theme = configOf('theme-color', 'Visual')
 
-   if (loading) return <Loader inline />
+   React.useEffect(() => {
+      if (!isEmpty(cart) && !loading) {
+         console.log('cart checkout-page-> ', cart)
+         const availablePaymentOptionToCart =
+            cart.availablePaymentOptionToCart.find(
+               option => option?.label === 'Paytm Page'
+            )
+         console.log(availablePaymentOptionToCart)
+         setPaymentInfo({
+            selectedAvailablePaymentOption: availablePaymentOptionToCart,
+         })
+      }
+   }, [cart])
+
+   if (loading || isPaymentLoading) return <Loader inline />
    if (isClient && !new URLSearchParams(location.search).get('id')) {
       return (
          <Main>
