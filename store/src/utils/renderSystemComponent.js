@@ -1,6 +1,8 @@
 import axios from 'axios'
 import ReactHtmlParser from 'react-html-parser'
+
 import { renderComponentByName } from '../utils'
+import axios from 'axios'
 const renderComponent = (fold, options) => {
    try {
       if (fold.component) {
@@ -41,6 +43,7 @@ export const renderPageContent = (folds, options) => {
          data-fold-id={fold.id}
          data-fold-position={fold.position}
          data-fold-type={fold.moduleType}
+
       >
          {renderComponent(fold, options)}
       </div>

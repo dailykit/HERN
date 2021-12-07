@@ -57,6 +57,15 @@ export const S_PRODUCT_CATEGORIES = gql`
    }
 `
 
+export const STORE_SETTINGS = gql`
+   subscription StoreSettings($type: String!) {
+      storeSettings(where: { type: { _eq: $type } }) {
+         value
+         identifier
+      }
+   }
+`
+
 export const RECURRENCES = gql`
    subscription Recurrence($type: String!) {
       recurrences(where: { type: { _eq: $type } }) {

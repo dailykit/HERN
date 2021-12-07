@@ -462,7 +462,7 @@ const Pricing = ({ state }) => {
                         },
                      })
                   }}
-                  placeholder="Add Product Description"
+                  placeholder="Add Recipe Description in 120 words"
                />
             </Form.Group>
          </Flex>

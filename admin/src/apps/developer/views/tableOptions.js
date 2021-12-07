@@ -1,7 +1,7 @@
 const options = {
     cellVertAlign: 'middle',
     autoResize: true,
-    maxHeight: "62%",
+    maxHeight: 500,
     virtualDomBuffer: 80,
     placeholder: 'No Data Available',
     index: 'id',

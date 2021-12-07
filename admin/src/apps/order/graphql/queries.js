@@ -353,27 +353,33 @@ export const QUERIES = {
                   }
                   brand {
                      id
-                     onBrandName: brand_brandSettings(
+                     onDemandName: onDemandSettings(
                         where: {
-                           brandSetting: { identifier: { _eq: "Brand Name" } }
+                           onDemandSetting: {
+                              identifier: { _eq: "Brand Name" }
+                           }
                         }
                      ) {
                         name: value(path: "name")
                      }
-                     brandSettings: brand_brandSettings(
+                     onDemandLogo: onDemandSettings(
                         where: {
-                           brandSetting: { identifier: { _eq: "theme-brand" } }
+                           onDemandSetting: {
+                              identifier: { _eq: "Brand Logo" }
+                           }
+                        }
+                     ) {
+                        url: value(path: "url")
+                     }
+                     subscriptionSettings: subscriptionStoreSettings(
+                        where: {
+                           subscriptionStoreSetting: {
+                              identifier: { _eq: "theme-brand" }
+                           }
                         }
                      ) {
                         name: value(path: "name")
                         logo: value(path: "logo.url")
-                     }
-                     brandLogo: brand_brandSettings(
-                        where: {
-                           brandSetting: { identifier: { _eq: "Brand Logo" } }
-                        }
-                     ) {
-                        url: value(path: "brandLogo.value")
                      }
                   }
                   cartItems_aggregate(

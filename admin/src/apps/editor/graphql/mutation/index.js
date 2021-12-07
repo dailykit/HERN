@@ -129,14 +129,61 @@ export const DELETE_RECORD = gql`
       }
    }
 `
+export const REMOVE_CSS_LINK = gql`
+   mutation REMOVE_CSS_LINK($guiFileId: Int!, $id: Int!) {
+      delete_editor_cssFileLinks(
+         where: { guiFileId: { _eq: $guiFileId }, id: { _eq: $id } }
+      ) {
+         returning {
+            cssFileId
+            guiFileId
+         }
+      }
+   }
+`
+export const REMOVE_JS_LINK = gql`
+   mutation REMOVE_JS_LINK($guiFileId: Int!, $id: Int!) {
+      delete_editor_jsFileLinks(
+         where: { guiFileId: { _eq: $guiFileId }, id: { _eq: $id } }
+      ) {
+         returning {
+            jsFileId
+            guiFileId
+         }
+      }
+   }
+`
 
-export const CREATE_BLOCK = gql`
-   mutation CREATE_BLOCK($object: editor_block_insert_input!) {
-      insert_editor_block_one(object: $object) {
-         fileId
-         id
-         name
-         category
+export const LINK_CSS_FILES = gql`
+   mutation LINK_CSS_FILES($objects: [editor_cssFileLinks_insert_input!]!) {
+      insert_editor_cssFileLinks(objects: $objects) {
+         returning {
+            cssFileId
+            guiFileId
+         }
+      }
+   }
+`
+export const LINK_JS_FILES = gql`
+   mutation LINK_JS_FILES($objects: [editor_jsFileLinks_insert_input!]!) {
+      insert_editor_jsFileLinks(objects: $objects) {
+         returning {
+            jsFileId
+            guiFileId
+         }
+      }
+   }
+`
+
+export const UPDATE_LINK_CSS_FILES = gql`
+   mutation UPDATE_LINK_CSS_FILES(
+      $objects: [editor_cssFileLinks_update_input!]!
+   ) {
+      update_editor_cssFileLinks(objects: $objects) {
+         returning {
+            cssFileId
+            guiFileId
+         }
       }
    }
 `

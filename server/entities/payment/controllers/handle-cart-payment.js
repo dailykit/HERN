@@ -3,13 +3,13 @@ import {
    UPDATE_CART_PAYMENT,
    CREATE_CART_PAYMENT,
    CART_PAYMENTS,
-   CART,
-   UPDATE_CART
+   CART
 } from '../graphql'
 export const handleCartPayment = async (req, res) => {
    try {
       const payload = req.body.event.data.new
       const { cart = {} } = await client.request(CART, { id: payload.id })
+      console.log('cart', cart)
       if (cart.balancePayment > 0) {
          const { cartPayments = [] } = await client.request(CART_PAYMENTS, {
             where: {
@@ -21,13 +21,14 @@ export const handleCartPayment = async (req, res) => {
                }
             }
          })
+         console.log('CartPayments', cartPayments)
 
          if (cartPayments.length > 0) {
             if (
                cartPayments.length > 1 ||
                cartPayments[0].amount !== cart.balancePayment
             ) {
-               // cancell all invalid previous cart...
+               //cancell all invalid previous cart...
                const cancelledCartPayments = await Promise.all(
                   cartPayments.map(async cartPayment => {
                      try {
@@ -50,6 +51,8 @@ export const handleCartPayment = async (req, res) => {
                   })
                )
 
+               console.log({ cancelledCartPayments })
+
                const { createCartPayment = {} } = await client.request(
                   CREATE_CART_PAYMENT,
                   {
@@ -63,18 +66,6 @@ export const handleCartPayment = async (req, res) => {
                      }
                   }
                )
-               if (
-                  Object.keys(createCartPayment).length > 0 &&
-                  createCartPayment.id
-               ) {
-                  await client.request(UPDATE_CART, {
-                     id: cart.id,
-                     set: {
-                        activeCartPaymentId: createCartPayment.id
-                     }
-                  })
-               }
-
                res.status(200).json(createCartPayment)
             } else {
                const updatedCartPayment = await Promise.all(
@@ -98,6 +89,7 @@ export const handleCartPayment = async (req, res) => {
                      }
                   })
                )
+               console.log({ updatedCartPayment })
                res.status(200).json(updatedCartPayment)
             }
          } else {
@@ -114,17 +106,7 @@ export const handleCartPayment = async (req, res) => {
                   }
                }
             )
-            if (
-               Object.keys(createCartPayment).length > 0 &&
-               createCartPayment.id
-            ) {
-               await client.request(UPDATE_CART, {
-                  id: cart.id,
-                  set: {
-                     activeCartPaymentId: createCartPayment.id
-                  }
-               })
-            }
+            console.log({ createCartPayment })
             res.status(200).json(createCartPayment)
          }
       } else if (cart.balancePayment === 0) {

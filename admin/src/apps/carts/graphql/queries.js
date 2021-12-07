@@ -38,9 +38,9 @@ export const QUERIES = {
                   id
                   title
                   domain
-                  brand_brandSettings(
+                  onDemandSettings(
                      where: {
-                        brandSetting: {
+                        onDemandSetting: {
                            identifier: {
                               _in: [
                                  "Location"
@@ -52,7 +52,7 @@ export const QUERIES = {
                      }
                   ) {
                      value
-                     brandSetting {
+                     onDemandSetting {
                         identifier
                      }
                   }
@@ -190,16 +190,9 @@ export const QUERIES = {
       `,
       SETTINGS: gql`
          query settings(
-            $_brandId: Int!
-            $identifier: String_comparison_exp!
-            $type: String_comparison_exp!
+            $where: brands_brand_subscriptionStoreSetting_bool_exp = {}
          ) {
-            settings: brands_brand_brandSetting(
-               where: {
-                  brandId: { _eq: $brandId }
-                  brandSetting: { identifier: $identifier, type: $type }
-               }
-            ) {
+            settings: brands_brand_subscriptionStoreSetting(where: $where) {
                value
             }
          }

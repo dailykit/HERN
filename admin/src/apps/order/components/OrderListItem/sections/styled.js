@@ -99,9 +99,7 @@ export const StyledCount = styled.span`
 
 export const StyledProductItem = styled.div`
    height: 32px;
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
+   display: grid;
    grid-gap: 24px;
    padding: 0 12px;
    margin-bottom: 4px;

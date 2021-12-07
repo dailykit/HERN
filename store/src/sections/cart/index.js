@@ -193,20 +193,6 @@ export const OnDemandCart = () => {
                                  showImage={false}
                                  showProductAdditionalText={false}
                                  customAreaComponent={customArea}
-                                 showModifier={Boolean(increaseProduct)}
-                                 closeModifier={closeModifier}
-                                 modifierPopupConfig={{
-                                    productData: increaseProduct,
-                                    showCounterBtn: Boolean(
-                                       popUpType === 'edit'
-                                    ),
-                                    forNewItem: Boolean(
-                                       popUpType === 'newItem'
-                                    ),
-                                    edit: Boolean(popUpType === 'edit'),
-                                    productCartDetail:
-                                       cartDetailSelectedProduct,
-                                 }}
                               />
                               {product.childs.length > 0 && (
                                  <ModifiersList data={product} />
@@ -270,6 +256,17 @@ export const OnDemandCart = () => {
             <footer className="hern-cart-footer">
                <Button className="hern-cart-proceed-btn">PROCEED TO PAY</Button>
             </footer>
+            {increaseProduct && (
+               <ModifierPopup
+                  productData={increaseProduct}
+                  closeModifier={closeModifier}
+                  showCounterBtn={popUpType === 'edit'}
+                  forNewItem={popUpType === 'newItem'}
+                  edit={popUpType === 'edit'}
+                  productCartDetail={cartDetailSelectedProduct}
+                  height={increaseProduct ? '100%' : '0'}
+               />
+            )}
          </div>
       </div>
    )
@@ -288,21 +285,16 @@ const ModifiersList = props => {
             <span>{formatCurrency(data.childs[0].price || 0)}</span>
          </div>
          <div className="hern-cart-product-modifiers-list">
-            {data.childs[0].childs.some(each => each.modifierOption) && (
-               <span className="hern-cart-product-modifiers-heading">
-                  Add ons:
-               </span>
-            )}
+            <span className="hern-cart-product-modifiers-heading">
+               Add ons:
+            </span>
             <ul>
-               {data.childs.length > 0 &&
-                  data.childs[0].childs.map((modifier, index) =>
-                     modifier.modifierOption ? (
-                        <li key={index}>
-                           <span>{modifier.modifierOption.name}</span>
-                           <span>{formatCurrency(modifier.price || 0)}</span>
-                        </li>
-                     ) : null
-                  )}
+               {data.childs[0].childs.map((modifier, index) => (
+                  <li key={index}>
+                     <span>{modifier.modifierOption.name}</span>
+                     <span>{formatCurrency(modifier.price || 0)}</span>
+                  </li>
+               ))}
             </ul>
          </div>
       </div>

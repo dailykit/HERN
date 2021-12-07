@@ -29,7 +29,6 @@ const MasterList = () => {
    const { data: ingredientCategories } = useSubscription(
       MASTER.INGREDIENT_CATEGORY.AGGREGATE
    )
-   const { data: vegNonVeg } = useSubscription(MASTER.VEG_NONVEG.AGGREGATE)
 
    const rowClick = (e, cell) => {
       const { _click } = cell.getData()
@@ -129,21 +128,6 @@ const MasterList = () => {
             )
          },
       },
-      {
-         listName: 'Veg Non-Veg',
-         length:
-            vegNonVeg?.master_vegNonvegType_aggregate?.aggregate?.count ||
-            '...',
-         _click() {
-            addTab('vegNonVeg-type', '/settings/master-lists/vegnonveg')
-         },
-      },
-      {
-         listName: 'Recipe',
-         _click() {
-            addTab('recipe-type', '/settings/master-lists/recipe')
-         },
-      },
    ]
 
    React.useEffect(() => {
@@ -163,9 +147,7 @@ const MasterList = () => {
             justifyContent="space-between"
          >
             <Flex as="section" container alignItems="center">
-               <Text as="h2">
-                  {t(address.concat('master lists'))}({data.length})
-               </Text>
+               <Text as="h2">{t(address.concat('master lists'))}({data.length})</Text>
                <Tooltip identifier="station_listing_heading" />
             </Flex>
          </Flex>

@@ -4,7 +4,7 @@ export const Wrapper = styled.div`
    width: 100%;
    padding: 12px;
    background: #e3e3e3;
-   height: calc(100vh - 104px);
+   height: calc(100vh - 40px);
    > div {
       height: 100%;
       display: grid;

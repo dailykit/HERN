@@ -28,23 +28,26 @@ export const Details = ({ order }) => {
    React.useEffect(() => {
       if (!isNull(order.cart?.brand) && !isEmpty(order.cart?.brand)) {
          if (order.cart.source === 'a-la-carte') {
-            if (!isEmpty(order.cart?.brand.onBrandName)) {
+            if (!isEmpty(order.cart?.brand.onDemandName)) {
                setBrand(existing => ({
                   ...existing,
-                  name: order.cart?.brand.onBrandName[0].name,
+                  name: order.cart?.brand.onDemandName[0].name,
                }))
             }
-            if (!isEmpty(order.cart?.brand.brandLogo)) {
+            if (!isEmpty(order.cart?.brand.onDemandLogo)) {
                setBrand(existing => ({
                   ...existing,
-                  logo: order.cart?.brand.brandLogo[0].url,
+                  logo: order.cart?.brand.onDemandLogo[0].url,
                }))
             }
          } else if (
             order.cart.source === 'subscription' &&
-            !isEmpty(order.cart?.brand.brandSettings)
+            !isEmpty(order.cart?.brand.subscriptionSettings)
          ) {
-            const { name = '', logo = '' } = order.cart?.brand.brandSettings[0]
+            const {
+               name = '',
+               logo = '',
+            } = order.cart?.brand.subscriptionSettings[0]
             setBrand({ name, logo })
          }
       }

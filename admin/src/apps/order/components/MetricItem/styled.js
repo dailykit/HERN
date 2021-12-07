@@ -28,17 +28,15 @@ export const ListItem = styled.li(
       list-style: none;
       margin-bottom: 16px;
       border: 1px solid rgba(0, 0, 0, 0.09);
-
-      border-right: 6px solid ${selectColor(variant)};
-      &.active {
+      border-left: 6px solid ${selectColor(variant)};
+      &.active,
+      &:hover {
          box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.09);
       }
-
       header {
          display: flex;
          align-items: center;
          justify-content: space-between;
-
          h2 {
             font-weight: 500;
             font-size: 14px;
@@ -48,7 +46,6 @@ export const ListItem = styled.li(
          display: flex;
          margin-top: 8px;
          justify-content: space-between;
-
          span {
             font-size: 20px;
          }

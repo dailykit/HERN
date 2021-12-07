@@ -1,16 +1,13 @@
 import React from 'react'
-import { Layout } from '../../components'
-import {
-   processExternalFiles,
-   renderPageContent,
-   getPageProps,
-} from '../../utils'
+import { SEO, Layout } from '../../components'
+import { processJsFile, renderPageContent, getPageProps } from '../../utils'
 
 const ResetPasswordPage = props => {
-   const { folds, settings, linkedFiles } = props
+   const { folds, settings } = props
+   console.log(folds)
    React.useEffect(() => {
       try {
-         processExternalFiles(folds, linkedFiles)
+         processJsFile(folds)
       } catch (err) {
          console.log('Failed to render page: ', err)
       }
@@ -26,11 +23,13 @@ const ResetPasswordPage = props => {
 export default ResetPasswordPage
 
 export const getStaticProps = async ({ params }) => {
-   const { parsedData, settings, navigationMenus, linkedFiles } =
-      await getPageProps(params, '/reset-password')
+   const { parsedData, seo, settings, navigationMenus } = await getPageProps(
+      params,
+      '/reset-password'
+   )
 
    return {
-      props: { folds: parsedData, linkedFiles, settings, navigationMenus },
+      props: { folds: parsedData, seo, settings, navigationMenus },
       revalidate: 60, // will be passed to the page component as props
    }
 }

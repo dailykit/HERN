@@ -57,10 +57,8 @@ const PickUpTunnel = ({ tunnel, onSave }) => {
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1} size="sm">
                <CreateOption
-                  // onSave={onSave}
-                  // close={{ parent: tunnel.close, child: closeTunnel }}
-                  parent={tunnel.close}
-                  child={closeTunnel}
+                  onSave={onSave}
+                  close={{ parent: tunnel.close, child: closeTunnel }}
                />
             </Tunnel>
          </Tunnels>
@@ -104,7 +102,7 @@ const PickupOptions = ({ onSave, close }) => {
    )
 }
 
-const CreateOption = ({ parent, child, onSave }) => {
+const CreateOption = ({ close, onSave }) => {
    const [form, setForm] = React.useState({
       from: '',
       to: '',
@@ -113,8 +111,8 @@ const CreateOption = ({ parent, child, onSave }) => {
    const [insert, { loading }] = useMutation(INSERT_PICKUP_OPTION, {
       onCompleted: ({ createPickupOption = {} }) => {
          onSave(createPickupOption)
-         parent(1)
-         child(1)
+         close.parent(1)
+         close.child(1)
       },
       onError: error => logger(error),
    })
@@ -122,13 +120,12 @@ const CreateOption = ({ parent, child, onSave }) => {
    const onChange = (name, value) => {
       setForm(existing => ({ ...existing, [name]: value }))
    }
-   console.log("close function check", parent, child)
 
    return (
       <>
          <TunnelHeader
             title="Add Pickup Option"
-            close={() => child(1)}
+            close={() => close.child(1)}
             right={{
                isLoading: loading,
                disabled: !form.from || !form.to || isEmpty(form.address),

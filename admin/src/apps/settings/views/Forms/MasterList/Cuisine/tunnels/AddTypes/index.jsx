@@ -42,7 +42,6 @@ const AddTypesTunnel = ({ closeTunnel }) => {
          const objects = types.filter(Boolean).map(type => ({
             name: type,
          }))
-
          if (!objects.length) {
             throw Error('Nothing to add!')
          }
@@ -73,7 +72,6 @@ const AddTypesTunnel = ({ closeTunnel }) => {
          <Flex padding="16px">
             {types.map((type, i) => (
                <>
-                  {console.log(types + 'TYPES')}
                   <Form.Group>
                      <Form.Label htmlFor={`type-${i}`} title={`type-${i}`}>
                         Type Name*

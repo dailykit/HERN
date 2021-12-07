@@ -1,9 +1,7 @@
 import gql from 'graphql-tag'
 
 const INSIGHT_ANALYTICS = gql`
-   subscription insights_analytics(
-      $args: getTotalEarnings_insights_analytics_args!
-   ) {
+   subscription insights_analytics($args: insights_getTotalEarnings_args!) {
       insights_analytics {
          id
          getTotalEarnings(args: $args)
@@ -11,18 +9,14 @@ const INSIGHT_ANALYTICS = gql`
    }
 `
 export const GET_TOTAL_EARNING = gql`
-   subscription GET_TOTAL_EARNING(
-      $args: getTotalEarnings_insights_analytics_args!
-   ) {
+   subscription GET_TOTAL_EARNING($args: insights_getTotalEarnings_args!) {
       insights_analytics {
          getTotalEarnings(args: $args)
       }
    }
 `
 export const TOTAL_ORDER_RECEIVED = gql`
-   subscription TOTAL_ORDER_RECEIVED(
-      $args: getOrdersRecieved_insights_analytics_args!
-   ) {
+   subscription TOTAL_ORDER_RECEIVED($args: insights_getOrdersRecieved_args!) {
       insights_analytics {
          getOrdersRecieved(args: $args)
       }
@@ -39,7 +33,7 @@ export const BRANDS = gql`
 `
 export const ACCEPTED_AND_REJECTED_ORDERS = gql`
    subscription ACCEPTED_AND_REJECTED_ORDERS(
-      $args: getAcceptedVsRejectedOrders_insights_analytics_args!
+      $args: insights_getAcceptedVsRejectedOrders_args!
    ) {
       insights_analytics {
          getAcceptedVsRejectedOrders(args: $args)
@@ -48,7 +42,7 @@ export const ACCEPTED_AND_REJECTED_ORDERS = gql`
 `
 export const SUBSCRIBED_CUSTOMER = gql`
    subscription SUBSCRIBED_CUSTOMER(
-      $args: getSubscribedCustomers_insights_analytics_args!
+      $args: insights_getSubscribedCustomers_args!
    ) {
       insights_analytics {
          getSubscribedCustomers(args: $args)
@@ -57,7 +51,7 @@ export const SUBSCRIBED_CUSTOMER = gql`
 `
 export const GET_REGISTERED_CUSTOMER = gql`
    subscription GET_REGISTERED_CUSTOMER(
-      $args: getRegisteredCustomers_insights_analytics_args!
+      $args: insights_getRegisteredCustomers_args!
    ) {
       insights_analytics {
          getRegisteredCustomers(args: $args)

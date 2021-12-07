@@ -1,4 +1,3 @@
-import { Modifier } from 'draft-js'
 import gql from 'graphql-tag'
 
 export const SIMPLE_RECIPE_UPDATE = gql`
@@ -29,7 +28,6 @@ export const UPDATE_INGREDIENTS = gql`
       }
    }
 `
-
 export const CONCATENATE_ARRAY_COLUMN = gql`
    query ConcatenateArrayColumn($concatData: concatenateArrayColumn_args!) {
       concatenateArrayColumn(args: $concatData) {
@@ -70,7 +68,6 @@ export const INGREDIENT_CATEGORY_CREATE = gql`
       }
    }
 `
-
 export const INCREASE_PRICE_AND_DISCOUNT = gql`
    mutation increasePriceAndDiscount(
       $price: numeric!
@@ -91,122 +88,6 @@ export const INCREMENTS_IN_PRODUCT_OPTIONS = gql`
       $_in: [Int!]
    ) {
       updateProductOptions(where: { id: { _in: $_in } }, _inc: $_inc) {
-         affected_rows
-      }
-   }
-`
-export const UPDATE_SUBSCRIPTION_OCCURRENCE_PRODUCT = gql`
-   mutation update_subscription_subscriptionOccurence_products(
-      $ids: [Int!]
-      $_set: subscription_subscriptionOccurence_product_set_input!
-   ) {
-      update_subscription_subscriptionOccurence_product(
-         _set: $_set
-         where: { id: { _in: $ids } }
-      ) {
-         affected_rows
-      }
-   }
-`
-export const INCREASE_PRICE_SUBSCRIPTION_OCCURRENCE_PRODUCT = gql`
-   mutation increasePrice(
-      $addOnPrice: numeric!
-      $where: subscription_subscriptionOccurence_product_bool_exp!
-   ) {
-      update_subscription_subscriptionOccurence_product(
-         _inc: { addOnPrice: $addOnPrice }
-         where: $where
-      ) {
-         affected_rows
-      }
-   }
-`
-// export const UPDATE_SUBSCRIPTION_OCCURRENCES = gql`
-//    mutation update_subscription_subscription($id: Int!) {
-//       update_subscription_subscription_by_pk(pk_columns: { id: $id }) {
-//          id
-//          subscriptionOccurences_aggregate {
-//             aggregate {
-//                count
-//             }
-//             nodes {
-//                cutoffTimeStamp
-//                startTimeStamp
-//                id
-//             }
-//          }
-//       }
-//    }
-// `
-export const MODIFY_TIMESTAMP = gql`
-   query ConcatenateStringColumn($timeStamp: concatenateTimeStamp_args!) {
-      concatenateTimeStamp(args: $timeStamp) {
-         message
-         success
-      }
-   }
-`
-export const MANAGE_MENU_PRODUCTS_SUBSCRIPTION = gql`
-   mutation addToSubscription(
-      $ids: [Int!]
-      $_set: subscription_subscriptionOccurence_product_set_input!
-   ) {
-      update_subscription_subscriptionOccurence_product(
-         where: { id: { _in: $ids } }
-         _set: $_set
-      ) {
-         affected_rows
-      }
-   }
-`
-export const MANAGE_ADD_ON_PRODUCTS_SUBSCRIPTION = gql`
-   mutation manageAddToSubscription(
-      $ids: [Int!]
-      $_set: subscription_subscriptionOccurence_addOn_set_input!
-   ) {
-      update_subscription_subscriptionOccurence_addOn(
-         where: { id: { _in: $ids } }
-         _set: $_set
-      ) {
-         affected_rows
-      }
-   }
-`
-export const INCREASE_PRICE_MANAGE_ADDON_SUBSCRIPTION_PRODUCT = gql`
-   mutation increaseUnitPrice(
-      $where: subscription_subscriptionOccurence_addOn_bool_exp!
-      $unitPrice: numeric!
-   ) {
-      update_subscription_subscriptionOccurence_addOn(
-         _inc: { unitPrice: $unitPrice }
-         where: $where
-      ) {
-         affected_rows
-      }
-   }
-`
-export const UPDATE_SUBSCRIPTION_DELIVERY_AREA = gql`
-   mutation deliveryArea(
-      $_set: subscription_subscription_zipcode_set_input!
-      $zipcode: [String!]!
-   ) {
-      update_subscription_subscription_zipcode(
-         where: { zipcode: { _in: $zipcode } }
-         _set: $_set
-      ) {
-         affected_rows
-      }
-   }
-`
-export const INCREASE_SUBSCRIPTION_DELIVERY_PRICE = gql`
-   mutation deliveryPrice(
-      $where: subscription_subscription_zipcode_bool_exp!
-      $deliveryPrice: numeric!
-   ) {
-      update_subscription_subscription_zipcode(
-         where: $where
-         _inc: { deliveryPrice: $deliveryPrice }
-      ) {
          affected_rows
       }
    }

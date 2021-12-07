@@ -75,22 +75,22 @@ export const DELETE_COLLECTION_PRODUCT_CATEGORY_PRODUCT = gql`
    }
 `
 
-// export const UPDATE_STORE_SETTING = gql`
-//    mutation UpdateStoreSetting(
-//       $type: String!
-//       $identifier: String!
-//       $value: jsonb!
-//    ) {
-//       updateStoreSetting(
-//          where: { type: { _eq: $type }, identifier: { _eq: $identifier } }
-//          _set: { value: $value }
-//       ) {
-//          returning {
-//             value
-//          }
-//       }
-//    }
-// `
+export const UPDATE_STORE_SETTING = gql`
+   mutation UpdateStoreSetting(
+      $type: String!
+      $identifier: String!
+      $value: jsonb!
+   ) {
+      updateStoreSetting(
+         where: { type: { _eq: $type }, identifier: { _eq: $identifier } }
+         _set: { value: $value }
+      ) {
+         returning {
+            value
+         }
+      }
+   }
+`
 
 export const CREATE_RECURRENCE = gql`
    mutation createRecurrence($object: fulfilment_recurrence_insert_input!) {

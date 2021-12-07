@@ -32,12 +32,6 @@ const ContextMenu = ({ style, node }) => {
          action: 'delete',
       },
       { id: 'cp-file', value: 'Copy File Path', type: 'file', action: 'copy' },
-      {
-         id: 'cr-block',
-         value: 'Make it as a block',
-         type: 'file',
-         action: 'block',
-      },
    ]
 
    const copyToClipboard = () => {

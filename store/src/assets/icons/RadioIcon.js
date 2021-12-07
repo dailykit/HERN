@@ -21,9 +21,9 @@ export const RadioIcon = ({
             width="13"
             height="13"
             rx="6.5"
-            stroke={stroke}
+            stroke="#367BF5"
          />
-         {showTick && <circle cx="7.23486" cy="7.78137" r="4" fill={stroke} />}
+         {showTick && <circle cx="7.23486" cy="7.78137" r="4" fill="#367BF5" />}
       </svg>
    )
 }

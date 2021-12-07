@@ -14,16 +14,13 @@ import { get_env } from '../utils'
 
 export const DataProvider = ({ children }) => {
    const { user } = useAuth()
-   const isByPassKeycloak = get_env('BYPASS_KEYCLOAK')
-   const staffId = isByPassKeycloak === "true" ? '1253dc8d-09d9-4574-aeb8-fed6bb15c9ef' : user?.sub
-   const staffEmail = isByPassKeycloak === "true" ? 'test@dailykit.org' : user?.email
 
    const authLink = setContext((_, { headers }) => {
       return {
          headers: {
             ...headers,
-            'Staff-Id': staffId,
-            'Staff-Email': staffEmail,
+            'Staff-Id': `${user.sub}`,
+            'Staff-Email': `${user.email}`,
          },
       }
    })
@@ -34,8 +31,8 @@ export const DataProvider = ({ children }) => {
          reconnect: true,
          connectionParams: {
             headers: {
-               'Staff-Id': staffId,
-               'Staff-Email': staffEmail,
+               'Staff-Id': `${user.sub}`,
+               'Staff-Email': `${user.email}`,
             },
          },
       },

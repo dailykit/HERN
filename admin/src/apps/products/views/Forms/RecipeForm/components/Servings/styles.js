@@ -6,7 +6,7 @@ export const StyledCardEven = styled.div(
       height: 100px;
       width: 180px;
       padding: 5px 5px 5px 5px;
-      /* margin-bottom: 40px; */
+      margin-bottom: 40px;
       background: ${index % 2 == 0 ? `#FFFFFF` : `#F4F4F4`};
       border: 1px solid #f4f4f4;
       box-sizing: border-box;
@@ -181,7 +181,7 @@ export const StyledCardIngredient = styled.div(
 
 export const SatchetCard = styled.div(
    ({ index }) => css`
-      height: 121px;
+      height: 90px;
       width: 180px;
       padding: 5px 5px 5px 5px;
       background: ${index % 2 == 0 ? `#FFFFFF` : `#F4F4F4`};
@@ -214,8 +214,8 @@ export const StyledButton = styled.button(
 export const IngredientRow = styled.div(
    ({ length }) => css`
       display: grid;
-      grid-template-columns: 238px repeat(${length}, 174px);
-      grid-template-rows: 118px;
+      grid-template-columns: 238px repeat(${length}, 180px);
+      grid-template-rows: 170px;
    `
 )
 
@@ -274,8 +274,8 @@ export const RecipeTable = styled.div(
 export const ServingRow = styled.div(
    ({ length }) => css`
       display: grid;
-      grid-template-columns: 283px repeat(${length}, 174px);
-      grid-template-rows: 100px;
+      grid-template-columns: 283px repeat(${length}, 180px);
+      grid-template-rows: 170px;
    `
 )
 
@@ -283,7 +283,6 @@ export const NutritionAndCostSachetWrapper = styled.div(
    css`
       display: inline-block;
       width: 150px;
-      margin-top: 36px;
       div#calCount {
          display: inline-block;
          min-width: 36px;

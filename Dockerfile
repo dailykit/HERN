@@ -6,7 +6,6 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /usr/src/app
 COPY . .
 
-ENV NODE_OPTIONS=--openssl-legacy-provider
 ENV SKIP_PREFLIGHT_CHECK=true
 RUN yarn install:packages && yarn build
 
@@ -56,7 +55,7 @@ COPY --from=builder /usr/src/app/package.json ./package.json
 COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY --from=builder /usr/src/app/get_env.js ./get_env.js
 
-RUN yarn add puppeteer --ignore-engines
+RUN yarn add puppeteer
 
 # used to expose container level
 EXPOSE 4000

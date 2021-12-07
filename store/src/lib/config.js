@@ -5,7 +5,6 @@ import { useQuery, useSubscription } from '@apollo/react-hooks'
 import { get_env, isClient } from '../utils'
 import { PageLoader } from '../components'
 import { SETTINGS } from '../graphql/queries'
-import { ORDER_TAB } from '../graphql'
 
 const ConfigContext = React.createContext()
 
@@ -14,7 +13,6 @@ const initialState = {
       id: null,
    },
    settings: {},
-   orderTabs: null,
 }
 
 const reducers = (state, { type, payload }) => {
@@ -23,8 +21,6 @@ const reducers = (state, { type, payload }) => {
          return { ...state, brand: payload }
       case 'SET_SETTINGS':
          return { ...state, settings: payload }
-      case 'SET_ORDER_TAB':
-         return { ...state, orderTabs: payload }
       default:
          return state
    }
@@ -33,7 +29,6 @@ const reducers = (state, { type, payload }) => {
 export const ConfigProvider = ({ children }) => {
    const [isLoading, setIsLoading] = React.useState(true)
    const [state, dispatch] = React.useReducer(reducers, initialState)
-   const [orderInterfaceType, setOrderInterfaceType] = React.useState(null)
 
    const { loading, data: { settings = [] } = {} } = useSubscription(SETTINGS, {
       variables: {
@@ -51,28 +46,6 @@ export const ConfigProvider = ({ children }) => {
       }),
       []
    )
-
-   useQuery(ORDER_TAB, {
-      skip: isLoading || !orderInterfaceType,
-      variables: {
-         where: {
-            isActive: { _eq: true },
-            availableOrderInterfaceLabel: { _eq: orderInterfaceType?.oiType },
-            brandId: { _eq: state.brand.id },
-         },
-      },
-      onCompleted: data => {
-         if (data) {
-            dispatch({
-               type: 'SET_ORDER_TAB',
-               payload: data.brands_orderTab,
-            })
-         }
-      },
-      onError: error => {
-         console.log('this is orderTab data', error)
-      },
-   })
 
    React.useEffect(() => {
       if (!loading) {
@@ -103,44 +76,6 @@ export const ConfigProvider = ({ children }) => {
       return `${server_url}/http://${bucket}.s3-website.us-east-2.amazonaws.com\\${size}\\${name}`
    }, [])
 
-   // handle order interfce for brand
-   React.useEffect(() => {
-      const oiType = JSON.parse(localStorage.getItem('orderInterfaceType'))
-      const oiTypeId = JSON.parse(localStorage.getItem('orderInterfaceTypeId'))
-      if (!oiType) {
-         const urlSearchParams = new URLSearchParams(window.location.search)
-         const params = Object.fromEntries(urlSearchParams.entries())
-         if (params && params.oiType) {
-            localStorage.setItem(
-               'orderInterfaceType',
-               JSON.stringify(params.oiType)
-            )
-            setOrderInterfaceType(prev => ({ ...prev, oiType: params.oiType }))
-            if (params.oiTypeId) {
-               localStorage.setItem(
-                  'orderInterfaceTypeId',
-                  JSON.stringify(params.oiTypeId)
-               )
-               setOrderInterfaceType(prev => ({
-                  ...prev,
-                  oiTypeId: params.oiTypeId,
-               }))
-            }
-         } else {
-            localStorage.setItem(
-               'orderInterfaceType',
-               JSON.stringify('Website')
-            )
-            setOrderInterfaceType(prev => ({ ...prev, oiType: 'Website' }))
-         }
-      } else {
-         setOrderInterfaceType(prev => ({
-            ...prev,
-            oiType,
-            ...(oiTypeId && { oiTypeId }),
-         }))
-      }
-   }, [])
    return (
       <ConfigContext.Provider
          value={{
@@ -205,7 +140,6 @@ export const useConfig = (globalType = '') => {
       noProductImage,
       imagePlaceholder,
       brand: state.brand,
-      orderTabs: state.orderTabs,
       isConfigLoading,
    }
 }

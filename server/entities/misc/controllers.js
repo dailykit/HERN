@@ -6,7 +6,7 @@ import path from 'path'
 import { client } from '../../lib/graphql'
 import { globalTemplate } from '../../utils'
 import get_env from '../../../get_env'
-import { GET_SES_DOMAIN, API_KEYS } from './graphql'
+import { GET_SES_DOMAIN } from './graphql'
 import aws from '../../lib/aws'
 
 const nodemailer = require('nodemailer')
@@ -28,11 +28,13 @@ export const sendMail = async (req, res) => {
       const AWS = await aws()
       const inputDomain = emailInput.from.split('@')[1]
       const {
-         includeHeader = false,
-         includeFooter = false,
+         includeHeader = true,
+         includeFooter = true,
          brandId = null
       } = emailInput
       const updatedAttachments = []
+
+      console.log('InviteINput', inviteInput)
 
       // Get the DKIM details from dailycloak
       const dkimDetails = await client.request(GET_SES_DOMAIN, {
@@ -100,6 +102,7 @@ export const sendMail = async (req, res) => {
       })
 
       let html = emailInput.html
+
       if (includeHeader) {
          // getting the header html and concatenating it with the email html
          const headerHtml = await globalTemplate({
@@ -232,21 +235,8 @@ export const authorizeRequest = async (req, res) => {
       const brandId = req.body.headers['Brand-Id']
       const brandCustomerId = req.body.headers['Brand-Customer-Id']
       const source = req.body.headers['Source']
-      const apiKeyHeaderValue = req.body.headers['Api-Key']
 
-      let apiKeyExists = false
       let staffUserExists = false
-      if (apiKeyHeaderValue) {
-         const apiKeys = await client.request(API_KEYS, {
-            apiKey: apiKeyHeaderValue
-         })
-         if (
-            apiKeys.developer_apiKey &&
-            apiKeys.developer_apiKey[0].isDeactivated == false
-         ) {
-            apiKeyExists = true
-         }
-      }
       if (staffId) {
          const { users = [] } = await client.request(STAFF_USERS, {
             email: { _eq: staffEmail }
@@ -276,15 +266,10 @@ export const authorizeRequest = async (req, res) => {
          }),
          ...(staffId &&
             staffUserExists && {
-            'X-Hasura-Role': 'admin',
-            'X-Hasura-Staff-Id': staffId,
-            'X-Hasura-Email-Id': staffEmail
-         }),
-         ...(apiKeyHeaderValue &&
-            apiKeyExists && {
-            'X-Hasura-Role': 'apiKeyRole',
-            'X-Hasura-Api-Key': apiKeyHeaderValue
-         })
+               'X-Hasura-Role': 'admin',
+               'X-Hasura-Staff-Id': staffId,
+               'X-Hasura-Email-Id': staffEmail
+            })
       })
    } catch (error) {
       return res.status(404).json({ success: false, error: error.message })
@@ -390,33 +375,3 @@ export const populate_env = async (req, res) => {
       return res.status(404).json({ success: false, error: error.message })
    }
 }
-
-export const syncEnvsFromPlatform = async () => {
-   try {
-      const PLATFORM_URL = await get_env('PLATFORM_URL')
-      const organizationId = process.env.ORGANIZATION_ID
-      // const PLATFORM_URL = 'http://localhost:5000'
-      // console.log('from syncEnvsFromPlatform🎄', organizationId, PLATFORM_URL)
-      let url = `${PLATFORM_URL}/getenvs?organizationId=${organizationId}`
-
-      const { data: { success, data = {} } = {} } = await axios.get(url)
-      if (success) {
-         await client.request(UPSERT_SETTINGS_ENV, {
-            objects: data
-         })
-         console.log('updated successfully')
-      } else {
-         throw "Couldn't update envs in setting table"
-      }
-   } catch (error) {
-      console.log(error)
-   }
-}
-
-const UPSERT_SETTINGS_ENV = `
-mutation upsertEnvs($objects: [settings_env_insert_input!]!) {
-   insert_settings_env(on_conflict: {constraint: env_pkey, update_columns: value}, objects: $objects) {
-     affected_rows
-   }
- }
- `

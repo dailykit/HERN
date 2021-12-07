@@ -46,7 +46,6 @@ const FileExplorer = () => {
          console.log(error)
       },
       onCompleted: data => {
-         console.log(data)
          if (
             data &&
             data.constructor === Object &&

@@ -123,98 +123,98 @@ export const FETCH_CART = `
    }
 `
 
-// export const BRAND_ON_DEMAND_SETTING = `
-//    query brand($id: Int!) {
-//       brand(id: $id) {
-//          name: onDemandSettings(
-//             where: { onDemandSetting: { identifier: { _eq: "Brand Name" } } }
-//          ) {
-//             name: value(path: "name")
-//          }
-//          address: onDemandSettings(
-//             where: { onDemandSetting: { identifier: { _eq: "Location" } } }
-//          ) {
-//             line1: value(path: "line1")
-//             line2: value(path: "line2")
-//             city: value(path: "city")
-//             state: value(path: "state")
-//             country: value(path: "country")
-//             zipcode: value(path: "zipcode")
-//             latitude: value(path: "lat")
-//             longitude: value(path: "lng")
-//          }
-//          contact: onDemandSettings(
-//             where: { onDemandSetting: { identifier: { _eq: "Contact" } } }
-//          ) {
-//             email: value(path: "email")
-//             phoneNo: value(path: "phoneNo")
-//          }
-//          email: onDemandSettings(
-//             where: {
-//                onDemandSetting: { identifier: { _eq: "Email Notification" } }
-//             }
-//          ) {
-//             name: value(path: "name")
-//             email: value(path: "email")
-//             template: value(path: "template")
-//          }
-//       }
-//    }
-// `
+export const BRAND_ON_DEMAND_SETTING = `
+   query brand($id: Int!) {
+      brand(id: $id) {
+         name: onDemandSettings(
+            where: { onDemandSetting: { identifier: { _eq: "Brand Name" } } }
+         ) {
+            name: value(path: "name")
+         }
+         address: onDemandSettings(
+            where: { onDemandSetting: { identifier: { _eq: "Location" } } }
+         ) {
+            line1: value(path: "line1")
+            line2: value(path: "line2")
+            city: value(path: "city")
+            state: value(path: "state")
+            country: value(path: "country")
+            zipcode: value(path: "zipcode")
+            latitude: value(path: "lat")
+            longitude: value(path: "lng")
+         }
+         contact: onDemandSettings(
+            where: { onDemandSetting: { identifier: { _eq: "Contact" } } }
+         ) {
+            email: value(path: "email")
+            phoneNo: value(path: "phoneNo")
+         }
+         email: onDemandSettings(
+            where: {
+               onDemandSetting: { identifier: { _eq: "Email Notification" } }
+            }
+         ) {
+            name: value(path: "name")
+            email: value(path: "email")
+            template: value(path: "template")
+         }
+      }
+   }
+`
 
-// export const BRAND_SUBSCRIPTION_SETTING = `
-//    query brand($id: Int!) {
-//       brand(id: $id) {
-//          name: subscriptionStoreSettings(
-//             where: {
-//                subscriptionStoreSetting: { identifier: { _eq: "theme-brand" } }
-//             }
-//          ) {
-//             name: value(path: "name")
-//          }
-//          address: subscriptionStoreSettings(
-//             where: {
-//                subscriptionStoreSetting: { identifier: { _eq: "Location" } }
-//             }
-//          ) {
-//             line1: value(path: "line1")
-//             line2: value(path: "line2")
-//             city: value(path: "city")
-//             state: value(path: "state")
-//             country: value(path: "country")
-//             zipcode: value(path: "zipcode")
-//             latitude: value(path: "lat")
-//             longitude: value(path: "lng")
-//          }
-//          contact: subscriptionStoreSettings(
-//             where: {
-//                subscriptionStoreSetting: { identifier: { _eq: "Contact" } }
-//             }
-//          ) {
-//             email: value(path: "email")
-//             phoneNo: value(path: "phoneNo")
-//          }
-//          email: subscriptionStoreSettings(
-//             where: {
-//                subscriptionStoreSetting: {
-//                   identifier: { _eq: "Email Notification" }
-//                }
-//             }
-//          ) {
-//             name: value(path: "name")
-//             email: value(path: "email")
-//             template: value(path: "template")
-//          }
-//       }
-//    }
-// `
+export const BRAND_SUBSCRIPTION_SETTING = `
+   query brand($id: Int!) {
+      brand(id: $id) {
+         name: subscriptionStoreSettings(
+            where: {
+               subscriptionStoreSetting: { identifier: { _eq: "theme-brand" } }
+            }
+         ) {
+            name: value(path: "name")
+         }
+         address: subscriptionStoreSettings(
+            where: {
+               subscriptionStoreSetting: { identifier: { _eq: "Location" } }
+            }
+         ) {
+            line1: value(path: "line1")
+            line2: value(path: "line2")
+            city: value(path: "city")
+            state: value(path: "state")
+            country: value(path: "country")
+            zipcode: value(path: "zipcode")
+            latitude: value(path: "lat")
+            longitude: value(path: "lng")
+         }
+         contact: subscriptionStoreSettings(
+            where: {
+               subscriptionStoreSetting: { identifier: { _eq: "Contact" } }
+            }
+         ) {
+            email: value(path: "email")
+            phoneNo: value(path: "phoneNo")
+         }
+         email: subscriptionStoreSettings(
+            where: {
+               subscriptionStoreSetting: {
+                  identifier: { _eq: "Email Notification" }
+               }
+            }
+         ) {
+            name: value(path: "name")
+            email: value(path: "email")
+            template: value(path: "template")
+         }
+      }
+   }
+`
 
 export const EMAIL_CONFIG = `
    query brand($id: Int!) {
       brand(id: $id) {
-         email: brand_brandSettings(
+         email: onDemandSettings(
             where: {
-               brandSetting: { identifier: { _eq: "Email Notification" } }
+               onDemandSetting: { identifier: { _eq: "Email Notification" } }
             }
          ) {
             name: value(path: "name")
@@ -226,49 +226,49 @@ export const EMAIL_CONFIG = `
 `
 
 export const EMAIL_SETTINGS = `
-query brand($id: Int!) {
-   brand(id: $id) {
-      id
-      delivered: brand_brandSettings(
-         where: {
-            brandSetting: { identifier: { _eq: "Order Delivered" } }
-         }
-      ) {
-         name: value(path: "name")
-         email: value(path: "email")
-         template: value(path: "template")
-      }
-      cancelled: brand_brandSettings(
-         where: {
-            brandSetting: { identifier: { _eq: "Order Cancelled" } }
-         }
-      ) {
-         name: value(path: "name")
-         email: value(path: "email")
-         template: value(path: "template")
-      }
-      new: brand_brandSettings(
-         where: {
-            brandSetting: { identifier: { _eq: "Email Notification" } }
-         }
-      ) {
-         name: value(path: "name")
-         email: value(path: "email")
-         template: value(path: "template")
-      }
-      subs_new: brand_brandSettings(
-         where: {
-            brandSetting: {
-               identifier: { _eq: "New Email Notification" }
+   query brand($id: Int!) {
+      brand(id: $id) {
+         id
+         delivered: onDemandSettings(
+            where: {
+               onDemandSetting: { identifier: { _eq: "Order Delivered" } }
             }
+         ) {
+            name: value(path: "name")
+            email: value(path: "email")
+            template: value(path: "template")
          }
-      ) {
-         name: value(path: "name")
-         email: value(path: "email")
-         template: value(path: "template")
+         cancelled: onDemandSettings(
+            where: {
+               onDemandSetting: { identifier: { _eq: "Order Cancelled" } }
+            }
+         ) {
+            name: value(path: "name")
+            email: value(path: "email")
+            template: value(path: "template")
+         }
+         new: onDemandSettings(
+            where: {
+               onDemandSetting: { identifier: { _eq: "Email Notification" } }
+            }
+         ) {
+            name: value(path: "name")
+            email: value(path: "email")
+            template: value(path: "template")
+         }
+         subs_new: subscriptionStoreSettings(
+            where: {
+               subscriptionStoreSetting: {
+                  identifier: { _eq: "Email Notification" }
+               }
+            }
+         ) {
+            name: value(path: "name")
+            email: value(path: "email")
+            template: value(path: "template")
+         }
       }
    }
-}
 `
 
 export const CUSTOMER = `

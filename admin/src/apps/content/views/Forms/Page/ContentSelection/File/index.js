@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react'
-import { List, useMultiList, ListSearch, Loader } from '@dailykit/ui'
-import _ from 'lodash'
+import {
+   ListHeader,
+   ListItem,
+   List,
+   ListOptions,
+   useMultiList,
+   ListSearch,
+   TextButton,
+   TagGroup,
+   Tag,
+   Loader,
+} from '@dailykit/ui'
+import { GET_FILES } from '../../../../../graphql'
 import { useSubscription } from '@apollo/react-hooks'
 import styled from 'styled-components'
-import { GET_FILES } from '../../../../../graphql'
-import { StyledOptions } from '../styled'
-import { PageModuleCard } from '../components/PageModuleCard'
 
-const File = ({
-   linkedFiles,
-   emptyOptions,
-   seletedModules,
-   setSeletedModules,
-}) => {
+const File = ({ linkedFiles, selectedOption, emptyOptions }) => {
    const [files, setFiles] = useState([])
    const [search, setSearch] = React.useState('')
    const [list, selected, selectOption] = useMultiList(files)
@@ -43,8 +46,7 @@ const File = ({
    })
 
    useEffect(() => {
-      const modules = _.unionWith(selected, seletedModules, _.isEqual)
-      setSeletedModules(modules)
+      selectedOption(selected)
    }, [selected])
 
    useEffect(() => {
@@ -60,27 +62,44 @@ const File = ({
       console.error(error)
    }
    return (
-      <List>
-         <ListSearch
-            onChange={value => setSearch(value)}
-            placeholder="type what you’re looking for..."
-         />
-         <StyledOptions>
-            {list
-               .filter(option => option.title.toLowerCase().includes(search))
-               .map(option => (
-                  <PageModuleCard
-                     key={option.id}
-                     content={{
-                        title: option.title,
-                        description: option.value,
-                     }}
-                     onClick={() => selectOption('id', option.id)}
-                     isActive={selected.find(item => item.id === option.id)}
-                  />
-               ))}
-         </StyledOptions>
-      </List>
+      <Wrapper>
+         <List>
+            <ListSearch
+               onChange={value => setSearch(value)}
+               placeholder="type what you’re looking for..."
+            />
+            {selected.length > 0 && (
+               <TagGroup style={{ margin: '8px 0' }}>
+                  {selected.map(option => (
+                     <Tag
+                        key={option.id}
+                        title={option.title}
+                        onClick={() => selectOption('id', option.id)}
+                     >
+                        {option.title}
+                     </Tag>
+                  ))}
+               </TagGroup>
+            )}
+            <ListHeader type="MSL2" label="Files" />
+            <ListOptions>
+               {list
+                  .filter(option => option.title.toLowerCase().includes(search))
+                  .map(option => (
+                     <ListItem
+                        type="MSL2"
+                        key={option.id}
+                        content={{
+                           title: option.title,
+                           description: option.value,
+                        }}
+                        onClick={() => selectOption('id', option.id)}
+                        isActive={selected.find(item => item.id === option.id)}
+                     />
+                  ))}
+            </ListOptions>
+         </List>
+      </Wrapper>
    )
 }
 export default File

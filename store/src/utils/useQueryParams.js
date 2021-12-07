@@ -13,7 +13,7 @@ export const useQueryParams = () => {
          })
          setParams(paramsFound)
       }
-   }, [])
+   }, [window?.location?.search, setParams])
 
    return params
 }

@@ -6,20 +6,21 @@ import { signOut } from 'next-auth/client'
 
 import { useConfig } from '../lib'
 import { useUser } from '../context'
-import { getProtectedRoutes, getRoute, isClient } from '../utils'
+import { getRoute, isClient } from '../utils'
 
 const routes = {
+   '/[brand]/get-started/register': { status: 'REGISTER', level: 0 },
    '/[brand]/get-started/select-plan': {
       status: 'SELECT_PLAN',
-      level: 0,
+      level: 25,
    },
    '/[brand]/get-started/select-delivery': {
       status: 'SELECT_DELIVERY',
-      level: 33,
+      level: 50,
    },
    '/[brand]/get-started/select-menu': {
       status: 'SELECT_MENU',
-      level: 66,
+      level: 75,
    },
    '/[brand]/get-started/checkout': { status: 'CHECKOUT', level: 100 },
 }
@@ -57,19 +58,14 @@ export const StepsNavbar = () => {
 
    const logout = async () => {
       await signOut({ redirect: false })
-      const currentPathName = router.pathname
-      if (getProtectedRoutes(true).find(x => x === currentPathName)) {
-         // router.push(getRoute('/'))
-         window.location.href = window.location.origin + getRoute('/')
-      }
+      window.location.href = window.location.origin + getRoute('/')
    }
 
    const canGoToStep = route => {
       if (!has(routes, route) || !has(routes, router.pathname)) return
-      // const status = user?.subscriptionOnboardStatus || 'REGISTER'
-      // const status = router.pathname
-      // const statusKey = findKey(routes, { status })
-      const completedRoute = routes[route]
+      const status = user?.subscriptionOnboardStatus || 'REGISTER'
+      const statusKey = findKey(routes, { status })
+      const completedRoute = routes[statusKey]
       if (routes[route].level <= completedRoute?.level) {
          return true
       }
@@ -80,13 +76,13 @@ export const StepsNavbar = () => {
       if (route.includes('select-plan') && isClient) {
          localStorage.removeItem('plan')
       }
-      let path = route.replace('/[brand]', '')
+      let path = route
       if (canGoToStep(route)) {
          if (!isEmpty(user?.carts)) {
             const [cart] = user?.carts
-            if (route === '/get-started/checkout') {
+            if (route === '/get-started/checkout/') {
                path += `?id=${cart.id}`
-            } else if (route === '/get-started/select-menu') {
+            } else if (route === '/get-started/select-menu/') {
                path += `?date=${cart.subscriptionOccurence?.fulfillmentDate}`
             }
          }
@@ -119,23 +115,31 @@ export const StepsNavbar = () => {
                   goToStep={goToStep}
                   canGoToStep={canGoToStep}
                   isActive={currentStep === 0}
-                  route="/[brand]/get-started/select-plan"
+                  route="/get-started/register"
+               >
+                  {steps.register}
+               </RenderStep>
+               <RenderStep
+                  goToStep={goToStep}
+                  canGoToStep={canGoToStep}
+                  isActive={currentStep === 25}
+                  route="/get-started/select-plan"
                >
                   Select Plan
                </RenderStep>
                <RenderStep
                   goToStep={goToStep}
                   canGoToStep={canGoToStep}
-                  isActive={currentStep === 33}
-                  route="/[brand]/get-started/select-delivery"
+                  isActive={currentStep === 50}
+                  route="/get-started/select-delivery"
                >
                   {steps.selectDelivery}
                </RenderStep>
                <RenderStep
                   goToStep={goToStep}
                   canGoToStep={canGoToStep}
-                  isActive={currentStep === 66}
-                  route="/[brand]/get-started/select-menu"
+                  isActive={currentStep === 75}
+                  route="/get-started/select-menu/"
                >
                   {steps.selectMenu}
                </RenderStep>
@@ -143,7 +147,7 @@ export const StepsNavbar = () => {
                   goToStep={goToStep}
                   canGoToStep={canGoToStep}
                   isActive={currentStep === 100}
-                  route="/[brand]/get-started/checkout"
+                  route="/get-started/checkout/"
                >
                   {steps.checkout}
                </RenderStep>
@@ -167,7 +171,6 @@ export const StepsNavbar = () => {
 
 const RenderStep = ({ route, isActive, children, canGoToStep, goToStep }) => {
    const active = canGoToStep(route) || isActive
-
    return (
       <li
          className={`hern-steps-navbar__step${active ? '--active' : ''}`}

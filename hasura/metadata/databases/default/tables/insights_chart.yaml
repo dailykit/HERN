@@ -1,7 +1,0 @@
-table:
-  name: chart
-  schema: insights
-object_relationships:
-- name: insight
-  using:
-    foreign_key_constraint_on: insightIdentifier

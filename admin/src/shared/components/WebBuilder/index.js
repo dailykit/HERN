@@ -8,7 +8,7 @@ import { InlineLoader } from '../InlineLoader'
 import { logger } from '../../utils'
 import { config } from './config'
 import { StyledDiv } from './style'
-import { get_env } from '../../utils'
+
 const Builder = React.forwardRef(
    (
       {
@@ -20,18 +20,17 @@ const Builder = React.forwardRef(
       },
       ref
    ) => {
-      const baseUrl = `${get_env('REACT_APP_EXPRESS_URL')}/template/files`
       const url = `${window._env_.REACT_APP_DAILYOS_SERVER_URI}/api/assets`
       const editorRef = useRef()
       const linkedCssArray = linkedCss.map(file => {
-         let fileUrl = `${baseUrl}${file.cssFile.path}`
+         let fileUrl = `https://test.dailykit.org/template/files${file.cssFile.path}`
          if (/\s/.test(url)) {
             fileUrl = url.split(' ').join('%20')
          }
          return fileUrl
       })
       const linkedJsArray = linkedJs.map(file => {
-         let fileUrl = `${baseUrl}${file.jsFile.path}`
+         let fileUrl = `https://test.dailykit.org/template/files${file.jsFile.path}`
          if (/\s/.test(url)) {
             fileUrl = url.split(' ').join('%20')
          }
@@ -128,7 +127,7 @@ const Builder = React.forwardRef(
                   data.data.editor_block.map(async block => {
                      try {
                         const blockContent = await axios.get(
-                           `${baseUrl}${block.path}`
+                           `https://test.dailykit.org/template/files${block.path}`
                         )
                         return {
                            content: blockContent.data,
@@ -201,7 +200,7 @@ const Builder = React.forwardRef(
                    <div class="my-label-block">${block?.name}</div>
                  </div>`,
                content: block?.content,
-               category: block?.category,
+               category: block.category,
             })
          })
 

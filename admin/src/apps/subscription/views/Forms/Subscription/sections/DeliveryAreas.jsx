@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { isEmpty } from 'lodash'
 import styled from 'styled-components'
 import { toast } from 'react-toastify'
@@ -16,9 +16,6 @@ import {
    ButtonTile,
    IconButton,
    TunnelHeader,
-   Checkbox,
-   TextButton,
-   ButtonGroup,
 } from '@dailykit/ui'
 
 import PickUpTunnel from './PickUp'
@@ -38,7 +35,6 @@ import {
    INSERT_SUBSCRIPTION_ZIPCODES,
    UPDATE_SUBSCRIPTION_ZIPCODE,
 } from '../../../../graphql'
-import { DeliveryArea } from './BulkActionTunnel/deliveryArea'
 
 const DeliveryAreas = ({ id, setAreasTotal }) => {
    const tableRef = React.useRef()
@@ -46,9 +42,6 @@ const DeliveryAreas = ({ id, setAreasTotal }) => {
    const [mode, setMode] = React.useState('ADD')
    const [selectedZipcode, setSelectedZipcode] = React.useState({})
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
-   const [BulkActionTunnels, openBulkActionTunnel, closeBulkActionTunnel] = useTunnel(1)
-   const [selectedRows, setSelectedRows] = useState([])
-   const [checked, setChecked] = useState(false)
    const [remove] = useMutation(ZIPCODE.DELETE, {
       onCompleted: () => {
          toast.success('Successfully deleted the zipcode!')
@@ -77,14 +70,6 @@ const DeliveryAreas = ({ id, setAreasTotal }) => {
 
    const columns = React.useMemo(
       () => [
-         {
-            title: 'Label',
-            field: 'label',
-            visible: false,
-            frozen: true,
-            headerFilter: 'true',
-            headerHozAlign: 'center',
-         },
          {
             title: 'Zipcode',
             field: 'zipcode',
@@ -137,7 +122,8 @@ const DeliveryAreas = ({ id, setAreasTotal }) => {
                )
             },
             formatter: cell =>
-               `${cell.getData().deliveryTime.from} - ${cell.getData().deliveryTime.to
+               `${cell.getData().deliveryTime.from} - ${
+                  cell.getData().deliveryTime.to
                }`,
          },
          {
@@ -164,8 +150,9 @@ const DeliveryAreas = ({ id, setAreasTotal }) => {
             },
             formatter: cell =>
                cell.getData().subscriptionPickupOptionId
-                  ? `${cell.getData().subscriptionPickupOption?.time?.from} - ${cell.getData().subscriptionPickupOption?.time?.to
-                  }`
+                  ? `${cell.getData().subscriptionPickupOption?.time?.from} - ${
+                       cell.getData().subscriptionPickupOption?.time?.to
+                    }`
                   : 'N/A',
          },
          {
@@ -204,109 +191,7 @@ const DeliveryAreas = ({ id, setAreasTotal }) => {
       ],
       []
    )
-   const handleOnDelete = () => {
-      const ids = selectedRows.map(each => each.zipcode)
-      if (
-         window.confirm(
-            `Are your sure you want to delete this ${selectedRows.length} product?`
-         )
-      ) {
-         remove({ variables: { _in: ids } })
-         setSelectedRows([])
-      }
-   }
-   const removeSelectedProducts = () => {
-      setChecked(false)
-      setSelectedRows([])
-      tableRef.current.table.deselectRow()
-      localStorage.setItem('selected-rows-id-delivery-area-table', JSON.stringify([]))
-   }
 
-   const handleMultipleRowSelection = () => {
-      setChecked(!checked)
-
-      if (!checked) {
-         tableRef.current.table.selectRow('active')
-         let multipleRowData = tableRef.current.table.getSelectedData()
-
-         setSelectedRows(multipleRowData)
-         localStorage.setItem(
-            'selected-rows-id-delivery-area-table',
-            JSON.stringify(multipleRowData.map(row => row.zipcode))
-         )
-      } else {
-         tableRef.current.table.deselectRow()
-         setSelectedRows([])
-         localStorage.setItem('selected-rows-id-delivery-area-table', JSON.stringify([]))
-      }
-   }
-
-   const handleRowSelection = ({ _row }) => {
-      const rowData = _row.getData()
-      const lastPersistence = localStorage.getItem('selected-rows-id-delivery-area-table')
-      const lastPersistenceParse =
-         lastPersistence !== undefined &&
-            lastPersistence !== null &&
-            lastPersistence.length !== 0
-            ? JSON.parse(lastPersistence)
-            : []
-      setSelectedRows(prevState => [...prevState, _row.getData()])
-      let newData = [...lastPersistenceParse, rowData.zipcode]
-      localStorage.setItem(
-         'selected-rows-id-delivery-area-table',
-         JSON.stringify(newData)
-      )
-   }
-
-   const handleRowDeselection = ({ _row }) => {
-      const data = _row.getData()
-      const lastPersistence = localStorage.getItem('selected-rows-id-delivery-area-table')
-      const lastPersistenceParse =
-         lastPersistence !== undefined &&
-            lastPersistence !== null &&
-            lastPersistence.length !== 0
-            ? JSON.parse(lastPersistence)
-            : []
-      setSelectedRows(prevState => prevState.filter(row => row.zipcode !== data.zipcode))
-      const newLastPersistenceParse = lastPersistenceParse.filter(
-         zipcode => zipcode !== data.zipcode
-      )
-      localStorage.setItem(
-         'selected-rows-id-delivery-area-table',
-         JSON.stringify(newLastPersistenceParse)
-      )
-   }
-   //change column according to selected rows
-   const selectionColumn =
-      selectedRows.length > 0 && selectedRows.length < subscriptionZipcodes.length
-         ? {
-            formatter: 'rowSelection',
-            titleFormatter: reactFormatter(
-               <CrossBox removeSelectedProducts={removeSelectedProducts} />
-            ),
-            align: 'center',
-            hozAlign: 'center',
-            width: 10,
-            headerSort: false,
-            frozen: true,
-         }
-         : {
-            formatter: 'rowSelection',
-            titleFormatter: reactFormatter(
-               <CheckBox
-                  checked={checked}
-                  handleMultipleRowSelection={handleMultipleRowSelection}
-               />
-            ),
-            align: 'center',
-            hozAlign: 'center',
-            width: 20,
-            headerSort: false,
-            frozen: true,
-         }
-   const removeSelectedRow = zipcode => {
-      tableRef.current.table.deselectRow(zipcode)
-   }
    const resetEditMode = () => {
       setMode('ADD')
       setSelectedZipcode({})
@@ -343,22 +228,16 @@ const DeliveryAreas = ({ id, setAreasTotal }) => {
                <PlusIcon />
             </IconButton>
          </Flex>
-         <ActionBar
-            selectedRows={selectedRows}
-            onDelete={handleOnDelete}
-            openTunnel={openBulkActionTunnel}
-         />
          <Spacer size="16px" />
          <ReactTabulator
             ref={tableRef}
-            columns={[selectionColumn, ...columns]}
+            columns={columns}
             data={subscriptionZipcodes}
-            rowSelected={handleRowSelection}
-            rowDeselected={handleRowDeselection}
-            selectableCheck={() => true}
             options={{
                ...tableOptions,
                layout: 'fitColumns',
+               pagination: 'local',
+               paginationSize: 10,
             }}
          />
          <Tunnels tunnels={tunnels}>
@@ -370,16 +249,6 @@ const DeliveryAreas = ({ id, setAreasTotal }) => {
                   closeTunnel={closeTunnel}
                   data={selectedZipcode}
                   setData={setSelectedZipcode}
-               />
-            </Tunnel>
-         </Tunnels>
-         <Tunnels tunnels={BulkActionTunnels}>
-            <Tunnel layer={1} size="full">
-               <DeliveryArea
-                  close={closeBulkActionTunnel}
-                  selectedRows={selectedRows}
-                  removeSelectedRow={removeSelectedRow}
-                  setSelectedRows={setSelectedRows}
                />
             </Tunnel>
          </Tunnels>
@@ -721,79 +590,4 @@ const Styles = {
          }
       }
    `,
-}
-const ActionBar = props => {
-   const { selectedRows, onDelete, openTunnel } = props
-   return (
-      <>
-         <Flex
-            container
-            as="header"
-            width="100%"
-            justifyContent="space-between"
-         >
-            <Flex
-               container
-               as="header"
-               width="25%"
-               alignItems="center"
-               justifyContent="space-between"
-            >
-               <Text as="subtitle">
-                  {selectedRows.length == 0
-                     ? 'No product'
-                     : selectedRows.length == 1
-                        ? `${selectedRows.length} product`
-                        : `${selectedRows.length} products`}{' '}
-                  selected
-               </Text>
-
-               <ButtonGroup align="left">
-                  <TextButton
-                     type="ghost"
-                     size="sm"
-                     disabled={selectedRows.length === 0 ? true : false}
-                     onClick={() => openTunnel(1)}
-                  >
-                     APPLY BULK ACTIONS
-                  </TextButton>
-               </ButtonGroup>
-            </Flex>
-            <Flex>
-               <ButtonGroup align="left">
-                  <TextButton
-                     type="ghost"
-                     size="sm"
-                     disabled={selectedRows.length === 0 ? true : false}
-                     onClick={() => onDelete()}
-                  >
-                     Delete Selected Items
-                  </TextButton>
-               </ButtonGroup>
-            </Flex>
-         </Flex>
-      </>
-   )
-}
-const CrossBox = ({ removeSelectedProducts }) => {
-   return (
-      <Checkbox
-         id="label"
-         checked={false}
-         onChange={removeSelectedProducts}
-         isAllSelected={false}
-      />
-   )
-}
-const CheckBox = ({ handleMultipleRowSelection, checked }) => {
-   return (
-      <Checkbox
-         id="label"
-         checked={checked}
-         onChange={() => {
-            handleMultipleRowSelection()
-         }}
-         isAllSelected={null}
-      />
-   )
 }

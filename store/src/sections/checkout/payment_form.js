@@ -20,7 +20,7 @@ import { isConnectedIntegration } from '../../utils'
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const PaymentForm = ({ intent }) => {
-   const { user, dispatch: userDispatch } = useUser()
+   const { user } = useUser()
    const { dispatch } = usePayment()
    const { brand } = useConfig()
    const STRIPE_ACCOUNT_ID = get_env('STRIPE_ACCOUNT_ID')
@@ -29,13 +29,6 @@ export const PaymentForm = ({ intent }) => {
       onError: error => console.error(error),
    })
    const [createPaymentMethod] = useMutation(CREATE_STRIPE_PAYMENT_METHOD, {
-      onCompleted: ({ paymentMethod }) => {
-         console.log('paymentMethod', paymentMethod)
-         userDispatch({
-            type: 'SET_PAYMENT_METHOD',
-            payload: paymentMethod,
-         })
-      },
       onError: error => console.error(error),
    })
 

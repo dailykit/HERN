@@ -12,7 +12,6 @@ import SubscriptionAppIcon from './subscription'
 import CartsAppIcon from './carts'
 import ArrowUp from './arrowUp'
 import ArrowDown from './arrowDown'
-import DeveloperAppIcon from './developer'
 
 export {
    BrandAppIcon,
@@ -29,5 +28,4 @@ export {
    CartsAppIcon,
    ArrowUp,
    ArrowDown,
-   DeveloperAppIcon
 }

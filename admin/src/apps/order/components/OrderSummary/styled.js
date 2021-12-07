@@ -29,7 +29,6 @@ export const Spacer = styled.div(
 )
 export const StyledIconButton = styled(IconButton)`
    display: none;
-
    @media (orientation: portrait) {
       display: block;
    }

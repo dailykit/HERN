@@ -20,8 +20,6 @@ import PrintIcon from './Print'
 import LabelPrinterIcon from './LabelPrinter'
 import KotPrinterIcon from './KotPrinter'
 import ScaleIcon from './Scale'
-import Cross from './Cross'
-import Tick from './Tick'
 
 export {
    PhoneIcon,
@@ -46,8 +44,6 @@ export {
    ScaleIcon,
    LabelPrinterIcon,
    KotPrinterIcon,
-   Cross,
-   Tick,
 }
 
 export * from './Notes'

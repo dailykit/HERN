@@ -33,17 +33,3 @@ export const PRODUCT_OPTION_TYPES = {
       }
    `,
 }
-export const PRODUCT_CATEGORY_OF_SUBSCRIPTION_OCCURRENCE_PRODUCT = gql`
-   subscription productCategory {
-      productCategories {
-         name
-         title: name
-         subscriptionOccurenceProducts_aggregate {
-            aggregate {
-               count
-               description: count
-            }
-         }
-      }
-   }
-`

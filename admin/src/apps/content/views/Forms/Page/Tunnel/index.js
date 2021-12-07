@@ -1,3 +1,4 @@
 import PagePreviewTunnel from './PagePreviewTunnel'
+import ConfigTunnel from './configTunnel'
 
-export { PagePreviewTunnel }
+export { PagePreviewTunnel, ConfigTunnel }

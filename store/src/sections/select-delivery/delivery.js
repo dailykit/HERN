@@ -1,13 +1,14 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useQuery } from '@apollo/react-hooks'
 import { useToasts } from 'react-toast-notifications'
+import { webRenderer } from '@dailykit/web-renderer'
 
 import { useUser } from '../../context'
-import { BRAND } from '../../graphql'
+import { GET_FILEID, BRAND } from '../../graphql'
 import { useConfig } from '../../lib'
-import { Button } from '../../components'
-import { getRoute } from '../../utils'
+import { Loader, Button } from '../../components'
+import { getRoute, get_env, isClient } from '../../utils'
 import { DeliveryDateSection } from './delivery_date_section'
 import { DeliveryProvider, useDelivery } from './state'
 import { AddressSection } from './address_section'
@@ -26,7 +27,49 @@ const DeliveryContent = () => {
    const { state } = useDelivery()
    const { addToast } = useToasts()
    const { brand, configOf } = useConfig()
+   const { loading } = useQuery(GET_FILEID, {
+      variables: {
+         divId: ['select-delivery-bottom-01'],
+      },
+      onCompleted: ({ content_subscriptionDivIds: fileData }) => {
+         if (fileData.length) {
+            fileData.forEach(data => {
+               if (data?.fileId) {
+                  const fileId = [data?.fileId]
+                  const cssPath =
+                     data?.subscriptionDivFileId?.linkedCssFiles.map(file => {
+                        return file?.cssFile?.path
+                     })
+                  const jsPath = data?.subscriptionDivFileId?.linkedJsFiles.map(
+                     file => {
+                        return file?.jsFile?.path
+                     }
+                  )
+                  webRenderer({
+                     type: 'file',
+                     config: {
+                        uri: isClient && get_env('DATA_HUB_HTTPS'),
+                        adminSecret: isClient && get_env('ADMIN_SECRET'),
+                        expressUrl: isClient && get_env('EXPRESS_URL'),
+                     },
+                     fileDetails: [
+                        {
+                           elementId: 'select-delivery-bottom-01',
+                           fileId,
+                           cssPath: cssPath,
+                           jsPath: jsPath,
+                        },
+                     ],
+                  })
+               }
+            })
+         }
+      },
 
+      onError: error => {
+         console.error(error)
+      },
+   })
    const [updateBrandCustomer] = useMutation(BRAND.CUSTOMER.UPDATE, {
       onCompleted: () => {
          addToast('Successfully saved delivery preferences.', {
@@ -77,7 +120,7 @@ const DeliveryContent = () => {
    const brandTextColor = {
       color: theme?.accent ? theme.accent : 'rgba(5, 150, 105, 1)',
    }
-
+   if (loading) return <Loader inline />
    return (
       <main className="hern-delivery__main">
          <header className="hern-delivery__header">
@@ -99,6 +142,7 @@ const DeliveryContent = () => {
                Continue
             </Button>
          </div>
+         <div id="select-delivery-bottom-01"></div>
       </main>
    )
 }

@@ -1,7 +1,0 @@
-table:
-  name: bottomBarOption
-  schema: ux
-object_relationships:
-- name: navigationMenu
-  using:
-    foreign_key_constraint_on: navigationMenuId

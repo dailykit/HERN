@@ -302,12 +302,7 @@ const PaymentContent = () => {
                      Oh no! Looks like you've wandered on an unknown path, let's
                      get you to home.
                   </HelperBar.Title>
-                  <HelperBar.Button
-                     onClick={() =>
-                        (window.location.href =
-                           window.location.origin + getRoute('/'))
-                     }
-                  >
+                  <HelperBar.Button onClick={() => navigate('/')}>
                      Go to Home
                   </HelperBar.Button>
                </HelperBar>
@@ -338,12 +333,7 @@ const PaymentContent = () => {
                      Looks like the page you're requesting is not available
                      anymore, let's get you to home.
                   </HelperBar.Title>
-                  <HelperBar.Button
-                     onClick={() =>
-                        (window.location.href =
-                           window.location.origin + getRoute('/'))
-                     }
-                  >
+                  <HelperBar.Button onClick={() => navigate('/')}>
                      Go to Home
                   </HelperBar.Button>
                </HelperBar>
@@ -360,12 +350,7 @@ const PaymentContent = () => {
                      Seems like, you do not have access to this page, let's get
                      you to home.
                   </HelperBar.SubTitle>
-                  <HelperBar.Button
-                     onClick={() =>
-                        (window.location.href =
-                           window.location.origin + getRoute('/'))
-                     }
-                  >
+                  <HelperBar.Button onClick={() => navigate('/')}>
                      Go to Home
                   </HelperBar.Button>
                </HelperBar>

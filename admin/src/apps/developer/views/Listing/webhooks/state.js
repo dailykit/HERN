@@ -1,4 +1,5 @@
 import React from 'react'
+import { PayloadList } from 'twilio/lib/rest/api/v2010/account/recording/addOnResult/payload'
 
 const WebhookContext = React.createContext()
 
@@ -6,7 +7,6 @@ const initialState = {
     webhookDetails: {
        "webhookUrl_EventId":undefined,
        "webhookUrl_EventLabel": undefined,
-       "webhookUrl_EventDescription": undefined,
        "webhookUrlEndpoint":undefined,
        "advanceConfig":undefined,
        "headers":[]

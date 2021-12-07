@@ -39,7 +39,6 @@ export const Styles = {
          padding: 16px;
          display: grid;
          grid-gap: 14px;
-
          position: relative;
          border-left-width: 8px;
          border-right-width: 8px;

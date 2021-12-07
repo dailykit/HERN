@@ -30,12 +30,6 @@ export const StyledWrapper = styled.div`
          }
       }
    }
-   .ant-card-cover > button {
-      width: 100%;
-      box-shadow: none;
-      border: 1px solid rgb(228, 228, 228);
-      border-radius: 0px;
-   }
 `
 export const ImageContainer = styled.div`
    display: flex;

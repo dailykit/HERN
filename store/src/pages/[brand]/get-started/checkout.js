@@ -3,27 +3,27 @@ import { useRouter } from 'next/router'
 import {
    isClient,
    getRoute,
-   processExternalFiles,
+   processJsFile,
    renderPageContent,
    getPageProps,
 } from '../../../utils'
-import { SEO, Layout, LoginWarning } from '../../../components'
+import { SEO, Layout } from '../../../components'
 import { useUser } from '../../../context'
 
 const Checkout = props => {
    const router = useRouter()
    const { isAuthenticated, isLoading } = useUser()
-   const { settings, folds, seoSettings, linkedFiles } = props
+   const { seo, settings, folds, seoSettings } = props
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
          isClient && localStorage.setItem('landed_on', location.href)
-         // router.push(getRoute('/get-started/register'))
+         router.push(getRoute('/get-started/register'))
       }
    }, [isAuthenticated, isLoading])
 
    React.useEffect(() => {
       try {
-         processExternalFiles(folds, linkedFiles)
+         processJsFile(folds)
       } catch (err) {
          console.log('Failed to render page: ', err)
       }
@@ -32,23 +32,22 @@ const Checkout = props => {
    return (
       <Layout noHeader settings={settings}>
          <SEO seoSettings={seoSettings} />
-         {!isAuthenticated && !isLoading ? (
-            <LoginWarning />
-         ) : (
-            <main>{renderPageContent(folds)}</main>
-         )}
+         <main className="hern-checkout">{renderPageContent(folds)}</main>
       </Layout>
    )
 }
 export const getStaticProps = async ({ params }) => {
-   const { parsedData, settings, seoSettings, linkedFiles } =
-      await getPageProps(params, '/get-started/checkout')
+
+   const { parsedData, seo, settings, seoSettings } = await getPageProps(
+      params,
+      '/get-started/checkout'
+   )
    return {
       props: {
          folds: parsedData,
+         seo,
          settings,
-         seoSettings,
-         linkedFiles,
+         seoSettings
       },
       revalidate: 1,
    }

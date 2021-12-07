@@ -36,6 +36,7 @@ const getHtml = async (functionFile, variables, subjectLineTemplate) => {
             })
          )
          const url = `${origin}/template/?template=${template_options}&data=${template_variables}`
+
          const { data } = await axios.get(url)
          const result = template_compiler(subjectLineTemplate, data)
          return result
@@ -98,6 +99,7 @@ export const emailTrigger = async ({
                variables,
                subjectLineTemplate
             )
+            console.log('subjectLine', typeof subjectLine)
 
             const { sendEmail } = await client.request(SEND_MAIL, {
                emailInput: {

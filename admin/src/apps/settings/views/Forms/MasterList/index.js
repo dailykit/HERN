@@ -8,8 +8,6 @@ import ProcessingsForm from './Processings'
 import UnitsForm from './Units'
 import ProductCategories from './ProductCategories'
 import IngredientCategories from './IngredientCategories'
-import VegNonVeg from './VegNonVeg'
-import Recipe from './Recipe'
 const MasterListForm = () => {
    const { list } = useParams()
 
@@ -34,12 +32,6 @@ const MasterListForm = () => {
       }
       case 'ingredient-categories': {
          return <IngredientCategories />
-      }
-      case 'vegnonveg': {
-         return <VegNonVeg />
-      }
-      case 'recipe': {
-         return <Recipe />
       }
       default: {
          return <AccompanimentTypesForm />

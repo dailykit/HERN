@@ -2,7 +2,7 @@ import React from 'react'
 import moment from 'moment'
 import { toast } from 'react-toastify'
 import { useSubscription } from '@apollo/react-hooks'
-import { Flex, Text, Spacer, useTunnel, Checkbox, TextButton, ButtonGroup, Tunnels, Tunnel } from '@dailykit/ui'
+import { Flex, Text, Spacer, useTunnel } from '@dailykit/ui'
 import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
 
 import tableOptions from '../../../../tableOption'
@@ -16,7 +16,6 @@ import {
    InlineLoader,
 } from '../../../../../../shared/components'
 import { AddOnProductsTunnel, PlanProductsTunnel } from '../../../../components'
-import { SubscriptionOccurrenceBulkAction } from '../../../Listings/Subscriptions/BulkActionTunnel'
 
 const Occurences = ({ id, setOccurencesTotal }) => {
    const tableRef = React.useRef()
@@ -27,10 +26,6 @@ const Occurences = ({ id, setOccurencesTotal }) => {
    const [menuTunnels, openMenuTunnel, closeMenuTunnel] = useTunnel(1)
    const [logTunnels, openLogTunnel, closeLogTunnel] = useTunnel(1)
    const [logOccurenceId, setLogOccurenceId] = React.useState(null)
-   const [selectedRows, setSelectedRows] = React.useState([])
-   const [bulkTunnels, openBulkTunnel, closeBulkTunnel] = useTunnel(3)
-   const [checked, setChecked] = React.useState(false)
-
    const {
       error,
       loading,
@@ -42,8 +37,6 @@ const Occurences = ({ id, setOccurencesTotal }) => {
             aggregate = {},
          } = data.subscription_occurences?.occurences_aggregate
          setOccurencesTotal(aggregate?.count || 0)
-         console.log("this is subscription id::::", id)
-
       },
    })
 
@@ -62,14 +55,6 @@ const Occurences = ({ id, setOccurencesTotal }) => {
    }
 
    const columns = [
-      {
-         title: 'Label',
-         field: 'label',
-         visible: false,
-         frozen: true,
-         headerFilter: 'true',
-         headerHozAlign: 'center',
-      },
       {
          title: 'Fulfillment Date',
          field: 'fulfillmentDate',
@@ -141,112 +126,7 @@ const Occurences = ({ id, setOccurencesTotal }) => {
          },
       },
    ]
-   const handleRowSelection = ({ _row }) => {
-      const rowData = _row.getData()
-      const lastPersistence = localStorage.getItem(
-         'selected-rows-id_subscription_occurrence_table'
-      )
-      const lastPersistenceParse =
-         lastPersistence !== undefined &&
-            lastPersistence !== null &&
-            lastPersistence.length !== 0
-            ? JSON.parse(lastPersistence)
-            : []
-      setSelectedRows(prevState => [...prevState, _row.getData()])
-      let newData = [...lastPersistenceParse, rowData.id]
-      localStorage.setItem(
-         'selected-rows-id_subscription_occurrence_table',
-         JSON.stringify(newData)
-      )
-   }
-   const handleRowDeselection = ({ _row }) => {
-      const data = _row.getData()
-      const lastPersistence = localStorage.getItem(
-         'selected-rows-id_subscription_occurrence_table'
-      )
-      const lastPersistenceParse =
-         lastPersistence !== undefined &&
-            lastPersistence !== null &&
-            lastPersistence.length !== 0
-            ? JSON.parse(lastPersistence)
-            : []
-      setSelectedRows(prevState => prevState.filter(row => row.id !== data.id))
-      const newLastPersistenceParse = lastPersistenceParse.filter(
-         id => id !== data.id
-      )
-      localStorage.setItem(
-         'selected-rows-id_subscription_occurrence_table',
-         JSON.stringify(newLastPersistenceParse)
-      )
-   }
 
-   const removeSelectedOccurrence = () => {
-      setChecked({ checked: false })
-      setSelectedRows([])
-      tableRef.current.table.deselectRow()
-      localStorage.setItem(
-         'selected-rows-id_subscription_occurrence_table',
-         JSON.stringify([])
-      )
-   }
-
-   const handleMultipleRowSelection = () => {
-      setChecked(!checked)
-      if (!checked) {
-         tableRef.current.table.selectRow('active')
-         let multipleRowData = tableRef.current.table.getSelectedData()
-         setSelectedRows(multipleRowData)
-         console.log('first', selectedRows)
-         localStorage.setItem(
-            'selected-rows-id_subscription_occurrence_table',
-            JSON.stringify(multipleRowData.map(row => row.id))
-         )
-      } else {
-         tableRef.current.table.deselectRow()
-         setSelectedRows([])
-         console.log('second', selectedRows)
-
-         localStorage.setItem(
-            'selected-rows-id_subscription_occurrence_table',
-            JSON.stringify([])
-         )
-      }
-   }
-   console.log('selected row:::::', selectedRows)
-   const selectionColumn =
-      selectedRows.length > 0 &&
-         selectedRows.length < subscription_occurences.length
-         ? {
-            formatter: 'rowSelection',
-            titleFormatter: reactFormatter(
-               <CrossBox
-                  removeSelectedOccurrence={removeSelectedOccurrence}
-               />
-            ),
-            align: 'center',
-            hozAlign: 'center',
-            width: 10,
-            headerSort: false,
-            frozen: true,
-         }
-         : {
-            formatter: 'rowSelection',
-            titleFormatter: reactFormatter(
-               <CheckBox
-                  checked={checked}
-                  handleMultipleRowSelection={handleMultipleRowSelection}
-               />
-            ),
-            align: 'center',
-            hozAlign: 'center',
-            width: 20,
-            headerSort: false,
-            frozen: true,
-         }
-
-   const removeSelectedRow = id => {
-      tableRef.current.table.deselectRow(id)
-   }
    if (loading) return <InlineLoader />
    if (error) {
       toast.error('Failed to fetch the list of occurences!')
@@ -260,32 +140,15 @@ const Occurences = ({ id, setOccurencesTotal }) => {
             <Tooltip identifier="form_subscription_section_delivery_day_section_occurences" />
          </Flex>
          <Spacer size="16px" />
-         <Tunnels tunnels={bulkTunnels}>
-            <Tunnel layer={1} size="full">
-               <SubscriptionOccurrenceBulkAction
-                  close={closeBulkTunnel}
-                  selectedRows={selectedRows}
-                  removeSelectedRow={removeSelectedRow}
-                  setSelectedRows={setSelectedRows}
-               />
-            </Tunnel>
-         </Tunnels>
-         <ActionBar
-            title="subscription"
-            selectedRows={selectedRows}
-            // defaultIDs={defaultIDs()}
-            openTunnel={openBulkTunnel}
-         />
          <ReactTabulator
             ref={tableRef}
-            columns={[selectionColumn, ...columns]}
+            columns={columns}
             options={{
                ...tableOptions,
                layout: 'fitColumns',
+               pagination: 'local',
+               paginationSize: 10,
             }}
-            rowSelected={handleRowSelection}
-            rowDeselected={handleRowDeselection}
-            selectableCheck={() => true}
             data={subscription_occurences?.occurences_aggregate?.nodes || []}
          />
          <AddOnProductsTunnel
@@ -337,60 +200,5 @@ const AddOnProductsCount = ({ cell: { _cell } }) => {
             {data.subscription.addOnProducts.aggregate.count}
          </span>
       </div>
-   )
-}
-const ActionBar = ({ title, selectedRows, openTunnel }) => {
-   return (
-      <>
-         <Flex
-            container
-            as="header"
-            width="100%"
-            style={{ marginLeft: 0 }}
-            alignItems="center"
-            justifyContent="flex-start"
-         >
-            <Text as="subtitle">
-               {selectedRows.length == 0
-                  ? `No ${title}`
-                  : selectedRows.length == 1
-                     ? `${selectedRows.length} ${title}`
-                     : `${selectedRows.length} ${title}s`}{' '}
-               selected
-            </Text>
-            <ButtonGroup align="left">
-               <TextButton
-                  type="ghost"
-                  size="sm"
-                  disabled={selectedRows.length === 0 ? true : false}
-                  onClick={() => openTunnel(1)}
-               >
-                  APPLY BULK ACTIONS
-               </TextButton>
-            </ButtonGroup>
-         </Flex>
-      </>
-   )
-}
-const CheckBox = ({ handleMultipleRowSelection, checked }) => {
-   return (
-      <Checkbox
-         id="label"
-         checked={checked}
-         onChange={() => {
-            handleMultipleRowSelection()
-         }}
-         isAllSelected={null}
-      />
-   )
-}
-const CrossBox = ({ removeSelectedOccurrence }) => {
-   return (
-      <Checkbox
-         id="label"
-         checked={false}
-         onChange={removeSelectedOccurrence}
-         isAllSelected={false}
-      />
    )
 }

@@ -45,7 +45,7 @@ const ProductsTunnel = ({ categoryId, closeTunnel }) => {
          setProducts([...products])
       },
    })
-   console.log('products', products)
+
    const [createRecord, { loading: inFlight }] = useMutation(
       CREATE_COLLECTION_PRODUCT_CATEGORY_PRODUCTS,
       {
@@ -144,16 +144,14 @@ const ProductsTunnel = ({ categoryId, closeTunnel }) => {
                            handleOnCreate={quickCreateProduct}
                         >
                            {list
-                              .filter(
-                                 option =>
-                                    option.title &&
-                                    option.title.toLowerCase().includes(search)
+                              .filter(option =>
+                                 option.title.toLowerCase().includes(search)
                               )
                               .map(option => (
                                  <ListItem
                                     type="MSL1"
                                     key={option.id}
-                                    title={option.title || 'N/A'}
+                                    title={option.title}
                                     onClick={() =>
                                        selectOption('id', option.id)
                                     }

@@ -1,7 +1,0 @@
-version: 3
-endpoint: https://testhern.dailykit.org/datahub
-admin_secret: 60ea76ab-5ab6-4f09-ad44-efeb00f978ce
-metadata_directory: metadata
-actions:
-   kind: synchronous
-   handler_webhook_baseurl: http://localhost:3000

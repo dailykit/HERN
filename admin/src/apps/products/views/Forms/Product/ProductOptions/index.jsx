@@ -17,11 +17,7 @@ import {
    useTunnel,
 } from '@dailykit/ui'
 
-import {
-   PRODUCT_OPTION,
-   PRODUCT_OPTION_TYPES,
-   UPDATE_PRODUCT_OPTION_SELECTION_STATEMENT,
-} from '../../../../graphql'
+import { PRODUCT_OPTION, PRODUCT_OPTION_TYPES } from '../../../../graphql'
 import { logger } from '../../../../../../shared/utils'
 import {
    DeleteIcon,
@@ -77,8 +73,7 @@ const ProductOptions = ({ productId, productName, options }) => {
 
    const opConfigInvokedBy = React.useRef('')
    const modifierOpConfig = React.useRef(undefined)
-   const [productOptionsTextField, setProductOptionsTextField] =
-      React.useState('')
+
    React.useEffect(() => {
       if (options.length) {
          initiatePriority({
@@ -114,18 +109,6 @@ const ProductOptions = ({ productId, productName, options }) => {
          logger(error)
       },
    })
-
-   const [updateProductSelectionStatement] = useMutation(
-      UPDATE_PRODUCT_OPTION_SELECTION_STATEMENT,
-      {
-         onCompleted: () => {
-            toast.success('Option updated')
-         },
-         onError: error => {
-            toast.error(error)
-         },
-      }
-   )
 
    const handleAddOption = () => {
       createProductOption({
@@ -212,15 +195,6 @@ const ProductOptions = ({ productId, productName, options }) => {
 
    if (loading) return <InlineLoader />
 
-   const updateProductOptionSelectionStatement = productOptionsTextField => {
-      updateProductSelectionStatement({
-         variables: {
-            id: productId,
-            productionOptionSelectionStatement: productOptionsTextField,
-         },
-      })
-   }
-
    return (
       <>
          <Tunnels tunnels={tunnels}>
@@ -294,23 +268,6 @@ const ProductOptions = ({ productId, productName, options }) => {
             closeTunnel={closeOperationConfigTunnel}
             onSelect={saveOperationConfig}
          />
-         <Form.Group>
-            <Form.Label>Label</Form.Label>
-            <Form.Text
-               id="productOptionsTextField"
-               name="productOptions"
-               variant="revamp"
-               placeholder="Enter your preference"
-               value={productOptionsTextField}
-               onChange={e => setProductOptionsTextField(e.target.value)}
-               onBlur={e => {
-                  updateProductOptionSelectionStatement(productOptionsTextField)
-               }}
-               style={{ width: '50%', textAlign: 'center', float: 'center' }}
-            />
-         </Form.Group>
-         <Spacer yAxis size="30px" />
-
          {Boolean(options.length) && (
             <Flex margin="0 0 32px 0">
                <DragNDrop
@@ -338,7 +295,6 @@ const ProductOptions = ({ productId, productName, options }) => {
                </DragNDrop>
             </Flex>
          )}
-
          <ButtonTile
             type="secondary"
             text="Add Option"

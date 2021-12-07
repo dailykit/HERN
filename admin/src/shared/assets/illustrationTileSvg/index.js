@@ -27,9 +27,6 @@ import NavbarMenuSvg from './NavbarMenu'
 import SettingsSvg from './Settings'
 import BlocksSvg from './Blocks'
 import CollectionsSvg from './Collections'
-import WebhookSvg from './Webhooks'
-import ApiKeySvg from './ApiKey'
-
 
 export {
    ProductsSvg,
@@ -61,6 +58,4 @@ export {
    SettingsSvg,
    BlocksSvg,
    CollectionsSvg,
-   WebhookSvg,
-   ApiKeySvg
 }

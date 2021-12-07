@@ -5,19 +5,19 @@ import {
    getRoute,
    isClient,
    renderPageContent,
-   processExternalFiles,
+   processJsFile,
 } from '../../../utils'
-import { SEO, Layout, LoginWarning } from '../../../components'
+import { SEO, Layout } from '../../../components'
 import { useUser } from '../../../context'
 
 const SelectPlan = props => {
    const router = useRouter()
-   const { settings, linkedFiles, folds, seoSettings } = props
+   const { settings, folds, seoSettings } = props
    const { isAuthenticated, isLoading } = useUser()
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
          isClient && localStorage.setItem('landed_on', location.href)
-         // router.push(getRoute('/get-started/register'))
+         router.push(getRoute('/get-started/register'))
       }
    }, [isAuthenticated, isLoading])
 
@@ -32,7 +32,7 @@ const SelectPlan = props => {
 
    React.useEffect(() => {
       try {
-         processExternalFiles(folds, linkedFiles)
+         processJsFile(folds)
       } catch (err) {
          console.log('Failed to render page: ', err)
       }
@@ -41,11 +41,9 @@ const SelectPlan = props => {
    return (
       <Layout settings={settings}>
          <SEO seoSettings={seoSettings} />
-         {!isAuthenticated && !isLoading ? (
-            <LoginWarning />
-         ) : (
-            <main>{renderPageContent(folds)}</main>
-         )}
+         <main className="hern-get-started-select-plan__main">
+            {renderPageContent(folds)}
+         </main>
       </Layout>
    )
 }
@@ -53,11 +51,13 @@ const SelectPlan = props => {
 export default SelectPlan
 
 export const getStaticProps = async ({ params }) => {
-   const { parsedData, settings, seoSettings, linkedFiles } =
-      await getPageProps(params, '/get-started/select-plan')
+   const { parsedData, seo, settings, seoSettings } = await getPageProps(
+      params,
+      '/get-started/select-plan'
+   )
 
    return {
-      props: { folds: parsedData, linkedFiles, settings, seoSettings },
+      props: { folds: parsedData, seo, settings, seoSettings },
       revalidate: 60,
    }
 }

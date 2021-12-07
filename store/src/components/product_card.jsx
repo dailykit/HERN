@@ -2,8 +2,6 @@ import React from 'react'
 import { Slide } from 'react-slideshow-image'
 import 'react-slideshow-image/dist/styles.css'
 import { formatCurrency } from '../utils'
-import { ModifierPopup } from './index'
-
 export const ProductCard = props => {
    const {
       data,
@@ -25,9 +23,6 @@ export const ProductCard = props => {
       onShowImageIconClick,
       showCustomText = true,
       customAreaComponent: CustomAreaComponent,
-      showModifier = false,
-      closeModifier,
-      modifierPopupConfig, //use for cart
    } = props
 
    const slideRef = React.useRef()
@@ -141,7 +136,7 @@ export const ProductCard = props => {
                   )}
                   {showProductAdditionalText && (
                      <div className="hern-product-card__additional-text">
-                        {data.additionalText}
+                        {data.description}
                      </div>
                   )}
                </div>
@@ -153,21 +148,6 @@ export const ProductCard = props => {
                </div>
             </div>
          </div>
-         {showModifier && data && (
-            <ModifierPopup
-               productData={
-                  modifierPopupConfig && modifierPopupConfig?.productData
-                     ? modifierPopupConfig?.productData
-                     : data
-               }
-               closeModifier={closeModifier}
-               showCounterBtn={modifierPopupConfig?.showCounterBtn}
-               forNewItem={modifierPopupConfig?.forNewItem}
-               edit={modifierPopupConfig?.edit}
-               productCartDetail={modifierPopupConfig?.productCartDetail}
-               showModifierImage={modifierPopupConfig?.showModifierImage}
-            />
-         )}
       </>
    )
 }

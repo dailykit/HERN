@@ -43,10 +43,3 @@ query CART_PAYMENT($where: order_cartPayment_bool_exp!) {
 }
 
 `
-export const API_KEYS = `
-query API_KEYS($apiKey: String = "") {
-  developer_apiKey(where: {apiKey: {_eq: $apiKey}}) {
-    isDeactivated
-  }
-}
-`
