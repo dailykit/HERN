@@ -94,6 +94,14 @@
             "dataType": "color",
             "userInsertType": "colorPicker"
          },
+         "primaryColorLight": {
+            "id": "prd-col",
+            "label": "Primary Color",
+            "value": "#E5F0F7",
+            "default": "#E5F0F7",
+            "dataType": "color",
+            "userInsertType": "colorPicker"
+         },
          "secondaryColor": {
             "id": "secondary-col",
             "label": "Secondary Color",

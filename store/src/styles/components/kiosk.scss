@@ -128,6 +128,43 @@
 // menu page
 
 // menu section
+.ant-steps-item-active {
+   .ant-steps-item-icon {
+   }
+   .ant-steps-item-title {
+      font-size: 21px;
+      font-weight: 600;
+   }
+}
+.ant-steps-finish-icon {
+   > svg {
+      margin-bottom: 6px;
+   }
+}
+.ant-steps-item-container {
+   display: flex;
+   align-items: center;
+}
+.hern-kiosk__step-bar-rtl {
+   .ant-steps-item-title {
+      margin: 0 12px 0 12px;
+      &::after {
+         right: 100%;
+      }
+      &:last-child {
+         margin: 0 12px 0 0;
+      }
+   }
+}
+.hern-kiosk__step-bar-count {
+   width: 45px;
+   height: 45px;
+   border-radius: 22px;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   font-weight: 600;
+}
 .hern-kiosk__menu-category-side-bar {
    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
    overflow: auto;
@@ -522,6 +559,10 @@
 }
 .hern-kiosk__cart-page-proceed-to-checkout {
    height: 9em;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding: 1em 2em;
 }
 .hern-kiosk-cart-bill-details {
    margin: 2em;
@@ -590,4 +631,17 @@
    font-weight: normal;
    font-size: 14px;
    line-height: 16px;
+}
+.hern-kiosk__cart-place-order-btn {
+   padding: 2em 2em;
+   height: 2.5em;
+   display: flex;
+   align-items: center;
+   .hern-kiosk__cart-place-order-btn-text {
+      font-size: 1.5em;
+      margin: 0 1em;
+   }
+   .hern-kiosk__cart-place-order-btn-total {
+      font-size: 1.3em;
+   }
 }

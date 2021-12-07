@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { Col, Layout, Menu, Row, Badge } from 'antd'
+import _ from 'lodash'
+import { Col, Layout, Menu, Row, Badge, Steps } from 'antd'
 import { useQueryParamState } from '../../utils'
 import { CartContext, useTranslation } from '../../context'
 import { KioskProduct } from './component'
@@ -9,7 +10,8 @@ import { useQuery } from '@apollo/react-hooks'
 import { CartIcon } from '../../assets/icons'
 import { Divider } from '../../components'
 
-const { Content, Sider, Header } = Layout
+const { Content, Sider, Header, Footer } = Layout
+const { Step } = Steps
 
 export const MenuSection = props => {
    const { brand, isConfigLoading } = useConfig()
@@ -139,7 +141,17 @@ export const MenuSection = props => {
    return (
       <Layout>
          <Content style={{ height: '40em' }}>
-            Promotion, coupons and progress bar
+            {/* Promotion, coupons and progress bar */}
+            <Layout style={{ height: '100%' }}>
+               <Content>Hello</Content>
+               <Footer
+                  style={{
+                     background: `${config.kioskSettings.theme.primaryColorLight.value}`,
+                  }}
+               >
+                  <ProgressBar config={config} />
+               </Footer>
+            </Layout>
          </Content>
          <KioskMenu
             config={config}
@@ -149,6 +161,78 @@ export const MenuSection = props => {
             setCurrentPage={setCurrentPage}
          />
       </Layout>
+   )
+}
+
+const ProgressBar = props => {
+   const { config } = props
+
+   const { cartState } = React.useContext(CartContext)
+   const { t, direction } = useTranslation()
+   const { cart } = cartState
+
+   const [current, setCurrent] = React.useState(0)
+
+   const steps = [
+      {
+         title: 'Select Product',
+      },
+      {
+         title: 'Add To Cart',
+      },
+      {
+         title: 'Payment',
+      },
+   ]
+   useEffect(() => {
+      if (cart && cart.cartItems_aggregate.aggregate.count > 0) {
+         setCurrent(2)
+      }
+   }, [cart])
+
+   const StepCount = ({ step, isFinish, isCurrent }) => {
+      return (
+         <div
+            className="hern-kiosk__step-bar-count"
+            style={{
+               backgroundColor: `${
+                  isFinish
+                     ? config.kioskSettings.theme.secondaryColor.value
+                     : isCurrent
+                     ? config.kioskSettings.theme.primaryColor.value
+                     : 'transparent'
+               }`,
+
+               color: `${isFinish ? '#fff' : isCurrent ? '#fff' : '#5A5A5A99'}`,
+               border: `${isFinish ? 'none' : '2px solid #5A5A5A99'}`,
+            }}
+         >
+            {step}
+         </div>
+      )
+   }
+   return (
+      <Steps
+         current={current}
+         className={direction === 'rtl' && 'hern-kiosk__step-bar-rtl'}
+      >
+         {steps.map((item, index) => (
+            <Step
+               key={item.title}
+               title={t(item.title)}
+               style={{
+                  color: `${config.kioskSettings.theme.primaryColor.value}`,
+               }}
+               icon={
+                  <StepCount
+                     step={index + 1}
+                     isFinish={index < current}
+                     isCurrent={index == current}
+                  />
+               }
+            />
+         ))}
+      </Steps>
    )
 }
 
