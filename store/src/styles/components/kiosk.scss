@@ -492,6 +492,8 @@
    font-weight: 500;
 }
 .hern-kiosk__cart-cards {
+   overflow: auto;
+   height: calc(100% - 8em);
    &::-webkit-scrollbar {
       width: 6px;
    }
