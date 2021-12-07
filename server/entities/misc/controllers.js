@@ -236,11 +236,14 @@ export const authorizeRequest = async (req, res) => {
 
       let apiKeyExists = false
       let staffUserExists = false
-      if (apiKeyHeaderValue){
+      if (apiKeyHeaderValue) {
          const apiKeys = await client.request(API_KEYS, {
-            "apiKey": apiKeyHeaderValue
+            apiKey: apiKeyHeaderValue
          })
-         if (apiKeys.developer_apiKey && apiKeys.developer_apiKey[0].isDeactivated==false){
+         if (
+            apiKeys.developer_apiKey &&
+            apiKeys.developer_apiKey[0].isDeactivated == false
+         ) {
             apiKeyExists = true
          }
       }
@@ -273,16 +276,15 @@ export const authorizeRequest = async (req, res) => {
          }),
          ...(staffId &&
             staffUserExists && {
-               'X-Hasura-Role': 'admin',
-               'X-Hasura-Staff-Id': staffId,
-               'X-Hasura-Email-Id': staffEmail
-            }),
+            'X-Hasura-Role': 'admin',
+            'X-Hasura-Staff-Id': staffId,
+            'X-Hasura-Email-Id': staffEmail
+         }),
          ...(apiKeyHeaderValue &&
-            apiKeyExists &&
-            {
-               'X-Hasura-Role': 'apiKeyRole',
-               'X-Hasura-Api-Key': apiKeyHeaderValue
-            })
+            apiKeyExists && {
+            'X-Hasura-Role': 'apiKeyRole',
+            'X-Hasura-Api-Key': apiKeyHeaderValue
+         })
       })
    } catch (error) {
       return res.status(404).json({ success: false, error: error.message })
@@ -388,3 +390,33 @@ export const populate_env = async (req, res) => {
       return res.status(404).json({ success: false, error: error.message })
    }
 }
+
+export const syncEnvsFromPlatform = async () => {
+   try {
+      const PLATFORM_URL = await get_env('PLATFORM_URL')
+      const organizationId = process.env.ORGANIZATION_ID
+      // const PLATFORM_URL = 'http://localhost:5000'
+      // console.log('from syncEnvsFromPlatform🎄', organizationId, PLATFORM_URL)
+      let url = `${PLATFORM_URL}/getenvs?organizationId=${organizationId}`
+
+      const { data: { success, data = {} } = {} } = await axios.get(url)
+      if (success) {
+         await client.request(UPSERT_SETTINGS_ENV, {
+            objects: data
+         })
+         console.log('updated successfully')
+      } else {
+         throw "Couldn't update envs in setting table"
+      }
+   } catch (error) {
+      console.log(error)
+   }
+}
+
+const UPSERT_SETTINGS_ENV = `
+mutation upsertEnvs($objects: [settings_env_insert_input!]!) {
+   insert_settings_env(on_conflict: {constraint: env_pkey, update_columns: value}, objects: $objects) {
+     affected_rows
+   }
+ }
+ `
