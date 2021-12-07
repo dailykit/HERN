@@ -1,4 +1,4 @@
-import { Radio } from 'antd'
+import { Radio, Space } from 'antd'
 import classNames from 'classnames'
 import React, { useState } from 'react'
 import { useTranslation } from '../../context'
@@ -36,35 +36,43 @@ const LanguageSelector = props => {
             style={{ display: 'flex' }}
             size="large"
          >
-            {locales.map((eachLang, index) => {
-               return (
-                  <Radio.Button
-                     value={eachLang.langCode}
-                     key={index}
-                     className={classNames(
-                        'hern-kiosk__kiosk-language-option',
-                        {
-                           'hern-kiosk__kiosk-language-option--active':
-                              lang === eachLang.langCode,
-                        }
-                     )}
-                     style={{
-                        ...(lang === eachLang.langCode && {
+            <Space size={'large'}>
+               {locales.map((eachLang, index) => {
+                  return (
+                     <Radio.Button
+                        value={eachLang.langCode}
+                        key={index}
+                        className={classNames(
+                           'hern-kiosk__kiosk-language-option',
+                           {
+                              'hern-kiosk__kiosk-language-option--active':
+                                 lang === eachLang.langCode,
+                           }
+                        )}
+                        style={{
                            backgroundColor: `${config.kioskSettings.theme.primaryColor.value}`,
-                        }),
-                     }}
-                  >
-                     {eachLang.flagIcon && (
-                        <img
-                           src={eachLang.flagIcon}
-                           alt="flagIcon"
-                           className="hern-kiosk__kiosk-language-flag-icon"
-                        />
-                     )}{' '}
-                     {eachLang.title}
-                  </Radio.Button>
-               )
-            })}
+                           border: `2px solid ${
+                              lang === eachLang.langCode
+                                 ? config.kioskSettings.theme.successColor.value
+                                 : config.kioskSettings.theme.primaryColorDark
+                                      .value
+                           }`,
+                           borderRadius: `.5em`,
+                           color: '#fff',
+                        }}
+                     >
+                        {eachLang.flagIcon && (
+                           <img
+                              src={eachLang.flagIcon}
+                              alt="flagIcon"
+                              className="hern-kiosk__kiosk-language-flag-icon"
+                           />
+                        )}{' '}
+                        {eachLang.title}
+                     </Radio.Button>
+                  )
+               })}
+            </Space>
          </Radio.Group>
       </div>
    )

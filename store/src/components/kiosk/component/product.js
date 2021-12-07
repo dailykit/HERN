@@ -12,56 +12,23 @@ export const KioskProduct = props => {
    const { cartState, methods, addToCart } = React.useContext(CartContext)
 
    const { config, productData, setCurrentPage } = props
-   const { t, locale } = useTranslation()
+   const { t, locale, dynamicTrans } = useTranslation()
    const [showModifier, setShowModifier] = useState(false)
    const [availableQuantityInCart, setAvailableQuantityInCart] = useState(0)
-   const [lLang, setLLang] = useState(locale)
+   const currentLang = React.useMemo(() => locale, [locale])
 
    const [combinedCartItems, setCombinedCartData] = useState(null)
 
-   const trans = strings => {
-      console.log('locale', lLang)
-      // const regFetcher = () => {
-      //    switch (lLang) {
-      //       case 'en':
-      //          return /\##EN##(.*?)\##EN##/g
-      //       case 'ar':
-      //          return /\##AR##(.*?)\##AR##/g
-      //       default:
-      //          return /\##DEF##(.*?)\##DEF##/g
-      //    }
-      // }
-      // const regFetcher2 = () => {
-      //    switch (lLang) {
-      //       case 'en':
-      //          return '##EN##'
-      //       case 'ar':
-      //          return '##AR##'
-      //       default:
-      //          return '##DEF##'
-      //    }
-      // }
-      // let reg = regFetcher()
-      // let reg2 = regFetcher2()
-      // console.log(reg, reg2, 'hello')
-
-      strings.forEach(x => {
-         if (lLang === 'en') {
-            if (x.innerHTML.match(/\##EN##(.*?)\##EN##/g)) {
-               x.innerHTML = x.innerHTML[0].replaceAll('##EN##', '')
-            }
-         }
-         if (lLang === 'ar') {
-            if (x.innerHTML.match(/\##AR##(.*?)\##AR##/g)) {
-               x.innerHTML = x.innerHTML[0].replaceAll('##AR##', '')
-            }
-         }
-      })
-   }
-   // useEffect(() => {
-   //    const translateString = document.querySelectorAll('span')
-   //    trans(translateString)
-   // }, [])
+   useEffect(() => {
+      const translateStringSpan = document.querySelectorAll('span')
+      const translateStringDiv = document.querySelectorAll('div')
+      const translateStringP = document.querySelectorAll('p')
+      const translateStringLi = document.querySelectorAll('li')
+      dynamicTrans(translateStringSpan, currentLang)
+      dynamicTrans(translateStringDiv, currentLang)
+      dynamicTrans(translateStringP, currentLang)
+      dynamicTrans(translateStringLi, currentLang)
+   }, [currentLang])
 
    useEffect(() => {
       if (cartState.cart) {

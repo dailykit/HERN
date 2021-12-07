@@ -11,8 +11,28 @@ const languages = { en, fr, ar }
 const rltLanguages = ['ar'] //Languages are read from right to left
 
 export const LanguageProvider = ({ children }) => {
-   const [locale, changeLocale] = React.useState('en')
-   const [direction, changeDirection] = React.useState('ltr')
+   const locales = [
+      {
+         langCode: 'en',
+         title: 'English',
+         default: true,
+         flagIcon: 'https://flagicons.lipis.dev/flags/4x3/um.svg',
+         direction: 'ltr',
+      },
+      {
+         langCode: 'ar',
+         title: 'عربي',
+         default: false,
+         flagIcon: 'https://flagicons.lipis.dev/flags/4x3/sa.svg',
+         direction: 'rtl',
+      },
+   ]
+   const [locale, changeLocale] = React.useState(
+      locales.find(x => x.default).langCode
+   )
+   const [direction, changeDirection] = React.useState(
+      locales.find(x => x.default).direction
+   )
 
    //Change direction for right to left read languages
    React.useEffect(() => {
@@ -25,7 +45,7 @@ export const LanguageProvider = ({ children }) => {
 
    return (
       <LanguageContext.Provider
-         value={{ locale, changeLocale, direction, changeDirection }}
+         value={{ locale, changeLocale, direction, changeDirection, locales }}
       >
          <IntlProvider locale={locale} messages={languages[locale]}>
             {children}
@@ -35,33 +55,29 @@ export const LanguageProvider = ({ children }) => {
 }
 
 export const useTranslation = () => {
-   const { locale, changeLocale, direction, changeDirection } =
+   const { locale, changeLocale, direction, changeDirection, locales } =
       React.useContext(LanguageContext)
 
-   const locales = [
-      {
-         langCode: 'en',
-         title: 'English',
-         default: true,
-         flagIcon: 'https://flagicons.lipis.dev/flags/4x3/um.svg',
-      },
-      {
-         langCode: 'ar',
-         title: 'عربي',
-         default: false,
-         flagIcon: 'https://flagicons.lipis.dev/flags/4x3/sa.svg',
-      },
-      // {
-      //    langCode: 'fr',
-      //    title: 'français',
-      //    default: false,
-      //    flagIcon: 'https://flagicons.lipis.dev/flags/4x3/fr.svg',
-      // },
-   ]
-
    const t = text => {
-      console.log(text)
       return <FormattedMessage id={text} />
+   }
+   const dynamicTrans = (strings, currentLang) => {
+      strings.forEach(x => {
+         if (currentLang === 'en') {
+            if (x.innerHTML.match(/\##EN##(.*?)\##EN##/g)) {
+               x.innerHTML = x.innerHTML
+                  .match(/\##EN##(.*?)\##EN##/g)[0]
+                  .replaceAll('##EN##', '')
+            }
+         }
+         if (currentLang === 'ar') {
+            if (x.innerHTML.match(/\##AR##(.*?)\##AR##/g)) {
+               x.innerHTML = x.innerHTML
+                  .match(/\##AR##(.*?)\##AR##/g)[0]
+                  .replaceAll('##AR##', '')
+            }
+         }
+      })
    }
 
    return {
@@ -71,5 +87,6 @@ export const useTranslation = () => {
       direction,
       changeDirection,
       t,
+      dynamicTrans,
    }
 }

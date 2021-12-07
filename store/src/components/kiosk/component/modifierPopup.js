@@ -21,7 +21,7 @@ export const KioskModifier = props => {
       productCartDetail,
       setCurrentPage,
    } = props
-   const { t } = useTranslation()
+   const { t, dynamicTrans, locale } = useTranslation()
    //context
    const { addToCart, methods } = React.useContext(CartContext)
 
@@ -37,6 +37,7 @@ export const KioskModifier = props => {
    const [status, setStatus] = useState('loading')
    const [errorCategories, setErrorCategories] = useState([])
    const [showProceedPopup, setShowProceedPopup] = useState(false)
+   const currentLang = React.useMemo(() => locale, [locale])
 
    const modifierPopRef = React.useRef()
    useOnClickOutside(modifierPopRef, () => onCloseModifier())
@@ -339,6 +340,17 @@ export const KioskModifier = props => {
          setSelectedProductOption(null)
       }
    }, [])
+
+   useEffect(() => {
+      const translateStringSpan = document.querySelectorAll('span')
+      const translateStringDiv = document.querySelectorAll('div')
+      const translateStringP = document.querySelectorAll('p')
+      const translateStringLi = document.querySelectorAll('li')
+      dynamicTrans(translateStringSpan, currentLang)
+      dynamicTrans(translateStringDiv, currentLang)
+      dynamicTrans(translateStringP, currentLang)
+      dynamicTrans(translateStringLi, currentLang)
+   }, [currentLang])
    if (showProceedPopup) {
       return (
          <Modal
