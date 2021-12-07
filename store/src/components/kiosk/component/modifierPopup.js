@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Badge, Carousel, Radio } from 'antd'
+import { Badge, Carousel, Radio, Modal } from 'antd'
 import { KioskCounterButton } from '.'
 import { CartContext, useTranslation } from '../../../context'
 import {
@@ -19,6 +19,7 @@ export const KioskModifier = props => {
       edit = false,
       forNewItem = false,
       productCartDetail,
+      setCurrentPage,
    } = props
    const { t } = useTranslation()
    //context
@@ -35,6 +36,7 @@ export const KioskModifier = props => {
    })
    const [status, setStatus] = useState('loading')
    const [errorCategories, setErrorCategories] = useState([])
+   const [showProceedPopup, setShowProceedPopup] = useState(false)
 
    const modifierPopRef = React.useRef()
    useOnClickOutside(modifierPopRef, () => onCloseModifier())
@@ -154,8 +156,11 @@ export const KioskModifier = props => {
                },
             })
          }
-
-         onCloseModifier()
+         if (edit || forNewItem) {
+            onCloseModifier()
+            return
+         }
+         setShowProceedPopup(true)
          return
       }
 
@@ -163,7 +168,6 @@ export const KioskModifier = props => {
 
       let errorState = []
       for (let i = 0; i < allCatagories.length; i++) {
-         console.log('Helloworld', allCatagories[i])
          const min = allCatagories[i]['limits']['min']
          const max = allCatagories[i]['limits']['max']
          const allFoundedOptionsLength = allSelectedOptions.filter(
@@ -208,7 +212,12 @@ export const KioskModifier = props => {
             })
          }
 
-         onCloseModifier()
+         if (edit || forNewItem) {
+            onCloseModifier()
+            return
+         }
+         setShowProceedPopup(true)
+         return
       }
    }
 
@@ -330,6 +339,49 @@ export const KioskModifier = props => {
          setSelectedProductOption(null)
       }
    }, [])
+   if (showProceedPopup) {
+      return (
+         <Modal
+            title="Repeat last used customization?"
+            visible={showProceedPopup}
+            centered={true}
+            closable={false}
+            footer={null}
+            maskClosable={false}
+            zIndex={'100000000000000000000'}
+         >
+            <div
+               style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+               }}
+            >
+               <KioskButton
+                  onClick={() => {
+                     onCloseModifier()
+                     setShowProceedPopup(false)
+                  }}
+                  style={{
+                     border: `2px solid ${config.kioskSettings.theme.secondaryColor.value}`,
+                     background: 'transparent',
+                     padding: '.1em 2em',
+                  }}
+               >
+                  GO TO MENU
+               </KioskButton>
+               <KioskButton
+                  style={{ padding: '.1em 2em' }}
+                  onClick={() => {
+                     setCurrentPage('cartPage')
+                  }}
+               >
+                  CHECKOUT
+               </KioskButton>
+            </div>
+         </Modal>
+      )
+   }
    return (
       <div className="hern-kiosk__menu-product-modifier-popup">
          <div className="hern-kiosk__menu-product-modifier-popup--bg"></div>
@@ -423,7 +475,7 @@ export const KioskModifier = props => {
                         style={{
                            ...(selectedProductOption.id === eachOption.id && {
                               backgroundColor: 'transparent',
-                              border: `2px solid ${config.kioskSettings.theme.primaryColorDark.value}`,
+                              border: `2px solid ${config.kioskSettings.theme.successColor.value}`,
                            }),
                         }}
                      >

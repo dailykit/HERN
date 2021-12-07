@@ -389,6 +389,7 @@ const KioskMenu = props => {
                                           <KioskProduct
                                              config={config}
                                              productData={eachProduct}
+                                             setCurrentPage={setCurrentPage}
                                           />
                                        </Col>
                                     )

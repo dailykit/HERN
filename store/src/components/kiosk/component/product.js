@@ -11,7 +11,7 @@ export const KioskProduct = props => {
    // context
    const { cartState, methods, addToCart } = React.useContext(CartContext)
 
-   const { config, productData } = props
+   const { config, productData, setCurrentPage } = props
    const { t, locale } = useTranslation()
    const [showModifier, setShowModifier] = useState(false)
    const [availableQuantityInCart, setAvailableQuantityInCart] = useState(0)
@@ -168,6 +168,7 @@ export const KioskProduct = props => {
                   setShowModifier(false)
                }}
                productData={productData}
+               setCurrentPage={setCurrentPage}
             />
          )}
       </>

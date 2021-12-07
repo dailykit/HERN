@@ -110,6 +110,14 @@
             "dataType": "color",
             "userInsertType": "colorPicker"
          },
+         "successColor": {
+            "id": "success-col",
+            "label": "Success Color",
+            "value": "#6CB20D",
+            "default": "#6CB20D",
+            "dataType": "color",
+            "userInsertType": "colorPicker"
+         },
          "categorySelectionWarningColor": {
             "id": "category-selector-warning-col",
             "label": "Category Selector warning Color",
