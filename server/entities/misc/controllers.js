@@ -406,7 +406,7 @@ export const syncEnvsFromPlatform = async () => {
          })
          console.log('updated successfully')
       } else {
-         throw "Couldn't update envs in setting table"
+         throw "Couldn't update envs"
       }
    } catch (error) {
       console.log(error)
