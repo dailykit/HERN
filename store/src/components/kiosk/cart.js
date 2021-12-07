@@ -1,11 +1,13 @@
-import { Col, Layout, Row } from 'antd'
-import React, { useState } from 'react'
+import { Button, Col, Layout, Modal, Row, Menu, Dropdown, Space } from 'antd'
+import React, { useEffect, useState } from 'react'
 import {
    ArrowLeftIconBG,
+   ArrowRightIcon,
    DeleteIcon,
    DownVector,
    EditIcon,
    EmptyCart,
+   PaymentModeIcon,
    UpVector,
 } from '../../assets/icons'
 import { useTranslation, CartContext } from '../../context'
@@ -15,6 +17,7 @@ import { PRODUCTS } from '../../graphql'
 import { useConfig } from '../../lib'
 import { KioskModifier } from './component'
 import { useLazyQuery, useQuery } from '@apollo/react-hooks'
+import KioskButton from './component/button'
 
 const { Header, Content, Footer } = Layout
 
@@ -39,11 +42,11 @@ export const KioskCart = props => {
          },
       })
    }
-   if (combinedCartItems === null || combinedCartItems.length === 0) {
+   if (combinedCartItems === null) {
       return <p>No cart available</p>
    }
    return (
-      <Layout style={{ height: '100%' }}>
+      <Layout style={{ height: '100%', overflowY: 'hidden' }}>
          <Header className="hern-kiosk__cart-section-header">
             <Row className="hern-kiosk__cart-section-header-row">
                <Col span={4}>
@@ -67,7 +70,13 @@ export const KioskCart = props => {
                      color: config.kioskSettings.theme.primaryColor.value,
                   }}
                >
-                  <span>{t('SEE MENU')}</span>
+                  <span
+                     onClick={() => {
+                        setCurrentPage('menuPage')
+                     }}
+                  >
+                     {t('SEE MENU')}
+                  </span>
                </Col>
             </Row>
          </Header>
@@ -168,7 +177,20 @@ export const KioskCart = props => {
                         </div>
                      </Content>
                      <Footer className="hern-kiosk__cart-page-proceed-to-checkout">
-                        Procced
+                        <CartPageFooter cart={cart} methods={methods} />
+                        <KioskButton customClass="hern-kiosk__cart-place-order-btn">
+                           <span className="hern-kiosk__cart-place-order-btn-total">
+                              {formatCurrency(cart.billing.itemTotal.value)}
+                           </span>
+                           <span className="hern-kiosk__cart-place-order-btn-text">
+                              {t('Place Order')}
+                           </span>
+                           <ArrowRightIcon
+                              stroke={
+                                 config.kioskSettings.theme.primaryColor.value
+                              }
+                           />
+                        </KioskButton>
                      </Footer>
                   </Layout>
                </Footer>
@@ -189,6 +211,7 @@ const CartCard = props => {
       useState(null)
    const [showAdditionalDetailsOnCard, setShowAdditionalDetailsOnCard] =
       useState(false)
+   const [showChooseIncreaseType, setShowChooseIncreaseType] = useState(false)
 
    const argsForByLocation = React.useMemo(
       () => ({
@@ -317,9 +340,7 @@ const CartCard = props => {
                   removeCartItems([productData.ids[productData.ids.length - 1]])
                }}
                onPlusClick={() => {
-                  setModifierType('newItem')
-                  setCartDetailSelectedProduct(productData)
-                  setModifyProductId(productData.productId)
+                  setShowChooseIncreaseType(true)
                }}
                style={{
                   border: '1px solid #0F6BB1',
@@ -328,6 +349,43 @@ const CartCard = props => {
                }}
             />
          </div>
+         <Modal
+            title="Repeat last used customization?"
+            visible={showChooseIncreaseType}
+            centered={true}
+            onCancel={() => {
+               setShowChooseIncreaseType(false)
+            }}
+            closable={false}
+            footer={null}
+         >
+            <div
+               style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+               }}
+            >
+               <KioskButton
+                  onClick={() => {
+                     setModifierType('newItem')
+                     setCartDetailSelectedProduct(productData)
+                     setModifyProductId(productData.productId)
+                     setShowChooseIncreaseType(false)
+                  }}
+                  style={{
+                     border: `2px solid ${config.kioskSettings.theme.secondaryColor.value}`,
+                     background: 'transparent',
+                     padding: '.1em 2em',
+                  }}
+               >
+                  I'LL CHOOSE
+               </KioskButton>
+               <KioskButton style={{ padding: '.1em 2em' }}>
+                  REPEAT LAST ONE
+               </KioskButton>
+            </div>
+         </Modal>
          <div className="hern-kiosk__cart-card-actions">
             <div className="hern-kiosk__cart-card-action-buttons">
                <EditIcon
@@ -368,6 +426,71 @@ const CartCard = props => {
                productCartDetail={cartDetailSelectedProduct}
             />
          )}
+      </div>
+   )
+}
+
+const CartPageFooter = props => {
+   const { cart, methods } = props
+   const { t } = useTranslation()
+   const [selectedMethod, setSelectedMethod] = useState(
+      cart.paymentMethods.find(x => x.id === cart.toUseAvailablePaymentOptionId)
+   )
+   useEffect(() => {
+      setSelectedMethod(
+         cart.paymentMethods.find(
+            x => x.id === cart.toUseAvailablePaymentOptionId
+         )
+      )
+   }, [cart])
+   const paymentMethods = (
+      <Menu
+         onClick={item => {
+            const option = cart.paymentMethods.find(x => x.id === +item.key)
+            // setSelectedMethod(option)
+            methods.cart.update({
+               variables: {
+                  id: cart.id,
+                  _set: {
+                     toUseAvailablePaymentOptionId: option.id,
+                  },
+               },
+            })
+         }}
+      >
+         {cart.paymentMethods.map((eachMethod, index) => (
+            <Menu.Item key={eachMethod.id}>
+               <span>{eachMethod.label}</span>
+            </Menu.Item>
+         ))}
+      </Menu>
+   )
+   return (
+      <div className="hern-kiosk__cart-page-footer-footer">
+         <Dropdown
+            overlay={paymentMethods}
+            trigger={['click']}
+            placement="topCenter"
+         >
+            <div>
+               <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <PaymentModeIcon />
+                  <span
+                     style={{
+                        margin: '0 .5em',
+                        fontSize: '1.4em',
+                        fontWeight: '500',
+                     }}
+                  >
+                     {t('Payment Method')}
+                  </span>
+                  <UpVector size={20} />
+               </div>
+               <span className="hern-kiosk__cart-payment-method-label">
+                  {selectedMethod?.label || 'Please choose payment method'}
+               </span>
+            </div>
+         </Dropdown>
       </div>
    )
 }

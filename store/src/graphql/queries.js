@@ -1382,6 +1382,7 @@ export const GET_CART = gql`
          customerKeycloakId
          billing: billingDetails
          subscriptionOccurenceId
+         toUseAvailablePaymentOptionId
          subscriptionOccurence {
             id
             fulfillmentDate
@@ -1418,9 +1419,35 @@ export const GET_CART = gql`
                count
             }
          }
+         paymentMethods: availablePaymentOptionToCart(
+            where: { isActive: { _eq: true } }
+            order_by: { position: desc_nulls_last }
+         ) {
+            id
+            isActive
+            isDown
+            isRecommended
+            isValid
+            label
+            position
+            publicCreds
+            privateCreds
+            showCompanyName
+            supportedPaymentOption {
+               id
+               country
+               supportedPaymentCompanyId
+               paymentOptionLabel
+               supportedPaymentCompany {
+                  id
+                  label
+               }
+            }
+         }
       }
    }
 `
+
 export const GET_CARTS = gql`
    subscription GET_CARTS($where: order_cart_bool_exp!) {
       carts(where: $where) {

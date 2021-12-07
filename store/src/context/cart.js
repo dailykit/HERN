@@ -286,6 +286,9 @@ export const CartProvider = ({ children }) => {
                cartItems: {
                   delete: deleteCartItems,
                },
+               cart: {
+                  update: updateCart,
+               },
             },
          }}
       >
