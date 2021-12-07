@@ -181,7 +181,6 @@ const SEObasics = ({ routeName }) => {
             <div className="metaDetails">
                 <Row>
                     <Col span={12}>
-                        <div style={{ marginTop: '7px' }} />
                         <Title level={4}>SEO Basics</Title>
                         <HelperText
                             type="hint"
@@ -211,7 +210,7 @@ const SEObasics = ({ routeName }) => {
                             footer={[
                                 <Button type="primary" onClick={() => Save()}>
                                     Save
-                                </Button>
+                                </Button>,
                             ]}
                         >
                             <Form layout="vertical">
@@ -350,7 +349,7 @@ const SEObasics = ({ routeName }) => {
                                                     style={{
                                                         width: '170px',
                                                         height: '120px',
-                                                        marginBottom: '10px'
+                                                        marginBottom: '10px',
                                                     }}
                                                 />
                                             )}
@@ -391,7 +390,10 @@ const SEObasics = ({ routeName }) => {
                     </Col>
                     <Col span={12}>
                         <Text strong>Preview on Google</Text>
-                        <Tooltip placement="top" title={'This is an example of a page in search results.'}>
+                        <Tooltip
+                            placement="top"
+                            title={'This is an example of a page in search results.'}
+                        >
                             <InfoCircleOutlined
                                 style={{
                                     marginLeft: '5px',
@@ -416,10 +418,10 @@ const SEObasics = ({ routeName }) => {
                             >
                                 {form.metaTitle.value || 'Page Name | Site Name'}
                             </Title>
-                            <p>
+                            <Typography.Paragraph ellipsis={{ rows: 2 }}>
                                 {form.metaDescription.value ||
                                     'this is the meta description'}
-                            </p>
+                            </Typography.Paragraph>
                         </Card>
                     </Col>
                 </Row>

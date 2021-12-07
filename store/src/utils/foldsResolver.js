@@ -18,7 +18,7 @@ const resolveComponent = fold => {
                component: fold.internalModuleIdentifier,
                moduleType: fold.moduleType,
                position: fold.position,
-               config: fold.config
+               config: fold.config,
             })
          }
 
@@ -49,7 +49,7 @@ const resolveComponent = fold => {
                scripts,
                moduleType: fold.moduleType,
                position: fold.position,
-               config: fold.config
+               config: fold.config,
             })
          }
 
@@ -59,11 +59,11 @@ const resolveComponent = fold => {
          )
 
          // add css links + html
-         const parsedData =
-            linkedCssFiles.map(
-               ({ cssFile }) =>
-                  `<link rel="stylesheet" type="text/css" href="${config['EXPRESS_URL']}/template/files${cssFile.path}" media="screen"/>`
-            ).join`` + data
+         // const parsedData =
+         //    linkedCssFiles.map(
+         //       ({ cssFile }) =>
+         //          `<link rel="stylesheet" type="text/css" href="${config['EXPRESS_URL']}/template/files${cssFile.path}" media="screen"/>`
+         //    ).join`` + data
 
          /*
                {
@@ -80,11 +80,11 @@ const resolveComponent = fold => {
          if (data) {
             return resolve({
                id: fold.id,
-               content: parsedData,
+               content: data,
                scripts,
                moduleType: fold.moduleType,
                position: fold.position,
-               config: fold.config
+               config: fold.config,
             })
          } else {
             return reject('Failed to load file')

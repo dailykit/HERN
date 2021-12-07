@@ -1,0 +1,55 @@
+table:
+  name: experienceClass
+  schema: experiences
+object_relationships:
+- name: experience
+  using:
+    foreign_key_constraint_on: experienceId
+- name: experienceBooking
+  using:
+    foreign_key_constraint_on: experienceBookingId
+- name: experienceClassExpert
+  using:
+    foreign_key_constraint_on: expertId
+- name: privateExperienceClassType
+  using:
+    foreign_key_constraint_on: privateExperienceClassTypeId
+- name: publicExperienceClassType
+  using:
+    foreign_key_constraint_on: publicExperienceClassTypeId
+array_relationships:
+- name: cartItems
+  using:
+    foreign_key_constraint_on:
+      column: experienceClassId
+      table:
+        name: cartItem
+        schema: order
+- name: carts
+  using:
+    foreign_key_constraint_on:
+      column: experienceClassId
+      table:
+        name: cart
+        schema: order
+- name: experienceBookingOptions
+  using:
+    foreign_key_constraint_on:
+      column: experienceClassId
+      table:
+        name: experienceBookingOption
+        schema: experiences
+- name: experienceBookings
+  using:
+    foreign_key_constraint_on:
+      column: experienceClassId
+      table:
+        name: experienceBooking
+        schema: experiences
+- name: experienceClassOptions
+  using:
+    foreign_key_constraint_on:
+      column: experienceClassId
+      table:
+        name: experienceClassOption
+        schema: experiences

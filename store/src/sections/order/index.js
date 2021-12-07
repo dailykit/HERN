@@ -6,11 +6,13 @@ import {
    Divider,
    ModifierPopup,
    Button,
+   Loader,
 } from '../../components'
 import { useQuery } from '@apollo/react-hooks'
 import _ from 'lodash'
 import { CartContext, onDemandMenuContext } from '../../context'
 import { PRODUCTS } from '../../graphql'
+import classNames from 'classnames'
 
 const datas = {
    id: 1080,
@@ -351,13 +353,21 @@ export const OnDemandOrder = () => {
       return <p>Error</p>
    }
    if (isMenuLoading || status === 'loading' || productsLoading) {
-      return <p>loading</p>
+      return <Loader />
    }
    return (
       <>
          <div className="hern-on-demand-order-container">
-            <div className="hern-on-demand-page">
-               <div className="hern-on-demand-page-content">
+            <div
+               className={classNames('hern-on-demand-page', {
+                  'hern-on-demand-page-pop-up--active': productModifier,
+               })}
+            >
+               <div
+                  className={classNames('hern-on-demand-page-content', {
+                     'hern-on-demand-page-content--navigationAnchor--active': false,
+                  })}
+               >
                   {hydratedMenu.map((eachCategory, index) => {
                      return (
                         <div key={index}>
@@ -378,6 +388,11 @@ export const OnDemandOrder = () => {
                                           : false
                                     }
                                     customAreaComponent={CustomArea}
+                                    showModifier={
+                                       productModifier &&
+                                       productModifier.id === eachProduct.id
+                                    }
+                                    closeModifier={closeModifier}
                                  />
                               )
                            })}
@@ -386,18 +401,18 @@ export const OnDemandOrder = () => {
                      )
                   })}
                </div>
-               <OnDemandMenu />
-               {cartState &&
+               <OnDemandMenu categories={categories} />
+               {cartState.cart &&
                   cartState.cart?.products?.aggregate?.count !== 0 && (
                      <BottomCartBar />
                   )}
-               {productModifier && (
+               {/* {productModifier && (
                   <ModifierPopup
                      productData={productModifier}
                      closeModifier={closeModifier}
                      height={productModifier ? '100%' : '0'}
                   />
-               )}
+               )} */}
             </div>
          </div>
       </>

@@ -1,0 +1,27 @@
+table:
+  name: template
+  schema: content
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - id
+    filter: {}
+  role: consumer
+- permission:
+    allow_aggregations: true
+    columns:
+    - id
+    filter: {}
+  role: guest-consumer
+event_triggers:
+- definition:
+    enable_manual: true
+    insert:
+      columns: "*"
+  name: handleTemplate
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: https://156bd2d32e02.ngrok.io/webhooks/handle

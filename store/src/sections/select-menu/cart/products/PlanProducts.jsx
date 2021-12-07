@@ -73,7 +73,6 @@ const PlanProducts = ({ noSkip, isCheckout }) => {
          }
       }
    }
-
    return (
       <div>
          <header className="hern-cart-plan-products__header">

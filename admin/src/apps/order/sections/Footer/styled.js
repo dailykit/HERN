@@ -15,6 +15,7 @@ export const StyledNav = styled.div(
          margin-left: auto;
       `}
       border-left: 1px solid #b4d5e6;
+
       button {
          width: 40px;
          height: 40px;

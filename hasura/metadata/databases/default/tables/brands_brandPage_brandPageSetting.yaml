@@ -1,0 +1,10 @@
+table:
+  name: brandPage_brandPageSetting
+  schema: brands
+object_relationships:
+- name: brandPage
+  using:
+    foreign_key_constraint_on: brandPageId
+- name: brandPageSetting
+  using:
+    foreign_key_constraint_on: brandPageSettingId

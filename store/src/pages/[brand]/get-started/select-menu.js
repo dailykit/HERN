@@ -2,29 +2,29 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import { useConfig } from '../../../lib'
 import { useUser } from '../../../context'
-import { SEO, Layout } from '../../../components'
+import { SEO, Layout, LoginWarning } from '../../../components'
 import {
    getPageProps,
    getRoute,
    isClient,
-   processJsFile,
+   processExternalFiles,
    renderPageContent,
 } from '../../../utils'
 
 const SelectMenu = props => {
-   const { settings, folds, seoSettings } = props
+   const { settings, linkedFiles, folds, seoSettings } = props
    const router = useRouter()
    const { isAuthenticated, isLoading } = useUser()
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
          isClient && localStorage.setItem('landed_on', location.href)
-         router.push(getRoute('/get-started/register'))
+         // router.push(getRoute('/get-started/register'))
       }
    }, [isAuthenticated, isLoading])
 
    React.useEffect(() => {
       try {
-         processJsFile(folds)
+         processExternalFiles(folds, linkedFiles)
       } catch (err) {
          console.log('Failed to render page: ', err)
       }
@@ -36,7 +36,11 @@ const SelectMenu = props => {
    return (
       <Layout settings={settings}>
          <SEO seoSettings={seoSettings} />
-         <main className="hern-select-menu">{renderPageContent(folds)}</main>
+         {!isAuthenticated && !isLoading ? (
+            <LoginWarning />
+         ) : (
+            <main>{renderPageContent(folds)}</main>
+         )}
       </Layout>
    )
 }
@@ -44,15 +48,11 @@ const SelectMenu = props => {
 export default SelectMenu
 
 export async function getStaticProps({ params }) {
-
-
-   const { parsedData, seo, settings, seoSettings } = await getPageProps(
-      params,
-      '/get-started/select-menu'
-   )
+   const { parsedData, settings, seoSettings, linkedFiles } =
+      await getPageProps(params, '/get-started/select-menu')
 
    return {
-      props: { folds: parsedData, seo, settings, seoSettings },
+      props: { folds: parsedData, linkedFiles, settings, seoSettings },
       revalidate: 60, // will be passed to the page component as props
    }
 }

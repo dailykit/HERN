@@ -1,0 +1,31 @@
+table:
+  name: view_full_occurence_report
+  schema: subscription
+object_relationships:
+- name: brandCustomer
+  using:
+    manual_configuration:
+      column_mapping:
+        brand_customerId: id
+      insertion_order: null
+      remote_table:
+        name: brand_customer
+        schema: crm
+- name: cart
+  using:
+    manual_configuration:
+      column_mapping:
+        cartId: id
+      insertion_order: null
+      remote_table:
+        name: cart
+        schema: order
+- name: subscription
+  using:
+    manual_configuration:
+      column_mapping:
+        subscriptionId: id
+      insertion_order: null
+      remote_table:
+        name: subscription
+        schema: subscription

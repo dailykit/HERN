@@ -24,7 +24,7 @@
    margin-bottom: 0em;
 }
 .tabulator-headers {
-   background-color: #f4f4f4;
+   /* background-color: #f4f4f4; */
    height: 100% !important;
    /* padding-top: auto; */
    font-weight: 500;

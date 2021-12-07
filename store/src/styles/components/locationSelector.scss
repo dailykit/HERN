@@ -1,0 +1,366 @@
+.hern-store-location-selector__css-transition-enter {
+   height: 0;
+   opacity: 0;
+}
+
+.hern-store-location-selector__css-transition-active {
+   transition: all 0.4s;
+   height: 100vh;
+   opacity: 1;
+}
+
+.hern-store-location-selector__css-transition-exit {
+   opacity: 1;
+   height: 100vh;
+}
+
+.hern-store-location-selector__css-transition-exit-active {
+   transition: all 0.4s;
+   height: 0;
+}
+
+.hern-store-location-selector {
+   position: fixed;
+   top: 0;
+   bottom: 0;
+   left: 0;
+   right: 0;
+   z-index: 1000;
+   width: 100vw;
+   overflow: hidden;
+   background-color: #ffffff;
+   transition: all 0.4s ease-in-out;
+}
+.hern-store-location__fulfillment-type-wrapper {
+   height: calc(100vh - 116px);
+   overflow-y: auto;
+   padding-bottom: 1em;
+}
+
+.hern-store-location-selector-container {
+   height: 100%;
+   width: 100%;
+}
+
+.hern-store-location-selector-header {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding: 1em;
+   border-bottom: 1px solid #ebebeb;
+}
+
+.hern-store-location-selector-header-left {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   > span {
+      margin-left: 1em;
+   }
+}
+
+.hern-store-location-selector__fulfillment-selector {
+   display: flex;
+   padding: 1em 1em 0 1em;
+   justify-content: center;
+   outline: none;
+}
+.hern-store-location-selector__fulfillment-selector-button {
+   margin: 0 1em;
+}
+.hern-store-location-selector__fulfillment-selector-button--active {
+   border-bottom: 2px solid #367bf5;
+}
+.hern-store-location-selector-main__location-field {
+   display: grid;
+   gap: 1em;
+   padding: 1em;
+   .google-places-autocomplete__suggestions-container {
+      position: absolute;
+      background: white;
+      overflow: auto;
+      height: 20em;
+   }
+}
+.hern-store-location-selector-main__location-input {
+   height: 40px;
+   background: #f4f4f4;
+   border-radius: 8px;
+   padding: 0 10px;
+   outline: none;
+   width: 100%;
+}
+
+.hern-store-location-selector-main__get-current-location {
+   height: 60px;
+   border: 1px solid #ebebeb;
+   display: flex;
+   align-items: center;
+   padding: 1em;
+   cursor: pointer;
+   > span {
+      margin-left: 1em;
+   }
+}
+
+.hern-store-location-selector-main__get-current-location-error-message {
+   font-size: 12px;
+   line-height: 14px;
+   color: #ff5a52;
+   letter-spacing: 0.44px;
+}
+
+.hern-store-location-selector__user-address {
+   padding: 1em;
+}
+
+.hern-store-location-selector__user-address-info-text {
+   font-size: 14px;
+   line-height: 14px;
+   color: #404040;
+}
+
+.hern-store-location__preOrder-time-selection {
+   display: flex;
+   justify-content: center;
+   padding: 0 1em;
+}
+
+.hern-location-selector__stores-list {
+   padding: 0 1em 1em 1em;
+   overflow-y: auto;
+   position: relative;
+}
+
+.hern-location-selector__view-on-map {
+   display: flex;
+   justify-content: flex-end;
+   > span {
+      font-size: 12px;
+      line-height: 14px;
+      color: #367bf5;
+      font-weight: 600;
+      cursor: pointer;
+   }
+}
+
+.hern-store-location-selector__store-location-info-container {
+   display: flex;
+   align-items: center;
+}
+.hern-store-location-selector__each-store {
+   display: flex;
+   align-items: center;
+   margin: 0.5em 0;
+   background: #f9f9f9;
+   border: 2px solid rgba(64, 64, 64, 0.25);
+   box-sizing: border-box;
+   border-radius: 6px;
+   padding: 0.5em;
+   justify-content: space-between;
+   position: relative;
+}
+
+.hern-store-location-selector__each-store--border {
+   border: 2px solid #367bf5;
+}
+.hern-store-location-selector__each-store--disabled {
+   cursor: not-allowed;
+}
+.hern-store-location-selector__store-location-details {
+   display: flex;
+   flex-direction: column;
+   margin-left: 0.5em;
+   .hern-store-location__store-location-label {
+      font-size: 20px;
+      line-height: 22px;
+      color: rgba(64, 64, 64, 0.8);
+      padding-bottom: 0.25em;
+   }
+   .hern-store-location__store-location-address {
+      font-weight: 500;
+      font-size: 12px;
+      line-height: 16px;
+      color: rgba(64, 64, 64, 0.6);
+   }
+}
+
+.hern-store-location-selector__time-distance {
+   position: absolute;
+   top: 0;
+   right: 0;
+   display: flex;
+   padding: 0.25em;
+   padding-right: 0.5em !important;
+   .hern-store-location-selector__aerialDistance {
+      display: flex;
+      align-items: center;
+
+      > span {
+         font-size: 12px;
+         color: rgba(64, 64, 64, 0.6);
+         margin-left: 3px;
+      }
+   }
+}
+.hern-store-location-selector__store-on-map-container {
+   position: fixed;
+   top: 0;
+   bottom: 0;
+   z-index: 10000;
+   width: 100vw;
+   margin-left: -1em;
+   // height: 0;
+   overflow: hidden;
+   background-color: #ffffff;
+   transition: all 0.4s ease-in-out;
+}
+.hern-store-location-selector__store-on-map-css-transition-enter {
+   height: 0;
+   opacity: 0;
+}
+.hern-store-location-selector__store-on-map-css-transition-enter-active {
+   height: 100vh;
+   opacity: 1;
+   transition: all 0.4s ease;
+   // width: inherit;
+}
+.hern-store-location-selector__store-on-map-css-transition-exit {
+   opacity: 1;
+   height: 100vh;
+   // width: inherit;
+}
+.hern-store-location-selector__store-on-map-css-transition-exit-active {
+   height: 0;
+   opacity: 0;
+   transition: all 0.4s ease;
+}
+
+.hern-store-location-selector__store-on-map-header {
+   margin: 0 1em;
+   height: 60px;
+   display: flex;
+   align-items: center;
+   .hern-store-location-selector__store-on-map-header-right {
+      display: flex;
+      align-items: center;
+      > span {
+         margin-left: 1em;
+      }
+   }
+}
+
+.hern-store-location-selector__store-on-map-map {
+   height: calc(100vh - 60px);
+}
+.hern-store-selector__store-location-map-store-marker {
+   height: 32px;
+   width: 32px;
+   position: relative;
+}
+.hern-store-selector__store-location-map-store-icon {
+   width: 32px;
+   height: 32px;
+   position: absolute;
+   top: -16px;
+   left: -16px;
+   cursor: pointer;
+}
+.hern-store-selector__store-location-map-store-detail-pop {
+   position: fixed;
+   top: -14em;
+   bottom: 0;
+   right: 0;
+   left: -50%;
+   height: 75vh;
+   width: 100vw;
+   display: none;
+   background: #ffffff;
+   z-index: 100000;
+   padding: 1em;
+   line-height: 16px;
+   flex-direction: column;
+   border-radius: 4px;
+}
+.hern-store-selector__store-location-map-store-detail-pop--active {
+   display: flex;
+   cursor: default;
+}
+.hern-store-selector__store-location-map-store-detail-pop-content {
+   position: relative;
+}
+.hern-store-selector__store-location-map-store-detail-pop__store {
+   display: flex;
+   flex-direction: column;
+}
+.hern-store-selector__store-location-map-store-detail-pop__store-label {
+   font-weight: 600;
+   font-size: 18px;
+   line-height: 18px;
+   letter-spacing: 0.0044em;
+   text-transform: uppercase;
+   color: #202020;
+   margin: 0.3em 0;
+}
+.hern-store-selector__store-location-map-store-detail-pop__address {
+   display: flex;
+   flex-direction: column;
+   margin: 0 0 0.8em 0;
+}
+.hern-store-selector__store-location-map-store-detail-pop__info-label {
+   font-weight: 500;
+   font-size: 11px;
+   line-height: 13px;
+   color: #404040;
+   margin: 0 0 0.25em 0;
+}
+.hern-store-selector__store-location-map-store-detail-pop__address__info {
+   font-weight: 500;
+   font-size: 10px;
+   line-height: 12px;
+   color: rgba(64, 64, 64, 0.6);
+   font-size: 12px;
+   line-height: 16px;
+}
+.hern-store-selector__store-location-map-store-detail-pop__timing {
+   display: flex;
+   flex-direction: column;
+}
+.hern-store-selector__store-location-map-store-detail-pop__timing-timing {
+   font-weight: 500;
+   font-size: 10px;
+   line-height: 12px;
+   color: rgba(64, 64, 64, 0.6);
+   font-size: 12px;
+   line-height: 14px;
+}
+.hern-store-selector__store-location-map-store-detail-pop__timing-timing-grid {
+   display: grid;
+   grid-template-columns: 7em 12em;
+   line-height: 16px;
+}
+.hern-store-selector__store-location-map-store-detail-pop-close-icon {
+   position: absolute;
+   right: 0;
+   top: 0.5 em;
+}
+.hern-store-selector__store-location-map-store-detail__store-btn {
+   margin: 1em 0 0 0;
+   width: 100%;
+   height: 2.5em;
+}
+@media only screen and (min-width: 769px) {
+   .hern-store-location-selector {
+      background-color: rgb(251, 252, 246);
+      display: flex;
+      justify-content: center;
+   }
+   .hern-store-location-selector-container {
+      padding: 0;
+      width: 28em;
+      background-color: #ffffff;
+   }
+   .hern-store-location-selector__store-on-map-container {
+      width: 28em;
+   }
+}

@@ -33,3 +33,42 @@ mutation UPDATE_REQUEST_HEADERS($id: Int, $headers: jsonb = "") {
   }
 }
 `
+
+export const ADD_API_KEY = gql`
+mutation ADD_API_KEY($canAddProducts: Boolean, $canUpdateProducts: Boolean, $isDeactivated: Boolean, $label: String) {
+  insert_developer_apiKey(objects: {canAddProducts: $canAddProducts, canUpdateProducts: $canUpdateProducts, isDeactivated: $isDeactivated, label: $label}) {
+    affected_rows
+  }
+}
+`
+
+export const UPDATE_API_KEY = gql`
+mutation UPDATE_API_KEY($canAddProducts: Boolean, $canUpdateProducts: Boolean, $isDeactivated: Boolean, $apiKey: String) {
+  update_developer_apiKey(where: {apiKey: {_eq: $apiKey}}, _set: {canAddProducts: $canAddProducts, canUpdateProducts: $canUpdateProducts, isDeactivated: $isDeactivated}) {
+    affected_rows
+  }
+}
+`
+
+export const DELETE_API_KEY = gql`
+mutation DELETE_API_KEY($apiKey: String) {
+  delete_developer_apiKey(where: {apiKey: {_eq: $apiKey}}) {
+    affected_rows
+  }
+}
+`
+export const UPDATE_API_KEY_PERMISSIONS = gql`
+mutation UPDATE_API_KEY_PERMISSIONS($apiKey: String, $canAddProducts: Boolean, $canUpdateProducts: Boolean) {
+  update_developer_apiKey(where: {apiKey: {_eq: $apiKey}}, _set: {canAddProducts: $canAddProducts, canUpdateProducts: $canUpdateProducts}) {
+    affected_rows
+  }
+}
+`
+
+export const UPDATE_API_KEY_ACTIVATION_STATUS = gql`
+mutation UPDATE_API_KEY_ACTIVATION_STATUS($isDeactivated: Boolean, $apiKey: String) {
+  update_developer_apiKey(where: {apiKey: {_eq: $apiKey}}, _set: {isDeactivated: $isDeactivated}) {
+    affected_rows
+  }
+}
+`

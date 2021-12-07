@@ -1,0 +1,16 @@
+table:
+  name: linkedFiles
+  schema: editor
+select_permissions:
+- permission:
+    columns:
+    - id
+    - records
+    filter: {}
+  role: consumer
+- permission:
+    columns:
+    - id
+    - records
+    filter: {}
+  role: guest-consumer

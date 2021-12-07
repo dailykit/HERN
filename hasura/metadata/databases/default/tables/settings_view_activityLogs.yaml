@@ -1,0 +1,60 @@
+table:
+  name: view_activityLogs
+  schema: settings
+object_relationships:
+- name: cart
+  using:
+    manual_configuration:
+      column_mapping:
+        cartId: id
+      insertion_order: null
+      remote_table:
+        name: cart
+        schema: order
+- name: customer
+  using:
+    manual_configuration:
+      column_mapping:
+        keycloakId: id
+      insertion_order: null
+      remote_table:
+        name: customer
+        schema: crm
+- name: subscriptionOccurence
+  using:
+    manual_configuration:
+      column_mapping:
+        subscriptionOccurenceId: id
+      insertion_order: null
+      remote_table:
+        name: subscriptionOccurence
+        schema: subscription
+- name: subscriptionOccurence_customer
+  using:
+    manual_configuration:
+      column_mapping:
+        brand_customerId: brand_customerId
+        keycloakId: keycloakId
+        subscriptionOccurenceId: subscriptionOccurenceId
+      insertion_order: null
+      remote_table:
+        name: subscriptionOccurence_customer
+        schema: subscription
+- name: updatedByCustomer
+  using:
+    manual_configuration:
+      column_mapping:
+        updateByUserId: keycloakId
+      insertion_order: null
+      remote_table:
+        name: customer
+        schema: crm
+- name: updatedByStaff
+  using:
+    manual_configuration:
+      column_mapping:
+        updateByStaffId: keycloakId
+      insertion_order: null
+      remote_table:
+        name: user
+        schema: settings

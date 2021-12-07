@@ -1,0 +1,10 @@
+table:
+  name: experience_expert
+  schema: experiences
+object_relationships:
+- name: experience
+  using:
+    foreign_key_constraint_on: experienceId
+- name: expert
+  using:
+    foreign_key_constraint_on: expertId

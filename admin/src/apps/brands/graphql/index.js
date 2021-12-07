@@ -64,32 +64,23 @@ export const BRANDS = {
          }
       }
    `,
-   ON_DEMAND_SETTINGS_TYPES: gql`
-      subscription storeSettings {
-         storeSettings {
+   SETTINGS_TYPES: gql`
+      subscription brandSettings {
+         brandSettings {
             id
             type
             identifier
          }
       }
    `,
-   SUBSCRIPTION_SETTINGS_TYPES: gql`
-      subscription subscriptionSettings {
-         subscriptionSettings: brands_subscriptionStoreSetting {
-            id
-            type
-            identifier
-         }
-      }
-   `,
-   UPDATE_ONDEMAND_SETTING: gql`
-      mutation upsertBrandOnDemandSetting(
-         $object: brands_brand_storeSetting_insert_input!
+   UPDATE_BRAND_SETTING: gql`
+      mutation upsertBrandSetting(
+         $object: brands_brand_brandSetting_insert_input!
       ) {
-         upsertBrandOnDemandSetting: insert_brands_brand_storeSetting_one(
+         upsertBrandSetting: insert_brands_brand_brandSetting_one(
             object: $object
             on_conflict: {
-               constraint: shop_storeSetting_pkey
+               constraint: brand_brandSetting_pkey
                update_columns: value
             }
          ) {
@@ -97,48 +88,43 @@ export const BRANDS = {
          }
       }
    `,
-   UPDATE_SUBSCRIPTION_SETTING: gql`
-      mutation upsertBrandSubscriptionSetting(
-         $object: brands_brand_subscriptionStoreSetting_insert_input!
-      ) {
-         upsertBrandSubscriptionSetting: insert_brands_brand_subscriptionStoreSetting_one(
-            object: $object
-            on_conflict: {
-               constraint: brand_subscriptionStoreSetting_pkey
-               update_columns: value
+
+   SETTING: gql`
+      subscription brandSettings($brandId: Int!) {
+         brands_brand_brandSetting(
+            where: {
+               _and: {
+                  brandId: { _eq: $brandId }
+                  brandSetting: { isDynamicForm: { _eq: true } }
+               }
             }
          ) {
+            brandId
             value
-         }
-      }
-   `,
-   ONDEMAND_SETTING: gql`
-      subscription storeSettings(
-         $identifier: String_comparison_exp!
-         $type: String_comparison_exp!
-      ) {
-         storeSettings(where: { identifier: $identifier, type: $type }) {
-            id
-            brand {
-               brandId
-               value
+            brandSetting {
+               id
+               identifier
+               type
+               isDynamicForm
             }
          }
       }
    `,
-   SUBSCRIPTION_SETTING: gql`
-      subscription subscriptionSetting(
+
+   //for seo settings(lazy query)
+   SETTINGS: gql`
+      query brandSettings(
          $identifier: String_comparison_exp!
          $type: String_comparison_exp!
+         $brandId: Int_comparison_exp!
       ) {
-         subscriptionSetting: brands_subscriptionStoreSetting(
-            where: { type: $type, identifier: $identifier }
-         ) {
+         brandSettings(where: { identifier: $identifier, type: $type }) {
             id
-            brand {
+            brand: brand_brandSettings(where: { brandId: $brandId }) {
                brandId
                value
             }
+            configTemplate
          }
       }
    `,

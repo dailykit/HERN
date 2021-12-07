@@ -1,0 +1,3 @@
+function:
+  name: getCustomer2
+  schema: crm

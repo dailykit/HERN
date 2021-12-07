@@ -1,0 +1,10 @@
+table:
+  name: experienceClassType_experiencePriceLevel
+  schema: experiences
+object_relationships:
+- name: experienceClassType
+  using:
+    foreign_key_constraint_on: experienceClassTypeId
+- name: experiencePriceLevel
+  using:
+    foreign_key_constraint_on: experiencePriceLevelId

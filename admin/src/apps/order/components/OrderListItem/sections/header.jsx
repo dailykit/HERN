@@ -3,7 +3,9 @@ import { useTranslation } from 'react-i18next'
 import { Flex, Spacer, IconButton, TextButton, ComboButton } from '@dailykit/ui'
 
 import { StyledStatus, HeaderFlex } from './styled'
+
 import { formatDate } from '../../../utils'
+
 import { useOrder } from '../../../context'
 import pickUpIcon from '../../../assets/svgs/pickup.png'
 import deliveryIcon from '../../../assets/svgs/delivery.png'
@@ -134,10 +136,9 @@ const TimeSlot = ({ type, time = {} }) => {
                ? formatDate(time.from, {
                     month: 'short',
                     day: 'numeric',
-                    year: 'numeric',
                  })
                : 'N/A'}
-            ,&nbsp;
+            |&nbsp;
             {time.from
                ? formatDate(time.from, {
                     minute: 'numeric',

@@ -78,12 +78,15 @@ import {
    UPDATE_NUTRITIONINFO,
    UPDATE_SIMPLE_RECIPE_YIELD_USER_DEFINED_NUTRITION_INFO,
    UPDATE_SIMPLE_RECIPE_YIELD,
+   OPTIONS_FROM_RECIPE_COMPONENT,
+   UPDATE_SIMPLE_RECIPE_INGREDIENT_PROCESSING_INCLUDED_WITH_PRODUCT,
 } from '../../../../../graphql'
 import { ServingsTunnel, IngredientsTunnel } from '../../tunnels'
 import { RecipeContext } from '../../../../../context/recipe'
 import { Nutrition } from '../../../../../../../shared/components'
 import { Button } from 'react-scroll'
 import { constant, stubFalse } from 'lodash'
+import { MASTER } from '../../../../../../settings/graphql'
 
 const Servings = ({ state }) => {
    const { recipeState } = React.useContext(RecipeContext)
@@ -318,8 +321,21 @@ const Servings = ({ state }) => {
       React.useState(false)
    const [selectedNutritionProcessing, setSelectedNutritionProcessing] =
       React.useState(null)
+   const [updateIngredientProcessing] = useMutation(
+      UPDATE_SIMPLE_RECIPE_INGREDIENT_PROCESSING_INCLUDED_WITH_PRODUCT,
+      {
+         onCompleted: () => {
+            toast.success('Updated')
+         },
+         onError: err => {
+            toast.error('Nothing to update')
+            logger(err)
+         },
+      }
+   )
    const ingredientsOptions =
       state.simpleRecipeIngredients?.map((option, index) => {
+         //option.id
          //console.log(option, 'ingredients option')
          const deleteIngredientProcessing = id => {
             const isConfirmed = window.confirm(
@@ -332,6 +348,21 @@ const Servings = ({ state }) => {
                      ids: [id],
                   },
                })
+            }
+         }
+
+         const update = (updatedBool, id) => {
+            try {
+               updateIngredientProcessing({
+                  variables: {
+                     id,
+                     _set: {
+                        includedWithProduct: updatedBool,
+                     },
+                  },
+               })
+            } catch (err) {
+               throw new Error(err)
             }
          }
          //console.log(option, 'option outside Processing')
@@ -352,6 +383,7 @@ const Servings = ({ state }) => {
                            overflow: 'hidden',
                            textOverflow: 'ellipsis',
                            color: '#367BF5',
+                           marginTop: '8px',
                         }}
                         to={`/products/ingredients/${option.ingredient.id}`}
                      >
@@ -365,7 +397,6 @@ const Servings = ({ state }) => {
                         </Link>
                      </span>
                   </div>
-
                   <div id="menu">
                      <ContextualMenu position="left">
                         <Context
@@ -376,13 +407,11 @@ const Servings = ({ state }) => {
                         ></Context>
                      </ContextualMenu>
                   </div>
-
                   <Spacer size="4px" />
-
                   <div id="dropdown">
                      <Processings state={state} option={option} />
+                     <RecipeComponent />
                   </div>
-
                   <div
                      id="calCountIngredient"
                      onClick={() => {
@@ -414,6 +443,27 @@ const Servings = ({ state }) => {
                         ? 'N/A'
                         : option.processing.cost + ' $'}
                   </div>
+                  {option.includedWithProduct ? (
+                     <StyledButton
+                        style={{ float: 'right' }}
+                        index={index}
+                        onClick={() =>
+                           update(!option.includedWithProduct, option.id)
+                        }
+                     >
+                        <VisibiltyOn />
+                     </StyledButton>
+                  ) : (
+                     <StyledButton
+                        style={{ float: 'right' }}
+                        index={index}
+                        onClick={() =>
+                           update(!option.includedWithProduct, option.id)
+                        }
+                     >
+                        <VisibiltyOff />
+                     </StyledButton>
+                  )}
                </StyledCardIngredient>
 
                {state.simpleRecipeYields?.map((object, index) => {
@@ -462,6 +512,7 @@ const Servings = ({ state }) => {
                                        : false
                                  }
                                  index={index}
+                                 style={{ marginTop: '10px' }}
                               />
                            </div>
                         </SatchetCard>
@@ -744,7 +795,7 @@ const Servings = ({ state }) => {
                            </ServingRow>
                            {
                               <>
-                                 <Spacer size="40px" />
+                                 {/* <Spacer size="40px" /> */}
                                  <DragNDrop
                                     list={state.simpleRecipeIngredients}
                                     droppableId="simpleRecipeIngredientsDroppableId"
@@ -934,7 +985,7 @@ const SachetDetails = ({
 
          <NutritionAndCostSachetWrapper>
             <div
-            id='calCount'
+               id="calCount"
                onClick={() => {
                   setShowNutritionalInfoSachet(!showNutritionalInfoSachet)
                   if (Object.keys(nutritionalInfo).length !== 0) {
@@ -949,9 +1000,7 @@ const SachetDetails = ({
                   ? 'N/A'
                   : `${nutritionalInfo.calories} cal`}
             </div>
-            <div
-            id='foodCost'
-            >
+            <div id="foodCost">
                <FoodCost /> {cost === null ? 'N/A' : `${cost} $`}
             </div>
          </NutritionAndCostSachetWrapper>
@@ -1111,6 +1160,67 @@ const Processings = ({ state, option }) => {
                loadProcessing()
             }}
             typeName="processing"
+         />
+      </div>
+   )
+}
+
+const RecipeComponent = () => {
+   const [options, setOptions] = React.useState([])
+   const [searchedOptions, setSearchedOptions] = React.useState(null)
+   const [addType] = useMutation(MASTER.RECIPE_COMPONENT.CREATE, {
+      onCompleted: () => {
+         toast.success('Type added')
+      },
+      onError: error => {
+         toast.error('Failed to add vegNonVeg type')
+         logger(error)
+      },
+   })
+
+   useSubscription(OPTIONS_FROM_RECIPE_COMPONENT, {
+      onSubscriptionData: data => {
+         let newOptions = []
+         data.subscriptionData.data.master_recipeComponent.forEach(item => {
+            newOptions = [
+               ...newOptions,
+               { id: Math.random(), title: item.label },
+            ]
+         })
+         setOptions(newOptions)
+      },
+   })
+
+   const searchOptions = name => {
+      setSearchedOptions(name)
+   }
+   const selectedOption = option => console.log(option)
+   const addDropDownOptions = () => {
+      try {
+         const object = {
+            label: searchedOptions,
+         }
+         addType({
+            variables: {
+               object,
+            },
+         })
+      } catch (error) {
+         toast.error('Nothing to add')
+      }
+   }
+   return (
+      <div style={{ width: '190px' }}>
+         <Spacer size="9px" yAxis />
+         <Dropdown
+            type="single"
+            variant="revamp"
+            options={options}
+            typeName="Label"
+            addOption={addDropDownOptions}
+            type="single"
+            searchedOption={searchOptions}
+            selectedOption={selectedOption}
          />
       </div>
    )

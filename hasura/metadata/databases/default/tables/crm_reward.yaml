@@ -1,0 +1,44 @@
+table:
+  name: reward
+  schema: crm
+object_relationships:
+- name: campaign
+  using:
+    foreign_key_constraint_on: campaignId
+- name: condition
+  using:
+    foreign_key_constraint_on: conditionId
+- name: coupon
+  using:
+    foreign_key_constraint_on: couponId
+array_relationships:
+- name: rewardHistories
+  using:
+    foreign_key_constraint_on:
+      column: rewardId
+      table:
+        name: rewardHistory
+        schema: crm
+select_permissions:
+- permission:
+    columns:
+    - id
+    - type
+    - couponId
+    - conditionId
+    - position
+    - campaignId
+    - rewardValue
+    filter: {}
+  role: consumer
+- permission:
+    columns:
+    - campaignId
+    - conditionId
+    - couponId
+    - id
+    - position
+    - rewardValue
+    - type
+    filter: {}
+  role: guest-consumer

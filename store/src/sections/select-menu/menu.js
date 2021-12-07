@@ -1,8 +1,6 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import Link from 'next/link'
 import { isEmpty, uniqBy } from 'lodash'
-import tw, { styled, css } from 'twin.macro'
 import { useQuery } from '@apollo/react-hooks'
 import ReactImageFallback from 'react-image-fallback'
 import { useToasts } from 'react-toast-notifications'
@@ -11,7 +9,7 @@ import { useMenu } from './state'
 import { useConfig } from '../../lib'
 import { useUser } from '../../context'
 import { HelperBar, Loader } from '../../components'
-import { formatCurrency, getRoute, isClient } from '../../utils'
+import { formatCurrency, getRoute, isClient, debounce } from '../../utils'
 import { SkeletonProduct } from './skeletons'
 import { CheckIcon } from '../../assets/icons'
 import { OCCURENCE_PRODUCTS_BY_CATEGORIES } from '../../graphql'
@@ -128,7 +126,16 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
    const openRecipe = () =>
       router.push(getRoute(`/recipes/${node?.productOption?.id}`))
 
-   const add = item => {
+   // const add = debounce(function (item, node) {
+   //    if (state.occurenceCustomer?.betweenPause) {
+   //       return addToast('You have paused your plan!', {
+   //          appearance: 'warning',
+   //       })
+   //       return
+   //    }
+   //    methods.products.add(item, node?.productOption?.product)
+   // }, 500)
+   const add = (item, node) => {
       if (state.occurenceCustomer?.betweenPause) {
          return addToast('You have paused your plan!', {
             appearance: 'warning',
@@ -140,9 +147,8 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
          })
          return
       }
-      methods.products.add(item)
+      methods.products.add(item, node?.productOption?.product)
    }
-
    const isActive = isAdded(node?.cartItem?.subscriptionOccurenceProductId)
    const canAdd = () => {
       if (!state?.week?.isValid) {
@@ -257,12 +263,16 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
          <p className="hern-select-menu__menu__product__link__additional-text">
             {product?.additionalText}
          </p>
+         {console.log(state.occurenceCustomer?.validStatus?.itemCountValid)}
          {canAdd() && (
             <button
                className={btnClasses}
                theme={theme}
-               disabled={!node.isAvailable}
-               onClick={() => add(node.cartItem)}
+               disabled={
+                  !node.isAvailable &&
+                  state.occurenceCustomer?.validStatus?.itemCountValid
+               }
+               onClick={() => add(node.cartItem, node)}
                title={
                   node.isAvailable
                      ? 'Add product'

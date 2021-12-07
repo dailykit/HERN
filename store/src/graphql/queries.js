@@ -338,6 +338,50 @@ export const INVENTORY_DETAILS = gql`
 `
 
 export const CART_BY_WEEK = gql`
+   query subscriptionOccurenceCustomer(
+      $keycloakId: String!
+      $weekId: Int!
+      $brand_customerId: Int!
+   ) {
+      subscriptionOccurenceCustomer: subscription_subscriptionOccurence_customer_by_pk(
+         keycloakId: $keycloakId
+         subscriptionOccurenceId: $weekId
+         brand_customerId: $brand_customerId
+      ) {
+         isAuto
+         isSkipped
+         betweenPause
+         validStatus
+         cart {
+            id
+            status
+            address
+            paymentStatus
+            walletAmountUsable
+            loyaltyPointsUsable
+            walletAmountUsed
+            loyaltyPointsUsed
+            billingDetails
+            fulfillmentInfo
+            transactionId
+            paymentMethodId
+            products: cartItems(where: { level: { _eq: 1 } }) {
+               id
+               name: displayName
+               image: displayImage
+               isAddOn
+               unitPrice
+               addOnLabel
+               addOnPrice
+               isAutoAdded
+               subscriptionOccurenceProductId
+               subscriptionOccurenceAddOnProductId
+            }
+         }
+      }
+   }
+`
+export const CART_BY_WEEK_SUBSCRIPTION = gql`
    subscription subscriptionOccurenceCustomer(
       $keycloakId: String!
       $weekId: Int!
@@ -704,14 +748,14 @@ export const OUR_MENU = {
 
 export const SETTINGS = gql`
    subscription settings($domain: String_comparison_exp) {
-      settings: brands_brand_subscriptionStoreSetting(
+      settings: brands_brand_brandSetting(
          where: {
             brand: { _or: [{ domain: $domain }, { isDefault: { _eq: true } }] }
          }
       ) {
          value
          brandId
-         meta: subscriptionStoreSetting {
+         meta: brandSetting {
             id
             type
             identifier
@@ -722,7 +766,7 @@ export const SETTINGS = gql`
 
 export const SETTINGS_QUERY = gql`
    query settings($domain: String) {
-      settings: brands_brand_subscriptionStoreSetting(
+      settings: brands_brand_brandSetting(
          where: {
             brand: {
                _or: [{ domain: { _eq: $domain } }, { isDefault: { _eq: true } }]
@@ -731,7 +775,7 @@ export const SETTINGS_QUERY = gql`
       ) {
          value
          brandId
-         meta: subscriptionStoreSetting {
+         meta: brandSetting {
             id
             type
             identifier
@@ -1124,109 +1168,91 @@ export const SUBSCRIPTION_PLAN = gql`
    }
 `
 export const NAVIGATION_MENU = gql`
-query NAVIGATION_MENU($navigationMenuId: Int!) {
-   brands_navigationMenuItem(
-      where: { navigationMenuId: { _eq: $navigationMenuId } }
-   ) {
-      created_at
-      id
-      label
-      navigationMenuId
-      openInNewTab
-      position
-      updated_at
-      url
-      parentNavigationMenuItemId
+   query NAVIGATION_MENU($navigationMenuId: Int!) {
+      brands_navigationMenuItem(
+         where: { navigationMenuId: { _eq: $navigationMenuId } }
+      ) {
+         created_at
+         id
+         label
+         navigationMenuId
+         openInNewTab
+         position
+         updated_at
+         url
+         parentNavigationMenuItemId
+      }
    }
-}
 `
 export const BRAND_PAGE = gql`
-query BRAND_PAGE($domain: String!, $route: String!) {
-   brands_brandPages(
-      where: {
-         route: { _eq: $route }
+   query BRAND_PAGE($domain: String!, $route: String!) {
+      brands_brandPages(
+         where: {
+            route: { _eq: $route }
             brand: {
-               _or: [
-                  { isDefault: { _eq: true } }
-                  { domain: { _eq: $domain } }
-               ]
+               _or: [{ isDefault: { _eq: true } }, { domain: { _eq: $domain } }]
             }
          }
-   ) {
-      id
-      internalPageName
-      isArchived
-      published
-      route
-      brandPageSettings{
-         value
-         brandPageSetting {
-            identifier
-           type
-         }
-      }
-      linkedNavigationMenuId
-      brandPageModules(
-         order_by: { position: desc_nulls_last }
-         where: { isHidden: { _eq: false } }
       ) {
          id
-         internalModuleIdentifier
-         config
-         moduleType
-         isHidden
-         fileId
-         position
-         subscriptionDivFileId: file {
-            path
-            linkedCssFiles {
-               id
-               cssFile {
-                  id
-                  path
-               }
+         internalPageName
+         isArchived
+         published
+         route
+         brandPageSettings {
+            value
+            brandPageSetting {
+               identifier
+               type
             }
-            linkedJsFiles {
-               id
-               jsFile {
+         }
+         linkedNavigationMenuId
+         brandPageModules(
+            order_by: { position: desc_nulls_last }
+            where: { isHidden: { _eq: false } }
+         ) {
+            id
+            internalModuleIdentifier
+            config
+            moduleType
+            isHidden
+            fileId
+            position
+            subscriptionDivFileId: file {
+               path
+               linkedCssFiles {
                   id
-                  path
+                  cssFile {
+                     id
+                     path
+                  }
+               }
+               linkedJsFiles {
+                  id
+                  jsFile {
+                     id
+                     path
+                  }
                }
             }
          }
-      }
-      brand {
-         navigationMenuId
+         brand {
+            navigationMenuId
+         }
+         brandPagesLinkedFiles(order_by: { position: desc_nulls_last }) {
+            position
+            fileId
+            fileType
+            id
+            linkedFile {
+               id
+               fileName
+               path
+            }
+         }
       }
    }
-}
 `
-
-// query MyQuery($navigationMenuId: Int!) {
-//    website_navigationMenuItem(
-//       where: {
-//          navigationMenuId: { _eq: $navigationMenuId }
-//          parentNavigationMenuItemId: { _is_null: true }
-//       }
-//       order_by: { position: desc_nulls_last }
-//    ) {
-//       id
-//       position
-//       url
-//       label
-//       openInNewTab
-//       parentNavigationMenuItemId
-//       navigationMenuId
-//       childNavigationMenuItems(order_by: { position: desc_nulls_last }) {
-//          id
-//          label
-//          navigationMenuId
-//          url
-//          position
-//          parentNavigationMenuItemId
-//       }
-//    }
-// }
 
 export const OTPS = gql`
    subscription otps($where: platform_otp_transaction_bool_exp = {}) {
@@ -1278,6 +1304,7 @@ export const PRODUCTS = gql`
          isPopupAllowed
          isPublished
          defaultProductOptionId
+         defaultCartItem
          productOptions(
             where: { isArchived: { _eq: false } }
             order_by: { position: desc_nulls_last }
@@ -1317,7 +1344,7 @@ export const PRODUCTS = gql`
       }
    }
 `
-export const GET_CART_ON_DEMAND = gql`
+export const GET_CART = gql`
    subscription cart($id: Int!) {
       cart(id: $id) {
          id
@@ -1373,6 +1400,285 @@ export const GET_CART_ON_DEMAND = gql`
                }
                productId
             }
+         }
+      }
+   }
+`
+export const GET_CARTS = gql`
+   subscription GET_CARTS($where: order_cart_bool_exp!) {
+      carts(where: $where) {
+         id
+      }
+   }
+`
+export const BRAND_SETTINGS_BY_TYPE = gql`
+   query BRAND_SEO_SETTINGS($domain: String!, $type: String!) {
+      brands_brand_brandSetting(
+         where: {
+            brand: {
+               _or: [{ domain: { _eq: $domain } }, { isDefault: { _eq: true } }]
+            }
+            brandSetting: { type: { _eq: $type } }
+         }
+      ) {
+         brandId
+         meta: brandSetting {
+            id
+            type
+            identifier
+         }
+         value
+      }
+   }
+`
+export const BRAND_ONDEMAND_DELIVERY_RECURRENCES = gql`
+   query BRAND_ONDEMAND_DELIVERY_RECURRENCES(
+      $where: fulfilment_brand_recurrence_bool_exp!
+   ) {
+      brandRecurrences(where: $where) {
+         brandId
+         brandLocationId
+         recurrenceId
+         recurrence {
+            id
+            rrule
+            type
+            timeSlots {
+               from
+               to
+               pickUpPrepTime
+               mileRanges {
+                  from
+                  city
+                  distanceType
+                  to
+                  zipcodes
+                  state
+                  prepTime
+                  geoBoundary
+                  isExcluded
+               }
+            }
+         }
+      }
+   }
+`
+export const ORDER_TAB = gql`
+   query ORDER_TAB($where: brands_orderTab_bool_exp!) {
+      brands_orderTab(where: $where) {
+         orderFulfillmentTypeLabel
+         label
+         orderType
+         availableOrderInterfaceLabel
+      }
+   }
+`
+export const BRAND_LOCATIONS = gql`
+   query BRAND_LOCATIONS($where: brands_brand_location_bool_exp!) {
+      brands_brand_location_aggregate(where: $where) {
+         aggregate {
+            count
+         }
+         nodes {
+            brandId
+            locationId
+            id
+            orderExperienceId
+            orderExperienceOptionType
+            doesDeliverOutsideCity
+            doesDeliverOutsideState
+         }
+      }
+   }
+`
+export const PREORDER_DELIVERY_BRAND_RECURRENCES = gql`
+   query BRAND_ONDEMAND_DELIVERY_RECURRENCES(
+      $where: fulfilment_brand_recurrence_bool_exp!
+   ) {
+      brandRecurrences(where: $where) {
+         brandId
+         brandLocationId
+         recurrenceId
+         recurrence {
+            id
+            rrule
+            type
+            timeSlots {
+               from
+               to
+               mileRanges {
+                  from
+                  city
+                  distanceType
+                  to
+                  zipcodes
+                  state
+                  geoBoundary
+                  isExcluded
+                  leadTime
+               }
+            }
+         }
+      }
+   }
+`
+export const ONDEMAND_PICKUP_BRAND_RECURRENCES = gql`
+   query ONDEMAND_PICKUP_BRAND_RECURRENCES(
+      $where: fulfilment_brand_recurrence_bool_exp!
+   ) {
+      brandRecurrences(where: $where) {
+         brandId
+         recurrenceId
+         recurrence {
+            id
+            rrule
+            type
+            timeSlots {
+               from
+               to
+               mileRanges {
+                  from
+                  city
+                  distanceType
+                  to
+                  zipcodes
+                  state
+                  geoBoundary
+                  isExcluded
+                  prepTime
+               }
+            }
+         }
+         brandLocationId
+      }
+   }
+`
+export const PREORDER_PICKUP_BRAND_RECURRENCES = gql`
+   query PREORDER_PICKUP_BRAND_RECURRENCES(
+      $where: fulfilment_brand_recurrence_bool_exp!
+   ) {
+      brandRecurrences(where: $where) {
+         brandId
+         recurrenceId
+         brandLocationId
+         recurrence {
+            id
+            rrule
+            type
+            timeSlots {
+               from
+               to
+               mileRanges {
+                  from
+                  city
+                  distanceType
+                  to
+                  zipcodes
+                  state
+                  geoBoundary
+                  isExcluded
+                  leadTime
+               }
+            }
+         }
+      }
+   }
+`
+export const ONDEMAND_DINE_BRAND_RECURRENCES = gql`
+   query ONDEMAND_DINE_BRAND_RECURRENCES(
+      $where: fulfilment_brand_recurrence_bool_exp!
+   ) {
+      brandRecurrences(where: $where) {
+         brandId
+         recurrenceId
+         recurrence {
+            id
+            rrule
+            type
+            timeSlots {
+               from
+               to
+               mileRanges {
+                  from
+                  city
+                  distanceType
+                  to
+                  zipcodes
+                  state
+                  geoBoundary
+                  isExcluded
+                  prepTime
+               }
+            }
+         }
+         brandLocationId
+      }
+   }
+`
+export const SCHEDULED_DINEIN_BRAND_RECURRENCES = gql`
+   query SCHEDULED_DINEIN_BRAND_RECURRENCES(
+      $where: fulfilment_brand_recurrence_bool_exp!
+   ) {
+      brandRecurrences(where: $where) {
+         brandId
+         recurrenceId
+         recurrence {
+            id
+            rrule
+            type
+            timeSlots {
+               from
+               to
+               mileRanges {
+                  from
+                  city
+                  distanceType
+                  to
+                  zipcodes
+                  state
+                  geoBoundary
+                  isExcluded
+                  leadTime
+               }
+            }
+         }
+         brandLocationId
+      }
+   }
+`
+export const GET_BRAND_LOCATION = gql`
+   query GET_BRAND_LOCATION($where: brands_brand_location_bool_exp!) {
+      brands_brand_location(where: $where) {
+         id
+         brandId
+         location {
+            id
+            locationAddress
+            label
+            zipcode
+            city
+            state
+            lat
+            lng
+            country
+         }
+      }
+   }
+`
+export const GET_JS_CSS_FILES = gql`
+   query GET_CSS_JS_FILES($where: brands_jsCssFileLinks_bool_exp!) {
+      brands_jsCssFileLinks(where: $where) {
+         id
+         brandId
+         brandPageId
+         brandPageModuleId
+         htmlFileId
+         position
+         file {
+            fileName
+            fileType
+            id
+            path
          }
       }
    }

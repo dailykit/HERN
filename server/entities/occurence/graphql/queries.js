@@ -9,11 +9,11 @@ export const GET_REMINDER_SETTINGS = `
 `
 
 export const GET_TEMPLATE_SETTINGS = `
-    query getTemplateSettings($identifier: String! ) {
-        brands_brand_subscriptionStoreSetting(where: {subscriptionStoreSetting: {identifier: {_eq: $identifier} }}) {
-            value
-        }
-    }   
+   query getTemplateSettings($identifier: String! ) {
+      brands_brand_brandSetting(where: {brandSetting: {identifier: {_eq: $identifier} }}) {
+       value
+   }
+}   
 `
 
 export const GET_CUSTOMERS_DETAILS = `

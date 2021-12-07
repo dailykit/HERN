@@ -6,7 +6,7 @@
    "dependencies": {
       "@apollo/react-hooks": "3.1.5",
       "@dailykit/react-tabulator": "0.13.6",
-      "@dailykit/ui": "^0.8.78",
+      "@dailykit/ui": "^0.8.83",
       "@dailykit/web-renderer": "1.0.7",
       "@monaco-editor/react": "^4.0.11",
       "@reach/tabs": "0.11.2",
@@ -56,9 +56,12 @@
       "react-draft-wysiwyg": "^1.14.5",
       "react-google-charts": "^3.0.15",
       "react-google-places-autocomplete": "2.1.0",
+      "react-html-parser": "^2.0.2",
       "react-i18next": "11.4.0",
+      "react-json-view": "^1.21.3",
       "react-loadable": "5.5.0",
       "react-phone-input-2": "2.13.5",
+      "react-phone-number-input": "^3.1.38",
       "react-router-dom": "5.1.2",
       "react-rte": "^0.16.3",
       "react-scripts": "3.4.1",
@@ -75,7 +78,7 @@
       "uuid": "8.1.0"
    },
    "scripts": {
-      "start": "SET PORT=8000 && SET SKIP_PREFLIGHT_CHECK=true&&react-scripts start",
+      "start": "set PORT=8000 && set SKIP_PREFLIGHT_CHECK=true&&react-scripts start",
       "start-mac": "SKIP_PREFLIGHT_CHECK=true&& PORT=8000 react-scripts start",
       "build": "react-scripts build",
       "test": "react-scripts test",

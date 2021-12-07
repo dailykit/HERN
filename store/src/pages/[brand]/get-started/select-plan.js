@@ -5,19 +5,19 @@ import {
    getRoute,
    isClient,
    renderPageContent,
-   processJsFile,
+   processExternalFiles,
 } from '../../../utils'
-import { SEO, Layout } from '../../../components'
+import { SEO, Layout, LoginWarning } from '../../../components'
 import { useUser } from '../../../context'
 
 const SelectPlan = props => {
    const router = useRouter()
-   const { settings, folds, seoSettings } = props
+   const { settings, linkedFiles, folds, seoSettings } = props
    const { isAuthenticated, isLoading } = useUser()
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
          isClient && localStorage.setItem('landed_on', location.href)
-         router.push(getRoute('/get-started/register'))
+         // router.push(getRoute('/get-started/register'))
       }
    }, [isAuthenticated, isLoading])
 
@@ -32,7 +32,7 @@ const SelectPlan = props => {
 
    React.useEffect(() => {
       try {
-         processJsFile(folds)
+         processExternalFiles(folds, linkedFiles)
       } catch (err) {
          console.log('Failed to render page: ', err)
       }
@@ -41,9 +41,11 @@ const SelectPlan = props => {
    return (
       <Layout settings={settings}>
          <SEO seoSettings={seoSettings} />
-         <main className="hern-get-started-select-plan__main">
-            {renderPageContent(folds)}
-         </main>
+         {!isAuthenticated && !isLoading ? (
+            <LoginWarning />
+         ) : (
+            <main>{renderPageContent(folds)}</main>
+         )}
       </Layout>
    )
 }
@@ -51,13 +53,11 @@ const SelectPlan = props => {
 export default SelectPlan
 
 export const getStaticProps = async ({ params }) => {
-   const { parsedData, seo, settings, seoSettings } = await getPageProps(
-      params,
-      '/get-started/select-plan'
-   )
+   const { parsedData, settings, seoSettings, linkedFiles } =
+      await getPageProps(params, '/get-started/select-plan')
 
    return {
-      props: { folds: parsedData, seo, settings, seoSettings },
+      props: { folds: parsedData, linkedFiles, settings, seoSettings },
       revalidate: 60,
    }
 }

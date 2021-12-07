@@ -1,0 +1,12 @@
+table:
+  name: user_location
+  schema: settings
+insert_permissions:
+- permission:
+    backend_only: false
+    check: {}
+    columns:
+    - userId
+    - locationId
+    - isActive
+  role: locationRole

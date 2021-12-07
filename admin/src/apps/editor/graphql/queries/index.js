@@ -159,18 +159,18 @@ export const GET_FILE = gql`
          fileName
          fileType
          id
-         linkedCssFiles {
+         linkedCssFiles: attachedCSSFiles {
             position
-            cssFile {
+            cssFile: file {
                path
                fileName
                fileType
                id
             }
          }
-         linkedJsFiles {
+         linkedJsFiles: attachedJSFiles {
             position
-            jsFile {
+            jsFile: file {
                path
                fileName
                fileType
@@ -214,6 +214,15 @@ export const PRIORITY_UPDATE = gql`
    query PRIORITY_UPDATE($arg: jsonb!) {
       editor_HandlePriority4(args: { arg: $arg }) {
          id
+      }
+   }
+`
+
+export const GET_FILE_ID = gql`
+   query MyQuery($where: editor_file_bool_exp!) {
+      editor_file(where: $where) {
+         id
+         path
       }
    }
 `

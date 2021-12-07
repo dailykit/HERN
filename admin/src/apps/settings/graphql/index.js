@@ -687,6 +687,78 @@ export const MASTER = {
          }
       `,
    },
+   VEG_NONVEG: {
+      LIST: gql`
+         subscription VegNonVeg {
+            master_vegNonvegType {
+               description
+               icon
+               label
+            }
+         }
+      `,
+      CREATE: gql`
+         mutation CREATE_VEG_NON_VEG_TYPE(
+            $object: master_vegNonvegType_insert_input!
+         ) {
+            insert_master_vegNonvegType_one(object: $object) {
+               label
+            }
+         }
+      `,
+      DELETE: gql`
+         mutation delete_veg_nonveg($where: master_vegNonvegType_bool_exp!) {
+            delete_master_vegNonvegType(where: $where) {
+               returning {
+                  label
+               }
+            }
+         }
+      `,
+      AGGREGATE: gql`
+         subscription vegnonvegAggregate {
+            master_vegNonvegType_aggregate {
+               aggregate {
+                  count
+               }
+            }
+         }
+      `,
+   },
+   RECIPE_COMPONENT: {
+      LIST: gql`
+         subscription LIST {
+            master_recipeComponent {
+               label
+            }
+         }
+      `,
+      CREATE: gql`
+         mutation CREATE($object: master_recipeComponent_insert_input!) {
+            insert_master_recipeComponent_one(object: $object) {
+               label
+            }
+         }
+      `,
+      AGGREGATE: gql`
+         subscription CREATE {
+            master_recipeComponent_aggregate {
+               aggregate {
+                  count
+               }
+            }
+         }
+      `,
+      DELETE: gql`
+         mutation DELETE($where: master_recipeComponent_bool_exp!) {
+            delete_master_recipeComponent(where: $where) {
+               returning {
+                  label
+               }
+            }
+         }
+      `,
+   },
 }
 
 export const DEVICES = {

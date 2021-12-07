@@ -2,7 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 
 import { Header } from './header'
-import { useUser } from '../context'
+import { useTranslation, useUser } from '../context'
 import { getRoute, normalizeAddress } from '../utils'
 import { MailIcon, PhoneIcon } from '../assets/icons'
 
@@ -28,9 +28,10 @@ export const Layout = ({
    const location = settings['availability']['Location']
 
    const theme = settings['Visual']['theme-color']
+   const { direction } = useTranslation()
 
    return (
-      <>
+      <div dir={direction}>
          {!noHeader && (
             <Header settings={settings} navigationMenus={navigationMenus} />
          )}
@@ -45,25 +46,13 @@ export const Layout = ({
             className="hern-layout__footer"
             style={{
                backgroundColor: `${
-                  theme?.footerBg ? theme?.footerBg : 'rgba(5, 150, 105, 1)'
-               }`,
-               color: `${
-                  theme?.footerText ? theme?.footerText : 'rgba(5, 150, 105, 1)'
+                  theme?.accent ? theme?.accent : 'rgba(5, 150, 105, 1)'
                }`,
             }}
          >
             <div>
                <section>
-                  <h4
-                     style={{
-                        color: `${
-                           theme?.footerText
-                              ? theme?.footerText
-                              : 'rgba(5, 150, 105, 1)'
-                        }`,
-                     }}
-                     className="hern-layout__footer__section-header"
-                  >
+                  <h4 className="hern-layout__footer__section-header">
                      Contact Us
                   </h4>
                   {location && (
@@ -149,6 +138,6 @@ export const Layout = ({
                )}
             </div>
          </footer>
-      </>
+      </div>
    )
 }

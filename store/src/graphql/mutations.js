@@ -164,6 +164,13 @@ export const MUTATIONS = {
             }
          }
       `,
+      DELETE: gql`
+         mutation deleteCart($id: Int!) {
+            deleteCart(id: $id) {
+               id
+            }
+         }
+      `,
    },
    CART_REWARDS: {
       CREATE: gql`
@@ -208,7 +215,14 @@ export const CREATE_STRIPE_PAYMENT_METHOD = gql`
       paymentMethod: insert_platform_customerPaymentMethod_one(
          object: $object
       ) {
+         brand
+         last4
+         country
+         expMonth
+         expYear
+         funding
          keycloakId
+         cardHolderName
          paymentMethodId
       }
    }
@@ -268,13 +282,16 @@ export const INSERT_CART_ITEM = gql`
    mutation createCartItem($object: order_cartItem_insert_input!) {
       createCartItem(object: $object) {
          id
-         cart {
-            id
-            subscriptionOccurenceCustomer {
-               isSkipped
-               validStatus
-            }
-         }
+         cartId
+         name: displayName
+         image: displayImage
+         isAddOn
+         unitPrice
+         addOnLabel
+         addOnPrice
+         isAutoAdded
+         subscriptionOccurenceProductId
+         subscriptionOccurenceAddOnProductId
       }
    }
 `
@@ -457,6 +474,16 @@ export const DELETE_CART_ITEMS = gql`
          returning {
             id
          }
+      }
+   }
+`
+export const UPDATE_CART_ITEMS = gql`
+   mutation UPDATE_CART_ITEMS(
+      $where: order_cartItem_bool_exp!
+      $_set: order_cartItem_set_input!
+   ) {
+      updateCartItems(where: $where, _set: $_set) {
+         affected_rows
       }
    }
 `

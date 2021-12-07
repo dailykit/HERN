@@ -1,0 +1,169 @@
+table:
+  name: customer
+  schema: crm
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteCustomers
+    delete_by_pk: deleteCustomer
+    insert: createCustomers
+    insert_one: createCustomer
+    select: customers
+    select_aggregate: customers_aggregate
+    select_by_pk: customer
+    update: updateCustomers
+    update_by_pk: updateCustomer
+object_relationships:
+- name: platform_customer
+  using:
+    manual_configuration:
+      column_mapping:
+        keycloakId: keycloakId
+      insertion_order: null
+      remote_table:
+        name: customer
+        schema: platform
+- name: subscription
+  using:
+    foreign_key_constraint_on: subscriptionId
+array_relationships:
+- name: attemptedPayments_
+  using:
+    manual_configuration:
+      column_mapping:
+        keycloakId: customerKeycloakId
+      insertion_order: null
+      remote_table:
+        name: payment_
+        schema: paymentHub
+- name: brandCustomers
+  using:
+    foreign_key_constraint_on:
+      column: keycloakId
+      table:
+        name: brand_customer
+        schema: crm
+- name: carts
+  using:
+    manual_configuration:
+      column_mapping:
+        id: customerId
+      insertion_order: null
+      remote_table:
+        name: cart
+        schema: order
+- name: customerReferrals
+  using:
+    foreign_key_constraint_on:
+      column: keycloakId
+      table:
+        name: customerReferral
+        schema: crm
+- name: loyaltyPointTransactions
+  using:
+    manual_configuration:
+      column_mapping:
+        keycloakId: customerKeycloakId
+      insertion_order: null
+      remote_table:
+        name: cart
+        schema: order
+- name: loyaltyPoints
+  using:
+    foreign_key_constraint_on:
+      column: keycloakId
+      table:
+        name: loyaltyPoint
+        schema: crm
+- name: orders
+  using:
+    manual_configuration:
+      column_mapping:
+        keycloakId: keycloakId
+      insertion_order: null
+      remote_table:
+        name: order
+        schema: order
+- name: rewardHistories
+  using:
+    foreign_key_constraint_on:
+      column: keycloakId
+      table:
+        name: rewardHistory
+        schema: crm
+- name: subscriptionOccurences
+  using:
+    foreign_key_constraint_on:
+      column: keycloakId
+      table:
+        name: subscriptionOccurence_customer
+        schema: subscription
+- name: wallets
+  using:
+    foreign_key_constraint_on:
+      column: keycloakId
+      table:
+        name: wallet
+        schema: crm
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - clientId
+    - created_at
+    - email
+    - id
+    - isArchived
+    - isSubscriber
+    - isTest
+    - keycloakId
+    - source
+    - sourceBrandId
+    - subscriptionId
+    - updated_at
+    filter: {}
+  role: consumer
+event_triggers:
+- definition:
+    enable_manual: true
+    insert:
+      columns: "*"
+  headers:
+  - name: OrganizationId
+    value_from_env: HEADER_REMOTE_SCHEMA_ORGANIZATIONID
+  name: createCustomerByClient
+  retry_conf:
+    interval_sec: 1
+    num_retries: 10
+    timeout_sec: 60
+  webhook_from_env: WEBHOOK_CREATE_CUSTOMER_BY_CLIENT
+- definition:
+    enable_manual: false
+    insert:
+      columns: "*"
+  name: customerSignupWebhookEvent
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: https://test.dailykit.org/server/api/sendWebhookEvents
+- definition:
+    enable_manual: false
+    insert:
+      columns: "*"
+  name: customer_signup_webhook
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: https://www.xyz.com
+- definition:
+    enable_manual: true
+    insert:
+      columns: "*"
+  name: handleNewOrder
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: https://dailyos-server.ngrok.io/webhook/emails/handle-new-order

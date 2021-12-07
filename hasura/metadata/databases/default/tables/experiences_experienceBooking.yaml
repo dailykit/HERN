@@ -1,0 +1,51 @@
+table:
+  name: experienceBooking
+  schema: experiences
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteExperienceBookings
+    delete_by_pk: deleteExperienceBooking
+    insert: createExperienceBookings
+    insert_one: createExperienceBooking
+    select: experienceBookings
+    select_by_pk: experienceBooking
+    update: updateExperienceBookings
+    update_by_pk: updateExperienceBooking
+object_relationships:
+- name: customer
+  using:
+    foreign_key_constraint_on: hostKeycloakId
+- name: experience
+  using:
+    foreign_key_constraint_on: experienceId
+- name: experienceClass
+  using:
+    foreign_key_constraint_on: experienceClassId
+- name: experienceClassById
+  using:
+    manual_configuration:
+      column_mapping:
+        id: experienceBookingId
+      insertion_order: null
+      remote_table:
+        name: experienceClass
+        schema: experiences
+- name: parentCart
+  using:
+    foreign_key_constraint_on: cartId
+array_relationships:
+- name: experienceBookingOptions
+  using:
+    foreign_key_constraint_on:
+      column: experienceBookingId
+      table:
+        name: experienceBookingOption
+        schema: experiences
+- name: experienceBookingParticipants
+  using:
+    foreign_key_constraint_on:
+      column: experienceBookingId
+      table:
+        name: experienceBookingParticipant
+        schema: experiences

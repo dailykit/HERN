@@ -72,13 +72,14 @@ export const  AVAILABLE_EVENTS = gql`
   subscription GET_PROCESSED_EVENTS($webhookUrl_EventId: Int) {
     developer_webhookUrl_events(where: {id: {_eq: $webhookUrl_EventId}}) {
       availableWebhookEvent {
-        processedWebhookEvents {
+        processedWebhookEvents(order_by: {created_at: desc}) {
           processedWebhookEventsByUrls(where: {webhookUrl_eventsId: {_eq: $webhookUrl_EventId}}) {
             attemptedTime
             statusCode
           }
           created_at
           id
+          payload
         }
       }
     }
@@ -88,10 +89,45 @@ export const  AVAILABLE_EVENTS = gql`
   export const GET_INVOCATIONS_OF_PROCESSED_EVENTS = gql`
   subscription GET_INVOCATIONS_OF_PROCESSED_EVENTS($processedWebhookEventsId: String, $webhookUrl_EventId: Int) {
     developer_processedWebhookEventsByUrl(where: {processedWebhookEventsId: {_eq: $processedWebhookEventsId}, webhookUrl_eventsId: {_eq: $webhookUrl_EventId}}) {
-      webhookUrl_EventsLogs {
+      webhookUrl_EventsLogs(order_by: {created_at: desc}) {
         PayloadSent
         Response
         created_at
+      }
+    }
+  }
+  `
+
+  export const GET_ALL_API_KEYS = gql`
+  subscription GET_ALL_API_KEYS {
+    developer_apiKey(order_by: {created_at: desc}) {
+      apiKey
+      canAddProducts
+      canUpdateProducts
+      isDeactivated
+      created_at
+      updated_at
+      label
+      createdBy
+    }
+  }
+  
+  `
+
+  export const GET_API_KEY = gql`
+  subscription GET_API_KEY($apiKey: String = "") {
+    developer_apiKey(where: {apiKey: {_eq: $apiKey}}) {
+      canAddProducts
+      canUpdateProducts
+    }
+  }
+  `
+ 
+  export const GET_API_KEY_COUNT = gql`
+  subscription GET_API_KEY_COUNT {
+    developer_apiKey_aggregate {
+      aggregate {
+        count
       }
     }
   }

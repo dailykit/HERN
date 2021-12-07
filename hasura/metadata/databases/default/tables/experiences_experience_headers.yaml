@@ -1,0 +1,7 @@
+table:
+  name: experience_headers
+  schema: experiences
+object_relationships:
+- name: experience
+  using:
+    foreign_key_constraint_on: experienceId

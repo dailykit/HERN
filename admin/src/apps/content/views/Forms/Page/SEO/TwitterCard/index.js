@@ -187,7 +187,6 @@ export const TwitterCard = ({ routeName }) => {
             <div className="metaDetails">
                 <Row style={{ marginTop: '20px' }}>
                     <Col span={12}>
-                        <div style={{ marginTop: '7px' }} />
                         <Title level={4}>Twitter</Title>
                         <HelperText
                             type="hint"
@@ -220,7 +219,7 @@ export const TwitterCard = ({ routeName }) => {
                                     onClick={() => Save()}
                                 >
                                     Save
-                                </Button>,
+                                </Button>
                             ]}
                         >
                             <Form layout="vertical">
@@ -263,7 +262,7 @@ export const TwitterCard = ({ routeName }) => {
                                         onChange={onChangeHandler}
                                         id="twitter-title"
                                         name="twitterTitle"
-                                    />{' '}
+                                    />
                                 </Form.Item>
                                 <Form.Item
                                     label={
@@ -413,14 +412,14 @@ export const TwitterCard = ({ routeName }) => {
                                         <Col span={24}>
                                             <Text>
                                                 <span style={{ fontWeight: 'bold' }}>
-                                                    Note:{' '}
-                                                </span>{' '}
+                                                    Note:
+                                                </span>
                                                 It can take time before you see these
                                                 changes on social networks.
                                                 <br />
                                                 <span style={{ fontWeight: 'bold' }}>
-                                                    Recommended:{' '}
-                                                </span>{' '}
+                                                    Recommended:
+                                                </span>
                                                 3: 1 aspect ratio, 1500px X px size and
                                                 maximum file size of 5MB.Images can be in
                                                 JPG, PNG or GIFs (but not animated GIFS)
@@ -449,6 +448,7 @@ export const TwitterCard = ({ routeName }) => {
                         </Tooltip>
                         <Card
                             hoverable
+                            onClick={showTwitterModal}
                             cover={
                                 form?.twitterImage?.value ? (
                                     <img
@@ -463,19 +463,13 @@ export const TwitterCard = ({ routeName }) => {
                                     <ButtonTile
                                         type="uploadImage"
                                         size="lg"
-                                        text=""
-                                        style={{
-                                            width: '100%',
-                                            boxShadow: 'none',
-                                            border: '1px solid #e4e4e4',
-                                            borderRadius: '0px',
-                                        }}
+                                        text="Add Image"
                                     />
                                 )
                             }
                         >
                             <p style={{ fontWeight: '600' }}>
-                                {' '}
+
                                 {form.twitterTitle.value || 'twitter: title'}
                             </p>
                             <p>

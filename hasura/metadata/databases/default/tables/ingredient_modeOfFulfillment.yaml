@@ -1,0 +1,72 @@
+table:
+  name: modeOfFulfillment
+  schema: ingredient
+configuration:
+  custom_column_names: {}
+  custom_root_fields:
+    delete: deleteModeOfFulfillments
+    delete_by_pk: deleteModeOfFulfillment
+    insert: createModeOfFulfillments
+    insert_one: createModeOfFulfillment
+    select: modeOfFulfillments
+    select_aggregate: modeOfFulfillmentsAggregate
+    select_by_pk: modeOfFulfillment
+    update: updateModeOfFulfillments
+    update_by_pk: updateModeOfFulfillment
+object_relationships:
+- name: bulkItem
+  using:
+    foreign_key_constraint_on: bulkItemId
+- name: ingredientSachet
+  using:
+    foreign_key_constraint_on: ingredientSachetId
+- name: labelTemplate
+  using:
+    foreign_key_constraint_on: labelTemplateId
+- name: operationConfig
+  using:
+    foreign_key_constraint_on: operationConfigId
+- name: packaging
+  using:
+    foreign_key_constraint_on: packagingId
+- name: sachetItem
+  using:
+    foreign_key_constraint_on: sachetItemId
+- name: station
+  using:
+    foreign_key_constraint_on: stationId
+computed_fields:
+- comment: ""
+  definition:
+    function:
+      name: getMOFCost
+      schema: ingredient
+  name: cost
+- comment: ""
+  definition:
+    function:
+      name: ismodevalid
+      schema: ingredient
+  name: isValid
+- comment: ""
+  definition:
+    function:
+      name: getMOFNutritionalInfo
+      schema: ingredient
+  name: nutritionalInfo
+event_triggers:
+- definition:
+    enable_manual: false
+    insert:
+      columns: "*"
+    update:
+      columns:
+      - isLive
+      - isPublished
+      - position
+  name: mofUpdate
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: https://154d3168122e.ngrok.io/api/mof/live
