@@ -36,4 +36,4 @@ event_triggers:
     interval_sec: 10
     num_retries: 0
     timeout_sec: 60
-  webhook: https://testhern.dailykit.org/server/api/webhooks/stripe/customer
+  webhook: "{{DAILYOS_SERVER_URL}}/server/api/webhooks/stripe/customer"
