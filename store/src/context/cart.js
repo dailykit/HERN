@@ -12,6 +12,7 @@ import {
 import { useUser } from '.'
 import { useConfig } from '../lib'
 import { useToasts } from 'react-toast-notifications'
+import { useQueryParamState } from '../utils'
 
 export const CartContext = React.createContext()
 
@@ -31,6 +32,7 @@ const reducer = (state = initialState, { type, payload }) => {
 export const CartProvider = ({ children }) => {
    const { brand } = useConfig()
    const { addToast } = useToasts()
+   const [oiType] = useQueryParamState('oiType')
 
    const { isAuthenticated, user, isLoading } = useUser()
    const [cartState, cartReducer] = React.useReducer(reducer, initialState)
@@ -80,7 +82,9 @@ export const CartProvider = ({ children }) => {
    //update cart
    const [updateCart] = useMutation(MUTATIONS.CART.UPDATE, {
       onCompleted: data => {
-         localStorage.removeItem('cart-id')
+         if (!(oiType === 'Kiosk')) {
+            localStorage.removeItem('cart-id')
+         }
          console.log('🍾 Cart updated with data!')
       },
       onError: error => {
