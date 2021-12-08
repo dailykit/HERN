@@ -50,7 +50,10 @@ export const Header = ({ settings, navigationMenus }) => {
    const brand = settings['brand']['theme-brand']
    const theme = settings['Visual']['theme-color']
    const headerNavigationSettings = settings['navigation']['header-navigation']
-   const isSubscriptionShopRequired = false
+   const isSubscriptionStore =
+      settings?.availability?.isSubscriptionAvailable?.Subscription
+         ?.isSubscriptionAvailable?.value
+
    const [toggle, setToggle] = React.useState(true)
    const [isMobileNavVisible, setIsMobileNavVisible] = React.useState(false)
    const [showLoginPopup, setShowLoginPopup] = React.useState(false)
@@ -65,7 +68,7 @@ export const Header = ({ settings, navigationMenus }) => {
    }, [])
    return (
       <>
-         {console.log(settings)}
+         {console.log(settings, isSubscriptionStore)}
          {headerNavigationSettings?.headerNavigation?.custom?.value ? (
             <TemplateFile
                path={headerNavigationSettings?.headerNavigation?.path?.value}
@@ -97,20 +100,26 @@ export const Header = ({ settings, navigationMenus }) => {
                      </li>
                      {isLoading ? (
                         <li className="hern-navbar__list__item__skeleton" />
-                     ) : isAuthenticated && user?.isSubscriber ? (
+                     ) : isAuthenticated &&
+                       user?.isSubscriber &&
+                       isSubscriptionStore ? (
                         <li className="hern-navbar__list__item">
                            <Link href={getRoute('/menu')}>
                               {t('Select Menu')}
                            </Link>
                         </li>
                      ) : (
-                        <li className="hern-navbar__list__item">
-                           <Link href={getRoute('/our-menu')}>
-                              {t('Our Menu')}
-                           </Link>
-                        </li>
+                        <>
+                           {isSubscriptionStore && (
+                              <li className="hern-navbar__list__item">
+                                 <Link href={getRoute('/our-menu')}>
+                                    {t('Our Menu')}
+                                 </Link>
+                              </li>
+                           )}
+                        </>
                      )}
-                     {!user?.isSubscriber && isSubscriptionShopRequired && (
+                     {!user?.isSubscriber && isSubscriptionStore && (
                         <li className="hern-navbar__list__item">
                            <Link href={getRoute('/our-plans')}>
                               {t('Get Started')}
@@ -183,16 +192,24 @@ export const Header = ({ settings, navigationMenus }) => {
                {isMobileNavVisible && (
                   <section className="hern-navigatin-menu__wrapper--mobile">
                      <NavigationBar Data={newNavigationMenus}>
-                        {isAuthenticated && user?.isSubscriber ? (
+                        {isAuthenticated &&
+                        user?.isSubscriber &&
+                        isSubscriptionStore ? (
                            <li className="hern-navbar__list__item">
                               <Link href={getRoute('/menu')}>Select Menu</Link>
                            </li>
                         ) : (
-                           <li className="hern-navbar__list__item">
-                              <Link href={getRoute('/our-menu')}>Our Menu</Link>
-                           </li>
+                           <>
+                              {isSubscriptionStore && (
+                                 <li className="hern-navbar__list__item">
+                                    <Link href={getRoute('/our-menu')}>
+                                       Our Menu
+                                    </Link>
+                                 </li>
+                              )}
+                           </>
                         )}
-                        {!user?.isSubscriber && (
+                        {!user?.isSubscriber && isSubscriptionStore && (
                            <li className="hern-navbar__list__item">
                               <Link href={getRoute('/our-plans')}>
                                  Get Started
@@ -212,11 +229,15 @@ export const Header = ({ settings, navigationMenus }) => {
          {isClient && width < 768 && (
             <ProfileSidebar toggle={toggle} logout={logout} />
          )}
-         <LoginWrapper
+         {/* <LoginWrapper
             closeLoginPopup={() => {
                setLoginPopup('false')
             }}
             showLoginPopup={Boolean(params['showLogin'] === 'true')}
+         /> */}
+         <LoginWrapper
+            closeLoginPopup={() => setShowLoginPopup(false)}
+            showLoginPopup={showLoginPopup}
          />
       </>
    )
