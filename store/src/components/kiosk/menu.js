@@ -7,7 +7,7 @@ import { KioskProduct } from './component'
 import { PRODUCTS_BY_CATEGORY, PRODUCTS } from '../../graphql'
 import { useConfig } from '../../lib'
 import { useQuery } from '@apollo/react-hooks'
-import { CartIcon } from '../../assets/icons'
+import { ArrowLeftIconBG, CartIcon } from '../../assets/icons'
 import { Divider } from '../../components'
 
 const { Content, Sider, Header, Footer } = Layout
@@ -143,7 +143,17 @@ export const MenuSection = props => {
          <Content style={{ height: '40em' }}>
             {/* Promotion, coupons and progress bar */}
             <Layout style={{ height: '100%' }}>
-               <Content>Hello</Content>
+               <Content className="hern-kiosk__menu-promotion-coupons">
+                  <div
+                     style={{ position: 'absolute', top: '2em', left: '2em' }}
+                  >
+                     <ArrowLeftIconBG
+                        onClick={() => {
+                           setCurrentPage('fulfillmentPage')
+                        }}
+                     />
+                  </div>
+               </Content>
                <Footer
                   style={{
                      background: `${config.kioskSettings.theme.primaryColorLight.value}`,
