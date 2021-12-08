@@ -49,10 +49,17 @@ export const Header = ({ settings, navigationMenus }) => {
 
    const brand = settings['brand']['theme-brand']
    const theme = settings['Visual']['theme-color']
-   const headerNavigationSettings = settings['navigation']['header-navigation']
+   const headerNavigationSettings =
+      settings['navigation']?.['header-navigation']
    const isSubscriptionStore =
       settings?.availability?.isSubscriptionAvailable?.Subscription
          ?.isSubscriptionAvailable?.value
+   const logo = settings?.brand?.['Brand Logo']?.brandLogo?.value
+      ? settings?.brand?.['Brand Logo']?.brandLogo?.value
+      : settings?.brand?.['Brand Logo']?.brandLogo?.default
+   const displayName = settings?.brand?.['Brand Logo']?.brandName?.value
+      ? settings?.brand?.['Brand Logo']?.brandName?.value
+      : settings?.brand?.['Brand Logo']?.brandName?.value
 
    const [toggle, setToggle] = React.useState(true)
    const [isMobileNavVisible, setIsMobileNavVisible] = React.useState(false)
@@ -78,16 +85,16 @@ export const Header = ({ settings, navigationMenus }) => {
             <header className="hern-header">
                <Link
                   href={getRoute('/')}
-                  title={brand?.name || 'Subscription Shop'}
+                  title={displayName || 'Subscription Shop'}
                >
                   <div className="hern-header__brand">
-                     {brand?.logo?.logoMark && (
+                     {logo && (
                         <img
-                           src={brand?.logo?.logoMark}
-                           alt={brand?.name || 'Subscription Shop'}
+                           src={logo}
+                           alt={displayName || 'Subscription Shop'}
                         />
                      )}
-                     {brand?.name && <span>{brand?.name}</span>}
+                     {displayName && <span>{displayName}</span>}
                   </div>
                </Link>
                <button onClick={() => setShowLocationSelectionPopup(true)}>
