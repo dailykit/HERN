@@ -39,10 +39,6 @@ export const TemplateFile = ({ path = '/navigation-menu/index.ejs', data }) => {
    }
 
    return (
-      <div>
-         {ReactHTMLParser(compileEJSFile(templateString, templateData), {
-            transform: htmlParserTransform,
-         })}
-      </div>
+      <div>{ReactHTMLParser(compileEJSFile(templateString, templateData))}</div>
    )
 }
