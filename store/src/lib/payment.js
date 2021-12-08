@@ -329,7 +329,9 @@ export const PaymentProvider = ({ children }) => {
             console.log('inside payment provider useEffect 1', cartPayment)
 
             if (cartPayment.paymentStatus === 'PENDING') {
-               const PAYTM_MERCHANT_ID = get_env('PAYTM_MERCHANT_ID')
+               const PAYTM_MERCHANT_ID =
+                  process.env.NEXT_PUBLIC_PAYTM_MERCHANT_ID ||
+                  get_env('PAYTM_MERCHANT_ID')
                const PAYTM_ORDER_ID = cartPayment?.id
                const PAYTM_TXN_TOKEN = cartPayment?.transactionId
                if (PAYTM_ORDER_ID && PAYTM_TXN_TOKEN && isClient) {

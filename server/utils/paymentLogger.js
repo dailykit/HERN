@@ -30,11 +30,11 @@ const STATUS = {
    canceled: 'CANCELLED',
    succeeded: 'SUCCEEDED',
    processing: 'PROCESSING',
-   payment_failed: 'PAYMENT_FAILED',
+   payment_failed: 'FAILED',
    requires_action: 'REQUIRES_ACTION',
    requires_payment_method: 'REQUIRES_PAYMENT_METHOD',
    TXN_SUCCESS: 'SUCCEEDED',
-   TXN_FAILURE: 'PAYMENT_FAILED',
+   TXN_FAILURE: 'FAILED',
    PENDING: 'PENDING'
 }
 // const handleInvoice = async args => {
