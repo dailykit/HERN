@@ -31,16 +31,13 @@ const Kiosk = () => {
    const [combinedCartItems, setCombinedCartData] = useState(null)
 
    useEffect(() => {
-      if (cartState.cart) {
-         console.log('cartState.cart', cartState.cart)
-
-         const combinedCartItems = combineCartItems(cartState.cart.products)
-         console.log('thisISCOmbinedCartFromKiosk', combinedCartItems)
+      if (cartState.cartItems) {
+         const combinedCartItems = combineCartItems(cartState.cartItems)
          setCombinedCartData(combinedCartItems)
       } else {
          setCombinedCartData([])
       }
-   }, [cartState.cart])
+   }, [cartState.cartItems])
 
    const handleOnIdle = event => {
       console.log('user is idle', event)

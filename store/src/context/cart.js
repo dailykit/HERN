@@ -1,4 +1,5 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
+import isEmpty from 'lodash/isEmpty'
 import gql from 'graphql-tag'
 import React, { useState } from 'react'
 import {
@@ -8,6 +9,7 @@ import {
    DELETE_CART_ITEMS,
    GET_CARTS,
    UPDATE_CART_ITEMS,
+   GET_CART_ITEMS,
 } from '../graphql'
 import { useUser } from '.'
 import { useConfig } from '../lib'
@@ -18,12 +20,17 @@ export const CartContext = React.createContext()
 
 const initialState = {
    cart: null,
+   cartItems: null,
 }
 
 const reducer = (state = initialState, { type, payload }) => {
+   console.log('cartDataInReducer', payload)
+
    switch (type) {
       case 'CART':
          return { ...state, cart: payload }
+      case 'CART_ITEMS':
+         return { ...state, cartItems: payload }
       default:
          return state
    }
@@ -49,20 +56,45 @@ export const CartProvider = ({ children }) => {
    }, [])
 
    //initial cart when no auth
-   const { error: getInitialCart } = useSubscription(GET_CART, {
-      skip: !storedCartId,
-      variables: {
-         id: storedCartId,
-      },
-      onSubscriptionData: ({
-         subscriptionData: { data: { cart = {} } = {} } = {},
-      } = {}) => {
-         cartReducer({
-            type: 'CART',
-            payload: cart,
-         })
-      },
-   })
+   const { loading: isCartLoading, error: getInitialCart } = useSubscription(
+      GET_CART,
+      {
+         skip: !storedCartId,
+         variables: {
+            id: storedCartId,
+         },
+         onSubscriptionData: ({
+            subscriptionData: { data: { cart = {} } = {} } = {},
+         } = {}) => {
+            cartReducer({
+               type: 'CART',
+               payload: cart,
+            })
+         },
+      }
+   )
+
+   // get cartItems
+   const { loading: cartItemsLoading, error: cartItemsError } = useSubscription(
+      GET_CART_ITEMS,
+      {
+         skip: !storedCartId,
+         variables: {
+            where: {
+               cartId: { _eq: storedCartId },
+               level: { _eq: 1 },
+            },
+         },
+         onSubscriptionData: ({
+            subscriptionData: { data: { cartItems = [] } = {} } = {},
+         } = {}) => {
+            cartReducer({
+               type: 'CART_ITEMS',
+               payload: cartItems,
+            })
+         },
+      }
+   )
 
    //create cart
    const [createCart] = useMutation(MUTATIONS.CART.CREATE, {
@@ -280,6 +312,7 @@ export const CartProvider = ({ children }) => {
             }
          },
       })
+
    return (
       <CartContext.Provider
          value={{

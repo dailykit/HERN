@@ -31,9 +31,9 @@ export const KioskProduct = props => {
    }, [currentLang])
 
    useEffect(() => {
-      if (cartState.cart) {
-         const combinedCartItemsUF = combineCartItems(cartState.cart.products)
-         console.log('combinedCartItemsUF', combinedCartItemsUF)
+      if (cartState.cartItems) {
+         const combinedCartItemsUF = combineCartItems(cartState.cartItems)
+
          const allCartItemsIdsForThisProducts = combinedCartItemsUF
             .filter(x => x.productId === productData.id)
             .map(x => x.ids)
@@ -43,7 +43,7 @@ export const KioskProduct = props => {
       } else {
          setCombinedCartData([])
       }
-   }, [cartState.cart])
+   }, [cartState.cartItems])
 
    // counter button (-) delete last cartItem
    const onMinusClick = cartItemIds => {
@@ -111,16 +111,12 @@ export const KioskProduct = props => {
                      <KioskCounterButton
                         config={config}
                         onMinusClick={() => {
-                           console.log(
-                              'combinedCartItems',
-                              combinedCartItems.ids,
-                              combinedCartItems
-                           )
-                           onMinusClick([
-                              combinedCartItems.ids[
-                                 combinedCartItems.ids.length - 1
-                              ],
-                           ])
+                           console.log('combinedCartItems')
+                           const idsAv = combinedCartItems
+                              .filter(x => x.productId === productData.id)
+                              .map(x => x.ids)
+                              .flat()
+                           onMinusClick([idsAv[idsAv.length - 1]])
                         }}
                         quantity={availableQuantityInCart}
                      />

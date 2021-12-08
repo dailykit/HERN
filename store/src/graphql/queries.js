@@ -1389,31 +1389,7 @@ export const GET_CART = gql`
          }
          address
          fulfillmentInfo
-         products: cartItems(where: { level: { _eq: 1 } }) {
-            id
-            addOnLabel
-            addOnPrice
-            price: unitPrice
-            name: displayName
-            image: displayImage
-            childs {
-               price: unitPrice
-               name: displayName
-               productOption {
-                  id
-                  label
-               }
-               childs {
-                  displayName
-                  price: unitPrice
-                  modifierOption {
-                     id
-                     name
-                  }
-               }
-            }
-            productId
-         }
+
          cartItems_aggregate(where: { level: { _eq: 1 } }) {
             aggregate {
                count
@@ -1724,6 +1700,35 @@ export const GET_JS_CSS_FILES = gql`
             id
             path
          }
+      }
+   }
+`
+export const GET_CART_ITEMS = gql`
+   subscription GET_CART_ITEMS($where: order_cartItem_bool_exp!) {
+      cartItems(where: $where) {
+         id
+         addOnLabel
+         addOnPrice
+         price: unitPrice
+         name: displayName
+         image: displayImage
+         childs {
+            price: unitPrice
+            name: displayName
+            productOption {
+               id
+               label
+            }
+            childs {
+               displayName
+               price: unitPrice
+               modifierOption {
+                  id
+                  name
+               }
+            }
+         }
+         productId
       }
    }
 `
