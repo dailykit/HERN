@@ -195,6 +195,7 @@ export const KioskProduct = props => {
                <KioskButton
                   onClick={() => {
                      setShowModifier(true)
+                     setShowChooseIncreaseType(false)
                   }}
                   style={{
                      border: `2px solid ${config.kioskSettings.theme.secondaryColor.value}`,

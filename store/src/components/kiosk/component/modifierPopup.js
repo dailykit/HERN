@@ -354,7 +354,6 @@ export const KioskModifier = props => {
    if (showProceedPopup) {
       return (
          <Modal
-            title="Repeat last used customization?"
             visible={showProceedPopup}
             centered={true}
             closable={false}
@@ -474,6 +473,8 @@ export const KioskModifier = props => {
                      const productOption = productData.productOptions.find(
                         x => x.id == e.target.value
                      )
+                     // when changing product option previous selected should be removed
+                     setSelectedOptions({ single: [], multiple: [] })
                      setSelectedProductOption(productOption)
                   }}
                   size="large"
@@ -574,6 +575,12 @@ export const KioskModifier = props => {
                                           <div
                                              key={index}
                                              className="hern-kiosk__modifier-category-option"
+                                             onClick={() => {
+                                                onCheckClick(
+                                                   eachOption,
+                                                   eachModifierCategory
+                                                )
+                                             }}
                                           >
                                              <div className="hern-kiosk__modifier-category-right">
                                                 <img
@@ -609,12 +616,6 @@ export const KioskModifier = props => {
                                                          .value
                                                    }
                                                    size={50}
-                                                   onClick={() => {
-                                                      onCheckClick(
-                                                         eachOption,
-                                                         eachModifierCategory
-                                                      )
-                                                   }}
                                                 />
                                              ) : (
                                                 <NoTickRoundCheckBoxIcon
