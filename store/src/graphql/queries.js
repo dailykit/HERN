@@ -1703,32 +1703,37 @@ export const GET_JS_CSS_FILES = gql`
       }
    }
 `
-export const GET_CART_ITEMS = gql`
-   subscription GET_CART_ITEMS($where: order_cartItem_bool_exp!) {
-      cartItems(where: $where) {
+
+export const GET_CART_ITEMS_BY_CART = gql`
+   subscription cart($id: Int!) {
+      cart(id: $id) {
          id
-         addOnLabel
-         addOnPrice
-         price: unitPrice
-         name: displayName
-         image: displayImage
-         childs {
+         cartItems(where: { level: { _eq: 1 } }) {
+            cartItemId: id
+            addOnLabel
+            addOnPrice
+            created_at
             price: unitPrice
             name: displayName
-            productOption {
-               id
-               label
-            }
+            image: displayImage
             childs {
-               displayName
                price: unitPrice
-               modifierOption {
+               name: displayName
+               productOption {
                   id
-                  name
+                  label
+               }
+               childs {
+                  displayName
+                  price: unitPrice
+                  modifierOption {
+                     id
+                     name
+                  }
                }
             }
+            productId
          }
-         productId
       }
    }
 `

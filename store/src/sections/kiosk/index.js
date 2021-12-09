@@ -22,22 +22,11 @@ import { KioskCart } from '../../components/kiosk/cart'
 const { Header, Content } = Layout
 const Kiosk = () => {
    // context
-   const { cartState, methods, addToCart } = React.useContext(CartContext)
+   const { combinedCartItems } = React.useContext(CartContext)
 
-   const componentsTabRef = React.useRef()
    const { direction } = useTranslation()
 
    const [isIdle, setIsIdle] = useState(false)
-   const [combinedCartItems, setCombinedCartData] = useState(null)
-
-   useEffect(() => {
-      if (cartState.cartItems) {
-         const combinedCartItems = combineCartItems(cartState.cartItems)
-         setCombinedCartData(combinedCartItems)
-      } else {
-         setCombinedCartData([])
-      }
-   }, [cartState.cartItems])
 
    const handleOnIdle = event => {
       console.log('user is idle', event)
