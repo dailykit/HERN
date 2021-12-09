@@ -2,7 +2,15 @@
    "idlePageSettings": {
       "idleTime": {
          "label": "Time for become screen idle(in seconds).",
-         "value": 100,
+         "value": 200,
+         "default": 30,
+         "dataType": "number",
+         "description": "This is use for make screen inactive.",
+         "userInsertType": "numberField"
+      },
+      "idleScreenWarningTime": {
+         "label": "Time for warning to show device becoming idle(in seconds).",
+         "value": 10,
          "default": 30,
          "dataType": "number",
          "description": "This is use for make screen inactive.",

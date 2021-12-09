@@ -3,7 +3,7 @@ import KioskConfig from './kioskConfig.json'
 import { useIdleTimer } from 'react-idle-timer'
 import { IdleScreen } from '../../components/kiosk/idleScreen'
 import 'antd/dist/antd.css'
-import { Carousel, Layout } from 'antd'
+import { Carousel, Layout, Modal } from 'antd'
 import { KioskHeader } from '../../components/kiosk/header'
 import { FulfillmentSection } from '../../components/kiosk/fulfillment'
 import { CartContext, useTranslation } from '../../context'
@@ -65,6 +65,8 @@ const Kiosk = () => {
       ...(isIdle && { onActive: handleOnActive, onAction: handleOnAction }),
    })
 
+   console.log('thisIsRemainingTime', getRemainingTime())
+
    function onChange(a, b, c) {
       console.log(a, b, c)
    }
@@ -77,6 +79,30 @@ const Kiosk = () => {
       'currentPage',
       'fulfillmentPage'
    )
+   useIdleTimer({
+      timeout:
+         1000 *
+         (KioskConfig.idlePageSettings.idleTime.value -
+            KioskConfig.idlePageSettings.idleScreenWarningTime.value),
+      onIdle: warning,
+      debounce: 500,
+      ...(isIdle && { onActive: handleOnActive, onAction: handleOnAction }),
+   })
+   function warning() {
+      let secondsToGo = KioskConfig.idlePageSettings.idleScreenWarningTime.value
+      const modal = Modal.warning({
+         title: `This device is becoming Idle in ${secondsToGo} second TOUCH ANY WHERE...`,
+         maskClosable: true,
+         centered: true,
+      })
+      // const timer = setInterval(() => {
+      //    secondsToGo -= 1
+      // }, 1000)
+      setTimeout(() => {
+         // clearInterval(timer)
+         modal.destroy()
+      }, KioskConfig.idlePageSettings.idleScreenWarningTime.value * 1000)
+   }
    if (isIdle) {
       return <IdleScreen config={KioskConfig} />
    }
