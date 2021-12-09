@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Carousel, Layout } from 'antd'
+import { Carousel, Layout, Modal } from 'antd'
 import KioskButton from './button'
 import { CartContext, useTranslation } from '../../../context'
 import { combineCartItems, formatCurrency } from '../../../utils'
@@ -9,7 +9,8 @@ const { Header, Content, Footer } = Layout
 
 export const KioskProduct = props => {
    // context
-   const { cartState, methods, addToCart } = React.useContext(CartContext)
+   const { cartState, methods, addToCart, combinedCartItems } =
+      React.useContext(CartContext)
 
    const { config, productData, setCurrentPage } = props
    const { t, locale, dynamicTrans } = useTranslation()
@@ -17,7 +18,8 @@ export const KioskProduct = props => {
    const [availableQuantityInCart, setAvailableQuantityInCart] = useState(0)
    const currentLang = React.useMemo(() => locale, [locale])
 
-   const [combinedCartItems, setCombinedCartData] = useState(null)
+   // const [combinedCartItems, setCombinedCartData] = useState(null)
+   const [showChooseIncreaseType, setShowChooseIncreaseType] = useState(false) // show I'll choose or repeat last one popup
 
    useEffect(() => {
       const translateStringSpan = document.querySelectorAll('span')
@@ -31,19 +33,12 @@ export const KioskProduct = props => {
    }, [currentLang])
 
    useEffect(() => {
-      if (cartState.cartItems) {
-         const combinedCartItemsUF = combineCartItems(cartState.cartItems)
-
-         const allCartItemsIdsForThisProducts = combinedCartItemsUF
-            .filter(x => x.productId === productData.id)
-            .map(x => x.ids)
-            .flat().length
-         setAvailableQuantityInCart(allCartItemsIdsForThisProducts)
-         setCombinedCartData(combinedCartItemsUF)
-      } else {
-         setCombinedCartData([])
-      }
-   }, [cartState.cartItems])
+      const allCartItemsIdsForThisProducts = combinedCartItems
+         .filter(x => x.productId === productData.id)
+         .map(x => x.ids)
+         .flat().length
+      setAvailableQuantityInCart(allCartItemsIdsForThisProducts)
+   }, [combinedCartItems])
 
    // counter button (-) delete last cartItem
    const onMinusClick = cartItemIds => {
@@ -56,6 +51,59 @@ export const KioskProduct = props => {
             },
          },
       })
+   }
+
+   // repeat last order
+   const repeatLastOne = productData => {
+      const cartDetailSelectedProduct = cartState.cartItems
+         .filter(x => x.productId === productData.id)
+         .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+         .pop()
+      const productOptionId =
+         cartDetailSelectedProduct.childs[0].productOption.id
+      const modifierCategoryOptionsIds =
+         cartDetailSelectedProduct.childs[0].childs.map(
+            x => x?.modifierOption?.id
+         )
+
+      //selected product option
+      const selectedProductOption = productData.productOptions.find(
+         x => x.id == productOptionId
+      )
+
+      //selected modifiers
+      let singleModifier = []
+      let multipleModifier = []
+      if (selectedProductOption.modifier) {
+         selectedProductOption.modifier.categories.forEach(category => {
+            category.options.forEach(option => {
+               const selectedOption = {
+                  modifierCategoryID: category.id,
+                  modifierCategoryOptionsID: option.id,
+                  modifierCategoryOptionsPrice: option.price,
+                  cartItem: option.cartItem,
+               }
+               if (category.type === 'single') {
+                  if (modifierCategoryOptionsIds.includes(option.id)) {
+                     singleModifier = singleModifier.concat(selectedOption)
+                  }
+               }
+               if (category.type === 'multiple') {
+                  if (modifierCategoryOptionsIds.includes(option.id)) {
+                     multipleModifier = multipleModifier.concat(selectedOption)
+                  }
+               }
+            })
+         })
+      }
+      const allSelectedOptions = [...singleModifier, ...multipleModifier]
+      const cartItem = getCartItemWithModifiers(
+         selectedProductOption.cartItem,
+         allSelectedOptions.map(x => x.cartItem)
+      )
+
+      addToCart(cartItem, 1)
+      setShowChooseIncreaseType(false)
    }
 
    return (
@@ -118,12 +166,54 @@ export const KioskProduct = props => {
                               .flat()
                            onMinusClick([idsAv[idsAv.length - 1]])
                         }}
+                        onPlusClick={() => {
+                           setShowChooseIncreaseType(true)
+                        }}
                         quantity={availableQuantityInCart}
                      />
                   )}
                </Content>
             </Layout>
          </div>
+         <Modal
+            title="Repeat last used customization?"
+            visible={showChooseIncreaseType}
+            centered={true}
+            onCancel={() => {
+               setShowChooseIncreaseType(false)
+            }}
+            closable={false}
+            footer={null}
+         >
+            <div
+               style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+               }}
+            >
+               <KioskButton
+                  onClick={() => {
+                     setShowModifier(true)
+                  }}
+                  style={{
+                     border: `2px solid ${config.kioskSettings.theme.secondaryColor.value}`,
+                     background: 'transparent',
+                     padding: '.1em 2em',
+                  }}
+               >
+                  I'LL CHOOSE
+               </KioskButton>
+               <KioskButton
+                  style={{ padding: '.1em 2em' }}
+                  onClick={() => {
+                     repeatLastOne(productData)
+                  }}
+               >
+                  REPEAT LAST ONE
+               </KioskButton>
+            </div>
+         </Modal>
          {showModifier && (
             <KioskModifier
                config={config}
@@ -136,4 +226,19 @@ export const KioskProduct = props => {
          )}
       </>
    )
+}
+
+const getCartItemWithModifiers = (cartItemInput, selectedModifiersInput) => {
+   const finalCartItem = { ...cartItemInput }
+
+   const combinedModifiers = selectedModifiersInput.reduce(
+      (acc, obj) => [...acc, ...obj.data],
+      []
+   )
+   const dataArr = finalCartItem?.childs?.data[0]?.childs?.data
+   const dataArrLength = dataArr.length
+
+   finalCartItem.childs.data[0].childs.data = combinedModifiers
+
+   return finalCartItem
 }

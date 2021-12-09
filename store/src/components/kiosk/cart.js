@@ -42,9 +42,11 @@ export const KioskCart = props => {
          },
       })
    }
+
    if (combinedCartItems === null) {
       return <p>No cart available</p>
    }
+
    return (
       <Layout style={{ height: '100%', overflowY: 'hidden' }}>
          <Header className="hern-kiosk__cart-section-header">
@@ -80,7 +82,7 @@ export const KioskCart = props => {
                </Col>
             </Row>
          </Header>
-         {combinedCartItems.length === 0 && (
+         {(cartState.cart == null || combinedCartItems.length === 0) && (
             <div className="hern-cart-empty-cart">
                <EmptyCart width={558} height={480} />
                <span>{t('Oops! Your cart is empty')} </span>
@@ -96,7 +98,7 @@ export const KioskCart = props => {
                </span>
             </div>
          )}
-         {combinedCartItems.length > 0 && (
+         {cartState.cart && combinedCartItems.length > 0 && (
             <>
                <Content style={{ backgroundColor: '#ffffff' }}>
                   <div className="hern-kiosk__cart-cards-container">
@@ -203,6 +205,7 @@ export const KioskCart = props => {
 const CartCard = props => {
    const { config, productData, removeCartItems } = props
    const { brand, isConfigLoading } = useConfig()
+   const { addToCart } = React.useContext(CartContext)
 
    const [modifyProductId, setModifyProductId] = useState(null)
    const [modifyProduct, setModifyProduct] = useState(null)
@@ -210,8 +213,10 @@ const CartCard = props => {
    const [cartDetailSelectedProduct, setCartDetailSelectedProduct] =
       useState(null)
    const [showAdditionalDetailsOnCard, setShowAdditionalDetailsOnCard] =
-      useState(false)
-   const [showChooseIncreaseType, setShowChooseIncreaseType] = useState(false)
+      useState(false) // show modifier and product options details
+   const [showChooseIncreaseType, setShowChooseIncreaseType] = useState(false) // show I'll choose or repeat last one popup
+   const [showModifier, setShowModifier] = useState(false) // show modifier popup
+   const [forRepeatLastOne, setForRepeatLastOne] = useState(false) // to run repeatLastOne fn in PRODUCTS query
 
    const argsForByLocation = React.useMemo(
       () => ({
@@ -239,15 +244,75 @@ const CartCard = props => {
          modifierCategoryOptionCartItemArgs: argsForByLocation,
       },
       onCompleted: data => {
+         // use for repeat last one order
+         if (forRepeatLastOne) {
+            if (data) {
+               repeatLastOne(data.products[0])
+               return
+            }
+         }
          if (data) {
             setModifyProduct(data.products[0])
          }
       },
    })
 
+   const repeatLastOne = productData => {
+      const productOptionId =
+         cartDetailSelectedProduct.childs[0].productOption.id
+      const modifierCategoryOptionsIds =
+         cartDetailSelectedProduct.childs[0].childs.map(
+            x => x?.modifierOption?.id
+         )
+
+      //selected product option
+      const selectedProductOption = productData.productOptions.find(
+         x => x.id == productOptionId
+      )
+
+      //selected modifiers
+      let singleModifier = []
+      let multipleModifier = []
+      if (selectedProductOption.modifier) {
+         selectedProductOption.modifier.categories.forEach(category => {
+            category.options.forEach(option => {
+               const selectedOption = {
+                  modifierCategoryID: category.id,
+                  modifierCategoryOptionsID: option.id,
+                  modifierCategoryOptionsPrice: option.price,
+                  cartItem: option.cartItem,
+               }
+               if (category.type === 'single') {
+                  if (modifierCategoryOptionsIds.includes(option.id)) {
+                     singleModifier = singleModifier.concat(selectedOption)
+                  }
+               }
+               if (category.type === 'multiple') {
+                  if (modifierCategoryOptionsIds.includes(option.id)) {
+                     multipleModifier = multipleModifier.concat(selectedOption)
+                  }
+               }
+            })
+         })
+      }
+      const allSelectedOptions = [...singleModifier, ...multipleModifier]
+      const cartItem = getCartItemWithModifiers(
+         selectedProductOption.cartItem,
+         allSelectedOptions.map(x => x.cartItem)
+      )
+
+      addToCart(cartItem, 1)
+      setForRepeatLastOne(false)
+      setModifyProduct(null)
+      setModifyProductId(null)
+      setCartDetailSelectedProduct(null)
+      setShowChooseIncreaseType(false)
+   }
+
    const onCloseModifier = () => {
       setModifyProduct(null)
       setModifyProductId(null)
+      setShowModifier(false)
    }
    return (
       <div className="hern-kiosk__cart-card">
@@ -372,6 +437,7 @@ const CartCard = props => {
                      setCartDetailSelectedProduct(productData)
                      setModifyProductId(productData.productId)
                      setShowChooseIncreaseType(false)
+                     setShowModifier(true)
                   }}
                   style={{
                      border: `2px solid ${config.kioskSettings.theme.secondaryColor.value}`,
@@ -381,7 +447,14 @@ const CartCard = props => {
                >
                   I'LL CHOOSE
                </KioskButton>
-               <KioskButton style={{ padding: '.1em 2em' }}>
+               <KioskButton
+                  style={{ padding: '.1em 2em' }}
+                  onClick={() => {
+                     setCartDetailSelectedProduct(productData)
+                     setModifyProductId(productData.productId)
+                     setForRepeatLastOne(true)
+                  }}
+               >
                   REPEAT LAST ONE
                </KioskButton>
             </div>
@@ -397,6 +470,7 @@ const CartCard = props => {
                      setModifierType('edit')
                      setCartDetailSelectedProduct(productData)
                      setModifyProductId(productData.productId)
+                     setShowModifier(true)
                   }}
                />
                <DeleteIcon
@@ -416,7 +490,7 @@ const CartCard = props => {
                {formatCurrency(productData.price)}
             </span>
          </div>
-         {modifyProduct && (
+         {modifyProduct && showModifier && (
             <KioskModifier
                config={config}
                onCloseModifier={onCloseModifier}
@@ -493,4 +567,18 @@ const CartPageFooter = props => {
          </Dropdown>
       </div>
    )
+}
+const getCartItemWithModifiers = (cartItemInput, selectedModifiersInput) => {
+   const finalCartItem = { ...cartItemInput }
+
+   const combinedModifiers = selectedModifiersInput.reduce(
+      (acc, obj) => [...acc, ...obj.data],
+      []
+   )
+   const dataArr = finalCartItem?.childs?.data[0]?.childs?.data
+   const dataArrLength = dataArr.length
+
+   finalCartItem.childs.data[0].childs.data = combinedModifiers
+
+   return finalCartItem
 }
