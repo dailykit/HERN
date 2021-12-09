@@ -18,6 +18,7 @@ import { useConfig } from '../../lib'
 import { KioskModifier } from './component'
 import { useLazyQuery, useQuery } from '@apollo/react-hooks'
 import KioskButton from './component/button'
+import { ProgressBar } from './component/progressBar'
 
 const { Header, Content, Footer } = Layout
 
@@ -49,6 +50,15 @@ export const KioskCart = props => {
 
    return (
       <Layout style={{ height: '100%', overflowY: 'hidden' }}>
+         <div
+            style={{
+               background: `${config.kioskSettings.theme.primaryColorLight.value}`,
+               padding: '1em 2em',
+               height: '6em',
+            }}
+         >
+            <ProgressBar config={config} />
+         </div>
          <Header className="hern-kiosk__cart-section-header">
             <Row className="hern-kiosk__cart-section-header-row">
                <Col span={4}>
@@ -82,6 +92,7 @@ export const KioskCart = props => {
                </Col>
             </Row>
          </Header>
+
          {(cartState.cart == null || combinedCartItems.length === 0) && (
             <div className="hern-cart-empty-cart">
                <EmptyCart width={558} height={480} />

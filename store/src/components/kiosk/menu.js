@@ -9,6 +9,7 @@ import { useConfig } from '../../lib'
 import { useQuery } from '@apollo/react-hooks'
 import { ArrowLeftIconBG, CartIcon } from '../../assets/icons'
 import { Divider } from '../../components'
+import { ProgressBar } from './component/progressBar'
 
 const { Content, Sider, Header, Footer } = Layout
 const { Step } = Steps
@@ -143,6 +144,15 @@ export const MenuSection = props => {
          <Content style={{ height: '40em' }}>
             {/* Promotion, coupons and progress bar */}
             <Layout style={{ height: '100%' }}>
+               <Header
+                  style={{
+                     background: `${config.kioskSettings.theme.primaryColorLight.value}`,
+                     padding: '1em 2em',
+                     height: '6em',
+                  }}
+               >
+                  <ProgressBar config={config} />
+               </Header>
                <Content className="hern-kiosk__menu-promotion-coupons">
                   <div
                      style={{ position: 'absolute', top: '2em', left: '2em' }}
@@ -154,13 +164,6 @@ export const MenuSection = props => {
                      />
                   </div>
                </Content>
-               <Footer
-                  style={{
-                     background: `${config.kioskSettings.theme.primaryColorLight.value}`,
-                  }}
-               >
-                  <ProgressBar config={config} />
-               </Footer>
             </Layout>
          </Content>
          <KioskMenu
@@ -171,78 +174,6 @@ export const MenuSection = props => {
             setCurrentPage={setCurrentPage}
          />
       </Layout>
-   )
-}
-
-const ProgressBar = props => {
-   const { config } = props
-
-   const { cartState } = React.useContext(CartContext)
-   const { t, direction } = useTranslation()
-   const { cart } = cartState
-
-   const [current, setCurrent] = React.useState(0)
-
-   const steps = [
-      {
-         title: 'Select Product',
-      },
-      {
-         title: 'Add To Cart',
-      },
-      {
-         title: 'Payment',
-      },
-   ]
-   useEffect(() => {
-      if (cart && cart.cartItems_aggregate.aggregate.count > 0) {
-         setCurrent(2)
-      }
-   }, [cart])
-
-   const StepCount = ({ step, isFinish, isCurrent }) => {
-      return (
-         <div
-            className="hern-kiosk__step-bar-count"
-            style={{
-               backgroundColor: `${
-                  isFinish
-                     ? config.kioskSettings.theme.secondaryColor.value
-                     : isCurrent
-                     ? config.kioskSettings.theme.primaryColor.value
-                     : 'transparent'
-               }`,
-
-               color: `${isFinish ? '#fff' : isCurrent ? '#fff' : '#5A5A5A99'}`,
-               border: `${isFinish ? 'none' : '2px solid #5A5A5A99'}`,
-            }}
-         >
-            {step}
-         </div>
-      )
-   }
-   return (
-      <Steps
-         current={current}
-         className={direction === 'rtl' && 'hern-kiosk__step-bar-rtl'}
-      >
-         {steps.map((item, index) => (
-            <Step
-               key={item.title}
-               title={t(item.title)}
-               style={{
-                  color: `${config.kioskSettings.theme.primaryColor.value}`,
-               }}
-               icon={
-                  <StepCount
-                     step={index + 1}
-                     isFinish={index < current}
-                     isCurrent={index == current}
-                  />
-               }
-            />
-         ))}
-      </Steps>
    )
 }
 
