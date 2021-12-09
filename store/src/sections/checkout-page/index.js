@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import tw, { styled, css } from 'twin.macro'
 import { useToasts } from 'react-toast-notifications'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { Radio, Space } from 'antd'
 
 import { useConfig, usePayment } from '../../lib'
 import * as Icon from '../../assets/icons'
@@ -220,19 +221,49 @@ const PaymentContent = () => {
 
    const theme = configOf('theme-color', 'Visual')
 
-   React.useEffect(() => {
-      if (!isEmpty(cart) && !loading) {
-         console.log('cart checkout-page-> ', cart)
+   // React.useEffect(() => {
+   //    if (!isEmpty(cart) && !loading) {
+   //       console.log('cart checkout-page-> ', cart)
+   //       const availablePaymentOptionToCart =
+   //          cart.availablePaymentOptionToCart.find(
+   //             option => option?.label === 'Paytm Page'
+   //          )
+   //       console.log(availablePaymentOptionToCart)
+   //       setPaymentInfo({
+   //          selectedAvailablePaymentOption: availablePaymentOptionToCart,
+   //       })
+   //    }
+   // }, [cart])
+
+   const onPaymentMethodChange = event => {
+      const { value } = event.target
+      if (value) {
+         console.log(value, typeof value)
          const availablePaymentOptionToCart =
             cart.availablePaymentOptionToCart.find(
-               option => option?.label === 'Paytm Page'
+               option => option.id === value
             )
          console.log(availablePaymentOptionToCart)
          setPaymentInfo({
             selectedAvailablePaymentOption: availablePaymentOptionToCart,
          })
       }
-   }, [cart])
+   }
+
+   const showPaymentIcon = label => {
+      switch (label) {
+         case 'Debit/Credit Card':
+            return <Icon.DebitCardIcon />
+         case 'Netbanking':
+            return <Icon.NetbankingIcon />
+         case 'Paytm':
+            return <Icon.PaytmIcon />
+         case 'UPI':
+            return <Icon.UpiIcon />
+         default:
+            return null
+      }
+   }
 
    if (loading || isPaymentLoading) return <Loader inline />
    if (isClient && !new URLSearchParams(location.search).get('id')) {
@@ -322,7 +353,31 @@ const PaymentContent = () => {
                <SectionTitle theme={theme}>Profile Details</SectionTitle>
             </header>
             <ProfileSection />
-            <PaymentSection cart={cart} />
+            <SectionTitle theme={theme}>Select Payment Method</SectionTitle>
+            <Radio.Group onChange={onPaymentMethodChange}>
+               <>
+                  <Space direction="vertical">
+                     {!isEmpty(cart) &&
+                        cart.availablePaymentOptionToCart.map(option => (
+                           <Radio value={option?.id} key={option?.id}>
+                              <div tw="flex items-center">
+                                 <Space size="middle">
+                                    {showPaymentIcon(option?.label)}
+
+                                    {option?.label ||
+                                       option?.supportedPaymentOption
+                                          ?.paymentOptionLabel}
+                                 </Space>
+                              </div>
+                           </Radio>
+                        ))}
+                  </Space>
+               </>
+            </Radio.Group>
+            {paymentInfo?.selectedAvailablePaymentOption?.supportedPaymentOption
+               ?.supportedPaymentCompany.label === 'stripe' && (
+               <PaymentSection cart={cart} />
+            )}
          </Form>
          {cart?.products?.length > 0 && (
             <CartDetails>
@@ -401,6 +456,9 @@ const Main = styled.main`
 
 const Form = styled.section`
    flex: 1;
+   .ant-radio-wrapper {
+      align-items: center;
+   }
 `
 const CartDetails = styled.section`
    width: 420px;
