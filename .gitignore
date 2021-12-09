@@ -6,4 +6,6 @@ todo*
 *.txt
 schema.json
 /config.js
+yarn.lock
+/yarn.lock
 templates

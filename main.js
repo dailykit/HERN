@@ -14,7 +14,7 @@ import get_env from './get_env'
 import ServerRouter from './server'
 import schema from './template/schema'
 import TemplateRouter from './template'
-import { createEnvFiles } from './server/entities'
+import { createEnvFiles, syncEnvsFromPlatform } from './server/entities'
 import ayrshareSchema from './server/ayrshare/src/schema/index'
 
 require('dotenv').config()
@@ -159,13 +159,13 @@ const serveSubscription = async (req, res, next) => {
             const filePath =
                routePath === ''
                   ? path.join(
-                       __dirname,
-                       `./store/.next/server/pages/${brand}.html`
-                    )
+                     __dirname,
+                     `./store/.next/server/pages/${brand}.html`
+                  )
                   : path.join(
-                       __dirname,
-                       `./store/.next/server/pages/${brand}/${routePath}.html`
-                    )
+                     __dirname,
+                     `./store/.next/server/pages/${brand}/${routePath}.html`
+                  )
 
             /*
                SSR: Server Side Rendering
@@ -277,7 +277,8 @@ app.use('/:path(*)', serveSubscription)
 app.listen(PORT, () => {
    console.log(`Server started on ${PORT}`)
 
-   if (process.env.NODE_ENV !== 'development') {
+   if (process.env.NODE_ENV != 'development') {
+      syncEnvsFromPlatform()
       createEnvFiles()
    }
 })
