@@ -1,5 +1,8 @@
 import PaytmChecksum from 'paytmchecksum'
+
+import { CART_PAYMENT } from '../../graphql'
 import paytm from '../../../../lib/paytm'
+import { client } from '../../../../lib/graphql'
 import get_env from '../../../../../get_env'
 
 const razorpayWebhookEvents = async arg => {
@@ -8,11 +11,8 @@ const razorpayWebhookEvents = async arg => {
       const _Paytm = await paytm()
       const { CHECKSUMHASH: incomingChecksumHas, ORDERID } = arg.body
       const orderId = parseInt(ORDERID)
-      const PAYTM_MERCHANT_ID =
-         'IMnPLs13302441482874' || (await get_env('PAYTM_MERCHANT_ID'))
       const PAYTM_MERCHANT_KEY =
-         'A5npkiMoy@zOrIlX' || (await get_env('PAYTM_MERCHANT_KEY'))
-      const PAYTM_WEBSITE = 'WEBSTAGING' || (await get_env('PAYTM_WEBSITE'))
+         process.env.PAYTM_MERCHANT_KEY || (await get_env('PAYTM_MERCHANT_KEY'))
       var isVerifySignature = PaytmChecksum.verifySignature(
          arg.body,
          PAYTM_MERCHANT_KEY,
@@ -41,19 +41,25 @@ const razorpayWebhookEvents = async arg => {
       )
       const { body } = response.responseObject
       console.log('body', body)
+      const { cartPayment } = await client.request(CART_PAYMENT, {
+         id: orderId
+      })
       const requiredData = {
          cartPaymentId: orderId,
          transactionRemark: body,
          requestId: orderId.toString(),
          paymentStatus: body.resultInfo.resultStatus,
-         transactionId: body.txnId
+         transactionId: body.txnId,
+         cartId: cartPayment.cartId
       }
       console.log('requiredData', requiredData)
+
       return {
          success: true,
          signatureIsValid: true,
          code: 200,
          data: requiredData,
+         company: 'paytm',
          received: true
       }
    } catch (error) {

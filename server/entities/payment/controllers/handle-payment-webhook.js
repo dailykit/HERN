@@ -28,6 +28,11 @@ export const handlePaymentWebhook = async (req, res) => {
       if (result.success && result.data) {
          await paymentLogger(result.data)
       }
+      if (result.success && result.company === 'paytm') {
+         return res.redirect(
+            `/checkout?id=${result.data.cartId}&payment=succeeded`
+         )
+      }
       return res.status(result.code).json(result)
    } catch (error) {
       return res.status(500).json({ success: false, error })
