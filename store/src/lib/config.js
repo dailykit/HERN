@@ -15,6 +15,8 @@ const initialState = {
    },
    settings: {},
    orderTabs: [],
+   kioskId: null,
+   selectedOrderTab: null,
 }
 
 const reducers = (state, { type, payload }) => {
@@ -25,6 +27,10 @@ const reducers = (state, { type, payload }) => {
          return { ...state, settings: payload }
       case 'SET_ORDER_TAB':
          return { ...state, orderTabs: payload }
+      case 'SET_KIOSK_ID':
+         return { ...state, kioskId: payload }
+      case 'SET_SELECTED_ORDER_TAB':
+         return { ...state, selectedOrderTab: payload }
       default:
          return state
    }
@@ -159,6 +165,7 @@ export const useConfig = (globalType = '') => {
       noProductImage,
       imagePlaceholder,
       isConfigLoading,
+      dispatch,
    } = React.useContext(ConfigContext)
 
    const hasConfig = React.useCallback(
@@ -201,6 +208,9 @@ export const useConfig = (globalType = '') => {
       imagePlaceholder,
       brand: state.brand,
       orderTabs: state.orderTabs,
+      selectedOrderTab: state.selectedOrderTab,
+      kioskId: state.kioskId,
       isConfigLoading,
+      dispatch,
    }
 }

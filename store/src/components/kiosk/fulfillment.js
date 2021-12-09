@@ -80,10 +80,15 @@ const FulfillmentOption = props => {
       fulfillment,
    } = props
 
+   const { dispatch } = useConfig()
    const { t } = useTranslation()
 
    const onFulfillmentClick = () => {
       console.log('fulfillment', fulfillment)
+      dispatch({
+         type: 'SET_SELECTED_ORDER_TAB',
+         payload: fulfillment,
+      })
       setCurrentPage('menuPage')
    }
 

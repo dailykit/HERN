@@ -1486,6 +1486,7 @@ export const BRAND_ONDEMAND_DELIVERY_RECURRENCES = gql`
 export const ORDER_TAB = gql`
    query ORDER_TAB($where: brands_orderTab_bool_exp!) {
       brands_orderTab(where: $where) {
+         id
          orderFulfillmentTypeLabel
          label
          orderType

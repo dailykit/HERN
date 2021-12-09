@@ -37,7 +37,7 @@ const reducer = (state = initialState, { type, payload }) => {
 }
 
 export const CartProvider = ({ children }) => {
-   const { brand } = useConfig()
+   const { brand, kioskId, selectedOrderTab } = useConfig()
    const { addToast } = useToasts()
    const [oiType] = useQueryParamState('oiType')
 
@@ -177,6 +177,9 @@ export const CartProvider = ({ children }) => {
                cartItems: {
                   data: cartItems,
                },
+               // locationKioskId: kioskId,
+               // usedOrderInterface: oiType,
+               // orderTabId: selectedOrderTab.id,
             }
             console.log('object new cart', object)
             createCart({
@@ -321,6 +324,7 @@ export const CartProvider = ({ children }) => {
             cartReducer,
             addToCart,
             combinedCartItems,
+            setStoredCartId,
             methods: {
                cartItems: {
                   delete: deleteCartItems,

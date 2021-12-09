@@ -1,9 +1,17 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { graphQLClient } from '../../../lib'
 import Kiosk from '../../../sections/kiosk'
+import { useConfig } from '../../../lib'
 const KioskScreen = props => {
    const { kioskId } = props
    console.log('kioskId', kioskId)
+   const { dispatch } = useConfig()
+   useEffect(() => {
+      dispatch({
+         type: 'SET_KIOSK_ID',
+         payload: kioskId,
+      })
+   }, [])
    return (
       <div>
          <Kiosk />

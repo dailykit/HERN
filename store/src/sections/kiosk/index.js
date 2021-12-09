@@ -22,7 +22,8 @@ import { KioskCart } from '../../components/kiosk/cart'
 const { Header, Content } = Layout
 const Kiosk = () => {
    // context
-   const { combinedCartItems } = React.useContext(CartContext)
+   const { combinedCartItems, setStoredCartId } = React.useContext(CartContext)
+   const { dispatch } = useConfig()
 
    const { direction } = useTranslation()
 
@@ -39,6 +40,12 @@ const Kiosk = () => {
       queryParams.delete('productCategoryId')
       history.replaceState(null, null, '?' + queryParams.toString())
       console.log('last active', getLastActiveTime())
+      localStorage.removeItem('cart-id')
+      setStoredCartId(null)
+      dispatch({
+         type: 'SET_SELECTED_ORDER_TAB',
+         payload: null,
+      })
    }
 
    const handleOnActive = event => {
