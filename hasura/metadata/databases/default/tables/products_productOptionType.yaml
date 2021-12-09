@@ -56,11 +56,9 @@ insert_permissions:
 select_permissions:
 - permission:
     columns:
-    - addedByApiKey
     - description
     - orderMode
     - title
-    - updatedByApiKey
     filter: {}
   role: apiKeyRole
 update_permissions:

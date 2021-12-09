@@ -34,21 +34,19 @@ insert_permissions:
 select_permissions:
 - permission:
     columns:
-    - isAvailable
-    - isPublished
     - brandId
+    - brandMenuCategoryId
     - brand_locationId
     - id
+    - isAvailable
+    - isPublished
     - locationId
+    - markupOnStandardPriceInPercentage
     - modifierCategoryOptionId
     - productId
     - productOptionId
-    - markupOnStandardPriceInPercentage
     - specificDiscount
     - specificPrice
-    - addedByApiKey
-    - updatedByApiKey
-    - brandMenuCategoryId
     filter: {}
   role: apiKeyRole
 update_permissions:

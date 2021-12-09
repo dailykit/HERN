@@ -159,29 +159,27 @@ select_permissions:
 - permission:
     allow_aggregations: true
     columns:
-    - id
-    - name
-    - additionalText
-    - description
-    - assets
-    - isPublished
-    - isPopupAllowed
-    - defaultProductOptionId
-    - created_at
-    - updated_at
-    - tags
-    - isArchived
-    - type
-    - price
-    - discount
-    - importHistoryId
-    - addedBy
-    - updatedBy
-    - addedByApiKey
-    - updatedByApiKey
     - VegNonVegType
-    - productionOptionSelectionStatement
+    - addedBy
+    - additionalText
+    - assets
+    - created_at
+    - defaultProductOptionId
+    - description
+    - discount
+    - id
+    - importHistoryId
+    - isArchived
+    - isPopupAllowed
+    - isPublished
+    - name
     - nutritionId
+    - price
+    - productionOptionSelectionStatement
+    - tags
+    - type
+    - updatedBy
+    - updated_at
     computed_fields:
     - defaultCartItem
     - isValid

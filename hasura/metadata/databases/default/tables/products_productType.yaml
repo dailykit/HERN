@@ -24,10 +24,8 @@ insert_permissions:
 select_permissions:
 - permission:
     columns:
-    - addedByApiKey
     - displayName
     - title
-    - updatedByApiKey
     filter: {}
   role: apiKeyRole
 update_permissions:

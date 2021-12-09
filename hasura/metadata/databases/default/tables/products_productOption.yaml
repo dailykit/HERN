@@ -111,27 +111,25 @@ insert_permissions:
 select_permissions:
 - permission:
     columns:
-    - isArchived
+    - created_at
+    - discount
     - id
     - inventoryProductBundleId
+    - isArchived
+    - label
     - modifierId
     - nutritionId
+    - nutritionalInfoSameAs
     - operationConfigId
+    - position
+    - price
     - productId
     - quantity
     - sachetItemId
     - simpleRecipeYieldId
     - supplierItemId
-    - discount
-    - position
-    - price
-    - addedByApiKey
-    - label
     - type
-    - updatedByApiKey
-    - created_at
     - updated_at
-    - nutritionalInfoSameAs
     computed_fields:
     - cartItem
     - cartItemByLocation

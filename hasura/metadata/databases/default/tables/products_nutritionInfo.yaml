@@ -40,15 +40,16 @@ insert_permissions:
 select_permissions:
 - permission:
     columns:
-    - isDynamic
-    - id
     - allergens
-    - excludes
     - calcium
     - calories
     - cholesterol
     - dietaryFibre
+    - excludes
+    - id
     - iron
+    - isDynamic
+    - per
     - protein
     - saturatedFat
     - sodium
@@ -58,16 +59,13 @@ select_permissions:
     - transFat
     - vitaminA
     - vitaminC
-    - addedByApiKey
-    - per
-    - updatedByApiKey
     filter: {}
   role: apiKeyRole
 update_permissions:
 - permission:
     check:
-      addedByApiKeyReference:
-        canAddProducts:
+      updatedByApiKeyReference:
+        canUpdateProducts:
           _eq: true
     columns:
     - allergens
@@ -89,9 +87,16 @@ update_permissions:
     - vitaminA
     - vitaminC
     filter:
-      addedByApiKeyReference:
-        canAddProducts:
+      updatedByApiKeyReference:
+        canUpdateProducts:
           _eq: true
     set:
-      addedByApiKey: x-hasura-Api-Key
+      updatedByApiKey: x-hasura-Api-Key
+  role: apiKeyRole
+delete_permissions:
+- permission:
+    filter:
+      updatedByApiKeyReference:
+        canDeleteProducts:
+          _eq: true
   role: apiKeyRole

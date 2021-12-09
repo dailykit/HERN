@@ -17,6 +17,9 @@ object_relationships:
 - name: activeCartPayment
   using:
     foreign_key_constraint_on: activeCartPaymentId
+- name: addedByApiKeyReference
+  using:
+    foreign_key_constraint_on: addedByApiKey
 - name: availablePaymentOption
   using:
     foreign_key_constraint_on: toUseAvailablePaymentOptionId
@@ -86,6 +89,9 @@ object_relationships:
       remote_table:
         name: subscriptionOccurence_customer
         schema: subscription
+- name: updatedByApiKeyReference
+  using:
+    foreign_key_constraint_on: updatedByApiKey
 array_relationships:
 - name: cartItems
   using:
@@ -338,6 +344,62 @@ computed_fields:
 insert_permissions:
 - permission:
     backend_only: false
+    check:
+      addedByApiKeyReference:
+        canAddCarts:
+          _eq: true
+    columns:
+    - activeCartPaymentId
+    - address
+    - amount
+    - balanceToPay
+    - brandId
+    - couponDiscount
+    - customerId
+    - customerInfo
+    - customerKeycloakId
+    - deliveryParentShare
+    - experienceClassId
+    - experienceClassTypeId
+    - fulfillmentInfo
+    - isArchived
+    - isTest
+    - lastUpdatedBy
+    - locationId
+    - locationKioskId
+    - locationTableId
+    - loyaltyPointsUsed
+    - offerDiscountParentShare
+    - orderId
+    - orderTabId
+    - paidPrice
+    - parentCartId
+    - paymentCustomerId
+    - paymentId
+    - paymentMethodId
+    - paymentRequestInfo
+    - paymentRetryAttempt
+    - paymentStatus
+    - paymentUpdatedAt
+    - retryPaymentMethod
+    - source
+    - statementDescriptor
+    - status
+    - stripeInvoiceDetails
+    - stripeInvoiceId
+    - subscriptionOccurenceId
+    - tip
+    - toUseAvailablePaymentOptionId
+    - totalToPay
+    - transactionId
+    - transactionRemark
+    - usedOrderInterface
+    - walletAmountUsed
+    set:
+      addedByApiKey: x-hasura-Api-Key
+  role: apiKeyRole
+- permission:
+    backend_only: false
     check: {}
     columns:
     - address
@@ -393,6 +455,94 @@ insert_permissions:
       source: x-hasura-Source
   role: guest-consumer
 select_permissions:
+- permission:
+    columns:
+    - activeCartPaymentId
+    - address
+    - amount
+    - balanceToPay
+    - brandId
+    - couponDiscount
+    - created_at
+    - created_at_date
+    - created_at_day
+    - created_at_dow
+    - created_at_hour
+    - created_at_month
+    - created_at_quarter
+    - created_at_week
+    - created_at_year
+    - customerId
+    - customerInfo
+    - customerKeycloakId
+    - deliveryParentShare
+    - experienceClassId
+    - experienceClassTypeId
+    - fulfillmentInfo
+    - isArchived
+    - isTest
+    - lastUpdatedBy
+    - locationId
+    - locationKioskId
+    - locationTableId
+    - loyaltyPointsUsed
+    - offerDiscountParentShare
+    - orderId
+    - orderTabId
+    - paidPrice
+    - parentCartId
+    - paymentCustomerId
+    - paymentId
+    - paymentMethodId
+    - paymentRequestInfo
+    - paymentRetryAttempt
+    - paymentStatus
+    - paymentUpdatedAt
+    - retryPaymentMethod
+    - source
+    - statementDescriptor
+    - status
+    - stripeInvoiceDetails
+    - stripeInvoiceId
+    - subscriptionOccurenceId
+    - tip
+    - toUseAvailablePaymentOptionId
+    - totalToPay
+    - transactionId
+    - transactionRemark
+    - updated_at
+    - usedOrderInterface
+    - walletAmountUsed
+    computed_fields:
+    - addOnTotal
+    - balancePayment
+    - billingDetails
+    - billingDetails2
+    - deliveryPrice
+    - deliveryPrice2
+    - discount
+    - discount2
+    - isCartValid
+    - isHostCart
+    - isHostParticipant
+    - itemTotal
+    - itemTotal2
+    - loyaltyPointsUsable
+    - subTotal
+    - subTotal2
+    - tax
+    - tax2
+    - taxPercent
+    - toPayByParent
+    - totalExperiencePrice
+    - totalKit
+    - totalKitPrice
+    - totalParticipants
+    - totalPrice
+    - totalPrice2
+    - walletAmountUsable
+    filter: {}
+  role: apiKeyRole
 - permission:
     allow_aggregations: true
     columns:
@@ -487,6 +637,61 @@ update_permissions:
 - permission:
     check: null
     columns:
+    - activeCartPaymentId
+    - address
+    - amount
+    - balanceToPay
+    - brandId
+    - couponDiscount
+    - created_at_date
+    - customerId
+    - customerInfo
+    - customerKeycloakId
+    - deliveryParentShare
+    - experienceClassId
+    - experienceClassTypeId
+    - fulfillmentInfo
+    - isArchived
+    - isTest
+    - lastUpdatedBy
+    - locationId
+    - locationKioskId
+    - locationTableId
+    - loyaltyPointsUsed
+    - offerDiscountParentShare
+    - orderId
+    - orderTabId
+    - paidPrice
+    - parentCartId
+    - paymentCustomerId
+    - paymentId
+    - paymentMethodId
+    - paymentRequestInfo
+    - paymentRetryAttempt
+    - paymentStatus
+    - paymentUpdatedAt
+    - retryPaymentMethod
+    - source
+    - statementDescriptor
+    - status
+    - stripeInvoiceDetails
+    - stripeInvoiceId
+    - subscriptionOccurenceId
+    - tip
+    - toUseAvailablePaymentOptionId
+    - totalToPay
+    - transactionId
+    - transactionRemark
+    - usedOrderInterface
+    - walletAmountUsed
+    filter:
+      updatedByApiKeyReference:
+        canUpdateCarts:
+          _eq: true
+  role: apiKeyRole
+- permission:
+    check: null
+    columns:
     - address
     - amount
     - couponDiscount
@@ -534,7 +739,7 @@ event_triggers:
     interval_sec: 10
     num_retries: 0
     timeout_sec: 60
-  webhook: "{{DAILYOS_SERVER_URL}}/event/print-kot"
+  webhook: "{{ORGANIZATION_URL}}/{{DAILYOS_SERVER_URL}}/event/print-kot"
 - definition:
     enable_manual: true
     update:
@@ -545,4 +750,4 @@ event_triggers:
     interval_sec: 10
     num_retries: 0
     timeout_sec: 60
-  webhook: "{{DAILYOS_SERVER_URL}}/api/order/status"
+  webhook: "{{ORGANIZATION_URL}}/{{DAILYOS_SERVER_URL}}/api/order/status"
