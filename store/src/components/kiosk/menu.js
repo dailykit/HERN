@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import _ from 'lodash'
-import { Col, Layout, Menu, Row, Badge, Steps } from 'antd'
+import { Col, Layout, Menu, Row, Badge, Steps, Carousel } from 'antd'
 import { useQueryParamState } from '../../utils'
 import { CartContext, useTranslation } from '../../context'
 import { KioskProduct } from './component'
@@ -163,6 +163,32 @@ export const MenuSection = props => {
                         }}
                      />
                   </div>
+
+                  <img
+                     src={
+                        'https://storage.eu.content-cdn.io/cdn-cgi/image/height=400,quality=100/https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/userimages/Jalapeno%20Tortilla%201600.jpg'
+                     }
+                     style={{ height: '19em', width: '100%' }}
+                  />
+
+                  <Carousel slidesToShow={2}>
+                     <img
+                        src={
+                           'https://storage.eu.content-cdn.io/cdn-cgi/image/height=250,quality=100/https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/userimages/superchknen_1.png'
+                        }
+                        alt="promotion-2"
+                        width={450}
+                        style={{ height: '13em', padding: '1em' }}
+                     />
+                     <img
+                        src={
+                           'https://storage.eu.content-cdn.io/cdn-cgi/image/height=250,quality=100/https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/userimages/Tortilla%20Family%20All%20600%20Ar%20alone_%20(3).jpg'
+                        }
+                        alt="promotion-2"
+                        width={450}
+                        style={{ height: '13em', padding: '1em' }}
+                     />
+                  </Carousel>
                </Content>
             </Layout>
          </Content>
