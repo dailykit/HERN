@@ -553,11 +553,12 @@
 
 .hern-kiosk__cart-page-footer {
    padding: 0;
-   height: 35em;
+   height: 40em;
 }
 .hern-kiosk__cart-page-offer {
-   height: 11em;
+   height: 16em;
    background: #ffffff;
+   padding: 0 2em;
 }
 .hern-kiosk__cart-page-price-detail {
    height: 15em;
@@ -654,4 +655,30 @@
    color: #5a5a5a;
    font-size: 1.3em;
    font-weight: 600;
+}
+.hern-kiosk__cart-offers-container {
+}
+.hern-kiosk__cart-offers-header {
+   > span {
+      font-size: 1.8em;
+      letter-spacing: 0.08em;
+   }
+}
+.hern-kiosk__cart-offers-content {
+   display: grid;
+   grid-template-columns: 0.7fr 8fr 2.5fr;
+   -webkit-align-items: center;
+   align-items: center;
+}
+.hern-kiosk__cart-offer-add-coupon {
+   font-size: 1.5em;
+   font-weight: 600;
+   letter-spacing: 0.08em;
+}
+
+.hern-kiosk__cart-offers-view-all {
+   text-align: end;
+   font-size: 1.5em;
+   font-weight: 600;
+   letter-spacing: 0.08em;
 }

@@ -7,14 +7,23 @@ import { useMenu } from '../sections/select-menu'
 import { Loader } from './loader'
 import { CloseIcon } from '../assets/icons'
 import classNames from 'classnames'
-import { isClient } from '../utils'
+import { isClient, useQueryParamState } from '../utils'
+import { Carousel } from 'antd'
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
-export const CouponsList = ({ createOrderCartRewards, closeTunnel }) => {
-   const { state } = useMenu()
+export const CouponsList = ({
+   createOrderCartRewards,
+   closeTunnel,
+   cart,
+   config,
+}) => {
+   // use this component for kiosk as well
+   const [orderInterfaceType] = useQueryParamState('oiType', 'Website')
+   const { state = {} } = orderInterfaceType === 'Kiosk' ? {} : useMenu()
    const { brand } = useConfig()
    const { user } = useUser()
-   const { id } = state?.occurenceCustomer?.cart
+   const { id } =
+      orderInterfaceType === 'Kiosk' ? cart : state?.occurenceCustomer?.cart
 
    const [availableCoupons, setAvailableCoupons] = React.useState([])
    const [applying, setApplying] = React.useState(false)
@@ -82,48 +91,92 @@ export const CouponsList = ({ createOrderCartRewards, closeTunnel }) => {
    }
 
    if (loading) return <Loader />
+   if (orderInterfaceType === 'Kiosk') {
+      return (
+         <Carousel slidesToShow={2}>
+            {availableCoupons.map(coupon => (
+               <div className="hern-kiosk-coupons-list__coupon" key={coupon.id}>
+                  <div className="hern-kiosk-coupons-list__coupon__top">
+                     <div className="hern-kiosk-coupons-list__coupon__code">
+                        {coupon.code}{' '}
+                     </div>
+                     <button
+                        className={classNames(
+                           'hern-kiosk-coupons-list__coupon__apply-btn',
+                           {
+                              'hern-kiosk-coupons-list__coupon__apply-btn':
+                                 isButtonDisabled(coupon),
+                           }
+                        )}
+                        style={{
+                           border: `2px solid ${config.kioskSettings.theme.secondaryColor.value}`,
+                        }}
+                        onClick={() => handleApplyCoupon(coupon)}
+                     >
+                        Apply
+                     </button>
+                  </div>
+                  <div style={{ margin: '.5em 0' }}>
+                     <p className="hern-kiosk-coupons-list__coupon__title">
+                        {coupon.metaDetails.title}
+                     </p>
+                     <p className="hern-kiosk-coupons-list__coupon__description">
+                        {coupon.metaDetails.description}
+                     </p>
+                  </div>
+               </div>
+            ))}
+         </Carousel>
+      )
+   }
    return (
       <div className="hern-coupons-list">
-         <div className="hern-coupons-list__header">
-            <div className="hern-coupons-list__heading">Available Coupons</div>
-            <button className="hern-coupons-list__close-btn">
-               <CloseIcon
-                  size={16}
-                  className="hern-coupons-list__close-btn__icon"
-                  onClick={closeTunnel}
-               />
-            </button>
-         </div>
-         {!availableCoupons.length && <p>No coupons available!</p>}
-         {availableCoupons.map(coupon => (
-            <div className="hern-coupons-list__coupon" key={coupon.id}>
-               <div className="hern-coupons-list__coupon__top">
-                  <div className="hern-coupons-list__coupon__code">
-                     {coupon.code}{' '}
-                  </div>
-                  <button
-                     className={classNames(
-                        'hern-coupons-list__coupon__apply-btn',
-                        {
-                           'hern-coupons-list__coupon__apply-btn':
-                              isButtonDisabled(coupon),
-                        }
-                     )}
-                     onClick={() => handleApplyCoupon(coupon)}
-                  >
-                     Apply
-                  </button>
+         {orderInterfaceType !== 'Kiosk' && (
+            <div className="hern-coupons-list__header">
+               <div className="hern-coupons-list__heading">
+                  Available Coupons
                </div>
-               <div>
-                  <p className="hern-coupons-list__coupon__title">
-                     {coupon.metaDetails.title}
-                  </p>
-                  <p className="hern-coupons-list__coupon__description">
-                     {coupon.metaDetails.description}
-                  </p>
-               </div>
+               <button className="hern-coupons-list__close-btn">
+                  <CloseIcon
+                     size={16}
+                     className="hern-coupons-list__close-btn__icon"
+                     onClick={closeTunnel}
+                  />
+               </button>
             </div>
-         ))}
+         )}
+         {/* {!availableCoupons.length && <p>No coupons available!</p>} */}
+         {true && <p>No coupons available!</p>}
+         {false &&
+            availableCoupons.map(coupon => (
+               <div className="hern-coupons-list__coupon" key={coupon.id}>
+                  <div className="hern-coupons-list__coupon__top">
+                     <div className="hern-coupons-list__coupon__code">
+                        {coupon.code}{' '}
+                     </div>
+                     <button
+                        className={classNames(
+                           'hern-coupons-list__coupon__apply-btn',
+                           {
+                              'hern-coupons-list__coupon__apply-btn':
+                                 isButtonDisabled(coupon),
+                           }
+                        )}
+                        onClick={() => handleApplyCoupon(coupon)}
+                     >
+                        Apply
+                     </button>
+                  </div>
+                  <div>
+                     <p className="hern-coupons-list__coupon__title">
+                        {coupon.metaDetails.title}
+                     </p>
+                     <p className="hern-coupons-list__coupon__description">
+                        {coupon.metaDetails.description}
+                     </p>
+                  </div>
+               </div>
+            ))}
       </div>
    )
 }

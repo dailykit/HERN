@@ -24,6 +24,7 @@
    -webkit-justify-content: space-between;
    -ms-flex-pack: justify;
    justify-content: space-between;
+   height: 100%;
 }
 .hern-coupon__coupon-code {
    font-weight: 700;
@@ -82,4 +83,51 @@
    text-transform: uppercase;
    text-align: center;
    width: 100%;
+}
+
+// for kiosk
+.hern-kiosk-coupon__form {
+   display: flex;
+   width: 100%;
+   justify-content: space-between;
+   height: 5em;
+}
+.hern-kiosk-coupon__input-wrapper {
+   display: flex;
+   width: 70%;
+   align-items: center;
+}
+.hern-kiosk-coupon__input-label {
+   width: 12em;
+   font-size: 1.7em;
+   font-weight: 600;
+   color: #5a5a5a;
+   letter-spacing: 0.08em;
+}
+.hern-kiosk-coupon__input {
+   border-bottom: 1px solid rebeccapurple;
+   width: 100%;
+   height: 3em;
+   font-size: 1.5em;
+   font-weight: 600;
+}
+.hern-kiosk-coupon__form__apply-btn {
+   width: 10em;
+   font-size: 1.5em;
+   // text-align: end;
+   font-weight: 500;
+   letter-spacing: 0.08em;
+   border-radius: 0.5em;
+}
+
+.hern-kiosk-coupon__coupon-code {
+   font-size: 1.5em;
+}
+.hern-kiosk-coupon__coupon-comment {
+   font-size: 1.2em;
+   font-style: italic;
+}
+.hern-kiosk-coupon__coupon__cancel-btn {
+   font-size: 4em;
+   color: #ff5a52;
 }

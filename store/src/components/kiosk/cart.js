@@ -19,6 +19,8 @@ import { KioskModifier } from './component'
 import { useLazyQuery, useQuery } from '@apollo/react-hooks'
 import KioskButton from './component/button'
 import { ProgressBar } from './component/progressBar'
+import { OffersIcon } from '../../assets/icons/Offers'
+import { Coupon } from '..'
 
 const { Header, Content, Footer } = Layout
 
@@ -59,7 +61,7 @@ export const KioskCart = props => {
          >
             <ProgressBar config={config} />
          </div>
-         <Header className="hern-kiosk__cart-section-header">
+         {/* <Header className="hern-kiosk__cart-section-header">
             <Row className="hern-kiosk__cart-section-header-row">
                <Col span={4}>
                   <ArrowLeftIconBG
@@ -91,7 +93,7 @@ export const KioskCart = props => {
                   </span>
                </Col>
             </Row>
-         </Header>
+         </Header> */}
 
          {(cartState.cart == null || combinedCartItems.length === 0) && (
             <div className="hern-cart-empty-cart">
@@ -146,7 +148,7 @@ export const KioskCart = props => {
                <Footer className="hern-kiosk__cart-page-footer">
                   <Layout>
                      <Header className="hern-kiosk__cart-page-offer">
-                        Offers
+                        <Offers config={config} />
                      </Header>
                      <Content className="hern-kiosk__cart-page-price-detail">
                         <div className="hern-kiosk-cart-bill-details">
@@ -154,11 +156,11 @@ export const KioskCart = props => {
                            <ul className="hern-kiosk-cart-bill-details-list">
                               <li>
                                  <span style={{ fontWeight: 'bold' }}>
-                                    {cart.billing.itemTotal.label}
+                                    {cart.billing.totalPrice.label}
                                  </span>
                                  <span style={{ fontWeight: 'bold' }}>
                                     {formatCurrency(
-                                       cart.billing.itemTotal.value || 0
+                                       cart.billing.totalPrice.value || 0
                                     )}
                                  </span>
                               </li>
@@ -181,6 +183,7 @@ export const KioskCart = props => {
                               <li>
                                  <span>{cart.billing.discount.label}</span>
                                  <span>
+                                    {'-'}{' '}
                                     {formatCurrency(
                                        cart.billing.discount.value || 0
                                     )}
@@ -193,7 +196,7 @@ export const KioskCart = props => {
                         <CartPageFooter cart={cart} methods={methods} />
                         <KioskButton customClass="hern-kiosk__cart-place-order-btn">
                            <span className="hern-kiosk__cart-place-order-btn-total">
-                              {formatCurrency(cart.billing.itemTotal.value)}
+                              {formatCurrency(cart.billing.totalPrice.value)}
                            </span>
                            <span className="hern-kiosk__cart-place-order-btn-text">
                               {t('Place Order')}
@@ -576,6 +579,17 @@ const CartPageFooter = props => {
                </span>
             </div>
          </Dropdown>
+      </div>
+   )
+}
+
+const Offers = props => {
+   const { config } = props
+   const { cartState } = React.useContext(CartContext)
+
+   return (
+      <div className="hern-kiosk__cart-offers-container">
+         <Coupon cart={cartState.cart} config={config} />
       </div>
    )
 }

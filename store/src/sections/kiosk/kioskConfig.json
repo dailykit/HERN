@@ -2,7 +2,7 @@
    "idlePageSettings": {
       "idleTime": {
          "label": "Time for become screen idle(in seconds).",
-         "value": 200,
+         "value": 600,
          "default": 30,
          "dataType": "number",
          "description": "This is use for make screen inactive.",
