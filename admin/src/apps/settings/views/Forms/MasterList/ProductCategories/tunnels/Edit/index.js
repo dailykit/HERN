@@ -1,7 +1,7 @@
 import React from 'react'
 import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { Form, Spacer, TunnelHeader, Flex } from '@dailykit/ui'
 
 import validator from '../../../../validators'
@@ -13,10 +13,12 @@ import useAssets from '../../../../../../../../shared/components/AssetUploader/u
 
 const address = 'apps.settings.views.forms.accompanimenttypes.tunnels.addnew.'
 
-const AddTypesTunnel = ({ closeTunnel }) => {
+const EditTypesTunnel = ({ closeTunnel, productCategoryName }) => {
    const { t } = useTranslation()
 
-   const { upload } = useAssets()
+   const { images, status, error:uploadError, remove, upload } = useAssets('images')
+   console.log("error", uploadError)
+   console.log("status", status)
 
    const imageInputRef = React.useRef(null)
 
@@ -24,25 +26,35 @@ const AddTypesTunnel = ({ closeTunnel }) => {
 
    const bannerInputRef = React.useRef(null)
 
-   const [imageUploadLoading, setImageUploadLoading] = React.useState(false)
-
-   const [iconUploadLoading, setIconUploadLoading] = React.useState(false)
-
-   const [bannerUploadLoading, setBannerUploadLoading] = React.useState(false)
-
-
-
    const [imageFiles, setImageFiles] = React.useState([])
 
    const [iconFiles, setIconFiles] = React.useState([])
 
    const [bannerFiles, setBannerFiles] = React.useState([])
 
+   const [iconKey, setIconKey] = React.useState('')
+
+   const [imageKey, setImageKey] = React.useState('')
+
+   const [bannerKey, setBannerKey] = React.useState('')
+
+   const [imageUploadLoading, setImageUploadLoading] = React.useState(false)
+
+   const [iconUploadLoading, setIconUploadLoading] = React.useState(false)
+
+   const [bannerUploadLoading, setBannerUploadLoading] = React.useState(false)
+
+   const [imageRemove, setImageRemove] = React.useState('')
+
+   const [iconRemove, setIconRemove] = React.useState('')
+
+   const [bannerRemove, setBannerRemove] = React.useState('')
+
 
    const [name, setName] = React.useState({
       value: '',
       meta: {
-         isValid: false,
+         isValid: true,
          isTouched: false,
          errors: [],
       },
@@ -76,63 +88,120 @@ const AddTypesTunnel = ({ closeTunnel }) => {
    })
 
    const [bannerUrl, setBannerUrl] = React.useState({
-      value: '',
-      meta: {
-         isValid: false,
-         isTouched: false,
-         errors: [],
-      },
-   })
+    value: '',
+    meta: {
+       isValid: false,
+       isTouched: false,
+       errors: [],
+    },
+ })
+
+   // subscription
+   const { loading, data, error } = useSubscription(
+    MASTER.PRODUCT_CATEGORY.LIST_ONE, {
+        variables:{
+            name: productCategoryName
+         },
+        onSubscriptionData:({ subscriptionData: { data = {} } = {} })=> {
+            if (data.productCategory.name) setName({...name, 'value':data.productCategory.name})
+           if (data.productCategory.iconUrl) setIconUrl({...iconUrl, 'value':data.productCategory.iconUrl})
+           if (data.productCategory.imageUrl) setImageUrl({...imageUrl, 'value':data.productCategory.imageUrl})
+           if (data.productCategory.bannerUrl) setBannerUrl({...bannerUrl, 'value':data.productCategory.bannerUrl})
+           if (data.productCategory.metaDetails&&data.productCategory.metaDetails.description ) setDescription({...description, 'value':data.productCategory.metaDetails.description})
+           if (data.productCategory.iconUrl) setIconFiles([data.productCategory.iconUrl])
+           if (data.productCategory.imageUrl) setImageFiles([data.productCategory.imageUrl])
+           if (data.productCategory.bannerImageUrl) setBannerFiles([data.productCategory.bannerImageUrl])
+           if (data.productCategory.metaDetails&&data.productCategory.metaDetails.imageKey ) setImageKey(data.productCategory.metaDetails.imageKey)
+           if (data.productCategory.metaDetails&&data.productCategory.metaDetails.iconKey ) setIconKey(data.productCategory.metaDetails.iconKey)
+           if (data.productCategory.metaDetails&&data.productCategory.metaDetails.bannerKey ) setBannerKey(data.productCategory.metaDetails.bannerKey)
+
+        }
+       }
+ )
 
    // Mutation
-   const [addCategory, { loading: addingCategory }] = useMutation(
-      MASTER.PRODUCT_CATEGORY.CREATE,
+   const [editCategory, { loading: editingCategory }] = useMutation(
+      MASTER.PRODUCT_CATEGORY.UPDATE,
       {
          onCompleted: () => {
             
-            toast.success('Product category added!')
+            toast.success('Product category edited!')
             closeTunnel(1)
          },
          onError: error => {
-            toast.error('Failed to add product category!')
+            console.log(error)
+            toast.error('Failed to edit product category!')
             logger(error)
          },
       }
    )
 
    // Handlers
-   const add = async () => {
-      setImageUploadLoading(true)
-      setIconUploadLoading(true)
-      setBannerUploadLoading(true)
-      let imageLocation, imageKey;
-      if(imageFiles.length){
-         [imageLocation, imageKey] = await imageUpload()
-      }
-      let iconLocation, iconKey;
-      if (iconFiles.length){
-         [iconLocation, iconKey] = await iconUpload()
-      }
-      let bannerLocation, bannerKey;
-      if (bannerFiles.length){
-         [bannerLocation, bannerKey] = await bannerUpload()
-      }
-      setImageUploadLoading(false)
+   const edit = async () => {
+    setImageUploadLoading(true)
+    setIconUploadLoading(true)
+    setBannerUploadLoading(true)
+
+    if (imageRemove){
+        await remove(imageRemove)
+        setImageRemove('')
+        setImageKey('')
+    } 
+    if (iconRemove) {
+        await remove(iconRemove)
+        setIconRemove('')
+        setIconKey('')
+    }
+    if (bannerRemove) {
+        await remove(bannerRemove)
+        setBannerRemove('')
+        setBannerKey('')
+    }
+    let imageLocation = imageUrl.value, image=imageKey;
+    if(imageFiles.length){
+       let [location, key] = await imageUpload()
+       if (location&&key){
+           imageLocation = location
+           image=key
+       }
+       
+    }
+    let iconLocation= iconUrl.value, icon=iconKey;
+    if (iconFiles.length){
+       let [location, key] = await iconUpload()
+       if (location&&key){
+        iconLocation = location
+        icon=key
+    }
+
+    }
+    let bannerLocation= bannerUrl.value, banner=bannerKey;
+    if (bannerFiles.length){
+       let [location, key] = await bannerImageUpload()
+       if (location&&key){
+        bannerLocation = location
+        banner=key
+    }
+
+    }
+    console.log(imageLocation, iconLocation, bannerLocation)
+    setImageUploadLoading(false)
       setIconUploadLoading(false)
       setBannerUploadLoading(false)
-      addCategory({
+
+      editCategory({
          variables: {
-            object: {
-               name: name.value,
-               metaDetails: {
-                  description: description.value,
-                  iconKey: iconKey,
-                  imageKey: imageKey,
-                  bannerKey: bannerKey
-               },
-               imageUrl: imageLocation,
-               iconUrl: iconLocation
+            name: productCategoryName,
+            metaDetails: {
+                description: description.value,
+                iconKey: icon,
+                imageKey: image,
+                bannerKey: banner
             },
+            imageUrl: imageLocation,
+            iconUrl: iconLocation,
+            bannerImageUrl: bannerLocation,
+            updatedName: name.value
          },
       })
    }
@@ -142,7 +211,7 @@ const AddTypesTunnel = ({ closeTunnel }) => {
       if (imageInputRef.current?.value) {
          imageInputRef.current.value = null
       }
-      setImageUrl({...imageUrl, 'value': ''})
+      setImageUrl({'value': ''})
    }
 
    const iconClearSelected = () => {
@@ -150,16 +219,16 @@ const AddTypesTunnel = ({ closeTunnel }) => {
       if (iconInputRef.current?.value) {
          iconInputRef.current.value = null
       }
-      setIconUrl({...iconUrl, 'value': ''})
+      setIconUrl({'value': ''})
    }
 
    const bannerClearSelected = () => {
-      setBannerFiles([])
-      if (bannerInputRef.current?.value) {
-         bannerInputRef.current.value = null
-      }
-      setBannerUrl({...bannerUrl, 'value': ''})
-   }
+    setBannerFiles([])
+    if (bannerInputRef.current?.value) {
+       bannerInputRef.current.value = null
+    }
+    setBannerUrl({'value': ''})
+ }
 
    const imageUpload = async () => {
       try {
@@ -170,9 +239,9 @@ const AddTypesTunnel = ({ closeTunnel }) => {
             setImageUrl({...imageUrl, value: file.Location })
          }
          
-         imageClearSelected()
-         return [file.Location, file.key]
+         return [file?.Location, file?.key]
       } catch (error) {
+          console.log(error)
          toast.error('Failed to upload image, please try again.')
       }
    }
@@ -185,37 +254,35 @@ const AddTypesTunnel = ({ closeTunnel }) => {
             [file] = list
             setIconUrl({...iconUrl, value:file.Location})
          }
-         iconClearSelected()
-         return [file.Location, file.key]
+         return [file?.Location, file?.key]
       } catch (error) {
          toast.error('Failed to upload icon, please try again.')
       }
    }
 
-   const bannerUpload = async () => {
-      try {
-         const list = await upload({ files:bannerFiles })
-         let file
-         if (Array.isArray(list) && list.length === 1) {
-            [file] = list
-            setBannerUrl({...bannerUrl, value:file.Location})
-         }
-         bannerClearSelected()
-         return [file.Location, file.key]
-      } catch (error) {
-         toast.error('Failed to upload banner, please try again.')
-      }
-   }
+   const bannerImageUpload = async () => {
+    try {
+       const list = await upload({ files:bannerFiles })
+       let file
+       if (Array.isArray(list) && list.length === 1) {
+          [file] = list
+          setBannerUrl({...bannerUrl, value:file.Location})
+       }
+       return [file?.Location, file?.key]
+    } catch (error) {
+       toast.error('Failed to upload banner, please try again.')
+    }
+ }
 
 
    return (
       <>
          <TunnelHeader
-            title="Add Product Category"
+            title="Edit Product Category"
             right={{
-               action: add,
-               title: 'Add',
-               isLoading: imageUploadLoading || addingCategory || iconUploadLoading || bannerUploadLoading,
+               action: edit,
+               title: 'Save',
+               isLoading: imageUploadLoading || editingCategory || iconUploadLoading || bannerUploadLoading,
                disabled: !name.meta.isValid,
             }}
             close={() => closeTunnel(1)}
@@ -280,21 +347,21 @@ const AddTypesTunnel = ({ closeTunnel }) => {
                <Form.Label title="image">
                   Image
                </Form.Label>
-               <Upload inputRef={imageInputRef} files={imageFiles} setFiles={setImageFiles} clearSelected={imageClearSelected} />
+               <Upload inputRef={imageInputRef} files={imageFiles} setFiles={setImageFiles} clearSelected={imageClearSelected} Key={imageKey} assetRemove={setImageRemove} />
             </Form.Group>
             <Spacer size="20px" />
             <Form.Group>
                <Form.Label title="icon">
                   Icon
                </Form.Label>
-               <Upload inputRef={iconInputRef} files={iconFiles} setFiles={setIconFiles} clearSelected={iconClearSelected} />
+               <Upload inputRef={iconInputRef} files={iconFiles} setFiles={setIconFiles} clearSelected={iconClearSelected} Key={iconKey} assetRemove={setIconRemove} />
             </Form.Group>
             <Spacer size="20px" />
             <Form.Group>
                <Form.Label title="banner image">
                   Banner Image
                </Form.Label>
-               <Upload inputRef={bannerInputRef} files={bannerFiles} setFiles={setBannerFiles} clearSelected={bannerClearSelected} />
+               <Upload inputRef={bannerInputRef} files={bannerFiles} setFiles={setBannerFiles} clearSelected={bannerClearSelected} Key={bannerKey} assetRemove={setBannerRemove} />
             </Form.Group>
             
          </Flex>
@@ -303,4 +370,4 @@ const AddTypesTunnel = ({ closeTunnel }) => {
    )
 }
 
-export default AddTypesTunnel
+export default EditTypesTunnel

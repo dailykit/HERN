@@ -624,6 +624,18 @@ export const MASTER = {
          subscription productCategories {
             productCategories {
                name
+               metaDetails
+            }
+         }
+      `,
+      LIST_ONE: gql`
+         subscription productCategory($name: String = "") {
+            productCategory(name: $name) {
+            iconUrl
+            imageUrl
+            bannerImageUrl
+            name
+            metaDetails
             }
          }
       `,
@@ -654,6 +666,13 @@ export const MASTER = {
             }
          }
       `,
+      UPDATE: gql`
+         mutation updateProductCategory($name: String = "", $iconUrl: String = "", $imageUrl: String = "", $bannerImageUrl: String = "", $metaDetails: jsonb = "", $updatedName: String = "") {
+            updateProductCategory(pk_columns: {name: $name}, _set: {iconUrl: $iconUrl, imageUrl: $imageUrl, bannerImageUrl: $bannerImageUrl, metaDetails: $metaDetails, name: $updatedName}) {
+            name
+            }
+         }
+      `
    },
    INGREDIENT_CATEGORY: {
       LIST: gql`
