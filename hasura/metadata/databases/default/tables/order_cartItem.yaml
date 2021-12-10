@@ -14,6 +14,9 @@ configuration:
     update: updateCartItems
     update_by_pk: updateCartItem
 object_relationships:
+- name: addedByApiKeyReference
+  using:
+    foreign_key_constraint_on: addedByApiKey
 - name: bulkItem
   using:
     manual_configuration:
@@ -86,6 +89,9 @@ object_relationships:
       remote_table:
         name: supplierItemView
         schema: inventory
+- name: updatedByApiKeyReference
+  using:
+    foreign_key_constraint_on: updatedByApiKey
 array_relationships:
 - name: childs
   using:
@@ -122,6 +128,76 @@ computed_fields:
 insert_permissions:
 - permission:
     backend_only: false
+    check:
+      addedByApiKeyReference:
+        canAddCarts:
+          _eq: true
+    columns:
+    - accuracy
+    - addOnLabel
+    - addOnPrice
+    - assemblyStatus
+    - bulkItemId
+    - cartId
+    - cartItemType
+    - comboProductComponentId
+    - count
+    - customizableProductComponentId
+    - discount
+    - displayBulkDensity
+    - displayImage
+    - displayName
+    - displayServing
+    - displayUnit
+    - displayUnitQuantity
+    - experienceClassId
+    - experienceClassTypeId
+    - ingredientId
+    - ingredientProcessingId
+    - ingredientSachetId
+    - instructionCardTemplateId
+    - inventoryProductBundleId
+    - isAddOn
+    - isAssembled
+    - isAutoAdded
+    - isLabelled
+    - isModifier
+    - isPortioned
+    - labelTemplateId
+    - lastUpdatedBy
+    - level
+    - levelType
+    - modifierOptionId
+    - operationConfigId
+    - orderMode
+    - packagingId
+    - packingStatus
+    - parentCartId
+    - parentCartItemId
+    - parentShare
+    - path
+    - position
+    - processingName
+    - productId
+    - productOptionId
+    - productOptionType
+    - refundPrice
+    - rootCartItemId
+    - sachetItemId
+    - simpleRecipeYieldId
+    - stationId
+    - status
+    - subRecipeYieldId
+    - subscriptionOccurenceAddOnProductId
+    - subscriptionOccurenceProductId
+    - supplierItemId
+    - taxSetting
+    - unitPrice
+    set:
+      addedByApiKey: x-hasura-Api-Key
+  role: apiKeyRole
+- permission:
+    backend_only: false
     check: {}
     columns:
     - accuracy
@@ -155,6 +231,75 @@ insert_permissions:
       cartId: x-hasura-Cart-Id
   role: guest-consumer
 select_permissions:
+- permission:
+    columns:
+    - accuracy
+    - addOnLabel
+    - addOnPrice
+    - assemblyStatus
+    - bulkItemId
+    - cartId
+    - cartItemType
+    - comboProductComponentId
+    - count
+    - created_at
+    - customizableProductComponentId
+    - discount
+    - displayBulkDensity
+    - displayImage
+    - displayName
+    - displayServing
+    - displayUnit
+    - displayUnitQuantity
+    - experienceClassId
+    - experienceClassTypeId
+    - id
+    - ingredientId
+    - ingredientProcessingId
+    - ingredientSachetId
+    - instructionCardTemplateId
+    - inventoryProductBundleId
+    - isAddOn
+    - isAssembled
+    - isAutoAdded
+    - isLabelled
+    - isModifier
+    - isPortioned
+    - labelTemplateId
+    - lastUpdatedBy
+    - level
+    - levelType
+    - modifierOptionId
+    - operationConfigId
+    - orderMode
+    - packagingId
+    - packingStatus
+    - parentCartId
+    - parentCartItemId
+    - parentShare
+    - path
+    - position
+    - processingName
+    - productId
+    - productOptionId
+    - productOptionType
+    - refundPrice
+    - rootCartItemId
+    - sachetItemId
+    - simpleRecipeYieldId
+    - stationId
+    - status
+    - subRecipeYieldId
+    - subscriptionOccurenceAddOnProductId
+    - subscriptionOccurenceProductId
+    - supplierItemId
+    - taxSetting
+    - unitPrice
+    - updated_at
+    computed_fields:
+    - experiencePrice
+    filter: {}
+  role: apiKeyRole
 - permission:
     allow_aggregations: true
     columns:
@@ -193,6 +338,76 @@ select_permissions:
     filter: {}
   role: guest-consumer
 update_permissions:
+- permission:
+    check: null
+    columns:
+    - accuracy
+    - addOnLabel
+    - addOnPrice
+    - assemblyStatus
+    - bulkItemId
+    - cartId
+    - cartItemType
+    - comboProductComponentId
+    - count
+    - customizableProductComponentId
+    - discount
+    - displayBulkDensity
+    - displayImage
+    - displayName
+    - displayServing
+    - displayUnit
+    - displayUnitQuantity
+    - experienceClassId
+    - experienceClassTypeId
+    - ingredientId
+    - ingredientProcessingId
+    - ingredientSachetId
+    - instructionCardTemplateId
+    - inventoryProductBundleId
+    - isAddOn
+    - isAssembled
+    - isAutoAdded
+    - isLabelled
+    - isModifier
+    - isPortioned
+    - labelTemplateId
+    - lastUpdatedBy
+    - level
+    - levelType
+    - modifierOptionId
+    - operationConfigId
+    - orderMode
+    - packagingId
+    - packingStatus
+    - parentCartId
+    - parentCartItemId
+    - parentShare
+    - path
+    - position
+    - processingName
+    - productId
+    - productOptionId
+    - productOptionType
+    - refundPrice
+    - rootCartItemId
+    - sachetItemId
+    - simpleRecipeYieldId
+    - stationId
+    - status
+    - subRecipeYieldId
+    - subscriptionOccurenceAddOnProductId
+    - subscriptionOccurenceProductId
+    - supplierItemId
+    - taxSetting
+    - unitPrice
+    filter:
+      updatedByApiKeyReference:
+        canUpdateCarts:
+          _eq: true
+    set:
+      updatedByApiKey: x-hasura-Api-Key
+  role: apiKeyRole
 - permission:
     check: null
     columns:
@@ -266,6 +481,12 @@ update_permissions:
 delete_permissions:
 - permission:
     filter:
+      updatedByApiKeyReference:
+        canDeleteCarts:
+          _eq: true
+  role: apiKeyRole
+- permission:
+    filter:
       cartId:
         _eq: X-Hasura-Cart-Id
   role: consumer
@@ -298,4 +519,4 @@ event_triggers:
     interval_sec: 10
     num_retries: 0
     timeout_sec: 60
-  webhook: "{{DAILYOS_SERVER_URL}}/event/print-label"
+  webhook: "{{ORGANIZATION_URL}}/{{DAILYOS_SERVER_URL}}/event/print-label"

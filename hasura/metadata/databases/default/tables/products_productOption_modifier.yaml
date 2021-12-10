@@ -1,0 +1,10 @@
+table:
+  name: productOption_modifier
+  schema: products
+object_relationships:
+- name: modifier
+  using:
+    foreign_key_constraint_on: modifierId
+- name: productOption
+  using:
+    foreign_key_constraint_on: productOptionId

@@ -24,4 +24,4 @@ event_triggers:
     interval_sec: 10
     num_retries: 0
     timeout_sec: 60
-  webhook: https://156bd2d32e02.ngrok.io/webhooks/handle
+  webhook: "{{ORGANIZATION_URL}}/{{DAILYOS_SERVER_URL}}/webhooks/handle"

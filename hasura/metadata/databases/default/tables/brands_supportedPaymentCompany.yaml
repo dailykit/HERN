@@ -1,3 +1,11 @@
 table:
   name: supportedPaymentCompany
   schema: brands
+array_relationships:
+- name: supportedPaymentOptions
+  using:
+    foreign_key_constraint_on:
+      column: supportedPaymentCompanyId
+      table:
+        name: supportedPaymentOption
+        schema: brands

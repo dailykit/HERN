@@ -2,28 +2,28 @@ actions:
 - name: FullOccurenceReport
   definition:
     kind: ""
-    handler: '{{DAILYOS_SERVER_URL}}/api/occurences/actionreport'
+    handler: '{{ORGANIZATION_URL}}/{{DAILYOS_SERVER_URL}}/api/occurences/actionreport'
     forward_client_headers: true
 - name: autoSelect
   definition:
     kind: synchronous
-    handler: '{{DAILYOS_SERVER_URL}}/webhook/occurence/auto-select'
+    handler: '{{ORGANIZATION_URL}}/{{DAILYOS_SERVER_URL}}/webhook/occurence/auto-select'
 - name: calculateNutitionalInfo
   definition:
     kind: synchronous
-    handler: '{{DAILYOS_SERVER_URL}}/api/actions/calculate-nutritional-info'
+    handler: '{{ORGANIZATION_URL}}/{{DAILYOS_SERVER_URL}}/api/actions/calculate-nutritional-info'
 - name: createPrintJob
   definition:
     kind: synchronous
-    handler: '{{DAILYOS_SERVER_URL}}/api/printer/print'
+    handler: '{{ORGANIZATION_URL}}/{{DAILYOS_SERVER_URL}}/api/printer/print'
 - name: createScheduledEvent
   definition:
     kind: synchronous
-    handler: '{{DAILYOS_SERVER_URL}}/webhook/occurence/schedule/create'
+    handler: '{{ORGANIZATION_URL}}/{{DAILYOS_SERVER_URL}}/webhook/occurence/schedule/create'
 - name: forgotPassword
   definition:
     kind: synchronous
-    handler: '{{DAILYOS_SERVER_URL}}/api/actions/forgot-password'
+    handler: '{{ORGANIZATION_URL}}/{{DAILYOS_SERVER_URL}}/api/actions/forgot-password'
 - name: hasura_createCronEvent
   definition:
     kind: synchronous
@@ -40,31 +40,31 @@ actions:
 - name: manageOccurence
   definition:
     kind: synchronous
-    handler: '{{DAILYOS_SERVER_URL}}/webhook/occurence/manage'
+    handler: '{{ORGANIZATION_URL}}/{{DAILYOS_SERVER_URL}}/webhook/occurence/manage'
 - name: printJobs
   definition:
     kind: ""
-    handler: '{{DAILYOS_SERVER_URL}}/api/printer/print/jobs'
+    handler: '{{ORGANIZATION_URL}}/{{DAILYOS_SERVER_URL}}/api/printer/print/jobs'
 - name: processRewards
   definition:
     kind: synchronous
-    handler: '{{DAILYOS_SERVER_URL}}/api/rewards/process'
+    handler: '{{ORGANIZATION_URL}}/{{DAILYOS_SERVER_URL}}/api/rewards/process'
 - name: registerAndCreateBrandCustomer
   definition:
     kind: synchronous
-    handler: '{{DAILYOS_SERVER_URL}}/api/customer/create'
+    handler: '{{ORGANIZATION_URL}}/{{DAILYOS_SERVER_URL}}/api/customer/create'
 - name: resetPassword
   definition:
     kind: synchronous
-    handler: http://testhern.dailykit.org/server/api/actions/reset-password
+    handler: '{{ORGANIZATION_URL}}/{{DAILYOS_SERVER_URL}}/api/actions/reset-password'
 - name: sendEmail
   definition:
     kind: synchronous
-    handler: '{{DAILYOS_SERVER_URL}}/api/sendmail'
+    handler: '{{ORGANIZATION_URL}}/{{DAILYOS_SERVER_URL}}/api/sendmail'
 - name: sendSMS
   definition:
     kind: synchronous
-    handler: https://testhern.dailykit.org/server/api/actions/send-sms
+    handler: '{{ORGANIZATION_URL}}/{{DAILYOS_SERVER_URL}}/api/actions/send-sms'
 - name: sendStripeInvoice
   definition:
     kind: synchronous
@@ -76,7 +76,7 @@ actions:
 - name: verifyResetPasswordToken
   definition:
     kind: synchronous
-    handler: https://testhern.dailykit.org/server/api/actions/verify-reset-password-token
+    handler: '{{ORGANIZATION_URL}}/{{DAILYOS_SERVER_URL}}/api/actions/verify-reset-password-token'
 custom_types:
   enums: []
   input_objects:

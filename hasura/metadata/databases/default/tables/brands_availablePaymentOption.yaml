@@ -1,3 +1,7 @@
 table:
   name: availablePaymentOption
   schema: brands
+object_relationships:
+- name: supportedPaymentOption
+  using:
+    foreign_key_constraint_on: supportedPaymentOptionId
