@@ -58,7 +58,7 @@ export const KioskCart = props => {
                height: '6em',
             }}
          >
-            <ProgressBar config={config} />
+            <ProgressBar config={config} setCurrentPage={setCurrentPage} />
          </div>
          {/* <Header className="hern-kiosk__cart-section-header">
             <Row className="hern-kiosk__cart-section-header-row">

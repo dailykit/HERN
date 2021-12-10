@@ -151,19 +151,12 @@ export const MenuSection = props => {
                      height: '6em',
                   }}
                >
-                  <ProgressBar config={config} />
+                  <ProgressBar
+                     config={config}
+                     setCurrentPage={setCurrentPage}
+                  />
                </Header>
                <Content className="hern-kiosk__menu-promotion-coupons">
-                  <div
-                     style={{ position: 'absolute', top: '2em', left: '2em' }}
-                  >
-                     <ArrowLeftIconBG
-                        onClick={() => {
-                           setCurrentPage('fulfillmentPage')
-                        }}
-                     />
-                  </div>
-
                   <img
                      src={
                         'https://storage.eu.content-cdn.io/cdn-cgi/image/height=400,quality=100/https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/userimages/Jalapeno%20Tortilla%201600.jpg'
