@@ -19,5 +19,11 @@
    "Select Product": "حدد المنتج",
    "Payment": "قسط",
    "Payment Method": "طريقة الدفع او السداد",
-   "Place Order": "مكان الامر"
+   "Place Order": "مكان الامر",
+   "See All Coupons": "انظر جميع القسائم",
+   "Coupon Code": "رمز الكوبون",
+   "Apply": "يتقدم",
+   "Apply Coupon": "تطبيق القسيمة",
+   "No coupons available!": "لا كوبونات متاحة!",
+   "Available Coupons": "القسائم المتاحة"
 }

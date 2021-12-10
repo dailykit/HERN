@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSubscription } from '@apollo/react-hooks'
-import { useUser } from '../context'
+import { useUser, useTranslation } from '../context'
 import { COUPONS } from '../graphql'
 import { useConfig } from '../lib'
 import { useMenu } from '../sections/select-menu'
@@ -24,6 +24,7 @@ export const CouponsList = ({
    const { user } = useUser()
    const { id } =
       orderInterfaceType === 'Kiosk' ? cart : state?.occurenceCustomer?.cart
+   const { t } = useTranslation()
 
    const [availableCoupons, setAvailableCoupons] = React.useState([])
    const [applying, setApplying] = React.useState(false)
@@ -93,40 +94,53 @@ export const CouponsList = ({
    if (loading) return <Loader />
    if (orderInterfaceType === 'Kiosk') {
       return (
-         <Carousel slidesToShow={2}>
-            {availableCoupons.map(coupon => (
-               <div className="hern-kiosk-coupons-list__coupon" key={coupon.id}>
-                  <div className="hern-kiosk-coupons-list__coupon__top">
-                     <div className="hern-kiosk-coupons-list__coupon__code">
-                        {coupon.code}{' '}
-                     </div>
-                     <button
-                        className={classNames(
-                           'hern-kiosk-coupons-list__coupon__apply-btn',
-                           {
-                              'hern-kiosk-coupons-list__coupon__apply-btn':
-                                 isButtonDisabled(coupon),
-                           }
-                        )}
-                        style={{
-                           border: `2px solid ${config.kioskSettings.theme.secondaryColor.value}`,
-                        }}
-                        onClick={() => handleApplyCoupon(coupon)}
+         <>
+            {!availableCoupons.length && (
+               <p className="hern-kiosk__coupon-not-available">
+                  {t('No coupons available!')}
+               </p>
+            )}
+
+            {availableCoupons.length > 0 && (
+               <Carousel slidesToShow={2}>
+                  {availableCoupons.map(coupon => (
+                     <div
+                        className="hern-kiosk-coupons-list__coupon"
+                        key={coupon.id}
                      >
-                        Apply
-                     </button>
-                  </div>
-                  <div style={{ margin: '.5em 0' }}>
-                     <p className="hern-kiosk-coupons-list__coupon__title">
-                        {coupon.metaDetails.title}
-                     </p>
-                     <p className="hern-kiosk-coupons-list__coupon__description">
-                        {coupon.metaDetails.description}
-                     </p>
-                  </div>
-               </div>
-            ))}
-         </Carousel>
+                        <div className="hern-kiosk-coupons-list__coupon__top">
+                           <div className="hern-kiosk-coupons-list__coupon__code">
+                              {coupon.code}{' '}
+                           </div>
+                           <button
+                              className={classNames(
+                                 'hern-kiosk-coupons-list__coupon__apply-btn',
+                                 {
+                                    'hern-kiosk-coupons-list__coupon__apply-btn':
+                                       isButtonDisabled(coupon),
+                                 }
+                              )}
+                              style={{
+                                 border: `2px solid ${config.kioskSettings.theme.secondaryColor.value}`,
+                              }}
+                              onClick={() => handleApplyCoupon(coupon)}
+                           >
+                              {t('Apply')}
+                           </button>
+                        </div>
+                        <div style={{ margin: '.5em 0' }}>
+                           <p className="hern-kiosk-coupons-list__coupon__title">
+                              {coupon.metaDetails.title}
+                           </p>
+                           <p className="hern-kiosk-coupons-list__coupon__description">
+                              {coupon.metaDetails.description}
+                           </p>
+                        </div>
+                     </div>
+                  ))}
+               </Carousel>
+            )}
+         </>
       )
    }
    return (
@@ -134,7 +148,7 @@ export const CouponsList = ({
          {orderInterfaceType !== 'Kiosk' && (
             <div className="hern-coupons-list__header">
                <div className="hern-coupons-list__heading">
-                  Available Coupons
+                  {t('Available Coupons')}
                </div>
                <button className="hern-coupons-list__close-btn">
                   <CloseIcon
@@ -145,38 +159,36 @@ export const CouponsList = ({
                </button>
             </div>
          )}
-         {/* {!availableCoupons.length && <p>No coupons available!</p>} */}
-         {true && <p>No coupons available!</p>}
-         {false &&
-            availableCoupons.map(coupon => (
-               <div className="hern-coupons-list__coupon" key={coupon.id}>
-                  <div className="hern-coupons-list__coupon__top">
-                     <div className="hern-coupons-list__coupon__code">
-                        {coupon.code}{' '}
-                     </div>
-                     <button
-                        className={classNames(
-                           'hern-coupons-list__coupon__apply-btn',
-                           {
-                              'hern-coupons-list__coupon__apply-btn':
-                                 isButtonDisabled(coupon),
-                           }
-                        )}
-                        onClick={() => handleApplyCoupon(coupon)}
-                     >
-                        Apply
-                     </button>
+         {!availableCoupons.length && <p>{t('No coupons available!')}</p>}
+         {availableCoupons.map(coupon => (
+            <div className="hern-coupons-list__coupon" key={coupon.id}>
+               <div className="hern-coupons-list__coupon__top">
+                  <div className="hern-coupons-list__coupon__code">
+                     {coupon.code}{' '}
                   </div>
-                  <div>
-                     <p className="hern-coupons-list__coupon__title">
-                        {coupon.metaDetails.title}
-                     </p>
-                     <p className="hern-coupons-list__coupon__description">
-                        {coupon.metaDetails.description}
-                     </p>
-                  </div>
+                  <button
+                     className={classNames(
+                        'hern-coupons-list__coupon__apply-btn',
+                        {
+                           'hern-coupons-list__coupon__apply-btn':
+                              isButtonDisabled(coupon),
+                        }
+                     )}
+                     onClick={() => handleApplyCoupon(coupon)}
+                  >
+                     {t('Apply')}
+                  </button>
                </div>
-            ))}
+               <div>
+                  <p className="hern-coupons-list__coupon__title">
+                     {coupon.metaDetails.title}
+                  </p>
+                  <p className="hern-coupons-list__coupon__description">
+                     {coupon.metaDetails.description}
+                  </p>
+               </div>
+            </div>
+         ))}
       </div>
    )
 }

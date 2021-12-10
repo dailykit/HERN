@@ -19,7 +19,6 @@ import { KioskModifier } from './component'
 import { useLazyQuery, useQuery } from '@apollo/react-hooks'
 import KioskButton from './component/button'
 import { ProgressBar } from './component/progressBar'
-import { OffersIcon } from '../../assets/icons/Offers'
 import { Coupon } from '..'
 
 const { Header, Content, Footer } = Layout

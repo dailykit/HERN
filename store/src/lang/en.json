@@ -19,5 +19,11 @@
    "Select Product": "Select Product",
    "Payment": "Payment",
    "Payment Method": "Payment Method",
-   "Place Order": "Place Order"
+   "Place Order": "Place Order",
+   "See All Coupons": "See All Coupons",
+   "Coupon Code": "Coupon Code",
+   "Apply": "Apply",
+   "Apply Coupon": "Apply Coupon",
+   "No coupons available!": "No coupons available!",
+   "Available Coupons": "Available Coupons"
 }

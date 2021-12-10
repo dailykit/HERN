@@ -1,7 +1,7 @@
 import { useLazyQuery, useMutation, useSubscription } from '@apollo/react-hooks'
 import React from 'react'
 import { useToasts } from 'react-toast-notifications'
-import { useUser } from '../context'
+import { useUser, useTranslation } from '../context'
 import { CART_REWARDS, MUTATIONS, SEARCH_COUPONS } from '../graphql'
 import { useConfig } from '../lib'
 import { useMenu } from '../sections/select-menu'
@@ -11,7 +11,6 @@ import { Tunnel } from './tunnel'
 import { useQueryParamState } from '../utils'
 
 export const Coupon = ({ cart, config }) => {
-   console.log('this is config in coupon', config)
    // use this component for kiosk as well
    const [orderInterfaceType] = useQueryParamState('oiType', 'Website')
    const { state = {} } = orderInterfaceType === 'Kiosk' ? {} : useMenu()
@@ -20,6 +19,7 @@ export const Coupon = ({ cart, config }) => {
    const { brand, configOf } = useConfig()
    const { id } =
       orderInterfaceType === 'Kiosk' ? cart : state?.occurenceCustomer?.cart
+   const { t } = useTranslation()
 
    const theme = configOf('theme-color', 'visual')
    // const theme = settings['visual']['theme-color']
@@ -165,7 +165,7 @@ export const Coupon = ({ cart, config }) => {
                      type="reset"
                      onClick={() => setIsCouponListOpen(true)}
                   >
-                     See All Coupons
+                     {t('See All Coupons')}
                   </button>
                )}
                <div
@@ -183,7 +183,7 @@ export const Coupon = ({ cart, config }) => {
                      }
                      htmlFor="coupon"
                   >
-                     Coupon Code
+                     {t('Coupon Code')}
                   </label>
                   <input
                      className={
@@ -217,7 +217,7 @@ export const Coupon = ({ cart, config }) => {
                      }),
                   }}
                >
-                  {searching || applying ? <Loader inline /> : 'Apply'}
+                  {searching || applying ? <Loader inline /> : t('Apply')}
                </button>
             </form>
             {orderInterfaceType === 'Kiosk' && (
@@ -274,7 +274,7 @@ export const Coupon = ({ cart, config }) => {
                            : 'hern-coupon__coupon-comment'
                      }
                   >
-                     Coupon applied!
+                     {t('Coupon applied!')}
                   </div>
                </div>
                <button
@@ -294,7 +294,7 @@ export const Coupon = ({ cart, config }) => {
                onClick={() => setIsCouponFormOpen(true)}
                style={{ color: `${theme?.accent ? theme?.accent : 'teal'}` }}
             >
-               Apply Coupon
+               {t('Apply Coupon')}
             </button>
          )}
       </div>
