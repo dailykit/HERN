@@ -16,6 +16,7 @@ export const SettingsCard = ({ setting, title, isChangeSaved, setIsSavedChange, 
     console.log(inView, "inView", ref)
     React.useEffect(() => {
         if (inView && !componentIsOnView.includes(title)) {
+            console.log(title, "title")
             setIsComponentIsOnView([...componentIsOnView, title])
         }
         else if (!inView && componentIsOnView.includes(title)) {
@@ -65,7 +66,7 @@ export const SettingsCard = ({ setting, title, isChangeSaved, setIsSavedChange, 
     }
 
     return (
-        <div ref={ref}>
+        <div ref={ref} style={{ marginBottom: "1em" }}>
             <ConfigTemplateUI
                 config={config}
                 setConfig={setConfig}

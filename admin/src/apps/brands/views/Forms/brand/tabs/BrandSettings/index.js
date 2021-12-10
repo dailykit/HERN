@@ -60,14 +60,6 @@ export const BrandSettings = () => {
       console.log("error in Brands.Setting", error)
    }
 
-   // const openConfig = data => {
-   //    if (isChangeSaved) {
-   //       setSetting(data)
-   //    }
-   //    else {
-   //       toast.warning('Changes will be lost if not saved. Click on save button to save your changes.')
-   //    }
-   // }
    const types = Object.keys(settings)
    if (loadingSettings) return <Loader />
    return (
@@ -168,7 +160,7 @@ const NavComponent = ({ children, heading }) => (
       >
          <Text as="title" style={{ color: "#555B6E", padding: "8px" }}> {heading} </Text>
       </Flex>
-      <Flex margin="10px 0" container flexDirection="column" >
+      <Flex margin="10px 0" container flexDirection="column" className="nav_child" >
          {children}
       </Flex>
    </CollapsibleWrapper>

@@ -9,8 +9,7 @@ export const Child = styled.div`
    background: #ffffff;
    cursor:pointer;
    border: 1px solid #f3f3f3;
-   border: ${({ isActive }) =>
-      isActive ? '2px solid #367BF5' : '1px solid #f3f3f3'};
+   border:1px solid #f3f3f3;
    box-sizing: border-box;
    color: #555b6e;
    width: 100%;
@@ -95,7 +94,7 @@ export const Styles = {
 
 export const CollapsibleWrapper = styled.div`
 background: #F9F9F9;
->div{
+>.nav_child{
    background: #F9F9F9;
    :hover{
       background: #fff;
