@@ -22,4 +22,10 @@ export const Wrapper = styled.div`
          background: #F9F9F9;
       }
    }
+   .linked-Files-tunnel-dropdown>div>div:nth-of-type(2) {
+      max-height: 70vh;
+   }
+   .linked-Files-tunnel-dropdown>div>ul:nth-of-type(1){
+      padding-left: 16px;
+   }
 `
