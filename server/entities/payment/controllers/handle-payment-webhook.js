@@ -2,7 +2,6 @@ import { paymentLogger } from '../../../utils'
 
 export const handlePaymentWebhook = async (req, res) => {
    try {
-      console.log('request body from webhook', req.body, req.headers['origin'])
       const stripeSignature = req.headers['stripe-signature']
       const razorpaySignature =
          req.headers['x-razorpay-signature'] || req.body.razorpay_signature
@@ -10,7 +9,6 @@ export const handlePaymentWebhook = async (req, res) => {
          'https://securegw-stage.paytm.in',
          'https://securegw.paytm.in'
       ].includes(req.headers['origin'])
-      console.log('isPaytmWebhook', isPaytmWebhook)
       let paymentType
       if (stripeSignature) {
          paymentType = 'stripe'
@@ -21,16 +19,16 @@ export const handlePaymentWebhook = async (req, res) => {
       } else {
          return
       }
-      console.log('paymentType', paymentType)
       const functionFilePath = `../functions/${paymentType}`
       const method = await import(functionFilePath)
       const result = await method.default(req, 'webhook')
       if (result.success && result.data) {
+         console.log('result.data', result.data)
          await paymentLogger(result.data)
       }
       if (result.success && result.company === 'paytm') {
          return res.redirect(
-            `/checkout?id=${result.data.cartId}&payment=succeeded`
+            `http://localhost:4000/checkout?id=${result.data.cartId}&payment=succeeded`
          )
       }
       return res.status(result.code).json(result)

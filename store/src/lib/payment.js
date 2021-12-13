@@ -22,7 +22,7 @@ import {
    getPaytmOptions,
    get_env,
 } from '../utils'
-import { CartPaymentComponent } from '../components'
+import { CartPaymentComponent, PaymentProcessingModal } from '../components'
 
 const PaymentContext = createContext()
 const inititalState = {
@@ -32,13 +32,14 @@ const inititalState = {
       phone: '',
       email: '',
    },
-   paymentInfo: null,
+   paymentInfo: {
+      tunnel: {
+         isVisible: false,
+      },
+      selectedAvailablePaymentOption: null,
+   },
    paymentLoading: false,
    paymentLifeCycleState: '',
-   isPaymentProcessing: false,
-   isPaymentSuccess: false,
-   isPaymentFailure: false,
-   isPaymentDismissed: false,
 }
 
 const reducer = (state, action) => {
@@ -71,6 +72,7 @@ export const PaymentProvider = ({ children }) => {
    const [isPaymentLoading, setIsPaymentLoading] = useState(true)
    const [cartId, setCartId] = useState(null)
    const [cartPayment, setCartPayment] = useState(null)
+   const [isProcessingPayment, setIsProcessingPayment] = useState(false)
    const { user, isAuthenticated, isLoading } = useUser()
    const { brand } = useConfig()
    const { displayRazorpay } = useRazorPay()
@@ -130,30 +132,18 @@ export const PaymentProvider = ({ children }) => {
                         requiredCartPayment.availablePaymentOption,
                   },
                })
-               switch (requiredCartPayment.paymentStatus) {
-                  case 'SUCCEEDED':
-                     dispatch({
-                        type: 'UPDATE_PAYMENT_STATE',
-                        payload: {
-                           paymentLifeCycleState: 'INITIALIZE',
-                        },
-                     })
-                  case 'CANCELLED':
-                     dispatch({
-                        type: 'UPDATE_PAYMENT_STATE',
-                        payload: {
-                           paymentLifeCycleState: 'CANCELLED',
-                        },
-                     })
-                  case 'FAILED':
-                     dispatch({
-                        type: 'UPDATE_PAYMENT_STATE',
-                        payload: {
-                           paymentLifeCycleState: 'FAILED',
-                        },
-                     })
-               }
 
+               dispatch({
+                  type: 'UPDATE_PAYMENT_STATE',
+                  payload: {
+                     paymentLifeCycleState:
+                        requiredCartPayment?.paymentStatus || 'PENDING',
+                  },
+               })
+               console.log(
+                  '2nd cartPayment from payment----->>>>',
+                  requiredCartPayments
+               )
                setCartPayment(requiredCartPayment)
             }
          },
@@ -161,11 +151,11 @@ export const PaymentProvider = ({ children }) => {
 
    // mutation to update cart payment
    const [updateCartPayment] = useMutation(UPDATE_CART_PAYMENT, {
-      onCompleted: () => {
-         addToast('Payment dismissed', {
-            appearance: 'error',
-         })
-      },
+      // onCompleted: () => {
+      //    addToast('Payment dismissed', {
+      //       appearance: 'error',
+      //    })
+      // },
       onError: error => {
          console.error(error)
          addToast('Something went wrong!', { appearance: 'error' })
@@ -208,11 +198,15 @@ export const PaymentProvider = ({ children }) => {
             },
          })
       }
-      dispatch({
-         type: 'UPDATE_PAYMENT_STATE',
-         payload: {
-            isPaymentDismissed: true,
-            isPaymentProcessing: false,
+   }
+   const onPaymentModalClose = () => {
+      setIsProcessingPayment(false)
+      updateCartPayment({
+         variables: {
+            id: cartPayment?.id,
+            _set: {
+               isResultShown: true,
+            },
          },
       })
    }
@@ -283,7 +277,7 @@ export const PaymentProvider = ({ children }) => {
 
    useEffect(() => {
       console.log(
-         'inside top of useEffect',
+         'useEffect=>',
          !_isEmpty(cartPayment),
          !_isEmpty(cartPayment?.transactionRemark),
          _has(
@@ -294,7 +288,7 @@ export const PaymentProvider = ({ children }) => {
       )
       if (
          !_isEmpty(cartPayment) &&
-         !_isEmpty(cartPayment.transactionRemark) &&
+         !_isEmpty(cartPayment?.transactionRemark) &&
          _has(
             cartPayment,
             'availablePaymentOption.supportedPaymentOption.supportedPaymentCompany.label'
@@ -302,6 +296,7 @@ export const PaymentProvider = ({ children }) => {
          !isCartPaymentLoading
       ) {
          console.log('inside payment provider useEffect')
+         setIsProcessingPayment(true)
          // right now only handle the razorpay method.
          if (
             cartPayment.availablePaymentOption.supportedPaymentOption
@@ -327,21 +322,28 @@ export const PaymentProvider = ({ children }) => {
                .supportedPaymentCompany.label === 'paytm'
          ) {
             console.log('inside payment provider useEffect 1', cartPayment)
-
-            if (cartPayment.paymentStatus === 'PENDING') {
-               const PAYTM_MERCHANT_ID =
-                  process.env.NEXT_PUBLIC_PAYTM_MERCHANT_ID ||
-                  get_env('PAYTM_MERCHANT_ID')
-               const PAYTM_ORDER_ID = cartPayment?.id
-               const PAYTM_TXN_TOKEN = cartPayment?.transactionId
-               if (PAYTM_ORDER_ID && PAYTM_TXN_TOKEN && isClient) {
-                  const paymentUrl = `https://securegw-stage.paytm.in/theia/api/v1/showPaymentPage?mid=${PAYTM_MERCHANT_ID}&orderId=${PAYTM_ORDER_ID}&txnToken=${PAYTM_TXN_TOKEN}`
+            if (['PENDING', 'PROCESSING'].includes(cartPayment.paymentStatus)) {
+               if (isClient && cartPayment.actionRequired) {
+                  const paymentUrl = cartPayment.actionUrl
                   window.location.href = paymentUrl
                }
             }
          }
+         // else if (
+         //    cartPayment.availablePaymentOption.supportedPaymentOption
+         //       .supportedPaymentCompany.label === 'stripe'
+         // ) {
+         //    setIsProcessingPayment(true)
+         // }
       }
-   }, [cartPayment?.paymentStatus, cartPayment?.transactionRemark])
+   }, [
+      cartPayment?.paymentStatus,
+      cartPayment?.transactionRemark,
+      cartPayment?.transactionId,
+      cartPayment?.stripeInvoiceId,
+      cartPayment?.actionUrl,
+      isCartPaymentLoading,
+   ])
 
    return (
       <PaymentContext.Provider
@@ -350,15 +352,21 @@ export const PaymentProvider = ({ children }) => {
             paymentLoading: isPaymentLoading,
             setPaymentInfo,
             setProfileInfo,
+            setIsProcessingPayment,
             updatePaymentState,
             initializePayment,
+            isProcessingPayment,
          }}
       >
-         {state.paymentLifeCycleState === 'INITIALIZE' ? (
-            <CartPaymentComponent cartId={cartId} />
-         ) : (
-            children
-         )}
+         <PaymentProcessingModal
+            isOpen={isProcessingPayment}
+            cartId={cartPayment?.cartId}
+            status={cartPayment?.paymentStatus}
+            actionUrl={cartPayment?.actionUrl}
+            actionRequired={cartPayment?.actionRequired}
+            closeModal={onPaymentModalClose}
+         />
+         {children}
       </PaymentContext.Provider>
    )
 }
@@ -369,8 +377,10 @@ export const usePayment = () => {
       paymentLoading,
       setPaymentInfo,
       setProfileInfo,
+      setIsProcessingPayment,
       updatePaymentState,
       initializePayment,
+      isProcessingPayment,
    } = useContext(PaymentContext)
    return {
       isPaymentLoading: paymentLoading,
@@ -382,7 +392,9 @@ export const usePayment = () => {
       paymentInfo: state.paymentInfo,
       setPaymentInfo: setPaymentInfo,
       setProfileInfo: setProfileInfo,
+      setIsProcessingPayment,
       updatePaymentState,
       initializePayment,
+      isProcessingPayment,
    }
 }

@@ -491,7 +491,7 @@ export const UPDATE_CART_ITEMS = gql`
 export const UPDATE_CART_PAYMENT = gql`
    mutation UPDATE_CART_PAYMENT(
       $id: Int!
-      $_inc: order_cartPayment_inc_input
+      $_inc: order_cartPayment_inc_input = {}
       $_set: order_cartPayment_set_input!
    ) {
       updateCartPayment(pk_columns: { id: $id }, _inc: $_inc, _set: $_set) {

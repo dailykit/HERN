@@ -4,10 +4,8 @@ import React, { useState, useEffect, useRef } from 'react'
 import { CSSTransition } from 'react-transition-group'
 import Link from 'next/link'
 import { getRoute } from '../../utils'
-import { usePayment } from '../../lib'
 
 function NavigationBar({ children, Data }) {
-   const { initializePayment } = usePayment()
    return (
       <Navbar>
          {Data.map((menu, index) => {
@@ -25,7 +23,6 @@ function NavigationBar({ children, Data }) {
             }
          })}
          {children}
-         <button onClick={() => initializePayment(2373)}>Pay</button>
       </Navbar>
    )
 }

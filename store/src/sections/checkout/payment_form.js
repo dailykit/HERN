@@ -10,8 +10,7 @@ import {
    CardElement,
 } from '@stripe/react-stripe-js'
 
-import { usePayment } from './state'
-import { useConfig } from '../../lib'
+import { useConfig, usePayment } from '../../lib'
 import { get_env, isClient } from '../../utils'
 import { useUser } from '../../context'
 import { HelperBar, Loader } from '../../components'
@@ -21,7 +20,7 @@ const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const PaymentForm = ({ intent }) => {
    const { user, dispatch: userDispatch } = useUser()
-   const { dispatch } = usePayment()
+   const { setPaymentInfo } = usePayment()
    const { brand } = useConfig()
    const STRIPE_ACCOUNT_ID = get_env('STRIPE_ACCOUNT_ID')
    const isConnected = isConnectedIntegration()
@@ -86,9 +85,10 @@ export const PaymentForm = ({ intent }) => {
                   brand: data.card.brand,
                })
 
-               dispatch({
-                  type: 'TOGGLE_TUNNEL',
-                  payload: { isVisible: false },
+               setPaymentInfo({
+                  tunnel: {
+                     isVisible: false,
+                  },
                })
             } else {
                throw "Couldn't complete card setup, please try again"

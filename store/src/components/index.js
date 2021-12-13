@@ -1,3 +1,5 @@
+import PaymentProcessingModal from './paymentProcessingModal'
+
 export * from './seo'
 export * from './form'
 export * from './button'
@@ -31,3 +33,5 @@ export * from './locationSelector'
 export * from './language_switch'
 export * from './loginWarning'
 export * from './cartPayment'
+
+export { PaymentProcessingModal }

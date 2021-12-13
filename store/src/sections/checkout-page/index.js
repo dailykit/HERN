@@ -58,6 +58,7 @@ const PaymentContent = () => {
       paymentInfo,
       profileInfo,
       setPaymentInfo,
+      setIsProcessingPayment,
       setProfileInfo,
       updatePaymentState,
    } = usePayment()
@@ -79,65 +80,65 @@ const PaymentContent = () => {
       },
    })
 
-   React.useEffect(() => {
-      if (!loading && !isEmpty(cart)) {
-         ;(async () => {
-            const status = cart.paymentStatus
-            const remark = cart.transactionRemark
-            const next_action = cart.transactionRemark?.next_action
+   // React.useEffect(() => {
+   //    if (!loading && !isEmpty(cart)) {
+   //       ;(async () => {
+   //          const status = cart.paymentStatus
+   //          const remark = cart.transactionRemark
+   //          const next_action = cart.transactionRemark?.next_action
 
-            try {
-               if (status === 'PENDING') {
-                  setOverlayMessage(messages['PENDING'])
-               } else if (status === 'REQUIRES_ACTION' && !next_action?.type) {
-                  toggleOverlay(true)
-                  setOverlayMessage(messages['REQUIRES_ACTION'])
-               } else if (status === 'REQUIRES_ACTION' && next_action?.type) {
-                  toggleOverlay(true)
-                  setOverlayMessage(messages['REQUIRES_ACTION_WITH_URL'])
-                  let TAB_URL = ''
-                  let remark = remark
-                  if (next_action?.type === 'use_stripe_sdk') {
-                     TAB_URL = next_action?.use_stripe_sdk?.stripe_js
-                  } else {
-                     TAB_URL = next_action?.redirect_to_url?.url
-                  }
-                  setOtpPageUrl(TAB_URL)
-                  authTabRef.current = window.open(TAB_URL, 'payment_auth_page')
-               } else if (
-                  status === 'REQUIRES_PAYMENT_METHOD' &&
-                  remark?.last_payment_error?.code
-               ) {
-                  toggleOverlay(false)
-                  setOverlayMessage(messages['PENDING'])
-                  addToast(remark?.last_payment_error?.message, {
-                     appearance: 'error',
-                  })
-               } else if (cart.paymentStatus === 'SUCCEEDED') {
-                  if (authTabRef.current) {
-                     authTabRef.current.close()
-                     if (!authTabRef.current.closed) {
-                        window.open(
-                           `/checkout?id=${cart.id}`,
-                           'payment_auth_page'
-                        )
-                     }
-                  }
-                  setOverlayMessage(messages['SUCCEEDED'])
-                  addToast(messages['SUCCEEDED'], { appearance: 'success' })
-                  router.push(`/placing-order?id=${cart.id}`)
-               } else if (status === 'PAYMENT_FAILED') {
-                  toggleOverlay(false)
-                  addToast(messages['PAYMENT_FAILED'], {
-                     appearance: 'error',
-                  })
-               }
-            } catch (error) {
-               console.log('on succeeded -> error -> ', error)
-            }
-         })()
-      }
-   }, [loading, cart])
+   //          try {
+   //             if (status === 'PENDING') {
+   //                setOverlayMessage(messages['PENDING'])
+   //             } else if (status === 'REQUIRES_ACTION' && !next_action?.type) {
+   //                toggleOverlay(true)
+   //                setOverlayMessage(messages['REQUIRES_ACTION'])
+   //             } else if (status === 'REQUIRES_ACTION' && next_action?.type) {
+   //                toggleOverlay(true)
+   //                setOverlayMessage(messages['REQUIRES_ACTION_WITH_URL'])
+   //                let TAB_URL = ''
+   //                let remark = remark
+   //                if (next_action?.type === 'use_stripe_sdk') {
+   //                   TAB_URL = next_action?.use_stripe_sdk?.stripe_js
+   //                } else {
+   //                   TAB_URL = next_action?.redirect_to_url?.url
+   //                }
+   //                setOtpPageUrl(TAB_URL)
+   //                authTabRef.current = window.open(TAB_URL, 'payment_auth_page')
+   //             } else if (
+   //                status === 'REQUIRES_PAYMENT_METHOD' &&
+   //                remark?.last_payment_error?.code
+   //             ) {
+   //                toggleOverlay(false)
+   //                setOverlayMessage(messages['PENDING'])
+   //                addToast(remark?.last_payment_error?.message, {
+   //                   appearance: 'error',
+   //                })
+   //             } else if (cart.paymentStatus === 'SUCCEEDED') {
+   //                if (authTabRef.current) {
+   //                   authTabRef.current.close()
+   //                   if (!authTabRef.current.closed) {
+   //                      window.open(
+   //                         `/checkout?id=${cart.id}`,
+   //                         'payment_auth_page'
+   //                      )
+   //                   }
+   //                }
+   //                setOverlayMessage(messages['SUCCEEDED'])
+   //                addToast(messages['SUCCEEDED'], { appearance: 'success' })
+   //                router.push(`/placing-order?id=${cart.id}`)
+   //             } else if (status === 'PAYMENT_FAILED') {
+   //                toggleOverlay(false)
+   //                addToast(messages['PAYMENT_FAILED'], {
+   //                   appearance: 'error',
+   //                })
+   //             }
+   //          } catch (error) {
+   //             console.log('on succeeded -> error -> ', error)
+   //          }
+   //       })()
+   //    }
+   // }, [loading, cart])
 
    const [updateCart] = useMutation(QUERIES.UPDATE_CART, {
       onCompleted: () => {
@@ -153,6 +154,10 @@ const PaymentContent = () => {
       },
    })
 
+   const isStripe =
+      paymentInfo?.selectedAvailablePaymentOption?.supportedPaymentOption
+         ?.supportedPaymentCompany?.label === 'stripe'
+
    const [updatePlatformCustomer] = useMutation(
       QUERIES.UPDATE_PLATFORM_CUSTOMER,
       {
@@ -162,8 +167,10 @@ const PaymentContent = () => {
                   id: cart.id,
                   _inc: { paymentRetryAttempt: 1 },
                   _set: {
-                     paymentMethodId:
-                        paymentInfo?.selectedAvailablePaymentOption?.id.toString(),
+                     paymentMethodId: isStripe
+                        ? paymentInfo?.selectedAvailablePaymentOption
+                             ?.selectedPaymentMethodId || null
+                        : null,
                      toUseAvailablePaymentOptionId:
                         paymentInfo?.selectedAvailablePaymentOption?.id,
                      customerInfo: {
@@ -186,7 +193,8 @@ const PaymentContent = () => {
    )
 
    const handleSubmit = () => {
-      toggleOverlay(true)
+      // toggleOverlay(true)
+      setIsProcessingPayment(true)
       if (!isEmpty(profileInfo)) {
          updatePaymentState({
             paymentLifeCycleState: 'INCREMENT_PAYMENT_RETRY_ATTEMPT',
@@ -238,7 +246,6 @@ const PaymentContent = () => {
    const onPaymentMethodChange = event => {
       const { value } = event.target
       if (value) {
-         console.log(value, typeof value)
          const availablePaymentOptionToCart =
             cart.availablePaymentOptionToCart.find(
                option => option.id === value
