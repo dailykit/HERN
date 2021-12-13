@@ -46,7 +46,6 @@ export const OnDemandMenuProvider = ({ children }) => {
          },
       },
       onCompleted: data => {
-         console.log('dataProduct', data)
          if (data?.onDemand_getMenuV2copy?.length) {
             const [res] = data.onDemand_getMenuV2copy
             const { menu } = res.data
