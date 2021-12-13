@@ -12,6 +12,7 @@ const PaymentProcessingModal = ({
    actionUrl,
    actionRequired,
    closeModal,
+   cancelPayment,
 }) => {
    console.log('PaymentProcessingModal')
    const router = useRouter()
@@ -53,11 +54,23 @@ const PaymentProcessingModal = ({
             <Button type="link" href={actionUrl} target="_blank">
                Authenticate Here
             </Button>,
+            <Button type="link" onClick={cancelPayment}>
+               Cancel Payment
+            </Button>,
          ]
       } else if (status === 'FAILED') {
          icon = <Result status="error" />
          title = 'Payment Failed'
          subtitle = 'Something went wrong'
+         extra = [
+            <Button type="primary" key="console" onClick={closeModalHandler}>
+               Close Modal
+            </Button>,
+         ]
+      } else if (status === 'CANCELLED') {
+         icon = <Result status="error" />
+         title = 'Payment Cancelled'
+         subtitle = 'You cancelled your payment process'
          extra = [
             <Button type="primary" key="console" onClick={closeModalHandler}>
                Close Modal
@@ -115,6 +128,7 @@ const PaymentProcessingModal = ({
          footer={null}
          closable={false}
          keyboard={false}
+         maskClosable={false}
          centered
          onCancel={closeModalHandler}
          width={780}

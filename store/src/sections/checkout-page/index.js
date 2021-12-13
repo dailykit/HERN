@@ -61,6 +61,7 @@ const PaymentContent = () => {
       setIsProcessingPayment,
       setProfileInfo,
       updatePaymentState,
+      setIsPaymentInitiated,
    } = usePayment()
    const { addToast } = useToasts()
    const authTabRef = React.useRef()
@@ -196,9 +197,11 @@ const PaymentContent = () => {
       // toggleOverlay(true)
       setIsProcessingPayment(true)
       if (!isEmpty(profileInfo)) {
+         setIsPaymentInitiated(true)
          updatePaymentState({
             paymentLifeCycleState: 'INCREMENT_PAYMENT_RETRY_ATTEMPT',
          })
+
          updatePlatformCustomer({
             variables: {
                keycloakId: user.keycloakId,

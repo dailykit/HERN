@@ -10,6 +10,7 @@ import _isEmpty from 'lodash/isEmpty'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { useToasts } from 'react-toast-notifications'
 import axios from 'axios'
+import { useRouter } from 'next/router'
 
 import { GET_CART_PAYMENT_INFO, UPDATE_CART_PAYMENT } from '../graphql'
 import { useUser } from '../context'
@@ -23,6 +24,7 @@ import {
    get_env,
 } from '../utils'
 import { CartPaymentComponent, PaymentProcessingModal } from '../components'
+import { set } from 'lodash'
 
 const PaymentContext = createContext()
 const inititalState = {
@@ -68,11 +70,13 @@ const reducer = (state, action) => {
 }
 
 export const PaymentProvider = ({ children }) => {
+   const router = useRouter()
    const [state, dispatch] = useReducer(reducer, inititalState)
    const [isPaymentLoading, setIsPaymentLoading] = useState(true)
    const [cartId, setCartId] = useState(null)
    const [cartPayment, setCartPayment] = useState(null)
    const [isProcessingPayment, setIsProcessingPayment] = useState(false)
+   const [isPaymentInitiated, setIsPaymentInitiated] = useState(false)
    const { user, isAuthenticated, isLoading } = useUser()
    const { brand } = useConfig()
    const { displayRazorpay } = useRazorPay()
@@ -201,6 +205,7 @@ export const PaymentProvider = ({ children }) => {
    }
    const onPaymentModalClose = () => {
       setIsProcessingPayment(false)
+      setIsPaymentInitiated(false)
       updateCartPayment({
          variables: {
             id: cartPayment?.id,
@@ -228,6 +233,7 @@ export const PaymentProvider = ({ children }) => {
 
    const initializePayment = requiredCartId => {
       setCartId(requiredCartId)
+      setIsPaymentInitiated(true)
       dispatch({
          type: 'UPDATE_PAYMENT_STATE',
          payload: {
@@ -276,6 +282,12 @@ export const PaymentProvider = ({ children }) => {
    }, [user])
 
    useEffect(() => {
+      if (!_isEmpty(router.query) && _has(router.query, 'payment')) {
+         setIsPaymentInitiated(true)
+      }
+   }, [router.query])
+
+   useEffect(() => {
       console.log(
          'useEffect=>',
          !_isEmpty(cartPayment),
@@ -287,6 +299,7 @@ export const PaymentProvider = ({ children }) => {
          !isCartPaymentLoading
       )
       if (
+         isPaymentInitiated &&
          !_isEmpty(cartPayment) &&
          !_isEmpty(cartPayment?.transactionRemark) &&
          _has(
@@ -353,19 +366,24 @@ export const PaymentProvider = ({ children }) => {
             setPaymentInfo,
             setProfileInfo,
             setIsProcessingPayment,
+            setIsPaymentInitiated,
             updatePaymentState,
             initializePayment,
             isProcessingPayment,
          }}
       >
-         <PaymentProcessingModal
-            isOpen={isProcessingPayment}
-            cartId={cartPayment?.cartId}
-            status={cartPayment?.paymentStatus}
-            actionUrl={cartPayment?.actionUrl}
-            actionRequired={cartPayment?.actionRequired}
-            closeModal={onPaymentModalClose}
-         />
+         {isPaymentInitiated && (
+            <PaymentProcessingModal
+               isOpen={isProcessingPayment}
+               cartId={cartPayment?.cartId}
+               status={cartPayment?.paymentStatus}
+               actionUrl={cartPayment?.actionUrl}
+               actionRequired={cartPayment?.actionRequired}
+               closeModal={onPaymentModalClose}
+               cancelPayment={onCancelledHandler}
+            />
+         )}
+
          {children}
       </PaymentContext.Provider>
    )
@@ -378,6 +396,7 @@ export const usePayment = () => {
       setPaymentInfo,
       setProfileInfo,
       setIsProcessingPayment,
+      setIsPaymentInitiated,
       updatePaymentState,
       initializePayment,
       isProcessingPayment,
@@ -393,6 +412,7 @@ export const usePayment = () => {
       setPaymentInfo: setPaymentInfo,
       setProfileInfo: setProfileInfo,
       setIsProcessingPayment,
+      setIsPaymentInitiated,
       updatePaymentState,
       initializePayment,
       isProcessingPayment,
