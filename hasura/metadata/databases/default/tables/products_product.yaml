@@ -34,6 +34,15 @@ array_relationships:
       table:
         name: cartItem
         schema: order
+- name: collection_categories
+  using:
+    manual_configuration:
+      column_mapping:
+        id: productId
+      insertion_order: null
+      remote_table:
+        name: collection_productCategory_product
+        schema: onDemand
 - name: comboProductComponents
   using:
     manual_configuration:
@@ -63,6 +72,13 @@ array_relationships:
       column: productId
       table:
         name: productOption
+        schema: products
+- name: productPrice_brand_locations
+  using:
+    foreign_key_constraint_on:
+      column: productId
+      table:
+        name: productPrice_brand_location
         schema: products
 computed_fields:
 - comment: ""

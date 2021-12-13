@@ -688,6 +688,8 @@ update_permissions:
       updatedByApiKeyReference:
         canUpdateCarts:
           _eq: true
+    set:
+      updatedByApiKey: x-hasura-Api-Key
   role: apiKeyRole
 - permission:
     check: null
@@ -714,6 +716,12 @@ update_permissions:
       customerKeycloakId: x-hasura-Keycloak-Id
   role: consumer
 delete_permissions:
+- permission:
+    filter:
+      updatedByApiKeyReference:
+        canDeleteCarts:
+          _eq: true
+  role: apiKeyRole
 - permission:
     filter: {}
   role: consumer
