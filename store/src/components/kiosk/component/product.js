@@ -116,13 +116,21 @@ export const KioskProduct = props => {
                   {productData.assets.images.length === 0 ? (
                      <img src={config.productSettings.defaultImage.value} />
                   ) : (
-                     <Carousel style={{ height: '20em', width: '20em' }}>
+                     <Carousel>
                         {productData.assets.images.map((eachImage, index) => (
-                           <img
-                              src={eachImage}
-                              key={index}
-                              style={{ height: '100%', width: '100%' }}
-                           />
+                           <div
+                              className="product_image"
+                              style={{
+                                 height: '20em !important',
+                                 width: '20em !important',
+                              }}
+                           >
+                              <img
+                                 src={eachImage}
+                                 key={index}
+                                 style={{ height: '100%', width: '100%' }}
+                              />
+                           </div>
                         ))}
                      </Carousel>
                   )}
