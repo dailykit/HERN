@@ -35,9 +35,13 @@ const initiatePayment = async arg => {
          txnAmount,
          userInfo
       )
+      const PAYTM_MERCHANT_ID =
+         process.env.PAYTM_MERCHANT_ID || (await get_env('PAYTM_MERCHANT_ID'))
       const paymentDetail = paymentDetailBuilder.build()
       const response = await _Paytm.Payment.createTxnToken(paymentDetail)
       const { txnToken } = response.responseObject.body
+      let actionUrl = null
+      let actionRequired = false
       console.log('txnToken', txnToken, response.responseObject.body)
       if (_isEmtpy(response) && _isEmtpy(response.responseObject)) {
          return {
@@ -45,11 +49,20 @@ const initiatePayment = async arg => {
             message: 'Failed to create order'
          }
       }
+      if (
+         !_isEmtpy(response.responseObject.body.resultInfo) &&
+         response.responseObject.body.resultInfo.resultStatus === 'S'
+      ) {
+         actionUrl = `https://securegw-stage.paytm.in/theia/api/v1/showPaymentPage?mid=${PAYTM_MERCHANT_ID}&orderId=${orderId}&txnToken=${txnToken}`
+         actionRequired = true
+      }
       await paymentLogger({
          cartPaymentId,
          transactionRemark: response.responseObject,
+         actionUrl,
+         actionRequired,
          requestId: orderId,
-         paymentStatus: 'PENDING',
+         paymentStatus: 'PROCESSING',
          transactionId: txnToken
       })
       return {

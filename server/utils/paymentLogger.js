@@ -35,7 +35,8 @@ const STATUS = {
    requires_payment_method: 'REQUIRES_PAYMENT_METHOD',
    TXN_SUCCESS: 'SUCCEEDED',
    TXN_FAILURE: 'FAILED',
-   PENDING: 'PENDING'
+   PENDING: 'PENDING',
+   PROCESSING: 'PROCESSING'
 }
 // const handleInvoice = async args => {
 //    try {
@@ -175,7 +176,8 @@ export const paymentLogger = async args => {
          requestId = null,
          paymentStatus = 'PENDING',
          actionUrl = null,
-         actionRequired = false
+         actionRequired = false,
+         stripeInvoiceDetails = null
       } = args
       await client.request(UPDATE_CART_PAYMENT, {
          id: cartPaymentId,
@@ -185,7 +187,8 @@ export const paymentLogger = async args => {
             transactionId,
             stripeInvoiceId: requestId,
             actionUrl,
-            actionRequired
+            actionRequired,
+            stripeInvoiceDetails
          }
       })
       let datahub_history_objects = []

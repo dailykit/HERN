@@ -159,13 +159,13 @@ const serveSubscription = async (req, res, next) => {
             const filePath =
                routePath === ''
                   ? path.join(
-                     __dirname,
-                     `./store/.next/server/pages/${brand}.html`
-                  )
+                       __dirname,
+                       `./store/.next/server/pages/${brand}.html`
+                    )
                   : path.join(
-                     __dirname,
-                     `./store/.next/server/pages/${brand}/${routePath}.html`
-                  )
+                       __dirname,
+                       `./store/.next/server/pages/${brand}/${routePath}.html`
+                    )
 
             /*
                SSR: Server Side Rendering
