@@ -3,7 +3,7 @@ import tw, { styled } from 'twin.macro'
 
 import { getSettings, isClient } from '../../../utils'
 import { PRODUCT_OPTION_WITH_RECIPES, RECIPE_DETAILS } from '../../../graphql'
-import { Layout, SEO } from '../../../components'
+import { HelperBar, Layout, SEO } from '../../../components'
 import LockIcon from '../../../assets/icons/Lock'
 import ChefIcon from '../../../assets/icons/Chef'
 import TimeIcon from '../../../assets/icons/Time'
@@ -30,7 +30,7 @@ const Recipe = props => {
    if (!recipe)
       return (
          <Layout settings={settings}>
-            <SEO title="Not found" />
+            {/* <SEO title="Not found" /> */}
             <main className="hern-recipe">
                <HelperBar type="info">
                   <HelperBar.Title> No such recipe exists!</HelperBar.Title>
@@ -40,7 +40,7 @@ const Recipe = props => {
       )
    return (
       <Layout settings={settings}>
-         <SEO title={recipe.name} richresult={recipe.richResult} />
+         {/* <SEO title={recipe.name} richresult={recipe.richResult} /> */}
          <main className="hern-recipe">
             <h1 className="hern-recipe__title">{recipe.name}</h1>
             <div className="hern-recipe__img__wrapper">

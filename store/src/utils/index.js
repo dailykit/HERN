@@ -30,3 +30,7 @@ export * from './debounce'
 export * from './getProtectedRoutes'
 export * from './resolveCSSJSFiles'
 export * from './queryParamsProvider'
+export * from './renderTemplateFile'
+export * from './useQueryParamState'
+export * from './useQueryParams'
+
