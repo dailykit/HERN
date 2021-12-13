@@ -1308,6 +1308,7 @@ export const PRODUCTS = gql`
          type
          assets
          tags
+         VegNonVegType
          additionalText
          description
          price: priceByLocation(args: $priceArgs)

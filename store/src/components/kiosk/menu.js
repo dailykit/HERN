@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import _ from 'lodash'
-import { Col, Layout, Menu, Row, Badge, Steps, Carousel } from 'antd'
+import {
+   Col,
+   Layout,
+   Menu,
+   Row,
+   Badge,
+   Steps,
+   Carousel,
+   Space,
+   Radio,
+} from 'antd'
 import { useQueryParamState } from '../../utils'
 import { CartContext, useTranslation } from '../../context'
 import { KioskProduct } from './component'
@@ -133,6 +143,8 @@ export const MenuSection = props => {
       }
    )
 
+   console.log('hydratedMenu', hydratedMenu)
+
    if (status === 'loading') {
       return <div>Loading</div>
    }
@@ -262,7 +274,10 @@ const KioskMenu = props => {
                               }}
                            >
                               <img
-                                 src={config.productSettings.defaultImage.value}
+                                 src={
+                                    eachCategory?.imageUrl ||
+                                    config.productSettings.defaultImage.value
+                                 }
                                  alt="category image"
                                  style={{ width: '100px', height: '100px' }}
                                  className="hern-kiosk__menu-page-product-category-image"
@@ -328,17 +343,94 @@ const KioskMenu = props => {
                </Header>
                <Content class="hern-kiosk__menu-product-list">
                   {kioskMenus.map((eachCategory, index) => {
+                     // VegNonVegTYpe change into type
+                     const groupedByType = React.useMemo(() => {
+                        return _.chain(eachCategory.products)
+                           .groupBy('VegNonVegType')
+                           .map((value, key) => ({
+                              type: key,
+                              products: value,
+                           }))
+                           .value()
+                     }, [])
+                     const [currentGroupProducts, setCurrentGroupedProduct] =
+                        useState(groupedByType[0].products)
+                     const [currentGroup, setCurrentGroup] = useState(
+                        groupedByType[0].type
+                     )
+
+                     const onRadioClick = e => {
+                        setCurrentGroupedProduct(prev => {
+                           return groupedByType.find(
+                              x => x.type === e.target.value
+                           ).products
+                        })
+                        setCurrentGroup(e.target.value)
+                     }
                      return (
                         <>
                            <div id={eachCategory.name} ref={menuRef}></div>
-                           <p className="hern-kiosk__menu-category-name">
-                              {eachCategory.name}
-                           </p>
+                           {eachCategory?.imageUrl ? (
+                              <img
+                                 src={eachCategory?.imageUrl}
+                                 className="hern-kiosk__menu-category-banner-img"
+                              />
+                           ) : (
+                              <p className="hern-kiosk__menu-category-name">
+                                 {eachCategory.name}
+                              </p>
+                           )}
+                           {groupedByType.length > 1 && (
+                              <div className="hern-kiosk__menu-product-type">
+                                 <Space>
+                                    <Radio.Group
+                                       defaultValue="a"
+                                       style={{ marginTop: 16 }}
+                                       onChange={onRadioClick}
+                                    >
+                                       {groupedByType.map((eachType, index) => {
+                                          return (
+                                             <Radio.Button
+                                                value={eachType.type}
+                                                className="hern-kiosk__menu-product-type-radio-btn"
+                                                style={{
+                                                   backgroundColor:
+                                                      currentGroup ===
+                                                      eachType.type
+                                                         ? config.kioskSettings
+                                                              .theme
+                                                              .primaryColor
+                                                              .value
+                                                         : config.kioskSettings
+                                                              .theme
+                                                              .primaryColorLight
+                                                              .value,
+                                                   color:
+                                                      currentGroup ===
+                                                      eachType.type
+                                                         ? '#ffffff'
+                                                         : config.kioskSettings
+                                                              .theme
+                                                              .primaryColor
+                                                              .value,
+                                                   borderRadius: '0.5em',
+                                                }}
+                                             >
+                                                {eachType.type == 'null'
+                                                   ? t('Others')
+                                                   : eachType.type}
+                                             </Radio.Button>
+                                          )
+                                       })}
+                                    </Radio.Group>
+                                 </Space>
+                              </div>
+                           )}
                            <Row
                               gutter={[16, 16]}
                               style={{ marginBottom: '2em' }}
                            >
-                              {eachCategory.products.map(
+                              {currentGroupProducts.map(
                                  (eachProduct, index2) => {
                                     return (
                                        <Col

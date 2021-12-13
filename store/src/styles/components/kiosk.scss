@@ -220,7 +220,25 @@
    width: 12em;
    height: 12em;
 }
-
+.hern-kiosk__menu-category-banner-img {
+   min-height: 120px;
+   width: 100%;
+   max-height: 150px;
+   margin: 1em 0;
+}
+.hern-kiosk__menu-product-type {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   margin: 1em 0;
+}
+.hern-kiosk__menu-product-type-radio-btn {
+   font-size: 23px;
+   padding: 0.5em;
+   min-width: 7em;
+   text-align: center;
+   height: auto;
+}
 // menu part where products are being show
 .hern-kiosk__menu-header {
    height: 9em;
