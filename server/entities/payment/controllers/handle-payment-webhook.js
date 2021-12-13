@@ -27,8 +27,14 @@ export const handlePaymentWebhook = async (req, res) => {
          await paymentLogger(result.data)
       }
       if (result.success && result.company === 'paytm') {
+         const paymentStatus = {
+            TXN_SUCCESS: 'SUCCEEDED',
+            TXN_FAILURE: 'FAILED'
+         }
          return res.redirect(
-            `http://localhost:4000/checkout?id=${result.data.cartId}&payment=succeeded`
+            `http://localhost:4000/checkout?id=${result.data.cartId}&payment=${
+               paymentStatus[result.data.paymentStatus]
+            }`
          )
       }
       return res.status(result.code).json(result)

@@ -186,9 +186,9 @@ export const paymentLogger = async args => {
             transactionRemark,
             transactionId,
             stripeInvoiceId: requestId,
-            actionUrl,
-            actionRequired,
-            stripeInvoiceDetails
+            stripeInvoiceDetails,
+            ...(actionUrl && { actionUrl }),
+            ...(actionRequired && { actionRequired })
          }
       })
       let datahub_history_objects = []
