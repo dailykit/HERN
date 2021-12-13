@@ -130,6 +130,24 @@
 // menu section
 .hern-kiosk__menu-promotion-coupons {
    position: relative;
+   margin: 1em;
+   padding-top: 1em;
+   .ant-carousel .slick-slide img {
+      padding: 0 1em;
+   }
+}
+.hern-kiosk__menu-carousal-arrow {
+   position: absolute;
+   stroke: currentColor;
+   bottom: calc(50% - 21px);
+   z-index: 100000000000000;
+   border-radius: 50%;
+}
+.hern-kiosk__menu-carousal-left-arrow {
+   left: 0;
+}
+.hern-kiosk__menu-carousal-right-arrow {
+   right: 0;
 }
 .ant-steps-item-active {
    .ant-steps-item-icon {

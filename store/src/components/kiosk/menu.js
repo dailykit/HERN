@@ -17,7 +17,12 @@ import { KioskProduct } from './component'
 import { PRODUCTS_BY_CATEGORY, PRODUCTS } from '../../graphql'
 import { useConfig } from '../../lib'
 import { useQuery } from '@apollo/react-hooks'
-import { ArrowLeftIconBG, CartIcon } from '../../assets/icons'
+import {
+   ArrowLeftIcon,
+   ArrowLeftIconBG,
+   ArrowRightIcon,
+   CartIcon,
+} from '../../assets/icons'
 import { Divider } from '../../components'
 import { ProgressBar } from './component/progressBar'
 
@@ -26,6 +31,7 @@ const { Step } = Steps
 
 export const MenuSection = props => {
    const { brand, isConfigLoading } = useConfig()
+   const carousalRef = React.useRef()
 
    const { config, setCurrentPage } = props
    const [category, changeCategory, deleteCategory] =
@@ -144,6 +150,14 @@ export const MenuSection = props => {
    )
 
    console.log('hydratedMenu', hydratedMenu)
+   const lastCarousal = e => {
+      e.stopPropagation()
+      carousalRef.current.prev()
+   }
+   const nextCarousal = e => {
+      e.stopPropagation()
+      carousalRef.current.next()
+   }
 
    if (status === 'loading') {
       return <div>Loading</div>
@@ -153,7 +167,7 @@ export const MenuSection = props => {
    }
    return (
       <Layout>
-         <Content style={{ height: '40em' }}>
+         <Content style={{ height: '25em' }}>
             {/* Promotion, coupons and progress bar */}
             <Layout style={{ height: '100%' }}>
                <Header
@@ -168,18 +182,58 @@ export const MenuSection = props => {
                      setCurrentPage={setCurrentPage}
                   />
                </Header>
-               <Content className="hern-kiosk__menu-promotion-coupons">
-                  <img
-                     src={
-                        'https://storage.eu.content-cdn.io/cdn-cgi/image/height=400,quality=100/https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/userimages/Jalapeno%20Tortilla%201600.jpg'
-                     }
-                     style={{ height: '19em', width: '100%' }}
+               <Content
+                  className="hern-kiosk__menu-promotion-coupons"
+                  infinite={false}
+               >
+                  <ArrowLeftIcon
+                     className="hern-kiosk__menu-carousal-left-arrow hern-kiosk__menu-carousal-arrow"
+                     style={{
+                        backgroundColor: `${config.kioskSettings.theme.secondaryColor.value}99`,
+                     }}
+                     size={42}
+                     onClick={lastCarousal}
                   />
-
-                  <Carousel slidesToShow={2}>
+                  <ArrowRightIcon
+                     className="hern-kiosk__menu-carousal-right-arrow hern-kiosk__menu-carousal-arrow"
+                     style={{
+                        backgroundColor: `${config.kioskSettings.theme.secondaryColor.value}99`,
+                     }}
+                     size={42}
+                     onClick={nextCarousal}
+                  />
+                  <Carousel
+                     slidesToShow={2}
+                     slidesToScroll={2}
+                     ref={carousalRef}
+                  >
                      <img
                         src={
                            'https://storage.eu.content-cdn.io/cdn-cgi/image/height=250,quality=100/https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/userimages/superchknen_1.png'
+                        }
+                        alt="promotion-2"
+                        width={450}
+                        style={{ height: '13em', padding: '1em' }}
+                     />
+                     <img
+                        src={
+                           'https://storage.eu.content-cdn.io/cdn-cgi/image/height=250,quality=100/https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/userimages/Tortilla%20Family%20All%20600%20Ar%20alone_%20(3).jpg'
+                        }
+                        alt="promotion-2"
+                        width={450}
+                        style={{ height: '13em', padding: '1em' }}
+                     />
+                     <img
+                        src={
+                           'https://storage.eu.content-cdn.io/cdn-cgi/image/height=250,quality=100/https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/userimages/Tortilla%20Family%20All%20600%20Ar%20alone_%20(3).jpg'
+                        }
+                        alt="promotion-2"
+                        width={450}
+                        style={{ height: '13em', padding: '1em' }}
+                     />
+                     <img
+                        src={
+                           'https://storage.eu.content-cdn.io/cdn-cgi/image/height=250,quality=100/https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/userimages/Tortilla%20Family%20All%20600%20Ar%20alone_%20(3).jpg'
                         }
                         alt="promotion-2"
                         width={450}
@@ -228,7 +282,7 @@ const KioskMenu = props => {
    }
 
    return (
-      <Layout style={{ height: 'calc(100vh - 50em)' }}>
+      <Layout style={{ height: 'calc(100vh - 35em)' }}>
          <Sider
             width={250}
             theme={'light'}
