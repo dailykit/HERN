@@ -41,18 +41,7 @@
    padding-bottom: 0.4em;
    scroll-margin: 6em 0 0 0;
 }
-@media only screen and (min-width: 769px) {
-   .hern-on-demand-order-container {
-      background-color: rgb(251, 252, 246);
-      display: flex;
-      justify-content: center;
-   }
-   .hern-on-demand-page {
-      padding: 0;
-      width: 28em;
-      background-color: aliceblue;
-   }
-}
+
 .hern-on-demand-product-custom-area {
    display: flex;
    flex-direction: column;
@@ -71,5 +60,81 @@
       line-height: 12px;
       color: #40404099;
       margin: 2px 0;
+   }
+}
+@media only screen and (min-width: 769px) {
+   .hern-on-demand-order-container {
+      display: grid;
+      grid-template-columns: 1fr 2fr 1fr;
+      max-width: 1200px;
+      margin: 0 auto;
+   }
+   .hern-on-demand-page {
+      background: #f4f4f4;
+      box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+      border-radius: 4px;
+      margin-top: 2rem;
+   }
+   .hern-on-demand-menu__wrapper {
+      grid-area: 1;
+   }
+   .hern-on-demand-menu {
+      display: none;
+   }
+   .hern-on-demand-menu-list-container {
+      position: relative;
+      height: 100% !important;
+      background: unset;
+      justify-content: flex-end;
+      grid-area: 1;
+   }
+   .hern-on-demand-menu-list {
+      position: static;
+      font-family: Nunito;
+      font-style: italic;
+      font-weight: 600;
+      font-size: 5em;
+      line-height: 7em;
+      text-align: right;
+      box-shadow: unset;
+      width: auto;
+      > ul > li {
+         padding: 12px 0;
+      }
+      > ul > li > a {
+         color: #555b6e;
+         justify-content: flex-end;
+      }
+      > ul > li > a:hover {
+         text-decoration: none;
+      }
+   }
+   .hern-bottom-cart-bar {
+      display: none;
+   }
+   .hern-order__cartbar {
+      display: block;
+      padding: 8px;
+   }
+   .hern-on-demand-menu__li--active {
+      border-right: 4px solid #367bf5;
+      > a {
+         color: #367bf5 !important;
+         padding: 0 16px;
+      }
+   }
+
+   .hern-cart-content {
+      min-height: unset !important;
+      background: unset !important;
+      > header {
+         box-shadow: unset !important;
+      }
+   }
+   .hern-cart-empty-cart-start__md {
+      justify-content: flex-start !important;
+   }
+   .hern-cart-container {
+      background: none !important;
    }
 }
