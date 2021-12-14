@@ -20,43 +20,48 @@ import {
 import { useLazyQuery, useQuery } from '@apollo/react-hooks'
 import { PRODUCTS } from '../../graphql'
 import Link from 'next/link'
+import { useConfig } from '../../lib'
 
 const CartBar = () => {
    //context
-   const { cartState, methods, addToCart } = React.useContext(CartContext)
+   const { cartState, methods, addToCart, combinedCartItems } =
+      React.useContext(CartContext)
    const { onDemandMenu } = React.useContext(onDemandMenuContext)
-
+   const { brand } = useConfig()
    //context data
    const { cart } = cartState
-   const { isMenuLoading } = onDemandMenu
-
    //component state
-   const [status, setStatus] = useState('loading')
-   const [combinedCartData, setCombinedCartData] = useState(null)
+   // const [combinedCartData, setCombinedCartData] = useState(null)
    const [increaseProductId, setIncreaseProductId] = useState(null)
    const [increaseProduct, setIncreaseProduct] = useState(null)
    const [popUpType, setPopupType] = useState(null)
    const [cartDetailSelectedProduct, setCartDetailSelectedProduct] =
       useState(null)
-   const [tip, setTip] = useState(null)
 
-   useEffect(() => {
-      if (!isMenuLoading) {
-         if (cart) {
-            const combinedCartItems = combineCartItems(cart.products.nodes)
-            setCombinedCartData(combinedCartItems)
-         } else {
-            setCombinedCartData([])
-         }
-         setStatus('success')
-      }
-   }, [cart, isMenuLoading])
+   const argsForByLocation = React.useMemo(
+      () => ({
+         params: {
+            brandId: brand?.id,
+            locationId: 1000,
+         },
+      }),
+      [brand]
+   )
 
    //fetch product detail which to be increase or edit
    useQuery(PRODUCTS, {
       skip: !increaseProductId,
       variables: {
          ids: increaseProductId,
+         priceArgs: argsForByLocation,
+         discountArgs: argsForByLocation,
+         defaultCartItemArgs: argsForByLocation,
+         productOptionPriceArgs: argsForByLocation,
+         productOptionDiscountArgs: argsForByLocation,
+         productOptionCartItemArgs: argsForByLocation,
+         modifierCategoryOptionPriceArgs: argsForByLocation,
+         modifierCategoryOptionDiscountArgs: argsForByLocation,
+         modifierCategoryOptionCartItemArgs: argsForByLocation,
       },
       onCompleted: data => {
          if (data) {
@@ -139,20 +144,7 @@ const CartBar = () => {
       }
    }
 
-   if (status === 'loading') {
-      return (
-         <div className="hern-cart-container">
-            <div className="hern-cart-page__cartbar">
-               <div className="hern-cart-content">
-                  <header>Cart</header>
-                  <Loader />
-               </div>
-            </div>
-         </div>
-      )
-   }
-
-   if (combinedCartData.length === 0) {
+   if (combinedCartItems.length === 0) {
       return (
          <div className="hern-cart-container">
             <div
@@ -180,7 +172,7 @@ const CartBar = () => {
                   <section>
                      {/*products*/}
                      <div className="hern-cart-products-product-list">
-                        {combinedCartData.map((product, index) => {
+                        {combinedCartItems.map((product, index) => {
                            return (
                               <div key={index}>
                                  <ProductCard
