@@ -215,6 +215,7 @@ export const OnDemandCart = () => {
                                     productCartDetail:
                                        cartDetailSelectedProduct,
                                  }}
+                                 useForThirdParty={true}
                               />
                               {product.childs.length > 0 && (
                                  <ModifiersList data={product} />

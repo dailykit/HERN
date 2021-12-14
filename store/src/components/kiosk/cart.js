@@ -500,7 +500,9 @@ const CartCard = props => {
                className="hern-kiosk__cart-cards-price"
                style={{ color: '#5A5A5A' }}
             >
-               {formatCurrency(productData.price)}
+               {productData.price !== 0
+                  ? formatCurrency(productData.price)
+                  : null}
             </span>
          </div>
          {modifyProduct && showModifier && (

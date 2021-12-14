@@ -1,4 +1,3 @@
-// kiosk idle screen
 .hern-kiosk__idle-screen-container {
    height: 100vh;
    overflow: hidden;
@@ -130,6 +129,25 @@
 // menu section
 .hern-kiosk__menu-promotion-coupons {
    position: relative;
+   margin: 1em;
+   padding-top: 1em;
+   z-index: 0;
+   .ant-carousel .slick-slide img {
+      padding: 0 1em;
+   }
+}
+.hern-kiosk__menu-carousal-arrow {
+   position: absolute;
+   stroke: currentColor;
+   bottom: calc(50% - 21px);
+   z-index: 100000000000000;
+   border-radius: 50%;
+}
+.hern-kiosk__menu-carousal-left-arrow {
+   left: 0;
+}
+.hern-kiosk__menu-carousal-right-arrow {
+   right: 0;
 }
 .ant-steps-item-active {
    .ant-steps-item-icon {
@@ -220,7 +238,25 @@
    width: 12em;
    height: 12em;
 }
-
+.hern-kiosk__menu-category-banner-img {
+   min-height: 120px;
+   width: 100%;
+   max-height: 150px;
+   margin: 1em 0;
+}
+.hern-kiosk__menu-product-type {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   margin: 1em 0;
+}
+.hern-kiosk__menu-product-type-radio-btn {
+   font-size: 23px;
+   padding: 0.5em;
+   min-width: 7em;
+   text-align: center;
+   height: auto;
+}
 // menu part where products are being show
 .hern-kiosk__menu-header {
    height: 9em;
@@ -336,23 +372,44 @@
    margin: 5em 0 0 0;
    border-radius: 2.5em;
    position: relative;
+   overflow-y: auto;
 }
 .hern-kiosk__menu-product-modifier-header {
    display: flex;
    flex-direction: column;
    align-items: center;
    justify-content: center;
-   margin: 2em;
+}
+.hern-kiosk__menu-product-modifier-header .ant-carousel {
+   height: 48.5em;
 }
 .hern-kiosk__menu-product-modifier-customize-text {
-   font-size: 3em;
-   font-weight: 700;
+   position: absolute;
+   width: 246px;
+   height: 32px;
+   left: 30px;
+   top: 35px;
+   font-family: Nunito;
+   font-style: normal;
+   font-weight: bold;
+   font-size: 30px;
+   line-height: 32px;
+   text-transform: uppercase;
+   color: #FFFFFF;
+   z-index: 1;
+}
+.hern-kiosk__menu-product-modifier-header-image{
+   height: 48.5em;
 }
 .hern-kiosk__menu-product-modifier-brief {
-   margin: 0 2em 1em 2em;
    display: flex;
    justify-content: space-between;
    align-items: center;
+   height: 5em;
+   position: sticky;
+   top: 0;
+   padding: 2em;
+   z-index: 2;
 }
 .hern-kiosk__menu-product-modifier-p-name {
    font-size: 2em;
@@ -363,32 +420,49 @@
    font-weight: 700;
 }
 .hern-kiosk__product-modifier-p-additional-text {
-   margin: 2em;
+   margin: 1em 2em;
+   font-size: 1.9em;
+   font-weight: 500;
    > span {
    }
 }
 .hern-kiosk__modifier-popup-product-options {
    display: flex;
    justify-content: center;
+   align-items: center;
+   position: sticky;
+   top: 5em;
+   height: 5em;
+   z-index: 2;
 }
 .hern-kiosk__modifier-product-option {
    margin: 0 0.5em;
-   font-weight: 700;
    border-radius: 0.4em;
+}
+.hern-kiosk__modifier-popup-product-options .ant-radio-button-wrapper {
+   font-size: 1.5rem;;
 }
 
 .hern-kiosk__modifier-popup-modifiers-list {
    margin: 2em;
-   height: 60em;
+   height: 42em;
    overflow-y: auto;
 }
 .hern-kiosk__modifier-popup-modifier-category {
+   padding: 1.3em;
+   border-radius: 0.625em;
+   margin: 0.625em 1.06em;
 }
 
 .hern-kiosk__modifier-category-label {
    display: flex;
    align-items: center;
    margin-bottom: 1em;
+   font-family: Nunito;
+   font-style: normal;
+   font-weight: bold;
+   font-size: 1.7em;
+   line-height: 1.625em;
    .hern-kiosk__modifier-category-mark {
    }
    .hern-kiosk__modifier-category-label-text {
@@ -413,24 +487,31 @@
    }
 }
 .hern-kiosk__modifier-category-option-image {
-   width: 92px;
-   height: 92px;
+   width: 6.5em;
+   height: 6.5em;
 }
 .hern-kiosk__modifier--option-name {
    margin-left: 1em;
+   font-weight: bold;
 }
 .hern-kiosk__modifier-popup-footer {
    display: flex;
-   margin: 2em;
    justify-content: space-between;
    align-items: center;
+   position: sticky;
+   left: 0;
+   right: 0;
+   bottom: 1px;
+   width: 79vw;
+   padding: 20px;
+   height: 5.8vh;
+   border-radius: 0em 0em 2.5em 2.5em;
 }
 .hern-kiosk__modifier-add-to-cart {
    padding: 1em;
    font-weight: 700;
    font-size: 1.5em;
    border-radius: 0.5em;
-   // margin: 0 2em;
    justify-content: space-between;
    align-items: center;
    width: 20em;
@@ -682,3 +763,4 @@
    font-weight: 600;
    letter-spacing: 0.08em;
 }
+

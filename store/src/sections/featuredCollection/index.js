@@ -382,7 +382,8 @@ export const FeaturedCollection = props => {
                      data.productOptions.length > 0 &&
                      (config?.informationVisibility?.modifier?.showModifier
                         ?.value ??
-                        true)
+                        true) &&
+                     data.isPopupAllowed
                   ) {
                      setProductIdForModifier(data.id)
                   } else {
