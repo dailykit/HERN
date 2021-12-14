@@ -15,19 +15,41 @@ import { PRODUCTS } from '../../graphql'
 import classNames from 'classnames'
 import * as Scroll from 'react-scroll'
 import CartBar from './CartBar'
+import { useConfig } from '../../lib'
 
 export const OnDemandOrder = () => {
+   const { brand } = useConfig()
+
    const [hydratedMenu, setHydratedMenu] = React.useState([])
    const [status, setStatus] = useState('loading')
    const { onDemandMenu } = React.useContext(onDemandMenuContext)
    const { cartState, addToCart } = React.useContext(CartContext)
    const { isMenuLoading, allProductIds, categories } = onDemandMenu
+
+   const argsForByLocation = React.useMemo(
+      () => ({
+         params: {
+            brandId: brand?.id,
+            locationId: 1000,
+         },
+      }),
+      [brand]
+   )
    const { loading: productsLoading, error: productsError } = useQuery(
       PRODUCTS,
       {
          skip: isMenuLoading,
          variables: {
             ids: allProductIds,
+            priceArgs: argsForByLocation,
+            discountArgs: argsForByLocation,
+            defaultCartItemArgs: argsForByLocation,
+            productOptionPriceArgs: argsForByLocation,
+            productOptionDiscountArgs: argsForByLocation,
+            productOptionCartItemArgs: argsForByLocation,
+            modifierCategoryOptionPriceArgs: argsForByLocation,
+            modifierCategoryOptionDiscountArgs: argsForByLocation,
+            modifierCategoryOptionCartItemArgs: argsForByLocation,
          },
          fetchPolicy: 'network-only',
          onCompleted: data => {

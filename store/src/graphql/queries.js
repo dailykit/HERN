@@ -1290,7 +1290,18 @@ export const PRODUCTS_BY_CATEGORY = gql`
    }
 `
 export const PRODUCTS = gql`
-   query Products($ids: [Int!]!) {
+   query Products(
+      $ids: [Int!]!
+      $priceArgs: priceByLocation_products_product_args!
+      $discountArgs: discountByLocation_products_product_args!
+      $defaultCartItemArgs: defaultCartItemByLocation_products_product_args!
+      $productOptionCartItemArgs: cartItemByLocation_products_productOption_args!
+      $productOptionDiscountArgs: discountByLocation_products_productOption_args!
+      $productOptionPriceArgs: priceByLocation_products_productOption_args!
+      $modifierCategoryOptionCartItemArgs: cartItemByLocation_onDemand_modifierCategoryOption_args!
+      $modifierCategoryOptionDiscountArgs: discountByLocation_onDemand_modifierCategoryOption_args!
+      $modifierCategoryOptionPriceArgs: priceByLocation_onDemand_modifierCategoryOption_args!
+   ) {
       products(where: { isArchived: { _eq: false }, id: { _in: $ids } }) {
          id
          name
@@ -1299,12 +1310,12 @@ export const PRODUCTS = gql`
          tags
          additionalText
          description
-         price
-         discount
+         price: priceByLocation(args: $priceArgs)
+         discount: discountByLocation(args: $discountArgs)
          isPopupAllowed
          isPublished
          defaultProductOptionId
-         defaultCartItem
+         defaultCartItem: defaultCartItemByLocation(args: $defaultCartItemArgs)
          productOptions(
             where: { isArchived: { _eq: false } }
             order_by: { position: desc_nulls_last }
@@ -1313,9 +1324,9 @@ export const PRODUCTS = gql`
             position
             type
             label
-            price
-            discount
-            cartItem
+            price: priceByLocation(args: $productOptionPriceArgs)
+            discount: discountByLocation(args: $productOptionDiscountArgs)
+            cartItem: cartItemByLocation(args: $productOptionCartItemArgs)
             modifier {
                id
                name
@@ -1328,15 +1339,21 @@ export const PRODUCTS = gql`
                   options(where: { isVisible: { _eq: true } }) {
                      id
                      name
-                     price
-                     discount
+                     price: priceByLocation(
+                        args: $modifierCategoryOptionPriceArgs
+                     )
+                     discount: discountByLocation(
+                        args: $modifierCategoryOptionDiscountArgs
+                     )
                      quantity
                      image
                      isActive
 
                      sachetItemId
                      ingredientSachetId
-                     cartItem
+                     cartItem: cartItemByLocation(
+                        args: $modifierCategoryOptionCartItemArgs
+                     )
                   }
                }
             }
@@ -1365,45 +1382,48 @@ export const GET_CART = gql`
          customerKeycloakId
          billing: billingDetails
          subscriptionOccurenceId
+         toUseAvailablePaymentOptionId
          subscriptionOccurence {
             id
             fulfillmentDate
          }
          address
          fulfillmentInfo
-         products: cartItems_aggregate(where: { level: { _eq: 1 } }) {
+
+         cartItems_aggregate(where: { level: { _eq: 1 } }) {
             aggregate {
                count
             }
-            nodes {
+         }
+         paymentMethods: availablePaymentOptionToCart(
+            where: { isActive: { _eq: true } }
+            order_by: { position: desc_nulls_last }
+         ) {
+            id
+            isActive
+            isDown
+            isRecommended
+            isValid
+            label
+            position
+            publicCreds
+            privateCreds
+            showCompanyName
+            supportedPaymentOption {
                id
-               addOnLabel
-               addOnPrice
-               price: unitPrice
-               name: displayName
-               image: displayImage
-               childs {
-                  price: unitPrice
-                  name: displayName
-                  productOption {
-                     id
-                     label
-                  }
-                  childs {
-                     displayName
-                     price: unitPrice
-                     modifierOption {
-                        id
-                        name
-                     }
-                  }
+               country
+               supportedPaymentCompanyId
+               paymentOptionLabel
+               supportedPaymentCompany {
+                  id
+                  label
                }
-               productId
             }
          }
       }
    }
 `
+
 export const GET_CARTS = gql`
    subscription GET_CARTS($where: order_cart_bool_exp!) {
       carts(where: $where) {
@@ -1466,6 +1486,7 @@ export const BRAND_ONDEMAND_DELIVERY_RECURRENCES = gql`
 export const ORDER_TAB = gql`
    query ORDER_TAB($where: brands_orderTab_bool_exp!) {
       brands_orderTab(where: $where) {
+         id
          orderFulfillmentTypeLabel
          label
          orderType
@@ -1679,6 +1700,40 @@ export const GET_JS_CSS_FILES = gql`
             fileType
             id
             path
+         }
+      }
+   }
+`
+
+export const GET_CART_ITEMS_BY_CART = gql`
+   subscription cart($id: Int!) {
+      cart(id: $id) {
+         id
+         cartItems(where: { level: { _eq: 1 } }) {
+            cartItemId: id
+            addOnLabel
+            addOnPrice
+            created_at
+            price: unitPrice
+            name: displayName
+            image: displayImage
+            childs {
+               price: unitPrice
+               name: displayName
+               productOption {
+                  id
+                  label
+               }
+               childs {
+                  displayName
+                  price: unitPrice
+                  modifierOption {
+                     id
+                     name
+                  }
+               }
+            }
+            productId
          }
       }
    }
