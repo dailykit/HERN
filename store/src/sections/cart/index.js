@@ -18,7 +18,8 @@ import { useConfig } from '../../lib'
 
 export const OnDemandCart = () => {
    //context
-   const { cartState, methods, addToCart } = React.useContext(CartContext)
+   const { cartState, methods, addToCart, combinedCartItems } =
+      React.useContext(CartContext)
    const { onDemandMenu } = React.useContext(onDemandMenuContext)
    const { brand, isConfigLoading } = useConfig()
 
@@ -27,8 +28,8 @@ export const OnDemandCart = () => {
    const { isMenuLoading } = onDemandMenu
 
    //component state
-   const [status, setStatus] = useState('loading')
-   const [combinedCartData, setCombinedCartData] = useState(null)
+   // const [status, setStatus] = useState('loading')
+   // const [combinedCartData, setCombinedCartData] = useState(null)
    const [increaseProductId, setIncreaseProductId] = useState(null)
    const [increaseProduct, setIncreaseProduct] = useState(null)
    const [popUpType, setPopupType] = useState(null)
@@ -36,18 +37,18 @@ export const OnDemandCart = () => {
       useState(null)
    const [tip, setTip] = useState(null)
 
-   useEffect(() => {
-      if (!isMenuLoading) {
-         if (cart) {
-            const combinedCartItems = combineCartItems(cart.products)
-            console.log('thisISCOmbinedCart', combinedCartItems)
-            setCombinedCartData(combinedCartItems)
-         } else {
-            setCombinedCartData([])
-         }
-         setStatus('success')
-      }
-   }, [cart, isMenuLoading])
+   // useEffect(() => {
+   //    if (!isMenuLoading) {
+   //       if (cart) {
+   //          const combinedCartItems = combineCartItems(cart.products)
+   //          console.log('thisISCOmbinedCart', combinedCartItems)
+   //          setCombinedCartData(combinedCartItems)
+   //       } else {
+   //          setCombinedCartData([])
+   //       }
+   //       setStatus('success')
+   //    }
+   // }, [cart, isMenuLoading])
 
    const argsForByLocation = React.useMemo(
       () => ({
@@ -156,7 +157,7 @@ export const OnDemandCart = () => {
       }
    }
 
-   if (status === 'loading') {
+   if (isMenuLoading || combinedCartItems === null) {
       return (
          <div className="hern-cart-container">
             <div className="hern-cart-page">
@@ -169,7 +170,7 @@ export const OnDemandCart = () => {
       )
    }
 
-   if (combinedCartData.length === 0) {
+   if (combinedCartItems.length === 0) {
       return (
          <div className="hern-cart-container">
             <div className="hern-cart-page" style={{ overflowY: 'hidden' }}>
@@ -207,7 +208,7 @@ export const OnDemandCart = () => {
                   </div>
                   {/*products*/}
                   <div className="hern-cart-products-product-list">
-                     {combinedCartData.map((product, index) => {
+                     {combinedCartItems.map((product, index) => {
                         return (
                            <div key={index}>
                               <ProductCard
