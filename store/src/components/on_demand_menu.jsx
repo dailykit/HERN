@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react'
 import { MenuIcon } from '../assets/icons'
 import { onDemandMenuContext } from '../context'
 import { useOnClickOutside } from '../utils/useOnClickOutisde'
+import * as Scroll from 'react-scroll'
+
 export const OnDemandMenu = props => {
    // props
    // menuTYpe --> floating or navigation anchor
@@ -55,11 +57,11 @@ export const OnDemandMenu = props => {
                      >
                         <a href={`#hern-product-category-${each.name}`}>
                            <span>{each.name}</span>
-                           <span>
+                           {/* <span>
                               {' ('}
                               {each.products.length}
                               {')'}
-                           </span>
+                           </span> */}
                         </a>
                      </li>
                   </React.Fragment>
@@ -84,27 +86,32 @@ export const OnDemandMenu = props => {
                style={{ height: `${showMenuItems}` }}
             >
                <div ref={ref} className="hern-on-demand-menu-list">
+                  <h3 className="hern-on-demand-menu__heading">
+                     Our categories
+                  </h3>
                   <ul>
                      {categories.map((each, index) => (
-                        <li
-                           onClick={e => {
-                              setShowMenuItems('0')
-                              e.preventDefault()
-                              document
-                                 .getElementById(
-                                    `hern-product-category-${each.name}`
-                                 )
-                                 .scrollIntoView({
-                                    behavior: 'smooth',
-                                    block: 'start',
-                                 })
-                           }}
-                           key={'menu-list' + index}
-                        >
-                           <a href={`#hern-product-category-${each.name}`}>
-                              <span>{each.name}</span>
-                              <span>{each.products.length}</span>
-                           </a>
+                        <li key={each.name + index}>
+                           <Scroll.Link
+                              containerId="hern-on-demand-order-container"
+                              smooth={true}
+                              activeClass="hern-on-demand-menu__li--active "
+                              to={each.name}
+                              spy={true}
+                           >
+                              <div onClick={() => setShowMenuItems('0%')}>
+                                 <span>
+                                    {each.name}{' '}
+                                    <span
+                                       style={{
+                                          display: 'inline-block',
+                                          padding: '0.5rem',
+                                       }}
+                                    ></span>
+                                 </span>
+                                 {/* <span>{each.products.length}</span> */}
+                              </div>
+                           </Scroll.Link>
                         </li>
                      ))}
                   </ul>
