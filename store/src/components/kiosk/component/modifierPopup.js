@@ -798,14 +798,16 @@ export const KioskModifier = props => {
                >
                   {productData.name}
                </span>
-               <span
-                  className="hern-kiosk__menu-product-modifier-p-price"
-                  style={{
-                     color: `${config.kioskSettings.theme.modifierTextColor.value}`,
-                  }}
-               >
-                  {formatCurrency(productData.price - productData.discount)}
-               </span>
+               {productData.price > 0 && (
+                  <span
+                     className="hern-kiosk__menu-product-modifier-p-price"
+                     style={{
+                        color: `${config.kioskSettings.theme.modifierTextColor.value}`,
+                     }}
+                  >
+                     {formatCurrency(productData.price - productData.discount)}
+                  </span>
+               )}
             </div>
             <div
                className="hern-kiosk__modifier-popup-product-options"

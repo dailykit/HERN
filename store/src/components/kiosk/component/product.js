@@ -153,7 +153,13 @@ export const KioskProduct = props => {
                   </div>
                   <span className="hern-kiosk__menu-product-price">
                      {/* <sup></sup> */}
-                     {formatCurrency(productData.price)}
+                     {formatCurrency(
+                        productData.price -
+                           productData.discount +
+                           (productData?.productOptions[0]?.price ||
+                              0 - productData?.productOptions[0]?.discount ||
+                              0)
+                     )}
                   </span>
                   {availableQuantityInCart === 0 ? (
                      <KioskButton

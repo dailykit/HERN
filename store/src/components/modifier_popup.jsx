@@ -359,6 +359,7 @@ export const ModifierPopup = props => {
                      showCustomText={false}
                      customAreaComponent={CustomArea}
                      showModifier={false}
+                     useForThirdParty={true}
                   />
                </div>
                <div className="hern-product-modifier-pop-up-product-option-list">
@@ -385,7 +386,9 @@ export const ModifierPopup = props => {
                                  {eachOption.label}
 
                                  {' (+ '}
-                                 {formatCurrency(eachOption.price)}
+                                 {formatCurrency(
+                                    eachOption.price - eachOption.discount
+                                 )}
                                  {')'}
                               </li>
                               <div>
