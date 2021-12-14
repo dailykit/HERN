@@ -352,6 +352,12 @@ export const ModifierPopup = props => {
             })}
          >
             <div className="hern-product-modifier-pop-up-product">
+               <div
+                  className="hern-product-modifier-pop-up-close-icon"
+                  onClick={closeModifier}
+               >
+                  <CloseIcon size={20} stroke="currentColor" />
+               </div>
                <div className="hern-product-modifier-pop-up-product-details">
                   <ProductCard
                      data={productData}
@@ -532,19 +538,27 @@ export const ModifierPopup = props => {
                      })}
                   </div>
                )}
+               <div style={{ padding: '0 32px' }}>
+                  <Button
+                     className="hern-product-modifier-pop-up-add-to-cart-btn"
+                     onClick={handleAddOnCartOn}
+                  >
+                     ADD TO CART {totalAmount()}
+                  </Button>
+               </div>
             </div>
-            <div
+            {/* <div
                className="hern-product-modifier-pop-up-close-icon"
                onClick={closeModifier}
             >
                <CloseIcon size={20} stroke="currentColor" />
-            </div>
-            <Button
+            </div> */}
+            {/* <Button
                className="hern-product-modifier-pop-up-add-to-cart-btn"
                onClick={handleAddOnCartOn}
             >
                ADD TO CART {totalAmount()}
-            </Button>
+            </Button> */}
             {modifierImage.showImage && (
                <div className="hern-product-modifier-image-pop-up">
                   <div
