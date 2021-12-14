@@ -28,27 +28,12 @@ export const OnDemandCart = () => {
    const { isMenuLoading } = onDemandMenu
 
    //component state
-   // const [status, setStatus] = useState('loading')
-   // const [combinedCartData, setCombinedCartData] = useState(null)
    const [increaseProductId, setIncreaseProductId] = useState(null)
    const [increaseProduct, setIncreaseProduct] = useState(null)
    const [popUpType, setPopupType] = useState(null)
    const [cartDetailSelectedProduct, setCartDetailSelectedProduct] =
       useState(null)
    const [tip, setTip] = useState(null)
-
-   // useEffect(() => {
-   //    if (!isMenuLoading) {
-   //       if (cart) {
-   //          const combinedCartItems = combineCartItems(cart.products)
-   //          console.log('thisISCOmbinedCart', combinedCartItems)
-   //          setCombinedCartData(combinedCartItems)
-   //       } else {
-   //          setCombinedCartData([])
-   //       }
-   //       setStatus('success')
-   //    }
-   // }, [cart, isMenuLoading])
 
    const argsForByLocation = React.useMemo(
       () => ({
