@@ -1749,3 +1749,37 @@ export const GET_CART_PAYMENT_INFO = gql`
       }
    }
 `
+
+export const GET_PAYMENT_OPTIONS = gql`
+   subscription cart($id: Int!) {
+      cart(id: $id) {
+         id
+         availablePaymentOptionToCart(
+            where: { isActive: { _eq: true } }
+            order_by: { position: desc_nulls_last }
+         ) {
+            id
+            isActive
+            isDown
+            isRecommended
+            isValid
+            label
+            description
+            position
+            publicCreds
+            privateCreds
+            showCompanyName
+            supportedPaymentOption {
+               id
+               country
+               supportedPaymentCompanyId
+               paymentOptionLabel
+               supportedPaymentCompany {
+                  id
+                  label
+               }
+            }
+         }
+      }
+   }
+`

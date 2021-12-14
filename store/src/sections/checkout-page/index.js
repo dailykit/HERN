@@ -9,7 +9,12 @@ import { useConfig, usePayment } from '../../lib'
 import * as Icon from '../../assets/icons'
 import OrderInfo from '../../sections/OrderInfo'
 import { isClient, formatCurrency, getRoute } from '../../utils'
-import { Loader, Button, HelperBar } from '../../components'
+import {
+   Loader,
+   Button,
+   HelperBar,
+   PaymentOptionsRenderer,
+} from '../../components'
 import {
    // usePayment,
    ProfileSection,
@@ -363,27 +368,12 @@ const PaymentContent = () => {
                <SectionTitle theme={theme}>Profile Details</SectionTitle>
             </header>
             <ProfileSection />
-            <SectionTitle theme={theme}>Select Payment Method</SectionTitle>
-            <Radio.Group onChange={onPaymentMethodChange}>
-               <>
-                  <Space direction="vertical">
-                     {!isEmpty(cart) &&
-                        cart.availablePaymentOptionToCart.map(option => (
-                           <Radio value={option?.id} key={option?.id}>
-                              <div tw="flex items-center">
-                                 <Space size="middle">
-                                    {showPaymentIcon(option?.label)}
-
-                                    {option?.label ||
-                                       option?.supportedPaymentOption
-                                          ?.paymentOptionLabel}
-                                 </Space>
-                              </div>
-                           </Radio>
-                        ))}
-                  </Space>
-               </>
-            </Radio.Group>
+            {/* <SectionTitle theme={theme}>Select Payment Method</SectionTitle> */}
+            <PaymentOptionsRenderer
+               cartId={
+                  isClient ? new URLSearchParams(location.search).get('id') : ''
+               }
+            />
             {paymentInfo?.selectedAvailablePaymentOption?.supportedPaymentOption
                ?.supportedPaymentCompany.label === 'stripe' && (
                <PaymentSection cart={cart} />

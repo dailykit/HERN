@@ -1,5 +1,6 @@
 import PaymentProcessingModal from './paymentProcessingModal'
 import FloatingBar from './floatingBar'
+import PaymentOptionsRenderer from './paymentOptionsRenderer'
 
 export * from './seo'
 export * from './form'
@@ -35,4 +36,4 @@ export * from './language_switch'
 export * from './loginWarning'
 export * from './cartPayment'
 
-export { PaymentProcessingModal, FloatingBar }
+export { PaymentProcessingModal, FloatingBar, PaymentOptionsRenderer }
