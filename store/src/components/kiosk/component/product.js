@@ -158,7 +158,15 @@ export const KioskProduct = props => {
                   {availableQuantityInCart === 0 ? (
                      <KioskButton
                         onClick={() => {
-                           setShowModifier(true)
+                           // setShowModifier(true)
+                           if (
+                              productData.productOptions.length > 0 &&
+                              productData.isPopupAllowed
+                           ) {
+                              setShowModifier(true)
+                           } else {
+                              addToCart(productData.defaultCartItem, 1)
+                           }
                         }}
                      >
                         {t('Add To Cart')}
