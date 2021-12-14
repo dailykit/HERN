@@ -417,37 +417,38 @@ export const KioskModifier = props => {
             >
                <CloseIcon size={30} stroke={'#fffffF'} />
             </div>
-            <div className="hern-kiosk__menu-product-modifier-header">
-               <span
+            <div style={{backgroundColor: `${config.kioskSettings.theme.primaryColorLight.value}99`}} className="hern-kiosk__menu-product-modifier-header">
+               {/* <div
                   className="hern-kiosk__menu-product-modifier-customize-text"
                   style={{
-                     color: `${config.kioskSettings.theme.modifierTextColor.value}`,
+                     BackgroundColor: `${config.kioskSettings.theme.primaryColorLight.value}99`,
                   }}
                >
                   {t('Customize')}
-               </span>
+               </div> */}
                {productData.assets.images.length === 0 ? (
-                  <img src={config.productSettings.defaultImage.value} />
+                  <img src={config.productSettings.defaultImage.value} style={{height: '680px'}} />
                ) : (
                   <Carousel style={{ height: '20em', width: '20em' }}>
                      {productData.assets.images.map((eachImage, index) => (
                         <img
                            src={eachImage}
                            key={index}
-                           style={{ height: '100%', width: '100%' }}
+                           style={{ height: '680px', width: '100%' }}
+                           className='hern-kiosk__menu-product-modifier-header-image'
                         />
                      ))}
                   </Carousel>
                )}
-               <KioskCounterButton
+               {/* <KioskCounterButton
                   config={config}
                   quantity={quantity}
                   onPlusClick={onPlusClick}
                   onMinusClick={onMinusClick}
                   style={{ margin: '2em 0 0 0' }}
-               />
+               /> */}
             </div>
-            <div className="hern-kiosk__menu-product-modifier-brief">
+            <div className="hern-kiosk__menu-product-modifier-brief" style={{backgroundColor: `${config.kioskSettings.theme.primaryColor.value}`}}>
                <span
                   className="hern-kiosk__menu-product-modifier-p-name"
                   style={{
@@ -465,7 +466,7 @@ export const KioskModifier = props => {
                   {formatCurrency(productData.price - productData.discount)}
                </span>
             </div>
-            <div className="hern-kiosk__modifier-popup-product-options">
+            <div className="hern-kiosk__modifier-popup-product-options" style={{backgroundColor: `${config.kioskSettings.theme.primaryColor.value}`}}>
                <Radio.Group
                   defaultValue={productData.productOptions[0].id}
                   buttonStyle="solid"
@@ -506,15 +507,16 @@ export const KioskModifier = props => {
                      color: `${config.kioskSettings.theme.modifierTextColor.value}`,
                   }}
                >
-                  {productData.additionalText}
+                  {productData.additionalText||`No additional text available`}
+
                </span>
             </div>
-            <div className="hern-kiosk__modifier-popup-modifiers-list">
+            {/* <div className="hern-kiosk__modifier-popup-modifiers-list"> */}
                {selectedProductOption.modifier &&
                   selectedProductOption.modifier.categories.map(
                      (eachModifierCategory, index) => {
                         return (
-                           <div className="hern-kiosk__modifier-popup-modifier-category">
+                           <div className="hern-kiosk__modifier-popup-modifier-category" style={{backgroundColor: `${config.kioskSettings.theme.primaryColorDark.value}`}}>
                               <label className="hern-kiosk__modifier-category-label">
                                  <Badge
                                     count={index + 1}
@@ -621,7 +623,7 @@ export const KioskModifier = props => {
                                                 <NoTickRoundCheckBoxIcon
                                                    fill={
                                                       config.kioskSettings.theme
-                                                         .primaryColorDark.value
+                                                         .primaryColor.value
                                                    }
                                                    size={50}
                                                    onClick={() => {
@@ -655,8 +657,8 @@ export const KioskModifier = props => {
                         )
                      }
                   )}
-            </div>
-            <div className="hern-kiosk__modifier-popup-footer">
+            {/* </div> */}
+            <div className="hern-kiosk__modifier-popup-footer" style={{backgroundColor: `${config.kioskSettings.theme.primaryColor.value}`}}>
                <div>
                   <span
                      className="hern-kiosk__modifier-total-label"
