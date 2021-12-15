@@ -31,7 +31,7 @@ const { Content, Sider, Header, Footer } = Layout
 const { Step } = Steps
 
 export const MenuSection = props => {
-   const { brand, isConfigLoading } = useConfig()
+   const { brand, isConfigLoading, kioskDetails } = useConfig()
    const carousalRef = React.useRef()
 
    const { config, setCurrentPage } = props
@@ -51,7 +51,7 @@ export const MenuSection = props => {
       () => ({
          params: {
             brandId: brand?.id,
-            locationId: 1000,
+            locationId: kioskDetails?.locationId,
          },
       }),
       [brand]
@@ -75,7 +75,7 @@ export const MenuSection = props => {
                   each => each.id
                ),
             }),
-            locationId: 1000,
+            locationId: kioskDetails?.locationId,
          },
       },
       onCompleted: data => {

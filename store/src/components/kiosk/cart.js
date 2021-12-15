@@ -217,7 +217,7 @@ export const KioskCart = props => {
 
 const CartCard = props => {
    const { config, productData, removeCartItems } = props
-   const { brand, isConfigLoading } = useConfig()
+   const { brand, kioskDetails } = useConfig()
    const { addToCart } = React.useContext(CartContext)
 
    const [modifyProductId, setModifyProductId] = useState(null)
@@ -235,7 +235,7 @@ const CartCard = props => {
       () => ({
          params: {
             brandId: brand?.id,
-            locationId: 1000,
+            locationId: kioskDetails?.locationId,
          },
       }),
       [brand]
