@@ -179,8 +179,8 @@ export const CartProvider = ({ children }) => {
                },
                locationKioskId: kioskId,
                usedOrderInterface: oiType,
-               orderTabId: selectedOrderTab.id,
-               locationId: locationId,
+               orderTabId: selectedOrderTab?.id || null,
+               locationId: locationId || null,
             }
             console.log('object new cart', object)
             createCart({
@@ -210,6 +210,9 @@ export const CartProvider = ({ children }) => {
                isTest: user.isTest,
                // to be moved to headers
                customerId: user.id,
+               usedOrderInterface: oiType,
+               orderTabId: selectedOrderTab?.id || null,
+               locationId: locationId || null,
                paymentMethodId: user.platform_customer.defaultPaymentMethodId,
                stripeCustomerId: user.platform_customer.stripeCustomerId,
                address: user.platform_customer.defaultCustomerAddress,
