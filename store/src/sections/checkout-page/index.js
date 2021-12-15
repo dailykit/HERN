@@ -220,15 +220,6 @@ const PaymentContent = () => {
       }
    }
 
-   const isValid = () => {
-      return (
-         profileInfo.firstName &&
-         profileInfo.lastName &&
-         profileInfo.phone &&
-         paymentInfo &&
-         paymentInfo.selectedAvailablePaymentOption?.id
-      )
-   }
    const onOverlayClose = () => {
       setOtpPageUrl('')
       setOverlayMessage('We are processing your payment.')
@@ -236,49 +227,6 @@ const PaymentContent = () => {
    }
 
    const theme = configOf('theme-color', 'Visual')
-
-   // React.useEffect(() => {
-   //    if (!isEmpty(cart) && !loading) {
-   //       console.log('cart checkout-page-> ', cart)
-   //       const availablePaymentOptionToCart =
-   //          cart.availablePaymentOptionToCart.find(
-   //             option => option?.label === 'Paytm Page'
-   //          )
-   //       console.log(availablePaymentOptionToCart)
-   //       setPaymentInfo({
-   //          selectedAvailablePaymentOption: availablePaymentOptionToCart,
-   //       })
-   //    }
-   // }, [cart])
-
-   const onPaymentMethodChange = event => {
-      const { value } = event.target
-      if (value) {
-         const availablePaymentOptionToCart =
-            cart.availablePaymentOptionToCart.find(
-               option => option.id === value
-            )
-         console.log(availablePaymentOptionToCart)
-         setPaymentInfo({
-            selectedAvailablePaymentOption: availablePaymentOptionToCart,
-         })
-      }
-   }
-
-   const showPaymentIcon = label => {
-      switch (label) {
-         case 'Debit/Credit Card':
-            return <Icon.DebitCardIcon />
-         case 'Netbanking':
-            return <Icon.NetbankingIcon />
-         case 'Paytm':
-            return <Icon.PaytmIcon />
-         case 'UPI':
-            return <Icon.UpiIcon />
-         default:
-            return null
-      }
-   }
 
    if (loading || isPaymentLoading) return <Loader inline />
    if (isClient && !new URLSearchParams(location.search).get('id')) {
@@ -368,30 +316,15 @@ const PaymentContent = () => {
                <SectionTitle theme={theme}>Profile Details</SectionTitle>
             </header>
             <ProfileSection />
-            {/* <SectionTitle theme={theme}>Select Payment Method</SectionTitle> */}
             <PaymentOptionsRenderer
                cartId={
                   isClient ? new URLSearchParams(location.search).get('id') : ''
                }
             />
-            {paymentInfo?.selectedAvailablePaymentOption?.supportedPaymentOption
-               ?.supportedPaymentCompany.label === 'stripe' && (
-               <PaymentSection cart={cart} />
-            )}
          </Form>
          {cart?.products?.length > 0 && (
             <CartDetails>
                <OrderInfo cart={cart} />
-               <section>
-                  <Button
-                     tw="w-full"
-                     bg={theme?.accent}
-                     onClick={handleSubmit}
-                     disabled={!Boolean(isValid())}
-                  >
-                     Confirm & Pay {formatCurrency(cart.totalPrice)}
-                  </Button>
-               </section>
             </CartDetails>
          )}
          {isOverlayOpen && (

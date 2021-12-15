@@ -873,6 +873,7 @@ export const CUSTOMER = {
                keycloakId
                phoneNumber
                paymentCustomerId
+               defaultPaymentMethodId
                addresses: customerAddresses(order_by: { created_at: desc }) {
                   id
                   lat
@@ -1754,6 +1755,7 @@ export const GET_PAYMENT_OPTIONS = gql`
    subscription cart($id: Int!) {
       cart(id: $id) {
          id
+         balanceToPay
          availablePaymentOptionToCart(
             where: { isActive: { _eq: true } }
             order_by: { position: desc_nulls_last }

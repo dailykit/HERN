@@ -274,6 +274,11 @@ export const PaymentProvider = ({ children }) => {
          dispatch({
             type: 'SET_PAYMENT_INFO',
             payload: {
+               selectedAvailablePaymentOption: {
+                  ...state.selectedAvailablePaymentOption,
+                  selectedPaymentMethodId:
+                     user.platform_customer?.defaultPaymentMethodId || null,
+               },
                paymentMethods: user.platform_customer?.paymentMethods,
             },
          })

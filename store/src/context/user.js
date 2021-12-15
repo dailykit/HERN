@@ -78,15 +78,16 @@ export const UserProvider = ({ children }) => {
    const { loading, data: { customer = {} } = {} } = useSubscription(
       CUSTOMER.DETAILS,
       {
-         skip: !session?.user?.id || !keycloakId || !brand.id,
+         // skip: !session?.user?.id || !keycloakId || !brand.id,
          fetchPolicy: 'network-only',
          variables: {
-            keycloakId,
-            brandId: brand.id,
+            keycloakId: '0f9a0c54-0b37-4d33-82cb-6d2aaf16aee0',
+            brandId: 1,
          },
          onSubscriptionData: async ({
             subscriptionData: { data: { customer = {} } = {} } = {},
          } = {}) => {
+            console.log('customer details ->>', customer)
             if (!customer?.id) {
                await createCustomer({
                   variables: {
@@ -181,7 +182,9 @@ export const UserProvider = ({ children }) => {
    }, [session, loadingSession])
 
    React.useEffect(() => {
+      console.log('process user =>>>> 1')
       if (keycloakId && !loading && customer?.id) {
+         console.log('process user =>>>> 2')
          const user = processUser(customer)
          // fb pixel initialization when user is logged in
          const pixelId = isClient && get_env('PIXEL_ID')
@@ -219,7 +222,13 @@ export const UserProvider = ({ children }) => {
          dispatch({ type: 'SET_USER', payload: user })
          setIsLoading(false)
       }
-   }, [keycloakId, loading, customer])
+   }, [
+      keycloakId,
+      loading,
+      customer,
+      customer?.platform_customer,
+      customer?.platform_customer?.defaultPaymentMethodId,
+   ])
 
    return (
       <UserContext.Provider

@@ -7,13 +7,18 @@ import tw, { styled, css } from 'twin.macro'
 import { usePayment, useConfig } from '../../lib'
 import * as Icon from '../../assets/icons'
 import { isClient, formatCurrency, getRoute } from '../../utils'
-import { Loader, Button, HelperBar } from '../../components'
+import { Button } from '../button'
+import { HelperBar } from '../helper_bar'
+import PayButton from '../PayButton'
 import { useUser } from '../../context'
 import * as QUERIES from '../../graphql'
+import { AddCard } from './components'
+import { useToasts } from 'react-toast-notifications'
 
 export default function PaymentOptionsRenderer({ cartId }) {
    const { setPaymentInfo, paymentInfo } = usePayment()
    const { configOf } = useConfig()
+   const { addToast } = useToasts()
    const theme = configOf('theme-color', 'Visual')
    const [isLoading, setIsLoading] = React.useState(true)
    // query for fetching available payment options
@@ -25,6 +30,14 @@ export default function PaymentOptionsRenderer({ cartId }) {
       skip: !cartId,
       variables: {
          id: cartId,
+      },
+   })
+
+   // update cart mutation
+   const [updateCart] = useMutation(QUERIES.UPDATE_CART, {
+      onError: error => {
+         console.log(error)
+         addToast(error.message, { appearance: 'error' })
       },
    })
 
@@ -48,8 +61,19 @@ export default function PaymentOptionsRenderer({ cartId }) {
          const availablePaymentOptionToCart =
             cart.availablePaymentOptionToCart.find(option => option.id === id)
          console.log(availablePaymentOptionToCart)
+         updateCart({
+            variables: {
+               id: cartId,
+               _set: {
+                  toUseAvailablePaymentOptionId: id,
+               },
+            },
+         })
          setPaymentInfo({
-            selectedAvailablePaymentOption: availablePaymentOptionToCart,
+            selectedAvailablePaymentOption: {
+               ...paymentInfo?.selectedAvailablePaymentOption,
+               ...availablePaymentOptionToCart,
+            },
          })
       }
    }
@@ -87,6 +111,9 @@ export default function PaymentOptionsRenderer({ cartId }) {
                               description={option?.description || ''}
                               icon={showPaymentIcon(option?.label)}
                               onClick={() => onPaymentMethodChange(option?.id)}
+                              paymentInfo={paymentInfo}
+                              balanceToPay={cart?.balanceToPay}
+                              cartId={cartId}
                            />
                         ))
                      ) : (
@@ -145,30 +172,48 @@ const PaymentOptionCard = ({
    description = '',
    isSelected = false,
    onClick = () => null,
+   paymentInfo = null,
+   balanceToPay = 0,
+   cartId = null,
 }) => (
    <div tw="flex flex-col ">
       <p tw="font-semibold text-sm text-gray-500 mb-2">{title}</p>
       <div
          css={[
-            tw`flex items-center justify-between p-4 rounded-md border[1px solid rgba(64, 64, 64, 0.25)] hover:(cursor-pointer border-purple-600 )`,
-            isSelected && tw`border-purple-600`,
+            tw`flex flex-col p-4 rounded-md border[1px solid rgba(64, 64, 64, 0.25)] hover:(cursor-pointer border-color[#367BF5] )`,
+            isSelected && tw`border[2px solid #367BF5]`,
          ]}
          onClick={onClick}
       >
-         <div tw="flex">
-            <span>{icon}</span>
-            <div tw="flex flex-col ml-2">
-               <h2 tw="mb-0 text-lg color[#202020] font-semibold">{title}</h2>
-               <p tw="text-xs italic text-gray-500 mb-0">{description}</p>
+         <div tw="flex items-center justify-between">
+            <div tw="flex">
+               <span>{icon}</span>
+               <div tw="flex flex-col ml-2">
+                  <h2 tw="mb-0 text-lg color[#202020] font-semibold">
+                     {title}
+                  </h2>
+                  <p tw="text-xs italic text-gray-500 mb-0">{description}</p>
+               </div>
             </div>
+            {isSelected ? (
+               <>
+                  {paymentInfo?.selectedAvailablePaymentOption
+                     ?.supportedPaymentOption?.supportedPaymentCompany.label !==
+                     'stripe' && (
+                     <PayButton bg="#367BF5" cartId={cartId}>
+                        Pay Now ${balanceToPay}
+                     </PayButton>
+                  )}
+               </>
+            ) : (
+               <span>
+                  <Icon.ArrowRightCircle size={32} />
+               </span>
+            )}
          </div>
-         {isSelected ? (
-            <Button>Pay Now</Button>
-         ) : (
-            <span>
-               <Icon.ArrowRightCircle size={32} />
-            </span>
-         )}
+         {paymentInfo?.selectedAvailablePaymentOption?.supportedPaymentOption
+            ?.supportedPaymentCompany.label === 'stripe' &&
+            isSelected && <AddCard cartId={cartId} />}
       </div>
    </div>
 )

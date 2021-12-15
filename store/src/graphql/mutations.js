@@ -204,6 +204,7 @@ export const UPDATE_PLATFORM_CUSTOMER = gql`
          _set: $_set
       ) {
          keycloakId
+         defaultPaymentMethodId
       }
    }
 `
