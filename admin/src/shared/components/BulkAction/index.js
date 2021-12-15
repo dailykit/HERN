@@ -31,6 +31,7 @@ import {
    INCREASE_SUBSCRIPTION_DELIVERY_PRICE,
    MANAGE_MENU_PRODUCTS_SUBSCRIPTION,
    MANAGE_ADD_ON_PRODUCTS_SUBSCRIPTION,
+   UPSERT_BRAND_MANAGER,
 } from './mutation'
 import { RecipeBulkAction } from './entities/recipe'
 import { IngredientBulkAction } from './entities/ingredients'
@@ -41,6 +42,8 @@ import { SubscriptionOccurrence } from './entities/subscriptionOccurrence'
 import { ManageMenuProducts } from './entities/subscriptionManageMenuProducts'
 import { ManageAddOnProducts } from './entities/subscriptionManageAddOnProducts'
 import { SubscriptionDeliveryArea } from './entities/subscriptionDeliveryArea'
+import BrandManagerBulkAction from './entities/brandManager'
+import { logger } from '../../utils'
 
 const BulkActions = ({
    table,
@@ -235,6 +238,22 @@ const BulkActions = ({
       isPickupActive: false,
       subscriptionPickupOptionId: null,
    })
+   const [initialBulkActionBrandManager, setInitialBulkActionBrandManager] =
+      React.useState({
+         isPublished: false,
+         isAvailable: false,
+
+         specificPrice: {
+            set: 0,
+            increase: 0,
+            decrease: 0,
+         },
+         specificDiscount: {
+            set: 0,
+            increase: 0,
+            decrease: 0,
+         },
+      })
    // additional bulk actions (actions which not to be set)
    const [additionalBulkAction, setAdditionalBulkAction] = React.useState({})
 
@@ -419,6 +438,22 @@ const BulkActions = ({
             isPickupActive: !prevState.isPickupActive,
             subscriptionPickupOptionId: null,
          }))
+      } else if (table === 'Product Manager') {
+         setInitialBulkActionBrandManager(prevState => ({
+            ...prevState,
+            isPublished: !prevState.isPublished,
+            isAvailable: !prevState.isAvailable,
+            specificPrice: {
+               set: 0,
+               increase: 0,
+               decrease: 0,
+            },
+            specificDiscount: {
+               set: 0,
+               increase: 0,
+               decrease: 0,
+            },
+         }))
       } else {
          // for product options
          handleModifierClear()
@@ -536,18 +571,16 @@ const BulkActions = ({
          },
       }
    )
-   // const [updateSubscriptionOccurrence] = useMutation(
-   //    UPDATE_SUBSCRIPTION_OCCURRENCES,
-   //    {
-   //       onCompleted: () => {
-   //          toast.success('Update Successfully')
-   //          close(1)
-   //       },
-   //       onError: error => {
-   //          toast.error('Something main update went wrong!')
-   //       },
-   //    }
-   // )
+   const [upsertBrandManager] = useMutation(UPSERT_BRAND_MANAGER, {
+      onCompleted: data => {
+         toast.success('Update Successfully')
+         close(1)
+      },
+      onError: e => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
    const [concatenateArrayColumn] = useLazyQuery(CONCATENATE_ARRAY_COLUMN, {
       onCompleted: () => {
          toast.success('Update Successfully')
@@ -711,6 +744,8 @@ const BulkActions = ({
             return updateSubscriptionManageAddOnProducts
          case 'Delivery Area':
             return updateSubscriptionDeliveryArea
+         case 'Brand Manager':
+            return upsertBrandManager
          default:
             return null
       }
@@ -798,6 +833,7 @@ const BulkActions = ({
       }
       if (fn) {
          const newBulkAction = { ...bulkActions }
+         console.log('New bulk action data', newBulkAction)
          if ('concatData' in bulkActions) {
             delete newBulkAction.concatData
          }
@@ -813,6 +849,18 @@ const BulkActions = ({
                   variables: {
                      zipcode: selectedRows.map(idx => idx.zipcode),
                      _set: newBulkAction,
+                  },
+               })
+            } else if (table === 'Brand Manager') {
+               const newData = selectedRows.map(eachId => ({
+                  ...newBulkAction,
+                  productId: eachId.id,
+                  brandId: eachId.brandId,
+               }))
+               console.log('newData', newData)
+               fn({
+                  variables: {
+                     objects: newData,
                   },
                })
             } else {
@@ -1049,6 +1097,18 @@ const BulkActions = ({
                            }
                            setInitialBulkAction={
                               setInitialBulkActionSubscriptionDeliveryArea
+                           }
+                           bulkActions={bulkActions}
+                           setBulkActions={setBulkActions}
+                           additionalBulkAction={additionalBulkAction}
+                           setAdditionalBulkAction={setAdditionalBulkAction}
+                        />
+                     )}
+                     {table === 'Brand Manager' && (
+                        <BrandManagerBulkAction
+                           initialBulkAction={initialBulkActionBrandManager}
+                           setInitialBulkAction={
+                              setInitialBulkActionBrandManager
                            }
                            bulkActions={bulkActions}
                            setBulkActions={setBulkActions}

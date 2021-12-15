@@ -63,6 +63,9 @@ export default function ConfirmationPopup({
                case 'Delivery Area':
                   keyName = 'selected-rows-id-delivery-area-table'
                   break
+               case 'Brand Manager':
+                  keyName = 'selected-rows-id_brand-manager_table'
+                  break
                default:
                   keyName = 'selected-rows-id_ingredients_table'
             }
