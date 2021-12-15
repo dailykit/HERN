@@ -25,12 +25,13 @@ import {
 } from '../../assets/icons'
 import { Divider } from '../../components'
 import { ProgressBar } from './component/progressBar'
+import { PromotionCarousal } from '../../sections/promotionCarousel'
 
 const { Content, Sider, Header, Footer } = Layout
 const { Step } = Steps
 
 export const MenuSection = props => {
-   const { brand, isConfigLoading } = useConfig()
+   const { brand, isConfigLoading, kioskDetails } = useConfig()
    const carousalRef = React.useRef()
 
    const { config, setCurrentPage } = props
@@ -50,7 +51,7 @@ export const MenuSection = props => {
       () => ({
          params: {
             brandId: brand?.id,
-            locationId: 1000,
+            locationId: kioskDetails?.locationId,
          },
       }),
       [brand]
@@ -74,7 +75,7 @@ export const MenuSection = props => {
                   each => each.id
                ),
             }),
-            locationId: 1000,
+            locationId: kioskDetails?.locationId,
          },
       },
       onCompleted: data => {
@@ -186,68 +187,7 @@ export const MenuSection = props => {
                   className="hern-kiosk__menu-promotion-coupons"
                   infinite={false}
                >
-                  <ArrowLeftIcon
-                     className="hern-kiosk__menu-carousal-left-arrow hern-kiosk__menu-carousal-arrow"
-                     style={{
-                        backgroundColor: `${config.kioskSettings.theme.secondaryColor.value}99`,
-                     }}
-                     size={42}
-                     onClick={lastCarousal}
-                  />
-                  <ArrowRightIcon
-                     className="hern-kiosk__menu-carousal-right-arrow hern-kiosk__menu-carousal-arrow"
-                     style={{
-                        backgroundColor: `${config.kioskSettings.theme.secondaryColor.value}99`,
-                     }}
-                     size={42}
-                     onClick={nextCarousal}
-                  />
-                  <Carousel
-                     slidesToShow={2}
-                     slidesToScroll={2}
-                     ref={carousalRef}
-                  >
-                     <img
-                        src={
-                           'https://storage.eu.content-cdn.io/cdn-cgi/image/height=250,quality=100/https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/userimages/superchknen_1.png'
-                        }
-                        alt="promotion-2"
-                        width={450}
-                        style={{ height: '13em', padding: '1em' }}
-                     />
-                     <img
-                        src={
-                           'https://storage.eu.content-cdn.io/cdn-cgi/image/height=250,quality=100/https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/userimages/Tortilla%20Family%20All%20600%20Ar%20alone_%20(3).jpg'
-                        }
-                        alt="promotion-2"
-                        width={450}
-                        style={{ height: '13em', padding: '1em' }}
-                     />
-                     <img
-                        src={
-                           'https://storage.eu.content-cdn.io/cdn-cgi/image/height=250,quality=100/https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/userimages/Tortilla%20Family%20All%20600%20Ar%20alone_%20(3).jpg'
-                        }
-                        alt="promotion-2"
-                        width={450}
-                        style={{ height: '13em', padding: '1em' }}
-                     />
-                     <img
-                        src={
-                           'https://storage.eu.content-cdn.io/cdn-cgi/image/height=250,quality=100/https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/userimages/Tortilla%20Family%20All%20600%20Ar%20alone_%20(3).jpg'
-                        }
-                        alt="promotion-2"
-                        width={450}
-                        style={{ height: '13em', padding: '1em' }}
-                     />
-                     <img
-                        src={
-                           'https://storage.eu.content-cdn.io/cdn-cgi/image/height=250,quality=100/https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/userimages/Tortilla%20Family%20All%20600%20Ar%20alone_%20(3).jpg'
-                        }
-                        alt="promotion-2"
-                        width={450}
-                        style={{ height: '13em', padding: '1em' }}
-                     />
-                  </Carousel>
+                  <PromotionCarousal config={config} />
                </Content>
             </Layout>
          </Content>

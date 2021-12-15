@@ -216,6 +216,28 @@
          "dataType": "select",
          "isRequired": "false",
          "userInsertType": "collectionSelector"
+      },
+      "promotionImages": {
+         "label": "Logo",
+         "value": [
+            {
+               "url": "https://storage.eu.content-cdn.io/cdn-cgi/image/height=250,quality=100/https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/userimages/superchknen_1.png"
+            },
+            {
+               "url": "https://storage.eu.content-cdn.io/cdn-cgi/image/height=250,quality=100/https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/userimages/Tortilla%20Family%20All%20600%20Ar%20alone_%20(3).jpg"
+            },
+            {
+               "url": "https://storage.eu.content-cdn.io/cdn-cgi/image/height=250,quality=100/https://images.phi.content-cdn.io/yum-resources/2ea4aca1-355b-475b-8046-b21c1eaadbe8/Images/userimages/superchknen_1.png"
+            }
+         ],
+         "default": {
+            "url": "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/1596121558382.png"
+         },
+         "dataType": "imageUpload",
+         "showModal": true,
+         "isRequired": true,
+         "description": "This sets your brand's logo",
+         "userInsertType": "imageUpload"
       }
    }
 }
