@@ -1773,3 +1773,15 @@ export const GET_CART_ITEMS_BY_CART = gql`
       }
    }
 `
+export const LOCATION_KIOSK = gql`
+   query LOCATION_KIOSK($id: Int!) {
+      brands_locationKiosk_by_pk(id: $id) {
+         accessPassword
+         accessUrl
+         id
+         internalLocationKioskLabel
+         kioskModuleConfig
+         locationId
+      }
+   }
+`

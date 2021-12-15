@@ -1,6 +1,6 @@
 import { Steps } from 'antd'
 import React, { useEffect } from 'react'
-import { ArrowLeftIconBG } from '../../../assets/icons'
+import { ArrowLeftIconBG, ArrowRightIconBG } from '../../../assets/icons'
 import { CartContext, useTranslation } from '../../../context'
 import { useQueryParamState } from '../../../utils'
 
@@ -80,11 +80,19 @@ export const ProgressBar = props => {
    }
    return (
       <div style={{ display: 'flex', alignItems: 'center' }}>
-         <ArrowLeftIconBG
-            style={{ marginRight: '1em' }}
-            onClick={handleArrowClick}
-            bgColor={config.kioskSettings.theme.primaryColor.value}
-         />
+         {direction === 'ltr' ? (
+            <ArrowLeftIconBG
+               style={{ marginRight: '1em' }}
+               onClick={handleArrowClick}
+               bgColor={config.kioskSettings.theme.primaryColor.value}
+            />
+         ) : (
+            <ArrowRightIconBG
+               style={{ marginRight: '1em' }}
+               onClick={handleArrowClick}
+               bgColor={config.kioskSettings.theme.primaryColor.value}
+            />
+         )}
          <Steps
             current={current}
             className={direction === 'rtl' && 'hern-kiosk__step-bar-rtl'}
