@@ -58,6 +58,13 @@ array_relationships:
       table:
         name: productOption_modifier
         schema: products
+- name: productPrice_brand_locations
+  using:
+    foreign_key_constraint_on:
+      column: productOptionId
+      table:
+        name: productPrice_brand_location
+        schema: products
 computed_fields:
 - comment: ""
   definition:
