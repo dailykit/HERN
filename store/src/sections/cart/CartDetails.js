@@ -155,7 +155,7 @@ export const CartDetails = () => {
       )
    }
 
-   if (combinedCartItems.length === 0) {
+   if (cart == null || combinedCartItems.length === 0) {
       return (
          <div className="hern-cart-container">
             <div className="hern-cart-page" style={{ overflowY: 'hidden' }}>
@@ -188,7 +188,9 @@ export const CartDetails = () => {
                      <span>YOUR ORDER(S)</span>
                      <div className="hern-cart-delivery-details">
                         <span>Delivery Description</span>
-                        <span>{address(cart.address)}</span>
+                        <span>
+                           {cart?.address ? address(cart?.address) : 'N/A'}
+                        </span>
                      </div>
                   </div>
                   {/*products*/}
