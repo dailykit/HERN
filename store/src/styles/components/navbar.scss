@@ -35,6 +35,8 @@
    -moz-box-pack: center;
    justify-content: center;
    margin-right: 0.5rem;
+   font-weight: 500;
+   padding: 8px;
    &:last-child {
       margin-right: 0;
    }
@@ -54,6 +56,10 @@
    a {
       cursor: pointer;
       color: rgba(31, 41, 55, 1) !important;
+   }
+   a:hover {
+      text-decoration: none;
+      color: rgba(46, 90, 59, 0.63) !important;
    }
 }
 

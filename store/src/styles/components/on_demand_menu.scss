@@ -26,9 +26,11 @@
    display: flex;
    height: 0;
    top: 0;
+   right: 0;
+   bottom: 0;
+   left: 0;
    z-index: 10;
    width: inherit;
-   //   display: ${(props) => props.display};
    justify-content: center;
    transition: height 0.35s ease;
 }
@@ -109,6 +111,19 @@
    border: 2px solid #367bf5 !important;
    color: #367bf5 !important;
 }
+.hern-on-demand-menu__heading {
+   display: none;
+   font-weight: 600;
+   font-size: 20px;
+   line-height: 24px;
+   color: #202020;
+   padding: 0 0.85em;
+   display: -webkit-flex;
+   display: -moz-box;
+   display: flex;
+   -moz-box-align: center;
+   font-style: normal;
+}
 @media only screen and (min-width: 769px) {
    .hern-on-demand-menu__navigationAnchor {
       > ul {
@@ -121,5 +136,11 @@
             border-radius: 2px;
          }
       }
+   }
+   .hern-on-demand-menu__heading {
+      display: block;
+   }
+   .hern-on-demand-menu-list {
+      padding: 0;
    }
 }

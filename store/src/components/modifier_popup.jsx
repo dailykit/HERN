@@ -2,12 +2,13 @@ import { each } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { Button, ProductCard } from '.'
 import { RadioIcon, ShowImageIcon } from '../assets/icons'
-import { formatCurrency } from '../utils'
+import { formatCurrency, getRoute } from '../utils'
 import { CloseIcon, CheckBoxIcon } from '../assets/icons'
 import { useOnClickOutside } from '../utils/useOnClickOutisde'
 import { CartContext } from '../context'
 import { CounterButton } from './counterBtn'
 import classNames from 'classnames'
+import Link from 'next/link'
 
 export const ModifierPopup = props => {
    const {
@@ -351,6 +352,12 @@ export const ModifierPopup = props => {
             })}
          >
             <div className="hern-product-modifier-pop-up-product">
+               <div
+                  className="hern-product-modifier-pop-up-close-icon"
+                  onClick={closeModifier}
+               >
+                  <CloseIcon size={20} stroke="currentColor" />
+               </div>
                <div className="hern-product-modifier-pop-up-product-details">
                   <ProductCard
                      data={productData}
@@ -358,12 +365,50 @@ export const ModifierPopup = props => {
                      showCustomText={false}
                      customAreaComponent={CustomArea}
                      showModifier={false}
+                     useForThirdParty={true}
                   />
                </div>
                <div className="hern-product-modifier-pop-up-product-option-list">
                   <label htmlFor="products">Available Options:</label>
                   <br />
-                  <select
+                  <ul>
+                     {productData.productOptions.map(eachOption => {
+                        return (
+                           <div
+                              key={eachOption.id}
+                              style={{
+                                 border: `${
+                                    productOption.id === eachOption.id
+                                       ? '1px solid #75b1da'
+                                       : '1px solid #e4e4e4'
+                                 }`,
+                                 padding: '16px',
+                                 display: 'flex',
+                                 justifyContent: 'space-between',
+                                 marginBottom: '8px',
+                              }}
+                           >
+                              <li onClick={e => setProductOption(eachOption)}>
+                                 {eachOption.label}
+
+                                 {' (+ '}
+                                 {formatCurrency(
+                                    eachOption.price - eachOption.discount
+                                 )}
+                                 {')'}
+                              </li>
+                              <div>
+                                 <Link
+                                    href={getRoute('/recipes/' + eachOption.id)}
+                                 >
+                                    View recipe
+                                 </Link>
+                              </div>
+                           </div>
+                        )
+                     })}
+                  </ul>
+                  {/* <select
                      className="hern-product-modifier-pop-up-product-options"
                      name="product-options"
                      onChange={e => {
@@ -384,7 +429,7 @@ export const ModifierPopup = props => {
                            </option>
                         )
                      })}
-                  </select>
+                  </select> */}
                </div>
                {showModifiers && productOption.modifier && (
                   <div className="hern-product-modifier-pop-up-modifier-list">
@@ -496,19 +541,27 @@ export const ModifierPopup = props => {
                      })}
                   </div>
                )}
+               <div style={{ padding: '0 32px' }}>
+                  <Button
+                     className="hern-product-modifier-pop-up-add-to-cart-btn"
+                     onClick={handleAddOnCartOn}
+                  >
+                     ADD TO CART {totalAmount()}
+                  </Button>
+               </div>
             </div>
-            <div
+            {/* <div
                className="hern-product-modifier-pop-up-close-icon"
                onClick={closeModifier}
             >
                <CloseIcon size={20} stroke="currentColor" />
-            </div>
-            <Button
+            </div> */}
+            {/* <Button
                className="hern-product-modifier-pop-up-add-to-cart-btn"
                onClick={handleAddOnCartOn}
             >
                ADD TO CART {totalAmount()}
-            </Button>
+            </Button> */}
             {modifierImage.showImage && (
                <div className="hern-product-modifier-image-pop-up">
                   <div

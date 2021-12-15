@@ -10,7 +10,7 @@ export const PageNotFound = () => {
             We can't find the page that you are looking for..
          </p>
          <span className="hern-404-home-link">
-            <Link href={getRoute('/subscription')}>Go to Home</Link>
+            <Link href={getRoute('/')}>Go to Home</Link>
          </span>
       </div>
    )
