@@ -159,7 +159,7 @@ export const AddCard = ({ cartId }) => {
                      'active'
                   }`}
                >
-                  <div tw="flex items-center">
+                  <div tw="flex flex-col items-start  sm:( flex-row items-center)">
                      <div tw="flex items-center flex-1">
                         <PaymentMethodIconWrap>
                            {showPaymentBrandIcon(method?.brand)}
@@ -167,10 +167,10 @@ export const AddCard = ({ cartId }) => {
 
                         <section tw="p-2 w-full">
                            <div tw="flex flex-col">
-                              <span tw="text-xl text-gray-500 font-semibold">
+                              <span tw="text-base sm:(text-xl) text-gray-500 font-semibold">
                                  XXXX-XXXXXXXX-{method.last4}
                               </span>
-                              <span tw="text-gray-500 text-sm font-medium">
+                              <span tw="text-gray-500 text-xs sm:(text-sm) font-medium">
                                  VALID TILL {method.expMonth}/{method.expYear}
                               </span>
                            </div>
@@ -193,7 +193,11 @@ export const AddCard = ({ cartId }) => {
                      {paymentInfo?.selectedAvailablePaymentOption
                         ?.selectedPaymentMethodId ===
                         method.paymentMethodId && (
-                        <PayButton bg="#38a169" cartId={cartId}>
+                        <PayButton
+                           bg="#38a169"
+                           className="payButton"
+                           cartId={cartId}
+                        >
                            Pay Via Card
                         </PayButton>
                      )}
@@ -242,6 +246,9 @@ const PaymentMethod = styled.li`
       svg {
          ${tw`color[#38a169]`}
       }
+   }
+   .payButton {
+      ${tw`w-full sm:w-auto`}
    }
 `
 

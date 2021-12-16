@@ -186,7 +186,7 @@ const PaymentOptionCard = ({
       })
    }
    return (
-      <div tw="flex flex-col ">
+      <StyledWrapper>
          <p tw="font-semibold text-sm text-gray-500 mb-2">{title}</p>
          <div
             css={[
@@ -195,7 +195,16 @@ const PaymentOptionCard = ({
             ]}
             onClick={onClick}
          >
-            <div tw="flex items-center justify-between">
+            <div
+               css={[
+                  tw`flex items-center justify-between`,
+                  paymentInfo?.selectedAvailablePaymentOption
+                     ?.supportedPaymentOption?.supportedPaymentCompany.label !==
+                     'stripe' &&
+                     isSelected &&
+                     tw`flex-col items-start sm:(flex-row items-center)`,
+               ]}
+            >
                <div tw="flex">
                   <span>{icon}</span>
                   <div tw="flex flex-col ml-2">
@@ -210,7 +219,11 @@ const PaymentOptionCard = ({
                      {paymentInfo?.selectedAvailablePaymentOption
                         ?.supportedPaymentOption?.supportedPaymentCompany
                         .label !== 'stripe' && (
-                        <PayButton bg="#38a169" cartId={cartId}>
+                        <PayButton
+                           bg="#38a169"
+                           className="payButton"
+                           cartId={cartId}
+                        >
                            Pay Now ${balanceToPay}
                         </PayButton>
                      )}
@@ -227,7 +240,7 @@ const PaymentOptionCard = ({
                                        style={{ display: 'inline-block' }}
                                     />
                                  </span>
-                                 Add New Card
+                                 <span tw="hidden sm:inline">Add New Card</span>
                               </>
                            </OutlineButton>
                         )}
@@ -242,10 +255,16 @@ const PaymentOptionCard = ({
                ?.supportedPaymentCompany.label === 'stripe' &&
                isSelected && <AddCard cartId={cartId} />}
          </div>
-      </div>
+      </StyledWrapper>
    )
 }
 
+const StyledWrapper = styled.div`
+   ${tw`flex flex-col`}
+   .payButton {
+      ${tw`w-full mt-2 sm:(w-auto mt-0)`}
+   }
+`
 const StyledButton = styled.button(
    () => css`
       ${tw`bg-green-600 rounded text-white px-4 h-10 hover:bg-green-700`}
