@@ -17,6 +17,7 @@ import { useToasts } from 'react-toast-notifications'
 
 export default function PaymentOptionsRenderer({ cartId }) {
    const { setPaymentInfo, paymentInfo } = usePayment()
+   const { user } = useUser()
    const { configOf } = useConfig()
    const { addToast } = useToasts()
    const theme = configOf('theme-color', 'Visual')
@@ -172,48 +173,85 @@ const PaymentOptionCard = ({
    description = '',
    isSelected = false,
    onClick = () => null,
-   paymentInfo = null,
    balanceToPay = 0,
    cartId = null,
-}) => (
-   <div tw="flex flex-col ">
-      <p tw="font-semibold text-sm text-gray-500 mb-2">{title}</p>
-      <div
-         css={[
-            tw`flex flex-col p-4 rounded-md border[1px solid rgba(64, 64, 64, 0.25)] hover:(cursor-pointer border-color[#367BF5] )`,
-            isSelected && tw`border[2px solid #367BF5]`,
-         ]}
-         onClick={onClick}
-      >
-         <div tw="flex items-center justify-between">
-            <div tw="flex">
-               <span>{icon}</span>
-               <div tw="flex flex-col ml-2">
-                  <h2 tw="mb-0 text-lg color[#202020] font-semibold">
-                     {title}
-                  </h2>
-                  <p tw="text-xs italic text-gray-500 mb-0">{description}</p>
+}) => {
+   const { user } = useUser()
+   const { setPaymentInfo, paymentInfo } = usePayment()
+   const toggleTunnel = value => {
+      setPaymentInfo({
+         tunnel: {
+            isVisible: value,
+         },
+      })
+   }
+   return (
+      <div tw="flex flex-col ">
+         <p tw="font-semibold text-sm text-gray-500 mb-2">{title}</p>
+         <div
+            css={[
+               tw`flex flex-col p-4 rounded-md border[1px solid rgba(64, 64, 64, 0.25)] hover:(cursor-pointer box-shadow[ 0px 2px 4px rgba(0, 0, 0, 0.2)] )`,
+               isSelected && tw`box-shadow[ 0px 2px 4px rgba(0, 0, 0, 0.2)]`,
+            ]}
+            onClick={onClick}
+         >
+            <div tw="flex items-center justify-between">
+               <div tw="flex">
+                  <span>{icon}</span>
+                  <div tw="flex flex-col ml-2">
+                     <h2 tw="mb-0 text-lg color[#202020] font-semibold">
+                        {title}
+                     </h2>
+                     <p tw="text-xs italic text-gray-500 mb-0">{description}</p>
+                  </div>
                </div>
+               {isSelected ? (
+                  <>
+                     {paymentInfo?.selectedAvailablePaymentOption
+                        ?.supportedPaymentOption?.supportedPaymentCompany
+                        .label !== 'stripe' && (
+                        <PayButton bg="#38a169" cartId={cartId}>
+                           Pay Now ${balanceToPay}
+                        </PayButton>
+                     )}
+                     {paymentInfo?.selectedAvailablePaymentOption
+                        ?.supportedPaymentOption?.supportedPaymentCompany
+                        .label === 'stripe' &&
+                        user?.platform_customer?.paymentMethods.length > 0 && (
+                           <OutlineButton onClick={() => toggleTunnel(true)}>
+                              <>
+                                 <span tw="mr-2">
+                                    <Icon.PlusCircle
+                                       size="28"
+                                       color="#38a169"
+                                       style={{ display: 'inline-block' }}
+                                    />
+                                 </span>
+                                 Add New Card
+                              </>
+                           </OutlineButton>
+                        )}
+                  </>
+               ) : (
+                  <span>
+                     <Icon.ArrowRightCircle size={32} />
+                  </span>
+               )}
             </div>
-            {isSelected ? (
-               <>
-                  {paymentInfo?.selectedAvailablePaymentOption
-                     ?.supportedPaymentOption?.supportedPaymentCompany.label !==
-                     'stripe' && (
-                     <PayButton bg="#367BF5" cartId={cartId}>
-                        Pay Now ${balanceToPay}
-                     </PayButton>
-                  )}
-               </>
-            ) : (
-               <span>
-                  <Icon.ArrowRightCircle size={32} />
-               </span>
-            )}
+            {paymentInfo?.selectedAvailablePaymentOption?.supportedPaymentOption
+               ?.supportedPaymentCompany.label === 'stripe' &&
+               isSelected && <AddCard cartId={cartId} />}
          </div>
-         {paymentInfo?.selectedAvailablePaymentOption?.supportedPaymentOption
-            ?.supportedPaymentCompany.label === 'stripe' &&
-            isSelected && <AddCard cartId={cartId} />}
       </div>
-   </div>
+   )
+}
+
+const StyledButton = styled.button(
+   () => css`
+      ${tw`bg-green-600 rounded text-white px-4 h-10 hover:bg-green-700`}
+   `
 )
+
+const OutlineButton = styled(StyledButton)`
+   ${tw`bg-transparent color[#38a169]   hover:(border[1px solid #38a169]  bg-white)`}
+`

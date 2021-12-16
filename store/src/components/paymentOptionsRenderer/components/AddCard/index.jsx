@@ -111,6 +111,20 @@ export const AddCard = ({ cartId }) => {
                   ? 'Pay using added Cards'
                   : 'Add Card'}
             </SectionTitle>
+            {/* {user?.platform_customer?.paymentMethods.length > 0 && (
+               <OutlineButton onClick={() => toggleTunnel(true)}>
+                  <>
+                     <span tw="mr-2">
+                        <PlusCircle
+                           size="28"
+                           color="#38a169"
+                           style={{ display: 'inline-block' }}
+                        />
+                     </span>
+                     Add New Card
+                  </>
+               </OutlineButton>
+            )} */}
          </header>
 
          {user?.platform_customer?.paymentMethods.length === 0 && (
@@ -146,22 +160,23 @@ export const AddCard = ({ cartId }) => {
                   }`}
                >
                   <div tw="flex items-center">
-                     <PaymentMethodIconWrap>
-                        {showPaymentBrandIcon(method?.brand)}
-                     </PaymentMethodIconWrap>
+                     <div tw="flex items-center flex-1">
+                        <PaymentMethodIconWrap>
+                           {showPaymentBrandIcon(method?.brand)}
+                        </PaymentMethodIconWrap>
 
-                     <section tw="p-2 w-full">
-                        <div tw="flex flex-col">
-                           <span tw="text-xl text-gray-500 font-semibold">
-                              XXXX-XXXXXXXX-{method.last4}
-                           </span>
-                           <span tw="text-gray-500 text-sm font-medium">
-                              VALID TILL {method.expMonth}/{method.expYear}
-                           </span>
-                        </div>
-                     </section>
+                        <section tw="p-2 w-full">
+                           <div tw="flex flex-col">
+                              <span tw="text-xl text-gray-500 font-semibold">
+                                 XXXX-XXXXXXXX-{method.last4}
+                              </span>
+                              <span tw="text-gray-500 text-sm font-medium">
+                                 VALID TILL {method.expMonth}/{method.expYear}
+                              </span>
+                           </div>
+                        </section>
 
-                     <PaymentMethodIconWrap>
+                        {/* <PaymentMethodIconWrap>
                         <CheckIcon
                            size={24}
                            css={[
@@ -173,31 +188,20 @@ export const AddCard = ({ cartId }) => {
                                  : tw`text-gray-400`,
                            ]}
                         />
-                     </PaymentMethodIconWrap>
+                     </PaymentMethodIconWrap> */}
+                     </div>
+                     {paymentInfo?.selectedAvailablePaymentOption
+                        ?.selectedPaymentMethodId ===
+                        method.paymentMethodId && (
+                        <PayButton bg="#38a169" cartId={cartId}>
+                           Pay Via Card
+                        </PayButton>
+                     )}
                   </div>
-                  {paymentInfo?.selectedAvailablePaymentOption
-                     ?.selectedPaymentMethodId === method.paymentMethodId && (
-                     <PayButton bg="#367BF5" cartId={cartId}>
-                        Pay Via Card
-                     </PayButton>
-                  )}
                </PaymentMethod>
             ))}
          </PaymentMethods>
-         {user?.platform_customer?.paymentMethods.length > 0 && (
-            <OutlineButton onClick={() => toggleTunnel(true)}>
-               <>
-                  <span tw="mr-2">
-                     <PlusCircle
-                        size="28"
-                        color="#367BF5"
-                        style={{ display: 'inline-block' }}
-                     />
-                  </span>
-                  Add New Card
-               </>
-            </OutlineButton>
-         )}
+
          {paymentInfo.tunnel.isVisible && <AddCardTunnel />}
       </>
    )
@@ -222,21 +226,21 @@ const SectionTitle = styled.h3(
 )
 
 const PaymentMethod = styled.li`
-   ${tw`flex flex-col border text-gray-700 rounded hover:(border-2 border-color[#367BF5])
+   ${tw`flex flex-col border text-gray-700 rounded hover:(border-2 border-color[#38a169])
    p-4`}
    > aside {
       width: 48px;
       ${tw`flex justify-center h-full`}
    }
    &.active {
-      ${tw`border-2 border-color[#367BF5]`}
+      ${tw`border-2 border-color[#38a169]`}
       svg {
-         ${tw`text-blue-600 `}
+         ${tw`color[#38a169] `}
       }
    }
    :hover {
       svg {
-         ${tw`text-blue-600`}
+         ${tw`color[#38a169]`}
       }
    }
 `
@@ -256,7 +260,7 @@ const Button = styled.button(
 )
 
 const OutlineButton = styled(Button)`
-   ${tw`bg-transparent text-blue-600 border mt-4  hover:(border-color[#367BF5]  bg-white)`}
+   ${tw`bg-transparent color[#38a169]   hover:(border-color[#38a169]  bg-white)`}
 `
 const createSetupIntent = async customer => {
    try {

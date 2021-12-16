@@ -193,7 +193,7 @@ const CardSetupForm = ({ intent, handleResult }) => {
                submitting && tw`cursor-not-allowed`,
             ]}
          >
-            {submitting ? 'Paying...' : 'Pay'}
+            {submitting ? 'Saving...' : 'Save Card'}
          </button>
          {error && <span tw="block text-red-500 mt-2">{error}</span>}
       </form>
