@@ -36,54 +36,103 @@ const PaymentProcessingModal = ({
 
    const ShowPaymentStatusInfo = () => {
       let icon = (
-         <Spin size="large" wrapperClassName="payment_processing_modal" />
+         // <Spin size="large" wrapperClassName="payment_processing_modal" />
+         <img
+            src="/assets/gifs/paymentProcessing.gif"
+            className="payment_status_loader"
+         />
       )
       let title = 'Processing your payment'
       let subtitle = 'Please wait while we process your payment'
       let extra = null
       if (status === 'SUCCEEDED') {
-         icon = <Result status="success" />
+         icon = (
+            <img
+               src="/assets/gifs/successful.gif"
+               className="payment_status_loader"
+            />
+         )
          title = 'Successfully placed your order'
          subtitle = 'You will be redirected to your booking page shortly'
       } else if (status === 'REQUIRES_ACTION') {
-         icon = <Result status="info" />
+         icon = (
+            <img
+               src="/assets/gifs/authentication.gif"
+               className="payment_status_loader"
+            />
+         )
          title = 'Looks like your card requires authentication'
          subtitle =
             'An additional verification step which direct you to an authentication page on your bank’s website'
          extra = [
-            <Button type="link" href={actionUrl} target="_blank">
+            <Button
+               type="primary"
+               className="authenticateBtn"
+               href={actionUrl}
+               target="_blank"
+            >
                Authenticate Here
             </Button>,
-            <Button type="link" onClick={cancelPayment}>
+            <Button type="link" danger onClick={cancelPayment}>
                Cancel Payment
             </Button>,
          ]
       } else if (status === 'FAILED') {
-         icon = <Result status="error" />
+         icon = (
+            <img
+               src="/assets/gifs/payment_fail.gif"
+               className="payment_status_loader"
+            />
+         )
          title = 'Payment Failed'
          subtitle = 'Something went wrong'
          extra = [
-            <Button type="primary" key="console" onClick={closeModalHandler}>
-               Close Modal
+            <Button
+               type="primary"
+               className="tryOtherPayment"
+               key="console"
+               onClick={closeModalHandler}
+            >
+               Try other payment method
             </Button>,
          ]
       } else if (status === 'CANCELLED') {
-         icon = <Result status="error" />
+         icon = (
+            <img
+               src="/assets/gifs/payment_fail.gif"
+               className="payment_status_loader"
+            />
+         )
          title = 'Payment Cancelled'
          subtitle = 'You cancelled your payment process'
          extra = [
-            <Button type="primary" key="console" onClick={closeModalHandler}>
-               Close Modal
+            <Button
+               type="primary"
+               className="tryOtherPayment"
+               key="console"
+               onClick={closeModalHandler}
+            >
+               Try other payment method
             </Button>,
          ]
       } else if (status === 'REQUIRES_PAYMENT_METHOD') {
-         icon = <Result status="error" />
+         icon = (
+            <img
+               src="/assets/gifs/payment_fail.gif"
+               className="payment_status_loader"
+            />
+         )
          title = 'Payment Failed'
          subtitle =
             "Your payment is failed since your bank doesn't authenticate you"
          extra = [
-            <Button type="primary" key="console" onClick={closeModalHandler}>
-               Close Modal
+            <Button
+               type="primary"
+               className="tryOtherPayment"
+               key="console"
+               onClick={closeModalHandler}
+            >
+               Try other payment method
             </Button>,
          ]
       }
@@ -123,7 +172,7 @@ const PaymentProcessingModal = ({
 
    return (
       <Modal
-         title="Payment Processing"
+         title={null}
          visible={isOpen}
          footer={null}
          closable={false}
