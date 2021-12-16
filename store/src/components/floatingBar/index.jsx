@@ -4,6 +4,7 @@ import gql from 'graphql-tag'
 import { useRouter } from 'next/router'
 import tw from 'twin.macro'
 import { useSubscription } from '@apollo/react-hooks'
+import isEmpty from 'lodash/isEmpty'
 
 import { Loader } from '../loader'
 import { Tunnel } from '../tunnel'
@@ -46,79 +47,31 @@ const FloatingBar = () => {
    if (error) return null
    if (cartPayments?.aggregate?.count === 0) return null
    return (
-      <>
-         <section tw="fixed bottom-0 right-0 left-0 mb-24 md:mb-3 px-3 md:px-0">
-            <div tw="pl-3 pr-2 flex items-center justify-between mx-auto rounded bg-red-400 text-white border-white h-14 border w-full md:w-5/12">
-               <span>Complete your payment:</span>
-               <button
-                  onClick={() =>
-                     initializePayment(cartPayments.nodes[0]?.cartId)
-                  }
-                  tw="bg-red-600 text-white rounded px-3 py-2"
-               >
-                  Pay now{' '}
-                  {formatCurrency(Number(cartPayments.nodes[0]?.amount) || 0)}
-               </button>
+      <section tw="fixed flex items-center height[120px] width[85%] box-shadow[0px 4px 12px rgba(0, 0, 0, 0.2)] background[rgba(56, 161, 105, 0.8)] backdrop-blur-sm bottom-0 right-0 left-0 margin[1rem auto] px-3 md:px-0">
+         <div tw="p-4 flex flex-col items-start sm:(flex-row items-center justify-between)  mx-auto rounded text-white w-full">
+            <div>
+               <p tw="text-white font-semibold text-2xl">
+                  Hi {user?.platform_customer?.fullName || ''}!
+               </p>
+               <p tw="text-white font-semibold text-lg">
+                  Your payment for Beef Burgur and Cheesy Garlic Supreme Bread
+                  is pending. Complete your payment
+               </p>
             </div>
-         </section>
-         {/* <Tunnel isOpen={isOpen} toggleTunnel={setIsOpen} size="md">
-            <Tunnel.Header title="Incomplete Payments">
-               <Button size="sm" onClick={() => setIsOpen(false)}>
-                  <CloseIcon size={20} tw="stroke-current" />
-               </Button>
-            </Tunnel.Header>
-            <Tunnel.Body>
-               {loading ? (
-                  <Loader inline />
-               ) : (
-                  <>
-                     {cartPayments?.aggregate?.count === 0 ? (
-                        <HelperBar type="success">
-                           <HelperBar.SubTitle>
-                              No Incomplete payments
-                           </HelperBar.SubTitle>
-                        </HelperBar>
-                     ) : (
-                        <ul tw="space-y-3">
-                           <li
-                              key={cartPayment?.id}
-                              tw="p-3 border border-gray-200 rounded"
-                           >
-                              <section tw="flex items-center justify-between">
-                                 <span>
-                                    Delivery on:&nbsp;
-                                    {cartPayment.cart.subscriptionOccurence
-                                       ?.fulfillmentDate
-                                       ? moment(
-                                            cartPayment.subscriptionOccurence
-                                               ?.fulfillmentDate
-                                         ).format('MMM DD, YYYY')
-                                       : 'N/A'}
-                                 </span>
-                                 <button
-                                    tw="uppercase rounded px-3 py-2 hover:bg-green-100 text-green-700"
-                                    onClick={() => {
-                                       initializePayment(cartPayment?.cartId)
-                                       setIsOpen(false)
-                                    }}
-                                 >
-                                    Pay{' '}
-                                    {formatCurrency(
-                                       Number(cartPayment?.amount) || 0
-                                    )}
-                                 </button>
-                              </section>
-                              <span>
-                                 Payment Status: {cartPayment.paymentStatus}
-                              </span>
-                           </li>
-                        </ul>
-                     )}
-                  </>
-               )}
-            </Tunnel.Body>
-         </Tunnel> */}
-      </>
+
+            <button
+               onClick={() =>
+                  initializePayment(cartPayments?.nodes[0]?.cartId || null)
+               }
+               tw="bg-white color[#38A169] font-semibold text-lg rounded px-3 py-2"
+            >
+               Pay Now{' '}
+               {!isEmpty(cartPayments) &&
+                  !isEmpty(cartPayments?.nodes) &&
+                  formatCurrency(Number(cartPayments?.nodes[0]?.amount || 0))}
+            </button>
+         </div>
+      </section>
    )
 }
 

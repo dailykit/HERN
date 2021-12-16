@@ -874,6 +874,7 @@ export const CUSTOMER = {
                phoneNumber
                paymentCustomerId
                defaultPaymentMethodId
+               fullName
                addresses: customerAddresses(order_by: { created_at: desc }) {
                   id
                   lat

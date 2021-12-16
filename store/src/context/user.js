@@ -87,7 +87,6 @@ export const UserProvider = ({ children }) => {
          onSubscriptionData: async ({
             subscriptionData: { data: { customer = {} } = {} } = {},
          } = {}) => {
-            console.log('customer details ->>', customer)
             if (!customer?.id) {
                await createCustomer({
                   variables: {
@@ -182,9 +181,7 @@ export const UserProvider = ({ children }) => {
    }, [session, loadingSession])
 
    React.useEffect(() => {
-      console.log('process user =>>>> 1')
       if (keycloakId && !loading && customer?.id) {
-         console.log('process user =>>>> 2')
          const user = processUser(customer)
          // fb pixel initialization when user is logged in
          const pixelId = isClient && get_env('PIXEL_ID')

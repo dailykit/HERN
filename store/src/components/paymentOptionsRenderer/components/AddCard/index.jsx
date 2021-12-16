@@ -165,7 +165,7 @@ export const AddCard = ({ cartId }) => {
                            {showPaymentBrandIcon(method?.brand)}
                         </PaymentMethodIconWrap>
 
-                        <section tw="p-2 w-full">
+                        <section tw="w-full">
                            <div tw="flex flex-col">
                               <span tw="text-base sm:(text-xl) text-gray-500 font-semibold">
                                  XXXX-XXXXXXXX-{method.last4}
