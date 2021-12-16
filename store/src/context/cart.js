@@ -99,8 +99,8 @@ export const CartProvider = ({ children }) => {
       onCompleted: data => {
          if (!isAuthenticated) {
             localStorage.setItem('cart-id', data.createCart.id)
-            setStoredCartId(data.createCart.id)
          }
+         setStoredCartId(data.createCart.id)
       },
       onError: error => {
          console.log(error)
@@ -179,8 +179,8 @@ export const CartProvider = ({ children }) => {
                },
                locationKioskId: kioskId,
                usedOrderInterface: oiType,
-               orderTabId: selectedOrderTab.id,
-               locationId: locationId,
+               orderTabId: selectedOrderTab?.id || null,
+               locationId: locationId || null,
             }
             console.log('object new cart', object)
             createCart({
@@ -210,9 +210,13 @@ export const CartProvider = ({ children }) => {
                isTest: user.isTest,
                // to be moved to headers
                customerId: user.id,
+               usedOrderInterface: oiType,
+               orderTabId: selectedOrderTab?.id || null,
+               locationId: locationId || null,
                paymentMethodId: user.platform_customer.defaultPaymentMethodId,
                stripeCustomerId: user.platform_customer.stripeCustomerId,
                address: user.platform_customer.defaultCustomerAddress,
+               customerKeycloakId: user?.keycloakId,
                cartItems: {
                   data: cartItems,
                },
@@ -251,7 +255,7 @@ export const CartProvider = ({ children }) => {
          variables: {
             where: {
                paymentStatus: { _eq: 'PENDING' },
-               status: { _eq: 'CART_PENDING' },
+               status: { _eq: 'ORDER_PENDING' },
                customerKeycloakId: {
                   _eq: user?.keycloakId,
                },
@@ -291,20 +295,20 @@ export const CartProvider = ({ children }) => {
                            isTest: user.isTest,
                            customerKeycloakId: user.keycloakId,
                            paymentMethodId:
-                              user.platform_customer.defaultPaymentMethodId,
+                              user.platform_customer?.defaultPaymentMethodId,
                            stripeCustomerId:
                               user.platform_customer?.stripeCustomerId,
                            address:
-                              user.platform_customer.defaultCustomerAddress,
+                              user.platform_customer?.defaultCustomerAddress,
                            ...(user.platform_customer.firstName && {
                               customerInfo: {
                                  customerFirstName:
-                                    user.platform_customer.firstName,
+                                    user.platform_customer?.firstName,
                                  customerLastName:
-                                    user.platform_customer.lastName,
-                                 customerEmail: user.platform_customer.email,
+                                    user.platform_customer?.lastName,
+                                 customerEmail: user.platform_customer?.email,
                                  customerPhone:
-                                    user.platform_customer.phoneNumber,
+                                    user.platform_customer?.phoneNumber,
                               },
                            }),
                         },
