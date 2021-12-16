@@ -45,7 +45,14 @@
    color: #ffffff;
    cursor: pointer;
    letter-spacing: 0.5px;
+   text-decoration: none;
+   > a {
+      color: #ffffff;
+   }
    &:hover {
       color: #ffffff99;
+      > a {
+         color: #ffffff99;
+      }
    }
 }

@@ -59,6 +59,7 @@
 .hern-product-card-content {
    margin-top: 6px;
    display: flex;
+   justify-content: space-between;
 }
 .hern-product-card-additional-icon {
    position: relative;
@@ -98,7 +99,7 @@
    max-width: 20em;
 }
 .hern-product-card-custom-area {
-   position: absolute;
+   // position: absolute;
    display: flex;
    flex-direction: column;
    height: auto;

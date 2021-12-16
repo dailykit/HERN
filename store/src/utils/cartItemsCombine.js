@@ -6,10 +6,11 @@ export const combineCartItems = cartItems => {
       return []
    }
 
-   const cartItemRootIds = cartItems.map(item => item.id)
+   const cartItemRootIds = cartItems.map(item => item.cartItemId)
    const cartItemsWithoutId = cartItems.map(item => {
       const updatedItem = item
-      delete updatedItem.id
+      delete updatedItem.cartItemId
+      delete updatedItem.created_at
       return updatedItem
    })
 
