@@ -113,6 +113,8 @@ const proxy = createProxyMiddleware({
 request on test.dailykit.org forwards to http://localhost:3000
 */
 app.use('/api/:path(*)', proxy)
+app.use('/_next/image', proxy)
+app.use('/assets/:path(*)', proxy)
 
 const RESTRICTED_FILES = ['env-config.js', 'favicon', '.next', '_next']
 
