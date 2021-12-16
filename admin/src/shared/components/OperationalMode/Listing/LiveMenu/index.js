@@ -1,7 +1,7 @@
-import { useSubscription } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import React, { useRef, useState, useImperativeHandle, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { COLLECTION_PRODUCTS } from '../../Query'
+import { COLLECTION_PRODUCTS, PRODUCT_PRICE_BRAND_LOCATION } from '../../Query'
 import {
    Text,
    Spacer,
@@ -13,11 +13,13 @@ import {
    Flex,
    Tunnels,
    Tunnel,
+   Form,
 } from '@dailykit/ui'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { StyledGroupBy } from './styled'
-import { MenuProduct } from '../../../../../apps/subscription/views/Listings/Menu/MenuProductTable/BulkActionTunnel'
 import { BrandManager } from './BulkActionTunnel'
+import { logger } from '../../../../utils'
+import { toast } from 'react-toastify'
 
 const LiveMenu = () => {
    const [CollectionProducts, setCollectionProducts] = React.useState([])
@@ -26,71 +28,104 @@ const LiveMenu = () => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
    const [checked, setChecked] = useState(false) //me
    const [selectedRows, setSelectedRows] = React.useState([])
+
    const { loading } = useSubscription(COLLECTION_PRODUCTS, {
-      variables: { brandId: parseInt(id) },
+      variables: { brandId: parseInt(id), brandId1: parseInt(id) },
       onSubscriptionData: data => {
          const result = data.subscriptionData.data.products.map(product => {
+            const specialPrice = !product?.productPrice_brand_locations.length
+               ? product.price
+               : product?.productPrice_brand_locations[0]?.specificPrice !==
+                 null
+               ? product?.productPrice_brand_locations[0]?.specificPrice
+               : product.price *
+                 (1 +
+                    product?.productPrice_brand_locations[0]
+                       ?.markupOnStandardPriceInPercentage /
+                       100)
+            console.log('specialPrice', specialPrice)
+            console.log('whole data', product?.productPrice_brand_locations)
             return {
                id: product.id,
                name: product.name,
                price: product.price,
+               brandId: parseInt(id),
                category:
                   product?.collection_categories[0]?.collection_productCategory
                      ?.productCategoryName || 'Not in Menu',
-               specificPrice:
-                  product?.productPrice_brand_locations[0]?.specificPrice ||
-                  'Not set',
+
+               specificPrice: specialPrice,
                specificDiscount:
                   product?.productPrice_brand_locations[0]?.specificDiscount ||
                   'Not set',
-               isPublished:
-                  product?.productPrice_brand_locations[0]?.isPublished ||
-                  'Not set',
-               isAvailable:
-                  product?.productPrice_brand_locations[0]?.isAvailable ||
-                  false,
-               brandLocationId:
-                  product?.productPrice_brand_locations[0]?.id || 'Not set',
+               isPublished: !product?.productPrice_brand_locations.length
+                  ? true
+                  : product?.productPrice_brand_locations[0]?.isPublished,
+               isAvailable: !product?.productPrice_brand_locations.length
+                  ? true
+                  : product?.productPrice_brand_locations[0]?.isAvailable,
+               brandLocationId: null,
             }
          })
          setCollectionProducts(result)
       },
    })
-   console.log('products', CollectionProducts)
+   // console.log('products', CollectionProducts)
 
    const groupByOptions = [{ id: 1, title: 'Category', payLoad: 'category' }]
+
+   const [updateBrandProduct] = useMutation(PRODUCT_PRICE_BRAND_LOCATION, {
+      onCompleted: () => toast.success('Successfully updated!'),
+      onError: error => {
+         toast.error('Failed to update, please try again!')
+         logger(error)
+      },
+   })
+
    const columns = [
       {
          title: 'Id',
          field: 'id',
+         headerFilter: true,
       },
 
       {
          title: 'Product Name',
          field: 'name',
-      },
-
-      {
-         title: 'Basic Price',
-         field: 'price',
-      },
-      {
-         title: 'Specific Price',
-         field: 'specificPrice',
-      },
-      {
-         title: 'Specific Discount',
-         field: 'specificDiscount',
+         headerFilter: true,
+         // formatter: reactFormatter(<ProductName update={updateBrandProduct} />),
       },
       {
          title: 'Availability',
          field: 'isAvailable',
+         formatter: reactFormatter(
+            <AvailableToggleStatus update={updateBrandProduct} />
+         ),
       },
       {
          title: 'Published',
          field: 'isPublished',
+         formatter: reactFormatter(
+            <PublishedToggleStatus update={updateBrandProduct} />
+         ),
+      },
+      {
+         title: 'Basic Price',
+         field: 'price',
+         headerFilter: true,
+      },
+      {
+         title: 'Specific Price',
+         field: 'specificPrice',
+         headerFilter: true,
+      },
+      {
+         title: 'Specific Discount',
+         field: 'specificDiscount',
+         headerFilter: true,
       },
    ]
+
    useEffect(() => {}, [])
 
    const handleRowSelection = ({ _row }) => {
@@ -246,7 +281,7 @@ const LiveMenu = () => {
    const removeSelectedRow = id => {
       tableRef.current.table.deselectRow(id)
    }
-   console.log('table ref', tableRef)
+   // console.log('table ref', tableRef)
    return (
       <>
          <Tunnels tunnels={tunnels}>
@@ -327,7 +362,8 @@ const options = {
    layout: 'fitDataStretch',
    resizableColumns: true,
    movableColumns: true,
-   tooltips: true,
+   pagination: 'local',
+   paginationSize: 8,
    downloadDataFormatter: data => data,
    downloadReady: (fileContents, blob) => blob,
 }
@@ -392,5 +428,85 @@ const ActionBar = ({
             </StyledGroupBy>
          </Flex>
       </>
+   )
+}
+const AvailableToggleStatus = ({ update, cell }) => {
+   const [checkedAvailable, setCheckedAvailable] = React.useState(
+      cell.getData().isAvailable
+   )
+   console.log('toggle data', cell.getData().name, cell.getData())
+   const toggleStatus = ({ Available, BrandId, ProductId }) => {
+      update({
+         variables: {
+            objects: {
+               isAvailable: Available,
+               brandId: BrandId,
+               productId: ProductId,
+            },
+            constraint: 'productPrice_brand_location_brandId_productId_key',
+            update_columns: ['isAvailable'],
+         },
+      })
+      console.log('mutation data on available', Available, BrandId, ProductId)
+   }
+   React.useEffect(() => {
+      if (checkedAvailable !== cell.getData().isAvailable) {
+         toggleStatus({
+            Available: checkedAvailable,
+            BrandId: cell.getData().brandId,
+            ProductId: cell.getData().id,
+         })
+         console.log('mutation data on available', {
+            Available: checkedAvailable,
+         })
+      }
+   }, [checkedAvailable])
+
+   return (
+      <Form.Toggle
+         name={`Available-${cell.getData().name}`}
+         onChange={() => setCheckedAvailable(!checkedAvailable)}
+         value={checkedAvailable}
+      />
+   )
+}
+const PublishedToggleStatus = ({ update, cell }) => {
+   const [checkedPublished, setCheckedPublished] = React.useState(
+      cell.getData().isPublished
+   )
+   console.log('toggle data', cell.getData().name, cell.getData())
+   const toggleStatus = ({ isPublished, brandId, productId }) => {
+      const objects = {
+         isPublished,
+         brandId,
+         productId,
+      }
+      update({
+         variables: {
+            objects,
+            constraint: 'productPrice_brand_location_brandId_productId_key',
+            update_columns: ['isPublished'],
+         },
+      })
+   }
+   React.useEffect(() => {
+      if (checkedPublished !== cell.getData().isPublished) {
+         toggleStatus({
+            isPublished: checkedPublished,
+            brandId: cell.getData().brandId,
+            productId: cell.getData().id,
+         })
+         console.log('mutation data on published', {
+            Published: checkedPublished,
+         })
+      }
+   }, [checkedPublished])
+
+   return (
+      <Form.Toggle
+         name={`Published-${cell.getData().name}`}
+         onChange={() => setCheckedPublished(!checkedPublished)}
+         value={checkedPublished}
+      />
    )
 }

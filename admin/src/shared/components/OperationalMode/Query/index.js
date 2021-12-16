@@ -14,7 +14,7 @@ export const BRAND_ID = gql`
    }
 `
 export const COLLECTION_PRODUCTS = gql`
-   subscription MyQuery($brandId: Int!) {
+   subscription collectionProduct($brandId: Int!, $brandId1: Int!) {
       products {
          id
          name
@@ -32,9 +32,10 @@ export const COLLECTION_PRODUCTS = gql`
                productCategoryName
             }
          }
-         productPrice_brand_locations(where: { brandId: { _eq: 1 } }) {
+         productPrice_brand_locations(where: { brandId: { _eq: $brandId1 } }) {
             specificPrice
             specificDiscount
+            markupOnStandardPriceInPercentage
             isPublished
             isAvailable
             id
@@ -48,6 +49,23 @@ export const BRANDS_LOCATION_ID = gql`
       brands_brand_location {
          brandId
          id
+      }
+   }
+`
+export const PRODUCT_PRICE_BRAND_LOCATION = gql`
+   mutation brandManager(
+      $objects: [products_productPrice_brand_location_insert_input!]!
+      $constraint: products_productPrice_brand_location_constraint!
+      $update_columns: [products_productPrice_brand_location_update_column!]!
+   ) {
+      insert_products_productPrice_brand_location(
+         objects: $objects
+         on_conflict: {
+            constraint: $constraint
+            update_columns: $update_columns
+         }
+      ) {
+         affected_rows
       }
    }
 `
