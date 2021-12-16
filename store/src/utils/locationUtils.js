@@ -65,7 +65,11 @@ export const isStoreOnDemandDeliveryAvailable = async (
                      const status = aerial && drivable && zipcode && geoBoundary
 
                      if (status || rec == finalRecurrences.length - 1) {
-                        return { status, result: distanceDeliveryStatus.result }
+                        return {
+                           status,
+                           result: distanceDeliveryStatus.result,
+                           rec: finalRecurrences[rec],
+                        }
                      }
                   } else {
                      if (rec == finalRecurrences.length - 1) {
