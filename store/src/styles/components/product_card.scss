@@ -49,6 +49,10 @@
       border-radius: 2px;
    }
 }
+.hern-product-card-image-background--aspect-ratio {
+   height: 100% !important;
+}
+
 .hern-product-card__image {
    border-radius: 5px;
    object-fit: contain;
@@ -56,10 +60,17 @@
    height: 180px;
    z-index: 5;
 }
+.hern-product-card__image--aspect-ratio {
+   aspect-ratio: 1/1;
+   height: auto !important;
+}
 .hern-product-card-content {
    margin-top: 6px;
    display: flex;
    justify-content: space-between;
+}
+.hern-product-card-content--custom-area-not-flex {
+   display: block !important;
 }
 .hern-product-card-additional-icon {
    position: relative;

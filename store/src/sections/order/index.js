@@ -17,8 +17,12 @@ import * as Scroll from 'react-scroll'
 import CartBar from './CartBar'
 import { useConfig } from '../../lib'
 
-export const OnDemandOrder = () => {
+export const OnDemandOrder = ({ config }) => {
    const { brand } = useConfig()
+
+   const menuType = config?.display?.dropdown?.value[0]?.value
+      ? config?.display?.dropdown?.value[0]?.value
+      : 'side-nav'
 
    const [hydratedMenu, setHydratedMenu] = React.useState([])
    const [status, setStatus] = useState('loading')
@@ -116,7 +120,18 @@ export const OnDemandOrder = () => {
    }
    return (
       <>
-         <div className="hern-on-demand-order-container">
+         {menuType === 'fixed-top-nav' && (
+            <OnDemandMenu
+               menuType="navigationAnchorMenu"
+               categories={categories}
+            />
+         )}
+         <div
+            className={classNames('hern-on-demand-order-container', {
+               'hern-on-demand-order-container--fixed-top-nav':
+                  menuType === 'fixed-top-nav',
+            })}
+         >
             <div
                id="hern-on-demand-order-container"
                className={classNames('hern-on-demand-page', {
@@ -135,45 +150,49 @@ export const OnDemandOrder = () => {
                               className="hern-product-category-heading"
                               id={`hern-product-category-${eachCategory.name}`}
                            >
-                              {eachCategory.name}
-                           </p>
-                           {eachCategory.products.map((eachProduct, index) => {
-                              return (
-                                 <ProductCard
-                                    key={index}
-                                    data={eachProduct}
-                                    showImage={
-                                       eachProduct.assets.images.length > 0
-                                          ? true
-                                          : false
-                                    }
-                                    customAreaComponent={CustomArea}
-                                    showModifier={
-                                       productModifier &&
-                                       productModifier.id === eachProduct.id
-                                    }
-                                    closeModifier={closeModifier}
-                                 />
+                              {eachCategory.name}({eachCategory.products.length}
                               )
-                           })}
+                           </p>
+                           <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                              {eachCategory.products.map(
+                                 (eachProduct, index) => {
+                                    return (
+                                       <div
+                                          key={index}
+                                          className="hern-on-demand-order--product-card"
+                                       >
+                                          <ProductCard
+                                             key={index}
+                                             data={eachProduct}
+                                             showImage={
+                                                eachProduct.assets.images
+                                                   .length > 0
+                                                   ? true
+                                                   : false
+                                             }
+                                             customAreaComponent={CustomArea}
+                                             showModifier={
+                                                productModifier &&
+                                                productModifier.id ===
+                                                   eachProduct.id
+                                             }
+                                             closeModifier={closeModifier}
+                                             customAreaFlex={false}
+                                          />
+                                       </div>
+                                    )
+                                 }
+                              )}
+                           </div>
                            <Divider />
                         </Scroll.Element>
                      )
                   })}
                </div>
-               {cartState.cart &&
-                  cartState.cart?.products?.aggregate?.count !== 0 && (
-                     <BottomCartBar />
-                  )}
-               {/* {productModifier && (
-                  <ModifierPopup
-                     productData={productModifier}
-                     closeModifier={closeModifier}
-                     height={productModifier ? '100%' : '0'}
-                  />
-               )} */}
             </div>
-            <OnDemandMenu categories={categories} />
+            {menuType !== 'fixed-top-nav' && (
+               <OnDemandMenu categories={categories} />
+            )}
             {cartState.cart &&
                cartState.cart?.products?.aggregate?.count !== 0 && (
                   <BottomCartBar />
