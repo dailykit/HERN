@@ -159,7 +159,6 @@ export const SocialShare = ({ update, domain }) => {
     //for every change in data will update the field(form)
     const onChangeHandler = e => {
         const { name, value } = e.target
-        console.log(name, value)
         setForm(prev => ({
             ...prev,
             [name]: {
