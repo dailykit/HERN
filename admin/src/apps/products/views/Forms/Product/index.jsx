@@ -255,7 +255,16 @@ const Product = () => {
    const searchOptions = option => {
       setSearchedOption(option)
    }
-   const selectedOption = option => console.log(option)
+   const selectedOption = option => {
+      updateProduct({
+         variables: {
+            id: state.id,
+            _set: {
+               VegNonVegType: option.title,
+            },
+         },
+      })
+   }
 
    const addDropDownOptions = () => {
       const object = {
@@ -305,7 +314,7 @@ const Product = () => {
                            hasError={
                               !title.meta.isValid && title.meta.isTouched
                            }
-                           style={{ width: '150%', textAlign: 'left' }}
+                           style={{ width: '100%', textAlign: 'left' }}
                         />
                         {title.meta.isTouched &&
                            !title.meta.isValid &&
@@ -417,8 +426,7 @@ const Product = () => {
                                  addOption={addDropDownOptions}
                                  type="single"
                                  searchedOption={searchOptions}
-                                 selectedOption={selectedOption}
-                              />
+                                 selectedOption={selectedOption} />
                            </Form.Group>
                         </HorizontalTabPanel>
                         <HorizontalTabPanel>

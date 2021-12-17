@@ -1,9 +1,14 @@
 import React from 'react'
 import tw, { styled } from 'twin.macro'
 
-import { getSettings, isClient } from '../../../utils'
+import {
+   getPageProps,
+   getSettings,
+   isClient,
+   processExternalFiles,
+} from '../../../utils'
 import { PRODUCT_OPTION_WITH_RECIPES, RECIPE_DETAILS } from '../../../graphql'
-import { Layout, SEO } from '../../../components'
+import { HelperBar, Layout, SEO } from '../../../components'
 import LockIcon from '../../../assets/icons/Lock'
 import ChefIcon from '../../../assets/icons/Chef'
 import TimeIcon from '../../../assets/icons/Time'
@@ -13,12 +18,26 @@ import { graphQLClient, useConfig } from '../../../lib'
 import classNames from 'classnames'
 
 const Recipe = props => {
-   const { productOption, seo, settings } = props
-
+   const {
+      folds,
+      settings,
+      navigationMenus,
+      seoSettings,
+      linkedFiles,
+      productOption,
+   } = props
    const recipe = productOption.simpleRecipeYield?.simpleRecipe
    const { configOf } = useConfig()
 
    const theme = configOf('theme-color', 'Visual')
+   console.log(linkedFiles)
+   React.useEffect(() => {
+      try {
+         processExternalFiles(folds, linkedFiles)
+      } catch (err) {
+         console.log('Failed to render page: ', err)
+      }
+   }, [])
 
    const renderIngredientName = (slipName, sachet) => {
       if (recipe.showIngredientsQuantity) {
@@ -29,8 +48,8 @@ const Recipe = props => {
 
    if (!recipe)
       return (
-         <Layout settings={settings}>
-            <SEO title="Not found" />
+         <Layout navigationMenus={navigationMenus} settings={settings}>
+            <SEO seoSettings={seoSettings} />
             <main className="hern-recipe">
                <HelperBar type="info">
                   <HelperBar.Title> No such recipe exists!</HelperBar.Title>
@@ -39,8 +58,12 @@ const Recipe = props => {
          </Layout>
       )
    return (
-      <Layout settings={settings}>
-         <SEO title={recipe.name} richresult={recipe.richResult} />
+      <Layout navigationMenus={navigationMenus} settings={settings}>
+         <SEO
+            seoSettings={seoSettings}
+            title={recipe.name}
+            richresult={recipe.richResult}
+         />
          <main className="hern-recipe">
             <h1 className="hern-recipe__title">{recipe.name}</h1>
             <div className="hern-recipe__img__wrapper">
@@ -223,16 +246,22 @@ export async function getStaticProps({ params }) {
       optionId: parseInt(params.id),
    })
    const domain = 'test.dailykit.org'
-   // const domain =
-   //    process.env.NODE_ENV === 'production'
-   //       ? params.domain
-   //       : 'test.dailykit.org'
-   //page data
-
    //brand settings
    const { seo, settings } = await getSettings(domain, `/recipes/${params.id}`)
+
+   const { parsedData, navigationMenus, seoSettings, linkedFiles } =
+      await getPageProps(params, '/recipe')
+
    return {
-      props: { productOption: data.productOption, seo, settings },
+      props: {
+         folds: parsedData,
+         linkedFiles,
+         navigationMenus,
+         seoSettings,
+         productOption: data.productOption,
+         seo,
+         settings,
+      },
       revalidate: 60, // will be passed to the page component as props
    }
 }

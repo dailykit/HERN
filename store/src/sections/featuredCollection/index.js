@@ -382,7 +382,8 @@ export const FeaturedCollection = props => {
                      data.productOptions.length > 0 &&
                      (config?.informationVisibility?.modifier?.showModifier
                         ?.value ??
-                        true)
+                        true) &&
+                     data.isPopupAllowed
                   ) {
                      setProductIdForModifier(data.id)
                   } else {
@@ -402,7 +403,7 @@ export const FeaturedCollection = props => {
    const closeModifier = () => {
       setProductIdForModifier(null)
    }
-
+   console.log('featuredError', productsError, menuError)
    if (status === 'error' || productsError || menuError) {
       return <p>Something went wrong</p>
    }

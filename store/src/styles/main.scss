@@ -26,6 +26,7 @@
 @use './components/counterBtn.scss';
 @use './components/login_v1.scss';
 @use './components/locationSelector.scss';
+@use './components/kiosk.scss';
 
 @use './sections/register';
 @use './sections/our-plans';
@@ -47,6 +48,7 @@
 @use './sections/placing-order';
 @use './sections/order';
 @use './sections/onDemandCart.scss';
+@use './sections/kiosk/kiosk-section.scss';
 
 /*Account routes pages*/
 @use './sections/account/addresses';
@@ -56,3 +58,5 @@
 @use './sections/account/referrals';
 @use './sections/account/wallet';
 @use './sections/account/profile';
+
+@use './components/on_demand_cart_bar.scss';
