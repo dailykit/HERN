@@ -47,14 +47,23 @@ const FloatingBar = () => {
    if (error) return null
    if (cartPayments?.aggregate?.count === 0) return null
    return (
-      <section tw="fixed flex items-center height[120px] width[85%] box-shadow[0px 4px 12px rgba(0, 0, 0, 0.2)] background[rgba(56, 161, 105, 0.8)] backdrop-blur-sm bottom-0 right-0 left-0 margin[1rem auto] px-3 md:px-0">
+      <section tw="fixed flex items-center max-height[200px] width[85%] border-radius[6px] box-shadow[0px 4px 12px rgba(0, 0, 0, 0.2)] background[rgba(56, 161, 105, 0.8)] backdrop-blur-md bottom-0 right-0 left-0 margin[1rem auto] px-3 md:px-0">
          <div tw="p-4 flex flex-col items-start sm:(flex-row items-center justify-between)  mx-auto rounded text-white w-full">
             <div>
                <p tw="text-white font-semibold text-2xl">
                   Hi {user?.platform_customer?.fullName || ''}!
                </p>
                <p tw="text-white font-semibold text-lg">
-                  Your payment for Beef Burgur and Cheesy Garlic Supreme Bread
+                  Your payment for fulfillment date &nbsp;
+                  {!isEmpty(cartPayments) &&
+                  !isEmpty(cartPayments?.nodes) &&
+                  cartPayments?.nodes[0]?.cart?.subscriptionOccurence
+                     ?.fulfillmentDate
+                     ? moment(
+                          cartPayments?.nodes[0]?.cart?.subscriptionOccurence
+                             ?.fulfillmentDate
+                       ).format('MMM DD, YYYY')
+                     : 'N/A'}{' '}
                   is pending. Complete your payment
                </p>
             </div>
@@ -63,7 +72,7 @@ const FloatingBar = () => {
                onClick={() =>
                   initializePayment(cartPayments?.nodes[0]?.cartId || null)
                }
-               tw="bg-white color[#38A169] font-semibold text-lg rounded px-3 py-2"
+               tw="bg-white color[#38A169] w-full md:(w-max) font-semibold text-lg rounded px-3 py-2"
             >
                Pay Now{' '}
                {!isEmpty(cartPayments) &&
