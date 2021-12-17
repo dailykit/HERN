@@ -103,7 +103,6 @@ export const SocialShare = ({ update, domain }) => {
         useLazyQuery(BRANDS.SETTINGS, {
             onCompleted: ({ brandSettings
             }) => {
-                console.log(brandSettings, "from social Share")
                 if (!isEmpty(brandSettings)) {
                     const { id, brand } = brandSettings[0]
                     setSettingId(id)

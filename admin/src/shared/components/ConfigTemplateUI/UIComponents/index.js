@@ -86,9 +86,11 @@ export const TextBox = ({
                   placeholder={`Enter the ${fieldDetail.label.toLowerCase()}`}
                />
             ) : (
-               <Text as="h3" style={{ fontSize: '16px' }}>
+               <Text as="h3" style={{ fontSize: '16px', color: '#555B6E' }}>
                   {fieldDetail?.value || fieldDetail.default}
-                  {(fieldDetail?.value == "" && fieldDetail.default == "") && <NoValueSpan>Not specified</NoValueSpan>}
+                  {fieldDetail?.value == '' && fieldDetail.default == '' && (
+                     <NoValueSpan>Not specified</NoValueSpan>
+                  )}
                </Text>
             )}
 
@@ -105,7 +107,7 @@ export const Toggle = ({ fieldDetail, marginLeft, path, onConfigChange }) => (
       container
       justifyContent="space-between"
       alignItems="center"
-      margin={`0 0 0 ${marginLeft}`}
+      margin={`${marginLeft} 0 0 ${marginLeft}`}
    >
       <Flex container alignItems="flex-end">
          <Form.Label title={fieldDetail.label} htmlFor="toggle">
@@ -178,7 +180,7 @@ export const Number = ({
             placeholder="Enter integer value"
          />
       ) : (
-         <Text as="h4">{fieldDetail?.value || fieldDetail.default}</Text>
+         <Text as="h4" style={{ color: '#555B6E' }}>{fieldDetail?.value || fieldDetail.default}</Text>
       )}
    </Flex>
 )
@@ -231,7 +233,7 @@ export const Date = ({
             value={fieldDetail?.value || fieldDetail.default}
          />
       ) : (
-         <Text as="h4">{fieldDetail?.value || fieldDetail.default}</Text>
+         <Text as="h4" style={{ color: '#555B6E' }}>{fieldDetail?.value || fieldDetail.default}</Text>
       )}
    </Flex>
 )
@@ -262,7 +264,7 @@ export const Time = ({
             value={fieldDetail?.value || fieldDetail.default}
          />
       ) : (
-         <Text as="h4">{fieldDetail?.value || fieldDetail.default}</Text>
+         <Text as="h4" style={{ color: '#555B6E' }}>{fieldDetail?.value || fieldDetail.default}</Text>
       )}
    </Flex>
 )
@@ -339,7 +341,7 @@ export const TextArea = ({
             value={fieldDetail?.value || fieldDetail.default}
          />
       ) : (
-         <Text as="h4">{fieldDetail?.value || fieldDetail.default}</Text>
+         <Text as="h4" style={{ color: '#555B6E' }}>{fieldDetail?.value || fieldDetail.default}</Text>
       )}
    </Flex>
 )
@@ -531,7 +533,7 @@ export const PhoneNumberSelector = ({
    const [errorMessage, setErrorMessage] = React.useState([])
 
    React.useEffect(() => {
-      const phoneNo = value.value || ""
+      const phoneNo = value.value || ''
       if (isValidPhoneNumber(phoneNo)) {
          setIsValid(true)
          setErrorMessage([])
@@ -569,7 +571,9 @@ export const PhoneNumberSelector = ({
                      placeholder="Enter your phone number"
                   />
                ) : (
-                  <Text as="h4">{fieldDetail?.value}</Text>
+                  <Text as="h4" className="showPhoneNumber">
+                     {fieldDetail?.value}
+                  </Text>
                )}
                {errorMessage.length !== 0 && (
                   <Form.Error> {errorMessage[0]}</Form.Error>
@@ -588,7 +592,6 @@ export const ImageUpload = props => {
       if ('url' in data) {
          const e = { target: { name: path, value: data.url } }
          onConfigChange(e, data.url)
-         // configSaveHandler(configJSON)
       }
       closeTunnel(1)
    }
@@ -694,24 +697,36 @@ export const ImageContainer = styled.div`
    }
    button {
       float: right;
-      margin: 4px 4px 0 0;
+      margin: 4px 4px 0 4px;
    }
 `
 export const PhoneNumSelector = styled.div`
-   .PhoneInputInput {
+   .showPhoneNumber {
+      color: #555b6e;
+   }
+   .PhoneInput {
       border-radius: 6px;
       border: 1px solid #e3e3e3;
+      margin-top: 12px;
+      width: 13rem;
+   }
+   .PhoneInputCountry {
+      padding-left: 12px;
+   }
+   .PhoneInputInput {
       text-align: left;
       font-size: 16px;
       padding: 0 12px;
       height: 40px;
+      border: none;
+      border-left: 1px solid #e3e3e3;
    }
    h4 {
       font-size: 15px;
    }
 `
 export const NoValueSpan = styled.span`
-color: #919699;
-    font-size: 14px;
-    font-weight: 400;
-    `
+   color: #919699;
+   font-size: 14px;
+   font-weight: 400;
+`
