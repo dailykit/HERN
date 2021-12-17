@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Col, Radio, Row, Space } from 'antd'
 import { useConfig } from '../lib'
-import { DineinTable, GPSIcon } from '../assets/icons'
+import { DineinTable, GPSIcon, OrderTime } from '../assets/icons'
 import {
    BRAND_LOCATIONS,
    BRAND_ONDEMAND_DELIVERY_RECURRENCES,
@@ -13,13 +13,15 @@ import {
    SCHEDULED_DINEIN_BRAND_RECURRENCES,
 } from '../graphql'
 import { getDistance, convertDistance } from 'geolib'
+import moment from 'moment'
 
 import {
    get_env,
    isClient,
    isPreOrderDeliveryAvailable,
    isStoreOnDemandDeliveryAvailable,
-   useScript,
+   generateDeliverySlots,
+   generateMiniSlots,
 } from '../utils'
 import { useUser } from '../context'
 import { useQuery } from '@apollo/react-hooks'
@@ -143,6 +145,7 @@ export const Fulfillment = () => {
          ...newAddress,
          latitude: newAddress.lat,
          longitude: newAddress.lng,
+         address: { zipcode: newAddress.zipcode },
       }
       setAddress(modifiedAddress)
       localStorage.setItem('userLocation', JSON.stringify(modifiedAddress))
@@ -184,6 +187,7 @@ export const Fulfillment = () => {
             <Delivery
                brands_brand_location_aggregate={brands_brand_location_aggregate}
                address={address}
+               orderTabFulfillmentType={orderTabFulfillmentType}
             />
          )}
          {/* {fulfillmentType === 'PICKUP' && <Pickup />} */}
@@ -192,10 +196,11 @@ export const Fulfillment = () => {
 }
 
 const Delivery = props => {
-   const { brands_brand_location_aggregate, address } = props
+   const { brands_brand_location_aggregate, address, orderTabFulfillmentType } =
+      props
    const { brand, locationId } = useConfig()
 
-   const [deliveryType, setDeliveryType] = useState('ONDEMAND')
+   const [deliveryType, setDeliveryType] = useState('PREORDER')
    const [status, setStatus] = useState('loading')
    const [selectedStore, setSelectedStore] = useState(null)
    const [brandLocation, setBrandLocation] = useState(null)
@@ -204,6 +209,27 @@ const Delivery = props => {
       useState(null)
    const [preOrderBrandRecurrence, setPreOrderBrandReoccurrence] =
       useState(null)
+   const [deliverySlots, setDeliverySlots] = useState(null)
+   const [selectedSlot, setSelectedSlot] = useState(null)
+
+   const [deliveryRadioOptions] = useState([
+      {
+         label: 'Now',
+         value: 'ONDEMAND',
+         disabled: !(
+            orderTabFulfillmentType &&
+            !orderTabFulfillmentType.includes('ONDEMAND_DELIVERY')
+         ),
+      },
+      {
+         label: 'Later',
+         value: 'PREORDER',
+         disabled: !(
+            orderTabFulfillmentType &&
+            !orderTabFulfillmentType.includes('PREORDER_DELIVERY')
+         ),
+      },
+   ])
 
    const fulfillmentStatus = React.useMemo(() => {
       let type
@@ -332,17 +358,20 @@ const Delivery = props => {
             Boolean(eachStore[fulfillmentStatus])
          )
       ) {
-         setSelectedStore(
-            sortedBrandLocation.filter(
-               eachStore => eachStore[fulfillmentStatus].status
-            )[0]
-         )
-         console.log(
-            'automatic',
-            sortedBrandLocation.filter(
-               eachStore => eachStore[fulfillmentStatus].status
-            )[0]
-         )
+         const firstStore = sortedBrandLocation.filter(
+            eachStore => eachStore[fulfillmentStatus].status
+         )[0]
+         setSelectedStore(firstStore)
+         console.log('automatic', firstStore)
+         if (deliveryType === 'PREORDER') {
+            const deliverySlots = generateDeliverySlots([
+               firstStore.deliveryStatus.rec.recurrence,
+            ])
+            console.log('deliverySlots', deliverySlots.data)
+            const miniSlots = generateMiniSlots(deliverySlots.data, 60)
+            setDeliverySlots(miniSlots)
+            console.log('miniSlots', miniSlots)
+         }
       }
       if (locationId) {
       }
@@ -413,5 +442,77 @@ const Delivery = props => {
    if (!selectedStore.deliveryStatus.status) {
       return <p>{selectedStore.deliveryStatus.message}</p>
    }
-   return <></>
+   return (
+      <div className="hern-cart__fulfillment-time-section">
+         <div className="hern-cart__fulfillment-time-section-heading">
+            <OrderTime />
+            <span>When would you like your order?</span>
+         </div>
+
+         <Radio.Group
+            options={deliveryRadioOptions}
+            onChange={e => {
+               setDeliveryType(e.target.value)
+            }}
+            value={deliveryType}
+            className="hern-cart__fulfillment-date-slot"
+         />
+
+         {deliveryType === 'ONDEMAND' ? (
+            <p>Store Available for Delivery</p>
+         ) : deliverySlots == null ? (
+            <Loader inline />
+         ) : (
+            <Space direction={'vertical'}>
+               <div>
+                  <p className="hern-cart__fulfillment-slot-heading">
+                     Fulfillment Date
+                  </p>
+                  <Radio.Group
+                     onChange={e => {
+                        console.log(e.target.value)
+                        setSelectedSlot(e.target.value)
+                     }}
+                  >
+                     <Space size={'middle'}>
+                        {deliverySlots.map((eachSlot, index) => {
+                           return (
+                              <Radio.Button value={eachSlot}>
+                                 {moment(eachSlot.date).format('DD MMM YY')}
+                              </Radio.Button>
+                           )
+                        })}
+                     </Space>
+                  </Radio.Group>
+               </div>
+               {selectedSlot && (
+                  <div>
+                     <p className="hern-cart__fulfillment-slot-heading">
+                        Fulfillment Time
+                     </p>
+                     <Radio.Group
+                        onChange={e => {
+                           console.log(e.target.value)
+                        }}
+                     >
+                        {selectedSlot.slots.map((eachSlot, index, elements) => {
+                           const slot = {
+                              from: eachSlot.time,
+                              to: elements[index + 1]?.time || eachSlot.end,
+                           }
+                           return (
+                              <Radio.Button value={slot}>
+                                 {slot.from}
+                                 {'-'}
+                                 {slot.to}
+                              </Radio.Button>
+                           )
+                        })}
+                     </Radio.Group>
+                  </div>
+               )}
+            </Space>
+         )}
+      </div>
+   )
 }

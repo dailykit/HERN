@@ -1,5 +1,6 @@
 .hern-cart__fulfillment-card {
    margin: 10px;
+   padding: 10px 0;
 }
 .hern-cart__fulfillment-heading {
    display: flex;
@@ -12,4 +13,41 @@
    font-size: 20px;
    line-height: 22px;
    color: rgba(64, 64, 64, 0.8);
+}
+
+.hern-cart__fulfillment-time-section {
+   display: flex;
+   flex-direction: column;
+   // .ant-radio-button-wrapper {
+   //    margin: 0 0 0 18px;
+   // }
+   // .ant-radio-button-wrapper:first-child {
+   //    margin-left: 0;
+   // }
+   // .ant-radio-button-wrapper:last-child {
+   //    margin-right: 0;
+   // }
+}
+.hern-cart__fulfillment-time-section-heading {
+   display: flex;
+   align-items: center;
+   margin: 10px 0;
+   > span {
+      font-style: normal;
+      font-weight: 600;
+      margin: 0 10px;
+      font-size: 20px;
+      line-height: 22px;
+      color: rgba(64, 64, 64, 0.8);
+   }
+}
+.hern-cart__fulfillment-date-slot {
+   margin-bottom: 10px;
+}
+.hern-cart__fulfillment-slot-heading {
+   font-style: normal;
+   font-weight: 600;
+   font-size: 12px;
+   line-height: 12px;
+   color: #404040;
 }

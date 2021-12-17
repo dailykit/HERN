@@ -4,6 +4,25 @@ import { isClient, get_env } from './index'
 import axios from 'axios'
 import { each } from 'lodash'
 
+export const getMinutes = time => {
+   return parseInt(time.split(':')[0]) * 60 + parseInt(time.split(':')[1])
+}
+
+export const makeDoubleDigit = num => {
+   if (num.toString().length === 1) {
+      return '0' + num
+   } else {
+      return num
+   }
+}
+
+export const getTimeFromMinutes = num => {
+   const hours = num / 60
+   const rhours = Math.floor(hours)
+   const minutes = (hours - rhours) * 60
+   const rminutes = Math.round(minutes)
+   return makeDoubleDigit(rhours) + ':' + makeDoubleDigit(rminutes)
+}
 export const isStoreOnDemandDeliveryAvailable = async (
    brandRecurrences,
    eachStore
@@ -147,7 +166,11 @@ export const isPreOrderDeliveryAvailable = async (
                const status = aerial && drivable && zipcode && geoBoundary
 
                if (status || rec == finalRecurrences.length - 1) {
-                  return { status, result: distanceDeliveryStatus.result }
+                  return {
+                     status,
+                     result: distanceDeliveryStatus.result,
+                     rec: finalRecurrences[rec],
+                  }
                }
             } else {
                if (rec == finalRecurrences.length - 1) {
@@ -523,4 +546,119 @@ export const combineRecurrenceAndBrandLocation = (
       eachStore.recurrences = finalBrandLocationRecurrence
       return eachStore.recurrences[0].recurrence
    }
+}
+export const generateDeliverySlots = recurrences => {
+   console.log('recurrences', recurrences)
+   let data = []
+   for (let rec of recurrences) {
+      const now = new Date() // now
+      const start = new Date(now.getTime() - 1000 * 60 * 60 * 24) // yesterday
+      // const start = now;
+      const end = new Date(now.getTime() + 7 * 1000 * 60 * 60 * 24) // 7 days later
+      const dates = rrulestr(rec.rrule).between(start, end)
+      dates.forEach(date => {
+         if (rec.timeSlots.length) {
+            rec.timeSlots.forEach(timeslot => {
+               // if multiple mile ranges, only first one will be taken
+               if (timeslot.mileRanges.length) {
+                  const leadTime = timeslot.mileRanges[0].leadTime
+                  const [fromHr, fromMin, fromSec] = timeslot.from.split(':')
+                  const [toHr, toMin, toSec] = timeslot.to.split(':')
+                  const fromTimeStamp = new Date(
+                     date.setHours(fromHr, fromMin, fromSec)
+                  )
+                  const toTimeStamp = new Date(
+                     date.setHours(toHr, toMin, toSec)
+                  )
+                  // start + lead time < to
+                  const leadMiliSecs = leadTime * 60000
+                  if (now.getTime() + leadMiliSecs < toTimeStamp.getTime()) {
+                     // if start + lead time > from -> set new from time
+                     let slotStart
+                     let slotEnd =
+                        toTimeStamp.getHours() + ':' + toTimeStamp.getMinutes()
+                     if (
+                        now.getTime() + leadMiliSecs >
+                        fromTimeStamp.getTime()
+                     ) {
+                        // new start time = lead time + now
+                        const newStartTimeStamp = new Date(
+                           now.getTime() + leadMiliSecs
+                        )
+                        slotStart =
+                           newStartTimeStamp.getHours() +
+                           ':' +
+                           newStartTimeStamp.getMinutes()
+                     } else {
+                        slotStart =
+                           fromTimeStamp.getHours() +
+                           ':' +
+                           fromTimeStamp.getMinutes()
+                     }
+                     // check if date already in slots
+                     const dateWithoutTime = date.toDateString()
+                     const index = data.findIndex(
+                        slot => slot.date === dateWithoutTime
+                     )
+                     if (index === -1) {
+                        data.push({
+                           date: dateWithoutTime,
+                           slots: [
+                              {
+                                 start: slotStart,
+                                 end: slotEnd,
+                                 mileRangeId: timeslot.mileRanges[0].id,
+                              },
+                           ],
+                        })
+                     } else {
+                        data[index].slots.push({
+                           start: slotStart,
+                           end: slotEnd,
+                           mileRangeId: timeslot.mileRanges[0].id,
+                        })
+                     }
+                  }
+               } else {
+                  return {
+                     status: false,
+                     message:
+                        'Sorry, you seem to be placed far out of our delivery range.',
+                  }
+               }
+            })
+         } else {
+            return { status: false, message: 'Sorry! No time slots available.' }
+         }
+      })
+   }
+   return { status: true, data }
+}
+
+export const generateMiniSlots = (data, size) => {
+   console.log('miniSlots', data)
+   let newData = []
+   data.forEach(el => {
+      el.slots.forEach(slot => {
+         const startMinutes = getMinutes(slot.start)
+         const endMinutes = getMinutes(slot.end)
+         let startPoint = startMinutes
+         while (startPoint < endMinutes) {
+            const index = newData.findIndex(datum => datum.date === el.date)
+            if (index === -1) {
+               newData.push({
+                  date: el.date,
+                  slots: [{ time: getTimeFromMinutes(startPoint), ...slot }],
+               })
+            } else {
+               newData[index].slots.push({
+                  time: getTimeFromMinutes(startPoint),
+                  ...slot,
+               })
+            }
+            startPoint = startPoint + size
+         }
+      })
+   })
+   return newData
 }
