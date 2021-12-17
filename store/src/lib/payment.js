@@ -31,7 +31,7 @@ const inititalState = {
    profileInfo: {
       firstName: '',
       lastName: '',
-      phone: '',
+      phoneNumber: '',
       email: '',
    },
    paymentInfo: {
@@ -267,7 +267,7 @@ export const PaymentProvider = ({ children }) => {
                firstName: user.platform_customer?.firstName || '',
                lastName: user.platform_customer?.lastName || '',
                email: user.platform_customer?.email || '',
-               phone: user.platform_customer?.phoneNumber || '',
+               phoneNumber: user.platform_customer?.phoneNumber || '',
             },
          })
 

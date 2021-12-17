@@ -28,7 +28,7 @@ export default function PayButton({ children, ...props }) {
       return (
          profileInfo.firstName &&
          profileInfo.lastName &&
-         profileInfo.phone &&
+         profileInfo.phoneNumber &&
          paymentInfo &&
          paymentInfo.selectedAvailablePaymentOption?.id
       )

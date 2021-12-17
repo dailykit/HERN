@@ -1,75 +1,78 @@
 import React from 'react'
 import tw from 'twin.macro'
+import { Skeleton } from 'antd'
 
-import { usePayment } from './state'
 import { Form, Referral } from '../../components'
 import { useUser } from '../../context'
+import { usePayment } from '../../lib'
 
 export const ProfileSection = () => {
    const { user } = useUser()
-   const { state, dispatch } = usePayment()
+   const { profileInfo, setProfileInfo, isPaymentLoading } = usePayment()
 
    React.useEffect(() => {
-      const { lastName, firstName, phoneNumber } = state.profile
-      dispatch({
-         type: 'SET_PROFILE',
-         payload: {
-            lastName: lastName || user?.platform_customer?.lastName,
-            firstName: firstName || user?.platform_customer?.firstName,
-            phoneNumber: phoneNumber || user?.platform_customer?.phoneNumber,
-         },
+      const { lastName, firstName, phoneNumber } = profileInfo
+      setProfileInfo({
+         lastName: lastName || user?.platform_customer?.lastName,
+         firstName: firstName || user?.platform_customer?.firstName,
+         phoneNumber: phoneNumber || user?.platform_customer?.phoneNumber,
       })
       // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, [user, dispatch])
+   }, [user])
 
    const handleChange = e => {
       const { name, value } = e.target
-
-      dispatch({
-         type: 'SET_PROFILE',
-         payload: {
-            [name]: value,
-         },
+      setProfileInfo({
+         ...profileInfo,
+         [name]: value,
       })
    }
+
    return (
       <main css={tw`flex flex-col`}>
-         <Form.Field tw="w-full md:w-3/12">
-            <Form.Label>First Name*</Form.Label>
-            <Form.Text
-               required
-               type="text"
-               name="firstName"
-               onChange={e => handleChange(e)}
-               value={state.profile.firstName}
-               placeholder="Enter your first name"
-            />
-         </Form.Field>
-         <Form.Field tw="w-full md:w-3/12">
-            <Form.Label>Last Name*</Form.Label>
-            <Form.Text
-               required
-               type="text"
-               name="lastName"
-               onChange={e => handleChange(e)}
-               value={state.profile.lastName}
-               placeholder="Enter your last name"
-            />
-         </Form.Field>
-         <Form.Field tw="w-full md:w-3/12">
-            <Form.Label>Phone No.*</Form.Label>
-            <Form.Text
-               required
-               type="text"
-               name="phoneNumber"
-               onChange={e => handleChange(e)}
-               value={state.profile.phoneNumber}
-               placeholder="Enter your phone no. eg. 987 987 9876"
-            />
-         </Form.Field>
-         {!user?.isSubscriber && !user?.customerReferral?.referredByCode && (
-            <Referral />
-         )}
+         <Skeleton
+            active
+            loading={isPaymentLoading}
+            title={{ width: 550 }}
+            paragraph={{ rows: 4, width: Array(5).fill(550) }}
+         >
+            <Form.Field tw="w-full md:w-3/12">
+               <Form.Label>First Name*</Form.Label>
+               <Form.Text
+                  required
+                  type="text"
+                  name="firstName"
+                  onChange={e => handleChange(e)}
+                  value={profileInfo?.firstName}
+                  placeholder="Enter your first name"
+               />
+            </Form.Field>
+            <Form.Field tw="w-full md:w-3/12">
+               <Form.Label>Last Name*</Form.Label>
+               <Form.Text
+                  required
+                  type="text"
+                  name="lastName"
+                  onChange={e => handleChange(e)}
+                  value={profileInfo?.lastName}
+                  placeholder="Enter your last name"
+               />
+            </Form.Field>
+            <Form.Field tw="w-full md:w-3/12">
+               <Form.Label>Phone No.*</Form.Label>
+               <Form.Text
+                  required
+                  type="text"
+                  name="phoneNumber"
+                  onChange={e => handleChange(e)}
+                  value={profileInfo?.phoneNumber}
+                  placeholder="Enter your phone no. eg. 987 987 9876"
+               />
+            </Form.Field>
+            {!user?.isSubscriber && !user?.customerReferral?.referredByCode && (
+               <Referral />
+            )}
+         </Skeleton>
       </main>
    )
 }
