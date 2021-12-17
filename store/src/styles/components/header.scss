@@ -13,6 +13,9 @@
    -ms-flex-align: center;
    align-items: center;
 }
+.hern-header--grid-3-col {
+   grid-template-columns: auto 1fr auto !important;
+}
 .hern-header__brand {
    height: 100%;
    padding-left: 0.5rem;
