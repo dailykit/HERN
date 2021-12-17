@@ -86,7 +86,6 @@ const FacebookPixelId = ({ update }) => {
 
     const onChangeHandler = e => {
         const { name, value } = e.target
-        console.log(name, value)
         setForm(prev => ({
             ...prev,
             [name]: {
