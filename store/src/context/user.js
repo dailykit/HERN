@@ -59,6 +59,7 @@ export const UserProvider = ({ children }) => {
    const [isLoading, setIsLoading] = React.useState(true)
    const [keycloakId, setKeycloakId] = React.useState('')
    const [session, loadingSession] = useSession()
+   console.log('session from userprovider', session)
 
    const [createCustomer] = useMutation(MUTATIONS.CUSTOMER.CREATE, {
       onError: error => console.log('createCustomer => error => ', error),
@@ -78,11 +79,11 @@ export const UserProvider = ({ children }) => {
    const { loading, data: { customer = {} } = {} } = useSubscription(
       CUSTOMER.DETAILS,
       {
-         // skip: !session?.user?.id || !keycloakId || !brand.id,
+         skip: !session?.user?.id || !keycloakId || !brand.id,
          fetchPolicy: 'network-only',
          variables: {
-            keycloakId: '0f9a0c54-0b37-4d33-82cb-6d2aaf16aee0',
-            brandId: 1,
+            keycloakId,
+            brandId: brand.id,
          },
          onSubscriptionData: async ({
             subscriptionData: { data: { customer = {} } = {} } = {},
@@ -205,11 +206,10 @@ export const UserProvider = ({ children }) => {
                updateBrandCustomer({
                   skip: !user?.brandCustomerId,
                   variables: {
-                     where: {
-                        id: {
-                           _eq: user?.brandCustomerId,
-                        },
+                     id: {
+                        _eq: user?.brandCustomerId,
                      },
+
                      _set: { subscriptionOnboardStatus: 'ONBOARDED' },
                   },
                })
