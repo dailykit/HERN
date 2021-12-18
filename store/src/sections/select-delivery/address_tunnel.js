@@ -12,7 +12,7 @@ import { Tunnel, Button, Form, Spacer } from '../../components'
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const AddressTunnel = props => {
-   const { outside = false } = props
+   const { outside = false, showAddressForm = true, onInputFiledSelect } = props
    const { user } = useUser()
    const { addToast } = useToasts()
    const { methods } = React.useContext(CartContext)
@@ -86,7 +86,10 @@ export const AddressTunnel = props => {
                address.zipcode = node.long_name
             }
          })
-         setAddress(address)
+         if (showAddressForm) {
+            setAddress(address)
+         }
+         onInputFiledSelect && onInputFiledSelect(address)
          setFormStatus('IN_PROGRESS')
       }
    }

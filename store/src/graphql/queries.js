@@ -1624,6 +1624,7 @@ export const PREORDER_PICKUP_BRAND_RECURRENCES = gql`
             timeSlots {
                from
                to
+               pickUpLeadTime
                mileRanges {
                   from
                   city

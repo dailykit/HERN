@@ -404,6 +404,7 @@ export const isStorePreOrderPickupAvailable = (brandRecurrences, eachStore) => {
       return {
          status: true,
          message: 'Store available for pre order pre order pickup.',
+         rec: finalRecurrences,
       }
    }
 }
@@ -661,4 +662,84 @@ export const generateMiniSlots = (data, size) => {
       })
    })
    return newData
+}
+export const generatePickUpSlots = recurrences => {
+   console.log('recurrences', recurrences)
+   let data = []
+   recurrences.forEach(rec => {
+      const now = new Date() // now
+      const start = new Date(now.getTime() - 1000 * 60 * 60 * 24) // yesterday
+      // const start = now;
+      const end = new Date(now.getTime() + 6 * 1000 * 60 * 60 * 24) // 7 days later
+      const dates = rrulestr(rec.rrule).between(start, end)
+      dates.forEach(date => {
+         if (rec.timeSlots.length) {
+            rec.timeSlots.forEach(timeslot => {
+               const timeslotFromArr = timeslot.from.split(':')
+               const timeslotToArr = timeslot.to.split(':')
+               const fromTimeStamp = new Date(
+                  date.setHours(
+                     timeslotFromArr[0],
+                     timeslotFromArr[1],
+                     timeslotFromArr[2]
+                  )
+               )
+               const toTimeStamp = new Date(
+                  date.setHours(
+                     timeslotToArr[0],
+                     timeslotToArr[1],
+                     timeslotToArr[2]
+                  )
+               )
+               // start + lead time < to
+               const leadMiliSecs = timeslot.pickUpLeadTime * 60000
+               if (now.getTime() + leadMiliSecs < toTimeStamp.getTime()) {
+                  // if start + lead time > from -> set new from time
+                  let slotStart
+                  let slotEnd =
+                     toTimeStamp.getHours() + ':' + toTimeStamp.getMinutes()
+                  if (now.getTime() + leadMiliSecs > fromTimeStamp.getTime()) {
+                     // new start time = lead time + now
+                     const newStartTimeStamp = new Date(
+                        now.getTime() + leadMiliSecs
+                     )
+                     slotStart =
+                        newStartTimeStamp.getHours() +
+                        ':' +
+                        newStartTimeStamp.getMinutes()
+                  } else {
+                     slotStart =
+                        fromTimeStamp.getHours() +
+                        ':' +
+                        fromTimeStamp.getMinutes()
+                  }
+                  // check if date already in slots
+                  const dateWithoutTime = date.toDateString()
+                  const index = data.findIndex(
+                     slot => slot.date === dateWithoutTime
+                  )
+                  if (index === -1) {
+                     data.push({
+                        date: dateWithoutTime,
+                        slots: [
+                           {
+                              start: slotStart,
+                              end: slotEnd,
+                           },
+                        ],
+                     })
+                  } else {
+                     data[index].slots.push({
+                        start: slotStart,
+                        end: slotEnd,
+                     })
+                  }
+               }
+            })
+         } else {
+            return { status: false }
+         }
+      })
+   })
+   return { status: true, data }
 }
