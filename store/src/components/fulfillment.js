@@ -95,6 +95,11 @@ export const Fulfillment = () => {
             ...(locationId || { locationId: { _eq: locationId } }),
          },
       },
+      onCompleted: data => {
+         if (data && data.brands_brand_location_aggregate.nodes.length !== 0) {
+            setBrandLocation(data.brands_brand_location_aggregate.nodes)
+         }
+      },
       onError: error => {
          console.log(error)
       },
@@ -152,29 +157,7 @@ export const Fulfillment = () => {
       setAddress(modifiedAddress)
       localStorage.setItem('userLocation', JSON.stringify(modifiedAddress))
    }
-   // get all store
-   const { loading: storeLoading, error: storeError } = useQuery(
-      GET_BRAND_LOCATION,
-      {
-         skip: !(brand || brand.id),
-         variables: {
-            where: {
-               brandId: {
-                  _eq: brand.id,
-               },
-               ...(locationId || { locationId: { _eq: locationId } }),
-            },
-         },
-         onCompleted: ({ brands_brand_location = [] }) => {
-            if (brands_brand_location.length !== 0) {
-               setBrandLocation(brands_brand_location)
-            }
-         },
-         onError: error => {
-            console.log('getBrandLocationError', error)
-         },
-      }
-   )
+
    return (
       <div className="hern-cart__fulfillment-card">
          <div>
@@ -556,18 +539,16 @@ const Pickup = props => {
       {
          label: 'Now',
          value: 'ONDEMAND',
-         disabled: !(
+         disabled:
             orderTabFulfillmentType &&
-            !orderTabFulfillmentType.includes('ONDEMAND_PICKUP')
-         ),
+            !orderTabFulfillmentType.includes('ONDEMAND_PICKUP'),
       },
       {
          label: 'Later',
          value: 'PREORDER',
-         disabled: !(
+         disabled:
             orderTabFulfillmentType &&
-            !orderTabFulfillmentType.includes('PREORDER_PICKUP')
-         ),
+            !orderTabFulfillmentType.includes('PREORDER_PICKUP'),
       },
    ])
 

@@ -1539,6 +1539,17 @@ export const BRAND_LOCATIONS = gql`
             brandId
             locationId
             id
+            location {
+               id
+               locationAddress
+               label
+               zipcode
+               city
+               state
+               lat
+               lng
+               country
+            }
             orderExperienceId
             orderExperienceOptionType
             doesDeliverOutsideCity
