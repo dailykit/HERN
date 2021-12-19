@@ -3,6 +3,7 @@
    border-radius: 0.25rem;
    padding: 0 2rem;
    color: #fff;
+   background: var(--hern-accent);
    -webkit-border-radius: 0.25rem;
    -moz-border-radius: 0.25rem;
    -ms-border-radius: 0.25rem;
@@ -64,5 +65,13 @@
    &:hover {
       background-color: rgba(107, 114, 128, 1) !important;
       color: rgba(255, 255, 255, 1);
+   }
+}
+.hern__btn--outline {
+   border: 1px solid var(--hern-accent);
+   color: var(--hern-accent);
+   background: transparent;
+   &:hover {
+      opacity: 0.7;
    }
 }
