@@ -16,13 +16,23 @@ import classNames from 'classnames'
 import * as Scroll from 'react-scroll'
 import CartBar from './CartBar'
 import { useConfig } from '../../lib'
+import { setThemeVariable } from '../../utils'
 
 export const OnDemandOrder = ({ config }) => {
    const { brand } = useConfig()
-
    const menuType = config?.display?.dropdown?.value[0]?.value
       ? config?.display?.dropdown?.value[0]?.value
       : 'side-nav'
+   const numberOfProducts =
+      config?.display?.['numberOfProducts']?.value ??
+      config?.display?.['numberOfProducts']?.default ??
+      2
+   const showCategoryLength =
+      config?.display?.['showCategoryLength']?.value ??
+      config?.display?.['numberOfProducts']?.default ??
+      true
+
+   setThemeVariable('--hern-number-of-products', numberOfProducts)
 
    const [hydratedMenu, setHydratedMenu] = React.useState([])
    const [status, setStatus] = useState('loading')
@@ -92,6 +102,7 @@ export const OnDemandOrder = ({ config }) => {
          <div className="hern-on-demand-product-custom-area">
             <Button
                className="hern-custom-area-add-btn"
+               type="outline"
                onClick={() => {
                   if (data.productOptions.length > 0) {
                      setProductModifier(data)
@@ -150,8 +161,10 @@ export const OnDemandOrder = ({ config }) => {
                               className="hern-product-category-heading"
                               id={`hern-product-category-${eachCategory.name}`}
                            >
-                              {eachCategory.name}({eachCategory.products.length}
-                              )
+                              {eachCategory.name}
+                              {showCategoryLength && (
+                                 <>({eachCategory.products.length})</>
+                              )}
                            </p>
                            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                               {eachCategory.products.map(
@@ -164,6 +177,7 @@ export const OnDemandOrder = ({ config }) => {
                                           <ProductCard
                                              key={index}
                                              data={eachProduct}
+                                             showProductDescription={true}
                                              showImage={
                                                 eachProduct.assets.images
                                                    .length > 0

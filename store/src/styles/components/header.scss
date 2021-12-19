@@ -4,14 +4,14 @@
    grid-template-columns: auto auto 1fr auto;
    width: 100%;
    display: grid;
-   top: 0px;
    background-color: rgba(255, 255, 255, 1);
-   position: fixed;
    border-bottom-width: 1px;
    -webkit-align-items: center;
    -webkit-box-align: center;
    -ms-flex-align: center;
    align-items: center;
+   position: sticky;
+   top: 0;
 }
 .hern-header--grid-3-col {
    grid-template-columns: auto 1fr auto !important;
