@@ -33,4 +33,4 @@ export * from './queryParamsProvider'
 export * from './renderTemplateFile'
 export * from './useQueryParamState'
 export * from './useQueryParams'
-
+export * from './setThemeVariables'
