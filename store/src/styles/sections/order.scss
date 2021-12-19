@@ -46,9 +46,6 @@
    width: 100%;
    align-items: flex-start;
    .hern-custom-area-add-btn {
-      color: #367bf5;
-      background: transparent !important;
-      border: 1px solid #367bf5;
       width: 80px;
       padding: 0;
       width: 100%;
@@ -145,6 +142,6 @@
       grid-template-columns: 2fr 1fr !important;
    }
    .hern-on-demand-order--product-card {
-      width: 50% !important;
+      width: calc(100% / var(--hern-number-of-products)) !important;
    }
 }

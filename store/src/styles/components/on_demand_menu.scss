@@ -118,8 +118,8 @@
    }
 }
 .hern-on-demand-menu__navigationAnchor-li--active {
-   border: 2px solid #367bf5 !important;
-   color: #367bf5 !important;
+   border: 2px solid var(--hern-accent) !important;
+   color: var(--hern-accent) !important;
 }
 .hern-on-demand-menu__heading {
    display: none;
