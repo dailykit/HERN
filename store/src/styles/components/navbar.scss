@@ -77,6 +77,11 @@
       color: rgba(46, 90, 59, 0.63) !important;
    }
 }
+.hern-navbar__list__item--cart-icon {
+   @media screen and (max-width: 768px) {
+      width: auto;
+   }
+}
 
 %loading {
    animation: loading 1s linear infinite alternate;

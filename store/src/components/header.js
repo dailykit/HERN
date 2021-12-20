@@ -165,22 +165,6 @@ export const Header = ({ settings, navigationMenus }) => {
                                  </Link>
                               </li>
                            )}
-                           {isSubscriptionStore && (
-                              <li
-                                 onClick={() =>
-                                    router.push(getRoute('/on-demand-cart'))
-                                 }
-                                 className="hern-navbar__list__item"
-                              >
-                                 <CartIcon
-                                    size="20px"
-                                    stroke="var(--hern-accent)"
-                                 />
-                                 <span className="number-of-cart-item">
-                                    {numberOfItemsOnCart}
-                                 </span>
-                              </li>
-                           )}
                         </>
                      )}
                      {!user?.isSubscriber && isSubscriptionStore && (
@@ -193,6 +177,17 @@ export const Header = ({ settings, navigationMenus }) => {
                   </NavigationBar>
                </section>
                <section className="hern-header__auth">
+                  {!isSubscriptionStore && (
+                     <div
+                        onClick={() => router.push(getRoute('/on-demand-cart'))}
+                        className="hern-navbar__list__item hern-navbar__list__item--cart-icon"
+                     >
+                        <CartIcon size="20px" stroke="var(--hern-accent)" />
+                        <span className="number-of-cart-item">
+                           {numberOfItemsOnCart}
+                        </span>
+                     </div>
+                  )}
                   {isLoading ? (
                      <>
                         <span className="hern-navbar__list__item__skeleton" />
