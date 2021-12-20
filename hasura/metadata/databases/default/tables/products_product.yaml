@@ -34,6 +34,15 @@ array_relationships:
       table:
         name: cartItem
         schema: order
+- name: collection_categories
+  using:
+    manual_configuration:
+      column_mapping:
+        id: productId
+      insertion_order: null
+      remote_table:
+        name: collection_productCategory_product
+        schema: onDemand
 - name: comboProductComponents
   using:
     manual_configuration:
@@ -63,6 +72,13 @@ array_relationships:
       column: productId
       table:
         name: productOption
+        schema: products
+- name: productPrice_brand_locations
+  using:
+    foreign_key_constraint_on:
+      column: productId
+      table:
+        name: productPrice_brand_location
         schema: products
 computed_fields:
 - comment: ""
@@ -159,29 +175,27 @@ select_permissions:
 - permission:
     allow_aggregations: true
     columns:
-    - id
-    - name
-    - additionalText
-    - description
-    - assets
-    - isPublished
-    - isPopupAllowed
-    - defaultProductOptionId
-    - created_at
-    - updated_at
-    - tags
-    - isArchived
-    - type
-    - price
-    - discount
-    - importHistoryId
-    - addedBy
-    - updatedBy
-    - addedByApiKey
-    - updatedByApiKey
     - VegNonVegType
-    - productionOptionSelectionStatement
+    - addedBy
+    - additionalText
+    - assets
+    - created_at
+    - defaultProductOptionId
+    - description
+    - discount
+    - id
+    - importHistoryId
+    - isArchived
+    - isPopupAllowed
+    - isPublished
+    - name
     - nutritionId
+    - price
+    - productionOptionSelectionStatement
+    - tags
+    - type
+    - updatedBy
+    - updated_at
     computed_fields:
     - defaultCartItem
     - isValid
@@ -256,4 +270,11 @@ update_permissions:
           _eq: true
     set:
       updatedByApiKey: x-hasura-Api-Key
+  role: apiKeyRole
+delete_permissions:
+- permission:
+    filter:
+      updatedByApiKeyReference:
+        canDeleteProducts:
+          _eq: true
   role: apiKeyRole

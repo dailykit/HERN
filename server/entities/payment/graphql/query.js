@@ -17,6 +17,7 @@ query CART_PAYMENT($id: Int!) {
    paymentStatus
    stripeInvoiceId
    paymentRetryAttempt
+   usedAvailablePaymentOptionId
  }
 }
 `
@@ -29,6 +30,7 @@ query CART_PAYMENTS($where: order_cartPayment_bool_exp!) {
     stripeInvoiceId
     paymentMethodId
     paymentStatus
+    usedAvailablePaymentOptionId
   }
 }
 `
@@ -40,9 +42,11 @@ query cart($id: Int!) {
     amount
     orderId
     balancePayment
+    retryPaymentMethod
     paymentMethodId
     paymentCustomerId
     statementDescriptor
+    toUseAvailablePaymentOptionId
   }
 }
 `

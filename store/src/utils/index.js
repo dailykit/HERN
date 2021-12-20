@@ -34,3 +34,8 @@ export * from './renderTemplateFile'
 export * from './useQueryParamState'
 export * from './useQueryParams'
 
+export * from './useRazorPay'
+export * from './usePaytm'
+export * from './getRazorpayOptions'
+export * from './getPaytmOptions'
+export * from './useWindowSize'

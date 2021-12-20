@@ -59,6 +59,7 @@ export const UserProvider = ({ children }) => {
    const [isLoading, setIsLoading] = React.useState(true)
    const [keycloakId, setKeycloakId] = React.useState('')
    const [session, loadingSession] = useSession()
+   console.log('session from userprovider', session)
 
    const [createCustomer] = useMutation(MUTATIONS.CUSTOMER.CREATE, {
       onError: error => console.log('createCustomer => error => ', error),
@@ -215,7 +216,13 @@ export const UserProvider = ({ children }) => {
          dispatch({ type: 'SET_USER', payload: user })
          setIsLoading(false)
       }
-   }, [keycloakId, loading, customer])
+   }, [
+      keycloakId,
+      loading,
+      customer,
+      customer?.platform_customer,
+      customer?.platform_customer?.defaultPaymentMethodId,
+   ])
 
    return (
       <UserContext.Provider

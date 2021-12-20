@@ -1,3 +1,50 @@
 table:
   name: productType
   schema: products
+object_relationships:
+- name: addedByApiKeyReference
+  using:
+    foreign_key_constraint_on: addedByApiKey
+- name: updatedByApiKeyReference
+  using:
+    foreign_key_constraint_on: updatedByApiKey
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      addedByApiKeyReference:
+        canAddProducts:
+          _eq: true
+    columns:
+    - displayName
+    - title
+    set:
+      addedByApiKey: x-hasura-Api-Key
+  role: apiKeyRole
+select_permissions:
+- permission:
+    columns:
+    - displayName
+    - title
+    filter: {}
+  role: apiKeyRole
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - displayName
+    - title
+    filter:
+      updatedByApiKeyReference:
+        canUpdateProducts:
+          _eq: true
+    set:
+      updatedByApiKey: x-hasura-Api-Key
+  role: apiKeyRole
+delete_permissions:
+- permission:
+    filter:
+      updatedByApiKeyReference:
+        canDeleteProducts:
+          _eq: true
+  role: apiKeyRole

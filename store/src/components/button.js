@@ -9,7 +9,7 @@ export const Button = ({
    className,
    variant,
 }) => {
-   const themeColor = useThemeStyle('backgroundColor')
+   const themeColor = bg ? { background: bg } : useThemeStyle('backgroundColor')
    const buttonClasses = classNames('hern__btn', {
       'hern__btn--disabled': disabled,
       'hern__btn--warn': !disabled && variant === 'warn',

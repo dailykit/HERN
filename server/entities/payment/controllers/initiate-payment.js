@@ -1,6 +1,6 @@
 import { client } from '../../../lib/graphql'
 import { logger } from '../../../utils'
-import { UPDATE_CART_PAYMENT } from '../graphql'
+import { UPDATE_CART_PAYMENT, AVAILABLE_PAYMENT_OPTION } from '../graphql'
 
 export const initiatePaymentHandler = async (req, res) => {
    // this handler is called on update of paymentRetryAttempt in cartPayment table
@@ -40,8 +40,18 @@ export const initiatePaymentHandler = async (req, res) => {
       if (payload.amount > 0) {
          // only if amount is greater than 0 and not on test mode then only
          // further payment process will be done
+         const { availablePaymentOption = {} } = await client.request(
+            AVAILABLE_PAYMENT_OPTION,
+            {
+               id: payload.usedAvailablePaymentOptionId
+            }
+         )
 
-         const functionFilePath = `../functions/${payload.paymentType}`
+         const company =
+            availablePaymentOption.supportedPaymentOption
+               .supportedPaymentCompany.label
+
+         const functionFilePath = `../functions/${company}`
          const method = await import(functionFilePath)
          const data = {
             ...payload,
@@ -57,6 +67,7 @@ export const initiatePaymentHandler = async (req, res) => {
          }
       }
    } catch (error) {
+      console.error(error)
       logger('/api/payment/initiate-payment', error)
       return res.status(500).json({ success: false, error })
    }

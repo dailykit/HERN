@@ -1,7 +1,9 @@
 import React from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 import { Header } from './header'
+import FloatingBar from './floatingBar'
 import { useTranslation, useUser } from '../context'
 import { getRoute, normalizeAddress } from '../utils'
 import { MailIcon, PhoneIcon } from '../assets/icons'
@@ -13,6 +15,7 @@ export const Layout = ({
    settings,
    navigationMenus = [],
 }) => {
+   const router = useRouter()
    const { isAuthenticated, user } = useUser()
 
    if (!settings) return null
@@ -148,6 +151,10 @@ export const Layout = ({
                </div>
             </footer>
          )}
+
+         {isAuthenticated &&
+            user?.keycloakId &&
+            !router.asPath.includes('checkout') && <FloatingBar />}
       </div>
    )
 }

@@ -3,14 +3,20 @@ import { useRouter } from 'next/router'
 import tw, { styled, css } from 'twin.macro'
 import { useToasts } from 'react-toast-notifications'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { Radio, Space } from 'antd'
 
-import { useConfig } from '../../lib'
+import { useConfig, usePayment } from '../../lib'
 import * as Icon from '../../assets/icons'
 import OrderInfo from '../../sections/OrderInfo'
 import { isClient, formatCurrency, getRoute } from '../../utils'
-import { Loader, Button, HelperBar } from '../../components'
 import {
-   usePayment,
+   Loader,
+   Button,
+   HelperBar,
+   PaymentOptionsRenderer,
+} from '../../components'
+import {
+   // usePayment,
    ProfileSection,
    PaymentProvider,
    PaymentSection,
@@ -50,7 +56,18 @@ const messages = {
 const PaymentContent = () => {
    const router = useRouter()
    const { user } = useUser()
-   const { state } = usePayment()
+   // const { state } = usePayment()
+   const {
+      isPaymentLoading,
+      paymentLifeCycleState,
+      paymentInfo,
+      profileInfo,
+      setPaymentInfo,
+      setIsProcessingPayment,
+      setProfileInfo,
+      updatePaymentState,
+      setIsPaymentInitiated,
+   } = usePayment()
    const { addToast } = useToasts()
    const authTabRef = React.useRef()
    const { configOf } = useConfig()
@@ -69,74 +86,86 @@ const PaymentContent = () => {
       },
    })
 
-   React.useEffect(() => {
-      if (!loading && !isEmpty(cart)) {
-         ;(async () => {
-            const status = cart.paymentStatus
-            const remark = cart.transactionRemark
-            const next_action = cart.transactionRemark?.next_action
+   // React.useEffect(() => {
+   //    if (!loading && !isEmpty(cart)) {
+   //       ;(async () => {
+   //          const status = cart.paymentStatus
+   //          const remark = cart.transactionRemark
+   //          const next_action = cart.transactionRemark?.next_action
 
-            try {
-               if (status === 'PENDING') {
-                  setOverlayMessage(messages['PENDING'])
-               } else if (status === 'REQUIRES_ACTION' && !next_action?.type) {
-                  toggleOverlay(true)
-                  setOverlayMessage(messages['REQUIRES_ACTION'])
-               } else if (status === 'REQUIRES_ACTION' && next_action?.type) {
-                  toggleOverlay(true)
-                  setOverlayMessage(messages['REQUIRES_ACTION_WITH_URL'])
-                  let TAB_URL = ''
-                  let remark = remark
-                  if (next_action?.type === 'use_stripe_sdk') {
-                     TAB_URL = next_action?.use_stripe_sdk?.stripe_js
-                  } else {
-                     TAB_URL = next_action?.redirect_to_url?.url
-                  }
-                  setOtpPageUrl(TAB_URL)
-                  authTabRef.current = window.open(TAB_URL, 'payment_auth_page')
-               } else if (
-                  status === 'REQUIRES_PAYMENT_METHOD' &&
-                  remark?.last_payment_error?.code
-               ) {
-                  toggleOverlay(false)
-                  setOverlayMessage(messages['PENDING'])
-                  addToast(remark?.last_payment_error?.message, {
-                     appearance: 'error',
-                  })
-               } else if (cart.paymentStatus === 'SUCCEEDED') {
-                  if (authTabRef.current) {
-                     authTabRef.current.close()
-                     if (!authTabRef.current.closed) {
-                        window.open(
-                           `/checkout?id=${cart.id}`,
-                           'payment_auth_page'
-                        )
-                     }
-                  }
-                  setOverlayMessage(messages['SUCCEEDED'])
-                  addToast(messages['SUCCEEDED'], { appearance: 'success' })
-                  router.push(`/placing-order?id=${cart.id}`)
-               } else if (status === 'PAYMENT_FAILED') {
-                  toggleOverlay(false)
-                  addToast(messages['PAYMENT_FAILED'], {
-                     appearance: 'error',
-                  })
-               }
-            } catch (error) {
-               console.log('on succeeded -> error -> ', error)
-            }
-         })()
-      }
-   }, [loading, cart])
+   //          try {
+   //             if (status === 'PENDING') {
+   //                setOverlayMessage(messages['PENDING'])
+   //             } else if (status === 'REQUIRES_ACTION' && !next_action?.type) {
+   //                toggleOverlay(true)
+   //                setOverlayMessage(messages['REQUIRES_ACTION'])
+   //             } else if (status === 'REQUIRES_ACTION' && next_action?.type) {
+   //                toggleOverlay(true)
+   //                setOverlayMessage(messages['REQUIRES_ACTION_WITH_URL'])
+   //                let TAB_URL = ''
+   //                let remark = remark
+   //                if (next_action?.type === 'use_stripe_sdk') {
+   //                   TAB_URL = next_action?.use_stripe_sdk?.stripe_js
+   //                } else {
+   //                   TAB_URL = next_action?.redirect_to_url?.url
+   //                }
+   //                setOtpPageUrl(TAB_URL)
+   //                authTabRef.current = window.open(TAB_URL, 'payment_auth_page')
+   //             } else if (
+   //                status === 'REQUIRES_PAYMENT_METHOD' &&
+   //                remark?.last_payment_error?.code
+   //             ) {
+   //                toggleOverlay(false)
+   //                setOverlayMessage(messages['PENDING'])
+   //                addToast(remark?.last_payment_error?.message, {
+   //                   appearance: 'error',
+   //                })
+   //             } else if (cart.paymentStatus === 'SUCCEEDED') {
+   //                if (authTabRef.current) {
+   //                   authTabRef.current.close()
+   //                   if (!authTabRef.current.closed) {
+   //                      window.open(
+   //                         `/checkout?id=${cart.id}`,
+   //                         'payment_auth_page'
+   //                      )
+   //                   }
+   //                }
+   //                setOverlayMessage(messages['SUCCEEDED'])
+   //                addToast(messages['SUCCEEDED'], { appearance: 'success' })
+   //                router.push(`/placing-order?id=${cart.id}`)
+   //             } else if (status === 'PAYMENT_FAILED') {
+   //                toggleOverlay(false)
+   //                addToast(messages['PAYMENT_FAILED'], {
+   //                   appearance: 'error',
+   //                })
+   //             }
+   //          } catch (error) {
+   //             console.log('on succeeded -> error -> ', error)
+   //          }
+   //       })()
+   //    }
+   // }, [loading, cart])
 
    const [updateCart] = useMutation(QUERIES.UPDATE_CART, {
+      onCompleted: () => {
+         updatePaymentState({
+            paymentLifeCycleState: 'PROCESSING',
+         })
+      },
       onError: error => {
+         updatePaymentState({
+            paymentLifeCycleState: 'FAILED',
+         })
          addToast(error.message, { appearance: 'error' })
       },
    })
 
+   const isStripe =
+      paymentInfo?.selectedAvailablePaymentOption?.supportedPaymentOption
+         ?.supportedPaymentCompany?.label === 'stripe'
+
    const [updatePlatformCustomer] = useMutation(
-      QUERIES.UPDATE_DAILYKEY_CUSTOMER,
+      QUERIES.UPDATE_PLATFORM_CUSTOMER,
       {
          onCompleted: () => {
             updateCart({
@@ -144,12 +173,17 @@ const PaymentContent = () => {
                   id: cart.id,
                   _inc: { paymentRetryAttempt: 1 },
                   _set: {
-                     paymentMethodId: state.payment.selected.id,
+                     paymentMethodId: isStripe
+                        ? paymentInfo?.selectedAvailablePaymentOption
+                             ?.selectedPaymentMethodId || null
+                        : null,
+                     toUseAvailablePaymentOptionId:
+                        paymentInfo?.selectedAvailablePaymentOption?.id,
                      customerInfo: {
-                        customerEmail: user?.platform_customer?.email,
-                        customerPhone: state?.profile?.phoneNumber,
-                        customerLastName: state?.profile?.lastName,
-                        customerFirstName: state?.profile?.firstName,
+                        customerEmail: profileInfo?.email,
+                        customerPhone: profileInfo?.phone,
+                        customerLastName: profileInfo?.lastName,
+                        customerFirstName: profileInfo?.firstName,
                      },
                   },
                },
@@ -165,23 +199,27 @@ const PaymentContent = () => {
    )
 
    const handleSubmit = () => {
-      toggleOverlay(true)
-      updatePlatformCustomer({
-         variables: {
-            keycloakId: user.keycloakId,
-            _set: { ...state.profile },
-         },
-      })
+      // toggleOverlay(true)
+      setIsProcessingPayment(true)
+      if (!isEmpty(profileInfo)) {
+         setIsPaymentInitiated(true)
+         updatePaymentState({
+            paymentLifeCycleState: 'INCREMENT_PAYMENT_RETRY_ATTEMPT',
+         })
+
+         updatePlatformCustomer({
+            variables: {
+               keycloakId: user.keycloakId,
+               _set: {
+                  firstName: profileInfo.firstName,
+                  lastName: profileInfo.lastName,
+                  phoneNumber: profileInfo.phone,
+               },
+            },
+         })
+      }
    }
 
-   const isValid = () => {
-      return (
-         state.profile.firstName &&
-         state.profile.lastName &&
-         state.profile.phoneNumber &&
-         state.payment.selected?.id
-      )
-   }
    const onOverlayClose = () => {
       setOtpPageUrl('')
       setOverlayMessage('We are processing your payment.')
@@ -190,7 +228,7 @@ const PaymentContent = () => {
 
    const theme = configOf('theme-color', 'Visual')
 
-   if (loading) return <Loader inline />
+   if (loading || isPaymentLoading) return <Loader inline />
    if (isClient && !new URLSearchParams(location.search).get('id')) {
       return (
          <Main>
@@ -278,21 +316,15 @@ const PaymentContent = () => {
                <SectionTitle theme={theme}>Profile Details</SectionTitle>
             </header>
             <ProfileSection />
-            <PaymentSection />
+            <PaymentOptionsRenderer
+               cartId={
+                  isClient ? new URLSearchParams(location.search).get('id') : ''
+               }
+            />
          </Form>
          {cart?.products?.length > 0 && (
             <CartDetails>
                <OrderInfo cart={cart} />
-               <section>
-                  <Button
-                     tw="w-full"
-                     bg={theme?.accent}
-                     onClick={handleSubmit}
-                     disabled={!Boolean(isValid())}
-                  >
-                     Confirm & Pay {formatCurrency(cart.totalPrice)}
-                  </Button>
-               </section>
             </CartDetails>
          )}
          {isOverlayOpen && (
@@ -357,6 +389,9 @@ const Main = styled.main`
 
 const Form = styled.section`
    flex: 1;
+   .ant-radio-wrapper {
+      align-items: center;
+   }
 `
 const CartDetails = styled.section`
    width: 420px;
