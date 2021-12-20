@@ -1,3 +1,4 @@
+import tw from 'twin.macro'
 import React, { useState, useEffect } from 'react'
 import Confetti from 'react-confetti'
 import { useRouter } from 'next/router'
@@ -12,6 +13,7 @@ const PaymentProcessingModal = ({
    actionUrl,
    actionRequired,
    closeModal,
+   normalModalClose,
    cancelPayment,
 }) => {
    console.log('PaymentProcessingModal')
@@ -186,6 +188,9 @@ const PaymentProcessingModal = ({
             maxHeight: '520px',
             overflowY: 'auto',
          }}
+         maskStyle={{
+            backgroundColor: '#fff',
+         }}
       >
          <Wrapper>
             <Result
@@ -196,6 +201,9 @@ const PaymentProcessingModal = ({
             />
             {isCelebrating && <Confetti />}
          </Wrapper>
+         <Button type="link" tw="fixed top-4 left-4" onClick={normalModalClose}>
+            Close
+         </Button>
       </Modal>
    )
 }
