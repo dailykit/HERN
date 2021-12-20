@@ -6,7 +6,7 @@ import { Button } from '../button'
 import * as QUERIES from '../../graphql'
 import { usePayment } from '../../lib'
 
-export default function PayButton({ children, ...props }) {
+export default function PayButton({ children, cartId = null, ...props }) {
    console.log(props)
    const {
       profileInfo,
@@ -25,12 +25,12 @@ export default function PayButton({ children, ...props }) {
    })
 
    const isValid = () => {
-      return (
+      return Boolean(
          profileInfo.firstName &&
-         profileInfo.lastName &&
-         profileInfo.phoneNumber &&
-         paymentInfo &&
-         paymentInfo.selectedAvailablePaymentOption?.id
+            profileInfo.lastName &&
+            profileInfo.phoneNumber &&
+            paymentInfo &&
+            paymentInfo.selectedAvailablePaymentOption?.id
       )
    }
 
@@ -39,16 +39,43 @@ export default function PayButton({ children, ...props }) {
          ?.supportedPaymentCompany?.label === 'stripe'
 
    const onPayClickHandler = () => {
-      if (!isEmpty(paymentInfo) && !isEmpty(props?.cartId) && isValid()) {
+      console.log(
+         props,
+         cartId,
+         'on pay click',
+         !isEmpty(paymentInfo),
+         cartId,
+         isValid()
+      )
+      if (!isEmpty(paymentInfo) && cartId && isValid()) {
          setIsProcessingPayment(true)
          setIsPaymentInitiated(true)
          updatePaymentState({
             paymentLifeCycleState: 'INCREMENT_PAYMENT_RETRY_ATTEMPT',
          })
 
+         console.log('initiating payment', {
+            id: cartId,
+            _inc: { paymentRetryAttempt: 1 },
+            _set: {
+               ...(isStripe && {
+                  paymentMethodId:
+                     paymentInfo?.selectedAvailablePaymentOption
+                        ?.selectedPaymentMethodId,
+               }),
+               toUseAvailablePaymentOptionId:
+                  paymentInfo?.selectedAvailablePaymentOption?.id,
+               customerInfo: {
+                  customerEmail: profileInfo?.email,
+                  customerPhone: profileInfo?.phone,
+                  customerLastName: profileInfo?.lastName,
+                  customerFirstName: profileInfo?.firstName,
+               },
+            },
+         })
          updateCart({
             variables: {
-               id: props?.cartId,
+               id: cartId,
                _inc: { paymentRetryAttempt: 1 },
                _set: {
                   ...(isStripe && {

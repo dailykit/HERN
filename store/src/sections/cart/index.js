@@ -1,7 +1,14 @@
 import React from 'react'
 import { Row, Col } from 'antd'
+import tw from 'twin.macro'
 import { CartDetails } from './CartDetails'
-import { Fulfillment, LoyaltyPoints, Loader, Button } from '../../components'
+import {
+   Fulfillment,
+   LoyaltyPoints,
+   Loader,
+   Button,
+   PaymentOptionsRenderer,
+} from '../../components'
 import { CartContext } from '../../context'
 import { EmptyCart } from '../../assets/icons'
 import Link from 'next/link'
@@ -35,7 +42,11 @@ export const OnDemandCart = () => {
                <LoyaltyPoints cart={cartState.cart} version={2} />
             </div>
             <div className="hern-ondemand-cart__left-card">Wallet</div>
-            <div className="hern-ondemand-cart__left-card">Payments</div>
+            <div className="hern-ondemand-cart__left-card">
+               <div tw="p-4">
+                  <PaymentOptionsRenderer cartId={cartState?.cart?.id} />
+               </div>
+            </div>
          </Col>
          <Col span={8}>
             <CartDetails />

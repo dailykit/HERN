@@ -151,7 +151,6 @@ export const Layout = ({
                </div>
             </footer>
          )}
-
          {isAuthenticated &&
             user?.keycloakId &&
             !router.asPath.includes('checkout') && <FloatingBar />}
