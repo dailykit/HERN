@@ -28,6 +28,7 @@
 @use './components/locationSelector.scss';
 @use './components/kiosk.scss';
 
+
 @use './sections/register';
 @use './sections/our-plans';
 @use './sections/our-menu';
@@ -49,6 +50,8 @@
 @use './sections/order';
 @use './sections/onDemandCart.scss';
 @use './sections/kiosk/kiosk-section.scss';
+@use './sections/slider-section.scss';
+@use './sections/product-gallery.scss';
 
 /*Account routes pages*/
 @use './sections/account/addresses';

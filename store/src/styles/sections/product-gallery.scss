@@ -1,0 +1,53 @@
+.hern-product_gallery-header{
+    text-align: center;
+    margin-bottom: 85px;
+}
+
+.hern-product_gallery-header-heading{
+    color: rgb(124 196 30);
+    font-family: "Poppins", sans-serif;
+    text-transform: uppercase;
+    font-size: 40px;
+    letter-spacing: 0.8px;
+    margin-bottom: 15px;
+}
+
+.hern-product_gallery-header-description{
+    color: #222;
+    font-size: 22px;
+    font-weight: 600;
+    font-family: "Poppins", sans-serif;
+    letter-spacing: 0.88px;
+    text-transform: uppercase;
+}
+
+.hern-product_gallery-cards{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.hern-product_gallery-product-image{
+    width: 18em;
+    height: 22em;
+}
+
+.hern-product_category-product-name{
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.hern-product_category-product-price{
+    background-color: rgb(124 196 30);
+    border-radius: 50px;
+    border: 1px solid rgb(124 196 30);
+    color: #121212;
+    display: inline-block;
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
+    padding: 8px 30px;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+}
+

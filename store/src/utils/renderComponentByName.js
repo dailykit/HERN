@@ -91,6 +91,16 @@ const FeaturedCollection = dynamic(() =>
       promise => promise.FeaturedCollection
    )
 )
+const ProductGallery = dynamic(() =>
+   import('../sections/product-gallery').then(
+      promise => promise.ProductGallery
+   )
+)
+const SliderSection = dynamic(() =>
+   import('../sections/slider-section').then(
+      promise => promise.SliderSection
+   )
+)
 export const renderComponentByName = (fold, options) => {
    const getProps = component => {
       if (options) {
@@ -249,6 +259,7 @@ export const renderComponentByName = (fold, options) => {
       case 'OnDemandOrder':
          return <OnDemandOrder />
 
+
       /*ROUTE :
       [brand]/cart
        */
@@ -258,5 +269,17 @@ export const renderComponentByName = (fold, options) => {
          return <FeaturedCollection config={fold.config} />
       default:
          return null
+
+      /* 
+      Global
+      */
+      case 'ProductGallery':
+         return <ProductGallery config={fold.config} />
+      
+      /* 
+      Global
+      */
+      case 'SliderSection':
+         return <SliderSection config={fold.config} />
    }
 }

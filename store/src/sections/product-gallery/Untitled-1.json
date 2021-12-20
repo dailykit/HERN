@@ -1,0 +1,48 @@
+{
+   "display": {
+      "slider": {
+         "showSliderArrow": {
+            "label": "Show Plan Image",
+            "value": true,
+            "default": true,
+            "dataType": "boolean",
+            "description": "This will show or hide of product image.",
+            "userInsertType": "toggle"
+         },
+         "showDotsOnSilder": {
+            "label": "Show the dots",
+            "value": false,
+            "default": true,
+            "dataType": "boolean",
+            "description": "This will show or hide of dots on the slider",
+            "userInsertType": "toggle"
+         }, 
+         "showVideo": {
+            "label": "Show Video",
+            "value": true,
+            "default": true,
+            "dataType": "boolean",
+            "description": "This will show or hide of dots on the slider",
+            "userInsertType": "toggle"
+         }, 
+         "content" : {
+             "images": {
+                "value": ["https://dailykit-502-chefbaskit1.s3.amazonaws.com/images/fold-1_1.jpg", "https://dailykit-502-chefbaskit1.s3.amazonaws.com/images/fold-1_1.jpg"], 
+                "default" : "https://dailykit-502-chefbaskit1.s3.amazonaws.com/images/fold-1_1.jpg"
+             }, 
+             "video" : {
+                 "value" : [], 
+                 "default" : "default video url if there is no video"
+             }, 
+             "heading" : {
+                 "value" : ["Meal kits delivered to your door step with fresh and raw ingrediants", "Meal kits delivered to your door step with fresh and raw ingrediants"], 
+                 "default" : "Meal kits delivered to your door step with fresh and raw ingrediants"
+             },
+             "description": {
+                 "value": ["Chef baskit makes you feel like a Professional Chef", "Chef baskit makes you feel like a Professional Chef"],
+                 "default": "Chef baskit makes you feel like a Professional Chef"
+             }
+         }
+      }
+   }
+}
