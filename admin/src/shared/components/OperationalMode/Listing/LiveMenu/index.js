@@ -20,6 +20,7 @@ import { StyledGroupBy } from './styled'
 import { BrandManager } from './BulkActionTunnel'
 import { logger } from '../../../../utils'
 import { toast } from 'react-toastify'
+import SpecificPriceTunnel from './BulkActionTunnel/Tunnel/specificPriceTunnel'
 
 const LiveMenu = () => {
    const [CollectionProducts, setCollectionProducts] = React.useState([])
@@ -28,6 +29,8 @@ const LiveMenu = () => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
    const [checked, setChecked] = useState(false) //me
    const [selectedRows, setSelectedRows] = React.useState([])
+   const [popupTunnels, openPopupTunnel, closePopupTunnel] = useTunnel(1)
+   const [selectedRowData, setSelectedRowData] = React.useState(null)
 
    const { loading } = useSubscription(COLLECTION_PRODUCTS, {
       variables: { brandId: parseInt(id), brandId1: parseInt(id) },
@@ -43,8 +46,8 @@ const LiveMenu = () => {
                     product?.productPrice_brand_locations[0]
                        ?.markupOnStandardPriceInPercentage /
                        100)
-            console.log('specialPrice', specialPrice)
-            console.log('whole data', product?.productPrice_brand_locations)
+            // console.log('specialPrice', specialPrice)
+            // console.log('whole data', product?.productPrice_brand_locations)
             return {
                id: product.id,
                name: product.name,
@@ -55,9 +58,9 @@ const LiveMenu = () => {
                      ?.productCategoryName || 'Not in Menu',
 
                specificPrice: specialPrice,
-               specificDiscount:
-                  product?.productPrice_brand_locations[0]?.specificDiscount ||
-                  'Not set',
+               specificDiscount: product?.productPrice_brand_locations.length
+                  ? product?.productPrice_brand_locations[0]?.specificDiscount
+                  : 'Not Set',
                isPublished: !product?.productPrice_brand_locations.length
                   ? true
                   : product?.productPrice_brand_locations[0]?.isPublished,
@@ -94,6 +97,15 @@ const LiveMenu = () => {
          field: 'name',
          headerFilter: true,
          // formatter: reactFormatter(<ProductName update={updateBrandProduct} />),
+      },
+      {
+         title: 'Operation',
+         formatter: reactFormatter(
+            <SpecificPrice
+               openPopupTunnel={openPopupTunnel}
+               setSelectedRowData={setSelectedRowData}
+            />
+         ),
       },
       {
          title: 'Availability',
@@ -294,6 +306,14 @@ const LiveMenu = () => {
                />
             </Tunnel>
          </Tunnels>
+         <Tunnels tunnels={popupTunnels}>
+            <Tunnel layer={1} size="sm">
+               <SpecificPriceTunnel
+                  closeTunnel={closePopupTunnel}
+                  selectedRowData={selectedRowData}
+               />
+            </Tunnel>
+         </Tunnels>
          <ActionBar
             title="Product"
             groupByOptions={groupByOptions}
@@ -434,7 +454,7 @@ const AvailableToggleStatus = ({ update, cell }) => {
    const [checkedAvailable, setCheckedAvailable] = React.useState(
       cell.getData().isAvailable
    )
-   console.log('toggle data', cell.getData().name, cell.getData())
+   // console.log('toggle data', cell.getData().name, cell.getData())
    const toggleStatus = ({ Available, BrandId, ProductId }) => {
       update({
          variables: {
@@ -447,7 +467,7 @@ const AvailableToggleStatus = ({ update, cell }) => {
             update_columns: ['isAvailable'],
          },
       })
-      console.log('mutation data on available', Available, BrandId, ProductId)
+      // console.log('mutation data on available', Available, BrandId, ProductId)
    }
    React.useEffect(() => {
       if (checkedAvailable !== cell.getData().isAvailable) {
@@ -456,9 +476,9 @@ const AvailableToggleStatus = ({ update, cell }) => {
             BrandId: cell.getData().brandId,
             ProductId: cell.getData().id,
          })
-         console.log('mutation data on available', {
-            Available: checkedAvailable,
-         })
+         // console.log('mutation data on available', {
+         //    Available: checkedAvailable,
+         // })
       }
    }, [checkedAvailable])
 
@@ -474,7 +494,7 @@ const PublishedToggleStatus = ({ update, cell }) => {
    const [checkedPublished, setCheckedPublished] = React.useState(
       cell.getData().isPublished
    )
-   console.log('toggle data', cell.getData().name, cell.getData())
+   // console.log('toggle data', cell.getData().name, cell.getData())
    const toggleStatus = ({ isPublished, brandId, productId }) => {
       const objects = {
          isPublished,
@@ -496,9 +516,9 @@ const PublishedToggleStatus = ({ update, cell }) => {
             brandId: cell.getData().brandId,
             productId: cell.getData().id,
          })
-         console.log('mutation data on published', {
-            Published: checkedPublished,
-         })
+         // console.log('mutation data on published', {
+         //    Published: checkedPublished,
+         // })
       }
    }, [checkedPublished])
 
@@ -508,5 +528,32 @@ const PublishedToggleStatus = ({ update, cell }) => {
          onChange={() => setCheckedPublished(!checkedPublished)}
          value={checkedPublished}
       />
+   )
+}
+function SpecificPrice({ cell, addTab, openPopupTunnel, setSelectedRowData }) {
+   const openTunnelButton = () => {
+      const data = cell.getData()
+      // console.log('open tunnel data', data)
+      setSelectedRowData(data)
+      openPopupTunnel(1)
+   }
+   return (
+      <>
+         <Flex
+            container
+            width="100%"
+            justifyContent="space-between"
+            alignItems="center"
+         >
+            <TextButton
+               type="ghost"
+               onClick={() => openTunnelButton()}
+               style={{ height: '42px' }}
+               title="Click to modify the row data"
+            >
+               Customize
+            </TextButton>
+         </Flex>
+      </>
    )
 }

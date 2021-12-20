@@ -212,20 +212,16 @@ export const INCREASE_SUBSCRIPTION_DELIVERY_PRICE = gql`
    }
 `
 export const UPSERT_BRAND_MANAGER = gql`
-   mutation upertBrandManager(
+   mutation brandManager(
       $objects: [products_productPrice_brand_location_insert_input!]!
+      $constraint: products_productPrice_brand_location_constraint!
+      $update_columns: [products_productPrice_brand_location_update_column!]!
    ) {
-      upsertBrandManager: insert_products_productPrice_brand_location(
+      insert_products_productPrice_brand_location(
          objects: $objects
          on_conflict: {
-            constraint: productPrice_brand_location_productId_productOptionId_brand_loc
-            update_columns: [
-               specificPrice
-               isAvailable
-               isPublished
-               markupOnStandardPriceInPercentage
-               specificDiscount
-            ]
+            constraint: $constraint
+            update_columns: $update_columns
          }
       ) {
          affected_rows
