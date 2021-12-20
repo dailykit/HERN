@@ -25,5 +25,5 @@
 }
 
 .tabulator .tabulator-tableHolder {
-   overflow-x: hidden;
+   overflow-x: auto;
 }
