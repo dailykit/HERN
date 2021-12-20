@@ -205,11 +205,7 @@ export const UserProvider = ({ children }) => {
                updateBrandCustomer({
                   skip: !user?.brandCustomerId,
                   variables: {
-                     where: {
-                        id: {
-                           _eq: user?.brandCustomerId,
-                        },
-                     },
+                     id: user?.brandCustomerId,
                      _set: { subscriptionOnboardStatus: 'ONBOARDED' },
                   },
                })

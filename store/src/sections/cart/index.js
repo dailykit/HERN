@@ -1,9 +1,28 @@
 import React from 'react'
 import { Row, Col } from 'antd'
 import { CartDetails } from './CartDetails'
-import { Fulfillment } from '../../components'
+import { Fulfillment, LoyaltyPoints, Loader, Button } from '../../components'
+import { CartContext } from '../../context'
+import { EmptyCart } from '../../assets/icons'
+import Link from 'next/link'
 
 export const OnDemandCart = () => {
+   const { cartState, combinedCartItems } = React.useContext(CartContext)
+
+   if (combinedCartItems === null) {
+      return <Loader />
+   }
+   if (cartState.cart == null || combinedCartItems.length === 0) {
+      return (
+         <div className="hern-cart-empty-cart">
+            <EmptyCart />
+            <span>Oops! Your cart is empty </span>
+            <Button className="hern-cart-go-to-menu-btn" onClick={() => {}}>
+               <Link href="/order">GO TO MENU</Link>
+            </Button>
+         </div>
+      )
+   }
    return (
       <Row>
          <Col span={16}>
@@ -12,7 +31,9 @@ export const OnDemandCart = () => {
                <Fulfillment />
             </div>
             <div className="hern-ondemand-cart__left-card">Apply Coupons</div>
-            <div className="hern-ondemand-cart__left-card">Loyalty points</div>
+            <div className="hern-ondemand-cart__left-card">
+               <LoyaltyPoints cart={cartState.cart} version={2} />
+            </div>
             <div className="hern-ondemand-cart__left-card">Wallet</div>
             <div className="hern-ondemand-cart__left-card">Payments</div>
          </Col>

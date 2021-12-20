@@ -26,6 +26,7 @@
    color: #ff5a52;
    font-size: 18px;
    cursor: pointer;
+   margin: 0 7px;
 }
 .hern-loyalty-points__form {
    display: -webkit-box;
@@ -54,6 +55,7 @@
    -webkit-justify-content: space-between;
    -ms-flex-pack: justify;
    justify-content: space-between;
+   margin: 10px 0;
 }
 .loyalty-points__tooltip {
    position: relative;
@@ -91,4 +93,14 @@
    color: #fff;
    border-radius: 2px;
    padding: 4px;
+}
+.hern-loyalty-points__label-v2 {
+   font-weight: 600;
+   font-size: 20px;
+   line-height: 22px;
+   color: rgba(64, 64, 64, 0.8);
+   margin: 0 10px;
+}
+.hern-loyalty-points-v2 {
+   border: none !important;
 }

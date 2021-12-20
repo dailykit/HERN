@@ -3,15 +3,17 @@ import React from 'react'
 import { useUser } from '../context'
 import { MUTATIONS } from '../graphql'
 import { useConfig } from '../lib'
-import { Info } from '../assets/icons'
+import { Info, LoyaltyPointsIcon } from '../assets/icons'
+import classNames from 'classnames'
 
-export const LoyaltyPoints = ({ cart }) => {
+export const LoyaltyPoints = ({ cart, version = 1 }) => {
    const { user } = useUser()
    const { configOf } = useConfig()
    const { label = 'Loyalty Points', description = null } = configOf(
       'Loyalty Points',
       'rewards'
    )
+   const isVersion2 = React.useMemo(() => version === 2, [version])
 
    const [points, setPoints] = React.useState(cart.loyaltyPointsUsable)
 
@@ -43,38 +45,64 @@ export const LoyaltyPoints = ({ cart }) => {
          },
       })
    }
+   const LoyaltyPointsHeader = () => {
+      return (
+         <div
+            style={{
+               display: 'flex',
+               alignItems: 'center',
+               marginBottom: '10px',
+            }}
+         >
+            {isVersion2 && <LoyaltyPointsIcon />}
+            <label
+               className="hern-loyalty-points__label"
+               className={classNames('hern-loyalty-points__label', {
+                  'hern-loyalty-points__label-v2': isVersion2,
+               })}
+               htmlFor="loyalty-points"
+            >
+               {label}
+            </label>
+         </div>
+      )
+   }
 
    if (!cart.loyaltyPointsUsable) return null
    return (
-      <div className="hern-loyalty-points">
+      <div
+         className="hern-loyalty-points"
+         className={classNames('hern-loyalty-points', {
+            'hern-loyalty-points-v2': isVersion2,
+         })}
+      >
          {cart.loyaltyPointsUsed ? (
-            <div className="hern-loyalty-points__status">
-               <span> {label} used: </span>
-               <span>
-                  <span
-                     className="hern-loyalty-points__close-btn"
-                     role="button"
-                     tabIndex={0}
-                     onClick={handleUpdateCart}
-                  >
-                     &times;
+            <>
+               <LoyaltyPointsHeader />
+               <div className="hern-loyalty-points__status">
+                  <span> {label} used: </span>
+                  <span>
+                     {cart.loyaltyPointsUsed}
+                     <span
+                        className="hern-loyalty-points__close-btn"
+                        role="button"
+                        tabIndex={0}
+                        onClick={handleUpdateCart}
+                     >
+                        &times;
+                     </span>
                   </span>
-                  {cart.loyaltyPointsUsed}
-               </span>
-            </div>
+               </div>
+            </>
          ) : (
             <>
                <form
                   className="hern-loyalty-points__form"
                   onSubmit={handleSubmit}
+                  style={{ ...(isVersion2 && { alignItems: 'flex-end' }) }}
                >
                   <div>
-                     <label
-                        className="hern-loyalty-points__label"
-                        htmlFor="loyalty-points"
-                     >
-                        {label}
-                     </label>
+                     <LoyaltyPointsHeader />
                      {description && (
                         <span className="loyalty-points__tooltip">
                            <Info size={18} />
