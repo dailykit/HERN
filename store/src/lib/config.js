@@ -17,6 +17,8 @@ const initialState = {
    orderTabs: [],
    kioskId: null,
    selectedOrderTab: null,
+   kioskDetails: null,
+   locationId: null,
 }
 
 const reducers = (state, { type, payload }) => {
@@ -31,6 +33,10 @@ const reducers = (state, { type, payload }) => {
          return { ...state, kioskId: payload }
       case 'SET_SELECTED_ORDER_TAB':
          return { ...state, selectedOrderTab: payload }
+      case 'SET_KIOSK_DETAILS':
+         return { ...state, kioskDetails: payload }
+      case 'SET_LOCATION_ID':
+         return { ...state, locationId: payload }
       default:
          return state
    }
@@ -210,6 +216,8 @@ export const useConfig = (globalType = '') => {
       orderTabs: state.orderTabs,
       selectedOrderTab: state.selectedOrderTab,
       kioskId: state.kioskId,
+      kioskDetails: state.kioskDetails,
+      locationId: state.locationId,
       isConfigLoading,
       dispatch,
    }

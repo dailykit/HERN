@@ -257,7 +257,7 @@ export const renderComponentByName = (fold, options) => {
       [brand]/order
       */
       case 'OnDemandOrder':
-         return <OnDemandOrder />
+         return <OnDemandOrder config={fold.config} />
 
 
       /*ROUTE :

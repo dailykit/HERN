@@ -351,6 +351,7 @@ export const KioskModifier = props => {
       dynamicTrans(translateStringP, currentLang)
       dynamicTrans(translateStringLi, currentLang)
    }, [currentLang])
+   console.log('product_data -->', productData)
    if (showProceedPopup) {
       return (
          <Modal
@@ -415,39 +416,65 @@ export const KioskModifier = props => {
                   padding: '.5em',
                }}
             >
-               <CloseIcon size={30} stroke={'#fffffF'} />
+               <CloseIcon
+                  size={50}
+                  stroke={'#fffffF'}
+                  style={{
+                     position: 'fixed',
+                     right: '8em',
+                     top: '12em',
+                     zIndex: '2',
+                     padding: '0.4em',
+                     borderRadius: '50%',
+                     backgroundColor: `#022d4a`,
+                  }}
+               />
             </div>
-            <div className="hern-kiosk__menu-product-modifier-header">
-               <span
+            <div
+               style={{
+                  backgroundColor: `${config.kioskSettings.theme.primaryColorLight.value}99`,
+               }}
+               className="hern-kiosk__menu-product-modifier-header"
+            >
+               {/* <div
                   className="hern-kiosk__menu-product-modifier-customize-text"
                   style={{
-                     color: `${config.kioskSettings.theme.modifierTextColor.value}`,
+                     BackgroundColor: `${config.kioskSettings.theme.primaryColorLight.value}99`,
                   }}
                >
                   {t('Customize')}
-               </span>
+               </div> */}
                {productData.assets.images.length === 0 ? (
-                  <img src={config.productSettings.defaultImage.value} />
+                  <img
+                     src={config.productSettings.defaultImage.value}
+                     style={{ height: '680px' }}
+                  />
                ) : (
                   <Carousel style={{ height: '20em', width: '20em' }}>
                      {productData.assets.images.map((eachImage, index) => (
                         <img
                            src={eachImage}
                            key={index}
-                           style={{ height: '100%', width: '100%' }}
+                           style={{ height: '680px', width: '100%' }}
+                           className="hern-kiosk__menu-product-modifier-header-image"
                         />
                      ))}
                   </Carousel>
                )}
-               <KioskCounterButton
+               {/* <KioskCounterButton
                   config={config}
                   quantity={quantity}
                   onPlusClick={onPlusClick}
                   onMinusClick={onMinusClick}
                   style={{ margin: '2em 0 0 0' }}
-               />
+               /> */}
             </div>
-            <div className="hern-kiosk__menu-product-modifier-brief">
+            <div
+               className="hern-kiosk__menu-product-modifier-brief"
+               style={{
+                  backgroundColor: `${config.kioskSettings.theme.primaryColor.value}`,
+               }}
+            >
                <span
                   className="hern-kiosk__menu-product-modifier-p-name"
                   style={{
@@ -462,10 +489,16 @@ export const KioskModifier = props => {
                      color: `${config.kioskSettings.theme.modifierTextColor.value}`,
                   }}
                >
-                  {formatCurrency(productData.price - productData.discount)}
+                  {productData.price > 0 &&
+                     formatCurrency(productData.price - productData.discount)}
                </span>
             </div>
-            <div className="hern-kiosk__modifier-popup-product-options">
+            <div
+               className="hern-kiosk__modifier-popup-product-options"
+               style={{
+                  backgroundColor: `${config.kioskSettings.theme.primaryColor.value}`,
+               }}
+            >
                <Radio.Group
                   defaultValue={productData.productOptions[0].id}
                   buttonStyle="solid"
@@ -509,130 +542,132 @@ export const KioskModifier = props => {
                   {productData.additionalText}
                </span>
             </div>
-            <div className="hern-kiosk__modifier-popup-modifiers-list">
-               {selectedProductOption.modifier &&
-                  selectedProductOption.modifier.categories.map(
-                     (eachModifierCategory, index) => {
-                        return (
-                           <div className="hern-kiosk__modifier-popup-modifier-category">
-                              <label className="hern-kiosk__modifier-category-label">
-                                 <Badge
-                                    count={index + 1}
-                                    style={{
-                                       backgroundColor: '#ffffff',
-                                       color: `${config.kioskSettings.theme.primaryColor.value}`,
-                                       fontWeight: '600',
-                                    }}
-                                 />
-                                 <span
-                                    className="hern-kiosk__modifier-category-label-text"
-                                    style={{
-                                       color: `${config.kioskSettings.theme.modifierTextColor.value}`,
-                                    }}
-                                 >
-                                    {eachModifierCategory.name}
-                                 </span>
-                                 <span className="hern-kiosk__modifier-category-selection-condition">
-                                    {'('}
-                                    {renderConditionText(eachModifierCategory)}
-                                    {')'}
-                                 </span>
-                                 {errorCategories.includes(
-                                    eachModifierCategory.id
-                                 ) && (
-                                    <>
-                                       <br />
-                                       <span
-                                          style={{
-                                             fontStyle: 'italic',
-                                             fontSize: '1em',
-                                             color: `${config.kioskSettings.theme.categorySelectionWarningColor.value}`,
+            {/* <div className="hern-kiosk__modifier-popup-modifiers-list"> */}
+            {selectedProductOption.modifier &&
+               selectedProductOption.modifier.categories.map(
+                  (eachModifierCategory, index) => {
+                     return (
+                        <div
+                           className="hern-kiosk__modifier-popup-modifier-category"
+                           style={{
+                              backgroundColor: `${config.kioskSettings.theme.primaryColorDark.value}`,
+                           }}
+                        >
+                           <label className="hern-kiosk__modifier-category-label">
+                              <Badge
+                                 count={index + 1}
+                                 style={{
+                                    backgroundColor: '#ffffff',
+                                    color: `${config.kioskSettings.theme.primaryColor.value}`,
+                                    fontWeight: '600',
+                                 }}
+                              />
+                              <span
+                                 className="hern-kiosk__modifier-category-label-text"
+                                 style={{
+                                    color: `${config.kioskSettings.theme.modifierTextColor.value}`,
+                                 }}
+                              >
+                                 {eachModifierCategory.name}
+                              </span>
+                              <span className="hern-kiosk__modifier-category-selection-condition">
+                                 {'('}
+                                 {renderConditionText(eachModifierCategory)}
+                                 {')'}
+                              </span>
+                              {errorCategories.includes(
+                                 eachModifierCategory.id
+                              ) && (
+                                 <>
+                                    <br />
+                                    <span
+                                       style={{
+                                          fontStyle: 'italic',
+                                          fontSize: '1em',
+                                          color: `${config.kioskSettings.theme.categorySelectionWarningColor.value}`,
+                                       }}
+                                    >
+                                       {'('}You have to choose this category.
+                                       {')'}
+                                    </span>
+                                 </>
+                              )}
+                           </label>
+                           <div className="hern-kiosk__modifier-category-options">
+                              {eachModifierCategory.options.map(
+                                 (eachOption, index) => {
+                                    const isModifierOptionInProduct = () => {
+                                       const isOptionSelected = selectedOptions[
+                                          eachModifierCategory.type
+                                       ].find(
+                                          x =>
+                                             x.modifierCategoryID ===
+                                                eachModifierCategory.id &&
+                                             x.modifierCategoryOptionsID ===
+                                                eachOption.id
+                                       )
+                                       return Boolean(isOptionSelected)
+                                    }
+                                    return (
+                                       <div
+                                          key={index}
+                                          className="hern-kiosk__modifier-category-option"
+                                          onClick={() => {
+                                             onCheckClick(
+                                                eachOption,
+                                                eachModifierCategory
+                                             )
                                           }}
                                        >
-                                          {'('}You have to choose this category.
-                                          {')'}
-                                       </span>
-                                    </>
-                                 )}
-                              </label>
-                              <div className="hern-kiosk__modifier-category-options">
-                                 {eachModifierCategory.options.map(
-                                    (eachOption, index) => {
-                                       const isModifierOptionInProduct = () => {
-                                          const isOptionSelected =
-                                             selectedOptions[
-                                                eachModifierCategory.type
-                                             ].find(
-                                                x =>
-                                                   x.modifierCategoryID ===
-                                                      eachModifierCategory.id &&
-                                                   x.modifierCategoryOptionsID ===
-                                                      eachOption.id
-                                             )
-                                          return Boolean(isOptionSelected)
-                                       }
-                                       return (
-                                          <div
-                                             key={index}
-                                             className="hern-kiosk__modifier-category-option"
-                                             onClick={() => {
-                                                onCheckClick(
-                                                   eachOption,
-                                                   eachModifierCategory
-                                                )
-                                             }}
-                                          >
-                                             <div className="hern-kiosk__modifier-category-right">
-                                                <img
-                                                   className="hern-kiosk__modifier-category-option-image"
-                                                   alt="modifier image"
-                                                   src={
-                                                      eachOption.image ||
-                                                      config.productSettings
-                                                         .defaultImage.value
-                                                   }
-                                                />
+                                          <div className="hern-kiosk__modifier-category-right">
+                                             <img
+                                                className="hern-kiosk__modifier-category-option-image"
+                                                alt="modifier image"
+                                                src={
+                                                   eachOption.image ||
+                                                   config.productSettings
+                                                      .defaultImage.value
+                                                }
+                                             />
 
-                                                <span className="hern-kiosk__modifier--option-name">
-                                                   {eachOption.name}
-                                                   {' ('}
-                                                   {formatCurrency(
-                                                      eachOption.price -
-                                                         eachOption.discount
-                                                   )}
-                                                   {')'}
-                                                </span>
-                                             </div>
-                                             {isModifierOptionInProduct() ? (
-                                                <RoundCheckBoxIcon
-                                                   fill={
-                                                      config.kioskSettings
-                                                         .tickBox
-                                                         .tickBoxBGonCheck.value
-                                                   }
-                                                   tickFill={
-                                                      config.kioskSettings
-                                                         .tickBox.tickColor
-                                                         .value
-                                                   }
-                                                   size={50}
-                                                />
-                                             ) : (
-                                                <NoTickRoundCheckBoxIcon
-                                                   fill={
-                                                      config.kioskSettings.theme
-                                                         .primaryColorDark.value
-                                                   }
-                                                   size={50}
-                                                   onClick={() => {
-                                                      onCheckClick(
-                                                         eachOption,
-                                                         eachModifierCategory
-                                                      )
-                                                   }}
-                                                />
-                                             )}
-                                             {/* <CheckBoxIcon
+                                             <span className="hern-kiosk__modifier--option-name">
+                                                {eachOption.name}
+                                                {' ('}
+                                                {formatCurrency(
+                                                   eachOption.price -
+                                                      eachOption.discount
+                                                )}
+                                                {')'}
+                                             </span>
+                                          </div>
+                                          {isModifierOptionInProduct() ? (
+                                             <RoundCheckBoxIcon
+                                                fill={
+                                                   config.kioskSettings.tickBox
+                                                      .tickBoxBGonCheck.value
+                                                }
+                                                tickFill={
+                                                   config.kioskSettings.tickBox
+                                                      .tickColor.value
+                                                }
+                                                size={50}
+                                             />
+                                          ) : (
+                                             <NoTickRoundCheckBoxIcon
+                                                fill={
+                                                   config.kioskSettings.theme
+                                                      .primaryColor.value
+                                                }
+                                                size={50}
+                                                onClick={() => {
+                                                   onCheckClick(
+                                                      eachOption,
+                                                      eachModifierCategory
+                                                   )
+                                                }}
+                                             />
+                                          )}
+                                          {/* <CheckBoxIcon
                                                 showTick={isModifierOptionInProduct()}
                                                 size={30}
                                                 stroke={
@@ -646,17 +681,22 @@ export const KioskModifier = props => {
                                                    )
                                                 }}
                                              /> */}
-                                          </div>
-                                       )
-                                    }
-                                 )}
-                              </div>
+                                       </div>
+                                    )
+                                 }
+                              )}
                            </div>
-                        )
-                     }
-                  )}
-            </div>
-            <div className="hern-kiosk__modifier-popup-footer">
+                        </div>
+                     )
+                  }
+               )}
+            {/* </div> */}
+            <div
+               className="hern-kiosk__modifier-popup-footer"
+               style={{
+                  backgroundColor: `${config.kioskSettings.theme.primaryColor.value}`,
+               }}
+            >
                <div>
                   <span
                      className="hern-kiosk__modifier-total-label"

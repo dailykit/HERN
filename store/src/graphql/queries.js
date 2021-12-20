@@ -1308,6 +1308,7 @@ export const PRODUCTS = gql`
          type
          assets
          tags
+         VegNonVegType
          additionalText
          description
          price: priceByLocation(args: $priceArgs)
@@ -1327,6 +1328,40 @@ export const PRODUCTS = gql`
             price: priceByLocation(args: $productOptionPriceArgs)
             discount: discountByLocation(args: $productOptionDiscountArgs)
             cartItem: cartItemByLocation(args: $productOptionCartItemArgs)
+            additionalModifiers(where: { isActive: { _eq: true } }) {
+               type
+               label
+               modifier {
+                  id
+                  name
+                  categories(where: { isVisible: { _eq: true } }) {
+                     id
+                     name
+                     isRequired
+                     type
+                     limits
+                     options(where: { isVisible: { _eq: true } }) {
+                        id
+                        name
+                        price: priceByLocation(
+                           args: $modifierCategoryOptionPriceArgs
+                        )
+                        discount: discountByLocation(
+                           args: $modifierCategoryOptionDiscountArgs
+                        )
+                        quantity
+                        image
+                        isActive
+
+                        sachetItemId
+                        ingredientSachetId
+                        cartItem: cartItemByLocation(
+                           args: $modifierCategoryOptionCartItemArgs
+                        )
+                     }
+                  }
+               }
+            }
             modifier {
                id
                name
@@ -1735,6 +1770,18 @@ export const GET_CART_ITEMS_BY_CART = gql`
             }
             productId
          }
+      }
+   }
+`
+export const LOCATION_KIOSK = gql`
+   query LOCATION_KIOSK($id: Int!) {
+      brands_locationKiosk_by_pk(id: $id) {
+         accessPassword
+         accessUrl
+         id
+         internalLocationKioskLabel
+         kioskModuleConfig
+         locationId
       }
    }
 `

@@ -116,13 +116,21 @@ export const KioskProduct = props => {
                   {productData.assets.images.length === 0 ? (
                      <img src={config.productSettings.defaultImage.value} />
                   ) : (
-                     <Carousel style={{ height: '20em', width: '20em' }}>
+                     <Carousel>
                         {productData.assets.images.map((eachImage, index) => (
-                           <img
-                              src={eachImage}
-                              key={index}
-                              style={{ height: '100%', width: '100%' }}
-                           />
+                           <div
+                              className="product_image"
+                              style={{
+                                 height: '20em !important',
+                                 width: '20em !important',
+                              }}
+                           >
+                              <img
+                                 src={eachImage}
+                                 key={index}
+                                 style={{ height: '100%', width: '100%' }}
+                              />
+                           </div>
                         ))}
                      </Carousel>
                   )}
@@ -145,12 +153,26 @@ export const KioskProduct = props => {
                   </div>
                   <span className="hern-kiosk__menu-product-price">
                      {/* <sup></sup> */}
-                     {formatCurrency(productData.price)}
+                     {formatCurrency(
+                        productData.price -
+                           productData.discount +
+                           (productData?.productOptions[0]?.price ||
+                              0 - productData?.productOptions[0]?.discount ||
+                              0)
+                     )}
                   </span>
                   {availableQuantityInCart === 0 ? (
                      <KioskButton
                         onClick={() => {
-                           setShowModifier(true)
+                           // setShowModifier(true)
+                           if (
+                              productData.productOptions.length > 0 &&
+                              productData.isPopupAllowed
+                           ) {
+                              setShowModifier(true)
+                           } else {
+                              addToCart(productData.defaultCartItem, 1)
+                           }
                         }}
                      >
                         {t('Add To Cart')}

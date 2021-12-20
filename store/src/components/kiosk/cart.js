@@ -1,6 +1,7 @@
 import { Button, Col, Layout, Modal, Row, Menu, Dropdown, Space } from 'antd'
 import React, { useEffect, useState } from 'react'
 import {
+   ArrowLeftIcon,
    ArrowLeftIconBG,
    ArrowRightIcon,
    DeleteIcon,
@@ -28,7 +29,7 @@ export const KioskCart = props => {
    const { cartState, methods, addToCart } = React.useContext(CartContext)
    const { cart } = cartState
    const { config, combinedCartItems, setCurrentPage } = props
-   const { t } = useTranslation()
+   const { t, direction } = useTranslation()
 
    console.log('combinedCartItems', combinedCartItems)
 
@@ -200,11 +201,21 @@ export const KioskCart = props => {
                            <span className="hern-kiosk__cart-place-order-btn-text">
                               {t('Place Order')}
                            </span>
-                           <ArrowRightIcon
-                              stroke={
-                                 config.kioskSettings.theme.primaryColor.value
-                              }
-                           />
+                           {direction === 'ltr' ? (
+                              <ArrowRightIcon
+                                 stroke={
+                                    config.kioskSettings.theme.primaryColor
+                                       .value
+                                 }
+                              />
+                           ) : (
+                              <ArrowLeftIcon
+                                 stroke={
+                                    config.kioskSettings.theme.primaryColor
+                                       .value
+                                 }
+                              />
+                           )}
                         </KioskButton>
                      </Footer>
                   </Layout>
@@ -217,7 +228,7 @@ export const KioskCart = props => {
 
 const CartCard = props => {
    const { config, productData, removeCartItems } = props
-   const { brand, isConfigLoading } = useConfig()
+   const { brand, kioskDetails } = useConfig()
    const { addToCart } = React.useContext(CartContext)
 
    const [modifyProductId, setModifyProductId] = useState(null)
@@ -235,7 +246,7 @@ const CartCard = props => {
       () => ({
          params: {
             brandId: brand?.id,
-            locationId: 1000,
+            locationId: kioskDetails?.locationId,
          },
       }),
       [brand]
@@ -500,7 +511,9 @@ const CartCard = props => {
                className="hern-kiosk__cart-cards-price"
                style={{ color: '#5A5A5A' }}
             >
-               {formatCurrency(productData.price)}
+               {productData.price !== 0
+                  ? formatCurrency(productData.price)
+                  : null}
             </span>
          </div>
          {modifyProduct && showModifier && (

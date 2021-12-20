@@ -3,12 +3,12 @@
    padding: 2px;
    justify-content: space-between;
    width: 5em;
-   border: 1px solid #367bf5e5;
+   border: 1px solid var(--hern-accent);
    box-sizing: border-box;
    border-radius: 8px;
    height: 28px;
    align-items: center;
-   color: #367bf5;
+   color: var(--hern-accent);
    border-radius: 14px !important;
 
    button {
