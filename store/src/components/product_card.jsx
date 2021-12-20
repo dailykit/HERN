@@ -26,6 +26,7 @@ export const ProductCard = props => {
       onShowImageIconClick,
       showCustomText = true,
       customAreaComponent: CustomAreaComponent,
+      showProductDescription = false,
       showModifier = false,
       closeModifier,
       modifierPopupConfig, //use for cart
@@ -195,6 +196,11 @@ export const ProductCard = props => {
                      <div className="hern-product-card-custom-text"></div>
                   )}
                </div>
+               {showProductDescription && (
+                  <div className="hern-product-card__description">
+                     {data.description}
+                  </div>
+               )}
             </div>
          </div>
          {showModifier && data && (

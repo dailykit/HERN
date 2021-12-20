@@ -5,15 +5,27 @@
 body {
    font-family: 'Nunito', sans-serif;
 }
-
+/* 
 body {
    padding-top: 64px;
-}
+} */
 
 /* h1,
 h2 {
    font-family: 'DM Serif Display', serif;
 } */
+
+:root {
+   --bg: #242526;
+   --bg-accent: #484a4d;
+   --text-color: inherit;
+   --nav-size: 60px;
+   --border: 1px solid #474a4d;
+   --border-radius: 8px;
+   --speed: 500ms;
+   --hern-number-of-products: 2;
+   --hern-accent: rgb(56, 161, 105);
+}
 
 .react-toast-notifications__container {
    -ms-overflow-style: none;
@@ -42,16 +54,6 @@ h2 {
 code {
    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
       monospace;
-}
-
-:root {
-   --bg: #242526;
-   --bg-accent: #484a4d;
-   --text-color: inherit;
-   --nav-size: 60px;
-   --border: 1px solid #474a4d;
-   --border-radius: 8px;
-   --speed: 500ms;
 }
 
 .ul-class {

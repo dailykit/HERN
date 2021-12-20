@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import { signOut } from 'next-auth/client'
 import { getProtectedRoutes, LoginWrapper } from '../utils'
 
-import { useUser, useTranslation } from '../context'
+import { useUser, useTranslation, CartContext } from '../context'
 import {
    isClient,
    getInitials,
@@ -16,7 +16,7 @@ import {
 import MenuIcon from '../assets/icons/Menu'
 
 import { ProfileSidebar } from './profile_sidebar'
-import { CrossIcon } from '../assets/icons'
+import { CrossIcon, CartIcon } from '../assets/icons'
 import { Loader } from './loader'
 import NavigationBar from './navbar'
 import { useWindowSize } from '../utils/useWindowSize'
@@ -96,6 +96,10 @@ export const Header = ({ settings, navigationMenus }) => {
 
    const newNavigationMenus = DataWithChildNodes(navigationMenus)
 
+   const { cartState } = React.useContext(CartContext)
+   const numberOfItemsOnCart =
+      cartState?.cart?.cartItems_aggregate?.aggregate?.count
+
    // FB pixel event tracking for page view
    React.useEffect(() => {
       ReactPixel.pageView()
@@ -173,6 +177,17 @@ export const Header = ({ settings, navigationMenus }) => {
                   </NavigationBar>
                </section>
                <section className="hern-header__auth">
+                  {!isSubscriptionStore && (
+                     <div
+                        onClick={() => router.push(getRoute('/on-demand-cart'))}
+                        className="hern-navbar__list__item hern-navbar__list__item--cart-icon"
+                     >
+                        <CartIcon size="20px" stroke="var(--hern-accent)" />
+                        <span className="number-of-cart-item">
+                           {numberOfItemsOnCart}
+                        </span>
+                     </div>
+                  )}
                   {isLoading ? (
                      <>
                         <span className="hern-navbar__list__item__skeleton" />
