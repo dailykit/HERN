@@ -108,4 +108,4 @@ event_triggers:
     interval_sec: 10
     num_retries: 0
     timeout_sec: 60
-  webhook: https://85366775c585.ngrok.io/server/api/customer/referralProgram
+  webhook: "{{ORGANIZATION_URL}}/{{DAILYOS_SERVER_URL}}/api/customer/referralProgram"
