@@ -3,6 +3,7 @@ import { isPointInPolygon } from 'geolib'
 import { isClient, get_env } from './index'
 import axios from 'axios'
 import { each } from 'lodash'
+import { formatISO, add } from 'date-fns'
 
 export const getMinutes = time => {
    return parseInt(time.split(':')[0]) * 60 + parseInt(time.split(':')[1])
@@ -88,6 +89,8 @@ export const isStoreOnDemandDeliveryAvailable = async (
                            status,
                            result: distanceDeliveryStatus.result,
                            rec: finalRecurrences[rec],
+                           mileRangeInfo: distanceDeliveryStatus.mileRangeInfo,
+                           timeSlotInfo: timeslot,
                         }
                      }
                   } else {
@@ -170,6 +173,8 @@ export const isPreOrderDeliveryAvailable = async (
                      status,
                      result: distanceDeliveryStatus.result,
                      rec: finalRecurrences[rec],
+                     mileRangeInfo: distanceDeliveryStatus.mileRangeInfo,
+                     timeSlotInfo: timeslot,
                   }
                }
             } else {
@@ -282,9 +287,21 @@ const isStoreDeliveryAvailableByDistance = async (mileRanges, eachStore) => {
             }
          }
       }
+      if (
+         isStoreDeliveryAvailableByDistanceStatus.aerial &&
+         isStoreDeliveryAvailableByDistanceStatus.drivable &&
+         isStoreDeliveryAvailableByDistanceStatus.zipcode &&
+         isStoreDeliveryAvailableByDistanceStatus.geoBoundary
+      ) {
+         return {
+            result: isStoreDeliveryAvailableByDistanceStatus,
+            mileRangeInfo: mileRanges[mileRange],
+         }
+      }
    }
    return {
       result: isStoreDeliveryAvailableByDistanceStatus,
+      mileRangeInfo: null,
    }
 }
 
@@ -742,4 +759,19 @@ export const generatePickUpSlots = recurrences => {
       })
    })
    return { status: true, data }
+}
+
+export const generateTimeStamp = (time, date, slotTiming) => {
+   let formatedTime = time.split(':')
+   formatedTime =
+      makeDoubleDigit(formatedTime[0]) + ':' + makeDoubleDigit(formatedTime[1])
+
+   const currTimestamp = formatISO(new Date())
+   const selectedDate = formatISO(new Date(date))
+   const from = `${selectedDate.split('T')[0]}T${formatedTime}:00+${
+      currTimestamp.split('+')[1]
+   }`
+
+   const to = formatISO(add(new Date(from), { minutes: slotTiming }))
+   return { from, to }
 }

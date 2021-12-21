@@ -31,8 +31,9 @@ import {
    isStoreOnDemandPickupAvailable,
    isStorePreOrderPickupAvailable,
    generatePickUpSlots,
+   generateTimeStamp,
 } from '../utils'
-import { useUser } from '../context'
+import { CartContext, useUser } from '../context'
 import { useQuery } from '@apollo/react-hooks'
 import { Loader } from '.'
 import classNames from 'classnames'
@@ -117,23 +118,26 @@ export const Fulfillment = () => {
       {
          label: 'Deliver',
          value: 'DELIVERY',
-         disabled:
+         disabled: !(
             orderTabFulfillmentType.includes('ONDEMAND_DELIVERY') ||
-            orderTabFulfillmentType.includes('PREORDER_DELIVERY'),
+            orderTabFulfillmentType.includes('PREORDER_DELIVERY')
+         ),
       },
       {
          label: 'Pickup',
          value: 'PICKUP',
-         disabled:
+         disabled: !(
             orderTabFulfillmentType.includes('ONDEMAND_PICKUP') ||
-            orderTabFulfillmentType.includes('PREORDER_PICKUP'),
+            orderTabFulfillmentType.includes('PREORDER_PICKUP')
+         ),
       },
       {
          label: 'Dinein',
          value: 'DINEIN',
-         disabled:
+         disabled: !(
             orderTabFulfillmentType.includes('ONDEMAND_DINEIN') ||
-            orderTabFulfillmentType.includes('SCHEDULED_DINEIN'),
+            orderTabFulfillmentType.includes('SCHEDULED_DINEIN')
+         ),
       },
    ])
 
@@ -173,6 +177,7 @@ export const Fulfillment = () => {
                   onChange={e => {
                      console.log(e)
                      setFulfillmentType(e.target.value)
+                     setAddress(null)
                   }}
                   value={fulfillmentType}
                />
@@ -220,9 +225,10 @@ const Delivery = props => {
       orderTabFulfillmentType,
       brandLocation,
    } = props
-   const { brand, locationId } = useConfig()
+   const { brand, locationId, orderTabs } = useConfig()
+   const { methods, cartState } = React.useContext(CartContext)
 
-   const [deliveryType, setDeliveryType] = useState('PREORDER')
+   const [deliveryType, setDeliveryType] = useState(null)
    const [status, setStatus] = useState('loading')
    const [selectedStore, setSelectedStore] = useState(null)
    const [sortedBrandLocation, setSortedBrandLocation] = useState(null)
@@ -232,21 +238,28 @@ const Delivery = props => {
       useState(null)
    const [deliverySlots, setDeliverySlots] = useState(null)
    const [selectedSlot, setSelectedSlot] = useState(null)
-
+   const [fulfillmentTabInfo, setFulfillmentTabInfo] = useState({
+      orderTabId: null,
+      locationId: null,
+      // fulfillmentInfo: null,
+   })
+   console.log('address', address)
    const [deliveryRadioOptions] = useState([
       {
          label: 'Now',
          value: 'ONDEMAND',
-         disabled:
+         disabled: !(
             orderTabFulfillmentType &&
-            !orderTabFulfillmentType.includes('ONDEMAND_DELIVERY'),
+            orderTabFulfillmentType.includes('ONDEMAND_DELIVERY')
+         ),
       },
       {
          label: 'Later',
          value: 'PREORDER',
-         disabled:
+         disabled: !(
             orderTabFulfillmentType &&
-            !orderTabFulfillmentType.includes('PREORDER_DELIVERY'),
+            orderTabFulfillmentType.includes('PREORDER_DELIVERY')
+         ),
       },
    ])
 
@@ -359,30 +372,27 @@ const Delivery = props => {
             eachStore => eachStore[fulfillmentStatus].status
          )[0]
          setSelectedStore(firstStore)
-         console.log('automatic', firstStore)
          if (deliveryType === 'PREORDER') {
             const deliverySlots = generateDeliverySlots([
                firstStore.deliveryStatus.rec.recurrence,
             ])
-            console.log('deliverySlots', deliverySlots.data)
             const miniSlots = generateMiniSlots(deliverySlots.data, 60)
             setDeliverySlots(miniSlots)
-            console.log('miniSlots', miniSlots)
          }
       }
       if (locationId) {
       }
    }, [sortedBrandLocation, address])
+
    useEffect(() => {
-      console.log('isBrand', brandLocation, address, brandRecurrences)
-      if (brandLocation && address) {
+      if (brandLocation && address && deliveryType) {
          ;(async () => {
             const bar = await getAerialDistance(brandLocation, true)
-            console.log('this is bar')
             setSortedBrandLocation(bar)
          })()
       }
-   }, [brandLocation, brandRecurrences, address])
+   }, [brandLocation, brandRecurrences, address, deliveryType])
+
    const getAerialDistance = async (data, sorted = false) => {
       const userLocation = JSON.parse(localStorage.getItem('userLocation'))
       const userLocationWithLatLang = {
@@ -433,12 +443,83 @@ const Delivery = props => {
       }
       return dataWithAerialDistance
    }
-   if (!locationId && selectedStore === null) {
+
+   const onFulfillmentTimeClick = timestamp => {
+      const slotInfo = {
+         slot: {
+            from: timestamp.from,
+            to: timestamp.to,
+            mileRangeId: selectedStore.deliveryStatus.mileRangeInfo.id,
+         },
+         type: 'PREORDER_DELIVERY',
+      }
+      methods.cart.update({
+         variables: {
+            id: cartState?.cart?.id,
+            _set: {
+               ...fulfillmentTabInfo,
+               fulfillmentInfo: slotInfo,
+               address,
+            },
+         },
+      })
+   }
+   useEffect(() => {
+      if (deliveryType === 'ONDEMAND' && selectedStore) {
+         onNowClick()
+      }
+   }, [deliveryType, selectedStore])
+
+   const onNowClick = () => {
+      const slotInfo = {
+         slot: {
+            from: moment().format(),
+            to: moment()
+               .add(selectedStore.deliveryStatus.mileRangeInfo.prepTime)
+               .format(),
+            mileRangeId: selectedStore.deliveryStatus.mileRangeInfo.id,
+         },
+         type: 'ONDEMAND_DELIVERY',
+      }
+      console.log('DataToBeSend', {
+         ...fulfillmentTabInfo,
+         fulfillmentInfo: slotInfo,
+         locationId: selectedStore.id,
+         address,
+      })
+      methods.cart.update({
+         variables: {
+            id: cartState?.cart?.id,
+            _set: {
+               ...fulfillmentTabInfo,
+               fulfillmentInfo: slotInfo,
+               locationId: selectedStore.id,
+               address,
+            },
+         },
+      })
+   }
+
+   // for ondemand delivery
+   useEffect(() => {
+      if (selectedStore) {
+         setFulfillmentTabInfo(prev => {
+            return { ...prev, locationId: selectedStore.id }
+         })
+      }
+   }, [selectedStore])
+
+   // if (!locationId && selectedStore === null) {
+   //    return <p>Please Select an address</p>
+   // }
+   // if (!selectedStore.deliveryStatus.status) {
+   //    return <p>{selectedStore.deliveryStatus.message}</p>
+   // }
+
+   if (!address) {
       return <p>Please Select an address</p>
    }
-   if (!selectedStore.deliveryStatus.status) {
-      return <p>{selectedStore.deliveryStatus.message}</p>
-   }
+   console.log('selectedStore', selectedStore)
    return (
       <div className="hern-cart__fulfillment-time-section">
          <div className="hern-cart__fulfillment-time-section-heading">
@@ -450,12 +531,26 @@ const Delivery = props => {
             options={deliveryRadioOptions}
             onChange={e => {
                setDeliveryType(e.target.value)
+               const orderTabId = orderTabs.find(
+                  t =>
+                     t.orderFulfillmentTypeLabel ===
+                     `${e.target.value}_DELIVERY`
+               )?.id
+               setFulfillmentTabInfo(prev => {
+                  return { ...prev, orderTabId }
+               })
             }}
             value={deliveryType}
             className="hern-cart__fulfillment-date-slot"
          />
 
-         {deliveryType === 'ONDEMAND' ? (
+         {!deliveryType ? (
+            <p>Please select a delivery type.</p>
+         ) : sortedBrandLocation === null || selectedStore === null ? (
+            <Loader inline />
+         ) : !selectedStore?.deliveryStatus?.status ? (
+            <p>{selectedStore.deliveryStatus.message}</p>
+         ) : deliveryType === 'ONDEMAND' ? (
             <p>Store Available for Delivery</p>
          ) : deliverySlots == null ? (
             <Loader inline />
@@ -490,6 +585,21 @@ const Delivery = props => {
                      <Radio.Group
                         onChange={e => {
                            console.log(e.target.value)
+                           const newTimeStamp = generateTimeStamp(
+                              e.target.value.time,
+                              selectedSlot.date,
+                              60
+                           )
+                           onFulfillmentTimeClick(newTimeStamp)
+                           setFulfillmentTabInfo(prev => {
+                              const data = {
+                                 slot: {
+                                    from: newTimeStamp.from,
+                                    to: newTimeStamp.to,
+                                 },
+                                 type: 'PREORDER_DELIVERY',
+                              }
+                           })
                         }}
                      >
                         {selectedSlot.slots.map((eachSlot, index, elements) => {
@@ -498,7 +608,7 @@ const Delivery = props => {
                               to: elements[index + 1]?.time || eachSlot.end,
                            }
                            return (
-                              <Radio.Button value={slot}>
+                              <Radio.Button value={eachSlot}>
                                  {slot.from}
                                  {'-'}
                                  {slot.to}
