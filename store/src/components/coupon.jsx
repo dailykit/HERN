@@ -13,12 +13,15 @@ import { useQueryParamState } from '../utils'
 export const Coupon = ({ cart, config }) => {
    // use this component for kiosk as well
    const [orderInterfaceType] = useQueryParamState('oiType', 'Website')
-   const { state = {} } = orderInterfaceType === 'Kiosk' ? {} : useMenu()
+   const { state = {} } =
+      orderInterfaceType === 'Kiosk Ordering' ? {} : useMenu()
    const { user } = useUser()
    const { addToast } = useToasts()
    const { brand, configOf } = useConfig()
    const { id } =
-      orderInterfaceType === 'Kiosk' ? cart : state?.occurenceCustomer?.cart
+      orderInterfaceType === 'Kiosk Ordering'
+         ? cart
+         : state?.occurenceCustomer?.cart
    const { t } = useTranslation()
 
    const theme = configOf('theme-color', 'visual')
@@ -144,13 +147,13 @@ export const Coupon = ({ cart, config }) => {
 
    if (
       !data?.cartRewards[0]?.reward?.coupon?.code &&
-      (isCouponFormOpen || orderInterfaceType === 'Kiosk')
+      (isCouponFormOpen || orderInterfaceType === 'Kiosk Ordering')
    ) {
       return (
          <>
             <form
                className={
-                  orderInterfaceType === 'Kiosk'
+                  orderInterfaceType === 'Kiosk Ordering'
                      ? 'hern-kiosk-coupon__form'
                      : 'hern-coupon__form'
                }
@@ -170,14 +173,14 @@ export const Coupon = ({ cart, config }) => {
                )}
                <div
                   className={
-                     orderInterfaceType === 'Kiosk'
+                     orderInterfaceType === 'Kiosk Ordering'
                         ? 'hern-kiosk-coupon__input-wrapper'
                         : 'hern-coupon__input-wrapper'
                   }
                >
                   <label
                      className={
-                        orderInterfaceType === 'Kiosk'
+                        orderInterfaceType === 'Kiosk Ordering'
                            ? 'hern-kiosk-coupon__input-label'
                            : 'hern-coupon__input-label'
                      }
@@ -187,7 +190,7 @@ export const Coupon = ({ cart, config }) => {
                   </label>
                   <input
                      className={
-                        orderInterfaceType === 'Kiosk'
+                        orderInterfaceType === 'Kiosk Ordering'
                            ? 'hern-kiosk-coupon__input'
                            : 'hern-coupon__input'
                      }
@@ -202,7 +205,7 @@ export const Coupon = ({ cart, config }) => {
                </div>
                <button
                   className={
-                     orderInterfaceType === 'Kiosk'
+                     orderInterfaceType === 'Kiosk Ordering'
                         ? 'hern-kiosk-coupon__form__apply-btn'
                         : 'hern-coupon__form__apply-btn'
                   }
@@ -260,7 +263,7 @@ export const Coupon = ({ cart, config }) => {
                <div>
                   <div
                      className={
-                        orderInterfaceType === 'Kiosk'
+                        orderInterfaceType === 'Kiosk Ordering'
                            ? 'hern-kiosk-coupon__coupon-code'
                            : 'hern-coupon__coupon-code'
                      }
@@ -269,7 +272,7 @@ export const Coupon = ({ cart, config }) => {
                   </div>
                   <div
                      className={
-                        orderInterfaceType === 'Kiosk'
+                        orderInterfaceType === 'Kiosk Ordering'
                            ? 'hern-kiosk-coupon__coupon-comment'
                            : 'hern-coupon__coupon-comment'
                      }
@@ -279,7 +282,7 @@ export const Coupon = ({ cart, config }) => {
                </div>
                <button
                   className={
-                     orderInterfaceType === 'Kiosk'
+                     orderInterfaceType === 'Kiosk Ordering'
                         ? 'hern-kiosk-coupon__coupon__cancel-btn'
                         : 'hern-coupon__coupon__cancel-btn'
                   }

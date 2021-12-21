@@ -20,6 +20,7 @@ import {
    isClient,
    useRazorPay,
    usePaytm,
+   useTerminalPay,
    getPaytmOptions,
    get_env,
 } from '../utils'
@@ -81,11 +82,13 @@ export const PaymentProvider = ({ children }) => {
    const { brand } = useConfig()
    const { displayRazorpay } = useRazorPay()
    const { displayPaytm } = usePaytm()
+   const { initiateTerminalPayment, byPassTerminalPayment } = useTerminalPay()
    const { addToast } = useToasts()
 
    // subscription to get cart payment info
    const { error: hasCartPaymentError, loading: isCartPaymentLoading } =
       useSubscription(GET_CART_PAYMENT_INFO, {
+         skip: !cartId && !isAuthenticated,
          variables: {
             where: {
                _and: [
@@ -349,6 +352,16 @@ export const PaymentProvider = ({ children }) => {
                   const paymentUrl = cartPayment.actionUrl
                   window.location.href = paymentUrl
                }
+            }
+         } else if (
+            cartPayment.availablePaymentOption.supportedPaymentOption
+               .paymentOptionLabel === 'TERMINAL'
+         ) {
+            console.log('inside payment provider useEffect 1', cartPayment)
+            if (cartPayment.paymentStatus === 'PENDING') {
+               ;(async () => {
+                  await initiateTerminalPayment(cartPayment)
+               })()
             }
          }
          // else if (

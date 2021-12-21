@@ -4,7 +4,8 @@ import Confetti from 'react-confetti'
 import { useRouter } from 'next/router'
 import { Result, Spin, Button, Modal } from 'antd'
 import { Wrapper } from './styles'
-import { useWindowSize } from '../../utils'
+import { Button as StyledButton } from '../button'
+import { useWindowSize, isKiosk } from '../../utils'
 
 const PaymentProcessingModal = ({
    isOpen,
@@ -18,6 +19,7 @@ const PaymentProcessingModal = ({
 }) => {
    console.log('PaymentProcessingModal')
    const router = useRouter()
+   const isKioskMode = isKiosk()
    const [isCelebrating, setIsCelebrating] = useState(false)
    const { width, height } = useWindowSize()
 
@@ -189,7 +191,7 @@ const PaymentProcessingModal = ({
             overflowY: 'auto',
          }}
          maskStyle={{
-            backgroundColor: '#fff',
+            backgroundColor: isKioskMode ? 'rgba(0, 64, 106, 0.9)' : '#fff',
          }}
       >
          <Wrapper>
@@ -204,6 +206,20 @@ const PaymentProcessingModal = ({
          <Button type="link" tw="fixed top-4 left-4" onClick={normalModalClose}>
             Close
          </Button>
+
+         {isKioskMode && (
+            <div tw="fixed bottom-48 width[780px] margin-left[-24px]">
+               <p tw="font-extrabold margin-bottom[36px] text-white text-4xl text-center">
+                  OR
+               </p>
+               <StyledButton
+                  tw="w-full justify-center"
+                  className="hern-kiosk__kiosk-button hern-kiosk__cart-place-order-btn"
+               >
+                  PAY AT COUNTER
+               </StyledButton>
+            </div>
+         )}
       </Modal>
    )
 }

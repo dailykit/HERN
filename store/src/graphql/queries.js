@@ -1857,6 +1857,8 @@ export const GET_CART_PAYMENT_INFO = gql`
             supportedPaymentOption {
                paymentOptionLabel
                id
+               isRequestClientBased
+               isWebhookClientBased
                supportedPaymentCompany {
                   label
                   id

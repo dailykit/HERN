@@ -20,7 +20,8 @@ import { KioskModifier } from './component'
 import { useLazyQuery, useQuery } from '@apollo/react-hooks'
 import KioskButton from './component/button'
 import { ProgressBar } from './component/progressBar'
-import { Coupon } from '..'
+import { Coupon } from '../coupon'
+import PayButton from '../PayButton'
 
 const { Header, Content, Footer } = Layout
 
@@ -194,7 +195,11 @@ export const KioskCart = props => {
                      </Content>
                      <Footer className="hern-kiosk__cart-page-proceed-to-checkout">
                         <CartPageFooter cart={cart} methods={methods} />
-                        <KioskButton customClass="hern-kiosk__cart-place-order-btn">
+                        <PayButton
+                           cartId={cart?.id}
+                           className="hern-kiosk__kiosk-button hern-kiosk__cart-place-order-btn"
+                        >
+                           {/* <KioskButton customClass="hern-kiosk__cart-place-order-btn"> */}
                            <span className="hern-kiosk__cart-place-order-btn-total">
                               {formatCurrency(cart.billing.totalPrice.value)}
                            </span>
@@ -216,7 +221,8 @@ export const KioskCart = props => {
                                  }
                               />
                            )}
-                        </KioskButton>
+                           {/* </KioskButton> */}
+                        </PayButton>
                      </Footer>
                   </Layout>
                </Footer>

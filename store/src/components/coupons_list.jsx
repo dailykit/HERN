@@ -19,11 +19,14 @@ export const CouponsList = ({
 }) => {
    // use this component for kiosk as well
    const [orderInterfaceType] = useQueryParamState('oiType', 'Website')
-   const { state = {} } = orderInterfaceType === 'Kiosk' ? {} : useMenu()
+   const { state = {} } =
+      orderInterfaceType === 'Kiosk Ordering' ? {} : useMenu()
    const { brand } = useConfig()
    const { user } = useUser()
    const { id } =
-      orderInterfaceType === 'Kiosk' ? cart : state?.occurenceCustomer?.cart
+      orderInterfaceType === 'Kiosk Ordering'
+         ? cart
+         : state?.occurenceCustomer?.cart
    const { t } = useTranslation()
 
    const [availableCoupons, setAvailableCoupons] = React.useState([])

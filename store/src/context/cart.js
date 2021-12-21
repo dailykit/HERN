@@ -181,6 +181,7 @@ export const CartProvider = ({ children }) => {
                usedOrderInterface: oiType,
                orderTabId: selectedOrderTab?.id || null,
                locationId: locationId || null,
+               toUseAvailablePaymentOptionId: 1010,
             }
             console.log('object new cart', object)
             createCart({
