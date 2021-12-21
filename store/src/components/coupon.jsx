@@ -4,13 +4,13 @@ import { useToasts } from 'react-toast-notifications'
 import { useUser, useTranslation } from '../context'
 import { CART_REWARDS, MUTATIONS, SEARCH_COUPONS } from '../graphql'
 import { useConfig } from '../lib'
-import { useMenu } from '../sections/select-menu'
+import { useMenu, MenuProvider } from '../sections/select-menu'
 import { CouponsList } from './coupons_list'
 import { Loader } from './loader'
 import { Tunnel } from './tunnel'
 import { useQueryParamState } from '../utils'
 
-export const Coupon = ({ cart, config }) => {
+const Coupon_ = ({ cart, config, upFrontLayout = true }) => {
    // use this component for kiosk as well
    const [orderInterfaceType] = useQueryParamState('oiType', 'Website')
    const { state = {} } = orderInterfaceType === 'Kiosk' ? {} : useMenu()
@@ -18,7 +18,9 @@ export const Coupon = ({ cart, config }) => {
    const { addToast } = useToasts()
    const { brand, configOf } = useConfig()
    const { id } =
-      orderInterfaceType === 'Kiosk' ? cart : state?.occurenceCustomer?.cart
+      orderInterfaceType === 'Kiosk' || upFrontLayout
+         ? cart
+         : state?.occurenceCustomer?.cart
    const { t } = useTranslation()
 
    const theme = configOf('theme-color', 'visual')
@@ -300,3 +302,9 @@ export const Coupon = ({ cart, config }) => {
       </div>
    )
 }
+export const Coupon = props => (
+   <MenuProvider>
+      {' '}
+      <Coupon_ {...props} />
+   </MenuProvider>
+)

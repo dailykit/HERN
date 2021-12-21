@@ -8,6 +8,7 @@ import {
    Loader,
    Button,
    PaymentOptionsRenderer,
+   Coupon,
 } from '../../components'
 import { CartContext } from '../../context'
 import { EmptyCart } from '../../assets/icons'
@@ -37,7 +38,9 @@ export const OnDemandCart = () => {
             <div className="hern-ondemand-cart__left-card">
                <Fulfillment />
             </div>
-            <div className="hern-ondemand-cart__left-card">Apply Coupons</div>
+            <div className="hern-ondemand-cart__left-card">
+               <Coupon cart={cartState.cart} />
+            </div>
             <div className="hern-ondemand-cart__left-card">
                <LoyaltyPoints cart={cartState.cart} version={2} />
             </div>

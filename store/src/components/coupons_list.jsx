@@ -3,7 +3,7 @@ import { useSubscription } from '@apollo/react-hooks'
 import { useUser, useTranslation } from '../context'
 import { COUPONS } from '../graphql'
 import { useConfig } from '../lib'
-import { useMenu } from '../sections/select-menu'
+import { useMenu, MenuProvider } from '../sections/select-menu'
 import { Loader } from './loader'
 import { CloseIcon } from '../assets/icons'
 import classNames from 'classnames'
@@ -11,11 +11,12 @@ import { isClient, useQueryParamState } from '../utils'
 import { Carousel } from 'antd'
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
-export const CouponsList = ({
+const Coupons_List = ({
    createOrderCartRewards,
    closeTunnel,
    cart,
    config,
+   upFrontLayout = true,
 }) => {
    // use this component for kiosk as well
    const [orderInterfaceType] = useQueryParamState('oiType', 'Website')
@@ -23,7 +24,9 @@ export const CouponsList = ({
    const { brand } = useConfig()
    const { user } = useUser()
    const { id } =
-      orderInterfaceType === 'Kiosk' ? cart : state?.occurenceCustomer?.cart
+      orderInterfaceType === 'Kiosk' || upFrontLayout
+         ? cart
+         : state?.occurenceCustomer?.cart
    const { t } = useTranslation()
 
    const [availableCoupons, setAvailableCoupons] = React.useState([])
@@ -192,3 +195,10 @@ export const CouponsList = ({
       </div>
    )
 }
+
+export const CouponsList = props => (
+   <MenuProvider>
+      {' '}
+      <Coupons_List {...props} />
+   </MenuProvider>
+)
