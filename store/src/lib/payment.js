@@ -215,6 +215,10 @@ export const PaymentProvider = ({ children }) => {
          },
       })
    }
+   const normalModalClose = () => {
+      setIsProcessingPayment(false)
+      setIsPaymentInitiated(false)
+   }
 
    const eventHandler = async response => {
       dispatch({
@@ -385,6 +389,7 @@ export const PaymentProvider = ({ children }) => {
                actionUrl={cartPayment?.actionUrl}
                actionRequired={cartPayment?.actionRequired}
                closeModal={onPaymentModalClose}
+               normalModalClose={normalModalClose}
                cancelPayment={onCancelledHandler}
             />
          )}
