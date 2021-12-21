@@ -23,7 +23,7 @@ export const ProductGallery = ({config})=> {
         PRODUCTS,
         {
            variables: {
-              ids: config.informationVisibility.products.value,
+              ids: config.data.products.value,
               priceArgs: argsForByLocation,
               discountArgs: argsForByLocation,
               defaultCartItemArgs: argsForByLocation,
