@@ -47,6 +47,16 @@ export const initiatePaymentHandler = async (req, res) => {
             }
          )
 
+         if (
+            availablePaymentOption.supportedPaymentOption.isRequestClientBased
+         ) {
+            return res.status(200).json({
+               success: true,
+               message:
+                  'Initiate payment request for this supported payment option is client based'
+            })
+         }
+
          const company =
             availablePaymentOption.supportedPaymentOption
                .supportedPaymentCompany.label

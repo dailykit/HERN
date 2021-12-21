@@ -9,6 +9,7 @@ export const handlePaymentWebhook = async (req, res) => {
          'https://securegw-stage.paytm.in',
          'https://securegw.paytm.in'
       ].includes(req.headers['origin'])
+      const isTerminalPayment = req.headers['payment-type'] === 'terminal'
       let paymentType
       if (stripeSignature) {
          paymentType = 'stripe'
@@ -16,6 +17,8 @@ export const handlePaymentWebhook = async (req, res) => {
          paymentType = 'razorpay'
       } else if (isPaytmWebhook) {
          paymentType = 'paytm'
+      } else if (isTerminalPayment) {
+         paymentType = 'terminal'
       } else {
          return
       }

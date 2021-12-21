@@ -83,6 +83,8 @@ query AVAILABLE_PAYMENT_OPTION($id: Int!) {
        id
        paymentOptionLabel
        country
+       isRequestClientBased
+       isWebhookClientBased
        supportedPaymentCompany {
          id
          label
