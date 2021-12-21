@@ -1,21 +1,13 @@
 import React from 'react'
-import {
-   ListHeader,
-   ListItem,
-   List,
-   ListOptions,
-   ListSearch,
-   TextButton,
-   TagGroup,
-   Tag,
-   useSingleList,
-} from '@dailykit/ui'
+import { Select } from 'antd'
+
 import { useSubscription } from '@apollo/react-hooks'
-import { Link } from 'react-router-dom'
 import { BRAND_ID } from '../../../Query'
+import { useTabs } from '../../../../../providers'
+
 const ListFunction = () => {
-   const [search, setSearch] = React.useState('')
    const [brandId, setBrandId] = React.useState([])
+   const { addTab } = useTabs()
 
    const { loading } = useSubscription(BRAND_ID, {
       onSubscriptionData: data => {
@@ -23,35 +15,32 @@ const ListFunction = () => {
       },
    })
    console.log('brand ID:::', brandId)
-   const [list, current, selectOption] = useSingleList(brandId)
+   const { Option } = Select
 
    return (
-      <List>
-         {Object.keys(current).length > 0 ? (
-            <ListItem type="SSL1" title={current.title} />
-         ) : (
-            <ListSearch
-               onChange={value => setSearch(value)}
-               placeholder="type what you’re looking for..."
-            />
-         )}
-         <ListHeader type="SSL1" label="Brand Name" />
-         <ListOptions search={search}>
-            {list
-               .filter(option => option.title.toLowerCase().includes(search))
-               .map(option => (
-                  <Link to={`/operationMode/${option.id}`}>
-                     <ListItem
-                        type="SSL1"
-                        key={option.id}
-                        title={option.title}
-                        isActive={option.id === current.id}
-                        onClick={() => selectOption('id', option.id)}
-                     />
-                  </Link>
-               ))}
-         </ListOptions>
-      </List>
+      <>
+         <Select
+            showSearch
+            style={{ width: 200 }}
+            placeholder="Select Brand Name"
+            optionFilterProp="children"
+            filterOption={(input, option) =>
+               option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+            }
+            filterSort={(optionA, optionB) =>
+               optionA.children
+                  .toLowerCase()
+                  .localeCompare(optionB.children.toLowerCase())
+            }
+            onSelect={option =>
+               addTab('Brand Manager', `/operationMode/brand-${option}`)
+            }
+         >
+            {brandId.map(eachId => {
+               return <Option value={eachId.id}>{eachId.title}</Option>
+            })}
+         </Select>
+      </>
    )
 }
 

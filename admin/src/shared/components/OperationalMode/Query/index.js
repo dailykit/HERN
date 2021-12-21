@@ -45,10 +45,14 @@ export const COLLECTION_PRODUCTS = gql`
 `
 
 export const BRANDS_LOCATION_ID = gql`
-   subscription brandLocationId {
-      brands_brand_location {
-         brandId
-         id
+   subscription brandLocationId($where: brands_brand_bool_exp!) {
+      brandsAggregate(order_by: { id: asc }, where: $where) {
+         nodes {
+            id
+            brand_locations {
+               id
+            }
+         }
       }
    }
 `
