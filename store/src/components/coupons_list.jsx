@@ -16,15 +16,16 @@ const Coupons_List = ({
    closeTunnel,
    cart,
    config,
-   upFrontLayout = true,
+   upFrontLayout = false,
 }) => {
    // use this component for kiosk as well
    const [orderInterfaceType] = useQueryParamState('oiType', 'Website')
-   const { state = {} } = orderInterfaceType === 'Kiosk' ? {} : useMenu()
+   const { state = {} } =
+      orderInterfaceType === 'Kiosk Ordering' ? {} : useMenu()
    const { brand } = useConfig()
    const { user } = useUser()
    const { id } =
-      orderInterfaceType === 'Kiosk' || upFrontLayout
+      orderInterfaceType === 'Kiosk Ordering' || upFrontLayout
          ? cart
          : state?.occurenceCustomer?.cart
    const { t } = useTranslation()
@@ -36,7 +37,7 @@ const Coupons_List = ({
       variables: {
          params: {
             cartId: id,
-            keycloakId: user?.keycloakId,
+            ...(user?.keycloakId && { keycloakId: user?.keycloakId }),
          },
          brandId: brand.id,
       },
@@ -45,7 +46,6 @@ const Coupons_List = ({
          setAvailableCoupons([
             ...coupons.filter(coupon => coupon.visibilityCondition.isValid),
          ])
-
          // fb pixel custom event for coupon list
          ReactPixel.trackCustom('showCouponList', {
             coupons: [
@@ -95,7 +95,7 @@ const Coupons_List = ({
    }
 
    if (loading) return <Loader />
-   if (orderInterfaceType === 'Kiosk' || upFrontLayout) {
+   if (orderInterfaceType === 'Kiosk Ordering' || upFrontLayout) {
       return (
          <div className={upFrontLayout ? 'hern-upfront-coupons-list' : ''}>
             {!availableCoupons.length && (
@@ -218,7 +218,7 @@ const Coupons_List = ({
 
    return (
       <div className="hern-coupons-list">
-         {orderInterfaceType !== 'Kiosk' && (
+         {orderInterfaceType !== 'Kiosk Ordering' && (
             <div className="hern-coupons-list__header">
                <div className="hern-coupons-list__heading">
                   {t('Available Coupons')}

@@ -25,7 +25,7 @@ export const OnDemandCart = () => {
          <div className="hern-cart-empty-cart">
             <EmptyCart />
             <span>Oops! Your cart is empty </span>
-            <Button className="hern-cart-go-to-menu-btn" onClick={() => {}}>
+            <Button className="hern-cart-go-to-menu-btn" onClick={() => { }}>
                <Link href="/order">GO TO MENU</Link>
             </Button>
          </div>
@@ -39,7 +39,7 @@ export const OnDemandCart = () => {
                <Fulfillment />
             </div>
             <div className="hern-ondemand-cart__left-card">
-               <Coupon cart={cartState.cart} />
+               <Coupon upFrontLayout={true} cart={cartState.cart} />
             </div>
             <div className="hern-ondemand-cart__left-card">
                <LoyaltyPoints cart={cartState.cart} version={2} />
