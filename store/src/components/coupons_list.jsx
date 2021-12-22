@@ -45,33 +45,6 @@ const Coupons_List = ({
          setAvailableCoupons([
             ...coupons.filter(coupon => coupon.visibilityCondition.isValid),
          ])
-         setAvailableCoupons([
-            {
-               id: '1',
-               code: '2348',
-               metaDetails: {
-                  title: 'Get 20% off on your First Order!',
-                  description: 'Upto $50 discount on your order',
-               },
-            },
-            {
-               id: '2',
-               code: '2368',
-               metaDetails: {
-                  title: 'Get 1000 Points on minimum Order of $500',
-                  description:
-                     'Get upto 1000 points on making order of minimum $500.',
-               },
-            },
-            {
-               id: '3',
-               code: '2378',
-               metaDetails: {
-                  title: 'Get 20% off on your First Order!',
-                  description: 'Upto $50 discount on your order',
-               },
-            },
-         ])
 
          // fb pixel custom event for coupon list
          ReactPixel.trackCustom('showCouponList', {
@@ -118,8 +91,7 @@ const Coupons_List = ({
    }
 
    const isButtonDisabled = coupon => {
-      return
-      // return !coupon.rewards.some(reward => reward.condition.isValid)
+      return !coupon.rewards.some(reward => reward.condition.isValid)
    }
 
    if (loading) return <Loader />
