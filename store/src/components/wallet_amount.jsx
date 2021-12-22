@@ -6,7 +6,7 @@ import { formatCurrency } from '../utils'
 import { useConfig } from '../lib'
 import { Info, WalletIcon } from '../assets/icons'
 import classNames from 'classnames'
-import { Button } from '.'
+import { Button, LoginWarningWithText } from '.'
 
 export const WalletAmount = ({ cart, version }) => {
    const { user } = useUser()
@@ -52,7 +52,18 @@ export const WalletAmount = ({ cart, version }) => {
          })
       }
    }
-
+   if (!user?.keycloakId) {
+      return (
+         <div
+            className={classNames('hern-wallet-amount', {
+               'hern-wallet-amount-v2': isVersion2,
+            })}
+         >
+            <WalletHeader />
+            <LoginWarningWithText />
+         </div>
+      )
+   }
    if (!cart.walletAmountUsable) return null
    return (
       <div

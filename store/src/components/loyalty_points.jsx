@@ -5,7 +5,7 @@ import { MUTATIONS } from '../graphql'
 import { useConfig } from '../lib'
 import { Info, LoyaltyPointsIcon } from '../assets/icons'
 import classNames from 'classnames'
-import { Button } from '.'
+import { Button, LoginWarningWithText } from '.'
 
 export const LoyaltyPoints = ({ cart, version = 1 }) => {
    const { user } = useUser()
@@ -65,6 +65,19 @@ export const LoyaltyPoints = ({ cart, version = 1 }) => {
             >
                {label}
             </label>
+         </div>
+      )
+   }
+   if (!user?.keycloakId) {
+      return (
+         <div
+            className="hern-loyalty-points"
+            className={classNames('hern-loyalty-points', {
+               'hern-loyalty-points-v2': isVersion2,
+            })}
+         >
+            <LoyaltyPointsHeader />
+            <LoginWarningWithText />
          </div>
       )
    }
