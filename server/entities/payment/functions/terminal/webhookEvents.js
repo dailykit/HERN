@@ -4,24 +4,19 @@ import get_env from '../../../../../get_env'
 
 const terminalWebhookEvents = async arg => {
    try {
-      console.log(arg.body)
-      // const { cartPayment } = await client.request(CART_PAYMENT, {
-      //    id: orderId
-      // })
-      // const requiredData = {
-      //    cartPaymentId: orderId,
-      //    transactionRemark: body,
-      //    requestId: orderId.toString(),
-      //    paymentStatus: body.resultInfo.resultStatus,
-      //    transactionId: body.txnId,
-      //    cartId: cartPayment.cartId
-      // }
-      // console.log('requiredData', requiredData)
+      const { cartPaymentId, status, transactionId } = arg.body
+      const requiredData = {
+         cartPaymentId,
+         transactionRemark: arg.body,
+         paymentStatus: status,
+         transactionId
+      }
+      console.log('requiredData', requiredData)
 
       return {
          success: true,
          code: 200,
-         data: {}
+         data: requiredData
       }
    } catch (error) {
       return { success: false, code: 500, error }
