@@ -203,3 +203,23 @@ Instead rename lodash.js to end in .cjs, change the requiring code to use import
 [/api/payment-intent] | [2021-12-20 17:12:81PM +05:30] | [Error: No such customer: '']
 [/api/payment-intent] | [2021-12-20 18:12:05PM +05:30] | [Error: No such customer: '']
 [/api/payment-intent] | [2021-12-20 18:12:34PM +05:30] | [Error: This payment requires additional user action before it can be completed successfully. Payment can be completed using the PaymentIntent associated with the invoice. For more details see: https://stripe.com/docs/billing/subscriptions/overview#requires-action]
+[/api/payment/initiate-payment] | [2021-12-22 14:12:54PM +05:30] | [Error: Cannot find module '../functions/cod'
+Require stack:
+- C:\Users\Deepak Negi\Desktop\DailyKit\HERN\server\entities\payment\controllers\initiate-payment.js
+- C:\Users\Deepak Negi\Desktop\DailyKit\HERN\server\entities\payment\controllers\index.js
+- C:\Users\Deepak Negi\Desktop\DailyKit\HERN\server\entities\payment\route.js
+- C:\Users\Deepak Negi\Desktop\DailyKit\HERN\server\entities\payment\index.js
+- C:\Users\Deepak Negi\Desktop\DailyKit\HERN\server\entities\index.js
+- C:\Users\Deepak Negi\Desktop\DailyKit\HERN\server\index.js
+- C:\Users\Deepak Negi\Desktop\DailyKit\HERN\main.js
+- C:\Users\Deepak Negi\Desktop\DailyKit\HERN\index.js]
+[/api/payment/initiate-payment] | [2021-12-22 15:12:23PM +05:30] | [Error: Cannot find module '../functions/cod'
+Require stack:
+- C:\Users\Deepak Negi\Desktop\DailyKit\HERN\server\entities\payment\controllers\initiate-payment.js
+- C:\Users\Deepak Negi\Desktop\DailyKit\HERN\server\entities\payment\controllers\index.js
+- C:\Users\Deepak Negi\Desktop\DailyKit\HERN\server\entities\payment\route.js
+- C:\Users\Deepak Negi\Desktop\DailyKit\HERN\server\entities\payment\index.js
+- C:\Users\Deepak Negi\Desktop\DailyKit\HERN\server\entities\index.js
+- C:\Users\Deepak Negi\Desktop\DailyKit\HERN\server\index.js
+- C:\Users\Deepak Negi\Desktop\DailyKit\HERN\main.js
+- C:\Users\Deepak Negi\Desktop\DailyKit\HERN\index.js]

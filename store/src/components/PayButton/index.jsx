@@ -5,16 +5,21 @@ import isEmpty from 'lodash/isEmpty'
 import { Button } from '../button'
 import * as QUERIES from '../../graphql'
 import { usePayment } from '../../lib'
+import { useCart } from '../../context'
 import { isKiosk } from '../../utils'
 
 export default function PayButton({ children, cartId = null, ...props }) {
    const isKioskMode = isKiosk()
+   const { cartState } = useCart()
+   const { kioskPaymentOption } = cartState
+   console.log('cartState', cartState)
    const {
       profileInfo,
       paymentInfo,
       setIsPaymentInitiated,
       setIsProcessingPayment,
       updatePaymentState,
+      initializePayment,
    } = usePayment()
 
    // update cart mutation
@@ -46,8 +51,33 @@ export default function PayButton({ children, cartId = null, ...props }) {
       console.log('PayButton: onPayClickHandler')
       if (isKioskMode) {
          console.log('inside kiosk condition')
-         setIsProcessingPayment(true)
-         setIsPaymentInitiated(true)
+         if (cartId) {
+            setIsProcessingPayment(true)
+            initializePayment(cartId)
+            updatePaymentState({
+               paymentLifeCycleState: 'INCREMENT_PAYMENT_RETRY_ATTEMPT',
+            })
+
+            updateCart({
+               variables: {
+                  id: cartId,
+                  _inc: { paymentRetryAttempt: 1 },
+                  _set: {
+                     toUseAvailablePaymentOptionId: isKioskMode
+                        ? kioskPaymentOption?.terminal
+                        : paymentInfo?.selectedAvailablePaymentOption?.id,
+                     ...(!isEmpty(profileInfo) && {
+                        customerInfo: {
+                           customerEmail: profileInfo?.email,
+                           customerPhone: profileInfo?.phone,
+                           customerLastName: profileInfo?.lastName,
+                           customerFirstName: profileInfo?.firstName,
+                        },
+                     }),
+                  },
+               },
+            })
+         }
       } else {
          if (!isEmpty(paymentInfo) && cartId && isValid()) {
             setIsProcessingPayment(true)

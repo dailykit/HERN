@@ -13,7 +13,7 @@ import axios from 'axios'
 import { useRouter } from 'next/router'
 
 import { GET_CART_PAYMENT_INFO, UPDATE_CART_PAYMENT } from '../graphql'
-import { useUser } from '../context'
+import { useUser, useCart } from '../context'
 import { useConfig } from '../lib'
 import {
    getRazorpayOptions,
@@ -82,7 +82,12 @@ export const PaymentProvider = ({ children }) => {
    const { brand } = useConfig()
    const { displayRazorpay } = useRazorPay()
    const { displayPaytm } = usePaytm()
-   const { initiateTerminalPayment, byPassTerminalPayment } = useTerminalPay()
+   const {
+      initiateTerminalPayment,
+      byPassTerminalPayment,
+      cancelTerminalPayment,
+   } = useTerminalPay()
+   const { cartState } = useCart()
    const { addToast } = useToasts()
 
    // subscription to get cart payment info
@@ -313,7 +318,7 @@ export const PaymentProvider = ({ children }) => {
       if (
          isPaymentInitiated &&
          !_isEmpty(cartPayment) &&
-         !_isEmpty(cartPayment?.transactionRemark) &&
+         // !_isEmpty(cartPayment?.transactionRemark) &&
          _has(
             cartPayment,
             'availablePaymentOption.supportedPaymentOption.supportedPaymentCompany.label'
@@ -357,19 +362,16 @@ export const PaymentProvider = ({ children }) => {
             cartPayment.availablePaymentOption.supportedPaymentOption
                .paymentOptionLabel === 'TERMINAL'
          ) {
-            console.log('inside payment provider useEffect 1', cartPayment)
+            console.log(
+               'inside payment provider useEffect 1 from terminal',
+               cartPayment
+            )
             if (cartPayment.paymentStatus === 'PENDING') {
                ;(async () => {
                   await initiateTerminalPayment(cartPayment)
                })()
             }
          }
-         // else if (
-         //    cartPayment.availablePaymentOption.supportedPaymentOption
-         //       .supportedPaymentCompany.label === 'stripe'
-         // ) {
-         //    setIsProcessingPayment(true)
-         // }
       }
    }, [
       cartPayment?.paymentStatus,
@@ -397,13 +399,14 @@ export const PaymentProvider = ({ children }) => {
          {isPaymentInitiated && (
             <PaymentProcessingModal
                isOpen={isProcessingPayment}
-               cartId={cartPayment?.cartId}
-               status={cartPayment?.paymentStatus}
-               actionUrl={cartPayment?.actionUrl}
-               actionRequired={cartPayment?.actionRequired}
+               cartPayment={cartPayment}
                closeModal={onPaymentModalClose}
                normalModalClose={normalModalClose}
                cancelPayment={onCancelledHandler}
+               isTestingByPass={true}
+               byPassTerminalPayment={byPassTerminalPayment}
+               cancelTerminalPayment={cancelTerminalPayment}
+               codPaymentOptionId={cartState.kioskPaymentOption.cod}
             />
          )}
 

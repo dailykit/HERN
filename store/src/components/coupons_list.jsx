@@ -95,7 +95,7 @@ export const CouponsList = ({
    }
 
    if (loading) return <Loader />
-   if (orderInterfaceType === 'Kiosk') {
+   if (orderInterfaceType === 'Kiosk Ordering') {
       return (
          <>
             {!availableCoupons.length && (
@@ -148,7 +148,7 @@ export const CouponsList = ({
    }
    return (
       <div className="hern-coupons-list">
-         {orderInterfaceType !== 'Kiosk' && (
+         {orderInterfaceType !== 'Kiosk Ordering' && (
             <div className="hern-coupons-list__header">
                <div className="hern-coupons-list__heading">
                   {t('Available Coupons')}

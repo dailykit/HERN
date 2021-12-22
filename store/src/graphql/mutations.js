@@ -497,6 +497,7 @@ export const UPDATE_CART_PAYMENT = gql`
    ) {
       updateCartPayment(pk_columns: { id: $id }, _inc: $_inc, _set: $_set) {
          cartId
+         paymentStatus
          id
       }
    }

@@ -159,7 +159,7 @@ export const Coupon = ({ cart, config }) => {
                }
                onSubmit={handleSubmit}
             >
-               {orderInterfaceType !== 'Kiosk' && (
+               {orderInterfaceType !== 'Kiosk Ordering' && (
                   <button
                      className="hern-coupon__see-all-btn"
                      style={{
@@ -213,7 +213,7 @@ export const Coupon = ({ cart, config }) => {
                   disabled={searching || applying}
                   color={theme?.accent}
                   style={{
-                     ...(orderInterfaceType === 'Kiosk' && {
+                     ...(orderInterfaceType === 'Kiosk Ordering' && {
                         border: `2px solid ${config.kioskSettings.theme.secondaryColor.value}`,
                         background: 'transparent',
                         padding: '.1em 2em',
@@ -223,7 +223,7 @@ export const Coupon = ({ cart, config }) => {
                   {searching || applying ? <Loader inline /> : t('Apply')}
                </button>
             </form>
-            {orderInterfaceType === 'Kiosk' && (
+            {orderInterfaceType === 'Kiosk Ordering' && (
                <CouponsList
                   createOrderCartRewards={createOrderCartRewards}
                   closeTunnel={() => setIsCouponListOpen(false)}
@@ -231,7 +231,7 @@ export const Coupon = ({ cart, config }) => {
                   config={config}
                />
             )}
-            {orderInterfaceType !== 'Kiosk' && (
+            {orderInterfaceType !== 'Kiosk Ordering' && (
                <Tunnel
                   isOpen={isCouponListOpen}
                   toggleTunnel={setIsCouponListOpen}
@@ -252,7 +252,7 @@ export const Coupon = ({ cart, config }) => {
          className="hern-coupon"
          style={{
             color: `${theme?.accent ? theme?.accent : 'teal'}`,
-            ...(orderInterfaceType === 'Kiosk' && {
+            ...(orderInterfaceType === 'Kiosk Ordering' && {
                borderRadius: '1em',
                marginTop: '2.5em',
             }),
