@@ -45,10 +45,7 @@ export * from './LoyaltyPoints'
 export * from './PaymentIcons'
 export * from './ArrowRightCircle'
 export * from './PlusCircle'
-<<<<<<< HEAD
 export * from './Scissor'
 export * from './CouponIcon'
-=======
 export * from './Wallet'
 export * from './UserIcon'
->>>>>>> 1b182ae67589a11819dc5e0177201b63b3d74d68
