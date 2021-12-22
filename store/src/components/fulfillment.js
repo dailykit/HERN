@@ -475,7 +475,10 @@ const Delivery = props => {
          slot: {
             from: moment().format(),
             to: moment()
-               .add(selectedStore.deliveryStatus.mileRangeInfo.prepTime)
+               .add(
+                  selectedStore.deliveryStatus.mileRangeInfo.prepTime,
+                  'minutes'
+               )
                .format(),
             mileRangeId: selectedStore.deliveryStatus.mileRangeInfo.id,
          },
@@ -633,7 +636,9 @@ const Pickup = props => {
       brandLocation,
    } = props
 
-   const { brand, locationId, configOf } = useConfig()
+   const { brand, locationId, configOf, orderTabs } = useConfig()
+   const { methods, cartState } = React.useContext(CartContext)
+
    const theme = configOf('theme-color', 'visual')
    const storeCarousal = React.useRef()
    const lastCarousal = e => {
@@ -662,7 +667,7 @@ const Pickup = props => {
       },
    ])
 
-   const [pickupType, setPickUpType] = useState('PREORDER')
+   const [pickupType, setPickUpType] = useState(null)
    const [onDemandBrandRecurrence, setOnDemandBrandReoccurrence] =
       useState(null)
    const [preOrderBrandRecurrence, setPreOrderBrandReoccurrence] =
@@ -672,6 +677,10 @@ const Pickup = props => {
    const [selectedStore, setSelectedStore] = useState(null)
    const [pickupSlots, setPickupSlots] = useState(null)
    const [selectedSlot, setSelectedSlot] = useState(null)
+   const [fulfillmentTabInfo, setFulfillmentTabInfo] = useState({
+      orderTabId: null,
+      locationId: null,
+   })
    const fulfillmentStatus = React.useMemo(() => {
       let type
       if (pickupType === 'ONDEMAND' || pickupType === 'PREORDER') {
@@ -730,23 +739,6 @@ const Pickup = props => {
    )
 
    useEffect(() => {
-      // if locationId already available then need not to choose store automatically
-      if (
-         !locationId &&
-         address &&
-         sortedBrandLocation &&
-         sortedBrandLocation.every(eachStore =>
-            Boolean(eachStore[fulfillmentStatus])
-         )
-      ) {
-         const firstStore = sortedBrandLocation.filter(
-            eachStore => eachStore[fulfillmentStatus].status
-         )[0]
-         setSelectedStore(firstStore)
-      }
-   }, [sortedBrandLocation, address])
-
-   useEffect(() => {
       if (pickupType === 'PREORDER' && selectedStore) {
          console.log('selectedStore', selectedStore)
          const pickupSlots = generatePickUpSlots(
@@ -768,7 +760,7 @@ const Pickup = props => {
             setSortedBrandLocation(bar)
          })()
       }
-   }, [brandLocation, brandRecurrences, address])
+   }, [brandLocation, brandRecurrences, address, pickupType])
 
    const getAerialDistance = async (data, sorted = false) => {
       const userLocation = JSON.parse(localStorage.getItem('userLocation'))
@@ -821,6 +813,46 @@ const Pickup = props => {
       return dataWithAerialDistance
    }
    console.log('sortedBrandLocationPickUP', sortedBrandLocation)
+
+   useEffect(() => {
+      if (pickupType === 'ONDEMAND' && selectedStore) {
+         onNowPickup()
+      }
+   }, [selectedStore, pickupType])
+
+   const onNowPickup = () => {
+      const mileRange = selectedStore.pickupStatus.timeSlotInfo.mileRanges
+         ? selectedStore.pickupStatus.timeSlotInfo.mileRanges[0]
+         : null
+      const slotInfo = {
+         slot: {
+            from: moment().format(),
+            to: moment()
+               .add(mileRange ? mileRange.prepTime : 60, 'minutes')
+               .format(),
+            timeslotId: selectedStore.pickupStatus.timeSlotInfo.id,
+         },
+         type: 'ONDEMAND_PICKUP',
+      }
+      console.log('DataToBeSend', {
+         ...fulfillmentTabInfo,
+         fulfillmentInfo: slotInfo,
+         locationId: selectedStore.id,
+         address,
+      })
+
+      methods.cart.update({
+         variables: {
+            id: cartState?.cart?.id,
+            _set: {
+               ...fulfillmentTabInfo,
+               fulfillmentInfo: slotInfo,
+               locationId: selectedStore.id,
+               address,
+            },
+         },
+      })
+   }
    return (
       <div>
          <Row>
@@ -832,23 +864,33 @@ const Pickup = props => {
                />
             </Col>
          </Row>
+         <div style={{ position: 'relative' }}>
+            <div className="hern-cart__fulfillment-time-section-heading">
+               <OrderTime />
+               <span>When would you like your order?</span>
+            </div>
+            <div>
+               <Radio.Group
+                  options={pickupRadioOptions}
+                  onChange={e => {
+                     console.log(e)
+                     setPickUpType(e.target.value)
+                     const orderTabId = orderTabs.find(
+                        t =>
+                           t.orderFulfillmentTypeLabel ===
+                           `${e.target.value}_DELIVERY`
+                     )?.id
+                     setFulfillmentTabInfo(prev => {
+                        return { ...prev, orderTabId }
+                     })
+                  }}
+                  value={pickupType}
+               />
+            </div>
+         </div>
          {sortedBrandLocation &&
             sortedBrandLocation.some(x => x?.pickupStatus?.status) && (
                <div style={{ position: 'relative' }}>
-                  <div className="hern-cart__fulfillment-time-section-heading">
-                     <OrderTime />
-                     <span>When would you like your order?</span>
-                  </div>
-                  <div>
-                     <Radio.Group
-                        options={pickupRadioOptions}
-                        onChange={e => {
-                           console.log(e)
-                           setPickUpType(e.target.value)
-                        }}
-                        value={pickupType}
-                     />
-                  </div>
                   <ArrowLeftIcon
                      size={24}
                      className="hern-cart__store-arrow hern-cart__store-arrow-left"
@@ -906,6 +948,7 @@ const Pickup = props => {
                                     setSelectedStore(eachStore)
                                  }
                               }}
+                              style={{ cursor: 'pointer' }}
                            >
                               <div className="hern-store-location-selector__store-location-info-container">
                                  <div className="hern-store-location-selector__store-location-details">

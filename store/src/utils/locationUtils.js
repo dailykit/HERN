@@ -364,6 +364,8 @@ export const isStoreOnDemandPickupAvailable = (brandRecurrences, eachStore) => {
                      if (rec == finalRecurrences.length - 1) {
                         return {
                            status: true,
+                           rec: finalRecurrences[rec],
+                           timeSlotInfo: timeslot,
                            message: 'Store available for pickup.',
                         }
                      }
