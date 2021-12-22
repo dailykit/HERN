@@ -5,10 +5,10 @@ import { COUPONS } from '../graphql'
 import { useConfig } from '../lib'
 import { useMenu, MenuProvider } from '../sections/select-menu'
 import { Loader } from './loader'
-import { CloseIcon } from '../assets/icons'
+import { CloseIcon, Scissor } from '../assets/icons'
 import classNames from 'classnames'
 import { isClient, useQueryParamState } from '../utils'
-import { Carousel } from 'antd'
+import { Carousel, Button } from 'antd'
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 const Coupons_List = ({
@@ -44,6 +44,33 @@ const Coupons_List = ({
          const coupons = data.subscriptionData.data.coupons
          setAvailableCoupons([
             ...coupons.filter(coupon => coupon.visibilityCondition.isValid),
+         ])
+         setAvailableCoupons([
+            {
+               id: '1',
+               code: '2348',
+               metaDetails: {
+                  title: 'Get 20% off on your First Order!',
+                  description: 'Upto $50 discount on your order',
+               },
+            },
+            {
+               id: '2',
+               code: '2368',
+               metaDetails: {
+                  title: 'Get 1000 Points on minimum Order of $500',
+                  description:
+                     'Get upto 1000 points on making order of minimum $500.',
+               },
+            },
+            {
+               id: '3',
+               code: '2378',
+               metaDetails: {
+                  title: 'Get 20% off on your First Order!',
+                  description: 'Upto $50 discount on your order',
+               },
+            },
          ])
 
          // fb pixel custom event for coupon list
@@ -91,13 +118,14 @@ const Coupons_List = ({
    }
 
    const isButtonDisabled = coupon => {
-      return !coupon.rewards.some(reward => reward.condition.isValid)
+      return
+      // return !coupon.rewards.some(reward => reward.condition.isValid)
    }
 
    if (loading) return <Loader />
-   if (orderInterfaceType === 'Kiosk') {
+   if (orderInterfaceType === 'Kiosk' || upFrontLayout) {
       return (
-         <>
+         <div className={upFrontLayout ? 'hern-upfront-coupons-list' : ''}>
             {!availableCoupons.length && (
                <p className="hern-kiosk__coupon-not-available">
                   {t('No coupons available!')}
@@ -105,47 +133,117 @@ const Coupons_List = ({
             )}
 
             {availableCoupons.length > 0 && (
-               <Carousel slidesToShow={2}>
+               <Carousel
+                  slidesToShow={2}
+                  className={
+                     upFrontLayout
+                        ? 'hern-upfront-coupons-list__coupon-wrapper'
+                        : ''
+                  }
+               >
                   {availableCoupons.map(coupon => (
                      <div
-                        className="hern-kiosk-coupons-list__coupon"
+                        className={
+                           !upFrontLayout
+                              ? 'hern-kiosk-coupons-list__coupon'
+                              : 'hern-upfront-coupons-list__coupon'
+                        }
                         key={coupon.id}
                      >
-                        <div className="hern-kiosk-coupons-list__coupon__top">
+                        <div
+                           className={
+                              !upFrontLayout
+                                 ? 'hern-kiosk-coupons-list__coupon__top'
+                                 : ''
+                           }
+                        >
                            <div className="hern-kiosk-coupons-list__coupon__code">
                               {coupon.code}{' '}
                            </div>
-                           <button
-                              className={classNames(
-                                 'hern-kiosk-coupons-list__coupon__apply-btn',
-                                 {
-                                    'hern-kiosk-coupons-list__coupon__apply-btn':
-                                       isButtonDisabled(coupon),
-                                 }
-                              )}
-                              style={{
-                                 border: `2px solid ${config.kioskSettings.theme.secondaryColor.value}`,
-                              }}
-                              onClick={() => handleApplyCoupon(coupon)}
-                           >
-                              {t('Apply')}
-                           </button>
+                           {!upFrontLayout && (
+                              <button
+                                 className={classNames(
+                                    'hern-kiosk-coupons-list__coupon__apply-btn',
+                                    {
+                                       'hern-kiosk-coupons-list__coupon__apply-btn':
+                                          isButtonDisabled(coupon),
+                                    }
+                                 )}
+                                 style={{
+                                    border: `2px solid ${config?.kioskSettings?.theme?.secondaryColor?.value}`,
+                                 }}
+                                 onClick={() => handleApplyCoupon(coupon)}
+                              >
+                                 {t('Apply')}
+                              </button>
+                           )}
                         </div>
-                        <div style={{ margin: '.5em 0' }}>
-                           <p className="hern-kiosk-coupons-list__coupon__title">
+                        <div
+                           style={{
+                              margin: upFrontLayout ? '0' : '.5em 0',
+                           }}
+                           className={
+                              upFrontLayout
+                                 ? 'hern-upfront-coupons-list__coupon__body-wrapper'
+                                 : ''
+                           }
+                        >
+                           <p
+                              className={
+                                 !upFrontLayout
+                                    ? 'hern-kiosk-coupons-list__coupon__title'
+                                    : 'hern-upfront-coupons-list__coupon__title'
+                              }
+                           >
                               {coupon.metaDetails.title}
                            </p>
-                           <p className="hern-kiosk-coupons-list__coupon__description">
+                           <p
+                              className={
+                                 !upFrontLayout
+                                    ? 'hern-kiosk-coupons-list__coupon__description'
+                                    : 'hern-upfront-coupons-list__coupon__description'
+                              }
+                           >
                               {coupon.metaDetails.description}
                            </p>
                         </div>
+                        {upFrontLayout && (
+                           <>
+                              <div
+                                 style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    flex: '0.5',
+                                 }}
+                              >
+                                 <Button
+                                    type="primary"
+                                    ghost
+                                    className={classNames(
+                                       'hern-upfront-coupons-list__coupon__apply-btn',
+                                       {
+                                          'hern-upfront-coupons-list__coupon__apply-btn':
+                                             isButtonDisabled(coupon),
+                                       }
+                                    )}
+                                    onClick={() => handleApplyCoupon(coupon)}
+                                 >
+                                    {t('Apply')}
+                                 </Button>
+                              </div>
+                              <div className="hern-upfront-coupons-list__coupon__scissor-icon">
+                                 <Scissor />
+                              </div>
+                           </>
+                        )}
                      </div>
                   ))}
                </Carousel>
             )}
-         </>
+         </div>
       )
    }
+
    return (
       <div className="hern-coupons-list">
          {orderInterfaceType !== 'Kiosk' && (
