@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import KioskConfig from './kioskConfig.json'
+import { useMutation } from '@apollo/react-hooks'
 import { useIdleTimer } from 'react-idle-timer'
-import { IdleScreen } from '../../components/kiosk/idleScreen'
-import 'antd/dist/antd.css'
 import { Carousel, Layout, Modal } from 'antd'
+import isEmpty from 'lodash/isEmpty'
+import 'antd/dist/antd.css'
+
+import { IdleScreen } from '../../components/kiosk/idleScreen'
 import { KioskHeader } from '../../components/kiosk/header'
 import { FulfillmentSection } from '../../components/kiosk/fulfillment'
 import { CartContext, useTranslation } from '../../context'
@@ -11,6 +14,7 @@ import { useConfig } from '../../lib'
 import { combineCartItems, isClient, useQueryParamState } from '../../utils'
 import { MenuSection } from '../../components/kiosk/menu'
 import { KioskCart } from '../../components/kiosk/cart'
+import { DELETE_CART } from '../../graphql'
 // idle screen component
 // fulfillment component
 // header
@@ -22,12 +26,25 @@ import { KioskCart } from '../../components/kiosk/cart'
 const { Header, Content } = Layout
 const Kiosk = () => {
    // context
-   const { combinedCartItems, setStoredCartId } = React.useContext(CartContext)
+   const { combinedCartItems, setStoredCartId, cartState } =
+      React.useContext(CartContext)
    const { dispatch } = useConfig()
 
    const { direction } = useTranslation()
 
    const [isIdle, setIsIdle] = useState(false)
+
+   //delete Cart mutation
+   const [deleteCart] = useMutation(DELETE_CART, {
+      onCompleted: () => {
+         localStorage.removeItem('cart-id')
+         setStoredCartId(null)
+         dispatch({
+            type: 'SET_SELECTED_ORDER_TAB',
+            payload: null,
+         })
+      },
+   })
 
    const handleOnIdle = event => {
       console.log('user is idle', event)
@@ -40,12 +57,13 @@ const Kiosk = () => {
       queryParams.delete('productCategoryId')
       history.replaceState(null, null, '?' + queryParams.toString())
       console.log('last active', getLastActiveTime())
-      localStorage.removeItem('cart-id')
-      setStoredCartId(null)
-      dispatch({
-         type: 'SET_SELECTED_ORDER_TAB',
-         payload: null,
-      })
+      if (!isEmpty(cartState.cart) && cartState.cart.id) {
+         deleteCart({
+            variables: {
+               id: cartState.cart.id,
+            },
+         })
+      }
    }
 
    const handleOnActive = event => {
