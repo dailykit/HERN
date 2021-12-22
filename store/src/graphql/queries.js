@@ -1450,6 +1450,7 @@ export const GET_CART = gql`
          paymentMethodId
          walletAmountUsed
          loyaltyPointsUsed
+         walletAmountUsable
          loyaltyPointsUsable
          customerKeycloakId
          billing: billingDetails

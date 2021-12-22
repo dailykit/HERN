@@ -5,6 +5,7 @@ import { MUTATIONS } from '../graphql'
 import { useConfig } from '../lib'
 import { Info, LoyaltyPointsIcon } from '../assets/icons'
 import classNames from 'classnames'
+import { Button } from '.'
 
 export const LoyaltyPoints = ({ cart, version = 1 }) => {
    const { user } = useUser()
@@ -120,12 +121,7 @@ export const LoyaltyPoints = ({ cart, version = 1 }) => {
                         onChange={e => setPoints(e.target.value)}
                      />
                   </div>
-                  <button
-                     className="hern-loyalty-points__submit-btn"
-                     type="submit"
-                  >
-                     Add
-                  </button>
+                  <Button type="submit">Add</Button>
                </form>
                <div className="hern-loyalty-points__help">
                   <small>Max usable: {cart.loyaltyPointsUsable}</small>
