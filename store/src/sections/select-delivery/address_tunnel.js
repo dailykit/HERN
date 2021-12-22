@@ -93,11 +93,10 @@ export const AddressTunnel = props => {
          setFormStatus('IN_PROGRESS')
       }
    }
-
    const handleSubmit = () => {
       setFormStatus('SAVING')
       // if user authenticate than add address to users details
-      if (user?.keycload) {
+      if (user?.keycloakId) {
          createAddress({
             variables: {
                object: { ...address, keycloakId: user?.keycloakId },
@@ -195,7 +194,16 @@ export const AddressTunnel = props => {
                      </Form.Field>
                      <Form.Field>
                         <Form.Label>Zipcode</Form.Label>
-                        <Form.Text readOnly value={address.zipcode} />
+                        <Form.Text
+                           // readOnly={Boolean(address.zipcode)}
+                           value={address.zipcode}
+                           onChange={e =>
+                              setAddress({
+                                 ...address,
+                                 zipcode: e.target.value,
+                              })
+                           }
+                        />
                      </Form.Field>
                   </div>
                   <Form.Field>
@@ -226,6 +234,7 @@ export const AddressTunnel = props => {
                      disabled={
                         !address?.line1 ||
                         !address?.city ||
+                        !address?.zipcode ||
                         formStatus === 'SAVING'
                      }
                   >

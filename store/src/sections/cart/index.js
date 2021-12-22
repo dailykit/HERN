@@ -9,10 +9,12 @@ import {
    Button,
    PaymentOptionsRenderer,
    Coupon,
+   WalletAmount,
 } from '../../components'
 import { CartContext } from '../../context'
 import { EmptyCart } from '../../assets/icons'
 import Link from 'next/link'
+import { UserInfo } from '../../components'
 
 export const OnDemandCart = () => {
    const { cartState, combinedCartItems } = React.useContext(CartContext)
@@ -34,7 +36,9 @@ export const OnDemandCart = () => {
    return (
       <Row>
          <Col span={16}>
-            <div className="hern-ondemand-cart__left-card">Account</div>
+            <div className="hern-ondemand-cart__left-card">
+               <UserInfo cart={cartState.cart} />
+            </div>
             <div className="hern-ondemand-cart__left-card">
                <Fulfillment />
             </div>
@@ -44,7 +48,9 @@ export const OnDemandCart = () => {
             <div className="hern-ondemand-cart__left-card">
                <LoyaltyPoints cart={cartState.cart} version={2} />
             </div>
-            <div className="hern-ondemand-cart__left-card">Wallet</div>
+            <div className="hern-ondemand-cart__left-card">
+               <WalletAmount cart={cartState.cart} version={2} />
+            </div>
             <div className="hern-ondemand-cart__left-card">
                <div tw="p-4">
                   <PaymentOptionsRenderer cartId={cartState?.cart?.id} />

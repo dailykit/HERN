@@ -45,3 +45,4 @@ export {
    PaymentOptionsRenderer,
    PayButton,
 }
+export * from './userInfo'

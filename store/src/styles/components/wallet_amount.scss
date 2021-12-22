@@ -22,6 +22,7 @@
    color: #ff5a52;
    font-size: 18px;
    cursor: pointer;
+   margin: 0 7px;
 }
 .hern-wallet-amount__form {
    display: -webkit-box;
@@ -66,6 +67,7 @@
    -webkit-justify-content: space-between;
    -ms-flex-pack: justify;
    justify-content: space-between;
+   margin: 10px 0;
 }
 .hern-wallet-amount__tooltip {
    position: relative;
@@ -91,4 +93,14 @@
    &:hover p {
       display: block;
    }
+}
+.hern-wallet-amount__label-v2 {
+   font-weight: 600;
+   font-size: 20px;
+   line-height: 22px;
+   color: rgba(64, 64, 64, 0.8);
+   margin: 0 10px;
+}
+.hern-wallet-amount-v2 {
+   border: none !important;
 }

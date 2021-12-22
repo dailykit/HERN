@@ -1,0 +1,72 @@
+.hern-user-info {
+   margin: 10px;
+   padding: 10px 0;
+}
+.hern-user-info__name-field {
+   display: flex;
+}
+.hern-user-info__heading {
+   font-weight: 600;
+   font-size: 20px;
+   line-height: 22px;
+   color: rgba(64, 64, 64, 0.8);
+   margin: 0 10px;
+}
+.hern-user-info__input-field {
+   height: 40px;
+   background: #f4f4f4;
+   border-radius: 8px;
+   padding: 0 10px;
+   outline: none;
+   &:focus {
+      outline: 1px solid #367bf5;
+   }
+}
+.hern-user-info__fieldset {
+   display: flex;
+   flex-direction: column;
+   margin: 4px 0;
+}
+.hern-user-info__fieldset-first-name {
+   margin-right: 1.5em;
+}
+.hern-user-info__fieldset-last-name {
+   margin-left: 1.5em;
+}
+.hern-user-info__phone__input {
+   input {
+      height: 40px;
+      background: #f4f4f4;
+      border-radius: 8px;
+      padding: 0 10px;
+      outline: none;
+      &:focus {
+         outline: 1px solid #367bf5;
+      }
+   }
+}
+.hern-user-info__phone__input-invalid {
+   input {
+      &:focus {
+         outline: 1px solid rgba(239, 68, 68, 1) !important;
+      }
+   }
+}
+.hern-user-info__fieldset-phone-number {
+   width: 50%;
+}
+.hern-user-info__save-button {
+   margin-right: 5px;
+}
+.hern-user-info_name {
+   font-style: normal;
+   font-weight: 600;
+   font-size: 20px;
+   line-height: 22px;
+   color: rgba(64, 64, 64, 0.8);
+}
+.hern-user-info__phoneNumber {
+   font-style: normal;
+   font-weight: 600;
+   color: rgba(64, 64, 64, 0.6);
+}

@@ -8,6 +8,7 @@ export const Button = ({
    onClick,
    className,
    variant,
+   type = 'button',
 }) => {
    const themeColor = bg ? { background: bg } : useThemeStyle('backgroundColor')
    const buttonClasses = classNames('hern__btn', {
@@ -22,6 +23,7 @@ export const Button = ({
          style={themeColor}
          className={`${buttonClasses} ${className ? className : ''}`}
          disabled={disabled}
+         type={type}
       >
          {children}
       </button>
