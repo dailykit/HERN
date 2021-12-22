@@ -14,6 +14,7 @@ import {
 import { CartContext } from '../../context'
 import { EmptyCart } from '../../assets/icons'
 import Link from 'next/link'
+import { UserInfo } from '../../components'
 
 export const OnDemandCart = () => {
    const { cartState, combinedCartItems } = React.useContext(CartContext)
@@ -35,7 +36,9 @@ export const OnDemandCart = () => {
    return (
       <Row>
          <Col span={16}>
-            <div className="hern-ondemand-cart__left-card">Account</div>
+            <div className="hern-ondemand-cart__left-card">
+               <UserInfo cart={cartState.cart} />
+            </div>
             <div className="hern-ondemand-cart__left-card">
                <Fulfillment />
             </div>
