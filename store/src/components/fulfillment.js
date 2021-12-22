@@ -594,15 +594,6 @@ const Delivery = props => {
                               60
                            )
                            onFulfillmentTimeClick(newTimeStamp)
-                           setFulfillmentTabInfo(prev => {
-                              const data = {
-                                 slot: {
-                                    from: newTimeStamp.from,
-                                    to: newTimeStamp.to,
-                                 },
-                                 type: 'PREORDER_DELIVERY',
-                              }
-                           })
                         }}
                      >
                         {selectedSlot.slots.map((eachSlot, index, elements) => {
@@ -834,12 +825,6 @@ const Pickup = props => {
          },
          type: 'ONDEMAND_PICKUP',
       }
-      console.log('DataToBeSend', {
-         ...fulfillmentTabInfo,
-         fulfillmentInfo: slotInfo,
-         locationId: selectedStore.id,
-         address,
-      })
 
       methods.cart.update({
          variables: {
@@ -848,6 +833,45 @@ const Pickup = props => {
                ...fulfillmentTabInfo,
                fulfillmentInfo: slotInfo,
                locationId: selectedStore.id,
+               address,
+            },
+         },
+      })
+   }
+
+   const onFulfillmentTimeClick = timestamp => {
+      let timeslotInfo = null
+      selectedStore.pickupStatus.rec.forEach(x => {
+         x.recurrence.timeSlots.forEach(timeSlot => {
+            const format = 'HH:mm:ss'
+            const chosenTime = moment(timestamp.from).format(format)
+            const toTime = moment(timeSlot.to, format)
+            const fromTime = moment(timeSlot.from, format)
+            const isInBetween = moment(chosenTime, format).isBetween(
+               fromTime,
+               toTime
+            )
+            if (isInBetween) {
+               timeslotInfo = timeSlot
+            }
+         })
+      })
+
+      const slotInfo = {
+         slot: {
+            from: timestamp.from,
+            to: timestamp.to,
+            timeslotId: timeslotInfo ? timeslotInfo?.id : null,
+         },
+         type: 'PREORDER_PICKUP',
+      }
+
+      methods.cart.update({
+         variables: {
+            id: cartState?.cart?.id,
+            _set: {
+               ...fulfillmentTabInfo,
+               fulfillmentInfo: slotInfo,
                address,
             },
          },
@@ -883,6 +907,7 @@ const Pickup = props => {
                      setFulfillmentTabInfo(prev => {
                         return { ...prev, orderTabId }
                      })
+                     setSelectedStore(null)
                   }}
                   value={pickupType}
                />
@@ -1019,6 +1044,12 @@ const Pickup = props => {
                      <Radio.Group
                         onChange={e => {
                            console.log(e.target.value)
+                           const newTimeStamp = generateTimeStamp(
+                              e.target.value.time,
+                              selectedSlot.date,
+                              60
+                           )
+                           onFulfillmentTimeClick(newTimeStamp)
                         }}
                      >
                         {selectedSlot.slots.map((eachSlot, index, elements) => {
@@ -1027,7 +1058,7 @@ const Pickup = props => {
                               to: elements[index + 1]?.time || eachSlot.end,
                            }
                            return (
-                              <Radio.Button value={slot}>
+                              <Radio.Button value={eachSlot}>
                                  {slot.from}
                                  {'-'}
                                  {slot.to}
