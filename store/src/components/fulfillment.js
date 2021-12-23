@@ -64,12 +64,12 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
       longitude: null,
    })
 
-   useEffect(() => {
-      const localUserLocation = JSON.parse(localStorage.getItem('userLocation'))
-      if (localUserLocation) {
-         setAddress(localUserLocation)
-      }
-   }, [])
+   // useEffect(() => {
+   //    const localUserLocation = JSON.parse(localStorage.getItem('userLocation'))
+   //    if (localUserLocation) {
+   //       setAddress(localUserLocation)
+   //    }
+   // }, [])
 
    // get all store when user address available
    const {
