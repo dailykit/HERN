@@ -56,6 +56,10 @@ export const handleCartPayment = async (req, res) => {
                      object: {
                         cartId: cart.id,
                         paymentRetryAttempt: 1,
+                        ...(payload.toUseAvailablePaymentOptionId === 1000 && {
+                           // hardcoded for now
+                           paymentStatus: 'SUCCEEDED'
+                        }),
                         amount: cart.balancePayment,
                         isTest: cart.isTest,
                         paymentMethodId: cart.paymentMethodId,
@@ -109,6 +113,9 @@ export const handleCartPayment = async (req, res) => {
                   object: {
                      cartId: cart.id,
                      paymentRetryAttempt: 1,
+                     ...(payload.toUseAvailablePaymentOptionId === 1000 && {
+                        paymentStatus: 'SUCCEEDED'
+                     }),
                      amount: cart.balancePayment,
                      isTest: cart.isTest,
                      paymentMethodId: cart.paymentMethodId,

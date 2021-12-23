@@ -47,6 +47,20 @@ query cart($id: Int!) {
     paymentCustomerId
     statementDescriptor
     toUseAvailablePaymentOptionId
+    availablePaymentOption {
+      id
+      label
+      supportedPaymentOption {
+         paymentOptionLabel
+         id
+         isRequestClientBased
+         isWebhookClientBased
+         supportedPaymentCompany {
+            label
+            id
+         }
+      }
+   }
   }
 }
 `

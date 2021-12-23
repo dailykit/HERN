@@ -28,35 +28,29 @@ const Kiosk = () => {
    // context
    const { combinedCartItems, setStoredCartId, cartState } =
       React.useContext(CartContext)
-   const { dispatch } = useConfig()
+   const {
+      dispatch,
+      currentPage,
+      setCurrentPage,
+      deleteCurrentPage,
+      isIdleScreen,
+      setIsIdleScreen,
+      clearCurrentPage,
+   } = useConfig()
 
    const { direction } = useTranslation()
-
-   const [isIdle, setIsIdle] = useState(false)
 
    //delete Cart mutation
    const [deleteCart] = useMutation(DELETE_CART, {
       onCompleted: () => {
-         localStorage.removeItem('cart-id')
+         clearCurrentPage()
          setStoredCartId(null)
-         dispatch({
-            type: 'SET_SELECTED_ORDER_TAB',
-            payload: null,
-         })
       },
    })
 
    const handleOnIdle = event => {
       console.log('user is idle', event)
-      setIsIdle(true)
-      deleteCurrentPage('currentPage')
-      // productCategoryId
-      // Replace current querystring with the new one
-      const search = isClient ? window.location.search : ''
-      let queryParams = new URLSearchParams(search)
-      queryParams.delete('productCategoryId')
-      history.replaceState(null, null, '?' + queryParams.toString())
-      console.log('last active', getLastActiveTime())
+      setIsIdleScreen(true)
       if (!isEmpty(cartState.cart) && cartState.cart.id) {
          deleteCart({
             variables: {
@@ -67,12 +61,13 @@ const Kiosk = () => {
    }
 
    const handleOnActive = event => {
-      setIsIdle(false)
+      setIsIdleScreen(false)
       console.log('user is active', event)
       console.log('time remaining', getRemainingTime())
    }
 
    const handleOnAction = event => {
+      setIsIdleScreen(false)
       console.log('user did something', event)
    }
 
@@ -80,7 +75,10 @@ const Kiosk = () => {
       timeout: 1000 * KioskConfig.idlePageSettings.idleTime.value,
       onIdle: handleOnIdle,
       debounce: 500,
-      ...(isIdle && { onActive: handleOnActive, onAction: handleOnAction }),
+      ...(isIdleScreen && {
+         onActive: handleOnActive,
+         onAction: handleOnAction,
+      }),
    })
 
    console.log('thisIsRemainingTime', getRemainingTime())
@@ -93,10 +91,7 @@ const Kiosk = () => {
       const b = document.querySelector('body')
       b.style.padding = 0
    }, [])
-   const [currentPage, setCurrentPage, deleteCurrentPage] = useQueryParamState(
-      'currentPage',
-      'fulfillmentPage'
-   )
+
    useIdleTimer({
       timeout:
          1000 *
@@ -104,7 +99,10 @@ const Kiosk = () => {
             KioskConfig.idlePageSettings.idleScreenWarningTime.value),
       onIdle: warning,
       debounce: 500,
-      ...(isIdle && { onActive: handleOnActive, onAction: handleOnAction }),
+      ...(isIdleScreen && {
+         onActive: handleOnActive,
+         onAction: handleOnAction,
+      }),
    })
    function warning() {
       let secondsToGo = KioskConfig.idlePageSettings.idleScreenWarningTime.value
@@ -121,7 +119,7 @@ const Kiosk = () => {
          modal.destroy()
       }, KioskConfig.idlePageSettings.idleScreenWarningTime.value * 1000)
    }
-   if (isIdle) {
+   if (isIdleScreen) {
       return <IdleScreen config={KioskConfig} />
    }
    console.log('this is cureent page', currentPage)
