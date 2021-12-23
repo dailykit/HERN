@@ -27,7 +27,7 @@ const SpecificPriceTunnel = ({ closeTunnel, selectedRowData }) => {
       PRODUCT_PRICE_BRAND_LOCATION,
       {
          onCompleted: input => {
-            console.log('The input contains:', input)
+            // console.log('The input contains:', input)
             setSpecificData({})
             setInitialSpecificData({
                specificData: 0,
@@ -44,24 +44,39 @@ const SpecificPriceTunnel = ({ closeTunnel, selectedRowData }) => {
    console.log('selectedRowData', selectedRowData)
    const SpecificDataHandler = () => {
       try {
-         const newData = {
-            ...specificData,
-            brandId: selectedRowData.brandId,
-            productId: selectedRowData.id,
+         if (selectedRowData.brand_locationId) {
+            const newData = {
+               ...specificData,
+               productId: selectedRowData.id,
+               brand_locationId: selectedRowData.brand_locationId,
+            }
+            console.log('new data', newData)
+            upsertSpecificData({
+               variables: {
+                  objects: newData,
+                  constraint:
+                     'productPrice_brand_location_brandId_brand_locationId_productId_',
+                  update_columns: Object.keys(specificData),
+               },
+            })
+         } else {
+            const newData = {
+               ...specificData,
+               brandId: selectedRowData.brandId,
+               productId: selectedRowData.id,
+            }
+            console.log('new data', newData)
+            upsertSpecificData({
+               variables: {
+                  objects: newData,
+                  constraint:
+                     'productPrice_brand_location_brandId_productId_key',
+                  update_columns: Object.keys(specificData), // keys of object which stored the customized data
+               },
+            })
          }
-         console.log('new data', newData)
-         upsertSpecificData({
-            variables: {
-               objects: newData,
-               constraint: 'productPrice_brand_location_brandId_productId_key',
-               update_columns: [
-                  'specificPrice',
-                  'markupOnStandardPriceInPercentage',
-                  'specificDiscount',
-               ],
-            },
-         })
       } catch (error) {
+         console.log('error for constrints', error)
          toast.error(error.message)
       }
    }
@@ -78,12 +93,12 @@ const SpecificPriceTunnel = ({ closeTunnel, selectedRowData }) => {
 
       closeTunnel(1)
    }
-   console.log(
-      'specific price and mark up',
-      specificData.specificPrice,
-      specificData.markupOnStandardPriceInPercentage,
-      specificData.specificDiscount
-   )
+   // console.log(
+   //    'specific price and mark up and discount',
+   //    specificData.specificPrice,
+   //    specificData.markupOnStandardPriceInPercentage,
+   //    specificData.specificDiscount
+   // )
    return (
       <div>
          <TunnelHeader

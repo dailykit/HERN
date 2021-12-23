@@ -1,46 +1,57 @@
 import React from 'react'
+import { DashboardTile, Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
+import { BrandsSvg } from '../../../assets/illustrationTileSvg'
+import { StyledHome, StyledCardList } from './styled'
+import { Banner } from '../..'
+import BrandManagerList from './ListForIds/brandId'
+import BrandLocationManagerList from './ListForIds/brandIdLocation'
 
-import { Collapse } from 'antd'
-import { CaretRightOutlined } from '@ant-design/icons'
-import ListFunction from './ListForIds/brandId'
-import BrandLocationId from './ListForIds/brandIdLocation'
-
-const ManagerLevel = () => {
-   const { Panel } = Collapse
-
-   const text = `
-  A dog is a type of domesticated animal.
-  Known for its loyalty and faithfulness,
-  it can be found as a welcome guest in many households across the world.
-`
+const OperationModeList = () => {
+   const [brandTunnels, openBrandTunnel, closeBrandTunnel] = useTunnel(1)
+   const [
+      brandLocationTunnels,
+      openBrandLocationTunnel,
+      closeBrandLocationTunnel,
+   ] = useTunnel(1)
 
    return (
-      <div>
-         <Collapse
-            bordered={false}
-            defaultActiveKey={['1']}
-            expandIcon={({ isActive }) => (
-               <CaretRightOutlined rotate={isActive ? 90 : 0} />
-            )}
-            className="site-collapse-custom-collapse"
-         >
-            <Panel
-               header="Brand Manager"
-               key="1"
-               className="site-collapse-custom-panel"
-            >
-               <ListFunction />
-            </Panel>
-            <Panel
-               header="Brand Location Manager"
-               key="2"
-               className="site-collapse-custom-panel"
-            >
-               <BrandLocationId />
-            </Panel>
-         </Collapse>
-      </div>
+      <>
+         <StyledHome>
+            <Banner id="operation-mode-top" />
+            <h1>Operation Mode</h1>
+            <StyledCardList>
+               <DashboardTile
+                  title="Brand Manager"
+                  // count="29"
+                  // conf="All available"
+                  onClick={() => openBrandTunnel(1)}
+                  tileSvg={<BrandsSvg />}
+               />
+               <DashboardTile
+                  title="Brand Location Manager"
+                  // count="29"
+                  // conf="All available"
+                  onClick={() => openBrandLocationTunnel(1)}
+                  tileSvg={<BrandsSvg />}
+               />
+            </StyledCardList>
+            <Banner id="operation-mode-bottom" />
+         </StyledHome>
+
+         <Tunnels tunnels={brandTunnels}>
+            <Tunnel popup={true} layer={4} size="md">
+               <BrandManagerList closeTunnel={closeBrandTunnel} />
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={brandLocationTunnels}>
+            <Tunnel popup={true} layer={4} size="md">
+               <BrandLocationManagerList
+                  closeTunnel={closeBrandLocationTunnel}
+               />
+            </Tunnel>
+         </Tunnels>
+      </>
    )
 }
 
-export default ManagerLevel
+export default OperationModeList

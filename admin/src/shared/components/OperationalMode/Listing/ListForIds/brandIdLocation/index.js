@@ -1,84 +1,93 @@
 import React from 'react'
-import { Select } from 'antd'
-import { BRAND_ID, BRANDS_LOCATION_ID } from '../../../Query'
+import { BRAND_ID } from '../../../Query'
 import { useSubscription } from '@apollo/react-hooks'
-import { useTabs } from '../../../../../providers'
-import { Spacer } from '@dailykit/ui'
-import { useHistory } from 'react-router-dom'
+import {
+   Filler,
+   List,
+   ListHeader,
+   ListItem,
+   ListOptions,
+   ListSearch,
+   Spacer,
+   Tunnel,
+   TunnelHeader,
+   Tunnels,
+   useSingleList,
+   useTunnel,
+} from '@dailykit/ui'
+import { Banner } from '../../../..'
+import { TunnelContainer } from '../../../../../../apps/inventory/components'
+import BrandLocationTunnel from './brandLocationTunnel'
 
-const BrandLocationId = () => {
-   const [brandLocationId, setBrandLocationId] = React.useState([])
+const BrandLocationManagerList = ({ closeTunnel }) => {
    const [brandId, setBrandId] = React.useState([])
-   const { addTab } = useTabs()
-   const [secondOption, setSecondOption] = React.useState(null)
-   const history = useHistory()
-
+   const [list, current, selectOption] = useSingleList(brandId)
+   const [search, setSearch] = React.useState('')
+   const [
+      brandLocationTunnels,
+      openBrandLocationTunnel,
+      closeBrandLocationTunnel,
+   ] = useTunnel(1)
+   const [selectedBrand, setSelectedBrand] = React.useState({})
    const { loadingBrand } = useSubscription(BRAND_ID, {
       onSubscriptionData: data => {
          setBrandId(data.subscriptionData.data.brandsAggregate.nodes)
       },
    })
-   const { loading } = useSubscription(BRANDS_LOCATION_ID, {
-      variables: {
-         where: {
-            id: {
-               _eq: secondOption,
-            },
-         },
-      },
-      onSubscriptionData: data => {
-         setBrandLocationId(
-            data.subscriptionData.data.brandsAggregate.nodes[0].brand_locations
-         )
-      },
-   })
-   // console.log('brand ID:::', brandId)
-   // console.log('brand Location', brandLocationId)
-
-   const { Option } = Select
-
-   // console.log('second optiomn', secondOption)
+   const onClickFunction = option => {
+      setSelectedBrand({
+         brandId: option.id,
+         brandName: option.title,
+      })
+      openBrandLocationTunnel(1)
+   }
    return (
       <>
-         <Select
-            showSearch
-            style={{ width: 200 }}
-            placeholder="Select Brand Name"
-            optionFilterProp="children"
-            filterOption={(input, option) =>
-               option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-            }
-            filterSort={(optionA, optionB) =>
-               optionA.children
-                  .toLowerCase()
-                  .localeCompare(optionB.children.toLowerCase())
-            }
-            onSelect={option => {
-               setSecondOption(option)
-            }}
-         >
-            {brandId.map(eachId => {
-               return <Option value={eachId.id}>{eachId.title}</Option>
-            })}
-         </Select>
-         <Spacer xaxis size="20px" />
-         <Select
-            showSearch
-            style={{ width: 200 }}
-            placeholder="Select Brand Location Id"
-            onSelect={option => {
-               history.push({
-                  pathname: `/operationMode/brandLocation-${option}`,
-                  state: [{ brandId: secondOption }],
-               })
-            }}
-         >
-            {brandLocationId.map(eachId => {
-               return <Option value={eachId.id}>{eachId.title}</Option>
-            })}
-         </Select>
+         <TunnelHeader
+            title="Select Brand Location"
+            close={() => closeTunnel(1)}
+            nextAction="Done"
+         />
+         <TunnelContainer>
+            <Banner id="operation-mode-brand-manager-tunnel-list-top" />
+            {list.length ? (
+               <List>
+                  <ListSearch
+                     onChange={value => setSearch(value)}
+                     placeholder="type what you’re looking for..."
+                  />
+                  <ListHeader type="SSL1" label="Brand" />
+                  <ListOptions>
+                     {list
+                        .filter(option =>
+                           option.title.toLowerCase().includes(search)
+                        )
+                        .map(option => (
+                           <ListItem
+                              type="SSL1"
+                              key={option.id}
+                              title={option.title}
+                              isActive={option.id === current.id}
+                              onClick={() => onClickFunction(option)}
+                           />
+                        ))}
+                  </ListOptions>
+               </List>
+            ) : (
+               <Filler message="Sorry!, No Brand is available" />
+            )}
+            <Banner id="operation-mode-brand-manager-tunnel-list-bottom" />
+         </TunnelContainer>
+         <Tunnels tunnels={brandLocationTunnels}>
+            <Tunnel popup={true} layer={4} size="md">
+               <BrandLocationTunnel
+                  closeTunnel={closeBrandLocationTunnel}
+                  selectedBrand={selectedBrand}
+               />
+            </Tunnel>
+         </Tunnels>
       </>
    )
 }
 
-export default BrandLocationId
+export default BrandLocationManagerList

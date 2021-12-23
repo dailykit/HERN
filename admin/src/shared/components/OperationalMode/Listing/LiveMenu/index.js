@@ -1,6 +1,6 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import React, { useRef, useState, useImperativeHandle, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import { COLLECTION_PRODUCTS, PRODUCT_PRICE_BRAND_LOCATION } from '../../Query'
 import {
    Text,
@@ -16,7 +16,7 @@ import {
    Form,
 } from '@dailykit/ui'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
-import { StyledGroupBy } from './styled'
+import { StyledGroupBy, StyledTitle } from './styled'
 import { BrandManager } from './BulkActionTunnel'
 import { logger } from '../../../../utils'
 import { toast } from 'react-toastify'
@@ -24,16 +24,24 @@ import SpecificPriceTunnel from './BulkActionTunnel/Tunnel/specificPriceTunnel'
 
 const LiveMenu = () => {
    const [CollectionProducts, setCollectionProducts] = React.useState([])
-   const { id } = useParams()
    const tableRef = useRef()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
    const [checked, setChecked] = useState(false) //me
    const [selectedRows, setSelectedRows] = React.useState([])
    const [popupTunnels, openPopupTunnel, closePopupTunnel] = useTunnel(1)
    const [selectedRowData, setSelectedRowData] = React.useState(null)
+   const location = useLocation()
+
+   console.log('location:::', location)
 
    const { loading } = useSubscription(COLLECTION_PRODUCTS, {
-      variables: { brandId: parseInt(id), brandId1: parseInt(id) },
+      variables: {
+         brandId: location.state[0].brandId,
+         brandId1: location.state[0].brandId,
+         brand_locationId: location.state[0].brandLocationId
+            ? location.state[0].brandLocationId
+            : null,
+      },
       onSubscriptionData: data => {
          const result = data.subscriptionData.data.products.map(product => {
             const specialPrice = !product?.productPrice_brand_locations.length
@@ -51,23 +59,28 @@ const LiveMenu = () => {
             return {
                id: product.id,
                name: product.name,
-               price: product.price,
-               brandId: parseInt(id),
+               brandId: location.state[0].brandId,
+               brand_locationId: location.state[0].brandLocationId
+                  ? location.state[0].brandLocationId
+                  : null,
                category:
                   product?.collection_categories[0]?.collection_productCategory
                      ?.productCategoryName || 'Not in Menu',
 
                specificPrice: specialPrice,
-               specificDiscount: product?.productPrice_brand_locations.length
-                  ? product?.productPrice_brand_locations[0]?.specificDiscount
-                  : 'Not Set',
+               specificDiscount:
+                  !product?.productPrice_brand_locations.length ||
+                  product?.productPrice_brand_locations[0]?.specificDiscount ===
+                     null
+                     ? 'Not Set'
+                     : product?.productPrice_brand_locations[0]
+                          ?.specificDiscount,
                isPublished: !product?.productPrice_brand_locations.length
                   ? true
                   : product?.productPrice_brand_locations[0]?.isPublished,
                isAvailable: !product?.productPrice_brand_locations.length
                   ? true
                   : product?.productPrice_brand_locations[0]?.isAvailable,
-               brandLocationId: null,
             }
          })
          setCollectionProducts(result)
@@ -75,7 +88,10 @@ const LiveMenu = () => {
    })
    // console.log('products', CollectionProducts)
 
-   const groupByOptions = [{ id: 1, title: 'Category', payLoad: 'category' }]
+   const groupByOptions = [
+      { id: 1, title: 'Published', payload: 'isPublished' },
+      { id: 2, title: 'Available', payload: 'isAvailable' },
+   ]
 
    const [updateBrandProduct] = useMutation(PRODUCT_PRICE_BRAND_LOCATION, {
       onCompleted: () => toast.success('Successfully updated!'),
@@ -90,22 +106,30 @@ const LiveMenu = () => {
          title: 'Id',
          field: 'id',
          headerFilter: true,
+         frozen: true,
       },
 
       {
          title: 'Product Name',
          field: 'name',
          headerFilter: true,
-         // formatter: reactFormatter(<ProductName update={updateBrandProduct} />),
+         frozen: true,
       },
       {
-         title: 'Operation',
+         title: 'Specific Price',
+         field: 'specificPrice',
+         headerFilter: true,
          formatter: reactFormatter(
             <SpecificPrice
                openPopupTunnel={openPopupTunnel}
                setSelectedRowData={setSelectedRowData}
             />
          ),
+      },
+      {
+         title: 'Specific Discount',
+         field: 'specificDiscount',
+         headerFilter: true,
       },
       {
          title: 'Availability',
@@ -120,21 +144,6 @@ const LiveMenu = () => {
          formatter: reactFormatter(
             <PublishedToggleStatus update={updateBrandProduct} />
          ),
-      },
-      {
-         title: 'Basic Price',
-         field: 'price',
-         headerFilter: true,
-      },
-      {
-         title: 'Specific Price',
-         field: 'specificPrice',
-         headerFilter: true,
-      },
-      {
-         title: 'Specific Discount',
-         field: 'specificDiscount',
-         headerFilter: true,
       },
    ]
 
@@ -204,7 +213,12 @@ const LiveMenu = () => {
             case 'category':
                newHeader = 'Category'
                break
-
+            case 'isPublished':
+               newHeader = 'Published'
+               break
+            case 'isAvailable':
+               newHeader = 'Available'
+               break
             default:
                break
          }
@@ -261,7 +275,7 @@ const LiveMenu = () => {
    }
 
    const handleGroupBy = option => {
-      tableRef.current.table.setGroupBy(['label', ...option])
+      tableRef.current.table.setGroupBy(['category', ...option])
    }
    const selectionColumn =
       selectedRows.length > 0 && selectedRows.length < CollectionProducts.length
@@ -296,24 +310,12 @@ const LiveMenu = () => {
    // console.log('table ref', tableRef)
    return (
       <>
-         <Tunnels tunnels={tunnels}>
-            <Tunnel layer={1} size="full">
-               <BrandManager
-                  close={closeTunnel}
-                  selectedRows={selectedRows}
-                  removeSelectedRow={removeSelectedRow}
-                  setSelectedRows={setSelectedRows}
-               />
-            </Tunnel>
-         </Tunnels>
-         <Tunnels tunnels={popupTunnels}>
-            <Tunnel layer={1} size="sm">
-               <SpecificPriceTunnel
-                  closeTunnel={closePopupTunnel}
-                  selectedRowData={selectedRowData}
-               />
-            </Tunnel>
-         </Tunnels>
+         <StyledTitle>
+            <Text as="h2">
+               We are changing product settings for{' '}
+               {location.state[0].brandName} brand{' '}
+            </Text>
+         </StyledTitle>
          <ActionBar
             title="Product"
             groupByOptions={groupByOptions}
@@ -335,6 +337,24 @@ const LiveMenu = () => {
                reactiveData: true,
             }}
          />
+         <Tunnels tunnels={tunnels}>
+            <Tunnel layer={1} size="full">
+               <BrandManager
+                  close={closeTunnel}
+                  selectedRows={selectedRows}
+                  removeSelectedRow={removeSelectedRow}
+                  setSelectedRows={setSelectedRows}
+               />
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={popupTunnels}>
+            <Tunnel layer={1} size="sm">
+               <SpecificPriceTunnel
+                  closeTunnel={closePopupTunnel}
+                  selectedRowData={selectedRowData}
+               />
+            </Tunnel>
+         </Tunnels>
       </>
    )
 }
@@ -379,7 +399,7 @@ const options = {
       page: true, //persist page
       columns: true, //persist columns
    },
-   layout: 'fitDataStretch',
+   layout: 'fitColumns',
    resizableColumns: true,
    movableColumns: true,
    pagination: 'local',
@@ -394,6 +414,25 @@ const ActionBar = ({
    groupByOptions,
    handleGroupBy,
 }) => {
+   const defaultIDs = () => {
+      let arr = []
+      const productGroup = localStorage.getItem(
+         `tabulator-brand-manager_table-groupBy`
+      )
+      const productGroupParse =
+         productGroup !== undefined &&
+         productGroup !== null &&
+         productGroup.length !== 0
+            ? JSON.parse(productGroup)
+            : null
+      if (productGroupParse !== null) {
+         productGroupParse.forEach(x => {
+            const foundGroup = groupByOptions.find(y => y.payload == x)
+            arr.push(foundGroup.id)
+         })
+      }
+      return arr.length == 0 ? [] : arr
+   }
    const selectedOption = option => {
       localStorage.setItem(
          `tabulator-brand-manager_table-groupBy`,
@@ -409,7 +448,7 @@ const ActionBar = ({
             container
             as="header"
             width="100%"
-            style={{ marginLeft: 0 }}
+            style={{ marginLeft: '1em', paddingBottom: '2em', gap: '4em' }}
             alignItems="center"
             justifyContent="flex-start"
          >
@@ -440,8 +479,9 @@ const ActionBar = ({
                   type="multi"
                   variant="revamp"
                   disabled={true}
+                  defaultIds={defaultIDs()}
                   options={groupByOptions}
-                  searchedOption={() => {}}
+                  searchedOption={searchedOption}
                   selectedOption={selectedOption}
                   typeName="groupBy"
                />
@@ -455,13 +495,19 @@ const AvailableToggleStatus = ({ update, cell }) => {
       cell.getData().isAvailable
    )
    // console.log('toggle data', cell.getData().name, cell.getData())
-   const toggleStatus = ({ Available, BrandId, ProductId }) => {
+   const toggleStatus = ({
+      Available,
+      BrandId,
+      ProductId,
+      brand_locationId,
+   }) => {
       update({
          variables: {
             objects: {
                isAvailable: Available,
                brandId: BrandId,
                productId: ProductId,
+               // brand_locationId,
             },
             constraint: 'productPrice_brand_location_brandId_productId_key',
             update_columns: ['isAvailable'],
@@ -475,6 +521,7 @@ const AvailableToggleStatus = ({ update, cell }) => {
             Available: checkedAvailable,
             BrandId: cell.getData().brandId,
             ProductId: cell.getData().id,
+            // brand_locationId: cell.getData().brand_locationId,
          })
          // console.log('mutation data on available', {
          //    Available: checkedAvailable,
@@ -495,11 +542,17 @@ const PublishedToggleStatus = ({ update, cell }) => {
       cell.getData().isPublished
    )
    // console.log('toggle data', cell.getData().name, cell.getData())
-   const toggleStatus = ({ isPublished, brandId, productId }) => {
+   const toggleStatus = ({
+      isPublished,
+      brandId,
+      productId,
+      brand_locationId,
+   }) => {
       const objects = {
          isPublished,
          brandId,
          productId,
+         // brand_locationId,
       }
       update({
          variables: {
@@ -515,6 +568,7 @@ const PublishedToggleStatus = ({ update, cell }) => {
             isPublished: checkedPublished,
             brandId: cell.getData().brandId,
             productId: cell.getData().id,
+            // brand_locationId: cell.getData().brand_locationId,
          })
          // console.log('mutation data on published', {
          //    Published: checkedPublished,
@@ -545,14 +599,33 @@ function SpecificPrice({ cell, addTab, openPopupTunnel, setSelectedRowData }) {
             justifyContent="space-between"
             alignItems="center"
          >
-            <TextButton
-               type="ghost"
-               onClick={() => openTunnelButton()}
-               style={{ height: '42px' }}
-               title="Click to modify the row data"
+            <Flex
+               container
+               width="auto"
+               justifyContent="flex-end"
+               alignItems="center"
             >
-               Customize
-            </TextButton>
+               <p
+                  style={{
+                     width: 'auto',
+                     whiteSpace: 'nowrap',
+                     overflow: 'hidden',
+                     textOverflow: 'ellipsis',
+                  }}
+               >
+                  {cell._cell.value}
+               </p>
+            </Flex>
+            <Flex container justifyContent="space-between" alignItems="center">
+               <TextButton
+                  type="ghost"
+                  onClick={() => openTunnelButton()}
+                  style={{ height: '42px' }}
+                  title="Click to modify the row data"
+               >
+                  Customize
+               </TextButton>
+            </Flex>
          </Flex>
       </>
    )

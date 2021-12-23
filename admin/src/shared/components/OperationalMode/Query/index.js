@@ -14,7 +14,11 @@ export const BRAND_ID = gql`
    }
 `
 export const COLLECTION_PRODUCTS = gql`
-   subscription collectionProduct($brandId: Int!, $brandId1: Int!) {
+   subscription collectionProduct(
+      $brandId: Int!
+      $brandId1: Int!
+      $brand_locationId: Int!
+   ) {
       products {
          id
          name
@@ -32,7 +36,12 @@ export const COLLECTION_PRODUCTS = gql`
                productCategoryName
             }
          }
-         productPrice_brand_locations(where: { brandId: { _eq: $brandId1 } }) {
+         productPrice_brand_locations(
+            where: {
+               brandId: { _eq: $brandId1 }
+               brand_locationId: { _eq: $brand_locationId }
+            }
+         ) {
             specificPrice
             specificDiscount
             markupOnStandardPriceInPercentage
@@ -69,6 +78,13 @@ export const PRODUCT_PRICE_BRAND_LOCATION = gql`
             update_columns: $update_columns
          }
       ) {
+         affected_rows
+      }
+   }
+`
+export const RESET_BRAND_MANAGER = gql`
+   mutation MyMutation($where: products_productPrice_brand_location_bool_exp!) {
+      delete_products_productPrice_brand_location(where: $where) {
          affected_rows
       }
    }
