@@ -205,6 +205,7 @@ export const OnDemandOrder = ({ config }) => {
                                              }
                                              closeModifier={closeModifier}
                                              customAreaFlex={false}
+                                             modifierWithoutPopup={false}
                                           />
                                        </div>
                                     )
