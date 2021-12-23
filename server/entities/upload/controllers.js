@@ -83,9 +83,9 @@ export const list = async (req, res) => {
       const AWS = await aws()
       const s3 = new AWS.S3()
       const S3_BUCKET = await get_env('S3_BUCKET')
-      console.log('from /api/assets endpoint', { S3_BUCKET })
+      // console.log('from /api/assets endpoint', { S3_BUCKET })
       const { Contents } = await listS3Files(S3_BUCKET, type)
-      console.log('from /api/assets endpoint', { Contents })
+      // console.log('from /api/assets endpoint', { Contents })
       const formatAssets = await Promise.all(
          Contents.map(async item => {
             try {
@@ -120,6 +120,7 @@ export const list = async (req, res) => {
 
 export const remove = async (req, res) => {
    try {
+      console.log("remove reached", req.query)
       const { key } = req.query
       const AWS = await aws()
       const s3 = new AWS.S3()

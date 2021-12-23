@@ -3,6 +3,7 @@ import { Slide } from 'react-slideshow-image'
 import 'react-slideshow-image/dist/styles.css'
 import { formatCurrency } from '../utils'
 import { ModifierPopup } from './index'
+import classNames from 'classnames'
 
 export const ProductCard = props => {
    const {
@@ -25,10 +26,14 @@ export const ProductCard = props => {
       onShowImageIconClick,
       showCustomText = true,
       customAreaComponent: CustomAreaComponent,
+      showProductDescription = false,
       showModifier = false,
       closeModifier,
       modifierPopupConfig, //use for cart
       useForThirdParty = false, // use some where else this component (don't wanna use some fn from this component)
+      maintainRatio = true,
+      customAreaFlex = true, //If custom area on the next line
+      contentAreaCustomStyle = {},
    } = props
 
    const slideRef = React.useRef()
@@ -85,12 +90,24 @@ export const ProductCard = props => {
                         return (
                            <div key={index}>
                               <div
-                                 className="hern-product-card-image-background"
+                                 className={classNames(
+                                    'hern-product-card-image-background',
+                                    {
+                                       'hern-product-card-image-background--aspect-ratio':
+                                          maintainRatio,
+                                    }
+                                 )}
                                  style={{ backgroundImage: `url(${each})` }}
                               ></div>
                               <img
                                  src={each}
-                                 className="hern-product-card__image"
+                                 className={classNames(
+                                    'hern-product-card__image',
+                                    {
+                                       'hern-product-card__image--aspect-ratio':
+                                          maintainRatio,
+                                    }
+                                 )}
                                  onClick={e => {
                                     e.stopPropagation()
                                     onImageClick ? onImageClick() : null
@@ -114,7 +131,11 @@ export const ProductCard = props => {
                </div>
             )}
             <div
-               className="hern-product-card-content"
+               className={classNames('hern-product-card-content', {
+                  'hern-product-card-content--custom-area-not-flex':
+                     !customAreaFlex,
+               })}
+               style={contentAreaCustomStyle}
                onClick={e => {
                   e.stopPropagation()
                   onProductCardContentClick ? onProductCardContentClick : null
@@ -175,6 +196,11 @@ export const ProductCard = props => {
                      <div className="hern-product-card-custom-text"></div>
                   )}
                </div>
+               {showProductDescription && (
+                  <div className="hern-product-card__description">
+                     {data.description}
+                  </div>
+               )}
             </div>
          </div>
          {showModifier && data && (

@@ -180,6 +180,7 @@ const CartBar = () => {
                                     showImage={false}
                                     showProductAdditionalText={false}
                                     customAreaComponent={customArea}
+                                    useForThirdParty={true}
                                     showModifier={Boolean(increaseProduct)}
                                     closeModifier={closeModifier}
                                     modifierPopupConfig={{

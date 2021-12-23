@@ -9,18 +9,16 @@ export const Child = styled.div`
    background: #ffffff;
    cursor:pointer;
    border: 1px solid #f3f3f3;
-   border: ${({ isActive }) =>
-      isActive ? '2px solid #367BF5' : '1px solid #f3f3f3'};
+   border:1px solid #f3f3f3;
    box-sizing: border-box;
-   box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.13);
    color: #555b6e;
-   width: 98%;
+   width: 100%;
    font-size: 16px;
    border-radius: 2px;
-   padding: 6px;
-   margin-bottom: 10px;
+   margin-bottom: 3px;
    &:hover {
-      box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+      border-left:2px solid #367BF5;
+      box-shadow: 0px 0.5px 2px rgba(0, 0, 0, 0.1);
       background: #F9F9F9;
    }
    .identifier_name{
@@ -33,6 +31,11 @@ export const Child = styled.div`
    .identifier_name:focus,.identifier_name:active{
       color:#367BF5
    }
+   .active-link{
+      border-left:2px solid #367BF5;
+      background: #F9F9F9;
+   }
+  
 `
 export const Styles = {
    Wrapper: styled.div`
@@ -41,7 +44,7 @@ export const Styles = {
       height: 480px;
    `,
    SettingsWrapper: styled.div`
-      width: 25%;
+      width: 20%;
       height: 100%;
       overflow:scroll;
       padding:16px;
@@ -56,7 +59,7 @@ export const Styles = {
    SettingWrapper: styled.div`
       background: #fff;
       border-radius: 4px;
-      width: 50%;
+      width: 55%;
       height: 100%;
       margin: 16px 8px;
       padding: 16px 20px;
@@ -91,7 +94,7 @@ export const Styles = {
 
 export const CollapsibleWrapper = styled.div`
 background: #F9F9F9;
->div{
+>.nav_child{
    background: #F9F9F9;
    :hover{
       background: #fff;

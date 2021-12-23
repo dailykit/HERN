@@ -147,7 +147,6 @@ export const TwitterCard = ({ update, domain }) => {
 
     const onChangeHandler = e => {
         const { name, value } = e.target
-        console.log(name, value)
         setForm(prev => ({
             ...prev,
             [name]: {

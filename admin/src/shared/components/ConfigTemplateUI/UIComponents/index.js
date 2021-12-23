@@ -13,7 +13,7 @@ import {
    TunnelHeader,
    useTunnel,
 } from '@dailykit/ui'
-import { Image } from 'antd'
+import { Image, Carousel } from 'antd'
 import {
    Tooltip,
    RichTextEditor,
@@ -21,6 +21,7 @@ import {
    InlineLoader,
    Banner,
    ErrorState,
+   Gallery,
 } from '../../../components'
 import { EditIcon, DeleteIcon } from '../../../assets/icons'
 import PhoneInput, {
@@ -86,9 +87,11 @@ export const TextBox = ({
                   placeholder={`Enter the ${fieldDetail.label.toLowerCase()}`}
                />
             ) : (
-               <Text as="h3" style={{ fontSize: '16px' }}>
+               <Text as="h3" style={{ fontSize: '16px', color: '#555B6E' }}>
                   {fieldDetail?.value || fieldDetail.default}
-                  {(fieldDetail?.value == "" && fieldDetail.default == "") && <NoValueSpan>Not specified</NoValueSpan>}
+                  {fieldDetail?.value == '' && fieldDetail.default == '' && (
+                     <NoValueSpan>Not specified</NoValueSpan>
+                  )}
                </Text>
             )}
 
@@ -105,7 +108,7 @@ export const Toggle = ({ fieldDetail, marginLeft, path, onConfigChange }) => (
       container
       justifyContent="space-between"
       alignItems="center"
-      margin={`0 0 0 ${marginLeft}`}
+      margin={`${marginLeft} 0 0 ${marginLeft}`}
    >
       <Flex container alignItems="flex-end">
          <Form.Label title={fieldDetail.label} htmlFor="toggle">
@@ -178,7 +181,7 @@ export const Number = ({
             placeholder="Enter integer value"
          />
       ) : (
-         <Text as="h4">{fieldDetail?.value || fieldDetail.default}</Text>
+         <Text as="h4" style={{ color: '#555B6E' }}>{fieldDetail?.value || fieldDetail.default}</Text>
       )}
    </Flex>
 )
@@ -231,7 +234,7 @@ export const Date = ({
             value={fieldDetail?.value || fieldDetail.default}
          />
       ) : (
-         <Text as="h4">{fieldDetail?.value || fieldDetail.default}</Text>
+         <Text as="h4" style={{ color: '#555B6E' }}>{fieldDetail?.value || fieldDetail.default}</Text>
       )}
    </Flex>
 )
@@ -262,7 +265,7 @@ export const Time = ({
             value={fieldDetail?.value || fieldDetail.default}
          />
       ) : (
-         <Text as="h4">{fieldDetail?.value || fieldDetail.default}</Text>
+         <Text as="h4" style={{ color: '#555B6E' }}>{fieldDetail?.value || fieldDetail.default}</Text>
       )}
    </Flex>
 )
@@ -339,7 +342,7 @@ export const TextArea = ({
             value={fieldDetail?.value || fieldDetail.default}
          />
       ) : (
-         <Text as="h4">{fieldDetail?.value || fieldDetail.default}</Text>
+         <Text as="h4" style={{ color: '#555B6E' }}>{fieldDetail?.value || fieldDetail.default}</Text>
       )}
    </Flex>
 )
@@ -531,7 +534,7 @@ export const PhoneNumberSelector = ({
    const [errorMessage, setErrorMessage] = React.useState([])
 
    React.useEffect(() => {
-      const phoneNo = value.value || ""
+      const phoneNo = value.value || ''
       if (isValidPhoneNumber(phoneNo)) {
          setIsValid(true)
          setErrorMessage([])
@@ -569,7 +572,9 @@ export const PhoneNumberSelector = ({
                      placeholder="Enter your phone number"
                   />
                ) : (
-                  <Text as="h4">{fieldDetail?.value}</Text>
+                  <Text as="h4" className="showPhoneNumber">
+                     {fieldDetail?.value}
+                  </Text>
                )}
                {errorMessage.length !== 0 && (
                   <Form.Error> {errorMessage[0]}</Form.Error>
@@ -588,7 +593,6 @@ export const ImageUpload = props => {
       if ('url' in data) {
          const e = { target: { name: path, value: data.url } }
          onConfigChange(e, data.url)
-         // configSaveHandler(configJSON)
       }
       closeTunnel(1)
    }
@@ -668,7 +672,7 @@ export const ImageUpload = props => {
                         width={170}
                         height={120}
                         src="error"
-                        fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMIAAADDCAYAAADQvc6UAAABRWlDQ1BJQ0MgUHJvZmlsZQAAKJFjYGASSSwoyGFhYGDIzSspCnJ3UoiIjFJgf8LAwSDCIMogwMCcmFxc4BgQ4ANUwgCjUcG3awyMIPqyLsis7PPOq3QdDFcvjV3jOD1boQVTPQrgSkktTgbSf4A4LbmgqISBgTEFyFYuLykAsTuAbJEioKOA7DkgdjqEvQHEToKwj4DVhAQ5A9k3gGyB5IxEoBmML4BsnSQk8XQkNtReEOBxcfXxUQg1Mjc0dyHgXNJBSWpFCYh2zi+oLMpMzyhRcASGUqqCZ16yno6CkYGRAQMDKMwhqj/fAIcloxgHQqxAjIHBEugw5sUIsSQpBobtQPdLciLEVJYzMPBHMDBsayhILEqEO4DxG0txmrERhM29nYGBddr//5/DGRjYNRkY/l7////39v///y4Dmn+LgeHANwDrkl1AuO+pmgAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAwqADAAQAAAABAAAAwwAAAAD9b/HnAAAHlklEQVR4Ae3dP3PTWBSGcbGzM6GCKqlIBRV0dHRJFarQ0eUT8LH4BnRU0NHR0UEFVdIlFRV7TzRksomPY8uykTk/zewQfKw/9znv4yvJynLv4uLiV2dBoDiBf4qP3/ARuCRABEFAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghggQAQZQKAnYEaQBAQaASKIAQJEkAEEegJmBElAoBEgghgg0Aj8i0JO4OzsrPv69Wv+hi2qPHr0qNvf39+iI97soRIh4f3z58/u7du3SXX7Xt7Z2enevHmzfQe+oSN2apSAPj09TSrb+XKI/f379+08+A0cNRE2ANkupk+ACNPvkSPcAAEibACyXUyfABGm3yNHuAECRNgAZLuYPgEirKlHu7u7XdyytGwHAd8jjNyng4OD7vnz51dbPT8/7z58+NB9+/bt6jU/TI+AGWHEnrx48eJ/EsSmHzx40L18+fLyzxF3ZVMjEyDCiEDjMYZZS5wiPXnyZFbJaxMhQIQRGzHvWR7XCyOCXsOmiDAi1HmPMMQjDpbpEiDCiL358eNHurW/5SnWdIBbXiDCiA38/Pnzrce2YyZ4//59F3ePLNMl4PbpiL2J0L979+7yDtHDhw8vtzzvdGnEXdvUigSIsCLAWavHp/+qM0BcXMd/q25n1vF57TYBp0a3mUzilePj4+7k5KSLb6gt6ydAhPUzXnoPR0dHl79WGTNCfBnn1uvSCJdegQhLI1vvCk+fPu2ePXt2tZOYEV6/fn31dz+shwAR1sP1cqvLntbEN9MxA9xcYjsxS1jWR4AIa2Ibzx0tc44fYX/16lV6NDFLXH+YL32jwiACRBiEbf5KcXoTIsQSpzXx4N28Ja4BQoK7rgXiydbHjx/P25TaQAJEGAguWy0+2Q8PD6/Ki4R8EVl+bzBOnZY95fq9rj9zAkTI2SxdidBHqG9+skdw43borCXO/ZcJdraPWdv22uIEiLA4q7nvvCug8WTqzQveOH26fodo7g6uFe/a17W3+nFBAkRYENRdb1vkkz1CH9cPsVy/jrhr27PqMYvENYNlHAIesRiBYwRy0V+8iXP8+/fvX11Mr7L7ECueb/r48eMqm7FuI2BGWDEG8cm+7G3NEOfmdcTQw4h9/55lhm7DekRYKQPZF2ArbXTAyu4kDYB2YxUzwg0gi/41ztHnfQG26HbGel/crVrm7tNY+/1btkOEAZ2M05r4FB7r9GbAIdxaZYrHdOsgJ/wCEQY0J74TmOKnbxxT9n3FgGGWWsVdowHtjt9Nnvf7yQM2aZU/TIAIAxrw6dOnAWtZZcoEnBpNuTuObWMEiLAx1HY0ZQJEmHJ3HNvGCBBhY6jtaMoEiJB0Z29vL6ls58vxPcO8/zfrdo5qvKO+d3Fx8Wu8zf1dW4p/cPzLly/dtv9Ts/EbcvGAHhHyfBIhZ6NSiIBTo0LNNtScABFyNiqFCBChULMNNSdAhJyNSiECRCjUbEPNCRAhZ6NSiAARCjXbUHMCRMjZqBQiQIRCzTbUnAARcjYqhQgQoVCzDTUnQIScjUohAkQo1GxDzQkQIWejUogAEQo121BzAkTI2agUIkCEQs021JwAEXI2KoUIEKFQsw01J0CEnI1KIQJEKNRsQ80JECFno1KIABEKNdtQcwJEyNmoFCJAhELNNtScABFyNiqFCBChULMNNSdAhJyNSiECRCjUbEPNCRAhZ6NSiAARCjXbUHMCRMjZqBQiQIRCzTbUnAARcjYqhQgQoVCzDTUnQIScjUohAkQo1GxDzQkQIWejUogAEQo121BzAkTI2agUIkCEQs021JwAEXI2KoUIEKFQsw01J0CEnI1KIQJEKNRsQ80JECFno1KIABEKNdtQcwJEyNmoFCJAhELNNtScABFyNiqFCBChULMNNSdAhJyNSiECRCjUbEPNCRAhZ6NSiAARCjXbUHMCRMjZqBQiQIRCzTbUnAARcjYqhQgQoVCzDTUnQIScjUohAkQo1GxDzQkQIWejUogAEQo121BzAkTI2agUIkCEQs021JwAEXI2KoUIEKFQsw01J0CEnI1KIQJEKNRsQ80JECFno1KIABEKNdtQcwJEyNmoFCJAhELNNtScABFyNiqFCBChULMNNSdAhJyNSiEC/wGgKKC4YMA4TAAAAABJRU5ErkJggg=="
+                        fallback="https://raw.githubusercontent.com/koehlersimon/fallback/master/Resources/Public/Images/placeholder.jpg"
                      />{' '}
                      <Text as="p">You haven't uploaded an image yet.</Text>
                   </div>
@@ -678,7 +682,82 @@ export const ImageUpload = props => {
       </>
    )
 }
+export const MultipleImageUpload = props => {
+   // props
+   const { fieldDetail, path, onConfigChange, editMode } = props
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
+   const updateSetting = (data) => {
+      if (data) {
+         console.log("path", path, "data", data)
+         const e = { target: { name: path, value: data } }
+         onConfigChange(e, data)
+         // configSaveHandler(configJSON)
+      }
+      closeTunnel(1)
+   }
+   function onChange(a, b, c) {
+      console.log(a, b, c)
+   }
+
+   const addImage = images => {
+      console.log(images, "images")
+      updateSetting(images)
+   }
+   return (
+      <>
+         {editMode ? (
+            <Flex width="50%" style={{ position: 'relative', top: '22px' }}>
+               {fieldDetail?.value !== null &&
+                  fieldDetail?.value?.length ? (
+                  <Gallery
+                     list={fieldDetail.value || []}
+                     isMulti={true}
+                     onChange={images => {
+                        addImage(images)
+                     }}
+                  />
+               ) : (
+                  <Gallery
+                     list={[]}
+                     isMulti={true}
+                     onChange={images => {
+                        addImage(images)
+                     }}
+                  />
+               )}
+            </Flex>
+         ) : (
+            <ImageContainer width="120px" height="120px">
+               {fieldDetail?.value?.length ||
+                  fieldDetail?.value?.length ? (
+                  <>
+                     <Carousel afterChange={onChange} style={{ width: "12rem", borderRadius: "16px" }}>
+                        {fieldDetail?.value && fieldDetail?.value.map(image => {
+                           return (
+                              <div>
+                                 <img src={image} alt="images" width="120px" />
+                              </div>
+                           )
+                        })}
+                     </Carousel>
+                  </>
+               ) : (
+                  <div style={{ display: 'flex' }}>
+                     <Image
+                        width={170}
+                        height={120}
+                        src="error"
+                        fallback="https://raw.githubusercontent.com/koehlersimon/fallback/master/Resources/Public/Images/placeholder.jpg"
+                     />{' '}
+                     <Text as="p">You haven't uploaded an image yet.</Text>
+                  </div>
+               )}
+            </ImageContainer>
+         )}
+      </>
+   )
+}
 export const ImageContainer = styled.div`
    display: flex;
    flex-direction: row-reverse;
@@ -694,24 +773,42 @@ export const ImageContainer = styled.div`
    }
    button {
       float: right;
-      margin: 4px 4px 0 0;
+      margin: 4px 4px 0 4px;
+   }
+   .slick-dots li.slick-active button,.ant-carousel .slick-dots li button  {
+      background:#000;
+   }
+   .ant-carousel .slick-dots-bottom {
+      height: 2px;
    }
 `
 export const PhoneNumSelector = styled.div`
-   .PhoneInputInput {
+   .showPhoneNumber {
+      color: #555b6e;
+   }
+   .PhoneInput {
       border-radius: 6px;
       border: 1px solid #e3e3e3;
+      margin-top: 12px;
+      width: 13rem;
+   }
+   .PhoneInputCountry {
+      padding-left: 12px;
+   }
+   .PhoneInputInput {
       text-align: left;
       font-size: 16px;
       padding: 0 12px;
       height: 40px;
+      border: none;
+      border-left: 1px solid #e3e3e3;
    }
    h4 {
       font-size: 15px;
    }
 `
 export const NoValueSpan = styled.span`
-color: #919699;
-    font-size: 14px;
-    font-weight: 400;
-    `
+   color: #919699;
+   font-size: 14px;
+   font-weight: 400;
+`

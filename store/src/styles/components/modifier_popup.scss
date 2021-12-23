@@ -69,22 +69,6 @@
 }
 .hern-product-modifier-pop-up-product-option-list > ul {
    padding: 16px;
-   height: 200px;
-   overflow-y: auto;
-   &::-webkit-scrollbar {
-      width: 4px;
-      border-radius: 2px;
-   }
-
-   &::-webkit-scrollbar-track {
-      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.2);
-   }
-
-   &::-webkit-scrollbar-thumb {
-      background-color: rgba(169, 169, 169, 0.562);
-      outline: 1px solid rgba(112, 128, 144, 0.404);
-      border-radius: 2px;
-   }
 }
 
 .hern-product-modifier-pop-up-modifier-category-list {
@@ -172,5 +156,23 @@
       left: 50%;
       transform: translateX(-50%);
       bottom: 10%;
+   }
+}
+.hern-product-modifier-pop-up-product-option-and-modifier {
+   height: 240px;
+   overflow-y: auto;
+   &::-webkit-scrollbar {
+      width: 4px;
+      border-radius: 2px;
+   }
+
+   &::-webkit-scrollbar-track {
+      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.2);
+   }
+
+   &::-webkit-scrollbar-thumb {
+      background-color: rgba(169, 169, 169, 0.562);
+      outline: 1px solid rgba(112, 128, 144, 0.404);
+      border-radius: 2px;
    }
 }

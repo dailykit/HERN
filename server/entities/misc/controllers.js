@@ -394,9 +394,7 @@ export const populate_env = async (req, res) => {
 export const syncEnvsFromPlatform = async () => {
    try {
       const PLATFORM_URL = await get_env('PLATFORM_URL')
-      const organizationId = process.env.ORGANIZATION_ID
-      // const PLATFORM_URL = 'http://localhost:5000'
-      // console.log('from syncEnvsFromPlatform🎄', organizationId, PLATFORM_URL)
+      const organizationId = await get_env('ORGANIZATION_ID')
       let url = `${PLATFORM_URL}/getenvs?organizationId=${organizationId}`
 
       const { data: { success, data = {} } = {} } = await axios.get(url)
