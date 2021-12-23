@@ -9,16 +9,19 @@ import { CouponsList } from './coupons_list'
 import { Loader } from './loader'
 import { Tunnel } from './tunnel'
 import { useQueryParamState } from '../utils'
+import { CouponIcon } from '../assets/icons'
+import { Button } from '.'
 
-const Coupon_ = ({ cart, config, upFrontLayout = true }) => {
+const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
    // use this component for kiosk as well
    const [orderInterfaceType] = useQueryParamState('oiType', 'Website')
-   const { state = {} } = orderInterfaceType === 'Kiosk' ? {} : useMenu()
+   const { state = {} } =
+      orderInterfaceType === 'Kiosk Ordering' ? {} : useMenu()
    const { user } = useUser()
    const { addToast } = useToasts()
    const { brand, configOf } = useConfig()
    const { id } =
-      orderInterfaceType === 'Kiosk' || upFrontLayout
+      orderInterfaceType === 'Kiosk Ordering' || upFrontLayout
          ? cart
          : state?.occurenceCustomer?.cart
    const { t } = useTranslation()
@@ -146,19 +149,21 @@ const Coupon_ = ({ cart, config, upFrontLayout = true }) => {
 
    if (
       !data?.cartRewards[0]?.reward?.coupon?.code &&
-      (isCouponFormOpen || orderInterfaceType === 'Kiosk')
+      (isCouponFormOpen ||
+         orderInterfaceType === 'Kiosk Ordering' ||
+         upFrontLayout)
    ) {
       return (
          <>
             <form
                className={
-                  orderInterfaceType === 'Kiosk'
+                  orderInterfaceType === 'Kiosk Ordering'
                      ? 'hern-kiosk-coupon__form'
                      : 'hern-coupon__form'
                }
                onSubmit={handleSubmit}
             >
-               {orderInterfaceType !== 'Kiosk' && (
+               {orderInterfaceType !== 'Kiosk Ordering' && !upFrontLayout && (
                   <button
                      className="hern-coupon__see-all-btn"
                      style={{
@@ -172,15 +177,23 @@ const Coupon_ = ({ cart, config, upFrontLayout = true }) => {
                )}
                <div
                   className={
-                     orderInterfaceType === 'Kiosk'
+                     orderInterfaceType === 'Kiosk Ordering'
                         ? 'hern-kiosk-coupon__input-wrapper'
+                        : upFrontLayout
+                        ? 'hern-upfront-coupon__input-wrapper'
                         : 'hern-coupon__input-wrapper'
                   }
                >
+                  {orderInterfaceType != 'Kiosk Ordering' && upFrontLayout && (
+                     <CouponHeader />
+                  )}
+
                   <label
                      className={
-                        orderInterfaceType === 'Kiosk'
+                        orderInterfaceType === 'Kiosk Ordering'
                            ? 'hern-kiosk-coupon__input-label'
+                           : upFrontLayout
+                           ? 'hern-upfront-coupon__input-label'
                            : 'hern-coupon__input-label'
                      }
                      htmlFor="coupon"
@@ -189,12 +202,15 @@ const Coupon_ = ({ cart, config, upFrontLayout = true }) => {
                   </label>
                   <input
                      className={
-                        orderInterfaceType === 'Kiosk'
+                        orderInterfaceType === 'Kiosk Ordering'
                            ? 'hern-kiosk-coupon__input'
+                           : upFrontLayout
+                           ? 'hern-upfront-coupon__input'
                            : 'hern-coupon__input'
                      }
                      type="text"
                      id="coupon"
+                     placeholder={upFrontLayout ? 'enter Coupon Code' : ''}
                      required
                      value={typedCode}
                      onChange={e =>
@@ -202,35 +218,46 @@ const Coupon_ = ({ cart, config, upFrontLayout = true }) => {
                      }
                   />
                </div>
-               <button
-                  className={
-                     orderInterfaceType === 'Kiosk'
-                        ? 'hern-kiosk-coupon__form__apply-btn'
-                        : 'hern-coupon__form__apply-btn'
-                  }
-                  type="submit"
-                  disabled={searching || applying}
-                  color={theme?.accent}
-                  style={{
-                     ...(orderInterfaceType === 'Kiosk' && {
-                        border: `2px solid ${config.kioskSettings.theme.secondaryColor.value}`,
-                        background: 'transparent',
-                        padding: '.1em 2em',
-                     }),
-                  }}
-               >
-                  {searching || applying ? <Loader inline /> : t('Apply')}
-               </button>
+               {!upFrontLayout ? (
+                  <button
+                     className={
+                        orderInterfaceType === 'Kiosk Ordering'
+                           ? 'hern-kiosk-coupon__form__apply-btn'
+                           : 'hern-coupon__form__apply-btn'
+                     }
+                     type="submit"
+                     disabled={searching || applying}
+                     color={theme?.accent}
+                     style={{
+                        ...(orderInterfaceType === 'Kiosk Ordering' && {
+                           border: `2px solid ${config.kioskSettings.theme.secondaryColor.value}`,
+                           background: 'transparent',
+                           padding: '.1em 2em',
+                        }),
+                     }}
+                  >
+                     {searching || applying ? <Loader inline /> : t('Apply')}
+                  </button>
+               ) : (
+                  <Button
+                     className="hern-upfront-coupon__form__apply-btn"
+                     disabled={searching || applying}
+                     type="submit"
+                  >
+                     {searching || applying ? <Loader inline /> : t('Apply')}
+                  </Button>
+               )}
             </form>
-            {orderInterfaceType === 'Kiosk' && (
+            {(orderInterfaceType === 'Kiosk Ordering' || upFrontLayout) && (
                <CouponsList
                   createOrderCartRewards={createOrderCartRewards}
                   closeTunnel={() => setIsCouponListOpen(false)}
                   cart={cart}
                   config={config}
+                  upFrontLayout={upFrontLayout}
                />
             )}
-            {orderInterfaceType !== 'Kiosk' && (
+            {orderInterfaceType !== 'Kiosk Ordering' && !upFrontLayout && (
                <Tunnel
                   isOpen={isCouponListOpen}
                   toggleTunnel={setIsCouponListOpen}
@@ -251,7 +278,7 @@ const Coupon_ = ({ cart, config, upFrontLayout = true }) => {
          className="hern-coupon"
          style={{
             color: `${theme?.accent ? theme?.accent : 'teal'}`,
-            ...(orderInterfaceType === 'Kiosk' && {
+            ...(orderInterfaceType === 'Kiosk Ordering' && {
                borderRadius: '1em',
                marginTop: '2.5em',
             }),
@@ -262,7 +289,7 @@ const Coupon_ = ({ cart, config, upFrontLayout = true }) => {
                <div>
                   <div
                      className={
-                        orderInterfaceType === 'Kiosk'
+                        orderInterfaceType === 'Kiosk Ordering'
                            ? 'hern-kiosk-coupon__coupon-code'
                            : 'hern-coupon__coupon-code'
                      }
@@ -271,7 +298,7 @@ const Coupon_ = ({ cart, config, upFrontLayout = true }) => {
                   </div>
                   <div
                      className={
-                        orderInterfaceType === 'Kiosk'
+                        orderInterfaceType === 'Kiosk Ordering'
                            ? 'hern-kiosk-coupon__coupon-comment'
                            : 'hern-coupon__coupon-comment'
                      }
@@ -281,7 +308,7 @@ const Coupon_ = ({ cart, config, upFrontLayout = true }) => {
                </div>
                <button
                   className={
-                     orderInterfaceType === 'Kiosk'
+                     orderInterfaceType === 'Kiosk Ordering'
                         ? 'hern-kiosk-coupon__coupon__cancel-btn'
                         : 'hern-coupon__coupon__cancel-btn'
                   }
@@ -303,8 +330,28 @@ const Coupon_ = ({ cart, config, upFrontLayout = true }) => {
    )
 }
 export const Coupon = props => (
-   <MenuProvider>
-      {' '}
-      <Coupon_ {...props} />
-   </MenuProvider>
+   <>
+      <MenuProvider>
+         <Coupon_ {...props} />
+      </MenuProvider>
+   </>
 )
+export const CouponHeader = () => {
+   return (
+      <div
+         style={{
+            display: 'flex',
+            alignItems: 'center',
+            marginBottom: '10px',
+         }}
+      >
+         <CouponIcon />
+         <label
+            className={'hern-upfront-coupon-header__label'}
+            htmlFor="coupon-header"
+         >
+            Apply Coupons
+         </label>
+      </div>
+   )
+}
