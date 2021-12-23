@@ -113,6 +113,9 @@ export const ProductCard = props => {
                                     e.stopPropagation()
                                     onImageClick ? onImageClick() : null
                                  }}
+                                 style={{
+                                    cursor: onImageClick ? 'pointer' : null,
+                                 }}
                               />
                            </div>
                         )
@@ -161,6 +164,9 @@ export const ProductCard = props => {
                            onClick={e => {
                               e.stopPropagation()
                               onProductNameClick ? onProductNameClick() : null
+                           }}
+                           style={{
+                              cursor: onProductNameClick ? 'pointer' : null,
                            }}
                         >
                            {data.name}
