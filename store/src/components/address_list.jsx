@@ -70,8 +70,7 @@ const AddressList = ({
          {user?.keycloakId ? (
             addresses.map(address => {
                const addressClasses = classNames('hern-address-list__address', {
-                  'hern-address-list__address--active':
-                     localAddress == addressByCart,
+                  'hern-address-list__address--active': localAddress,
                })
                return (
                   <address

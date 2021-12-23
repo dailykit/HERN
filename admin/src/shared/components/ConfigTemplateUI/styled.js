@@ -2,10 +2,26 @@ import styled from 'styled-components'
 
 export const Styles = {
    ConfigTemplateUI: styled.div`
+      .title{
+      color: #555B6E;
+      }
       .display-none {
          display: none;
       }
       padding: 16px;
+      .edit_button{
+      margin-right: -20px;
+      display:none;
+      }
+      &:hover{
+         .edit_button{
+            display:flex;
+            background:transparent;
+         }
+      }
+      .ant-card-head {
+         max-height:58px;
+      }
    `,
    Header: styled.div`
       display: flex;
@@ -32,6 +48,8 @@ export const Styles = {
          flex-direction: column;
          p{padding: 4px;
             margin-left: ${({ indentation }) => indentation};
+            padding-top:0px;
+            padding-bottom:8px;
          }
       }
       > .header > h2 {

@@ -4,20 +4,41 @@ import { useUser } from '../context'
 import { MUTATIONS } from '../graphql'
 import { formatCurrency } from '../utils'
 import { useConfig } from '../lib'
-import { Info } from '../assets/icons'
+import { Info, WalletIcon } from '../assets/icons'
+import classNames from 'classnames'
+import { Button, LoginWarningWithText } from '.'
 
-export const WalletAmount = ({ cart }) => {
+export const WalletAmount = ({ cart, version }) => {
    const { user } = useUser()
    const { configOf } = useConfig()
    const walletSettings = configOf('Wallet', 'rewards')
-
+   const isVersion2 = React.useMemo(() => version === 2, [version])
+   console.log('cartInWalletAmount', cart, user)
    const [amount, setAmount] = React.useState(cart.walletAmountUsable)
 
    const [updateCart] = useMutation(MUTATIONS.CART.UPDATE, {
       onCompleted: () => console.log('Wallet amount added!'),
       onError: error => console.log(error),
    })
-
+   const WalletHeader = () => {
+      return (
+         <div
+            style={{
+               display: 'flex',
+               alignItems: 'center',
+               marginBottom: '10px',
+            }}
+         >
+            <WalletIcon />
+            <label
+               className="hern-wallet-amount__label-v2"
+               htmlFor="wallet-amount"
+            >
+               {walletSettings?.label ? walletSettings.label : 'Wallet'}
+            </label>
+         </div>
+      )
+   }
    const handleSubmit = e => {
       e.preventDefault()
       if (amount <= cart.walletAmountUsable) {
@@ -31,55 +52,78 @@ export const WalletAmount = ({ cart }) => {
          })
       }
    }
-
+   if (!user?.keycloakId) {
+      return (
+         <div
+            className={classNames('hern-wallet-amount', {
+               'hern-wallet-amount-v2': isVersion2,
+            })}
+         >
+            <WalletHeader />
+            <LoginWarningWithText />
+         </div>
+      )
+   }
    if (!cart.walletAmountUsable) return null
    return (
-      <div className="hern-wallet-amount">
+      <div
+         className={classNames('hern-wallet-amount', {
+            'hern-wallet-amount-v2': isVersion2,
+         })}
+      >
          {cart.walletAmountUsed ? (
-            <div className="hern-wallet-amount__status">
-               <span>
-                  {' '}
-                  ${walletSettings?.label
-                     ? walletSettings.label
-                     : 'Wallet'}{' '}
-                  amount used:{' '}
-               </span>
-               <span>
-                  <span
-                     className="hern-card-list__card__close-btn "
-                     role="button"
-                     tabIndex={0}
-                     onClick={() =>
-                        updateCart({
-                           variables: {
-                              id: cart.id,
-                              _set: {
-                                 walletAmountUsed: 0,
-                              },
-                           },
-                        })
-                     }
-                  >
-                     &times;{' '}
+            <>
+               <WalletHeader />
+               <div className="hern-wallet-amount__status">
+                  <span>
+                     {' '}
+                     {walletSettings?.label
+                        ? walletSettings.label
+                        : 'Wallet'}{' '}
+                     amount used:{' '}
                   </span>
-                  {formatCurrency(cart.walletAmountUsed)}
-               </span>
-            </div>
+                  <span>
+                     {formatCurrency(cart.walletAmountUsed)}
+                     <span
+                        className="hern-card-list__card__close-btn "
+                        role="button"
+                        tabIndex={0}
+                        onClick={() =>
+                           updateCart({
+                              variables: {
+                                 id: cart.id,
+                                 _set: {
+                                    walletAmountUsed: 0,
+                                 },
+                              },
+                           })
+                        }
+                     >
+                        &times;{' '}
+                     </span>
+                  </span>
+               </div>
+            </>
          ) : (
             <>
                <form
                   onSubmit={handleSubmit}
                   className="hern-wallet-amount__form"
+                  style={{ ...(isVersion2 && { alignItems: 'flex-end' }) }}
                >
                   <div>
-                     <label className="hern-wallet-amount__form__label">
-                        {' '}
-                        $
-                        {walletSettings?.label
-                           ? walletSettings.label
-                           : 'Wallet'}{' '}
-                        amount{' '}
-                     </label>
+                     {isVersion2 ? (
+                        <WalletHeader />
+                     ) : (
+                        <label className="hern-wallet-amount__form__label">
+                           {' '}
+                           $
+                           {walletSettings?.label
+                              ? walletSettings.label
+                              : 'Wallet'}{' '}
+                           amount{' '}
+                        </label>
+                     )}
                      {walletSettings?.description && (
                         <span className="hern-wallet-amount__tooltip">
                            <Info size={18} />
@@ -101,9 +145,7 @@ export const WalletAmount = ({ cart }) => {
                         onChange={e => setAmount(e.target.value)}
                      />
                   </div>
-                  <button className="hern-wallet-amount__add-btn" type="submit">
-                     Add
-                  </button>
+                  <Button type="submit">Add</Button>
                </form>
                <div className="hern-wallet-amount__help">
                   <small>

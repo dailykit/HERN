@@ -180,7 +180,7 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
                <Card
                   title={
                      identifier ? (
-                        <Text as="h3">{identifier}</Text>
+                        <Text as="h3" className="title">{identifier}</Text>
                      ) : (
                         <Text as="h3" style={{ textAlign: 'center' }}>
                            Select a brand's setting to edit.
@@ -200,10 +200,10 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
                         </TextButton>
                      ) : (
                         <ComboButton
+                           className="edit_button"
                            type="ghost"
                            size="sm"
                            onClick={handleEdit}
-                           style={{ marginRight: "-16px" }}
                         >
                            <EditIcon color="#367bf5" /> Edit
                         </ComboButton>

@@ -1450,6 +1450,8 @@ export const GET_CART = gql`
          paymentMethodId
          walletAmountUsed
          loyaltyPointsUsed
+         walletAmountUsable
+         locationId
          loyaltyPointsUsable
          customerKeycloakId
          billing: billingDetails
@@ -1539,7 +1541,9 @@ export const BRAND_ONDEMAND_DELIVERY_RECURRENCES = gql`
                from
                to
                pickUpPrepTime
+               id
                mileRanges {
+                  id
                   from
                   city
                   distanceType
@@ -1610,6 +1614,7 @@ export const PREORDER_DELIVERY_BRAND_RECURRENCES = gql`
             timeSlots {
                from
                to
+               id
                mileRanges {
                   from
                   city
@@ -1620,6 +1625,7 @@ export const PREORDER_DELIVERY_BRAND_RECURRENCES = gql`
                   geoBoundary
                   isExcluded
                   leadTime
+                  id
                }
             }
          }
@@ -1640,7 +1646,9 @@ export const ONDEMAND_PICKUP_BRAND_RECURRENCES = gql`
             timeSlots {
                from
                to
+               id
                mileRanges {
+                  id
                   from
                   city
                   distanceType
@@ -1672,8 +1680,10 @@ export const PREORDER_PICKUP_BRAND_RECURRENCES = gql`
             timeSlots {
                from
                to
+               id
                pickUpLeadTime
                mileRanges {
+                  id
                   from
                   city
                   distanceType
@@ -1703,7 +1713,9 @@ export const ONDEMAND_DINE_BRAND_RECURRENCES = gql`
             timeSlots {
                from
                to
+               id
                mileRanges {
+                  id
                   from
                   city
                   distanceType
@@ -1734,7 +1746,9 @@ export const SCHEDULED_DINEIN_BRAND_RECURRENCES = gql`
             timeSlots {
                from
                to
+               id
                mileRanges {
+                  id
                   from
                   city
                   distanceType

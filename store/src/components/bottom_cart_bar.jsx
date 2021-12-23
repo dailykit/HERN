@@ -10,7 +10,7 @@ export const BottomCartBar = () => {
       <div className="hern-bottom-cart-bar">
          <div className="hern-bottom-cart-bar-details">
             <span className="hern-bottom-cart-bar__item-count">
-               {cart?.products?.aggregate?.count || 0} item(s)
+               {cart?.cartItems_aggregate?.aggregate?.count || 0} item(s)
             </span>
             <span className="hern-bottom-cart-bar__price">
                {formatCurrency(cart?.billing?.itemTotal?.value || 0)}

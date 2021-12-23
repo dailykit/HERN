@@ -158,6 +158,9 @@ export const CartProvider = ({ children }) => {
          if (!(oiType === 'Kiosk Ordering')) {
             localStorage.removeItem('cart-id')
          }
+         addToast('Update Successfully!', {
+            appearance: 'success',
+         })
          console.log('🍾 Cart updated with data!')
       },
       onError: error => {
@@ -342,7 +345,7 @@ export const CartProvider = ({ children }) => {
                      variables: {
                         id: storedCartId,
                         _set: {
-                           isTest: user.isTest,
+                           // isTest: user.isTest,
                            customerKeycloakId: user.keycloakId,
                            paymentMethodId:
                               user.platform_customer?.defaultPaymentMethodId,
