@@ -31,6 +31,10 @@ export const OnDemandOrder = ({ config }) => {
       config?.display?.['showCategoryLength']?.value ??
       config?.display?.['numberOfProducts']?.default ??
       true
+   const showCartOnRight =
+      config?.display?.['showCartOnRight']?.value ??
+      config?.display?.['showCartOnRight']?.default ??
+      false
 
    setThemeVariable('--hern-number-of-products', numberOfProducts)
 
@@ -129,6 +133,15 @@ export const OnDemandOrder = ({ config }) => {
    if (isMenuLoading || status === 'loading' || productsLoading) {
       return <Loader />
    }
+   const getWrapperClasses = () => {
+      if (menuType === 'fixed-top-nav') {
+         if (!showCartOnRight) {
+            return 'hern-on-demand-order-container--fixed-top-nav--full-width'
+         }
+         return 'hern-on-demand-order-container--fixed-top-nav'
+      }
+      return ''
+   }
    return (
       <>
          {menuType === 'fixed-top-nav' && (
@@ -138,10 +151,10 @@ export const OnDemandOrder = ({ config }) => {
             />
          )}
          <div
-            className={classNames('hern-on-demand-order-container', {
-               'hern-on-demand-order-container--fixed-top-nav':
-                  menuType === 'fixed-top-nav',
-            })}
+            className={classNames(
+               'hern-on-demand-order-container',
+               getWrapperClasses()
+            )}
          >
             <div
                id="hern-on-demand-order-container"
@@ -211,7 +224,7 @@ export const OnDemandOrder = ({ config }) => {
                cartState.cart?.products?.aggregate?.count !== 0 && (
                   <BottomCartBar />
                )}
-            <CartBar />
+            {showCartOnRight && <CartBar />}
          </div>
       </>
    )
