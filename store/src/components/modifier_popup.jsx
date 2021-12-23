@@ -20,6 +20,7 @@ export const ModifierPopup = props => {
       edit = false,
       productCartDetail,
       showModifierImage = true,
+      modifierWithoutPopup,
    } = props
    //context
    const { addToCart, methods } = React.useContext(CartContext)
@@ -333,7 +334,7 @@ export const ModifierPopup = props => {
    }, [])
 
    useEffect(() => {
-      if (productData) {
+      if (productData && !modifierWithoutPopup) {
          document.querySelector('body').style.overflowY = 'hidden'
       }
       return () => {
@@ -346,18 +347,30 @@ export const ModifierPopup = props => {
    return (
       <>
          <div
-            className={classNames('hern-product-modifier-pop-up-container', {
-               'hern-product-modifier-pop-up-container--show-modifier-pop-up':
-                  productData,
-            })}
+            className={classNames(
+               {
+                  'hern-product-modifier-pop-up-container':
+                     !modifierWithoutPopup,
+               },
+               {
+                  'hern-product-modifier-pop-up-container--show-modifier-pop-up':
+                     productData && !modifierWithoutPopup,
+               }
+            )}
          >
-            <div className="hern-product-modifier-pop-up-product">
-               <div
-                  className="hern-product-modifier-pop-up-close-icon"
-                  onClick={closeModifier}
-               >
-                  <CloseIcon size={20} stroke="currentColor" />
-               </div>
+            <div
+               className={classNames({
+                  'hern-product-modifier-pop-up-product': !modifierWithoutPopup,
+               })}
+            >
+               {!modifierWithoutPopup && (
+                  <div
+                     className="hern-product-modifier-pop-up-close-icon"
+                     onClick={closeModifier}
+                  >
+                     <CloseIcon size={20} stroke="currentColor" />
+                  </div>
+               )}
                <div className="hern-product-modifier-pop-up-product-details">
                   <ProductCard
                      data={productData}
@@ -368,7 +381,15 @@ export const ModifierPopup = props => {
                      useForThirdParty={true}
                   />
                </div>
-               <div className="hern-product-modifier-pop-up-product-option-and-modifier">
+               <div
+                  className={classNames(
+                     'hern-product-modifier-pop-up-product-option-and-modifier',
+                     {
+                        'hern-product-modifier-pop-up-product-option-and-modifier--without-popup':
+                           modifierWithoutPopup,
+                     }
+                  )}
+               >
                   <div className="hern-product-modifier-pop-up-product-option-list">
                      <label htmlFor="products">Available Options:</label>
                      <br />

@@ -36,6 +36,7 @@ export * from './locationSelector'
 export * from './language_switch'
 export * from './loginWarning'
 export * from './templateFile'
+export * from './recipe'
 export * from './fulfillment'
 export * from './cartPayment'
 

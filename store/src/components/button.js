@@ -10,7 +10,7 @@ export const Button = ({
    className,
    variant,
    type = 'button',
-   style = {}
+   style = {},
 }) => {
    const { configOf } = useConfig()
    const theme = configOf('theme-color', 'Visual')
@@ -27,7 +27,7 @@ export const Button = ({
    return (
       <button
          onClick={onClick}
-         style={{ ...themeColor, ...style }}
+         style={style}
          className={`${buttonClasses} ${className ? className : ''}`}
          disabled={disabled}
          type={type}
