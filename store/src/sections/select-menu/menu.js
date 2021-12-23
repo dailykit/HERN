@@ -225,8 +225,8 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
                   alt="Non-Veg Icon"
                   src={
                      product.type === 'Non-vegetarian'
-                        ? '/imgs/non-veg.png'
-                        : '/imgs/veg.png'
+                        ? '/assets/imgs/non-veg.png'
+                        : '/assets/imgs/veg.png'
                   }
                   title={product.type}
                   className="hern-select-menu__menu__product__type__img"

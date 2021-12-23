@@ -13,6 +13,13 @@ configuration:
     select_by_pk: productOptionType
     update: updateProductOptionTypes
     update_by_pk: updateProductOptionType
+object_relationships:
+- name: addedByApiKeyReference
+  using:
+    foreign_key_constraint_on: addedByApiKey
+- name: updatedByApiKeyReference
+  using:
+    foreign_key_constraint_on: updatedByApiKey
 array_relationships:
 - name: cartItems
   using:
@@ -32,3 +39,46 @@ array_relationships:
       remote_table:
         name: productOption
         schema: products
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      addedByApiKeyReference:
+        canAddProducts:
+          _eq: true
+    columns:
+    - description
+    - orderMode
+    - title
+    set:
+      addedByApiKey: x-hasura-Api-Key
+  role: apiKeyRole
+select_permissions:
+- permission:
+    columns:
+    - description
+    - orderMode
+    - title
+    filter: {}
+  role: apiKeyRole
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - description
+    - orderMode
+    - title
+    filter:
+      updatedByApiKeyReference:
+        canUpdateProducts:
+          _eq: true
+    set:
+      updatedByApiKey: x-hasura-Api-Key
+  role: apiKeyRole
+delete_permissions:
+- permission:
+    filter:
+      updatedByApiKeyReference:
+        canDeleteProducts:
+          _eq: true
+  role: apiKeyRole

@@ -26,4 +26,4 @@ event_triggers:
     interval_sec: 10
     num_retries: 0
     timeout_sec: 60
-  webhook: "{{DAILYOS_SERVER_URL}}/api/inventory/packaging-history-upsert"
+  webhook: "{{ORGANIZATION_URL}}/{{DAILYOS_SERVER_URL}}/api/inventory/packaging-history-upsert"

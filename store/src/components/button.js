@@ -9,7 +9,8 @@ export const Button = ({
    onClick,
    className,
    variant,
-   type,
+   type = 'button',
+   style = {}
 }) => {
    const { configOf } = useConfig()
    const theme = configOf('theme-color', 'Visual')
@@ -26,8 +27,10 @@ export const Button = ({
    return (
       <button
          onClick={onClick}
+         style={{ ...themeColor, ...style }}
          className={`${buttonClasses} ${className ? className : ''}`}
          disabled={disabled}
+         type={type}
       >
          {children}
       </button>

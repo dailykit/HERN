@@ -27,6 +27,8 @@ export const processUser = customer => {
       rest.isSubscriptionCancelled = isSubscriptionCancelled
       rest.subscriptionPaymentMethodId = subscriptionPaymentMethodId
 
+      sub.defaultPaymentMethodId =
+         rest?.platform_customer?.defaultPaymentMethodId || null
       sub.defaultAddress = rest?.platform_customer?.addresses.find(
          address => address.id === subscriptionAddressId
       )

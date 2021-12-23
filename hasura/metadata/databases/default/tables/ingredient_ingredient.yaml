@@ -11,9 +11,15 @@ configuration:
     select_by_pk: ingredient
     update: updateIngredient
 object_relationships:
+- name: addedByApiKeyReference
+  using:
+    foreign_key_constraint_on: addedByApiKey
 - name: ingredientCategory
   using:
     foreign_key_constraint_on: category
+- name: updatedByApiKeyReference
+  using:
+    foreign_key_constraint_on: updatedByApiKey
 array_relationships:
 - name: cartItems
   using:
@@ -63,3 +69,65 @@ computed_fields:
       name: isingredientvalid
       schema: ingredient
   name: isValid
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      addedByApiKeyReference:
+        canAddIngredients:
+          _eq: true
+    columns:
+    - assets
+    - category
+    - image
+    - isArchived
+    - isPublished
+    - name
+    - nutritionId
+    set:
+      addedByApiKey: x-hasura-Api-Key
+  role: apiKeyRole
+select_permissions:
+- permission:
+    columns:
+    - isArchived
+    - isPublished
+    - createdAt
+    - id
+    - nutritionId
+    - assets
+    - addedByApiKey
+    - category
+    - image
+    - name
+    - updatedByApiKey
+    - updated_at
+    computed_fields:
+    - isValid
+    filter: {}
+  role: apiKeyRole
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - assets
+    - category
+    - image
+    - isArchived
+    - isPublished
+    - name
+    - nutritionId
+    filter:
+      updatedByApiKeyReference:
+        canUpdateIngredients:
+          _eq: true
+    set:
+      updatedByApiKey: x-hasura-Api-Key
+  role: apiKeyRole
+delete_permissions:
+- permission:
+    filter:
+      updatedByApiKeyReference:
+        canDeleteIngredients:
+          _eq: true
+  role: apiKeyRole

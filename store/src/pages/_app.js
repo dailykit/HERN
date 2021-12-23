@@ -1,7 +1,12 @@
 import App from 'next/app'
 import { UserProvider } from '../context'
 import { Provider as AuthProvider } from 'next-auth/client'
-import { ApolloProvider, ConfigProvider, ScriptProvider } from '../lib'
+import {
+   ApolloProvider,
+   ConfigProvider,
+   ScriptProvider,
+   PaymentProvider,
+} from '../lib'
 import { get_env, isClient } from '../utils'
 import { ToastProvider } from 'react-toast-notifications'
 
@@ -39,7 +44,9 @@ const AppWrapper = ({ Component, pageProps }) => {
                         >
                            <UserProvider>
                               <CartProvider>
-                                 <Component {...pageProps} />
+                                 <PaymentProvider>
+                                    <Component {...pageProps} />
+                                 </PaymentProvider>
                               </CartProvider>
                            </UserProvider>
                         </ToastProvider>

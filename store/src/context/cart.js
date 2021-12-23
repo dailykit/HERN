@@ -115,6 +115,9 @@ export const CartProvider = ({ children }) => {
          if (!(oiType === 'Kiosk')) {
             localStorage.removeItem('cart-id')
          }
+         addToast('Update Successfully!', {
+            appearance: 'success',
+         })
          console.log('🍾 Cart updated with data!')
       },
       onError: error => {
@@ -214,7 +217,8 @@ export const CartProvider = ({ children }) => {
                orderTabId: selectedOrderTab?.id || null,
                locationId: locationId || null,
                paymentMethodId: user.platform_customer.defaultPaymentMethodId,
-               stripeCustomerId: user.platform_customer.stripeCustomerId,
+               brandId: brand.id,
+               paymentCustomerId: user.platform_customer?.paymentCustomerId,
                address: user.platform_customer.defaultCustomerAddress,
                customerKeycloakId: user?.keycloakId,
                cartItems: {
@@ -292,12 +296,13 @@ export const CartProvider = ({ children }) => {
                      variables: {
                         id: storedCartId,
                         _set: {
-                           isTest: user.isTest,
+                           // isTest: user.isTest,
                            customerKeycloakId: user.keycloakId,
                            paymentMethodId:
                               user.platform_customer?.defaultPaymentMethodId,
-                           stripeCustomerId:
-                              user.platform_customer?.stripeCustomerId,
+                           brandId: brand.id,
+                           paymentCustomerId:
+                              user.platform_customer?.paymentCustomerId,
                            address:
                               user.platform_customer?.defaultCustomerAddress,
                            ...(user.platform_customer.firstName && {

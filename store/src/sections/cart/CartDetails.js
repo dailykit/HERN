@@ -186,12 +186,12 @@ export const CartDetails = () => {
                   {/* address */}
                   <div className="hern-cart-delivery-info">
                      <span>YOUR ORDER(S)</span>
-                     <div className="hern-cart-delivery-details">
+                     {/* <div className="hern-cart-delivery-details">
                         <span>Delivery Description</span>
                         <span>
                            {cart?.address ? address(cart?.address) : 'N/A'}
                         </span>
-                     </div>
+                     </div> */}
                   </div>
                   {/*products*/}
                   <div className="hern-cart-products-product-list">
@@ -278,9 +278,9 @@ export const CartDetails = () => {
                </section>
             </div>
             {/* bottom bar to proceed */}
-            <footer className="hern-cart-footer">
+            {/* <footer className="hern-cart-footer">
                <Button className="hern-cart-proceed-btn">PROCEED TO PAY</Button>
-            </footer>
+            </footer> */}
          </div>
       </div>
    )

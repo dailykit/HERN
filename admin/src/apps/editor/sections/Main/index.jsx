@@ -173,7 +173,7 @@ const Main = () => {
                },
             })
          } else {
-            const folderPath = path.replace(/.\/templates/g, '')
+            const folderPath = path.replace('./template/templates', '')
             await deleteFolder({
                variables: {
                   path: folderPath,
