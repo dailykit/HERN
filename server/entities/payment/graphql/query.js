@@ -47,6 +47,7 @@ query cart($id: Int!) {
     paymentCustomerId
     statementDescriptor
     toUseAvailablePaymentOptionId
+
   }
 }
 `

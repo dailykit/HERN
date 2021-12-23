@@ -1,6 +1,7 @@
 import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import isEmpty from 'lodash/isEmpty'
+import { Skeleton } from 'antd'
 
 import { Button } from '../button'
 import * as QUERIES from '../../graphql'
@@ -21,6 +22,19 @@ export default function PayButton({ children, cartId = null, ...props }) {
       updatePaymentState,
       initializePayment,
    } = usePayment()
+
+   // cart availablePaymentOptions query
+   // query for fetching available payment options
+   // const {
+   //    loading,
+   //    error,
+   //    data: { cart = {} } = {},
+   // } = useSubscription(QUERIES.GET_PAYMENT_OPTIONS, {
+   //    skip: !cartId,
+   //    variables: {
+   //       id: cartId,
+   //    },
+   // })
 
    // update cart mutation
    const [updateCart] = useMutation(QUERIES.UPDATE_CART, {
@@ -112,12 +126,14 @@ export default function PayButton({ children, cartId = null, ...props }) {
    }
 
    return (
-      <Button
-         onClick={onPayClickHandler}
-         disabled={!Boolean(isValid())}
-         {...props}
-      >
-         {children}
-      </Button>
+      <>
+         <Button
+            onClick={onPayClickHandler}
+            disabled={!Boolean(isValid())}
+            {...props}
+         >
+            {children}
+         </Button>
+      </>
    )
 }

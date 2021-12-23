@@ -22,8 +22,8 @@ const initialState = {
    cart: null,
    cartItems: null,
    kioskPaymentOption: {
-      cod: null,
-      terminal: null,
+      cod: 1000,
+      terminal: 1010,
    },
 }
 

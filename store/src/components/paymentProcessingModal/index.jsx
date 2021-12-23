@@ -5,7 +5,14 @@ import { useRouter } from 'next/router'
 import { Result, Spin, Button, Modal } from 'antd'
 import { Wrapper } from './styles'
 import { Button as StyledButton } from '../button'
-import { useWindowSize, isKiosk } from '../../utils'
+import {
+   useWindowSize,
+   isKiosk,
+   useQueryParamState,
+   isClient,
+} from '../../utils'
+import { useCart } from '../../context'
+import { useConfig } from '../../lib'
 
 const PaymentProcessingModal = ({
    isOpen,
@@ -22,7 +29,53 @@ const PaymentProcessingModal = ({
    const router = useRouter()
    const isKioskMode = isKiosk()
    const [isCelebrating, setIsCelebrating] = useState(false)
+   const [printStatus, setPrintStatus] = useState('not-started')
    const { width, height } = useWindowSize()
+   const [currentPage, setCurrentPage, deleteCurrentPage] = useQueryParamState(
+      'currentPage',
+      'fulfillmentPage'
+   )
+   const { setStoredCartId } = useCart()
+   const { dispatch } = useConfig()
+
+   const showPrintingStatus = () => {
+      let icon = (
+         <img
+            src="/assets/gifs/receipt.gif"
+            className="payment_status_loader"
+         />
+      )
+
+      let title = 'Printing your receipt'
+      let subtitle = 'Please wait while we print your receipt'
+      let extra = null
+      if (printStatus === 'success') {
+         icon = (
+            <img
+               src="/assets/gifs/successful.gif"
+               className="payment_status_loader"
+            />
+         )
+         title = 'Printed your receipt successfully'
+         subtitle = 'Taking you back to the home page shortly'
+      } else if (printStatus === 'failed') {
+         icon = (
+            <img
+               src="/assets/gifs/failed.gif"
+               className="payment_status_loader"
+            />
+         )
+         title = 'Failed to print your receipt'
+         subtitle = 'Please try again'
+         extra = [<Button type="primary">Retry Print Receipt</Button>]
+      }
+      return {
+         icon,
+         title,
+         subtitle,
+         extra,
+      }
+   }
 
    const stopCelebration = () => {
       if (router.pathname !== `/placing-order?id=${cartPayment?.cartId}`) {
@@ -85,7 +138,16 @@ const PaymentProcessingModal = ({
             )
             title = 'Successfully placed your order'
             subtitle = 'You will be redirected to your booking page shortly'
-            extra = [<Button type="primary">Print Receipt</Button>]
+            extra = [
+               <Button
+                  type="primary"
+                  loading={printStatus === 'ongoing'}
+                  disabled={printStatus === 'ongoing'}
+                  onClick={printReceiptHandler}
+               >
+                  Print Receipt
+               </Button>,
+            ]
          } else if (cartPayment?.paymentStatus === 'REQUIRES_ACTION') {
             icon = (
                <img
@@ -299,6 +361,38 @@ const PaymentProcessingModal = ({
       }
    }
 
+   const printReceiptHandler = () => {
+      setIsCelebrating(false)
+      setPrintStatus('ongoing')
+   }
+
+   useEffect(() => {
+      if (printStatus === 'ongoing') {
+         setTimeout(() => {
+            setPrintStatus('success')
+         }, 5000)
+      } else if (printStatus === 'success') {
+         setIsCelebrating(true)
+         setTimeout(() => {
+            if (isClient) {
+               deleteCurrentPage('currentPage')
+               const search = window.location.search
+               let queryParams = new URLSearchParams(search)
+               queryParams.delete('productCategoryId')
+               history.replaceState(null, null, '?' + queryParams.toString())
+               localStorage.removeItem('cart-id')
+               setStoredCartId(null)
+               dispatch({
+                  type: 'SET_SELECTED_ORDER_TAB',
+                  payload: null,
+               })
+               closeModal()
+               window.location.href = `${window.location.origin}/kiosk/1?oiType=Kiosk+Ordering`
+            }
+         }, 5000)
+      }
+   }, [printStatus])
+
    // start celebration (confetti effect) once payment is successful
    useEffect(() => {
       if (cartPayment?.paymentStatus === 'SUCCEEDED') {
@@ -329,13 +423,22 @@ const PaymentProcessingModal = ({
          }}
       >
          <Wrapper>
-            <Result
-               icon={ShowPaymentStatusInfo().icon}
-               title={ShowPaymentStatusInfo().title}
-               subTitle={ShowPaymentStatusInfo().subtitle}
-               extra={ShowPaymentStatusInfo().extra}
-            />
-            {isCelebrating && <Confetti />}
+            {printStatus === 'not-started' ? (
+               <Result
+                  icon={ShowPaymentStatusInfo().icon}
+                  title={ShowPaymentStatusInfo().title}
+                  subTitle={ShowPaymentStatusInfo().subtitle}
+                  extra={ShowPaymentStatusInfo().extra}
+               />
+            ) : (
+               <Result
+                  icon={showPrintingStatus().icon}
+                  title={showPrintingStatus().title}
+                  subTitle={showPrintingStatus().subtitle}
+                  extra={showPrintingStatus().extra}
+               />
+            )}
+            {isCelebrating || (printStatus === 'success' && <Confetti />)}
          </Wrapper>
          {/* <Button type="link" tw="fixed top-4 left-4" onClick={normalModalClose}>
             Close
@@ -362,22 +465,28 @@ const PaymentProcessingModal = ({
             </div>
          )}
 
-         {isKioskMode && (
-            <div tw="fixed bottom-48 width[780px] margin-left[-24px]">
-               <p tw="font-extrabold margin-bottom[36px] text-white text-4xl text-center">
-                  OR
-               </p>
-               <StyledButton
-                  onClick={() =>
-                     cancelTerminalPayment({ codPaymentOptionId, cartPayment })
-                  }
-                  tw="w-full justify-center"
-                  className="hern-kiosk__kiosk-button hern-kiosk__cart-place-order-btn"
-               >
-                  PAY AT COUNTER
-               </StyledButton>
-            </div>
-         )}
+         {isKioskMode &&
+            ['PENDING', 'PROCESSING', 'SWIPE_OR_INSERT', 'FAILED'].includes(
+               cartPayment?.paymentStatus
+            ) && (
+               <div tw="fixed bottom-48 width[780px] margin-left[-24px]">
+                  <p tw="font-extrabold margin-bottom[36px] text-white text-4xl text-center">
+                     OR
+                  </p>
+                  <StyledButton
+                     onClick={() =>
+                        cancelTerminalPayment({
+                           codPaymentOptionId,
+                           cartPayment,
+                        })
+                     }
+                     tw="w-full justify-center"
+                     className="hern-kiosk__kiosk-button hern-kiosk__cart-place-order-btn"
+                  >
+                     PAY AT COUNTER
+                  </StyledButton>
+               </div>
+            )}
       </Modal>
    )
 }
