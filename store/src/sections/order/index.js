@@ -16,9 +16,11 @@ import classNames from 'classnames'
 import * as Scroll from 'react-scroll'
 import CartBar from './CartBar'
 import { useConfig } from '../../lib'
-import { setThemeVariable } from '../../utils'
+import { setThemeVariable, getRoute } from '../../utils'
+import { useRouter } from 'next/router'
 
 export const OnDemandOrder = ({ config }) => {
+   const router = useRouter()
    const { brand } = useConfig()
    const menuType = config?.display?.dropdown?.value[0]?.value
       ? config?.display?.dropdown?.value[0]?.value
@@ -188,6 +190,22 @@ export const OnDemandOrder = ({ config }) => {
                                           className="hern-on-demand-order--product-card"
                                        >
                                           <ProductCard
+                                             onProductNameClick={() =>
+                                                router.push(
+                                                   getRoute(
+                                                      '/products/' +
+                                                         eachProduct.id
+                                                   )
+                                                )
+                                             }
+                                             onImageClickonProductNameClick={() =>
+                                                router.push(
+                                                   getRoute(
+                                                      '/products/' +
+                                                         eachProduct.id
+                                                   )
+                                                )
+                                             }
                                              key={index}
                                              data={eachProduct}
                                              showProductDescription={true}
