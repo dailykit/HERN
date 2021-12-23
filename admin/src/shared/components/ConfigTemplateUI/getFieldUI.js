@@ -19,6 +19,7 @@ import {
     NumberWithSelect,
     PhoneNumberSelector,
     ImageUpload,
+    MultipleImageUpload,
     RichText,
     CollectionSelector
 } from "./UIComponents"
@@ -233,6 +234,22 @@ export const getFieldUI = (fieldKey, configJSON, onConfigChange, isValid, setIsV
     ) {
         configUI = (
             <ImageUpload
+                fieldDetail={field}
+                marginLeft={indentation}
+                path={fieldKey}
+                onConfigChange={onConfigChange}
+                configSaveHandler={configSaveHandler}
+                configJSON={configJSON}
+                editMode={editMode}
+            />
+        )
+    }
+    else if (
+        field.dataType === "multipleImagesUpload" &&
+        field.userInsertType === "multipleImagesUpload"
+    ) {
+        configUI = (
+            <MultipleImageUpload
                 fieldDetail={field}
                 marginLeft={indentation}
                 path={fieldKey}

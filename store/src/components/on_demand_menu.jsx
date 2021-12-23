@@ -41,28 +41,19 @@ export const OnDemandMenu = props => {
                                  each.name === activeCategory,
                            }
                         )}
-                        onClick={e => {
-                           e.preventDefault()
-                           setActiveCategory(each.name)
-                           document
-                              .getElementById(
-                                 `hern-product-category-${each.name}`
-                              )
-                              .scrollIntoView({
-                                 behavior: 'smooth',
-                                 block: 'start',
-                              })
-                        }}
                         key={'menu-list' + index}
                      >
-                        <a href={`#hern-product-category-${each.name}`}>
-                           <span>{each.name}</span>
-                           {/* <span>
-                              {' ('}
-                              {each.products.length}
-                              {')'}
-                           </span> */}
-                        </a>
+                        <Scroll.Link
+                           containerId="hern-on-demand-order-container"
+                           smooth={true}
+                           activeClass="hern-on-demand-menu__navigationAnchor-li--active"
+                           to={each.name}
+                           spy={true}
+                        >
+                           <span>
+                              {each.name}({each?.products?.length})
+                           </span>
+                        </Scroll.Link>
                      </li>
                   </React.Fragment>
                ))}

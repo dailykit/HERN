@@ -103,7 +103,6 @@ export const SocialShare = ({ update, domain }) => {
         useLazyQuery(BRANDS.SETTINGS, {
             onCompleted: ({ brandSettings
             }) => {
-                console.log(brandSettings, "from social Share")
                 if (!isEmpty(brandSettings)) {
                     const { id, brand } = brandSettings[0]
                     setSettingId(id)
@@ -160,7 +159,6 @@ export const SocialShare = ({ update, domain }) => {
     //for every change in data will update the field(form)
     const onChangeHandler = e => {
         const { name, value } = e.target
-        console.log(name, value)
         setForm(prev => ({
             ...prev,
             [name]: {

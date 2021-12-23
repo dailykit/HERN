@@ -20,6 +20,7 @@ const LinkFilesTunnel = ({ setSelectedFiles, fileType, linkedFilesId }) => {
             id: file.id,
             title: file.fileName,
             value: file.path,
+            description: file.path,
             type: file.fileType,
          }))
          setOptions(result)
@@ -39,13 +40,16 @@ const LinkFilesTunnel = ({ setSelectedFiles, fileType, linkedFilesId }) => {
    }
    if (loading) return <Loader />
    return (
-      <Dropdown
-         type="multi"
-         options={searchResult}
-         searchedOption={option => setSearchOption(option)}
-         selectedOption={option => setSelectedFiles(option)}
-         placeholder="type what you're looking for..."
-      />
+      <div className="linked-Files-tunnel-dropdown">
+         <Dropdown
+            type="multi"
+            options={searchResult}
+            searchedOption={option => setSearchOption(option)}
+            selectedOption={option => setSelectedFiles(option)}
+            placeholder="type what you're looking for..."
+            typeName='option'
+         />
+      </div>
    )
 }
 

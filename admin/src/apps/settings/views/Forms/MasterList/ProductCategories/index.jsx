@@ -11,20 +11,22 @@ import {
    Tunnels,
    useTunnel,
    Flex,
+   ButtonGroup
 } from '@dailykit/ui'
 
-import { Add } from './tunnels'
+import { Add, Edit } from './tunnels'
 import { MASTER } from '../../../../graphql'
 import { logger } from '../../../../../../shared/utils'
 import tableOptions from '../../../Listings/tableOption'
 import { useTooltip, useTabs } from '../../../../../../shared/providers'
-import { AddIcon, DeleteIcon } from '../../../../../../shared/assets/icons'
+import { AddIcon, DeleteIcon, EditIcon } from '../../../../../../shared/assets/icons'
 import {
    Tooltip,
    ErrorState,
    InlineLoader,
    Banner,
 } from '../../../../../../shared/components'
+import useAssets from '../../../../../../shared/components/AssetUploader/useAssets'
 
 const address = 'apps.settings.views.forms.accompanimenttypes.'
 
@@ -34,7 +36,16 @@ const ProductCategoriesForm = () => {
    const tableRef = React.useRef()
    const { tab, addTab } = useTabs()
 
-   const [tunnels, openTunnel, closeTunnel] = useTunnel()
+   const [addTunnels, addOpenTunnel, addCloseTunnel] = useTunnel()
+
+   const [editTunnels, editOpenTunnel, editCloseTunnel] = useTunnel()
+
+   const [productCategoryNameSelected, setProductCategoryNameSelected] = React.useState('')
+
+   const [assetDeleteLoading, setAssetDeleteLoading] = React.useState(false)
+
+   const {remove} = useAssets('images')
+
 
    // subscription
    const { loading, data, error } = useSubscription(
@@ -47,6 +58,7 @@ const ProductCategoriesForm = () => {
          toast.success('Successfully deleted the product category!')
       },
       onError: error => {
+         console.log(error)
          toast.error('Failed to delete the product category')
          logger(error)
       },
@@ -61,7 +73,14 @@ const ProductCategoriesForm = () => {
       }
    }, [tab, addTab])
 
-   const remove = name => {
+   const deleteCategory = async (name, metaDetails) => {
+      if (metaDetails){
+         setAssetDeleteLoading(true)
+         if (metaDetails.iconKey) await remove(metaDetails.iconKey)
+         if (metaDetails.imageKey) await remove(metaDetails.imageKey)
+         if (metaDetails.bannerKey) await remove(metaDetails.bannerKey)
+      }
+      
       deleteElement({
          variables: {
             where: {
@@ -69,6 +88,7 @@ const ProductCategoriesForm = () => {
             },
          },
       })
+      setAssetDeleteLoading(false)
    }
 
    const columns = [
@@ -89,11 +109,11 @@ const ProductCategoriesForm = () => {
          headerSort: false,
          hozAlign: 'center',
          cssClass: 'center-text',
-         formatter: reactFormatter(<Delete remove={remove} />),
+         formatter: reactFormatter(<Action deleteCategory={deleteCategory} setProductCategoryNameSelected={setProductCategoryNameSelected} editOpenTunnel={editOpenTunnel} />),
       },
    ]
 
-   if (loading) return <InlineLoader />
+   if (loading||assetDeleteLoading) return <InlineLoader />
    if (!loading && error) {
       logger(error)
       toast.error('Failed to fetch product categories!')
@@ -115,7 +135,7 @@ const ProductCategoriesForm = () => {
                </Text>
                <Tooltip identifier="listing_product_categories_heading" />
             </Flex>
-            <ComboButton type="solid" onClick={() => openTunnel(1)}>
+            <ComboButton type="solid" onClick={() => addOpenTunnel(1)}>
                <AddIcon size={24} /> Create Product Category
             </ComboButton>
          </Flex>
@@ -125,9 +145,14 @@ const ProductCategoriesForm = () => {
             data={data.productCategories}
             options={tableOptions}
          />
-         <Tunnels tunnels={tunnels}>
+         <Tunnels tunnels={addTunnels}>
             <Tunnel layer={1}>
-               <Add closeTunnel={closeTunnel} />
+               <Add closeTunnel={addCloseTunnel} />
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={editTunnels}>
+            <Tunnel layer={1}>
+               {productCategoryNameSelected && <Edit closeTunnel={editCloseTunnel} productCategoryName={productCategoryNameSelected} />}
             </Tunnel>
          </Tunnels>
          <Banner id="settings-app-master-lists-product-categories-bottom" />
@@ -137,21 +162,34 @@ const ProductCategoriesForm = () => {
 
 export default ProductCategoriesForm
 
-const Delete = ({ cell, remove }) => {
+const Action = ({ cell, deleteCategory, setProductCategoryNameSelected, editOpenTunnel }) => {
    const removeItem = () => {
-      const { name = '' } = cell.getData()
+      const { name = '', metaDetails = {} } = cell.getData()
       if (
          window.confirm(
             `Are your sure you want to delete product category - ${name} ?`
          )
       ) {
-         remove(name)
+         deleteCategory(name, metaDetails)
       }
+      
+
+   }
+
+   const editItem = () => {
+      const { name = '' } = cell.getData()
+      setProductCategoryNameSelected(name)
+      editOpenTunnel(1)
    }
 
    return (
-      <IconButton size="sm" type="ghost" onClick={removeItem}>
-         <DeleteIcon color="#FF5A52" />
-      </IconButton>
+      <ButtonGroup>
+         <IconButton size="sm" type="ghost" onClick={removeItem}>
+            <DeleteIcon title="delete" color="#FF5A52" />
+         </IconButton>
+         <IconButton size="sm" type="ghost" onClick={editItem}>
+            <EditIcon title="edit" color='#367BF5' />
+         </IconButton>
+    </ButtonGroup>
    )
 }

@@ -5,10 +5,30 @@ import { toast } from 'react-toastify'
 import { BRANDS } from '../../../../../graphql'
 import { logger } from '../../../../../../../shared/utils'
 import ConfigTemplateUI from '../../../../../../../shared/components/ConfigTemplateUI'
-
-export const SettingsCard = ({ setting, title, isChangeSaved, setIsSavedChange }) => {
+import { useInView } from "react-intersection-observer";
+export const SettingsCard = ({ setting, title, isChangeSaved, setIsSavedChange, setIsComponentIsOnView, componentIsOnView }) => {
     const [config, setConfig] = React.useState({})
     const params = useParams()
+
+    const { ref, inView } = useInView({
+        threshold: 0
+    });
+    console.log(inView, "inView", ref)
+    React.useEffect(() => {
+        if (inView && !componentIsOnView.includes(title)) {
+            console.log(title, "title")
+            setIsComponentIsOnView([...componentIsOnView, title])
+        }
+        else if (!inView && componentIsOnView.includes(title)) {
+            const res = componentIsOnView.filter((i) => i !== title)
+            console.log(res)
+            setIsComponentIsOnView([...res])
+        }
+    }, [
+        inView,
+        title,
+    ])
+    console.log("componentIsOnView", componentIsOnView)
     const [updateSetting] = useMutation(BRANDS.UPDATE_BRAND_SETTING, {
         onCompleted: () => {
             toast.success('Successfully updated!')
@@ -46,13 +66,14 @@ export const SettingsCard = ({ setting, title, isChangeSaved, setIsSavedChange }
     }
 
     return (
-        <ConfigTemplateUI
-            config={config}
-            setConfig={setConfig}
-            configSaveHandler={saveInfo}
-            identifier={title}
-            isChangeSaved={isChangeSaved}
-            setIsSavedChange={setIsSavedChange}
-        />
+        <div ref={ref} style={{ marginBottom: "1em" }}>
+            <ConfigTemplateUI
+                config={config}
+                setConfig={setConfig}
+                configSaveHandler={saveInfo}
+                identifier={title}
+                isChangeSaved={isChangeSaved}
+                setIsSavedChange={setIsSavedChange} />
+        </div>
     )
 }

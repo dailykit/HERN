@@ -16,9 +16,23 @@ import classNames from 'classnames'
 import * as Scroll from 'react-scroll'
 import CartBar from './CartBar'
 import { useConfig } from '../../lib'
+import { setThemeVariable } from '../../utils'
 
-export const OnDemandOrder = () => {
+export const OnDemandOrder = ({ config }) => {
    const { brand } = useConfig()
+   const menuType = config?.display?.dropdown?.value[0]?.value
+      ? config?.display?.dropdown?.value[0]?.value
+      : 'side-nav'
+   const numberOfProducts =
+      config?.display?.['numberOfProducts']?.value ??
+      config?.display?.['numberOfProducts']?.default ??
+      2
+   const showCategoryLength =
+      config?.display?.['showCategoryLength']?.value ??
+      config?.display?.['numberOfProducts']?.default ??
+      true
+
+   setThemeVariable('--hern-number-of-products', numberOfProducts)
 
    const [hydratedMenu, setHydratedMenu] = React.useState([])
    const [status, setStatus] = useState('loading')
@@ -88,6 +102,7 @@ export const OnDemandOrder = () => {
          <div className="hern-on-demand-product-custom-area">
             <Button
                className="hern-custom-area-add-btn"
+               type="outline"
                onClick={() => {
                   if (data.productOptions.length > 0) {
                      setProductModifier(data)
@@ -116,7 +131,18 @@ export const OnDemandOrder = () => {
    }
    return (
       <>
-         <div className="hern-on-demand-order-container">
+         {menuType === 'fixed-top-nav' && (
+            <OnDemandMenu
+               menuType="navigationAnchorMenu"
+               categories={categories}
+            />
+         )}
+         <div
+            className={classNames('hern-on-demand-order-container', {
+               'hern-on-demand-order-container--fixed-top-nav':
+                  menuType === 'fixed-top-nav',
+            })}
+         >
             <div
                id="hern-on-demand-order-container"
                className={classNames('hern-on-demand-page', {
@@ -136,44 +162,51 @@ export const OnDemandOrder = () => {
                               id={`hern-product-category-${eachCategory.name}`}
                            >
                               {eachCategory.name}
+                              {showCategoryLength && (
+                                 <>({eachCategory.products.length})</>
+                              )}
                            </p>
-                           {eachCategory.products.map((eachProduct, index) => {
-                              return (
-                                 <ProductCard
-                                    key={index}
-                                    data={eachProduct}
-                                    showImage={
-                                       eachProduct.assets.images.length > 0
-                                          ? true
-                                          : false
-                                    }
-                                    customAreaComponent={CustomArea}
-                                    showModifier={
-                                       productModifier &&
-                                       productModifier.id === eachProduct.id
-                                    }
-                                    closeModifier={closeModifier}
-                                 />
-                              )
-                           })}
+                           <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                              {eachCategory.products.map(
+                                 (eachProduct, index) => {
+                                    return (
+                                       <div
+                                          key={index}
+                                          className="hern-on-demand-order--product-card"
+                                       >
+                                          <ProductCard
+                                             key={index}
+                                             data={eachProduct}
+                                             showProductDescription={true}
+                                             showImage={
+                                                eachProduct.assets.images
+                                                   .length > 0
+                                                   ? true
+                                                   : false
+                                             }
+                                             customAreaComponent={CustomArea}
+                                             showModifier={
+                                                productModifier &&
+                                                productModifier.id ===
+                                                   eachProduct.id
+                                             }
+                                             closeModifier={closeModifier}
+                                             customAreaFlex={false}
+                                          />
+                                       </div>
+                                    )
+                                 }
+                              )}
+                           </div>
                            <Divider />
                         </Scroll.Element>
                      )
                   })}
                </div>
-               {cartState.cart &&
-                  cartState.cart?.products?.aggregate?.count !== 0 && (
-                     <BottomCartBar />
-                  )}
-               {/* {productModifier && (
-                  <ModifierPopup
-                     productData={productModifier}
-                     closeModifier={closeModifier}
-                     height={productModifier ? '100%' : '0'}
-                  />
-               )} */}
             </div>
-            <OnDemandMenu categories={categories} />
+            {menuType !== 'fixed-top-nav' && (
+               <OnDemandMenu categories={categories} />
+            )}
             {cartState.cart &&
                cartState.cart?.products?.aggregate?.count !== 0 && (
                   <BottomCartBar />

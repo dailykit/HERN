@@ -44,16 +44,17 @@ export const Address = ({ fieldDetail, path, onConfigChange, editMode }) => {
                   </Form.Label>
                </Flex>
                <Form.Group>
-                  <Tooltip
-                     placement="bottom"
-                     title={normalizeAddress(fieldDetail.value)}
+                  <Text
+                     as="h3"
+                     style={{
+                        fontSize: '15px',
+                        width: '15rem',
+                        color: '#555B6E',
+                        marginRight: '-2rem',
+                     }}
                   >
-                     <Text as="h3" style={{ fontSize: '15px' }}>
-                        {normalizeAddress(fieldDetail.value)
-                           .slice(0, 28)
-                           .concat('...')}
-                     </Text>
-                  </Tooltip>
+                     {normalizeAddress(fieldDetail.value)}
+                  </Text>
                </Form.Group>
             </Flex>
          )}

@@ -8,10 +8,13 @@ import {
    Loader,
    Button,
    PaymentOptionsRenderer,
+   Coupon,
+   WalletAmount,
 } from '../../components'
 import { CartContext } from '../../context'
-import { EmptyCart } from '../../assets/icons'
+import { EmptyCart, PaymentIcon } from '../../assets/icons'
 import Link from 'next/link'
+import { UserInfo } from '../../components'
 
 export const OnDemandCart = () => {
    const { cartState, combinedCartItems } = React.useContext(CartContext)
@@ -24,7 +27,7 @@ export const OnDemandCart = () => {
          <div className="hern-cart-empty-cart">
             <EmptyCart />
             <span>Oops! Your cart is empty </span>
-            <Button className="hern-cart-go-to-menu-btn" onClick={() => {}}>
+            <Button className="hern-cart-go-to-menu-btn" onClick={() => { }}>
                <Link href="/order">GO TO MENU</Link>
             </Button>
          </div>
@@ -33,17 +36,27 @@ export const OnDemandCart = () => {
    return (
       <Row>
          <Col span={16}>
-            <div className="hern-ondemand-cart__left-card">Account</div>
+            <div className="hern-ondemand-cart__left-card">
+               <UserInfo cart={cartState.cart} />
+            </div>
             <div className="hern-ondemand-cart__left-card">
                <Fulfillment />
             </div>
-            <div className="hern-ondemand-cart__left-card">Apply Coupons</div>
+            <div className="hern-ondemand-cart__left-card">
+               <Coupon upFrontLayout={true} cart={cartState.cart} />
+            </div>
             <div className="hern-ondemand-cart__left-card">
                <LoyaltyPoints cart={cartState.cart} version={2} />
             </div>
-            <div className="hern-ondemand-cart__left-card">Wallet</div>
+            <div className="hern-ondemand-cart__left-card">
+               <WalletAmount cart={cartState.cart} version={2} />
+            </div>
             <div className="hern-ondemand-cart__left-card">
                <div tw="p-4">
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                     <PaymentIcon />
+                     <span className="hern-user-info__heading">Payment</span>
+                  </div>
                   <PaymentOptionsRenderer cartId={cartState?.cart?.id} />
                </div>
             </div>
