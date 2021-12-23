@@ -132,14 +132,15 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
             orderTabFulfillmentType.includes('PREORDER_PICKUP')
          ),
       },
-      {
-         label: 'Dinein',
-         value: 'DINEIN',
-         disabled: !(
-            orderTabFulfillmentType.includes('ONDEMAND_DINEIN') ||
-            orderTabFulfillmentType.includes('SCHEDULED_DINEIN')
-         ),
-      },
+      // (orderTabFulfillmentType.includes('ONDEMAND_DINEIN') ||
+      //    orderTabFulfillmentType.includes('SCHEDULED_DINEIN')) && {
+      //    label: 'Dinein',
+      //    value: 'DINEIN',
+      //    disabled: !(
+      //       orderTabFulfillmentType.includes('ONDEMAND_DINEIN') ||
+      //       orderTabFulfillmentType.includes('SCHEDULED_DINEIN')
+      //    ),
+      // },
    ])
 
    const onAddressSelect = newAddress => {
@@ -895,30 +896,34 @@ const Pickup = props => {
                />
             </Col>
          </Row>
-         <div style={{ position: 'relative' }}>
-            <div className="hern-cart__fulfillment-time-section-heading">
-               <OrderTime />
-               <span>When would you like your order?</span>
+         {!address ? (
+            <p>Please Select an address</p>
+         ) : (
+            <div style={{ position: 'relative' }}>
+               <div className="hern-cart__fulfillment-time-section-heading">
+                  <OrderTime />
+                  <span>When would you like your order?</span>
+               </div>
+               <div>
+                  <Radio.Group
+                     options={pickupRadioOptions}
+                     onChange={e => {
+                        setPickUpType(e.target.value)
+                        const orderTabId = orderTabs.find(
+                           t =>
+                              t.orderFulfillmentTypeLabel ===
+                              `${e.target.value}_DELIVERY`
+                        )?.id
+                        setFulfillmentTabInfo(prev => {
+                           return { ...prev, orderTabId }
+                        })
+                        setSelectedStore(null)
+                     }}
+                     value={pickupType}
+                  />
+               </div>
             </div>
-            <div>
-               <Radio.Group
-                  options={pickupRadioOptions}
-                  onChange={e => {
-                     setPickUpType(e.target.value)
-                     const orderTabId = orderTabs.find(
-                        t =>
-                           t.orderFulfillmentTypeLabel ===
-                           `${e.target.value}_DELIVERY`
-                     )?.id
-                     setFulfillmentTabInfo(prev => {
-                        return { ...prev, orderTabId }
-                     })
-                     setSelectedStore(null)
-                  }}
-                  value={pickupType}
-               />
-            </div>
-         </div>
+         )}
          {sortedBrandLocation &&
             sortedBrandLocation.some(x => x?.pickupStatus?.status) && (
                <div style={{ position: 'relative' }}>
@@ -1185,7 +1190,7 @@ export const Fulfillment = () => {
          }
       }
    }, [cartState.cart, brandLocation])
-   if (brandLocationLading || !brandLocation) {
+   if (brandLocationLading) {
       return <Loader inline />
    }
    return (
