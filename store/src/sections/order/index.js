@@ -18,9 +18,11 @@ import CartBar from './CartBar'
 import { useConfig } from '../../lib'
 import { setThemeVariable, getRoute } from '../../utils'
 import { useRouter } from 'next/router'
+import { useToasts } from 'react-toast-notifications'
 
 export const OnDemandOrder = ({ config }) => {
    const router = useRouter()
+   const { addToast } = useToasts()
    const { brand } = useConfig()
    const menuType = config?.display?.dropdown?.value[0]?.value
       ? config?.display?.dropdown?.value[0]?.value
@@ -113,7 +115,9 @@ export const OnDemandOrder = ({ config }) => {
                   if (data.productOptions.length > 0) {
                      setProductModifier(data)
                   } else {
-                     console.log('product added to cart', data)
+                     addToast('Added to the Cart!', {
+                        appearance: 'success',
+                     })
                      addToCart({ productId: data.id }, 1)
                   }
                }}
