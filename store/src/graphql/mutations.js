@@ -194,7 +194,7 @@ export const MUTATIONS = {
    },
 }
 
-export const UPDATE_DAILYKEY_CUSTOMER = gql`
+export const UPDATE_PLATFORM_CUSTOMER = gql`
    mutation updateCustomers(
       $keycloakId: String!
       $_set: platform_customer_set_input!
@@ -204,11 +204,12 @@ export const UPDATE_DAILYKEY_CUSTOMER = gql`
          _set: $_set
       ) {
          keycloakId
+         defaultPaymentMethodId
       }
    }
 `
 
-export const CREATE_STRIPE_PAYMENT_METHOD = gql`
+export const CREATE_CUSTOMER_PAYMENT_METHOD = gql`
    mutation paymentMethod(
       $object: platform_customerPaymentMethod_insert_input!
    ) {
@@ -484,6 +485,19 @@ export const UPDATE_CART_ITEMS = gql`
    ) {
       updateCartItems(where: $where, _set: $_set) {
          affected_rows
+      }
+   }
+`
+
+export const UPDATE_CART_PAYMENT = gql`
+   mutation UPDATE_CART_PAYMENT(
+      $id: Int!
+      $_inc: order_cartPayment_inc_input = {}
+      $_set: order_cartPayment_set_input!
+   ) {
+      updateCartPayment(pk_columns: { id: $id }, _inc: $_inc, _set: $_set) {
+         cartId
+         id
       }
    }
 `

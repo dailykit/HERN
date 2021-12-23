@@ -496,6 +496,39 @@ export const CART_SUBSCRIPTION = gql`
          stripeInvoiceId
          stripeInvoiceDetails
          customerKeycloakId
+         retryPaymentMethod
+         activeCartPaymentId
+         activeCartPayment {
+            id
+            paymentStatus
+            cancelAttempt
+            transactionRemark
+         }
+         availablePaymentOptionToCart(
+            where: { isActive: { _eq: true } }
+            order_by: { position: desc_nulls_last }
+         ) {
+            id
+            isActive
+            isDown
+            isRecommended
+            isValid
+            label
+            position
+            publicCreds
+            privateCreds
+            showCompanyName
+            supportedPaymentOption {
+               id
+               country
+               supportedPaymentCompanyId
+               paymentOptionLabel
+               supportedPaymentCompany {
+                  id
+                  label
+               }
+            }
+         }
          products: cartItems(where: { level: { _eq: 1 } }) {
             id
             isAddOn
@@ -840,6 +873,8 @@ export const CUSTOMER = {
                keycloakId
                phoneNumber
                paymentCustomerId
+               defaultPaymentMethodId
+               fullName
                addresses: customerAddresses(order_by: { created_at: desc }) {
                   id
                   lat
@@ -863,6 +898,8 @@ export const CUSTOMER = {
                   keycloakId
                   cardHolderName
                   paymentMethodId
+                  paymentCustomerId
+                  supportedPaymentOptionId
                }
             }
          }
@@ -1413,6 +1450,8 @@ export const GET_CART = gql`
          paymentMethodId
          walletAmountUsed
          loyaltyPointsUsed
+         walletAmountUsable
+         locationId
          loyaltyPointsUsable
          customerKeycloakId
          billing: billingDetails
@@ -1502,7 +1541,9 @@ export const BRAND_ONDEMAND_DELIVERY_RECURRENCES = gql`
                from
                to
                pickUpPrepTime
+               id
                mileRanges {
+                  id
                   from
                   city
                   distanceType
@@ -1539,6 +1580,17 @@ export const BRAND_LOCATIONS = gql`
             brandId
             locationId
             id
+            location {
+               id
+               locationAddress
+               label
+               zipcode
+               city
+               state
+               lat
+               lng
+               country
+            }
             orderExperienceId
             orderExperienceOptionType
             doesDeliverOutsideCity
@@ -1562,6 +1614,7 @@ export const PREORDER_DELIVERY_BRAND_RECURRENCES = gql`
             timeSlots {
                from
                to
+               id
                mileRanges {
                   from
                   city
@@ -1572,6 +1625,7 @@ export const PREORDER_DELIVERY_BRAND_RECURRENCES = gql`
                   geoBoundary
                   isExcluded
                   leadTime
+                  id
                }
             }
          }
@@ -1592,7 +1646,9 @@ export const ONDEMAND_PICKUP_BRAND_RECURRENCES = gql`
             timeSlots {
                from
                to
+               id
                mileRanges {
+                  id
                   from
                   city
                   distanceType
@@ -1624,7 +1680,10 @@ export const PREORDER_PICKUP_BRAND_RECURRENCES = gql`
             timeSlots {
                from
                to
+               id
+               pickUpLeadTime
                mileRanges {
+                  id
                   from
                   city
                   distanceType
@@ -1654,7 +1713,9 @@ export const ONDEMAND_DINE_BRAND_RECURRENCES = gql`
             timeSlots {
                from
                to
+               id
                mileRanges {
+                  id
                   from
                   city
                   distanceType
@@ -1685,7 +1746,9 @@ export const SCHEDULED_DINEIN_BRAND_RECURRENCES = gql`
             timeSlots {
                from
                to
+               id
                mileRanges {
+                  id
                   from
                   city
                   distanceType
@@ -1782,6 +1845,73 @@ export const LOCATION_KIOSK = gql`
          internalLocationKioskLabel
          kioskModuleConfig
          locationId
+      }
+   }
+`
+
+export const GET_CART_PAYMENT_INFO = gql`
+   subscription GET_CART_PAYMENT_INFO($where: order_cartPayment_bool_exp!) {
+      cartPayments(where: $where, limit: 1, order_by: { updated_at: desc }) {
+         id
+         amount
+         cancelAttempt
+         cartId
+         isTest
+         paymentStatus
+         paymentType
+         transactionRemark
+         isResultShown
+         stripeInvoiceId
+         transactionId
+         actionUrl
+         actionRequired
+         availablePaymentOption {
+            id
+            label
+            supportedPaymentOption {
+               paymentOptionLabel
+               id
+               supportedPaymentCompany {
+                  label
+                  id
+               }
+            }
+         }
+      }
+   }
+`
+
+export const GET_PAYMENT_OPTIONS = gql`
+   subscription cart($id: Int!) {
+      cart(id: $id) {
+         id
+         balanceToPay
+         availablePaymentOptionToCart(
+            where: { isActive: { _eq: true } }
+            order_by: { position: desc_nulls_last }
+         ) {
+            id
+            isActive
+            isDown
+            isRecommended
+            isValid
+            label
+            description
+            position
+            publicCreds
+            privateCreds
+            showCompanyName
+            supportedPaymentOption {
+               id
+               country
+               supportedPaymentCompanyId
+               paymentOptionLabel
+               supportedPaymentCompany {
+                  id
+                  label
+               }
+            }
+         }
       }
    }
 `

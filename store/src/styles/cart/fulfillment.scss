@@ -75,3 +75,19 @@
    font-size: 0.875rem;
    line-height: 1.25rem;
 }
+.hern-cart__store-arrow {
+   position: absolute;
+   bottom: calc(50% - 42px);
+   z-index: 1000;
+   color: #fff;
+   background: #367bf599;
+   stroke: currentColor;
+   border-radius: 50%;
+   cursor: pointer;
+}
+.hern-cart__store-arrow-left {
+   left: -10px;
+}
+.hern-cart__store-arrow-right {
+   right: -10px;
+}

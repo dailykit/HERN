@@ -126,7 +126,7 @@ const FileExplorer = () => {
       nodeRef.current = node
       setStyle({
          ...style,
-         top: `${e.pageY - 20}px`,
+         top: `${e.pageY - 136}px`,
          left: `${e.pageX}px`,
          display: command === 'show' ? 'block' : 'none',
       })

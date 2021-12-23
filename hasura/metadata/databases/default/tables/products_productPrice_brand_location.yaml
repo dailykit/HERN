@@ -5,6 +5,12 @@ object_relationships:
 - name: addedByApiKeyReference
   using:
     foreign_key_constraint_on: addedByApiKey
+- name: product
+  using:
+    foreign_key_constraint_on: productId
+- name: productOption
+  using:
+    foreign_key_constraint_on: productOptionId
 - name: updatedByApiKeyReference
   using:
     foreign_key_constraint_on: updatedByApiKey

@@ -263,6 +263,11 @@ computed_fields:
       name: loyaltyPointsUsable
       schema: order
   name: loyaltyPointsUsable
+- definition:
+    function:
+      name: posistOrderDetails
+      schema: order
+  name: posistOrderDetails
 - comment: ""
   definition:
     function:
