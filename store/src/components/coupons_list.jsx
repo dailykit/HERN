@@ -8,7 +8,8 @@ import { Loader } from './loader'
 import { CloseIcon, Scissor } from '../assets/icons'
 import classNames from 'classnames'
 import { isClient, useQueryParamState } from '../utils'
-import { Carousel, Button } from 'antd'
+import { Carousel } from 'antd'
+import { Button } from '.'
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 const Coupons_List = ({
@@ -126,12 +127,14 @@ const Coupons_List = ({
                            className={
                               !upFrontLayout
                                  ? 'hern-kiosk-coupons-list__coupon__top'
-                                 : ''
+                                 : 'hern-upfront-coupons-list__coupon__top'
                            }
                         >
-                           <div className="hern-kiosk-coupons-list__coupon__code">
-                              {coupon.code}{' '}
-                           </div>
+                           {!upFrontLayout && (
+                              <div className="hern-kiosk-coupons-list__coupon__code">
+                                 {coupon.code}
+                              </div>
+                           )}
                            {!upFrontLayout && (
                               <button
                                  className={classNames(
@@ -160,6 +163,11 @@ const Coupons_List = ({
                                  : ''
                            }
                         >
+                           {upFrontLayout && (
+                              <div className="hern-kiosk-coupons-list__coupon__code">
+                                 {coupon.code}
+                              </div>
+                           )}
                            <p
                               className={
                                  !upFrontLayout
@@ -185,12 +193,11 @@ const Coupons_List = ({
                                  style={{
                                     display: 'flex',
                                     alignItems: 'center',
-                                    flex: '0.5',
+                                    flex: 1,
                                  }}
                               >
                                  <Button
-                                    type="primary"
-                                    ghost
+                                    type="submit"
                                     className={classNames(
                                        'hern-upfront-coupons-list__coupon__apply-btn',
                                        {

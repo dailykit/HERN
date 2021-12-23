@@ -150,32 +150,44 @@
 }
 .hern-upfront-coupons-list__coupon__scissor-icon {
    position: relative;
-   right: -0.3rem;
-   top: 4.5rem;
+   right: -1rem;
+   top: 3.5rem;
 }
 .hern-upfront-coupons-list__coupon__body-wrapper {
    margin: 0px;
-   flex: 1.5;
    padding-left: 1em;
    padding-right: 0.5em;
+   flex: 3;
 }
 .hern-upfront-coupons-list__coupon__title {
    color: rgba(64, 64, 64, 0.8);
    display: block;
    font-size: 18px;
-   margin-bottom: 6px;
+   margin-bottom: 0px;
    white-space: nowrap;
    overflow: hidden;
    text-overflow: ellipsis;
-   width: 20.5rem;
 }
 .hern-upfront-coupons-list__coupon__description {
    display: block;
    color: rgba(64, 64, 64, 0.6);
    font-size: 12px;
+   line-height: 20px;
+   margin-bottom: 0px;
 }
 .hern-upfront-coupons-list__coupon__apply-btn {
-   border: 2px solid #367bf5;
    box-sizing: border-box;
    border-radius: 12px;
+   :disabled {
+      color: #cacaca;
+      cursor: no-drop;
+   }
+}
+.hern-kiosk-coupons-list__coupon__code {
+   font-size: 1.2em;
+   font-weight: 500;
+   line-height: 20px;
+}
+.hern-upfront-coupons-list__coupon__top {
+   display: none;
 }

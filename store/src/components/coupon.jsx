@@ -10,6 +10,7 @@ import { Loader } from './loader'
 import { Tunnel } from './tunnel'
 import { useQueryParamState } from '../utils'
 import { CouponIcon } from '../assets/icons'
+import { Button } from '.'
 
 const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
    // use this component for kiosk as well
@@ -217,27 +218,35 @@ const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
                      }
                   />
                </div>
-               <button
-                  className={
-                     orderInterfaceType === 'Kiosk Ordering'
-                        ? 'hern-kiosk-coupon__form__apply-btn'
-                        : upFrontLayout
-                        ? 'hern-upfront-coupon__form__apply-btn'
-                        : 'hern-coupon__form__apply-btn'
-                  }
-                  type="submit"
-                  disabled={searching || applying}
-                  color={theme?.accent}
-                  style={{
-                     ...(orderInterfaceType === 'Kiosk Ordering' && {
-                        border: `2px solid ${config.kioskSettings.theme.secondaryColor.value}`,
-                        background: 'transparent',
-                        padding: '.1em 2em',
-                     }),
-                  }}
-               >
-                  {searching || applying ? <Loader inline /> : t('Apply')}
-               </button>
+               {!upFrontLayout ? (
+                  <button
+                     className={
+                        orderInterfaceType === 'Kiosk Ordering'
+                           ? 'hern-kiosk-coupon__form__apply-btn'
+                           : 'hern-coupon__form__apply-btn'
+                     }
+                     type="submit"
+                     disabled={searching || applying}
+                     color={theme?.accent}
+                     style={{
+                        ...(orderInterfaceType === 'Kiosk Ordering' && {
+                           border: `2px solid ${config.kioskSettings.theme.secondaryColor.value}`,
+                           background: 'transparent',
+                           padding: '.1em 2em',
+                        }),
+                     }}
+                  >
+                     {searching || applying ? <Loader inline /> : t('Apply')}
+                  </button>
+               ) : (
+                  <Button
+                     className="hern-upfront-coupon__form__apply-btn"
+                     disabled={searching || applying}
+                     type="submit"
+                  >
+                     {searching || applying ? <Loader inline /> : t('Apply')}
+                  </Button>
+               )}
             </form>
             {(orderInterfaceType === 'Kiosk Ordering' || upFrontLayout) && (
                <CouponsList

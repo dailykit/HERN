@@ -162,6 +162,10 @@
    background: rgba(54, 123, 245, 0.5);
    border-radius: 12px;
    flex: 1;
+   :disabled {
+      color: #cacaca;
+      cursor: no-drop;
+   }
 }
 .hern-upfront-coupon-header__label {
    display: block;
