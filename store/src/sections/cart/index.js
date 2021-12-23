@@ -12,7 +12,7 @@ import {
    WalletAmount,
 } from '../../components'
 import { CartContext } from '../../context'
-import { EmptyCart } from '../../assets/icons'
+import { EmptyCart, PaymentIcon } from '../../assets/icons'
 import Link from 'next/link'
 import { UserInfo } from '../../components'
 
@@ -53,6 +53,10 @@ export const OnDemandCart = () => {
             </div>
             <div className="hern-ondemand-cart__left-card">
                <div tw="p-4">
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                     <PaymentIcon />
+                     <span className="hern-user-info__heading">Payment</span>
+                  </div>
                   <PaymentOptionsRenderer cartId={cartState?.cart?.id} />
                </div>
             </div>
