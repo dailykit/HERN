@@ -35,17 +35,18 @@ import {
 } from '../utils'
 import { CartContext, useUser } from '../context'
 import { useQuery } from '@apollo/react-hooks'
-import { Loader } from '.'
+import { Loader, Button } from '.'
 import classNames from 'classnames'
 // import AddressListOuter from './address_list_outer'
 import { AddressTunnel } from '../sections/select-delivery/address_tunnel'
 import AddressList from './address_list'
 // import AddressList from './address_list'
 
-export const Fulfillment = () => {
-   const { brand, orderTabs, locationId, selectedOrderTab } = useConfig()
+export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
+   const { brand, orderTabs, locationId, selectedOrderTab, configOf } =
+      useConfig()
    const { user } = useUser()
-
+   const theme = configOf('theme-color', 'Visual')
    const addresses = user?.platform_customer?.addresses || []
 
    // check whether user select fulfillment type or not
@@ -63,12 +64,12 @@ export const Fulfillment = () => {
       longitude: null,
    })
 
-   useEffect(() => {
-      const localUserLocation = JSON.parse(localStorage.getItem('userLocation'))
-      if (localUserLocation) {
-         setAddress(localUserLocation)
-      }
-   }, [])
+   // useEffect(() => {
+   //    const localUserLocation = JSON.parse(localStorage.getItem('userLocation'))
+   //    if (localUserLocation) {
+   //       setAddress(localUserLocation)
+   //    }
+   // }, [])
 
    // get all store when user address available
    const {
@@ -113,7 +114,7 @@ export const Fulfillment = () => {
             : null,
       [orderTabs]
    )
-   console.log('orderTabFulfillmentType', orderTabFulfillmentType)
+
    const [deliveryRadioOptions] = useState([
       {
          label: 'Deliver',
@@ -164,18 +165,34 @@ export const Fulfillment = () => {
 
    return (
       <div className="hern-cart__fulfillment-card">
-         <div>
+         <div style={{ position: 'relative' }}>
             <div className="hern-cart__fulfillment-heading">
                <DineinTable style={{}} />
                <span className="hern-cart__fulfillment-heading-text">
                   How would you like to your order?
                </span>
             </div>
+            {isEdit && (
+               <Button
+                  onClick={() => {
+                     setIsEdit(false)
+                  }}
+                  className="hern-cart__fulfillment-change-btn"
+                  style={{
+                     color: theme?.accent || 'rgba(5, 150, 105, 1)',
+                     border: `1px solid ${
+                        theme?.accent || 'rgba(5, 150, 105, 1)'
+                     }`,
+                     bottom: '8px',
+                  }}
+               >
+                  Cancel
+               </Button>
+            )}
             <Space size={'large'} style={{ margin: '10px 0' }}>
                <Radio.Group
                   options={deliveryRadioOptions}
                   onChange={e => {
-                     console.log(e)
                      setFulfillmentType(e.target.value)
                      setAddress(null)
                   }}
@@ -243,7 +260,7 @@ const Delivery = props => {
       locationId: null,
       // fulfillmentInfo: null,
    })
-   console.log('address', address)
+
    const [deliveryRadioOptions] = useState([
       {
          label: 'Now',
@@ -463,6 +480,7 @@ const Delivery = props => {
             },
          },
       })
+      setIsEdit(false)
    }
    useEffect(() => {
       if (deliveryType === 'ONDEMAND' && selectedStore) {
@@ -484,12 +502,7 @@ const Delivery = props => {
          },
          type: 'ONDEMAND_DELIVERY',
       }
-      console.log('DataToBeSend', {
-         ...fulfillmentTabInfo,
-         fulfillmentInfo: slotInfo,
-         locationId: selectedStore.id,
-         address,
-      })
+
       methods.cart.update({
          variables: {
             id: cartState?.cart?.id,
@@ -501,6 +514,7 @@ const Delivery = props => {
             },
          },
       })
+      setIsEdit(false)
    }
 
    // for ondemand delivery
@@ -522,7 +536,7 @@ const Delivery = props => {
    if (!address) {
       return <p>Please Select an address</p>
    }
-   console.log('selectedStore', selectedStore)
+
    return (
       <div className="hern-cart__fulfillment-time-section">
          <div className="hern-cart__fulfillment-time-section-heading">
@@ -565,7 +579,6 @@ const Delivery = props => {
                   </p>
                   <Radio.Group
                      onChange={e => {
-                        console.log(e.target.value)
                         setSelectedSlot(e.target.value)
                      }}
                   >
@@ -587,7 +600,6 @@ const Delivery = props => {
                      </p>
                      <Radio.Group
                         onChange={e => {
-                           console.log(e.target.value)
                            const newTimeStamp = generateTimeStamp(
                               e.target.value.time,
                               selectedSlot.date,
@@ -694,7 +706,6 @@ const Pickup = props => {
             },
          },
          onCompleted: data => {
-            console.log('ondemandPickup', data)
             if (data) {
                setOnDemandBrandReoccurrence(data.brandRecurrences)
             }
@@ -716,7 +727,6 @@ const Pickup = props => {
             },
          },
          onCompleted: data => {
-            console.log('PREoRDER', data)
             if (data) {
                setPreOrderBrandReoccurrence(data.brandRecurrences)
             }
@@ -731,23 +741,18 @@ const Pickup = props => {
 
    useEffect(() => {
       if (pickupType === 'PREORDER' && selectedStore) {
-         console.log('selectedStore', selectedStore)
          const pickupSlots = generatePickUpSlots(
             selectedStore.pickupStatus.rec.map(x => x.recurrence)
          )
-         console.log('pickupSlots', pickupSlots)
          const miniSlots = generateMiniSlots(pickupSlots.data, 60)
          setPickupSlots(miniSlots)
-         console.log('miniSlots', miniSlots)
       }
    }, [selectedStore])
 
    useEffect(() => {
-      console.log('isBrand', brandLocation, address, brandRecurrences)
       if (brandLocation && address) {
          ;(async () => {
             const bar = await getAerialDistance(brandLocation, true)
-            console.log('this is bar', bar)
             setSortedBrandLocation(bar)
          })()
       }
@@ -803,7 +808,6 @@ const Pickup = props => {
       }
       return dataWithAerialDistance
    }
-   console.log('sortedBrandLocationPickUP', sortedBrandLocation)
 
    useEffect(() => {
       if (pickupType === 'ONDEMAND' && selectedStore) {
@@ -837,6 +841,7 @@ const Pickup = props => {
             },
          },
       })
+      setIsEdit(false)
    }
 
    const onFulfillmentTimeClick = timestamp => {
@@ -873,9 +878,11 @@ const Pickup = props => {
                ...fulfillmentTabInfo,
                fulfillmentInfo: slotInfo,
                address,
+               locationId: selectedStore.id,
             },
          },
       })
+      setIsEdit(false)
    }
    return (
       <div>
@@ -897,7 +904,6 @@ const Pickup = props => {
                <Radio.Group
                   options={pickupRadioOptions}
                   onChange={e => {
-                     console.log(e)
                      setPickUpType(e.target.value)
                      const orderTabId = orderTabs.find(
                         t =>
@@ -969,7 +975,6 @@ const Pickup = props => {
                               )}
                               onClick={() => {
                                  if (eachStore[fulfillmentStatus].status) {
-                                    console.log('selectedStore', eachStore)
                                     setSelectedStore(eachStore)
                                  }
                               }}
@@ -1021,7 +1026,6 @@ const Pickup = props => {
                   </p>
                   <Radio.Group
                      onChange={e => {
-                        console.log(e.target.value)
                         setSelectedSlot(e.target.value)
                      }}
                   >
@@ -1043,7 +1047,6 @@ const Pickup = props => {
                      </p>
                      <Radio.Group
                         onChange={e => {
-                           console.log(e.target.value)
                            const newTimeStamp = generateTimeStamp(
                               e.target.value.time,
                               selectedSlot.date,
@@ -1072,5 +1075,208 @@ const Pickup = props => {
          )}
          <div></div>
       </div>
+   )
+}
+
+export const Fulfillment = () => {
+   const { cartState } = React.useContext(CartContext)
+   const { brand, configOf } = useConfig()
+   const theme = configOf('theme-color', 'Visual')
+
+   const [isEdit, setIsEdit] = useState(false)
+   const title = React.useMemo(() => {
+      switch (cartState.cart?.fulfillmentInfo?.type) {
+         case 'ONDEMAND_DELIVERY':
+            return 'Delivery'
+         case 'PREORDER_DELIVERY':
+            return 'Schedule Delivery'
+         case 'PREORDER_PICKUP':
+            return 'Schedule Pickup'
+         case 'ONDEMAND_PICKUP':
+            return 'Pickup'
+      }
+   }, [cartState.cart])
+
+   const {
+      loading: brandLocationLading,
+      error: brandLocationError,
+      data: brandLocation,
+   } = useQuery(BRAND_LOCATIONS, {
+      skip:
+         !brand || !brand?.id || !cartState.cart || !cartState.cart?.locationId,
+      variables: {
+         where: {
+            brandId: { _eq: brand.id },
+            locationId: { _eq: cartState.cart?.locationId },
+         },
+      },
+   })
+
+   const addressInfo = React.useMemo(() => {
+      if (
+         cartState.cart?.fulfillmentInfo?.type === 'ONDEMAND_DELIVERY' ||
+         cartState.cart?.fulfillmentInfo?.type === 'PREORDER_DELIVERY'
+      ) {
+         const { location } =
+            brandLocation.brands_brand_location_aggregate.nodes[0]
+         const brandCoordinate = {
+            latitude: location.lat,
+            longitude: location.lng,
+         }
+         const aerialDistance = getDistance(
+            {
+               latitude: cartState.cart.address.lat,
+               longitude: cartState.cart.address.lng,
+            },
+            brandCoordinate,
+            0.1
+         )
+         const aerialDistanceInMiles = convertDistance(aerialDistance, 'mi')
+         return {
+            ...cartState.cart.address,
+            aerialDistance: aerialDistanceInMiles,
+            distanceUnit: 'mi',
+         }
+      }
+      if (
+         cartState.cart?.fulfillmentInfo?.type === 'ONDEMAND_PICKUP' ||
+         cartState.cart?.fulfillmentInfo?.type === 'PREORDER_PICKUP'
+      ) {
+         if (!brandLocation) {
+            return {}
+         }
+         const {
+            location: {
+               label,
+               id,
+               locationAddress,
+               city,
+               state,
+               country,
+               zipcode,
+               lat,
+               lng,
+            },
+         } = brandLocation.brands_brand_location_aggregate.nodes[0]
+         const { line1, line2 } = locationAddress
+         const aerialDistance = getDistance(
+            {
+               latitude: cartState.cart.address.lat,
+               longitude: cartState.cart.address.lng,
+            },
+            {
+               latitude: lat,
+               longitude: lng,
+            },
+            0.1
+         )
+         const aerialDistanceInMiles = convertDistance(aerialDistance, 'mi')
+         return {
+            label,
+            id,
+            city,
+            state,
+            country,
+            zipcode,
+            line1,
+            line2,
+            aerialDistance: aerialDistanceInMiles,
+            distanceUnit: 'mi',
+         }
+      }
+   }, [cartState.cart, brandLocation])
+   if (brandLocationLading || !brandLocation) {
+      return <Loader inline />
+   }
+   return (
+      <>
+         {cartState.cart?.fulfillmentInfo === null || isEdit ? (
+            <FulfillmentForm isEdit={isEdit} setIsEdit={setIsEdit} />
+         ) : (
+            <div className="hern-cart__fulfillment-card">
+               <div className="hern-cart__fulfillment-heading">
+                  <DineinTable />
+                  <span className="hern-cart__fulfillment-heading-text">
+                     How would you like to your order?
+                  </span>
+               </div>
+               <div style={{ position: 'relative' }}>
+                  <label style={{ marginTop: '5px' }}>
+                     {title}{' '}
+                     {(cartState.cart?.fulfillmentInfo?.type ===
+                        'PREORDER_PICKUP' ||
+                        cartState.cart?.fulfillmentInfo?.type ===
+                           'PREORDER_DELIVERY') && (
+                        <span>
+                           {' '}
+                           on{' '}
+                           {moment(
+                              cartState.cart?.fulfillmentInfo?.slot?.from
+                           ).format('DD MMM YYYY')}
+                           {' ('}
+                           {moment(
+                              cartState.cart?.fulfillmentInfo?.slot?.from
+                           ).format('HH:mm')}
+                           {'-'}
+                           {moment(
+                              cartState.cart?.fulfillmentInfo?.slot?.to
+                           ).format('HH:mm')}
+                           {')'}
+                        </span>
+                     )}
+                  </label>
+                  <Button
+                     onClick={() => {
+                        setIsEdit(true)
+                     }}
+                     className="hern-cart__fulfillment-change-btn"
+                     style={{
+                        color: theme?.accent || 'rgba(5, 150, 105, 1)',
+                        border: `1px solid ${
+                           theme?.accent || 'rgba(5, 150, 105, 1)'
+                        }`,
+                     }}
+                  >
+                     Change
+                  </Button>
+                  <div
+                     className={classNames(
+                        'hern-store-location-selector__each-store'
+                     )}
+                  >
+                     <div className="hern-store-location-selector__store-location-info-container">
+                        <div className="hern-store-location-selector__store-location-details">
+                           <span className="hern-store-location__store-location-label">
+                              {addressInfo.label}
+                           </span>
+
+                           <span className="hern-store-location__store-location-address hern-store-location__store-location-address-line1">
+                              {addressInfo.line1}
+                           </span>
+                           <span className="hern-store-location__store-location-address hern-store-location__store-location-address-line2">
+                              {addressInfo.line2}
+                           </span>
+                           <span className="hern-store-location__store-location-address hern-store-location__store-location-address-c-s-c-z">
+                              {addressInfo.city} {addressInfo.state}{' '}
+                              {addressInfo.country}
+                              {' ('}
+                              {addressInfo.zipcode}
+                              {')'}
+                           </span>
+                        </div>
+                     </div>
+                     <div className="hern-store-location-selector__time-distance">
+                        <div className="hern-store-location-selector__aerialDistance">
+                           <span>
+                              {addressInfo.aerialDistance.toFixed(2)}{' '}
+                              {addressInfo.distanceUnit}
+                           </span>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         )}
+      </>
    )
 }

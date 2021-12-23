@@ -9,6 +9,7 @@ export const Button = ({
    className,
    variant,
    type = 'button',
+   style = {},
 }) => {
    const themeColor = bg ? { background: bg } : useThemeStyle('backgroundColor')
    const buttonClasses = classNames('hern__btn', {
@@ -20,7 +21,7 @@ export const Button = ({
    return (
       <button
          onClick={onClick}
-         style={themeColor}
+         style={{ ...themeColor, ...style }}
          className={`${buttonClasses} ${className ? className : ''}`}
          disabled={disabled}
          type={type}
