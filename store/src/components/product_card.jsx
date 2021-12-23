@@ -34,6 +34,7 @@ export const ProductCard = props => {
       maintainRatio = true,
       customAreaFlex = true, //If custom area on the next line
       contentAreaCustomStyle = {},
+      modifierWithoutPopup = true,
    } = props
 
    const slideRef = React.useRef()
@@ -216,6 +217,7 @@ export const ProductCard = props => {
                edit={modifierPopupConfig?.edit}
                productCartDetail={modifierPopupConfig?.productCartDetail}
                showModifierImage={modifierPopupConfig?.showModifierImage}
+               modifierWithoutPopup={modifierWithoutPopup}
             />
          )}
       </>
