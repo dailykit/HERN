@@ -31,61 +31,9 @@ const PaymentProcessingModal = ({
    const [isCelebrating, setIsCelebrating] = useState(false)
    const [printStatus, setPrintStatus] = useState('not-started')
    const { width, height } = useWindowSize()
-   const [currentPage, setCurrentPage, deleteCurrentPage] = useQueryParamState(
-      'currentPage',
-      'fulfillmentPage'
-   )
-   const { setStoredCartId } = useCart()
-   const { dispatch } = useConfig()
-
-   const showPrintingStatus = () => {
-      let icon = (
-         <img
-            src="/assets/gifs/receipt.gif"
-            className="payment_status_loader"
-         />
-      )
-
-      let title = 'Printing your receipt'
-      let subtitle = 'Please wait while we print your receipt'
-      let extra = null
-      if (printStatus === 'success') {
-         icon = (
-            <img
-               src="/assets/gifs/successful.gif"
-               className="payment_status_loader"
-            />
-         )
-         title = 'Printed your receipt successfully'
-         subtitle = 'Taking you back to the home page shortly'
-      } else if (printStatus === 'failed') {
-         icon = (
-            <img
-               src="/assets/gifs/failed.gif"
-               className="payment_status_loader"
-            />
-         )
-         title = 'Failed to print your receipt'
-         subtitle = 'Please try again'
-         extra = [<Button type="primary">Retry Print Receipt</Button>]
-      }
-      return {
-         icon,
-         title,
-         subtitle,
-         extra,
-      }
-   }
 
    const { setStoredCartId } = useCart()
-   const {
-      dispatch,
-      currentPage,
-      setCurrentPage,
-      deleteCurrentPage,
-      setIsIdleScreen,
-      clearCurrentPage,
-   } = useConfig()
+   const { setIsIdleScreen, clearCurrentPage } = useConfig()
 
    const showPrintingStatus = () => {
       let icon = (
