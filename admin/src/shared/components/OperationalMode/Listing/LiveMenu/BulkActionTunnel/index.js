@@ -13,7 +13,7 @@ export const BrandManager = ({
          removeSelectedRow={removeSelectedRow}
          selectedRows={selectedRows}
          setSelectedRows={setSelectedRows}
-         table="Brand Manager"
+         table="Brand Product"
          keyName="name"
       />
    </>

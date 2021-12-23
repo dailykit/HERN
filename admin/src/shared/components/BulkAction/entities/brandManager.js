@@ -30,6 +30,10 @@ const BrandManagerBulkAction = props => {
       { id: 1, title: 'Publish', payload: { isPublished: true } },
       { id: 2, title: 'Unpublish', payload: { isPublished: false } },
    ]
+   const radioAvailableOption = [
+      { id: 1, title: 'Available', payload: { isAvailable: true } },
+      { id: 2, title: 'Unavailable', payload: { isAvailable: false } },
+   ]
 
    return (
       <>
@@ -74,312 +78,310 @@ const BrandManagerBulkAction = props => {
             />
          </ButtonGroup>
          <Spacer size="10px" />
-         {[
-            { heading: 'Specific Price', columnName: 'specificPrice' },
-            { heading: 'Specific Discount', columnName: 'specificDiscount' },
-         ].map((column, i) => (
-            <CollapsibleComponent heading={column.heading} key={i}>
-               <HorizontalTabs>
-                  <HorizontalTabList>
-                     <HorizontalTab>
-                        <TextButton
-                           type="ghost"
-                           size="sm"
-                           disabled={column.columnName in additionalBulkAction}
-                           onClick={() => {
-                              console.log('clear')
-                           }}
-                        >
-                           Set {column.columnName}
-                        </TextButton>
-                     </HorizontalTab>
-                     <HorizontalTab>
-                        <TextButton
-                           type="ghost"
-                           size="sm"
-                           disabled={column.columnName in bulkActions}
-                           onClick={() => {
-                              console.log('clear')
-                           }}
-                        >
-                           {column.heading} increase or decrease
-                        </TextButton>
-                     </HorizontalTab>
-                  </HorizontalTabList>
-                  <HorizontalTabPanels>
-                     <HorizontalTabPanel>
-                        <Form.Group>
-                           <Form.Label htmlFor="Price " title="Price ">
-                              <Flex container alignItems="center">
-                                 <Text as="text1">{column.heading}</Text>
-                                 <TextButton
-                                    type="ghost"
-                                    size="sm"
-                                    // disabled={initialBulkAction.price.decrease !== 0}
-                                    onClick={() => {
-                                       setInitialBulkAction({
-                                          ...initialBulkAction,
-                                          [column.columnName]: {
-                                             ...initialBulkAction[
-                                                column.columnName
-                                             ],
-                                             set: 0,
-                                          },
-                                       })
-                                       setBulkActions(prevState => {
-                                          const newOption = {
-                                             ...prevState,
-                                          }
-                                          delete newOption[[column.columnName]]
-                                          return newOption
-                                       })
-                                    }}
-                                 >
-                                    Clear
-                                 </TextButton>
-                                 {/* <Tooltip identifier="recipe_price_increase" /> */}
-                              </Flex>
-                           </Form.Label>
-                           <Form.Number
-                              id={column.columnName}
-                              name={column.columnName}
-                              min="0"
-                              // disabled={initialBulkAction.price.decrease !== 0}
-                              value={initialBulkAction[column.columnName].set}
-                              placeholder="Enter price"
-                              onChange={e =>
-                                 setInitialBulkAction({
-                                    ...initialBulkAction,
-                                    [column.columnName]: {
-                                       ...initialBulkAction[column.columnName],
-                                       set: e.target.value,
-                                    },
-                                 })
-                              }
-                              onBlur={() => {
-                                 if (initialBulkAction[column.columnName].set) {
-                                    setBulkActions({
-                                       ...bulkActions,
-                                       [column.columnName]:
-                                          initialBulkAction[column.columnName]
-                                             .set,
-                                    })
-                                    return
-                                 }
-                                 if (column.columnName in bulkActions) {
-                                    const newOptions = {
-                                       ...bulkActions,
-                                    }
-                                    delete newOptions[column.columnName]
-                                    setBulkActions(newOptions)
-                                    return
-                                 }
-                              }}
-                           />
-                        </Form.Group>
-                     </HorizontalTabPanel>
-                     <HorizontalTabPanel>
-                        <Form.Group>
-                           <Form.Label
-                              htmlFor="Increase By"
-                              title="Increase By"
-                           >
-                              <Flex container alignItems="center">
-                                 <Text as="text1">
-                                    {column.heading} Increase By
-                                 </Text>
-                                 <TextButton
-                                    type="ghost"
-                                    size="sm"
-                                    min="0"
-                                    disabled={
-                                       initialBulkAction[column.columnName]
-                                          .decrease !== 0
-                                    }
-                                    onClick={() => {
-                                       setInitialBulkAction({
-                                          ...initialBulkAction,
-                                          [column.columnName]: {
-                                             ...initialBulkAction[
-                                                column.columnName
-                                             ],
-                                             increase: 0,
-                                          },
-                                       })
-                                       setAdditionalBulkAction(prevState => {
-                                          const newOption = {
-                                             ...prevState,
-                                          }
-                                          delete newOption[column.columnName]
-                                          return newOption
-                                       })
-                                    }}
-                                 >
-                                    Clear
-                                 </TextButton>
-                                 {/* <Tooltip identifier="recipe_price_increase" /> */}
-                              </Flex>
-                           </Form.Label>
-                           <Form.Number
-                              id="priceIncreaseBy"
-                              name="priceIncreaseBy"
-                              min="0"
-                              disabled={
-                                 initialBulkAction[column.columnName]
-                                    .decrease !== 0
-                              }
-                              value={
-                                 initialBulkAction[column.columnName].increase
-                              }
-                              placeholder="Enter price increase by"
-                              onChange={e =>
-                                 setInitialBulkAction({
-                                    ...initialBulkAction,
-                                    [column.columnName]: {
-                                       ...initialBulkAction[column.columnName],
-                                       increase: e.target.value,
-                                    },
-                                 })
-                              }
-                              onBlur={() => {
-                                 if (
-                                    initialBulkAction[column.columnName]
-                                       .increase
-                                 ) {
-                                    setAdditionalBulkAction({
-                                       ...additionalBulkAction,
-                                       [column.columnName]:
-                                          initialBulkAction[column.columnName]
-                                             .increase,
-                                    })
-                                    return
-                                 }
-                                 if (
-                                    column.columnName in additionalBulkAction
-                                 ) {
-                                    const newOptions = {
-                                       ...additionalBulkAction,
-                                    }
-                                    delete newOptions[column.columnName]
-                                    setAdditionalBulkAction(newOptions)
-                                    return
-                                 }
-                              }}
-                           />
-                        </Form.Group>
-                        <Form.Group>
-                           <Form.Label
-                              htmlFor="Price Decrease By"
-                              title="Price Decrease By"
-                           >
-                              <Flex container alignItems="center">
-                                 <Text as="text1">
-                                    {column.heading} Decrease By
-                                 </Text>
-                                 <TextButton
-                                    type="ghost"
-                                    size="sm"
-                                    disabled={
-                                       initialBulkAction[column.columnName]
-                                          .increase !== 0
-                                    }
-                                    onClick={() => {
-                                       setInitialBulkAction({
-                                          ...initialBulkAction,
-                                          [column.columnName]: {
-                                             ...initialBulkAction[
-                                                column.columnName
-                                             ],
-                                             decrease: 0,
-                                          },
-                                       })
-                                       setAdditionalBulkAction(prevState => {
-                                          const newOption = {
-                                             ...prevState,
-                                          }
-                                          delete newOption[column.columnName]
-                                          return newOption
-                                       })
-                                    }}
-                                 >
-                                    Clear
-                                 </TextButton>
-                                 {/* <Tooltip identifier="recipe_price_decrease" /> */}
-                              </Flex>
-                           </Form.Label>
-                           <Form.Number
-                              id="priceDecreaseBy"
-                              name="priceDecreaseBy"
-                              min="0"
-                              disabled={
-                                 initialBulkAction[column.columnName]
-                                    .increase !== 0
-                              }
-                              value={
-                                 initialBulkAction[column.columnName].decrease
-                              }
-                              placeholder="Enter price decrease by"
-                              onChange={e =>
-                                 setInitialBulkAction({
-                                    ...initialBulkAction,
-                                    [column.columnName]: {
-                                       ...initialBulkAction[column.columnName],
-                                       decrease: e.target.value,
-                                    },
-                                 })
-                              }
-                              onBlur={() => {
-                                 if (
-                                    initialBulkAction[column.columnName]
-                                       .decrease
-                                 ) {
-                                    setAdditionalBulkAction({
-                                       ...additionalBulkAction,
-                                       [column.columnName]:
-                                          initialBulkAction[column.columnName]
-                                             .decrease * -1,
-                                    })
-                                    return
-                                 }
-                                 if (
-                                    column.columnName in additionalBulkAction
-                                 ) {
-                                    const newOptions = {
-                                       ...additionalBulkAction,
-                                    }
-                                    delete newOptions[column.columnName]
-                                    setAdditionalBulkAction(newOptions)
-                                    return
-                                 }
-                              }}
-                           />
-                        </Form.Group>
-                     </HorizontalTabPanel>
-                  </HorizontalTabPanels>
-               </HorizontalTabs>
-            </CollapsibleComponent>
-         ))}
-         <Form.Group>
-            <Form.Toggle
-               name="isAvailable"
-               onChange={() => {
-                  setInitialBulkAction(() => ({
-                     ...initialBulkAction,
-                     isAvailable: {
-                        ...initialBulkAction.isAvailable,
-                        isAvailable: !initialBulkAction.isAvailable,
-                     },
+         <Flex container alignItems="center">
+            <Text as="text1">Change Available Status</Text>
+            <TextButton
+               type="ghost"
+               size="sm"
+               onClick={() => {
+                  setInitialBulkAction(prevState => ({
+                     ...prevState,
+                     isAvailable: !prevState.isAvailable,
                   }))
-                  setBulkActions({
-                     ...bulkActions,
-                     isAvailable: !bulkActions.isAvailable,
+                  setBulkActions(prevState => {
+                     delete prevState.isAvailable
+                     return prevState
                   })
                }}
-               value={initialBulkAction.isAvailable.value}
             >
-               Availability
-            </Form.Toggle>
-         </Form.Group>
+               Clear
+            </TextButton>
+         </Flex>
+         <Spacer size="10px" />
+         <ButtonGroup align="left">
+            <RadioGroup
+               options={radioAvailableOption}
+               active={initialBulkAction.isAvailable}
+               onChange={option => {
+                  if (option !== null) {
+                     setBulkActions(prevState => ({
+                        ...prevState,
+                        ...option.payload,
+                     }))
+                     return
+                  }
+                  setBulkActions(prevState => {
+                     const newActions = { ...prevState }
+                     delete newActions['isAvailable']
+                     return newActions
+                  })
+               }}
+            />
+         </ButtonGroup>
+         <Spacer size="10px" />
+
+         <CollapsibleComponent heading="Set Price" key={1}>
+            <HorizontalTabs>
+               <HorizontalTabList>
+                  <HorizontalTab>
+                     <TextButton
+                        type="ghost"
+                        size="sm"
+                        disabled={
+                           'markupOnStandardPriceInPercentage' in bulkActions // in bulk action we are using markupOnStandardPriceInPercentage as it is used in table by this name but in intialBulkAction we are using the same under the name of markupPrice
+                        }
+                        onClick={() => {
+                           setBulkActions(prevData => {
+                              const newData = { ...prevData }
+                              delete newData[
+                                 'markupOnStandardPriceInPercentage'
+                              ]
+                              return newData
+                           })
+                        }}
+                     >
+                        Specific Price
+                     </TextButton>
+                  </HorizontalTab>
+                  <HorizontalTab>
+                     <TextButton
+                        type="ghost"
+                        size="sm"
+                        disabled={'specificPrice' in bulkActions}
+                        onClick={() => {
+                           setBulkActions(prevData => {
+                              const newData = { ...prevData }
+                              delete newData['specificPrice']
+                              return newData
+                           })
+                        }}
+                     >
+                        Markup Price
+                     </TextButton>
+                  </HorizontalTab>
+               </HorizontalTabList>
+               <HorizontalTabPanels>
+                  <HorizontalTabPanel>
+                     <Form.Group>
+                        <Form.Label
+                           htmlFor="specificPrice "
+                           title="specificPrice "
+                        >
+                           <Flex container alignItems="center">
+                              <Text as="text1">Specific Price</Text>
+                              <TextButton
+                                 type="ghost"
+                                 size="sm"
+                                 onClick={() => {
+                                    setInitialBulkAction({
+                                       ...initialBulkAction,
+                                       specificPrice: 0,
+                                    })
+                                    setBulkActions(prevState => {
+                                       const newOption = {
+                                          ...prevState,
+                                       }
+                                       delete newOption['specificPrice']
+                                       return newOption
+                                    })
+                                 }}
+                              >
+                                 Clear
+                              </TextButton>
+                              {/* <Tooltip identifier="recipe_price_increase" /> */}
+                           </Flex>
+                        </Form.Label>
+                        <Form.Number
+                           id="specificPrice"
+                           name="specificPrice"
+                           min="0"
+                           // disabled={initialBulkAction.price.decrease !== 0}
+                           value={initialBulkAction.specificPrice}
+                           placeholder="Enter price"
+                           onChange={e =>
+                              setInitialBulkAction({
+                                 ...initialBulkAction,
+                                 specificPrice: e.target.value,
+                              })
+                           }
+                           onBlur={() => {
+                              if (initialBulkAction.specificPrice) {
+                                 setBulkActions({
+                                    ...bulkActions,
+                                    specificPrice:
+                                       initialBulkAction.specificPrice,
+                                 })
+                                 return
+                              }
+                              if ('specificPrice' in bulkActions) {
+                                 const newOptions = {
+                                    ...bulkActions,
+                                 }
+                                 delete newOptions['specificPrice']
+                                 setBulkActions(newOptions)
+                                 return
+                              }
+                           }}
+                        />
+                     </Form.Group>
+                  </HorizontalTabPanel>
+                  <HorizontalTabPanel>
+                     <Form.Group>
+                        <Form.Label htmlFor="markupPrice " title="markupPrice ">
+                           <Flex container alignItems="center">
+                              <Text as="text1"> Markup Price</Text>
+                              <TextButton
+                                 type="ghost"
+                                 size="sm"
+                                 onClick={() => {
+                                    setInitialBulkAction({
+                                       ...initialBulkAction,
+                                       markupPrice: 0,
+                                    })
+                                    setBulkActions(prevState => {
+                                       const newOption = {
+                                          ...prevState,
+                                       }
+                                       delete newOption[
+                                          'markupOnStandardPriceInPercentage'
+                                       ]
+                                       return newOption
+                                    })
+                                 }}
+                              >
+                                 Clear
+                              </TextButton>
+                              {/* <Tooltip identifier="recipe_price_increase" /> */}
+                           </Flex>
+                        </Form.Label>
+                        <Form.Number
+                           id="markupPrice"
+                           name="markupPrice"
+                           min="0"
+                           // disabled={initialBulkAction.price.decrease !== 0}
+                           value={initialBulkAction.markupPrice}
+                           placeholder="Enter price"
+                           onChange={e =>
+                              setInitialBulkAction({
+                                 ...initialBulkAction,
+                                 markupPrice: e.target.value,
+                              })
+                           }
+                           onBlur={() => {
+                              if (initialBulkAction.markupPrice) {
+                                 setBulkActions({
+                                    ...bulkActions,
+                                    markupOnStandardPriceInPercentage:
+                                       initialBulkAction.markupPrice,
+                                 })
+                                 return
+                              }
+                              if (
+                                 'markupOnStandardPriceInPercentage' in
+                                 bulkActions
+                              ) {
+                                 const newOptions = {
+                                    ...bulkActions,
+                                 }
+                                 delete newOptions[
+                                    'markupOnStandardPriceInPercentage'
+                                 ]
+                                 setBulkActions(newOptions)
+                                 return
+                              }
+                           }}
+                        />
+                     </Form.Group>
+                  </HorizontalTabPanel>
+               </HorizontalTabPanels>
+            </HorizontalTabs>
+         </CollapsibleComponent>
+         <CollapsibleComponent heading="Specific Discount" key={2}>
+            <HorizontalTabs>
+               <HorizontalTabList>
+                  <HorizontalTab>
+                     <TextButton
+                        type="ghost"
+                        size="sm"
+                        disabled={
+                           'markupOnStandardPriceInPercentage' in bulkActions // in bulk action we are using markupOnStandardPriceInPercentage as it is used in table by this name but in intialBulkAction we are using the same under the name of markupPrice
+                        }
+                        onClick={() => {
+                           console.log('Specific Discount')
+                        }}
+                     >
+                        Specific Discount
+                     </TextButton>
+                  </HorizontalTab>
+               </HorizontalTabList>
+               <HorizontalTabPanels>
+                  <HorizontalTabPanel>
+                     <Form.Group>
+                        <Form.Label
+                           htmlFor="specificDiscount"
+                           title="specificDiscount "
+                        >
+                           <Flex container alignItems="center">
+                              <Text as="text1">Specific Discount</Text>
+                              <TextButton
+                                 type="ghost"
+                                 size="sm"
+                                 onClick={() => {
+                                    setInitialBulkAction({
+                                       ...initialBulkAction,
+                                       specificDiscount: 0,
+                                    })
+                                    setBulkActions(prevState => {
+                                       const newOption = {
+                                          ...prevState,
+                                       }
+                                       delete newOption['specificDiscount']
+                                       return newOption
+                                    })
+                                 }}
+                              >
+                                 Clear
+                              </TextButton>
+                              {/* <Tooltip identifier="recipe_price_increase" /> */}
+                           </Flex>
+                        </Form.Label>
+                        <Form.Number
+                           id="specificDiscount"
+                           name="specificDiscount"
+                           min="0"
+                           // disabled={initialBulkAction.price.decrease !== 0}
+                           value={initialBulkAction.specificDiscount}
+                           placeholder="Enter price"
+                           onChange={e =>
+                              setInitialBulkAction({
+                                 ...initialBulkAction,
+                                 specificDiscount: e.target.value,
+                              })
+                           }
+                           onBlur={() => {
+                              if (initialBulkAction.specificDiscount) {
+                                 setBulkActions({
+                                    ...bulkActions,
+                                    specificDiscount:
+                                       initialBulkAction.specificDiscount,
+                                 })
+                                 return
+                              }
+                              if ('specificDiscount' in bulkActions) {
+                                 const newOptions = {
+                                    ...bulkActions,
+                                 }
+                                 delete newOptions['specificDiscount']
+                                 setBulkActions(newOptions)
+                                 return
+                              }
+                           }}
+                        />
+                     </Form.Group>
+                  </HorizontalTabPanel>
+               </HorizontalTabPanels>
+            </HorizontalTabs>
+         </CollapsibleComponent>
          <Spacer size="20px" />
       </>
    )
