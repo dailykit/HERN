@@ -27,14 +27,14 @@ export const OnDemandCart = () => {
          <div className="hern-cart-empty-cart">
             <EmptyCart />
             <span>Oops! Your cart is empty </span>
-            <Button className="hern-cart-go-to-menu-btn" onClick={() => { }}>
+            <Button className="hern-cart-go-to-menu-btn" onClick={() => {}}>
                <Link href="/order">GO TO MENU</Link>
             </Button>
          </div>
       )
    }
    return (
-      <Row>
+      <Row style={{ maxWidth: '1200px', margin: '0 auto' }}>
          <Col span={16}>
             <div className="hern-ondemand-cart__left-card">
                <UserInfo cart={cartState.cart} />
