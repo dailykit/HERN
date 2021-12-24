@@ -366,12 +366,16 @@ const KioskMenu = props => {
 
                      const onRadioClick = e => {
                         setCurrentGroupedProduct(prev => {
-                           return groupedByType.find(
-                              x => x.type === e.target.value
-                           ).products
+                           return groupedByType.find(x => x.type === e).products
                         })
-                        setCurrentGroup(e.target.value)
+                        setCurrentGroup(e)
                      }
+                     useEffect(() => {
+                        const languageTags = document.querySelectorAll(
+                           '[data-translation="true"]'
+                        )
+                        dynamicTrans(languageTags)
+                     }, [currentGroup])
                      return (
                         <>
                            <div id={eachCategory.name} ref={menuRef}></div>
@@ -392,46 +396,49 @@ const KioskMenu = props => {
                            {groupedByType.length > 1 && (
                               <div className="hern-kiosk__menu-product-type">
                                  <Space>
-                                    <Radio.Group
-                                       defaultValue="a"
-                                       style={{ marginTop: 16 }}
-                                       onChange={onRadioClick}
-                                    >
-                                       {groupedByType.map((eachType, index) => {
-                                          return (
-                                             <Radio.Button
-                                                value={eachType.type}
-                                                className="hern-kiosk__menu-product-type-radio-btn"
-                                                style={{
-                                                   backgroundColor:
-                                                      currentGroup ===
-                                                      eachType.type
-                                                         ? config.kioskSettings
-                                                              .theme
-                                                              .primaryColor
-                                                              .value
-                                                         : config.kioskSettings
-                                                              .theme
-                                                              .primaryColorLight
-                                                              .value,
-                                                   color:
-                                                      currentGroup ===
-                                                      eachType.type
-                                                         ? '#ffffff'
-                                                         : config.kioskSettings
-                                                              .theme
-                                                              .primaryColor
-                                                              .value,
-                                                   borderRadius: '0.5em',
-                                                }}
-                                             >
-                                                {eachType.type == 'null'
-                                                   ? t('Others')
-                                                   : eachType.type}
-                                             </Radio.Button>
-                                          )
-                                       })}
-                                    </Radio.Group>
+                                    {groupedByType.map((eachType, index) => {
+                                       return (
+                                          <button
+                                             onClick={() =>
+                                                onRadioClick(eachType.type)
+                                             }
+                                             // value={eachType.type}
+                                             key={index}
+                                             className="hern-kiosk__menu-product-type-radio-btn"
+                                             data-translation="true"
+                                             data-original-value={eachType.type}
+                                             style={{
+                                                backgroundColor:
+                                                   currentGroup ===
+                                                   eachType.type
+                                                      ? config.kioskSettings
+                                                           .theme.primaryColor
+                                                           .value
+                                                      : config.kioskSettings
+                                                           .theme
+                                                           .primaryColorLight
+                                                           .value,
+                                                color:
+                                                   currentGroup ===
+                                                   eachType.type
+                                                      ? '#ffffff'
+                                                      : config.kioskSettings
+                                                           .theme.primaryColor
+                                                           .value,
+                                                borderRadius: '0.5em',
+                                                border:
+                                                   currentGroup ===
+                                                   eachType.type
+                                                      ? `1px solid ${config.kioskSettings.theme.successColor.value}`
+                                                      : 'none',
+                                             }}
+                                          >
+                                             {eachType.type == 'null'
+                                                ? t('Others')
+                                                : eachType.type}
+                                          </button>
+                                       )
+                                    })}
                                  </Space>
                               </div>
                            )}
