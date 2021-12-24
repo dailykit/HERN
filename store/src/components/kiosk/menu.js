@@ -203,6 +203,9 @@ export const MenuSection = props => {
 }
 
 const KioskMenu = props => {
+   //
+   // warning do not use loader in this component
+   //
    const { config, kioskMenus, setCurrentPage } = props
    const { categoryId, changeCategory } = props
 
@@ -214,12 +217,18 @@ const KioskMenu = props => {
       (categoryId && categoryId.toString()) || '0'
    )
 
-   const { t } = useTranslation()
+   const { t, dynamicTrans } = useTranslation()
 
    const onCategorySelect = e => {
       setSelectedCategory(e.key)
       changeCategory(e.key)
    }
+   useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [])
 
    return (
       <Layout style={{ height: 'calc(100vh - 35em)' }}>
@@ -284,6 +293,8 @@ const KioskMenu = props => {
                                        color: `${config.kioskSettings.theme.primaryColor.value}`,
                                     }),
                                  }}
+                                 data-translation="true"
+                                 data-original-value={eachCategory.name}
                               >
                                  {eachCategory.name}
                               </span>
@@ -364,13 +375,17 @@ const KioskMenu = props => {
                      return (
                         <>
                            <div id={eachCategory.name} ref={menuRef}></div>
-                           {eachCategory?.imageUrl ? (
+                           {eachCategory?.bannerImageUrl ? (
                               <img
-                                 src={eachCategory?.imageUrl}
+                                 src={eachCategory?.bannerImageUrl}
                                  className="hern-kiosk__menu-category-banner-img"
                               />
                            ) : (
-                              <p className="hern-kiosk__menu-category-name">
+                              <p
+                                 className="hern-kiosk__menu-category-name"
+                                 data-translation="true"
+                                 data-original-value={eachCategory.name}
+                              >
                                  {eachCategory.name}
                               </p>
                            )}
