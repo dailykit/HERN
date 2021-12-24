@@ -22,6 +22,12 @@ export const handleCartPayment = async (req, res) => {
             }
          })
 
+         // detect if the cart is of cash/cod type
+         const isCashOrCod =
+            cart.availablePaymentOption.supportedPaymentOption
+               .paymentOptionLabel === 'CASH' ||
+            cart.availablePaymentOption.label === 'COD'
+
          if (cartPayments.length > 0) {
             if (
                cartPayments.length > 1 ||
@@ -56,7 +62,7 @@ export const handleCartPayment = async (req, res) => {
                      object: {
                         cartId: cart.id,
                         paymentRetryAttempt: 1,
-                        ...(payload.toUseAvailablePaymentOptionId === 1000 && {
+                        ...(isCashOrCod && {
                            // hardcoded for now
                            paymentStatus: 'SUCCEEDED'
                         }),
@@ -113,7 +119,7 @@ export const handleCartPayment = async (req, res) => {
                   object: {
                      cartId: cart.id,
                      paymentRetryAttempt: 1,
-                     ...(payload.toUseAvailablePaymentOptionId === 1000 && {
+                     ...(isCashOrCod && {
                         paymentStatus: 'SUCCEEDED'
                      }),
                      amount: cart.balancePayment,
