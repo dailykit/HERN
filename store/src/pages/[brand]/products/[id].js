@@ -1,7 +1,10 @@
 import React from 'react'
-import { getPageProps, processExternalFiles } from '../../../utils'
+import {
+   getPageProps,
+   processExternalFiles,
+   renderPageContent,
+} from '../../../utils'
 import { Layout, SEO } from '../../../components'
-import { Product } from '../../../sections/product'
 
 const ProductPage = props => {
    const {
@@ -23,7 +26,7 @@ const ProductPage = props => {
    return (
       <Layout settings={settings} navigationMenus={navigationMenus}>
          <SEO seoSettings={seoSettings} />
-         <Product productId={productId} />
+         {renderPageContent(folds)}
       </Layout>
    )
 }
