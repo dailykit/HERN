@@ -31,23 +31,37 @@ import { BrandManager, BrandManagerProductOption } from './BulkActionTunnel'
 import { logger } from '../../../../utils'
 import { toast } from 'react-toastify'
 import SpecificPriceTunnel from './BulkActionTunnel/Tunnel/specificPriceTunnel'
+import { useWindowSize } from '../../../../hooks'
 
 const LiveMenu = () => {
    const location = useLocation()
+   const { width } = useWindowSize()
 
    console.log('location:::', location)
    return (
       <>
          <Flex>
             <StyledTitle>
-               <Text as="h2">
-                  We are changing product settings for{' '}
-                  {location.state[0].brandName} brand{' '}
-               </Text>
+               {width > 768 ? (
+                  <Text as="h2">
+                     We are changing product settings for{' '}
+                     {location.state[0].brandName} brand{' '}
+                  </Text>
+               ) : (
+                  <Text as="h2">{location.state[0].brandName} Brand </Text>
+               )}
             </StyledTitle>
             <Flex>
                <HorizontalTabs>
-                  <HorizontalTabList>
+                  <HorizontalTabList
+                     style={
+                        width > 500
+                           ? {
+                                justifyContent: 'center',
+                             }
+                           : { marginLeft: '1em', justifyContent: 'flex-start' }
+                     }
+                  >
                      <HorizontalTab>Product</HorizontalTab>
                      <HorizontalTab>By Product Option</HorizontalTab>
                   </HorizontalTabList>
@@ -73,7 +87,7 @@ const LiveMenuProductTable = ({ location }) => {
    const [selectedRows, setSelectedRows] = React.useState([])
    const [popupTunnels, openPopupTunnel, closePopupTunnel] = useTunnel(1)
    const [selectedRowData, setSelectedRowData] = React.useState(null)
-
+   const { width } = useWindowSize()
    const { loading } = useSubscription(COLLECTION_PRODUCTS, {
       variables: {
          brandId: location.state[0].brandId,
@@ -394,6 +408,7 @@ const LiveMenuProductTable = ({ location }) => {
             selectedRows={selectedRows}
             handleGroupBy={handleGroupBy}
             openTunnel={openTunnel}
+            width={width}
          />
          <ReactTabulator
             columns={[selectionColumn, ...columns]}
@@ -420,7 +435,7 @@ const LiveMenuProductTable = ({ location }) => {
             </Tunnel>
          </Tunnels>
          <Tunnels tunnels={popupTunnels}>
-            <Tunnel layer={1} size="sm">
+            <Tunnel layer={1} size="md">
                <SpecificPriceTunnel
                   closeTunnel={closePopupTunnel}
                   selectedRowData={selectedRowData}
@@ -438,7 +453,7 @@ const LiveMenuProductOptionTable = ({ location }) => {
    const [selectedRows, setSelectedRows] = React.useState([])
    const [popupTunnels, openPopupTunnel, closePopupTunnel] = useTunnel(1)
    const [selectedRowData, setSelectedRowData] = React.useState(null)
-
+   const { width } = useWindowSize()
    const { loading } = useSubscription(COLLECTION_PRODUCT_OPTIONS, {
       variables: {
          brandId: location.state[0].brandId,
@@ -782,6 +797,7 @@ const LiveMenuProductOptionTable = ({ location }) => {
             selectedRows={selectedRows}
             handleGroupBy={handleGroupBy}
             openTunnel={openTunnel}
+            width={width}
          />
          <ReactTabulator
             columns={[selectionColumn, ...columns]}
@@ -808,7 +824,7 @@ const LiveMenuProductOptionTable = ({ location }) => {
             </Tunnel>
          </Tunnels>
          <Tunnels tunnels={popupTunnels}>
-            <Tunnel layer={1} size="sm">
+            <Tunnel layer={1} size="md">
                <SpecificPriceTunnel
                   closeTunnel={closePopupTunnel}
                   selectedRowData={selectedRowData}
@@ -873,6 +889,7 @@ const ActionBar = ({
    openTunnel,
    groupByOptions,
    handleGroupBy,
+   width,
 }) => {
    const defaultIDs = () => {
       let arr = []
@@ -908,9 +925,14 @@ const ActionBar = ({
             container
             as="header"
             width="100%"
-            style={{ marginLeft: '1em', paddingBottom: '2em', gap: '3em' }}
-            alignItems="center"
+            style={
+               width > 500
+                  ? { paddingBottom: '2em', gap: '3em' }
+                  : { paddingBottom: '2em' }
+            }
+            alignItems={width > 500 ? 'center' : 'flex-start'}
             justifyContent="flex-start"
+            flexDirection={width > 500 ? 'row' : 'column'}
          >
             <Text as="subtitle">
                {selectedRows.length == 0
@@ -926,13 +948,19 @@ const ActionBar = ({
                   size="sm"
                   disabled={selectedRows.length === 0 ? true : false}
                   onClick={() => openTunnel(1)}
+                  style={
+                     width > 500
+                        ? {
+                             padding: '7px 20px 8px 20px',
+                          }
+                        : { padding: 0 }
+                  }
                >
                   APPLY BULK ACTIONS
                </TextButton>
             </ButtonGroup>
 
             <StyledGroupBy>
-               <Spacer size="5px" xAxis />
                <Text as="text1">Group By:</Text>
                <Spacer size="5px" xAxis />
                <Dropdown

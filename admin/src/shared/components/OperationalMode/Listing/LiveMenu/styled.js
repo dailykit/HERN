@@ -10,4 +10,7 @@ export const StyledTitle = styled.div`
    height: 4em;
    padding: 1em;
    align-items: center;
+   @media (max-width: 780px) {
+      width: 100%;
+   }
 `

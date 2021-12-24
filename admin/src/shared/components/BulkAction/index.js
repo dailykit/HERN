@@ -7,6 +7,11 @@ import {
    Text,
    Flex,
    IconButton,
+   HorizontalTabs,
+   HorizontalTabList,
+   HorizontalTab,
+   HorizontalTabPanels,
+   HorizontalTabPanel,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 
@@ -44,6 +49,7 @@ import { ManageAddOnProducts } from './entities/subscriptionManageAddOnProducts'
 import { SubscriptionDeliveryArea } from './entities/subscriptionDeliveryArea'
 import BrandManagerBulkAction from './entities/brandManager'
 import { logger } from '../../utils'
+import { useWindowSize } from '../../hooks'
 
 const BulkActions = ({
    table,
@@ -55,6 +61,7 @@ const BulkActions = ({
 }) => {
    // ref
    const productOptionsTableRef = React.useRef()
+   const { width } = useWindowSize()
 
    // initial states for entities
    const [initialBulkActionRecipe, setInitialBulkActionRecipe] = React.useState(
@@ -947,14 +954,256 @@ const BulkActions = ({
          toast.error('Incorrect schema or table name!')
       }
    }
+   const ProductName = (
+      <>
+         <Flex width={width < 500 ? '100%' : '50%'}>
+            <Flex
+               container
+               as="header"
+               justifyContent="space-between"
+               padding="0px 0px 10px 0px"
+               flexDirection={width < 500 ? 'column' : 'row'}
+               alignItems={width < 500 ? 'flex-start' : 'center'}
+            >
+               <Text as="h3">{table}</Text>
+               <span
+                  style={{
+                     color: '#919699',
+                     fontStyle: 'italic',
+                     fontWeight: '500',
+                     marginRight: '20px',
+                  }}
+               >
+                  {selectedRows.length}{' '}
+                  {selectedRows.length > 1 ? table + 's' : table} selected{' '}
+               </span>
+            </Flex>
+            <div
+               style={{
+                  height: '48vh',
+                  overflowY: 'auto',
+                  scrollbarWidth: 'thin',
+               }}
+            >
+               {selectedRows.map((item, id) => (
+                  <div
+                     as="title"
+                     style={{
+                        backgroundColor: `${id % 2 === 0 ? '#F4F4F4' : '#fff'}`,
+                        color: '#202020',
+                     }}
+                     key={id}
+                  >
+                     <Flex
+                        container
+                        as="header"
+                        alignItems="center"
+                        justifyContent="space-between"
+                     >
+                        {item[keyName]}
+                        <IconButton
+                           type="ghost"
+                           onClick={() => {
+                              removeSelectedRow(item.id)
+                              setSelectedRows(prevState =>
+                                 prevState.filter(row => row.id !== item.id)
+                              )
+                           }}
+                        >
+                           <RemoveIcon color="#FF5A52" />
+                        </IconButton>
+                     </Flex>
+                  </div>
+               ))}
+            </div>
+         </Flex>
+      </>
+   )
+
+   const CustomizeBulkAction = (
+      <>
+         <Flex width={width < 500 ? '100%' : '50%'} padding="0px 0px 0px 20px">
+            <Flex
+               container
+               justifyContent="space-between"
+               flexDirection={width < 500 ? 'column' : 'row'}
+               alignItems={width < 500 ? 'flex-end' : 'center'}
+            >
+               {width > 500 && <Text as="h3">Bulk Actions</Text>}
+               <TextButton
+                  type="ghost"
+                  size="sm"
+                  onClick={() => {
+                     clearAllActions()
+                  }}
+               >
+                  Clear All Actions
+               </TextButton>
+            </Flex>
+            <Spacer size="8px" />
+            <Flex height="44vh" overflowY="auto">
+               {/* {children} */}
+               {table === 'Recipe' && (
+                  <RecipeBulkAction
+                     initialBulkAction={initialBulkActionRecipe}
+                     setInitialBulkAction={setInitialBulkActionRecipe}
+                     bulkActions={bulkActions}
+                     setBulkActions={setBulkActions}
+                  />
+               )}
+               {table === 'Ingredient' && (
+                  <IngredientBulkAction
+                     initialBulkAction={initialBulkActionIngredient}
+                     setInitialBulkAction={setInitialBulkActionIngredient}
+                     bulkActions={bulkActions}
+                     setBulkActions={setBulkActions}
+                  />
+               )}
+               {table === 'Product' && (
+                  <ProductBulkAction
+                     initialBulkAction={initialBulkActionProduct}
+                     setInitialBulkAction={setInitialBulkActionProduct}
+                     bulkActions={bulkActions}
+                     setBulkActions={setBulkActions}
+                     additionalBulkAction={additionalBulkAction}
+                     setAdditionalBulkAction={setAdditionalBulkAction}
+                  />
+               )}
+               {table === 'Product Options' && (
+                  <ProductOptionsBulkAction
+                     ref={productOptionsTableRef}
+                     initialBulkAction={initialBulkActionProductOption}
+                     setInitialBulkAction={setInitialBulkActionProductOption}
+                     bulkActions={bulkActions}
+                     setBulkActions={setBulkActions}
+                     additionalBulkAction={additionalBulkAction}
+                     setAdditionalBulkAction={setAdditionalBulkAction}
+                  />
+               )}
+               {table === 'Menu Product' && (
+                  <SubscriptionOccurrenceProductBulkAction
+                     initialBulkAction={
+                        initialBulkActionSubscriptionMenuProduct
+                     }
+                     setInitialBulkAction={
+                        setInitialBulkActionSubscriptionMenuProduct
+                     }
+                     bulkActions={bulkActions}
+                     setBulkActions={setBulkActions}
+                     additionalBulkAction={additionalBulkAction}
+                     setAdditionalBulkAction={setAdditionalBulkAction}
+                  />
+               )}
+               {table === 'Subscription Occurrence' && (
+                  <SubscriptionOccurrence
+                     initialBulkAction={initialBulkActionSubscriptionOccurrence}
+                     setInitialBulkAction={
+                        setInitialBulkActionSubscriptionOccurrence
+                     }
+                     bulkActions={bulkActions}
+                     setBulkActions={setBulkActions}
+                  />
+               )}
+               {table === 'Manage Menu Products' && (
+                  <ManageMenuProducts
+                     initialBulkAction={
+                        initialBulkActionManageMenuProductsSubscription
+                     }
+                     setInitialBulkAction={
+                        setInitialBulkActionManageMenuProductsSubscription
+                     }
+                     bulkActions={bulkActions}
+                     setBulkActions={setBulkActions}
+                     additionalBulkAction={additionalBulkAction}
+                     setAdditionalBulkAction={setAdditionalBulkAction}
+                  />
+               )}
+               {table === 'Manage Add On Products' && (
+                  <ManageAddOnProducts
+                     initialBulkAction={
+                        initialBulkActionManageAddOnProductsSubscription
+                     }
+                     setInitialBulkAction={
+                        setInitialBulkActionManageAddOnProductsSubscription
+                     }
+                     bulkActions={bulkActions}
+                     setBulkActions={setBulkActions}
+                     additionalBulkAction={additionalBulkAction}
+                     setAdditionalBulkAction={setAdditionalBulkAction}
+                  />
+               )}
+               {table === 'Delivery Area' && (
+                  <SubscriptionDeliveryArea
+                     initialBulkAction={
+                        initialBulkActionSubscriptionDeliveryArea
+                     }
+                     setInitialBulkAction={
+                        setInitialBulkActionSubscriptionDeliveryArea
+                     }
+                     bulkActions={bulkActions}
+                     setBulkActions={setBulkActions}
+                     additionalBulkAction={additionalBulkAction}
+                     setAdditionalBulkAction={setAdditionalBulkAction}
+                  />
+               )}
+               {(table === 'Brand Product' ||
+                  table === 'Brand Location Product') && (
+                  <BrandManagerBulkAction
+                     initialBulkAction={initialBulkActionBrandManager}
+                     setInitialBulkAction={setInitialBulkActionBrandManager}
+                     bulkActions={bulkActions}
+                     setBulkActions={setBulkActions}
+                     additionalBulkAction={additionalBulkAction}
+                     setAdditionalBulkAction={setAdditionalBulkAction}
+                  />
+               )}
+               {(table === 'Brand Product Option' ||
+                  table === 'Brand Location Product Option') && (
+                  <BrandManagerBulkAction
+                     initialBulkAction={
+                        initialBulkActionBrandManagerProductOption
+                     }
+                     setInitialBulkAction={
+                        setInitialBulkActionBrandManagerProductOption
+                     }
+                     bulkActions={bulkActions}
+                     setBulkActions={setBulkActions}
+                     additionalBulkAction={additionalBulkAction}
+                     setAdditionalBulkAction={setAdditionalBulkAction}
+                  />
+               )}
+            </Flex>
+            <Spacer size="16px" />
+            <Flex container alignItems="center" justifyContent="flex-end">
+               <TextButton
+                  type="solid"
+                  size="md"
+                  disabled={
+                     selectedRows.length > 0 &&
+                     (Object.keys(bulkActions).length !== 0 ||
+                     Object.keys(additionalBulkAction).length !== 0
+                        ? false
+                        : true)
+                  }
+                  onClick={() => {
+                     setShowPopup(true)
+                     setPopupHeading('Save All Changes')
+                  }}
+               >
+                  Save Changes
+               </TextButton>
+            </Flex>
+         </Flex>
+      </>
+   )
 
    return (
       <>
          <TunnelHeader
-            title="Apply Bulk Actions"
+            title={width < 500 ? 'Bulk Action' : 'Apply Bulk Actions'}
             close={() => close(1)}
             right={{
-               title: 'Delete Selected Data',
+               title: width > 500 ? 'Delete Selected Data' : 'Delete',
                type: 'outline',
                variant: 'danger',
                action: function () {
@@ -976,254 +1225,38 @@ const BulkActions = ({
                table={table}
                setSelectedRows={setSelectedRows}
             />
-            <Flex
-               container
-               as="header"
-               width="100%"
-               justifyContent="flex-start"
-            >
-               <Flex width="50%">
-                  <Flex
-                     container
-                     as="header"
-                     alignItems="center"
-                     justifyContent="space-between"
-                     padding="0px 0px 10px 0px"
-                  >
-                     <Text as="h3">{table}</Text>
-                     <span
-                        style={{
-                           color: '#919699',
-                           fontStyle: 'italic',
-                           fontWeight: '500',
-                           marginRight: '20px',
-                        }}
-                     >
-                        {selectedRows.length}{' '}
-                        {selectedRows.length > 1 ? table + 's' : table} selected{' '}
-                     </span>
-                  </Flex>
-                  <div
-                     style={{
-                        height: '48vh',
-                        overflowY: 'auto',
-                        scrollbarWidth: 'thin',
-                     }}
-                  >
-                     {selectedRows.map((item, id) => (
-                        <div
-                           as="title"
-                           style={{
-                              backgroundColor: `${
-                                 id % 2 === 0 ? '#F4F4F4' : '#fff'
-                              }`,
-                              color: '#202020',
-                           }}
-                           key={id}
-                        >
-                           <Flex
-                              container
-                              as="header"
-                              alignItems="center"
-                              justifyContent="space-between"
-                           >
-                              {item[keyName]}
-                              <IconButton
-                                 type="ghost"
-                                 onClick={() => {
-                                    removeSelectedRow(item.id)
-                                    setSelectedRows(prevState =>
-                                       prevState.filter(
-                                          row => row.id !== item.id
-                                       )
-                                    )
-                                 }}
-                              >
-                                 <RemoveIcon color="#FF5A52" />
-                              </IconButton>
-                           </Flex>
-                        </div>
-                     ))}
-                  </div>
+
+            {width < 500 ? (
+               <Flex
+                  container
+                  as="header"
+                  width="100%"
+                  justifyContent="flex-start"
+               >
+                  <HorizontalTabs>
+                     <HorizontalTabList>
+                        <HorizontalTab>Product</HorizontalTab>
+                        <HorizontalTab>Bulk Actions</HorizontalTab>
+                     </HorizontalTabList>
+                     <HorizontalTabPanels>
+                        <HorizontalTabPanel>{ProductName}</HorizontalTabPanel>
+                        <HorizontalTabPanel>
+                           {CustomizeBulkAction}
+                        </HorizontalTabPanel>
+                     </HorizontalTabPanels>
+                  </HorizontalTabs>
                </Flex>
-               <Flex width="50%" padding="0px 0px 0px 20px">
-                  <Flex
-                     container
-                     justifyContent="space-between"
-                     alignItems="center"
-                  >
-                     <Text as="h3">Bulk Actions</Text>
-                     <TextButton
-                        type="ghost"
-                        size="sm"
-                        onClick={() => {
-                           clearAllActions()
-                        }}
-                     >
-                        Clear All Actions
-                     </TextButton>
-                  </Flex>
-                  <Spacer size="8px" />
-                  <Flex height="44vh" overflowY="auto">
-                     {/* {children} */}
-                     {table === 'Recipe' && (
-                        <RecipeBulkAction
-                           initialBulkAction={initialBulkActionRecipe}
-                           setInitialBulkAction={setInitialBulkActionRecipe}
-                           bulkActions={bulkActions}
-                           setBulkActions={setBulkActions}
-                        />
-                     )}
-                     {table === 'Ingredient' && (
-                        <IngredientBulkAction
-                           initialBulkAction={initialBulkActionIngredient}
-                           setInitialBulkAction={setInitialBulkActionIngredient}
-                           bulkActions={bulkActions}
-                           setBulkActions={setBulkActions}
-                        />
-                     )}
-                     {table === 'Product' && (
-                        <ProductBulkAction
-                           initialBulkAction={initialBulkActionProduct}
-                           setInitialBulkAction={setInitialBulkActionProduct}
-                           bulkActions={bulkActions}
-                           setBulkActions={setBulkActions}
-                           additionalBulkAction={additionalBulkAction}
-                           setAdditionalBulkAction={setAdditionalBulkAction}
-                        />
-                     )}
-                     {table === 'Product Options' && (
-                        <ProductOptionsBulkAction
-                           ref={productOptionsTableRef}
-                           initialBulkAction={initialBulkActionProductOption}
-                           setInitialBulkAction={
-                              setInitialBulkActionProductOption
-                           }
-                           bulkActions={bulkActions}
-                           setBulkActions={setBulkActions}
-                           additionalBulkAction={additionalBulkAction}
-                           setAdditionalBulkAction={setAdditionalBulkAction}
-                        />
-                     )}
-                     {table === 'Menu Product' && (
-                        <SubscriptionOccurrenceProductBulkAction
-                           initialBulkAction={
-                              initialBulkActionSubscriptionMenuProduct
-                           }
-                           setInitialBulkAction={
-                              setInitialBulkActionSubscriptionMenuProduct
-                           }
-                           bulkActions={bulkActions}
-                           setBulkActions={setBulkActions}
-                           additionalBulkAction={additionalBulkAction}
-                           setAdditionalBulkAction={setAdditionalBulkAction}
-                        />
-                     )}
-                     {table === 'Subscription Occurrence' && (
-                        <SubscriptionOccurrence
-                           initialBulkAction={
-                              initialBulkActionSubscriptionOccurrence
-                           }
-                           setInitialBulkAction={
-                              setInitialBulkActionSubscriptionOccurrence
-                           }
-                           bulkActions={bulkActions}
-                           setBulkActions={setBulkActions}
-                        />
-                     )}
-                     {table === 'Manage Menu Products' && (
-                        <ManageMenuProducts
-                           initialBulkAction={
-                              initialBulkActionManageMenuProductsSubscription
-                           }
-                           setInitialBulkAction={
-                              setInitialBulkActionManageMenuProductsSubscription
-                           }
-                           bulkActions={bulkActions}
-                           setBulkActions={setBulkActions}
-                           additionalBulkAction={additionalBulkAction}
-                           setAdditionalBulkAction={setAdditionalBulkAction}
-                        />
-                     )}
-                     {table === 'Manage Add On Products' && (
-                        <ManageAddOnProducts
-                           initialBulkAction={
-                              initialBulkActionManageAddOnProductsSubscription
-                           }
-                           setInitialBulkAction={
-                              setInitialBulkActionManageAddOnProductsSubscription
-                           }
-                           bulkActions={bulkActions}
-                           setBulkActions={setBulkActions}
-                           additionalBulkAction={additionalBulkAction}
-                           setAdditionalBulkAction={setAdditionalBulkAction}
-                        />
-                     )}
-                     {table === 'Delivery Area' && (
-                        <SubscriptionDeliveryArea
-                           initialBulkAction={
-                              initialBulkActionSubscriptionDeliveryArea
-                           }
-                           setInitialBulkAction={
-                              setInitialBulkActionSubscriptionDeliveryArea
-                           }
-                           bulkActions={bulkActions}
-                           setBulkActions={setBulkActions}
-                           additionalBulkAction={additionalBulkAction}
-                           setAdditionalBulkAction={setAdditionalBulkAction}
-                        />
-                     )}
-                     {(table === 'Brand Product' ||
-                        table === 'Brand Location Product') && (
-                        <BrandManagerBulkAction
-                           initialBulkAction={initialBulkActionBrandManager}
-                           setInitialBulkAction={
-                              setInitialBulkActionBrandManager
-                           }
-                           bulkActions={bulkActions}
-                           setBulkActions={setBulkActions}
-                           additionalBulkAction={additionalBulkAction}
-                           setAdditionalBulkAction={setAdditionalBulkAction}
-                        />
-                     )}
-                     {(table === 'Brand Product Option' ||
-                        table === 'Brand Location Product Option') && (
-                        <BrandManagerBulkAction
-                           initialBulkAction={
-                              initialBulkActionBrandManagerProductOption
-                           }
-                           setInitialBulkAction={
-                              setInitialBulkActionBrandManagerProductOption
-                           }
-                           bulkActions={bulkActions}
-                           setBulkActions={setBulkActions}
-                           additionalBulkAction={additionalBulkAction}
-                           setAdditionalBulkAction={setAdditionalBulkAction}
-                        />
-                     )}
-                  </Flex>
-                  <Spacer size="16px" />
-                  <Flex container alignItems="center" justifyContent="flex-end">
-                     <TextButton
-                        type="solid"
-                        size="md"
-                        disabled={
-                           selectedRows.length > 0 &&
-                           (Object.keys(bulkActions).length !== 0 ||
-                           Object.keys(additionalBulkAction).length !== 0
-                              ? false
-                              : true)
-                        }
-                        onClick={() => {
-                           setShowPopup(true)
-                           setPopupHeading('Save All Changes')
-                        }}
-                     >
-                        Save Changes
-                     </TextButton>
-                  </Flex>
+            ) : (
+               <Flex
+                  container
+                  as="header"
+                  width="100%"
+                  justifyContent="flex-start"
+               >
+                  {ProductName}
+                  {CustomizeBulkAction}
                </Flex>
-            </Flex>
+            )}
          </TunnelBody>
       </>
    )

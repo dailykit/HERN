@@ -44,7 +44,7 @@ const BrandLocationManagerList = ({ closeTunnel }) => {
    return (
       <>
          <TunnelHeader
-            title="Select Brand Location"
+            title="Select Brand Name"
             close={() => closeTunnel(1)}
             nextAction="Done"
          />

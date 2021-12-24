@@ -38,7 +38,9 @@ const BrandLocationTunnel = ({ selectedBrand, closeTunnel }) => {
    return (
       <>
          <TunnelHeader
-            title="Select Brand Location for"
+            title={
+               'Select Brand Location for ' + selectedBrand.brandName + ' Brand'
+            }
             close={() => closeTunnel(1)}
             nextAction="Done"
          />
