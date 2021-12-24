@@ -1537,6 +1537,7 @@ export const PRODUCT_DETAILS = gql`
             simpleRecipeYield {
                id
                yield
+               nutritionalInfo
                sachets: ingredientSachets {
                   isVisible
                   slipName
