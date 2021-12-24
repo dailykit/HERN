@@ -52,7 +52,47 @@ export const COLLECTION_PRODUCTS = gql`
       }
    }
 `
+export const COLLECTION_PRODUCT_OPTIONS = gql`
+   subscription collectionProductOptions(
+      $brandId: Int!
+      $brandId1: Int!
+      $brand_locationId: Int!
+   ) {
+      productOptions(order_by: { id: asc }) {
+         id
+         price
+         productPrice_brand_locations(
+            where: {
+               brandId: { _eq: $brandId1 }
+               brand_locationId: { _eq: $brand_locationId }
+            }
+         ) {
+            id
+            isPublished
+            isAvailable
+            markupOnStandardPriceInPercentage
+            specificPrice
+            specificDiscount
+         }
+         product {
+            name
 
+            collection_categories(
+               where: {
+                  collection_productCategory: {
+                     collection: { brands: { brandId: { _eq: $brandId } } }
+                  }
+               }
+               limit: 1
+            ) {
+               collection_productCategory {
+                  productCategoryName
+               }
+            }
+         }
+      }
+   }
+`
 export const BRANDS_LOCATION_ID = gql`
    subscription brandLocationId($where: brands_brand_bool_exp!) {
       brandsAggregate(order_by: { id: asc }, where: $where) {
@@ -83,7 +123,9 @@ export const PRODUCT_PRICE_BRAND_LOCATION = gql`
    }
 `
 export const RESET_BRAND_MANAGER = gql`
-   mutation MyMutation($where: products_productPrice_brand_location_bool_exp!) {
+   mutation resetProduct(
+      $where: products_productPrice_brand_location_bool_exp!
+   ) {
       delete_products_productPrice_brand_location(where: $where) {
          affected_rows
       }

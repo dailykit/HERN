@@ -1,7 +1,7 @@
 import React from 'react'
 import BulkActions from '../../../../BulkAction'
 
-export const BrandManager = ({
+export const BrandLocationManager = ({
    close,
    selectedRows,
    removeSelectedRow,
@@ -13,12 +13,12 @@ export const BrandManager = ({
          removeSelectedRow={removeSelectedRow}
          selectedRows={selectedRows}
          setSelectedRows={setSelectedRows}
-         table="Brand Product"
+         table="Brand Location Product"
          keyName="name"
       />
    </>
 )
-export const BrandManagerProductOption = ({
+export const BrandLocationManagerProductOption = ({
    close,
    selectedRows,
    removeSelectedRow,
@@ -30,7 +30,7 @@ export const BrandManagerProductOption = ({
          removeSelectedRow={removeSelectedRow}
          selectedRows={selectedRows}
          setSelectedRows={setSelectedRows}
-         table="Brand Product Option"
+         table="Brand Location Product Option"
          keyName="name"
       />
    </>

@@ -11,7 +11,7 @@ const Main = () => {
             <Route path="/operationMode" component={ManagerLevel} exact />
             <Route
                path="/operationMode/brandLocation:id"
-               component={LiveMenu}
+               component={LiveMenuBrandLocation}
                exact
             />
             <Route path="/operationMode/brand-:id" component={LiveMenu} exact />

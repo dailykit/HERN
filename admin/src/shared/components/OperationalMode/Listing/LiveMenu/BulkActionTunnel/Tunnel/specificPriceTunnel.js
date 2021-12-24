@@ -44,36 +44,70 @@ const SpecificPriceTunnel = ({ closeTunnel, selectedRowData }) => {
    console.log('selectedRowData', selectedRowData)
    const SpecificDataHandler = () => {
       try {
-         if (selectedRowData.brand_locationId) {
-            const newData = {
-               ...specificData,
-               productId: selectedRowData.id,
-               brand_locationId: selectedRowData.brand_locationId,
+         if (selectedRowData.specificId === 'productOptionId') {
+            if (selectedRowData.cellData.brand_locationId) {
+               const newData = {
+                  ...specificData,
+                  productOptionId: selectedRowData.cellData.id,
+                  brand_locationId: selectedRowData.cellData.brand_locationId,
+               }
+               console.log('new data', newData)
+               upsertSpecificData({
+                  variables: {
+                     objects: newData,
+                     constraint:
+                        'productPrice_brand_location_brand_locationId_productOptionId_ke',
+                     update_columns: Object.keys(specificData),
+                  },
+               })
+            } else {
+               const newData = {
+                  ...specificData,
+                  brandId: selectedRowData.cellData.brandId,
+                  productOptionId: selectedRowData.cellData.id,
+               }
+               console.log('new data', newData)
+               upsertSpecificData({
+                  variables: {
+                     objects: newData,
+                     constraint:
+                        'productPrice_brand_location_productOptionId_brandId_key',
+                     update_columns: Object.keys(specificData), // keys of object which stored the customized data
+                  },
+               })
             }
-            console.log('new data', newData)
-            upsertSpecificData({
-               variables: {
-                  objects: newData,
-                  constraint:
-                     'productPrice_brand_location_brandId_brand_locationId_productId_',
-                  update_columns: Object.keys(specificData),
-               },
-            })
          } else {
-            const newData = {
-               ...specificData,
-               brandId: selectedRowData.brandId,
-               productId: selectedRowData.id,
+            if (selectedRowData.cellData.brand_locationId) {
+               const newData = {
+                  ...specificData,
+                  productId: selectedRowData.cellData.id,
+                  brand_locationId: selectedRowData.cellData.brand_locationId,
+               }
+               console.log('new data', newData)
+               upsertSpecificData({
+                  variables: {
+                     objects: newData,
+                     constraint:
+                        'productPrice_brand_location_brand_locationId_productId_key',
+                     update_columns: Object.keys(specificData),
+                  },
+               })
+            } else {
+               const newData = {
+                  ...specificData,
+                  brandId: selectedRowData.cellData.brandId,
+                  productId: selectedRowData.cellData.id,
+               }
+               console.log('new data', newData)
+               upsertSpecificData({
+                  variables: {
+                     objects: newData,
+                     constraint:
+                        'productPrice_brand_location_brandId_productId_key',
+                     update_columns: Object.keys(specificData), // keys of object which stored the customized data
+                  },
+               })
             }
-            console.log('new data', newData)
-            upsertSpecificData({
-               variables: {
-                  objects: newData,
-                  constraint:
-                     'productPrice_brand_location_brandId_productId_key',
-                  update_columns: Object.keys(specificData), // keys of object which stored the customized data
-               },
-            })
          }
       } catch (error) {
          console.log('error for constrints', error)

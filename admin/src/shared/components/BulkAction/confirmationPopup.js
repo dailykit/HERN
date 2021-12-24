@@ -66,6 +66,9 @@ export default function ConfirmationPopup({
                case 'Brand Product':
                   keyName = 'selected-rows-id_brand-manager_table'
                   break
+               case 'Brand Product Option':
+                  keyName =
+                     'selected-rows-id_brand-manager-option-product_table'
                default:
                   keyName = 'selected-rows-id_ingredients_table'
             }

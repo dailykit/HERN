@@ -246,6 +246,16 @@ const BulkActions = ({
          markupPrice: 0,
          specificDiscount: 0,
       })
+   const [
+      initialBulkActionBrandManagerProductOption,
+      setInitialBulkActionBrandManagerProductOption,
+   ] = React.useState({
+      isPublished: false,
+      isAvailable: false,
+      specificPrice: 0,
+      markupPrice: 0,
+      specificDiscount: 0,
+   })
    // additional bulk actions (actions which not to be set)
    const [additionalBulkAction, setAdditionalBulkAction] = React.useState({})
 
@@ -431,8 +441,17 @@ const BulkActions = ({
             isPickupActive: !prevState.isPickupActive,
             subscriptionPickupOptionId: null,
          }))
-      } else if (table === 'Product Manager') {
+      } else if (table === 'Brand Product') {
          setInitialBulkActionBrandManager(prevState => ({
+            ...prevState,
+            isPublished: !prevState.isPublished,
+            isAvailable: !prevState.isAvailable,
+            specificPrice: 0,
+            markupPrice: 0,
+            specificDiscount: 0,
+         }))
+      } else if (table === 'Brand Product Option') {
+         setInitialBulkActionBrandManagerProductOption(prevState => ({
             ...prevState,
             isPublished: !prevState.isPublished,
             isAvailable: !prevState.isAvailable,
@@ -732,6 +751,12 @@ const BulkActions = ({
             return updateSubscriptionDeliveryArea
          case 'Brand Product':
             return upsertBrandManager
+         case 'Brand Product Option':
+            return upsertBrandManager
+         case 'Brand Location Product':
+            return upsertBrandManager
+         case 'Brand Location Product Option':
+            return upsertBrandManager
          default:
             return null
       }
@@ -838,6 +863,7 @@ const BulkActions = ({
                   },
                })
             } else if (table === 'Brand Product') {
+               console.log('SelectedRows', selectedRows)
                const newData = selectedRows.map(eachId => ({
                   ...newBulkAction,
                   productId: eachId.id,
@@ -850,6 +876,59 @@ const BulkActions = ({
                      objects: newData,
                      constraint:
                         'productPrice_brand_location_brandId_productId_key',
+                     update_columns: Object.keys(newBulkAction),
+                  },
+               })
+            } else if (table === 'Brand Product Option') {
+               console.log('SelectedRows', selectedRows)
+
+               const newData = selectedRows.map(eachId => ({
+                  ...newBulkAction,
+                  productOptionId: eachId.id,
+                  brandId: eachId.brandId,
+               }))
+               console.log('newData', newData)
+               console.log('objects key', Object.keys(newBulkAction))
+               fn({
+                  variables: {
+                     objects: newData,
+                     constraint:
+                        'productPrice_brand_location_productOptionId_brandId_key',
+                     update_columns: Object.keys(newBulkAction),
+                  },
+               })
+            } else if (table === 'Brand Location Product') {
+               console.log('SelectedRows', selectedRows)
+               const newData = selectedRows.map(eachId => ({
+                  ...newBulkAction,
+                  productId: eachId.id,
+                  brand_locationId: eachId.brand_locationId,
+               }))
+               console.log('newData', newData)
+               console.log('objects key', Object.keys(newBulkAction))
+               fn({
+                  variables: {
+                     objects: newData,
+                     constraint:
+                        'productPrice_brand_location_brand_locationId_productId_key',
+                     update_columns: Object.keys(newBulkAction),
+                  },
+               })
+            } else if (table === 'Brand Location Product Option') {
+               console.log('SelectedRows', selectedRows)
+
+               const newData = selectedRows.map(eachId => ({
+                  ...newBulkAction,
+                  productOptionId: eachId.id,
+                  brand_locationId: eachId.brand_locationId,
+               }))
+               console.log('newData', newData)
+               console.log('objects key', Object.keys(newBulkAction))
+               fn({
+                  variables: {
+                     objects: newData,
+                     constraint:
+                        'productPrice_brand_location_brand_locationId_productOptionId_ke',
                      update_columns: Object.keys(newBulkAction),
                   },
                })
@@ -1094,11 +1173,27 @@ const BulkActions = ({
                            setAdditionalBulkAction={setAdditionalBulkAction}
                         />
                      )}
-                     {table === 'Brand Product' && (
+                     {(table === 'Brand Product' ||
+                        table === 'Brand Location Product') && (
                         <BrandManagerBulkAction
                            initialBulkAction={initialBulkActionBrandManager}
                            setInitialBulkAction={
                               setInitialBulkActionBrandManager
+                           }
+                           bulkActions={bulkActions}
+                           setBulkActions={setBulkActions}
+                           additionalBulkAction={additionalBulkAction}
+                           setAdditionalBulkAction={setAdditionalBulkAction}
+                        />
+                     )}
+                     {(table === 'Brand Product Option' ||
+                        table === 'Brand Location Product Option') && (
+                        <BrandManagerBulkAction
+                           initialBulkAction={
+                              initialBulkActionBrandManagerProductOption
+                           }
+                           setInitialBulkAction={
+                              setInitialBulkActionBrandManagerProductOption
                            }
                            bulkActions={bulkActions}
                            setBulkActions={setBulkActions}
