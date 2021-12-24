@@ -47,3 +47,4 @@ export {
    PayButton,
 }
 export * from './userInfo'
+export * from './nutrition'

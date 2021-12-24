@@ -1,16 +1,13 @@
 import React from 'react'
 import { useQuery } from '@apollo/react-hooks'
 import { PRODUCT_DETAILS } from '../../graphql'
-import { CartContext, onDemandMenuContext } from '../../context'
 import { useConfig } from '../../lib'
-import { Recipe, ProductCard, Loader } from '../../components'
+import { Recipe, ProductCard, Loader, Nutritions } from '../../components'
+import { useRouter } from 'next/router'
 
-export const Product = ({ productId }) => {
-   console.log(productId)
-   const { cartState, addToCart } = React.useContext(CartContext)
-   const { onDemandMenu } = React.useContext(onDemandMenuContext)
-   const { isMenuLoading, allProductIds, categories } = onDemandMenu
-   const [hydratedMenu, setHydratedMenu] = React.useState([])
+export const Product = () => {
+   const router = useRouter()
+   const { id } = router.query
    const [status, setStatus] = React.useState('loading')
    const { brand } = useConfig()
    const [productDetails, setProductDetails] = React.useState({})
@@ -27,9 +24,9 @@ export const Product = ({ productId }) => {
    const { loading: productsLoading, error: productsError } = useQuery(
       PRODUCT_DETAILS,
       {
-         skip: !productId,
+         skip: !id,
          variables: {
-            id: productId,
+            id: Number(id),
             priceArgs: argsForByLocation,
             discountArgs: argsForByLocation,
             defaultCartItemArgs: argsForByLocation,
@@ -67,7 +64,6 @@ export const Product = ({ productId }) => {
                   customAreaFlex={false}
                />
             </div>
-
             <div className="hern-product-section__product-details">
                <ProductCard
                   data={productDetails}
@@ -83,6 +79,13 @@ export const Product = ({ productId }) => {
          </div>
          <div className="hern-product-recipe-section">
             <Recipe productOption={productDetails?.productOptions[0]} />
+         </div>
+         <div className="hern-product-nutrition-section">
+            <Nutritions
+               simpleRecipeYield={
+                  productDetails?.productOptions[0]?.simpleRecipeYield
+               }
+            />
          </div>
       </>
    )
