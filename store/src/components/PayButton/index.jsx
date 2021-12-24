@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import isEmpty from 'lodash/isEmpty'
 import { Skeleton } from 'antd'
@@ -21,20 +21,20 @@ export default function PayButton({ children, cartId = null, ...props }) {
       setIsProcessingPayment,
       updatePaymentState,
       initializePayment,
+      setPaymentInfo,
    } = usePayment()
 
-   // cart availablePaymentOptions query
    // query for fetching available payment options
-   // const {
-   //    loading,
-   //    error,
-   //    data: { cart = {} } = {},
-   // } = useSubscription(QUERIES.GET_PAYMENT_OPTIONS, {
-   //    skip: !cartId,
-   //    variables: {
-   //       id: cartId,
-   //    },
-   // })
+   const {
+      loading,
+      error,
+      data: { cart = {} } = {},
+   } = useSubscription(QUERIES.GET_PAYMENT_OPTIONS, {
+      skip: !cartId,
+      variables: {
+         id: cartId,
+      },
+   })
 
    // update cart mutation
    const [updateCart] = useMutation(QUERIES.UPDATE_CART, {
@@ -77,9 +77,8 @@ export default function PayButton({ children, cartId = null, ...props }) {
                   id: cartId,
                   _inc: { paymentRetryAttempt: 1 },
                   _set: {
-                     toUseAvailablePaymentOptionId: isKioskMode
-                        ? kioskPaymentOption?.terminal
-                        : paymentInfo?.selectedAvailablePaymentOption?.id,
+                     toUseAvailablePaymentOptionId:
+                        paymentInfo?.selectedAvailablePaymentOption?.id,
                      ...(!isEmpty(profileInfo) && {
                         customerInfo: {
                            customerEmail: profileInfo?.email,
@@ -125,15 +124,30 @@ export default function PayButton({ children, cartId = null, ...props }) {
       }
    }
 
+   useEffect(() => {
+      if (!loading && !isEmpty(cart)) {
+         setPaymentInfo({
+            selectedAvailablePaymentOption: {
+               ...paymentInfo.selectedAvailablePaymentOption,
+               ...cart.availablePaymentOptionToCart[0],
+            },
+         })
+      }
+   }, [cart])
+
    return (
       <>
-         <Button
-            onClick={onPayClickHandler}
-            disabled={!Boolean(isValid())}
-            {...props}
-         >
-            {children}
-         </Button>
+         {loading ? (
+            <Skeleton.Button active size="large" />
+         ) : (
+            <Button
+               onClick={onPayClickHandler}
+               disabled={!Boolean(isValid())}
+               {...props}
+            >
+               {children}
+            </Button>
+         )}
       </>
    )
 }
