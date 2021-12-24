@@ -37,8 +37,10 @@ function useTerminalPay() {
                id: updateCartPayment.cartId,
                _inc: { paymentRetryAttempt: 1 },
                _set: {
-                  toUseAvailablePaymentOptionId:
-                     paymentOptionRef.current.codPaymentOptionId,
+                  ...(paymentOptionRef.current && {
+                     toUseAvailablePaymentOptionId:
+                        paymentOptionRef.current.codPaymentOptionId,
+                  }),
                },
             },
          })
@@ -81,11 +83,13 @@ function useTerminalPay() {
    }
 
    const cancelTerminalPayment = async ({
-      codPaymentOptionId,
+      codPaymentOptionId = null,
       cartPayment,
    }) => {
       console.log('cancelling terminal payment')
-      paymentOptionRef.current = { codPaymentOptionId }
+      paymentOptionRef.current = codPaymentOptionId
+         ? { codPaymentOptionId }
+         : null
       const terminalResponseData = {
          cartPaymentId: cartPayment.id,
          status: 'cancelled',
