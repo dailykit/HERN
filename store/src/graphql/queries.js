@@ -1845,6 +1845,7 @@ export const LOCATION_KIOSK = gql`
          internalLocationKioskLabel
          kioskModuleConfig
          locationId
+         printerId
       }
    }
 `

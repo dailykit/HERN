@@ -223,3 +223,4 @@ Require stack:
 - C:\Users\Deepak Negi\Desktop\DailyKit\HERN\server\index.js
 - C:\Users\Deepak Negi\Desktop\DailyKit\HERN\main.js
 - C:\Users\Deepak Negi\Desktop\DailyKit\HERN\index.js]
+[/api/payment-intent] | [2021-12-24 12:12:75PM +05:30] | [Error: This payment requires additional user action before it can be completed successfully. Payment can be completed using the PaymentIntent associated with the invoice. For more details see: https://stripe.com/docs/billing/subscriptions/overview#requires-action]

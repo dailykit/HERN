@@ -5,14 +5,7 @@ import { useRouter } from 'next/router'
 import { Result, Spin, Button, Modal } from 'antd'
 import { Wrapper } from './styles'
 import { Button as StyledButton } from '../button'
-import {
-   useWindowSize,
-   isKiosk,
-   useQueryParamState,
-   isClient,
-} from '../../utils'
-import { useCart } from '../../context'
-import { useConfig } from '../../lib'
+import { useWindowSize, isKiosk } from '../../utils'
 
 const PaymentProcessingModal = ({
    isOpen,
@@ -24,65 +17,24 @@ const PaymentProcessingModal = ({
    isTestingByPass = false,
    byPassTerminalPayment = () => null,
    cancelTerminalPayment = () => null,
+   initializePrinting = () => null,
 }) => {
    console.log('PaymentProcessingModal')
    const router = useRouter()
    const isKioskMode = isKiosk()
    const [isCelebrating, setIsCelebrating] = useState(false)
-   const [printStatus, setPrintStatus] = useState('not-started')
    const { width, height } = useWindowSize()
-
-   const { setStoredCartId } = useCart()
-   const { setIsIdleScreen, clearCurrentPage } = useConfig()
-
-   const showPrintingStatus = () => {
-      let icon = (
-         <img
-            src="/assets/gifs/receipt.gif"
-            className="payment_status_loader"
-         />
-      )
-
-      let title = 'Printing your receipt'
-      let subtitle = 'Please wait while we print your receipt'
-      let extra = null
-      if (printStatus === 'success') {
-         icon = (
-            <img
-               src="/assets/gifs/successful.gif"
-               className="payment_status_loader"
-            />
-         )
-         title = 'Printed your receipt successfully'
-         subtitle = 'Taking you back to the home page shortly'
-      } else if (printStatus === 'failed') {
-         icon = (
-            <img
-               src="/assets/gifs/failed.gif"
-               className="payment_status_loader"
-            />
-         )
-         title = 'Failed to print your receipt'
-         subtitle = 'Please try again'
-         extra = [<Button type="primary">Retry Print Receipt</Button>]
-      }
-      return {
-         icon,
-         title,
-         subtitle,
-         extra,
-      }
-   }
 
    const stopCelebration = () => {
       if (isKioskMode) {
-         printReceiptHandler()
+         setIsCelebrating(false)
+         initializePrinting()
       } else {
          if (router.pathname !== `/placing-order?id=${cartPayment?.cartId}`) {
             router.push(`/placing-order?id=${cartPayment?.cartId}`)
          }
-         closeModal()
       }
+      closeModal()
    }
    const startCelebration = () => {
       setIsCelebrating(true)
@@ -113,23 +65,6 @@ const PaymentProcessingModal = ({
          )
          title = 'Processing your order'
          subtitle = 'Please wait while we process your order'
-         // if (
-         //    cartPayment.availablePaymentOption.supportedPaymentOption
-         //       .paymentOptionLabel === 'CASH'
-         // ) {
-         //    icon = (
-         //       <img
-         //          src="/assets/gifs/kioskLoader.gif"
-         //          className="payment_status_loader"
-         //       />
-         //    )
-         //    title = 'Collect cash from customer'
-         //    subtitle = 'Please collect cash from customer to complete your order'
-         //    extra = [
-         //       <Button type="primary">Cash Recieved</Button>,
-         //       <Button type="primary">Cancel</Button>,
-         //    ]
-         // } else {
          if (cartPayment?.paymentStatus === 'SUCCEEDED') {
             icon = (
                <img
@@ -176,9 +111,13 @@ const PaymentProcessingModal = ({
                   type="primary"
                   className="tryOtherPayment"
                   key="console"
-                  onClick={closeModalHandler}
+                  onClick={() => {
+                     cancelTerminalPayment({
+                        cartPayment,
+                     })
+                  }}
                >
-                  Try other payment method
+                  Try again
                </Button>,
             ]
          } else if (cartPayment?.paymentStatus === 'CANCELLED') {
@@ -231,7 +170,6 @@ const PaymentProcessingModal = ({
             subtitle =
                'Please swipe or insert your card to complete your payment'
          }
-         // }
       } else {
          if (cartPayment?.paymentStatus === 'SUCCEEDED') {
             icon = (
@@ -281,7 +219,7 @@ const PaymentProcessingModal = ({
                   key="console"
                   onClick={closeModalHandler}
                >
-                  Try other payment method
+                  Try again
                </Button>,
             ]
          } else if (cartPayment?.paymentStatus === 'CANCELLED') {
@@ -324,24 +262,6 @@ const PaymentProcessingModal = ({
                </Button>,
             ]
          }
-         // else if (cartPayment?.paymentStatus === 'PROCESSING' && actionRequired) {
-         //    icon = <Result status="info" />
-         //    title = 'Complete your payment'
-         //    subtitle = 'Please complete your payment in below link'
-         //    extra = [
-         //       <Button
-         //          type="primary"
-         //          key="console"
-         //          href={actionUrl}
-         //          target="_blank"
-         //       >
-         //          Pay Now
-         //       </Button>,
-         //       <Button type="primary" key="console" onClick={closeModalHandler}>
-         //          Close Modal
-         //       </Button>,
-         //    ]
-         // }
       }
 
       return {
@@ -351,27 +271,6 @@ const PaymentProcessingModal = ({
          extra,
       }
    }
-
-   const printReceiptHandler = () => {
-      setIsCelebrating(false)
-      setPrintStatus('ongoing')
-   }
-
-   useEffect(() => {
-      if (printStatus === 'ongoing') {
-         setTimeout(() => {
-            setPrintStatus('success')
-         }, 5000)
-      } else if (printStatus === 'success') {
-         setIsCelebrating(true)
-         setTimeout(() => {
-            clearCurrentPage()
-            setStoredCartId(null)
-            setIsIdleScreen(true)
-            closeModal()
-         }, 5000)
-      }
-   }, [printStatus])
 
    // start celebration (confetti effect) once payment is successful
    useEffect(() => {
@@ -401,22 +300,14 @@ const PaymentProcessingModal = ({
          }}
       >
          <Wrapper>
-            {printStatus === 'not-started' ? (
-               <Result
-                  icon={ShowPaymentStatusInfo().icon}
-                  title={ShowPaymentStatusInfo().title}
-                  subTitle={ShowPaymentStatusInfo().subtitle}
-                  extra={ShowPaymentStatusInfo().extra}
-               />
-            ) : (
-               <Result
-                  icon={showPrintingStatus().icon}
-                  title={showPrintingStatus().title}
-                  subTitle={showPrintingStatus().subtitle}
-                  extra={showPrintingStatus().extra}
-               />
-            )}
-            {isCelebrating || (printStatus === 'success' && <Confetti />)}
+            <Result
+               icon={ShowPaymentStatusInfo().icon}
+               title={ShowPaymentStatusInfo().title}
+               subTitle={ShowPaymentStatusInfo().subtitle}
+               extra={ShowPaymentStatusInfo().extra}
+            />
+
+            {isCelebrating === 'success' && <Confetti />}
          </Wrapper>
          {/* <Button type="link" tw="fixed top-4 left-4" onClick={normalModalClose}>
             Close

@@ -2,6 +2,7 @@ import PaymentProcessingModal from './paymentProcessingModal'
 import FloatingBar from './floatingBar'
 import PaymentOptionsRenderer from './paymentOptionsRenderer'
 import PayButton from './PayButton'
+import PrintProcessingModal from './printProcessingModal'
 
 export * from './seo'
 export * from './form'
@@ -44,5 +45,6 @@ export {
    FloatingBar,
    PaymentOptionsRenderer,
    PayButton,
+   PrintProcessingModal,
 }
 export * from './userInfo'
