@@ -670,15 +670,11 @@ export const KioskModifier = props => {
    }, [])
 
    useEffect(() => {
-      const translateStringSpan = document.querySelectorAll('span')
-      const translateStringDiv = document.querySelectorAll('div')
-      const translateStringP = document.querySelectorAll('p')
-      const translateStringLi = document.querySelectorAll('li')
-      dynamicTrans(translateStringSpan, currentLang)
-      dynamicTrans(translateStringDiv, currentLang)
-      dynamicTrans(translateStringP, currentLang)
-      dynamicTrans(translateStringLi, currentLang)
-   }, [currentLang])
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [])
    console.log('product_data -->', productData)
    if (showProceedPopup) {
       return (
@@ -808,6 +804,8 @@ export const KioskModifier = props => {
                   style={{
                      color: `${config.kioskSettings.theme.modifierTextColor.value}`,
                   }}
+                  data-translation="true"
+                  data-original-value={productData.name}
                >
                   {productData.name}
                </span>
@@ -852,6 +850,7 @@ export const KioskModifier = props => {
                               border: `2px solid ${config.kioskSettings.theme.successColor.value}`,
                            }),
                         }}
+                        data-name={eachOption.label}
                      >
                         {eachOption.label}
                         {' (+ '}
@@ -861,15 +860,19 @@ export const KioskModifier = props => {
                   ))}
                </Radio.Group>
             </div>
-            <div className="hern-kiosk__product-modifier-p-additional-text">
-               <span
-                  style={{
-                     color: `${config.kioskSettings.theme.modifierTextColor.value}`,
-                  }}
-               >
-                  {productData.additionalText}
-               </span>
-            </div>
+            {productData.additionalText && (
+               <div className="hern-kiosk__product-modifier-p-additional-text">
+                  <span
+                     style={{
+                        color: `${config.kioskSettings.theme.modifierTextColor.value}`,
+                     }}
+                     data-translation="true"
+                     data-original-value={productData.additionalText}
+                  >
+                     {productData.additionalText}
+                  </span>
+               </div>
+            )}
             {/* <div className="hern-kiosk__modifier-popup-modifiers-list"> */}
             {selectedProductOption.additionalModifiers.length > 0 &&
                selectedProductOption.additionalModifiers.map(
@@ -896,6 +899,10 @@ export const KioskModifier = props => {
                               <span
                                  className="hern-kiosk__additional-modifier-label"
                                  style={{ color: '#ffffff' }}
+                                 data-translation="true"
+                                 data-original-value={
+                                    eachAdditionalModifier.label
+                                 }
                               >
                                  {eachAdditionalModifier.label}
                               </span>
@@ -939,6 +946,10 @@ export const KioskModifier = props => {
                                                 style={{
                                                    color: `${config.kioskSettings.theme.modifierTextColor.value}`,
                                                 }}
+                                                data-translation="true"
+                                                data-original-value={
+                                                   eachModifierCategory.name
+                                                }
                                              >
                                                 {eachModifierCategory.name}
                                              </span>
@@ -1013,7 +1024,13 @@ export const KioskModifier = props => {
                                                                }
                                                             />
 
-                                                            <span className="hern-kiosk__modifier--option-name">
+                                                            <span
+                                                               className="hern-kiosk__modifier--option-name"
+                                                               data-translation="true"
+                                                               data-original-value={
+                                                                  eachOption.name
+                                                               }
+                                                            >
                                                                {eachOption.name}
                                                                {eachOption.price >
                                                                   0 && (
@@ -1102,6 +1119,8 @@ export const KioskModifier = props => {
                                  style={{
                                     color: `${config.kioskSettings.theme.modifierTextColor.value}`,
                                  }}
+                                 data-translation="true"
+                                 data-original-value={eachModifierCategory.name}
                               >
                                  {eachModifierCategory.name}
                               </span>
@@ -1166,7 +1185,13 @@ export const KioskModifier = props => {
                                                 }
                                              />
 
-                                             <span className="hern-kiosk__modifier--option-name">
+                                             <span
+                                                className="hern-kiosk__modifier--option-name"
+                                                data-translation="true"
+                                                data-original-value={
+                                                   eachOption.name
+                                                }
+                                             >
                                                 {eachOption.name}
                                                 {eachOption.price > 0 && (
                                                    <>

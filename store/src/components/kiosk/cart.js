@@ -157,7 +157,6 @@ export const KioskCart = props => {
                            <ul className="hern-kiosk-cart-bill-details-list">
                               <li>
                                  <span style={{ fontWeight: 'bold' }}>
-                                    {cart.billing.totalPrice.label}
                                     {t('Total Price')}
                                  </span>
                                  <span style={{ fontWeight: 'bold' }}>
@@ -229,7 +228,7 @@ const CartCard = props => {
    const { config, productData, removeCartItems } = props
    const { brand, kioskDetails } = useConfig()
    const { addToCart } = React.useContext(CartContext)
-   const { t } = useTranslation()
+   const { t, dynamicTrans, locale } = useTranslation()
 
    const [modifyProductId, setModifyProductId] = useState(null)
    const [modifyProduct, setModifyProduct] = useState(null)
@@ -338,6 +337,14 @@ const CartCard = props => {
       setModifyProductId(null)
       setShowModifier(false)
    }
+
+   useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [locale, showAdditionalDetailsOnCard])
+
    return (
       <div className="hern-kiosk__cart-card">
          <img
@@ -351,6 +358,8 @@ const CartCard = props => {
                   <span
                      className="hern-kiosk__cart-card-p-name"
                      style={{ color: '#5A5A5A' }}
+                     data-translation="true"
+                     data-original-value={productData.name}
                   >
                      {productData.name}
                   </span>{' '}
@@ -380,7 +389,12 @@ const CartCard = props => {
                         Product Option:
                      </span> */}
                      <div className="hern-kiosk-cart-product-modifiers-product-option">
-                        <span>
+                        <span
+                           data-translation="true"
+                           data-original-value={
+                              productData.childs[0].productOption.label || 'N/A'
+                           }
+                        >
                            {productData.childs[0].productOption.label || 'N/A'}
                         </span>{' '}
                         <span>
@@ -401,7 +415,13 @@ const CartCard = props => {
                                        (modifier, index) =>
                                           modifier.modifierOption ? (
                                              <li key={index}>
-                                                <span>
+                                                <span
+                                                   data-translation="true"
+                                                   data-original-value={
+                                                      modifier.modifierOption
+                                                         .name
+                                                   }
+                                                >
                                                    {
                                                       modifier.modifierOption
                                                          .name
