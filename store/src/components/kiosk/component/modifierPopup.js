@@ -708,7 +708,7 @@ export const KioskModifier = props => {
                      padding: '.1em 2em',
                   }}
                >
-                  GO TO MENU
+                  {t('GO TO MENU')}
                </KioskButton>
                <KioskButton
                   style={{ padding: '.1em 2em' }}
@@ -716,7 +716,7 @@ export const KioskModifier = props => {
                      setCurrentPage('cartPage')
                   }}
                >
-                  CHECKOUT
+                  {t('CHECKOUT')}
                </KioskButton>
             </div>
          </Modal>
@@ -867,7 +867,7 @@ export const KioskModifier = props => {
                      color: `${config.kioskSettings.theme.modifierTextColor.value}`,
                   }}
                >
-                  {productData.additionalText || `No additional text available`}
+                  {productData.additionalText}
                </span>
             </div>
             {/* <div className="hern-kiosk__modifier-popup-modifiers-list"> */}
@@ -961,8 +961,9 @@ export const KioskModifier = props => {
                                                          color: `${config.kioskSettings.theme.categorySelectionWarningColor.value}`,
                                                       }}
                                                    >
-                                                      {'('}You have to choose
-                                                      this category.
+                                                      {'('}
+                                                      {t(`You have to choose
+                                                      this category`)}
                                                       {')'}
                                                    </span>
                                                 </>
@@ -1014,12 +1015,17 @@ export const KioskModifier = props => {
 
                                                             <span className="hern-kiosk__modifier--option-name">
                                                                {eachOption.name}
-                                                               {' ('}
-                                                               {formatCurrency(
-                                                                  eachOption.price -
-                                                                     eachOption.discount
+                                                               {eachOption.price >
+                                                                  0 && (
+                                                                  <>
+                                                                     {' ('}
+                                                                     {formatCurrency(
+                                                                        eachOption.price -
+                                                                           eachOption.discount
+                                                                     )}
+                                                                     {')'}
+                                                                  </>
                                                                )}
-                                                               {')'}
                                                             </span>
                                                          </div>
                                                          {isModifierOptionInProduct() ? (
@@ -1116,7 +1122,8 @@ export const KioskModifier = props => {
                                           color: `${config.kioskSettings.theme.categorySelectionWarningColor.value}`,
                                        }}
                                     >
-                                       {'('}You have to choose this category.
+                                       {'('}
+                                       {t(`You have to choose this category`)}
                                        {')'}
                                     </span>
                                  </>
@@ -1161,12 +1168,16 @@ export const KioskModifier = props => {
 
                                              <span className="hern-kiosk__modifier--option-name">
                                                 {eachOption.name}
-                                                {' ('}
-                                                {formatCurrency(
-                                                   eachOption.price -
-                                                      eachOption.discount
+                                                {eachOption.price > 0 && (
+                                                   <>
+                                                      {' ('}
+                                                      {formatCurrency(
+                                                         eachOption.price -
+                                                            eachOption.discount
+                                                      )}
+                                                      {')'}
+                                                   </>
                                                 )}
-                                                {')'}
                                              </span>
                                           </div>
                                           {isModifierOptionInProduct() ? (
@@ -1233,7 +1244,7 @@ export const KioskModifier = props => {
                         color: `${config.kioskSettings.theme.secondaryColor.value}`,
                      }}
                   >
-                     Total
+                     {t('Total')}
                   </span>
                   <span className="hern-kiosk__modifier-total-price">
                      {formatCurrency(totalAmount())}
@@ -1243,7 +1254,7 @@ export const KioskModifier = props => {
                   onClick={handleAddOnCart}
                   customClass="hern-kiosk__modifier-add-to-cart"
                >
-                  Add to cart
+                  {t('Add To Cart')}
                </KioskButton>
             </div>
          </div>

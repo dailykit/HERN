@@ -48,7 +48,7 @@ export const KioskCart = props => {
    }
 
    if (combinedCartItems === null) {
-      return <p>No cart available</p>
+      return <p>{t('No cart available')}</p>
    }
 
    return (
@@ -153,11 +153,12 @@ export const KioskCart = props => {
                      </Header>
                      <Content className="hern-kiosk__cart-page-price-detail">
                         <div className="hern-kiosk-cart-bill-details">
-                           <span>BILL DETAILS</span>
+                           <span>{t('BILL DETAILS')}</span>
                            <ul className="hern-kiosk-cart-bill-details-list">
                               <li>
                                  <span style={{ fontWeight: 'bold' }}>
                                     {cart.billing.totalPrice.label}
+                                    {t('Total Price')}
                                  </span>
                                  <span style={{ fontWeight: 'bold' }}>
                                     {formatCurrency(
@@ -166,15 +167,7 @@ export const KioskCart = props => {
                                  </span>
                               </li>
                               <li>
-                                 <span>{cart.billing.deliveryPrice.label}</span>
-                                 <span>
-                                    {formatCurrency(
-                                       cart.billing.deliveryPrice.value || 0
-                                    )}
-                                 </span>
-                              </li>
-                              <li>
-                                 <span>{cart.billing.tax.label}</span>
+                                 <span>{t('Tax')}</span>
                                  <span>
                                     {formatCurrency(
                                        cart.billing.tax.value || 0
@@ -182,7 +175,7 @@ export const KioskCart = props => {
                                  </span>
                               </li>
                               <li>
-                                 <span>{cart.billing.discount.label}</span>
+                                 <span>{t('Discount')}</span>
                                  <span>
                                     {'-'}{' '}
                                     {formatCurrency(
@@ -236,6 +229,7 @@ const CartCard = props => {
    const { config, productData, removeCartItems } = props
    const { brand, kioskDetails } = useConfig()
    const { addToCart } = React.useContext(CartContext)
+   const { t } = useTranslation()
 
    const [modifyProductId, setModifyProductId] = useState(null)
    const [modifyProduct, setModifyProduct] = useState(null)
@@ -445,7 +439,7 @@ const CartCard = props => {
             />
          </div>
          <Modal
-            title="Repeat last used customization?"
+            title={t('Repeat last used customization')}
             visible={showChooseIncreaseType}
             centered={true}
             onCancel={() => {
@@ -475,7 +469,7 @@ const CartCard = props => {
                      padding: '.1em 2em',
                   }}
                >
-                  I'LL CHOOSE
+                  {t(`I'LL CHOOSE`)}
                </KioskButton>
                <KioskButton
                   style={{ padding: '.1em 2em' }}
@@ -485,7 +479,7 @@ const CartCard = props => {
                      setForRepeatLastOne(true)
                   }}
                >
-                  REPEAT LAST ONE
+                  {t('REPEAT LAST ONE')}
                </KioskButton>
             </div>
          </Modal>

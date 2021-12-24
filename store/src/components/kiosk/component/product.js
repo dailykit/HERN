@@ -198,7 +198,7 @@ export const KioskProduct = props => {
             </Layout>
          </div>
          <Modal
-            title="Repeat last used customization?"
+            title={t('Repeat last used customization')}
             visible={showChooseIncreaseType}
             centered={true}
             onCancel={() => {
@@ -225,7 +225,7 @@ export const KioskProduct = props => {
                      padding: '.1em 2em',
                   }}
                >
-                  I'LL CHOOSE
+                  {t("I'LL CHOOSE")}
                </KioskButton>
                <KioskButton
                   style={{ padding: '.1em 2em' }}
@@ -233,7 +233,7 @@ export const KioskProduct = props => {
                      repeatLastOne(productData)
                   }}
                >
-                  REPEAT LAST ONE
+                  {t('REPEAT LAST ONE')}
                </KioskButton>
             </div>
          </Modal>
