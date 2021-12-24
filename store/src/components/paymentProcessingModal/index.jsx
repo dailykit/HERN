@@ -75,10 +75,14 @@ const PaymentProcessingModal = ({
    }
 
    const stopCelebration = () => {
-      if (router.pathname !== `/placing-order?id=${cartPayment?.cartId}`) {
-         router.push(`/placing-order?id=${cartPayment?.cartId}`)
+      if (isKioskMode) {
+         printReceiptHandler()
+      } else {
+         if (router.pathname !== `/placing-order?id=${cartPayment?.cartId}`) {
+            router.push(`/placing-order?id=${cartPayment?.cartId}`)
+         }
+         closeModal()
       }
-      closeModal()
    }
    const startCelebration = () => {
       setIsCelebrating(true)
@@ -135,16 +139,6 @@ const PaymentProcessingModal = ({
             )
             title = 'Successfully placed your order'
             subtitle = 'You will be redirected to your booking page shortly'
-            extra = [
-               <Button
-                  type="primary"
-                  loading={printStatus === 'ongoing'}
-                  disabled={printStatus === 'ongoing'}
-                  onClick={printReceiptHandler}
-               >
-                  Print Receipt
-               </Button>,
-            ]
          } else if (cartPayment?.paymentStatus === 'REQUIRES_ACTION') {
             icon = (
                <img
@@ -382,9 +376,7 @@ const PaymentProcessingModal = ({
    // start celebration (confetti effect) once payment is successful
    useEffect(() => {
       if (cartPayment?.paymentStatus === 'SUCCEEDED') {
-         if (!isKioskMode) {
-            startCelebration()
-         }
+         startCelebration()
       }
    }, [cartPayment?.paymentStatus])
 
