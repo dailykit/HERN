@@ -1,4 +1,4 @@
-import React from 'react'
+import { useRef } from 'react'
 import { useMutation } from '@apollo/react-hooks'
 import axios from 'axios'
 import isEmpty from 'lodash/isEmpty'
@@ -21,12 +21,28 @@ const passResponseToWebhook = async data => {
 }
 
 function useTerminalPay() {
+   const paymentOptionRef = useRef(null)
    const [updateCart] = useMutation(UPDATE_CART, {
+      onCompleted: () => {
+         paymentOptionRef.current = null
+      },
       onError: error => {
          console.error(error)
       },
    })
    const [updateCartPayment] = useMutation(UPDATE_CART_PAYMENT, {
+      onCompleted: ({ updateCartPayment }) => {
+         updateCart({
+            variables: {
+               id: updateCartPayment.cartId,
+               _inc: { paymentRetryAttempt: 1 },
+               _set: {
+                  toUseAvailablePaymentOptionId:
+                     paymentOptionRef.current.codPaymentOptionId,
+               },
+            },
+         })
+      },
       onError: error => {
          console.error(error)
       },
@@ -69,12 +85,13 @@ function useTerminalPay() {
       cartPayment,
    }) => {
       console.log('cancelling terminal payment')
+      paymentOptionRef.current = { codPaymentOptionId }
       const terminalResponseData = {
          cartPaymentId: cartPayment.id,
          status: 'cancelled',
          transactionId: `TXN-${new Date().getTime()}`,
       }
-      const { data } = await updateCartPayment({
+      updateCartPayment({
          variables: {
             id: cartPayment.id,
             _set: {
@@ -83,20 +100,6 @@ function useTerminalPay() {
             },
          },
       })
-      if (
-         !isEmpty(data) &&
-         data.updateCartPayment.paymentStatus === 'CANCELLED'
-      ) {
-         await updateCart({
-            variables: {
-               id: data.updateCartPayment.cartId,
-               _inc: { paymentRetryAttempt: 1 },
-               _set: {
-                  toUseAvailablePaymentOptionId: codPaymentOptionId,
-               },
-            },
-         })
-      }
    }
 
    return {
