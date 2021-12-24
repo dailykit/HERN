@@ -18,7 +18,7 @@ export const SliderSection = ({config})=> {
     }
     return (
         <>
-            <Carousel className="hern-slider_section-carousel" arrows dots={checkShowDots()} prevArrow={<LeftArrow />} nextArrow={<RightArrow />}>
+            <Carousel className="hern-slider_section-carousel" arrows dots={checkShowDots()} prevArrow={checkShowArrow()?<LeftArrow />:false} nextArrow={checkShowArrow()?<RightArrow />:false}>
                 {config.display.slider.content.images.value.map((imageSrc, index)=>{
                     return <SliderDiv content={config.display.slider.content} index={index} />
                 })}
@@ -33,7 +33,7 @@ const SliderDiv = ({content, index})=> {
         <div style={{display:'flex', alignItems: 'center', justifyContent: 'center'}}>
             <img
             src={content.images.value[index]?content.images.value[index]:content.images.default}
-            alt="promotion-2"
+            alt="products"
             width="100%"
             />
             <div style={{position: 'absolute', color: 'white', width: '10%', textAlign: 'center'}}>

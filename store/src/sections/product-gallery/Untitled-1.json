@@ -31,9 +31,9 @@
          "label": "Product Orientation",
          "value": [
             {
-               "id": 2,
-               "title": "grid",
-               "value": "grid"
+               "id": 1,
+               "title": "slide",
+               "value": "slide"
             }
          ],
          "options": [
