@@ -8,7 +8,7 @@ import { useConfig } from '../lib'
 import classNames from 'classnames'
 import { HelperBar } from './helper_bar'
 
-export const Recipe = ({ productOption }) => {
+export const Recipe = ({ productOption, config }) => {
    const { configOf } = useConfig()
    const recipe = productOption?.simpleRecipeYield?.simpleRecipe
    const theme = configOf('theme-color', 'Visual')
@@ -18,6 +18,11 @@ export const Recipe = ({ productOption }) => {
       }
       return slipName
    }
+   const customIngredientsLabel =
+      config?.['information Visibility']?.recipe?.customIngredientsLabel
+         ?.value ?? 'Ingredients'
+   const showAuthor =
+      config?.['information Visibility']?.recipe?.showAuthor?.value ?? true
 
    if (!recipe) {
       return (
@@ -70,7 +75,7 @@ export const Recipe = ({ productOption }) => {
                      <p>{recipe.cuisine}</p>
                   </div>
                )}
-               {!!recipe.author && (
+               {!!recipe.author && showAuthor && (
                   <div className="hern-recipe__details__author">
                      <ChefIcon size={40} color={theme?.accent} />
                      <p>{recipe.author}</p>
@@ -103,7 +108,7 @@ export const Recipe = ({ productOption }) => {
                Boolean(productOption.simpleRecipeYield.sachets.length) && (
                   <>
                      <h2 className="hern-recipe__ingradients__heading">
-                        Ingredients
+                        {customIngredientsLabel}
                      </h2>
                      <div className="hern-recipe__ingradients">
                         {productOption.simpleRecipeYield.sachets.map(
