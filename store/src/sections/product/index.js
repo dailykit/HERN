@@ -5,7 +5,7 @@ import { useConfig } from '../../lib'
 import { Recipe, ProductCard, Loader, Nutritions } from '../../components'
 import { useRouter } from 'next/router'
 
-export const Product = () => {
+export const Product = ({ config }) => {
    const router = useRouter()
    const { id } = router.query
    const [status, setStatus] = React.useState('loading')
@@ -52,6 +52,27 @@ export const Product = () => {
    )
    if (productsLoading || status === 'loading') return <Loader />
    if (productsError) return <p>Something went wrong</p>
+   const productType =
+      productDetails?.VegNonVegType === 'vegetarian' ||
+      productDetails?.VegNonVegType === 'veg' ||
+      productDetails?.VegNonVegType === 'Veg' ||
+      productDetails?.VegNonVegType === 'VEG'
+         ? 'vegetarian'
+         : 'Non-vegetarian'
+
+   const VegNonVegIcon = () => (
+      <span>
+         <img
+            alt="Non-Veg Icon"
+            src={
+               productType === 'Non-vegetarian'
+                  ? '/assets/imgs/non-veg.png'
+                  : '/assets/imgs/veg.png'
+            }
+            title={productType}
+         />
+      </span>
+   )
    return (
       <>
          <div className="hern-product-section">
@@ -62,6 +83,7 @@ export const Product = () => {
                   showImage={true}
                   closeModifier={() => console.log('close')}
                   customAreaFlex={false}
+                  iconOnImage={VegNonVegIcon}
                />
             </div>
             <div className="hern-product-section__product-details">
@@ -78,7 +100,10 @@ export const Product = () => {
             </div>
          </div>
          <div className="hern-product-recipe-section">
-            <Recipe productOption={productDetails?.productOptions[0]} />
+            <Recipe
+               productOption={productDetails?.productOptions[0]}
+               config={config}
+            />
          </div>
          <div className="hern-product-nutrition-section">
             <Nutritions
