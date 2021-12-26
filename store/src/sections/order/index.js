@@ -29,9 +29,13 @@ export const OnDemandOrder = ({ config }) => {
       config?.display?.['numberOfProducts']?.value ??
       config?.display?.['numberOfProducts']?.default ??
       2
-   const showCategoryLength =
-      config?.display?.['showCategoryLength']?.value ??
-      config?.display?.['numberOfProducts']?.default ??
+   const showCategoryLengthOnCategoryTitle =
+      config?.display?.['showCategoryLengthOnCategoryTitle']?.value ??
+      config?.display?.['showCategoryLengthOnCategoryTitle']?.default ??
+      true
+   const showCategoryLengthOnCategory =
+      config?.display?.['showCategoryLengthOnCategory']?.value ??
+      config?.display?.['showCategoryLengthOnCategory']?.default ??
       true
    const showCartOnRight =
       config?.display?.['showCartOnRight']?.value ??
@@ -101,6 +105,7 @@ export const OnDemandOrder = ({ config }) => {
          },
       }
    )
+   console.log('Kama Sutra: A Tale of Love', config)
    const [productModifier, setProductModifier] = useState(null)
    const CustomArea = props => {
       const { data } = props
@@ -150,6 +155,7 @@ export const OnDemandOrder = ({ config }) => {
             <OnDemandMenu
                menuType="navigationAnchorMenu"
                categories={categories}
+               showCount={showCategoryLengthOnCategory}
             />
          )}
          <div
@@ -177,7 +183,7 @@ export const OnDemandOrder = ({ config }) => {
                               id={`hern-product-category-${eachCategory.name}`}
                            >
                               {eachCategory.name}
-                              {showCategoryLength && (
+                              {showCategoryLengthOnCategoryTitle && (
                                  <>({eachCategory.products.length})</>
                               )}
                            </p>
