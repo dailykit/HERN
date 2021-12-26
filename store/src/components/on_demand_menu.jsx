@@ -8,7 +8,8 @@ import * as Scroll from 'react-scroll'
 export const OnDemandMenu = props => {
    // props
    // menuTYpe --> floating or navigation anchor
-   const { menuType, categories } = props
+   const { menuType, categories, showCount } = props
+   const showProductCount = showCount ?? showCount ?? true
    const [showMenuItems, setShowMenuItems] = useState('0')
    const [activeCategory, setActiveCategory] = useState(null)
    const ref = React.useRef()
@@ -51,7 +52,10 @@ export const OnDemandMenu = props => {
                            spy={true}
                         >
                            <span>
-                              {each.name}({each?.products?.length})
+                              {each.name}
+                              {showProductCount && (
+                                 <> ({each?.products?.length})</>
+                              )}
                            </span>
                         </Scroll.Link>
                      </li>
@@ -100,7 +104,9 @@ export const OnDemandMenu = props => {
                                        }}
                                     ></span>
                                  </span>
-                                 {/* <span>{each.products.length}</span> */}
+                                 {showProductCount && (
+                                    <span>{each.products.length}</span>
+                                 )}
                               </div>
                            </Scroll.Link>
                         </li>
