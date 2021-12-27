@@ -1,3 +1,5 @@
+import { lte } from 'lodash'
+
 const validator = {
    label: value => {
       let isValid = true
@@ -42,6 +44,16 @@ const validator = {
             'Discount should be a greater than or equal to 0!',
          ]
       }
+      return { isValid, errors }
+   },
+   posist_baseItemId: value => {
+      let text = value.trim()
+      let isValid = true
+      let errors = []
+      // if (text.length < 1) {
+      //    isValid = false
+      //    errors = [...errors, 'Cannot be empty!']
+      // }
       return { isValid, errors }
    },
    csv: value => {

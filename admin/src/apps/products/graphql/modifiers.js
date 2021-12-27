@@ -35,6 +35,7 @@ export const MODIFIER = {
                limits
                options(order_by: { created_at: asc_nulls_last }) {
                   id
+                  posist_baseItemId
                   name
                   originalName
                   price
