@@ -228,6 +228,14 @@
    margin: 0 0 1em 0;
    font-weight: 500;
 }
+.hern-kiosk__scroll-element:nth-last-child(1) {
+   min-height: 100%;
+}
+.hern-kiosk__category-scroll-link {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+}
 .hern-kiosk__menu-page-product-category-title {
    font-size: 1.5em;
    font-weight: bold;
