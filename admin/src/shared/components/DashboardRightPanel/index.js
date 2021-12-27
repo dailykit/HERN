@@ -55,6 +55,9 @@ const DashboardRightPanel = () => {
                <span>Would you like to see your Reports</span>
             </UserText>
             <OptionTypes>
+               <li onClick={() => history.push('/operationMode')}>
+                  Operation Mode
+               </li>
                <li onClick={() => openOrderReportTunnel(1)}>Order Summary</li>
                <li onClick={() => openReportTunnel(1)}>Earnings Overtime</li>
                <li onClick={() => openCustomerReportTunnel(1)}>

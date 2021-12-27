@@ -7,6 +7,7 @@
    "Where will you be eating today?": "Where will you be eating today?",
    "Dine in": "Dine in",
    "Take Out": "Take Out",
+   "Take Away": "Take Away",
    "Menu": "Menu",
    "Add To Cart": "Add To Cart",
    "Customize": "Customize",
@@ -27,5 +28,15 @@
    "No coupons available!": "No coupons available!",
    "Available Coupons": "Available Coupons",
    "Review Cart": "Review Cart",
-   "Others": "Others"
+   "Others": "Others",
+   "No cart available": "No cart available",
+   "BILL DETAILS": "BILL DETAILS",
+   "Tax": "Tax",
+   "Discount": "Discount",
+   "I'LL CHOOSE": "I'LL CHOOSE",
+   "REPEAT LAST ONE": "REPEAT LAST ONE",
+   "Repeat last used customization": "Repeat last used customization?",
+   "Total": "Total",
+   "You have to choose this category": "You have to choose this category",
+   "Total Price": "Total Price"
 }

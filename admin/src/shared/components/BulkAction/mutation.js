@@ -211,3 +211,20 @@ export const INCREASE_SUBSCRIPTION_DELIVERY_PRICE = gql`
       }
    }
 `
+export const UPSERT_BRAND_MANAGER = gql`
+   mutation brandManager(
+      $objects: [products_productPrice_brand_location_insert_input!]!
+      $constraint: products_productPrice_brand_location_constraint!
+      $update_columns: [products_productPrice_brand_location_update_column!]!
+   ) {
+      insert_products_productPrice_brand_location(
+         objects: $objects
+         on_conflict: {
+            constraint: $constraint
+            update_columns: $update_columns
+         }
+      ) {
+         affected_rows
+      }
+   }
+`

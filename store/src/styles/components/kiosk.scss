@@ -380,6 +380,25 @@
    align-items: center;
    justify-content: center;
 }
+.hern-kiosk__additional-modifier {
+   padding: 1.3em;
+   margin: 0.625em 1.06em;
+   border-radius: 0.625em;
+}
+.hern-kiosk__additional-modifier-header {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+}
+.hern-kiosk__additional-modifier-label {
+   font-size: 1.8em;
+   font-weight: 500;
+}
+.hern-kiosk__additional-modifier-customize {
+   font-size: 1.8em;
+   font-weight: 500;
+   text-decoration: underline;
+}
 .hern-kiosk__menu-product-modifier-header .ant-carousel {
    height: 48.5em;
 }
@@ -438,6 +457,8 @@
 .hern-kiosk__modifier-product-option {
    margin: 0 0.5em;
    border-radius: 0.4em;
+   font-size: 1.5em;
+   padding: 0.5em 0.8em;
 }
 .hern-kiosk__modifier-popup-product-options .ant-radio-button-wrapper {
    font-size: 1.5rem;
@@ -452,6 +473,10 @@
    padding: 1.3em;
    border-radius: 0.625em;
    margin: 0.625em 1.06em;
+}
+.hern-kiosk__modifier-popup-modifier-category--nested {
+   padding: 1.3em 0;
+   margin: 0.625em 0;
 }
 
 .hern-kiosk__modifier-category-label {
