@@ -1,4 +1,3 @@
-import { each } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { Button, ProductCard } from '.'
 import { RadioIcon, ShowImageIcon } from '../assets/icons'
@@ -9,6 +8,7 @@ import { CartContext } from '../context'
 import { CounterButton } from './counterBtn'
 import classNames from 'classnames'
 import Link from 'next/link'
+import { useToasts } from 'react-toast-notifications'
 
 export const ModifierPopup = props => {
    const {
@@ -24,7 +24,7 @@ export const ModifierPopup = props => {
    } = props
    //context
    const { addToCart, methods } = React.useContext(CartContext)
-   console.log('productData', productData)
+   const { addToast } = useToasts()
    const [productOption, setProductOption] = useState(
       productData.productOptions[0]
    ) // for by default choose one product option
@@ -140,6 +140,9 @@ export const ModifierPopup = props => {
          // const objects = new Array(quantity).fill({ ...cartItem })
          // console.log('cartItem', objects)
          addToCart(cartItem, quantity)
+         addToast('Added to the Cart!', {
+            appearance: 'success',
+         })
          if (edit) {
             methods.cartItems.delete({
                variables: {

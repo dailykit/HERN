@@ -18,9 +18,11 @@ import CartBar from './CartBar'
 import { useConfig } from '../../lib'
 import { setThemeVariable, getRoute } from '../../utils'
 import { useRouter } from 'next/router'
+import { useToasts } from 'react-toast-notifications'
 
 export const OnDemandOrder = ({ config }) => {
    const router = useRouter()
+   const { addToast } = useToasts()
    const { brand } = useConfig()
    const menuType = config?.display?.dropdown?.value[0]?.value
       ? config?.display?.dropdown?.value[0]?.value
@@ -29,9 +31,13 @@ export const OnDemandOrder = ({ config }) => {
       config?.display?.['numberOfProducts']?.value ??
       config?.display?.['numberOfProducts']?.default ??
       2
-   const showCategoryLength =
-      config?.display?.['showCategoryLength']?.value ??
-      config?.display?.['numberOfProducts']?.default ??
+   const showCategoryLengthOnCategoryTitle =
+      config?.display?.['showCategoryLengthOnCategoryTitle']?.value ??
+      config?.display?.['showCategoryLengthOnCategoryTitle']?.default ??
+      true
+   const showCategoryLengthOnCategory =
+      config?.display?.['showCategoryLengthOnCategory']?.value ??
+      config?.display?.['showCategoryLengthOnCategory']?.default ??
       true
    const showCartOnRight =
       config?.display?.['showCartOnRight']?.value ??
@@ -101,6 +107,7 @@ export const OnDemandOrder = ({ config }) => {
          },
       }
    )
+   console.log('Kama Sutra: A Tale of Love', config)
    const [productModifier, setProductModifier] = useState(null)
    const CustomArea = props => {
       const { data } = props
@@ -113,7 +120,9 @@ export const OnDemandOrder = ({ config }) => {
                   if (data.productOptions.length > 0) {
                      setProductModifier(data)
                   } else {
-                     console.log('product added to cart', data)
+                     addToast('Added to the Cart!', {
+                        appearance: 'success',
+                     })
                      addToCart({ productId: data.id }, 1)
                   }
                }}
@@ -150,6 +159,7 @@ export const OnDemandOrder = ({ config }) => {
             <OnDemandMenu
                menuType="navigationAnchorMenu"
                categories={categories}
+               showCount={showCategoryLengthOnCategory}
             />
          )}
          <div
@@ -177,7 +187,7 @@ export const OnDemandOrder = ({ config }) => {
                               id={`hern-product-category-${eachCategory.name}`}
                            >
                               {eachCategory.name}
-                              {showCategoryLength && (
+                              {showCategoryLengthOnCategoryTitle && (
                                  <>({eachCategory.products.length})</>
                               )}
                            </p>

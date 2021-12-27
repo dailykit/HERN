@@ -16,7 +16,7 @@ import {
 import MenuIcon from '../assets/icons/Menu'
 
 import { ProfileSidebar } from './profile_sidebar'
-import { CrossIcon, CartIcon, LocationMarker } from '../assets/icons'
+import { CrossIcon, CartIcon, LocationIcon } from '../assets/icons'
 
 import NavigationBar from './navbar'
 import { useWindowSize } from '../utils/useWindowSize'
@@ -81,13 +81,10 @@ export const Header = ({ settings, navigationMenus }) => {
          'LanguageTranslation'
       ]?.['showLanguageTranslation'].value ?? true
 
-   console.log(
-      'navigation',
-      settings?.['navigation']?.['language-translation']?.[
-         'LanguageTranslation'
-      ]?.['showLanguageTranslation'].value,
-      showLanguageSwitcher
-   )
+   const showLocationText =
+      settings?.['navigation']?.['Show Location Text']?.[
+         'Show Location Text'
+      ]?.['Show Location Text']?.value ?? true
    const [toggle, setToggle] = React.useState(true)
    const [isMobileNavVisible, setIsMobileNavVisible] = React.useState(false)
    const [showLoginPopup, setShowLoginPopup] = React.useState(false)
@@ -139,7 +136,8 @@ export const Header = ({ settings, navigationMenus }) => {
                      style={{ display: 'flex', alignItems: 'center' }}
                      onClick={() => setShowLocationSelectionPopup(true)}
                   >
-                     <LocationMarker /> {t('Location')}
+                     <LocationIcon />
+                     {showLocationText && <>{t('Location')}</>}
                   </button>
                )}
                <section className="hern-navigatin-menu__wrapper">
