@@ -52,6 +52,14 @@ const Product = () => {
          errors: [],
       },
    })
+   const [posist_baseItemId, setPosist_baseItemId] = React.useState({
+      value: '',
+      meta: {
+         isTouched: false,
+         isValid: true,
+         errors: [],
+      },
+   })
    const [state, setState] = React.useState({})
    const [dropDownOptions, setDropDownOptions] = React.useState([])
    const [searchedOptions, setSearchedOption] = React.useState(null)
@@ -66,6 +74,10 @@ const Product = () => {
          setTitle({
             ...title,
             value: data.subscriptionData.data.product.name,
+         })
+         setPosist_baseItemId({
+            ...posist_baseItemId,
+            value: data.subscriptionData.data.product.posist_baseItemId,
          })
       },
    })
@@ -142,6 +154,27 @@ const Product = () => {
       }
       setTitle({
          ...title,
+         meta: {
+            isTouched: true,
+            errors,
+            isValid,
+         },
+      })
+   }
+   const updatePosist_baseItemId = async () => {
+      const { isValid, errors } = validator.posist_baseItemId(posist_baseItemId.value)
+      if (isValid) {
+         const { data } = await updateProduct({
+            variables: {
+               id: state.id,
+               _set: {
+                  posist_baseItemId: posist_baseItemId.value,
+               },
+            },
+         })
+      }
+      setPosist_baseItemId({
+         ...posist_baseItemId,
          meta: {
             isTouched: true,
             errors,
@@ -234,6 +267,7 @@ const Product = () => {
          discount: state.discount,
          isPopupAllowed: state.isPopupAllowed,
          isPublished: state.isPublished,
+         posist_baseItemId: state.posist_baseItemId,
          productOptions: {
             data: generatedProductOptions,
          },
@@ -417,6 +451,34 @@ const Product = () => {
                            </StyledFlex>
                            <Spacer size="32px" />
                            <Description state={state} />
+                           <Form.Group>
+                              <Form.Label
+                                 htmlFor={`Posist_baseItemId-${state.id}`}
+                                 title={`Posist_baseItemId-${state.id}`}
+                              >
+                                 Posist Base ItemId
+                              </Form.Label>
+                              <Form.Text
+                                 id={`Posist_baseItemId-${state.id}`}
+                                 name={`Posist_baseItemId-${state.id}`}
+                                 value={posist_baseItemId.value}
+                                 placeholder="Enter Product posist Base ItemId"
+                                 onChange={e =>
+                                    setPosist_baseItemId({ ...posist_baseItemId, value: e.target.value })
+                                 }
+                                 onBlur={updatePosist_baseItemId}
+                                 hasError={
+                                    !posist_baseItemId.meta.isValid && posist_baseItemId.meta.isTouched
+                                 }
+                                 style={{ width: "50%" }}
+                              />
+                              {posist_baseItemId.meta.isTouched &&
+                                 !posist_baseItemId.meta.isValid &&
+                                 posist_baseItemId.meta.errors.map((error, index) => (
+                                    <Form.Error key={index}>{error}</Form.Error>
+                                 ))}
+                           </Form.Group>
+                           <Spacer size="32px" yaxis />
                            <Form.Group>
                               <Form.Label>Type</Form.Label>
                               <Dropdown

@@ -47,7 +47,6 @@ const validator = {
       return { isValid, errors }
    },
    posist_baseItemId: value => {
-      let text = value.trim()
       let isValid = true
       let errors = []
       // if (text.length < 1) {
