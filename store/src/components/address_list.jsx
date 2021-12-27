@@ -1,8 +1,8 @@
 import { useQuery } from '@apollo/react-hooks'
 import classNames from 'classnames'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useToasts } from 'react-toast-notifications'
-import { CloseIcon } from '../assets/icons'
+import { CloseIcon, LocationIcon } from '../assets/icons'
 import { CartContext, useUser } from '../context'
 import { ZIPCODE_AVAILABILITY } from '../graphql'
 import { Loader } from './loader'
@@ -18,10 +18,19 @@ const AddressList = ({
    const { cartState } = React.useContext(CartContext)
 
    const addresses = user?.platform_customer?.addresses || []
+
    const addressByCart = cartState.cart?.address
 
    const [availableZipcodes, setAvailableZipcodes] = React.useState([])
    const [localAddress, setLocalAddress] = useState(null)
+
+   // useEffect(() => {
+   //    const localUserLocation = JSON.parse(localStorage.getItem('userLocation'))
+   //    console.log(localUserLocation, 'localUserLocation')
+   //    if (localUserLocation) {
+   //       setLocalAddress(localUserLocation)
+   //    }
+   // }, [])
 
    const { loading } = useQuery(ZIPCODE_AVAILABILITY, {
       fetchPolicy: 'network-only',
@@ -52,6 +61,7 @@ const AddressList = ({
    }
 
    if (loading) return <Loader />
+
    return (
       <div className="hern-address-list">
          <div className="hern-address-list__header">
@@ -78,12 +88,29 @@ const AddressList = ({
                      className={addressClasses}
                      onClick={() => selectAddress(address)}
                   >
-                     <p>{address?.line1}</p>
-                     <p>{address?.line2}</p>
-                     <p>{address?.city}</p>
-                     <span>{address?.state}</span>
-                     <span>{address?.country}</span>
-                     <span>{address?.zipcode}</span>
+                     <AddressListHeader />
+                     <div className="hern-address-list__address-landmark">
+                        {address?.landmark}
+                     </div>
+                     <p className="hern-address-list__address-line1">
+                        {address?.line1}, {address?.line2}, {address?.city},
+                        {address?.state}, {address?.zipcode}, {address?.country}
+                     </p>
+                     {/* <p className="hern-address-list__address-line2">
+                        {address?.line2}
+                     </p>
+                     <p className="hern-address-list__address-city">
+                        {address?.city}
+                     </p>
+                     <span className="hern-address-list__address-state">
+                        {address?.state}
+                     </span>
+                     <span className="hern-address-list__address-country">
+                        {address?.country}
+                     </span>
+                     <span className="hern-address-list__address-zipcode">
+                        {address?.zipcode}
+                     </span> */}
                   </address>
                )
             })
@@ -112,3 +139,22 @@ const AddressList = ({
 }
 
 export default AddressList
+export const AddressListHeader = () => {
+   return (
+      <div
+         style={{
+            display: 'flex',
+            alignItems: 'center',
+            marginBottom: '10px',
+         }}
+      >
+         <LocationIcon />
+         <label
+            className={'hern-address-list-header__label'}
+            htmlFor="address-list-header"
+         >
+            Delivery Area
+         </label>
+      </div>
+   )
+}

@@ -40,23 +40,25 @@
 }
 
 .hern-address-list__address {
-   border-width: 2px;
-   border-color: rgba(209, 213, 219, 1);
+   color: rgba(64, 64, 64, 0.8);
    padding: 0.5rem;
    margin-bottom: 0.5rem;
    border-radius: 0.125rem;
    cursor: pointer;
-   -webkit-border-radius: 0.125rem;
-   -moz-border-radius: 0.125rem;
-   -ms-border-radius: 0.125rem;
-   -o-border-radius: 0.125rem;
-   font-style: normal;
-   &:hover {
-      border-color: rgba(16, 185, 129, 1);
-   }
+   background: #f9f9f9;
+   padding: 14px 16px;
+   border-radius: 8px;
+   // -webkit-border-radius: 0.125rem;
+   // -moz-border-radius: 0.125rem;
+   // -ms-border-radius: 0.125rem;
+   // -o-border-radius: 0.125rem;
+   // font-style: normal;
+   // &:hover {
+   //    border-color: rgba(16, 185, 129, 1);
+   // }
 }
 .hern-address-list__address--active {
-   border-color: rgba(16, 185, 129, 1);
+   // border-color: rgba(16, 185, 129, 1);
 }
 .hern-address-list__address--not-clickable {
    border-width: 2px;
@@ -67,11 +69,23 @@
    cursor: pointer;
    color: rgba(156, 163, 175, 1);
    cursor: not-allowed;
-   -webkit-border-radius: 0.125rem;
-   -moz-border-radius: 0.125rem;
-   -ms-border-radius: 0.125rem;
-   -o-border-radius: 0.125rem;
+   // -webkit-border-radius: 0.125rem;
+   // -moz-border-radius: 0.125rem;
+   // -ms-border-radius: 0.125rem;
+   // -o-border-radius: 0.125rem;
    &:hover {
       border-color: rgba(209, 213, 219, 1);
    }
+}
+.hern-address-list-header__label {
+   display: block;
+   font-weight: 600;
+   font-size: 20px;
+   line-height: 22px;
+   margin: 0 10px;
+}
+.hern-address-list__address-landmark {
+   font-weight: 600;
+   font-size: 18px;
+   line-height: 20px;
 }
