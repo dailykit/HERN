@@ -57,6 +57,8 @@ const Kiosk = () => {
                id: cartState.cart.id,
             },
          })
+      } else {
+         clearCurrentPage()
       }
    }
 

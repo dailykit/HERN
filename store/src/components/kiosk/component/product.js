@@ -22,14 +22,11 @@ export const KioskProduct = props => {
    const [showChooseIncreaseType, setShowChooseIncreaseType] = useState(false) // show I'll choose or repeat last one popup
 
    useEffect(() => {
-      const translateStringSpan = document.querySelectorAll('span')
-      const translateStringDiv = document.querySelectorAll('div')
-      const translateStringP = document.querySelectorAll('p')
-      const translateStringLi = document.querySelectorAll('li')
-      dynamicTrans(translateStringSpan, currentLang)
-      dynamicTrans(translateStringDiv, currentLang)
-      dynamicTrans(translateStringP, currentLang)
-      dynamicTrans(translateStringLi, currentLang)
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      console.log('languageTags', languageTags)
+      dynamicTrans(languageTags)
    }, [currentLang])
 
    useEffect(() => {
@@ -144,10 +141,20 @@ export const KioskProduct = props => {
                   }}
                >
                   <div className="hern-kiosk__menu-product-content">
-                     <span className="hern-kiosk__menu-product-name">
+                     <span
+                        className="hern-kiosk__menu-product-name"
+                        data-translation="true"
+                        data-original-value={productData.name}
+                     >
                         {productData.name}
                      </span>
-                     <span className="hern-kiosk__menu-product-description">
+                     <span
+                        className="hern-kiosk__menu-product-description"
+                        data-translation="true"
+                        data-original-value={
+                           productData.additionalText || 'N/A'
+                        }
+                     >
                         {productData.additionalText}
                      </span>
                   </div>

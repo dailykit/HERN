@@ -34,6 +34,7 @@ import { useLocation } from 'react-router-dom'
 import DashboardRightPanel from './shared/components/DashboardRightPanel'
 import DashboardWeeklyAnalysis from './shared/components/dashboardWeeklyAnalysis'
 import { useLocalStorage } from './shared/hooks'
+
 const APPS = gql`
    subscription apps {
       apps(order_by: { id: asc }) {
@@ -108,7 +109,11 @@ const Developer = Loadable({
    loader: () => import('./apps/developer'),
    loading: Loader,
 })
-
+// change for operational mode
+const OperationMode = Loadable({
+   loader: () => import('../src/shared/components/OperationalMode'),
+   loading: Loader,
+})
 const App = () => {
    // const location = useLocation()
    // const { routes, setRoutes } = useTabs()
@@ -159,6 +164,7 @@ const App = () => {
                <Route path="/carts" component={Carts} />
                <Route path="/developer" component={Developer} />
                <Route path="/viewStore" component={ViewStore} />
+               <Route path="/operationMode" component={OperationMode} />
             </Switch>
          </main>
          {/* {!isKeycloakSupported() && <RedirectBanner />} */}

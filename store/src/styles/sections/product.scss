@@ -1,0 +1,63 @@
+.hern-product-section {
+   display: flex;
+   max-width: 1200px;
+   margin: 32px auto;
+}
+.hern-product-section__image-gallery {
+   width: 65%;
+}
+.hern-product-section__product-details {
+   width: 35%;
+}
+.hern-product__image-gallery {
+   display: flex;
+}
+.hern-product__image-gallery__left {
+   width: 75%;
+   max-height: 480px;
+   overflow: hidden;
+   > div {
+      > img {
+         width: 100%;
+         aspect-ratio: 1/1;
+      }
+   }
+}
+.hern-product__image-gallery__right {
+   width: 25%;
+   max-height: 480px;
+   overflow-y: auto;
+   padding-right: 16px;
+   &::-webkit-scrollbar {
+      display: none;
+   }
+   > div {
+      margin-bottom: 16px;
+      > img {
+         aspect-ratio: 1/1;
+      }
+      &:last-child {
+         margin-bottom: 0;
+      }
+   }
+}
+.hern-product-section__header {
+   margin-top: 16px;
+   > p {
+      color: rgba(64, 64, 64, 0.9);
+   }
+}
+.hern-product-section__product-title {
+   font-size: 24px;
+   font-weight: bold;
+}
+
+.hern-product-recipe-section {
+   max-width: 1200px;
+   margin: 32px auto;
+}
+
+.hern-product-nutrition-section {
+   max-width: 1200px;
+   margin: 32px auto;
+}

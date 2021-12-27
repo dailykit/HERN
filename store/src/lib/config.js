@@ -254,6 +254,7 @@ export const useConfig = (globalType = '') => {
       noProductImage,
       imagePlaceholder,
       brand: state.brand,
+      settings: state.settings,
       orderTabs: state.orderTabs,
       selectedOrderTab: state.selectedOrderTab,
       kioskId: state.kioskId,
