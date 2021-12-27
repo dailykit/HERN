@@ -218,6 +218,7 @@ const Product = () => {
                   productId={state.id}
                   productName={state.name}
                   options={state.productOptions || []}
+                  posist_baseItemId={state.posist_baseItemId}
                />
             )
          }

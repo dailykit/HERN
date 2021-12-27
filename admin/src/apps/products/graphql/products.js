@@ -84,6 +84,7 @@ export const PRODUCT = {
                price
                discount
                quantity
+               posist_baseItemId
                simpleRecipeYield {
                   id
                   yield
