@@ -1,6 +1,4 @@
 import React from 'react'
-import { Row, Col } from 'antd'
-import tw from 'twin.macro'
 import { CartDetails } from './CartDetails'
 import {
    Fulfillment,
@@ -34,8 +32,8 @@ export const OnDemandCart = () => {
       )
    }
    return (
-      <Row style={{ maxWidth: '1200px', margin: '0 auto' }}>
-         <Col span={16}>
+      <div className="hern-on-demand-cart-section">
+         <div className="hern-on-demand-cart-section__left">
             <div className="hern-ondemand-cart__left-card">
                <UserInfo cart={cartState.cart} />
             </div>
@@ -60,10 +58,10 @@ export const OnDemandCart = () => {
                   <PaymentOptionsRenderer cartId={cartState?.cart?.id} />
                </div>
             </div>
-         </Col>
-         <Col span={8}>
+         </div>
+         <div className="hern-on-demand-cart-section__right">
             <CartDetails />
-         </Col>
-      </Row>
+         </div>
+      </div>
    )
 }
