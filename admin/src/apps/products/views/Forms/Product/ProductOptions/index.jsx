@@ -54,7 +54,7 @@ import { useDnd } from '../../../../../../shared/components/DragNDrop/useDnd'
 import { from } from 'apollo-link'
 import { InventoryBundleContext } from '../../../../context/product/inventoryBundle'
 
-const ProductOptions = ({ productId, productName, options }) => {
+const ProductOptions = ({ productId, productName, options, posist_baseItemId }) => {
    const SERVING_TUNNEL_TYPES = ['mealKit', 'readyToEat', 'Meal Kit']
 
    const { initiatePriority } = useDnd()
@@ -414,7 +414,14 @@ const Option = ({
          errors: [],
       },
    })
-
+   const [posist_baseItemId, setPosist_baseItemId] = React.useState({
+      value: '',
+      meta: {
+         isTouched: false,
+         isValid: true,
+         errors: [],
+      },
+   })
    const [updateProductOption] = useMutation(PRODUCT_OPTION.UPDATE, {
       onCompleted: () => {
          toast.success('Option updated!')
@@ -563,6 +570,29 @@ const Option = ({
             })
             return
          }
+         case 'posist_baseItemId': {
+            const val = posist_baseItemId.value.trim()
+            const { isValid, errors } = validator.posist_baseItemId(val)
+            if (isValid && isActuallyUpdated(field, val)) {
+               updateProductOption({
+                  variables: {
+                     id: option.id,
+                     _set: {
+                        posist_baseItemId: val,
+                     },
+                  },
+               })
+            }
+            setPosist_baseItemId({
+               ...posist_baseItemId,
+               meta: {
+                  isTouched: true,
+                  isValid,
+                  errors,
+               },
+            })
+            return
+         }
          default:
             return null
       }
@@ -689,6 +719,23 @@ const Option = ({
                      value={label.value}
                      placeholder="Enter label"
                      hasError={label.meta.isTouched && !label.meta.isValid}
+                  />
+               </Flex>
+               <Spacer xAxis size="16px" />
+               <Flex maxWidth="140px">
+                  <Form.Label htmlFor={`posist_baseItemId-${option.id}`} title="posist_baseItemId">
+                     Posist Base Item Id
+                  </Form.Label>
+                  <Form.Text
+                     id={`posist_baseItemId-${option.id}`}
+                     name={`posist_baseItemId-${option.id}`}
+                     onBlur={() => handleBlur('posist_baseItemId')}
+                     onChange={e =>
+                        setPosist_baseItemId({ ...posist_baseItemId, value: e.target.value })
+                     }
+                     value={posist_baseItemId.value}
+                     placeholder="Enter Posist Base ItemId"
+                     hasError={posist_baseItemId.meta.isTouched && !posist_baseItemId.meta.isValid}
                   />
                </Flex>
                <Spacer xAxis size="32px" />

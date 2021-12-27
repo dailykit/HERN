@@ -28,12 +28,14 @@ export const MODIFIER = {
             categories(order_by: { created_at: asc_nulls_last }) {
                id
                name
+               categoryType
                isRequired
                isVisible
                type
                limits
                options(order_by: { created_at: asc_nulls_last }) {
                   id
+                  posist_baseItemId
                   name
                   originalName
                   price
