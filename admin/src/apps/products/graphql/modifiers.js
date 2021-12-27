@@ -28,6 +28,7 @@ export const MODIFIER = {
             categories(order_by: { created_at: asc_nulls_last }) {
                id
                name
+               categoryType
                isRequired
                isVisible
                type

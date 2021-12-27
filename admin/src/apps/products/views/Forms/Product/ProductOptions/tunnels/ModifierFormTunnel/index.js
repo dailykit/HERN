@@ -210,6 +210,10 @@ export const Category = ({ category, open, openOperationConfigTunnel }) => {
       { id: 'single', title: 'Single' },
       { id: 'multiple', title: 'Multiple' },
    ]
+   const categoryOption = [
+      { id: 'addOn', title: 'ADDON' },
+      { id: 'combo', title: 'COMBO' },
+   ]
 
    const { modifiersDispatch } = React.useContext(ModifiersContext)
 
@@ -402,6 +406,23 @@ export const Category = ({ category, open, openOperationConfigTunnel }) => {
                                          min: 1,
                                          max: null,
                                       },
+                           },
+                        },
+                     })
+                  }
+               />
+            </div>
+            <div>
+               <Text as="subtitle">Category Type</Text>
+               <RadioGroup
+                  options={categoryOption}
+                  active={category.categoryType}
+                  onChange={option =>
+                     updateCategory({
+                        variables: {
+                           id: category.id,
+                           _set: {
+                              categoryType: option.title,
                            },
                         },
                      })
