@@ -34,6 +34,7 @@ export const ProductCard = props => {
       maintainRatio = true,
       customAreaFlex = true, //If custom area on the next line
       contentAreaCustomStyle = {},
+      modifierWithoutPopup = true,
    } = props
 
    const slideRef = React.useRef()
@@ -112,6 +113,9 @@ export const ProductCard = props => {
                                     e.stopPropagation()
                                     onImageClick ? onImageClick() : null
                                  }}
+                                 style={{
+                                    cursor: onImageClick ? 'pointer' : null,
+                                 }}
                               />
                            </div>
                         )
@@ -160,6 +164,9 @@ export const ProductCard = props => {
                            onClick={e => {
                               e.stopPropagation()
                               onProductNameClick ? onProductNameClick() : null
+                           }}
+                           style={{
+                              cursor: onProductNameClick ? 'pointer' : null,
                            }}
                         >
                            {data.name}
@@ -216,6 +223,7 @@ export const ProductCard = props => {
                edit={modifierPopupConfig?.edit}
                productCartDetail={modifierPopupConfig?.productCartDetail}
                showModifierImage={modifierPopupConfig?.showModifierImage}
+               modifierWithoutPopup={modifierWithoutPopup}
             />
          )}
       </>
