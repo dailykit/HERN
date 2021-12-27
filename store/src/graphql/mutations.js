@@ -497,7 +497,28 @@ export const UPDATE_CART_PAYMENT = gql`
    ) {
       updateCartPayment(pk_columns: { id: $id }, _inc: $_inc, _set: $_set) {
          cartId
+         paymentStatus
          id
+      }
+   }
+`
+export const CREATE_PRINT_JOB = gql`
+   mutation CREATE_PRINT_JOB(
+      $contentType: String!
+      $printerId: Int!
+      $source: String!
+      $title: String!
+      $url: String!
+   ) {
+      createPrintJob(
+         contentType: $contentType
+         printerId: $printerId
+         source: $source
+         title: $title
+         url: $url
+      ) {
+         message
+         success
       }
    }
 `

@@ -12,18 +12,27 @@ import { useToasts } from 'react-toast-notifications'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 
-import { GET_CART_PAYMENT_INFO, UPDATE_CART_PAYMENT } from '../graphql'
-import { useUser } from '../context'
+import {
+   GET_CART_PAYMENT_INFO,
+   UPDATE_CART_PAYMENT,
+   CREATE_PRINT_JOB,
+} from '../graphql'
+import { useUser, useCart } from '../context'
 import { useConfig } from '../lib'
 import {
    getRazorpayOptions,
    isClient,
    useRazorPay,
    usePaytm,
+   useTerminalPay,
    getPaytmOptions,
    get_env,
 } from '../utils'
-import { CartPaymentComponent, PaymentProcessingModal } from '../components'
+import {
+   CartPaymentComponent,
+   PaymentProcessingModal,
+   PrintProcessingModal,
+} from '../components'
 import { set } from 'lodash'
 
 const PaymentContext = createContext()
@@ -42,6 +51,11 @@ const inititalState = {
    },
    paymentLoading: false,
    paymentLifeCycleState: '',
+   printDetails: {
+      isPrintInitiated: false,
+      printStatus: 'not-started',
+      message: '',
+   },
 }
 
 const reducer = (state, action) => {
@@ -59,7 +73,7 @@ const reducer = (state, action) => {
                ...action.payload,
             },
          }
-      case 'UPDATE_PAYMENT_STATE':
+      case 'UPDATE_INITIAL_STATE':
          return {
             ...state,
             ...action.payload,
@@ -78,14 +92,21 @@ export const PaymentProvider = ({ children }) => {
    const [isProcessingPayment, setIsProcessingPayment] = useState(false)
    const [isPaymentInitiated, setIsPaymentInitiated] = useState(false)
    const { user, isAuthenticated, isLoading } = useUser()
-   const { brand } = useConfig()
+   const { brand, kioskDetails, settings } = useConfig()
    const { displayRazorpay } = useRazorPay()
    const { displayPaytm } = usePaytm()
+   const {
+      initiateTerminalPayment,
+      byPassTerminalPayment,
+      cancelTerminalPayment,
+   } = useTerminalPay()
+   const { cartState } = useCart()
    const { addToast } = useToasts()
 
    // subscription to get cart payment info
    const { error: hasCartPaymentError, loading: isCartPaymentLoading } =
       useSubscription(GET_CART_PAYMENT_INFO, {
+         skip: !cartId && !isAuthenticated,
          variables: {
             where: {
                _and: [
@@ -138,7 +159,7 @@ export const PaymentProvider = ({ children }) => {
                })
 
                dispatch({
-                  type: 'UPDATE_PAYMENT_STATE',
+                  type: 'UPDATE_INITIAL_STATE',
                   payload: {
                      paymentLifeCycleState:
                         requiredCartPayment?.paymentStatus || 'PENDING',
@@ -155,16 +176,55 @@ export const PaymentProvider = ({ children }) => {
 
    // mutation to update cart payment
    const [updateCartPayment] = useMutation(UPDATE_CART_PAYMENT, {
-      // onCompleted: () => {
-      //    addToast('Payment dismissed', {
-      //       appearance: 'error',
-      //    })
-      // },
       onError: error => {
          console.error(error)
          addToast('Something went wrong!', { appearance: 'error' })
       },
    })
+
+   // mutation to create print job
+   const [createPrintJob, { loading: isPrinting, error: hasPrintError }] =
+      useMutation(CREATE_PRINT_JOB, {
+         onCompleted: ({ createPrintJob = {} }) => {
+            if (createPrintJob.success) {
+               dispatch({
+                  type: 'UPDATE_INITIAL_STATE',
+                  payload: {
+                     printDetails: {
+                        ...state.printDetails,
+                        printStatus: 'success',
+                     },
+                  },
+               })
+            } else {
+               dispatch({
+                  type: 'UPDATE_INITIAL_STATE',
+                  payload: {
+                     printDetails: {
+                        ...state.printDetails,
+                        printStatus: 'failed',
+                        message: createPrintJob.message,
+                     },
+                  },
+               })
+            }
+         },
+         onError: error => {
+            console.error(error)
+            addToast('Something went wrong!', { appearance: 'error' })
+            dispatch({
+               type: 'UPDATE_INITIAL_STATE',
+               payload: {
+                  printDetails: {
+                     ...state.printDetails,
+                     printStatus: 'failed',
+                     message:
+                        'Something went wrong while printing, please try again!',
+                  },
+               },
+            })
+         },
+      })
 
    // methods to set/update reducer state
    const setProfileInfo = profileInfo => {
@@ -183,7 +243,7 @@ export const PaymentProvider = ({ children }) => {
 
    const updatePaymentState = state => {
       dispatch({
-         type: 'UPDATE_PAYMENT_STATE',
+         type: 'UPDATE_INITIAL_STATE',
          payload: state,
       })
    }
@@ -222,7 +282,7 @@ export const PaymentProvider = ({ children }) => {
 
    const eventHandler = async response => {
       dispatch({
-         type: 'UPDATE_PAYMENT_STATE',
+         type: 'UPDATE_INITIAL_STATE',
          payload: {
             isPaymentProcessing: false,
          },
@@ -239,9 +299,60 @@ export const PaymentProvider = ({ children }) => {
       setCartId(requiredCartId)
       setIsPaymentInitiated(true)
       dispatch({
-         type: 'UPDATE_PAYMENT_STATE',
+         type: 'UPDATE_INITIAL_STATE',
          payload: {
             paymentLifeCycleState: 'INITIALIZE',
+         },
+      })
+   }
+
+   const initializePrinting = async () => {
+      normalModalClose()
+      const path = settings['printing'].find(
+         item => item?.identifier === 'KioskCustomerTokenTemplate'
+      )?.value?.path?.value
+      await dispatch({
+         type: 'UPDATE_INITIAL_STATE',
+         payload: {
+            printDetails: {
+               isPrintInitiated: true,
+               printStatus: 'ongoing',
+               message: '',
+            },
+         },
+      })
+      await createPrintJob({
+         variables: {
+            contentType: 'pdf_uri',
+            printerId: kioskDetails?.printerId,
+            source: 'Dailykit',
+            title: `TOKEN-${cartPayment?.cartId}`,
+            url: `https://testhern.dailykit.org/template?template={"path":${path},"format":"pdf","readVar":false}&data={"cartId":${cartPayment?.cartId}}`,
+         },
+      })
+   }
+
+   const setPrintStatus = value => {
+      dispatch({
+         type: 'UPDATE_INITIAL_STATE',
+         payload: {
+            printDetails: {
+               ...state.printDetails,
+               printStatus: value,
+            },
+         },
+      })
+   }
+
+   const closePrintModal = () => {
+      dispatch({
+         type: 'UPDATE_INITIAL_STATE',
+         payload: {
+            printDetails: {
+               isPrintInitiated: false,
+               printStatus: 'not-started',
+               message: '',
+            },
          },
       })
    }
@@ -249,7 +360,7 @@ export const PaymentProvider = ({ children }) => {
    // useEffect(() => {
    //    if (cartId) {
    //       dispatch({
-   //          type: 'UPDATE_PAYMENT_STATE',
+   //          type: 'UPDATE_INITIAL_STATE',
    //          payload: {
    //             paymentLifeCycleState: 'INITIALIZE',
    //          },
@@ -310,7 +421,7 @@ export const PaymentProvider = ({ children }) => {
       if (
          isPaymentInitiated &&
          !_isEmpty(cartPayment) &&
-         !_isEmpty(cartPayment?.transactionRemark) &&
+         // !_isEmpty(cartPayment?.transactionRemark) &&
          _has(
             cartPayment,
             'availablePaymentOption.supportedPaymentOption.supportedPaymentCompany.label'
@@ -350,13 +461,20 @@ export const PaymentProvider = ({ children }) => {
                   window.location.href = paymentUrl
                }
             }
+         } else if (
+            cartPayment.availablePaymentOption.supportedPaymentOption
+               .paymentOptionLabel === 'TERMINAL'
+         ) {
+            console.log(
+               'inside payment provider useEffect 1 from terminal',
+               cartPayment
+            )
+            if (cartPayment.paymentStatus === 'PENDING') {
+               ;(async () => {
+                  await initiateTerminalPayment(cartPayment)
+               })()
+            }
          }
-         // else if (
-         //    cartPayment.availablePaymentOption.supportedPaymentOption
-         //       .supportedPaymentCompany.label === 'stripe'
-         // ) {
-         //    setIsProcessingPayment(true)
-         // }
       }
    }, [
       cartPayment?.paymentStatus,
@@ -379,18 +497,29 @@ export const PaymentProvider = ({ children }) => {
             updatePaymentState,
             initializePayment,
             isProcessingPayment,
+            initializePrinting,
          }}
       >
          {isPaymentInitiated && (
             <PaymentProcessingModal
                isOpen={isProcessingPayment}
-               cartId={cartPayment?.cartId}
-               status={cartPayment?.paymentStatus}
-               actionUrl={cartPayment?.actionUrl}
-               actionRequired={cartPayment?.actionRequired}
+               cartPayment={cartPayment}
                closeModal={onPaymentModalClose}
                normalModalClose={normalModalClose}
                cancelPayment={onCancelledHandler}
+               isTestingByPass={true}
+               byPassTerminalPayment={byPassTerminalPayment}
+               cancelTerminalPayment={cancelTerminalPayment}
+               codPaymentOptionId={cartState.kioskPaymentOption.cod}
+               initializePrinting={initializePrinting}
+            />
+         )}
+         {state.printDetails.isPrintInitiated && (
+            <PrintProcessingModal
+               printDetails={state.printDetails}
+               setPrintStatus={setPrintStatus}
+               closePrintModal={closePrintModal}
+               initializePrinting={initializePrinting}
             />
          )}
 

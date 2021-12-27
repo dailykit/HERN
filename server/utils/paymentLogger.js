@@ -36,7 +36,9 @@ const STATUS = {
    TXN_SUCCESS: 'SUCCEEDED',
    TXN_FAILURE: 'FAILED',
    PENDING: 'PENDING',
-   PROCESSING: 'PROCESSING'
+   PROCESSING: 'PROCESSING',
+   FAILED: 'FAILED',
+   SWIPE_OR_INSERT: 'SWIPE_OR_INSERT'
 }
 // const handleInvoice = async args => {
 //    try {

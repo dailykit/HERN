@@ -38,5 +38,6 @@ export * from './usePaytm'
 export * from './getRazorpayOptions'
 export * from './getPaytmOptions'
 export * from './useWindowSize'
+export * from './isKiosk'
+export * from './useTerminalPay'
 export * from './setThemeVariables'
-
