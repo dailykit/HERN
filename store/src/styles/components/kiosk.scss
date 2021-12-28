@@ -129,8 +129,9 @@
 // menu section
 .hern-kiosk__menu-promotion-coupons {
    position: relative;
-   margin: 1em;
-   padding-top: 1em;
+   // margin: 1em;
+   margin: 0 1em;
+   // padding-top: 1em;
    z-index: 0;
    .ant-carousel .slick-slide img {
       padding: 0 1em;
@@ -148,6 +149,10 @@
 }
 .hern-kiosk__menu-carousal-right-arrow {
    right: 0;
+}
+.hern-kiosk__promotion-image {
+   display: flex !important;
+   justify-content: center !important;
 }
 .ant-steps-item-active {
    .ant-steps-item-icon {
@@ -326,6 +331,10 @@
    width: 100%;
    border-radius: 0.5em;
    background: linear-gradient(180deg, #e5f0f7 0%, rgba(229, 240, 247, 0) 100%);
+}
+.product_image {
+   display: flex !important;
+   justify-content: center !important;
 }
 .hern-kiosk__kiosk-product-images-carousal {
    width: 100%;

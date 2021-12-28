@@ -169,7 +169,7 @@ export const MenuSection = props => {
    }
    return (
       <Layout>
-         <Content style={{ height: '25em' }}>
+         <Content>
             {/* Promotion, coupons and progress bar */}
             <Layout style={{ height: '100%' }}>
                <Header
