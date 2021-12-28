@@ -27,6 +27,8 @@
 @use './components/login_v1.scss';
 @use './components/locationSelector.scss';
 @use './components/kiosk.scss';
+@use './components/fulfillmentcart.scss';
+@use './components/userInfo.scss';
 
 
 @use './sections/register';
@@ -63,3 +65,4 @@
 @use './sections/account/profile';
 
 @use './components/on_demand_cart_bar.scss';
+@use './sections/product.scss';

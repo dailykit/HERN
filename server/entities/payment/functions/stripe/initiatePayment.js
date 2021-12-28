@@ -30,6 +30,25 @@ const initiatePayment = async arg => {
          const chargeAmount = (amount * 100).toFixed(0)
          const CURRENCY = await get_env('CURRENCY')
          const _stripe = await stripe()
+         let requiredData = null
+         const getPaymentLoggerData = async (cartPaymentId, invoice) => {
+            let payment_intent = null
+            if (invoice.paymentIntent) {
+               payment_intent = await _stripe.paymentIntents.retrieve(
+                  invoice.paymentIntent
+               )
+            }
+            return {
+               cartPaymentId,
+               requestId: invoice.id,
+               stripeInvoiceDetails: invoice,
+               ...(payment_intent && {
+                  transactionRemark: payment_intent,
+                  transactionId: payment_intent.id,
+                  paymentStatus: payment_intent.status
+               })
+            }
+         }
 
          if (stripeAccountType === 'standard') {
             // RE ATTEMPT
@@ -165,7 +184,8 @@ const initiatePayment = async arg => {
 
             // handleInvoice just updates the cartPayment and stripePaymentHistory table
             console.log('executing paymentLogger for invoice created')
-            await paymentLogger({ invoice })
+            requiredData = await getPaymentLoggerData(transferGroup, invoice)
+            await paymentLogger(requiredData)
             console.log('after executing paymentLogger for invoice created')
 
             // finalize the Invoice drafts before paying
@@ -182,7 +202,11 @@ const initiatePayment = async arg => {
 
             // again here handleInvoice just updates the cartPayment and stripePaymentHistory table
             console.log('executing paymentLogger for invoice finalized')
-            await paymentLogger({ invoice: finalizedInvoice })
+            requiredData = await getPaymentLoggerData(
+               transferGroup,
+               finalizedInvoice
+            )
+            await paymentLogger(requiredData)
             console.log('executing paymentLogger for after invoice finalized')
 
             // here we pay for the invoice that is been finalized
@@ -199,7 +223,11 @@ const initiatePayment = async arg => {
 
             // again here handleInvoice just updates the cartPayment and stripePaymentHistory table
             console.log('executing paymentLogger for  invoice pay')
-            await paymentLogger({ invoice: result })
+            requiredData = await getPaymentLoggerData(
+               transferGroup,
+               finalizedInvoice
+            )
+            await paymentLogger(result)
             console.log('executing paymentLogger for after invoice pay')
 
             return {

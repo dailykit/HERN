@@ -18,7 +18,7 @@ export const useQueryParamState = (key, initialValue) => {
             // Set new or modify existing page value
             queryParams.set(key, queryTerm)
             // Replace current querystring with the new one
-            history.replaceState(null, null, '?' + queryParams.toString())
+            history.pushState(null, null, '?' + queryParams.toString())
          }
       },
       [key, router]
@@ -32,7 +32,7 @@ export const useQueryParamState = (key, initialValue) => {
          setValue(initialValue)
          queryParams.delete(key)
          // Replace current querystring with the new one
-         history.replaceState(null, null, '?' + queryParams.toString())
+         history.pushState(null, null, '?' + queryParams.toString())
       }
    })
    return [value, onSetValue, deleteQuery]

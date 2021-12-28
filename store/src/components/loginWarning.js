@@ -13,3 +13,32 @@ export const LoginWarning = () => {
       />
    )
 }
+
+export const LoginWarningWithText = ({ text = 'You need to login.' }) => {
+   const [showLoginPopup, setShowLoginPopup] = React.useState(false)
+   return (
+      <>
+         <div>
+            {text}{' '}
+            <span
+               onClick={() => {
+                  setShowLoginPopup(true)
+               }}
+               style={{
+                  textDecoration: 'underline',
+                  cursor: 'pointer',
+                  color: '#367BF5',
+               }}
+            >
+               Login
+            </span>
+         </div>
+         <LoginWrapper
+            closeLoginPopup={() => {
+               setShowLoginPopup(false)
+            }}
+            showLoginPopup={showLoginPopup}
+         />
+      </>
+   )
+}

@@ -20,7 +20,8 @@ import { KioskModifier } from './component'
 import { useLazyQuery, useQuery } from '@apollo/react-hooks'
 import KioskButton from './component/button'
 import { ProgressBar } from './component/progressBar'
-import { Coupon } from '..'
+import { Coupon } from '../coupon'
+import PayButton from '../PayButton'
 
 const { Header, Content, Footer } = Layout
 
@@ -47,7 +48,7 @@ export const KioskCart = props => {
    }
 
    if (combinedCartItems === null) {
-      return <p>No cart available</p>
+      return <p>{t('No cart available')}</p>
    }
 
    return (
@@ -152,11 +153,11 @@ export const KioskCart = props => {
                      </Header>
                      <Content className="hern-kiosk__cart-page-price-detail">
                         <div className="hern-kiosk-cart-bill-details">
-                           <span>BILL DETAILS</span>
+                           <span>{t('BILL DETAILS')}</span>
                            <ul className="hern-kiosk-cart-bill-details-list">
                               <li>
                                  <span style={{ fontWeight: 'bold' }}>
-                                    {cart.billing.totalPrice.label}
+                                    {t('Total Price')}
                                  </span>
                                  <span style={{ fontWeight: 'bold' }}>
                                     {formatCurrency(
@@ -165,15 +166,7 @@ export const KioskCart = props => {
                                  </span>
                               </li>
                               <li>
-                                 <span>{cart.billing.deliveryPrice.label}</span>
-                                 <span>
-                                    {formatCurrency(
-                                       cart.billing.deliveryPrice.value || 0
-                                    )}
-                                 </span>
-                              </li>
-                              <li>
-                                 <span>{cart.billing.tax.label}</span>
+                                 <span>{t('Tax')}</span>
                                  <span>
                                     {formatCurrency(
                                        cart.billing.tax.value || 0
@@ -181,7 +174,7 @@ export const KioskCart = props => {
                                  </span>
                               </li>
                               <li>
-                                 <span>{cart.billing.discount.label}</span>
+                                 <span>{t('Discount')}</span>
                                  <span>
                                     {'-'}{' '}
                                     {formatCurrency(
@@ -194,7 +187,11 @@ export const KioskCart = props => {
                      </Content>
                      <Footer className="hern-kiosk__cart-page-proceed-to-checkout">
                         <CartPageFooter cart={cart} methods={methods} />
-                        <KioskButton customClass="hern-kiosk__cart-place-order-btn">
+                        <PayButton
+                           cartId={cart?.id}
+                           className="hern-kiosk__kiosk-button hern-kiosk__cart-place-order-btn"
+                        >
+                           {/* <KioskButton customClass="hern-kiosk__cart-place-order-btn"> */}
                            <span className="hern-kiosk__cart-place-order-btn-total">
                               {formatCurrency(cart.billing.totalPrice.value)}
                            </span>
@@ -216,7 +213,8 @@ export const KioskCart = props => {
                                  }
                               />
                            )}
-                        </KioskButton>
+                           {/* </KioskButton> */}
+                        </PayButton>
                      </Footer>
                   </Layout>
                </Footer>
@@ -230,6 +228,7 @@ const CartCard = props => {
    const { config, productData, removeCartItems } = props
    const { brand, kioskDetails } = useConfig()
    const { addToCart } = React.useContext(CartContext)
+   const { t, dynamicTrans, locale } = useTranslation()
 
    const [modifyProductId, setModifyProductId] = useState(null)
    const [modifyProduct, setModifyProduct] = useState(null)
@@ -338,6 +337,14 @@ const CartCard = props => {
       setModifyProductId(null)
       setShowModifier(false)
    }
+
+   useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [locale, showAdditionalDetailsOnCard])
+
    return (
       <div className="hern-kiosk__cart-card">
          <img
@@ -351,6 +358,8 @@ const CartCard = props => {
                   <span
                      className="hern-kiosk__cart-card-p-name"
                      style={{ color: '#5A5A5A' }}
+                     data-translation="true"
+                     data-original-value={productData.name}
                   >
                      {productData.name}
                   </span>{' '}
@@ -380,7 +389,12 @@ const CartCard = props => {
                         Product Option:
                      </span> */}
                      <div className="hern-kiosk-cart-product-modifiers-product-option">
-                        <span>
+                        <span
+                           data-translation="true"
+                           data-original-value={
+                              productData.childs[0].productOption.label || 'N/A'
+                           }
+                        >
                            {productData.childs[0].productOption.label || 'N/A'}
                         </span>{' '}
                         <span>
@@ -401,7 +415,13 @@ const CartCard = props => {
                                        (modifier, index) =>
                                           modifier.modifierOption ? (
                                              <li key={index}>
-                                                <span>
+                                                <span
+                                                   data-translation="true"
+                                                   data-original-value={
+                                                      modifier.modifierOption
+                                                         .name
+                                                   }
+                                                >
                                                    {
                                                       modifier.modifierOption
                                                          .name
@@ -439,7 +459,7 @@ const CartCard = props => {
             />
          </div>
          <Modal
-            title="Repeat last used customization?"
+            title={t('Repeat last used customization')}
             visible={showChooseIncreaseType}
             centered={true}
             onCancel={() => {
@@ -469,7 +489,7 @@ const CartCard = props => {
                      padding: '.1em 2em',
                   }}
                >
-                  I'LL CHOOSE
+                  {t(`I'LL CHOOSE`)}
                </KioskButton>
                <KioskButton
                   style={{ padding: '.1em 2em' }}
@@ -479,7 +499,7 @@ const CartCard = props => {
                      setForRepeatLastOne(true)
                   }}
                >
-                  REPEAT LAST ONE
+                  {t('REPEAT LAST ONE')}
                </KioskButton>
             </div>
          </Modal>

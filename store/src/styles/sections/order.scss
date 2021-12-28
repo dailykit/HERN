@@ -141,6 +141,9 @@
    .hern-on-demand-order-container--fixed-top-nav {
       grid-template-columns: 2fr 1fr !important;
    }
+   .hern-on-demand-order-container--fixed-top-nav--full-width {
+      grid-template-columns: 1fr;
+   }
    .hern-on-demand-order--product-card {
       width: calc(100% / var(--hern-number-of-products)) !important;
    }

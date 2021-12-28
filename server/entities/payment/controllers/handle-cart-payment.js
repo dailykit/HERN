@@ -17,10 +17,16 @@ export const handleCartPayment = async (req, res) => {
                   _eq: cart.id
                },
                paymentStatus: {
-                  _neq: 'SUCCEEDED'
+                  _nin: ['SUCCEEDED', 'CANCELLED']
                }
             }
          })
+
+         // detect if the cart is of cash/cod type
+         const isCashOrCod =
+            cart.availablePaymentOption.supportedPaymentOption
+               .paymentOptionLabel === 'CASH' ||
+            cart.availablePaymentOption.label === 'COD'
 
          if (cartPayments.length > 0) {
             if (
@@ -56,10 +62,16 @@ export const handleCartPayment = async (req, res) => {
                      object: {
                         cartId: cart.id,
                         paymentRetryAttempt: 1,
+                        ...(isCashOrCod && {
+                           // hardcoded for now
+                           paymentStatus: 'SUCCEEDED'
+                        }),
                         amount: cart.balancePayment,
                         isTest: cart.isTest,
                         paymentMethodId: cart.paymentMethodId,
-                        paymentCustomerId: cart.paymentCustomerId
+                        paymentCustomerId: cart.paymentCustomerId,
+                        usedAvailablePaymentOptionId:
+                           cart.toUseAvailablePaymentOptionId
                      }
                   }
                )
@@ -107,10 +119,15 @@ export const handleCartPayment = async (req, res) => {
                   object: {
                      cartId: cart.id,
                      paymentRetryAttempt: 1,
+                     ...(isCashOrCod && {
+                        paymentStatus: 'SUCCEEDED'
+                     }),
                      amount: cart.balancePayment,
                      isTest: cart.isTest,
                      paymentMethodId: cart.paymentMethodId,
-                     paymentCustomerId: cart.paymentCustomerId
+                     paymentCustomerId: cart.paymentCustomerId,
+                     usedAvailablePaymentOptionId:
+                        cart.toUseAvailablePaymentOptionId
                   }
                }
             )

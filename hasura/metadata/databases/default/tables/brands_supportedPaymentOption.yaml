@@ -5,3 +5,11 @@ object_relationships:
 - name: supportedPaymentCompany
   using:
     foreign_key_constraint_on: supportedPaymentCompanyId
+array_relationships:
+- name: availablePaymentOptions
+  using:
+    foreign_key_constraint_on:
+      column: supportedPaymentOptionId
+      table:
+        name: availablePaymentOption
+        schema: brands

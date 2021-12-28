@@ -1,4 +1,3 @@
-import { each } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { Button, ProductCard } from '.'
 import { RadioIcon, ShowImageIcon } from '../assets/icons'
@@ -9,6 +8,7 @@ import { CartContext } from '../context'
 import { CounterButton } from './counterBtn'
 import classNames from 'classnames'
 import Link from 'next/link'
+import { useToasts } from 'react-toast-notifications'
 
 export const ModifierPopup = props => {
    const {
@@ -20,10 +20,11 @@ export const ModifierPopup = props => {
       edit = false,
       productCartDetail,
       showModifierImage = true,
+      modifierWithoutPopup,
    } = props
    //context
    const { addToCart, methods } = React.useContext(CartContext)
-   console.log('productData', productData)
+   const { addToast } = useToasts()
    const [productOption, setProductOption] = useState(
       productData.productOptions[0]
    ) // for by default choose one product option
@@ -139,6 +140,9 @@ export const ModifierPopup = props => {
          // const objects = new Array(quantity).fill({ ...cartItem })
          // console.log('cartItem', objects)
          addToCart(cartItem, quantity)
+         addToast('Added to the Cart!', {
+            appearance: 'success',
+         })
          if (edit) {
             methods.cartItems.delete({
                variables: {
@@ -333,7 +337,7 @@ export const ModifierPopup = props => {
    }, [])
 
    useEffect(() => {
-      if (productData) {
+      if (productData && !modifierWithoutPopup) {
          document.querySelector('body').style.overflowY = 'hidden'
       }
       return () => {
@@ -346,18 +350,30 @@ export const ModifierPopup = props => {
    return (
       <>
          <div
-            className={classNames('hern-product-modifier-pop-up-container', {
-               'hern-product-modifier-pop-up-container--show-modifier-pop-up':
-                  productData,
-            })}
+            className={classNames(
+               {
+                  'hern-product-modifier-pop-up-container':
+                     !modifierWithoutPopup,
+               },
+               {
+                  'hern-product-modifier-pop-up-container--show-modifier-pop-up':
+                     productData && !modifierWithoutPopup,
+               }
+            )}
          >
-            <div className="hern-product-modifier-pop-up-product">
-               <div
-                  className="hern-product-modifier-pop-up-close-icon"
-                  onClick={closeModifier}
-               >
-                  <CloseIcon size={20} stroke="currentColor" />
-               </div>
+            <div
+               className={classNames({
+                  'hern-product-modifier-pop-up-product': !modifierWithoutPopup,
+               })}
+            >
+               {!modifierWithoutPopup && (
+                  <div
+                     className="hern-product-modifier-pop-up-close-icon"
+                     onClick={closeModifier}
+                  >
+                     <CloseIcon size={20} stroke="currentColor" />
+                  </div>
+               )}
                <div className="hern-product-modifier-pop-up-product-details">
                   <ProductCard
                      data={productData}
@@ -368,7 +384,15 @@ export const ModifierPopup = props => {
                      useForThirdParty={true}
                   />
                </div>
-               <div className="hern-product-modifier-pop-up-product-option-and-modifier">
+               <div
+                  className={classNames(
+                     'hern-product-modifier-pop-up-product-option-and-modifier',
+                     {
+                        'hern-product-modifier-pop-up-product-option-and-modifier--without-popup':
+                           modifierWithoutPopup,
+                     }
+                  )}
+               >
                   <div className="hern-product-modifier-pop-up-product-option-list">
                      <label htmlFor="products">Available Options:</label>
                      <br />

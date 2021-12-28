@@ -101,6 +101,9 @@ const SliderSection = dynamic(() =>
       promise => promise.SliderSection
    )
 )
+const Product = dynamic(() =>
+   import('../sections/product').then(promise => promise.Product)
+)
 export const renderComponentByName = (fold, options) => {
    const getProps = component => {
       if (options) {
@@ -259,6 +262,12 @@ export const renderComponentByName = (fold, options) => {
       case 'OnDemandOrder':
          return <OnDemandOrder config={fold.config} />
 
+
+      /*ROUTE :
+      [brand]/products/[id]
+       */
+      case 'Products':
+         return <Product config={fold.config} />
 
       /*ROUTE :
       [brand]/cart

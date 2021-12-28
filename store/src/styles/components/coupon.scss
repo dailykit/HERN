@@ -131,3 +131,41 @@
    font-size: 4em;
    color: #ff5a52;
 }
+//for upfront
+.hern-upfront-coupon__input-wrapper {
+   display: block;
+   flex: 4;
+}
+.hern-upfront-coupon__input {
+   display: block;
+   background: #f4f4f4;
+   border-radius: 8px;
+   padding: 10px;
+   width: 100%;
+   ::placeholder {
+      color: rgba(64, 64, 64, 0.25);
+      font-weight: 600;
+      font-size: 18px;
+      line-height: 20px;
+   }
+}
+.hern-upfront-coupon__input-label {
+   display: none;
+}
+.hern-upfront-coupon__form__apply-btn {
+   padding: 10px 28px;
+   margin: 0px 20px;
+   height: auto;
+   :disabled {
+      color: #cacaca;
+      cursor: no-drop;
+   }
+}
+.hern-upfront-coupon-header__label {
+   display: block;
+   font-weight: 600;
+   font-size: 20px;
+   line-height: 22px;
+   color: rgba(64, 64, 64, 0.8);
+   margin: 0 10px;
+}

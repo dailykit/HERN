@@ -451,8 +451,8 @@ const Product = ({
                   alt="Non-Veg Icon"
                   src={
                      product.type === 'Non-vegetarian'
-                        ? '/imgs/non-veg.png'
-                        : '/imgs/veg.png'
+                        ? '/assets/imgs/non-veg.png'
+                        : '/assets/imgs/veg.png'
                   }
                   title={product.type}
                />

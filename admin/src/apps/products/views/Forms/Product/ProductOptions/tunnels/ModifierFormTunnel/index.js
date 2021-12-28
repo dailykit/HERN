@@ -210,6 +210,10 @@ export const Category = ({ category, open, openOperationConfigTunnel }) => {
       { id: 'single', title: 'Single' },
       { id: 'multiple', title: 'Multiple' },
    ]
+   const categoryOption = [
+      { id: 'addOn', title: 'ADDON' },
+      { id: 'combo', title: 'COMBO' },
+   ]
 
    const { modifiersDispatch } = React.useContext(ModifiersContext)
 
@@ -409,6 +413,23 @@ export const Category = ({ category, open, openOperationConfigTunnel }) => {
                />
             </div>
             <div>
+               <Text as="subtitle">Category Type</Text>
+               <RadioGroup
+                  options={categoryOption}
+                  active={category.categoryType}
+                  onChange={option =>
+                     updateCategory({
+                        variables: {
+                           id: category.id,
+                           _set: {
+                              categoryType: option.title,
+                           },
+                        },
+                     })
+                  }
+               />
+            </div>
+            <div>
                <Text as="subtitle">Flags</Text>
                <Grid>
                   <Form.Checkbox
@@ -568,7 +589,14 @@ const Option = ({ open, openOperationConfigTunnel, option }) => {
          errors: [],
       },
    })
-
+   const [posist_baseItemId, setPosist_baseItemId] = React.useState({
+      value: option.posist_baseItemId ?? null,
+      meta: {
+         isValid: true,
+         isTouched: false,
+         errors: [],
+      },
+   })
    const [updateOption] = useMutation(MODIFIER_OPTION.UPDATE, {
       onCompleted: () => toast.success('Updated!'),
       onError: error => {
@@ -675,6 +703,30 @@ const Option = ({ open, openOperationConfigTunnel, option }) => {
             })
             break
          }
+         case 'posist_baseItemId': {
+            const { isValid, errors } = validator.posist_baseItemId(
+               posist_baseItemId.value
+            )
+            if (isValid) {
+               updateOption({
+                  variables: {
+                     id: option.id,
+                     _set: {
+                        posist_baseItemId: posist_baseItemId.value,
+                     },
+                  },
+               })
+            }
+            setPosist_baseItemId({
+               ...posist_baseItemId,
+               meta: {
+                  isValid,
+                  errors,
+                  isTouched: true,
+               },
+            })
+            break
+         }
       }
    }
 
@@ -744,6 +796,41 @@ const Option = ({ open, openOperationConfigTunnel, option }) => {
                            ))}
                      </Form.Group>
                      <small>{option.originalName}</small>
+                  </div>
+               </Flex>
+               <Spacer size="8px" />
+               <Flex>
+                  <div>
+                     <Form.Group>
+                        <Form.Label
+                           htmlFor={`optionPosist_baseItemId-${option.id}`}
+                           title={`optionPosist_baseItemId-${option.id}`}
+                        >
+                           Option Posist Base ItemId
+                        </Form.Label>
+                        <Form.Text
+                           id={`optionPosist_baseItemId-${option.id}`}
+                           name={`optionPosist_baseItemId-${option.id}`}
+                           onBlur={() => handleOnBlur('posist_baseItemId')}
+                           onChange={e =>
+                              setPosist_baseItemId({
+                                 ...posist_baseItemId,
+                                 value: e.target.value,
+                              })
+                           }
+                           value={posist_baseItemId.value}
+                           placeholder="Enter option posist_baseItemId"
+                           hasError={
+                              posist_baseItemId.meta.isTouched &&
+                              !posist_baseItemId.meta.isValid
+                           }
+                        />
+                        {posist_baseItemId.meta.isTouched &&
+                           !posist_baseItemId.meta.isValid &&
+                           posist_baseItemId.meta.errors.map((error, index) => (
+                              <Form.Error key={index}>{error}</Form.Error>
+                           ))}
+                     </Form.Group>
                   </div>
                </Flex>
                <Spacer size="8px" />
