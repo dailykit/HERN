@@ -314,6 +314,9 @@
    display: flex;
    justify-content: center;
    align-items: center;
+   .ant-carousel {
+      width: 135%;
+   }
 }
 .hern-kiosk__menu-product-background-shadow {
    position: absolute;

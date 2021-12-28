@@ -25,7 +25,6 @@ export const KioskProduct = props => {
       const languageTags = document.querySelectorAll(
          '[data-translation="true"]'
       )
-      console.log('languageTags', languageTags)
       dynamicTrans(languageTags)
    }, [currentLang])
 
