@@ -119,7 +119,7 @@ export const AddressTunnel = props => {
    const toggleTunnel = (value = false) => {
       dispatch({ type: 'TOGGLE_TUNNEL', payload: value })
    }
-   console.log(address, "address🎈🎆🎇🧨✨🎉🎊🎃")
+
    if (outside) {
       return (
          <>
