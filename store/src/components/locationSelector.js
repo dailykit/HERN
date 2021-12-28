@@ -99,9 +99,6 @@ export const LocationSelector = props => {
                   />
                   <span>Location</span>
                </div>
-               <div>
-                  <span>Skip</span>
-               </div>
             </div>
             {/* fulfillment type*/}
             <div className="hern-store-location-selector__fulfillment-selector">

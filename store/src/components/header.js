@@ -16,8 +16,8 @@ import {
 import MenuIcon from '../assets/icons/Menu'
 
 import { ProfileSidebar } from './profile_sidebar'
-import { CrossIcon, CartIcon } from '../assets/icons'
-import { Loader } from './loader'
+import { CrossIcon, CartIcon, LocationMarker } from '../assets/icons'
+
 import NavigationBar from './navbar'
 import { useWindowSize } from '../utils/useWindowSize'
 import { LanguageSwitch, TemplateFile } from '.'
@@ -135,8 +135,11 @@ export const Header = ({ settings, navigationMenus }) => {
                   </div>
                </Link>
                {showLocationButton && (
-                  <button onClick={() => setShowLocationSelectionPopup(true)}>
-                     {t('Location')}
+                  <button
+                     style={{ display: 'flex', alignItems: 'center' }}
+                     onClick={() => setShowLocationSelectionPopup(true)}
+                  >
+                     <LocationMarker /> {t('Location')}
                   </button>
                )}
                <section className="hern-navigatin-menu__wrapper">
