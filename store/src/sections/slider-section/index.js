@@ -3,7 +3,6 @@ import { Carousel } from 'antd'
 import { ArrowLeftIcon, ArrowRightIcon } from '../../assets/icons'
 
 export const SliderSection = ({config})=> {
-    console.log('slider section config', config)
     const checkShowDots = ()=> {
         if (config.display.slider.showDotsOnSilder.value!=undefined){
             return config.display.slider.showDotsOnSilder.value
@@ -16,6 +15,7 @@ export const SliderSection = ({config})=> {
         }
         return config.display.slider.showSliderArrow.default
     }
+    console.log('video', config.display.slider.content.video.value[0])
     return (
         <>
             <Carousel className="hern-slider_section-carousel" arrows dots={checkShowDots()} prevArrow={checkShowArrow()?<LeftArrow />:false} nextArrow={checkShowArrow()?<RightArrow />:false}>
@@ -27,15 +27,19 @@ export const SliderSection = ({config})=> {
     )
 }
 
+
 const SliderDiv = ({content, index})=> {
     return (
     <div>
         <div style={{display:'flex', alignItems: 'center', justifyContent: 'center'}}>
-            <img
+            {/* <img
             src={content.images.value[index]?content.images.value[index]:content.images.default}
             alt="products"
             width="100%"
-            />
+            /> */}
+            <video muted autoplay="autoplay" loop="loop" preload="auto">
+                <source src={content.video.value[index]?content.video.value[index]:content.video.default}></source>
+            </video>
             <div style={{position: 'absolute', color: 'white', width: '10%', textAlign: 'center'}}>
                 <h1 className="hern-slider_section-heading">{content.heading.value[index]?content.heading.value[index]:content.heading.default}</h1>
                 <p className="hern-slider_section-description">{content.description.value[index]?content.description.value[index]:content.description.default}</p>
@@ -49,7 +53,7 @@ const SliderDiv = ({content, index})=> {
 const LeftArrow = ({...props})=> {
     return (
         <div {...props}  className="hern-slider_section-left_arrow">
-            <ArrowLeftIcon color="black" size="30" />
+            <ArrowLeftIcon color="black" size="35" />
         </div>
     )
      
@@ -58,7 +62,7 @@ const LeftArrow = ({...props})=> {
 const RightArrow = ({...props})=> {
     return (
         <div {...props} className="hern-slider_section-right_arrow">
-            <ArrowRightIcon color="black" size="30" />
+            <ArrowRightIcon color="black" size="35" />
         </div>
     )
      

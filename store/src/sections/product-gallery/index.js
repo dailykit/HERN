@@ -7,7 +7,6 @@ import { Carousel, Row, Col } from 'antd'
 import {ProductCard} from '../../components/product_card'
 import { ArrowLeftIcon, ArrowRightIcon } from '../../assets/icons'
 export const ProductGallery = ({config})=> {
-    console.log('product gallery config', config)
     const [productsData, setProductsData] = React.useState([])
     const [productOrientation, setProductOrientation] = React.useState(config.informationVisibility.productOrientation.value[0].value)
     const [status, setStatus] = React.useState('loading')
@@ -40,7 +39,6 @@ export const ProductGallery = ({config})=> {
            onCompleted: data => {
               if (data && data.products.length) {
                  const productsData = data.products
-                 console.log('productsData',productsData)
                  setProductsData(productsData)
                  setStatus('success')
 
@@ -56,8 +54,8 @@ export const ProductGallery = ({config})=> {
     return (
         <>
             <div className="hern-product_gallery-header">
-                <h3 className="hern-product_gallery-header-heading">POPULAR RECIPES</h3>
-                <h5 className="hern-product_gallery-header-description">CHECKOUT SOME OF OUR MOST POPULAR DISHES FROM THE MENU</h5>
+                <h3 className="hern-product_gallery-header-heading">{config.data.title.value}</h3>
+                <h5 className="hern-product_gallery-header-description">{config.data.subTitle.value}</h5>
             </div>
             {productsData.length?
             <>
@@ -99,7 +97,6 @@ const ProductGrid = ({product, index}) => {
                     if (data.productOptions.length > 0) {
                        setProductModifier(data)
                     } else {
-                       console.log('product added to cart', data)
                        addToCart({ productId: data.id }, 1)
                     }
                  }}
@@ -183,7 +180,7 @@ const SliderDiv = ({productsArray})=> {
 const LeftArrow = ({...props})=> {
     return (
         <div {...props}  className="hern-product_gallery-left_arrow">
-            <ArrowLeftIcon color="white" size="30" />
+            <ArrowLeftIcon color="white" size="35" />
         </div>
     )
      
@@ -192,7 +189,7 @@ const LeftArrow = ({...props})=> {
 const RightArrow = ({...props})=> {
     return (
         <div {...props} className="hern-product_gallery-right_arrow">
-            <ArrowRightIcon color="white" size="30" />
+            <ArrowRightIcon color="white" size="35" />
         </div>
     )
      
