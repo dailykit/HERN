@@ -141,6 +141,12 @@
    padding: 10px;
    margin-bottom: 12px;
 }
+.hern-upfront-coupons-list__coupon-wrapper > .slick-list > .slick-track {
+   display: flex;
+   flex-direction: row;
+   width: 100%;
+}
+
 .hern-upfront-coupons-list__coupon {
    padding: 8px;
    display: flex !important;
@@ -150,8 +156,8 @@
 }
 .hern-upfront-coupons-list__coupon__scissor-icon {
    position: relative;
-   right: -1rem;
-   top: 3.5rem;
+   right: -1.7rem;
+   top: 7.5rem;
 }
 .hern-upfront-coupons-list__coupon__body-wrapper {
    margin: 0px;
