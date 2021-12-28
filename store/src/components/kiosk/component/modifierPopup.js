@@ -78,7 +78,8 @@ export const KioskModifier = props => {
             if (
                selectedOptions.single[existCategoryIndex][
                   'modifierCategoryOptionsID'
-               ] === eachOption.id
+               ] === eachOption.id &&
+               !eachModifierCategory.isRequired
             ) {
                const newSelectedOptions = selectedOptions.single.filter(
                   x =>
@@ -335,13 +336,66 @@ export const KioskModifier = props => {
             setQuantity(productCartDetail.ids.length)
          }
          setStatus('success')
-      } else {
-         setStatus('success')
       }
       return () => {
          setSelectedProductOption(null)
       }
    }, [])
+   useEffect(() => {
+      // default selected modifiers
+      if (!(forNewItem || edit)) {
+         let singleModifier = []
+         let multipleModifier = []
+         if (selectedProductOption.modifier) {
+            selectedProductOption.modifier.categories.forEach(eachCategory => {
+               if (eachCategory.type === 'single' && eachCategory.isRequired) {
+                  // default selected modifier option
+                  const defaultModifierSelectedOption = {
+                     modifierCategoryID: eachCategory.id,
+                     modifierCategoryOptionsID: eachCategory.options[0].id,
+                     modifierCategoryOptionsPrice:
+                        eachCategory.options[0].price,
+                     modifierCategoryOptionsDiscount:
+                        eachCategory.options[0].discount,
+                     cartItem: eachCategory.options[0].cartItem,
+                  }
+                  singleModifier = [
+                     ...singleModifier,
+                     defaultModifierSelectedOption,
+                  ]
+               } else if (
+                  eachCategory.type === 'multiple' &&
+                  eachCategory.isRequired
+               ) {
+                  const defaultSelectedOptions = eachCategory.options.slice(
+                     0,
+                     eachCategory.limits.min
+                  )
+                  defaultSelectedOptions.forEach(eachModifierOption => {
+                     // default selected modifier option
+                     const defaultModifierSelectedOption = {
+                        modifierCategoryID: eachCategory.id,
+                        modifierCategoryOptionsID: eachModifierOption.id,
+                        modifierCategoryOptionsPrice: eachModifierOption.price,
+                        modifierCategoryOptionsDiscount:
+                           eachModifierOption.discount,
+                        cartItem: eachModifierOption.cartItem,
+                     }
+                     multipleModifier = [
+                        ...multipleModifier,
+                        defaultModifierSelectedOption,
+                     ]
+                  })
+               }
+            })
+         }
+         setSelectedOptions(prevState => ({
+            ...prevState,
+            single: singleModifier,
+            multiple: multipleModifier,
+         }))
+      }
+   }, [selectedProductOption])
 
    useEffect(() => {
       const languageTags = document.querySelectorAll(
