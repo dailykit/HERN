@@ -15,12 +15,14 @@ import Link from 'next/link'
 import { UserInfo } from '../../components'
 
 export const OnDemandCart = () => {
-   const { cartState, combinedCartItems } = React.useContext(CartContext)
+   const { cartState, combinedCartItems, isCartLoading, cartItemsLoading } =
+      React.useContext(CartContext)
 
-   if (combinedCartItems === null) {
+   if (combinedCartItems === null || isCartLoading || cartItemsLoading) {
       return <Loader />
    }
-   if (cartState.cart == null || combinedCartItems.length === 0) {
+
+   if (!cartState.cart || combinedCartItems.length === 0) {
       return (
          <div className="hern-cart-empty-cart">
             <EmptyCart />
