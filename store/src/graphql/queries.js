@@ -2058,6 +2058,8 @@ export const GET_PAYMENT_OPTIONS = gql`
                country
                supportedPaymentCompanyId
                paymentOptionLabel
+               isLoginRequired
+               canShowWhileLoggedIn
                supportedPaymentCompany {
                   id
                   label
