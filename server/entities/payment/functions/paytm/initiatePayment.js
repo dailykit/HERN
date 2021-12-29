@@ -1,6 +1,7 @@
 import _isEmtpy from 'lodash/isEmpty'
 import paytm from '../../../../lib/paytm'
 import { logger, paymentLogger } from '../../../../utils'
+import get_env from '../../../../../get_env'
 
 const initiatePayment = async arg => {
    try {
@@ -36,7 +37,7 @@ const initiatePayment = async arg => {
          userInfo
       )
       const PAYTM_MERCHANT_ID =
-         process.env.PAYTM_MERCHANT_ID || (await get_env('PAYTM_MERCHANT_ID'))
+         (await get_env('PAYTM_MERCHANT_ID')) || process.env.PAYTM_MERCHANT_ID
       const paymentDetail = paymentDetailBuilder.build()
       const response = await _Paytm.Payment.createTxnToken(paymentDetail)
       const { txnToken } = response.responseObject.body
