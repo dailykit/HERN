@@ -31,8 +31,8 @@ const PaymentProcessingModal = ({
    }
 
    const stopCelebration = () => {
+      setIsCelebrating(false)
       if (isKioskMode) {
-         setIsCelebrating(false)
          initializePrinting()
          closeModalHandler()
       } else {

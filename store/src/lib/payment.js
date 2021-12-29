@@ -345,6 +345,19 @@ export const PaymentProvider = ({ children }) => {
       })
    }
 
+   const resetPrintDetails = () => {
+      dispatch({
+         type: 'UPDATE_INITIAL_STATE',
+         payload: {
+            printDetails: {
+               isPrintInitiated: false,
+               printStatus: 'not-started',
+               message: '',
+            },
+         },
+      })
+   }
+
    const closePrintModal = () => {
       dispatch({
          type: 'UPDATE_INITIAL_STATE',
@@ -519,6 +532,7 @@ export const PaymentProvider = ({ children }) => {
             <PrintProcessingModal
                printDetails={state.printDetails}
                setPrintStatus={setPrintStatus}
+               resetPrintDetails={resetPrintDetails}
                closePrintModal={closePrintModal}
                initializePrinting={initializePrinting}
             />
