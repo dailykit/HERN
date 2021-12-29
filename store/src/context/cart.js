@@ -132,6 +132,11 @@ export const CartProvider = ({ children }) => {
          )
          console.log('combinedCartItems', combinedCartItems)
          setCombinedCartData(combinedCartItems)
+      } else {
+         const localCartId = localStorage.getItem('cart-id')
+         if (!localCartId && !isAuthenticated) {
+            setCombinedCartData([])
+         }
       }
    }, [cartItemsData?.cart?.cartItems])
 
