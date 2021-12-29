@@ -14,6 +14,7 @@ const PrintProcessingModal = ({
    setPrintStatus = () => null,
    closePrintModal = () => null,
    initializePrinting = () => null,
+   resetPrintDetails = () => null,
 }) => {
    console.log('PrintProcessingModal')
 
@@ -75,6 +76,7 @@ const PrintProcessingModal = ({
       if (printStatus === 'success') {
          setTimeout(() => {
             if (isKioskMode) {
+               resetPrintDetails()
                clearCurrentPage()
                setStoredCartId(null)
                setIsIdleScreen(true)
