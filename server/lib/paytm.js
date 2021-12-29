@@ -5,11 +5,11 @@ const Paytm = require('paytm-pg-node-sdk')
 const paytm = async () => {
    const PAYTM_ENVIRONMENT = Paytm.LibraryConstants.STAGING_ENVIRONMENT
    const PAYTM_MERCHANT_ID =
-      process.env.PAYTM_MERCHANT_ID || (await get_env('PAYTM_MERCHANT_ID'))
+      (await get_env('PAYTM_MERCHANT_ID')) || process.env.PAYTM_MERCHANT_ID
    const PAYTM_MERCHANT_KEY =
-      process.env.PAYTM_MERCHANT_KEY || (await get_env('PAYTM_MERCHANT_KEY'))
+      (await get_env('PAYTM_MERCHANT_KEY')) || process.env.PAYTM_MERCHANT_KEY
    const PAYTM_WEBSITE =
-      process.env.PAYTM_WEBSITE || (await get_env('PAYTM_WEBSITE'))
+      (await get_env('PAYTM_WEBSITE')) || process.env.PAYTM_WEBSITE
    const PAYTM_CALLBACK_URL =
       'https://dailyos-backend.ngrok.io/server/api/payment/handle-payment-webhook'
    Paytm.MerchantProperties.setCallbackUrl(PAYTM_CALLBACK_URL)

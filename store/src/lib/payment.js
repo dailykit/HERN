@@ -263,13 +263,14 @@ export const PaymentProvider = ({ children }) => {
          })
       }
    }
-   const onPaymentModalClose = () => {
+   const onPaymentModalClose = (isFailed = false) => {
       setIsProcessingPayment(false)
       setIsPaymentInitiated(false)
       updateCartPayment({
          variables: {
             id: cartPayment?.id,
             _set: {
+               ...(isFailed && { paymentStatus: 'FAILED' }),
                isResultShown: true,
             },
          },
@@ -504,7 +505,7 @@ export const PaymentProvider = ({ children }) => {
             <PaymentProcessingModal
                isOpen={isProcessingPayment}
                cartPayment={cartPayment}
-               closeModal={onPaymentModalClose}
+               closeModal={isFailed => onPaymentModalClose(isFailed)}
                normalModalClose={normalModalClose}
                cancelPayment={onCancelledHandler}
                isTestingByPass={true}

@@ -10,14 +10,10 @@ const stripeWebhookEvents = async arg => {
       const _stripe = await stripe()
       const signature = arg.headers['stripe-signature']
       let event
-      let SECRET =
-         'whsec_ivLV3pCHRGf8igUIT4DTdzISsLjCkayq' ||
-         (await get_env('WEBHOOK_STRIPE_SECRET'))
+      let SECRET = await get_env('WEBHOOK_STRIPE_SECRET')
       const body = JSON.parse(arg.rawBody)
       if ('account' in body && body.account) {
-         SECRET =
-            'whsec_ivLV3pCHRGf8igUIT4DTdzISsLjCkayq' ||
-            (await get_env('WEBHOOK_STRIPE_CONNECT_SECRET'))
+         SECRET = await get_env('WEBHOOK_STRIPE_CONNECT_SECRET')
       }
 
       try {
