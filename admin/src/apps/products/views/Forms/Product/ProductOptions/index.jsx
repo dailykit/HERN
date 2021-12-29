@@ -415,7 +415,7 @@ const Option = ({
       },
    })
    const [posist_baseItemId, setPosist_baseItemId] = React.useState({
-      value: '',
+      value: option.posist_baseItemId,
       meta: {
          isTouched: false,
          isValid: true,
@@ -571,9 +571,8 @@ const Option = ({
             return
          }
          case 'posist_baseItemId': {
-            const val = posist_baseItemId.value.trim()
-            const { isValid, errors } = validator.posist_baseItemId(val)
-            if (isValid && isActuallyUpdated(field, val)) {
+            const val = posist_baseItemId.value
+            if (isActuallyUpdated(field, val)) {
                updateProductOption({
                   variables: {
                      id: option.id,
@@ -585,11 +584,7 @@ const Option = ({
             }
             setPosist_baseItemId({
                ...posist_baseItemId,
-               meta: {
-                  isTouched: true,
-                  isValid,
-                  errors,
-               },
+
             })
             return
          }
