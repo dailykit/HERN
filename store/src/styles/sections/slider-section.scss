@@ -1,7 +1,7 @@
 .hern-slider_section-left_arrow{
     position: absolute;
     z-index: 1;
-    left: 6rem;
+    left: 4%;
     background: white;
     padding: 1em 1em 1em 1.2em;
     top: 50%;
@@ -12,7 +12,7 @@
 .hern-slider_section-right_arrow{
     position: absolute;
     z-index: 1;
-    right: 6rem;
+    right: 4%;
     background: white;
     padding: 1em 1.2em 1em 1em;
     top: 50%;
@@ -22,8 +22,8 @@
 .hern-slider_section-get_started_button{
     background-color: rgb(124 196 30);
     border: 1px solid rgb(124 196 30);
-    padding: 10px 60px;
-    font-size: 12px;
+    padding: 2% 10%;
+    font-size: 1vw;
     font-weight: 600;
     font-family: "Poppins", sans-serif;
     text-align: center;
@@ -40,12 +40,16 @@
     letter-spacing: -1.2px;
     color: #fff;
     font-family: "Poppins", sans-serif;
+    font-size: 3vw;
 }
 .hern-slider_section-description{
     line-height: 26px;
     letter-spacing: 0.72px;
+    font-size: 1vw;
+    color: #fff;
     padding: 0 15%;
     font-family: "Lato", sans-serif;
+    margin-top: 1em;
 }
 .ant-carousel .hern-slider_section-carousel .slick-arrow .slick-prev{
     z-index: 4;

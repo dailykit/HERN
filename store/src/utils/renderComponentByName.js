@@ -101,6 +101,12 @@ const SliderSection = dynamic(() =>
       promise => promise.SliderSection
    )
 )
+const ContactUs = dynamic(() =>
+   import('../sections/contact-us').then(
+      promise => promise.ContactUs
+   )
+)
+
 const Product = dynamic(() =>
    import('../sections/product').then(promise => promise.Product)
 )
@@ -290,5 +296,8 @@ export const renderComponentByName = (fold, options) => {
       */
       case 'SliderSection':
          return <SliderSection config={fold.config} />
+      
+      case 'ContactUs':
+         return <ContactUs config={fold.config} />
    }
 }

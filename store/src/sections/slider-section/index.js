@@ -3,6 +3,7 @@ import { Carousel } from 'antd'
 import { ArrowLeftIcon, ArrowRightIcon } from '../../assets/icons'
 
 export const SliderSection = ({config})=> {
+    console.log('-->config', config)
     const checkShowDots = ()=> {
         if (config.display.slider.showDotsOnSilder.value!=undefined){
             return config.display.slider.showDotsOnSilder.value
@@ -32,14 +33,11 @@ const SliderDiv = ({content, index})=> {
     return (
     <div>
         <div style={{display:'flex', alignItems: 'center', justifyContent: 'center'}}>
-            {/* <img
+            <img
             src={content.images.value[index]?content.images.value[index]:content.images.default}
             alt="products"
             width="100%"
-            /> */}
-            <video muted autoplay="autoplay" loop="loop" preload="auto">
-                <source src={content.video.value[index]?content.video.value[index]:content.video.default}></source>
-            </video>
+            />
             <div style={{position: 'absolute', color: 'white', width: '10%', textAlign: 'center'}}>
                 <h1 className="hern-slider_section-heading">{content.heading.value[index]?content.heading.value[index]:content.heading.default}</h1>
                 <p className="hern-slider_section-description">{content.description.value[index]?content.description.value[index]:content.description.default}</p>
