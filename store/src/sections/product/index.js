@@ -78,6 +78,7 @@ export const Product = ({ config }) => {
                   customAreaFlex={false}
                   showModifier={true}
                   customProductDetails={true}
+                  modifierWithoutPopup={true}
                />
             </div>
          </div>

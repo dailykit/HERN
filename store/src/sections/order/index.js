@@ -107,7 +107,6 @@ export const OnDemandOrder = ({ config }) => {
          },
       }
    )
-   console.log('Kama Sutra: A Tale of Love', config)
    const [productModifier, setProductModifier] = useState(null)
    const CustomArea = props => {
       const { data } = props
