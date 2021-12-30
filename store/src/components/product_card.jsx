@@ -34,7 +34,7 @@ export const ProductCard = props => {
       maintainRatio = true,
       customAreaFlex = true, //If custom area on the next line
       contentAreaCustomStyle = {},
-      modifierWithoutPopup = true,
+      modifierWithoutPopup = false,
       showProductDetails = true,
       customProductDetails = false,
    } = props
