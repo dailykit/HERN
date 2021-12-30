@@ -27,6 +27,9 @@ export const Recipe = ({ productOption, config }) => {
    const showCookingProcess =
       config?.['information Visibility']?.recipe?.showCookingProcess?.value ??
       false
+   const showNavigationCategory =
+      config?.['information Visibility']?.recipe?.showNavigationCategory
+         ?.value ?? false
    if (!recipe) {
       return (
          <main className="hern-recipe">
@@ -40,17 +43,19 @@ export const Recipe = ({ productOption, config }) => {
       <div className="hern-recipe__wrapper">
          <div className="hern-recipe-navigation">
             <h3>Recipe</h3>
-            <div>
-               {recipe.showIngredients && (
-                  <a href="#ingredients" className="active">
-                     Ingredients
-                  </a>
-               )}
-               <a href="#nutrition">Nutrition &amp; Allergens</a>
-               {showCookingProcess && (
-                  <a href="#cooking-process">Cooking Process</a>
-               )}
-            </div>
+            {showNavigationCategory && (
+               <div>
+                  {recipe.showIngredients && (
+                     <a href="#ingredients" className="active">
+                        Ingredients
+                     </a>
+                  )}
+                  <a href="#nutrition">Nutrition &amp; Allergens</a>
+                  {showCookingProcess && (
+                     <a href="#cooking-process">Cooking Process</a>
+                  )}
+               </div>
+            )}
          </div>
          <div>
             <main className="hern-recipe">
