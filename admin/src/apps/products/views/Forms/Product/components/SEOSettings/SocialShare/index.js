@@ -38,7 +38,7 @@ import { PRODUCT } from '../../../../../../graphql'
 import { InfoCircleOutlined } from '@ant-design/icons'
 const { Title, Text } = Typography
 
-export const SocialShare = ({ update, productId }) => {
+export const SocialShare = ({ update, productId, domain }) => {
     const [tunnel1, openTunnel1, closeTunnel1] = useTunnel(1)
     const params = useParams()
     const [settingId, setSettingId] = React.useState(null)
@@ -444,9 +444,9 @@ export const SocialShare = ({ update, productId }) => {
                                 }
                             >
                                 <Tooltip placement="bottom" title={'page link'}>
-                                    {/* <p style={{ textTransform: 'uppercase' }}>
-
-                                    </p> */}
+                                    <p style={{ textTransform: 'uppercase' }}>
+                                        {domain.split('//')[1]}
+                                    </p>
                                 </Tooltip>
                                 <Title strong level={4}>
                                     {form.ogTitle.value || 'Title Tag'}

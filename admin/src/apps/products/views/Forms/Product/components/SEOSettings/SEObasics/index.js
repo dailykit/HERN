@@ -37,7 +37,7 @@ import { EditIcon, DeleteIcon } from '../../../../../../../../shared/assets/icon
 import { PRODUCT } from '../../../../../../graphql'
 import { InfoCircleOutlined } from '@ant-design/icons'
 
-const SEOBasics = ({ update, productId }) => {
+const SEOBasics = ({ update, productId, domain }) => {
     const [settingId, setSettingId] = React.useState(null)
     const { Text, Title } = Typography
     const [tunnel1, openTunnel1, closeTunnel1] = useTunnel(1)
@@ -389,9 +389,9 @@ const SEOBasics = ({ update, productId }) => {
                             </Tooltip>
                             <Card>
                                 <Tooltip placement="bottom" title={'google preview'}>
-                                    {/* <p className="link">
-
-                                    </p> */}
+                                    <p className="link">
+                                        {domain}
+                                    </p>
                                 </Tooltip>
                                 <Title
                                     strong

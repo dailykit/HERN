@@ -9,7 +9,7 @@ import SocialShare from './SocialShare'
 import TwitterCard from './TwitterCard'
 
 const SEOSettings = ({ productId }) => {
-
+   const domain = `${window.location.origin}/product/${productId}`
    const [updateSetting] = useMutation(PRODUCT.UPDATE_PRODUCT_SETTING, {
       onCompleted: () => {
          toast.success('Successfully updated!')
@@ -20,13 +20,8 @@ const SEOSettings = ({ productId }) => {
       },
    })
 
-
+   console.log(domain, "🎁🎀🎄🎋🎍🎎")
    const update = ({ id, value }) => {
-      console.log('🎗🎗', {
-         "productPageSettingId": id,
-         "productId": productId,
-         "value": value,
-      })
       updateSetting({
          variables: {
             object: {
@@ -40,9 +35,9 @@ const SEOSettings = ({ productId }) => {
 
    return (
       <div style={{ margin: '35px 35px 35px 35px' }}>
-         <SEOBasics update={update} productId={productId} />
-         <SocialShare update={update} productId={productId} />
-         <TwitterCard update={update} productId={productId} />
+         <SEOBasics update={update} productId={productId} domain={domain} />
+         <SocialShare update={update} productId={productId} domain={domain} />
+         <TwitterCard update={update} productId={productId} domain={domain} />
       </div>
    )
 }

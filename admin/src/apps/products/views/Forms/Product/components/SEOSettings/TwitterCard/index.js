@@ -42,7 +42,7 @@ import {
 import { InfoCircleOutlined } from '@ant-design/icons'
 const { Title, Text } = Typography
 
-export const TwitterCard = ({ update, productId }) => {
+export const TwitterCard = ({ update, productId, domain }) => {
     const [tunnel1, openTunnel1, closeTunnel1] = useTunnel(1)
     const params = useParams()
     const [settingId, setSettingId] = React.useState(null)
@@ -465,7 +465,7 @@ export const TwitterCard = ({ update, productId }) => {
                                 <Tooltip placement="bottom" title={'page link'}>
                                     <p>
                                         <LinkIcon2 />
-                                        {/* <span>{domain}</span> */}
+                                        <span>{domain.split('//')[1]}</span>
                                     </p>
                                 </Tooltip>
                             </Card>
