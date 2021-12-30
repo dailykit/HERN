@@ -400,7 +400,7 @@ const SEOBasics = ({ update, productId, domain }) => {
                                     id="pageRoute"
                                     name="pageRoute"
                                 >
-                                    {form.metaTitle.value || 'Page Name | Site Name'}
+                                    {form.metaTitle.value || 'Product Name '}
                                 </Title>
                                 <p>
                                     {form.metaDescription.value ||
