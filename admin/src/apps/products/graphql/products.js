@@ -101,6 +101,11 @@ export const PRODUCT = {
                   id
                   name
                }
+               additionalModifiers {
+                  productOptionId
+                  modifierId
+                  label
+               }
                operationConfig {
                   id
                   name
@@ -297,3 +302,12 @@ export const PRODUCT_OPTION_TYPES = {
       }
    `,
 }
+export const DELETE_ADDITIONAL_MODIFIER = gql`
+   mutation deleteAdditionalModifier($productOptionId: Int!) {
+      delete_products_productOption_modifier(
+         where: { productOptionId: { _eq: $productOptionId } }
+      ) {
+         affected_rows
+      }
+   }
+`

@@ -112,3 +112,41 @@ export const MODIFIER_OPTION = {
       }
    `,
 }
+export const ADDITIONAL_MODIFIERS = {
+   CREATE: gql`
+      mutation createAdditionalModifiers(
+         $objects: [products_productOption_modifier_insert_input!]!
+      ) {
+         insert_products_productOption_modifier(objects: $objects) {
+            affected_rows
+         }
+      }
+   `,
+   VIEW: gql`
+      subscription viewAdditionalModifier($productOptionId: Int!) {
+         products_productOption_modifier(
+            where: { productOptionId: { _eq: $productOptionId } }
+         ) {
+            modifierId
+            productOptionId
+            type
+            label
+         }
+      }
+   `,
+   DELETE: gql`
+      mutation deleteAdditionalModifier(
+         $productOptionId: Int!
+         $modifierId: Int!
+      ) {
+         delete_products_productOption_modifier(
+            where: {
+               productOptionId: { _eq: $productOptionId }
+               modifierId: { _eq: $modifierId }
+            }
+         ) {
+            affected_rows
+         }
+      }
+   `,
+}
