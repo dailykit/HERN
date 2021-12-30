@@ -9,14 +9,15 @@ import {
    Coupon,
    WalletAmount,
 } from '../../components'
-import { CartContext } from '../../context'
+import { CartContext, useUser } from '../../context'
 import { EmptyCart, PaymentIcon } from '../../assets/icons'
 import Link from 'next/link'
-import { UserInfo } from '../../components'
+import { UserInfo, UserType } from '../../components'
 
 export const OnDemandCart = () => {
    const { cartState, combinedCartItems, isCartLoading, cartItemsLoading } =
       React.useContext(CartContext)
+   const { isAuthenticated, userType } = useUser()
 
    if (combinedCartItems === null || isCartLoading || cartItemsLoading) {
       return <Loader />
@@ -33,6 +34,18 @@ export const OnDemandCart = () => {
          </div>
       )
    }
+   if (!isAuthenticated && userType !== 'guest') {
+      return (
+         <div className="hern-on-demand-cart-section">
+            <div className="hern-on-demand-cart-section__left">
+               <UserType />
+            </div>
+            <div className="hern-on-demand-cart-section__right">
+               <CartDetails />
+            </div>
+         </div>
+      )
+   }
    return (
       <div className="hern-on-demand-cart-section">
          <div className="hern-on-demand-cart-section__left">
@@ -45,12 +58,16 @@ export const OnDemandCart = () => {
             <div className="hern-ondemand-cart__left-card">
                <Coupon upFrontLayout={true} cart={cartState.cart} />
             </div>
-            <div className="hern-ondemand-cart__left-card">
-               <LoyaltyPoints cart={cartState.cart} version={2} />
-            </div>
-            <div className="hern-ondemand-cart__left-card">
-               <WalletAmount cart={cartState.cart} version={2} />
-            </div>
+            {isAuthenticated && (
+               <div className="hern-ondemand-cart__left-card">
+                  <LoyaltyPoints cart={cartState.cart} version={2} />
+               </div>
+            )}
+            {isAuthenticated && (
+               <div className="hern-ondemand-cart__left-card">
+                  <WalletAmount cart={cartState.cart} version={2} />
+               </div>
+            )}
             <div className="hern-ondemand-cart__left-card">
                <div tw="p-4">
                   <div style={{ display: 'flex', alignItems: 'center' }}>
