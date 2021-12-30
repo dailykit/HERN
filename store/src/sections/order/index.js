@@ -198,6 +198,13 @@ export const OnDemandOrder = ({ config }) => {
                                        <div
                                           key={index}
                                           className="hern-on-demand-order--product-card"
+                                          style={{
+                                             margin: '0 auto',
+                                             maxWidth:
+                                                numberOfProducts === 4
+                                                   ? '280px'
+                                                   : 'auto',
+                                          }}
                                        >
                                           <ProductCard
                                              onProductNameClick={() =>
