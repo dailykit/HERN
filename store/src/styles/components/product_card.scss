@@ -85,8 +85,8 @@
    display: flex;
    .hern-product-card__name {
       max-width: 15em;
-      font-weight: 600;
-      font-size: 16px;
+      font-weight: 700;
+      font-size: 18px;
       line-height: 20px;
    }
 
@@ -128,4 +128,5 @@
 .hern-product-card__description {
    color: #40404099;
    padding-bottom: 16px;
+   font-weight: 600;
 }
