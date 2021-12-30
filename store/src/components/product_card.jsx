@@ -35,6 +35,8 @@ export const ProductCard = props => {
       customAreaFlex = true, //If custom area on the next line
       contentAreaCustomStyle = {},
       modifierWithoutPopup = true,
+      showProductDetails = true,
+      customProductDetails = false,
    } = props
 
    const slideRef = React.useRef()
@@ -156,47 +158,51 @@ export const ProductCard = props => {
                      <AdditionalIcon />
                   </div>
                )}
-               <div className="hern-product-card-details">
-                  <div className="hern-product-card-title">
-                     {showProductName && (
-                        <div
-                           className="hern-product-card__name"
-                           onClick={e => {
-                              e.stopPropagation()
-                              onProductNameClick ? onProductNameClick() : null
-                           }}
-                           style={{
-                              cursor: onProductNameClick ? 'pointer' : null,
-                           }}
-                        >
-                           {data.name}
+               {showProductDetails && (
+                  <div className="hern-product-card-details">
+                     <div className="hern-product-card-title">
+                        {showProductName && (
+                           <div
+                              className="hern-product-card__name"
+                              onClick={e => {
+                                 e.stopPropagation()
+                                 onProductNameClick
+                                    ? onProductNameClick()
+                                    : null
+                              }}
+                              style={{
+                                 cursor: onProductNameClick ? 'pointer' : null,
+                              }}
+                           >
+                              {data.name}
+                           </div>
+                        )}
+                        {ShowImageIcon && (
+                           <div
+                              className="hern-product-card-show-image-icon"
+                              onClick={e => {
+                                 e.stopPropagation()
+                                 onShowImageIconClick
+                                    ? onShowImageIconClick()
+                                    : null
+                              }}
+                           >
+                              <ShowImageIcon />
+                           </div>
+                        )}
+                     </div>
+                     {showProductPrice && (
+                        <div className="hern-product-card__price">
+                           {finalProductPrice()}
                         </div>
                      )}
-                     {ShowImageIcon && (
-                        <div
-                           className="hern-product-card-show-image-icon"
-                           onClick={e => {
-                              e.stopPropagation()
-                              onShowImageIconClick
-                                 ? onShowImageIconClick()
-                                 : null
-                           }}
-                        >
-                           <ShowImageIcon />
+                     {showProductAdditionalText && (
+                        <div className="hern-product-card__additional-text">
+                           {data.additionalText}
                         </div>
                      )}
                   </div>
-                  {showProductPrice && (
-                     <div className="hern-product-card__price">
-                        {finalProductPrice()}
-                     </div>
-                  )}
-                  {showProductAdditionalText && (
-                     <div className="hern-product-card__additional-text">
-                        {data.additionalText}
-                     </div>
-                  )}
-               </div>
+               )}
                <div className="hern-product-card-custom-area">
                   {CustomAreaComponent && <CustomAreaComponent data={data} />}
                   {showCustomText && (
@@ -224,6 +230,7 @@ export const ProductCard = props => {
                productCartDetail={modifierPopupConfig?.productCartDetail}
                showModifierImage={modifierPopupConfig?.showModifierImage}
                modifierWithoutPopup={modifierWithoutPopup}
+               customProductDetails={customProductDetails}
             />
          )}
       </>
