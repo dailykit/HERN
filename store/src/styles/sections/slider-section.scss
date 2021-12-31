@@ -41,7 +41,7 @@
 .hern-slider_section-heading {
    font-size: 3.5rem;
    color: #fff;
-   margin: 0 0 0.75rem 0;
+   margin: 0 0 1rem 0;
 }
 
 .hern-slider-section__content {
@@ -95,7 +95,7 @@
 @media screen and (max-width: 600px) {
    .hern-slider_section-left_arrow,
    .hern-slider_section-right_arrow {
-      display: none;
+      padding: 0px;
    }
    .hern-slider-section__content {
       > div {

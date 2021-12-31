@@ -69,11 +69,14 @@ export const ProductGallery = ({ config }) => {
                ) : (
                   <Row
                      gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
-                     style={{ justifyContent: 'center', margin: '0 7em 0 7em' }}
+                     style={{
+                        justifyContent: 'center',
+                        margin: '0 7em 0 7em',
+                     }}
                   >
                      {productsData.map((product, index) => {
                         return (
-                           <Col className="gutter-row" span={6}>
+                           <Col lg={6} md={12} sm={24}>
                               <div>
                                  <ProductGrid product={product} index={index} />
                               </div>
