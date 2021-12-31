@@ -56,6 +56,7 @@ import { from } from 'apollo-link'
 import { InventoryBundleContext } from '../../../../context/product/inventoryBundle'
 import AdditionalModifierTemplateTunnel from './tunnels/AdditionalModifierTemplateTunnel'
 import _ from 'lodash'
+import AdditionalModifierModeTunnel from './tunnels/AdditionalModifierModeTunnel'
 
 const ProductOptions = ({ productId, productName, options, posist_baseItemId }) => {
    const SERVING_TUNNEL_TYPES = ['mealKit', 'readyToEat', 'Meal Kit']
@@ -67,7 +68,7 @@ const ProductOptions = ({ productId, productName, options, posist_baseItemId }) 
    const [modifiersTunnel, openModifiersTunnel, closeModifiersTunnel] =
       useTunnel(6)
    const [additionalModifiersTunnel, openAdditionalModifiersTunnel, closeAdditionalModifiersTunnel] =
-      useTunnel(1)
+      useTunnel(2)
    const [
       operationConfigTunnels,
       openOperationConfigTunnel,
@@ -79,7 +80,6 @@ const ProductOptions = ({ productId, productName, options, posist_baseItemId }) 
    const { bundleDispatch } = React.useContext(InventoryBundleContext)
 
    const [productOptionTypes, setProductOptionTypes] = React.useState([])
-   const [additionalModifierData, setAdditionalModifier] = React.useState([])
    const opConfigInvokedBy = React.useRef('')
    const modifierOpConfig = React.useRef(undefined)
    const [productOptionsTextField, setProductOptionsTextField] =
@@ -203,7 +203,7 @@ const ProductOptions = ({ productId, productName, options, posist_baseItemId }) 
          type: 'OPTION_ID',
          payload: optionId,
       })
-      openAdditionalModifiersTunnel(1)
+      openAdditionalModifiersTunnel(3)
    }
 
    const handleAddOpConfig = optionId => {
@@ -311,8 +311,21 @@ const ProductOptions = ({ productId, productName, options, posist_baseItemId }) 
          </Tunnels>
          <Tunnels tunnels={additionalModifiersTunnel}>
             <Tunnel layer={1}>
-               <AdditionalModifierTemplateTunnel closeTunnel={closeAdditionalModifiersTunnel} />
+               <AdditionalModifierModeTunnel close={closeAdditionalModifiersTunnel} open={openAdditionalModifiersTunnel} />
             </Tunnel>
+            <Tunnel layer={2}>
+               <ModifierFormTunnel close={closeAdditionalModifiersTunnel}
+                  open={openAdditionalModifiersTunnel}
+                  openOperationConfigTunnel={value => {
+                     opConfigInvokedBy.current = 'modifier'
+                     openOperationConfigTunnel(value)
+                  }}
+                  modifierOpConfig={modifierOpConfig.current} />
+            </Tunnel>
+            <Tunnel layer={3}>
+               <AdditionalModifierTemplateTunnel close={closeAdditionalModifiersTunnel} />
+            </Tunnel>
+
          </Tunnels>
          <OperationConfig
             tunnels={operationConfigTunnels}

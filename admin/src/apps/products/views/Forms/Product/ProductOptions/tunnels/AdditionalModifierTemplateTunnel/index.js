@@ -31,7 +31,7 @@ import { logger } from '../../../../../../../../shared/utils'
 import { toast } from 'react-toastify'
 import _ from 'lodash'
 
-const AdditionalModifierTemplateTunnel = ({ closeTunnel }) => {
+const AdditionalModifierTemplateTunnel = ({ close }) => {
    const {
       modifiersState: { optionId },
    } = React.useContext(ModifiersContext)
@@ -76,8 +76,13 @@ const AdditionalModifierTemplateTunnel = ({ closeTunnel }) => {
             .groupBy('label')
             .map((value, key) => ({ label: key, additionalModifiers: value }))
             .value()
-
-         // console.log(' additionalModifierLabel', additionalModifierLabel)
+         const additionalModifierType = _.chain(
+            data.subscriptionData.data.products_productOption_modifier
+         )
+            .groupBy('type')
+            .map((value, key) => ({ type: key, additionalModifiers: value }))
+            .value()
+         console.log(' additionalModifierType', additionalModifierType)
          setGroupedList(additionalModifierLabel)
          setModifierData({
             ...modifierData,
@@ -89,6 +94,7 @@ const AdditionalModifierTemplateTunnel = ({ closeTunnel }) => {
                   isValid: true,
                },
             },
+            type: additionalModifierType[0]?.type,
          })
       },
    })
@@ -125,7 +131,8 @@ const AdditionalModifierTemplateTunnel = ({ closeTunnel }) => {
             modifierIds: null,
             type: 'hidden',
          })
-         closeTunnel(1)
+         close(1)
+         close(3)
       },
       onError: error => {
          toast.error('Something went wrong!')
@@ -217,7 +224,7 @@ const AdditionalModifierTemplateTunnel = ({ closeTunnel }) => {
                title: loading ? 'Saving...' : 'Save',
                action: save,
             }}
-            close={() => closeTunnel(1)}
+            close={() => close(3)}
             tooltip={
                <Tooltip identifier="additional_modifier_templates_tunnel" />
             }
@@ -258,7 +265,7 @@ const AdditionalModifierTemplateTunnel = ({ closeTunnel }) => {
                <div style={{ marginBottom: '0.5em' }}>Change type</div>
                <RadioGroup
                   options={radioOption}
-                  active={2}
+                  active={modifierData.type === 'visible' ? 1 : 2}
                   onChange={radioOption =>
                      setModifierData({
                         ...modifierData,
