@@ -24,7 +24,7 @@ import { DELETE_CART } from '../../graphql'
 // modifiers popup
 
 const { Header, Content } = Layout
-const Kiosk = () => {
+const Kiosk = props => {
    // context
    const { combinedCartItems, setStoredCartId, cartState } =
       React.useContext(CartContext)
@@ -37,6 +37,7 @@ const Kiosk = () => {
       setIsIdleScreen,
       clearCurrentPage,
    } = useConfig()
+   const { kioskConfig } = props
 
    const { direction } = useTranslation()
 
@@ -74,7 +75,7 @@ const Kiosk = () => {
    }
 
    const { getRemainingTime, getLastActiveTime } = useIdleTimer({
-      timeout: 1000 * KioskConfig.idlePageSettings.idleTime.value,
+      timeout: 1000 * kioskConfig.idlePageSettings.idleTime.value,
       onIdle: handleOnIdle,
       debounce: 500,
       ...(isIdleScreen && {
@@ -97,8 +98,8 @@ const Kiosk = () => {
    useIdleTimer({
       timeout:
          1000 *
-         (KioskConfig.idlePageSettings.idleTime.value -
-            KioskConfig.idlePageSettings.idleScreenWarningTime.value),
+         (kioskConfig.idlePageSettings.idleTime.value -
+            kioskConfig.idlePageSettings.idleScreenWarningTime.value),
       onIdle: warning,
       debounce: 500,
       ...(isIdleScreen && {
@@ -107,7 +108,7 @@ const Kiosk = () => {
       }),
    })
    function warning() {
-      let secondsToGo = KioskConfig.idlePageSettings.idleScreenWarningTime.value
+      let secondsToGo = kioskConfig.idlePageSettings.idleScreenWarningTime.value
       const modal = Modal.warning({
          title: `This device is becoming Idle in ${secondsToGo} second TOUCH ANY WHERE...`,
          maskClosable: true,
@@ -119,10 +120,10 @@ const Kiosk = () => {
       setTimeout(() => {
          // clearInterval(timer)
          modal.destroy()
-      }, KioskConfig.idlePageSettings.idleScreenWarningTime.value * 1000)
+      }, kioskConfig.idlePageSettings.idleScreenWarningTime.value * 1000)
    }
    if (isIdleScreen) {
-      return <IdleScreen config={KioskConfig} />
+      return <IdleScreen config={kioskConfig} />
    }
    console.log('this is cureent page', currentPage)
    return (
@@ -132,16 +133,16 @@ const Kiosk = () => {
             <Header
                className="hern-kiosk__kiosk-header"
                style={{
-                  backgroundColor: `${KioskConfig.kioskSettings.theme.primaryColor.value}`,
+                  backgroundColor: `${kioskConfig.kioskSettings.theme.primaryColor.value}`,
                }}
             >
-               <KioskHeader config={KioskConfig} />
+               <KioskHeader config={kioskConfig} />
             </Header>
             <Layout className="hern-kiosk__content-layout">
                {currentPage === 'fulfillmentPage' && (
                   <Content>
                      <FulfillmentSection
-                        config={KioskConfig}
+                        config={kioskConfig}
                         setCurrentPage={setCurrentPage}
                      />
                   </Content>
@@ -149,7 +150,7 @@ const Kiosk = () => {
                {currentPage === 'menuPage' && (
                   <Content>
                      <MenuSection
-                        config={KioskConfig}
+                        config={kioskConfig}
                         setCurrentPage={setCurrentPage}
                         combinedCartItems={combinedCartItems}
                      />
@@ -158,7 +159,7 @@ const Kiosk = () => {
                {currentPage === 'cartPage' && (
                   <Content>
                      <KioskCart
-                        config={KioskConfig}
+                        config={kioskConfig}
                         setCurrentPage={setCurrentPage}
                         combinedCartItems={combinedCartItems}
                      />

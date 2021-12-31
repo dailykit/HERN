@@ -1,4 +1,3 @@
-import { each } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { Button, ProductCard } from '.'
 import { RadioIcon, ShowImageIcon } from '../assets/icons'
@@ -9,6 +8,7 @@ import { CartContext } from '../context'
 import { CounterButton } from './counterBtn'
 import classNames from 'classnames'
 import Link from 'next/link'
+import { useToasts } from 'react-toast-notifications'
 
 export const ModifierPopup = props => {
    const {
@@ -21,10 +21,11 @@ export const ModifierPopup = props => {
       productCartDetail,
       showModifierImage = true,
       modifierWithoutPopup,
+      customProductDetails = false,
    } = props
    //context
    const { addToCart, methods } = React.useContext(CartContext)
-   console.log('productData', productData)
+   const { addToast } = useToasts()
    const [productOption, setProductOption] = useState(
       productData.productOptions[0]
    ) // for by default choose one product option
@@ -140,6 +141,9 @@ export const ModifierPopup = props => {
          // const objects = new Array(quantity).fill({ ...cartItem })
          // console.log('cartItem', objects)
          addToCart(cartItem, quantity)
+         addToast('Added to the Cart!', {
+            appearance: 'success',
+         })
          if (edit) {
             methods.cartItems.delete({
                variables: {
@@ -344,6 +348,50 @@ export const ModifierPopup = props => {
    if (status === 'loading') {
       return <p>Loading</p>
    }
+
+   const finalProductPrice = () => {
+      // use for product card
+      if (
+         productData?.isPopupAllowed &&
+         productData.productOptions.length > 0
+      ) {
+         return formatCurrency(
+            productData.price -
+               productData.discount +
+               ((productData?.productOptions[0]?.price || 0) -
+                  (productData?.productOptions[0]?.discount || 0))
+         )
+      } else {
+         return formatCurrency(productData.price - productData.discount)
+      }
+   }
+
+   const CustomProductDetails = () => {
+      return (
+         <div className="hern-product-options__custom-details">
+            <div>
+               <div className="hern-product-options__custom-details__product-title">
+                  {productData.name}
+               </div>
+               <div className="hern-product-options__custom-details__product-desc">
+                  {productData.description}
+               </div>
+               <div className="hern-product-options__custom-details__product-tags">
+                  {productData?.tags?.join(',')}
+               </div>
+            </div>
+            <div className="hern-product-options__custom-details__left">
+               <div className="hern-product-options__custom-details__product-counter">
+                  <CustomArea />
+               </div>
+               <div className="hern-product-options__custom-details__product-price">
+                  {finalProductPrice()}
+               </div>
+            </div>
+         </div>
+      )
+   }
+
    return (
       <>
          <div
@@ -372,14 +420,18 @@ export const ModifierPopup = props => {
                   </div>
                )}
                <div className="hern-product-modifier-pop-up-product-details">
-                  <ProductCard
-                     data={productData}
-                     showImage={false}
-                     showCustomText={false}
-                     customAreaComponent={CustomArea}
-                     showModifier={false}
-                     useForThirdParty={true}
-                  />
+                  {customProductDetails ? (
+                     <CustomProductDetails />
+                  ) : (
+                     <ProductCard
+                        data={productData}
+                        showImage={false}
+                        showCustomText={false}
+                        customAreaComponent={CustomArea}
+                        showModifier={false}
+                        useForThirdParty={true}
+                     />
+                  )}
                </div>
                <div
                   className={classNames(
@@ -401,7 +453,7 @@ export const ModifierPopup = props => {
                                  style={{
                                     border: `${
                                        productOption.id === eachOption.id
-                                          ? '1px solid #75b1da'
+                                          ? '1px solid var(--hern-accent)'
                                           : '1px solid #e4e4e4'
                                     }`,
                                     padding: '16px',
@@ -411,6 +463,7 @@ export const ModifierPopup = props => {
                                  }}
                               >
                                  <li
+                                    style={{ color: 'var(--hern-accent)' }}
                                     onClick={e => setProductOption(eachOption)}
                                  >
                                     {eachOption.label}

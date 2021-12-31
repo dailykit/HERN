@@ -263,13 +263,14 @@ export const PaymentProvider = ({ children }) => {
          })
       }
    }
-   const onPaymentModalClose = () => {
+   const onPaymentModalClose = (isFailed = false) => {
       setIsProcessingPayment(false)
       setIsPaymentInitiated(false)
       updateCartPayment({
          variables: {
             id: cartPayment?.id,
             _set: {
+               ...(isFailed && { paymentStatus: 'FAILED' }),
                isResultShown: true,
             },
          },
@@ -339,6 +340,19 @@ export const PaymentProvider = ({ children }) => {
             printDetails: {
                ...state.printDetails,
                printStatus: value,
+            },
+         },
+      })
+   }
+
+   const resetPrintDetails = () => {
+      dispatch({
+         type: 'UPDATE_INITIAL_STATE',
+         payload: {
+            printDetails: {
+               isPrintInitiated: false,
+               printStatus: 'not-started',
+               message: '',
             },
          },
       })
@@ -504,7 +518,7 @@ export const PaymentProvider = ({ children }) => {
             <PaymentProcessingModal
                isOpen={isProcessingPayment}
                cartPayment={cartPayment}
-               closeModal={onPaymentModalClose}
+               closeModal={isFailed => onPaymentModalClose(isFailed)}
                normalModalClose={normalModalClose}
                cancelPayment={onCancelledHandler}
                isTestingByPass={true}
@@ -518,6 +532,7 @@ export const PaymentProvider = ({ children }) => {
             <PrintProcessingModal
                printDetails={state.printDetails}
                setPrintStatus={setPrintStatus}
+               resetPrintDetails={resetPrintDetails}
                closePrintModal={closePrintModal}
                initializePrinting={initializePrinting}
             />

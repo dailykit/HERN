@@ -51,6 +51,11 @@ const reducers = (state, { type, payload }) => {
                },
             },
          }
+      case 'SET_USER_TYPE':
+         return {
+            ...state,
+            userType: payload,
+         }
    }
 }
 
@@ -74,6 +79,7 @@ export const UserProvider = ({ children }) => {
          keycloakId: '',
          subscriptionOnboardStatus: 'REGISTER',
       },
+      userType: '',
    })
 
    const { loading, data: { customer = {} } = {} } = useSubscription(
@@ -214,8 +220,22 @@ export const UserProvider = ({ children }) => {
          }
 
          dispatch({ type: 'SET_USER', payload: user })
+         dispatch({
+            type: 'SET_USER_TYPE',
+            payload: '',
+         })
+         localStorage.removeItem('userType')
          setIsLoading(false)
       }
+      // else {
+      //    const isGuest = Boolean(localStorage.getItem('userType') === 'guest')
+      //    if (isGuest) {
+      //       dispatch({
+      //          type: 'SET_USER_TYPE',
+      //          payload: 'guest',
+      //       })
+      //    }
+      // }
    }, [
       keycloakId,
       loading,
@@ -223,12 +243,22 @@ export const UserProvider = ({ children }) => {
       customer?.platform_customer,
       customer?.platform_customer?.defaultPaymentMethodId,
    ])
+   React.useEffect(() => {
+      const isGuest = Boolean(localStorage.getItem('userType') === 'guest')
+      if (isGuest && !state.isAuthenticated) {
+         dispatch({
+            type: 'SET_USER_TYPE',
+            payload: 'guest',
+         })
+      }
+   }, [])
 
    return (
       <UserContext.Provider
          value={{
             isAuthenticated: state.isAuthenticated,
             user: state.user,
+            userType: state.userType,
             dispatch,
             isLoading,
          }}

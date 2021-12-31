@@ -18,6 +18,7 @@ import {
 } from '@dailykit/ui'
 
 import {
+   DELETE_ADDITIONAL_MODIFIER,
    PRODUCT_OPTION,
    PRODUCT_OPTION_TYPES,
    UPDATE_PRODUCT_OPTION_SELECTION_STATEMENT,
@@ -53,8 +54,10 @@ import {
 import { useDnd } from '../../../../../../shared/components/DragNDrop/useDnd'
 import { from } from 'apollo-link'
 import { InventoryBundleContext } from '../../../../context/product/inventoryBundle'
+import AdditionalModifierTemplateTunnel from './tunnels/AdditionalModifierTemplateTunnel'
+import _ from 'lodash'
 
-const ProductOptions = ({ productId, productName, options }) => {
+const ProductOptions = ({ productId, productName, options, posist_baseItemId }) => {
    const SERVING_TUNNEL_TYPES = ['mealKit', 'readyToEat', 'Meal Kit']
 
    const { initiatePriority } = useDnd()
@@ -63,6 +66,8 @@ const ProductOptions = ({ productId, productName, options }) => {
       useTunnel(5)
    const [modifiersTunnel, openModifiersTunnel, closeModifiersTunnel] =
       useTunnel(6)
+   const [additionalModifiersTunnel, openAdditionalModifiersTunnel, closeAdditionalModifiersTunnel] =
+      useTunnel(1)
    const [
       operationConfigTunnels,
       openOperationConfigTunnel,
@@ -74,7 +79,7 @@ const ProductOptions = ({ productId, productName, options }) => {
    const { bundleDispatch } = React.useContext(InventoryBundleContext)
 
    const [productOptionTypes, setProductOptionTypes] = React.useState([])
-
+   const [additionalModifierData, setAdditionalModifier] = React.useState([])
    const opConfigInvokedBy = React.useRef('')
    const modifierOpConfig = React.useRef(undefined)
    const [productOptionsTextField, setProductOptionsTextField] =
@@ -177,12 +182,28 @@ const ProductOptions = ({ productId, productName, options }) => {
       openModifiersTunnel(1)
    }
 
+   const handleAdditionalAddModifier = optionId => {
+      modifiersDispatch({
+         type: 'OPTION_ID',
+         payload: optionId,
+      })
+      openAdditionalModifiersTunnel(1)
+   }
+
    const handleEditModifier = modifier => {
       modifiersDispatch({
          type: 'MODIFIER_ID',
          payload: modifier.id,
       })
       openModifiersTunnel(2)
+   }
+
+   const handleEditAdditionalModifier = optionId => {
+      modifiersDispatch({
+         type: 'OPTION_ID',
+         payload: optionId,
+      })
+      openAdditionalModifiersTunnel(1)
    }
 
    const handleAddOpConfig = optionId => {
@@ -288,6 +309,11 @@ const ProductOptions = ({ productId, productName, options }) => {
                <ModifierTemplatesTunnel close={closeModifiersTunnel} />
             </Tunnel>
          </Tunnels>
+         <Tunnels tunnels={additionalModifiersTunnel}>
+            <Tunnel layer={1}>
+               <AdditionalModifierTemplateTunnel closeTunnel={closeAdditionalModifiersTunnel} />
+            </Tunnel>
+         </Tunnels>
          <OperationConfig
             tunnels={operationConfigTunnels}
             openTunnel={openOperationConfigTunnel}
@@ -329,9 +355,11 @@ const ProductOptions = ({ productId, productName, options }) => {
                            handleEditOptionItem(option)
                         }
                         handleAddModifier={() => handleAddModifier(option.id)}
+                        handleAdditionalAddModifier={() => handleAdditionalAddModifier(option.id)}
                         handleEditModifier={() =>
                            handleEditModifier(option.modifier)
                         }
+                        handleEditAdditionalModifier={() => handleEditAdditionalModifier(option.id)}
                         handleAddOpConfig={() => handleAddOpConfig(option.id)}
                      />
                   ))}
@@ -355,7 +383,9 @@ const Option = ({
    productOptionTypes,
    handleAddOptionItem,
    handleAddModifier,
+   handleAdditionalAddModifier,
    handleEditModifier,
+   handleEditAdditionalModifier,
    handleEditOptionItem,
    handleAddOpConfig,
 }) => {
@@ -414,7 +444,14 @@ const Option = ({
          errors: [],
       },
    })
-
+   const [posist_baseItemId, setPosist_baseItemId] = React.useState({
+      value: option.posist_baseItemId,
+      meta: {
+         isTouched: false,
+         isValid: true,
+         errors: [],
+      },
+   })
    const [updateProductOption] = useMutation(PRODUCT_OPTION.UPDATE, {
       onCompleted: () => {
          toast.success('Option updated!')
@@ -424,7 +461,15 @@ const Option = ({
          logger(error)
       },
    })
-
+   const [deleteAdditionalModifier] = useMutation(DELETE_ADDITIONAL_MODIFIER, {
+      onCompleted: () => {
+         toast.success('Additional Modifier deleted!')
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
    const [deleteProductOption] = useMutation(PRODUCT_OPTION.DELETE, {
       onCompleted: () => {
          toast.success('Option deleted!')
@@ -563,6 +608,24 @@ const Option = ({
             })
             return
          }
+         case 'posist_baseItemId': {
+            const val = posist_baseItemId.value
+            if (isActuallyUpdated(field, val)) {
+               updateProductOption({
+                  variables: {
+                     id: option.id,
+                     _set: {
+                        posist_baseItemId: val,
+                     },
+                  },
+               })
+            }
+            setPosist_baseItemId({
+               ...posist_baseItemId,
+
+            })
+            return
+         }
          default:
             return null
       }
@@ -589,6 +652,14 @@ const Option = ({
             _set: {
                modifierId: null,
             },
+         },
+      })
+   }
+
+   const handleDeleteAddModifier = () => {
+      deleteAdditionalModifier({
+         variables: {
+            productOptionId: option.id
          },
       })
    }
@@ -691,6 +762,23 @@ const Option = ({
                      hasError={label.meta.isTouched && !label.meta.isValid}
                   />
                </Flex>
+               <Spacer xAxis size="16px" />
+               <Flex maxWidth="140px">
+                  <Form.Label htmlFor={`posist_baseItemId-${option.id}`} title="posist_baseItemId">
+                     Posist Base Item Id
+                  </Form.Label>
+                  <Form.Text
+                     id={`posist_baseItemId-${option.id}`}
+                     name={`posist_baseItemId-${option.id}`}
+                     onBlur={() => handleBlur('posist_baseItemId')}
+                     onChange={e =>
+                        setPosist_baseItemId({ ...posist_baseItemId, value: e.target.value })
+                     }
+                     value={posist_baseItemId.value}
+                     placeholder="Enter Posist Base ItemId"
+                     hasError={posist_baseItemId.meta.isTouched && !posist_baseItemId.meta.isValid}
+                  />
+               </Flex>
                <Spacer xAxis size="32px" />
                <Flex maxWidth="100px">
                   <Form.Label
@@ -779,6 +867,12 @@ const Option = ({
    }
 
    const renderBody = () => {
+      const additionalModifierLabel = _.chain(option.additionalModifiers)
+         .groupBy("label")
+         .map((value, key) => ({ label: key, additionalModifiers: value }))
+         .value()
+      // console.log("option.additionalModifiers", option.additionalModifiers, additionalModifierLabel);
+
       return (
          <Flex container padding="8px 0 0 0">
             <Flex>
@@ -808,6 +902,37 @@ const Option = ({
                ) : (
                   <ComboButton type="ghost" onClick={handleAddModifier}>
                      <PlusIcon /> Add Modifiers
+                  </ComboButton>
+               )}
+            </Flex>
+            <Spacer xAxis size="32px" />
+            <Flex>
+               {additionalModifierLabel.length ? (
+                  <Flex container alignItems="center">
+                     <Flex>
+                        <Text as="subtitle">Additional Modifier Template</Text>
+                        <Text as="p">{additionalModifierLabel[0]?.label}</Text>
+                     </Flex>
+                     <Spacer xAxis size="16px" />
+                     <IconButton
+                        title="Edit Additional Modifier"
+                        type="ghost"
+                        onClick={handleEditAdditionalModifier}
+                     >
+                        <EditIcon />
+                     </IconButton>
+
+                     <IconButton
+                        title="Delete Additional Modifier"
+                        type="ghost"
+                        onClick={handleDeleteAddModifier}
+                     >
+                        <DeleteIcon />
+                     </IconButton>
+                  </Flex>
+               ) : (
+                  <ComboButton type="ghost" onClick={handleAdditionalAddModifier}>
+                     <PlusIcon /> Add Additional Modifiers
                   </ComboButton>
                )}
             </Flex>

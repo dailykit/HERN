@@ -1,14 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import PhoneInput, {
-   formatPhoneNumber,
-   formatPhoneNumberIntl,
-   isValidPhoneNumber,
-} from 'react-phone-number-input'
+import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
 import { detectCountry } from '../utils'
 import { UPDATE_PLATFORM_CUSTOMER } from '../graphql'
-import { UserIcon, CloseIcon, PhoneIcon } from '../assets/icons'
-import { Button } from '.'
+import { UserIcon } from '../assets/icons'
 import { useUser, CartContext } from '../context'
 import { useMutation } from '@apollo/react-hooks'
 import { useToasts } from 'react-toast-notifications'
@@ -34,7 +29,6 @@ export const UserInfo = props => {
          user.platform_customer?.phoneNumber ||
          'N/A'
    )
-   const [isEdit, setIsEdit] = useState(false)
    const [countryCode, setCountryCode] = useState(null)
 
    const [updateCustomer] = useMutation(UPDATE_PLATFORM_CUSTOMER, {
@@ -56,15 +50,32 @@ export const UserInfo = props => {
       detectedUserData()
    }, [])
 
-   const onSaveData = () => {
+   const onBlurData = type => {
+      let infoToBeSend
+      switch (type) {
+         case 'firstName':
+            infoToBeSend = {
+               customerFirstName: firstName,
+            }
+            break
+         case 'lastName':
+            infoToBeSend = {
+               customerLastName: lastName,
+            }
+            break
+         case 'phoneNumber':
+            infoToBeSend = {
+               customerPhone: mobileNumber,
+            }
+            break
+      }
       methods.cart.update({
          variables: {
             id: cart.id,
             _set: {
                customerInfo: {
-                  customerFirstName: firstName,
-                  customerLastName: lastName,
-                  customerPhone: mobileNumber,
+                  ...cart?.customerInfo,
+                  ...infoToBeSend,
                },
             },
          },
@@ -72,19 +83,19 @@ export const UserInfo = props => {
       if (
          user?.keycloakId &&
          (!user?.platform_customer?.firstName ||
-            !user?.platform_customer?.lastName)
+            !user?.platform_customer?.lastName) &&
+         type !== 'phoneNumber'
       ) {
+         const nameData = type === 'firstName' ? { firstName } : { lastName }
          updateCustomer({
             variables: {
                keycloakId: user.keycloakId,
                _set: {
-                  firstName,
-                  lastName,
+                  ...nameData,
                },
             },
          })
       }
-      setIsEdit(false)
    }
    const UserInfoHeader = () => {
       return (
@@ -100,52 +111,27 @@ export const UserInfo = props => {
                <UserIcon />
                <span className="hern-user-info__heading">User Details</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-               {!isEdit ? (
-                  <Button onClick={() => setIsEdit(true)}>Edit</Button>
-               ) : (
-                  <>
-                     <Button
-                        className="hern-user-info__save-button"
-                        disabled={!isValidPhoneNumber(mobileNumber)}
-                        onClick={onSaveData}
-                     >
-                        Save
-                     </Button>
-                     <CloseIcon
-                        stroke="currentColor"
-                        style={{
-                           color: '#404040',
-                           cursor: 'pointer',
-                        }}
-                        onClick={() => {
-                           setIsEdit(false)
-                        }}
-                     />
-                  </>
-               )}
-            </div>
          </div>
       )
    }
-   if (!isEdit) {
-      return (
-         <div className="hern-user-info">
-            <UserInfoHeader />
-            <div>
-               <span className="hern-user-info_name">{firstName} </span>{' '}
-               <span className="hern-user-info_name">{lastName}</span>
-            </div>
-            <div
-               style={{ display: 'flex', alignItems: 'center' }}
-               className="hern-user-info__phoneNumber"
-            >
-               <PhoneIcon stroke="currentColor" size={14} />
-               {mobileNumber}
-            </div>
-         </div>
-      )
-   }
+   // if (!isEdit) {
+   //    return (
+   //       <div className="hern-user-info">
+   //          <UserInfoHeader />
+   //          <div>
+   //             <span className="hern-user-info_name">{firstName} </span>{' '}
+   //             <span className="hern-user-info_name">{lastName}</span>
+   //          </div>
+   //          <div
+   //             style={{ display: 'flex', alignItems: 'center' }}
+   //             className="hern-user-info__phoneNumber"
+   //          >
+   //             <PhoneIcon stroke="currentColor" size={14} />
+   //             {mobileNumber}
+   //          </div>
+   //       </div>
+   //    )
+   // }
    return (
       <div className="hern-user-info">
          <UserInfoHeader />
@@ -161,6 +147,13 @@ export const UserInfo = props => {
                   }}
                   value={firstName}
                   placeholder="Enter your first name"
+                  onBlur={() => {
+                     if (
+                        !(cart?.customerInfo?.customerFirstName == firstName)
+                     ) {
+                        onBlurData('firstName')
+                     }
+                  }}
                />
             </fieldset>
             <fieldset className="hern-user-info__fieldset hern-user-info__fieldset-last-name">
@@ -174,6 +167,11 @@ export const UserInfo = props => {
                   }}
                   value={lastName}
                   placeholder="Enter your last name"
+                  onBlur={() => {
+                     if (!(cart?.customerInfo?.customerLastName == lastName)) {
+                        onBlurData('lastName')
+                     }
+                  }}
                />
             </fieldset>
          </div>
@@ -188,11 +186,25 @@ export const UserInfo = props => {
                initialValueFormat="national"
                value={mobileNumber}
                onChange={e => {
-                  setMobileNumber(e.target.value)
+                  setMobileNumber(e)
+               }}
+               onBlur={() => {
+                  if (
+                     mobileNumber &&
+                     isValidPhoneNumber(mobileNumber) &&
+                     !(cart?.customerInfo?.customerPhone == mobileNumber)
+                  ) {
+                     onBlurData('phoneNumber')
+                  }
                }}
                defaultCountry={countryCode}
                placeholder="Enter your phone number"
             />
+            <span className="hern-user-info__phone-number-warning">
+               {mobileNumber &&
+                  !isValidPhoneNumber(mobileNumber) &&
+                  'Invalid phone number'}
+            </span>
          </fieldset>
       </div>
    )

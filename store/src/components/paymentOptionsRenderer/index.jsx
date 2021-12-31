@@ -43,18 +43,17 @@ export default function PaymentOptionsRenderer({ cartId }) {
    })
 
    const showPaymentIcon = label => {
-      switch (label) {
-         case 'Debit/Credit Card':
-            return <Icon.DebitCardIcon size={48} />
-         case 'Netbanking':
-            return <Icon.NetbankingIcon size={48} />
-         case 'Paytm':
-            return <Icon.PaytmIcon size={48} />
-         case 'UPI':
-            return <Icon.UpiIcon size={48} />
-         default:
-            return null
+      let icon = null
+      if (['Debit/Credit Card', 'Debit/Credit Cards'].includes(label)) {
+         icon = <Icon.DebitCardIcon size={48} />
+      } else if (label === 'Netbanking') {
+         icon = <Icon.NetbankingIcon size={48} />
+      } else if (label === 'Paytm') {
+         icon = <Icon.PaytmIcon size={48} />
+      } else if (label === 'UPI') {
+         icon = <Icon.UpiIcon size={48} />
       }
+      return icon
    }
 
    const onPaymentMethodChange = id => {
@@ -115,6 +114,13 @@ export default function PaymentOptionsRenderer({ cartId }) {
                               paymentInfo={paymentInfo}
                               balanceToPay={cart?.balanceToPay}
                               cartId={cartId}
+                              isLoginRequired={
+                                 option?.supportedPaymentOption?.isLoginRequired
+                              }
+                              canShowWhileLoggedIn={
+                                 option?.supportedPaymentOption
+                                    ?.canShowWhileLoggedIn
+                              }
                            />
                         ))
                      ) : (
@@ -175,8 +181,10 @@ const PaymentOptionCard = ({
    onClick = () => null,
    balanceToPay = 0,
    cartId = null,
+   isLoginRequired = false,
+   canShowWhileLoggedIn = true,
 }) => {
-   const { user } = useUser()
+   const { user, isAuthenticated } = useUser()
    const { setPaymentInfo, paymentInfo } = usePayment()
    const toggleTunnel = value => {
       setPaymentInfo({
@@ -184,6 +192,12 @@ const PaymentOptionCard = ({
             isVisible: value,
          },
       })
+   }
+   if (!isAuthenticated && isLoginRequired) {
+      return null
+   }
+   if (isAuthenticated && !canShowWhileLoggedIn) {
+      return null
    }
    return (
       <StyledWrapper>

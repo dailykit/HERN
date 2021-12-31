@@ -25,24 +25,26 @@ const PaymentProcessingModal = ({
    const [isCelebrating, setIsCelebrating] = useState(false)
    const { width, height } = useWindowSize()
 
+   const closeModalHandler = (isFailed = false) => {
+      setIsCelebrating(false)
+      closeModal(isFailed)
+   }
+
    const stopCelebration = () => {
+      setIsCelebrating(false)
       if (isKioskMode) {
-         setIsCelebrating(false)
          initializePrinting()
+         closeModalHandler()
       } else {
          if (router.pathname !== `/placing-order?id=${cartPayment?.cartId}`) {
+            closeModalHandler()
             router.push(`/placing-order?id=${cartPayment?.cartId}`)
          }
       }
-      closeModal()
    }
    const startCelebration = () => {
       setIsCelebrating(true)
       setTimeout(stopCelebration, 5000)
-   }
-
-   const closeModalHandler = () => {
-      closeModal()
    }
 
    const ShowPaymentStatusInfo = () => {
@@ -256,7 +258,7 @@ const PaymentProcessingModal = ({
                   type="primary"
                   className="tryOtherPayment"
                   key="console"
-                  onClick={closeModalHandler}
+                  onClick={() => closeModalHandler(true)}
                >
                   Try other payment method
                </Button>,
