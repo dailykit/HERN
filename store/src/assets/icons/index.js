@@ -51,3 +51,4 @@ export * from './Wallet'
 export * from './UserIcon'
 export * from './LocationIcon'
 export * from './VegNonVegType'
+
