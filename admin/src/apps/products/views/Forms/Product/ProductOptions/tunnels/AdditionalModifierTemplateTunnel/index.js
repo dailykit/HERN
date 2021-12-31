@@ -76,8 +76,13 @@ const AdditionalModifierTemplateTunnel = ({ close }) => {
             .groupBy('label')
             .map((value, key) => ({ label: key, additionalModifiers: value }))
             .value()
-
-         // console.log(' additionalModifierLabel', additionalModifierLabel)
+         const additionalModifierType = _.chain(
+            data.subscriptionData.data.products_productOption_modifier
+         )
+            .groupBy('type')
+            .map((value, key) => ({ type: key, additionalModifiers: value }))
+            .value()
+         console.log(' additionalModifierType', additionalModifierType)
          setGroupedList(additionalModifierLabel)
          setModifierData({
             ...modifierData,
@@ -89,6 +94,7 @@ const AdditionalModifierTemplateTunnel = ({ close }) => {
                   isValid: true,
                },
             },
+            type: additionalModifierType[0]?.type,
          })
       },
    })
@@ -259,7 +265,7 @@ const AdditionalModifierTemplateTunnel = ({ close }) => {
                <div style={{ marginBottom: '0.5em' }}>Change type</div>
                <RadioGroup
                   options={radioOption}
-                  active={2}
+                  active={modifierData.type === 'visible' ? 1 : 2}
                   onChange={radioOption =>
                      setModifierData({
                         ...modifierData,
