@@ -1,11 +1,14 @@
 import React from 'react'
-import { StyledArticle } from '../../components'
-import tw from 'twin.macro'
 import ReactHtmlParser from 'react-html-parser'
 import { useConfig } from '../../lib'
 
 export const TermsAndConditions = () => {
-   const { value } = useConfig('brand').configOf('Terms and Conditions')
+   const { settings } = useConfig('brand')
+
+   const termsAndConditions =
+      settings?.brand?.find(
+         setting => setting.identifier === 'Terms and Conditions'
+      )?.value?.['Terms and Conditions']?.value ?? '<p>Coming Soon !</p>'
 
    return (
       <div className="hern-terms-condition">
@@ -14,7 +17,7 @@ export const TermsAndConditions = () => {
          </h1>
          <div className="hern-terms-condition__content">
             <article className="hern-terms-condition__article">
-               {ReactHtmlParser(value)}
+               {ReactHtmlParser(termsAndConditions)}
             </article>
          </div>
       </div>
