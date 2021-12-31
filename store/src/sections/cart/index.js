@@ -47,42 +47,46 @@ export const OnDemandCart = () => {
       )
    }
    return (
-      <Row style={{ justifyContent: "space-around" }}>
+      <Row style={{ justifyContent: 'space-around' }}>
          <Col span={15}>
-      <div className="hern-on-demand-cart-section">
-         <div className="hern-on-demand-cart-section__left">
-            <div className="hern-ondemand-cart__left-card">
-               <UserInfo cart={cartState.cart} />
-            </div>
-            <div className="hern-ondemand-cart__left-card">
-               <Fulfillment />
-            </div>
-            <div className="hern-ondemand-cart__left-card">
-               <Coupon upFrontLayout={true} cart={cartState.cart} />
-            </div>
-            {isAuthenticated && (
-               <div className="hern-ondemand-cart__left-card">
-                  <LoyaltyPoints cart={cartState.cart} version={2} />
-               </div>
-            )}
-            {isAuthenticated && (
-               <div className="hern-ondemand-cart__left-card">
-                  <WalletAmount cart={cartState.cart} version={2} />
-               </div>
-            )}
-            <div className="hern-ondemand-cart__left-card">
-               <div tw="p-4">
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                     <PaymentIcon />
-                     <span className="hern-user-info__heading">Payment</span>
+            <div className="hern-on-demand-cart-section">
+               <div className="hern-on-demand-cart-section__left">
+                  <div className="hern-ondemand-cart__left-card">
+                     <UserInfo cart={cartState.cart} />
                   </div>
-                  <PaymentOptionsRenderer cartId={cartState?.cart?.id} />
+                  <div className="hern-ondemand-cart__left-card">
+                     <Fulfillment />
+                  </div>
+                  <div className="hern-ondemand-cart__left-card">
+                     <Coupon upFrontLayout={true} cart={cartState.cart} />
+                  </div>
+                  {isAuthenticated && (
+                     <div className="hern-ondemand-cart__left-card">
+                        <LoyaltyPoints cart={cartState.cart} version={2} />
+                     </div>
+                  )}
+                  {isAuthenticated && (
+                     <div className="hern-ondemand-cart__left-card">
+                        <WalletAmount cart={cartState.cart} version={2} />
+                     </div>
+                  )}
+                  <div className="hern-ondemand-cart__left-card">
+                     <div tw="p-4">
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                           <PaymentIcon />
+                           <span className="hern-user-info__heading">
+                              Payment
+                           </span>
+                        </div>
+                        <PaymentOptionsRenderer cartId={cartState?.cart?.id} />
+                     </div>
+                  </div>
+               </div>
+               <div className="hern-on-demand-cart-section__right">
+                  <CartDetails />
                </div>
             </div>
-         </div>
-         <div className="hern-on-demand-cart-section__right">
-            <CartDetails />
-         </div>
-      </div>
+         </Col>
+      </Row>
    )
 }
