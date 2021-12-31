@@ -9,35 +9,27 @@ export const Nutritions = ({ simpleRecipeYield }) => {
          item !== 'allergens' &&
          Number(nutritionalInfo[item]) !== 0
    )
+   const allergens = nutritionalInfo?.allergens
    return (
-      <div>
-         <header
-            style={{ paddingTop: '32px', borderBottom: '0.5px solid #f4f4f4' }}
-         >
-            <h2>Nutritions </h2>
+      <div id="nutrition">
+         <header className="hern-nutritionas-header">
+            <h2>Nutritions &amp; Allergens </h2>
          </header>
          {nutritions.length > 0 ? (
-            <div>
-               <table
-                  style={{
-                     width: '100%',
-                     maxWidth: '600px',
-                     margin: '0 auto',
-                     paddingTop: '16px',
-                  }}
-               >
-                  <tr>
-                     <th>Nutrition</th>
-                     <th>Per({nutritionalInfo?.per})</th>
-                  </tr>
+            <>
+               <div className="hern-nutrition-info">
                   {nutritions.map((nutrition, index) => (
-                     <tr key={index}>
-                        <td>{nutrition}</td>
-                        <td> {nutritionalInfo[nutrition]}</td>
-                     </tr>
+                     <div key={index}>
+                        <div>{nutrition}</div>
+                        <span></span>
+                        <div>{nutritionalInfo[nutrition]}</div>
+                     </div>
                   ))}
-               </table>
-            </div>
+                  {allergens?.length > 0 && (
+                     <span>Allergens : {allergens?.join(',')}</span>
+                  )}
+               </div>
+            </>
          ) : (
             <div
                style={{

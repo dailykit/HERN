@@ -70,3 +70,24 @@
    font-weight: 600;
    color: rgba(64, 64, 64, 0.6);
 }
+.hern-user-info__phone-number-warning {
+   cursor: pointer;
+   font-size: 12px;
+   font-weight: 400;
+   padding: 2px 0;
+   color: #ff0f0f;
+}
+.hern-user-info__footer {
+   display: flex;
+   align-items: center;
+   margin: 10px 0;
+}
+.hern-user-info__footer-guest {
+   text-decoration: underline;
+   cursor: pointer;
+   color: #367bf5;
+}
+.hern-user-info__footer-text {
+   margin-left: 2px;
+   margin-top: 1px;
+}

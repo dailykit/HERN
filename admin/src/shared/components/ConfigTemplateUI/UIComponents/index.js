@@ -629,7 +629,8 @@ export const ImageUpload = props => {
                            <DeleteIcon />
                         </IconButton>
                      </div>
-                     <img src={fieldDetail?.value} alt="Brand Logo" />
+                     {console.log("FIELDVALUE", fieldDetail.value)}
+                     <img src={fieldDetail?.value} alt={fieldDetail?.label} />
                   </ImageContainer>
                ) : (
                   <ButtonTile
@@ -663,9 +664,9 @@ export const ImageUpload = props => {
             </>
          ) : (
             <ImageContainer width="120px" height="120px">
-               {' '}
+               {console.log("🎈🎆", fieldDetail.value)}
                {fieldDetail?.value ? (
-                  <img src={fieldDetail?.value} alt="Brand Logo" />
+                  <img src={fieldDetail?.value} alt={fieldDetail.label} />
                ) : (
                   <div style={{ display: 'flex' }}>
                      <Image
@@ -708,10 +709,10 @@ export const MultipleImageUpload = props => {
       <>
          {editMode ? (
             <Flex width="50%" style={{ position: 'relative', top: '22px' }}>
-               {fieldDetail?.value !== null &&
-                  fieldDetail?.value?.length ? (
+               {fieldDetail?.value?.url !== null &&
+                  fieldDetail?.value?.url.length ? (
                   <Gallery
-                     list={fieldDetail.value || []}
+                     list={fieldDetail.value.url || []}
                      isMulti={true}
                      onChange={images => {
                         addImage(images)
@@ -729,11 +730,11 @@ export const MultipleImageUpload = props => {
             </Flex>
          ) : (
             <ImageContainer width="120px" height="120px">
-               {fieldDetail?.value?.length ||
-                  fieldDetail?.value?.length ? (
+               {fieldDetail?.value?.url &&
+                  fieldDetail?.value?.url.length ? (
                   <>
                      <Carousel afterChange={onChange} style={{ width: "12rem", borderRadius: "16px" }}>
-                        {fieldDetail?.value && fieldDetail?.value.map(image => {
+                        {fieldDetail?.value?.url && fieldDetail.value.url.map(image => {
                            return (
                               <div>
                                  <img src={image} alt="images" width="120px" />
