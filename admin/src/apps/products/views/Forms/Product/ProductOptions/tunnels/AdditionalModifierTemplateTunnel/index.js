@@ -31,7 +31,7 @@ import { logger } from '../../../../../../../../shared/utils'
 import { toast } from 'react-toastify'
 import _ from 'lodash'
 
-const AdditionalModifierTemplateTunnel = ({ closeTunnel }) => {
+const AdditionalModifierTemplateTunnel = ({ close }) => {
    const {
       modifiersState: { optionId },
    } = React.useContext(ModifiersContext)
@@ -125,7 +125,8 @@ const AdditionalModifierTemplateTunnel = ({ closeTunnel }) => {
             modifierIds: null,
             type: 'hidden',
          })
-         closeTunnel(1)
+         close(1)
+         close(3)
       },
       onError: error => {
          toast.error('Something went wrong!')
@@ -217,7 +218,7 @@ const AdditionalModifierTemplateTunnel = ({ closeTunnel }) => {
                title: loading ? 'Saving...' : 'Save',
                action: save,
             }}
-            close={() => closeTunnel(1)}
+            close={() => close(3)}
             tooltip={
                <Tooltip identifier="additional_modifier_templates_tunnel" />
             }
