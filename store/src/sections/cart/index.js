@@ -47,6 +47,8 @@ export const OnDemandCart = () => {
       )
    }
    return (
+      <Row style={{ justifyContent: "space-around" }}>
+         <Col span={15}>
       <div className="hern-on-demand-cart-section">
          <div className="hern-on-demand-cart-section__left">
             <div className="hern-ondemand-cart__left-card">
