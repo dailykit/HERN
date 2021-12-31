@@ -1,63 +1,197 @@
-.hern-product-section {
-   display: flex;
+* {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+}
+:root {
+   --product-image-aspect-ratio-height: 1;
+   --product-image-aspect-ratio-width: 1;
+   --hern-accent: #38a169;
+}
+.hern-product-page {
    max-width: 1200px;
-   margin: 32px auto;
+   margin: 0 auto;
+   padding: 1rem;
 }
-.hern-product-section__image-gallery {
-   width: 65%;
-}
-.hern-product-section__product-details {
-   width: 35%;
-}
-.hern-product__image-gallery {
+.hern-product-page__product-section {
    display: flex;
+   width: 100%;
+   gap: 20px;
+   margin-top: 16px;
 }
-.hern-product__image-gallery__left {
-   width: 75%;
-   max-height: 480px;
-   overflow: hidden;
+.hern-product-page__product-media-wrapper {
+   width: 55%;
+   // height: 600px;
+   position: relative;
+   .hern-veg-non-veg-type {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+   }
+}
+.hern-product-page__product-options-wrapper {
+   width: 45%;
+   background: #ffffff;
+   box-shadow: 0px 0.5px 2px rgba(0, 0, 0, 0.2);
+   border-radius: 0.25rem;
+   // height: 600px;
+   overflow-y: auto;
+   padding: 0.75rem;
+   &::-webkit-scrollbar {
+      width: 0.5rem;
+   }
+   &::-webkit-scrollbar-thumb {
+      background-color: #e5e5e5;
+      border-radius: 0.25px;
+   }
+}
+
+.hern-product-image {
+   height: 0;
+   position: relative;
    > div {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      > div {
+         width: 100%;
+         height: 100%;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         backdrop-filter: blur(20px);
+         background-size: cover;
+         background-repeat: no-repeat;
+         > img {
+            width: 100%;
+            height: auto;
+         }
+      }
+   }
+}
+.hern-product-image-gallery__preview {
+   position: relative;
+}
+.hern-product-image-gallery__not-previewed {
+   display: flex;
+   width: 100%;
+   overflow-x: auto;
+   margin-top: 12px;
+   margin-bottom: 32px;
+   &::-webkit-scrollbar {
+      width: 0.25rem;
+      height: 0.25rem;
+   }
+   &::-webkit-scrollbar-thumb {
+      background-color: #e5e5e5;
+      border-radius: 0.25px;
+   }
+   > div {
+      min-width: 60px;
+      width: 60px;
+
+      margin-right: 12px;
+      > :nth-last-child(1) {
+         margin-right: 0;
+      }
       > img {
          width: 100%;
-         aspect-ratio: 1/1;
+         height: 100%;
+         filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+         padding: 2px;
+         border: 1px solid #e5e5e5;
+      }
+      > .active-img {
+         padding: 2px;
+         border: 2px solid var(--hern-accent);
       }
    }
 }
-.hern-product__image-gallery__right {
-   width: 25%;
-   max-height: 480px;
-   overflow-y: auto;
-   padding-right: 16px;
-   &::-webkit-scrollbar {
-      display: none;
-   }
-   > div {
-      margin-bottom: 16px;
-      > img {
-         aspect-ratio: 1/1;
-      }
-      &:last-child {
-         margin-bottom: 0;
-      }
+
+/**PRODUCT OPTIONS **/
+.hern-product-options {
+}
+
+/*Nutrition*/
+.hern-nutritionas-header {
+   > h2 {
+      font-weight: bold;
+      font-size: 24px;
+      line-height: 33px;
+      text-transform: uppercase;
+      color: var(--hern-accent);
    }
 }
-.hern-product-section__header {
-   margin-top: 16px;
-   > p {
-      color: rgba(64, 64, 64, 0.9);
+
+.hern-product-page-section-ending {
+   width: 100%;
+   height: 4px;
+   background: #e4e4e4;
+   margin: 20px 0;
+}
+
+@media only screen and (max-width: 767px) {
+   .hern-product-page__product-section {
+      flex-direction: column;
+   }
+   .hern-product-page__product-media-wrapper {
+      width: 100%;
+   }
+   .hern-product-page__product-options-wrapper {
+      width: 100%;
    }
 }
-.hern-product-section__product-title {
-   font-size: 24px;
+
+.hern-product-section__product-details {
+   .hern-product-card__name {
+      font-weight: bold;
+      font-size: 24px;
+      color: var(--hern-accent);
+   }
+}
+
+.hern-product-options__custom-details {
+   display: flex;
+   justify-content: space-between;
+   gap: 1.5rem;
+   margin-bottom: 16px;
+}
+
+.hern-product-options__custom-details__product-title {
+   font-style: normal;
    font-weight: bold;
+   font-size: 24px;
+   line-height: 33px;
+   color: var(--hern-accent);
+   padding-bottom: 0.5rem;
 }
-
-.hern-product-recipe-section {
-   max-width: 1200px;
-   margin: 32px auto;
+.hern-product-options__custom-details__product-desc {
+   font-style: normal;
+   font-weight: normal;
+   font-size: 14px;
+   line-height: 16px;
+   color: #281813;
 }
-
-.hern-product-nutrition-section {
-   max-width: 1200px;
-   margin: 32px auto;
+.hern-product-options__custom-details__product-tags {
+   font-style: normal;
+   font-weight: normal;
+   font-size: 16px;
+   line-height: 22px;
+   color: #23527c;
+   padding-top: 0.5rem;
+}
+.hern-product-options__custom-details__product-price {
+   font-style: normal;
+   font-weight: 600;
+   font-size: 28px;
+   line-height: 38px;
+   color: #281813;
+}
+.hern-product-options__custom-details__left {
+   display: flex;
+   flex-direction: column;
+   align-items: flex-end;
+   justify-content: space-between;
 }

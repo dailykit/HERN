@@ -72,21 +72,25 @@ export const PromotionCarousal = props => {
                   return null
                }
                return (
-                  <img
-                     src={eachCoupons.metaDetails.image}
-                     key={eachCoupons.id}
-                     style={{ height: 'inherit', padding: '1em' }}
-                  />
+                  <div className="hern-kiosk__promotion-image">
+                     <img
+                        src={eachCoupons.metaDetails.image}
+                        key={eachCoupons.id}
+                        style={{ padding: '1em' }}
+                     />
+                  </div>
                )
             })}
             {componentConfig.data.promotionImages.value.map(
                (eachImage, index) => {
                   return (
-                     <img
-                        src={eachImage.url}
-                        key={index}
-                        style={{ height: 'inherit', padding: '1em' }}
-                     />
+                     <div className="hern-kiosk__promotion-image">
+                        <img
+                           src={eachImage.url}
+                           key={index}
+                           style={{ padding: '1em' }}
+                        />
+                     </div>
                   )
                }
             )}

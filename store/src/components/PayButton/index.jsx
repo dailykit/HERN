@@ -126,12 +126,14 @@ export default function PayButton({ children, cartId = null, ...props }) {
 
    useEffect(() => {
       if (!loading && !isEmpty(cart)) {
-         setPaymentInfo({
-            selectedAvailablePaymentOption: {
-               ...paymentInfo.selectedAvailablePaymentOption,
-               ...cart.availablePaymentOptionToCart[0],
-            },
-         })
+         if (isEmpty(paymentInfo.selectedAvailablePaymentOption)) {
+            setPaymentInfo({
+               selectedAvailablePaymentOption: {
+                  ...paymentInfo.selectedAvailablePaymentOption,
+                  ...cart.availablePaymentOptionToCart[0],
+               },
+            })
+         }
       }
    }, [cart])
 

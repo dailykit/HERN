@@ -17,7 +17,7 @@ export const handleCartPayment = async (req, res) => {
                   _eq: cart.id
                },
                paymentStatus: {
-                  _nin: ['SUCCEEDED', 'CANCELLED']
+                  _nin: ['SUCCEEDED', 'CANCELLED', 'FAILED']
                }
             }
          })

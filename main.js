@@ -278,9 +278,4 @@ app.use('/:path(*)', serveSubscription)
 
 app.listen(PORT, () => {
    console.log(`Server started on ${PORT}`)
-
-   if (process.env.NODE_ENV != 'development') {
-      syncEnvsFromPlatform()
-      createEnvFiles()
-   }
 })
