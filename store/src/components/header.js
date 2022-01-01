@@ -58,7 +58,8 @@ export const Header = ({ settings, navigationMenus }) => {
    const logo = settings?.brand?.['Brand Logo']?.brandLogo?.value
       ? settings?.brand?.['Brand Logo']?.brandLogo?.value
       : settings?.brand?.['Brand Logo']?.brandLogo?.default
-
+   const logoForSmallDevice =
+      settings?.brand?.['Brand Logo']?.brandLogoSmall?.value
    const showLogo =
       settings?.brand?.['Brand Logo']?.BrandLogo?.value ??
       settings?.brand?.['Brand Logo']?.BrandLogo?.default ??
@@ -121,10 +122,22 @@ export const Header = ({ settings, navigationMenus }) => {
                >
                   <div className="hern-header__brand">
                      {logo && showLogo && (
-                        <img
-                           src={logo}
-                           alt={displayName || 'Subscription Shop'}
-                        />
+                        <>
+                           <img
+                              class={classNames({
+                                 'hern-header__brand__logo': logoForSmallDevice,
+                              })}
+                              src={logo}
+                              alt={displayName || 'Subscription Shop'}
+                           />
+                           {logoForSmallDevice && (
+                              <img
+                                 class="hern-header__brand__logo--sm"
+                                 src={logoForSmallDevice}
+                                 alt={displayName || 'Subscription Shop'}
+                              />
+                           )}
+                        </>
                      )}
                      {displayName && showBrandName && (
                         <span>{displayName}</span>
