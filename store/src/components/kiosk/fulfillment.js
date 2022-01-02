@@ -89,7 +89,10 @@ const FulfillmentOption = props => {
    }
 
    return (
-      <div className="hern-kiosk__fulfillment-option">
+      <div
+         className="hern-kiosk__fulfillment-option"
+         onClick={onFulfillmentClick}
+      >
          <div className="hern-kiosk_fulfillment-icon">
             <FulfillmentIcon width={200} height={200} fill="#ffffff" />
          </div>
