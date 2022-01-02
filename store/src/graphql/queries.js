@@ -1368,6 +1368,7 @@ export const PRODUCTS = gql`
             additionalModifiers(where: { isActive: { _eq: true } }) {
                type
                label
+               linkedToModifierCategoryOptionId
                modifier {
                   id
                   name
@@ -1389,7 +1390,8 @@ export const PRODUCTS = gql`
                         quantity
                         image
                         isActive
-
+                        additionalModifierTemplateId
+                        isAdditionalModifierRequired
                         sachetItemId
                         ingredientSachetId
                         cartItem: cartItemByLocation(
@@ -1420,7 +1422,8 @@ export const PRODUCTS = gql`
                      quantity
                      image
                      isActive
-
+                     additionalModifierTemplateId
+                     isAdditionalModifierRequired
                      sachetItemId
                      ingredientSachetId
                      cartItem: cartItemByLocation(
@@ -2064,6 +2067,42 @@ export const GET_PAYMENT_OPTIONS = gql`
                   id
                   label
                }
+            }
+         }
+      }
+   }
+`
+export const GET_MODIFIER_BY_ID = gql`
+   query GET_MODIFIER_BY_ID(
+      $priceArgs: priceByLocation_onDemand_modifierCategoryOption_args!
+      $discountArgs: discountByLocation_onDemand_modifierCategoryOption_args!
+      $modifierCategoryOptionCartItemArgs: cartItemByLocation_onDemand_modifierCategoryOption_args!
+      $id: Int!
+   ) {
+      modifier(id: $id) {
+         id
+         name
+         categories(where: { isVisible: { _eq: true } }) {
+            id
+            name
+            isRequired
+            type
+            limits
+            options(where: { isVisible: { _eq: true } }) {
+               id
+               name
+               quantity
+               image
+               isActive
+               sachetItemId
+               ingredientSachetId
+               additionalModifierTemplateId
+               isAdditionalModifierRequired
+               price: priceByLocation(args: $priceArgs)
+               discount: discountByLocation(args: $discountArgs)
+               cartItem: cartItemByLocation(
+                  args: $modifierCategoryOptionCartItemArgs
+               )
             }
          }
       }

@@ -532,6 +532,14 @@
       display: flex;
       align-items: center;
    }
+   position: relative;
+}
+.hern-kiosk__modifier-option-customize {
+   position: absolute;
+   right: 0;
+   bottom: -10px;
+   font-size: 20px;
+   text-decoration: underline;
 }
 .hern-kiosk__modifier-category-option-image {
    width: 6.5em;
