@@ -10,7 +10,7 @@ const paytm = async host => {
       (await get_env('PAYTM_MERCHANT_KEY')) || process.env.PAYTM_MERCHANT_KEY
    const PAYTM_WEBSITE =
       (await get_env('PAYTM_WEBSITE')) || process.env.PAYTM_WEBSITE
-   const PAYTM_CALLBACK_URL = `${host}/server/api/payment/handle-payment-webhook`
+   const PAYTM_CALLBACK_URL = `https://${host}/server/api/payment/handle-payment-webhook`
    Paytm.MerchantProperties.setCallbackUrl(PAYTM_CALLBACK_URL)
    Paytm.MerchantProperties.initialize(
       PAYTM_ENVIRONMENT,
