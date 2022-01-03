@@ -66,6 +66,7 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
 
    // useEffect(() => {
    //    const localUserLocation = JSON.parse(localStorage.getItem('userLocation'))
+   //    console.log(localUserLocation, "localUserLocation")
    //    if (localUserLocation) {
    //       setAddress(localUserLocation)
    //    }
@@ -170,7 +171,7 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
             <div className="hern-cart__fulfillment-heading">
                <DineinTable style={{}} />
                <span className="hern-cart__fulfillment-heading-text">
-                  How would you like to your order?
+                  How would you like to order?
                </span>
             </div>
             {isEdit && (
@@ -181,9 +182,8 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
                   className="hern-cart__fulfillment-change-btn"
                   style={{
                      color: theme?.accent || 'rgba(5, 150, 105, 1)',
-                     border: `1px solid ${
-                        theme?.accent || 'rgba(5, 150, 105, 1)'
-                     }`,
+                     border: `1px solid ${theme?.accent || 'rgba(5, 150, 105, 1)'
+                        }`,
                      bottom: '8px',
                   }}
                >
@@ -205,7 +205,7 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
                   <Col span={12}>
                      <AddressTunnel outside={true} />
                   </Col>
-                  <Col span={12}>
+                  <Col span={24}>
                      <AddressList
                         zipCodes={false}
                         tunnel={false}
@@ -404,7 +404,7 @@ const Delivery = props => {
 
    useEffect(() => {
       if (brandLocation && address && deliveryType) {
-         ;(async () => {
+         ; (async () => {
             const bar = await getAerialDistance(brandLocation, true)
             setSortedBrandLocation(bar)
          })()
@@ -542,7 +542,7 @@ const Delivery = props => {
       <div className="hern-cart__fulfillment-time-section">
          <div className="hern-cart__fulfillment-time-section-heading">
             <OrderTime />
-            <span>When would you like your order?</span>
+            <span>When would you like to order?</span>
          </div>
 
          <Radio.Group
@@ -752,7 +752,7 @@ const Pickup = props => {
 
    useEffect(() => {
       if (brandLocation && address) {
-         ;(async () => {
+         ; (async () => {
             const bar = await getAerialDistance(brandLocation, true)
             setSortedBrandLocation(bar)
          })()
@@ -1211,24 +1211,24 @@ export const Fulfillment = () => {
                      {(cartState.cart?.fulfillmentInfo?.type ===
                         'PREORDER_PICKUP' ||
                         cartState.cart?.fulfillmentInfo?.type ===
-                           'PREORDER_DELIVERY') && (
-                        <span>
-                           {' '}
-                           on{' '}
-                           {moment(
-                              cartState.cart?.fulfillmentInfo?.slot?.from
-                           ).format('DD MMM YYYY')}
-                           {' ('}
-                           {moment(
-                              cartState.cart?.fulfillmentInfo?.slot?.from
-                           ).format('HH:mm')}
-                           {'-'}
-                           {moment(
-                              cartState.cart?.fulfillmentInfo?.slot?.to
-                           ).format('HH:mm')}
-                           {')'}
-                        </span>
-                     )}
+                        'PREORDER_DELIVERY') && (
+                           <span>
+                              {' '}
+                              on{' '}
+                              {moment(
+                                 cartState.cart?.fulfillmentInfo?.slot?.from
+                              ).format('DD MMM YYYY')}
+                              {' ('}
+                              {moment(
+                                 cartState.cart?.fulfillmentInfo?.slot?.from
+                              ).format('HH:mm')}
+                              {'-'}
+                              {moment(
+                                 cartState.cart?.fulfillmentInfo?.slot?.to
+                              ).format('HH:mm')}
+                              {')'}
+                           </span>
+                        )}
                   </label>
                   <Button
                      onClick={() => {
@@ -1237,9 +1237,8 @@ export const Fulfillment = () => {
                      className="hern-cart__fulfillment-change-btn"
                      style={{
                         color: theme?.accent || 'rgba(5, 150, 105, 1)',
-                        border: `1px solid ${
-                           theme?.accent || 'rgba(5, 150, 105, 1)'
-                        }`,
+                        border: `1px solid ${theme?.accent || 'rgba(5, 150, 105, 1)'
+                           }`,
                      }}
                   >
                      Change

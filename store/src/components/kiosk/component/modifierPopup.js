@@ -13,332 +13,6 @@ import {
 import KioskButton from './button'
 import { formatCurrency, useOnClickOutside } from '../../../utils'
 
-const addModifier = [
-   {
-      label: 'Customize',
-      type: 'hidden',
-      modifier: {
-         id: 1073,
-         name: 'Herfy Original Tortilla-Regular',
-         categories: [
-            {
-               id: 1042,
-               name: 'Sandwich',
-               isRequired: true,
-               type: 'single',
-               limits: {
-                  max: null,
-                  min: 1,
-               },
-               options: [
-                  {
-                     id: 1070,
-                     name: 'Chicken Tortilla',
-                     price: 0,
-                     discount: 0,
-                     quantity: 1,
-                     image: 'https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/30665-Chicken%20TORTILLA.png',
-                     isActive: true,
-                     sachetItemId: null,
-                     ingredientSachetId: null,
-                     cartItem: {
-                        data: [
-                           {
-                              discount: 0,
-                              unitPrice: 0,
-                              modifierOptionId: 1070,
-                           },
-                        ],
-                     },
-                     __typename: 'onDemand_modifierCategoryOption',
-                  },
-               ],
-               __typename: 'onDemand_modifierCategory',
-            },
-            {
-               id: 1043,
-               name: 'Sides',
-               isRequired: true,
-               type: 'single',
-               limits: {
-                  max: null,
-                  min: 1,
-               },
-               options: [
-                  {
-                     id: 1071,
-                     name: 'Regular Fries',
-                     price: 0,
-                     discount: 0,
-                     quantity: 1,
-                     image: 'https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/97788-sideFriesReg.png',
-                     isActive: true,
-                     sachetItemId: null,
-                     ingredientSachetId: null,
-                     cartItem: {
-                        data: [
-                           {
-                              discount: 0,
-                              unitPrice: 0,
-                              modifierOptionId: 1071,
-                           },
-                        ],
-                     },
-                     __typename: 'onDemand_modifierCategoryOption',
-                  },
-                  {
-                     id: 1072,
-                     name: 'Onion Rings Regular',
-                     price: 0,
-                     discount: 0,
-                     quantity: 1,
-                     image: 'https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/12587-ONION-RINGS-1.png',
-                     isActive: true,
-                     sachetItemId: null,
-                     ingredientSachetId: null,
-                     cartItem: {
-                        data: [
-                           {
-                              discount: 0,
-                              unitPrice: 0,
-                              modifierOptionId: 1072,
-                           },
-                        ],
-                     },
-                     __typename: 'onDemand_modifierCategoryOption',
-                  },
-               ],
-               __typename: 'onDemand_modifierCategory',
-            },
-            {
-               id: 1044,
-               name: 'Drinks',
-               isRequired: true,
-               type: 'single',
-               limits: {
-                  max: null,
-                  min: 1,
-               },
-               options: [
-                  {
-                     id: 1073,
-                     name: 'Pepsi regular',
-                     price: 0,
-                     discount: 0,
-                     quantity: 1,
-                     image: 'https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/60364-Pepsi.png',
-                     isActive: true,
-                     sachetItemId: null,
-                     ingredientSachetId: null,
-                     cartItem: {
-                        data: [
-                           {
-                              discount: 0,
-                              unitPrice: 0,
-                              modifierOptionId: 1073,
-                           },
-                        ],
-                     },
-                     __typename: 'onDemand_modifierCategoryOption',
-                  },
-                  {
-                     id: 1074,
-                     name: 'Diet Pepsi Regular',
-                     price: 0,
-                     discount: 0,
-                     quantity: 1,
-                     image: 'https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/84875-Diet%20Pepsi.png',
-                     isActive: true,
-                     sachetItemId: null,
-                     ingredientSachetId: null,
-                     cartItem: {
-                        data: [
-                           {
-                              discount: 0,
-                              unitPrice: 0,
-                              modifierOptionId: 1074,
-                           },
-                        ],
-                     },
-                     __typename: 'onDemand_modifierCategoryOption',
-                  },
-                  {
-                     id: 1075,
-                     name: 'Mirinda Regular',
-                     price: 0,
-                     discount: 0,
-                     quantity: 1,
-                     image: 'https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/13743-Mirinda.png',
-                     isActive: true,
-                     sachetItemId: null,
-                     ingredientSachetId: null,
-                     cartItem: {
-                        data: [
-                           {
-                              discount: 0,
-                              unitPrice: 0,
-                              modifierOptionId: 1075,
-                           },
-                        ],
-                     },
-                     __typename: 'onDemand_modifierCategoryOption',
-                  },
-                  {
-                     id: 1076,
-                     name: 'Mt. Dew Regular',
-                     price: 0,
-                     discount: 0,
-                     quantity: 1,
-                     image: 'https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/39316-Mt.%20Dew.png',
-                     isActive: true,
-                     sachetItemId: null,
-                     ingredientSachetId: null,
-                     cartItem: {
-                        data: [
-                           {
-                              discount: 0,
-                              unitPrice: 0,
-                              modifierOptionId: 1076,
-                           },
-                        ],
-                     },
-                     __typename: 'onDemand_modifierCategoryOption',
-                  },
-                  {
-                     id: 1077,
-                     name: '7up Regular',
-                     price: 0,
-                     discount: 0,
-                     quantity: 1,
-                     image: 'https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/65607-7up.png',
-                     isActive: true,
-                     sachetItemId: null,
-                     ingredientSachetId: null,
-                     cartItem: {
-                        data: [
-                           {
-                              discount: 0,
-                              unitPrice: 0,
-                              modifierOptionId: 1077,
-                           },
-                        ],
-                     },
-                     __typename: 'onDemand_modifierCategoryOption',
-                  },
-                  {
-                     id: 1078,
-                     name: 'Water 500ml',
-                     price: 0,
-                     discount: 0,
-                     quantity: 1,
-                     image: 'https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/87435-Water-HR.png',
-                     isActive: true,
-                     sachetItemId: null,
-                     ingredientSachetId: null,
-                     cartItem: {
-                        data: [
-                           {
-                              discount: 0,
-                              unitPrice: 0,
-                              modifierOptionId: 1078,
-                           },
-                        ],
-                     },
-                     __typename: 'onDemand_modifierCategoryOption',
-                  },
-                  {
-                     id: 1079,
-                     name: '7up can',
-                     price: 1,
-                     discount: 0,
-                     quantity: 1,
-                     image: null,
-                     isActive: true,
-                     sachetItemId: null,
-                     ingredientSachetId: null,
-                     cartItem: {
-                        data: [
-                           {
-                              discount: 0,
-                              unitPrice: 1,
-                              modifierOptionId: 1079,
-                           },
-                        ],
-                     },
-                     __typename: 'onDemand_modifierCategoryOption',
-                  },
-                  {
-                     id: 1080,
-                     name: 'Pepsi can',
-                     price: 1,
-                     discount: 0,
-                     quantity: 1,
-                     image: null,
-                     isActive: true,
-                     sachetItemId: null,
-                     ingredientSachetId: null,
-                     cartItem: {
-                        data: [
-                           {
-                              discount: 0,
-                              unitPrice: 1,
-                              modifierOptionId: 1080,
-                           },
-                        ],
-                     },
-                     __typename: 'onDemand_modifierCategoryOption',
-                  },
-                  {
-                     id: 1081,
-                     name: 'Diet Pepsi can',
-                     price: 1,
-                     discount: 0,
-                     quantity: 1,
-                     image: null,
-                     isActive: true,
-                     sachetItemId: null,
-                     ingredientSachetId: null,
-                     cartItem: {
-                        data: [
-                           {
-                              discount: 0,
-                              unitPrice: 1,
-                              modifierOptionId: 1081,
-                           },
-                        ],
-                     },
-                     __typename: 'onDemand_modifierCategoryOption',
-                  },
-                  {
-                     id: 1082,
-                     name: 'Mirinda can',
-                     price: 1,
-                     discount: 0,
-                     quantity: 1,
-                     image: null,
-                     isActive: true,
-                     sachetItemId: null,
-                     ingredientSachetId: null,
-                     cartItem: {
-                        data: [
-                           {
-                              discount: 0,
-                              unitPrice: 1,
-                              modifierOptionId: 1082,
-                           },
-                        ],
-                     },
-                     __typename: 'onDemand_modifierCategoryOption',
-                  },
-               ],
-               __typename: 'onDemand_modifierCategory',
-            },
-         ],
-         __typename: 'onDemand_modifier',
-      },
-   },
-]
-
 export const KioskModifier = props => {
    const {
       config,
@@ -404,7 +78,8 @@ export const KioskModifier = props => {
             if (
                selectedOptions.single[existCategoryIndex][
                   'modifierCategoryOptionsID'
-               ] === eachOption.id
+               ] === eachOption.id &&
+               !eachModifierCategory.isRequired
             ) {
                const newSelectedOptions = selectedOptions.single.filter(
                   x =>
@@ -661,13 +336,66 @@ export const KioskModifier = props => {
             setQuantity(productCartDetail.ids.length)
          }
          setStatus('success')
-      } else {
-         setStatus('success')
       }
       return () => {
          setSelectedProductOption(null)
       }
    }, [])
+   useEffect(() => {
+      // default selected modifiers
+      if (!(forNewItem || edit)) {
+         let singleModifier = []
+         let multipleModifier = []
+         if (selectedProductOption.modifier) {
+            selectedProductOption.modifier.categories.forEach(eachCategory => {
+               if (eachCategory.type === 'single' && eachCategory.isRequired) {
+                  // default selected modifier option
+                  const defaultModifierSelectedOption = {
+                     modifierCategoryID: eachCategory.id,
+                     modifierCategoryOptionsID: eachCategory.options[0].id,
+                     modifierCategoryOptionsPrice:
+                        eachCategory.options[0].price,
+                     modifierCategoryOptionsDiscount:
+                        eachCategory.options[0].discount,
+                     cartItem: eachCategory.options[0].cartItem,
+                  }
+                  singleModifier = [
+                     ...singleModifier,
+                     defaultModifierSelectedOption,
+                  ]
+               } else if (
+                  eachCategory.type === 'multiple' &&
+                  eachCategory.isRequired
+               ) {
+                  const defaultSelectedOptions = eachCategory.options.slice(
+                     0,
+                     eachCategory.limits.min
+                  )
+                  defaultSelectedOptions.forEach(eachModifierOption => {
+                     // default selected modifier option
+                     const defaultModifierSelectedOption = {
+                        modifierCategoryID: eachCategory.id,
+                        modifierCategoryOptionsID: eachModifierOption.id,
+                        modifierCategoryOptionsPrice: eachModifierOption.price,
+                        modifierCategoryOptionsDiscount:
+                           eachModifierOption.discount,
+                        cartItem: eachModifierOption.cartItem,
+                     }
+                     multipleModifier = [
+                        ...multipleModifier,
+                        defaultModifierSelectedOption,
+                     ]
+                  })
+               }
+            })
+         }
+         setSelectedOptions(prevState => ({
+            ...prevState,
+            single: singleModifier,
+            multiple: multipleModifier,
+         }))
+      }
+   }, [selectedProductOption])
 
    useEffect(() => {
       const languageTags = document.querySelectorAll(
@@ -853,11 +581,14 @@ export const KioskModifier = props => {
                         setSelectedOptions({ single: [], multiple: [] })
                         setSelectedProductOption(productOption)
                      }}
-                     data-name={eachOption.label}
-                     data-translation="true"
-                     data-original-value={eachOption.label}
                   >
-                     {eachOption.label}
+                     <span
+                        data-name={eachOption.label}
+                        data-translation="true"
+                        data-original-value={eachOption.label}
+                     >
+                        {eachOption.label}
+                     </span>
                      {' (+ '}
                      {formatCurrency(eachOption.price - eachOption.discount)}
                      {')'}
@@ -1028,14 +759,17 @@ export const KioskModifier = props => {
                                                                }
                                                             />
 
-                                                            <span
-                                                               className="hern-kiosk__modifier--option-name"
-                                                               data-translation="true"
-                                                               data-original-value={
-                                                                  eachOption.name
-                                                               }
-                                                            >
-                                                               {eachOption.name}
+                                                            <span className="hern-kiosk__modifier--option-name">
+                                                               <span
+                                                                  data-translation="true"
+                                                                  data-original-value={
+                                                                     eachOption.name
+                                                                  }
+                                                               >
+                                                                  {
+                                                                     eachOption.name
+                                                                  }
+                                                               </span>
                                                                {eachOption.price >
                                                                   0 && (
                                                                   <>
@@ -1189,14 +923,15 @@ export const KioskModifier = props => {
                                                 }
                                              />
 
-                                             <span
-                                                className="hern-kiosk__modifier--option-name"
-                                                data-translation="true"
-                                                data-original-value={
-                                                   eachOption.name
-                                                }
-                                             >
-                                                {eachOption.name}
+                                             <span className="hern-kiosk__modifier--option-name">
+                                                <span
+                                                   data-translation="true"
+                                                   data-original-value={
+                                                      eachOption.name
+                                                   }
+                                                >
+                                                   {eachOption.name}
+                                                </span>
                                                 {eachOption.price > 0 && (
                                                    <>
                                                       {' ('}

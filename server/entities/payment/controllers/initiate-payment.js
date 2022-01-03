@@ -61,6 +61,8 @@ export const initiatePaymentHandler = async (req, res) => {
             availablePaymentOption.supportedPaymentOption
                .supportedPaymentCompany.label
 
+         console.log('company', company)
+
          const functionFilePath = `../functions/${company}`
          const method = await import(functionFilePath)
          const data = {

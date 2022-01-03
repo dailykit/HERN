@@ -1,8 +1,9 @@
 import { useQuery } from '@apollo/react-hooks'
 import classNames from 'classnames'
-import React, { useState } from 'react'
+import { Col, Row } from 'antd'
+import React, { useState, useEffect } from 'react'
 import { useToasts } from 'react-toast-notifications'
-import { CloseIcon } from '../assets/icons'
+import { CloseIcon, LocationIcon } from '../assets/icons'
 import { CartContext, useUser } from '../context'
 import { ZIPCODE_AVAILABILITY } from '../graphql'
 import { Loader } from './loader'
@@ -18,6 +19,7 @@ const AddressList = ({
    const { cartState } = React.useContext(CartContext)
 
    const addresses = user?.platform_customer?.addresses || []
+
    const addressByCart = cartState.cart?.address
 
    const [availableZipcodes, setAvailableZipcodes] = React.useState([])
@@ -52,6 +54,7 @@ const AddressList = ({
    }
 
    if (loading) return <Loader />
+
    return (
       <div className="hern-address-list">
          <div className="hern-address-list__header">
@@ -67,48 +70,79 @@ const AddressList = ({
                </button>
             )}
          </div>
-         {user?.keycloakId ? (
-            addresses.map(address => {
-               const addressClasses = classNames('hern-address-list__address', {
-                  'hern-address-list__address--active': localAddress,
-               })
-               return (
+         <div className="hern-address-list-container__address">
+            <Row>
+               {user?.keycloakId ? (
+                  addresses.map(address => {
+                     const addressClasses = classNames(
+                        'hern-address-list__address',
+                        {
+                           'hern-address-list__address--active': localAddress,
+                        }
+                     )
+                     return (
+                        <address
+                           key={address?.id}
+                           className={addressClasses}
+                           tabIndex={1}
+                           onClick={() => selectAddress(address)}
+                        >
+                           <AddressListHeader />
+                           <div className="hern-address-list__address-landmark">
+                              {address?.landmark}
+                           </div>
+                           <p className="hern-address-list__address-line1">
+                              {address?.line1}, {address?.line2},{' '}
+                              {address?.city},{address?.state},{' '}
+                              {address?.zipcode}, {address?.country}
+                           </p>
+                        </address>
+                     )
+                  })
+               ) : (
                   <address
-                     key={address?.id}
-                     className={addressClasses}
-                     onClick={() => selectAddress(address)}
+                     key={addressByCart?.id || 1}
+                     tabIndex={1}
+                     className={classNames('hern-address-list__address', {
+                        'hern-address-list__address--active':
+                           localAddress === addressByCart,
+                     })}
+                     onClick={() => selectAddress(addressByCart)}
                   >
-                     <p>{address?.line1}</p>
-                     <p>{address?.line2}</p>
-                     <p>{address?.city}</p>
-                     <span>{address?.state}</span>
-                     <span>{address?.country}</span>
-                     <span>{address?.zipcode}</span>
+                     <p>{addressByCart?.line1}</p>
+                     <p>{addressByCart?.line2}</p>
+                     <span>{addressByCart?.city} </span>
+                     <span>{addressByCart?.state} </span>
+                     <span>
+                        {addressByCart?.country}
+                        {', '}
+                     </span>
+                     <span>{addressByCart?.zipcode}</span>
                   </address>
-               )
-            })
-         ) : (
-            <address
-               key={addressByCart?.id || 1}
-               className={classNames('hern-address-list__address', {
-                  'hern-address-list__address--active':
-                     localAddress === addressByCart,
-               })}
-               onClick={() => selectAddress(addressByCart)}
-            >
-               <p>{addressByCart?.line1}</p>
-               <p>{addressByCart?.line2}</p>
-               <span>{addressByCart?.city} </span>
-               <span>{addressByCart?.state} </span>
-               <span>
-                  {addressByCart?.country}
-                  {', '}
-               </span>
-               <span>{addressByCart?.zipcode}</span>
-            </address>
-         )}
+               )}
+            </Row>
+         </div>
       </div>
    )
 }
 
 export default AddressList
+export const AddressListHeader = () => {
+   return (
+      <div
+         style={{
+            display: 'flex',
+            alignItems: 'center',
+            marginBottom: '10px',
+         }}
+      >
+         <LocationIcon />
+         <label
+            className={'hern-address-list-header__label'}
+            htmlFor="address-list-header"
+         >
+            Delivery Area
+         </label>
+      </div>
+   )
+}

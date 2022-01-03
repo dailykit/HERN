@@ -133,7 +133,10 @@ export const CartProvider = ({ children }) => {
          console.log('combinedCartItems', combinedCartItems)
          setCombinedCartData(combinedCartItems)
       } else {
-         setCombinedCartData([])
+         const localCartId = localStorage.getItem('cart-id')
+         if (!localCartId && !isAuthenticated) {
+            setCombinedCartData([])
+         }
       }
    }, [cartItemsData?.cart?.cartItems])
 
@@ -385,6 +388,8 @@ export const CartProvider = ({ children }) => {
             addToCart,
             combinedCartItems,
             setStoredCartId,
+            isCartLoading,
+            cartItemsLoading,
             methods: {
                cartItems: {
                   delete: deleteCartItems,

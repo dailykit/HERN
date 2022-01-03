@@ -26,6 +26,7 @@ import {
 import { Divider } from '../../components'
 import { ProgressBar } from './component/progressBar'
 import { PromotionCarousal } from '../../sections/promotionCarousel'
+import * as Scroll from 'react-scroll'
 
 const { Content, Sider, Header, Footer } = Layout
 const { Step } = Steps
@@ -168,7 +169,7 @@ export const MenuSection = props => {
    }
    return (
       <Layout>
-         <Content style={{ height: '25em' }}>
+         <Content>
             {/* Promotion, coupons and progress bar */}
             <Layout style={{ height: '100%' }}>
                <Header
@@ -221,7 +222,7 @@ const KioskMenu = props => {
 
    const onCategorySelect = e => {
       setSelectedCategory(e.key)
-      changeCategory(e.key)
+      // changeCategory(e.key)
    }
    useEffect(() => {
       const languageTags = document.querySelectorAll(
@@ -246,35 +247,26 @@ const KioskMenu = props => {
                {kioskMenus.map((eachCategory, index) => {
                   return (
                      <Menu.Item key={index} style={{ height: '13em' }}>
-                        <a
-                           href={`#${eachCategory.name}`}
-                           onClick={() => {
-                              // document
-                              //    .getElementById(`#${eachCategory.name}`)
-                              // .scrollIntoView({
-                              //    behavior: 'smooth',
-                              //    block: 'start',
-                              // })
-                              console.log(
-                                 document.getElementById(
-                                    `#${menuRef.current.id}`
-                                 )
-                              )
-                              // menuRef.current.id.scrollIntoView({
-                              //    behavior: 'smooth',
-                              //    block: 'start',
-                              // })
-                              console.log(menuRef.current.id)
+                        <div
+                           className="hern-kiosk__menu-page-product-category"
+                           style={{
+                              ...(index == selectedCategory && {
+                                 border: ` 4px solid ${config.kioskSettings.theme.primaryColor.value}`,
+                              }),
                            }}
                         >
-                           <div
-                              className="hern-kiosk__menu-page-product-category"
-                              style={{
-                                 ...((index == selectedCategory ||
-                                    index == categoryId) && {
-                                    border: ` 4px solid ${config.kioskSettings.theme.primaryColor.value}`,
-                                 }),
+                           <Scroll.Link
+                              containerId="hern-kiosk__menu-list"
+                              smooth={true}
+                              // activeClass="hern-on-demand-menu__navigationAnchor-li--active"
+                              onSetActive={to => {
+                                 setSelectedCategory(index)
+                                 // changeCategory(index)
+                                 console.log('thisIsTo', to)
                               }}
+                              to={eachCategory.name}
+                              spy={true}
+                              className="hern-kiosk__category-scroll-link"
                            >
                               <img
                                  src={
@@ -298,8 +290,8 @@ const KioskMenu = props => {
                               >
                                  {eachCategory.name}
                               </span>
-                           </div>
-                        </a>
+                           </Scroll.Link>
+                        </div>
                      </Menu.Item>
                   )
                })}
@@ -346,7 +338,10 @@ const KioskMenu = props => {
                      </Col>
                   </Row>
                </Header>
-               <Content class="hern-kiosk__menu-product-list">
+               <Content
+                  className="hern-kiosk__menu-product-list"
+                  id="hern-kiosk__menu-list"
+               >
                   {kioskMenus.map((eachCategory, index) => {
                      // VegNonVegTYpe change into type
                      const groupedByType = React.useMemo(() => {
@@ -377,8 +372,11 @@ const KioskMenu = props => {
                         dynamicTrans(languageTags)
                      }, [currentGroup])
                      return (
-                        <>
-                           <div id={eachCategory.name} ref={menuRef}></div>
+                        <Scroll.Element
+                           name={eachCategory.name}
+                           className="hern-kiosk__scroll-element"
+                        >
+                           <div name={eachCategory.name} ref={menuRef}></div>
                            {eachCategory?.bannerImageUrl ? (
                               <img
                                  src={eachCategory?.bannerImageUrl}
@@ -465,7 +463,7 @@ const KioskMenu = props => {
                               )}
                            </Row>
                            <Divider />
-                        </>
+                        </Scroll.Element>
                      )
                   })}
                </Content>

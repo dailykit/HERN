@@ -52,3 +52,4 @@ export * from './UserIcon'
 export * from './LocationIcon'
 export * from './AddressIcon'
 
+export * from './VegNonVegType'
