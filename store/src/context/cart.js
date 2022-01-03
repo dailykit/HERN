@@ -311,7 +311,7 @@ export const CartProvider = ({ children }) => {
          variables: {
             where: {
                paymentStatus: { _eq: 'PENDING' },
-               status: { _eq: 'ORDER_PENDING' },
+               status: { _eq: 'CART_PENDING' },
                customerKeycloakId: {
                   _eq: user?.keycloakId,
                },
