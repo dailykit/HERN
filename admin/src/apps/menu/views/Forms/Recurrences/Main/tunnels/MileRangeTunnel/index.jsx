@@ -8,6 +8,8 @@ import { RecurrenceContext } from '../../../../../../context/recurrence'
 import { CREATE_MILE_RANGES } from '../../../../../../graphql'
 import validator from '../../../../validators'
 import { InputHeading, InputsNotes, TunnelBody } from '../styled'
+import { Radio } from 'antd'
+
 
 const MileRangeTunnel = ({ closeTunnel }) => {
    const { recurrenceState } = React.useContext(RecurrenceContext)
@@ -37,6 +39,13 @@ const MileRangeTunnel = ({ closeTunnel }) => {
       },
    })
    const [isExcluded, setIsExcluded] = React.useState(false)
+
+   // Distance type declearation
+   const [valueDistanceType, setValueDistanceType] = React.useState('aerial');
+   const onChangeDistanceType = e => {
+      console.log('radio checked', e.target.value)
+      setValueDistanceType(e.target.value)
+   }
    // Mutation
    const [createMileRanges, { loading: inFlight }] = useMutation(
       CREATE_MILE_RANGES,
@@ -68,7 +77,8 @@ const MileRangeTunnel = ({ closeTunnel }) => {
                      to: +to.value,
                      prepTime: type.includes('ONDEMAND') ? +time.value : null,
                      leadTime: type.includes('PREORDER') ? +time.value : null,
-                     isExcluded: isExcluded
+                     isExcluded: isExcluded,
+                     distanceType: valueDistanceType
                   },
                ],
             },
@@ -207,9 +217,19 @@ const MileRangeTunnel = ({ closeTunnel }) => {
                </Form.Group>
             </Flex>
             <Spacer size="16px" />
+
+            <InputHeading>Distance Type</InputHeading>
+            <Spacer size="4px" />
+            <Radio.Group onChange={onChangeDistanceType} value={valueDistanceType}>
+               <Radio value={'aerial'}>Aerial</Radio>
+               <Radio value={'drivable'}>Drivable</Radio>
+            </Radio.Group>
+            <Spacer size="16px" />
+
          </TunnelBody>
       </>
    )
 }
 
 export default MileRangeTunnel
+
