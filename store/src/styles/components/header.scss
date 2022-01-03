@@ -40,6 +40,18 @@
       padding-right: 1.5rem;
    }
 }
+.hern-header__brand__logo {
+   display: none;
+   @media (min-width: 600px) {
+      display: block;
+   }
+}
+.hern-header__brand__logo--sm {
+   display: block;
+   @media (min-width: 600px) {
+      display: none;
+   }
+}
 
 .hern-header__auth {
    padding-left: 0.5rem;

@@ -3,12 +3,6 @@ import styled from 'styled-components'
 export const DashboardReport = styled.div`
    display: flex;
    flex-direction: column;
-   // position: absolute;
-   width: 300px;
-   height: 310px;
-   // left: 998px;
-   // top: 68.51px;
-
    background: #ffffff;
    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
    border-radius: 6px;
@@ -58,12 +52,11 @@ export const ViewBtn = styled.div`
    display: flex;
    justify-content: flex-end;
    width: 100%;
+   padding: 0px 9px 4px 9px;
 `
 export const DashboardQuickNav = styled.div`
    display: flex;
    flex-direction: column;
-   width: 300px;
-   height: 290px;
    background: #ffffff;
    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
    border-radius: 6px;
