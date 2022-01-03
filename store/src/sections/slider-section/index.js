@@ -8,9 +8,7 @@ export const SliderSection = ({ config }) => {
    const showArrowsOnSlider =
       config?.display?.slider?.showSliderArrow?.value ?? false
    const sliderContent = config.display.slider.content.images.value ?? false
-   const getStartedURL =
-      config?.data?.getStartedURL.value ??
-      'https://chefbaskit1.dailykit.org/order'
+   const getStartedURL = config?.data?.callToActionButtonURL.value ?? '#'
    return (
       <>
          {sliderContent && (
