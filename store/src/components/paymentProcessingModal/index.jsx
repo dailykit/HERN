@@ -314,27 +314,29 @@ const PaymentProcessingModal = ({
          {/* <Button type="link" tw="fixed top-4 left-4" onClick={normalModalClose}>
             Close
          </Button> */}
-         {cartPayment?.paymentStatus === 'SWIPE_OR_INSERT' && isTestingByPass && (
-            <div tw="flex items-center gap-2 justify-center">
-               <Button
-                  type="primary"
-                  onClick={() =>
-                     byPassTerminalPayment({ type: 'success', cartPayment })
-                  }
-               >
-                  Mark Success
-               </Button>
-               <Button
-                  type="primary"
-                  danger
-                  onClick={() =>
-                     byPassTerminalPayment({ type: 'fail', cartPayment })
-                  }
-               >
-                  Mark Failure
-               </Button>
-            </div>
-         )}
+         {isKioskMode &&
+            isTestingByPass &&
+            cartPayment?.paymentStatus === 'SWIPE_OR_INSERT' && (
+               <div tw="flex items-center gap-2 justify-center">
+                  <Button
+                     type="primary"
+                     onClick={() =>
+                        byPassTerminalPayment({ type: 'success', cartPayment })
+                     }
+                  >
+                     Mark Success
+                  </Button>
+                  <Button
+                     type="primary"
+                     danger
+                     onClick={() =>
+                        byPassTerminalPayment({ type: 'fail', cartPayment })
+                     }
+                  >
+                     Mark Failure
+                  </Button>
+               </div>
+            )}
 
          {isKioskMode &&
             ['PENDING', 'PROCESSING', 'SWIPE_OR_INSERT', 'FAILED'].includes(
