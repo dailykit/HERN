@@ -834,7 +834,12 @@ export const CUSTOMER = {
             keycloakId
             isSubscriber
             isTest
-            carts {
+            carts(
+               where: {
+                  source: { _eq: "subscription" }
+                  brandId: { _eq: $brandId }
+               }
+            ) {
                id
                paymentStatus
                subscriptionOccurence {
