@@ -1,9 +1,7 @@
 import gql from 'graphql-tag'
 
 export const GET_TOTAL_EARNING_ORDER_CUSTOMER_TOP_PRODUCT = gql`
-   query TotalEarningAndTotalOrder(
-      $topProductArgs: insights_getTopProducts_args!
-   ) {
+   query TotalEarningAndTotalOrder {
       ordersAggregate(
          where: {
             isAccepted: { _eq: true }
@@ -22,10 +20,6 @@ export const GET_TOTAL_EARNING_ORDER_CUSTOMER_TOP_PRODUCT = gql`
          aggregate {
             count
          }
-      }
-      insights_analytics {
-         getTopProducts(args: $topProductArgs)
-         id
       }
    }
 `
