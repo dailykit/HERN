@@ -12,6 +12,7 @@ import {
 import { CartContext, useUser } from '../../context'
 import { EmptyCart, PaymentIcon } from '../../assets/icons'
 import Link from 'next/link'
+import { Row, Col } from 'antd'
 import { UserInfo, UserType } from '../../components'
 
 export const OnDemandCart = () => {
