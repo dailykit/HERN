@@ -7,7 +7,7 @@ import { logger } from '../../../../../../../../shared/utils'
 import { RecurrenceContext } from '../../../../../../context/recurrence'
 import { CREATE_MILE_RANGES } from '../../../../../../graphql'
 import validator from '../../../../validators'
-import { TunnelBody } from '../styled'
+import { InputHeading, InputsNotes, TunnelBody } from '../styled'
 
 const MileRangeTunnel = ({ closeTunnel }) => {
    const { recurrenceState } = React.useContext(RecurrenceContext)
@@ -36,7 +36,7 @@ const MileRangeTunnel = ({ closeTunnel }) => {
          errors: [],
       },
    })
-
+   const [isExcluded, setIsExcluded] = React.useState(false)
    // Mutation
    const [createMileRanges, { loading: inFlight }] = useMutation(
       CREATE_MILE_RANGES,
@@ -68,6 +68,7 @@ const MileRangeTunnel = ({ closeTunnel }) => {
                      to: +to.value,
                      prepTime: type.includes('ONDEMAND') ? +time.value : null,
                      leadTime: type.includes('PREORDER') ? +time.value : null,
+                     isExcluded: isExcluded
                   },
                ],
             },
@@ -85,11 +86,63 @@ const MileRangeTunnel = ({ closeTunnel }) => {
             close={() => closeTunnel(3)}
          />
          <TunnelBody>
-            <Text as="p">
+            <Form.Group>
+               <Form.Toggle
+                  name={`isExcluded-${recurrenceState.timeSlotId}`}
+                  value={isExcluded}
+                  onChange={() => setIsExcluded(!isExcluded)
+                  }
+               >
+                  Exclude
+               </Form.Toggle>
+            </Form.Group>
+            <InputsNotes>
+               This will exclude all the things you have mentioned below
+            </InputsNotes>
+            <Spacer size="16px" />
+            {/* <Text as="p">
                Enter Mile Range and{' '}
                {type.includes('PREORDER') ? 'Lead' : 'Prep'} Time:
             </Text>
+            <Spacer size="16px" /> */}
+            <InputHeading>{type.includes('PREORDER')
+               ? 'Lead Time(minutes)*'
+               : 'Prep Time(minutes)*'}</InputHeading>
+            <Spacer size="4px" />
+            <Form.Group>
+               <Form.Label htmlFor="time" title="time">
+                  Time
+               </Form.Label>
+               <Form.Number
+                  id="time"
+                  name="time"
+                  onChange={e => setTime({ ...time, value: e.target.value })}
+                  onBlur={() => {
+                     const { isValid, errors } = validator.minutes(time.value)
+                     setTime({
+                        ...time,
+                        meta: {
+                           isTouched: true,
+                           isValid,
+                           errors,
+                        },
+                     })
+                  }}
+                  value={time.value}
+                  placeholder="Enter minutes"
+                  hasError={time.meta.isTouched && !time.meta.isValid}
+                  style={{ width: "60%" }}
+               />
+               {time.meta.isTouched &&
+                  !time.meta.isValid &&
+                  time.meta.errors.map((error, index) => (
+                     <Form.Error key={index}>{error}</Form.Error>
+                  ))}
+            </Form.Group>
             <Spacer size="16px" />
+
+            <InputHeading>Miles Range</InputHeading>
+            <Spacer size="4px" />
             <Flex container>
                <Form.Group>
                   <Form.Label htmlFor="from" title="from">
@@ -154,37 +207,6 @@ const MileRangeTunnel = ({ closeTunnel }) => {
                </Form.Group>
             </Flex>
             <Spacer size="16px" />
-            <Form.Group>
-               <Form.Label htmlFor="time" title="time">
-                  {type.includes('PREORDER')
-                     ? 'Lead Time(minutes)*'
-                     : 'Prep Time(minutes)*'}
-               </Form.Label>
-               <Form.Number
-                  id="time"
-                  name="time"
-                  onChange={e => setTime({ ...time, value: e.target.value })}
-                  onBlur={() => {
-                     const { isValid, errors } = validator.minutes(time.value)
-                     setTime({
-                        ...time,
-                        meta: {
-                           isTouched: true,
-                           isValid,
-                           errors,
-                        },
-                     })
-                  }}
-                  value={time.value}
-                  placeholder="Enter minutes"
-                  hasError={time.meta.isTouched && !time.meta.isValid}
-               />
-               {time.meta.isTouched &&
-                  !time.meta.isValid &&
-                  time.meta.errors.map((error, index) => (
-                     <Form.Error key={index}>{error}</Form.Error>
-                  ))}
-            </Form.Group>
          </TunnelBody>
       </>
    )
