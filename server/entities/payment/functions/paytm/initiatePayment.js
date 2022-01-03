@@ -13,10 +13,11 @@ const initiatePayment = async arg => {
          paymentCustomerId,
          requires3dSecure,
          amount,
-         oldAmount
+         oldAmount,
+         host
       } = arg
       console.log('initiating paytm instance')
-      const _Paytm = await paytm()
+      const _Paytm = await paytm(host)
       const channelId = _Paytm.EChannelId.WEB
       const orderId = cartPaymentId.toString()
       const txnAmount = _Paytm.Money.constructWithCurrencyAndValue(
