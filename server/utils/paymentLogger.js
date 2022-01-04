@@ -27,7 +27,7 @@ mutation insertStripePaymentHistory(
 
 const STATUS = {
    created: 'CREATED',
-   canceled: 'CANCELLED',
+   cancelled: 'CANCELLED',
    succeeded: 'SUCCEEDED',
    processing: 'PROCESSING',
    payment_failed: 'FAILED',
@@ -38,7 +38,29 @@ const STATUS = {
    PENDING: 'PENDING',
    PROCESSING: 'PROCESSING',
    FAILED: 'FAILED',
-   SWIPE_OR_INSERT: 'SWIPE_OR_INSERT'
+   SWIPE_OR_INSERT: 'SWIPE_OR_INSERT',
+   declined: 'FAILED',
+   rejected: 'FAILED',
+   void: 'FAILED',
+   card_not_supported: 'FAILED',
+   txn_not_allowed: 'FAILED',
+   card_expired: 'FAILED',
+   no_dial_tone: 'FAILED',
+   card_not_accepted: 'FAILED',
+   incorrect_refund_card: 'FAILED',
+   pin_locked: 'FAILED',
+   pin_timeout: 'FAILED',
+   service_not_accepted: 'FAILED',
+   card_removed_after_pin_entry: 'FAILED',
+   card_removed_before_pin_entry: 'FAILED',
+   card_removed_after_arqc: 'FAILED',
+   card_timeout: 'FAILED',
+   invalid_pin: 'FAILED',
+   invalid_amount: 'FAILED',
+   invalid_card: 'FAILED',
+   emv_blocked: 'FAILED',
+   transaction_declined_by_card: 'FAILED',
+   emv_card_not_detected: 'FAILED'
 }
 // const handleInvoice = async args => {
 //    try {
