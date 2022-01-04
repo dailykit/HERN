@@ -437,7 +437,10 @@ export const KioskModifier = props => {
             centered={true}
             closable={false}
             footer={null}
-            maskClosable={false}
+            onCancel={() => {
+               onCloseModifier()
+               setShowProceedPopup(false)
+            }}
             zIndex={'100000000000000000000'}
          >
             <div
