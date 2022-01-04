@@ -193,7 +193,18 @@ export const ProductCard = props => {
                      </div>
                      {showProductPrice && (
                         <div className="hern-product-card__price">
-                           {finalProductPrice()}
+                           {useForThirdParty && data.discount > 0 && (
+                              <span
+                                 style={{
+                                    textDecoration: 'line-through',
+                                 }}
+                              >
+                                 {formatCurrency(data.price)}
+                              </span>
+                           )}
+                           <span style={{ marginLeft: '6px' }}>
+                              {finalProductPrice()}
+                           </span>
                         </div>
                      )}
                      {showProductAdditionalText && (
