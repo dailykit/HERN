@@ -22,30 +22,33 @@ const passResponseToWebhook = async data => {
 
 function useTerminalPay() {
    const paymentOptionRef = useRef(null)
-   var socket = new WebSocket('ws://localhost:8080/neoleap_integration')
+   let socket
 
-   socket.onopen = function (data) {
-      console.log('on open', data)
-      // connection opened – add action here
-   }
-   socket.onmessage = async event => {
-      console.log('onmessage', event)
-      if (!isEmpty(event)) {
-         const { JsonResult = null } = event.data
-         if (!isEmpty(JsonResult)) {
-            const terminalResponseData = {
-               cartPaymentId: cartPayment.id,
-               status: formatTerminalStatus[JsonResult?.StatusCode].status,
-               transactionId: JsonResult?.TransactionDateTime,
-               transactionRemark: JsonResult,
+   if (isClient) {
+      socket = new WebSocket('ws://localhost:8080/neoleap_integration')
+      socket.onopen = function (data) {
+         console.log('on open', data)
+         // connection opened – add action here
+      }
+      socket.onmessage = async event => {
+         console.log('onmessage', event)
+         if (!isEmpty(event)) {
+            const { JsonResult = null } = event.data
+            if (!isEmpty(JsonResult)) {
+               const terminalResponseData = {
+                  cartPaymentId: cartPayment.id,
+                  status: formatTerminalStatus[JsonResult?.StatusCode].status,
+                  transactionId: JsonResult?.TransactionDateTime,
+                  transactionRemark: JsonResult,
+               }
+               return await passResponseToWebhook(terminalResponseData)
             }
-            return await passResponseToWebhook(terminalResponseData)
          }
       }
    }
 
    const onPay = data => {
-      if (socket.readyState === WebSocket.OPEN) {
+      if (socket.readyState === (isClient ? WebSocket.OPEN : '')) {
          console.log(data)
          const jsonStringifiedData = JSON.stringify(data)
          console.log(jsonStringifiedData)
@@ -54,7 +57,7 @@ function useTerminalPay() {
       }
    }
    const onGetLastTxn = data => {
-      if (socket.readyState === WebSocket.OPEN) {
+      if (socket.readyState === (isClient ? WebSocket.OPEN : '')) {
          console.log(data)
          var getLastTxnRes = socket.send(JSON.stringify(getLastTxnData))
          console.log('getLastTxn response', getLastTxnRes)
@@ -95,7 +98,7 @@ function useTerminalPay() {
          const initiatePaymentReqData = {
             Command: 'SALE',
             PrintFlag: '1',
-            Amount: cartPayment?.amount || 0,
+            Amount: (cartPayment.amount * 100).toFixed(2),
             AdditionalData: cartPayment?.id?.toString() || '',
          }
          onPay(initiatePaymentReqData)
