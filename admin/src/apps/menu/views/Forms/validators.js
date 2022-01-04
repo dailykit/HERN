@@ -1,3 +1,5 @@
+import { isInteger } from 'lodash'
+
 const validator = {
    name: value => {
       const text = value.trim()
@@ -69,6 +71,23 @@ const validator = {
       if (+value < 0) {
          isValid = false
          errors = [...errors, 'Invalid value!']
+      }
+      return { isValid, errors }
+   },
+   zipcode: value => {
+      const zipcodeValue = value
+      let isValid = true
+      let errors = []
+      if (zipcodeValue.length === 1 && !isInteger(zipcodeValue[0])) {
+         isValid = false
+         errors = [...errors, 'Cannot be empty or invalid']
+      } else {
+         zipcodeValue.map(each => {
+            if (!isInteger(each)) {
+               isValid = false
+               errors = [...errors, 'Invalid Zipcode value!']
+            }
+         })
       }
       return { isValid, errors }
    },

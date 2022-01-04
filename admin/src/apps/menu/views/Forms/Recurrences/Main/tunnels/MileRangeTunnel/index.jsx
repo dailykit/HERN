@@ -9,6 +9,7 @@ import { CREATE_MILE_RANGES } from '../../../../../../graphql'
 import validator from '../../../../validators'
 import { InputHeading, InputsNotes, TunnelBody } from '../styled'
 import { Radio } from 'antd'
+import { parseInt, zip } from 'lodash'
 
 
 const MileRangeTunnel = ({ closeTunnel }) => {
@@ -40,6 +41,17 @@ const MileRangeTunnel = ({ closeTunnel }) => {
    })
    const [isExcluded, setIsExcluded] = React.useState(false)
 
+   const [zipcodes, setZipcodes] = React.useState({
+      value: '',
+      meta: {
+         isTouched: false,
+         isValid: true,
+         errors: [],
+      },
+   })
+   const [initialZipcodes, setInitialZipcodes] = React.useState({
+      value: "",
+   })
    // Distance type declearation
    const [valueDistanceType, setValueDistanceType] = React.useState('aerial');
    const onChangeDistanceType = e => {
@@ -60,14 +72,15 @@ const MileRangeTunnel = ({ closeTunnel }) => {
          },
       }
    )
+   // console.log("zipcodes", initialZipcodes, zipcodes)
 
    // Handlers
    const save = () => {
       if (inFlight) return
-      if (!from.value || !to.value || !time.value) {
+      if (!from.value || !to.value || !time.value || !zipcodes.value) {
          return toast.error('Invalid values!')
       }
-      if (from.meta.isValid && to.meta.isValid && time.meta.isValid) {
+      if (from.meta.isValid && to.meta.isValid && time.meta.isValid && zipcodes.meta.isValid) {
          createMileRanges({
             variables: {
                objects: [
@@ -78,7 +91,8 @@ const MileRangeTunnel = ({ closeTunnel }) => {
                      prepTime: type.includes('ONDEMAND') ? +time.value : null,
                      leadTime: type.includes('PREORDER') ? +time.value : null,
                      isExcluded: isExcluded,
-                     distanceType: valueDistanceType
+                     distanceType: valueDistanceType,
+                     zipcodes: { zipcodes: zipcodes.value }
                   },
                ],
             },
@@ -224,6 +238,45 @@ const MileRangeTunnel = ({ closeTunnel }) => {
                <Radio value={'aerial'}>Aerial</Radio>
                <Radio value={'drivable'}>Drivable</Radio>
             </Radio.Group>
+            <Spacer size="16px" />
+
+            <InputHeading>Zipcodes*</InputHeading>
+            <Spacer size="4px" />
+            <Form.Group>
+               <Form.Text
+                  id="zipcodes"
+                  name="zipcodes"
+                  value={initialZipcodes.value}
+                  placeholder="Enter the zipcodes"
+                  onChange={e => setInitialZipcodes({
+                     ...initialZipcodes,
+                     value: e.target.value
+                  })}
+                  onBlur={() => {
+                     const zipcodeArray = initialZipcodes.value.split(',').map(node => parseInt(node.trim()))
+                     // console.log("zipcodeArray", zipcodeArray);
+                     const { isValid, errors } = validator.zipcode(zipcodeArray)
+                     setZipcodes({
+                        ...zipcodes,
+                        value: zipcodeArray,
+                        meta: {
+                           isTouched: true,
+                           isValid,
+                           errors,
+                        },
+                     })
+                  }}
+                  hasError={zipcodes.meta.isTouched && !zipcodes.meta.isValid}
+               />
+               {zipcodes.meta.isTouched &&
+                  !zipcodes.meta.isValid &&
+                  zipcodes.meta.errors.map((error, index) => (
+                     <Form.Error key={index}>{error}</Form.Error>
+                  ))}
+            </Form.Group>
+            <InputsNotes>
+               Enter comma to separate zipcodes
+            </InputsNotes>
             <Spacer size="16px" />
 
          </TunnelBody>
