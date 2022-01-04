@@ -587,17 +587,14 @@ export const KioskModifier = props => {
                      style={{
                         backgroundColor:
                            selectedProductOption.id === eachOption.id
-                              ? config.kioskSettings.theme.primaryColor.value
-                              : config.kioskSettings.theme.primaryColorLight
-                                   .value,
-                        color:
-                           selectedProductOption.id === eachOption.id
-                              ? '#ffffff'
-                              : config.kioskSettings.theme.primaryColor.value,
+                              ? config.kioskSettings.theme.primaryColorDark
+                                   .value
+                              : 'transparent',
+                        color: '#ffffff',
                         border:
                            selectedProductOption.id === eachOption.id
-                              ? `1px solid ${config.kioskSettings.theme.successColor.value}`
-                              : 'none',
+                              ? `2px solid ${config.kioskSettings.theme.successColor.value}`
+                              : `2px solid ${config.kioskSettings.theme.primaryColorDark.value}`,
                      }}
                      onClick={() => {
                         const productOption = productData.productOptions.find(
