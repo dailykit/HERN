@@ -645,11 +645,7 @@ export const KioskModifier = props => {
                      const [showCustomize, setShowCustomize] = useState(
                         !Boolean(additionalModifiersType)
                      )
-                     if (
-                        !eachAdditionalModifier.linkedToModifierCategoryOptionId
-                     ) {
-                        return null
-                     }
+
                      return (
                         <div
                            className="hern-kiosk__additional-modifier"
@@ -867,18 +863,6 @@ export const KioskModifier = props => {
             {selectedProductOption.modifier &&
                selectedProductOption.modifier.categories.map(
                   (eachModifierCategory, index) => {
-                     const linkedModifierOptionIds =
-                        selectedProductOption.additionalModifiers.length > 0
-                           ? selectedProductOption.additionalModifiers.map(
-                                x => {
-                                   if (x.linkedToModifierCategoryOptionId) {
-                                      return x.linkedToModifierCategoryOptionId
-                                   } else {
-                                      null
-                                   }
-                                }
-                             )
-                           : []
                      return (
                         <div
                            className="hern-kiosk__modifier-popup-modifier-category"
@@ -944,10 +928,7 @@ export const KioskModifier = props => {
                                        )
                                        return Boolean(isOptionSelected)
                                     }
-                                    const isLinkedModifierOptionIdIncludes =
-                                       linkedModifierOptionIds.includes(
-                                          eachOption.id
-                                       )
+
                                     return (
                                        <>
                                           <div
