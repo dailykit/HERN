@@ -23,6 +23,11 @@ export const InputHeading = styled.p`
    font-weight: 600;
    font-size: 14px;
    line-height: 20px;
-
+   cursor: default;
    color: #919699;
+`
+export const StyledGeoBoundary = styled.div`
+   display: flex;
+   justify-content: space-around;
+   align-items: flex-end;
 `

@@ -91,6 +91,34 @@ const validator = {
       }
       return { isValid, errors }
    },
+   latitude: value => {
+      const latitude = value.trim()
+      let isValid = true
+      let errors = []
+      if (latitude === '') {
+         isValid = false
+         errors = [...errors, 'Cannot be empty!']
+      }
+      if (!Number.isInteger(+value)) {
+         isValid = false
+         errors = [...errors, 'Integers only!']
+      }
+      return { isValid, errors }
+   },
+   longitude: value => {
+      const longitude = value.trim()
+      let isValid = true
+      let errors = []
+      if (longitude === '') {
+         isValid = false
+         errors = [...errors, 'Cannot be empty!']
+      }
+      if (!Number.isInteger(+value)) {
+         isValid = false
+         errors = [...errors, 'Integers only!']
+      }
+      return { isValid, errors }
+   },
 }
 
 export default validator
