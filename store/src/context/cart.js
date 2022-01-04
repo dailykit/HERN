@@ -126,10 +126,8 @@ export const CartProvider = ({ children }) => {
    }, [cartData, isCartLoading])
 
    useEffect(() => {
-      if (cartItemsData?.cart?.cartItems) {
-         const combinedCartItems = combineCartItems(
-            cartItemsData?.cart?.cartItems
-         )
+      if (cartItemsData?.cartItems) {
+         const combinedCartItems = combineCartItems(cartItemsData?.cartItems)
          console.log('combinedCartItems', combinedCartItems)
          setCombinedCartData(combinedCartItems)
       } else {
@@ -138,7 +136,7 @@ export const CartProvider = ({ children }) => {
             setCombinedCartData([])
          }
       }
-   }, [cartItemsData?.cart?.cartItems])
+   }, [cartItemsData?.cartItems])
 
    //create cart
    const [createCart] = useMutation(MUTATIONS.CART.CREATE, {
@@ -375,13 +373,12 @@ export const CartProvider = ({ children }) => {
             }
          },
       })
-
    return (
       <CartContext.Provider
          value={{
             cartState: {
                cart: cartData?.cart,
-               cartItems: cartItemsData?.cart?.cartItems,
+               cartItems: cartItemsData?.cartItems,
                kioskPaymentOption: cartState.kioskPaymentOption,
             },
             cartReducer,

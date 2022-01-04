@@ -1956,35 +1956,45 @@ export const GET_JS_CSS_FILES = gql`
 `
 
 export const GET_CART_ITEMS_BY_CART = gql`
-   subscription cart($id: Int!) {
-      cart(id: $id) {
-         id
-         cartItems(where: { level: { _eq: 1 } }) {
-            cartItemId: id
-            addOnLabel
-            addOnPrice
-            created_at
+   subscription GET_CART_ITEMS_BY_CART($id: Int!) {
+      cartItems(where: { level: { _eq: 1 }, cartId: { _eq: $id } }) {
+         cartItemId: id
+         parentCartItemId
+         addOnLabel
+         addOnPrice
+         created_at
+         price: unitPrice
+         discount
+         name: displayName
+         image: displayImage
+         childs {
             price: unitPrice
             name: displayName
-            image: displayImage
+            discount
+            productOption {
+               id
+               label
+            }
             childs {
+               displayName
                price: unitPrice
-               name: displayName
-               productOption {
+               discount
+               modifierOption {
                   id
-                  label
+                  name
                }
                childs {
                   displayName
                   price: unitPrice
+                  discount
                   modifierOption {
                      id
                      name
                   }
                }
             }
-            productId
          }
+         productId
       }
    }
 `
@@ -2077,9 +2087,9 @@ export const GET_MODIFIER_BY_ID = gql`
       $priceArgs: priceByLocation_onDemand_modifierCategoryOption_args!
       $discountArgs: discountByLocation_onDemand_modifierCategoryOption_args!
       $modifierCategoryOptionCartItemArgs: cartItemByLocation_onDemand_modifierCategoryOption_args!
-      $id: Int!
+      $id: [Int!]!
    ) {
-      modifier(id: $id) {
+      modifiers(where: { id: { _in: $id } }) {
          id
          name
          categories(where: { isVisible: { _eq: true } }) {
