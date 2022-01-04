@@ -3,6 +3,7 @@ import { toast } from 'react-toastify'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    ButtonTile,
+   Checkbox,
    Collapsible,
    ComboButton,
    Dropdown,
@@ -19,6 +20,7 @@ import {
 
 import {
    DELETE_ADDITIONAL_MODIFIER,
+   PRODUCT,
    PRODUCT_OPTION,
    PRODUCT_OPTION_TYPES,
    UPDATE_PRODUCT_OPTION_SELECTION_STATEMENT,
@@ -56,8 +58,9 @@ import { from } from 'apollo-link'
 import { InventoryBundleContext } from '../../../../context/product/inventoryBundle'
 import AdditionalModifierTemplateTunnel from './tunnels/AdditionalModifierTemplateTunnel'
 import _ from 'lodash'
+import AdditionalModifierModeTunnel from './tunnels/AdditionalModifierModeTunnel'
 
-const ProductOptions = ({ productId, productName, options, posist_baseItemId }) => {
+const ProductOptions = ({ productId, productName, options, productData }) => {
    const SERVING_TUNNEL_TYPES = ['mealKit', 'readyToEat', 'Meal Kit']
 
    const { initiatePriority } = useDnd()
@@ -67,7 +70,7 @@ const ProductOptions = ({ productId, productName, options, posist_baseItemId }) 
    const [modifiersTunnel, openModifiersTunnel, closeModifiersTunnel] =
       useTunnel(6)
    const [additionalModifiersTunnel, openAdditionalModifiersTunnel, closeAdditionalModifiersTunnel] =
-      useTunnel(1)
+      useTunnel(2)
    const [
       operationConfigTunnels,
       openOperationConfigTunnel,
@@ -79,7 +82,6 @@ const ProductOptions = ({ productId, productName, options, posist_baseItemId }) 
    const { bundleDispatch } = React.useContext(InventoryBundleContext)
 
    const [productOptionTypes, setProductOptionTypes] = React.useState([])
-   const [additionalModifierData, setAdditionalModifier] = React.useState([])
    const opConfigInvokedBy = React.useRef('')
    const modifierOpConfig = React.useRef(undefined)
    const [productOptionsTextField, setProductOptionsTextField] =
@@ -131,7 +133,15 @@ const ProductOptions = ({ productId, productName, options, posist_baseItemId }) 
          },
       }
    )
-
+   const [updateDefaultProductOption] = useMutation(PRODUCT.UPDATE, {
+      onCompleted: () => {
+         toast.success('Updated!')
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
    const handleAddOption = () => {
       createProductOption({
          variables: {
@@ -203,9 +213,28 @@ const ProductOptions = ({ productId, productName, options, posist_baseItemId }) 
          type: 'OPTION_ID',
          payload: optionId,
       })
-      openAdditionalModifiersTunnel(1)
+      openAdditionalModifiersTunnel(3)
    }
-
+   const handleDefaultProductOption = (optionId) => {
+      updateDefaultProductOption({
+         variables: {
+            id: productId,
+            _set: {
+               defaultProductOptionId: optionId,
+            },
+         },
+      })
+   }
+   const handleRemoveDefaultProductOption = () => {
+      updateDefaultProductOption({
+         variables: {
+            id: productId,
+            _set: {
+               defaultProductOptionId: null,
+            },
+         },
+      })
+   }
    const handleAddOpConfig = optionId => {
       productDispatch({
          type: 'OPTION_ID',
@@ -311,8 +340,21 @@ const ProductOptions = ({ productId, productName, options, posist_baseItemId }) 
          </Tunnels>
          <Tunnels tunnels={additionalModifiersTunnel}>
             <Tunnel layer={1}>
-               <AdditionalModifierTemplateTunnel closeTunnel={closeAdditionalModifiersTunnel} />
+               <AdditionalModifierModeTunnel close={closeAdditionalModifiersTunnel} open={openAdditionalModifiersTunnel} />
             </Tunnel>
+            <Tunnel layer={2}>
+               <ModifierFormTunnel close={closeAdditionalModifiersTunnel}
+                  open={openAdditionalModifiersTunnel}
+                  openOperationConfigTunnel={value => {
+                     opConfigInvokedBy.current = 'modifier'
+                     openOperationConfigTunnel(value)
+                  }}
+                  modifierOpConfig={modifierOpConfig.current} />
+            </Tunnel>
+            <Tunnel layer={3}>
+               <AdditionalModifierTemplateTunnel close={closeAdditionalModifiersTunnel} />
+            </Tunnel>
+
          </Tunnels>
          <OperationConfig
             tunnels={operationConfigTunnels}
@@ -361,6 +403,9 @@ const ProductOptions = ({ productId, productName, options, posist_baseItemId }) 
                         }
                         handleEditAdditionalModifier={() => handleEditAdditionalModifier(option.id)}
                         handleAddOpConfig={() => handleAddOpConfig(option.id)}
+                        handleDefaultProductOption={() => handleDefaultProductOption(option.id)}
+                        handleRemoveDefaultProductOption={() => handleRemoveDefaultProductOption()}
+                        productData={productData}
                      />
                   ))}
                </DragNDrop>
@@ -388,6 +433,9 @@ const Option = ({
    handleEditAdditionalModifier,
    handleEditOptionItem,
    handleAddOpConfig,
+   handleDefaultProductOption,
+   handleRemoveDefaultProductOption,
+   productData
 }) => {
    const [history, setHistory] = React.useState({
       ...option,
@@ -967,7 +1015,19 @@ const Option = ({
                   </ComboButton>
                )}
             </Flex>
-         </Flex>
+            <Spacer xAxis size="32px" />
+            <React.Fragment>
+               <Checkbox
+                  id='label'
+                  checked={productData.defaultProductOptionId === option.id ? true : false}
+                  onChange={productData.defaultProductOptionId === option.id ?
+                     handleRemoveDefaultProductOption : handleDefaultProductOption}
+                  isAllSelected={false}
+               >
+                  Default Product Option
+               </Checkbox>
+            </React.Fragment>
+         </Flex >
       )
    }
 

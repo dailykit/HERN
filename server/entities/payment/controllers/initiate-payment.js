@@ -67,6 +67,7 @@ export const initiatePaymentHandler = async (req, res) => {
          const method = await import(functionFilePath)
          const data = {
             ...payload,
+            host: req.hostname || req.headers.host,
             oldAmount: req.body.event.data.old
                ? req.body.event.data.old.amount
                : 0

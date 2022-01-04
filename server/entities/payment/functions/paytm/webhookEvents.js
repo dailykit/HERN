@@ -8,7 +8,8 @@ import get_env from '../../../../../get_env'
 const razorpayWebhookEvents = async arg => {
    try {
       console.log('arg', arg.body)
-      const _Paytm = await paytm()
+      const host = arg.hostname || arg.headers.host
+      const _Paytm = await paytm(host)
       const { CHECKSUMHASH: incomingChecksumHas, ORDERID } = arg.body
       const orderId = parseInt(ORDERID)
       const PAYTM_MERCHANT_KEY =

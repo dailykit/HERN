@@ -8,9 +8,7 @@ export const SliderSection = ({ config }) => {
    const showArrowsOnSlider =
       config?.display?.slider?.showSliderArrow?.value ?? false
    const sliderContent = config.display.slider.content.images.value ?? false
-   const getStartedURL =
-      config?.data?.getStartedURL.value ??
-      'https://chefbaskit1.dailykit.org/order'
+   const getStartedURL = config?.data?.callToActionButtonURL.value ?? '#'
    return (
       <>
          {sliderContent && (
@@ -41,34 +39,25 @@ export const SliderSection = ({ config }) => {
 
 const SliderDiv = ({ content, index, getStartedURL }) => {
    return (
-      <div>
-         <div
-            style={{
-               display: 'flex',
-               alignItems: 'center',
-               justifyContent: 'center',
-            }}
-         >
-            <img
-               src={
-                  content.images.value[index]
-                     ? content.images.value[index]
-                     : content.images.default
-               }
-               alt="products"
-               width="100%"
-            />
-            {/* <video muted autoplay="autoplay" loop="loop" preload="auto">
+      <div
+         style={{
+            position: 'relative',
+         }}
+      >
+         <img
+            src={
+               content.images.value[index]
+                  ? content.images.value[index]
+                  : content.images.default
+            }
+            // alt="products"
+            // width="100%"
+         />
+         {/* <video muted autoplay="autoplay" loop="loop" preload="auto">
                 <source src={content.video.value[index]?content.video.value[index]:content.video.default}></source>
             </video> */}
-            <div
-               style={{
-                  position: 'absolute',
-                  color: 'white',
-                  width: '10%',
-                  textAlign: 'center',
-               }}
-            >
+         <div className="hern-slider-section__content">
+            <div>
                <h1 className="hern-slider_section-heading">
                   {content.heading.value[index]
                      ? content.heading.value[index]

@@ -22,6 +22,7 @@ const passResponseToWebhook = async data => {
 
 function useTerminalPay() {
    const paymentOptionRef = useRef(null)
+   // var ws = new WebSocket('ws://localhost:8080/neoleap_integration')
    const [updateCart] = useMutation(UPDATE_CART, {
       onCompleted: () => {
          paymentOptionRef.current = null
@@ -49,6 +50,28 @@ function useTerminalPay() {
          console.error(error)
       },
    })
+
+   // ws.onopen = function () {
+   //    // connection opened – add action here
+   // }
+   // ws.onmessage = function (evt) {
+   //    // payload received and message can be fetched on evt.data
+   //    // parse JSON message here or add an action
+   // }
+   // ws.onerror = function (evt) {
+   //    // error can be determined on evt.message
+   // }
+   // ws.onclose = function () {
+   //    // connection closed
+   // }
+
+   // function SendCommand(jsonRequest) {
+   //    if (ws.readyState == WebSocket.OPEN) {
+   //       var res = ws.send(jsonRequest)
+   //    }
+   // }
+
+   // ws.close();
 
    // React.useEffect(() => {
    //    // here we listen the responses coming from terminal

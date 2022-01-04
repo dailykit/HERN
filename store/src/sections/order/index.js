@@ -4,7 +4,6 @@ import {
    ProductCard,
    BottomCartBar,
    Divider,
-   ModifierPopup,
    Button,
    Loader,
 } from '../../components'
@@ -19,6 +18,7 @@ import { useConfig } from '../../lib'
 import { setThemeVariable, getRoute } from '../../utils'
 import { useRouter } from 'next/router'
 import { useToasts } from 'react-toast-notifications'
+import { VegNonVegType } from '../../assets/icons'
 
 export const OnDemandOrder = ({ config }) => {
    const router = useRouter()
@@ -193,6 +193,13 @@ export const OnDemandOrder = ({ config }) => {
                            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                               {eachCategory.products.map(
                                  (eachProduct, index) => {
+                                    const VegNonVegIcon = () => (
+                                       <VegNonVegType
+                                          vegNonVegType={
+                                             eachProduct?.VegNonVegType
+                                          }
+                                       />
+                                    )
                                     return (
                                        <div
                                           key={index}
@@ -206,6 +213,7 @@ export const OnDemandOrder = ({ config }) => {
                                           }}
                                        >
                                           <ProductCard
+                                             iconOnImage={VegNonVegIcon}
                                              onProductNameClick={() =>
                                                 router.push(
                                                    getRoute(
@@ -214,7 +222,7 @@ export const OnDemandOrder = ({ config }) => {
                                                    )
                                                 )
                                              }
-                                             onImageClickonProductNameClick={() =>
+                                             onImageClick={() =>
                                                 router.push(
                                                    getRoute(
                                                       '/products/' +
