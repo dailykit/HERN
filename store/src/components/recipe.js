@@ -32,7 +32,7 @@ export const Recipe = ({ productOption, config }) => {
          ?.value ?? false
    if (!recipe) {
       return (
-         <main className="hern-recipe">
+         <main className="hern-recipe__wrapper">
             <HelperBar type="info">
                <HelperBar.Title> No such recipe exists!</HelperBar.Title>
             </HelperBar>
