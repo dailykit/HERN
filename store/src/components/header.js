@@ -193,7 +193,11 @@ export const Header = ({ settings, navigationMenus }) => {
                <section className="hern-header__auth">
                   {!isSubscriptionStore && (
                      <div
-                        onClick={() => router.push(getRoute('/on-demand-cart'))}
+                        onClick={() =>
+                           router.push(
+                              getRoute(`/checkout?id=${cartState?.cart?.id}`)
+                           )
+                        }
                         className="hern-navbar__list__item hern-navbar__list__item--cart-icon"
                      >
                         <CartIcon size="20px" stroke="var(--hern-accent)" />

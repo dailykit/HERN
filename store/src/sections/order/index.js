@@ -24,13 +24,9 @@ export const OnDemandOrder = ({ config }) => {
    const router = useRouter()
    const { addToast } = useToasts()
    const { brand } = useConfig()
-   const menuType = config?.display?.dropdown?.value[0]?.value
-      ? config?.display?.dropdown?.value[0]?.value
-      : 'side-nav'
-   const numberOfProducts =
-      config?.display?.['numberOfProducts']?.value ??
-      config?.display?.['numberOfProducts']?.default ??
-      2
+   console.log({ config })
+   const menuType = 'side-nav'
+   const numberOfProducts = 2
    const showCategoryLengthOnCategoryTitle =
       config?.display?.['showCategoryLengthOnCategoryTitle']?.value ??
       config?.display?.['showCategoryLengthOnCategoryTitle']?.default ??
@@ -44,8 +40,8 @@ export const OnDemandOrder = ({ config }) => {
       config?.display?.['showCartOnRight']?.default ??
       false
    const productsScrollWidth =
-      config?.display?.productsScrollWidth.value ??
-      config?.display?.productsScrollWidth.default ??
+      config?.display?.productsScrollWidth?.value ??
+      config?.display?.productsScrollWidth?.default ??
       0
 
    setThemeVariable('--hern-number-of-products', numberOfProducts)
