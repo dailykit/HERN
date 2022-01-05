@@ -39,13 +39,20 @@
         text-align: center;
     }
     @media (min-width: 768px){
-        width: 50%;
+        width: 40%;
         float: left;
     }
     position: relative;
     min-height: 1px;
     padding-right: 15px;
     padding-left: 15px;
+}
+.hern-contact_us-details.contact-form{
+    @media (min-width: 768px){
+        width: 60%;
+        float: left;
+    }
+    width: 100%;
 }
 
 .hern-contact_us-details{
@@ -126,15 +133,12 @@
 
 .hern-contact_us-div{
     display: flex;
-    justify-content: space-evenly;
-}
-
-.hern-contact_us-details.contact-form{
-    max-width: 500px;
+    padding: 0 9% 0 9%;
+    flex-wrap: wrap;
 }
 
 .hern-contact_us-icon{
-    color: #ff9c00;
+    color: rgb(124 196 30);
     display: inline-block;
     border: 2px solid #d3d3d3;
     font-size: 20px;
