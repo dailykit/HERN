@@ -92,14 +92,10 @@ const FeaturedCollection = dynamic(() =>
    )
 )
 const ProductGallery = dynamic(() =>
-   import('../sections/product-gallery').then(
-      promise => promise.ProductGallery
-   )
+   import('../sections/product-gallery').then(promise => promise.ProductGallery)
 )
 const SliderSection = dynamic(() =>
-   import('../sections/slider-section').then(
-      promise => promise.SliderSection
-   )
+   import('../sections/slider-section').then(promise => promise.SliderSection)
 )
 const ContactUs = dynamic(() =>
    import('../sections/contact-us').then(
@@ -109,6 +105,9 @@ const ContactUs = dynamic(() =>
 
 const Product = dynamic(() =>
    import('../sections/product').then(promise => promise.Product)
+)
+const PrivacyPolicy = dynamic(() =>
+   import('../sections/privacy-policy').then(promise => promise.PrivacyPolicy)
 )
 export const renderComponentByName = (fold, options) => {
    const getProps = component => {
@@ -174,6 +173,11 @@ export const renderComponentByName = (fold, options) => {
       */
       case 'RefundPolicy':
          return <RefundPolicy />
+      /*ROUTES : 
+      [brand]/privacy-policy
+      */
+      case 'PrivacyPolicy':
+         return <PrivacyPolicy />
       /*ROUTES : 
       [brand]/reset-password
       */
@@ -268,7 +272,6 @@ export const renderComponentByName = (fold, options) => {
       case 'OnDemandOrder':
          return <OnDemandOrder config={fold.config} />
 
-
       /*ROUTE :
       [brand]/products/[id]
        */
@@ -290,7 +293,7 @@ export const renderComponentByName = (fold, options) => {
       */
       case 'ProductGallery':
          return <ProductGallery config={fold.config} />
-      
+
       /* 
       Global
       */

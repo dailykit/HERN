@@ -297,6 +297,8 @@
    margin: 0 auto;
    display: flex;
    flex-direction: column;
+   gap: 16px;
+   padding: 16px;
    > .hern-on-demand-cart-section__left {
       width: 100%;
       order: 2;
