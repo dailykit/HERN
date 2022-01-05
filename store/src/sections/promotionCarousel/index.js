@@ -81,12 +81,13 @@ export const PromotionCarousal = props => {
                   </div>
                )
             })}
-            {componentConfig.data.promotionImages.value.map(
+            {console.log('configs', componentConfig)}
+            {componentConfig.data.promotionImages.value.url.map(
                (eachImage, index) => {
                   return (
                      <div className="hern-kiosk__promotion-image">
                         <img
-                           src={eachImage.url}
+                           src={eachImage}
                            key={index}
                            style={{ padding: '1em' }}
                         />

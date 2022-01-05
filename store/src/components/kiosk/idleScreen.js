@@ -19,7 +19,7 @@ export const IdleScreen = props => {
       b.style.padding = 0
    }, [])
 
-   const videoURLs = config.idlePageSettings.idlePageVideo.value.assets.urls
+   const videoURLs = config.idlePageSettings?.idlePageVideo?.value?.urls
    const playNextFile = () => {
       if (playing === videoURLs.length - 1) {
          setPlaying(0)
@@ -30,7 +30,7 @@ export const IdleScreen = props => {
 
    return (
       <div className="hern-kiosk__idle-screen-container">
-         {config.idlePageSettings.idlePageVideo &&
+         {config.idlePageSettings?.idlePageVideo &&
          ReactPlayer.canPlay(videoURLs[playing]) ? (
             <>
                {/*TODO: Data types and useIsertType should be changed on the JSON file */}
@@ -60,7 +60,7 @@ export const IdleScreen = props => {
                {...properties}
                cssClass="hern-kiosk__idle-screen-image-slider"
             >
-               {config.idlePageSettings.idlePageImage.value.assets.images.map(
+               {config.idlePageSettings.idlePageImage.value.url.map(
                   (image, index) => {
                      return (
                         <img
