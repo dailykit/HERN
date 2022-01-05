@@ -151,10 +151,16 @@ export const Recipe = ({ productOption, config }) => {
                                           }
                                        )}
                                     >
-                                       {true ? (
+                                       {isVisible ? (
                                           <>
-                                             {true && (
-                                                <img src="https://images.pexels.com/photos/5313676/pexels-photo-5313676.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" />
+                                             {sachet.ingredient.assets?.images
+                                                ?.length && (
+                                                <img
+                                                   src={
+                                                      sachet.ingredient.assets
+                                                         .images[0]
+                                                   }
+                                                />
                                              )}
                                              {renderIngredientName(
                                                 slipName,
