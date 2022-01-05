@@ -1342,7 +1342,7 @@ const RefineLocation = props => {
 }
 
 // render all available stores
-const StoreList = props => {
+export const StoreList = props => {
    const {
       userCoordinate,
       setShowLocationSelectionPopup,
@@ -2071,7 +2071,7 @@ const StoresOnMap = props => {
                                  storeDetails.location
                               )
                               localStorage.setItem(
-                                 'selected store brand location id',
+                                 'storeBrandLocationId',
                                  JSON.stringify(storeDetails.location.id)
                               )
                            }}
