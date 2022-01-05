@@ -8,6 +8,7 @@ import { VegNonVegType } from '../assets/icons'
 import { useConfig } from '../lib'
 import classNames from 'classnames'
 import { HelperBar } from './helper_bar'
+import { Nutritions } from './nutrition'
 
 export const Recipe = ({ productOption, config }) => {
    const { configOf } = useConfig()
@@ -30,6 +31,11 @@ export const Recipe = ({ productOption, config }) => {
    const showNavigationCategory =
       config?.['information Visibility']?.recipe?.showNavigationCategory
          ?.value ?? false
+
+   const nutritionAndRecipeSameline =
+      config?.['information Visibility']?.recipe?.nutritionAndRecipeSameline
+         ?.value ?? false
+
    if (!recipe) {
       return (
          <main className="hern-recipe__wrapper">
@@ -117,49 +123,59 @@ export const Recipe = ({ productOption, config }) => {
                      <p>{recipe.notIncluded.join(', ')}</p>
                   </div>
                )}
-
-               {recipe.showIngredients &&
-                  Boolean(productOption.simpleRecipeYield.sachets.length) && (
-                     <div id="ingredients" className="hern-recipe__ingradients">
-                        <h2>{customIngredientsLabel}</h2>
-                        <div>
-                           {productOption.simpleRecipeYield.sachets.map(
-                              ({ isVisible, slipName, sachet }, index) => (
-                                 <div
-                                    key={index}
-                                    className={classNames(
-                                       'hern-recipe__ingradient__item--visible',
-                                       {
-                                          'hern-recipe__ingradient__item':
-                                             !isVisible,
-                                       }
-                                    )}
-                                 >
-                                    {isVisible ? (
-                                       <>
-                                          {sachet.ingredient.assets?.images
-                                             ?.length && (
-                                             <img
-                                                src={
-                                                   sachet.ingredient.assets
-                                                      .images[0]
-                                                }
-                                             />
-                                          )}
-                                          {renderIngredientName(
-                                             slipName,
-                                             sachet
-                                          )}
-                                       </>
-                                    ) : (
-                                       <LockIcon />
-                                    )}
-                                 </div>
-                              )
-                           )}
+               <div
+                  className={classNames({
+                     'hern-nutrition-recipe__wrapper':
+                        nutritionAndRecipeSameline,
+                  })}
+               >
+                  {recipe.showIngredients &&
+                     Boolean(
+                        productOption.simpleRecipeYield.sachets.length
+                     ) && (
+                        <div
+                           id="ingredients"
+                           className="hern-recipe__ingradients"
+                        >
+                           <h2>{customIngredientsLabel}</h2>
+                           <div>
+                              {productOption.simpleRecipeYield.sachets.map(
+                                 ({ isVisible, slipName, sachet }, index) => (
+                                    <div
+                                       key={index}
+                                       className={classNames(
+                                          'hern-recipe__ingradient__item--visible',
+                                          {
+                                             'hern-recipe__ingradient__item':
+                                                !isVisible,
+                                          }
+                                       )}
+                                    >
+                                       {true ? (
+                                          <>
+                                             {true && (
+                                                <img src="https://images.pexels.com/photos/5313676/pexels-photo-5313676.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" />
+                                             )}
+                                             {renderIngredientName(
+                                                slipName,
+                                                sachet
+                                             )}
+                                          </>
+                                       ) : (
+                                          <LockIcon />
+                                       )}
+                                    </div>
+                                 )
+                              )}
+                           </div>
                         </div>
-                     </div>
-                  )}
+                     )}
+                  <div className="hern-recipe-nutrition">
+                     <Nutritions
+                        simpleRecipeYield={productOption?.simpleRecipeYield}
+                     />
+                  </div>
+               </div>
                {showCookingProcess &&
                   recipe.showProcedures &&
                   Boolean(recipe.instructionSets.length) && (
