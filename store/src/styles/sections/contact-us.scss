@@ -151,3 +151,13 @@
     line-height: 75px;
     text-align: center;
 }
+
+.hern-contact_us-success_message{
+    // height: 80vh;
+    @media (min-width: 768px){
+        margin-top: 5em;
+    }
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
