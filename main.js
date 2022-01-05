@@ -24,13 +24,12 @@ const ohyaySchema = require('./server/streaming/ohyay/src/schema/schema')
 
 const app = express()
 
-
 const setupForStripeWebhooks = {
    // Because Stripe needs the raw body, we compute it but only when hitting the Stripe callback URL.
-   verify: (req, res, buf) => {
+   verify: (req, res, buf, encoding) => {
       const url = req.originalUrl
       if (url.startsWith('/server/api/payment/handle-payment-webhook')) {
-         req.rawBody = buf.toString()
+         req.rawBody = buf.toString(encoding || 'utf8')
       }
    }
 }
@@ -88,8 +87,6 @@ app.use('/apps/:path(*)', (req, res, next) => {
    express.static('admin/build')(req, res, next)
 })
 
-
-
 /*
 handles template endpoints for ex. serving labels, sachets, emails in pdf or html format
 
@@ -116,6 +113,8 @@ const proxy = createProxyMiddleware({
 request on test.dailykit.org forwards to http://localhost:3000
 */
 app.use('/api/:path(*)', proxy)
+app.use('/_next/image', proxy)
+app.use('/assets/:path(*)', proxy)
 
 const RESTRICTED_FILES = ['env-config.js', 'favicon', '.next', '_next']
 
@@ -162,13 +161,13 @@ const serveSubscription = async (req, res, next) => {
             const filePath =
                routePath === ''
                   ? path.join(
-                     __dirname,
-                     `./store/.next/server/pages/${brand}.html`
-                  )
+                       __dirname,
+                       `./store/.next/server/pages/${brand}.html`
+                    )
                   : path.join(
-                     __dirname,
-                     `./store/.next/server/pages/${brand}/${routePath}.html`
-                  )
+                       __dirname,
+                       `./store/.next/server/pages/${brand}/${routePath}.html`
+                    )
 
             /*
                SSR: Server Side Rendering
@@ -279,9 +278,4 @@ app.use('/:path(*)', serveSubscription)
 
 app.listen(PORT, () => {
    console.log(`Server started on ${PORT}`)
-
-   if (process.env.NODE_ENV != 'development') {
-      syncEnvsFromPlatform()
-      createEnvFiles()
-   }
 })

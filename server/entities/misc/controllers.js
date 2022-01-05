@@ -276,15 +276,15 @@ export const authorizeRequest = async (req, res) => {
          }),
          ...(staffId &&
             staffUserExists && {
-            'X-Hasura-Role': 'admin',
-            'X-Hasura-Staff-Id': staffId,
-            'X-Hasura-Email-Id': staffEmail
-         }),
+               'X-Hasura-Role': 'admin',
+               'X-Hasura-Staff-Id': staffId,
+               'X-Hasura-Email-Id': staffEmail
+            }),
          ...(apiKeyHeaderValue &&
             apiKeyExists && {
-            'X-Hasura-Role': 'apiKeyRole',
-            'X-Hasura-Api-Key': apiKeyHeaderValue
-         })
+               'X-Hasura-Role': 'apiKeyRole',
+               'X-Hasura-Api-Key': apiKeyHeaderValue
+            })
       })
    } catch (error) {
       return res.status(404).json({ success: false, error: error.message })
@@ -307,8 +307,9 @@ used to create env config files and populate with relevant envs
 
 export const createEnvFiles = async () => {
    const { envs } = await client.request(ENVS)
+   console.log('initializing createEnvfiles')
    if (isEmpty(envs)) {
-      return null
+      return await syncEnvsFromPlatform()
    }
    const grouped = groupBy(envs, 'belongsTo')
 
@@ -378,6 +379,7 @@ export const createEnvFiles = async () => {
 
 export const populate_env = async (req, res) => {
    try {
+      console.log('initiating populate_env')
       const data = await createEnvFiles()
       if (!data) {
          throw Error('No envs found!')
@@ -393,16 +395,26 @@ export const populate_env = async (req, res) => {
 
 export const syncEnvsFromPlatform = async () => {
    try {
+      console.log('initializing syncEnv')
       const PLATFORM_URL = await get_env('PLATFORM_URL')
       const organizationId = await get_env('ORGANIZATION_ID')
       let url = `${PLATFORM_URL}/getenvs?organizationId=${organizationId}`
 
       const { data: { success, data = {} } = {} } = await axios.get(url)
       if (success) {
-         await client.request(UPSERT_SETTINGS_ENV, {
-            objects: data
-         })
-         console.log('updated successfully')
+         const { insert_settings_env = {} } = await client.request(
+            UPSERT_SETTINGS_ENV,
+            {
+               objects: data
+            }
+         )
+         if (
+            !isEmpty(insert_settings_env) &&
+            !isEmpty(insert_settings_env.returning)
+         ) {
+            console.log('updated successfully')
+            await createEnvFiles()
+         }
       } else {
          throw "Couldn't update envs"
       }
@@ -414,7 +426,9 @@ export const syncEnvsFromPlatform = async () => {
 const UPSERT_SETTINGS_ENV = `
 mutation upsertEnvs($objects: [settings_env_insert_input!]!) {
    insert_settings_env(on_conflict: {constraint: env_pkey, update_columns: value}, objects: $objects) {
-     affected_rows
+      returning {
+         id
+       }
    }
  }
  `

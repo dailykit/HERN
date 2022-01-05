@@ -2,23 +2,21 @@ import React from 'react'
 import axios from 'axios'
 import tw from 'twin.macro'
 
-import { usePayment } from './state'
 import { useUser } from '../../context'
 import { Tunnel } from '../../components'
 import { PaymentForm } from './payment_form'
 import { CloseIcon } from '../../assets/icons'
 import { isClient, get_env } from '../../utils'
-import { useConfig } from '../../lib'
+import { useConfig, usePayment } from '../../lib'
 
 export const PaymentTunnel = () => {
    const { user } = useUser()
-   const { state, dispatch } = usePayment()
+   const { setPaymentInfo, paymentInfo } = usePayment()
    const [intent, setIntent] = React.useState(null)
 
    const toggleTunnel = (value = false) => {
-      dispatch({
-         type: 'TOGGLE_TUNNEL',
-         payload: {
+      setPaymentInfo({
+         tunnel: {
             isVisible: value,
          },
       })
@@ -41,7 +39,7 @@ export const PaymentTunnel = () => {
       <Tunnel
          size="sm"
          toggleTunnel={toggleTunnel}
-         isOpen={state.tunnel.isVisible}
+         isOpen={paymentInfo.tunnel.isVisible}
       >
          <Tunnel.Header title="Add Payment Method">
             <button

@@ -26,6 +26,7 @@ export const ProductCard = props => {
       onShowImageIconClick,
       showCustomText = true,
       customAreaComponent: CustomAreaComponent,
+      showProductDescription = false,
       showModifier = false,
       closeModifier,
       modifierPopupConfig, //use for cart
@@ -33,6 +34,9 @@ export const ProductCard = props => {
       maintainRatio = true,
       customAreaFlex = true, //If custom area on the next line
       contentAreaCustomStyle = {},
+      modifierWithoutPopup = false,
+      showProductDetails = true,
+      customProductDetails = false,
    } = props
 
    const slideRef = React.useRef()
@@ -111,6 +115,9 @@ export const ProductCard = props => {
                                     e.stopPropagation()
                                     onImageClick ? onImageClick() : null
                                  }}
+                                 style={{
+                                    cursor: onImageClick ? 'pointer' : null,
+                                 }}
                               />
                            </div>
                         )
@@ -151,50 +158,73 @@ export const ProductCard = props => {
                      <AdditionalIcon />
                   </div>
                )}
-               <div className="hern-product-card-details">
-                  <div className="hern-product-card-title">
-                     {showProductName && (
-                        <div
-                           className="hern-product-card__name"
-                           onClick={e => {
-                              e.stopPropagation()
-                              onProductNameClick ? onProductNameClick() : null
-                           }}
-                        >
-                           {data.name}
+               {showProductDetails && (
+                  <div className="hern-product-card-details">
+                     <div className="hern-product-card-title">
+                        {showProductName && (
+                           <div
+                              className="hern-product-card__name"
+                              onClick={e => {
+                                 e.stopPropagation()
+                                 onProductNameClick
+                                    ? onProductNameClick()
+                                    : null
+                              }}
+                              style={{
+                                 cursor: onProductNameClick ? 'pointer' : null,
+                              }}
+                           >
+                              {data.name}
+                           </div>
+                        )}
+                        {ShowImageIcon && (
+                           <div
+                              className="hern-product-card-show-image-icon"
+                              onClick={e => {
+                                 e.stopPropagation()
+                                 onShowImageIconClick
+                                    ? onShowImageIconClick()
+                                    : null
+                              }}
+                           >
+                              <ShowImageIcon />
+                           </div>
+                        )}
+                     </div>
+                     {showProductPrice && (
+                        <div className="hern-product-card__price">
+                           {useForThirdParty && data.discount > 0 && (
+                              <span
+                                 style={{
+                                    textDecoration: 'line-through',
+                                 }}
+                              >
+                                 {formatCurrency(data.price)}
+                              </span>
+                           )}
+                           <span style={{ marginLeft: '6px' }}>
+                              {finalProductPrice()}
+                           </span>
                         </div>
                      )}
-                     {ShowImageIcon && (
-                        <div
-                           className="hern-product-card-show-image-icon"
-                           onClick={e => {
-                              e.stopPropagation()
-                              onShowImageIconClick
-                                 ? onShowImageIconClick()
-                                 : null
-                           }}
-                        >
-                           <ShowImageIcon />
+                     {showProductAdditionalText && (
+                        <div className="hern-product-card__additional-text">
+                           {data.additionalText}
                         </div>
                      )}
                   </div>
-                  {showProductPrice && (
-                     <div className="hern-product-card__price">
-                        {finalProductPrice()}
-                     </div>
-                  )}
-                  {showProductAdditionalText && (
-                     <div className="hern-product-card__additional-text">
-                        {data.additionalText}
-                     </div>
-                  )}
-               </div>
+               )}
                <div className="hern-product-card-custom-area">
                   {CustomAreaComponent && <CustomAreaComponent data={data} />}
                   {showCustomText && (
                      <div className="hern-product-card-custom-text"></div>
                   )}
                </div>
+               {showProductDescription && (
+                  <div className="hern-product-card__description">
+                     {data.description}
+                  </div>
+               )}
             </div>
          </div>
          {showModifier && data && (
@@ -210,6 +240,8 @@ export const ProductCard = props => {
                edit={modifierPopupConfig?.edit}
                productCartDetail={modifierPopupConfig?.productCartDetail}
                showModifierImage={modifierPopupConfig?.showModifierImage}
+               modifierWithoutPopup={modifierWithoutPopup}
+               customProductDetails={customProductDetails}
             />
          )}
       </>

@@ -1,7 +1,8 @@
 - name: dailygit
   definition:
-    url: https://testhern.dailykit.org/template/graphql
+    url: '{{ORGANIZATION_URL}}/template/graphql'
     timeout_seconds: 60
+  comment: ""
 - name: ohyay
   definition:
     url: https://testhern.dailykit.org/ohyay/graphql

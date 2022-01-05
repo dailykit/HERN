@@ -10,34 +10,36 @@ import {
    CardElement,
 } from '@stripe/react-stripe-js'
 
-import { usePayment } from './state'
-import { useConfig } from '../../lib'
+import { useConfig, usePayment } from '../../lib'
 import { get_env, isClient } from '../../utils'
 import { useUser } from '../../context'
 import { HelperBar, Loader } from '../../components'
-import { BRAND, CREATE_STRIPE_PAYMENT_METHOD } from '../../graphql'
+import { BRAND, CREATE_CUSTOMER_PAYMENT_METHOD } from '../../graphql'
 import { isConnectedIntegration } from '../../utils'
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const PaymentForm = ({ intent }) => {
    const { user, dispatch: userDispatch } = useUser()
-   const { dispatch } = usePayment()
+   const { setPaymentInfo } = usePayment()
    const { brand } = useConfig()
    const STRIPE_ACCOUNT_ID = get_env('STRIPE_ACCOUNT_ID')
    const isConnected = isConnectedIntegration()
    const [updateBrandCustomer] = useMutation(BRAND.CUSTOMER.UPDATE, {
       onError: error => console.error(error),
    })
-   const [createPaymentMethod] = useMutation(CREATE_STRIPE_PAYMENT_METHOD, {
-      onCompleted: ({ paymentMethod }) => {
-         console.log('paymentMethod', paymentMethod)
-         userDispatch({
-            type: 'SET_PAYMENT_METHOD',
-            payload: paymentMethod,
-         })
-      },
-      onError: error => console.error(error),
-   })
+   const [createCustomerPaymentMethod] = useMutation(
+      CREATE_CUSTOMER_PAYMENT_METHOD,
+      {
+         onCompleted: ({ paymentMethod }) => {
+            console.log('paymentMethod', paymentMethod)
+            userDispatch({
+               type: 'SET_PAYMENT_METHOD',
+               payload: paymentMethod,
+            })
+         },
+         onError: error => console.error(error),
+      }
+   )
 
    const handleResult = async ({ setupIntent }) => {
       try {
@@ -47,7 +49,7 @@ export const PaymentForm = ({ intent }) => {
             const { data: { success, data = {} } = {} } = await axios.get(url)
 
             if (success) {
-               await createPaymentMethod({
+               await createCustomerPaymentMethod({
                   variables: {
                      object: {
                         last4: data.card.last4,
@@ -83,9 +85,10 @@ export const PaymentForm = ({ intent }) => {
                   brand: data.card.brand,
                })
 
-               dispatch({
-                  type: 'TOGGLE_TUNNEL',
-                  payload: { isVisible: false },
+               setPaymentInfo({
+                  tunnel: {
+                     isVisible: false,
+                  },
                })
             } else {
                throw "Couldn't complete card setup, please try again"

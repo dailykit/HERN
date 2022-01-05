@@ -496,6 +496,39 @@ export const CART_SUBSCRIPTION = gql`
          stripeInvoiceId
          stripeInvoiceDetails
          customerKeycloakId
+         retryPaymentMethod
+         activeCartPaymentId
+         activeCartPayment {
+            id
+            paymentStatus
+            cancelAttempt
+            transactionRemark
+         }
+         availablePaymentOptionToCart(
+            where: { isActive: { _eq: true } }
+            order_by: { position: desc_nulls_last }
+         ) {
+            id
+            isActive
+            isDown
+            isRecommended
+            isValid
+            label
+            position
+            publicCreds
+            privateCreds
+            showCompanyName
+            supportedPaymentOption {
+               id
+               country
+               supportedPaymentCompanyId
+               paymentOptionLabel
+               supportedPaymentCompany {
+                  id
+                  label
+               }
+            }
+         }
          products: cartItems(where: { level: { _eq: 1 } }) {
             id
             isAddOn
@@ -801,7 +834,12 @@ export const CUSTOMER = {
             keycloakId
             isSubscriber
             isTest
-            carts {
+            carts(
+               where: {
+                  source: { _eq: "subscription" }
+                  brandId: { _eq: $brandId }
+               }
+            ) {
                id
                paymentStatus
                subscriptionOccurence {
@@ -840,6 +878,8 @@ export const CUSTOMER = {
                keycloakId
                phoneNumber
                paymentCustomerId
+               defaultPaymentMethodId
+               fullName
                addresses: customerAddresses(order_by: { created_at: desc }) {
                   id
                   lat
@@ -863,6 +903,8 @@ export const CUSTOMER = {
                   keycloakId
                   cardHolderName
                   paymentMethodId
+                  paymentCustomerId
+                  supportedPaymentOptionId
                }
             }
          }
@@ -1331,6 +1373,7 @@ export const PRODUCTS = gql`
             additionalModifiers(where: { isActive: { _eq: true } }) {
                type
                label
+               linkedToModifierCategoryOptionId
                modifier {
                   id
                   name
@@ -1352,7 +1395,8 @@ export const PRODUCTS = gql`
                         quantity
                         image
                         isActive
-
+                        additionalModifierTemplateId
+                        isAdditionalModifierRequired
                         sachetItemId
                         ingredientSachetId
                         cartItem: cartItemByLocation(
@@ -1383,12 +1427,162 @@ export const PRODUCTS = gql`
                      quantity
                      image
                      isActive
-
+                     additionalModifierTemplateId
+                     isAdditionalModifierRequired
                      sachetItemId
                      ingredientSachetId
                      cartItem: cartItemByLocation(
                         args: $modifierCategoryOptionCartItemArgs
                      )
+                  }
+               }
+            }
+         }
+      }
+   }
+`
+export const PRODUCT_DETAILS = gql`
+   query Products(
+      $id: Int!
+      $priceArgs: priceByLocation_products_product_args!
+      $discountArgs: discountByLocation_products_product_args!
+      $defaultCartItemArgs: defaultCartItemByLocation_products_product_args!
+      $productOptionCartItemArgs: cartItemByLocation_products_productOption_args!
+      $productOptionDiscountArgs: discountByLocation_products_productOption_args!
+      $productOptionPriceArgs: priceByLocation_products_productOption_args!
+      $modifierCategoryOptionCartItemArgs: cartItemByLocation_onDemand_modifierCategoryOption_args!
+      $modifierCategoryOptionDiscountArgs: discountByLocation_onDemand_modifierCategoryOption_args!
+      $modifierCategoryOptionPriceArgs: priceByLocation_onDemand_modifierCategoryOption_args!
+   ) {
+      products(where: { isArchived: { _eq: false }, id: { _eq: $id } }) {
+         id
+         name
+         type
+         assets
+         tags
+         VegNonVegType
+         additionalText
+         description
+         price: priceByLocation(args: $priceArgs)
+         discount: discountByLocation(args: $discountArgs)
+         isPopupAllowed
+         isPublished
+         defaultProductOptionId
+         defaultCartItem: defaultCartItemByLocation(args: $defaultCartItemArgs)
+         productOptions(
+            where: { isArchived: { _eq: false } }
+            order_by: { position: desc_nulls_last }
+         ) {
+            id
+            position
+            type
+            label
+            price: priceByLocation(args: $productOptionPriceArgs)
+            discount: discountByLocation(args: $productOptionDiscountArgs)
+            cartItem: cartItemByLocation(args: $productOptionCartItemArgs)
+            additionalModifiers(where: { isActive: { _eq: true } }) {
+               type
+               label
+               modifier {
+                  id
+                  name
+                  categories(where: { isVisible: { _eq: true } }) {
+                     id
+                     name
+                     isRequired
+                     type
+                     limits
+                     options(where: { isVisible: { _eq: true } }) {
+                        id
+                        name
+                        price: priceByLocation(
+                           args: $modifierCategoryOptionPriceArgs
+                        )
+                        discount: discountByLocation(
+                           args: $modifierCategoryOptionDiscountArgs
+                        )
+                        quantity
+                        image
+                        isActive
+                        sachetItemId
+                        ingredientSachetId
+                        cartItem: cartItemByLocation(
+                           args: $modifierCategoryOptionCartItemArgs
+                        )
+                     }
+                  }
+               }
+            }
+            modifier {
+               id
+               name
+               categories(where: { isVisible: { _eq: true } }) {
+                  id
+                  name
+                  isRequired
+                  type
+                  limits
+                  options(where: { isVisible: { _eq: true } }) {
+                     id
+                     name
+                     price: priceByLocation(
+                        args: $modifierCategoryOptionPriceArgs
+                     )
+                     discount: discountByLocation(
+                        args: $modifierCategoryOptionDiscountArgs
+                     )
+                     quantity
+                     image
+                     isActive
+                     sachetItemId
+                     ingredientSachetId
+                     cartItem: cartItemByLocation(
+                        args: $modifierCategoryOptionCartItemArgs
+                     )
+                  }
+               }
+            }
+            simpleRecipeYield {
+               id
+               yield
+               nutritionalInfo
+               sachets: ingredientSachets {
+                  isVisible
+                  slipName
+                  sachet: ingredientSachet {
+                     id
+                     quantity
+                     unit
+                     ingredient {
+                        id
+                        assets
+                     }
+                  }
+               }
+               simpleRecipe {
+                  id
+                  name
+                  type
+                  author
+                  cookingTime
+                  cuisine
+                  description
+                  assets
+                  utensils
+                  notIncluded
+                  showIngredients
+                  showIngredientsQuantity
+                  showProcedures
+                  instructionSets(order_by: { position: desc_nulls_last }) {
+                     id
+                     title
+                     instructionSteps(order_by: { position: desc_nulls_last }) {
+                        id
+                        assets
+                        description
+                        isVisible
+                        title
+                     }
                   }
                }
             }
@@ -1413,6 +1607,8 @@ export const GET_CART = gql`
          paymentMethodId
          walletAmountUsed
          loyaltyPointsUsed
+         walletAmountUsable
+         locationId
          loyaltyPointsUsable
          customerKeycloakId
          billing: billingDetails
@@ -1502,7 +1698,9 @@ export const BRAND_ONDEMAND_DELIVERY_RECURRENCES = gql`
                from
                to
                pickUpPrepTime
+               id
                mileRanges {
+                  id
                   from
                   city
                   distanceType
@@ -1539,6 +1737,17 @@ export const BRAND_LOCATIONS = gql`
             brandId
             locationId
             id
+            location {
+               id
+               locationAddress
+               label
+               zipcode
+               city
+               state
+               lat
+               lng
+               country
+            }
             orderExperienceId
             orderExperienceOptionType
             doesDeliverOutsideCity
@@ -1562,6 +1771,7 @@ export const PREORDER_DELIVERY_BRAND_RECURRENCES = gql`
             timeSlots {
                from
                to
+               id
                mileRanges {
                   from
                   city
@@ -1572,6 +1782,7 @@ export const PREORDER_DELIVERY_BRAND_RECURRENCES = gql`
                   geoBoundary
                   isExcluded
                   leadTime
+                  id
                }
             }
          }
@@ -1592,7 +1803,9 @@ export const ONDEMAND_PICKUP_BRAND_RECURRENCES = gql`
             timeSlots {
                from
                to
+               id
                mileRanges {
+                  id
                   from
                   city
                   distanceType
@@ -1624,7 +1837,10 @@ export const PREORDER_PICKUP_BRAND_RECURRENCES = gql`
             timeSlots {
                from
                to
+               id
+               pickUpLeadTime
                mileRanges {
+                  id
                   from
                   city
                   distanceType
@@ -1654,7 +1870,9 @@ export const ONDEMAND_DINE_BRAND_RECURRENCES = gql`
             timeSlots {
                from
                to
+               id
                mileRanges {
+                  id
                   from
                   city
                   distanceType
@@ -1685,7 +1903,9 @@ export const SCHEDULED_DINEIN_BRAND_RECURRENCES = gql`
             timeSlots {
                from
                to
+               id
                mileRanges {
+                  id
                   from
                   city
                   distanceType
@@ -1741,35 +1961,45 @@ export const GET_JS_CSS_FILES = gql`
 `
 
 export const GET_CART_ITEMS_BY_CART = gql`
-   subscription cart($id: Int!) {
-      cart(id: $id) {
-         id
-         cartItems(where: { level: { _eq: 1 } }) {
-            cartItemId: id
-            addOnLabel
-            addOnPrice
-            created_at
+   subscription GET_CART_ITEMS_BY_CART($id: Int!) {
+      cartItems(where: { level: { _eq: 1 }, cartId: { _eq: $id } }) {
+         cartItemId: id
+         parentCartItemId
+         addOnLabel
+         addOnPrice
+         created_at
+         price: unitPrice
+         discount
+         name: displayName
+         image: displayImage
+         childs {
             price: unitPrice
             name: displayName
-            image: displayImage
+            discount
+            productOption {
+               id
+               label
+            }
             childs {
+               displayName
                price: unitPrice
-               name: displayName
-               productOption {
+               discount
+               modifierOption {
                   id
-                  label
+                  name
                }
                childs {
                   displayName
                   price: unitPrice
+                  discount
                   modifierOption {
                      id
                      name
                   }
                }
             }
-            productId
          }
+         productId
       }
    }
 `
@@ -1782,6 +2012,114 @@ export const LOCATION_KIOSK = gql`
          internalLocationKioskLabel
          kioskModuleConfig
          locationId
+         printerId
+      }
+   }
+`
+
+export const GET_CART_PAYMENT_INFO = gql`
+   subscription GET_CART_PAYMENT_INFO($where: order_cartPayment_bool_exp!) {
+      cartPayments(where: $where, limit: 1, order_by: { updated_at: desc }) {
+         id
+         amount
+         cancelAttempt
+         cartId
+         isTest
+         paymentStatus
+         paymentType
+         transactionRemark
+         isResultShown
+         stripeInvoiceId
+         transactionId
+         actionUrl
+         actionRequired
+         availablePaymentOption {
+            id
+            label
+            supportedPaymentOption {
+               paymentOptionLabel
+               id
+               isRequestClientBased
+               isWebhookClientBased
+               supportedPaymentCompany {
+                  label
+                  id
+               }
+            }
+         }
+      }
+   }
+`
+
+export const GET_PAYMENT_OPTIONS = gql`
+   subscription cart($id: Int!) {
+      cart(id: $id) {
+         id
+         balanceToPay
+         availablePaymentOptionToCart(
+            where: { isActive: { _eq: true } }
+            order_by: { position: desc_nulls_last }
+         ) {
+            id
+            isActive
+            isDown
+            isRecommended
+            isValid
+            label
+            description
+            position
+            publicCreds
+            privateCreds
+            showCompanyName
+            supportedPaymentOption {
+               id
+               country
+               supportedPaymentCompanyId
+               paymentOptionLabel
+               isLoginRequired
+               canShowWhileLoggedIn
+               supportedPaymentCompany {
+                  id
+                  label
+               }
+            }
+         }
+      }
+   }
+`
+export const GET_MODIFIER_BY_ID = gql`
+   query GET_MODIFIER_BY_ID(
+      $priceArgs: priceByLocation_onDemand_modifierCategoryOption_args!
+      $discountArgs: discountByLocation_onDemand_modifierCategoryOption_args!
+      $modifierCategoryOptionCartItemArgs: cartItemByLocation_onDemand_modifierCategoryOption_args!
+      $id: [Int!]!
+   ) {
+      modifiers(where: { id: { _in: $id } }) {
+         id
+         name
+         categories(where: { isVisible: { _eq: true } }) {
+            id
+            name
+            isRequired
+            type
+            limits
+            options(where: { isVisible: { _eq: true } }) {
+               id
+               name
+               quantity
+               image
+               isActive
+               sachetItemId
+               ingredientSachetId
+               additionalModifierTemplateId
+               isAdditionalModifierRequired
+               price: priceByLocation(args: $priceArgs)
+               discount: discountByLocation(args: $discountArgs)
+               cartItem: cartItemByLocation(
+                  args: $modifierCategoryOptionCartItemArgs
+               )
+            }
+         }
       }
    }
 `

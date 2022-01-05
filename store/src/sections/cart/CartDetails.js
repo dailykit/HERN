@@ -186,12 +186,12 @@ export const CartDetails = () => {
                   {/* address */}
                   <div className="hern-cart-delivery-info">
                      <span>YOUR ORDER(S)</span>
-                     <div className="hern-cart-delivery-details">
+                     {/* <div className="hern-cart-delivery-details">
                         <span>Delivery Description</span>
                         <span>
                            {cart?.address ? address(cart?.address) : 'N/A'}
                         </span>
-                     </div>
+                     </div> */}
                   </div>
                   {/*products*/}
                   <div className="hern-cart-products-product-list">
@@ -278,9 +278,9 @@ export const CartDetails = () => {
                </section>
             </div>
             {/* bottom bar to proceed */}
-            <footer className="hern-cart-footer">
+            {/* <footer className="hern-cart-footer">
                <Button className="hern-cart-proceed-btn">PROCEED TO PAY</Button>
-            </footer>
+            </footer> */}
          </div>
       </div>
    )
@@ -296,7 +296,24 @@ const ModifiersList = props => {
          </span>
          <div className="hern-cart-product-modifiers-product-option">
             <span>{data.childs[0].productOption.label || 'N/A'}</span>{' '}
-            <span>{formatCurrency(data.childs[0].price || 0)}</span>
+            {data.childs[0].price !== 0 && (
+               <div>
+                  {data.childs[0].discount > 0 && (
+                     <span
+                        style={{
+                           textDecoration: 'line-through',
+                        }}
+                     >
+                        {formatCurrency(data.childs[0].price)}
+                     </span>
+                  )}
+                  <span style={{ marginLeft: '6px' }}>
+                     {formatCurrency(
+                        data.childs[0].price - data.childs[0].discount
+                     )}
+                  </span>
+               </div>
+            )}
          </div>
          <div className="hern-cart-product-modifiers-list">
             {data.childs[0].childs.some(each => each.modifierOption) && (
@@ -310,7 +327,25 @@ const ModifiersList = props => {
                      modifier.modifierOption ? (
                         <li key={index}>
                            <span>{modifier.modifierOption.name}</span>
-                           <span>{formatCurrency(modifier.price || 0)}</span>
+
+                           {modifier.price !== 0 && (
+                              <div>
+                                 {modifier.discount > 0 && (
+                                    <span
+                                       style={{
+                                          textDecoration: 'line-through',
+                                       }}
+                                    >
+                                       {formatCurrency(modifier.price)}
+                                    </span>
+                                 )}
+                                 <span style={{ marginLeft: '6px' }}>
+                                    {formatCurrency(
+                                       modifier.price - modifier.discount
+                                    )}
+                                 </span>
+                              </div>
+                           )}
                         </li>
                      ) : null
                   )}

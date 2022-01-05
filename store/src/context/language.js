@@ -61,18 +61,35 @@ export const useTranslation = () => {
    const t = text => {
       return <FormattedMessage id={text} />
    }
-   const dynamicTrans = (strings, currentLang) => {
-      strings.forEach(x => {
-         if (currentLang === 'en') {
-            if (x.innerHTML.match(/\##EN##(.*?)\##EN##/g)) {
-               x.innerHTML = x.innerHTML
+   const dynamicTrans = langTags => {
+      // strings.forEach(x => {
+      //    if (locale === 'en') {
+      //       if (x.innerHTML.match(/\##EN##(.*?)\##EN##/g)) {
+      //          x.innerHTML = x.innerHTML
+      //             .match(/\##EN##(.*?)\##EN##/g)[0]
+      //             .replaceAll('##EN##', '')
+      //       }
+      //    }
+      //    if (locale === 'ar') {
+      //       if (x.innerHTML.match(/\##AR##(.*?)\##AR##/g)) {
+      //          x.innerHTML = x.innerHTML
+      //             .match(/\##AR##(.*?)\##AR##/g)[0]
+      //             .replaceAll('##AR##', '')
+      //       }
+      //    }
+      // })
+      langTags.forEach(tag => {
+         const langPattern = tag.getAttribute('data-original-value')
+         if (locale === 'en') {
+            if (langPattern.match(/\##EN##(.*?)\##EN##/g)) {
+               tag.innerHTML = langPattern
                   .match(/\##EN##(.*?)\##EN##/g)[0]
                   .replaceAll('##EN##', '')
             }
          }
-         if (currentLang === 'ar') {
-            if (x.innerHTML.match(/\##AR##(.*?)\##AR##/g)) {
-               x.innerHTML = x.innerHTML
+         if (locale === 'ar') {
+            if (langPattern.match(/\##AR##(.*?)\##AR##/g)) {
+               tag.innerHTML = langPattern
                   .match(/\##AR##(.*?)\##AR##/g)[0]
                   .replaceAll('##AR##', '')
             }

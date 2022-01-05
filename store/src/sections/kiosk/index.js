@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import KioskConfig from './kioskConfig.json'
+import { useMutation } from '@apollo/react-hooks'
 import { useIdleTimer } from 'react-idle-timer'
-import { IdleScreen } from '../../components/kiosk/idleScreen'
-import 'antd/dist/antd.css'
 import { Carousel, Layout, Modal } from 'antd'
+import isEmpty from 'lodash/isEmpty'
+import 'antd/dist/antd.css'
+
+import { IdleScreen } from '../../components/kiosk/idleScreen'
 import { KioskHeader } from '../../components/kiosk/header'
 import { FulfillmentSection } from '../../components/kiosk/fulfillment'
 import { CartContext, useTranslation } from '../../context'
@@ -11,6 +14,7 @@ import { useConfig } from '../../lib'
 import { combineCartItems, isClient, useQueryParamState } from '../../utils'
 import { MenuSection } from '../../components/kiosk/menu'
 import { KioskCart } from '../../components/kiosk/cart'
+import { DELETE_CART } from '../../graphql'
 // idle screen component
 // fulfillment component
 // header
@@ -20,49 +24,64 @@ import { KioskCart } from '../../components/kiosk/cart'
 // modifiers popup
 
 const { Header, Content } = Layout
-const Kiosk = () => {
+const Kiosk = props => {
    // context
-   const { combinedCartItems, setStoredCartId } = React.useContext(CartContext)
-   const { dispatch } = useConfig()
+   const { combinedCartItems, setStoredCartId, cartState } =
+      React.useContext(CartContext)
+   const {
+      dispatch,
+      currentPage,
+      setCurrentPage,
+      deleteCurrentPage,
+      isIdleScreen,
+      setIsIdleScreen,
+      clearCurrentPage,
+   } = useConfig()
+   const { kioskConfig } = props
 
    const { direction } = useTranslation()
 
-   const [isIdle, setIsIdle] = useState(false)
+   //delete Cart mutation
+   const [deleteCart] = useMutation(DELETE_CART, {
+      onCompleted: () => {
+         clearCurrentPage()
+         setStoredCartId(null)
+      },
+   })
 
    const handleOnIdle = event => {
       console.log('user is idle', event)
-      setIsIdle(true)
-      deleteCurrentPage('currentPage')
-      // productCategoryId
-      // Replace current querystring with the new one
-      const search = isClient ? window.location.search : ''
-      let queryParams = new URLSearchParams(search)
-      queryParams.delete('productCategoryId')
-      history.replaceState(null, null, '?' + queryParams.toString())
-      console.log('last active', getLastActiveTime())
-      localStorage.removeItem('cart-id')
-      setStoredCartId(null)
-      dispatch({
-         type: 'SET_SELECTED_ORDER_TAB',
-         payload: null,
-      })
+      setIsIdleScreen(true)
+      if (!isEmpty(cartState.cart) && cartState.cart.id) {
+         deleteCart({
+            variables: {
+               id: cartState.cart.id,
+            },
+         })
+      } else {
+         clearCurrentPage()
+      }
    }
 
    const handleOnActive = event => {
-      setIsIdle(false)
+      setIsIdleScreen(false)
       console.log('user is active', event)
       console.log('time remaining', getRemainingTime())
    }
 
    const handleOnAction = event => {
+      setIsIdleScreen(false)
       console.log('user did something', event)
    }
 
    const { getRemainingTime, getLastActiveTime } = useIdleTimer({
-      timeout: 1000 * KioskConfig.idlePageSettings.idleTime.value,
+      timeout: 1000 * kioskConfig.idlePageSettings.idleTime.value,
       onIdle: handleOnIdle,
       debounce: 500,
-      ...(isIdle && { onActive: handleOnActive, onAction: handleOnAction }),
+      ...(isIdleScreen && {
+         onActive: handleOnActive,
+         onAction: handleOnAction,
+      }),
    })
 
    console.log('thisIsRemainingTime', getRemainingTime())
@@ -75,21 +94,21 @@ const Kiosk = () => {
       const b = document.querySelector('body')
       b.style.padding = 0
    }, [])
-   const [currentPage, setCurrentPage, deleteCurrentPage] = useQueryParamState(
-      'currentPage',
-      'fulfillmentPage'
-   )
+
    useIdleTimer({
       timeout:
          1000 *
-         (KioskConfig.idlePageSettings.idleTime.value -
-            KioskConfig.idlePageSettings.idleScreenWarningTime.value),
+         (kioskConfig.idlePageSettings.idleTime.value -
+            kioskConfig.idlePageSettings.idleScreenWarningTime.value),
       onIdle: warning,
       debounce: 500,
-      ...(isIdle && { onActive: handleOnActive, onAction: handleOnAction }),
+      ...(isIdleScreen && {
+         onActive: handleOnActive,
+         onAction: handleOnAction,
+      }),
    })
    function warning() {
-      let secondsToGo = KioskConfig.idlePageSettings.idleScreenWarningTime.value
+      let secondsToGo = kioskConfig.idlePageSettings.idleScreenWarningTime.value
       const modal = Modal.warning({
          title: `This device is becoming Idle in ${secondsToGo} second TOUCH ANY WHERE...`,
          maskClosable: true,
@@ -101,10 +120,10 @@ const Kiosk = () => {
       setTimeout(() => {
          // clearInterval(timer)
          modal.destroy()
-      }, KioskConfig.idlePageSettings.idleScreenWarningTime.value * 1000)
+      }, kioskConfig.idlePageSettings.idleScreenWarningTime.value * 1000)
    }
-   if (isIdle) {
-      return <IdleScreen config={KioskConfig} />
+   if (isIdleScreen) {
+      return <IdleScreen config={kioskConfig} />
    }
    console.log('this is cureent page', currentPage)
    return (
@@ -114,16 +133,16 @@ const Kiosk = () => {
             <Header
                className="hern-kiosk__kiosk-header"
                style={{
-                  backgroundColor: `${KioskConfig.kioskSettings.theme.primaryColor.value}`,
+                  backgroundColor: `${kioskConfig.kioskSettings.theme.primaryColor.value}`,
                }}
             >
-               <KioskHeader config={KioskConfig} />
+               <KioskHeader config={kioskConfig} />
             </Header>
             <Layout className="hern-kiosk__content-layout">
                {currentPage === 'fulfillmentPage' && (
                   <Content>
                      <FulfillmentSection
-                        config={KioskConfig}
+                        config={kioskConfig}
                         setCurrentPage={setCurrentPage}
                      />
                   </Content>
@@ -131,7 +150,7 @@ const Kiosk = () => {
                {currentPage === 'menuPage' && (
                   <Content>
                      <MenuSection
-                        config={KioskConfig}
+                        config={kioskConfig}
                         setCurrentPage={setCurrentPage}
                         combinedCartItems={combinedCartItems}
                      />
@@ -140,7 +159,7 @@ const Kiosk = () => {
                {currentPage === 'cartPage' && (
                   <Content>
                      <KioskCart
-                        config={KioskConfig}
+                        config={kioskConfig}
                         setCurrentPage={setCurrentPage}
                         combinedCartItems={combinedCartItems}
                      />

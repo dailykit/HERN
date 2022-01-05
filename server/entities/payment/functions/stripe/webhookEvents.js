@@ -27,7 +27,6 @@ const stripeWebhookEvents = async arg => {
             'successfully event constructed in stripe webhook function'
          )
       } catch (err) {
-         console.log(err)
          return {
             success: false,
             code: 400,
@@ -44,11 +43,9 @@ const stripeWebhookEvents = async arg => {
             error: `No such event has been mapped yet!`
          }
 
-      console.log('fetching for cartPaymentInfo in stripe webhook function')
       const { cartPayment } = await client.request(CART_PAYMENT, {
          id: Number(node.metadata.cartPaymentId)
       })
-      console.log('fetched for cartPaymentInfo in stripe webhook function')
 
       if (get(cartPayment, 'id') && cartPayment.paymentStatus === 'SUCCEEDED') {
          return {
@@ -58,12 +55,49 @@ const stripeWebhookEvents = async arg => {
                "Could not process invoice/intent webhook, since cart's payment has already succeeded"
          }
       }
-
-      const data = {
-         eventType: event.type,
-         invoice: node
+      let payment_intent = null
+      let actionUrl = null
+      let actionRequired = false
+      if (node.payment_intent) {
+         payment_intent = await _stripe.paymentIntents.retrieve(
+            node.payment_intent
+         )
+         // SEND ACTION REQUIRED SMS
+         if (event.type === 'invoice.payment_action_required') {
+            // sendSMS({ cartPaymentId, transactionRemark: payment_intent })
+            if (
+               payment_intent &&
+               Object.keys(payment_intent).length > 0 &&
+               payment_intent.next_action
+            ) {
+               actionRequired = true
+               if (payment_intent.next_action.type === 'use_stripe_sdk') {
+                  actionUrl =
+                     payment_intent.next_action.use_stripe_sdk.stripe_js
+               } else {
+                  actionUrl = payment_intent.next_action.redirect_to_url.url
+               }
+            }
+         }
       }
-      return { success: true, data, code: 200, received: true }
+
+      // const data = {
+      //    eventType: event.type,
+      //    invoice: node
+      // }
+      const requiredData = {
+         cartPaymentId: node.metadata.cartPaymentId,
+         requestId: node.id,
+         stripeInvoiceDetails: node,
+         actionUrl,
+         actionRequired,
+         ...(payment_intent && {
+            transactionRemark: payment_intent,
+            transactionId: payment_intent.id,
+            paymentStatus: payment_intent.status
+         })
+      }
+      return { success: true, data: requiredData, code: 200, received: true }
    } catch (error) {
       return { success: false, code: 500, error }
    }

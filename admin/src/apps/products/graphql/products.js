@@ -72,6 +72,8 @@ export const PRODUCT = {
             isPopupAllowed
             isValid
             isPublished
+            posist_baseItemId
+            defaultProductOptionId
             productOptions(
                where: { isArchived: { _eq: false } }
                order_by: { position: desc_nulls_last }
@@ -83,6 +85,7 @@ export const PRODUCT = {
                price
                discount
                quantity
+               posist_baseItemId
                simpleRecipeYield {
                   id
                   yield
@@ -98,6 +101,11 @@ export const PRODUCT = {
                modifier {
                   id
                   name
+               }
+               additionalModifiers {
+                  productOptionId
+                  modifierId
+                  label
                }
                operationConfig {
                   id
@@ -320,3 +328,12 @@ export const PRODUCT_OPTION_TYPES = {
       }
    `,
 }
+export const DELETE_ADDITIONAL_MODIFIER = gql`
+   mutation deleteAdditionalModifier($productOptionId: Int!) {
+      delete_products_productOption_modifier(
+         where: { productOptionId: { _eq: $productOptionId } }
+      ) {
+         affected_rows
+      }
+   }
+`

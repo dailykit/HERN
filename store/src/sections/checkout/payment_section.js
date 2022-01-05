@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import tw, { styled, css } from 'twin.macro'
+import { useToasts } from 'react-toast-notifications'
 
-import { usePayment } from './state'
-import { useConfig } from '../../lib'
+// import { usePayment } from './state'
+import { useConfig, usePayment } from '../../lib'
 import { useUser } from '../../context'
 import { HelperBar } from '../../components'
 import { CheckIcon } from '../../assets/icons'
@@ -11,22 +12,29 @@ import { PaymentForm } from './payment_form'
 import { isClient, get_env } from '../../utils'
 import axios from 'axios'
 
-export const PaymentSection = () => {
+export const PaymentSection = ({ cart }) => {
+   const { addToast } = useToasts()
    const { user } = useUser()
    const { configOf } = useConfig()
-   const { state, dispatch } = usePayment()
+   const { setPaymentInfo, paymentInfo } = usePayment()
    const [intent, setIntent] = React.useState(null)
 
    React.useEffect(() => {
       if (user.subscriptionPaymentMethodId) {
-         dispatch({
-            type: 'SET_PAYMENT_METHOD',
-            payload: {
-               selected: { id: user.subscriptionPaymentMethodId },
+         // dispatch({
+         //    type: 'SET_PAYMENT_METHOD',
+         //    payload: {
+         //       selected: { id: user.subscriptionPaymentMethodId },
+         //    },
+         // })
+         setPaymentInfo({
+            selectedAvailablePaymentOption: {
+               ...paymentInfo.selectedAvailablePaymentOption,
+               selectedPaymentMethodId: user.subscriptionPaymentMethodId,
             },
          })
       }
-   }, [user, dispatch])
+   }, [user])
 
    React.useEffect(() => {
       if (user?.platform_customer?.paymentCustomerId && isClient && !intent) {
@@ -41,9 +49,8 @@ export const PaymentSection = () => {
    }, [user])
 
    const toggleTunnel = value => {
-      dispatch({
-         type: 'TOGGLE_TUNNEL',
-         payload: {
+      setPaymentInfo({
+         tunnel: {
             isVisible: value,
          },
       })
@@ -53,13 +60,19 @@ export const PaymentSection = () => {
    return (
       <>
          <header tw="my-3 pb-1 border-b flex items-center justify-between">
-            <SectionTitle theme={theme}>Select Payment Method</SectionTitle>
+            <SectionTitle theme={theme}>
+               {user?.platform_customer?.paymentMethods.length > 0
+                  ? 'Select'
+                  : 'Add'}{' '}
+               Card
+            </SectionTitle>
             {user?.platform_customer?.paymentMethods.length > 0 && (
                <OutlineButton onClick={() => toggleTunnel(true)}>
                   Add Card
                </OutlineButton>
             )}
          </header>
+
          {user?.platform_customer?.paymentMethods.length === 0 && (
             <div tw="w-full md:w-1/2">
                <PaymentForm intent={intent} />
@@ -70,15 +83,16 @@ export const PaymentSection = () => {
                <PaymentMethod
                   key={method.paymentMethodId}
                   onClick={() =>
-                     dispatch({
-                        type: 'SET_PAYMENT_METHOD',
-                        payload: {
-                           selected: { id: method.paymentMethodId },
+                     setPaymentInfo({
+                        selectedAvailablePaymentOption: {
+                           ...paymentInfo.selectedAvailablePaymentOption,
+                           selectedPaymentMethodId: method.paymentMethodId,
                         },
                      })
                   }
                   className={`${
-                     state.payment.selected?.id === method.paymentMethodId &&
+                     paymentInfo?.selectedAvailablePaymentOption
+                        ?.selectedPaymentMethodId === method.paymentMethodId &&
                      'active'
                   }`}
                >
@@ -87,7 +101,9 @@ export const PaymentSection = () => {
                         size={18}
                         css={[
                            tw`stroke-current`,
-                           state.payment.selected?.id === method.paymentMethodId
+                           paymentInfo?.selectedAvailablePaymentOption
+                              ?.selectedPaymentMethodId ===
+                           method.paymentMethodId
                               ? tw`text-green-700`
                               : tw`text-gray-400`,
                         ]}
@@ -115,7 +131,7 @@ export const PaymentSection = () => {
                </PaymentMethod>
             ))}
          </PaymentMethods>
-         {state.tunnel.isVisible && <PaymentTunnel />}
+         {paymentInfo.tunnel.isVisible && <PaymentTunnel />}
       </>
    )
 }

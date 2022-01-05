@@ -112,3 +112,88 @@
    font-weight: 500;
    margin-top: 1em;
 }
+
+//upfront
+.hern-upfront-coupons-list {
+   padding: 12px;
+}
+.hern-upfront-coupons-list__coupon-wrapper > .slick-dots > li > button {
+   background: #367bf5;
+}
+.hern-upfront-coupons-list__coupon-wrapper
+   > .slick-dots
+   > .slick-active
+   > button {
+   background: #618fde !important;
+}
+.hern-upfront-coupons-list__coupon-wrapper > .slick-dots {
+   bottom: 0px !important;
+}
+
+.hern-upfront-coupons-list__coupon-wrapper
+   > .slick-list
+   > .slick-track
+   > .slick-slide
+   > div {
+   border: 1px solid rgba(64, 64, 64, 0.25);
+   box-sizing: border-box;
+   border-radius: 12px;
+   padding: 10px;
+   margin-bottom: 12px;
+}
+.hern-upfront-coupons-list__coupon-wrapper > .slick-list > .slick-track {
+   display: flex;
+   flex-direction: row;
+   width: 100%;
+}
+
+.hern-upfront-coupons-list__coupon {
+   padding: 8px;
+   display: flex !important;
+   justify-content: space-between;
+   border-radius: 8px;
+   border: 1px dashed rgba(64, 64, 64, 0.6);
+}
+.hern-upfront-coupons-list__coupon__scissor-icon {
+   position: relative;
+   right: -1.7rem;
+   top: 7.5rem;
+}
+.hern-upfront-coupons-list__coupon__body-wrapper {
+   margin: 0px;
+   padding-left: 1em;
+   padding-right: 0.5em;
+   flex: 3;
+}
+.hern-upfront-coupons-list__coupon__title {
+   color: rgba(64, 64, 64, 0.8);
+   display: block;
+   font-size: 18px;
+   margin-bottom: 0px;
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+}
+.hern-upfront-coupons-list__coupon__description {
+   display: block;
+   color: rgba(64, 64, 64, 0.6);
+   font-size: 12px;
+   line-height: 20px;
+   margin-bottom: 0px;
+}
+.hern-upfront-coupons-list__coupon__apply-btn {
+   box-sizing: border-box;
+   border-radius: 12px;
+   :disabled {
+      color: #cacaca;
+      cursor: no-drop;
+   }
+}
+.hern-kiosk-coupons-list__coupon__code {
+   font-size: 1.2em;
+   font-weight: 500;
+   line-height: 20px;
+}
+.hern-upfront-coupons-list__coupon__top {
+   display: none;
+}

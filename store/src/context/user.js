@@ -51,6 +51,11 @@ const reducers = (state, { type, payload }) => {
                },
             },
          }
+      case 'SET_USER_TYPE':
+         return {
+            ...state,
+            userType: payload,
+         }
    }
 }
 
@@ -59,6 +64,7 @@ export const UserProvider = ({ children }) => {
    const [isLoading, setIsLoading] = React.useState(true)
    const [keycloakId, setKeycloakId] = React.useState('')
    const [session, loadingSession] = useSession()
+   console.log('session from userprovider', session)
 
    const [createCustomer] = useMutation(MUTATIONS.CUSTOMER.CREATE, {
       onError: error => console.log('createCustomer => error => ', error),
@@ -73,6 +79,7 @@ export const UserProvider = ({ children }) => {
          keycloakId: '',
          subscriptionOnboardStatus: 'REGISTER',
       },
+      userType: '',
    })
 
    const { loading, data: { customer = {} } = {} } = useSubscription(
@@ -201,15 +208,14 @@ export const UserProvider = ({ children }) => {
             const index = user.carts.findIndex(
                node => node.paymentStatus === 'SUCCEEDED'
             )
-            if (index !== -1) {
+            if (
+               index !== -1 &&
+               user.subscriptionOnboardStatus !== 'ONBOARDED'
+            ) {
                updateBrandCustomer({
                   skip: !user?.brandCustomerId,
                   variables: {
-                     where: {
-                        id: {
-                           _eq: user?.brandCustomerId,
-                        },
-                     },
+                     id: user?.brandCustomerId,
                      _set: { subscriptionOnboardStatus: 'ONBOARDED' },
                   },
                })
@@ -217,15 +223,45 @@ export const UserProvider = ({ children }) => {
          }
 
          dispatch({ type: 'SET_USER', payload: user })
+         dispatch({
+            type: 'SET_USER_TYPE',
+            payload: '',
+         })
+         localStorage.removeItem('userType')
          setIsLoading(false)
       }
-   }, [keycloakId, loading, customer])
+      // else {
+      //    const isGuest = Boolean(localStorage.getItem('userType') === 'guest')
+      //    if (isGuest) {
+      //       dispatch({
+      //          type: 'SET_USER_TYPE',
+      //          payload: 'guest',
+      //       })
+      //    }
+      // }
+   }, [
+      keycloakId,
+      loading,
+      customer,
+      customer?.platform_customer,
+      customer?.platform_customer?.defaultPaymentMethodId,
+   ])
+   React.useEffect(() => {
+      const isGuest = Boolean(localStorage.getItem('userType') === 'guest')
+      if (isGuest && !state.isAuthenticated) {
+         dispatch({
+            type: 'SET_USER_TYPE',
+            payload: 'guest',
+         })
+      }
+   }, [])
 
    return (
       <UserContext.Provider
          value={{
             isAuthenticated: state.isAuthenticated,
             user: state.user,
+            userType: state.userType,
             dispatch,
             isLoading,
          }}

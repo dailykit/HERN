@@ -1,0 +1,1 @@
+INSERT INTO "brands"."availablePaymentOption"("label", "supportedPaymentOptionId", "publicCreds", "privateCreds", "isActive", "isValid", "isDown", "position", "showCompanyName", "isRecommended", "id") VALUES (E'UPI via PayTm', 1009, null, null, true, null, null, null, true, false, 1008);

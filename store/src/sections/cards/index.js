@@ -24,7 +24,7 @@ import { useUser } from '../../context'
 import { CloseIcon, DeleteIcon } from '../../assets/icons'
 import {
    BRAND,
-   CREATE_STRIPE_PAYMENT_METHOD,
+   CREATE_CUSTOMER_PAYMENT_METHOD,
    DELETE_STRIPE_PAYMENT_METHOD,
 } from '../../graphql'
 
@@ -241,11 +241,14 @@ export const PaymentForm = ({ intent, toggleTunnel }) => {
          console.error(error)
       },
    })
-   const [createPaymentMethod] = useMutation(CREATE_STRIPE_PAYMENT_METHOD, {
-      onError: error => {
-         console.error(error)
-      },
-   })
+   const [createCustomerPaymentMethod] = useMutation(
+      CREATE_CUSTOMER_PAYMENT_METHOD,
+      {
+         onError: error => {
+            console.error(error)
+         },
+      }
+   )
 
    const handleResult = async ({ setupIntent }) => {
       try {
@@ -256,7 +259,7 @@ export const PaymentForm = ({ intent, toggleTunnel }) => {
             const { data: { success, data = {} } = {} } = await axios.get(url)
 
             if (success) {
-               await createPaymentMethod({
+               await createCustomerPaymentMethod({
                   variables: {
                      object: {
                         last4: data.card.last4,

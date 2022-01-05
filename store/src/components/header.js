@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import { signOut } from 'next-auth/client'
 import { getProtectedRoutes, LoginWrapper } from '../utils'
 
-import { useUser, useTranslation } from '../context'
+import { useUser, useTranslation, CartContext } from '../context'
 import {
    isClient,
    getInitials,
@@ -16,8 +16,8 @@ import {
 import MenuIcon from '../assets/icons/Menu'
 
 import { ProfileSidebar } from './profile_sidebar'
-import { CrossIcon } from '../assets/icons'
-import { Loader } from './loader'
+import { CrossIcon, CartIcon, LocationIcon } from '../assets/icons'
+
 import NavigationBar from './navbar'
 import { useWindowSize } from '../utils/useWindowSize'
 import { LanguageSwitch, TemplateFile } from '.'
@@ -58,7 +58,8 @@ export const Header = ({ settings, navigationMenus }) => {
    const logo = settings?.brand?.['Brand Logo']?.brandLogo?.value
       ? settings?.brand?.['Brand Logo']?.brandLogo?.value
       : settings?.brand?.['Brand Logo']?.brandLogo?.default
-
+   const logoForSmallDevice =
+      settings?.brand?.['Brand Logo']?.brandLogoSmall?.value
    const showLogo =
       settings?.brand?.['Brand Logo']?.BrandLogo?.value ??
       settings?.brand?.['Brand Logo']?.BrandLogo?.default ??
@@ -81,13 +82,10 @@ export const Header = ({ settings, navigationMenus }) => {
          'LanguageTranslation'
       ]?.['showLanguageTranslation'].value ?? true
 
-   console.log(
-      'navigation',
-      settings?.['navigation']?.['language-translation']?.[
-         'LanguageTranslation'
-      ]?.['showLanguageTranslation'].value,
-      showLanguageSwitcher
-   )
+   const showLocationText =
+      settings?.['navigation']?.['Show Location Text']?.[
+         'Show Location Text'
+      ]?.['Show Location Text']?.value ?? true
    const [toggle, setToggle] = React.useState(true)
    const [isMobileNavVisible, setIsMobileNavVisible] = React.useState(false)
    const [showLoginPopup, setShowLoginPopup] = React.useState(false)
@@ -95,6 +93,10 @@ export const Header = ({ settings, navigationMenus }) => {
       React.useState(false)
 
    const newNavigationMenus = DataWithChildNodes(navigationMenus)
+
+   const { cartState } = React.useContext(CartContext)
+   const numberOfItemsOnCart =
+      cartState?.cart?.cartItems_aggregate?.aggregate?.count
 
    // FB pixel event tracking for page view
    React.useEffect(() => {
@@ -120,10 +122,22 @@ export const Header = ({ settings, navigationMenus }) => {
                >
                   <div className="hern-header__brand">
                      {logo && showLogo && (
-                        <img
-                           src={logo}
-                           alt={displayName || 'Subscription Shop'}
-                        />
+                        <>
+                           <img
+                              class={classNames({
+                                 'hern-header__brand__logo': logoForSmallDevice,
+                              })}
+                              src={logo}
+                              alt={displayName || 'Subscription Shop'}
+                           />
+                           {logoForSmallDevice && (
+                              <img
+                                 class="hern-header__brand__logo--sm"
+                                 src={logoForSmallDevice}
+                                 alt={displayName || 'Subscription Shop'}
+                              />
+                           )}
+                        </>
                      )}
                      {displayName && showBrandName && (
                         <span>{displayName}</span>
@@ -131,8 +145,12 @@ export const Header = ({ settings, navigationMenus }) => {
                   </div>
                </Link>
                {showLocationButton && (
-                  <button onClick={() => setShowLocationSelectionPopup(true)}>
-                     {t('Location')}
+                  <button
+                     style={{ display: 'flex', alignItems: 'center' }}
+                     onClick={() => setShowLocationSelectionPopup(true)}
+                  >
+                     <LocationIcon />
+                     {showLocationText && <>{t('Location')}</>}
                   </button>
                )}
                <section className="hern-navigatin-menu__wrapper">
@@ -173,6 +191,17 @@ export const Header = ({ settings, navigationMenus }) => {
                   </NavigationBar>
                </section>
                <section className="hern-header__auth">
+                  {!isSubscriptionStore && (
+                     <div
+                        onClick={() => router.push(getRoute('/on-demand-cart'))}
+                        className="hern-navbar__list__item hern-navbar__list__item--cart-icon"
+                     >
+                        <CartIcon size="20px" stroke="var(--hern-accent)" />
+                        <span className="number-of-cart-item">
+                           {numberOfItemsOnCart}
+                        </span>
+                     </div>
+                  )}
                   {isLoading ? (
                      <>
                         <span className="hern-navbar__list__item__skeleton" />

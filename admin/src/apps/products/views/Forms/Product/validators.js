@@ -1,3 +1,5 @@
+import { lte } from 'lodash'
+
 const validator = {
    label: value => {
       let isValid = true
@@ -44,6 +46,15 @@ const validator = {
       }
       return { isValid, errors }
    },
+   // posist_baseItemId: value => {
+   //    let isValid = true
+   //    let errors = []
+   //    if (text.length < 1) {
+   //       isValid = false
+   //       errors = [...errors, 'Cannot be empty!']
+   //    }
+   //    return { isValid, errors }
+   // },
    csv: value => {
       const words = value.trim().split(',')
       let isValid = true

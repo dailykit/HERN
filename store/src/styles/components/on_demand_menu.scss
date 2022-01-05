@@ -95,21 +95,21 @@
          cursor: pointer;
          margin: 0 0.4em;
          // border-radius: 1em;
-         font-weight: 600;
+         font-weight: 700;
          font-size: 14px;
          line-height: 16px;
          font-size: 18px;
          line-height: 20px;
-         color: rgba(64, 64, 64, 0.4);
+         color: var(--hern-accent);
          > a {
             width: 100%;
             display: flex;
             justify-content: space-between;
-            color: rgba(64, 64, 64, 0.4);
+            color: var(--hern-accent);
             text-decoration: none;
             padding: 0.5em 1em;
             border-radius: 2em;
-            border: 2px solid rgba(64, 64, 64, 0.4);
+            border: 2px solid var(--hern-accent);
          }
          > a:hover {
             text-decoration: none;
@@ -118,8 +118,8 @@
    }
 }
 .hern-on-demand-menu__navigationAnchor-li--active {
-   border: 2px solid #367bf5 !important;
-   color: #367bf5 !important;
+   color: #ffffff !important;
+   background: var(--hern-accent) !important;
 }
 .hern-on-demand-menu__heading {
    display: none;

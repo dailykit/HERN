@@ -4,7 +4,6 @@ import {
    ProductCard,
    BottomCartBar,
    Divider,
-   ModifierPopup,
    Button,
    Loader,
 } from '../../components'
@@ -16,13 +15,36 @@ import classNames from 'classnames'
 import * as Scroll from 'react-scroll'
 import CartBar from './CartBar'
 import { useConfig } from '../../lib'
+import { setThemeVariable, getRoute } from '../../utils'
+import { useRouter } from 'next/router'
+import { useToasts } from 'react-toast-notifications'
+import { VegNonVegType } from '../../assets/icons'
 
 export const OnDemandOrder = ({ config }) => {
+   const router = useRouter()
+   const { addToast } = useToasts()
    const { brand } = useConfig()
-
    const menuType = config?.display?.dropdown?.value[0]?.value
       ? config?.display?.dropdown?.value[0]?.value
       : 'side-nav'
+   const numberOfProducts =
+      config?.display?.['numberOfProducts']?.value ??
+      config?.display?.['numberOfProducts']?.default ??
+      2
+   const showCategoryLengthOnCategoryTitle =
+      config?.display?.['showCategoryLengthOnCategoryTitle']?.value ??
+      config?.display?.['showCategoryLengthOnCategoryTitle']?.default ??
+      true
+   const showCategoryLengthOnCategory =
+      config?.display?.['showCategoryLengthOnCategory']?.value ??
+      config?.display?.['showCategoryLengthOnCategory']?.default ??
+      true
+   const showCartOnRight =
+      config?.display?.['showCartOnRight']?.value ??
+      config?.display?.['showCartOnRight']?.default ??
+      false
+
+   setThemeVariable('--hern-number-of-products', numberOfProducts)
 
    const [hydratedMenu, setHydratedMenu] = React.useState([])
    const [status, setStatus] = useState('loading')
@@ -92,11 +114,14 @@ export const OnDemandOrder = ({ config }) => {
          <div className="hern-on-demand-product-custom-area">
             <Button
                className="hern-custom-area-add-btn"
+               type="outline"
                onClick={() => {
                   if (data.productOptions.length > 0) {
                      setProductModifier(data)
                   } else {
-                     console.log('product added to cart', data)
+                     addToast('Added to the Cart!', {
+                        appearance: 'success',
+                     })
                      addToCart({ productId: data.id }, 1)
                   }
                }}
@@ -118,19 +143,29 @@ export const OnDemandOrder = ({ config }) => {
    if (isMenuLoading || status === 'loading' || productsLoading) {
       return <Loader />
    }
+   const getWrapperClasses = () => {
+      if (menuType === 'fixed-top-nav') {
+         if (!showCartOnRight) {
+            return 'hern-on-demand-order-container--fixed-top-nav--full-width'
+         }
+         return 'hern-on-demand-order-container--fixed-top-nav'
+      }
+      return ''
+   }
    return (
       <>
          {menuType === 'fixed-top-nav' && (
             <OnDemandMenu
                menuType="navigationAnchorMenu"
                categories={categories}
+               showCount={showCategoryLengthOnCategory}
             />
          )}
          <div
-            className={classNames('hern-on-demand-order-container', {
-               'hern-on-demand-order-container--fixed-top-nav':
-                  menuType === 'fixed-top-nav',
-            })}
+            className={classNames(
+               'hern-on-demand-order-container',
+               getWrapperClasses()
+            )}
          >
             <div
                id="hern-on-demand-order-container"
@@ -150,20 +185,54 @@ export const OnDemandOrder = ({ config }) => {
                               className="hern-product-category-heading"
                               id={`hern-product-category-${eachCategory.name}`}
                            >
-                              {eachCategory.name}({eachCategory.products.length}
-                              )
+                              {eachCategory.name}
+                              {showCategoryLengthOnCategoryTitle && (
+                                 <>({eachCategory.products.length})</>
+                              )}
                            </p>
                            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                               {eachCategory.products.map(
                                  (eachProduct, index) => {
+                                    const VegNonVegIcon = () => (
+                                       <VegNonVegType
+                                          vegNonVegType={
+                                             eachProduct?.VegNonVegType
+                                          }
+                                       />
+                                    )
                                     return (
                                        <div
                                           key={index}
                                           className="hern-on-demand-order--product-card"
+                                          style={{
+                                             margin: '0 auto',
+                                             maxWidth:
+                                                numberOfProducts === 4
+                                                   ? '280px'
+                                                   : 'auto',
+                                          }}
                                        >
                                           <ProductCard
+                                             iconOnImage={VegNonVegIcon}
+                                             onProductNameClick={() =>
+                                                router.push(
+                                                   getRoute(
+                                                      '/products/' +
+                                                         eachProduct.id
+                                                   )
+                                                )
+                                             }
+                                             onImageClick={() =>
+                                                router.push(
+                                                   getRoute(
+                                                      '/products/' +
+                                                         eachProduct.id
+                                                   )
+                                                )
+                                             }
                                              key={index}
                                              data={eachProduct}
+                                             showProductDescription={true}
                                              showImage={
                                                 eachProduct.assets.images
                                                    .length > 0
@@ -178,6 +247,7 @@ export const OnDemandOrder = ({ config }) => {
                                              }
                                              closeModifier={closeModifier}
                                              customAreaFlex={false}
+                                             modifierWithoutPopup={false}
                                           />
                                        </div>
                                     )
@@ -197,7 +267,7 @@ export const OnDemandOrder = ({ config }) => {
                cartState.cart?.products?.aggregate?.count !== 0 && (
                   <BottomCartBar />
                )}
-            <CartBar />
+            {showCartOnRight && <CartBar />}
          </div>
       </>
    )

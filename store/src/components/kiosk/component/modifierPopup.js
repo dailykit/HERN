@@ -1,15 +1,27 @@
-import React, { useState, useEffect } from 'react'
+import React, {
+   useState,
+   useEffect,
+   forwardRef,
+   useRef,
+   useImperativeHandle,
+} from 'react'
 import { Badge, Carousel, Radio, Modal } from 'antd'
 import { KioskCounterButton } from '.'
 import { CartContext, useTranslation } from '../../../context'
 import {
    CheckBoxIcon,
    CloseIcon,
+   DownVector,
    NoTickRoundCheckBoxIcon,
    RoundCheckBoxIcon,
+   UpVector,
 } from '../../../assets/icons'
 import KioskButton from './button'
 import { formatCurrency, useOnClickOutside } from '../../../utils'
+import { GET_MODIFIER_BY_ID } from '../../../graphql'
+import { useQuery } from '@apollo/react-hooks'
+import { useConfig } from '../../../lib'
+import { Loader } from '../..'
 
 export const KioskModifier = props => {
    const {
@@ -38,6 +50,9 @@ export const KioskModifier = props => {
    const [errorCategories, setErrorCategories] = useState([])
    const [showProceedPopup, setShowProceedPopup] = useState(false)
    const currentLang = React.useMemo(() => locale, [locale])
+   const nestedModifierRef = React.useRef()
+   const [showNestedModifierOptions, setShowNestedModifierOptions] =
+      useState(false)
 
    const modifierPopRef = React.useRef()
    useOnClickOutside(modifierPopRef, () => onCloseModifier())
@@ -76,7 +91,8 @@ export const KioskModifier = props => {
             if (
                selectedOptions.single[existCategoryIndex][
                   'modifierCategoryOptionsID'
-               ] === eachOption.id
+               ] === eachOption.id &&
+               !eachModifierCategory.isRequired
             ) {
                const newSelectedOptions = selectedOptions.single.filter(
                   x =>
@@ -195,10 +211,23 @@ export const KioskModifier = props => {
          return
       } else {
          console.log('PASS')
-         const cartItem = getCartItemWithModifiers(
-            selectedProductOption.cartItem,
-            allSelectedOptions.map(x => x.cartItem)
-         )
+         let cartItem
+         const idNestedVerify = nestedModifierRef?.current?.modifierValidation()
+         if (idNestedVerify && idNestedVerify.status == false) {
+            console.log('error in nested')
+            return
+         } else if (idNestedVerify && idNestedVerify.status) {
+            cartItem = getCartItemWithModifiers(
+               selectedProductOption.cartItem,
+               allSelectedOptions.map(x => x.cartItem),
+               idNestedVerify.data.map(x => x.cartItem)
+            )
+         } else {
+            cartItem = getCartItemWithModifiers(
+               selectedProductOption.cartItem,
+               allSelectedOptions.map(x => x.cartItem)
+            )
+         }
 
          addToCart(cartItem, quantity)
          if (edit) {
@@ -243,9 +272,9 @@ export const KioskModifier = props => {
             }
          } else {
             if (category.limits.max) {
-               return '(CHOOSE AS MANY AS YOU LIKE)'
-            } else {
                return `(CHOOSE AS MANY AS YOU LIKE UPTO ${category.limits.max})`
+            } else {
+               return '(CHOOSE AS MANY AS YOU LIKE)'
             }
          }
       }
@@ -333,24 +362,70 @@ export const KioskModifier = props => {
             setQuantity(productCartDetail.ids.length)
          }
          setStatus('success')
-      } else {
-         setStatus('success')
-      }
-      return () => {
-         setSelectedProductOption(null)
       }
    }, [])
+   useEffect(() => {
+      // default selected modifiers
+      if (!(forNewItem || edit)) {
+         let singleModifier = []
+         let multipleModifier = []
+         if (selectedProductOption.modifier) {
+            selectedProductOption.modifier.categories.forEach(eachCategory => {
+               if (eachCategory.type === 'single' && eachCategory.isRequired) {
+                  // default selected modifier option
+                  const defaultModifierSelectedOption = {
+                     modifierCategoryID: eachCategory.id,
+                     modifierCategoryOptionsID: eachCategory.options[0].id,
+                     modifierCategoryOptionsPrice:
+                        eachCategory.options[0].price,
+                     modifierCategoryOptionsDiscount:
+                        eachCategory.options[0].discount,
+                     cartItem: eachCategory.options[0].cartItem,
+                  }
+                  singleModifier = [
+                     ...singleModifier,
+                     defaultModifierSelectedOption,
+                  ]
+               } else if (
+                  eachCategory.type === 'multiple' &&
+                  eachCategory.isRequired
+               ) {
+                  const defaultSelectedOptions = eachCategory.options.slice(
+                     0,
+                     eachCategory.limits.min
+                  )
+                  defaultSelectedOptions.forEach(eachModifierOption => {
+                     // default selected modifier option
+                     const defaultModifierSelectedOption = {
+                        modifierCategoryID: eachCategory.id,
+                        modifierCategoryOptionsID: eachModifierOption.id,
+                        modifierCategoryOptionsPrice: eachModifierOption.price,
+                        modifierCategoryOptionsDiscount:
+                           eachModifierOption.discount,
+                        cartItem: eachModifierOption.cartItem,
+                     }
+                     multipleModifier = [
+                        ...multipleModifier,
+                        defaultModifierSelectedOption,
+                     ]
+                  })
+               }
+            })
+         }
+         setSelectedOptions(prevState => ({
+            ...prevState,
+            single: singleModifier,
+            multiple: multipleModifier,
+         }))
+      }
+   }, [selectedProductOption])
 
    useEffect(() => {
-      const translateStringSpan = document.querySelectorAll('span')
-      const translateStringDiv = document.querySelectorAll('div')
-      const translateStringP = document.querySelectorAll('p')
-      const translateStringLi = document.querySelectorAll('li')
-      dynamicTrans(translateStringSpan, currentLang)
-      dynamicTrans(translateStringDiv, currentLang)
-      dynamicTrans(translateStringP, currentLang)
-      dynamicTrans(translateStringLi, currentLang)
-   }, [currentLang])
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [selectedProductOption])
    console.log('product_data -->', productData)
    if (showProceedPopup) {
       return (
@@ -359,7 +434,10 @@ export const KioskModifier = props => {
             centered={true}
             closable={false}
             footer={null}
-            maskClosable={false}
+            onCancel={() => {
+               onCloseModifier()
+               setShowProceedPopup(false)
+            }}
             zIndex={'100000000000000000000'}
          >
             <div
@@ -380,7 +458,7 @@ export const KioskModifier = props => {
                      padding: '.1em 2em',
                   }}
                >
-                  GO TO MENU
+                  {t('GO TO MENU')}
                </KioskButton>
                <KioskButton
                   style={{ padding: '.1em 2em' }}
@@ -388,7 +466,7 @@ export const KioskModifier = props => {
                      setCurrentPage('cartPage')
                   }}
                >
-                  CHECKOUT
+                  {t('CHECKOUT')}
                </KioskButton>
             </div>
          </Modal>
@@ -480,6 +558,8 @@ export const KioskModifier = props => {
                   style={{
                      color: `${config.kioskSettings.theme.modifierTextColor.value}`,
                   }}
+                  data-translation="true"
+                  data-original-value={productData.name}
                >
                   {productData.name}
                </span>
@@ -499,50 +579,75 @@ export const KioskModifier = props => {
                   backgroundColor: `${config.kioskSettings.theme.primaryColor.value}`,
                }}
             >
-               <Radio.Group
-                  defaultValue={productData.productOptions[0].id}
-                  buttonStyle="solid"
-                  onChange={e => {
-                     const productOption = productData.productOptions.find(
-                        x => x.id == e.target.value
-                     )
-                     // when changing product option previous selected should be removed
-                     setSelectedOptions({ single: [], multiple: [] })
-                     setSelectedProductOption(productOption)
-                  }}
-                  size="large"
-                  style={{ margin: '.5em 0' }}
-               >
-                  {productData.productOptions.map((eachOption, index) => (
-                     <Radio.Button
-                        value={eachOption.id}
-                        key={index}
-                        className="hern-kiosk__modifier-product-option"
-                        style={{
-                           ...(selectedProductOption.id === eachOption.id && {
-                              backgroundColor: 'transparent',
-                              border: `2px solid ${config.kioskSettings.theme.successColor.value}`,
-                           }),
-                        }}
+               {productData.productOptions.map((eachOption, index) => (
+                  <button
+                     value={eachOption.id}
+                     key={index}
+                     className="hern-kiosk__modifier-product-option"
+                     style={{
+                        backgroundColor:
+                           selectedProductOption.id === eachOption.id
+                              ? config.kioskSettings.theme.primaryColorDark
+                                   .value
+                              : 'transparent',
+                        color: '#ffffff',
+                        border:
+                           selectedProductOption.id === eachOption.id
+                              ? `2px solid ${config.kioskSettings.theme.successColor.value}`
+                              : `2px solid ${config.kioskSettings.theme.primaryColorDark.value}`,
+                     }}
+                     onClick={() => {
+                        const productOption = productData.productOptions.find(
+                           x => x.id == eachOption.id
+                        )
+                        // when changing product option previous selected should be removed
+                        setSelectedOptions({ single: [], multiple: [] })
+                        setSelectedProductOption(productOption)
+                     }}
+                  >
+                     <span
+                        data-name={eachOption.label}
+                        data-translation="true"
+                        data-original-value={eachOption.label}
                      >
                         {eachOption.label}
-                        {' (+ '}
-                        {formatCurrency(eachOption.price - eachOption.discount)}
-                        {')'}
-                     </Radio.Button>
-                  ))}
-               </Radio.Group>
+                     </span>
+                     {' (+ '}
+                     {formatCurrency(eachOption.price - eachOption.discount)}
+                     {')'}
+                  </button>
+               ))}
             </div>
-            <div className="hern-kiosk__product-modifier-p-additional-text">
-               <span
-                  style={{
-                     color: `${config.kioskSettings.theme.modifierTextColor.value}`,
-                  }}
-               >
-                  {productData.additionalText}
-               </span>
-            </div>
+            {productData.additionalText && (
+               <div className="hern-kiosk__product-modifier-p-additional-text">
+                  <span
+                     style={{
+                        color: `${config.kioskSettings.theme.modifierTextColor.value}`,
+                     }}
+                     data-translation="true"
+                     data-original-value={productData.additionalText}
+                  >
+                     {productData.additionalText}
+                  </span>
+               </div>
+            )}
             {/* <div className="hern-kiosk__modifier-popup-modifiers-list"> */}
+            {selectedProductOption.additionalModifiers.length > 0 &&
+               selectedProductOption.additionalModifiers.map(
+                  (eachAdditionalModifier, index) => (
+                     <AdditionalModifiers
+                        eachAdditionalModifier={eachAdditionalModifier}
+                        selectedProductOption={selectedProductOption}
+                        onCheckClick={onCheckClick}
+                        config={config}
+                        key={index}
+                        renderConditionText={renderConditionText}
+                        errorCategories={errorCategories}
+                        selectedOptions={selectedOptions}
+                     />
+                  )
+               )}
+
             {selectedProductOption.modifier &&
                selectedProductOption.modifier.categories.map(
                   (eachModifierCategory, index) => {
@@ -567,6 +672,8 @@ export const KioskModifier = props => {
                                  style={{
                                     color: `${config.kioskSettings.theme.modifierTextColor.value}`,
                                  }}
+                                 data-translation="true"
+                                 data-original-value={eachModifierCategory.name}
                               >
                                  {eachModifierCategory.name}
                               </span>
@@ -587,7 +694,296 @@ export const KioskModifier = props => {
                                           color: `${config.kioskSettings.theme.categorySelectionWarningColor.value}`,
                                        }}
                                     >
-                                       {'('}You have to choose this category.
+                                       {'('}
+                                       {t(`You have to choose this category`)}
+                                       {')'}
+                                    </span>
+                                 </>
+                              )}
+                           </label>
+                           <div className="hern-kiosk__modifier-category-options">
+                              {eachModifierCategory.options.map(
+                                 (eachOption, index) => {
+                                    const isModifierOptionInProduct = () => {
+                                       const isOptionSelected = selectedOptions[
+                                          eachModifierCategory.type
+                                       ].find(
+                                          x =>
+                                             x.modifierCategoryID ===
+                                                eachModifierCategory.id &&
+                                             x.modifierCategoryOptionsID ===
+                                                eachOption.id
+                                       )
+                                       return Boolean(isOptionSelected)
+                                    }
+
+                                    return (
+                                       <>
+                                          <div
+                                             key={index}
+                                             className="hern-kiosk__modifier-category-option"
+                                             onClick={() => {
+                                                onCheckClick(
+                                                   eachOption,
+                                                   eachModifierCategory
+                                                )
+                                             }}
+                                          >
+                                             <div className="hern-kiosk__modifier-category-right">
+                                                <img
+                                                   className="hern-kiosk__modifier-category-option-image"
+                                                   alt="modifier image"
+                                                   src={
+                                                      eachOption.image ||
+                                                      config.productSettings
+                                                         .defaultImage.value
+                                                   }
+                                                />
+
+                                                <span className="hern-kiosk__modifier--option-name">
+                                                   <span
+                                                      data-translation="true"
+                                                      data-original-value={
+                                                         eachOption.name
+                                                      }
+                                                   >
+                                                      {eachOption.name}
+                                                   </span>
+                                                   {eachOption.price > 0 && (
+                                                      <>
+                                                         {' ('}
+                                                         {formatCurrency(
+                                                            eachOption.price -
+                                                               eachOption.discount
+                                                         )}
+                                                         {')'}
+                                                      </>
+                                                   )}
+                                                </span>
+                                             </div>
+                                             {isModifierOptionInProduct() ? (
+                                                <RoundCheckBoxIcon
+                                                   fill={
+                                                      config.kioskSettings
+                                                         .tickBox
+                                                         .tickBoxBGonCheck.value
+                                                   }
+                                                   tickFill={
+                                                      config.kioskSettings
+                                                         .tickBox.tickColor
+                                                         .value
+                                                   }
+                                                   size={50}
+                                                />
+                                             ) : (
+                                                <NoTickRoundCheckBoxIcon
+                                                   fill={
+                                                      config.kioskSettings.theme
+                                                         .primaryColor.value
+                                                   }
+                                                   size={50}
+                                                   onClick={() => {
+                                                      onCheckClick(
+                                                         eachOption,
+                                                         eachModifierCategory
+                                                      )
+                                                   }}
+                                                />
+                                             )}
+                                             {eachOption.additionalModifierTemplateId && (
+                                                <span
+                                                   className="hern-kiosk__modifier-option-customize"
+                                                   onClick={() => {
+                                                      setShowNestedModifierOptions(
+                                                         prev => !prev
+                                                      )
+                                                   }}
+                                                   style={{
+                                                      color: config
+                                                         .kioskSettings.theme
+                                                         .modifierTextColor
+                                                         .value,
+                                                   }}
+                                                >
+                                                   Customize
+                                                </span>
+                                             )}
+                                          </div>
+                                          {showNestedModifierOptions &&
+                                             eachOption.additionalModifierTemplateId && (
+                                                <ModifierOptionsList
+                                                   ref={nestedModifierRef}
+                                                   nestedModifierTemplateId={
+                                                      eachOption.additionalModifierTemplateId
+                                                   }
+                                                   nestedModifierTemplateRequired={
+                                                      eachOption.isAdditionalModifierRequired
+                                                   }
+                                                   selectedOptions={
+                                                      selectedOptions
+                                                   }
+                                                   config={config}
+                                                   onCheckClick={onCheckClick}
+                                                   errorCategories={
+                                                      errorCategories
+                                                   }
+                                                   renderConditionText={
+                                                      renderConditionText
+                                                   }
+                                                   edit={edit}
+                                                   forNewItem={forNewItem}
+                                                   productCartDetail={
+                                                      productCartDetail
+                                                   }
+                                                />
+                                             )}
+                                       </>
+                                    )
+                                 }
+                              )}
+                           </div>
+                        </div>
+                     )
+                  }
+               )}
+            {/* </div> */}
+            <div
+               className="hern-kiosk__modifier-popup-footer"
+               style={{
+                  backgroundColor: `${config.kioskSettings.theme.primaryColor.value}`,
+               }}
+            >
+               <div>
+                  <span
+                     className="hern-kiosk__modifier-total-label"
+                     style={{
+                        color: `${config.kioskSettings.theme.secondaryColor.value}`,
+                     }}
+                  >
+                     {t('Total')}
+                  </span>
+                  <span className="hern-kiosk__modifier-total-price">
+                     {formatCurrency(totalAmount())}
+                  </span>
+               </div>
+               <KioskButton
+                  onClick={handleAddOnCart}
+                  customClass="hern-kiosk__modifier-add-to-cart"
+               >
+                  {t('Add To Cart')}
+               </KioskButton>
+            </div>
+         </div>
+      </div>
+   )
+}
+const AdditionalModifiers = ({
+   eachAdditionalModifier,
+   onCheckClick,
+   config,
+   renderConditionText,
+   errorCategories,
+   selectedOptions,
+}) => {
+   const additionalModifiersType = React.useMemo(
+      () => eachAdditionalModifier.type == 'hidden',
+      [eachAdditionalModifier]
+   )
+   const [showCustomize, setShowCustomize] = useState(
+      !Boolean(additionalModifiersType)
+   )
+   const { t, dynamicTrans } = useTranslation()
+   useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [showCustomize])
+   return (
+      <>
+         <div
+            className="hern-kiosk__additional-modifier"
+            style={{
+               backgroundColor: `${config.kioskSettings.theme.primaryColorDark.value}`,
+            }}
+         >
+            <div
+               className="hern-kiosk__additional-modifier-header"
+               onClick={() => setShowCustomize(prev => !prev)}
+            >
+               <span
+                  className="hern-kiosk__additional-modifier-label"
+                  style={{ color: '#ffffff' }}
+                  data-translation="true"
+                  data-original-value={eachAdditionalModifier.label}
+               >
+                  {eachAdditionalModifier.label}
+               </span>
+               {/* {additionalModifiersType && (
+                              <span
+                                 className="hern-kiosk__additional-modifier-customize"
+                                 style={{ color: '#ffffff' }}
+                              >
+                                 {t('Customize')}
+                              </span>
+                           )} */}
+               {showCustomize ? (
+                  <UpVector stroke="#ffffff" />
+               ) : (
+                  <DownVector stroke="#ffffff" />
+               )}
+            </div>
+            {showCustomize &&
+               eachAdditionalModifier.modifier &&
+               eachAdditionalModifier.modifier.categories.map(
+                  (eachModifierCategory, index) => {
+                     eachModifierCategory.options.length = 1
+                     return (
+                        <div
+                           className="hern-kiosk__modifier-popup-modifier-category hern-kiosk__modifier-popup-modifier-category--nested"
+                           style={{
+                              backgroundColor: `${config.kioskSettings.theme.primaryColorDark.value}`,
+                           }}
+                        >
+                           <label className="hern-kiosk__modifier-category-label">
+                              <Badge
+                                 count={index + 1}
+                                 style={{
+                                    backgroundColor: '#ffffff',
+                                    color: `${config.kioskSettings.theme.primaryColor.value}`,
+                                    fontWeight: '600',
+                                 }}
+                              />
+                              <span
+                                 className="hern-kiosk__modifier-category-label-text"
+                                 style={{
+                                    color: `${config.kioskSettings.theme.modifierTextColor.value}`,
+                                 }}
+                                 data-translation="true"
+                                 data-original-value={eachModifierCategory.name}
+                              >
+                                 {eachModifierCategory.name}
+                              </span>
+                              <span className="hern-kiosk__modifier-category-selection-condition">
+                                 {'('}
+                                 {renderConditionText(eachModifierCategory)}
+                                 {')'}
+                              </span>
+                              {errorCategories.includes(
+                                 eachModifierCategory.id
+                              ) && (
+                                 <>
+                                    <br />
+                                    <span
+                                       style={{
+                                          fontStyle: 'italic',
+                                          fontSize: '1em',
+                                          color: `${config.kioskSettings.theme.categorySelectionWarningColor.value}`,
+                                       }}
+                                    >
+                                       {'('}
+                                       {t(`You have to choose
+                                                      this category`)}
                                        {')'}
                                     </span>
                                  </>
@@ -631,13 +1027,24 @@ export const KioskModifier = props => {
                                              />
 
                                              <span className="hern-kiosk__modifier--option-name">
-                                                {eachOption.name}
-                                                {' ('}
-                                                {formatCurrency(
-                                                   eachOption.price -
-                                                      eachOption.discount
+                                                <span
+                                                   data-translation="true"
+                                                   data-original-value={
+                                                      eachOption.name
+                                                   }
+                                                >
+                                                   {eachOption.name}
+                                                </span>
+                                                {eachOption.price > 0 && (
+                                                   <>
+                                                      {' ('}
+                                                      {formatCurrency(
+                                                         eachOption.price -
+                                                            eachOption.discount
+                                                      )}
+                                                      {')'}
+                                                   </>
                                                 )}
-                                                {')'}
                                              </span>
                                           </div>
                                           {isModifierOptionInProduct() ? (
@@ -667,20 +1074,6 @@ export const KioskModifier = props => {
                                                 }}
                                              />
                                           )}
-                                          {/* <CheckBoxIcon
-                                                showTick={isModifierOptionInProduct()}
-                                                size={30}
-                                                stroke={
-                                                   config.kioskSettings.theme
-                                                      .primaryColor.value
-                                                }
-                                                onClick={() => {
-                                                   onCheckClick(
-                                                      eachOption,
-                                                      eachModifierCategory
-                                                   )
-                                                }}
-                                             /> */}
                                        </div>
                                     )
                                  }
@@ -690,38 +1083,15 @@ export const KioskModifier = props => {
                      )
                   }
                )}
-            {/* </div> */}
-            <div
-               className="hern-kiosk__modifier-popup-footer"
-               style={{
-                  backgroundColor: `${config.kioskSettings.theme.primaryColor.value}`,
-               }}
-            >
-               <div>
-                  <span
-                     className="hern-kiosk__modifier-total-label"
-                     style={{
-                        color: `${config.kioskSettings.theme.secondaryColor.value}`,
-                     }}
-                  >
-                     Total
-                  </span>
-                  <span className="hern-kiosk__modifier-total-price">
-                     {formatCurrency(totalAmount())}
-                  </span>
-               </div>
-               <KioskButton
-                  onClick={handleAddOnCart}
-                  customClass="hern-kiosk__modifier-add-to-cart"
-               >
-                  Add to cart
-               </KioskButton>
-            </div>
          </div>
-      </div>
+      </>
    )
 }
-const getCartItemWithModifiers = (cartItemInput, selectedModifiersInput) => {
+const getCartItemWithModifiers = (
+   cartItemInput,
+   selectedModifiersInput,
+   nestedModifiersInput
+) => {
    const finalCartItem = { ...cartItemInput }
 
    const combinedModifiers = selectedModifiersInput.reduce(
@@ -732,6 +1102,387 @@ const getCartItemWithModifiers = (cartItemInput, selectedModifiersInput) => {
    const dataArrLength = dataArr.length
 
    finalCartItem.childs.data[0].childs.data = combinedModifiers
+   if (nestedModifiersInput) {
+      const nestedCombinedModifiers = nestedModifiersInput.reduce(
+         (acc, obj) => [...acc, ...obj.data],
+         []
+      )
+      finalCartItem.childs.data[0].childs.data[0].childs = {}
+      finalCartItem.childs.data[0].childs.data[0].childs['data'] =
+         nestedCombinedModifiers
+   }
 
    return finalCartItem
 }
+
+const ModifierOptionsList = forwardRef((props, ref) => {
+   const {
+      nestedModifierTemplateId,
+      selectedOptions,
+      config,
+      renderConditionText,
+      forNewItem,
+      edit,
+      productCartDetail,
+   } = props
+   const { brand, isConfigLoading, kioskDetails } = useConfig()
+   const [errorCategories, setErrorCategories] = useState([])
+   const [nestedSelectedOptions, setNestedSelectedOptions] = useState({
+      single: [],
+      multiple: [],
+   })
+   const { t, dynamicTrans } = useTranslation()
+
+   const argsForByLocation = React.useMemo(
+      () => ({
+         params: {
+            brandId: brand?.id,
+            locationId: kioskDetails?.locationId,
+         },
+      }),
+      [brand]
+   )
+   const {
+      loading: templateLoading,
+      error: TemplateError,
+      data,
+   } = useQuery(GET_MODIFIER_BY_ID, {
+      variables: {
+         priceArgs: argsForByLocation,
+         discountArgs: argsForByLocation,
+         modifierCategoryOptionCartItemArgs: argsForByLocation,
+         id: [nestedModifierTemplateId],
+      },
+      skip: isConfigLoading || !brand?.id,
+   })
+   useImperativeHandle(ref, () => ({
+      modifierValidation() {
+         const allSelectedOptions = [
+            ...nestedSelectedOptions.single,
+            ...nestedSelectedOptions.multiple,
+         ]
+         let allCatagories = data.modifiers[0].categories || []
+
+         let errorState = []
+         for (let i = 0; i < allCatagories.length; i++) {
+            const min = allCatagories[i]['limits']['min']
+            const max = allCatagories[i]['limits']['max']
+            const allFoundedOptionsLength = allSelectedOptions.filter(
+               x => x.modifierCategoryID === allCatagories[i].id
+            ).length
+
+            if (allCatagories[i]['isRequired']) {
+               if (
+                  allFoundedOptionsLength > 0 &&
+                  min <= allFoundedOptionsLength &&
+                  (max
+                     ? allFoundedOptionsLength <= max
+                     : allFoundedOptionsLength <=
+                       allCatagories[i].options.length)
+               ) {
+               } else {
+                  errorState.push(allCatagories[i].id)
+                  // setErrorCategories([...errorCategories, allCatagories[i].id])
+               }
+            }
+         }
+         setErrorCategories(errorState)
+         if (errorState.length > 0) {
+            return { status: false }
+         } else {
+            return { status: true, data: allSelectedOptions }
+         }
+      },
+   }))
+   // on check click
+   const onCheckClick = (eachOption, eachModifierCategory) => {
+      //selected option
+      const selectedOption = {
+         modifierCategoryID: eachModifierCategory.id,
+         modifierCategoryOptionsID: eachOption.id,
+         modifierCategoryOptionsPrice: eachOption.price,
+         modifierCategoryOptionsDiscount: eachOption.discount,
+         cartItem: eachOption.cartItem,
+      }
+      //modifierCategoryOptionID
+      //modifierCategoryID
+      if (eachModifierCategory.type === 'single') {
+         const existCategoryIndex = nestedSelectedOptions.single.findIndex(
+            x => x.modifierCategoryID == eachModifierCategory.id
+         )
+         //single-->already exist category
+         if (existCategoryIndex !== -1) {
+            //for uncheck the option
+            if (
+               nestedSelectedOptions.single[existCategoryIndex][
+                  'modifierCategoryOptionsID'
+               ] === eachOption.id &&
+               !eachModifierCategory.isRequired
+            ) {
+               const newSelectedOptions = nestedSelectedOptions.single.filter(
+                  x =>
+                     x.modifierCategoryID !== eachModifierCategory.id &&
+                     x.modifierCategoryOptionsID !== eachOption.id
+               )
+               setNestedSelectedOptions({
+                  ...nestedSelectedOptions,
+                  single: newSelectedOptions,
+               })
+               return
+            }
+            const newSelectedOptions = nestedSelectedOptions.single
+            newSelectedOptions[existCategoryIndex] = selectedOption
+            setNestedSelectedOptions({
+               ...nestedSelectedOptions,
+               single: newSelectedOptions,
+            })
+            return
+         } else {
+            //single--> already not exist
+            setNestedSelectedOptions({
+               ...nestedSelectedOptions,
+               single: [...nestedSelectedOptions.single, selectedOption],
+            })
+            return
+         }
+      }
+      if (eachModifierCategory.type === 'multiple') {
+         const existOptionIndex = nestedSelectedOptions.multiple.findIndex(
+            x => x.modifierCategoryOptionsID == eachOption.id
+         )
+
+         //already exist option
+         if (existOptionIndex !== -1) {
+            const newSelectedOptions = nestedSelectedOptions.multiple.filter(
+               x => x.modifierCategoryOptionsID !== eachOption.id
+            )
+            setNestedSelectedOptions({
+               ...nestedSelectedOptions,
+               multiple: newSelectedOptions,
+            })
+            return
+         }
+         //new option select
+         else {
+            setNestedSelectedOptions({
+               ...nestedSelectedOptions,
+               multiple: [...nestedSelectedOptions.multiple, selectedOption],
+            })
+         }
+      }
+   }
+
+   // default select for modifier option
+   useEffect(() => {
+      if ((forNewItem || edit) && data && data.modifiers.length > 0) {
+         const modifierCategoryOptionsIds = productCartDetail.childs[0].childs
+            .reduce((acc, obj) => [...acc, ...obj.childs], [])
+            .map(x => x?.modifierOption?.id)
+
+         console.log('modifierCategoryOptionsIds', modifierCategoryOptionsIds)
+         //selected modifiers
+         let singleModifier = []
+         let multipleModifier = []
+         if (data.modifiers[0]) {
+            data.modifiers[0].categories.forEach(category => {
+               category.options.forEach(option => {
+                  const selectedOption = {
+                     modifierCategoryID: category.id,
+                     modifierCategoryOptionsID: option.id,
+                     modifierCategoryOptionsPrice: option.price,
+                     cartItem: option.cartItem,
+                  }
+                  if (category.type === 'single') {
+                     if (modifierCategoryOptionsIds.includes(option.id)) {
+                        singleModifier = singleModifier.concat(selectedOption)
+                     }
+                  }
+                  if (category.type === 'multiple') {
+                     if (modifierCategoryOptionsIds.includes(option.id)) {
+                        multipleModifier =
+                           multipleModifier.concat(selectedOption)
+                     }
+                  }
+               })
+            })
+         }
+
+         setNestedSelectedOptions(prevState => ({
+            ...prevState,
+            single: singleModifier,
+            multiple: multipleModifier,
+         }))
+      }
+   }, [data])
+
+   useEffect(() => {
+      if (!templateLoading) {
+         const languageTags = document.querySelectorAll(
+            '[data-translation="true"]'
+         )
+         dynamicTrans(languageTags)
+      }
+   }, [templateLoading])
+
+   if (templateLoading) {
+      return <Loader inline />
+   }
+   console.log('modifierData', data)
+   if (data.modifiers[0].categories.length === 0) {
+      return null
+   }
+   return (
+      <>
+         {data.modifiers[0].categories.map((eachModifierCategory, index) => {
+            return (
+               <div
+                  className="hern-kiosk__modifier-popup-modifier-category"
+                  style={{
+                     backgroundColor: `${config.kioskSettings.theme.primaryColorDark.value}`,
+                  }}
+               >
+                  <label className="hern-kiosk__modifier-category-label">
+                     <Badge
+                        count={index + 1}
+                        style={{
+                           backgroundColor: '#ffffff',
+                           color: `${config.kioskSettings.theme.primaryColor.value}`,
+                           fontWeight: '600',
+                        }}
+                     />
+                     <span
+                        className="hern-kiosk__modifier-category-label-text"
+                        style={{
+                           color: `${config.kioskSettings.theme.modifierTextColor.value}`,
+                        }}
+                        data-translation="true"
+                        data-original-value={eachModifierCategory.name}
+                     >
+                        {eachModifierCategory.name}
+                     </span>
+                     <span className="hern-kiosk__modifier-category-selection-condition">
+                        {'('}
+                        {renderConditionText(eachModifierCategory)}
+                        {')'}
+                     </span>
+                     {errorCategories.includes(eachModifierCategory.id) && (
+                        <>
+                           <br />
+                           <span
+                              style={{
+                                 fontStyle: 'italic',
+                                 fontSize: '1em',
+                                 color: `${config.kioskSettings.theme.categorySelectionWarningColor.value}`,
+                              }}
+                           >
+                              {'('}
+                              {t(`You have to choose this category`)}
+                              {')'}
+                           </span>
+                        </>
+                     )}
+                  </label>
+                  <div className="hern-kiosk__modifier-category-options">
+                     {eachModifierCategory.options.map((eachOption, index) => {
+                        const isModifierOptionInProduct = () => {
+                           const isOptionSelected = nestedSelectedOptions[
+                              eachModifierCategory.type
+                           ].find(
+                              x =>
+                                 x.modifierCategoryID ===
+                                    eachModifierCategory.id &&
+                                 x.modifierCategoryOptionsID === eachOption.id
+                           )
+                           return Boolean(isOptionSelected)
+                        }
+                        return (
+                           <>
+                              <div
+                                 key={index}
+                                 className="hern-kiosk__modifier-category-option"
+                                 onClick={() => {
+                                    onCheckClick(
+                                       eachOption,
+                                       eachModifierCategory
+                                    )
+                                 }}
+                              >
+                                 <div className="hern-kiosk__modifier-category-right">
+                                    <img
+                                       className="hern-kiosk__modifier-category-option-image"
+                                       alt="modifier image"
+                                       src={
+                                          eachOption.image ||
+                                          config.productSettings.defaultImage
+                                             .value
+                                       }
+                                    />
+
+                                    <span className="hern-kiosk__modifier--option-name">
+                                       <span
+                                          data-translation="true"
+                                          data-original-value={eachOption.name}
+                                       >
+                                          {eachOption.name}
+                                       </span>
+                                       {eachOption.price > 0 && (
+                                          <>
+                                             {' ('}
+                                             {formatCurrency(
+                                                eachOption.price -
+                                                   eachOption.discount
+                                             )}
+                                             {')'}
+                                          </>
+                                       )}
+                                    </span>
+                                 </div>
+                                 {isModifierOptionInProduct() ? (
+                                    <RoundCheckBoxIcon
+                                       fill={
+                                          config.kioskSettings.tickBox
+                                             .tickBoxBGonCheck.value
+                                       }
+                                       tickFill={
+                                          config.kioskSettings.tickBox.tickColor
+                                             .value
+                                       }
+                                       size={50}
+                                    />
+                                 ) : (
+                                    <NoTickRoundCheckBoxIcon
+                                       fill={
+                                          config.kioskSettings.theme
+                                             .primaryColor.value
+                                       }
+                                       size={50}
+                                       onClick={() => {
+                                          onCheckClick(
+                                             eachOption,
+                                             eachModifierCategory
+                                          )
+                                       }}
+                                    />
+                                 )}
+                              </div>
+                              {/* {eachOption.additionalModifierTemplateId && (
+                           <ModifierOptionsList
+                              eachModifierCategory={
+                                 selectedProductOption.additionalModifiers[0]
+                                    .modifier.categories
+                              }
+                              selectedOptions={selectedOptions}
+                              config={config}
+                              onCheckClick={onCheckClick}
+                           />
+                        )} */}
+                           </>
+                        )
+                     })}
+                  </div>
+               </div>
+            )
+         })}
+      </>
+   )
+})

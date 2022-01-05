@@ -1,12 +1,12 @@
 import React from 'react'
 
-export const ArrowRightIcon = ({ size = 24, ...props }) => (
+export const ArrowRightIcon = ({ size = 24, color="none", ...props }) => (
    <svg
       xmlns="http://www.w3.org/2000/svg"
       width={size}
       height={size}
       viewBox="0 0 24 24"
-      fill="none"
+      fill={color}
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"

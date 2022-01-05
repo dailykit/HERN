@@ -26,6 +26,7 @@ import {
 import { Divider } from '../../components'
 import { ProgressBar } from './component/progressBar'
 import { PromotionCarousal } from '../../sections/promotionCarousel'
+import * as Scroll from 'react-scroll'
 
 const { Content, Sider, Header, Footer } = Layout
 const { Step } = Steps
@@ -168,7 +169,7 @@ export const MenuSection = props => {
    }
    return (
       <Layout>
-         <Content style={{ height: '25em' }}>
+         <Content>
             {/* Promotion, coupons and progress bar */}
             <Layout style={{ height: '100%' }}>
                <Header
@@ -203,6 +204,9 @@ export const MenuSection = props => {
 }
 
 const KioskMenu = props => {
+   //
+   // warning do not use loader in this component
+   //
    const { config, kioskMenus, setCurrentPage } = props
    const { categoryId, changeCategory } = props
 
@@ -214,12 +218,18 @@ const KioskMenu = props => {
       (categoryId && categoryId.toString()) || '0'
    )
 
-   const { t } = useTranslation()
+   const { t, dynamicTrans } = useTranslation()
 
    const onCategorySelect = e => {
       setSelectedCategory(e.key)
-      changeCategory(e.key)
+      // changeCategory(e.key)
    }
+   useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [])
 
    return (
       <Layout style={{ height: 'calc(100vh - 35em)' }}>
@@ -237,35 +247,26 @@ const KioskMenu = props => {
                {kioskMenus.map((eachCategory, index) => {
                   return (
                      <Menu.Item key={index} style={{ height: '13em' }}>
-                        <a
-                           href={`#${eachCategory.name}`}
-                           onClick={() => {
-                              // document
-                              //    .getElementById(`#${eachCategory.name}`)
-                              // .scrollIntoView({
-                              //    behavior: 'smooth',
-                              //    block: 'start',
-                              // })
-                              console.log(
-                                 document.getElementById(
-                                    `#${menuRef.current.id}`
-                                 )
-                              )
-                              // menuRef.current.id.scrollIntoView({
-                              //    behavior: 'smooth',
-                              //    block: 'start',
-                              // })
-                              console.log(menuRef.current.id)
+                        <div
+                           className="hern-kiosk__menu-page-product-category"
+                           style={{
+                              ...(index == selectedCategory && {
+                                 border: ` 4px solid ${config.kioskSettings.theme.primaryColor.value}`,
+                              }),
                            }}
                         >
-                           <div
-                              className="hern-kiosk__menu-page-product-category"
-                              style={{
-                                 ...((index == selectedCategory ||
-                                    index == categoryId) && {
-                                    border: ` 4px solid ${config.kioskSettings.theme.primaryColor.value}`,
-                                 }),
+                           <Scroll.Link
+                              containerId="hern-kiosk__menu-list"
+                              smooth={true}
+                              // activeClass="hern-on-demand-menu__navigationAnchor-li--active"
+                              onSetActive={to => {
+                                 setSelectedCategory(index)
+                                 // changeCategory(index)
+                                 console.log('thisIsTo', to)
                               }}
+                              to={eachCategory.name}
+                              spy={true}
+                              className="hern-kiosk__category-scroll-link"
                            >
                               <img
                                  src={
@@ -284,11 +285,13 @@ const KioskMenu = props => {
                                        color: `${config.kioskSettings.theme.primaryColor.value}`,
                                     }),
                                  }}
+                                 data-translation="true"
+                                 data-original-value={eachCategory.name}
                               >
                                  {eachCategory.name}
                               </span>
-                           </div>
-                        </a>
+                           </Scroll.Link>
+                        </div>
                      </Menu.Item>
                   )
                })}
@@ -335,17 +338,23 @@ const KioskMenu = props => {
                      </Col>
                   </Row>
                </Header>
-               <Content class="hern-kiosk__menu-product-list">
+               <Content
+                  className="hern-kiosk__menu-product-list"
+                  id="hern-kiosk__menu-list"
+               >
                   {kioskMenus.map((eachCategory, index) => {
                      // VegNonVegTYpe change into type
                      const groupedByType = React.useMemo(() => {
-                        return _.chain(eachCategory.products)
+                        const data = _.chain(eachCategory.products)
                            .groupBy('VegNonVegType')
                            .map((value, key) => ({
                               type: key,
                               products: value,
                            }))
                            .value()
+                        const nullData = data.filter(x => x.type === 'null')
+                        const nonNullData = data.filter(x => x.type !== 'null')
+                        return [...nonNullData, ...nullData]
                      }, [])
                      const [currentGroupProducts, setCurrentGroupedProduct] =
                         useState(groupedByType[0].products)
@@ -355,68 +364,82 @@ const KioskMenu = props => {
 
                      const onRadioClick = e => {
                         setCurrentGroupedProduct(prev => {
-                           return groupedByType.find(
-                              x => x.type === e.target.value
-                           ).products
+                           return groupedByType.find(x => x.type === e).products
                         })
-                        setCurrentGroup(e.target.value)
+                        setCurrentGroup(e)
                      }
+                     useEffect(() => {
+                        const languageTags = document.querySelectorAll(
+                           '[data-translation="true"]'
+                        )
+                        dynamicTrans(languageTags)
+                     }, [currentGroup])
                      return (
-                        <>
-                           <div id={eachCategory.name} ref={menuRef}></div>
-                           {eachCategory?.imageUrl ? (
+                        <Scroll.Element
+                           name={eachCategory.name}
+                           className="hern-kiosk__scroll-element"
+                        >
+                           <div name={eachCategory.name} ref={menuRef}></div>
+                           {eachCategory?.bannerImageUrl ? (
                               <img
-                                 src={eachCategory?.imageUrl}
+                                 src={eachCategory?.bannerImageUrl}
                                  className="hern-kiosk__menu-category-banner-img"
                               />
                            ) : (
-                              <p className="hern-kiosk__menu-category-name">
+                              <p
+                                 className="hern-kiosk__menu-category-name"
+                                 data-translation="true"
+                                 data-original-value={eachCategory.name}
+                              >
                                  {eachCategory.name}
                               </p>
                            )}
                            {groupedByType.length > 1 && (
                               <div className="hern-kiosk__menu-product-type">
                                  <Space>
-                                    <Radio.Group
-                                       defaultValue="a"
-                                       style={{ marginTop: 16 }}
-                                       onChange={onRadioClick}
-                                    >
-                                       {groupedByType.map((eachType, index) => {
-                                          return (
-                                             <Radio.Button
-                                                value={eachType.type}
-                                                className="hern-kiosk__menu-product-type-radio-btn"
-                                                style={{
-                                                   backgroundColor:
-                                                      currentGroup ===
-                                                      eachType.type
-                                                         ? config.kioskSettings
-                                                              .theme
-                                                              .primaryColor
-                                                              .value
-                                                         : config.kioskSettings
-                                                              .theme
-                                                              .primaryColorLight
-                                                              .value,
-                                                   color:
-                                                      currentGroup ===
-                                                      eachType.type
-                                                         ? '#ffffff'
-                                                         : config.kioskSettings
-                                                              .theme
-                                                              .primaryColor
-                                                              .value,
-                                                   borderRadius: '0.5em',
-                                                }}
-                                             >
-                                                {eachType.type == 'null'
-                                                   ? t('Others')
-                                                   : eachType.type}
-                                             </Radio.Button>
-                                          )
-                                       })}
-                                    </Radio.Group>
+                                    {groupedByType.map((eachType, index) => {
+                                       return (
+                                          <button
+                                             onClick={() =>
+                                                onRadioClick(eachType.type)
+                                             }
+                                             // value={eachType.type}
+                                             key={index}
+                                             className="hern-kiosk__menu-product-type-radio-btn"
+                                             data-translation="true"
+                                             data-original-value={eachType.type}
+                                             style={{
+                                                backgroundColor:
+                                                   currentGroup ===
+                                                   eachType.type
+                                                      ? config.kioskSettings
+                                                           .theme.primaryColor
+                                                           .value
+                                                      : config.kioskSettings
+                                                           .theme
+                                                           .primaryColorLight
+                                                           .value,
+                                                color:
+                                                   currentGroup ===
+                                                   eachType.type
+                                                      ? '#ffffff'
+                                                      : config.kioskSettings
+                                                           .theme.primaryColor
+                                                           .value,
+                                                borderRadius: '0.5em',
+                                                border:
+                                                   currentGroup ===
+                                                   eachType.type
+                                                      ? `1px solid ${config.kioskSettings.theme.successColor.value}`
+                                                      : 'none',
+                                             }}
+                                          >
+                                             {eachType.type == 'null'
+                                                ? t('Others')
+                                                : eachType.type}
+                                          </button>
+                                       )
+                                    })}
                                  </Space>
                               </div>
                            )}
@@ -443,7 +466,7 @@ const KioskMenu = props => {
                               )}
                            </Row>
                            <Divider />
-                        </>
+                        </Scroll.Element>
                      )
                   })}
                </Content>

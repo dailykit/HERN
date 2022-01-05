@@ -1,7 +1,7 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import isEmpty from 'lodash/isEmpty'
 import gql from 'graphql-tag'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import {
    CREATE_CART_ITEMS,
    GET_CART,
@@ -21,9 +21,13 @@ export const CartContext = React.createContext()
 const initialState = {
    cart: null,
    cartItems: null,
+   kioskPaymentOption: {
+      cod: null,
+      terminal: null,
+   },
 }
 
-const reducer = (state = initialState, { type, payload }) => {
+const reducer = (state, { type, payload }) => {
    console.log('cartDataInReducer', payload)
 
    switch (type) {
@@ -31,6 +35,8 @@ const reducer = (state = initialState, { type, payload }) => {
          return { ...state, cart: payload }
       case 'CART_ITEMS':
          return { ...state, cartItems: payload }
+      case 'KIOSK_PAYMENT_OPTION':
+         return { ...state, kioskPaymentOption: payload }
       default:
          return state
    }
@@ -83,16 +89,54 @@ export const CartProvider = ({ children }) => {
    })
 
    useEffect(() => {
-      if (cartItemsData?.cart?.cartItems) {
-         const combinedCartItems = combineCartItems(
-            cartItemsData?.cart?.cartItems
+      console.log('kiosk paymentOption', cartData)
+      if (!isCartLoading && !isEmpty(cartData) && oiType === 'Kiosk Ordering') {
+         const terminalPaymentOption = cartData?.cart?.paymentMethods.find(
+            option =>
+               option?.supportedPaymentOption?.paymentOptionLabel === 'TERMINAL'
          )
+         console.log('kiosk paymentOption 1', terminalPaymentOption)
+
+         const codPaymentOption = cartData?.cart?.paymentMethods.find(
+            option =>
+               option?.supportedPaymentOption?.paymentOptionLabel === 'CASH'
+         )
+         console.log('kiosk paymentOption 2', codPaymentOption)
+         const terminalPaymentOptionId = !isEmpty(terminalPaymentOption)
+            ? terminalPaymentOption?.id
+            : null
+         console.log('kiosk paymentOption 3', terminalPaymentOptionId)
+         const codPaymentOptionId = !isEmpty(codPaymentOption)
+            ? codPaymentOption?.id
+            : null
+         console.log('kiosk paymentOption 4', codPaymentOptionId)
+         console.log(
+            'kiosk paymentOption 5',
+            terminalPaymentOptionId,
+            codPaymentOptionId
+         )
+         cartReducer({
+            type: 'KIOSK_PAYMENT_OPTION',
+            payload: {
+               cod: codPaymentOptionId,
+               terminal: terminalPaymentOptionId,
+            },
+         })
+      }
+   }, [cartData, isCartLoading])
+
+   useEffect(() => {
+      if (cartItemsData?.cartItems) {
+         const combinedCartItems = combineCartItems(cartItemsData?.cartItems)
          console.log('combinedCartItems', combinedCartItems)
          setCombinedCartData(combinedCartItems)
       } else {
-         setCombinedCartData([])
+         const localCartId = localStorage.getItem('cart-id')
+         if (!localCartId && !isAuthenticated) {
+            setCombinedCartData([])
+         }
       }
-   }, [cartItemsData?.cart?.cartItems])
+   }, [cartItemsData?.cartItems])
 
    //create cart
    const [createCart] = useMutation(MUTATIONS.CART.CREATE, {
@@ -112,9 +156,12 @@ export const CartProvider = ({ children }) => {
    //update cart
    const [updateCart] = useMutation(MUTATIONS.CART.UPDATE, {
       onCompleted: data => {
-         if (!(oiType === 'Kiosk')) {
+         if (!(oiType === 'Kiosk Ordering')) {
             localStorage.removeItem('cart-id')
          }
+         addToast('Update Successfully!', {
+            appearance: 'success',
+         })
          console.log('🍾 Cart updated with data!')
       },
       onError: error => {
@@ -173,6 +220,7 @@ export const CartProvider = ({ children }) => {
          //without login
          if (!cartData?.cart) {
             //new cart
+            console.log('new cart', cartState)
             const object = {
                cartItems: {
                   data: cartItems,
@@ -181,6 +229,11 @@ export const CartProvider = ({ children }) => {
                usedOrderInterface: oiType,
                orderTabId: selectedOrderTab?.id || null,
                locationId: locationId || null,
+               ...(oiType === 'Kiosk Ordering' &&
+                  cartState.kioskPaymentOption.terminal && {
+                     toUseAvailablePaymentOptionId:
+                        cartState.kioskPaymentOption.terminal,
+                  }),
             }
             console.log('object new cart', object)
             createCart({
@@ -214,7 +267,8 @@ export const CartProvider = ({ children }) => {
                orderTabId: selectedOrderTab?.id || null,
                locationId: locationId || null,
                paymentMethodId: user.platform_customer.defaultPaymentMethodId,
-               stripeCustomerId: user.platform_customer.stripeCustomerId,
+               brandId: brand.id,
+               paymentCustomerId: user.platform_customer?.paymentCustomerId,
                address: user.platform_customer.defaultCustomerAddress,
                customerKeycloakId: user?.keycloakId,
                cartItems: {
@@ -255,7 +309,7 @@ export const CartProvider = ({ children }) => {
          variables: {
             where: {
                paymentStatus: { _eq: 'PENDING' },
-               status: { _eq: 'ORDER_PENDING' },
+               status: { _eq: 'CART_PENDING' },
                customerKeycloakId: {
                   _eq: user?.keycloakId,
                },
@@ -292,12 +346,13 @@ export const CartProvider = ({ children }) => {
                      variables: {
                         id: storedCartId,
                         _set: {
-                           isTest: user.isTest,
+                           // isTest: user.isTest,
                            customerKeycloakId: user.keycloakId,
                            paymentMethodId:
                               user.platform_customer?.defaultPaymentMethodId,
-                           stripeCustomerId:
-                              user.platform_customer?.stripeCustomerId,
+                           brandId: brand.id,
+                           paymentCustomerId:
+                              user.platform_customer?.paymentCustomerId,
                            address:
                               user.platform_customer?.defaultCustomerAddress,
                            ...(user.platform_customer.firstName && {
@@ -318,18 +373,21 @@ export const CartProvider = ({ children }) => {
             }
          },
       })
-
+   console.log('cartData', cartData?.cart)
    return (
       <CartContext.Provider
          value={{
             cartState: {
                cart: cartData?.cart,
-               cartItems: cartItemsData?.cart?.cartItems,
+               cartItems: cartItemsData?.cartItems,
+               kioskPaymentOption: cartState.kioskPaymentOption,
             },
             cartReducer,
             addToCart,
             combinedCartItems,
             setStoredCartId,
+            isCartLoading,
+            cartItemsLoading,
             methods: {
                cartItems: {
                   delete: deleteCartItems,
@@ -344,3 +402,5 @@ export const CartProvider = ({ children }) => {
       </CartContext.Provider>
    )
 }
+
+export const useCart = () => useContext(CartContext)

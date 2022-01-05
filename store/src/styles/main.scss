@@ -27,6 +27,10 @@
 @use './components/login_v1.scss';
 @use './components/locationSelector.scss';
 @use './components/kiosk.scss';
+@use './components/fulfillmentcart.scss';
+@use './components/userInfo.scss';
+@use './components/userType.scss';
+
 
 @use './sections/register';
 @use './sections/our-plans';
@@ -49,6 +53,8 @@
 @use './sections/order';
 @use './sections/onDemandCart.scss';
 @use './sections/kiosk/kiosk-section.scss';
+@use './sections/slider-section.scss';
+@use './sections/product-gallery.scss';
 
 /*Account routes pages*/
 @use './sections/account/addresses';
@@ -60,3 +66,5 @@
 @use './sections/account/profile';
 
 @use './components/on_demand_cart_bar.scss';
+@use './sections/product.scss';
+@use './components/nutritition.scss';
