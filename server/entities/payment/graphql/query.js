@@ -41,12 +41,15 @@ query cart($id: Int!) {
     isTest
     amount
     orderId
+    customerId
+    customerKeycloakId
     balancePayment
     retryPaymentMethod
     paymentMethodId
     paymentCustomerId
     statementDescriptor
     toUseAvailablePaymentOptionId
+    customerInfo
     availablePaymentOption {
       id
       label
