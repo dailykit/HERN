@@ -2351,3 +2351,25 @@
 [2022-01-03T07:00:56.893Z] [PAYTM] INFO [NODE-SDK:1.0.0:9bedc31a-a2e1-4efc-af89-c81318983e3a] <EncDecUtil>: verifyChecksumByString returns: true
 [2022-01-03T07:00:56.893Z] [PAYTM] INFO [NODE-SDK:1.0.0:9bedc31a-a2e1-4efc-af89-c81318983e3a] <Request>: signature validation passed 
 [2022-01-03T07:00:56.893Z] [PAYTM] INFO [NODE-SDK:1.0.0:9bedc31a-a2e1-4efc-af89-c81318983e3a] <Request>: Execution completed with raw json response: {"head":{"responseTimestamp":"1641193257799","version":"v1","signature":"X+/UezBhjrprOn3c4mTooyVh5Rm39jnJt8qU0qRR+3yiG7Xwvtkt+w3BmIuRp88tm+8eFbOvsZ5FLkdd5y23Wynh9AMvO8ZyS2gROQct6Yk="},"body":{"resultInfo":{"resultStatus":"S","resultCode":"0000","resultMsg":"Success"},"txnToken":"0eeef2a17aa9494093f91534f5e777ce1641193257339","isPromoCodeValid":false,"authenticated":false}}
+[2022-01-05T08:46:21.771Z] [PAYTM] INFO [NODE-SDK1.0.0] <MerchantProperties>: initialize called
+[2022-01-05T08:46:21.772Z] [PAYTM] INFO [NODE-SDK1.0.0] <MerchantProperties>: Setting Environment for STAGE
+[2022-01-05T09:02:08.796Z] [PAYTM] INFO [NODE-SDK1.0.0] <MerchantProperties>: initialize called
+[2022-01-05T09:02:08.797Z] [PAYTM] INFO [NODE-SDK1.0.0] <MerchantProperties>: Setting Environment for STAGE
+[2022-01-05T09:02:08.798Z] [PAYTM] INFO [NODE-SDK:1.0.0:de2a4ad7-5b46-4bb3-9fec-6f2da7963195] <Payment>: In getPaymentStatus PaymentStatusDetail: {"orderId":"1400","readTimeout":8000}
+[2022-01-05T09:02:08.798Z] [PAYTM] INFO [NODE-SDK:1.0.0:de2a4ad7-5b46-4bb3-9fec-6f2da7963195] <Payment>: validatePaymentStatusDetailObject for request: {"orderId":"1400","readTimeout":8000}
+[2022-01-05T09:02:08.798Z] [PAYTM] INFO [NODE-SDK:1.0.0:de2a4ad7-5b46-4bb3-9fec-6f2da7963195] <Payment>:  validatePaymentStatusDetailObject returns true 
+[2022-01-05T09:02:08.798Z] [PAYTM] INFO [NODE-SDK:1.0.0:de2a4ad7-5b46-4bb3-9fec-6f2da7963195] <CommonUtil>: In getSecureRequestHeader
+[2022-01-05T09:02:08.799Z] [PAYTM] INFO [NODE-SDK:1.0.0:de2a4ad7-5b46-4bb3-9fec-6f2da7963195] <Payment>: NativePaymentStatusRequest object {"head":{"version":"v2","channelId":null,"requestTimestamp":"1641373328798","workFlow":null,"signature":null},"body":{"mid":"AEiAMj13465280943458","orderId":"1400"}}
+[2022-01-05T09:02:08.799Z] [PAYTM] INFO [NODE-SDK:1.0.0:de2a4ad7-5b46-4bb3-9fec-6f2da7963195] <EncDecUtil>: generateSignature() called
+[2022-01-05T09:02:08.799Z] [PAYTM] INFO [NODE-SDK:1.0.0:de2a4ad7-5b46-4bb3-9fec-6f2da7963195] <EncDecUtil>: generateRandomString() called
+[2022-01-05T09:02:08.801Z] [PAYTM] INFO [NODE-SDK:1.0.0:de2a4ad7-5b46-4bb3-9fec-6f2da7963195] <EncDecUtil>: generateSalt returns: gKh7
+[2022-01-05T09:02:08.801Z] [PAYTM] INFO [NODE-SDK:1.0.0:de2a4ad7-5b46-4bb3-9fec-6f2da7963195] <EncDecUtil>: getChecksumFromString returns: HRylnULkfqvx2XGBP0eOsnTv/WmUMbjLA2i8R4pOSlHOmqRWOMr6A4/XrO7qMzkeMRAfWw73JxtW+l1Y0lgbeWp/sTWQBunKyWvXwW0FqOo=
+[2022-01-05T09:02:08.802Z] [PAYTM] INFO [NODE-SDK:1.0.0:de2a4ad7-5b46-4bb3-9fec-6f2da7963195] <Request>: process for request: {"head":{"version":"v2","channelId":null,"requestTimestamp":"1641373328798","workFlow":null,"signature":"HRylnULkfqvx2XGBP0eOsnTv/WmUMbjLA2i8R4pOSlHOmqRWOMr6A4/XrO7qMzkeMRAfWw73JxtW+l1Y0lgbeWp/sTWQBunKyWvXwW0FqOo="},"body":{"mid":"AEiAMj13465280943458","orderId":"1400"}}
+[2022-01-05T09:02:08.802Z] [PAYTM] INFO [NODE-SDK:1.0.0:de2a4ad7-5b46-4bb3-9fec-6f2da7963195] <Request>: executeCurl called 
+[2022-01-05T09:02:08.802Z] [PAYTM] INFO [NODE-SDK:1.0.0:de2a4ad7-5b46-4bb3-9fec-6f2da7963195] <Request>: will make API call to: https://securegw-stage.paytm.in/merchant-status/api/v1/getPaymentStatus
+[2022-01-05T09:02:09.028Z] [PAYTM] INFO [NODE-SDK:1.0.0:de2a4ad7-5b46-4bb3-9fec-6f2da7963195] <Request>: API response received upon successful execution: {"head":{"responseTimestamp":"1641373329621","version":"v1"},"body":{"resultInfo":{"resultStatus":"TXN_FAILURE","resultCode":"501","resultMsg":"System Error."}}}
+[2022-01-05T09:02:09.029Z] [PAYTM] INFO [NODE-SDK:1.0.0:de2a4ad7-5b46-4bb3-9fec-6f2da7963195] <Request>: Raw Response: {"head":{"responseTimestamp":"1641373329621","version":"v1"},"body":{"resultInfo":{"resultStatus":"TXN_FAILURE","resultCode":"501","resultMsg":"System Error."}}}
+[2022-01-05T09:02:09.030Z] [PAYTM] INFO [NODE-SDK:1.0.0:de2a4ad7-5b46-4bb3-9fec-6f2da7963195] <Request>: Response Data Object: {"head":{"responseTimestamp":"1641373329621","version":"v1"},"body":{"resultInfo":{"resultStatus":"TXN_FAILURE","resultMsg":"System Error.","resultCode":"501"},"extraParamsMap":{}}}
+[2022-01-05T09:02:09.030Z] [PAYTM] INFO [NODE-SDK:1.0.0:de2a4ad7-5b46-4bb3-9fec-6f2da7963195] <Request>: Execution completed with raw json response: {"head":{"responseTimestamp":"1641373329621","version":"v1"},"body":{"resultInfo":{"resultStatus":"TXN_FAILURE","resultCode":"501","resultMsg":"System Error."}}}
+[2022-01-05T09:25:15.118Z] [PAYTM] INFO [NODE-SDK1.0.0] <MerchantProperties>: initialize called
+[2022-01-05T09:25:15.119Z] [PAYTM] INFO [NODE-SDK1.0.0] <MerchantProperties>: Setting Environment for STAGE
