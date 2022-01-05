@@ -208,7 +208,10 @@ export const UserProvider = ({ children }) => {
             const index = user.carts.findIndex(
                node => node.paymentStatus === 'SUCCEEDED'
             )
-            if (index !== -1) {
+            if (
+               index !== -1 &&
+               user.subscriptionOnboardStatus !== 'ONBOARDED'
+            ) {
                updateBrandCustomer({
                   skip: !user?.brandCustomerId,
                   variables: {

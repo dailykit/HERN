@@ -345,13 +345,16 @@ const KioskMenu = props => {
                   {kioskMenus.map((eachCategory, index) => {
                      // VegNonVegTYpe change into type
                      const groupedByType = React.useMemo(() => {
-                        return _.chain(eachCategory.products)
+                        const data = _.chain(eachCategory.products)
                            .groupBy('VegNonVegType')
                            .map((value, key) => ({
                               type: key,
                               products: value,
                            }))
                            .value()
+                        const nullData = data.filter(x => x.type === 'null')
+                        const nonNullData = data.filter(x => x.type !== 'null')
+                        return [...nonNullData, ...nullData]
                      }, [])
                      const [currentGroupProducts, setCurrentGroupedProduct] =
                         useState(groupedByType[0].products)

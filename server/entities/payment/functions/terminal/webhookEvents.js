@@ -4,11 +4,12 @@ import get_env from '../../../../../get_env'
 
 const terminalWebhookEvents = async arg => {
    try {
-      const { cartPaymentId, status, transactionId } = arg.body
+      const { cartPaymentId, status, transactionId, transactionRemark } =
+         arg.body
       const requiredData = {
          cartPaymentId,
-         transactionRemark: arg.body,
          paymentStatus: status,
+         transactionRemark,
          transactionId
       }
       console.log('requiredData', requiredData)

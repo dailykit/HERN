@@ -305,26 +305,6 @@ export const UPDATE_BRAND_CUSTOMER = gql`
       updateBrandCustomer(pk_columns: { id: $id }, _set: $_set) {
          id
          subscriptionOnboardStatus
-         subscriptionOccurencesFullReport {
-            brand_customerId
-            cartId
-            cutoffTimeStamp
-            fulfillmentDate
-            isItemCountValid
-            isAuto
-            addedProductsCount
-            allTimeRank
-            betweenPause
-            isPaused
-            isSkipped
-            keycloakId
-            paymentStatus
-            percentageSkipped
-            skippedAtThisStage
-            subscriptionId
-            subscriptionOccurenceId
-            totalProductsToBeAdded
-         }
       }
    }
 `
