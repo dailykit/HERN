@@ -691,7 +691,7 @@ export const MultipleImageUpload = props => {
    const updateSetting = (data) => {
       if (data) {
          console.log("path", path, "data", data)
-         const e = { target: { name: path, value: data } }
+         const e = { target: { name: path, value: { "url": [...data] } } }
          onConfigChange(e, data)
          // configSaveHandler(configJSON)
       }
@@ -709,7 +709,7 @@ export const MultipleImageUpload = props => {
       <>
          {editMode ? (
             <Flex width="50%" style={{ position: 'relative', top: '22px' }}>
-               {fieldDetail?.value?.url !== null &&
+               {(fieldDetail?.value?.url && fieldDetail?.value?.url !== null) &&
                   fieldDetail?.value?.url.length ? (
                   <Gallery
                      list={fieldDetail.value.url || []}
@@ -781,6 +781,13 @@ export const ImageContainer = styled.div`
    }
    .ant-carousel .slick-dots-bottom {
       height: 2px;
+   }
+   .ant-carousel>.slick-slider{
+      height:10rem !important;
+      .slick-list>.slick-track>.slick-slide>div>div>img{
+         max-height:120px !important;
+         width:auto;
+      }
    }
 `
 export const PhoneNumSelector = styled.div`
