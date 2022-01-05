@@ -10,7 +10,7 @@ import { get_env } from '../../utils/get_env'
 export const ContactUs = ({ config }) => {
    const { addToast } = useToasts()
    const [noReplyEmail, setNoReplyEmail] = useState('')
-   const [formState, setFormState] = useState(false)
+   const [formState, setFormState] = useState(true)
    const [sendMail, { loading }] = useMutation(SEND_MAIL, {
       onCompleted: () => {
          setFormState(false)
