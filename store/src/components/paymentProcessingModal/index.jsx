@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { Result, Spin, Button, Modal } from 'antd'
 import { Wrapper } from './styles'
 import { Button as StyledButton } from '../button'
-import { useWindowSize, isKiosk } from '../../utils'
+import { useWindowSize, isKiosk, formatTerminalStatus } from '../../utils'
 
 const PaymentProcessingModal = ({
    isOpen,
@@ -75,30 +75,7 @@ const PaymentProcessingModal = ({
                />
             )
             title = 'Successfully placed your order'
-            subtitle = 'You will be redirected to your booking page shortly'
-         } else if (cartPayment?.paymentStatus === 'REQUIRES_ACTION') {
-            icon = (
-               <img
-                  src="/assets/gifs/authentication.gif"
-                  className="payment_status_loader"
-               />
-            )
-            title = 'Looks like your card requires authentication'
-            subtitle =
-               'An additional verification step which direct you to an authentication page on your bank’s website'
-            extra = [
-               <Button
-                  type="primary"
-                  className="authenticateBtn"
-                  href={cartPayment?.actionUrl}
-                  target="_blank"
-               >
-                  Authenticate Here
-               </Button>,
-               <Button type="link" danger onClick={cancelPayment}>
-                  Cancel Payment
-               </Button>,
-            ]
+            subtitle = 'You will be redirected to your order page shortly'
          } else if (cartPayment?.paymentStatus === 'FAILED') {
             icon = (
                <img
@@ -107,7 +84,9 @@ const PaymentProcessingModal = ({
                />
             )
             title = 'Payment Failed'
-            subtitle = 'Something went wrong'
+            subtitle =
+               formatTerminalStatus[cartPayment.transactionRemark?.StatusCode]
+                  .message
             extra = [
                <Button
                   type="primary"
@@ -131,26 +110,6 @@ const PaymentProcessingModal = ({
             )
             title = 'Payment Cancelled'
             subtitle = 'You cancelled your payment process'
-            extra = [
-               <Button
-                  type="primary"
-                  className="tryOtherPayment"
-                  key="console"
-                  onClick={closeModalHandler}
-               >
-                  Try other payment method
-               </Button>,
-            ]
-         } else if (cartPayment?.paymentStatus === 'REQUIRES_PAYMENT_METHOD') {
-            icon = (
-               <img
-                  src="/assets/gifs/payment_fail.gif"
-                  className="payment_status_loader"
-               />
-            )
-            title = 'Payment Failed'
-            subtitle =
-               "Your payment is failed since your bank doesn't authenticate you"
             extra = [
                <Button
                   type="primary"

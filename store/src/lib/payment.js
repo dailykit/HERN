@@ -103,6 +103,8 @@ export const PaymentProvider = ({ children }) => {
    const { cartState } = useCart()
    const { addToast } = useToasts()
 
+   const BY_PASS_TERMINAL_PAYMENT = get_env('BY_PASS_TERMINAL_PAYMENT')
+
    // subscription to get cart payment info
    const { error: hasCartPaymentError, loading: isCartPaymentLoading } =
       useSubscription(GET_CART_PAYMENT_INFO, {
@@ -521,7 +523,7 @@ export const PaymentProvider = ({ children }) => {
                closeModal={isFailed => onPaymentModalClose(isFailed)}
                normalModalClose={normalModalClose}
                cancelPayment={onCancelledHandler}
-               isTestingByPass={true}
+               isTestingByPass={BY_PASS_TERMINAL_PAYMENT === 'true'}
                byPassTerminalPayment={byPassTerminalPayment}
                cancelTerminalPayment={cancelTerminalPayment}
                codPaymentOptionId={cartState.kioskPaymentOption.cod}
