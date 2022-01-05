@@ -198,7 +198,7 @@ export const ContactUs = ({ config }) => {
                               placeholder="Message"
                               id="textarea_message"
                               name="contact-message"
-                              rows="15"
+                              rows="8"
                               className="form-control"
                            ></textarea>
                         </div>
