@@ -6,15 +6,17 @@ import get_env from '../../../../../get_env'
 // start transaction for native flow with paytm
 
 const makeRequest = async ({
-   baseUrl = 'https://securegw.paytm.in',
+   baseUrl = '',
    apiPath = '',
    data = {},
    headers = {
       'Content-Type': 'application/json'
    }
 }) => {
+   const PAYTM_API_URL = await get_env('PAYTM_API_URL')
+   const url = baseUrl ? `${baseUrl}${apiPath}` : `${PAYTM_API_URL}${apiPath}`
    const response = await axios({
-      url: `${baseUrl}${apiPath}`,
+      url,
       data,
       headers,
       method: 'POST'
