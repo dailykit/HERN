@@ -32,6 +32,7 @@ export const getFieldUI = (fieldKey, configJSON, onConfigChange, isValid, setIsV
     const indentation = `${fieldKey.split(".").length * 6}px`
     let configUI
 
+
     if (field.dataType === "boolean" && field.userInsertType === "toggle") {
         configUI = (
             <>{editMode ? <Toggle
@@ -281,6 +282,12 @@ export const getFieldUI = (fieldKey, configJSON, onConfigChange, isValid, setIsV
                 path={fieldKey}
                 onConfigChange={onConfigChange}
             />
+        )
+    } else if (field.userInsertType === 'productSelector' && field.dataType === 'product') {
+        configUI = (
+            <>
+            <p>product-selector</p>
+            </>
         )
     }
     return <div data-config-path={fieldKey}>{configUI}</div>

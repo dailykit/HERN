@@ -20,6 +20,12 @@ const initialState = {
    kioskDetails: null,
    locationId: null,
    isIdleScreen: false,
+   userLocation: null, // this location only for get store location,
+   storeStatus: {
+      status: false,
+      message: '',
+      loading: true,
+   },
 }
 
 const reducers = (state, { type, payload }) => {
@@ -40,6 +46,10 @@ const reducers = (state, { type, payload }) => {
          return { ...state, locationId: payload }
       case 'SET_IDLE_SCREEN':
          return { ...state, isIdleScreen: payload }
+      case 'SET_USER_LOCATION':
+         return { ...state, userLocation: payload }
+      case 'SET_STORE_STATUS':
+         return { ...state, storeStatus: payload }
       default:
          return state
    }
@@ -267,6 +277,8 @@ export const useConfig = (globalType = '') => {
       currentPage,
       setIsIdleScreen,
       isIdleScreen: state.isIdleScreen,
+      userLocation: state.userLocation,
+      storeStatus: state.storeStatus,
       clearCurrentPage,
    }
 }
