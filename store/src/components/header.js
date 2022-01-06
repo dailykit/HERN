@@ -47,6 +47,7 @@ export const Header = ({ settings, navigationMenus }) => {
       orderTabs,
       locationId,
       selectedOrderTab,
+      storeStatus,
    } = useConfig()
    const router = useRouter()
    const { width } = useWindowSize()
@@ -123,11 +124,11 @@ export const Header = ({ settings, navigationMenus }) => {
       useState(null)
    const [preOrderPickupRecurrence, setPreOrderPickupReoccurrence] =
       useState(null)
-   const [storeStatus, setStoreStatus] = useState({
-      status: false,
-      message: '',
-      loading: true,
-   })
+   // const [storeStatus, setStoreStatus] = useState({
+   //    status: false,
+   //    message: '',
+   //    loading: true,
+   // })
 
    const newNavigationMenus = DataWithChildNodes(navigationMenus)
 
@@ -143,21 +144,47 @@ export const Header = ({ settings, navigationMenus }) => {
    React.useEffect(() => {
       const storeLocationId = localStorage.getItem('storeBrandLocationId')
       if (storeLocationId) {
+         console.log('inTheSafeZone')
          dispatch({
             type: 'SET_LOCATION_ID',
             payload: JSON.parse(storeLocationId),
          })
-         const localUserLocation = localStorage.getItem('userLocation')
-         setAddress(JSON.parse(localUserLocation))
-         setStoreStatus(prev => ({
-            status: true,
-            message: 'Store available on your location.',
-            loading: false,
-         }))
+         const localUserLocation = JSON.parse(
+            localStorage.getItem('userLocation')
+         )
+         setAddress({ ...localUserLocation, ...localUserLocation.address })
+         dispatch({
+            type: 'SET_USER_LOCATION',
+            payload: { ...localUserLocation, ...localUserLocation.address },
+         })
+         // setStoreStatus(prev => ({
+         //    status: true,
+         //    message: 'Store available on your location.',
+         //    loading: false,
+         // }))
+         dispatch({
+            type: 'SET_STORE_STATUS',
+            payload: {
+               status: true,
+               message: 'Store available on your location.',
+               loading: false,
+            },
+         })
       } else {
          const localUserLocation = localStorage.getItem('userLocation')
          if (localUserLocation) {
-            setAddress(JSON.parse(localUserLocation))
+            const localUserLocationParse = JSON.parse(localUserLocation)
+            setAddress({
+               ...localUserLocationParse,
+               ...localUserLocationParse.address,
+            })
+            dispatch({
+               type: 'SET_USER_LOCATION',
+               payload: {
+                  ...localUserLocationParse,
+                  ...localUserLocationParse.address,
+               },
+            })
             return
          }
          const geolocation = isClient ? window.navigator.geolocation : false
@@ -204,6 +231,15 @@ export const Header = ({ settings, navigationMenus }) => {
                            secondaryText,
                            ...address,
                         }))
+                        dispatch({
+                           type: 'SET_USER_LOCATION',
+                           payload: {
+                              mainText,
+                              secondaryText,
+                              ...address,
+                           },
+                        })
+
                         localStorage.setItem(
                            'userLocation',
                            JSON.stringify({
@@ -214,7 +250,6 @@ export const Header = ({ settings, navigationMenus }) => {
                                  secondaryText,
                                  ...address,
                               },
-                              ...address,
                            })
                         )
                      }
@@ -226,11 +261,19 @@ export const Header = ({ settings, navigationMenus }) => {
             const error = () => {
                console.log('this is error')
                setShowLocationSelectionPopup(true)
-               setStoreStatus(prev => ({
-                  status: true,
-                  message: 'Please select location.',
-                  loading: false,
-               }))
+               // setStoreStatus(prev => ({
+               //    status: true,
+               //    message: 'Please select location.',
+               //    loading: false,
+               // }))
+               dispatch({
+                  type: 'SET_STORE_STATUS',
+                  payload: {
+                     status: true,
+                     message: 'Please select location.',
+                     loading: false,
+                  },
+               })
             }
             geolocation.getCurrentPosition(success, error)
          }
@@ -252,7 +295,19 @@ export const Header = ({ settings, navigationMenus }) => {
          }
       }
    }, [orderTabs])
-
+   console.log(
+      'address',
+      address,
+      !address?.city,
+      !address?.state,
+      !configBrand,
+      !configBrand?.id,
+      !orderTabs.find(
+         x =>
+            x.orderFulfillmentTypeLabel === 'ONDEMAND_DELIVERY' ||
+            x.orderFulfillmentTypeLabel === 'PREORDER_DELIVERY'
+      )
+   )
    // get all store when user address available
    const {
       loading: brandLocationLoading,
@@ -534,11 +589,19 @@ export const Header = ({ settings, navigationMenus }) => {
             } else {
                const message = result[0][fulfillmentStatus].message
                console.log('message', message)
-               setStoreStatus(prev => ({
-                  status: false,
-                  message: message,
-                  loading: false,
-               }))
+               // setStoreStatus(prev => ({
+               //    status: false,
+               //    message: message,
+               //    loading: false,
+               // }))
+               dispatch({
+                  type: 'SET_STORE_STATUS',
+                  payload: {
+                     status: false,
+                     message: message,
+                     loading: false,
+                  },
+               })
             }
          })()
       }
@@ -561,11 +624,19 @@ export const Header = ({ settings, navigationMenus }) => {
          brands_brand_location_aggregate?.nodes &&
          brands_brand_location_aggregate?.nodes.length == 0
       ) {
-         setStoreStatus(prev => ({
-            status: false,
-            message: 'No store available on this location.',
-            loading: false,
-         }))
+         // setStoreStatus(prev => ({
+         //    status: false,
+         //    message: 'No store available on this location.',
+         //    loading: false,
+         // }))
+         dispatch({
+            type: 'SET_STORE_STATUS',
+            payload: {
+               status: false,
+               message: 'No store available on this location.',
+               loading: false,
+            },
+         })
       }
    }, [brands_brand_location_aggregate])
    return (
@@ -610,11 +681,7 @@ export const Header = ({ settings, navigationMenus }) => {
                      )}
                   </div>
                </Link>
-               <LocationInfo
-                  address={address}
-                  storeStatus={storeStatus}
-                  settings={settings}
-               />
+               <LocationInfo address={address} settings={settings} />
                {/* {address && <StoreList settings={settings} />} */}
                <section className="hern-navigatin-menu__wrapper">
                   <NavigationBar Data={newNavigationMenus}>
@@ -790,8 +857,8 @@ const DataWithChildNodes = dataList => {
    return dataList
 }
 
-const LocationInfo = ({ address, storeStatus, settings }) => {
-   const { selectedOrderTab } = useConfig()
+const LocationInfo = ({ settings }) => {
+   const { selectedOrderTab, userLocation, storeStatus } = useConfig()
    const [showLocationSelectorPopup, setShowLocationSelectionPopup] =
       React.useState(false)
 
@@ -827,20 +894,24 @@ const LocationInfo = ({ address, storeStatus, settings }) => {
                <LocationIcon size={18} />
             </div>
             <div className="hern-header__location-right">
-               <div className="hern-header__location-upper">
-                  {prefix}{' '}
-                  <span className="hern-header__downvector-icon">
-                     {prefix && <DownVector size={12} />}
-                  </span>
-               </div>
+               {storeStatus.status && (
+                  <div className="hern-header__location-upper">
+                     {prefix}{' '}
+                     <span className="hern-header__downvector-icon">
+                        {prefix && <DownVector size={12} />}
+                     </span>
+                  </div>
+               )}
                <div className="hern-header__location-content">
-                  {address.secondaryText
-                     ? address.secondaryText
-                     : address.address.secondaryText
-                     ? address.address.secondaryText
+                  {userLocation?.mainText
+                     ? userLocation?.mainText
+                     : userLocation?.address?.mainText
+                     ? userLocation?.address?.mainText
                      : 'Please select address...'}
                </div>
-               <div>{!storeStatus.status ? storeStatus.message : ''}</div>
+               <div className="hern-header__location-warning">
+                  {!storeStatus.status ? storeStatus.message : ''}
+               </div>
             </div>
          </div>
          <LocationSelectorWrapper

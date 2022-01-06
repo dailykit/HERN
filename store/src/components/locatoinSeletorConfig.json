@@ -4,9 +4,9 @@
             "type": "single",
             "label": "Select menu type for jump on categories of products.",
             "value": {
-                "id": 2,
-                "title": "Pick Up",
-                "value": "PICKUP"
+                "id": 1,
+                "title": "Delivery",
+                "value": "DELIVERY"
             },
             "default": {
                 "id": 1,
@@ -189,8 +189,8 @@
             },
             "showAllLocations": {
                 "label": "Show All Store Location",
-                "value": true,
-                "default": true,
+                "value": false,
+                "default": false,
                 "dataType": "boolean",
                 "description": "This will show or hide all store location list in location selection popup.",
                 "userInsertType": "checkbox"

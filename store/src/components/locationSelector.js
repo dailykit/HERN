@@ -72,7 +72,8 @@ export const LocationSelector = props => {
          : storeFulfillmentType.default.map(x => x.value)
 
    const [fulfillmentType, setFulfillmentType] = useState(
-      defaultFulfillmentType.value?.value ||
+      orderTabFulfillmentType[0]?.split('_')[1] ||
+         defaultFulfillmentType.value?.value ||
          defaultFulfillmentType.default?.value
    )
 
@@ -217,29 +218,37 @@ const Delivery = props => {
       [orderTabs]
    )
 
+   // const [deliveryType, setDeliveryType] = useState(
+   //    Boolean(availableStoreType.find(x => x === 'ONDEMAND'))
+   //       ? 'ONDEMAND'
+   //       : availableStoreType[0]
+   // )
    const [deliveryType, setDeliveryType] = useState(
-      Boolean(availableStoreType.find(x => x === 'ONDEMAND'))
+      orderTabFulfillmentType.includes('ONDEMAND_DELIVERY')
          ? 'ONDEMAND'
-         : availableStoreType[0]
+         : 'PREORDER'
    )
-   const [deliveryRadioOptions] = useState([
-      {
-         label: 'Now',
-         value: 'ONDEMAND',
-         disabled:
-            (orderTabFulfillmentType &&
-               !orderTabFulfillmentType.includes('ONDEMAND_DELIVERY')) ||
-            !Boolean(availableStoreType.find(x => x === 'ONDEMAND')),
-      },
-      {
-         label: 'Later',
-         value: 'PREORDER',
-         disabled:
-            (orderTabFulfillmentType &&
-               !orderTabFulfillmentType.includes('PREORDER_DELIVERY')) ||
-            !Boolean(availableStoreType.find(x => x === 'PREORDER')),
-      },
-   ])
+
+   const deliveryRadioOptions = React.useMemo(() => {
+      let options = []
+      if (
+         orderTabFulfillmentType &&
+         orderTabFulfillmentType.includes('PREORDER_DELIVERY') &&
+         Boolean(availableStoreType.find(x => x === 'PREORDER'))
+      ) {
+         options.push({ label: 'Later', value: 'PREORDER' })
+      }
+      if (
+         orderTabFulfillmentType &&
+         orderTabFulfillmentType.includes('ONDEMAND_DELIVERY') &&
+         Boolean(availableStoreType.find(x => x === 'ONDEMAND'))
+      ) {
+         options.push({ label: 'Now', value: 'ONDEMAND' })
+      }
+      return options
+   }, [orderTabFulfillmentType, availableStoreType])
+
+   console.log('deliveryRadioOptions', deliveryRadioOptions)
    const [onDemandBrandRecurrence, setOnDemandBrandReoccurrence] =
       useState(null)
    const [preOrderBrandRecurrence, setPreOrderBrandReoccurrence] =
@@ -1353,7 +1362,7 @@ export const StoreList = props => {
       address,
    } = props
    // console.log('settings', settings)
-   const { brand } = useConfig()
+   const { brand, dispatch, orderTabs } = useConfig()
    const { addToast } = useToasts()
 
    const fulfillmentStatus = React.useMemo(() => {
@@ -1468,6 +1477,12 @@ export const StoreList = props => {
       }
    }, [brandLocation, brandRecurrences, address])
 
+   const selectedOrderTab = React.useMemo(() => {
+      return orderTabs.find(
+         x => x.orderFulfillmentTypeLabel === fulfillmentType
+      )
+   }, [orderTabs])
+
    useEffect(() => {
       if (
          address &&
@@ -1483,15 +1498,43 @@ export const StoreList = props => {
          )
          if (
             LocationSelectorConfig.informationVisibility.deliverySettings
-               .storeLocationSelectionMethod.value.value === 'auto'
+               .storeLocationSelectionMethod.value.value === 'auto' ||
+            sortedBrandLocation.length === 1
          ) {
             // select automatically first store form sorted array
-            console.log(
-               'your automatic store is',
-               sortedBrandLocation.filter(
+
+            dispatch({
+               type: 'SET_LOCATION_ID',
+               payload: sortedBrandLocation.filter(
                   eachStore => eachStore[fulfillmentStatus].status
-               )[0]
+               )[0].id,
+            })
+            dispatch({
+               type: 'SET_SELECTED_ORDER_TAB',
+               payload: selectedOrderTab,
+            })
+            dispatch({
+               type: 'SET_USER_LOCATION',
+               payload: address,
+            })
+            dispatch({
+               type: 'SET_STORE_STATUS',
+               payload: {
+                  status: true,
+                  message: 'Store available on your location.',
+                  loading: false,
+               },
+            })
+            localStorage.setItem('orderTab', JSON.stringify(fulfillmentType))
+            localStorage.setItem(
+               'storeBrandLocationId',
+               JSON.stringify(
+                  sortedBrandLocation.filter(
+                     eachStore => eachStore[fulfillmentStatus].status
+                  )[0].id
+               )
             )
+
             setShowLocationSelectionPopup(false)
          }
       }
@@ -1583,69 +1626,74 @@ export const StoreList = props => {
    if (!address) {
       return (
          <div className="hern-location-selector__stores-list">
-            {showStoresOnMap.value && (
-               <div className="hern-location-selector__view-on-map">
-                  <span onClick={() => setShowStoreOnMap(true)}>
-                     View on map
-                  </span>
-               </div>
-            )}
-            {brandLocation &&
-               brandLocation.map((eachStore, index) => {
-                  const {
-                     location: {
-                        label,
-                        id,
-                        locationAddress,
-                        city,
-                        state,
-                        country,
-                        zipcode,
-                     },
-                  } = eachStore
-                  const { line1, line2 } = locationAddress
-
-                  return (
-                     <div
-                        key={index}
-                        className={classNames(
-                           'hern-store-location-selector__each-store'
-                        )}
-                        onClick={() => {
-                           addToast('Please Enter Address', {
-                              appearance: 'info',
-                           })
-                        }}
-                     >
-                        <div className="hern-store-location-selector__store-location-info-container">
-                           <StoreIcon />
-                           <div className="hern-store-location-selector__store-location-details">
-                              {showLocationLabel.value && (
-                                 <span className="hern-store-location__store-location-label">
-                                    {label}
-                                 </span>
-                              )}
-                              {showStoreAddress.value && (
-                                 <>
-                                    <span className="hern-store-location__store-location-address hern-store-location__store-location-address-line1">
-                                       {line1}
-                                    </span>
-                                    <span className="hern-store-location__store-location-address hern-store-location__store-location-address-line2">
-                                       {line2}
-                                    </span>
-                                    <span className="hern-store-location__store-location-address hern-store-location__store-location-address-c-s-c-z">
-                                       {city} {state} {country}
-                                       {' ('}
-                                       {zipcode}
-                                       {')'}
-                                    </span>
-                                 </>
-                              )}
-                           </div>
-                        </div>
+            {brandLocation && brandLocation.length > 1 ? (
+               <>
+                  {showStoresOnMap.value && (
+                     <div className="hern-location-selector__view-on-map">
+                        <span onClick={() => setShowStoreOnMap(true)}>
+                           View on map
+                        </span>
                      </div>
-                  )
-               })}
+                  )}
+                  {brandLocation &&
+                     brandLocation.map((eachStore, index) => {
+                        const {
+                           location: {
+                              label,
+                              id,
+                              locationAddress,
+                              city,
+                              state,
+                              country,
+                              zipcode,
+                           },
+                        } = eachStore
+                        const { line1, line2 } = locationAddress
+
+                        return (
+                           <div
+                              key={index}
+                              className={classNames(
+                                 'hern-store-location-selector__each-store'
+                              )}
+                              onClick={() => {
+                                 addToast('Please Enter Address', {
+                                    appearance: 'info',
+                                 })
+                              }}
+                           >
+                              <div className="hern-store-location-selector__store-location-info-container">
+                                 <StoreIcon />
+                                 <div className="hern-store-location-selector__store-location-details">
+                                    {showLocationLabel.value && (
+                                       <span className="hern-store-location__store-location-label">
+                                          {label}
+                                       </span>
+                                    )}
+                                    {showStoreAddress.value && (
+                                       <>
+                                          <span className="hern-store-location__store-location-address hern-store-location__store-location-address-line1">
+                                             {line1}
+                                          </span>
+                                          <span className="hern-store-location__store-location-address hern-store-location__store-location-address-line2">
+                                             {line2}
+                                          </span>
+                                          <span className="hern-store-location__store-location-address hern-store-location__store-location-address-c-s-c-z">
+                                             {city} {state} {country}
+                                             {' ('}
+                                             {zipcode}
+                                             {')'}
+                                          </span>
+                                       </>
+                                    )}
+                                 </div>
+                              </div>
+                           </div>
+                        )
+                     })}
+               </>
+            ) : null}
+
             {/* <StoresOnMap
                showStoreOnMap={showStoreOnMap}
                setShowStoreOnMap={setShowStoreOnMap}
@@ -1755,6 +1803,34 @@ export const StoreList = props => {
                   onClick={() => {
                      if (eachStore[fulfillmentStatus].status) {
                         console.log('selectedStore', eachStore)
+                        dispatch({
+                           type: 'SET_LOCATION_ID',
+                           payload: eachStore.id,
+                        })
+                        dispatch({
+                           type: 'SET_SELECTED_ORDER_TAB',
+                           payload: selectedOrderTab,
+                        })
+                        localStorage.setItem(
+                           'orderTab',
+                           JSON.stringify(fulfillmentType)
+                        )
+                        localStorage.setItem(
+                           'storeBrandLocationId',
+                           JSON.stringify(eachStore.id)
+                        )
+                        dispatch({
+                           type: 'SET_USER_LOCATION',
+                           payload: address,
+                        })
+                        dispatch({
+                           type: 'SET_STORE_STATUS',
+                           payload: {
+                              status: true,
+                              message: 'Store available on your location.',
+                              loading: false,
+                           },
+                        })
                         setSelectedStore(eachStore)
                         setShowLocationSelectionPopup(false)
                      }

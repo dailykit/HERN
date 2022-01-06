@@ -166,6 +166,9 @@
    align-items: center;
    padding: 4px;
    cursor: pointer;
+   @media (max-width: 768px) {
+      padding: 0;
+   }
 }
 .hern-header__location-icon {
    margin: 0 5px;
@@ -179,6 +182,14 @@
    color: #40404099;
    border-bottom: 1px solid rgba(64, 64, 64, 0.25);
    margin: 2px 0;
+   @media (max-width: 768px) {
+      font-size: 11px;
+   }
+}
+.hern-header__location-warning {
+   @media (max-width: 768px) {
+      font-size: 9px;
+   }
 }
 .hern-header__downvector-icon {
    margin: 0 6px;
