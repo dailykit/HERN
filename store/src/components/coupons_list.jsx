@@ -10,6 +10,7 @@ import classNames from 'classnames'
 import { isClient, useQueryParamState } from '../utils'
 import { Carousel } from 'antd'
 import { Button } from '.'
+import { useWindowSize } from '../utils'
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 const Coupons_List = ({
@@ -33,7 +34,7 @@ const Coupons_List = ({
 
    const [availableCoupons, setAvailableCoupons] = React.useState([])
    const [applying, setApplying] = React.useState(false)
-
+   const { width, height } = useWindowSize()
    const { loading, error } = useSubscription(COUPONS, {
       variables: {
          params: {
@@ -107,7 +108,7 @@ const Coupons_List = ({
 
             {availableCoupons.length > 0 && (
                <Carousel
-                  slidesToShow={2}
+                  slidesToShow={width < 1600 ? 1 : 2}
                   className={
                      upFrontLayout
                         ? 'hern-upfront-coupons-list__coupon-wrapper'
