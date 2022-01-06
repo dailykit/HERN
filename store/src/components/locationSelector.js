@@ -586,7 +586,13 @@ const Delivery = props => {
          ) : null}
          {/* <RefineLocation setUserCoordinate={setUserCoordinate} /> */}
          {/* Footer */}
-         {brandRecurrencesLoading || preOrderBrandRecurrencesLoading ? (
+         {!address ? null : brandLocationLoading ? (
+            <Loader inline />
+         ) : brands_brand_location_aggregate?.nodes?.length == 0 ? (
+            <p style={{ padding: '0 14px' }}>
+               No store available on this location.
+            </p>
+         ) : brandRecurrencesLoading || preOrderBrandRecurrencesLoading ? (
             <Loader />
          ) : (
             <StoreList
@@ -1711,14 +1717,14 @@ export const StoreList = props => {
    ) {
       return null
    }
-
+   console.log('sorted', sortedBrandLocation, brandRecurrences)
    // sorted and location calculating
    if (
       brandRecurrences === null ||
       sortedBrandLocation === null ||
       status === 'loading'
    ) {
-      return <Loader />
+      return <Loader inline />
    }
 
    // when no store available on user location
