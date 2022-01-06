@@ -72,7 +72,7 @@ export const Header = ({ settings, navigationMenus }) => {
       useQueryParamState('showLogin')
 
    const brand = settings['brand']['theme-brand']
-   const theme = settings['Visual']['theme-color']
+   const theme = settings['Visual']?.['theme-color']
    const headerNavigationSettings =
       settings['navigation']?.['header-navigation']
    const isSubscriptionStore =
