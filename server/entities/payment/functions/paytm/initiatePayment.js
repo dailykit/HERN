@@ -27,6 +27,7 @@ const initiatePayment = async arg => {
          lastName: ''
       }
       const PAYTM_MERCHANT_ID = await get_env('PAYTM_MERCHANT_ID')
+      const PAYTM_API_URL = await get_env('PAYTM_API_URL')
       const orderId = arg.id.toString()
       const { cart = {} } = await client.request(CART, {
          id: arg.cartId
@@ -70,7 +71,7 @@ const initiatePayment = async arg => {
          !_isEmtpy(response.body.resultInfo) &&
          response.body.resultInfo.resultStatus === 'S'
       ) {
-         actionUrl = `https://securegw.paytm.in/theia/api/v1/showPaymentPage?mid=${PAYTM_MERCHANT_ID}&orderId=${orderId}&txnToken=${txnToken}`
+         actionUrl = `${PAYTM_API_URL}/theia/api/v1/showPaymentPage?mid=${PAYTM_MERCHANT_ID}&orderId=${orderId}&txnToken=${txnToken}`
          actionRequired = true
       }
       await paymentLogger({

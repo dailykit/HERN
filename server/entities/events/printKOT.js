@@ -92,7 +92,7 @@ export const getKOTUrls = async (req, res) => {
       const { cartItems = [] } = await client.request(CART_ITEMS)
 
       const data = { order: { id } }
-      const DATA_HUB = get_env('DATA_HUB')
+      const DATA_HUB = await get_env('DATA_HUB')
       const { origin } = new URL(DATA_HUB)
 
       const productStations = uniqBy(
