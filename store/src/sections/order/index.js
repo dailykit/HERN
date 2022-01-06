@@ -24,9 +24,14 @@ export const OnDemandOrder = ({ config }) => {
    const router = useRouter()
    const { addToast } = useToasts()
    const { brand } = useConfig()
-   console.log({ config })
-   const menuType = 'side-nav'
-   const numberOfProducts = 2
+
+   const menuType = config?.display?.dropdown?.value[0]?.value
+      ? config?.display?.dropdown?.value[0]?.value
+      : 'side-nav'
+   const numberOfProducts =
+      config?.display?.['numberOfProducts']?.value ??
+      config?.display?.['numberOfProducts']?.default ??
+      2
    const showCategoryLengthOnCategoryTitle =
       config?.display?.['showCategoryLengthOnCategoryTitle']?.value ??
       config?.display?.['showCategoryLengthOnCategoryTitle']?.default ??
