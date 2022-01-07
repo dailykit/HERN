@@ -210,28 +210,28 @@ export const Checkout = props => {
          </Main>
       )
    }
-   if (isAuthenticated && user?.keycloakId !== cart?.customerKeycloakId) {
-      return (
-         <Main>
-            <div tw="pt-4 w-full">
-               <HelperBar type="warning">
-                  <HelperBar.SubTitle>
-                     Seems like, you do not have access to this page, let's get
-                     you to home.
-                  </HelperBar.SubTitle>
-                  <HelperBar.Button
-                     onClick={() =>
-                        (window.location.href =
-                           window.location.origin + getRoute('/'))
-                     }
-                  >
-                     Go to Home
-                  </HelperBar.Button>
-               </HelperBar>
-            </div>
-         </Main>
-      )
-   }
+   // if (isAuthenticated && user?.keycloakId !== cart?.customerKeycloakId) {
+   //    return (
+   //       <Main>
+   //          <div tw="pt-4 w-full">
+   //             <HelperBar type="warning">
+   //                <HelperBar.SubTitle>
+   //                   Seems like, you do not have access to this page, let's get
+   //                   you to home.
+   //                </HelperBar.SubTitle>
+   //                <HelperBar.Button
+   //                   onClick={() =>
+   //                      (window.location.href =
+   //                         window.location.origin + getRoute('/'))
+   //                   }
+   //                >
+   //                   Go to Home
+   //                </HelperBar.Button>
+   //             </HelperBar>
+   //          </div>
+   //       </Main>
+   //    )
+   // }
    return (
       <>
          {cart.source === 'subscription' ? (
