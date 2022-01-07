@@ -234,7 +234,7 @@ export const Checkout = props => {
    // }
    return (
       <>
-         {cart.source === 'subscription' ? (
+         {cart?.source === 'subscription' ? (
             <Main>
                <Form>
                   <header tw="my-3 pb-1 border-b flex items-center justify-between">
