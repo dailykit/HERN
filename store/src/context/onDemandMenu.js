@@ -29,7 +29,7 @@ const reducer = (state = initialState, { type, payload }) => {
 
 export const OnDemandMenuProvider = ({ children }) => {
    const date = React.useMemo(() => new Date(Date.now()).toISOString(), [])
-   const { brand, isConfigLoading } = useConfig()
+   const { brand, isConfigLoading, locationId } = useConfig()
    const [onDemandMenu, onDemandMenuDispatch] = React.useReducer(
       reducer,
       initialState
@@ -41,7 +41,7 @@ export const OnDemandMenuProvider = ({ children }) => {
          params: {
             brandId: brand?.id,
             date,
-            locationId: 1000,
+            locationId: locationId,
          },
       },
       onCompleted: data => {

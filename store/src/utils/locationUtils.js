@@ -95,6 +95,8 @@ export const isStoreOnDemandDeliveryAvailable = async (
                            message: status
                               ? 'Delivery available in your location'
                               : 'Delivery not available in your location.',
+                           drivableDistance:
+                              distanceDeliveryStatus.drivableDistance,
                         }
                      }
                   } else {
@@ -182,6 +184,7 @@ export const isPreOrderDeliveryAvailable = async (
                      message: status
                         ? 'Delivery available in your location'
                         : 'Delivery not available in your location.',
+                     drivableDistance: distanceDeliveryStatus.drivableDistance,
                   }
                }
             } else {
@@ -206,6 +209,7 @@ const isStoreDeliveryAvailableByDistance = async (mileRanges, eachStore) => {
       zipcode: true,
       geoBoundary: true,
    }
+   let drivableByGoogleDistance = null
 
    for (let mileRange in mileRanges) {
       // aerial distance
@@ -234,6 +238,7 @@ const isStoreDeliveryAvailableByDistance = async (mileRanges, eachStore) => {
             const drivableDistance = mileRanges[mileRange]
             const distanceMileFloat =
                data.rows[0].elements[0].distance.text.split(' ')[0]
+            drivableByGoogleDistance = distanceMileFloat
             let result =
                distanceMileFloat >= drivableDistance.from &&
                distanceMileFloat <= drivableDistance.to &&
@@ -304,6 +309,7 @@ const isStoreDeliveryAvailableByDistance = async (mileRanges, eachStore) => {
    return {
       result: isStoreDeliveryAvailableByDistanceStatus,
       mileRangeInfo: null,
+      drivableDistance: drivableByGoogleDistance,
    }
 }
 

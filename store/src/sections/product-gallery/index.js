@@ -12,12 +12,12 @@ export const ProductGallery = ({ config }) => {
       config.informationVisibility.productOrientation.value[0].value
    )
    const [status, setStatus] = React.useState('loading')
-   const { brand } = useConfig()
+   const { brand, locationId } = useConfig()
    const argsForByLocation = React.useMemo(
       () => ({
          params: {
             brandId: brand?.id,
-            locationId: 1000,
+            locationId: locationId,
          },
       }),
       [brand]
