@@ -22,6 +22,7 @@ import { DeleteIcon } from '../../../../../../assets/icons'
 import { ModifiersContext } from '../../../../../../context/product/modifiers'
 import {
    MODIFIER,
+   MODIFIERS,
    MODIFIER_CATEGORIES,
    MODIFIER_OPTION,
 } from '../../../../../../graphql'
@@ -41,6 +42,7 @@ const ModifierFormTunnel = ({
    close,
    openOperationConfigTunnel,
    modifierOpConfig,
+   setModifierCategoryOption,
 }) => {
    const {
       modifiersState: { modifierId, optionId },
@@ -181,6 +183,7 @@ const ModifierFormTunnel = ({
                   key={category.id}
                   open={open}
                   openOperationConfigTunnel={openOperationConfigTunnel}
+                  setModifierCategoryOption={setModifierCategoryOption}
                />
             ))}
             <ButtonTile
@@ -205,7 +208,12 @@ const ModifierFormTunnel = ({
 
 export default ModifierFormTunnel
 
-export const Category = ({ category, open, openOperationConfigTunnel }) => {
+export const Category = ({
+   category,
+   open,
+   openOperationConfigTunnel,
+   setModifierCategoryOption,
+}) => {
    const options = [
       { id: 'single', title: 'Single' },
       { id: 'multiple', title: 'Multiple' },
@@ -528,6 +536,7 @@ export const Category = ({ category, open, openOperationConfigTunnel }) => {
             <Option
                open={open}
                openOperationConfigTunnel={openOperationConfigTunnel}
+               setModifierCategoryOption={setModifierCategoryOption}
                option={option}
                key={option.id}
             />
@@ -554,7 +563,12 @@ export const Category = ({ category, open, openOperationConfigTunnel }) => {
    )
 }
 
-const Option = ({ open, openOperationConfigTunnel, option }) => {
+const Option = ({
+   open,
+   openOperationConfigTunnel,
+   option,
+   setModifierCategoryOption,
+}) => {
    const { modifiersDispatch } = React.useContext(ModifiersContext)
 
    const [name, setName] = React.useState({
@@ -597,6 +611,12 @@ const Option = ({ open, openOperationConfigTunnel, option }) => {
          errors: [],
       },
    })
+
+   const {
+      data: { modifiers = [] } = {},
+      loading,
+      error,
+   } = useSubscription(MODIFIERS)
    const [updateOption] = useMutation(MODIFIER_OPTION.UPDATE, {
       onCompleted: () => toast.success('Updated!'),
       onError: error => {
@@ -977,6 +997,56 @@ const Option = ({ open, openOperationConfigTunnel, option }) => {
                   >
                      <PlusIcon color="#19B7EE" />
                      Operation Config
+                  </ComboButton>
+               )}
+            </Flex>
+            <Flex container alignItems="center">
+               {option?.additionalModifierTemplateId ? (
+                  <ComboButton
+                     type="ghost"
+                     size="sm"
+                     onClick={() => {
+                        setModifierCategoryOption({
+                           ...setModifierCategoryOption,
+                           categoryOption: false,
+                           categoryOptionId: null,
+                        })
+                        updateOption({
+                           variables: {
+                              id: option.id,
+                              _set: {
+                                 additionalModifierTemplateId: null,
+                              },
+                           },
+                        })
+                     }}
+                  >
+                     <CloseIcon color="#19B7EE" />
+                     {modifiers.map(each => {
+                        if (each.id === option.additionalModifierTemplateId) {
+                           return each.title
+                        }
+                     })}
+                  </ComboButton>
+               ) : (
+                  <ComboButton
+                     type="ghost"
+                     size="sm"
+                     onClick={() => {
+                        modifiersDispatch({
+                           type: 'OPTION_ID',
+                           payload: option.id,
+                        })
+                        setModifierCategoryOption({
+                           ...setModifierCategoryOption,
+                           categoryOption: true,
+                           categoryOptionId: option.id,
+                        })
+                        open(6)
+                     }}
+                  >
+                     <PlusIcon color="#19B7EE" />
+                     Add Modifier
                   </ComboButton>
                )}
             </Flex>

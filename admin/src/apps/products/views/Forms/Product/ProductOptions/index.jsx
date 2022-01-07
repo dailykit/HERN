@@ -82,6 +82,10 @@ const ProductOptions = ({ productId, productName, options, productData }) => {
    const { bundleDispatch } = React.useContext(InventoryBundleContext)
 
    const [productOptionTypes, setProductOptionTypes] = React.useState([])
+   const [modifierCategoryOption, setModifierCategoryOption] = React.useState({
+      categoryOption: false,
+      categoryOptionId: null,
+   })
    const opConfigInvokedBy = React.useRef('')
    const modifierOpConfig = React.useRef(undefined)
    const [productOptionsTextField, setProductOptionsTextField] =
@@ -320,6 +324,7 @@ const ProductOptions = ({ productId, productName, options, productData }) => {
                      openOperationConfigTunnel(value)
                   }}
                   modifierOpConfig={modifierOpConfig.current}
+                  setModifierCategoryOption={setModifierCategoryOption}
                />
             </Tunnel>
             <Tunnel layer={3}>
@@ -335,7 +340,9 @@ const ProductOptions = ({ productId, productName, options, productData }) => {
                <ModifierPhotoTunnel close={closeModifiersTunnel} />
             </Tunnel>
             <Tunnel layer={6}>
-               <ModifierTemplatesTunnel close={closeModifiersTunnel} />
+               <ModifierTemplatesTunnel close={closeModifiersTunnel}
+                  setModifierCategoryOption={setModifierCategoryOption}
+                  modifierCategoryOption={modifierCategoryOption} />
             </Tunnel>
          </Tunnels>
          <Tunnels tunnels={additionalModifiersTunnel}>
