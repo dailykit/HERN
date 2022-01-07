@@ -238,3 +238,6 @@ Require stack:
 [/api/payment-intent] | [2021-12-29 14:12:60PM +05:30] | [Error: `key_id` is mandatory]
 [/api/payment-intent] | [2021-12-29 15:12:62PM +05:30] | [Error: This payment requires additional user action before it can be completed successfully. Payment can be completed using the PaymentIntent associated with the invoice. For more details see: https://stripe.com/docs/billing/subscriptions/overview#requires-action]
 [/api/payment-intent] | [2021-12-29 15:12:87PM +05:30] | [Error: This payment requires additional user action before it can be completed successfully. Payment can be completed using the PaymentIntent associated with the invoice. For more details see: https://stripe.com/docs/billing/subscriptions/overview#requires-action]
+[/api/payment/initiate-payment] | [2022-01-05 13:01:45PM +05:30] | [SyntaxError: Identifier 'data' has already been declared]
+[/api/payment-intent] | [2022-01-05 13:01:17PM +05:30] | [ReferenceError: get_env is not defined]
+[/api/payment-intent] | [2022-01-05 13:01:79PM +05:30] | [ReferenceError: PAYTM_MERCHANT_ID is not defined]

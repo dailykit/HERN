@@ -127,7 +127,7 @@
    background: #618fde !important;
 }
 .hern-upfront-coupons-list__coupon-wrapper > .slick-dots {
-   bottom: 0px !important;
+   bottom: -1rem !important;
 }
 
 .hern-upfront-coupons-list__coupon-wrapper
@@ -141,17 +141,24 @@
    padding: 10px;
    margin-bottom: 12px;
 }
+.hern-upfront-coupons-list__coupon-wrapper > .slick-list > .slick-track {
+   display: flex;
+   flex-direction: row;
+   width: 100%;
+}
+
 .hern-upfront-coupons-list__coupon {
    padding: 8px;
    display: flex !important;
    justify-content: space-between;
    border-radius: 8px;
    border: 1px dashed rgba(64, 64, 64, 0.6);
+   min-height: 15rem;
 }
 .hern-upfront-coupons-list__coupon__scissor-icon {
    position: relative;
-   right: -1rem;
-   top: 3.5rem;
+   right: -1.7rem;
+   top: 7.5rem;
 }
 .hern-upfront-coupons-list__coupon__body-wrapper {
    margin: 0px;

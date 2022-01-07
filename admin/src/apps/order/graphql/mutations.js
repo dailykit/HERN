@@ -17,16 +17,8 @@ export const MUTATIONS = {
    },
    ORDER: {
       UPDATE: gql`
-         mutation updateOrder(
-            $id: oid!
-            $_set: order_order_set_input
-            $_append: order_order_append_input
-         ) {
-            updateOrder(
-               pk_columns: { id: $id }
-               _set: $_set
-               _append: $_append
-            ) {
+         mutation updateOrder($id: oid!, $_set: order_order_set_input) {
+            updateOrder(pk_columns: { id: $id }, _set: $_set) {
                id
             }
          }

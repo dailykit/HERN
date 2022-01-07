@@ -41,8 +41,8 @@ export const AddressTunnel = props => {
    const [loaded, error] = useScript(
       isClient
          ? `https://maps.googleapis.com/maps/api/js?key=${get_env(
-              'GOOGLE_API_KEY'
-           )}&libraries=places`
+            'GOOGLE_API_KEY'
+         )}&libraries=places`
          : ''
    )
 
@@ -50,8 +50,7 @@ export const AddressTunnel = props => {
       if (!isClient) return 'Runs only on client side.'
 
       const response = await fetch(
-         `https://maps.googleapis.com/maps/api/geocode/json?key=${
-            isClient ? get_env('GOOGLE_API_KEY') : ''
+         `https://maps.googleapis.com/maps/api/geocode/json?key=${isClient ? get_env('GOOGLE_API_KEY') : ''
          }&address=${encodeURIComponent(input.description)}`
       )
       const data = await response.json()
@@ -120,6 +119,7 @@ export const AddressTunnel = props => {
    const toggleTunnel = (value = false) => {
       dispatch({ type: 'TOGGLE_TUNNEL', payload: value })
    }
+
    if (outside) {
       return (
          <>

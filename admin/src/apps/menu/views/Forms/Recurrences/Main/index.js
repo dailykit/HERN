@@ -116,7 +116,7 @@ const Main = () => {
             <Tunnel layer={2} size="sm">
                <TimeSlotTunnel closeTunnel={closeTunnel} />
             </Tunnel>
-            <Tunnel layer={3} size="sm">
+            <Tunnel layer={3} size="md">
                <MileRangeTunnel closeTunnel={closeTunnel} />
             </Tunnel>
             <Tunnel layer={4} size="sm">
@@ -235,6 +235,22 @@ const Main = () => {
                                              : 'recurrences_table_prep_time'
                                        }
                                     />
+                                 </Flex>
+                                 <Flex
+                                    direction="row"
+                                    align="center"
+                                    justify="flex-start"
+                                 >
+                                    Excluded
+                                    <Tooltip identifier="recurrences_table_isExcluded" />
+                                 </Flex>
+                                 <Flex
+                                    direction="row"
+                                    align="center"
+                                    justify="flex-start"
+                                 >
+                                    Zipcodes
+                                    <Tooltip identifier="recurrences_table_Zipcodes" />
                                  </Flex>
                                  <Flex
                                     direction="row"

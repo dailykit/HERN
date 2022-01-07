@@ -126,16 +126,17 @@ export const CartProvider = ({ children }) => {
    }, [cartData, isCartLoading])
 
    useEffect(() => {
-      if (cartItemsData?.cart?.cartItems) {
-         const combinedCartItems = combineCartItems(
-            cartItemsData?.cart?.cartItems
-         )
+      if (cartItemsData?.cartItems) {
+         const combinedCartItems = combineCartItems(cartItemsData?.cartItems)
          console.log('combinedCartItems', combinedCartItems)
          setCombinedCartData(combinedCartItems)
       } else {
-         setCombinedCartData([])
+         const localCartId = localStorage.getItem('cart-id')
+         if (!localCartId && !isAuthenticated) {
+            setCombinedCartData([])
+         }
       }
-   }, [cartItemsData?.cart?.cartItems])
+   }, [cartItemsData?.cartItems])
 
    //create cart
    const [createCart] = useMutation(MUTATIONS.CART.CREATE, {
@@ -308,7 +309,7 @@ export const CartProvider = ({ children }) => {
          variables: {
             where: {
                paymentStatus: { _eq: 'PENDING' },
-               status: { _eq: 'ORDER_PENDING' },
+               status: { _eq: 'CART_PENDING' },
                customerKeycloakId: {
                   _eq: user?.keycloakId,
                },
@@ -372,19 +373,21 @@ export const CartProvider = ({ children }) => {
             }
          },
       })
-
+   console.log('cartData', cartData?.cart)
    return (
       <CartContext.Provider
          value={{
             cartState: {
                cart: cartData?.cart,
-               cartItems: cartItemsData?.cart?.cartItems,
+               cartItems: cartItemsData?.cartItems,
                kioskPaymentOption: cartState.kioskPaymentOption,
             },
             cartReducer,
             addToCart,
             combinedCartItems,
             setStoredCartId,
+            isCartLoading,
+            cartItemsLoading,
             methods: {
                cartItems: {
                   delete: deleteCartItems,

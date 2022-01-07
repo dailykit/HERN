@@ -60,6 +60,9 @@ const Product = () => {
          errors: [],
       },
    })
+   // const [defaultProductOptionId, setDefaultProductOptionId] = React.useState({
+   //    id: null
+   // })
    const [state, setState] = React.useState({})
    const [dropDownOptions, setDropDownOptions] = React.useState([])
    const [searchedOptions, setSearchedOption] = React.useState(null)
@@ -79,6 +82,10 @@ const Product = () => {
             ...posist_baseItemId,
             value: data.subscriptionData.data.product.posist_baseItemId,
          })
+         // setDefaultProductOptionId({
+         //    ...defaultProductOptionId,
+         //    id: data.subscriptionData.data.product.defaultProductOptionId,
+         // })
       },
    })
 
@@ -218,7 +225,7 @@ const Product = () => {
                   productId={state.id}
                   productName={state.name}
                   options={state.productOptions || []}
-                  posist_baseItemId={state.posist_baseItemId}
+                  productData={state}
                />
             )
          }

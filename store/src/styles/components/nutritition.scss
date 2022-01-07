@@ -1,0 +1,34 @@
+.hern-nutritionas-header {
+   > h2 {
+      font-weight: bold;
+      font-size: 24px;
+      line-height: 33px;
+      text-transform: uppercase;
+      color: var(--hern-accent);
+   }
+}
+
+.hern-product-page-section-ending {
+   width: 100%;
+   height: 4px;
+   background: #e4e4e4;
+   margin: 20px 0;
+}
+.hern-nutrition-info {
+   max-width: 550px;
+   margin: 0 auto;
+   > div {
+      display: flex;
+      justify-content: space-between;
+      > div {
+         padding: 12px;
+      }
+      > span {
+         display: inline-block;
+         height: 1px;
+         background: #e4e4e4;
+         width: 100%;
+         align-self: center;
+      }
+   }
+}

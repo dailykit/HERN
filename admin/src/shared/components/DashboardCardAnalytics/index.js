@@ -27,11 +27,11 @@ const DashboardCards = () => {
    const { loading: subsLoading, error: subsError } = useSubscription(
       GET_TOTAL_EARNING_ORDER_CUSTOMER_TOP_PRODUCT,
       {
-         variables: {
-            topProductArgs: {
-               params: { where: '"paymentStatus"=\'SUCCEEDED\'' },
-            },
-         },
+         // variables: {
+         //    topProductArgs: {
+         //       params: { where: '"paymentStatus"=\'SUCCEEDED\'' },
+         //    },
+         // },
          onSubscriptionData: ({ subscriptionData }) => {
             console.log('subscription data', subscriptionData)
             const total = {}
@@ -41,13 +41,14 @@ const DashboardCards = () => {
                subscriptionData.data.ordersAggregate.aggregate.count
             total.totalCustomers =
                subscriptionData.data.customers_aggregate.aggregate.count
-            total.topProduct =
-               subscriptionData.data.insights_analytics[0]['getTopProducts'][0]
+            // total.topProduct =
+            //    subscriptionData.data.insights_analytics[0]['getTopProducts'][0]
             setAnalyticsData(total)
             setStatus({ ...status, loading: false })
          },
       }
    )
+   console.log('analyticsData', analyticsData)
    if (subsLoading || status.loading) {
       return <InlineLoader />
    }
