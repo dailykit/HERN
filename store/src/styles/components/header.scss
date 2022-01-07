@@ -194,3 +194,11 @@
 .hern-header__downvector-icon {
    margin: 0 6px;
 }
+.hern-header__location-right-loading {
+   font-style: italic;
+   color: #40404099;
+   font-size: 14px;
+   @media (max-width: 768) {
+      font-size: 10px;
+   }
+}
