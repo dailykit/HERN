@@ -19,18 +19,28 @@ import {
 } from '../../../../../../../../shared/components'
 import { logger } from '../../../../../../../../shared/utils'
 import { ModifiersContext } from '../../../../../../context/product/modifiers'
-import { MODIFIERS, PRODUCT_OPTION } from '../../../../../../graphql'
+import {
+   MODIFIERS,
+   MODIFIER_OPTION,
+   PRODUCT_OPTION,
+} from '../../../../../../graphql'
 import { TunnelBody } from '../../../tunnels/styled'
 
-const ModifierTemplatesTunnel = ({ close }) => {
+const ModifierTemplatesTunnel = ({
+   close,
+   modifierCategoryOption,
+   setModifierCategoryOption,
+}) => {
    const {
       modifiersState: { optionId },
    } = React.useContext(ModifiersContext)
 
    // Subscription
-   const { data: { modifiers = [] } = {}, loading, error } = useSubscription(
-      MODIFIERS
-   )
+   const {
+      data: { modifiers = [] } = {},
+      loading,
+      error,
+   } = useSubscription(MODIFIERS)
 
    const [search, setSearch] = React.useState('')
    const [list, current, selectOption] = useSingleList(modifiers)
@@ -50,19 +60,55 @@ const ModifierTemplatesTunnel = ({ close }) => {
          },
       }
    )
-
-   const save = () => {
-      if (inFlight) return
-      updateProductOptions({
-         variables: {
-            id: optionId,
-            _set: {
-               modifierId: current.id,
-            },
+   const [updateOption, { loading: modifierCategory }] = useMutation(
+      MODIFIER_OPTION.UPDATE,
+      {
+         onCompleted: () => {
+            toast.success('Updated!')
+            setModifierCategoryOption({
+               ...setModifierCategoryOption,
+               categoryOption: false,
+               categoryOptionId: null,
+            })
+            close(6)
          },
-      })
+         onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
+         },
+      }
+   )
+   const save = () => {
+      if (modifierCategoryOption.categoryOption === true) {
+         if (modifierCategory) return
+         updateOption({
+            variables: {
+               id: modifierCategoryOption.categoryOptionId,
+               _set: {
+                  additionalModifierTemplateId: current.id,
+               },
+            },
+         })
+      } else {
+         if (inFlight) return
+         updateProductOptions({
+            variables: {
+               id: optionId,
+               _set: {
+                  modifierId: current.id,
+               },
+            },
+         })
+      }
    }
-
+   const closeTunnel = () => {
+      setModifierCategoryOption({
+         ...setModifierCategoryOption,
+         categoryOption: false,
+         categoryOptionId: null,
+      })
+      close(6)
+   }
    React.useEffect(() => {
       if (current.id) {
          save()
@@ -76,7 +122,7 @@ const ModifierTemplatesTunnel = ({ close }) => {
       <>
          <TunnelHeader
             title="Choose Modifier Template"
-            close={() => close(6)}
+            close={closeTunnel}
             tooltip={<Tooltip identifier="modifier_templates_tunnel" />}
          />
          <TunnelBody>
