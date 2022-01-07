@@ -594,6 +594,10 @@ export const ImageUpload = props => {
          const e = { target: { name: path, value: data.url } }
          onConfigChange(e, data.url)
       }
+      else if (data) {
+         const e = { target: { name: path, value: data } }
+         onConfigChange(e, data)
+      }
       closeTunnel(1)
    }
    return (
@@ -629,8 +633,7 @@ export const ImageUpload = props => {
                            <DeleteIcon />
                         </IconButton>
                      </div>
-                     {console.log("FIELDVALUE", fieldDetail.value)}
-                     <img src={fieldDetail?.value} alt={fieldDetail?.label} />
+                     <img src={fieldDetail?.value?.url || fieldDetail?.value} alt={fieldDetail?.label} />
                   </ImageContainer>
                ) : (
                   <ButtonTile
@@ -664,17 +667,16 @@ export const ImageUpload = props => {
             </>
          ) : (
             <ImageContainer width="120px" height="120px">
-               {console.log("🎈🎆", fieldDetail.value)}
                {fieldDetail?.value ? (
-                  <img src={fieldDetail?.value} alt={fieldDetail.label} />
+                  <img src={fieldDetail?.value?.url || fieldDetail?.value} alt={fieldDetail.label} />
                ) : (
-                  <div style={{ display: 'flex' }}>
+                  <div className="fallback-image-container">
                      <Image
                         width={170}
                         height={120}
                         src="error"
                         fallback="https://raw.githubusercontent.com/koehlersimon/fallback/master/Resources/Public/Images/placeholder.jpg"
-                     />{' '}
+                     />
                      <Text as="p">You haven't uploaded an image yet.</Text>
                   </div>
                )}
@@ -690,7 +692,6 @@ export const MultipleImageUpload = props => {
 
    const updateSetting = (data) => {
       if (data) {
-         console.log("path", path, "data", data)
          const e = { target: { name: path, value: data } }
          onConfigChange(e, data)
          // configSaveHandler(configJSON)
@@ -702,7 +703,6 @@ export const MultipleImageUpload = props => {
    }
 
    const addImage = images => {
-      console.log(images, "images")
       updateSetting(images)
    }
    return (
@@ -744,7 +744,7 @@ export const MultipleImageUpload = props => {
                      </Carousel>
                   </>
                ) : (
-                  <div style={{ display: 'flex' }}>
+                  <div className="fallback-image-container">
                      <Image
                         width={170}
                         height={120}
@@ -781,6 +781,13 @@ export const ImageContainer = styled.div`
    }
    .ant-carousel .slick-dots-bottom {
       height: 2px;
+   }
+   .fallback-image-container{
+      display:flex;
+      flex-wrap: wrap;
+      align-content: flex-start;
+      text-align: center;
+      flex-direction: column;
    }
 `
 export const PhoneNumSelector = styled.div`
