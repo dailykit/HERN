@@ -6,6 +6,11 @@ import {
    Form,
    IconButton,
    PlusIcon,
+   SectionTab,
+   SectionTabList,
+   SectionTabPanel,
+   SectionTabPanels,
+   SectionTabs,
    Tag,
    Text,
    TextButton,
@@ -22,7 +27,6 @@ import {
    Tooltip,
 } from '../../../../../../shared/components'
 import { logger } from '../../../../../../shared/utils'
-import { DeleteIcon } from '../../../../assets/icons'
 import {
    RecurrenceContext,
    reducers,
@@ -35,7 +39,17 @@ import {
 } from '../../../../graphql'
 import { Container, Flex, Grid } from '../styled'
 import { TimeSlots } from './components'
-import { TableHeader, TableRecord } from './styled'
+import {
+   SectionTabDay,
+   SectionTabDelete,
+   SectionTabLink,
+   StyledInsideSectionTab,
+   StyledSectionBottom,
+   StyledSectionTab,
+   StyledSectionTop,
+   TableHeader,
+   TableRecord,
+} from './styled'
 import {
    BrandsTunnel,
    ChargesTunnel,
@@ -43,6 +57,8 @@ import {
    ReccurenceTunnel,
    TimeSlotTunnel,
 } from './tunnels'
+import { DeleteIcon } from '../../../../../../shared/assets/icons'
+import { Switch } from 'antd'
 
 const Main = () => {
    const [recurrences, setRecurrences] = React.useState(undefined)
@@ -51,7 +67,7 @@ const Main = () => {
       reducers,
       initialState
    )
-
+   const [isClicked, setIsClicked] = React.useState(false)
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
    // Subscription
@@ -263,61 +279,81 @@ const Main = () => {
                               </>
                            )}
                         </TableHeader>
-                        {recurrences.map(recurrence => (
-                           <TableRecord key={recurrence.id}>
-                              <div style={{ padding: '16px' }}>
-                                 {rrulestr(recurrence.rrule)
-                                    .toText()
-                                    .replace(/^\w/, char => char.toUpperCase())}
-                                 <TextButton
-                                    type="ghost"
-                                    onClick={() =>
-                                       linkWithBrands(recurrence.id)
-                                    }
-                                 >
-                                    Link with Brands
-                                 </TextButton>
-                              </div>
-                              <Flex
-                                 direction="row"
-                                 align="center"
-                                 style={{ padding: '16px' }}
-                              >
-                                 <Form.Toggle
-                                    name={`recurrence-${recurrence.id}`}
-                                    value={recurrence.isActive}
-                                    onChange={() =>
-                                       updateRecurrence({
-                                          variables: {
-                                             id: recurrence.id,
-                                             set: {
-                                                isActive: !recurrence.isActive,
-                                             },
-                                          },
-                                       })
-                                    }
-                                 />
-                                 <IconButton
-                                    type="ghost"
-                                    onClick={() => deleteHandler(recurrence.id)}
-                                 >
-                                    <DeleteIcon color=" #FF5A52" />
-                                 </IconButton>
-                              </Flex>
-                              <div>
-                                 <TimeSlots
-                                    recurrenceId={recurrence.id}
-                                    timeSlots={recurrence.timeSlots}
-                                    openTunnel={openTunnel}
-                                 />
-                              </div>
-                           </TableRecord>
-                        ))}
+
+                        <SectionTabs>
+                           <SectionTabList>
+                              {recurrences.map(recurrence => (
+                                 <SectionTab key={recurrence.id}>
+                                    <StyledInsideSectionTab>
+                                       <StyledSectionTop>
+                                          <SectionTabDay>
+                                             {rrulestr(recurrence.rrule)
+                                                .toText()
+                                                .replace(/^\w/, char =>
+                                                   char.toUpperCase()
+                                                )}
+                                          </SectionTabDay>
+                                          <IconButton
+                                             type="ghost"
+                                             style={SectionTabDelete}
+                                             onClick={() =>
+                                                deleteHandler(recurrence.id)
+                                             }
+                                          >
+                                             <DeleteIcon color=" #FF5A52" />
+                                          </IconButton>
+                                       </StyledSectionTop>
+                                       <StyledSectionBottom>
+                                          <TextButton
+                                             type="ghost"
+                                             size="sm"
+                                             style={SectionTabLink}
+                                             onClick={() =>
+                                                linkWithBrands(recurrence.id)
+                                             }
+                                          >
+                                             Link with Brands
+                                          </TextButton>
+                                          <Switch
+                                             name={`recurrence-${recurrence.id}`}
+                                             value={recurrence.isActive}
+                                             checkedChildren="Published"
+                                             unCheckedChildren="UnPublished"
+                                             defaultChecked
+                                             onChange={() =>
+                                                updateRecurrence({
+                                                   variables: {
+                                                      id: recurrence.id,
+                                                      set: {
+                                                         isActive:
+                                                            !recurrence.isActive,
+                                                      },
+                                                   },
+                                                })
+                                             }
+                                          />
+                                       </StyledSectionBottom>
+                                    </StyledInsideSectionTab>
+                                 </SectionTab>
+                              ))}
+                           </SectionTabList>
+                           <SectionTabPanels>
+                              {recurrences.map(recurrence => (
+                                 <SectionTabPanel key={recurrence.id}>
+                                    <TimeSlots
+                                       recurrenceId={recurrence.id}
+                                       timeSlots={recurrence.timeSlots}
+                                       openTunnel={openTunnel}
+                                    />
+                                 </SectionTabPanel>
+                              ))}
+                           </SectionTabPanels>
+                        </SectionTabs>
                      </>
                   )}
                   <ButtonTile
-                     noIcon
-                     type="secondary"
+                     type="primary"
+                     size="lg"
                      text="Add Recurrence"
                      onClick={() => openTunnel(1)}
                   />
