@@ -142,7 +142,7 @@ export const Header = ({ settings, navigationMenus }) => {
    }, [])
 
    React.useEffect(() => {
-      const storeLocationId = localStorage.getItem('storeBrandLocationId')
+      const storeLocationId = localStorage.getItem('storeLocationId')
       if (storeLocationId) {
          console.log('inTheSafeZone')
          dispatch({
@@ -514,9 +514,7 @@ export const Header = ({ settings, navigationMenus }) => {
    )
 
    React.useEffect(() => {
-      const availableLocalLocationId = localStorage.getItem(
-         'storeBrandLocationId'
-      )
+      const availableLocalLocationId = localStorage.getItem('storeLocationId')
       if (availableLocalLocationId) {
          return
       }
@@ -572,12 +570,12 @@ export const Header = ({ settings, navigationMenus }) => {
                   JSON.stringify(recurrencesDetails.fulfillmentType)
                )
                localStorage.setItem(
-                  'storeBrandLocationId',
-                  JSON.stringify(availableStores[0].id)
+                  'storeLocationId',
+                  JSON.stringify(availableStores[0].location.id)
                )
                dispatch({
                   type: 'SET_LOCATION_ID',
-                  payload: availableStores[0].id,
+                  payload: availableStores[0].location.id,
                })
                dispatch({
                   type: 'SET_SELECTED_ORDER_TAB',

@@ -23,7 +23,7 @@ import { VegNonVegType } from '../../assets/icons'
 export const OnDemandOrder = ({ config }) => {
    const router = useRouter()
    const { addToast } = useToasts()
-   const { brand } = useConfig()
+   const { brand, locationId } = useConfig()
    const menuType = config?.display?.dropdown?.value[0]?.value
       ? config?.display?.dropdown?.value[0]?.value
       : 'side-nav'
@@ -56,7 +56,7 @@ export const OnDemandOrder = ({ config }) => {
       () => ({
          params: {
             brandId: brand?.id,
-            locationId: 1000,
+            locationId: locationId,
          },
       }),
       [brand]

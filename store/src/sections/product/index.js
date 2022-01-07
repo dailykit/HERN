@@ -11,14 +11,14 @@ export const Product = ({ config }) => {
    const router = useRouter()
    const { id } = router.query
    const [status, setStatus] = React.useState('loading')
-   const { brand } = useConfig()
+   const { brand, locationId } = useConfig()
    const [productDetails, setProductDetails] = React.useState({})
 
    const argsForByLocation = React.useMemo(
       () => ({
          params: {
             brandId: brand?.id,
-            locationId: 1000,
+            locationId: locationId,
          },
       }),
       [brand]

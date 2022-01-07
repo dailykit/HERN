@@ -1502,6 +1502,12 @@ export const StoreList = props => {
                eachStore => eachStore[fulfillmentStatus].status
             )[0]
          )
+         console.log(
+            'selectedStore',
+            sortedBrandLocation.filter(
+               eachStore => eachStore[fulfillmentStatus].status
+            )[0]
+         )
          if (
             LocationSelectorConfig.informationVisibility.deliverySettings
                .storeLocationSelectionMethod.value.value === 'auto' ||
@@ -1513,7 +1519,7 @@ export const StoreList = props => {
                type: 'SET_LOCATION_ID',
                payload: sortedBrandLocation.filter(
                   eachStore => eachStore[fulfillmentStatus].status
-               )[0].id,
+               )[0].location.id,
             })
             dispatch({
                type: 'SET_SELECTED_ORDER_TAB',
@@ -1533,11 +1539,11 @@ export const StoreList = props => {
             })
             localStorage.setItem('orderTab', JSON.stringify(fulfillmentType))
             localStorage.setItem(
-               'storeBrandLocationId',
+               'storeLocationId',
                JSON.stringify(
                   sortedBrandLocation.filter(
                      eachStore => eachStore[fulfillmentStatus].status
-                  )[0].id
+                  )[0].location.id
                )
             )
 
@@ -1811,7 +1817,7 @@ export const StoreList = props => {
                         console.log('selectedStore', eachStore)
                         dispatch({
                            type: 'SET_LOCATION_ID',
-                           payload: eachStore.id,
+                           payload: eachStore.location.id,
                         })
                         dispatch({
                            type: 'SET_SELECTED_ORDER_TAB',
@@ -1822,8 +1828,8 @@ export const StoreList = props => {
                            JSON.stringify(fulfillmentType)
                         )
                         localStorage.setItem(
-                           'storeBrandLocationId',
-                           JSON.stringify(eachStore.id)
+                           'storeLocationId',
+                           JSON.stringify(eachStore.location.id)
                         )
                         dispatch({
                            type: 'SET_USER_LOCATION',
@@ -2153,7 +2159,7 @@ const StoresOnMap = props => {
                                  storeDetails.location
                               )
                               localStorage.setItem(
-                                 'storeBrandLocationId',
+                                 'storeLocationId',
                                  JSON.stringify(storeDetails.location.id)
                               )
                            }}
