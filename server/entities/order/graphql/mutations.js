@@ -54,7 +54,7 @@ export const UPDATE_ORDER = `
       updateOrder(pk_columns: {id: $id}, _set: $_set) {
          id
       }
-   } 
+   }
 `
 
 export const SEND_MAIL = `

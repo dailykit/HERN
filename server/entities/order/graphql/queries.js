@@ -295,3 +295,38 @@ export const ORDER_BY_CART = `
       }
    }
 `
+
+export const CART = `
+query cart($id: Int!) {
+  cart(id: $id) {
+    id
+    isTest
+    amount
+    orderId
+    customerId
+    customerKeycloakId
+    balancePayment
+    retryPaymentMethod
+    paymentMethodId
+    paymentCustomerId
+    statementDescriptor
+    toUseAvailablePaymentOptionId
+    customerInfo
+    posistOrderDetails
+    availablePaymentOption {
+      id
+      label
+      supportedPaymentOption {
+         paymentOptionLabel
+         id
+         isRequestClientBased
+         isWebhookClientBased
+         supportedPaymentCompany {
+            label
+            id
+         }
+      }
+   }
+  }
+}
+`

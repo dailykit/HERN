@@ -1,7 +1,13 @@
-import { client } from '../../lib/graphql'
+import axios from 'axios'
 
-import { SEND_MAIL } from './graphql/mutations'
-import { CUSTOMER, EMAIL_SETTINGS, ORDER_BY_CART } from './graphql/queries'
+import { client } from '../../lib/graphql'
+import { SEND_MAIL, UPDATE_CART } from './graphql/mutations'
+import {
+   CUSTOMER,
+   EMAIL_SETTINGS,
+   ORDER_BY_CART,
+   CART
+} from './graphql/queries'
 
 import { logger2 } from '../../utils'
 import { fetch_html } from './functions'
@@ -136,6 +142,51 @@ export const handleStatusChange = async (req, res) => {
       //    trace: error
       // })
       return res.status('code' in error && error.code ? error.code : 500).json({
+         success: false,
+         error
+      })
+   }
+}
+
+export const posistOrderPush = async (req, res) => {
+   try {
+      const { id } = req.body.event.data.new
+      const { cart = {} } = await client.request(CART, {
+         id
+      })
+      const posistOrder = cart.posistOrderDetails
+      console.log(posistOrder)
+      const response = await axios.post({
+         url: 'https://posist.com/api/v1/orders',
+         headers: {
+            'Content-Type': 'application/json',
+            'X-POSIST-API-KEY': process.env.POSIST_API_KEY
+         },
+         data: posistOrder
+      })
+      if (response.status === 200) {
+         const posistOrderResponse = response.data
+         await client.request(UPDATE_CART, {
+            id,
+            _set: {
+               posistOrderResponse,
+               posistOrderStatus: 'CREATED'
+            }
+         })
+         return res.status(200).json({
+            success: true,
+            data: posistOrderResponse,
+            message: 'Order pushed to posist successfully'
+         })
+      } else {
+         return {
+            success: false,
+            message: 'Error in pushing order to posist'
+         }
+      }
+   } catch (error) {
+      console.error(error)
+      return res.status(500).json({
          success: false,
          error
       })
