@@ -722,15 +722,16 @@ export const ImageUpload = props => {
                      </Form.Label>
                      <Tooltip identifier="image_label" />
                   </Flex>
-                  <ImageContainer width="120px" height="120px" flexDirection="row">
+                  <ImageContainer width="100px" height="100px" flexDirection="row">
                      <div className="fallback-image-container">
                         <Image
-                           width={170}
-                           height={120}
+                           width={150}
+                           height={100}
                            src="error"
                            fallback="https://raw.githubusercontent.com/koehlersimon/fallback/master/Resources/Public/Images/placeholder.jpg"
+                           title="no image added"
                         />
-                        <Text as="p">You haven't uploaded an image yet.</Text>
+
                      </div> </ImageContainer>
                </>
                )}
