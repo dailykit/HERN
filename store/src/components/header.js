@@ -882,9 +882,9 @@ const LocationInfo = ({ settings }) => {
             return null
       }
    }, [selectedOrderTab])
-   if (storeStatus.loading) {
-      return <Loader inline />
-   }
+   // if (storeStatus.loading) {
+   //    return <Loader inline />
+   // }
 
    return (
       <>
@@ -895,26 +895,32 @@ const LocationInfo = ({ settings }) => {
             <div className="hern-header__location-icon">
                <LocationIcon size={18} />
             </div>
-            <div className="hern-header__location-right">
-               {storeStatus.status && (
-                  <div className="hern-header__location-upper">
-                     {prefix}{' '}
-                     <span className="hern-header__downvector-icon">
-                        {prefix && <DownVector size={12} />}
-                     </span>
+            {storeStatus.loading ? (
+               <div className="hern-header__location-right-loading">
+                  getting your location...
+               </div>
+            ) : (
+               <div className="hern-header__location-right">
+                  {storeStatus.status && (
+                     <div className="hern-header__location-upper">
+                        {prefix}{' '}
+                        <span className="hern-header__downvector-icon">
+                           {prefix && <DownVector size={12} />}
+                        </span>
+                     </div>
+                  )}
+                  <div className="hern-header__location-content">
+                     {userLocation?.mainText
+                        ? userLocation?.mainText
+                        : userLocation?.address?.mainText
+                        ? userLocation?.address?.mainText
+                        : 'Please select address...'}
                   </div>
-               )}
-               <div className="hern-header__location-content">
-                  {userLocation?.mainText
-                     ? userLocation?.mainText
-                     : userLocation?.address?.mainText
-                     ? userLocation?.address?.mainText
-                     : 'Please select address...'}
+                  <div className="hern-header__location-warning">
+                     {!storeStatus.status ? storeStatus.message : ''}
+                  </div>
                </div>
-               <div className="hern-header__location-warning">
-                  {!storeStatus.status ? storeStatus.message : ''}
-               </div>
-            </div>
+            )}
          </div>
          <LocationSelectorWrapper
             showLocationSelectorPopup={showLocationSelectorPopup}
