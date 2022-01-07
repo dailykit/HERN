@@ -1,6 +1,7 @@
 import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
+   ButtonGroup,
    ButtonTile,
    ComboButton,
    Form,
@@ -47,6 +48,7 @@ import {
    StyledSectionBottom,
    StyledSectionTab,
    StyledSectionTop,
+   StyledTabListHeading,
    TableHeader,
    TableRecord,
 } from './styled'
@@ -165,123 +167,37 @@ const Main = () => {
                      </div>
                   </Grid>
                   <ComboButton type="solid" onClick={() => openTunnel(1)}>
-                     <PlusIcon /> Create Recurrence
+                     <PlusIcon color="#f3f3f3" /> Create Recurrence
                   </ComboButton>
                </Flex>
             </Container>
             {loading ? (
                <InlineLoader />
             ) : (
-               <Container top="80" paddingX="32" bottom="64">
-                  {Boolean(recurrences?.length) && (
+               <Container
+                  top="80"
+                  paddingX="32"
+                  bottom="64"
+                  style={{ paddingBottom: '54px' }}
+               >
+                  {recurrences?.length > 0 ? (
                      <>
-                        <TableHeader>
-                           <Flex
-                              direction="row"
-                              align="center"
-                              justify="flex-start"
-                           >
-                              Recurrences
-                              <Tooltip identifier="recurrences_table_recurrences" />
-                           </Flex>
-                           <Flex
-                              direction="row"
-                              align="center"
-                              justify="flex-start"
-                           >
-                              Availability
-                              <Tooltip identifier="recurrences_table_availability" />
-                           </Flex>
-                           <Flex
-                              direction="row"
-                              align="center"
-                              justify="flex-start"
-                           >
-                              Time Slots
-                              <Tooltip identifier="recurrences_table_time_slots" />
-                           </Flex>
-                           {type.includes('PICKUP') && (
-                              <Flex
-                                 direction="row"
-                                 align="center"
-                                 justify="flex-start"
-                              >
-                                 {type.includes('PREORDER') ? 'Lead' : 'Prep'}{' '}
-                                 Time
-                                 <Tooltip
-                                    identifier={
-                                       type.includes('PREORDER')
-                                          ? 'recurrences_table_lead_time'
-                                          : 'recurrences_table_prep_time'
-                                    }
-                                 />
-                              </Flex>
-                           )}
-                           <Flex
-                              direction="row"
-                              align="center"
-                              justify="flex-start"
-                           >
-                              Availability
-                              <Tooltip identifier="recurrences_table_availability" />
-                           </Flex>
-                           {type.includes('DELIVERY') && (
-                              <>
-                                 <Flex
-                                    direction="row"
-                                    align="center"
-                                    justify="flex-start"
-                                 >
-                                    Delivery Range
-                                    <Tooltip identifier="recurrences_table_delivery_range" />
-                                 </Flex>
-                                 <Flex
-                                    direction="row"
-                                    align="center"
-                                    justify="flex-start"
-                                 >
-                                    {type.includes('PREORDER')
-                                       ? 'Lead'
-                                       : 'Prep'}{' '}
-                                    Time
-                                    <Tooltip
-                                       identifier={
-                                          type.includes('PREORDER')
-                                             ? 'recurrences_table_lead_time'
-                                             : 'recurrences_table_prep_time'
-                                       }
-                                    />
-                                 </Flex>
-                                 <Flex
-                                    direction="row"
-                                    align="center"
-                                    justify="flex-start"
-                                 >
-                                    Availability
-                                    <Tooltip identifier="recurrences_table_availability" />
-                                 </Flex>
-                                 <Flex
-                                    direction="row"
-                                    align="center"
-                                    justify="flex-start"
-                                 >
-                                    Order Value
-                                    <Tooltip identifier="recurrences_table_order_value" />
-                                 </Flex>
-                                 <Flex
-                                    direction="row"
-                                    align="center"
-                                    justify="flex-start"
-                                 >
-                                    Charges
-                                    <Tooltip identifier="recurrences_table_charges" />
-                                 </Flex>
-                              </>
-                           )}
-                        </TableHeader>
-
                         <SectionTabs>
                            <SectionTabList>
+                              <StyledTabListHeading>
+                                 <div>Recurrence</div>
+                                 <ButtonGroup>
+                                    <IconButton
+                                       type="ghost"
+                                       size="md"
+                                       title="Click to add a new recurrence"
+                                       onClick={() => openTunnel(1)}
+                                       style={{ right: '0.5em' }}
+                                    >
+                                       <PlusIcon color="#919699" />
+                                    </IconButton>
+                                 </ButtonGroup>
+                              </StyledTabListHeading>
                               {recurrences.map(recurrence => (
                                  <SectionTab key={recurrence.id}>
                                     <StyledInsideSectionTab>
@@ -296,6 +212,7 @@ const Main = () => {
                                           <IconButton
                                              type="ghost"
                                              style={SectionTabDelete}
+                                             title="Delete Recurrence"
                                              onClick={() =>
                                                 deleteHandler(recurrence.id)
                                              }
@@ -308,6 +225,7 @@ const Main = () => {
                                              type="ghost"
                                              size="sm"
                                              style={SectionTabLink}
+                                             title="Link with brands"
                                              onClick={() =>
                                                 linkWithBrands(recurrence.id)
                                              }
@@ -320,6 +238,7 @@ const Main = () => {
                                              checkedChildren="Published"
                                              unCheckedChildren="UnPublished"
                                              defaultChecked
+                                             title="Press to change publish type"
                                              onChange={() =>
                                                 updateRecurrence({
                                                    variables: {
@@ -350,13 +269,14 @@ const Main = () => {
                            </SectionTabPanels>
                         </SectionTabs>
                      </>
+                  ) : (
+                     <ButtonTile
+                        type="primary"
+                        size="lg"
+                        text="Add Recurrence"
+                        onClick={() => openTunnel(1)}
+                     />
                   )}
-                  <ButtonTile
-                     type="primary"
-                     size="lg"
-                     text="Add Recurrence"
-                     onClick={() => openTunnel(1)}
-                  />
                </Container>
             )}
          </Container>

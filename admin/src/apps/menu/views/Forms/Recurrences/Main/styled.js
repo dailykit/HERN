@@ -37,12 +37,21 @@ export const StyledInsideSectionTab = styled.div`
    flex-direction: column;
    width: 100%;
 `
-export const StyledSectionTab = {
-   background: '#F9F9F9',
-   border: '1px solid #F3F3F3',
-   boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.1)',
-   borderRadius: '4px',
-}
+export const StyledTabListHeading = styled.div`
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   padding-bottom: 8px;
+   div {
+      font-family: Roboto;
+      font-style: normal;
+      font-weight: 500;
+      font-size: 26px;
+      line-height: 16px;
+      letter-spacing: 0.32px;
+      color: #919699;
+   }
+`
 export const StyledSectionTop = styled.div`
    display: flex;
    position: relative;
