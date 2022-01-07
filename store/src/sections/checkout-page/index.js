@@ -210,7 +210,7 @@ export const Checkout = props => {
          </Main>
       )
    }
-   if (user?.keycloakId !== cart?.customerKeycloakId) {
+   if (isAuthenticated && user?.keycloakId !== cart?.customerKeycloakId) {
       return (
          <Main>
             <div tw="pt-4 w-full">
