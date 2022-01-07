@@ -23,7 +23,9 @@ import { VegNonVegType } from '../../assets/icons'
 export const OnDemandOrder = ({ config }) => {
    const router = useRouter()
    const { addToast } = useToasts()
+
    const { brand, locationId } = useConfig()
+
    const menuType = config?.display?.dropdown?.value[0]?.value
       ? config?.display?.dropdown?.value[0]?.value
       : 'side-nav'
@@ -43,8 +45,16 @@ export const OnDemandOrder = ({ config }) => {
       config?.display?.['showCartOnRight']?.value ??
       config?.display?.['showCartOnRight']?.default ??
       false
+   const productsScrollWidth =
+      config?.display?.productsScrollWidth?.value ??
+      config?.display?.productsScrollWidth?.default ??
+      0
 
    setThemeVariable('--hern-number-of-products', numberOfProducts)
+   setThemeVariable(
+      '--hern-order-product-section-scroll-width',
+      productsScrollWidth + 'px'
+   )
 
    const [hydratedMenu, setHydratedMenu] = React.useState([])
    const [status, setStatus] = useState('loading')

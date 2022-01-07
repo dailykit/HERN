@@ -14,7 +14,7 @@ export const SliderSection = ({ config }) => {
          {sliderContent && (
             <Carousel
                className="hern-slider_section-carousel"
-               arrows
+               arrows={showArrowsOnSlider}
                dots={showDotsOnSlider}
                prevArrow={showArrowsOnSlider ? <LeftArrow /> : false}
                nextArrow={showArrowsOnSlider ? <RightArrow /> : false}

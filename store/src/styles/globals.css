@@ -25,6 +25,7 @@ h2 {
    --speed: 500ms;
    --hern-number-of-products: 2;
    --hern-accent: rgb(56, 161, 105);
+   --hern-order-product-section-scroll-width: 8px;
 }
 
 .react-toast-notifications__container {

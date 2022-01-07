@@ -67,7 +67,7 @@ export const Layout = ({
                      </h4>
                      {location && (
                         <address className="hern-layout__footer__contact__location">
-                           {normalizeAddress(location)}
+                           {normalizeAddress(location?.Location?.value)}
                         </address>
                      )}
 
