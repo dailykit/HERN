@@ -600,85 +600,102 @@ export const ImageUpload = props => {
       <>
          {editMode ? (
             <>
-               <Flex container alignItems="flex-start">
-                  <Form.Label title={fieldDetail.label} htmlFor="textArea">
-                     YOUR {fieldDetail.label.toUpperCase()}
-                  </Form.Label>
-                  <Tooltip identifier="textArea_component_info" />
-               </Flex>
-               <Spacer size="16px" />
-               {fieldDetail?.value ? (
-                  <ImageContainer width="120px" height="120px">
-                     <div>
-                        <IconButton
-                           style={{ background: 'transparent' }}
-                           size="sm"
-                           type="solid"
-                           onClick={() => openTunnel(1)}
-                        >
-                           <EditIcon />
-                        </IconButton>
-                        <IconButton
-                           style={{
-                              background: 'transparent',
-                           }}
-                           size="sm"
-                           type="solid"
-                           onClick={() => updateSetting({ url: '' })}
-                        >
-                           <DeleteIcon />
-                        </IconButton>
-                     </div>
-                     {console.log("FIELDVALUE", fieldDetail.value)}
-                     <img src={fieldDetail?.value} alt={fieldDetail?.label} />
-                  </ImageContainer>
-               ) : (
-                  <ButtonTile
-                     type="uploadImage"
-                     size="sm"
-                     text="Upload"
-                     onClick={() => openTunnel(1)}
-                     style={{
-                        width: '170px',
-                        height: '120px',
-                        marginBottom: '10px',
-                     }}
-                  />
-               )}
+               <ImageWrapper paddingRight="2rem">
+                  <Flex container alignItems="flex-start">
+                     <Form.Label title={fieldDetail.label} htmlFor="textArea">
+                        YOUR {fieldDetail.label.toUpperCase()}
+                     </Form.Label>
+                     <Tooltip identifier="textArea_component_info" />
+                  </Flex>
+                  <Spacer size="16px" />
+                  {fieldDetail?.value ? (
+                     <ImageContainer width="120px" height="120px">
+                        <div>
+                           <IconButton
+                              style={{ background: 'transparent' }}
+                              size="sm"
+                              type="solid"
+                              onClick={() => openTunnel(1)}
+                           >
+                              <EditIcon />
+                           </IconButton>
+                           <IconButton
+                              style={{
+                                 background: 'transparent',
+                              }}
+                              size="sm"
+                              type="solid"
+                              onClick={() => updateSetting({ url: '' })}
+                           >
+                              <DeleteIcon />
+                           </IconButton>
+                        </div>
+                        <img src={fieldDetail?.value} alt={fieldDetail?.label} />
+                     </ImageContainer>
+                  ) : (
+                     <ButtonTile
+                        type="uploadImage"
+                        size="sm"
+                        text="Upload"
+                        onClick={() => openTunnel(1)}
+                        style={{
+                           width: '170px',
+                           height: '120px',
+                           marginBottom: '10px',
+                        }}
+                     />
+                  )}
+               </ImageWrapper>
                <Tunnels tunnels={tunnels}>
                   <Tunnel layer={1} size="md">
                      <TunnelHeader
                         title="Add Brand Logo"
                         close={() => closeTunnel(1)}
                      />
-                     <Banner id="brands-app-brands-brand-details-brand-logo-tunnel-top" />
                      <Flex padding="16px">
                         <AssetUploader
                            onAssetUpload={data => updateSetting(data)}
                            onImageSelect={data => updateSetting(data)}
                         />
                      </Flex>
-                     <Banner id="brands-app-brands-brand-details-brand-logo-tunnel-bottom" />
                   </Tunnel>
                </Tunnels>
             </>
          ) : (
-            <ImageContainer width="120px" height="120px">
-               {console.log("🎈🎆", fieldDetail.value)}
-               {fieldDetail?.value ? (
-                  <img src={fieldDetail?.value} alt={fieldDetail.label} />
-               ) : (
-                  <div style={{ display: 'flex' }}>
-                     <Image
-                        width={170}
-                        height={120}
-                        src="error"
-                        fallback="https://raw.githubusercontent.com/koehlersimon/fallback/master/Resources/Public/Images/placeholder.jpg"
-                     />{' '}
-                     <Text as="p">You haven't uploaded an image yet.</Text>
-                  </div>
+            <ImageWrapper>
+               {fieldDetail?.value ? (<>
+                  <Flex container alignItems="flex-end">
+                     <Form.Label title={fieldDetail.label} htmlFor="text">
+                        {fieldDetail.label.toUpperCase()}
+                     </Form.Label>
+                     <Tooltip identifier="image_label" />
+                  </Flex>
+                  <ImageContainer width="120px" height="120px" flexDirection="row">
+
+                     <img src={fieldDetail?.value} alt={fieldDetail.label} />
+                  </ImageContainer>
+               </>
+               ) : (<>
+                  <Flex container alignItems="flex-end">
+                     <Form.Label title={fieldDetail.label} htmlFor="text">
+                        {fieldDetail.label.toUpperCase()}
+                     </Form.Label>
+                     <Tooltip identifier="image_label" />
+                  </Flex>
+                  <ImageContainer width="120px" height="120px" flexDirection="row">
+                     <div style={{ display: 'flex' }}>
+                        <Image
+                           width={170}
+                           height={120}
+                           src="error"
+                           fallback="https://raw.githubusercontent.com/koehlersimon/fallback/master/Resources/Public/Images/placeholder.jpg"
+                        />{' '}
+                        <Text as="p">You haven't uploaded an image yet.</Text>
+                     </div> </ImageContainer>
+               </>
                )}
-            </ImageContainer>
+
+            </ImageWrapper>
          )}
       </>
    )
@@ -690,8 +707,7 @@ export const MultipleImageUpload = props => {
 
    const updateSetting = (data) => {
       if (data) {
-         console.log("path", path, "data", data)
-         const e = { target: { name: path, value: data } }
+         const e = { target: { name: path, value: { "url": [...data] } } }
          onConfigChange(e, data)
          // configSaveHandler(configJSON)
       }
@@ -702,14 +718,13 @@ export const MultipleImageUpload = props => {
    }
 
    const addImage = images => {
-      console.log(images, "images")
       updateSetting(images)
    }
    return (
       <>
          {editMode ? (
             <Flex width="50%" style={{ position: 'relative', top: '22px' }}>
-               {fieldDetail?.value?.url !== null &&
+               {(fieldDetail?.value?.url && fieldDetail?.value?.url !== null) &&
                   fieldDetail?.value?.url.length ? (
                   <Gallery
                      list={fieldDetail.value.url || []}
@@ -761,7 +776,7 @@ export const MultipleImageUpload = props => {
 }
 export const ImageContainer = styled.div`
    display: flex;
-   flex-direction: row-reverse;
+   flex-direction: ${props => props.flexDirection ? props.flexDirection : 'row-reverse'};
    justify-content: flex-end;
    height: ${props => props.height || 'auto'};
    width: ${props => props.width || 'auto'};
@@ -781,6 +796,13 @@ export const ImageContainer = styled.div`
    }
    .ant-carousel .slick-dots-bottom {
       height: 2px;
+   }
+   .ant-carousel>.slick-slider{
+      height:10rem !important;
+      .slick-list>.slick-track>.slick-slide>div>div>img{
+         max-height:120px !important;
+         width:auto;
+      }
    }
 `
 export const PhoneNumSelector = styled.div`
@@ -812,4 +834,11 @@ export const NoValueSpan = styled.span`
    color: #919699;
    font-size: 14px;
    font-weight: 400;
+`
+export const ImageWrapper = styled.div`
+display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0.4rem;
+    padding-right: ${props => props.paddingRight || '0.4rem'};
 `

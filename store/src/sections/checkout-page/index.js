@@ -8,6 +8,7 @@ import { Radio, Space } from 'antd'
 import { useConfig, usePayment } from '../../lib'
 import * as Icon from '../../assets/icons'
 import OrderInfo from '../../sections/OrderInfo'
+import { OnDemandCart } from '../cart'
 import { isClient, formatCurrency, getRoute } from '../../utils'
 import {
    Loader,
@@ -27,36 +28,7 @@ import { isEmpty } from 'lodash'
 
 export const Checkout = props => {
    const router = useRouter()
-   const { isAuthenticated, isLoading } = useUser()
-   React.useEffect(() => {
-      if (!isAuthenticated && !isLoading) {
-         isClient && localStorage.setItem('landed_on', location.href)
-         router.push(getRoute('/get-started/select-plan'))
-      }
-   }, [isAuthenticated, isLoading])
-
-   return (
-      <PaymentProvider>
-         <PaymentContent />
-      </PaymentProvider>
-   )
-}
-
-const messages = {
-   PENDING: 'We are processing your payment.',
-   SUCCEEDED: 'Payment for your order has succeeded, you will redirected soon.',
-   REQUIRES_PAYMENT_METHOD: '',
-   REQUIRES_ACTION:
-      'A window will open in short while for further payment authorization required by your bank!',
-   PAYMENT_FAILED: 'Your payment has failed, please try again.',
-   REQUIRES_ACTION_WITH_URL:
-      'A window will open in short while for further payment authorization required by your bank. In case the new window has not opened own yet, please click the button below.',
-}
-
-const PaymentContent = () => {
-   const router = useRouter()
-   const { user } = useUser()
-   // const { state } = usePayment()
+   const { isAuthenticated, isLoading, user } = useUser()
    const {
       isPaymentLoading,
       paymentLifeCycleState,
@@ -85,66 +57,6 @@ const PaymentContent = () => {
          id: isClient ? new URLSearchParams(location.search).get('id') : '',
       },
    })
-
-   // React.useEffect(() => {
-   //    if (!loading && !isEmpty(cart)) {
-   //       ;(async () => {
-   //          const status = cart.paymentStatus
-   //          const remark = cart.transactionRemark
-   //          const next_action = cart.transactionRemark?.next_action
-
-   //          try {
-   //             if (status === 'PENDING') {
-   //                setOverlayMessage(messages['PENDING'])
-   //             } else if (status === 'REQUIRES_ACTION' && !next_action?.type) {
-   //                toggleOverlay(true)
-   //                setOverlayMessage(messages['REQUIRES_ACTION'])
-   //             } else if (status === 'REQUIRES_ACTION' && next_action?.type) {
-   //                toggleOverlay(true)
-   //                setOverlayMessage(messages['REQUIRES_ACTION_WITH_URL'])
-   //                let TAB_URL = ''
-   //                let remark = remark
-   //                if (next_action?.type === 'use_stripe_sdk') {
-   //                   TAB_URL = next_action?.use_stripe_sdk?.stripe_js
-   //                } else {
-   //                   TAB_URL = next_action?.redirect_to_url?.url
-   //                }
-   //                setOtpPageUrl(TAB_URL)
-   //                authTabRef.current = window.open(TAB_URL, 'payment_auth_page')
-   //             } else if (
-   //                status === 'REQUIRES_PAYMENT_METHOD' &&
-   //                remark?.last_payment_error?.code
-   //             ) {
-   //                toggleOverlay(false)
-   //                setOverlayMessage(messages['PENDING'])
-   //                addToast(remark?.last_payment_error?.message, {
-   //                   appearance: 'error',
-   //                })
-   //             } else if (cart.paymentStatus === 'SUCCEEDED') {
-   //                if (authTabRef.current) {
-   //                   authTabRef.current.close()
-   //                   if (!authTabRef.current.closed) {
-   //                      window.open(
-   //                         `/checkout?id=${cart.id}`,
-   //                         'payment_auth_page'
-   //                      )
-   //                   }
-   //                }
-   //                setOverlayMessage(messages['SUCCEEDED'])
-   //                addToast(messages['SUCCEEDED'], { appearance: 'success' })
-   //                router.push(`/placing-order?id=${cart.id}`)
-   //             } else if (status === 'PAYMENT_FAILED') {
-   //                toggleOverlay(false)
-   //                addToast(messages['PAYMENT_FAILED'], {
-   //                   appearance: 'error',
-   //                })
-   //             }
-   //          } catch (error) {
-   //             console.log('on succeeded -> error -> ', error)
-   //          }
-   //       })()
-   //    }
-   // }, [loading, cart])
 
    const [updateCart] = useMutation(QUERIES.UPDATE_CART, {
       onCompleted: () => {
@@ -228,6 +140,13 @@ const PaymentContent = () => {
 
    const theme = configOf('theme-color', 'Visual')
 
+   React.useEffect(() => {
+      if (!isAuthenticated && !isLoading) {
+         isClient && localStorage.setItem('landed_on', location.href)
+         router.push(getRoute('/get-started/select-plan'))
+      }
+   }, [isAuthenticated, isLoading])
+
    if (loading || isPaymentLoading) return <Loader inline />
    if (isClient && !new URLSearchParams(location.search).get('id')) {
       return (
@@ -310,57 +229,85 @@ const PaymentContent = () => {
       )
    }
    return (
-      <Main>
-         <Form>
-            <header tw="my-3 pb-1 border-b flex items-center justify-between">
-               <SectionTitle theme={theme}>Profile Details</SectionTitle>
-            </header>
-            <ProfileSection />
-            <PaymentOptionsRenderer
-               cartId={
-                  isClient ? new URLSearchParams(location.search).get('id') : ''
-               }
-            />
-         </Form>
-         {cart?.products?.length > 0 && (
-            <CartDetails>
-               <OrderInfo cart={cart} />
-            </CartDetails>
+      <>
+         {cart.source === 'subscription' ? (
+            <>
+               <Main>
+                  <Form>
+                     <header tw="my-3 pb-1 border-b flex items-center justify-between">
+                        <SectionTitle theme={theme}>
+                           Profile Details
+                        </SectionTitle>
+                     </header>
+                     <ProfileSection />
+                     <PaymentOptionsRenderer
+                        cartId={
+                           isClient
+                              ? new URLSearchParams(location.search).get('id')
+                              : ''
+                        }
+                     />
+                  </Form>
+                  {cart?.products?.length > 0 && (
+                     <CartDetails>
+                        <OrderInfo cart={cart} />
+                     </CartDetails>
+                  )}
+                  {isOverlayOpen && (
+                     <Overlay>
+                        <header tw="flex pr-3 pt-3">
+                           <button
+                              onClick={onOverlayClose}
+                              tw="ml-auto bg-white h-10 w-10 flex items-center justify-center rounded-full"
+                           >
+                              <Icon.CloseIcon tw="stroke-current text-gray-600" />
+                           </button>
+                        </header>
+                        <main tw="flex-1 flex flex-col items-center justify-center">
+                           <section tw="p-4 w-11/12 lg:w-8/12 bg-white rounded flex flex-col items-center">
+                              <p tw="lg:w-3/4 text-gray-700 md:text-lg mb-4 text-center">
+                                 {overlayMessage}{' '}
+                              </p>
+                              {cart.paymentStatus === 'REQUIRES_ACTION' &&
+                                 otpPageUrl && (
+                                    <a
+                                       target="_blank"
+                                       href={otpPageUrl}
+                                       title={otpPageUrl}
+                                       rel="noreferer noopener"
+                                       style={{ color: '#fff' }}
+                                       tw="inline-block px-4 py-2 bg-orange-400 text-sm uppercase rounded font-medium tracking-wider text-indigo-600"
+                                    >
+                                       Complete Payment
+                                    </a>
+                                 )}
+                              {cart.paymentStatus !== 'PENDING' && (
+                                 <Loader inline />
+                              )}
+                           </section>
+                        </main>
+                     </Overlay>
+                  )}
+               </Main>
+            </>
+         ) : (
+            <>
+               <OnDemandCart config={props.config} />
+            </>
          )}
-         {isOverlayOpen && (
-            <Overlay>
-               <header tw="flex pr-3 pt-3">
-                  <button
-                     onClick={onOverlayClose}
-                     tw="ml-auto bg-white h-10 w-10 flex items-center justify-center rounded-full"
-                  >
-                     <Icon.CloseIcon tw="stroke-current text-gray-600" />
-                  </button>
-               </header>
-               <main tw="flex-1 flex flex-col items-center justify-center">
-                  <section tw="p-4 w-11/12 lg:w-8/12 bg-white rounded flex flex-col items-center">
-                     <p tw="lg:w-3/4 text-gray-700 md:text-lg mb-4 text-center">
-                        {overlayMessage}{' '}
-                     </p>
-                     {cart.paymentStatus === 'REQUIRES_ACTION' && otpPageUrl && (
-                        <a
-                           target="_blank"
-                           href={otpPageUrl}
-                           title={otpPageUrl}
-                           rel="noreferer noopener"
-                           style={{ color: '#fff' }}
-                           tw="inline-block px-4 py-2 bg-orange-400 text-sm uppercase rounded font-medium tracking-wider text-indigo-600"
-                        >
-                           Complete Payment
-                        </a>
-                     )}
-                     {cart.paymentStatus !== 'PENDING' && <Loader inline />}
-                  </section>
-               </main>
-            </Overlay>
-         )}
-      </Main>
+      </>
    )
+}
+
+const messages = {
+   PENDING: 'We are processing your payment.',
+   SUCCEEDED: 'Payment for your order has succeeded, you will redirected soon.',
+   REQUIRES_PAYMENT_METHOD: '',
+   REQUIRES_ACTION:
+      'A window will open in short while for further payment authorization required by your bank!',
+   PAYMENT_FAILED: 'Your payment has failed, please try again.',
+   REQUIRES_ACTION_WITH_URL:
+      'A window will open in short while for further payment authorization required by your bank. In case the new window has not opened own yet, please click the button below.',
 }
 
 const Overlay = styled.section`

@@ -16,6 +16,7 @@ export const getPageProps = async (params, route) => {
       route,
    })
 
+   console.log('dataByRoute', dataByRoute)
    //Seo and settings
    const seoSettings = await getSEOSettings(params.brand, dataByRoute)
 

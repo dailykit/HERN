@@ -502,3 +502,10 @@ export const CREATE_PRINT_JOB = gql`
       }
    }
 `
+export const SEND_MAIL = gql`
+   mutation MyMutation($emailInput: EmailInput!) {
+      sendEmail(emailInput: $emailInput) {
+         success
+      }
+   }
+`
