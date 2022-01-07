@@ -27,7 +27,6 @@ export const BrandSettings = () => {
    const groupingBrandSettings = (array, key) => {
       return array.reduce((obj, item) => {
          let objKey = item[key].type;
-         console.log(key, item)
          if (!obj[objKey]) {
             obj[objKey] = [];
          }
@@ -57,7 +56,6 @@ export const BrandSettings = () => {
 
    if (error) {
       toast.error('Something went wrong')
-      console.log("error in Brands.Setting", error)
    }
 
    const types = Object.keys(settings)
