@@ -6,11 +6,13 @@ import {
    CUSTOMER,
    EMAIL_SETTINGS,
    ORDER_BY_CART,
-   CART
+   CART,
+   LOCATION_KIOSK
 } from './graphql/queries'
 
 import { logger2 } from '../../utils'
 import { fetch_html } from './functions'
+import get_env from '../../../get_env'
 
 export const handleStatusChange = async (req, res) => {
    const { id, source, status, brandId, customerKeycloakId } =
@@ -151,16 +153,23 @@ export const handleStatusChange = async (req, res) => {
 export const posistOrderPush = async (req, res) => {
    try {
       const { id } = req.body.event.data.new
+      const POSIST_API_KEY = await get_env('POSIST_API_KEY')
       const { cart = {} } = await client.request(CART, {
          id
       })
+      const { locationKiosk = {} } = await client.request(LOCATION_KIOSK, {
+         id: cart.locationKioskId
+      })
+
       const posistOrder = cart.posistOrderDetails
+      const posist_customer_key =
+         locationKiosk.location.brand_locations[0].posist_customer_key
       console.log(posistOrder)
       const response = await axios.post({
-         url: 'https://posist.com/api/v1/orders',
+         url: `http://posistapi.com/api/v1/online_order/push?customer_key=${posist_customer_key}`,
          headers: {
             'Content-Type': 'application/json',
-            'X-POSIST-API-KEY': process.env.POSIST_API_KEY
+            Authorization: `Basic ${POSIST_API_KEY}`
          },
          data: posistOrder
       })

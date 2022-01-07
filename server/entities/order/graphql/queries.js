@@ -330,3 +330,15 @@ query cart($id: Int!) {
   }
 }
 `
+
+export const LOCATION_KIOSK = `
+query LOCATION_KIOSK($id: Int!) {
+   brands_locationKiosk_by_pk(id: $id) {
+     location {
+       brand_locations {
+         posist_customer_key
+       }
+     }
+   }
+ }
+ `
