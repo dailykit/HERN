@@ -678,6 +678,24 @@ const Pickup = props => {
       },
    ])
 
+   const pickupRadioOptions = React.useMemo(() => {
+      let options = []
+      if (
+         orderTabFulfillmentType &&
+         orderTabFulfillmentType.includes('ONDEMAND_PICKUP')
+      ) {
+         options.push({ label: 'Now', value: 'ONDEMAND' })
+      }
+      if (
+         orderTabFulfillmentType &&
+         orderTabFulfillmentType.includes('PREORDER_PICKUP')
+      ) {
+         options.push({ label: 'Later', value: 'PREORDER' })
+      }
+
+      return options
+   }, [orderTabFulfillmentType])
+
    const [pickupType, setPickUpType] = useState(null)
    const [onDemandBrandRecurrence, setOnDemandBrandReoccurrence] =
       useState(null)

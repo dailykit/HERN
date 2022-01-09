@@ -233,18 +233,19 @@ const Delivery = props => {
       let options = []
       if (
          orderTabFulfillmentType &&
-         orderTabFulfillmentType.includes('PREORDER_DELIVERY') &&
-         Boolean(availableStoreType.find(x => x === 'PREORDER'))
-      ) {
-         options.push({ label: 'Later', value: 'PREORDER' })
-      }
-      if (
-         orderTabFulfillmentType &&
          orderTabFulfillmentType.includes('ONDEMAND_DELIVERY') &&
          Boolean(availableStoreType.find(x => x === 'ONDEMAND'))
       ) {
          options.push({ label: 'Now', value: 'ONDEMAND' })
       }
+      if (
+         orderTabFulfillmentType &&
+         orderTabFulfillmentType.includes('PREORDER_DELIVERY') &&
+         Boolean(availableStoreType.find(x => x === 'PREORDER'))
+      ) {
+         options.push({ label: 'Later', value: 'PREORDER' })
+      }
+
       return options
    }, [orderTabFulfillmentType, availableStoreType])
 
@@ -646,24 +647,27 @@ const Pickup = props => {
          ? 'ONDEMAND'
          : availableStoreType[0]
    )
-   const [deliveryRadioOptions] = useState([
-      {
-         label: 'Now',
-         value: 'ONDEMAND',
-         disabled:
-            (orderTabFulfillmentType &&
-               !orderTabFulfillmentType.includes('ONDEMAND_PICKUP')) ||
-            !Boolean(availableStoreType.find(x => x === 'ONDEMAND')),
-      },
-      {
-         label: 'Later',
-         value: 'PREORDER',
-         disabled:
-            (orderTabFulfillmentType &&
-               !orderTabFulfillmentType.includes('PREORDER_PICKUP')) ||
-            !Boolean(availableStoreType.find(x => x === 'PREORDER')),
-      },
-   ])
+
+   const pickupRadioOptions = React.useMemo(() => {
+      let options = []
+      if (
+         orderTabFulfillmentType &&
+         orderTabFulfillmentType.includes('ONDEMAND_PICKUP') &&
+         Boolean(availableStoreType.find(x => x === 'ONDEMAND'))
+      ) {
+         options.push({ label: 'Now', value: 'ONDEMAND' })
+      }
+      if (
+         orderTabFulfillmentType &&
+         orderTabFulfillmentType.includes('PREORDER_PICKUP') &&
+         Boolean(availableStoreType.find(x => x === 'PREORDER'))
+      ) {
+         options.push({ label: 'Later', value: 'PREORDER' })
+      }
+
+      return options
+   }, [orderTabFulfillmentType, availableStoreType])
+
    const [onDemandBrandRecurrence, setOnDemandBrandReoccurrence] =
       useState(null)
    const [preOrderBrandRecurrence, setPreOrderBrandReoccurrence] =
@@ -876,7 +880,7 @@ const Pickup = props => {
             )}
          >
             <Radio.Group
-               options={deliveryRadioOptions}
+               options={pickupRadioOptions}
                onChange={e => {
                   setPickupType(e.target.value)
                }}
@@ -991,24 +995,26 @@ const DineIn = props => {
    })
    const [address, setAddress] = useState(null)
 
-   const [dineInRadioOptions] = useState([
-      {
-         label: 'Now',
-         value: 'ONDEMAND',
-         disabled:
-            (orderTabFulfillmentType &&
-               !orderTabFulfillmentType.includes('ONDEMAND_DINEIN')) ||
-            !Boolean(availableStoreType.find(x => x === 'ONDEMAND')),
-      },
-      {
-         label: 'Later',
-         value: 'PREORDER',
-         disabled:
-            (orderTabFulfillmentType &&
-               !orderTabFulfillmentType.includes('SCHEDULED_DINEIN')) ||
-            !Boolean(availableStoreType.find(x => x === 'PREORDER')),
-      },
-   ])
+   const dineInRadioOptions = React.useMemo(() => {
+      let options = []
+      if (
+         orderTabFulfillmentType &&
+         orderTabFulfillmentType.includes('ONDEMAND_DINEIN') &&
+         Boolean(availableStoreType.find(x => x === 'ONDEMAND'))
+      ) {
+         options.push({ label: 'Now', value: 'ONDEMAND' })
+      }
+      if (
+         orderTabFulfillmentType &&
+         orderTabFulfillmentType.includes('PREORDER_DINEIN') &&
+         Boolean(availableStoreType.find(x => x === 'PREORDER'))
+      ) {
+         options.push({ label: 'Later', value: 'PREORDER' })
+      }
+
+      return options
+   }, [orderTabFulfillmentType, availableStoreType])
+
    const [loaded, error] = useScript(
       isClient
          ? `https://maps.googleapis.com/maps/api/js?key=${get_env(
