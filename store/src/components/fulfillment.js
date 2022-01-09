@@ -51,7 +51,11 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
 
    // check whether user select fulfillment type or not
    const selectedFulfillmentType = React.useMemo(() =>
-      selectedOrderTab ? selectedOrderTab.replace('_', ' ').split(' ')[1] : null
+      selectedOrderTab
+         ? selectedOrderTab.orderFulfillmentTypeLabel
+              .replace('_', ' ')
+              .split(' ')[1]
+         : null
    )
    const [fulfillmentType, setFulfillmentType] = useState(
       selectedFulfillmentType || 'PICKUP'
@@ -152,7 +156,7 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
          address: { zipcode: newAddress.zipcode },
       }
       setAddress(modifiedAddress)
-      localStorage.setItem('userLocation', JSON.stringify(modifiedAddress))
+      // localStorage.setItem('userLocation', JSON.stringify(modifiedAddress))
    }
    const onPickUpAddressSelect = newAddress => {
       const modifiedAddress = {
@@ -162,7 +166,7 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
          address: { zipcode: newAddress.zipcode },
       }
       setAddress(modifiedAddress)
-      localStorage.setItem('userLocation', JSON.stringify(modifiedAddress))
+      // localStorage.setItem('userLocation', JSON.stringify(modifiedAddress))
    }
 
    return (
@@ -182,8 +186,9 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
                   className="hern-cart__fulfillment-change-btn"
                   style={{
                      color: theme?.accent || 'rgba(5, 150, 105, 1)',
-                     border: `1px solid ${theme?.accent || 'rgba(5, 150, 105, 1)'
-                        }`,
+                     border: `1px solid ${
+                        theme?.accent || 'rgba(5, 150, 105, 1)'
+                     }`,
                      bottom: '8px',
                   }}
                >
@@ -404,7 +409,7 @@ const Delivery = props => {
 
    useEffect(() => {
       if (brandLocation && address && deliveryType) {
-         ; (async () => {
+         ;(async () => {
             const bar = await getAerialDistance(brandLocation, true)
             setSortedBrandLocation(bar)
          })()
@@ -412,10 +417,10 @@ const Delivery = props => {
    }, [brandLocation, brandRecurrences, address, deliveryType])
 
    const getAerialDistance = async (data, sorted = false) => {
-      const userLocation = JSON.parse(localStorage.getItem('userLocation'))
+      // const userLocation = JSON.parse(localStorage.getItem('userLocation'))
       const userLocationWithLatLang = {
-         latitude: userLocation.latitude,
-         longitude: userLocation.longitude,
+         latitude: address.latitude,
+         longitude: address.longitude,
       }
 
       // // add arial distance
@@ -752,7 +757,7 @@ const Pickup = props => {
 
    useEffect(() => {
       if (brandLocation && address) {
-         ; (async () => {
+         ;(async () => {
             const bar = await getAerialDistance(brandLocation, true)
             setSortedBrandLocation(bar)
          })()
@@ -760,10 +765,10 @@ const Pickup = props => {
    }, [brandLocation, brandRecurrences, address, pickupType])
 
    const getAerialDistance = async (data, sorted = false) => {
-      const userLocation = JSON.parse(localStorage.getItem('userLocation'))
+      // const userLocation = JSON.parse(localStorage.getItem('userLocation'))
       const userLocationWithLatLang = {
-         latitude: userLocation.latitude,
-         longitude: userLocation.longitude,
+         latitude: address.latitude,
+         longitude: address.longitude,
       }
 
       // // add arial distance
@@ -1211,24 +1216,24 @@ export const Fulfillment = () => {
                      {(cartState.cart?.fulfillmentInfo?.type ===
                         'PREORDER_PICKUP' ||
                         cartState.cart?.fulfillmentInfo?.type ===
-                        'PREORDER_DELIVERY') && (
-                           <span>
-                              {' '}
-                              on{' '}
-                              {moment(
-                                 cartState.cart?.fulfillmentInfo?.slot?.from
-                              ).format('DD MMM YYYY')}
-                              {' ('}
-                              {moment(
-                                 cartState.cart?.fulfillmentInfo?.slot?.from
-                              ).format('HH:mm')}
-                              {'-'}
-                              {moment(
-                                 cartState.cart?.fulfillmentInfo?.slot?.to
-                              ).format('HH:mm')}
-                              {')'}
-                           </span>
-                        )}
+                           'PREORDER_DELIVERY') && (
+                        <span>
+                           {' '}
+                           on{' '}
+                           {moment(
+                              cartState.cart?.fulfillmentInfo?.slot?.from
+                           ).format('DD MMM YYYY')}
+                           {' ('}
+                           {moment(
+                              cartState.cart?.fulfillmentInfo?.slot?.from
+                           ).format('HH:mm')}
+                           {'-'}
+                           {moment(
+                              cartState.cart?.fulfillmentInfo?.slot?.to
+                           ).format('HH:mm')}
+                           {')'}
+                        </span>
+                     )}
                   </label>
                   <Button
                      onClick={() => {
@@ -1237,8 +1242,9 @@ export const Fulfillment = () => {
                      className="hern-cart__fulfillment-change-btn"
                      style={{
                         color: theme?.accent || 'rgba(5, 150, 105, 1)',
-                        border: `1px solid ${theme?.accent || 'rgba(5, 150, 105, 1)'
-                           }`,
+                        border: `1px solid ${
+                           theme?.accent || 'rgba(5, 150, 105, 1)'
+                        }`,
                      }}
                   >
                      Change
