@@ -120,33 +120,32 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
       [orderTabs]
    )
 
-   const [deliveryRadioOptions] = useState([
-      {
-         label: 'Deliver',
-         value: 'DELIVERY',
-         disabled: !(
-            orderTabFulfillmentType.includes('ONDEMAND_DELIVERY') ||
-            orderTabFulfillmentType.includes('PREORDER_DELIVERY')
-         ),
-      },
-      {
-         label: 'Pickup',
-         value: 'PICKUP',
-         disabled: !(
-            orderTabFulfillmentType.includes('ONDEMAND_PICKUP') ||
-            orderTabFulfillmentType.includes('PREORDER_PICKUP')
-         ),
-      },
-      // (orderTabFulfillmentType.includes('ONDEMAND_DINEIN') ||
-      //    orderTabFulfillmentType.includes('SCHEDULED_DINEIN')) && {
-      //    label: 'Dinein',
-      //    value: 'DINEIN',
-      //    disabled: !(
-      //       orderTabFulfillmentType.includes('ONDEMAND_DINEIN') ||
-      //       orderTabFulfillmentType.includes('SCHEDULED_DINEIN')
-      //    ),
-      // },
-   ])
+   const deliveryRadioOptions = React.useMemo(() => {
+      let options = []
+      if (
+         orderTabFulfillmentType &&
+         (orderTabFulfillmentType.includes('ONDEMAND_DELIVERY') ||
+            orderTabFulfillmentType.includes('PREORDER_DELIVERY'))
+      ) {
+         options.push({ label: 'Delivery', value: 'DELIVERY' })
+      }
+      if (
+         orderTabFulfillmentType &&
+         (orderTabFulfillmentType.includes('ONDEMAND_PICKUP') ||
+            orderTabFulfillmentType.includes('PREORDER_PICKUP'))
+      ) {
+         options.push({ label: 'Pickup', value: 'PICKUP' })
+      }
+      if (
+         orderTabFulfillmentType &&
+         (orderTabFulfillmentType.includes('ONDEMAND_DINEIN') ||
+            orderTabFulfillmentType.includes('PREORDER_DINEIN'))
+      ) {
+         options.push({ label: 'Dinein', value: 'DINEIN' })
+      }
+
+      return options
+   }, [orderTabFulfillmentType])
 
    const onAddressSelect = newAddress => {
       const modifiedAddress = {
@@ -226,6 +225,7 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
                address={address}
                orderTabFulfillmentType={orderTabFulfillmentType}
                brandLocation={brandLocation}
+               setIsEdit={setIsEdit}
             />
          )}
          {fulfillmentType === 'PICKUP' && (
@@ -235,6 +235,7 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
                orderTabFulfillmentType={orderTabFulfillmentType}
                onPickUpAddressSelect={onPickUpAddressSelect}
                brandLocation={brandLocation}
+               setIsEdit={setIsEdit}
             />
          )}
       </div>
@@ -247,6 +248,7 @@ const Delivery = props => {
       address,
       orderTabFulfillmentType,
       brandLocation,
+      setIsEdit,
    } = props
    const { brand, locationId, orderTabs } = useConfig()
    const { methods, cartState } = React.useContext(CartContext)
@@ -267,24 +269,23 @@ const Delivery = props => {
       // fulfillmentInfo: null,
    })
 
-   const [deliveryRadioOptions] = useState([
-      {
-         label: 'Now',
-         value: 'ONDEMAND',
-         disabled: !(
-            orderTabFulfillmentType &&
-            orderTabFulfillmentType.includes('ONDEMAND_DELIVERY')
-         ),
-      },
-      {
-         label: 'Later',
-         value: 'PREORDER',
-         disabled: !(
-            orderTabFulfillmentType &&
-            orderTabFulfillmentType.includes('PREORDER_DELIVERY')
-         ),
-      },
-   ])
+   const deliveryRadioOptions = React.useMemo(() => {
+      let options = []
+      if (
+         orderTabFulfillmentType &&
+         orderTabFulfillmentType.includes('ONDEMAND_DELIVERY')
+      ) {
+         options.push({ label: 'Now', value: 'ONDEMAND' })
+      }
+      if (
+         orderTabFulfillmentType &&
+         orderTabFulfillmentType.includes('PREORDER_DELIVERY')
+      ) {
+         options.push({ label: 'Later', value: 'PREORDER' })
+      }
+
+      return options
+   }, [orderTabFulfillmentType])
 
    const fulfillmentStatus = React.useMemo(() => {
       let type
@@ -384,7 +385,6 @@ const Delivery = props => {
    useEffect(() => {
       // if locationId already available then need not to choose store automatically
       if (
-         !locationId &&
          address &&
          sortedBrandLocation &&
          sortedBrandLocation.every(eachStore =>
@@ -483,6 +483,7 @@ const Delivery = props => {
                ...fulfillmentTabInfo,
                fulfillmentInfo: slotInfo,
                address,
+               locationId: locationId,
             },
          },
       })
@@ -515,7 +516,7 @@ const Delivery = props => {
             _set: {
                ...fulfillmentTabInfo,
                fulfillmentInfo: slotInfo,
-               locationId: selectedStore.id,
+               locationId: locationId,
                address,
             },
          },
@@ -527,7 +528,7 @@ const Delivery = props => {
    useEffect(() => {
       if (selectedStore) {
          setFulfillmentTabInfo(prev => {
-            return { ...prev, locationId: selectedStore.id }
+            return { ...prev, locationId: selectedStore.location.id }
          })
       }
    }, [selectedStore])
@@ -643,6 +644,7 @@ const Pickup = props => {
       orderTabFulfillmentType,
       onPickUpAddressSelect,
       brandLocation,
+      setIsEdit,
    } = props
 
    const { brand, locationId, configOf, orderTabs } = useConfig()
@@ -842,7 +844,7 @@ const Pickup = props => {
             _set: {
                ...fulfillmentTabInfo,
                fulfillmentInfo: slotInfo,
-               locationId: selectedStore.id,
+               locationId: locationId,
                address,
             },
          },
@@ -884,7 +886,7 @@ const Pickup = props => {
                ...fulfillmentTabInfo,
                fulfillmentInfo: slotInfo,
                address,
-               locationId: selectedStore.id,
+               locationId: locationId,
             },
          },
       })
@@ -1127,6 +1129,9 @@ export const Fulfillment = () => {
          cartState.cart?.fulfillmentInfo?.type === 'ONDEMAND_DELIVERY' ||
          cartState.cart?.fulfillmentInfo?.type === 'PREORDER_DELIVERY'
       ) {
+         if (!brandLocation) {
+            return {}
+         }
          const { location } =
             brandLocation.brands_brand_location_aggregate.nodes[0]
          const brandCoordinate = {
