@@ -56,6 +56,7 @@ export const KioskModifier = props => {
    const additionalModifierRef = React.useRef()
    const [showNestedModifierOptions, setShowNestedModifierOptions] =
       useState(false)
+   const [childChangingToggle, setChildChangingToggle] = useState(false) // use for reflect changes from child so that parent can re render
 
    const modifierPopRef = React.useRef()
    useOnClickOutside(modifierPopRef, () => onCloseModifier())
@@ -365,7 +366,8 @@ export const KioskModifier = props => {
    //       productOptionDiscount
    //    return totalPrice * quantity
    // }
-   const totalAmount = React.useMemo(() => {
+   console.log('childChangingToggle', childChangingToggle)
+   const totalAmount = () => {
       const productOptionPrice = selectedProductOption.price
       const productOptionDiscount = selectedProductOption.discount
       let allSelectedOptions = [
@@ -418,12 +420,7 @@ export const KioskModifier = props => {
          productData.discount -
          productOptionDiscount
       return totalPrice * quantity
-   }, [
-      selectedProductOption,
-      selectedOptions,
-      nestedModifierRef,
-      additionalModifierRef,
-   ])
+   }
 
    useEffect(() => {
       if (forNewItem || edit) {
@@ -760,6 +757,7 @@ export const KioskModifier = props => {
                         edit={edit}
                         forNewItem={forNewItem}
                         productCartDetail={productCartDetail}
+                        setChildChangingToggle={setChildChangingToggle}
                      />
                   )
                )}
@@ -954,6 +952,9 @@ export const KioskModifier = props => {
                                                    productCartDetail={
                                                       productCartDetail
                                                    }
+                                                   setChildChangingToggle={
+                                                      setChildChangingToggle
+                                                   }
                                                 />
                                              )}
                                        </>
@@ -982,7 +983,7 @@ export const KioskModifier = props => {
                      {t('Total')}
                   </span>
                   <span className="hern-kiosk__modifier-total-price">
-                     {formatCurrency(totalAmount)}
+                     {formatCurrency(totalAmount())}
                   </span>
                </div>
                <KioskButton
@@ -1005,6 +1006,7 @@ const AdditionalModifiers = forwardRef(
          forNewItem,
          edit,
          productCartDetail,
+         setChildChangingToggle,
       },
       ref
    ) => {
@@ -1074,6 +1076,7 @@ const AdditionalModifiers = forwardRef(
                single: singleModifier,
                multiple: multipleModifier,
             }))
+            setChildChangingToggle(prev => !prev)
          }
       }, [])
 
@@ -1128,6 +1131,7 @@ const AdditionalModifiers = forwardRef(
                single: singleModifier,
                multiple: multipleModifier,
             }))
+            setChildChangingToggle(prev => !prev)
          }
       }, [])
 
@@ -1222,6 +1226,8 @@ const AdditionalModifiers = forwardRef(
                      ...nestedSelectedOptions,
                      single: newSelectedOptions,
                   })
+                  setChildChangingToggle(prev => !prev)
+
                   return
                }
                const newSelectedOptions = additionalModifierOptions.single
@@ -1230,6 +1236,8 @@ const AdditionalModifiers = forwardRef(
                   ...additionalModifierOptions,
                   single: newSelectedOptions,
                })
+               setChildChangingToggle(prev => !prev)
+
                return
             } else {
                //single--> already not exist
@@ -1237,6 +1245,8 @@ const AdditionalModifiers = forwardRef(
                   ...additionalModifierOptions,
                   single: [...additionalModifierOptions.single, selectedOption],
                })
+               setChildChangingToggle(prev => !prev)
+
                return
             }
          }
@@ -1256,6 +1266,8 @@ const AdditionalModifiers = forwardRef(
                   ...additionalModifierOptions,
                   multiple: newSelectedOptions,
                })
+               setChildChangingToggle(prev => !prev)
+
                return
             }
             //new option select
@@ -1267,6 +1279,7 @@ const AdditionalModifiers = forwardRef(
                      selectedOption,
                   ],
                })
+               setChildChangingToggle(prev => !prev)
             }
          }
       }
@@ -1500,6 +1513,9 @@ const AdditionalModifiers = forwardRef(
                                                       productCartDetail={
                                                          productCartDetail
                                                       }
+                                                      setChildChangingToggle={
+                                                         setChildChangingToggle
+                                                      }
                                                    />
                                                 )}
                                           </>
@@ -1560,6 +1576,7 @@ const ModifierOptionsList = forwardRef((props, ref) => {
       edit,
       productCartDetail,
       modifierOptionId,
+      setChildChangingToggle,
    } = props
    const { brand, isConfigLoading, kioskDetails } = useConfig()
    const [errorCategories, setErrorCategories] = useState([])
@@ -1645,6 +1662,7 @@ const ModifierOptionsList = forwardRef((props, ref) => {
             single: singleModifier,
             multiple: multipleModifier,
          }))
+         setChildChangingToggle(prev => !prev)
       }
    }, [data])
 
@@ -1729,6 +1747,7 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                   ...nestedSelectedOptions,
                   single: newSelectedOptions,
                })
+               setChildChangingToggle(prev => !prev)
                return
             }
             const newSelectedOptions = nestedSelectedOptions.single
@@ -1737,6 +1756,7 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                ...nestedSelectedOptions,
                single: newSelectedOptions,
             })
+            setChildChangingToggle(prev => !prev)
             return
          } else {
             //single--> already not exist
@@ -1744,6 +1764,7 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                ...nestedSelectedOptions,
                single: [...nestedSelectedOptions.single, selectedOption],
             })
+            setChildChangingToggle(prev => !prev)
             return
          }
       }
@@ -1761,6 +1782,7 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                ...nestedSelectedOptions,
                multiple: newSelectedOptions,
             })
+            setChildChangingToggle(prev => !prev)
             return
          }
          //new option select
@@ -1769,6 +1791,7 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                ...nestedSelectedOptions,
                multiple: [...nestedSelectedOptions.multiple, selectedOption],
             })
+            setChildChangingToggle(prev => !prev)
          }
       }
    }
@@ -1815,6 +1838,7 @@ const ModifierOptionsList = forwardRef((props, ref) => {
             single: singleModifier,
             multiple: multipleModifier,
          }))
+         setChildChangingToggle(prev => !prev)
       }
    }, [data])
 
@@ -1959,12 +1983,6 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                                              .primaryColor.value
                                        }
                                        size={50}
-                                       onClick={() => {
-                                          onCheckClick(
-                                             eachOption,
-                                             eachModifierCategory
-                                          )
-                                       }}
                                     />
                                  )}
                               </div>
