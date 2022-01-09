@@ -332,13 +332,14 @@ query cart($id: Int!) {
 `
 
 export const LOCATION_KIOSK = `
-query LOCATION_KIOSK($id: Int!) {
+query LOCATION_KIOSK($id: Int!, $brandId: Int!) {
    brands_locationKiosk_by_pk(id: $id) {
      location {
-       brand_locations {
+       brand_locations(where: {brandId: {_eq: $brandId}}) {
          posist_customer_key
        }
      }
    }
  }
+
  `

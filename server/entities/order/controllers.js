@@ -158,7 +158,8 @@ export const posistOrderPush = async (req, res) => {
          id
       })
       const { locationKiosk = {} } = await client.request(LOCATION_KIOSK, {
-         id: cart.locationKioskId
+         id: cart.locationKioskId,
+         brandId: cart.brandId
       })
 
       const posistOrder = cart.posistOrderDetails
