@@ -232,10 +232,10 @@ export const CartDetails = () => {
                      <span>BILL DETAILS</span>
                      <ul className="hern-cart-bill-details-list">
                         <li>
-                           <span>{cart.billing.itemTotal.label}</span>
+                           <span>{cart.billing.totalPrice.label}</span>
                            <span>
                               {formatCurrency(
-                                 cart.billing.itemTotal.value || 0
+                                 cart.billing.totalPrice.value || 0
                               )}
                            </span>
                         </li>
