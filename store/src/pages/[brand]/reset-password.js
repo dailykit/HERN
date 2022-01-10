@@ -1,23 +1,13 @@
 import React from 'react'
-import { Layout } from '../../components'
-import {
-   processExternalFiles,
-   renderPageContent,
-   getPageProps,
-} from '../../utils'
+import { Layout, ExternalJSCSSFiles } from '../../components'
+import { renderPageContent, getPageProps } from '../../utils'
 
 const ResetPasswordPage = props => {
    const { folds, settings, linkedFiles } = props
-   React.useEffect(() => {
-      try {
-         processExternalFiles(folds, linkedFiles)
-      } catch (err) {
-         console.log('Failed to render page: ', err)
-      }
-   }, [folds])
 
    return (
       <Layout settings={settings}>
+         <ExternalJSCSSFiles externalFiles={linkedFiles} />
          <main>{renderPageContent(folds)}</main>
       </Layout>
    )
