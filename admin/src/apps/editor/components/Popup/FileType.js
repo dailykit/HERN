@@ -11,6 +11,7 @@ import {
    Liquid,
    FileIcon,
    CloseIcon,
+   XML,
 } from '../../assets/Icons'
 import { useGlobalContext } from '../../context'
 import { Card, Cross, FileTypeWrapper } from './style'
@@ -50,6 +51,10 @@ export default function FileType({ show, closePopup, setFileType }) {
             <Card onClick={() => setFileType('liquid')}>
                <Liquid size="64" />
                <p>Liquid</p>
+            </Card>
+            <Card onClick={() => setFileType('xml')}>
+               <XML />
+               <p>XML</p>
             </Card>
          </FileTypeWrapper>
       </Popup>
