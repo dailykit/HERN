@@ -661,23 +661,6 @@ const Pickup = props => {
       storeCarousal.current.next()
    }
 
-   const [pickupRadioOptions] = useState([
-      {
-         label: 'Now',
-         value: 'ONDEMAND',
-         disabled:
-            orderTabFulfillmentType &&
-            !orderTabFulfillmentType.includes('ONDEMAND_PICKUP'),
-      },
-      {
-         label: 'Later',
-         value: 'PREORDER',
-         disabled:
-            orderTabFulfillmentType &&
-            !orderTabFulfillmentType.includes('PREORDER_PICKUP'),
-      },
-   ])
-
    const pickupRadioOptions = React.useMemo(() => {
       let options = []
       if (
