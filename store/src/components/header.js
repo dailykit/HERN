@@ -78,22 +78,22 @@ export const Header = ({ settings, navigationMenus }) => {
    const isSubscriptionStore =
       settings?.availability?.isSubscriptionAvailable?.Subscription
          ?.isSubscriptionAvailable?.value
-   const logo = settings?.brand?.['Brand Logo']?.brandLogo?.value
-      ? settings?.brand?.['Brand Logo']?.brandLogo?.value
-      : settings?.brand?.['Brand Logo']?.brandLogo?.default
+   const logo = settings?.brand?.['Brand Info']?.brandLogo?.value
+      ? settings?.brand?.['Brand Info']?.brandLogo?.value
+      : settings?.brand?.['Brand Info']?.brandLogo?.default
    const logoForSmallDevice =
-      settings?.brand?.['Brand Logo']?.brandLogoSmall?.value
+      settings?.brand?.['Brand Info']?.brandLogoSmall?.value
    const showLogo =
-      settings?.brand?.['Brand Logo']?.BrandLogo?.value ??
-      settings?.brand?.['Brand Logo']?.BrandLogo?.default ??
+      settings?.brand?.['Brand Info']?.BrandLogo?.value ??
+      settings?.brand?.['Brand Info']?.BrandLogo?.default ??
       true
 
-   const displayName = settings?.brand?.['Brand Logo']?.brandName?.value
-      ? settings?.brand?.['Brand Logo']?.brandName?.value
-      : settings?.brand?.['Brand Logo']?.brandName?.value
+   const displayName = settings?.brand?.['Brand Info']?.brandName?.value
+      ? settings?.brand?.['Brand Info']?.brandName?.value
+      : settings?.brand?.['Brand Info']?.brandName?.value
    const showBrandName =
-      settings?.brand?.['Brand Logo']?.BrandName?.value ??
-      settings?.brand?.['Brand Logo']?.BrandName?.default ??
+      settings?.brand?.['Brand Info']?.BrandName?.value ??
+      settings?.brand?.['Brand Info']?.BrandName?.default ??
       true
 
    const showLocationButton =
@@ -555,7 +555,7 @@ export const Header = ({ settings, navigationMenus }) => {
                }
                break
          }
-         ;(async () => {
+         ; (async () => {
             const [result, fulfillmentStatus] = await autoSelectStore(
                brandLocation,
                recurrencesDetails.brandRecurrences,
@@ -691,8 +691,8 @@ export const Header = ({ settings, navigationMenus }) => {
                      {isLoading ? (
                         <li className="hern-navbar__list__item__skeleton" />
                      ) : isAuthenticated &&
-                       user?.isSubscriber &&
-                       isSubscriptionStore ? (
+                        user?.isSubscriber &&
+                        isSubscriptionStore ? (
                         <li className="hern-navbar__list__item">
                            <Link href={getRoute('/menu')}>
                               {t('Select Menu')}
@@ -772,11 +772,10 @@ export const Header = ({ settings, navigationMenus }) => {
                      <button
                         className="hern-header__logout"
                         style={{
-                           backgroundColor: `${
-                              theme?.accent
-                                 ? theme?.accent
-                                 : 'rgba(37, 99, 235, 1)'
-                           }`,
+                           backgroundColor: `${theme?.accent
+                              ? theme?.accent
+                              : 'rgba(37, 99, 235, 1)'
+                              }`,
                         }}
                         onClick={() => setShowLoginPopup(true)}
                      >
@@ -798,8 +797,8 @@ export const Header = ({ settings, navigationMenus }) => {
                   <section className="hern-navigatin-menu__wrapper--mobile">
                      <NavigationBar Data={newNavigationMenus}>
                         {isAuthenticated &&
-                        user?.isSubscriber &&
-                        isSubscriptionStore ? (
+                           user?.isSubscriber &&
+                           isSubscriptionStore ? (
                            <li className="hern-navbar__list__item">
                               <Link href={getRoute('/menu')}>Select Menu</Link>
                            </li>
@@ -913,8 +912,8 @@ const LocationInfo = ({ settings }) => {
                      {userLocation?.mainText
                         ? userLocation?.mainText
                         : userLocation?.address?.mainText
-                        ? userLocation?.address?.mainText
-                        : 'Please select address...'}
+                           ? userLocation?.address?.mainText
+                           : 'Please select address...'}
                   </div>
                   <div className="hern-header__location-warning">
                      {!storeStatus.status ? storeStatus.message : ''}
