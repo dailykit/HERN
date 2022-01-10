@@ -1,25 +1,14 @@
 import React from 'react'
-import { SEO, Layout } from '../../components'
-import {
-   processExternalFiles,
-   renderPageContent,
-   getPageProps,
-} from '../../utils'
+import { SEO, Layout, ExternalJSCSSFiles } from '../../components'
+import { renderPageContent, getPageProps } from '../../utils'
 
 const RefundPolicyPage = props => {
    const { folds, settings, seoSettings, linkedFiles } = props
 
-   React.useEffect(() => {
-      try {
-         processExternalFiles(folds, linkedFiles)
-      } catch (err) {
-         console.log('Failed to render page: ', err)
-      }
-   }, [folds])
-
    return (
       <Layout settings={settings}>
          <SEO seoSettings={seoSettings} />
+         <ExternalJSCSSFiles externalFiles={linkedFiles} />
          <main>{renderPageContent(folds)}</main>
       </Layout>
    )
