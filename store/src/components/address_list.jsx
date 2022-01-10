@@ -58,7 +58,7 @@ const AddressList = ({
    return (
       <div className="hern-address-list">
          <div className="hern-address-list__header">
-            <h3 className="hern-address-list__heading">Available Addresses</h3>
+            <h3 className="hern-address-list__heading">Your saved addresses</h3>
             {tunnel && (
                <button className="hern-address-list__close-btn">
                   <CloseIcon
