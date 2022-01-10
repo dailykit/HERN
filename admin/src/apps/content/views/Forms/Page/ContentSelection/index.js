@@ -39,7 +39,7 @@ const ContentSelection = () => {
    const [linkedModuleId, setLinkedModuleId] = useState(null)
    const [config, setConfig] = useState({})
    const [seletedModules, setSeletedModules] = useState([])
-   const [isChangeSaved, setIsSavedChange] = React.useState(true)
+   const [isChangeSaved, setIsSavedChange] = useState(true)
    const { loading, error: subscriptionError } = useSubscription(
       LINKED_COMPONENT,
       {
