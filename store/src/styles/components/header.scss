@@ -48,6 +48,7 @@
 }
 .hern-header__brand__logo--sm {
    display: block;
+   min-height: 54px;
    @media (min-width: 600px) {
       display: none;
    }
@@ -159,5 +160,46 @@
    transition-duration: 200ms;
    @media (min-width: 768px) {
       display: none;
+   }
+}
+.hern-header__location-container {
+   display: flex;
+   align-items: center;
+   padding: 4px;
+   cursor: pointer;
+   @media (max-width: 768px) {
+      padding: 0;
+   }
+}
+.hern-header__location-icon {
+   margin: 0 5px;
+}
+.hern-header__location-upper {
+   display: flex;
+   align-items: center;
+   margin: 2px 0;
+}
+.hern-header__location-content {
+   color: #40404099;
+   border-bottom: 1px solid rgba(64, 64, 64, 0.25);
+   margin: 2px 0;
+   @media (max-width: 768px) {
+      font-size: 11px;
+   }
+}
+.hern-header__location-warning {
+   @media (max-width: 768px) {
+      font-size: 9px;
+   }
+}
+.hern-header__downvector-icon {
+   margin: 0 6px;
+}
+.hern-header__location-right-loading {
+   font-style: italic;
+   color: #40404099;
+   font-size: 14px;
+   @media (max-width: 768) {
+      font-size: 10px;
    }
 }

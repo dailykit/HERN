@@ -1,7 +1,6 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import { SEO, Layout } from '../../components'
-import styled from 'styled-components'
 import { useUser } from '../../context'
 import {
    getPageProps,
@@ -26,7 +25,7 @@ const CartPage = props => {
    return (
       <Layout settings={settings} navigationMenus={navigationMenus}>
          <SEO seoSettings={seoSettings} />
-         <Main>{renderPageContent(folds)}</Main>
+         <main>{renderPageContent(folds)}</main>
       </Layout>
    )
 }
@@ -54,8 +53,3 @@ export async function getStaticPaths() {
       fallback: 'blocking', // true -> build page if missing, false -> serve 404
    }
 }
-
-const Main = styled.div`
-padding: 29px 100px;
-background: #f9f9f9;
-`

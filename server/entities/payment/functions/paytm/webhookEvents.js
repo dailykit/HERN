@@ -1,25 +1,21 @@
 import PaytmChecksum from 'paytmchecksum'
 
+import { transactionStatus } from './functions'
 import { CART_PAYMENT } from '../../graphql'
-import paytm from '../../../../lib/paytm'
 import { client } from '../../../../lib/graphql'
 import get_env from '../../../../../get_env'
 
 const razorpayWebhookEvents = async arg => {
    try {
-      console.log('arg', arg.body)
       const host = arg.hostname || arg.headers.host
-      const _Paytm = await paytm(host)
       const { CHECKSUMHASH: incomingChecksumHas, ORDERID } = arg.body
       const orderId = parseInt(ORDERID)
-      const PAYTM_MERCHANT_KEY =
-         process.env.PAYTM_MERCHANT_KEY || (await get_env('PAYTM_MERCHANT_KEY'))
+      const PAYTM_MERCHANT_KEY = await get_env('PAYTM_MERCHANT_KEY')
       var isVerifySignature = PaytmChecksum.verifySignature(
          arg.body,
          PAYTM_MERCHANT_KEY,
          incomingChecksumHas
       )
-      console.log('isVerifySignature', isVerifySignature)
       if (!isVerifySignature) {
          console.log('Checksum Mismatched')
          return {
@@ -30,18 +26,8 @@ const razorpayWebhookEvents = async arg => {
          }
       }
       console.log('Checksum Matched')
-      const readTimeout = 8000
-      const paymentStatusDetailBuilder = new _Paytm.PaymentStatusDetailBuilder(
-         orderId.toString()
-      )
-      const paymentStatusDetail = paymentStatusDetailBuilder
-         .setReadTimeout(readTimeout)
-         .build()
-      const response = await _Paytm.Payment.getPaymentStatus(
-         paymentStatusDetail
-      )
-      const { body } = response.responseObject
-      console.log('body', body)
+      const response = await transactionStatus({ orderId: ORDERID })
+      const { body } = response
       const { cartPayment } = await client.request(CART_PAYMENT, {
          id: orderId
       })

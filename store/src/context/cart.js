@@ -274,10 +274,10 @@ export const CartProvider = ({ children }) => {
                cartItems: {
                   data: cartItems,
                },
-               ...(user.platform_customer.firstName && {
+               ...(user.platform_customer?.firstName && {
                   customerInfo: {
-                     customerFirstName: user.platform_customer.firstName,
-                     customerLastName: user.platform_customer.lastName,
+                     customerFirstName: user.platform_customer?.firstName,
+                     customerLastName: user.platform_customer?.lastName,
                      customerEmail: user.platform_customer.email,
                      customerPhone: user.platform_customer.phoneNumber,
                   },
@@ -355,7 +355,7 @@ export const CartProvider = ({ children }) => {
                               user.platform_customer?.paymentCustomerId,
                            address:
                               user.platform_customer?.defaultCustomerAddress,
-                           ...(user.platform_customer.firstName && {
+                           ...(user.platform_customer?.firstName && {
                               customerInfo: {
                                  customerFirstName:
                                     user.platform_customer?.firstName,

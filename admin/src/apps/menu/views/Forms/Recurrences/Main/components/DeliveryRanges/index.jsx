@@ -52,7 +52,6 @@ const DeliveryRanges = ({ timeSlotId, mileRanges, openTunnel }) => {
       })
       openTunnel(3)
    }
-
    return (
       <>
          {mileRanges.map(mileRange => (
@@ -62,6 +61,12 @@ const DeliveryRanges = ({ timeSlotId, mileRanges, openTunnel }) => {
                </div>
                <div style={{ padding: '8px' }}>
                   {mileRange.leadTime || mileRange.prepTime} mins.
+               </div>
+               <div style={{ padding: '8px' }}>
+                  {String(mileRange.isExcluded)}
+               </div>
+               <div style={{ padding: '8px' }}>
+                  {mileRange.zipcodes.zipcodes.map(each => { return <div> {String(each)}</div> })}
                </div>
                <Flex direction="row" align="center" style={{ padding: '16px' }}>
                   <Form.Toggle

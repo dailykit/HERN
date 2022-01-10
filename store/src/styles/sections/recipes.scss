@@ -1,3 +1,7 @@
+.hern-recipe__wrapper {
+   max-width: 1200px;
+   margin: 0 auto;
+}
 .hern-recipe__title {
    font-weight: 600;
    font-size: 18px;
@@ -92,7 +96,7 @@
    }
 }
 .hern-recipe__ingradients {
-   margin: 32px 0;
+   // margin: 32px 0;
    > h2 {
       margin-bottom: 16px;
       font-size: 24px;
@@ -205,4 +209,20 @@
    border: none;
    outline: none;
    text-transform: uppercase;
+}
+.hern-nutrition-recipe__wrapper {
+   display: flex;
+   gap: 64px;
+   margin: 32px 0;
+   .hern-recipe__ingradients {
+      width: 60%;
+   }
+   .hern-recipe-nutrition {
+   }
+   @media (max-width: 767px) {
+      flex-direction: column;
+      .hern-recipe__ingradients {
+         width: 100%;
+      }
+   }
 }

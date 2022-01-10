@@ -1,4 +1,5 @@
 import React from 'react'
+import _ from 'lodash'
 
 export const Nutritions = ({ simpleRecipeYield }) => {
    const nutritionalInfo = simpleRecipeYield?.nutritionalInfo || {}
@@ -20,7 +21,7 @@ export const Nutritions = ({ simpleRecipeYield }) => {
                <div className="hern-nutrition-info">
                   {nutritions.map((nutrition, index) => (
                      <div key={index}>
-                        <div>{nutrition}</div>
+                        <div>{_.startCase(nutrition)}</div>
                         <span></span>
                         <div>{nutritionalInfo[nutrition]}</div>
                      </div>

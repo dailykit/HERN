@@ -2,7 +2,7 @@ import React from 'react'
 import { useQuery } from '@apollo/react-hooks'
 import { PRODUCT_DETAILS } from '../../graphql'
 import { useConfig } from '../../lib'
-import { Recipe, ProductCard, Loader, Nutritions } from '../../components'
+import { Recipe, ProductCard, Loader } from '../../components'
 import { useRouter } from 'next/router'
 import ProductMedia from './ProductMedia'
 import { VegNonVegType } from '../../assets/icons'
@@ -11,14 +11,14 @@ export const Product = ({ config }) => {
    const router = useRouter()
    const { id } = router.query
    const [status, setStatus] = React.useState('loading')
-   const { brand } = useConfig()
+   const { brand, locationId } = useConfig()
    const [productDetails, setProductDetails] = React.useState({})
 
    const argsForByLocation = React.useMemo(
       () => ({
          params: {
             brandId: brand?.id,
-            locationId: 1000,
+            locationId: locationId,
          },
       }),
       [brand]
@@ -87,13 +87,6 @@ export const Product = ({ config }) => {
             <Recipe
                productOption={productDetails?.productOptions[0]}
                config={config}
-            />
-         </div>
-         <div className="hern-product-page__nutrition-section">
-            <Nutritions
-               simpleRecipeYield={
-                  productDetails?.productOptions[0]?.simpleRecipeYield
-               }
             />
          </div>
       </div>

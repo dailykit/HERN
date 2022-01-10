@@ -2,8 +2,9 @@ import { rrulestr } from 'rrule'
 import { isPointInPolygon } from 'geolib'
 import { isClient, get_env } from './index'
 import axios from 'axios'
-import { each } from 'lodash'
+import _, { each } from 'lodash'
 import { formatISO, add } from 'date-fns'
+import { getDistance, convertDistance } from 'geolib'
 
 export const getMinutes = time => {
    return parseInt(time.split(':')[0]) * 60 + parseInt(time.split(':')[1])
@@ -91,6 +92,11 @@ export const isStoreOnDemandDeliveryAvailable = async (
                            rec: finalRecurrences[rec],
                            mileRangeInfo: distanceDeliveryStatus.mileRangeInfo,
                            timeSlotInfo: timeslot,
+                           message: status
+                              ? 'Delivery available in your location'
+                              : 'Delivery not available in your location.',
+                           drivableDistance:
+                              distanceDeliveryStatus.drivableDistance,
                         }
                      }
                   } else {
@@ -175,6 +181,10 @@ export const isPreOrderDeliveryAvailable = async (
                      rec: finalRecurrences[rec],
                      mileRangeInfo: distanceDeliveryStatus.mileRangeInfo,
                      timeSlotInfo: timeslot,
+                     message: status
+                        ? 'Delivery available in your location'
+                        : 'Delivery not available in your location.',
+                     drivableDistance: distanceDeliveryStatus.drivableDistance,
                   }
                }
             } else {
@@ -199,6 +209,7 @@ const isStoreDeliveryAvailableByDistance = async (mileRanges, eachStore) => {
       zipcode: true,
       geoBoundary: true,
    }
+   let drivableByGoogleDistance = null
 
    for (let mileRange in mileRanges) {
       // aerial distance
@@ -206,11 +217,10 @@ const isStoreDeliveryAvailableByDistance = async (mileRanges, eachStore) => {
          const aerialDistance = mileRanges[mileRange]
          let result =
             eachStore.aerialDistance >= aerialDistance.from &&
-            eachStore.aerialDistance <= aerialDistance.to
-         if (result) {
-            result = !mileRanges[mileRange].isExcluded
-            isStoreDeliveryAvailableByDistanceStatus['aerial'] = result
-         }
+            eachStore.aerialDistance <= aerialDistance.to &&
+            !mileRanges[mileRange].isExcluded
+
+         isStoreDeliveryAvailableByDistanceStatus['aerial'] = result
       }
       // drivable distance
       if (mileRanges[mileRange].distanceType === 'drivable') {
@@ -228,13 +238,13 @@ const isStoreDeliveryAvailableByDistance = async (mileRanges, eachStore) => {
             const drivableDistance = mileRanges[mileRange]
             const distanceMileFloat =
                data.rows[0].elements[0].distance.text.split(' ')[0]
+            drivableByGoogleDistance = distanceMileFloat
             let result =
                distanceMileFloat >= drivableDistance.from &&
-               distanceMileFloat <= drivableDistance.to
-            if (result) {
-               result = !mileRanges[mileRange].isExcluded
-               isStoreDeliveryAvailableByDistanceStatus['drivable'] = result
-            }
+               distanceMileFloat <= drivableDistance.to &&
+               !mileRanges[mileRange].isExcluded
+
+            isStoreDeliveryAvailableByDistanceStatus['drivable'] = result
          } catch (error) {
             console.log('getDataWithDrivableDistance', error)
          }
@@ -253,10 +263,9 @@ const isStoreDeliveryAvailableByDistance = async (mileRanges, eachStore) => {
             let result = Boolean(
                zipcodes.find(x => x == parseInt(userLocation.address.zipcode))
             )
-            if (result) {
-               result = !mileRanges[mileRange].isExcluded
-               isStoreDeliveryAvailableByDistanceStatus['zipcode'] = result
-            }
+
+            isStoreDeliveryAvailableByDistanceStatus['zipcode'] =
+               result && !mileRanges[mileRange].isExcluded
          }
       }
       // geoBoundary
@@ -281,10 +290,8 @@ const isStoreDeliveryAvailableByDistance = async (mileRanges, eachStore) => {
             let result =
                storeValidationForGeoBoundaries &&
                !mileRanges[mileRange].isExcluded
-            if (storeValidationForGeoBoundaries) {
-               result = !mileRanges[mileRange].isExcluded
-               isStoreDeliveryAvailableByDistanceStatus['geoBoundary'] = result
-            }
+
+            isStoreDeliveryAvailableByDistanceStatus['geoBoundary'] = result
          }
       }
       if (
@@ -302,6 +309,7 @@ const isStoreDeliveryAvailableByDistance = async (mileRanges, eachStore) => {
    return {
       result: isStoreDeliveryAvailableByDistanceStatus,
       mileRangeInfo: null,
+      drivableDistance: drivableByGoogleDistance,
    }
 }
 
@@ -776,4 +784,108 @@ export const generateTimeStamp = (time, date, slotTiming) => {
 
    const to = formatISO(add(new Date(from), { minutes: slotTiming }))
    return { from, to }
+}
+
+export const autoSelectStore = async (
+   brandLocation,
+   brandRecurrences,
+   fulfillmentType
+) => {
+   const fulfillmentStatus = () => {
+      let type
+      if (
+         fulfillmentType === 'ONDEMAND_PICKUP' ||
+         fulfillmentType === 'PREORDER_PICKUP'
+      ) {
+         type = 'pickupStatus'
+         return type
+      }
+      if (
+         fulfillmentType === 'ONDEMAND_DELIVERY' ||
+         fulfillmentType === 'PREORDER_DELIVERY'
+      ) {
+         type = 'deliveryStatus'
+         return type
+      }
+      if (
+         fulfillmentType === 'ONDEMAND_DINEIN' ||
+         fulfillmentType === 'SCHEDULED_DINEIN'
+      ) {
+         type = 'dineInStatus'
+         return type
+      }
+   }
+   const getAerialDistance = async (data, sorted = false) => {
+      const userLocation = JSON.parse(localStorage.getItem('userLocation'))
+
+      // add arial distance
+      const dataWithAerialDistance = await Promise.all(
+         data.map(async eachStore => {
+            const aerialDistance = getDistance(
+               userLocation,
+               eachStore.location.locationAddress.locationCoordinates,
+               0.1
+            )
+            const aerialDistanceInMiles = convertDistance(aerialDistance, 'mi')
+            eachStore['aerialDistance'] = parseFloat(
+               aerialDistanceInMiles.toFixed(2)
+            )
+            eachStore['distanceUnit'] = 'mi'
+            if (brandRecurrences && fulfillmentType === 'ONDEMAND_DELIVERY') {
+               const deliveryStatus = await isStoreOnDemandDeliveryAvailable(
+                  brandRecurrences,
+                  eachStore
+               )
+               eachStore[fulfillmentStatus()] = deliveryStatus
+            }
+            if (brandRecurrences && fulfillmentType === 'PREORDER_DELIVERY') {
+               const deliveryStatus = await isPreOrderDeliveryAvailable(
+                  brandRecurrences,
+                  eachStore
+               )
+               eachStore[fulfillmentStatus()] = deliveryStatus
+            }
+            if (fulfillmentType === 'ONDEMAND_PICKUP' && brandRecurrences) {
+               const pickupStatus = isStoreOnDemandPickupAvailable(
+                  brandRecurrences,
+                  eachStore
+               )
+               eachStore[fulfillmentStatus()] = pickupStatus
+            }
+            if (fulfillmentType === 'PREORDER_PICKUP' && brandRecurrences) {
+               const pickupStatus = isStorePreOrderPickupAvailable(
+                  brandRecurrences,
+                  eachStore
+               )
+               eachStore[fulfillmentStatus()] = pickupStatus
+            }
+            if (fulfillmentType === 'ONDEMAND_DINEIN' && brandRecurrences) {
+               const dineInStatus = isStoreOnDemandDineInAvailable(
+                  brandRecurrences,
+                  eachStore
+               )
+               eachStore[fulfillmentStatus()] = dineInStatus
+            }
+            if (fulfillmentType === 'SCHEDULED_DINEIN' && brandRecurrences) {
+               const dineInStatus = isStorePreOrderDineInAvailable(
+                  brandRecurrences,
+                  eachStore
+               )
+               eachStore[fulfillmentStatus()] = dineInStatus
+            }
+            return eachStore
+         })
+      )
+      // sort by distance
+      if (sorted) {
+         const sortedDataWithAerialDistance = _.sortBy(dataWithAerialDistance, [
+            x => x.aerialDistance,
+         ])
+
+         return sortedDataWithAerialDistance
+      }
+      return dataWithAerialDistance
+   }
+   const bar = await getAerialDistance(brandLocation, true)
+   return [bar, fulfillmentStatus()]
 }

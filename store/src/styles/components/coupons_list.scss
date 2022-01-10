@@ -127,7 +127,7 @@
    background: #618fde !important;
 }
 .hern-upfront-coupons-list__coupon-wrapper > .slick-dots {
-   bottom: 0px !important;
+   bottom: -1rem !important;
 }
 
 .hern-upfront-coupons-list__coupon-wrapper
@@ -153,6 +153,7 @@
    justify-content: space-between;
    border-radius: 8px;
    border: 1px dashed rgba(64, 64, 64, 0.6);
+   min-height: 15rem;
 }
 .hern-upfront-coupons-list__coupon__scissor-icon {
    position: relative;

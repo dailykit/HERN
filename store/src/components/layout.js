@@ -31,7 +31,7 @@ export const Layout = ({
    const store = settings['availability']['Store Availability']
    const location = settings['availability']['Location']
 
-   const theme = settings['Visual']['theme-color']
+   const theme = settings['Visual']?.['theme-color']
    const { direction } = useTranslation()
 
    return (
@@ -67,7 +67,7 @@ export const Layout = ({
                      </h4>
                      {location && (
                         <address className="hern-layout__footer__contact__location">
-                           {normalizeAddress(location)}
+                           {normalizeAddress(location?.Location?.value)}
                         </address>
                      )}
 

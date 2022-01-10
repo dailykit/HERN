@@ -44,6 +44,7 @@ export const MODIFIER = {
                   image
                   isActive
                   isVisible
+                  additionalModifierTemplateId
                   operationConfig {
                      id
                      name
