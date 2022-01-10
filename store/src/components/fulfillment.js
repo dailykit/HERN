@@ -46,27 +46,31 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
    const { brand, orderTabs, locationId, selectedOrderTab, configOf } =
       useConfig()
    const { user } = useUser()
+   const { cartState } = React.useContext(CartContext)
+   const addressByCart = cartState.cart?.address
+
    const theme = configOf('theme-color', 'Visual')
    const addresses = user?.platform_customer?.addresses || []
 
    // check whether user select fulfillment type or not
-   const selectedFulfillmentType = React.useMemo(() =>
-      selectedOrderTab
-         ? selectedOrderTab.orderFulfillmentTypeLabel
-              .replace('_', ' ')
-              .split(' ')[1]
-         : null
+   const selectedFulfillmentType = React.useMemo(
+      () =>
+         selectedOrderTab
+            ? selectedOrderTab.orderFulfillmentTypeLabel
+                 .replace('_', ' ')
+                 .split(' ')[1]
+            : orderTabs.length == 0
+            ? null
+            : orderTabs[0].orderFulfillmentTypeLabel
+                 .replace('_', ' ')
+                 .split(' ')[1],
+      [orderTabs]
    )
    const [fulfillmentType, setFulfillmentType] = useState(
-      selectedFulfillmentType || 'PICKUP'
-   )
-   const [address, setAddress] = useState(null)
-   const [brandLocation, setBrandLocation] = useState(null)
-
-   const [userCoordinate, setUserCoordinate] = useState({
-      latitude: null,
-      longitude: null,
-   })
+      selectedFulfillmentType
+   ) // DELIVERY, PICKUP or DINEIN
+   const [address, setAddress] = useState(null) // consumer address
+   const [brandLocations, setBrandLocation] = useState(null) // available brand locations on particular consumer address
 
    // useEffect(() => {
    //    const localUserLocation = JSON.parse(localStorage.getItem('userLocation'))
@@ -76,7 +80,7 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
    //    }
    // }, [])
 
-   // get all store when user address available
+   // get all store when consumer address available
    const {
       loading: brandLocationLoading,
       data: { brands_brand_location_aggregate = {} } = {},
@@ -112,6 +116,7 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
       },
    })
 
+   // map orderTabs to get order fulfillment type label
    const orderTabFulfillmentType = React.useMemo(
       () =>
          orderTabs
@@ -120,7 +125,8 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
       [orderTabs]
    )
 
-   const deliveryRadioOptions = React.useMemo(() => {
+   // show
+   const fulfillmentRadioOptions = React.useMemo(() => {
       let options = []
       if (
          orderTabFulfillmentType &&
@@ -196,7 +202,7 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
             )}
             <Space size={'large'} style={{ margin: '10px 0' }}>
                <Radio.Group
-                  options={deliveryRadioOptions}
+                  options={fulfillmentRadioOptions}
                   onChange={e => {
                      setFulfillmentType(e.target.value)
                      setAddress(null)
@@ -224,7 +230,7 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
                brands_brand_location_aggregate={brands_brand_location_aggregate}
                address={address}
                orderTabFulfillmentType={orderTabFulfillmentType}
-               brandLocation={brandLocation}
+               brandLocations={brandLocations}
                setIsEdit={setIsEdit}
             />
          )}
@@ -234,7 +240,7 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
                address={address}
                orderTabFulfillmentType={orderTabFulfillmentType}
                onPickUpAddressSelect={onPickUpAddressSelect}
-               brandLocation={brandLocation}
+               brandLocations={brandLocations}
                setIsEdit={setIsEdit}
             />
          )}
@@ -247,7 +253,7 @@ const Delivery = props => {
       brands_brand_location_aggregate,
       address,
       orderTabFulfillmentType,
-      brandLocation,
+      brandLocations,
       setIsEdit,
    } = props
    const { brand, locationId, orderTabs } = useConfig()
@@ -394,11 +400,16 @@ const Delivery = props => {
          const firstStore = sortedBrandLocation.filter(
             eachStore => eachStore[fulfillmentStatus].status
          )[0]
+
+         console.log('firstStore', firstStore)
          setSelectedStore(firstStore)
          if (deliveryType === 'PREORDER') {
-            const deliverySlots = generateDeliverySlots([
-               firstStore.deliveryStatus.rec.recurrence,
-            ])
+            const deliverySlots = generateDeliverySlots(
+               firstStore.deliveryStatus.rec.map(
+                  eachFulfillRecurrence => eachFulfillRecurrence.recurrence
+               )
+            )
+            console.log('deliverySlots', deliverySlots)
             const miniSlots = generateMiniSlots(deliverySlots.data, 60)
             setDeliverySlots(miniSlots)
          }
@@ -408,13 +419,16 @@ const Delivery = props => {
    }, [sortedBrandLocation, address])
 
    useEffect(() => {
-      if (brandLocation && address && deliveryType) {
+      if (brandLocations && address && deliveryType) {
          ;(async () => {
-            const bar = await getAerialDistance(brandLocation, true)
-            setSortedBrandLocation(bar)
+            const sortedBrandLocationsData = await getAerialDistance(
+               brandLocations,
+               true
+            )
+            setSortedBrandLocation(sortedBrandLocationsData)
          })()
       }
-   }, [brandLocation, brandRecurrences, address, deliveryType])
+   }, [brandLocations, brandRecurrences, address, deliveryType])
 
    const getAerialDistance = async (data, sorted = false) => {
       // const userLocation = JSON.parse(localStorage.getItem('userLocation'))
@@ -643,7 +657,7 @@ const Pickup = props => {
       address,
       orderTabFulfillmentType,
       onPickUpAddressSelect,
-      brandLocation,
+      brandLocations,
       setIsEdit,
    } = props
 
@@ -759,13 +773,16 @@ const Pickup = props => {
    }, [selectedStore])
 
    useEffect(() => {
-      if (brandLocation && address) {
+      if (brandLocations && address) {
          ;(async () => {
-            const bar = await getAerialDistance(brandLocation, true)
-            setSortedBrandLocation(bar)
+            const brandLocationSortedByAerialDistance = await getAerialDistance(
+               brandLocations,
+               true
+            )
+            setSortedBrandLocation(brandLocationSortedByAerialDistance)
          })()
       }
-   }, [brandLocation, brandRecurrences, address, pickupType])
+   }, [brandLocations, brandRecurrences, address, pickupType])
 
    const getAerialDistance = async (data, sorted = false) => {
       // const userLocation = JSON.parse(localStorage.getItem('userLocation'))
@@ -1113,7 +1130,7 @@ export const Fulfillment = () => {
    const {
       loading: brandLocationLading,
       error: brandLocationError,
-      data: brandLocation,
+      data: brandLocations,
    } = useQuery(BRAND_LOCATIONS, {
       skip:
          !brand || !brand?.id || !cartState.cart || !cartState.cart?.locationId,
@@ -1130,11 +1147,11 @@ export const Fulfillment = () => {
          cartState.cart?.fulfillmentInfo?.type === 'ONDEMAND_DELIVERY' ||
          cartState.cart?.fulfillmentInfo?.type === 'PREORDER_DELIVERY'
       ) {
-         if (!brandLocation) {
+         if (!brandLocations) {
             return {}
          }
          const { location } =
-            brandLocation.brands_brand_location_aggregate.nodes[0]
+            brandLocations.brands_brand_location_aggregate.nodes[0]
          const brandCoordinate = {
             latitude: location.lat,
             longitude: location.lng,
@@ -1158,7 +1175,7 @@ export const Fulfillment = () => {
          cartState.cart?.fulfillmentInfo?.type === 'ONDEMAND_PICKUP' ||
          cartState.cart?.fulfillmentInfo?.type === 'PREORDER_PICKUP'
       ) {
-         if (!brandLocation) {
+         if (!brandLocations) {
             return {}
          }
          const {
@@ -1173,7 +1190,7 @@ export const Fulfillment = () => {
                lat,
                lng,
             },
-         } = brandLocation.brands_brand_location_aggregate.nodes[0]
+         } = brandLocations.brands_brand_location_aggregate.nodes[0]
          const { line1, line2 } = locationAddress
          const aerialDistance = getDistance(
             {
@@ -1200,7 +1217,7 @@ export const Fulfillment = () => {
             distanceUnit: 'mi',
          }
       }
-   }, [cartState.cart, brandLocation])
+   }, [cartState.cart, brandLocations])
    if (brandLocationLading) {
       return <Loader inline />
    }
@@ -1284,8 +1301,9 @@ export const Fulfillment = () => {
                      <div className="hern-store-location-selector__time-distance">
                         <div className="hern-store-location-selector__aerialDistance">
                            <span>
-                              {addressInfo.aerialDistance.toFixed(2)}{' '}
-                              {addressInfo.distanceUnit}
+                              {addressInfo?.aerialDistance &&
+                                 addressInfo?.aerialDistance.toFixed(2)}{' '}
+                              {addressInfo?.distanceUnit}
                            </span>
                         </div>
                      </div>

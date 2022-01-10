@@ -264,6 +264,7 @@ const Delivery = props => {
       errorType: '',
    })
    const [address, setAddress] = useState(null)
+   const [brandLocationsLoading, setBranLocationsLoading] = useState(true)
 
    // location by browser
    const locationByBrowser = () => {
@@ -372,35 +373,43 @@ const Delivery = props => {
    }, [userCoordinate])
 
    // get all store when user address available
-   const {
-      loading: brandLocationLoading,
-      data: { brands_brand_location_aggregate = {} } = {},
-   } = useQuery(BRAND_LOCATIONS, {
-      skip: !address?.city || !address?.state || !brand || !brand?.id,
-      variables: {
-         where: {
-            _or: [
-               {
-                  location: {
-                     city: { _eq: address?.city },
-                     state: { _eq: address?.state },
+   const { data: { brands_brand_location_aggregate = {} } = {} } = useQuery(
+      BRAND_LOCATIONS,
+      {
+         skip: !address?.city || !address?.state || !brand || !brand?.id,
+         variables: {
+            where: {
+               _or: [
+                  {
+                     location: {
+                        city: { _eq: address?.city },
+                        state: { _eq: address?.state },
+                     },
                   },
-               },
-               {
-                  _or: [
-                     { doesDeliverOutsideCity: { _eq: true } },
-                     { doesDeliverOutsideState: { _eq: true } },
-                  ],
-               },
-            ],
-            brandId: { _eq: brand.id },
+                  {
+                     _or: [
+                        { doesDeliverOutsideCity: { _eq: true } },
+                        { doesDeliverOutsideState: { _eq: true } },
+                     ],
+                  },
+               ],
+               brandId: { _eq: brand.id },
+            },
          },
-      },
-      onError: error => {
-         console.log(error)
-      },
-   })
-
+         onCompleted: data => {
+            if (data) {
+               setBranLocationsLoading(false)
+            }
+         },
+         onError: error => {
+            console.log(error)
+         },
+      }
+   )
+   console.log(
+      'brands_brand_location_aggregate',
+      brands_brand_location_aggregate
+   )
    // onDemand delivery
    const { loading: brandRecurrencesLoading } = useQuery(
       BRAND_ONDEMAND_DELIVERY_RECURRENCES,
@@ -521,6 +530,7 @@ const Delivery = props => {
          )
       }
    }
+
    if (!orderTabFulfillmentType) {
       return <Loader />
    }
@@ -587,7 +597,7 @@ const Delivery = props => {
          ) : null}
          {/* <RefineLocation setUserCoordinate={setUserCoordinate} /> */}
          {/* Footer */}
-         {!address ? null : brandLocationLoading ? (
+         {!address ? null : brandLocationsLoading ? (
             <Loader inline />
          ) : brands_brand_location_aggregate?.nodes?.length == 0 ? (
             <p style={{ padding: '0 14px' }}>
@@ -1483,8 +1493,11 @@ export const StoreList = props => {
    useEffect(() => {
       if (brandLocation && address) {
          ;(async () => {
-            const bar = await getAerialDistance(brandLocation, true)
-            setSortedBrandLocation(bar)
+            const brandLocationSortedByAerialDistance = await getAerialDistance(
+               brandLocation,
+               true
+            )
+            setSortedBrandLocation(brandLocationSortedByAerialDistance)
          })()
       }
    }, [brandLocation, brandRecurrences, address])
@@ -1556,6 +1569,10 @@ export const StoreList = props => {
             setShowLocationSelectionPopup(false)
          }
       }
+      return () => {
+         setSortedBrandLocation(null)
+         setBrandLocation(null)
+      }
    }, [sortedBrandLocation, address])
 
    const getAerialDistance = async (data, sorted = false) => {
@@ -1574,6 +1591,7 @@ export const StoreList = props => {
                aerialDistanceInMiles.toFixed(2)
             )
             eachStore['distanceUnit'] = 'mi'
+
             if (
                storeDistanceValidation &&
                brandRecurrences &&
