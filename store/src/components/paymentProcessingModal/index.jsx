@@ -33,8 +33,8 @@ const PaymentProcessingModal = ({
    const stopCelebration = () => {
       setIsCelebrating(false)
       if (isKioskMode) {
-         initializePrinting()
-         closeModalHandler()
+         // initializePrinting()
+         // closeModalHandler()
       } else {
          if (router.pathname !== `/placing-order?id=${cartPayment?.cartId}`) {
             closeModalHandler()
