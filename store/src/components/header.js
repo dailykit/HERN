@@ -72,7 +72,7 @@ export const Header = ({ settings, navigationMenus }) => {
       useQueryParamState('showLogin')
 
    const brand = settings['brand']['theme-brand']
-   const theme = settings['Visual']['theme-color']
+   const theme = settings['Visual']?.['theme-color']
    const headerNavigationSettings =
       settings['navigation']?.['header-navigation']
    const isSubscriptionStore =
@@ -746,7 +746,7 @@ export const Header = ({ settings, navigationMenus }) => {
                               <span className="hern-header__avatar">
                                  <Link href={getRoute('/account/profile/')}>
                                     {getInitials(
-                                       `${user.platform_customer.firstName} ${user.platform_customer.lastName}`
+                                       `${user.platform_customer?.firstName} ${user.platform_customer?.lastName}`
                                     )}
                                  </Link>
                               </span>
@@ -756,7 +756,7 @@ export const Header = ({ settings, navigationMenus }) => {
                                  onClick={() => setToggle(!toggle)}
                               >
                                  {getInitials(
-                                    `${user.platform_customer.firstName} ${user.platform_customer.lastName}`
+                                    `${user.platform_customer?.firstName} ${user.platform_customer?.lastName}`
                                  )}
                               </span>
                            ))}
