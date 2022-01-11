@@ -1615,6 +1615,8 @@ export const GET_CART = gql`
          billing: billingDetails
          subscriptionOccurenceId
          toUseAvailablePaymentOptionId
+         posistOrderStatus
+         posistOrderResponse
          subscriptionOccurence {
             id
             fulfillmentDate
