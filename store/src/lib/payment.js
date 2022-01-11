@@ -337,7 +337,6 @@ export const PaymentProvider = ({ children }) => {
          )?.value?.path?.value
          const DATA_HUB_HTTPS = get_env('DATA_HUB_HTTPS')
          const { origin } = new URL(DATA_HUB_HTTPS)
-         const origin2 = 'https://testhern.dailykit.org'
          const templateOptions = encodeURI(
             JSON.stringify({
                path,
@@ -351,7 +350,7 @@ export const PaymentProvider = ({ children }) => {
             })
          )
 
-         const url = `${origin2}/template/?template=${templateOptions}&data=${templateVariable}`
+         const url = `${origin}/template/?template=${templateOptions}&data=${templateVariable}`
 
          await createPrintJob({
             variables: {
@@ -402,18 +401,18 @@ export const PaymentProvider = ({ children }) => {
       })
    }
 
-   const closePrintModal = () => {
-      dispatch({
-         type: 'UPDATE_INITIAL_STATE',
-         payload: {
-            printDetails: {
-               isPrintInitiated: false,
-               printStatus: 'not-started',
-               message: '',
-            },
-         },
-      })
-   }
+   // const closePrintModal = () => {
+   //    dispatch({
+   //       type: 'UPDATE_INITIAL_STATE',
+   //       payload: {
+   //          printDetails: {
+   //             isPrintInitiated: false,
+   //             printStatus: 'not-started',
+   //             message: '',
+   //          },
+   //       },
+   //    })
+   // }
 
    // useEffect(() => {
    //    if (cartId) {
@@ -603,7 +602,6 @@ export const PaymentProvider = ({ children }) => {
                printDetails={state.printDetails}
                setPrintStatus={setPrintStatus}
                resetPrintDetails={resetPrintDetails}
-               closePrintModal={closePrintModal}
                initializePrinting={initializePrinting}
             />
          )}
