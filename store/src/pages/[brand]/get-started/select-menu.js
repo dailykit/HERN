@@ -2,14 +2,13 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import { useConfig } from '../../../lib'
 import { useUser } from '../../../context'
-import { SEO, Layout, LoginWarning } from '../../../components'
 import {
-   getPageProps,
-   getRoute,
-   isClient,
-   processExternalFiles,
-   renderPageContent,
-} from '../../../utils'
+   SEO,
+   Layout,
+   LoginWarning,
+   ExternalJSCSSFiles,
+} from '../../../components'
+import { getPageProps, isClient, renderPageContent } from '../../../utils'
 
 const SelectMenu = props => {
    const { settings, linkedFiles, folds, seoSettings } = props
@@ -22,20 +21,13 @@ const SelectMenu = props => {
       }
    }, [isAuthenticated, isLoading])
 
-   React.useEffect(() => {
-      try {
-         processExternalFiles(folds, linkedFiles)
-      } catch (err) {
-         console.log('Failed to render page: ', err)
-      }
-   }, [folds])
-
    const { configOf } = useConfig('Select-Menu')
    const config = configOf('select-menu-header')
 
    return (
       <Layout settings={settings}>
          <SEO seoSettings={seoSettings} />
+         <ExternalJSCSSFiles externalFiles={linkedFiles} />
          {!isAuthenticated && !isLoading ? (
             <LoginWarning />
          ) : (

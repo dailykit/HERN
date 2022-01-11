@@ -9,7 +9,12 @@ import {
    processExternalFiles,
    renderPageContent,
 } from '../../../utils'
-import { SEO, Layout, LoginWarning } from '../../../components'
+import {
+   SEO,
+   Layout,
+   LoginWarning,
+   ExternalJSCSSFiles,
+} from '../../../components'
 
 const OrdersPage = props => {
    const router = useRouter()
@@ -23,17 +28,10 @@ const OrdersPage = props => {
       }
    }, [isAuthenticated, isLoading])
 
-   React.useEffect(() => {
-      try {
-         processExternalFiles(folds, linkedFiles)
-      } catch (err) {
-         console.log('Failed to render page: ', err)
-      }
-   }, [folds])
-
    return (
       <Layout settings={settings} navigationMenus={navigationMenus}>
          <SEO seoSettings={seoSettings} />
+         <ExternalJSCSSFiles externalFiles={linkedFiles} />
          {!isAuthenticated && !isLoading ? (
             <LoginWarning />
          ) : (
