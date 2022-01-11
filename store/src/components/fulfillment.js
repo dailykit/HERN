@@ -7,6 +7,8 @@ import {
    OrderTime,
    ArrowLeftIcon,
    ArrowRightIcon,
+   EditIcon,
+   CloseIcon,
 } from '../assets/icons'
 import {
    BRAND_LOCATIONS,
@@ -73,6 +75,7 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
    ) // DELIVERY, PICKUP or DINEIN
    const [address, setAddress] = useState(null) // consumer address
    const [brandLocations, setBrandLocation] = useState(null) // available brand locations on particular consumer address
+   const [showAddressForm, setShowAddressForm] = useState(false)
 
    // useEffect(() => {
    //    const localUserLocation = JSON.parse(localStorage.getItem('userLocation'))
@@ -199,7 +202,7 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
                      top: '0',
                   }}
                >
-                  Cancel
+                  Close
                </Button>
             )}
             {fulfillmentRadioOptions.length > 1 && (
@@ -216,23 +219,45 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
             )}
             {fulfillmentType === 'DELIVERY' && (
                <Row className="hern-address__location-input-field">
-                  <Col xs={24} sm={24} md={24} lg={12} xl={12}>
-                     <AddressTunnel
-                        outside={true}
-                        onSubmitAddress={onAddressSelect}
-                     />
-                  </Col>
-                  <Col xs={24} sm={24} md={24} lg={12} xl={12}>
-                     <ConsumerAddress address={address} />
-                  </Col>
-                  {user?.keycloakId && (
-                     <Col span={24}>
-                        <AddressList
-                           zipCodes={false}
-                           tunnel={false}
-                           onSelect={onAddressSelect}
+                  {address && !showAddressForm ? (
+                     <Col xs={24} sm={24} md={24} lg={12} xl={12}>
+                        <ConsumerAddress
+                           address={address}
+                           setShowAddressForm={setShowAddressForm}
                         />
                      </Col>
+                  ) : (
+                     <>
+                        {showAddressForm && (
+                           <CloseIcon
+                              onClick={() => {
+                                 setShowAddressForm(false)
+                              }}
+                              style={{
+                                 cursor: 'pointer',
+                                 position: 'absolute',
+                                 zIndex: '100',
+                                 right: '0',
+                                 stroke: 'currentColor',
+                              }}
+                           />
+                        )}
+                        <Col xs={24} sm={24} md={24} lg={12} xl={12}>
+                           <AddressTunnel
+                              outside={true}
+                              onSubmitAddress={onAddressSelect}
+                           />
+                        </Col>
+                        {user?.keycloakId && (
+                           <Col span={24}>
+                              <AddressList
+                                 zipCodes={false}
+                                 tunnel={false}
+                                 onSelect={onAddressSelect}
+                              />
+                           </Col>
+                        )}
+                     </>
                   )}
                </Row>
             )}
@@ -440,6 +465,7 @@ const Delivery = props => {
             )
             console.log('deliverySlots', deliverySlots)
             const miniSlots = generateMiniSlots(deliverySlots.data, 60)
+            console.log('miniSlots1', miniSlots)
             setDeliverySlots(miniSlots)
          }
       }
@@ -535,6 +561,10 @@ const Delivery = props => {
          type: 'PREORDER_DELIVERY',
       }
       if (user?.keycloakId) {
+         const addressToBeSave = { ...address }
+         delete addressToBeSave.address
+         delete addressToBeSave.latitude
+         delete addressToBeSave.longitude
          createAddress({
             variables: {
                object: { ...address, keycloakId: user?.keycloakId },
@@ -683,8 +713,8 @@ const Delivery = props => {
                      >
                         {selectedSlot.slots.map((eachSlot, index, elements) => {
                            const slot = {
-                              from: eachSlot.time,
-                              to: elements[index + 1]?.time || eachSlot.end,
+                              from: eachSlot.start,
+                              to: eachSlot.end,
                            }
                            return (
                               <Radio.Button value={eachSlot}>
@@ -1139,8 +1169,8 @@ const Pickup = props => {
                      >
                         {selectedSlot.slots.map((eachSlot, index, elements) => {
                            const slot = {
-                              from: eachSlot.time,
-                              to: elements[index + 1]?.time || eachSlot.end,
+                              from: eachSlot.start,
+                              to: eachSlot.end,
                            }
                            return (
                               <Radio.Button value={eachSlot}>
@@ -1324,6 +1354,20 @@ export const Fulfillment = () => {
                   >
                      Change
                   </Button>
+                  <EditIcon
+                     style={{
+                        position: 'absolute',
+                        right: '8px',
+                        top: '8px',
+                        cursor: 'pointer',
+                     }}
+                     onClick={() => {
+                        setIsEdit(true)
+                     }}
+                     fill={theme?.accent || 'rgba(5, 150, 105, 1)'}
+                     className="hern-cart__fulfillment-change-edit-icon"
+                  />
+
                   <div
                      className={classNames(
                         'hern-store-location-selector__each-store'
@@ -1367,7 +1411,10 @@ export const Fulfillment = () => {
    )
 }
 
-const ConsumerAddress = ({ address }) => {
+const ConsumerAddress = ({ address, setShowAddressForm }) => {
+   const { configOf } = useConfig()
+   const theme = configOf('theme-color', 'Visual')
+
    if (!address) {
       return null
    }
@@ -1383,6 +1430,18 @@ const ConsumerAddress = ({ address }) => {
             {', '}
          </span>
          <span>{address?.zipcode}</span>
+         <EditIcon
+            style={{
+               position: 'absolute',
+               right: '8px',
+               top: '8px',
+               cursor: 'pointer',
+            }}
+            onClick={() => {
+               setShowAddressForm(true)
+            }}
+            fill={theme?.accent || 'rgba(5, 150, 105, 1)'}
+         />
       </div>
    )
 }

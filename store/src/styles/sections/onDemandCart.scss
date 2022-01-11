@@ -349,11 +349,13 @@
    }
    .hern-on-demand-cart-section {
       flex-direction: row;
+      position: relative;
       > .hern-on-demand-cart-section__left {
          width: 65%;
          order: 1;
       }
       > .hern-on-demand-cart-section__right {
+         position: sticky;
          width: 35%;
          padding-bottom: unset;
          order: 2;
