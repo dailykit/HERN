@@ -39,6 +39,7 @@ import { CloneIcon } from '../../../../../shared/assets/icons'
 import { InventoryBundleProvider } from '../../../context/product/inventoryBundle'
 import ProductInsight from './components/Insight'
 import { MASTER } from '../../../../settings/graphql/index'
+import { SEOSettings } from './components'
 const Product = () => {
    const { id: productId } = useParams()
 
@@ -444,6 +445,8 @@ const Product = () => {
                         <HorizontalTab>Basic Details</HorizontalTab>
                         <HorizontalTab>Options</HorizontalTab>
                         <HorizontalTab>Insights</HorizontalTab>
+                        <HorizontalTab>SEO Tools</HorizontalTab>
+                        <HorizontalTab>Product Settings</HorizontalTab>
                      </HorizontalTabList>
                      <HorizontalTabPanels>
                         <HorizontalTabPanel>
@@ -496,7 +499,8 @@ const Product = () => {
                                  addOption={addDropDownOptions}
                                  type="single"
                                  searchedOption={searchOptions}
-                                 selectedOption={selectedOption} />
+                                 selectedOption={selectedOption}
+                              />
                            </Form.Group>
                         </HorizontalTabPanel>
                         <HorizontalTabPanel>
@@ -513,6 +517,12 @@ const Product = () => {
                               }}
                               showInTunnel={false}
                            /> */}
+                        </HorizontalTabPanel>
+                        <HorizontalTabPanel>
+                           <SEOSettings productId={Number(productId)} />
+                        </HorizontalTabPanel>
+                        <HorizontalTabPanel>
+                           {/* <ProductSettings /> */}
                         </HorizontalTabPanel>
                      </HorizontalTabPanels>
                   </HorizontalTabs>

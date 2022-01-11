@@ -40,13 +40,11 @@ export const CREATE_ORDER_SACHET = `
 `
 
 export const UPDATE_CART = `
-   mutation updateCart($id: Int!, $_set: order_cart_set_input!) {
-      updateCart(where: { id: { _eq: $id } }, _set: $_set) {
-         returning {
-            id
-         }
-      }
+mutation updateCart($id: Int!, $set: order_cart_set_input!) {
+   updateCart(pk_columns: { id: $id }, _set: $set) {
+      id
    }
+}
 `
 
 export const UPDATE_ORDER = `
