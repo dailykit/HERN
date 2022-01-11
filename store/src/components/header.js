@@ -199,7 +199,7 @@ export const Header = ({ settings, navigationMenus }) => {
                )
                   .then(res => res.json())
                   .then(data => {
-                     if (data.status === 'OK' && data.results.length > 0) {
+                     if (data?.status === 'OK' && data.results.length > 0) {
                         const formatted_address =
                            data.results[0].formatted_address.split(',')
                         const mainText = formatted_address
@@ -562,7 +562,7 @@ export const Header = ({ settings, navigationMenus }) => {
                recurrencesDetails.fulfillmentType
             )
             const availableStores = result.filter(
-               x => x[fulfillmentStatus].status
+               x => x[fulfillmentStatus]?.status
             )
             if (availableStores.length > 0) {
                localStorage.setItem(
@@ -900,7 +900,7 @@ const LocationInfo = ({ settings }) => {
                </div>
             ) : (
                <div className="hern-header__location-right">
-                  {storeStatus.status && (
+                  {storeStatus?.status && (
                      <div className="hern-header__location-upper">
                         {prefix}{' '}
                         <span className="hern-header__downvector-icon">
@@ -916,7 +916,7 @@ const LocationInfo = ({ settings }) => {
                            : 'Please select address...'}
                   </div>
                   <div className="hern-header__location-warning">
-                     {!storeStatus.status ? storeStatus.message : ''}
+                     {!storeStatus?.status ? storeStatus.message : ''}
                   </div>
                </div>
             )}
