@@ -229,6 +229,7 @@ export const CartProvider = ({ children }) => {
                usedOrderInterface: oiType,
                orderTabId: selectedOrderTab?.id || null,
                locationId: locationId || null,
+               brandId: brand?.id,
                ...(oiType === 'Kiosk Ordering' &&
                   cartState.kioskPaymentOption.terminal && {
                      toUseAvailablePaymentOptionId:

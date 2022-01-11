@@ -159,16 +159,11 @@ export const posistOrderPush = async (req, res) => {
          id
       })
       const { locationKiosk = {} } = await client.request(LOCATION_KIOSK, {
-         id: 1,
-         brandId: 1
+         id: cart.locationKioskId,
+         brandId: cart.brandId
       })
 
       let posistOrder = cart.posistOrderDetails
-      // posistOrder
-      // return res.status(200).json({
-      //    success: true,
-      //    data: posistOrder
-      // })
       const posist_customer_key =
          locationKiosk.location.brand_locations[0].posist_customer_key
       console.log(
