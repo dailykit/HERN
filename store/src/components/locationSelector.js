@@ -1495,7 +1495,8 @@ export const StoreList = props => {
          ;(async () => {
             const brandLocationSortedByAerialDistance = await getAerialDistance(
                brandLocation,
-               true
+               true,
+               address
             )
             setSortedBrandLocation(brandLocationSortedByAerialDistance)
          })()
@@ -1575,7 +1576,7 @@ export const StoreList = props => {
       }
    }, [sortedBrandLocation, address])
 
-   const getAerialDistance = async (data, sorted = false) => {
+   const getAerialDistance = async (data, sorted = false, address) => {
       const userLocation = JSON.parse(localStorage.getItem('userLocation'))
 
       // add arial distance
@@ -1599,7 +1600,8 @@ export const StoreList = props => {
             ) {
                const deliveryStatus = await isStoreOnDemandDeliveryAvailable(
                   brandRecurrences,
-                  eachStore
+                  eachStore,
+                  address
                )
                eachStore[fulfillmentStatus] = deliveryStatus
             }
@@ -1610,7 +1612,8 @@ export const StoreList = props => {
             ) {
                const deliveryStatus = await isPreOrderDeliveryAvailable(
                   brandRecurrences,
-                  eachStore
+                  eachStore,
+                  address
                )
                eachStore[fulfillmentStatus] = deliveryStatus
             }

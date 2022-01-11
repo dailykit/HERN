@@ -559,7 +559,8 @@ export const Header = ({ settings, navigationMenus }) => {
             const [result, fulfillmentStatus] = await autoSelectStore(
                brandLocation,
                recurrencesDetails.brandRecurrences,
-               recurrencesDetails.fulfillmentType
+               recurrencesDetails.fulfillmentType,
+               address
             )
             const availableStores = result.filter(
                x => x[fulfillmentStatus].status

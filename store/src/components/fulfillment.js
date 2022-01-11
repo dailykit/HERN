@@ -166,6 +166,7 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
          address: { zipcode: newAddress.zipcode },
       }
       setAddress(modifiedAddress)
+      setShowAddressForm(false)
    }
    const onPickUpAddressSelect = newAddress => {
       const modifiedAddress = {
@@ -219,29 +220,49 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
             )}
             {fulfillmentType === 'DELIVERY' && (
                <Row className="hern-address__location-input-field">
-                  {address && !showAddressForm ? (
-                     <Col xs={24} sm={24} md={24} lg={12} xl={12}>
-                        <ConsumerAddress
-                           address={address}
-                           setShowAddressForm={setShowAddressForm}
-                        />
-                     </Col>
+                  {address ? (
+                     showAddressForm ? (
+                        <>
+                           {showAddressForm && (
+                              <CloseIcon
+                                 onClick={() => {
+                                    setShowAddressForm(false)
+                                 }}
+                                 style={{
+                                    cursor: 'pointer',
+                                    position: 'absolute',
+                                    zIndex: '100',
+                                    right: '0',
+                                    stroke: 'currentColor',
+                                 }}
+                              />
+                           )}
+                           <Col xs={24} sm={24} md={24} lg={12} xl={12}>
+                              <AddressTunnel
+                                 outside={true}
+                                 onSubmitAddress={onAddressSelect}
+                              />
+                           </Col>
+                           {user?.keycloakId && (
+                              <Col span={24}>
+                                 <AddressList
+                                    zipCodes={false}
+                                    tunnel={false}
+                                    onSelect={onAddressSelect}
+                                 />
+                              </Col>
+                           )}
+                        </>
+                     ) : (
+                        <Col xs={24} sm={24} md={24} lg={12} xl={12}>
+                           <ConsumerAddress
+                              address={address}
+                              setShowAddressForm={setShowAddressForm}
+                           />
+                        </Col>
+                     )
                   ) : (
                      <>
-                        {showAddressForm && (
-                           <CloseIcon
-                              onClick={() => {
-                                 setShowAddressForm(false)
-                              }}
-                              style={{
-                                 cursor: 'pointer',
-                                 position: 'absolute',
-                                 zIndex: '100',
-                                 right: '0',
-                                 stroke: 'currentColor',
-                              }}
-                           />
-                        )}
                         <Col xs={24} sm={24} md={24} lg={12} xl={12}>
                            <AddressTunnel
                               outside={true}
@@ -331,7 +352,10 @@ const Delivery = props => {
 
       return options
    }, [orderTabFulfillmentType])
-
+   console.log(
+      'brands_brand_location_aggregate',
+      brands_brand_location_aggregate
+   )
    React.useEffect(() => {
       if (deliveryRadioOptions.length === 1) {
          const availableDeliveryType = deliveryRadioOptions[0].value
@@ -474,18 +498,36 @@ const Delivery = props => {
    }, [sortedBrandLocation, address])
 
    useEffect(() => {
-      if (brandLocations && address && deliveryType) {
+      if (
+         brandLocations &&
+         address &&
+         deliveryType &&
+         brands_brand_location_aggregate?.aggregate?.count > 0
+      ) {
          ;(async () => {
             const sortedBrandLocationsData = await getAerialDistance(
                brandLocations,
-               true
+               true,
+               address
             )
             setSortedBrandLocation(sortedBrandLocationsData)
          })()
       }
-   }, [brandLocations, brandRecurrences, address, deliveryType])
+   }, [
+      brandLocations,
+      brandRecurrences,
+      address,
+      deliveryType,
+      brands_brand_location_aggregate,
+   ])
 
-   const getAerialDistance = async (data, sorted = false) => {
+   useEffect(() => {
+      if (brands_brand_location_aggregate?.aggregate?.count == 0) {
+         setSelectedStore(null)
+      }
+   }, [brands_brand_location_aggregate])
+
+   const getAerialDistance = async (data, sorted = false, address) => {
       // const userLocation = JSON.parse(localStorage.getItem('userLocation'))
       const userLocationWithLatLang = {
          latitude: address.latitude,
@@ -508,14 +550,16 @@ const Delivery = props => {
             if (brandRecurrences && deliveryType === 'ONDEMAND') {
                const deliveryStatus = await isStoreOnDemandDeliveryAvailable(
                   brandRecurrences,
-                  eachStore
+                  eachStore,
+                  address
                )
                eachStore[fulfillmentStatus] = deliveryStatus
             }
             if (brandRecurrences && deliveryType === 'PREORDER') {
                const deliveryStatus = await isPreOrderDeliveryAvailable(
                   brandRecurrences,
-                  eachStore
+                  eachStore,
+                  address
                )
                eachStore[fulfillmentStatus] = deliveryStatus
             }
@@ -634,7 +678,7 @@ const Delivery = props => {
    // if (!selectedStore.deliveryStatus.status) {
    //    return <p>{selectedStore.deliveryStatus.message}</p>
    // }
-
+   console.log('selectedStore', selectedStore)
    if (!address) {
       return <p>Please Select an address</p>
    }
@@ -667,6 +711,8 @@ const Delivery = props => {
 
          {!deliveryType ? (
             <p>Please select a delivery type.</p>
+         ) : brands_brand_location_aggregate?.aggregate?.count == 0 ? (
+            'No store available on this location.'
          ) : sortedBrandLocation === null || selectedStore === null ? (
             <Loader inline />
          ) : !selectedStore?.deliveryStatus?.status ? (

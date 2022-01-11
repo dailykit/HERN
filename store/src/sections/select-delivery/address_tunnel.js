@@ -10,6 +10,7 @@ import { CloseIcon } from '../../assets/icons'
 import { useScript, isClient, get_env } from '../../utils'
 import { Tunnel, Button, Form, Spacer } from '../../components'
 import { useConfig } from '../../lib'
+import { Modal } from 'antd'
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const AddressTunnel = props => {
@@ -29,6 +30,7 @@ export const AddressTunnel = props => {
       ? { state: {}, dispatch: {} }
       : useDelivery()
    const { selectedOrderTab } = useConfig()
+
    const [formStatus, setFormStatus] = React.useState('PENDING')
    const [address, setAddress] = React.useState(null)
    const [createAddress] = useMutation(MUTATIONS.CUSTOMER.ADDRESS.CREATE, {
@@ -57,8 +59,6 @@ export const AddressTunnel = props => {
    )
    const [addressWarnings, setAddressWarnings] = React.useState({
       line1: false,
-      zipcode: false,
-      city: false,
    }) // to show warning for required field
 
    const formatAddress = async input => {
@@ -104,20 +104,21 @@ export const AddressTunnel = props => {
          if (showAddressForm) {
             setAddress(address)
          }
+         if (!address.zipcode) {
+            showWarningPopup()
+         }
          onInputFiledSelect && onInputFiledSelect(address)
          setFormStatus('IN_PROGRESS')
       }
    }
 
-   React.useEffect(() => {
-      if (address) {
-         if (!address.zipcode) {
-            setAddressWarnings(prev => ({ ...prev, zipcode: true }))
-         } else {
-            setAddressWarnings(prev => ({ ...prev, zipcode: false }))
-         }
-      }
-   }, [address])
+   const showWarningPopup = () => {
+      Modal.warning({
+         title: `Please select precise zipcode location`,
+         maskClosable: true,
+         centered: true,
+      })
+   }
 
    const handleSubmit = () => {
       setFormStatus('SAVING')
@@ -142,7 +143,9 @@ export const AddressTunnel = props => {
          //       },
          //    },
          // })
-         onSubmitAddress(address)
+         if (outside) {
+            onSubmitAddress(address)
+         }
       }
       setAddress(null)
    }
@@ -167,144 +170,91 @@ export const AddressTunnel = props => {
                   />
                )}
             </section>
-            {address && (
-               <div
-                  className="hern-address__address-form"
-                  onBlur={() => {
-                     if (!address.zipcode) {
-                        setAddressWarnings(prev => ({ ...prev, zipcode: true }))
-                        return
-                     }
-                     if (!address.line1) {
-                        setAddressWarnings(prev => ({ ...prev, line1: true }))
-                        return
-                     }
-                     if (!address.city) {
-                        setAddressWarnings(prev => ({ ...prev, city: true }))
-                        return
-                     }
-                     console.log('this is valid location')
-                     handleSubmit()
-                  }}
-               >
-                  <Form.Field>
-                     <Form.Label>
-                        Apartment/Building Info/Street info*{' '}
-                        <span className="hern-address-warning">
-                           {addressWarnings.line1 ? 'fill this field' : null}
-                        </span>
-                     </Form.Label>
-                     <Form.Text
-                        type="text"
-                        placeholder="Enter apartment/building info/street info"
-                        value={address.line1 || ''}
-                        onChange={e => {
-                           if (!e.target.value) {
-                              setAddressWarnings(prev => ({
-                                 ...prev,
-                                 line1: true,
-                              }))
-                           } else {
-                              setAddressWarnings(prev => ({
-                                 ...prev,
-                                 line1: false,
-                              }))
-                           }
-                           setAddress({ ...address, line1: e.target.value })
-                        }}
-                     />
-                  </Form.Field>
-                  <Form.Field>
-                     <Form.Label>Line 2</Form.Label>
-                     <Form.Text
-                        type="text"
-                        placeholder="Enter line 2"
-                        value={address.line2 || ''}
-                        onChange={e =>
-                           setAddress({ ...address, line2: e.target.value })
+            {address &&
+               (address.zipcode ? (
+                  <div
+                     className="hern-address__address-form"
+                     onBlur={() => {
+                        if (!address.line1) {
+                           setAddressWarnings(prev => ({
+                              ...prev,
+                              line1: true,
+                           }))
+                           return
                         }
-                     />
-                  </Form.Field>
-                  <Form.Field>
-                     <Form.Label>Landmark</Form.Label>
-                     <Form.Text
-                        type="text"
-                        value={address.landmark || ''}
-                        placeholder="Enter landmark"
-                        onChange={e =>
-                           setAddress({ ...address, landmark: e.target.value })
-                        }
-                     />
-                  </Form.Field>
-
-                  <Form.Field>
-                     <Form.Label>
-                        City*{' '}
-                        <span className="hern-address-warning">
-                           {addressWarnings.city
-                              ? 'enter valid city location'
-                              : null}
-                        </span>
-                     </Form.Label>
-                     <Form.Text
-                        type="text"
-                        placeholder="Enter city"
-                        value={address.city || ''}
-                        onChange={e =>
-                           setAddress({ ...address, city: e.target.value })
-                        }
-                     />
-                  </Form.Field>
-                  <Form.Field>
-                     <Form.Label>State</Form.Label>
-                     <Form.Text readOnly value={address.state} />
-                  </Form.Field>
-
-                  <div className="hern-delivery__address-tunnel__country-zip-code">
-                     <Form.Field>
-                        <Form.Label>Country</Form.Label>
-                        <Form.Text readOnly value={address.country} />
-                     </Form.Field>
+                        console.log('this is valid location')
+                        handleSubmit()
+                     }}
+                  >
                      <Form.Field>
                         <Form.Label>
-                           Zipcode{' '}
+                           Apartment/Building Info/Street info*{' '}
                            <span className="hern-address-warning">
-                              {addressWarnings.zipcode
-                                 ? 'enter valid zipcode location'
-                                 : null}
+                              {addressWarnings.line1 ? 'fill this field' : null}
                            </span>
                         </Form.Label>
                         <Form.Text
-                           readOnly={Boolean(address.zipcode)}
-                           value={address.zipcode}
+                           type="text"
+                           placeholder="Enter apartment/building info/street info"
+                           value={address.line1 || ''}
+                           onChange={e => {
+                              if (!e.target.value) {
+                                 setAddressWarnings(prev => ({
+                                    ...prev,
+                                    line1: true,
+                                 }))
+                              } else {
+                                 setAddressWarnings(prev => ({
+                                    ...prev,
+                                    line1: false,
+                                 }))
+                              }
+                              setAddress({ ...address, line1: e.target.value })
+                           }}
                         />
                      </Form.Field>
+                     <Form.Field>
+                        <Form.Label>Landmark</Form.Label>
+                        <Form.Text
+                           type="text"
+                           value={address.landmark || ''}
+                           placeholder="Enter landmark"
+                           onChange={e =>
+                              setAddress({
+                                 ...address,
+                                 landmark: e.target.value,
+                              })
+                           }
+                        />
+                     </Form.Field>
+
+                     <Form.Field>
+                        <Form.Label>Label</Form.Label>
+                        <Form.Text
+                           type="text"
+                           value={address.label || ''}
+                           placeholder="Enter label for this address"
+                           onChange={e =>
+                              setAddress({ ...address, label: e.target.value })
+                           }
+                        />
+                     </Form.Field>
+                     <Form.Field>
+                        <Form.Label>Dropoff Instructions</Form.Label>
+                        <Form.TextArea
+                           type="text"
+                           value={address.notes || ''}
+                           placeholder="Enter dropoff instructions"
+                           onChange={e =>
+                              setAddress({ ...address, notes: e.target.value })
+                           }
+                        />
+                     </Form.Field>
+                     <Spacer />
                   </div>
-                  <Form.Field>
-                     <Form.Label>Label</Form.Label>
-                     <Form.Text
-                        type="text"
-                        value={address.label || ''}
-                        placeholder="Enter label for this address"
-                        onChange={e =>
-                           setAddress({ ...address, label: e.target.value })
-                        }
-                     />
-                  </Form.Field>
-                  <Form.Field>
-                     <Form.Label>Dropoff Instructions</Form.Label>
-                     <Form.TextArea
-                        type="text"
-                        value={address.notes || ''}
-                        placeholder="Enter dropoff instructions"
-                        onChange={e =>
-                           setAddress({ ...address, notes: e.target.value })
-                        }
-                     />
-                  </Form.Field>
-                  <Spacer />
-               </div>
-            )}
+               ) : (
+                  <>{showWarningPopup}</>
+               ))}
          </>
       )
    }

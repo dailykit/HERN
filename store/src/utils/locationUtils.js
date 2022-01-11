@@ -139,7 +139,8 @@ export const isStoreOnDemandDeliveryAvailable = async (
 
 export const isPreOrderDeliveryAvailable = async (
    brandRecurrences,
-   eachStore
+   eachStore,
+   address
 ) => {
    // this fn use for pre order delivery
    // bcz in pre order we need not to validate time (check either store available by distance or not)
@@ -169,7 +170,8 @@ export const isPreOrderDeliveryAvailable = async (
                const distanceDeliveryStatus =
                   await isStoreDeliveryAvailableByDistance(
                      timeslot.mileRanges,
-                     eachStore
+                     eachStore,
+                     address
                   )
                const { aerial, drivable, zipcode, geoBoundary } =
                   distanceDeliveryStatus.result
@@ -211,8 +213,12 @@ export const isPreOrderDeliveryAvailable = async (
    }
 }
 
-const isStoreDeliveryAvailableByDistance = async (mileRanges, eachStore) => {
-   const userLocation = JSON.parse(localStorage.getItem('userLocation'))
+const isStoreDeliveryAvailableByDistance = async (
+   mileRanges,
+   eachStore,
+   address
+) => {
+   const userLocation = { ...address }
    let isStoreDeliveryAvailableByDistanceStatus = {
       aerial: true,
       drivable: true,
@@ -817,7 +823,8 @@ export const generateTimeStamp = (time, date, slotTiming) => {
 export const autoSelectStore = async (
    brandLocation,
    brandRecurrences,
-   fulfillmentType
+   fulfillmentType,
+   address
 ) => {
    const fulfillmentStatus = () => {
       let type
@@ -862,14 +869,16 @@ export const autoSelectStore = async (
             if (brandRecurrences && fulfillmentType === 'ONDEMAND_DELIVERY') {
                const deliveryStatus = await isStoreOnDemandDeliveryAvailable(
                   brandRecurrences,
-                  eachStore
+                  eachStore,
+                  address
                )
                eachStore[fulfillmentStatus()] = deliveryStatus
             }
             if (brandRecurrences && fulfillmentType === 'PREORDER_DELIVERY') {
                const deliveryStatus = await isPreOrderDeliveryAvailable(
                   brandRecurrences,
-                  eachStore
+                  eachStore,
+                  address
                )
                eachStore[fulfillmentStatus()] = deliveryStatus
             }
@@ -914,6 +923,6 @@ export const autoSelectStore = async (
       }
       return dataWithAerialDistance
    }
-   const bar = await getAerialDistance(brandLocation, true)
+   const bar = await getAerialDistance(brandLocation, true, address)
    return [bar, fulfillmentStatus()]
 }
