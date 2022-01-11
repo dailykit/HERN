@@ -13,11 +13,19 @@ import { CartContext, useUser } from '../../context'
 import { EmptyCart, PaymentIcon } from '../../assets/icons'
 import Link from 'next/link'
 import { UserInfo, UserType } from '../../components'
+import { useConfig } from '../../lib'
 
 export const OnDemandCart = () => {
    const { cartState, combinedCartItems, isCartLoading, cartItemsLoading } =
       React.useContext(CartContext)
    const { isAuthenticated, userType } = useUser()
+
+   const { settings } = useConfig()
+
+   const isLoyaltyPointsAvailable =
+      settings?.rewards?.find(
+         setting => setting?.identifier === 'Loyalty Points Availability'
+      )?.value?.['Loyalty Points']?.IsLoyaltyPointsAvailable?.value ?? true
 
    if (combinedCartItems === null || isCartLoading || cartItemsLoading) {
       return <Loader />
@@ -58,7 +66,7 @@ export const OnDemandCart = () => {
             <div className="hern-ondemand-cart__left-card">
                <Coupon upFrontLayout={true} cart={cartState.cart} />
             </div>
-            {isAuthenticated && (
+            {isAuthenticated && isLoyaltyPointsAvailable && (
                <div className="hern-ondemand-cart__left-card">
                   <LoyaltyPoints cart={cartState.cart} version={2} />
                </div>
