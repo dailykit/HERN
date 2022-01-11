@@ -9,7 +9,7 @@ export const SEO = ({ seoSettings, richresult, children }) => {
    const { pathname } = useRouter()
    // const { favicon } = useConfig().configOf('theme-brand', 'brand')
 
-   //for basic SEO settings
+   // for basic SEO settings
    // const basicSEO =
    //    pageLevel.find(
    //       setting => setting?.brandPageSetting?.identifier === 'basic-seo'
@@ -45,13 +45,14 @@ export const SEO = ({ seoSettings, richresult, children }) => {
          )?.value?.[property]
       )
          ? seoSettings?.pageLevel.find(
-              setting => setting?.brandPageSetting?.identifier === 'basic-seo'
-           )?.value?.[property]
+            setting => setting?.brandPageSetting?.identifier === 'basic-seo'
+         )?.value?.[property]
          : seoSettings?.brandLevel.find(
-              setting => setting.meta.identifier === 'basic-seo'
-           )?.value?.[property]
+            setting => setting.meta.identifier === 'basic-seo'
+         )?.value?.[property]
       return value
    }
+
    return (
       <Head>
          <title>
@@ -59,11 +60,14 @@ export const SEO = ({ seoSettings, richresult, children }) => {
          </title>
          <link rel="icon" href={getBasicSEOValue('favicon')} type="image/png" />
          <meta
+            name={getBasicSEOValue('metaTitle') || pathname.split('/').slice(-1)}
+            content={getBasicSEOValue('metaDescription') || ''}
+         />
+         <meta
             property="description"
             content={getBasicSEOValue('metaDescription') || ''}
             name="description"
          />
-
          <meta
             property="og:title"
             content={
@@ -88,7 +92,7 @@ export const SEO = ({ seoSettings, richresult, children }) => {
             title="og-image"
          />
          <meta property="og:type" content="website" />
-
+         <meta property="og:url" content={openGraphCard?.value?.ogUrl} />
          <meta property="twitter:card" content="summary" />
          <meta
             property="twitter:title"
