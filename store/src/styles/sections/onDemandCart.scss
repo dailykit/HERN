@@ -353,6 +353,20 @@
       > .hern-on-demand-cart-section__left {
          width: 65%;
          order: 1;
+         height: calc(100vh - 64px);
+         overflow: auto;
+         &::-webkit-scrollbar {
+            width: 3px;
+         }
+
+         &::-webkit-scrollbar-track {
+            box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+         }
+
+         &::-webkit-scrollbar-thumb {
+            background-color: darkgrey;
+            outline: 1px solid slategrey;
+         }
       }
       > .hern-on-demand-cart-section__right {
          position: sticky;
