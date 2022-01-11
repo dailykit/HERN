@@ -347,10 +347,15 @@ export const PaymentProvider = ({ children }) => {
          const templateVariable = encodeURI(
             JSON.stringify({
                cartId: cartState?.cart?.id,
+               paymentMode:
+                  cartPayment?.availablePaymentOption?.supportedPaymentOption
+                     ?.paymentOptionLabel === 'TERMINAL'
+                     ? 'card'
+                     : 'counter',
             })
          )
-
          const url = `${origin}/template/?template=${templateOptions}&data=${templateVariable}`
+         console.log('url.....', url)
 
          await createPrintJob({
             variables: {

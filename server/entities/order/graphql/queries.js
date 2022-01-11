@@ -313,6 +313,8 @@ query cart($id: Int!) {
     toUseAvailablePaymentOptionId
     customerInfo
     posistOrderDetails
+    locationKioskId
+    brandId
     availablePaymentOption {
       id
       label
