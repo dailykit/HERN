@@ -232,10 +232,10 @@ export const CartDetails = () => {
                      <span>BILL DETAILS</span>
                      <ul className="hern-cart-bill-details-list">
                         <li>
-                           <span>{cart.billing.totalPrice.label}</span>
+                           <span>{cart.billing.itemTotal.label}</span>
                            <span>
                               {formatCurrency(
-                                 cart.billing.totalPrice.value || 0
+                                 cart.billing.itemTotal.value || 0
                               )}
                            </span>
                         </li>
@@ -256,6 +256,7 @@ export const CartDetails = () => {
                         <li>
                            <span>{cart.billing.discount.label}</span>
                            <span>
+                              -{' '}
                               {formatCurrency(cart.billing.discount.value || 0)}
                            </span>
                         </li>
@@ -265,6 +266,14 @@ export const CartDetails = () => {
                               <span>{formatCurrency(tip)}</span>
                            </li>
                         )}
+                        <li style={{ fontWeight: 'bold' }}>
+                           <span>{cart.billing.totalPrice.label}</span>
+                           <span>
+                              {formatCurrency(
+                                 cart.billing.totalPrice.value || 0
+                              )}
+                           </span>
+                        </li>
                      </ul>
                   </div>
                   {/* tip */}
