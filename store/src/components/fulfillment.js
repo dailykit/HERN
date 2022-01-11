@@ -647,7 +647,7 @@ const Delivery = props => {
             <Loader inline />
          ) : (
             <Space direction={'vertical'}>
-               <div>
+               <div className="hern-fulfillment__day-slots-container">
                   <p>Please Select Schedule For Delivery</p>
                   <p className="hern-cart__fulfillment-slot-heading">
                      Fulfillment Date
@@ -657,19 +657,17 @@ const Delivery = props => {
                         setSelectedSlot(e.target.value)
                      }}
                   >
-                     <Space size={'middle'}>
-                        {deliverySlots.map((eachSlot, index) => {
-                           return (
-                              <Radio.Button value={eachSlot}>
-                                 {moment(eachSlot.date).format('DD MMM YY')}
-                              </Radio.Button>
-                           )
-                        })}
-                     </Space>
+                     {deliverySlots.map((eachSlot, index) => {
+                        return (
+                           <Radio.Button value={eachSlot} size="large">
+                              {moment(eachSlot.date).format('DD MMM YY')}
+                           </Radio.Button>
+                        )
+                     })}
                   </Radio.Group>
                </div>
                {selectedSlot && (
-                  <div>
+                  <div className="hern-fulfillment__time-slots-container">
                      <p className="hern-cart__fulfillment-slot-heading">
                         Fulfillment Time
                      </p>
