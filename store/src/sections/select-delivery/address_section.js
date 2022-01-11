@@ -34,7 +34,8 @@ export const AddressSection = () => {
       dispatch({ type: 'TOGGLE_TUNNEL', payload: value })
    }
    const theme = configOf('theme-color', 'Visual')
-
+   const addressLabelFromConfig = configOf('address', 'Select-Delivery').address
+   console.log("addressfromconfig", addressLabelFromConfig?.value)
    return (
       <>
          <header className="hern-delivery__address-section__header">
@@ -44,7 +45,7 @@ export const AddressSection = () => {
                   color: theme?.accent ? theme.accent : 'rgba(5, 150, 105, 1)',
                }}
             >
-               Select Address
+               {addressLabelFromConfig?.value || 'Select Address'}
             </h3>
             {user?.platform_customer?.addresses.length > 0 && (
                <Button bg={theme?.accent} onClick={() => toggleTunnel(true)}>
