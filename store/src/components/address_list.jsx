@@ -71,56 +71,57 @@ const AddressList = ({
             )}
          </div>
          <div className="hern-address-list-container__address">
-            <Row>
-               {user?.keycloakId ? (
-                  addresses.map(address => {
-                     const addressClasses = classNames(
-                        'hern-address-list__address',
-                        {
-                           'hern-address-list__address--active': localAddress,
-                        }
-                     )
-                     return (
-                        <address
-                           key={address?.id}
-                           className={addressClasses}
-                           tabIndex={1}
-                           onClick={() => selectAddress(address)}
-                        >
-                           <AddressListHeader />
-                           <div className="hern-address-list__address-landmark">
-                              {address?.landmark}
-                           </div>
-                           <p className="hern-address-list__address-line1">
-                              {address?.line1}, {address?.line2},{' '}
-                              {address?.city},{address?.state},{' '}
-                              {address?.zipcode}, {address?.country}
-                           </p>
-                        </address>
-                     )
-                  })
-               ) : (
-                  <address
-                     key={addressByCart?.id || 1}
-                     tabIndex={1}
-                     className={classNames('hern-address-list__address', {
-                        'hern-address-list__address--active':
-                           localAddress === addressByCart,
-                     })}
-                     onClick={() => selectAddress(addressByCart)}
-                  >
-                     <p>{addressByCart?.line1}</p>
-                     <p>{addressByCart?.line2}</p>
-                     <span>{addressByCart?.city} </span>
-                     <span>{addressByCart?.state} </span>
-                     <span>
-                        {addressByCart?.country}
-                        {', '}
-                     </span>
-                     <span>{addressByCart?.zipcode}</span>
-                  </address>
-               )}
-            </Row>
+            {user?.keycloakId ? (
+               addresses.map(address => {
+                  const addressClasses = classNames(
+                     'hern-address-list__address',
+                     {
+                        'hern-address-list__address--active': localAddress,
+                     }
+                  )
+                  return (
+                     <address
+                        key={address?.id}
+                        className={addressClasses}
+                        tabIndex={1}
+                        onClick={() => selectAddress(address)}
+                     >
+                        <div className="hern-address-list__address-landmark">
+                           {address?.landmark}
+                        </div>
+                        <p>{address?.line1}</p>
+                        <p>{address?.line2}</p>
+                        <span>{address?.city} </span>
+                        <span>{address?.state} </span>
+                        <span>
+                           {address?.country}
+                           {', '}
+                        </span>
+                        <span>{address?.zipcode}</span>
+                     </address>
+                  )
+               })
+            ) : (
+               <address
+                  key={addressByCart?.id || 1}
+                  tabIndex={1}
+                  className={classNames('hern-address-list__address', {
+                     'hern-address-list__address--active':
+                        localAddress === addressByCart,
+                  })}
+                  onClick={() => selectAddress(addressByCart)}
+               >
+                  <p>{addressByCart?.line1}</p>
+                  <p>{addressByCart?.line2}</p>
+                  <span>{addressByCart?.city} </span>
+                  <span>{addressByCart?.state} </span>
+                  <span>
+                     {addressByCart?.country}
+                     {', '}
+                  </span>
+                  <span>{addressByCart?.zipcode}</span>
+               </address>
+            )}
          </div>
       </div>
    )

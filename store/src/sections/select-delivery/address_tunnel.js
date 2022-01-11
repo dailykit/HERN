@@ -9,16 +9,26 @@ import { MUTATIONS } from '../../graphql'
 import { CloseIcon } from '../../assets/icons'
 import { useScript, isClient, get_env } from '../../utils'
 import { Tunnel, Button, Form, Spacer } from '../../components'
+import { useConfig } from '../../lib'
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const AddressTunnel = props => {
-   const { outside = false, showAddressForm = true, onInputFiledSelect } = props
+   const {
+      outside = false,
+      showAddressForm = true,
+      onInputFiledSelect,
+      onSubmitAddress,
+   } = props
+
+   // outside --> use without this component without popup
+
    const { user } = useUser()
    const { addToast } = useToasts()
    const { methods } = React.useContext(CartContext)
    const { state, dispatch } = outside
       ? { state: {}, dispatch: {} }
       : useDelivery()
+   const { selectedOrderTab } = useConfig()
    const [formStatus, setFormStatus] = React.useState('PENDING')
    const [address, setAddress] = React.useState(null)
    const [createAddress] = useMutation(MUTATIONS.CUSTOMER.ADDRESS.CREATE, {
@@ -45,6 +55,11 @@ export const AddressTunnel = props => {
            )}&libraries=places`
          : ''
    )
+   const [addressWarnings, setAddressWarnings] = React.useState({
+      line1: false,
+      zipcode: false,
+      city: false,
+   }) // to show warning for required field
 
    const formatAddress = async input => {
       if (!isClient) return 'Runs only on client side.'
@@ -65,7 +80,7 @@ export const AddressTunnel = props => {
             lat: result.geometry.location.lat.toString(),
             lng: result.geometry.location.lng.toString(),
          }
-
+         console.log('resultAddress', result.address_components)
          result.address_components.forEach(node => {
             if (node.types.includes('street_number')) {
                address.line2 = `${node.long_name} `
@@ -93,10 +108,24 @@ export const AddressTunnel = props => {
          setFormStatus('IN_PROGRESS')
       }
    }
+
+   React.useEffect(() => {
+      if (address) {
+         if (!address.zipcode) {
+            setAddressWarnings(prev => ({ ...prev, zipcode: true }))
+         } else {
+            setAddressWarnings(prev => ({ ...prev, zipcode: false }))
+         }
+      }
+   }, [address])
+
    const handleSubmit = () => {
       setFormStatus('SAVING')
       // if user authenticate than add address to users details
       if (user?.keycloakId) {
+         if (outside) {
+            onSubmitAddress(address)
+         }
          createAddress({
             variables: {
                object: { ...address, keycloakId: user?.keycloakId },
@@ -104,15 +133,16 @@ export const AddressTunnel = props => {
          })
       } else {
          // add address detail into current cart
-         const cartId = localStorage.getItem('cart-id')
-         methods.cart.update({
-            variables: {
-               id: cartId,
-               _set: {
-                  address: address,
-               },
-            },
-         })
+         // const cartId = localStorage.getItem('cart-id')
+         // methods.cart.update({
+         //    variables: {
+         //       id: cartId,
+         //       _set: {
+         //          address: address,
+         //       },
+         //    },
+         // })
+         onSubmitAddress(address)
       }
       setAddress(null)
    }
@@ -125,7 +155,10 @@ export const AddressTunnel = props => {
       return (
          <>
             <section className="hern-delivery__address-tunnel__address-search">
-               <Form.Label>Search Address</Form.Label>
+               <Form.Label>
+                  Search{selectedOrderTab ? ' ' + selectedOrderTab.label : ''}{' '}
+                  Address
+               </Form.Label>
                {loaded && !error && (
                   <GooglePlacesAutocomplete
                      inputClassName="hern-store-location-selector-main__location-input"
@@ -135,18 +168,50 @@ export const AddressTunnel = props => {
                )}
             </section>
             {address && (
-               <div className="hern-address__address-form">
+               <div
+                  className="hern-address__address-form"
+                  onBlur={() => {
+                     if (!address.zipcode) {
+                        setAddressWarnings(prev => ({ ...prev, zipcode: true }))
+                        return
+                     }
+                     if (!address.line1) {
+                        setAddressWarnings(prev => ({ ...prev, line1: true }))
+                        return
+                     }
+                     if (!address.city) {
+                        setAddressWarnings(prev => ({ ...prev, city: true }))
+                        return
+                     }
+                     console.log('this is valid location')
+                     handleSubmit()
+                  }}
+               >
                   <Form.Field>
                      <Form.Label>
-                        Apartment/Building Info/Street info*
+                        Apartment/Building Info/Street info*{' '}
+                        <span className="hern-address-warning">
+                           {addressWarnings.line1 ? 'fill this field' : null}
+                        </span>
                      </Form.Label>
                      <Form.Text
                         type="text"
                         placeholder="Enter apartment/building info/street info"
                         value={address.line1 || ''}
-                        onChange={e =>
+                        onChange={e => {
+                           if (!e.target.value) {
+                              setAddressWarnings(prev => ({
+                                 ...prev,
+                                 line1: true,
+                              }))
+                           } else {
+                              setAddressWarnings(prev => ({
+                                 ...prev,
+                                 line1: false,
+                              }))
+                           }
                            setAddress({ ...address, line1: e.target.value })
-                        }
+                        }}
                      />
                   </Form.Field>
                   <Form.Field>
@@ -173,7 +238,14 @@ export const AddressTunnel = props => {
                   </Form.Field>
 
                   <Form.Field>
-                     <Form.Label>City*</Form.Label>
+                     <Form.Label>
+                        City*{' '}
+                        <span className="hern-address-warning">
+                           {addressWarnings.city
+                              ? 'enter valid city location'
+                              : null}
+                        </span>
+                     </Form.Label>
                      <Form.Text
                         type="text"
                         placeholder="Enter city"
@@ -194,16 +266,17 @@ export const AddressTunnel = props => {
                         <Form.Text readOnly value={address.country} />
                      </Form.Field>
                      <Form.Field>
-                        <Form.Label>Zipcode</Form.Label>
+                        <Form.Label>
+                           Zipcode{' '}
+                           <span className="hern-address-warning">
+                              {addressWarnings.zipcode
+                                 ? 'enter valid zipcode location'
+                                 : null}
+                           </span>
+                        </Form.Label>
                         <Form.Text
-                           // readOnly={Boolean(address.zipcode)}
+                           readOnly={Boolean(address.zipcode)}
                            value={address.zipcode}
-                           onChange={e =>
-                              setAddress({
-                                 ...address,
-                                 zipcode: e.target.value,
-                              })
-                           }
                         />
                      </Form.Field>
                   </div>
@@ -229,18 +302,6 @@ export const AddressTunnel = props => {
                         }
                      />
                   </Form.Field>
-                  <Button
-                     size="sm"
-                     onClick={() => handleSubmit()}
-                     disabled={
-                        !address?.line1 ||
-                        !address?.city ||
-                        !address?.zipcode ||
-                        formStatus === 'SAVING'
-                     }
-                  >
-                     {formStatus === 'SAVING' ? 'Saving...' : 'Save Address'}
-                  </Button>
                   <Spacer />
                </div>
             )}

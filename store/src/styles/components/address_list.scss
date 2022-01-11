@@ -1,5 +1,5 @@
 .hern-address-list {
-   padding: 16px;
+   padding: 16px 0;
 }
 .hern-address-list__header {
    margin-bottom: 16px;
@@ -17,7 +17,12 @@
    justify-content: space-between;
 }
 .hern-address-list__heading {
-   color: gray;
+   margin: 0;
+   font-style: normal;
+   font-weight: 600;
+   font-size: 15px;
+   line-height: 17px;
+   color: rgba(64, 64, 64, 0.8);
 }
 .hern-address-list__close-btn {
    border-radius: 9999px;
@@ -42,7 +47,7 @@
 .hern-address-list__address {
    color: rgba(64, 64, 64, 0.8);
    padding: 0.5rem;
-   margin-bottom: 0.5rem;
+   margin: 0 1rem;
    border-radius: 0.125rem;
    cursor: pointer;
    background: #f9f9f9;
@@ -50,12 +55,9 @@
    border-radius: 8px;
    display: block;
    // for alignment in two columns
-   -webkit-flex: 0 0 48.9%;
-   -moz-box-flex: 0;
-   flex: 0 0 48.9%;
-   max-width: 48.85%;
    position: relative;
    min-height: 1px;
+   min-width: 80%;
    // -webkit-border-radius: 0.125rem;
    // -moz-border-radius: 0.125rem;
    // -ms-border-radius: 0.125rem;
@@ -64,6 +66,19 @@
    // &:hover {
    //    border-color: rgba(16, 185, 129, 1);
    // }
+   &:first-child {
+      margin-left: 0;
+   }
+   &:last-child {
+      margin-right: 0;
+   }
+   @media (min-width: 768px) {
+      -webkit-flex: 0 0 48.9%;
+      -moz-box-flex: 0;
+      flex: 0 0 48.9%;
+      max-width: 48.85%;
+      min-width: 48.85%;
+   }
 }
 .hern-address-list__address:focus {
    background: rgb(215 215 215 / 80%);
@@ -100,16 +115,21 @@
    font-size: 18px;
    line-height: 20px;
 }
+// .hern-address-list-container__address {
+//    -ms-overflow-style: none;
+//    scrollbar-width: none;
+// }
+// .hern-address-list-container__address::-webkit-scrollbar {
+//    display: none;
+// }
 .hern-address-list-container__address {
-   -ms-overflow-style: none;
-   scrollbar-width: none;
-   overflow-y: scroll;
-   height: calc(40vh - 64px);
-   .ant-row {
-      column-gap: 2rem;
-      row-gap: 2rem !important;
+   display: flex;
+   overflow: auto;
+   &::-webkit-scrollbar {
+      width: 1px;
    }
-}
-.hern-address-list-container__address::-webkit-scrollbar {
-   display: none;
+   &::-webkit-scrollbar-thumb {
+      background: #e5f0f7;
+      border-radius: 1px;
+   }
 }
