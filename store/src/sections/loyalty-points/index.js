@@ -16,13 +16,17 @@ export const LoyaltyPoints = () => {
 
 const Content = () => {
    const { user } = useUser()
-   const { configOf } = useConfig()
+   const { configOf, settings } = useConfig()
 
    const theme = configOf('theme-color', 'Visual')
    const { isAvailable = false, label = 'Loyalty Points' } = configOf(
       'Loyalty Points',
       'rewards'
    )
+   const isLoyaltyPointsAvailable =
+      settings?.rewards?.find(
+         setting => setting?.['Loyalty Points Availability']
+      )?.value?.['Loyalty Points']?.IsLoyaltyPointsAvailable?.value ?? true
 
    return (
       <section className="hern-account-loyalty-points">
@@ -36,7 +40,7 @@ const Content = () => {
                {label}
             </h2>
          </header>
-         {isAvailable && !!user.loyaltyPoint && (
+         {isLoyaltyPointsAvailable && !!user.loyaltyPoint ? (
             <>
                <div>
                   <Form.Label>Balance </Form.Label>
@@ -53,30 +57,40 @@ const Content = () => {
                      </tr>
                   </thead>
                   <tbody>
-                     {user.loyaltyPoint.loyaltyPointTransactions.map(txn => (
-                        <tr key={txn.id}>
-                           <td className="hern-account-loyalty-points__table__cell">
-                              {txn.id}
-                           </td>
-                           <td
-                              className="hern-account-loyalty-points__table__cell"
-                              title={txn.type}
-                           >
-                              {txn.type}
-                           </td>
-                           <td className="hern-account-loyalty-points__table__cell">
-                              {txn.points}
-                           </td>
-                           <td className="hern-account-loyalty-points__table__cell">
-                              {moment(txn.created_at).format(
-                                 'MMMM Do YYYY, h:mm:ss a'
-                              )}
-                           </td>
-                        </tr>
-                     ))}
+                     {user.loyaltyPoint.loyaltyPointTransactions.length > 0 ? (
+                        user.loyaltyPoint.loyaltyPointTransactions.map(txn => (
+                           <tr key={txn.id}>
+                              <td className="hern-account-loyalty-points__table__cell">
+                                 {txn.id}
+                              </td>
+                              <td
+                                 className="hern-account-loyalty-points__table__cell"
+                                 title={txn.type}
+                              >
+                                 {txn.type}
+                              </td>
+                              <td className="hern-account-loyalty-points__table__cell">
+                                 {txn.points}
+                              </td>
+                              <td className="hern-account-loyalty-points__table__cell">
+                                 {moment(txn.created_at).format(
+                                    'MMMM Do YYYY, h:mm:ss a'
+                                 )}
+                              </td>
+                           </tr>
+                        ))
+                     ) : (
+                        <div style={{ textAlign: 'center', color: 'gray' }}>
+                           (not available)
+                        </div>
+                     )}
                   </tbody>
                </table>
             </>
+         ) : (
+            <div style={{ textAlign: 'center', color: 'gray' }}>
+               Loyalty points not available
+            </div>
          )}
       </section>
    )
