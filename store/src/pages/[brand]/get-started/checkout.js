@@ -3,11 +3,15 @@ import { useRouter } from 'next/router'
 import {
    isClient,
    getRoute,
-   processExternalFiles,
    renderPageContent,
    getPageProps,
 } from '../../../utils'
-import { SEO, Layout, LoginWarning } from '../../../components'
+import {
+   SEO,
+   Layout,
+   LoginWarning,
+   ExternalJSCSSFiles,
+} from '../../../components'
 import { useUser } from '../../../context'
 
 const Checkout = props => {
@@ -21,17 +25,10 @@ const Checkout = props => {
       }
    }, [isAuthenticated, isLoading])
 
-   React.useEffect(() => {
-      try {
-         processExternalFiles(folds, linkedFiles)
-      } catch (err) {
-         console.log('Failed to render page: ', err)
-      }
-   }, [folds])
-
    return (
       <Layout noHeader settings={settings}>
          <SEO seoSettings={seoSettings} />
+         <ExternalJSCSSFiles externalFiles={linkedFiles} />
          {!isAuthenticated && !isLoading ? (
             <LoginWarning />
          ) : (
