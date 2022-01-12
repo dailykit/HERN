@@ -765,10 +765,10 @@ export const Sidebar = ({ setOpen }) => {
                      },
                   ],
                },
-               // {
-               //    title: 'Apps',
-               //    path: '/settings/apps',
-               // },
+               {
+                  title: 'Market Place',
+                  path: '/settings/marketplace',
+               },
             ],
          },
          {
@@ -836,7 +836,7 @@ export const Sidebar = ({ setOpen }) => {
                               <Styles.AppIcon>
                                  <app.icon
                                     active={pathNameHandle(location.pathname)
-                                 .includes(pathNameHandle(app.path)) }
+                                       .includes(pathNameHandle(app.path))}
                                  />{' '}
                               </Styles.AppIcon>
                               <Styles.AppTitle
@@ -914,7 +914,7 @@ export const Sidebar = ({ setOpen }) => {
                                                       )
                                                       setIsOpen(null)
                                                       switch (
-                                                         children.payload
+                                                      children.payload
                                                       ) {
                                                          // case 'simple': return handleCreateProduct(children.payload);
                                                          // case 'combo': return handleCreateProduct(children.payload);
