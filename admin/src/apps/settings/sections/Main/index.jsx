@@ -18,6 +18,7 @@ import {
 } from '../../views'
 import { useAccess } from '../../../../shared/providers'
 import { ErrorBoundary, Flex } from '../../../../shared/components'
+import { MarketPlace } from '../../views/Listings'
 
 const Main = () => {
    return (
@@ -98,6 +99,14 @@ const Main = () => {
                message="You do not have sufficient permission to see master list details"
             >
                <MasterListForm />
+            </AccessCheck>
+         </Route>
+         <Route path="/settings/marketplace" exact>
+            <AccessCheck
+               title="marketplace"
+               message="You do not have sufficient permission to see market place."
+            >
+               <MarketPlace />
             </AccessCheck>
          </Route>
       </>
