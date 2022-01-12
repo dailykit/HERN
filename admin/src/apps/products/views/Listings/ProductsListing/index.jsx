@@ -293,7 +293,7 @@ class DataTable extends React.Component {
          title: this.props.t(address.concat('product name')),
          field: 'name',
          width: 400,
-         frozen: true,
+         // frozen: true,
          headerFilter: true,
          formatter: reactFormatter(<ProductName />),
          cellClick: (e, cell) => {
@@ -306,10 +306,9 @@ class DataTable extends React.Component {
          maxWidth: 500,
       },
       {
-         title: `Price (${
-            currency[get_env('REACT_APP_CURRENCY')] ||
+         title: `Price (${currency[get_env('REACT_APP_CURRENCY')] ||
             get_env('REACT_APP_CURRENCY')
-         })`,
+            })`,
          field: 'price',
          hozAlign: 'right',
       },
@@ -319,7 +318,7 @@ class DataTable extends React.Component {
          headerSort: false,
          hozAlign: 'center',
          download: false,
-         frozen: true,
+         // frozen: true,
          headerHozAlign: 'center',
          formatter: reactFormatter(
             <DeleteProduct onDelete={this.props.deleteProductHandler} />
@@ -380,8 +379,8 @@ class DataTable extends React.Component {
       )
       const productGroupParse =
          productGroup !== undefined &&
-         productGroup !== null &&
-         productGroup.length !== 0
+            productGroup !== null &&
+            productGroup.length !== 0
             ? JSON.parse(productGroup)
             : null
       this.tableRef.current.table.setGroupBy(
@@ -476,36 +475,36 @@ class DataTable extends React.Component {
    render() {
       const selectionColumn =
          this.props.selectedRows.length > 0 &&
-         this.props.selectedRows.length < this.props.data.length
+            this.props.selectedRows.length < this.props.data.length
             ? {
-                 formatter: 'rowSelection',
-                 titleFormatter: reactFormatter(
-                    <CrossBox
-                       removeSelectedProducts={this.removeSelectedProducts}
-                    />
-                 ),
-                 align: 'center',
-                 hozAlign: 'center',
-                 width: 10,
-                 headerSort: false,
-                 frozen: true,
-              }
+               formatter: 'rowSelection',
+               titleFormatter: reactFormatter(
+                  <CrossBox
+                     removeSelectedProducts={this.removeSelectedProducts}
+                  />
+               ),
+               align: 'center',
+               hozAlign: 'center',
+               width: 10,
+               headerSort: false,
+               frozen: true,
+            }
             : {
-                 formatter: 'rowSelection',
-                 titleFormatter: reactFormatter(
-                    <CheckBox
-                       checked={this.state.checked}
-                       handleMultipleRowSelection={
-                          this.handleMultipleRowSelection
-                       }
-                    />
-                 ),
-                 align: 'center',
-                 hozAlign: 'center',
-                 width: 20,
-                 headerSort: false,
-                 frozen: true,
-              }
+               formatter: 'rowSelection',
+               titleFormatter: reactFormatter(
+                  <CheckBox
+                     checked={this.state.checked}
+                     handleMultipleRowSelection={
+                        this.handleMultipleRowSelection
+                     }
+                  />
+               ),
+               align: 'center',
+               hozAlign: 'center',
+               width: 20,
+               headerSort: false,
+               frozen: true,
+            }
       return (
          <>
             {this.props.view == 'simple' && (
@@ -688,8 +687,8 @@ const ActionBar = ({
       )
       const productGroupParse =
          productGroup !== undefined &&
-         productGroup !== null &&
-         productGroup.length !== 0
+            productGroup !== null &&
+            productGroup.length !== 0
             ? JSON.parse(productGroup)
             : null
       if (productGroupParse !== null) {
@@ -731,8 +730,8 @@ const ActionBar = ({
                   {selectedRows.length == 0
                      ? `No ${title}`
                      : selectedRows.length == 1
-                     ? `${selectedRows.length} ${title}`
-                     : `${selectedRows.length} ${title}s`}{' '}
+                        ? `${selectedRows.length} ${title}`
+                        : `${selectedRows.length} ${title}s`}{' '}
                   selected
                </Text>
                <ButtonGroup align="left">
@@ -894,8 +893,15 @@ const ProductOptions = forwardRef(
             setProductOptionsList(newOptions)
          },
       })
-      useEffect(() => {}, [])
+      useEffect(() => { }, [])
       const columns = [
+         {
+            title: 'Product ID',
+            field: 'id',
+            headerFilter: true,
+            frozen: true,
+            hozAlign: 'center',
+         },
          {
             title: 'Label',
             field: 'label',
@@ -908,12 +914,13 @@ const ProductOptions = forwardRef(
             title: 'Product Name',
             field: 'name',
             width: 350,
-            frozen: true,
+            // frozen: true,
             headerFilter: true,
             headerHozAlign: 'center',
             formatter: reactFormatter(<ProductName />),
             cellClick: (e, cell) => {
                const { name, id } = cell._cell.row.data
+               console.log("nitin", cell);
                addTab(name, `/products/products/${id}`)
             },
             cssClass: 'colHover',
@@ -927,7 +934,7 @@ const ProductOptions = forwardRef(
             headerFilter: false,
             hozAlign: 'center',
             download: false,
-            frozen: true,
+            // frozen: true,
             headerHozAlign: 'center',
             formatter: reactFormatter(
                <DeleteProduct onDelete={deleteProductOptionHandler} />
@@ -983,8 +990,8 @@ const ProductOptions = forwardRef(
          )
          const lastPersistenceParse =
             lastPersistence !== undefined &&
-            lastPersistence !== null &&
-            lastPersistence.length !== 0
+               lastPersistence !== null &&
+               lastPersistence.length !== 0
                ? JSON.parse(lastPersistence)
                : []
          setSelectedRows(prevState => [...prevState, _row.getData()])
@@ -1001,8 +1008,8 @@ const ProductOptions = forwardRef(
          )
          const lastPersistenceParse =
             lastPersistence !== undefined &&
-            lastPersistence !== null &&
-            lastPersistence.length !== 0
+               lastPersistence !== null &&
+               lastPersistence.length !== 0
                ? JSON.parse(lastPersistence)
                : []
          setSelectedRows(prevState =>
@@ -1028,8 +1035,8 @@ const ProductOptions = forwardRef(
          )
          const productOptionsGroupParse =
             productOptionsGroup !== undefined &&
-            productOptionsGroup !== null &&
-            productOptionsGroup.length !== 0
+               productOptionsGroup !== null &&
+               productOptionsGroup.length !== 0
                ? JSON.parse(productOptionsGroup)
                : null
          tableRef.current.table.setGroupBy(
@@ -1130,32 +1137,32 @@ const ProductOptions = forwardRef(
       }
       const selectionColumn =
          selectedRows.length > 0 &&
-         selectedRows.length < productOptionsList.length //
+            selectedRows.length < productOptionsList.length //
             ? {
-                 formatter: 'rowSelection',
-                 titleFormatter: reactFormatter(
-                    <CrossBox removeSelectedProducts={removeSelectedProducts} />
-                 ),
-                 align: 'center',
-                 hozAlign: 'center',
-                 width: 10,
-                 headerSort: false,
-                 frozen: true,
-              }
+               formatter: 'rowSelection',
+               titleFormatter: reactFormatter(
+                  <CrossBox removeSelectedProducts={removeSelectedProducts} />
+               ),
+               align: 'center',
+               hozAlign: 'center',
+               width: 10,
+               headerSort: false,
+               frozen: true,
+            }
             : {
-                 formatter: 'rowSelection',
-                 titleFormatter: reactFormatter(
-                    <CheckBox
-                       checked={checked}
-                       handleMultipleRowSelection={handleMultipleRowSelection}
-                    />
-                 ),
-                 align: 'center',
-                 hozAlign: 'center',
-                 width: 20,
-                 headerSort: false,
-                 frozen: true,
-              }
+               formatter: 'rowSelection',
+               titleFormatter: reactFormatter(
+                  <CheckBox
+                     checked={checked}
+                     handleMultipleRowSelection={handleMultipleRowSelection}
+                  />
+               ),
+               align: 'center',
+               hozAlign: 'center',
+               width: 20,
+               headerSort: false,
+               frozen: true,
+            }
       return (
          <>
             <ActionBar
