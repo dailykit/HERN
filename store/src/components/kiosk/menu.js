@@ -396,7 +396,7 @@ const KioskMenu = props => {
                            )}
                            {groupedByType.length > 1 && (
                               <div className="hern-kiosk__menu-product-type">
-                                 <Space>
+                                 <div className="hern-kiosk__menu-product-type-list">
                                     {groupedByType.map((eachType, index) => {
                                        return (
                                           <button
@@ -440,7 +440,7 @@ const KioskMenu = props => {
                                           </button>
                                        )
                                     })}
-                                 </Space>
+                                 </div>
                               </div>
                            )}
                            <Row
