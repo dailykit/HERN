@@ -887,7 +887,9 @@ const ProductOptions = forwardRef(
          onSubscriptionData: ({ subscriptionData }) => {
             const newOptions = subscriptionData.data.productOptions.map(x => {
                const productName = x.product.name
+               const productId = x.product.id
                x.name = productName
+               x.productId = productId
                return x
             })
             setProductOptionsList(newOptions)
@@ -895,13 +897,6 @@ const ProductOptions = forwardRef(
       })
       useEffect(() => { }, [])
       const columns = [
-         {
-            title: 'Product ID',
-            field: 'id',
-            headerFilter: true,
-            frozen: true,
-            hozAlign: 'center',
-         },
          {
             title: 'Label',
             field: 'label',
@@ -919,9 +914,8 @@ const ProductOptions = forwardRef(
             headerHozAlign: 'center',
             formatter: reactFormatter(<ProductName />),
             cellClick: (e, cell) => {
-               const { name, id } = cell._cell.row.data
-               console.log("nitin", cell);
-               addTab(name, `/products/products/${id}`)
+               const { name, productId } = cell._cell.row.data
+               addTab(name, `/products/products/${productId}`)
             },
             cssClass: 'colHover',
             resizable: 'true',
