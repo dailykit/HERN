@@ -33,9 +33,11 @@ export const AddressSection = () => {
    const toggleTunnel = value => {
       dispatch({ type: 'TOGGLE_TUNNEL', payload: value })
    }
+
+   //config properties
    const theme = configOf('theme-color', 'Visual')
-   const addressLabelFromConfig = configOf('address', 'Select-Delivery').address
-   console.log("addressfromconfig", addressLabelFromConfig?.value)
+   const addressLabelFromConfig = configOf('address', 'Select-Delivery')?.address?.selectAddress
+
    return (
       <>
          <header className="hern-delivery__address-section__header">

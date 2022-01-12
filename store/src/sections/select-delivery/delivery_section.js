@@ -3,6 +3,7 @@ import { rrulestr } from 'rrule'
 import { isEmpty } from 'lodash'
 import { useLazyQuery } from '@apollo/react-hooks'
 import { useToasts } from 'react-toast-notifications'
+import { useConfig } from '../../lib'
 
 import { useDelivery } from './state'
 import { formatCurrency, getRoute, isClient } from '../../utils'
@@ -15,6 +16,7 @@ import classNames from 'classnames'
 export const DeliverySection = ({ planId }) => {
    const { user } = useUser()
    const { addToast } = useToasts()
+   const { configOf } = useConfig()
    const { state, dispatch } = useDelivery()
    const [fetchDays, { loading, data: { itemCount = {} } = {} }] = useLazyQuery(
       ITEM_COUNT,
@@ -61,12 +63,17 @@ export const DeliverySection = ({ planId }) => {
             <Loader inline />
          </>
       )
+
+   //config properties
+   const addressLabelFromConfig = configOf('address', 'Select-Delivery')?.address?.getStarted
+   const unavailableDaysFromConfig = configOf('address', 'Select-Delivery')?.deliveryUnavailable
+
    if (isEmpty(state.address.selected))
       return (
          <>
             <HelperBar type="info">
                <HelperBar.SubTitle>
-                  Select an address to get started
+                  {addressLabelFromConfig?.value || 'Select an address to get started'}
                </HelperBar.SubTitle>
             </HelperBar>
          </>
@@ -75,7 +82,7 @@ export const DeliverySection = ({ planId }) => {
       return (
          <HelperBar type="warning">
             <HelperBar.SubTitle>
-               No days are available for delivery on this address.
+               {unavailableDaysFromConfig?.noDays?.value || 'No days are available for delivery on this address.'}
             </HelperBar.SubTitle>
             <HelperBar.Button
                onClick={() => router.push(getRoute('/get-started/select-plan'))}
@@ -90,7 +97,7 @@ export const DeliverySection = ({ planId }) => {
          {isEmpty(itemCount?.valid) && !isEmpty(itemCount?.invalid) && (
             <HelperBar type="warning">
                <HelperBar.SubTitle>
-                  Following days are not available for delivery on this address.
+                  {unavailableDaysFromConfig?.followingDays?.value || 'Following days are not available for delivery on this address.'}
                </HelperBar.SubTitle>
             </HelperBar>
          )}
@@ -143,8 +150,8 @@ export const DeliverySection = ({ planId }) => {
                                     {day.zipcodes[0].deliveryPrice === 0
                                        ? 'Free Delivery'
                                        : `Delivery at ${formatCurrency(
-                                            day.zipcodes[0].deliveryPrice
-                                         )}`}
+                                          day.zipcodes[0].deliveryPrice
+                                       )}`}
                                  </p>
                               </section>
                               {day.zipcodes[0].isPickupActive && (
@@ -201,8 +208,8 @@ export const DeliverySection = ({ planId }) => {
                                     {day.zipcodes[0].deliveryPrice === 0
                                        ? 'Free Delivery'
                                        : `Delivery at ${formatCurrency(
-                                            day.zipcodes[0].deliveryPrice
-                                         )}`}
+                                          day.zipcodes[0].deliveryPrice
+                                       )}`}
                                  </p>
                               </section>
                               <section className="hern-delivery__delivery-days__fulfillment__pickup">

@@ -82,7 +82,10 @@ const DeliveryContent = () => {
       color: theme?.accent ? theme.accent : 'rgba(5, 150, 105, 1)',
    }
    return (
-      <main className="hern-delivery__main" style={{ background: backgroundFromConfig?.value && backgroundFromConfig.value }}>
+      <main className="hern-delivery__main" style={{
+         backgroundImage: "url(" + backgroundFromConfig?.BackgroundImage?.value + ")",
+         backgroundColor: backgroundFromConfig?.backgroundColor?.value
+      }}>
          <header className="hern-delivery__header">
             <h2 className="hern-delivery__title" style={brandTextColor}>
                Delivery
