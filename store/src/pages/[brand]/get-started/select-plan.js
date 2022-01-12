@@ -5,9 +5,13 @@ import {
    getRoute,
    isClient,
    renderPageContent,
-   processExternalFiles,
 } from '../../../utils'
-import { SEO, Layout, LoginWarning } from '../../../components'
+import {
+   SEO,
+   Layout,
+   LoginWarning,
+   ExternalJSCSSFiles,
+} from '../../../components'
 import { useUser } from '../../../context'
 
 const SelectPlan = props => {
@@ -30,17 +34,10 @@ const SelectPlan = props => {
       }
    }, [])
 
-   React.useEffect(() => {
-      try {
-         processExternalFiles(folds, linkedFiles)
-      } catch (err) {
-         console.log('Failed to render page: ', err)
-      }
-   }, [folds])
-
    return (
       <Layout settings={settings}>
          <SEO seoSettings={seoSettings} />
+         <ExternalJSCSSFiles externalFiles={linkedFiles} />
          {!isAuthenticated && !isLoading ? (
             <LoginWarning />
          ) : (

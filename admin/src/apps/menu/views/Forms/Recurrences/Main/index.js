@@ -241,22 +241,6 @@ const Main = () => {
                                     align="center"
                                     justify="flex-start"
                                  >
-                                    Excluded
-                                    <Tooltip identifier="recurrences_table_isExcluded" />
-                                 </Flex>
-                                 <Flex
-                                    direction="row"
-                                    align="center"
-                                    justify="flex-start"
-                                 >
-                                    Zipcodes
-                                    <Tooltip identifier="recurrences_table_Zipcodes" />
-                                 </Flex>
-                                 <Flex
-                                    direction="row"
-                                    align="center"
-                                    justify="flex-start"
-                                 >
                                     Availability
                                     <Tooltip identifier="recurrences_table_availability" />
                                  </Flex>

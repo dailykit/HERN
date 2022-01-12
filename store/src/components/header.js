@@ -78,22 +78,22 @@ export const Header = ({ settings, navigationMenus }) => {
    const isSubscriptionStore =
       settings?.availability?.isSubscriptionAvailable?.Subscription
          ?.isSubscriptionAvailable?.value
-   const logo = settings?.brand?.['Brand Logo']?.brandLogo?.value
-      ? settings?.brand?.['Brand Logo']?.brandLogo?.value
-      : settings?.brand?.['Brand Logo']?.brandLogo?.default
+   const logo = settings?.brand?.['Brand Info']?.brandLogo?.value
+      ? settings?.brand?.['Brand Info']?.brandLogo?.value
+      : settings?.brand?.['Brand Info']?.brandLogo?.default
    const logoForSmallDevice =
-      settings?.brand?.['Brand Logo']?.brandLogoSmall?.value
+      settings?.brand?.['Brand Info']?.brandLogoSmall?.value
    const showLogo =
-      settings?.brand?.['Brand Logo']?.BrandLogo?.value ??
-      settings?.brand?.['Brand Logo']?.BrandLogo?.default ??
+      settings?.brand?.['Brand Info']?.BrandLogo?.value ??
+      settings?.brand?.['Brand Info']?.BrandLogo?.default ??
       true
 
-   const displayName = settings?.brand?.['Brand Logo']?.brandName?.value
-      ? settings?.brand?.['Brand Logo']?.brandName?.value
-      : settings?.brand?.['Brand Logo']?.brandName?.value
+   const displayName = settings?.brand?.['Brand Info']?.brandName?.value
+      ? settings?.brand?.['Brand Info']?.brandName?.value
+      : settings?.brand?.['Brand Info']?.brandName?.value
    const showBrandName =
-      settings?.brand?.['Brand Logo']?.BrandName?.value ??
-      settings?.brand?.['Brand Logo']?.BrandName?.default ??
+      settings?.brand?.['Brand Info']?.BrandName?.value ??
+      settings?.brand?.['Brand Info']?.BrandName?.default ??
       true
 
    const showLocationButton =
@@ -559,8 +559,7 @@ export const Header = ({ settings, navigationMenus }) => {
             const [result, fulfillmentStatus] = await autoSelectStore(
                brandLocation,
                recurrencesDetails.brandRecurrences,
-               recurrencesDetails.fulfillmentType,
-               address
+               recurrencesDetails.fulfillmentType
             )
             const availableStores = result.filter(
                x => x[fulfillmentStatus].status
@@ -683,9 +682,10 @@ export const Header = ({ settings, navigationMenus }) => {
                      </div>
                   </Link>
                   <div className="hern-header__location-in-navbar">
-                     <LocationInfo address={address} settings={settings} />
+                     {showLocationButton && (
+                        <LocationInfo address={address} settings={settings} />
+                     )}
                   </div>
-
                   {/* {address && <StoreList settings={settings} />} */}
                   <section className="hern-navigatin-menu__wrapper">
                      <NavigationBar Data={newNavigationMenus}>
@@ -835,10 +835,11 @@ export const Header = ({ settings, navigationMenus }) => {
                      </section>
                   )}
                </header>
-
-               <div className="hern-header__mobile-view-header">
-                  <LocationInfo address={address} settings={settings} />
-               </div>
+               {showLocationButton && (
+                  <div className="hern-header__mobile-view-header">
+                     <LocationInfo address={address} settings={settings} />
+                  </div>
+               )}
             </>
          )}
          <LocationSelectorWrapper

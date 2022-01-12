@@ -12,6 +12,7 @@ import {
    Json,
    Liquid,
    FileIcon,
+   XML,
 } from '../../assets/Icons'
 
 import { Parent, Node, Children, Icon } from './styles'
@@ -40,6 +41,8 @@ const TreeView = ({ data, onSelection, onToggle, showContextMenu }) => {
             return <Json size="24" color="#555b6e" />
          case 'liquid':
             return <Liquid size="24" color="#555b6e" />
+         case 'xml':
+            return <XML size="24" color="#555b6e" />
          default:
             return <FileIcon size="24" color="#555b6e" />
       }
