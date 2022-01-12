@@ -294,10 +294,10 @@ export const CartDetails = () => {
                      </ul>
                   </div>
                   {/* tip */}
-                  <Tips
+                  {/* <Tips
                      setTip={setTip}
                      totalPrice={cart.billing.totalPrice.value}
-                  />
+                  /> */}
                   {/*
                   total
                   */}
