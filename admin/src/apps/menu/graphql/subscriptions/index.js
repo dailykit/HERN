@@ -78,6 +78,9 @@ export const RECURRENCES = gql`
                leadTime
                prepTime
                isActive
+               distanceType
+               geoBoundary
+               zipcodes
                charges {
                   id
                   charge

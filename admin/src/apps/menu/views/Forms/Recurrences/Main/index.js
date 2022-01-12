@@ -199,7 +199,14 @@ const Main = () => {
                                  </ButtonGroup>
                               </StyledTabListHeading>
                               {recurrences.map(recurrence => (
-                                 <SectionTab key={recurrence.id}>
+                                 <SectionTab
+                                    key={recurrence.id}
+                                    dataSelectedBoxShadow={
+                                       '0px 1px 8px rgba(0, 0, 0, 0.1)'
+                                    }
+                                    dataSelectedBorder={'2px solid #367BF5'}
+                                    borderRadius={'4px'}
+                                 >
                                     <StyledInsideSectionTab>
                                        <StyledSectionTop>
                                           <SectionTabDay>
