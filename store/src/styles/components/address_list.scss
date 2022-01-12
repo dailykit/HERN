@@ -1,5 +1,5 @@
 .hern-address-list {
-   padding: 16px;
+   padding: 16px 0;
 }
 .hern-address-list__header {
    margin-bottom: 16px;
@@ -17,7 +17,12 @@
    justify-content: space-between;
 }
 .hern-address-list__heading {
-   color: gray;
+   margin: 0;
+   font-style: normal;
+   font-weight: 600;
+   font-size: 15px;
+   line-height: 17px;
+   color: rgba(64, 64, 64, 0.8);
 }
 .hern-address-list__close-btn {
    border-radius: 9999px;
@@ -40,24 +45,47 @@
 }
 
 .hern-address-list__address {
-   border-width: 2px;
-   border-color: rgba(209, 213, 219, 1);
+   color: rgba(64, 64, 64, 0.8);
    padding: 0.5rem;
-   margin-bottom: 0.5rem;
+   margin: 0 1rem;
    border-radius: 0.125rem;
    cursor: pointer;
-   -webkit-border-radius: 0.125rem;
-   -moz-border-radius: 0.125rem;
-   -ms-border-radius: 0.125rem;
-   -o-border-radius: 0.125rem;
-   font-style: normal;
-   &:hover {
-      border-color: rgba(16, 185, 129, 1);
+   background: #f9f9f9;
+   padding: 14px 16px;
+   border-radius: 8px;
+   display: block;
+   // for alignment in two columns
+   position: relative;
+   min-height: 1px;
+   min-width: 80%;
+   // -webkit-border-radius: 0.125rem;
+   // -moz-border-radius: 0.125rem;
+   // -ms-border-radius: 0.125rem;
+   // -o-border-radius: 0.125rem;
+   // font-style: normal;
+   // &:hover {
+   //    border-color: rgba(16, 185, 129, 1);
+   // }
+   &:first-child {
+      margin-left: 0;
+   }
+   &:last-child {
+      margin-right: 0;
+   }
+   @media (min-width: 768px) {
+      -webkit-flex: 0 0 48.9%;
+      -moz-box-flex: 0;
+      flex: 0 0 48.9%;
+      max-width: 48.85%;
+      min-width: 48.85%;
    }
 }
-.hern-address-list__address--active {
-   border-color: rgba(16, 185, 129, 1);
+.hern-address-list__address:focus {
+   background: rgb(215 215 215 / 80%);
 }
+// .hern-address-list__address--active {
+//    background: rgba(187, 187, 187, 0.8);
+// }
 .hern-address-list__address--not-clickable {
    border-width: 2px;
    border-color: rgba(209, 213, 219, 1);
@@ -67,11 +95,41 @@
    cursor: pointer;
    color: rgba(156, 163, 175, 1);
    cursor: not-allowed;
-   -webkit-border-radius: 0.125rem;
-   -moz-border-radius: 0.125rem;
-   -ms-border-radius: 0.125rem;
-   -o-border-radius: 0.125rem;
+   // -webkit-border-radius: 0.125rem;
+   // -moz-border-radius: 0.125rem;
+   // -ms-border-radius: 0.125rem;
+   // -o-border-radius: 0.125rem;
    &:hover {
       border-color: rgba(209, 213, 219, 1);
+   }
+}
+.hern-address-list-header__label {
+   display: block;
+   font-weight: 600;
+   font-size: 20px;
+   line-height: 22px;
+   margin: 0 10px;
+}
+.hern-address-list__address-landmark {
+   font-weight: 600;
+   font-size: 18px;
+   line-height: 20px;
+}
+// .hern-address-list-container__address {
+//    -ms-overflow-style: none;
+//    scrollbar-width: none;
+// }
+// .hern-address-list-container__address::-webkit-scrollbar {
+//    display: none;
+// }
+.hern-address-list-container__address {
+   display: flex;
+   overflow: auto;
+   &::-webkit-scrollbar {
+      width: 1px;
+   }
+   &::-webkit-scrollbar-thumb {
+      background: #e5f0f7;
+      border-radius: 1px;
    }
 }

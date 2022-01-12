@@ -73,6 +73,7 @@ export const CartProvider = ({ children }) => {
       variables: {
          id: storedCartId,
       },
+      fetchPolicy: 'network-only',
    })
 
    // get cartItems
@@ -126,16 +127,17 @@ export const CartProvider = ({ children }) => {
    }, [cartData, isCartLoading])
 
    useEffect(() => {
-      if (cartItemsData?.cart?.cartItems) {
-         const combinedCartItems = combineCartItems(
-            cartItemsData?.cart?.cartItems
-         )
+      if (cartItemsData?.cartItems) {
+         const combinedCartItems = combineCartItems(cartItemsData?.cartItems)
          console.log('combinedCartItems', combinedCartItems)
          setCombinedCartData(combinedCartItems)
       } else {
-         setCombinedCartData([])
+         const localCartId = localStorage.getItem('cart-id')
+         if (!localCartId && !isAuthenticated && !isLoading) {
+            setCombinedCartData([])
+         }
       }
-   }, [cartItemsData?.cart?.cartItems])
+   }, [cartItemsData?.cartItems, isLoading])
 
    //create cart
    const [createCart] = useMutation(MUTATIONS.CART.CREATE, {
@@ -228,6 +230,7 @@ export const CartProvider = ({ children }) => {
                usedOrderInterface: oiType,
                orderTabId: selectedOrderTab?.id || null,
                locationId: locationId || null,
+               brandId: brand?.id,
                ...(oiType === 'Kiosk Ordering' &&
                   cartState.kioskPaymentOption.terminal && {
                      toUseAvailablePaymentOptionId:
@@ -273,10 +276,10 @@ export const CartProvider = ({ children }) => {
                cartItems: {
                   data: cartItems,
                },
-               ...(user.platform_customer.firstName && {
+               ...(user.platform_customer?.firstName && {
                   customerInfo: {
-                     customerFirstName: user.platform_customer.firstName,
-                     customerLastName: user.platform_customer.lastName,
+                     customerFirstName: user.platform_customer?.firstName,
+                     customerLastName: user.platform_customer?.lastName,
                      customerEmail: user.platform_customer.email,
                      customerPhone: user.platform_customer.phoneNumber,
                   },
@@ -308,7 +311,7 @@ export const CartProvider = ({ children }) => {
          variables: {
             where: {
                paymentStatus: { _eq: 'PENDING' },
-               status: { _eq: 'ORDER_PENDING' },
+               status: { _eq: 'CART_PENDING' },
                customerKeycloakId: {
                   _eq: user?.keycloakId,
                },
@@ -354,7 +357,7 @@ export const CartProvider = ({ children }) => {
                               user.platform_customer?.paymentCustomerId,
                            address:
                               user.platform_customer?.defaultCustomerAddress,
-                           ...(user.platform_customer.firstName && {
+                           ...(user.platform_customer?.firstName && {
                               customerInfo: {
                                  customerFirstName:
                                     user.platform_customer?.firstName,
@@ -372,19 +375,21 @@ export const CartProvider = ({ children }) => {
             }
          },
       })
-
+   console.log('cartData', cartData?.cart, getInitialCart)
    return (
       <CartContext.Provider
          value={{
             cartState: {
                cart: cartData?.cart,
-               cartItems: cartItemsData?.cart?.cartItems,
+               cartItems: cartItemsData?.cartItems,
                kioskPaymentOption: cartState.kioskPaymentOption,
             },
             cartReducer,
             addToCart,
             combinedCartItems,
             setStoredCartId,
+            isCartLoading,
+            cartItemsLoading,
             methods: {
                cartItems: {
                   delete: deleteCartItems,

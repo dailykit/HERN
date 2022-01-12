@@ -486,6 +486,7 @@ export const CART_SUBSCRIPTION = gql`
          tax
          tip
          address
+         source
          totalPrice
          paymentStatus
          deliveryPrice
@@ -834,7 +835,12 @@ export const CUSTOMER = {
             keycloakId
             isSubscriber
             isTest
-            carts {
+            carts(
+               where: {
+                  source: { _eq: "subscription" }
+                  brandId: { _eq: $brandId }
+               }
+            ) {
                id
                paymentStatus
                subscriptionOccurence {
@@ -1368,6 +1374,7 @@ export const PRODUCTS = gql`
             additionalModifiers(where: { isActive: { _eq: true } }) {
                type
                label
+               linkedToModifierCategoryOptionId
                modifier {
                   id
                   name
@@ -1389,7 +1396,8 @@ export const PRODUCTS = gql`
                         quantity
                         image
                         isActive
-
+                        additionalModifierTemplateId
+                        isAdditionalModifierRequired
                         sachetItemId
                         ingredientSachetId
                         cartItem: cartItemByLocation(
@@ -1420,7 +1428,8 @@ export const PRODUCTS = gql`
                      quantity
                      image
                      isActive
-
+                     additionalModifierTemplateId
+                     isAdditionalModifierRequired
                      sachetItemId
                      ingredientSachetId
                      cartItem: cartItemByLocation(
@@ -1606,6 +1615,8 @@ export const GET_CART = gql`
          billing: billingDetails
          subscriptionOccurenceId
          toUseAvailablePaymentOptionId
+         posistOrderStatus
+         posistOrderResponse
          subscriptionOccurence {
             id
             fulfillmentDate
@@ -1953,35 +1964,45 @@ export const GET_JS_CSS_FILES = gql`
 `
 
 export const GET_CART_ITEMS_BY_CART = gql`
-   subscription cart($id: Int!) {
-      cart(id: $id) {
-         id
-         cartItems(where: { level: { _eq: 1 } }) {
-            cartItemId: id
-            addOnLabel
-            addOnPrice
-            created_at
+   subscription GET_CART_ITEMS_BY_CART($id: Int!) {
+      cartItems(where: { level: { _eq: 1 }, cartId: { _eq: $id } }) {
+         cartItemId: id
+         parentCartItemId
+         addOnLabel
+         addOnPrice
+         created_at
+         price: unitPrice
+         discount
+         name: displayName
+         image: displayImage
+         childs {
             price: unitPrice
             name: displayName
-            image: displayImage
+            discount
+            productOption {
+               id
+               label
+            }
             childs {
+               displayName
                price: unitPrice
-               name: displayName
-               productOption {
+               discount
+               modifierOption {
                   id
-                  label
+                  name
                }
                childs {
                   displayName
                   price: unitPrice
+                  discount
                   modifierOption {
                      id
                      name
                   }
                }
             }
-            productId
          }
+         productId
       }
    }
 `
@@ -2058,10 +2079,48 @@ export const GET_PAYMENT_OPTIONS = gql`
                country
                supportedPaymentCompanyId
                paymentOptionLabel
+               isLoginRequired
+               canShowWhileLoggedIn
                supportedPaymentCompany {
                   id
                   label
                }
+            }
+         }
+      }
+   }
+`
+export const GET_MODIFIER_BY_ID = gql`
+   query GET_MODIFIER_BY_ID(
+      $priceArgs: priceByLocation_onDemand_modifierCategoryOption_args!
+      $discountArgs: discountByLocation_onDemand_modifierCategoryOption_args!
+      $modifierCategoryOptionCartItemArgs: cartItemByLocation_onDemand_modifierCategoryOption_args!
+      $id: [Int!]!
+   ) {
+      modifiers(where: { id: { _in: $id } }) {
+         id
+         name
+         categories(where: { isVisible: { _eq: true } }) {
+            id
+            name
+            isRequired
+            type
+            limits
+            options(where: { isVisible: { _eq: true } }) {
+               id
+               name
+               quantity
+               image
+               isActive
+               sachetItemId
+               ingredientSachetId
+               additionalModifierTemplateId
+               isAdditionalModifierRequired
+               price: priceByLocation(args: $priceArgs)
+               discount: discountByLocation(args: $discountArgs)
+               cartItem: cartItemByLocation(
+                  args: $modifierCategoryOptionCartItemArgs
+               )
             }
          }
       }

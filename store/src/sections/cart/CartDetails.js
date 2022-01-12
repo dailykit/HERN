@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { CartContext, onDemandMenuContext } from '../../context'
+import { CartContext, onDemandMenuContext, useUser } from '../../context'
 import {
    Button,
    Divider,
@@ -21,7 +21,8 @@ export const CartDetails = () => {
    const { cartState, methods, addToCart, combinedCartItems } =
       React.useContext(CartContext)
    const { onDemandMenu } = React.useContext(onDemandMenuContext)
-   const { brand, isConfigLoading } = useConfig()
+   const { brand, isConfigLoading, locationId } = useConfig()
+   const { user } = useUser()
 
    //context data
    const { cart } = cartState
@@ -39,7 +40,7 @@ export const CartDetails = () => {
       () => ({
          params: {
             brandId: brand?.id,
-            locationId: 1000,
+            locationId: locationId,
          },
       }),
       [brand]
@@ -256,22 +257,47 @@ export const CartDetails = () => {
                         <li>
                            <span>{cart.billing.discount.label}</span>
                            <span>
+                              -{' '}
                               {formatCurrency(cart.billing.discount.value || 0)}
                            </span>
                         </li>
+                        {user?.keycloakId && (
+                           <li>
+                              <span>
+                                 {cart.billing.loyaltyPointsUsed.label}
+                              </span>
+                              <span>
+                                 {cart.billing.loyaltyPointsUsed.value}
+                              </span>
+                           </li>
+                        )}
+                        {user?.keycloakId && (
+                           <li>
+                              <span>{cart.billing.walletAmountUsed.label}</span>
+                              <span>{cart.billing.walletAmountUsed.value}</span>
+                           </li>
+                        )}
                         {tip && tip !== 0 && (
                            <li>
                               <span>Tip</span>
                               <span>{formatCurrency(tip)}</span>
                            </li>
                         )}
+                        <li style={{ fontWeight: 'bold' }}>
+                           <span>{cart.billing.totalPrice.label}</span>
+                           <span>
+                              {formatCurrency(
+                                 cart.billing.totalPrice.value || 0
+                              )}
+                           </span>
+                        </li>
                      </ul>
                   </div>
                   {/* tip */}
-                  <Tips
+                  {/* <Tips
                      setTip={setTip}
                      totalPrice={cart.billing.totalPrice.value}
-                  />
+                  /> */}
                   {/*
                   total
                   */}
@@ -296,7 +322,24 @@ const ModifiersList = props => {
          </span>
          <div className="hern-cart-product-modifiers-product-option">
             <span>{data.childs[0].productOption.label || 'N/A'}</span>{' '}
-            <span>{formatCurrency(data.childs[0].price || 0)}</span>
+            {data.childs[0].price !== 0 && (
+               <div>
+                  {data.childs[0].discount > 0 && (
+                     <span
+                        style={{
+                           textDecoration: 'line-through',
+                        }}
+                     >
+                        {formatCurrency(data.childs[0].price)}
+                     </span>
+                  )}
+                  <span style={{ marginLeft: '6px' }}>
+                     {formatCurrency(
+                        data.childs[0].price - data.childs[0].discount
+                     )}
+                  </span>
+               </div>
+            )}
          </div>
          <div className="hern-cart-product-modifiers-list">
             {data.childs[0].childs.some(each => each.modifierOption) && (
@@ -310,7 +353,25 @@ const ModifiersList = props => {
                      modifier.modifierOption ? (
                         <li key={index}>
                            <span>{modifier.modifierOption.name}</span>
-                           <span>{formatCurrency(modifier.price || 0)}</span>
+
+                           {modifier.price !== 0 && (
+                              <div>
+                                 {modifier.discount > 0 && (
+                                    <span
+                                       style={{
+                                          textDecoration: 'line-through',
+                                       }}
+                                    >
+                                       {formatCurrency(modifier.price)}
+                                    </span>
+                                 )}
+                                 <span style={{ marginLeft: '6px' }}>
+                                    {formatCurrency(
+                                       modifier.price - modifier.discount
+                                    )}
+                                 </span>
+                              </div>
+                           )}
                         </li>
                      ) : null
                   )}

@@ -1,15 +1,14 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import { useUser } from '../../../context'
-import {
-   isClient,
-   getRoute,
-   processExternalFiles,
-   getPageProps,
-   renderPageContent,
-} from '../../../utils'
+import { isClient, getPageProps, renderPageContent } from '../../../utils'
 
-import { SEO, Layout, LoginWarning } from '../../../components'
+import {
+   SEO,
+   Layout,
+   LoginWarning,
+   ExternalJSCSSFiles,
+} from '../../../components'
 
 const AddressesPage = props => {
    const router = useRouter()
@@ -23,17 +22,10 @@ const AddressesPage = props => {
       }
    }, [isAuthenticated, isLoading])
 
-   React.useEffect(() => {
-      try {
-         processExternalFiles(folds, linkedFiles)
-      } catch (err) {
-         console.log('Failed to render page: ', err)
-      }
-   }, [folds])
-
    return (
       <Layout settings={settings} navigationMenus={navigationMenus}>
          <SEO seoSettings={seoSettings} />
+         <ExternalJSCSSFiles externalFiles={linkedFiles} />
          {!isAuthenticated && !isLoading ? (
             <LoginWarning />
          ) : (

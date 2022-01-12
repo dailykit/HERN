@@ -130,6 +130,7 @@ export const ColorPicker = ({
    marginLeft,
    path,
    onConfigChange,
+   editMode,
 }) => (
    <Flex
       container
@@ -143,13 +144,41 @@ export const ColorPicker = ({
          </Form.Label>
          <Tooltip identifier="color_component_info" />
       </Flex>
-      <input
-         type="color"
-         id="favcolor"
-         name={path}
-         value={fieldDetail?.value || fieldDetail.default}
-         onChange={onConfigChange}
-      />
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+         {editMode ? (
+            <>
+               <ColorLabel backgroundColor="#fff" title={fieldDetail?.value || 'none'}>
+                  {fieldDetail?.value || 'none'}
+               </ColorLabel>
+               <input
+                  type="color"
+                  id="favcolor"
+                  name={path}
+                  value={fieldDetail?.value || ''}
+                  onChange={onConfigChange}
+                  style={{ cursor: 'pointer' }}
+               />
+            </>
+         ) : (
+            <>
+               <ColorLabel
+                  backgroundColor='rgb(244 244 244)'
+                  title={fieldDetail?.value || 'none'}
+               >
+                  {fieldDetail?.value || 'none'}
+               </ColorLabel>
+               <input
+                  type="color"
+                  id="favcolor"
+                  name={path}
+                  title="Click on edit to change color"
+                  value={fieldDetail?.value || ''}
+                  onChange={onConfigChange}
+                  disabled
+               />
+            </>
+         )}
+      </div>
    </Flex>
 )
 
@@ -181,7 +210,9 @@ export const Number = ({
             placeholder="Enter integer value"
          />
       ) : (
-         <Text as="h4" style={{ color: '#555B6E' }}>{fieldDetail?.value || fieldDetail.default}</Text>
+         <Text as="h4" style={{ color: '#555B6E' }}>
+            {fieldDetail?.value || fieldDetail.default}
+         </Text>
       )}
    </Flex>
 )
@@ -234,7 +265,9 @@ export const Date = ({
             value={fieldDetail?.value || fieldDetail.default}
          />
       ) : (
-         <Text as="h4" style={{ color: '#555B6E' }}>{fieldDetail?.value || fieldDetail.default}</Text>
+         <Text as="h4" style={{ color: '#555B6E' }}>
+            {fieldDetail?.value || fieldDetail.default}
+         </Text>
       )}
    </Flex>
 )
@@ -265,7 +298,9 @@ export const Time = ({
             value={fieldDetail?.value || fieldDetail.default}
          />
       ) : (
-         <Text as="h4" style={{ color: '#555B6E' }}>{fieldDetail?.value || fieldDetail.default}</Text>
+         <Text as="h4" style={{ color: '#555B6E' }}>
+            {fieldDetail?.value || fieldDetail.default}
+         </Text>
       )}
    </Flex>
 )
@@ -342,7 +377,9 @@ export const TextArea = ({
             value={fieldDetail?.value || fieldDetail.default}
          />
       ) : (
-         <Text as="h4" style={{ color: '#555B6E' }}>{fieldDetail?.value || fieldDetail.default}</Text>
+         <Text as="h4" style={{ color: '#555B6E' }}>
+            {fieldDetail?.value || fieldDetail.default}
+         </Text>
       )}
    </Flex>
 )
@@ -593,6 +630,9 @@ export const ImageUpload = props => {
       if ('url' in data) {
          const e = { target: { name: path, value: data.url } }
          onConfigChange(e, data.url)
+      } else if (data) {
+         const e = { target: { name: path, value: data } }
+         onConfigChange(e, data)
       }
       closeTunnel(1)
    }
@@ -600,84 +640,103 @@ export const ImageUpload = props => {
       <>
          {editMode ? (
             <>
-               <Flex container alignItems="flex-start">
-                  <Form.Label title={fieldDetail.label} htmlFor="textArea">
-                     YOUR {fieldDetail.label.toUpperCase()}
-                  </Form.Label>
-                  <Tooltip identifier="textArea_component_info" />
-               </Flex>
-               <Spacer size="16px" />
-               {fieldDetail?.value ? (
-                  <ImageContainer width="120px" height="120px">
-                     <div>
-                        <IconButton
-                           style={{ background: 'transparent' }}
-                           size="sm"
-                           type="solid"
-                           onClick={() => openTunnel(1)}
-                        >
-                           <EditIcon />
-                        </IconButton>
-                        <IconButton
-                           style={{
-                              background: 'transparent',
-                           }}
-                           size="sm"
-                           type="solid"
-                           onClick={() => updateSetting({ url: '' })}
-                        >
-                           <DeleteIcon />
-                        </IconButton>
-                     </div>
-                     <img src={fieldDetail?.value} alt="Brand Logo" />
-                  </ImageContainer>
-               ) : (
-                  <ButtonTile
-                     type="uploadImage"
-                     size="sm"
-                     text="Upload"
-                     onClick={() => openTunnel(1)}
-                     style={{
-                        width: '170px',
-                        height: '120px',
-                        marginBottom: '10px',
-                     }}
-                  />
-               )}
+               <ImageWrapper paddingRight="2rem">
+                  <Flex container alignItems="flex-start">
+                     <Form.Label title={fieldDetail.label} htmlFor="textArea">
+                        YOUR {fieldDetail.label.toUpperCase()}
+                     </Form.Label>
+                     <Tooltip identifier="textArea_component_info" />
+                  </Flex>
+                  <Spacer size="16px" />
+                  {(fieldDetail?.value?.url || fieldDetail?.value) ? (
+                     <ImageContainer width="120px" height="120px">
+                        <div>
+                           <IconButton
+                              style={{ background: 'transparent' }}
+                              size="sm"
+                              type="solid"
+                              onClick={() => openTunnel(1)}
+                           >
+                              <EditIcon />
+                           </IconButton>
+                           <IconButton
+                              style={{
+                                 background: 'transparent',
+                              }}
+                              size="sm"
+                              type="solid"
+                              onClick={() => updateSetting({ url: '' })}
+                           >
+                              <DeleteIcon />
+                           </IconButton>
+                        </div>
+                        <img src={fieldDetail?.value?.url || fieldDetail?.value} alt={fieldDetail?.label} />
+                     </ImageContainer>
+                  ) : (
+                     <ButtonTile
+                        type="uploadImage"
+                        size="sm"
+                        text="Upload"
+                        onClick={() => openTunnel(1)}
+                        style={{
+                           width: '170px',
+                           height: '120px',
+                           marginBottom: '10px',
+                        }}
+                     />
+                  )}
+               </ImageWrapper>
                <Tunnels tunnels={tunnels}>
                   <Tunnel layer={1} size="md">
                      <TunnelHeader
                         title="Add Brand Logo"
                         close={() => closeTunnel(1)}
                      />
-                     <Banner id="brands-app-brands-brand-details-brand-logo-tunnel-top" />
                      <Flex padding="16px">
                         <AssetUploader
                            onAssetUpload={data => updateSetting(data)}
                            onImageSelect={data => updateSetting(data)}
                         />
                      </Flex>
-                     <Banner id="brands-app-brands-brand-details-brand-logo-tunnel-bottom" />
                   </Tunnel>
                </Tunnels>
             </>
          ) : (
-            <ImageContainer width="120px" height="120px">
-               {' '}
-               {fieldDetail?.value ? (
-                  <img src={fieldDetail?.value} alt="Brand Logo" />
-               ) : (
-                  <div style={{ display: 'flex' }}>
-                     <Image
-                        width={170}
-                        height={120}
-                        src="error"
-                        fallback="https://raw.githubusercontent.com/koehlersimon/fallback/master/Resources/Public/Images/placeholder.jpg"
-                     />{' '}
-                     <Text as="p">You haven't uploaded an image yet.</Text>
-                  </div>
+            <ImageWrapper>
+               {(fieldDetail?.value?.url || fieldDetail?.value) ? (<>
+                  <Flex container alignItems="flex-end">
+                     <Form.Label title={fieldDetail.label} htmlFor="text">
+                        {fieldDetail.label.toUpperCase()}
+                     </Form.Label>
+                     <Tooltip identifier="image_label" />
+                  </Flex>
+                  <ImageContainer width="120px" height="120px" flexDirection="row">
+
+                     <img src={fieldDetail?.value?.url || fieldDetail?.value} alt={fieldDetail.label} />
+                  </ImageContainer>
+               </>
+               ) : (<>
+                  <Flex container alignItems="flex-end">
+                     <Form.Label title={fieldDetail.label} htmlFor="text">
+                        {fieldDetail.label.toUpperCase()}
+                     </Form.Label>
+                     <Tooltip identifier="image_label" />
+                  </Flex>
+                  <ImageContainer width="100px" height="100px" flexDirection="row">
+                     <div className="fallback-image-container">
+                        <Image
+                           width={150}
+                           height={100}
+                           src="error"
+                           fallback="https://raw.githubusercontent.com/koehlersimon/fallback/master/Resources/Public/Images/placeholder.jpg"
+                           title="no image added"
+                        />
+
+                     </div> </ImageContainer>
+               </>
                )}
-            </ImageContainer>
+
+            </ImageWrapper>
          )}
       </>
    )
@@ -687,10 +746,9 @@ export const MultipleImageUpload = props => {
    const { fieldDetail, path, onConfigChange, editMode } = props
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
-   const updateSetting = (data) => {
+   const updateSetting = data => {
       if (data) {
-         console.log("path", path, "data", data)
-         const e = { target: { name: path, value: data } }
+         const e = { target: { name: path, value: { "url": [...data] } } }
          onConfigChange(e, data)
          // configSaveHandler(configJSON)
       }
@@ -701,17 +759,16 @@ export const MultipleImageUpload = props => {
    }
 
    const addImage = images => {
-      console.log(images, "images")
       updateSetting(images)
    }
    return (
       <>
          {editMode ? (
             <Flex width="50%" style={{ position: 'relative', top: '22px' }}>
-               {fieldDetail?.value !== null &&
-                  fieldDetail?.value?.length ? (
+               {(fieldDetail?.value?.url && fieldDetail?.value?.url !== null) &&
+                  fieldDetail?.value?.url.length ? (
                   <Gallery
-                     list={fieldDetail.value || []}
+                     list={fieldDetail.value.url || []}
                      isMulti={true}
                      onChange={images => {
                         addImage(images)
@@ -729,21 +786,28 @@ export const MultipleImageUpload = props => {
             </Flex>
          ) : (
             <ImageContainer width="120px" height="120px">
-               {fieldDetail?.value?.length ||
-                  fieldDetail?.value?.length ? (
+               {fieldDetail?.value?.url && fieldDetail?.value?.url.length ? (
                   <>
-                     <Carousel afterChange={onChange} style={{ width: "12rem", borderRadius: "16px" }}>
-                        {fieldDetail?.value && fieldDetail?.value.map(image => {
-                           return (
-                              <div>
-                                 <img src={image} alt="images" width="120px" />
-                              </div>
-                           )
-                        })}
+                     <Carousel
+                        afterChange={onChange}
+                        style={{ width: '12rem', borderRadius: '16px' }}
+                     >
+                        {fieldDetail?.value?.url &&
+                           fieldDetail.value.url.map(image => {
+                              return (
+                                 <div>
+                                    <img
+                                       src={image}
+                                       alt="images"
+                                       width="120px"
+                                    />
+                                 </div>
+                              )
+                           })}
                      </Carousel>
                   </>
                ) : (
-                  <div style={{ display: 'flex' }}>
+                  <div className="fallback-image-container">
                      <Image
                         width={170}
                         height={120}
@@ -760,7 +824,7 @@ export const MultipleImageUpload = props => {
 }
 export const ImageContainer = styled.div`
    display: flex;
-   flex-direction: row-reverse;
+   flex-direction: ${props => props.flexDirection ? props.flexDirection : 'row-reverse'};
    justify-content: flex-end;
    height: ${props => props.height || 'auto'};
    width: ${props => props.width || 'auto'};
@@ -775,11 +839,26 @@ export const ImageContainer = styled.div`
       float: right;
       margin: 4px 4px 0 4px;
    }
-   .slick-dots li.slick-active button,.ant-carousel .slick-dots li button  {
-      background:#000;
+   .slick-dots li.slick-active button,
+   .ant-carousel .slick-dots li button {
+      background: #000;
    }
    .ant-carousel .slick-dots-bottom {
       height: 2px;
+   }
+   .fallback-image-container {
+      display: flex;
+      flex-wrap: wrap;
+      align-content: flex-start;
+      text-align: center;
+      flex-direction: column;
+   }
+   .ant-carousel>.slick-slider{
+      height:10rem !important;
+      .slick-list>.slick-track>.slick-slide>div>div>img{
+         max-height:120px !important;
+         width:auto;
+      }
    }
 `
 export const PhoneNumSelector = styled.div`
@@ -811,4 +890,20 @@ export const NoValueSpan = styled.span`
    color: #919699;
    font-size: 14px;
    font-weight: 400;
+`
+export const ColorLabel = styled.p`
+margin: 0.5rem;
+margin-bottom: 0.5rem!important;
+cursor: default;
+background-color: ${props => props.backgroundColor};
+padding: 0.5em;
+font-weight: 500;
+color: grey;`
+
+export const ImageWrapper = styled.div`
+display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0.4rem;
+    padding-right: ${props => props.paddingRight || '0.4rem'};
 `

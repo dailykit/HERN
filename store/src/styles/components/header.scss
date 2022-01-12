@@ -1,7 +1,7 @@
 .hern-header {
    height: 64px;
    z-index: 1000;
-   grid-template-columns: auto auto 1fr auto;
+   grid-template-columns: auto auto;
    width: 100%;
    display: grid;
    background-color: rgba(255, 255, 255, 1);
@@ -12,6 +12,9 @@
    align-items: center;
    position: sticky;
    top: 0;
+   @media (min-width: 768px) {
+      grid-template-columns: auto auto 1fr auto;
+   }
 }
 .hern-header--grid-3-col {
    grid-template-columns: auto 1fr auto !important;
@@ -38,6 +41,19 @@
    @media (min-width: 768px) {
       padding-left: 1.5rem;
       padding-right: 1.5rem;
+   }
+}
+.hern-header__brand__logo {
+   display: none;
+   @media (min-width: 600px) {
+      display: block;
+   }
+}
+.hern-header__brand__logo--sm {
+   display: block;
+   min-height: 54px;
+   @media (min-width: 600px) {
+      display: none;
    }
 }
 
@@ -145,6 +161,71 @@
    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
    -webkit-transition-duration: 200ms;
    transition-duration: 200ms;
+   @media (min-width: 768px) {
+      display: none;
+   }
+}
+.hern-header__location-container {
+   display: flex;
+   align-items: center;
+   padding: 4px;
+   cursor: pointer;
+   @media (max-width: 768px) {
+      padding: 6px 0;
+   }
+}
+.hern-header__location-icon {
+   margin: 0 5px;
+}
+.hern-header__location-upper {
+   width: 120px;
+   display: flex;
+   align-items: center;
+   margin: 2px 0;
+}
+.hern-header__location-content {
+   color: #40404099;
+   border-bottom: 1px solid rgba(64, 64, 64, 0.25);
+   margin: 2px 0;
+   @media (max-width: 768px) {
+      font-size: 11px;
+      font-size: 11px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 250px;
+   }
+}
+.hern-header__location-warning {
+   @media (max-width: 768px) {
+      font-size: 9px;
+   }
+}
+.hern-header__downvector-icon {
+   margin: 0 6px;
+}
+.hern-header__location-right {
+   display: flex;
+   @media (min-width: 768px) {
+      display: unset;
+   }
+}
+.hern-header__location-right-loading {
+   font-style: italic;
+   color: #40404099;
+   font-size: 14px;
+   @media (max-width: 768) {
+      font-size: 10px;
+   }
+}
+.hern-header__location-in-navbar {
+   display: none;
+   @media (min-width: 768px) {
+      display: unset;
+   }
+}
+.hern-header__mobile-view-header {
+   display: unset;
    @media (min-width: 768px) {
       display: none;
    }

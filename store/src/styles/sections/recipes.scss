@@ -1,163 +1,139 @@
-.hern-recipe {
-   margin: auto;
-   max-width: 640px;
-   padding: 16px 0;
-   width: calc(100vw - 40px);
+.hern-recipe__wrapper {
+   max-width: 1200px;
+   margin: 0 auto;
 }
 .hern-recipe__title {
-   padding-top: 1rem;
-   padding-bottom: 1rem;
-   font-size: 1.5rem;
-   line-height: 2rem;
-   -webkit-letter-spacing: 0.025em;
-   -moz-letter-spacing: 0.025em;
-   -ms-letter-spacing: 0.025em;
-   letter-spacing: 0.025em;
-   color: rgba(35, 78, 82, 1);
-   @media (min-width: 768px) {
-      font-size: 1.875rem;
-      line-height: 2.25rem;
+   font-weight: 600;
+   font-size: 18px;
+   line-height: 25px;
+   color: var(--hern-accent);
+}
+.hern-recipe-navigation {
+   margin-bottom: 2rem;
+   > h3 {
+      font-weight: bold;
+      font-size: 40px;
+      color: var(--hern-accent);
+      text-align: center;
+   }
+   > div {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      .active {
+         background: var(--hern-accent);
+      }
+      > a {
+         text-decoration: none;
+         border: none;
+         outline: none;
+         color: #fff;
+         background: #281813;
+         border-radius: 2px;
+         padding: 8px 24px;
+         margin-right: 16px;
+         font-weight: bold;
+         font-size: 16px;
+      }
    }
 }
 .hern-recipe__img__wrapper {
-   height: 320px;
-   @media (max-width: 567px) {
-      height: 240px;
+   > img {
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
    }
-}
-.hern-recipe__img {
-   width: 100%;
-   height: 100%;
-   border-color: rgba(243, 244, 246, 1);
-   object-fit: cover;
-   border-radius: 0.5rem;
-}
-
-.hern-recipe__description__heading {
-   padding-bottom: 0.5rem;
-   margin-top: 1rem;
-   border-bottom-width: 1px;
-   border-color: rgba(209, 213, 219, 1);
-   color: rgba(75, 85, 99, 1);
-   font-size: 1.125rem;
-   line-height: 1.75rem;
-   font-weight: 400;
-   margin-bottom: 0.5rem;
 }
 .hern-recipe__description {
-   color: rgba(35, 78, 82, 1);
-}
-.hern-recipe__details__heading {
-   padding-bottom: 0.5rem;
    margin-top: 1rem;
-   border-bottom-width: 1px;
-   border-color: rgba(209, 213, 219, 1);
-   color: rgba(75, 85, 99, 1);
-   font-size: 1.125rem;
-   line-height: 1.75rem;
-   font-weight: 400;
-   margin-bottom: 1.5rem;
+   > h2 {
+      font-size: 24px;
+      color: #281813;
+      font-style: normal;
+      font-weight: normal;
+   }
+   > p {
+      font-size: 18px;
+      color: #281813;
+      color: #281813;
+   }
 }
 .hern-recipe__details {
-   display: grid;
-   grid-template-columns: repeat(4, minmax(0, 1fr));
-   gap: 0.5rem;
-   margin-bottom: 0.5rem;
-}
-
-%details-wrapper {
-   display: -webkit-box;
-   display: -webkit-flex;
-   display: -ms-flexbox;
-   display: flex;
-   -webkit-flex-direction: column;
-   -ms-flex-direction: column;
-   flex-direction: column;
-   -webkit-align-items: center;
-   -webkit-box-align: center;
-   -ms-flex-align: center;
-   align-items: center;
-}
-%detail-option-text {
-   color: rgba(35, 78, 82, 1);
-}
-
-.hern-recipe__details__cuisine {
-   @extend %details-wrapper;
-   > p {
-      @extend %detail-option-text;
+   margin-bottom: 32px;
+   > h2 {
+      font-style: normal;
+      font-weight: bold;
+      font-size: 24px;
+      text-transform: uppercase;
+      color: var(--hern-accent);
+   }
+   > div {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+      text-align: center;
+      > div {
+         display: flex;
+         align-items: center;
+         flex-direction: column;
+         gap: 8px;
+      }
    }
 }
-.hern-recipe__details__cooking-time {
-   @extend %details-wrapper;
-   > p {
-      @extend %detail-option-text;
-   }
-}
-.hern-recipe__details__utensils {
-   @extend %details-wrapper;
-   > p {
-      @extend %detail-option-text;
-   }
-}
-.hern-recipe__details__author {
-   @extend %details-wrapper;
-   > p {
-      @extend %detail-option-text;
-   }
-}
-
 .hern-recipe__not-included {
-   margin-bottom: 0.5rem;
-}
-.hern-recipe__not-included__heading {
-   color: rgba(107, 114, 128, 1);
-   font-size: 0.875rem;
-   line-height: 1.25rem;
-   font-weight: 400;
-}
-.hern-recipe__not-included__item {
-   color: rgba(35, 78, 82, 1);
-}
-
-.hern-recipe__ingradients__heading {
-   padding-bottom: 0.5rem;
-   margin-top: 1rem;
-   border-bottom-width: 1px;
-   border-color: rgba(209, 213, 219, 1);
-   color: rgba(75, 85, 99, 1);
-   font-size: 1.125rem;
-   line-height: 1.75rem;
-   font-weight: 400;
-   margin-bottom: 1rem;
+   > h2 {
+      margin-bottom: 16px;
+      font-size: 24px;
+      font-style: normal;
+      font-weight: bold;
+      text-transform: uppercase;
+      color: var(--hern-accent);
+   }
+   > p {
+      font-size: 16px;
+   }
 }
 .hern-recipe__ingradients {
-   display: grid;
-   grid-template-columns: repeat(2, minmax(0, 1fr));
-   gap: 0.5rem;
+   // margin: 32px 0;
+   > h2 {
+      margin-bottom: 16px;
+      font-size: 24px;
+      font-style: normal;
+      font-weight: bold;
+      text-transform: uppercase;
+      color: var(--hern-accent);
+   }
+   > div {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 1rem;
+      text-align: center;
+      > div {
+         background: #ffffff;
+         border: 1px solid #f9f9f9;
+         box-sizing: border-box;
+         box-shadow: 0px 0.504798px 2.01919px rgba(0, 0, 0, 0.2);
+         border-radius: 4px;
+         padding: 8px;
+         > img {
+            width: 184px;
+         }
+      }
+   }
 }
-.hern-recipe__ingradient__item {
-   justify-content: center;
-}
-.hern-recipe__ingradient__item--visible {
-   border-width: 1px;
-   height: 4rem;
-   padding-left: 0.5rem;
-   padding-right: 0.5rem;
-   border-radius: 0.125rem;
-   display: -webkit-box;
-   display: -webkit-flex;
-   display: -ms-flexbox;
-   display: flex;
-   -webkit-align-items: center;
-   -webkit-box-align: center;
-   -ms-flex-align: center;
-   align-items: center;
-   > img {
-      height: 3rem;
-      width: 3rem;
-      margin-right: 0.5rem;
-      border-radius: 0.125rem;
+.hern-recipe__cooking-process {
+   > h2 {
+      margin-bottom: 16px;
+      font-size: 24px;
+      font-style: normal;
+      font-weight: bold;
+      text-transform: uppercase;
+      color: var(--hern-accent);
+   }
+   > ul {
+      list-style-type: none;
    }
 }
 .hern-recipe__cooking-process__heading {
@@ -220,16 +196,33 @@
 
 .hern-recipe__go-back-btn {
    left: 50%;
+   transform: translateX(-50%);
    bottom: 16px;
    position: fixed;
-   background-color: rgba(5, 150, 105, 1);
+   background-color: var(--hern-accent);
    border-radius: 0.25rem;
-   color: rgba(255, 255, 255, 1);
+   color: #fff;
    padding-left: 1rem;
    padding-right: 1rem;
    height: 2.5rem;
    margin: 0 auto;
-   &:hover {
-      background-color: rgba(4, 120, 87, 1);
+   border: none;
+   outline: none;
+   text-transform: uppercase;
+}
+.hern-nutrition-recipe__wrapper {
+   display: flex;
+   gap: 64px;
+   margin: 32px 0;
+   .hern-recipe__ingradients {
+      width: 60%;
+   }
+   .hern-recipe-nutrition {
+   }
+   @media (max-width: 767px) {
+      flex-direction: column;
+      .hern-recipe__ingradients {
+         width: 100%;
+      }
    }
 }

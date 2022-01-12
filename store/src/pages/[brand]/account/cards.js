@@ -1,5 +1,10 @@
 import React from 'react'
-import { Layout, LoginWarning, SEO } from '../../../components'
+import {
+   Layout,
+   LoginWarning,
+   SEO,
+   ExternalJSCSSFiles,
+} from '../../../components'
 import {
    getPageProps,
    processExternalFiles,
@@ -21,17 +26,10 @@ const ManageCardsPage = props => {
       }
    }, [isAuthenticated, isLoading])
 
-   React.useEffect(() => {
-      try {
-         processExternalFiles(folds, linkedFiles)
-      } catch (err) {
-         console.log('Failed to render page: ', err)
-      }
-   }, [folds])
-
    return (
       <Layout settings={settings} navigationMenus={navigationMenus}>
          <SEO seoSettings={seoSettings} />
+         <ExternalJSCSSFiles externalFiles={linkedFiles} />
          {!isAuthenticated && !isLoading ? (
             <LoginWarning />
          ) : (

@@ -1,12 +1,11 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import { SEO, Layout, LoginWarning } from '../../components'
+import { SEO, Layout, LoginWarning, ExternalJSCSSFiles } from '../../components'
 import { useUser } from '../../context'
 import {
    getPageProps,
    getRoute,
    isClient,
-   processExternalFiles,
    renderPageContent,
 } from '../../utils'
 
@@ -22,17 +21,10 @@ const MenuPage = props => {
       }
    }, [isAuthenticated, isLoading])
 
-   React.useEffect(() => {
-      try {
-         processExternalFiles(folds, linkedFiles)
-      } catch (err) {
-         console.log('Failed to render page: ', err)
-      }
-   }, [folds])
-
    return (
       <Layout settings={settings} navigationMenus={navigationMenus}>
          <SEO seoSettings={seoSettings} />
+         <ExternalJSCSSFiles externalFiles={linkedFiles} />
          {!isAuthenticated && !isLoading ? (
             <LoginWarning />
          ) : (

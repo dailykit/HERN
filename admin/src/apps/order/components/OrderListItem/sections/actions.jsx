@@ -85,16 +85,12 @@ export const Actions = ({ order }) => {
             <Popup show={isOpen}>
                <Popup.Text type="danger">
                   {order.thirdPartyOrderId
-                     ? `${
-                          order.isRejected ? 'Unrejecting' : 'Rejecting'
-                       } a third party order would not ${
-                          order.isRejected ? 'unreject' : 'reject'
-                       } the order from said third party app. Are you sure you want to ${
-                          order.isRejected ? 'unreject' : 'reject'
-                       } this order?`
-                     : `Are you sure you want to ${
-                          order.isRejected ? 'unreject' : 'reject'
-                       } this order?`}
+                     ? `${order.isRejected ? 'Unrejecting' : 'Rejecting'
+                     } a third party order would not ${order.isRejected ? 'unreject' : 'reject'
+                     } the order from said third party app. Are you sure you want to ${order.isRejected ? 'unreject' : 'reject'
+                     } this order?`
+                     : `Are you sure you want to ${order.isRejected ? 'unreject' : 'reject'
+                     } this order?`}
                </Popup.Text>
                <Popup.Actions>
                   <ButtonGroup align="left">

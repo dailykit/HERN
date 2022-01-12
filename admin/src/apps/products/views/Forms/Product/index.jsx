@@ -39,6 +39,7 @@ import { CloneIcon } from '../../../../../shared/assets/icons'
 import { InventoryBundleProvider } from '../../../context/product/inventoryBundle'
 import ProductInsight from './components/Insight'
 import { MASTER } from '../../../../settings/graphql/index'
+import { SEOSettings } from './components'
 const Product = () => {
    const { id: productId } = useParams()
 
@@ -60,6 +61,9 @@ const Product = () => {
          errors: [],
       },
    })
+   // const [defaultProductOptionId, setDefaultProductOptionId] = React.useState({
+   //    id: null
+   // })
    const [state, setState] = React.useState({})
    const [dropDownOptions, setDropDownOptions] = React.useState([])
    const [searchedOptions, setSearchedOption] = React.useState(null)
@@ -79,6 +83,10 @@ const Product = () => {
             ...posist_baseItemId,
             value: data.subscriptionData.data.product.posist_baseItemId,
          })
+         // setDefaultProductOptionId({
+         //    ...defaultProductOptionId,
+         //    id: data.subscriptionData.data.product.defaultProductOptionId,
+         // })
       },
    })
 
@@ -218,7 +226,7 @@ const Product = () => {
                   productId={state.id}
                   productName={state.name}
                   options={state.productOptions || []}
-                  posist_baseItemId={state.posist_baseItemId}
+                  productData={state}
                />
             )
          }
@@ -437,6 +445,8 @@ const Product = () => {
                         <HorizontalTab>Basic Details</HorizontalTab>
                         <HorizontalTab>Options</HorizontalTab>
                         <HorizontalTab>Insights</HorizontalTab>
+                        <HorizontalTab>SEO Tools</HorizontalTab>
+                        <HorizontalTab>Product Settings</HorizontalTab>
                      </HorizontalTabList>
                      <HorizontalTabPanels>
                         <HorizontalTabPanel>
@@ -489,7 +499,8 @@ const Product = () => {
                                  addOption={addDropDownOptions}
                                  type="single"
                                  searchedOption={searchOptions}
-                                 selectedOption={selectedOption} />
+                                 selectedOption={selectedOption}
+                              />
                            </Form.Group>
                         </HorizontalTabPanel>
                         <HorizontalTabPanel>
@@ -506,6 +517,12 @@ const Product = () => {
                               }}
                               showInTunnel={false}
                            /> */}
+                        </HorizontalTabPanel>
+                        <HorizontalTabPanel>
+                           <SEOSettings productId={Number(productId)} />
+                        </HorizontalTabPanel>
+                        <HorizontalTabPanel>
+                           {/* <ProductSettings /> */}
                         </HorizontalTabPanel>
                      </HorizontalTabPanels>
                   </HorizontalTabs>

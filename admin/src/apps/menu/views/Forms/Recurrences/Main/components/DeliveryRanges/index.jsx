@@ -52,7 +52,6 @@ const DeliveryRanges = ({ timeSlotId, mileRanges, openTunnel }) => {
       })
       openTunnel(3)
    }
-
    return (
       <>
          {mileRanges.map(mileRange => (

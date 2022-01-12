@@ -11,14 +11,10 @@ export const FulfillmentSection = props => {
 
    return (
       <div className="hern-kiosk__fulfillment-section-container">
-         {config.fulfillmentPageSettings.backgroundImage.value.assets
-            .images[0] && (
+         {config.fulfillmentPageSettings.backgroundImage.value.url[0] && (
             <img
                className="hern-kiosk__fulfillment-section-bg-image"
-               src={
-                  config.fulfillmentPageSettings.backgroundImage.value.assets
-                     .images[0]
-               }
+               src={config.fulfillmentPageSettings.backgroundImage.value.url[0]}
                alt="bg-image"
             />
          )}
@@ -93,7 +89,10 @@ const FulfillmentOption = props => {
    }
 
    return (
-      <div className="hern-kiosk__fulfillment-option">
+      <div
+         className="hern-kiosk__fulfillment-option"
+         onClick={onFulfillmentClick}
+      >
          <div className="hern-kiosk_fulfillment-icon">
             <FulfillmentIcon width={200} height={200} fill="#ffffff" />
          </div>

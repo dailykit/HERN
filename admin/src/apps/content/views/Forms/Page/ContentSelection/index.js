@@ -39,6 +39,7 @@ const ContentSelection = () => {
    const [linkedModuleId, setLinkedModuleId] = useState(null)
    const [config, setConfig] = useState({})
    const [seletedModules, setSeletedModules] = useState([])
+   const [isChangeSaved, setIsSavedChange] = useState(true)
    const { loading, error: subscriptionError } = useSubscription(
       LINKED_COMPONENT,
       {
@@ -280,6 +281,8 @@ const ContentSelection = () => {
                      config={config}
                      setConfig={setConfig}
                      configSaveHandler={updateHandler}
+                     isChangeSaved={isChangeSaved}
+                     setIsSavedChange={setIsSavedChange}
                   />
                   <LinkFiles
                      title="Linked CSS file with this Module"

@@ -80,18 +80,24 @@ export const useTranslation = () => {
       // })
       langTags.forEach(tag => {
          const langPattern = tag.getAttribute('data-original-value')
+         let innerHTMLToBe = langPattern
          if (locale === 'en') {
-            if (langPattern.match(/\##EN##(.*?)\##EN##/g)) {
-               tag.innerHTML = langPattern
-                  .match(/\##EN##(.*?)\##EN##/g)[0]
-                  .replaceAll('##EN##', '')
+            // if (langPattern.match(/\##EN##(.*?)\##EN##/g)) {
+            //    tag.innerHTML = langPattern
+            //       .match(/\##EN##(.*?)\##EN##/g)[0]
+            //       .replaceAll('##EN##', '')
+            // }
+            if (langPattern.match(/\@@AR@@(.*?)\@@AR@@/g)) {
+               const arabic = langPattern.match(/\@@AR@@(.*?)\@@AR@@/g)[0]
+               innerHTMLToBe = langPattern.replaceAll(arabic, '')
             }
+            tag.innerHTML = innerHTMLToBe
          }
          if (locale === 'ar') {
-            if (langPattern.match(/\##AR##(.*?)\##AR##/g)) {
+            if (langPattern.match(/\@@AR@@(.*?)\@@AR@@/g)) {
                tag.innerHTML = langPattern
-                  .match(/\##AR##(.*?)\##AR##/g)[0]
-                  .replaceAll('##AR##', '')
+                  .match(/\@@AR@@(.*?)\@@AR@@/g)[0]
+                  .replaceAll('@@AR@@', '')
             }
          }
       })

@@ -12,7 +12,6 @@ import { useConfig } from '../../lib'
 const PrintProcessingModal = ({
    printDetails,
    setPrintStatus = () => null,
-   closePrintModal = () => null,
    initializePrinting = () => null,
    resetPrintDetails = () => null,
 }) => {
@@ -81,7 +80,6 @@ const PrintProcessingModal = ({
                setStoredCartId(null)
                setIsIdleScreen(true)
             }
-            closePrintModal()
          }, 5000)
       }
    }, [printStatus])
@@ -95,7 +93,6 @@ const PrintProcessingModal = ({
          keyboard={false}
          maskClosable={false}
          centered
-         onCancel={closePrintModal}
          width={780}
          zIndex={10000}
          bodyStyle={{

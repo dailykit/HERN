@@ -91,8 +91,21 @@ const FeaturedCollection = dynamic(() =>
       promise => promise.FeaturedCollection
    )
 )
+const ProductGallery = dynamic(() =>
+   import('../sections/product-gallery').then(promise => promise.ProductGallery)
+)
+const SliderSection = dynamic(() =>
+   import('../sections/slider-section').then(promise => promise.SliderSection)
+)
+const ContactUs = dynamic(() =>
+   import('../sections/contact-us').then(promise => promise.ContactUs)
+)
+
 const Product = dynamic(() =>
    import('../sections/product').then(promise => promise.Product)
+)
+const PrivacyPolicy = dynamic(() =>
+   import('../sections/privacy-policy').then(promise => promise.PrivacyPolicy)
 )
 export const renderComponentByName = (fold, options) => {
    const getProps = component => {
@@ -107,136 +120,141 @@ export const renderComponentByName = (fold, options) => {
    }
 
    switch (fold.component) {
-      /*ROUTES: 
+      /*ROUTES:
       [brand]/our-plans
       [brand]/get-started/select-plan
       */
       case 'Plans':
          return <Plans {...getProps('Plans')} />
-      /*ROUTES: 
+      /*ROUTES:
       [brand]/our-menu
       */
       case 'Content':
          return <Content />
-      /*ROUTES : 
+      /*ROUTES :
       [brand]/get-started/register
       */
       case 'Registration':
          return <Registration {...getProps('Registration')} />
-      /*ROUTES : 
+      /*ROUTES :
       [brand]/get-started/select-delivery
       */
       case 'Delivery':
          return <Delivery />
-      /*ROUTES : 
+      /*ROUTES :
       [brand]/get-started/select-delivery
       */
       case 'MenuSection':
          return <MenuSection />
-      /*ROUTES : 
+      /*ROUTES :
       [brand]/get-started/checkout
       */
       case 'CheckoutSection':
-         return <CheckoutSection />
-      /*ROUTES : 
+         return <CheckoutSection config={fold.config} />
+      /*ROUTES :
       [brand]/change-plan
       */
       case 'ChangePlan':
          return <ChangePlan />
-      /*ROUTES : 
+      /*ROUTES :
       [brand]/login
       */
       case 'Login':
          return <Login />
-      /*ROUTES : 
+      /*ROUTES :
       [brand]/terms-and-condition
       */
       case 'TermsAndConditions':
          return <TermsAndConditions />
-      /*ROUTES : 
+      /*ROUTES :
       [brand]/refund-policy
       */
       case 'RefundPolicy':
          return <RefundPolicy />
-      /*ROUTES : 
+      /*ROUTES :
+      [brand]/privacy-policy
+      */
+      case 'PrivacyPolicy':
+         return <PrivacyPolicy />
+      /*ROUTES :
       [brand]/reset-password
       */
       case 'ResetPassword':
          return <ResetPassword />
-      /*ROUTES : 
+      /*ROUTES :
       [brand]/
       */
       case 'Home':
          return <Home />
-      /*ROUTES : 
+      /*ROUTES :
       [brand]/404
       */
       case 'PageNotFound':
          return <PageNotFound />
-      /*ROUTES : 
+      /*ROUTES :
       [brand]/forgot-password
       */
       case 'ForgotPassword':
          return <ForgotPassword />
-      /*ROUTES : 
+      /*ROUTES :
       [brand]/checkout
       */
       case 'Checkout':
-         return <Checkout />
-      /*ROUTES : 
+         return <Checkout config={fold.config} />
+      /*ROUTES :
       [brand]/menu
       */
       case 'MenuView':
          return <MenuView />
-      /*ROUTES : 
+      /*ROUTES :
       [brand]/account/addresses
       */
       case 'Addresses':
          return <Addresses />
-      /*ROUTES : 
+      /*ROUTES :
       [brand]/account/cards
       */
       case 'ManageCards':
          return <ManageCards />
-      /*ROUTES : 
+      /*ROUTES :
       [brand]/account/loyalty-points
       */
       case 'LoyaltyPoints':
          return <LoyaltyPoints />
-      /*ROUTES : 
+      /*ROUTES :
       [brand]/account/orders
       */
       case 'Orders':
          return <Orders />
-      /*ROUTES : 
+      /*ROUTES :
       [brand]/account/profile
       */
       case 'Profile':
          return <Profile />
-      /*ROUTES : 
+      /*ROUTES :
       [brand]/account/wallet
       */
       case 'Wallet':
          return <Wallet />
-      /*ROUTES : 
+      /*ROUTES :
       [brand]/account/referrals
       */
       case 'Referrals':
          return <Referrals />
-      /*ROUTES : 
+      /*ROUTES :
       [brand]/account/inventory
       */
       case 'Inventory':
          return <Inventory />
 
-      /*ROUTES : 
+      /*ROUTES :
       [brand]/get-started/placing-order
       [brand]/placing-order
       */
       case 'PlacingOrder':
          return <PlacingOrder />
 
-      /*ROUTES : 
+      /*ROUTES :
       [brand]/get-started/register
       [brand]/get-started/select-plan
       [brand]/get-started/select-delivery
@@ -267,5 +285,20 @@ export const renderComponentByName = (fold, options) => {
          return <FeaturedCollection config={fold.config} />
       default:
          return null
+
+      /*
+      Global
+      */
+      case 'ProductGallery':
+         return <ProductGallery config={fold.config} />
+
+      /*
+      Global
+      */
+      case 'SliderSection':
+         return <SliderSection config={fold.config} />
+
+      case 'ContactUs':
+         return <ContactUs config={fold.config} />
    }
 }

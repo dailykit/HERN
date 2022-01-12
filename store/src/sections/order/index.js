@@ -4,7 +4,6 @@ import {
    ProductCard,
    BottomCartBar,
    Divider,
-   ModifierPopup,
    Button,
    Loader,
 } from '../../components'
@@ -19,11 +18,14 @@ import { useConfig } from '../../lib'
 import { setThemeVariable, getRoute } from '../../utils'
 import { useRouter } from 'next/router'
 import { useToasts } from 'react-toast-notifications'
+import { VegNonVegType } from '../../assets/icons'
 
 export const OnDemandOrder = ({ config }) => {
    const router = useRouter()
    const { addToast } = useToasts()
-   const { brand } = useConfig()
+
+   const { brand, locationId, storeStatus } = useConfig()
+
    const menuType = config?.display?.dropdown?.value[0]?.value
       ? config?.display?.dropdown?.value[0]?.value
       : 'side-nav'
@@ -43,8 +45,16 @@ export const OnDemandOrder = ({ config }) => {
       config?.display?.['showCartOnRight']?.value ??
       config?.display?.['showCartOnRight']?.default ??
       false
+   const productsScrollWidth =
+      config?.display?.productsScrollWidth?.value ??
+      config?.display?.productsScrollWidth?.default ??
+      0
 
    setThemeVariable('--hern-number-of-products', numberOfProducts)
+   setThemeVariable(
+      '--hern-order-product-section-scroll-width',
+      productsScrollWidth + 'px'
+   )
 
    const [hydratedMenu, setHydratedMenu] = React.useState([])
    const [status, setStatus] = useState('loading')
@@ -56,7 +66,7 @@ export const OnDemandOrder = ({ config }) => {
       () => ({
          params: {
             brandId: brand?.id,
-            locationId: 1000,
+            locationId: locationId,
          },
       }),
       [brand]
@@ -107,7 +117,6 @@ export const OnDemandOrder = ({ config }) => {
          },
       }
    )
-   console.log('Kama Sutra: A Tale of Love', config)
    const [productModifier, setProductModifier] = useState(null)
    const CustomArea = props => {
       const { data } = props
@@ -126,8 +135,15 @@ export const OnDemandOrder = ({ config }) => {
                      addToCart({ productId: data.id }, 1)
                   }
                }}
+               disabled={
+                  locationId ? (storeStatus.status ? false : true) : true
+               }
             >
-               ADD
+               {locationId
+                  ? storeStatus.status
+                     ? 'ADD'
+                     : 'COMING SOON'
+                  : 'COMING SOON'}
             </Button>
             {data.productOptions.length > 0 && <span>Customizable</span>}
          </div>
@@ -194,12 +210,27 @@ export const OnDemandOrder = ({ config }) => {
                            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                               {eachCategory.products.map(
                                  (eachProduct, index) => {
+                                    const VegNonVegIcon = () => (
+                                       <VegNonVegType
+                                          vegNonVegType={
+                                             eachProduct?.VegNonVegType
+                                          }
+                                       />
+                                    )
                                     return (
                                        <div
                                           key={index}
                                           className="hern-on-demand-order--product-card"
+                                          style={{
+                                             margin: '0 auto',
+                                             maxWidth:
+                                                numberOfProducts === 4
+                                                   ? '280px'
+                                                   : 'auto',
+                                          }}
                                        >
                                           <ProductCard
+                                             iconOnImage={VegNonVegIcon}
                                              onProductNameClick={() =>
                                                 router.push(
                                                    getRoute(
@@ -208,7 +239,7 @@ export const OnDemandOrder = ({ config }) => {
                                                    )
                                                 )
                                              }
-                                             onImageClickonProductNameClick={() =>
+                                             onImageClick={() =>
                                                 router.push(
                                                    getRoute(
                                                       '/products/' +

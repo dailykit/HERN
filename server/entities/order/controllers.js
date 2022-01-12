@@ -1,10 +1,19 @@
-import { client } from '../../lib/graphql'
+import axios from 'axios'
 
-import { SEND_MAIL } from './graphql/mutations'
-import { CUSTOMER, EMAIL_SETTINGS, ORDER_BY_CART } from './graphql/queries'
+import { client } from '../../lib/graphql'
+import { SEND_MAIL, UPDATE_CART } from './graphql/mutations'
+import fs from 'fs'
+import {
+   CUSTOMER,
+   EMAIL_SETTINGS,
+   ORDER_BY_CART,
+   CART,
+   LOCATION_KIOSK
+} from './graphql/queries'
 
 import { logger2 } from '../../utils'
 import { fetch_html } from './functions'
+import get_env from '../../../get_env'
 
 export const handleStatusChange = async (req, res) => {
    const { id, source, status, brandId, customerKeycloakId } =
@@ -136,6 +145,63 @@ export const handleStatusChange = async (req, res) => {
       //    trace: error
       // })
       return res.status('code' in error && error.code ? error.code : 500).json({
+         success: false,
+         error
+      })
+   }
+}
+
+export const posistOrderPush = async (req, res) => {
+   try {
+      const { id } = req.body.event.data.new
+      const POSIST_API_KEY = await get_env('POSIST_API_KEY')
+      const { cart = {} } = await client.request(CART, {
+         id
+      })
+      const { locationKiosk = {} } = await client.request(LOCATION_KIOSK, {
+         id: cart.locationKioskId,
+         brandId: cart.brandId
+      })
+
+      let posistOrder = cart.posistOrderDetails
+      const posist_customer_key =
+         locationKiosk.location.brand_locations[0].posist_customer_key
+      console.log(
+         `http://posistapi.com/api/v1/online_order/push?customer_key=${posist_customer_key}`
+      )
+      const response = await axios({
+         method: 'POST',
+         url: `http://posistapi.com/api/v1/online_order/push?customer_key=${posist_customer_key}`,
+         headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Basic ${POSIST_API_KEY}`
+         },
+         data: posistOrder
+      })
+      console.log('api response', response)
+      if ([200, 201].includes(response.status)) {
+         const posistOrderResponse = response.data
+         await client.request(UPDATE_CART, {
+            id,
+            set: {
+               posistOrderResponse,
+               posistOrderStatus: 'CREATED'
+            }
+         })
+         return res.status(200).json({
+            success: true,
+            data: posistOrderResponse,
+            message: 'Order pushed to posist successfully'
+         })
+      } else {
+         return {
+            success: false,
+            message: 'Error in pushing order to posist'
+         }
+      }
+   } catch (error) {
+      console.error(error)
+      return res.status(500).json({
          success: false,
          error
       })

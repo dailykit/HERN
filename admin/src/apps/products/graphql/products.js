@@ -73,6 +73,7 @@ export const PRODUCT = {
             isValid
             isPublished
             posist_baseItemId
+            defaultProductOptionId
             productOptions(
                where: { isArchived: { _eq: false } }
                order_by: { position: desc_nulls_last }
@@ -100,6 +101,11 @@ export const PRODUCT = {
                modifier {
                   id
                   name
+               }
+               additionalModifiers {
+                  productOptionId
+                  modifierId
+                  label
                }
                operationConfig {
                   id
@@ -154,6 +160,31 @@ export const PRODUCT = {
          }
       }
    `,
+   UPDATE_PRODUCT_SETTING: gql`
+    mutation upsertProductSetting($object: [products_product_productPageSetting_insert_input!]!) {
+   upsertProductSetting: insert_products_product_productPageSetting(objects: $object, on_conflict: {constraint: productPage_productPageSetting_pkey, update_columns: value}) {
+     returning {
+       value
+     }
+   }
+ }
+    `,
+   //for seo settings(lazy query)
+   PRODUCT_PAGE_SETTINGS: gql`
+    query productPageSettings(
+      $identifier: String_comparison_exp!
+      $type: String_comparison_exp!
+      $productId: Int_comparison_exp!
+   ) {
+      products_productPageSetting(where: { identifier: $identifier, type: $type }) {
+         id
+        product: product_productPageSettings(where: { productId: $productId }) {
+            productId
+            value
+         }
+      }
+   }
+`,
 }
 
 export const PRODUCT_OPTION = {
@@ -297,3 +328,12 @@ export const PRODUCT_OPTION_TYPES = {
       }
    `,
 }
+export const DELETE_ADDITIONAL_MODIFIER = gql`
+   mutation deleteAdditionalModifier($productOptionId: Int!) {
+      delete_products_productOption_modifier(
+         where: { productOptionId: { _eq: $productOptionId } }
+      ) {
+         affected_rows
+      }
+   }
+`

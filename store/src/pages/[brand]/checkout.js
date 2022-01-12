@@ -1,37 +1,14 @@
 import React from 'react'
-import { useRouter } from 'next/router'
-import {
-   isClient,
-   getRoute,
-   processExternalFiles,
-   renderPageContent,
-   getPageProps,
-} from '../../utils'
-import { SEO, Layout } from '../../components'
-import { useUser } from '../../context'
+import { renderPageContent, getPageProps } from '../../utils'
+import { SEO, Layout, ExternalJSCSSFiles } from '../../components'
 
 const CheckoutPage = props => {
-   const router = useRouter()
-   const { isAuthenticated, isLoading } = useUser()
    const { folds, settings, navigationMenus, seoSettings, linkedFiles } = props
-   React.useEffect(() => {
-      if (!isAuthenticated && !isLoading) {
-         isClient && localStorage.setItem('landed_on', location.href)
-         router.push(getRoute('/get-started/select-plan'))
-      }
-   }, [isAuthenticated, isLoading])
-
-   React.useEffect(() => {
-      try {
-         processExternalFiles(folds, linkedFiles)
-      } catch (err) {
-         console.log('Failed to render page: ', err)
-      }
-   }, [folds])
 
    return (
       <Layout settings={settings} navigationMenus={navigationMenus}>
          <SEO seoSettings={seoSettings} />
+         <ExternalJSCSSFiles externalFiles={linkedFiles} />
          <main>{renderPageContent(folds)}</main>
       </Layout>
    )
