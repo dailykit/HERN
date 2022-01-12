@@ -14,7 +14,10 @@ import {
    Banner,
 } from '../../../../shared/components'
 import OrdersAccounts from '../Listing/OrdersAccounts'
-import { OrdersSvg, PlannedSvg } from '../../../../shared/assets/illustrationTileSvg'
+import {
+   OrdersSvg,
+   PlannedSvg,
+} from '../../../../shared/assets/illustrationTileSvg'
 const address = 'apps.order.views.home.'
 const Home = () => {
    const { t } = useTranslation()

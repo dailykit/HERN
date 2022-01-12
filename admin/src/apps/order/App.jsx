@@ -93,9 +93,9 @@ const App = () => {
    }, [state.filter.tunnel])
 
    return (
-      <StyledWrapper position={position}>
+      <StyledWrapper position={position} view={state.current_view}>
          <ErrorBoundary rootRoute="/apps/order">
-            {state.current_view === 'SUMMARY' && <OrderSummary />}
+            {/* {state.current_view === 'SUMMARY' && <OrderSummary />} */}
             {state.current_view === 'SACHET_ITEM' && <ProcessSachet />}
             {state.current_view === 'PRODUCT' && <ProcessProduct />}
          </ErrorBoundary>

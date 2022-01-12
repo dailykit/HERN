@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import { useLocation } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
 
+import './styles.css'
 import { paginate } from '../../utils'
 import { QUERIES } from '../../graphql'
 import { useOrder } from '../../context'
@@ -12,6 +13,7 @@ import { OrderListItem } from '../../components'
 import { logger } from '../../../../shared/utils'
 import { useTabs } from '../../../../shared/providers'
 import { ErrorState, InlineLoader, Banner } from '../../../../shared/components'
+import { Board } from './component/Board'
 
 const Orders = () => {
    const location = useLocation()
@@ -19,6 +21,24 @@ const Orders = () => {
    const { state, dispatch } = useOrder()
    const [active, setActive] = React.useState(1)
    const [orders, setOrders] = React.useState([])
+   let _columnId = 0
+   let _cardId = 0
+   const initialCards = Array.from({ length: 9 }).map(() => ({
+      id: ++_cardId,
+      title: `Card ${_cardId}`,
+   }))
+   const initialColumns = [
+      'PENDING',
+      'Under Processing',
+      'Ready to Dispatch',
+      'Out for delivery',
+   ].map((title, i) => ({
+      id: _columnId++,
+      title,
+      cardIds: initialCards.slice(i * 3, i * 3 + 3).map(card => card.id),
+   }))
+   const [columns, setColumns] = React.useState(initialColumns)
+   const [cards, setCards] = React.useState(initialCards)
    const {
       loading: loadingAggregate,
       data: { orders: ordersAggregate = {} } = {},
@@ -52,6 +72,55 @@ const Orders = () => {
          }
       },
    })
+
+   const addColumn = _title => {
+      const title = _title.trim()
+      if (!title) return
+
+      const newColumn = {
+         id: ++_columnId,
+         title,
+         cardIds: [],
+      }
+      setColumns(prev => [...prev, newColumn])
+   }
+   const addCard = (columnId, _title) => {
+      const title = _title.trim()
+      if (!title) return
+
+      const newCard = { id: ++_cardId, title }
+      setCards(prev => [...prev, newCard])
+      setColumns(prev => {
+         const column = prev.find(column => column.id === columnId)
+         column.cardIds.push(newCard.id)
+         return [...prev]
+      })
+   }
+
+   const moveCard = (cardId, destColumnId, index) => {
+      setColumns(prev => {
+         const column = prev.find(column => column.id === destColumnId)
+         const card = prev
+            .flatMap(column => column.cardIds)
+            .find(card => card === cardId)
+         column.cardIds.splice(index, 0, card)
+         return [...prev]
+      })
+      // this.setState(state => ({
+      //   columns: state.columns.map(column => ({
+      //     ...column,
+      //     cardIds: _.flowRight(
+      //       // 2) If this is the destination column, insert the cardId.
+      //       ids =>
+      //         column.id === destColumnId
+      //           ? [...ids.slice(0, index), cardId, ...ids.slice(index)]
+      //           : ids,
+      //       // 1) Remove the cardId for all columns
+      //       ids => ids.filter(id => id !== cardId)
+      //     )(column.cardIds),
+      //   })),
+      // }));
+   }
 
    React.useEffect(() => {
       if (!tab) {
@@ -95,7 +164,14 @@ const Orders = () => {
    return (
       <div>
          <Banner id="orders-app-orders-top" />
-         <Flex
+         <Board
+            cards={cards}
+            columns={columns}
+            moveCard={moveCard}
+            addCard={addCard}
+            addColumn={addColumn}
+         />
+         {/* <Flex
             container
             height="48px"
             alignItems="center"
@@ -142,7 +218,7 @@ const Orders = () => {
             ) : (
                <Filler message="No orders available!" />
             )}
-         </Flex>
+         </Flex> */}
          <Banner id="orders-app-orders-bottom" />
       </div>
    )
