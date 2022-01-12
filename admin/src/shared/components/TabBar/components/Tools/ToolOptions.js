@@ -121,13 +121,13 @@ const ToolOptions = ({ setIsMenuOpen, handleOpen, tools, open }) => {
                <ChevronRight size={12} color="#75787A" />
             </Arrow>
          </Tool> */}
-         <Tool onClick={() => handleOpen(tools.marketPlace)}>
+         {/* <Tool onClick={() => handleOpen(tools.marketPlace)}>
             <StoreIcon />
             <Title>MarketPlaces</Title>
             <Arrow type="ghost">
                <ChevronRight size={12} color="#75787A" />
             </Arrow>
-         </Tool>
+         </Tool> */}
          <Tool onClick={() => handleOpen(tools.profile)}>
             <Avatar
                title={user?.name || 'user'}

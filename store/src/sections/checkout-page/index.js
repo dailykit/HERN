@@ -3,7 +3,6 @@ import { useRouter } from 'next/router'
 import tw, { styled, css } from 'twin.macro'
 import { useToasts } from 'react-toast-notifications'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Radio, Space } from 'antd'
 
 import { useConfig, usePayment } from '../../lib'
 import * as Icon from '../../assets/icons'
@@ -141,14 +140,19 @@ export const Checkout = props => {
    const theme = configOf('theme-color', 'Visual')
 
    React.useEffect(() => {
-      if (!isAuthenticated && !isLoading) {
+      if (!isAuthenticated && !isLoading && cart?.source === 'subscription') {
          isClient && localStorage.setItem('landed_on', location.href)
          router.push(getRoute('/get-started/select-plan'))
       }
    }, [isAuthenticated, isLoading])
 
-   if (loading || isPaymentLoading) return <Loader inline />
-   if (isClient && !new URLSearchParams(location.search).get('id')) {
+   if ((loading || isPaymentLoading) && cart?.source === 'subscription')
+      return <Loader inline />
+   if (
+      isClient &&
+      !new URLSearchParams(location.search).get('id') &&
+      cart?.source === 'subscription'
+   ) {
       return (
          <Main>
             <div tw="pt-4 w-full">
@@ -184,7 +188,7 @@ export const Checkout = props => {
          </Main>
       )
    }
-   if (isEmpty(cart)) {
+   if (isEmpty(cart) && cart?.source === 'subscription') {
       return (
          <Main>
             <div tw="pt-4 w-full">
@@ -206,94 +210,88 @@ export const Checkout = props => {
          </Main>
       )
    }
-   if (user?.keycloakId !== cart?.customerKeycloakId) {
-      return (
-         <Main>
-            <div tw="pt-4 w-full">
-               <HelperBar type="warning">
-                  <HelperBar.SubTitle>
-                     Seems like, you do not have access to this page, let's get
-                     you to home.
-                  </HelperBar.SubTitle>
-                  <HelperBar.Button
-                     onClick={() =>
-                        (window.location.href =
-                           window.location.origin + getRoute('/'))
-                     }
-                  >
-                     Go to Home
-                  </HelperBar.Button>
-               </HelperBar>
-            </div>
-         </Main>
-      )
-   }
+   // if (isAuthenticated && user?.keycloakId !== cart?.customerKeycloakId) {
+   //    return (
+   //       <Main>
+   //          <div tw="pt-4 w-full">
+   //             <HelperBar type="warning">
+   //                <HelperBar.SubTitle>
+   //                   Seems like, you do not have access to this page, let's get
+   //                   you to home.
+   //                </HelperBar.SubTitle>
+   //                <HelperBar.Button
+   //                   onClick={() =>
+   //                      (window.location.href =
+   //                         window.location.origin + getRoute('/'))
+   //                   }
+   //                >
+   //                   Go to Home
+   //                </HelperBar.Button>
+   //             </HelperBar>
+   //          </div>
+   //       </Main>
+   //    )
+   // }
    return (
       <>
-         {cart.source === 'subscription' ? (
-            <>
-               <Main>
-                  <Form>
-                     <header tw="my-3 pb-1 border-b flex items-center justify-between">
-                        <SectionTitle theme={theme}>
-                           Profile Details
-                        </SectionTitle>
+         {cart?.source === 'subscription' ? (
+            <Main>
+               <Form>
+                  <header tw="my-3 pb-1 border-b flex items-center justify-between">
+                     <SectionTitle theme={theme}>Profile Details</SectionTitle>
+                  </header>
+                  <ProfileSection />
+                  <PaymentOptionsRenderer
+                     cartId={
+                        isClient
+                           ? new URLSearchParams(location.search).get('id')
+                           : ''
+                     }
+                  />
+               </Form>
+               {cart?.products?.length > 0 && (
+                  <CartDetails>
+                     <OrderInfo cart={cart} />
+                  </CartDetails>
+               )}
+               {isOverlayOpen && (
+                  <Overlay>
+                     <header tw="flex pr-3 pt-3">
+                        <button
+                           onClick={onOverlayClose}
+                           tw="ml-auto bg-white h-10 w-10 flex items-center justify-center rounded-full"
+                        >
+                           <Icon.CloseIcon tw="stroke-current text-gray-600" />
+                        </button>
                      </header>
-                     <ProfileSection />
-                     <PaymentOptionsRenderer
-                        cartId={
-                           isClient
-                              ? new URLSearchParams(location.search).get('id')
-                              : ''
-                        }
-                     />
-                  </Form>
-                  {cart?.products?.length > 0 && (
-                     <CartDetails>
-                        <OrderInfo cart={cart} />
-                     </CartDetails>
-                  )}
-                  {isOverlayOpen && (
-                     <Overlay>
-                        <header tw="flex pr-3 pt-3">
-                           <button
-                              onClick={onOverlayClose}
-                              tw="ml-auto bg-white h-10 w-10 flex items-center justify-center rounded-full"
-                           >
-                              <Icon.CloseIcon tw="stroke-current text-gray-600" />
-                           </button>
-                        </header>
-                        <main tw="flex-1 flex flex-col items-center justify-center">
-                           <section tw="p-4 w-11/12 lg:w-8/12 bg-white rounded flex flex-col items-center">
-                              <p tw="lg:w-3/4 text-gray-700 md:text-lg mb-4 text-center">
-                                 {overlayMessage}{' '}
-                              </p>
-                              {cart.paymentStatus === 'REQUIRES_ACTION' &&
-                                 otpPageUrl && (
-                                    <a
-                                       target="_blank"
-                                       href={otpPageUrl}
-                                       title={otpPageUrl}
-                                       rel="noreferer noopener"
-                                       style={{ color: '#fff' }}
-                                       tw="inline-block px-4 py-2 bg-orange-400 text-sm uppercase rounded font-medium tracking-wider text-indigo-600"
-                                    >
-                                       Complete Payment
-                                    </a>
-                                 )}
-                              {cart.paymentStatus !== 'PENDING' && (
-                                 <Loader inline />
+                     <main tw="flex-1 flex flex-col items-center justify-center">
+                        <section tw="p-4 w-11/12 lg:w-8/12 bg-white rounded flex flex-col items-center">
+                           <p tw="lg:w-3/4 text-gray-700 md:text-lg mb-4 text-center">
+                              {overlayMessage}{' '}
+                           </p>
+                           {cart.paymentStatus === 'REQUIRES_ACTION' &&
+                              otpPageUrl && (
+                                 <a
+                                    target="_blank"
+                                    href={otpPageUrl}
+                                    title={otpPageUrl}
+                                    rel="noreferer noopener"
+                                    style={{ color: '#fff' }}
+                                    tw="inline-block px-4 py-2 bg-orange-400 text-sm uppercase rounded font-medium tracking-wider text-indigo-600"
+                                 >
+                                    Complete Payment
+                                 </a>
                               )}
-                           </section>
-                        </main>
-                     </Overlay>
-                  )}
-               </Main>
-            </>
+                           {cart.paymentStatus !== 'PENDING' && (
+                              <Loader inline />
+                           )}
+                        </section>
+                     </main>
+                  </Overlay>
+               )}
+            </Main>
          ) : (
-            <>
-               <OnDemandCart config={props.config} />
-            </>
+            <OnDemandCart config={props.config} />
          )}
       </>
    )

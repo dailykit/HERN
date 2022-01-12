@@ -7,11 +7,14 @@ import {
    OrderTime,
    ArrowLeftIcon,
    ArrowRightIcon,
+   EditIcon,
+   CloseIcon,
 } from '../assets/icons'
 import {
    BRAND_LOCATIONS,
    BRAND_ONDEMAND_DELIVERY_RECURRENCES,
    GET_BRAND_LOCATION,
+   MUTATIONS,
    ONDEMAND_DINE_BRAND_RECURRENCES,
    ONDEMAND_PICKUP_BRAND_RECURRENCES,
    PREORDER_DELIVERY_BRAND_RECURRENCES,
@@ -34,35 +37,45 @@ import {
    generateTimeStamp,
 } from '../utils'
 import { CartContext, useUser } from '../context'
-import { useQuery } from '@apollo/react-hooks'
+import { useMutation, useQuery } from '@apollo/react-hooks'
 import { Loader, Button } from '.'
 import classNames from 'classnames'
 // import AddressListOuter from './address_list_outer'
 import { AddressTunnel } from '../sections/select-delivery/address_tunnel'
 import AddressList from './address_list'
-// import AddressList from './address_list'
+import { useToasts } from 'react-toast-notifications'
+const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
    const { brand, orderTabs, locationId, selectedOrderTab, configOf } =
       useConfig()
    const { user } = useUser()
+   const { cartState } = React.useContext(CartContext)
+   const addressByCart = cartState.cart?.address
+
    const theme = configOf('theme-color', 'Visual')
    const addresses = user?.platform_customer?.addresses || []
 
    // check whether user select fulfillment type or not
-   const selectedFulfillmentType = React.useMemo(() =>
-      selectedOrderTab ? selectedOrderTab.replace('_', ' ').split(' ')[1] : null
+   const selectedFulfillmentType = React.useMemo(
+      () =>
+         selectedOrderTab
+            ? selectedOrderTab.orderFulfillmentTypeLabel
+                 .replace('_', ' ')
+                 .split(' ')[1]
+            : orderTabs.length == 0
+            ? null
+            : orderTabs[0].orderFulfillmentTypeLabel
+                 .replace('_', ' ')
+                 .split(' ')[1],
+      [orderTabs]
    )
    const [fulfillmentType, setFulfillmentType] = useState(
-      selectedFulfillmentType || 'PICKUP'
-   )
-   const [address, setAddress] = useState(null)
-   const [brandLocation, setBrandLocation] = useState(null)
-
-   const [userCoordinate, setUserCoordinate] = useState({
-      latitude: null,
-      longitude: null,
-   })
+      selectedFulfillmentType
+   ) // DELIVERY, PICKUP or DINEIN
+   const [address, setAddress] = useState(null) // consumer address
+   const [brandLocations, setBrandLocation] = useState(null) // available brand locations on particular consumer address
+   const [showAddressForm, setShowAddressForm] = useState(false)
 
    // useEffect(() => {
    //    const localUserLocation = JSON.parse(localStorage.getItem('userLocation'))
@@ -72,7 +85,7 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
    //    }
    // }, [])
 
-   // get all store when user address available
+   // get all store when consumer address available
    const {
       loading: brandLocationLoading,
       data: { brands_brand_location_aggregate = {} } = {},
@@ -108,6 +121,7 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
       },
    })
 
+   // map orderTabs to get order fulfillment type label
    const orderTabFulfillmentType = React.useMemo(
       () =>
          orderTabs
@@ -116,33 +130,33 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
       [orderTabs]
    )
 
-   const [deliveryRadioOptions] = useState([
-      {
-         label: 'Deliver',
-         value: 'DELIVERY',
-         disabled: !(
-            orderTabFulfillmentType.includes('ONDEMAND_DELIVERY') ||
-            orderTabFulfillmentType.includes('PREORDER_DELIVERY')
-         ),
-      },
-      {
-         label: 'Pickup',
-         value: 'PICKUP',
-         disabled: !(
-            orderTabFulfillmentType.includes('ONDEMAND_PICKUP') ||
-            orderTabFulfillmentType.includes('PREORDER_PICKUP')
-         ),
-      },
-      // (orderTabFulfillmentType.includes('ONDEMAND_DINEIN') ||
-      //    orderTabFulfillmentType.includes('SCHEDULED_DINEIN')) && {
-      //    label: 'Dinein',
-      //    value: 'DINEIN',
-      //    disabled: !(
-      //       orderTabFulfillmentType.includes('ONDEMAND_DINEIN') ||
-      //       orderTabFulfillmentType.includes('SCHEDULED_DINEIN')
-      //    ),
-      // },
-   ])
+   // show
+   const fulfillmentRadioOptions = React.useMemo(() => {
+      let options = []
+      if (
+         orderTabFulfillmentType &&
+         (orderTabFulfillmentType.includes('ONDEMAND_DELIVERY') ||
+            orderTabFulfillmentType.includes('PREORDER_DELIVERY'))
+      ) {
+         options.push({ label: 'Delivery', value: 'DELIVERY' })
+      }
+      if (
+         orderTabFulfillmentType &&
+         (orderTabFulfillmentType.includes('ONDEMAND_PICKUP') ||
+            orderTabFulfillmentType.includes('PREORDER_PICKUP'))
+      ) {
+         options.push({ label: 'Pickup', value: 'PICKUP' })
+      }
+      if (
+         orderTabFulfillmentType &&
+         (orderTabFulfillmentType.includes('ONDEMAND_DINEIN') ||
+            orderTabFulfillmentType.includes('PREORDER_DINEIN'))
+      ) {
+         options.push({ label: 'Dinein', value: 'DINEIN' })
+      }
+
+      return options
+   }, [orderTabFulfillmentType])
 
    const onAddressSelect = newAddress => {
       const modifiedAddress = {
@@ -152,7 +166,7 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
          address: { zipcode: newAddress.zipcode },
       }
       setAddress(modifiedAddress)
-      localStorage.setItem('userLocation', JSON.stringify(modifiedAddress))
+      setShowAddressForm(false)
    }
    const onPickUpAddressSelect = newAddress => {
       const modifiedAddress = {
@@ -162,7 +176,7 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
          address: { zipcode: newAddress.zipcode },
       }
       setAddress(modifiedAddress)
-      localStorage.setItem('userLocation', JSON.stringify(modifiedAddress))
+      // localStorage.setItem('userLocation', JSON.stringify(modifiedAddress))
    }
 
    return (
@@ -182,36 +196,90 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
                   className="hern-cart__fulfillment-change-btn"
                   style={{
                      color: theme?.accent || 'rgba(5, 150, 105, 1)',
-                     border: `1px solid ${theme?.accent || 'rgba(5, 150, 105, 1)'
-                        }`,
+                     border: `1px solid ${
+                        theme?.accent || 'rgba(5, 150, 105, 1)'
+                     }`,
                      bottom: '8px',
+                     top: '0',
                   }}
                >
-                  Cancel
+                  Close
                </Button>
             )}
-            <Space size={'large'} style={{ margin: '10px 0' }}>
-               <Radio.Group
-                  options={deliveryRadioOptions}
-                  onChange={e => {
-                     setFulfillmentType(e.target.value)
-                     setAddress(null)
-                  }}
-                  value={fulfillmentType}
-               />
-            </Space>
+            {fulfillmentRadioOptions.length > 1 && (
+               <Space size={'large'} style={{ margin: '10px 0' }}>
+                  <Radio.Group
+                     options={fulfillmentRadioOptions}
+                     onChange={e => {
+                        setFulfillmentType(e.target.value)
+                        setAddress(null)
+                     }}
+                     value={fulfillmentType}
+                  />
+               </Space>
+            )}
             {fulfillmentType === 'DELIVERY' && (
-               <Row>
-                  <Col span={12}>
-                     <AddressTunnel outside={true} />
-                  </Col>
-                  <Col span={24}>
-                     <AddressList
-                        zipCodes={false}
-                        tunnel={false}
-                        onSelect={onAddressSelect}
-                     />
-                  </Col>
+               <Row className="hern-address__location-input-field">
+                  {address ? (
+                     showAddressForm ? (
+                        <>
+                           {showAddressForm && (
+                              <CloseIcon
+                                 onClick={() => {
+                                    setShowAddressForm(false)
+                                 }}
+                                 style={{
+                                    cursor: 'pointer',
+                                    position: 'absolute',
+                                    zIndex: '100',
+                                    right: '0',
+                                    stroke: 'currentColor',
+                                 }}
+                              />
+                           )}
+                           <Col xs={24} sm={24} md={24} lg={12} xl={12}>
+                              <AddressTunnel
+                                 outside={true}
+                                 onSubmitAddress={onAddressSelect}
+                              />
+                           </Col>
+                           {user?.keycloakId && (
+                              <Col span={24}>
+                                 <AddressList
+                                    zipCodes={false}
+                                    tunnel={false}
+                                    onSelect={onAddressSelect}
+                                 />
+                              </Col>
+                           )}
+                        </>
+                     ) : (
+                        <Col xs={24} sm={24} md={24} lg={12} xl={12}>
+                           <ConsumerAddress
+                              address={address}
+                              setShowAddressForm={setShowAddressForm}
+                           />
+                        </Col>
+                     )
+                  ) : (
+                     <>
+                        <Col xs={24} sm={24} md={24} lg={12} xl={12}>
+                           <AddressTunnel
+                              outside={true}
+                              onSubmitAddress={onAddressSelect}
+                           />
+                        </Col>
+                        {user?.keycloakId && (
+                           <Col span={24}>
+                              <AddressList
+                                 zipCodes={false}
+                                 tunnel={false}
+                                 onSelect={onAddressSelect}
+                              />
+                           </Col>
+                        )}
+                     </>
+                  )}
                </Row>
             )}
          </div>
@@ -220,7 +288,8 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
                brands_brand_location_aggregate={brands_brand_location_aggregate}
                address={address}
                orderTabFulfillmentType={orderTabFulfillmentType}
-               brandLocation={brandLocation}
+               brandLocations={brandLocations}
+               setIsEdit={setIsEdit}
             />
          )}
          {fulfillmentType === 'PICKUP' && (
@@ -229,7 +298,8 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
                address={address}
                orderTabFulfillmentType={orderTabFulfillmentType}
                onPickUpAddressSelect={onPickUpAddressSelect}
-               brandLocation={brandLocation}
+               brandLocations={brandLocations}
+               setIsEdit={setIsEdit}
             />
          )}
       </div>
@@ -241,10 +311,13 @@ const Delivery = props => {
       brands_brand_location_aggregate,
       address,
       orderTabFulfillmentType,
-      brandLocation,
+      brandLocations,
+      setIsEdit,
    } = props
    const { brand, locationId, orderTabs } = useConfig()
    const { methods, cartState } = React.useContext(CartContext)
+   const { user } = useUser()
+   const { addToast } = useToasts()
 
    const [deliveryType, setDeliveryType] = useState(null)
    const [status, setStatus] = useState('loading')
@@ -262,24 +335,41 @@ const Delivery = props => {
       // fulfillmentInfo: null,
    })
 
-   const [deliveryRadioOptions] = useState([
-      {
-         label: 'Now',
-         value: 'ONDEMAND',
-         disabled: !(
-            orderTabFulfillmentType &&
-            orderTabFulfillmentType.includes('ONDEMAND_DELIVERY')
-         ),
-      },
-      {
-         label: 'Later',
-         value: 'PREORDER',
-         disabled: !(
-            orderTabFulfillmentType &&
-            orderTabFulfillmentType.includes('PREORDER_DELIVERY')
-         ),
-      },
-   ])
+   const deliveryRadioOptions = React.useMemo(() => {
+      let options = []
+      if (
+         orderTabFulfillmentType &&
+         orderTabFulfillmentType.includes('ONDEMAND_DELIVERY')
+      ) {
+         options.push({ label: 'Now', value: 'ONDEMAND' })
+      }
+      if (
+         orderTabFulfillmentType &&
+         orderTabFulfillmentType.includes('PREORDER_DELIVERY')
+      ) {
+         options.push({ label: 'Later', value: 'PREORDER' })
+      }
+
+      return options
+   }, [orderTabFulfillmentType])
+   console.log(
+      'brands_brand_location_aggregate',
+      brands_brand_location_aggregate
+   )
+   React.useEffect(() => {
+      if (deliveryRadioOptions.length === 1) {
+         const availableDeliveryType = deliveryRadioOptions[0].value
+         setDeliveryType(availableDeliveryType)
+         const orderTabId = orderTabs.find(
+            t =>
+               t.orderFulfillmentTypeLabel ===
+               `${availableDeliveryType}_DELIVERY`
+         )?.id
+         setFulfillmentTabInfo(prev => {
+            return { ...prev, orderTabId }
+         })
+      }
+   }, [deliveryRadioOptions])
 
    const fulfillmentStatus = React.useMemo(() => {
       let type
@@ -379,7 +469,6 @@ const Delivery = props => {
    useEffect(() => {
       // if locationId already available then need not to choose store automatically
       if (
-         !locationId &&
          address &&
          sortedBrandLocation &&
          sortedBrandLocation.every(eachStore =>
@@ -389,12 +478,18 @@ const Delivery = props => {
          const firstStore = sortedBrandLocation.filter(
             eachStore => eachStore[fulfillmentStatus].status
          )[0]
+
+         console.log('firstStore', firstStore)
          setSelectedStore(firstStore)
          if (deliveryType === 'PREORDER') {
-            const deliverySlots = generateDeliverySlots([
-               firstStore.deliveryStatus.rec.recurrence,
-            ])
+            const deliverySlots = generateDeliverySlots(
+               firstStore.deliveryStatus.rec.map(
+                  eachFulfillRecurrence => eachFulfillRecurrence.recurrence
+               )
+            )
+            console.log('deliverySlots', deliverySlots)
             const miniSlots = generateMiniSlots(deliverySlots.data, 60)
+            console.log('miniSlots1', miniSlots)
             setDeliverySlots(miniSlots)
          }
       }
@@ -403,19 +498,40 @@ const Delivery = props => {
    }, [sortedBrandLocation, address])
 
    useEffect(() => {
-      if (brandLocation && address && deliveryType) {
-         ; (async () => {
-            const bar = await getAerialDistance(brandLocation, true)
-            setSortedBrandLocation(bar)
+      if (
+         brandLocations &&
+         address &&
+         deliveryType &&
+         brands_brand_location_aggregate?.aggregate?.count > 0
+      ) {
+         ;(async () => {
+            const sortedBrandLocationsData = await getAerialDistance(
+               brandLocations,
+               true,
+               address
+            )
+            setSortedBrandLocation(sortedBrandLocationsData)
          })()
       }
-   }, [brandLocation, brandRecurrences, address, deliveryType])
+   }, [
+      brandLocations,
+      brandRecurrences,
+      address,
+      deliveryType,
+      brands_brand_location_aggregate,
+   ])
 
-   const getAerialDistance = async (data, sorted = false) => {
-      const userLocation = JSON.parse(localStorage.getItem('userLocation'))
+   useEffect(() => {
+      if (brands_brand_location_aggregate?.aggregate?.count == 0) {
+         setSelectedStore(null)
+      }
+   }, [brands_brand_location_aggregate])
+
+   const getAerialDistance = async (data, sorted = false, address) => {
+      // const userLocation = JSON.parse(localStorage.getItem('userLocation'))
       const userLocationWithLatLang = {
-         latitude: userLocation.latitude,
-         longitude: userLocation.longitude,
+         latitude: address.latitude,
+         longitude: address.longitude,
       }
 
       // // add arial distance
@@ -434,14 +550,16 @@ const Delivery = props => {
             if (brandRecurrences && deliveryType === 'ONDEMAND') {
                const deliveryStatus = await isStoreOnDemandDeliveryAvailable(
                   brandRecurrences,
-                  eachStore
+                  eachStore,
+                  address
                )
                eachStore[fulfillmentStatus] = deliveryStatus
             }
             if (brandRecurrences && deliveryType === 'PREORDER') {
                const deliveryStatus = await isPreOrderDeliveryAvailable(
                   brandRecurrences,
-                  eachStore
+                  eachStore,
+                  address
                )
                eachStore[fulfillmentStatus] = deliveryStatus
             }
@@ -462,6 +580,21 @@ const Delivery = props => {
       return dataWithAerialDistance
    }
 
+   const [createAddress] = useMutation(MUTATIONS.CUSTOMER.ADDRESS.CREATE, {
+      onCompleted: () => {
+         addToast('Address has been saved.', {
+            appearance: 'success',
+         })
+         // fb pixel custom event for adding a new address
+         ReactPixel.trackCustom('addAddress', address)
+      },
+      onError: error => {
+         addToast(error.message, {
+            appearance: 'error',
+         })
+      },
+   })
+
    const onFulfillmentTimeClick = timestamp => {
       const slotInfo = {
          slot: {
@@ -471,6 +604,17 @@ const Delivery = props => {
          },
          type: 'PREORDER_DELIVERY',
       }
+      if (user?.keycloakId) {
+         const addressToBeSave = { ...address }
+         delete addressToBeSave.address
+         delete addressToBeSave.latitude
+         delete addressToBeSave.longitude
+         createAddress({
+            variables: {
+               object: { ...address, keycloakId: user?.keycloakId },
+            },
+         })
+      }
       methods.cart.update({
          variables: {
             id: cartState?.cart?.id,
@@ -478,6 +622,7 @@ const Delivery = props => {
                ...fulfillmentTabInfo,
                fulfillmentInfo: slotInfo,
                address,
+               locationId: locationId,
             },
          },
       })
@@ -510,7 +655,7 @@ const Delivery = props => {
             _set: {
                ...fulfillmentTabInfo,
                fulfillmentInfo: slotInfo,
-               locationId: selectedStore.id,
+               locationId: locationId,
                address,
             },
          },
@@ -522,7 +667,7 @@ const Delivery = props => {
    useEffect(() => {
       if (selectedStore) {
          setFulfillmentTabInfo(prev => {
-            return { ...prev, locationId: selectedStore.id }
+            return { ...prev, locationId: selectedStore.location.id }
          })
       }
    }, [selectedStore])
@@ -533,7 +678,7 @@ const Delivery = props => {
    // if (!selectedStore.deliveryStatus.status) {
    //    return <p>{selectedStore.deliveryStatus.message}</p>
    // }
-
+   console.log('selectedStore', selectedStore)
    if (!address) {
       return <p>Please Select an address</p>
    }
@@ -545,25 +690,29 @@ const Delivery = props => {
             <span>When would you like to order?</span>
          </div>
 
-         <Radio.Group
-            options={deliveryRadioOptions}
-            onChange={e => {
-               setDeliveryType(e.target.value)
-               const orderTabId = orderTabs.find(
-                  t =>
-                     t.orderFulfillmentTypeLabel ===
-                     `${e.target.value}_DELIVERY`
-               )?.id
-               setFulfillmentTabInfo(prev => {
-                  return { ...prev, orderTabId }
-               })
-            }}
-            value={deliveryType}
-            className="hern-cart__fulfillment-date-slot"
-         />
+         {deliveryRadioOptions.length > 1 && (
+            <Radio.Group
+               options={deliveryRadioOptions}
+               onChange={e => {
+                  setDeliveryType(e.target.value)
+                  const orderTabId = orderTabs.find(
+                     t =>
+                        t.orderFulfillmentTypeLabel ===
+                        `${e.target.value}_DELIVERY`
+                  )?.id
+                  setFulfillmentTabInfo(prev => {
+                     return { ...prev, orderTabId }
+                  })
+               }}
+               value={deliveryType}
+               className="hern-cart__fulfillment-date-slot"
+            />
+         )}
 
          {!deliveryType ? (
             <p>Please select a delivery type.</p>
+         ) : brands_brand_location_aggregate?.aggregate?.count == 0 ? (
+            'No store available on this location.'
          ) : sortedBrandLocation === null || selectedStore === null ? (
             <Loader inline />
          ) : !selectedStore?.deliveryStatus?.status ? (
@@ -574,7 +723,8 @@ const Delivery = props => {
             <Loader inline />
          ) : (
             <Space direction={'vertical'}>
-               <div>
+               <div className="hern-fulfillment__day-slots-container">
+                  <p>Please Select Schedule For Delivery</p>
                   <p className="hern-cart__fulfillment-slot-heading">
                      Fulfillment Date
                   </p>
@@ -583,19 +733,17 @@ const Delivery = props => {
                         setSelectedSlot(e.target.value)
                      }}
                   >
-                     <Space size={'middle'}>
-                        {deliverySlots.map((eachSlot, index) => {
-                           return (
-                              <Radio.Button value={eachSlot}>
-                                 {moment(eachSlot.date).format('DD MMM YY')}
-                              </Radio.Button>
-                           )
-                        })}
-                     </Space>
+                     {deliverySlots.map((eachSlot, index) => {
+                        return (
+                           <Radio.Button value={eachSlot} size="large">
+                              {moment(eachSlot.date).format('DD MMM YY')}
+                           </Radio.Button>
+                        )
+                     })}
                   </Radio.Group>
                </div>
                {selectedSlot && (
-                  <div>
+                  <div className="hern-fulfillment__time-slots-container">
                      <p className="hern-cart__fulfillment-slot-heading">
                         Fulfillment Time
                      </p>
@@ -611,8 +759,8 @@ const Delivery = props => {
                      >
                         {selectedSlot.slots.map((eachSlot, index, elements) => {
                            const slot = {
-                              from: eachSlot.time,
-                              to: elements[index + 1]?.time || eachSlot.end,
+                              from: eachSlot.start,
+                              to: eachSlot.end,
                            }
                            return (
                               <Radio.Button value={eachSlot}>
@@ -637,7 +785,8 @@ const Pickup = props => {
       address,
       orderTabFulfillmentType,
       onPickUpAddressSelect,
-      brandLocation,
+      brandLocations,
+      setIsEdit,
    } = props
 
    const { brand, locationId, configOf, orderTabs } = useConfig()
@@ -654,22 +803,23 @@ const Pickup = props => {
       storeCarousal.current.next()
    }
 
-   const [pickupRadioOptions] = useState([
-      {
-         label: 'Now',
-         value: 'ONDEMAND',
-         disabled:
-            orderTabFulfillmentType &&
-            !orderTabFulfillmentType.includes('ONDEMAND_PICKUP'),
-      },
-      {
-         label: 'Later',
-         value: 'PREORDER',
-         disabled:
-            orderTabFulfillmentType &&
-            !orderTabFulfillmentType.includes('PREORDER_PICKUP'),
-      },
-   ])
+   const pickupRadioOptions = React.useMemo(() => {
+      let options = []
+      if (
+         orderTabFulfillmentType &&
+         orderTabFulfillmentType.includes('ONDEMAND_PICKUP')
+      ) {
+         options.push({ label: 'Now', value: 'ONDEMAND' })
+      }
+      if (
+         orderTabFulfillmentType &&
+         orderTabFulfillmentType.includes('PREORDER_PICKUP')
+      ) {
+         options.push({ label: 'Later', value: 'PREORDER' })
+      }
+
+      return options
+   }, [orderTabFulfillmentType])
 
    const [pickupType, setPickUpType] = useState(null)
    const [onDemandBrandRecurrence, setOnDemandBrandReoccurrence] =
@@ -751,19 +901,22 @@ const Pickup = props => {
    }, [selectedStore])
 
    useEffect(() => {
-      if (brandLocation && address) {
-         ; (async () => {
-            const bar = await getAerialDistance(brandLocation, true)
-            setSortedBrandLocation(bar)
+      if (brandLocations && address) {
+         ;(async () => {
+            const brandLocationSortedByAerialDistance = await getAerialDistance(
+               brandLocations,
+               true
+            )
+            setSortedBrandLocation(brandLocationSortedByAerialDistance)
          })()
       }
-   }, [brandLocation, brandRecurrences, address, pickupType])
+   }, [brandLocations, brandRecurrences, address, pickupType])
 
    const getAerialDistance = async (data, sorted = false) => {
-      const userLocation = JSON.parse(localStorage.getItem('userLocation'))
+      // const userLocation = JSON.parse(localStorage.getItem('userLocation'))
       const userLocationWithLatLang = {
-         latitude: userLocation.latitude,
-         longitude: userLocation.longitude,
+         latitude: address.latitude,
+         longitude: address.longitude,
       }
 
       // // add arial distance
@@ -837,7 +990,7 @@ const Pickup = props => {
             _set: {
                ...fulfillmentTabInfo,
                fulfillmentInfo: slotInfo,
-               locationId: selectedStore.id,
+               locationId: locationId,
                address,
             },
          },
@@ -879,7 +1032,7 @@ const Pickup = props => {
                ...fulfillmentTabInfo,
                fulfillmentInfo: slotInfo,
                address,
-               locationId: selectedStore.id,
+               locationId: locationId,
             },
          },
       })
@@ -1062,8 +1215,8 @@ const Pickup = props => {
                      >
                         {selectedSlot.slots.map((eachSlot, index, elements) => {
                            const slot = {
-                              from: eachSlot.time,
-                              to: elements[index + 1]?.time || eachSlot.end,
+                              from: eachSlot.start,
+                              to: eachSlot.end,
                            }
                            return (
                               <Radio.Button value={eachSlot}>
@@ -1105,7 +1258,7 @@ export const Fulfillment = () => {
    const {
       loading: brandLocationLading,
       error: brandLocationError,
-      data: brandLocation,
+      data: brandLocations,
    } = useQuery(BRAND_LOCATIONS, {
       skip:
          !brand || !brand?.id || !cartState.cart || !cartState.cart?.locationId,
@@ -1122,8 +1275,11 @@ export const Fulfillment = () => {
          cartState.cart?.fulfillmentInfo?.type === 'ONDEMAND_DELIVERY' ||
          cartState.cart?.fulfillmentInfo?.type === 'PREORDER_DELIVERY'
       ) {
+         if (!brandLocations) {
+            return {}
+         }
          const { location } =
-            brandLocation.brands_brand_location_aggregate.nodes[0]
+            brandLocations.brands_brand_location_aggregate.nodes[0]
          const brandCoordinate = {
             latitude: location.lat,
             longitude: location.lng,
@@ -1147,7 +1303,7 @@ export const Fulfillment = () => {
          cartState.cart?.fulfillmentInfo?.type === 'ONDEMAND_PICKUP' ||
          cartState.cart?.fulfillmentInfo?.type === 'PREORDER_PICKUP'
       ) {
-         if (!brandLocation) {
+         if (!brandLocations) {
             return {}
          }
          const {
@@ -1162,7 +1318,7 @@ export const Fulfillment = () => {
                lat,
                lng,
             },
-         } = brandLocation.brands_brand_location_aggregate.nodes[0]
+         } = brandLocations.brands_brand_location_aggregate.nodes[0]
          const { line1, line2 } = locationAddress
          const aerialDistance = getDistance(
             {
@@ -1189,7 +1345,7 @@ export const Fulfillment = () => {
             distanceUnit: 'mi',
          }
       }
-   }, [cartState.cart, brandLocation])
+   }, [cartState.cart, brandLocations])
    if (brandLocationLading) {
       return <Loader inline />
    }
@@ -1211,24 +1367,24 @@ export const Fulfillment = () => {
                      {(cartState.cart?.fulfillmentInfo?.type ===
                         'PREORDER_PICKUP' ||
                         cartState.cart?.fulfillmentInfo?.type ===
-                        'PREORDER_DELIVERY') && (
-                           <span>
-                              {' '}
-                              on{' '}
-                              {moment(
-                                 cartState.cart?.fulfillmentInfo?.slot?.from
-                              ).format('DD MMM YYYY')}
-                              {' ('}
-                              {moment(
-                                 cartState.cart?.fulfillmentInfo?.slot?.from
-                              ).format('HH:mm')}
-                              {'-'}
-                              {moment(
-                                 cartState.cart?.fulfillmentInfo?.slot?.to
-                              ).format('HH:mm')}
-                              {')'}
-                           </span>
-                        )}
+                           'PREORDER_DELIVERY') && (
+                        <span>
+                           {' '}
+                           on{' '}
+                           {moment(
+                              cartState.cart?.fulfillmentInfo?.slot?.from
+                           ).format('DD MMM YYYY')}
+                           {' ('}
+                           {moment(
+                              cartState.cart?.fulfillmentInfo?.slot?.from
+                           ).format('HH:mm')}
+                           {'-'}
+                           {moment(
+                              cartState.cart?.fulfillmentInfo?.slot?.to
+                           ).format('HH:mm')}
+                           {')'}
+                        </span>
+                     )}
                   </label>
                   <Button
                      onClick={() => {
@@ -1237,12 +1393,27 @@ export const Fulfillment = () => {
                      className="hern-cart__fulfillment-change-btn"
                      style={{
                         color: theme?.accent || 'rgba(5, 150, 105, 1)',
-                        border: `1px solid ${theme?.accent || 'rgba(5, 150, 105, 1)'
-                           }`,
+                        border: `1px solid ${
+                           theme?.accent || 'rgba(5, 150, 105, 1)'
+                        }`,
                      }}
                   >
                      Change
                   </Button>
+                  <EditIcon
+                     style={{
+                        position: 'absolute',
+                        right: '8px',
+                        top: '8px',
+                        cursor: 'pointer',
+                     }}
+                     onClick={() => {
+                        setIsEdit(true)
+                     }}
+                     fill={theme?.accent || 'rgba(5, 150, 105, 1)'}
+                     className="hern-cart__fulfillment-change-edit-icon"
+                  />
+
                   <div
                      className={classNames(
                         'hern-store-location-selector__each-store'
@@ -1272,8 +1443,9 @@ export const Fulfillment = () => {
                      <div className="hern-store-location-selector__time-distance">
                         <div className="hern-store-location-selector__aerialDistance">
                            <span>
-                              {addressInfo.aerialDistance.toFixed(2)}{' '}
-                              {addressInfo.distanceUnit}
+                              {addressInfo?.aerialDistance &&
+                                 addressInfo?.aerialDistance.toFixed(2)}{' '}
+                              {addressInfo?.distanceUnit}
                            </span>
                         </div>
                      </div>
@@ -1282,5 +1454,40 @@ export const Fulfillment = () => {
             </div>
          )}
       </>
+   )
+}
+
+const ConsumerAddress = ({ address, setShowAddressForm }) => {
+   const { configOf } = useConfig()
+   const theme = configOf('theme-color', 'Visual')
+
+   if (!address) {
+      return null
+   }
+   return (
+      <div className="hern-fulfillment-consumer-address">
+         <label>Address</label>
+         <p>{address?.line1}</p>
+         <p>{address?.line2}</p>
+         <span>{address?.city} </span>
+         <span>{address?.state} </span>
+         <span>
+            {address?.country}
+            {', '}
+         </span>
+         <span>{address?.zipcode}</span>
+         <EditIcon
+            style={{
+               position: 'absolute',
+               right: '8px',
+               top: '8px',
+               cursor: 'pointer',
+            }}
+            onClick={() => {
+               setShowAddressForm(true)
+            }}
+            fill={theme?.accent || 'rgba(5, 150, 105, 1)'}
+         />
+      </div>
    )
 }

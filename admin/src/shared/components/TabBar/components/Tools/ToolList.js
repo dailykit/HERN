@@ -42,13 +42,13 @@ const ToolList = ({ toolbarRef, handleOpen, open, tools }) => {
          {/* <IconButton size="sm" type="ghost">
             <SettingsIcon />
          </IconButton> */}
-         <IconButton
+         {/* <IconButton
             size="sm"
             type="ghost"
             onClick={() => handleOpen(marketPlace)}
          >
             <StoreIcon color={open === marketPlace ? '#367BF5' : '#45484C'} />
-         </IconButton>
+         </IconButton> */}
 
          <StyledAvatar
             onClick={() => handleOpen(profile)}

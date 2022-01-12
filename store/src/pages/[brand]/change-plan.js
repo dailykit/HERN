@@ -1,24 +1,14 @@
 import React from 'react'
-import { Layout, SEO } from '../../components'
-import {
-   getPageProps,
-   processExternalFiles,
-   renderPageContent,
-} from '../../utils'
+import { Layout, SEO, ExternalJSCSSFiles } from '../../components'
+import { getPageProps, renderPageContent } from '../../utils'
 
 const ChangePlanPage = props => {
    const { settings, linkedFiles, navigationMenus, folds, seoSettings } = props
-   React.useEffect(() => {
-      try {
-         processExternalFiles(folds, linkedFiles)
-      } catch (err) {
-         console.log('Failed to render page: ', err)
-      }
-   }, [folds])
 
    return (
       <Layout settings={settings} navigationMenus={navigationMenus}>
          <SEO seoSettings={seoSettings} />
+         <ExternalJSCSSFiles externalFiles={linkedFiles} />
          <main>{renderPageContent(folds)}</main>
       </Layout>
    )
