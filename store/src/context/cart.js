@@ -132,11 +132,11 @@ export const CartProvider = ({ children }) => {
          setCombinedCartData(combinedCartItems)
       } else {
          const localCartId = localStorage.getItem('cart-id')
-         if (!localCartId && !isAuthenticated) {
+         if (!localCartId && !isAuthenticated && !isLoading) {
             setCombinedCartData([])
          }
       }
-   }, [cartItemsData?.cartItems])
+   }, [cartItemsData?.cartItems, isLoading])
 
    //create cart
    const [createCart] = useMutation(MUTATIONS.CART.CREATE, {

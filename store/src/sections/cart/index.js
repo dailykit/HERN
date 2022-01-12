@@ -17,9 +17,14 @@ import { UserInfo, UserType } from '../../components'
 export const OnDemandCart = () => {
    const { cartState, combinedCartItems, isCartLoading, cartItemsLoading } =
       React.useContext(CartContext)
-   const { isAuthenticated, userType } = useUser()
+   const { isAuthenticated, userType, isLoading } = useUser()
 
-   if (combinedCartItems === null || isCartLoading || cartItemsLoading) {
+   if (
+      combinedCartItems === null ||
+      isCartLoading ||
+      cartItemsLoading ||
+      isLoading
+   ) {
       return <Loader />
    }
 

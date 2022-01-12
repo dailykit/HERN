@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { CartContext, onDemandMenuContext } from '../../context'
+import { CartContext, onDemandMenuContext, useUser } from '../../context'
 import {
    Button,
    Divider,
@@ -22,6 +22,7 @@ export const CartDetails = () => {
       React.useContext(CartContext)
    const { onDemandMenu } = React.useContext(onDemandMenuContext)
    const { brand, isConfigLoading, locationId } = useConfig()
+   const { user } = useUser()
 
    //context data
    const { cart } = cartState
@@ -260,6 +261,22 @@ export const CartDetails = () => {
                               {formatCurrency(cart.billing.discount.value || 0)}
                            </span>
                         </li>
+                        {user?.keycloakId && (
+                           <li>
+                              <span>
+                                 {cart.billing.loyaltyPointsUsed.label}
+                              </span>
+                              <span>
+                                 {cart.billing.loyaltyPointsUsed.value}
+                              </span>
+                           </li>
+                        )}
+                        {user?.keycloakId && (
+                           <li>
+                              <span>{cart.billing.walletAmountUsed.label}</span>
+                              <span>{cart.billing.walletAmountUsed.value}</span>
+                           </li>
+                        )}
                         {tip && tip !== 0 && (
                            <li>
                               <span>Tip</span>
