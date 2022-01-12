@@ -604,17 +604,7 @@ const Delivery = props => {
          },
          type: 'PREORDER_DELIVERY',
       }
-      if (user?.keycloakId) {
-         const addressToBeSave = { ...address }
-         delete addressToBeSave.address
-         delete addressToBeSave.latitude
-         delete addressToBeSave.longitude
-         createAddress({
-            variables: {
-               object: { ...addressToBeSave, keycloakId: user?.keycloakId },
-            },
-         })
-      }
+
       methods.cart.update({
          variables: {
             id: cartState?.cart?.id,
