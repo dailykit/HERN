@@ -30,17 +30,19 @@ export const AddressTunnel = props => {
       ? { state: {}, dispatch: {} }
       : useDelivery()
    const { selectedOrderTab } = useConfig()
-
+   console.log('dispatch', dispatch)
    const [formStatus, setFormStatus] = React.useState('PENDING')
    const [address, setAddress] = React.useState(null)
    const [createAddress] = useMutation(MUTATIONS.CUSTOMER.ADDRESS.CREATE, {
       onCompleted: () => {
-         toggleTunnel(false)
          setFormStatus('SAVED')
          addToast('Address has been saved.', {
             appearance: 'success',
          })
-         dispatch({ type: 'SET_ADDRESS', payload: address })
+         if (!outside) {
+            toggleTunnel(false)
+            dispatch({ type: 'SET_ADDRESS', payload: address })
+         }
          // fb pixel custom event for adding a new address
          ReactPixel.trackCustom('addAddress', address)
       },
