@@ -585,7 +585,7 @@ export const Header = ({ settings, navigationMenus }) => {
                //    window.location.reload()
                // }
             } else {
-               const message = result[0][fulfillmentStatus].message
+               const message = result[0][fulfillmentStatus]?.message
                console.log('message', message)
                // setStoreStatus(prev => ({
                //    status: false,
