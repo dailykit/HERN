@@ -18,7 +18,7 @@ import { useConfig } from '../../lib'
 export const OnDemandCart = () => {
    const { cartState, combinedCartItems, isCartLoading, cartItemsLoading } =
       React.useContext(CartContext)
-   const { isAuthenticated, userType } = useUser()
+   const { isAuthenticated, userType, isLoading } = useUser()
 
    const { settings } = useConfig()
 
@@ -27,7 +27,12 @@ export const OnDemandCart = () => {
          setting => setting?.identifier === 'Loyalty Points Availability'
       )?.value?.['Loyalty Points']?.IsLoyaltyPointsAvailable?.value ?? true
 
-   if (combinedCartItems === null || isCartLoading || cartItemsLoading) {
+   if (
+      combinedCartItems === null ||
+      isCartLoading ||
+      cartItemsLoading ||
+      isLoading
+   ) {
       return <Loader />
    }
 

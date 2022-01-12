@@ -73,6 +73,7 @@ export const CartProvider = ({ children }) => {
       variables: {
          id: storedCartId,
       },
+      fetchPolicy: 'network-only',
    })
 
    // get cartItems
@@ -132,11 +133,11 @@ export const CartProvider = ({ children }) => {
          setCombinedCartData(combinedCartItems)
       } else {
          const localCartId = localStorage.getItem('cart-id')
-         if (!localCartId && !isAuthenticated) {
+         if (!localCartId && !isAuthenticated && !isLoading) {
             setCombinedCartData([])
          }
       }
-   }, [cartItemsData?.cartItems])
+   }, [cartItemsData?.cartItems, isLoading])
 
    //create cart
    const [createCart] = useMutation(MUTATIONS.CART.CREATE, {
@@ -374,7 +375,7 @@ export const CartProvider = ({ children }) => {
             }
          },
       })
-   console.log('cartData', cartData?.cart)
+   console.log('cartData', cartData?.cart, getInitialCart)
    return (
       <CartContext.Provider
          value={{
