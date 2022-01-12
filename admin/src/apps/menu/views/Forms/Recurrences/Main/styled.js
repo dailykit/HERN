@@ -65,7 +65,7 @@ export const SectionTabDay = styled.div`
    font-weight: 500;
    font-size: 18px;
    line-height: 17px;
-
+   text-align: left;
    color: #202020;
 `
 export const SectionTabDelete = {
