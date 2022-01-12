@@ -185,26 +185,43 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
             <div className="hern-cart__fulfillment-heading">
                <DineinTable style={{}} />
                <span className="hern-cart__fulfillment-heading-text">
-                  How would you like to order?
+                  How would you like to your order?
                </span>
             </div>
             {isEdit && (
-               <Button
-                  onClick={() => {
-                     setIsEdit(false)
-                  }}
-                  className="hern-cart__fulfillment-change-btn"
-                  style={{
-                     color: theme?.accent || 'rgba(5, 150, 105, 1)',
-                     border: `1px solid ${
-                        theme?.accent || 'rgba(5, 150, 105, 1)'
-                     }`,
-                     bottom: '8px',
-                     top: '0',
-                  }}
-               >
-                  Close
-               </Button>
+               <>
+                  <Button
+                     onClick={() => {
+                        setIsEdit(false)
+                     }}
+                     className="hern-cart__fulfillment-change-btn"
+                     style={{
+                        color: theme?.accent || 'rgba(5, 150, 105, 1)',
+                        border: `1px solid ${
+                           theme?.accent || 'rgba(5, 150, 105, 1)'
+                        }`,
+                        bottom: '8px',
+                        top: '0',
+                     }}
+                  >
+                     Close
+                  </Button>
+                  <CloseIcon
+                     style={{
+                        position: 'absolute',
+                        right: '8px',
+                        top: '30px',
+                        cursor: 'pointer',
+                        stroke: 'currentColor',
+                        zIndex: '100000',
+                     }}
+                     onClick={() => {
+                        setIsEdit(false)
+                     }}
+                     fill={theme?.accent || 'rgba(5, 150, 105, 1)'}
+                     className="hern-cart__fulfillment-close-icon"
+                  />
+               </>
             )}
             {fulfillmentRadioOptions.length > 1 && (
                <Space size={'large'} style={{ margin: '10px 0' }}>
