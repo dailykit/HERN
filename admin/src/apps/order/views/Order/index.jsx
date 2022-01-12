@@ -27,6 +27,8 @@ import {
    HorizontalTabPanels,
    DropdownButton,
 } from '@dailykit/ui'
+import { Tree } from 'antd'
+import styled from 'styled-components'
 
 import { Products } from './sections'
 import { formatDate } from '../../utils'
@@ -41,6 +43,7 @@ import {
    logger,
    parseAddress,
    get_env,
+   getTreeViewArray,
 } from '../../../../shared/utils'
 import {
    Tooltip,
@@ -66,6 +69,7 @@ const Order = () => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [addressTunnels, openAddressTunnel, closeAddressTunnel] = useTunnel(1)
    const [isThirdParty, setIsThirdParty] = React.useState(false)
+   const [treeviewProduct, setTreeviewProduct] = React.useState([])
    const [updateOrder] = useMutation(MUTATIONS.ORDER.UPDATE, {
       onCompleted: () => {
          toast.success('Successfully updated the order!')
@@ -106,7 +110,7 @@ const Order = () => {
       skip: !order?.cartId,
       variables: {
          where: {
-            levelType: { _eq: 'orderItem' },
+            // levelType: { _eq: 'orderItem' },
             cartId: {
                _eq: order?.cartId,
             },
@@ -117,6 +121,16 @@ const Order = () => {
       },
    })
 
+   const onSelectHandler = (selectedKeys, { selectedNodes }) => {
+      if (!isEmpty(selectedNodes)) {
+         const [selectedNode] = selectedNodes
+         dispatch({
+            type: 'SELECT_PRODUCT',
+            payload: selectedNode,
+         })
+      }
+   }
+
    React.useEffect(() => {
       if (!productsLoading && !isEmpty(products)) {
          const [product] = products
@@ -126,6 +140,17 @@ const Order = () => {
          })
       }
    }, [productsLoading, products])
+
+   React.useEffect(() => {
+      if (!isEmpty(products)) {
+         const treeViewArray = getTreeViewArray({
+            dataset: products,
+            rootIdKeyName: 'id',
+            parentIdKeyName: 'parentCartItemId',
+         })
+         setTreeviewProduct(treeViewArray)
+      }
+   }, [products])
 
    /*
    React.useEffect(() => {
@@ -488,7 +513,7 @@ const Order = () => {
                <span />
             )}
 
-            <ResponsiveFlex container style={{alignItems:'center'}}>
+            <ResponsiveFlex container style={{ alignItems: 'center' }}>
                {!isThirdParty && (
                   <>
                      <Flex width="240px">
@@ -569,12 +594,14 @@ const Order = () => {
                <>
                   <Text as="text1">Address:</Text>
                   <Spacer size="14px" xAxis />
-                  <p style={{marginBottom:'0em'}}>{parseAddress(order.cart?.address)}</p>
+                  <p style={{ marginBottom: '0em' }}>
+                     {parseAddress(order.cart?.address)}
+                  </p>
                </>
             )}
          </Flex>
          <Spacer size="8px" />
-         {isThirdParty ? (
+         {/* {isThirdParty ? (
             <HorizontalTabs>
                <HorizontalTabList style={{ padding: '0 16px' }}>
                   <HorizontalTab>Email Content</HorizontalTab>
@@ -646,6 +673,18 @@ const Order = () => {
                   ))}
                </HorizontalTabPanels>
             </HorizontalTabs>
+         )} */}
+
+         {!isEmpty(treeviewProduct) && (
+            <TreeContainer
+               onSelect={onSelectHandler}
+               fieldNames={{
+                  title: 'displayName',
+                  key: 'id',
+                  children: 'childNodes',
+               }}
+               treeData={treeviewProduct}
+            />
          )}
 
          <EditDeliveryTunnel
@@ -674,7 +713,7 @@ const TimeSlot = ({ openTunnel, type, time = {} }) => {
             <Text as="h4">{isPickup(type) ? 'Pick Up' : 'Delivery'}</Text>
             <Tooltip identifier="order_details_date_fulfillment" />
          </Flex>
-         <Text as="p" style={{marginBottom:'0em'}}>
+         <Text as="p" style={{ marginBottom: '0em' }}>
             {time?.from && moment(time?.from).format(': MMM DD, YYYY')}
             &nbsp;
             {time?.from ? moment(time?.from).format('hh:mmA') : 'N/A'}-
@@ -950,3 +989,17 @@ const EditAddressTunnel = ({ cartId, tunnels, closeTunnel, address = {} }) => {
       </Tunnels>
    )
 }
+
+const TreeContainer = styled(Tree)`
+   width: 100%;
+   margin: 0 1rem;
+   .ant-tree-treenode,
+   .ant-tree-switcher {
+      display: flex;
+      align-items: center;
+   }
+   .ant-tree-node-content-wrapper {
+      padding: 1rem;
+      background: #f5f5f5;
+   }
+`

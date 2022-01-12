@@ -30,9 +30,8 @@ const OrderListItem = ({ containerId, order = {} }) => {
       },
    })
 
-   const {
-      data: { order_orderStatusEnum: statuses = [] } = {},
-   } = useSubscription(QUERIES.ORDER.STATUSES)
+   const { data: { order_orderStatusEnum: statuses = [] } = {} } =
+      useSubscription(QUERIES.ORDER.STATUSES)
 
    const updateStatus = () => {
       if (Boolean(order.isAccepted !== true && order.isRejected !== true)) {

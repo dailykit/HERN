@@ -3,6 +3,7 @@ import React from 'react'
 import App from './App'
 import { OrderProvider, ConfigProvider } from './context'
 import { AccessProvider, TooltipProvider } from '../../shared/providers'
+import 'antd/dist/antd.css'
 
 const Settings = () => (
    <TooltipProvider app="Order App">

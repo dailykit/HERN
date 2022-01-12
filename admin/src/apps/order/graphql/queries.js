@@ -129,6 +129,7 @@ export const QUERIES = {
          subscription products($where: order_cartItem_bool_exp = {}) {
             products: cartItems(where: $where, order_by: { created_at: desc }) {
                id
+               parentCartItemId
                status
                isAddOn
                displayName
