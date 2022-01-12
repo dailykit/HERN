@@ -1775,6 +1775,7 @@ export const PREORDER_DELIVERY_BRAND_RECURRENCES = gql`
                from
                to
                id
+               slotInterval
                mileRanges {
                   from
                   city
@@ -1841,6 +1842,7 @@ export const PREORDER_PICKUP_BRAND_RECURRENCES = gql`
                from
                to
                id
+               slotInterval
                pickUpLeadTime
                mileRanges {
                   id

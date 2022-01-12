@@ -608,7 +608,7 @@ export const generateDeliverySlots = recurrences => {
       const now = new Date() // now
       const start = new Date(now.getTime() - 1000 * 60 * 60 * 24) // yesterday
       // const start = now;
-      const end = new Date(now.getTime() + 7 * 1000 * 60 * 60 * 24) // 7 days later
+      const end = new Date(now.getTime() + 10 * 1000 * 60 * 60 * 24) // 7 days later
       const dates = rrulestr(rec.rrule).between(start, end)
       dates.forEach(date => {
          if (rec.timeSlots.length) {
@@ -662,6 +662,12 @@ export const generateDeliverySlots = recurrences => {
                      const index = data.findIndex(
                         slot => slot.date === dateWithoutTime
                      )
+                     const [HH, MM, SS] = timeslot.slotInterval
+                        ? timeslot.slotInterval.split(':')
+                        : []
+                     const intervalInMinutes = Boolean(HH && MM && SS)
+                        ? +HH * 60 + +MM
+                        : null
                      if (index === -1) {
                         data.push({
                            date: dateWithoutTime,
@@ -670,6 +676,7 @@ export const generateDeliverySlots = recurrences => {
                                  start: slotStart,
                                  end: slotEnd,
                                  mileRangeId: timeslot.mileRanges[0].id,
+                                 intervalInMinutes: intervalInMinutes,
                               },
                            ],
                         })
@@ -678,6 +685,7 @@ export const generateDeliverySlots = recurrences => {
                            start: slotStart,
                            end: slotEnd,
                            mileRangeId: timeslot.mileRanges[0].id,
+                           intervalInMinutes: intervalInMinutes,
                         })
                      }
                   }
@@ -699,6 +707,7 @@ export const generateDeliverySlots = recurrences => {
 
 export const generateMiniSlots = (data, size) => {
    console.log('miniSlots', data)
+   // data --> delivery slots group by dates
    let newData = []
    data.forEach(el => {
       el.slots.forEach(slot => {
@@ -718,7 +727,11 @@ export const generateMiniSlots = (data, size) => {
                   ...slot,
                })
             }
-            startPoint = startPoint + size
+            if (slot.intervalInMinutes) {
+               startPoint = startPoint + slot.intervalInMinutes
+            } else {
+               startPoint = startPoint + size
+            }
          }
       })
    })
@@ -731,7 +744,7 @@ export const generatePickUpSlots = recurrences => {
       const now = new Date() // now
       const start = new Date(now.getTime() - 1000 * 60 * 60 * 24) // yesterday
       // const start = now;
-      const end = new Date(now.getTime() + 6 * 1000 * 60 * 60 * 24) // 7 days later
+      const end = new Date(now.getTime() + 10 * 1000 * 60 * 60 * 24) // 7 days later
       const dates = rrulestr(rec.rrule).between(start, end)
       dates.forEach(date => {
          if (rec.timeSlots.length) {

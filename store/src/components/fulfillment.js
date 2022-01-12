@@ -611,7 +611,7 @@ const Delivery = props => {
          delete addressToBeSave.longitude
          createAddress({
             variables: {
-               object: { ...address, keycloakId: user?.keycloakId },
+               object: { ...addressToBeSave, keycloakId: user?.keycloakId },
             },
          })
       }
@@ -759,8 +759,10 @@ const Delivery = props => {
                      >
                         {selectedSlot.slots.map((eachSlot, index, elements) => {
                            const slot = {
-                              from: eachSlot.start,
-                              to: eachSlot.end,
+                              from: eachSlot.time,
+                              to: moment(eachSlot.time, 'HH:mm')
+                                 .add(eachSlot.intervalInMinutes, 'm')
+                                 .format('HH:mm'),
                            }
                            return (
                               <Radio.Button value={eachSlot}>
@@ -1215,8 +1217,10 @@ const Pickup = props => {
                      >
                         {selectedSlot.slots.map((eachSlot, index, elements) => {
                            const slot = {
-                              from: eachSlot.start,
-                              to: eachSlot.end,
+                              from: eachSlot.time,
+                              to: moment(eachSlot.time, 'HH:mm')
+                                 .add(eachSlot.intervalInMinutes, 'm')
+                                 .format('HH:mm'),
                            }
                            return (
                               <Radio.Button value={eachSlot}>
