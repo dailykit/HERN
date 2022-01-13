@@ -754,8 +754,8 @@ export const Header = ({ settings, navigationMenus }) => {
                            className="hern-header__logout"
                            style={{
                               backgroundColor: `${theme?.accent
-                                    ? theme?.accent
-                                    : 'rgba(37, 99, 235, 1)'
+                                 ? theme?.accent
+                                 : 'rgba(37, 99, 235, 1)'
                                  }`,
                            }}
                            onClick={() => setShowLoginPopup(true)}
