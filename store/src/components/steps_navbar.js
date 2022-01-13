@@ -52,8 +52,8 @@ export const StepsNavbar = () => {
       }
    }, [router.pathname])
 
-   const brand = configOf('theme-brand', 'brand')
-   const theme = configOf('theme-color', 'Visual')
+   const brand = configOf('theme-brand', 'brand')?.themeBrand
+   const theme = configOf('theme-color', 'Visual')?.themeColor
 
    const logout = async () => {
       await signOut({ redirect: false })
@@ -183,7 +183,7 @@ const ProgressBar = ({ theme, current }) => {
          <span
             style={{
                width: `${current}%`,
-               backgroundColor: `${theme.accent}`,
+               backgroundColor: `${theme?.accent?.value}`,
             }}
             className="hern-steps-navbar__progressbar__before"
          ></span>
@@ -191,7 +191,7 @@ const ProgressBar = ({ theme, current }) => {
             className="hern-steps-navbar__progressbar__after"
             style={{
                left: `calc(${current}% - 8px)`,
-               backgroundColor: `${theme.highlight}`,
+               backgroundColor: `${theme?.highlight?.value}`,
             }}
          ></span>
       </span>
