@@ -5,17 +5,17 @@ import { useConfig } from '.'
 import { isClient } from '../utils'
 
 export const ScriptProvider = ({ children }) => {
-   const { configOf } = useConfig('App')
+   const { configOf } = useConfig('app')
 
    React.useEffect(() => {
-      const scripts = configOf('scripts')
-      if (!isEmpty(scripts)) {
+      const scripts = configOf('Scripts')?.scripts
+      if (!isEmpty(scripts?.value)) {
          const {
             startHead = [],
             endHead = [],
             startBody = [],
             endBody = [],
-         } = scripts
+         } = scripts?.value
 
          if (isClient) {
             // MOUNT IN STARTING OF HEAD
