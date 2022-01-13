@@ -1,6 +1,5 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import { useConfig } from '../../../lib'
 import { useUser } from '../../../context'
 import {
    SEO,
@@ -21,8 +20,7 @@ const SelectMenu = props => {
       }
    }, [isAuthenticated, isLoading])
 
-   const { configOf } = useConfig('Select-Menu')
-   const config = configOf('select-menu-header')
+
 
    return (
       <Layout settings={settings}>
