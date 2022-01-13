@@ -342,18 +342,7 @@ const Delivery = props => {
                      secondaryText,
                      ...address,
                   }))
-                  localStorage.setItem(
-                     'userLocation',
-                     JSON.stringify({
-                        latitude: userCoordinate.latitude,
-                        longitude: userCoordinate.longitude,
-                        address: {
-                           mainText,
-                           secondaryText,
-                           ...address,
-                        },
-                     })
-                  )
+
                   setLocationSearching(prev => ({
                      ...prev,
                      loading: false,
@@ -523,11 +512,7 @@ const Delivery = props => {
                address.zipcode = node.long_name
             }
          })
-         setAddress(address)
-         localStorage.setItem(
-            'userLocation',
-            JSON.stringify({ ...userLocation, address })
-         )
+         setAddress({ ...userLocation, address })
       }
    }
 
@@ -768,18 +753,7 @@ const Pickup = props => {
                      secondaryText,
                      ...address,
                   }))
-                  localStorage.setItem(
-                     'userLocation',
-                     JSON.stringify({
-                        latitude: userCoordinate.latitude,
-                        longitude: userCoordinate.longitude,
-                        address: {
-                           mainText,
-                           secondaryText,
-                           ...address,
-                        },
-                     })
-                  )
+
                   setLocationSearching(prev => ({
                      ...prev,
                      loading: !prev.loading,
@@ -873,10 +847,10 @@ const Pickup = props => {
             }
          })
          setAddress(address)
-         localStorage.setItem(
-            'userLocation',
-            JSON.stringify({ ...userLocation, address })
-         )
+         // localStorage.setItem(
+         //    'userLocation',
+         //    JSON.stringify({ ...userLocation, address })
+         // )
       }
    }
    if (!orderTabFulfillmentType) {
@@ -1107,18 +1081,7 @@ const DineIn = props => {
                      secondaryText,
                      ...address,
                   }))
-                  localStorage.setItem(
-                     'userLocation',
-                     JSON.stringify({
-                        latitude: userCoordinate.latitude,
-                        longitude: userCoordinate.longitude,
-                        address: {
-                           mainText,
-                           secondaryText,
-                           ...address,
-                        },
-                     })
-                  )
+
                   setLocationSearching(prev => ({
                      ...prev,
                      loading: !prev.loading,
@@ -1205,11 +1168,11 @@ const DineIn = props => {
                address.zipcode = node.long_name
             }
          })
-         setAddress(address)
-         localStorage.setItem(
-            'userLocation',
-            JSON.stringify({ ...userLocation, address })
-         )
+         setAddress({ ...userLocation, address })
+         // localStorage.setItem(
+         //    'userLocation',
+         //    JSON.stringify({ ...userLocation, address })
+         // )
       }
    }
 
@@ -1517,21 +1480,15 @@ export const StoreList = props => {
             Boolean(eachStore[fulfillmentStatus])
          )
       ) {
-         setSelectedStore(
-            sortedBrandLocation.filter(
-               eachStore => eachStore[fulfillmentStatus].status
-            )[0]
-         )
-         console.log(
-            'selectedStore',
-            sortedBrandLocation.filter(
-               eachStore => eachStore[fulfillmentStatus].status
-            )[0]
-         )
+         const firstStoreOfSortedBrandLocations = sortedBrandLocation.filter(
+            eachStore => eachStore[fulfillmentStatus].status
+         )[0]
+
          if (
-            LocationSelectorConfig.informationVisibility.deliverySettings
+            firstStoreOfSortedBrandLocations &&
+            (LocationSelectorConfig.informationVisibility.deliverySettings
                .storeLocationSelectionMethod.value.value === 'auto' ||
-            sortedBrandLocation.length === 1
+               sortedBrandLocation.length === 1)
          ) {
             // select automatically first store form sorted array
 
@@ -1566,24 +1523,31 @@ export const StoreList = props => {
                   )[0].location.id
                )
             )
+            localStorage.setItem(
+               'userLocation',
+               JSON.stringify({
+                  latitude: userCoordinate.latitude,
+                  longitude: userCoordinate.longitude,
+                  address: address,
+               })
+            )
 
             setShowLocationSelectionPopup(false)
          }
       }
-      return () => {
-         setSortedBrandLocation(null)
-         setBrandLocation(null)
-      }
    }, [sortedBrandLocation, address])
 
    const getAerialDistance = async (data, sorted = false, address) => {
-      const userLocation = JSON.parse(localStorage.getItem('userLocation'))
-
+      // const userLocation = JSON.parse(localStorage.getItem('userLocation'))
+      const userCoordinate = {
+         latitude: address.latitude,
+         longitude: address.longitude,
+      }
       // add arial distance
       const dataWithAerialDistance = await Promise.all(
          data.map(async eachStore => {
             const aerialDistance = getDistance(
-               userLocation,
+               userCoordinate,
                eachStore.location.locationAddress.locationCoordinates,
                0.1
             )
@@ -1927,13 +1891,14 @@ export const StoreList = props => {
                </div>
             )
          })}
-         <StoresOnMap
+         {/* <StoresOnMap
             showStoreOnMap={showStoreOnMap}
             setShowStoreOnMap={setShowStoreOnMap}
             brandLocation={brandLocation}
             settings={settings}
             brandRecurrences={brandRecurrences}
-         />
+            address={address}
+         /> */}
       </div>
    )
 }
@@ -1951,13 +1916,11 @@ const StoresOnMap = props => {
       showStoreOnMap,
       setShowStoreOnMap,
       brandRecurrences,
+      address,
    } = props
 
-   const defaultCenter = localStorage.getItem('userLocation')
-   const { latitude, longitude } = React.useMemo(
-      () => defaultCenter && JSON.parse(defaultCenter),
-      [defaultCenter]
-   )
+   // const defaultCenter = localStorage.getItem('userLocation')
+   const { latitude, longitude } = React.useMemo(() => address, [address])
 
    // defaultProps for google map
    const defaultProps = {
