@@ -113,3 +113,9 @@
       display: none;
    }
 }
+.hern-cart__fulfillment-close-icon {
+   display: unset;
+   @media (min-width: 769px) {
+      display: none;
+   }
+}
