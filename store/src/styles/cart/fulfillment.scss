@@ -91,3 +91,31 @@
 .hern-cart__store-arrow-right {
    right: -10px;
 }
+.hern-fulfillment-consumer-address {
+   margin: 0 6px;
+   position: relative;
+   padding: 10px;
+   border: 2px solid rgba(107, 114, 128, 1);
+   border-radius: 10px;
+   p {
+      margin: 0;
+   }
+}
+.hern-cart__fulfillment-change-btn {
+   display: none;
+   @media (min-width: 769px) {
+      display: unset;
+   }
+}
+.hern-cart__fulfillment-change-edit-icon {
+   display: unset;
+   @media (min-width: 769px) {
+      display: none;
+   }
+}
+.hern-cart__fulfillment-close-icon {
+   display: unset;
+   @media (min-width: 769px) {
+      display: none;
+   }
+}

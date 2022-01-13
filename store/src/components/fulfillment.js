@@ -7,11 +7,14 @@ import {
    OrderTime,
    ArrowLeftIcon,
    ArrowRightIcon,
+   EditIcon,
+   CloseIcon,
 } from '../assets/icons'
 import {
    BRAND_LOCATIONS,
    BRAND_ONDEMAND_DELIVERY_RECURRENCES,
    GET_BRAND_LOCATION,
+   MUTATIONS,
    ONDEMAND_DINE_BRAND_RECURRENCES,
    ONDEMAND_PICKUP_BRAND_RECURRENCES,
    PREORDER_DELIVERY_BRAND_RECURRENCES,
@@ -34,13 +37,14 @@ import {
    generateTimeStamp,
 } from '../utils'
 import { CartContext, useUser } from '../context'
-import { useQuery } from '@apollo/react-hooks'
+import { useMutation, useQuery } from '@apollo/react-hooks'
 import { Loader, Button } from '.'
 import classNames from 'classnames'
 // import AddressListOuter from './address_list_outer'
 import { AddressTunnel } from '../sections/select-delivery/address_tunnel'
 import AddressList from './address_list'
-// import AddressList from './address_list'
+import { useToasts } from 'react-toast-notifications'
+const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
    const { brand, orderTabs, locationId, selectedOrderTab, configOf } =
@@ -71,6 +75,7 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
    ) // DELIVERY, PICKUP or DINEIN
    const [address, setAddress] = useState(null) // consumer address
    const [brandLocations, setBrandLocation] = useState(null) // available brand locations on particular consumer address
+   const [showAddressForm, setShowAddressForm] = useState(false)
 
    // useEffect(() => {
    //    const localUserLocation = JSON.parse(localStorage.getItem('userLocation'))
@@ -161,7 +166,7 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
          address: { zipcode: newAddress.zipcode },
       }
       setAddress(modifiedAddress)
-      // localStorage.setItem('userLocation', JSON.stringify(modifiedAddress))
+      setShowAddressForm(false)
    }
    const onPickUpAddressSelect = newAddress => {
       const modifiedAddress = {
@@ -180,48 +185,118 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
             <div className="hern-cart__fulfillment-heading">
                <DineinTable style={{}} />
                <span className="hern-cart__fulfillment-heading-text">
-                  How would you like to order?
+                  How would you like to your order?
                </span>
             </div>
             {isEdit && (
-               <Button
-                  onClick={() => {
-                     setIsEdit(false)
-                  }}
-                  className="hern-cart__fulfillment-change-btn"
-                  style={{
-                     color: theme?.accent || 'rgba(5, 150, 105, 1)',
-                     border: `1px solid ${
-                        theme?.accent || 'rgba(5, 150, 105, 1)'
-                     }`,
-                     bottom: '8px',
-                  }}
-               >
-                  Cancel
-               </Button>
+               <>
+                  <Button
+                     onClick={() => {
+                        setIsEdit(false)
+                     }}
+                     className="hern-cart__fulfillment-change-btn"
+                     style={{
+                        color: theme?.accent || 'rgba(5, 150, 105, 1)',
+                        border: `1px solid ${
+                           theme?.accent || 'rgba(5, 150, 105, 1)'
+                        }`,
+                        bottom: '8px',
+                        top: '0',
+                     }}
+                  >
+                     Close
+                  </Button>
+                  <CloseIcon
+                     style={{
+                        position: 'absolute',
+                        right: '8px',
+                        top: '30px',
+                        cursor: 'pointer',
+                        stroke: 'currentColor',
+                        zIndex: '100000',
+                     }}
+                     onClick={() => {
+                        setIsEdit(false)
+                     }}
+                     fill={theme?.accent || 'rgba(5, 150, 105, 1)'}
+                     className="hern-cart__fulfillment-close-icon"
+                  />
+               </>
             )}
-            <Space size={'large'} style={{ margin: '10px 0' }}>
-               <Radio.Group
-                  options={fulfillmentRadioOptions}
-                  onChange={e => {
-                     setFulfillmentType(e.target.value)
-                     setAddress(null)
-                  }}
-                  value={fulfillmentType}
-               />
-            </Space>
+            {fulfillmentRadioOptions.length > 1 && (
+               <Space size={'large'} style={{ margin: '10px 0' }}>
+                  <Radio.Group
+                     options={fulfillmentRadioOptions}
+                     onChange={e => {
+                        setFulfillmentType(e.target.value)
+                        setAddress(null)
+                     }}
+                     value={fulfillmentType}
+                  />
+               </Space>
+            )}
             {fulfillmentType === 'DELIVERY' && (
-               <Row>
-                  <Col span={12}>
-                     <AddressTunnel outside={true} />
-                  </Col>
-                  <Col span={24}>
-                     <AddressList
-                        zipCodes={false}
-                        tunnel={false}
-                        onSelect={onAddressSelect}
-                     />
-                  </Col>
+               <Row className="hern-address__location-input-field">
+                  {address ? (
+                     showAddressForm ? (
+                        <>
+                           {showAddressForm && (
+                              <CloseIcon
+                                 onClick={() => {
+                                    setShowAddressForm(false)
+                                 }}
+                                 style={{
+                                    cursor: 'pointer',
+                                    position: 'absolute',
+                                    zIndex: '100',
+                                    right: '0',
+                                    stroke: 'currentColor',
+                                 }}
+                              />
+                           )}
+                           <Col xs={24} sm={24} md={24} lg={12} xl={12}>
+                              <AddressTunnel
+                                 outside={true}
+                                 onSubmitAddress={onAddressSelect}
+                              />
+                           </Col>
+                           {user?.keycloakId && (
+                              <Col span={24}>
+                                 <AddressList
+                                    zipCodes={false}
+                                    tunnel={false}
+                                    onSelect={onAddressSelect}
+                                 />
+                              </Col>
+                           )}
+                        </>
+                     ) : (
+                        <Col xs={24} sm={24} md={24} lg={12} xl={12}>
+                           <ConsumerAddress
+                              address={address}
+                              setShowAddressForm={setShowAddressForm}
+                           />
+                        </Col>
+                     )
+                  ) : (
+                     <>
+                        <Col xs={24} sm={24} md={24} lg={12} xl={12}>
+                           <AddressTunnel
+                              outside={true}
+                              onSubmitAddress={onAddressSelect}
+                           />
+                        </Col>
+                        {user?.keycloakId && (
+                           <Col span={24}>
+                              <AddressList
+                                 zipCodes={false}
+                                 tunnel={false}
+                                 onSelect={onAddressSelect}
+                              />
+                           </Col>
+                        )}
+                     </>
+                  )}
                </Row>
             )}
          </div>
@@ -258,6 +333,8 @@ const Delivery = props => {
    } = props
    const { brand, locationId, orderTabs } = useConfig()
    const { methods, cartState } = React.useContext(CartContext)
+   const { user } = useUser()
+   const { addToast } = useToasts()
 
    const [deliveryType, setDeliveryType] = useState(null)
    const [status, setStatus] = useState('loading')
@@ -292,6 +369,24 @@ const Delivery = props => {
 
       return options
    }, [orderTabFulfillmentType])
+   console.log(
+      'brands_brand_location_aggregate',
+      brands_brand_location_aggregate
+   )
+   React.useEffect(() => {
+      if (deliveryRadioOptions.length === 1) {
+         const availableDeliveryType = deliveryRadioOptions[0].value
+         setDeliveryType(availableDeliveryType)
+         const orderTabId = orderTabs.find(
+            t =>
+               t.orderFulfillmentTypeLabel ===
+               `${availableDeliveryType}_DELIVERY`
+         )?.id
+         setFulfillmentTabInfo(prev => {
+            return { ...prev, orderTabId }
+         })
+      }
+   }, [deliveryRadioOptions])
 
    const fulfillmentStatus = React.useMemo(() => {
       let type
@@ -411,6 +506,7 @@ const Delivery = props => {
             )
             console.log('deliverySlots', deliverySlots)
             const miniSlots = generateMiniSlots(deliverySlots.data, 60)
+            console.log('miniSlots1', miniSlots)
             setDeliverySlots(miniSlots)
          }
       }
@@ -419,18 +515,36 @@ const Delivery = props => {
    }, [sortedBrandLocation, address])
 
    useEffect(() => {
-      if (brandLocations && address && deliveryType) {
+      if (
+         brandLocations &&
+         address &&
+         deliveryType &&
+         brands_brand_location_aggregate?.aggregate?.count > 0
+      ) {
          ;(async () => {
             const sortedBrandLocationsData = await getAerialDistance(
                brandLocations,
-               true
+               true,
+               address
             )
             setSortedBrandLocation(sortedBrandLocationsData)
          })()
       }
-   }, [brandLocations, brandRecurrences, address, deliveryType])
+   }, [
+      brandLocations,
+      brandRecurrences,
+      address,
+      deliveryType,
+      brands_brand_location_aggregate,
+   ])
 
-   const getAerialDistance = async (data, sorted = false) => {
+   useEffect(() => {
+      if (brands_brand_location_aggregate?.aggregate?.count == 0) {
+         setSelectedStore(null)
+      }
+   }, [brands_brand_location_aggregate])
+
+   const getAerialDistance = async (data, sorted = false, address) => {
       // const userLocation = JSON.parse(localStorage.getItem('userLocation'))
       const userLocationWithLatLang = {
          latitude: address.latitude,
@@ -453,14 +567,16 @@ const Delivery = props => {
             if (brandRecurrences && deliveryType === 'ONDEMAND') {
                const deliveryStatus = await isStoreOnDemandDeliveryAvailable(
                   brandRecurrences,
-                  eachStore
+                  eachStore,
+                  address
                )
                eachStore[fulfillmentStatus] = deliveryStatus
             }
             if (brandRecurrences && deliveryType === 'PREORDER') {
                const deliveryStatus = await isPreOrderDeliveryAvailable(
                   brandRecurrences,
-                  eachStore
+                  eachStore,
+                  address
                )
                eachStore[fulfillmentStatus] = deliveryStatus
             }
@@ -481,6 +597,21 @@ const Delivery = props => {
       return dataWithAerialDistance
    }
 
+   const [createAddress] = useMutation(MUTATIONS.CUSTOMER.ADDRESS.CREATE, {
+      onCompleted: () => {
+         addToast('Address has been saved.', {
+            appearance: 'success',
+         })
+         // fb pixel custom event for adding a new address
+         ReactPixel.trackCustom('addAddress', address)
+      },
+      onError: error => {
+         addToast(error.message, {
+            appearance: 'error',
+         })
+      },
+   })
+
    const onFulfillmentTimeClick = timestamp => {
       const slotInfo = {
          slot: {
@@ -490,6 +621,7 @@ const Delivery = props => {
          },
          type: 'PREORDER_DELIVERY',
       }
+
       methods.cart.update({
          variables: {
             id: cartState?.cart?.id,
@@ -553,7 +685,7 @@ const Delivery = props => {
    // if (!selectedStore.deliveryStatus.status) {
    //    return <p>{selectedStore.deliveryStatus.message}</p>
    // }
-
+   console.log('selectedStore', selectedStore)
    if (!address) {
       return <p>Please Select an address</p>
    }
@@ -565,25 +697,29 @@ const Delivery = props => {
             <span>When would you like to order?</span>
          </div>
 
-         <Radio.Group
-            options={deliveryRadioOptions}
-            onChange={e => {
-               setDeliveryType(e.target.value)
-               const orderTabId = orderTabs.find(
-                  t =>
-                     t.orderFulfillmentTypeLabel ===
-                     `${e.target.value}_DELIVERY`
-               )?.id
-               setFulfillmentTabInfo(prev => {
-                  return { ...prev, orderTabId }
-               })
-            }}
-            value={deliveryType}
-            className="hern-cart__fulfillment-date-slot"
-         />
+         {deliveryRadioOptions.length > 1 && (
+            <Radio.Group
+               options={deliveryRadioOptions}
+               onChange={e => {
+                  setDeliveryType(e.target.value)
+                  const orderTabId = orderTabs.find(
+                     t =>
+                        t.orderFulfillmentTypeLabel ===
+                        `${e.target.value}_DELIVERY`
+                  )?.id
+                  setFulfillmentTabInfo(prev => {
+                     return { ...prev, orderTabId }
+                  })
+               }}
+               value={deliveryType}
+               className="hern-cart__fulfillment-date-slot"
+            />
+         )}
 
          {!deliveryType ? (
             <p>Please select a delivery type.</p>
+         ) : brands_brand_location_aggregate?.aggregate?.count == 0 ? (
+            'No store available on this location.'
          ) : sortedBrandLocation === null || selectedStore === null ? (
             <Loader inline />
          ) : !selectedStore?.deliveryStatus?.status ? (
@@ -594,7 +730,8 @@ const Delivery = props => {
             <Loader inline />
          ) : (
             <Space direction={'vertical'}>
-               <div>
+               <div className="hern-fulfillment__day-slots-container">
+                  <p>Please Select Schedule For Delivery</p>
                   <p className="hern-cart__fulfillment-slot-heading">
                      Fulfillment Date
                   </p>
@@ -603,19 +740,17 @@ const Delivery = props => {
                         setSelectedSlot(e.target.value)
                      }}
                   >
-                     <Space size={'middle'}>
-                        {deliverySlots.map((eachSlot, index) => {
-                           return (
-                              <Radio.Button value={eachSlot}>
-                                 {moment(eachSlot.date).format('DD MMM YY')}
-                              </Radio.Button>
-                           )
-                        })}
-                     </Space>
+                     {deliverySlots.map((eachSlot, index) => {
+                        return (
+                           <Radio.Button value={eachSlot} size="large">
+                              {moment(eachSlot.date).format('DD MMM YY')}
+                           </Radio.Button>
+                        )
+                     })}
                   </Radio.Group>
                </div>
                {selectedSlot && (
-                  <div>
+                  <div className="hern-fulfillment__time-slots-container">
                      <p className="hern-cart__fulfillment-slot-heading">
                         Fulfillment Time
                      </p>
@@ -632,7 +767,9 @@ const Delivery = props => {
                         {selectedSlot.slots.map((eachSlot, index, elements) => {
                            const slot = {
                               from: eachSlot.time,
-                              to: elements[index + 1]?.time || eachSlot.end,
+                              to: moment(eachSlot.time, 'HH:mm')
+                                 .add(eachSlot.intervalInMinutes, 'm')
+                                 .format('HH:mm'),
                            }
                            return (
                               <Radio.Button value={eachSlot}>
@@ -1088,7 +1225,9 @@ const Pickup = props => {
                         {selectedSlot.slots.map((eachSlot, index, elements) => {
                            const slot = {
                               from: eachSlot.time,
-                              to: elements[index + 1]?.time || eachSlot.end,
+                              to: moment(eachSlot.time, 'HH:mm')
+                                 .add(eachSlot.intervalInMinutes, 'm')
+                                 .format('HH:mm'),
                            }
                            return (
                               <Radio.Button value={eachSlot}>
@@ -1272,6 +1411,20 @@ export const Fulfillment = () => {
                   >
                      Change
                   </Button>
+                  <EditIcon
+                     style={{
+                        position: 'absolute',
+                        right: '8px',
+                        top: '8px',
+                        cursor: 'pointer',
+                     }}
+                     onClick={() => {
+                        setIsEdit(true)
+                     }}
+                     fill={theme?.accent || 'rgba(5, 150, 105, 1)'}
+                     className="hern-cart__fulfillment-change-edit-icon"
+                  />
+
                   <div
                      className={classNames(
                         'hern-store-location-selector__each-store'
@@ -1312,5 +1465,40 @@ export const Fulfillment = () => {
             </div>
          )}
       </>
+   )
+}
+
+const ConsumerAddress = ({ address, setShowAddressForm }) => {
+   const { configOf } = useConfig()
+   const theme = configOf('theme-color', 'Visual')
+
+   if (!address) {
+      return null
+   }
+   return (
+      <div className="hern-fulfillment-consumer-address">
+         <label>Address</label>
+         <p>{address?.line1}</p>
+         <p>{address?.line2}</p>
+         <span>{address?.city} </span>
+         <span>{address?.state} </span>
+         <span>
+            {address?.country}
+            {', '}
+         </span>
+         <span>{address?.zipcode}</span>
+         <EditIcon
+            style={{
+               position: 'absolute',
+               right: '8px',
+               top: '8px',
+               cursor: 'pointer',
+            }}
+            onClick={() => {
+               setShowAddressForm(true)
+            }}
+            fill={theme?.accent || 'rgba(5, 150, 105, 1)'}
+         />
+      </div>
    )
 }

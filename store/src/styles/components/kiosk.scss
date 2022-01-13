@@ -265,12 +265,26 @@
    align-items: center;
    margin: 1em 0;
 }
+.hern-kiosk__menu-product-type-list {
+   display: flex;
+   overflow: auto;
+   display: -webkit-flex;
+   display: -moz-box;
+}
 .hern-kiosk__menu-product-type-radio-btn {
    font-size: 23px;
-   padding: 0.5em;
-   min-width: 7em;
+   padding: 0.5em 0.8em;
    text-align: center;
    height: auto;
+   margin: 0 0.5em;
+   white-space: nowrap;
+   &::-webkit-scrollbar {
+      width: 1px;
+   }
+   &::-webkit-scrollbar-thumb {
+      background: #e5f0f7;
+      border-radius: 2px;
+   }
 }
 // menu part where products are being show
 .hern-kiosk__menu-header {

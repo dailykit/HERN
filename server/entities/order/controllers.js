@@ -2,6 +2,7 @@ import axios from 'axios'
 
 import { client } from '../../lib/graphql'
 import { SEND_MAIL, UPDATE_CART } from './graphql/mutations'
+import fs from 'fs'
 import {
    CUSTOMER,
    EMAIL_SETTINGS,
@@ -162,11 +163,14 @@ export const posistOrderPush = async (req, res) => {
          brandId: cart.brandId
       })
 
-      const posistOrder = cart.posistOrderDetails
+      let posistOrder = cart.posistOrderDetails
       const posist_customer_key =
          locationKiosk.location.brand_locations[0].posist_customer_key
-      console.log(posistOrder)
-      const response = await axios.post({
+      console.log(
+         `http://posistapi.com/api/v1/online_order/push?customer_key=${posist_customer_key}`
+      )
+      const response = await axios({
+         method: 'POST',
          url: `http://posistapi.com/api/v1/online_order/push?customer_key=${posist_customer_key}`,
          headers: {
             'Content-Type': 'application/json',
@@ -174,11 +178,12 @@ export const posistOrderPush = async (req, res) => {
          },
          data: posistOrder
       })
-      if (response.status === 200) {
+      console.log('api response', response)
+      if ([200, 201].includes(response.status)) {
          const posistOrderResponse = response.data
          await client.request(UPDATE_CART, {
             id,
-            _set: {
+            set: {
                posistOrderResponse,
                posistOrderStatus: 'CREATED'
             }

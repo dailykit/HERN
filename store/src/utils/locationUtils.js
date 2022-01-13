@@ -108,14 +108,6 @@ export const isStoreOnDemandDeliveryAvailable = async (
                         }
                      }
                   }
-               } else {
-                  if (rec == finalRecurrences.length - 1) {
-                     return {
-                        status: false,
-                        message:
-                           'Sorry, you seem to be placed far out of our delivery range.',
-                     }
-                  }
                }
             }
          } else {
@@ -139,7 +131,8 @@ export const isStoreOnDemandDeliveryAvailable = async (
 
 export const isPreOrderDeliveryAvailable = async (
    brandRecurrences,
-   eachStore
+   eachStore,
+   address
 ) => {
    // this fn use for pre order delivery
    // bcz in pre order we need not to validate time (check either store available by distance or not)
@@ -169,7 +162,8 @@ export const isPreOrderDeliveryAvailable = async (
                const distanceDeliveryStatus =
                   await isStoreDeliveryAvailableByDistance(
                      timeslot.mileRanges,
-                     eachStore
+                     eachStore,
+                     address
                   )
                const { aerial, drivable, zipcode, geoBoundary } =
                   distanceDeliveryStatus.result
@@ -180,7 +174,6 @@ export const isPreOrderDeliveryAvailable = async (
                      finalRecurrences[rec],
                   ]
                }
-
                if (
                   rec == finalRecurrences.length - 1 &&
                   fulfilledRecurrences.length > 0
@@ -196,13 +189,13 @@ export const isPreOrderDeliveryAvailable = async (
                         : 'Delivery not available in your location.',
                      drivableDistance: distanceDeliveryStatus.drivableDistance,
                   }
-               }
-            } else {
-               if (rec == finalRecurrences.length - 1) {
-                  return {
-                     status: false,
-                     message:
-                        'Sorry, you seem to be placed far out of our delivery range.',
+               } else {
+                  if (rec == finalRecurrences.length - 1) {
+                     return {
+                        status: false,
+                        message:
+                           'Sorry, you seem to be placed far out of our delivery range.',
+                     }
                   }
                }
             }
@@ -211,8 +204,13 @@ export const isPreOrderDeliveryAvailable = async (
    }
 }
 
-const isStoreDeliveryAvailableByDistance = async (mileRanges, eachStore) => {
-   const userLocation = JSON.parse(localStorage.getItem('userLocation'))
+const isStoreDeliveryAvailableByDistance = async (
+   mileRanges,
+   eachStore,
+   address
+) => {
+   const userLocation = { ...address }
+   console.log('userLocation', userLocation)
    let isStoreDeliveryAvailableByDistanceStatus = {
       aerial: true,
       drivable: true,
@@ -602,7 +600,7 @@ export const generateDeliverySlots = recurrences => {
       const now = new Date() // now
       const start = new Date(now.getTime() - 1000 * 60 * 60 * 24) // yesterday
       // const start = now;
-      const end = new Date(now.getTime() + 7 * 1000 * 60 * 60 * 24) // 7 days later
+      const end = new Date(now.getTime() + 10 * 1000 * 60 * 60 * 24) // 7 days later
       const dates = rrulestr(rec.rrule).between(start, end)
       dates.forEach(date => {
          if (rec.timeSlots.length) {
@@ -656,6 +654,12 @@ export const generateDeliverySlots = recurrences => {
                      const index = data.findIndex(
                         slot => slot.date === dateWithoutTime
                      )
+                     const [HH, MM, SS] = timeslot.slotInterval
+                        ? timeslot.slotInterval.split(':')
+                        : []
+                     const intervalInMinutes = Boolean(HH && MM && SS)
+                        ? +HH * 60 + +MM
+                        : null
                      if (index === -1) {
                         data.push({
                            date: dateWithoutTime,
@@ -664,6 +668,7 @@ export const generateDeliverySlots = recurrences => {
                                  start: slotStart,
                                  end: slotEnd,
                                  mileRangeId: timeslot.mileRanges[0].id,
+                                 intervalInMinutes: intervalInMinutes,
                               },
                            ],
                         })
@@ -672,6 +677,7 @@ export const generateDeliverySlots = recurrences => {
                            start: slotStart,
                            end: slotEnd,
                            mileRangeId: timeslot.mileRanges[0].id,
+                           intervalInMinutes: intervalInMinutes,
                         })
                      }
                   }
@@ -693,6 +699,7 @@ export const generateDeliverySlots = recurrences => {
 
 export const generateMiniSlots = (data, size) => {
    console.log('miniSlots', data)
+   // data --> delivery slots group by dates
    let newData = []
    data.forEach(el => {
       el.slots.forEach(slot => {
@@ -712,7 +719,11 @@ export const generateMiniSlots = (data, size) => {
                   ...slot,
                })
             }
-            startPoint = startPoint + size
+            if (slot.intervalInMinutes) {
+               startPoint = startPoint + slot.intervalInMinutes
+            } else {
+               startPoint = startPoint + size
+            }
          }
       })
    })
@@ -725,7 +736,7 @@ export const generatePickUpSlots = recurrences => {
       const now = new Date() // now
       const start = new Date(now.getTime() - 1000 * 60 * 60 * 24) // yesterday
       // const start = now;
-      const end = new Date(now.getTime() + 6 * 1000 * 60 * 60 * 24) // 7 days later
+      const end = new Date(now.getTime() + 10 * 1000 * 60 * 60 * 24) // 7 days later
       const dates = rrulestr(rec.rrule).between(start, end)
       dates.forEach(date => {
          if (rec.timeSlots.length) {
@@ -817,7 +828,8 @@ export const generateTimeStamp = (time, date, slotTiming) => {
 export const autoSelectStore = async (
    brandLocation,
    brandRecurrences,
-   fulfillmentType
+   fulfillmentType,
+   address
 ) => {
    const fulfillmentStatus = () => {
       let type
@@ -862,14 +874,16 @@ export const autoSelectStore = async (
             if (brandRecurrences && fulfillmentType === 'ONDEMAND_DELIVERY') {
                const deliveryStatus = await isStoreOnDemandDeliveryAvailable(
                   brandRecurrences,
-                  eachStore
+                  eachStore,
+                  address
                )
                eachStore[fulfillmentStatus()] = deliveryStatus
             }
             if (brandRecurrences && fulfillmentType === 'PREORDER_DELIVERY') {
                const deliveryStatus = await isPreOrderDeliveryAvailable(
                   brandRecurrences,
-                  eachStore
+                  eachStore,
+                  address
                )
                eachStore[fulfillmentStatus()] = deliveryStatus
             }
@@ -914,6 +928,6 @@ export const autoSelectStore = async (
       }
       return dataWithAerialDistance
    }
-   const bar = await getAerialDistance(brandLocation, true)
+   const bar = await getAerialDistance(brandLocation, true, address)
    return [bar, fulfillmentStatus()]
 }

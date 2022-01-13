@@ -6,15 +6,20 @@ import { getRoute } from '../utils'
 import classNames from 'classnames'
 
 export const ProfileSidebar = ({ toggle = true, logout }) => {
-   const { configOf } = useConfig()
+   const { configOf, settings } = useConfig()
    const router = useRouter()
+
+   const isLoyaltyPointsAvailable =
+      settings?.rewards?.find(
+         setting => setting?.identifier === 'Loyalty Points Availability'
+      )?.value?.['Loyalty Points']?.IsLoyaltyPointsAvailable?.value ?? true
 
    const loyaltyPointsSettings = configOf('Loyalty Points', 'rewards')
 
    const walletSettings = configOf('Wallet', 'rewards')
    const referralsAllowed = configOf('Referral', 'rewards')?.isAvailable
 
-   const [menu] = useState([
+   const sidebarLinks = [
       { title: 'Profile', href: '/account/profile/' },
       {
          title: `${walletSettings?.label ? walletSettings.label : 'Wallet'}`,
@@ -32,8 +37,12 @@ export const ProfileSidebar = ({ toggle = true, logout }) => {
       { title: 'Order History', href: '/account/orders/' },
       { title: 'Manage Addresses', href: '/account/addresses/' },
       { title: 'Manage Cards', href: '/account/cards/' },
-   ])
-
+   ]
+   const menu = sidebarLinks.filter(item =>
+      !isLoyaltyPointsAvailable
+         ? item.href !== '/account/loyalty-points/'
+         : true
+   )
    return (
       <aside className={`hern-profile-sidebar${toggle ? '--toggle' : ''}`}>
          <ul>

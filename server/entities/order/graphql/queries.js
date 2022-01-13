@@ -313,6 +313,8 @@ query cart($id: Int!) {
     toUseAvailablePaymentOptionId
     customerInfo
     posistOrderDetails
+    locationKioskId
+    brandId
     availablePaymentOption {
       id
       label
@@ -333,7 +335,7 @@ query cart($id: Int!) {
 
 export const LOCATION_KIOSK = `
 query LOCATION_KIOSK($id: Int!, $brandId: Int!) {
-   brands_locationKiosk_by_pk(id: $id) {
+   locationKiosk:brands_locationKiosk_by_pk(id: $id) {
      location {
        brand_locations(where: {brandId: {_eq: $brandId}}) {
          posist_customer_key

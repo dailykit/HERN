@@ -1615,6 +1615,8 @@ export const GET_CART = gql`
          billing: billingDetails
          subscriptionOccurenceId
          toUseAvailablePaymentOptionId
+         posistOrderStatus
+         posistOrderResponse
          subscriptionOccurence {
             id
             fulfillmentDate
@@ -1773,6 +1775,7 @@ export const PREORDER_DELIVERY_BRAND_RECURRENCES = gql`
                from
                to
                id
+               slotInterval
                mileRanges {
                   from
                   city
@@ -1839,6 +1842,7 @@ export const PREORDER_PICKUP_BRAND_RECURRENCES = gql`
                from
                to
                id
+               slotInterval
                pickUpLeadTime
                mileRanges {
                   id
