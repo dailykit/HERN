@@ -63,20 +63,6 @@ export const CUSTOMER_DATA = gql`
                   lastName
                   email
                   phoneNumber
-                  defaultStripePaymentMethod {
-                     brand
-                     last4
-                     expMonth
-                     expYear
-                  }
-                  defaultCustomerAddress {
-                     line1
-                     line2
-                     city
-                     state
-                     zipcode
-                     country
-                  }
                }
                orders_aggregate {
                   aggregate {
