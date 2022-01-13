@@ -7,7 +7,7 @@ import { useDelivery } from './state'
 import { useUser, CartContext } from '../../context'
 import { MUTATIONS } from '../../graphql'
 import { CloseIcon } from '../../assets/icons'
-import { useScript, isClient, get_env } from '../../utils'
+import { useScript, isClient, get_env, useOnClickOutside } from '../../utils'
 import { Tunnel, Button, Form, Spacer } from '../../components'
 import { useConfig } from '../../lib'
 import { Modal } from 'antd'
@@ -30,6 +30,19 @@ export const AddressTunnel = props => {
       ? { state: {}, dispatch: {} }
       : useDelivery()
    const { selectedOrderTab } = useConfig()
+   const userAddressFormRef = React.useRef()
+   useOnClickOutside(userAddressFormRef, () => {
+      if (!address.line1) {
+         setAddressWarnings(prev => ({
+            ...prev,
+            line1: true,
+         }))
+         return
+      }
+      console.log('this is valid location')
+      handleSubmit()
+   })
+
    console.log('dispatch', dispatch)
    const [formStatus, setFormStatus] = React.useState('PENDING')
    const [address, setAddress] = React.useState(null)
@@ -176,17 +189,7 @@ export const AddressTunnel = props => {
                (address.zipcode ? (
                   <div
                      className="hern-address__address-form"
-                     onBlur={() => {
-                        if (!address.line1) {
-                           setAddressWarnings(prev => ({
-                              ...prev,
-                              line1: true,
-                           }))
-                           return
-                        }
-                        console.log('this is valid location')
-                        handleSubmit()
-                     }}
+                     ref={userAddressFormRef}
                   >
                      <Form.Field>
                         <Form.Label>
