@@ -492,22 +492,24 @@ const Delivery = props => {
             Boolean(eachStore[fulfillmentStatus])
          )
       ) {
-         const firstStore = sortedBrandLocation.filter(
+         const firstStoreOfSortedBrandLocations = sortedBrandLocation.filter(
             eachStore => eachStore[fulfillmentStatus].status
          )[0]
 
-         console.log('firstStore', firstStore)
-         setSelectedStore(firstStore)
-         if (deliveryType === 'PREORDER') {
-            const deliverySlots = generateDeliverySlots(
-               firstStore.deliveryStatus.rec.map(
-                  eachFulfillRecurrence => eachFulfillRecurrence.recurrence
+         // set selectedStore undefined if not available else selected fulfilled first store
+         setSelectedStore(firstStoreOfSortedBrandLocations)
+         if (firstStoreOfSortedBrandLocations) {
+            if (deliveryType === 'PREORDER') {
+               const deliverySlots = generateDeliverySlots(
+                  firstStoreOfSortedBrandLocations.deliveryStatus.rec.map(
+                     eachFulfillRecurrence => eachFulfillRecurrence.recurrence
+                  )
                )
-            )
-            console.log('deliverySlots', deliverySlots)
-            const miniSlots = generateMiniSlots(deliverySlots.data, 60)
-            console.log('miniSlots1', miniSlots)
-            setDeliverySlots(miniSlots)
+               console.log('deliverySlots', deliverySlots)
+               const miniSlots = generateMiniSlots(deliverySlots.data, 60)
+               console.log('miniSlots1', miniSlots)
+               setDeliverySlots(miniSlots)
+            }
          }
       }
       if (locationId) {
@@ -723,7 +725,7 @@ const Delivery = props => {
          ) : sortedBrandLocation === null || selectedStore === null ? (
             <Loader inline />
          ) : !selectedStore?.deliveryStatus?.status ? (
-            <p>{selectedStore.deliveryStatus.message}</p>
+            <p>{sortedBrandLocation[0].deliveryStatus.message}</p>
          ) : deliveryType === 'ONDEMAND' ? (
             <p>Store Available for Delivery</p>
          ) : deliverySlots == null ? (
