@@ -110,7 +110,7 @@ export const PaymentProvider = ({ children }) => {
    // subscription to get cart payment info
    const { error: hasCartPaymentError, loading: isCartPaymentLoading } =
       useSubscription(GET_CART_PAYMENT_INFO, {
-         skip: !cartId && !isAuthenticated,
+         skip: !cartId,
          variables: {
             where: {
                _and: [
@@ -121,21 +121,25 @@ export const PaymentProvider = ({ children }) => {
                   },
                   {
                      _or: [
-                        cartId
-                           ? {
-                                cartId: {
-                                   _eq: cartId,
-                                },
-                             }
-                           : {},
+                        {
+                           ...(cartId
+                              ? {
+                                   cartId: {
+                                      _eq: cartId,
+                                   },
+                                }
+                              : {}),
+                        },
                         {
                            cart: {
                               brandId: {
                                  _eq: brand?.id,
                               },
-                              customerKeycloakId: {
-                                 _eq: user?.keycloakId,
-                              },
+                              ...(isAuthenticated && {
+                                 customerKeycloakId: {
+                                    _eq: user?.keycloakId,
+                                 },
+                              }),
                            },
                         },
                      ],
@@ -275,10 +279,8 @@ export const PaymentProvider = ({ children }) => {
          })
       }
    }
-   const onPaymentModalClose = (isFailed = false) => {
-      setIsProcessingPayment(false)
-      setIsPaymentInitiated(false)
-      updateCartPayment({
+   const onPaymentModalClose = async (isFailed = false) => {
+      await updateCartPayment({
          variables: {
             id: cartPayment?.id,
             _set: {
@@ -287,6 +289,8 @@ export const PaymentProvider = ({ children }) => {
             },
          },
       })
+      setIsProcessingPayment(false)
+      setIsPaymentInitiated(false)
    }
    const normalModalClose = () => {
       setIsProcessingPayment(false)
@@ -320,56 +324,68 @@ export const PaymentProvider = ({ children }) => {
    }
 
    const initializePrinting = async () => {
-      normalModalClose()
+      console.log('inside  print method....')
+      onPaymentModalClose()
+      // await dispatch({
+      //    type: 'UPDATE_INITIAL_STATE',
+      //    payload: {
+      //       printDetails: {
+      //          isPrintInitiated: true,
+      //          printStatus: 'ongoing',
+      //          message: '',
+      //       },
+      //    },
+      // })
+      // if (!isEmpty(settings) && isClient) {
+      //    const path = settings['printing'].find(
+      //       item => item?.identifier === 'KioskCustomerTokenTemplate'
+      //    )?.value?.path?.value
+      //    const DATA_HUB_HTTPS = get_env('DATA_HUB_HTTPS')
+      //    const { origin } = new URL(DATA_HUB_HTTPS)
+      //    const templateOptions = encodeURI(
+      //       JSON.stringify({
+      //          path,
+      //          format: 'raw',
+      //          readVar: false,
+      //       })
+      //    )
+      //    const templateVariable = encodeURI(
+      //       JSON.stringify({
+      //          cartId: cartState?.cart?.id,
+      //          paymentMode:
+      //             cartPayment?.availablePaymentOption?.supportedPaymentOption
+      //                ?.paymentOptionLabel === 'TERMINAL'
+      //                ? 'card'
+      //                : 'counter',
+      //       })
+      //    )
+      //    const url = `${origin}/template/?template=${templateOptions}&data=${templateVariable}`
+      //    console.log('url.....', url)
+
+      //    await createPrintJob({
+      //       variables: {
+      //          contentType: 'raw_uri',
+      //          printerId: kioskDetails?.printerId,
+      //          source: 'Dailykit',
+      //          title: `TOKEN-${cartPayment?.cartId}`,
+      //          url,
+      //       },
+      //    })
+      // }
       await dispatch({
          type: 'UPDATE_INITIAL_STATE',
          payload: {
             printDetails: {
+               ...state.printDetails,
                isPrintInitiated: true,
-               printStatus: 'ongoing',
-               message: '',
+               printStatus: 'success',
             },
          },
       })
-      if (!isEmpty(settings) && isClient) {
-         const path = settings['printing'].find(
-            item => item?.identifier === 'KioskCustomerTokenTemplate'
-         )?.value?.path?.value
-         const DATA_HUB_HTTPS = get_env('DATA_HUB_HTTPS')
-         const { origin } = new URL(DATA_HUB_HTTPS)
-         const templateOptions = encodeURI(
-            JSON.stringify({
-               path,
-               format: 'raw',
-               readVar: false,
-            })
-         )
-         const templateVariable = encodeURI(
-            JSON.stringify({
-               cartId: cartState?.cart?.id,
-               paymentMode:
-                  cartPayment?.availablePaymentOption?.supportedPaymentOption
-                     ?.paymentOptionLabel === 'TERMINAL'
-                     ? 'card'
-                     : 'counter',
-            })
-         )
-         const url = `${origin}/template/?template=${templateOptions}&data=${templateVariable}`
-         console.log('url.....', url)
-
-         await createPrintJob({
-            variables: {
-               contentType: 'raw_uri',
-               printerId: kioskDetails?.printerId,
-               source: 'Dailykit',
-               title: `TOKEN-${cartPayment?.cartId}`,
-               url,
-            },
-         })
-      }
    }
 
    const createPosistOrder = async () => {
+      console.log('creating posist order....')
       await updateCart({
          variables: {
             id: cartPayment?.cartId,
@@ -393,10 +409,24 @@ export const PaymentProvider = ({ children }) => {
       })
    }
 
-   const resetPrintDetails = () => {
-      dispatch({
+   const resetPaymentProviderStates = async () => {
+      await dispatch({
          type: 'UPDATE_INITIAL_STATE',
          payload: {
+            profileInfo: {
+               firstName: '',
+               lastName: '',
+               phoneNumber: '',
+               email: '',
+            },
+            paymentInfo: {
+               tunnel: {
+                  isVisible: false,
+               },
+               selectedAvailablePaymentOption: null,
+            },
+            paymentLoading: false,
+            paymentLifeCycleState: '',
             printDetails: {
                isPrintInitiated: false,
                printStatus: 'not-started',
@@ -404,6 +434,11 @@ export const PaymentProvider = ({ children }) => {
             },
          },
       })
+      setCartId(null)
+      setCartPayment(null)
+      setIsPaymentLoading(true)
+      setIsPaymentInitiated(false)
+      setIsProcessingPayment(false)
    }
 
    // const closePrintModal = () => {
@@ -474,6 +509,7 @@ export const PaymentProvider = ({ children }) => {
          !_isEmpty(cartState) &&
          cartState?.cart?.posistOrderStatus === 'CREATED'
       ) {
+         console.log('intializingggg print....')
          initializePrinting()
       }
    }, [cartState?.cart?.posistOrderStatus])
@@ -588,11 +624,13 @@ export const PaymentProvider = ({ children }) => {
             initializePrinting,
          }}
       >
-         {isPaymentInitiated && (
+         {isPaymentInitiated && !isEmpty(cartPayment) && (
             <PaymentProcessingModal
                isOpen={isProcessingPayment}
                cartPayment={cartPayment}
-               closeModal={isFailed => onPaymentModalClose(isFailed)}
+               closeModal={async isFailed =>
+                  await onPaymentModalClose(isFailed)
+               }
                normalModalClose={normalModalClose}
                cancelPayment={onCancelledHandler}
                isTestingByPass={BY_PASS_TERMINAL_PAYMENT === 'true'}
@@ -606,7 +644,7 @@ export const PaymentProvider = ({ children }) => {
             <PrintProcessingModal
                printDetails={state.printDetails}
                setPrintStatus={setPrintStatus}
-               resetPrintDetails={resetPrintDetails}
+               resetPaymentProviderStates={resetPaymentProviderStates}
                initializePrinting={initializePrinting}
             />
          )}

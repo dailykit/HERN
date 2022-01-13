@@ -13,7 +13,7 @@ const PrintProcessingModal = ({
    printDetails,
    setPrintStatus = () => null,
    initializePrinting = () => null,
-   resetPrintDetails = () => null,
+   resetPaymentProviderStates = () => null,
 }) => {
    console.log('PrintProcessingModal')
 
@@ -73,9 +73,9 @@ const PrintProcessingModal = ({
 
    useEffect(() => {
       if (printStatus === 'success') {
-         setTimeout(() => {
+         setTimeout(async () => {
             if (isKioskMode) {
-               resetPrintDetails()
+               await resetPaymentProviderStates()
                clearCurrentPage()
                setStoredCartId(null)
                setIsIdleScreen(true)
