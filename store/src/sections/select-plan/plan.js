@@ -88,8 +88,9 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
    }
 
    const config = configOf('primary-labels')?.primaryLabels
-   const colorConfig = configOf('theme-color', 'Visual')
-   const priceDisplay = configOf('priceDisplay', 'Visual')
+   const colorConfig = configOf('theme-color', 'Visual')?.themeColor
+   const priceDisplay = configOf('priceDisplay', 'Visual')?.priceDisplay
+
    const yieldLabel = {
       singular: config?.yieldLabel?.singular || 'serving',
       plural: config?.yieldLabel?.singular || 'servings',
@@ -98,7 +99,7 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
       singular: config?.itemLabel?.singular || 'recipe',
       plural: config?.itemLabel?.singular || 'recipes',
    }
-   const theme = configOf('theme-color', 'Visual')
+
    if (!defaultServing) return <Loader inline />
 
    const planClasses = classNames('hern-our-plans__plan', {
@@ -120,7 +121,7 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                <h2
                   className="hern-our-plans__plan__title"
                   style={{
-                     color: `${theme?.accent ? theme?.accent : 'rgba(5, 150, 105, 1)'
+                     color: `${colorConfig?.accent?.value ? colorConfig?.accent?.value : 'rgba(5, 150, 105, 1)'
                         }`,
                   }}
                >
@@ -234,8 +235,8 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                         )}
                         <span
                            style={{
-                              color: `${theme?.accent
-                                 ? theme?.accent
+                              color: `${colorConfig?.accent?.value
+                                 ? colorConfig?.accent?.value
                                  : 'rgba(5, 150, 105, 1)'
                                  }`,
                            }}
@@ -265,8 +266,8 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                         )}
                         <span
                            style={{
-                              color: `${theme?.accent
-                                 ? theme?.accent
+                              color: `${colorConfig?.accent?.value
+                                 ? colorConfig?.accent?.value
                                  : 'rgba(5, 150, 105, 1)'
                                  }`,
                            }}
@@ -290,8 +291,8 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                         <div className="hern-our-plans__price-total-servings__wrapper">
                            <span
                               style={{
-                                 color: `${theme?.accent
-                                    ? theme?.accent
+                                 color: `${colorConfig?.accent?.value
+                                    ? colorConfig?.accent?.value
                                     : 'rgba(5, 150, 105, 1)'
                                     }`,
                               }}
@@ -316,8 +317,8 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                   className="hern-our-plans__select-plan__btn"
                   onClick={() => selectPlan()}
                   style={{
-                     backgroundColor: `${colorConfig?.accent
-                        ? colorConfig?.accent
+                     backgroundColor: `${colorConfig?.accent?.value
+                        ? colorConfig?.accent?.value
                         : 'rgba(96, 165, 250, 1)'
                         }`,
                   }}
