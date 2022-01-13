@@ -59,7 +59,8 @@ export const StepsNavbar = () => {
       }
    }, [router.pathname])
 
-   const brand = configOf('theme-brand', 'brand')?.themeBrand
+   //config properties
+   const brand = configOf('Brand Info', 'brand')
    const theme = configOf('theme-color', 'Visual')?.themeColor
 
    const logout = async () => {
@@ -105,16 +106,16 @@ export const StepsNavbar = () => {
       <div className="hern-steps-navbar">
          <Link href={getRoute('/')}>
             <div className="hern-steps-navbar__brand">
-               {brand?.logo?.logoMark && (
+               {brand?.brandLogo?.value && (
                   <img
                      className="hern-steps-navbar__brand__img"
-                     src={brand?.logo?.logoMark}
-                     alt={brand?.name || 'Subscription Shop'}
+                     src={brand?.brandLogo?.value}
+                     alt={brand?.brandName?.value || 'Subscription Shop'}
                   />
                )}
-               {brand?.name && (
+               {brand?.brandName?.value && (
                   <span className="hern-steps-navbar__brand__text">
-                     {brand?.name}
+                     {brand?.brandName?.value}
                   </span>
                )}
             </div>
