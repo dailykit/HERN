@@ -108,14 +108,6 @@ export const isStoreOnDemandDeliveryAvailable = async (
                         }
                      }
                   }
-               } else {
-                  if (rec == finalRecurrences.length - 1) {
-                     return {
-                        status: false,
-                        message:
-                           'Sorry, you seem to be placed far out of our delivery range.',
-                     }
-                  }
                }
             }
          } else {
@@ -182,7 +174,6 @@ export const isPreOrderDeliveryAvailable = async (
                      finalRecurrences[rec],
                   ]
                }
-
                if (
                   rec == finalRecurrences.length - 1 &&
                   fulfilledRecurrences.length > 0
@@ -198,13 +189,13 @@ export const isPreOrderDeliveryAvailable = async (
                         : 'Delivery not available in your location.',
                      drivableDistance: distanceDeliveryStatus.drivableDistance,
                   }
-               }
-            } else {
-               if (rec == finalRecurrences.length - 1) {
-                  return {
-                     status: false,
-                     message:
-                        'Sorry, you seem to be placed far out of our delivery range.',
+               } else {
+                  if (rec == finalRecurrences.length - 1) {
+                     return {
+                        status: false,
+                        message:
+                           'Sorry, you seem to be placed far out of our delivery range.',
+                     }
                   }
                }
             }
@@ -219,6 +210,7 @@ const isStoreDeliveryAvailableByDistance = async (
    address
 ) => {
    const userLocation = { ...address }
+   console.log('userLocation', userLocation)
    let isStoreDeliveryAvailableByDistanceStatus = {
       aerial: true,
       drivable: true,
