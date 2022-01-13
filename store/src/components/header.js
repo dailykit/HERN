@@ -925,6 +925,7 @@ const LocationInfo = ({ settings }) => {
                         </span>
                      </div>
                   )}
+                  <div>
                   <div className="hern-header__location-content">
                      {userLocation?.mainText
                         ? userLocation?.mainText
@@ -934,6 +935,7 @@ const LocationInfo = ({ settings }) => {
                   </div>
                   <div className="hern-header__location-warning">
                      {!storeStatus.status ? storeStatus.message : ''}
+                  </div>
                   </div>
                </div>
             )}

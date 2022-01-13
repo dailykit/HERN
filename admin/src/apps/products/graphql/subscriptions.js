@@ -500,6 +500,7 @@ export const PRODUCT_OPTIONS = gql`
          quantity
          product {
             name
+            id
          }
          type
       }
