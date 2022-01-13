@@ -1,11 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { toast } from 'react-toastify'
 import { Filler, Flex } from '@dailykit/ui'
 import styled from 'styled-components'
 import { useLocation } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 
-import './styles.css'
 import { paginate } from '../../utils'
 import { QUERIES } from '../../graphql'
 import { useOrder } from '../../context'
@@ -13,7 +13,70 @@ import { OrderListItem } from '../../components'
 import { logger } from '../../../../shared/utils'
 import { useTabs } from '../../../../shared/providers'
 import { ErrorState, InlineLoader, Banner } from '../../../../shared/components'
-import { Board } from './component/Board'
+
+const itemsFromBackend = [
+   { id: 12, content: 'First task' },
+   { id: 121, content: 'Second task' },
+   { id: 123, content: 'Third task' },
+   { id: 1232, content: 'Fourth task' },
+   { id: 111, content: 'Fifth task' },
+]
+
+const columnsFromBackend = {
+   141: {
+      name: 'Requested',
+      items: itemsFromBackend,
+   },
+   144: {
+      name: 'To do',
+      items: [],
+   },
+   148: {
+      name: 'In Progress',
+      items: [],
+   },
+   155: {
+      name: 'Done',
+      items: [],
+   },
+}
+
+const onDragEnd = (result, columns, setColumns) => {
+   if (!result.destination) return
+   const { source, destination } = result
+
+   if (source.droppableId !== destination.droppableId) {
+      const sourceColumn = columns[source.droppableId]
+      const destColumn = columns[destination.droppableId]
+      const sourceItems = [...sourceColumn.items]
+      const destItems = [...destColumn.items]
+      const [removed] = sourceItems.splice(source.index, 1)
+      destItems.splice(destination.index, 0, removed)
+      setColumns({
+         ...columns,
+         [source.droppableId]: {
+            ...sourceColumn,
+            items: sourceItems,
+         },
+         [destination.droppableId]: {
+            ...destColumn,
+            items: destItems,
+         },
+      })
+   } else {
+      const column = columns[source.droppableId]
+      const copiedItems = [...column.items]
+      const [removed] = copiedItems.splice(source.index, 1)
+      copiedItems.splice(destination.index, 0, removed)
+      setColumns({
+         ...columns,
+         [source.droppableId]: {
+            ...column,
+            items: copiedItems,
+         },
+      })
+   }
+}
 
 const Orders = () => {
    const location = useLocation()
@@ -21,24 +84,24 @@ const Orders = () => {
    const { state, dispatch } = useOrder()
    const [active, setActive] = React.useState(1)
    const [orders, setOrders] = React.useState([])
-   let _columnId = 0
-   let _cardId = 0
-   const initialCards = Array.from({ length: 9 }).map(() => ({
-      id: ++_cardId,
-      title: `Card ${_cardId}`,
-   }))
-   const initialColumns = [
-      'PENDING',
-      'Under Processing',
-      'Ready to Dispatch',
-      'Out for delivery',
-   ].map((title, i) => ({
-      id: _columnId++,
-      title,
-      cardIds: initialCards.slice(i * 3, i * 3 + 3).map(card => card.id),
-   }))
-   const [columns, setColumns] = React.useState(initialColumns)
-   const [cards, setCards] = React.useState(initialCards)
+   const [columns, setColumns] = useState({
+      pending: {
+         name: 'Pending',
+         items: itemsFromBackend,
+      },
+      underProcess: {
+         name: 'Under Processing',
+         items: [],
+      },
+      readyToDispatch: {
+         name: 'Ready to Dispatch',
+         items: [],
+      },
+      outForDelivery: {
+         name: 'Out for delivery',
+         items: [],
+      },
+   })
    const {
       loading: loadingAggregate,
       data: { orders: ordersAggregate = {} } = {},
@@ -72,55 +135,6 @@ const Orders = () => {
          }
       },
    })
-
-   const addColumn = _title => {
-      const title = _title.trim()
-      if (!title) return
-
-      const newColumn = {
-         id: ++_columnId,
-         title,
-         cardIds: [],
-      }
-      setColumns(prev => [...prev, newColumn])
-   }
-   const addCard = (columnId, _title) => {
-      const title = _title.trim()
-      if (!title) return
-
-      const newCard = { id: ++_cardId, title }
-      setCards(prev => [...prev, newCard])
-      setColumns(prev => {
-         const column = prev.find(column => column.id === columnId)
-         column.cardIds.push(newCard.id)
-         return [...prev]
-      })
-   }
-
-   const moveCard = (cardId, destColumnId, index) => {
-      setColumns(prev => {
-         const column = prev.find(column => column.id === destColumnId)
-         const card = prev
-            .flatMap(column => column.cardIds)
-            .find(card => card === cardId)
-         column.cardIds.splice(index, 0, card)
-         return [...prev]
-      })
-      // this.setState(state => ({
-      //   columns: state.columns.map(column => ({
-      //     ...column,
-      //     cardIds: _.flowRight(
-      //       // 2) If this is the destination column, insert the cardId.
-      //       ids =>
-      //         column.id === destColumnId
-      //           ? [...ids.slice(0, index), cardId, ...ids.slice(index)]
-      //           : ids,
-      //       // 1) Remove the cardId for all columns
-      //       ids => ids.filter(id => id !== cardId)
-      //     )(column.cardIds),
-      //   })),
-      // }));
-   }
 
    React.useEffect(() => {
       if (!tab) {
@@ -164,13 +178,89 @@ const Orders = () => {
    return (
       <div>
          <Banner id="orders-app-orders-top" />
-         <Board
-            cards={cards}
-            columns={columns}
-            moveCard={moveCard}
-            addCard={addCard}
-            addColumn={addColumn}
-         />
+         <div
+            style={{
+               display: 'flex',
+               justifyContent: 'center',
+               height: '100%',
+            }}
+         >
+            <DragDropContext
+               onDragEnd={result => onDragEnd(result, columns, setColumns)}
+            >
+               {Object.entries(columns).map(([columnId, column], index) => {
+                  return (
+                     <div
+                        style={{
+                           display: 'flex',
+                           flexDirection: 'column',
+                           alignItems: 'center',
+                        }}
+                        key={columnId}
+                     >
+                        <h2>{column.name}</h2>
+                        <div style={{ margin: 8 }}>
+                           <Droppable droppableId={columnId} key={columnId}>
+                              {(provided, snapshot) => {
+                                 return (
+                                    <div
+                                       {...provided.droppableProps}
+                                       ref={provided.innerRef}
+                                       style={{
+                                          background: snapshot.isDraggingOver
+                                             ? 'lightblue'
+                                             : 'lightgrey',
+                                          padding: 4,
+                                          width: 250,
+                                          minHeight: 500,
+                                       }}
+                                    >
+                                       {column.items.map((item, index) => {
+                                          return (
+                                             <Draggable
+                                                key={item.id}
+                                                draggableId={item.id.toString()}
+                                                index={index}
+                                             >
+                                                {(provided, snapshot) => {
+                                                   return (
+                                                      <div
+                                                         ref={provided.innerRef}
+                                                         {...provided.draggableProps}
+                                                         {...provided.dragHandleProps}
+                                                         style={{
+                                                            userSelect: 'none',
+                                                            padding: 16,
+                                                            margin: '0 0 8px 0',
+                                                            minHeight: '50px',
+                                                            backgroundColor:
+                                                               snapshot.isDragging
+                                                                  ? '#263B4A'
+                                                                  : '#456C86',
+                                                            color: 'white',
+                                                            ...provided
+                                                               .draggableProps
+                                                               .style,
+                                                         }}
+                                                      >
+                                                         {item.content}
+                                                      </div>
+                                                   )
+                                                }}
+                                             </Draggable>
+                                          )
+                                       })}
+                                       {provided.placeholder}
+                                    </div>
+                                 )
+                              }}
+                           </Droppable>
+                        </div>
+                     </div>
+                  )
+               })}
+            </DragDropContext>
+         </div>
          {/* <Flex
             container
             height="48px"
