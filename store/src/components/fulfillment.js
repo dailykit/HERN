@@ -165,6 +165,7 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
          longitude: newAddress.lng,
          address: { zipcode: newAddress.zipcode },
       }
+      console.log('modifiedAddress', modifiedAddress)
       setAddress(modifiedAddress)
       setShowAddressForm(false)
    }
@@ -258,6 +259,7 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
                               <AddressTunnel
                                  outside={true}
                                  onSubmitAddress={onAddressSelect}
+                                 useLocalAddress={true}
                               />
                            </Col>
                            {user?.keycloakId && (
@@ -284,6 +286,7 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
                            <AddressTunnel
                               outside={true}
                               onSubmitAddress={onAddressSelect}
+                              useLocalAddress={true}
                            />
                         </Col>
                         {user?.keycloakId && (
@@ -552,7 +555,7 @@ const Delivery = props => {
          latitude: address.latitude,
          longitude: address.longitude,
       }
-
+      console.log('getAerialDistance', address)
       // // add arial distance
       const dataWithAerialDistance = await Promise.all(
          data.map(async eachStore => {
@@ -1057,6 +1060,7 @@ const Pickup = props => {
                   outside={true}
                   showAddressForm={false}
                   onInputFiledSelect={onPickUpAddressSelect}
+                  useLocalAddress={true}
                />
             </Col>
          </Row>
