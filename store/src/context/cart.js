@@ -67,13 +67,13 @@ export const CartProvider = ({ children }) => {
    const {
       loading: isCartLoading,
       error: getInitialCart,
-      data: cartData,
+      data: cartData = {},
    } = useSubscription(GET_CART, {
       skip: !storedCartId,
       variables: {
          id: storedCartId,
       },
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'no-cache',
    })
 
    // get cartItems
@@ -86,36 +86,25 @@ export const CartProvider = ({ children }) => {
       variables: {
          id: storedCartId,
       },
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'no-cache',
    })
 
    useEffect(() => {
-      console.log('kiosk paymentOption', cartData)
       if (!isCartLoading && !isEmpty(cartData) && oiType === 'Kiosk Ordering') {
          const terminalPaymentOption = cartData?.cart?.paymentMethods.find(
             option =>
                option?.supportedPaymentOption?.paymentOptionLabel === 'TERMINAL'
          )
-         console.log('kiosk paymentOption 1', terminalPaymentOption)
-
          const codPaymentOption = cartData?.cart?.paymentMethods.find(
             option =>
                option?.supportedPaymentOption?.paymentOptionLabel === 'CASH'
          )
-         console.log('kiosk paymentOption 2', codPaymentOption)
          const terminalPaymentOptionId = !isEmpty(terminalPaymentOption)
             ? terminalPaymentOption?.id
             : null
-         console.log('kiosk paymentOption 3', terminalPaymentOptionId)
          const codPaymentOptionId = !isEmpty(codPaymentOption)
             ? codPaymentOption?.id
             : null
-         console.log('kiosk paymentOption 4', codPaymentOptionId)
-         console.log(
-            'kiosk paymentOption 5',
-            terminalPaymentOptionId,
-            codPaymentOptionId
-         )
          cartReducer({
             type: 'KIOSK_PAYMENT_OPTION',
             payload: {
@@ -318,6 +307,7 @@ export const CartProvider = ({ children }) => {
             },
          },
          skip: !(brand?.id && user?.keycloakId),
+         fetchPolicy: 'no-cache',
          onSubscriptionData: ({ subscriptionData }) => {
             // pending cart available
             if (
@@ -375,14 +365,14 @@ export const CartProvider = ({ children }) => {
             }
          },
       })
-   console.log('cartData', cartData?.cart, getInitialCart)
+
    return (
       <CartContext.Provider
          value={{
             cartState: {
-               cart: cartData?.cart,
-               cartItems: cartItemsData?.cartItems,
-               kioskPaymentOption: cartState.kioskPaymentOption,
+               cart: cartData?.cart || {},
+               cartItems: cartItemsData?.cartItems || {},
+               kioskPaymentOption: cartState.kioskPaymentOption || {},
             },
             cartReducer,
             addToCart,

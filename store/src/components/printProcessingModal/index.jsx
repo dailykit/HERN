@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { Result, Spin, Button, Modal } from 'antd'
 import { Wrapper } from './styles'
 import { Button as StyledButton } from '../button'
-import { useWindowSize, isKiosk } from '../../utils'
+import { useWindowSize, isKiosk, isClient } from '../../utils'
 import { useCart } from '../../context'
 import { useConfig } from '../../lib'
 
@@ -78,7 +78,9 @@ const PrintProcessingModal = ({
                await resetPaymentProviderStates()
                clearCurrentPage()
                setStoredCartId(null)
-               setIsIdleScreen(true)
+               if (isClient) {
+                  window.location.reload()
+               }
             }
          }, 5000)
       }

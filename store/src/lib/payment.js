@@ -108,79 +108,43 @@ export const PaymentProvider = ({ children }) => {
    const ALLOW_POSIST_PUSH_ORDER = get_env('ALLOW_POSIST_PUSH_ORDER')
 
    // subscription to get cart payment info
-   const { error: hasCartPaymentError, loading: isCartPaymentLoading } =
-      useSubscription(GET_CART_PAYMENT_INFO, {
-         skip: !cartId,
-         variables: {
-            where: {
-               _and: [
-                  {
-                     isResultShown: {
-                        _eq: false,
-                     },
-                  },
-                  {
-                     _or: [
-                        {
-                           ...(cartId
-                              ? {
-                                   cartId: {
-                                      _eq: cartId,
-                                   },
-                                }
-                              : {}),
-                        },
-                        {
-                           cart: {
-                              brandId: {
-                                 _eq: brand?.id,
-                              },
-                              ...(isAuthenticated && {
-                                 customerKeycloakId: {
-                                    _eq: user?.keycloakId,
-                                 },
-                              }),
-                           },
-                        },
-                     ],
-                  },
-               ],
+   const {
+      data: { cartPayments: cartPaymentsFromQuery = [] } = {},
+      error: hasCartPaymentError,
+      loading: isCartPaymentLoading,
+   } = useSubscription(GET_CART_PAYMENT_INFO, {
+      skip: !cartId,
+      fetchPolicy: 'no-cache',
+      variables: {
+         where: {
+            isResultShown: {
+               _eq: false,
             },
-         },
-         onSubscriptionData: ({
-            subscriptionData: {
-               data: { cartPayments: requiredCartPayments = [] } = {},
-            } = {},
-         } = {}) => {
-            console.log(
-               'cartPayment from payment----->>>>',
-               requiredCartPayments
-            )
-            if (!_isEmpty(requiredCartPayments)) {
-               const [requiredCartPayment] = requiredCartPayments
-               dispatch({
-                  type: 'SET_PAYMENT_INFO',
-                  payload: {
-                     selectedAvailablePaymentOption:
-                        requiredCartPayment.availablePaymentOption,
-                  },
-               })
+            _or: [
+               {
+                  ...(cartId && {
+                     cartId: {
+                        _eq: cartId,
+                     },
+                  }),
+               },
+               {
+                  ...(isAuthenticated && {
+                     cart: {
+                        brandId: {
+                           _eq: brand?.id,
+                        },
 
-               dispatch({
-                  type: 'UPDATE_INITIAL_STATE',
-                  payload: {
-                     paymentLifeCycleState:
-                        requiredCartPayment?.paymentStatus || 'PENDING',
-                  },
-               })
-               console.log(
-                  '2nd cartPayment from payment----->>>>',
-                  requiredCartPayments
-               )
-               setCartPayment(requiredCartPayment)
-            }
+                        customerKeycloakId: {
+                           _eq: user?.keycloakId,
+                        },
+                     },
+                  }),
+               },
+            ],
          },
-      })
+      },
+   })
 
    // mutation to update cart payment
    const [updateCartPayment] = useMutation(UPDATE_CART_PAYMENT, {
@@ -242,7 +206,8 @@ export const PaymentProvider = ({ children }) => {
          },
       })
 
-   // methods to set/update reducer state
+   //<---------  methods to set/update reducer state  --------->
+
    const setProfileInfo = profileInfo => {
       dispatch({
          type: 'SET_PROFILE_INFO',
@@ -441,29 +406,14 @@ export const PaymentProvider = ({ children }) => {
       setIsProcessingPayment(false)
    }
 
-   // const closePrintModal = () => {
-   //    dispatch({
-   //       type: 'UPDATE_INITIAL_STATE',
-   //       payload: {
-   //          printDetails: {
-   //             isPrintInitiated: false,
-   //             printStatus: 'not-started',
-   //             message: '',
-   //          },
-   //       },
-   //    })
-   // }
+   //<---------  methods to set/update reducer state  --------->
 
-   // useEffect(() => {
-   //    if (cartId) {
-   //       dispatch({
-   //          type: 'UPDATE_INITIAL_STATE',
-   //          payload: {
-   //             paymentLifeCycleState: 'INITIALIZE',
-   //          },
-   //       })
-   //    }
-   // }, [cartId])
+   // setting cartPayment in state
+   useEffect(() => {
+      if (!isEmpty(cartPaymentsFromQuery)) {
+         setCartPayment(cartPaymentsFromQuery[0])
+      }
+   }, [cartPaymentsFromQuery])
 
    // setting user related info in payment provider context
    useEffect(() => {
@@ -498,22 +448,29 @@ export const PaymentProvider = ({ children }) => {
       }
    }, [user])
 
+   // initiating payment flow (this is required after coming back from paytm payment page)
    useEffect(() => {
       if (!_isEmpty(router.query) && _has(router.query, 'payment')) {
          setIsPaymentInitiated(true)
       }
    }, [router.query])
 
+   // initiate printing flow when posistOrderStatus is CREATED
    useEffect(() => {
       if (
          !_isEmpty(cartState) &&
          cartState?.cart?.posistOrderStatus === 'CREATED'
       ) {
-         console.log('intializingggg print....')
+         // alert(`initializing printing with cartId: ${cartState?.cart?.id}`)
+         console.log(
+            `initializing printing with cartId: ${cartState?.cart?.id}`
+         )
          initializePrinting()
       }
    }, [cartState?.cart?.posistOrderStatus])
 
+   //creating posist order (just increasing posistOrderRetryAttempt) when cartPayment is successful
+   // and posistOrderPush is allowed
    useEffect(() => {
       if (
          cartPayment?.paymentStatus === 'SUCCEEDED' &&
@@ -530,6 +487,7 @@ export const PaymentProvider = ({ children }) => {
       }
    }, [cartPayment?.paymentStatus])
 
+   // useEffect which checks the payment company and payment related status and does required actions
    useEffect(() => {
       console.log(
          'useEffect=>',
@@ -622,6 +580,7 @@ export const PaymentProvider = ({ children }) => {
             initializePayment,
             isProcessingPayment,
             initializePrinting,
+            resetPaymentProviderStates,
          }}
       >
          {isPaymentInitiated && !isEmpty(cartPayment) && (
@@ -665,6 +624,7 @@ export const usePayment = () => {
       updatePaymentState,
       initializePayment,
       isProcessingPayment,
+      resetPaymentProviderStates,
    } = useContext(PaymentContext)
    return {
       isPaymentLoading: paymentLoading,
@@ -681,5 +641,6 @@ export const usePayment = () => {
       updatePaymentState,
       initializePayment,
       isProcessingPayment,
+      resetPaymentProviderStates,
    }
 }
