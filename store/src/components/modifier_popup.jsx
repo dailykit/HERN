@@ -460,12 +460,11 @@ export const ModifierPopup = props => {
                                     display: 'flex',
                                     justifyContent: 'space-between',
                                     marginBottom: '8px',
+                                    cursor: 'pointer',
                                  }}
+                                 onClick={e => setProductOption(eachOption)}
                               >
-                                 <li
-                                    style={{ color: 'var(--hern-accent)' }}
-                                    onClick={e => setProductOption(eachOption)}
-                                 >
+                                 <li>
                                     {eachOption.label}
 
                                     {' (+ '}
