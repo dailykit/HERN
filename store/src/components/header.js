@@ -198,7 +198,7 @@ export const Header = ({ settings, navigationMenus }) => {
                )
                   .then(res => res.json())
                   .then(data => {
-                     if (data.status === 'OK' && data.results.length > 0) {
+                     if (data?.status === 'OK' && data.results.length > 0) {
                         const formatted_address =
                            data.results[0].formatted_address.split(',')
                         const mainText = formatted_address
@@ -528,14 +528,14 @@ export const Header = ({ settings, navigationMenus }) => {
                }
                break
          }
-         ;(async () => {
+         ; (async () => {
             const [result, fulfillmentStatus] = await autoSelectStore(
                brandLocation,
                recurrencesDetails.brandRecurrences,
                recurrencesDetails.fulfillmentType
             )
             const availableStores = result.filter(
-               x => x[fulfillmentStatus].status
+               x => x[fulfillmentStatus]?.status
             )
             if (availableStores.length > 0) {
                localStorage.setItem(
@@ -570,7 +570,7 @@ export const Header = ({ settings, navigationMenus }) => {
                //    window.location.reload()
                // }
             } else {
-               const message = result[0][fulfillmentStatus].message
+               const message = result[0][fulfillmentStatus]?.message
                console.log('message', message)
                dispatch({
                   type: 'SET_STORE_STATUS',
@@ -672,8 +672,8 @@ export const Header = ({ settings, navigationMenus }) => {
                         {isLoading ? (
                            <li className="hern-navbar__list__item__skeleton" />
                         ) : isAuthenticated &&
-                          user?.isSubscriber &&
-                          isSubscriptionStore ? (
+                           user?.isSubscriber &&
+                           isSubscriptionStore ? (
                            <li className="hern-navbar__list__item">
                               <Link href={getRoute('/menu')}>
                                  {t('Select Menu')}
@@ -753,11 +753,10 @@ export const Header = ({ settings, navigationMenus }) => {
                         <button
                            className="hern-header__logout"
                            style={{
-                              backgroundColor: `${
-                                 theme?.accent
-                                    ? theme?.accent
-                                    : 'rgba(37, 99, 235, 1)'
-                              }`,
+                              backgroundColor: `${theme?.accent
+                                 ? theme?.accent
+                                 : 'rgba(37, 99, 235, 1)'
+                                 }`,
                            }}
                            onClick={() => setShowLoginPopup(true)}
                         >
@@ -781,8 +780,8 @@ export const Header = ({ settings, navigationMenus }) => {
                      <section className="hern-navigatin-menu__wrapper--mobile">
                         <NavigationBar Data={newNavigationMenus}>
                            {isAuthenticated &&
-                           user?.isSubscriber &&
-                           isSubscriptionStore ? (
+                              user?.isSubscriber &&
+                              isSubscriptionStore ? (
                               <li className="hern-navbar__list__item">
                                  <Link href={getRoute('/menu')}>
                                     Select Menu
@@ -892,7 +891,7 @@ const LocationInfo = ({ settings }) => {
                </div>
             ) : (
                <div className="hern-header__location-right">
-                  {storeStatus.status && prefix && (
+                  {storeStatus?.status && prefix && (
                      <div className="hern-header__location-upper">
                         {prefix}{' '}
                         <span className="hern-header__downvector-icon">
@@ -905,11 +904,11 @@ const LocationInfo = ({ settings }) => {
                         {userLocation?.mainText
                            ? userLocation?.mainText
                            : userLocation?.address?.mainText
-                           ? userLocation?.address?.mainText
-                           : 'Please select address...'}
+                              ? userLocation?.address?.mainText
+                              : 'Please select address...'}
                      </div>
                      <div className="hern-header__location-warning">
-                        {!storeStatus.status ? storeStatus.message : ''}
+                        {!storeStatus?.status ? storeStatus?.message : ''}
                      </div>
                   </div>
                </div>

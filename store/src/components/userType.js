@@ -8,8 +8,8 @@ import { useConfig } from '../lib'
 export const UserType = () => {
    const { dispatch } = useUser()
    const { configOf } = useConfig()
-   const theme = configOf('theme-color', 'Visual')
-   const themeColor = theme?.accent ? theme?.accent : 'rgba(5, 150, 105, 1)'
+   const theme = configOf('theme-color', 'Visual')?.themeColor
+   const themeColor = theme?.accent?.value ? theme?.accent?.value : 'rgba(5, 150, 105, 1)'
    const [showLoginPopup, setShowLoginPopup] = React.useState(false)
 
    return (

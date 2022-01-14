@@ -286,8 +286,12 @@ class DataTable extends React.Component {
          title: 'Product ID',
          field: 'id',
          headerFilter: true,
-         frozen: true,
+         // frozen: true,
          hozAlign: 'center',
+         cellClick: (e, cell) => {
+            const { name, id } = cell._cell.row.data
+            this.props.addTab(name, `/products/products/${id}`)
+         },
       },
       {
          title: this.props.t(address.concat('product name')),

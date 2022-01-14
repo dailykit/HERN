@@ -20,7 +20,7 @@ export const Layout = ({
 
    if (!settings) return null
 
-   const brand = settings['brand']['theme-brand']
+   const brand = settings['brand']['Contact']
    const footerSettings = settings['footer']['footer']
    const {
       isPrivacyPolicyAvailable,
@@ -28,10 +28,10 @@ export const Layout = ({
       isTermsAndConditionsAvailable,
    } = settings['brand']['Policy Availability']
 
-   const store = settings['availability']['Store Availability']
-   const location = settings['availability']['Location']
+   const store = settings['availability']['Store Availability']?.storeAvailability
+   const location = settings['availability']['Location']?.Location
 
-   const theme = settings['Visual']?.['theme-color']
+   const theme = settings['Visual']?.['theme-color']?.themeColor
    const { direction } = useTranslation()
 
    return (
@@ -41,12 +41,12 @@ export const Layout = ({
          )}
          <div style={{ minHeight: '80vh' }}>{children}</div>
          <div className="hern-demo-mode">
-            {(user?.isTest === true || store?.isStoreLive === false) && (
+            {(user?.isTest === true || store?.isStoreLive?.value === false) && (
                <p>Store running in test mode so payments will be bypassed</p>
             )}
             {user?.isDemo && <p>Logged in user is in demo mode.</p>}
          </div>
-         {footerSettings?.footer?.custom?.value ? (
+         {footerSettings?.footer?.isFooterAvailable?.value ? (
             <TemplateFile
                path={footerSettings?.footer?.path?.value}
                data={{}}
@@ -55,40 +55,53 @@ export const Layout = ({
             <footer
                className="hern-layout__footer"
                style={{
-                  backgroundColor: `${
-                     theme?.accent ? theme?.accent : 'rgba(5, 150, 105, 1)'
-                  }`,
+                  backgroundColor: `${theme?.accent?.value ? theme?.accent?.value : 'rgba(5, 150, 105, 1)'
+                     }`,
                }}
             >
                <div>
                   <section>
+                     {footerSettings?.footer?.showTitle?.value && <h2>
+                        {footerSettings?.footer?.Title?.value}
+                     </h2>}
                      <h4 className="hern-layout__footer__section-header">
                         Contact Us
                      </h4>
-                     {location && (
+                     {location?.value && (
                         <address className="hern-layout__footer__contact__location">
-                           {normalizeAddress(location?.Location?.value)}
+                           {normalizeAddress(location?.value)}
                         </address>
                      )}
 
-                     {brand?.['Contact'] && (
+                     {brand?.Contact?.email?.value && (
                         <>
                            <a
-                              href={`mailto:${brand['Contact'].email}`}
+                              href={`mailto:${brand?.Contact?.email?.value}`}
                               className="hern-layout__footer__contact__location--email"
                            >
                               <MailIcon size={18} />
-                              {brand['Contact'].email}
+                              {brand?.Contact?.email?.value}
                            </a>
-                           {brand?.['Contact']?.phoneNo && (
+                           {brand?.Contact?.phoneNo?.value && (
                               <a
                                  target="_blank"
                                  rel="noreferrer noopener"
                                  className="hern-layout__footer__contact__location--phone"
-                                 href={`https://api.whatsapp.com/send?phone=${brand?.['Contact']?.phoneNo}`}
+                                 href={`https://api.whatsapp.com/send?phone=${brand?.Contact?.phoneNo?.value}`}
                               >
                                  <PhoneIcon size={18} />
-                                 {brand?.['Contact']?.phoneNo}
+                                 {brand?.Contact?.phoneNo?.value}
+                              </a>
+                           )}
+                           {footerSettings?.footer?.showPhoneNumber?.value && (
+                              <a
+                                 target="_blank"
+                                 rel="noreferrer noopener"
+                                 className="hern-layout__footer__contact__location--phone"
+                                 href={`https://api.whatsapp.com/send?phone=${footerSettings?.footer?.phoneNumber?.value}`}
+                              >
+                                 <PhoneIcon size={18} />
+                                 {footerSettings?.footer?.phoneNumber?.value}
                               </a>
                            )}
                         </>
@@ -114,40 +127,40 @@ export const Layout = ({
                         </li>
                      </ul>
                   </section>
-                  {(isTermsAndConditionsAvailable ||
-                     isPrivacyPolicyAvailable ||
-                     isRefundPolicyAvailable) && (
-                     <section>
-                        <h4 className="hern-layout__footer__section-header">
-                           Policy
-                        </h4>
-                        <ul>
-                           {isTermsAndConditionsAvailable && (
-                              <li className="hern-layout__footer__link">
-                                 <Link
-                                    href={getRoute('/terms-and-conditions/')}
-                                 >
-                                    Terms and Conditions
-                                 </Link>
-                              </li>
-                           )}
-                           {isPrivacyPolicyAvailable && (
-                              <li className="hern-layout__footer__link">
-                                 <Link href={getRoute('/privacy-policy/')}>
-                                    Privacy Policy
-                                 </Link>
-                              </li>
-                           )}
-                           {isRefundPolicyAvailable && (
-                              <li className="hern-layout__footer__link">
-                                 <Link href={getRoute('/refund-policy/')}>
-                                    Refund Policy
-                                 </Link>
-                              </li>
-                           )}
-                        </ul>
-                     </section>
-                  )}
+                  {(isTermsAndConditionsAvailable?.value ||
+                     isPrivacyPolicyAvailable?.value ||
+                     isRefundPolicyAvailable?.value) && (
+                        <section>
+                           <h4 className="hern-layout__footer__section-header">
+                              Policy
+                           </h4>
+                           <ul>
+                              {isTermsAndConditionsAvailable?.value && (
+                                 <li className="hern-layout__footer__link">
+                                    <Link
+                                       href={getRoute('/terms-and-conditions/')}
+                                    >
+                                       Terms and Conditions
+                                    </Link>
+                                 </li>
+                              )}
+                              {isPrivacyPolicyAvailable?.value && (
+                                 <li className="hern-layout__footer__link">
+                                    <Link href={getRoute('/privacy-policy/')}>
+                                       Privacy Policy
+                                    </Link>
+                                 </li>
+                              )}
+                              {isRefundPolicyAvailable?.value && (
+                                 <li className="hern-layout__footer__link">
+                                    <Link href={getRoute('/refund-policy/')}>
+                                       Refund Policy
+                                    </Link>
+                                 </li>
+                              )}
+                           </ul>
+                        </section>
+                     )}
                </div>
             </footer>
          )}
