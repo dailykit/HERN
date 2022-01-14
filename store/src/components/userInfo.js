@@ -2,10 +2,8 @@ import React, { useState, useEffect } from 'react'
 import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
 import { detectCountry } from '../utils'
-import { UPDATE_PLATFORM_CUSTOMER } from '../graphql'
 import { UserIcon } from '../assets/icons'
 import { useUser, CartContext } from '../context'
-import { useMutation } from '@apollo/react-hooks'
 import { useToasts } from 'react-toast-notifications'
 
 export const UserInfo = props => {
@@ -30,17 +28,6 @@ export const UserInfo = props => {
          'N/A'
    )
    const [countryCode, setCountryCode] = useState(null)
-
-   const [updateCustomer] = useMutation(UPDATE_PLATFORM_CUSTOMER, {
-      onCompleted: () => {
-         console.log('updated')
-      },
-      onError: error => {
-         addToast('Failed to save!', {
-            appearance: 'error',
-         })
-      },
-   })
 
    React.useEffect(() => {
       const detectedUserData = async () => {
@@ -80,22 +67,6 @@ export const UserInfo = props => {
             },
          },
       })
-      if (
-         user?.keycloakId &&
-         (!user?.platform_customer?.firstName ||
-            !user?.platform_customer?.lastName) &&
-         type !== 'phoneNumber'
-      ) {
-         const nameData = type === 'firstName' ? { firstName } : { lastName }
-         updateCustomer({
-            variables: {
-               keycloakId: user.keycloakId,
-               _set: {
-                  ...nameData,
-               },
-            },
-         })
-      }
    }
    const UserInfoHeader = () => {
       return (
