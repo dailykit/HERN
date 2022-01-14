@@ -182,7 +182,15 @@ export const CartProvider = ({ children }) => {
          console.log('delete cart error', error)
       },
    })
-
+   useEffect(() => {
+      if (cartItemsData?.cartItems && cartItemsData?.cartItems.length === 0) {
+         deleteCart({
+            variables: {
+               id: cartData.cart.id,
+            },
+         })
+      }
+   }, [cartItemsData])
    // create cartItems
    const [createCartItems] = useMutation(CREATE_CART_ITEMS, {
       onCompleted: () => {
