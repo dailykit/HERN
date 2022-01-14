@@ -42,7 +42,7 @@ import {
    PREORDER_PICKUP_BRAND_RECURRENCES,
    GET_BRAND_LOCATION,
 } from '../graphql'
-import { TimePicker, Divider, Radio } from 'antd'
+import { TimePicker, Divider, Radio, Modal } from 'antd'
 import 'antd/dist/antd.css'
 import { useToasts } from 'react-toast-notifications'
 import { rrulestr } from 'rrule'
@@ -83,7 +83,7 @@ export const LocationSelector = props => {
    }, [])
 
    if (!orderTabFulfillmentType) {
-      return <Loader />
+      return <Loader inline />
    }
 
    return (
@@ -504,7 +504,6 @@ const Delivery = props => {
             latitude: result.geometry.location.lat,
             longitude: result.geometry.location.lng,
          }
-         setUserCoordinate(prev => ({ ...prev, ...userLocation }))
          const address = {
             mainText: input.structured_formatting.main_text,
             secondaryText: input.structured_formatting.secondary_text,
@@ -514,12 +513,25 @@ const Delivery = props => {
                address.zipcode = node.long_name
             }
          })
-         setAddress({ ...userLocation, address })
+         console.log('this is adress', address)
+         if (address.zipcode) {
+            setUserCoordinate(prev => ({ ...prev, ...userLocation }))
+            setAddress({ ...userLocation, address })
+         } else {
+            showWarningPopup()
+         }
       }
+   }
+   const showWarningPopup = () => {
+      Modal.warning({
+         title: `Please select a precise location. Try typing a landmark near your house.`,
+         maskClosable: true,
+         centered: true,
+      })
    }
 
    if (!orderTabFulfillmentType) {
-      return <Loader />
+      return <Loader inline />
    }
 
    return (
@@ -573,9 +585,11 @@ const Delivery = props => {
          </div>
 
          {locationSearching.loading ? (
-            <Loader />
+            <p style={{ padding: '1em' }}>Getting your location...</p>
          ) : locationSearching.error ? (
-            <p>unable to find location</p>
+            <p style={{ padding: '1em', fontWeight: 'bold' }}>
+               Unable to find location
+            </p>
          ) : address ? (
             <div className="hern-store-location-selector__user-location">
                {LocationSelectorConfig.informationVisibility.deliverySettings
@@ -585,13 +599,17 @@ const Delivery = props => {
          {/* <RefineLocation setUserCoordinate={setUserCoordinate} /> */}
          {/* Footer */}
          {!address ? null : brandLocationsLoading ? (
-            <Loader inline />
+            <p style={{ padding: '1em' }}>
+               Finding nearest store location to you
+            </p>
          ) : brands_brand_location_aggregate?.nodes?.length == 0 ? (
-            <p style={{ padding: '0 14px' }}>
+            <p style={{ padding: '0 14px', fontWeight: 'bold' }}>
                No store available on this location.
             </p>
          ) : brandRecurrencesLoading || preOrderBrandRecurrencesLoading ? (
-            <Loader />
+            <p style={{ padding: '1em' }}>
+               Finding nearest store location to you
+            </p>
          ) : (
             <StoreList
                userCoordinate={userCoordinate}
@@ -838,7 +856,6 @@ const Pickup = props => {
             latitude: result.geometry.location.lat,
             longitude: result.geometry.location.lng,
          }
-         setUserCoordinate(prev => ({ ...prev, ...userLocation }))
          const address = {
             mainText: input.structured_formatting.main_text,
             secondaryText: input.structured_formatting.secondary_text,
@@ -848,15 +865,28 @@ const Pickup = props => {
                address.zipcode = node.long_name
             }
          })
-         setAddress(address)
+         if (address.zipcode) {
+            setUserCoordinate(prev => ({ ...prev, ...userLocation }))
+            setAddress({ ...userLocation, address })
+         } else {
+            showWarningPopup()
+         }
+
          // localStorage.setItem(
          //    'userLocation',
          //    JSON.stringify({ ...userLocation, address })
          // )
       }
    }
+   const showWarningPopup = () => {
+      Modal.warning({
+         title: `Please select a precise location. Try typing a landmark near your house.`,
+         maskClosable: true,
+         centered: true,
+      })
+   }
    if (!orderTabFulfillmentType) {
-      return <Loader />
+      return <Loader inline />
    }
    return (
       <div className="hern-store-location__fulfillment-type-wrapper">
@@ -907,16 +937,20 @@ const Pickup = props => {
             </div>
          </div>
          {locationSearching.loading ? (
-            <Loader />
+            <p style={{ padding: '1em' }}>Getting your location...</p>
          ) : locationSearching.error ? (
-            <p>unable to find location</p>
+            <p style={{ padding: '1em', fontWeight: 'bold' }}>
+               Unable to find location
+            </p>
          ) : address ? (
             <div className="hern-store-location-selector__user-location">
                {userAddress.value && <AddressInfo address={address} />}
             </div>
          ) : null}
          {onDemandPickupRecurrenceLoading || preOrderPickRecurrencesLoading ? (
-            <Loader />
+            <p style={{ padding: '1em' }}>
+               Finding nearest store location to you
+            </p>
          ) : (
             <StoreList
                userCoordinate={userCoordinate}
@@ -1160,7 +1194,6 @@ const DineIn = props => {
             latitude: result.geometry.location.lat,
             longitude: result.geometry.location.lng,
          }
-         setUserCoordinate(prev => ({ ...prev, ...userLocation }))
          const address = {
             mainText: input.structured_formatting.main_text,
             secondaryText: input.structured_formatting.secondary_text,
@@ -1170,16 +1203,28 @@ const DineIn = props => {
                address.zipcode = node.long_name
             }
          })
-         setAddress({ ...userLocation, address })
+         if (address.zipcode) {
+            setUserCoordinate(prev => ({ ...prev, ...userLocation }))
+            setAddress({ ...userLocation, address })
+         } else {
+            showWarningPopup()
+         }
          // localStorage.setItem(
          //    'userLocation',
          //    JSON.stringify({ ...userLocation, address })
          // )
       }
    }
+   const showWarningPopup = () => {
+      Modal.warning({
+         title: `Please select a precise location. Try typing a landmark near your house.`,
+         maskClosable: true,
+         centered: true,
+      })
+   }
 
    if (!orderTabFulfillmentType) {
-      return <Loader />
+      return <Loader inline />
    }
 
    return (
@@ -1231,16 +1276,20 @@ const DineIn = props => {
             </div>
          </div>
          {locationSearching.loading ? (
-            <Loader />
+            <p style={{ padding: '1em' }}>Getting your location...</p>
          ) : locationSearching.error ? (
-            <p>unable to find location</p>
+            <p style={{ padding: '1em', fontWeight: 'bold' }}>
+               unable to find location
+            </p>
          ) : address ? (
             <div className="hern-store-location-selector__user-location">
                {userAddress.value && <AddressInfo address={address} />}
             </div>
          ) : null}
          {onDemandPickupRecurrenceLoading || preOrderPickRecurrencesLoading ? (
-            <Loader />
+            <p style={{ padding: '1em', fontWeight: 'bold' }}>
+               Finding nearest store location to you
+            </p>
          ) : (
             <StoreList
                userCoordinate={userCoordinate}
@@ -1723,7 +1772,7 @@ export const StoreList = props => {
       sortedBrandLocation === null ||
       status === 'loading'
    ) {
-      return <Loader inline />
+      return <p>Finding nearest store location to you</p>
    }
 
    // when no store available on user location
