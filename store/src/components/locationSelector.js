@@ -341,6 +341,8 @@ const Delivery = props => {
                      mainText,
                      secondaryText,
                      ...address,
+                     latitude: userCoordinate.latitude,
+                     longitude: userCoordinate.longitude,
                   }))
 
                   setLocationSearching(prev => ({
