@@ -392,6 +392,17 @@ export const ModifierPopup = props => {
       )
    }
 
+   window.onclick = function (event) {
+      if (
+         event.target ==
+            document.querySelector(
+               '.hern-product-modifier-pop-up-container--show-modifier-pop-up'
+            ) &&
+         !modifierWithoutPopup
+      ) {
+         closeModifier()
+      }
+   }
    return (
       <>
          <div
@@ -412,11 +423,12 @@ export const ModifierPopup = props => {
                })}
             >
                {!modifierWithoutPopup && (
-                  <div
-                     className="hern-product-modifier-pop-up-close-icon"
-                     onClick={closeModifier}
-                  >
-                     <CloseIcon size={20} stroke="currentColor" />
+                  <div className="hern-product-modifier-pop-up-close-icon">
+                     <CloseIcon
+                        size={20}
+                        stroke="currentColor"
+                        onClick={closeModifier}
+                     />
                   </div>
                )}
                <div className="hern-product-modifier-pop-up-product-details">
@@ -460,12 +472,11 @@ export const ModifierPopup = props => {
                                     display: 'flex',
                                     justifyContent: 'space-between',
                                     marginBottom: '8px',
+                                    cursor: 'pointer',
                                  }}
+                                 onClick={e => setProductOption(eachOption)}
                               >
-                                 <li
-                                    style={{ color: 'var(--hern-accent)' }}
-                                    onClick={e => setProductOption(eachOption)}
-                                 >
+                                 <li>
                                     {eachOption.label}
 
                                     {' (+ '}
