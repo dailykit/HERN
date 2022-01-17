@@ -39,7 +39,9 @@ export const KioskModifier = props => {
 
    // component state
    const [selectedProductOption, setSelectedProductOption] = useState(
-      productData.productOptions[0]
+      productData.productOptions.find(
+         x => x.id === productData.defaultProductOptionId
+      ) || productData.productOptions[0]
    )
    const [quantity, setQuantity] = useState(1)
    const [selectedOptions, setSelectedOptions] = useState({
@@ -54,6 +56,7 @@ export const KioskModifier = props => {
    const additionalModifierRef = React.useRef()
    const [showNestedModifierOptions, setShowNestedModifierOptions] =
       useState(false)
+   const [childChangingToggle, setChildChangingToggle] = useState(false) // use for reflect changes from child so that parent can re render
 
    const modifierPopRef = React.useRef()
    useOnClickOutside(modifierPopRef, () => onCloseModifier())
@@ -216,32 +219,37 @@ export const KioskModifier = props => {
          const idNestedVerify = nestedModifierRef?.current?.modifierValidation()
          const additionalNestedVerify =
             additionalModifierRef?.current?.additionalModifiersValidation()
+         const additionalModifierVerify =
+            additionalModifierRef?.current?.additionalModifiersSelfValidation()
+
          if (
             (idNestedVerify && idNestedVerify.status == false) ||
-            (additionalNestedVerify && additionalNestedVerify.status == false)
+            (additionalNestedVerify &&
+               additionalNestedVerify.status == false) ||
+            (additionalModifierVerify &&
+               additionalModifierVerify.status == false)
          ) {
-            console.log('error in nested')
             return
          } else if (
             (idNestedVerify && idNestedVerify.status) ||
-            (additionalNestedVerify && additionalNestedVerify.status)
+            (additionalNestedVerify && additionalNestedVerify.status) ||
+            (additionalModifierVerify && additionalModifierVerify.status)
          ) {
             let resultantNested = []
+            let resultantParentModifier = [
+               ...allSelectedOptions.map(x => x.cartItem),
+               ...additionalModifierVerify.data.map(x => x.cartItem),
+            ]
             if (additionalNestedVerify && additionalNestedVerify.status) {
-               resultantNested = [
-                  ...resultantNested,
-                  ...additionalNestedVerify.data.map(x => x.cartItem),
-               ]
+               resultantNested = [...resultantNested, additionalNestedVerify]
             }
             if (idNestedVerify && idNestedVerify.status) {
-               resultantNested = [
-                  ...resultantNested,
-                  ...idNestedVerify.data.map(x => x.cartItem),
-               ]
+               resultantNested = [...resultantNested, idNestedVerify]
             }
+
             cartItem = getCartItemWithModifiers(
                selectedProductOption.cartItem,
-               allSelectedOptions.map(x => x.cartItem),
+               resultantParentModifier,
                resultantNested
             )
          } else {
@@ -304,13 +312,91 @@ export const KioskModifier = props => {
 
    // total amount
    //total amount for this item
+   // const totalAmount = () => {
+   //    const productOptionPrice = selectedProductOption.price
+   //    const productOptionDiscount = selectedProductOption.discount
+   //    let allSelectedOptions = [
+   //       ...selectedOptions.single,
+   //       ...selectedOptions.multiple,
+   //    ]
+   //    const nestedSelectedOptions =
+   //       nestedModifierRef?.current?.nestedSelectedModifiers()
+   //    const additionalNestedSelectedOptions =
+   //       additionalModifierRef?.current?.additionalNestedModifiers()
+   //    console.log(
+   //       'this is price',
+   //       nestedSelectedOptions,
+   //       additionalNestedSelectedOptions
+   //    )
+   //    if (nestedSelectedOptions) {
+   //       allSelectedOptions = [
+   //          ...allSelectedOptions,
+   //          ...nestedSelectedOptions.single,
+   //          ...nestedSelectedOptions.multiple,
+   //       ]
+   //    }
+   //    if (additionalNestedSelectedOptions) {
+   //       allSelectedOptions = [
+   //          ...allSelectedOptions,
+   //          ...additionalNestedSelectedOptions.single,
+   //          ...additionalNestedSelectedOptions.multiple,
+   //       ]
+   //    }
+   //    let allSelectedOptionsPrice = 0
+   //    allSelectedOptions.forEach(
+   //       x =>
+   //          (allSelectedOptionsPrice =
+   //             allSelectedOptionsPrice +
+   //             (x?.modifierCategoryOptionsPrice || 0) -
+   //             (x?.modifierCategoryOptionsDiscount || 0))
+   //    )
+   //    console.log(
+   //       'totalPrice',
+   //       productOptionPrice,
+   //       allSelectedOptionsPrice,
+   //       productData.price,
+   //       productData.discount,
+   //       productOptionDiscount
+   //    )
+   //    const totalPrice =
+   //       productOptionPrice +
+   //       allSelectedOptionsPrice +
+   //       productData.price -
+   //       productData.discount -
+   //       productOptionDiscount
+   //    return totalPrice * quantity
+   // }
+   console.log('childChangingToggle', childChangingToggle)
    const totalAmount = () => {
       const productOptionPrice = selectedProductOption.price
       const productOptionDiscount = selectedProductOption.discount
-      const allSelectedOptions = [
+      let allSelectedOptions = [
          ...selectedOptions.single,
          ...selectedOptions.multiple,
       ]
+      const nestedSelectedOptions =
+         nestedModifierRef?.current?.nestedSelectedModifiers()
+      const additionalNestedSelectedOptions =
+         additionalModifierRef?.current?.additionalNestedModifiers()
+      console.log(
+         'this is price',
+         nestedSelectedOptions,
+         additionalNestedSelectedOptions
+      )
+      if (nestedSelectedOptions) {
+         allSelectedOptions = [
+            ...allSelectedOptions,
+            ...nestedSelectedOptions.single,
+            ...nestedSelectedOptions.multiple,
+         ]
+      }
+      if (additionalNestedSelectedOptions) {
+         allSelectedOptions = [
+            ...allSelectedOptions,
+            ...additionalNestedSelectedOptions.single,
+            ...additionalNestedSelectedOptions.multiple,
+         ]
+      }
       let allSelectedOptionsPrice = 0
       allSelectedOptions.forEach(
          x =>
@@ -386,6 +472,7 @@ export const KioskModifier = props => {
          setStatus('success')
       }
    }, [])
+
    useEffect(() => {
       // default selected modifiers
       if (!(forNewItem || edit)) {
@@ -667,6 +754,10 @@ export const KioskModifier = props => {
                         renderConditionText={renderConditionText}
                         errorCategories={errorCategories}
                         selectedOptions={selectedOptions}
+                        edit={edit}
+                        forNewItem={forNewItem}
+                        productCartDetail={productCartDetail}
+                        setChildChangingToggle={setChildChangingToggle}
                      />
                   )
                )}
@@ -839,6 +930,9 @@ export const KioskModifier = props => {
                                                    nestedModifierTemplateId={
                                                       eachOption.additionalModifierTemplateId
                                                    }
+                                                   modifierOptionId={
+                                                      eachOption.id
+                                                   }
                                                    nestedModifierTemplateRequired={
                                                       eachOption.isAdditionalModifierRequired
                                                    }
@@ -857,6 +951,9 @@ export const KioskModifier = props => {
                                                    forNewItem={forNewItem}
                                                    productCartDetail={
                                                       productCartDetail
+                                                   }
+                                                   setChildChangingToggle={
+                                                      setChildChangingToggle
                                                    }
                                                 />
                                              )}
@@ -904,14 +1001,12 @@ const AdditionalModifiers = forwardRef(
    (
       {
          eachAdditionalModifier,
-         onCheckClick,
          config,
          renderConditionText,
-         errorCategories,
-         selectedOptions,
          forNewItem,
          edit,
          productCartDetail,
+         setChildChangingToggle,
       },
       ref
    ) => {
@@ -922,8 +1017,16 @@ const AdditionalModifiers = forwardRef(
       const [showCustomize, setShowCustomize] = useState(
          !Boolean(additionalModifiersType)
       )
+      const [additionalModifierOptions, setAdditionalModifierOptions] =
+         useState({
+            single: [],
+            multiple: [],
+         })
+
       const [showNestedModifierOptions, setShowNestedModifierOptions] =
          useState(false)
+      const [errorCategories, setErrorCategories] = useState([])
+
       const { t, dynamicTrans } = useTranslation()
       useEffect(() => {
          const languageTags = document.querySelectorAll(
@@ -933,11 +1036,253 @@ const AdditionalModifiers = forwardRef(
       }, [showCustomize])
       const nestedModifierRef = React.useRef()
 
+      // for edit aur new item
+      useEffect(() => {
+         if (forNewItem || edit) {
+            const modifierCategoryOptionsIds =
+               productCartDetail.childs[0].childs.map(
+                  x => x?.modifierOption?.id
+               )
+
+            //selected modifiers
+            let singleModifier = []
+            let multipleModifier = []
+            if (eachAdditionalModifier) {
+               eachAdditionalModifier.modifier.categories.forEach(category => {
+                  category.options.forEach(option => {
+                     const selectedOption = {
+                        modifierCategoryID: category.id,
+                        modifierCategoryOptionsID: option.id,
+                        modifierCategoryOptionsPrice: option.price,
+                        cartItem: option.cartItem,
+                     }
+                     if (category.type === 'single') {
+                        if (modifierCategoryOptionsIds.includes(option.id)) {
+                           singleModifier =
+                              singleModifier.concat(selectedOption)
+                        }
+                     }
+                     if (category.type === 'multiple') {
+                        if (modifierCategoryOptionsIds.includes(option.id)) {
+                           multipleModifier =
+                              multipleModifier.concat(selectedOption)
+                        }
+                     }
+                  })
+               })
+            }
+            setAdditionalModifierOptions(prevState => ({
+               ...prevState,
+               single: singleModifier,
+               multiple: multipleModifier,
+            }))
+            setChildChangingToggle(prev => !prev)
+         }
+      }, [])
+
+      // initial default selection
+      useEffect(() => {
+         if (!(forNewItem || edit)) {
+            let singleModifier = []
+            let multipleModifier = []
+            eachAdditionalModifier.modifier.categories.forEach(eachCategory => {
+               if (eachCategory.type === 'single' && eachCategory.isRequired) {
+                  // default selected modifier option
+                  const defaultModifierSelectedOption = {
+                     modifierCategoryID: eachCategory.id,
+                     modifierCategoryOptionsID: eachCategory.options[0].id,
+                     modifierCategoryOptionsPrice:
+                        eachCategory.options[0].price,
+                     modifierCategoryOptionsDiscount:
+                        eachCategory.options[0].discount,
+                     cartItem: eachCategory.options[0].cartItem,
+                  }
+                  singleModifier = [
+                     ...singleModifier,
+                     defaultModifierSelectedOption,
+                  ]
+               } else if (
+                  eachCategory.type === 'multiple' &&
+                  eachCategory.isRequired
+               ) {
+                  const defaultSelectedOptions = eachCategory.options.slice(
+                     0,
+                     eachCategory.limits.min
+                  )
+                  defaultSelectedOptions.forEach(eachModifierOption => {
+                     // default selected modifier option
+                     const defaultModifierSelectedOption = {
+                        modifierCategoryID: eachCategory.id,
+                        modifierCategoryOptionsID: eachModifierOption.id,
+                        modifierCategoryOptionsPrice: eachModifierOption.price,
+                        modifierCategoryOptionsDiscount:
+                           eachModifierOption.discount,
+                        cartItem: eachModifierOption.cartItem,
+                     }
+                     multipleModifier = [
+                        ...multipleModifier,
+                        defaultModifierSelectedOption,
+                     ]
+                  })
+               }
+            })
+            setAdditionalModifierOptions(prevState => ({
+               ...prevState,
+               single: singleModifier,
+               multiple: multipleModifier,
+            }))
+            setChildChangingToggle(prev => !prev)
+         }
+      }, [])
+
       useImperativeHandle(ref, () => ({
+         // validation for additional modifier option it self
+         additionalModifiersSelfValidation() {
+            const allSelectedOptions = [
+               ...additionalModifierOptions.single,
+               ...additionalModifierOptions.multiple,
+            ]
+            let allCatagories = eachAdditionalModifier.modifier.categories || []
+
+            let errorState = []
+            for (let i = 0; i < allCatagories.length; i++) {
+               const min = allCatagories[i]['limits']['min']
+               const max = allCatagories[i]['limits']['max']
+               const allFoundedOptionsLength = allSelectedOptions.filter(
+                  x => x.modifierCategoryID === allCatagories[i].id
+               ).length
+
+               if (allCatagories[i]['isRequired']) {
+                  if (
+                     allFoundedOptionsLength > 0 &&
+                     min <= allFoundedOptionsLength &&
+                     (max
+                        ? allFoundedOptionsLength <= max
+                        : allFoundedOptionsLength <=
+                          allCatagories[i].options.length)
+                  ) {
+                  } else {
+                     errorState.push(allCatagories[i].id)
+                     // setErrorCategories([...errorCategories, allCatagories[i].id])
+                  }
+               }
+            }
+            setErrorCategories(errorState)
+            if (errorState.length > 0) {
+               return { status: false }
+            } else {
+               return { status: true, data: allSelectedOptions }
+            }
+         },
+
+         // selected additional modifiers
+         additionalSelfModifiers() {
+            return additionalModifierOptions
+         },
+
+         // additional modifier's childs validation
          additionalModifiersValidation() {
             return nestedModifierRef?.current?.modifierValidation()
          },
+
+         // additional modifier option's modifiers options
+         additionalNestedModifiers() {
+            return nestedModifierRef?.current?.nestedSelectedModifiers()
+         },
       }))
+      // on check click
+      const onCheckClick = (eachOption, eachModifierCategory) => {
+         //selected option
+         const selectedOption = {
+            modifierCategoryID: eachModifierCategory.id,
+            modifierCategoryOptionsID: eachOption.id,
+            modifierCategoryOptionsPrice: eachOption.price,
+            modifierCategoryOptionsDiscount: eachOption.discount,
+            cartItem: eachOption.cartItem,
+         }
+         //modifierCategoryOptionID
+         //modifierCategoryID
+         if (eachModifierCategory.type === 'single') {
+            const existCategoryIndex =
+               additionalModifierOptions.single.findIndex(
+                  x => x.modifierCategoryID == eachModifierCategory.id
+               )
+            //single-->already exist category
+            if (existCategoryIndex !== -1) {
+               //for uncheck the option
+               if (
+                  additionalModifierOptions.single[existCategoryIndex][
+                     'modifierCategoryOptionsID'
+                  ] === eachOption.id &&
+                  !eachModifierCategory.isRequired
+               ) {
+                  const newSelectedOptions =
+                     additionalModifierOptions.single.filter(
+                        x =>
+                           x.modifierCategoryID !== eachModifierCategory.id &&
+                           x.modifierCategoryOptionsID !== eachOption.id
+                     )
+                  setAdditionalModifierOptions({
+                     ...nestedSelectedOptions,
+                     single: newSelectedOptions,
+                  })
+                  setChildChangingToggle(prev => !prev)
+
+                  return
+               }
+               const newSelectedOptions = additionalModifierOptions.single
+               additionalModifierOptions[existCategoryIndex] = selectedOption
+               setAdditionalModifierOptions({
+                  ...additionalModifierOptions,
+                  single: newSelectedOptions,
+               })
+               setChildChangingToggle(prev => !prev)
+
+               return
+            } else {
+               //single--> already not exist
+               setAdditionalModifierOptions({
+                  ...additionalModifierOptions,
+                  single: [...additionalModifierOptions.single, selectedOption],
+               })
+               setChildChangingToggle(prev => !prev)
+
+               return
+            }
+         }
+         if (eachModifierCategory.type === 'multiple') {
+            const existOptionIndex =
+               additionalModifierOptions.multiple.findIndex(
+                  x => x.modifierCategoryOptionsID == eachOption.id
+               )
+
+            //already exist option
+            if (existOptionIndex !== -1) {
+               const newSelectedOptions =
+                  additionalModifierOptions.multiple.filter(
+                     x => x.modifierCategoryOptionsID !== eachOption.id
+                  )
+               setAdditionalModifierOptions({
+                  ...additionalModifierOptions,
+                  multiple: newSelectedOptions,
+               })
+               setChildChangingToggle(prev => !prev)
+
+               return
+            }
+            //new option select
+            else {
+               setAdditionalModifierOptions({
+                  ...additionalModifierOptions,
+                  multiple: [
+                     ...additionalModifierOptions.multiple,
+                     selectedOption,
+                  ],
+               })
+               setChildChangingToggle(prev => !prev)
+            }
+         }
+      }
       return (
          <>
             <div
@@ -1035,7 +1380,7 @@ const AdditionalModifiers = forwardRef(
                                     (eachOption, index) => {
                                        const isModifierOptionInProduct = () => {
                                           const isOptionSelected =
-                                             selectedOptions[
+                                             additionalModifierOptions[
                                                 eachModifierCategory.type
                                              ].find(
                                                 x =>
@@ -1147,11 +1492,11 @@ const AdditionalModifiers = forwardRef(
                                                       nestedModifierTemplateId={
                                                          eachOption.additionalModifierTemplateId
                                                       }
+                                                      modifierOptionId={
+                                                         eachOption.id
+                                                      }
                                                       nestedModifierTemplateRequired={
                                                          eachOption.isAdditionalModifierRequired
-                                                      }
-                                                      selectedOptions={
-                                                         selectedOptions
                                                       }
                                                       config={config}
                                                       onCheckClick={
@@ -1167,6 +1512,9 @@ const AdditionalModifiers = forwardRef(
                                                       forNewItem={forNewItem}
                                                       productCartDetail={
                                                          productCartDetail
+                                                      }
+                                                      setChildChangingToggle={
+                                                         setChildChangingToggle
                                                       }
                                                    />
                                                 )}
@@ -1200,13 +1548,20 @@ const getCartItemWithModifiers = (
 
    finalCartItem.childs.data[0].childs.data = combinedModifiers
    if (nestedModifiersInput) {
-      const nestedCombinedModifiers = nestedModifiersInput.reduce(
-         (acc, obj) => [...acc, ...obj.data],
-         []
-      )
-      finalCartItem.childs.data[0].childs.data[0].childs = {}
-      finalCartItem.childs.data[0].childs.data[0].childs['data'] =
-         nestedCombinedModifiers
+      nestedModifiersInput.forEach(x => {
+         const foundModifierIndex =
+            finalCartItem.childs.data[0].childs.data.findIndex(
+               y => x.parentModifierOptionId == y.modifierOptionId
+            )
+         const xCombinedModifier = x.data
+            .map(z => z.cartItem)
+            .reduce((acc, obj) => [...acc, ...obj.data], [])
+         finalCartItem.childs.data[0].childs.data[foundModifierIndex].childs =
+            {}
+         finalCartItem.childs.data[0].childs.data[foundModifierIndex].childs[
+            'data'
+         ] = xCombinedModifier
+      })
    }
 
    return finalCartItem
@@ -1215,12 +1570,13 @@ const getCartItemWithModifiers = (
 const ModifierOptionsList = forwardRef((props, ref) => {
    const {
       nestedModifierTemplateId,
-      selectedOptions,
       config,
       renderConditionText,
       forNewItem,
       edit,
       productCartDetail,
+      modifierOptionId,
+      setChildChangingToggle,
    } = props
    const { brand, isConfigLoading, kioskDetails } = useConfig()
    const [errorCategories, setErrorCategories] = useState([])
@@ -1252,6 +1608,64 @@ const ModifierOptionsList = forwardRef((props, ref) => {
       },
       skip: isConfigLoading || !brand?.id,
    })
+
+   // default selected modifiers
+   useEffect(() => {
+      if (!data) {
+         return
+      }
+      if (!(forNewItem || edit)) {
+         let singleModifier = []
+         let multipleModifier = []
+         data.modifiers[0].categories.forEach(eachCategory => {
+            if (eachCategory.type === 'single' && eachCategory.isRequired) {
+               // default selected modifier option
+               const defaultModifierSelectedOption = {
+                  modifierCategoryID: eachCategory.id,
+                  modifierCategoryOptionsID: eachCategory.options[0].id,
+                  modifierCategoryOptionsPrice: eachCategory.options[0].price,
+                  modifierCategoryOptionsDiscount:
+                     eachCategory.options[0].discount,
+                  cartItem: eachCategory.options[0].cartItem,
+               }
+               singleModifier = [
+                  ...singleModifier,
+                  defaultModifierSelectedOption,
+               ]
+            } else if (
+               eachCategory.type === 'multiple' &&
+               eachCategory.isRequired
+            ) {
+               const defaultSelectedOptions = eachCategory.options.slice(
+                  0,
+                  eachCategory.limits.min
+               )
+               defaultSelectedOptions.forEach(eachModifierOption => {
+                  // default selected modifier option
+                  const defaultModifierSelectedOption = {
+                     modifierCategoryID: eachCategory.id,
+                     modifierCategoryOptionsID: eachModifierOption.id,
+                     modifierCategoryOptionsPrice: eachModifierOption.price,
+                     modifierCategoryOptionsDiscount:
+                        eachModifierOption.discount,
+                     cartItem: eachModifierOption.cartItem,
+                  }
+                  multipleModifier = [
+                     ...multipleModifier,
+                     defaultModifierSelectedOption,
+                  ]
+               })
+            }
+         })
+         setNestedSelectedOptions(prevState => ({
+            ...prevState,
+            single: singleModifier,
+            multiple: multipleModifier,
+         }))
+         setChildChangingToggle(prev => !prev)
+      }
+   }, [data])
+
    useImperativeHandle(ref, () => ({
       modifierValidation() {
          const allSelectedOptions = [
@@ -1287,10 +1701,18 @@ const ModifierOptionsList = forwardRef((props, ref) => {
          if (errorState.length > 0) {
             return { status: false }
          } else {
-            return { status: true, data: allSelectedOptions }
+            return {
+               status: true,
+               data: allSelectedOptions,
+               parentModifierOptionId: modifierOptionId,
+            }
          }
       },
+      nestedSelectedModifiers() {
+         return nestedSelectedOptions
+      },
    }))
+
    // on check click
    const onCheckClick = (eachOption, eachModifierCategory) => {
       //selected option
@@ -1325,6 +1747,7 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                   ...nestedSelectedOptions,
                   single: newSelectedOptions,
                })
+               setChildChangingToggle(prev => !prev)
                return
             }
             const newSelectedOptions = nestedSelectedOptions.single
@@ -1333,6 +1756,7 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                ...nestedSelectedOptions,
                single: newSelectedOptions,
             })
+            setChildChangingToggle(prev => !prev)
             return
          } else {
             //single--> already not exist
@@ -1340,6 +1764,7 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                ...nestedSelectedOptions,
                single: [...nestedSelectedOptions.single, selectedOption],
             })
+            setChildChangingToggle(prev => !prev)
             return
          }
       }
@@ -1357,6 +1782,7 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                ...nestedSelectedOptions,
                multiple: newSelectedOptions,
             })
+            setChildChangingToggle(prev => !prev)
             return
          }
          //new option select
@@ -1365,18 +1791,21 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                ...nestedSelectedOptions,
                multiple: [...nestedSelectedOptions.multiple, selectedOption],
             })
+            setChildChangingToggle(prev => !prev)
          }
       }
    }
 
-   // default select for modifier option
+   // selection when modifier is in newItem or edit mode
    useEffect(() => {
-      if ((forNewItem || edit) && data && data.modifiers.length > 0) {
+      if (!data) {
+         return
+      }
+      if (forNewItem || edit) {
          const modifierCategoryOptionsIds = productCartDetail.childs[0].childs
             .reduce((acc, obj) => [...acc, ...obj.childs], [])
             .map(x => x?.modifierOption?.id)
 
-         console.log('modifierCategoryOptionsIds', modifierCategoryOptionsIds)
          //selected modifiers
          let singleModifier = []
          let multipleModifier = []
@@ -1409,6 +1838,7 @@ const ModifierOptionsList = forwardRef((props, ref) => {
             single: singleModifier,
             multiple: multipleModifier,
          }))
+         setChildChangingToggle(prev => !prev)
       }
    }, [data])
 
@@ -1424,7 +1854,7 @@ const ModifierOptionsList = forwardRef((props, ref) => {
    if (templateLoading) {
       return <Loader inline />
    }
-   console.log('modifierData', data)
+
    if (data.modifiers[0].categories.length === 0) {
       return null
    }
@@ -1553,12 +1983,6 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                                              .primaryColor.value
                                        }
                                        size={50}
-                                       onClick={() => {
-                                          onCheckClick(
-                                             eachOption,
-                                             eachModifierCategory
-                                          )
-                                       }}
                                     />
                                  )}
                               </div>

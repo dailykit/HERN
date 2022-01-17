@@ -82,6 +82,9 @@ export const root = async (req, res) => {
             res.type('application/pdf')
             return res.send(buffer)
          }
+         case 'raw': {
+            return res.send(result)
+         }
          default:
             throw Error('Invalid Format')
       }

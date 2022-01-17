@@ -53,7 +53,6 @@ const DeliveryRanges = ({ timeSlotId, mileRanges, openTunnel }) => {
       })
       openTunnel(3)
    }
-   console.log("nitin", mileRanges);
    return (
       <>
          {mileRanges?.length > 0 ? (

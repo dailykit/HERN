@@ -16,6 +16,7 @@ import {
    GET_CART_PAYMENT_INFO,
    UPDATE_CART_PAYMENT,
    CREATE_PRINT_JOB,
+   UPDATE_CART,
 } from '../graphql'
 import { useUser, useCart } from '../context'
 import { useConfig } from '../lib'
@@ -33,7 +34,7 @@ import {
    PaymentProcessingModal,
    PrintProcessingModal,
 } from '../components'
-import { set } from 'lodash'
+import { isEmpty, set } from 'lodash'
 
 const PaymentContext = createContext()
 const inititalState = {
@@ -104,6 +105,7 @@ export const PaymentProvider = ({ children }) => {
    const { addToast } = useToasts()
 
    const BY_PASS_TERMINAL_PAYMENT = get_env('BY_PASS_TERMINAL_PAYMENT')
+   const ALLOW_POSIST_PUSH_ORDER = get_env('ALLOW_POSIST_PUSH_ORDER')
 
    // subscription to get cart payment info
    const { error: hasCartPaymentError, loading: isCartPaymentLoading } =
@@ -178,6 +180,14 @@ export const PaymentProvider = ({ children }) => {
 
    // mutation to update cart payment
    const [updateCartPayment] = useMutation(UPDATE_CART_PAYMENT, {
+      onError: error => {
+         console.error(error)
+         addToast('Something went wrong!', { appearance: 'error' })
+      },
+   })
+
+   // mutation to update cart
+   const [updateCart] = useMutation(UPDATE_CART, {
       onError: error => {
          console.error(error)
          addToast('Something went wrong!', { appearance: 'error' })
@@ -311,9 +321,6 @@ export const PaymentProvider = ({ children }) => {
 
    const initializePrinting = async () => {
       normalModalClose()
-      const path = settings['printing'].find(
-         item => item?.identifier === 'KioskCustomerTokenTemplate'
-      )?.value?.path?.value
       await dispatch({
          type: 'UPDATE_INITIAL_STATE',
          payload: {
@@ -324,13 +331,52 @@ export const PaymentProvider = ({ children }) => {
             },
          },
       })
-      await createPrintJob({
+      if (!isEmpty(settings) && isClient) {
+         const path = settings['printing'].find(
+            item => item?.identifier === 'KioskCustomerTokenTemplate'
+         )?.value?.path?.value
+         const DATA_HUB_HTTPS = get_env('DATA_HUB_HTTPS')
+         const { origin } = new URL(DATA_HUB_HTTPS)
+         const templateOptions = encodeURI(
+            JSON.stringify({
+               path,
+               format: 'raw',
+               readVar: false,
+            })
+         )
+         const templateVariable = encodeURI(
+            JSON.stringify({
+               cartId: cartState?.cart?.id,
+               paymentMode:
+                  cartPayment?.availablePaymentOption?.supportedPaymentOption
+                     ?.paymentOptionLabel === 'TERMINAL'
+                     ? 'card'
+                     : 'counter',
+            })
+         )
+         const url = `${origin}/template/?template=${templateOptions}&data=${templateVariable}`
+         console.log('url.....', url)
+
+         await createPrintJob({
+            variables: {
+               contentType: 'raw_uri',
+               printerId: kioskDetails?.printerId,
+               source: 'Dailykit',
+               title: `TOKEN-${cartPayment?.cartId}`,
+               url,
+            },
+         })
+      }
+   }
+
+   const createPosistOrder = async () => {
+      await updateCart({
          variables: {
-            contentType: 'pdf_uri',
-            printerId: kioskDetails?.printerId,
-            source: 'Dailykit',
-            title: `TOKEN-${cartPayment?.cartId}`,
-            url: `https://testhern.dailykit.org/template?template={"path":${path},"format":"pdf","readVar":false}&data={"cartId":${cartPayment?.cartId}}`,
+            id: cartPayment?.cartId,
+            _set: {},
+            _inc: {
+               posistOrderPushAttempt: 1,
+            },
          },
       })
    }
@@ -360,18 +406,18 @@ export const PaymentProvider = ({ children }) => {
       })
    }
 
-   const closePrintModal = () => {
-      dispatch({
-         type: 'UPDATE_INITIAL_STATE',
-         payload: {
-            printDetails: {
-               isPrintInitiated: false,
-               printStatus: 'not-started',
-               message: '',
-            },
-         },
-      })
-   }
+   // const closePrintModal = () => {
+   //    dispatch({
+   //       type: 'UPDATE_INITIAL_STATE',
+   //       payload: {
+   //          printDetails: {
+   //             isPrintInitiated: false,
+   //             printStatus: 'not-started',
+   //             message: '',
+   //          },
+   //       },
+   //    })
+   // }
 
    // useEffect(() => {
    //    if (cartId) {
@@ -424,6 +470,31 @@ export const PaymentProvider = ({ children }) => {
    }, [router.query])
 
    useEffect(() => {
+      if (
+         !_isEmpty(cartState) &&
+         cartState?.cart?.posistOrderStatus === 'CREATED'
+      ) {
+         initializePrinting()
+      }
+   }, [cartState?.cart?.posistOrderStatus])
+
+   useEffect(() => {
+      if (
+         cartPayment?.paymentStatus === 'SUCCEEDED' &&
+         ALLOW_POSIST_PUSH_ORDER === 'true'
+      ) {
+         console.log(
+            'inside terminal payment useffect',
+            cartPayment?.paymentStatus,
+            ALLOW_POSIST_PUSH_ORDER
+         )
+         ;(async () => {
+            await createPosistOrder()
+         })()
+      }
+   }, [cartPayment?.paymentStatus])
+
+   useEffect(() => {
       console.log(
          'useEffect=>',
          !_isEmpty(cartPayment),
@@ -434,6 +505,7 @@ export const PaymentProvider = ({ children }) => {
          ),
          !isCartPaymentLoading
       )
+
       if (
          isPaymentInitiated &&
          !_isEmpty(cartPayment) &&
@@ -535,7 +607,6 @@ export const PaymentProvider = ({ children }) => {
                printDetails={state.printDetails}
                setPrintStatus={setPrintStatus}
                resetPrintDetails={resetPrintDetails}
-               closePrintModal={closePrintModal}
                initializePrinting={initializePrinting}
             />
          )}

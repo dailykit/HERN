@@ -295,3 +295,53 @@ export const ORDER_BY_CART = `
       }
    }
 `
+
+export const CART = `
+query cart($id: Int!) {
+  cart(id: $id) {
+    id
+    isTest
+    amount
+    orderId
+    customerId
+    customerKeycloakId
+    balancePayment
+    retryPaymentMethod
+    paymentMethodId
+    paymentCustomerId
+    statementDescriptor
+    toUseAvailablePaymentOptionId
+    customerInfo
+    posistOrderDetails
+    locationKioskId
+    brandId
+    availablePaymentOption {
+      id
+      label
+      supportedPaymentOption {
+         paymentOptionLabel
+         id
+         isRequestClientBased
+         isWebhookClientBased
+         supportedPaymentCompany {
+            label
+            id
+         }
+      }
+   }
+  }
+}
+`
+
+export const LOCATION_KIOSK = `
+query LOCATION_KIOSK($id: Int!, $brandId: Int!) {
+   locationKiosk:brands_locationKiosk_by_pk(id: $id) {
+     location {
+       brand_locations(where: {brandId: {_eq: $brandId}}) {
+         posist_customer_key
+       }
+     }
+   }
+ }
+
+ `

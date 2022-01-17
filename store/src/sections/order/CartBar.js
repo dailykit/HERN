@@ -27,7 +27,7 @@ const CartBar = () => {
    const { cartState, methods, addToCart, combinedCartItems } =
       React.useContext(CartContext)
    const { onDemandMenu } = React.useContext(onDemandMenuContext)
-   const { brand } = useConfig()
+   const { brand, locationId } = useConfig()
    //context data
    const { cart } = cartState
    //component state
@@ -42,7 +42,7 @@ const CartBar = () => {
       () => ({
          params: {
             brandId: brand?.id,
-            locationId: 1000,
+            locationId: locationId,
          },
       }),
       [brand]

@@ -95,6 +95,8 @@ export const isStoreOnDemandDeliveryAvailable = async (
                            message: status
                               ? 'Delivery available in your location'
                               : 'Delivery not available in your location.',
+                           drivableDistance:
+                              distanceDeliveryStatus.drivableDistance,
                         }
                      }
                   } else {
@@ -137,7 +139,8 @@ export const isStoreOnDemandDeliveryAvailable = async (
 
 export const isPreOrderDeliveryAvailable = async (
    brandRecurrences,
-   eachStore
+   eachStore,
+   address
 ) => {
    // this fn use for pre order delivery
    // bcz in pre order we need not to validate time (check either store available by distance or not)
@@ -160,28 +163,40 @@ export const isPreOrderDeliveryAvailable = async (
          message: 'Sorry, there is no store available for pickup.',
       }
    } else {
+      let fulfilledRecurrences = []
       for (let rec in finalRecurrences) {
          for (let timeslot of finalRecurrences[rec].recurrence.timeSlots) {
             if (timeslot.mileRanges.length) {
                const distanceDeliveryStatus =
                   await isStoreDeliveryAvailableByDistance(
                      timeslot.mileRanges,
-                     eachStore
+                     eachStore,
+                     address
                   )
                const { aerial, drivable, zipcode, geoBoundary } =
                   distanceDeliveryStatus.result
                const status = aerial && drivable && zipcode && geoBoundary
+               if (status) {
+                  fulfilledRecurrences = [
+                     ...fulfilledRecurrences,
+                     finalRecurrences[rec],
+                  ]
+               }
 
-               if (status || rec == finalRecurrences.length - 1) {
+               if (
+                  rec == finalRecurrences.length - 1 &&
+                  fulfilledRecurrences.length > 0
+               ) {
                   return {
                      status,
                      result: distanceDeliveryStatus.result,
-                     rec: finalRecurrences[rec],
+                     rec: fulfilledRecurrences,
                      mileRangeInfo: distanceDeliveryStatus.mileRangeInfo,
                      timeSlotInfo: timeslot,
                      message: status
-                        ? 'Delivery available in your location'
+                        ? 'Pre Order Delivery available in your location'
                         : 'Delivery not available in your location.',
+                     drivableDistance: distanceDeliveryStatus.drivableDistance,
                   }
                }
             } else {
@@ -198,25 +213,32 @@ export const isPreOrderDeliveryAvailable = async (
    }
 }
 
-const isStoreDeliveryAvailableByDistance = async (mileRanges, eachStore) => {
-   const userLocation = JSON.parse(localStorage.getItem('userLocation'))
+const isStoreDeliveryAvailableByDistance = async (
+   mileRanges,
+   eachStore,
+   address
+) => {
+   const userLocation = { ...address }
    let isStoreDeliveryAvailableByDistanceStatus = {
       aerial: true,
       drivable: true,
       zipcode: true,
       geoBoundary: true,
    }
-
+   let drivableByGoogleDistance = null
    for (let mileRange in mileRanges) {
       // aerial distance
       if (mileRanges[mileRange].distanceType === 'aerial') {
          const aerialDistance = mileRanges[mileRange]
          let result =
             eachStore.aerialDistance >= aerialDistance.from &&
-            eachStore.aerialDistance <= aerialDistance.to &&
-            !mileRanges[mileRange].isExcluded
-
-         isStoreDeliveryAvailableByDistanceStatus['aerial'] = result
+            eachStore.aerialDistance <= aerialDistance.to
+         if (result) {
+            isStoreDeliveryAvailableByDistanceStatus['aerial'] =
+               result && !mileRanges[mileRange].isExcluded
+         } else {
+            isStoreDeliveryAvailableByDistanceStatus['aerial'] = result
+         }
       }
       // drivable distance
       if (mileRanges[mileRange].distanceType === 'drivable') {
@@ -234,12 +256,16 @@ const isStoreDeliveryAvailableByDistance = async (mileRanges, eachStore) => {
             const drivableDistance = mileRanges[mileRange]
             const distanceMileFloat =
                data.rows[0].elements[0].distance.text.split(' ')[0]
+            drivableByGoogleDistance = distanceMileFloat
             let result =
                distanceMileFloat >= drivableDistance.from &&
-               distanceMileFloat <= drivableDistance.to &&
-               !mileRanges[mileRange].isExcluded
-
-            isStoreDeliveryAvailableByDistanceStatus['drivable'] = result
+               distanceMileFloat <= drivableDistance.to
+            if (result) {
+               isStoreDeliveryAvailableByDistanceStatus['drivable'] =
+                  result && !mileRanges[mileRange].isExcluded
+            } else {
+               isStoreDeliveryAvailableByDistanceStatus['drivable'] = result
+            }
          } catch (error) {
             console.log('getDataWithDrivableDistance', error)
          }
@@ -258,9 +284,12 @@ const isStoreDeliveryAvailableByDistance = async (mileRanges, eachStore) => {
             let result = Boolean(
                zipcodes.find(x => x == parseInt(userLocation.address.zipcode))
             )
-
-            isStoreDeliveryAvailableByDistanceStatus['zipcode'] =
-               result && !mileRanges[mileRange].isExcluded
+            if (result) {
+               isStoreDeliveryAvailableByDistanceStatus['zipcode'] =
+                  result && !mileRanges[mileRange].isExcluded
+            } else {
+               isStoreDeliveryAvailableByDistanceStatus['zipcode'] = result
+            }
          }
       }
       // geoBoundary
@@ -282,11 +311,13 @@ const isStoreDeliveryAvailableByDistance = async (mileRanges, eachStore) => {
                geoBoundaries
             )
 
-            let result =
-               storeValidationForGeoBoundaries &&
-               !mileRanges[mileRange].isExcluded
-
-            isStoreDeliveryAvailableByDistanceStatus['geoBoundary'] = result
+            let result = storeValidationForGeoBoundaries
+            if (result) {
+               isStoreDeliveryAvailableByDistanceStatus['geoBoundary'] =
+                  result && !mileRanges[mileRange].isExcluded
+            } else {
+               isStoreDeliveryAvailableByDistanceStatus['geoBoundary'] = result
+            }
          }
       }
       if (
@@ -304,6 +335,7 @@ const isStoreDeliveryAvailableByDistance = async (mileRanges, eachStore) => {
    return {
       result: isStoreDeliveryAvailableByDistanceStatus,
       mileRangeInfo: null,
+      drivableDistance: drivableByGoogleDistance,
    }
 }
 
@@ -594,6 +626,14 @@ export const generateDeliverySlots = recurrences => {
                   )
                   // start + lead time < to
                   const leadMiliSecs = leadTime * 60000
+                  console.log(
+                     'leadMiliSecs',
+                     now.getTime() + leadMiliSecs < toTimeStamp.getTime(),
+                     now.getTime(),
+                     leadMiliSecs,
+                     toTimeStamp.getTime(),
+                     timeslot
+                  )
                   if (now.getTime() + leadMiliSecs < toTimeStamp.getTime()) {
                      // if start + lead time > from -> set new from time
                      let slotStart
@@ -783,7 +823,8 @@ export const generateTimeStamp = (time, date, slotTiming) => {
 export const autoSelectStore = async (
    brandLocation,
    brandRecurrences,
-   fulfillmentType
+   fulfillmentType,
+   address
 ) => {
    const fulfillmentStatus = () => {
       let type
@@ -828,14 +869,16 @@ export const autoSelectStore = async (
             if (brandRecurrences && fulfillmentType === 'ONDEMAND_DELIVERY') {
                const deliveryStatus = await isStoreOnDemandDeliveryAvailable(
                   brandRecurrences,
-                  eachStore
+                  eachStore,
+                  address
                )
                eachStore[fulfillmentStatus()] = deliveryStatus
             }
             if (brandRecurrences && fulfillmentType === 'PREORDER_DELIVERY') {
                const deliveryStatus = await isPreOrderDeliveryAvailable(
                   brandRecurrences,
-                  eachStore
+                  eachStore,
+                  address
                )
                eachStore[fulfillmentStatus()] = deliveryStatus
             }
@@ -880,6 +923,6 @@ export const autoSelectStore = async (
       }
       return dataWithAerialDistance
    }
-   const bar = await getAerialDistance(brandLocation, true)
+   const bar = await getAerialDistance(brandLocation, true, address)
    return [bar, fulfillmentStatus()]
 }

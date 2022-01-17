@@ -23,7 +23,8 @@ import { VegNonVegType } from '../../assets/icons'
 export const OnDemandOrder = ({ config }) => {
    const router = useRouter()
    const { addToast } = useToasts()
-   const { brand } = useConfig()
+
+   const { brand, locationId, storeStatus } = useConfig()
 
    const menuType = config?.display?.dropdown?.value[0]?.value
       ? config?.display?.dropdown?.value[0]?.value
@@ -65,7 +66,7 @@ export const OnDemandOrder = ({ config }) => {
       () => ({
          params: {
             brandId: brand?.id,
-            locationId: 1000,
+            locationId: locationId,
          },
       }),
       [brand]
@@ -134,8 +135,15 @@ export const OnDemandOrder = ({ config }) => {
                      addToCart({ productId: data.id }, 1)
                   }
                }}
+               disabled={
+                  locationId ? (storeStatus.status ? false : true) : true
+               }
             >
-               ADD
+               {locationId
+                  ? storeStatus.status
+                     ? 'ADD'
+                     : 'COMING SOON'
+                  : 'COMING SOON'}
             </Button>
             {data.productOptions.length > 0 && <span>Customizable</span>}
          </div>

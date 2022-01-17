@@ -1,3 +1,4 @@
 import NoData from './NoData'
+import ComingSoon from './ComingSoon'
 
-export { NoData }
+export { NoData, ComingSoon }

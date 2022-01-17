@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { useMutation } from '@apollo/react-hooks'
 import axios from 'axios'
 import isEmpty from 'lodash/isEmpty'
@@ -22,45 +22,75 @@ const passResponseToWebhook = async data => {
 
 function useTerminalPay() {
    const paymentOptionRef = useRef(null)
-   let socket
-
-   if (isClient) {
-      socket = new WebSocket('ws://localhost:8080/neoleap_integration')
-      socket.onopen = function (data) {
-         console.log('on open', data)
-         // connection opened – add action here
+   const [socket, setSocket] = useState(null)
+   useEffect(() => {
+      if (typeof window !== 'undefined' && window.document && !socket) {
+         setSocket(new WebSocket('ws://localhost:8080/neoleap_integration'))
       }
-      socket.onmessage = async event => {
-         console.log('onmessage', event)
-         if (!isEmpty(event)) {
-            const { JsonResult = null } = event.data
-            if (!isEmpty(JsonResult)) {
-               const terminalResponseData = {
-                  cartPaymentId: cartPayment.id,
-                  status: formatTerminalStatus[JsonResult?.StatusCode].status,
-                  transactionId: JsonResult?.TransactionDateTime,
-                  transactionRemark: JsonResult,
+      return () => {
+         socket.close()
+      }
+   }, [])
+   useEffect(() => {
+      if (socket) {
+         socket.onopen = function (data) {
+            console.log('on open', data)
+            // connection opened – add action here
+         }
+      }
+   }, [socket])
+   useEffect(() => {
+      if (socket) {
+         socket.onmessage = async event => {
+            console.log('onmessage', event)
+            if (!isEmpty(event)) {
+               const parsedData = JSON.parse(event.data)
+               console.log('parsed data', parsedData)
+               const { JsonResult = null } = parsedData
+               if (!isEmpty(JsonResult)) {
+                  const terminalResponseData = {
+                     cartPaymentId: parseInt(JsonResult.ECRReferenceNumber),
+                     status:
+                        formatTerminalStatus[JsonResult?.StatusCode].status,
+                     transactionId: JsonResult?.TransactionDateTime,
+                     transactionRemark: JsonResult,
+                  }
+                  console.log(JsonResult)
+                  return await passResponseToWebhook(terminalResponseData)
                }
-               return await passResponseToWebhook(terminalResponseData)
             }
          }
       }
-   }
+   }, [socket])
+   const onPay = async data => {
+      console.log(
+         'onPay outside isclient',
+         isClient,
+         socket,
+         socket.readyState,
+         socket.OPEN
+      )
+      if (isClient) {
+         console.log('onPay inside isclient', isClient)
+         console.log('socket ready?', socket.readyState, WebSocket.OPEN)
+         if (socket.readyState === WebSocket.OPEN) {
+            console.log('inside onPay if condition')
 
-   const onPay = data => {
-      if (socket.readyState === (isClient ? WebSocket.OPEN : '')) {
-         console.log(data)
-         const jsonStringifiedData = JSON.stringify(data)
-         console.log(jsonStringifiedData)
-         socket.send(jsonStringifiedData)
-         console.log(new Date().getTime())
+            console.log(data)
+            const jsonStringifiedData = JSON.stringify(data)
+            console.log(jsonStringifiedData)
+            socket.send(jsonStringifiedData)
+            console.log(new Date().getTime())
+         }
       }
    }
    const onGetLastTxn = data => {
-      if (socket.readyState === (isClient ? WebSocket.OPEN : '')) {
-         console.log(data)
-         var getLastTxnRes = socket.send(JSON.stringify(getLastTxnData))
-         console.log('getLastTxn response', getLastTxnRes)
+      if (isClient) {
+         if (socket.readyState === WebSocket.OPEN) {
+            console.log(data)
+            var getLastTxnRes = socket.send(JSON.stringify(getLastTxnData))
+            console.log('getLastTxn response', getLastTxnRes)
+         }
       }
    }
 
@@ -95,13 +125,14 @@ function useTerminalPay() {
    const initiateTerminalPayment = async cartPayment => {
       console.log('initiateTerminalPayment')
       if (!isEmpty(cartPayment) && cartPayment.id && cartPayment.amount) {
+         console.log('inside initiateTerminalPayment if condition')
          const initiatePaymentReqData = {
             Command: 'SALE',
             PrintFlag: '1',
-            Amount: (cartPayment.amount * 100).toFixed(2),
+            Amount: parseInt(cartPayment.amount * 100),
             AdditionalData: cartPayment?.id?.toString() || '',
          }
-         onPay(initiatePaymentReqData)
+         await onPay(initiatePaymentReqData)
       }
    }
 

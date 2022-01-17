@@ -1,27 +1,17 @@
 import React from 'react'
 import { providers, getSession } from 'next-auth/client'
 
-import {
-   getPageProps,
-   processExternalFiles,
-   renderPageContent,
-} from '../../../utils'
-import { SEO, Layout } from '../../../components'
+import { getPageProps, renderPageContent } from '../../../utils'
+import { SEO, Layout, ExternalJSCSSFiles } from '../../../components'
 import 'regenerator-runtime'
 
 const Register = props => {
    const { settings, linkedFiles, folds, seoSettings } = props
-   React.useEffect(() => {
-      try {
-         processExternalFiles(folds, linkedFiles)
-      } catch (err) {
-         console.log('Failed to render page: ', err)
-      }
-   }, [folds])
 
    return (
       <Layout settings={settings}>
          <SEO seoSettings={seoSettings} />
+         <ExternalJSCSSFiles externalFiles={linkedFiles} />
          <main className="hern-register">
             {renderPageContent(folds, [
                {

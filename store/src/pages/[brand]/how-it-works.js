@@ -1,26 +1,15 @@
 import React from 'react'
-import { SEO, Layout } from '../../components'
-import {
-   processExternalFiles,
-   renderPageContent,
-   getPageProps,
-} from '../../utils'
+import { SEO, Layout, ExternalJSCSSFiles } from '../../components'
+import { renderPageContent, getPageProps } from '../../utils'
 import 'regenerator-runtime'
 
 const HowItWorks = props => {
    const { folds, settings, navigationMenus, seoSettings, linkedFiles } = props
 
-   React.useEffect(() => {
-      try {
-         processExternalFiles(folds, linkedFiles)
-      } catch (err) {
-         console.log('Failed to render page: ', err)
-      }
-   }, [folds])
-
    return (
-      <Layout settings={settings}>
+      <Layout settings={settings} navigationMenus={navigationMenus}>
          <SEO seoSettings={seoSettings} />
+         <ExternalJSCSSFiles externalFiles={linkedFiles} />
          <main>{renderPageContent(folds)}</main>
       </Layout>
    )

@@ -11,15 +11,20 @@ import * as moment from 'moment'
 
 export const Profile = () => {
    const { isConfigLoading } = useConfig()
+   const { settings } = useConfig()
    const { isLoading } = useUser()
    if (isConfigLoading || isLoading) return <Loader component />
 
+   const isSubscriptionStore =
+      settings?.availability?.find(
+         i => i.identifier === 'isSubscriptionAvailable'
+      )?.value?.Subscription?.isSubscriptionAvailable?.value ?? true
    return (
       <main className="hern-profile__main">
          <ProfileSidebar />
          <div>
             <ProfileForm />
-            <CurrentPlan />
+            {isSubscriptionStore && <CurrentPlan />}
          </div>
       </main>
    )
