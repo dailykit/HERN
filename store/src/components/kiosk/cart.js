@@ -1,4 +1,14 @@
-import { Button, Col, Layout, Modal, Row, Menu, Dropdown, Space } from 'antd'
+import {
+   Button,
+   Col,
+   Layout,
+   Modal,
+   Row,
+   Menu,
+   Dropdown,
+   Space,
+   Spin,
+} from 'antd'
 import React, { useEffect, useState } from 'react'
 import {
    ArrowLeftIcon,
@@ -27,7 +37,8 @@ const { Header, Content, Footer } = Layout
 
 export const KioskCart = props => {
    //context
-   const { cartState, methods, addToCart } = React.useContext(CartContext)
+   const { cartState, methods, addToCart, isFinalCartLoading } =
+      React.useContext(CartContext)
    const { cart } = cartState
    const { config, combinedCartItems, setCurrentPage } = props
    const { t, direction } = useTranslation()
@@ -49,6 +60,20 @@ export const KioskCart = props => {
 
    if (combinedCartItems === null) {
       return <p>{t('No cart available')}</p>
+   }
+   if (isFinalCartLoading) {
+      return (
+         <div
+            style={{
+               display: 'flex',
+               alignItems: 'center',
+               justifyContent: 'center',
+               height: '100%',
+            }}
+         >
+            <Spin size="large" tip="Loading Cart..." />
+         </div>
+      )
    }
 
    return (

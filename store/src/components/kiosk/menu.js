@@ -10,6 +10,7 @@ import {
    Carousel,
    Space,
    Radio,
+   Spin,
 } from 'antd'
 import { useQueryParamState } from '../../utils'
 import { CartContext, useTranslation } from '../../context'
@@ -162,7 +163,18 @@ export const MenuSection = props => {
    }
 
    if (status === 'loading') {
-      return <div>Loading</div>
+      return (
+         <div
+            style={{
+               display: 'flex',
+               alignItems: 'center',
+               justifyContent: 'center',
+               height: '100%',
+            }}
+         >
+            <Spin size="large" tip="Loading Menu..." />
+         </div>
+      )
    }
    if (status === 'error') {
       return <div>Somthing went wring</div>
