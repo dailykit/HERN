@@ -60,3 +60,22 @@ export const DaysButton = styled.div`
       color: ${props => (props.value === true ? '#367BF5' : '#919699')};
    }
 `
+export const TimeButton = styled.div`
+   display: block;
+   padding: 0.5em;
+   border: 1px solid #f3f3f3;
+   box-sizing: border-box;
+   border-radius: 4px;
+   letter-spacing: 0.5px;
+   line-height: 1;
+   background: ${props => (props.value === true ? '#F3F3F3' : '#ffffff')};
+   span {
+      font-family: Roboto;
+      font-style: normal;
+      font-size: 11px;
+      line-height: 18px;
+      text-align: center;
+      text-transform: uppercase;
+      color: ${props => (props.value === true ? '#367BF5' : '#919699')};
+   }
+`
