@@ -15,6 +15,7 @@ import { combineCartItems, isClient, useQueryParamState } from '../../utils'
 import { MenuSection } from '../../components/kiosk/menu'
 import { KioskCart } from '../../components/kiosk/cart'
 import { DELETE_CART } from '../../graphql'
+import { usePayment } from '../../lib'
 // idle screen component
 // fulfillment component
 // header
@@ -41,25 +42,43 @@ const Kiosk = props => {
 
    const { direction } = useTranslation()
 
+   const { resetPaymentProviderStates } = usePayment()
+
    //delete Cart mutation
-   const [deleteCart] = useMutation(DELETE_CART, {
-      onCompleted: () => {
-         clearCurrentPage()
-         setStoredCartId(null)
-      },
-   })
+   const [deleteCart] = useMutation(DELETE_CART)
 
    const handleOnIdle = event => {
       console.log('user is idle', event)
       setIsIdleScreen(true)
+      // if (!isEmpty(cartState.cart) && cartState.cart.id) {
+      //    deleteCart({
+      //       variables: {
+      //          id: cartState.cart.id,
+      //       },
+      //    })
+      //    clearCurrentPage()
+      //    setStoredCartId(null)
+      //    resetPaymentProviderStates()
+      // } else {
+      //    clearCurrentPage()
+      //    setStoredCartId(null)
+      //    resetPaymentProviderStates()
+      // }
+   }
+   const resetStates = () => {
       if (!isEmpty(cartState.cart) && cartState.cart.id) {
          deleteCart({
             variables: {
                id: cartState.cart.id,
             },
          })
+         clearCurrentPage()
+         setStoredCartId(null)
+         resetPaymentProviderStates()
       } else {
          clearCurrentPage()
+         setStoredCartId(null)
+         resetPaymentProviderStates()
       }
    }
 
@@ -123,7 +142,7 @@ const Kiosk = props => {
       }, kioskConfig.idlePageSettings.idleScreenWarningTime.value * 1000)
    }
    if (isIdleScreen) {
-      return <IdleScreen config={kioskConfig} />
+      return <IdleScreen config={kioskConfig} resetStates={resetStates} />
    }
    console.log('this is cureent page', currentPage)
    return (
