@@ -119,13 +119,19 @@
 }
 
 .hern-upfront-coupons-list__coupon-wrapper > .slick-dots > li > button {
-   background: #367bf5;
+   background: #38a169;
 }
 .hern-upfront-coupons-list__coupon-wrapper
    > .slick-dots
    > .slick-active
    > button {
-   background: #618fde !important;
+   background: #38a169 !important;
+}
+.hern-upfront-coupons-list__carousal-wrapper {
+   width: 93%;
+   @media (max-width: 480px) {
+      width: 100%;
+   }
 }
 // adding arrows
 .hern-upfront-coupons-list__carousal-arrow {
@@ -135,6 +141,16 @@
    z-index: 100000000000000;
    border-radius: 50%;
    cursor: pointer;
+   width: 15%;
+   height: 50%;
+   padding: 0.3rem;
+   border: 2px solid rgba(64, 64, 64, 0.4);
+   &:hover {
+      background: #f4f4f4;
+   }
+   @media (max-width: 480px) {
+      display: none;
+   }
 }
 .hern-upfront-coupons-list__carousal-left-arrow {
    left: -1%;
@@ -146,10 +162,9 @@
 .hern-upfront-coupons-list__coupon-wrapper > .slick-dots {
    bottom: 0rem;
    @media (max-width: 480px) {
-      bottom: -2rem !important;
+      bottom: -1rem !important;
       display: block !important;
-      left: 20%;
-      right: 20%;
+      left: 25%;
    }
 }
 

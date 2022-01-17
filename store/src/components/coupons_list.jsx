@@ -129,7 +129,7 @@ const Coupons_List = ({
                      size={42}
                      onClick={lastCarousal}
                   />
-                  <div style={{ width: '95%' }}>
+                  <div className="hern-upfront-coupons-list__carousal-wrapper">
                      <Carousel
                         ref={carousalRef}
                         slidesToShow={width < 1600 ? 1 : 2}
