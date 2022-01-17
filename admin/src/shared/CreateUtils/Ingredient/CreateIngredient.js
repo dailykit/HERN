@@ -21,7 +21,7 @@ const CreateIngredient = ({ closeTunnel }) => {
    const [ingredient, setIngredient] = React.useState([
       {
          ingredientName: {
-            value: null,
+            value: '',
             meta: {
                isValid: false,
                isTouched: false,
@@ -47,7 +47,7 @@ const CreateIngredient = ({ closeTunnel }) => {
          setIngredient([
             {
                ingredientName: {
-                  value: null,
+                  value: '',
                   meta: {
                      isValid: false,
                      isTouched: false,
@@ -86,49 +86,25 @@ const CreateIngredient = ({ closeTunnel }) => {
       const { name, value } = e.target
       if (name === `ingredientName-${i}`) {
          const ingredientNameIs = updatedIngredient[i].ingredientName
-         const ingredientNameMeta = updatedIngredient[i].ingredientName.meta
-
          ingredientNameIs.value = value
-         ingredientNameMeta.isTouched = true
-         ingredientNameMeta.errors = validator.text(value).errors
-         ingredientNameMeta.isValid = validator.text(value).isValid
          setIngredient([...updatedIngredient])
-         console.log('Ingredient Name::::', ingredient)
       }
    }
-   console.log('ingredient :>> ', ingredient)
+   console.log('Ingredient Name::::', ingredient)
 
-   // const onBlur = (e, i) => {
-   //    const { name, value } = e.target
-   //    if (name === `ingredientName-${i}` && name === `ingredientAuthor-${i}`) {
-   //       const ingredientInstant = ingredient[i]
-
-   //       setIngredient([
-   //          ...ingredient,
-   //          {
-   //             ...ingredientInstant,
-   //             ingredientName: {
-   //                ...ingredientInstant.ingredientName,
-   //                meta: {
-   //                   ...ingredientInstant.ingredientName.meta,
-   //                   isTouched: true,
-   //                   errors: validator.text(value).errors,
-   //                   isValid: validator.text(value).isValid,
-   //                },
-   //             },
-   //             ingredientAuthor: {
-   //                ...ingredientInstant.ingredientAuthor,
-   //                meta: {
-   //                   ...ingredientInstant.ingredientAuthor.meta,
-   //                   isTouched: true,
-   //                   errors: validator.text(value).errors,
-   //                   isValid: validator.text(value).isValid,
-   //                },
-   //             },
-   //          },
-   //       ])
-   //    }
-   // }
+   const onBlur = (e, i) => {
+      const { name, value } = e.target
+      const updatedIngredient = ingredient
+      if (name === `ingredientName-${i}`) {
+         const nameValue = updatedIngredient[i].ingredientName.value
+         updatedIngredient[i].ingredientName.meta.isTouched = true
+         updatedIngredient[i].ingredientName.meta.errors =
+            validator.text(nameValue).errors
+         updatedIngredient[i].ingredientName.meta.isValid =
+            validator.text(nameValue).isValid
+         setIngredient([...updatedIngredient])
+      }
+   }
 
    const save = type => {
       setClick(type)
@@ -148,7 +124,7 @@ const CreateIngredient = ({ closeTunnel }) => {
       setIngredient([
          {
             ingredientName: {
-               value: null,
+               value: '',
                meta: {
                   isValid: false,
                   isTouched: false,
@@ -201,7 +177,7 @@ const CreateIngredient = ({ closeTunnel }) => {
                         value={ingredient.ingredientName.value}
                         placeholder="Enter ingredient name"
                         onChange={e => onChange(e, i)}
-                        // onBlur={e => onBlur(e, i, `ingredientName-${i}`)}
+                        onBlur={e => onBlur(e, i, `ingredientName-${i}`)}
                         hasError={
                            !ingredient.ingredientName.meta.isValid &&
                            ingredient.ingredientName.meta.isTouched
@@ -226,7 +202,7 @@ const CreateIngredient = ({ closeTunnel }) => {
                      ...ingredient,
                      {
                         ingredientName: {
-                           value: null,
+                           value: '',
                            meta: {
                               isValid: false,
                               isTouched: false,
