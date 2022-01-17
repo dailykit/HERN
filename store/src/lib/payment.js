@@ -93,7 +93,7 @@ export const PaymentProvider = ({ children }) => {
    const [isProcessingPayment, setIsProcessingPayment] = useState(false)
    const [isPaymentInitiated, setIsPaymentInitiated] = useState(false)
    const { user, isAuthenticated, isLoading } = useUser()
-   const { brand, kioskDetails, settings } = useConfig()
+   const { brand, kioskDetails, settings, selectedOrderTab } = useConfig()
    const { displayRazorpay } = useRazorPay()
    const { displayPaytm } = usePaytm()
    const {
@@ -291,62 +291,63 @@ export const PaymentProvider = ({ children }) => {
    const initializePrinting = async () => {
       console.log('inside  print method....')
       onPaymentModalClose()
-      // await dispatch({
-      //    type: 'UPDATE_INITIAL_STATE',
-      //    payload: {
-      //       printDetails: {
-      //          isPrintInitiated: true,
-      //          printStatus: 'ongoing',
-      //          message: '',
-      //       },
-      //    },
-      // })
-      // if (!isEmpty(settings) && isClient) {
-      //    const path = settings['printing'].find(
-      //       item => item?.identifier === 'KioskCustomerTokenTemplate'
-      //    )?.value?.path?.value
-      //    const DATA_HUB_HTTPS = get_env('DATA_HUB_HTTPS')
-      //    const { origin } = new URL(DATA_HUB_HTTPS)
-      //    const templateOptions = encodeURI(
-      //       JSON.stringify({
-      //          path,
-      //          format: 'raw',
-      //          readVar: false,
-      //       })
-      //    )
-      //    const templateVariable = encodeURI(
-      //       JSON.stringify({
-      //          cartId: cartState?.cart?.id,
-      //          paymentMode:
-      //             cartPayment?.availablePaymentOption?.supportedPaymentOption
-      //                ?.paymentOptionLabel === 'TERMINAL'
-      //                ? 'card'
-      //                : 'counter',
-      //       })
-      //    )
-      //    const url = `${origin}/template/?template=${templateOptions}&data=${templateVariable}`
-      //    console.log('url.....', url)
-
-      //    await createPrintJob({
-      //       variables: {
-      //          contentType: 'raw_uri',
-      //          printerId: kioskDetails?.printerId,
-      //          source: 'Dailykit',
-      //          title: `TOKEN-${cartPayment?.cartId}`,
-      //          url,
-      //       },
-      //    })
-      // }
       await dispatch({
          type: 'UPDATE_INITIAL_STATE',
          payload: {
             printDetails: {
-               ...state.printDetails,
                isPrintInitiated: true,
-               printStatus: 'success',
+               printStatus: 'ongoing',
+               message: '',
             },
          },
       })
+      if (!isEmpty(settings) && isClient) {
+         const path = settings['printing'].find(
+            item => item?.identifier === 'KioskCustomerTokenTemplate'
+         )?.value?.path?.value
+         const DATA_HUB_HTTPS = get_env('DATA_HUB_HTTPS')
+         const { origin } = new URL(DATA_HUB_HTTPS)
+         const templateOptions = encodeURI(
+            JSON.stringify({
+               path,
+               format: 'raw',
+               readVar: false,
+            })
+         )
+         const templateVariable = encodeURI(
+            JSON.stringify({
+               cartId: cartState?.cart?.id,
+               paymentMode:
+                  cartPayment?.availablePaymentOption?.supportedPaymentOption
+                     ?.paymentOptionLabel === 'TERMINAL'
+                     ? 'card'
+                     : 'counter',
+               orderType: selectedOrderTab?.orderFulfillmentTypeLabel || 'N/A',
+            })
+         )
+         const url = `${origin}/template/?template=${templateOptions}&data=${templateVariable}`
+         console.log('url.....', url)
+
+         await createPrintJob({
+            variables: {
+               contentType: 'raw_uri',
+               printerId: kioskDetails?.printerId,
+               source: 'Dailykit',
+               title: `TOKEN-${cartPayment?.cartId}`,
+               url,
+            },
+         })
+      }
+      // await dispatch({
+      //    type: 'UPDATE_INITIAL_STATE',
+      //    payload: {
+      //       printDetails: {
+      //          ...state.printDetails,
+      //          isPrintInitiated: true,
+      //          printStatus: 'success',
+      //       },
+      //    },
+      // })
    }
 
    const createPosistOrder = async () => {
