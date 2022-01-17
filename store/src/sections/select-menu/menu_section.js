@@ -22,22 +22,21 @@ export const MenuSection = () => {
                      className="hern-select-menu__header__before"
                      style={{
                         backgroundImage: `url(
-                           ${
-                              !isEmpty(config?.header?.images)
-                                 ? config?.header?.images[0]?.url
-                                 : ''
+                           ${!isEmpty(config?.header?.images?.value?.url)
+                              ? config?.header?.images?.value?.url
+                              : ''
                            }
                         )`,
                      }}
                   />
-                  {config?.header?.heading && (
+                  {config?.header?.heading?.value && (
                      <h1 className="hern-select-menu__header__heading">
-                        {config?.header?.heading}
+                        {config?.header?.heading?.value}
                      </h1>
                   )}
-                  {config?.header?.subHeading && (
+                  {config?.header?.subHeading?.value && (
                      <h3 className="hern-select-menu__header__sub-heading">
-                        {config?.header?.subHeading}
+                        {config?.header?.subHeading?.value}
                      </h3>
                   )}
                </header>

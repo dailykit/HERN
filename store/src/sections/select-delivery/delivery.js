@@ -34,12 +34,10 @@ const DeliveryContent = () => {
          })
          router.push(
             getRoute(
-               `/get-started/select-menu/?date=${
-                  state.delivery_date.selected.fulfillmentDate
-               }${
-                  state.skip_list.length > 0
-                     ? `&previous=${state.skip_list}`
-                     : ''
+               `/get-started/select-menu/?date=${state.delivery_date.selected.fulfillmentDate
+               }${state.skip_list.length > 0
+                  ? `&previous=${state.skip_list}`
+                  : ''
                }`
             )
          )
@@ -73,13 +71,21 @@ const DeliveryContent = () => {
       if (state.address.error) return false
       return true
    }
+
+   //config properties
    const theme = configOf('theme-color', 'Visual')
+   const backgroundFromConfig = configOf('select-delivery-background', 'Select-Delivery')?.background
+   const deliveryDayLabelFromConfig = configOf('delivery-day', 'Select-Delivery')?.Delivery?.deliveryDayLabel
+   const firstDeliveryDayLabelFromConfig = configOf('first-delivery', 'Select-Delivery')?.firstDelivery?.firstDeliveryDayLabel
+
    const brandTextColor = {
       color: theme?.accent ? theme.accent : 'rgba(5, 150, 105, 1)',
    }
-
    return (
-      <main className="hern-delivery__main">
+      <main className="hern-delivery__main" style={backgroundFromConfig && {
+         backgroundImage: "url(" + backgroundFromConfig?.BackgroundImage?.value + ")",
+         backgroundColor: backgroundFromConfig?.backgroundColor?.value
+      }}>
          <header className="hern-delivery__header">
             <h2 className="hern-delivery__title" style={brandTextColor}>
                Delivery
@@ -87,11 +93,11 @@ const DeliveryContent = () => {
          </header>
          <AddressSection />
          <h3 className="hern-delivery__section-title" style={brandTextColor}>
-            Delivery Day
+            {deliveryDayLabelFromConfig?.value || 'Delivery Day'}
          </h3>
          <DeliverySection />
          <h3 className="hern-delivery__section-title" style={brandTextColor}>
-            Select your first delivery date
+            {firstDeliveryDayLabelFromConfig?.value || 'Select your first delivery date'}
          </h3>
          <DeliveryDateSection />
          <div className="hern-delivery__continue">

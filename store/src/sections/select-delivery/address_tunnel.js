@@ -7,7 +7,7 @@ import { useDelivery } from './state'
 import { useUser, CartContext } from '../../context'
 import { MUTATIONS } from '../../graphql'
 import { CloseIcon } from '../../assets/icons'
-import { useScript, isClient, get_env } from '../../utils'
+import { useScript, isClient, get_env, useOnClickOutside } from '../../utils'
 import { Tunnel, Button, Form, Spacer } from '../../components'
 import { useConfig } from '../../lib'
 import { Modal } from 'antd'
@@ -19,6 +19,7 @@ export const AddressTunnel = props => {
       showAddressForm = true,
       onInputFiledSelect,
       onSubmitAddress,
+      useLocalAddress = false, // use local address as address
    } = props
 
    // outside --> use without this component without popup
@@ -30,6 +31,26 @@ export const AddressTunnel = props => {
       ? { state: {}, dispatch: {} }
       : useDelivery()
    const { selectedOrderTab } = useConfig()
+   const userAddressFormRef = React.useRef()
+   useOnClickOutside(userAddressFormRef, () => {
+      if (!address) {
+         return
+      }
+      if (!address.line1) {
+         setAddressWarnings(prev => ({
+            ...prev,
+            line1: true,
+         }))
+         return
+      }
+      console.log('this is valid location')
+      if (useLocalAddress) {
+         handleSubmitLocal()
+      } else {
+         handleSubmit()
+      }
+   })
+
    console.log('dispatch', dispatch)
    const [formStatus, setFormStatus] = React.useState('PENDING')
    const [address, setAddress] = React.useState(null)
@@ -122,6 +143,39 @@ export const AddressTunnel = props => {
       })
    }
 
+   const handleSubmitLocal = () => {
+      setFormStatus('SAVING')
+      const userLocationInLocal = JSON.parse(
+         localStorage.getItem('userLocation')
+      )
+      const addressFromLocal = {
+         ...address,
+         city: userLocationInLocal.address.city,
+         country: userLocationInLocal.address.country,
+         state: userLocationInLocal.address.state,
+         zipcode: userLocationInLocal.address.zipcode,
+         lat: userLocationInLocal.latitude,
+         lng: userLocationInLocal.longitude,
+         line2: userLocationInLocal.address.mainText,
+         searched: '',
+      }
+      if (user?.keycloakId) {
+         if (outside) {
+            onSubmitAddress(addressFromLocal)
+         }
+         createAddress({
+            variables: {
+               object: { ...addressFromLocal, keycloakId: user?.keycloakId },
+            },
+         })
+      } else {
+         if (outside) {
+            onSubmitAddress(addressFromLocal)
+         }
+      }
+      setAddress(null)
+   }
+
    const handleSubmit = () => {
       setFormStatus('SAVING')
       // if user authenticate than add address to users details
@@ -135,16 +189,6 @@ export const AddressTunnel = props => {
             },
          })
       } else {
-         // add address detail into current cart
-         // const cartId = localStorage.getItem('cart-id')
-         // methods.cart.update({
-         //    variables: {
-         //       id: cartId,
-         //       _set: {
-         //          address: address,
-         //       },
-         //    },
-         // })
          if (outside) {
             onSubmitAddress(address)
          }
@@ -156,6 +200,79 @@ export const AddressTunnel = props => {
       dispatch({ type: 'TOGGLE_TUNNEL', payload: value })
    }
 
+   // outside --> use without tunnel
+   // useLocalAddress --> use localStorage address (getting from location selector) for address
+   if (outside && useLocalAddress) {
+      return (
+         <div className="hern-address__address-form" ref={userAddressFormRef}>
+            <Form.Field>
+               <Form.Label>
+                  Apartment/Building Info/Street info*{' '}
+                  <span className="hern-address-warning">
+                     {addressWarnings?.line1 ? 'fill this field' : null}
+                  </span>
+               </Form.Label>
+               <Form.Text
+                  type="text"
+                  placeholder="Enter apartment/building info/street info"
+                  value={address?.line1 || ''}
+                  onChange={e => {
+                     if (!e.target.value) {
+                        setAddressWarnings(prev => ({
+                           ...prev,
+                           line1: true,
+                        }))
+                     } else {
+                        setAddressWarnings(prev => ({
+                           ...prev,
+                           line1: false,
+                        }))
+                     }
+                     setAddress({ ...address, line1: e.target.value })
+                  }}
+               />
+            </Form.Field>
+            <Form.Field>
+               <Form.Label>Landmark</Form.Label>
+               <Form.Text
+                  type="text"
+                  value={address?.landmark || ''}
+                  placeholder="Enter landmark"
+                  onChange={e =>
+                     setAddress({
+                        ...address,
+                        landmark: e.target.value,
+                     })
+                  }
+               />
+            </Form.Field>
+
+            <Form.Field>
+               <Form.Label>Label</Form.Label>
+               <Form.Text
+                  type="text"
+                  value={address?.label || ''}
+                  placeholder="Enter label for this address"
+                  onChange={e =>
+                     setAddress({ ...address, label: e.target.value })
+                  }
+               />
+            </Form.Field>
+            <Form.Field>
+               <Form.Label>Dropoff Instructions</Form.Label>
+               <Form.TextArea
+                  type="text"
+                  value={address?.notes || ''}
+                  placeholder="Enter dropoff instructions"
+                  onChange={e =>
+                     setAddress({ ...address, notes: e.target.value })
+                  }
+               />
+            </Form.Field>
+            <Spacer />
+         </div>
+      )
+   }
    if (outside) {
       return (
          <>
@@ -176,17 +293,7 @@ export const AddressTunnel = props => {
                (address.zipcode ? (
                   <div
                      className="hern-address__address-form"
-                     onBlur={() => {
-                        if (!address.line1) {
-                           setAddressWarnings(prev => ({
-                              ...prev,
-                              line1: true,
-                           }))
-                           return
-                        }
-                        console.log('this is valid location')
-                        handleSubmit()
-                     }}
+                     ref={userAddressFormRef}
                   >
                      <Form.Field>
                         <Form.Label>

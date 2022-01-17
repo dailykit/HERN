@@ -1076,9 +1076,12 @@ const AdditionalModifiers = forwardRef(
                single: singleModifier,
                multiple: multipleModifier,
             }))
-            setChildChangingToggle(prev => !prev)
          }
       }, [])
+
+      useEffect(() => {
+         setChildChangingToggle(prev => !prev)
+      }, [additionalModifierOptions])
 
       // initial default selection
       useEffect(() => {
@@ -1131,7 +1134,6 @@ const AdditionalModifiers = forwardRef(
                single: singleModifier,
                multiple: multipleModifier,
             }))
-            setChildChangingToggle(prev => !prev)
          }
       }, [])
 
@@ -1223,11 +1225,9 @@ const AdditionalModifiers = forwardRef(
                            x.modifierCategoryOptionsID !== eachOption.id
                      )
                   setAdditionalModifierOptions({
-                     ...nestedSelectedOptions,
+                     ...additionalModifierOptions,
                      single: newSelectedOptions,
                   })
-                  setChildChangingToggle(prev => !prev)
-
                   return
                }
                const newSelectedOptions = additionalModifierOptions.single
@@ -1236,8 +1236,6 @@ const AdditionalModifiers = forwardRef(
                   ...additionalModifierOptions,
                   single: newSelectedOptions,
                })
-               setChildChangingToggle(prev => !prev)
-
                return
             } else {
                //single--> already not exist
@@ -1245,8 +1243,6 @@ const AdditionalModifiers = forwardRef(
                   ...additionalModifierOptions,
                   single: [...additionalModifierOptions.single, selectedOption],
                })
-               setChildChangingToggle(prev => !prev)
-
                return
             }
          }
@@ -1266,8 +1262,6 @@ const AdditionalModifiers = forwardRef(
                   ...additionalModifierOptions,
                   multiple: newSelectedOptions,
                })
-               setChildChangingToggle(prev => !prev)
-
                return
             }
             //new option select
@@ -1279,7 +1273,6 @@ const AdditionalModifiers = forwardRef(
                      selectedOption,
                   ],
                })
-               setChildChangingToggle(prev => !prev)
             }
          }
       }
@@ -1546,14 +1539,16 @@ const getCartItemWithModifiers = (
    const dataArr = finalCartItem?.childs?.data[0]?.childs?.data
    const dataArrLength = dataArr.length
 
-   finalCartItem.childs.data[0].childs.data = combinedModifiers
+   finalCartItem.childs.data[0].childs.data = [...dataArr, ...combinedModifiers]
    if (nestedModifiersInput) {
-      nestedModifiersInput.forEach(x => {
+      nestedModifiersInput.forEach(eachNestedModifierInput => {
          const foundModifierIndex =
             finalCartItem.childs.data[0].childs.data.findIndex(
-               y => x.parentModifierOptionId == y.modifierOptionId
+               y =>
+                  eachNestedModifierInput.parentModifierOptionId ==
+                  y.modifierOptionId
             )
-         const xCombinedModifier = x.data
+         const xCombinedModifier = eachNestedModifierInput.data
             .map(z => z.cartItem)
             .reduce((acc, obj) => [...acc, ...obj.data], [])
          finalCartItem.childs.data[0].childs.data[foundModifierIndex].childs =
@@ -1609,6 +1604,9 @@ const ModifierOptionsList = forwardRef((props, ref) => {
       skip: isConfigLoading || !brand?.id,
    })
 
+   useEffect(() => {
+      setChildChangingToggle(prev => !prev)
+   }, [nestedSelectedOptions])
    // default selected modifiers
    useEffect(() => {
       if (!data) {
@@ -1662,7 +1660,6 @@ const ModifierOptionsList = forwardRef((props, ref) => {
             single: singleModifier,
             multiple: multipleModifier,
          }))
-         setChildChangingToggle(prev => !prev)
       }
    }, [data])
 
@@ -1747,7 +1744,6 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                   ...nestedSelectedOptions,
                   single: newSelectedOptions,
                })
-               setChildChangingToggle(prev => !prev)
                return
             }
             const newSelectedOptions = nestedSelectedOptions.single
@@ -1756,7 +1752,6 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                ...nestedSelectedOptions,
                single: newSelectedOptions,
             })
-            setChildChangingToggle(prev => !prev)
             return
          } else {
             //single--> already not exist
@@ -1764,7 +1759,6 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                ...nestedSelectedOptions,
                single: [...nestedSelectedOptions.single, selectedOption],
             })
-            setChildChangingToggle(prev => !prev)
             return
          }
       }
@@ -1782,7 +1776,6 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                ...nestedSelectedOptions,
                multiple: newSelectedOptions,
             })
-            setChildChangingToggle(prev => !prev)
             return
          }
          //new option select
@@ -1791,7 +1784,6 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                ...nestedSelectedOptions,
                multiple: [...nestedSelectedOptions.multiple, selectedOption],
             })
-            setChildChangingToggle(prev => !prev)
          }
       }
    }
@@ -1838,7 +1830,6 @@ const ModifierOptionsList = forwardRef((props, ref) => {
             single: singleModifier,
             multiple: multipleModifier,
          }))
-         setChildChangingToggle(prev => !prev)
       }
    }, [data])
 

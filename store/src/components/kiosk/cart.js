@@ -841,7 +841,7 @@ const getCartItemWithModifiers = (
    const dataArr = finalCartItem?.childs?.data[0]?.childs?.data
    const dataArrLength = dataArr.length
 
-   finalCartItem.childs.data[0].childs.data = combinedModifiers
+   finalCartItem.childs.data[0].childs.data = [...dataArr, ...combinedModifiers]
    if (nestedModifiersInput) {
       const nestedCombinedModifiers = nestedModifiersInput.reduce(
          (acc, obj) => [...acc, ...obj.data],
