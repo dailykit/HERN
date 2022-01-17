@@ -131,7 +131,7 @@ const Main = () => {
             <Tunnel layer={1}>
                <ReccurenceTunnel closeTunnel={closeTunnel} />
             </Tunnel>
-            <Tunnel layer={2} size="sm">
+            <Tunnel layer={2} size="md">
                <TimeSlotTunnel closeTunnel={closeTunnel} />
             </Tunnel>
             <Tunnel layer={3} size="md">
