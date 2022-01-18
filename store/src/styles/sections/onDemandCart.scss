@@ -117,8 +117,14 @@
 }
 
 .hern-cart-products-product-list {
+   overflow: auto;
+   height: 40vh;
    margin-bottom: 1em;
+   @media (min-width: 1200px) {
+      width: 104%;
+   }
 }
+
 .hern-cart-product-modifiers-heading {
    font-style: normal;
    font-weight: normal;
