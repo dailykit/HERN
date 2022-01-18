@@ -80,7 +80,6 @@ const FulfillmentOption = props => {
    const { t } = useTranslation()
 
    const onFulfillmentClick = () => {
-      console.log('fulfillment', fulfillment)
       dispatch({
          type: 'SET_SELECTED_ORDER_TAB',
          payload: fulfillment,

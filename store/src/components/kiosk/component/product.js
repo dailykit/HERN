@@ -2,8 +2,15 @@ import React, { useEffect, useState } from 'react'
 import { Carousel, Layout, Modal } from 'antd'
 import KioskButton from './button'
 import { CartContext, useTranslation } from '../../../context'
-import { combineCartItems, formatCurrency } from '../../../utils'
+import {
+   combineCartItems,
+   formatCurrency,
+   nestedModifierTemplateIds,
+} from '../../../utils'
 import { KioskModifier, KioskCounterButton } from '.'
+import { GET_MODIFIER_BY_ID } from '../../../graphql'
+import { useQuery } from '@apollo/react-hooks'
+import { useConfig } from '../../../lib'
 
 const { Header, Content, Footer } = Layout
 
@@ -11,6 +18,7 @@ export const KioskProduct = props => {
    // context
    const { cartState, methods, addToCart, combinedCartItems } =
       React.useContext(CartContext)
+   const { brand, isConfigLoading, kioskDetails } = useConfig()
 
    const { config, productData, setCurrentPage } = props
    const { t, locale, dynamicTrans } = useTranslation()
@@ -20,6 +28,9 @@ export const KioskProduct = props => {
 
    // const [combinedCartItems, setCombinedCartData] = useState(null)
    const [showChooseIncreaseType, setShowChooseIncreaseType] = useState(false) // show I'll choose or repeat last one popup
+   const additionalModifierTemplateIds = React.useMemo(() => {
+      return nestedModifierTemplateIds(productData)
+   }, [productData])
 
    useEffect(() => {
       const languageTags = document.querySelectorAll(
@@ -29,13 +40,37 @@ export const KioskProduct = props => {
    }, [currentLang])
 
    useEffect(() => {
-      const allCartItemsIdsForThisProducts = combinedCartItems
-         .filter(x => x.productId === productData.id)
-         .map(x => x.ids)
-         .flat().length
-      setAvailableQuantityInCart(allCartItemsIdsForThisProducts)
+      if (combinedCartItems) {
+         const allCartItemsIdsForThisProducts = combinedCartItems
+            .filter(x => x.productId === productData.id)
+            .map(x => x.ids)
+            .flat().length
+         setAvailableQuantityInCart(allCartItemsIdsForThisProducts)
+      }
    }, [combinedCartItems])
+   const argsForByLocation = React.useMemo(
+      () => ({
+         params: {
+            brandId: brand?.id,
+            locationId: kioskDetails?.locationId,
+         },
+      }),
+      [brand]
+   )
 
+   const { data: additionalModifierTemplates } = useQuery(GET_MODIFIER_BY_ID, {
+      variables: {
+         priceArgs: argsForByLocation,
+         discountArgs: argsForByLocation,
+         modifierCategoryOptionCartItemArgs: argsForByLocation,
+         id: additionalModifierTemplateIds,
+      },
+      skip:
+         isConfigLoading ||
+         !brand?.id ||
+         !(additionalModifierTemplateIds.length > 0),
+   })
+   console.log('additionalModifierTemplates', additionalModifierTemplates)
    // counter button (-) delete last cartItem
    const onMinusClick = cartItemIds => {
       methods.cartItems.delete({
@@ -67,9 +102,29 @@ export const KioskProduct = props => {
          x => x.id == productOptionId
       )
 
+      // select all modifier option id which has modifier option ( parent modifier option id)
+      const modifierOptionsConsistAdditionalModifiers =
+         cartDetailSelectedProduct.childs[0].childs
+            .map(eachModifierOption => {
+               if (eachModifierOption.childs.length > 0) {
+                  return {
+                     parentModifierOptionId:
+                        eachModifierOption.modifierOption.id,
+                     selectedModifierOptionIds: eachModifierOption.childs.map(
+                        x => x.modifierOption.id
+                     ),
+                  }
+               } else {
+                  return null
+               }
+            })
+            .filter(eachId => eachId !== null)
+
       //selected modifiers
       let singleModifier = []
       let multipleModifier = []
+      let singleAdditionalModifier = []
+      let multipleAdditionalModifier = []
       if (selectedProductOption.modifier) {
          selectedProductOption.modifier.categories.forEach(category => {
             category.options.forEach(option => {
@@ -93,6 +148,89 @@ export const KioskProduct = props => {
          })
       }
       const allSelectedOptions = [...singleModifier, ...multipleModifier]
+      if (additionalModifierTemplateIds) {
+         selectedProductOption.additionalModifiers.forEach(option => {
+            option.modifier.categories.forEach(category => {
+               category.options.forEach(option => {
+                  const selectedOption = {
+                     modifierCategoryID: category.id,
+                     modifierCategoryOptionsID: option.id,
+                     modifierCategoryOptionsPrice: option.price,
+                     cartItem: option.cartItem,
+                  }
+                  if (category.type === 'single') {
+                     if (modifierCategoryOptionsIds.includes(option.id)) {
+                        singleAdditionalModifier =
+                           singleAdditionalModifier.concat(selectedOption)
+                     }
+                  }
+                  if (category.type === 'multiple') {
+                     if (modifierCategoryOptionsIds.includes(option.id)) {
+                        multipleAdditionalModifier =
+                           multipleAdditionalModifier.concat(selectedOption)
+                     }
+                  }
+               })
+            })
+         })
+         const modifierOptionsConsistAdditionalModifiersWithData =
+            modifierOptionsConsistAdditionalModifiers.map(
+               eachModifierOptionsConsistAdditionalModifiers => {
+                  let additionalModifierOptions = []
+                  additionalModifierTemplates.modifiers.forEach(
+                     eachModifier => {
+                        eachModifier.categories.forEach(eachCategory => {
+                           additionalModifierOptions.push(
+                              ...eachCategory.options.map(eachOption => ({
+                                 ...eachOption,
+                                 categoryId: eachCategory.id,
+                              }))
+                           )
+                        })
+                     }
+                  )
+                  const mapedModifierOptions =
+                     eachModifierOptionsConsistAdditionalModifiers.selectedModifierOptionIds.map(
+                        eachId => {
+                           const additionalModifierOption =
+                              additionalModifierOptions.find(
+                                 x => x.id === eachId
+                              )
+                           const selectedOption = {
+                              modifierCategoryID:
+                                 additionalModifierOption.categoryId,
+                              modifierCategoryOptionsID:
+                                 additionalModifierOption.id,
+                              modifierCategoryOptionsPrice:
+                                 additionalModifierOption.price,
+                              cartItem: additionalModifierOption.cartItem,
+                           }
+                           return selectedOption
+                        }
+                     )
+                  return {
+                     ...eachModifierOptionsConsistAdditionalModifiers,
+                     data: mapedModifierOptions,
+                  }
+               }
+            )
+
+         // root modifiers options + additional modifier's modifier options
+         const resultSelectedModifier = [
+            ...allSelectedOptions,
+            ...singleAdditionalModifier,
+            ...multipleAdditionalModifier,
+         ]
+         const cartItem = getCartItemWithModifiers(
+            selectedProductOption.cartItem,
+            resultSelectedModifier.map(x => x.cartItem),
+            modifierOptionsConsistAdditionalModifiersWithData
+         )
+
+         addToCart(cartItem, 1)
+         setShowChooseIncreaseType(false)
+         return
+      }
       const cartItem = getCartItemWithModifiers(
          selectedProductOption.cartItem,
          allSelectedOptions.map(x => x.cartItem)
@@ -257,7 +395,12 @@ export const KioskProduct = props => {
    )
 }
 
-const getCartItemWithModifiers = (cartItemInput, selectedModifiersInput) => {
+const getCartItemWithModifiers = (
+   cartItemInput,
+   selectedModifiersInput,
+   nestedModifiersInput = null
+) => {
+   // cartItemInput --> selectedProductOption.cartItem
    const finalCartItem = { ...cartItemInput }
 
    const combinedModifiers = selectedModifiersInput.reduce(
@@ -267,7 +410,26 @@ const getCartItemWithModifiers = (cartItemInput, selectedModifiersInput) => {
    const dataArr = finalCartItem?.childs?.data[0]?.childs?.data
    const dataArrLength = dataArr.length
 
-   finalCartItem.childs.data[0].childs.data = [...dataArr, ...combinedModifiers]
+   finalCartItem.childs.data[0].childs.data = [...combinedModifiers]
+
+   if (nestedModifiersInput) {
+      nestedModifiersInput.forEach(eachNestedModifierInput => {
+         const foundModifierIndex =
+            finalCartItem.childs.data[0].childs.data.findIndex(
+               y =>
+                  eachNestedModifierInput.parentModifierOptionId ==
+                  y.modifierOptionId
+            )
+         const xCombinedModifier = eachNestedModifierInput.data
+            .map(z => z.cartItem)
+            .reduce((acc, obj) => [...acc, ...obj.data], [])
+         finalCartItem.childs.data[0].childs.data[foundModifierIndex].childs =
+            {}
+         finalCartItem.childs.data[0].childs.data[foundModifierIndex].childs[
+            'data'
+         ] = xCombinedModifier
+      })
+   }
 
    return finalCartItem
 }
