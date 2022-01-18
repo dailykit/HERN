@@ -62,8 +62,8 @@ const ManageCards = dynamic(() =>
 const LoyaltyPoints = dynamic(() =>
    import('../sections/loyalty-points').then(promise => promise.LoyaltyPoints)
 )
-const Orders = dynamic(() =>
-   import('../sections/orders').then(promise => promise.Orders)
+const OrderHistory = dynamic(() =>
+   import('../sections/order-history').then(promise => promise.OrderHistory)
 )
 const Profile = dynamic(() =>
    import('../sections/profile').then(promise => promise.Profile)
@@ -227,8 +227,8 @@ export const renderComponentByName = (fold, options) => {
       /*ROUTES :
       [brand]/account/orders
       */
-      case 'Orders':
-         return <Orders />
+      case 'OrderHistory':
+         return <OrderHistory />
       /*ROUTES :
       [brand]/account/profile
       */
