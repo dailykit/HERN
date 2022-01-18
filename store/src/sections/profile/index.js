@@ -18,7 +18,7 @@ export const Profile = () => {
    const isSubscriptionStore =
       settings?.availability?.find(
          i => i.identifier === 'isSubscriptionAvailable'
-      )?.value?.Subscription?.isSubscriptionAvailable?.value ?? true
+      )?.value?.Subscription?.isSubscriptionAvailable?.value ?? false
    return (
       <main className="hern-profile__main">
          <ProfileSidebar />

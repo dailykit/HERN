@@ -62,8 +62,8 @@ const ManageCards = dynamic(() =>
 const LoyaltyPoints = dynamic(() =>
    import('../sections/loyalty-points').then(promise => promise.LoyaltyPoints)
 )
-const Orders = dynamic(() =>
-   import('../sections/orders').then(promise => promise.Orders)
+const OrderHistory = dynamic(() =>
+   import('../sections/order-history').then(promise => promise.OrderHistory)
 )
 const Profile = dynamic(() =>
    import('../sections/profile').then(promise => promise.Profile)
@@ -106,6 +106,9 @@ const Product = dynamic(() =>
 )
 const PrivacyPolicy = dynamic(() =>
    import('../sections/privacy-policy').then(promise => promise.PrivacyPolicy)
+)
+const Subscriptions = dynamic(() =>
+   import('../sections/subscriptions').then(promise => promise.Subscriptions)
 )
 export const renderComponentByName = (fold, options) => {
    const getProps = component => {
@@ -224,8 +227,8 @@ export const renderComponentByName = (fold, options) => {
       /*ROUTES :
       [brand]/account/orders
       */
-      case 'Orders':
-         return <Orders />
+      case 'OrderHistory':
+         return <OrderHistory />
       /*ROUTES :
       [brand]/account/profile
       */
@@ -246,6 +249,12 @@ export const renderComponentByName = (fold, options) => {
       */
       case 'Inventory':
          return <Inventory />
+      /*ROUTES :
+      [brand]/account/subscriptions
+
+      */
+      case 'Subscriptions':
+         return <Subscriptions config={fold.config} />
 
       /*ROUTES :
       [brand]/get-started/placing-order
