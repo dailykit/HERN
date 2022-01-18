@@ -107,6 +107,9 @@ const Product = dynamic(() =>
 const PrivacyPolicy = dynamic(() =>
    import('../sections/privacy-policy').then(promise => promise.PrivacyPolicy)
 )
+const Subscriptions = dynamic(() =>
+   import('../sections/subscriptions').then(promise => promise.Subscriptions)
+)
 export const renderComponentByName = (fold, options) => {
    const getProps = component => {
       if (options) {
@@ -246,6 +249,12 @@ export const renderComponentByName = (fold, options) => {
       */
       case 'Inventory':
          return <Inventory />
+      /*ROUTES :
+      [brand]/account/subscriptions
+
+      */
+      case 'Subscriptions':
+         return <Subscriptions config={fold.config} />
 
       /*ROUTES :
       [brand]/get-started/placing-order

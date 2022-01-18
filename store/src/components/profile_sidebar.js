@@ -35,6 +35,7 @@ export const ProfileSidebar = ({ toggle = true, logout }) => {
       },
       { title: 'Referrals', href: '/account/referrals/' },
       { title: 'Order History', href: '/account/orders/' },
+      { title: 'Subscriptions', href: '/account/subscriptions/' },
       { title: 'Manage Addresses', href: '/account/addresses/' },
       { title: 'Manage Cards', href: '/account/cards/' },
    ]
