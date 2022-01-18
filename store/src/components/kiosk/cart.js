@@ -43,8 +43,6 @@ export const KioskCart = props => {
    const { config, combinedCartItems, setCurrentPage } = props
    const { t, direction } = useTranslation()
 
-   console.log('combinedCartItems', combinedCartItems)
-
    //remove cartItem or cartItems
    const removeCartItems = cartItemIds => {
       methods.cartItems.delete({
@@ -269,6 +267,17 @@ const CartCard = props => {
    const [showModifier, setShowModifier] = useState(false) // show modifier popup
    const [forRepeatLastOne, setForRepeatLastOne] = useState(false) // to run repeatLastOne fn in PRODUCTS query
 
+   let totalPrice = 0
+   let totalDiscount = 0
+   const price = product => {
+      totalPrice += product.price
+      totalDiscount += product.discount
+      product.childs.forEach(product => {
+         price(product)
+      })
+      return { totalPrice, totalDiscount }
+   }
+   const getTotalPrice = React.useMemo(() => price(productData), [productData])
    const argsForByLocation = React.useMemo(
       () => ({
          params: {
@@ -307,7 +316,6 @@ const CartCard = props => {
          }
       },
    })
-   console.log('repeatLastOneData', repeatLastOneData)
    const additionalModifiersIds = React.useMemo(() => {
       if (repeatLastOneData) {
          return repeatLastOneData?.products[0]?.productOptions
@@ -349,7 +357,6 @@ const CartCard = props => {
             .reduce((acc, obj) => [...acc, ...obj.childs], [])
             .map(x => x.modifierOption?.id)
 
-      console.log('nestedModifierOptionsIds', nestedModifierOptionsIds)
       //selected product option
       const selectedProductOption = productData.productOptions?.find(
          x => x.id == productOptionId
@@ -438,7 +445,6 @@ const CartCard = props => {
       )
       dynamicTrans(languageTags)
    }, [locale, showAdditionalDetailsOnCard])
-   console.log('productData', productData)
    return (
       <div className="hern-kiosk__cart-card">
          <img
@@ -750,18 +756,20 @@ const CartCard = props => {
                className="hern-kiosk__cart-cards-price"
                style={{ color: '#5A5A5A' }}
             >
-               {productData.discount > 0 && (
+               {getTotalPrice.totalDiscount > 0 && (
                   <>
                      <span style={{ textDecoration: 'line-through' }}>
                         {' '}
-                        {formatCurrency(productData.price)}
+                        {formatCurrency(getTotalPrice.totalPrice)}
                      </span>
                      <br />
                   </>
                )}
                <span>
-                  {productData.price !== 0
-                     ? formatCurrency(productData.price - productData.discount)
+                  {getTotalPrice.totalPrice !== 0
+                     ? formatCurrency(
+                          getTotalPrice.totalPrice - getTotalPrice.totalDiscount
+                       )
                      : null}
                </span>
             </div>
