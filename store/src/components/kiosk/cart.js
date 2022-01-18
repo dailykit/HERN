@@ -10,6 +10,8 @@ import {
    Spin,
 } from 'antd'
 import React, { useEffect, useState } from 'react'
+import isEmpty from 'lodash/isEmpty'
+
 import {
    ArrowLeftIcon,
    ArrowLeftIconBG,
@@ -270,12 +272,16 @@ const CartCard = props => {
    let totalPrice = 0
    let totalDiscount = 0
    const price = product => {
-      totalPrice += product.price
-      totalDiscount += product.discount
-      product.childs.forEach(product => {
-         price(product)
-      })
-      return { totalPrice, totalDiscount }
+      if (!isEmpty(product)) {
+         totalPrice += product.price
+         totalDiscount += product.discount
+         if (!isEmpty(product.childs)) {
+            product.childs.forEach(product => {
+               price(product)
+            })
+         }
+         return { totalPrice, totalDiscount }
+      }
    }
    const getTotalPrice = React.useMemo(() => price(productData), [productData])
    const argsForByLocation = React.useMemo(
