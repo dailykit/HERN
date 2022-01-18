@@ -97,8 +97,8 @@ const validator = {
       let isValid = true
       let errors = []
       if (latitude === '') {
-         isValid = false
-         errors = [...errors, 'Cannot be empty!']
+         isValid = true
+         // errors = [...errors, 'Cannot be empty!']
       }
       if (!Number.isInteger(+value)) {
          isValid = false
@@ -111,8 +111,8 @@ const validator = {
       let isValid = true
       let errors = []
       if (longitude === '') {
-         isValid = false
-         errors = [...errors, 'Cannot be empty!']
+         isValid = true
+         // errors = [...errors, 'Cannot be empty!']
       }
       if (!Number.isInteger(+value)) {
          isValid = false

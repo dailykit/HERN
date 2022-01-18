@@ -83,7 +83,7 @@ const MileRangeTunnel = ({ closeTunnel }) => {
       geoBoundaryInstance
    ])
    const addField = () => {
-      console.log('added')
+      // console.log('added')
       if (geoBoundary.every(object => object.latitude.value.trim().length && object.longitude.value.trim().length)) {
          setGeoBoundary([
             ...geoBoundary,
@@ -147,6 +147,9 @@ const MileRangeTunnel = ({ closeTunnel }) => {
       }
       setGeoBoundary([...newGeoBoundary])
    }
+   const geoBoundaryNotMandatory = geoBoundary.every(object =>     //checking every co-ordinate must be empty or having string with 0 length
+      !object.latitude.value.trim().length && !object.longitude.value.trim().length)
+
    const geoBoundaryValidation = geoBoundary.every(object =>
       object.latitude.value.trim().length && object.longitude.value.trim().length)
 
@@ -174,11 +177,12 @@ const MileRangeTunnel = ({ closeTunnel }) => {
    // console.log("geoBoundary", geoBoundary);
    // Handlers
    const save = () => {
+      console.log({ geoBoundaryNotMandatory });
       if (inFlight) return
-      if (!from.value || !to.value || !time.value || !zipcodes.value) {
+      if (!from.value || !to.value || !time.value) {
          return toast.error('Invalid values!')
       }
-      if (from.meta.isValid && to.meta.isValid && time.meta.isValid && zipcodes.meta.isValid) {
+      if (from.meta.isValid && to.meta.isValid && time.meta.isValid) {
          if (geoBoundaryValidation) {
             const coordinates = geoBoundary.map(each => ({
                latitude: parseInt(each.latitude.value),
@@ -196,14 +200,33 @@ const MileRangeTunnel = ({ closeTunnel }) => {
                         leadTime: type.includes('PREORDER') ? +time.value : null,
                         isExcluded: isExcluded,
                         distanceType: valueDistanceType,
-                        zipcodes: { zipcodes: zipcodes.value },
+                        zipcodes: zipcodes.value ? { zipcodes: zipcodes.value } : null,
                         geoBoundary: { geoBoundaries: coordinates }
                      },
                   ],
                },
             })
-         } else {
-            toast.error('Geo-Boundary Co-ordinate is empty!')
+         }
+         else if (geoBoundaryNotMandatory) {
+            createMileRanges({
+               variables: {
+                  objects: [
+                     {
+                        timeSlotId: recurrenceState.timeSlotId,
+                        from: +from.value,
+                        to: +to.value,
+                        prepTime: type.includes('ONDEMAND') ? +time.value : null,
+                        leadTime: type.includes('PREORDER') ? +time.value : null,
+                        isExcluded: isExcluded,
+                        distanceType: valueDistanceType,
+                        zipcodes: zipcodes.value ? { zipcodes: zipcodes.value } : null,
+                     },
+                  ],
+               },
+            })
+         }
+         else {
+            toast.error("Empty Geo-cordinates or Fill atleast 3 co-ordinates")
          }
       } else {
          toast.error('Invalid values!')
@@ -385,7 +408,7 @@ const MileRangeTunnel = ({ closeTunnel }) => {
             </InputsNotes>
             <Spacer size="16px" />
 
-            <InputHeading title='Geo-Boundary Co-ordinates for mapping area' >Geo-Boundary*</InputHeading>
+            <InputHeading title='Geo-Boundary Co-ordinates for mapping area' >Geo-Boundary</InputHeading>
             {geoBoundary.map((eachGeoBoundary, i) => (
                <>
                   <Spacer size="4px" />
