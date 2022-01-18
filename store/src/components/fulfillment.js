@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Col, Radio, Row, Space, Carousel, Modal } from 'antd'
 import { useConfig } from '../lib'
+import { isEmpty } from 'lodash'
 import {
    DineinTable,
    GPSIcon,
@@ -1300,14 +1301,14 @@ const Pickup = props => {
    )
 }
 
-export const Fulfillment = () => {
-   const { cartState } = React.useContext(CartContext)
+export const Fulfillment = ({ cart, editable = true }) => {
+   // const { cartState } = React.useContext(CartContext)
    const { brand, configOf } = useConfig()
    const theme = configOf('theme-color', 'Visual')
 
    const [isEdit, setIsEdit] = useState(false)
    const title = React.useMemo(() => {
-      switch (cartState.cart?.fulfillmentInfo?.type) {
+      switch (cart?.fulfillmentInfo?.type) {
          case 'ONDEMAND_DELIVERY':
             return 'Delivery'
          case 'PREORDER_DELIVERY':
@@ -1317,27 +1318,26 @@ export const Fulfillment = () => {
          case 'ONDEMAND_PICKUP':
             return 'Pickup'
       }
-   }, [cartState.cart])
+   }, [cart])
 
    const {
       loading: brandLocationLading,
       error: brandLocationError,
       data: brandLocations,
    } = useQuery(BRAND_LOCATIONS, {
-      skip:
-         !brand || !brand?.id || !cartState.cart || !cartState.cart?.locationId,
+      skip: !brand || !brand?.id || !cart || !cart?.locationId,
       variables: {
          where: {
             brandId: { _eq: brand.id },
-            locationId: { _eq: cartState.cart?.locationId },
+            locationId: { _eq: cart?.locationId },
          },
       },
    })
 
    const addressInfo = React.useMemo(() => {
       if (
-         cartState.cart?.fulfillmentInfo?.type === 'ONDEMAND_DELIVERY' ||
-         cartState.cart?.fulfillmentInfo?.type === 'PREORDER_DELIVERY'
+         cart?.fulfillmentInfo?.type === 'ONDEMAND_DELIVERY' ||
+         cart?.fulfillmentInfo?.type === 'PREORDER_DELIVERY'
       ) {
          if (!brandLocations) {
             return {}
@@ -1350,22 +1350,22 @@ export const Fulfillment = () => {
          }
          const aerialDistance = getDistance(
             {
-               latitude: cartState.cart.address.lat,
-               longitude: cartState.cart.address.lng,
+               latitude: cart.address.lat,
+               longitude: cart.address.lng,
             },
             brandCoordinate,
             0.1
          )
          const aerialDistanceInMiles = convertDistance(aerialDistance, 'mi')
          return {
-            ...cartState.cart.address,
+            ...cart.address,
             aerialDistance: aerialDistanceInMiles,
             distanceUnit: 'mi',
          }
       }
       if (
-         cartState.cart?.fulfillmentInfo?.type === 'ONDEMAND_PICKUP' ||
-         cartState.cart?.fulfillmentInfo?.type === 'PREORDER_PICKUP'
+         cart?.fulfillmentInfo?.type === 'ONDEMAND_PICKUP' ||
+         cart?.fulfillmentInfo?.type === 'PREORDER_PICKUP'
       ) {
          if (!brandLocations) {
             return {}
@@ -1386,8 +1386,8 @@ export const Fulfillment = () => {
          const { line1, line2 } = locationAddress
          const aerialDistance = getDistance(
             {
-               latitude: cartState.cart.address.lat,
-               longitude: cartState.cart.address.lng,
+               latitude: cart.address.lat,
+               longitude: cart.address.lng,
             },
             {
                latitude: lat,
@@ -1409,111 +1409,116 @@ export const Fulfillment = () => {
             distanceUnit: 'mi',
          }
       }
-   }, [cartState.cart, brandLocations])
+   }, [cart, brandLocations])
    if (brandLocationLading) {
       return <Loader inline />
    }
    return (
       <>
-         {cartState.cart?.fulfillmentInfo === null || isEdit ? (
+         {editable && (cart?.fulfillmentInfo === null || isEdit) ? (
             <FulfillmentForm isEdit={isEdit} setIsEdit={setIsEdit} />
          ) : (
             <div className="hern-cart__fulfillment-card">
                <div className="hern-cart__fulfillment-heading">
                   <DineinTable />
                   <span className="hern-cart__fulfillment-heading-text">
-                     How would you like to your order?
+                     {editable
+                        ? 'How would you like to your order?'
+                        : 'Order details'}
                   </span>
                </div>
                <div style={{ position: 'relative' }}>
                   <label style={{ marginTop: '5px' }}>
                      {title}{' '}
-                     {(cartState.cart?.fulfillmentInfo?.type ===
-                        'PREORDER_PICKUP' ||
-                        cartState.cart?.fulfillmentInfo?.type ===
+                     {(cart?.fulfillmentInfo?.type === 'PREORDER_PICKUP' ||
+                        cart?.fulfillmentInfo?.type ===
                            'PREORDER_DELIVERY') && (
                         <span>
                            {' '}
                            on{' '}
-                           {moment(
-                              cartState.cart?.fulfillmentInfo?.slot?.from
-                           ).format('DD MMM YYYY')}
+                           {moment(cart?.fulfillmentInfo?.slot?.from).format(
+                              'DD MMM YYYY'
+                           )}
                            {' ('}
-                           {moment(
-                              cartState.cart?.fulfillmentInfo?.slot?.from
-                           ).format('HH:mm')}
+                           {moment(cart?.fulfillmentInfo?.slot?.from).format(
+                              'HH:mm'
+                           )}
                            {'-'}
-                           {moment(
-                              cartState.cart?.fulfillmentInfo?.slot?.to
-                           ).format('HH:mm')}
+                           {moment(cart?.fulfillmentInfo?.slot?.to).format(
+                              'HH:mm'
+                           )}
                            {')'}
                         </span>
                      )}
                   </label>
-                  <Button
-                     onClick={() => {
-                        setIsEdit(true)
-                     }}
-                     className="hern-cart__fulfillment-change-btn"
-                     style={{
-                        color: theme?.accent || 'rgba(5, 150, 105, 1)',
-                        border: `1px solid ${
-                           theme?.accent || 'rgba(5, 150, 105, 1)'
-                        }`,
-                     }}
-                  >
-                     Change
-                  </Button>
-                  <EditIcon
-                     style={{
-                        position: 'absolute',
-                        right: '8px',
-                        top: '8px',
-                        cursor: 'pointer',
-                     }}
-                     onClick={() => {
-                        setIsEdit(true)
-                     }}
-                     fill={theme?.accent || 'rgba(5, 150, 105, 1)'}
-                     className="hern-cart__fulfillment-change-edit-icon"
-                  />
+                  {editable && (
+                     <>
+                        <Button
+                           onClick={() => {
+                              setIsEdit(true)
+                           }}
+                           className="hern-cart__fulfillment-change-btn"
+                           style={{
+                              color: theme?.accent || 'rgba(5, 150, 105, 1)',
+                              border: `1px solid ${
+                                 theme?.accent || 'rgba(5, 150, 105, 1)'
+                              }`,
+                           }}
+                        >
+                           Change
+                        </Button>
+                        <EditIcon
+                           style={{
+                              position: 'absolute',
+                              right: '8px',
+                              top: '8px',
+                              cursor: 'pointer',
+                           }}
+                           onClick={() => {
+                              setIsEdit(true)
+                           }}
+                           fill={theme?.accent || 'rgba(5, 150, 105, 1)'}
+                           className="hern-cart__fulfillment-change-edit-icon"
+                        />
+                     </>
+                  )}
 
-                  <div
-                     className={classNames(
-                        'hern-store-location-selector__each-store'
-                     )}
-                  >
-                     <div className="hern-store-location-selector__store-location-info-container">
-                        <div className="hern-store-location-selector__store-location-details">
-                           <span className="hern-store-location__store-location-label">
-                              {addressInfo.label}
-                           </span>
+                  {!isEmpty(addressInfo) ? (
+                     <div className="hern-store-location-selector__each-store">
+                        <div className="hern-store-location-selector__store-location-info-container">
+                           <div className="hern-store-location-selector__store-location-details">
+                              <span className="hern-store-location__store-location-label">
+                                 {addressInfo.label}
+                              </span>
 
-                           <span className="hern-store-location__store-location-address hern-store-location__store-location-address-line1">
-                              {addressInfo.line1}
-                           </span>
-                           <span className="hern-store-location__store-location-address hern-store-location__store-location-address-line2">
-                              {addressInfo.line2}
-                           </span>
-                           <span className="hern-store-location__store-location-address hern-store-location__store-location-address-c-s-c-z">
-                              {addressInfo.city} {addressInfo.state}{' '}
-                              {addressInfo.country}
-                              {' ('}
-                              {addressInfo.zipcode}
-                              {')'}
-                           </span>
+                              <span className="hern-store-location__store-location-address hern-store-location__store-location-address-line1">
+                                 {addressInfo.line1}
+                              </span>
+                              <span className="hern-store-location__store-location-address hern-store-location__store-location-address-line2">
+                                 {addressInfo.line2}
+                              </span>
+                              <span className="hern-store-location__store-location-address hern-store-location__store-location-address-c-s-c-z">
+                                 {addressInfo.city} {addressInfo.state}{' '}
+                                 {addressInfo.country}
+                                 {' ('}
+                                 {addressInfo.zipcode}
+                                 {')'}
+                              </span>
+                           </div>
+                        </div>
+                        <div className="hern-store-location-selector__time-distance">
+                           <div className="hern-store-location-selector__aerialDistance">
+                              <span>
+                                 {addressInfo?.aerialDistance &&
+                                    addressInfo?.aerialDistance.toFixed(2)}{' '}
+                                 {addressInfo?.distanceUnit}
+                              </span>
+                           </div>
                         </div>
                      </div>
-                     <div className="hern-store-location-selector__time-distance">
-                        <div className="hern-store-location-selector__aerialDistance">
-                           <span>
-                              {addressInfo?.aerialDistance &&
-                                 addressInfo?.aerialDistance.toFixed(2)}{' '}
-                              {addressInfo?.distanceUnit}
-                           </span>
-                        </div>
-                     </div>
-                  </div>
+                  ) : (
+                     <p>No address available ! </p>
+                  )}
                </div>
             </div>
          )}

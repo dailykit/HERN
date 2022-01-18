@@ -10,7 +10,7 @@ import {
    ExternalJSCSSFiles,
 } from '../../../components'
 
-const OrdersPage = props => {
+const SubscriptionHistory = props => {
    const router = useRouter()
    const { isAuthenticated, isLoading } = useUser()
    const { folds, settings, navigationMenus, seoSettings, linkedFiles } = props
@@ -35,11 +35,11 @@ const OrdersPage = props => {
    )
 }
 
-export default OrdersPage
+export default SubscriptionHistory
 
 export const getStaticProps = async ({ params }) => {
    const { parsedData, settings, navigationMenus, seoSettings, linkedFiles } =
-      await getPageProps(params, '/account/orders')
+      await getPageProps(params, '/account/subscriptions')
 
    return {
       props: {

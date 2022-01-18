@@ -1,4 +1,4 @@
-import { isInteger } from 'lodash'
+import { isEmpty, isInteger } from 'lodash'
 
 const validator = {
    name: value => {
@@ -74,30 +74,31 @@ const validator = {
       }
       return { isValid, errors }
    },
-   zipcode: value => {
-      const zipcodeValue = value
+   zipCode: value => {
+      const zipCodeValue = isEmpty(value)
+         ? null
+         : value.split(',').map(node => parseInt(node.trim()))
+      console.log('zipCodeValue', zipCodeValue)
       let isValid = true
       let errors = []
-      if (zipcodeValue.length === 1 && !isInteger(zipcodeValue[0])) {
-         isValid = false
-         errors = [...errors, 'Cannot be empty or invalid']
-      } else {
-         zipcodeValue.map(each => {
-            if (!isInteger(each)) {
-               isValid = false
-               errors = [...errors, 'Invalid Zipcode value!']
-            }
-         })
+      {
+         zipCodeValue !== null &&
+            zipCodeValue.map(each => {
+               if (!isInteger(each)) {
+                  isValid = false
+                  errors = [...errors, 'Invalid! Integer value only']
+               }
+            })
       }
-      return { isValid, errors }
+      return { isValid, errors, zipCodeValue }
    },
    latitude: value => {
       const latitude = value.trim()
       let isValid = true
       let errors = []
       if (latitude === '') {
-         isValid = false
-         errors = [...errors, 'Cannot be empty!']
+         isValid = true
+         // errors = [...errors, 'Cannot be empty!']
       }
       if (!Number.isInteger(+value)) {
          isValid = false
@@ -110,8 +111,8 @@ const validator = {
       let isValid = true
       let errors = []
       if (longitude === '') {
-         isValid = false
-         errors = [...errors, 'Cannot be empty!']
+         isValid = true
+         // errors = [...errors, 'Cannot be empty!']
       }
       if (!Number.isInteger(+value)) {
          isValid = false

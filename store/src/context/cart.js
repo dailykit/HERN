@@ -174,6 +174,7 @@ export const CartProvider = ({ children }) => {
    const [deleteCart] = useMutation(MUTATIONS.CART.DELETE, {
       onCompleted: () => {
          localStorage.removeItem('cart-id')
+         setStoredCartId(null)
          setIsFinalCartLoading(false)
       },
       onError: error => {
@@ -181,15 +182,7 @@ export const CartProvider = ({ children }) => {
          setIsFinalCartLoading(false)
       },
    })
-   useEffect(() => {
-      if (cartItemsData?.cartItems && cartItemsData?.cartItems.length === 0) {
-         deleteCart({
-            variables: {
-               id: cartData.cart.id,
-            },
-         })
-      }
-   }, [cartItemsData])
+
    // create cartItems
    const [createCartItems] = useMutation(CREATE_CART_ITEMS, {
       onCompleted: () => {
@@ -207,8 +200,21 @@ export const CartProvider = ({ children }) => {
 
    // delete cartItems
    const [deleteCartItems] = useMutation(DELETE_CART_ITEMS, {
-      onCompleted: () => {
+      onCompleted: ({ deleteCartItems = null }) => {
          console.log('item removed successfully')
+         if (
+            deleteCartItems &&
+            deleteCartItems.returning.length &&
+            deleteCartItems.returning[0].cart.cartItems_aggregate.aggregate
+               .count === 0 &&
+            storedCartId
+         ) {
+            deleteCart({
+               variables: {
+                  id: storedCartId,
+               },
+            })
+         }
          setIsFinalCartLoading(false)
          addToast('Item removed!', {
             appearance: 'success',
