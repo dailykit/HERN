@@ -4,6 +4,7 @@ import 'react-slideshow-image/dist/styles.css'
 import { formatCurrency } from '../utils'
 import { ModifierPopup } from './index'
 import classNames from 'classnames'
+import { EditIcon } from '../assets/icons'
 
 export const ProductCard = props => {
    const {
@@ -175,6 +176,11 @@ export const ProductCard = props => {
                               }}
                            >
                               {data.name}
+                           </div>
+                        )}
+                        {data.childs.length > 0 && (
+                           <div className="hern-product-card-productOption-label">
+                              {data.childs[0].productOption.label || 'N/A'}
                            </div>
                         )}
                         {ShowImageIcon && (
