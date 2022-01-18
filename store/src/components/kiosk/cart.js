@@ -10,7 +10,6 @@ import {
    Spin,
 } from 'antd'
 import React, { useEffect, useState } from 'react'
-import isEmpty from 'lodash/isEmpty'
 
 import {
    ArrowLeftIcon,
@@ -165,6 +164,7 @@ export const KioskCart = props => {
                               <CartCard
                                  config={config}
                                  productData={product}
+                                 quantity={product?.ids?.length}
                                  removeCartItems={removeCartItems}
                               />
                            )
@@ -255,7 +255,7 @@ export const KioskCart = props => {
 
 const CartCard = props => {
    // productData --> product data from cart
-   const { config, productData, removeCartItems } = props
+   const { config, productData, removeCartItems, quantity = 0 } = props
    const { brand, kioskDetails, isConfigLoading } = useConfig()
    const { addToCart } = React.useContext(CartContext)
    const { t, dynamicTrans, locale } = useTranslation()
@@ -282,7 +282,10 @@ const CartCard = props => {
                price(product)
             })
          }
-         return { totalPrice, totalDiscount }
+         return {
+            totalPrice: totalPrice * quantity,
+            totalDiscount: totalDiscount * quantity,
+         }
       }
    }
    const getTotalPrice = React.useMemo(() => price(productData), [productData])
