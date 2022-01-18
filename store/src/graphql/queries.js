@@ -1595,6 +1595,7 @@ export const GET_CART = gql`
    subscription cart($id: Int!) {
       cart(id: $id) {
          id
+         status
          tax
          orderId
          discount
