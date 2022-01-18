@@ -33,7 +33,7 @@ export const OnDemandCart = () => {
       cartItemsLoading ||
       isLoading
    ) {
-      return <Loader />
+      return <Loader type="cart-loading" />
    }
 
    if (!cartState.cart || combinedCartItems.length === 0) {
