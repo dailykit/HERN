@@ -47,7 +47,7 @@ const MileRangeTunnel = ({ closeTunnel }) => {
 
    // Zipcodes declarations
    const [zipcodes, setZipcodes] = React.useState({
-      value: '',
+      value: "",
       meta: {
          isTouched: false,
          isValid: true,
@@ -348,25 +348,23 @@ const MileRangeTunnel = ({ closeTunnel }) => {
             </Radio.Group>
             <Spacer size="16px" />
 
-            <InputHeading title="Enter Zipcodes for this mile range" >Zipcodes*</InputHeading>
+            <InputHeading title="Enter Zipcodes for this mile range" >Zipcodes</InputHeading>
             <Spacer size="4px" />
             <Form.Group>
                <Form.Text
                   id="zipcodes"
                   name="zipcodes"
                   value={initialZipcodes.value}
-                  placeholder="Enter the zipcodes"
+                  placeholder="Enter zipcodes"
                   onChange={e => setInitialZipcodes({
                      ...initialZipcodes,
                      value: e.target.value
                   })}
                   onBlur={() => {
-                     const zipcodeArray = initialZipcodes.value.split(',').map(node => parseInt(node.trim()))
-                     // console.log("zipcodeArray", zipcodeArray);
-                     const { isValid, errors } = validator.zipcode(zipcodeArray)
+                     const { isValid, errors, zipCodeValue } = validator.zipCode(initialZipcodes.value)
                      setZipcodes({
                         ...zipcodes,
-                        value: zipcodeArray,
+                        value: zipCodeValue,
                         meta: {
                            isTouched: true,
                            isValid,
