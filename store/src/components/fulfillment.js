@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Col, Radio, Row, Space, Carousel } from 'antd'
+import { Col, Radio, Row, Space, Carousel, Modal } from 'antd'
 import { useConfig } from '../lib'
 import {
    DineinTable,
@@ -9,6 +9,7 @@ import {
    ArrowRightIcon,
    EditIcon,
    CloseIcon,
+   Info,
 } from '../assets/icons'
 import {
    BRAND_LOCATIONS,
@@ -76,6 +77,8 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
    const [address, setAddress] = useState(null) // consumer address
    const [brandLocations, setBrandLocation] = useState(null) // available brand locations on particular consumer address
    const [showAddressForm, setShowAddressForm] = useState(false)
+   const [isAddressValidating, setIsAddressValidating] = useState(false)
+   const [addressRetryAttempt, setAddressRetryAttempt] = useState(0)
 
    // useEffect(() => {
    //    const localUserLocation = JSON.parse(localStorage.getItem('userLocation'))
@@ -159,6 +162,7 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
    }, [orderTabFulfillmentType])
 
    const onAddressSelect = newAddress => {
+      setIsAddressValidating(true)
       const modifiedAddress = {
          ...newAddress,
          latitude: newAddress.lat,
@@ -179,7 +183,17 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
       setAddress(modifiedAddress)
       // localStorage.setItem('userLocation', JSON.stringify(modifiedAddress))
    }
+   console.log('consumerAddress', address)
 
+   React.useEffect(() => {
+      if (addressRetryAttempt > 0) {
+         Modal.warning({
+            title: `This address is not available for delivery. Please select different address.`,
+            maskClosable: true,
+            centered: true,
+         })
+      }
+   }, [addressRetryAttempt])
    return (
       <div className="hern-cart__fulfillment-card">
          <div style={{ position: 'relative' }}>
@@ -231,6 +245,7 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
                      onChange={e => {
                         setFulfillmentType(e.target.value)
                         setAddress(null)
+                        setAddressRetryAttempt(0)
                      }}
                      value={fulfillmentType}
                   />
@@ -238,7 +253,7 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
             )}
             {fulfillmentType === 'DELIVERY' && (
                <Row className="hern-address__location-input-field">
-                  {address ? (
+                  {address && !isAddressValidating ? (
                      showAddressForm ? (
                         <>
                            {showAddressForm && (
@@ -310,6 +325,11 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
                orderTabFulfillmentType={orderTabFulfillmentType}
                brandLocations={brandLocations}
                setIsEdit={setIsEdit}
+               setIsAddressValidating={setIsAddressValidating}
+               setAddressRetryAttempt={setAddressRetryAttempt}
+               addressRetryAttempt={addressRetryAttempt}
+               setAddress={setAddress}
+               isAddressValidating={isAddressValidating}
             />
          )}
          {fulfillmentType === 'PICKUP' && (
@@ -333,6 +353,11 @@ const Delivery = props => {
       orderTabFulfillmentType,
       brandLocations,
       setIsEdit,
+      setIsAddressValidating,
+      setAddressRetryAttempt,
+      addressRetryAttempt,
+      setAddress,
+      isAddressValidating,
    } = props
    const { brand, locationId, orderTabs } = useConfig()
    const { methods, cartState } = React.useContext(CartContext)
@@ -513,6 +538,13 @@ const Delivery = props => {
                console.log('miniSlots1', miniSlots)
                setDeliverySlots(miniSlots)
             }
+            setIsAddressValidating(false)
+         } else {
+            setIsAddressValidating(false)
+            console.log('location1')
+            setAddress(null)
+            setAddressRetryAttempt(prev => prev + 1)
+            setSortedBrandLocation(null)
          }
       }
       if (locationId) {
@@ -546,6 +578,9 @@ const Delivery = props => {
    useEffect(() => {
       if (brands_brand_location_aggregate?.aggregate?.count == 0) {
          setSelectedStore(null)
+         setAddress(null)
+         setIsAddressValidating(false)
+         setAddressRetryAttempt(prev => prev + 1)
       }
    }, [brands_brand_location_aggregate])
 
@@ -690,9 +725,21 @@ const Delivery = props => {
    // if (!selectedStore.deliveryStatus.status) {
    //    return <p>{selectedStore.deliveryStatus.message}</p>
    // }
-   console.log('selectedStore', selectedStore)
+   console.log('isAddressValidating', isAddressValidating)
+   if (isAddressValidating) {
+      return <Loader inline />
+   }
    if (!address) {
-      return <p>Please Select an address</p>
+      return (
+         <div style={{ display: 'flex', alignItems: 'center' }}>
+            <Info size={18} stroke={'currentColor'} />{' '}
+            <span style={{ margin: '0 5px' }}>
+               {addressRetryAttempt > 0
+                  ? 'This address is not available for delivery. Please select different address.'
+                  : 'Please Select an address'}
+            </span>
+         </div>
+      )
    }
 
    return (
