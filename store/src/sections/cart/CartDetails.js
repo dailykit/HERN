@@ -87,10 +87,11 @@ export const CartDetails = () => {
       const { data } = props
       const { productId } = data
 
-      return (
+      return (<>
          <div className="hern-cart-product-custom-area">
             <div className="hern-cart-product-custom-area-quantity">
                {/* <span>X{quantity}</span> */}
+
                <CounterButton
                   count={data.ids.length}
                   incrementClick={() => {
@@ -106,28 +107,48 @@ export const CartDetails = () => {
                      removeCartItems([data.ids[data.ids.length - 1]])
                   }
                />
-            </div>
-            <div className="hern-cart-product-custom-area-icons">
-               <DeleteIcon
-                  stroke={'red'}
-                  onClick={() => removeCartItems(data.ids)}
-                  style={{ cursor: 'pointer' }}
-                  title="Delete"
-               />
-               {data.childs.length > 0 && (
-                  <EditIcon
-                     stroke={'#367BF5'}
-                     onClick={() => {
-                        setCartDetailSelectedProduct(data)
-                        setIncreaseProductId(productId)
-                        setPopupType('edit')
-                     }}
-                     style={{ cursor: 'pointer' }}
-                     title="Edit"
-                  />
+               {/* price */}
+               {data.childs[0].price !== 0 && (
+                  <div>
+                     {data.childs[0].discount > 0 && (
+                        <span
+                           style={{
+                              textDecoration: 'line-through',
+                           }}
+                        >
+                           {formatCurrency(data.childs[0].price)}
+                        </span>
+                     )}
+
+                     <span className='hern-cart-product-custom-area-price'>
+                        {formatCurrency(
+                           data.childs[0].price - data.childs[0].discount
+                        )}
+                     </span>
+                  </div>
                )}
             </div>
+            {/* <div className="hern-cart-product-custom-area-icons"> */}
+            {/* </div> */}
+
+
          </div>
+         <div style={{ position: 'relative', left: '6.5rem' }}>
+            {data.childs.length > 0 && (
+               <EditIcon
+                  size={12}
+                  stroke={'#38a169'}
+                  onClick={() => {
+                     setCartDetailSelectedProduct(data)
+                     setIncreaseProductId(productId)
+                     setPopupType('edit')
+                  }}
+                  style={{ cursor: 'pointer', margin: '0rem 0.5rem' }}
+                  title="Edit"
+               />
+            )}
+         </div>
+      </>
       )
    }
 
@@ -167,7 +188,7 @@ export const CartDetails = () => {
                      <span>Oops! Your cart is empty </span>
                      <Button
                         className="hern-cart-go-to-menu-btn"
-                        onClick={() => {}}
+                        onClick={() => { }}
                      >
                         <Link href="/order">GO TO MENU</Link>
                      </Button>
@@ -220,9 +241,7 @@ export const CartDetails = () => {
                                  }}
                                  useForThirdParty={true}
                               />
-                              {product.childs.length > 0 && (
-                                 <ModifiersList data={product} />
-                              )}
+
                            </div>
                         )
                      })}
@@ -283,7 +302,7 @@ export const CartDetails = () => {
                               <span>{formatCurrency(tip)}</span>
                            </li>
                         )}
-                        <li style={{ fontWeight: 'bold' }}>
+                        <li className='hern-cart-bill-details-list-total-price'>
                            <span>{cart.billing.totalPrice.label}</span>
                            <span>
                               {formatCurrency(
