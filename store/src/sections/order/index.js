@@ -158,7 +158,7 @@ export const OnDemandOrder = ({ config }) => {
       return <p>Error</p>
    }
    if (isMenuLoading || status === 'loading' || productsLoading) {
-      return <Loader />
+      return <Loader type="order-loading" />
    }
    const getWrapperClasses = () => {
       if (menuType === 'fixed-top-nav') {
