@@ -123,7 +123,7 @@ export const MenuSection = props => {
          },
          // fetchPolicy: 'network-only',
          onCompleted: data => {
-            if (data && data.products.length) {
+            if (data && data.products.length && hydratedMenu.length === 0) {
                const updatedMenu = menuData.categories.map(category => {
                   const updatedProducts = category.products
                      .map(productId => {
@@ -141,6 +141,7 @@ export const MenuSection = props => {
                      products: updatedProducts,
                   }
                })
+               console.log('menu done')
                setStatus('success')
                setHydratedMenu(updatedMenu)
             }
@@ -152,7 +153,11 @@ export const MenuSection = props => {
       }
    )
 
-   console.log('hydratedMenu', hydratedMenu)
+   useEffect(() => {
+      console.log('hydratedMenu', hydratedMenu)
+   }, [hydratedMenu])
+
+   const memoHydratedMenu = React.useMemo(() => hydratedMenu, [hydratedMenu])
    const lastCarousal = e => {
       e.stopPropagation()
       carousalRef.current.prev()
@@ -208,7 +213,7 @@ export const MenuSection = props => {
             config={config}
             categoryId={category}
             changeCategory={changeCategory}
-            kioskMenus={hydratedMenu}
+            kioskMenus={memoHydratedMenu}
             setCurrentPage={setCurrentPage}
          />
       </Layout>
