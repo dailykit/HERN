@@ -219,8 +219,8 @@ export const Category = ({
       { id: 'multiple', title: 'Multiple' },
    ]
    const categoryOption = [
-      { id: 'addOn', title: 'ADDON' },
-      { id: 'combo', title: 'COMBO' },
+      { id: 'ADDON', title: 'ADDON' },
+      { id: 'COMBO', title: 'COMBO' },
    ]
 
    const { modifiersDispatch } = React.useContext(ModifiersContext)
@@ -430,7 +430,7 @@ export const Category = ({
                         variables: {
                            id: category.id,
                            _set: {
-                              categoryType: option.title,
+                              categoryType: option.id,
                            },
                         },
                      })
@@ -604,7 +604,7 @@ const Option = ({
       },
    })
    const [posist_baseItemId, setPosist_baseItemId] = React.useState({
-      value: option.posist_baseItemId ?? null,
+      value: option.posist_baseItemId || null,
       meta: {
          isValid: true,
          isTouched: false,
@@ -839,7 +839,7 @@ const Option = ({
                               })
                            }
                            value={posist_baseItemId.value}
-                           placeholder="Enter option posist_baseItemId"
+                           placeholder="Enter option posist base ItemId"
                            hasError={
                               posist_baseItemId.meta.isTouched &&
                               !posist_baseItemId.meta.isValid
