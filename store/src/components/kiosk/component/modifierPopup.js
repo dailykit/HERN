@@ -422,6 +422,7 @@ export const KioskModifier = props => {
       return totalPrice * quantity
    }
 
+   // used for add new product or edit product
    useEffect(() => {
       if (forNewItem || edit) {
          const productOptionId = productCartDetail.childs[0].productOption.id
@@ -1532,6 +1533,13 @@ const getCartItemWithModifiers = (
 ) => {
    const finalCartItem = { ...cartItemInput }
 
+   console.log(
+      'inModifier',
+      cartItemInput,
+      selectedModifiersInput,
+      nestedModifiersInput
+   )
+
    const combinedModifiers = selectedModifiersInput.reduce(
       (acc, obj) => [...acc, ...obj.data],
       []
@@ -1539,7 +1547,8 @@ const getCartItemWithModifiers = (
    const dataArr = finalCartItem?.childs?.data[0]?.childs?.data
    const dataArrLength = dataArr.length
 
-   finalCartItem.childs.data[0].childs.data = [...dataArr, ...combinedModifiers]
+   console.log('dataArr', dataArr, combinedModifiers)
+   finalCartItem.childs.data[0].childs.data = [...combinedModifiers]
    if (nestedModifiersInput) {
       nestedModifiersInput.forEach(eachNestedModifierInput => {
          const foundModifierIndex =
