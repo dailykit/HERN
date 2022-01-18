@@ -25,7 +25,7 @@ export const UserInfo = props => {
    const [mobileNumber, setMobileNumber] = useState(
       cart?.customerInfo?.customerPhone ||
          user.platform_customer?.phoneNumber ||
-         'N/A'
+         ''
    )
    const [countryCode, setCountryCode] = useState(null)
 

@@ -517,7 +517,6 @@ export const CART_SUBSCRIPTION = gql`
             label
             position
             publicCreds
-            privateCreds
             showCompanyName
             supportedPaymentOption {
                id
@@ -1642,7 +1641,6 @@ export const GET_CART = gql`
             label
             position
             publicCreds
-            privateCreds
             showCompanyName
             supportedPaymentOption {
                id
@@ -2075,7 +2073,6 @@ export const GET_PAYMENT_OPTIONS = gql`
             description
             position
             publicCreds
-            privateCreds
             showCompanyName
             supportedPaymentOption {
                id

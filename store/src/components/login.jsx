@@ -672,6 +672,9 @@ const SocialLogin = props => {
    //props
    const { callbackURL } = props
 
+   const { configOf } = useConfig()
+   const authConfig = configOf('Auth Methods', 'brand')
+
    //fetch all available provider
    const {
       loading: providerLoading,
@@ -709,22 +712,26 @@ const SocialLogin = props => {
                            className="hern-login-v1__social__login__provider"
                            key={index}
                         >
-                           {eachProvider.title === 'google' && (
-                              <GoogleIcon
-                                 onClick={() => {
-                                    handleSocialOnClick('google')
-                                 }}
-                                 style={{ cursor: 'pointer' }}
-                              />
-                           )}
-                           {eachProvider.title === 'facebook' && (
-                              <FacebookIcon
-                                 onClick={() => {
-                                    handleSocialOnClick('facebook')
-                                 }}
-                                 style={{ cursor: 'pointer' }}
-                              />
-                           )}
+                           {eachProvider.title === 'google' &&
+                              authConfig.socialLoginMethods.googleLogin
+                                 .value && (
+                                 <GoogleIcon
+                                    onClick={() => {
+                                       handleSocialOnClick('google')
+                                    }}
+                                    style={{ cursor: 'pointer' }}
+                                 />
+                              )}
+                           {eachProvider.title === 'facebook' &&
+                              authConfig.socialLoginMethods.facebookLogin
+                                 .value && (
+                                 <FacebookIcon
+                                    onClick={() => {
+                                       handleSocialOnClick('facebook')
+                                    }}
+                                    style={{ cursor: 'pointer' }}
+                                 />
+                              )}
                         </div>
                      )
                   })}

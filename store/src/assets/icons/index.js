@@ -53,3 +53,4 @@ export * from './LocationIcon'
 export * from './AddressIcon'
 
 export * from './VegNonVegType'
+export * from './Warning'

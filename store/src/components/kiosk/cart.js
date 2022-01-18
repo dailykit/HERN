@@ -1,4 +1,14 @@
-import { Button, Col, Layout, Modal, Row, Menu, Dropdown, Space } from 'antd'
+import {
+   Button,
+   Col,
+   Layout,
+   Modal,
+   Row,
+   Menu,
+   Dropdown,
+   Space,
+   Spin,
+} from 'antd'
 import React, { useEffect, useState } from 'react'
 import {
    ArrowLeftIcon,
@@ -27,7 +37,8 @@ const { Header, Content, Footer } = Layout
 
 export const KioskCart = props => {
    //context
-   const { cartState, methods, addToCart } = React.useContext(CartContext)
+   const { cartState, methods, addToCart, isFinalCartLoading } =
+      React.useContext(CartContext)
    const { cart } = cartState
    const { config, combinedCartItems, setCurrentPage } = props
    const { t, direction } = useTranslation()
@@ -49,6 +60,20 @@ export const KioskCart = props => {
 
    if (combinedCartItems === null) {
       return <p>{t('No cart available')}</p>
+   }
+   if (isFinalCartLoading) {
+      return (
+         <div
+            style={{
+               display: 'flex',
+               alignItems: 'center',
+               justifyContent: 'center',
+               height: '100%',
+            }}
+         >
+            <Spin size="large" tip="Loading Cart..." />
+         </div>
+      )
    }
 
    return (
@@ -161,7 +186,7 @@ export const KioskCart = props => {
                                  </span>
                                  <span style={{ fontWeight: 'bold' }}>
                                     {formatCurrency(
-                                       cart.billing.totalPrice.value || 0
+                                       cart?.billing?.totalPrice?.value || 0
                                     )}
                                  </span>
                               </li>
@@ -169,7 +194,7 @@ export const KioskCart = props => {
                                  <span>{t('Tax')}</span>
                                  <span>
                                     {formatCurrency(
-                                       cart.billing.tax.value || 0
+                                       cart?.billing?.tax?.value || 0
                                     )}
                                  </span>
                               </li>
@@ -178,7 +203,7 @@ export const KioskCart = props => {
                                  <span>
                                     {'-'}{' '}
                                     {formatCurrency(
-                                       cart.billing.discount.value || 0
+                                       cart?.billing?.discount?.value || 0
                                     )}
                                  </span>
                               </li>
@@ -186,14 +211,16 @@ export const KioskCart = props => {
                         </div>
                      </Content>
                      <Footer className="hern-kiosk__cart-page-proceed-to-checkout">
-                        <CartPageFooter cart={cart} methods={methods} />
+                        {/* <CartPageFooter cart={cart} methods={methods} /> */}
                         <PayButton
                            cartId={cart?.id}
                            className="hern-kiosk__kiosk-button hern-kiosk__cart-place-order-btn"
                         >
                            {/* <KioskButton customClass="hern-kiosk__cart-place-order-btn"> */}
                            <span className="hern-kiosk__cart-place-order-btn-total">
-                              {formatCurrency(cart.billing.totalPrice.value)}
+                              {formatCurrency(
+                                 cart?.billing?.totalPrice?.value || 0
+                              )}
                            </span>
                            <span className="hern-kiosk__cart-place-order-btn-text">
                               {t('Place Order')}
@@ -213,6 +240,7 @@ export const KioskCart = props => {
                                  }
                               />
                            )}
+
                            {/* </KioskButton> */}
                         </PayButton>
                      </Footer>
@@ -282,8 +310,8 @@ const CartCard = props => {
    console.log('repeatLastOneData', repeatLastOneData)
    const additionalModifiersIds = React.useMemo(() => {
       if (repeatLastOneData) {
-         return repeatLastOneData.products[0].productOptions
-            .find(
+         return repeatLastOneData?.products[0]?.productOptions
+            ?.find(
                x =>
                   x.id === cartDetailSelectedProduct.childs[0].productOption.id
             )
@@ -323,7 +351,7 @@ const CartCard = props => {
 
       console.log('nestedModifierOptionsIds', nestedModifierOptionsIds)
       //selected product option
-      const selectedProductOption = productData.productOptions.find(
+      const selectedProductOption = productData.productOptions?.find(
          x => x.id == productOptionId
       )
 
@@ -752,70 +780,72 @@ const CartCard = props => {
    )
 }
 
-const CartPageFooter = props => {
-   const { cart, methods } = props
-   const { t } = useTranslation()
-   const [selectedMethod, setSelectedMethod] = useState(
-      cart.paymentMethods.find(x => x.id === cart.toUseAvailablePaymentOptionId)
-   )
-   useEffect(() => {
-      setSelectedMethod(
-         cart.paymentMethods.find(
-            x => x.id === cart.toUseAvailablePaymentOptionId
-         )
-      )
-   }, [cart])
-   const paymentMethods = (
-      <Menu
-         onClick={item => {
-            const option = cart.paymentMethods.find(x => x.id === +item.key)
-            // setSelectedMethod(option)
-            methods.cart.update({
-               variables: {
-                  id: cart.id,
-                  _set: {
-                     toUseAvailablePaymentOptionId: option.id,
-                  },
-               },
-            })
-         }}
-      >
-         {cart.paymentMethods.map((eachMethod, index) => (
-            <Menu.Item key={eachMethod.id}>
-               <span>{eachMethod.label}</span>
-            </Menu.Item>
-         ))}
-      </Menu>
-   )
-   return (
-      <div className="hern-kiosk__cart-page-footer-footer">
-         <Dropdown
-            overlay={paymentMethods}
-            trigger={['click']}
-            placement="topCenter"
-         >
-            <div>
-               <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <PaymentModeIcon />
-                  <span
-                     style={{
-                        margin: '0 .5em',
-                        fontSize: '1.4em',
-                        fontWeight: '500',
-                     }}
-                  >
-                     {t('Payment Method')}
-                  </span>
-                  <UpVector size={20} />
-               </div>
-               <span className="hern-kiosk__cart-payment-method-label">
-                  {selectedMethod?.label || 'Please choose payment method'}
-               </span>
-            </div>
-         </Dropdown>
-      </div>
-   )
-}
+// const CartPageFooter = props => {
+//    const { cart, methods } = props
+//    const { t } = useTranslation()
+//    const [selectedMethod, setSelectedMethod] = useState(
+//       cart.paymentMethods?.find(
+//          x => x.id === cart.toUseAvailablePaymentOptionId
+//       )
+//    )
+//    useEffect(() => {
+//       setSelectedMethod(
+//          cart.paymentMethods?.find(
+//             x => x.id === cart.toUseAvailablePaymentOptionId
+//          )
+//       )
+//    }, [cart])
+//    // const paymentMethods = (
+//    //    <Menu
+//    //       onClick={item => {
+//    //          const option = cart.paymentMethods?.find(x => x.id === +item.key)
+//    //          // setSelectedMethod(option)
+//    //          methods.cart.update({
+//    //             variables: {
+//    //                id: cart.id,
+//    //                _set: {
+//    //                   toUseAvailablePaymentOptionId: option.id,
+//    //                },
+//    //             },
+//    //          })
+//    //       }}
+//    //    >
+//    //       {cart.paymentMethods.map((eachMethod, index) => (
+//    //          <Menu.Item key={eachMethod.id}>
+//    //             <span>{eachMethod.label}</span>
+//    //          </Menu.Item>
+//    //       ))}
+//    //    </Menu>
+//    // )
+//    return (
+//       <div className="hern-kiosk__cart-page-footer-footer">
+//          <Dropdown
+//             overlay={paymentMethods}
+//             trigger={['click']}
+//             placement="topCenter"
+//          >
+//             <div>
+//                <div style={{ display: 'flex', alignItems: 'center' }}>
+//                   <PaymentModeIcon />
+//                   <span
+//                      style={{
+//                         margin: '0 .5em',
+//                         fontSize: '1.4em',
+//                         fontWeight: '500',
+//                      }}
+//                   >
+//                      {t('Payment Method')}
+//                   </span>
+//                   <UpVector size={20} />
+//                </div>
+//                <span className="hern-kiosk__cart-payment-method-label">
+//                   {selectedMethod?.label || 'Please choose payment method'}
+//                </span>
+//             </div>
+//          </Dropdown>
+//       </div>
+//    )
+// }
 
 const Offers = props => {
    const { config } = props

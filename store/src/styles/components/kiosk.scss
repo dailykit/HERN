@@ -806,6 +806,8 @@
    height: 2.5em;
    display: flex;
    align-items: center;
+   width: 100%;
+   justify-content: center;
    .hern-kiosk__cart-place-order-btn-text {
       font-size: 1.5em;
       margin: 0 1em;
