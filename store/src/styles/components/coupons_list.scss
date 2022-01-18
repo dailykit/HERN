@@ -118,6 +118,9 @@
    padding: 12px;
 }
 
+.hern-upfront-coupons-list__coupon-wrapper > .slick-dots {
+   z-index: 0 !important;
+}
 .hern-upfront-coupons-list__coupon-wrapper > .slick-dots > li > button {
    background: #38a169;
 }
@@ -138,7 +141,6 @@
    position: relative;
    stroke: rgba(64, 64, 64, 0.4);
    bottom: calc(45% - 21px);
-   z-index: 100000000000000;
    border-radius: 50%;
    cursor: pointer;
    width: 15%;
