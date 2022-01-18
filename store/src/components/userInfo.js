@@ -7,7 +7,7 @@ import { useUser, CartContext } from '../context'
 import { useToasts } from 'react-toast-notifications'
 
 export const UserInfo = props => {
-   const { cart } = props
+   const { cart, editable = true } = props
    const { methods } = React.useContext(CartContext)
    const { user } = useUser()
    const { addToast } = useToasts()
@@ -125,6 +125,7 @@ export const UserInfo = props => {
                         onBlurData('firstName')
                      }
                   }}
+                  disabled={!editable}
                />
             </fieldset>
             <fieldset className="hern-user-info__fieldset hern-user-info__fieldset-last-name">
@@ -143,6 +144,7 @@ export const UserInfo = props => {
                         onBlurData('lastName')
                      }
                   }}
+                  disabled={!editable}
                />
             </fieldset>
          </div>
@@ -170,6 +172,7 @@ export const UserInfo = props => {
                }}
                defaultCountry={countryCode}
                placeholder="Enter your phone number"
+               disabled={!editable}
             />
             <span className="hern-user-info__phone-number-warning">
                {mobileNumber &&
