@@ -5,10 +5,11 @@ export const CounterButton = props => {
    const { incrementClick, decrementClick, count } = props
    return (
       <div className="hern-counter-button">
-         {count < 2 ? (
+         {count == 1 ? (
             <DeleteIcon
                stroke={'red'}
                onClick={decrementClick}
+               disabled={count === 0}
                // onClick={() => removeCartItems(data.ids)}
                style={{
                   cursor: 'pointer',

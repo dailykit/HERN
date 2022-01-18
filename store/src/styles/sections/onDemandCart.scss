@@ -1,6 +1,6 @@
-.hern-cart-container {
-   // height: calc(100vh - 64px);
-}
+// .hern-cart-container {
+//    // height: calc(100vh - 64px);
+// }
 .hern-cart-page {
    padding: 0;
    width: 100%;
@@ -95,17 +95,24 @@
 .hern-cart-bill-details {
    margin: 1em;
 }
-
+.hern-cart-bill-details > span {
+   font-weight: bold;
+}
 .hern-cart-bill-details-list {
    li {
       display: flex;
       justify-content: space-between;
       font-style: normal;
-      font-weight: normal;
+      font-weight: 400;
       font-size: 14px;
       line-height: 16px;
       color: #555b6e;
       margin: 12px 0;
+   }
+   .hern-cart-bill-details-list-total-price {
+      font-weight: bold;
+      padding-top: 2.5rem;
+      border-top: 1px solid #000;
    }
 }
 
@@ -136,13 +143,21 @@
 }
 
 .hern-cart-product-custom-area-quantity {
-   margin-right: 10px;
+   // margin-right: 10px;
    display: flex;
    align-items: center;
    > span {
       font-style: italic;
       font-weight: normal;
       font-size: 14px;
+      line-height: 16px;
+   }
+   .hern-cart-product-custom-area-price {
+      margin-left: 6px;
+      color: #404040;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 17px;
       line-height: 16px;
    }
 }
@@ -155,7 +170,7 @@
 
 .hern-cart-product-modifiers {
    margin: 0 1em;
-   border: 1px solid rgba(64, 64, 64, 0.25);
+   // border: 1px solid rgba(64, 64, 64, 0.25);
    box-sizing: border-box;
    border-radius: 6px;
    padding: 0 0.5em;

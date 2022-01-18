@@ -178,7 +178,7 @@ export const ProductCard = props => {
                               {data.name}
                            </div>
                         )}
-                        {data.childs.length > 0 && (
+                        {data?.childs?.length > 0 && (
                            <div className="hern-product-card-productOption-label">
                               {data.childs[0].productOption.label || 'N/A'}
                            </div>
