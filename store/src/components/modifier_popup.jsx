@@ -677,7 +677,8 @@ export const ModifierPopup = props => {
    )
 }
 const getCartItemWithModifiers = (cartItemInput, selectedModifiersInput) => {
-   const finalCartItem = { ...cartItemInput }
+   // const finalCartItem = { ...cartItemInput }
+   const finalCartItem = JSON.parse(JSON.stringify(cartItemInput))
 
    const combinedModifiers = selectedModifiersInput.reduce(
       (acc, obj) => [...acc, ...obj.data],

@@ -142,7 +142,7 @@ const Kiosk = props => {
    if (isIdleScreen) {
       return <IdleScreen config={kioskConfig} resetStates={resetStates} />
    }
-   console.log('this is cureent page', currentPage)
+
    return (
       <div dir={direction}>
          <Layout>
