@@ -422,14 +422,22 @@ export const KioskModifier = props => {
             selectedProductOption.modifier.categories.forEach(eachCategory => {
                if (eachCategory.type === 'single' && eachCategory.isRequired) {
                   // default selected modifier option
+                  // select first option which has zero price
+
+                  const firstOptionWithZeroPrice = eachCategory.options.find(
+                     option => option.price === 0
+                  )
+                     ? eachCategory.options.find(option => option.price === 0)
+                     : eachCategory.options[0]
+
                   const defaultModifierSelectedOption = {
                      modifierCategoryID: eachCategory.id,
-                     modifierCategoryOptionsID: eachCategory.options[0].id,
+                     modifierCategoryOptionsID: firstOptionWithZeroPrice.id,
                      modifierCategoryOptionsPrice:
-                        eachCategory.options[0].price,
+                        firstOptionWithZeroPrice.price,
                      modifierCategoryOptionsDiscount:
-                        eachCategory.options[0].discount,
-                     cartItem: eachCategory.options[0].cartItem,
+                        firstOptionWithZeroPrice.discount,
+                     cartItem: firstOptionWithZeroPrice.cartItem,
                   }
                   singleModifier = [
                      ...singleModifier,
@@ -439,11 +447,26 @@ export const KioskModifier = props => {
                   eachCategory.type === 'multiple' &&
                   eachCategory.isRequired
                ) {
-                  const defaultSelectedOptions = eachCategory.options.slice(
-                     0,
-                     eachCategory.limits.min
+                  // select options which has price zero
+                  const optionsWithZeroPrice = eachCategory.options.filter(
+                     option => option.price === 0
                   )
-                  defaultSelectedOptions.forEach(eachModifierOption => {
+                  const optionsWithOutZeroPrice = eachCategory.options.filter(
+                     option => option.price !== 0
+                  )
+                  const defaultMultiSelectedOptions =
+                     optionsWithZeroPrice.length >= eachCategory.limits.min
+                        ? optionsWithZeroPrice.slice(0, eachCategory.limits.min)
+                        : [
+                             ...optionsWithZeroPrice,
+                             ...optionsWithOutZeroPrice.slice(
+                                0,
+                                eachCategory.limits.min -
+                                   optionsWithZeroPrice.length
+                             ),
+                          ]
+
+                  defaultMultiSelectedOptions.forEach(eachModifierOption => {
                      // default selected modifier option
                      const defaultModifierSelectedOption = {
                         modifierCategoryID: eachCategory.id,
