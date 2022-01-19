@@ -102,14 +102,14 @@ const DeliveryRanges = ({ timeSlotId, mileRanges, openTunnel }) => {
                                  <div>Delivery Type</div>
                                  <div>{mileRange.distanceType}</div>
                               </StyledContext>
-                              <StyledContext>
+                              {mileRange.zipcodes && (<StyledContext>
                                  <div>Zipcodes</div>
                                  <div>{mileRange?.zipcodes?.zipcodes.map(x => <span>{x}, </span>)}</div>
-                              </StyledContext>
-                              <StyledContext>
+                              </StyledContext>)}
+                              {mileRange.geoBoundary && (<StyledContext>
                                  <div>Geo-Boundary</div>
                                  <div>{mileRange?.geoBoundary?.geoBoundaries.map(boundary => <span>{<span>({boundary.latitude},{boundary.longitude}) </span>}</span>)}</div>
-                              </StyledContext>
+                              </StyledContext>)}
                               <StyledCardAction>
                                  <Switch
                                     name={`mileRange-${mileRange.id}`}

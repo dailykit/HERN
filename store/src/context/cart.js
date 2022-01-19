@@ -28,8 +28,6 @@ const initialState = {
 }
 
 const reducer = (state, { type, payload }) => {
-   console.log('cartDataInReducer', payload)
-
    switch (type) {
       case 'CART':
          return { ...state, cart: payload }
@@ -46,6 +44,7 @@ export const CartProvider = ({ children }) => {
    const { brand, kioskId, selectedOrderTab, locationId } = useConfig()
    const { addToast } = useToasts()
    const [oiType] = useQueryParamState('oiType')
+   const [isFinalCartLoading, setIsFinalCartLoading] = React.useState(true)
 
    const { isAuthenticated, user, isLoading } = useUser()
    const [cartState, cartReducer] = React.useReducer(reducer, initialState)
@@ -67,13 +66,16 @@ export const CartProvider = ({ children }) => {
    const {
       loading: isCartLoading,
       error: getInitialCart,
-      data: cartData,
+      data: cartData = {},
    } = useSubscription(GET_CART, {
       skip: !storedCartId,
       variables: {
          id: storedCartId,
       },
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'no-cache',
+      onSubscriptionComplete: () => {
+         setIsFinalCartLoading(false)
+      },
    })
 
    // get cartItems
@@ -86,36 +88,25 @@ export const CartProvider = ({ children }) => {
       variables: {
          id: storedCartId,
       },
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'no-cache',
    })
 
    useEffect(() => {
-      console.log('kiosk paymentOption', cartData)
       if (!isCartLoading && !isEmpty(cartData) && oiType === 'Kiosk Ordering') {
          const terminalPaymentOption = cartData?.cart?.paymentMethods.find(
             option =>
                option?.supportedPaymentOption?.paymentOptionLabel === 'TERMINAL'
          )
-         console.log('kiosk paymentOption 1', terminalPaymentOption)
-
          const codPaymentOption = cartData?.cart?.paymentMethods.find(
             option =>
                option?.supportedPaymentOption?.paymentOptionLabel === 'CASH'
          )
-         console.log('kiosk paymentOption 2', codPaymentOption)
          const terminalPaymentOptionId = !isEmpty(terminalPaymentOption)
             ? terminalPaymentOption?.id
             : null
-         console.log('kiosk paymentOption 3', terminalPaymentOptionId)
          const codPaymentOptionId = !isEmpty(codPaymentOption)
             ? codPaymentOption?.id
             : null
-         console.log('kiosk paymentOption 4', codPaymentOptionId)
-         console.log(
-            'kiosk paymentOption 5',
-            terminalPaymentOptionId,
-            codPaymentOptionId
-         )
          cartReducer({
             type: 'KIOSK_PAYMENT_OPTION',
             payload: {
@@ -146,9 +137,11 @@ export const CartProvider = ({ children }) => {
             localStorage.setItem('cart-id', data.createCart.id)
          }
          setStoredCartId(data.createCart.id)
+         setIsFinalCartLoading(false)
       },
       onError: error => {
          console.log(error)
+         setIsFinalCartLoading(false)
          addToast('Failed to create cart!', {
             appearance: 'error',
          })
@@ -164,9 +157,11 @@ export const CartProvider = ({ children }) => {
             appearance: 'success',
          })
          console.log('🍾 Cart updated with data!')
+         setIsFinalCartLoading(false)
       },
       onError: error => {
          console.log(error)
+         setIsFinalCartLoading(false)
          addToast('Failed to update items!', {
             appearance: 'error',
          })
@@ -177,9 +172,12 @@ export const CartProvider = ({ children }) => {
    const [deleteCart] = useMutation(MUTATIONS.CART.DELETE, {
       onCompleted: () => {
          localStorage.removeItem('cart-id')
+         setStoredCartId(null)
+         setIsFinalCartLoading(false)
       },
       onError: error => {
          console.log('delete cart error', error)
+         setIsFinalCartLoading(false)
       },
    })
 
@@ -187,9 +185,11 @@ export const CartProvider = ({ children }) => {
    const [createCartItems] = useMutation(CREATE_CART_ITEMS, {
       onCompleted: () => {
          console.log('items added successfully')
+         setIsFinalCartLoading(false)
       },
       onError: error => {
          console.log(error)
+         setIsFinalCartLoading(false)
          addToast('Failed to create items!', {
             appearance: 'error',
          })
@@ -198,14 +198,29 @@ export const CartProvider = ({ children }) => {
 
    // delete cartItems
    const [deleteCartItems] = useMutation(DELETE_CART_ITEMS, {
-      onCompleted: () => {
+      onCompleted: ({ deleteCartItems = null }) => {
          console.log('item removed successfully')
+         if (
+            deleteCartItems &&
+            deleteCartItems.returning.length &&
+            deleteCartItems.returning[0].cart.cartItems_aggregate.aggregate
+               .count === 0 &&
+            storedCartId
+         ) {
+            deleteCart({
+               variables: {
+                  id: storedCartId,
+               },
+            })
+         }
+         setIsFinalCartLoading(false)
          addToast('Item removed!', {
             appearance: 'success',
          })
       },
       onError: error => {
          console.log(error)
+         setIsFinalCartLoading(false)
          addToast('Failed to delete items!', {
             appearance: 'error',
          })
@@ -216,12 +231,13 @@ export const CartProvider = ({ children }) => {
    const [updateCartItems] = useMutation(UPDATE_CART_ITEMS)
    //add to cart
    const addToCart = (cartItem, quantity) => {
+      setIsFinalCartLoading(true)
       const cartItems = new Array(quantity).fill({ ...cartItem })
       if (!isAuthenticated) {
          //without login
          if (!cartData?.cart) {
             //new cart
-            console.log('new cart', cartState)
+            // console.log('new cart', cartState)
             const object = {
                cartItems: {
                   data: cartItems,
@@ -237,7 +253,7 @@ export const CartProvider = ({ children }) => {
                         cartState.kioskPaymentOption.terminal,
                   }),
             }
-            console.log('object new cart', object)
+            // console.log('object new cart', object)
             createCart({
                variables: {
                   object,
@@ -249,7 +265,7 @@ export const CartProvider = ({ children }) => {
                ...cartItem,
                cartId: storedCartId,
             })
-            console.log('object new cart', cartItemsWithCartId)
+            // console.log('object new cart', cartItemsWithCartId)
             createCartItems({
                variables: {
                   objects: cartItemsWithCartId,
@@ -318,6 +334,7 @@ export const CartProvider = ({ children }) => {
             },
          },
          skip: !(brand?.id && user?.keycloakId),
+         fetchPolicy: 'no-cache',
          onSubscriptionData: ({ subscriptionData }) => {
             // pending cart available
             if (
@@ -341,6 +358,7 @@ export const CartProvider = ({ children }) => {
                   })
                }
                setStoredCartId(subscriptionData.data.carts[0].id)
+               setIsFinalCartLoading(false)
             } else {
                // no pending cart
                if (storedCartId) {
@@ -371,19 +389,21 @@ export const CartProvider = ({ children }) => {
                         },
                      },
                   })
+                  setIsFinalCartLoading(false)
                }
             }
          },
       })
-   console.log('cartData', cartData?.cart, getInitialCart)
+
    return (
       <CartContext.Provider
          value={{
             cartState: {
-               cart: cartData?.cart,
-               cartItems: cartItemsData?.cartItems,
-               kioskPaymentOption: cartState.kioskPaymentOption,
+               cart: cartData?.cart || {},
+               cartItems: cartItemsData?.cartItems || {},
+               kioskPaymentOption: cartState.kioskPaymentOption || {},
             },
+            isFinalCartLoading,
             cartReducer,
             addToCart,
             combinedCartItems,

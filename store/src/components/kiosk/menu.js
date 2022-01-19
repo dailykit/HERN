@@ -10,6 +10,7 @@ import {
    Carousel,
    Space,
    Radio,
+   Spin,
 } from 'antd'
 import { useQueryParamState } from '../../utils'
 import { CartContext, useTranslation } from '../../context'
@@ -38,7 +39,7 @@ export const MenuSection = props => {
    const { config, setCurrentPage } = props
    const [category, changeCategory, deleteCategory] =
       useQueryParamState('productCategoryId')
-   console.log('fromMenuSection')
+   // console.log('fromMenuSection')
 
    const [menuData, setMenuData] = useState({
       categories: [],
@@ -80,7 +81,7 @@ export const MenuSection = props => {
          },
       },
       onCompleted: data => {
-         console.log('v2Data', data)
+         // console.log('v2Data', data)
          if (data?.onDemand_getMenuV2copy?.length) {
             const [res] = data.onDemand_getMenuV2copy
             const { menu } = res.data
@@ -122,7 +123,7 @@ export const MenuSection = props => {
          },
          // fetchPolicy: 'network-only',
          onCompleted: data => {
-            if (data && data.products.length) {
+            if (data && data.products.length && hydratedMenu.length === 0) {
                const updatedMenu = menuData.categories.map(category => {
                   const updatedProducts = category.products
                      .map(productId => {
@@ -151,7 +152,11 @@ export const MenuSection = props => {
       }
    )
 
-   console.log('hydratedMenu', hydratedMenu)
+   useEffect(() => {
+      console.log('hydratedMenu', hydratedMenu)
+   }, [hydratedMenu])
+
+   const memoHydratedMenu = React.useMemo(() => hydratedMenu, [hydratedMenu])
    const lastCarousal = e => {
       e.stopPropagation()
       carousalRef.current.prev()
@@ -162,7 +167,18 @@ export const MenuSection = props => {
    }
 
    if (status === 'loading') {
-      return <div>Loading</div>
+      return (
+         <div
+            style={{
+               display: 'flex',
+               alignItems: 'center',
+               justifyContent: 'center',
+               height: '100%',
+            }}
+         >
+            <Spin size="large" tip="Loading Menu..." />
+         </div>
+      )
    }
    if (status === 'error') {
       return <div>Somthing went wring</div>
@@ -196,7 +212,7 @@ export const MenuSection = props => {
             config={config}
             categoryId={category}
             changeCategory={changeCategory}
-            kioskMenus={hydratedMenu}
+            kioskMenus={memoHydratedMenu}
             setCurrentPage={setCurrentPage}
          />
       </Layout>
@@ -262,7 +278,7 @@ const KioskMenu = props => {
                               onSetActive={to => {
                                  setSelectedCategory(index)
                                  // changeCategory(index)
-                                 console.log('thisIsTo', to)
+                                 // console.log('thisIsTo', to)
                               }}
                               to={eachCategory.name}
                               spy={true}
@@ -404,7 +420,7 @@ const KioskMenu = props => {
                                                 onRadioClick(eachType.type)
                                              }
                                              // value={eachType.type}
-                                             key={index}
+                                             key={eachType.type}
                                              className="hern-kiosk__menu-product-type-radio-btn"
                                              data-translation="true"
                                              data-original-value={eachType.type}
@@ -453,7 +469,7 @@ const KioskMenu = props => {
                                        <Col
                                           span={8}
                                           className="gutter-row"
-                                          key={index2}
+                                          key={eachProduct?.id}
                                        >
                                           <KioskProduct
                                              config={config}

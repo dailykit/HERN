@@ -1,5 +1,16 @@
-import { Button, Col, Layout, Modal, Row, Menu, Dropdown, Space } from 'antd'
+import {
+   Button,
+   Col,
+   Layout,
+   Modal,
+   Row,
+   Menu,
+   Dropdown,
+   Space,
+   Spin,
+} from 'antd'
 import React, { useEffect, useState } from 'react'
+
 import {
    ArrowLeftIcon,
    ArrowLeftIconBG,
@@ -13,7 +24,7 @@ import {
 } from '../../assets/icons'
 import { useTranslation, CartContext } from '../../context'
 import { KioskCounterButton } from './component'
-import { formatCurrency } from '../../utils'
+import { formatCurrency, nestedModifierTemplateIds } from '../../utils'
 import { PRODUCTS, GET_MODIFIER_BY_ID } from '../../graphql'
 import { useConfig } from '../../lib'
 import { KioskModifier } from './component'
@@ -22,17 +33,17 @@ import KioskButton from './component/button'
 import { ProgressBar } from './component/progressBar'
 import { Coupon } from '../coupon'
 import PayButton from '../PayButton'
+import isEmpty from 'lodash/isEmpty'
 
 const { Header, Content, Footer } = Layout
 
 export const KioskCart = props => {
    //context
-   const { cartState, methods, addToCart } = React.useContext(CartContext)
+   const { cartState, methods, addToCart, isFinalCartLoading } =
+      React.useContext(CartContext)
    const { cart } = cartState
    const { config, combinedCartItems, setCurrentPage } = props
    const { t, direction } = useTranslation()
-
-   console.log('combinedCartItems', combinedCartItems)
 
    //remove cartItem or cartItems
    const removeCartItems = cartItemIds => {
@@ -49,6 +60,20 @@ export const KioskCart = props => {
 
    if (combinedCartItems === null) {
       return <p>{t('No cart available')}</p>
+   }
+   if (isFinalCartLoading) {
+      return (
+         <div
+            style={{
+               display: 'flex',
+               alignItems: 'center',
+               justifyContent: 'center',
+               height: '100%',
+            }}
+         >
+            <Spin size="large" tip="Loading Cart..." />
+         </div>
+      )
    }
 
    return (
@@ -139,6 +164,7 @@ export const KioskCart = props => {
                               <CartCard
                                  config={config}
                                  productData={product}
+                                 quantity={product?.ids?.length}
                                  removeCartItems={removeCartItems}
                               />
                            )
@@ -161,7 +187,7 @@ export const KioskCart = props => {
                                  </span>
                                  <span style={{ fontWeight: 'bold' }}>
                                     {formatCurrency(
-                                       cart.billing.totalPrice.value || 0
+                                       cart?.billing?.totalPrice?.value || 0
                                     )}
                                  </span>
                               </li>
@@ -169,7 +195,7 @@ export const KioskCart = props => {
                                  <span>{t('Tax')}</span>
                                  <span>
                                     {formatCurrency(
-                                       cart.billing.tax.value || 0
+                                       cart?.billing?.tax?.value || 0
                                     )}
                                  </span>
                               </li>
@@ -178,7 +204,7 @@ export const KioskCart = props => {
                                  <span>
                                     {'-'}{' '}
                                     {formatCurrency(
-                                       cart.billing.discount.value || 0
+                                       cart?.billing?.discount?.value || 0
                                     )}
                                  </span>
                               </li>
@@ -186,14 +212,16 @@ export const KioskCart = props => {
                         </div>
                      </Content>
                      <Footer className="hern-kiosk__cart-page-proceed-to-checkout">
-                        <CartPageFooter cart={cart} methods={methods} />
+                        {/* <CartPageFooter cart={cart} methods={methods} /> */}
                         <PayButton
                            cartId={cart?.id}
                            className="hern-kiosk__kiosk-button hern-kiosk__cart-place-order-btn"
                         >
                            {/* <KioskButton customClass="hern-kiosk__cart-place-order-btn"> */}
                            <span className="hern-kiosk__cart-place-order-btn-total">
-                              {formatCurrency(cart.billing.totalPrice.value)}
+                              {formatCurrency(
+                                 cart?.billing?.totalPrice?.value || 0
+                              )}
                            </span>
                            <span className="hern-kiosk__cart-place-order-btn-text">
                               {t('Place Order')}
@@ -213,6 +241,7 @@ export const KioskCart = props => {
                                  }
                               />
                            )}
+
                            {/* </KioskButton> */}
                         </PayButton>
                      </Footer>
@@ -225,7 +254,8 @@ export const KioskCart = props => {
 }
 
 const CartCard = props => {
-   const { config, productData, removeCartItems } = props
+   // productData --> product data from cart
+   const { config, productData, removeCartItems, quantity = 0 } = props
    const { brand, kioskDetails, isConfigLoading } = useConfig()
    const { addToCart } = React.useContext(CartContext)
    const { t, dynamicTrans, locale } = useTranslation()
@@ -241,6 +271,24 @@ const CartCard = props => {
    const [showModifier, setShowModifier] = useState(false) // show modifier popup
    const [forRepeatLastOne, setForRepeatLastOne] = useState(false) // to run repeatLastOne fn in PRODUCTS query
 
+   let totalPrice = 0
+   let totalDiscount = 0
+   const price = product => {
+      if (!isEmpty(product)) {
+         totalPrice += product.price
+         totalDiscount += product.discount
+         if (!isEmpty(product.childs)) {
+            product.childs.forEach(product => {
+               price(product)
+            })
+         }
+         return {
+            totalPrice: totalPrice * quantity,
+            totalDiscount: totalDiscount * quantity,
+         }
+      }
+   }
+   const getTotalPrice = React.useMemo(() => price(productData), [productData])
    const argsForByLocation = React.useMemo(
       () => ({
          params: {
@@ -270,7 +318,6 @@ const CartCard = props => {
          // use for repeat last one order
          if (forRepeatLastOne) {
             if (data) {
-               repeatLastOne(data.products[0])
                return
             }
          }
@@ -279,36 +326,59 @@ const CartCard = props => {
          }
       },
    })
-   console.log('repeatLastOneData', repeatLastOneData)
-   const additionalModifiersIds = React.useMemo(() => {
+
+   const additionalModifierTemplateIds = React.useMemo(() => {
       if (repeatLastOneData) {
-         return repeatLastOneData.products[0].productOptions
-            .find(
-               x =>
-                  x.id === cartDetailSelectedProduct.childs[0].productOption.id
-            )
-            .modifier.categories.reduce(
-               (acc, obj) => [...acc, ...obj.options],
-               []
-            )
-            .map(x => x.additionalModifierTemplateId)
-            .filter(x => x !== null)
-      } else {
-         return null
+         return nestedModifierTemplateIds(repeatLastOneData?.products[0])
       }
    }, [repeatLastOneData])
 
-   const { data: nestedModifierData } = useQuery(GET_MODIFIER_BY_ID, {
+   const {
+      data: additionalModifierTemplates,
+      loading: additionalModifiersLoading,
+   } = useQuery(GET_MODIFIER_BY_ID, {
       variables: {
          priceArgs: argsForByLocation,
          discountArgs: argsForByLocation,
          modifierCategoryOptionCartItemArgs: argsForByLocation,
-         id: additionalModifiersIds,
+         id: additionalModifierTemplateIds,
       },
-      skip: isConfigLoading || !brand?.id || !additionalModifiersIds,
+      skip:
+         isConfigLoading ||
+         !brand?.id ||
+         !(
+            additionalModifierTemplateIds &&
+            additionalModifierTemplateIds.length > 0
+         ),
+      // onCompleted: data => {
+      //    if (data) {
+      //       if (repeatLastOne) {
+      //          if (additionalModifierTemplateIds) {
+      //             repeatLastOne(repeatLastOneData.products[0])
+      //          }
+      //       }
+      //    }
+      // },
    })
 
+   useEffect(() => {
+      if (repeatLastOneData && forRepeatLastOne) {
+         if (!additionalModifiersLoading) {
+            repeatLastOne(repeatLastOneData.products[0])
+         }
+      }
+   }, [repeatLastOneData, additionalModifiersLoading, forRepeatLastOne])
+
    const repeatLastOne = productData => {
+      if (cartDetailSelectedProduct.childs.length === 0) {
+         addToCart(productData.defaultCartItem, 1)
+         setForRepeatLastOne(false)
+         setModifyProduct(null)
+         setModifyProductId(null)
+         setCartDetailSelectedProduct(null)
+         setShowChooseIncreaseType(false)
+         return
+      }
       const productOptionId =
          cartDetailSelectedProduct.childs[0].productOption.id
       const modifierCategoryOptionsIds =
@@ -316,20 +386,34 @@ const CartCard = props => {
             x => x?.modifierOption?.id
          )
 
-      const nestedModifierOptionsIds =
-         cartDetailSelectedProduct.childs[0].childs
-            .reduce((acc, obj) => [...acc, ...obj.childs], [])
-            .map(x => x.modifierOption?.id)
-
-      console.log('nestedModifierOptionsIds', nestedModifierOptionsIds)
       //selected product option
-      const selectedProductOption = productData.productOptions.find(
+      const selectedProductOption = productData.productOptions?.find(
          x => x.id == productOptionId
       )
+
+      // select all modifier option id which has modifier option ( parent modifier option id)
+      const modifierOptionsConsistAdditionalModifiers =
+         cartDetailSelectedProduct.childs[0].childs
+            .map(eachModifierOption => {
+               if (eachModifierOption.childs.length > 0) {
+                  return {
+                     parentModifierOptionId:
+                        eachModifierOption.modifierOption.id,
+                     selectedModifierOptionIds: eachModifierOption.childs.map(
+                        x => x.modifierOption.id
+                     ),
+                  }
+               } else {
+                  return null
+               }
+            })
+            .filter(eachId => eachId !== null)
 
       //selected modifiers
       let singleModifier = []
       let multipleModifier = []
+      let singleAdditionalModifier = []
+      let multipleAdditionalModifier = []
       if (selectedProductOption.modifier) {
          selectedProductOption.modifier.categories.forEach(category => {
             category.options.forEach(option => {
@@ -352,11 +436,12 @@ const CartCard = props => {
             })
          })
       }
-      const singleNestedModifier = []
-      const multiNestedModifier = []
-      if (false) {
-         nestedModifierData.modifiers.forEach(eachModifierTemplate => {
-            eachModifierTemplate.categories.forEach(category => {
+
+      const allSelectedOptions = [...singleModifier, ...multipleModifier]
+
+      if (additionalModifierTemplateIds) {
+         selectedProductOption.additionalModifiers.forEach(option => {
+            option.modifier.categories.forEach(category => {
                category.options.forEach(option => {
                   const selectedOption = {
                      modifierCategoryID: category.id,
@@ -366,25 +451,82 @@ const CartCard = props => {
                   }
                   if (category.type === 'single') {
                      if (modifierCategoryOptionsIds.includes(option.id)) {
-                        singleNestedModifier =
-                           singleNestedModifier.concat(selectedOption)
+                        singleAdditionalModifier =
+                           singleAdditionalModifier.concat(selectedOption)
                      }
                   }
                   if (category.type === 'multiple') {
                      if (modifierCategoryOptionsIds.includes(option.id)) {
-                        multiNestedModifier =
-                           multiNestedModifier.concat(selectedOption)
+                        multipleAdditionalModifier =
+                           multipleAdditionalModifier.concat(selectedOption)
                      }
                   }
                })
             })
          })
+         const modifierOptionsConsistAdditionalModifiersWithData =
+            modifierOptionsConsistAdditionalModifiers.map(
+               eachModifierOptionsConsistAdditionalModifiers => {
+                  let additionalModifierOptions = []
+                  additionalModifierTemplates.modifiers.forEach(
+                     eachModifier => {
+                        eachModifier.categories.forEach(eachCategory => {
+                           additionalModifierOptions.push(
+                              ...eachCategory.options.map(eachOption => ({
+                                 ...eachOption,
+                                 categoryId: eachCategory.id,
+                              }))
+                           )
+                        })
+                     }
+                  )
+                  const mapedModifierOptions =
+                     eachModifierOptionsConsistAdditionalModifiers.selectedModifierOptionIds.map(
+                        eachId => {
+                           const additionalModifierOption =
+                              additionalModifierOptions.find(
+                                 x => x.id === eachId
+                              )
+                           const selectedOption = {
+                              modifierCategoryID:
+                                 additionalModifierOption.categoryId,
+                              modifierCategoryOptionsID:
+                                 additionalModifierOption.id,
+                              modifierCategoryOptionsPrice:
+                                 additionalModifierOption.price,
+                              cartItem: additionalModifierOption.cartItem,
+                           }
+                           return selectedOption
+                        }
+                     )
+                  return {
+                     ...eachModifierOptionsConsistAdditionalModifiers,
+                     data: mapedModifierOptions,
+                  }
+               }
+            )
+
+         // root modifiers options + additional modifier's modifier options
+         const resultSelectedModifier = [
+            ...allSelectedOptions,
+            ...singleAdditionalModifier,
+            ...multipleAdditionalModifier,
+         ]
+         const cartItem = getCartItemWithModifiers(
+            selectedProductOption.cartItem,
+            resultSelectedModifier.map(x => x.cartItem),
+            modifierOptionsConsistAdditionalModifiersWithData
+         )
+
+         addToCart(cartItem, 1)
+         setForRepeatLastOne(false)
+         setModifyProduct(null)
+         setModifyProductId(null)
+         setCartDetailSelectedProduct(null)
+         setShowChooseIncreaseType(false)
+         return
       }
-      const allSelectedOptions = [...singleModifier, ...multipleModifier]
-      const allNestedSelectedOptions = [
-         ...singleNestedModifier,
-         ...multiNestedModifier,
-      ]
+
       const cartItem = getCartItemWithModifiers(
          selectedProductOption.cartItem,
          allSelectedOptions.map(x => x.cartItem)
@@ -410,7 +552,6 @@ const CartCard = props => {
       )
       dynamicTrans(languageTags)
    }, [locale, showAdditionalDetailsOnCard])
-   console.log('productData', productData)
    return (
       <div className="hern-kiosk__cart-card">
          <img
@@ -722,18 +863,20 @@ const CartCard = props => {
                className="hern-kiosk__cart-cards-price"
                style={{ color: '#5A5A5A' }}
             >
-               {productData.discount > 0 && (
+               {getTotalPrice.totalDiscount > 0 && (
                   <>
                      <span style={{ textDecoration: 'line-through' }}>
                         {' '}
-                        {formatCurrency(productData.price)}
+                        {formatCurrency(getTotalPrice.totalPrice)}
                      </span>
                      <br />
                   </>
                )}
                <span>
-                  {productData.price !== 0
-                     ? formatCurrency(productData.price - productData.discount)
+                  {getTotalPrice.totalPrice !== 0
+                     ? formatCurrency(
+                          getTotalPrice.totalPrice - getTotalPrice.totalDiscount
+                       )
                      : null}
                </span>
             </div>
@@ -752,70 +895,72 @@ const CartCard = props => {
    )
 }
 
-const CartPageFooter = props => {
-   const { cart, methods } = props
-   const { t } = useTranslation()
-   const [selectedMethod, setSelectedMethod] = useState(
-      cart.paymentMethods.find(x => x.id === cart.toUseAvailablePaymentOptionId)
-   )
-   useEffect(() => {
-      setSelectedMethod(
-         cart.paymentMethods.find(
-            x => x.id === cart.toUseAvailablePaymentOptionId
-         )
-      )
-   }, [cart])
-   const paymentMethods = (
-      <Menu
-         onClick={item => {
-            const option = cart.paymentMethods.find(x => x.id === +item.key)
-            // setSelectedMethod(option)
-            methods.cart.update({
-               variables: {
-                  id: cart.id,
-                  _set: {
-                     toUseAvailablePaymentOptionId: option.id,
-                  },
-               },
-            })
-         }}
-      >
-         {cart.paymentMethods.map((eachMethod, index) => (
-            <Menu.Item key={eachMethod.id}>
-               <span>{eachMethod.label}</span>
-            </Menu.Item>
-         ))}
-      </Menu>
-   )
-   return (
-      <div className="hern-kiosk__cart-page-footer-footer">
-         <Dropdown
-            overlay={paymentMethods}
-            trigger={['click']}
-            placement="topCenter"
-         >
-            <div>
-               <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <PaymentModeIcon />
-                  <span
-                     style={{
-                        margin: '0 .5em',
-                        fontSize: '1.4em',
-                        fontWeight: '500',
-                     }}
-                  >
-                     {t('Payment Method')}
-                  </span>
-                  <UpVector size={20} />
-               </div>
-               <span className="hern-kiosk__cart-payment-method-label">
-                  {selectedMethod?.label || 'Please choose payment method'}
-               </span>
-            </div>
-         </Dropdown>
-      </div>
-   )
-}
+// const CartPageFooter = props => {
+//    const { cart, methods } = props
+//    const { t } = useTranslation()
+//    const [selectedMethod, setSelectedMethod] = useState(
+//       cart.paymentMethods?.find(
+//          x => x.id === cart.toUseAvailablePaymentOptionId
+//       )
+//    )
+//    useEffect(() => {
+//       setSelectedMethod(
+//          cart.paymentMethods?.find(
+//             x => x.id === cart.toUseAvailablePaymentOptionId
+//          )
+//       )
+//    }, [cart])
+//    // const paymentMethods = (
+//    //    <Menu
+//    //       onClick={item => {
+//    //          const option = cart.paymentMethods?.find(x => x.id === +item.key)
+//    //          // setSelectedMethod(option)
+//    //          methods.cart.update({
+//    //             variables: {
+//    //                id: cart.id,
+//    //                _set: {
+//    //                   toUseAvailablePaymentOptionId: option.id,
+//    //                },
+//    //             },
+//    //          })
+//    //       }}
+//    //    >
+//    //       {cart.paymentMethods.map((eachMethod, index) => (
+//    //          <Menu.Item key={eachMethod.id}>
+//    //             <span>{eachMethod.label}</span>
+//    //          </Menu.Item>
+//    //       ))}
+//    //    </Menu>
+//    // )
+//    return (
+//       <div className="hern-kiosk__cart-page-footer-footer">
+//          <Dropdown
+//             overlay={paymentMethods}
+//             trigger={['click']}
+//             placement="topCenter"
+//          >
+//             <div>
+//                <div style={{ display: 'flex', alignItems: 'center' }}>
+//                   <PaymentModeIcon />
+//                   <span
+//                      style={{
+//                         margin: '0 .5em',
+//                         fontSize: '1.4em',
+//                         fontWeight: '500',
+//                      }}
+//                   >
+//                      {t('Payment Method')}
+//                   </span>
+//                   <UpVector size={20} />
+//                </div>
+//                <span className="hern-kiosk__cart-payment-method-label">
+//                   {selectedMethod?.label || 'Please choose payment method'}
+//                </span>
+//             </div>
+//          </Dropdown>
+//       </div>
+//    )
+// }
 
 const Offers = props => {
    const { config } = props
@@ -830,8 +975,9 @@ const Offers = props => {
 const getCartItemWithModifiers = (
    cartItemInput,
    selectedModifiersInput,
-   nestedModifiersInput
+   nestedModifiersInput = null
 ) => {
+   // cartItemInput --> selectedProductOption.cartItem
    const finalCartItem = { ...cartItemInput }
 
    const combinedModifiers = selectedModifiersInput.reduce(
@@ -841,15 +987,25 @@ const getCartItemWithModifiers = (
    const dataArr = finalCartItem?.childs?.data[0]?.childs?.data
    const dataArrLength = dataArr.length
 
-   finalCartItem.childs.data[0].childs.data = [...dataArr, ...combinedModifiers]
+   finalCartItem.childs.data[0].childs.data = [...combinedModifiers]
+
    if (nestedModifiersInput) {
-      const nestedCombinedModifiers = nestedModifiersInput.reduce(
-         (acc, obj) => [...acc, ...obj.data],
-         []
-      )
-      finalCartItem.childs.data[0].childs.data[0].childs = {}
-      finalCartItem.childs.data[0].childs.data[0].childs['data'] =
-         nestedCombinedModifiers
+      nestedModifiersInput.forEach(eachNestedModifierInput => {
+         const foundModifierIndex =
+            finalCartItem.childs.data[0].childs.data.findIndex(
+               y =>
+                  eachNestedModifierInput.parentModifierOptionId ==
+                  y.modifierOptionId
+            )
+         const xCombinedModifier = eachNestedModifierInput.data
+            .map(z => z.cartItem)
+            .reduce((acc, obj) => [...acc, ...obj.data], [])
+         finalCartItem.childs.data[0].childs.data[foundModifierIndex].childs =
+            {}
+         finalCartItem.childs.data[0].childs.data[foundModifierIndex].childs[
+            'data'
+         ] = xCombinedModifier
+      })
    }
 
    return finalCartItem

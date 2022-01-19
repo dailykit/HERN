@@ -517,7 +517,6 @@ export const CART_SUBSCRIPTION = gql`
             label
             position
             publicCreds
-            privateCreds
             showCompanyName
             supportedPaymentOption {
                id
@@ -1595,6 +1594,7 @@ export const GET_CART = gql`
    subscription cart($id: Int!) {
       cart(id: $id) {
          id
+         status
          tax
          orderId
          discount
@@ -1641,7 +1641,6 @@ export const GET_CART = gql`
             label
             position
             publicCreds
-            privateCreds
             showCompanyName
             supportedPaymentOption {
                id
@@ -2074,7 +2073,6 @@ export const GET_PAYMENT_OPTIONS = gql`
             description
             position
             publicCreds
-            privateCreds
             showCompanyName
             supportedPaymentOption {
                id

@@ -8,7 +8,10 @@ import classNames from 'classnames'
 export const ProfileSidebar = ({ toggle = true, logout }) => {
    const { configOf, settings } = useConfig()
    const router = useRouter()
-
+   const isSubscriptionStore =
+      settings?.availability?.find(
+         i => i.identifier === 'isSubscriptionAvailable'
+      )?.value?.Subscription?.isSubscriptionAvailable?.value ?? false
    const isLoyaltyPointsAvailable =
       settings?.rewards?.find(
          setting => setting?.identifier === 'Loyalty Points Availability'
@@ -35,14 +38,18 @@ export const ProfileSidebar = ({ toggle = true, logout }) => {
       },
       { title: 'Referrals', href: '/account/referrals/' },
       { title: 'Order History', href: '/account/orders/' },
+      { title: 'Subscriptions', href: '/account/subscriptions/' },
       { title: 'Manage Addresses', href: '/account/addresses/' },
       { title: 'Manage Cards', href: '/account/cards/' },
    ]
-   const menu = sidebarLinks.filter(item =>
-      !isLoyaltyPointsAvailable
-         ? item.href !== '/account/loyalty-points/'
-         : true
+   const conditionalRoutes = {
+      '/account/subscriptions/': isSubscriptionStore,
+      '/account/loyalty-points/': isLoyaltyPointsAvailable,
+   }
+   const excludedRoutes = Object.keys(conditionalRoutes).filter(
+      route => conditionalRoutes[route] === false
    )
+   const menu = sidebarLinks.filter(item => !excludedRoutes.includes(item.href))
    return (
       <aside className={`hern-profile-sidebar${toggle ? '--toggle' : ''}`}>
          <ul>

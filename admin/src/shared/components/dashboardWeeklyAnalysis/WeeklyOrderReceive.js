@@ -8,7 +8,7 @@ import { TOTAL_ORDER_RECEIVED } from '../DashboardAnalytics/graphQl/subscription
 import { SparkChart } from './SparkChart'
 import { Card, CardGraph, CardText, CardTotal } from './styled'
 
-const WeeklyOrderReceive = () => {
+const WeeklyOrderReceive = ({ onClick }) => {
    const groupBy = ['year', 'month', 'week', 'day']
    const from = moment().subtract(7, 'day').format('YYYY-MM-DD')
    const to = moment().format('YYYY-MM-DD')
@@ -54,7 +54,7 @@ const WeeklyOrderReceive = () => {
       insights_analytics[0].getOrdersRecieved.filter(x => x.year !== null)
    )
    return (
-      <Card>
+      <Card onClick={onClick} title="Click to see order report">
          <CardText>Total Orders Received in last week</CardText>
          <CardTotal>
             {insights_analytics[0].getOrdersRecieved?.find(

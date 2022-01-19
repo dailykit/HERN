@@ -189,13 +189,16 @@ export const KioskModifier = props => {
 
       let errorState = []
       for (let i = 0; i < allCatagories.length; i++) {
-         const min = allCatagories[i]['limits']['min']
-         const max = allCatagories[i]['limits']['max']
          const allFoundedOptionsLength = allSelectedOptions.filter(
             x => x.modifierCategoryID === allCatagories[i].id
          ).length
 
-         if (allCatagories[i]['isRequired']) {
+         if (
+            allCatagories[i]['isRequired'] &&
+            allCatagories[i]['type'] === 'multiple'
+         ) {
+            const min = allCatagories[i]['limits']['min']
+            const max = allCatagories[i]['limits']['max']
             if (
                allFoundedOptionsLength > 0 &&
                min <= allFoundedOptionsLength &&
@@ -310,63 +313,7 @@ export const KioskModifier = props => {
       }
    }
 
-   // total amount
-   //total amount for this item
-   // const totalAmount = () => {
-   //    const productOptionPrice = selectedProductOption.price
-   //    const productOptionDiscount = selectedProductOption.discount
-   //    let allSelectedOptions = [
-   //       ...selectedOptions.single,
-   //       ...selectedOptions.multiple,
-   //    ]
-   //    const nestedSelectedOptions =
-   //       nestedModifierRef?.current?.nestedSelectedModifiers()
-   //    const additionalNestedSelectedOptions =
-   //       additionalModifierRef?.current?.additionalNestedModifiers()
-   //    console.log(
-   //       'this is price',
-   //       nestedSelectedOptions,
-   //       additionalNestedSelectedOptions
-   //    )
-   //    if (nestedSelectedOptions) {
-   //       allSelectedOptions = [
-   //          ...allSelectedOptions,
-   //          ...nestedSelectedOptions.single,
-   //          ...nestedSelectedOptions.multiple,
-   //       ]
-   //    }
-   //    if (additionalNestedSelectedOptions) {
-   //       allSelectedOptions = [
-   //          ...allSelectedOptions,
-   //          ...additionalNestedSelectedOptions.single,
-   //          ...additionalNestedSelectedOptions.multiple,
-   //       ]
-   //    }
-   //    let allSelectedOptionsPrice = 0
-   //    allSelectedOptions.forEach(
-   //       x =>
-   //          (allSelectedOptionsPrice =
-   //             allSelectedOptionsPrice +
-   //             (x?.modifierCategoryOptionsPrice || 0) -
-   //             (x?.modifierCategoryOptionsDiscount || 0))
-   //    )
-   //    console.log(
-   //       'totalPrice',
-   //       productOptionPrice,
-   //       allSelectedOptionsPrice,
-   //       productData.price,
-   //       productData.discount,
-   //       productOptionDiscount
-   //    )
-   //    const totalPrice =
-   //       productOptionPrice +
-   //       allSelectedOptionsPrice +
-   //       productData.price -
-   //       productData.discount -
-   //       productOptionDiscount
-   //    return totalPrice * quantity
-   // }
-   console.log('childChangingToggle', childChangingToggle)
+  
    const totalAmount = () => {
       const productOptionPrice = selectedProductOption.price
       const productOptionDiscount = selectedProductOption.discount
@@ -378,11 +325,7 @@ export const KioskModifier = props => {
          nestedModifierRef?.current?.nestedSelectedModifiers()
       const additionalNestedSelectedOptions =
          additionalModifierRef?.current?.additionalNestedModifiers()
-      console.log(
-         'this is price',
-         nestedSelectedOptions,
-         additionalNestedSelectedOptions
-      )
+   
       if (nestedSelectedOptions) {
          allSelectedOptions = [
             ...allSelectedOptions,
@@ -405,14 +348,7 @@ export const KioskModifier = props => {
                (x?.modifierCategoryOptionsPrice || 0) -
                (x?.modifierCategoryOptionsDiscount || 0))
       )
-      console.log(
-         'totalPrice',
-         productOptionPrice,
-         allSelectedOptionsPrice,
-         productData.price,
-         productData.discount,
-         productOptionDiscount
-      )
+      
       const totalPrice =
          productOptionPrice +
          allSelectedOptionsPrice +
@@ -422,6 +358,7 @@ export const KioskModifier = props => {
       return totalPrice * quantity
    }
 
+   // used for add new product or edit product
    useEffect(() => {
       if (forNewItem || edit) {
          const productOptionId = productCartDetail.childs[0].productOption.id
@@ -535,7 +472,7 @@ export const KioskModifier = props => {
       )
       dynamicTrans(languageTags)
    }, [selectedProductOption])
-   console.log('product_data -->', productData)
+
    if (showProceedPopup) {
       return (
          <Modal
@@ -1148,13 +1085,16 @@ const AdditionalModifiers = forwardRef(
 
             let errorState = []
             for (let i = 0; i < allCatagories.length; i++) {
-               const min = allCatagories[i]['limits']['min']
-               const max = allCatagories[i]['limits']['max']
                const allFoundedOptionsLength = allSelectedOptions.filter(
                   x => x.modifierCategoryID === allCatagories[i].id
                ).length
 
-               if (allCatagories[i]['isRequired']) {
+               if (
+                  allCatagories[i]['isRequired'] &&
+                  allCatagories[i]['type'] === 'multiple'
+               ) {
+                  const min = allCatagories[i]['limits']['min']
+                  const max = allCatagories[i]['limits']['max']
                   if (
                      allFoundedOptionsLength > 0 &&
                      min <= allFoundedOptionsLength &&
@@ -1539,7 +1479,7 @@ const getCartItemWithModifiers = (
    const dataArr = finalCartItem?.childs?.data[0]?.childs?.data
    const dataArrLength = dataArr.length
 
-   finalCartItem.childs.data[0].childs.data = [...dataArr, ...combinedModifiers]
+   finalCartItem.childs.data[0].childs.data = [...combinedModifiers]
    if (nestedModifiersInput) {
       nestedModifiersInput.forEach(eachNestedModifierInput => {
          const foundModifierIndex =
@@ -1673,13 +1613,16 @@ const ModifierOptionsList = forwardRef((props, ref) => {
 
          let errorState = []
          for (let i = 0; i < allCatagories.length; i++) {
-            const min = allCatagories[i]['limits']['min']
-            const max = allCatagories[i]['limits']['max']
             const allFoundedOptionsLength = allSelectedOptions.filter(
                x => x.modifierCategoryID === allCatagories[i].id
             ).length
 
-            if (allCatagories[i]['isRequired']) {
+            if (
+               allCatagories[i]['isRequired'] &&
+               allCatagories[i]['type'] === 'multiple'
+            ) {
+               const min = allCatagories[i]['limits']['min']
+               const max = allCatagories[i]['limits']['max']
                if (
                   allFoundedOptionsLength > 0 &&
                   min <= allFoundedOptionsLength &&
