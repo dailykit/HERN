@@ -290,15 +290,15 @@ export const KioskProduct = props => {
                      >
                         {productData.name}
                      </span>
-                     <span
-                        className="hern-kiosk__menu-product-description"
-                        data-translation="true"
-                        data-original-value={
-                           productData.additionalText || 'N/A'
-                        }
-                     >
-                        {productData.additionalText}
-                     </span>
+                     {productData.additionalText && (
+                        <span
+                           className="hern-kiosk__menu-product-description"
+                           data-translation="true"
+                           data-original-value={productData.additionalText}
+                        >
+                           {productData.additionalText}
+                        </span>
+                     )}
                   </div>
                   <span className="hern-kiosk__menu-product-price">
                      {/* <sup></sup> */}
