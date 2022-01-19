@@ -70,7 +70,7 @@ export const KioskProduct = props => {
          !brand?.id ||
          !(additionalModifierTemplateIds.length > 0),
    })
-   console.log('additionalModifierTemplates', additionalModifierTemplates)
+
    // counter button (-) delete last cartItem
    const onMinusClick = cartItemIds => {
       methods.cartItems.delete({
@@ -90,6 +90,11 @@ export const KioskProduct = props => {
          .filter(x => x.productId === productData.id)
          .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
          .pop()
+      if (cartDetailSelectedProduct.childs.length === 0) {
+         addToCart(productData.defaultCartItem, 1)
+         setShowChooseIncreaseType(false)
+         return
+      }
       const productOptionId =
          cartDetailSelectedProduct.childs[0].productOption.id
       const modifierCategoryOptionsIds =
@@ -285,15 +290,15 @@ export const KioskProduct = props => {
                      >
                         {productData.name}
                      </span>
-                     <span
-                        className="hern-kiosk__menu-product-description"
-                        data-translation="true"
-                        data-original-value={
-                           productData.additionalText || 'N/A'
-                        }
-                     >
-                        {productData.additionalText}
-                     </span>
+                     {productData.additionalText && (
+                        <span
+                           className="hern-kiosk__menu-product-description"
+                           data-translation="true"
+                           data-original-value={productData.additionalText}
+                        >
+                           {productData.additionalText}
+                        </span>
+                     )}
                   </div>
                   <span className="hern-kiosk__menu-product-price">
                      {/* <sup></sup> */}
@@ -325,7 +330,7 @@ export const KioskProduct = props => {
                      <KioskCounterButton
                         config={config}
                         onMinusClick={() => {
-                           console.log('combinedCartItems')
+                           // console.log('combinedCartItems')
                            const idsAv = combinedCartItems
                               .filter(x => x.productId === productData.id)
                               .map(x => x.ids)
