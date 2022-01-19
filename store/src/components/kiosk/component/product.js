@@ -90,6 +90,11 @@ export const KioskProduct = props => {
          .filter(x => x.productId === productData.id)
          .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
          .pop()
+      if (cartDetailSelectedProduct.childs.length === 0) {
+         addToCart(productData.defaultCartItem, 1)
+         setShowChooseIncreaseType(false)
+         return
+      }
       const productOptionId =
          cartDetailSelectedProduct.childs[0].productOption.id
       const modifierCategoryOptionsIds =
