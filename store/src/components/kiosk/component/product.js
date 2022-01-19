@@ -340,7 +340,14 @@ export const KioskProduct = props => {
                            onMinusClick([idsAv[idsAv.length - 1]])
                         }}
                         onPlusClick={() => {
-                           setShowChooseIncreaseType(true)
+                           if (
+                              productData.productOptions.length > 0 &&
+                              productData.isPopupAllowed
+                           ) {
+                              setShowChooseIncreaseType(true)
+                           } else {
+                              addToCart(productData.defaultCartItem, 1)
+                           }
                         }}
                         quantity={availableQuantityInCart}
                      />

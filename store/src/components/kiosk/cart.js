@@ -784,7 +784,13 @@ const CartCard = props => {
                   removeCartItems([productData.ids[productData.ids.length - 1]])
                }}
                onPlusClick={() => {
-                  setShowChooseIncreaseType(true)
+                  if (productData.childs.length > 0) {
+                     setShowChooseIncreaseType(true)
+                  } else {
+                     setCartDetailSelectedProduct(productData)
+                     setModifyProductId(productData.productId)
+                     setForRepeatLastOne(true)
+                  }
                }}
                style={{
                   border: '1px solid #0F6BB1',
