@@ -631,7 +631,7 @@ export const KioskModifier = props => {
                {productData.productOptions.map((eachOption, index) => (
                   <button
                      value={eachOption.id}
-                     key={index}
+                     key={eachOption.id}
                      className="hern-kiosk__modifier-product-option"
                      style={{
                         backgroundColor:
@@ -690,7 +690,7 @@ export const KioskModifier = props => {
                         selectedProductOption={selectedProductOption}
                         onCheckClick={onCheckClick}
                         config={config}
-                        key={index}
+                        key={`${eachAdditionalModifier.modifierId}-${eachAdditionalModifier.productOption}`}
                         renderConditionText={renderConditionText}
                         errorCategories={errorCategories}
                         selectedOptions={selectedOptions}
@@ -711,6 +711,7 @@ export const KioskModifier = props => {
                            style={{
                               backgroundColor: `${config.kioskSettings.theme.primaryColorDark.value}`,
                            }}
+                           key={eachModifierCategory.id}
                         >
                            <label className="hern-kiosk__modifier-category-label">
                               <Badge
@@ -774,7 +775,7 @@ export const KioskModifier = props => {
                                     return (
                                        <>
                                           <div
-                                             key={index}
+                                             key={eachOption.id}
                                              className="hern-kiosk__modifier-category-option"
                                              onClick={() => {
                                                 onCheckClick(
@@ -1826,7 +1827,7 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                         return (
                            <>
                               <div
-                                 key={index}
+                                 key={eachOption.id}
                                  className="hern-kiosk__modifier-category-option"
                                  onClick={() => {
                                     onCheckClick(

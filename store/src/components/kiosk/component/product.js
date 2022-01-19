@@ -264,6 +264,7 @@ export const KioskProduct = props => {
                                  height: '20em !important',
                                  width: '20em !important',
                               }}
+                              key={eachImage}
                            >
                               <img
                                  src={eachImage}

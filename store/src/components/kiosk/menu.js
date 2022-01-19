@@ -152,10 +152,6 @@ export const MenuSection = props => {
       }
    )
 
-   useEffect(() => {
-      console.log('hydratedMenu', hydratedMenu)
-   }, [hydratedMenu])
-
    const memoHydratedMenu = React.useMemo(() => hydratedMenu, [hydratedMenu])
    const lastCarousal = e => {
       e.stopPropagation()
@@ -200,10 +196,7 @@ export const MenuSection = props => {
                      setCurrentPage={setCurrentPage}
                   />
                </Header>
-               <Content
-                  className="hern-kiosk__menu-promotion-coupons"
-                  infinite={false}
-               >
+               <Content className="hern-kiosk__menu-promotion-coupons">
                   <PromotionCarousal config={config} />
                </Content>
             </Layout>
@@ -394,6 +387,7 @@ const KioskMenu = props => {
                         <Scroll.Element
                            name={eachCategory.name}
                            className="hern-kiosk__scroll-element"
+                           key={eachCategory.name}
                         >
                            <div name={eachCategory.name} ref={menuRef}></div>
                            {eachCategory?.bannerImageUrl ? (

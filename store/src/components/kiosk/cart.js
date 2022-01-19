@@ -170,6 +170,7 @@ export const KioskCart = props => {
                                  productData={product}
                                  quantity={product?.ids?.length}
                                  removeCartItems={removeCartItems}
+                                 key={product.productId}
                               />
                            )
                         })}
