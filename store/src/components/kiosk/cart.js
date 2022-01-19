@@ -332,26 +332,11 @@ const CartCard = props => {
          return nestedModifierTemplateIds(repeatLastOneData?.products[0])
       }
    }, [repeatLastOneData])
-   console.log('repeatLastOneData', repeatLastOneData)
-   // const additionalModifierTemplateIds = React.useMemo(() => {
-   //    if (repeatLastOneData) {
-   //       return repeatLastOneData?.products[0]?.productOptions
-   //          ?.find(
-   //             x =>
-   //                x.id === cartDetailSelectedProduct.childs[0].productOption.id
-   //          )
-   //          .modifier.categories.reduce(
-   //             (acc, obj) => [...acc, ...obj.options],
-   //             []
-   //          )
-   //          .map(x => x.additionalModifierTemplateId)
-   //          .filter(x => x !== null)
-   //    } else {
-   //       return null
-   //    }
-   // }, [repeatLastOneData])
-   console.log('additionalModifierTemplateIds', additionalModifierTemplateIds)
-   const { data: additionalModifierTemplates } = useQuery(GET_MODIFIER_BY_ID, {
+
+   const {
+      data: additionalModifierTemplates,
+      loading: additionalModifiersLoading,
+   } = useQuery(GET_MODIFIER_BY_ID, {
       variables: {
          priceArgs: argsForByLocation,
          discountArgs: argsForByLocation,
@@ -365,16 +350,35 @@ const CartCard = props => {
             additionalModifierTemplateIds &&
             additionalModifierTemplateIds.length > 0
          ),
-      onCompleted: data => {
-         if (data) {
-            if (repeatLastOne) {
-               repeatLastOne(repeatLastOneData.products[0])
-            }
-         }
-      },
+      // onCompleted: data => {
+      //    if (data) {
+      //       if (repeatLastOne) {
+      //          if (additionalModifierTemplateIds) {
+      //             repeatLastOne(repeatLastOneData.products[0])
+      //          }
+      //       }
+      //    }
+      // },
    })
 
+   useEffect(() => {
+      if (repeatLastOneData && forRepeatLastOne) {
+         if (!additionalModifiersLoading) {
+            repeatLastOne(repeatLastOneData.products[0])
+         }
+      }
+   }, [repeatLastOneData, additionalModifiersLoading, forRepeatLastOne])
+
    const repeatLastOne = productData => {
+      if (cartDetailSelectedProduct.childs.length === 0) {
+         addToCart(productData.defaultCartItem, 1)
+         setForRepeatLastOne(false)
+         setModifyProduct(null)
+         setModifyProductId(null)
+         setCartDetailSelectedProduct(null)
+         setShowChooseIncreaseType(false)
+         return
+      }
       const productOptionId =
          cartDetailSelectedProduct.childs[0].productOption.id
       const modifierCategoryOptionsIds =

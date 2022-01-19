@@ -28,8 +28,6 @@ const initialState = {
 }
 
 const reducer = (state, { type, payload }) => {
-   console.log('cartDataInReducer', payload)
-
    switch (type) {
       case 'CART':
          return { ...state, cart: payload }
@@ -239,7 +237,7 @@ export const CartProvider = ({ children }) => {
          //without login
          if (!cartData?.cart) {
             //new cart
-            console.log('new cart', cartState)
+            // console.log('new cart', cartState)
             const object = {
                cartItems: {
                   data: cartItems,
@@ -255,7 +253,7 @@ export const CartProvider = ({ children }) => {
                         cartState.kioskPaymentOption.terminal,
                   }),
             }
-            console.log('object new cart', object)
+            // console.log('object new cart', object)
             createCart({
                variables: {
                   object,
@@ -267,7 +265,7 @@ export const CartProvider = ({ children }) => {
                ...cartItem,
                cartId: storedCartId,
             })
-            console.log('object new cart', cartItemsWithCartId)
+            // console.log('object new cart', cartItemsWithCartId)
             createCartItems({
                variables: {
                   objects: cartItemsWithCartId,
