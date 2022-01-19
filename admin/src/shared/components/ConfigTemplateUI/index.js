@@ -15,6 +15,8 @@ import { Text } from '@dailykit/ui'
 import { FieldUI } from './getFieldUI'
 import { EditModeProvider, useEditMode } from './EditModeContext'
 import { Styles } from './styled'
+import { toast } from 'react-toastify'
+import { CrossIcon } from '../../assets/icons'
 
 const ConfigTemplateUI = props => {
    return (
@@ -24,7 +26,7 @@ const ConfigTemplateUI = props => {
    )
 }
 
-const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsSavedChange }) => {
+const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsSavedChange, noneditMode, setLinkedModuleId }) => {
    const [configJSON, setConfigJSON] = React.useState({})
    const [fields, setFields] = React.useState([])
    const [description, setDescription] = React.useState('')
@@ -164,11 +166,17 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
       setFields([])
    }, [config])
 
+   React.useEffect(() => {
+      if (noneditMode) {
+         setEditMode(true)
+      }
+   }, [noneditMode])
    const handleEdit = () => {
       if (editMode) {
          configSaveHandler(isChangeSaved)
-         setEditMode(false)
+         !noneditMode && setEditMode(false)
          setIsSavedChange(true)
+         console.log(isChangeSaved, "isChangeSaved")
       } else {
          setEditMode(true)
       }
@@ -179,17 +187,25 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
             <>
                <Card
                   title={
-                     identifier ? (
-                        <Text as="h3" className="title">{identifier}</Text>
+                     identifier ? (<>
+                        {noneditMode && <button
+                           title={'clear'}
+                           onClick={() => setLinkedModuleId(null)}
+                           style={{ cursor: "pointer", border: "none", backgroundColor: "transparent" }}
+                        >
+                           <CrossIcon size="14" />
+                        </button>}&nbsp;&nbsp;
+                        <Text as="h3" className="title">Edit {identifier}</Text></>
                      ) : (
                         <Text as="h3" style={{ textAlign: 'center' }}>
-                           BrandSettings
+                           Edit
                         </Text>
                      )
                   }
                   style={{ width: '100%' }}
                   extra={
-                     editMode ? (
+                     editMode ? (<>
+
                         <TextButton
                            type="solid"
                            size="sm"
@@ -198,6 +214,7 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
                         >
                            Save
                         </TextButton>
+                     </>
                      ) : (
                         <ComboButton
                            className="edit_button"
