@@ -16,7 +16,9 @@ import {
    InlineLoader,
    Tooltip,
    Banner,
+   DragNDrop,
 } from '../../../../../../../../shared/components'
+import { useDnd } from '../../../../../../../../shared/components/DragNDrop/useDnd'
 import { logger, randomSuffix } from '../../../../../../../../shared/utils'
 import { DeleteIcon } from '../../../../../../assets/icons'
 import { ModifiersContext } from '../../../../../../context/product/modifiers'
@@ -49,6 +51,7 @@ const ModifierFormTunnel = ({
       modifiersDispatch,
    } = React.useContext(ModifiersContext)
 
+   const { initiatePriority } = useDnd()
    const [modifier, setModifier] = React.useState(null)
    const [modifierName, setModifierName] = React.useState({
       value: null,
@@ -138,6 +141,16 @@ const ModifierFormTunnel = ({
       }
    }, [modifierOpConfig])
 
+   React.useEffect(() => {
+      if (modifier?.categories.length) {
+         initiatePriority({
+            tablename: 'modifierCategory',
+            schemaname: 'onDemand',
+            data: modifier?.categories,
+         })
+      }
+   }, [modifier?.categories])
+
    if (loading) return <InlineLoader />
 
    return (
@@ -177,15 +190,24 @@ const ModifierFormTunnel = ({
                      <Form.Error key={index}>{error}</Form.Error>
                   ))}
             </Form.Group>
-            {modifier?.categories.map(category => (
-               <Category
-                  category={category}
-                  key={category.id}
-                  open={open}
-                  openOperationConfigTunnel={openOperationConfigTunnel}
-                  setModifierCategoryOption={setModifierCategoryOption}
-               />
-            ))}
+            {modifier?.categories.length > 0 && (
+               <DragNDrop
+                  list={modifier?.categories}
+                  droppableId="modifierCategoryDroppableId"
+                  tablename="modifierCategory"
+                  schemaname="onDemand"
+               >
+                  {modifier?.categories.map(category => (
+                     <Category
+                        category={category}
+                        key={category.id}
+                        open={open}
+                        openOperationConfigTunnel={openOperationConfigTunnel}
+                        setModifierCategoryOption={setModifierCategoryOption}
+                     />
+                  ))}
+               </DragNDrop>
+            )}
             <ButtonTile
                type="secondary"
                text="Add Category"
@@ -214,6 +236,7 @@ export const Category = ({
    openOperationConfigTunnel,
    setModifierCategoryOption,
 }) => {
+   const { initiatePriority } = useDnd()
    const options = [
       { id: 'single', title: 'Single' },
       { id: 'multiple', title: 'Multiple' },
@@ -364,6 +387,16 @@ export const Category = ({
          },
       })
    }
+
+   React.useEffect(() => {
+      if (category?.options.length) {
+         initiatePriority({
+            tablename: 'modifierCategoryOption',
+            schemaname: 'onDemand',
+            data: category?.options,
+         })
+      }
+   }, [category?.options])
 
    return (
       <CategoryWrapper id={category.id}>
@@ -532,15 +565,24 @@ export const Category = ({
             </>
          )}
          <Text as="subtitle">Options</Text>
-         {category.options.map(option => (
-            <Option
-               open={open}
-               openOperationConfigTunnel={openOperationConfigTunnel}
-               setModifierCategoryOption={setModifierCategoryOption}
-               option={option}
-               key={option.id}
-            />
-         ))}
+         {category?.options?.length > 0 && (
+            <DragNDrop
+               list={category?.options}
+               droppableId="modifierCategoryOptionDroppableId"
+               tablename="modifierCategoryOption"
+               schemaname="onDemand"
+            >
+               {category?.options.map(option => (
+                  <Option
+                     open={open}
+                     openOperationConfigTunnel={openOperationConfigTunnel}
+                     setModifierCategoryOption={setModifierCategoryOption}
+                     option={option}
+                     key={option.id}
+                  />
+               ))}
+            </DragNDrop>
+         )}
          <Grid>
             <ButtonTile
                type="secondary"
