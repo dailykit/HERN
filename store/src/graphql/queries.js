@@ -1374,6 +1374,8 @@ export const PRODUCTS = gql`
                type
                label
                linkedToModifierCategoryOptionId
+               productOptionId
+               modifierId
                modifier {
                   id
                   name

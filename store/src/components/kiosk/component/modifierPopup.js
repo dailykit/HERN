@@ -17,7 +17,11 @@ import {
    UpVector,
 } from '../../../assets/icons'
 import KioskButton from './button'
-import { formatCurrency, useOnClickOutside } from '../../../utils'
+import {
+   formatCurrency,
+   getCartItemWithModifiers,
+   useOnClickOutside,
+} from '../../../utils'
 import { GET_MODIFIER_BY_ID } from '../../../graphql'
 import { useQuery } from '@apollo/react-hooks'
 import { useConfig } from '../../../lib'
@@ -313,7 +317,6 @@ export const KioskModifier = props => {
       }
    }
 
-  
    const totalAmount = () => {
       const productOptionPrice = selectedProductOption.price
       const productOptionDiscount = selectedProductOption.discount
@@ -325,7 +328,7 @@ export const KioskModifier = props => {
          nestedModifierRef?.current?.nestedSelectedModifiers()
       const additionalNestedSelectedOptions =
          additionalModifierRef?.current?.additionalNestedModifiers()
-   
+
       if (nestedSelectedOptions) {
          allSelectedOptions = [
             ...allSelectedOptions,
@@ -348,7 +351,7 @@ export const KioskModifier = props => {
                (x?.modifierCategoryOptionsPrice || 0) -
                (x?.modifierCategoryOptionsDiscount || 0))
       )
-      
+
       const totalPrice =
          productOptionPrice +
          allSelectedOptionsPrice +
@@ -628,7 +631,7 @@ export const KioskModifier = props => {
                {productData.productOptions.map((eachOption, index) => (
                   <button
                      value={eachOption.id}
-                     key={index}
+                     key={eachOption.id}
                      className="hern-kiosk__modifier-product-option"
                      style={{
                         backgroundColor:
@@ -687,7 +690,7 @@ export const KioskModifier = props => {
                         selectedProductOption={selectedProductOption}
                         onCheckClick={onCheckClick}
                         config={config}
-                        key={index}
+                        key={`${eachAdditionalModifier.modifierId}-${eachAdditionalModifier.productOption}`}
                         renderConditionText={renderConditionText}
                         errorCategories={errorCategories}
                         selectedOptions={selectedOptions}
@@ -708,6 +711,7 @@ export const KioskModifier = props => {
                            style={{
                               backgroundColor: `${config.kioskSettings.theme.primaryColorDark.value}`,
                            }}
+                           key={eachModifierCategory.id}
                         >
                            <label className="hern-kiosk__modifier-category-label">
                               <Badge
@@ -771,7 +775,7 @@ export const KioskModifier = props => {
                                     return (
                                        <>
                                           <div
-                                             key={index}
+                                             key={eachOption.id}
                                              className="hern-kiosk__modifier-category-option"
                                              onClick={() => {
                                                 onCheckClick(
@@ -1465,42 +1469,6 @@ const AdditionalModifiers = forwardRef(
       )
    }
 )
-const getCartItemWithModifiers = (
-   cartItemInput,
-   selectedModifiersInput,
-   nestedModifiersInput
-) => {
-   const finalCartItem = { ...cartItemInput }
-
-   const combinedModifiers = selectedModifiersInput.reduce(
-      (acc, obj) => [...acc, ...obj.data],
-      []
-   )
-   const dataArr = finalCartItem?.childs?.data[0]?.childs?.data
-   const dataArrLength = dataArr.length
-
-   finalCartItem.childs.data[0].childs.data = [...combinedModifiers]
-   if (nestedModifiersInput) {
-      nestedModifiersInput.forEach(eachNestedModifierInput => {
-         const foundModifierIndex =
-            finalCartItem.childs.data[0].childs.data.findIndex(
-               y =>
-                  eachNestedModifierInput.parentModifierOptionId ==
-                  y.modifierOptionId
-            )
-         const xCombinedModifier = eachNestedModifierInput.data
-            .map(z => z.cartItem)
-            .reduce((acc, obj) => [...acc, ...obj.data], [])
-         finalCartItem.childs.data[0].childs.data[foundModifierIndex].childs =
-            {}
-         finalCartItem.childs.data[0].childs.data[foundModifierIndex].childs[
-            'data'
-         ] = xCombinedModifier
-      })
-   }
-
-   return finalCartItem
-}
 
 const ModifierOptionsList = forwardRef((props, ref) => {
    const {
@@ -1859,7 +1827,7 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                         return (
                            <>
                               <div
-                                 key={index}
+                                 key={eachOption.id}
                                  className="hern-kiosk__modifier-category-option"
                                  onClick={() => {
                                     onCheckClick(

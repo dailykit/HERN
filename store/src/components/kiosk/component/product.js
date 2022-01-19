@@ -5,6 +5,7 @@ import { CartContext, useTranslation } from '../../../context'
 import {
    combineCartItems,
    formatCurrency,
+   getCartItemWithModifiers,
    nestedModifierTemplateIds,
 } from '../../../utils'
 import { KioskModifier, KioskCounterButton } from '.'
@@ -263,6 +264,7 @@ export const KioskProduct = props => {
                                  height: '20em !important',
                                  width: '20em !important',
                               }}
+                              key={eachImage}
                            >
                               <img
                                  src={eachImage}
@@ -398,43 +400,4 @@ export const KioskProduct = props => {
          )}
       </>
    )
-}
-
-const getCartItemWithModifiers = (
-   cartItemInput,
-   selectedModifiersInput,
-   nestedModifiersInput = null
-) => {
-   // cartItemInput --> selectedProductOption.cartItem
-   const finalCartItem = { ...cartItemInput }
-
-   const combinedModifiers = selectedModifiersInput.reduce(
-      (acc, obj) => [...acc, ...obj.data],
-      []
-   )
-   const dataArr = finalCartItem?.childs?.data[0]?.childs?.data
-   const dataArrLength = dataArr.length
-
-   finalCartItem.childs.data[0].childs.data = [...combinedModifiers]
-
-   if (nestedModifiersInput) {
-      nestedModifiersInput.forEach(eachNestedModifierInput => {
-         const foundModifierIndex =
-            finalCartItem.childs.data[0].childs.data.findIndex(
-               y =>
-                  eachNestedModifierInput.parentModifierOptionId ==
-                  y.modifierOptionId
-            )
-         const xCombinedModifier = eachNestedModifierInput.data
-            .map(z => z.cartItem)
-            .reduce((acc, obj) => [...acc, ...obj.data], [])
-         finalCartItem.childs.data[0].childs.data[foundModifierIndex].childs =
-            {}
-         finalCartItem.childs.data[0].childs.data[foundModifierIndex].childs[
-            'data'
-         ] = xCombinedModifier
-      })
-   }
-
-   return finalCartItem
 }

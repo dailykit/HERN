@@ -24,7 +24,11 @@ import {
 } from '../../assets/icons'
 import { useTranslation, CartContext } from '../../context'
 import { KioskCounterButton } from './component'
-import { formatCurrency, nestedModifierTemplateIds } from '../../utils'
+import {
+   formatCurrency,
+   getCartItemWithModifiers,
+   nestedModifierTemplateIds,
+} from '../../utils'
 import { PRODUCTS, GET_MODIFIER_BY_ID } from '../../graphql'
 import { useConfig } from '../../lib'
 import { KioskModifier } from './component'
@@ -166,6 +170,7 @@ export const KioskCart = props => {
                                  productData={product}
                                  quantity={product?.ids?.length}
                                  removeCartItems={removeCartItems}
+                                 key={product.productId}
                               />
                            )
                         })}
@@ -971,42 +976,4 @@ const Offers = props => {
          <Coupon cart={cartState.cart} config={config} />
       </div>
    )
-}
-const getCartItemWithModifiers = (
-   cartItemInput,
-   selectedModifiersInput,
-   nestedModifiersInput = null
-) => {
-   // cartItemInput --> selectedProductOption.cartItem
-   const finalCartItem = { ...cartItemInput }
-
-   const combinedModifiers = selectedModifiersInput.reduce(
-      (acc, obj) => [...acc, ...obj.data],
-      []
-   )
-   const dataArr = finalCartItem?.childs?.data[0]?.childs?.data
-   const dataArrLength = dataArr.length
-
-   finalCartItem.childs.data[0].childs.data = [...combinedModifiers]
-
-   if (nestedModifiersInput) {
-      nestedModifiersInput.forEach(eachNestedModifierInput => {
-         const foundModifierIndex =
-            finalCartItem.childs.data[0].childs.data.findIndex(
-               y =>
-                  eachNestedModifierInput.parentModifierOptionId ==
-                  y.modifierOptionId
-            )
-         const xCombinedModifier = eachNestedModifierInput.data
-            .map(z => z.cartItem)
-            .reduce((acc, obj) => [...acc, ...obj.data], [])
-         finalCartItem.childs.data[0].childs.data[foundModifierIndex].childs =
-            {}
-         finalCartItem.childs.data[0].childs.data[foundModifierIndex].childs[
-            'data'
-         ] = xCombinedModifier
-      })
-   }
-
-   return finalCartItem
 }
