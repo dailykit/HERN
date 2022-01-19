@@ -421,7 +421,7 @@ const KioskMenu = props => {
                                                 onRadioClick(eachType.type)
                                              }
                                              // value={eachType.type}
-                                             key={index}
+                                             key={eachType.type}
                                              className="hern-kiosk__menu-product-type-radio-btn"
                                              data-translation="true"
                                              data-original-value={eachType.type}
@@ -470,7 +470,7 @@ const KioskMenu = props => {
                                        <Col
                                           span={8}
                                           className="gutter-row"
-                                          key={index2}
+                                          key={eachProduct?.id}
                                        >
                                           <KioskProduct
                                              config={config}
