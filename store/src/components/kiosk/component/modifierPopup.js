@@ -189,13 +189,16 @@ export const KioskModifier = props => {
 
       let errorState = []
       for (let i = 0; i < allCatagories.length; i++) {
-         const min = allCatagories[i]['limits']['min']
-         const max = allCatagories[i]['limits']['max']
          const allFoundedOptionsLength = allSelectedOptions.filter(
             x => x.modifierCategoryID === allCatagories[i].id
          ).length
 
-         if (allCatagories[i]['isRequired']) {
+         if (
+            allCatagories[i]['isRequired'] &&
+            allCatagories[i]['type'] === 'multiple'
+         ) {
+            const min = allCatagories[i]['limits']['min']
+            const max = allCatagories[i]['limits']['max']
             if (
                allFoundedOptionsLength > 0 &&
                min <= allFoundedOptionsLength &&
@@ -1149,13 +1152,16 @@ const AdditionalModifiers = forwardRef(
 
             let errorState = []
             for (let i = 0; i < allCatagories.length; i++) {
-               const min = allCatagories[i]['limits']['min']
-               const max = allCatagories[i]['limits']['max']
                const allFoundedOptionsLength = allSelectedOptions.filter(
                   x => x.modifierCategoryID === allCatagories[i].id
                ).length
 
-               if (allCatagories[i]['isRequired']) {
+               if (
+                  allCatagories[i]['isRequired'] &&
+                  allCatagories[i]['type'] === 'multiple'
+               ) {
+                  const min = allCatagories[i]['limits']['min']
+                  const max = allCatagories[i]['limits']['max']
                   if (
                      allFoundedOptionsLength > 0 &&
                      min <= allFoundedOptionsLength &&
@@ -1682,13 +1688,16 @@ const ModifierOptionsList = forwardRef((props, ref) => {
 
          let errorState = []
          for (let i = 0; i < allCatagories.length; i++) {
-            const min = allCatagories[i]['limits']['min']
-            const max = allCatagories[i]['limits']['max']
             const allFoundedOptionsLength = allSelectedOptions.filter(
                x => x.modifierCategoryID === allCatagories[i].id
             ).length
 
-            if (allCatagories[i]['isRequired']) {
+            if (
+               allCatagories[i]['isRequired'] &&
+               allCatagories[i]['type'] === 'multiple'
+            ) {
+               const min = allCatagories[i]['limits']['min']
+               const max = allCatagories[i]['limits']['max']
                if (
                   allFoundedOptionsLength > 0 &&
                   min <= allFoundedOptionsLength &&
