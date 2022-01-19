@@ -183,7 +183,7 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
                         <Text as="h3" className="title">{identifier}</Text>
                      ) : (
                         <Text as="h3" style={{ textAlign: 'center' }}>
-                           Select a brand's setting to edit.
+                           BrandSettings
                         </Text>
                      )
                   }
