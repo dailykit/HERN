@@ -313,63 +313,7 @@ export const KioskModifier = props => {
       }
    }
 
-   // total amount
-   //total amount for this item
-   // const totalAmount = () => {
-   //    const productOptionPrice = selectedProductOption.price
-   //    const productOptionDiscount = selectedProductOption.discount
-   //    let allSelectedOptions = [
-   //       ...selectedOptions.single,
-   //       ...selectedOptions.multiple,
-   //    ]
-   //    const nestedSelectedOptions =
-   //       nestedModifierRef?.current?.nestedSelectedModifiers()
-   //    const additionalNestedSelectedOptions =
-   //       additionalModifierRef?.current?.additionalNestedModifiers()
-   //    console.log(
-   //       'this is price',
-   //       nestedSelectedOptions,
-   //       additionalNestedSelectedOptions
-   //    )
-   //    if (nestedSelectedOptions) {
-   //       allSelectedOptions = [
-   //          ...allSelectedOptions,
-   //          ...nestedSelectedOptions.single,
-   //          ...nestedSelectedOptions.multiple,
-   //       ]
-   //    }
-   //    if (additionalNestedSelectedOptions) {
-   //       allSelectedOptions = [
-   //          ...allSelectedOptions,
-   //          ...additionalNestedSelectedOptions.single,
-   //          ...additionalNestedSelectedOptions.multiple,
-   //       ]
-   //    }
-   //    let allSelectedOptionsPrice = 0
-   //    allSelectedOptions.forEach(
-   //       x =>
-   //          (allSelectedOptionsPrice =
-   //             allSelectedOptionsPrice +
-   //             (x?.modifierCategoryOptionsPrice || 0) -
-   //             (x?.modifierCategoryOptionsDiscount || 0))
-   //    )
-   //    console.log(
-   //       'totalPrice',
-   //       productOptionPrice,
-   //       allSelectedOptionsPrice,
-   //       productData.price,
-   //       productData.discount,
-   //       productOptionDiscount
-   //    )
-   //    const totalPrice =
-   //       productOptionPrice +
-   //       allSelectedOptionsPrice +
-   //       productData.price -
-   //       productData.discount -
-   //       productOptionDiscount
-   //    return totalPrice * quantity
-   // }
-   console.log('childChangingToggle', childChangingToggle)
+  
    const totalAmount = () => {
       const productOptionPrice = selectedProductOption.price
       const productOptionDiscount = selectedProductOption.discount
@@ -381,11 +325,7 @@ export const KioskModifier = props => {
          nestedModifierRef?.current?.nestedSelectedModifiers()
       const additionalNestedSelectedOptions =
          additionalModifierRef?.current?.additionalNestedModifiers()
-      console.log(
-         'this is price',
-         nestedSelectedOptions,
-         additionalNestedSelectedOptions
-      )
+   
       if (nestedSelectedOptions) {
          allSelectedOptions = [
             ...allSelectedOptions,
@@ -408,14 +348,7 @@ export const KioskModifier = props => {
                (x?.modifierCategoryOptionsPrice || 0) -
                (x?.modifierCategoryOptionsDiscount || 0))
       )
-      console.log(
-         'totalPrice',
-         productOptionPrice,
-         allSelectedOptionsPrice,
-         productData.price,
-         productData.discount,
-         productOptionDiscount
-      )
+      
       const totalPrice =
          productOptionPrice +
          allSelectedOptionsPrice +
@@ -539,7 +472,7 @@ export const KioskModifier = props => {
       )
       dynamicTrans(languageTags)
    }, [selectedProductOption])
-   console.log('product_data -->', productData)
+
    if (showProceedPopup) {
       return (
          <Modal
@@ -1539,13 +1472,6 @@ const getCartItemWithModifiers = (
 ) => {
    const finalCartItem = { ...cartItemInput }
 
-   console.log(
-      'inModifier',
-      cartItemInput,
-      selectedModifiersInput,
-      nestedModifiersInput
-   )
-
    const combinedModifiers = selectedModifiersInput.reduce(
       (acc, obj) => [...acc, ...obj.data],
       []
@@ -1553,7 +1479,6 @@ const getCartItemWithModifiers = (
    const dataArr = finalCartItem?.childs?.data[0]?.childs?.data
    const dataArrLength = dataArr.length
 
-   console.log('dataArr', dataArr, combinedModifiers)
    finalCartItem.childs.data[0].childs.data = [...combinedModifiers]
    if (nestedModifiersInput) {
       nestedModifiersInput.forEach(eachNestedModifierInput => {

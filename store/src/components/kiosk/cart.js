@@ -327,9 +327,7 @@ const CartCard = props => {
          return nestedModifierTemplateIds(repeatLastOneData?.products[0])
       }
    }, [repeatLastOneData])
-   console.log('repeatLastOneData', repeatLastOneData)
 
-   console.log('additionalModifierTemplateIds', additionalModifierTemplateIds)
    const {
       data: additionalModifierTemplates,
       loading: additionalModifiersLoading,

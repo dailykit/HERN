@@ -103,8 +103,6 @@ const Kiosk = props => {
       }),
    })
 
-   console.log('thisIsRemainingTime', getRemainingTime())
-
    function onChange(a, b, c) {
       console.log(a, b, c)
    }

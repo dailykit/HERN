@@ -70,7 +70,7 @@ export const KioskProduct = props => {
          !brand?.id ||
          !(additionalModifierTemplateIds.length > 0),
    })
-   console.log('additionalModifierTemplates', additionalModifierTemplates)
+
    // counter button (-) delete last cartItem
    const onMinusClick = cartItemIds => {
       methods.cartItems.delete({
@@ -330,7 +330,7 @@ export const KioskProduct = props => {
                      <KioskCounterButton
                         config={config}
                         onMinusClick={() => {
-                           console.log('combinedCartItems')
+                           // console.log('combinedCartItems')
                            const idsAv = combinedCartItems
                               .filter(x => x.productId === productData.id)
                               .map(x => x.ids)

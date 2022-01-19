@@ -39,7 +39,7 @@ export const MenuSection = props => {
    const { config, setCurrentPage } = props
    const [category, changeCategory, deleteCategory] =
       useQueryParamState('productCategoryId')
-   console.log('fromMenuSection')
+   // console.log('fromMenuSection')
 
    const [menuData, setMenuData] = useState({
       categories: [],
@@ -81,7 +81,7 @@ export const MenuSection = props => {
          },
       },
       onCompleted: data => {
-         console.log('v2Data', data)
+         // console.log('v2Data', data)
          if (data?.onDemand_getMenuV2copy?.length) {
             const [res] = data.onDemand_getMenuV2copy
             const { menu } = res.data
@@ -141,7 +141,6 @@ export const MenuSection = props => {
                      products: updatedProducts,
                   }
                })
-               console.log('menu done')
                setStatus('success')
                setHydratedMenu(updatedMenu)
             }
@@ -279,7 +278,7 @@ const KioskMenu = props => {
                               onSetActive={to => {
                                  setSelectedCategory(index)
                                  // changeCategory(index)
-                                 console.log('thisIsTo', to)
+                                 // console.log('thisIsTo', to)
                               }}
                               to={eachCategory.name}
                               spy={true}
