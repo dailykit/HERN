@@ -1379,13 +1379,19 @@ export const PRODUCTS = gql`
                modifier {
                   id
                   name
-                  categories(where: { isVisible: { _eq: true } }) {
+                  categories(
+                     where: { isVisible: { _eq: true } }
+                     order_by: { position: desc_nulls_last }
+                  ) {
                      id
                      name
                      isRequired
                      type
                      limits
-                     options(where: { isVisible: { _eq: true } }) {
+                     options(
+                        where: { isVisible: { _eq: true } }
+                        order_by: { position: desc_nulls_last }
+                     ) {
                         id
                         name
                         price: priceByLocation(
@@ -1411,13 +1417,19 @@ export const PRODUCTS = gql`
             modifier {
                id
                name
-               categories(where: { isVisible: { _eq: true } }) {
+               categories(
+                  where: { isVisible: { _eq: true } }
+                  order_by: { position: desc_nulls_last }
+               ) {
                   id
                   name
                   isRequired
                   type
                   limits
-                  options(where: { isVisible: { _eq: true } }) {
+                  options(
+                     where: { isVisible: { _eq: true } }
+                     order_by: { position: desc_nulls_last }
+                  ) {
                      id
                      name
                      price: priceByLocation(
