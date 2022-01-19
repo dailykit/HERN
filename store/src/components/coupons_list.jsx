@@ -5,7 +5,12 @@ import { COUPONS } from '../graphql'
 import { useConfig } from '../lib'
 import { useMenu, MenuProvider } from '../sections/select-menu'
 import { Loader } from './loader'
-import { CloseIcon, Scissor } from '../assets/icons'
+import {
+   ArrowLeftIcon,
+   ArrowRightIcon,
+   CloseIcon,
+   Scissor,
+} from '../assets/icons'
 import classNames from 'classnames'
 import { isClient, useQueryParamState } from '../utils'
 import { Carousel } from 'antd'
@@ -57,6 +62,17 @@ const Coupons_List = ({
       },
    })
 
+   const carousalRef = React.useRef()
+
+   const lastCarousal = e => {
+      e.stopPropagation()
+      carousalRef.current.prev()
+   }
+   const nextCarousal = e => {
+      e.stopPropagation()
+      carousalRef.current.next()
+   }
+
    const handleApplyCoupon = coupon => {
       try {
          if (applying) return
@@ -107,118 +123,135 @@ const Coupons_List = ({
             )}
 
             {availableCoupons.length > 0 && (
-               <Carousel
-                  slidesToShow={width < 1600 ? 1 : 2}
-                  className={
-                     upFrontLayout
-                        ? 'hern-upfront-coupons-list__coupon-wrapper'
-                        : ''
-                  }
-               >
-                  {availableCoupons.map(coupon => (
-                     <div
+               <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <ArrowLeftIcon
+                     className="hern-upfront-coupons-list__carousal-left-arrow hern-upfront-coupons-list__carousal-arrow"
+                     size={42}
+                     onClick={lastCarousal}
+                  />
+                  <div className="hern-upfront-coupons-list__carousal-wrapper">
+                     <Carousel
+                        ref={carousalRef}
+                        slidesToShow={width < 1600 ? 1 : 2}
                         className={
-                           !upFrontLayout
-                              ? 'hern-kiosk-coupons-list__coupon'
-                              : 'hern-upfront-coupons-list__coupon'
+                           upFrontLayout
+                              ? 'hern-upfront-coupons-list__coupon-wrapper'
+                              : ''
                         }
-                        key={coupon.id}
                      >
-                        <div
-                           className={
-                              !upFrontLayout
-                                 ? 'hern-kiosk-coupons-list__coupon__top'
-                                 : 'hern-upfront-coupons-list__coupon__top'
-                           }
-                        >
-                           {!upFrontLayout && (
-                              <div className="hern-kiosk-coupons-list__coupon__code">
-                                 {coupon.code}
-                              </div>
-                           )}
-                           {!upFrontLayout && (
-                              <button
-                                 className={classNames(
-                                    'hern-kiosk-coupons-list__coupon__apply-btn',
-                                    {
-                                       'hern-kiosk-coupons-list__coupon__apply-btn':
-                                          isButtonDisabled(coupon),
-                                    }
-                                 )}
-                                 style={{
-                                    border: `2px solid ${config?.kioskSettings?.theme?.secondaryColor?.value}`,
-                                 }}
-                                 onClick={() => handleApplyCoupon(coupon)}
+                        {availableCoupons.map(coupon => (
+                           <div
+                              className={
+                                 !upFrontLayout
+                                    ? 'hern-kiosk-coupons-list__coupon'
+                                    : 'hern-upfront-coupons-list__coupon'
+                              }
+                              key={coupon.id}
+                           >
+                              <div
+                                 className={
+                                    !upFrontLayout
+                                       ? 'hern-kiosk-coupons-list__coupon__top'
+                                       : 'hern-upfront-coupons-list__coupon__top'
+                                 }
                               >
-                                 {t('Apply')}
-                              </button>
-                           )}
-                        </div>
-                        <div
-                           style={{
-                              margin: upFrontLayout ? '0' : '.5em 0',
-                           }}
-                           className={
-                              upFrontLayout
-                                 ? 'hern-upfront-coupons-list__coupon__body-wrapper'
-                                 : ''
-                           }
-                        >
-                           {upFrontLayout && (
-                              <div className="hern-kiosk-coupons-list__coupon__code">
-                                 {coupon.code}
+                                 {!upFrontLayout && (
+                                    <div className="hern-kiosk-coupons-list__coupon__code">
+                                       {coupon.code}
+                                    </div>
+                                 )}
+                                 {!upFrontLayout && (
+                                    <button
+                                       className={classNames(
+                                          'hern-kiosk-coupons-list__coupon__apply-btn',
+                                          {
+                                             'hern-kiosk-coupons-list__coupon__apply-btn':
+                                                isButtonDisabled(coupon),
+                                          }
+                                       )}
+                                       style={{
+                                          border: `2px solid ${config?.kioskSettings?.theme?.secondaryColor?.value}`,
+                                       }}
+                                       onClick={() => handleApplyCoupon(coupon)}
+                                    >
+                                       {t('Apply')}
+                                    </button>
+                                 )}
                               </div>
-                           )}
-                           <p
-                              className={
-                                 !upFrontLayout
-                                    ? 'hern-kiosk-coupons-list__coupon__title'
-                                    : 'hern-upfront-coupons-list__coupon__title'
-                              }
-                           >
-                              {coupon.metaDetails.title}
-                           </p>
-                           <p
-                              className={
-                                 !upFrontLayout
-                                    ? 'hern-kiosk-coupons-list__coupon__description'
-                                    : 'hern-upfront-coupons-list__coupon__description'
-                              }
-                           >
-                              {coupon.metaDetails.description}
-                           </p>
-                        </div>
-                        {upFrontLayout && (
-                           <>
                               <div
                                  style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    flex: 1,
+                                    margin: upFrontLayout ? '0' : '.5em 0',
                                  }}
+                                 className={
+                                    upFrontLayout
+                                       ? 'hern-upfront-coupons-list__coupon__body-wrapper'
+                                       : ''
+                                 }
                               >
-                                 <Button
-                                    type="submit"
-                                    className={classNames(
-                                       'hern-upfront-coupons-list__coupon__apply-btn',
-                                       {
-                                          'hern-upfront-coupons-list__coupon__apply-btn':
-                                             isButtonDisabled(coupon),
-                                       }
-                                    )}
-                                    onClick={() => handleApplyCoupon(coupon)}
+                                 {upFrontLayout && (
+                                    <div className="hern-kiosk-coupons-list__coupon__code">
+                                       {coupon.code}
+                                    </div>
+                                 )}
+                                 <p
+                                    className={
+                                       !upFrontLayout
+                                          ? 'hern-kiosk-coupons-list__coupon__title'
+                                          : 'hern-upfront-coupons-list__coupon__title'
+                                    }
                                  >
-                                    {t('Apply')}
-                                 </Button>
+                                    {coupon.metaDetails.title}
+                                 </p>
+                                 <p
+                                    className={
+                                       !upFrontLayout
+                                          ? 'hern-kiosk-coupons-list__coupon__description'
+                                          : 'hern-upfront-coupons-list__coupon__description'
+                                    }
+                                 >
+                                    {coupon.metaDetails.description}
+                                 </p>
                               </div>
-                              <div className="hern-upfront-coupons-list__coupon__scissor-icon">
-                                 <Scissor />
-                              </div>
-                           </>
-                        )}
-                     </div>
-                  ))}
-               </Carousel>
+                              {upFrontLayout && (
+                                 <>
+                                    <div
+                                       style={{
+                                          display: 'flex',
+                                          alignItems: 'center',
+                                          flex: 1,
+                                       }}
+                                    >
+                                       <Button
+                                          type="submit"
+                                          className={classNames(
+                                             'hern-upfront-coupons-list__coupon__apply-btn',
+                                             {
+                                                'hern-upfront-coupons-list__coupon__apply-btn':
+                                                   isButtonDisabled(coupon),
+                                             }
+                                          )}
+                                          onClick={() =>
+                                             handleApplyCoupon(coupon)
+                                          }
+                                       >
+                                          {t('Apply')}
+                                       </Button>
+                                    </div>
+                                    <div className="hern-upfront-coupons-list__coupon__scissor-icon">
+                                       <Scissor />
+                                    </div>
+                                 </>
+                              )}
+                           </div>
+                        ))}
+                     </Carousel>
+                  </div>
+                  <ArrowRightIcon
+                     className="hern-upfront-coupons-list__carousal-right-arrow hern-upfront-coupons-list__carousal-arrow"
+                     size={42}
+                     onClick={nextCarousal}
+                  />
+               </div>
             )}
          </div>
       )

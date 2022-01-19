@@ -33,7 +33,7 @@ export const OnDemandCart = () => {
       cartItemsLoading ||
       isLoading
    ) {
-      return <Loader />
+      return <Loader type="cart-loading" />
    }
 
    if (!cartState.cart || combinedCartItems.length === 0) {
@@ -66,7 +66,7 @@ export const OnDemandCart = () => {
                <UserInfo cart={cartState.cart} />
             </div>
             <div className="hern-ondemand-cart__left-card">
-               <Fulfillment />
+               <Fulfillment cart={cartState.cart} />
             </div>
             <div className="hern-ondemand-cart__left-card">
                <Coupon upFrontLayout={true} cart={cartState.cart} />

@@ -8,7 +8,7 @@ import { toast } from 'react-toastify'
 import { currencyFmt, logger } from '../../utils'
 import { Card, CardGraph, CardText, CardTotal } from './styled'
 
-const WeeklyEarning = () => {
+const WeeklyEarning = ({ onClick }) => {
    const groupBy = ['year', 'month', 'week', 'day']
    const from = moment().subtract(7, 'day').format('YYYY-MM-DD')
    const to = moment().format('YYYY-MM-DD')
@@ -51,7 +51,7 @@ const WeeklyEarning = () => {
       insights_analytics[0].getTotalEarnings.slice(1)
    )
    return (
-      <Card>
+      <Card onClick={onClick} title="Click to see earning report">
          <CardText>Total Earning in last week</CardText>
          <CardTotal>
             {currencyFmt(
