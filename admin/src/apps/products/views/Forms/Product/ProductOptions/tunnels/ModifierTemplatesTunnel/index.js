@@ -30,6 +30,8 @@ const ModifierTemplatesTunnel = ({
    close,
    modifierCategoryOption,
    setModifierCategoryOption,
+   additionalModifier,
+   setAdditionalModifier,
 }) => {
    const {
       modifiersState: { optionId },
@@ -89,6 +91,14 @@ const ModifierTemplatesTunnel = ({
                },
             },
          })
+      } else if (additionalModifier.modifierIdStatus === true) {
+         setAdditionalModifier({
+            ...additionalModifier,
+            modifierId: current.id,
+            modifierIdStatus: false,
+         })
+         close(6)
+         close(1)
       } else {
          if (inFlight) return
          updateProductOptions({
