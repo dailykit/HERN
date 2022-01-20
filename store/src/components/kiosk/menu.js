@@ -218,7 +218,7 @@ const KioskMenu = props => {
    //
    const { config, kioskMenus, setCurrentPage } = props
    const { categoryId, changeCategory } = props
-deepak
+
    const { cartState } = React.useContext(CartContext)
    const { cart } = cartState
 
