@@ -1,14 +1,15 @@
 import React, { useEffect } from 'react'
+
 import { graphQLClient } from '../../../lib'
 import Kiosk from '../../../sections/kiosk'
 import { useConfig } from '../../../lib'
 import { LOCATION_KIOSK } from '../../../graphql'
-import { getSettings } from '../../../utils'
+import { getSettings, isClient } from '../../../utils'
 
 const KioskScreen = props => {
    const { kioskId, kioskDetails, settings } = props
-
    const { dispatch } = useConfig()
+
    useEffect(() => {
       dispatch({
          type: 'SET_KIOSK_ID',
