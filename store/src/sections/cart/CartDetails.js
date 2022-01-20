@@ -133,7 +133,7 @@ export const CartDetails = () => {
 
 
          </div>
-         <div style={{ position: 'relative', left: '6.5rem' }}>
+         <div style={{ position: 'relative', left: '5.5rem' }}>
             {data.childs.length > 0 && (
                <EditIcon
                   size={12}
