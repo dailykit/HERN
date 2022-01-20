@@ -8,7 +8,12 @@ import { MODIFIERS } from '../../../../../../graphql/modifiers'
 import { toast } from 'react-toastify'
 import { logger, randomSuffix } from '../../../../../../../../shared/utils'
 
-const ModifierModeTunnel = ({ open, close }) => {
+const ModifierModeTunnel = ({
+   open,
+   close,
+   setAdditionalModifier,
+   additionalModifier,
+}) => {
    const { modifiersDispatch } = React.useContext(ModifiersContext)
 
    const [createModifier] = useMutation(MODIFIERS.CREATE, {
@@ -25,12 +30,15 @@ const ModifierModeTunnel = ({ open, close }) => {
          logger(error)
       },
    })
-
+   const closeTunnel = () => {
+      setAdditionalModifier({ ...additionalModifier, modifierIdStatus: false })
+      close(1)
+   }
    return (
       <>
          <TunnelHeader
             title="Choose Method"
-            close={() => close(1)}
+            close={closeTunnel}
             tooltip={<Tooltip identifier="modifier_mode_tunnel" />}
          />
          <TunnelBody>
