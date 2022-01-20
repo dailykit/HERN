@@ -22,6 +22,9 @@ export const Styles = {
       .ant-card-head {
          max-height:58px;
       }
+      .ant-card-head-title {
+         display:flex !important;
+      }
    `,
    Header: styled.div`
       display: flex;
