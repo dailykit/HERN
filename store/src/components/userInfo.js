@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
-import { detectCountry } from '../utils'
+import { detectCountry, get_env } from '../utils'
 import { UserIcon } from '../assets/icons'
 import { useUser, CartContext } from '../context'
 import { useToasts } from 'react-toast-notifications'
@@ -27,15 +27,6 @@ export const UserInfo = props => {
          user.platform_customer?.phoneNumber ||
          ''
    )
-   const [countryCode, setCountryCode] = useState(null)
-
-   React.useEffect(() => {
-      const detectedUserData = async () => {
-         const data = await detectCountry()
-         setCountryCode(data.countryCode)
-      }
-      detectedUserData()
-   }, [])
 
    const onBlurData = type => {
       let infoToBeSend
@@ -170,7 +161,7 @@ export const UserInfo = props => {
                      onBlurData('phoneNumber')
                   }
                }}
-               defaultCountry={countryCode}
+               defaultCountry={get_env('COUNTRY_CODE')}
                placeholder="Enter your phone number"
                disabled={!editable}
             />
