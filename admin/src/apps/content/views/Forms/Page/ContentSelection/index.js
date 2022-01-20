@@ -38,6 +38,7 @@ const ContentSelection = () => {
    const [linkedFiles, setLinkedFiles] = useState([])
    const [linkedModuleId, setLinkedModuleId] = useState(null)
    const [config, setConfig] = useState({})
+   const [identifier, setIdentifier] = useState('')
    const [seletedModules, setSeletedModules] = useState([])
    const [isChangeSaved, setIsSavedChange] = useState(true)
    const { loading, error: subscriptionError } = useSubscription(
@@ -161,8 +162,10 @@ const ContentSelection = () => {
                },
             },
          })
+         setIdentifier(data?.systemModule?.identifier)
          setConfig(data?.systemModule?.configTemplate)
       } else {
+         setIdentifier(data?.internalModuleIdentifier)
          setConfig(data.config)
       }
    }
@@ -280,9 +283,12 @@ const ContentSelection = () => {
                   <ConfigTemplateUI
                      config={config}
                      setConfig={setConfig}
+                     identifier={identifier}
                      configSaveHandler={updateHandler}
                      isChangeSaved={isChangeSaved}
                      setIsSavedChange={setIsSavedChange}
+                     noneditMode={"noneditMode"}
+                     setLinkedModuleId={setLinkedModuleId}
                   />
                   <LinkFiles
                      title="Linked CSS file with this Module"

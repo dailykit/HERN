@@ -70,7 +70,7 @@ const ProductOptions = ({ productId, productName, options, productData }) => {
    const [modifiersTunnel, openModifiersTunnel, closeModifiersTunnel] =
       useTunnel(6)
    const [additionalModifiersTunnel, openAdditionalModifiersTunnel, closeAdditionalModifiersTunnel] =
-      useTunnel(2)
+      useTunnel(1)
    const [
       operationConfigTunnels,
       openOperationConfigTunnel,
@@ -85,6 +85,10 @@ const ProductOptions = ({ productId, productName, options, productData }) => {
    const [modifierCategoryOption, setModifierCategoryOption] = React.useState({
       categoryOption: false,
       categoryOptionId: null,
+   })
+   const [additionalModifier, setAdditionalModifier] = React.useState({
+      modifierId: null,
+      modifierIdStatus: false,
    })
    const opConfigInvokedBy = React.useRef('')
    const modifierOpConfig = React.useRef(undefined)
@@ -217,7 +221,7 @@ const ProductOptions = ({ productId, productName, options, productData }) => {
          type: 'OPTION_ID',
          payload: optionId,
       })
-      openAdditionalModifiersTunnel(3)
+      openAdditionalModifiersTunnel(1)
    }
    const handleDefaultProductOption = (optionId) => {
       updateDefaultProductOption({
@@ -325,6 +329,7 @@ const ProductOptions = ({ productId, productName, options, productData }) => {
                   }}
                   modifierOpConfig={modifierOpConfig.current}
                   setModifierCategoryOption={setModifierCategoryOption}
+
                />
             </Tunnel>
             <Tunnel layer={3}>
@@ -340,28 +345,35 @@ const ProductOptions = ({ productId, productName, options, productData }) => {
                <ModifierPhotoTunnel close={closeModifiersTunnel} />
             </Tunnel>
             <Tunnel layer={6}>
-               <ModifierTemplatesTunnel close={closeModifiersTunnel}
+               <ModifierTemplatesTunnel
+                  close={closeModifiersTunnel}
                   setModifierCategoryOption={setModifierCategoryOption}
-                  modifierCategoryOption={modifierCategoryOption} />
+                  modifierCategoryOption={modifierCategoryOption}
+                  additionalModifier={additionalModifier}
+                  setAdditionalModifier={setAdditionalModifier} />
             </Tunnel>
          </Tunnels>
+
          <Tunnels tunnels={additionalModifiersTunnel}>
-            <Tunnel layer={1}>
+            {/* <Tunnel layer={1}>
                <AdditionalModifierModeTunnel close={closeAdditionalModifiersTunnel} open={openAdditionalModifiersTunnel} />
-            </Tunnel>
-            <Tunnel layer={2}>
-               <ModifierFormTunnel close={closeAdditionalModifiersTunnel}
-                  open={openAdditionalModifiersTunnel}
+            </Tunnel> */}
+            <Tunnel layer={1}>
+               <AdditionalModifierTemplateTunnel
+                  closeTunnel={closeAdditionalModifiersTunnel}
+                  openTunnel={openAdditionalModifiersTunnel}
+                  additionalModifier={additionalModifier}
+                  setAdditionalModifier={setAdditionalModifier}
+
+                  setModifierCategoryOption={setModifierCategoryOption}
+                  modifierCategoryOption={modifierCategoryOption}
                   openOperationConfigTunnel={value => {
                      opConfigInvokedBy.current = 'modifier'
                      openOperationConfigTunnel(value)
                   }}
-                  modifierOpConfig={modifierOpConfig.current} />
+                  modifierOpConfig={modifierOpConfig.current}
+               />
             </Tunnel>
-            <Tunnel layer={3}>
-               <AdditionalModifierTemplateTunnel close={closeAdditionalModifiersTunnel} />
-            </Tunnel>
-
          </Tunnels>
          <OperationConfig
             tunnels={operationConfigTunnels}
