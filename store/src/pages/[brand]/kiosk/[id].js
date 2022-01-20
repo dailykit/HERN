@@ -1,14 +1,49 @@
 import React, { useEffect } from 'react'
+import { ErrorBoundary } from 'react-error-boundary'
+import { Result, Button } from 'antd'
+
 import { graphQLClient } from '../../../lib'
 import Kiosk from '../../../sections/kiosk'
 import { useConfig } from '../../../lib'
 import { LOCATION_KIOSK } from '../../../graphql'
-import { getSettings } from '../../../utils'
+import { getSettings, isClient } from '../../../utils'
 
 const KioskScreen = props => {
    const { kioskId, kioskDetails, settings } = props
 
    const { dispatch } = useConfig()
+   const handleReload = () => {
+      if (isClient) {
+         window.location.reload()
+      }
+   }
+   const onErrorHandler = (error, errorInfo) => {
+      console.error('ErrorBoundary error--->', error, errorInfo)
+   }
+   function ErrorFallback() {
+      return (
+         <div
+            style={{
+               display: 'flex',
+               alignItems: 'center',
+               justifyContent: 'center',
+               height: '100vh',
+            }}
+         >
+            <Result
+               status="500"
+               title="Something Went wrong!"
+               subTitle="There was an error, Please reload the page. "
+               extra={
+                  <Button type="primary" onClick={handleReload}>
+                     Reload
+                  </Button>
+               }
+            />
+         </div>
+      )
+   }
+
    useEffect(() => {
       dispatch({
          type: 'SET_KIOSK_ID',
@@ -24,13 +59,16 @@ const KioskScreen = props => {
       })
    }, [])
    return (
-      <div>
-         <Kiosk
-            kioskConfig={
-               kioskDetails.kioskModuleConfig || settings.kiosk['kiosk-config']
-            }
-         />
-      </div>
+      <ErrorBoundary FallbackComponent={ErrorFallback} onError={onErrorHandler}>
+         <div>
+            <Kiosk
+               kioskConfig={
+                  kioskDetails.kioskModuleConfig ||
+                  settings.kiosk['kiosk-config']
+               }
+            />
+         </div>
+      </ErrorBoundary>
    )
 }
 export default KioskScreen
