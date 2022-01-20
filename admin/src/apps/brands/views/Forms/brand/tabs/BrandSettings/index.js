@@ -23,6 +23,7 @@ export const BrandSettings = () => {
    const [active, setActive] = React.useState('')
    const [searchResult, setSearchResult] = React.useState([])
    const [isChangeSaved, setIsSavedChange] = React.useState(true)
+   const [mode, setMode] = React.useState('saved')
    const [componentIsOnView, setIsComponentIsOnView] = React.useState([]);
    const { Search } = Input;
 
@@ -63,6 +64,9 @@ export const BrandSettings = () => {
    const types = Object.keys(settings)
    if (loadingSettings) return <Loader />
 
+
+
+   //for seraching brandSettings
    const onSearch = value => {
       const lowerCaseValue = value.toLowerCase()
       setSearchResult(allSettings.filter(item => { return item.brandSetting.identifier.toLowerCase().includes(lowerCaseValue) }))
@@ -138,7 +142,7 @@ export const BrandSettings = () => {
                            return (<><a name={setting?.brandSetting?.identifier}></a>
                               <SettingsCard setting={setting} key={setting?.brandSetting?.id} title={setting?.brandSetting?.identifier}
                                  isChangeSaved={isChangeSaved} setIsSavedChange={setIsSavedChange} setIsComponentIsOnView={setIsComponentIsOnView}
-                                 componentIsOnView={componentIsOnView} />
+                                 componentIsOnView={componentIsOnView} mode={mode} setMode={setMode} />
                            </>)
                         })}</>)
                   }))}</Flex>

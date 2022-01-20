@@ -26,7 +26,7 @@ const ConfigTemplateUI = props => {
    )
 }
 
-const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsSavedChange, noneditMode, setLinkedModuleId }) => {
+const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsSavedChange, noneditMode, setLinkedModuleId, setMode, mode }) => {
    const [configJSON, setConfigJSON] = React.useState({})
    const [fields, setFields] = React.useState([])
    const [description, setDescription] = React.useState('')
@@ -56,6 +56,7 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
          ...updatedConfig,
       }))
       console.log({ updatedConfig }, "updatedConfig")
+
    }
 
    const handleToggle = key => {
@@ -166,18 +167,30 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
       setFields([])
    }, [config])
 
+   //for pageModule, this is to not have editMode when config is opened 
    React.useEffect(() => {
       if (noneditMode) {
          setEditMode(true)
       }
+
    }, [noneditMode])
+
+
    const handleEdit = () => {
+      //after saving
       if (editMode) {
+         setMode('saved')
          configSaveHandler(isChangeSaved)
+         //for pageModule this noneditMode tells the config belongs to pageModule 
+         //and there is no requirement of editMode
          !noneditMode && setEditMode(false)
          setIsSavedChange(true)
-         console.log(isChangeSaved, "isChangeSaved")
-      } else {
+      } else if (!editMode && !isChangeSaved && mode == 'editing') {
+         toast.warning('Changes will be lost if not saved. Please save your changes.')
+      }
+      else {
+         setMode('editing')
+         //when editing
          setEditMode(true)
       }
    }
@@ -188,6 +201,7 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
                <Card
                   title={
                      identifier ? (<>
+                        {/* for pageModule */}
                         {noneditMode && <button
                            title={'clear'}
                            onClick={() => setLinkedModuleId(null)}
