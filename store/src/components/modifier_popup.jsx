@@ -665,10 +665,11 @@ export const ModifierPopup = props => {
                      </div>
                   )}
                </div>
-               <div style={{ padding: '4rem 32px 2.5rem' }}>
+               <div style={{ padding: '32px' }}>
                   <Button
                      className="hern-product-modifier-pop-up-add-to-cart-btn"
                      onClick={handleAddOnCartOn}
+                     style={{ padding: '16px 0px 34px 0px' }}
                   >
                      ADD TO CART {totalAmount()}
                   </Button>

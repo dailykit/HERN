@@ -13,11 +13,11 @@
    transition: height 0.45s ease;
 }
 .hern-product-modifier-pop-up-container--show-modifier-pop-up {
-   height: 100vh;
+   height: 101vh;
 }
 .hern-product-modifier-pop-up-product {
    // padding-top: 0.8em;
-   height: 70%;
+   height: fit-content;
    background: #ffffff;
    border-top-right-radius: 5px;
    border-top-left-radius: 5px;
@@ -167,7 +167,7 @@
    }
 }
 .hern-product-modifier-pop-up-product-option-and-modifier {
-   height: 240px;
+   height: 262px;
    overflow-y: auto;
    &::-webkit-scrollbar {
       width: 4px;
