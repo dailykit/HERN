@@ -121,6 +121,39 @@ const Main = () => {
       openTunnel(5)
    }
 
+   // hover on toggle and delete icon
+   const [mouseState, setMouseState] = React.useState({
+      isHovered: {},
+   })
+   const [mouseClickedState, setMouseClickedState] = React.useState({
+      isClicked: { [0]: true },
+   })
+   const handleMouseEnter = index => {
+      setMouseState({
+         ...mouseState,
+         isHovered: {
+            ...mouseState.isHovered,
+            [index]: true,
+         },
+      })
+   }
+   const handleMouseLeave = index => {
+      setMouseState({
+         ...mouseState,
+         isHovered: {
+            ...mouseState.isHovered,
+            [index]: false,
+         },
+      })
+   }
+   const handleMouseClicked = index => {
+      setMouseClickedState({
+         isClicked: {
+            [index]: true,
+         },
+      })
+   }
+
    if (!loading && error) return <ErrorBoundary rootRoute="/apps/menu" />
 
    return (
@@ -137,7 +170,7 @@ const Main = () => {
             <Tunnel layer={3} size="md">
                <MileRangeTunnel closeTunnel={closeTunnel} />
             </Tunnel>
-            <Tunnel layer={4} size="sm">
+            <Tunnel layer={4} size="md">
                <ChargesTunnel closeTunnel={closeTunnel} />
             </Tunnel>
             <Tunnel layer={5} size="lg">
@@ -198,7 +231,7 @@ const Main = () => {
                                     </IconButton>
                                  </ButtonGroup>
                               </StyledTabListHeading>
-                              {recurrences.map(recurrence => (
+                              {recurrences.map((recurrence, index) => (
                                  <SectionTab
                                     key={recurrence.id}
                                     dataSelectedBoxShadow={
@@ -206,8 +239,21 @@ const Main = () => {
                                     }
                                     dataSelectedBorder={'2px solid #367BF5'}
                                     borderRadius={'4px'}
+                                    border={'2px solid #F3F3F3'}
+                                    hoverBorder={'2px solid #F3F3F3'}
+                                    dataSelectedHoverBorder={
+                                       '2px solid #F3F3F3'
+                                    }
                                  >
-                                    <StyledInsideSectionTab>
+                                    <StyledInsideSectionTab
+                                       onMouseEnter={() =>
+                                          handleMouseEnter(index)
+                                       }
+                                       onMouseLeave={() =>
+                                          handleMouseLeave(index)
+                                       }
+                                       onClick={() => handleMouseClicked(index)}
+                                    >
                                        <StyledSectionTop>
                                           <SectionTabDay>
                                              {rrulestr(recurrence.rrule)
@@ -216,16 +262,21 @@ const Main = () => {
                                                    char.toUpperCase()
                                                 )}
                                           </SectionTabDay>
-                                          <IconButton
-                                             type="ghost"
-                                             style={SectionTabDelete}
-                                             title="Delete Recurrence"
-                                             onClick={() =>
-                                                deleteHandler(recurrence.id)
-                                             }
-                                          >
-                                             <DeleteIcon color=" #FF5A52" />
-                                          </IconButton>
+                                          {(mouseState.isHovered[index] ||
+                                             mouseClickedState.isClicked[
+                                                index
+                                             ]) && (
+                                             <IconButton
+                                                type="ghost"
+                                                style={SectionTabDelete}
+                                                title="Delete Recurrence"
+                                                onClick={() =>
+                                                   deleteHandler(recurrence.id)
+                                                }
+                                             >
+                                                <DeleteIcon color=" #FF5A52" />
+                                             </IconButton>
+                                          )}
                                        </StyledSectionTop>
                                        <StyledSectionBottom>
                                           <TextButton
@@ -239,25 +290,30 @@ const Main = () => {
                                           >
                                              Link with Brands
                                           </TextButton>
-                                          <Switch
-                                             name={`recurrence-${recurrence.id}`}
-                                             value={recurrence.isActive}
-                                             checkedChildren="Published"
-                                             unCheckedChildren="UnPublished"
-                                             defaultChecked
-                                             title="Press to change publish type"
-                                             onChange={() =>
-                                                updateRecurrence({
-                                                   variables: {
-                                                      id: recurrence.id,
-                                                      set: {
-                                                         isActive:
-                                                            !recurrence.isActive,
+                                          {(mouseState.isHovered[index] ||
+                                             mouseClickedState.isClicked[
+                                                index
+                                             ]) && (
+                                             <Switch
+                                                name={`recurrence-${recurrence.id}`}
+                                                value={recurrence.isActive}
+                                                checked={recurrence.isActive}
+                                                checkedChildren="Published"
+                                                unCheckedChildren="UnPublished"
+                                                title="Press to change publish type"
+                                                onChange={() =>
+                                                   updateRecurrence({
+                                                      variables: {
+                                                         id: recurrence.id,
+                                                         set: {
+                                                            isActive:
+                                                               !recurrence.isActive,
+                                                         },
                                                       },
-                                                   },
-                                                })
-                                             }
-                                          />
+                                                   })
+                                                }
+                                             />
+                                          )}
                                        </StyledSectionBottom>
                                     </StyledInsideSectionTab>
                                  </SectionTab>
