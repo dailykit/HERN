@@ -117,8 +117,13 @@ const DeliveryRanges = ({ timeSlotId, mileRanges, openTunnel }) => {
                         <SectionTab
                            key={index}
                            dataSelectedBoxShadow={"0px 1px 8px rgba(0, 0, 0, 0.1)"}
-                           borderRadius={"4px"}
                            dataSelectedBorder={"2px solid #367BF5"}
+                           dataSelectedHoverBorder={
+                              '2px solid #F3F3F3'
+                           }
+                           hoverBorder={'2px solid #F3F3F3'}
+                           border={'2px solid #F3F3F3'}
+                           borderRadius={"8px"}
                            height={"auto"}
                            width={"24em"}
                            padding={"none"}

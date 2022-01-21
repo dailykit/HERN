@@ -69,7 +69,6 @@ const Main = () => {
       reducers,
       initialState
    )
-   const [isClicked, setIsClicked] = React.useState(false)
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
    // Subscription
@@ -128,6 +127,7 @@ const Main = () => {
    const [mouseClickedState, setMouseClickedState] = React.useState({
       isClicked: { [0]: true },
    })
+   // console.log(mouseState)
    const handleMouseEnter = index => {
       setMouseState({
          ...mouseState,
@@ -238,12 +238,14 @@ const Main = () => {
                                        '0px 1px 8px rgba(0, 0, 0, 0.1)'
                                     }
                                     dataSelectedBorder={'2px solid #367BF5'}
-                                    borderRadius={'4px'}
-                                    border={'2px solid #F3F3F3'}
-                                    hoverBorder={'2px solid #F3F3F3'}
                                     dataSelectedHoverBorder={
                                        '2px solid #F3F3F3'
                                     }
+                                    hoverBorder={'2px solid #F3F3F3'}
+                                    width={'auto'}
+                                    borderRadius={'8px'}
+                                    border={'2px solid #F3F3F3'}
+                                    padding={'none'}
                                  >
                                     <StyledInsideSectionTab
                                        onMouseEnter={() =>
