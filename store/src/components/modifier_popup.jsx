@@ -448,19 +448,19 @@ export const ModifierPopup = props => {
                      />
                   )}
                </div>
-               <div
-                  className={classNames(
-                     'hern-product-modifier-pop-up-product-option-and-modifier',
-                     {
-                        'hern-product-modifier-pop-up-product-option-and-modifier--without-popup':
-                           modifierWithoutPopup,
-                     }
-                  )}
-               >
+               <div>
                   <div className="hern-product-modifier-pop-up-product-option-list">
                      <label htmlFor="products">Available Options:</label>
                      <br />
-                     <ul>
+                     <ul
+                        className={classNames(
+                           'hern-product-modifier-pop-up-product-option-and-modifier',
+                           {
+                              'hern-product-modifier-pop-up-product-option-and-modifier--without-popup':
+                                 modifierWithoutPopup,
+                           }
+                        )}
+                     >
                         {productData.productOptions.map(eachOption => {
                            return (
                               <div
@@ -638,7 +638,7 @@ export const ModifierPopup = props => {
                      </div>
                   )}
                </div>
-               <div style={{ padding: '0 32px' }}>
+               <div style={{ padding: '0 32px', margin: '2rem 0rem' }}>
                   <Button
                      className="hern-product-modifier-pop-up-add-to-cart-btn"
                      onClick={handleAddOnCartOn}

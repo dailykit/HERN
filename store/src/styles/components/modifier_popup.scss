@@ -17,7 +17,7 @@
 }
 .hern-product-modifier-pop-up-product {
    // padding-top: 0.8em;
-   height: 400px;
+   height: 70%;
    background: #ffffff;
    border-top-right-radius: 5px;
    border-top-left-radius: 5px;
@@ -148,10 +148,10 @@
       // left: calc(50% - 14em);
    }
    .hern-product-modifier-pop-up-product {
-      height: 400px;
+      height: fit-content;
       background: #ffffff;
       border-radius: 16px;
-      overflow: auto;
+      // overflow: auto;
       position: absolute;
       width: 600px;
       left: 50%;
