@@ -20,11 +20,12 @@ export const InputsNotes = styled.p`
 export const InputHeading = styled.p`
    font-family: roboto;
    font-style: normal;
-   font-weight: 600;
+   font-weight: 500;
    font-size: 14px;
    line-height: 20px;
    cursor: default;
    color: #919699;
+   letter-spacing: 0.3px;
 `
 export const StyledGeoBoundary = styled.div`
    display: flex;
