@@ -662,7 +662,7 @@ const SocialLogin = props => {
    //props
    const { callbackURL } = props
 
-   const { configOf } = useConfig()
+   const { configOf, isConfigLoading } = useConfig()
    const authConfig = configOf('Auth Methods', 'brand')
 
    //fetch all available provider
@@ -703,6 +703,7 @@ const SocialLogin = props => {
                            key={index}
                         >
                            {eachProvider.title === 'google' &&
+                              !isConfigLoading &&
                               authConfig.socialLoginMethods.googleLogin
                                  .value && (
                                  <GoogleIcon
@@ -713,6 +714,7 @@ const SocialLogin = props => {
                                  />
                               )}
                            {eachProvider.title === 'facebook' &&
+                              !isConfigLoading &&
                               authConfig.socialLoginMethods.facebookLogin
                                  .value && (
                                  <FacebookIcon
