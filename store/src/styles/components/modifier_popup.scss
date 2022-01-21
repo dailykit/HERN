@@ -42,6 +42,7 @@
       font-size: 14px;
       line-height: 20px;
       color: #404040;
+      padding-left: 16px;
    }
    > select {
       color: #333333;
@@ -132,7 +133,7 @@
    display: flex;
    justify-content: flex-end;
    align-items: center;
-   padding: 16px 20px 16px 0;
+   // padding: 16px 20px 16px 0;
    border-bottom: 1px solid #f4f4f4;
 }
 .hern-menu-popup-product-custom-area {
@@ -157,6 +158,12 @@
       left: 50%;
       transform: translateX(-50%);
       bottom: 10%;
+      .hern-product-card__name {
+         max-width: 15em;
+         font-weight: 700;
+         font-size: 18px;
+         line-height: 20px;
+      }
    }
 }
 .hern-product-modifier-pop-up-product-option-and-modifier {

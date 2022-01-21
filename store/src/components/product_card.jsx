@@ -38,6 +38,7 @@ export const ProductCard = props => {
       modifierWithoutPopup = false,
       showProductDetails = true,
       customProductDetails = false,
+      showProductCard = true,
    } = props
 
    const slideRef = React.useRef()
@@ -86,153 +87,163 @@ export const ProductCard = props => {
    }
    return (
       <>
-         <div className="hern-product-card">
-            {showImage && (
-               <div className="hern-product-card-image-container">
-                  <Slide ref={slideRef} {...properties}>
-                     {data.assets.images.map((each, index) => {
-                        return (
-                           <div key={index}>
-                              <div
-                                 className={classNames(
-                                    'hern-product-card-image-background',
-                                    {
-                                       'hern-product-card-image-background--aspect-ratio':
-                                          maintainRatio,
-                                    }
-                                 )}
-                                 style={{ backgroundImage: `url(${each})` }}
-                              ></div>
-                              <img
-                                 src={each}
-                                 className={classNames(
-                                    'hern-product-card__image',
-                                    {
-                                       'hern-product-card__image--aspect-ratio':
-                                          maintainRatio,
-                                    }
-                                 )}
-                                 onClick={e => {
-                                    e.stopPropagation()
-                                    onImageClick ? onImageClick() : null
-                                 }}
-                                 style={{
-                                    cursor: onImageClick ? 'pointer' : null,
-                                 }}
-                              />
-                           </div>
-                        )
-                     })}
-                  </Slide>
-                  {IconOnImage && (
+         {showProductCard && (
+            <div className="hern-product-card">
+               {showImage && (
+                  <div className="hern-product-card-image-container">
+                     <Slide ref={slideRef} {...properties}>
+                        {data.assets.images.map((each, index) => {
+                           return (
+                              <div key={index}>
+                                 <div
+                                    className={classNames(
+                                       'hern-product-card-image-background',
+                                       {
+                                          'hern-product-card-image-background--aspect-ratio':
+                                             maintainRatio,
+                                       }
+                                    )}
+                                    style={{ backgroundImage: `url(${each})` }}
+                                 ></div>
+                                 <img
+                                    src={each}
+                                    className={classNames(
+                                       'hern-product-card__image',
+                                       {
+                                          'hern-product-card__image--aspect-ratio':
+                                             maintainRatio,
+                                       }
+                                    )}
+                                    onClick={e => {
+                                       e.stopPropagation()
+                                       onImageClick ? onImageClick() : null
+                                    }}
+                                    style={{
+                                       cursor: onImageClick ? 'pointer' : null,
+                                    }}
+                                 />
+                              </div>
+                           )
+                        })}
+                     </Slide>
+                     {IconOnImage && (
+                        <div
+                           className="hern-product-card-on-image-icon"
+                           onClick={e => {
+                              e.stopPropagation()
+                              onIconOnImageClick ? onIconOnImageClick() : null
+                           }}
+                        >
+                           <IconOnImage />
+                        </div>
+                     )}
+                  </div>
+               )}
+               <div
+                  className={classNames('hern-product-card-content', {
+                     'hern-product-card-content--custom-area-not-flex':
+                        !customAreaFlex,
+                  })}
+                  style={contentAreaCustomStyle}
+                  onClick={e => {
+                     e.stopPropagation()
+                     onProductCardContentClick
+                        ? onProductCardContentClick
+                        : null
+                  }}
+               >
+                  {AdditionalIcon && (
                      <div
-                        className="hern-product-card-on-image-icon"
+                        className="hern-product-card-additional-icon"
                         onClick={e => {
                            e.stopPropagation()
-                           onIconOnImageClick ? onIconOnImageClick() : null
+                           onAdditionalIconClick
+                              ? onAdditionalIconClick()
+                              : null
                         }}
                      >
-                        <IconOnImage />
+                        <AdditionalIcon />
                      </div>
                   )}
-               </div>
-            )}
-            <div
-               className={classNames('hern-product-card-content', {
-                  'hern-product-card-content--custom-area-not-flex':
-                     !customAreaFlex,
-               })}
-               style={contentAreaCustomStyle}
-               onClick={e => {
-                  e.stopPropagation()
-                  onProductCardContentClick ? onProductCardContentClick : null
-               }}
-            >
-               {AdditionalIcon && (
-                  <div
-                     className="hern-product-card-additional-icon"
-                     onClick={e => {
-                        e.stopPropagation()
-                        onAdditionalIconClick ? onAdditionalIconClick() : null
-                     }}
-                  >
-                     <AdditionalIcon />
-                  </div>
-               )}
-               {showProductDetails && (
-                  <div className="hern-product-card-details">
-                     <div className="hern-product-card-title">
-                        {showProductName && (
-                           <div
-                              className="hern-product-card__name"
-                              onClick={e => {
-                                 e.stopPropagation()
-                                 onProductNameClick
-                                    ? onProductNameClick()
-                                    : null
-                              }}
-                              style={{
-                                 cursor: onProductNameClick ? 'pointer' : null,
-                              }}
-                           >
-                              {data.name}
-                           </div>
-                        )}
-                        {data?.childs?.length > 0 && (
-                           <div className="hern-product-card-productOption-label">
-                              {data.childs[0].productOption.label || 'N/A'}
-                           </div>
-                        )}
-                        {ShowImageIcon && (
-                           <div
-                              className="hern-product-card-show-image-icon"
-                              onClick={e => {
-                                 e.stopPropagation()
-                                 onShowImageIconClick
-                                    ? onShowImageIconClick()
-                                    : null
-                              }}
-                           >
-                              <ShowImageIcon />
-                           </div>
-                        )}
-                     </div>
-                     {showProductPrice && (
-                        <div className="hern-product-card__price">
-                           {useForThirdParty && data.discount > 0 && (
-                              <span
+                  {showProductDetails && (
+                     <div className="hern-product-card-details">
+                        <div className="hern-product-card-title">
+                           {showProductName && (
+                              <div
+                                 className="hern-product-card__name"
+                                 onClick={e => {
+                                    e.stopPropagation()
+                                    onProductNameClick
+                                       ? onProductNameClick()
+                                       : null
+                                 }}
                                  style={{
-                                    textDecoration: 'line-through',
+                                    cursor: onProductNameClick
+                                       ? 'pointer'
+                                       : null,
                                  }}
                               >
-                                 {formatCurrency(data.price)}
-                              </span>
+                                 {data.name}
+                              </div>
                            )}
-                           <span style={{ marginLeft: '6px' }}>
-                              {finalProductPrice()}
-                           </span>
+                           {data?.childs?.length > 0 && (
+                              <div className="hern-product-card-productOption-label">
+                                 {data.childs[0].productOption.label || 'N/A'}
+                              </div>
+                           )}
+                           {ShowImageIcon && (
+                              <div
+                                 className="hern-product-card-show-image-icon"
+                                 onClick={e => {
+                                    e.stopPropagation()
+                                    onShowImageIconClick
+                                       ? onShowImageIconClick()
+                                       : null
+                                 }}
+                              >
+                                 <ShowImageIcon />
+                              </div>
+                           )}
                         </div>
+                        {showProductPrice && (
+                           <div className="hern-product-card__price">
+                              {useForThirdParty && data.discount > 0 && (
+                                 <span
+                                    style={{
+                                       textDecoration: 'line-through',
+                                    }}
+                                 >
+                                    {formatCurrency(data.price)}
+                                 </span>
+                              )}
+                              <span style={{ marginLeft: '6px' }}>
+                                 {finalProductPrice()}
+                              </span>
+                           </div>
+                        )}
+                        {showProductAdditionalText && (
+                           <div className="hern-product-card__additional-text">
+                              {data.additionalText}
+                           </div>
+                        )}
+                     </div>
+                  )}
+                  <div className="hern-product-card-custom-area">
+                     {CustomAreaComponent && (
+                        <CustomAreaComponent data={data} />
                      )}
-                     {showProductAdditionalText && (
-                        <div className="hern-product-card__additional-text">
-                           {data.additionalText}
-                        </div>
+                     {showCustomText && (
+                        <div className="hern-product-card-custom-text"></div>
                      )}
                   </div>
-               )}
-               <div className="hern-product-card-custom-area">
-                  {CustomAreaComponent && <CustomAreaComponent data={data} />}
-                  {showCustomText && (
-                     <div className="hern-product-card-custom-text"></div>
+                  {showProductDescription && (
+                     <div className="hern-product-card__description">
+                        {data.description}
+                     </div>
                   )}
                </div>
-               {showProductDescription && (
-                  <div className="hern-product-card__description">
-                     {data.description}
-                  </div>
-               )}
             </div>
-         </div>
+         )}
          {showModifier && data && (
             <ModifierPopup
                productData={

@@ -425,15 +425,41 @@ export const ModifierPopup = props => {
                   'hern-product-modifier-pop-up-product': !modifierWithoutPopup,
                })}
             >
-               {!modifierWithoutPopup && (
-                  <div className="hern-product-modifier-pop-up-close-icon">
-                     <CloseIcon
-                        size={20}
-                        stroke="currentColor"
-                        onClick={closeModifier}
-                     />
+               <div
+                  style={{
+                     display: 'flex',
+                     justifyContent: 'space-between',
+                     padding: '1.5rem 1.6rem 1rem 3rem',
+                     alignItems: 'center',
+                     borderBottom: '2px solid #c2c2c2',
+                     marginBottom: '1rem',
+                  }}
+               >
+                  <div
+                     className="hern-product-card__name"
+                     style={{ fontSize: '20px', fontWeight: '600px' }}
+                  >
+                     {productData?.name}
                   </div>
-               )}
+                  <div
+                     style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                     }}
+                  >
+                     {showCounterBtn && <CustomArea data={productData} />}
+
+                     {!modifierWithoutPopup && (
+                        <div className="hern-product-modifier-pop-up-close-icon">
+                           <CloseIcon
+                              size={20}
+                              stroke="currentColor"
+                              onClick={closeModifier}
+                           />
+                        </div>
+                     )}
+                  </div>
+               </div>
                <div className="hern-product-modifier-pop-up-product-details">
                   {customProductDetails ? (
                      <CustomProductDetails />
@@ -445,6 +471,7 @@ export const ModifierPopup = props => {
                         customAreaComponent={CustomArea}
                         showModifier={false}
                         useForThirdParty={true}
+                        showProductCard={false}
                      />
                   )}
                </div>
@@ -638,7 +665,7 @@ export const ModifierPopup = props => {
                      </div>
                   )}
                </div>
-               <div style={{ padding: '0 32px', margin: '2rem 0rem' }}>
+               <div style={{ padding: '4rem 32px 2.5rem' }}>
                   <Button
                      className="hern-product-modifier-pop-up-add-to-cart-btn"
                      onClick={handleAddOnCartOn}
