@@ -148,6 +148,14 @@
       // width: 28em;
       // left: calc(50% - 14em);
    }
+   .hern-product-modifier-pop-up-header-container {
+      display: flex;
+      justify-content: space-between;
+      padding: 1.5rem 1.6rem 1rem 3rem;
+      align-items: center;
+      border-bottom: 2px solid rgb(194, 194, 194);
+      margin-bottom: 2rem;
+   }
    .hern-product-modifier-pop-up-product {
       height: fit-content;
       background: #ffffff;

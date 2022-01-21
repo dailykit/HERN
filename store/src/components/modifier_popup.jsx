@@ -425,16 +425,7 @@ export const ModifierPopup = props => {
                   'hern-product-modifier-pop-up-product': !modifierWithoutPopup,
                })}
             >
-               <div
-                  style={{
-                     display: 'flex',
-                     justifyContent: 'space-between',
-                     padding: '1.5rem 1.6rem 1rem 3rem',
-                     alignItems: 'center',
-                     borderBottom: '2px solid #c2c2c2',
-                     marginBottom: '1rem',
-                  }}
-               >
+               <div className="hern-product-modifier-pop-up-header-container">
                   <div
                      className="hern-product-card__name"
                      style={{ fontSize: '20px', fontWeight: '600px' }}
