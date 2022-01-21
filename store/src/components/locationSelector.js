@@ -20,6 +20,7 @@ import {
    isStorePreOrderDineInAvailable,
    isStorePreOrderPickupAvailable,
    combineRecurrenceAndBrandLocation,
+   useOnClickOutside,
 } from '../utils'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
 import { Loader } from './index'
@@ -62,6 +63,10 @@ export const LocationSelector = props => {
             : null,
       [orderTabs]
    )
+   const locationSelectorRef = React.useRef()
+   useOnClickOutside(locationSelectorRef, () =>
+      setShowLocationSelectionPopup(false)
+   )
    const {
       availableFulfillmentType: storeFulfillmentType,
       defaultFulfillmentType,
@@ -88,7 +93,10 @@ export const LocationSelector = props => {
 
    return (
       <div className={classNames('hern-store-location-selector')}>
-         <div className="hern-store-location-selector-container">
+         <div
+            className="hern-store-location-selector-container"
+            ref={locationSelectorRef}
+         >
             {/* Header */}
             <div className="hern-store-location-selector-header">
                <div className="hern-store-location-selector-header-left">
@@ -574,6 +582,7 @@ const Delivery = props => {
                   <GPSIcon />
                   <span>Get Current Location</span>
                </div>
+               {/* <RefineLocation /> */}
                {locationSearching.error &&
                   locationSearching.errorType === 'blockByBrowser' && (
                      <span className="hern-store-location-selector-main__get-current-location-error-message">
@@ -1332,7 +1341,7 @@ const AddressInfo = props => {
 
 const RefineLocation = props => {
    // props
-   const { setUserCoordinate } = props
+   // const { setUserCoordinate } = props
 
    // component state
    const [centerCoordinate, setCenterCoordinate] = useState({})
@@ -1352,6 +1361,7 @@ const RefineLocation = props => {
 
    const onChangeMap = (center, zoom, bounds, marginBounds) => {
       // console.log('onChange', center, zoom, bounds, marginBounds)
+      console.log('thisIsCenter', center)
       setCenterCoordinate(prev => ({
          ...prev,
          latitude: center.lat,
@@ -1360,7 +1370,7 @@ const RefineLocation = props => {
    }
 
    const handleUpdateClick = () => {
-      setUserCoordinate(centerCoordinate)
+      // setUserCoordinate(centerCoordinate)
    }
    return (
       <>
@@ -1369,7 +1379,10 @@ const RefineLocation = props => {
             <button onClick={handleUpdateClick}>Update</button>
          </div>
          <div>
-            <div style={{ height: '100vh', width: '100%' }}>
+            <div
+               style={{ height: '200px', width: '100%', position: 'relative' }}
+            >
+               <UserLocationMarker />
                <GoogleMapReact
                   bootstrapURLKeys={{ key: get_env('GOOGLE_API_KEY') }}
                   defaultCenter={defaultProps.center}
@@ -1379,6 +1392,7 @@ const RefineLocation = props => {
                      console.log('childClick', a, b, c, d)
                   }}
                   onChange={onChangeMap}
+                  options={{ gestureHandling: 'greedy' }}
                ></GoogleMapReact>
             </div>
          </div>
@@ -1984,20 +1998,6 @@ const StoresOnMap = props => {
       zoom: 16,
    }
 
-   const UserLocationMarker = () => {
-      return (
-         <div style={{ position: 'relative', width: '48px', height: '48px' }}>
-            <LocationMarker
-               size={48}
-               style={{
-                  position: 'absolute',
-                  top: '-48px',
-                  left: '-24px',
-               }}
-            />
-         </div>
-      )
-   }
    const [clickedStoreId, setClickedStoreId] = useState(null)
 
    const StoreLocationMarker = props => {
@@ -2279,5 +2279,19 @@ const StoresOnMap = props => {
             </div>
          </div>
       </CSSTransition>
+   )
+}
+const UserLocationMarker = () => {
+   return (
+      <LocationMarker
+         size={48}
+         style={{
+            position: 'absolute',
+            top: 'calc(52.5% - 24px)',
+            left: '49.5%',
+            zIndex: '1000',
+            transform: 'translate(-50%,-50%)',
+         }}
+      />
    )
 }
