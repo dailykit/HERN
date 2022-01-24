@@ -48,6 +48,7 @@ export const CartProvider = ({ children }) => {
 
    const [storedCartId, setStoredCartId] = useState(null)
    const [combinedCartItems, setCombinedCartData] = useState(null)
+   const [showCartIconToolTip, setShowCartIconToolTip] = useState(false)
    React.useEffect(() => {
       const cartId = localStorage.getItem('cart-id')
       if (cartId) {
@@ -133,6 +134,10 @@ export const CartProvider = ({ children }) => {
       }
    }, [cartItemsData?.cartItems, isLoading])
 
+   const cartToolTipStopper = () => {
+      setShowCartIconToolTip(false)
+   }
+
    //create cart
    const [createCart] = useMutation(MUTATIONS.CART.CREATE, {
       onCompleted: data => {
@@ -141,6 +146,8 @@ export const CartProvider = ({ children }) => {
          }
          setStoredCartId(data.createCart.id)
          setIsFinalCartLoading(false)
+         setShowCartIconToolTip(true)
+         setTimeout(cartToolTipStopper, 6000)
       },
       onError: error => {
          console.log(error)
@@ -189,6 +196,8 @@ export const CartProvider = ({ children }) => {
       onCompleted: () => {
          console.log('items added successfully')
          setIsFinalCartLoading(false)
+         setShowCartIconToolTip(true)
+         setTimeout(cartToolTipStopper, 6000)
       },
       onError: error => {
          console.log(error)
@@ -420,6 +429,8 @@ export const CartProvider = ({ children }) => {
             setStoredCartId,
             isCartLoading,
             cartItemsLoading,
+            storedCartId,
+            showCartIconToolTip,
             methods: {
                cartItems: {
                   delete: deleteCartItems,
