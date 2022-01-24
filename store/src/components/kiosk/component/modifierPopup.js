@@ -185,6 +185,15 @@ export const KioskModifier = props => {
             onCloseModifier()
             return
          }
+
+         // not open GO TO MENU - CHECKOUT popup
+         if (
+            !config.kioskSettings.popupSettings.showGoToMenuCheckoutPopup.value
+         ) {
+            onCloseModifier()
+            return
+         }
+
          setShowProceedPopup(true)
          return
       }
@@ -280,6 +289,13 @@ export const KioskModifier = props => {
          }
 
          if (edit || forNewItem) {
+            onCloseModifier()
+            return
+         }
+         // not open GO TO MENU - CHECKOUT popup
+         if (
+            !config.kioskSettings.popupSettings.showGoToMenuCheckoutPopup.value
+         ) {
             onCloseModifier()
             return
          }
