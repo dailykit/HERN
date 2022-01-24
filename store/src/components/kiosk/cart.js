@@ -43,7 +43,7 @@ const { Header, Content, Footer } = Layout
 
 export const KioskCart = props => {
    //context
-   const { cartState, methods, addToCart, isFinalCartLoading } =
+   const { cartState, methods, addToCart, isFinalCartLoading, storedCartId } =
       React.useContext(CartContext)
    const { cart } = cartState
    const { config, combinedCartItems, setCurrentPage } = props
@@ -65,7 +65,7 @@ export const KioskCart = props => {
    if (combinedCartItems === null) {
       return <p>{t('No cart available')}</p>
    }
-   if (isFinalCartLoading) {
+   if (storedCartId && isFinalCartLoading) {
       return (
          <div
             style={{
