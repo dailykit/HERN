@@ -73,7 +73,7 @@ export const CartProvider = ({ children }) => {
          id: storedCartId,
       },
       fetchPolicy: 'no-cache',
-      onSubscriptionComplete: () => {
+      onSubscriptionData: data => {
          setIsFinalCartLoading(false)
       },
    })
@@ -389,6 +389,8 @@ export const CartProvider = ({ children }) => {
                         },
                      },
                   })
+                  setIsFinalCartLoading(false)
+               } else {
                   setIsFinalCartLoading(false)
                }
             }
