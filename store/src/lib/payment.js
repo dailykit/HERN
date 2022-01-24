@@ -584,10 +584,11 @@ export const PaymentProvider = ({ children }) => {
             resetPaymentProviderStates,
          }}
       >
-         {isPaymentInitiated && !isEmpty(cartPayment) && (
+         {isPaymentInitiated && (
             <PaymentProcessingModal
                isOpen={isProcessingPayment}
                cartPayment={cartPayment}
+               cartId={cartState?.cart?.id}
                closeModal={async isFailed =>
                   await onPaymentModalClose(isFailed)
                }
@@ -596,7 +597,7 @@ export const PaymentProvider = ({ children }) => {
                isTestingByPass={BY_PASS_TERMINAL_PAYMENT === 'true'}
                byPassTerminalPayment={byPassTerminalPayment}
                cancelTerminalPayment={cancelTerminalPayment}
-               codPaymentOptionId={cartState.kioskPaymentOption.cod}
+               PaymentOptions={cartState.kioskPaymentOptions}
                initializePrinting={initializePrinting}
             />
          )}

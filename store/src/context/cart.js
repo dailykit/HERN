@@ -21,10 +21,7 @@ export const CartContext = React.createContext()
 const initialState = {
    cart: null,
    cartItems: null,
-   kioskPaymentOption: {
-      cod: null,
-      terminal: null,
-   },
+   kioskPaymentOptions: [],
 }
 
 const reducer = (state, { type, payload }) => {
@@ -34,7 +31,7 @@ const reducer = (state, { type, payload }) => {
       case 'CART_ITEMS':
          return { ...state, cartItems: payload }
       case 'KIOSK_PAYMENT_OPTION':
-         return { ...state, kioskPaymentOption: payload }
+         return { ...state, kioskPaymentOptions: payload }
       default:
          return state
    }
@@ -109,10 +106,16 @@ export const CartProvider = ({ children }) => {
             : null
          cartReducer({
             type: 'KIOSK_PAYMENT_OPTION',
-            payload: {
-               cod: codPaymentOptionId,
-               terminal: terminalPaymentOptionId,
-            },
+            payload: [
+               {
+                  label: 'TERMINAL',
+                  id: terminalPaymentOptionId,
+               },
+               {
+                  label: 'COD',
+                  id: codPaymentOptionId,
+               },
+            ],
          })
       }
    }, [cartData, isCartLoading])
@@ -237,7 +240,13 @@ export const CartProvider = ({ children }) => {
          //without login
          if (!cartData?.cart) {
             //new cart
-            // console.log('new cart', cartState)
+
+            // finding terminal payment method option id for setting as default
+            // payment method (only for kiosk ordering)
+
+            const terminalPayment = cartState.kioskPaymentOptions.find(
+               opt => opt.label === 'TERMINAL'
+            )
             const object = {
                cartItems: {
                   data: cartItems,
@@ -248,9 +257,8 @@ export const CartProvider = ({ children }) => {
                locationId: locationId || null,
                brandId: brand?.id,
                ...(oiType === 'Kiosk Ordering' &&
-                  cartState.kioskPaymentOption.terminal && {
-                     toUseAvailablePaymentOptionId:
-                        cartState.kioskPaymentOption.terminal,
+                  !isEmpty(terminalPayment) && {
+                     toUseAvailablePaymentOptionId: terminalPayment.id,
                   }),
             }
             // console.log('object new cart', object)
@@ -403,7 +411,7 @@ export const CartProvider = ({ children }) => {
             cartState: {
                cart: cartData?.cart || {},
                cartItems: cartItemsData?.cartItems || {},
-               kioskPaymentOption: cartState.kioskPaymentOption || {},
+               kioskPaymentOptions: cartState.kioskPaymentOptions,
             },
             isFinalCartLoading,
             cartReducer,
