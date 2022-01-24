@@ -425,16 +425,7 @@ export const ModifierPopup = props => {
                   'hern-product-modifier-pop-up-product': !modifierWithoutPopup,
                })}
             >
-               <div
-                  style={{
-                     display: 'flex',
-                     justifyContent: 'space-between',
-                     padding: '1.5rem 1.6rem 1rem 3rem',
-                     alignItems: 'center',
-                     borderBottom: '2px solid #c2c2c2',
-                     marginBottom: '1rem',
-                  }}
-               >
+               <div className="hern-product-modifier-pop-up-header-container">
                   <div
                      className="hern-product-card__name"
                      style={{ fontSize: '20px', fontWeight: '600px' }}
@@ -665,10 +656,11 @@ export const ModifierPopup = props => {
                      </div>
                   )}
                </div>
-               <div style={{ padding: '4rem 32px 2.5rem' }}>
+               <div style={{ padding: '32px' }}>
                   <Button
                      className="hern-product-modifier-pop-up-add-to-cart-btn"
-                     onClick={handleAddOnCartOn}
+                     onClick={() => setTimeout(handleAddOnCartOn, 500)}
+                     style={{ padding: '16px 0px 34px 0px' }}
                   >
                      ADD TO CART {totalAmount()}
                   </Button>

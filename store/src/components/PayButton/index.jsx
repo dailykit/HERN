@@ -9,7 +9,12 @@ import { usePayment } from '../../lib'
 import { useCart } from '../../context'
 import { isKiosk } from '../../utils'
 
-export default function PayButton({ children, cartId = null, ...props }) {
+function PayButton({
+   children,
+   selectedAvailablePaymentOptionId = null,
+   cartId = null,
+   ...props
+}) {
    const isKioskMode = isKiosk()
    const { cartState } = useCart()
    const { kioskPaymentOption } = cartState
@@ -78,7 +83,7 @@ export default function PayButton({ children, cartId = null, ...props }) {
                   _inc: { paymentRetryAttempt: 1 },
                   _set: {
                      toUseAvailablePaymentOptionId:
-                        paymentInfo?.selectedAvailablePaymentOption?.id,
+                        selectedAvailablePaymentOptionId,
                      ...(!isEmpty(profileInfo) && {
                         customerInfo: {
                            customerEmail: profileInfo?.email,
@@ -140,7 +145,7 @@ export default function PayButton({ children, cartId = null, ...props }) {
    return (
       <>
          {loading ? (
-            <Skeleton.Button active size="large" />
+            <Skeleton.Button active size="large" block={true} />
          ) : (
             <Button
                onClick={onPayClickHandler}
@@ -153,3 +158,4 @@ export default function PayButton({ children, cartId = null, ...props }) {
       </>
    )
 }
+export default PayButton
