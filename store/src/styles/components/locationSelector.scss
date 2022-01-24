@@ -1,3 +1,4 @@
+// transition for location selector component
 .hern-store-location-selector__css-transition-enter {
    .hern-store-location-selector-container {
       transform: translate(-100%);
@@ -40,6 +41,7 @@
    height: calc(100vh - 116px);
    overflow-y: auto;
    padding-bottom: 1em;
+   position: relative;
 }
 
 .hern-store-location-selector-container {
@@ -60,6 +62,7 @@
    display: flex;
    justify-content: space-between;
    align-items: center;
+   background: #ffffff;
    > span {
       margin-left: 1em;
    }

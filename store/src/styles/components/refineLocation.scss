@@ -1,0 +1,44 @@
+// transition for refine location component
+.hern-store-refine-location__css-transition-enter {
+   transform: translate(-100%);
+}
+.hern-store-refine-location__css-transition-active {
+   transition: transform 0.2s ease-in;
+   transform: translate(0%, 0px);
+}
+.hern-store-refine-location__css-transition-exit {
+   transform: translate(0%, 0px);
+}
+
+.hern-store-refine-location__css-transition-exit-active {
+   transition: transform 0.2s ease-in-out;
+   transform: translate(-100%);
+}
+
+.hern-refine-location {
+   position: fixed;
+   top: 0;
+   height: 100vh;
+   width: 100vw;
+}
+.hern-refine-location_content {
+   height: 100%;
+   background: #ffffff;
+}
+.hern-refine-location__address-form-field {
+   height: 40px;
+   background: #f4f4f4;
+   border-radius: 8px;
+   padding: 0 10px;
+   outline: none;
+   width: 100%;
+}
+@media (min-width: 768px) {
+   .hern-refine-location_content {
+      width: 28em;
+      background: #ffffff;
+   }
+   .hern-refine-location {
+      background: rgba(32, 32, 32, 0.4);
+   }
+}

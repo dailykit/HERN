@@ -30,6 +30,7 @@
 @use './components/fulfillmentcart.scss';
 @use './components/userInfo.scss';
 @use './components/userType.scss';
+@use './components/refineLocation.scss';
 
 @use './sections/register';
 @use './sections/our-plans';
@@ -55,7 +56,6 @@
 @use './sections/slider-section.scss';
 @use './sections/product-gallery.scss';
 @use './sections/contact-us.scss';
-
 
 /*Account routes pages*/
 @use './sections/account/addresses';

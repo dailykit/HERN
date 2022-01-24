@@ -6,6 +6,7 @@ import {
    DistanceIcon,
    GPSIcon,
    LocationMarker,
+   NotFound,
    RadioIcon,
    StoreIcon,
 } from '../assets/icons'
@@ -47,6 +48,7 @@ import { TimePicker, Divider, Radio, Modal } from 'antd'
 import 'antd/dist/antd.css'
 import { useToasts } from 'react-toast-notifications'
 import { rrulestr } from 'rrule'
+import { RefineLocationPopup } from './refineLocation'
 
 // this Location selector is a pop up for mobile view so can user can select there location
 
@@ -273,6 +275,7 @@ const Delivery = props => {
    })
    const [address, setAddress] = useState(null)
    const [brandLocationsLoading, setBranLocationsLoading] = useState(true)
+   const [showRefineLocation, setShowRefineLocation] = useState(false)
 
    // location by browser
    const locationByBrowser = () => {
@@ -606,19 +609,62 @@ const Delivery = props => {
             </div>
          ) : null}
          {/* <RefineLocation setUserCoordinate={setUserCoordinate} /> */}
+         <RefineLocationPopup showRefineLocation={true} />
+
          {/* Footer */}
          {!address ? null : brandLocationsLoading ? (
-            <p style={{ padding: '1em' }}>
-               Finding nearest store location to you
-            </p>
+            <div
+               style={{
+                  padding: '1em',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+               }}
+            >
+               <img
+                  src="/assets/gifs/findingLocation.gif"
+                  width={72}
+                  height={72}
+               />
+               <span>Finding nearest store location to you</span>
+            </div>
          ) : brands_brand_location_aggregate?.nodes?.length == 0 ? (
-            <p style={{ padding: '0 14px', fontWeight: 'bold' }}>
-               No store available on this location.
-            </p>
+            <div
+               style={{
+                  padding: '0 14px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+               }}
+            >
+               <NotFound style={{ margin: '10px 0' }} />
+               <span
+                  style={{
+                     fontWeight: 'bold',
+                     color: 'rgba(64, 64, 64, 0.8)',
+                     fontStyle: 'italic',
+                     lineHeight: '26px',
+                  }}
+               >
+                  No store available on this location.{' '}
+               </span>
+            </div>
          ) : brandRecurrencesLoading || preOrderBrandRecurrencesLoading ? (
-            <p style={{ padding: '1em' }}>
-               Finding nearest store location to you
-            </p>
+            <div
+               style={{
+                  padding: '1em',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+               }}
+            >
+               <img
+                  src="/assets/gifs/findingLocation.gif"
+                  width={72}
+                  height={72}
+               />
+               <span>Finding nearest store location to you</span>
+            </div>
          ) : (
             <StoreList
                userCoordinate={userCoordinate}
@@ -636,6 +682,8 @@ const Delivery = props => {
                }
                storeDistanceValidation={true}
                address={address}
+               setShowRefineLocation={setShowRefineLocation}
+               showRefineLocation={showRefineLocation}
             />
          )}
       </div>
@@ -1339,67 +1387,6 @@ const AddressInfo = props => {
    )
 }
 
-const RefineLocation = props => {
-   // props
-   // const { setUserCoordinate } = props
-
-   // component state
-   const [centerCoordinate, setCenterCoordinate] = useState({})
-
-   // defaultProps for google map
-   const defaultProps = {
-      center: {
-         lat: 26.90316230216457,
-         lng: 75.73522352265464,
-      },
-      zoom: 16,
-   }
-
-   const onClickOnMap = () => {
-      console.log('hello')
-   }
-
-   const onChangeMap = (center, zoom, bounds, marginBounds) => {
-      // console.log('onChange', center, zoom, bounds, marginBounds)
-      console.log('thisIsCenter', center)
-      setCenterCoordinate(prev => ({
-         ...prev,
-         latitude: center.lat,
-         longitude: center.lng,
-      }))
-   }
-
-   const handleUpdateClick = () => {
-      // setUserCoordinate(centerCoordinate)
-   }
-   return (
-      <>
-         <div>
-            <span>Refine your location </span>{' '}
-            <button onClick={handleUpdateClick}>Update</button>
-         </div>
-         <div>
-            <div
-               style={{ height: '200px', width: '100%', position: 'relative' }}
-            >
-               <UserLocationMarker />
-               <GoogleMapReact
-                  bootstrapURLKeys={{ key: get_env('GOOGLE_API_KEY') }}
-                  defaultCenter={defaultProps.center}
-                  defaultZoom={defaultProps.zoom}
-                  onClick={onClickOnMap}
-                  onChildClick={(a, b, c, d) => {
-                     console.log('childClick', a, b, c, d)
-                  }}
-                  onChange={onChangeMap}
-                  options={{ gestureHandling: 'greedy' }}
-               ></GoogleMapReact>
-            </div>
-         </div>
-      </>
-   )
-}
-
 // render all available stores
 export const StoreList = props => {
    const {
@@ -1410,6 +1397,8 @@ export const StoreList = props => {
       storeDistanceValidation = false,
       fulfillmentType,
       address,
+      setShowRefineLocation,
+      showRefineLocation = false,
    } = props
    // console.log('settings', settings)
    const { brand, dispatch, orderTabs } = useConfig()
@@ -1556,6 +1545,12 @@ export const StoreList = props => {
                sortedBrandLocation.length === 1)
          ) {
             // select automatically first store form sorted array
+            if (
+               fulfillmentType === 'ONDEMAND_DELIVERY' ||
+               fulfillmentType === 'PREORDER_DELIVERY'
+            ) {
+               return setShowRefineLocation(true)
+            }
 
             dispatch({
                type: 'SET_LOCATION_ID',
@@ -1786,7 +1781,23 @@ export const StoreList = props => {
       sortedBrandLocation === null ||
       status === 'loading'
    ) {
-      return <p>Finding nearest store location to you</p>
+      return (
+         <div
+            style={{
+               padding: '1em',
+               display: 'flex',
+               flexDirection: 'column',
+               alignItems: 'center',
+            }}
+         >
+            <img
+               src="/assets/gifs/findingLocation.gif"
+               width={72}
+               height={72}
+            />
+            <span>Finding nearest store location to you</span>
+         </div>
+      )
    }
 
    // when no store available on user location
@@ -1829,6 +1840,7 @@ export const StoreList = props => {
                <span onClick={() => setShowStoreOnMap(true)}>View on map</span>
             </div>
          )}
+         <RefineLocationPopup showRefineLocation={showRefineLocation} />
          {sortedBrandLocation.map((eachStore, index) => {
             const {
                location: {
