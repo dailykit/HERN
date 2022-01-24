@@ -659,7 +659,7 @@ export const ModifierPopup = props => {
                <div style={{ padding: '32px' }}>
                   <Button
                      className="hern-product-modifier-pop-up-add-to-cart-btn"
-                     onClick={handleAddOnCartOn}
+                     onClick={() => setTimeout(handleAddOnCartOn, 500)}
                      style={{ padding: '16px 0px 34px 0px' }}
                   >
                      ADD TO CART {totalAmount()}
