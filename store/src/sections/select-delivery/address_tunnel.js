@@ -153,9 +153,9 @@ export const AddressTunnel = props => {
          city: userLocationInLocal.address.city,
          country: userLocationInLocal.address.country,
          state: userLocationInLocal.address.state,
-         zipcode: userLocationInLocal.address.zipcode,
-         lat: userLocationInLocal.latitude,
-         lng: userLocationInLocal.longitude,
+         zipcode: userLocationInLocal.address.zipcode.toString(),
+         lat: userLocationInLocal.latitude.toString(),
+         lng: userLocationInLocal.longitude.toString(),
          line2: userLocationInLocal.address.mainText,
          searched: '',
       }

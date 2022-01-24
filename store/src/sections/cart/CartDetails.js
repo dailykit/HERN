@@ -8,7 +8,7 @@ import {
    CounterButton,
    Loader,
 } from '../../components'
-import _ from 'lodash'
+import _, { isEmpty } from 'lodash'
 import { combineCartItems, formatCurrency } from '../../utils'
 import { DeleteIcon, EditIcon, EmptyCart, CloseIcon } from '../../assets/icons'
 import { useLazyQuery, useQuery } from '@apollo/react-hooks'
@@ -18,8 +18,13 @@ import { useConfig } from '../../lib'
 
 export const CartDetails = () => {
    //context
-   const { cartState, methods, addToCart, combinedCartItems } =
-      React.useContext(CartContext)
+   const {
+      cartState,
+      methods,
+      addToCart,
+      combinedCartItems,
+      isFinalCartLoading,
+   } = React.useContext(CartContext)
    const { onDemandMenu } = React.useContext(onDemandMenuContext)
    const { brand, isConfigLoading, locationId } = useConfig()
    const { user } = useUser()
@@ -87,68 +92,67 @@ export const CartDetails = () => {
       const { data } = props
       const { productId } = data
 
-      return (<>
-         <div className="hern-cart-product-custom-area">
-            <div className="hern-cart-product-custom-area-quantity">
-               {/* <span>X{quantity}</span> */}
+      return (
+         <>
+            <div className="hern-cart-product-custom-area">
+               <div className="hern-cart-product-custom-area-quantity">
+                  {/* <span>X{quantity}</span> */}
 
-               <CounterButton
-                  count={data.ids.length}
-                  incrementClick={() => {
-                     if (data.childs.length === 0) {
-                        addToCart({ productId: data.productId }, 1)
-                        return
+                  <CounterButton
+                     count={data.ids.length}
+                     incrementClick={() => {
+                        if (data.childs.length === 0) {
+                           addToCart({ productId: data.productId }, 1)
+                           return
+                        }
+                        setCartDetailSelectedProduct(data)
+                        setIncreaseProductId(productId)
+                        setPopupType('newItem')
+                     }}
+                     decrementClick={() =>
+                        removeCartItems([data.ids[data.ids.length - 1]])
                      }
-                     setCartDetailSelectedProduct(data)
-                     setIncreaseProductId(productId)
-                     setPopupType('newItem')
-                  }}
-                  decrementClick={() =>
-                     removeCartItems([data.ids[data.ids.length - 1]])
-                  }
-               />
-               {/* price */}
-               {data.childs[0].price !== 0 && (
-                  <div>
-                     {data.childs[0].discount > 0 && (
-                        <span
-                           style={{
-                              textDecoration: 'line-through',
-                           }}
-                        >
-                           {formatCurrency(data.childs[0].price)}
-                        </span>
-                     )}
-
-                     <span className='hern-cart-product-custom-area-price'>
-                        {formatCurrency(
-                           data.childs[0].price - data.childs[0].discount
+                  />
+                  {/* price */}
+                  {data.childs[0].price !== 0 && (
+                     <div>
+                        {data.childs[0].discount > 0 && (
+                           <span
+                              style={{
+                                 textDecoration: 'line-through',
+                              }}
+                           >
+                              {formatCurrency(data.childs[0].price)}
+                           </span>
                         )}
-                     </span>
-                  </div>
+
+                        <span className="hern-cart-product-custom-area-price">
+                           {formatCurrency(
+                              data.childs[0].price - data.childs[0].discount
+                           )}
+                        </span>
+                     </div>
+                  )}
+               </div>
+               {/* <div className="hern-cart-product-custom-area-icons"> */}
+               {/* </div> */}
+            </div>
+            <div style={{ position: 'relative', left: '5.5rem' }}>
+               {data.childs.length > 0 && (
+                  <EditIcon
+                     size={12}
+                     stroke={'#38a169'}
+                     onClick={() => {
+                        setCartDetailSelectedProduct(data)
+                        setIncreaseProductId(productId)
+                        setPopupType('edit')
+                     }}
+                     style={{ cursor: 'pointer', margin: '0rem 0.5rem' }}
+                     title="Edit"
+                  />
                )}
             </div>
-            {/* <div className="hern-cart-product-custom-area-icons"> */}
-            {/* </div> */}
-
-
-         </div>
-         <div style={{ position: 'relative', left: '5.5rem' }}>
-            {data.childs.length > 0 && (
-               <EditIcon
-                  size={12}
-                  stroke={'#38a169'}
-                  onClick={() => {
-                     setCartDetailSelectedProduct(data)
-                     setIncreaseProductId(productId)
-                     setPopupType('edit')
-                  }}
-                  style={{ cursor: 'pointer', margin: '0rem 0.5rem' }}
-                  title="Edit"
-               />
-            )}
-         </div>
-      </>
+         </>
       )
    }
 
@@ -164,7 +168,7 @@ export const CartDetails = () => {
       }
    }
 
-   if (isMenuLoading || combinedCartItems === null) {
+   if (isFinalCartLoading || isMenuLoading) {
       return (
          <div className="hern-cart-container">
             <div className="hern-cart-page">
@@ -177,7 +181,12 @@ export const CartDetails = () => {
       )
    }
 
-   if (cart == null || combinedCartItems.length === 0) {
+   if (
+      cart == null ||
+      isEmpty(cart) ||
+      combinedCartItems?.length === 0 ||
+      combinedCartItems === null
+   ) {
       return (
          <div className="hern-cart-container">
             <div className="hern-cart-page" style={{ overflowY: 'hidden' }}>
@@ -188,7 +197,7 @@ export const CartDetails = () => {
                      <span>Oops! Your cart is empty </span>
                      <Button
                         className="hern-cart-go-to-menu-btn"
-                        onClick={() => { }}
+                        onClick={() => {}}
                      >
                         <Link href="/order">GO TO MENU</Link>
                      </Button>
@@ -241,7 +250,6 @@ export const CartDetails = () => {
                                  }}
                                  useForThirdParty={true}
                               />
-
                            </div>
                         )
                      })}
@@ -302,7 +310,7 @@ export const CartDetails = () => {
                               <span>{formatCurrency(tip)}</span>
                            </li>
                         )}
-                        <li className='hern-cart-bill-details-list-total-price'>
+                        <li className="hern-cart-bill-details-list-total-price">
                            <span>{cart.billing.totalPrice.label}</span>
                            <span>
                               {formatCurrency(

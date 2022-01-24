@@ -166,8 +166,8 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
       setIsAddressValidating(true)
       const modifiedAddress = {
          ...newAddress,
-         latitude: newAddress.lat,
-         longitude: newAddress.lng,
+         latitude: newAddress.lat.toString(),
+         longitude: newAddress.lng.toString(),
          address: { zipcode: newAddress.zipcode },
       }
       console.log('modifiedAddress', modifiedAddress)
