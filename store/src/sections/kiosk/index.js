@@ -39,6 +39,7 @@ const Kiosk = props => {
       clearCurrentPage,
    } = useConfig()
    const { kioskConfig } = props
+   console.log('kioskConfig', kioskConfig)
 
    const { direction } = useTranslation()
 
