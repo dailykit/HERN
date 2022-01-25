@@ -1,7 +1,7 @@
 .hern-orders__main {
    display: grid;
    grid-template-rows: 1fr;
-   grid-template-columns: 240px 1fr;
+   grid-template-columns: 300px 1fr;
    @media (max-width: 768px) {
       display: block;
    }
