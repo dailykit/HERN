@@ -34,7 +34,7 @@ export const Recipe = ({ productOption, config }) => {
 
    const nutritionAndRecipeSameline =
       config?.['information Visibility']?.recipe?.nutritionAndRecipeSameline
-         ?.value ?? false
+         ?.value ?? true
 
    if (!recipe) {
       return (
