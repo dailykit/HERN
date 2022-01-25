@@ -859,10 +859,14 @@ export const autoSelectStore = async (
       const userLocation = JSON.parse(localStorage.getItem('userLocation'))
 
       // add arial distance
+      console.log('addressIN', address)
       const dataWithAerialDistance = await Promise.all(
          data.map(async eachStore => {
             const aerialDistance = getDistance(
-               userLocation,
+               {
+                  latitude: address.latitude,
+                  longitude: address.longitude,
+               },
                eachStore.location.locationAddress.locationCoordinates,
                0.1
             )
@@ -930,4 +934,61 @@ export const autoSelectStore = async (
    }
    const bar = await getAerialDistance(brandLocation, true, address)
    return [bar, fulfillmentStatus()]
+}
+
+export const getAddressByCoordinates = async (lat, lng) => {
+   let result
+   fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${get_env(
+         'GOOGLE_API_KEY'
+      )}`
+   )
+      .then(res => res.json())
+      .then(data => {
+         if (data.status === 'OK' && data.results.length > 0) {
+            const formatted_address =
+               data.results[0].formatted_address.split(',')
+            const mainText = formatted_address
+               .slice(0, formatted_address.length - 3)
+               .join(',')
+            const secondaryText = formatted_address
+               .slice(formatted_address.length - 3)
+               .join(',')
+            const address = {}
+            data.results[0].address_components.forEach(node => {
+               if (node.types.includes('locality')) {
+                  address.city = node.long_name
+               }
+               if (node.types.includes('administrative_area_level_1')) {
+                  address.state = node.long_name
+               }
+               if (node.types.includes('country')) {
+                  address.country = node.long_name
+               }
+               if (node.types.includes('postal_code')) {
+                  address.zipcode = node.long_name
+               }
+            })
+
+            result = {
+               status: true,
+               data: {
+                  mainText,
+                  secondaryText,
+                  ...address,
+                  latitude: lat,
+                  longitude: lng,
+               },
+            }
+         }
+      })
+      .catch(e => {
+         console.log('error', e)
+         result = {
+            status: false,
+            message: e,
+         }
+      })
+
+   return result
 }
