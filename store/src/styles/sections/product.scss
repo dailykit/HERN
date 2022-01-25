@@ -48,7 +48,10 @@
 .hern-product-image {
    height: 0;
    position: relative;
-   width: 32vw;
+   @media (min-width: 768px) {
+      width: 32.5vw;
+   }
+
    > div {
       position: absolute;
       top: 0;
@@ -71,9 +74,12 @@
       }
    }
 }
-.hern-product-media {
-   display: flex;
-   flex-direction: row-reverse;
+
+@media (min-width: 768px) {
+   .hern-product-media {
+      display: flex;
+      flex-direction: row-reverse;
+   }
 }
 .hern-product-image-gallery__preview {
    position: relative;
@@ -82,8 +88,10 @@
    display: flex;
    width: 100%;
    overflow-x: auto;
-   // margin-top: 12px;
    margin-bottom: 32px;
+   @media (max-width: 479px) {
+      margin-top: 12px;
+   }
    &::-webkit-scrollbar {
       width: 0.25rem;
       height: 0.25rem;
