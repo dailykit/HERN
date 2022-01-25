@@ -528,7 +528,7 @@ export const Header = ({ settings, navigationMenus }) => {
                }
                break
          }
-         ; (async () => {
+         ;(async () => {
             const [result, fulfillmentStatus] = await autoSelectStore(
                brandLocation,
                recurrencesDetails.brandRecurrences,
@@ -672,8 +672,8 @@ export const Header = ({ settings, navigationMenus }) => {
                         {isLoading ? (
                            <li className="hern-navbar__list__item__skeleton" />
                         ) : isAuthenticated &&
-                           user?.isSubscriber &&
-                           isSubscriptionStore ? (
+                          user?.isSubscriber &&
+                          isSubscriptionStore ? (
                            <li className="hern-navbar__list__item">
                               <Link href={getRoute('/menu')}>
                                  {t('Select Menu')}
@@ -753,10 +753,11 @@ export const Header = ({ settings, navigationMenus }) => {
                         <button
                            className="hern-header__logout"
                            style={{
-                              backgroundColor: `${theme?.accent
-                                 ? theme?.accent
-                                 : 'rgba(37, 99, 235, 1)'
-                                 }`,
+                              backgroundColor: `${
+                                 theme?.accent
+                                    ? theme?.accent
+                                    : 'rgba(37, 99, 235, 1)'
+                              }`,
                            }}
                            onClick={() => setShowLoginPopup(true)}
                         >
@@ -780,8 +781,8 @@ export const Header = ({ settings, navigationMenus }) => {
                      <section className="hern-navigatin-menu__wrapper--mobile">
                         <NavigationBar Data={newNavigationMenus}>
                            {isAuthenticated &&
-                              user?.isSubscriber &&
-                              isSubscriptionStore ? (
+                           user?.isSubscriber &&
+                           isSubscriptionStore ? (
                               <li className="hern-navbar__list__item">
                                  <Link href={getRoute('/menu')}>
                                     Select Menu
@@ -855,10 +856,16 @@ const LocationInfo = ({ settings }) => {
       React.useState(false)
 
    const prefix = React.useMemo(() => {
-      if (!selectedOrderTab) {
+      const selectedOrderTabInLocal = isClient
+         ? localStorage.getItem('orderTab')
+         : null
+
+      if (!selectedOrderTab && !selectedOrderTabInLocal) {
          return null
       }
-      const type = selectedOrderTab.orderFulfillmentTypeLabel
+      const type = selectedOrderTab
+         ? selectedOrderTab.orderFulfillmentTypeLabel
+         : JSON.parse(selectedOrderTabInLocal)
       switch (type) {
          case 'PREORDER_DELIVERY':
             return 'DELIVER AT'
@@ -904,8 +911,8 @@ const LocationInfo = ({ settings }) => {
                         {userLocation?.mainText
                            ? userLocation?.mainText
                            : userLocation?.address?.mainText
-                              ? userLocation?.address?.mainText
-                              : 'Please select address...'}
+                           ? userLocation?.address?.mainText
+                           : 'Please select address...'}
                      </div>
                      <div className="hern-header__location-warning">
                         {!storeStatus?.status ? storeStatus?.message : ''}
