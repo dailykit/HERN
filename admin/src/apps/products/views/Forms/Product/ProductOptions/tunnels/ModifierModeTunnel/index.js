@@ -8,12 +8,7 @@ import { MODIFIERS } from '../../../../../../graphql/modifiers'
 import { toast } from 'react-toastify'
 import { logger, randomSuffix } from '../../../../../../../../shared/utils'
 
-const ModifierModeTunnel = ({
-   open,
-   close,
-   setAdditionalModifier,
-   additionalModifier,
-}) => {
+const ModifierModeTunnel = ({ open, close }) => {
    const { modifiersDispatch } = React.useContext(ModifiersContext)
 
    const [createModifier] = useMutation(MODIFIERS.CREATE, {

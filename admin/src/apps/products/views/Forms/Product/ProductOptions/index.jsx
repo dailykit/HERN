@@ -13,7 +13,6 @@ import {
    RadioGroup,
    Spacer,
    Text,
-   TextButton,
    Tunnel,
    Tunnels,
    useTunnel,
@@ -21,7 +20,6 @@ import {
 
 import {
    ADDITIONAL_MODIFIER,
-   DELETE_ADDITIONAL_MODIFIER,
    PRODUCT,
    PRODUCT_OPTION,
    PRODUCT_OPTION_TYPES,
@@ -58,10 +56,7 @@ import {
 import { useDnd } from '../../../../../../shared/components/DragNDrop/useDnd'
 import { from } from 'apollo-link'
 import { InventoryBundleContext } from '../../../../context/product/inventoryBundle'
-import AdditionalModifierTemplateTunnel from './tunnels/AdditionalModifierTemplateTunnel'
-import _, { cloneDeep } from 'lodash'
-import AdditionalModifierModeTunnel from "./tunnels/AdditionalModifierModeTunnel"
-import { FetchType } from 'apollo-client'
+import _ from 'lodash'
 const ProductOptions = ({ productId, productName, options, productData }) => {
    const SERVING_TUNNEL_TYPES = ['mealKit', 'readyToEat', 'Meal Kit']
 
@@ -71,8 +66,6 @@ const ProductOptions = ({ productId, productName, options, productData }) => {
       useTunnel(5)
    const [modifiersTunnel, openModifiersTunnel, closeModifiersTunnel] =
       useTunnel(6)
-   const [additionalModifiersTunnel, openAdditionalModifiersTunnel, closeAdditionalModifiersTunnel] =
-      useTunnel(1)
    const [
       operationConfigTunnels,
       openOperationConfigTunnel,
@@ -89,7 +82,6 @@ const ProductOptions = ({ productId, productName, options, productData }) => {
       categoryOptionId: null,
    })
    const [additionalModifier, setAdditionalModifier] = React.useState(false)
-   const [additionalModifierId, setAdditionalModifierId] = React.useState(null)
    const opConfigInvokedBy = React.useRef('')
    const modifierOpConfig = React.useRef(undefined)
    const [productOptionsTextField, setProductOptionsTextField] = React.useState('')
@@ -350,39 +342,6 @@ const ProductOptions = ({ productId, productName, options, productData }) => {
                   modifierCategoryOption={modifierCategoryOption}
                   additionalModifier={additionalModifier}
                   setAdditionalModifier={setAdditionalModifier} />
-            </Tunnel>
-         </Tunnels>
-
-         <Tunnels tunnels={additionalModifiersTunnel}>
-            <Tunnel layer={1}>
-               <AdditionalModifierModeTunnel
-                  closeTunnel={closeAdditionalModifiersTunnel}
-                  openTunnel={openAdditionalModifiersTunnel}
-                  additionalModifier={additionalModifier}
-                  setAdditionalModifier={setAdditionalModifier}
-                  setModifierCategoryOption={setModifierCategoryOption}
-                  modifierCategoryOption={modifierCategoryOption}
-                  openOperationConfigTunnel={value => {
-                     opConfigInvokedBy.current = 'modifier'
-                     openOperationConfigTunnel(value)
-                  }}
-                  modifierOpConfig={modifierOpConfig.current} />
-            </Tunnel>
-            <Tunnel layer={2}>
-               <AdditionalModifierTemplateTunnel
-                  closeTunnel={closeAdditionalModifiersTunnel}
-                  openTunnel={openAdditionalModifiersTunnel}
-                  additionalModifier={additionalModifier}
-                  setAdditionalModifier={setAdditionalModifier}
-
-                  setModifierCategoryOption={setModifierCategoryOption}
-                  modifierCategoryOption={modifierCategoryOption}
-                  openOperationConfigTunnel={value => {
-                     opConfigInvokedBy.current = 'modifier'
-                     openOperationConfigTunnel(value)
-                  }}
-                  modifierOpConfig={modifierOpConfig.current}
-               />
             </Tunnel>
          </Tunnels>
          <OperationConfig
@@ -1050,21 +1009,21 @@ const Option = ({
                   >
                      <Text as="p" style={{ width: "23%", fontWeight: "bold" }}> Modifier Name </Text>
                      <Text as="p" style={{ width: "5%", fontWeight: "bold" }}> Edit </Text>
-                     <Text as="p" style={{ width: "25%", fontWeight: "bold" }}> Label  </Text>
-                     <Text as="p" style={{ width: "31%", fontWeight: "bold" }}>  Type </Text>
-                     <Text as="p" style={{ width: "5%", fontWeight: "bold" }}>  Action </Text>
+                     <Text as="p" style={{ width: "26%", fontWeight: "bold" }}> Label  </Text>
+                     <Text as="p" style={{ width: "32%", fontWeight: "bold" }}>  Type </Text>
+                     <Text as="p" style={{ width: "4%", fontWeight: "bold" }}>  Action </Text>
                   </Flex></>
             )}
             <Flex >
                {option.additionalModifiers.length > 0 && (
-                  option.additionalModifiers.map((each, index) =>
+                  option.additionalModifiers.map(additionalModifier =>
                      <AdditionalLabelAndType
-                        each={each}
-                        AdditionalModifierId={each.modifierId}
-                        additionalModifierOptionId={each.productOptionId}
-                        handleDeleteAddModifier={() => handleDeleteAddModifier(each.modifierId)}
+                        additionalModifier={additionalModifier}
+                        AdditionalModifierId={additionalModifier.modifierId}
+                        additionalModifierOptionId={additionalModifier.productOptionId}
+                        handleDeleteAddModifier={() => handleDeleteAddModifier(additionalModifier.modifierId)}
                         updateAdditionalModifier={updateAdditionalModifier}
-                        handleEditAdditionalModifier={() => handleEditAdditionalModifier(each.modifierId)}
+                        handleEditAdditionalModifier={() => handleEditAdditionalModifier(additionalModifier.modifierId)}
                      />
                   )
                )}
@@ -1079,7 +1038,7 @@ const Option = ({
    return <Collapsible isDraggable head={renderHead()} body={renderBody()} />
 }
 const AdditionalLabelAndType = ({
-   each,
+   additionalModifier,
    AdditionalModifierId,
    additionalModifierOptionId,
    handleDeleteAddModifier,
@@ -1087,7 +1046,7 @@ const AdditionalLabelAndType = ({
    handleEditAdditionalModifier
 }) => {
    const [additionalModifierLabel, setAdditionalModifierLabel] = React.useState({
-      label: each.label || ""
+      label: additionalModifier.label || ""
    })
    const radioOption = [
       { id: 1, title: 'Visible', payload: 'visible' },
@@ -1107,7 +1066,7 @@ const AdditionalLabelAndType = ({
                   justifyContent="space-between"
                   margin="4px 0"
                >
-                  <Text as="text2" style={{ width: "20%" }}>{each.modifier.name}</Text>
+                  <Text as="text2" style={{ width: "20%" }}>{additionalModifier.modifier.name}</Text>
                   <IconButton
                      title="Edit Additional Modifier"
                      type="ghost"
@@ -1118,8 +1077,8 @@ const AdditionalLabelAndType = ({
                   <Flex width="24%">
                      <Form.Group>
                         <Form.Text
-                           id={`${each.modifierId} - ${each.productOptionId}`}
-                           name={`${each.modifierId} - ${each.productOptionId}`}
+                           id={`${additionalModifier.modifierId} - ${additionalModifier.productOptionId}`}
+                           name={`${additionalModifier.modifierId} - ${additionalModifier.productOptionId}`}
                            variant="revamp-sm"
                            placeholder="Enter Label"
                            value={additionalModifierLabel.label}
@@ -1131,8 +1090,8 @@ const AdditionalLabelAndType = ({
                               const val = additionalModifierLabel.label
                               updateAdditionalModifier({
                                  variables: {
-                                    modifierId: each.modifierId,
-                                    productOptionId: each.productOptionId,
+                                    modifierId: additionalModifier.modifierId,
+                                    productOptionId: additionalModifier.productOptionId,
                                     _set: {
                                        label: val
                                     }
@@ -1146,12 +1105,12 @@ const AdditionalLabelAndType = ({
                   <Flex title="Select Type for modifier" width="30%">
                      <RadioGroup
                         options={radioOption}
-                        active={each.type === 'visible' ? 1 : 2}
+                        active={additionalModifier.type === 'visible' ? 1 : 2}
                         onChange={radioOption =>
                            updateAdditionalModifier({
                               variables: {
-                                 modifierId: each.modifierId,
-                                 productOptionId: each.productOptionId,
+                                 modifierId: additionalModifier.modifierId,
+                                 productOptionId: additionalModifier.productOptionId,
                                  _set: {
                                     type: radioOption.payload
                                  }

@@ -132,6 +132,7 @@ const ModifierTemplatesTunnel = ({
          categoryOption: false,
          categoryOptionId: null,
       })
+      setAdditionalModifier(false)
       close(6)
    }
    React.useEffect(() => {
