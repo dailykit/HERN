@@ -30,24 +30,25 @@ import {
    nestedModifierTemplateIds,
 } from '../../utils'
 import { PRODUCTS, GET_MODIFIER_BY_ID } from '../../graphql'
-import { useConfig } from '../../lib'
+import { useConfig, usePayment } from '../../lib'
 import { KioskModifier } from './component'
 import { useLazyQuery, useQuery } from '@apollo/react-hooks'
 import KioskButton from './component/button'
 import { ProgressBar } from './component/progressBar'
 import { Coupon } from '../coupon'
-import PayButton from '../PayButton'
 import isEmpty from 'lodash/isEmpty'
 
 const { Header, Content, Footer } = Layout
 
 export const KioskCart = props => {
    //context
-   const { cartState, methods, addToCart, isFinalCartLoading } =
+   const { cartState, methods, addToCart, isFinalCartLoading, storedCartId } =
       React.useContext(CartContext)
    const { cart } = cartState
    const { config, combinedCartItems, setCurrentPage } = props
    const { t, direction } = useTranslation()
+   const { setIsProcessingPayment, setIsPaymentInitiated, updatePaymentState } =
+      usePayment()
 
    //remove cartItem or cartItems
    const removeCartItems = cartItemIds => {
@@ -62,10 +63,21 @@ export const KioskCart = props => {
       })
    }
 
+   const placeOrderHandler = () => {
+      if (cart.id) {
+         setIsProcessingPayment(true)
+         setIsPaymentInitiated(true)
+         // initializePayment(cartId)
+         updatePaymentState({
+            paymentLifeCycleState: 'INITIALIZE',
+         })
+      }
+   }
+
    if (combinedCartItems === null) {
       return <p>{t('No cart available')}</p>
    }
-   if (isFinalCartLoading) {
+   if (storedCartId && isFinalCartLoading) {
       return (
          <div
             style={{
@@ -218,11 +230,14 @@ export const KioskCart = props => {
                      </Content>
                      <Footer className="hern-kiosk__cart-page-proceed-to-checkout">
                         {/* <CartPageFooter cart={cart} methods={methods} /> */}
-                        <PayButton
+                        {/* <PayButton
                            cartId={cart?.id}
                            className="hern-kiosk__kiosk-button hern-kiosk__cart-place-order-btn"
+                        > */}
+                        <KioskButton
+                           customClass="hern-kiosk__cart-place-order-btn"
+                           onClick={placeOrderHandler}
                         >
-                           {/* <KioskButton customClass="hern-kiosk__cart-place-order-btn"> */}
                            <span className="hern-kiosk__cart-place-order-btn-total">
                               {formatCurrency(
                                  cart?.billing?.totalPrice?.value || 0
@@ -246,9 +261,8 @@ export const KioskCart = props => {
                                  }
                               />
                            )}
-
-                           {/* </KioskButton> */}
-                        </PayButton>
+                        </KioskButton>
+                        {/* </PayButton> */}
                      </Footer>
                   </Layout>
                </Footer>
