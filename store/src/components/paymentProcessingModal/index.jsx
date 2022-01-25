@@ -40,9 +40,9 @@ const PaymentProcessingModal = ({
          // initializePrinting()
          closeModalHandler()
       } else {
-         if (router.pathname !== `/placing-order?id=${cartPayment?.cartId}`) {
+         if (router.pathname !== `/account/orders`) {
             closeModalHandler()
-            router.push(`/placing-order?id=${cartPayment?.cartId}`)
+            router.push(`/account/orders`)
          }
       }
    }
@@ -202,7 +202,7 @@ const PaymentProcessingModal = ({
                   key="console"
                   onClick={closeModalHandler}
                >
-                  Try again
+                  Try other payment method
                </Button>,
             ]
          } else if (cartPayment?.paymentStatus === 'CANCELLED') {
