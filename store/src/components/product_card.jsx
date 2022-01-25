@@ -229,8 +229,12 @@ export const ProductCard = props => {
                      </div>
                   )}
                   {showProductDescription && (
-                     <div className="hern-product-card__description">
-                        {data.description}
+                     <div
+                        className="hern-product-card__description"
+                        title={data?.description}
+                     >
+                        {data?.description.slice(0, 77)}
+                        {data?.description.length > 77 && '...'}
                      </div>
                   )}
                   <div className="hern-product-card-custom-area">
