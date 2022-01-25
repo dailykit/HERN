@@ -7,7 +7,6 @@ import { useToasts } from 'react-toast-notifications'
 import { Button } from '../button'
 import * as QUERIES from '../../graphql'
 import { usePayment } from '../../lib'
-import { useCart } from '../../context'
 import { isKiosk, useTerminalPay } from '../../utils'
 
 function PayButton({
@@ -18,8 +17,6 @@ function PayButton({
    ...props
 }) {
    const isKioskMode = isKiosk()
-   const { cartState } = useCart()
-   const { kioskPaymentOption } = cartState
    const {
       profileInfo,
       paymentInfo,
@@ -65,7 +62,6 @@ function PayButton({
          if (response && response === 'BUSY')
             return addToast('Terminal is busy', { appearance: 'error' })
          if (cartId) {
-            setIsProcessingPayment(true)
             initializePayment(cartId)
             updatePaymentState({
                paymentLifeCycleState: 'INCREMENT_PAYMENT_RETRY_ATTEMPT',
@@ -91,12 +87,18 @@ function PayButton({
             })
          }
       } else {
-         if (!isEmpty(paymentInfo) && cartId && cartValidity.status) {
-            setIsProcessingPayment(true)
-            setIsPaymentInitiated(true)
-            updatePaymentState({
-               paymentLifeCycleState: 'INCREMENT_PAYMENT_RETRY_ATTEMPT',
-            })
+         if (
+            !isEmpty(paymentInfo) &&
+            cartId &&
+            !isEmpty(cartValidity) &&
+            cartValidity.status
+         ) {
+            initializePayment(cartId)
+            // setIsProcessingPayment(true)
+            // setIsPaymentInitiated(true)
+            // updatePaymentState({
+            //    paymentLifeCycleState: 'INCREMENT_PAYMENT_RETRY_ATTEMPT',
+            // })
 
             updateCart({
                variables: {
@@ -125,8 +127,8 @@ function PayButton({
 
    useEffect(() => {
       if (!loading && !isEmpty(cart)) {
+         setCartValidity(cart?.isCartValid)
          if (isEmpty(paymentInfo.selectedAvailablePaymentOption)) {
-            setCartValidity(cart?.isCartValid)
             setPaymentInfo({
                selectedAvailablePaymentOption: {
                   ...paymentInfo.selectedAvailablePaymentOption,
@@ -144,7 +146,7 @@ function PayButton({
          ) : (
             <Button
                onClick={onPayClickHandler}
-               disabled={!cartValidity.status}
+               disabled={!cartValidity?.status}
                {...props}
             >
                {children}

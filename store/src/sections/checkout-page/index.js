@@ -21,7 +21,7 @@ import {
    PaymentProvider,
    PaymentSection,
 } from '../../sections/checkout'
-import { useUser } from '../../context'
+import { useUser, useCart } from '../../context'
 import * as QUERIES from '../../graphql'
 import { isEmpty } from 'lodash'
 import { EmptyCart } from '../../assets/icons'
@@ -42,6 +42,7 @@ export const Checkout = props => {
       updatePaymentState,
       setIsPaymentInitiated,
    } = usePayment()
+   const { cartState } = useCart()
    const { addToast } = useToasts()
    const authTabRef = React.useRef()
    const { configOf } = useConfig()
@@ -54,12 +55,9 @@ export const Checkout = props => {
       error,
       data: { cart = { paymentStatus: '', transactionRemark: {} } } = {},
    } = useSubscription(QUERIES.CART_SUBSCRIPTION, {
-      skip:
-         !isClient ||
-         !new URLSearchParams(location.search).get('id') ||
-         id === 'undefined',
+      skip: isEmpty(cartState) || !cartState?.cart?.id,
       variables: {
-         id: isClient ? new URLSearchParams(location.search).get('id') : '',
+         id: cartState?.cart?.id,
       },
    })
 
@@ -258,13 +256,9 @@ export const Checkout = props => {
                      <SectionTitle theme={theme}>Profile Details</SectionTitle>
                   </header>
                   <ProfileSection />
-                  <PaymentOptionsRenderer
-                     cartId={
-                        isClient
-                           ? new URLSearchParams(location.search).get('id')
-                           : ''
-                     }
-                  />
+                  {!isEmpty(cartState) && (
+                     <PaymentOptionsRenderer cartId={cartState?.cart?.id} />
+                  )}
                </Form>
                {cart?.products?.length > 0 && (
                   <CartDetails>
