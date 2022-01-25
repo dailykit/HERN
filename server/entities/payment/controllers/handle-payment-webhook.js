@@ -35,7 +35,8 @@ export const handlePaymentWebhook = async (req, res) => {
             TXN_FAILURE: 'FAILED'
          }
          return res.redirect(
-            `http://localhost:4000/checkout?id=${result.data.cartId}&payment=${
+            301,
+            `/checkout?id=${result.data.cartId}&payment=${
                paymentStatus[result.data.paymentStatus]
             }`
          )
