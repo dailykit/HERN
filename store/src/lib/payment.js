@@ -120,28 +120,9 @@ export const PaymentProvider = ({ children }) => {
             isResultShown: {
                _eq: false,
             },
-            _or: [
-               {
-                  ...(cartId && {
-                     cartId: {
-                        _eq: cartId,
-                     },
-                  }),
-               },
-               {
-                  ...(isAuthenticated && {
-                     cart: {
-                        brandId: {
-                           _eq: brand?.id,
-                        },
-
-                        customerKeycloakId: {
-                           _eq: user?.keycloakId,
-                        },
-                     },
-                  }),
-               },
-            ],
+            cartId: {
+               _eq: cartId,
+            },
          },
       },
    })
@@ -244,22 +225,21 @@ export const PaymentProvider = ({ children }) => {
          })
       }
    }
-   const onPaymentModalClose = async (isFailed = false) => {
+   const onPaymentModalClose = async () => {
       await updateCartPayment({
          variables: {
             id: cartPayment?.id,
             _set: {
-               ...(isFailed && { paymentStatus: 'FAILED' }),
+               ...(!['FAILED', 'CANCELLED'].includes(
+                  cartPayment?.paymentStatus
+               ) && {
+                  paymentStatus: 'FAILED',
+               }),
                isResultShown: true,
             },
          },
       })
-      setIsProcessingPayment(false)
-      setIsPaymentInitiated(false)
-   }
-   const normalModalClose = () => {
-      setIsProcessingPayment(false)
-      setIsPaymentInitiated(false)
+      resetPaymentProviderStates()
    }
 
    const eventHandler = async response => {
@@ -462,7 +442,6 @@ export const PaymentProvider = ({ children }) => {
          !_isEmpty(cartState) &&
          cartState?.cart?.posistOrderStatus === 'CREATED'
       ) {
-         // alert(`initializing printing with cartId: ${cartState?.cart?.id}`)
          console.log(
             `initializing printing with cartId: ${cartState?.cart?.id}`
          )
@@ -589,10 +568,8 @@ export const PaymentProvider = ({ children }) => {
                isOpen={isProcessingPayment}
                cartPayment={cartPayment}
                cartId={cartState?.cart?.id}
-               closeModal={async isFailed =>
-                  await onPaymentModalClose(isFailed)
-               }
-               normalModalClose={normalModalClose}
+               closeModal={onPaymentModalClose}
+               normalModalClose={resetPaymentProviderStates}
                cancelPayment={onCancelledHandler}
                isTestingByPass={BY_PASS_TERMINAL_PAYMENT === 'true'}
                byPassTerminalPayment={byPassTerminalPayment}
