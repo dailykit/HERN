@@ -5,7 +5,7 @@ export const CounterButton = props => {
    const { incrementClick, decrementClick, count } = props
    return (
       <div className="hern-counter-button">
-         {count == 1 ? (
+         {count == 1 && props?.showDeleteButton ? (
             <DeleteIcon
                stroke={'red'}
                onClick={decrementClick}
@@ -22,7 +22,7 @@ export const CounterButton = props => {
             <button
                className="hern-counter-minus-button"
                onClick={decrementClick}
-               disabled={count === 0}
+               disabled={count === 1}
                style={{ padding: '2px' }}
             >
                -

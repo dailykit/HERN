@@ -112,6 +112,7 @@ export const CartDetails = () => {
                      decrementClick={() =>
                         removeCartItems([data.ids[data.ids.length - 1]])
                      }
+                     showDeleteButton
                   />
                   {/* price */}
                   {data.childs[0].price !== 0 && (
