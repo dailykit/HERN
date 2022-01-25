@@ -221,11 +221,16 @@ export const ProductCard = props => {
                               </span>
                            </div>
                         )}
-                        {showProductAdditionalText && (
+                        {showProductAdditionalText && data?.additionalText && (
                            <div className="hern-product-card__additional-text">
                               {data.additionalText}
                            </div>
                         )}
+                     </div>
+                  )}
+                  {showProductDescription && (
+                     <div className="hern-product-card__description">
+                        {data.description}
                      </div>
                   )}
                   <div className="hern-product-card-custom-area">
@@ -236,11 +241,6 @@ export const ProductCard = props => {
                         <div className="hern-product-card-custom-text"></div>
                      )}
                   </div>
-                  {showProductDescription && (
-                     <div className="hern-product-card__description">
-                        {data.description}
-                     </div>
-                  )}
                </div>
             </div>
          )}
