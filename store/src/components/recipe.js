@@ -9,9 +9,12 @@ import { useConfig } from '../lib'
 import classNames from 'classnames'
 import { HelperBar } from './helper_bar'
 import { Nutritions } from './nutrition'
+import { getRoute } from '../utils'
+import { useRouter } from 'next/router'
 
 export const Recipe = ({ productOption, config }) => {
    const { configOf } = useConfig()
+   const router = useRouter()
    const recipe = productOption?.simpleRecipeYield?.simpleRecipe
    const theme = configOf('theme-color', 'Visual')
    const renderIngredientName = (slipName, sachet) => {
@@ -251,7 +254,7 @@ export const Recipe = ({ productOption, config }) => {
             </main>
             <button
                className="hern-recipe__go-back-btn"
-               onClick={() => isClient && window.history.go(-1)}
+               onClick={() => router.push(getRoute('/order'))}
             >
                Go back to Main menu
             </button>
