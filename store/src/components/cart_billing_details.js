@@ -6,10 +6,10 @@ import { formatCurrency } from '../utils'
 export const CartBillingDetails = ({ billing, tip }) => {
    const { user } = useUser()
    return (
-      <div className="hern-cart-bill-details">
-         <span>BILL DETAILS</span>
+      <div className="hern-cart-billing-details">
+         <h3>Bill Details</h3>
          {billing && (
-            <ul className="hern-cart-bill-details-list">
+            <ul className="hern-cart-billing-details-list">
                <li>
                   <span>{billing.itemTotal.label}</span>
                   <span>{formatCurrency(billing.itemTotal.value || 0)}</span>
@@ -46,7 +46,7 @@ export const CartBillingDetails = ({ billing, tip }) => {
                      <span>{formatCurrency(tip)}</span>
                   </li>
                )}
-               <li style={{ fontWeight: 'bold' }}>
+               <li className="hern-cart-billing-details-total-price">
                   <span>{billing.totalPrice.label}</span>
                   <span>{formatCurrency(billing.totalPrice.value || 0)}</span>
                </li>
