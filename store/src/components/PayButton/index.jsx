@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import isEmpty from 'lodash/isEmpty'
 import { Skeleton } from 'antd'
@@ -14,12 +14,12 @@ function PayButton({
    children,
    selectedAvailablePaymentOptionId = null,
    cartId = null,
+   fullWidthSkeleton = true,
    ...props
 }) {
    const isKioskMode = isKiosk()
    const { cartState } = useCart()
    const { kioskPaymentOption } = cartState
-   console.log('cartState', cartState)
    const {
       profileInfo,
       paymentInfo,
@@ -31,6 +31,7 @@ function PayButton({
    } = usePayment()
    const { checkTerminalStatus } = useTerminalPay()
    const { addToast } = useToasts()
+   const [cartValidity, setCartValidity] = useState(null)
 
    // query for fetching available payment options
    const {
@@ -51,19 +52,6 @@ function PayButton({
          addToast(error.message, { appearance: 'error' })
       },
    })
-
-   const isValid = () => {
-      if (isKioskMode) {
-         return true
-      }
-      return Boolean(
-         profileInfo.firstName &&
-            profileInfo.lastName &&
-            profileInfo.phoneNumber &&
-            paymentInfo &&
-            paymentInfo.selectedAvailablePaymentOption?.id
-      )
-   }
 
    const isStripe =
       paymentInfo?.selectedAvailablePaymentOption?.supportedPaymentOption
@@ -103,7 +91,7 @@ function PayButton({
             })
          }
       } else {
-         if (!isEmpty(paymentInfo) && cartId && isValid()) {
+         if (!isEmpty(paymentInfo) && cartId && cartValidity.status) {
             setIsProcessingPayment(true)
             setIsPaymentInitiated(true)
             updatePaymentState({
@@ -138,6 +126,7 @@ function PayButton({
    useEffect(() => {
       if (!loading && !isEmpty(cart)) {
          if (isEmpty(paymentInfo.selectedAvailablePaymentOption)) {
+            setCartValidity(cart?.isCartValid)
             setPaymentInfo({
                selectedAvailablePaymentOption: {
                   ...paymentInfo.selectedAvailablePaymentOption,
@@ -146,16 +135,16 @@ function PayButton({
             })
          }
       }
-   }, [cart])
+   }, [cart, loading])
 
    return (
       <>
          {loading ? (
-            <Skeleton.Button active size="large" block={true} />
+            <Skeleton.Button active size="large" block={fullWidthSkeleton} />
          ) : (
             <Button
                onClick={onPayClickHandler}
-               disabled={!Boolean(isValid())}
+               disabled={!cartValidity.status}
                {...props}
             >
                {children}

@@ -3,17 +3,17 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { Radio, Space, Skeleton } from 'antd'
 import { isEmpty } from 'lodash'
 import tw, { styled, css } from 'twin.macro'
+import { useToasts } from 'react-toast-notifications'
 
+import { AddCard } from './components'
 import { usePayment, useConfig } from '../../lib'
 import * as Icon from '../../assets/icons'
-import { isClient, formatCurrency, getRoute } from '../../utils'
 import { Button } from '../button'
 import { HelperBar } from '../helper_bar'
 import PayButton from '../PayButton'
 import { useUser } from '../../context'
 import * as QUERIES from '../../graphql'
-import { AddCard } from './components'
-import { useToasts } from 'react-toast-notifications'
+import { isClient, formatCurrency, getRoute } from '../../utils'
 
 export default function PaymentOptionsRenderer({ cartId }) {
    const { setPaymentInfo, paymentInfo } = usePayment()
@@ -31,6 +31,9 @@ export default function PaymentOptionsRenderer({ cartId }) {
       skip: !cartId,
       variables: {
          id: cartId,
+      },
+      onSubscriptionData: data => {
+         console.log('payment option renderer', data)
       },
    })
 
@@ -112,7 +115,9 @@ export default function PaymentOptionsRenderer({ cartId }) {
                               icon={showPaymentIcon(option?.label)}
                               onClick={() => onPaymentMethodChange(option?.id)}
                               paymentInfo={paymentInfo}
-                              balanceToPay={cart?.balanceToPay}
+                              balanceToPay={
+                                 cart?.cartOwnerBilling?.balanceToPay
+                              }
                               cartId={cartId}
                               isLoginRequired={
                                  option?.supportedPaymentOption?.isLoginRequired
@@ -237,8 +242,9 @@ const PaymentOptionCard = ({
                            bg="#38a169"
                            className="payButton"
                            cartId={cartId}
+                           fullWidthSkeleton={false}
                         >
-                           Pay Now ${balanceToPay}
+                           Pay Now {formatCurrency(balanceToPay)}
                         </PayButton>
                      )}
                      {paymentInfo?.selectedAvailablePaymentOption
