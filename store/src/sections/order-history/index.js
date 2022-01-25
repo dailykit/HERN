@@ -4,7 +4,12 @@ import { useUser } from '../../context'
 import { combineCartItems, formatCurrency } from '../../utils'
 
 import { GET_ORDER_DETAILS } from '../../graphql'
-import { ProfileSidebar, Button, CartBillingDetails } from '../../components'
+import {
+   ProfileSidebar,
+   Button,
+   CartBillingDetails,
+   Tunnel,
+} from '../../components'
 import classNames from 'classnames'
 import moment from 'moment'
 import { Drawer, Select, Empty } from 'antd'
@@ -172,23 +177,20 @@ const OrderCard = ({ cart }) => {
       </div>
    )
 }
-
 const OrderDetailsTunnel = ({ cart, openDetails, setOpenDetails }) => {
    const { address: addressInfo } = cart
    return (
-      <Drawer
+      <Tunnel.Right
          title={`Order #${cart.id}`}
-         placement="right"
-         width={425}
-         onClose={() => setOpenDetails(false)}
          visible={openDetails}
+         onClose={() => setOpenDetails(false)}
       >
          <div className="hern-order-history-card__tunnel-address">
             <span style={{ minWidth: '24px' }}>
                <LocationIcon size={20} />
             </span>
             <span>
-               {addressInfo && (
+               {!_.isEmpty(addressInfo) && (
                   <div>
                      <span>{addressInfo.label}</span>
                      <span>{addressInfo.line1}</span>
@@ -237,7 +239,7 @@ const OrderDetailsTunnel = ({ cart, openDetails, setOpenDetails }) => {
          </div>
          <CartItems products={cart?.cartItems} border={true} title={true} />
          <CartBillingDetails billing={cart?.billingDetails} />
-      </Drawer>
+      </Tunnel.Right>
    )
 }
 const CartItems = ({ products, border = false, title = false }) => {
