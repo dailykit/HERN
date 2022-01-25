@@ -8,7 +8,7 @@ import { useConfig, usePayment } from '../../lib'
 import * as Icon from '../../assets/icons'
 import OrderInfo from '../../sections/OrderInfo'
 import { OnDemandCart } from '../cart'
-import { isClient, formatCurrency, getRoute } from '../../utils'
+import { isClient, formatCurrency, getRoute, useQueryParams } from '../../utils'
 import {
    Loader,
    Button,
@@ -24,9 +24,12 @@ import {
 import { useUser } from '../../context'
 import * as QUERIES from '../../graphql'
 import { isEmpty } from 'lodash'
+import { EmptyCart } from '../../assets/icons'
+import Link from 'next/link'
 
 export const Checkout = props => {
    const router = useRouter()
+   const { id } = useQueryParams()
    const { isAuthenticated, isLoading, user } = useUser()
    const {
       isPaymentLoading,
@@ -51,7 +54,10 @@ export const Checkout = props => {
       error,
       data: { cart = { paymentStatus: '', transactionRemark: {} } } = {},
    } = useSubscription(QUERIES.CART_SUBSCRIPTION, {
-      skip: !isClient || !new URLSearchParams(location.search).get('id'),
+      skip:
+         !isClient ||
+         !new URLSearchParams(location.search).get('id') ||
+         id === 'undefined',
       variables: {
          id: isClient ? new URLSearchParams(location.search).get('id') : '',
       },
@@ -208,6 +214,17 @@ export const Checkout = props => {
                </HelperBar>
             </div>
          </Main>
+      )
+   }
+   if (id === 'undefined') {
+      return (
+         <div className="hern-cart-empty-cart">
+            <EmptyCart />
+            <span>Oops! Your cart is empty </span>
+            <Button className="hern-cart-go-to-menu-btn" onClick={() => {}}>
+               <Link href="/order">GO TO MENU</Link>
+            </Button>
+         </div>
       )
    }
    // if (isAuthenticated && user?.keycloakId !== cart?.customerKeycloakId) {
