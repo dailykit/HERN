@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 import { useConfig } from '../lib'
 import classNames from 'classnames'
 import { isClient, useOnClickOutside } from '../utils'
+import { Drawer } from 'antd'
 
 const portalRoot = isClient ? document.getElementById('portal') : null
 
@@ -82,5 +83,36 @@ const Body = ({ children }) => {
    return <main className="hern-tunnel__body">{children}</main>
 }
 
+const Right = ({ title, children, visible, onClose }) => {
+   return (
+      <Drawer
+         title={title}
+         placement="right"
+         width={425}
+         onClose={onClose}
+         visible={visible}
+         className="hern-tunnel__ant"
+      >
+         {children}
+      </Drawer>
+   )
+}
+const Left = ({ title, children, visible, onClose }) => {
+   return (
+      <Drawer
+         title={title}
+         placement="left"
+         width={425}
+         onClose={onClose}
+         visible={visible}
+         className="hern-tunnel__ant"
+      >
+         {children}
+      </Drawer>
+   )
+}
+
 Tunnel.Header = Header
 Tunnel.Body = Body
+Tunnel.Right = Right
+Tunnel.Left = Left
