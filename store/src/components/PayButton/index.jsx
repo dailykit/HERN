@@ -2,12 +2,13 @@ import React, { useEffect } from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import isEmpty from 'lodash/isEmpty'
 import { Skeleton } from 'antd'
+import { useToasts } from 'react-toast-notifications'
 
 import { Button } from '../button'
 import * as QUERIES from '../../graphql'
 import { usePayment } from '../../lib'
 import { useCart } from '../../context'
-import { isKiosk } from '../../utils'
+import { isKiosk, useTerminalPay } from '../../utils'
 
 function PayButton({
    children,
@@ -28,6 +29,8 @@ function PayButton({
       initializePayment,
       setPaymentInfo,
    } = usePayment()
+   const { checkTerminalStatus } = useTerminalPay()
+   const { addToast } = useToasts()
 
    // query for fetching available payment options
    const {
@@ -66,10 +69,13 @@ function PayButton({
       paymentInfo?.selectedAvailablePaymentOption?.supportedPaymentOption
          ?.supportedPaymentCompany?.label === 'stripe'
 
-   const onPayClickHandler = () => {
+   const onPayClickHandler = async () => {
       console.log('PayButton: onPayClickHandler')
       if (isKioskMode) {
          console.log('inside kiosk condition')
+         const response = await checkTerminalStatus()
+         if (response && response === 'BUSY')
+            return addToast('Terminal is busy', { appearance: 'error' })
          if (cartId) {
             setIsProcessingPayment(true)
             initializePayment(cartId)
