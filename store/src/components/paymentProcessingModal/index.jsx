@@ -3,14 +3,18 @@ import React, { useState, useEffect } from 'react'
 import Confetti from 'react-confetti'
 import { useRouter } from 'next/router'
 import { Result, Spin, Button, Modal } from 'antd'
+import isEmpty from 'lodash/isEmpty'
+
 import { Wrapper } from './styles'
 import { Button as StyledButton } from '../button'
+import PayButton from '../PayButton'
+import { ArrowLeftIconBG } from '../../assets/icons'
 import { useWindowSize, isKiosk, formatTerminalStatus } from '../../utils'
-
 const PaymentProcessingModal = ({
    isOpen,
    cartPayment,
-   codPaymentOptionId,
+   cartId,
+   PaymentOptions,
    closeModal = () => null,
    normalModalClose = () => null,
    cancelPayment = () => null,
@@ -260,19 +264,56 @@ const PaymentProcessingModal = ({
             backgroundColor: isKioskMode ? 'rgba(0, 64, 106, 0.9)' : '#fff',
          }}
       >
-         <Wrapper>
-            <Result
-               icon={ShowPaymentStatusInfo().icon}
-               title={ShowPaymentStatusInfo().title}
-               subTitle={ShowPaymentStatusInfo().subtitle}
-               extra={ShowPaymentStatusInfo().extra}
-            />
+         {!isEmpty(cartPayment) ? (
+            <Wrapper>
+               <Result
+                  icon={ShowPaymentStatusInfo().icon}
+                  title={ShowPaymentStatusInfo().title}
+                  subTitle={ShowPaymentStatusInfo().subtitle}
+                  extra={ShowPaymentStatusInfo().extra}
+               />
 
-            {isCelebrating === 'success' && <Confetti />}
-         </Wrapper>
-         {/* <Button type="link" tw="fixed top-4 left-4" onClick={normalModalClose}>
-            Close
-         </Button> */}
+               {isCelebrating === 'success' && <Confetti />}
+            </Wrapper>
+         ) : (
+            <Wrapper>
+               <div tw="flex flex-col">
+                  <h1 tw="font-extrabold color[rgba(0, 64, 106, 0.9)] text-4xl text-center margin[2rem 0]">
+                     Choose a payment method
+                  </h1>
+                  {PaymentOptions.map(option => {
+                     return (
+                        <>
+                           <PayButton
+                              cartId={cartId}
+                              className="hern-kiosk__kiosk-button hern-kiosk__cart-place-order-btn"
+                              key={option.id}
+                              selectedAvailablePaymentOptionId={option.id}
+                           >
+                              {LABEL[option.label]}
+                           </PayButton>
+
+                           <p tw="last:(hidden) font-extrabold margin[2rem 0] color[rgba(0, 64, 106, 0.9)] text-2xl text-center">
+                              OR
+                           </p>
+                        </>
+                     )
+                  })}
+               </div>
+            </Wrapper>
+         )}
+         {isEmpty(cartPayment) && (
+            <Button
+               type="link"
+               tw="fixed top-8 left-4"
+               onClick={normalModalClose}
+            >
+               <div tw="flex items-center">
+                  <ArrowLeftIconBG bgColor="#F7B502" arrowColor="#fff" />
+                  <span tw="ml-4 font-bold text-white text-2xl">Back</span>
+               </div>
+            </Button>
+         )}
          {isKioskMode &&
             isTestingByPass &&
             cartPayment?.paymentStatus === 'SWIPE_OR_INSERT' && (
@@ -297,30 +338,29 @@ const PaymentProcessingModal = ({
                </div>
             )}
 
-         {isKioskMode &&
-            ['PENDING', 'PROCESSING', 'SWIPE_OR_INSERT', 'FAILED'].includes(
-               cartPayment?.paymentStatus
-            ) && (
-               <div tw="fixed bottom-48 width[780px] margin-left[-24px]">
-                  <p tw="font-extrabold margin-bottom[36px] text-white text-4xl text-center">
-                     OR
-                  </p>
-                  <StyledButton
-                     onClick={() =>
-                        cancelTerminalPayment({
-                           codPaymentOptionId,
-                           cartPayment,
-                        })
-                     }
-                     tw="w-full justify-center"
-                     className="hern-kiosk__kiosk-button hern-kiosk__cart-place-order-btn"
-                  >
-                     PAY AT COUNTER
-                  </StyledButton>
-               </div>
-            )}
+         {/* {isKioskMode && !['SUCCEEDED'].includes(cartPayment?.paymentStatus) && (
+            <div tw="fixed bottom-48 width[780px] margin-left[-24px]">
+               <Button
+                  type="link"
+                  onClick={() =>
+                     cancelTerminalPayment({
+                        codPaymentOptionId,
+                        cartPayment,
+                     })
+                  }
+                  tw="w-full justify-center"
+               >
+                  Try Again
+               </Button>
+            </div>
+         )} */}
       </Modal>
    )
 }
 
 export default PaymentProcessingModal
+
+const LABEL = {
+   COD: 'PAY AT COUNTER ',
+   TERMINAL: 'PAY VIA CARD',
+}

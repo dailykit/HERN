@@ -12,7 +12,7 @@ import {
    Radio,
    Spin,
 } from 'antd'
-import { useQueryParamState } from '../../utils'
+import { useQueryParamState, formatCurrency } from '../../utils'
 import { CartContext, useTranslation } from '../../context'
 import { KioskProduct } from './component'
 import { PRODUCTS_BY_CATEGORY, PRODUCTS } from '../../graphql'
@@ -219,7 +219,7 @@ const KioskMenu = props => {
    const { config, kioskMenus, setCurrentPage } = props
    const { categoryId, changeCategory } = props
 
-   const { cartState } = React.useContext(CartContext)
+   const { cartState, showCartIconToolTip } = React.useContext(CartContext)
    const { cart } = cartState
 
    const menuRef = React.useRef()
@@ -323,13 +323,14 @@ const KioskMenu = props => {
                            </Col>
                         </Row>
                      </Col>
-                     <Col span={3} className="hern-kiosk__menu-header-col-2">
-                        <CartIcon
-                           onClick={() => {
-                              setCurrentPage('cartPage')
-                           }}
-                           size={43}
-                        />
+                     <Col
+                        span={3}
+                        className="hern-kiosk__menu-header-col-2"
+                        onClick={() => {
+                           setCurrentPage('cartPage')
+                        }}
+                     >
+                        <CartIcon size={43} />
                         <div
                            style={{
                               position: 'absolute',
@@ -344,6 +345,41 @@ const KioskMenu = props => {
                               }
                            />
                         </div>
+                        {cart?.cartItems_aggregate?.aggregate?.count > 0 &&
+                           showCartIconToolTip && (
+                              <div className="hern-kiosk__cart-tool-tip">
+                                 <span
+                                    className="hern-kiosk__cart-tool-tip-text"
+                                    style={{
+                                       background:
+                                          config.kioskSettings.theme
+                                             .secondaryColorLight.value,
+                                       color: config.kioskSettings.theme
+                                          .primaryColor.value,
+                                    }}
+                                 >
+                                    {
+                                       cart?.cartItems_aggregate?.aggregate
+                                          ?.count
+                                    }{' '}
+                                    {cart?.cartItems_aggregate?.aggregate
+                                       ?.count === 1
+                                       ? t('Item')
+                                       : t('Items')}{' '}
+                                    {formatCurrency(
+                                       cart?.billing?.totalPrice?.value
+                                    )}
+                                 </span>
+                                 <div
+                                    className="hern-kiosk__cart-tip"
+                                    style={{
+                                       background:
+                                          config.kioskSettings.theme
+                                             .secondaryColorLight.value,
+                                    }}
+                                 ></div>
+                              </div>
+                           )}
                      </Col>
                   </Row>
                </Header>
