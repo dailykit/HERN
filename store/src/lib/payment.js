@@ -260,6 +260,7 @@ export const PaymentProvider = ({ children }) => {
    const initializePayment = requiredCartId => {
       setCartId(requiredCartId)
       setIsPaymentInitiated(true)
+      setIsProcessingPayment(true)
       dispatch({
          type: 'UPDATE_INITIAL_STATE',
          payload: {
@@ -431,8 +432,15 @@ export const PaymentProvider = ({ children }) => {
 
    // initiating payment flow (this is required after coming back from paytm payment page)
    useEffect(() => {
-      if (!_isEmpty(router.query) && _has(router.query, 'payment')) {
+      if (
+         !_isEmpty(router.query) &&
+         _has(router.query, 'payment') &&
+         _has(router.query, 'id') &&
+         router.query.id
+      ) {
          setIsPaymentInitiated(true)
+         setIsProcessingPayment(true)
+         setCartId(router.query.id)
       }
    }, [router.query])
 

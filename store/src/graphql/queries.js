@@ -2074,7 +2074,8 @@ export const GET_PAYMENT_OPTIONS = gql`
    subscription cart($id: Int!) {
       cart(id: $id) {
          id
-         balanceToPay
+         cartOwnerBilling
+         isCartValid
          availablePaymentOptionToCart(
             where: { isActive: { _eq: true } }
             order_by: { position: desc_nulls_last }
