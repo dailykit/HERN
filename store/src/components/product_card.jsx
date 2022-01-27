@@ -85,6 +85,7 @@ export const ProductCard = props => {
          }
       }
    }
+
    return (
       <>
          {showProductCard && (
