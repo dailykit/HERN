@@ -7,9 +7,14 @@ import { Banner, InlineLoader, Tooltip } from '../../../../../shared/components'
 import { logger } from '../../../../../shared/utils'
 import { LOCATIONS } from '../../../graphql'
 import { StyledHeader, StyledWrapper } from '../styled'
+import tableOptions from '../../../tableOption'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 
 export const Locations = () => {
    const [locations, setLocations] = React.useState()
+   const tableRef = React.useRef()
+
+   // subscriptions
    const {
       error,
       loading: listLoading,
@@ -21,11 +26,47 @@ export const Locations = () => {
       },
    })
 
+   const columns = React.useMemo(() => [
+      {
+         title: 'Location Id',
+         field: 'id',
+         headerFilter: true,
+      },
+      {
+         title: 'Location Name',
+         field: 'label',
+         headerFilter: true,
+      },
+      {
+         title: 'Zipcode',
+         field: 'zipcode',
+         headerFilter: true,
+      },
+      {
+         title: 'City',
+         field: 'city',
+      },
+      {
+         title: 'State',
+         field: 'state',
+      },
+      {
+         title: 'Country',
+         field: 'country',
+      },
+      {
+         title: 'Linked Brands',
+         field: 'brand_locations_aggregate.aggregate.count',
+      },
+      {
+         title: 'Action',
+      },
+   ])
    if (error) {
       toast.error('Something went wrong!')
       logger(error)
    }
-   if (listLoading) return <InlineLoader />
+   if (!locations) return <InlineLoader />
    return (
       <StyledWrapper>
          <Banner id="brands-app-Locations-listing-top" />
@@ -42,6 +83,16 @@ export const Locations = () => {
                Create Brand
             </ComboButton>
          </StyledHeader>
+
+         <ReactTabulator
+            ref={tableRef}
+            columns={columns}
+            data={locations || []}
+            options={{
+               ...tableOptions,
+               placeholder: 'No Locations Available Yet !',
+            }}
+         />
       </StyledWrapper>
    )
 }

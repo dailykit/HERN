@@ -222,6 +222,11 @@ export const LOCATIONS = {
             country
             state
             zipcode
+            brand_locations_aggregate {
+               aggregate {
+                  count
+               }
+            }
          }
       }
    `,
