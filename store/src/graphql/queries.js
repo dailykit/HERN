@@ -1774,7 +1774,7 @@ export const BRAND_LOCATIONS = gql`
    }
 `
 export const PREORDER_DELIVERY_BRAND_RECURRENCES = gql`
-   query BRAND_ONDEMAND_DELIVERY_RECURRENCES(
+   query PREORDER_DELIVERY_BRAND_RECURRENCES(
       $where: fulfilment_brand_recurrence_bool_exp!
    ) {
       brandRecurrences(where: $where) {
