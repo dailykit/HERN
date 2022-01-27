@@ -20,11 +20,12 @@ export const InputsNotes = styled.p`
 export const InputHeading = styled.p`
    font-family: roboto;
    font-style: normal;
-   font-weight: 600;
+   font-weight: 500;
    font-size: 14px;
    line-height: 20px;
    cursor: default;
    color: #919699;
+   letter-spacing: 0.3px;
 `
 export const StyledGeoBoundary = styled.div`
    display: flex;
@@ -69,13 +70,11 @@ export const TimeButton = styled.div`
    letter-spacing: 0.5px;
    line-height: 1;
    background: ${props => (props.value === true ? '#F3F3F3' : '#ffffff')};
-   span {
-      font-family: Roboto;
-      font-style: normal;
-      font-size: 11px;
-      line-height: 18px;
-      text-align: center;
-      text-transform: uppercase;
-      color: ${props => (props.value === true ? '#367BF5' : '#919699')};
-   }
+   font-family: Roboto;
+   font-style: normal;
+   font-size: 11px;
+   line-height: 18px;
+   text-align: center;
+   text-transform: uppercase;
+   color: ${props => (props.value === true ? '#367BF5' : '#919699')};
 `

@@ -79,6 +79,7 @@ export const Product = ({ config }) => {
                   showModifier={true}
                   customProductDetails={true}
                   modifierWithoutPopup={true}
+                  showProductCard={false}
                />
             </div>
          </div>

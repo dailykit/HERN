@@ -200,12 +200,12 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
             'beforeend',
             `<style data-stylesheet="hern-select-menu__menu">
             .hern-select-menu__menu__product__link>a:hover {
-                  color: ${theme?.accent || 'teal'}!important;
+                  color: var(--hern-accent)!important;
             }
             .hern-select-menu__menu__product__btn:hover{
-               background: ${theme?.accent || 'teal'};
+               background: var(--hern-accent);
                color: white;
-               border-color: ${theme?.accent || 'teal'};
+               border-color: var(--hern-accent);
             }
             </style>`
          )

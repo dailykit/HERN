@@ -213,8 +213,7 @@
    color: rgba(55, 65, 81, 1);
    cursor: pointer;
    &:hover {
-      /* color: ${theme?.accent || 'teal'}; */
-      color: teal;
+      color: var(--hern-accent);
    }
 }
 .hern-our-menu__product-tag-list {

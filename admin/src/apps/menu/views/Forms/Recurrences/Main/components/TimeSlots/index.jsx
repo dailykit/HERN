@@ -7,12 +7,11 @@ import { DeliveryRanges } from '../'
 import { logger } from '../../../../../../../../shared/utils'
 import { RecurrenceContext } from '../../../../../../context/recurrence'
 import { DELETE_TIME_SLOT, UPDATE_TIME_SLOT } from '../../../../../../graphql'
-import { SectionTabDay, SectionTabDelete, StyledInsideSectionTab, StyledSectionBottom, StyledSectionTop, StyledTabListHeading } from '../../styled'
 import { Switch } from 'antd'
 import { DeleteIcon, PlusIcon } from '../../../../../../../../shared/assets/icons'
 import { Tabs, Button } from 'antd';
-import { parseString } from 'rrule/dist/esm/src/parsestring'
 import { TabsAction, TabsHeading, TimeSlotDetails, TimeSlotHeading } from './styled'
+import moment from 'moment'
 
 const TimeSlots = ({ recurrenceId, timeSlots, openTunnel }) => {
    const { recurrenceDispatch } = React.useContext(RecurrenceContext)
@@ -57,13 +56,44 @@ const TimeSlots = ({ recurrenceId, timeSlots, openTunnel }) => {
       })
       openTunnel(2)
    }
-   // abt design declaration 
+   // ant design declaration 
    const { TabPane } = Tabs;
 
    function callback(key) {
       console.log("ant", key);
    }
+   // time format
 
+   const TimeType = ({ timeSlot }) => {
+      if (moment(timeSlot.to, "HH:mm:ss").isBefore(moment("09:00:00", "HH:mm:ss")) &&
+         moment(timeSlot.from, "HH:mm:ss").isSameOrAfter(moment("04:00:00", "HH:mm:ss"))) {
+         return "Early Morning"
+      }
+      else if (moment(timeSlot.from, "HH:mm:ss").isSameOrAfter(moment("09:00:00", "HH:mm:ss")) &&
+         moment(timeSlot.to, "HH:mm:ss").isSameOrBefore(moment("12:00:00", "HH:mm:ss"))) {
+         return "Morning"
+      }
+      else if (moment(timeSlot.from, "HH:mm:ss").isSameOrAfter(moment("12:00:01", "HH:mm:ss")) &&
+         moment(timeSlot.to, "HH:mm:ss").isSameOrBefore(moment("16:00:00", "HH:mm:ss"))) {
+         return "Noon"
+      }
+      else if (moment(timeSlot.from, "HH:mm:ss").isSameOrAfter(moment("16:00:01", "HH:mm:ss")) &&
+         moment(timeSlot.to, "HH:mm:ss").isSameOrBefore(moment("19:00:00", "HH:mm:ss"))) {
+         return "Evening"
+      }
+      else if (moment(timeSlot.from, "HH:mm:ss").isSameOrAfter(moment("19:00:01", "HH:mm:ss")) &&
+         moment(timeSlot.to, "HH:mm:ss").isSameOrBefore(moment("22:00:00", "HH:mm:ss"))) {
+         return "Night"
+      }
+      else if (moment(timeSlot.from, "HH:mm:ss").isSameOrAfter(moment("22:00:01", "HH:mm:ss")) &&
+         moment(timeSlot.to, "HH:mm:ss").isSameOrBefore(moment("04:00:00", "HH:mm:ss"))) {
+         return "Late Night"
+      }
+      else {
+         return "Specific Time Slot"
+      }
+   }
+   // console.log("timeslot", timeSlots);
    return (
       <>
          <TimeSlotHeading>
@@ -75,13 +105,17 @@ const TimeSlots = ({ recurrenceId, timeSlots, openTunnel }) => {
             onEdit={addTimeSlot}
          >
             {timeSlots.map(timeSlot => (
-               <TabPane tab={` \n ( ${timeSlot.from} - ${timeSlot.to} )`} key={timeSlot.id} closable={false}>
+               <TabPane tab={`${TimeType({ timeSlot })} \n(${timeSlot.from} - ${timeSlot.to})`} key={timeSlot.id} closable={false}>
                   <TimeSlotDetails>
-                     <TabsHeading>( {timeSlot.from} - {timeSlot.to} )</TabsHeading>
+                     <TabsHeading>
+                        <TimeType timeSlot={timeSlot} />
+                        <spam> ( {timeSlot.from} - {timeSlot.to} )</spam>
+                     </TabsHeading>
                      <TabsAction>
                         <Switch
                            name={`timeSlot-${timeSlot.id}`}
                            value={timeSlot.isActive}
+                           checked={timeSlot.isActive}
                            onChange={() =>
                               updateTimeSlot({
                                  variables: {
@@ -94,7 +128,6 @@ const TimeSlots = ({ recurrenceId, timeSlots, openTunnel }) => {
                            }
                            checkedChildren="Published"
                            unCheckedChildren="UnPublished"
-                           defaultChecked
                            title="Press to change publish type"
 
                         />
@@ -121,101 +154,6 @@ const TimeSlots = ({ recurrenceId, timeSlots, openTunnel }) => {
             ))}
 
          </Tabs>
-         {/* {timeSlots?.length > 0 ? (
-            <>
-               <SectionTabs>
-                  <SectionTabList>
-                     <StyledTabListHeading>
-                        <div>Time Slot</div>
-                        <ButtonGroup>
-                           <IconButton
-                              type="ghost"
-                              size="md"
-                              title="Click to add a new time slot"
-                              onClick={addTimeSlot}
-                              style={{ right: '0.5em' }}
-                           >
-                              <PlusIcon color="#919699" />
-                           </IconButton>
-                        </ButtonGroup>
-                     </StyledTabListHeading>
-                     {timeSlots.map(timeSlot => (
-                        <SectionTab key={timeSlot.id}>
-                           <StyledInsideSectionTab>
-                              <StyledSectionTop>
-                                 <SectionTabDay>
-                                    <div>
-                                       {timeSlot.from} - {timeSlot.to}
-                                    </div>
-                                    {type.includes('PICKUP') && (
-                                       <div >
-                                          {type.includes('ONDEMAND')
-                                             ? timeSlot.pickUpPrepTime
-                                             : timeSlot.pickUpLeadTime}{' '}
-                                          mins.
-                                       </div>
-                                    )}
-                                 </SectionTabDay>
-                                 <IconButton
-                                    type="ghost"
-                                    style={SectionTabDelete}
-                                    title="Delete Time Slot"
-                                    onClick={() => deleteHandler(timeSlot.id)}
-
-                                 >
-                                    <DeleteIcon color=" #FF5A52" />
-                                 </IconButton>
-                              </StyledSectionTop>
-                              <StyledSectionBottom style={{ justifyContent: " flex-end" }}>
-                                 <Switch
-                                    name={`timeSlot-${timeSlot.id}`}
-                                    value={timeSlot.isActive}
-                                    onChange={() =>
-                                       updateTimeSlot({
-                                          variables: {
-                                             id: timeSlot.id,
-                                             set: {
-                                                isActive: !timeSlot.isActive,
-                                             },
-                                          },
-                                       })
-                                    }
-                                    checkedChildren="Published"
-                                    unCheckedChildren="UnPublished"
-                                    defaultChecked
-                                    title="Press to change publish type"
-
-                                 />
-                              </StyledSectionBottom>
-                           </StyledInsideSectionTab>
-                        </SectionTab>
-                     ))}
-                  </SectionTabList>
-                  <SectionTabPanels>
-                     {timeSlots.map(timeSlot => (
-                        <div>
-                           {type.includes('DELIVERY') && (
-                              <SectionTabPanel key={timeSlot.id} style={{ background: "white" }}>
-                                 <DeliveryRanges
-                                    timeSlotId={timeSlot.id}
-                                    mileRanges={timeSlot.mileRanges}
-                                    openTunnel={openTunnel}
-                                 />
-                              </SectionTabPanel>
-                           )}
-
-                        </div>
-                     ))}
-                  </SectionTabPanels>
-               </SectionTabs>
-            </>
-         ) : (
-            <ButtonTile
-               type="secondary"
-               text="Add Time Slot"
-               onClick={addTimeSlot}
-            />
-         )} */}
       </>
    )
 }
