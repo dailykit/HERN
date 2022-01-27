@@ -170,7 +170,9 @@ const Product = () => {
       })
    }
    const updatePosist_baseItemId = async () => {
-      const { isValid, errors } = validator.posist_baseItemId(posist_baseItemId.value)
+      const { isValid, errors } = validator.posist_baseItemId(
+         posist_baseItemId.value
+      )
       if (isValid) {
          const { data } = await updateProduct({
             variables: {
@@ -475,19 +477,27 @@ const Product = () => {
                                  value={posist_baseItemId.value}
                                  placeholder="Enter Product posist Base ItemId"
                                  onChange={e =>
-                                    setPosist_baseItemId({ ...posist_baseItemId, value: e.target.value })
+                                    setPosist_baseItemId({
+                                       ...posist_baseItemId,
+                                       value: e.target.value,
+                                    })
                                  }
                                  onBlur={updatePosist_baseItemId}
                                  hasError={
-                                    !posist_baseItemId.meta.isValid && posist_baseItemId.meta.isTouched
+                                    !posist_baseItemId.meta.isValid &&
+                                    posist_baseItemId.meta.isTouched
                                  }
-                                 style={{ width: "50%" }}
+                                 style={{ width: '50%' }}
                               />
                               {posist_baseItemId.meta.isTouched &&
                                  !posist_baseItemId.meta.isValid &&
-                                 posist_baseItemId.meta.errors.map((error, index) => (
-                                    <Form.Error key={index}>{error}</Form.Error>
-                                 ))}
+                                 posist_baseItemId.meta.errors.map(
+                                    (error, index) => (
+                                       <Form.Error key={index}>
+                                          {error}
+                                       </Form.Error>
+                                    )
+                                 )}
                            </Form.Group>
                            <Spacer size="32px" yaxis />
                            <Form.Group>
@@ -519,7 +529,10 @@ const Product = () => {
                            /> */}
                         </HorizontalTabPanel>
                         <HorizontalTabPanel>
-                           <SEOSettings productId={Number(productId)} />
+                           <SEOSettings
+                              productId={Number(productId)}
+                              data={state}
+                           />
                         </HorizontalTabPanel>
                         <HorizontalTabPanel>
                            {/* <ProductSettings /> */}

@@ -37,7 +37,7 @@ import { EditIcon, DeleteIcon } from '../../../../../../../../shared/assets/icon
 import { PRODUCT } from '../../../../../../graphql'
 import { InfoCircleOutlined } from '@ant-design/icons'
 
-const SEOBasics = ({ update, productId, domain }) => {
+const SEOBasics = ({ update, domain, product }) => {
     const [settingId, setSettingId] = React.useState(null)
     const { Text, Title } = Typography
     const [tunnel1, openTunnel1, closeTunnel1] = useTunnel(1)
@@ -129,7 +129,7 @@ const SEOBasics = ({ update, productId, domain }) => {
             variables: {
                 identifier: { _eq: 'basic-seo' },
                 type: { _eq: 'seo' },
-                productId: { _eq: Number(productId) }
+                productId: { _eq: Number(product?.id) }
             }
         })
     }, [])
@@ -138,7 +138,7 @@ const SEOBasics = ({ update, productId, domain }) => {
     const Save = () => {
         update({
             id: settingId,
-            productId: productId,
+            productId: product?.id,
             value: {
                 metaTitle: form.metaTitle.value,
                 metaDescription: form.metaDescription.value,
@@ -236,7 +236,7 @@ const SEOBasics = ({ update, productId, domain }) => {
                                                 borderRadius: '4px',
                                             }}
                                             bordered={false}
-                                            value={form.metaTitle.value}
+                                            value={form.metaTitle.value || product?.name}
                                             onChange={onChangeHandler}
                                             id="metaTitle"
                                             name="metaTitle"
@@ -254,7 +254,7 @@ const SEOBasics = ({ update, productId, domain }) => {
                                             bordered={false}
                                             name="metaDescription"
                                             id="metaDescription"
-                                            value={form.metaDescription.value}
+                                            value={form.metaDescription.value || product?.description}
                                             onChange={onChangeHandler}
                                             placeholder="Add Page Meta description in 120 words"
                                         />
@@ -286,7 +286,7 @@ const SEOBasics = ({ update, productId, domain }) => {
                                     >
                                         <Row>
                                             <Col span={12}>
-                                                {form.favicon.value ? (
+                                                {(form.favicon.value || product?.assets?.images[0]) ? (
                                                     <ImageContainer
                                                         border="none"
                                                         height="120px"
@@ -318,7 +318,7 @@ const SEOBasics = ({ update, productId, domain }) => {
                                                             </IconButton>
                                                         </div>
                                                         <img
-                                                            src={form.favicon.value}
+                                                            src={form.favicon.value || product?.assets?.images[0]}
                                                             alt="icon"
                                                             style={{
                                                                 borderRadius: '8px',
@@ -400,11 +400,11 @@ const SEOBasics = ({ update, productId, domain }) => {
                                     id="pageRoute"
                                     name="pageRoute"
                                 >
-                                    {form.metaTitle.value || 'Product Name '}
+                                    {form.metaTitle.value || product?.name}
                                 </Title>
                                 <p>
                                     {form.metaDescription.value ||
-                                        'this is the meta description'}
+                                        product?.description}
                                 </p>
                             </Card>
                         </Col>
