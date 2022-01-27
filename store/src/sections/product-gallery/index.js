@@ -130,6 +130,22 @@ const ProductGrid = ({ product, index }) => {
    }
    return (
       <ProductCard
+         onProductNameClick={() =>
+            router.push(
+               getRoute(
+                  '/products/' +
+                  eachProduct.id
+               )
+            )
+         }
+         onImageClick={() =>
+            router.push(
+               getRoute(
+                  '/products/' +
+                  eachProduct.id
+               )
+            )
+         }
          key={index}
          data={product}
          showProductDescription={true}
