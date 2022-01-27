@@ -6,7 +6,7 @@ import { BRANDS } from '../../graphql'
 import { StyledCardList, StyledHome } from './styled'
 import { useTabs } from '../../../../shared/providers'
 import { Banner } from '../../../../shared/components'
-import { BrandsSvg } from '../../../../shared/assets/illustrationTileSvg'
+import { BrandLocationsSvg, BrandsSvg } from '../../../../shared/assets/illustrationTileSvg'
 
 export const Home = () => {
    const { addTab } = useTabs()
@@ -28,6 +28,15 @@ export const Home = () => {
                }
                onClick={() => addTab('Brands', '/brands/brands')}
                tileSvg={<BrandsSvg />}
+            />
+            <DashboardTile
+               title="Locations"
+               conf="All available"
+               // count={
+               //    loadingBrands ? '...' : brandsAggregate?.aggregate?.count || 0
+               // }
+               onClick={() => addTab('Locations', '/brands/locations')}
+               tileSvg={<BrandLocationsSvg />}
             />
          </StyledCardList>
          <Banner id="brands-app-home-bottom" />

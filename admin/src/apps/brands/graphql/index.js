@@ -211,3 +211,23 @@ export const PLANS = {
       }
    `,
 }
+
+export const LOCATIONS = {
+   LIST: gql`
+      subscription locations {
+         brands_location(order_by: { id: asc }) {
+            id
+            label
+            city
+            country
+            state
+            zipcode
+            brand_locations_aggregate {
+               aggregate {
+                  count
+               }
+            }
+         }
+      }
+   `,
+}
