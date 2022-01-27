@@ -219,7 +219,8 @@ export const KioskCart = props => {
                                     {'-'}{' '}
                                     {formatCurrency(
                                        (
-                                          cart?.billing?.discount?.value || 0
+                                          cart?.cartOwnerBilling
+                                             ?.totalDiscount || 0
                                        ).toFixed(2)
                                     )}
                                  </span>
