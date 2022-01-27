@@ -163,13 +163,16 @@ export const ModifierPopup = props => {
 
       let errorState = []
       for (let i = 0; i < allCatagories.length; i++) {
-         const min = allCatagories[i]['limits']['min']
-         const max = allCatagories[i]['limits']['max']
          const allFoundedOptionsLength = allSelectedOptions.filter(
             x => x.modifierCategoryID === allCatagories[i].id
          ).length
 
-         if (allCatagories[i]['isRequired']) {
+         if (
+            allCatagories[i]['isRequired'] &&
+            allCatagories[i]['type'] === 'multiple'
+         ) {
+            const min = allCatagories[i]['limits']['min']
+            const max = allCatagories[i]['limits']['max']
             if (
                allFoundedOptionsLength > 0 &&
                min <= allFoundedOptionsLength &&
@@ -392,6 +395,17 @@ export const ModifierPopup = props => {
       )
    }
 
+   window.onclick = function (event) {
+      if (
+         event.target ==
+            document.querySelector(
+               '.hern-product-modifier-pop-up-container--show-modifier-pop-up'
+            ) &&
+         !modifierWithoutPopup
+      ) {
+         closeModifier()
+      }
+   }
    return (
       <>
          <div
@@ -411,12 +425,32 @@ export const ModifierPopup = props => {
                   'hern-product-modifier-pop-up-product': !modifierWithoutPopup,
                })}
             >
-               {!modifierWithoutPopup && (
-                  <div
-                     className="hern-product-modifier-pop-up-close-icon"
-                     onClick={closeModifier}
-                  >
-                     <CloseIcon size={20} stroke="currentColor" />
+               {!customProductDetails && (
+                  <div className="hern-product-modifier-pop-up-header-container">
+                     <div
+                        className="hern-product-card__name"
+                        style={{ fontSize: '20px', fontWeight: '600px' }}
+                     >
+                        {productData?.name}
+                     </div>
+                     <div
+                        style={{
+                           display: 'flex',
+                           alignItems: 'center',
+                        }}
+                     >
+                        {showCounterBtn && <CustomArea data={productData} />}
+
+                        {!modifierWithoutPopup && (
+                           <div className="hern-product-modifier-pop-up-close-icon">
+                              <CloseIcon
+                                 size={20}
+                                 stroke="currentColor"
+                                 onClick={closeModifier}
+                              />
+                           </div>
+                        )}
+                     </div>
                   </div>
                )}
                <div className="hern-product-modifier-pop-up-product-details">
@@ -430,22 +464,23 @@ export const ModifierPopup = props => {
                         customAreaComponent={CustomArea}
                         showModifier={false}
                         useForThirdParty={true}
+                        showProductCard={false}
                      />
                   )}
                </div>
-               <div
-                  className={classNames(
-                     'hern-product-modifier-pop-up-product-option-and-modifier',
-                     {
-                        'hern-product-modifier-pop-up-product-option-and-modifier--without-popup':
-                           modifierWithoutPopup,
-                     }
-                  )}
-               >
+               <div>
                   <div className="hern-product-modifier-pop-up-product-option-list">
                      <label htmlFor="products">Available Options:</label>
                      <br />
-                     <ul>
+                     <ul
+                        className={classNames(
+                           'hern-product-modifier-pop-up-product-option-and-modifier',
+                           {
+                              'hern-product-modifier-pop-up-product-option-and-modifier--without-popup':
+                                 modifierWithoutPopup,
+                           }
+                        )}
+                     >
                         {productData.productOptions.map(eachOption => {
                            return (
                               <div
@@ -460,12 +495,11 @@ export const ModifierPopup = props => {
                                     display: 'flex',
                                     justifyContent: 'space-between',
                                     marginBottom: '8px',
+                                    cursor: 'pointer',
                                  }}
+                                 onClick={e => setProductOption(eachOption)}
                               >
-                                 <li
-                                    style={{ color: 'var(--hern-accent)' }}
-                                    onClick={e => setProductOption(eachOption)}
-                                 >
+                                 <li>
                                     {eachOption.label}
 
                                     {' (+ '}
@@ -624,10 +658,11 @@ export const ModifierPopup = props => {
                      </div>
                   )}
                </div>
-               <div style={{ padding: '0 32px' }}>
+               <div style={{ padding: '32px' }}>
                   <Button
                      className="hern-product-modifier-pop-up-add-to-cart-btn"
-                     onClick={handleAddOnCartOn}
+                     onClick={() => setTimeout(handleAddOnCartOn, 500)}
+                     style={{ padding: '16px 0px 34px 0px' }}
                   >
                      ADD TO CART {totalAmount()}
                   </Button>
@@ -663,7 +698,8 @@ export const ModifierPopup = props => {
    )
 }
 const getCartItemWithModifiers = (cartItemInput, selectedModifiersInput) => {
-   const finalCartItem = { ...cartItemInput }
+   // const finalCartItem = { ...cartItemInput }
+   const finalCartItem = JSON.parse(JSON.stringify(cartItemInput))
 
    const combinedModifiers = selectedModifiersInput.reduce(
       (acc, obj) => [...acc, ...obj.data],
@@ -671,15 +707,15 @@ const getCartItemWithModifiers = (cartItemInput, selectedModifiersInput) => {
    )
    console.log('combineMOdifiers', combinedModifiers)
    const dataArr = finalCartItem?.childs?.data[0]?.childs?.data
-   const dataArrLength = dataArr.length
 
-   console.log('finalCartItemBefore', finalCartItem)
-   finalCartItem.childs.data[0].childs.data = combinedModifiers
-
+   console.log('finalCartItemBefore 123', finalCartItem)
+   finalCartItem.childs.data[0].childs.data = [...dataArr, ...combinedModifiers]
    return finalCartItem
+
+   // return finalCartItem
    // if (dataArrLength === 0) {
-   //    // finalCartItem.childs.data[0].childs.data = combinedModifiers
-   //    // return finalCartItem
+   //    finalCartItem.childs.data[0].childs.data = combinedModifiers
+   //    return finalCartItem
    // } else {
    //    for (let i = 0; i < dataArrLength; i++) {
    //       const objWithModifiers = {

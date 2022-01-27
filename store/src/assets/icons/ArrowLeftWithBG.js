@@ -21,14 +21,14 @@ export const ArrowLeftIconBG = props => {
             height="56"
             rx="28"
             fill={bgColor}
-            fill-opacity="0.8"
+            fillOpacity="0.8"
          />
          <path
             d="M42 28.5485H14M14 28.5485L25.0519 19.8333M14 28.5485L25.0519 36.1666"
             stroke={arrowColor}
-            stroke-width="3"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
       </svg>
    )

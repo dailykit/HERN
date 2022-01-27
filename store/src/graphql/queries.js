@@ -268,6 +268,7 @@ export const RECIPE_DETAILS = gql`
          simpleRecipeYield {
             id
             yield
+            nutritionalInfo
             sachets: ingredientSachets {
                isVisible
                slipName
@@ -517,7 +518,6 @@ export const CART_SUBSCRIPTION = gql`
             label
             position
             publicCreds
-            privateCreds
             showCompanyName
             supportedPaymentOption {
                id
@@ -1375,16 +1375,24 @@ export const PRODUCTS = gql`
                type
                label
                linkedToModifierCategoryOptionId
+               productOptionId
+               modifierId
                modifier {
                   id
                   name
-                  categories(where: { isVisible: { _eq: true } }) {
+                  categories(
+                     where: { isVisible: { _eq: true } }
+                     order_by: { position: desc_nulls_last }
+                  ) {
                      id
                      name
                      isRequired
                      type
                      limits
-                     options(where: { isVisible: { _eq: true } }) {
+                     options(
+                        where: { isVisible: { _eq: true } }
+                        order_by: { position: desc_nulls_last }
+                     ) {
                         id
                         name
                         price: priceByLocation(
@@ -1410,13 +1418,19 @@ export const PRODUCTS = gql`
             modifier {
                id
                name
-               categories(where: { isVisible: { _eq: true } }) {
+               categories(
+                  where: { isVisible: { _eq: true } }
+                  order_by: { position: desc_nulls_last }
+               ) {
                   id
                   name
                   isRequired
                   type
                   limits
-                  options(where: { isVisible: { _eq: true } }) {
+                  options(
+                     where: { isVisible: { _eq: true } }
+                     order_by: { position: desc_nulls_last }
+                  ) {
                      id
                      name
                      price: priceByLocation(
@@ -1595,6 +1609,7 @@ export const GET_CART = gql`
    subscription cart($id: Int!) {
       cart(id: $id) {
          id
+         status
          tax
          orderId
          discount
@@ -1641,7 +1656,6 @@ export const GET_CART = gql`
             label
             position
             publicCreds
-            privateCreds
             showCompanyName
             supportedPaymentOption {
                id
@@ -1775,6 +1789,7 @@ export const PREORDER_DELIVERY_BRAND_RECURRENCES = gql`
                from
                to
                id
+               slotInterval
                mileRanges {
                   from
                   city
@@ -1841,6 +1856,7 @@ export const PREORDER_PICKUP_BRAND_RECURRENCES = gql`
                from
                to
                id
+               slotInterval
                pickUpLeadTime
                mileRanges {
                   id
@@ -2058,7 +2074,8 @@ export const GET_PAYMENT_OPTIONS = gql`
    subscription cart($id: Int!) {
       cart(id: $id) {
          id
-         balanceToPay
+         cartOwnerBilling
+         isCartValid
          availablePaymentOptionToCart(
             where: { isActive: { _eq: true } }
             order_by: { position: desc_nulls_last }
@@ -2072,7 +2089,6 @@ export const GET_PAYMENT_OPTIONS = gql`
             description
             position
             publicCreds
-            privateCreds
             showCompanyName
             supportedPaymentOption {
                id
@@ -2122,6 +2138,70 @@ export const GET_MODIFIER_BY_ID = gql`
                   args: $modifierCategoryOptionCartItemArgs
                )
             }
+         }
+      }
+   }
+`
+export const GET_ORDER_DETAILS = gql`
+   subscription GET_ORDER_DETAILS($where: order_cart_bool_exp!) {
+      carts(where: $where, order_by: { order: { created_at: desc } }) {
+         id
+         status
+         paymentStatus
+         fulfillmentInfo
+         billingDetails
+         address
+         order {
+            created_at
+         }
+         cartPayments {
+            id
+         }
+         availablePaymentOption {
+            label
+            supportedPaymentOption {
+               id
+               paymentOptionLabel
+            }
+         }
+         cartItems(where: { level: { _eq: 1 } }) {
+            cartItemId: id
+            parentCartItemId
+            addOnLabel
+            addOnPrice
+            created_at
+            price: unitPrice
+            discount
+            name: displayName
+            image: displayImage
+            childs {
+               price: unitPrice
+               name: displayName
+               discount
+               productOption {
+                  id
+                  label
+               }
+               childs {
+                  displayName
+                  price: unitPrice
+                  discount
+                  modifierOption {
+                     id
+                     name
+                  }
+                  childs {
+                     displayName
+                     price: unitPrice
+                     discount
+                     modifierOption {
+                        id
+                        name
+                     }
+                  }
+               }
+            }
+            productId
          }
       }
    }

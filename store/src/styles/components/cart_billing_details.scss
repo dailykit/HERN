@@ -1,0 +1,29 @@
+.hern-cart-billing-details {
+   > h3 {
+      font-weight: 600;
+      font-size: 18px;
+      line-height: 18px;
+      color: rgba(64, 64, 64, 0.8);
+      margin: 12px 0 16px 0;
+   }
+}
+.hern-cart-billing-details-list {
+   list-style-type: none;
+   > li {
+      font-size: 14px;
+      line-height: 16px;
+      color: #555b6e;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+   }
+   .hern-cart-billing-details-total-price {
+      font-weight: bold;
+      font-size: 20px;
+      line-height: 22px;
+      color: #555b6e;
+      padding-top: 8px;
+      border-top: 1px solid #e5e5e5;
+   }
+}

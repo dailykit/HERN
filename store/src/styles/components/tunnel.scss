@@ -141,3 +141,21 @@ $variants: (
    font-size: 1.25rem;
    line-height: 1.75rem;
 }
+
+.hern-tunnel__ant {
+   .ant-drawer {
+      top: 64px;
+   }
+   .ant-drawer-mask {
+      top: 64px;
+   }
+   .ant-drawer-content-wrapper {
+      height: calc(100vh - 64px);
+      top: 64px;
+   }
+   @media only screen and (max-width: 600px) {
+      .ant-drawer-content-wrapper {
+         width: 100% !important;
+      }
+   }
+}

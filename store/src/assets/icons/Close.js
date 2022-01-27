@@ -10,6 +10,7 @@ export const CloseIcon = ({ size = 24, ...props }) => (
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
+      style={{ cursor: 'pointer' }}
       {...props}
    >
       <line x1="18" y1="6" x2="6" y2="18" />

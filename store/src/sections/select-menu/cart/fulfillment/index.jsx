@@ -27,7 +27,10 @@ const Fulfillment = () => {
 
    const [isAddressListOpen, setIsAddressListOpen] = React.useState(false)
 
-   const store = configOf('Store Availability', 'availability')
+   const store = configOf(
+      'Store Availability',
+      'availability'
+   )?.storeAvailability
 
    const [updateOccurenceCustomer] = useMutation(
       MUTATIONS.OCCURENCE.CUSTOMER.UPDATE,
@@ -156,7 +159,7 @@ const Fulfillment = () => {
                   address: user.defaultAddress,
                   customerKeycloakId: user.keycloakId,
                   subscriptionOccurenceId: state.week.id,
-                  isTest: user?.isTest || !store?.isStoreLive,
+                  isTest: user?.isTest || !store?.isStoreLive?.value,
                   ...(user?.subscriptionPaymentMethodId && {
                      paymentMethodId: user?.subscriptionPaymentMethodId,
                   }),

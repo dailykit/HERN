@@ -7,7 +7,7 @@ export const LocationSelectorWrapper = props => {
    return (
       <CSSTransition
          in={showLocationSelectorPopup}
-         timeout={300}
+         timeout={100}
          unmountOnExit
          classNames="hern-store-location-selector__css-transition"
       >

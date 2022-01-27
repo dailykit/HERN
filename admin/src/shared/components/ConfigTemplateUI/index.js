@@ -15,6 +15,8 @@ import { Text } from '@dailykit/ui'
 import { FieldUI } from './getFieldUI'
 import { EditModeProvider, useEditMode } from './EditModeContext'
 import { Styles } from './styled'
+import { toast } from 'react-toastify'
+import { CrossIcon } from '../../assets/icons'
 
 const ConfigTemplateUI = props => {
    return (
@@ -24,7 +26,7 @@ const ConfigTemplateUI = props => {
    )
 }
 
-const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsSavedChange }) => {
+const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsSavedChange, noneditMode, setLinkedModuleId, setMode, mode }) => {
    const [configJSON, setConfigJSON] = React.useState({})
    const [fields, setFields] = React.useState([])
    const [description, setDescription] = React.useState('')
@@ -54,6 +56,7 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
          ...updatedConfig,
       }))
       console.log({ updatedConfig }, "updatedConfig")
+
    }
 
    const handleToggle = key => {
@@ -164,12 +167,30 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
       setFields([])
    }, [config])
 
+   //for pageModule, this is to not have editMode when config is opened 
+   React.useEffect(() => {
+      if (noneditMode) {
+         setEditMode(true)
+      }
+
+   }, [noneditMode])
+
+
    const handleEdit = () => {
+      //after saving
       if (editMode) {
+         setMode('saved')
          configSaveHandler(isChangeSaved)
-         setEditMode(false)
+         //for pageModule this noneditMode tells the config belongs to pageModule 
+         //and there is no requirement of editMode
+         !noneditMode && setEditMode(false)
          setIsSavedChange(true)
-      } else {
+      } else if (!editMode && !isChangeSaved && mode == 'editing') {
+         toast.warning('Changes will be lost if not saved. Please save your changes.')
+      }
+      else {
+         setMode('editing')
+         //when editing
          setEditMode(true)
       }
    }
@@ -179,17 +200,26 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
             <>
                <Card
                   title={
-                     identifier ? (
-                        <Text as="h3" className="title">{identifier}</Text>
+                     identifier ? (<>
+                        {/* for pageModule */}
+                        {noneditMode && <button
+                           title={'clear'}
+                           onClick={() => setLinkedModuleId(null)}
+                           style={{ cursor: "pointer", border: "none", backgroundColor: "transparent" }}
+                        >
+                           <CrossIcon size="14" />
+                        </button>}&nbsp;&nbsp;
+                        <Text as="h3" className="title">Edit {identifier}</Text></>
                      ) : (
                         <Text as="h3" style={{ textAlign: 'center' }}>
-                           Select a brand's setting to edit.
+                           Edit
                         </Text>
                      )
                   }
                   style={{ width: '100%' }}
                   extra={
-                     editMode ? (
+                     editMode ? (<>
+
                         <TextButton
                            type="solid"
                            size="sm"
@@ -198,6 +228,7 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
                         >
                            Save
                         </TextButton>
+                     </>
                      ) : (
                         <ComboButton
                            className="edit_button"

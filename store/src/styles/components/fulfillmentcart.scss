@@ -65,7 +65,7 @@
       display: flex !important;
       overflow: auto !important;
       .ant-radio-button-wrapper {
-         min-width: 10rem;
+         white-space: nowrap;
          margin: 0 0.5rem;
          margin-bottom: 0.5rem;
          &:first-child {
@@ -82,9 +82,9 @@
       display: flex !important;
       overflow: auto !important;
       .ant-radio-button-wrapper {
-         min-width: 10rem;
          margin: 0 0.5rem;
          margin-bottom: 0.5rem;
+         white-space: nowrap;
          &:first-child {
             margin-left: 0;
          }

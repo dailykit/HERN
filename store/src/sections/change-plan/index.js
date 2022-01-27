@@ -28,7 +28,7 @@ const ChangePlanSection = () => {
    const router = useRouter()
    const { user, isAuthenticated, isLoading } = useUser()
    const { addToast } = useToasts()
-   const { brand } = useConfig()
+   const { brand, configOf } = useConfig()
    const { state, dispatch } = useDelivery()
 
    const [selectedPlanId, setSelectedPlanId] = React.useState(null)
@@ -86,7 +86,9 @@ const ChangePlanSection = () => {
       if (state.address.error) return false
       return true
    }
-
+   const deliveryDayLabel = configOf('delivery-day', 'Select-Delivery')
+   const firstDeliveryDayLabel = configOf('first-delivery', 'Select-Delivery')
+   console.log("deliveryDayLabel", deliveryDayLabel, "firstDeliveryDayLabel", firstDeliveryDayLabel)
    return (
       <>
          <h2
@@ -103,14 +105,14 @@ const ChangePlanSection = () => {
                   className="hern-change-plan__section-title"
                   style={themeColor}
                >
-                  Delivery Day
+                  {deliveryDayLabel?.value || 'Delivery Day'}
                </h3>
                <DeliverySection planId={selectedPlanId} />
                <h3
                   className="hern-change-plan__section-title"
                   style={themeColor}
                >
-                  Select your first delivery date
+                  {firstDeliveryDayLabel?.value || 'Select your first delivery date'}
                </h3>
                <DeliveryDateSection />
                <div className="hern-change-plan__continue-btn-wrapper">

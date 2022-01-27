@@ -70,15 +70,7 @@ export const Login = props => {
 
    //component state
    const [defaultLogin, setDefaultLogin] = useState(loginBy)
-   const [countryCode, setCountryCode] = useState(null)
 
-   React.useEffect(() => {
-      const detectedUserData = async () => {
-         const data = await detectCountry()
-         setCountryCode(data.countryCode)
-      }
-      detectedUserData()
-   }, [])
    return (
       <div className={`hern-login-v1-container`}>
          <div className="hern-login-v1-content">
@@ -131,7 +123,6 @@ export const Login = props => {
                      closeLoginPopup={closeLoginPopup}
                      isSilentlyLogin={isSilentlyLogin}
                      callbackURL={callbackURL}
-                     countryCode={countryCode}
                   />
                )}
                {defaultLogin === 'forgotPassword' && (
@@ -143,7 +134,6 @@ export const Login = props => {
                      isSilentlyLogin={isSilentlyLogin}
                      closeLoginPopup={closeLoginPopup}
                      callbackURL={callbackURL}
-                     countryCode={countryCode}
                   />
                )}
                {/* {defaultLogin === 'email' ? <Email /> : <OTPLogin />} */}
@@ -329,7 +319,7 @@ const Email = props => {
 //  login with otp
 const OTPLogin = props => {
    //props
-   const { isSilentlyLogin, closeLoginPopup, callbackURL, countryCode } = props
+   const { isSilentlyLogin, closeLoginPopup, callbackURL } = props
    const { addToast } = useToasts()
 
    //component state
@@ -560,7 +550,7 @@ const OTPLogin = props => {
                            ['phone']: e,
                         }))
                      }}
-                     defaultCountry={countryCode}
+                     defaultCountry={get_env('COUNTRY_CODE')}
                      placeholder="Enter your phone number"
                   />
                </fieldset>
@@ -672,6 +662,9 @@ const SocialLogin = props => {
    //props
    const { callbackURL } = props
 
+   const { configOf, isConfigLoading } = useConfig()
+   const authConfig = configOf('Auth Methods', 'brand')
+
    //fetch all available provider
    const {
       loading: providerLoading,
@@ -709,22 +702,28 @@ const SocialLogin = props => {
                            className="hern-login-v1__social__login__provider"
                            key={index}
                         >
-                           {eachProvider.title === 'google' && (
-                              <GoogleIcon
-                                 onClick={() => {
-                                    handleSocialOnClick('google')
-                                 }}
-                                 style={{ cursor: 'pointer' }}
-                              />
-                           )}
-                           {eachProvider.title === 'facebook' && (
-                              <FacebookIcon
-                                 onClick={() => {
-                                    handleSocialOnClick('facebook')
-                                 }}
-                                 style={{ cursor: 'pointer' }}
-                              />
-                           )}
+                           {eachProvider.title === 'google' &&
+                              !isConfigLoading &&
+                              authConfig.socialLoginMethods.googleLogin
+                                 .value && (
+                                 <GoogleIcon
+                                    onClick={() => {
+                                       handleSocialOnClick('google')
+                                    }}
+                                    style={{ cursor: 'pointer' }}
+                                 />
+                              )}
+                           {eachProvider.title === 'facebook' &&
+                              !isConfigLoading &&
+                              authConfig.socialLoginMethods.facebookLogin
+                                 .value && (
+                                 <FacebookIcon
+                                    onClick={() => {
+                                       handleSocialOnClick('facebook')
+                                    }}
+                                    style={{ cursor: 'pointer' }}
+                                 />
+                              )}
                         </div>
                      )
                   })}
@@ -841,13 +840,8 @@ function validateEmail(email) {
 //signup
 const Signup = props => {
    //props
-   const {
-      setDefaultLogin,
-      isSilentlyLogin,
-      closeLoginPopup,
-      callbackURL,
-      countryCode,
-   } = props
+   const { setDefaultLogin, isSilentlyLogin, closeLoginPopup, callbackURL } =
+      props
 
    //component state
    const [showPassword, setShowPassword] = useState(false)
@@ -1148,7 +1142,7 @@ const Signup = props => {
                            ['phone']: e,
                         }))
                      }}
-                     defaultCountry={countryCode}
+                     defaultCountry={get_env('COUNTRY_CODE')}
                      placeholder="Enter your phone number"
                   />
                </fieldset>

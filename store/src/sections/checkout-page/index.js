@@ -8,7 +8,7 @@ import { useConfig, usePayment } from '../../lib'
 import * as Icon from '../../assets/icons'
 import OrderInfo from '../../sections/OrderInfo'
 import { OnDemandCart } from '../cart'
-import { isClient, formatCurrency, getRoute } from '../../utils'
+import { isClient, formatCurrency, getRoute, useQueryParams } from '../../utils'
 import {
    Loader,
    Button,
@@ -21,12 +21,15 @@ import {
    PaymentProvider,
    PaymentSection,
 } from '../../sections/checkout'
-import { useUser } from '../../context'
+import { useUser, useCart } from '../../context'
 import * as QUERIES from '../../graphql'
 import { isEmpty } from 'lodash'
+import { EmptyCart } from '../../assets/icons'
+import Link from 'next/link'
 
 export const Checkout = props => {
    const router = useRouter()
+   const { id } = useQueryParams()
    const { isAuthenticated, isLoading, user } = useUser()
    const {
       isPaymentLoading,
@@ -39,6 +42,7 @@ export const Checkout = props => {
       updatePaymentState,
       setIsPaymentInitiated,
    } = usePayment()
+   const { cartState } = useCart()
    const { addToast } = useToasts()
    const authTabRef = React.useRef()
    const { configOf } = useConfig()
@@ -51,9 +55,9 @@ export const Checkout = props => {
       error,
       data: { cart = { paymentStatus: '', transactionRemark: {} } } = {},
    } = useSubscription(QUERIES.CART_SUBSCRIPTION, {
-      skip: !isClient || !new URLSearchParams(location.search).get('id'),
+      skip: isEmpty(cartState) || !cartState?.cart?.id,
       variables: {
-         id: isClient ? new URLSearchParams(location.search).get('id') : '',
+         id: cartState?.cart?.id,
       },
    })
 
@@ -210,6 +214,17 @@ export const Checkout = props => {
          </Main>
       )
    }
+   if (id === 'undefined') {
+      return (
+         <div className="hern-cart-empty-cart">
+            <EmptyCart />
+            <span>Oops! Your cart is empty </span>
+            <Button className="hern-cart-go-to-menu-btn" onClick={() => {}}>
+               <Link href="/order">GO TO MENU</Link>
+            </Button>
+         </div>
+      )
+   }
    // if (isAuthenticated && user?.keycloakId !== cart?.customerKeycloakId) {
    //    return (
    //       <Main>
@@ -241,13 +256,9 @@ export const Checkout = props => {
                      <SectionTitle theme={theme}>Profile Details</SectionTitle>
                   </header>
                   <ProfileSection />
-                  <PaymentOptionsRenderer
-                     cartId={
-                        isClient
-                           ? new URLSearchParams(location.search).get('id')
-                           : ''
-                     }
-                  />
+                  {!isEmpty(cartState) && (
+                     <PaymentOptionsRenderer cartId={cartState?.cart?.id} />
+                  )}
                </Form>
                {cart?.products?.length > 0 && (
                   <CartDetails>

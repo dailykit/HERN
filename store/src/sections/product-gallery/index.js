@@ -94,6 +94,8 @@ export const ProductGallery = ({ config }) => {
 }
 
 const ProductGrid = ({ product, index }) => {
+   const { locationId, storeStatus } = useConfig()
+
    const [productModifier, setProductModifier] = React.useState(null)
    const CustomArea = props => {
       const { data } = props
@@ -109,8 +111,15 @@ const ProductGrid = ({ product, index }) => {
                      addToCart({ productId: data.id }, 1)
                   }
                }}
+               disabled={
+                  locationId ? (storeStatus.status ? false : true) : true
+               }
             >
-               ADD
+               {locationId
+                  ? storeStatus.status
+                     ? 'ADD'
+                     : 'COMING SOON'
+                  : 'COMING SOON'}
             </Button>
             {data.productOptions.length > 0 && <span>Customizable</span>}
          </div>

@@ -49,6 +49,7 @@ import GoogleAnalyticsIcon from './GoogleAnalyticsIcon'
 import AvailableIcon from './Available'
 import UnavailableIcon from './Unavailable'
 import PlaceHolderImgIcon from './PlaceHolderImg'
+import CrossIcon from './Cross'
 export {
    SearchIcon,
    AddIcon,
@@ -100,7 +101,8 @@ export {
    GoogleAnalyticsIcon,
    PlaceHolderImgIcon,
    AvailableIcon,
-   UnavailableIcon
+   UnavailableIcon,
+   CrossIcon
 }
 
 export * from './Tick'
@@ -113,3 +115,4 @@ export * from './Circle'
 export * from './CircleChecked'
 export * from './Square'
 export * from './SquareChecked'
+
