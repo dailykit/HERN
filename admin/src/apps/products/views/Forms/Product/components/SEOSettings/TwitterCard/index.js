@@ -42,7 +42,7 @@ import {
 import { InfoCircleOutlined } from '@ant-design/icons'
 const { Title, Text } = Typography
 
-export const TwitterCard = ({ update, productId, domain }) => {
+export const TwitterCard = ({ update, domain, product }) => {
     const [tunnel1, openTunnel1, closeTunnel1] = useTunnel(1)
     const params = useParams()
     const [settingId, setSettingId] = React.useState(null)
@@ -125,7 +125,7 @@ export const TwitterCard = ({ update, productId, domain }) => {
             variables: {
                 identifier: { _eq: 'twitter-card' },
                 type: { _eq: 'seo' },
-                productId: { _eq: productId }
+                productId: { _eq: product.id }
             }
         })
     }, [])
@@ -134,7 +134,7 @@ export const TwitterCard = ({ update, productId, domain }) => {
     const Save = () => {
         update({
             id: settingId,
-            productId: productId,
+            productId: product?.id,
             value: {
                 twitterTitle: form.twitterTitle.value,
                 twitterDescription: form.twitterDescription.value,
@@ -244,7 +244,7 @@ export const TwitterCard = ({ update, productId, domain }) => {
                                                 borderRadius: '4px',
                                             }}
                                             bordered={false}
-                                            value={form.twitterTitle.value}
+                                            value={form.twitterTitle.value || product?.name || product?.description}
                                             onChange={onChangeHandler}
                                             id="twitter-title"
                                             name="twitterTitle"
@@ -285,7 +285,7 @@ export const TwitterCard = ({ update, productId, domain }) => {
                                                 borderRadius: '4px',
                                             }}
                                             bordered={false}
-                                            value={form.twitterDescription.value}
+                                            value={form.twitterDescription.value || product?.description}
                                             onChange={onChangeHandler}
                                             name="twitterDescription"
                                             id="twitter-description"
@@ -320,7 +320,7 @@ export const TwitterCard = ({ update, productId, domain }) => {
                                         {/* for image upload */}
                                         <Row>
                                             <Col span={12}>
-                                                {form.twitterImage.value ? (
+                                                {(form.twitterImage.value || product?.assets?.images[0]) ? (
                                                     <ImageContainer
                                                         border="none"
                                                         height="120px"
@@ -352,7 +352,7 @@ export const TwitterCard = ({ update, productId, domain }) => {
                                                             </IconButton>
                                                         </div>
                                                         <img
-                                                            src={form.twitterImage.value}
+                                                            src={form.twitterImage.value || product?.assets?.images[0]}
                                                             alt="twitter-image"
                                                             style={{
                                                                 borderRadius: '8px',
@@ -436,10 +436,10 @@ export const TwitterCard = ({ update, productId, domain }) => {
                                 hoverable
                                 onClick={showTwitterModal}
                                 cover={
-                                    form?.twitterImage?.value ? (
+                                    (form?.twitterImage?.value || product?.assets?.images[0]) ? (
                                         <img
                                             alt="example"
-                                            src={form.twitterImage.value}
+                                            src={form.twitterImage.value || product?.assets?.images[0]}
                                             style={{
                                                 maxHeight: '220px',
                                                 objectFit: 'cover',
@@ -456,11 +456,11 @@ export const TwitterCard = ({ update, productId, domain }) => {
                             >
                                 <p style={{ fontWeight: '600' }}>
 
-                                    {form.twitterTitle.value || 'twitter: title'}
+                                    {form.twitterTitle.value || product?.name}
                                 </p>
                                 <p>
-                                    {form.twitterDescription.value ||
-                                        'twitter: description'}
+                                    {form.twitterDescription.value
+                                        || product?.description}
                                 </p>
                                 <Tooltip placement="bottom" title={'page link'}>
                                     <p>

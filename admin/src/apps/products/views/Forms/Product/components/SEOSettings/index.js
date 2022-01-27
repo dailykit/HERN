@@ -36,8 +36,8 @@ const SEOSettings = ({ data }) => {
    return (
       <div style={{ margin: '35px 35px 35px 35px' }}>
          <SEOBasics update={update} domain={domain} product={data} />
-         <SocialShare update={update} productId={data?.id} domain={domain} product={data} />
-         <TwitterCard update={update} productId={data?.id} domain={domain} product={data} />
+         <SocialShare update={update} domain={domain} product={data} />
+         <TwitterCard update={update} domain={domain} product={data} />
       </div>
    )
 }

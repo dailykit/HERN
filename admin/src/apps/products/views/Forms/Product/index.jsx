@@ -529,10 +529,7 @@ const Product = () => {
                            /> */}
                         </HorizontalTabPanel>
                         <HorizontalTabPanel>
-                           <SEOSettings
-                              productId={Number(productId)}
-                              data={state}
-                           />
+                           <SEOSettings data={state} />
                         </HorizontalTabPanel>
                         <HorizontalTabPanel>
                            {/* <ProductSettings /> */}
