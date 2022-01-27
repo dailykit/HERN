@@ -27,7 +27,7 @@ export const StyledContent = styled.div`
    width: 100%;
    margin: 0.5em;
    padding: 0.5em 0.5em;
-   border-radius: 6px;
+   border-radius: 8px;
 `
 export const StyledContentText = styled.div`
    display: flex;
@@ -36,6 +36,7 @@ export const StyledContentText = styled.div`
    font-weight: 500;
    font-size: 17px;
    line-height: 14px;
+   padding-left: 10px;
    align-items: center;
    > div:nth-child(1) {
       color: #919699;

@@ -53,6 +53,40 @@ const DeliveryRanges = ({ timeSlotId, mileRanges, openTunnel }) => {
       })
       openTunnel(3)
    }
+
+   // hover on toggle and delete icon
+   const [mouseState, setMouseState] = React.useState({
+      isHovered: {},
+   })
+   const [mouseClickedState, setMouseClickedState] = React.useState({
+      isClicked: { [0]: true },
+   })
+   const handleMouseEnter = index => {
+      setMouseState({
+         ...mouseState,
+         isHovered: {
+            ...mouseState.isHovered,
+            [index]: true,
+         },
+      })
+   }
+   const handleMouseLeave = index => {
+      setMouseState({
+         ...mouseState,
+         isHovered: {
+            ...mouseState.isHovered,
+            [index]: false,
+         },
+      })
+   }
+   const handleMouseClicked = index => {
+      setMouseClickedState({
+         isClicked: {
+            [index]: true,
+         },
+      })
+   }
+
    return (
       <>
          {mileRanges?.length > 0 ? (
@@ -79,17 +113,32 @@ const DeliveryRanges = ({ timeSlotId, mileRanges, openTunnel }) => {
                            </ButtonGroup>
                         </StyledHeadingAction>
                      </StyledHeading>
-                     {mileRanges.map(mileRange => (
+                     {mileRanges.map((mileRange, index) => (
                         <SectionTab
-                           key={mileRange.id}
+                           key={index}
                            dataSelectedBoxShadow={"0px 1px 8px rgba(0, 0, 0, 0.1)"}
-                           borderRadius={"4px"}
                            dataSelectedBorder={"2px solid #367BF5"}
+                           dataSelectedHoverBorder={
+                              '2px solid #F3F3F3'
+                           }
+                           hoverBorder={'2px solid #F3F3F3'}
+                           border={'2px solid #F3F3F3'}
+                           borderRadius={"8px"}
                            height={"auto"}
                            width={"24em"}
-                           padding={"0.5em"}
+                           padding={"none"}
                         >
-                           <Flex>
+                           <Flex
+                              onMouseEnter={() =>
+                                 handleMouseEnter(index)
+                              }
+                              onMouseLeave={() =>
+                                 handleMouseLeave(index)
+                              }
+                              onClick={() => handleMouseClicked(index)}
+                              style={{ padding: "0.5em", width: "100%" }}
+
+                           >
                               <StyledContext>
                                  <div>Prep Time</div>
                                  <div>{mileRange.leadTime || mileRange.prepTime} mins.</div>
@@ -108,38 +157,41 @@ const DeliveryRanges = ({ timeSlotId, mileRanges, openTunnel }) => {
                               </StyledContext>)}
                               {mileRange.geoBoundary && (<StyledContext>
                                  <div>Geo-Boundary</div>
-                                 <div>{mileRange?.geoBoundary?.geoBoundaries.map(boundary => <span>{<span>({boundary.latitude},{boundary.longitude}) </span>}</span>)}</div>
-                              </StyledContext>)}
-                              <StyledCardAction>
-                                 <Switch
-                                    name={`mileRange-${mileRange.id}`}
-                                    value={mileRange.isActive}
-                                    checkedChildren="Published"
-                                    unCheckedChildren="UnPublished"
-                                    defaultChecked
-                                    title="Press to change publish type"
-                                    onChange={() =>
-                                       updateMileRange({
-                                          variables: {
-                                             id: mileRange.id,
-                                             set: {
-                                                isActive:
-                                                   !mileRange.isActive,
+                                 <div>{mileRange?.geoBoundary?.geoBoundaries.map(boundary => <span>{<span>({boundary.latitude},{boundary.longitude}) </span>}</span>)}</div>                              </StyledContext>
+
+                              {(mouseState.isHovered[index] ||
+                                 mouseClickedState.isClicked[
+                                 index
+                                 ]) && (<StyledCardAction>
+                                    <Switch
+                                       name={`mileRange-${mileRange.id}`}
+                                       value={mileRange.isActive}
+                                       checkedChildren="Published"
+                                       unCheckedChildren="UnPublished"
+                                       defaultChecked
+                                       title="Press to change publish type"
+                                       onChange={() =>
+                                          updateMileRange({
+                                             variables: {
+                                                id: mileRange.id,
+                                                set: {
+                                                   isActive:
+                                                      !mileRange.isActive,
+                                                },
                                              },
-                                          },
-                                       })
-                                    }
-                                 />
-                                 <IconButton
-                                    type="ghost"
-                                    title="Delete Delivery Area"
-                                    onClick={() =>
-                                       deleteHandler(mileRange.id)
-                                    }
-                                 >
-                                    <DeleteIcon color=" #FF5A52" />
-                                 </IconButton>
-                              </StyledCardAction>
+                                          })
+                                       }
+                                    />
+                                    <IconButton
+                                       type="ghost"
+                                       title="Delete Delivery Area"
+                                       onClick={() =>
+                                          deleteHandler(mileRange.id)
+                                       }
+                                    >
+                                       <DeleteIcon color=" #FF5A52" />
+                                    </IconButton>
+                                 </StyledCardAction>)}
                            </Flex>
                         </SectionTab>
                      ))}

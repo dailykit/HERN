@@ -13,7 +13,7 @@ import { logger } from '../../../../../../../../shared/utils'
 import { RecurrenceContext } from '../../../../../../context/recurrence'
 import { CREATE_CHARGES, UPDATE_CHARGE } from '../../../../../../graphql'
 import validator from '../../../../validators'
-import { TunnelBody } from '../styled'
+import { InputHeading, InputsNotes, TunnelBody } from '../styled'
 
 const ChargesTunnel = ({ closeTunnel }) => {
    const { recurrenceState } = React.useContext(RecurrenceContext)
@@ -112,9 +112,8 @@ const ChargesTunnel = ({ closeTunnel }) => {
    return (
       <>
          <TunnelHeader
-            title={`${
-               recurrenceState.charge ? 'Update' : 'Add'
-            } Delivery Charges`}
+            title={`${recurrenceState.charge ? 'Update' : 'Add'
+               } Delivery Charges`}
             right={{
                action: save,
                title: busy
@@ -124,12 +123,14 @@ const ChargesTunnel = ({ closeTunnel }) => {
             close={() => closeTunnel(4)}
          />
          <TunnelBody>
-            <Text as="p">Enter Order Value Range and Charges:</Text>
-            <Spacer size="16px" />
+            <InputHeading
+               style={{ fontSize: "16px" }}
+            >Enter Order Value Range and Charges</InputHeading>
+            <Spacer size="10px" />
             <Flex container>
                <Form.Group>
                   <Form.Label htmlFor="from" title="from">
-                     From*
+                     <InputHeading>From*</InputHeading>
                   </Form.Label>
                   <Form.Number
                      id="from"
@@ -159,7 +160,7 @@ const ChargesTunnel = ({ closeTunnel }) => {
                <Spacer xAxis size="16px" />
                <Form.Group>
                   <Form.Label htmlFor="to" title="to">
-                     To*
+                     <InputHeading>To*</InputHeading>
                   </Form.Label>
                   <Form.Number
                      id="to"
@@ -190,7 +191,7 @@ const ChargesTunnel = ({ closeTunnel }) => {
             <Spacer size="16px" />
             <Form.Group>
                <Form.Label htmlFor="charge" title="charge">
-                  Charge*
+                  <InputHeading>Charge*</InputHeading>
                </Form.Label>
                <Form.Number
                   id="charge"
@@ -221,10 +222,10 @@ const ChargesTunnel = ({ closeTunnel }) => {
             </Form.Group>
             <Spacer size="16px" />
             <section>
-               <Form.Toggle name="auto" value={auto} onChange={() => {}}>
-                  Handle delivery automatically?
+               <Form.Toggle name="auto" value={auto} onChange={() => { }}>
+                  <InputHeading> Handle delivery automatically?</InputHeading>
                </Form.Toggle>
-               <HelperText type="hint" message="Coming Soon!" />
+               <InputsNotes>Coming Soon!</InputsNotes>
             </section>
          </TunnelBody>
       </>
