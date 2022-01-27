@@ -22,7 +22,7 @@ export const StyledHeadAction = styled.div`
 export const StyledContent = styled.div`
    display: grid;
    background: #f9f9f9;
-   grid-template-columns: 20em 24em 7em;
+   grid-template-columns: 19rem 16rem 7rem;
    align-items: center;
    width: 100%;
    margin: 0.5em;
