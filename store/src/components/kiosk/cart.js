@@ -200,19 +200,16 @@ export const KioskCart = props => {
                            <ul className="hern-kiosk-cart-bill-details-list">
                               <li>
                                  <span style={{ fontWeight: 'bold' }}>
-                                    {t('Total Price')}
+                                    {t('Item Total')}
                                  </span>
                                  <span style={{ fontWeight: 'bold' }}>
                                     {formatCurrency(
-                                       cart?.billing?.totalPrice?.value || 0
-                                    )}
-                                 </span>
-                              </li>
-                              <li>
-                                 <span>{t('Tax')}</span>
-                                 <span>
-                                    {formatCurrency(
-                                       cart?.billing?.tax?.value || 0
+                                       (
+                                          (cart?.cartOwnerBilling?.itemTotal ||
+                                             0) -
+                                          (cart?.cartOwnerBilling
+                                             ?.itemTotalInclusiveTax || 0)
+                                       ).toFixed(2)
                                     )}
                                  </span>
                               </li>
@@ -221,7 +218,35 @@ export const KioskCart = props => {
                                  <span>
                                     {'-'}{' '}
                                     {formatCurrency(
-                                       cart?.billing?.discount?.value || 0
+                                       (
+                                          cart?.billing?.discount?.value || 0
+                                       ).toFixed(2)
+                                    )}
+                                 </span>
+                              </li>
+                              <li>
+                                 <span>{t('VAT')}</span>
+                                 <span>
+                                    {formatCurrency(
+                                       (
+                                          (cart?.cartOwnerBilling
+                                             ?.itemTotalInclusiveTax || 0) +
+                                          (cart?.cartOwnerBilling
+                                             ?.itemTotalTaxExcluded || 0)
+                                       ).toFixed(2)
+                                    )}
+                                 </span>
+                              </li>
+                              <li>
+                                 <span style={{ fontWeight: 'bold' }}>
+                                    {t('Total Price')}
+                                 </span>
+                                 <span style={{ fontWeight: 'bold' }}>
+                                    {formatCurrency(
+                                       (
+                                          cart?.cartOwnerBilling
+                                             ?.balanceToPay || 0
+                                       ).toFixed(2)
                                     )}
                                  </span>
                               </li>
@@ -240,7 +265,9 @@ export const KioskCart = props => {
                         >
                            <span className="hern-kiosk__cart-place-order-btn-total">
                               {formatCurrency(
-                                 cart?.billing?.totalPrice?.value || 0
+                                 (
+                                    cart?.cartOwnerBilling?.balanceToPay || 0
+                                 ).toFixed(2)
                               )}
                            </span>
                            <span className="hern-kiosk__cart-place-order-btn-text">
