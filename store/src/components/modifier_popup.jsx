@@ -425,32 +425,34 @@ export const ModifierPopup = props => {
                   'hern-product-modifier-pop-up-product': !modifierWithoutPopup,
                })}
             >
-               <div className="hern-product-modifier-pop-up-header-container">
-                  <div
-                     className="hern-product-card__name"
-                     style={{ fontSize: '20px', fontWeight: '600px' }}
-                  >
-                     {productData?.name}
-                  </div>
-                  <div
-                     style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                     }}
-                  >
-                     {showCounterBtn && <CustomArea data={productData} />}
+               {!customProductDetails && (
+                  <div className="hern-product-modifier-pop-up-header-container">
+                     <div
+                        className="hern-product-card__name"
+                        style={{ fontSize: '20px', fontWeight: '600px' }}
+                     >
+                        {productData?.name}
+                     </div>
+                     <div
+                        style={{
+                           display: 'flex',
+                           alignItems: 'center',
+                        }}
+                     >
+                        {showCounterBtn && <CustomArea data={productData} />}
 
-                     {!modifierWithoutPopup && (
-                        <div className="hern-product-modifier-pop-up-close-icon">
-                           <CloseIcon
-                              size={20}
-                              stroke="currentColor"
-                              onClick={closeModifier}
-                           />
-                        </div>
-                     )}
+                        {!modifierWithoutPopup && (
+                           <div className="hern-product-modifier-pop-up-close-icon">
+                              <CloseIcon
+                                 size={20}
+                                 stroke="currentColor"
+                                 onClick={closeModifier}
+                              />
+                           </div>
+                        )}
+                     </div>
                   </div>
-               </div>
+               )}
                <div className="hern-product-modifier-pop-up-product-details">
                   {customProductDetails ? (
                      <CustomProductDetails />

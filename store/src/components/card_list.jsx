@@ -1,6 +1,7 @@
 import React from 'react'
 import { CloseIcon } from '../assets/icons'
 import { useUser } from '../context'
+import { useConfig } from '../lib'
 
 const CardList = ({ closeTunnel, onSelect }) => {
    const { user } = useUser()
@@ -17,7 +18,7 @@ const CardList = ({ closeTunnel, onSelect }) => {
                <CloseIcon
                   size={16}
                   stroke="currentColor"
-                  style={{ color: 'rgba(52, 211, 153, 1)' }}
+                  style={{ color: 'var(--hern-accent)' }}
                   onClick={closeTunnel}
                />
             </button>

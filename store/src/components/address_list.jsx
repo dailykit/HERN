@@ -1,7 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
 import classNames from 'classnames'
-import { Col, Row } from 'antd'
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useToasts } from 'react-toast-notifications'
 import { CloseIcon, LocationIcon } from '../assets/icons'
 import { CartContext, useUser } from '../context'
@@ -74,7 +73,7 @@ const AddressList = ({
                <button className="hern-address-list__close-btn">
                   <CloseIcon
                      size={16}
-                     color=" rgba(52,211,153,1)"
+                     color={'var(--hern-accent)'}
                      stroke="currentColor"
                      onClick={closeTunnel}
                   />
