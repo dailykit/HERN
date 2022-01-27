@@ -63,18 +63,14 @@ const DeliveryRanges = ({ timeSlotId, mileRanges, openTunnel }) => {
    })
    const handleMouseEnter = index => {
       setMouseState({
-         ...mouseState,
          isHovered: {
-            ...mouseState.isHovered,
             [index]: true,
          },
       })
    }
    const handleMouseLeave = index => {
       setMouseState({
-         ...mouseState,
          isHovered: {
-            ...mouseState.isHovered,
             [index]: false,
          },
       })
@@ -91,125 +87,131 @@ const DeliveryRanges = ({ timeSlotId, mileRanges, openTunnel }) => {
       <>
          {mileRanges?.length > 0 ? (
             <>
+               <Flex
+                  container
+                  style={{ background: "#f9f9f9", padding: "1rem 0 0 1rem", borderRadius: "0.5rem" }}
 
-               <SectionTabs sectionTabListWidth={"365px"}>
-                  <SectionTabList>
-                     <StyledHeading>
-                        <StyledHeadingText>
-                           Delivery Area
-                        </StyledHeadingText>
-                        <StyledHeadingAction>
-                           <ButtonGroup>
-                              <IconButton
-                                 type="ghost"
-                                 size="md"
-                                 title="Click to add a delivery area"
-                                 onClick={addMileRange}
-                                 width="auto"
-                                 height="auto"
-                              >
-                                 <PlusIcon color="#919699" />
-                              </IconButton>
-                           </ButtonGroup>
-                        </StyledHeadingAction>
-                     </StyledHeading>
-                     {mileRanges.map((mileRange, index) => (
-                        <SectionTab
-                           key={index}
-                           dataSelectedBoxShadow={"0px 1px 8px rgba(0, 0, 0, 0.1)"}
-                           dataSelectedBorder={"2px solid #367BF5"}
-                           dataSelectedHoverBorder={
-                              '2px solid #F3F3F3'
-                           }
-                           hoverBorder={'2px solid #F3F3F3'}
-                           border={'2px solid #F3F3F3'}
-                           borderRadius={"8px"}
-                           height={"auto"}
-                           width={"24em"}
-                           padding={"none"}
-                        >
-                           <Flex
-                              onMouseEnter={() =>
-                                 handleMouseEnter(index)
+               >
+                  <SectionTabs sectionTabListWidth={"365px"} >
+                     <SectionTabList>
+                        <StyledHeading>
+                           <StyledHeadingText>
+                              Delivery Area
+                           </StyledHeadingText>
+                           <StyledHeadingAction>
+                              <ButtonGroup>
+                                 <IconButton
+                                    type="ghost"
+                                    size="md"
+                                    title="Click to add a delivery area"
+                                    onClick={addMileRange}
+                                    width="auto"
+                                    height="auto"
+                                 >
+                                    <PlusIcon color="#919699" />
+                                 </IconButton>
+                              </ButtonGroup>
+                           </StyledHeadingAction>
+                        </StyledHeading>
+                        {mileRanges.map((mileRange, index) => (
+                           <SectionTab
+                              key={index}
+                              dataSelectedBoxShadow={"0px 1px 8px rgba(0, 0, 0, 0.1)"}
+                              dataSelectedBorder={"2px solid #367BF5"}
+                              dataSelectedHoverBorder={
+                                 '2px solid #F3F3F3'
                               }
-                              onMouseLeave={() =>
-                                 handleMouseLeave(index)
-                              }
-                              onClick={() => handleMouseClicked(index)}
-                              style={{ padding: "0.5em", width: "100%" }}
-
+                              hoverBorder={'2px solid #F3F3F3'}
+                              border={'2px solid #F3F3F3'}
+                              borderRadius={"8px"}
+                              height={"auto"}
+                              width={"24em"}
+                              padding={"none"}
                            >
-                              <StyledContext>
-                                 <div>Prep Time</div>
-                                 <div>{mileRange.leadTime || mileRange.prepTime} mins.</div>
-                              </StyledContext>
-                              <StyledContext>
-                                 <div>Mile Range</div>
-                                 <div> {mileRange.from} - {mileRange.to}</div>
-                              </StyledContext>
-                              <StyledContext>
-                                 <div>Delivery Type</div>
-                                 <div>{mileRange.distanceType}</div>
-                              </StyledContext>
-                              {mileRange.zipcodes && (<StyledContext>
-                                 <div>Zipcodes</div>
-                                 <div>{mileRange?.zipcodes?.zipcodes.map(x => <span>{x}, </span>)}</div>
-                              </StyledContext>)}
-                              {mileRange.geoBoundary && (<StyledContext>
-                                 <div>Geo-Boundary</div>
-                                 <div>{mileRange?.geoBoundary?.geoBoundaries.map(boundary => <span>{<span>({boundary.latitude},{boundary.longitude}) </span>}</span>)}</div>                              </StyledContext>
+                              <Flex
+                                 onMouseEnter={() =>
+                                    handleMouseEnter(index)
+                                 }
+                                 onMouseLeave={() =>
+                                    handleMouseLeave(index)
+                                 } c
+                                 onClick={() => handleMouseClicked(index)}
+                                 style={{ padding: "0.5em", width: "100%" }}
 
-                              {(mouseState.isHovered[index] ||
-                                 mouseClickedState.isClicked[
-                                 index
-                                 ]) && (<StyledCardAction>
-                                    <Switch
-                                       name={`mileRange-${mileRange.id}`}
-                                       value={mileRange.isActive}
-                                       checkedChildren="Published"
-                                       unCheckedChildren="UnPublished"
-                                       defaultChecked
-                                       title="Press to change publish type"
-                                       onChange={() =>
-                                          updateMileRange({
-                                             variables: {
-                                                id: mileRange.id,
-                                                set: {
-                                                   isActive:
-                                                      !mileRange.isActive,
+                              >
+                                 <StyledContext>
+                                    <div>Prep Time</div>
+                                    <div>{mileRange.leadTime || mileRange.prepTime} mins.</div>
+                                 </StyledContext>
+                                 <StyledContext>
+                                    <div>Mile Range</div>
+                                    <div> {mileRange.from} - {mileRange.to}</div>
+                                 </StyledContext>
+                                 <StyledContext>
+                                    <div>Delivery Type</div>
+                                    <div>{mileRange.distanceType}</div>
+                                 </StyledContext>
+                                 <StyledContext>
+                                    <div>Zipcodes</div>
+                                    <div>{mileRange?.zipcodes?.zipcodes.map(x => <span>{x}, </span>)}</div>
+                                 </StyledContext>
+                                 <StyledContext>
+                                    <div>Geo-Boundary</div>
+                                    <div>{mileRange?.geoBoundary?.geoBoundaries.map(boundary => <span>{<span>({boundary.latitude},{boundary.longitude}) </span>}</span>)}</div>
+                                 </StyledContext>
+
+                                 {(mouseState.isHovered[index] ||
+                                    mouseClickedState.isClicked[
+                                    index
+                                    ]) && (<StyledCardAction>
+                                       <Switch
+                                          name={`mileRange-${mileRange.id}`}
+                                          value={mileRange.isActive}
+                                          checked={mileRange.isActive}
+                                          checkedChildren="Published"
+                                          unCheckedChildren="UnPublished"
+                                          title="Press to change publish type"
+                                          onChange={() =>
+                                             updateMileRange({
+                                                variables: {
+                                                   id: mileRange.id,
+                                                   set: {
+                                                      isActive:
+                                                         !mileRange.isActive,
+                                                   },
                                                 },
-                                             },
-                                          })
-                                       }
-                                    />
-                                    <IconButton
-                                       type="ghost"
-                                       title="Delete Delivery Area"
-                                       onClick={() =>
-                                          deleteHandler(mileRange.id)
-                                       }
-                                    >
-                                       <DeleteIcon color=" #FF5A52" />
-                                    </IconButton>
-                                 </StyledCardAction>)}
-                           </Flex>
-                        </SectionTab>
-                     ))}
-                  </SectionTabList>
-                  <SectionTabPanels>
-                     {mileRanges.map(mileRange => (
-                        <div>
-                           <SectionTabPanel key={mileRange.id} style={{ background: "white" }}>
-                              <DeliveryCharges
-                                 mileRangeId={mileRange.id}
-                                 charges={mileRange.charges}
-                                 openTunnel={openTunnel}
-                              />
-                           </SectionTabPanel>
-                        </div>
-                     ))}
-                  </SectionTabPanels>
-               </SectionTabs>
+                                             })
+                                          }
+                                       />
+                                       <IconButton
+                                          type="ghost"
+                                          title="Delete Delivery Area"
+                                          onClick={() =>
+                                             deleteHandler(mileRange.id)
+                                          }
+                                       >
+                                          <DeleteIcon color=" #FF5A52" />
+                                       </IconButton>
+                                    </StyledCardAction>)}
+                              </Flex>
+                           </SectionTab>
+                        ))}
+                     </SectionTabList>
+                     <SectionTabPanels>
+                        {mileRanges.map(mileRange => (
+                           <div>
+                              <SectionTabPanel key={mileRange.id} style={{ background: "white" }}>
+                                 <DeliveryCharges
+                                    mileRangeId={mileRange.id}
+                                    charges={mileRange.charges}
+                                    openTunnel={openTunnel}
+                                 />
+                              </SectionTabPanel>
+                           </div>
+                        ))}
+                     </SectionTabPanels>
+                  </SectionTabs>
+               </Flex>
             </>
          ) : (
             <ButtonTile

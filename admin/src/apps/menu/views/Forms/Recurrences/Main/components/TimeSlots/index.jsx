@@ -105,7 +105,12 @@ const TimeSlots = ({ recurrenceId, timeSlots, openTunnel }) => {
             onEdit={addTimeSlot}
          >
             {timeSlots.map(timeSlot => (
-               <TabPane tab={`${TimeType({ timeSlot })} \n(${timeSlot.from} - ${timeSlot.to})`} key={timeSlot.id} closable={false}>
+               <TabPane
+                  tab={`${TimeType({ timeSlot })} (${timeSlot.from} - ${timeSlot.to})`}
+                  key={timeSlot.id}
+                  closable={false}
+                  style={{ background: "#ffffff" }}
+               >
                   <TimeSlotDetails>
                      <TabsHeading>
                         <TimeType timeSlot={timeSlot} />
@@ -141,7 +146,7 @@ const TimeSlots = ({ recurrenceId, timeSlots, openTunnel }) => {
                      </TabsAction>
                   </TimeSlotDetails>
                   {type.includes('DELIVERY') && (
-                     <Flex key={timeSlot.id} style={{ marginTop: "10px" }} >
+                     <Flex key={timeSlot.id} style={{ padding: "0 0 0 1rem" }} >
                         <DeliveryRanges
                            timeSlotId={timeSlot.id}
                            mileRanges={timeSlot.mileRanges}
@@ -149,7 +154,6 @@ const TimeSlots = ({ recurrenceId, timeSlots, openTunnel }) => {
                         />
                      </Flex>
                   )}
-
                </TabPane>
             ))}
 

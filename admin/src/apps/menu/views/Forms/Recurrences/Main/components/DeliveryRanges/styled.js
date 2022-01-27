@@ -31,7 +31,7 @@ export const StyledContext = styled.div`
    padding: 0.2em;
    > div:nth-child(1) {
       color: #919699;
-      width: 7em;
+      width: 7rem;
       text-align: left;
    }
    > div:nth-child(2) {
