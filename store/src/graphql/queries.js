@@ -1627,6 +1627,7 @@ export const GET_CART = gql`
          locationId
          loyaltyPointsUsable
          customerKeycloakId
+         cartOwnerBilling
          billing: billingDetails
          subscriptionOccurenceId
          toUseAvailablePaymentOptionId

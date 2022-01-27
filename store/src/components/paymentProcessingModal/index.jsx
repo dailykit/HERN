@@ -22,6 +22,7 @@ const PaymentProcessingModal = ({
    byPassTerminalPayment = () => null,
    cancelTerminalPayment = () => null,
    initializePrinting = () => null,
+   resetPaymentProviderStates = () => null,
 }) => {
    console.log('PaymentProcessingModal')
    const router = useRouter()
@@ -32,6 +33,7 @@ const PaymentProcessingModal = ({
    const closeModalHandler = () => {
       setIsCelebrating(false)
       closeModal()
+      resetPaymentProviderStates()
    }
 
    const stopCelebration = () => {
