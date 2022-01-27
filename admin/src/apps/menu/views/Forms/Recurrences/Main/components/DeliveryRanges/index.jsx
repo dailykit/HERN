@@ -63,18 +63,14 @@ const DeliveryRanges = ({ timeSlotId, mileRanges, openTunnel }) => {
    })
    const handleMouseEnter = index => {
       setMouseState({
-         ...mouseState,
          isHovered: {
-            ...mouseState.isHovered,
             [index]: true,
          },
       })
    }
    const handleMouseLeave = index => {
       setMouseState({
-         ...mouseState,
          isHovered: {
-            ...mouseState.isHovered,
             [index]: false,
          },
       })
@@ -167,9 +163,9 @@ const DeliveryRanges = ({ timeSlotId, mileRanges, openTunnel }) => {
                                     <Switch
                                        name={`mileRange-${mileRange.id}`}
                                        value={mileRange.isActive}
+                                       checked={mileRange.isActive}
                                        checkedChildren="Published"
                                        unCheckedChildren="UnPublished"
-                                       defaultChecked
                                        title="Press to change publish type"
                                        onChange={() =>
                                           updateMileRange({

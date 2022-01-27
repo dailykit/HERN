@@ -130,18 +130,14 @@ const Main = () => {
    // console.log(mouseState)
    const handleMouseEnter = index => {
       setMouseState({
-         ...mouseState,
          isHovered: {
-            ...mouseState.isHovered,
             [index]: true,
          },
       })
    }
    const handleMouseLeave = index => {
       setMouseState({
-         ...mouseState,
          isHovered: {
-            ...mouseState.isHovered,
             [index]: false,
          },
       })
