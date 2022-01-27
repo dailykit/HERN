@@ -238,7 +238,6 @@ const Main = () => {
                                        '2px solid #F3F3F3'
                                     }
                                     hoverBorder={'2px solid #F3F3F3'}
-                                    width={'auto'}
                                     borderRadius={'8px'}
                                     border={'2px solid #F3F3F3'}
                                     padding={'none'}
