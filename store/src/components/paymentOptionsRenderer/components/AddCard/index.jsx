@@ -22,9 +22,9 @@ import {
 import { AddCardTunnel } from '../AddCardTunnel'
 // import { PaymentTunnel } from './payment_tunnel'
 // import { PaymentForm } from '../payment_form'
-import { isClient, get_env } from '../../../../utils'
+import { isClient, get_env, formatCurrency } from '../../../../utils'
 
-export const AddCard = ({ cartId }) => {
+export const AddCard = ({ cartId, balanceToPay = 0 }) => {
    const { addToast } = useToasts()
    const { user } = useUser()
    const { configOf, brand } = useConfig()
@@ -197,8 +197,9 @@ export const AddCard = ({ cartId }) => {
                            bg="#38a169"
                            className="payButton"
                            cartId={cartId}
+                           fullWidthSkeleton={false}
                         >
-                           Pay Via Card
+                           Pay Now {formatCurrency(balanceToPay)}
                         </PayButton>
                      )}
                   </div>

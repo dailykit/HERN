@@ -2,7 +2,7 @@
    display: grid;
    grid-template-rows: 1fr;
    min-height: calc(100vh - 64px);
-   grid-template-columns: 240px 1fr;
+   grid-template-columns: 300px 1fr;
    position: relative;
    @media (max-width: 768px) {
       display: block;
