@@ -230,7 +230,7 @@ export const PaymentProvider = ({ children }) => {
          variables: {
             id: cartPayment?.id,
             _set: {
-               ...(!['FAILED', 'CANCELLED'].includes(
+               ...(!['SUCCEEDED', 'FAILED', 'CANCELLED'].includes(
                   cartPayment?.paymentStatus
                ) && {
                   paymentStatus: 'FAILED',
@@ -239,7 +239,6 @@ export const PaymentProvider = ({ children }) => {
             },
          },
       })
-      resetPaymentProviderStates()
    }
 
    const eventHandler = async response => {
@@ -584,6 +583,7 @@ export const PaymentProvider = ({ children }) => {
                cancelTerminalPayment={cancelTerminalPayment}
                PaymentOptions={cartState.kioskPaymentOptions}
                initializePrinting={initializePrinting}
+               resetPaymentProviderStates={resetPaymentProviderStates}
             />
          )}
          {state.printDetails.isPrintInitiated && (

@@ -367,7 +367,7 @@ const KioskMenu = props => {
                                        ? t('Item')
                                        : t('Items')}{' '}
                                     {formatCurrency(
-                                       cart?.billing?.totalPrice?.value
+                                       cart?.cartOwnerBilling?.balanceToPay
                                     )}
                                  </span>
                                  <div
