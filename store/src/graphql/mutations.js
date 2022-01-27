@@ -454,6 +454,14 @@ export const DELETE_CART_ITEMS = gql`
       deleteCartItems(where: $where) {
          returning {
             id
+            cart {
+               id
+               cartItems_aggregate {
+                  aggregate {
+                     count
+                  }
+               }
+            }
          }
       }
    }

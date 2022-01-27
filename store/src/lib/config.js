@@ -19,7 +19,7 @@ const initialState = {
    selectedOrderTab: null,
    kioskDetails: null,
    locationId: null,
-   isIdleScreen: false,
+   isIdleScreen: true,
    userLocation: null, // this location only for get store location,
    storeStatus: {
       status: false,

@@ -44,19 +44,19 @@ const MenuContent = () => {
                <WeekPicker />
                <Header
                   url={
-                     !isEmpty(config?.header?.images)
-                        ? config?.header?.images[0]?.url
+                     !isEmpty(config?.header?.images?.value?.url)
+                        ? config?.header?.images?.value?.url
                         : ''
                   }
                >
-                  {config?.header?.heading && (
+                  {config?.header?.heading?.value && (
                      <h1 css={tw`text-4xl text-white z-10`}>
-                        {config?.header?.heading}
+                        {config?.header?.heading?.value}
                      </h1>
                   )}
-                  {config?.header?.subHeading && (
+                  {config?.header?.subHeading?.value && (
                      <h3 css={tw`text-xl text-gray-100 z-10`}>
-                        {config?.header?.subHeading}
+                        {config?.header?.subHeading?.value}
                      </h3>
                   )}
                </Header>

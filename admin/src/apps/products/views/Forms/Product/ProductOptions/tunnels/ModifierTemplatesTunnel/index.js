@@ -20,6 +20,7 @@ import {
 import { logger } from '../../../../../../../../shared/utils'
 import { ModifiersContext } from '../../../../../../context/product/modifiers'
 import {
+   ADDITIONAL_MODIFIER,
    MODIFIERS,
    MODIFIER_OPTION,
    PRODUCT_OPTION,
@@ -30,6 +31,8 @@ const ModifierTemplatesTunnel = ({
    close,
    modifierCategoryOption,
    setModifierCategoryOption,
+   additionalModifier,
+   setAdditionalModifier,
 }) => {
    const {
       modifiersState: { optionId },
@@ -78,6 +81,19 @@ const ModifierTemplatesTunnel = ({
          },
       }
    )
+   const [createAdditionalModifier, { loading: additionalModifierLoading }] =
+      useMutation(ADDITIONAL_MODIFIER.CREATE, {
+         onCompleted: () => {
+            toast.success('Updated!')
+            setAdditionalModifier(false)
+            close(6)
+            close(1)
+         },
+         onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
+         },
+      })
    const save = () => {
       if (modifierCategoryOption.categoryOption === true) {
          if (modifierCategory) return
@@ -86,6 +102,15 @@ const ModifierTemplatesTunnel = ({
                id: modifierCategoryOption.categoryOptionId,
                _set: {
                   additionalModifierTemplateId: current.id,
+               },
+            },
+         })
+      } else if (additionalModifier === true) {
+         createAdditionalModifier({
+            variables: {
+               object: {
+                  productOptionId: optionId,
+                  modifierId: current.id,
                },
             },
          })
@@ -107,6 +132,7 @@ const ModifierTemplatesTunnel = ({
          categoryOption: false,
          categoryOptionId: null,
       })
+      setAdditionalModifier(false)
       close(6)
    }
    React.useEffect(() => {

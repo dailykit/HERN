@@ -25,7 +25,7 @@ export const MODIFIER = {
          modifier(id: $id) {
             id
             name
-            categories(order_by: { created_at: asc_nulls_last }) {
+            categories(order_by: { position: desc_nulls_last }) {
                id
                name
                categoryType
@@ -33,7 +33,8 @@ export const MODIFIER = {
                isVisible
                type
                limits
-               options(order_by: { created_at: asc_nulls_last }) {
+               position
+               options(order_by: { position: desc_nulls_last }) {
                   id
                   posist_baseItemId
                   name
@@ -45,6 +46,7 @@ export const MODIFIER = {
                   isActive
                   isVisible
                   additionalModifierTemplateId
+                  position
                   operationConfig {
                      id
                      name

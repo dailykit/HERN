@@ -7,7 +7,7 @@ const InfoBlock = ({ heading, subHeading, columns, children, orientation }) => {
    const { configOf } = useConfig('Visual')
 
    return (
-      <BlockWrapper theme={configOf('theme-color')}>
+      <BlockWrapper theme={configOf('theme-color')?.themeColor}>
          {heading && <Heading>{heading}</Heading>}
          {subHeading && <SubHeading>{subHeading}</SubHeading>}
          <Container count={columns} orientation={orientation}>
@@ -71,10 +71,9 @@ const Container = styled.ul(
       grid-template-columns: 1fr;
    }
    li {
-      ${
-         orientation === 'row'
-            ? tw`flex flex-col items-center text-center`
-            : tw`flex items-start space-x-3`
+      ${orientation === 'row'
+         ? tw`flex flex-col items-center text-center`
+         : tw`flex items-start space-x-3`
       }
    }
 `

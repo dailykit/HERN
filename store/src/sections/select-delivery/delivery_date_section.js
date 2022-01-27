@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import { isEmpty } from 'lodash'
 import { useLazyQuery } from '@apollo/react-hooks'
 import { useToasts } from 'react-toast-notifications'
+import { useConfig } from '../../lib'
 
 import { useDelivery } from './state'
 import { CheckIcon } from '../../assets/icons'
@@ -32,6 +33,10 @@ export const DeliveryDateSection = () => {
          fetchPolicy: 'cache-and-network',
       }
    )
+   //config properties
+   const { configOf } = useConfig('Select-Delivery')
+   const noDatesAvailable = configOf('delivery-day')?.Delivery?.unavailableDateLabel
+   const getStartedDate = configOf('delivery-day')?.Delivery?.getStarted
 
    React.useEffect(() => {
       if (Object.keys(state.delivery.selected).length > 0) {
@@ -58,22 +63,24 @@ export const DeliveryDateSection = () => {
       dispatch({ type: 'SET_SKIP_LIST', payload: skipList })
    }
 
+
    if (loading) return <Loader inline />
    if (Object.keys(state.delivery.selected).length === 0)
       return (
          <>
             <HelperBar type="info">
                <HelperBar.SubTitle>
-                  Select a delivery day to get started
+                  {getStartedDate?.value || 'Select a delivery day to get started'}
                </HelperBar.SubTitle>
             </HelperBar>
          </>
       )
+
    if (isEmpty(occurences)) {
       return (
          <HelperBar type="warning">
             <HelperBar.SubTitle>
-               No dates are available for delivery on this address.
+               {noDatesAvailable?.value || 'No dates are available for delivery on this address.'}
             </HelperBar.SubTitle>
             <HelperBar.Button
                onClick={() => router.push(getRoute('/get-started/select-plan'))}

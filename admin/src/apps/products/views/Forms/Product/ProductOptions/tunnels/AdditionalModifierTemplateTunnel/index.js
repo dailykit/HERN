@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react'
 import {
+   ComboButton,
    Filler,
    Flex,
    Form,
+   IconButton,
    List,
    ListHeader,
    ListItem,
@@ -13,9 +15,12 @@ import {
    Tag,
    TagGroup,
    Text,
+   Tunnel,
    TunnelHeader,
+   Tunnels,
    useMultiList,
    useSingleList,
+   useTunnel,
 } from '@dailykit/ui'
 import {
    Banner,
@@ -30,12 +35,41 @@ import { ModifiersContext } from '../../../../../../context/product/modifiers'
 import { logger } from '../../../../../../../../shared/utils'
 import { toast } from 'react-toastify'
 import _ from 'lodash'
+import {
+   DeleteIcon,
+   EditIcon,
+   PlusIcon,
+} from '../../../../../../../../shared/assets/icons'
+import validator from '../../../validators'
+import {
+   ModifierFormTunnel,
+   ModifierModeTunnel,
+   ModifierOptionsTunnel,
+   ModifierPhotoTunnel,
+   ModifierTemplatesTunnel,
+   ModifierTypeTunnel,
+} from '..'
 
-const AdditionalModifierTemplateTunnel = ({ close }) => {
+const AdditionalModifierTemplateTunnel = ({
+   openTunnel,
+   closeTunnel,
+   additionalModifier,
+   setAdditionalModifier,
+
+   openOperationConfigTunnel,
+   setModifierCategoryOption,
+   modifierOpConfig,
+   modifierCategoryOption,
+}) => {
    const {
       modifiersState: { optionId },
+      modifiersDispatch,
    } = React.useContext(ModifiersContext)
+   console.log({ additionalModifier })
 
+   const [modifierTunnels, openModifierTunnel, closeModifierTunnel] =
+      useTunnel(6)
+   //const
    const [modifierData, setModifierData] = React.useState({
       label: {
          value: null,
@@ -47,22 +81,22 @@ const AdditionalModifierTemplateTunnel = ({ close }) => {
       },
       type: 'hidden',
    })
-   const [groupedList, setGroupedList] = React.useState(null)
-   const [selectedModifiers, setSelectedModifiers] = React.useState(null)
+   const [selectedModifiers, setSelectedModifiers] = React.useState([])
+   const [selectedPreviousModifiers, setSelectedPreviousModifiers] =
+      React.useState([])
+
+   console.log([selectedModifiers])
 
    // multi select list
-   const [search, setSearch] = React.useState('')
-   const [isCreating, setIsCreating] = React.useState(false)
    const {
       data: { modifiers = [] } = {},
       loading,
       error,
    } = useSubscription(MODIFIERS)
-   const [list, selected, selectOption] = useMultiList(modifiers)
 
    // subscription existing data
    const {
-      data: { additionalModifier = [] } = {},
+      data: { additionalModifierData = [] } = {},
       loading: loadingAdditionalModifier,
       error: errorAdditionalModifier,
    } = useSubscription(ADDITIONAL_MODIFIERS.VIEW, {
@@ -82,8 +116,19 @@ const AdditionalModifierTemplateTunnel = ({ close }) => {
             .groupBy('type')
             .map((value, key) => ({ type: key, additionalModifiers: value }))
             .value()
+
          console.log(' additionalModifierType', additionalModifierType)
-         setGroupedList(additionalModifierLabel)
+         console.log([
+            data.subscriptionData.data.products_productOption_modifier,
+         ])
+         const additionalModifierIds =
+            data.subscriptionData.data.products_productOption_modifier.map(
+               each => {
+                  return each.modifierId
+               }
+            )
+         setSelectedModifiers([...additionalModifierIds])
+         setSelectedPreviousModifiers([...additionalModifierIds])
          setModifierData({
             ...modifierData,
             label: {
@@ -101,19 +146,20 @@ const AdditionalModifierTemplateTunnel = ({ close }) => {
    // console.log('optionId', optionId, groupedList)
 
    useEffect(() => {
-      if (list.length > 0 && groupedList && groupedList.length) {
-         const selectedModifiers = groupedList[0]?.additionalModifiers.map(
-            eachModifier => {
-               return list.find(item => item.id === eachModifier.modifierId)
-            }
+      if (additionalModifier.modifierId !== null) {
+         const exists = selectedModifiers.find(
+            p => p === additionalModifier.modifierId
          )
-         setSelectedModifiers(selectedModifiers)
-         // console.log('selected modifiers', selectedModifiers)
-         selectedModifiers.forEach(x => {
-            selectOption('id', x.id)
-         })
+         if (exists) {
+            toast.error('Modifier Exists !')
+         } else {
+            setSelectedModifiers([
+               ...selectedModifiers,
+               additionalModifier.modifierId,
+            ])
+         }
       }
-   }, [list, groupedList])
+   }, [additionalModifier])
 
    // Mutations
    const [createAdditionalModifier] = useMutation(ADDITIONAL_MODIFIERS.CREATE, {
@@ -128,31 +174,17 @@ const AdditionalModifierTemplateTunnel = ({ close }) => {
                   errors: [],
                },
             },
-            modifierIds: null,
             type: 'hidden',
          })
-         close(1)
-         close(3)
+         closeTunnel(1)
       },
       onError: error => {
          toast.error('Something went wrong!')
          logger(error)
-         // console.log('error', error)
+         console.log('error', error)
       },
    })
    const [deleteModifiers] = useMutation(ADDITIONAL_MODIFIERS.DELETE)
-
-   // validator function
-   const validator = value => {
-      const text = value.trim()
-      let isValid = true
-      let errors = []
-      if (text.length < 1) {
-         isValid = false
-         errors = [...errors, 'Cannot be empty!']
-      }
-      return { isValid, errors }
-   }
 
    // onBlur
    const onBlur = e => {
@@ -166,8 +198,8 @@ const AdditionalModifierTemplateTunnel = ({ close }) => {
                meta: {
                   ...modifierData.label.meta,
                   isTouched: true,
-                  errors: validator(value).errors,
-                  isValid: validator(value).isValid,
+                  errors: validator.label(value).errors,
+                  isValid: validator.label(value).isValid,
                },
             },
          })
@@ -176,37 +208,50 @@ const AdditionalModifierTemplateTunnel = ({ close }) => {
    // console.log('selectedModifiers', selectedModifiers)
 
    const save = () => {
-      const labelValid = modifierData.label.meta.isValid
-      const newData = selected.map(eachModifier => ({
+      const newData = selectedModifiers.map(eachModifierId => ({
          label: modifierData.label.value,
          type: modifierData.type,
          productOptionId: optionId,
-         modifierId: eachModifier.id,
+         modifierId: eachModifierId,
       }))
 
-      if (selectedModifiers !== null) {
-         selectedModifiers.forEach(x => {
+      if (selectedPreviousModifiers !== null) {
+         selectedPreviousModifiers.forEach(eachModifierId => {
             deleteModifiers({
                variables: {
                   productOptionId: optionId,
-                  modifierId: x.id,
+                  modifierId: eachModifierId,
                },
             })
          })
       }
-
       // console.log('newData', newData)
-      if (labelValid === true) {
+      if (selectedModifiers.length > 0) {
          createAdditionalModifier({
             variables: {
                objects: newData,
             },
          })
       } else {
-         toast.error('Label field can not be empty')
+         toast.error('Modifiers can not be Null !')
       }
    }
 
+   // handler
+   const handlerDelete = ({ index }) => {
+      const array = [...selectedModifiers]
+      if (index !== -1) {
+         array.splice(index, 1)
+         setSelectedModifiers([...array])
+      }
+   }
+   const handlerEditModifier = modifierId => {
+      modifiersDispatch({
+         type: 'MODIFIER_ID',
+         payload: modifierId,
+      })
+      openModifierTunnel(2)
+   }
    const radioOption = [
       { id: 1, title: 'Visible', payload: 'visible' },
       { id: 2, title: 'Hidden', payload: 'hidden' },
@@ -224,7 +269,7 @@ const AdditionalModifierTemplateTunnel = ({ close }) => {
                title: loading ? 'Saving...' : 'Save',
                action: save,
             }}
-            close={() => close(3)}
+            close={() => closeTunnel(1)}
             tooltip={
                <Tooltip identifier="additional_modifier_templates_tunnel" />
             }
@@ -275,57 +320,105 @@ const AdditionalModifierTemplateTunnel = ({ close }) => {
                />
             </Flex>
             <Spacer size="10px" />
-            <Banner id="products-app-single-product-additional-modifier-tunnel-top" />
-            {!modifiers.length ? (
-               <Filler
-                  message="No modifiers found! To start, please add some."
-                  height="500px"
-               />
-            ) : (
-               <List>
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder="type what you’re looking for..."
-                  />
-                  {selected.length > 0 && (
-                     <TagGroup style={{ margin: '8px 0' }}>
-                        {selected.map(option => (
-                           <Tag
-                              key={option.id}
-                              title={option.title}
-                              onClick={() => selectOption('id', option.id)}
-                           >
-                              {option.title}
-                           </Tag>
-                        ))}
-                     </TagGroup>
-                  )}
-                  <ListHeader type="MSL1" label="Modifiers" />
-                  <ListOptions
-                     search={search}
-                     handleOnCreate={() => setIsCreating(true)}
-                     isCreating={isCreating}
-                  >
-                     {list
-                        .filter(option =>
-                           option.title.toLowerCase().includes(search)
+            <Banner id="products-app-single-product-additional-modifier-modifierTunnel-top" />
+            <Flex>
+               {selectedModifiers.map((each, index) =>
+                  modifiers.map((eachModifier, i) => {
+                     if (each === eachModifier.id) {
+                        return (
+                           <>
+                              <Flex container alignItems="center" key={index}>
+                                 <Flex>
+                                    <Text as="subtitle">Modifier Template</Text>
+                                    <Text as="p">{eachModifier.title}</Text>
+                                 </Flex>
+                                 <Spacer xAxis size="16px" />
+                                 <IconButton
+                                    title="Edit Modifier"
+                                    type="ghost"
+                                    onClick={() => handlerEditModifier(each)}
+                                 >
+                                    <EditIcon />
+                                 </IconButton>
+
+                                 <IconButton
+                                    title="Delete Modifier"
+                                    type="ghost"
+                                    onClick={() => handlerDelete(index)}
+                                 >
+                                    <DeleteIcon />
+                                 </IconButton>
+                              </Flex>
+                           </>
                         )
-                        .map(option => (
-                           <ListItem
-                              type="MSL1"
-                              key={option.id}
-                              title={option.title}
-                              onClick={() => selectOption('id', option.id)}
-                              isActive={selected.find(
-                                 item => item.id === option.id
-                              )}
-                           />
-                        ))}
-                  </ListOptions>
-               </List>
-            )}
-            <Banner id="products-app-single-product -additional-modifier-tunnel-bottom" />
+                     }
+                  })
+               )}
+            </Flex>
+            <ComboButton
+               type="ghost"
+               onClick={() => {
+                  openModifierTunnel(1)
+                  setAdditionalModifier({
+                     ...additionalModifier,
+                     modifierIdStatus: true,
+                     modifierId: null,
+                  })
+               }}
+            >
+               <PlusIcon /> Add Modifiers
+            </ComboButton>
+            <Banner id="products-app-single-product -additional-modifier-modifierTunnel-bottom" />
          </TunnelBody>
+
+         <Tunnels tunnels={modifierTunnels}>
+            <Tunnel layer={1}>
+               <ModifierModeTunnel
+                  open={openModifierTunnel}
+                  close={closeModifierTunnel}
+                  setModifierCategoryOption={setModifierCategoryOption}
+                  setAdditionalModifier={setAdditionalModifier}
+                  additionalModifier={additionalModifier}
+               />
+            </Tunnel>
+            <Tunnel layer={2}>
+               <ModifierFormTunnel
+                  open={openModifierTunnel}
+                  close={closeModifierTunnel}
+                  openOperationConfigTunnel={openOperationConfigTunnel}
+                  modifierOpConfig={modifierOpConfig}
+                  setModifierCategoryOption={setModifierCategoryOption}
+               />
+            </Tunnel>
+            <Tunnel layer={3}>
+               <ModifierTypeTunnel
+                  open={openModifierTunnel}
+                  close={closeModifierTunnel}
+               />
+            </Tunnel>
+            <Tunnel layer={4}>
+               <ModifierOptionsTunnel
+                  open={openModifierTunnel}
+                  close={closeModifierTunnel}
+               />
+            </Tunnel>
+            <Tunnel layer={5}>
+               <ModifierPhotoTunnel
+                  open={openModifierTunnel}
+                  close={closeModifierTunnel}
+               />
+            </Tunnel>
+            <Tunnel layer={6}>
+               <ModifierTemplatesTunnel
+                  open={openModifierTunnel}
+                  close={closeModifierTunnel}
+                  additionalModifier={additionalModifier}
+                  setAdditionalModifier={setAdditionalModifier}
+                  setModifierCategoryOption={setModifierCategoryOption}
+                  modifierCategoryOption={modifierCategoryOption}
+               />
+            </Tunnel>
+         </Tunnels>
       </>
    )
 }

@@ -4,11 +4,15 @@ import { useRouter } from 'next/router'
 import { useConfig } from '../lib'
 import { getRoute } from '../utils'
 import classNames from 'classnames'
+import { ProfileSidebarIcon } from '../assets/icons'
 
 export const ProfileSidebar = ({ toggle = true, logout }) => {
    const { configOf, settings } = useConfig()
    const router = useRouter()
-
+   const isSubscriptionStore =
+      settings?.availability?.find(
+         i => i.identifier === 'isSubscriptionAvailable'
+      )?.value?.Subscription?.isSubscriptionAvailable?.value ?? false
    const isLoyaltyPointsAvailable =
       settings?.rewards?.find(
          setting => setting?.identifier === 'Loyalty Points Availability'
@@ -20,10 +24,15 @@ export const ProfileSidebar = ({ toggle = true, logout }) => {
    const referralsAllowed = configOf('Referral', 'rewards')?.isAvailable
 
    const sidebarLinks = [
-      { title: 'Profile', href: '/account/profile/' },
+      {
+         title: 'Profile',
+         href: '/account/profile/',
+         Icon: ProfileSidebarIcon.Profile,
+      },
       {
          title: `${walletSettings?.label ? walletSettings.label : 'Wallet'}`,
          href: '/account/wallet/',
+         Icon: ProfileSidebarIcon.Wallet,
       },
       {
          title: `${
@@ -32,17 +41,42 @@ export const ProfileSidebar = ({ toggle = true, logout }) => {
                : 'Loyalty Points'
          }`,
          href: '/account/loyalty-points/',
+         Icon: ProfileSidebarIcon.LoyaltyPoints,
       },
-      { title: 'Referrals', href: '/account/referrals/' },
-      { title: 'Order History', href: '/account/orders/' },
-      { title: 'Manage Addresses', href: '/account/addresses/' },
-      { title: 'Manage Cards', href: '/account/cards/' },
+      {
+         title: 'Referrals',
+         href: '/account/referrals/',
+         Icon: ProfileSidebarIcon.Referrals,
+      },
+      {
+         title: 'Order History',
+         href: '/account/orders/',
+         Icon: ProfileSidebarIcon.Orders,
+      },
+      {
+         title: 'Subscriptions',
+         href: '/account/subscriptions/',
+         Icon: ProfileSidebarIcon.Subscriptions,
+      },
+      {
+         title: 'Manage Addresses',
+         href: '/account/addresses/',
+         Icon: ProfileSidebarIcon.ManageAddresses,
+      },
+      {
+         title: 'Manage Cards',
+         href: '/account/cards/',
+         Icon: ProfileSidebarIcon.ManageCards,
+      },
    ]
-   const menu = sidebarLinks.filter(item =>
-      !isLoyaltyPointsAvailable
-         ? item.href !== '/account/loyalty-points/'
-         : true
+   const conditionalRoutes = {
+      '/account/subscriptions/': isSubscriptionStore,
+      '/account/loyalty-points/': isLoyaltyPointsAvailable,
+   }
+   const excludedRoutes = Object.keys(conditionalRoutes).filter(
+      route => conditionalRoutes[route] === false
    )
+   const menu = sidebarLinks.filter(item => !excludedRoutes.includes(item.href))
    return (
       <aside className={`hern-profile-sidebar${toggle ? '--toggle' : ''}`}>
          <ul>
@@ -54,9 +88,13 @@ export const ProfileSidebar = ({ toggle = true, logout }) => {
                   'hern-profile-sidebar__menu-link',
                   { 'hern-profile-sidebar__menu-link--active': isActive }
                )
+               const Icon = node.Icon
                return (
                   <Link href={getRoute(node.href)} key={node.href} passHref>
-                     <span className={manuItemClasses}>{node.title}</span>
+                     <span className={manuItemClasses}>
+                        <Icon />
+                        <span>{node.title}</span>
+                     </span>
                   </Link>
                )
             })}

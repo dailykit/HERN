@@ -33,7 +33,10 @@ export const AddressSection = () => {
    const toggleTunnel = value => {
       dispatch({ type: 'TOGGLE_TUNNEL', payload: value })
    }
+
+   //config properties
    const theme = configOf('theme-color', 'Visual')
+   const addressLabelFromConfig = configOf('address', 'Select-Delivery')?.address?.selectAddress
 
    return (
       <>
@@ -44,7 +47,7 @@ export const AddressSection = () => {
                   color: theme?.accent ? theme.accent : 'rgba(5, 150, 105, 1)',
                }}
             >
-               Select Address
+               {addressLabelFromConfig?.value || 'Select Address'}
             </h3>
             {user?.platform_customer?.addresses.length > 0 && (
                <Button bg={theme?.accent} onClick={() => toggleTunnel(true)}>

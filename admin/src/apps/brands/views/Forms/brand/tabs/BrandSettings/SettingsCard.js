@@ -6,7 +6,7 @@ import { BRANDS } from '../../../../../graphql'
 import { logger } from '../../../../../../../shared/utils'
 import ConfigTemplateUI from '../../../../../../../shared/components/ConfigTemplateUI'
 import { useInView } from "react-intersection-observer";
-export const SettingsCard = ({ setting, title, isChangeSaved, setIsSavedChange, setIsComponentIsOnView, componentIsOnView }) => {
+export const SettingsCard = ({ setting, title, isChangeSaved, setIsSavedChange, setIsComponentIsOnView, componentIsOnView, setMode, mode }) => {
     const [config, setConfig] = React.useState({})
     const params = useParams()
 
@@ -72,7 +72,10 @@ export const SettingsCard = ({ setting, title, isChangeSaved, setIsSavedChange, 
                 configSaveHandler={saveInfo}
                 identifier={title}
                 isChangeSaved={isChangeSaved}
-                setIsSavedChange={setIsSavedChange} />
+                setIsSavedChange={setIsSavedChange}
+                mode={mode}
+                setMode={setMode}
+            />
         </div>
     )
 }

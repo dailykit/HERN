@@ -2,13 +2,7 @@ import React from 'react'
 import { useRouter } from 'next/router'
 
 import { useUser } from '../../../context'
-import {
-   getPageProps,
-   getRoute,
-   isClient,
-   processExternalFiles,
-   renderPageContent,
-} from '../../../utils'
+import { getPageProps, isClient, renderPageContent } from '../../../utils'
 import {
    SEO,
    Layout,

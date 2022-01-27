@@ -7,9 +7,9 @@ export const Child = styled.div`
    align-items: center;
    justify-content: space-between;
    background: #ffffff;
-   cursor:pointer;
+   cursor: pointer;
    border: 1px solid #f3f3f3;
-   border:1px solid #f3f3f3;
+   border: 1px solid #f3f3f3;
    box-sizing: border-box;
    color: #555b6e;
    width: 100%;
@@ -17,41 +17,44 @@ export const Child = styled.div`
    border-radius: 2px;
    margin-bottom: 3px;
    &:hover {
-      border-left:2px solid #367BF5;
+      border-left: 2px solid #367bf5;
       box-shadow: 0px 0.5px 2px rgba(0, 0, 0, 0.1);
-      background: #F9F9F9;
+      background: #f9f9f9;
    }
-   .identifier_name{
+   .identifier_name {
       padding: 9px 12px;
       width: 100%;
       font-weight: 500;
-      color: #555B6E;
+      color: #555b6e;
       letter-spacing: 0.44px;
-  }
-   .identifier_name:focus,.identifier_name:active{
-      color:#367BF5
    }
-   .active-link{
-      border-left:2px solid #367BF5;
-      background: #F9F9F9;
+   .identifier_name:focus,
+   .identifier_name:active {
+      color: #367bf5;
    }
-  
+   .active-link {
+      border-left: 2px solid #367bf5;
+      background: #f9f9f9;
+   }
 `
 export const Styles = {
    Wrapper: styled.div`
       display: flex;
       background: #f9f9f9;
       height: 480px;
+      .ant-input-group-wrapper {
+         margin: 1rem 0 -1rem 0 !important;
+      }
    `,
    SettingsWrapper: styled.div`
       width: 20%;
       height: 100%;
-      overflow:scroll;
-      padding:16px;
-      align-items:center;
+      overflow: scroll;
+      padding: 16px;
+      align-items: center;
       ::-webkit-scrollbar {
          display: none;
-     }
+      }
    `,
    Tabs: styled.div`
       height: calc(100% - 80px);
@@ -79,33 +82,34 @@ export const Styles = {
       ::-webkit-scrollbar-thumb:hover {
          background: #919699;
       }
-   ` , LinkWrapper: styled.div`
-   width: 25%;
-   height: 100%;
-   overflow:scroll;
-   padding:16px;
-   text-align:center;
-   align-items:center;
-   ::-webkit-scrollbar {
-      display: none;
-  }
-`,
+   `,
+   LinkWrapper: styled.div`
+      width: 25%;
+      height: 100%;
+      overflow: scroll;
+      padding: 16px;
+      text-align: center;
+      align-items: center;
+      ::-webkit-scrollbar {
+         display: none;
+      }
+   `,
 }
 
 export const CollapsibleWrapper = styled.div`
-background: #F9F9F9;
->.nav_child{
-   background: #F9F9F9;
-   :hover{
-      background: #fff;
+   background: #f9f9f9;
+   > .nav_child {
+      background: #f9f9f9;
+      :hover {
+         background: #fff;
+      }
    }
-}
-button{
-   border-radius: 15px;
-   width: 22px;
-   height: 22px;
-   :hover{
-      background: #F3F3F3;
+   button {
+      border-radius: 15px;
+      width: 22px;
+      height: 22px;
+      :hover {
+         background: #f3f3f3;
+      }
    }
-}
 `

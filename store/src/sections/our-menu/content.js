@@ -174,9 +174,9 @@ export const Content = () => {
       })
    }
 
-   const config = configOf('primary-labels')
-   const theme = configOf('theme-color', 'Visual')
-   const imageRatio = useConfig().configOf('image-aspect-ratio', 'Visual')
+   const config = configOf('primary-labels')?.primaryLabels
+   const theme = configOf('theme-color', 'Visual')?.themeColor
+   const imageRatio = useConfig().configOf('image-aspect-ratio', 'Visual')?.imageAspectRatio
 
    const yieldLabel = {
       singular: config?.yieldLabel?.singular || 'serving',
@@ -320,9 +320,8 @@ export const Content = () => {
                      >
                         <span>
                            <ArrowLeftIcon
-                              className={`hern-our-menu__occurences___btn__icon${
-                                 current === 0 ? '--disabled' : ''
-                              }`}
+                              className={`hern-our-menu__occurences___btn__icon${current === 0 ? '--disabled' : ''
+                                 }`}
                            />
                         </span>
                         Past week
@@ -357,11 +356,10 @@ export const Content = () => {
                         Upcoming Week
                         <span>
                            <ArrowRightIcon
-                              className={`hern-our-menu__occurences___btn__icon${
-                                 current === occurences.length - 1
-                                    ? '--disabled'
-                                    : ''
-                              }`}
+                              className={`hern-our-menu__occurences___btn__icon${current === occurences.length - 1
+                                 ? '--disabled'
+                                 : ''
+                                 }`}
                            />
                         </span>
                      </button>
@@ -503,8 +501,8 @@ const Product = ({
 const ImageWrapper = styled.div(
    ({ imageRatio }) => css`
       ${tw`flex items-center justify-center bg-gray-200 mb-2 rounded overflow-hidden cursor-pointer `}
-      ${imageRatio && imageRatio.width
-         ? `aspect-ratio: ${imageRatio.height}/ ${imageRatio.width} }`
+      ${imageRatio && imageRatio?.width?.value
+         ? `aspect-ratio: ${imageRatio?.height?.value}/ ${imageRatio?.width?.value} }`
          : tw`aspect-w-4 aspect-h-3`}
    `
 )
