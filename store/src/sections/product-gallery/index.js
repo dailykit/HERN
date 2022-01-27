@@ -8,6 +8,7 @@ import { ProductCard } from '../../components/product_card'
 import { ArrowLeftIcon, ArrowRightIcon } from '../../assets/icons'
 import { useRouter } from 'next/router'
 import { getRoute } from '../../utils'
+
 export const ProductGallery = ({ config }) => {
    const [productsData, setProductsData] = React.useState([])
    const [productOrientation, setProductOrientation] = React.useState(
@@ -114,15 +115,16 @@ const ProductGrid = ({ product, index }) => {
                      addToCart({ productId: data.id }, 1)
                   }
                }}
-               disabled={
-                  locationId ? (storeStatus.status ? false : true) : true
-               }
+            // disabled={
+            //    locationId ? (storeStatus.status ? false : true) : true
+            // }
             >
-               {locationId
+               {/* {locationId
                   ? storeStatus.status
                      ? 'ADD'
                      : 'COMING SOON'
-                  : 'COMING SOON'}
+                  : 'COMING SOON'} */}
+               ADD
             </Button>
             {data.productOptions.length > 0 && <span>Customizable</span>}
          </div>
