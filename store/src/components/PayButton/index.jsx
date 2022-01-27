@@ -74,14 +74,6 @@ function PayButton({
                   _set: {
                      toUseAvailablePaymentOptionId:
                         selectedAvailablePaymentOptionId,
-                     ...(!isEmpty(profileInfo) && {
-                        customerInfo: {
-                           customerEmail: profileInfo?.email,
-                           customerPhone: profileInfo?.phone,
-                           customerLastName: profileInfo?.lastName,
-                           customerFirstName: profileInfo?.firstName,
-                        },
-                     }),
                   },
                },
             })
@@ -112,12 +104,6 @@ function PayButton({
                      }),
                      toUseAvailablePaymentOptionId:
                         paymentInfo?.selectedAvailablePaymentOption?.id,
-                     customerInfo: {
-                        customerEmail: profileInfo?.email,
-                        customerPhone: profileInfo?.phone,
-                        customerLastName: profileInfo?.lastName,
-                        customerFirstName: profileInfo?.firstName,
-                     },
                   },
                },
             })
