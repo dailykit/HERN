@@ -1,5 +1,13 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { ComboButton, Flex, IconButton, Text } from '@dailykit/ui'
+import {
+   ComboButton,
+   Flex,
+   IconButton,
+   Text,
+   Tunnel,
+   Tunnels,
+   useTunnel,
+} from '@dailykit/ui'
 import React from 'react'
 import { toast } from 'react-toastify'
 import { DeleteIcon, PlusIcon } from '../../../../../shared/assets/icons'
@@ -10,11 +18,13 @@ import { StyledHeader, StyledWrapper } from '../styled'
 import tableOptions from '../../../tableOption'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { useTooltip } from '../../../../../shared/providers'
+import CreateBrandLocation from '../../../../../shared/CreateUtils/Brand/BrandLocation'
 
 export const Locations = () => {
    const [locations, setLocations] = React.useState()
    const tableRef = React.useRef()
    const { tooltip } = useTooltip()
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
    // subscriptions
    const {
@@ -109,7 +119,7 @@ export const Locations = () => {
                <Tooltip identifier="locations_listing_heading" />
             </Flex>
 
-            <ComboButton type="solid">
+            <ComboButton type="solid" onClick={() => openTunnel(1)}>
                <PlusIcon color="white" />
                Create Location
             </ComboButton>
@@ -124,6 +134,12 @@ export const Locations = () => {
                placeholder: 'No Locations Available Yet !',
             }}
          />
+         <Tunnels tunnels={tunnels}>
+            <Tunnel layer={1} size="md">
+               <CreateBrandLocation closeTunnel={closeTunnel} />
+            </Tunnel>
+         </Tunnels>
+         <Banner id="brands-app-locations-listing-bottom" />
       </StyledWrapper>
    )
 }
