@@ -1,18 +1,20 @@
-import { useSubscription } from '@apollo/react-hooks'
-import { ComboButton, Flex, Text } from '@dailykit/ui'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { ComboButton, Flex, IconButton, Text } from '@dailykit/ui'
 import React from 'react'
 import { toast } from 'react-toastify'
-import { PlusIcon } from '../../../../../shared/assets/icons'
+import { DeleteIcon, PlusIcon } from '../../../../../shared/assets/icons'
 import { Banner, InlineLoader, Tooltip } from '../../../../../shared/components'
 import { logger } from '../../../../../shared/utils'
 import { LOCATIONS } from '../../../graphql'
 import { StyledHeader, StyledWrapper } from '../styled'
 import tableOptions from '../../../tableOption'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
+import { useTooltip } from '../../../../../shared/providers'
 
 export const Locations = () => {
    const [locations, setLocations] = React.useState()
    const tableRef = React.useRef()
+   const { tooltip } = useTooltip()
 
    // subscriptions
    const {
@@ -25,6 +27,26 @@ export const Locations = () => {
          setLocations(data.subscriptionData.data.brands_location)
       },
    })
+
+   //mutations
+   const [deleteLocation] = useMutation(LOCATIONS.DELETE, {
+      onCompleted: () => {
+         toast.success('Location deleted!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Could not delete!')
+      },
+   })
+
+   //handler
+   const deleteHandler = location => {
+      deleteLocation({
+         variables: {
+            id: location.id,
+         },
+      })
+   }
 
    const columns = React.useMemo(() => [
       {
@@ -60,6 +82,15 @@ export const Locations = () => {
       },
       {
          title: 'Action',
+         formatter: reactFormatter(
+            <DeleteLocation deleteHandler={deleteHandler} />
+         ),
+         headerTooltip: function (column) {
+            const identifier = 'locations_listing_actions_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
    ])
    if (error) {
@@ -80,7 +111,7 @@ export const Locations = () => {
 
             <ComboButton type="solid">
                <PlusIcon color="white" />
-               Create Brand
+               Create Location
             </ComboButton>
          </StyledHeader>
 
@@ -94,5 +125,15 @@ export const Locations = () => {
             }}
          />
       </StyledWrapper>
+   )
+}
+
+const DeleteLocation = ({ cell, deleteHandler }) => {
+   const onClick = () => deleteHandler(cell._cell.row.data)
+   if (cell.getData().isDefault) return null
+   return (
+      <IconButton type="ghost" size="sm" onClick={onClick}>
+         <DeleteIcon color="#FF5A52" />
+      </IconButton>
    )
 }

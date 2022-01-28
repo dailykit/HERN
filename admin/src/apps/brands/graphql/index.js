@@ -230,4 +230,11 @@ export const LOCATIONS = {
          }
       }
    `,
+   DELETE: gql`
+      mutation deleteLocation($id: Int!) {
+         delete_brands_location(where: { id: { _eq: $id } }) {
+            affected_rows
+         }
+      }
+   `,
 }
