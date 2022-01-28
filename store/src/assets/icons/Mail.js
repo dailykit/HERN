@@ -21,25 +21,25 @@ export const MailIcon = ({ size = 24, ...props }) => (
          height="97"
          rx="3"
          stroke="white"
-         stroke-width="8"
+         strokeWidth="8"
          mask="url(#path-2-inside-1_243_27)"
       />
       <path
          d="M74.4762 46.6749L5.47998 3.84964C4.62497 3.31895 5.00103 2 6.00734 2H144.952C145.961 2 146.335 3.32573 145.474 3.85285L75.5257 46.6781C75.2034 46.8755 74.7973 46.8742 74.4762 46.6749Z"
          stroke="white"
-         stroke-width="4"
+         strokeWidth="4"
       />
       <path
          d="M99 75H138"
          stroke="white"
-         stroke-width="4"
-         stroke-linecap="round"
+         strokeWidth="4"
+         strokeLinecap="round"
       />
       <path
          d="M99 84H138"
          stroke="white"
-         stroke-width="4"
-         stroke-linecap="round"
+         strokeWidth="4"
+         strokeLinecap="round"
       />
    </svg>
 )
