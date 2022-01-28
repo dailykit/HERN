@@ -122,7 +122,7 @@ const CreateBrandLocation = ({ closeTunnel }) => {
          [field]: {
             ...newLocation[index][field],
             meta: {
-               isTouched: false,
+               isTouched: true,
                isValid,
                errors,
             },
@@ -139,8 +139,14 @@ const CreateBrandLocation = ({ closeTunnel }) => {
             object.line1.meta.isValid &&
             object.line2.meta.isValid
       )
+      let locationTouch = location.every(
+         object =>
+            object.label.meta.isTouched &&
+            object.line1.meta.isTouched &&
+            object.line2.meta.isTouched
+      )
 
-      if (locationValid === true) {
+      if (locationValid && locationTouch) {
          return createLocationHandler()
       }
       return toast.error('All fields must be filled!')
@@ -222,7 +228,7 @@ const CreateBrandLocation = ({ closeTunnel }) => {
                               eachLocation.label.meta.isTouched
                            }
                         />
-                        {!eachLocation.label.meta.isTouched &&
+                        {eachLocation.label.meta.isTouched &&
                            !eachLocation.label.meta.isValid &&
                            eachLocation.label.meta.errors.map(
                               (error, index) => (
@@ -250,7 +256,7 @@ const CreateBrandLocation = ({ closeTunnel }) => {
                               eachLocation.line1.meta.isTouched
                            }
                         />
-                        {!eachLocation.line1.meta.isTouched &&
+                        {eachLocation.line1.meta.isTouched &&
                            !eachLocation.line1.meta.isValid &&
                            eachLocation.line1.meta.errors.map(
                               (error, index) => (
@@ -278,7 +284,7 @@ const CreateBrandLocation = ({ closeTunnel }) => {
                               eachLocation.line2.meta.isTouched
                            }
                         />
-                        {!eachLocation.line2.meta.isTouched &&
+                        {eachLocation.line2.meta.isTouched &&
                            !eachLocation.line2.meta.isValid &&
                            eachLocation.line2.meta.errors.map(
                               (error, index) => (
