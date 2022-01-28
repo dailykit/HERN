@@ -51,7 +51,6 @@ import 'antd/dist/antd.css'
 import { useToasts } from 'react-toast-notifications'
 import { rrulestr } from 'rrule'
 import { RefineLocationPopup } from './refineLocation'
-import { DeliveryV1 } from './locationSelector/delivery'
 
 // this Location selector is a pop up for mobile view so can user can select there location
 

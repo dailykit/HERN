@@ -1,6 +1,6 @@
 import React from 'react'
 import { CSSTransition } from 'react-transition-group'
-import { LocationSelector } from '../components'
+import { LocationSelector } from '../components/locationSelector/index'
 
 export const LocationSelectorWrapper = props => {
    const { showLocationSelectorPopup } = props

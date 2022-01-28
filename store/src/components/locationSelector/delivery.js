@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import classNames from 'classnames'
-import { Divider, Radio, Modal } from 'antd'
+import { Radio, Modal } from 'antd'
 import { useConfig } from '../../lib'
 import { get_env, useScript, isClient } from '../../utils'
-import { useFulfillment } from '../../utils'
+import { getStoresWithValidations } from '../../utils'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
 import LocationSelectorConfig from '../locatoinSeletorConfig.json'
-import { Loader } from '..'
+import { StoreList } from '../locationSelector/storeList'
 import { GPSIcon, NotFound } from '../../assets/icons'
+import { Loader } from '..'
+import { AddressInfo } from './addressInfo'
 
 // delivery section
-export const DeliveryV1 = props => {
+export const Delivery = props => {
    const { deliveryType: storeDeliveryType } =
       LocationSelectorConfig.informationVisibility.deliverySettings
 
@@ -21,7 +23,7 @@ export const DeliveryV1 = props => {
 
    const { setShowLocationSelectionPopup, settings } = props
 
-   const { orderTabs } = useConfig()
+   const { orderTabs, brand } = useConfig()
 
    const orderTabFulfillmentType = React.useMemo(
       () =>
@@ -67,34 +69,25 @@ export const DeliveryV1 = props => {
          : 'PREORDER_DELIVERY'
    )
    const [showRefineLocation, setShowRefineLocation] = useState(false)
+   const [isGetStoresLoading, setIsGetStoresLoading] = useState(true)
    const [stores, setStores] = useState(null)
 
-   const {
-      onDemandDeliveryBrandRecurrenceLoading,
-      preOrderDeliveryBrandRecurrenceLoading,
-      brands_brand_location_aggregate,
-      deliverableBrandLocationsLoading,
-      autoSelectStore,
-      isFulfillmentLoading,
-      setIsFulfillmentLoading,
-   } = useFulfillment(address, fulfillmentType)
-
    useEffect(() => {
-      console.log('isFulfillmentLoading', isFulfillmentLoading)
-      if (!isFulfillmentLoading && address) {
-         console.log(
-            'address in useEffect',
-            address,
-            onDemandDeliveryBrandRecurrenceLoading,
-            preOrderDeliveryBrandRecurrenceLoading
-         )
+      if (address && brand.id) {
          async function fetchStores() {
-            const [autoSelectedStore] = await autoSelectStore()
-            setStores(autoSelectedStore)
+            const brandClone = { ...brand }
+            const availableStore = await getStoresWithValidations(
+               brandClone,
+               fulfillmentType,
+               address,
+               true
+            )
+            setStores(availableStore)
+            setIsGetStoresLoading(false)
          }
          fetchStores()
       }
-   }, [isFulfillmentLoading, address, fulfillmentType])
+   }, [address, fulfillmentType, brand])
 
    // location by browser
    const locationByBrowser = () => {
@@ -162,7 +155,7 @@ export const DeliveryV1 = props => {
                         address.zipcode = node.long_name
                      }
                   })
-                  setIsFulfillmentLoading(true)
+                  setIsGetStoresLoading(true)
                   setAddress(prev => ({
                      ...prev,
                      mainText,
@@ -235,10 +228,9 @@ export const DeliveryV1 = props => {
                address.zipcode = node.long_name
             }
          })
-         console.log('this is adress', address)
          if (address.zipcode) {
             setUserCoordinate(prev => ({ ...prev, ...userLocation }))
-            setIsFulfillmentLoading(true)
+            setIsGetStoresLoading(true)
             setAddress({ ...userLocation, ...address })
          } else {
             showWarningPopup()
@@ -269,7 +261,7 @@ export const DeliveryV1 = props => {
                options={deliveryRadioOptions}
                onChange={e => {
                   setFulfillmentType(e.target.value)
-                  setIsFulfillmentLoading(true)
+                  setIsGetStoresLoading(true)
                }}
                value={fulfillmentType}
             />
@@ -323,7 +315,7 @@ export const DeliveryV1 = props => {
          ) : null}
 
          {/* Footer */}
-         {!address ? null : deliverableBrandLocationsLoading ? (
+         {!address ? null : isGetStoresLoading ? (
             <div
                style={{
                   padding: '1em',
@@ -339,7 +331,7 @@ export const DeliveryV1 = props => {
                />
                <span>Finding nearest store location to you</span>
             </div>
-         ) : brands_brand_location_aggregate?.nodes?.length == 0 ? (
+         ) : stores?.length == 0 ? (
             <div
                style={{
                   padding: '0 14px',
@@ -360,8 +352,7 @@ export const DeliveryV1 = props => {
                   No store available on this location.{' '}
                </span>
             </div>
-         ) : onDemandDeliveryBrandRecurrenceLoading ||
-           preOrderDeliveryBrandRecurrenceLoading ? (
+         ) : isGetStoresLoading ? (
             <div
                style={{
                   padding: '1em',
@@ -377,25 +368,20 @@ export const DeliveryV1 = props => {
                />
                <span>Finding nearest store location to you</span>
             </div>
-         ) : null}
+         ) : (
+            <StoreList
+               setShowLocationSelectionPopup={setShowLocationSelectionPopup}
+               settings={settings}
+               stores={stores}
+               fulfillmentType={fulfillmentType}
+               storeDistanceValidation={true}
+               address={address}
+               setShowRefineLocation={setShowRefineLocation}
+               showRefineLocation={showRefineLocation}
+            />
+         )}
       </div>
    )
 }
 
 // user's address
-const AddressInfo = props => {
-   const { address } = props
-   return (
-      <div className="hern-store-location-selector__user-address">
-         <div className="hern-store-location-selector__user-address-info">
-            <span className="hern-store-location-selector__user-address-info-text hern-store-location-selector__user-address-info-main-text">
-               {address.mainText}
-            </span>
-            <br />
-            <span className="hern-store-location-selector__user-address-info-text hern-store-location-selector__user-address-info-secondary-text">
-               {address.secondaryText} {address.zipcode}
-            </span>
-         </div>
-      </div>
-   )
-}

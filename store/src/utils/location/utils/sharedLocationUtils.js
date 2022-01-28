@@ -8,31 +8,9 @@ import {
    isStoreOnDemandDineInAvailable,
    isStorePreOrderDineInAvailable,
 } from '.'
-
-const fulfillmentStatus = fulfillmentType => {
-   let type
-   if (
-      fulfillmentType === 'ONDEMAND_PICKUP' ||
-      fulfillmentType === 'PREORDER_PICKUP'
-   ) {
-      type = 'pickupStatus'
-      return type
-   }
-   if (
-      fulfillmentType === 'ONDEMAND_DELIVERY' ||
-      fulfillmentType === 'PREORDER_DELIVERY'
-   ) {
-      type = 'deliveryStatus'
-      return type
-   }
-   if (
-      fulfillmentType === 'ONDEMAND_DINEIN' ||
-      fulfillmentType === 'SCHEDULED_DINEIN'
-   ) {
-      type = 'dineInStatus'
-      return type
-   }
-}
+import { graphQLClientSide } from '../../../lib'
+import { GET_ALL_RECURRENCES, GET_BRAND_LOCATION } from '../../../graphql'
+import { isClient } from '../../index'
 
 const getSortedStoresByAerialDistance = async (brandLocations, address) => {
    console.log('address', address)
@@ -64,19 +42,76 @@ const getSortedStoresByAerialDistance = async (brandLocations, address) => {
 }
 
 export const getStoresWithValidations = async (
-   brandLocations,
-   brandRecurrences,
+   brand,
    fulfillmentType, // ONDEMAND_DELVIERY PREORDER_DELVIERY etc.
    address,
-   autoSelect = false
+   autoSelect = false,
+   includeInvalidStore = false
 ) => {
-   // return --> an array
-   // array --> array[0] = store(s) with validation | array[1] fulfillmentStatus {deliveryStatus, pickupStatus, dineinStatus}
+   // fulfillmentStatus {deliveryStatus, pickupStatus, dineinStatus}
+   if (!isClient) {
+      return []
+   }
+   // get all store for brand
+   const { brandLocations } = await graphQLClientSide.request(
+      GET_BRAND_LOCATION,
+      {
+         where: {
+            brandId: {
+               _eq: brand.id,
+            },
+         },
+      }
+   )
+
+   // get all store which are deliverable
+   const { brandLocations: deliverableBrandLocations = [] } =
+      await graphQLClientSide.request(GET_BRAND_LOCATION, {
+         where: {
+            _or: [
+               {
+                  location: {
+                     city: { _eq: address?.city },
+                     state: { _eq: address?.state },
+                  },
+               },
+               {
+                  _or: [
+                     { doesDeliverOutsideCity: { _eq: true } },
+                     { doesDeliverOutsideState: { _eq: true } },
+                  ],
+               },
+            ],
+            brandId: { _eq: brand.id },
+         },
+      })
+
+   const { brandRecurrences } = await graphQLClientSide.request(
+      GET_ALL_RECURRENCES,
+      {
+         where: {
+            recurrence: {
+               isActive: { _eq: true },
+               type: { _eq: fulfillmentType },
+            },
+            _or: [
+               {
+                  brandLocationId: {
+                     _in: deliverableBrandLocations.map(x => x.id),
+                  },
+               },
+               { brandId: { _eq: brand.id } },
+            ],
+            isActive: { _eq: true },
+         },
+      }
+   )
 
    const sortedStoresByAerialDistance = await getSortedStoresByAerialDistance(
       brandLocations,
       address
    )
+   const sortedStoresByAerialDistanceWithValidation = []
 
    for (let i = 0; i < sortedStoresByAerialDistance.length; i++) {
       const storeLocationRecurrences = brandRecurrences.filter(
@@ -101,18 +136,16 @@ export const getStoresWithValidations = async (
                      message:
                         'Sorry, there is no store available for delivery.',
                   }
-                  sortedStoresByAerialDistance[i][
-                     fulfillmentStatus(fulfillmentType)
-                  ] = deliveryStatus
+                  sortedStoresByAerialDistance[i]['fulfillmentStatus'] =
+                     deliveryStatus
                } else {
                   const deliveryStatus = await isStoreOnDemandDeliveryAvailable(
                      finalRecurrences,
                      sortedStoresByAerialDistance[i],
                      address
                   )
-                  sortedStoresByAerialDistance[i][
-                     fulfillmentStatus(fulfillmentType)
-                  ] = deliveryStatus
+                  sortedStoresByAerialDistance[i]['fulfillmentStatus'] =
+                     deliveryStatus
                }
             }
             break
@@ -124,18 +157,16 @@ export const getStoresWithValidations = async (
                      message:
                         'Sorry, there is no store available for pre order delivery.',
                   }
-                  sortedStoresByAerialDistance[i][
-                     fulfillmentStatus(fulfillmentType)
-                  ] = deliveryStatus
+                  sortedStoresByAerialDistance[i]['fulfillmentStatus'] =
+                     deliveryStatus
                } else {
                   const deliveryStatus = await isStorePreOrderDeliveryAvailable(
                      finalRecurrences,
                      sortedStoresByAerialDistance[i],
                      address
                   )
-                  sortedStoresByAerialDistance[i][
-                     fulfillmentStatus(fulfillmentType)
-                  ] = deliveryStatus
+                  sortedStoresByAerialDistance[i]['fulfillmentStatus'] =
+                     deliveryStatus
                }
             }
             break
@@ -146,17 +177,15 @@ export const getStoresWithValidations = async (
                      status: false,
                      message: 'Sorry, there is no store available for pickup.',
                   }
-                  sortedStoresByAerialDistance[i][
-                     fulfillmentStatus(fulfillmentType)
-                  ] = pickupStatus
+                  sortedStoresByAerialDistance[i]['fulfillmentStatus'] =
+                     pickupStatus
                } else {
                   const pickupStatus = isStoreOnDemandPickupAvailable(
                      finalRecurrences,
                      sortedStoresByAerialDistance[i]
                   )
-                  sortedStoresByAerialDistance[i][
-                     fulfillmentStatus(fulfillmentType)
-                  ] = pickupStatus
+                  sortedStoresByAerialDistance[i]['fulfillmentStatus'] =
+                     pickupStatus
                }
             }
             break
@@ -167,17 +196,15 @@ export const getStoresWithValidations = async (
                      status: false,
                      message: 'Sorry, there is no store available for pickup.',
                   }
-                  sortedStoresByAerialDistance[i][
-                     fulfillmentStatus(fulfillmentType)
-                  ] = pickupStatus
+                  sortedStoresByAerialDistance[i]['fulfillmentStatus'] =
+                     pickupStatus
                } else {
                   const pickupStatus = isStorePreOrderPickupAvailable(
                      finalRecurrences,
                      sortedStoresByAerialDistance[i]
                   )
-                  sortedStoresByAerialDistance[i][
-                     fulfillmentStatus(fulfillmentType)
-                  ] = pickupStatus
+                  sortedStoresByAerialDistance[i]['fulfillmentStatus'] =
+                     pickupStatus
                }
             }
             break
@@ -188,17 +215,15 @@ export const getStoresWithValidations = async (
                      status: false,
                      message: 'Sorry, there is no store available for dine in.',
                   }
-                  sortedStoresByAerialDistance[i][
-                     fulfillmentStatus(fulfillmentType)
-                  ] = dineInStatus
+                  sortedStoresByAerialDistance[i]['fulfillmentStatus'] =
+                     dineInStatus
                } else {
                   const dineInStatus = isStoreOnDemandDineInAvailable(
                      finalRecurrences,
                      sortedStoresByAerialDistance[i]
                   )
-                  sortedStoresByAerialDistance[i][
-                     fulfillmentStatus(fulfillmentType)
-                  ] = dineInStatus
+                  sortedStoresByAerialDistance[i]['fulfillmentStatus'] =
+                     dineInStatus
                }
             }
             break
@@ -208,39 +233,41 @@ export const getStoresWithValidations = async (
                   status: false,
                   message: 'Sorry, there is no store available for dine in.',
                }
-               sortedStoresByAerialDistance[i][
-                  fulfillmentStatus(fulfillmentType)
-               ] = dineInStatus
+               sortedStoresByAerialDistance[i]['fulfillmentStatus'] =
+                  dineInStatus
             } else {
                const dineInStatus = isStorePreOrderDineInAvailable(
                   finalRecurrences,
                   sortedStoresByAerialDistance[i]
                )
-               sortedStoresByAerialDistance[i][
-                  fulfillmentStatus(fulfillmentType)
-               ] = dineInStatus
+               sortedStoresByAerialDistance[i]['fulfillmentStatus'] =
+                  dineInStatus
             }
          }
       }
 
       // when auto select true, check if there any store which available for consumer then return only that store as an array
-      if (autoSelect) {
-         if (
-            sortedStoresByAerialDistance[i][fulfillmentStatus(fulfillmentType)]
-               .status
-         ) {
-            return [
-               [sortedStoresByAerialDistance[i]],
-               fulfillmentStatus(fulfillmentType),
-            ]
+      if (autoSelect && !includeInvalidStore) {
+         if (sortedStoresByAerialDistance[i]['fulfillmentStatus'].status) {
+            sortedStoresByAerialDistanceWithValidation.push(
+               sortedStoresByAerialDistance[i]
+            )
+            break
+         }
+      } else {
+         if (sortedStoresByAerialDistance[i]['fulfillmentStatus'].status) {
+            sortedStoresByAerialDistanceWithValidation.push(
+               sortedStoresByAerialDistance[i]
+            )
+         } else {
+            if (includeInvalidStore) {
+               sortedStoresByAerialDistanceWithValidation.push(
+                  sortedStoresByAerialDistance[i]
+               )
+            }
          }
       }
    }
 
-   // when auto select true and no store available to select
-   if (autoSelect) {
-      return [[], fulfillmentStatus(fulfillmentType)]
-   }
-
-   return [sortedStoresByAerialDistance, fulfillmentStatus(fulfillmentType)]
+   return sortedStoresByAerialDistanceWithValidation
 }

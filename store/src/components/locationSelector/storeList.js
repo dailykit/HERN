@@ -1,18 +1,27 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { useEffect } from 'react'
+import { useToasts } from 'react-toast-notifications'
+import { useConfig } from '../../lib'
+import { get_env } from '../../utils'
+import classNames from 'classnames'
+
+import LocationSelectorConfig from '../locatoinSeletorConfig.json'
+import { DistanceIcon, RadioIcon, StoreIcon } from '../../assets/icons'
 
 // render all available stores
 export const StoreList = props => {
    const {
       setShowLocationSelectionPopup,
       settings,
-      storeDistanceValidation = false,
+      stores,
       fulfillmentType,
+      storeDistanceValidation = false,
       address,
       setShowRefineLocation,
       showRefineLocation = false,
    } = props
    // console.log('settings', settings)
-   const { dispatch } = useConfig()
+   const { dispatch, orderTabs } = useConfig()
    const { addToast } = useToasts()
 
    const {
@@ -31,123 +40,64 @@ export const StoreList = props => {
    const [showStoreOnMap, setShowStoreOnMap] = useState(false)
    const [status, setStatus] = useState('loading')
 
-   // get distance
-   const getDataWithDrivableDistance = async brandLocation => {
-      try {
-         const origin = isClient ? window.location.origin : ''
-         const url = `${origin}/server/api/distance-matrix`
-         const userLocationInLocal = JSON.parse(
-            localStorage.getItem('userLocation')
-         )
-         brandLocation.forEach(async (eachLocation, index) => {
-            const postLocationData = {
-               key: get_env('GOOGLE_API_KEY'),
-               lat1: userLocationInLocal.latitude,
-               lon1: userLocationInLocal.longitude,
-               lat2: eachLocation.location.locationAddress.locationCoordinates
-                  .latitude,
-               lon2: eachLocation.location.locationAddress.locationCoordinates
-                  .longitude,
-            }
-            const data = await getDrivableData(postLocationData, url)
-            const mapData = data.map(x => {
-               x['distance'] = x.rows[0].elements[0].distance
-               x['duration'] = x.rows[0].elements[0].duration
-               return x
-            })
-            setBrandLocation(prev => {
-               prev[index] = {
-                  ...prev[index],
-                  drivableDistanceDetails: mapData,
-               }
-               return prev
-            })
-         })
-      } catch (error) {
-         console.log('getDataWithDrivableDistance', error)
-      }
-   }
-
-   if (!address) {
-      return (
-         <div className="hern-location-selector__stores-list">
-            {brandLocation && brandLocation.length > 1 ? (
-               <>
-                  {showStoresOnMap.value && (
-                     <div className="hern-location-selector__view-on-map">
-                        <span onClick={() => setShowStoreOnMap(true)}>
-                           View on map
-                        </span>
-                     </div>
-                  )}
-                  {brandLocation &&
-                     brandLocation.map((eachStore, index) => {
-                        const {
-                           location: {
-                              label,
-                              id,
-                              locationAddress,
-                              city,
-                              state,
-                              country,
-                              zipcode,
-                           },
-                        } = eachStore
-                        const { line1, line2 } = locationAddress
-
-                        return (
-                           <div
-                              key={index}
-                              className={classNames(
-                                 'hern-store-location-selector__each-store'
-                              )}
-                              onClick={() => {
-                                 addToast('Please Enter Address', {
-                                    appearance: 'info',
-                                 })
-                              }}
-                           >
-                              <div className="hern-store-location-selector__store-location-info-container">
-                                 <StoreIcon />
-                                 <div className="hern-store-location-selector__store-location-details">
-                                    {showLocationLabel.value && (
-                                       <span className="hern-store-location__store-location-label">
-                                          {label}
-                                       </span>
-                                    )}
-                                    {showStoreAddress.value && (
-                                       <>
-                                          <span className="hern-store-location__store-location-address hern-store-location__store-location-address-line1">
-                                             {line1}
-                                          </span>
-                                          <span className="hern-store-location__store-location-address hern-store-location__store-location-address-line2">
-                                             {line2}
-                                          </span>
-                                          <span className="hern-store-location__store-location-address hern-store-location__store-location-address-c-s-c-z">
-                                             {city} {state} {country}
-                                             {' ('}
-                                             {zipcode}
-                                             {')'}
-                                          </span>
-                                       </>
-                                    )}
-                                 </div>
-                              </div>
-                           </div>
-                        )
-                     })}
-               </>
-            ) : null}
-
-            {/* <StoresOnMap
-                showStoreOnMap={showStoreOnMap}
-                setShowStoreOnMap={setShowStoreOnMap}
-                brandLocation={brandLocation}
-                settings={settings}
-             /> */}
-         </div>
+   const selectedOrderTab = React.useMemo(() => {
+      return orderTabs.find(
+         x => x.orderFulfillmentTypeLabel === fulfillmentType
       )
-   }
+   }, [orderTabs])
+
+   useEffect(() => {
+      const firstStoreOfSortedBrandLocation = stores.filter(
+         eachStore => eachStore['fulfillmentStatus'].status
+      )[0]
+      if (
+         firstStoreOfSortedBrandLocation &&
+         LocationSelectorConfig.informationVisibility.deliverySettings
+            .storeLocationSelectionMethod.value.value === 'auto'
+      ) {
+         if (
+            fulfillmentType === 'ONDEMAND_DELIVERY' ||
+            fulfillmentType === 'PREORDER_DELIVERY'
+         ) {
+            setShowRefineLocation(true)
+            return
+         }
+         dispatch({
+            type: 'SET_LOCATION_ID',
+            payload: firstStoreOfSortedBrandLocation.location.id,
+         })
+         dispatch({
+            type: 'SET_SELECTED_ORDER_TAB',
+            payload: selectedOrderTab,
+         })
+         dispatch({
+            type: 'SET_USER_LOCATION',
+            payload: address,
+         })
+         dispatch({
+            type: 'SET_STORE_STATUS',
+            payload: {
+               status: true,
+               message: 'Store available on your location.',
+               loading: false,
+            },
+         })
+         localStorage.setItem('orderTab', JSON.stringify(fulfillmentType))
+         localStorage.setItem(
+            'storeLocationId',
+            JSON.stringify(firstStoreOfSortedBrandLocation.location.id)
+         )
+         localStorage.setItem(
+            'userLocation',
+            JSON.stringify({
+               latitude: userCoordinate.latitude,
+               longitude: userCoordinate.longitude,
+               address: address,
+            })
+         )
+         setShowLocationSelectionPopup(false)
+      }
+   }, [stores])
 
    // auto select mode
    if (
@@ -158,26 +108,26 @@ export const StoreList = props => {
    }
 
    // when no store available on user location
-   if (sortedBrandLocation.length === 0) {
+   if (stores.length === 0) {
       return <p>No Store Available</p>
    }
-   console.log('sortedBrandLocation', sortedBrandLocation)
+   console.log('sortedBrandLocation', stores)
    // when there is no stores which do not fulfill delivery time and mile range for brandRecurrences
-   if (!sortedBrandLocation.some(store => store[fulfillmentStatus].status)) {
+   if (!stores.some(store => store['fulfillmentStatus'].status)) {
       return (
          <div className="hern-location-selector__stores-list">
-            {sortedBrandLocation[0][fulfillmentStatus].message}
+            {stores[0]['fulfillmentStatus'].message}
          </div>
       )
    }
 
    // when there is no stores which do not fulfill timing but does not fulfill delivery conditions (aerial distance, zipcodes, geoboundry)
    if (
-      storeDistanceValidation &&
-      !sortedBrandLocation.some(store => {
-         const sortedStatus = store[fulfillmentStatus].result
+      stores &&
+      !stores.some(store => {
+         const sortedStatus = store['fulfillmentStatus'].result
          if (sortedStatus) {
-            return store[fulfillmentStatus].status
+            return store['fulfillmentStatus'].status
          }
          return false
       })
@@ -202,7 +152,7 @@ export const StoreList = props => {
             address={address}
             fulfillmentType={fulfillmentType}
          />
-         {sortedBrandLocation.map((eachStore, index) => {
+         {stores.map((eachStore, index) => {
             const {
                location: {
                   label,
@@ -218,7 +168,7 @@ export const StoreList = props => {
             } = eachStore
             const { line1, line2 } = locationAddress
             if (
-               !eachStore[fulfillmentStatus].status &&
+               !eachStore['fulfillmentStatus'].status &&
                disabledLocationDisplayStyle.value?.value === 'noShow'
             ) {
                return null
@@ -238,11 +188,11 @@ export const StoreList = props => {
                         'hern-store-location-selector__each-store--disabled':
                            disabledLocationDisplayStyle.value?.value ===
                               'disabled' &&
-                           !eachStore[fulfillmentStatus].status,
+                           !eachStore['fulfillmentStatus'].status,
                      }
                   )}
                   onClick={() => {
-                     if (eachStore[fulfillmentStatus].status) {
+                     if (eachStore['fulfillmentStatus'].status) {
                         console.log('selectedStore', eachStore)
                         dispatch({
                            type: 'SET_LOCATION_ID',
@@ -252,14 +202,6 @@ export const StoreList = props => {
                            type: 'SET_SELECTED_ORDER_TAB',
                            payload: selectedOrderTab,
                         })
-                        localStorage.setItem(
-                           'orderTab',
-                           JSON.stringify(fulfillmentType)
-                        )
-                        localStorage.setItem(
-                           'storeLocationId',
-                           JSON.stringify(eachStore.location.id)
-                        )
                         dispatch({
                            type: 'SET_USER_LOCATION',
                            payload: address,
@@ -272,6 +214,22 @@ export const StoreList = props => {
                               loading: false,
                            },
                         })
+                        localStorage.setItem(
+                           'orderTab',
+                           JSON.stringify(fulfillmentType)
+                        )
+                        localStorage.setItem(
+                           'storeLocationId',
+                           JSON.stringify(eachStore.location.id)
+                        )
+                        localStorage.setItem(
+                           'userLocation',
+                           JSON.stringify({
+                              latitude: userCoordinate.latitude,
+                              longitude: userCoordinate.longitude,
+                              address: address,
+                           })
+                        )
                         setSelectedStore(eachStore)
                         setShowLocationSelectionPopup(false)
                      }
@@ -308,7 +266,7 @@ export const StoreList = props => {
                         ? !(
                              disabledLocationDisplayStyle.value?.value ===
                                 'disabled' &&
-                             !eachStore[fulfillmentStatus].status
+                             !eachStore['fulfillmentStatus'].status
                           )
                         : true) && (
                         <RadioIcon
@@ -339,4 +297,46 @@ export const StoreList = props => {
           /> */}
       </div>
    )
+}
+
+// get distance
+// const getDataWithDrivableDistance = async brandLocation => {
+//    try {
+//       const origin = isClient ? window.location.origin : ''
+//       const url = `${origin}/server/api/distance-matrix`
+//       const userLocationInLocal = JSON.parse(
+//          localStorage.getItem('userLocation')
+//       )
+//       brandLocation.forEach(async (eachLocation, index) => {
+//          const postLocationData = {
+//             key: get_env('GOOGLE_API_KEY'),
+//             lat1: userLocationInLocal.latitude,
+//             lon1: userLocationInLocal.longitude,
+//             lat2: eachLocation.location.locationAddress.locationCoordinates
+//                .latitude,
+//             lon2: eachLocation.location.locationAddress.locationCoordinates
+//                .longitude,
+//          }
+//          const data = await getDrivableData(postLocationData, url)
+//          const mapData = data.map(x => {
+//             x['distance'] = x.rows[0].elements[0].distance
+//             x['duration'] = x.rows[0].elements[0].duration
+//             return x
+//          })
+//          setBrandLocation(prev => {
+//             prev[index] = {
+//                ...prev[index],
+//                drivableDistanceDetails: mapData,
+//             }
+//             return prev
+//          })
+//       })
+//    } catch (error) {
+//       console.log('getDataWithDrivableDistance', error)
+//    }
+// }
+const getDrivableData = async (postLocationData, url) => {
+   const { data } = await axios.post(url, postLocationData)
+   console.log('this is data with drivable distance', data)
+   return data
 }

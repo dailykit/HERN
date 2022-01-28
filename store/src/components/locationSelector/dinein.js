@@ -1,7 +1,18 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import classNames from 'classnames'
+import { Divider, Radio, Modal } from 'antd'
+import { useConfig } from '../../lib'
+import { get_env, useScript, isClient } from '../../utils'
+import { getStoresWithValidations } from '../../utils'
+import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
+import LocationSelectorConfig from '../locatoinSeletorConfig.json'
+import { StoreList } from '../locationSelector/storeList'
+import { GPSIcon, NotFound } from '../../assets/icons'
+import { Loader } from '..'
+import { AddressInfo } from './addressInfo'
 
 // dine in section
-const DineIn = props => {
+export const DineIn = props => {
    const { setShowLocationSelectionPopup, settings } = props
 
    const { dineInType: storeDineInType, userAddress } =
@@ -27,10 +38,7 @@ const DineIn = props => {
          ? 'ONDEMAND'
          : availableStoreType[0]
    )
-   const [onDemandBrandRecurrence, setOnDemandBrandReoccurrence] =
-      useState(null)
-   const [preOrderBrandRecurrence, setPreOrderBrandReoccurrence] =
-      useState(null)
+
    const [userCoordinate, setUserCoordinate] = useState({
       latitude: null,
       longitude: null,
@@ -41,6 +49,13 @@ const DineIn = props => {
       errorType: '',
    })
    const [address, setAddress] = useState(null)
+   const [isGetStoresLoading, setIsGetStoresLoading] = useState(true)
+   const [stores, setStores] = useState(null)
+   const [fulfillmentType, setFulfillmentType] = useState(
+      orderTabFulfillmentType.includes('ONDEMAND_DELIVERY')
+         ? 'ONDEMAND_DELIVERY'
+         : 'PREORDER_DELIVERY'
+   )
 
    const dineInRadioOptions = React.useMemo(() => {
       let options = []
@@ -138,6 +153,7 @@ const DineIn = props => {
                         address.zipcode = node.long_name
                      }
                   })
+                  setIsGetStoresLoading(true)
                   setAddress(prev => ({
                      ...prev,
                      mainText,
@@ -163,50 +179,23 @@ const DineIn = props => {
       }
    }, [userCoordinate])
 
-   const { loading: onDemandPickupRecurrenceLoading } = useQuery(
-      ONDEMAND_DINE_BRAND_RECURRENCES,
-      {
-         skip: !brand || !brand.id,
-         variables: {
-            where: {
-               isActive: { _eq: true },
-               recurrence: {
-                  isActive: { _eq: true },
-                  type: { _eq: 'ONDEMAND_DINEIN' },
-               },
-               brandId: { _eq: brand.id },
-            },
-         },
-         onCompleted: data => {
-            console.log('ondemandDineIn', data)
-            if (data) {
-               setOnDemandBrandReoccurrence(data.brandRecurrences)
-            }
-         },
+   useEffect(() => {
+      if (address && brand.id) {
+         async function fetchStores() {
+            const brandClone = { ...brand }
+            const availableStore = await getStoresWithValidations(
+               brandClone,
+               fulfillmentType,
+               address,
+               true
+            )
+            setStores(availableStore)
+            setIsGetStoresLoading(false)
+         }
+         fetchStores()
       }
-   )
-   const { loading: preOrderPickRecurrencesLoading } = useQuery(
-      SCHEDULED_DINEIN_BRAND_RECURRENCES,
-      {
-         skip: !brand || !brand.id,
-         variables: {
-            where: {
-               isActive: { _eq: true },
-               recurrence: {
-                  isActive: { _eq: true },
-                  type: { _eq: 'SCHEDULED_DINEIN' },
-               },
-               brandId: { _eq: brand.id },
-            },
-         },
-         onCompleted: data => {
-            console.log('preorderDineIn', data)
-            if (data) {
-               setPreOrderBrandReoccurrence(data.brandRecurrences)
-            }
-         },
-      }
-   )
+   }, [address, fulfillmentType, brand])
+
    const formatAddress = async input => {
       if (!isClient) return 'Runs only on client side.'
       const response = await fetch(
@@ -232,6 +221,7 @@ const DineIn = props => {
          })
          if (address.zipcode) {
             setUserCoordinate(prev => ({ ...prev, ...userLocation }))
+            setIsGetStoresLoading(true)
             setAddress({ ...userLocation, address })
          } else {
             showWarningPopup()
@@ -265,6 +255,7 @@ const DineIn = props => {
                options={dineInRadioOptions}
                onChange={e => {
                   setDineInType(e.target.value)
+                  setIsGetStoresLoading(true)
                }}
                value={dineInType}
             />
@@ -302,6 +293,7 @@ const DineIn = props => {
                   )}
             </div>
          </div>
+
          {locationSearching.loading ? (
             <p style={{ padding: '1em' }}>Getting your location...</p>
          ) : locationSearching.error ? (
@@ -313,25 +305,67 @@ const DineIn = props => {
                {userAddress.value && <AddressInfo address={address} />}
             </div>
          ) : null}
-         {onDemandPickupRecurrenceLoading || preOrderPickRecurrencesLoading ? (
-            <p style={{ padding: '1em', fontWeight: 'bold' }}>
-               Finding nearest store location to you
-            </p>
+
+         {!address ? null : isGetStoresLoading ? (
+            <div
+               style={{
+                  padding: '1em',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+               }}
+            >
+               <img
+                  src="/assets/gifs/findingLocation.gif"
+                  width={72}
+                  height={72}
+               />
+               <span>Finding nearest store location to you</span>
+            </div>
+         ) : stores?.length == 0 ? (
+            <div
+               style={{
+                  padding: '0 14px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+               }}
+            >
+               <NotFound style={{ margin: '10px 0' }} />
+               <span
+                  style={{
+                     fontWeight: 'bold',
+                     color: 'rgba(64, 64, 64, 0.8)',
+                     fontStyle: 'italic',
+                     lineHeight: '26px',
+                  }}
+               >
+                  No store available on this location.{' '}
+               </span>
+            </div>
+         ) : isGetStoresLoading ? (
+            <div
+               style={{
+                  padding: '1em',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+               }}
+            >
+               <img
+                  src="/assets/gifs/findingLocation.gif"
+                  width={72}
+                  height={72}
+               />
+               <span>Finding nearest store location to you</span>
+            </div>
          ) : (
             <StoreList
-               userCoordinate={userCoordinate}
                setShowLocationSelectionPopup={setShowLocationSelectionPopup}
                settings={settings}
-               brandRecurrences={
-                  dineInType === 'ONDEMAND'
-                     ? onDemandBrandRecurrence
-                     : preOrderBrandRecurrence
-               }
-               fulfillmentType={
-                  dineInType === 'ONDEMAND'
-                     ? 'ONDEMAND_DINEIN'
-                     : 'SCHEDULED_DINEIN'
-               }
+               stores={stores}
+               fulfillmentType={fulfillmentType}
+               storeDistanceValidation={true}
                address={address}
             />
          )}
