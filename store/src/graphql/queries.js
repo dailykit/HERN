@@ -1680,11 +1680,11 @@ export const GET_CARTS = gql`
    }
 `
 export const BRAND_SETTINGS_BY_TYPE = gql`
-   query BRAND_SEO_SETTINGS($domain: String!, $type: String!) {
+  query BRAND_SEO_SETTINGS($domain: String!, $type: String!) {
       brands_brand_brandSetting(
          where: {
-            brand: {
-               _or: [{ domain: { _eq: $domain } }, { isDefault: { _eq: true } }]
+           brand: {
+               _or: [{ isDefault: { _eq: true } }, { domain: { _eq: $domain } }]
             }
             brandSetting: { type: { _eq: $type } }
          }

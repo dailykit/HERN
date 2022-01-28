@@ -2,77 +2,44 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { useConfig } from '../lib'
-import _ from 'lodash'
+
 export const SEO = ({ seoSettings, richresult, children }) => {
-   const { pageLevel, brandLevel } = seoSettings
+   const {
+      metaTitle,
+      metaDescription,
+      favicon,
+      twitterImage,
+      twitterTitle,
+      twitterDescription,
+      ogImage,
+      ogTitle,
+      ogDescription,
+      googleAnalyticsId,
+      facebookPixelId,
+   } = seoSettings
+
    const { pathname } = useRouter()
-   // const { favicon } = useConfig().configOf('theme-brand', 'brand')
-
-   // for basic SEO settings
-   // const basicSEO =
-   //    pageLevel.find(
-   //       setting => setting?.brandPageSetting?.identifier === 'basic-seo'
-   //    ) || brandLevel.find(setting => setting?.meta?.identifier === 'basic-seo')
-
-   //for SEO settings for social networks like Facebook,Pinterest,LinkedIn or Twitter
-   const openGraphCard =
-      pageLevel.find(
-         setting => setting?.brandPageSetting?.identifier === 'og-card'
-      ) || brandLevel.find(setting => setting?.meta?.identifier === 'og-card')
-
-   //specifically for Twitter
-   const twitterCard =
-      pageLevel.find(
-         setting => setting?.brandPageSetting?.identifier === 'twitter-card'
-      ) ||
-      brandLevel.find(setting => setting?.meta?.identifier === 'twitter-card')
-
-   // for googleAnalyticsId
-   const googleAnalyticsId = brandLevel.find(
-      setting => setting?.meta?.identifier === 'googleAnalyticsId'
-   )?.value?.value
-
-   //for facebookpixel code
-   const facebookPixelId = brandLevel.find(
-      setting => setting?.meta?.identifier === 'facebookPixelId'
-   )?.value?.value
-
-   const getBasicSEOValue = property => {
-      const value = !_.isEmpty(
-         seoSettings?.pageLevel.find(
-            setting => setting?.brandPageSetting?.identifier === 'basic-seo'
-         )?.value?.[property]
-      )
-         ? seoSettings?.pageLevel.find(
-            setting => setting?.brandPageSetting?.identifier === 'basic-seo'
-         )?.value?.[property]
-         : seoSettings?.brandLevel.find(
-            setting => setting.meta.identifier === 'basic-seo'
-         )?.value?.[property]
-      return value
-   }
 
    return (
       <Head>
          <title>
-            {getBasicSEOValue('metaTitle') || pathname.split('/').slice(-1)}
+            {metaTitle || pathname.split('/').slice(-1)}
          </title>
-         <link rel="icon" href={getBasicSEOValue('favicon')} type="image/png" />
+         <link rel="icon" href={favicon} type="image/png" />
          <meta
-            name={getBasicSEOValue('metaTitle') || pathname.split('/').slice(-1)}
-            content={getBasicSEOValue('metaDescription') || ''}
+            name={metaTitle || pathname.split('/').slice(-1)}
+            content={metaDescription || ''}
          />
          <meta
             property="description"
-            content={getBasicSEOValue('metaDescription') || ''}
+            content={metaDescription || ''}
             name="description"
          />
          <meta
             property="og:title"
             content={
-               openGraphCard?.value?.ogTitle ||
-               getBasicSEOValue('title') ||
+               ogTitle ||
+               metaTitle ||
                pathname.split('/').slice(-1)
             }
             title="og-title"
@@ -80,26 +47,26 @@ export const SEO = ({ seoSettings, richresult, children }) => {
          <meta
             property="og:description"
             content={
-               openGraphCard?.value?.ogDescription ||
-               getBasicSEOValue('metaDescription') ||
+               ogDescription ||
+               metaDescription ||
                ''
             }
             title="og-desc"
          />
          <meta
             property="og:image"
-            content={openGraphCard?.value?.ogImage}
+            content={ogImage}
             title="og-image"
          />
          <meta property="og:type" content="website" />
-         <meta property="og:url" content={openGraphCard?.value?.ogUrl} />
+         <meta property="og:url" content={ogImage} />
          <meta property="twitter:card" content="summary" />
          <meta
             property="twitter:title"
             content={
-               twitterCard?.value?.twitterTitle ||
-               openGraphCard?.value?.ogTitle ||
-               getBasicSEOValue('metaTitle') ||
+               twitterTitle ||
+               ogTitle ||
+               metaTitle ||
                pathname.split('/').slice(-1)
             }
             title="tw-title"
@@ -107,9 +74,9 @@ export const SEO = ({ seoSettings, richresult, children }) => {
          <meta
             property="twitter:description"
             content={
-               twitterCard?.value?.twitterDescription ||
-               openGraphCard?.value?.ogDescription ||
-               getBasicSEOValue('metaDescription') ||
+               twitterDescription ||
+               ogDescription ||
+               metaDescription ||
                ''
             }
             title="tw-desc"
@@ -117,9 +84,9 @@ export const SEO = ({ seoSettings, richresult, children }) => {
          <meta
             property="twitter:image:src"
             content={
-               twitterCard?.value?.twitterImage ||
-               openGraphCard?.value?.ogImage ||
-               getBasicSEOValue('favicon')
+               twitterImage ||
+               ogImage ||
+               favicon
             }
             title="tw-image"
          />
