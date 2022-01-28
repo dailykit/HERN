@@ -1,6 +1,8 @@
 import { useMutation } from '@apollo/react-hooks'
 import {
+   ButtonGroup,
    ButtonTile,
+   ComboButton,
    Flex,
    Form,
    IconButton,
@@ -10,7 +12,7 @@ import {
 import React from 'react'
 import { toast } from 'react-toastify'
 import { LOCATIONS } from '../../../../apps/brands/graphql'
-import { DeleteIcon } from '../../../assets/icons'
+import { DeleteIcon, PlusIcon } from '../../../assets/icons'
 import { Banner } from '../../../components'
 import { useTabs } from '../../../providers'
 import validator from '../../validator'
@@ -55,7 +57,7 @@ const CreateBrandLocation = ({ closeTunnel }) => {
                input.insert_brands_location.returning.map(separateTab => {
                   addTab(
                      separateTab.label,
-                     `/products/recipes/${separateTab.id}`
+                     `/brands/locations/${separateTab.id}`
                   )
                })
             }
@@ -172,100 +174,133 @@ const CreateBrandLocation = ({ closeTunnel }) => {
          <Banner id="brand-app-location-create-location-tunnel-top" />
          <Flex padding="16px">
             {location.map((eachLocation, i) => (
-               <Flex key={i}>
-                  <Form.Group>
-                     <Form.Label
-                        htmlFor={`locationLabel-${i}`}
-                        title={`Location ${i + 1}`}
-                     >
-                        Label
-                     </Form.Label>
-                     <IconButton
-                        type="ghost"
-                        title="Delete this Location"
-                        onClick={() => removeField(i)}
-                     >
-                        <DeleteIcon color="#FF5A52" />
-                     </IconButton>
-                     <Form.Text
-                        id={`location-${i}`}
-                        name={`location-${i}`}
-                        value={eachLocation.label.value}
-                        placeholder="Enter Label"
-                        onChange={e => onChange('label', e.target.value, i)}
-                        onBlur={() => onBlur('label', i)}
-                        hasError={
+               <>
+                  <Flex
+                     key={i}
+                     style={{
+                        border: '2px solid #ffffff',
+                        boxShadow: '0px 1px 8px rgb(0 0 0 / 10%)',
+                        padding: '16px',
+                     }}
+                  >
+                     <Form.Group>
+                        <Flex
+                           container
+                           style={{
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                           }}
+                        >
+                           <Form.Label
+                              htmlFor={`locationLabel-${i}`}
+                              title={`Location ${i + 1}`}
+                           >
+                              Label
+                           </Form.Label>
+                           <IconButton
+                              type="ghost"
+                              title="Delete this Location"
+                              onClick={() => removeField(i)}
+                              style={{
+                                 width: '30px',
+                                 height: '20px',
+                                 marginBottom: '4px',
+                              }}
+                           >
+                              <DeleteIcon color="#FF5A52" />
+                           </IconButton>
+                        </Flex>
+                        <Form.Text
+                           id={`location-${i}`}
+                           name={`location-${i}`}
+                           value={eachLocation.label.value}
+                           placeholder="Enter Label"
+                           onChange={e => onChange('label', e.target.value, i)}
+                           onBlur={() => onBlur('label', i)}
+                           hasError={
+                              !eachLocation.label.meta.isValid &&
+                              eachLocation.label.meta.isTouched
+                           }
+                        />
+                        {!eachLocation.label.meta.isTouched &&
                            !eachLocation.label.meta.isValid &&
-                           eachLocation.label.meta.isTouched
-                        }
-                     />
-                     {!eachLocation.label.meta.isTouched &&
-                        !eachLocation.label.meta.isValid &&
-                        eachLocation.label.meta.errors.map((error, index) => (
-                           <Form.Error key={index}>{error}</Form.Error>
-                        ))}
-                  </Form.Group>
-                  <Spacer yAxis size="16px" />
-                  <Form.Group>
-                     <Form.Label
-                        htmlFor={`locationLine1-${i}`}
-                        title={`Location ${i + 1}`}
-                     >
-                        Address Line 1
-                     </Form.Label>
-                     <Form.Text
-                        id={`location-${i}`}
-                        name={`location-${i}`}
-                        value={eachLocation.line1.value}
-                        placeholder="Enter Address"
-                        onChange={e => onChange('line1', e.target.value, i)}
-                        onBlur={() => onBlur('line1', i)}
-                        hasError={
+                           eachLocation.label.meta.errors.map(
+                              (error, index) => (
+                                 <Form.Error key={index}>{error}</Form.Error>
+                              )
+                           )}
+                     </Form.Group>
+                     <Spacer yAxis size="16px" />
+                     <Form.Group>
+                        <Form.Label
+                           htmlFor={`locationLine1-${i}`}
+                           title={`Location ${i + 1}`}
+                        >
+                           Address Line 1
+                        </Form.Label>
+                        <Form.Text
+                           id={`location-${i}`}
+                           name={`location-${i}`}
+                           value={eachLocation.line1.value}
+                           placeholder="Enter Address"
+                           onChange={e => onChange('line1', e.target.value, i)}
+                           onBlur={() => onBlur('line1', i)}
+                           hasError={
+                              !eachLocation.line1.meta.isValid &&
+                              eachLocation.line1.meta.isTouched
+                           }
+                        />
+                        {!eachLocation.line1.meta.isTouched &&
                            !eachLocation.line1.meta.isValid &&
-                           eachLocation.line1.meta.isTouched
-                        }
-                     />
-                     {!eachLocation.line1.meta.isTouched &&
-                        !eachLocation.line1.meta.isValid &&
-                        eachLocation.line1.meta.errors.map((error, index) => (
-                           <Form.Error key={index}>{error}</Form.Error>
-                        ))}
-                  </Form.Group>
-                  <Spacer yAxis size="16px" />
-                  <Form.Group>
-                     <Form.Label
-                        htmlFor={`locationLine2-${i}`}
-                        title={`Location ${i + 1}`}
-                     >
-                        Address Line 2
-                     </Form.Label>
-                     <Form.Text
-                        id={`location-${i}`}
-                        name={`location-${i}`}
-                        value={eachLocation.line2.value}
-                        placeholder="Enter Address"
-                        onChange={e => onChange('line2', e.target.value, i)}
-                        onBlur={() => onBlur('line2', i)}
-                        hasError={
+                           eachLocation.line1.meta.errors.map(
+                              (error, index) => (
+                                 <Form.Error key={index}>{error}</Form.Error>
+                              )
+                           )}
+                     </Form.Group>
+                     <Spacer yAxis size="16px" />
+                     <Form.Group>
+                        <Form.Label
+                           htmlFor={`locationLine2-${i}`}
+                           title={`Location ${i + 1}`}
+                        >
+                           Address Line 2
+                        </Form.Label>
+                        <Form.Text
+                           id={`location-${i}`}
+                           name={`location-${i}`}
+                           value={eachLocation.line2.value}
+                           placeholder="Enter Address"
+                           onChange={e => onChange('line2', e.target.value, i)}
+                           onBlur={() => onBlur('line2', i)}
+                           hasError={
+                              !eachLocation.line2.meta.isValid &&
+                              eachLocation.line2.meta.isTouched
+                           }
+                        />
+                        {!eachLocation.line2.meta.isTouched &&
                            !eachLocation.line2.meta.isValid &&
-                           eachLocation.line2.meta.isTouched
-                        }
-                     />
-                     {!eachLocation.line2.meta.isTouched &&
-                        !eachLocation.line2.meta.isValid &&
-                        eachLocation.line2.meta.errors.map((error, index) => (
-                           <Form.Error key={index}>{error}</Form.Error>
-                        ))}
-                  </Form.Group>
+                           eachLocation.line2.meta.errors.map(
+                              (error, index) => (
+                                 <Form.Error key={index}>{error}</Form.Error>
+                              )
+                           )}
+                     </Form.Group>
+                  </Flex>
                   <Spacer yAxis size="16px" />
-               </Flex>
+               </>
             ))}
-            <Spacer yAxis size="16px" />
-            <ButtonTile
-               type="secondary"
-               text="Add New Recipe"
-               onClick={() => setLocation([...location, locationInstance])}
-            />
+
+            <ButtonGroup>
+               <ComboButton
+                  type="ghost"
+                  size="sm"
+                  onClick={() => setLocation([...location, locationInstance])}
+                  title="Click to add new location"
+               >
+                  <PlusIcon color="#367BF5" /> Add New Location
+               </ComboButton>
+            </ButtonGroup>
          </Flex>
          <Spacer xAxis size="24px" />
          <Banner id="brand-app-location-create-location-tunnel-bottom" />
