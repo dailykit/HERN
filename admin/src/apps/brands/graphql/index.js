@@ -237,4 +237,16 @@ export const LOCATIONS = {
          }
       }
    `,
+   CREATE: gql`
+      mutation createLocation($objects: [brands_location_insert_input!]!) {
+         insert_brands_location(objects: $objects) {
+            affected_rows
+            returning {
+               id
+               locationAddress
+               label
+            }
+         }
+      }
+   `,
 }
