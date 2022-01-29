@@ -29,7 +29,7 @@ import BlocksSvg from './Blocks'
 import CollectionsSvg from './Collections'
 import WebhookSvg from './Webhooks'
 import ApiKeySvg from './ApiKey'
-
+import BrandLocationsSvg from './brandLocations'
 
 export {
    ProductsSvg,
@@ -62,5 +62,6 @@ export {
    BlocksSvg,
    CollectionsSvg,
    WebhookSvg,
-   ApiKeySvg
+   ApiKeySvg,
+   BrandLocationsSvg,
 }
