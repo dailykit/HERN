@@ -37,7 +37,8 @@ const razorpayWebhookEvents = async arg => {
          requestId: orderId.toString(),
          paymentStatus: body.resultInfo.resultStatus,
          transactionId: body.txnId,
-         cartId: cartPayment.cartId
+         cartId: cartPayment.cartId,
+         domain: cartPayment.cart.brand.domain
       }
       console.log('requiredData', requiredData)
 
