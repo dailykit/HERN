@@ -8,7 +8,7 @@ export const combineCartItems = cartItems => {
 
    const cartItemRootIds = cartItems.map(item => item.cartItemId)
    const cartItemsWithoutId = cartItems.map(item => {
-      const updatedItem = item
+      const updatedItem = JSON.parse(JSON.stringify(item))
       delete updatedItem.cartItemId
       delete updatedItem.created_at
       return updatedItem
