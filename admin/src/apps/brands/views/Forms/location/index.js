@@ -87,7 +87,17 @@ export const Location = () => {
          },
       })
    }
-
+   const togglePublish = () => {
+      const val = !locationDetails.isActive
+      updateLocation({
+         variables: {
+            id: id,
+            _set: {
+               isActive: val,
+            },
+         },
+      })
+   }
    return (
       <>
          <ResponsiveFlex
@@ -128,6 +138,21 @@ export const Location = () => {
                         <Form.Error key={index}>{error}</Form.Error>
                      ))}
                </Form.Group>
+
+               <Form.Toggle
+                  name="active"
+                  value={locationDetails.isActive}
+                  onChange={togglePublish}
+               >
+                  <Flex
+                     container
+                     alignItems="center"
+                     style={{ paddingRight: '0px' }}
+                  >
+                     Active
+                     <Tooltip identifier="brand_location_active" />
+                  </Flex>
+               </Form.Toggle>
             </Flex>
          </ResponsiveFlex>
       </>
