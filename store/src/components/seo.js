@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Head from 'next/head'
-import { useRouter } from 'next/router'
 
 export const SEO = ({ seoSettings, richresult, children }) => {
    const {
@@ -18,16 +17,14 @@ export const SEO = ({ seoSettings, richresult, children }) => {
       facebookPixelId,
    } = seoSettings
 
-   const { pathname } = useRouter()
-
    return (
       <Head>
          <title>
-            {metaTitle || pathname.split('/').slice(-1)}
+            {metaTitle}
          </title>
          <link rel="icon" href={favicon} type="image/png" />
          <meta
-            name={metaTitle || pathname.split('/').slice(-1)}
+            name={metaTitle}
             content={metaDescription || ''}
          />
          <meta
@@ -39,8 +36,7 @@ export const SEO = ({ seoSettings, richresult, children }) => {
             property="og:title"
             content={
                ogTitle ||
-               metaTitle ||
-               pathname.split('/').slice(-1)
+               metaTitle
             }
             title="og-title"
          />
@@ -66,8 +62,7 @@ export const SEO = ({ seoSettings, richresult, children }) => {
             content={
                twitterTitle ||
                ogTitle ||
-               metaTitle ||
-               pathname.split('/').slice(-1)
+               metaTitle
             }
             title="tw-title"
          />
