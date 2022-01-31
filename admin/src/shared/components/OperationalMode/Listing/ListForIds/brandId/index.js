@@ -20,7 +20,7 @@ import { TunnelContainer } from '../../../../../../apps/inventory/components'
 
 const BrandManagerList = ({ closeTunnel }) => {
    const [brandId, setBrandId] = React.useState([])
-   const history = useHistory()
+   const { tab, addTab } = useTabs()
 
    const { loading } = useSubscription(BRAND_ID, {
       onSubscriptionData: data => {
@@ -60,15 +60,10 @@ const BrandManagerList = ({ closeTunnel }) => {
                               title={option.title}
                               isActive={option.id === current.id}
                               onClick={() =>
-                                 history.push({
-                                    pathname: `/operationMode/brand-${option.id}`,
-                                    state: [
-                                       {
-                                          brandId: option.id,
-                                          brandName: option.title,
-                                       },
-                                    ],
-                                 })
+                                 addTab(
+                                    `${option.title}`,
+                                    `/operationMode/${option.title}-${option.id}`
+                                 )
                               }
                            />
                         ))}

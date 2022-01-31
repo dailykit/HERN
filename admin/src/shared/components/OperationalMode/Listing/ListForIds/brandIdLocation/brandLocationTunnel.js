@@ -10,17 +10,16 @@ import {
    useSingleList,
 } from '@dailykit/ui'
 import React from 'react'
-import { useHistory } from 'react-router-dom'
 import { Banner } from '../../../..'
 import { TunnelContainer } from '../../../../../../apps/inventory/components'
+import { useTabs } from '../../../../../providers'
 import { BRANDS_LOCATION_ID } from '../../../Query'
 
 const BrandLocationTunnel = ({ selectedBrand, closeTunnel }) => {
-   const history = useHistory()
+   const { tab, addTab } = useTabs()
    const [brandLocationId, setBrandLocationId] = React.useState([])
    const [list, current, selectOption] = useSingleList(brandLocationId)
    const [search, setSearch] = React.useState('')
-   console.log('nitin', selectedBrand)
    const { loading } = useSubscription(BRANDS_LOCATION_ID, {
       variables: {
          where: {
@@ -65,16 +64,10 @@ const BrandLocationTunnel = ({ selectedBrand, closeTunnel }) => {
                               title={String(option.id)}
                               isActive={option.id === current.id}
                               onClick={() =>
-                                 history.push({
-                                    pathname: `/operationMode/brandLocation-${option.id}`,
-                                    state: [
-                                       {
-                                          brandLocationId: option.id,
-                                          brandId: selectedBrand.brandId,
-                                          brandName: selectedBrand.brandName,
-                                       },
-                                    ],
-                                 })
+                                 addTab(
+                                    `${option.id}`,
+                                    `/operationMode/${selectedBrand.brandName}-${selectedBrand.brandId}${option.id}`
+                                 )
                               }
                            />
                         ))}
