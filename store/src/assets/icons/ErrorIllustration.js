@@ -12,7 +12,7 @@ export const ErrorIllustration = ({
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
    >
-      <g clip-path="url(#clip0_1001_144)">
+      <g clipPath="url(#clip0_1001_144)">
          <rect width={size} height={size} fill="white" />
          <path
             d="M343.738 656.332C716.23 677.484 746.088 95.3483 545.222 54.6946C344.356 14.0408 534.82 259.728 163.741 286.204C-207.338 312.681 150.02 645.332 343.738 656.332Z"
@@ -253,14 +253,14 @@ export const ErrorIllustration = ({
          <path
             d="M554.977 240.307L577.682 261.737M546.633 247.095L553.096 262.053M561.526 230.702L576.769 237.79"
             stroke="#999999"
-            stroke-width="2"
-            stroke-linecap="round"
+            strokeWidth="2"
+            strokeLinecap="round"
          />
          <path
             d="M446.832 144.629L424.127 123.198M455.176 137.84L448.712 122.883M440.282 154.233L425.04 147.146"
             stroke="#999999"
-            stroke-width="2"
-            stroke-linecap="round"
+            strokeWidth="2"
+            strokeLinecap="round"
          />
          <circle cx="470.091" cy="70.485" r="5" fill="#F7B502" />
          <circle cx="68.5542" cy="453.47" r="5" fill="#F7B502" />
