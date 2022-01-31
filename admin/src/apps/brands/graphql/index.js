@@ -249,4 +249,24 @@ export const LOCATIONS = {
          }
       }
    `,
+   UPDATE: gql`
+      mutation updateLocation($_set: brands_location_set_input!, $id: Int!) {
+         update_brands_location(where: { id: { _eq: $id } }, _set: $_set) {
+            affected_rows
+         }
+      }
+   `,
+   VIEW: gql`
+      subscription viewLocation($id: Int!) {
+         brands_location(where: { id: { _eq: $id } }) {
+            city
+            country
+            isActive
+            label
+            state
+            zipcode
+            locationAddress
+         }
+      }
+   `,
 }
