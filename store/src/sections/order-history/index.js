@@ -1,20 +1,22 @@
 import React, { useState } from 'react'
 import { useSubscription } from '@apollo/react-hooks'
 import { useUser } from '../../context'
-import { combineCartItems, formatCurrency } from '../../utils'
+import {
+   combineCartItems,
+   formatCurrency,
+   useQueryParamState,
+} from '../../utils'
 
 import { GET_ORDER_DETAILS } from '../../graphql'
 import {
    ProfileSidebar,
    Button,
-   CartBillingDetails,
    Tunnel,
+   CartOrderDetails,
 } from '../../components'
 import classNames from 'classnames'
 import moment from 'moment'
-import { Drawer, Select, Empty } from 'antd'
-import { DebitCardIcon, LocationIcon } from '../../assets/icons'
-import TimeIcon from '../../assets/icons/Time'
+import { Select, Empty } from 'antd'
 import _ from 'lodash'
 
 export const OrderHistory = () => {
@@ -123,7 +125,7 @@ const OrderCards = () => {
 }
 
 const OrderCard = ({ cart }) => {
-   const [openDetails, setOpenDetails] = React.useState(false)
+   const [cartId, setId, deleteId] = useQueryParamState('id')
    return (
       <div className="hern-order-history-card">
          <div className="hern-order-history-card__status">
@@ -163,85 +165,20 @@ const OrderCard = ({ cart }) => {
          </div>
 
          <CartItems products={cart?.cartItems} />
-         <Button
-            style={{ height: '3.5rem' }}
-            onClick={() => setOpenDetails(true)}
-         >
+         <Button style={{ height: '3.5rem' }} onClick={() => setId(cart?.id)}>
             View Details
          </Button>
-         <OrderDetailsTunnel
-            cart={cart}
-            openDetails={openDetails}
-            setOpenDetails={setOpenDetails}
-         />
+         <Tunnel.Right
+            title={`Order #${cart.id}`}
+            visible={Number(cartId) === cart.id}
+            onClose={() => deleteId('id')}
+         >
+            <CartOrderDetails />
+         </Tunnel.Right>
       </div>
    )
 }
-const OrderDetailsTunnel = ({ cart, openDetails, setOpenDetails }) => {
-   const { address: addressInfo } = cart
-   return (
-      <Tunnel.Right
-         title={`Order #${cart.id}`}
-         visible={openDetails}
-         onClose={() => setOpenDetails(false)}
-      >
-         <div className="hern-order-history-card__tunnel-address">
-            <span style={{ minWidth: '24px' }}>
-               <LocationIcon size={20} />
-            </span>
-            <span>
-               {!_.isEmpty(addressInfo) && (
-                  <div>
-                     <span>{addressInfo.label}</span>
-                     <span>{addressInfo.line1}</span>
-                     <span>{addressInfo.line2}</span>
-                     <span>
-                        {addressInfo.city} {addressInfo.state}{' '}
-                        {addressInfo.country}
-                        {' ('}
-                        {addressInfo.zipcode}
-                        {')'}
-                     </span>
-                  </div>
-               )}
-            </span>
-         </div>
-         <div className="hern-order-history-card__tunnel-fulfillment-info">
-            <span style={{ minWidth: '24px' }}>
-               <TimeIcon color="rgba(64, 64, 64, 0.6)" size={16} />
-            </span>
-            <div>
-               {getTitle(cart?.fulfillmentInfo?.type)}{' '}
-               {(cart?.fulfillmentInfo?.type === 'PREORDER_PICKUP' ||
-                  cart?.fulfillmentInfo?.type === 'PREORDER_DELIVERY') && (
-                  <span>
-                     {' '}
-                     on{' '}
-                     {moment(cart?.fulfillmentInfo?.slot?.from).format(
-                        'DD MMM YYYY'
-                     )}
-                     {' ('}
-                     {moment(cart?.fulfillmentInfo?.slot?.from).format('HH:mm')}
-                     {'-'}
-                     {moment(cart?.fulfillmentInfo?.slot?.to).format('HH:mm')}
-                     {')'}
-                  </span>
-               )}
-            </div>
-         </div>
-         <div className="hern-order-history-card__tunnel-payment-info">
-            <span style={{ minWidth: '24px' }}>
-               <DebitCardIcon size={20} />
-            </span>
-            {cart?.cartPayments?.length > 0 && (
-               <div>Payment: Paid by {cart?.availablePaymentOption?.label}</div>
-            )}
-         </div>
-         <CartItems products={cart?.cartItems} border={true} title={true} />
-         <CartBillingDetails billing={cart?.billingDetails} />
-      </Tunnel.Right>
-   )
-}
+
 const CartItems = ({ products, border = false, title = false }) => {
    const cartItems = combineCartItems(products)
 
