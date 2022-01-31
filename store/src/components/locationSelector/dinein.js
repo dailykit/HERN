@@ -140,6 +140,12 @@ export const DineIn = props => {
                      .join(',')
                   const address = {}
                   data.results[0].address_components.forEach(node => {
+                     if (node.types.includes('street_number')) {
+                        address.line2 = `${node.long_name} `
+                     }
+                     if (node.types.includes('route')) {
+                        address.line2 += node.long_name
+                     }
                      if (node.types.includes('locality')) {
                         address.city = node.long_name
                      }
@@ -206,7 +212,7 @@ export const DineIn = props => {
       const data = await response.json()
       if (data.status === 'OK' && data.results.length > 0) {
          const [result] = data.results
-         const userLocation = {
+         const userCoordinate = {
             latitude: result.geometry.location.lat,
             longitude: result.geometry.location.lng,
          }
@@ -215,21 +221,32 @@ export const DineIn = props => {
             secondaryText: input.structured_formatting.secondary_text,
          }
          result.address_components.forEach(node => {
+            if (node.types.includes('street_number')) {
+               address.line2 = `${node.long_name} `
+            }
+            if (node.types.includes('route')) {
+               address.line2 += node.long_name
+            }
+            if (node.types.includes('locality')) {
+               address.city = node.long_name
+            }
+            if (node.types.includes('administrative_area_level_1')) {
+               address.state = node.long_name
+            }
+            if (node.types.includes('country')) {
+               address.country = node.long_name
+            }
             if (node.types.includes('postal_code')) {
                address.zipcode = node.long_name
             }
          })
          if (address.zipcode) {
-            setUserCoordinate(prev => ({ ...prev, ...userLocation }))
+            setUserCoordinate(prev => ({ ...prev, ...userCoordinate }))
             setIsGetStoresLoading(true)
-            setAddress({ ...userLocation, address })
+            setAddress({ ...userCoordinate, ...address })
          } else {
             showWarningPopup()
          }
-         // localStorage.setItem(
-         //    'userLocation',
-         //    JSON.stringify({ ...userLocation, address })
-         // )
       }
    }
    const showWarningPopup = () => {

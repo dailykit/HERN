@@ -2,11 +2,16 @@ import React, { useState } from 'react'
 import { useEffect } from 'react'
 import { useToasts } from 'react-toast-notifications'
 import { useConfig } from '../../lib'
-import { get_env } from '../../utils'
+import { get_env, isClient } from '../../utils'
 import classNames from 'classnames'
 
 import LocationSelectorConfig from '../locatoinSeletorConfig.json'
 import { DistanceIcon, RadioIcon, StoreIcon } from '../../assets/icons'
+import { RefineLocationPopup } from '../refineLocation'
+import { MUTATIONS } from '../../graphql'
+import { useMutation } from '@apollo/react-hooks'
+import { useCart, useUser } from '../../context'
+const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 // render all available stores
 export const StoreList = props => {
@@ -19,10 +24,13 @@ export const StoreList = props => {
       address,
       setShowRefineLocation,
       showRefineLocation = false,
+      setAddress,
    } = props
    // console.log('settings', settings)
    const { dispatch, orderTabs } = useConfig()
    const { addToast } = useToasts()
+   const { methods, storedCartId } = useCart()
+   const { user } = useUser()
 
    const {
       showAerialDistance,
@@ -34,8 +42,6 @@ export const StoreList = props => {
    const { showStoresOnMap, disabledLocationDisplayStyle } =
       LocationSelectorConfig.informationVisibility.deliverySettings
 
-   const [brandLocation, setBrandLocation] = useState(null)
-   const [sortedBrandLocation, setSortedBrandLocation] = useState(null)
    const [selectedStore, setSelectedStore] = useState(null)
    const [showStoreOnMap, setShowStoreOnMap] = useState(false)
    const [status, setStatus] = useState('loading')
@@ -45,6 +51,21 @@ export const StoreList = props => {
          x => x.orderFulfillmentTypeLabel === fulfillmentType
       )
    }, [orderTabs])
+
+   const [createAddress] = useMutation(MUTATIONS.CUSTOMER.ADDRESS.CREATE, {
+      onCompleted: () => {
+         addToast('Address has been saved.', {
+            appearance: 'success',
+         })
+         // fb pixel custom event for adding a new address
+         ReactPixel.trackCustom('addAddress', address)
+      },
+      onError: error => {
+         addToast(error.message, {
+            appearance: 'error',
+         })
+      },
+   })
 
    useEffect(() => {
       const firstStoreOfSortedBrandLocation = stores.filter(
@@ -61,6 +82,28 @@ export const StoreList = props => {
          ) {
             setShowRefineLocation(true)
             return
+         }
+         if (user?.keycloakId) {
+            createAddress({
+               variables: {
+                  object: { ...customerAddress, keycloakId: user?.keycloakId },
+               },
+            })
+         }
+         const cartIdInLocal = localStorage.getItem('cart-id')
+         if (cartIdInLocal || storedCartId) {
+            const finalCartId = cartIdInLocal
+               ? JSON.parse(cartIdInLocal)
+               : storedCartId
+            methods.cart.update({
+               variables: {
+                  id: finalCartId,
+                  _set: {
+                     address: address,
+                     locationId: firstStoreOfSortedBrandLocation.location.id,
+                  },
+               },
+            })
          }
          dispatch({
             type: 'SET_LOCATION_ID',
@@ -92,19 +135,39 @@ export const StoreList = props => {
             JSON.stringify({
                latitude: userCoordinate.latitude,
                longitude: userCoordinate.longitude,
-               address: address,
+               ...address,
             })
          )
          setShowLocationSelectionPopup(false)
       }
    }, [stores])
 
+   const onRefineLocationCloseIconClick = () => {
+      setAddress(null)
+   }
+
+   // run when click on save and proceed
+   const onRefineLocationComplete = () => {
+      setShowLocationSelectionPopup(false)
+   }
+
    // auto select mode
    if (
       LocationSelectorConfig.informationVisibility.deliverySettings
-         .storeLocationSelectionMethod.value.value === 'auto'
+         .storeLocationSelectionMethod.value.value === 'auto' &&
+      (fulfillmentType === 'ONDEMAND_DELIVERY' ||
+         fulfillmentType === 'PREORDER_DELIVERY')
    ) {
-      return null
+      return (
+         <RefineLocationPopup
+            showRefineLocation={showRefineLocation}
+            setShowRefineLocation={setShowRefineLocation}
+            address={address}
+            fulfillmentType={fulfillmentType}
+            onRefineLocationCloseIconClick={onRefineLocationCloseIconClick}
+            onRefineLocationComplete={onRefineLocationComplete}
+         />
+      )
    }
 
    // when no store available on user location
@@ -151,6 +214,7 @@ export const StoreList = props => {
             showRefineLocation={showRefineLocation}
             address={address}
             fulfillmentType={fulfillmentType}
+            onRefineLocationCloseIconClick={onRefineLocationCloseIconClick}
          />
          {stores.map((eachStore, index) => {
             const {
@@ -227,7 +291,7 @@ export const StoreList = props => {
                            JSON.stringify({
                               latitude: userCoordinate.latitude,
                               longitude: userCoordinate.longitude,
-                              address: address,
+                              ...address,
                            })
                         )
                         setSelectedStore(eachStore)

@@ -192,8 +192,15 @@ const isStoreDeliveryAvailableByDistance = async (
             }
             const { data } = await axios.post(url, postLocationData)
             const drivableDistance = mileRanges[mileRange]
-            const distanceMileFloat =
-               data.rows[0].elements[0].distance.text.split(' ')[0]
+            const distanceDetailsArray =
+               data.rows[0].elements[0].distance.text.split(' ') // [distance,unit]
+            const distanceFloat = parseFloat(distanceDetailsArray[0])
+            const distanceUnit = distanceDetailsArray[1]
+            const distanceMileFloat = convertDistanceIntoMiles(
+               distanceFloat,
+               distanceUnit
+            )
+
             drivableByGoogleDistance = distanceMileFloat
             let result =
                distanceMileFloat >= drivableDistance.from &&
@@ -274,5 +281,18 @@ const isStoreDeliveryAvailableByDistance = async (
       result: isStoreDeliveryAvailableByDistanceStatus,
       mileRangeInfo: null,
       drivableDistance: drivableByGoogleDistance,
+   }
+}
+
+const convertDistanceIntoMiles = (value, unit) => {
+   switch (unit) {
+      case 'ft':
+         return value * 0.000189394
+      case 'm':
+         return value * 0.000621371
+      case 'km':
+         return value * 0.621371
+      default:
+         return value
    }
 }

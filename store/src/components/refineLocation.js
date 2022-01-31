@@ -2,14 +2,28 @@ import React, { useState, useEffect } from 'react'
 import GoogleMapReact from 'google-map-react'
 import { LocationMarker, CloseIcon } from '../assets/icons'
 import { CSSTransition } from 'react-transition-group'
-import { get_env, useDelivery, autoSelectStore } from '../utils'
+import { get_env, getStoresWithValidations, isClient } from '../utils'
 import { Form, Button } from '.'
 import { useConfig } from '../lib'
+import { useUser, useCart } from '../context'
+import { useMutation } from '@apollo/react-hooks'
+import { MUTATIONS } from '../graphql'
+import { useToasts } from 'react-toast-notifications'
+const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 const RefineLocation = props => {
    // props
-   const { fulfillmentType } = props
-   const { orderTabs, dispatch } = useConfig()
+   const {
+      fulfillmentType,
+      onRefineLocationCloseIconClick,
+      onRefineLocationComplete,
+      showRefineLocation,
+      setShowRefineLocation,
+   } = props
+   const { orderTabs, dispatch, brand } = useConfig()
+   const { user } = useUser()
+   const { storedCartId, methods } = useCart()
+   const { addToast } = useToasts()
 
    // component state
    const [centerCoordinate, setCenterCoordinate] = useState({})
@@ -17,13 +31,29 @@ const RefineLocation = props => {
    const [isStoreAvailableOnAddress, setIsStoreAvailableOnAddress] =
       React.useState(true)
    const [additionalAddressInfo, setAdditionalAddressInfo] = useState({
-      line: '',
+      line1: '',
       landmark: '',
       label: '',
       notes: '',
    })
    const [selectedStore, setSelectedStore] = useState(null)
+   const [isGetStoresLoading, setIsGetStoresLoading] = useState(true)
    console.log('this is address', address)
+
+   const [createAddress] = useMutation(MUTATIONS.CUSTOMER.ADDRESS.CREATE, {
+      onCompleted: () => {
+         addToast('Address has been saved.', {
+            appearance: 'success',
+         })
+         // fb pixel custom event for adding a new address
+         ReactPixel.trackCustom('addAddress', address)
+      },
+      onError: error => {
+         addToast(error.message, {
+            appearance: 'error',
+         })
+      },
+   })
 
    // defaultProps for google map
    const defaultProps = {
@@ -43,8 +73,64 @@ const RefineLocation = props => {
       const selectedOrderTab = orderTabs.find(
          x => x.orderFulfillmentTypeLabel === fulfillmentType
       )
-
-      localStorage.setItem('orderTab', JSON.stringify(selectedOrderTab))
+      console.log('address', { ...address, ...additionalAddressInfo })
+      const customerAddress = {
+         line1: additionalAddressInfo.line1,
+         line2: address.line2,
+         city: address.city,
+         state: address.state,
+         country: address.country,
+         zipcode: address.zipcode,
+         notes: additionalAddressInfo.notes,
+         label: additionalAddressInfo.label,
+         lat: address.latitude.toString(),
+         lng: address.longitude.toString(),
+         landmark: setAdditionalAddressInfo.landmark,
+         searched: '',
+      }
+      if (user?.keycloakId) {
+         createAddress({
+            variables: {
+               object: { ...customerAddress, keycloakId: user?.keycloakId },
+            },
+         })
+      }
+      const cartIdInLocal = localStorage.getItem('cart-id')
+      if (cartIdInLocal || storedCartId) {
+         const finalCartId = cartIdInLocal
+            ? JSON.parse(cartIdInLocal)
+            : storedCartId
+         methods.cart.update({
+            variables: {
+               id: finalCartId,
+               _set: {
+                  address: customerAddress,
+                  locationId: selectedStore.location.id,
+               },
+            },
+         })
+      }
+      dispatch({
+         type: 'SET_LOCATION_ID',
+         payload: selectedStore.location.id,
+      })
+      dispatch({
+         type: 'SET_SELECTED_ORDER_TAB',
+         payload: selectedOrderTab,
+      })
+      dispatch({
+         type: 'SET_USER_LOCATION',
+         payload: address,
+      })
+      dispatch({
+         type: 'SET_STORE_STATUS',
+         payload: {
+            status: true,
+            message: 'Store available on your location.',
+            loading: false,
+         },
+      })
+      localStorage.setItem('orderTab', JSON.stringify(fulfillmentType))
       localStorage.setItem(
          'storeLocationId',
          JSON.stringify(selectedStore.location.id)
@@ -53,14 +139,8 @@ const RefineLocation = props => {
          'userLocation',
          JSON.stringify({ ...address, ...additionalAddressInfo })
       )
-      dispatch({
-         type: 'SET_LOCATION_ID',
-         payload: selectedStore.location.id,
-      })
-      dispatch({
-         type: 'SET_SELECTED_ORDER_TAB',
-         payload: fulfillmentType,
-      })
+      onRefineLocationComplete()
+      setShowRefineLocation(false)
    }
 
    const onChangeMap = ({ center, zoom, bounds, marginBounds }) => {
@@ -68,8 +148,8 @@ const RefineLocation = props => {
       console.log('thisIsCenter', center)
       setCenterCoordinate(prev => ({
          ...prev,
-         latitude: center.lat,
-         longitude: center.lng,
+         latitude: center.lat.toString(),
+         longitude: center.lng.toString(),
       }))
       fetch(
          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${
@@ -89,6 +169,12 @@ const RefineLocation = props => {
                   .join(',')
                const address = {}
                data.results[0].address_components.forEach(node => {
+                  if (node.types.includes('street_number')) {
+                     address.line2 = `${node.long_name} `
+                  }
+                  if (node.types.includes('route')) {
+                     address.line2 += node.long_name
+                  }
                   if (node.types.includes('locality')) {
                      address.city = node.long_name
                   }
@@ -102,6 +188,7 @@ const RefineLocation = props => {
                      address.zipcode = node.long_name
                   }
                })
+               setIsGetStoresLoading(true)
                setAddress(prev => ({
                   mainText,
                   secondaryText,
@@ -116,62 +203,37 @@ const RefineLocation = props => {
          })
    }
 
-   const { onDemandBrandRecurrence, preOrderBrandRecurrence, brandLocations } =
-      useDelivery(address, fulfillmentType)
-
    useEffect(() => {
-      if (
-         address &&
-         brandLocations &&
-         (onDemandBrandRecurrence || preOrderBrandRecurrence)
-      ) {
-         const type = fulfillmentType
-         let recurrencesDetails = {}
-         switch (type) {
-            case 'PREORDER_DELIVERY':
-               recurrencesDetails = {
-                  brandRecurrences: preOrderBrandRecurrence,
-                  fulfillmentType: 'PREORDER_DELIVERY',
-               }
-               break
-            case 'ONDEMAND_DELIVERY':
-               recurrencesDetails = {
-                  brandRecurrences: onDemandBrandRecurrence,
-                  fulfillmentType: 'ONDEMAND_DELIVERY',
-               }
-               break
-         }
-         ;(async () => {
-            const [result, fulfillmentStatus] = await autoSelectStore(
-               brandLocations,
-               recurrencesDetails.brandRecurrences,
-               recurrencesDetails.fulfillmentType,
-               address
+      if (address && brand.id) {
+         async function fetchStores() {
+            const brandClone = { ...brand }
+            const availableStore = await getStoresWithValidations(
+               brandClone,
+               fulfillmentType,
+               address,
+               true
             )
-            console.log('results', result, fulfillmentStatus)
-            const availableStores = result.filter(
-               x => x[fulfillmentStatus]?.status
-            )
-            if (availableStores.length > 0) {
-               setIsStoreAvailableOnAddress(true)
-               setSelectedStore(availableStores[0])
-            } else {
+            if (availableStore.length === 0) {
                setIsStoreAvailableOnAddress(false)
+               setSelectedStore(null)
+            } else {
+               setIsStoreAvailableOnAddress(true)
             }
-         })()
+            setSelectedStore(availableStore[0])
+            setIsGetStoresLoading(false)
+         }
+         fetchStores()
       }
-   }, [
-      address,
-      brandLocations,
+   }, [address, fulfillmentType, brand])
 
-      preOrderBrandRecurrence,
-      onDemandBrandRecurrence,
-   ])
-
+   const onRefineCloseClick = () => {
+      onRefineLocationCloseIconClick && onRefineLocationCloseIconClick()
+      setShowRefineLocation(false)
+   }
    return (
       <div className="hern-refine-location">
          <div className="hern-refine-location_content">
-            <RefineLocationHeader />
+            <RefineLocationHeader onRefineCloseClick={onRefineCloseClick} />
             <div>
                <div
                   style={{
@@ -224,11 +286,16 @@ const UserLocationMarker = () => {
    )
 }
 
-const RefineLocationHeader = () => {
+const RefineLocationHeader = ({ onRefineCloseClick }) => {
    return (
       <div className="hern-store-location-selector-header">
          <div className="hern-store-location-selector-header-left">
-            <CloseIcon size={16} color="#404040CC" stroke="currentColor" />
+            <CloseIcon
+               size={16}
+               color="#404040CC"
+               stroke="currentColor"
+               onClick={onRefineCloseClick}
+            />
             <span>Refine Your Location</span>
          </div>
       </div>

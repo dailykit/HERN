@@ -142,6 +142,12 @@ export const Delivery = props => {
                      .join(',')
                   const address = {}
                   data.results[0].address_components.forEach(node => {
+                     if (node.types.includes('street_number')) {
+                        address.line2 = `${node.long_name} `
+                     }
+                     if (node.types.includes('route')) {
+                        address.line2 += node.long_name
+                     }
                      if (node.types.includes('locality')) {
                         address.city = node.long_name
                      }
@@ -200,7 +206,7 @@ export const Delivery = props => {
       const data = await response.json()
       if (data.status === 'OK' && data.results.length > 0) {
          const [result] = data.results
-         const userLocation = {
+         const userCoordinate = {
             latitude: result.geometry.location.lat.toString(),
             longitude: result.geometry.location.lng.toString(),
          }
@@ -209,6 +215,12 @@ export const Delivery = props => {
             secondaryText: input.structured_formatting.secondary_text,
          }
          result.address_components.forEach(node => {
+            if (node.types.includes('street_number')) {
+               address.line2 = `${node.long_name} `
+            }
+            if (node.types.includes('route')) {
+               address.line2 += node.long_name
+            }
             if (node.types.includes('street_number')) {
                address.line2 = `${node.long_name} `
             }
@@ -229,9 +241,9 @@ export const Delivery = props => {
             }
          })
          if (address.zipcode) {
-            setUserCoordinate(prev => ({ ...prev, ...userLocation }))
+            setUserCoordinate(prev => ({ ...prev, ...userCoordinate }))
             setIsGetStoresLoading(true)
-            setAddress({ ...userLocation, ...address })
+            setAddress({ ...userCoordinate, ...address })
          } else {
             showWarningPopup()
          }
@@ -378,6 +390,7 @@ export const Delivery = props => {
                address={address}
                setShowRefineLocation={setShowRefineLocation}
                showRefineLocation={showRefineLocation}
+               setAddress={setAddress}
             />
          )}
       </div>
