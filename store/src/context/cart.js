@@ -384,6 +384,7 @@ export const CartProvider = ({ children }) => {
                         id: storedCartId,
                         _set: {
                            // isTest: user.isTest,
+                           customerId: user.id,
                            customerKeycloakId: user.keycloakId,
                            paymentMethodId:
                               user.platform_customer?.defaultPaymentMethodId,
