@@ -368,7 +368,7 @@ const Order = () => {
             justifyContent="space-between"
          >
             <Flex container alignItems="center">
-               <Text as="h4">ORD{order?.id}</Text>
+               <Text as="h4">ORD{order?.cart?.id}</Text>
                {!isThirdParty && Boolean(order?.cart?.isTest) && (
                   <>
                      <Spacer size="8px" xAxis />
@@ -488,7 +488,7 @@ const Order = () => {
                <span />
             )}
 
-            <ResponsiveFlex container style={{alignItems:'center'}}>
+            <ResponsiveFlex container style={{ alignItems: 'center' }}>
                {!isThirdParty && (
                   <>
                      <Flex width="240px">
@@ -569,7 +569,9 @@ const Order = () => {
                <>
                   <Text as="text1">Address:</Text>
                   <Spacer size="14px" xAxis />
-                  <p style={{marginBottom:'0em'}}>{parseAddress(order.cart?.address)}</p>
+                  <p style={{ marginBottom: '0em' }}>
+                     {parseAddress(order.cart?.address)}
+                  </p>
                </>
             )}
          </Flex>
@@ -674,7 +676,7 @@ const TimeSlot = ({ openTunnel, type, time = {} }) => {
             <Text as="h4">{isPickup(type) ? 'Pick Up' : 'Delivery'}</Text>
             <Tooltip identifier="order_details_date_fulfillment" />
          </Flex>
-         <Text as="p" style={{marginBottom:'0em'}}>
+         <Text as="p" style={{ marginBottom: '0em' }}>
             {time?.from && moment(time?.from).format(': MMM DD, YYYY')}
             &nbsp;
             {time?.from ? moment(time?.from).format('hh:mmA') : 'N/A'}-
