@@ -22,12 +22,12 @@ export const StyledHeadAction = styled.div`
 export const StyledContent = styled.div`
    display: grid;
    background: #f9f9f9;
-   grid-template-columns: 20em 24em 7em;
+   grid-template-columns: 19rem 16rem 7rem;
    align-items: center;
    width: 100%;
    margin: 0.5em;
    padding: 0.5em 0.5em;
-   border-radius: 6px;
+   border-radius: 8px;
 `
 export const StyledContentText = styled.div`
    display: flex;
@@ -36,6 +36,7 @@ export const StyledContentText = styled.div`
    font-weight: 500;
    font-size: 17px;
    line-height: 14px;
+   padding-left: 10px;
    align-items: center;
    > div:nth-child(1) {
       color: #919699;

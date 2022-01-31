@@ -6,6 +6,9 @@ import { Button, Loader } from '../../components'
 import { Carousel, Row, Col } from 'antd'
 import { ProductCard } from '../../components/product_card'
 import { ArrowLeftIcon, ArrowRightIcon } from '../../assets/icons'
+import { useRouter } from 'next/router'
+import { getRoute } from '../../utils'
+
 export const ProductGallery = ({ config }) => {
    const [productsData, setProductsData] = React.useState([])
    const [productOrientation, setProductOrientation] = React.useState(
@@ -95,9 +98,10 @@ export const ProductGallery = ({ config }) => {
 
 const ProductGrid = ({ product, index }) => {
    const { locationId, storeStatus } = useConfig()
-
+   const router = useRouter()
    const [productModifier, setProductModifier] = React.useState(null)
    const CustomArea = props => {
+
       const { data } = props
       return (
          <div className="hern-product_gallery-product-custom-area">
@@ -111,15 +115,16 @@ const ProductGrid = ({ product, index }) => {
                      addToCart({ productId: data.id }, 1)
                   }
                }}
-               disabled={
-                  locationId ? (storeStatus.status ? false : true) : true
-               }
+            // disabled={
+            //    locationId ? (storeStatus.status ? false : true) : true
+            // }
             >
-               {locationId
+               {/* {locationId
                   ? storeStatus.status
                      ? 'ADD'
                      : 'COMING SOON'
-                  : 'COMING SOON'}
+                  : 'COMING SOON'} */}
+               ADD
             </Button>
             {data.productOptions.length > 0 && <span>Customizable</span>}
          </div>
@@ -130,6 +135,22 @@ const ProductGrid = ({ product, index }) => {
    }
    return (
       <ProductCard
+         onProductNameClick={() =>
+            router.push(
+               getRoute(
+                  '/products/' +
+                  product.id
+               )
+            )
+         }
+         onImageClick={() =>
+            router.push(
+               getRoute(
+                  '/products/' +
+                  product.id
+               )
+            )
+         }
          key={index}
          data={product}
          showProductDescription={true}

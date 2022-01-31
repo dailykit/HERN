@@ -112,6 +112,7 @@ export const CartDetails = () => {
                      decrementClick={() =>
                         removeCartItems([data.ids[data.ids.length - 1]])
                      }
+                     showDeleteButton
                   />
                   {/* price */}
                   {data.childs[0].price !== 0 && (
@@ -141,7 +142,7 @@ export const CartDetails = () => {
                {data.childs.length > 0 && (
                   <EditIcon
                      size={12}
-                     stroke={'#38a169'}
+                     fill={'var(--hern-accent)'}
                      onClick={() => {
                         setCartDetailSelectedProduct(data)
                         setIncreaseProductId(productId)
@@ -197,7 +198,7 @@ export const CartDetails = () => {
                      <span>Oops! Your cart is empty </span>
                      <Button
                         className="hern-cart-go-to-menu-btn"
-                        onClick={() => {}}
+                        onClick={() => { }}
                      >
                         <Link href="/order">GO TO MENU</Link>
                      </Button>

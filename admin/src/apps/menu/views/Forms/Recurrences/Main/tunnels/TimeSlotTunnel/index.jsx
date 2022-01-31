@@ -226,28 +226,28 @@ const TimeSlotTunnel = ({ closeTunnel }) => {
                            value={tunnelSlot.rangeChoice.morning}
                            onClick={e => onClick(e, i)}
                         >
-                           <span>Morning <br />(09:00AM-12:00AM)</span>
+                           Morning <br />(09:00AM-12:00AM)
                         </TimeButton>
                         <TimeButton
                            id={`noon-${i}`}
                            value={tunnelSlot.rangeChoice.noon}
                            onClick={e => onClick(e, i)}
                         >
-                           <span>Noon <br />(12:00PM-04:00PM)</span>
+                           Noon <br />(12:00PM-04:00PM)
                         </TimeButton>
                         <TimeButton
                            id={`evening-${i}`}
                            value={tunnelSlot.rangeChoice.evening}
                            onClick={e => onClick(e, i)}
                         >
-                           <span>Evening<br /> (04:00PM-07:00PM)</span>
+                           Evening<br /> (04:00PM-07:00PM)
                         </TimeButton>
                         <TimeButton
                            id={`night-${i}`}
                            value={tunnelSlot.rangeChoice.night}
                            onClick={e => onClick(e, i)}
                         >
-                           <span>Night<br /> (07:00PM-10:00PM)</span>
+                           Night<br /> (07:00PM-10:00PM)
                         </TimeButton>
                      </RecurrenceDays>
                      <Spacer size="16px" />

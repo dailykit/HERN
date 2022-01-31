@@ -1,11 +1,11 @@
 .hern-coupon {
    margin-top: 0.5rem;
-   border: 1px dashed teal;
+   border: 1px dashed var(--hern-accent);
    padding: 8px;
    border-radius: 2px;
 }
 .hern-coupon__apply-btn {
-   color: teal;
+   color: var(--hern-accent);
    padding: 4px;
    text-transform: uppercase;
    text-align: center;
@@ -63,7 +63,7 @@
    top: 4px;
    right: 4px;
    font-size: 12px;
-   color: teal;
+   color: var(--hern-accent);
 }
 .hern-coupon__input-wrapper {
    display: block;
@@ -78,7 +78,7 @@
    display: block;
 }
 .hern-coupon__form__apply-btn {
-   color: teal;
+   color: var(--hern-accent);
    padding: 4px;
    text-transform: uppercase;
    text-align: center;

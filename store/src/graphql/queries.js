@@ -1627,6 +1627,7 @@ export const GET_CART = gql`
          locationId
          loyaltyPointsUsable
          customerKeycloakId
+         cartOwnerBilling
          billing: billingDetails
          subscriptionOccurenceId
          toUseAvailablePaymentOptionId
@@ -1684,7 +1685,7 @@ export const BRAND_SETTINGS_BY_TYPE = gql`
       brands_brand_brandSetting(
          where: {
             brand: {
-               _or: [{ domain: { _eq: $domain } }, { isDefault: { _eq: true } }]
+               _or: [{ isDefault: { _eq: true } }, { domain: { _eq: $domain } }]
             }
             brandSetting: { type: { _eq: $type } }
          }
@@ -2239,6 +2240,24 @@ export const GET_ALL_RECURRENCES = gql`
                }
             }
          }
+      }
+   }
+`
+export const PRODUCT_SEO_SETTINGS_BY_ID = gql`
+   query PRODUCT_SEO_SETTINGS($productId: Int!, $type: String!) {
+      products(where: { id: { _eq: $productId } }) {
+         description
+         name
+         assets
+      }
+      products_productPageSetting(where: { type: { _eq: $type } }) {
+         product_productPageSettings(
+            where: { productId: { _eq: $productId } }
+         ) {
+            value
+            productId
+         }
+         identifier
       }
    }
 `

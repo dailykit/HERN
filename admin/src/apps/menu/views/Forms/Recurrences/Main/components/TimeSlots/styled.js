@@ -23,14 +23,10 @@ export const TabsHeading = styled.div`
    font-weight: 500;
    font-size: 20px;
    line-height: 18px;
-
+   margin: 1rem;
    color: #202020;
 `
 export const TabsAction = styled.div`
    display: flex;
    align-items: center;
 `
-
-// export const TimeSlotDetails = styled.div``
-// export const TimeSlotDetails = styled.div``
-// export const TimeSlotDetails = styled.div``
