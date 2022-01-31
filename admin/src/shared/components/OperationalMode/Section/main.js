@@ -10,11 +10,15 @@ const Main = () => {
          <Switch>
             <Route path="/operationMode" component={ManagerLevel} exact />
             <Route
-               path="/operationMode/brandLocation:id"
+               path="/operationMode/:brandName-:brandId:brandLocationId"
                component={LiveMenuBrandLocation}
                exact
             />
-            <Route path="/operationMode/brand-:id" component={LiveMenu} exact />
+            <Route
+               path="/operationMode/:brandName-:brandId"
+               component={LiveMenu}
+               exact
+            />
          </Switch>
       </main>
    )

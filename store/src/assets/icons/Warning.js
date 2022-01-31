@@ -14,7 +14,7 @@ export const WarningIcon = ({ size = 24 }) => {
                <path d="M 0,38 38,38 38,0 0,0 0,38 Z" />
             </clipPath>
          </defs>
-         <g clip-path="url(#a)" transform="matrix(1.25 0 0 -1.25 0 47.5)">
+         <g clipPath="url(#a)" transform="matrix(1.25 0 0 -1.25 0 47.5)">
             <path
                fill="#ffcc4d"
                d="m 0,0 c -1.842,0 -2.654,1.338 -1.806,2.973 l 15.609,30.055 c 0.848,1.635 2.238,1.635 3.087,0 L 32.499,2.973 C 33.349,1.338 32.536,0 30.693,0 L 0,0 Z"

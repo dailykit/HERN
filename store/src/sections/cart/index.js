@@ -30,6 +30,8 @@ export const OnDemandCart = () => {
 
    const { isMenuLoading } = onDemandMenu
 
+   const { user } = useUser()
+
    const { settings } = useConfig()
 
    const isLoyaltyPointsAvailable =
@@ -51,7 +53,7 @@ export const OnDemandCart = () => {
          <div className="hern-cart-empty-cart">
             <EmptyCart />
             <span>Oops! Your cart is empty </span>
-            <Button className="hern-cart-go-to-menu-btn" onClick={() => {}}>
+            <Button className="hern-cart-go-to-menu-btn" onClick={() => { }}>
                <Link href="/order">GO TO MENU</Link>
             </Button>
          </div>
@@ -81,7 +83,7 @@ export const OnDemandCart = () => {
             <div className="hern-ondemand-cart__left-card">
                <Coupon upFrontLayout={true} cart={cartState.cart} />
             </div>
-            {isAuthenticated && isLoyaltyPointsAvailable && (
+            {isAuthenticated && isLoyaltyPointsAvailable && user.loyaltyPoint?.points > 0 && (
                <div className="hern-ondemand-cart__left-card">
                   <LoyaltyPoints cart={cartState.cart} version={2} />
                </div>
