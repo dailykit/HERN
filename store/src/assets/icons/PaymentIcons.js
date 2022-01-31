@@ -326,7 +326,7 @@ export const AmexIcon = ({ size = 24, color = '#000000' }) => (
       <g
          id="Creditcards"
          stroke="none"
-         stroke-width="1"
+         strokeWidth="1"
          fill="none"
          fill-rule="evenodd"
       >

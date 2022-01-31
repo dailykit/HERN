@@ -38,7 +38,7 @@ import { PRODUCT } from '../../../../../../graphql'
 import { InfoCircleOutlined } from '@ant-design/icons'
 const { Title, Text } = Typography
 
-export const SocialShare = ({ update, productId, domain }) => {
+export const SocialShare = ({ update, domain, product }) => {
     const [tunnel1, openTunnel1, closeTunnel1] = useTunnel(1)
     const params = useParams()
     const [settingId, setSettingId] = React.useState(null)
@@ -134,7 +134,7 @@ export const SocialShare = ({ update, productId, domain }) => {
             variables: {
                 identifier: { _eq: 'og-card' },
                 type: { _eq: 'seo' },
-                productId: { _eq: productId }
+                productId: { _eq: product?.id }
             }
         })
     }, [])
@@ -145,7 +145,7 @@ export const SocialShare = ({ update, productId, domain }) => {
     const Save = () => {
         update({
             id: settingId,
-            productId: productId,
+            productId: product?.id,
             value: {
                 ogTitle: form.ogTitle.value,
                 ogDescription: form.ogDescription.value,
@@ -242,7 +242,7 @@ export const SocialShare = ({ update, productId, domain }) => {
                                             }}
                                             className="text-box"
                                             bordered={false}
-                                            value={form.ogTitle.value}
+                                            value={form.ogTitle.value || product?.name}
                                             onChange={onChangeHandler}
                                             id="og-title"
                                             name="ogTitle"
@@ -284,7 +284,7 @@ export const SocialShare = ({ update, productId, domain }) => {
                                             }}
                                             className="text-area"
                                             bordered={false}
-                                            value={form.ogDescription.value}
+                                            value={form.ogDescription.value || product?.description}
                                             onChange={onChangeHandler}
                                             name="ogDescription"
                                             id="og-description"
@@ -319,7 +319,7 @@ export const SocialShare = ({ update, productId, domain }) => {
                                         {/* for image upload (modal)*/}
                                         <Row>
                                             <Col span={12} className="imageModal">
-                                                {form.ogImage.value ? (
+                                                {(form.ogImage.value || product?.assets?.images[0]) ? (
                                                     <ImageContainer
                                                         border="none"
                                                         height="120px"
@@ -345,7 +345,7 @@ export const SocialShare = ({ update, productId, domain }) => {
                                                             </IconButton>
                                                         </div>
                                                         <img
-                                                            src={form.ogImage.value}
+                                                            src={form.ogImage.value || product?.assets?.images[0]}
                                                             alt="og-image"
                                                         />
                                                     </ImageContainer>
@@ -425,10 +425,10 @@ export const SocialShare = ({ update, productId, domain }) => {
                                 onClick={showOgModal}
                                 style={{ backgroundColor: '#f0f4f7' }}
                                 cover={
-                                    form?.ogImage?.value ? (
+                                    (form?.ogImage?.value || product?.assets?.images[0]) ? (
                                         <img
                                             alt="example"
-                                            src={form.ogImage.value}
+                                            src={form?.ogImage?.value || product?.assets?.images[0]}
                                             style={{
                                                 maxHeight: '220px',
                                                 objectFit: 'cover',
@@ -449,11 +449,10 @@ export const SocialShare = ({ update, productId, domain }) => {
                                     </p>
                                 </Tooltip>
                                 <Title strong level={4}>
-                                    {form.ogTitle.value || 'Title Tag'}
+                                    {form.ogTitle.value || product?.name}
                                 </Title>
                                 <p>
-                                    {form.ogDescription.value ||
-                                        'this is the og: description'}
+                                    {form.ogDescription.value || product?.description}
                                 </p>
                             </Card>
                         </Col>
