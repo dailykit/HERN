@@ -43,7 +43,14 @@ export const ModifierPopup = props => {
       src: null,
    })
    const { locationId, storeStatus } = useConfig()
-
+   const recipeLink = useConfig('Product Card').configOf('recipe-link')
+   const recipeButton = {
+      show:
+         recipeLink?.['Recipe link Button']?.['Show link button']?.value ??
+         false,
+      label:
+         recipeLink?.['Recipe link Button']?.['label'].value ?? 'View Recipe',
+   }
    useOnClickOutside(imagePopUpRef, () =>
       setModifierImage({
          showImage: false,
@@ -511,15 +518,17 @@ export const ModifierPopup = props => {
                                     )}
                                     {')'}
                                  </li>
-                                 <div>
-                                    <Link
-                                       href={getRoute(
-                                          '/recipes/' + eachOption.id
-                                       )}
-                                    >
-                                       View recipe
-                                    </Link>
-                                 </div>
+                                 {recipeButton.show && (
+                                    <div>
+                                       <Link
+                                          href={getRoute(
+                                             '/recipes/' + eachOption.id
+                                          )}
+                                       >
+                                          <>{recipeButton.label}</>
+                                       </Link>
+                                    </div>
+                                 )}
                               </div>
                            )
                         })}
