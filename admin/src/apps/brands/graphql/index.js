@@ -211,3 +211,42 @@ export const PLANS = {
       }
    `,
 }
+
+export const LOCATIONS = {
+   LIST: gql`
+      subscription locations {
+         brands_location(order_by: { id: asc }) {
+            id
+            label
+            city
+            country
+            state
+            zipcode
+            brand_locations_aggregate {
+               aggregate {
+                  count
+               }
+            }
+         }
+      }
+   `,
+   DELETE: gql`
+      mutation deleteLocation($id: Int!) {
+         delete_brands_location(where: { id: { _eq: $id } }) {
+            affected_rows
+         }
+      }
+   `,
+   CREATE: gql`
+      mutation createLocation($objects: [brands_location_insert_input!]!) {
+         insert_brands_location(objects: $objects) {
+            affected_rows
+            returning {
+               id
+               locationAddress
+               label
+            }
+         }
+      }
+   `,
+}

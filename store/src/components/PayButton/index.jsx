@@ -1,24 +1,22 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import isEmpty from 'lodash/isEmpty'
 import { Skeleton } from 'antd'
+import { useToasts } from 'react-toast-notifications'
 
 import { Button } from '../button'
 import * as QUERIES from '../../graphql'
 import { usePayment } from '../../lib'
-import { useCart } from '../../context'
-import { isKiosk } from '../../utils'
+import { isKiosk, useTerminalPay } from '../../utils'
 
 function PayButton({
    children,
    selectedAvailablePaymentOptionId = null,
    cartId = null,
+   fullWidthSkeleton = true,
    ...props
 }) {
    const isKioskMode = isKiosk()
-   const { cartState } = useCart()
-   const { kioskPaymentOption } = cartState
-   console.log('cartState', cartState)
    const {
       profileInfo,
       paymentInfo,
@@ -28,6 +26,9 @@ function PayButton({
       initializePayment,
       setPaymentInfo,
    } = usePayment()
+   const { checkTerminalStatus } = useTerminalPay()
+   const { addToast } = useToasts()
+   const [cartValidity, setCartValidity] = useState(null)
 
    // query for fetching available payment options
    const {
@@ -49,29 +50,18 @@ function PayButton({
       },
    })
 
-   const isValid = () => {
-      if (isKioskMode) {
-         return true
-      }
-      return Boolean(
-         profileInfo.firstName &&
-            profileInfo.lastName &&
-            profileInfo.phoneNumber &&
-            paymentInfo &&
-            paymentInfo.selectedAvailablePaymentOption?.id
-      )
-   }
-
    const isStripe =
       paymentInfo?.selectedAvailablePaymentOption?.supportedPaymentOption
          ?.supportedPaymentCompany?.label === 'stripe'
 
-   const onPayClickHandler = () => {
+   const onPayClickHandler = async () => {
       console.log('PayButton: onPayClickHandler')
       if (isKioskMode) {
          console.log('inside kiosk condition')
+         const response = await checkTerminalStatus()
+         if (response && response === 'BUSY')
+            return addToast('Terminal is busy', { appearance: 'error' })
          if (cartId) {
-            setIsProcessingPayment(true)
             initializePayment(cartId)
             updatePaymentState({
                paymentLifeCycleState: 'INCREMENT_PAYMENT_RETRY_ATTEMPT',
@@ -84,25 +74,23 @@ function PayButton({
                   _set: {
                      toUseAvailablePaymentOptionId:
                         selectedAvailablePaymentOptionId,
-                     ...(!isEmpty(profileInfo) && {
-                        customerInfo: {
-                           customerEmail: profileInfo?.email,
-                           customerPhone: profileInfo?.phone,
-                           customerLastName: profileInfo?.lastName,
-                           customerFirstName: profileInfo?.firstName,
-                        },
-                     }),
                   },
                },
             })
          }
       } else {
-         if (!isEmpty(paymentInfo) && cartId && isValid()) {
-            setIsProcessingPayment(true)
-            setIsPaymentInitiated(true)
-            updatePaymentState({
-               paymentLifeCycleState: 'INCREMENT_PAYMENT_RETRY_ATTEMPT',
-            })
+         if (
+            !isEmpty(paymentInfo) &&
+            cartId &&
+            !isEmpty(cartValidity) &&
+            cartValidity.status
+         ) {
+            initializePayment(cartId)
+            // setIsProcessingPayment(true)
+            // setIsPaymentInitiated(true)
+            // updatePaymentState({
+            //    paymentLifeCycleState: 'INCREMENT_PAYMENT_RETRY_ATTEMPT',
+            // })
 
             updateCart({
                variables: {
@@ -116,12 +104,6 @@ function PayButton({
                      }),
                      toUseAvailablePaymentOptionId:
                         paymentInfo?.selectedAvailablePaymentOption?.id,
-                     customerInfo: {
-                        customerEmail: profileInfo?.email,
-                        customerPhone: profileInfo?.phone,
-                        customerLastName: profileInfo?.lastName,
-                        customerFirstName: profileInfo?.firstName,
-                     },
                   },
                },
             })
@@ -131,6 +113,7 @@ function PayButton({
 
    useEffect(() => {
       if (!loading && !isEmpty(cart)) {
+         setCartValidity(cart?.isCartValid)
          if (isEmpty(paymentInfo.selectedAvailablePaymentOption)) {
             setPaymentInfo({
                selectedAvailablePaymentOption: {
@@ -140,16 +123,16 @@ function PayButton({
             })
          }
       }
-   }, [cart])
+   }, [cart, loading])
 
    return (
       <>
          {loading ? (
-            <Skeleton.Button active size="large" block={true} />
+            <Skeleton.Button active size="large" block={fullWidthSkeleton} />
          ) : (
             <Button
                onClick={onPayClickHandler}
-               disabled={!Boolean(isValid())}
+               disabled={!cartValidity?.status}
                {...props}
             >
                {children}

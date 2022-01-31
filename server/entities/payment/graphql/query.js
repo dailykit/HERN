@@ -18,6 +18,11 @@ query CART_PAYMENT($id: Int!) {
    stripeInvoiceId
    paymentRetryAttempt
    usedAvailablePaymentOptionId
+   cart{
+      brand{
+        domain
+      }
+    }
  }
 }
 `

@@ -34,11 +34,17 @@ export const handlePaymentWebhook = async (req, res) => {
             TXN_SUCCESS: 'SUCCEEDED',
             TXN_FAILURE: 'FAILED'
          }
-         return res.redirect(
-            `http://localhost:4000/checkout?id=${result.data.cartId}&payment=${
+         let url
+         if (process.env.NODE_ENV === 'development') {
+            url = `/checkout?id=${result.data.cartId}&payment=${
                paymentStatus[result.data.paymentStatus]
             }`
-         )
+         } else {
+            url = `https://${result.data.domain}/checkout?id=${
+               result.data.cartId
+            }&payment=${paymentStatus[result.data.paymentStatus]}`
+         }
+         return res.redirect(url)
       }
       return res.status(result.code).json(result)
    } catch (error) {

@@ -167,7 +167,7 @@ const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
                   <button
                      className="hern-coupon__see-all-btn"
                      style={{
-                        color: `${theme?.accent ? theme?.accent : 'teal'}`,
+                        color: `var(--hern-accent)`,
                      }}
                      type="reset"
                      onClick={() => setIsCouponListOpen(true)}
@@ -227,7 +227,7 @@ const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
                      }
                      type="submit"
                      disabled={searching || applying}
-                     color={theme?.accent}
+                     color={theme?.accent?.value}
                      style={{
                         ...(orderInterfaceType === 'Kiosk Ordering' && {
                            border: `2px solid ${config.kioskSettings.theme.secondaryColor.value}`,
@@ -277,7 +277,7 @@ const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
       <div
          className="hern-coupon"
          style={{
-            color: `${theme?.accent ? theme?.accent : 'teal'}`,
+            color: `var(--hern-accent)`,
             ...(orderInterfaceType === 'Kiosk Ordering' && {
                borderRadius: '1em',
                marginTop: '2.5em',
@@ -321,7 +321,7 @@ const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
             <button
                className="hern-coupon__apply-btn"
                onClick={() => setIsCouponFormOpen(true)}
-               style={{ color: `${theme?.accent ? theme?.accent : 'teal'}` }}
+               style={{ color: `var(--hern-accent)` }}
             >
                {t('Apply Coupon')}
             </button>

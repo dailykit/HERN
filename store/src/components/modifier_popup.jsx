@@ -9,6 +9,7 @@ import { CounterButton } from './counterBtn'
 import classNames from 'classnames'
 import Link from 'next/link'
 import { useToasts } from 'react-toast-notifications'
+import { useConfig } from '../lib'
 
 export const ModifierPopup = props => {
    const {
@@ -41,6 +42,8 @@ export const ModifierPopup = props => {
       showImage: false,
       src: null,
    })
+   const { locationId, storeStatus } = useConfig()
+
    useOnClickOutside(imagePopUpRef, () =>
       setModifierImage({
          showImage: false,
@@ -425,32 +428,34 @@ export const ModifierPopup = props => {
                   'hern-product-modifier-pop-up-product': !modifierWithoutPopup,
                })}
             >
-               <div className="hern-product-modifier-pop-up-header-container">
-                  <div
-                     className="hern-product-card__name"
-                     style={{ fontSize: '20px', fontWeight: '600px' }}
-                  >
-                     {productData?.name}
-                  </div>
-                  <div
-                     style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                     }}
-                  >
-                     {showCounterBtn && <CustomArea data={productData} />}
+               {!customProductDetails && (
+                  <div className="hern-product-modifier-pop-up-header-container">
+                     <div
+                        className="hern-product-card__name"
+                        style={{ fontSize: '20px', fontWeight: '600px' }}
+                     >
+                        {productData?.name}
+                     </div>
+                     <div
+                        style={{
+                           display: 'flex',
+                           alignItems: 'center',
+                        }}
+                     >
+                        {showCounterBtn && <CustomArea data={productData} />}
 
-                     {!modifierWithoutPopup && (
-                        <div className="hern-product-modifier-pop-up-close-icon">
-                           <CloseIcon
-                              size={20}
-                              stroke="currentColor"
-                              onClick={closeModifier}
-                           />
-                        </div>
-                     )}
+                        {!modifierWithoutPopup && (
+                           <div className="hern-product-modifier-pop-up-close-icon">
+                              <CloseIcon
+                                 size={20}
+                                 stroke="currentColor"
+                                 onClick={closeModifier}
+                              />
+                           </div>
+                        )}
+                     </div>
                   </div>
-               </div>
+               )}
                <div className="hern-product-modifier-pop-up-product-details">
                   {customProductDetails ? (
                      <CustomProductDetails />
@@ -661,8 +666,15 @@ export const ModifierPopup = props => {
                      className="hern-product-modifier-pop-up-add-to-cart-btn"
                      onClick={() => setTimeout(handleAddOnCartOn, 500)}
                      style={{ padding: '16px 0px 34px 0px' }}
+                     disabled={
+                        locationId ? (storeStatus.status ? false : true) : true
+                     }
                   >
-                     ADD TO CART {totalAmount()}
+                     {locationId
+                        ? storeStatus.status
+                           ? `ADD TO CART ${totalAmount()}`
+                           : 'COMING SOON'
+                        : 'COMING SOON'}
                   </Button>
                </div>
             </div>

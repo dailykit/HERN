@@ -54,12 +54,6 @@ export function CartPaymentComponent({ cartId = null }) {
                      paymentMethodId: null,
                      toUseAvailablePaymentOptionId:
                         paymentInfo?.selectedAvailablePaymentOption?.id,
-                     customerInfo: {
-                        customerEmail: profileInfo?.email,
-                        customerPhone: profileInfo?.phone,
-                        customerLastName: profileInfo?.lastName,
-                        customerFirstName: profileInfo?.firstName,
-                     },
                   },
                },
             })
@@ -96,12 +90,6 @@ export function CartPaymentComponent({ cartId = null }) {
                         paymentMethodId: null,
                         toUseAvailablePaymentOptionId:
                            paymentInfo?.selectedAvailablePaymentOption?.id,
-                        customerInfo: {
-                           customerEmail: profileInfo?.email,
-                           customerPhone: profileInfo?.phone,
-                           customerLastName: profileInfo?.lastName,
-                           customerFirstName: profileInfo?.firstName,
-                        },
                      },
                   },
                })

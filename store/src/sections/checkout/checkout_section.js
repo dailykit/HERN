@@ -270,12 +270,6 @@ const PaymentContent = () => {
                   _inc: { paymentRetryAttempt: 1 },
                   _set: {
                      paymentMethodId: state.payment.selected.id,
-                     customerInfo: {
-                        customerEmail: user?.platform_customer?.email,
-                        customerPhone: state?.profile?.phoneNumber,
-                        customerLastName: state?.profile?.lastName,
-                        customerFirstName: state?.profile?.firstName,
-                     },
                   },
                },
             })

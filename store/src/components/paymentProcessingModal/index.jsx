@@ -22,6 +22,7 @@ const PaymentProcessingModal = ({
    byPassTerminalPayment = () => null,
    cancelTerminalPayment = () => null,
    initializePrinting = () => null,
+   resetPaymentProviderStates = () => null,
 }) => {
    console.log('PaymentProcessingModal')
    const router = useRouter()
@@ -29,20 +30,21 @@ const PaymentProcessingModal = ({
    const [isCelebrating, setIsCelebrating] = useState(false)
    const { width, height } = useWindowSize()
 
-   const closeModalHandler = async (isFailed = false) => {
+   const closeModalHandler = () => {
       setIsCelebrating(false)
-      await closeModal(isFailed)
+      closeModal()
+      resetPaymentProviderStates()
    }
 
-   const stopCelebration = async () => {
+   const stopCelebration = () => {
       setIsCelebrating(false)
       if (isKioskMode) {
          // initializePrinting()
-         await closeModalHandler()
+         closeModalHandler()
       } else {
-         if (router.pathname !== `/placing-order?id=${cartPayment?.cartId}`) {
-            await closeModalHandler()
-            router.push(`/placing-order?id=${cartPayment?.cartId}`)
+         if (router.pathname !== `/account/orders`) {
+            closeModalHandler()
+            router.push(`/account/orders`)
          }
       }
    }
@@ -90,7 +92,7 @@ const PaymentProcessingModal = ({
             title = 'Payment Failed'
             subtitle =
                formatTerminalStatus[cartPayment.transactionRemark?.StatusCode]
-                  .message
+                  ?.message || 'Unknown error'
             extra = [
                <Button
                   type="primary"
@@ -99,10 +101,19 @@ const PaymentProcessingModal = ({
                   onClick={() => {
                      cancelTerminalPayment({
                         cartPayment,
+                        retryPaymentAttempt: false,
                      })
                   }}
                >
                   Try again
+               </Button>,
+               <Button
+                  type="primary"
+                  className="tryOtherPayment"
+                  key="console"
+                  onClick={closeModalHandler}
+               >
+                  Try other payment method
                </Button>,
             ]
          } else if (cartPayment?.paymentStatus === 'CANCELLED') {
@@ -124,7 +135,7 @@ const PaymentProcessingModal = ({
                   Try other payment method
                </Button>,
             ]
-         } else if (cartPayment?.paymentStatus === 'SWIPE_OR_INSERT') {
+         } else if (cartPayment?.paymentStatus === 'SWIPE_CARD') {
             icon = (
                <img
                   src="/assets/gifs/swipe.gif"
@@ -133,7 +144,16 @@ const PaymentProcessingModal = ({
             )
             title = 'Swipe or Insert your card'
             subtitle =
-               'Please swipe or insert your card to complete your payment'
+               'Please swipe or insert your card to complete the payment'
+         } else if (cartPayment?.paymentStatus === 'ENTER_PIN') {
+            icon = (
+               <img
+                  src="/assets/gifs/swipe.gif"
+                  className="payment_status_loader"
+               />
+            )
+            title = 'Enter your pin'
+            subtitle = 'Please your pin to complete the payment'
          }
       } else {
          if (cartPayment?.paymentStatus === 'SUCCEEDED') {
@@ -184,7 +204,7 @@ const PaymentProcessingModal = ({
                   key="console"
                   onClick={closeModalHandler}
                >
-                  Try again
+                  Try other payment method
                </Button>,
             ]
          } else if (cartPayment?.paymentStatus === 'CANCELLED') {
@@ -221,7 +241,7 @@ const PaymentProcessingModal = ({
                   type="primary"
                   className="tryOtherPayment"
                   key="console"
-                  onClick={() => closeModalHandler(true)}
+                  onClick={closeModalHandler}
                >
                   Try other payment method
                </Button>,
@@ -237,11 +257,27 @@ const PaymentProcessingModal = ({
       }
    }
 
-   // start celebration (confetti effect) once payment is successful
    useEffect(() => {
-      if (cartPayment?.paymentStatus === 'SUCCEEDED') {
-         startCelebration()
+      let timer
+      if (!isEmpty(cartPayment)) {
+         // start celebration (confetti effect) once payment is successful
+         if (cartPayment?.paymentStatus === 'SUCCEEDED') {
+            startCelebration()
+         } else if (
+            // start the timeout to cancel the payment if payment is not successful/cancelled/failed
+            !['SUCCEEDED', 'FAILED', 'CANCELLED'].includes(
+               cartPayment?.paymentStatus
+            )
+         ) {
+            timer = setTimeout(() => {
+               cancelTerminalPayment({
+                  cartPayment,
+                  retryPaymentAttempt: false,
+               })
+            }, 1000 * 60)
+         }
       }
+      return () => clearTimeout(timer)
    }, [cartPayment?.paymentStatus])
 
    return (
@@ -264,7 +300,7 @@ const PaymentProcessingModal = ({
             backgroundColor: isKioskMode ? 'rgba(0, 64, 106, 0.9)' : '#fff',
          }}
       >
-         {!isEmpty(cartPayment) ? (
+         {/* {!isEmpty(cartPayment) && (
             <Wrapper>
                <Result
                   icon={ShowPaymentStatusInfo().icon}
@@ -275,48 +311,78 @@ const PaymentProcessingModal = ({
 
                {isCelebrating === 'success' && <Confetti />}
             </Wrapper>
+         )}
+         {!isKioskMode && isEmpty(cartPayment) && (
+            <Wrapper>
+               <Result
+                  icon={ShowPaymentStatusInfo().icon}
+                  title={ShowPaymentStatusInfo().title}
+                  subTitle={ShowPaymentStatusInfo().subtitle}
+                  extra={ShowPaymentStatusInfo().extra}
+               />
+
+               {isCelebrating === 'success' && <Confetti />}
+            </Wrapper>
+         )} */}
+
+         {/* this payment option selection screen and back button, it will only show in kiosk app  */}
+         {isKioskMode && isEmpty(cartPayment) ? (
+            <>
+               <Wrapper>
+                  <div tw="flex flex-col">
+                     <h1 tw="font-extrabold color[rgba(0, 64, 106, 0.9)] text-4xl text-center margin[2rem 0]">
+                        Choose a payment method
+                     </h1>
+                     {PaymentOptions.map(option => {
+                        return (
+                           <>
+                              <PayButton
+                                 cartId={cartId}
+                                 className="hern-kiosk__kiosk-button hern-kiosk__cart-place-order-btn"
+                                 key={option.id}
+                                 selectedAvailablePaymentOptionId={option.id}
+                              >
+                                 {LABEL[option.label]}
+                              </PayButton>
+
+                              <p tw="last:(hidden) font-extrabold margin[2rem 0] color[rgba(0, 64, 106, 0.9)] text-2xl text-center">
+                                 OR
+                              </p>
+                           </>
+                        )
+                     })}
+                  </div>
+               </Wrapper>
+               <Button
+                  type="link"
+                  tw="fixed top-8 left-4"
+                  onClick={normalModalClose}
+               >
+                  <div tw="flex items-center">
+                     <ArrowLeftIconBG bgColor="#F7B502" arrowColor="#fff" />
+                     <span tw="ml-4 font-bold text-white text-2xl">Back</span>
+                  </div>
+               </Button>
+            </>
          ) : (
             <Wrapper>
-               <div tw="flex flex-col">
-                  <h1 tw="font-extrabold color[rgba(0, 64, 106, 0.9)] text-4xl text-center margin[2rem 0]">
-                     Choose a payment method
-                  </h1>
-                  {PaymentOptions.map(option => {
-                     return (
-                        <>
-                           <PayButton
-                              cartId={cartId}
-                              className="hern-kiosk__kiosk-button hern-kiosk__cart-place-order-btn"
-                              key={option.id}
-                              selectedAvailablePaymentOptionId={option.id}
-                           >
-                              {LABEL[option.label]}
-                           </PayButton>
+               <Result
+                  icon={ShowPaymentStatusInfo().icon}
+                  title={ShowPaymentStatusInfo().title}
+                  subTitle={ShowPaymentStatusInfo().subtitle}
+                  extra={ShowPaymentStatusInfo().extra}
+               />
 
-                           <p tw="last:(hidden) font-extrabold margin[2rem 0] color[rgba(0, 64, 106, 0.9)] text-2xl text-center">
-                              OR
-                           </p>
-                        </>
-                     )
-                  })}
-               </div>
+               {isCelebrating === 'success' && <Confetti />}
             </Wrapper>
          )}
-         {isEmpty(cartPayment) && (
-            <Button
-               type="link"
-               tw="fixed top-8 left-4"
-               onClick={normalModalClose}
-            >
-               <div tw="flex items-center">
-                  <ArrowLeftIconBG bgColor="#F7B502" arrowColor="#fff" />
-                  <span tw="ml-4 font-bold text-white text-2xl">Back</span>
-               </div>
-            </Button>
-         )}
+
+         {/* this is the bypass payment button to make the payment success or failed for testing purpose */}
          {isKioskMode &&
             isTestingByPass &&
-            cartPayment?.paymentStatus === 'SWIPE_OR_INSERT' && (
+            ['SUCCEEDED', 'FAILED', 'CANCELLED'].includes(
+               cartPayment?.paymentStatus
+            ) && (
                <div tw="flex items-center gap-2 justify-center">
                   <Button
                      type="primary"
@@ -337,23 +403,6 @@ const PaymentProcessingModal = ({
                   </Button>
                </div>
             )}
-
-         {/* {isKioskMode && !['SUCCEEDED'].includes(cartPayment?.paymentStatus) && (
-            <div tw="fixed bottom-48 width[780px] margin-left[-24px]">
-               <Button
-                  type="link"
-                  onClick={() =>
-                     cancelTerminalPayment({
-                        codPaymentOptionId,
-                        cartPayment,
-                     })
-                  }
-                  tw="w-full justify-center"
-               >
-                  Try Again
-               </Button>
-            </div>
-         )} */}
       </Modal>
    )
 }

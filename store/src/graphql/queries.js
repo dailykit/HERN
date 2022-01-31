@@ -268,6 +268,7 @@ export const RECIPE_DETAILS = gql`
          simpleRecipeYield {
             id
             yield
+            nutritionalInfo
             sachets: ingredientSachets {
                isVisible
                slipName
@@ -1626,6 +1627,7 @@ export const GET_CART = gql`
          locationId
          loyaltyPointsUsable
          customerKeycloakId
+         cartOwnerBilling
          billing: billingDetails
          subscriptionOccurenceId
          toUseAvailablePaymentOptionId
@@ -1679,11 +1681,11 @@ export const GET_CARTS = gql`
    }
 `
 export const BRAND_SETTINGS_BY_TYPE = gql`
-   query BRAND_SEO_SETTINGS($domain: String!, $type: String!) {
+  query BRAND_SEO_SETTINGS($domain: String!, $type: String!) {
       brands_brand_brandSetting(
          where: {
-            brand: {
-               _or: [{ domain: { _eq: $domain } }, { isDefault: { _eq: true } }]
+           brand: {
+               _or: [{ isDefault: { _eq: true } }, { domain: { _eq: $domain } }]
             }
             brandSetting: { type: { _eq: $type } }
          }
@@ -2073,7 +2075,8 @@ export const GET_PAYMENT_OPTIONS = gql`
    subscription cart($id: Int!) {
       cart(id: $id) {
          id
-         balanceToPay
+         cartOwnerBilling
+         isCartValid
          availablePaymentOptionToCart(
             where: { isActive: { _eq: true } }
             order_by: { position: desc_nulls_last }
@@ -2203,4 +2206,21 @@ export const GET_ORDER_DETAILS = gql`
          }
       }
    }
+`
+export const PRODUCT_SEO_SETTINGS_BY_ID = gql`
+query PRODUCT_SEO_SETTINGS($productId: Int!, $type: String!) {
+ products(where: {id: {_eq: $productId}}) {
+    description
+    name
+    assets
+  }
+  products_productPageSetting(where: {type: {_eq: $type}}) {
+    product_productPageSettings(where: {productId: {_eq: $productId}}) {
+      value
+      productId
+    }
+    identifier
+  }
+}
+
 `
