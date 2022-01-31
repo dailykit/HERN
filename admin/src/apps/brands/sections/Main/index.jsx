@@ -3,7 +3,7 @@ import { Text } from '@dailykit/ui'
 import { Switch, Route } from 'react-router-dom'
 
 // Views
-import { Home, Brands, Brand, Locations } from '../../views'
+import { Home, Brands, Brand, Locations, Location } from '../../views'
 import { Flex } from '../../../../shared/components'
 import { useAccess } from '../../../../shared/providers'
 export default function Main() {
@@ -40,6 +40,14 @@ export default function Main() {
                   message="You do not have sufficient permission to access brand details."
                >
                   <Brand />
+               </AccessCheck>
+            </Route>
+            <Route path="/brands/locations/:id" exact>
+               <AccessCheck
+                  title="location"
+                  message="You do not have sufficient permission to access location details."
+               >
+                  <Location />
                </AccessCheck>
             </Route>
          </Switch>
