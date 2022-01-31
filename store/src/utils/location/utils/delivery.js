@@ -1,5 +1,5 @@
 import { rrulestr } from 'rrule'
-import { isPointInPolygon } from 'geolib'
+import { isPointInPolygon, convertDistance } from 'geolib'
 import { isClient, get_env } from '../../index'
 import axios from 'axios'
 
@@ -192,14 +192,9 @@ const isStoreDeliveryAvailableByDistance = async (
             }
             const { data } = await axios.post(url, postLocationData)
             const drivableDistance = mileRanges[mileRange]
-            const distanceDetailsArray =
-               data.rows[0].elements[0].distance.text.split(' ') // [distance,unit]
-            const distanceFloat = parseFloat(distanceDetailsArray[0])
-            const distanceUnit = distanceDetailsArray[1]
-            const distanceMileFloat = convertDistanceIntoMiles(
-               distanceFloat,
-               distanceUnit
-            )
+            const distanceMeter = data.rows[0].elements[0].distance.value
+
+            const distanceMileFloat = convertDistance(distanceMeter, 'mi')
 
             drivableByGoogleDistance = distanceMileFloat
             let result =
@@ -281,18 +276,5 @@ const isStoreDeliveryAvailableByDistance = async (
       result: isStoreDeliveryAvailableByDistanceStatus,
       mileRangeInfo: null,
       drivableDistance: drivableByGoogleDistance,
-   }
-}
-
-const convertDistanceIntoMiles = (value, unit) => {
-   switch (unit) {
-      case 'ft':
-         return value * 0.000189394
-      case 'm':
-         return value * 0.000621371
-      case 'km':
-         return value * 0.621371
-      default:
-         return value
    }
 }
