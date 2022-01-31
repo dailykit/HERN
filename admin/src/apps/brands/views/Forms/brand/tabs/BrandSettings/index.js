@@ -90,11 +90,27 @@ export const BrandSettings = () => {
             </Flex>
 
             {/* (Navigation) types and identifiers */}
-            {types.length > 0 ? (
-               searchResult.length < 1 ? (
-                  types.map((type) => {
-                     return (<NavComponent key={type} heading={(type).charAt(0).toUpperCase() + (type).slice(1)}>
-                        {settings[type].map((item) => {
+            <div className="settings_wrapper">
+               {types.length > 0 ? (
+                  searchResult.length < 1 ? (
+                     types.map((type) => {
+                        return (<NavComponent key={type} heading={(type).charAt(0).toUpperCase() + (type).slice(1)}>
+                           {settings[type].map((item) => {
+                              return (
+                                 <>
+                                    <a href={`#${item?.brandSetting?.identifier}`}>
+                                       <Child key={item?.brandSetting?.id} onClick={() => setActive(item?.brandSetting?.identifier)}>
+                                          <div tabindex="1" className={(active == item?.brandSetting?.identifier || componentIsOnView.includes(item?.brandSetting?.identifier)) ? "active-link identifier_name" : "identifier_name"}>
+                                             {item?.brandSetting?.identifier || ''}
+                                          </div>
+                                       </Child>
+                                    </a>
+                                 </>)
+                           })}
+                        </NavComponent>)
+                     })) :
+                     <NavComponent heading={'Search Results'} setSearchResult={setSearchResult} searchResult={searchResult}>
+                        {searchResult.map((item) => {
                            return (
                               <>
                                  <a href={`#${item?.brandSetting?.identifier}`}>
@@ -106,29 +122,14 @@ export const BrandSettings = () => {
                                  </a>
                               </>)
                         })}
-                     </NavComponent>)
-                  })) :
-                  <NavComponent heading={'Search Results'} setSearchResult={setSearchResult} searchResult={searchResult}>
-                     {searchResult.map((item) => {
-                        return (
-                           <>
-                              <a href={`#${item?.brandSetting?.identifier}`}>
-                                 <Child key={item?.brandSetting?.id} onClick={() => setActive(item?.brandSetting?.identifier)}>
-                                    <div tabindex="1" className={(active == item?.brandSetting?.identifier || componentIsOnView.includes(item?.brandSetting?.identifier)) ? "active-link identifier_name" : "identifier_name"}>
-                                       {item?.brandSetting?.identifier || ''}
-                                    </div>
-                                 </Child>
-                              </a>
-                           </>)
-                     })}
-                  </NavComponent>) : (
-               <Filler
-                  message="No brandSettings"
-                  width="80%"
-                  height="80%"
-               />
-            )
-            }
+                     </NavComponent>) : (
+                  <Filler
+                     message="No brandSettings"
+                     width="80%"
+                     height="80%"
+                  />
+               )
+               }</div>
          </Styles.SettingsWrapper >
 
 

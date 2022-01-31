@@ -48,10 +48,25 @@ export const Styles = {
    `,
    SettingsWrapper: styled.div`
       width: 20%;
-      height: 100%;
-      overflow: scroll;
       padding: 16px;
       align-items: center;
+      .settings_wrapper{
+         overflow: scroll;
+    height: 100vh;
+    height: calc(100vh - 64px);
+    overflow-y: auto;
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    &::-webkit-scrollbar-track {
+      background: #f4f4f4;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #919699;
+      opacity: 0.5;
+      border-radius: 20px;
+    }
+      }
       ::-webkit-scrollbar {
          display: none;
       }
