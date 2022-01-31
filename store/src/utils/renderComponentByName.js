@@ -110,6 +110,9 @@ const PrivacyPolicy = dynamic(() =>
 const Subscriptions = dynamic(() =>
    import('../sections/subscriptions').then(promise => promise.Subscriptions)
 )
+const CartOrderDetails = dynamic(() =>
+   import('../sections/view-order').then(promise => promise.CartOrderDetails)
+)
 export const renderComponentByName = (fold, options) => {
    const getProps = component => {
       if (options) {
@@ -294,6 +297,12 @@ export const renderComponentByName = (fold, options) => {
          return <FeaturedCollection config={fold.config} />
       default:
          return null
+
+      /*ROUTE :
+      [brand]/view-order
+       */
+      case 'CartOrderDetails':
+         return <CartOrderDetails />
 
       /*
       Global
