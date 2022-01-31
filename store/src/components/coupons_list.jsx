@@ -173,6 +173,7 @@ const Coupons_List = ({
                                           border: `2px solid ${config?.kioskSettings?.theme?.secondaryColor?.value}`,
                                        }}
                                        onClick={() => handleApplyCoupon(coupon)}
+                                       disabled={isButtonDisabled(coupon)}
                                     >
                                        {t('Apply')}
                                     </button>
@@ -223,16 +224,15 @@ const Coupons_List = ({
                                     >
                                        <Button
                                           type="submit"
-                                          className={classNames(
-                                             'hern-upfront-coupons-list__coupon__apply-btn',
-                                             {
-                                                'hern-upfront-coupons-list__coupon__apply-btn':
-                                                   isButtonDisabled(coupon),
-                                             }
-                                          )}
+                                          className={
+                                             isButtonDisabled(coupon)
+                                                ? 'hern-upfront-coupons-list__coupon__apply-btn'
+                                                : 'hern-upfront-coupons-list__coupon__apply-btn hern-upfront-coupons-list__coupon__apply-disabled'
+                                          }
                                           onClick={() =>
                                              handleApplyCoupon(coupon)
                                           }
+                                          disabled={isButtonDisabled(coupon)}
                                        >
                                           {t('Apply')}
                                        </Button>
@@ -289,6 +289,7 @@ const Coupons_List = ({
                         }
                      )}
                      onClick={() => handleApplyCoupon(coupon)}
+                     disabled={isButtonDisabled(coupon)}
                   >
                      {t('Apply')}
                   </button>

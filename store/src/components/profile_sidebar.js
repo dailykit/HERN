@@ -98,12 +98,12 @@ export const ProfileSidebar = ({ toggle = true, logout }) => {
                   </Link>
                )
             })}
-            <button
+            {/* <button
                className="hern-profile-sidebar__logout-btn"
                onClick={logout}
             >
                Logout
-            </button>
+            </button> */}
          </ul>
       </aside>
    )

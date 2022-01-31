@@ -34,10 +34,10 @@ import SpecificPriceTunnel from './BulkActionTunnel/Tunnel/specificPriceTunnel'
 import { useWindowSize } from '../../../../hooks'
 
 const LiveMenu = () => {
-   const location = useLocation()
+   const brandDetail = useParams()
    const { width } = useWindowSize()
 
-   console.log('location:::', location)
+   console.log('brandDetail:::', brandDetail)
    return (
       <>
          <Flex>
@@ -45,10 +45,10 @@ const LiveMenu = () => {
                {width > 768 ? (
                   <Text as="h2">
                      We are changing product settings for{' '}
-                     {location.state[0].brandName} brand{' '}
+                     {brandDetail.brandName} brand{' '}
                   </Text>
                ) : (
-                  <Text as="h2">{location.state[0].brandName} Brand </Text>
+                  <Text as="h2">{brandDetail.brandName} Brand </Text>
                )}
             </StyledTitle>
             <Flex>
@@ -67,10 +67,10 @@ const LiveMenu = () => {
                   </HorizontalTabList>
                   <HorizontalTabPanels>
                      <HorizontalTabPanel>
-                        <LiveMenuProductTable location={location} />
+                        <LiveMenuProductTable brandDetail={brandDetail} />
                      </HorizontalTabPanel>
                      <HorizontalTabPanel>
-                        <LiveMenuProductOptionTable location={location} />
+                        <LiveMenuProductOptionTable brandDetail={brandDetail} />
                      </HorizontalTabPanel>
                   </HorizontalTabPanels>
                </HorizontalTabs>
@@ -79,7 +79,7 @@ const LiveMenu = () => {
       </>
    )
 }
-const LiveMenuProductTable = ({ location }) => {
+const LiveMenuProductTable = ({ brandDetail }) => {
    const [CollectionProducts, setCollectionProducts] = React.useState([])
    const tableRef = useRef()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
@@ -90,10 +90,10 @@ const LiveMenuProductTable = ({ location }) => {
    const { width } = useWindowSize()
    const { loading } = useSubscription(COLLECTION_PRODUCTS, {
       variables: {
-         brandId: location.state[0].brandId,
-         brandId1: location.state[0].brandId,
-         brand_locationId: location.state[0].brandLocationId
-            ? location.state[0].brandLocationId
+         brandId: brandDetail.brandId,
+         brandId1: brandDetail.brandId,
+         brand_locationId: brandDetail.brandLocationId
+            ? brandDetail.brandLocationId
             : null,
       },
       onSubscriptionData: data => {
@@ -113,9 +113,9 @@ const LiveMenuProductTable = ({ location }) => {
             return {
                id: product.id,
                name: product.name,
-               brandId: location.state[0].brandId,
-               brand_locationId: location.state[0].brandLocationId
-                  ? location.state[0].brandLocationId
+               brandId: brandDetail.brandId,
+               brand_locationId: brandDetail.brandLocationId
+                  ? brandDetail.brandLocationId
                   : null,
                category:
                   product?.collection_categories[0]?.collection_productCategory
@@ -140,7 +140,7 @@ const LiveMenuProductTable = ({ location }) => {
          setCollectionProducts(result)
       },
    })
-   // console.log('products', CollectionProducts)
+   console.log('products', CollectionProducts)
    const [resetProduct] = useMutation(RESET_BRAND_MANAGER, {
       onCompleted: () => {
          toast.success('Product has Reset!')
@@ -445,7 +445,7 @@ const LiveMenuProductTable = ({ location }) => {
       </>
    )
 }
-const LiveMenuProductOptionTable = ({ location }) => {
+const LiveMenuProductOptionTable = ({ brandDetail }) => {
    const [CollectionProducts, setCollectionProducts] = React.useState([])
    const tableRef = useRef()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
@@ -456,8 +456,8 @@ const LiveMenuProductOptionTable = ({ location }) => {
    const { width } = useWindowSize()
    const { loading } = useSubscription(COLLECTION_PRODUCT_OPTIONS, {
       variables: {
-         brandId: location.state[0].brandId,
-         brandId1: location.state[0].brandId,
+         brandId: brandDetail.brandId,
+         brandId1: brandDetail.brandId,
          brand_locationId: null,
       },
       onSubscriptionData: data => {
@@ -483,9 +483,9 @@ const LiveMenuProductOptionTable = ({ location }) => {
                return {
                   id: productOptions.id,
                   name: productOptions.product.name,
-                  brandId: location.state[0].brandId,
-                  brand_locationId: location.state[0].brandLocationId
-                     ? location.state[0].brandLocationId
+                  brandId: brandDetail.brandId,
+                  brand_locationId: brandDetail.brandLocationId
+                     ? brandDetail.brandLocationId
                      : null,
                   category:
                      productOptions?.product?.collection_categories[0]
