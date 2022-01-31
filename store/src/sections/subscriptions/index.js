@@ -8,7 +8,6 @@ import { formatDate, getRoute, isClient } from '../../utils'
 import { ORDER_HISTORY, ORDER } from '../../graphql'
 import { HelperBar, ProfileSidebar, ProductSkeleton } from '../../components'
 import OrderInfo from '../../sections/OrderInfo'
-import { route } from 'next/dist/next-server/server/router'
 import classNames from 'classnames'
 
 export const Subscriptions = () => {
@@ -181,7 +180,7 @@ const Details = () => {
          {order?.cart?.paymentStatus !== 'SUCCEEDED' && (
             <button
                className="hern-orders__order-details__payment__complete-payment"
-               onClick={() => route.push(`/checkout?id=${order?.cart?.id}`)}
+               onClick={() => router.push(`/checkout?id=${order?.cart?.id}`)}
             >
                Complete Payment
             </button>
