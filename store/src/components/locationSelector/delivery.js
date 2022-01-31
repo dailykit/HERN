@@ -76,12 +76,12 @@ export const Delivery = props => {
       if (address && brand.id) {
          async function fetchStores() {
             const brandClone = { ...brand }
-            const availableStore = await getStoresWithValidations(
-               brandClone,
+            const availableStore = await getStoresWithValidations({
+               brand: brandClone,
                fulfillmentType,
                address,
-               true
-            )
+               autoSelect: true,
+            })
             setStores(availableStore)
             setIsGetStoresLoading(false)
          }

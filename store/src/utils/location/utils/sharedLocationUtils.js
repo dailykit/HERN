@@ -41,13 +41,15 @@ const getSortedStoresByAerialDistance = async (brandLocations, address) => {
    return sortedBrandLocationsWithAerialDistance
 }
 
-export const getStoresWithValidations = async (
-   brand,
-   fulfillmentType, // ONDEMAND_DELVIERY PREORDER_DELVIERY etc.
-   address,
-   autoSelect = false,
-   includeInvalidStore = false
-) => {
+export const getStoresWithValidations = async props => {
+   const {
+      brand,
+      locationId = null,
+      fulfillmentType, // ONDEMAND_DELVIERY PREORDER_DELVIERY etc.
+      address,
+      autoSelect = false,
+      includeInvalidStore = false,
+   } = props
    // fulfillmentStatus {deliveryStatus, pickupStatus, dineinStatus}
    if (!isClient) {
       return []
@@ -60,6 +62,7 @@ export const getStoresWithValidations = async (
             brandId: {
                _eq: brand.id,
             },
+            ...(locationId || { locationId: { _eq: locationId } }),
          },
       }
    )
@@ -83,6 +86,7 @@ export const getStoresWithValidations = async (
                },
             ],
             brandId: { _eq: brand.id },
+            ...(locationId || { locationId: { _eq: locationId } }),
          },
       })
 
