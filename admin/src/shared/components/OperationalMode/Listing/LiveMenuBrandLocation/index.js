@@ -37,10 +37,10 @@ import {
 import { useWindowSize } from '../../../../hooks'
 
 const LiveMenuBrandLocation = () => {
-   const location = useLocation()
+   const brandDetail = useParams()
    const { width } = useWindowSize()
 
-   console.log('location:::', location)
+   console.log('brandDetail:::', brandDetail)
    return (
       <>
          <Flex>
@@ -48,10 +48,10 @@ const LiveMenuBrandLocation = () => {
                {width > 768 ? (
                   <Text as="h2">
                      We are changing product settings for{' '}
-                     {location.state[0].brandName} brand{' '}
+                     {brandDetail.brandName} brand{' '}
                   </Text>
                ) : (
-                  <Text as="h2">{location.state[0].brandName} Brand </Text>
+                  <Text as="h2">{brandDetail.brandName} Brand </Text>
                )}
             </StyledTitle>
             <Flex>
@@ -70,10 +70,10 @@ const LiveMenuBrandLocation = () => {
                   </HorizontalTabList>
                   <HorizontalTabPanels>
                      <HorizontalTabPanel>
-                        <LiveMenuProductTable location={location} />
+                        <LiveMenuProductTable brandDetail={brandDetail} />
                      </HorizontalTabPanel>
                      <HorizontalTabPanel>
-                        <LiveMenuProductOptionTable location={location} />
+                        <LiveMenuProductOptionTable brandDetail={brandDetail} />
                      </HorizontalTabPanel>
                   </HorizontalTabPanels>
                </HorizontalTabs>
@@ -82,7 +82,7 @@ const LiveMenuBrandLocation = () => {
       </>
    )
 }
-const LiveMenuProductTable = ({ location }) => {
+const LiveMenuProductTable = ({ brandDetail }) => {
    const [CollectionProducts, setCollectionProducts] = React.useState([])
    const tableRef = useRef()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
@@ -96,7 +96,7 @@ const LiveMenuProductTable = ({ location }) => {
       variables: {
          brandId: null,
          brandId1: null,
-         brand_locationId: location.state[0].brandLocationId,
+         brand_locationId: brandDetail.brandLocationId,
       },
       onSubscriptionData: data => {
          const result = data.subscriptionData.data.products.map(product => {
@@ -115,8 +115,8 @@ const LiveMenuProductTable = ({ location }) => {
             return {
                id: product.id,
                name: product.name,
-               brandId: location.state[0].brandId,
-               brand_locationId: location.state[0].brandLocationId,
+               brandId: brandDetail.brandId,
+               brand_locationId: brandDetail.brandLocationId,
 
                category:
                   product?.collection_categories[0]?.collection_productCategory
@@ -449,7 +449,7 @@ const LiveMenuProductTable = ({ location }) => {
       </>
    )
 }
-const LiveMenuProductOptionTable = ({ location }) => {
+const LiveMenuProductOptionTable = ({ brandDetail }) => {
    const [CollectionProducts, setCollectionProducts] = React.useState([])
    const tableRef = useRef()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
@@ -463,7 +463,7 @@ const LiveMenuProductOptionTable = ({ location }) => {
       variables: {
          brandId: null,
          brandId1: null,
-         brand_locationId: location.state[0].brandLocationId,
+         brand_locationId: brandDetail.brandLocationId,
       },
       onSubscriptionData: data => {
          const result = data.subscriptionData.data.productOptions.map(
@@ -488,8 +488,8 @@ const LiveMenuProductOptionTable = ({ location }) => {
                return {
                   id: productOptions.id,
                   name: productOptions.product.name,
-                  brandId: location.state[0].brandId,
-                  brand_locationId: location.state[0].brandLocationId,
+                  brandId: brandDetail.brandId,
+                  brand_locationId: brandDetail.brandLocationId,
                   category:
                      productOptions?.product?.collection_categories[0]
                         ?.collection_productCategory?.productCategoryName ||
