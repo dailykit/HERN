@@ -41,7 +41,8 @@ const validatorFunc = {
       return { isValid, errors }
    },
    email: value => {
-      var mailformat = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      var mailformat =
+         /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
       let isValid = true
       let errors = []
       if (!value.match(mailformat)) {
@@ -51,7 +52,8 @@ const validatorFunc = {
       return { isValid, errors }
    },
    phone: value => {
-      var phoneformat = /^(^\+{0,2}([\-\. ])?(\(?\d{0,3}\))?([\-\. ])?\(?\d{0,3}\)?([\-\. ])?\d{3}([\-\. ])?\d{4})$/
+      var phoneformat =
+         /^(^\+{0,2}([\-\. ])?(\(?\d{0,3}\))?([\-\. ])?\(?\d{0,3}\)?([\-\. ])?\d{3}([\-\. ])?\d{4})$/
       let isValid = true
       let errors = []
       if (!phoneformat.test(value.toString())) {
@@ -105,13 +107,21 @@ const validatorFunc = {
       return { isValid, errors }
    },
    url: value => {
-      var urlFormat = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/
+      var urlFormat =
+         /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/
       let isValid = true
       let errors = []
       if (!urlFormat.test(value)) {
          isValid = false
          errors = [...errors, ' Invalid Input!']
       }
+      return { isValid, errors }
+   },
+   address: value => {
+      const text = value.trim()
+      let isValid = true
+      let errors = []
+
       return { isValid, errors }
    },
 }

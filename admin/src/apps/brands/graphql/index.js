@@ -270,3 +270,42 @@ export const LOCATIONS = {
       }
    `,
 }
+export const BRAND_LOCATION = {
+   VIEW: gql`
+      subscription MySubscription($locationId: Int!) {
+         brands_brand_location(where: { locationId: { _eq: $locationId } }) {
+            brandId
+            doesDeliver
+            doesDeliverOutsideCity
+            doesDeliverOutsideState
+            doesDinein
+            doesPickup
+            isActive
+            locationId
+         }
+      }
+   `,
+   UPDATE_BRAND: gql`
+      mutation MyMutation($objects: [brands_brand_location_insert_input!]!) {
+         insert_brands_brand_location(
+            objects: $objects
+            on_conflict: { constraint: brand_location_locationId_brandId_key }
+         ) {
+            affected_rows
+         }
+      }
+   `,
+}
+export const BRAND_ID_LIST = gql`
+   subscription brandId {
+      brandsAggregate(
+         order_by: { id: asc }
+         where: { isArchived: { _eq: false } }
+      ) {
+         nodes {
+            title
+            id
+         }
+      }
+   }
+`
