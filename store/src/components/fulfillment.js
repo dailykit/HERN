@@ -817,7 +817,11 @@ const Delivery = props => {
                            onFulfillmentTimeClick(newTimeStamp)
                         }}
                      >
-                        {selectedSlot.slots.map((eachSlot, index, elements) => {
+                        {_.sortBy(selectedSlot.slots, [
+                           function (x) {
+                              return moment(x.time, 'HH:mm')
+                           },
+                        ]).map((eachSlot, index, elements) => {
                            const slot = {
                               from: eachSlot.time,
                               to: moment(eachSlot.time, 'HH:mm')
@@ -1276,7 +1280,11 @@ const Pickup = props => {
                            onFulfillmentTimeClick(newTimeStamp)
                         }}
                      >
-                        {selectedSlot.slots.map((eachSlot, index, elements) => {
+                        {_.sortBy(selectedSlot.slots, [
+                           function (x) {
+                              return moment(x.time, 'HH:mm')
+                           },
+                        ]).map((eachSlot, index, elements) => {
                            const slot = {
                               from: eachSlot.time,
                               to: moment(eachSlot.time, 'HH:mm')

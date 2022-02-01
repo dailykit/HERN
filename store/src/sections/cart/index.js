@@ -18,12 +18,10 @@ export const OnDemandCart = () => {
       React.useContext(CartContext)
    const { isAuthenticated, userType, isLoading } = useUser()
    const { onDemandMenu } = React.useContext(onDemandMenuContext)
-
    const { isMenuLoading } = onDemandMenu
 
-   if (isFinalCartLoading || isMenuLoading) {
+   if (isFinalCartLoading || isMenuLoading)
       return <Loader type="cart-loading" />
-   }
 
    if (
       storedCartId === null ||
