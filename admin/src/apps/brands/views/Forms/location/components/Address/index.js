@@ -5,19 +5,14 @@ import { toast } from 'react-toastify'
 import { logger } from '../../../../../../../shared/utils'
 import { LOCATIONS } from '../../../../../graphql'
 import validatorFunc from '../../../../validator'
-import {
-   StyledContainer,
-   styledContainer,
-   StyledGroup,
-   StyledInputText,
-} from './styled'
+import { StyledContainer, StyledGroup, StyledInputText } from './styled'
 
 export const Address = ({ state, locationId }) => {
-   // console.log('locationData', state.locationAddress.line1)
+   console.log('locationData', state)
 
    const [locationDetails, setLocationDetails] = React.useState({
       line1: {
-         value: '',
+         value: state.locationAddress?.line1 || '',
          meta: {
             isTouched: false,
             isValid: true,
@@ -25,7 +20,7 @@ export const Address = ({ state, locationId }) => {
          },
       },
       line2: {
-         value: '',
+         value: state.locationAddress?.line2 || '',
          meta: {
             isTouched: false,
             isValid: true,
@@ -33,7 +28,7 @@ export const Address = ({ state, locationId }) => {
          },
       },
       city: {
-         value: '',
+         value: state.city || '',
          meta: {
             isTouched: false,
             isValid: true,
@@ -41,7 +36,7 @@ export const Address = ({ state, locationId }) => {
          },
       },
       zipcode: {
-         value: '',
+         value: state.zipcode || '',
          meta: {
             isTouched: false,
             isValid: true,
@@ -49,7 +44,7 @@ export const Address = ({ state, locationId }) => {
          },
       },
       state: {
-         value: '',
+         value: state.state || '',
          meta: {
             isTouched: false,
             isValid: true,
@@ -57,7 +52,7 @@ export const Address = ({ state, locationId }) => {
          },
       },
       country: {
-         value: '',
+         value: state.country || '',
          meta: {
             isTouched: false,
             isValid: true,
@@ -89,7 +84,7 @@ export const Address = ({ state, locationId }) => {
    const onBlur = field => {
       switch (field) {
          case 'line1': {
-            const { isValid, errors } = validatorFunc.text(
+            const { isValid, errors } = validatorFunc.address(
                locationDetails[field].value
             )
             if (isValid) {
@@ -119,7 +114,7 @@ export const Address = ({ state, locationId }) => {
             return
          }
          case 'line2': {
-            const { isValid, errors } = validatorFunc.text(
+            const { isValid, errors } = validatorFunc.address(
                locationDetails[field].value
             )
             if (isValid) {
@@ -149,7 +144,7 @@ export const Address = ({ state, locationId }) => {
             return
          }
          case 'city': {
-            const { isValid, errors } = validatorFunc.text(
+            const { isValid, errors } = validatorFunc.address(
                locationDetails[field].value
             )
             if (isValid) {
@@ -176,7 +171,7 @@ export const Address = ({ state, locationId }) => {
             return
          }
          case 'zipcode': {
-            const { isValid, errors } = validatorFunc.text(
+            const { isValid, errors } = validatorFunc.address(
                locationDetails[field].value
             )
             if (isValid) {
@@ -203,7 +198,7 @@ export const Address = ({ state, locationId }) => {
             return
          }
          case 'state': {
-            const { isValid, errors } = validatorFunc.text(
+            const { isValid, errors } = validatorFunc.address(
                locationDetails[field].value
             )
             if (isValid) {
@@ -230,7 +225,7 @@ export const Address = ({ state, locationId }) => {
             return
          }
          case 'country': {
-            const { isValid, errors } = validatorFunc.text(
+            const { isValid, errors } = validatorFunc.address(
                locationDetails[field].value
             )
             if (isValid) {

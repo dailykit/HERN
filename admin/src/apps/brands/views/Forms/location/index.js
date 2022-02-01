@@ -12,7 +12,7 @@ import {
 import React from 'react'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { Tooltip } from '../../../../../shared/components'
+import { InlineLoader, Tooltip } from '../../../../../shared/components'
 import { logger } from '../../../../../shared/utils'
 import { LOCATIONS } from '../../../graphql'
 import validator from '../../validator'
@@ -22,7 +22,7 @@ import { ResponsiveFlex, StyledFlex } from './styled'
 export const Location = () => {
    const { id } = useParams()
    const [state, setState] = React.useState({})
-
+   const [isLoading, setIsLoading] = React.useState(true)
    const [locationDetails, setLocationDetails] = React.useState({
       label: {
          value: '',
@@ -52,6 +52,7 @@ export const Location = () => {
             },
             isActive: locationData.isActive,
          })
+         setIsLoading(false)
       },
    })
 
@@ -110,6 +111,7 @@ export const Location = () => {
          },
       })
    }
+   if (isLoading) return <InlineLoader />
    return (
       <>
          <ResponsiveFlex
