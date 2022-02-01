@@ -29,7 +29,7 @@ const initiatePayment = async arg => {
       }
       const PAYTM_MERCHANT_ID = await get_env('PAYTM_MERCHANT_ID')
       const PAYTM_API_URL = await get_env('PAYTM_API_URL')
-      const orderId = arg.id.toString()
+      const orderId = `ORD-${cartId}-${cartPaymentId}`
       const { cart = {} } = await client.request(CART, {
          id: cartId
       })
