@@ -30,27 +30,29 @@ const PaymentProcessingModal = ({
    const [isCelebrating, setIsCelebrating] = useState(false)
    const { width, height } = useWindowSize()
 
-   const closeModalHandler = () => {
+   const closeModalHandler = async () => {
       setIsCelebrating(false)
-      closeModal()
-      resetPaymentProviderStates()
+      await closeModal()
+      // await resetPaymentProviderStates()
    }
 
-   const stopCelebration = () => {
+   const stopCelebration = async () => {
       setIsCelebrating(false)
       if (isKioskMode) {
          // initializePrinting()
-         closeModalHandler()
+         await closeModalHandler()
       } else {
          if (router.pathname !== `/account/orders`) {
-            closeModalHandler()
+            await closeModalHandler()
             router.push(`/account/orders`)
          }
       }
    }
    const startCelebration = () => {
       setIsCelebrating(true)
-      setTimeout(stopCelebration, 5000)
+      setTimeout(async () => {
+         await stopCelebration()
+      }, 5000)
    }
 
    const ShowPaymentStatusInfo = () => {
