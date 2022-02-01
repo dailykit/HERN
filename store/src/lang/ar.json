@@ -41,7 +41,7 @@
    "Total Price": "المجموع",
    "Item": "الأصناف",
    "Items": "الأصناف",
-   "CANCEL": "CANCEL",
-   "CONTINUE": "CONTINUE",
-   "Current changes will lose do you wish to continue?": "Current changes will lose do you wish to continue?"
+   "CANCEL": "إلغاء",
+   "CONTINUE": "إستمرار",
+   "Current changes will lose do you wish to continue?": "سوف يتم إلغاء التعديلات الحالية , هل ترغب في الإستمرار ؟"
 }
