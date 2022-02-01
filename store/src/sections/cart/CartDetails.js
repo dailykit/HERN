@@ -30,7 +30,7 @@ export const CartDetails = () => {
    } = React.useContext(CartContext)
    const { onDemandMenu } = React.useContext(onDemandMenuContext)
    const { brand, isConfigLoading, locationId, settings } = useConfig()
-   const { isAuthenticated } = useUser()
+   const { user, isAuthenticated } = useUser()
    //context data
    const { cart } = cartState
    const { isMenuLoading } = onDemandMenu
@@ -265,11 +265,13 @@ export const CartDetails = () => {
          <div className="hern-ondemand-cart__left-card">
             <Coupon upFrontLayout={true} cart={cart} />
          </div>
-         {isAuthenticated && isLoyaltyPointsAvailable && (
-            <div className="hern-ondemand-cart__left-card">
-               <LoyaltyPoints cart={cart} version={2} />
-            </div>
-         )}
+         {isAuthenticated &&
+            isLoyaltyPointsAvailable &&
+            user.loyaltyPoint?.points > 0 && (
+               <div className="hern-ondemand-cart__left-card">
+                  <LoyaltyPoints cart={cartState.cart} version={2} />
+               </div>
+            )}
          <Divider />
 
          <CartBillingDetails billing={cart.billing} />
