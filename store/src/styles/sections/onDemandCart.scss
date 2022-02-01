@@ -123,14 +123,12 @@
 }
 
 .hern-cart-products-product-list {
+   margin-bottom: 1em;
    > div {
       border: 1px solid rgba(64, 64, 64, 0.25);
       border-radius: 4px;
       margin-bottom: 16px;
    }
-   overflow: auto;
-   height: 40vh;
-   margin-bottom: 1em;
    .hern-cart-container {
       box-shadow: none;
    }
