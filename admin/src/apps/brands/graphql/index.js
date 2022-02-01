@@ -270,3 +270,19 @@ export const LOCATIONS = {
       }
    `,
 }
+export const BRAND_LOCATION = {
+   VIEW: gql`
+      subscription MySubscription($locationId: Int!) {
+         brands_brand_location(where: { locationId: { _eq: $locationId } }) {
+            brandId
+            doesDeliver
+            doesDeliverOutsideCity
+            doesDeliverOutsideState
+            doesDinein
+            doesPickup
+            isActive
+            locationId
+         }
+      }
+   `,
+}

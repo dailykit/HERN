@@ -16,7 +16,7 @@ import { Tooltip } from '../../../../../shared/components'
 import { logger } from '../../../../../shared/utils'
 import { LOCATIONS } from '../../../graphql'
 import validator from '../../validator'
-import { Address, Assets } from './components'
+import { Address, Assets, LinkedBrands } from './components'
 import { ResponsiveFlex, StyledFlex } from './styled'
 
 export const Location = () => {
@@ -185,6 +185,9 @@ export const Location = () => {
                         <Spacer xAxis size="16px" />
                         <Assets state={state} locationId={id} />
                      </StyledFlex>
+                  </HorizontalTabPanel>
+                  <HorizontalTabPanel>
+                     <LinkedBrands state={state} locationId={id} />
                   </HorizontalTabPanel>
                </HorizontalTabPanels>
             </HorizontalTabs>
