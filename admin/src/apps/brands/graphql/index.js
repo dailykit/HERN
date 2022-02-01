@@ -285,4 +285,27 @@ export const BRAND_LOCATION = {
          }
       }
    `,
+   UPDATE_BRAND: gql`
+      mutation MyMutation($objects: [brands_brand_location_insert_input!]!) {
+         insert_brands_brand_location(
+            objects: $objects
+            on_conflict: { constraint: brand_location_locationId_brandId_key }
+         ) {
+            affected_rows
+         }
+      }
+   `,
 }
+export const BRAND_ID_LIST = gql`
+   subscription brandId {
+      brandsAggregate(
+         order_by: { id: asc }
+         where: { isArchived: { _eq: false } }
+      ) {
+         nodes {
+            title
+            id
+         }
+      }
+   }
+`
