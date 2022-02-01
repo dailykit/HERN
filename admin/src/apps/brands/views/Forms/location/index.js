@@ -182,6 +182,8 @@ export const Location = () => {
                         justifyContent="space-between"
                      >
                         <Address state={state} locationId={id} />
+                        <Spacer xAxis size="16px" />
+                        <Assets state={state} locationId={id} />
                      </StyledFlex>
                   </HorizontalTabPanel>
                </HorizontalTabPanels>
