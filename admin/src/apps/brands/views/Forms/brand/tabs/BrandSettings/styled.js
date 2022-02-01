@@ -41,7 +41,7 @@ export const Styles = {
    Wrapper: styled.div`
       display: flex;
       background: #f9f9f9;
-      height: 480px;
+      height: 69vh;
       .ant-input-group-wrapper {
          margin: 1rem 0 -1rem 0 !important;
       }
@@ -52,9 +52,8 @@ export const Styles = {
       align-items: center;
       .settings_wrapper{
          overflow: scroll;
-    height: 100vh;
-    height: calc(100vh - 64px);
-    overflow-y: auto;
+    height: 50vh;
+    overflow-x:hidden;
     &::-webkit-scrollbar {
       width: 6px;
     }
@@ -78,10 +77,9 @@ export const Styles = {
       background: #fff;
       border-radius: 4px;
       width: 55%;
-      height: 100%;
       margin: 16px 8px;
       padding: 16px 20px;
-      height: calc(100% - 16px);
+      height: 67vh;
       overflow-y: auto;
       ::-webkit-scrollbar {
          width: 6px;

@@ -230,23 +230,19 @@ export const BrandSettings = () => {
 
          {/* linked component */}
          <Styles.LinkWrapper>
-            <Card
-               title={<Text as="h3">Link JS and CSS file</Text>}
-               style={{ width: '100%' }}
-            >
-               <LinkFiles
-                  title="Linked CSS files"
-                  fileType="css"
-                  entityId={params?.id}
-                  scope="brand"
-               />
-               <LinkFiles
-                  title="Linked JS files"
-                  fileType="js"
-                  entityId={params?.id}
-                  scope="brand"
-               />
-            </Card>
+            <LinkFiles
+               title="Linked CSS files"
+               fileType="css"
+               entityId={params?.id}
+               scope="brand"
+            />
+            <LinkFiles
+               title="Linked JS files"
+               fileType="js"
+               entityId={params?.id}
+               scope="brand"
+            />
+
          </Styles.LinkWrapper>
       </Styles.Wrapper>
    )
