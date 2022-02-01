@@ -1,5 +1,14 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Flex, Form } from '@dailykit/ui'
+import {
+   Flex,
+   Form,
+   HorizontalTab,
+   HorizontalTabList,
+   HorizontalTabPanel,
+   HorizontalTabPanels,
+   HorizontalTabs,
+   Spacer,
+} from '@dailykit/ui'
 import React from 'react'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -7,10 +16,13 @@ import { Tooltip } from '../../../../../shared/components'
 import { logger } from '../../../../../shared/utils'
 import { LOCATIONS } from '../../../graphql'
 import validator from '../../validator'
-import { ResponsiveFlex } from './styled'
+import { Address, Assets } from './components'
+import { ResponsiveFlex, StyledFlex } from './styled'
 
 export const Location = () => {
    const { id } = useParams()
+   const [state, setState] = React.useState({})
+
    const [locationDetails, setLocationDetails] = React.useState({
       label: {
          value: '',
@@ -31,6 +43,7 @@ export const Location = () => {
       onSubscriptionData: data => {
          //  console.log(data.subscriptionData.data.brands_location[0])
          const locationData = data.subscriptionData.data.brands_location[0]
+         setState(locationData)
          setLocationDetails({
             ...locationDetails,
             label: {
@@ -41,7 +54,6 @@ export const Location = () => {
          })
       },
    })
-   console.log(locationDetails)
 
    //mutation
    const [updateLocation] = useMutation(LOCATIONS.UPDATE, {
@@ -155,6 +167,26 @@ export const Location = () => {
                </Form.Toggle>
             </Flex>
          </ResponsiveFlex>
+         <Flex as="main" padding="8px 20px" minHeight="calc(100vh - 130px)">
+            <HorizontalTabs>
+               <HorizontalTabList>
+                  <HorizontalTab>Basic Information</HorizontalTab>
+                  <HorizontalTab>Links</HorizontalTab>
+               </HorizontalTabList>
+               <HorizontalTabPanels>
+                  <HorizontalTabPanel>
+                     <StyledFlex
+                        as="section"
+                        container
+                        alignItems="start"
+                        justifyContent="space-between"
+                     >
+                        <Address state={state} locationId={id} />
+                     </StyledFlex>
+                  </HorizontalTabPanel>
+               </HorizontalTabPanels>
+            </HorizontalTabs>
+         </Flex>
       </>
    )
 }
