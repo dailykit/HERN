@@ -720,9 +720,15 @@ export const Header = ({ settings, navigationMenus }) => {
                         <>
                            {isClient && width > 767 ? (
                               <span className="hern-header__avatar">
-                                 <Link href={getRoute('/account/profile/')}>
+                                 <button
+                                    onClick={() =>
+                                       router.push(
+                                          getRoute('/account/profile/')
+                                       )
+                                    }
+                                 >
                                     <UserIcon size="20" />
-                                 </Link>
+                                 </button>
                               </span>
                            ) : (
                               <span
@@ -764,7 +770,7 @@ export const Header = ({ settings, navigationMenus }) => {
                         {isMobileNavVisible ? (
                            <CrossIcon stroke="#111" size={24} />
                         ) : (
-                           <MenuIcon />
+                           <MenuIcon color="#111" />
                         )}
                      </button>
                   </section>
