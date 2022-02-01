@@ -31,7 +31,6 @@ import Template from './Template'
 import SystemModule from './SystemModule'
 import ConfigTemplateUI from '../../../../../../shared/components/ConfigTemplateUI'
 import LinkFiles from './components/LinkFiles'
-import { Card } from 'antd'
 
 const ContentSelection = () => {
    const { initiatePriority } = useDnd()
@@ -256,8 +255,9 @@ const ContentSelection = () => {
                            <IconButton
                               type="ghost"
                               onClick={() => openConfig(file)}
+
                            >
-                              <EditIcon color="#555b6e" size="20" />
+                              <EditIcon color={linkedModuleId == file.id ? "#367bf5" : "#555b6e"} size="20" />
                            </IconButton>
                         )}
 
@@ -292,42 +292,37 @@ const ContentSelection = () => {
                      setLinkedModuleId={setLinkedModuleId}
                   />
                   <Styles.LinkWrapper>
-                     <Card
-                        title={<Text as="h3">Linked CSS and JS file </Text>}
-                        style={{ width: '100%' }}
-                     >
-                        <LinkFiles
-                           title="Linked CSS file with this Module"
-                           fileType="css"
-                           entityId={linkedModuleId}
-                           scope="page-module"
-                        />
-                        <LinkFiles
-                           title="Linked JS file with this Module"
-                           fileType="js"
-                           entityId={linkedModuleId}
-                           scope="page-module"
-                        /></Card>
+                     <LinkFiles
+                        title="Linked CSS file"
+                        fileType="css"
+                        entityId={linkedModuleId}
+                        scope="page-module"
+                     />
+                     <LinkFiles
+                        title="Linked JS file"
+                        fileType="js"
+                        entityId={linkedModuleId}
+                        scope="page-module"
+                     />
+
                   </Styles.LinkWrapper>
                </>
             ) : (
                <Styles.LinkWrapper>
-                  <Card
-                     title={<Text as="h3">Linked CSS and JS file   </Text>}
-                     style={{ width: '100%' }}
-                  >
-                     <LinkFiles
-                        title="Linked CSS file with this Page"
-                        fileType="css"
-                        entityId={pageId}
-                        scope="page"
-                     />
-                     <LinkFiles
-                        title="Linked JS file with this Page"
-                        fileType="js"
-                        entityId={pageId}
-                        scope="page"
-                     /></Card>
+
+                  <LinkFiles
+                     title="Linked CSS file"
+                     fileType="css"
+                     entityId={pageId}
+                     scope="page"
+                  />
+                  <LinkFiles
+                     title="Linked JS file"
+                     fileType="js"
+                     entityId={pageId}
+                     scope="page"
+                  />
+
                </Styles.LinkWrapper>
             )}
          </Styles.ConfigWrapper>
