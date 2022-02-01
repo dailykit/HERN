@@ -1,4 +1,8 @@
 import React from 'react'
+import { isEmpty } from 'lodash'
+import classNames from 'classnames'
+import Link from 'next/link'
+
 import { CartDetails } from './CartDetails'
 import {
    Fulfillment,
@@ -8,10 +12,9 @@ import {
    WalletAmount,
 } from '../../components'
 import { CartContext, onDemandMenuContext, useUser } from '../../context'
-import { EmptyCart, PaymentIcon } from '../../assets/icons'
-import Link from 'next/link'
+import { CloseIcon, EmptyCart, PaymentIcon } from '../../assets/icons'
 import { UserInfo, UserType } from '../../components'
-import { isEmpty } from 'lodash'
+import { isClient } from '../../utils'
 
 export const OnDemandCart = () => {
    const { cartState, combinedCartItems, isFinalCartLoading, storedCartId } =
@@ -63,24 +66,58 @@ export const OnDemandCart = () => {
                <div className="hern-ondemand-cart__left-card">
                   <Fulfillment cart={cartState.cart} />
                </div>
-               <div className="hern-ondemand-cart__left-card">
-                  {/* TODO:Should be fixed */}
-                  {isAuthenticated && (
-                     <div className="hern-ondemand-cart__left-card">
-                        <WalletAmount cart={cartState.cart} version={2} />
-                     </div>
-                  )}
-                  <div tw="p-4">
-                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <PaymentIcon />
-                        <span className="hern-user-info__heading">Payment</span>
-                     </div>
-                     <PaymentOptionsRenderer cartId={cartState?.cart?.id} />
-                  </div>
-               </div>
+               <PaymentSection />
             </div>
             <div className="hern-on-demand-cart-section__right">
                <CartDetails />
+            </div>
+         </div>
+      </div>
+   )
+}
+const PaymentSection = () => {
+   const { isAuthenticated } = useUser()
+   const { cartState } = React.useContext(CartContext)
+   const [open, setOpen] = React.useState(false)
+
+   React.useEffect(() => {
+      if (open && isClient) {
+         document.body.style.overflowY = 'hidden'
+      } else {
+         document.body.style.overflowY = 'auto'
+      }
+   }, [open])
+
+   return (
+      <div
+         className={classNames(
+            'hern-ondemand-cart__left-card',
+            'hern-ondemand-cart__payment-section',
+            { 'hern-ondemand-cart__payment-section--toggle': open }
+         )}
+      >
+         <button onClick={() => setOpen(true)}>Make Payment</button>
+         <div>
+            <div className="hern-ondemand-cart__payment-section__header">
+               <div>
+                  <PaymentIcon />
+                  <span className="hern-user-info__heading">Payment</span>
+               </div>
+               <button onClick={() => setOpen(false)}>
+                  <CloseIcon stroke="rgba(64, 64, 64, 0.6)" />
+               </button>
+            </div>
+            <div className="hern-on-demand-cart__payment-section__content">
+               {/* TODO:Should be fixed */}
+               {isAuthenticated && (
+                  <div className="hern-ondemand-cart__left-card">
+                     <WalletAmount cart={cartState.cart} version={2} />
+                  </div>
+               )}
+               <PaymentOptionsRenderer
+                  cartId={cartState?.cart?.id}
+                  setPaymentTunnelOpen={setOpen}
+               />
             </div>
          </div>
       </div>

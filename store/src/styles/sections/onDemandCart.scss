@@ -364,11 +364,9 @@
       padding: 16px;
       > .hern-on-demand-cart-section__left {
          width: 100%;
-         order: 2;
       }
       > .hern-on-demand-cart-section__right {
          width: 100%;
-         order: 1;
          padding-bottom: 32px;
       }
    }
@@ -429,6 +427,80 @@
             background-color: #fff;
             padding: 16px;
          }
+      }
+   }
+}
+.hern-ondemand-cart__payment-section {
+   height: auto;
+   padding: 16px;
+   > button {
+      display: none;
+   }
+   @media only screen and (max-width: 767px) {
+      padding: 0;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin-bottom: 0;
+      z-index: 999;
+      height: 75px;
+      > button {
+         display: block;
+         border: none;
+         outline: none;
+         width: 100%;
+         height: 75px;
+         background-color: var(--hern-accent);
+         font-weight: 600;
+         font-size: 28px;
+         line-height: 22px;
+         text-align: center;
+         color: #ffffff;
+      }
+   }
+}
+.hern-ondemand-cart__payment-section--toggle {
+   @media only screen and (max-width: 767px) {
+      height: 100vh;
+      z-index: 99999;
+      background-color: rgba(32, 32, 32, 0.4);
+      > div {
+         position: absolute;
+         bottom: 0;
+         padding: 0 16px 16px 16px;
+         background-color: #fff;
+         width: 100%;
+         border-radius: 8px 8px 0 0;
+      }
+      .hern-on-demand-cart__payment-section__content {
+         height: calc(80vh - 80px);
+         overflow-y: auto;
+      }
+      > button {
+         display: none;
+      }
+   }
+}
+.hern-ondemand-cart__payment-section__header {
+   > div {
+      display: flex;
+      align-items: center;
+   }
+   > button {
+      display: none;
+   }
+   @media only screen and (max-width: 767px) {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 16px 16px 0px;
+      border-bottom: 1px solid #f4f4f4;
+      > button {
+         display: block;
+         border: none;
+         outline: none;
+         background: transparent;
       }
    }
 }
