@@ -40,5 +40,8 @@
    "You have to choose this category": "يجب أن تختار هذه القائمة",
    "Total Price": "المجموع",
    "Item": "الأصناف",
-   "Items": "الأصناف"
+   "Items": "الأصناف",
+   "CANCEL": "CANCEL",
+   "CONTINUE": "CONTINUE",
+   "Current changes will lose do you wish to continue?": "Current changes will lose do you wish to continue?"
 }
