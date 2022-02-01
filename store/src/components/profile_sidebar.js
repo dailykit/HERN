@@ -1,10 +1,13 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { useQuery } from '@apollo/react-hooks'
+import classNames from 'classnames'
+
 import { useConfig } from '../lib'
 import { getRoute } from '../utils'
-import classNames from 'classnames'
 import { ProfileSidebarIcon } from '../assets/icons'
+import { SUPPORTED_PAYMENT_OPTIONS } from '../graphql'
 
 export const ProfileSidebar = ({ toggle = true, logout }) => {
    const { configOf, settings } = useConfig()
@@ -19,9 +22,15 @@ export const ProfileSidebar = ({ toggle = true, logout }) => {
       )?.value?.['Loyalty Points']?.IsLoyaltyPointsAvailable?.value ?? true
 
    const loyaltyPointsSettings = configOf('Loyalty Points', 'rewards')
-
    const walletSettings = configOf('Wallet', 'rewards')
    const referralsAllowed = configOf('Referral', 'rewards')?.isAvailable
+   const { loading, error, data } = useQuery(SUPPORTED_PAYMENT_OPTIONS)
+   console.log(
+      'Data',
+      loading,
+      error,
+      data?.brands_supportedPaymentCompany.some(pm => pm.label === 'stripe')
+   )
 
    const sidebarLinks = [
       {
@@ -72,6 +81,10 @@ export const ProfileSidebar = ({ toggle = true, logout }) => {
    const conditionalRoutes = {
       '/account/subscriptions/': isSubscriptionStore,
       '/account/loyalty-points/': isLoyaltyPointsAvailable,
+      '/account/cards/':
+         !error &&
+         !loading &&
+         data?.brands_supportedPaymentCompany.some(pm => pm.label === 'cod'),
    }
    const excludedRoutes = Object.keys(conditionalRoutes).filter(
       route => conditionalRoutes[route] === false
@@ -98,12 +111,6 @@ export const ProfileSidebar = ({ toggle = true, logout }) => {
                   </Link>
                )
             })}
-            {/* <button
-               className="hern-profile-sidebar__logout-btn"
-               onClick={logout}
-            >
-               Logout
-            </button> */}
          </ul>
       </aside>
    )
