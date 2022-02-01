@@ -631,24 +631,28 @@ export const generateDeliverySlots = recurrences => {
                      let slotStart
                      let slotEnd =
                         toTimeStamp.getHours() + ':' + toTimeStamp.getMinutes()
-                     if (
-                        now.getTime() + leadMiliSecs >
-                        fromTimeStamp.getTime()
-                     ) {
-                        // new start time = lead time + now
-                        const newStartTimeStamp = new Date(
-                           now.getTime() + leadMiliSecs
-                        )
-                        slotStart =
-                           newStartTimeStamp.getHours() +
-                           ':' +
-                           newStartTimeStamp.getMinutes()
-                     } else {
-                        slotStart =
-                           fromTimeStamp.getHours() +
-                           ':' +
-                           fromTimeStamp.getMinutes()
-                     }
+                     slotStart =
+                        fromTimeStamp.getHours() +
+                        ':' +
+                        fromTimeStamp.getMinutes()
+                     // if (
+                     //    now.getTime() + leadMiliSecs >
+                     //    fromTimeStamp.getTime()
+                     // ) {
+                     //    // new start time = lead time + now
+                     //    const newStartTimeStamp = new Date(
+                     //       now.getTime() + leadMiliSecs
+                     //    )
+                     //    slotStart =
+                     //       newStartTimeStamp.getHours() +
+                     //       ':' +
+                     //       newStartTimeStamp.getMinutes()
+                     // } else {
+                     //    slotStart =
+                     //       fromTimeStamp.getHours() +
+                     //       ':' +
+                     //       fromTimeStamp.getMinutes()
+                     // }
                      // check if date already in slots
                      const dateWithoutTime = date.toDateString()
                      const index = data.findIndex(
