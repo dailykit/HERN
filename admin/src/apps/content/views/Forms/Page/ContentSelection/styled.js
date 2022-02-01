@@ -83,6 +83,16 @@ export const Styles = {
          background: #919699;
       }
    `,
+   LinkWrapper: styled.div`
+      height: 100%;
+      overflow: scroll;
+      padding: 16px;
+      text-align: center;
+      align-items: center;
+      ::-webkit-scrollbar {
+         display: none;
+      }
+   `
 }
 export const StyledOptions = styled(ListOptions)`
    display: grid;

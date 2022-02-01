@@ -142,7 +142,7 @@ const LinkFiles = ({ title, fileType, entityId, scope }) => {
 
    return (
       <Wrapper>
-         <div style={{ padding: '16px', borderBottom: '1px solid #E5E5E5' }}>
+         <div style={{ padding: '16px 10px', borderBottom: '1px solid #E5E5E5' }}>
             <Flex container alignItems="center" justifyContent="space-between">
                <Text as="text2" className="title">{title}</Text>
                <IconButton
