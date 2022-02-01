@@ -2,7 +2,12 @@ import React, { useState, useEffect } from 'react'
 import GoogleMapReact from 'google-map-react'
 import { LocationMarker, CloseIcon } from '../assets/icons'
 import { CSSTransition } from 'react-transition-group'
-import { get_env, getStoresWithValidations, isClient } from '../utils'
+import {
+   get_env,
+   getStoresWithValidations,
+   isClient,
+   LocationSelectorWrapper,
+} from '../utils'
 import { Form, Button } from '.'
 import { useConfig } from '../lib'
 import { useUser, useCart } from '../context'
@@ -19,6 +24,7 @@ const RefineLocation = props => {
       onRefineLocationComplete,
       showRefineLocation,
       setShowRefineLocation,
+      showRightButton = false,
    } = props
    const { orderTabs, dispatch, brand } = useConfig()
    const { user } = useUser()
@@ -38,6 +44,8 @@ const RefineLocation = props => {
    })
    const [selectedStore, setSelectedStore] = useState(null)
    const [isGetStoresLoading, setIsGetStoresLoading] = useState(true)
+   const [showLocationSelectorPopup, setShowLocationSelectorPopup] =
+      useState(false)
    console.log('this is address', address)
 
    const [createAddress] = useMutation(MUTATIONS.CUSTOMER.ADDRESS.CREATE, {
@@ -139,7 +147,7 @@ const RefineLocation = props => {
          'userLocation',
          JSON.stringify({ ...address, ...additionalAddressInfo })
       )
-      onRefineLocationComplete()
+      onRefineLocationComplete && onRefineLocationComplete()
       setShowRefineLocation(false)
    }
 
@@ -230,10 +238,21 @@ const RefineLocation = props => {
       onRefineLocationCloseIconClick && onRefineLocationCloseIconClick()
       setShowRefineLocation(false)
    }
+
+   const onChangeClick = () => {
+      setShowLocationSelectorPopup(true)
+   }
    return (
       <div className="hern-refine-location">
          <div className="hern-refine-location_content">
-            <RefineLocationHeader onRefineCloseClick={onRefineCloseClick} />
+            <LocationSelectorWrapper
+               showLocationSelectorPopup={showLocationSelectorPopup}
+               setShowLocationSelectionPopup={setShowLocationSelectorPopup}
+            />
+            <RefineLocationHeader
+               onRefineCloseClick={onRefineCloseClick}
+               onChangeClick={onChangeClick}
+            />
             <div>
                <div
                   style={{
@@ -286,7 +305,7 @@ const UserLocationMarker = () => {
    )
 }
 
-const RefineLocationHeader = ({ onRefineCloseClick }) => {
+const RefineLocationHeader = ({ onRefineCloseClick, onChangeClick }) => {
    return (
       <div className="hern-store-location-selector-header">
          <div className="hern-store-location-selector-header-left">
@@ -297,6 +316,14 @@ const RefineLocationHeader = ({ onRefineCloseClick }) => {
                onClick={onRefineCloseClick}
             />
             <span>Refine Your Location</span>
+         </div>
+         <div className="hern-store-location-selector-header-right">
+            <span
+               onClick={onChangeClick}
+               className="hern-refine-location__change-btn"
+            >
+               Change
+            </span>
          </div>
       </div>
    )
