@@ -132,6 +132,8 @@ export const ColorPicker = ({
    onConfigChange,
    editMode,
 }) => {
+   const [color, setColor] = React.useState(fieldDetail?.value || "#000");
+
    return (
       <Flex
          container
@@ -148,8 +150,8 @@ export const ColorPicker = ({
          <div style={{ display: 'flex', alignItems: 'center' }}>
             {editMode ? (
                <>
-                  <ColorLabel backgroundColor="#fff" title={fieldDetail?.value || 'none'}>
-                     {fieldDetail?.value || 'none'}
+                  <ColorLabel backgroundColor="#fff" title={color}>
+                     {color}
                   </ColorLabel>
                   {/* <input
                   type="color"
@@ -159,15 +161,15 @@ export const ColorPicker = ({
                   onChange={onConfigChange}
                   style={{ cursor: 'pointer' }}
                /> */}
-                  <CustomColorPicker path={path} color={fieldDetail?.value || "#000"} onChange={onConfigChange} />;
+                  <CustomColorPicker path={path} color={color} onChange={setColor} onConfigChange={e => onConfigChange(e, color)} />;
                </>
             ) : (
                <>
                   <ColorLabel
                      backgroundColor='rgb(244 244 244)'
-                     title={fieldDetail?.value || 'none'}
+                     title={color}
                   >
-                     {fieldDetail?.value || 'none'}
+                     {color}
                   </ColorLabel>
                   {/* <input
                   type="color"
@@ -178,7 +180,7 @@ export const ColorPicker = ({
                   onChange={onConfigChange}
                   disabled
                /> */}
-                  <CustomColorPicker path={path} color={fieldDetail?.value || "#000"} onChange={onConfigChange} />;
+                  <CustomColorPicker path={path} color={color} onChange={setColor} onConfigChange={e => onConfigChange(e, color)} />;
                </>
             )}
          </div>
