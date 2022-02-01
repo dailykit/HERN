@@ -87,7 +87,6 @@ export const Styles = {
       height: 100%;
       overflow: scroll;
       padding: 16px;
-      text-align: center;
       align-items: center;
       ::-webkit-scrollbar {
          display: none;
