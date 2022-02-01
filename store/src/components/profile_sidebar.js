@@ -84,7 +84,7 @@ export const ProfileSidebar = ({ toggle = true, logout }) => {
       '/account/cards/':
          !error &&
          !loading &&
-         data?.brands_supportedPaymentCompany.some(pm => pm.label === 'cod'),
+         data?.brands_supportedPaymentCompany.some(pm => pm.label === 'stripe'),
    }
    const excludedRoutes = Object.keys(conditionalRoutes).filter(
       route => conditionalRoutes[route] === false
