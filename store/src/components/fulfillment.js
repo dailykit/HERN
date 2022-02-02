@@ -11,6 +11,7 @@ import { useQuery } from '@apollo/react-hooks'
 import { Loader, Button } from '.'
 import { Delivery, Pickup } from './fulfillmentSection'
 import { RefineLocationPopup } from './refineLocation'
+import { LocationSelectorWrapper } from '../utils'
 
 export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
    const { orderTabs, selectedOrderTab, configOf } = useConfig()
@@ -33,6 +34,8 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
    )
    const [fulfillment, setFulfillment] = useState(selectedFulfillment) // DELIVERY, PICKUP or DINEIN
    const [showRefineLocation, setShowRefineLocation] = useState(false)
+   const [showLocationSelectorPopup, setShowLocationSelectionPopup] =
+      React.useState(false)
 
    // useEffect(() => {
    //    const localUserLocation = JSON.parse(localStorage.getItem('userLocation'))
@@ -79,8 +82,23 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
       return options
    }, [orderTabFulfillmentType])
 
+   const fulfillmentLabel = React.useMemo(() => {
+      switch (fulfillment) {
+         case 'DELIVERY':
+            return 'Delivery At'
+         case 'PICKUP':
+            return 'Pickup From'
+         case 'DINEIN':
+            return 'DineIn At'
+      }
+   }, [fulfillment])
+
    return (
       <div className="hern-cart__fulfillment-card">
+         <LocationSelectorWrapper
+            showLocationSelectorPopup={showLocationSelectorPopup}
+            setShowLocationSelectionPopup={setShowLocationSelectionPopup}
+         />
          <div style={{ position: 'relative' }}>
             <div className="hern-cart__fulfillment-heading">
                <DineinTable style={{}} />
@@ -123,7 +141,7 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
                   />
                </>
             )}
-            {fulfillmentRadioOptions.length > 1 && (
+            {/* {fulfillmentRadioOptions.length > 1 && (
                <Space size={'large'} style={{ margin: '10px 0' }}>
                   <Radio.Group
                      options={fulfillmentRadioOptions}
@@ -133,7 +151,20 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
                      value={fulfillment}
                   />
                </Space>
-            )}
+            )} */}
+            <div className="hern-fulfillment-section__fulfillment-label-section">
+               <span className="hern-fulfillment-section__fulfillment-label">
+                  {fulfillmentLabel}
+               </span>
+               <Button
+                  variant={'outline'}
+                  onClick={() => {
+                     setShowLocationSelectionPopup(true)
+                  }}
+               >
+                  Change
+               </Button>
+            </div>
             {fulfillment === 'DELIVERY' && (
                <Row className="hern-address__location-input-field">
                   <ConsumerAddress

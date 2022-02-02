@@ -162,6 +162,7 @@ export const Delivery = props => {
          type: 'SET_LAST_LOCATION_ID',
          payload: null,
       })
+      setShowSlots(false)
       // setIsEdit(false)
    }
 
