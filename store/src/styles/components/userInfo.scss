@@ -3,28 +3,38 @@
 }
 .hern-user-info__name-field {
    display: flex;
+   padding: 0 32px;
+}
+.hern-user-info__header {
+   display: flex;
+   align-items: center;
+   border-bottom: 1px solid #f3f3f3;
+   padding-bottom: 16px;
+   margin-bottom: 8px;
 }
 .hern-user-info__heading {
    font-weight: 600;
-   font-size: 20px;
-   line-height: 22px;
-   color: rgba(64, 64, 64, 0.8);
+   font-size: 16px;
+   line-height: 16px;
+   color: rgba(64, 64, 64, 0.6);
    margin: 0 10px;
 }
 .hern-user-info__input-field {
    height: 40px;
-   background: #f4f4f4;
-   border-radius: 8px;
+   // background: #f4f4f4;
+   // border-radius: 8px;
    padding: 0 10px;
    outline: none;
+   border-bottom: 1.5px solid rgba(64, 64, 64, 0.25);
    &:focus {
-      outline: 1px solid #367bf5;
+      border-bottom: 1.5px solid var(--hern-accent);
    }
 }
 .hern-user-info__fieldset {
    display: flex;
    flex-direction: column;
    margin: 4px 0;
+   width: 100%;
 }
 .hern-user-info__fieldset-first-name {
    margin-right: 1.5em;
@@ -35,12 +45,13 @@
 .hern-user-info__phone__input {
    input {
       height: 40px;
-      background: #f4f4f4;
-      border-radius: 8px;
+      // background: #f4f4f4;
+      // border-radius: 8px;
       padding: 0 10px;
       outline: none;
+      border-bottom: 1.5px solid rgba(64, 64, 64, 0.25);
       &:focus {
-         outline: 1px solid #367bf5;
+         border-bottom: 1.5px solid var(--hern-accent);
       }
    }
 }
@@ -53,6 +64,7 @@
 }
 .hern-user-info__fieldset-phone-number {
    width: 50%;
+   padding: 0 32px;
 }
 .hern-user-info__save-button {
    margin-right: 5px;
@@ -89,4 +101,9 @@
 .hern-user-info__footer-text {
    margin-left: 2px;
    margin-top: 1px;
+}
+.hern-user-info__label {
+   font-size: 12px;
+   line-height: 12px;
+   color: rgba(64, 64, 64, 0.6);
 }

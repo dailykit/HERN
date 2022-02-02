@@ -61,18 +61,9 @@ export const UserInfo = props => {
    }
    const UserInfoHeader = () => {
       return (
-         <div
-            style={{
-               display: 'flex',
-               alignItems: 'center',
-               marginBottom: '10px',
-               justifyContent: 'space-between',
-            }}
-         >
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-               <UserIcon />
-               <span className="hern-user-info__heading">User Details</span>
-            </div>
+         <div className="hern-user-info__header">
+            <UserIcon size={16} />
+            <h2 className="hern-user-info__heading">User Details </h2>
          </div>
       )
    }
