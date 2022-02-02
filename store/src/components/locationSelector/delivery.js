@@ -8,7 +8,7 @@ import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
 import LocationSelectorConfig from '../locatoinSeletorConfig.json'
 import { StoreList } from '../locationSelector/storeList'
 import { GPSIcon, NotFound } from '../../assets/icons'
-import { Loader } from '..'
+import { Loader, UserAddressList } from '..'
 import { AddressInfo } from './addressInfo'
 
 // delivery section
@@ -189,6 +189,11 @@ export const Delivery = props => {
       }
    }, [userCoordinate])
 
+   useEffect(() => {
+      if (address == null) {
+         setStores(null)
+      }
+   }, [address])
    const [loaded, error] = useScript(
       isClient
          ? `https://maps.googleapis.com/maps/api/js?key=${get_env(
@@ -256,7 +261,10 @@ export const Delivery = props => {
          centered: true,
       })
    }
-   console.log('availableStores', stores)
+
+   const onAddressSelect = addressFromUserAddressList => {
+      setAddress(addressFromUserAddressList)
+   }
    if (!orderTabFulfillmentType) {
       return <Loader inline />
    }
@@ -392,6 +400,9 @@ export const Delivery = props => {
                showRefineLocation={showRefineLocation}
                setAddress={setAddress}
             />
+         )}
+         {(stores == null || stores?.length == 0) && (
+            <UserAddressList onAddressSelect={onAddressSelect} />
          )}
       </div>
    )
