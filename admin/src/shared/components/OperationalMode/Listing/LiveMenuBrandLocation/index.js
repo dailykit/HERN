@@ -35,6 +35,7 @@ import {
    BrandLocationManagerProductOption,
 } from './BulkActionTunnel'
 import { useWindowSize } from '../../../../hooks'
+import { InlineLoader } from '../../..'
 
 const LiveMenuBrandLocation = () => {
    const brandDetail = useParams()
@@ -91,8 +92,9 @@ const LiveMenuProductTable = ({ brandDetail }) => {
    const [popupTunnels, openPopupTunnel, closePopupTunnel] = useTunnel(1)
    const [selectedRowData, setSelectedRowData] = React.useState(null)
    const { width } = useWindowSize()
+   const [isLoading, setIsLoading] = React.useState(true)
 
-   const { loading } = useSubscription(COLLECTION_PRODUCTS, {
+   const { loading, error } = useSubscription(COLLECTION_PRODUCTS, {
       variables: {
          brandId: null,
          brandId1: null,
@@ -139,9 +141,12 @@ const LiveMenuProductTable = ({ brandDetail }) => {
             }
          })
          setCollectionProducts(result)
+         setIsLoading(false)
       },
    })
    // console.log('products', CollectionProducts)
+
+   //mutations
    const [resetProduct] = useMutation(RESET_BRAND_MANAGER, {
       onCompleted: () => {
          toast.success('Product has Reset!')
@@ -151,6 +156,15 @@ const LiveMenuProductTable = ({ brandDetail }) => {
          logger(error)
       },
    })
+   const [updateBrandProduct] = useMutation(PRODUCT_PRICE_BRAND_LOCATION, {
+      onCompleted: () => toast.success('Successfully updated!'),
+      onError: error => {
+         toast.error('Failed to update, please try again!')
+         logger(error)
+      },
+   })
+
+   //handler
    const resetHandler = product => {
       if (
          window.confirm(
@@ -169,18 +183,11 @@ const LiveMenuProductTable = ({ brandDetail }) => {
          })
       }
    }
+
    const groupByOptions = [
       { id: 1, title: 'Published', payload: 'isPublished' },
       { id: 2, title: 'Available', payload: 'isAvailable' },
    ]
-
-   const [updateBrandProduct] = useMutation(PRODUCT_PRICE_BRAND_LOCATION, {
-      onCompleted: () => toast.success('Successfully updated!'),
-      onError: error => {
-         toast.error('Failed to update, please try again!')
-         logger(error)
-      },
-   })
 
    const columns = [
       {
@@ -402,6 +409,8 @@ const LiveMenuProductTable = ({ brandDetail }) => {
       tableRef.current.table.deselectRow(id)
    }
    // console.log('table ref', tableRef)
+
+   if (isLoading) return <InlineLoader />
    return (
       <>
          <ActionBar
@@ -458,8 +467,10 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
    const [popupTunnels, openPopupTunnel, closePopupTunnel] = useTunnel(1)
    const [selectedRowData, setSelectedRowData] = React.useState(null)
    const { width } = useWindowSize()
+   const [isLoading, setIsLoading] = useState(true)
 
-   const { loading } = useSubscription(COLLECTION_PRODUCT_OPTIONS, {
+   //subscription
+   const { loading, error } = useSubscription(COLLECTION_PRODUCT_OPTIONS, {
       variables: {
          brandId: null,
          brandId1: null,
@@ -517,9 +528,12 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
             }
          )
          setCollectionProducts(result)
+         setIsLoading(false)
       },
    })
    // console.log('products', CollectionProducts)
+
+   //mutation
    const [resetProduct] = useMutation(RESET_BRAND_MANAGER, {
       onCompleted: () => {
          toast.success('Product has Reset!')
@@ -529,6 +543,15 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
          logger(error)
       },
    })
+   const [updateBrandProduct] = useMutation(PRODUCT_PRICE_BRAND_LOCATION, {
+      onCompleted: () => toast.success('Successfully updated!'),
+      onError: error => {
+         toast.error('Failed to update, please try again!')
+         logger(error)
+      },
+   })
+
+   //handler
    const resetHandler = product => {
       if (
          window.confirm(
@@ -551,14 +574,6 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
       { id: 1, title: 'Published', payload: 'isPublished' },
       { id: 2, title: 'Available', payload: 'isAvailable' },
    ]
-
-   const [updateBrandProduct] = useMutation(PRODUCT_PRICE_BRAND_LOCATION, {
-      onCompleted: () => toast.success('Successfully updated!'),
-      onError: error => {
-         toast.error('Failed to update, please try again!')
-         logger(error)
-      },
-   })
 
    const columns = [
       {
@@ -787,6 +802,8 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
       tableRef.current.table.deselectRow(id)
    }
    // console.log('table ref', tableRef)
+
+   if (isLoading) return <InlineLoader />
    return (
       <>
          <ActionBar

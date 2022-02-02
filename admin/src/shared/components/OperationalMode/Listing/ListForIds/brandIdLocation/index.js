@@ -15,13 +15,12 @@ import {
    useSingleList,
    useTunnel,
 } from '@dailykit/ui'
-import { Banner } from '../../../..'
+import { Banner, InlineLoader } from '../../../..'
 import { TunnelContainer } from '../../../../../../apps/inventory/components'
 import BrandLocationTunnel from './brandLocationTunnel'
 
 const BrandLocationManagerList = ({ closeTunnel }) => {
    const [brandId, setBrandId] = React.useState([])
-   const [list, current, selectOption] = useSingleList(brandId)
    const [search, setSearch] = React.useState('')
    const [
       brandLocationTunnels,
@@ -29,11 +28,16 @@ const BrandLocationManagerList = ({ closeTunnel }) => {
       closeBrandLocationTunnel,
    ] = useTunnel(1)
    const [selectedBrand, setSelectedBrand] = React.useState({})
-   const { loadingBrand } = useSubscription(BRAND_ID, {
+
+   //subscription
+   const { loading: loadingBrand, error } = useSubscription(BRAND_ID, {
       onSubscriptionData: data => {
          setBrandId(data.subscriptionData.data.brandsAggregate.nodes)
       },
    })
+
+   const [list, current, selectOption] = useSingleList(brandId)
+   //handler
    const onClickFunction = option => {
       setSelectedBrand({
          brandId: option.id,
@@ -48,38 +52,42 @@ const BrandLocationManagerList = ({ closeTunnel }) => {
             close={() => closeTunnel(1)}
             nextAction="Done"
          />
-         <TunnelContainer>
-            <Banner id="operation-mode-brand-manager-tunnel-list-top" />
-            {list.length ? (
-               <List>
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder="type what you’re looking for..."
-                  />
-                  <ListHeader type="SSL1" label="Brand" />
-                  <ListOptions>
-                     {list
-                        .filter(option =>
-                           option.title.toLowerCase().includes(search)
-                        )
-                        .map(option => (
-                           <ListItem
-                              type="SSL1"
-                              key={option.id}
-                              title={option.title}
-                              isActive={option.id === current.id}
-                              onClick={() => onClickFunction(option)}
-                           />
-                        ))}
-                  </ListOptions>
-               </List>
-            ) : (
-               <Filler message="Sorry!, No Brand is available" />
-            )}
-            <Banner id="operation-mode-brand-manager-tunnel-list-bottom" />
-         </TunnelContainer>
+         {loadingBrand ? (
+            <InlineLoader />
+         ) : (
+            <TunnelContainer>
+               <Banner id="operation-mode-brand-manager-tunnel-list-top" />
+               {list.length ? (
+                  <List>
+                     <ListSearch
+                        onChange={value => setSearch(value)}
+                        placeholder="type what you’re looking for..."
+                     />
+                     <ListHeader type="SSL1" label="Brand" />
+                     <ListOptions>
+                        {list
+                           .filter(option =>
+                              option.title.toLowerCase().includes(search)
+                           )
+                           .map(option => (
+                              <ListItem
+                                 type="SSL1"
+                                 key={option.id}
+                                 title={option.title}
+                                 isActive={option.id === current.id}
+                                 onClick={() => onClickFunction(option)}
+                              />
+                           ))}
+                     </ListOptions>
+                  </List>
+               ) : (
+                  <Filler message="Sorry!, No Brand is available" />
+               )}
+               <Banner id="operation-mode-brand-manager-tunnel-list-bottom" />
+            </TunnelContainer>
+         )}
          <Tunnels tunnels={brandLocationTunnels}>
-            <Tunnel popup={true} layer={4} size="md">
+            <Tunnel popup={true} layer={1} size="md">
                <BrandLocationTunnel
                   closeTunnel={closeBrandLocationTunnel}
                   selectedBrand={selectedBrand}
