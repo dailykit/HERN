@@ -9,10 +9,10 @@ import { CouponsList } from './coupons_list'
 import { Loader } from './loader'
 import { Tunnel } from './tunnel'
 import { useQueryParamState } from '../utils'
-import { CouponIcon } from '../assets/icons'
+import { CouponIcon, ChevronIcon, CouponTicketIcon } from '../assets/icons'
 import { Button } from '.'
 
-const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
+const Coupon_ = ({ cart, config, upFrontLayout = false, tunnel = false }) => {
    // use this component for kiosk as well
    const [orderInterfaceType] = useQueryParamState('oiType', 'Website')
    const { state = {} } =
@@ -329,13 +329,33 @@ const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
       </div>
    )
 }
-export const Coupon = props => (
-   <>
+export const Coupon = props => {
+   const { tunnel = true } = props
+   const [isCouponTunnelOpen, setIsCouponTunnelOpen] = React.useState(false)
+   if (tunnel) {
+      return (
+         <>
+            <CouponTunnlelTrigger
+               setIsCouponTunnelOpen={setIsCouponTunnelOpen}
+            />
+            <Tunnel.Right
+               title="Coupon"
+               visible={isCouponTunnelOpen}
+               onClose={() => setIsCouponTunnelOpen(false)}
+            >
+               <MenuProvider>
+                  <Coupon_ {...props} />
+               </MenuProvider>
+            </Tunnel.Right>
+         </>
+      )
+   }
+   return (
       <MenuProvider>
          <Coupon_ {...props} />
       </MenuProvider>
-   </>
-)
+   )
+}
 export const CouponHeader = () => {
    return (
       <div
@@ -352,6 +372,28 @@ export const CouponHeader = () => {
          >
             Apply Coupons
          </label>
+      </div>
+   )
+}
+const CouponTunnlelTrigger = ({ setIsCouponTunnelOpen }) => {
+   return (
+      <div className="hern-upfront-coupon-header__tunnel">
+         <div>
+            <span>
+               <CouponTicketIcon />
+            </span>
+            <div>
+               <h4>Apply Coupon</h4>
+               <button onClick={() => setIsCouponTunnelOpen(true)}>
+                  <span>View All Offers</span>
+                  <ChevronIcon />
+               </button>
+            </div>
+         </div>
+         <button onClick={() => setIsCouponTunnelOpen(true)}>
+            <span>Apply</span>
+            <ChevronIcon />
+         </button>
       </div>
    )
 }
