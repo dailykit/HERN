@@ -32,7 +32,7 @@ import { Products } from './sections'
 import { formatDate } from '../../utils'
 import { findAndSelectSachet } from './methods'
 import { ResponsiveFlex, Styles } from './styled'
-import { QUERIES, MUTATIONS } from '../../graphql'
+import { QUERIES, MUTATIONS, CREATE_PRINT_JOB } from '../../graphql'
 import { useConfig, useOrder } from '../../context'
 import { EditIcon, PrintIcon, UserIcon } from '../../assets/icons'
 import { useAccess, useAuth, useTabs } from '../../../../shared/providers'
@@ -73,6 +73,15 @@ const Order = () => {
       onError: error => {
          logger(error)
          toast.error('Failed to update the order')
+      },
+   })
+   const [createPrintJob] = useMutation(CREATE_PRINT_JOB, {
+      onCompleted: () => {
+         toast.success('Receipt printed successfully!')
+      },
+      onError: error => {
+         logger(error)
+         toast.error('Failed to print the receipt')
       },
    })
 
@@ -248,6 +257,24 @@ const Order = () => {
          '_blank'
       )
    }, [order])
+   const rawPrint = React.useCallback(() => {
+      const template = encodeURIComponent(
+         JSON.stringify({ name: 'bill1', type: 'bill', format: 'raw' })
+      )
+      const data = encodeURIComponent(JSON.stringify({ id: order?.id }))
+      const url = `${get_env(
+         'REACT_APP_TEMPLATE_URL'
+      )}?template=${template}&data=${data}`
+      createPrintJob({
+         variables: {
+            contentType: 'raw_uri',
+            printerId: config.kot?.default_kot_printer?.value?.printNodeId,
+            source: 'Dailykit',
+            title: 'Print Raw Receipt',
+            url,
+         },
+      })
+   }, [order, config.kot?.default_kot_printer?.value?.printNodeId])
 
    const printKOT = async () => {
       try {
@@ -418,9 +445,23 @@ const Order = () => {
                )}
                <Spacer size="16px" xAxis />
                {!isThirdParty && (
-                  <IconButton size="sm" type="outline" onClick={print}>
-                     <PrintIcon size={16} />
-                  </IconButton>
+                  <>
+                     <IconButton size="sm" type="outline" onClick={print}>
+                        <PrintIcon size={16} />
+                     </IconButton>
+                     <Spacer size="16px" xAxis />
+                     <TextButton
+                        size="sm"
+                        type="outline"
+                        fallBackMessage="PrinterId is not present!"
+                        hasAccess={Boolean(
+                           config.kot?.default_kot_printer?.value?.printNodeId
+                        )}
+                        onClick={rawPrint}
+                     >
+                        Print Receipt
+                     </TextButton>
+                  </>
                )}
                <Spacer size="16px" xAxis />
                {!isThirdParty && !isPickup(order?.fulfillmentType) && (
