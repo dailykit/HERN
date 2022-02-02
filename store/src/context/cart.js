@@ -161,7 +161,7 @@ export const CartProvider = ({ children }) => {
    const [updateCart] = useMutation(MUTATIONS.CART.UPDATE, {
       onCompleted: data => {
          if (!(oiType === 'Kiosk Ordering')) {
-            localStorage.removeItem('cart-id')
+            // localStorage.removeItem('cart-id')
          }
          addToast('Update Successfully!', {
             appearance: 'success',
@@ -374,6 +374,7 @@ export const CartProvider = ({ children }) => {
                      },
                   })
                }
+               localStorage.removeItem('cart-id')
                setStoredCartId(subscriptionData.data.carts[0].id)
                setIsFinalCartLoading(false)
             } else {
