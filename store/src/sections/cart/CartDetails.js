@@ -262,18 +262,13 @@ export const CartDetails = () => {
                )
             })}
          </div>
-         <div className="hern-ondemand-cart__left-card">
-            <Coupon upFrontLayout={true} cart={cart} />
-         </div>
+         <Coupon upFrontLayout={true} cart={cart} />
          {isAuthenticated &&
             isLoyaltyPointsAvailable &&
             user.loyaltyPoint?.points > 0 && (
-               <div className="hern-ondemand-cart__left-card">
-                  <LoyaltyPoints cart={cartState.cart} version={2} />
-               </div>
+               <LoyaltyPoints cart={cartState.cart} version={2} />
             )}
          <Divider />
-
          <CartBillingDetails billing={cart.billing} />
       </section>
    )
