@@ -72,7 +72,7 @@ const LinkedBrandsTunnel = ({ close, locationId }) => {
                title: inFlight ? 'Adding...' : 'Add',
             }}
          />
-         <List>
+         <List style={{ padding: '0 1rem' }}>
             <ListSearch
                onChange={value => setSearch(value)}
                placeholder="type what you’re looking for..."
