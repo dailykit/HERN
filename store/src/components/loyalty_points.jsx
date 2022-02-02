@@ -3,11 +3,52 @@ import React from 'react'
 import { useUser } from '../context'
 import { MUTATIONS } from '../graphql'
 import { useConfig } from '../lib'
-import { Info, LoyaltyPointsIcon } from '../assets/icons'
+import { Info, LoyaltyPointsIcon, ChevronIcon } from '../assets/icons'
 import classNames from 'classnames'
-import { Button, LoginWarningWithText } from '.'
+import { Button, LoginWarningWithText, Tunnel } from '.'
 
-export const LoyaltyPoints = ({ cart, version = 1 }) => {
+export const LoyaltyPoints = props => {
+   const { tunnel = true } = props
+   const [isLoyaltyPointsTunnelOpen, setIsLoyaltyPointsTunnelOpen] =
+      React.useState(false)
+   if (tunnel) {
+      return (
+         <>
+            <LoyaltyPointsTunnlelTrigger
+               setIsLoyaltyPointsTunnelOpen={setIsLoyaltyPointsTunnelOpen}
+            />
+            <Tunnel.Right
+               title="Loyalty Points"
+               visible={isLoyaltyPointsTunnelOpen}
+               onClose={() => setIsLoyaltyPointsTunnelOpen(false)}
+            >
+               <LoyaltyPointsContent {...props} />
+            </Tunnel.Right>
+         </>
+      )
+   }
+   return <LoyaltyPointsContent {...props} />
+}
+const LoyaltyPointsTunnlelTrigger = ({ setIsLoyaltyPointsTunnelOpen }) => {
+   return (
+      <div className="hern-loyalty-points-header__tunnel">
+         <div>
+            <span>
+               <LoyaltyPointsIcon color="#fff" size={36} opacity={1} />
+            </span>
+            <div>
+               <h4>Loyalty Points</h4>
+            </div>
+         </div>
+         <button onClick={() => setIsLoyaltyPointsTunnelOpen(true)}>
+            <span>Use Points</span>
+            <ChevronIcon />
+         </button>
+      </div>
+   )
+}
+
+const LoyaltyPointsContent = ({ cart, version = 1 }) => {
    const { user } = useUser()
    const { configOf } = useConfig()
    const { label = 'Loyalty Points', description = null } = configOf(
