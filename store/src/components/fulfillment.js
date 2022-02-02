@@ -88,7 +88,7 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
                   How would you like to your order?
                </span>
             </div>
-            {isEdit && (
+            {false && (
                <>
                   <Button
                      onClick={() => {
@@ -142,8 +142,8 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
                </Row>
             )}
          </div>
-         {fulfillment === 'DELIVERY' && <Delivery setIsEdit={setIsEdit} />}
-         {fulfillment === 'PICKUP' && <Pickup setIsEdit={setIsEdit} />}
+         {fulfillment === 'DELIVERY' && <Delivery />}
+         {fulfillment === 'PICKUP' && <Pickup />}
          <RefineLocationPopup
             showRefineLocation={showRefineLocation}
             setShowRefineLocation={setShowRefineLocation}
@@ -213,8 +213,8 @@ export const Fulfillment = ({ cart, editable = true }) => {
          }
          const aerialDistance = getDistance(
             {
-               latitude: cart.address.lat,
-               longitude: cart.address.lng,
+               latitude: cart.address.lat || cart.address.latitude,
+               longitude: cart.address.lng || cart.address.longitude,
             },
             brandCoordinate,
             0.1
@@ -249,8 +249,8 @@ export const Fulfillment = ({ cart, editable = true }) => {
          const { line1, line2 } = locationAddress
          const aerialDistance = getDistance(
             {
-               latitude: cart.address.lat,
-               longitude: cart.address.lng,
+               latitude: cart.address.lat || cart.address.latitude,
+               longitude: cart.address.lng || cart.address.longitude,
             },
             {
                latitude: lat,

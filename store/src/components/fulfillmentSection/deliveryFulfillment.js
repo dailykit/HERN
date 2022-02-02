@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Radio, Space } from 'antd'
 import { useConfig } from '../../lib'
-import { OrderTime } from '../../assets/icons'
+import { EditIcon, OrderTime } from '../../assets/icons'
 import moment from 'moment'
 import {
    generateTimeStamp,
@@ -11,10 +11,21 @@ import {
 } from '../../utils'
 import { CartContext } from '../../context'
 import { Loader } from '../'
+import { TimeSlots } from './components/timeSlots'
+import { Button } from '../button'
 
 export const Delivery = props => {
    const { setIsEdit } = props
-   const { brand, locationId, orderTabs } = useConfig()
+   const {
+      brand,
+      locationId,
+      orderTabs,
+      lastStoreLocationId,
+      dispatch,
+      configOf,
+   } = useConfig()
+   const theme = configOf('theme-color', 'Visual')
+
    const { methods, cartState } = React.useContext(CartContext)
    // map orderTabs to get order fulfillment type label
    const orderTabFulfillmentType = React.useMemo(
@@ -29,8 +40,12 @@ export const Delivery = props => {
       if (cartState.cart?.address) {
          return {
             ...cartState.cart?.address,
-            latitude: cartState.cart?.address?.lat,
-            longitude: cartState.cart?.address?.lng,
+            latitude:
+               cartState.cart?.address?.lat ||
+               cartState.cart?.address?.latitude,
+            longitude:
+               cartState.cart?.address?.lng ||
+               cartState.cart?.address?.longitude,
          }
       } else {
          return JSON.parse(localStorage.getItem('userLocation'))
@@ -47,6 +62,8 @@ export const Delivery = props => {
    const [fulfillmentType, setFulfillmentType] = useState(null)
    const [isGetStoresLoading, setIsGetStoresLoading] = useState(true)
    const [stores, setStores] = useState(null)
+   const [isLoading, setIsLoading] = React.useState(true)
+   const [showSlots, setShowSlots] = React.useState(false)
 
    const deliveryRadioOptions = React.useMemo(() => {
       let options = []
@@ -140,7 +157,12 @@ export const Delivery = props => {
             },
          },
       })
-      setIsEdit(false)
+      localStorage.removeItem('lastStoreLocationId')
+      dispatch({
+         type: 'SET_LAST_LOCATION_ID',
+         payload: null,
+      })
+      // setIsEdit(false)
    }
 
    const onNowClick = () => {
@@ -169,7 +191,7 @@ export const Delivery = props => {
             },
          },
       })
-      setIsEdit(false)
+      // setIsEdit(false)
    }
 
    // for ondemand delivery
@@ -180,13 +202,89 @@ export const Delivery = props => {
          })
       }
    }, [stores])
-   console.log(
-      'selectedSlot',
-      selectedSlot,
-      selectedSlot?.slots?.sort(
-         (t1, t2) => moment(t1.time, 'HH:mm') > moment(t2.time, 'HH:mm')
+
+   const title = React.useMemo(() => {
+      switch (cartState.cart?.fulfillmentInfo?.type) {
+         case 'ONDEMAND_DELIVERY':
+            return 'Delivery'
+         case 'PREORDER_DELIVERY':
+            return 'Schedule Delivery'
+         case 'PREORDER_PICKUP':
+            return 'Schedule Pickup'
+         case 'ONDEMAND_PICKUP':
+            return 'Pickup'
+      }
+   }, [cartState.cart])
+
+   React.useEffect(() => {
+      if (!_.isEmpty(cartState.cart)) {
+         if (
+            cartState.cart?.fulfillmentInfo?.slot?.to &&
+            cartState.cart?.fulfillmentInfo?.slot?.from
+         ) {
+            const showTimeSlots = Boolean(
+               !lastStoreLocationId == null ||
+                  localStorage.getItem('lastStoreLocationId')
+            )
+            setShowSlots(showTimeSlots)
+            setIsLoading(false)
+         } else {
+            setShowSlots(true)
+            setIsLoading(false)
+         }
+      }
+   }, [cartState.cart])
+
+   if (isLoading) {
+      return <p>Loading</p>
+   }
+   if (!showSlots) {
+      return (
+         <div className="hern-cart__fulfillment-time-section">
+            <div className="hern-cart__fulfillment-time-section-heading">
+               <OrderTime />
+               <span>When would you like to order?</span>
+            </div>
+            <div
+               style={{
+                  display: 'flex',
+                  alignItems: 'center',
+               }}
+            >
+               <label style={{ marginTop: '5px' }}>
+                  {title}{' '}
+                  {(cartState.cart?.fulfillmentInfo?.type ===
+                     'PREORDER_PICKUP' ||
+                     cartState.cart?.fulfillmentInfo?.type ===
+                        'PREORDER_DELIVERY') && (
+                     <span>
+                        {' '}
+                        on{' '}
+                        {moment(
+                           cartState.cart?.fulfillmentInfo?.slot?.from
+                        ).format('DD MMM YYYY')}
+                        {' ('}
+                        {moment(
+                           cartState.cart?.fulfillmentInfo?.slot?.from
+                        ).format('HH:mm')}
+                        {'-'}
+                        {moment(
+                           cartState.cart?.fulfillmentInfo?.slot?.to
+                        ).format('HH:mm')}
+                        {')'}
+                     </span>
+                  )}
+               </label>
+               <EditIcon
+                  fill={theme?.accent || 'rgba(5, 150, 105, 1)'}
+                  onClick={() => setShowSlots(true)}
+                  style={{ cursor: 'pointer', margin: '0 6px' }}
+               />
+            </div>
+         </div>
       )
-   )
+   }
+
    return (
       <div className="hern-cart__fulfillment-time-section">
          <div className="hern-cart__fulfillment-time-section-heading">
@@ -218,64 +316,13 @@ export const Delivery = props => {
          ) : stores.length === 0 ? (
             <p>no stores available</p>
          ) : (
-            <Space direction={'vertical'}>
-               <div className="hern-fulfillment__day-slots-container">
-                  <p>Please Select Schedule For Delivery</p>
-                  <p className="hern-cart__fulfillment-slot-heading">
-                     Fulfillment Date
-                  </p>
-                  <Radio.Group
-                     onChange={e => {
-                        setSelectedSlot(e.target.value)
-                     }}
-                  >
-                     {deliverySlots.map((eachSlot, index) => {
-                        return (
-                           <Radio.Button value={eachSlot} size="large">
-                              {moment(eachSlot.date).format('DD MMM YY')}
-                           </Radio.Button>
-                        )
-                     })}
-                  </Radio.Group>
-               </div>
-               {selectedSlot && (
-                  <div className="hern-fulfillment__time-slots-container">
-                     <p className="hern-cart__fulfillment-slot-heading">
-                        Fulfillment Time
-                     </p>
-                     <Radio.Group
-                        onChange={e => {
-                           const newTimeStamp = generateTimeStamp(
-                              e.target.value.time,
-                              selectedSlot.date,
-                              60
-                           )
-                           onFulfillmentTimeClick(newTimeStamp)
-                        }}
-                     >
-                        {_.sortBy(selectedSlot.slots, [
-                           function (slot) {
-                              return moment(slot.time, 'HH:mm')
-                           },
-                        ]).map((eachSlot, index, elements) => {
-                           const slot = {
-                              from: eachSlot.time,
-                              to: moment(eachSlot.time, 'HH:mm')
-                                 .add(eachSlot.intervalInMinutes, 'm')
-                                 .format('HH:mm'),
-                           }
-                           return (
-                              <Radio.Button value={eachSlot}>
-                                 {slot.from}
-                                 {'-'}
-                                 {slot.to}
-                              </Radio.Button>
-                           )
-                        })}
-                     </Radio.Group>
-                  </div>
-               )}
-            </Space>
+            <TimeSlots
+               onFulfillmentTimeClick={onFulfillmentTimeClick}
+               selectedSlot={selectedSlot}
+               availableDaySlots={deliverySlots}
+               setSelectedSlot={setSelectedSlot}
+               timeSlotsFor={'Delivery'}
+            />
          )}
       </div>
    )

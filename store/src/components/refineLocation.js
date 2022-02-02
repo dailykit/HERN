@@ -139,6 +139,23 @@ const RefineLocation = props => {
          },
       })
       localStorage.setItem('orderTab', JSON.stringify(fulfillmentType))
+      if (
+         localStorage.getItem('storeLocationId') &&
+         JSON.parse(localStorage.getItem('storeLocationId')) !==
+            selectedStore.location.id
+      ) {
+         const lastStoreLocationId = JSON.parse(
+            localStorage.getItem('storeLocationId')
+         )
+         localStorage.setItem(
+            'lastStoreLocationId',
+            JSON.stringify(lastStoreLocationId)
+         )
+         dispatch({
+            type: 'SET_LAST_LOCATION_ID',
+            payload: lastStoreLocationId,
+         })
+      }
       localStorage.setItem(
          'storeLocationId',
          JSON.stringify(selectedStore.location.id)
@@ -245,10 +262,10 @@ const RefineLocation = props => {
    return (
       <div className="hern-refine-location">
          <div className="hern-refine-location_content">
-            <LocationSelectorWrapper
+            {/* <LocationSelectorWrapper
                showLocationSelectorPopup={showLocationSelectorPopup}
                setShowLocationSelectionPopup={setShowLocationSelectorPopup}
-            />
+            /> */}
             <RefineLocationHeader
                onRefineCloseClick={onRefineCloseClick}
                onChangeClick={onChangeClick}
@@ -316,14 +333,6 @@ const RefineLocationHeader = ({ onRefineCloseClick, onChangeClick }) => {
                onClick={onRefineCloseClick}
             />
             <span>Refine Your Location</span>
-         </div>
-         <div className="hern-store-location-selector-header-right">
-            <span
-               onClick={onChangeClick}
-               className="hern-refine-location__change-btn"
-            >
-               Change
-            </span>
          </div>
       </div>
    )
