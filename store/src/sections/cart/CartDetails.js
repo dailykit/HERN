@@ -127,13 +127,16 @@ export const CartDetails = () => {
                                  textDecoration: 'line-through',
                               }}
                            >
-                              {formatCurrency(data.childs[0].price)}
+                              {formatCurrency(
+                                 data.childs[0].price * data.ids.length
+                              )}
                            </span>
                         )}
 
                         <span className="hern-cart-product-custom-area-price">
                            {formatCurrency(
-                              data.childs[0].price - data.childs[0].discount
+                              (data.childs[0].price - data.childs[0].discount) *
+                                 data.ids.length
                            )}
                         </span>
                      </div>
