@@ -428,80 +428,50 @@
       }
    }
 }
-.hern-ondemand-cart__payment-section {
-   height: auto;
+.hern-on-demand-cart__payment-section__content {
    padding: 16px;
-   > button {
+   @media only screen and (max-width: 767px) {
       display: none;
    }
+}
+.hern-on-demand-cart__payment-section__content--tunnel {
+   display: none;
+   padding: 0;
    @media only screen and (max-width: 767px) {
-      padding: 0;
+      display: block;
+   }
+}
+
+.hern-on-demand-cart__payment-section__header {
+   display: flex;
+   padding-bottom: 16px;
+   margin-bottom: 8px;
+   border-bottom: 1px solid #f4f4f4;
+}
+.hern-on-demand-cart__payment-section__header--tunnel {
+   margin: 0;
+   padding: 0;
+   border: none;
+   display: flex;
+}
+.hern-make-payment__btn {
+   display: none;
+   @media only screen and (max-width: 767px) {
+      z-index: 999;
+      display: block;
+      border: none;
+      outline: none;
+      width: 100%;
+      height: 75px;
+      background-color: var(--hern-accent);
+      font-weight: 600;
+      font-size: 28px;
+      line-height: 22px;
+      text-align: center;
+      color: #ffffff;
       position: fixed;
-      bottom: 0;
       left: 0;
       right: 0;
-      margin-bottom: 0;
-      z-index: 999;
-      height: 75px;
-      > button {
-         display: block;
-         border: none;
-         outline: none;
-         width: 100%;
-         height: 75px;
-         background-color: var(--hern-accent);
-         font-weight: 600;
-         font-size: 28px;
-         line-height: 22px;
-         text-align: center;
-         color: #ffffff;
-      }
-   }
-}
-.hern-ondemand-cart__payment-section--toggle {
-   @media only screen and (max-width: 767px) {
-      height: 100vh;
-      z-index: 99999;
-      background-color: rgba(32, 32, 32, 0.4);
-      > div {
-         position: absolute;
-         bottom: 0;
-         padding: 0 16px 16px 16px;
-         background-color: #fff;
-         width: 100%;
-         border-radius: 8px 8px 0 0;
-      }
-      .hern-on-demand-cart__payment-section__content {
-         height: calc(80vh - 80px);
-         overflow-y: auto;
-      }
-      > button {
-         display: none;
-      }
-   }
-}
-.hern-ondemand-cart__payment-section__header {
-   margin-bottom: 8px;
-   border-bottom: 1.5px solid #f3f3f3;
-   padding-bottom: 12px;
-   > div {
-      display: flex;
-      align-items: center;
-   }
-   > button {
-      display: none;
-   }
-   @media only screen and (max-width: 767px) {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px 16px 16px 0px;
-      border-bottom: 1px solid #f4f4f4;
-      > button {
-         display: block;
-         border: none;
-         outline: none;
-         background: transparent;
-      }
+      bottom: 0;
    }
 }
