@@ -100,7 +100,7 @@ const PaymentSection = () => {
          <div>
             <div className="hern-ondemand-cart__payment-section__header">
                <div>
-                  <PaymentIcon />
+                  <PaymentIcon width={20} height={22} />
                   <span className="hern-user-info__heading">Payment</span>
                </div>
                <button onClick={() => setOpen(false)}>
@@ -108,7 +108,6 @@ const PaymentSection = () => {
                </button>
             </div>
             <div className="hern-on-demand-cart__payment-section__content">
-               {/* TODO:Should be fixed */}
                {isAuthenticated && (
                   <div className="hern-ondemand-cart__left-card">
                      <WalletAmount cart={cartState.cart} version={2} />
