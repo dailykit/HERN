@@ -97,6 +97,20 @@ const Right = ({ title, children, visible, onClose }) => {
       </Drawer>
    )
 }
+const Bottom = props => {
+   const { title, children, visible, onClose } = props
+   return (
+      <Drawer
+         title={title}
+         placement="bottom"
+         onClose={onClose}
+         visible={visible}
+         {...props}
+      >
+         {children}
+      </Drawer>
+   )
+}
 const Left = ({ title, children, visible, onClose }) => {
    return (
       <Drawer
@@ -116,3 +130,4 @@ Tunnel.Header = Header
 Tunnel.Body = Body
 Tunnel.Right = Right
 Tunnel.Left = Left
+Tunnel.Bottom = Bottom
