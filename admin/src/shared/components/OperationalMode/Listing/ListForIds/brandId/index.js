@@ -15,19 +15,22 @@ import {
    TunnelHeader,
    useSingleList,
 } from '@dailykit/ui'
-import { Banner } from '../../../..'
+import { Banner, InlineLoader } from '../../../..'
 import { TunnelContainer } from '../../../../../../apps/inventory/components'
 
 const BrandManagerList = ({ closeTunnel }) => {
    const [brandId, setBrandId] = React.useState([])
    const { tab, addTab } = useTabs()
 
-   const { loading } = useSubscription(BRAND_ID, {
+   //subscription
+   const { loading, error } = useSubscription(BRAND_ID, {
       onSubscriptionData: data => {
          setBrandId(data.subscriptionData.data.brandsAggregate.nodes)
       },
    })
-   console.log('brand ID:::', brandId)
+   // console.log('brand ID:::', brandId)
+
+   //ssl1 declaration
    const [list, current, selectOption] = useSingleList(brandId)
    const [search, setSearch] = React.useState('')
 
@@ -38,42 +41,45 @@ const BrandManagerList = ({ closeTunnel }) => {
             close={() => closeTunnel(1)}
             nextAction="Done"
          />
-
-         <TunnelContainer>
-            <Banner id="operation-mode-brand-manager-tunnel-list-top" />
-            {list.length ? (
-               <List>
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder="type what you’re looking for..."
-                  />
-                  <ListHeader type="SSL1" label="Brand" />
-                  <ListOptions>
-                     {list
-                        .filter(option =>
-                           option.title.toLowerCase().includes(search)
-                        )
-                        .map(option => (
-                           <ListItem
-                              type="SSL1"
-                              key={option.id}
-                              title={option.title}
-                              isActive={option.id === current.id}
-                              onClick={() =>
-                                 addTab(
-                                    `${option.title}`,
-                                    `/operationMode/${option.title}-${option.id}`
-                                 )
-                              }
-                           />
-                        ))}
-                  </ListOptions>
-               </List>
-            ) : (
-               <Filler message="Sorry!, No Brand is available" />
-            )}
-            <Banner id="operation-mode-brand-manager-tunnel-list-bottom" />
-         </TunnelContainer>
+         {loading ? (
+            <InlineLoader />
+         ) : (
+            <TunnelContainer>
+               <Banner id="operation-mode-brand-manager-tunnel-list-top" />
+               {list.length ? (
+                  <List>
+                     <ListSearch
+                        onChange={value => setSearch(value)}
+                        placeholder="type what you’re looking for..."
+                     />
+                     <ListHeader type="SSL1" label="Brand" />
+                     <ListOptions>
+                        {list
+                           .filter(option =>
+                              option.title.toLowerCase().includes(search)
+                           )
+                           .map(option => (
+                              <ListItem
+                                 type="SSL1"
+                                 key={option.id}
+                                 title={option.title}
+                                 isActive={option.id === current.id}
+                                 onClick={() =>
+                                    addTab(
+                                       `${option.title}`,
+                                       `/operationMode/${option.title}-${option.id}`
+                                    )
+                                 }
+                              />
+                           ))}
+                     </ListOptions>
+                  </List>
+               ) : (
+                  <Filler message="Sorry!, No Brand is available" />
+               )}
+               <Banner id="operation-mode-brand-manager-tunnel-list-bottom" />
+            </TunnelContainer>
+         )}
       </>
    )
 }

@@ -282,14 +282,37 @@ export const BRAND_LOCATION = {
             doesPickup
             isActive
             locationId
+            brand {
+               id
+               title
+            }
          }
       }
    `,
    UPDATE_BRAND: gql`
-      mutation MyMutation($objects: [brands_brand_location_insert_input!]!) {
+      mutation insertBrandLocation(
+         $objects: [brands_brand_location_insert_input!]!
+      ) {
          insert_brands_brand_location(
             objects: $objects
             on_conflict: { constraint: brand_location_locationId_brandId_key }
+         ) {
+            affected_rows
+         }
+      }
+   `,
+   UPDATE: gql`
+      mutation updateBrandLocation(
+         $_set: brands_brand_location_set_input!
+         $brandId: Int!
+         $locationId: Int!
+      ) {
+         update_brands_brand_location(
+            where: {
+               locationId: { _eq: $locationId }
+               brandId: { _eq: $brandId }
+            }
+            _set: $_set
          ) {
             affected_rows
          }
