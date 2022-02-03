@@ -25,8 +25,6 @@ import {
 } from '../../../components'
 import { EditIcon, DeleteIcon } from '../../../assets/icons'
 import PhoneInput, {
-   formatPhoneNumber,
-   formatPhoneNumberIntl,
    isValidPhoneNumber,
 } from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
@@ -34,6 +32,8 @@ import ReactHTMLParser from 'react-html-parser'
 import gql from 'graphql-tag'
 import { useSubscription } from '@apollo/react-hooks'
 import validator from '../../../../apps/brands/views/validator'
+import CustomColorPicker from './CustomColorPicker'
+
 export const TextBox = ({
    fieldDetail,
    marginLeft,
@@ -131,43 +131,47 @@ export const ColorPicker = ({
    path,
    onConfigChange,
    editMode,
-}) => (
-   <Flex
-      container
-      justifyContent="space-between"
-      alignItems="center"
-      margin={`0 0 0 ${marginLeft}`}
-   >
-      <Flex container alignItems="flex-end">
-         <Form.Label title={fieldDetail.label} htmlFor="color">
-            {fieldDetail.label.toUpperCase()}
-         </Form.Label>
-         <Tooltip identifier="color_component_info" />
-      </Flex>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-         {editMode ? (
-            <>
-               <ColorLabel backgroundColor="#fff" title={fieldDetail?.value || 'none'}>
-                  {fieldDetail?.value || 'none'}
-               </ColorLabel>
-               <input
+}) => {
+   const [color, setColor] = React.useState(fieldDetail?.value || "#000");
+
+   return (
+      <Flex
+         container
+         justifyContent="space-between"
+         alignItems="center"
+         margin={`0 0 0 ${marginLeft}`}
+      >
+         <Flex container alignItems="flex-end">
+            <Form.Label title={fieldDetail.label} htmlFor="color">
+               {fieldDetail.label.toUpperCase()}
+            </Form.Label>
+            <Tooltip identifier="color_component_info" />
+         </Flex>
+         <div style={{ display: 'flex', alignItems: 'center' }}>
+            {editMode ? (
+               <>
+                  <ColorLabel backgroundColor="#fff" title={color}>
+                     {color}
+                  </ColorLabel>
+                  {/* <input
                   type="color"
                   id="favcolor"
                   name={path}
                   value={fieldDetail?.value || ''}
                   onChange={onConfigChange}
                   style={{ cursor: 'pointer' }}
-               />
-            </>
-         ) : (
-            <>
-               <ColorLabel
-                  backgroundColor='rgb(244 244 244)'
-                  title={fieldDetail?.value || 'none'}
-               >
-                  {fieldDetail?.value || 'none'}
-               </ColorLabel>
-               <input
+               /> */}
+                  <CustomColorPicker path={path} color={color} onChange={setColor} onConfigChange={e => onConfigChange(e, color)} />;
+               </>
+            ) : (
+               <>
+                  <ColorLabel
+                     backgroundColor='rgb(244 244 244)'
+                     title={color}
+                  >
+                     {color}
+                  </ColorLabel>
+                  {/* <input
                   type="color"
                   id="favcolor"
                   name={path}
@@ -175,12 +179,14 @@ export const ColorPicker = ({
                   value={fieldDetail?.value || ''}
                   onChange={onConfigChange}
                   disabled
-               />
-            </>
-         )}
-      </div>
-   </Flex>
-)
+               /> */}
+                  <CustomColorPicker path={path} color={color} onChange={setColor} onConfigChange={e => onConfigChange(e, color)} />;
+               </>
+            )}
+         </div>
+      </Flex>
+   )
+}
 
 export const Number = ({
    fieldDetail,
@@ -822,6 +828,11 @@ export const MultipleImageUpload = props => {
       </>
    )
 }
+
+
+
+
+
 export const ImageContainer = styled.div`
    display: flex;
    flex-direction: ${props => props.flexDirection ? props.flexDirection : 'row-reverse'};
