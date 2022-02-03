@@ -904,10 +904,14 @@ const LocationInfo = ({ settings }) => {
                   )}
                   <div>
                      <div className="hern-header__location-content">
-                        {userLocation?.mainText
+                        {userLocation?.label
+                           ? userLocation?.label
+                           : userLocation?.mainText
                            ? userLocation?.mainText
                            : userLocation?.address?.mainText
                            ? userLocation?.address?.mainText
+                           : userLocation?.line1
+                           ? userLocation?.line1
                            : 'Please select address...'}
                      </div>
                      <div className="hern-header__location-warning">
