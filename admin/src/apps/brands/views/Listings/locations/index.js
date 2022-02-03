@@ -4,6 +4,7 @@ import {
    Flex,
    IconButton,
    Text,
+   ToolTip,
    Tunnel,
    Tunnels,
    useTunnel,
@@ -11,19 +12,21 @@ import {
 import React from 'react'
 import { toast } from 'react-toastify'
 import { DeleteIcon, PlusIcon } from '../../../../../shared/assets/icons'
-import { Banner, InlineLoader, Tooltip } from '../../../../../shared/components'
+import { Banner, InlineLoader } from '../../../../../shared/components'
 import { logger } from '../../../../../shared/utils'
 import { LOCATIONS } from '../../../graphql'
 import { StyledHeader, StyledWrapper } from '../styled'
 import tableOptions from '../../../tableOption'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
-import { useTooltip } from '../../../../../shared/providers'
+import { useTabs, useTooltip } from '../../../../../shared/providers'
 import CreateBrandLocation from '../../../../../shared/CreateUtils/Brand/BrandLocation'
+import { Avatar, Tooltip } from 'antd'
 
 export const Locations = () => {
    const [locations, setLocations] = React.useState()
    const tableRef = React.useRef()
    const { tooltip } = useTooltip()
+   const { addTab, tab } = useTabs()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
    // subscriptions
@@ -32,8 +35,10 @@ export const Locations = () => {
       loading: listLoading,
       data,
    } = useSubscription(LOCATIONS.LIST, {
+      variables: {
+         identifier: 'Brand Info',
+      },
       onSubscriptionData: data => {
-         console.log('data', data)
          setLocations(data.subscriptionData.data.brands_location)
       },
    })
@@ -68,6 +73,10 @@ export const Locations = () => {
          title: 'Location Name',
          field: 'label',
          headerFilter: true,
+         cellClick: (e, cell) => {
+            const { label, id } = cell._cell.row.data
+            addTab(label, `/brands/locations/${id}`)
+         },
       },
       {
          title: 'Zipcode',
@@ -88,7 +97,7 @@ export const Locations = () => {
       },
       {
          title: 'Linked Brands',
-         field: 'brand_locations_aggregate.aggregate.count',
+         formatter: reactFormatter(<BrandAvatar />),
       },
       {
          title: 'Action',
@@ -105,6 +114,7 @@ export const Locations = () => {
    ])
    if (error) {
       toast.error('Something went wrong!')
+      console.log('error', error)
       logger(error)
    }
    if (!locations) return <InlineLoader />
@@ -116,7 +126,6 @@ export const Locations = () => {
                <Text as="h2" style={{ marginBottom: '0px' }}>
                   Locations ({locations?.length || 0})
                </Text>
-               <Tooltip identifier="locations_listing_heading" />
             </Flex>
 
             <ComboButton type="solid" onClick={() => openTunnel(1)}>
@@ -151,5 +160,53 @@ const DeleteLocation = ({ cell, deleteHandler }) => {
       <IconButton type="ghost" size="sm" onClick={onClick}>
          <DeleteIcon color="#FF5A52" />
       </IconButton>
+   )
+}
+
+const BrandAvatar = ({ cell }) => {
+   console.log('avatar', cell._cell.row.data)
+   const rowData = cell._cell.row.data
+   return (
+      <>
+         <Avatar.Group
+            maxCount={
+               rowData.brand_locations.length > 5
+                  ? 5
+                  : rowData.brand_locations.length
+            }
+            maxStyle={{
+               color: '#f56a00',
+               backgroundColor: '#fde3cf',
+            }}
+         >
+            {rowData.brand_locations.map(eachBrand => (
+               <Tooltip
+                  title={eachBrand.brand.title}
+                  placement="top"
+                  key={eachBrand.brandId}
+               >
+                  {eachBrand.brand.brand_brandSettings.length > 0 ? (
+                     <Avatar
+                        style={{
+                           backgroundColor: '#87d068',
+                        }}
+                        icon={
+                           eachBrand.brand.brand_brandSettings[0]?.value
+                              .brandLogo.value
+                        }
+                     />
+                  ) : (
+                     <Avatar
+                        style={{
+                           backgroundColor: '#87d068',
+                        }}
+                     >
+                        {eachBrand.brand.title.charAt(0).toUpperCase()}
+                     </Avatar>
+                  )}
+               </Tooltip>
+            ))}
+         </Avatar.Group>
+      </>
    )
 }

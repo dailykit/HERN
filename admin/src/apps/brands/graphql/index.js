@@ -214,19 +214,31 @@ export const PLANS = {
 
 export const LOCATIONS = {
    LIST: gql`
-      subscription locations {
+      subscription locations($identifier: String!) {
          brands_location(order_by: { id: asc }) {
             id
             label
-            city
-            country
-            state
-            zipcode
-            brand_locations_aggregate {
-               aggregate {
-                  count
+            isActive
+            brand_locations {
+               brandId
+               brand {
+                  title
+                  brand_brandSettings(
+                     where: {
+                        brandSetting: { identifier: { _eq: $identifier } }
+                     }
+                  ) {
+                     value
+                  }
                }
             }
+            locationTables {
+               id
+            }
+            country
+            city
+            state
+            zipcode
          }
       }
    `,
