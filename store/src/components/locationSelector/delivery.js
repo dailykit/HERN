@@ -71,6 +71,8 @@ export const Delivery = props => {
    const [showRefineLocation, setShowRefineLocation] = useState(false)
    const [isGetStoresLoading, setIsGetStoresLoading] = useState(true)
    const [stores, setStores] = useState(null)
+   const [isUserExistingAddressSelected, setIsUserExistingAddressSelected] =
+      useState(false)
 
    useEffect(() => {
       if (address && brand.id) {
@@ -264,6 +266,7 @@ export const Delivery = props => {
 
    const onAddressSelect = addressFromUserAddressList => {
       setAddress(addressFromUserAddressList)
+      setIsUserExistingAddressSelected(true)
    }
    if (!orderTabFulfillmentType) {
       return <Loader inline />
@@ -399,6 +402,10 @@ export const Delivery = props => {
                setShowRefineLocation={setShowRefineLocation}
                showRefineLocation={showRefineLocation}
                setAddress={setAddress}
+               setIsUserExistingAddressSelected={
+                  setIsUserExistingAddressSelected
+               }
+               isUserExistingAddressSelected={isUserExistingAddressSelected}
             />
          )}
          {(stores == null || stores?.length == 0) && (

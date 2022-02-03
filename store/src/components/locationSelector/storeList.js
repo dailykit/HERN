@@ -25,6 +25,8 @@ export const StoreList = props => {
       setShowRefineLocation,
       showRefineLocation = false,
       setAddress,
+      setIsUserExistingAddressSelected,
+      isUserExistingAddressSelected,
    } = props
    // console.log('settings', settings)
    const { dispatch, orderTabs } = useConfig()
@@ -77,13 +79,16 @@ export const StoreList = props => {
             .storeLocationSelectionMethod.value.value === 'auto'
       ) {
          if (
-            fulfillmentType === 'ONDEMAND_DELIVERY' ||
-            fulfillmentType === 'PREORDER_DELIVERY'
+            (fulfillmentType === 'ONDEMAND_DELIVERY' ||
+               fulfillmentType === 'PREORDER_DELIVERY') &&
+            !isUserExistingAddressSelected
          ) {
             setShowRefineLocation(true)
             return
          }
-         if (user?.keycloakId) {
+
+         // only create address when user not select there existing address
+         if (user?.keycloakId && !isUserExistingAddressSelected) {
             createAddress({
                variables: {
                   object: { ...customerAddress, keycloakId: user?.keycloakId },
@@ -126,6 +131,23 @@ export const StoreList = props => {
             },
          })
          localStorage.setItem('orderTab', JSON.stringify(fulfillmentType))
+         if (
+            localStorage.getItem('storeLocationId') &&
+            JSON.parse(localStorage.getItem('storeLocationId')) !==
+               firstStoreOfSortedBrandLocation.location.id
+         ) {
+            const lastStoreLocationId = JSON.parse(
+               localStorage.getItem('storeLocationId')
+            )
+            localStorage.setItem(
+               'lastStoreLocationId',
+               JSON.stringify(lastStoreLocationId)
+            )
+            dispatch({
+               type: 'SET_LAST_LOCATION_ID',
+               payload: lastStoreLocationId,
+            })
+         }
          localStorage.setItem(
             'storeLocationId',
             JSON.stringify(firstStoreOfSortedBrandLocation.location.id)
@@ -133,8 +155,8 @@ export const StoreList = props => {
          localStorage.setItem(
             'userLocation',
             JSON.stringify({
-               latitude: userCoordinate.latitude,
-               longitude: userCoordinate.longitude,
+               latitude: address.lat,
+               longitude: address.lng,
                ...address,
             })
          )
