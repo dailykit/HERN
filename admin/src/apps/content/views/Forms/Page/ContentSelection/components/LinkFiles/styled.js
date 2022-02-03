@@ -12,6 +12,7 @@ export const Wrapper = styled.div`
       height:2rem;
       font-weight: 500;
       color: #919699;
+      cursor:default;
       button{
          display:none;
       }
@@ -28,4 +29,8 @@ export const Wrapper = styled.div`
    .linked-Files-tunnel-dropdown>div>ul:nth-of-type(1){
       padding-left: 16px;
    }
+   .ant-card-body{
+      padding:0px 24px !important;
+   }
+
 `

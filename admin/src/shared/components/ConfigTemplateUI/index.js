@@ -179,12 +179,15 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
    const handleEdit = () => {
       //after saving
       if (editMode) {
+         configSaveHandler(configJSON)
+         console.log(noneditMode)
+         noneditMode && setLinkedModuleId(null)
          setMode('saved')
-         configSaveHandler(isChangeSaved)
          //for pageModule this noneditMode tells the config belongs to pageModule 
          //and there is no requirement of editMode
          !noneditMode && setEditMode(false)
          setIsSavedChange(true)
+
       } else if (!editMode && !isChangeSaved && mode == 'editing') {
          toast.warning('Changes will be lost if not saved. Please save your changes.')
       }
