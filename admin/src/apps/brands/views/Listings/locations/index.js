@@ -21,6 +21,7 @@ import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { useTabs, useTooltip } from '../../../../../shared/providers'
 import CreateBrandLocation from '../../../../../shared/CreateUtils/Brand/BrandLocation'
 import { Avatar, Tooltip } from 'antd'
+import { PublishIcon, UnPublishIcon } from '../../../assets/icons'
 
 export const Locations = () => {
    const [locations, setLocations] = React.useState()
@@ -65,42 +66,28 @@ export const Locations = () => {
 
    const columns = React.useMemo(() => [
       {
-         title: 'Location Id',
+         title: 'Id',
          field: 'id',
          headerFilter: true,
+         frozen: true,
+         width: 70,
       },
       {
          title: 'Location Name',
          field: 'label',
          headerFilter: true,
+         frozen: true,
          cellClick: (e, cell) => {
             const { label, id } = cell._cell.row.data
             addTab(label, `/brands/locations/${id}`)
          },
-      },
-      {
-         title: 'Zipcode',
-         field: 'zipcode',
-         headerFilter: true,
-      },
-      {
-         title: 'City',
-         field: 'city',
-      },
-      {
-         title: 'State',
-         field: 'state',
-      },
-      {
-         title: 'Country',
-         field: 'country',
-      },
-      {
-         title: 'Linked Brands',
-         formatter: reactFormatter(<BrandAvatar />),
+         formatter: reactFormatter(<LocationLabel />),
+         cssClass: 'colHover',
+         width: 280,
       },
       {
          title: 'Action',
+         frozen: true,
          formatter: reactFormatter(
             <DeleteLocation deleteHandler={deleteHandler} />
          ),
@@ -110,6 +97,36 @@ export const Locations = () => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
+         width: 80,
+         headerHozAlign: 'center',
+      },
+      {
+         title: 'Zipcode',
+         field: 'zipcode',
+         headerFilter: true,
+         width: 120,
+      },
+      {
+         title: 'City',
+         field: 'city',
+         headerFilter: true,
+         width: 120,
+      },
+      {
+         title: 'State',
+         field: 'state',
+         headerFilter: true,
+         width: 120,
+      },
+      {
+         title: 'Country',
+         field: 'country',
+         headerFilter: true,
+         width: 120,
+      },
+      {
+         title: 'Linked Brands',
+         formatter: reactFormatter(<BrandAvatar />),
       },
    ])
    if (error) {
@@ -154,12 +171,20 @@ export const Locations = () => {
 }
 
 const DeleteLocation = ({ cell, deleteHandler }) => {
-   const onClick = () => deleteHandler(cell._cell.row.data)
+   const data = cell._cell.row.data
+   const onClick = () => deleteHandler(data)
    if (cell.getData().isDefault) return null
    return (
-      <IconButton type="ghost" size="sm" onClick={onClick}>
-         <DeleteIcon color="#FF5A52" />
-      </IconButton>
+      <>
+         <IconButton
+            type="ghost"
+            size="sm"
+            onClick={onClick}
+            title="Click to delete location"
+         >
+            <DeleteIcon color="#FF5A52" />
+         </IconButton>
+      </>
    )
 }
 
@@ -170,8 +195,8 @@ const BrandAvatar = ({ cell }) => {
       <>
          <Avatar.Group
             maxCount={
-               rowData.brand_locations.length > 5
-                  ? 5
+               rowData.brand_locations.length > 4
+                  ? 4
                   : rowData.brand_locations.length
             }
             maxStyle={{
@@ -207,6 +232,51 @@ const BrandAvatar = ({ cell }) => {
                </Tooltip>
             ))}
          </Avatar.Group>
+      </>
+   )
+}
+function LocationLabel({ cell, addTab }) {
+   const data = cell._cell.row.data
+   return (
+      <>
+         <Flex
+            container
+            width="100%"
+            justifyContent="space-between"
+            alignItems="center"
+         >
+            <Flex
+               container
+               width="100%"
+               justifyContent="flex-end"
+               alignItems="center"
+            >
+               <p
+                  style={{
+                     width: '230px',
+                     whiteSpace: 'nowrap',
+                     overflow: 'hidden',
+                     textOverflow: 'ellipsis',
+                  }}
+               >
+                  {data.label}
+               </p>
+            </Flex>
+
+            <Flex
+               container
+               width="100%"
+               justifyContent="flex-end"
+               alignItems="center"
+            >
+               <IconButton
+                  type="ghost"
+                  title={data.isActive ? 'Published' : 'Unpublished'}
+               >
+                  {data.isActive ? <PublishIcon /> : <UnPublishIcon />}
+               </IconButton>
+            </Flex>
+         </Flex>
       </>
    )
 }
