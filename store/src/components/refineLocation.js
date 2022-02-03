@@ -48,6 +48,15 @@ const RefineLocation = props => {
       useState(false)
    console.log('this is address', address)
 
+   React.useEffect(() => {
+      if (address?.mainText) {
+         setAdditionalAddressInfo(prev => ({
+            ...prev,
+            line1: address.mainText || address.line1 || '',
+         }))
+      }
+   }, [address])
+
    const [createAddress] = useMutation(MUTATIONS.CUSTOMER.ADDRESS.CREATE, {
       onCompleted: () => {
          addToast('Address has been saved.', {
