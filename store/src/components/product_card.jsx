@@ -178,6 +178,7 @@ export const ProductCard = props => {
                                        ? onProductNameClick()
                                        : null
                                  }}
+                                 title={data?.name}
                                  style={{
                                     cursor: onProductNameClick
                                        ? 'pointer'
