@@ -20,6 +20,7 @@ export const BrandSettings = () => {
    const [searchResult, setSearchResult] = React.useState([])
    const [isChangeSaved, setIsSavedChange] = React.useState(true)
    const [mode, setMode] = React.useState('saved')
+   const [saveAllSettings, setSaveAllSettings] = React.useState({})
    const [componentIsOnView, setIsComponentIsOnView] = React.useState([])
    const { Search } = Input
 
@@ -63,7 +64,7 @@ export const BrandSettings = () => {
    const types = Object.keys(settings)
    if (loadingSettings) return <Loader />
 
-   //for seraching brandSettings
+   //for searching brandSettings
    const onSearch = value => {
       const lowerCaseValue = value.toLowerCase()
       setSearchResult(
@@ -75,6 +76,7 @@ export const BrandSettings = () => {
       )
    }
 
+   console.log("saveAllSettings", saveAllSettings, "isChangeSaved", isChangeSaved, "mode", mode)
    return (
       <Styles.Wrapper>
          {/* navigation bar */}
@@ -218,6 +220,8 @@ export const BrandSettings = () => {
                                        componentIsOnView={componentIsOnView}
                                        mode={mode}
                                        setMode={setMode}
+                                       saveAllSettings={saveAllSettings}
+                                       setSaveAllSettings={setSaveAllSettings}
                                     />
                                  </>
                               )

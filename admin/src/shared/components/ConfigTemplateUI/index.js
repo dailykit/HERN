@@ -2,7 +2,6 @@ import React from 'react'
 import _ from 'lodash'
 import {
    ComboButton,
-   PlusIcon,
    ArrowDownIcon,
    ArrowUpIcon,
    EditIcon,
@@ -10,12 +9,11 @@ import {
    Filler,
    TextButton,
 } from '@dailykit/ui'
-import { Card } from 'antd'
+import { Card, Modal, Button } from 'antd'
 import { Text } from '@dailykit/ui'
 import { FieldUI } from './getFieldUI'
 import { EditModeProvider, useEditMode } from './EditModeContext'
 import { Styles } from './styled'
-import { toast } from 'react-toastify'
 import { CrossIcon } from '../../assets/icons'
 
 const ConfigTemplateUI = props => {
@@ -26,20 +24,27 @@ const ConfigTemplateUI = props => {
    )
 }
 
-const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsSavedChange, noneditMode, setLinkedModuleId, setMode, mode }) => {
+const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsSavedChange, noneditMode, setLinkedModuleId, setMode, mode, saveAllSettings, setSaveAllSettings, updateAllSettings, setting_brand_Id }) => {
    const [configJSON, setConfigJSON] = React.useState({})
    const [fields, setFields] = React.useState([])
-   const [description, setDescription] = React.useState('')
+
+   //for showing description in config 
    const [isValid, setIsValid] = React.useState(true)
+
+   //for toggling between edit and save button on config
    const { editMode, setEditMode } = useEditMode()
 
+   // for showing alert box
+   const [modalVisible, setModalVisible] = React.useState(false)
+   const [modalLoading, setModalLoading] = React.useState(false)
+
+   //for dropdown arrow in displaying config 
    const elements = []
 
    //when there is any change in data
    const onConfigChange = (e, value) => {
-
+      //whenever there is any change isChangeSaved is false
       setIsSavedChange(false)
-
       let updatedConfig
       const type = _.get(configJSON, `${e.target.name}.dataType`)
       if (type === 'boolean' || type === 'html' || type === 'select') {
@@ -55,7 +60,7 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
          ...prev,
          ...updatedConfig,
       }))
-      console.log({ updatedConfig }, "updatedConfig")
+      setSaveAllSettings(configJSON)
 
    }
 
@@ -110,7 +115,6 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
             >
                <ArrowDownIcon color="#367BF5" />
             </button>
-            {setDescription(fieldData.description)}
          </Styles.ConfigTemplateHeader>
       )
    }
@@ -156,6 +160,7 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
       if (Object.keys(configJSON).length) {
          renderAllFields(configJSON, '')
       }
+
    }, [configJSON])
 
    React.useEffect(() => {
@@ -180,16 +185,18 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
       //after saving
       if (editMode) {
          configSaveHandler(configJSON)
-         console.log(noneditMode)
          noneditMode && setLinkedModuleId(null)
          setMode('saved')
+
          //for pageModule this noneditMode tells the config belongs to pageModule 
          //and there is no requirement of editMode
          !noneditMode && setEditMode(false)
          setIsSavedChange(true)
 
       } else if (!editMode && !isChangeSaved && mode == 'editing') {
-         toast.warning('Changes will be lost if not saved. Please save your changes.')
+         //showing warning(alert box)to save changes
+         setModalVisible(true)
+         console.log(modalVisible)
       }
       else {
          setMode('editing')
@@ -197,6 +204,23 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
          setEditMode(true)
       }
    }
+
+   const handleOk = () => {
+      setModalLoading(true)
+      setTimeout(() => {
+         updateAllSettings()
+         setModalLoading(false)
+         noneditMode && setLinkedModuleId(null)
+         setMode('saved')
+         setEditMode(false)
+         //for pageModule this noneditMode tells the config belongs to pageModule 
+         //and there is no requirement of editMode
+         !noneditMode && setEditMode(false)
+         setIsSavedChange(true)
+         setModalVisible(false)
+      }, 1000);
+   };
+
    return (
       <Styles.ConfigTemplateUI>
          {config ? (
@@ -221,8 +245,7 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
                   }
                   style={{ width: '100%' }}
                   extra={
-                     editMode ? (<>
-
+                     (editMode && mode == 'editing') ? (<>
                         <TextButton
                            type="solid"
                            size="sm"
@@ -247,7 +270,25 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
                   {fields.map((config, index) => (
                      <div key={index}>{config}</div>
                   ))}
-               </Card>
+
+
+                  <Modal
+                     visible={modalVisible}
+                     title="Unsaved Changes"
+                     onOk={handleOk}
+                     onCancel={() => setModalVisible(false)}
+                     footer={[
+                        <Button key="back" onClick={() => setModalVisible(false)}>
+                           Discard
+                        </Button>,
+                        <Button key="submit" type="primary" loading={modalLoading} onClick={handleOk}>
+                           Save
+                        </Button>
+                     ]}
+                  >
+                     Your Changes will be lost. Please save your changes.
+                     Click Save to save your changes.
+                  </Modal></Card>
             </>
          ) : (
             <Flex container justifyContent="center" padding="16px">
