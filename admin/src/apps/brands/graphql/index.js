@@ -249,4 +249,86 @@ export const LOCATIONS = {
          }
       }
    `,
+   UPDATE: gql`
+      mutation updateLocation($_set: brands_location_set_input!, $id: Int!) {
+         update_brands_location(where: { id: { _eq: $id } }, _set: $_set) {
+            affected_rows
+         }
+      }
+   `,
+   VIEW: gql`
+      subscription viewLocation($id: Int!) {
+         brands_location(where: { id: { _eq: $id } }) {
+            city
+            country
+            isActive
+            label
+            state
+            zipcode
+            locationAddress
+         }
+      }
+   `,
 }
+export const BRAND_LOCATION = {
+   VIEW: gql`
+      subscription MySubscription($locationId: Int!) {
+         brands_brand_location(where: { locationId: { _eq: $locationId } }) {
+            brandId
+            doesDeliver
+            doesDeliverOutsideCity
+            doesDeliverOutsideState
+            doesDinein
+            doesPickup
+            isActive
+            locationId
+            brand {
+               id
+               title
+            }
+         }
+      }
+   `,
+   UPDATE_BRAND: gql`
+      mutation insertBrandLocation(
+         $objects: [brands_brand_location_insert_input!]!
+      ) {
+         insert_brands_brand_location(
+            objects: $objects
+            on_conflict: { constraint: brand_location_locationId_brandId_key }
+         ) {
+            affected_rows
+         }
+      }
+   `,
+   UPDATE: gql`
+      mutation updateBrandLocation(
+         $_set: brands_brand_location_set_input!
+         $brandId: Int!
+         $locationId: Int!
+      ) {
+         update_brands_brand_location(
+            where: {
+               locationId: { _eq: $locationId }
+               brandId: { _eq: $brandId }
+            }
+            _set: $_set
+         ) {
+            affected_rows
+         }
+      }
+   `,
+}
+export const BRAND_ID_LIST = gql`
+   subscription brandId {
+      brandsAggregate(
+         order_by: { id: asc }
+         where: { isArchived: { _eq: false } }
+      ) {
+         nodes {
+            title
+            id
+         }
+      }
+   }
+`

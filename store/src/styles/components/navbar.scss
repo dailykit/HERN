@@ -104,7 +104,7 @@
    border-radius: 0.25rem;
 }
 .hern-header__avatar {
-   margin-right: 0.75rem;
+   padding: 0 0.75rem;
    display: -webkit-inline-box;
    display: -webkit-inline-flex;
    display: -ms-inline-flexbox;
@@ -117,11 +117,9 @@
    -webkit-justify-content: center;
    -ms-flex-pack: center;
    justify-content: center;
-   border-radius: 9999px;
-   height: 2.5rem;
-   width: 2.5rem;
-   --tw-bg-opacity: 1;
-   background-color: rgba(229, 231, 235, var(--tw-bg-opacity));
+   :hover {
+      cursor: pointer;
+   }
 }
 .hern-header__avatar__skeleton {
    @extend %loading;

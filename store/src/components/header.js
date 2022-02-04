@@ -18,7 +18,7 @@ import {
    useQueryParams,
    useQueryParamState,
 } from '../utils'
-import MenuIcon from '../assets/icons/Menu'
+import { MenuIcon, UserIcon } from '../assets/icons'
 
 import { ProfileSidebar } from './profile_sidebar'
 import { CrossIcon, CartIcon, LocationIcon, DownVector } from '../assets/icons'
@@ -718,25 +718,26 @@ export const Header = ({ settings, navigationMenus }) => {
                         </>
                      ) : isAuthenticated ? (
                         <>
-                           {user?.platform_customer?.firstName &&
-                              (isClient && width > 768 ? (
-                                 <span className="hern-header__avatar">
-                                    <Link href={getRoute('/account/profile/')}>
-                                       {getInitials(
-                                          `${user.platform_customer?.firstName} ${user.platform_customer?.lastName}`
-                                       )}
-                                    </Link>
-                                 </span>
-                              ) : (
-                                 <span
-                                    className="hern-header__avatar"
-                                    onClick={() => setToggle(!toggle)}
+                           {isClient && width > 767 ? (
+                              <span className="hern-header__avatar">
+                                 <button
+                                    onClick={() =>
+                                       router.push(
+                                          getRoute('/account/profile/')
+                                       )
+                                    }
                                  >
-                                    {getInitials(
-                                       `${user.platform_customer?.firstName} ${user.platform_customer?.lastName}`
-                                    )}
-                                 </span>
-                              ))}
+                                    <UserIcon size="20" />
+                                 </button>
+                              </span>
+                           ) : (
+                              <span
+                                 className="hern-header__avatar"
+                                 onClick={() => setToggle(!toggle)}
+                              >
+                                 <UserIcon size="20" />
+                              </span>
+                           )}
 
                            <button
                               className="hern-header__logout-btn"
@@ -769,7 +770,7 @@ export const Header = ({ settings, navigationMenus }) => {
                         {isMobileNavVisible ? (
                            <CrossIcon stroke="#111" size={24} />
                         ) : (
-                           <MenuIcon />
+                           <MenuIcon color="#111" />
                         )}
                      </button>
                   </section>

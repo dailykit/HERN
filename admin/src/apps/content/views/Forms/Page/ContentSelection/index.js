@@ -255,8 +255,9 @@ const ContentSelection = () => {
                            <IconButton
                               type="ghost"
                               onClick={() => openConfig(file)}
+
                            >
-                              <EditIcon color="#555b6e" size="20" />
+                              <EditIcon color={linkedModuleId == file.id ? "#367bf5" : "#555b6e"} size="20" />
                            </IconButton>
                         )}
 
@@ -290,34 +291,39 @@ const ContentSelection = () => {
                      noneditMode={"noneditMode"}
                      setLinkedModuleId={setLinkedModuleId}
                   />
-                  <LinkFiles
-                     title="Linked CSS file with this Module"
-                     fileType="css"
-                     entityId={linkedModuleId}
-                     scope="page-module"
-                  />
-                  <LinkFiles
-                     title="Linked JS file with this Module"
-                     fileType="js"
-                     entityId={linkedModuleId}
-                     scope="page-module"
-                  />
+                  <Styles.LinkWrapper>
+                     <LinkFiles
+                        title="Linked CSS file"
+                        fileType="css"
+                        entityId={linkedModuleId}
+                        scope="page-module"
+                     />
+                     <LinkFiles
+                        title="Linked JS file"
+                        fileType="js"
+                        entityId={linkedModuleId}
+                        scope="page-module"
+                     />
+
+                  </Styles.LinkWrapper>
                </>
             ) : (
-               <>
+               <Styles.LinkWrapper>
+
                   <LinkFiles
-                     title="Linked CSS file with this Page"
+                     title="Linked CSS file"
                      fileType="css"
                      entityId={pageId}
                      scope="page"
                   />
                   <LinkFiles
-                     title="Linked JS file with this Page"
+                     title="Linked JS file"
                      fileType="js"
                      entityId={pageId}
                      scope="page"
                   />
-               </>
+
+               </Styles.LinkWrapper>
             )}
          </Styles.ConfigWrapper>
       </Styles.Wrapper>

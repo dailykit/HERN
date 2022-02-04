@@ -2261,3 +2261,11 @@ export const PRODUCT_SEO_SETTINGS_BY_ID = gql`
       }
    }
 `
+export const SUPPORTED_PAYMENT_OPTIONS = gql`
+   query SUPPORTED_PAYMENT_OPTIONS {
+      brands_supportedPaymentCompany {
+         id
+         label
+      }
+   }
+`

@@ -75,9 +75,9 @@ const PrintProcessingModal = ({
       if (printStatus === 'success') {
          setTimeout(async () => {
             if (isKioskMode) {
-               await resetPaymentProviderStates()
-               clearCurrentPage()
-               setStoredCartId(null)
+               // await resetPaymentProviderStates()
+               // clearCurrentPage()
+               // setStoredCartId(null)
                if (isClient) {
                   window.location.reload()
                }

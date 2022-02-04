@@ -1,23 +1,73 @@
-import { Radio, Space } from 'antd'
+import { Modal, Radio, Space } from 'antd'
 import classNames from 'classnames'
 import React, { useState } from 'react'
 import { useTranslation } from '../../context'
+import KioskButton from './component/button'
+import { ReloadIcon } from '../../assets/icons'
+import { isClient } from '../../utils'
 
 export const KioskHeader = props => {
    const { config } = props
-   const { direction } = useTranslation()
+   const { t } = useTranslation()
+   const [showReloadWarningPopup, setShowReloadWarningPopup] =
+      React.useState(false)
    return (
       <div className="hern-kiosk__kiosk-header-container">
          <img
             src={config.kioskSettings.logo.value}
             className="hern-kiosk__kiosk-header-logo"
          />
-         <LanguageSelector config={config} />
+         <LanguageSelector
+            config={config}
+            setShowReloadWarningPopup={setShowReloadWarningPopup}
+         />
+
+         <Modal
+            title={t('Current changes will lose do you wish to continue?')}
+            visible={showReloadWarningPopup}
+            centered={true}
+            onCancel={() => {
+               setShowReloadWarningPopup(false)
+            }}
+            closable={false}
+            footer={null}
+         >
+            <div
+               style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+               }}
+            >
+               <KioskButton
+                  onClick={() => {
+                     setShowReloadWarningPopup(false)
+                  }}
+                  style={{
+                     border: `2px solid ${config.kioskSettings.theme.secondaryColor.value}`,
+                     background: 'transparent',
+                     padding: '.1em 2em',
+                  }}
+               >
+                  {t('CANCEL')}
+               </KioskButton>
+               <KioskButton
+                  style={{ padding: '.1em 2em' }}
+                  onClick={() => {
+                     if (isClient) {
+                        window.location.reload()
+                     }
+                  }}
+               >
+                  {t('CONTINUE')}
+               </KioskButton>
+            </div>
+         </Modal>
       </div>
    )
 }
 const LanguageSelector = props => {
-   const { config } = props
+   const { config, setShowReloadWarningPopup } = props
    const { changeLocale, locales } = useTranslation()
    const defaultLang = React.useMemo(() => {
       return locales.find(x => x.default).langCode
@@ -25,7 +75,7 @@ const LanguageSelector = props => {
 
    const [lang, setLang] = useState(defaultLang)
    return (
-      <div>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
          <Radio.Group
             defaultValue={lang}
             buttonStyle="solid"
@@ -74,6 +124,16 @@ const LanguageSelector = props => {
                })}
             </Space>
          </Radio.Group>
+         <div
+            onClick={() => {
+               setShowReloadWarningPopup(true)
+            }}
+            style={{
+               margin: '0 20px',
+            }}
+         >
+            <ReloadIcon size={32} />
+         </div>
       </div>
    )
 }

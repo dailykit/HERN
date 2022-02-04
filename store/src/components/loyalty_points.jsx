@@ -16,7 +16,11 @@ export const LoyaltyPoints = ({ cart, version = 1 }) => {
    )
    const isVersion2 = React.useMemo(() => version === 2, [version])
 
-   const [points, setPoints] = React.useState(cart.loyaltyPointsUsable)
+   const [points, setPoints] = React.useState(
+      cart.loyaltyPointsUsed < cart.loyaltyPointsUsable
+         ? cart.loyaltyPointsUsed
+         : cart.loyaltyPointsUsable
+   )
 
    const [updateCart] = useMutation(MUTATIONS.CART.UPDATE, {
       onCompleted: () => console.log('Loyalty points added!'),
@@ -83,6 +87,7 @@ export const LoyaltyPoints = ({ cart, version = 1 }) => {
    }
 
    if (!cart.loyaltyPointsUsable) return null
+
    return (
       <div
          className="hern-loyalty-points"

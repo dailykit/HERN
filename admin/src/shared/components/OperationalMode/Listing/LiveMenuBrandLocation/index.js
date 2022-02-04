@@ -35,12 +35,13 @@ import {
    BrandLocationManagerProductOption,
 } from './BulkActionTunnel'
 import { useWindowSize } from '../../../../hooks'
+import { InlineLoader } from '../../..'
 
 const LiveMenuBrandLocation = () => {
-   const location = useLocation()
+   const brandDetail = useParams()
    const { width } = useWindowSize()
 
-   console.log('location:::', location)
+   console.log('brandDetail:::', brandDetail)
    return (
       <>
          <Flex>
@@ -48,10 +49,10 @@ const LiveMenuBrandLocation = () => {
                {width > 768 ? (
                   <Text as="h2">
                      We are changing product settings for{' '}
-                     {location.state[0].brandName} brand{' '}
+                     {brandDetail.brandName} brand{' '}
                   </Text>
                ) : (
-                  <Text as="h2">{location.state[0].brandName} Brand </Text>
+                  <Text as="h2">{brandDetail.brandName} Brand </Text>
                )}
             </StyledTitle>
             <Flex>
@@ -70,10 +71,10 @@ const LiveMenuBrandLocation = () => {
                   </HorizontalTabList>
                   <HorizontalTabPanels>
                      <HorizontalTabPanel>
-                        <LiveMenuProductTable location={location} />
+                        <LiveMenuProductTable brandDetail={brandDetail} />
                      </HorizontalTabPanel>
                      <HorizontalTabPanel>
-                        <LiveMenuProductOptionTable location={location} />
+                        <LiveMenuProductOptionTable brandDetail={brandDetail} />
                      </HorizontalTabPanel>
                   </HorizontalTabPanels>
                </HorizontalTabs>
@@ -82,7 +83,7 @@ const LiveMenuBrandLocation = () => {
       </>
    )
 }
-const LiveMenuProductTable = ({ location }) => {
+const LiveMenuProductTable = ({ brandDetail }) => {
    const [CollectionProducts, setCollectionProducts] = React.useState([])
    const tableRef = useRef()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
@@ -91,12 +92,13 @@ const LiveMenuProductTable = ({ location }) => {
    const [popupTunnels, openPopupTunnel, closePopupTunnel] = useTunnel(1)
    const [selectedRowData, setSelectedRowData] = React.useState(null)
    const { width } = useWindowSize()
+   const [isLoading, setIsLoading] = React.useState(true)
 
-   const { loading } = useSubscription(COLLECTION_PRODUCTS, {
+   const { loading, error } = useSubscription(COLLECTION_PRODUCTS, {
       variables: {
          brandId: null,
          brandId1: null,
-         brand_locationId: location.state[0].brandLocationId,
+         brand_locationId: brandDetail.brandLocationId,
       },
       onSubscriptionData: data => {
          const result = data.subscriptionData.data.products.map(product => {
@@ -115,8 +117,8 @@ const LiveMenuProductTable = ({ location }) => {
             return {
                id: product.id,
                name: product.name,
-               brandId: location.state[0].brandId,
-               brand_locationId: location.state[0].brandLocationId,
+               brandId: brandDetail.brandId,
+               brand_locationId: brandDetail.brandLocationId,
 
                category:
                   product?.collection_categories[0]?.collection_productCategory
@@ -139,9 +141,12 @@ const LiveMenuProductTable = ({ location }) => {
             }
          })
          setCollectionProducts(result)
+         setIsLoading(false)
       },
    })
    // console.log('products', CollectionProducts)
+
+   //mutations
    const [resetProduct] = useMutation(RESET_BRAND_MANAGER, {
       onCompleted: () => {
          toast.success('Product has Reset!')
@@ -151,6 +156,15 @@ const LiveMenuProductTable = ({ location }) => {
          logger(error)
       },
    })
+   const [updateBrandProduct] = useMutation(PRODUCT_PRICE_BRAND_LOCATION, {
+      onCompleted: () => toast.success('Successfully updated!'),
+      onError: error => {
+         toast.error('Failed to update, please try again!')
+         logger(error)
+      },
+   })
+
+   //handler
    const resetHandler = product => {
       if (
          window.confirm(
@@ -169,18 +183,11 @@ const LiveMenuProductTable = ({ location }) => {
          })
       }
    }
+
    const groupByOptions = [
       { id: 1, title: 'Published', payload: 'isPublished' },
       { id: 2, title: 'Available', payload: 'isAvailable' },
    ]
-
-   const [updateBrandProduct] = useMutation(PRODUCT_PRICE_BRAND_LOCATION, {
-      onCompleted: () => toast.success('Successfully updated!'),
-      onError: error => {
-         toast.error('Failed to update, please try again!')
-         logger(error)
-      },
-   })
 
    const columns = [
       {
@@ -402,6 +409,8 @@ const LiveMenuProductTable = ({ location }) => {
       tableRef.current.table.deselectRow(id)
    }
    // console.log('table ref', tableRef)
+
+   if (isLoading) return <InlineLoader />
    return (
       <>
          <ActionBar
@@ -449,7 +458,7 @@ const LiveMenuProductTable = ({ location }) => {
       </>
    )
 }
-const LiveMenuProductOptionTable = ({ location }) => {
+const LiveMenuProductOptionTable = ({ brandDetail }) => {
    const [CollectionProducts, setCollectionProducts] = React.useState([])
    const tableRef = useRef()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
@@ -458,12 +467,14 @@ const LiveMenuProductOptionTable = ({ location }) => {
    const [popupTunnels, openPopupTunnel, closePopupTunnel] = useTunnel(1)
    const [selectedRowData, setSelectedRowData] = React.useState(null)
    const { width } = useWindowSize()
+   const [isLoading, setIsLoading] = useState(true)
 
-   const { loading } = useSubscription(COLLECTION_PRODUCT_OPTIONS, {
+   //subscription
+   const { loading, error } = useSubscription(COLLECTION_PRODUCT_OPTIONS, {
       variables: {
          brandId: null,
          brandId1: null,
-         brand_locationId: location.state[0].brandLocationId,
+         brand_locationId: brandDetail.brandLocationId,
       },
       onSubscriptionData: data => {
          const result = data.subscriptionData.data.productOptions.map(
@@ -488,8 +499,8 @@ const LiveMenuProductOptionTable = ({ location }) => {
                return {
                   id: productOptions.id,
                   name: productOptions.product.name,
-                  brandId: location.state[0].brandId,
-                  brand_locationId: location.state[0].brandLocationId,
+                  brandId: brandDetail.brandId,
+                  brand_locationId: brandDetail.brandLocationId,
                   category:
                      productOptions?.product?.collection_categories[0]
                         ?.collection_productCategory?.productCategoryName ||
@@ -517,9 +528,12 @@ const LiveMenuProductOptionTable = ({ location }) => {
             }
          )
          setCollectionProducts(result)
+         setIsLoading(false)
       },
    })
    // console.log('products', CollectionProducts)
+
+   //mutation
    const [resetProduct] = useMutation(RESET_BRAND_MANAGER, {
       onCompleted: () => {
          toast.success('Product has Reset!')
@@ -529,6 +543,15 @@ const LiveMenuProductOptionTable = ({ location }) => {
          logger(error)
       },
    })
+   const [updateBrandProduct] = useMutation(PRODUCT_PRICE_BRAND_LOCATION, {
+      onCompleted: () => toast.success('Successfully updated!'),
+      onError: error => {
+         toast.error('Failed to update, please try again!')
+         logger(error)
+      },
+   })
+
+   //handler
    const resetHandler = product => {
       if (
          window.confirm(
@@ -551,14 +574,6 @@ const LiveMenuProductOptionTable = ({ location }) => {
       { id: 1, title: 'Published', payload: 'isPublished' },
       { id: 2, title: 'Available', payload: 'isAvailable' },
    ]
-
-   const [updateBrandProduct] = useMutation(PRODUCT_PRICE_BRAND_LOCATION, {
-      onCompleted: () => toast.success('Successfully updated!'),
-      onError: error => {
-         toast.error('Failed to update, please try again!')
-         logger(error)
-      },
-   })
 
    const columns = [
       {
@@ -787,6 +802,8 @@ const LiveMenuProductOptionTable = ({ location }) => {
       tableRef.current.table.deselectRow(id)
    }
    // console.log('table ref', tableRef)
+
+   if (isLoading) return <InlineLoader />
    return (
       <>
          <ActionBar
