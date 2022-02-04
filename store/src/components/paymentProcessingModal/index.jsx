@@ -35,6 +35,11 @@ const PaymentProcessingModal = ({
       await closeModal()
       // await resetPaymentProviderStates()
    }
+   const resetStateAfterModalClose = async () => {
+      setIsCelebrating(false)
+      await closeModal()
+      await resetPaymentProviderStates()
+   }
 
    const stopCelebration = async () => {
       setIsCelebrating(false)
@@ -113,7 +118,7 @@ const PaymentProcessingModal = ({
                   type="primary"
                   className="tryOtherPayment"
                   key="console"
-                  onClick={closeModalHandler}
+                  onClick={resetStateAfterModalClose}
                >
                   Try other payment method
                </Button>,
@@ -132,7 +137,7 @@ const PaymentProcessingModal = ({
                   type="primary"
                   className="tryOtherPayment"
                   key="console"
-                  onClick={closeModalHandler}
+                  onClick={resetStateAfterModalClose}
                >
                   Try other payment method
                </Button>,
@@ -204,7 +209,7 @@ const PaymentProcessingModal = ({
                   type="primary"
                   className="tryOtherPayment"
                   key="console"
-                  onClick={closeModalHandler}
+                  onClick={resetStateAfterModalClose}
                >
                   Try other payment method
                </Button>,
@@ -223,7 +228,7 @@ const PaymentProcessingModal = ({
                   type="primary"
                   className="tryOtherPayment"
                   key="console"
-                  onClick={closeModalHandler}
+                  onClick={resetStateAfterModalClose}
                >
                   Try other payment method
                </Button>,
@@ -243,7 +248,7 @@ const PaymentProcessingModal = ({
                   type="primary"
                   className="tryOtherPayment"
                   key="console"
-                  onClick={closeModalHandler}
+                  onClick={resetStateAfterModalClose}
                >
                   Try other payment method
                </Button>,
@@ -358,7 +363,7 @@ const PaymentProcessingModal = ({
                <Button
                   type="link"
                   tw="fixed top-8 left-4"
-                  onClick={normalModalClose}
+                  onClick={resetPaymentProviderStates}
                >
                   <div tw="flex items-center">
                      <ArrowLeftIconBG bgColor="#F7B502" arrowColor="#fff" />
