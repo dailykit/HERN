@@ -137,6 +137,7 @@ export const isStorePreOrderDeliveryAvailable = async (
                      eachStore,
                      address
                   )
+               console.log('distanceDeliveryStatus', distanceDeliveryStatus)
                const { isDistanceValid, zipcode, geoBoundary } =
                   distanceDeliveryStatus.result
                const status = isDistanceValid && zipcode && geoBoundary
@@ -215,7 +216,7 @@ const isStoreDeliveryAvailableByDistance = async (
       // aerial distance
       if (mileRanges[mileRange].distanceType === 'aerial') {
          const aerialDistance = mileRanges[mileRange]
-         if (aerialDistance.from && aerialDistance.to) {
+         if (aerialDistance.from !== null && aerialDistance.to !== null) {
             let result =
                eachStore.aerialDistance >= aerialDistance.from &&
                eachStore.aerialDistance <= aerialDistance.to
@@ -230,7 +231,8 @@ const isStoreDeliveryAvailableByDistance = async (
       // drivable distance
       if (mileRanges[mileRange].distanceType === 'drivable') {
          const drivableDistance = mileRanges[mileRange]
-         if (drivableDistance.from && drivableDistance.to) {
+         console.log('drivableDistance', drivableDistance)
+         if (drivableDistance.from !== null && drivableDistance.to !== null) {
             try {
                const origin = isClient ? window.location.origin : ''
                const url = `${origin}/server/api/distance-matrix`

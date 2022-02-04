@@ -229,7 +229,7 @@ export const Delivery = props => {
                      },
                   })
                   Modal.warning({
-                     title: `This time slots are not available now.`,
+                     title: `This time slot is not available now.`,
                      maskClosable: true,
                      centered: true,
                   })
@@ -254,7 +254,7 @@ export const Delivery = props => {
                   })
                }
                Modal.warning({
-                  title: `This time slots are not available now.`,
+                  title: `This time slot expired.`,
                   maskClosable: true,
                   centered: true,
                })
@@ -267,58 +267,61 @@ export const Delivery = props => {
    }, [stores, cartState.cart])
 
    React.useEffect(() => {
-      const cartTimeSlotFrom = cartState.cart?.fulfillmentInfo?.slot?.from
-      const cartTimeSlotTo = cartState.cart?.fulfillmentInfo?.slot?.to
-      const cartFulfillmentType = cartState.cart?.fulfillmentInfo?.type
-      if (
-         cartTimeSlotFrom &&
-         cartTimeSlotTo &&
-         cartFulfillmentType == 'PREORDER_DELIVERY'
-      ) {
-         const isValid = getTimeSlotsValidation(
-            stores[0].fulfillmentStatus.rec,
-            cartTimeSlotFrom,
-            cartTimeSlotTo,
-            cartState.cart?.fulfillmentInfo.slot.mileRangeId
-         )
-         if (!isValid.status) {
-            methods.cart.update({
-               variables: {
-                  id: cartState?.cart?.id,
-                  _set: {
-                     fulfillmentInfo: null,
+      if (stores && stores.length > 0) {
+         const cartTimeSlotFrom = cartState.cart?.fulfillmentInfo?.slot?.from
+         const cartTimeSlotTo = cartState.cart?.fulfillmentInfo?.slot?.to
+         const cartFulfillmentType = cartState.cart?.fulfillmentInfo?.type
+         if (
+            cartTimeSlotFrom &&
+            cartTimeSlotTo &&
+            cartFulfillmentType == 'PREORDER_DELIVERY'
+         ) {
+            const isValid = getTimeSlotsValidation(
+               stores[0].fulfillmentStatus.rec,
+               cartTimeSlotFrom,
+               cartTimeSlotTo,
+               cartState.cart?.fulfillmentInfo.slot.mileRangeId
+            )
+            console.log('isValid', isValid)
+            if (!isValid.status) {
+               methods.cart.update({
+                  variables: {
+                     id: cartState?.cart?.id,
+                     _set: {
+                        fulfillmentInfo: null,
+                     },
                   },
-               },
-            })
+               })
+               Modal.warning({
+                  title: `This time slot is not available now.`,
+                  maskClosable: true,
+                  centered: true,
+               })
+            }
+         }
+         if (cartFulfillmentType == 'ONDEMAND_DELIVERY') {
+            const isValid = getOnDemandValidation(
+               stores[0].fulfillmentStatus.rec,
+               cartState.cart?.fulfillmentInfo.slot.mileRangeId
+            )
+            if (!isValid.status) {
+               methods.cart.update({
+                  variables: {
+                     id: cartState?.cart?.id,
+                     _set: {
+                        fulfillmentInfo: null,
+                     },
+                  },
+               })
+            }
             Modal.warning({
-               title: `This time slots are not available now.`,
+               title: `This time slot expired.`,
                maskClosable: true,
                centered: true,
             })
          }
       }
-      if (cartFulfillmentType == 'ONDEMAND_DELIVERY') {
-         const isValid = getOnDemandValidation(
-            stores[0].fulfillmentStatus.rec,
-            cartState.cart?.fulfillmentInfo.slot.mileRangeId
-         )
-         if (!isValid.status) {
-            methods.cart.update({
-               variables: {
-                  id: cartState?.cart?.id,
-                  _set: {
-                     fulfillmentInfo: null,
-                  },
-               },
-            })
-         }
-         Modal.warning({
-            title: `This time slots are not available now.`,
-            maskClosable: true,
-            centered: true,
-         })
-      }
-   }, [])
+   }, [stores])
 
    const title = React.useMemo(() => {
       switch (cartState.cart?.fulfillmentInfo?.type) {
