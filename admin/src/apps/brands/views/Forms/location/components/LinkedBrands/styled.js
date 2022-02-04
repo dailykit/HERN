@@ -30,7 +30,10 @@ export const StyledCard = styled.div`
 `
 export const StyledContent = styled.div`
    display: flex;
-   width: 16rem;
+   border-right: 1px solid #f3f3f3;
+   border-left: 1px solid #f3f3f3;
+   margin-left: 0.5rem;
+   width: 15.6rem;
    gap: 0.5rem;
    height: auto;
    flex-direction: column;
