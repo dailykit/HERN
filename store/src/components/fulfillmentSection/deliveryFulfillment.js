@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Radio, Space } from 'antd'
+import { Modal, Radio, Space } from 'antd'
 import { useConfig } from '../../lib'
 import { EditIcon, OrderTime } from '../../assets/icons'
 import moment from 'moment'
@@ -8,6 +8,7 @@ import {
    getStoresWithValidations,
    generateDeliverySlots,
    generateMiniSlots,
+   getTimeSlotsValidation,
 } from '../../utils'
 import { CartContext } from '../../context'
 import { Loader } from '../'
@@ -64,6 +65,8 @@ export const Delivery = props => {
    const [stores, setStores] = useState(null)
    const [isLoading, setIsLoading] = React.useState(true)
    const [showSlots, setShowSlots] = React.useState(false)
+   const [isSlotInCrtItemValid, setIsSlotInCartItemValid] =
+      React.useState(false)
 
    const deliveryRadioOptions = React.useMemo(() => {
       let options = []
@@ -136,12 +139,12 @@ export const Delivery = props => {
       }
    }, [fulfillmentType, stores])
 
-   const onFulfillmentTimeClick = timestamp => {
+   const onFulfillmentTimeClick = (timestamp, mileRangeId) => {
       const slotInfo = {
          slot: {
             from: timestamp.from,
             to: timestamp.to,
-            mileRangeId: stores[0].fulfillmentStatus.mileRangeInfo.id,
+            mileRangeId: mileRangeId,
          },
          type: 'PREORDER_DELIVERY',
       }
@@ -169,13 +172,8 @@ export const Delivery = props => {
    const onNowClick = () => {
       const slotInfo = {
          slot: {
-            from: moment().format(),
-            to: moment()
-               .add(
-                  stores[0].fulfillmentStatus.mileRangeInfo.prepTime,
-                  'minutes'
-               )
-               .format(),
+            from: null,
+            to: null,
             mileRangeId: stores[0].fulfillmentStatus.mileRangeInfo.id,
          },
          type: 'ONDEMAND_DELIVERY',
@@ -203,6 +201,124 @@ export const Delivery = props => {
          })
       }
    }, [stores])
+
+   useEffect(() => {
+      const interval = setInterval(() => {
+         if (stores && stores.length > 0) {
+            const cartTimeSlotFrom = cartState.cart?.fulfillmentInfo?.slot?.from
+            const cartTimeSlotTo = cartState.cart?.fulfillmentInfo?.slot?.to
+            const cartFulfillmentType = cartState.cart?.fulfillmentInfo?.type
+            if (
+               cartTimeSlotFrom &&
+               cartTimeSlotTo &&
+               cartFulfillmentType == 'PREORDER_DELIVERY'
+            ) {
+               const isValid = getTimeSlotsValidation(
+                  stores[0].fulfillmentStatus.rec,
+                  cartTimeSlotFrom,
+                  cartTimeSlotTo,
+                  cartState.cart?.fulfillmentInfo?.slot?.mileRangeId
+               )
+               if (!isValid.status) {
+                  methods.cart.update({
+                     variables: {
+                        id: cartState?.cart?.id,
+                        _set: {
+                           fulfillmentInfo: null,
+                        },
+                     },
+                  })
+                  Modal.warning({
+                     title: `This time slots are not available now.`,
+                     maskClosable: true,
+                     centered: true,
+                  })
+               }
+            }
+            if (
+               cartFulfillmentType == 'ONDEMAND_DELIVERY' &&
+               cartState.cart?.fulfillmentInfo?.slot?.mileRangeId
+            ) {
+               const isValid = getOnDemandValidation(
+                  stores[0].fulfillmentStatus.rec,
+                  cartState.cart?.fulfillmentInfo?.slot?.mileRangeId
+               )
+               if (!isValid.status) {
+                  methods.cart.update({
+                     variables: {
+                        id: cartState?.cart?.id,
+                        _set: {
+                           fulfillmentInfo: null,
+                        },
+                     },
+                  })
+               }
+               Modal.warning({
+                  title: `This time slots are not available now.`,
+                  maskClosable: true,
+                  centered: true,
+               })
+            }
+         }
+      }, 10000)
+      return () => {
+         clearInterval(interval)
+      }
+   }, [stores, cartState.cart])
+
+   React.useEffect(() => {
+      const cartTimeSlotFrom = cartState.cart?.fulfillmentInfo?.slot?.from
+      const cartTimeSlotTo = cartState.cart?.fulfillmentInfo?.slot?.to
+      const cartFulfillmentType = cartState.cart?.fulfillmentInfo?.type
+      if (
+         cartTimeSlotFrom &&
+         cartTimeSlotTo &&
+         cartFulfillmentType == 'PREORDER_DELIVERY'
+      ) {
+         const isValid = getTimeSlotsValidation(
+            stores[0].fulfillmentStatus.rec,
+            cartTimeSlotFrom,
+            cartTimeSlotTo,
+            cartState.cart?.fulfillmentInfo.slot.mileRangeId
+         )
+         if (!isValid.status) {
+            methods.cart.update({
+               variables: {
+                  id: cartState?.cart?.id,
+                  _set: {
+                     fulfillmentInfo: null,
+                  },
+               },
+            })
+            Modal.warning({
+               title: `This time slots are not available now.`,
+               maskClosable: true,
+               centered: true,
+            })
+         }
+      }
+      if (cartFulfillmentType == 'ONDEMAND_DELIVERY') {
+         const isValid = getOnDemandValidation(
+            stores[0].fulfillmentStatus.rec,
+            cartState.cart?.fulfillmentInfo.slot.mileRangeId
+         )
+         if (!isValid.status) {
+            methods.cart.update({
+               variables: {
+                  id: cartState?.cart?.id,
+                  _set: {
+                     fulfillmentInfo: null,
+                  },
+               },
+            })
+         }
+         Modal.warning({
+            title: `This time slots are not available now.`,
+            maskClosable: true,
+            centered: true,
+         })
+      }
+   }, [])
 
    const title = React.useMemo(() => {
       switch (cartState.cart?.fulfillmentInfo?.type) {

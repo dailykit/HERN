@@ -46,7 +46,10 @@ export const TimeSlots = ({
                         selectedSlot.date,
                         60
                      )
-                     onFulfillmentTimeClick(newTimeStamp)
+                     onFulfillmentTimeClick(
+                        newTimeStamp,
+                        e.target.value.mileRangeId
+                     )
                   }}
                >
                   {_.sortBy(selectedSlot.slots, [

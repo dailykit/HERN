@@ -2,6 +2,7 @@ import { rrulestr } from 'rrule'
 import { isPointInPolygon, convertDistance } from 'geolib'
 import { isClient, get_env } from '../../index'
 import axios from 'axios'
+import moment from 'moment'
 
 // return delivery status of store (with recurrences, mileRange info, timeSlot info and drivable distance if store available for on demand delivery)
 export const isStoreOnDemandDeliveryAvailable = async (
@@ -19,7 +20,15 @@ export const isStoreOnDemandDeliveryAvailable = async (
       )
       if (dates.length) {
          if (finalRecurrences[rec].recurrence.timeSlots.length) {
-            for (let timeslot of finalRecurrences[rec].recurrence.timeSlots) {
+            const sortedTimeSlots = _.sortBy(
+               finalRecurrences[rec].recurrence.timeSlots,
+               [
+                  function (slot) {
+                     return moment(slot.from, 'HH:mm')
+                  },
+               ]
+            )
+            for (let timeslot of sortedTimeSlots) {
                if (timeslot.mileRanges.length) {
                   const timeslotFromArr = timeslot.from.split(':')
                   const timeslotToArr = timeslot.to.split(':')
@@ -67,7 +76,13 @@ export const isStoreOnDemandDeliveryAvailable = async (
                         }
                      }
                   } else {
-                     if (rec == finalRecurrences.length - 1) {
+                     const timeslotIndex =
+                        finalRecurrences[rec].recurrence.timeSlots.indexOf(
+                           timeslot
+                        )
+                     const timesSlotsLength =
+                        finalRecurrences[rec].recurrence.timeSlots.length
+                     if (timeslotIndex == timesSlotsLength - 1) {
                         return {
                            status: false,
                            message:
@@ -104,46 +119,78 @@ export const isStorePreOrderDeliveryAvailable = async (
 ) => {
    let fulfilledRecurrences = []
    for (let rec in finalRecurrences) {
-      for (let timeslot of finalRecurrences[rec].recurrence.timeSlots) {
-         if (timeslot.mileRanges.length) {
-            const distanceDeliveryStatus =
-               await isStoreDeliveryAvailableByDistance(
-                  timeslot.mileRanges,
-                  eachStore,
-                  address
-               )
-            const { aerial, drivable, zipcode, geoBoundary } =
-               distanceDeliveryStatus.result
-            const status = aerial && drivable && zipcode && geoBoundary
-            if (status) {
-               fulfilledRecurrences = [
-                  ...fulfilledRecurrences,
-                  finalRecurrences[rec],
-               ]
-            }
-            if (
-               rec == finalRecurrences.length - 1 &&
-               fulfilledRecurrences.length > 0
-            ) {
-               return {
-                  status,
-                  result: distanceDeliveryStatus.result,
-                  rec: fulfilledRecurrences,
-                  mileRangeInfo: distanceDeliveryStatus.mileRangeInfo,
-                  timeSlotInfo: timeslot,
-                  message: status
-                     ? 'Pre Order Delivery available in your location'
-                     : 'Delivery not available in your location.',
-                  drivableDistance: distanceDeliveryStatus.drivableDistance,
+      if (finalRecurrences[rec].recurrence.timeSlots.length) {
+         const sortedTimeSlots = _.sortBy(
+            finalRecurrences[rec].recurrence.timeSlots,
+            [
+               function (slot) {
+                  return moment(slot.from, 'HH:mm')
+               },
+            ]
+         )
+         let validTimeSlots = []
+         for (let timeslot of sortedTimeSlots) {
+            if (timeslot.mileRanges.length) {
+               const distanceDeliveryStatus =
+                  await isStoreDeliveryAvailableByDistance(
+                     timeslot.mileRanges,
+                     eachStore,
+                     address
+                  )
+               const { aerial, drivable, zipcode, geoBoundary } =
+                  distanceDeliveryStatus.result
+               const status = aerial && drivable && zipcode && geoBoundary
+               console.log('statusMile', status, distanceDeliveryStatus.result)
+               if (status) {
+                  timeslot.validMileRange = distanceDeliveryStatus.mileRangeInfo
+                  validTimeSlots.push(timeslot)
                }
-            } else {
-               if (rec == finalRecurrences.length - 1) {
+               const timeslotIndex = sortedTimeSlots.indexOf(timeslot)
+               const timesSlotsLength = sortedTimeSlots.length
+               console.log('statusMile', timeslotIndex, timesSlotsLength)
+               if (timeslotIndex == timesSlotsLength - 1) {
+                  finalRecurrences[rec].recurrence.validTimeSlots =
+                     validTimeSlots
+                  fulfilledRecurrences = [
+                     ...fulfilledRecurrences,
+                     finalRecurrences[rec],
+                  ]
+               }
+               if (
+                  rec == finalRecurrences.length - 1 &&
+                  fulfilledRecurrences.length > 0 &&
+                  timeslotIndex == timesSlotsLength - 1
+               ) {
                   return {
-                     status: false,
-                     message:
-                        'Sorry, you seem to be placed far out of our delivery range.',
+                     status,
+                     result: distanceDeliveryStatus.result,
+                     rec: fulfilledRecurrences,
+                     mileRangeInfo: distanceDeliveryStatus.mileRangeInfo,
+                     timeSlotInfo: timeslot,
+                     message: status
+                        ? 'Pre Order Delivery available in your location'
+                        : 'Delivery not available in your location.',
+                     drivableDistance: distanceDeliveryStatus.drivableDistance,
+                  }
+               } else {
+                  if (
+                     rec == finalRecurrences.length - 1 &&
+                     timeslotIndex == timesSlotsLength - 1
+                  ) {
+                     return {
+                        status: false,
+                        message:
+                           'Sorry, you seem to be placed far out of our delivery range.',
+                     }
                   }
                }
+            }
+         }
+      } else {
+         if (rec == finalRecurrences.length - 1) {
+            return {
+               status: false,
+               message: 'Sorry, We do not offer Delivery at this time.',
             }
          }
       }
