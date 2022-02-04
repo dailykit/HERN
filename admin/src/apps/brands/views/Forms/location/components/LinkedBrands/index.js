@@ -9,7 +9,7 @@ import {
    Tunnels,
    useTunnel,
 } from '@dailykit/ui'
-import { Switch } from 'antd'
+import { Avatar, Switch, Tooltip } from 'antd'
 import React from 'react'
 import { toast } from 'react-toastify'
 import { PlusIcon } from '../../../../../../../shared/assets/icons'
@@ -25,6 +25,7 @@ import {
 import { BRAND_LOCATION } from '../../../../../graphql'
 import { LinkedBrandsTunnel } from '../../tunnels'
 import {
+   StyledBrandHeader,
    StyledCard,
    StyledContainer,
    StyledContainerHead,
@@ -43,6 +44,7 @@ export const LinkedBrands = ({ state, locationId }) => {
    const { loading, error } = useSubscription(BRAND_LOCATION.VIEW, {
       variables: {
          locationId: locationId,
+         identifier: 'Brand Info',
       },
       onSubscriptionData: data => {
          console.log(
@@ -84,6 +86,7 @@ export const LinkedBrands = ({ state, locationId }) => {
                <LinkedBrandsTunnel
                   close={closeTunnel}
                   locationId={locationId}
+                  state={state}
                />
             </Tunnel>
          </Tunnels>
@@ -113,9 +116,42 @@ export const LinkedBrands = ({ state, locationId }) => {
                            >
                               <TopBrandLocationCard />
                               <StyledContent>
-                                 <Flex>
+                                 <StyledBrandHeader>
+                                    <Tooltip
+                                       title={eachBrand.brand.title}
+                                       placement="top"
+                                       key={eachBrand.brandId}
+                                    >
+                                       {eachBrand.brand.brand_brandSettings
+                                          .length > 0 ? (
+                                          <Avatar
+                                             src={
+                                                eachBrand.brand
+                                                   .brand_brandSettings[0]
+                                                   ?.value.brandLogo.value
+                                                   ? eachBrand.brand
+                                                        .brand_brandSettings[0]
+                                                        ?.value.brandLogo.value
+                                                   : eachBrand.brand
+                                                        .brand_brandSettings[0]
+                                                        ?.value.brandLogo
+                                                        .default.url
+                                             }
+                                          />
+                                       ) : (
+                                          <Avatar
+                                             style={{
+                                                backgroundColor: '#87d068',
+                                             }}
+                                          >
+                                             {eachBrand.brand.title
+                                                .charAt(0)
+                                                .toUpperCase()}
+                                          </Avatar>
+                                       )}
+                                    </Tooltip>
                                     <Text as="h3">{eachBrand.brand.title}</Text>
-                                 </Flex>
+                                 </StyledBrandHeader>
                                  <StyledServiceType>
                                     <StyledServiceToggle>
                                        <DeliveryIcon />

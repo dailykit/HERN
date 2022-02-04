@@ -187,7 +187,6 @@ const DeleteLocation = ({ cell, deleteHandler }) => {
       </>
    )
 }
-
 const BrandAvatar = ({ cell }) => {
    console.log('avatar', cell._cell.row.data)
    const rowData = cell._cell.row.data
@@ -212,12 +211,13 @@ const BrandAvatar = ({ cell }) => {
                >
                   {eachBrand.brand.brand_brandSettings.length > 0 ? (
                      <Avatar
-                        style={{
-                           backgroundColor: '#87d068',
-                        }}
-                        icon={
+                        src={
                            eachBrand.brand.brand_brandSettings[0]?.value
                               .brandLogo.value
+                              ? eachBrand.brand.brand_brandSettings[0]?.value
+                                   .brandLogo.value
+                              : eachBrand.brand.brand_brandSettings[0]?.value
+                                   .brandLogo.default.url
                         }
                      />
                   ) : (

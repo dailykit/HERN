@@ -284,7 +284,7 @@ export const LOCATIONS = {
 }
 export const BRAND_LOCATION = {
    VIEW: gql`
-      subscription MySubscription($locationId: Int!) {
+      subscription linkedBrands($locationId: Int!, $identifier: String!) {
          brands_brand_location(where: { locationId: { _eq: $locationId } }) {
             brandId
             doesDeliver
@@ -294,9 +294,17 @@ export const BRAND_LOCATION = {
             doesPickup
             isActive
             locationId
+            location {
+               label
+            }
             brand {
                id
                title
+               brand_brandSettings(
+                  where: { brandSetting: { identifier: { _eq: $identifier } } }
+               ) {
+                  value
+               }
             }
          }
       }
@@ -332,7 +340,7 @@ export const BRAND_LOCATION = {
    `,
 }
 export const BRAND_ID_LIST = gql`
-   subscription brandId {
+   subscription brandId($identifier: String!) {
       brandsAggregate(
          order_by: { id: asc }
          where: { isArchived: { _eq: false } }
@@ -340,6 +348,12 @@ export const BRAND_ID_LIST = gql`
          nodes {
             title
             id
+            domain
+            brand_brandSettings(
+               where: { brandSetting: { identifier: { _eq: $identifier } } }
+            ) {
+               value
+            }
          }
       }
    }
