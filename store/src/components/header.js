@@ -10,7 +10,7 @@ import {
    getStoresWithValidations,
 } from '../utils'
 
-import { useUser, useTranslation, CartContext } from '../context'
+import { useUser, useTranslation, CartContext, useCart } from '../context'
 import {
    isClient,
    getInitials,
@@ -51,6 +51,7 @@ export const Header = ({ settings, navigationMenus }) => {
          // router.push(signOutData.url)
          window.location.href = window.location.origin + getRoute('/')
       }
+      setStoredCartId(null)
    }
    const params = useQueryParams()
    const [loginPopup, setLoginPopup, deleteLoginPopUp] =
@@ -114,7 +115,7 @@ export const Header = ({ settings, navigationMenus }) => {
 
    const newNavigationMenus = DataWithChildNodes(navigationMenus)
 
-   const { cartState } = React.useContext(CartContext)
+   const { cartState, setStoredCartId } = React.useContext(CartContext)
    const numberOfItemsOnCart =
       cartState?.cart?.cartItems_aggregate?.aggregate?.count
 
