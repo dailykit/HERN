@@ -72,7 +72,7 @@ const LinkedBrandsTunnel = ({ close, locationId }) => {
                title: inFlight ? 'Adding...' : 'Add',
             }}
          />
-         <List>
+         <List style={{ padding: '0 1rem' }}>
             <ListSearch
                onChange={value => setSearch(value)}
                placeholder="type what you’re looking for..."
@@ -91,11 +91,7 @@ const LinkedBrandsTunnel = ({ close, locationId }) => {
                </TagGroup>
             )}
             <ListHeader type="MSL1" label="Brands" />
-            <ListOptions
-               search={search}
-               handleOnCreate={() => setIsCreating(true)}
-               isCreating={isCreating}
-            >
+            <ListOptions search={search}>
                {list
                   .filter(option => option.title.toLowerCase().includes(search))
                   .map(option => (
