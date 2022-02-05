@@ -57,9 +57,9 @@ export const isStoreOnDemandDeliveryAvailable = async (
                            address
                         )
 
-                     const { aerial, drivable, zipcode, geoBoundary } =
+                     const { isDistanceValid, zipcode, geoBoundary } =
                         distanceDeliveryStatus.result
-                     const status = aerial && drivable && zipcode && geoBoundary
+                     const status = isDistanceValid && zipcode && geoBoundary
 
                      if (status || rec == finalRecurrences.length - 1) {
                         return {
@@ -137,9 +137,9 @@ export const isStorePreOrderDeliveryAvailable = async (
                      eachStore,
                      address
                   )
-               const { aerial, drivable, zipcode, geoBoundary } =
+               const { isDistanceValid, zipcode, geoBoundary } =
                   distanceDeliveryStatus.result
-               const status = aerial && drivable && zipcode && geoBoundary
+               const status = isDistanceValid && zipcode && geoBoundary
                console.log('statusMile', status, distanceDeliveryStatus.result)
                if (status) {
                   timeslot.validMileRange = distanceDeliveryStatus.mileRangeInfo
@@ -205,56 +205,60 @@ const isStoreDeliveryAvailableByDistance = async (
    const userLocation = { ...address }
    console.log('userLocation', userLocation)
    let isStoreDeliveryAvailableByDistanceStatus = {
-      aerial: true,
-      drivable: true,
-      zipcode: true,
-      geoBoundary: true,
+      isDistanceValid: false,
+      zipcode: false,
+      geoBoundary: false,
    }
    let drivableByGoogleDistance = null
+   let mileRangeInfo = null
    for (let mileRange in mileRanges) {
       // aerial distance
       if (mileRanges[mileRange].distanceType === 'aerial') {
          const aerialDistance = mileRanges[mileRange]
-         let result =
-            eachStore.aerialDistance >= aerialDistance.from &&
-            eachStore.aerialDistance <= aerialDistance.to
-         if (result) {
-            isStoreDeliveryAvailableByDistanceStatus['aerial'] =
-               result && !mileRanges[mileRange].isExcluded
-         } else {
-            isStoreDeliveryAvailableByDistanceStatus['aerial'] = result
+         if (aerialDistance.from && aerialDistance.to) {
+            let result =
+               eachStore.aerialDistance >= aerialDistance.from &&
+               eachStore.aerialDistance <= aerialDistance.to
+            if (result) {
+               isStoreDeliveryAvailableByDistanceStatus['isDistanceValid'] =
+                  result && !mileRanges[mileRange].isExcluded
+            } else {
+               break
+            }
          }
       }
       // drivable distance
       if (mileRanges[mileRange].distanceType === 'drivable') {
-         try {
-            const origin = isClient ? window.location.origin : ''
-            const url = `${origin}/server/api/distance-matrix`
-            const postLocationData = {
-               key: get_env('GOOGLE_API_KEY'),
-               lat1: userLocation.latitude,
-               lon1: userLocation.longitude,
-               lat2: eachStore.location.lat,
-               lon2: eachStore.location.lng,
-            }
-            const { data } = await axios.post(url, postLocationData)
-            const drivableDistance = mileRanges[mileRange]
-            const distanceMeter = data.rows[0].elements[0].distance.value
+         const drivableDistance = mileRanges[mileRange]
+         if (drivableDistance.from && drivableDistance.to) {
+            try {
+               const origin = isClient ? window.location.origin : ''
+               const url = `${origin}/server/api/distance-matrix`
+               const postLocationData = {
+                  key: get_env('GOOGLE_API_KEY'),
+                  lat1: userLocation.latitude,
+                  lon1: userLocation.longitude,
+                  lat2: eachStore.location.lat,
+                  lon2: eachStore.location.lng,
+               }
+               const { data } = await axios.post(url, postLocationData)
+               const distanceMeter = data.rows[0].elements[0].distance.value
 
-            const distanceMileFloat = convertDistance(distanceMeter, 'mi')
+               const distanceMileFloat = convertDistance(distanceMeter, 'mi')
 
-            drivableByGoogleDistance = distanceMileFloat
-            let result =
-               distanceMileFloat >= drivableDistance.from &&
-               distanceMileFloat <= drivableDistance.to
-            if (result) {
-               isStoreDeliveryAvailableByDistanceStatus['drivable'] =
-                  result && !mileRanges[mileRange].isExcluded
-            } else {
-               isStoreDeliveryAvailableByDistanceStatus['drivable'] = result
+               drivableByGoogleDistance = distanceMileFloat
+               let result =
+                  distanceMileFloat >= drivableDistance.from &&
+                  distanceMileFloat <= drivableDistance.to
+               if (result) {
+                  isStoreDeliveryAvailableByDistanceStatus['isDistanceValid'] =
+                     result && !mileRanges[mileRange].isExcluded
+               } else {
+                  break
+               }
+            } catch (error) {
+               console.log('getDataWithDrivableDistance', error)
             }
-         } catch (error) {
-            console.log('getDataWithDrivableDistance', error)
          }
       }
 
@@ -269,13 +273,22 @@ const isStoreDeliveryAvailableByDistance = async (
          } else {
             const zipcodes = mileRanges[mileRange].zipcodes.zipcodes
             let result = Boolean(
-               zipcodes.find(x => x == parseInt(userLocation.address.zipcode))
+               zipcodes.find(x => x == parseInt(userLocation.zipcode))
             )
             if (result) {
                isStoreDeliveryAvailableByDistanceStatus['zipcode'] =
                   result && !mileRanges[mileRange].isExcluded
-            } else {
-               isStoreDeliveryAvailableByDistanceStatus['zipcode'] = result
+               if (!(result && !mileRanges[mileRange].isExcluded)) {
+                  return {
+                     result: {
+                        isDistanceValid: true,
+                        zipcode: false,
+                        geoBoundary: true,
+                     },
+                     mileRangeInfo: null,
+                     drivableDistance: null,
+                  }
+               }
             }
          }
       }
@@ -302,26 +315,31 @@ const isStoreDeliveryAvailableByDistance = async (
             if (result) {
                isStoreDeliveryAvailableByDistanceStatus['geoBoundary'] =
                   result && !mileRanges[mileRange].isExcluded
-            } else {
-               isStoreDeliveryAvailableByDistanceStatus['geoBoundary'] = result
+               if (!(result && !mileRanges[mileRange].isExcluded)) {
+                  return {
+                     result: {
+                        isDistanceValid: true,
+                        zipcode: true,
+                        geoBoundary: false,
+                     },
+                     mileRangeInfo: null,
+                     drivableDistance: null,
+                  }
+               }
             }
          }
       }
       if (
-         isStoreDeliveryAvailableByDistanceStatus.aerial &&
-         isStoreDeliveryAvailableByDistanceStatus.drivable &&
+         isStoreDeliveryAvailableByDistanceStatus.isDistanceValid &&
          isStoreDeliveryAvailableByDistanceStatus.zipcode &&
          isStoreDeliveryAvailableByDistanceStatus.geoBoundary
       ) {
-         return {
-            result: isStoreDeliveryAvailableByDistanceStatus,
-            mileRangeInfo: mileRanges[mileRange],
-         }
+         mileRangeInfo = mileRanges[mileRange]
       }
    }
    return {
       result: isStoreDeliveryAvailableByDistanceStatus,
-      mileRangeInfo: null,
+      mileRangeInfo: mileRangeInfo,
       drivableDistance: drivableByGoogleDistance,
    }
 }
