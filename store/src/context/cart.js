@@ -399,6 +399,9 @@ export const CartProvider = ({ children }) => {
 
                      setStoredCartId(subscriptionData.data.carts[0].id)
                      setIsFinalCartLoading(false)
+                  } else {
+                     setStoredCartId(subscriptionData.data.carts[0].id)
+                     setIsFinalCartLoading(false)
                   }
                } else {
                   // no pending cart
