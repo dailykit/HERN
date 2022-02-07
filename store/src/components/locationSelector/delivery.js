@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import classNames from 'classnames'
-import { Radio, Modal } from 'antd'
+import { Radio, Modal, Skeleton } from 'antd'
 import { useConfig } from '../../lib'
 import { get_env, useScript, isClient } from '../../utils'
 import { getStoresWithValidations } from '../../utils'
@@ -8,7 +8,7 @@ import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
 import LocationSelectorConfig from '../locatoinSeletorConfig.json'
 import { StoreList } from '../locationSelector/storeList'
 import { GPSIcon, NotFound } from '../../assets/icons'
-import { Loader, UserAddressList } from '..'
+import { Loader, UserAddressList, GoogleSuggestionsList } from '..'
 import { AddressInfo } from './addressInfo'
 
 // delivery section
@@ -205,6 +205,7 @@ export const Delivery = props => {
    )
    const formatAddress = async input => {
       if (!isClient) return 'Runs only on client side.'
+      console.log('inputfn', input)
       const response = await fetch(
          `https://maps.googleapis.com/maps/api/geocode/json?key=${
             isClient ? get_env('GOOGLE_API_KEY') : ''
@@ -303,6 +304,22 @@ export const Delivery = props => {
                               .deliverySettings.userAddressInputPlaceHolder
                               .value || 'Enter your delivery location'
                         }
+                        renderSuggestions={suggestions => (
+                           <GoogleSuggestionsList
+                              suggestions={suggestions}
+                              onSuggestionClick={formatAddress}
+                           />
+                        )}
+                        loader={() => {
+                           return (
+                              <Skeleton.Input
+                                 style={{ width: 100 }}
+                                 active={true}
+                                 size={'small'}
+                                 loading={true}
+                              />
+                           )
+                        }}
                      />
                   )}
 

@@ -1,0 +1,30 @@
+.hern-google-autocomplete-suggestion {
+   position: relative;
+}
+.hern-google-autocomplete-suggestion {
+   display: flex;
+   margin: 10px 0;
+   cursor: pointer;
+   align-items: center;
+   &:hover {
+      border-right: 2px solid rgb(98, 98, 100);
+   }
+}
+.hern-google-autocomplete-main-text {
+   font-weight: 600;
+   // color: rgb(251, 109, 58);
+   font-size: 13px;
+}
+.hern-google-autocomplete-location-icon {
+   margin-right: 10px;
+}
+.hern-google-autocomplete-secondary-text {
+   font-size: 11px;
+   font-weight: 400;
+   color: rgb(98, 98, 100);
+   margin-right: 8px;
+}
+.hern-google-autocomplete-text-container {
+   display: flex;
+   flex-direction: column;
+}
