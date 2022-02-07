@@ -10,6 +10,7 @@ import {
    Button,
    PaymentOptionsRenderer,
    WalletAmount,
+   FulfillmentForm,
 } from '../../components'
 import { CartContext, onDemandMenuContext, useUser } from '../../context'
 import { EmptyCart, PaymentIcon } from '../../assets/icons'

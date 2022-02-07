@@ -134,7 +134,7 @@ export const ModifierPopup = props => {
    }
 
    //add to cart
-   const handleAddOnCartOn = () => {
+   const handleAddOnCartOn = async () => {
       //check category fulfillment conditions
       const allSelectedOptions = [
          ...selectedOptions.single,
@@ -150,7 +150,7 @@ export const ModifierPopup = props => {
          )
          // const objects = new Array(quantity).fill({ ...cartItem })
          // console.log('cartItem', objects)
-         addToCart(cartItem, quantity)
+         await addToCart(cartItem, quantity)
          addToast('Added to the Cart!', {
             appearance: 'success',
          })
@@ -209,7 +209,7 @@ export const ModifierPopup = props => {
          // const objects = new Array(quantity).fill({ ...cartItem })
          // console.log('cartItem', objects)
 
-         addToCart(cartItem, quantity)
+         await addToCart(cartItem, quantity)
          if (edit) {
             methods.cartItems.delete({
                variables: {

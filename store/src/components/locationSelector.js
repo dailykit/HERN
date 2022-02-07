@@ -6,6 +6,7 @@ import {
    DistanceIcon,
    GPSIcon,
    LocationMarker,
+   NotFound,
    RadioIcon,
    StoreIcon,
 } from '../assets/icons'
@@ -21,6 +22,8 @@ import {
    isStorePreOrderPickupAvailable,
    combineRecurrenceAndBrandLocation,
    useOnClickOutside,
+   useDelivery,
+   autoSelectStore,
 } from '../utils'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
 import { Loader } from './index'
@@ -47,6 +50,7 @@ import { TimePicker, Divider, Radio, Modal } from 'antd'
 import 'antd/dist/antd.css'
 import { useToasts } from 'react-toast-notifications'
 import { rrulestr } from 'rrule'
+import { RefineLocationPopup } from './refineLocation'
 
 // this Location selector is a pop up for mobile view so can user can select there location
 
@@ -216,7 +220,7 @@ const Delivery = props => {
 
    const { setShowLocationSelectionPopup, settings } = props
 
-   const { brand, orderTabs } = useConfig()
+   const { orderTabs } = useConfig()
 
    const orderTabFulfillmentType = React.useMemo(
       () =>
@@ -224,17 +228,6 @@ const Delivery = props => {
             ? orderTabs.map(eachTab => eachTab.orderFulfillmentTypeLabel)
             : null,
       [orderTabs]
-   )
-
-   // const [deliveryType, setDeliveryType] = useState(
-   //    Boolean(availableStoreType.find(x => x === 'ONDEMAND'))
-   //       ? 'ONDEMAND'
-   //       : availableStoreType[0]
-   // )
-   const [deliveryType, setDeliveryType] = useState(
-      orderTabFulfillmentType.includes('ONDEMAND_DELIVERY')
-         ? 'ONDEMAND'
-         : 'PREORDER'
    )
 
    const deliveryRadioOptions = React.useMemo(() => {
@@ -257,11 +250,6 @@ const Delivery = props => {
       return options
    }, [orderTabFulfillmentType, availableStoreType])
 
-   console.log('deliveryRadioOptions', deliveryRadioOptions)
-   const [onDemandBrandRecurrence, setOnDemandBrandReoccurrence] =
-      useState(null)
-   const [preOrderBrandRecurrence, setPreOrderBrandReoccurrence] =
-      useState(null)
    const [userCoordinate, setUserCoordinate] = useState({
       latitude: null,
       longitude: null,
@@ -272,7 +260,18 @@ const Delivery = props => {
       errorType: '',
    })
    const [address, setAddress] = useState(null)
-   const [brandLocationsLoading, setBranLocationsLoading] = useState(true)
+   const [showRefineLocation, setShowRefineLocation] = useState(false)
+
+   const {
+      onDemandBrandRecurrence,
+      preOrderBrandRecurrence,
+      brands_brand_location_aggregate,
+      brandRecurrencesLoading,
+      preOrderBrandRecurrencesLoading,
+      deliveryType,
+      setDeliveryType,
+      brandLocationsLoading,
+   } = useDelivery(address)
 
    // location by browser
    const locationByBrowser = () => {
@@ -288,15 +287,7 @@ const Delivery = props => {
          const success = position => {
             const latitude = position.coords.latitude
             const longitude = position.coords.longitude
-            const userLocationInfo = {
-               latitude,
-               longitude,
-            }
             setUserCoordinate(prev => ({ ...prev, latitude, longitude }))
-            // localStorage.setItem(
-            //    'userLocation',
-            //    JSON.stringify(userLocationInfo)
-            // )
          }
          const error = () => {
             setLocationSearching(prev => ({
@@ -312,7 +303,12 @@ const Delivery = props => {
 
    // get address by coordinates
    useEffect(() => {
-      if (userCoordinate.latitude && userCoordinate.longitude) {
+      if (
+         userCoordinate.latitude &&
+         userCoordinate.longitude &&
+         locationSearching.loading
+      ) {
+         console.log('hello brother')
          fetch(
             `https://maps.googleapis.com/maps/api/geocode/json?latlng=${
                userCoordinate.latitude
@@ -371,126 +367,6 @@ const Delivery = props => {
       }
    }, [userCoordinate])
 
-   // get all store when user address available
-   const { data: { brands_brand_location_aggregate = {} } = {} } = useQuery(
-      BRAND_LOCATIONS,
-      {
-         skip: !address?.city || !address?.state || !brand || !brand?.id,
-         variables: {
-            where: {
-               _or: [
-                  {
-                     location: {
-                        city: { _eq: address?.city },
-                        state: { _eq: address?.state },
-                     },
-                  },
-                  {
-                     _or: [
-                        { doesDeliverOutsideCity: { _eq: true } },
-                        { doesDeliverOutsideState: { _eq: true } },
-                     ],
-                  },
-               ],
-               brandId: { _eq: brand.id },
-            },
-         },
-         onCompleted: data => {
-            if (data) {
-               setBranLocationsLoading(false)
-            }
-         },
-         onError: error => {
-            console.log(error)
-         },
-      }
-   )
-   console.log(
-      'brands_brand_location_aggregate',
-      brands_brand_location_aggregate
-   )
-   // onDemand delivery
-   const { loading: brandRecurrencesLoading } = useQuery(
-      BRAND_ONDEMAND_DELIVERY_RECURRENCES,
-      {
-         skip:
-            !brands_brand_location_aggregate?.nodes ||
-            !brands_brand_location_aggregate?.nodes.length > 0 ||
-            !brand ||
-            !brand.id ||
-            !(deliveryType === 'ONDEMAND'),
-         variables: {
-            where: {
-               recurrence: {
-                  isActive: { _eq: true },
-                  type: { _eq: 'ONDEMAND_DELIVERY' },
-               },
-               _or: [
-                  {
-                     brandLocationId: {
-                        _in: brands_brand_location_aggregate?.nodes?.map(
-                           x => x.id
-                        ),
-                     },
-                  },
-                  { brandId: { _eq: brand.id } },
-               ],
-               isActive: { _eq: true },
-            },
-         },
-         fetchPolicy: 'network-only',
-         onCompleted: data => {
-            if (data) {
-               setOnDemandBrandReoccurrence(data.brandRecurrences)
-            }
-         },
-         onError: e => {
-            console.log('Ondemand brand recurrences error:::', e)
-         },
-      }
-   )
-
-   // preOrderDelivery
-   const { loading: preOrderBrandRecurrencesLoading } = useQuery(
-      PREORDER_DELIVERY_BRAND_RECURRENCES,
-      {
-         skip:
-            !brands_brand_location_aggregate?.nodes ||
-            !brands_brand_location_aggregate?.nodes.length > 0 ||
-            !brand ||
-            !brand.id ||
-            !(deliveryType === 'PREORDER'),
-         variables: {
-            where: {
-               recurrence: {
-                  isActive: { _eq: true },
-                  type: { _eq: 'PREORDER_DELIVERY' },
-               },
-               _or: [
-                  {
-                     brandLocationId: {
-                        _in: brands_brand_location_aggregate?.nodes?.map(
-                           x => x.id
-                        ),
-                     },
-                  },
-                  { brandId: { _eq: brand.id } },
-               ],
-               isActive: { _eq: true },
-            },
-         },
-         fetchPolicy: 'network-only',
-         onCompleted: data => {
-            if (data) {
-               setPreOrderBrandReoccurrence(data.brandRecurrences)
-            }
-         },
-         onError: e => {
-            console.log('preOrder brand recurrences error:::', e)
-         },
-      }
-   )
-
    const [loaded, error] = useScript(
       isClient
          ? `https://maps.googleapis.com/maps/api/js?key=${get_env(
@@ -509,14 +385,29 @@ const Delivery = props => {
       if (data.status === 'OK' && data.results.length > 0) {
          const [result] = data.results
          const userLocation = {
-            latitude: result.geometry.location.lat,
-            longitude: result.geometry.location.lng,
+            latitude: result.geometry.location.lat.toString(),
+            longitude: result.geometry.location.lng.toString(),
          }
          const address = {
             mainText: input.structured_formatting.main_text,
             secondaryText: input.structured_formatting.secondary_text,
          }
          result.address_components.forEach(node => {
+            if (node.types.includes('street_number')) {
+               address.line2 = `${node.long_name} `
+            }
+            if (node.types.includes('route')) {
+               address.line2 += node.long_name
+            }
+            if (node.types.includes('locality')) {
+               address.city = node.long_name
+            }
+            if (node.types.includes('administrative_area_level_1')) {
+               address.state = node.long_name
+            }
+            if (node.types.includes('country')) {
+               address.country = node.long_name
+            }
             if (node.types.includes('postal_code')) {
                address.zipcode = node.long_name
             }
@@ -524,7 +415,7 @@ const Delivery = props => {
          console.log('this is adress', address)
          if (address.zipcode) {
             setUserCoordinate(prev => ({ ...prev, ...userLocation }))
-            setAddress({ ...userLocation, address })
+            setAddress({ ...userLocation, ...address })
          } else {
             showWarningPopup()
          }
@@ -606,19 +497,62 @@ const Delivery = props => {
             </div>
          ) : null}
          {/* <RefineLocation setUserCoordinate={setUserCoordinate} /> */}
+         {/* <RefineLocationPopup showRefineLocation={true} /> */}
+
          {/* Footer */}
          {!address ? null : brandLocationsLoading ? (
-            <p style={{ padding: '1em' }}>
-               Finding nearest store location to you
-            </p>
+            <div
+               style={{
+                  padding: '1em',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+               }}
+            >
+               <img
+                  src="/assets/gifs/findingLocation.gif"
+                  width={72}
+                  height={72}
+               />
+               <span>Finding nearest store location to you</span>
+            </div>
          ) : brands_brand_location_aggregate?.nodes?.length == 0 ? (
-            <p style={{ padding: '0 14px', fontWeight: 'bold' }}>
-               No store available on this location.
-            </p>
+            <div
+               style={{
+                  padding: '0 14px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+               }}
+            >
+               <NotFound style={{ margin: '10px 0' }} />
+               <span
+                  style={{
+                     fontWeight: 'bold',
+                     color: 'rgba(64, 64, 64, 0.8)',
+                     fontStyle: 'italic',
+                     lineHeight: '26px',
+                  }}
+               >
+                  No store available on this location.{' '}
+               </span>
+            </div>
          ) : brandRecurrencesLoading || preOrderBrandRecurrencesLoading ? (
-            <p style={{ padding: '1em' }}>
-               Finding nearest store location to you
-            </p>
+            <div
+               style={{
+                  padding: '1em',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+               }}
+            >
+               <img
+                  src="/assets/gifs/findingLocation.gif"
+                  width={72}
+                  height={72}
+               />
+               <span>Finding nearest store location to you</span>
+            </div>
          ) : (
             <StoreList
                userCoordinate={userCoordinate}
@@ -636,6 +570,8 @@ const Delivery = props => {
                }
                storeDistanceValidation={true}
                address={address}
+               setShowRefineLocation={setShowRefineLocation}
+               showRefineLocation={showRefineLocation}
             />
          )}
       </div>
@@ -1339,67 +1275,6 @@ const AddressInfo = props => {
    )
 }
 
-const RefineLocation = props => {
-   // props
-   // const { setUserCoordinate } = props
-
-   // component state
-   const [centerCoordinate, setCenterCoordinate] = useState({})
-
-   // defaultProps for google map
-   const defaultProps = {
-      center: {
-         lat: 26.90316230216457,
-         lng: 75.73522352265464,
-      },
-      zoom: 16,
-   }
-
-   const onClickOnMap = () => {
-      console.log('hello')
-   }
-
-   const onChangeMap = (center, zoom, bounds, marginBounds) => {
-      // console.log('onChange', center, zoom, bounds, marginBounds)
-      console.log('thisIsCenter', center)
-      setCenterCoordinate(prev => ({
-         ...prev,
-         latitude: center.lat,
-         longitude: center.lng,
-      }))
-   }
-
-   const handleUpdateClick = () => {
-      // setUserCoordinate(centerCoordinate)
-   }
-   return (
-      <>
-         <div>
-            <span>Refine your location </span>{' '}
-            <button onClick={handleUpdateClick}>Update</button>
-         </div>
-         <div>
-            <div
-               style={{ height: '200px', width: '100%', position: 'relative' }}
-            >
-               <UserLocationMarker />
-               <GoogleMapReact
-                  bootstrapURLKeys={{ key: get_env('GOOGLE_API_KEY') }}
-                  defaultCenter={defaultProps.center}
-                  defaultZoom={defaultProps.zoom}
-                  onClick={onClickOnMap}
-                  onChildClick={(a, b, c, d) => {
-                     console.log('childClick', a, b, c, d)
-                  }}
-                  onChange={onChangeMap}
-                  options={{ gestureHandling: 'greedy' }}
-               ></GoogleMapReact>
-            </div>
-         </div>
-      </>
-   )
-}
-
 // render all available stores
 export const StoreList = props => {
    const {
@@ -1410,6 +1285,8 @@ export const StoreList = props => {
       storeDistanceValidation = false,
       fulfillmentType,
       address,
+      setShowRefineLocation,
+      showRefineLocation = false,
    } = props
    // console.log('settings', settings)
    const { brand, dispatch, orderTabs } = useConfig()
@@ -1556,6 +1433,12 @@ export const StoreList = props => {
                sortedBrandLocation.length === 1)
          ) {
             // select automatically first store form sorted array
+            if (
+               fulfillmentType === 'ONDEMAND_DELIVERY' ||
+               fulfillmentType === 'PREORDER_DELIVERY'
+            ) {
+               return setShowRefineLocation(true)
+            }
 
             dispatch({
                type: 'SET_LOCATION_ID',
@@ -1786,7 +1669,23 @@ export const StoreList = props => {
       sortedBrandLocation === null ||
       status === 'loading'
    ) {
-      return <p>Finding nearest store location to you</p>
+      return (
+         <div
+            style={{
+               padding: '1em',
+               display: 'flex',
+               flexDirection: 'column',
+               alignItems: 'center',
+            }}
+         >
+            <img
+               src="/assets/gifs/findingLocation.gif"
+               width={72}
+               height={72}
+            />
+            <span>Finding nearest store location to you</span>
+         </div>
+      )
    }
 
    // when no store available on user location
@@ -1829,6 +1728,11 @@ export const StoreList = props => {
                <span onClick={() => setShowStoreOnMap(true)}>View on map</span>
             </div>
          )}
+         <RefineLocationPopup
+            showRefineLocation={showRefineLocation}
+            address={address}
+            fulfillmentType={fulfillmentType}
+         />
          {sortedBrandLocation.map((eachStore, index) => {
             const {
                location: {

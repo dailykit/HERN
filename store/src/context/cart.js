@@ -130,6 +130,7 @@ export const CartProvider = ({ children }) => {
          const localCartId = localStorage.getItem('cart-id')
          if (!localCartId && !isAuthenticated && !isLoading) {
             setCombinedCartData([])
+            setIsFinalCartLoading(false)
          }
       }
    }, [cartItemsData?.cartItems, isLoading])
@@ -161,7 +162,7 @@ export const CartProvider = ({ children }) => {
    const [updateCart] = useMutation(MUTATIONS.CART.UPDATE, {
       onCompleted: data => {
          if (!(oiType === 'Kiosk Ordering')) {
-            localStorage.removeItem('cart-id')
+            // localStorage.removeItem('cart-id')
          }
          addToast('Update Successfully!', {
             appearance: 'success',
@@ -242,11 +243,29 @@ export const CartProvider = ({ children }) => {
    //update cartItems
    const [updateCartItems] = useMutation(UPDATE_CART_ITEMS)
    //add to cart
-   const addToCart = (cartItem, quantity) => {
+   const addToCart = async (cartItem, quantity) => {
       setIsFinalCartLoading(true)
       const cartItems = new Array(quantity).fill({ ...cartItem })
+      const customerAddressFromLocal = JSON.parse(
+         localStorage.getItem('userLocation')
+      )
+      const customerAddress = {
+         line1: customerAddressFromLocal.line1,
+         line2: customerAddressFromLocal.line2,
+         city: customerAddressFromLocal.city,
+         state: customerAddressFromLocal.state,
+         country: customerAddressFromLocal.country,
+         zipcode: customerAddressFromLocal.zipcode,
+         notes: customerAddressFromLocal.notes,
+         label: customerAddressFromLocal.label,
+         lat: customerAddressFromLocal.latitude.toString(),
+         lng: customerAddressFromLocal.longitude.toString(),
+         landmark: customerAddressFromLocal.landmark,
+         searched: '',
+      }
       if (!isAuthenticated) {
          //without login
+
          if (!cartData?.cart) {
             //new cart
 
@@ -265,13 +284,14 @@ export const CartProvider = ({ children }) => {
                orderTabId: selectedOrderTab?.id || null,
                locationId: locationId || null,
                brandId: brand?.id,
+               address: customerAddress,
                ...(oiType === 'Kiosk Ordering' &&
                   !isEmpty(terminalPayment) && {
                      toUseAvailablePaymentOptionId: terminalPayment.id,
                   }),
             }
             // console.log('object new cart', object)
-            createCart({
+            await createCart({
                variables: {
                   object,
                },
@@ -283,7 +303,7 @@ export const CartProvider = ({ children }) => {
                cartId: storedCartId,
             })
             // console.log('object new cart', cartItemsWithCartId)
-            createCartItems({
+            await createCartItems({
                variables: {
                   objects: cartItemsWithCartId,
                },
@@ -317,8 +337,9 @@ export const CartProvider = ({ children }) => {
                      customerPhone: user.platform_customer.phoneNumber,
                   },
                }),
+               address: customerAddress,
             }
-            createCart({
+            await createCart({
                variables: {
                   object,
                },
@@ -329,7 +350,7 @@ export const CartProvider = ({ children }) => {
                ...cartItem,
                cartId: storedCartId,
             })
-            createCartItems({
+            await createCartItems({
                variables: {
                   objects: cartItemsWithCartId,
                },
@@ -354,63 +375,69 @@ export const CartProvider = ({ children }) => {
          fetchPolicy: 'no-cache',
          onSubscriptionData: ({ subscriptionData }) => {
             // pending cart available
-            if (
-               subscriptionData.data.carts &&
-               subscriptionData.data.carts.length > 0
-            ) {
-               const pendingCartId = localStorage.getItem('cart-id')
-               if (pendingCartId) {
-                  // merge
-                  updateCartItems({
-                     variables: {
-                        where: { cartId: { _eq: pendingCartId } },
-                        _set: { cartId: subscriptionData.data.carts[0].id },
-                     },
-                  })
-                  // delete last one
-                  deleteCart({
-                     variables: {
-                        id: pendingCartId,
-                     },
-                  })
-               }
-               setStoredCartId(subscriptionData.data.carts[0].id)
-               setIsFinalCartLoading(false)
-            } else {
-               // no pending cart
-               if (storedCartId) {
-                  updateCart({
-                     variables: {
-                        id: storedCartId,
-                        _set: {
-                           // isTest: user.isTest,
-                           customerKeycloakId: user.keycloakId,
-                           paymentMethodId:
-                              user.platform_customer?.defaultPaymentMethodId,
-                           brandId: brand.id,
-                           paymentCustomerId:
-                              user.platform_customer?.paymentCustomerId,
-                           address:
-                              user.platform_customer?.defaultCustomerAddress,
-                           ...(user.platform_customer?.firstName && {
-                              customerInfo: {
-                                 customerFirstName:
-                                    user.platform_customer?.firstName,
-                                 customerLastName:
-                                    user.platform_customer?.lastName,
-                                 customerEmail: user.platform_customer?.email,
-                                 customerPhone:
-                                    user.platform_customer?.phoneNumber,
-                              },
-                           }),
+            ;(async () => {
+               if (
+                  subscriptionData.data.carts &&
+                  subscriptionData.data.carts.length > 0
+               ) {
+                  const guestCartId = localStorage.getItem('cart-id')
+                  if (guestCartId) {
+                     // merge
+                     await updateCartItems({
+                        variables: {
+                           where: { cartId: { _eq: guestCartId } },
+                           _set: { cartId: subscriptionData.data.carts[0].id },
                         },
-                     },
-                  })
-                  setIsFinalCartLoading(false)
+                     })
+                     // delete last one
+                     await deleteCart({
+                        variables: {
+                           id: guestCartId,
+                        },
+                     })
+                     // localStorage.removeItem('cart-id')
+
+                     setStoredCartId(subscriptionData.data.carts[0].id)
+                     setIsFinalCartLoading(false)
+                  }
                } else {
-                  setIsFinalCartLoading(false)
+                  // no pending cart
+                  if (storedCartId) {
+                     await updateCart({
+                        variables: {
+                           id: storedCartId,
+                           _set: {
+                              // isTest: user.isTest,
+                              customerId: user.id,
+                              customerKeycloakId: user.keycloakId,
+                              paymentMethodId:
+                                 user.platform_customer?.defaultPaymentMethodId,
+                              brandId: brand.id,
+                              paymentCustomerId:
+                                 user.platform_customer?.paymentCustomerId,
+                              address:
+                                 user.platform_customer?.defaultCustomerAddress,
+                              ...(user.platform_customer?.firstName && {
+                                 customerInfo: {
+                                    customerFirstName:
+                                       user.platform_customer?.firstName,
+                                    customerLastName:
+                                       user.platform_customer?.lastName,
+                                    customerEmail:
+                                       user.platform_customer?.email,
+                                    customerPhone:
+                                       user.platform_customer?.phoneNumber,
+                                 },
+                              }),
+                           },
+                        },
+                     })
+                     setIsFinalCartLoading(false)
+                  } else {
+                     setIsFinalCartLoading(false)
+                  }
                }
-            }
+            })()
          },
       })
 

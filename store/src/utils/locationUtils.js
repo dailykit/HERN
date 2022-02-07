@@ -25,543 +25,6 @@ export const getTimeFromMinutes = num => {
    const rminutes = Math.round(minutes)
    return makeDoubleDigit(rhours) + ':' + makeDoubleDigit(rminutes)
 }
-export const isStoreOnDemandDeliveryAvailable = async (
-   brandRecurrences,
-   eachStore
-) => {
-   const storeLocationRecurrences = brandRecurrences.filter(
-      x => x.brandLocationId === eachStore.id
-   )
-
-   // getting brand recurrence by location [consist different brandLocation ids]
-
-   const storeRecurrencesLength = storeLocationRecurrences.length
-
-   // if there is brandLocationId in brandRecurrences we use only those brandRecurrences which has eachStore.id for particular eachStore other wise (brand level recurrences) we use reoccurrences which as brandLocationId == null
-   const finalRecurrences =
-      storeRecurrencesLength === 0
-         ? brandRecurrences.filter(x => x.brandLocationId === null)
-         : storeLocationRecurrences
-
-   for (let rec in finalRecurrences) {
-      const now = new Date() // now
-      const start = new Date(now.getTime() - 1000 * 60 * 60 * 24) // yesterday
-      const end = new Date(now.getTime() + 1000 * 60 * 60 * 24) // tomorrow
-      const dates = rrulestr(finalRecurrences[rec].recurrence.rrule).between(
-         start,
-         now
-      )
-      if (dates.length) {
-         if (finalRecurrences[rec].recurrence.timeSlots.length) {
-            for (let timeslot of finalRecurrences[rec].recurrence.timeSlots) {
-               if (timeslot.mileRanges.length) {
-                  const timeslotFromArr = timeslot.from.split(':')
-                  const timeslotToArr = timeslot.to.split(':')
-                  const fromTimeStamp = new Date(now.getTime())
-                  fromTimeStamp.setHours(
-                     timeslotFromArr[0],
-                     timeslotFromArr[1],
-                     timeslotFromArr[2]
-                  )
-                  const toTimeStamp = new Date(now.getTime())
-                  toTimeStamp.setHours(
-                     timeslotToArr[0],
-                     timeslotToArr[1],
-                     timeslotToArr[2]
-                  )
-                  // check if current time falls within time slot
-
-                  if (
-                     now.getTime() > fromTimeStamp.getTime() &&
-                     now.getTime() < toTimeStamp.getTime()
-                  ) {
-                     const distanceDeliveryStatus =
-                        await isStoreDeliveryAvailableByDistance(
-                           timeslot.mileRanges,
-                           eachStore
-                        )
-
-                     const { aerial, drivable, zipcode, geoBoundary } =
-                        distanceDeliveryStatus.result
-                     const status = aerial && drivable && zipcode && geoBoundary
-
-                     if (status || rec == finalRecurrences.length - 1) {
-                        return {
-                           status,
-                           result: distanceDeliveryStatus.result,
-                           rec: finalRecurrences[rec],
-                           mileRangeInfo: distanceDeliveryStatus.mileRangeInfo,
-                           timeSlotInfo: timeslot,
-                           message: status
-                              ? 'Delivery available in your location'
-                              : 'Delivery not available in your location.',
-                           drivableDistance:
-                              distanceDeliveryStatus.drivableDistance,
-                        }
-                     }
-                  } else {
-                     if (rec == finalRecurrences.length - 1) {
-                        return {
-                           status: false,
-                           message:
-                              'Sorry, We do not offer Delivery at this time.',
-                        }
-                     }
-                  }
-               }
-            }
-         } else {
-            if (rec == finalRecurrences.length - 1) {
-               return {
-                  status: false,
-                  message: 'Sorry, We do not offer Delivery at this time.',
-               }
-            }
-         }
-      } else {
-         if (rec == finalRecurrences.length - 1) {
-            return {
-               status: false,
-               message: 'Sorry, We do not offer Delivery on this day.',
-            }
-         }
-      }
-   }
-}
-
-export const isPreOrderDeliveryAvailable = async (
-   brandRecurrences,
-   eachStore,
-   address
-) => {
-   // this fn use for pre order delivery
-   // bcz in pre order we need not to validate time (check either store available by distance or not)
-   const storeLocationRecurrences = brandRecurrences.filter(
-      x => x.brandLocationId === eachStore.id
-   )
-
-   // getting brand recurrence by location [consist different brandLocation ids]
-
-   const storeRecurrencesLength = storeLocationRecurrences.length
-
-   // if there is brandLocationId in brandRecurrences we use only those brandRecurrences which has eachStore.id for particular eachStore other wise (brand level recurrences) we use reoccurrences which as brandLocationId == null
-   const finalRecurrences =
-      storeRecurrencesLength === 0
-         ? brandRecurrences.filter(x => x.brandLocationId === null)
-         : storeLocationRecurrences
-   if (finalRecurrences.length === 0) {
-      return {
-         status: false,
-         message: 'Sorry, there is no store available for pickup.',
-      }
-   } else {
-      let fulfilledRecurrences = []
-      for (let rec in finalRecurrences) {
-         for (let timeslot of finalRecurrences[rec].recurrence.timeSlots) {
-            if (timeslot.mileRanges.length) {
-               const distanceDeliveryStatus =
-                  await isStoreDeliveryAvailableByDistance(
-                     timeslot.mileRanges,
-                     eachStore,
-                     address
-                  )
-               const { aerial, drivable, zipcode, geoBoundary } =
-                  distanceDeliveryStatus.result
-               const status = aerial && drivable && zipcode && geoBoundary
-               if (status) {
-                  fulfilledRecurrences = [
-                     ...fulfilledRecurrences,
-                     finalRecurrences[rec],
-                  ]
-               }
-               if (
-                  rec == finalRecurrences.length - 1 &&
-                  fulfilledRecurrences.length > 0
-               ) {
-                  return {
-                     status,
-                     result: distanceDeliveryStatus.result,
-                     rec: fulfilledRecurrences,
-                     mileRangeInfo: distanceDeliveryStatus.mileRangeInfo,
-                     timeSlotInfo: timeslot,
-                     message: status
-                        ? 'Pre Order Delivery available in your location'
-                        : 'Delivery not available in your location.',
-                     drivableDistance: distanceDeliveryStatus.drivableDistance,
-                  }
-               } else {
-                  if (rec == finalRecurrences.length - 1) {
-                     return {
-                        status: false,
-                        message:
-                           'Sorry, you seem to be placed far out of our delivery range.',
-                     }
-                  }
-               }
-            }
-         }
-      }
-   }
-}
-
-const isStoreDeliveryAvailableByDistance = async (
-   mileRanges,
-   eachStore,
-   address
-) => {
-   const userLocation = { ...address }
-   console.log('userLocation', userLocation)
-   let isStoreDeliveryAvailableByDistanceStatus = {
-      aerial: true,
-      drivable: true,
-      zipcode: true,
-      geoBoundary: true,
-   }
-   let drivableByGoogleDistance = null
-   for (let mileRange in mileRanges) {
-      // aerial distance
-      if (mileRanges[mileRange].distanceType === 'aerial') {
-         const aerialDistance = mileRanges[mileRange]
-         let result =
-            eachStore.aerialDistance >= aerialDistance.from &&
-            eachStore.aerialDistance <= aerialDistance.to
-         if (result) {
-            isStoreDeliveryAvailableByDistanceStatus['aerial'] =
-               result && !mileRanges[mileRange].isExcluded
-         } else {
-            isStoreDeliveryAvailableByDistanceStatus['aerial'] = result
-         }
-      }
-      // drivable distance
-      if (mileRanges[mileRange].distanceType === 'drivable') {
-         try {
-            const origin = isClient ? window.location.origin : ''
-            const url = `${origin}/server/api/distance-matrix`
-            const postLocationData = {
-               key: get_env('GOOGLE_API_KEY'),
-               lat1: userLocation.latitude,
-               lon1: userLocation.longitude,
-               lat2: eachStore.location.lat,
-               lon2: eachStore.location.lng,
-            }
-            const { data } = await axios.post(url, postLocationData)
-            const drivableDistance = mileRanges[mileRange]
-            const distanceMileFloat =
-               data.rows[0].elements[0].distance.text.split(' ')[0]
-            drivableByGoogleDistance = distanceMileFloat
-            let result =
-               distanceMileFloat >= drivableDistance.from &&
-               distanceMileFloat <= drivableDistance.to
-            if (result) {
-               isStoreDeliveryAvailableByDistanceStatus['drivable'] =
-                  result && !mileRanges[mileRange].isExcluded
-            } else {
-               isStoreDeliveryAvailableByDistanceStatus['drivable'] = result
-            }
-         } catch (error) {
-            console.log('getDataWithDrivableDistance', error)
-         }
-      }
-
-      // zip code
-      if (
-         mileRanges[mileRange].zipcodes === null ||
-         mileRanges[mileRange].zipcodes
-      ) {
-         // assuming null as true
-         if (mileRanges[mileRange].zipcodes === null) {
-            isStoreDeliveryAvailableByDistanceStatus['zipcode'] = true
-         } else {
-            const zipcodes = mileRanges[mileRange].zipcodes.zipcodes
-            let result = Boolean(
-               zipcodes.find(x => x == parseInt(userLocation.address.zipcode))
-            )
-            if (result) {
-               isStoreDeliveryAvailableByDistanceStatus['zipcode'] =
-                  result && !mileRanges[mileRange].isExcluded
-            } else {
-               isStoreDeliveryAvailableByDistanceStatus['zipcode'] = result
-            }
-         }
-      }
-      // geoBoundary
-      if (
-         mileRanges[mileRange].geoBoundary === null ||
-         mileRanges[mileRange].geoBoundary
-      ) {
-         // assuming null as true
-         if (mileRanges[mileRange].geoBoundary === null) {
-            isStoreDeliveryAvailableByDistanceStatus['geoBoundary'] = true
-         } else {
-            const geoBoundaries =
-               mileRanges[mileRange].geoBoundary.geoBoundaries
-            const storeValidationForGeoBoundaries = isPointInPolygon(
-               {
-                  latitude: userLocation.latitude,
-                  longitude: userLocation.longitude,
-               },
-               geoBoundaries
-            )
-
-            let result = storeValidationForGeoBoundaries
-            if (result) {
-               isStoreDeliveryAvailableByDistanceStatus['geoBoundary'] =
-                  result && !mileRanges[mileRange].isExcluded
-            } else {
-               isStoreDeliveryAvailableByDistanceStatus['geoBoundary'] = result
-            }
-         }
-      }
-      if (
-         isStoreDeliveryAvailableByDistanceStatus.aerial &&
-         isStoreDeliveryAvailableByDistanceStatus.drivable &&
-         isStoreDeliveryAvailableByDistanceStatus.zipcode &&
-         isStoreDeliveryAvailableByDistanceStatus.geoBoundary
-      ) {
-         return {
-            result: isStoreDeliveryAvailableByDistanceStatus,
-            mileRangeInfo: mileRanges[mileRange],
-         }
-      }
-   }
-   return {
-      result: isStoreDeliveryAvailableByDistanceStatus,
-      mileRangeInfo: null,
-      drivableDistance: drivableByGoogleDistance,
-   }
-}
-
-export const isStoreOnDemandPickupAvailable = (brandRecurrences, eachStore) => {
-   // there is no need for checking validation for store mile ranges bcz user will pick up form store
-
-   // only store timing will matter
-
-   // filter store which as there specific brandRecurrences (those brand recurrences where location id not null)
-   const storeLocationRecurrences = brandRecurrences.filter(
-      x => x.brandLocationId === eachStore.id
-   )
-
-   const storeRecurrencesLength = storeLocationRecurrences.length
-
-   // if there is no brandRecurrences where brandLocation is not null then take available brandRecurrences for brand
-   const finalRecurrences =
-      storeRecurrencesLength === 0
-         ? brandRecurrences.filter(x => x.brandLocationId === null)
-         : storeLocationRecurrences
-
-   // there is no recurrences available for store
-   if (finalRecurrences.length === 0) {
-      return {
-         status: false,
-         message: 'Sorry, there is no store available for pickup.',
-      }
-   } else {
-      for (let rec in finalRecurrences) {
-         const now = new Date() // now
-         const start = new Date(now.getTime() - 1000 * 60 * 60 * 24) // yesterday
-         const end = new Date(now.getTime() + 1000 * 60 * 60 * 24) // tomorrow
-         const dates = rrulestr(finalRecurrences[rec].recurrence.rrule).between(
-            start,
-            now
-         )
-         if (dates.length) {
-            if (finalRecurrences[rec].recurrence.timeSlots.length) {
-               for (let timeslot of finalRecurrences[rec].recurrence
-                  .timeSlots) {
-                  const timeslotFromArr = timeslot.from.split(':')
-                  const timeslotToArr = timeslot.to.split(':')
-                  const fromTimeStamp = new Date(now.getTime())
-                  fromTimeStamp.setHours(
-                     timeslotFromArr[0],
-                     timeslotFromArr[1],
-                     timeslotFromArr[2]
-                  )
-                  const toTimeStamp = new Date(now.getTime())
-                  toTimeStamp.setHours(
-                     timeslotToArr[0],
-                     timeslotToArr[1],
-                     timeslotToArr[2]
-                  )
-                  // check if current time falls within time slot
-                  if (
-                     now.getTime() > fromTimeStamp.getTime() &&
-                     now.getTime() < toTimeStamp.getTime()
-                  ) {
-                     if (rec == finalRecurrences.length - 1) {
-                        return {
-                           status: true,
-                           rec: finalRecurrences[rec],
-                           timeSlotInfo: timeslot,
-                           message: 'Store available for pickup.',
-                        }
-                     }
-                  } else {
-                     if (rec == finalRecurrences.length - 1) {
-                        return {
-                           status: false,
-                           message:
-                              'Sorry, We do not offer Pickup at this time.',
-                        }
-                     }
-                  }
-               }
-            } else {
-               if (rec == finalRecurrences.length - 1) {
-                  return {
-                     status: false,
-                     message: 'Sorry, We do not offer Pickup at this time.',
-                  }
-               }
-            }
-         } else {
-            if (rec == finalRecurrences.length - 1) {
-               return {
-                  status: false,
-                  message: 'Sorry, We do not offer Pickup on this day.',
-               }
-            }
-         }
-      }
-   }
-}
-export const isStorePreOrderPickupAvailable = (brandRecurrences, eachStore) => {
-   // there is no need for check mile ranges as well as timing
-
-   // recurrences for specific location
-   const storeLocationRecurrences = brandRecurrences.filter(
-      x => x.brandLocationId === eachStore.id
-   )
-
-   const storeRecurrencesLength = storeLocationRecurrences.length
-
-   // final recurrences by specific location or brand recurrences
-   const finalRecurrences =
-      storeRecurrencesLength === 0
-         ? brandRecurrences.filter(x => x.brandLocationId === null)
-         : storeLocationRecurrences
-
-   if (finalRecurrences.length === 0) {
-      return {
-         status: false,
-         message: 'Sorry, there is no store available for pre order pickup.',
-      }
-   } else {
-      return {
-         status: true,
-         message: 'Store available for pre order pre order pickup.',
-         rec: finalRecurrences,
-      }
-   }
-}
-export const isStoreOnDemandDineInAvailable = (brandRecurrences, eachStore) => {
-   // same as onDemand pick up
-   const storeLocationRecurrences = brandRecurrences.filter(
-      x => x.brandLocationId === eachStore.id
-   )
-
-   const storeRecurrencesLength = storeLocationRecurrences.length
-
-   const finalRecurrences =
-      storeRecurrencesLength === 0
-         ? brandRecurrences.filter(x => x.brandLocationId === null)
-         : storeLocationRecurrences
-   if (finalRecurrences.length === 0) {
-      return {
-         status: false,
-         message: 'Sorry, there is no store available for dine in.',
-      }
-   } else {
-      for (let rec in finalRecurrences) {
-         const now = new Date() // now
-         const start = new Date(now.getTime() - 1000 * 60 * 60 * 24) // yesterday
-         const end = new Date(now.getTime() + 1000 * 60 * 60 * 24) // tomorrow
-         const dates = rrulestr(finalRecurrences[rec].recurrence.rrule).between(
-            start,
-            now
-         )
-         if (dates.length) {
-            if (finalRecurrences[rec].recurrence.timeSlots.length) {
-               for (let timeslot of finalRecurrences[rec].recurrence
-                  .timeSlots) {
-                  const timeslotFromArr = timeslot.from.split(':')
-                  const timeslotToArr = timeslot.to.split(':')
-                  const fromTimeStamp = new Date(now.getTime())
-                  fromTimeStamp.setHours(
-                     timeslotFromArr[0],
-                     timeslotFromArr[1],
-                     timeslotFromArr[2]
-                  )
-                  const toTimeStamp = new Date(now.getTime())
-                  toTimeStamp.setHours(
-                     timeslotToArr[0],
-                     timeslotToArr[1],
-                     timeslotToArr[2]
-                  )
-                  // check if current time falls within time slot
-                  if (
-                     now.getTime() > fromTimeStamp.getTime() &&
-                     now.getTime() < toTimeStamp.getTime()
-                  ) {
-                     if (rec == finalRecurrences.length - 1) {
-                        return {
-                           status: true,
-                           message: 'Store available for Dine In.',
-                        }
-                     }
-                  } else {
-                     if (rec == finalRecurrences.length - 1) {
-                        return {
-                           status: false,
-                           message:
-                              'Sorry, We do not offer Dine In at this time.',
-                        }
-                     }
-                  }
-               }
-            } else {
-               if (rec == finalRecurrences.length - 1) {
-                  return {
-                     status: false,
-                     message: 'Sorry, We do not offer Dine In at this time.',
-                  }
-               }
-            }
-         } else {
-            if (rec == finalRecurrences.length - 1) {
-               return {
-                  status: false,
-                  message: 'Sorry, We do not offer Dine In on this day.',
-               }
-            }
-         }
-      }
-   }
-}
-
-export const isStorePreOrderDineInAvailable = (brandRecurrences, eachStore) => {
-   // same as preOrder pickup
-   const storeLocationRecurrences = brandRecurrences.filter(
-      x => x.brandLocationId === eachStore.id
-   )
-
-   const storeRecurrencesLength = storeLocationRecurrences.length
-
-   const finalRecurrences =
-      storeRecurrencesLength === 0
-         ? brandRecurrences.filter(x => x.brandLocationId === null)
-         : storeLocationRecurrences
-   if (finalRecurrences.length === 0) {
-      return {
-         status: false,
-         message: 'Sorry, there is no store available for dine in.',
-      }
-   } else {
-      return {
-         status: true,
-         message: 'Store available for pre order dine in.',
-      }
-   }
-}
 
 export const combineRecurrenceAndBrandLocation = (
    eachStore,
@@ -603,11 +66,11 @@ export const generateDeliverySlots = recurrences => {
       const end = new Date(now.getTime() + 10 * 1000 * 60 * 60 * 24) // 7 days later
       const dates = rrulestr(rec.rrule).between(start, end)
       dates.forEach(date => {
-         if (rec.timeSlots.length) {
-            rec.timeSlots.forEach(timeslot => {
+         if (rec.validTimeSlots.length) {
+            rec.validTimeSlots.forEach(timeslot => {
                // if multiple mile ranges, only first one will be taken
-               if (timeslot.mileRanges.length) {
-                  const leadTime = timeslot.mileRanges[0].leadTime
+               if (timeslot.validMileRange) {
+                  const leadTime = timeslot.validMileRange.leadTime
                   const [fromHr, fromMin, fromSec] = timeslot.from.split(':')
                   const [toHr, toMin, toSec] = timeslot.to.split(':')
                   const fromTimeStamp = new Date(
@@ -618,14 +81,6 @@ export const generateDeliverySlots = recurrences => {
                   )
                   // start + lead time < to
                   const leadMiliSecs = leadTime * 60000
-                  console.log(
-                     'leadMiliSecs',
-                     now.getTime() + leadMiliSecs < toTimeStamp.getTime(),
-                     now.getTime(),
-                     leadMiliSecs,
-                     toTimeStamp.getTime(),
-                     timeslot
-                  )
                   if (now.getTime() + leadMiliSecs < toTimeStamp.getTime()) {
                      // if start + lead time > from -> set new from time
                      let slotStart
@@ -671,7 +126,7 @@ export const generateDeliverySlots = recurrences => {
                               {
                                  start: slotStart,
                                  end: slotEnd,
-                                 mileRangeId: timeslot.mileRanges[0].id,
+                                 mileRangeId: timeslot.validMileRange.id,
                                  intervalInMinutes: intervalInMinutes,
                               },
                            ],
@@ -680,7 +135,7 @@ export const generateDeliverySlots = recurrences => {
                         data[index].slots.push({
                            start: slotStart,
                            end: slotEnd,
-                           mileRangeId: timeslot.mileRanges[0].id,
+                           mileRangeId: timeslot.validMileRange.id,
                            intervalInMinutes: intervalInMinutes,
                         })
                      }
@@ -863,10 +318,14 @@ export const autoSelectStore = async (
       const userLocation = JSON.parse(localStorage.getItem('userLocation'))
 
       // add arial distance
+      console.log('addressIN', address)
       const dataWithAerialDistance = await Promise.all(
          data.map(async eachStore => {
             const aerialDistance = getDistance(
-               userLocation,
+               {
+                  latitude: address.latitude,
+                  longitude: address.longitude,
+               },
                eachStore.location.locationAddress.locationCoordinates,
                0.1
             )
@@ -934,4 +393,61 @@ export const autoSelectStore = async (
    }
    const bar = await getAerialDistance(brandLocation, true, address)
    return [bar, fulfillmentStatus()]
+}
+
+export const getAddressByCoordinates = async (lat, lng) => {
+   let result
+   fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${get_env(
+         'GOOGLE_API_KEY'
+      )}`
+   )
+      .then(res => res.json())
+      .then(data => {
+         if (data.status === 'OK' && data.results.length > 0) {
+            const formatted_address =
+               data.results[0].formatted_address.split(',')
+            const mainText = formatted_address
+               .slice(0, formatted_address.length - 3)
+               .join(',')
+            const secondaryText = formatted_address
+               .slice(formatted_address.length - 3)
+               .join(',')
+            const address = {}
+            data.results[0].address_components.forEach(node => {
+               if (node.types.includes('locality')) {
+                  address.city = node.long_name
+               }
+               if (node.types.includes('administrative_area_level_1')) {
+                  address.state = node.long_name
+               }
+               if (node.types.includes('country')) {
+                  address.country = node.long_name
+               }
+               if (node.types.includes('postal_code')) {
+                  address.zipcode = node.long_name
+               }
+            })
+
+            result = {
+               status: true,
+               data: {
+                  mainText,
+                  secondaryText,
+                  ...address,
+                  latitude: lat,
+                  longitude: lng,
+               },
+            }
+         }
+      })
+      .catch(e => {
+         console.log('error', e)
+         result = {
+            status: false,
+            message: e,
+         }
+      })
+
+   return result
 }

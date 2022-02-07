@@ -145,9 +145,9 @@
                 "type": "single",
                 "label": "Select store location method to pick store after get user's location.",
                 "value": {
-                    "id": 2,
-                    "title": "Manual",
-                    "value": "manual"
+                    "id": 1,
+                    "title": "Auto",
+                    "value": "auto"
                 },
                 "options": [
                     {

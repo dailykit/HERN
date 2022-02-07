@@ -1,5 +1,6 @@
 import fs from 'fs'
 import { GraphQLClient } from 'graphql-request'
+import { get_env, isClient } from '../utils'
 
 export const graphQLClient = async () => {
    try {
@@ -18,3 +19,12 @@ export const graphQLClient = async () => {
       console.error('error', error)
    }
 }
+
+export const graphQLClientSide = new GraphQLClient(
+   isClient ? get_env('DATA_HUB_HTTPS') : '',
+   {
+      headers: {
+         'x-hasura-admin-secret': isClient ? get_env('ADMIN_SECRET') : '',
+      },
+   }
+)

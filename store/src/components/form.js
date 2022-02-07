@@ -11,8 +11,12 @@ export const DisabledText = props => {
 }
 
 export const TextArea = props => {
+   const { className } = props
    return (
-      <textarea {...props} className="hern-form__text-area">
+      <textarea
+         {...props}
+         className={`hern-form__text-area ${className ? className : ''}`}
+      >
          {props.children}
       </textarea>
    )
@@ -25,7 +29,7 @@ export const Label = props => {
    )
 }
 export const Field = props => {
-   const { mr, ml, w } = props
+   const { mr, ml, w, className } = props
    return (
       <section
          {...props}
@@ -33,7 +37,7 @@ export const Field = props => {
             width: w ? w : '100%',
             margin: `0 ${mr ? mr : 0} 1rem ${ml ? ml : 0}`,
          }}
-         className="hern-form__field"
+         className={`hern-form__field ${className ? className : ''}`}
       >
          {props.children}
       </section>
