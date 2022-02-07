@@ -382,22 +382,42 @@ export const CartProvider = ({ children }) => {
                ) {
                   const guestCartId = localStorage.getItem('cart-id')
                   if (guestCartId) {
-                     // merge
-                     await updateCartItems({
+                     // delete pending cart and assign guest cart to the user
+                     await updateCart({
                         variables: {
-                           where: { cartId: { _eq: guestCartId } },
-                           _set: { cartId: subscriptionData.data.carts[0].id },
+                           id: guestCartId,
+                           _set: {
+                              // isTest: user.isTest,
+                              customerId: user.id,
+                              customerKeycloakId: user.keycloakId,
+                              paymentMethodId:
+                                 user.platform_customer?.defaultPaymentMethodId,
+                              brandId: brand.id,
+                              paymentCustomerId:
+                                 user.platform_customer?.paymentCustomerId,
+                              ...(user.platform_customer?.firstName && {
+                                 customerInfo: {
+                                    customerFirstName:
+                                       user.platform_customer?.firstName,
+                                    customerLastName:
+                                       user.platform_customer?.lastName,
+                                    customerEmail:
+                                       user.platform_customer?.email,
+                                    customerPhone:
+                                       user.platform_customer?.phoneNumber,
+                                 },
+                              }),
+                           },
                         },
                      })
                      // delete last one
                      await deleteCart({
                         variables: {
-                           id: guestCartId,
+                           id: subscriptionData.data.carts[0].id,
                         },
                      })
                      // localStorage.removeItem('cart-id')
-
-                     setStoredCartId(subscriptionData.data.carts[0].id)
+                     setStoredCartId(guestCartId)
                      setIsFinalCartLoading(false)
                   } else {
                      setStoredCartId(subscriptionData.data.carts[0].id)
@@ -418,8 +438,6 @@ export const CartProvider = ({ children }) => {
                               brandId: brand.id,
                               paymentCustomerId:
                                  user.platform_customer?.paymentCustomerId,
-                              address:
-                                 user.platform_customer?.defaultCustomerAddress,
                               ...(user.platform_customer?.firstName && {
                                  customerInfo: {
                                     customerFirstName:
