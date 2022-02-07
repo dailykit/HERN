@@ -66,7 +66,7 @@ export const Delivery = props => {
    const [stores, setStores] = useState(null)
    const [isLoading, setIsLoading] = React.useState(true)
    const [showSlots, setShowSlots] = React.useState(false)
-   const [isSlotInCrtItemValid, setIsSlotInCartItemValid] =
+   const [updateFulfillmentInfoForNow, setUpdateFulfillmentInfoForNow] =
       React.useState(false)
    const validMileRangeInfo = React.useMemo(() => {
       if (
@@ -107,7 +107,11 @@ export const Delivery = props => {
                `${cartState.cart?.fulfillmentInfo?.type}`
          )?.id
          setFulfillmentTabInfo(prev => {
-            return { ...prev, orderTabId }
+            return {
+               ...prev,
+               orderTabId,
+               locationId: cartState.cart?.locationId,
+            }
          })
          return
       }
@@ -135,6 +139,9 @@ export const Delivery = props => {
                autoSelect: true,
             })
             if (availableStore.length > 0) {
+               setFulfillmentTabInfo(prev => {
+                  return { ...prev, locationId: availableStore[0].location.id }
+               })
                if (fulfillmentType === 'PREORDER_DELIVERY') {
                   const deliverySlots = generateDeliverySlots(
                      availableStore[0].fulfillmentStatus.rec.map(
@@ -145,15 +152,29 @@ export const Delivery = props => {
                   const miniSlots = generateMiniSlots(deliverySlots.data, 60)
                   setDeliverySlots(miniSlots)
                }
+
+               // this will only run when fulfillment will change manually
+               if (
+                  fulfillmentType === 'ONDEMAND_DELIVERY' &&
+                  deliveryRadioOptions?.length > 1 &&
+                  updateFulfillmentInfoForNow
+               ) {
+                  onNowClick({
+                     mileRangeId:
+                        availableStore[0].fulfillmentStatus.mileRangeInfo.id,
+                  })
+               }
             }
             setStores(availableStore)
             console.log('availableStore', availableStore)
             setIsGetStoresLoading(false)
+            setUpdateFulfillmentInfoForNow(false)
          }
          fetchStores()
       }
    }, [consumerAddress, brand, fulfillmentType])
 
+   // this will run when ondemand delivery auto select
    useEffect(() => {
       if (
          deliveryRadioOptions?.length === 1 &&
@@ -161,7 +182,9 @@ export const Delivery = props => {
          stores?.length > 0 &&
          !cartState?.cart?.fulfillmentInfo?.type
       ) {
-         onNowClick()
+         onNowClick({
+            mileRangeId: stores[0].fulfillmentStatus.mileRangeInfo.id,
+         })
       }
    }, [fulfillmentType, stores, cartState?.cart, deliveryRadioOptions])
 
@@ -195,12 +218,13 @@ export const Delivery = props => {
       // setIsEdit(false)
    }
 
-   const onNowClick = () => {
+   // this fn will run just after available stores length > 0
+   const onNowClick = ({ mileRangeId }) => {
       const slotInfo = {
          slot: {
             from: null,
             to: null,
-            mileRangeId: stores[0].fulfillmentStatus.mileRangeInfo.id,
+            mileRangeId: mileRangeId,
          },
          type: 'ONDEMAND_DELIVERY',
       }
@@ -220,15 +244,7 @@ export const Delivery = props => {
       // setIsEdit(false)
    }
 
-   // for ondemand delivery
-   useEffect(() => {
-      if (stores && stores.length > 0) {
-         setFulfillmentTabInfo(prev => {
-            return { ...prev, locationId: stores[0].location.id }
-         })
-      }
-   }, [stores])
-
+   // to check validation for selected time slot to available time slots
    useEffect(() => {
       const interval = setInterval(() => {
          if (stores && stores.length > 0) {
@@ -429,8 +445,12 @@ export const Delivery = props => {
                   <EditIcon
                      fill={theme?.accent || 'rgba(5, 150, 105, 1)'}
                      onClick={() => {
-                        if (deliveryRadioOptions.length > 0) {
+                        if (deliveryRadioOptions.length > 1) {
                            setFulfillmentType(null)
+                           setFulfillmentTabInfo(prev => ({
+                              ...prev,
+                              orderTabId: null,
+                           }))
                         }
                         setShowSlots(true)
                      }}
@@ -460,7 +480,10 @@ export const Delivery = props => {
                   setFulfillmentTabInfo(prev => {
                      return { ...prev, orderTabId }
                   })
-                  onNowClick()
+                  setIsGetStoresLoading(true)
+                  if (e.target.value === 'ONDEMAND_DELIVERY') {
+                     setUpdateFulfillmentInfoForNow(prev => !prev)
+                  }
                }}
                value={fulfillmentType}
                className="hern-cart__fulfillment-date-slot"
