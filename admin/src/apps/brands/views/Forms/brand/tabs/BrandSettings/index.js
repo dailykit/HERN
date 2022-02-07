@@ -22,6 +22,7 @@ export const BrandSettings = () => {
    const [mode, setMode] = React.useState('saved')
    const [saveAllSettings, setSaveAllSettings] = React.useState({})
    const [componentIsOnView, setIsComponentIsOnView] = React.useState([])
+   const [alertShow, setAlertShow] = React.useState(false)
    const { Search } = Input
 
    const groupingBrandSettings = (array, key) => {
@@ -222,6 +223,8 @@ export const BrandSettings = () => {
                                        setMode={setMode}
                                        saveAllSettings={saveAllSettings}
                                        setSaveAllSettings={setSaveAllSettings}
+                                       alertShow={alertShow}
+                                       setAlertShow={setAlertShow}
                                     />
                                  </>
                               )

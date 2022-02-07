@@ -8,7 +8,7 @@ import ConfigTemplateUI from '../../../../../../../shared/components/ConfigTempl
 import { useInView } from "react-intersection-observer";
 
 
-export const SettingsCard = ({ setting, title, isChangeSaved, setIsSavedChange, setIsComponentIsOnView, componentIsOnView, setMode, mode, saveAllSettings, setSaveAllSettings }) => {
+export const SettingsCard = ({ setting, title, isChangeSaved, setIsSavedChange, setIsComponentIsOnView, componentIsOnView, setMode, mode, saveAllSettings, setSaveAllSettings, alertShow, setAlertShow }) => {
     const [config, setConfig] = React.useState({})
     const params = useParams()
     const [setting_brand_Id, setBrandId] = React.useState('')
@@ -92,6 +92,7 @@ export const SettingsCard = ({ setting, title, isChangeSaved, setIsSavedChange, 
                     },
                 },
             })
+            setAlertShow(true)
         }
         else {
             //normal updating setting(save button in each config)
@@ -122,10 +123,8 @@ export const SettingsCard = ({ setting, title, isChangeSaved, setIsSavedChange, 
                 saveAllSettings={saveAllSettings}
                 setSaveAllSettings={setSaveAllSettings}
                 updateAllSettings={saveInfo}
-                setting_brand_Id={setting_brand_Id}
-                setBrandId={setBrandId}
+                alertShow={alertShow}
             />
         </div>
     )
 }
-
