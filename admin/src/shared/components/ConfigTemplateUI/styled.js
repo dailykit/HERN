@@ -22,6 +22,12 @@ export const Styles = {
       .ant-card-head {
          max-height:58px;
       }
+      .ant-card-head-title {
+         display:flex !important;
+      }
+      .ant-modal-body{
+         font-size:16px !important;
+      }
    `,
    Header: styled.div`
       display: flex;

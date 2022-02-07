@@ -305,6 +305,38 @@
    justify-content: center;
    align-items: center;
 }
+.hern-kiosk__cart-tool-tip {
+   position: absolute;
+   bottom: -5px;
+   animation-name: cart-tool-tip;
+   animation-duration: 1.5s;
+   animation-iteration-count: infinite;
+}
+@keyframes cart-tool-tip {
+   from {
+      bottom: -5px;
+   }
+   to {
+      bottom: -12px;
+   }
+}
+.hern-kiosk__cart-tool-tip-text {
+   padding: 0.5em;
+   border-radius: 12px;
+   font-weight: 600;
+   font-size: 16px;
+   line-height: 22px;
+   white-space: nowrap;
+}
+.hern-kiosk__cart-tip {
+   content: '';
+   width: 15px;
+   height: 15px;
+   position: absolute;
+   transform: rotate(45deg);
+   left: 50%;
+   top: 8px;
+}
 
 // menu product list
 .hern-kiosk__menu-product-list {
@@ -806,6 +838,8 @@
    height: 2.5em;
    display: flex;
    align-items: center;
+   width: 100%;
+   justify-content: center;
    .hern-kiosk__cart-place-order-btn-text {
       font-size: 1.5em;
       margin: 0 1em;

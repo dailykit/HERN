@@ -38,5 +38,10 @@
    "Repeat last used customization": "إعادة إختيار آخر تعديل",
    "Total": "المجموع",
    "You have to choose this category": "يجب أن تختار هذه القائمة",
-   "Total Price": "Total Price"
+   "Total Price": "المجموع",
+   "Item": "الأصناف",
+   "Items": "الأصناف",
+   "CANCEL": "إلغاء",
+   "CONTINUE": "إستمرار",
+   "Current changes will lose do you wish to continue?": "سوف يتم إلغاء التعديلات الحالية , هل ترغب في الإستمرار ؟"
 }

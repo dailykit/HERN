@@ -36,6 +36,9 @@ export const StyledInsideSectionTab = styled.div`
    position: relative;
    flex-direction: column;
    width: 100%;
+   height: 111%;
+   justify-content: space-between;
+   padding: 12px 12px;
 `
 export const StyledTabListHeading = styled.div`
    display: flex;
@@ -63,8 +66,8 @@ export const SectionTabDay = styled.div`
    font-family: Roboto;
    font-style: normal;
    font-weight: 500;
-   font-size: 18px;
-   line-height: 17px;
+   font-size: 17px;
+   line-height: 18px;
    text-align: left;
    color: #202020;
 `

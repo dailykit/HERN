@@ -1,29 +1,47 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { useQuery } from '@apollo/react-hooks'
+import classNames from 'classnames'
+
 import { useConfig } from '../lib'
 import { getRoute } from '../utils'
-import classNames from 'classnames'
+import { ProfileSidebarIcon } from '../assets/icons'
+import { SUPPORTED_PAYMENT_OPTIONS } from '../graphql'
 
 export const ProfileSidebar = ({ toggle = true, logout }) => {
    const { configOf, settings } = useConfig()
    const router = useRouter()
-
+   const isSubscriptionStore =
+      settings?.availability?.find(
+         i => i.identifier === 'isSubscriptionAvailable'
+      )?.value?.Subscription?.isSubscriptionAvailable?.value ?? false
    const isLoyaltyPointsAvailable =
       settings?.rewards?.find(
          setting => setting?.identifier === 'Loyalty Points Availability'
       )?.value?.['Loyalty Points']?.IsLoyaltyPointsAvailable?.value ?? true
 
    const loyaltyPointsSettings = configOf('Loyalty Points', 'rewards')
-
    const walletSettings = configOf('Wallet', 'rewards')
    const referralsAllowed = configOf('Referral', 'rewards')?.isAvailable
+   const { loading, error, data } = useQuery(SUPPORTED_PAYMENT_OPTIONS)
+   console.log(
+      'Data',
+      loading,
+      error,
+      data?.brands_supportedPaymentCompany.some(pm => pm.label === 'stripe')
+   )
 
    const sidebarLinks = [
-      { title: 'Profile', href: '/account/profile/' },
+      {
+         title: 'Profile',
+         href: '/account/profile/',
+         Icon: ProfileSidebarIcon.Profile,
+      },
       {
          title: `${walletSettings?.label ? walletSettings.label : 'Wallet'}`,
          href: '/account/wallet/',
+         Icon: ProfileSidebarIcon.Wallet,
       },
       {
          title: `${
@@ -32,17 +50,46 @@ export const ProfileSidebar = ({ toggle = true, logout }) => {
                : 'Loyalty Points'
          }`,
          href: '/account/loyalty-points/',
+         Icon: ProfileSidebarIcon.LoyaltyPoints,
       },
-      { title: 'Referrals', href: '/account/referrals/' },
-      { title: 'Order History', href: '/account/orders/' },
-      { title: 'Manage Addresses', href: '/account/addresses/' },
-      { title: 'Manage Cards', href: '/account/cards/' },
+      {
+         title: 'Referrals',
+         href: '/account/referrals/',
+         Icon: ProfileSidebarIcon.Referrals,
+      },
+      {
+         title: 'Order History',
+         href: '/account/orders/',
+         Icon: ProfileSidebarIcon.Orders,
+      },
+      {
+         title: 'Subscriptions',
+         href: '/account/subscriptions/',
+         Icon: ProfileSidebarIcon.Subscriptions,
+      },
+      {
+         title: 'Manage Addresses',
+         href: '/account/addresses/',
+         Icon: ProfileSidebarIcon.ManageAddresses,
+      },
+      {
+         title: 'Manage Cards',
+         href: '/account/cards/',
+         Icon: ProfileSidebarIcon.ManageCards,
+      },
    ]
-   const menu = sidebarLinks.filter(item =>
-      !isLoyaltyPointsAvailable
-         ? item.href !== '/account/loyalty-points/'
-         : true
+   const conditionalRoutes = {
+      '/account/subscriptions/': isSubscriptionStore,
+      '/account/loyalty-points/': isLoyaltyPointsAvailable,
+      '/account/cards/':
+         !error &&
+         !loading &&
+         data?.brands_supportedPaymentCompany.some(pm => pm.label === 'stripe'),
+   }
+   const excludedRoutes = Object.keys(conditionalRoutes).filter(
+      route => conditionalRoutes[route] === false
    )
+   const menu = sidebarLinks.filter(item => !excludedRoutes.includes(item.href))
    return (
       <aside className={`hern-profile-sidebar${toggle ? '--toggle' : ''}`}>
          <ul>
@@ -54,18 +101,16 @@ export const ProfileSidebar = ({ toggle = true, logout }) => {
                   'hern-profile-sidebar__menu-link',
                   { 'hern-profile-sidebar__menu-link--active': isActive }
                )
+               const Icon = node.Icon
                return (
                   <Link href={getRoute(node.href)} key={node.href} passHref>
-                     <span className={manuItemClasses}>{node.title}</span>
+                     <span className={manuItemClasses}>
+                        <Icon />
+                        <span>{node.title}</span>
+                     </span>
                   </Link>
                )
             })}
-            <button
-               className="hern-profile-sidebar__logout-btn"
-               onClick={logout}
-            >
-               Logout
-            </button>
          </ul>
       </aside>
    )

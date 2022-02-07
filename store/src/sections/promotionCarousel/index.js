@@ -67,30 +67,30 @@ export const PromotionCarousal = props => {
             }}
          />
          <Carousel ref={carousalRef} slidesToShow={2} slidesToScroll={2}>
-            {data.coupons.map(eachCoupons => {
-               if (!eachCoupons.metaDetails?.image) {
+            {data.coupons.map(eachCoupon => {
+               if (!eachCoupon.metaDetails?.image) {
                   return null
                }
                return (
-                  <div className="hern-kiosk__promotion-image">
+                  <div
+                     className="hern-kiosk__promotion-image"
+                     key={eachCoupon.id}
+                  >
                      <img
-                        src={eachCoupons.metaDetails.image}
-                        key={eachCoupons.id}
+                        src={eachCoupon.metaDetails.image}
                         style={{ padding: '1em' }}
                      />
                   </div>
                )
             })}
-            {console.log('configs', componentConfig)}
             {componentConfig.data.promotionImages.value.url.map(
                (eachImage, index) => {
                   return (
-                     <div className="hern-kiosk__promotion-image">
-                        <img
-                           src={eachImage}
-                           key={index}
-                           style={{ padding: '1em' }}
-                        />
+                     <div
+                        className="hern-kiosk__promotion-image"
+                        key={eachImage}
+                     >
+                        <img src={eachImage} style={{ padding: '1em' }} />
                      </div>
                   )
                }

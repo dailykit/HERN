@@ -20,6 +20,7 @@ import {
    isStorePreOrderDineInAvailable,
    isStorePreOrderPickupAvailable,
    combineRecurrenceAndBrandLocation,
+   useOnClickOutside,
 } from '../utils'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
 import { Loader } from './index'
@@ -42,7 +43,7 @@ import {
    PREORDER_PICKUP_BRAND_RECURRENCES,
    GET_BRAND_LOCATION,
 } from '../graphql'
-import { TimePicker, Divider, Radio } from 'antd'
+import { TimePicker, Divider, Radio, Modal } from 'antd'
 import 'antd/dist/antd.css'
 import { useToasts } from 'react-toast-notifications'
 import { rrulestr } from 'rrule'
@@ -61,6 +62,10 @@ export const LocationSelector = props => {
             ? orderTabs.map(eachTab => eachTab.orderFulfillmentTypeLabel)
             : null,
       [orderTabs]
+   )
+   const locationSelectorRef = React.useRef()
+   useOnClickOutside(locationSelectorRef, () =>
+      setShowLocationSelectionPopup(false)
    )
    const {
       availableFulfillmentType: storeFulfillmentType,
@@ -83,12 +88,15 @@ export const LocationSelector = props => {
    }, [])
 
    if (!orderTabFulfillmentType) {
-      return <Loader />
+      return <Loader inline />
    }
 
    return (
       <div className={classNames('hern-store-location-selector')}>
-         <div className="hern-store-location-selector-container">
+         <div
+            className="hern-store-location-selector-container"
+            ref={locationSelectorRef}
+         >
             {/* Header */}
             <div className="hern-store-location-selector-header">
                <div className="hern-store-location-selector-header-left">
@@ -504,7 +512,6 @@ const Delivery = props => {
             latitude: result.geometry.location.lat,
             longitude: result.geometry.location.lng,
          }
-         setUserCoordinate(prev => ({ ...prev, ...userLocation }))
          const address = {
             mainText: input.structured_formatting.main_text,
             secondaryText: input.structured_formatting.secondary_text,
@@ -514,12 +521,25 @@ const Delivery = props => {
                address.zipcode = node.long_name
             }
          })
-         setAddress({ ...userLocation, address })
+         console.log('this is adress', address)
+         if (address.zipcode) {
+            setUserCoordinate(prev => ({ ...prev, ...userLocation }))
+            setAddress({ ...userLocation, address })
+         } else {
+            showWarningPopup()
+         }
       }
+   }
+   const showWarningPopup = () => {
+      Modal.warning({
+         title: `Please select a precise location. Try typing a landmark near your house.`,
+         maskClosable: true,
+         centered: true,
+      })
    }
 
    if (!orderTabFulfillmentType) {
-      return <Loader />
+      return <Loader inline />
    }
 
    return (
@@ -562,6 +582,7 @@ const Delivery = props => {
                   <GPSIcon />
                   <span>Get Current Location</span>
                </div>
+               {/* <RefineLocation /> */}
                {locationSearching.error &&
                   locationSearching.errorType === 'blockByBrowser' && (
                      <span className="hern-store-location-selector-main__get-current-location-error-message">
@@ -573,9 +594,11 @@ const Delivery = props => {
          </div>
 
          {locationSearching.loading ? (
-            <Loader />
+            <p style={{ padding: '1em' }}>Getting your location...</p>
          ) : locationSearching.error ? (
-            <p>unable to find location</p>
+            <p style={{ padding: '1em', fontWeight: 'bold' }}>
+               Unable to find location
+            </p>
          ) : address ? (
             <div className="hern-store-location-selector__user-location">
                {LocationSelectorConfig.informationVisibility.deliverySettings
@@ -585,13 +608,17 @@ const Delivery = props => {
          {/* <RefineLocation setUserCoordinate={setUserCoordinate} /> */}
          {/* Footer */}
          {!address ? null : brandLocationsLoading ? (
-            <Loader inline />
+            <p style={{ padding: '1em' }}>
+               Finding nearest store location to you
+            </p>
          ) : brands_brand_location_aggregate?.nodes?.length == 0 ? (
-            <p style={{ padding: '0 14px' }}>
+            <p style={{ padding: '0 14px', fontWeight: 'bold' }}>
                No store available on this location.
             </p>
          ) : brandRecurrencesLoading || preOrderBrandRecurrencesLoading ? (
-            <Loader />
+            <p style={{ padding: '1em' }}>
+               Finding nearest store location to you
+            </p>
          ) : (
             <StoreList
                userCoordinate={userCoordinate}
@@ -838,7 +865,6 @@ const Pickup = props => {
             latitude: result.geometry.location.lat,
             longitude: result.geometry.location.lng,
          }
-         setUserCoordinate(prev => ({ ...prev, ...userLocation }))
          const address = {
             mainText: input.structured_formatting.main_text,
             secondaryText: input.structured_formatting.secondary_text,
@@ -848,15 +874,28 @@ const Pickup = props => {
                address.zipcode = node.long_name
             }
          })
-         setAddress(address)
+         if (address.zipcode) {
+            setUserCoordinate(prev => ({ ...prev, ...userLocation }))
+            setAddress({ ...userLocation, address })
+         } else {
+            showWarningPopup()
+         }
+
          // localStorage.setItem(
          //    'userLocation',
          //    JSON.stringify({ ...userLocation, address })
          // )
       }
    }
+   const showWarningPopup = () => {
+      Modal.warning({
+         title: `Please select a precise location. Try typing a landmark near your house.`,
+         maskClosable: true,
+         centered: true,
+      })
+   }
    if (!orderTabFulfillmentType) {
-      return <Loader />
+      return <Loader inline />
    }
    return (
       <div className="hern-store-location__fulfillment-type-wrapper">
@@ -907,16 +946,20 @@ const Pickup = props => {
             </div>
          </div>
          {locationSearching.loading ? (
-            <Loader />
+            <p style={{ padding: '1em' }}>Getting your location...</p>
          ) : locationSearching.error ? (
-            <p>unable to find location</p>
+            <p style={{ padding: '1em', fontWeight: 'bold' }}>
+               Unable to find location
+            </p>
          ) : address ? (
             <div className="hern-store-location-selector__user-location">
                {userAddress.value && <AddressInfo address={address} />}
             </div>
          ) : null}
          {onDemandPickupRecurrenceLoading || preOrderPickRecurrencesLoading ? (
-            <Loader />
+            <p style={{ padding: '1em' }}>
+               Finding nearest store location to you
+            </p>
          ) : (
             <StoreList
                userCoordinate={userCoordinate}
@@ -1160,7 +1203,6 @@ const DineIn = props => {
             latitude: result.geometry.location.lat,
             longitude: result.geometry.location.lng,
          }
-         setUserCoordinate(prev => ({ ...prev, ...userLocation }))
          const address = {
             mainText: input.structured_formatting.main_text,
             secondaryText: input.structured_formatting.secondary_text,
@@ -1170,16 +1212,28 @@ const DineIn = props => {
                address.zipcode = node.long_name
             }
          })
-         setAddress({ ...userLocation, address })
+         if (address.zipcode) {
+            setUserCoordinate(prev => ({ ...prev, ...userLocation }))
+            setAddress({ ...userLocation, address })
+         } else {
+            showWarningPopup()
+         }
          // localStorage.setItem(
          //    'userLocation',
          //    JSON.stringify({ ...userLocation, address })
          // )
       }
    }
+   const showWarningPopup = () => {
+      Modal.warning({
+         title: `Please select a precise location. Try typing a landmark near your house.`,
+         maskClosable: true,
+         centered: true,
+      })
+   }
 
    if (!orderTabFulfillmentType) {
-      return <Loader />
+      return <Loader inline />
    }
 
    return (
@@ -1231,16 +1285,20 @@ const DineIn = props => {
             </div>
          </div>
          {locationSearching.loading ? (
-            <Loader />
+            <p style={{ padding: '1em' }}>Getting your location...</p>
          ) : locationSearching.error ? (
-            <p>unable to find location</p>
+            <p style={{ padding: '1em', fontWeight: 'bold' }}>
+               unable to find location
+            </p>
          ) : address ? (
             <div className="hern-store-location-selector__user-location">
                {userAddress.value && <AddressInfo address={address} />}
             </div>
          ) : null}
          {onDemandPickupRecurrenceLoading || preOrderPickRecurrencesLoading ? (
-            <Loader />
+            <p style={{ padding: '1em', fontWeight: 'bold' }}>
+               Finding nearest store location to you
+            </p>
          ) : (
             <StoreList
                userCoordinate={userCoordinate}
@@ -1283,7 +1341,7 @@ const AddressInfo = props => {
 
 const RefineLocation = props => {
    // props
-   const { setUserCoordinate } = props
+   // const { setUserCoordinate } = props
 
    // component state
    const [centerCoordinate, setCenterCoordinate] = useState({})
@@ -1303,6 +1361,7 @@ const RefineLocation = props => {
 
    const onChangeMap = (center, zoom, bounds, marginBounds) => {
       // console.log('onChange', center, zoom, bounds, marginBounds)
+      console.log('thisIsCenter', center)
       setCenterCoordinate(prev => ({
          ...prev,
          latitude: center.lat,
@@ -1311,7 +1370,7 @@ const RefineLocation = props => {
    }
 
    const handleUpdateClick = () => {
-      setUserCoordinate(centerCoordinate)
+      // setUserCoordinate(centerCoordinate)
    }
    return (
       <>
@@ -1320,7 +1379,10 @@ const RefineLocation = props => {
             <button onClick={handleUpdateClick}>Update</button>
          </div>
          <div>
-            <div style={{ height: '100vh', width: '100%' }}>
+            <div
+               style={{ height: '200px', width: '100%', position: 'relative' }}
+            >
+               <UserLocationMarker />
                <GoogleMapReact
                   bootstrapURLKeys={{ key: get_env('GOOGLE_API_KEY') }}
                   defaultCenter={defaultProps.center}
@@ -1330,6 +1392,7 @@ const RefineLocation = props => {
                      console.log('childClick', a, b, c, d)
                   }}
                   onChange={onChangeMap}
+                  options={{ gestureHandling: 'greedy' }}
                ></GoogleMapReact>
             </div>
          </div>
@@ -1723,7 +1786,7 @@ export const StoreList = props => {
       sortedBrandLocation === null ||
       status === 'loading'
    ) {
-      return <Loader inline />
+      return <p>Finding nearest store location to you</p>
    }
 
    // when no store available on user location
@@ -1935,20 +1998,6 @@ const StoresOnMap = props => {
       zoom: 16,
    }
 
-   const UserLocationMarker = () => {
-      return (
-         <div style={{ position: 'relative', width: '48px', height: '48px' }}>
-            <LocationMarker
-               size={48}
-               style={{
-                  position: 'absolute',
-                  top: '-48px',
-                  left: '-24px',
-               }}
-            />
-         </div>
-      )
-   }
    const [clickedStoreId, setClickedStoreId] = useState(null)
 
    const StoreLocationMarker = props => {
@@ -2230,5 +2279,19 @@ const StoresOnMap = props => {
             </div>
          </div>
       </CSSTransition>
+   )
+}
+const UserLocationMarker = () => {
+   return (
+      <LocationMarker
+         size={48}
+         style={{
+            position: 'absolute',
+            top: 'calc(52.5% - 24px)',
+            left: '49.5%',
+            zIndex: '1000',
+            transform: 'translate(-50%,-50%)',
+         }}
+      />
    )
 }

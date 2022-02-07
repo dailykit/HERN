@@ -158,7 +158,7 @@ export const OnDemandOrder = ({ config }) => {
       return <p>Error</p>
    }
    if (isMenuLoading || status === 'loading' || productsLoading) {
-      return <Loader />
+      return <Loader type="order-loading" />
    }
    const getWrapperClasses = () => {
       if (menuType === 'fixed-top-nav') {
@@ -235,7 +235,7 @@ export const OnDemandOrder = ({ config }) => {
                                                 router.push(
                                                    getRoute(
                                                       '/products/' +
-                                                         eachProduct.id
+                                                      eachProduct.id
                                                    )
                                                 )
                                              }
@@ -243,7 +243,7 @@ export const OnDemandOrder = ({ config }) => {
                                                 router.push(
                                                    getRoute(
                                                       '/products/' +
-                                                         eachProduct.id
+                                                      eachProduct.id
                                                    )
                                                 )
                                              }
@@ -260,7 +260,7 @@ export const OnDemandOrder = ({ config }) => {
                                              showModifier={
                                                 productModifier &&
                                                 productModifier.id ===
-                                                   eachProduct.id
+                                                eachProduct.id
                                              }
                                              closeModifier={closeModifier}
                                              customAreaFlex={false}

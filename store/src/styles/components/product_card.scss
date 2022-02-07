@@ -1,15 +1,28 @@
 .hern-product-card {
    padding-top: 0.67em;
    padding-bottom: 0.67em;
+   margin-bottom: 0.5rem;
    padding-left: 1em;
    padding-right: 1em;
    position: relative;
    height: auto;
+   box-shadow: 0px 1px 8px 0px rgb(0 0 0 / 5%);
+   @media (max-width: 479px) {
+      display: flex;
+   }
 }
+
+.hern-product-card:hover {
+   box-shadow: 0px 1px 8px 0px rgb(188 185 185);
+}
+
 .hern-product-card-image-container {
    position: relative;
    margin-bottom: 12px;
-
+   @media (max-width: 479px) {
+      width: 120px;
+      display: inline-block;
+   }
    > ul {
       padding: 0;
       margin: 10px 0 0 0;
@@ -68,9 +81,16 @@
    margin-top: 6px;
    display: flex;
    justify-content: space-between;
+   box-sizing: border-box;
+   border-radius: 2px;
+   padding: 1rem;
+   padding-bottom: 0.5rem;
 }
 .hern-product-card-content--custom-area-not-flex {
    display: block !important;
+   @media (max-width: 479px) {
+      display: inline !important;
+   }
 }
 .hern-product-card-additional-icon {
    position: relative;
@@ -79,17 +99,36 @@
 }
 .hern-product-card-details {
    display: flex;
-   flex-direction: column;
+   flex-direction: row;
+   justify-content: space-between;
+   align-items: center;
 }
 .hern-product-card-title {
    display: flex;
+   flex-direction: column;
+   align-content: center;
    .hern-product-card__name {
       max-width: 15em;
       font-weight: 700;
       font-size: 18px;
       line-height: 20px;
+      //for adding ellipsis if more than 2 lines
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: initial;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      @media (max-width: 479px) {
+         font-size: 16px;
+      }
    }
-
+   .hern-product-card-productOption-label {
+      color: rgba(64, 64, 64, 0.8);
+      font-style: italic;
+      font-weight: normal;
+      font-size: 14px;
+   }
    .hern-product-card-show-image-icon {
       margin-left: 10px;
       cursor: pointer;
@@ -97,10 +136,13 @@
 }
 .hern-product-card__price {
    font-weight: 400;
-   font-size: 14px;
+   font-size: 16px;
    line-height: 16px;
    margin-bottom: 6px;
    margin-top: 8px;
+   @media (max-width: 479px) {
+      font-size: 14px;
+   }
 }
 .hern-product-card__additional-text {
    font-weight: normal;
@@ -117,6 +159,7 @@
    min-width: 60px;
    right: 1em;
    align-items: center;
+   // margin-left: 2.5em;
 }
 .hern-product-card-custom-text {
    font-weight: normal;
@@ -129,4 +172,9 @@
    color: #40404099;
    padding-bottom: 16px;
    font-weight: 600;
+   cursor: default;
+   @media (max-width: 479px) {
+      line-height: 12px;
+      font-size: 10px;
+   }
 }

@@ -53,3 +53,7 @@ export * from './LocationIcon'
 export * from './AddressIcon'
 
 export * from './VegNonVegType'
+export * from './Warning'
+export * from './ErrorIllustration'
+export * as ProfileSidebarIcon from './ProfileSidebar'
+export * from './ReloadIcon'

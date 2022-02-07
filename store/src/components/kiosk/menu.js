@@ -10,8 +10,9 @@ import {
    Carousel,
    Space,
    Radio,
+   Spin,
 } from 'antd'
-import { useQueryParamState } from '../../utils'
+import { useQueryParamState, formatCurrency } from '../../utils'
 import { CartContext, useTranslation } from '../../context'
 import { KioskProduct } from './component'
 import { PRODUCTS_BY_CATEGORY, PRODUCTS } from '../../graphql'
@@ -38,7 +39,7 @@ export const MenuSection = props => {
    const { config, setCurrentPage } = props
    const [category, changeCategory, deleteCategory] =
       useQueryParamState('productCategoryId')
-   console.log('fromMenuSection')
+   // console.log('fromMenuSection')
 
    const [menuData, setMenuData] = useState({
       categories: [],
@@ -80,7 +81,7 @@ export const MenuSection = props => {
          },
       },
       onCompleted: data => {
-         console.log('v2Data', data)
+         // console.log('v2Data', data)
          if (data?.onDemand_getMenuV2copy?.length) {
             const [res] = data.onDemand_getMenuV2copy
             const { menu } = res.data
@@ -122,7 +123,7 @@ export const MenuSection = props => {
          },
          // fetchPolicy: 'network-only',
          onCompleted: data => {
-            if (data && data.products.length) {
+            if (data && data.products.length && hydratedMenu.length === 0) {
                const updatedMenu = menuData.categories.map(category => {
                   const updatedProducts = category.products
                      .map(productId => {
@@ -151,7 +152,7 @@ export const MenuSection = props => {
       }
    )
 
-   console.log('hydratedMenu', hydratedMenu)
+   const memoHydratedMenu = React.useMemo(() => hydratedMenu, [hydratedMenu])
    const lastCarousal = e => {
       e.stopPropagation()
       carousalRef.current.prev()
@@ -162,7 +163,18 @@ export const MenuSection = props => {
    }
 
    if (status === 'loading') {
-      return <div>Loading</div>
+      return (
+         <div
+            style={{
+               display: 'flex',
+               alignItems: 'center',
+               justifyContent: 'center',
+               height: '100%',
+            }}
+         >
+            <Spin size="large" tip="Loading Menu..." />
+         </div>
+      )
    }
    if (status === 'error') {
       return <div>Somthing went wring</div>
@@ -184,10 +196,7 @@ export const MenuSection = props => {
                      setCurrentPage={setCurrentPage}
                   />
                </Header>
-               <Content
-                  className="hern-kiosk__menu-promotion-coupons"
-                  infinite={false}
-               >
+               <Content className="hern-kiosk__menu-promotion-coupons">
                   <PromotionCarousal config={config} />
                </Content>
             </Layout>
@@ -196,7 +205,7 @@ export const MenuSection = props => {
             config={config}
             categoryId={category}
             changeCategory={changeCategory}
-            kioskMenus={hydratedMenu}
+            kioskMenus={memoHydratedMenu}
             setCurrentPage={setCurrentPage}
          />
       </Layout>
@@ -210,7 +219,7 @@ const KioskMenu = props => {
    const { config, kioskMenus, setCurrentPage } = props
    const { categoryId, changeCategory } = props
 
-   const { cartState } = React.useContext(CartContext)
+   const { cartState, showCartIconToolTip } = React.useContext(CartContext)
    const { cart } = cartState
 
    const menuRef = React.useRef()
@@ -262,7 +271,7 @@ const KioskMenu = props => {
                               onSetActive={to => {
                                  setSelectedCategory(index)
                                  // changeCategory(index)
-                                 console.log('thisIsTo', to)
+                                 // console.log('thisIsTo', to)
                               }}
                               to={eachCategory.name}
                               spy={true}
@@ -314,13 +323,14 @@ const KioskMenu = props => {
                            </Col>
                         </Row>
                      </Col>
-                     <Col span={3} className="hern-kiosk__menu-header-col-2">
-                        <CartIcon
-                           onClick={() => {
-                              setCurrentPage('cartPage')
-                           }}
-                           size={43}
-                        />
+                     <Col
+                        span={3}
+                        className="hern-kiosk__menu-header-col-2"
+                        onClick={() => {
+                           setCurrentPage('cartPage')
+                        }}
+                     >
+                        <CartIcon size={43} />
                         <div
                            style={{
                               position: 'absolute',
@@ -335,6 +345,41 @@ const KioskMenu = props => {
                               }
                            />
                         </div>
+                        {cart?.cartItems_aggregate?.aggregate?.count > 0 &&
+                           showCartIconToolTip && (
+                              <div className="hern-kiosk__cart-tool-tip">
+                                 <span
+                                    className="hern-kiosk__cart-tool-tip-text"
+                                    style={{
+                                       background:
+                                          config.kioskSettings.theme
+                                             .secondaryColorLight.value,
+                                       color: config.kioskSettings.theme
+                                          .primaryColor.value,
+                                    }}
+                                 >
+                                    {
+                                       cart?.cartItems_aggregate?.aggregate
+                                          ?.count
+                                    }{' '}
+                                    {cart?.cartItems_aggregate?.aggregate
+                                       ?.count === 1
+                                       ? t('Item')
+                                       : t('Items')}{' '}
+                                    {formatCurrency(
+                                       cart?.cartOwnerBilling?.balanceToPay
+                                    )}
+                                 </span>
+                                 <div
+                                    className="hern-kiosk__cart-tip"
+                                    style={{
+                                       background:
+                                          config.kioskSettings.theme
+                                             .secondaryColorLight.value,
+                                    }}
+                                 ></div>
+                              </div>
+                           )}
                      </Col>
                   </Row>
                </Header>
@@ -378,6 +423,7 @@ const KioskMenu = props => {
                         <Scroll.Element
                            name={eachCategory.name}
                            className="hern-kiosk__scroll-element"
+                           key={eachCategory.name}
                         >
                            <div name={eachCategory.name} ref={menuRef}></div>
                            {eachCategory?.bannerImageUrl ? (
@@ -404,7 +450,7 @@ const KioskMenu = props => {
                                                 onRadioClick(eachType.type)
                                              }
                                              // value={eachType.type}
-                                             key={index}
+                                             key={eachType.type}
                                              className="hern-kiosk__menu-product-type-radio-btn"
                                              data-translation="true"
                                              data-original-value={eachType.type}
@@ -453,7 +499,7 @@ const KioskMenu = props => {
                                        <Col
                                           span={8}
                                           className="gutter-row"
-                                          key={index2}
+                                          key={eachProduct?.id}
                                        >
                                           <KioskProduct
                                              config={config}

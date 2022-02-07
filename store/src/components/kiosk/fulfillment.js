@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button } from 'antd'
-import { useTranslation } from '../../context'
+import { useCart, useTranslation } from '../../context'
 import { DineInIcon, TakeOutIcon } from '../../assets/icons'
 import { useConfig } from '../../lib'
 
@@ -78,13 +78,24 @@ const FulfillmentOption = props => {
 
    const { dispatch } = useConfig()
    const { t } = useTranslation()
+   const { methods } = useCart()
 
    const onFulfillmentClick = () => {
-      console.log('fulfillment', fulfillment)
       dispatch({
          type: 'SET_SELECTED_ORDER_TAB',
          payload: fulfillment,
       })
+      const cartIdInLocal = localStorage.getItem('cart-id')
+      if (cartIdInLocal) {
+         methods.cart.update({
+            variables: {
+               id: JSON.parse(cartIdInLocal),
+               _set: {
+                  orderTabId: fulfillment?.id || null,
+               },
+            },
+         })
+      }
       setCurrentPage('menuPage')
    }
 

@@ -17,7 +17,11 @@ import {
    UpVector,
 } from '../../../assets/icons'
 import KioskButton from './button'
-import { formatCurrency, useOnClickOutside } from '../../../utils'
+import {
+   formatCurrency,
+   getCartItemWithModifiers,
+   useOnClickOutside,
+} from '../../../utils'
 import { GET_MODIFIER_BY_ID } from '../../../graphql'
 import { useQuery } from '@apollo/react-hooks'
 import { useConfig } from '../../../lib'
@@ -181,6 +185,15 @@ export const KioskModifier = props => {
             onCloseModifier()
             return
          }
+
+         // not open GO TO MENU - CHECKOUT popup
+         if (
+            !config.kioskSettings.popupSettings.showGoToMenuCheckoutPopup.value
+         ) {
+            onCloseModifier()
+            return
+         }
+
          setShowProceedPopup(true)
          return
       }
@@ -189,13 +202,16 @@ export const KioskModifier = props => {
 
       let errorState = []
       for (let i = 0; i < allCatagories.length; i++) {
-         const min = allCatagories[i]['limits']['min']
-         const max = allCatagories[i]['limits']['max']
          const allFoundedOptionsLength = allSelectedOptions.filter(
             x => x.modifierCategoryID === allCatagories[i].id
          ).length
 
-         if (allCatagories[i]['isRequired']) {
+         if (
+            allCatagories[i]['isRequired'] &&
+            allCatagories[i]['type'] === 'multiple'
+         ) {
+            const min = allCatagories[i]['limits']['min']
+            const max = allCatagories[i]['limits']['max']
             if (
                allFoundedOptionsLength > 0 &&
                min <= allFoundedOptionsLength &&
@@ -276,6 +292,13 @@ export const KioskModifier = props => {
             onCloseModifier()
             return
          }
+         // not open GO TO MENU - CHECKOUT popup
+         if (
+            !config.kioskSettings.popupSettings.showGoToMenuCheckoutPopup.value
+         ) {
+            onCloseModifier()
+            return
+         }
          setShowProceedPopup(true)
          return
       }
@@ -310,63 +333,6 @@ export const KioskModifier = props => {
       }
    }
 
-   // total amount
-   //total amount for this item
-   // const totalAmount = () => {
-   //    const productOptionPrice = selectedProductOption.price
-   //    const productOptionDiscount = selectedProductOption.discount
-   //    let allSelectedOptions = [
-   //       ...selectedOptions.single,
-   //       ...selectedOptions.multiple,
-   //    ]
-   //    const nestedSelectedOptions =
-   //       nestedModifierRef?.current?.nestedSelectedModifiers()
-   //    const additionalNestedSelectedOptions =
-   //       additionalModifierRef?.current?.additionalNestedModifiers()
-   //    console.log(
-   //       'this is price',
-   //       nestedSelectedOptions,
-   //       additionalNestedSelectedOptions
-   //    )
-   //    if (nestedSelectedOptions) {
-   //       allSelectedOptions = [
-   //          ...allSelectedOptions,
-   //          ...nestedSelectedOptions.single,
-   //          ...nestedSelectedOptions.multiple,
-   //       ]
-   //    }
-   //    if (additionalNestedSelectedOptions) {
-   //       allSelectedOptions = [
-   //          ...allSelectedOptions,
-   //          ...additionalNestedSelectedOptions.single,
-   //          ...additionalNestedSelectedOptions.multiple,
-   //       ]
-   //    }
-   //    let allSelectedOptionsPrice = 0
-   //    allSelectedOptions.forEach(
-   //       x =>
-   //          (allSelectedOptionsPrice =
-   //             allSelectedOptionsPrice +
-   //             (x?.modifierCategoryOptionsPrice || 0) -
-   //             (x?.modifierCategoryOptionsDiscount || 0))
-   //    )
-   //    console.log(
-   //       'totalPrice',
-   //       productOptionPrice,
-   //       allSelectedOptionsPrice,
-   //       productData.price,
-   //       productData.discount,
-   //       productOptionDiscount
-   //    )
-   //    const totalPrice =
-   //       productOptionPrice +
-   //       allSelectedOptionsPrice +
-   //       productData.price -
-   //       productData.discount -
-   //       productOptionDiscount
-   //    return totalPrice * quantity
-   // }
-   console.log('childChangingToggle', childChangingToggle)
    const totalAmount = () => {
       const productOptionPrice = selectedProductOption.price
       const productOptionDiscount = selectedProductOption.discount
@@ -378,11 +344,7 @@ export const KioskModifier = props => {
          nestedModifierRef?.current?.nestedSelectedModifiers()
       const additionalNestedSelectedOptions =
          additionalModifierRef?.current?.additionalNestedModifiers()
-      console.log(
-         'this is price',
-         nestedSelectedOptions,
-         additionalNestedSelectedOptions
-      )
+
       if (nestedSelectedOptions) {
          allSelectedOptions = [
             ...allSelectedOptions,
@@ -405,14 +367,7 @@ export const KioskModifier = props => {
                (x?.modifierCategoryOptionsPrice || 0) -
                (x?.modifierCategoryOptionsDiscount || 0))
       )
-      console.log(
-         'totalPrice',
-         productOptionPrice,
-         allSelectedOptionsPrice,
-         productData.price,
-         productData.discount,
-         productOptionDiscount
-      )
+
       const totalPrice =
          productOptionPrice +
          allSelectedOptionsPrice +
@@ -422,6 +377,7 @@ export const KioskModifier = props => {
       return totalPrice * quantity
    }
 
+   // used for add new product or edit product
    useEffect(() => {
       if (forNewItem || edit) {
          const productOptionId = productCartDetail.childs[0].productOption.id
@@ -482,14 +438,22 @@ export const KioskModifier = props => {
             selectedProductOption.modifier.categories.forEach(eachCategory => {
                if (eachCategory.type === 'single' && eachCategory.isRequired) {
                   // default selected modifier option
+                  // select first option which has zero price
+
+                  const firstOptionWithZeroPrice = eachCategory.options.find(
+                     option => option.price === 0
+                  )
+                     ? eachCategory.options.find(option => option.price === 0)
+                     : eachCategory.options[0]
+
                   const defaultModifierSelectedOption = {
                      modifierCategoryID: eachCategory.id,
-                     modifierCategoryOptionsID: eachCategory.options[0].id,
+                     modifierCategoryOptionsID: firstOptionWithZeroPrice.id,
                      modifierCategoryOptionsPrice:
-                        eachCategory.options[0].price,
+                        firstOptionWithZeroPrice.price,
                      modifierCategoryOptionsDiscount:
-                        eachCategory.options[0].discount,
-                     cartItem: eachCategory.options[0].cartItem,
+                        firstOptionWithZeroPrice.discount,
+                     cartItem: firstOptionWithZeroPrice.cartItem,
                   }
                   singleModifier = [
                      ...singleModifier,
@@ -499,11 +463,26 @@ export const KioskModifier = props => {
                   eachCategory.type === 'multiple' &&
                   eachCategory.isRequired
                ) {
-                  const defaultSelectedOptions = eachCategory.options.slice(
-                     0,
-                     eachCategory.limits.min
+                  // select options which has price zero
+                  const optionsWithZeroPrice = eachCategory.options.filter(
+                     option => option.price === 0
                   )
-                  defaultSelectedOptions.forEach(eachModifierOption => {
+                  const optionsWithOutZeroPrice = eachCategory.options.filter(
+                     option => option.price !== 0
+                  )
+                  const defaultMultiSelectedOptions =
+                     optionsWithZeroPrice.length >= eachCategory.limits.min
+                        ? optionsWithZeroPrice.slice(0, eachCategory.limits.min)
+                        : [
+                             ...optionsWithZeroPrice,
+                             ...optionsWithOutZeroPrice.slice(
+                                0,
+                                eachCategory.limits.min -
+                                   optionsWithZeroPrice.length
+                             ),
+                          ]
+
+                  defaultMultiSelectedOptions.forEach(eachModifierOption => {
                      // default selected modifier option
                      const defaultModifierSelectedOption = {
                         modifierCategoryID: eachCategory.id,
@@ -535,7 +514,7 @@ export const KioskModifier = props => {
       )
       dynamicTrans(languageTags)
    }, [selectedProductOption])
-   console.log('product_data -->', productData)
+
    if (showProceedPopup) {
       return (
          <Modal
@@ -682,51 +661,106 @@ export const KioskModifier = props => {
                      formatCurrency(productData.price - productData.discount)}
                </span>
             </div>
-            <div
-               className="hern-kiosk__modifier-popup-product-options"
-               style={{
-                  backgroundColor: `${config.kioskSettings.theme.primaryColor.value}`,
-               }}
-            >
-               {productData.productOptions.map((eachOption, index) => (
-                  <button
-                     value={eachOption.id}
-                     key={index}
-                     className="hern-kiosk__modifier-product-option"
+            {productData.productOptions.length === 1 ? (
+               config.productSettings.showSingleProductOption.value ? (
+                  <div
+                     className="hern-kiosk__modifier-popup-product-options"
                      style={{
-                        backgroundColor:
-                           selectedProductOption.id === eachOption.id
-                              ? config.kioskSettings.theme.primaryColorDark
-                                   .value
-                              : 'transparent',
-                        color: '#ffffff',
-                        border:
-                           selectedProductOption.id === eachOption.id
-                              ? `2px solid ${config.kioskSettings.theme.successColor.value}`
-                              : `2px solid ${config.kioskSettings.theme.primaryColorDark.value}`,
-                     }}
-                     onClick={() => {
-                        const productOption = productData.productOptions.find(
-                           x => x.id == eachOption.id
-                        )
-                        // when changing product option previous selected should be removed
-                        setSelectedOptions({ single: [], multiple: [] })
-                        setSelectedProductOption(productOption)
+                        backgroundColor: `${config.kioskSettings.theme.primaryColor.value}`,
                      }}
                   >
-                     <span
-                        data-name={eachOption.label}
-                        data-translation="true"
-                        data-original-value={eachOption.label}
+                     {productData.productOptions.map((eachOption, index) => (
+                        <button
+                           value={eachOption.id}
+                           key={eachOption.id}
+                           className="hern-kiosk__modifier-product-option"
+                           style={{
+                              backgroundColor:
+                                 selectedProductOption.id === eachOption.id
+                                    ? config.kioskSettings.theme
+                                         .primaryColorDark.value
+                                    : 'transparent',
+                              color: '#ffffff',
+                              border:
+                                 selectedProductOption.id === eachOption.id
+                                    ? `2px solid ${config.kioskSettings.theme.successColor.value}`
+                                    : `2px solid ${config.kioskSettings.theme.primaryColorDark.value}`,
+                           }}
+                           onClick={() => {
+                              const productOption =
+                                 productData.productOptions.find(
+                                    x => x.id == eachOption.id
+                                 )
+                              // when changing product option previous selected should be removed
+                              setSelectedOptions({ single: [], multiple: [] })
+                              setSelectedProductOption(productOption)
+                           }}
+                        >
+                           <span
+                              data-name={eachOption.label}
+                              data-translation="true"
+                              data-original-value={eachOption.label}
+                           >
+                              {eachOption.label}
+                           </span>
+                           {' (+ '}
+                           {formatCurrency(
+                              eachOption.price - eachOption.discount
+                           )}
+                           {')'}
+                        </button>
+                     ))}
+                  </div>
+               ) : null
+            ) : (
+               <div
+                  className="hern-kiosk__modifier-popup-product-options"
+                  style={{
+                     backgroundColor: `${config.kioskSettings.theme.primaryColor.value}`,
+                  }}
+               >
+                  {productData.productOptions.map((eachOption, index) => (
+                     <button
+                        value={eachOption.id}
+                        key={eachOption.id}
+                        className="hern-kiosk__modifier-product-option"
+                        style={{
+                           backgroundColor:
+                              selectedProductOption.id === eachOption.id
+                                 ? config.kioskSettings.theme.primaryColorDark
+                                      .value
+                                 : 'transparent',
+                           color: '#ffffff',
+                           border:
+                              selectedProductOption.id === eachOption.id
+                                 ? `2px solid ${config.kioskSettings.theme.successColor.value}`
+                                 : `2px solid ${config.kioskSettings.theme.primaryColorDark.value}`,
+                        }}
+                        onClick={() => {
+                           const productOption =
+                              productData.productOptions.find(
+                                 x => x.id == eachOption.id
+                              )
+                           // when changing product option previous selected should be removed
+                           setSelectedOptions({ single: [], multiple: [] })
+                           setSelectedProductOption(productOption)
+                        }}
                      >
-                        {eachOption.label}
-                     </span>
-                     {' (+ '}
-                     {formatCurrency(eachOption.price - eachOption.discount)}
-                     {')'}
-                  </button>
-               ))}
-            </div>
+                        <span
+                           data-name={eachOption.label}
+                           data-translation="true"
+                           data-original-value={eachOption.label}
+                        >
+                           {eachOption.label}
+                        </span>
+                        {' (+ '}
+                        {formatCurrency(eachOption.price - eachOption.discount)}
+                        {')'}
+                     </button>
+                  ))}
+               </div>
+            )}
+
             {productData.additionalText && (
                <div className="hern-kiosk__product-modifier-p-additional-text">
                   <span
@@ -750,7 +784,7 @@ export const KioskModifier = props => {
                         selectedProductOption={selectedProductOption}
                         onCheckClick={onCheckClick}
                         config={config}
-                        key={index}
+                        key={`${eachAdditionalModifier.modifierId}-${eachAdditionalModifier.productOption}`}
                         renderConditionText={renderConditionText}
                         errorCategories={errorCategories}
                         selectedOptions={selectedOptions}
@@ -771,6 +805,7 @@ export const KioskModifier = props => {
                            style={{
                               backgroundColor: `${config.kioskSettings.theme.primaryColorDark.value}`,
                            }}
+                           key={eachModifierCategory.id}
                         >
                            <label className="hern-kiosk__modifier-category-label">
                               <Badge
@@ -834,7 +869,7 @@ export const KioskModifier = props => {
                                     return (
                                        <>
                                           <div
-                                             key={index}
+                                             key={eachOption.id}
                                              className="hern-kiosk__modifier-category-option"
                                              onClick={() => {
                                                 onCheckClick(
@@ -1148,13 +1183,16 @@ const AdditionalModifiers = forwardRef(
 
             let errorState = []
             for (let i = 0; i < allCatagories.length; i++) {
-               const min = allCatagories[i]['limits']['min']
-               const max = allCatagories[i]['limits']['max']
                const allFoundedOptionsLength = allSelectedOptions.filter(
                   x => x.modifierCategoryID === allCatagories[i].id
                ).length
 
-               if (allCatagories[i]['isRequired']) {
+               if (
+                  allCatagories[i]['isRequired'] &&
+                  allCatagories[i]['type'] === 'multiple'
+               ) {
+                  const min = allCatagories[i]['limits']['min']
+                  const max = allCatagories[i]['limits']['max']
                   if (
                      allFoundedOptionsLength > 0 &&
                      min <= allFoundedOptionsLength &&
@@ -1525,42 +1563,6 @@ const AdditionalModifiers = forwardRef(
       )
    }
 )
-const getCartItemWithModifiers = (
-   cartItemInput,
-   selectedModifiersInput,
-   nestedModifiersInput
-) => {
-   const finalCartItem = { ...cartItemInput }
-
-   const combinedModifiers = selectedModifiersInput.reduce(
-      (acc, obj) => [...acc, ...obj.data],
-      []
-   )
-   const dataArr = finalCartItem?.childs?.data[0]?.childs?.data
-   const dataArrLength = dataArr.length
-
-   finalCartItem.childs.data[0].childs.data = [...dataArr, ...combinedModifiers]
-   if (nestedModifiersInput) {
-      nestedModifiersInput.forEach(eachNestedModifierInput => {
-         const foundModifierIndex =
-            finalCartItem.childs.data[0].childs.data.findIndex(
-               y =>
-                  eachNestedModifierInput.parentModifierOptionId ==
-                  y.modifierOptionId
-            )
-         const xCombinedModifier = eachNestedModifierInput.data
-            .map(z => z.cartItem)
-            .reduce((acc, obj) => [...acc, ...obj.data], [])
-         finalCartItem.childs.data[0].childs.data[foundModifierIndex].childs =
-            {}
-         finalCartItem.childs.data[0].childs.data[foundModifierIndex].childs[
-            'data'
-         ] = xCombinedModifier
-      })
-   }
-
-   return finalCartItem
-}
 
 const ModifierOptionsList = forwardRef((props, ref) => {
    const {
@@ -1673,13 +1675,16 @@ const ModifierOptionsList = forwardRef((props, ref) => {
 
          let errorState = []
          for (let i = 0; i < allCatagories.length; i++) {
-            const min = allCatagories[i]['limits']['min']
-            const max = allCatagories[i]['limits']['max']
             const allFoundedOptionsLength = allSelectedOptions.filter(
                x => x.modifierCategoryID === allCatagories[i].id
             ).length
 
-            if (allCatagories[i]['isRequired']) {
+            if (
+               allCatagories[i]['isRequired'] &&
+               allCatagories[i]['type'] === 'multiple'
+            ) {
+               const min = allCatagories[i]['limits']['min']
+               const max = allCatagories[i]['limits']['max']
                if (
                   allFoundedOptionsLength > 0 &&
                   min <= allFoundedOptionsLength &&
@@ -1916,7 +1921,7 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                         return (
                            <>
                               <div
-                                 key={index}
+                                 key={eachOption.id}
                                  className="hern-kiosk__modifier-category-option"
                                  onClick={() => {
                                     onCheckClick(

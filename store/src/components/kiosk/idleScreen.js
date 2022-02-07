@@ -28,6 +28,10 @@ export const IdleScreen = props => {
       }
    }
 
+   useEffect(() => {
+      props.resetStates()
+   }, [])
+
    return (
       <div className="hern-kiosk__idle-screen-container">
          {config.idlePageSettings?.idlePageVideo &&

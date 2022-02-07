@@ -18,7 +18,7 @@ import {
    useQueryParams,
    useQueryParamState,
 } from '../utils'
-import MenuIcon from '../assets/icons/Menu'
+import { MenuIcon, UserIcon } from '../assets/icons'
 
 import { ProfileSidebar } from './profile_sidebar'
 import { CrossIcon, CartIcon, LocationIcon, DownVector } from '../assets/icons'
@@ -198,7 +198,7 @@ export const Header = ({ settings, navigationMenus }) => {
                )
                   .then(res => res.json())
                   .then(data => {
-                     if (data.status === 'OK' && data.results.length > 0) {
+                     if (data?.status === 'OK' && data.results.length > 0) {
                         const formatted_address =
                            data.results[0].formatted_address.split(',')
                         const mainText = formatted_address
@@ -535,7 +535,7 @@ export const Header = ({ settings, navigationMenus }) => {
                recurrencesDetails.fulfillmentType
             )
             const availableStores = result.filter(
-               x => x[fulfillmentStatus].status
+               x => x[fulfillmentStatus]?.status
             )
             if (availableStores.length > 0) {
                localStorage.setItem(
@@ -570,7 +570,7 @@ export const Header = ({ settings, navigationMenus }) => {
                //    window.location.reload()
                // }
             } else {
-               const message = result[0][fulfillmentStatus].message
+               const message = result[0][fulfillmentStatus]?.message
                console.log('message', message)
                dispatch({
                   type: 'SET_STORE_STATUS',
@@ -702,11 +702,7 @@ export const Header = ({ settings, navigationMenus }) => {
                   <section className="hern-header__auth">
                      {!isSubscriptionStore && (
                         <div
-                           onClick={() =>
-                              router.push(
-                                 getRoute(`/checkout?id=${cartState?.cart?.id}`)
-                              )
-                           }
+                           onClick={() => router.push(getRoute(`/checkout`))}
                            className="hern-navbar__list__item hern-navbar__list__item--cart-icon"
                         >
                            <CartIcon size="20px" stroke="var(--hern-accent)" />
@@ -722,25 +718,26 @@ export const Header = ({ settings, navigationMenus }) => {
                         </>
                      ) : isAuthenticated ? (
                         <>
-                           {user?.platform_customer?.firstName &&
-                              (isClient && width > 768 ? (
-                                 <span className="hern-header__avatar">
-                                    <Link href={getRoute('/account/profile/')}>
-                                       {getInitials(
-                                          `${user.platform_customer?.firstName} ${user.platform_customer?.lastName}`
-                                       )}
-                                    </Link>
-                                 </span>
-                              ) : (
-                                 <span
-                                    className="hern-header__avatar"
-                                    onClick={() => setToggle(!toggle)}
+                           {isClient && width > 767 ? (
+                              <span className="hern-header__avatar">
+                                 <button
+                                    onClick={() =>
+                                       router.push(
+                                          getRoute('/account/profile/')
+                                       )
+                                    }
                                  >
-                                    {getInitials(
-                                       `${user.platform_customer?.firstName} ${user.platform_customer?.lastName}`
-                                    )}
-                                 </span>
-                              ))}
+                                    <UserIcon size="20" />
+                                 </button>
+                              </span>
+                           ) : (
+                              <span
+                                 className="hern-header__avatar"
+                                 onClick={() => setToggle(!toggle)}
+                              >
+                                 <UserIcon size="20" />
+                              </span>
+                           )}
 
                            <button
                               className="hern-header__logout-btn"
@@ -773,7 +770,7 @@ export const Header = ({ settings, navigationMenus }) => {
                         {isMobileNavVisible ? (
                            <CrossIcon stroke="#111" size={24} />
                         ) : (
-                           <MenuIcon />
+                           <MenuIcon color="#111" />
                         )}
                      </button>
                   </section>
@@ -892,7 +889,7 @@ const LocationInfo = ({ settings }) => {
                </div>
             ) : (
                <div className="hern-header__location-right">
-                  {storeStatus.status && prefix && (
+                  {storeStatus?.status && prefix && (
                      <div className="hern-header__location-upper">
                         {prefix}{' '}
                         <span className="hern-header__downvector-icon">
@@ -909,7 +906,7 @@ const LocationInfo = ({ settings }) => {
                            : 'Please select address...'}
                      </div>
                      <div className="hern-header__location-warning">
-                        {!storeStatus.status ? storeStatus.message : ''}
+                        {!storeStatus?.status ? storeStatus?.message : ''}
                      </div>
                   </div>
                </div>

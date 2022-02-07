@@ -17,7 +17,8 @@ const initiatePayment = async arg => {
          requires3dSecure,
          amount,
          oldAmount,
-         host
+         host,
+         cartId
       } = arg
       let paymentMode = []
       let customerInfo = {
@@ -28,9 +29,9 @@ const initiatePayment = async arg => {
       }
       const PAYTM_MERCHANT_ID = await get_env('PAYTM_MERCHANT_ID')
       const PAYTM_API_URL = await get_env('PAYTM_API_URL')
-      const orderId = arg.id.toString()
+      const orderId = `ORD-${cartId}-${cartPaymentId}`
       const { cart = {} } = await client.request(CART, {
-         id: arg.cartId
+         id: cartId
       })
       const { availablePaymentOption = {} } = await client.request(
          AVAILABLE_PAYMENT_OPTION,

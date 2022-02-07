@@ -9,7 +9,7 @@ const razorpayWebhookEvents = async arg => {
    try {
       const host = arg.hostname || arg.headers.host
       const { CHECKSUMHASH: incomingChecksumHas, ORDERID } = arg.body
-      const orderId = parseInt(ORDERID)
+      const orderId = parseInt(ORDERID.split('-').pop())
       const PAYTM_MERCHANT_KEY = await get_env('PAYTM_MERCHANT_KEY')
       var isVerifySignature = PaytmChecksum.verifySignature(
          arg.body,
@@ -34,10 +34,11 @@ const razorpayWebhookEvents = async arg => {
       const requiredData = {
          cartPaymentId: orderId,
          transactionRemark: body,
-         requestId: orderId.toString(),
+         requestId: ORDERID,
          paymentStatus: body.resultInfo.resultStatus,
          transactionId: body.txnId,
-         cartId: cartPayment.cartId
+         cartId: cartPayment.cartId,
+         domain: cartPayment.cart.brand.domain
       }
       console.log('requiredData', requiredData)
 

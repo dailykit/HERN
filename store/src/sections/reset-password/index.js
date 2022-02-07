@@ -42,10 +42,10 @@ export const ResetPassword = () => {
 
    const [create_brand_customer] = useMutation(BRAND.CUSTOMER.CREATE, {
       onCompleted: () => {
-         if (isClient) {
-            window.location.href =
-               window.location.origin + '/get-started/select-plan'
-         }
+         // if (isClient) {
+         //    window.location.href =
+         //       window.location.origin + '/get-started/select-plan'
+         // }
       },
       onError: error => {
          console.log(error)
@@ -54,10 +54,10 @@ export const ResetPassword = () => {
    const [create] = useMutation(MUTATIONS.CUSTOMER.CREATE, {
       onCompleted: () => {
          dispatch({ type: 'SET_USER', payload: {} })
-         if (isClient) {
-            window.location.href =
-               window.location.origin + '/get-started/select-plan'
-         }
+         // if (isClient) {
+         //    window.location.href =
+         //       window.location.origin + '/get-started/select-plan'
+         // }
       },
       onError: () =>
          addToast('Something went wrong!', {
@@ -113,9 +113,7 @@ export const ResetPassword = () => {
                   localStorage.removeItem('landed_on')
                   window.location.href = landedOn
                } else {
-                  window.location.href =
-                     window.location.origin +
-                     getRoute('/get-started/select-plan')
+                  window.location.href = window.location.origin + getRoute('/')
                }
             }
          }

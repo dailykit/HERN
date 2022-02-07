@@ -9,16 +9,28 @@ import {
    Coupon,
    WalletAmount,
 } from '../../components'
-import { CartContext, useUser } from '../../context'
+import { CartContext, onDemandMenuContext, useUser } from '../../context'
 import { EmptyCart, PaymentIcon } from '../../assets/icons'
 import Link from 'next/link'
 import { UserInfo, UserType } from '../../components'
 import { useConfig } from '../../lib'
+import { isEmpty } from 'lodash'
 
 export const OnDemandCart = () => {
-   const { cartState, combinedCartItems, isCartLoading, cartItemsLoading } =
-      React.useContext(CartContext)
+   const {
+      cartState,
+      combinedCartItems,
+      isCartLoading,
+      cartItemsLoading,
+      isFinalCartLoading,
+      storedCartId,
+   } = React.useContext(CartContext)
    const { isAuthenticated, userType, isLoading } = useUser()
+   const { onDemandMenu } = React.useContext(onDemandMenuContext)
+
+   const { isMenuLoading } = onDemandMenu
+
+   const { user } = useUser()
 
    const { settings } = useConfig()
 
@@ -27,21 +39,21 @@ export const OnDemandCart = () => {
          setting => setting?.identifier === 'Loyalty Points Availability'
       )?.value?.['Loyalty Points']?.IsLoyaltyPointsAvailable?.value ?? true
 
-   if (
-      combinedCartItems === null ||
-      isCartLoading ||
-      cartItemsLoading ||
-      isLoading
-   ) {
-      return <Loader />
+   if (isFinalCartLoading || isMenuLoading) {
+      return <Loader type="cart-loading" />
    }
 
-   if (!cartState.cart || combinedCartItems.length === 0) {
+   if (
+      storedCartId === null ||
+      isEmpty(cartState?.cart) ||
+      combinedCartItems === null ||
+      combinedCartItems?.length === 0
+   ) {
       return (
          <div className="hern-cart-empty-cart">
             <EmptyCart />
             <span>Oops! Your cart is empty </span>
-            <Button className="hern-cart-go-to-menu-btn" onClick={() => {}}>
+            <Button className="hern-cart-go-to-menu-btn" onClick={() => { }}>
                <Link href="/order">GO TO MENU</Link>
             </Button>
          </div>
@@ -66,12 +78,12 @@ export const OnDemandCart = () => {
                <UserInfo cart={cartState.cart} />
             </div>
             <div className="hern-ondemand-cart__left-card">
-               <Fulfillment />
+               <Fulfillment cart={cartState.cart} />
             </div>
             <div className="hern-ondemand-cart__left-card">
                <Coupon upFrontLayout={true} cart={cartState.cart} />
             </div>
-            {isAuthenticated && isLoyaltyPointsAvailable && (
+            {isAuthenticated && isLoyaltyPointsAvailable && user.loyaltyPoint?.points > 0 && (
                <div className="hern-ondemand-cart__left-card">
                   <LoyaltyPoints cart={cartState.cart} version={2} />
                </div>

@@ -38,5 +38,10 @@
    "Repeat last used customization": "Repeat last used customization?",
    "Total": "Total",
    "You have to choose this category": "You have to choose this category",
-   "Total Price": "Total Price"
+   "Total Price": "Total Price",
+   "Item": "Item",
+   "Items": "Items",
+   "CANCEL": "CANCEL",
+   "CONTINUE": "CONTINUE",
+   "Current changes will lose do you wish to continue?": "Current changes will lose do you wish to continue?"
 }

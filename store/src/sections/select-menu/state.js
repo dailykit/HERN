@@ -288,7 +288,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
                      router.push(
                         getRoute(
                            '/menu?d=' +
-                              subscription?.occurences[0].fulfillmentDate
+                           subscription?.occurences[0].fulfillmentDate
                         )
                      )
                   }
@@ -304,8 +304,8 @@ export const MenuProvider = ({ isCheckout, children }) => {
                      router.push(
                         getRoute(
                            '/menu?d=' +
-                              subscription?.occurences[validWeekIndex]
-                                 .fulfillmentDate
+                           subscription?.occurences[validWeekIndex]
+                              .fulfillmentDate
                         )
                      )
                   }
@@ -376,7 +376,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
       })
    }
 
-   const store = configOf('Store Availability', 'availability')
+   const store = configOf('Store Availability', 'availability')?.storeAvailability
    const addProduct = (item, product) => {
       dispatch({ type: 'CART_STATE', payload: 'SAVING' })
 
@@ -514,7 +514,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
                   fulfillmentInfo: fulfillment,
                   customerKeycloakId: user.keycloakId,
                   subscriptionOccurenceId: state.week.id,
-                  isTest: user?.isTest || !store?.isStoreLive,
+                  isTest: user?.isTest || !store?.isStoreLive?.value,
                   ...(user?.subscriptionPaymentMethodId && {
                      paymentMethodId: user?.subscriptionPaymentMethodId,
                   }),

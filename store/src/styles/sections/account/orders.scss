@@ -1,7 +1,7 @@
 .hern-orders__main {
    display: grid;
    grid-template-rows: 1fr;
-   grid-template-columns: 240px 1fr;
+   grid-template-columns: 300px 1fr;
    @media (max-width: 768px) {
       display: block;
    }
@@ -68,7 +68,7 @@
    padding-top: 0.75rem;
    padding-bottom: 0.25rem;
    margin-bottom: 0.5rem;
-   color: rgba(5, 150, 105, 1);
+   color: var(--hern-accent);
    font-size: 1.5rem;
    line-height: 2rem;
 }

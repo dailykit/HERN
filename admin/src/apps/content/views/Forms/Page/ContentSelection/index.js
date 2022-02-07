@@ -38,6 +38,7 @@ const ContentSelection = () => {
    const [linkedFiles, setLinkedFiles] = useState([])
    const [linkedModuleId, setLinkedModuleId] = useState(null)
    const [config, setConfig] = useState({})
+   const [identifier, setIdentifier] = useState('')
    const [seletedModules, setSeletedModules] = useState([])
    const [isChangeSaved, setIsSavedChange] = useState(true)
    const { loading, error: subscriptionError } = useSubscription(
@@ -161,8 +162,10 @@ const ContentSelection = () => {
                },
             },
          })
+         setIdentifier(data?.systemModule?.identifier)
          setConfig(data?.systemModule?.configTemplate)
       } else {
+         setIdentifier(data?.internalModuleIdentifier)
          setConfig(data.config)
       }
    }
@@ -252,8 +255,9 @@ const ContentSelection = () => {
                            <IconButton
                               type="ghost"
                               onClick={() => openConfig(file)}
+
                            >
-                              <EditIcon color="#555b6e" size="20" />
+                              <EditIcon color={linkedModuleId == file.id ? "#367bf5" : "#555b6e"} size="20" />
                            </IconButton>
                         )}
 
@@ -280,38 +284,46 @@ const ContentSelection = () => {
                   <ConfigTemplateUI
                      config={config}
                      setConfig={setConfig}
+                     identifier={identifier}
                      configSaveHandler={updateHandler}
                      isChangeSaved={isChangeSaved}
                      setIsSavedChange={setIsSavedChange}
+                     noneditMode={"noneditMode"}
+                     setLinkedModuleId={setLinkedModuleId}
                   />
-                  <LinkFiles
-                     title="Linked CSS file with this Module"
-                     fileType="css"
-                     entityId={linkedModuleId}
-                     scope="page-module"
-                  />
-                  <LinkFiles
-                     title="Linked JS file with this Module"
-                     fileType="js"
-                     entityId={linkedModuleId}
-                     scope="page-module"
-                  />
+                  <Styles.LinkWrapper>
+                     <LinkFiles
+                        title="Linked CSS file"
+                        fileType="css"
+                        entityId={linkedModuleId}
+                        scope="page-module"
+                     />
+                     <LinkFiles
+                        title="Linked JS file"
+                        fileType="js"
+                        entityId={linkedModuleId}
+                        scope="page-module"
+                     />
+
+                  </Styles.LinkWrapper>
                </>
             ) : (
-               <>
+               <Styles.LinkWrapper>
+
                   <LinkFiles
-                     title="Linked CSS file with this Page"
+                     title="Linked CSS file"
                      fileType="css"
                      entityId={pageId}
                      scope="page"
                   />
                   <LinkFiles
-                     title="Linked JS file with this Page"
+                     title="Linked JS file"
                      fileType="js"
                      entityId={pageId}
                      scope="page"
                   />
-               </>
+
+               </Styles.LinkWrapper>
             )}
          </Styles.ConfigWrapper>
       </Styles.Wrapper>

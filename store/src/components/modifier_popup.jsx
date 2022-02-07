@@ -9,6 +9,7 @@ import { CounterButton } from './counterBtn'
 import classNames from 'classnames'
 import Link from 'next/link'
 import { useToasts } from 'react-toast-notifications'
+import { useConfig } from '../lib'
 
 export const ModifierPopup = props => {
    const {
@@ -41,6 +42,15 @@ export const ModifierPopup = props => {
       showImage: false,
       src: null,
    })
+   const { locationId, storeStatus } = useConfig()
+   const recipeLink = useConfig('Product Card').configOf('recipe-link')
+   const recipeButton = {
+      show:
+         recipeLink?.['Recipe link Button']?.['Show link button']?.value ??
+         false,
+      label:
+         recipeLink?.['Recipe link Button']?.['label'].value ?? 'View Recipe',
+   }
    useOnClickOutside(imagePopUpRef, () =>
       setModifierImage({
          showImage: false,
@@ -163,13 +173,16 @@ export const ModifierPopup = props => {
 
       let errorState = []
       for (let i = 0; i < allCatagories.length; i++) {
-         const min = allCatagories[i]['limits']['min']
-         const max = allCatagories[i]['limits']['max']
          const allFoundedOptionsLength = allSelectedOptions.filter(
             x => x.modifierCategoryID === allCatagories[i].id
          ).length
 
-         if (allCatagories[i]['isRequired']) {
+         if (
+            allCatagories[i]['isRequired'] &&
+            allCatagories[i]['type'] === 'multiple'
+         ) {
+            const min = allCatagories[i]['limits']['min']
+            const max = allCatagories[i]['limits']['max']
             if (
                allFoundedOptionsLength > 0 &&
                min <= allFoundedOptionsLength &&
@@ -392,6 +405,17 @@ export const ModifierPopup = props => {
       )
    }
 
+   window.onclick = function (event) {
+      if (
+         event.target ==
+            document.querySelector(
+               '.hern-product-modifier-pop-up-container--show-modifier-pop-up'
+            ) &&
+         !modifierWithoutPopup
+      ) {
+         closeModifier()
+      }
+   }
    return (
       <>
          <div
@@ -411,12 +435,32 @@ export const ModifierPopup = props => {
                   'hern-product-modifier-pop-up-product': !modifierWithoutPopup,
                })}
             >
-               {!modifierWithoutPopup && (
-                  <div
-                     className="hern-product-modifier-pop-up-close-icon"
-                     onClick={closeModifier}
-                  >
-                     <CloseIcon size={20} stroke="currentColor" />
+               {!customProductDetails && (
+                  <div className="hern-product-modifier-pop-up-header-container">
+                     <div
+                        className="hern-product-card__name"
+                        style={{ fontSize: '20px', fontWeight: '600px' }}
+                     >
+                        {productData?.name}
+                     </div>
+                     <div
+                        style={{
+                           display: 'flex',
+                           alignItems: 'center',
+                        }}
+                     >
+                        {showCounterBtn && <CustomArea data={productData} />}
+
+                        {!modifierWithoutPopup && (
+                           <div className="hern-product-modifier-pop-up-close-icon">
+                              <CloseIcon
+                                 size={20}
+                                 stroke="currentColor"
+                                 onClick={closeModifier}
+                              />
+                           </div>
+                        )}
+                     </div>
                   </div>
                )}
                <div className="hern-product-modifier-pop-up-product-details">
@@ -430,22 +474,23 @@ export const ModifierPopup = props => {
                         customAreaComponent={CustomArea}
                         showModifier={false}
                         useForThirdParty={true}
+                        showProductCard={false}
                      />
                   )}
                </div>
-               <div
-                  className={classNames(
-                     'hern-product-modifier-pop-up-product-option-and-modifier',
-                     {
-                        'hern-product-modifier-pop-up-product-option-and-modifier--without-popup':
-                           modifierWithoutPopup,
-                     }
-                  )}
-               >
+               <div>
                   <div className="hern-product-modifier-pop-up-product-option-list">
                      <label htmlFor="products">Available Options:</label>
                      <br />
-                     <ul>
+                     <ul
+                        className={classNames(
+                           'hern-product-modifier-pop-up-product-option-and-modifier',
+                           {
+                              'hern-product-modifier-pop-up-product-option-and-modifier--without-popup':
+                                 modifierWithoutPopup,
+                           }
+                        )}
+                     >
                         {productData.productOptions.map(eachOption => {
                            return (
                               <div
@@ -460,12 +505,11 @@ export const ModifierPopup = props => {
                                     display: 'flex',
                                     justifyContent: 'space-between',
                                     marginBottom: '8px',
+                                    cursor: 'pointer',
                                  }}
+                                 onClick={e => setProductOption(eachOption)}
                               >
-                                 <li
-                                    style={{ color: 'var(--hern-accent)' }}
-                                    onClick={e => setProductOption(eachOption)}
-                                 >
+                                 <li>
                                     {eachOption.label}
 
                                     {' (+ '}
@@ -474,15 +518,17 @@ export const ModifierPopup = props => {
                                     )}
                                     {')'}
                                  </li>
-                                 <div>
-                                    <Link
-                                       href={getRoute(
-                                          '/recipes/' + eachOption.id
-                                       )}
-                                    >
-                                       View recipe
-                                    </Link>
-                                 </div>
+                                 {recipeButton.show && (
+                                    <div>
+                                       <Link
+                                          href={getRoute(
+                                             '/recipes/' + eachOption.id
+                                          )}
+                                       >
+                                          <>{recipeButton.label}</>
+                                       </Link>
+                                    </div>
+                                 )}
                               </div>
                            )
                         })}
@@ -624,12 +670,20 @@ export const ModifierPopup = props => {
                      </div>
                   )}
                </div>
-               <div style={{ padding: '0 32px' }}>
+               <div style={{ padding: '32px' }}>
                   <Button
                      className="hern-product-modifier-pop-up-add-to-cart-btn"
-                     onClick={handleAddOnCartOn}
+                     onClick={() => setTimeout(handleAddOnCartOn, 500)}
+                     style={{ padding: '16px 0px 34px 0px' }}
+                     disabled={
+                        locationId ? (storeStatus.status ? false : true) : true
+                     }
                   >
-                     ADD TO CART {totalAmount()}
+                     {locationId
+                        ? storeStatus.status
+                           ? `ADD TO CART ${totalAmount()}`
+                           : 'COMING SOON'
+                        : 'COMING SOON'}
                   </Button>
                </div>
             </div>
@@ -663,7 +717,8 @@ export const ModifierPopup = props => {
    )
 }
 const getCartItemWithModifiers = (cartItemInput, selectedModifiersInput) => {
-   const finalCartItem = { ...cartItemInput }
+   // const finalCartItem = { ...cartItemInput }
+   const finalCartItem = JSON.parse(JSON.stringify(cartItemInput))
 
    const combinedModifiers = selectedModifiersInput.reduce(
       (acc, obj) => [...acc, ...obj.data],

@@ -64,12 +64,12 @@ export const getFieldUI = (
                             type="ghost"
                             style={{ marginRight: '-20px' }}
                             title={
-                                value.value && value.default
+                                value.value
                                     ? 'available'
                                     : 'unavailable'
                             }
                         >
-                            {value.value && value.default ? (
+                            {value.value ? (
                                 <AvailableIcon />
                             ) : (
                                 <UnavailableIcon />

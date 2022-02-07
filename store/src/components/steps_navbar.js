@@ -36,8 +36,15 @@ export const StepsNavbar = () => {
    })
 
    React.useEffect(() => {
-      if (hasConfig('steps-labels', 'conventions')) {
-         setSteps(configOf('steps-labels', 'conventions'))
+      if (hasConfig('steps-labels', 'conventions')?.stepsLabels) {
+         const stepsLabels = hasConfig('steps-labels', 'conventions')?.stepsLabels
+         const steps_labels = {
+            register: stepsLabels?.Register?.value,
+            selectDelivery: stepsLabels?.selectDelivery?.value,
+            selectMenu: stepsLabels?.selectMenu?.value,
+            checkout: stepsLabels?.checkout?.value,
+         }
+         setSteps(steps_labels)
       }
    }, [hasConfig, configOf, setSteps])
 
@@ -52,8 +59,9 @@ export const StepsNavbar = () => {
       }
    }, [router.pathname])
 
-   const brand = configOf('theme-brand', 'brand')
-   const theme = configOf('theme-color', 'Visual')
+   //config properties
+   const brand = configOf('Brand Info', 'brand')
+   const theme = configOf('theme-color', 'Visual')?.themeColor
 
    const logout = async () => {
       await signOut({ redirect: false })
@@ -98,16 +106,16 @@ export const StepsNavbar = () => {
       <div className="hern-steps-navbar">
          <Link href={getRoute('/')}>
             <div className="hern-steps-navbar__brand">
-               {brand?.logo?.logoMark && (
+               {brand?.brandLogo?.value && (
                   <img
                      className="hern-steps-navbar__brand__img"
-                     src={brand?.logo?.logoMark}
-                     alt={brand?.name || 'Subscription Shop'}
+                     src={brand?.brandLogo?.value}
+                     alt={brand?.brandName?.value || 'Subscription Shop'}
                   />
                )}
-               {brand?.name && (
+               {brand?.brandName?.value && (
                   <span className="hern-steps-navbar__brand__text">
-                     {brand?.name}
+                     {brand?.brandName?.value}
                   </span>
                )}
             </div>
@@ -183,7 +191,7 @@ const ProgressBar = ({ theme, current }) => {
          <span
             style={{
                width: `${current}%`,
-               backgroundColor: `${theme.accent}`,
+               backgroundColor: `${theme?.accent?.value}`,
             }}
             className="hern-steps-navbar__progressbar__before"
          ></span>
@@ -191,7 +199,7 @@ const ProgressBar = ({ theme, current }) => {
             className="hern-steps-navbar__progressbar__after"
             style={{
                left: `calc(${current}% - 8px)`,
-               backgroundColor: `${theme.highlight}`,
+               backgroundColor: `${theme?.highlight?.value}`,
             }}
          ></span>
       </span>

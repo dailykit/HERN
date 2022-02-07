@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
 import classNames from 'classnames'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {
    Button,
    ProductCard,
@@ -432,16 +432,32 @@ export const FeaturedCollection = props => {
                         <div key={index}>
                            {config?.informationVisibility?.collection
                               ?.productCategory?.value && (
-                              <p
-                                 className="hern-product-category-heading"
-                                 id={`hern-product-category-${eachCategory.name}`}
-                              >
-                                 {eachCategory.name}
-                              </p>
-                           )}
+                                 <p
+                                    className="hern-product-category-heading"
+                                    id={`hern-product-category-${eachCategory.name}`}
+                                 >
+                                    {eachCategory.name}
+                                 </p>
+                              )}
                            {eachCategory.products.map((eachProduct, index) => {
                               return (
                                  <ProductCard
+                                    onProductNameClick={() =>
+                                       router.push(
+                                          getRoute(
+                                             '/products/' +
+                                             eachProduct.id
+                                          )
+                                       )
+                                    }
+                                    onImageClick={() =>
+                                       router.push(
+                                          getRoute(
+                                             '/products/' +
+                                             eachProduct.id
+                                          )
+                                       )
+                                    }
                                     key={index}
                                     data={eachProduct}
                                     showImage={
