@@ -13,11 +13,20 @@ export const GET_TEMPLATE_SETTINGS = `
          title
          requiredVar: var
          subjectLineTemplate
+         smsTemplate
          functionFile {
             fileName
             path
          }
          fromEmail
+      }
+   }
+`
+export const SEND_SMS = `
+   mutation sendSMS($message: String!, $phone: String!) {
+      sendSMS(message: $message, phone: $phone) {
+         success
+         message
       }
    }
 `
@@ -59,16 +68,41 @@ const getHtml = async (functionFile, variables, subjectLineTemplate) => {
    }
 }
 
+const getSms = async (functionFile, variables, smsTemplate) => {
+   try {
+      const DATA_HUB = await get_env('DATA_HUB')
+      const { origin } = new URL(DATA_HUB)
+      const template_variables = encodeURI(JSON.stringify({ ...variables }))
+      if (smsTemplate) {
+         const template_options = encodeURI(
+            JSON.stringify({
+               path: functionFile.path,
+               format: 'html',
+               readVar: true
+            })
+         )
+         const url = `${origin}/template/?template=${template_options}&data=${template_variables}`
+         const { data } = await axios.get(url)
+         const result = template_compiler(smsTemplate, data)
+         return result
+      }
+   } catch (error) {
+      console.log('error from getHtml', error)
+      throw error
+   }
+}
+
 export const emailTrigger = async ({
    title,
    variables = {},
    to,
    brandId,
    includeHeader,
-   includeFooter
+   includeFooter,
+   type = ['email']
 }) => {
    try {
-      console.log('entering emailTrigger', { title, variables, to })
+      // console.log('entering emailTrigger', { title, variables, to, type })
       const { templateSettings = [] } = await client.request(
          GET_TEMPLATE_SETTINGS,
          {
@@ -80,6 +114,7 @@ export const emailTrigger = async ({
             {
                requiredVar = [],
                subjectLineTemplate,
+               smsTemplate,
                fromEmail,
                functionFile = {}
             }
@@ -91,27 +126,40 @@ export const emailTrigger = async ({
             return proceed
          })
          if (proceed) {
-            const html = await getHtml(functionFile, variables)
-            console.log('html', typeof html)
-            const subjectLine = await getHtml(
-               functionFile,
-               variables,
-               subjectLineTemplate
-            )
+            if (type.includes('email')) {
+               const html = await getHtml(functionFile, variables)
+               const subjectLine = await getHtml(
+                  functionFile,
+                  variables,
+                  subjectLineTemplate
+               )
 
-            const { sendEmail } = await client.request(SEND_MAIL, {
-               emailInput: {
-                  from: fromEmail,
-                  to,
-                  subject: subjectLine,
-                  attachments: [],
-                  html,
-                  ...(brandId && { brandId }),
-                  ...(includeHeader && { includeHeader }),
-                  ...(includeFooter && { includeFooter })
-               }
-            })
-            return sendEmail
+               const { sendEmail } = await client.request(SEND_MAIL, {
+                  emailInput: {
+                     from: fromEmail,
+                     to,
+                     subject: subjectLine,
+                     attachments: [],
+                     html,
+                     ...(brandId && { brandId }),
+                     ...(includeHeader && { includeHeader }),
+                     ...(includeFooter && { includeFooter })
+                  }
+               })
+               return sendEmail
+            }
+            if (type.includes('sms')) {
+               const messageTemplate = await getSms(
+                  functionFile,
+                  variables,
+                  smsTemplate
+               )
+               const { sendSMS } = await client.request(SEND_SMS, {
+                  message: messageTemplate,
+                  phone: to
+               })
+               return sendSMS
+            }
          }
          if (!proceed) {
             console.log(
