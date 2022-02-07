@@ -9,6 +9,7 @@ import {
    generateDeliverySlots,
    generateMiniSlots,
    getTimeSlotsValidation,
+   getOnDemandValidation,
 } from '../../utils'
 import { CartContext } from '../../context'
 import { Loader } from '../'
@@ -67,6 +68,17 @@ export const Delivery = props => {
    const [showSlots, setShowSlots] = React.useState(false)
    const [isSlotInCrtItemValid, setIsSlotInCartItemValid] =
       React.useState(false)
+   const validMileRangeInfo = React.useMemo(() => {
+      if (
+         stores &&
+         stores.length > 0 &&
+         fulfillmentType === 'ONDEMAND_DELIVERY'
+      ) {
+         return stores[0].fulfillmentStatus.mileRangeInfo
+      } else {
+         null
+      }
+   }, [stores, fulfillmentType])
 
    const deliveryRadioOptions = React.useMemo(() => {
       let options = []
@@ -87,6 +99,18 @@ export const Delivery = props => {
    }, [orderTabFulfillmentType])
 
    React.useEffect(() => {
+      if (cartState.cart?.fulfillmentInfo?.type) {
+         setFulfillmentType(cartState.cart?.fulfillmentInfo?.type)
+         const orderTabId = orderTabs.find(
+            t =>
+               t.orderFulfillmentTypeLabel ===
+               `${cartState.cart?.fulfillmentInfo?.type}`
+         )?.id
+         setFulfillmentTabInfo(prev => {
+            return { ...prev, orderTabId }
+         })
+         return
+      }
       if (deliveryRadioOptions.length === 1) {
          const availableDeliveryType = deliveryRadioOptions[0].value
          setFulfillmentType(availableDeliveryType)
@@ -97,7 +121,7 @@ export const Delivery = props => {
             return { ...prev, orderTabId }
          })
       }
-   }, [deliveryRadioOptions])
+   }, [deliveryRadioOptions, cartState.cart])
 
    React.useEffect(() => {
       if (consumerAddress && brand.id && fulfillmentType) {
@@ -129,15 +153,17 @@ export const Delivery = props => {
          fetchStores()
       }
    }, [consumerAddress, brand, fulfillmentType])
+
    useEffect(() => {
       if (
+         deliveryRadioOptions?.length === 1 &&
          fulfillmentType === 'ONDEMAND_DELIVERY' &&
-         stores &&
-         stores.length > 0
+         stores?.length > 0 &&
+         !cartState?.cart?.fulfillmentInfo?.type
       ) {
          onNowClick()
       }
-   }, [fulfillmentType, stores])
+   }, [fulfillmentType, stores, cartState?.cart, deliveryRadioOptions])
 
    const onFulfillmentTimeClick = (timestamp, mileRangeId) => {
       const slotInfo = {
@@ -155,8 +181,8 @@ export const Delivery = props => {
             _set: {
                ...fulfillmentTabInfo,
                fulfillmentInfo: slotInfo,
-               address: consumerAddress,
-               locationId: locationId,
+               // address: consumerAddress,
+               // locationId: locationId,
             },
          },
       })
@@ -185,11 +211,12 @@ export const Delivery = props => {
             _set: {
                ...fulfillmentTabInfo,
                fulfillmentInfo: slotInfo,
-               locationId: locationId,
-               address: consumerAddress,
+               // locationId: locationId,
+               // address: consumerAddress,
             },
          },
       })
+      setShowSlots(false)
       // setIsEdit(false)
    }
 
@@ -252,12 +279,12 @@ export const Delivery = props => {
                         },
                      },
                   })
+                  Modal.warning({
+                     title: `This time slot expired.`,
+                     maskClosable: true,
+                     centered: true,
+                  })
                }
-               Modal.warning({
-                  title: `This time slot expired.`,
-                  maskClosable: true,
-                  centered: true,
-               })
             }
          }
       }, 10000)
@@ -313,12 +340,12 @@ export const Delivery = props => {
                      },
                   },
                })
+               Modal.warning({
+                  title: `This time slot expired.`,
+                  maskClosable: true,
+                  centered: true,
+               })
             }
-            Modal.warning({
-               title: `This time slot expired.`,
-               maskClosable: true,
-               centered: true,
-            })
          }
       }
    }, [stores])
@@ -326,15 +353,13 @@ export const Delivery = props => {
    const title = React.useMemo(() => {
       switch (cartState.cart?.fulfillmentInfo?.type) {
          case 'ONDEMAND_DELIVERY':
-            return 'Delivery'
+            return `You order will be delivered within ${
+               validMileRangeInfo?.prepTime || '...'
+            } minutes.`
          case 'PREORDER_DELIVERY':
             return 'Schedule Delivery'
-         case 'PREORDER_PICKUP':
-            return 'Schedule Pickup'
-         case 'ONDEMAND_PICKUP':
-            return 'Pickup'
       }
-   }, [cartState.cart])
+   }, [cartState.cart, validMileRangeInfo])
 
    React.useEffect(() => {
       if (!_.isEmpty(cartState.cart)) {
@@ -347,6 +372,10 @@ export const Delivery = props => {
                   localStorage.getItem('lastStoreLocationId')
             )
             setShowSlots(showTimeSlots)
+            setIsLoading(false)
+         } else if (
+            cartState.cart?.fulfillmentInfo?.type === 'ONDEMAND_DELIVERY'
+         ) {
             setIsLoading(false)
          } else {
             setShowSlots(true)
@@ -395,11 +424,19 @@ export const Delivery = props => {
                      </span>
                   )}
                </label>
-               <EditIcon
-                  fill={theme?.accent || 'rgba(5, 150, 105, 1)'}
-                  onClick={() => setShowSlots(true)}
-                  style={{ cursor: 'pointer', margin: '0 6px' }}
-               />
+               {(deliveryRadioOptions.length > 0 ||
+                  fulfillmentType === 'PREORDER_DELIVERY') && (
+                  <EditIcon
+                     fill={theme?.accent || 'rgba(5, 150, 105, 1)'}
+                     onClick={() => {
+                        if (deliveryRadioOptions.length > 0) {
+                           setFulfillmentType(null)
+                        }
+                        setShowSlots(true)
+                     }}
+                     style={{ cursor: 'pointer', margin: '0 6px' }}
+                  />
+               )}
             </div>
          </div>
       )
@@ -423,6 +460,7 @@ export const Delivery = props => {
                   setFulfillmentTabInfo(prev => {
                      return { ...prev, orderTabId }
                   })
+                  onNowClick()
                }}
                value={fulfillmentType}
                className="hern-cart__fulfillment-date-slot"
@@ -434,8 +472,8 @@ export const Delivery = props => {
          ) : isGetStoresLoading ? (
             <Loader inline />
          ) : stores.length === 0 ? (
-            <p>no stores available</p>
-         ) : (
+            <p>No store available</p>
+         ) : fulfillmentType === 'PREORDER_DELIVERY' ? (
             <TimeSlots
                onFulfillmentTimeClick={onFulfillmentTimeClick}
                selectedSlot={selectedSlot}
@@ -443,7 +481,7 @@ export const Delivery = props => {
                setSelectedSlot={setSelectedSlot}
                timeSlotsFor={'Delivery'}
             />
-         )}
+         ) : null}
       </div>
    )
 }
