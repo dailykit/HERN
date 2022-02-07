@@ -135,7 +135,7 @@ export const getStoresWithValidations = async props => {
          case 'ONDEMAND_DELIVERY':
             {
                if (finalRecurrences.length === 0) {
-                  deliveryStatus = {
+                  const deliveryStatus = {
                      status: false,
                      message:
                         'Sorry, there is no store available for delivery.',
@@ -156,7 +156,7 @@ export const getStoresWithValidations = async props => {
          case 'PREORDER_DELIVERY':
             {
                if (finalRecurrences.length === 0) {
-                  deliveryStatus = {
+                  const deliveryStatus = {
                      status: false,
                      message:
                         'Sorry, there is no store available for pre order delivery.',
@@ -177,7 +177,7 @@ export const getStoresWithValidations = async props => {
          case 'ONDEMAND_PICKUP':
             {
                if (finalRecurrences.length === 0) {
-                  pickupStatus = {
+                  const pickupStatus = {
                      status: false,
                      message: 'Sorry, there is no store available for pickup.',
                   }
@@ -196,7 +196,7 @@ export const getStoresWithValidations = async props => {
          case 'PREORDER_PICKUP':
             {
                if (finalRecurrences.length === 0) {
-                  pickupStatus = {
+                  const pickupStatus = {
                      status: false,
                      message: 'Sorry, there is no store available for pickup.',
                   }
@@ -215,7 +215,7 @@ export const getStoresWithValidations = async props => {
          case 'ONDEMAND_DINEIN':
             {
                if (finalRecurrences.length === 0) {
-                  dineInStatus = {
+                  const dineInStatus = {
                      status: false,
                      message: 'Sorry, there is no store available for dine in.',
                   }
@@ -233,7 +233,7 @@ export const getStoresWithValidations = async props => {
             break
          case 'SCHEDULED_DINEIN': {
             if (finalRecurrences.length === 0) {
-               dineInStatus = {
+               const dineInStatus = {
                   status: false,
                   message: 'Sorry, there is no store available for dine in.',
                }
