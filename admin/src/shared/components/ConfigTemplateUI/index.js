@@ -14,7 +14,8 @@ import { Text } from '@dailykit/ui'
 import { FieldUI } from './getFieldUI'
 import { EditModeProvider, useEditMode } from './EditModeContext'
 import { Styles } from './styled'
-import { CrossIcon } from '../../assets/icons'
+import { CrossIcon, WarningIcon } from '../../assets/icons'
+import styled from 'styled-components'
 
 const ConfigTemplateUI = props => {
    return (
@@ -24,11 +25,25 @@ const ConfigTemplateUI = props => {
    )
 }
 
-const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsSavedChange, noneditMode, setLinkedModuleId, setMode, mode, saveAllSettings, setSaveAllSettings, updateAllSettings, setting_brand_Id }) => {
+const ConfigUI = ({
+   config,
+   configSaveHandler,
+   identifier,
+   isChangeSaved,
+   setIsSavedChange,
+   noneditMode,
+   setLinkedModuleId,
+   setMode,
+   mode,
+   saveAllSettings,
+   setSaveAllSettings,
+   updateAllSettings,
+   alertShow,
+}) => {
    const [configJSON, setConfigJSON] = React.useState({})
    const [fields, setFields] = React.useState([])
 
-   //for showing description in config 
+   //for showing description in config
    const [isValid, setIsValid] = React.useState(true)
 
    //for toggling between edit and save button on config
@@ -38,7 +53,7 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
    const [modalVisible, setModalVisible] = React.useState(false)
    const [modalLoading, setModalLoading] = React.useState(false)
 
-   //for dropdown arrow in displaying config 
+   //for dropdown arrow in displaying config
    const elements = []
 
    //when there is any change in data
@@ -61,7 +76,6 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
          ...updatedConfig,
       }))
       setSaveAllSettings(configJSON)
-
    }
 
    const handleToggle = key => {
@@ -160,7 +174,6 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
       if (Object.keys(configJSON).length) {
          renderAllFields(configJSON, '')
       }
-
    }, [configJSON])
 
    React.useEffect(() => {
@@ -172,14 +185,18 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
       setFields([])
    }, [config])
 
-   //for pageModule, this is to not have editMode when config is opened 
+   //for pageModule, this is to not have editMode when config is opened
    React.useEffect(() => {
       if (noneditMode) {
          setEditMode(true)
       }
-
    }, [noneditMode])
 
+   React.useEffect(() => {
+      if (alertShow && saveAllSettings !== {}) {
+         setEditMode(false)
+      }
+   }, [alertShow])
 
    const handleEdit = () => {
       //after saving
@@ -188,17 +205,15 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
          noneditMode && setLinkedModuleId(null)
          setMode('saved')
 
-         //for pageModule this noneditMode tells the config belongs to pageModule 
+         //for pageModule this noneditMode tells the config belongs to pageModule
          //and there is no requirement of editMode
          !noneditMode && setEditMode(false)
          setIsSavedChange(true)
-
       } else if (!editMode && !isChangeSaved && mode == 'editing') {
          //showing warning(alert box)to save changes
          setModalVisible(true)
          console.log(modalVisible)
-      }
-      else {
+      } else {
          setMode('editing')
          //when editing
          setEditMode(true)
@@ -213,13 +228,13 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
          noneditMode && setLinkedModuleId(null)
          setMode('saved')
          setEditMode(false)
-         //for pageModule this noneditMode tells the config belongs to pageModule 
+         //for pageModule this noneditMode tells the config belongs to pageModule
          //and there is no requirement of editMode
          !noneditMode && setEditMode(false)
          setIsSavedChange(true)
          setModalVisible(false)
-      }, 1000);
-   };
+      }, 1000)
+   }
 
    return (
       <Styles.ConfigTemplateUI>
@@ -227,16 +242,27 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
             <>
                <Card
                   title={
-                     identifier ? (<>
-                        {/* for pageModule */}
-                        {noneditMode && <button
-                           title={'clear'}
-                           onClick={() => setLinkedModuleId(null)}
-                           style={{ cursor: "pointer", border: "none", backgroundColor: "transparent" }}
-                        >
-                           <CrossIcon size="14" />
-                        </button>}&nbsp;&nbsp;
-                        <Text as="h3" className="title">Edit {identifier}</Text></>
+                     identifier ? (
+                        <>
+                           {/* for pageModule */}
+                           {noneditMode && (
+                              <button
+                                 title={'clear'}
+                                 onClick={() => setLinkedModuleId(null)}
+                                 style={{
+                                    cursor: 'pointer',
+                                    border: 'none',
+                                    backgroundColor: 'transparent',
+                                 }}
+                              >
+                                 <CrossIcon size="14" />
+                              </button>
+                           )}
+                           &nbsp;&nbsp;
+                           <Text as="h3" className="title">
+                              Edit {identifier}
+                           </Text>
+                        </>
                      ) : (
                         <Text as="h3" style={{ textAlign: 'center' }}>
                            Edit
@@ -245,16 +271,17 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
                   }
                   style={{ width: '100%' }}
                   extra={
-                     (editMode && mode == 'editing') ? (<>
-                        <TextButton
-                           type="solid"
-                           size="sm"
-                           disabled={!isValid}
-                           onClick={handleEdit}
-                        >
-                           Save
-                        </TextButton>
-                     </>
+                     editMode && mode == 'editing' ? (
+                        <>
+                           <TextButton
+                              type="solid"
+                              size="sm"
+                              disabled={!isValid}
+                              onClick={handleEdit}
+                           >
+                              Save
+                           </TextButton>
+                        </>
                      ) : (
                         <ComboButton
                            className="edit_button"
@@ -271,24 +298,37 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
                      <div key={index}>{config}</div>
                   ))}
 
-
                   <Modal
+                     centered
                      visible={modalVisible}
                      title="Unsaved Changes"
                      onOk={handleOk}
                      onCancel={() => setModalVisible(false)}
                      footer={[
-                        <Button key="back" onClick={() => setModalVisible(false)}>
+                        <Button
+                           key="back"
+                           onClick={() => setModalVisible(false)}
+                           style={{ color: "#367BF5" }}
+                        >
                            Discard
                         </Button>,
-                        <Button key="submit" type="primary" loading={modalLoading} onClick={handleOk}>
+                        <Button
+                           key="submit"
+                           type="primary"
+                           loading={modalLoading}
+                           onClick={handleOk}
+                           style={{ backgroundColor: "#367BF5" }}
+                        >
                            Save
-                        </Button>
+                        </Button>,
                      ]}
-                  >
-                     Your Changes will be lost. Please save your changes.
-                     Click Save to save your changes.
-                  </Modal></Card>
+                  > <Layout>
+                        <Sider><WarningIcon /></Sider>
+                        <Content> Your Changes will be lost. Please save your changes.
+                           <br />Click Save to save your changes.</Content>
+                     </Layout>
+                  </Modal>
+               </Card>
             </>
          ) : (
             <Flex container justifyContent="center" padding="16px">
@@ -304,3 +344,18 @@ const ConfigUI = ({ config, configSaveHandler, identifier, isChangeSaved, setIsS
 }
 
 export default ConfigTemplateUI
+
+export const Layout = styled.div`
+display: flex;
+    flex: auto;
+    flex-direction: row;
+    min-height: 0;
+`
+export const Sider = styled.div`
+max-width:200px;
+padding-right:20px;
+`
+export const Content = styled.div`
+flex: auto;
+    min-height: 0;
+`
