@@ -102,7 +102,7 @@ const RefineLocation = props => {
          label: additionalAddressInfo.label,
          lat: address.latitude.toString(),
          lng: address.longitude.toString(),
-         landmark: setAdditionalAddressInfo.landmark,
+         landmark: additionalAddressInfo.landmark,
          searched: '',
       }
       if (user?.keycloakId) {
