@@ -4,11 +4,15 @@ import { useConfig } from '../lib'
 
 export const GoogleSuggestionsList = ({ suggestions, onSuggestionClick }) => {
    const { configOf } = useConfig()
+   console.log('suggestions', suggestions)
 
    const theme = configOf('theme-color', 'Visual')?.themeColor
    const themeColor = theme?.accent?.value
       ? theme?.accent?.value
       : 'rgba(5, 150, 105, 1)'
+   if (!suggestions) {
+      return null
+   }
    return (
       <div className="hern-google-autocomplete-suggestions-container">
          {suggestions.map(suggestion => (

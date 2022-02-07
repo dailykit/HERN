@@ -304,7 +304,7 @@ export const Delivery = props => {
                               .deliverySettings.userAddressInputPlaceHolder
                               .value || 'Enter your delivery location'
                         }
-                        renderSuggestions={suggestions => (
+                        renderSuggestions={(active, suggestions) => (
                            <GoogleSuggestionsList
                               suggestions={suggestions}
                               onSuggestionClick={formatAddress}

@@ -295,7 +295,7 @@ export const Pickup = props => {
                               .pickupSettings.userAddressInputPlaceHolder
                               .value || 'Enter your address'
                         }
-                        renderSuggestions={suggestions => (
+                        renderSuggestions={(active, suggestions) => (
                            <GoogleSuggestionsList
                               suggestions={suggestions}
                               onSuggestionClick={formatAddress}
