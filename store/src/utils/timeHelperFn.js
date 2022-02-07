@@ -1,4 +1,5 @@
 import { rrulestr } from 'rrule'
+import moment from 'moment'
 
 export const getTimeSlotsValidation = (
    recurrences,

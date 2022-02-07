@@ -10,6 +10,7 @@ export const isStoreOnDemandDeliveryAvailable = async (
    eachStore,
    address
 ) => {
+   let fulfilledRecurrences = []
    for (let rec in finalRecurrences) {
       const now = new Date() // now
       const start = new Date(now.getTime() - 1000 * 60 * 60 * 24) // yesterday
@@ -28,6 +29,7 @@ export const isStoreOnDemandDeliveryAvailable = async (
                   },
                ]
             )
+            let validTimeSlots = []
             for (let timeslot of sortedTimeSlots) {
                if (timeslot.mileRanges.length) {
                   const timeslotFromArr = timeslot.from.split(':')
@@ -47,8 +49,8 @@ export const isStoreOnDemandDeliveryAvailable = async (
                   // check if current time falls within time slot
 
                   if (
-                     now.getTime() > fromTimeStamp.getTime() &&
-                     now.getTime() < toTimeStamp.getTime()
+                     now.getTime() >= fromTimeStamp.getTime() &&
+                     now.getTime() <= toTimeStamp.getTime()
                   ) {
                      const distanceDeliveryStatus =
                         await isStoreDeliveryAvailableByDistance(
@@ -60,12 +62,25 @@ export const isStoreOnDemandDeliveryAvailable = async (
                      const { isDistanceValid, zipcode, geoBoundary } =
                         distanceDeliveryStatus.result
                      const status = isDistanceValid && zipcode && geoBoundary
+                     if (status) {
+                        timeslot.validMileRange =
+                           distanceDeliveryStatus.mileRangeInfo
+                        validTimeSlots.push(timeslot)
+                        finalRecurrences[rec].recurrence.validTimeSlots =
+                           validTimeSlots
+                        fulfilledRecurrences = [
+                           ...fulfilledRecurrences,
+                           finalRecurrences[rec],
+                        ]
+                     }
+                     // const timeslotIndex = sortedTimeSlots.indexOf(timeslot)
+                     // const timesSlotsLength = sortedTimeSlots.length
 
                      if (status || rec == finalRecurrences.length - 1) {
                         return {
                            status,
                            result: distanceDeliveryStatus.result,
-                           rec: finalRecurrences[rec],
+                           rec: fulfilledRecurrences,
                            mileRangeInfo: distanceDeliveryStatus.mileRangeInfo,
                            timeSlotInfo: timeslot,
                            message: status
