@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
-import { detectCountry, get_env } from '../utils'
+import { get_env } from '../utils'
 import { UserIcon } from '../assets/icons'
+import { Button } from './button'
 import { useUser, CartContext } from '../context'
 import { useToasts } from 'react-toast-notifications'
-import { Tunnel } from './tunnel'
-import classNames from 'classnames'
 import { UPDATE_PLATFORM_CUSTOMER } from '../graphql'
 import { useMutation } from '@apollo/react-hooks'
 
@@ -31,203 +30,148 @@ export const UserInfo = props => {
          user.platform_customer?.phoneNumber ||
          ''
    )
-   const [openTunnel, setOpenTunnel] = useState(false)
    const [updateCustomer] = useMutation(UPDATE_PLATFORM_CUSTOMER, {
       onCompleted: () => {
          console.log('updated')
       },
       onError: error => {
+         console.error(error)
          addToast('Failed to save!', {
             appearance: 'error',
          })
       },
    })
+   const [isOpen, setIsOpen] = useState(false)
 
-   const onBlurData = type => {
-      let infoToBeSend
-      switch (type) {
-         case 'firstName':
-            infoToBeSend = {
-               customerFirstName: firstName,
-            }
-            break
-         case 'lastName':
-            infoToBeSend = {
-               customerLastName: lastName,
-            }
-            break
-         case 'phoneNumber':
-            infoToBeSend = {
-               customerPhone: mobileNumber,
-            }
-            break
-      }
+   const handleSave = () => {
       methods.cart.update({
          variables: {
             id: cart.id,
             _set: {
                customerInfo: {
-                  ...cart?.customerInfo,
-                  ...infoToBeSend,
+                  customerFirstName: firstName,
+                  customerLastName: lastName,
+                  customerPhone: mobileNumber,
                },
             },
          },
       })
-      if (user?.keycloakId && type !== 'phoneNumber') {
-         const nameData = type === 'firstName' ? { firstName } : { lastName }
+      if (user?.keycloakId) {
          updateCustomer({
             variables: {
                keycloakId: user.keycloakId,
-               _set: { ...nameData },
+               _set: { firstName: firstName, lastName: lastName },
             },
          })
       }
+
+      setIsOpen(false)
    }
-   const UserInfoHeader = ({ insideTunnel = false }) => {
-      return (
-         <div
-            className={classNames('hern-user-info__header', {
-               'hern-user-info__header--title': insideTunnel,
-            })}
-         >
-            <UserIcon size={16} />
-            <h2 className="hern-user-info__heading">User Details </h2>
-         </div>
-      )
-   }
-   // if (!isEdit) {
-   //    return (
-   //       <div className="hern-user-info">
-   //          <UserInfoHeader />
-   //          <div>
-   //             <span className="hern-user-info_name">{firstName} </span>{' '}
-   //             <span className="hern-user-info_name">{lastName}</span>
-   //          </div>
-   //          <div
-   //             style={{ display: 'flex', alignItems: 'center' }}
-   //             className="hern-user-info__phoneNumber"
-   //          >
-   //             <PhoneIcon stroke="currentColor" size={14} />
-   //             {mobileNumber}
-   //          </div>
-   //       </div>
-   //    )
-   // }
-   const UserInfoContent = ({ insideTunnel = false }) => {
-      return (
-         <div
-            className={classNames('hern-user-info', {
-               'hern-user-info__inside-tunnel': insideTunnel,
-            })}
-         >
-            {!insideTunnel && <UserInfoHeader />}
-            <div className="hern-user-info__name-field">
-               <fieldset className="hern-user-info__fieldset hern-user-info__fieldset-first-name">
-                  <label className="hern-user-info__label">First Name</label>
-                  <input
-                     name="user-first-name"
-                     type="text"
-                     className="hern-user-info__input-field"
-                     onChange={e => {
-                        setFirstName(e.target.value)
-                     }}
-                     value={firstName}
-                     placeholder="Enter your first name"
-                     onBlur={() => {
-                        if (
-                           !(cart?.customerInfo?.customerFirstName == firstName)
-                        ) {
-                           onBlurData('firstName')
-                        }
-                     }}
-                     disabled={!editable}
-                  />
-               </fieldset>
-               <fieldset className="hern-user-info__fieldset hern-user-info__fieldset-last-name">
-                  <label className="hern-user-info__label">Last Name</label>
-                  <input
-                     name="user-last-name"
-                     type="text"
-                     className="hern-user-info__input-field"
-                     onChange={e => {
-                        setLastName(e.target.value)
-                     }}
-                     value={lastName}
-                     placeholder="Enter your last name"
-                     onBlur={() => {
-                        if (
-                           !(cart?.customerInfo?.customerLastName == lastName)
-                        ) {
-                           onBlurData('lastName')
-                        }
-                     }}
-                     disabled={!editable}
-                  />
-               </fieldset>
-            </div>
-            <fieldset className="hern-user-info__fieldset hern-user-info__fieldset-phone-number">
-               <label className="hern-user-info__label">Phone Number</label>
-               <PhoneInput
-                  className={`hern-user-info__phone__input hern-user-info__phone__input${
-                     !(mobileNumber && isValidPhoneNumber(mobileNumber))
-                        ? '-invalid'
-                        : '-valid'
-                  }`}
-                  initialValueFormat="national"
-                  value={mobileNumber}
-                  onChange={e => {
-                     setMobileNumber(e)
-                  }}
-                  onBlur={() => {
-                     if (
-                        mobileNumber &&
-                        isValidPhoneNumber(mobileNumber) &&
-                        !(cart?.customerInfo?.customerPhone == mobileNumber)
-                     ) {
-                        onBlurData('phoneNumber')
-                     }
-                  }}
-                  defaultCountry={get_env('COUNTRY_CODE')}
-                  placeholder="Enter your phone number"
-                  disabled={!editable}
-               />
-               <span className="hern-user-info__phone-number-warning">
-                  {mobileNumber &&
-                     !isValidPhoneNumber(mobileNumber) &&
-                     'Invalid phone number'}
-               </span>
-            </fieldset>
-         </div>
-      )
-   }
+   React.useEffect(() => {
+      if (!firstName.length || !lastName.length || !mobileNumber.length) {
+         setIsOpen(true)
+      }
+   }, [])
    return (
       <>
-         <div className="hern-user-info--sm">
-            <div>
-               <span>
-                  <UserIcon size={16} />
-               </span>
+         {!isOpen ? (
+            <div className="hern-user-info--closed">
                <div>
-                  <span>{firstName + ' ' + lastName}</span>
-                  <span className="hern-user-info--sm__phone-no">
-                     {mobileNumber}
+                  <span>
+                     <UserIcon size={16} />
                   </span>
+                  <div>
+                     <span>{firstName + ' ' + lastName}</span>
+                     <span className="hern-user-info--closed__phone-no">
+                        {mobileNumber}
+                     </span>
+                  </div>
+               </div>
+               <button onClick={() => setIsOpen(true)}>Edit</button>
+            </div>
+         ) : (
+            <div className="hern-user-info__wrapper">
+               <div className="hern-user-info">
+                  <div className="hern-user-info__header">
+                     <div>
+                        <UserIcon size={16} />
+                        <h2 className="hern-user-info__heading">
+                           User Details
+                        </h2>
+                     </div>
+                     <Button
+                        disabled={
+                           !firstName.length ||
+                           !lastName.length ||
+                           !mobileNumber.length
+                        }
+                        onClick={handleSave}
+                     >
+                        save
+                     </Button>
+                  </div>
+                  <div className="hern-user-info__name-field">
+                     <fieldset className="hern-user-info__fieldset hern-user-info__fieldset-first-name">
+                        <label className="hern-user-info__label">
+                           First Name
+                        </label>
+                        <input
+                           name="user-first-name"
+                           type="text"
+                           className="hern-user-info__input-field"
+                           onChange={e => {
+                              setFirstName(e.target.value)
+                           }}
+                           value={firstName}
+                           placeholder="Enter your first name"
+                           disabled={!editable}
+                        />
+                     </fieldset>
+                     <fieldset className="hern-user-info__fieldset hern-user-info__fieldset-last-name">
+                        <label className="hern-user-info__label">
+                           Last Name
+                        </label>
+                        <input
+                           name="user-last-name"
+                           type="text"
+                           className="hern-user-info__input-field"
+                           onChange={e => {
+                              setLastName(e.target.value)
+                           }}
+                           value={lastName}
+                           placeholder="Enter your last name"
+                           disabled={!editable}
+                        />
+                     </fieldset>
+                  </div>
+                  <fieldset className="hern-user-info__fieldset hern-user-info__fieldset-phone-number">
+                     <label className="hern-user-info__label">
+                        Phone Number
+                     </label>
+                     <PhoneInput
+                        className={`hern-user-info__phone__input hern-user-info__phone__input${
+                           !(mobileNumber && isValidPhoneNumber(mobileNumber))
+                              ? '-invalid'
+                              : '-valid'
+                        }`}
+                        initialValueFormat="national"
+                        value={mobileNumber}
+                        onChange={e => {
+                           setMobileNumber(e)
+                        }}
+                        defaultCountry={get_env('COUNTRY_CODE')}
+                        placeholder="Enter your phone number"
+                        disabled={!editable}
+                     />
+                     <span className="hern-user-info__phone-number-warning">
+                        {mobileNumber &&
+                           !isValidPhoneNumber(mobileNumber) &&
+                           'Invalid phone number'}
+                     </span>
+                  </fieldset>
                </div>
             </div>
-            <button onClick={() => setOpenTunnel(true)}>Edit</button>
-         </div>
-         <div className="hern-user-info__wrapper">
-            <UserInfoContent />
-         </div>
-
-         <Tunnel.Bottom
-            title={<UserInfoHeader insideTunnel={true} />}
-            visible={openTunnel}
-            className="hern-user-info__tunnel"
-            onClose={() => setOpenTunnel(false)}
-         >
-            <UserInfoContent insideTunnel={true} />
-         </Tunnel.Bottom>
+         )}
       </>
    )
 }

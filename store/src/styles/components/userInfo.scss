@@ -29,48 +29,45 @@
    }
 }
 
-.hern-user-info--sm {
-   display: none;
-   @media only screen and (max-width: 767px) {
+.hern-user-info--closed {
+   display: flex;
+   justify-content: space-between;
+   padding: 8px;
+   background: #ebf6f0;
+   > button {
+      border: none;
+      outline: none;
+      font-weight: bold;
+      font-size: 18px;
+      line-height: 20px;
+      color: #367bf5;
+   }
+   > div {
       display: flex;
-      justify-content: space-between;
-      padding: 8px;
-      background: #ebf6f0;
-      > button {
-         border: none;
-         outline: none;
-         font-weight: bold;
-         font-size: 18px;
-         line-height: 20px;
-         color: #367bf5;
-      }
+      align-items: center;
       > div {
-         display: flex;
-         align-items: center;
-         > div {
-            font-weight: 600;
-            font-size: 16px;
-            line-height: 22px;
-            color: rgba(64, 64, 64, 0.8);
-            margin-right: 8px;
-         }
-         > span {
-            padding: 4px;
-            border-radius: 50%;
-            background: #ffffff;
-            box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.05);
-            display: inline-block;
-            margin-right: 8px;
-         }
-      }
-      .hern-user-info--sm__phone-no {
-         display: inline-block;
-         margin-left: 12px;
          font-weight: 600;
-         font-size: 12px;
-         line-height: 12px;
-         color: rgba(64, 64, 64, 0.6);
+         font-size: 16px;
+         line-height: 22px;
+         color: rgba(64, 64, 64, 0.8);
+         margin-right: 8px;
       }
+      > span {
+         padding: 4px;
+         border-radius: 50%;
+         background: #ffffff;
+         box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.05);
+         display: inline-block;
+         margin-right: 8px;
+      }
+   }
+   .hern-user-info--closed__phone-no {
+      display: inline-block;
+      margin-left: 12px;
+      font-weight: 600;
+      font-size: 12px;
+      line-height: 12px;
+      color: rgba(64, 64, 64, 0.6);
    }
 }
 .hern-user-info__name-field {
@@ -83,6 +80,11 @@
    border-bottom: 1px solid #f3f3f3;
    padding-bottom: 16px;
    margin-bottom: 8px;
+   justify-content: space-between;
+   > div {
+      display: flex;
+      align-items: center;
+   }
 }
 .hern-user-info__header--title {
    margin: 0;
