@@ -30,11 +30,20 @@ export const StyledCard = styled.div`
 `
 export const StyledContent = styled.div`
    display: flex;
-   width: 17rem;
+   border-right: 1px solid #f3f3f3;
+   border-left: 1px solid #f3f3f3;
+   margin-left: 0.5rem;
+   width: 15.6rem;
    gap: 0.5rem;
    height: auto;
    flex-direction: column;
    padding: 0.5rem;
+`
+export const StyledBrandHeader = styled.div`
+   display: flex;
+   padding: 0.5rem;
+   align-items: center;
+   gap: 1rem;
 `
 export const StyledServiceType = styled.div`
    display: grid;
