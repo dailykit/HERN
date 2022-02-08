@@ -1677,6 +1677,10 @@ export const GET_CARTS = gql`
    subscription GET_CARTS($where: order_cart_bool_exp!) {
       carts(where: $where) {
          id
+         address
+         fulfillmentInfo
+         locationId
+         orderTabId
       }
    }
 `
