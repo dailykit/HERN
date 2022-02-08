@@ -47,14 +47,14 @@ export const Pickup = props => {
          orderTabFulfillmentType.includes('ONDEMAND_PICKUP') &&
          Boolean(availableStoreType.find(x => x === 'ONDEMAND'))
       ) {
-         options.push({ label: 'Now', value: 'ONDEMAND' })
+         options.push({ label: 'Now', value: 'ONDEMAND_PICKUP' })
       }
       if (
          orderTabFulfillmentType &&
          orderTabFulfillmentType.includes('PREORDER_PICKUP') &&
          Boolean(availableStoreType.find(x => x === 'PREORDER'))
       ) {
-         options.push({ label: 'Later', value: 'PREORDER' })
+         options.push({ label: 'Later', value: 'PREORDER_PICKUP' })
       }
 
       return options
@@ -71,9 +71,9 @@ export const Pickup = props => {
    })
    const [address, setAddress] = useState(null)
    const [fulfillmentType, setFulfillmentType] = useState(
-      orderTabFulfillmentType.includes('ONDEMAND_DELIVERY')
-         ? 'ONDEMAND_DELIVERY'
-         : 'PREORDER_DELIVERY'
+      orderTabFulfillmentType.includes('ONDEMAND_PICKUP')
+         ? 'ONDEMAND_PICKUP'
+         : 'PREORDER_PICKUP'
    )
    const [isGetStoresLoading, setIsGetStoresLoading] = useState(true)
    const [stores, setStores] = useState(null)
@@ -88,6 +88,7 @@ export const Pickup = props => {
                address,
                autoSelect: true,
             })
+            console.log('availableStoreInPickup', availableStore)
             setStores(availableStore)
             setIsGetStoresLoading(false)
          }
@@ -180,7 +181,7 @@ export const Pickup = props => {
 
                   setLocationSearching(prev => ({
                      ...prev,
-                     loading: !prev.loading,
+                     loading: false,
                   }))
                }
             })
@@ -188,7 +189,7 @@ export const Pickup = props => {
                console.log('error', e)
                setLocationSearching(prev => ({
                   ...prev,
-                  loading: !prev.loading,
+                  loading: false,
                   error: true,
                   errorType: 'fetchAddress',
                }))
@@ -275,10 +276,10 @@ export const Pickup = props => {
             <Radio.Group
                options={pickupRadioOptions}
                onChange={e => {
-                  setPickupType(e.target.value)
+                  setFulfillmentType(e.target.value)
                   setIsGetStoresLoading(true)
                }}
-               value={pickupType}
+               value={fulfillmentType}
             />
          </div>
          <div className="hern-store-location-selector-main">

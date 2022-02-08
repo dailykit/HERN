@@ -607,6 +607,22 @@ const LocationInfo = ({ settings }) => {
             return null
       }
    }, [selectedOrderTab])
+
+   const storeAddress = React.useMemo(() => {
+      const storeAddress = isClient
+         ? localStorage.getItem('pickupLocation')
+         : ''
+
+      console.log('storeAddress', storeAddress)
+      if (storeAddress) {
+         const parseStoreAddress = JSON.parse(
+            localStorage.getItem('pickupLocation')
+         )
+         return parseStoreAddress
+      } else {
+         return null
+      }
+   }, [selectedOrderTab])
    // if (storeStatus.loading) {
    //    return <Loader inline />
    // }
@@ -636,15 +652,21 @@ const LocationInfo = ({ settings }) => {
                   )}
                   <div>
                      <div className="hern-header__location-content">
-                        {userLocation?.label
-                           ? userLocation?.label
-                           : userLocation?.mainText
-                           ? userLocation?.mainText
-                           : userLocation?.address?.mainText
-                           ? userLocation?.address?.mainText
-                           : userLocation?.line1
-                           ? userLocation?.line1
-                           : 'Please select address...'}
+                        {prefix === 'DELIVER AT' &&
+                           (userLocation?.label
+                              ? userLocation?.label
+                              : userLocation?.mainText
+                              ? userLocation?.mainText
+                              : userLocation?.address?.mainText
+                              ? userLocation?.address?.mainText
+                              : userLocation?.line1
+                              ? userLocation?.line1
+                              : 'Please select address...')}
+                        {prefix === 'PICKUP FROM' &&
+                           storeAddress &&
+                           (storeAddress.line1 ||
+                              '' + storeAddress.line2 ||
+                              '')}
                      </div>
                      <div className="hern-header__location-warning">
                         {!storeStatus?.status ? storeStatus?.message : ''}
