@@ -162,6 +162,7 @@ export const Delivery = props => {
                   onNowClick({
                      mileRangeId:
                         availableStore[0].fulfillmentStatus.mileRangeInfo.id,
+                     locationId: availableStore[0].location.id,
                   })
                }
             }
@@ -184,6 +185,7 @@ export const Delivery = props => {
       ) {
          onNowClick({
             mileRangeId: stores[0].fulfillmentStatus.mileRangeInfo.id,
+            locationId: stores[0].location.id,
          })
       }
    }, [fulfillmentType, stores, cartState?.cart, deliveryRadioOptions])
@@ -219,7 +221,7 @@ export const Delivery = props => {
    }
 
    // this fn will run just after available stores length > 0
-   const onNowClick = ({ mileRangeId }) => {
+   const onNowClick = ({ mileRangeId, locationId }) => {
       const slotInfo = {
          slot: {
             from: null,
@@ -233,8 +235,9 @@ export const Delivery = props => {
          variables: {
             id: cartState?.cart?.id,
             _set: {
-               ...fulfillmentTabInfo,
                fulfillmentInfo: slotInfo,
+               orderTabId: fulfillmentTabInfo.orderTabId,
+               locationId: fulfillmentTabInfo.locationId || locationId,
                // locationId: locationId,
                // address: consumerAddress,
             },
