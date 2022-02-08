@@ -47,9 +47,9 @@ const PaymentProcessingModal = ({
          // initializePrinting()
          await closeModalHandler()
       } else {
-         if (router.pathname !== `/account/orders`) {
+         if (router.pathname !== `/view-order`) {
             await closeModalHandler()
-            router.push(`/account/orders`)
+            router.push(`/view-order?id=${cartPayment?.cartId}`)
          }
       }
    }
