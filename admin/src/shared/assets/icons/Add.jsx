@@ -1,5 +1,6 @@
 import React from 'react'
 
+
 const AddIcon = ({ size = 16, color = '#fff', strokeWidth = 1.5 }) => (
    <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -16,5 +17,4 @@ const AddIcon = ({ size = 16, color = '#fff', strokeWidth = 1.5 }) => (
       <line x1="5" y1="12" x2="19" y2="12" />
    </svg>
 )
-
 export default AddIcon
