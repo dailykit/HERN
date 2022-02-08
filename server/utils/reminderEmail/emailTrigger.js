@@ -96,6 +96,7 @@ export const emailTrigger = async ({
    title,
    variables = {},
    to,
+   phone,
    brandId,
    includeHeader,
    includeFooter,
@@ -103,6 +104,7 @@ export const emailTrigger = async ({
 }) => {
    try {
       // console.log('entering emailTrigger', { title, variables, to, type })
+      let result
       const { templateSettings = [] } = await client.request(
          GET_TEMPLATE_SETTINGS,
          {
@@ -146,7 +148,7 @@ export const emailTrigger = async ({
                      ...(includeFooter && { includeFooter })
                   }
                })
-               return sendEmail
+               result = { email: sendEmail }
             }
             if (type.includes('sms')) {
                const messageTemplate = await getSms(
@@ -154,12 +156,14 @@ export const emailTrigger = async ({
                   variables,
                   smsTemplate
                )
+               // console.log('messageTemplate', messageTemplate, phone)
                const { sendSMS } = await client.request(SEND_SMS, {
                   message: messageTemplate,
-                  phone: to
+                  phone
                })
-               return sendSMS
+               result = { ...result, sms: sendSMS }
             }
+            return result
          }
          if (!proceed) {
             console.log(

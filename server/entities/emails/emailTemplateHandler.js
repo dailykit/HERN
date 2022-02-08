@@ -12,13 +12,14 @@ export const emailTemplateHandler = async (req, res) => {
          const result = await emailTrigger({
             title: payload.emailTriggerTitle,
             variables: payload,
-            to: payload.type === 'email' ? payload.email : payload.phone,
+            to: payload.email,
+            phone: payload.phone,
             brandId: payload.brandId,
             includeHeader: payload.includeHeader,
             includeFooter: payload.includeFooter,
-            type: payload.type && payload.type.split('&')
+            type: payload.type
          })
-         res.status(result.success ? 200 : 400).json(result)
+         res.json(result)
       }
    } catch (error) {
       console.log(error)
