@@ -12,6 +12,7 @@
       "build": "cd store && yarn build && cd ../admin && yarn build",
       "prod": "concurrently \"nodemon -r esm index.js\" \"cd store && yarn start\"",
       "dev:server": "concurrently \"nodemon -r esm index.js\" \"cd store && yarn dev\"",
+      "dev:admin": "concurrently \"nodemon -r esm index.js\" \"cd admin && yarn start\"",
       "download-graphql": "chmod +x ./fetchgraphqlschema.sh && ./fetchgraphqlschema.sh",
       "lint:graphql": "eslint **/graphql/*.js > graphqlerrors.txt",
       "start-hasura": "cd hasura && hasura console"

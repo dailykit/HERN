@@ -81,19 +81,19 @@ export const Home = () => {
                onClick={() => addTab('Pages', '/content/pages')}
                tileSvg={<PagesSvg />}
             />
-            <DashboardTile
+            {/* <DashboardTile
                title="Subscription"
                count={foldCount}
                onClick={() => addTab('Subscription', '/content/subscription')}
                tileSvg={<SubscriptionSvg />}
-            />
+            /> */}
             <DashboardTile
                title="Navbar Menu"
                count={menuCount}
                onClick={() => addTab('Navbar Menu', '/content/navbarMenu')}
                tileSvg={<NavbarMenuSvg />}
             />
-            <DashboardTile
+            {/* <DashboardTile
                title="Settings"
                onClick={() => addTab('Settings', '/content/settings')}
                tileSvg={<SettingsSvg />}
@@ -102,7 +102,7 @@ export const Home = () => {
                title="Blocks"
                onClick={() => addTab('Blocks', '/content/blocks')}
                tileSvg={<BlocksSvg />}
-            />
+            /> */}
          </StyledCardList>
          <Banner id="content-app-home-bottom" />
       </StyledHome>
