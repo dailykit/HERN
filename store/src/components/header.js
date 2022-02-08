@@ -33,7 +33,7 @@ import { useConfig } from '../lib'
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const Header = ({ settings, navigationMenus }) => {
-   const { dispatch, brand: configBrand, orderTabs } = useConfig()
+   const { dispatch, brand: configBrand, orderTabs, locationId } = useConfig()
    const router = useRouter()
    const { width } = useWindowSize()
    const { isAuthenticated, user, isLoading } = useUser()
@@ -115,7 +115,8 @@ export const Header = ({ settings, navigationMenus }) => {
 
    const newNavigationMenus = DataWithChildNodes(navigationMenus)
 
-   const { cartState, setStoredCartId } = React.useContext(CartContext)
+   const { cartState, setStoredCartId, isFinalCartLoading } =
+      React.useContext(CartContext)
    const numberOfItemsOnCart =
       cartState?.cart?.cartItems_aggregate?.aggregate?.count
 
@@ -125,128 +126,131 @@ export const Header = ({ settings, navigationMenus }) => {
    }, [])
 
    React.useEffect(() => {
-      const storeLocationId = localStorage.getItem('storeLocationId')
-      if (storeLocationId) {
-         dispatch({
-            type: 'SET_LOCATION_ID',
-            payload: JSON.parse(storeLocationId),
-         })
-         const localUserLocation = JSON.parse(
-            localStorage.getItem('userLocation')
-         )
-         setAddress({ ...localUserLocation, ...localUserLocation.address })
-         dispatch({
-            type: 'SET_USER_LOCATION',
-            payload: { ...localUserLocation, ...localUserLocation.address },
-         })
-         dispatch({
-            type: 'SET_STORE_STATUS',
-            payload: {
-               status: true,
-               message: 'Store available on your location.',
-               loading: false,
-            },
-         })
-      } else {
-         const localUserLocation = localStorage.getItem('userLocation')
-         if (localUserLocation) {
-            const localUserLocationParse = JSON.parse(localUserLocation)
-            setAddress({
-               ...localUserLocationParse,
-               ...localUserLocationParse.address,
+      if (!isFinalCartLoading) {
+         const storeLocationId = localStorage.getItem('storeLocationId')
+         console.log('im in')
+         if (storeLocationId && !locationId) {
+            dispatch({
+               type: 'SET_LOCATION_ID',
+               payload: JSON.parse(storeLocationId),
             })
+            const localUserLocation = JSON.parse(
+               localStorage.getItem('userLocation')
+            )
+            setAddress({ ...localUserLocation })
             dispatch({
                type: 'SET_USER_LOCATION',
+               payload: { ...localUserLocation },
+            })
+            dispatch({
+               type: 'SET_STORE_STATUS',
                payload: {
-                  ...localUserLocationParse,
-                  ...localUserLocationParse.address,
+                  status: true,
+                  message: 'Store available on your location.',
+                  loading: false,
                },
             })
-            return
-         }
-         const geolocation = isClient ? window.navigator.geolocation : false
-         if (geolocation) {
-            const success = position => {
-               const latitude = position.coords.latitude
-               const longitude = position.coords.longitude
-               setUserCoordinate(prev => ({ ...prev, latitude, longitude }))
-               fetch(
-                  `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${get_env(
-                     'GOOGLE_API_KEY'
-                  )}`
-               )
-                  .then(res => res.json())
-                  .then(data => {
-                     if (data?.status === 'OK' && data.results.length > 0) {
-                        const formatted_address =
-                           data.results[0].formatted_address.split(',')
-                        const mainText = formatted_address
-                           .slice(0, formatted_address.length - 3)
-                           .join(',')
-                        const secondaryText = formatted_address
-                           .slice(formatted_address.length - 3)
-                           .join(',')
-                        const address = {}
-                        data.results[0].address_components.forEach(node => {
-                           if (node.types.includes('locality')) {
-                              address.city = node.long_name
-                           }
-                           if (
-                              node.types.includes('administrative_area_level_1')
-                           ) {
-                              address.state = node.long_name
-                           }
-                           if (node.types.includes('country')) {
-                              address.country = node.long_name
-                           }
-                           if (node.types.includes('postal_code')) {
-                              address.zipcode = node.long_name
-                           }
-                        })
-                        setAddress(prev => ({
-                           ...prev,
-                           mainText,
-                           secondaryText,
-                           latitude,
-                           longitude,
-                           ...address,
-                        }))
-                        dispatch({
-                           type: 'SET_USER_LOCATION',
-                           payload: {
+         } else {
+            const localUserLocation = localStorage.getItem('userLocation')
+            if (localUserLocation) {
+               const localUserLocationParse = JSON.parse(localUserLocation)
+               setAddress({
+                  ...localUserLocationParse,
+               })
+               dispatch({
+                  type: 'SET_USER_LOCATION',
+                  payload: {
+                     ...localUserLocationParse,
+                  },
+               })
+               return
+            }
+            const geolocation = isClient ? window.navigator.geolocation : false
+            if (geolocation) {
+               const success = position => {
+                  const latitude = position.coords.latitude
+                  const longitude = position.coords.longitude
+                  setUserCoordinate(prev => ({ ...prev, latitude, longitude }))
+                  fetch(
+                     `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${get_env(
+                        'GOOGLE_API_KEY'
+                     )}`
+                  )
+                     .then(res => res.json())
+                     .then(data => {
+                        if (data?.status === 'OK' && data.results.length > 0) {
+                           const formatted_address =
+                              data.results[0].formatted_address.split(',')
+                           const mainText = formatted_address
+                              .slice(0, formatted_address.length - 3)
+                              .join(',')
+                           const secondaryText = formatted_address
+                              .slice(formatted_address.length - 3)
+                              .join(',')
+                           const address = {}
+                           data.results[0].address_components.forEach(node => {
+                              if (node.types.includes('locality')) {
+                                 address.city = node.long_name
+                              }
+                              if (
+                                 node.types.includes(
+                                    'administrative_area_level_1'
+                                 )
+                              ) {
+                                 address.state = node.long_name
+                              }
+                              if (node.types.includes('country')) {
+                                 address.country = node.long_name
+                              }
+                              if (node.types.includes('postal_code')) {
+                                 address.zipcode = node.long_name
+                              }
+                           })
+                           setAddress(prev => ({
+                              ...prev,
                               mainText,
                               secondaryText,
                               latitude,
                               longitude,
                               ...address,
-                           },
-                        })
-                     }
+                           }))
+                           dispatch({
+                              type: 'SET_USER_LOCATION',
+                              payload: {
+                                 mainText,
+                                 secondaryText,
+                                 latitude,
+                                 longitude,
+                                 ...address,
+                              },
+                           })
+                        }
+                     })
+                     .catch(e => {
+                        console.log('error', e)
+                     })
+               }
+               const error = () => {
+                  console.log('this is error')
+                  setShowLocationSelectionPopup(true)
+                  dispatch({
+                     type: 'SET_STORE_STATUS',
+                     payload: {
+                        status: true,
+                        message: 'Please select location.',
+                        loading: false,
+                     },
                   })
-                  .catch(e => {
-                     console.log('error', e)
-                  })
-            }
-            const error = () => {
-               console.log('this is error')
-               setShowLocationSelectionPopup(true)
-               dispatch({
-                  type: 'SET_STORE_STATUS',
-                  payload: {
-                     status: true,
-                     message: 'Please select location.',
-                     loading: false,
-                  },
+               }
+               geolocation.getCurrentPosition(success, error, {
+                  maximumAge: 60000,
+                  timeout: 15000,
+                  enableHighAccuracy: true,
                })
             }
-            geolocation.getCurrentPosition(success, error, {
-               maximumAge: 60000,
-               timeout: 15000,
-               enableHighAccuracy: true,
-            })
          }
       }
-   }, [])
+   }, [isFinalCartLoading])
 
    React.useEffect(() => {
       if (orderTabs.length > 0) {
@@ -267,71 +271,77 @@ export const Header = ({ settings, navigationMenus }) => {
    }, [orderTabs])
 
    React.useEffect(() => {
-      const availableLocalLocationId = localStorage.getItem('storeLocationId')
-      if (availableLocalLocationId) {
-         return
-      }
-      if (address && configBrand.id && fulfillmentType) {
-         async function fetchStores() {
-            const brandClone = { ...configBrand }
-            const availableStore = await getStoresWithValidations({
-               brand: brandClone,
-               fulfillmentType,
-               address,
-               autoSelect: true,
-            })
-            if (availableStore.length === 0) {
-               dispatch({
-                  type: 'SET_STORE_STATUS',
-                  payload: {
-                     status: false,
-                     message: 'No store available on this location.',
-                     loading: false,
-                  },
-               })
-            } else {
-               const firstStoreOfSortedBrandLocation = availableStore[0]
-               const selectedOrderTab = orderTabs.find(
-                  x => x.orderFulfillmentTypeLabel === fulfillmentType
-               )
-               dispatch({
-                  type: 'SET_LOCATION_ID',
-                  payload: firstStoreOfSortedBrandLocation.location.id,
-               })
-               dispatch({
-                  type: 'SET_SELECTED_ORDER_TAB',
-                  payload: selectedOrderTab,
-               })
-               dispatch({
-                  type: 'SET_USER_LOCATION',
-                  payload: address,
-               })
-               dispatch({
-                  type: 'SET_STORE_STATUS',
-                  payload: {
-                     status: true,
-                     message: 'Store available on your location.',
-                     loading: false,
-                  },
-               })
-               localStorage.setItem('orderTab', JSON.stringify(fulfillmentType))
-               localStorage.setItem(
-                  'storeLocationId',
-                  JSON.stringify(firstStoreOfSortedBrandLocation.location.id)
-               )
-               localStorage.setItem(
-                  'userLocation',
-                  JSON.stringify({
-                     latitude: address.lat,
-                     longitude: address.lng,
-                     ...address,
-                  })
-               )
-            }
+      if (!isFinalCartLoading) {
+         const availableLocalLocationId =
+            localStorage.getItem('storeLocationId')
+         if (availableLocalLocationId) {
+            return
          }
-         fetchStores()
+         if (address && configBrand.id && fulfillmentType) {
+            async function fetchStores() {
+               const brandClone = { ...configBrand }
+               const availableStore = await getStoresWithValidations({
+                  brand: brandClone,
+                  fulfillmentType,
+                  address,
+                  autoSelect: true,
+               })
+               if (availableStore.length === 0) {
+                  dispatch({
+                     type: 'SET_STORE_STATUS',
+                     payload: {
+                        status: false,
+                        message: 'No store available on this location.',
+                        loading: false,
+                     },
+                  })
+               } else {
+                  const firstStoreOfSortedBrandLocation = availableStore[0]
+                  const selectedOrderTab = orderTabs.find(
+                     x => x.orderFulfillmentTypeLabel === fulfillmentType
+                  )
+                  dispatch({
+                     type: 'SET_LOCATION_ID',
+                     payload: firstStoreOfSortedBrandLocation.location.id,
+                  })
+                  dispatch({
+                     type: 'SET_SELECTED_ORDER_TAB',
+                     payload: selectedOrderTab,
+                  })
+                  dispatch({
+                     type: 'SET_USER_LOCATION',
+                     payload: address,
+                  })
+                  dispatch({
+                     type: 'SET_STORE_STATUS',
+                     payload: {
+                        status: true,
+                        message: 'Store available on your location.',
+                        loading: false,
+                     },
+                  })
+                  localStorage.setItem(
+                     'orderTab',
+                     JSON.stringify(fulfillmentType)
+                  )
+                  localStorage.setItem(
+                     'storeLocationId',
+                     JSON.stringify(firstStoreOfSortedBrandLocation.location.id)
+                  )
+                  localStorage.setItem(
+                     'userLocation',
+                     JSON.stringify({
+                        latitude: address.lat,
+                        longitude: address.lng,
+                        ...address,
+                     })
+                  )
+               }
+            }
+            fetchStores()
+         }
       }
-   }, [address, fulfillmentType, brand])
+   }, [address, fulfillmentType, brand, isFinalCartLoading])
 
    return (
       <>
@@ -578,13 +588,13 @@ const LocationInfo = ({ settings }) => {
          ? localStorage.getItem('orderTab')
          : null
 
-      if (!selectedOrderTab && !selectedOrderTabInLocal) {
-         return null
-      }
-      const type = selectedOrderTab
-         ? selectedOrderTab.orderFulfillmentTypeLabel
-         : JSON.parse(selectedOrderTabInLocal)
-      switch (type) {
+      const fulfillmentType = selectedOrderTab?.orderFulfillmentTypeLabel
+         ? selectedOrderTab?.orderFulfillmentTypeLabel
+         : selectedOrderTabInLocal
+         ? JSON.parse(selectedOrderTabInLocal)
+         : null
+
+      switch (fulfillmentType) {
          case 'PREORDER_DELIVERY':
             return 'DELIVER AT'
          case 'ONDEMAND_DELIVERY':

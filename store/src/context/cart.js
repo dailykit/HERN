@@ -38,7 +38,8 @@ const reducer = (state, { type, payload }) => {
 }
 
 export const CartProvider = ({ children }) => {
-   const { brand, kioskId, selectedOrderTab, locationId } = useConfig()
+   const { brand, kioskId, selectedOrderTab, locationId, dispatch, orderTabs } =
+      useConfig()
    const { addToast } = useToasts()
    const [oiType] = useQueryParamState('oiType')
    const [isFinalCartLoading, setIsFinalCartLoading] = React.useState(true)
@@ -371,7 +372,7 @@ export const CartProvider = ({ children }) => {
                },
             },
          },
-         skip: !(brand?.id && user?.keycloakId),
+         skip: !(brand?.id && user?.keycloakId && orderTabs.length > 0),
          fetchPolicy: 'no-cache',
          onSubscriptionData: ({ subscriptionData }) => {
             // pending cart available
@@ -382,24 +383,107 @@ export const CartProvider = ({ children }) => {
                ) {
                   const guestCartId = localStorage.getItem('cart-id')
                   if (guestCartId) {
-                     // merge
-                     await updateCartItems({
+                     // delete pending cart and assign guest cart to the user
+                     await updateCart({
                         variables: {
-                           where: { cartId: { _eq: guestCartId } },
-                           _set: { cartId: subscriptionData.data.carts[0].id },
+                           id: guestCartId,
+                           _set: {
+                              // isTest: user.isTest,
+                              customerId: user.id,
+                              customerKeycloakId: user.keycloakId,
+                              paymentMethodId:
+                                 user.platform_customer?.defaultPaymentMethodId,
+                              brandId: brand.id,
+                              paymentCustomerId:
+                                 user.platform_customer?.paymentCustomerId,
+                              ...(user.platform_customer?.firstName && {
+                                 customerInfo: {
+                                    customerFirstName:
+                                       user.platform_customer?.firstName,
+                                    customerLastName:
+                                       user.platform_customer?.lastName,
+                                    customerEmail:
+                                       user.platform_customer?.email,
+                                    customerPhone:
+                                       user.platform_customer?.phoneNumber,
+                                 },
+                              }),
+                           },
                         },
                      })
                      // delete last one
                      await deleteCart({
                         variables: {
-                           id: guestCartId,
+                           id: subscriptionData.data.carts[0].id,
                         },
                      })
                      // localStorage.removeItem('cart-id')
-
-                     setStoredCartId(subscriptionData.data.carts[0].id)
+                     setStoredCartId(guestCartId)
                      setIsFinalCartLoading(false)
                   } else {
+                     const addressInCart =
+                        subscriptionData.data.carts[0].address
+                     const addressToBeSaveInLocal = {
+                        city: addressInCart.city,
+                        country: addressInCart.country,
+                        label: addressInCart.label,
+                        landmark: addressInCart.landmark,
+                        latitude: addressInCart.lat,
+                        line1: addressInCart.line1,
+                        line2: addressInCart.line2,
+                        longitude: addressInCart.lng,
+                        mainText: addressInCart.line1,
+                        notes: addressInCart.notes,
+                        secondaryText: `${addressInCart.city}, ${addressInCart.state} ${addressInCart.zipcode}, ${addressInCart.country}`,
+                        state: addressInCart.state,
+                        zipcode: addressInCart.zipcode,
+                     }
+                     const orderTabForLocal =
+                        subscriptionData.data.carts[0].fulfillmentInfo?.type ||
+                        orderTabs.find(
+                           eachOrderTab =>
+                              eachOrderTab.id ===
+                              subscriptionData.data.carts[0].orderTabId
+                        ).orderFulfillmentTypeLabel
+                     const locationIdForLocal =
+                        subscriptionData.data.carts[0].locationId
+                     localStorage.setItem(
+                        'orderTab',
+                        JSON.stringify(orderTabForLocal)
+                     )
+                     localStorage.setItem(
+                        'userLocation',
+                        JSON.stringify(addressToBeSaveInLocal)
+                     )
+                     localStorage.setItem(
+                        'storeLocationId',
+                        JSON.stringify(locationIdForLocal)
+                     )
+                     console.log('helloBrother')
+                     dispatch({
+                        type: 'SET_LOCATION_ID',
+                        payload: locationIdForLocal,
+                     })
+                     dispatch({
+                        type: 'SET_SELECTED_ORDER_TAB',
+                        payload: orderTabs.find(
+                           eachOrderTab =>
+                              eachOrderTab.id ===
+                              subscriptionData.data.carts[0].orderTabId
+                        ),
+                     })
+                     dispatch({
+                        type: 'SET_USER_LOCATION',
+                        payload: addressToBeSaveInLocal,
+                     })
+                     dispatch({
+                        type: 'SET_STORE_STATUS',
+                        payload: {
+                           status: true,
+                           message: 'Store available on your location.',
+                           loading: false,
+                        },
+                     })
                      setStoredCartId(subscriptionData.data.carts[0].id)
                      setIsFinalCartLoading(false)
                   }
@@ -418,8 +502,6 @@ export const CartProvider = ({ children }) => {
                               brandId: brand.id,
                               paymentCustomerId:
                                  user.platform_customer?.paymentCustomerId,
-                              address:
-                                 user.platform_customer?.defaultCustomerAddress,
                               ...(user.platform_customer?.firstName && {
                                  customerInfo: {
                                     customerFirstName:

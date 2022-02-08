@@ -123,6 +123,7 @@ const RefineLocation = props => {
                _set: {
                   address: customerAddress,
                   locationId: selectedStore.location.id,
+                  orderTabId: selectedOrderTab.id,
                },
             },
          })
