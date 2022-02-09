@@ -235,6 +235,9 @@ export const LOCATIONS = {
             locationTables {
                id
             }
+            locationAddress
+            lng
+            lat
             country
             city
             state
