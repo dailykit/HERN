@@ -16,25 +16,40 @@ export const CartBillingDetails = ({ billing, tip }) => {
                </li>
                <li>
                   <span>{billing.deliveryPrice.label}</span>
-                  <span>
-                     {formatCurrency(billing.deliveryPrice.value || 0)}
-                  </span>
+                  {billing.deliveryPrice.value === 0 ? (
+                     <span
+                        style={{
+                           color: 'var(--hern-accent)',
+                           fontWeight: 'bold',
+                        }}
+                     >
+                        free
+                     </span>
+                  ) : (
+                     <span>
+                        {formatCurrency(billing.deliveryPrice.value || 0)}
+                     </span>
+                  )}
                </li>
                <li>
                   <span>{billing.tax.label}</span>
                   <span>{formatCurrency(billing.tax.value || 0)}</span>
                </li>
-               <li>
-                  <span>{billing.discount.label}</span>
-                  <span>- {formatCurrency(billing.discount.value || 0)}</span>
-               </li>
-               {user?.keycloakId && (
+               {billing.discount.value > 0 && (
+                  <li>
+                     <span>{billing.discount.label}</span>
+                     <span>
+                        - {formatCurrency(billing.discount.value || 0)}
+                     </span>
+                  </li>
+               )}
+               {user?.keycloakId && billing.loyaltyPointsUsed.value > 0 && (
                   <li>
                      <span>{billing.loyaltyPointsUsed.label}</span>
                      <span>{billing.loyaltyPointsUsed.value}</span>
                   </li>
                )}
-               {user?.keycloakId && (
+               {user?.keycloakId && billing.walletAmountUsed.value > 0 && (
                   <li>
                      <span>{billing.walletAmountUsed.label}</span>
                      <span>{billing.walletAmountUsed.value}</span>
