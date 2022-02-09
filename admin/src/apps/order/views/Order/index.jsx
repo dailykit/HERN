@@ -27,6 +27,8 @@ import {
    HorizontalTabPanels,
    DropdownButton,
 } from '@dailykit/ui'
+import { Tree } from 'antd'
+import styled from 'styled-components'
 
 import { Products } from './sections'
 import { formatDate } from '../../utils'
@@ -41,6 +43,7 @@ import {
    logger,
    parseAddress,
    get_env,
+   getTreeViewArray,
 } from '../../../../shared/utils'
 import {
    Tooltip,
@@ -48,6 +51,8 @@ import {
    InlineLoader,
    Banner,
 } from '../../../../shared/components'
+
+import { ChevronRight, ChevronDown } from '../../../../shared/assets/icons'
 
 const isPickup = value => ['ONDEMAND_PICKUP', 'PREORDER_PICKUP'].includes(value)
 
@@ -66,6 +71,9 @@ const Order = () => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [addressTunnels, openAddressTunnel, closeAddressTunnel] = useTunnel(1)
    const [isThirdParty, setIsThirdParty] = React.useState(false)
+   const [treeviewProduct, setTreeviewProduct] = React.useState([])
+   const [isSwitchedToTreeview, setIsSwitchedToTreeview] = React.useState(false)
+
    const [updateOrder] = useMutation(MUTATIONS.ORDER.UPDATE, {
       onCompleted: () => {
          toast.success('Successfully updated the order!')
@@ -115,7 +123,7 @@ const Order = () => {
       skip: !order?.cartId,
       variables: {
          where: {
-            levelType: { _eq: 'orderItem' },
+            // levelType: { _eq: 'orderItem' },
             cartId: {
                _eq: order?.cartId,
             },
@@ -126,8 +134,26 @@ const Order = () => {
       },
    })
 
+   const onSelectHandler = (selectedKeys, { selectedNodes }) => {
+      if (!isEmpty(selectedNodes)) {
+         const [selectedNode] = selectedNodes
+         dispatch({
+            type: 'SELECT_PRODUCT',
+            payload: selectedNode,
+         })
+      }
+   }
+
    React.useEffect(() => {
       if (!productsLoading && !isEmpty(products)) {
+         const treeViewArray = getTreeViewArray({
+            dataset: products,
+            rootIdKeyName: 'id',
+            parentIdKeyName: 'parentCartItemId',
+         })
+         console.log('treeViewArray', treeViewArray)
+         setTreeviewProduct(treeViewArray)
+
          const [product] = products
          dispatch({
             type: 'SELECT_PRODUCT',
@@ -135,6 +161,18 @@ const Order = () => {
          })
       }
    }, [productsLoading, products])
+
+   // React.useEffect(() => {
+   //    if (!isEmpty(products)) {
+   //       const treeViewArray = getTreeViewArray({
+   //          dataset: products,
+   //          rootIdKeyName: 'id',
+   //          parentIdKeyName: 'parentCartItemId',
+   //       })
+   //       console.log('treeViewArray', treeViewArray)
+   //       setTreeviewProduct(treeViewArray)
+   //    }
+   // }, [products])
 
    /*
    React.useEffect(() => {
@@ -492,6 +530,7 @@ const Order = () => {
                      &nbsp;:&nbsp;{formatDate(order?.created_at)}
                   </Text>
                </Flex>
+
                {!isThirdParty && (
                   <>
                      <Spacer size="32px" xAxis />
@@ -505,6 +544,17 @@ const Order = () => {
                   </>
                )}
             </Flex>
+            <Spacer size="16px" xAxis />
+            <Form.Group>
+               <Form.Toggle
+                  name="tree_view_toggle"
+                  onChange={() => setIsSwitchedToTreeview(prev => !prev)}
+                  value={isSwitchedToTreeview}
+                  size={32}
+               >
+                  Switch to Tree View
+               </Form.Toggle>
+            </Form.Group>
          </ResponsiveFlex>
          <Spacer size="16px" />
 
@@ -617,78 +667,100 @@ const Order = () => {
             )}
          </Flex>
          <Spacer size="8px" />
-         {isThirdParty ? (
-            <HorizontalTabs>
-               <HorizontalTabList style={{ padding: '0 16px' }}>
-                  <HorizontalTab>Email Content</HorizontalTab>
-                  <HorizontalTab>Products</HorizontalTab>
-               </HorizontalTabList>
-               <HorizontalTabPanels>
-                  <HorizontalTabPanel>
-                     {parser.parse(order?.thirdPartyOrder?.emailContent)}
-                  </HorizontalTabPanel>
-                  <HorizontalTabPanel>
-                     {isNull(order.thirdPartyOrder.products) ? (
-                        <Filler message="No products available." />
-                     ) : (
-                        <Styles.Products>
-                           {order.thirdPartyOrder.products.map(
-                              (product, index) => (
-                                 <Styles.ProductItem key={index}>
-                                    <Flex
-                                       container
-                                       alignItems="center"
-                                       justifyContent="space-between"
-                                    >
-                                       <span>{product.label}</span>
-                                       <span>
-                                          {currencyFmt(product.price || 0)}
-                                       </span>
-                                    </Flex>
-                                    <Spacer size="14px" />
-                                    <Flex container alignItems="center">
-                                       <Flex
-                                          as="span"
-                                          container
-                                          alignItems="center"
-                                       >
-                                          <UserIcon size={16} />
-                                       </Flex>
-                                       <Spacer size="6px" xAxis />
-                                       <span>{product.quantity}</span>
-                                    </Flex>
-                                 </Styles.ProductItem>
-                              )
-                           )}
-                        </Styles.Products>
-                     )}
-                  </HorizontalTabPanel>
-               </HorizontalTabPanels>
-            </HorizontalTabs>
+         {isSwitchedToTreeview ? (
+            <>
+               {!isEmpty(treeviewProduct) && (
+                  <TreeContainer
+                     blockNode={true}
+                     onSelect={onSelectHandler}
+                     fieldNames={{
+                        title: 'displayName',
+                        key: 'id',
+                        children: 'childNodes',
+                     }}
+                     treeData={treeviewProduct}
+                     switcherIcon={<ChevronRight size="24" color="#aaa" />}
+                  />
+               )}
+            </>
          ) : (
-            <HorizontalTabs
-            // index={tabIndex} onChange={onTabChange}
-            >
-               <HorizontalTabList style={{ padding: '0 16px' }}>
-                  {Object.keys(types).map(key => (
-                     <HorizontalTab key={key}>
-                        {key === 'null' ? 'Others' : key}
-                        <span> ({types[key].length})</span>
-                     </HorizontalTab>
-                  ))}
-               </HorizontalTabList>
-               <HorizontalTabPanels>
-                  {Object.values(types).map((listing, index) => (
-                     <HorizontalTabPanel key={index}>
-                        <Products
-                           products={listing}
-                           loading={productsLoading}
-                           error={productsError}
-                        />
-                     </HorizontalTabPanel>
-                  ))}
-               </HorizontalTabPanels>
-            </HorizontalTabs>
+            <>
+               {isThirdParty ? (
+                  <HorizontalTabs>
+                     <HorizontalTabList style={{ padding: '0 16px' }}>
+                        <HorizontalTab>Email Content</HorizontalTab>
+                        <HorizontalTab>Products</HorizontalTab>
+                     </HorizontalTabList>
+                     <HorizontalTabPanels>
+                        <HorizontalTabPanel>
+                           {parser.parse(order?.thirdPartyOrder?.emailContent)}
+                        </HorizontalTabPanel>
+                        <HorizontalTabPanel>
+                           {isNull(order.thirdPartyOrder.products) ? (
+                              <Filler message="No products available." />
+                           ) : (
+                              <Styles.Products>
+                                 {order.thirdPartyOrder.products.map(
+                                    (product, index) => (
+                                       <Styles.ProductItem key={index}>
+                                          <Flex
+                                             container
+                                             alignItems="center"
+                                             justifyContent="space-between"
+                                          >
+                                             <span>{product.label}</span>
+                                             <span>
+                                                {currencyFmt(
+                                                   product.price || 0
+                                                )}
+                                             </span>
+                                          </Flex>
+                                          <Spacer size="14px" />
+                                          <Flex container alignItems="center">
+                                             <Flex
+                                                as="span"
+                                                container
+                                                alignItems="center"
+                                             >
+                                                <UserIcon size={16} />
+                                             </Flex>
+                                             <Spacer size="6px" xAxis />
+                                             <span>{product.quantity}</span>
+                                          </Flex>
+                                       </Styles.ProductItem>
+                                    )
+                                 )}
+                              </Styles.Products>
+                           )}
+                        </HorizontalTabPanel>
+                     </HorizontalTabPanels>
+                  </HorizontalTabs>
+               ) : (
+                  <HorizontalTabs
+                  // index={tabIndex} onChange={onTabChange}
+                  >
+                     <HorizontalTabList style={{ padding: '0 16px' }}>
+                        {Object.keys(types).map(key => (
+                           <HorizontalTab key={key}>
+                              {key === 'null' ? 'Others' : key}
+                              <span> ({types[key].length})</span>
+                           </HorizontalTab>
+                        ))}
+                     </HorizontalTabList>
+                     <HorizontalTabPanels>
+                        {Object.values(types).map((listing, index) => (
+                           <HorizontalTabPanel key={index}>
+                              <Products
+                                 products={listing}
+                                 loading={productsLoading}
+                                 error={productsError}
+                              />
+                           </HorizontalTabPanel>
+                        ))}
+                     </HorizontalTabPanels>
+                  </HorizontalTabs>
+               )}
+            </>
          )}
 
          <EditDeliveryTunnel
@@ -993,3 +1065,25 @@ const EditAddressTunnel = ({ cartId, tunnels, closeTunnel, address = {} }) => {
       </Tunnels>
    )
 }
+
+const TreeContainer = styled(Tree)`
+   margin: 0 1rem;
+   .ant-tree-treenode,
+   .ant-tree-switcher {
+      display: flex;
+      align-items: center;
+   }
+   ${
+      '' /* .ant-tree-list-holder-inner .ant-tree-treenode {
+      width: 100%;
+   } */
+   }
+   .ant-tree-list-holder-inner .ant-tree-treenode .ant-tree-switcher {
+      background: #f5f5f5;
+   }
+   .ant-tree-node-content-wrapper {
+      ${'' /* width: 100%; */}
+      padding: 1rem;
+      background: #f5f5f5;
+   }
+`
