@@ -30,27 +30,34 @@ const PaymentProcessingModal = ({
    const [isCelebrating, setIsCelebrating] = useState(false)
    const { width, height } = useWindowSize()
 
-   const closeModalHandler = () => {
+   const closeModalHandler = async () => {
       setIsCelebrating(false)
-      closeModal()
-      resetPaymentProviderStates()
+      await closeModal()
+      // await resetPaymentProviderStates()
+   }
+   const resetStateAfterModalClose = async () => {
+      setIsCelebrating(false)
+      await closeModal()
+      await resetPaymentProviderStates()
    }
 
-   const stopCelebration = () => {
+   const stopCelebration = async () => {
       setIsCelebrating(false)
       if (isKioskMode) {
          // initializePrinting()
-         closeModalHandler()
+         await closeModalHandler()
       } else {
-         if (router.pathname !== `/account/orders`) {
-            closeModalHandler()
-            router.push(`/account/orders`)
+         if (router.pathname !== `/view-order`) {
+            await closeModalHandler()
+            router.push(`/view-order?id=${cartPayment?.cartId}`)
          }
       }
    }
    const startCelebration = () => {
       setIsCelebrating(true)
-      setTimeout(stopCelebration, 5000)
+      setTimeout(async () => {
+         await stopCelebration()
+      }, 5000)
    }
 
    const ShowPaymentStatusInfo = () => {
@@ -111,7 +118,7 @@ const PaymentProcessingModal = ({
                   type="primary"
                   className="tryOtherPayment"
                   key="console"
-                  onClick={closeModalHandler}
+                  onClick={resetStateAfterModalClose}
                >
                   Try other payment method
                </Button>,
@@ -130,7 +137,7 @@ const PaymentProcessingModal = ({
                   type="primary"
                   className="tryOtherPayment"
                   key="console"
-                  onClick={closeModalHandler}
+                  onClick={resetStateAfterModalClose}
                >
                   Try other payment method
                </Button>,
@@ -202,7 +209,7 @@ const PaymentProcessingModal = ({
                   type="primary"
                   className="tryOtherPayment"
                   key="console"
-                  onClick={closeModalHandler}
+                  onClick={resetStateAfterModalClose}
                >
                   Try other payment method
                </Button>,
@@ -221,7 +228,7 @@ const PaymentProcessingModal = ({
                   type="primary"
                   className="tryOtherPayment"
                   key="console"
-                  onClick={closeModalHandler}
+                  onClick={resetStateAfterModalClose}
                >
                   Try other payment method
                </Button>,
@@ -241,7 +248,7 @@ const PaymentProcessingModal = ({
                   type="primary"
                   className="tryOtherPayment"
                   key="console"
-                  onClick={closeModalHandler}
+                  onClick={resetStateAfterModalClose}
                >
                   Try other payment method
                </Button>,
@@ -356,7 +363,7 @@ const PaymentProcessingModal = ({
                <Button
                   type="link"
                   tw="fixed top-8 left-4"
-                  onClick={normalModalClose}
+                  onClick={resetPaymentProviderStates}
                >
                   <div tw="flex items-center">
                      <ArrowLeftIconBG bgColor="#F7B502" arrowColor="#fff" />

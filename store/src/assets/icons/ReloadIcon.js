@@ -1,7 +1,5 @@
 import React from 'react'
-
-
-const AddIcon = ({ size = 16, color = '#fff', strokeWidth = 1.5 }) => (
+export const ReloadIcon = ({ size = 100, color = '#fff' }) => (
    <svg
       xmlns="http://www.w3.org/2000/svg"
       width={size}
@@ -9,12 +7,10 @@ const AddIcon = ({ size = 16, color = '#fff', strokeWidth = 1.5 }) => (
       viewBox="0 0 24 24"
       fill="none"
       stroke={color}
-      strokeWidth={strokeWidth}
+      strokeWidth="1"
       strokeLinecap="round"
       strokeLinejoin="round"
    >
-      <line x1="12" y1="5" x2="12" y2="19" />
-      <line x1="5" y1="12" x2="19" y2="12" />
+      <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38" />
    </svg>
 )
-export default AddIcon

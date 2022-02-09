@@ -1,6 +1,7 @@
 import React from 'react'
 import { useLocation, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
+import { ForwardIcon } from '../../../assets/icons'
 
 const Breadcrumbs = () => {
    const { pathname } = useLocation()
@@ -35,11 +36,24 @@ const Breadcrumbs = () => {
    return (
       <Styles.Wrapper>
          <Styles.Crumb onClick={() => history.push('/')} isHome={true}>
-            Home
+            Home{' '}
+            {routes.length >= 1 && (
+               <>
+                  &nbsp;
+                  <ForwardIcon />
+               </>
+            )}
          </Styles.Crumb>
-         {routes.map(route => (
+
+         {routes.map((route, index) => (
             <Styles.Crumb onClick={() => history.push(route.path)}>
                {route.title}
+               {routes.length - 1 !== index && (
+                  <>
+                     &nbsp;
+                     <ForwardIcon />
+                  </>
+               )}
             </Styles.Crumb>
          ))}
       </Styles.Wrapper>
@@ -55,10 +69,8 @@ const Styles = {
       float: none;
       max-width: 1280px;
       width: calc(100vw - 130px);
-      filter: drop-shadow(1px 0px 0px #f3f3f3) drop-shadow(0px 0px 0px #f3f3f3)
-         drop-shadow(0px 0px 0px #f3f3f3) drop-shadow(0px 1px 0px #f3f3f3)
-         drop-shadow(1px 1px 0px #f3f3f3) drop-shadow(-1px -1px 0px #f3f3f3)
-         drop-shadow(-1px 1px 0px #f3f3f3) drop-shadow(1px -1px 0px #f3f3f3);
+     
+      }
    `,
    Crumb: styled.button`
       display: flex;
@@ -66,29 +78,17 @@ const Styles = {
       font-size: 12px;
       border: none;
       outline: none;
-      color: #555b6e;
+      color: #919699;
       font-weight: 500;
       text-transform: capitalize;
       background: White;
-      padding: ${({ isHome }) =>
-         isHome ? '2px 12px 2px 4px' : '2px 12px 2px 14px'};
-      width: 100px;
-      clip-path: ${({ isHome }) =>
-         isHome
-            ? ` polygon(
-      calc(100% - 16px) 0%,
-      0 0,
-      0 100%,
-      calc(100% - 16px) 100%,
-      100% 50%)`
-            : `polygon(80% 0%,100% 50%,80% 100%,0% 100%,15% 50%,0% 0%)`};
+      padding: 2px 0px 2px 3px;
+
       &:last-child {
          color: #367bf5;
-         background: #f3f3f3;
       }
       &:hover {
-         background: #f3f3f3;
-         color: #202020;
+         color: #555b6e;
       }
    `,
 }

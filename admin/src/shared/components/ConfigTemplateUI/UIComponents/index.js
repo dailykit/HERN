@@ -19,21 +19,23 @@ import {
    RichTextEditor,
    AssetUploader,
    InlineLoader,
-   Banner,
    ErrorState,
    Gallery,
 } from '../../../components'
 import { EditIcon, DeleteIcon } from '../../../assets/icons'
-import PhoneInput, {
-   formatPhoneNumber,
-   formatPhoneNumberIntl,
-   isValidPhoneNumber,
-} from 'react-phone-number-input'
+import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
 import ReactHTMLParser from 'react-html-parser'
 import gql from 'graphql-tag'
 import { useSubscription } from '@apollo/react-hooks'
 import validator from '../../../../apps/brands/views/validator'
+import CustomColorPicker from './CustomColorPicker'
+
+//antd components
+import { Typography, Slider } from 'antd'
+
+const { Paragraph } = Typography
+
 export const TextBox = ({
    fieldDetail,
    marginLeft,
@@ -131,43 +133,50 @@ export const ColorPicker = ({
    path,
    onConfigChange,
    editMode,
-}) => (
-   <Flex
-      container
-      justifyContent="space-between"
-      alignItems="center"
-      margin={`0 0 0 ${marginLeft}`}
-   >
-      <Flex container alignItems="flex-end">
-         <Form.Label title={fieldDetail.label} htmlFor="color">
-            {fieldDetail.label.toUpperCase()}
-         </Form.Label>
-         <Tooltip identifier="color_component_info" />
-      </Flex>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-         {editMode ? (
-            <>
-               <ColorLabel backgroundColor="#fff" title={fieldDetail?.value || 'none'}>
-                  {fieldDetail?.value || 'none'}
-               </ColorLabel>
-               <input
+}) => {
+   const [color, setColor] = React.useState(fieldDetail?.value || '#000')
+
+   return (
+      <Flex
+         container
+         justifyContent="space-between"
+         alignItems="center"
+         margin={`0 0 0 ${marginLeft}`}
+      >
+         <Flex container alignItems="flex-end">
+            <Form.Label title={fieldDetail.label} htmlFor="color">
+               {fieldDetail.label.toUpperCase()}
+            </Form.Label>
+            <Tooltip identifier="color_component_info" />
+         </Flex>
+         <div style={{ display: 'flex', alignItems: 'center' }}>
+            {editMode ? (
+               <>
+                  <ColorLabel backgroundColor="#fff" title={color}>
+                     {color}
+                  </ColorLabel>
+                  {/* <input
                   type="color"
                   id="favcolor"
                   name={path}
                   value={fieldDetail?.value || ''}
                   onChange={onConfigChange}
                   style={{ cursor: 'pointer' }}
-               />
-            </>
-         ) : (
-            <>
-               <ColorLabel
-                  backgroundColor='rgb(244 244 244)'
-                  title={fieldDetail?.value || 'none'}
-               >
-                  {fieldDetail?.value || 'none'}
-               </ColorLabel>
-               <input
+               /> */}
+                  <CustomColorPicker
+                     path={path}
+                     color={color}
+                     onChange={setColor}
+                     onConfigChange={e => onConfigChange(e, color)}
+                  />
+                  ;
+               </>
+            ) : (
+               <>
+                  <ColorLabel backgroundColor="rgb(244 244 244)" title={color}>
+                     {color}
+                  </ColorLabel>
+                  {/* <input
                   type="color"
                   id="favcolor"
                   name={path}
@@ -175,12 +184,20 @@ export const ColorPicker = ({
                   value={fieldDetail?.value || ''}
                   onChange={onConfigChange}
                   disabled
-               />
-            </>
-         )}
-      </div>
-   </Flex>
-)
+               /> */}
+                  <CustomColorPicker
+                     path={path}
+                     color={color}
+                     onChange={setColor}
+                     onConfigChange={e => onConfigChange(e, color)}
+                  />
+                  ;
+               </>
+            )}
+         </div>
+      </Flex>
+   )
+}
 
 export const Number = ({
    fieldDetail,
@@ -465,6 +482,13 @@ export const RichText = ({
    onConfigChange,
    editMode,
 }) => {
+   const [rows, setRows] = React.useState(5)
+   const [expandable, setExpandable] = React.useState(true)
+   const richText = ReactHTMLParser(fieldDetail?.value) || ''
+   const onChange = rows => {
+      setRows(rows)
+   }
+
    const onEditorChange = html => {
       const e = {
          target: {
@@ -473,6 +497,7 @@ export const RichText = ({
       }
       onConfigChange(e, html)
    }
+
    return (
       <Flex margin={`0 0 0 ${marginLeft}`}>
          <Flex container alignItems="flex-end">
@@ -488,8 +513,36 @@ export const RichText = ({
                   onChange={html => onEditorChange(html)}
                />
             ) : (
-               <div style={{ background: '#f9f9f9', padding: '6px' }}>
-                  {ReactHTMLParser(fieldDetail?.value)}
+               <div style={{ background: '#f9f9f9' }}>
+                  <Slider value={rows} min={5} max={100} onChange={onChange} />
+                  <Paragraph
+                     ellipsis={{
+                        rows,
+                        expandable: expandable,
+                        onExpand: () => setExpandable(false),
+                        onEllipsis: ellipsis => {
+                           console.log('Ellipsis changed:', ellipsis)
+                        },
+                     }}
+                  >
+                     {richText}
+                  </Paragraph>
+                  {!expandable && (
+                     <div
+                        style={{
+                           color: '#1890ff',
+                           outline: 'none',
+                           cursor: 'pointer',
+                           transition: 'color 0.3s',
+                           textDecoration: 'none',
+                        }}
+                        onClick={() => {
+                           setExpandable(true)
+                        }}
+                     >
+                        close
+                     </div>
+                  )}
                </div>
             )}
          </Form.Group>
@@ -648,7 +701,7 @@ export const ImageUpload = props => {
                      <Tooltip identifier="textArea_component_info" />
                   </Flex>
                   <Spacer size="16px" />
-                  {(fieldDetail?.value?.url || fieldDetail?.value) ? (
+                  {fieldDetail?.value?.url || fieldDetail?.value ? (
                      <ImageContainer width="120px" height="120px">
                         <div>
                            <IconButton
@@ -670,7 +723,10 @@ export const ImageUpload = props => {
                               <DeleteIcon />
                            </IconButton>
                         </div>
-                        <img src={fieldDetail?.value?.url || fieldDetail?.value} alt={fieldDetail?.label} />
+                        <img
+                           src={fieldDetail?.value?.url || fieldDetail?.value}
+                           alt={fieldDetail?.label}
+                        />
                      </ImageContainer>
                   ) : (
                      <ButtonTile
@@ -703,39 +759,50 @@ export const ImageUpload = props => {
             </>
          ) : (
             <ImageWrapper>
-               {(fieldDetail?.value?.url || fieldDetail?.value) ? (<>
-                  <Flex container alignItems="flex-end">
-                     <Form.Label title={fieldDetail.label} htmlFor="text">
-                        {fieldDetail.label.toUpperCase()}
-                     </Form.Label>
-                     <Tooltip identifier="image_label" />
-                  </Flex>
-                  <ImageContainer width="120px" height="120px" flexDirection="row">
-
-                     <img src={fieldDetail?.value?.url || fieldDetail?.value} alt={fieldDetail.label} />
-                  </ImageContainer>
-               </>
-               ) : (<>
-                  <Flex container alignItems="flex-end">
-                     <Form.Label title={fieldDetail.label} htmlFor="text">
-                        {fieldDetail.label.toUpperCase()}
-                     </Form.Label>
-                     <Tooltip identifier="image_label" />
-                  </Flex>
-                  <ImageContainer width="100px" height="100px" flexDirection="row">
-                     <div className="fallback-image-container">
-                        <Image
-                           width={150}
-                           height={100}
-                           src="error"
-                           fallback="https://raw.githubusercontent.com/koehlersimon/fallback/master/Resources/Public/Images/placeholder.jpg"
-                           title="no image added"
+               {fieldDetail?.value?.url || fieldDetail?.value ? (
+                  <>
+                     <Flex container alignItems="flex-end">
+                        <Form.Label title={fieldDetail.label} htmlFor="text">
+                           {fieldDetail.label.toUpperCase()}
+                        </Form.Label>
+                        <Tooltip identifier="image_label" />
+                     </Flex>
+                     <ImageContainer
+                        width="120px"
+                        height="120px"
+                        flexDirection="row"
+                     >
+                        <img
+                           src={fieldDetail?.value?.url || fieldDetail?.value}
+                           alt={fieldDetail.label}
                         />
-
-                     </div> </ImageContainer>
-               </>
+                     </ImageContainer>
+                  </>
+               ) : (
+                  <>
+                     <Flex container alignItems="flex-end">
+                        <Form.Label title={fieldDetail.label} htmlFor="text">
+                           {fieldDetail.label.toUpperCase()}
+                        </Form.Label>
+                        <Tooltip identifier="image_label" />
+                     </Flex>
+                     <ImageContainer
+                        width="100px"
+                        height="100px"
+                        flexDirection="row"
+                     >
+                        <div className="fallback-image-container">
+                           <Image
+                              width={150}
+                              height={100}
+                              src="error"
+                              fallback="https://raw.githubusercontent.com/koehlersimon/fallback/master/Resources/Public/Images/placeholder.jpg"
+                              title="no image added"
+                           />
+                        </div>{' '}
+                     </ImageContainer>
+                  </>
                )}
-
             </ImageWrapper>
          )}
       </>
@@ -748,7 +815,7 @@ export const MultipleImageUpload = props => {
 
    const updateSetting = data => {
       if (data) {
-         const e = { target: { name: path, value: { "url": [...data] } } }
+         const e = { target: { name: path, value: { url: [...data] } } }
          onConfigChange(e, data)
          // configSaveHandler(configJSON)
       }
@@ -765,7 +832,8 @@ export const MultipleImageUpload = props => {
       <>
          {editMode ? (
             <Flex width="50%" style={{ position: 'relative', top: '22px' }}>
-               {(fieldDetail?.value?.url && fieldDetail?.value?.url !== null) &&
+               {fieldDetail?.value?.url &&
+                  fieldDetail?.value?.url !== null &&
                   fieldDetail?.value?.url.length ? (
                   <Gallery
                      list={fieldDetail.value.url || []}
@@ -822,9 +890,11 @@ export const MultipleImageUpload = props => {
       </>
    )
 }
+
 export const ImageContainer = styled.div`
    display: flex;
-   flex-direction: ${props => props.flexDirection ? props.flexDirection : 'row-reverse'};
+   flex-direction: ${props =>
+      props.flexDirection ? props.flexDirection : 'row-reverse'};
    justify-content: flex-end;
    height: ${props => props.height || 'auto'};
    width: ${props => props.width || 'auto'};
@@ -853,11 +923,11 @@ export const ImageContainer = styled.div`
       text-align: center;
       flex-direction: column;
    }
-   .ant-carousel>.slick-slider{
-      height:10rem !important;
-      .slick-list>.slick-track>.slick-slide>div>div>img{
-         max-height:120px !important;
-         width:auto;
+   .ant-carousel > .slick-slider {
+      height: 10rem !important;
+      .slick-list > .slick-track > .slick-slide > div > div > img {
+         max-height: 120px !important;
+         width: auto;
       }
    }
 `
@@ -892,18 +962,19 @@ export const NoValueSpan = styled.span`
    font-weight: 400;
 `
 export const ColorLabel = styled.p`
-margin: 0.5rem;
-margin-bottom: 0.5rem!important;
-cursor: default;
-background-color: ${props => props.backgroundColor};
-padding: 0.5em;
-font-weight: 500;
-color: grey;`
+   margin: 0.5rem;
+   margin-bottom: 0.5rem !important;
+   cursor: default;
+   background-color: ${props => props.backgroundColor};
+   padding: 0.5em;
+   font-weight: 500;
+   color: grey;
+`
 
 export const ImageWrapper = styled.div`
-display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 0.4rem;
-    padding-right: ${props => props.paddingRight || '0.4rem'};
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   padding: 1rem 0.4rem;
+   padding-right: ${props => props.paddingRight || '0.4rem'};
 `

@@ -27,12 +27,14 @@ import {
    HorizontalTabPanels,
    DropdownButton,
 } from '@dailykit/ui'
+import { Tree } from 'antd'
+import styled from 'styled-components'
 
 import { Products } from './sections'
 import { formatDate } from '../../utils'
 import { findAndSelectSachet } from './methods'
 import { ResponsiveFlex, Styles } from './styled'
-import { QUERIES, MUTATIONS } from '../../graphql'
+import { QUERIES, MUTATIONS, CREATE_PRINT_JOB } from '../../graphql'
 import { useConfig, useOrder } from '../../context'
 import { EditIcon, PrintIcon, UserIcon } from '../../assets/icons'
 import { useAccess, useAuth, useTabs } from '../../../../shared/providers'
@@ -41,6 +43,7 @@ import {
    logger,
    parseAddress,
    get_env,
+   getTreeViewArray,
 } from '../../../../shared/utils'
 import {
    Tooltip,
@@ -48,6 +51,8 @@ import {
    InlineLoader,
    Banner,
 } from '../../../../shared/components'
+
+import { ChevronRight, ChevronDown } from '../../../../shared/assets/icons'
 
 const isPickup = value => ['ONDEMAND_PICKUP', 'PREORDER_PICKUP'].includes(value)
 
@@ -66,6 +71,9 @@ const Order = () => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [addressTunnels, openAddressTunnel, closeAddressTunnel] = useTunnel(1)
    const [isThirdParty, setIsThirdParty] = React.useState(false)
+   const [treeviewProduct, setTreeviewProduct] = React.useState([])
+   const [isSwitchedToTreeview, setIsSwitchedToTreeview] = React.useState(false)
+
    const [updateOrder] = useMutation(MUTATIONS.ORDER.UPDATE, {
       onCompleted: () => {
          toast.success('Successfully updated the order!')
@@ -73,6 +81,15 @@ const Order = () => {
       onError: error => {
          logger(error)
          toast.error('Failed to update the order')
+      },
+   })
+   const [createPrintJob] = useMutation(CREATE_PRINT_JOB, {
+      onCompleted: () => {
+         toast.success('Receipt printed successfully!')
+      },
+      onError: error => {
+         logger(error)
+         toast.error('Failed to print the receipt')
       },
    })
 
@@ -106,7 +123,7 @@ const Order = () => {
       skip: !order?.cartId,
       variables: {
          where: {
-            levelType: { _eq: 'orderItem' },
+            // levelType: { _eq: 'orderItem' },
             cartId: {
                _eq: order?.cartId,
             },
@@ -117,8 +134,26 @@ const Order = () => {
       },
    })
 
+   const onSelectHandler = (selectedKeys, { selectedNodes }) => {
+      if (!isEmpty(selectedNodes)) {
+         const [selectedNode] = selectedNodes
+         dispatch({
+            type: 'SELECT_PRODUCT',
+            payload: selectedNode,
+         })
+      }
+   }
+
    React.useEffect(() => {
       if (!productsLoading && !isEmpty(products)) {
+         const treeViewArray = getTreeViewArray({
+            dataset: products,
+            rootIdKeyName: 'id',
+            parentIdKeyName: 'parentCartItemId',
+         })
+         console.log('treeViewArray', treeViewArray)
+         setTreeviewProduct(treeViewArray)
+
          const [product] = products
          dispatch({
             type: 'SELECT_PRODUCT',
@@ -126,6 +161,18 @@ const Order = () => {
          })
       }
    }, [productsLoading, products])
+
+   // React.useEffect(() => {
+   //    if (!isEmpty(products)) {
+   //       const treeViewArray = getTreeViewArray({
+   //          dataset: products,
+   //          rootIdKeyName: 'id',
+   //          parentIdKeyName: 'parentCartItemId',
+   //       })
+   //       console.log('treeViewArray', treeViewArray)
+   //       setTreeviewProduct(treeViewArray)
+   //    }
+   // }, [products])
 
    /*
    React.useEffect(() => {
@@ -248,6 +295,24 @@ const Order = () => {
          '_blank'
       )
    }, [order])
+   const rawPrint = React.useCallback(() => {
+      const template = encodeURIComponent(
+         JSON.stringify({ name: 'bill1', type: 'bill', format: 'raw' })
+      )
+      const data = encodeURIComponent(JSON.stringify({ id: order?.id }))
+      const url = `${get_env(
+         'REACT_APP_TEMPLATE_URL'
+      )}?template=${template}&data=${data}`
+      createPrintJob({
+         variables: {
+            contentType: 'raw_uri',
+            printerId: config.kot?.default_kot_printer?.value?.printNodeId,
+            source: 'Dailykit',
+            title: 'Print Raw Receipt',
+            url,
+         },
+      })
+   }, [order, config.kot?.default_kot_printer?.value?.printNodeId])
 
    const printKOT = async () => {
       try {
@@ -368,7 +433,7 @@ const Order = () => {
             justifyContent="space-between"
          >
             <Flex container alignItems="center">
-               <Text as="h4">ORD{order?.id}</Text>
+               <Text as="h4">ORD{order?.cart?.id}</Text>
                {!isThirdParty && Boolean(order?.cart?.isTest) && (
                   <>
                      <Spacer size="8px" xAxis />
@@ -418,9 +483,35 @@ const Order = () => {
                )}
                <Spacer size="16px" xAxis />
                {!isThirdParty && (
-                  <IconButton size="sm" type="outline" onClick={print}>
-                     <PrintIcon size={16} />
-                  </IconButton>
+                  <>
+                     <Flex width="180px">
+                        <DropdownButton title="Receipt Options">
+                           <DropdownButton.Options>
+                              <DropdownButton.Option onClick={rawPrint}>
+                                 Print Receipt
+                              </DropdownButton.Option>
+                              <DropdownButton.Option onClick={print}>
+                                 View receipt in browser
+                              </DropdownButton.Option>
+                           </DropdownButton.Options>
+                        </DropdownButton>
+                     </Flex>
+                     {/* <IconButton size="sm" type="outline" onClick={print}>
+                        <PrintIcon size={16} />
+                     </IconButton>
+                     <Spacer size="16px" xAxis />
+                     <TextButton
+                        size="sm"
+                        type="outline"
+                        fallBackMessage="PrinterId is not present!"
+                        hasAccess={Boolean(
+                           config.kot?.default_kot_printer?.value?.printNodeId
+                        )}
+                        onClick={rawPrint}
+                     >
+                        Print Receipt
+                     </TextButton> */}
+                  </>
                )}
                <Spacer size="16px" xAxis />
                {!isThirdParty && !isPickup(order?.fulfillmentType) && (
@@ -451,6 +542,7 @@ const Order = () => {
                      &nbsp;:&nbsp;{formatDate(order?.created_at)}
                   </Text>
                </Flex>
+
                {!isThirdParty && (
                   <>
                      <Spacer size="32px" xAxis />
@@ -464,6 +556,17 @@ const Order = () => {
                   </>
                )}
             </Flex>
+            <Spacer size="16px" xAxis />
+            <Form.Group>
+               <Form.Toggle
+                  name="tree_view_toggle"
+                  onChange={() => setIsSwitchedToTreeview(prev => !prev)}
+                  value={isSwitchedToTreeview}
+                  size={32}
+               >
+                  Switch to Tree View
+               </Form.Toggle>
+            </Form.Group>
          </ResponsiveFlex>
          <Spacer size="16px" />
 
@@ -488,7 +591,7 @@ const Order = () => {
                <span />
             )}
 
-            <ResponsiveFlex container style={{alignItems:'center'}}>
+            <ResponsiveFlex container style={{ alignItems: 'center' }}>
                {!isThirdParty && (
                   <>
                      <Flex width="240px">
@@ -569,83 +672,107 @@ const Order = () => {
                <>
                   <Text as="text1">Address:</Text>
                   <Spacer size="14px" xAxis />
-                  <p style={{marginBottom:'0em'}}>{parseAddress(order.cart?.address)}</p>
+                  <p style={{ marginBottom: '0em' }}>
+                     {parseAddress(order.cart?.address)}
+                  </p>
                </>
             )}
          </Flex>
          <Spacer size="8px" />
-         {isThirdParty ? (
-            <HorizontalTabs>
-               <HorizontalTabList style={{ padding: '0 16px' }}>
-                  <HorizontalTab>Email Content</HorizontalTab>
-                  <HorizontalTab>Products</HorizontalTab>
-               </HorizontalTabList>
-               <HorizontalTabPanels>
-                  <HorizontalTabPanel>
-                     {parser.parse(order?.thirdPartyOrder?.emailContent)}
-                  </HorizontalTabPanel>
-                  <HorizontalTabPanel>
-                     {isNull(order.thirdPartyOrder.products) ? (
-                        <Filler message="No products available." />
-                     ) : (
-                        <Styles.Products>
-                           {order.thirdPartyOrder.products.map(
-                              (product, index) => (
-                                 <Styles.ProductItem key={index}>
-                                    <Flex
-                                       container
-                                       alignItems="center"
-                                       justifyContent="space-between"
-                                    >
-                                       <span>{product.label}</span>
-                                       <span>
-                                          {currencyFmt(product.price || 0)}
-                                       </span>
-                                    </Flex>
-                                    <Spacer size="14px" />
-                                    <Flex container alignItems="center">
-                                       <Flex
-                                          as="span"
-                                          container
-                                          alignItems="center"
-                                       >
-                                          <UserIcon size={16} />
-                                       </Flex>
-                                       <Spacer size="6px" xAxis />
-                                       <span>{product.quantity}</span>
-                                    </Flex>
-                                 </Styles.ProductItem>
-                              )
-                           )}
-                        </Styles.Products>
-                     )}
-                  </HorizontalTabPanel>
-               </HorizontalTabPanels>
-            </HorizontalTabs>
+         {isSwitchedToTreeview ? (
+            <>
+               {!isEmpty(treeviewProduct) && (
+                  <TreeContainer
+                     blockNode={true}
+                     onSelect={onSelectHandler}
+                     fieldNames={{
+                        title: 'displayName',
+                        key: 'id',
+                        children: 'childNodes',
+                     }}
+                     treeData={treeviewProduct}
+                     switcherIcon={<ChevronRight size="24" color="#aaa" />}
+                  />
+               )}
+            </>
          ) : (
-            <HorizontalTabs
-            // index={tabIndex} onChange={onTabChange}
-            >
-               <HorizontalTabList style={{ padding: '0 16px' }}>
-                  {Object.keys(types).map(key => (
-                     <HorizontalTab key={key}>
-                        {key === 'null' ? 'Others' : key}
-                        <span> ({types[key].length})</span>
-                     </HorizontalTab>
-                  ))}
-               </HorizontalTabList>
-               <HorizontalTabPanels>
-                  {Object.values(types).map((listing, index) => (
-                     <HorizontalTabPanel key={index}>
-                        <Products
-                           products={listing}
-                           loading={productsLoading}
-                           error={productsError}
-                        />
-                     </HorizontalTabPanel>
-                  ))}
-               </HorizontalTabPanels>
-            </HorizontalTabs>
+            <>
+               {isThirdParty ? (
+                  <HorizontalTabs>
+                     <HorizontalTabList style={{ padding: '0 16px' }}>
+                        <HorizontalTab>Email Content</HorizontalTab>
+                        <HorizontalTab>Products</HorizontalTab>
+                     </HorizontalTabList>
+                     <HorizontalTabPanels>
+                        <HorizontalTabPanel>
+                           {parser.parse(order?.thirdPartyOrder?.emailContent)}
+                        </HorizontalTabPanel>
+                        <HorizontalTabPanel>
+                           {isNull(order.thirdPartyOrder.products) ? (
+                              <Filler message="No products available." />
+                           ) : (
+                              <Styles.Products>
+                                 {order.thirdPartyOrder.products.map(
+                                    (product, index) => (
+                                       <Styles.ProductItem key={index}>
+                                          <Flex
+                                             container
+                                             alignItems="center"
+                                             justifyContent="space-between"
+                                          >
+                                             <span>{product.label}</span>
+                                             <span>
+                                                {currencyFmt(
+                                                   product.price || 0
+                                                )}
+                                             </span>
+                                          </Flex>
+                                          <Spacer size="14px" />
+                                          <Flex container alignItems="center">
+                                             <Flex
+                                                as="span"
+                                                container
+                                                alignItems="center"
+                                             >
+                                                <UserIcon size={16} />
+                                             </Flex>
+                                             <Spacer size="6px" xAxis />
+                                             <span>{product.quantity}</span>
+                                          </Flex>
+                                       </Styles.ProductItem>
+                                    )
+                                 )}
+                              </Styles.Products>
+                           )}
+                        </HorizontalTabPanel>
+                     </HorizontalTabPanels>
+                  </HorizontalTabs>
+               ) : (
+                  <HorizontalTabs
+                  // index={tabIndex} onChange={onTabChange}
+                  >
+                     <HorizontalTabList style={{ padding: '0 16px' }}>
+                        {Object.keys(types).map(key => (
+                           <HorizontalTab key={key}>
+                              {key === 'null' ? 'Others' : key}
+                              <span> ({types[key].length})</span>
+                           </HorizontalTab>
+                        ))}
+                     </HorizontalTabList>
+                     <HorizontalTabPanels>
+                        {Object.values(types).map((listing, index) => (
+                           <HorizontalTabPanel key={index}>
+                              <Products
+                                 products={listing}
+                                 loading={productsLoading}
+                                 error={productsError}
+                              />
+                           </HorizontalTabPanel>
+                        ))}
+                     </HorizontalTabPanels>
+                  </HorizontalTabs>
+               )}
+            </>
          )}
 
          <EditDeliveryTunnel
@@ -674,7 +801,7 @@ const TimeSlot = ({ openTunnel, type, time = {} }) => {
             <Text as="h4">{isPickup(type) ? 'Pick Up' : 'Delivery'}</Text>
             <Tooltip identifier="order_details_date_fulfillment" />
          </Flex>
-         <Text as="p" style={{marginBottom:'0em'}}>
+         <Text as="p" style={{ marginBottom: '0em' }}>
             {time?.from && moment(time?.from).format(': MMM DD, YYYY')}
             &nbsp;
             {time?.from ? moment(time?.from).format('hh:mmA') : 'N/A'}-
@@ -950,3 +1077,25 @@ const EditAddressTunnel = ({ cartId, tunnels, closeTunnel, address = {} }) => {
       </Tunnels>
    )
 }
+
+const TreeContainer = styled(Tree)`
+   margin: 0 1rem;
+   .ant-tree-treenode,
+   .ant-tree-switcher {
+      display: flex;
+      align-items: center;
+   }
+   ${
+      '' /* .ant-tree-list-holder-inner .ant-tree-treenode {
+      width: 100%;
+   } */
+   }
+   .ant-tree-list-holder-inner .ant-tree-treenode .ant-tree-switcher {
+      background: #f5f5f5;
+   }
+   .ant-tree-node-content-wrapper {
+      ${'' /* width: 100%; */}
+      padding: 1rem;
+      background: #f5f5f5;
+   }
+`

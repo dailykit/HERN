@@ -22,11 +22,12 @@ import {
 import { DragNDrop } from '../../../../../../../../shared/components'
 import {
    ChevronDown,
-   ChevronUp,
+   ChevronRight,
    DeleteIcon,
 } from '../../../../../../../../shared/assets/icons'
 import { Wrapper } from './styled'
 import LinkFilesTunnel from './LinkFilesTunnel'
+import { Card } from 'antd'
 
 const LinkFiles = ({ title, fileType, entityId, scope }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
@@ -141,87 +142,90 @@ const LinkFiles = ({ title, fileType, entityId, scope }) => {
    if (linkLoading) return <Loader />
 
    return (
-      <Wrapper>
-         <div style={{ padding: '16px', borderBottom: '1px solid #E5E5E5' }}>
-            <Flex container alignItems="center" justifyContent="space-between">
-               <Text as="text2" className="title">{title}</Text>
-               <IconButton
-                  onClick={() => setIsOpen(!isOpen)}
-                  type="ghost"
-                  variant="secondary"
-                  size="sm"
-               >
-                  {isOpen ? <ChevronDown /> : <ChevronUp color="#202020" />}
-               </IconButton>
-            </Flex>
-            {isOpen && (
-               <Flex padding="8px">
-                  {selectedFiles.length > 0 ? (
-                     <DragNDrop
-                        list={selectedFiles}
-                        droppableId="linkWithPageDroppableId"
-                        tablename="jsCssFileLinks"
-                        schemaname="brands"
-                     >
-                        {selectedFiles.map(file => (
-                           <div className="selected_file"
-                              title={file.file?.path}
-                              key={file.id}
-                           >
-                              <span>{file.file?.fileName}</span>
-                              <IconButton
-                                 onClick={() =>
-                                    removeLinkedFile({
-                                       variables: {
-                                          id: file.id,
-                                       },
-                                    })
-                                 }
-                                 type="ghost"
-                                 variant="secondary"
-                                 size="sm"
+      <Card
+         title={<Text as="h3" style={{ color: "#555B6E" }}>{title}</Text>}
+         style={{ width: '100%', marginBottom: "1rem" }}
+         extra={<IconButton
+            onClick={() => setIsOpen(!isOpen)}
+            type="ghost"
+            variant="secondary"
+            size="sm"
+         >
+            {isOpen ? <ChevronDown color="#202020" size="26" /> : <ChevronRight color="#202020" size="24" />}
+         </IconButton>}
+      >
+         {isOpen && (
+            <Wrapper isOpen={isOpen} >
+               <div style={{ padding: '0px 10px', borderBottom: '1px solid #E5E5E5' }}>
+
+                  <Flex padding="8px">
+                     {selectedFiles.length > 0 ? (
+                        <DragNDrop
+                           list={selectedFiles}
+                           droppableId="linkWithPageDroppableId"
+                           tablename="jsCssFileLinks"
+                           schemaname="brands"
+                        >
+                           {selectedFiles.map(file => (
+                              <div className="selected_file"
+                                 title={file.file?.path}
+                                 key={file.id}
                               >
-                                 <DeleteIcon />
-                              </IconButton>
-                           </div>
-                        ))}
-                     </DragNDrop>
-                  ) : (
-                     <Flex container justifyContent="center" padding="8px">
-                        <Text as="subtitle">(No file linked)</Text>
-                     </Flex>
-                  )}
-                  <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                     <ComboButton
-                        type="ghost"
-                        size="sm"
-                        onClick={() => openTunnel(1)}
-                     >
-                        <PlusIcon color="#367BF5" />
-                        Add more files
-                     </ComboButton>
-                  </div>
-               </Flex>
-            )}
-         </div>
-         <Tunnels tunnels={tunnels}>
-            <Tunnel layer={1}>
-               <TunnelHeader
-                  title={title}
-                  close={() => closeTunnel(1)}
-                  right={{
-                     title: linking ? 'Saving' : 'Save',
-                     action: onFileSaveHandler,
-                  }}
-               />
-               <LinkFilesTunnel
-                  fileType={fileType}
-                  setSelectedFiles={setSelectedFiles}
-                  linkedFilesId={linkedFilesId}
-               />
-            </Tunnel>
-         </Tunnels>
-      </Wrapper>
+                                 <span>{file.file?.fileName}</span>
+                                 <IconButton
+                                    onClick={() =>
+                                       removeLinkedFile({
+                                          variables: {
+                                             id: file.id,
+                                          },
+                                       })
+                                    }
+                                    type="ghost"
+                                    variant="secondary"
+                                    size="sm"
+                                 >
+                                    <DeleteIcon />
+                                 </IconButton>
+                              </div>
+                           ))}
+                        </DragNDrop>
+                     ) : (
+                        <Flex container justifyContent="center" padding="8px">
+                           <Text as="subtitle">(No file linked)</Text>
+                        </Flex>
+                     )}
+                     <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                        <ComboButton
+                           type="ghost"
+                           size="sm"
+                           onClick={() => openTunnel(1)}
+                        >
+                           <PlusIcon color="#367BF5" />
+                           Add more files
+                        </ComboButton>
+                     </div>
+                  </Flex>
+
+               </div>
+               <Tunnels tunnels={tunnels}>
+                  <Tunnel layer={1}>
+                     <TunnelHeader
+                        title={title}
+                        close={() => closeTunnel(1)}
+                        right={{
+                           title: linking ? 'Saving' : 'Save',
+                           action: onFileSaveHandler,
+                        }}
+                     />
+                     <LinkFilesTunnel
+                        fileType={fileType}
+                        setSelectedFiles={setSelectedFiles}
+                        linkedFilesId={linkedFilesId}
+                     />
+                  </Tunnel>
+               </Tunnels>
+            </Wrapper>)}
+      </Card>
    )
 }
 export default LinkFiles
