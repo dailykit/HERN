@@ -71,12 +71,8 @@ export const OnDemandCart = () => {
          <div className="hern-on-demand-cart-section">
             <div>
                <div className="hern-on-demand-cart-section__left">
-                  <div className="hern-ondemand-cart__left-card">
-                     <UserInfo cart={cartState.cart} />
-                  </div>
-
+                  <UserInfo cart={cartState.cart} />
                   <Fulfillment cart={cartState.cart} />
-
                   <PaymentSection />
                </div>
                <div className="hern-on-demand-cart-section__right">

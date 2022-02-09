@@ -90,86 +90,76 @@ export const UserInfo = props => {
                <button onClick={() => setIsOpen(true)}>Edit</button>
             </div>
          ) : (
-            <div className="hern-user-info__wrapper">
-               <div className="hern-user-info">
-                  <div className="hern-user-info__header">
-                     <div>
-                        <UserIcon size={16} />
-                        <h2 className="hern-user-info__heading">
-                           User Details
-                        </h2>
-                     </div>
-                     <Button
-                        disabled={
-                           !firstName.length ||
-                           !lastName.length ||
-                           !mobileNumber.length
-                        }
-                        onClick={handleSave}
-                     >
-                        save
-                     </Button>
+            <div className="hern-user-info">
+               <div className="hern-user-info__header">
+                  <div>
+                     <UserIcon size={16} />
+                     <h2 className="hern-user-info__heading">User Details</h2>
                   </div>
-                  <div className="hern-user-info__name-field">
-                     <fieldset className="hern-user-info__fieldset hern-user-info__fieldset-first-name">
-                        <label className="hern-user-info__label">
-                           First Name
-                        </label>
-                        <input
-                           name="user-first-name"
-                           type="text"
-                           className="hern-user-info__input-field"
-                           onChange={e => {
-                              setFirstName(e.target.value)
-                           }}
-                           value={firstName}
-                           placeholder="Enter your first name"
-                           disabled={!editable}
-                        />
-                     </fieldset>
-                     <fieldset className="hern-user-info__fieldset hern-user-info__fieldset-last-name">
-                        <label className="hern-user-info__label">
-                           Last Name
-                        </label>
-                        <input
-                           name="user-last-name"
-                           type="text"
-                           className="hern-user-info__input-field"
-                           onChange={e => {
-                              setLastName(e.target.value)
-                           }}
-                           value={lastName}
-                           placeholder="Enter your last name"
-                           disabled={!editable}
-                        />
-                     </fieldset>
-                  </div>
-                  <fieldset className="hern-user-info__fieldset hern-user-info__fieldset-phone-number">
-                     <label className="hern-user-info__label">
-                        Phone Number
-                     </label>
-                     <PhoneInput
-                        className={`hern-user-info__phone__input hern-user-info__phone__input${
-                           !(mobileNumber && isValidPhoneNumber(mobileNumber))
-                              ? '-invalid'
-                              : '-valid'
-                        }`}
-                        initialValueFormat="national"
-                        value={mobileNumber}
+                  <Button
+                     disabled={
+                        !firstName.length ||
+                        !lastName.length ||
+                        !mobileNumber.length
+                     }
+                     onClick={handleSave}
+                  >
+                     save
+                  </Button>
+               </div>
+               <div className="hern-user-info__name-field">
+                  <fieldset className="hern-user-info__fieldset hern-user-info__fieldset-first-name">
+                     <label className="hern-user-info__label">First Name</label>
+                     <input
+                        name="user-first-name"
+                        type="text"
+                        className="hern-user-info__input-field"
                         onChange={e => {
-                           setMobileNumber(e)
+                           setFirstName(e.target.value)
                         }}
-                        defaultCountry={get_env('COUNTRY_CODE')}
-                        placeholder="Enter your phone number"
+                        value={firstName}
+                        placeholder="Enter your first name"
                         disabled={!editable}
                      />
-                     <span className="hern-user-info__phone-number-warning">
-                        {mobileNumber &&
-                           !isValidPhoneNumber(mobileNumber) &&
-                           'Invalid phone number'}
-                     </span>
+                  </fieldset>
+                  <fieldset className="hern-user-info__fieldset hern-user-info__fieldset-last-name">
+                     <label className="hern-user-info__label">Last Name</label>
+                     <input
+                        name="user-last-name"
+                        type="text"
+                        className="hern-user-info__input-field"
+                        onChange={e => {
+                           setLastName(e.target.value)
+                        }}
+                        value={lastName}
+                        placeholder="Enter your last name"
+                        disabled={!editable}
+                     />
                   </fieldset>
                </div>
+               <fieldset className="hern-user-info__fieldset hern-user-info__fieldset-phone-number">
+                  <label className="hern-user-info__label">Phone Number</label>
+                  <PhoneInput
+                     className={`hern-user-info__phone__input hern-user-info__phone__input${
+                        !(mobileNumber && isValidPhoneNumber(mobileNumber))
+                           ? '-invalid'
+                           : '-valid'
+                     }`}
+                     initialValueFormat="national"
+                     value={mobileNumber}
+                     onChange={e => {
+                        setMobileNumber(e)
+                     }}
+                     defaultCountry={get_env('COUNTRY_CODE')}
+                     placeholder="Enter your phone number"
+                     disabled={!editable}
+                  />
+                  <span className="hern-user-info__phone-number-warning">
+                     {mobileNumber &&
+                        !isValidPhoneNumber(mobileNumber) &&
+                        'Invalid phone number'}
+                  </span>
+               </fieldset>
             </div>
          )}
       </>
