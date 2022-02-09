@@ -1,6 +1,5 @@
 import React from 'react'
 import { isEmpty } from 'lodash'
-import classNames from 'classnames'
 import Link from 'next/link'
 
 import { CartDetails } from './CartDetails'
@@ -10,11 +9,11 @@ import {
    Button,
    PaymentOptionsRenderer,
    WalletAmount,
-   FulfillmentForm,
 } from '../../components'
 import { CartContext, onDemandMenuContext, useUser } from '../../context'
-import { EmptyCart, PaymentIcon } from '../../assets/icons'
+import { EmptyCart, PaymentIcon, LeftArrowIcon } from '../../assets/icons'
 import { UserInfo, UserType, Tunnel } from '../../components'
+import { useConfig } from '../../lib'
 
 export const OnDemandCart = () => {
    const { cartState, combinedCartItems, isFinalCartLoading, storedCartId } =
@@ -22,9 +21,13 @@ export const OnDemandCart = () => {
    const { isAuthenticated, userType, isLoading } = useUser()
    const { onDemandMenu } = React.useContext(onDemandMenuContext)
    const { isMenuLoading } = onDemandMenu
-
    if (isFinalCartLoading || isMenuLoading)
-      return <Loader type="cart-loading" />
+      return (
+         <>
+            <CarPageHeader />
+            <Loader type="cart-loading" />
+         </>
+      )
 
    if (
       storedCartId === null ||
@@ -33,46 +36,55 @@ export const OnDemandCart = () => {
       combinedCartItems?.length === 0
    ) {
       return (
-         <div className="hern-cart-empty-cart">
-            <EmptyCart />
-            <span>Oops! Your cart is empty </span>
-            <Button className="hern-cart-go-to-menu-btn" onClick={() => {}}>
-               <Link href="/order">GO TO MENU</Link>
-            </Button>
-         </div>
+         <>
+            <CarPageHeader />
+            <div className="hern-cart-empty-cart">
+               <EmptyCart />
+               <span>Oops! Your cart is empty </span>
+               <Button className="hern-cart-go-to-menu-btn" onClick={() => {}}>
+                  <Link href="/order">GO TO MENU</Link>
+               </Button>
+            </div>
+         </>
       )
    }
    if (!isAuthenticated && userType !== 'guest') {
       return (
+         <>
+            <CarPageHeader />
+            <div className="hern-on-demand-cart-section">
+               <div>
+                  <div className="hern-on-demand-cart-section__left">
+                     <UserType />
+                  </div>
+                  <div className="hern-on-demand-cart-section__right">
+                     <CartDetails />
+                  </div>
+               </div>
+            </div>
+         </>
+      )
+   }
+   return (
+      <>
+         <CarPageHeader />
          <div className="hern-on-demand-cart-section">
             <div>
                <div className="hern-on-demand-cart-section__left">
-                  <UserType />
+                  <div className="hern-ondemand-cart__left-card">
+                     <UserInfo cart={cartState.cart} />
+                  </div>
+
+                  <Fulfillment cart={cartState.cart} />
+
+                  <PaymentSection />
                </div>
                <div className="hern-on-demand-cart-section__right">
                   <CartDetails />
                </div>
             </div>
          </div>
-      )
-   }
-   return (
-      <div className="hern-on-demand-cart-section">
-         <div>
-            <div className="hern-on-demand-cart-section__left">
-               <div className="hern-ondemand-cart__left-card">
-                  <UserInfo cart={cartState.cart} />
-               </div>
-               <div className="hern-ondemand-cart__left-card">
-                  <Fulfillment cart={cartState.cart} />
-               </div>
-               <PaymentSection />
-            </div>
-            <div className="hern-on-demand-cart-section__right">
-               <CartDetails />
-            </div>
-         </div>
-      </div>
+      </>
    )
 }
 const PaymentSection = () => {
@@ -129,5 +141,28 @@ const PaymentSection = () => {
             />
          </Tunnel.Bottom>
       </>
+   )
+}
+
+const CarPageHeader = () => {
+   const {
+      BrandName: { value: showBrandName } = {},
+      BrandLogo: { value: showBrandLogo } = {},
+      brandName: { value: brandName } = {},
+      brandLogo: { value: logo } = {},
+   } = useConfig('brand').configOf('Brand Info')
+
+   return (
+      <header className="hern-cart-page__header">
+         <div>
+            <LeftArrowIcon /> &nbsp;&nbsp;
+            <span>Cart</span>
+         </div>
+         <div className="hern-cart-page__header-logo">
+            {showBrandLogo && logo && <img src={logo} alt={brandName} />}
+            &nbsp;&nbsp;
+            {showBrandName && brandName && <span>{brandName}</span>}
+         </div>
+      </header>
    )
 }

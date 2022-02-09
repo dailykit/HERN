@@ -10,6 +10,7 @@ const CheckoutPage = props => {
          settings={settings}
          navigationMenus={navigationMenus}
          noFooter={true}
+         noHeader={true}
       >
          <SEO seoSettings={seoSettings} />
          <ExternalJSCSSFiles externalFiles={linkedFiles} />

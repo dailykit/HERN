@@ -1,3 +1,36 @@
+.hern-cart-page__header {
+   height: 64px;
+   z-index: 9999;
+   width: 100%;
+   background-color: white;
+   border-bottom-width: 1px;
+   position: sticky;
+   top: 0;
+   padding: 0 32px;
+   display: flex;
+   align-items: center;
+
+   > div {
+      display: flex;
+      align-items: center;
+      > span {
+         font-weight: 600;
+         font-size: 24px;
+         line-height: 30px;
+         color: rgba(64, 64, 64, 0.6);
+      }
+   }
+   .hern-cart-page__header-logo {
+      margin: 0 auto;
+      align-items: center;
+      transform: translateX(-50%);
+      > img {
+         width: 100%;
+         max-height: 48px;
+      }
+   }
+}
+
 .hern-cart-container {
    > h2 {
       font-weight: 600;
@@ -353,6 +386,8 @@
 }
 .hern-on-demand-cart-section {
    background-color: #f9f9f9;
+   max-height: calc(100vh - 164px);
+   overflow-y: auto;
    > div {
       max-width: 1200px;
       margin: 0 auto;
@@ -367,6 +402,10 @@
          width: 100%;
          padding-bottom: 32px;
       }
+   }
+   @media only screen and (min-width: 769px) {
+      max-height: initial;
+      overflow-y: auto;
    }
 }
 
