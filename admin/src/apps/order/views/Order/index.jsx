@@ -484,7 +484,19 @@ const Order = () => {
                <Spacer size="16px" xAxis />
                {!isThirdParty && (
                   <>
-                     <IconButton size="sm" type="outline" onClick={print}>
+                     <Flex width="180px">
+                        <DropdownButton title="Receipt Options">
+                           <DropdownButton.Options>
+                              <DropdownButton.Option onClick={rawPrint}>
+                                 Print Receipt
+                              </DropdownButton.Option>
+                              <DropdownButton.Option onClick={print}>
+                                 View receipt in browser
+                              </DropdownButton.Option>
+                           </DropdownButton.Options>
+                        </DropdownButton>
+                     </Flex>
+                     {/* <IconButton size="sm" type="outline" onClick={print}>
                         <PrintIcon size={16} />
                      </IconButton>
                      <Spacer size="16px" xAxis />
@@ -498,7 +510,7 @@ const Order = () => {
                         onClick={rawPrint}
                      >
                         Print Receipt
-                     </TextButton>
+                     </TextButton> */}
                   </>
                )}
                <Spacer size="16px" xAxis />
