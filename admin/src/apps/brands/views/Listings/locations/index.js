@@ -1,9 +1,11 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
+   ButtonGroup,
    ComboButton,
    Flex,
    IconButton,
    Text,
+   TextButton,
    ToolTip,
    Tunnel,
    Tunnels,
@@ -22,13 +24,16 @@ import { useTabs, useTooltip } from '../../../../../shared/providers'
 import CreateBrandLocation from '../../../../../shared/CreateUtils/Brand/BrandLocation'
 import { Avatar, Tooltip } from 'antd'
 import { PublishIcon, UnPublishIcon } from '../../../assets/icons'
+import BrandLocationMap from './locationSelector'
+import { DisplayLocation } from './tunnels'
 
 export const Locations = () => {
    const [locations, setLocations] = React.useState()
    const tableRef = React.useRef()
    const { tooltip } = useTooltip()
    const { addTab, tab } = useTabs()
-   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
+   const [selectedRowData, setSelectedRowData] = React.useState(null)
 
    // subscriptions
    const {
@@ -128,6 +133,15 @@ export const Locations = () => {
          title: 'Linked Brands',
          formatter: reactFormatter(<BrandAvatar />),
       },
+      {
+         title: 'Location On Map',
+         formatter: reactFormatter(
+            <LocationOnMap
+               openTunnel={openTunnel}
+               setSelectedRowData={setSelectedRowData}
+            />
+         ),
+      },
    ])
    if (error) {
       toast.error('Something went wrong!')
@@ -150,19 +164,24 @@ export const Locations = () => {
                Create Location
             </ComboButton>
          </StyledHeader>
-
          <ReactTabulator
             ref={tableRef}
             columns={columns}
             data={locations || []}
             options={{
                ...tableOptions,
-               placeholder: 'No Locations Available Yet !',
+               placeholder: 'No Locations Available Yet!',
             }}
          />
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1} size="md">
                <CreateBrandLocation closeTunnel={closeTunnel} />
+            </Tunnel>
+            <Tunnel layer={2} size="md">
+               <DisplayLocation
+                  closeTunnel={closeTunnel}
+                  selectedRowData={selectedRowData}
+               />
             </Tunnel>
          </Tunnels>
          <Banner id="brands-app-locations-listing-bottom" />
@@ -188,7 +207,7 @@ const DeleteLocation = ({ cell, deleteHandler }) => {
    )
 }
 const BrandAvatar = ({ cell }) => {
-   console.log('avatar', cell._cell.row.data)
+   // console.log('avatar', cell._cell.row.data)
    const rowData = cell._cell.row.data
    return (
       <>
@@ -277,6 +296,26 @@ function LocationLabel({ cell, addTab }) {
                </IconButton>
             </Flex>
          </Flex>
+      </>
+   )
+}
+const LocationOnMap = ({ cell, openTunnel, setSelectedRowData }) => {
+   const rowData = () => {
+      const data = cell.getData()
+      setSelectedRowData(data)
+      openTunnel(2)
+   }
+   return (
+      <>
+         <ButtonGroup align="center" onClick={rowData}>
+            <TextButton
+               type="ghost"
+               size="sm"
+               title="Click to see location on map"
+            >
+               View Map
+            </TextButton>
+         </ButtonGroup>
       </>
    )
 }
