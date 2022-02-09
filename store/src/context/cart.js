@@ -451,15 +451,31 @@ export const CartProvider = ({ children }) => {
                         'orderTab',
                         JSON.stringify(orderTabForLocal)
                      )
-                     localStorage.setItem(
-                        'userLocation',
-                        JSON.stringify(addressToBeSaveInLocal)
-                     )
+                     if (
+                        orderTabForLocal === 'ONDEMAND_PICKUP' ||
+                        orderTabForLocal === 'PREORDER_PICKUP'
+                     ) {
+                        localStorage.setItem(
+                           'pickupLocation',
+                           JSON.stringify(addressToBeSaveInLocal)
+                        )
+                     } else if (
+                        orderTabForLocal === 'PREORDER_DELIVERY' ||
+                        orderTabForLocal === 'ONDEMAND_DELIVERY'
+                     ) {
+                        localStorage.setItem(
+                           'userLocation',
+                           JSON.stringify(addressToBeSaveInLocal)
+                        )
+                        dispatch({
+                           type: 'SET_USER_LOCATION',
+                           payload: addressToBeSaveInLocal,
+                        })
+                     }
                      localStorage.setItem(
                         'storeLocationId',
                         JSON.stringify(locationIdForLocal)
                      )
-                     console.log('helloBrother')
                      dispatch({
                         type: 'SET_LOCATION_ID',
                         payload: locationIdForLocal,
@@ -471,10 +487,6 @@ export const CartProvider = ({ children }) => {
                               eachOrderTab.id ===
                               subscriptionData.data.carts[0].orderTabId
                         ),
-                     })
-                     dispatch({
-                        type: 'SET_USER_LOCATION',
-                        payload: addressToBeSaveInLocal,
                      })
                      dispatch({
                         type: 'SET_STORE_STATUS',

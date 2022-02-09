@@ -86,81 +86,6 @@ export const StoreList = props => {
             setShowRefineLocation(true)
             return
          }
-
-         // only create address when user not select there existing address
-         if (user?.keycloakId && !isUserExistingAddressSelected) {
-            createAddress({
-               variables: {
-                  object: { ...customerAddress, keycloakId: user?.keycloakId },
-               },
-            })
-         }
-         const cartIdInLocal = localStorage.getItem('cart-id')
-         if (cartIdInLocal || storedCartId) {
-            const finalCartId = cartIdInLocal
-               ? JSON.parse(cartIdInLocal)
-               : storedCartId
-            methods.cart.update({
-               variables: {
-                  id: finalCartId,
-                  _set: {
-                     address: address,
-                     locationId: firstStoreOfSortedBrandLocation.location.id,
-                  },
-               },
-            })
-         }
-         dispatch({
-            type: 'SET_LOCATION_ID',
-            payload: firstStoreOfSortedBrandLocation.location.id,
-         })
-         dispatch({
-            type: 'SET_SELECTED_ORDER_TAB',
-            payload: selectedOrderTab,
-         })
-         dispatch({
-            type: 'SET_USER_LOCATION',
-            payload: address,
-         })
-         dispatch({
-            type: 'SET_STORE_STATUS',
-            payload: {
-               status: true,
-               message: 'Store available on your location.',
-               loading: false,
-            },
-         })
-         localStorage.setItem('orderTab', JSON.stringify(fulfillmentType))
-         if (
-            localStorage.getItem('storeLocationId') &&
-            JSON.parse(localStorage.getItem('storeLocationId')) !==
-               firstStoreOfSortedBrandLocation.location.id
-         ) {
-            const lastStoreLocationId = JSON.parse(
-               localStorage.getItem('storeLocationId')
-            )
-            localStorage.setItem(
-               'lastStoreLocationId',
-               JSON.stringify(lastStoreLocationId)
-            )
-            dispatch({
-               type: 'SET_LAST_LOCATION_ID',
-               payload: lastStoreLocationId,
-            })
-         }
-         localStorage.setItem(
-            'storeLocationId',
-            JSON.stringify(firstStoreOfSortedBrandLocation.location.id)
-         )
-         localStorage.setItem(
-            'userLocation',
-            JSON.stringify({
-               latitude: address.lat,
-               longitude: address.lng,
-               ...address,
-            })
-         )
-         setShowLocationSelectionPopup(false)
       }
    }, [stores])
 
@@ -210,7 +135,7 @@ export const StoreList = props => {
    if (
       stores &&
       !stores.some(store => {
-         const sortedStatus = store['fulfillmentStatus'].result
+         const sortedStatus = store['fulfillmentStatus'].status
          if (sortedStatus) {
             return store['fulfillmentStatus'].status
          }
@@ -279,7 +204,37 @@ export const StoreList = props => {
                   )}
                   onClick={() => {
                      if (eachStore['fulfillmentStatus'].status) {
-                        console.log('selectedStore', eachStore)
+                        const storeAddress = eachStore.location
+                        const addressToBeSaveInCart = {
+                           line1: storeAddress.locationAddress.line1,
+                           line2: storeAddress.locationAddress.line2,
+                           city: storeAddress.city,
+                           state: storeAddress.state,
+                           country: storeAddress.country,
+                           zipcode: storeAddress.zipcode,
+                           notes: '',
+                           label: storeAddress.label,
+                           lat: storeAddress.lat.toString(),
+                           lng: storeAddress.lng.toString(),
+                           landmark: '',
+                           searched: '',
+                        }
+                        const cartIdInLocal = localStorage.getItem('cart-id')
+                        if (cartIdInLocal || storedCartId) {
+                           const finalCartId = cartIdInLocal
+                              ? JSON.parse(cartIdInLocal)
+                              : storedCartId
+                           methods.cart.update({
+                              variables: {
+                                 id: finalCartId,
+                                 _set: {
+                                    address: addressToBeSaveInCart,
+                                    locationId: selectedStore.location.id,
+                                    orderTabId: selectedOrderTab.id,
+                                 },
+                              },
+                           })
+                        }
                         dispatch({
                            type: 'SET_LOCATION_ID',
                            payload: eachStore.location.id,
@@ -311,10 +266,12 @@ export const StoreList = props => {
                         localStorage.setItem(
                            'userLocation',
                            JSON.stringify({
-                              latitude: userCoordinate.latitude,
-                              longitude: userCoordinate.longitude,
                               ...address,
                            })
+                        )
+                        localStorage.setItem(
+                           'pickupLocation',
+                           JSON.stringify(addressToBeSaveInCart)
                         )
                         setSelectedStore(eachStore)
                         setShowLocationSelectionPopup(false)
