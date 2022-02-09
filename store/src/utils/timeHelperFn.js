@@ -36,13 +36,6 @@ export const getTimeSlotsValidation = (
                   from.getTime() <= toTimeStamp.getTime() &&
                   to.getTime() <= toTimeStamp.getTime()
                ) {
-                  console.log(
-                     'foundSlot',
-                     timeslot,
-                     timeslot.validMileRange,
-                     cartMileRangeId
-                  )
-
                   const leadTime = timeslot.validMileRange.leadTime
                   const isDateValid =
                      currentTime.getTime() + leadTime * 60000 <= to.getTime()
@@ -138,6 +131,130 @@ export const getOnDemandValidation = (recurrences, cartMileRangeId) => {
                      }
                   }
                }
+            }
+         }
+      }
+   }
+}
+
+export const getPickupTimeSlotValidation = (
+   recurrences,
+   cartFrom,
+   cartTo,
+   cartTimeSlotId
+) => {
+   for (let rec in recurrences) {
+      const from = new Date(cartFrom) // from
+      const to = new Date(cartTo)
+      const currentTime = new Date()
+      const start = new Date(from.getTime() - 1000 * 60 * 60 * 24) // yesterday
+
+      if (recurrences[rec].recurrence.timeSlots.length) {
+         const timeslot = recurrences[rec].recurrence.timeSlots.find(
+            eachTimeSlot => eachTimeSlot.id === cartTimeSlotId
+         )
+         if (timeslot) {
+            const timeslotFromArr = timeslot.from.split(':')
+            const timeslotToArr = timeslot.to.split(':')
+            const fromTimeStamp = new Date(from.getTime())
+            fromTimeStamp.setHours(
+               timeslotFromArr[0],
+               timeslotFromArr[1],
+               timeslotFromArr[2]
+            )
+            const toTimeStamp = new Date(from.getTime())
+            toTimeStamp.setHours(
+               timeslotToArr[0],
+               timeslotToArr[1],
+               timeslotToArr[2]
+            )
+            // check if cart from and to time falls within time slot
+            if (
+               from.getTime() >= fromTimeStamp.getTime() &&
+               from.getTime() <= toTimeStamp.getTime() &&
+               to.getTime() <= toTimeStamp.getTime()
+            ) {
+               const leadTime = timeslot.pickUpLeadTime
+               const isDateValid =
+                  currentTime.getTime() + leadTime * 60000 <= to.getTime()
+               return {
+                  status: isDateValid,
+                  message: isDateValid
+                     ? 'Valid date and time'
+                     : 'In Valid Date',
+               }
+            }
+         } else {
+            if (rec == recurrences.length - 1) {
+               return {
+                  status: false,
+                  message: 'Time slot not available1',
+               }
+            }
+         }
+      } else {
+         if (rec == recurrences.length - 1) {
+            return {
+               status: false,
+               message: 'Time slot not available',
+            }
+         }
+      }
+   }
+}
+
+export const getOndemandPickupTimeValidation = (
+   recurrences,
+   cartTimeSlotId
+) => {
+   for (let rec in recurrences) {
+      const now = new Date() // now
+      const start = new Date(now.getTime() - 1000 * 60 * 60 * 24) // yesterday
+
+      if (recurrences[rec].recurrence.timeSlots.length) {
+         const timeslot = recurrences[rec].recurrence.timeSlots.find(
+            eachTimeSlot => eachTimeSlot.id === cartTimeSlotId
+         )
+         if (timeslot) {
+            const timeslotFromArr = timeslot.from.split(':')
+            const timeslotToArr = timeslot.to.split(':')
+            const fromTimeStamp = new Date(now.getTime())
+            fromTimeStamp.setHours(
+               timeslotFromArr[0],
+               timeslotFromArr[1],
+               timeslotFromArr[2]
+            )
+            const toTimeStamp = new Date(now.getTime())
+            toTimeStamp.setHours(
+               timeslotToArr[0],
+               timeslotToArr[1],
+               timeslotToArr[2]
+            )
+            if (
+               now.getTime() >= fromTimeStamp.getTime() &&
+               now.getTime() <= toTimeStamp.getTime()
+            ) {
+               const prepTime = timeslot.pickUpPrepTime
+               const isDateValid =
+                  now.getTime() + prepTime * 60000 <= toTimeStamp.getTime()
+               return {
+                  status: isDateValid,
+                  message: isDateValid ? 'Valid date and time' : 'Invalid Date',
+               }
+            }
+         } else {
+            if (rec == recurrences.length - 1) {
+               return {
+                  status: false,
+                  message: 'Time slot not available',
+               }
+            }
+         }
+      } else {
+         if (rec == recurrences.length - 1) {
+            return {
+               status: false,
+               message: 'Time slot not available',
             }
          }
       }
