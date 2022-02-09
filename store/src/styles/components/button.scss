@@ -75,3 +75,24 @@
       opacity: 0.7;
    }
 }
+.hern__btn--ghost {
+   background-color: transparent;
+   border: none;
+   outline: none;
+   font-weight: bold;
+   font-size: 16px;
+   line-height: 16px;
+   color: var(--hern-accent);
+   height: auto;
+   padding: 0;
+   &:not(.hern__btn--disabled):hover {
+      transform: none;
+      box-shadow: none;
+   }
+   &:focus {
+      outline: none;
+   }
+   &:hover {
+      opacity: 0.7;
+   }
+}

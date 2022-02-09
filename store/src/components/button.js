@@ -5,7 +5,9 @@ import { setThemeVariable } from '../utils'
 export const Button = ({ children, style = {}, className, ...props }) => {
    const { configOf } = useConfig()
    const theme = configOf('theme-color', 'Visual')?.themeColor
-   const themeColor = theme?.accent?.value ? theme?.accent?.value : 'rgba(5, 150, 105, 1)'
+   const themeColor = theme?.accent?.value
+      ? theme?.accent?.value
+      : 'rgba(5, 150, 105, 1)'
    /*TODO: Somer other button type could be added */
    setThemeVariable('--hern-accent', themeColor)
    const buttonClasses = classNames('hern__btn', {
@@ -14,6 +16,7 @@ export const Button = ({ children, style = {}, className, ...props }) => {
       'hern__btn--danger': !props.disabled && props.variant === 'danger',
       'hern__btn--dull': !props.disabled && props.variant === 'dull',
       'hern__btn--outline': !props.disabled && props.variant === 'outline',
+      'hern__btn--ghost': !props.disabled && props.variant === 'ghost',
    })
    return (
       <button
