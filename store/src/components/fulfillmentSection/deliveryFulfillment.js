@@ -409,17 +409,24 @@ export const Delivery = props => {
    if (!showSlots) {
       return (
          <div className="hern-cart__fulfillment-time-section">
-            <div className="hern-cart__fulfillment-time-section-heading">
+            {/* <div className="hern-cart__fulfillment-time-section-heading">
                <OrderTime />
                <span>When would you like to order?</span>
-            </div>
+            </div> */}
             <div
                style={{
                   display: 'flex',
                   alignItems: 'center',
                }}
             >
-               <label style={{ marginTop: '5px' }}>
+               <label
+                  style={{
+                     marginTop: '5px',
+                     fontSize: '16px',
+                     color: 'rgba(64, 64, 64, 0.8)',
+                     fontWeight: 'bold',
+                  }}
+               >
                   {title}{' '}
                   {(cartState.cart?.fulfillmentInfo?.type ===
                      'PREORDER_PICKUP' ||
@@ -445,8 +452,9 @@ export const Delivery = props => {
                </label>
                {(deliveryRadioOptions.length > 0 ||
                   fulfillmentType === 'PREORDER_DELIVERY') && (
-                  <EditIcon
-                     fill={theme?.accent || 'rgba(5, 150, 105, 1)'}
+                  <Button
+                     variant="ghost"
+                     style={{ marginLeft: 'auto' }}
                      onClick={() => {
                         if (deliveryRadioOptions.length > 1) {
                            setFulfillmentType(null)
@@ -457,8 +465,9 @@ export const Delivery = props => {
                         }
                         setShowSlots(true)
                      }}
-                     style={{ cursor: 'pointer', margin: '0 6px' }}
-                  />
+                  >
+                     Change
+                  </Button>
                )}
             </div>
          </div>
@@ -468,7 +477,7 @@ export const Delivery = props => {
    return (
       <div className="hern-cart__fulfillment-time-section">
          <div className="hern-cart__fulfillment-time-section-heading">
-            <OrderTime />
+            {/* <OrderTime /> */}
             <span>When would you like to order?</span>
          </div>
 

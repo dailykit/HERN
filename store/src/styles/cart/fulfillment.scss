@@ -119,3 +119,108 @@
       display: none;
    }
 }
+.hern-fulfillment__address {
+   background: #ffffff;
+   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
+   border-radius: 8px;
+   margin-bottom: 16px;
+   padding: 12px 16px;
+}
+
+.hern-fulfillment__address__header {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   .hern-location-icon-shawdow {
+      padding: 5px;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.05);
+      display: inline-block;
+   }
+   > div {
+      display: flex;
+      align-items: center;
+   }
+   h3 {
+      font-weight: 600;
+      font-size: 18px;
+      line-height: 16px;
+      color: rgba(64, 64, 64, 0.6);
+      font-family: 'Nunito';
+   }
+}
+.hern-fulfillment__address__header--open {
+   margin-bottom: 12px;
+   border-bottom: 1px solid #f4f4f4;
+   padding-bottom: 16px;
+}
+
+.hern-fulfillment__address__content {
+   display: flex;
+   > span {
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 16px;
+      color: rgba(64, 64, 64, 0.6);
+      display: inline-block;
+      margin-right: 10px;
+   }
+   address {
+      font-size: 16px;
+      line-height: 20px;
+      color: rgba(64, 64, 64, 0.6);
+      margin: 0;
+      padding-left: 10px;
+      font-weight: bold;
+      max-width: 500px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+   }
+}
+.hern-fulfillment__address__content__change-btn {
+   border: none;
+   outline: none;
+   color: var(--hern-accent);
+   margin-left: auto;
+   font-weight: bold;
+   font-size: 16px;
+   line-height: 16px;
+}
+
+.hern-fulfillment__time {
+   background: #ffffff;
+   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
+   border-radius: 8px;
+   margin-bottom: 16px;
+   padding: 12px 16px;
+}
+.hern-fulfillment__time__header {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   .hern-time-icon-shawdow {
+      padding: 5px;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.05);
+      display: inline-block;
+   }
+   > div {
+      display: flex;
+      align-items: center;
+   }
+   h3 {
+      font-weight: 600;
+      font-size: 18px;
+      line-height: 16px;
+      color: rgba(64, 64, 64, 0.6);
+      font-family: 'Nunito';
+   }
+}
+.hern-fulfillment__time__header--open {
+   margin-bottom: 12px;
+   border-bottom: 1px solid #f4f4f4;
+   padding-bottom: 16px;
+}
