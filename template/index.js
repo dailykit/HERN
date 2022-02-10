@@ -4,10 +4,9 @@ import path from 'path'
 import fs from 'fs'
 import { GraphQLClient, gql } from 'graphql-request'
 
+import checkExist from './utils/checkExist'
+import copyFolder from './utils/copyFolder'
 import get_env from '../get_env'
-
-const checkExist = require('./utils/checkExist')
-const copyFolder = require('./utils/copyFolder')
 
 const router = express.Router()
 
@@ -97,7 +96,9 @@ export const download = async (req, res) => {
    try {
       const src = `/${req.params.path}`
       const dest = await checkExist(src)
+      console.log({ src, dest })
       const result = await copyFolder(src, dest)
+      console.log(result)
       res.send(result)
    } catch (err) {
       console.log(err)

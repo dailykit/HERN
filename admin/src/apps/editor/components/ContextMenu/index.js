@@ -45,7 +45,7 @@ const ContextMenu = ({ style, node }) => {
          get_env('REACT_APP_ROOT_FOLDER'),
          ''
       )
-      const fileUrl = `https://test.dailykit.org/template/files${relativePath}`
+      const fileUrl = `${window.location.origin}/template/files${relativePath}`
       navigator.clipboard.writeText(fileUrl).then(
          () => {
             toast.success('Copied!')
