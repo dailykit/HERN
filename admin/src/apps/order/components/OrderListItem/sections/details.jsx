@@ -56,7 +56,71 @@ export const Details = ({ order }) => {
 
    return (
       <aside>
-         <Styles.Accordian isOpen={currentPanel === 'brand'}>
+         <div>
+            {/* <Text as="p">Order Id: {order.id}</Text> */}
+            <Text as="p">Brand: {brand.name}</Text>
+            <Text as="p">
+               Customer:
+               {order.cart.customer?.customerFirstName || 'N/A'}&nbsp;
+               {order.cart.customer?.customerLastName}
+            </Text>
+            <main>
+               <Flex container alignItems="center">
+                  <span>
+                     <PhoneIcon size={14} color="#718096" />
+                  </span>
+                  <Spacer size="4px" xAxis />
+                  <Text as="subtitle">
+                     {order.cart.customer?.customerPhone || 'N/A'}
+                  </Text>
+               </Flex>
+               <Spacer size="8px" />
+               <Flex container alignItems="center">
+                  <span>
+                     <EmailIcon size={14} color="#718096" />
+                  </span>
+                  <Spacer size="4px" xAxis />
+                  {order.cart.customer?.customerEmail ? (
+                     <Text as="subtitle">
+                        <a
+                           target="__blank"
+                           rel="noopener roreferrer"
+                           href={`mailto:${order.cart.customer?.customerEmail}`}
+                        >
+                           {order.cart.customer?.customerEmail}
+                        </a>
+                     </Text>
+                  ) : (
+                     <Text as="subtitle">N/A</Text>
+                  )}
+               </Flex>
+               <Spacer size="8px" />
+               <Flex container>
+                  <span>
+                     <HomeIcon size={14} color="#718096" />
+                  </span>
+                  <Spacer size="4px" xAxis />
+                  <Text as="subtitle">
+                     {parseAddress(order.cart.address) || 'N/A'}
+                  </Text>
+               </Flex>
+               <Spacer size="8px" />
+               <Flex container>
+                  <span>
+                     <Notes size={14} color="#718096" />
+                  </span>
+                  <Spacer size="4px" xAxis />
+                  <Text as="subtitle">
+                     {order.cart.address?.notes || 'N/A'}
+                  </Text>
+               </Flex>
+               <Spacer size="8px" />
+            </main>
+            <Text as="p">
+               Amount: {currencyFmt(Number(order.amountPaid) || 0)}
+            </Text>
+         </div>
+         {/* <Styles.Accordian isOpen={currentPanel === 'brand'}>
             <header>
                <Flex container alignItems="center">
                   {brand.logo && (
@@ -221,7 +285,7 @@ export const Details = ({ order }) => {
                   <span>{order?.cart?.transactionId || 'N/A'}</span>
                </StyledStat>
             </main>
-         </Styles.Accordian>
+         </Styles.Accordian> */}
       </aside>
    )
 }

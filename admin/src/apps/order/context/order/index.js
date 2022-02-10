@@ -14,11 +14,11 @@ const initialState = {
    sachet: { id: null, product: { name: null } },
    current_product: { id: null },
    orders: {
-      limit: 10,
+      // limit: 10,
       offset: 0,
       loading: true,
       where: {
-         cart: { status: { _eq: 'ORDER_PENDING' }, order: {} },
+         // cart: { status: { _eq: 'ORDER_PENDING' }, order: {} },
          isArchived: { _eq: false },
          _or: [
             { isRejected: { _eq: false } },
@@ -26,6 +26,7 @@ const initialState = {
          ],
       },
    },
+   isKanbanView: false,
 }
 
 const reducers = (state, { type, payload }) => {
@@ -184,6 +185,12 @@ const reducers = (state, { type, payload }) => {
             filter: payload,
          }
       }
+      case 'TOGGLE_KANBAN_VIEW': {
+         return {
+            ...state,
+            isKanbanView: !state.isKanbanView,
+         }
+      }
       case 'SET_ORDERS_STATUS': {
          return {
             ...state,
@@ -233,6 +240,12 @@ export const useOrder = () => {
       [dispatch]
    )
 
+   const toggleKanbanView = React.useCallback(() => {
+      dispatch({
+         type: 'TOGGLE_KANBAN_VIEW',
+      })
+   }, [dispatch])
+
    const updateOrder = ({ id, set, append }) => {
       update({
          variables: {
@@ -249,5 +262,6 @@ export const useOrder = () => {
       switchView,
       updateOrder,
       selectSachet,
+      toggleKanbanView,
    }
 }

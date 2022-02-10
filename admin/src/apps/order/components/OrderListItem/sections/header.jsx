@@ -38,8 +38,13 @@ export const Header = ({ order }) => {
    }
    return (
       <HeaderFlex as="header" container alignItems="center">
-         <Flex container>
-            {!order.thirdPartyOrderId && (
+         <Flex
+            container
+            alignItem="center"
+            justifyContent="space-between"
+            margin="0 0 8px 0"
+         >
+            {/* {!order.thirdPartyOrderId && (
                <>
                   <Flex
                      container
@@ -66,7 +71,7 @@ export const Header = ({ order }) => {
                   </Flex>
                   <Spacer size="8px" xAxis />
                </>
-            )}
+            )} */}
             <ComboButton
                size="sm"
                type="outline"
@@ -82,7 +87,7 @@ export const Header = ({ order }) => {
                   <PrintIcon size={16} />
                </IconButton>
             )}
-            {!order.thirdPartyOrderId && !isPickup(order.fulfillmentType) && (
+            {/* {!order.thirdPartyOrderId && !isPickup(order.fulfillmentType) && (
                <>
                   <Spacer size="8px" xAxis />
                   <TextButton
@@ -100,9 +105,9 @@ export const Header = ({ order }) => {
                      {order?.deliveryCompany?.name ? 'View' : 'Select'} Delivery
                   </TextButton>
                </>
-            )}
+            )} */}
          </Flex>
-         <Spacer size="24px" xAxis />
+         {/* <Spacer size="24px" xAxis />
          <HeaderFlex as="section" container alignItems="center">
             <StyledStatus>
                <span>{t(address.concat('ordered on'))}:&nbsp;</span>
@@ -117,7 +122,7 @@ export const Header = ({ order }) => {
                   />
                </>
             )}
-         </HeaderFlex>
+         </HeaderFlex> */}
       </HeaderFlex>
    )
 }

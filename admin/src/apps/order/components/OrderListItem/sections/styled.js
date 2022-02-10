@@ -215,7 +215,9 @@ export const StyledText = styled(Text)`
 `
 export const ResponsiveFlex = styled(Flex)`
    @media only screen and (min-width: 1024px) {
-      flex-direction: column;
+      flex-direction: ${({ row = false }) => (row ? 'row' : 'column')};
+      justify-content: ${({ row = false }) =>
+         row ? 'space-between' : 'flex-start'};
       align-items: flex-start;
    }
 `

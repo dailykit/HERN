@@ -39,7 +39,7 @@ const App = () => {
    const [configTunnels, openConfigTunnel, closeConfigTunnel] = useTunnel(1)
    const [notifTunnels, openNotifTunnel, closeNotifTunnel] = useTunnel(1)
    const [paymentTunnels, openPaymentTunnel, closePaymentTunnel] = useTunnel(2)
-   const [position, setPosition] = React.useState('left')
+   const [position, setPosition] = React.useState('right')
 
    React.useEffect(() => {
       if (!isSuperUser && configState.current_station?.id) {
@@ -93,9 +93,9 @@ const App = () => {
    }, [state.filter.tunnel])
 
    return (
-      <StyledWrapper position={position}>
+      <StyledWrapper position={position} view={state.current_view}>
          <ErrorBoundary rootRoute="/apps/order">
-            {state.current_view === 'SUMMARY' && <OrderSummary />}
+            {/* {state.current_view === 'SUMMARY' && <OrderSummary />} */}
             {state.current_view === 'SACHET_ITEM' && <ProcessSachet />}
             {state.current_view === 'PRODUCT' && <ProcessProduct />}
          </ErrorBoundary>

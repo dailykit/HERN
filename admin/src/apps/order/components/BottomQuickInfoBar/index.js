@@ -11,9 +11,8 @@ import { InlineLoader, ErrorState } from '../../../../shared/components'
 
 const BottomQuickInfoBar = ({ openOrderSummaryTunnel }) => {
    const { state } = useOrder()
-   const { data: { orders = {} } = {} } = useSubscription(
-      QUERIES.ORDERS.AGGREGATE.TOTAL
-   )
+   const { loading: isLoadingOrders, data: { orders = {} } = {} } =
+      useSubscription(QUERIES.ORDERS.AGGREGATE.TOTAL)
    const { data: { orders: cancelledOrders = {} } = {} } = useSubscription(
       QUERIES.ORDERS.AGGREGATE.CANCELLED
    )
@@ -23,7 +22,7 @@ const BottomQuickInfoBar = ({ openOrderSummaryTunnel }) => {
       data: { ordersAggregate = [] } = {},
    } = useSubscription(QUERIES2.ORDERS_AGGREGATE)
 
-   if (loading) return <div />
+   if (loading || isLoadingOrders) return <div />
    if (error) {
       logger(error)
       toast.error('Failed to fetch the order summary!')

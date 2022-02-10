@@ -67,11 +67,11 @@ const OrderListItem = ({ containerId, order = {} }) => {
 
    return (
       <Styles.Order status={order.cart?.status} id={containerId}>
-         <Details order={order} />
          <Header order={order} />
-         <Products order={order} />
+         <Details order={order} />
+         {/* <Products order={order} /> */}
          <Actions order={order} />
-         <Styles.Status status={order.cart?.status} onClick={updateStatus}>
+         {/* <Styles.Status status={order.cart?.status} onClick={updateStatus}>
             {order.cart?.orderStatus?.title}
             <span>
                <RightIcon size={20} color="#fff" />
@@ -81,7 +81,7 @@ const OrderListItem = ({ containerId, order = {} }) => {
             <IconButton type="ghost" size="sm">
                <DeleteIcon color="#FF5A52" />
             </IconButton>
-         </Styles.DeleteBtn>
+         </Styles.DeleteBtn> */}
       </Styles.Order>
    )
 }

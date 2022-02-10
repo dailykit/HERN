@@ -37,62 +37,10 @@ export const Styles = {
    Order: styled.div(
       ({ status }) => css`
          padding: 16px;
-         display: grid;
-         grid-gap: 14px;
-
+         display: flex;
+         flex-direction: column;
+         background: #fff;
          position: relative;
-         border-left-width: 8px;
-         border-right-width: 8px;
-         border-bottom: 1px solid #ececec;
-         grid-template-columns: 220px 1fr 140px;
-         border: 3px solid ${selectColor(status)};
-         grid-template-areas:
-            'left header right'
-            'left section right';
-         > aside:nth-of-type(1) {
-            grid-area: left;
-         }
-         > aside:nth-of-type(2) {
-            grid-area: right;
-         }
-         > header {
-            grid-area: header;
-         }
-         > section {
-            grid-area: section;
-         }
-         @media only screen and (max-width: 1023px) {
-            height: auto;
-            grid-template-columns: auto;
-            grid-template-rows: auto;
-            overflow-y: auto;
-            grid-template-areas:
-               'header'
-               'right'
-               'left'
-               'section';
-            > header {
-               margin-top: 16px;
-            }
-         }
-         @media only screen and (max-width: 1439px) and (min-width: 1024px) {
-            grid-template-areas:
-               'left header right'
-               'left section section';
-            > aside:nth-of-type(2) {
-               margin-top: 16px;
-            }
-         }
-         @media only screen and (min-width: 768px) and (orientation: portrait) {
-            grid-template-columns: auto auto;
-            grid-template-areas:
-               'header right'
-               'left left'
-               'section section';
-            > header {
-               margin-top: 0px;
-            }
-         }
       `
    ),
 }

@@ -17,7 +17,6 @@ import { useOrder } from '../../../context'
 
 import { CardIcon } from '../../../assets/icons'
 
-
 import { logger } from '../../../../../shared/utils'
 
 import { ResponsiveFlex, StyledText } from './styled'
@@ -38,15 +37,10 @@ export const Actions = ({ order }) => {
       },
    })
    return (
-      <Flex
-         as="aside"
-         padding="0 14px"
-         style={{
-            borderLeft: '1px solid #ececec',
-         }}
-      >
-         <StyledText as="h3">Actions</StyledText>
-         <ResponsiveFlex container>
+      <Flex as="aside">
+         {/* <StyledText as="h3">Actions</StyledText> */}
+         <Spacer size="16px" yAxis />
+         <ResponsiveFlex container row={true}>
             <TextButton
                type="solid"
                disabled={order.isAccepted}
@@ -69,6 +63,7 @@ export const Actions = ({ order }) => {
                {order.isRejected ? 'Un Reject' : 'Reject'}
             </TextButton>
          </ResponsiveFlex>
+         <Spacer size="8px" yAxis />
          {!order.paymentId && (
             <ComboButton
                type="outline"
@@ -85,12 +80,16 @@ export const Actions = ({ order }) => {
             <Popup show={isOpen}>
                <Popup.Text type="danger">
                   {order.thirdPartyOrderId
-                     ? `${order.isRejected ? 'Unrejecting' : 'Rejecting'
-                     } a third party order would not ${order.isRejected ? 'unreject' : 'reject'
-                     } the order from said third party app. Are you sure you want to ${order.isRejected ? 'unreject' : 'reject'
-                     } this order?`
-                     : `Are you sure you want to ${order.isRejected ? 'unreject' : 'reject'
-                     } this order?`}
+                     ? `${
+                          order.isRejected ? 'Unrejecting' : 'Rejecting'
+                       } a third party order would not ${
+                          order.isRejected ? 'unreject' : 'reject'
+                       } the order from said third party app. Are you sure you want to ${
+                          order.isRejected ? 'unreject' : 'reject'
+                       } this order?`
+                     : `Are you sure you want to ${
+                          order.isRejected ? 'unreject' : 'reject'
+                       } this order?`}
                </Popup.Text>
                <Popup.Actions>
                   <ButtonGroup align="left">
