@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import classNames from 'classnames'
-import { Divider, Radio, Modal } from 'antd'
+import { Divider, Radio, Modal, Skeleton } from 'antd'
 import { useConfig } from '../../lib'
 import { get_env, useScript, isClient } from '../../utils'
 import { getStoresWithValidations } from '../../utils'
@@ -8,7 +8,7 @@ import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
 import LocationSelectorConfig from '../locatoinSeletorConfig.json'
 import { StoreList } from '../locationSelector/storeList'
 import { GPSIcon, NotFound } from '../../assets/icons'
-import { Loader } from '..'
+import { GoogleSuggestionsList, Loader } from '..'
 import { AddressInfo } from './addressInfo'
 
 // dine in section
@@ -283,24 +283,53 @@ export const DineIn = props => {
                   !error &&
                   LocationSelectorConfig.informationVisibility.dineInSettings
                      .userAddressInput.value && (
-                     <GooglePlacesAutocomplete
-                        inputClassName="hern-store-location-selector-main__location-input"
-                        onSelect={data => formatAddress(data)}
-                        placeholder={
-                           LocationSelectorConfig.informationVisibility
-                              .pickupSettings.userAddressInputPlaceHolder
-                              .value || 'Enter your address'
-                        }
-                     />
+                     <div
+                        style={{
+                           display: 'flex',
+                           alignItems: 'center',
+                           justifyContent: 'space-between',
+                        }}
+                     >
+                        <div
+                           style={{
+                              width: '100%',
+                           }}
+                        >
+                           <GooglePlacesAutocomplete
+                              inputClassName="hern-store-location-selector-main__location-input"
+                              onSelect={data => formatAddress(data)}
+                              placeholder={
+                                 LocationSelectorConfig.informationVisibility
+                                    .pickupSettings.userAddressInputPlaceHolder
+                                    .value || 'Enter your address'
+                              }
+                              renderSuggestions={(active, suggestions) => (
+                                 <GoogleSuggestionsList
+                                    suggestions={suggestions}
+                                    onSuggestionClick={formatAddress}
+                                 />
+                              )}
+                              loader={() => {
+                                 return (
+                                    <Skeleton.Input
+                                       style={{ width: 100 }}
+                                       active={true}
+                                       size={'small'}
+                                       loading={true}
+                                    />
+                                 )
+                              }}
+                           />
+                        </div>
+                        <div
+                           className="hern-store-location-selector-main__get-current-location"
+                           onClick={locationByBrowser}
+                        >
+                           <GPSIcon />
+                        </div>
+                     </div>
                   )}
 
-               <div
-                  className="hern-store-location-selector-main__get-current-location"
-                  onClick={locationByBrowser}
-               >
-                  <GPSIcon />
-                  <span>Get Current Location</span>
-               </div>
                {locationSearching.error &&
                   locationSearching.errorType === 'blockByBrowser' && (
                      <span className="hern-store-location-selector-main__get-current-location-error-message">
