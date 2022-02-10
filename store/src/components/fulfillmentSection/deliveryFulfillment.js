@@ -150,7 +150,35 @@ export const Delivery = props => {
                      )
                   )
                   const miniSlots = generateMiniSlots(deliverySlots.data, 60)
-                  setDeliverySlots(miniSlots)
+                  const validMiniSlots = miniSlots.map(eachMiniSlot => {
+                     const eachMiniSlotDate = moment(eachMiniSlot.date).format(
+                        'YYYY-MM-DD'
+                     )
+                     const currentDate = moment().format('YYYY-MM-DD')
+                     const isSameDate = moment(currentDate).isSame(
+                        moment(eachMiniSlotDate)
+                     )
+                     if (isSameDate) {
+                        let newMiniSlots = []
+                        eachMiniSlot.slots.forEach(eachSlot => {
+                           const slot = moment(eachSlot.time, 'HH:mm')
+                              .add(eachSlot.intervalInMinutes, 'm')
+                              .format('HH:mm')
+                           const isSlotIsValidForCurrentTime =
+                              slot > moment().format('HH:mm')
+                           if (isSlotIsValidForCurrentTime) {
+                              newMiniSlots.push(eachSlot)
+                           }
+                        })
+                        return {
+                           ...eachMiniSlot,
+                           slots: newMiniSlots,
+                        }
+                     } else {
+                        return eachMiniSlot
+                     }
+                  })
+                  setDeliverySlots(validMiniSlots)
                }
 
                // this will only run when fulfillment will change manually
@@ -274,6 +302,11 @@ export const Delivery = props => {
                         },
                      },
                   })
+                  setFulfillmentType(null)
+                  setFulfillmentTabInfo({
+                     orderTabId: null,
+                     locationId: null,
+                  })
                   Modal.warning({
                      title: `This time slot is not available now.`,
                      maskClosable: true,
@@ -297,6 +330,11 @@ export const Delivery = props => {
                            fulfillmentInfo: null,
                         },
                      },
+                  })
+                  setFulfillmentType(null)
+                  setFulfillmentTabInfo({
+                     orderTabId: null,
+                     locationId: null,
                   })
                   Modal.warning({
                      title: `This time slot expired.`,
@@ -338,6 +376,11 @@ export const Delivery = props => {
                      },
                   },
                })
+               setFulfillmentType(null)
+               setFulfillmentTabInfo({
+                  orderTabId: null,
+                  locationId: null,
+               })
                Modal.warning({
                   title: `This time slot is not available now.`,
                   maskClosable: true,
@@ -359,6 +402,11 @@ export const Delivery = props => {
                      },
                   },
                })
+               setFulfillmentType(null)
+               setFulfillmentTabInfo({
+                  orderTabId: null,
+                  locationId: null,
+               })
                Modal.warning({
                   title: `This time slot expired.`,
                   maskClosable: true,
@@ -366,8 +414,36 @@ export const Delivery = props => {
                })
             }
          }
+      } else {
+         if (
+            stores?.length === 0 &&
+            cartState.cart?.fulfillmentInfo &&
+            !showSlots
+         ) {
+            methods.cart.update({
+               variables: {
+                  id: cartState?.cart?.id,
+                  _set: {
+                     fulfillmentInfo: null,
+                  },
+               },
+            })
+            setFulfillmentType(null)
+            setFulfillmentTabInfo(prev => ({
+               orderTabId: null,
+               locationId: null,
+            }))
+            setStores(null)
+            Modal.warning({
+               title: `This time slot is not available now. Please select new time.`,
+               maskClosable: true,
+               centered: true,
+            })
+            setShowSlots(true)
+            setIsLoading(false)
+         }
       }
-   }, [stores])
+   }, [stores, cartState.cart])
 
    const title = React.useMemo(() => {
       switch (cartState.cart?.fulfillmentInfo?.type) {
