@@ -60,6 +60,18 @@
 .hern-refine-location__no-store-available {
    color: #ec4730;
 }
+.hern-refine-location-search-close-icon {
+   padding: 8px;
+   cursor: pointer;
+   border: 1px solid #f3f3f3;
+   box-sizing: border-box;
+   box-shadow: 0px 1px 8px rgb(0 0 0 / 5%);
+   border-radius: 6px;
+   margin-right: 8px;
+}
+.hern-refine-location-close-icon {
+   height: 36px;
+}
 @media (min-width: 768px) {
    .hern-refine-location_content {
       width: 28em;
