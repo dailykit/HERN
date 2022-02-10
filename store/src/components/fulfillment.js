@@ -30,15 +30,14 @@ export const FulfillmentForm = () => {
             : orderTabs[0].orderFulfillmentTypeLabel
                  .replace('_', ' ')
                  .split(' ')[1],
-      [orderTabs]
+      [orderTabs, selectedOrderTab]
    )
-   const [fulfillment] = useState(selectedFulfillment) // DELIVERY, PICKUP or DINEIN
    const [showRefineLocation, setShowRefineLocation] = useState(false)
    const [showLocationSelectorPopup, setShowLocationSelectionPopup] =
       React.useState(false)
 
    const fulfillmentLabel = React.useMemo(() => {
-      switch (fulfillment) {
+      switch (selectedFulfillment) {
          case 'DELIVERY':
             return 'Delivery At'
          case 'PICKUP':
@@ -46,10 +45,11 @@ export const FulfillmentForm = () => {
          case 'DINEIN':
             return 'DineIn At'
       }
-   }, [fulfillment])
+   }, [selectedFulfillment])
    const [fulfillementAddressOpen, setFulfillementAddressOpen] =
       React.useState(false)
    const [fulfillementTimeOpen, setFulfillementTimeOpen] = React.useState(false)
+
    return (
       <div>
          <LocationSelectorWrapper
@@ -93,11 +93,11 @@ export const FulfillmentForm = () => {
                      >
                         <ChevronIcon direction="down" />
                      </button>
-                     {(fulfillment === 'DELIVERY' ||
-                        fulfillment === 'PICKUP') && (
+                     {(selectedFulfillment === 'DELIVERY' ||
+                        selectedFulfillment === 'PICKUP') && (
                         <ConsumerAddress
                            setShowRefineLocation={setShowRefineLocation}
-                           showEditIcon={fulfillment === 'DELIVERY'}
+                           showEditIcon={selectedFulfillment === 'DELIVERY'}
                         />
                      )}
                   </div>
@@ -116,8 +116,8 @@ export const FulfillmentForm = () => {
                   </span>
                   &nbsp; &nbsp;
                   <h3>
-                     {fulfillment === 'PICKUP' && 'Pick up time'}
-                     {fulfillment === 'DELIVERY' && 'Delivery time'}
+                     {selectedFulfillment === 'PICKUP' && 'Pick up time'}
+                     {selectedFulfillment === 'DELIVERY' && 'Delivery time'}
                   </h3>
                </div>
                <span
@@ -134,8 +134,8 @@ export const FulfillmentForm = () => {
             </div>
             {fulfillementTimeOpen && (
                <div>
-                  {fulfillment === 'DELIVERY' && <Delivery />}
-                  {fulfillment === 'PICKUP' && <Pickup />}
+                  {selectedFulfillment === 'DELIVERY' && <Delivery />}
+                  {selectedFulfillment === 'PICKUP' && <Pickup />}
                </div>
             )}
          </div>

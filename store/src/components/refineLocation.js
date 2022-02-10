@@ -93,7 +93,7 @@ const RefineLocation = props => {
       console.log('address', { ...address, ...additionalAddressInfo })
       const customerAddress = {
          line1: additionalAddressInfo.line1,
-         line2: address.line2,
+         line2: address.line2 || '',
          city: address.city,
          state: address.state,
          country: address.country,

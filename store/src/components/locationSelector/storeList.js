@@ -86,6 +86,97 @@ export const StoreList = props => {
             setShowRefineLocation(true)
             return
          }
+         if (
+            (fulfillmentType === 'ONDEMAND_DELIVERY' ||
+               fulfillmentType === 'PREORDER_DELIVERY') &&
+            isUserExistingAddressSelected
+         ) {
+            const customerAddress = {
+               line1: address.line1,
+               line2: address.line2,
+               city: address.city,
+               state: address.state,
+               country: address.country,
+               zipcode: address.zipcode,
+               notes: address.notes,
+               label: address.label,
+               lat: address.latitude?.toString(),
+               lng: address.longitude?.toString(),
+               landmark: address.landmark,
+               searched: '',
+            }
+            const cartIdInLocal = localStorage.getItem('cart-id')
+            if (cartIdInLocal || storedCartId) {
+               const finalCartId = cartIdInLocal
+                  ? JSON.parse(cartIdInLocal)
+                  : storedCartId
+               methods.cart.update({
+                  variables: {
+                     id: finalCartId,
+                     _set: {
+                        address: customerAddress,
+                        locationId: firstStoreOfSortedBrandLocation.location.id,
+                        orderTabId: selectedOrderTab.id,
+                     },
+                  },
+               })
+            }
+            dispatch({
+               type: 'SET_LOCATION_ID',
+               payload: firstStoreOfSortedBrandLocation.location.id,
+            })
+            dispatch({
+               type: 'SET_SELECTED_ORDER_TAB',
+               payload: selectedOrderTab,
+            })
+            dispatch({
+               type: 'SET_USER_LOCATION',
+               payload: {
+                  ...address,
+                  latitude: address.lat.toString(),
+                  longitude: address.lng.toString(),
+               },
+            })
+            dispatch({
+               type: 'SET_STORE_STATUS',
+               payload: {
+                  status: true,
+                  message: 'Store available on your location.',
+                  loading: false,
+               },
+            })
+            localStorage.setItem('orderTab', JSON.stringify(fulfillmentType))
+            if (
+               localStorage.getItem('storeLocationId') &&
+               JSON.parse(localStorage.getItem('storeLocationId')) !==
+                  firstStoreOfSortedBrandLocation.location.id
+            ) {
+               const lastStoreLocationId = JSON.parse(
+                  localStorage.getItem('storeLocationId')
+               )
+               localStorage.setItem(
+                  'lastStoreLocationId',
+                  JSON.stringify(lastStoreLocationId)
+               )
+               dispatch({
+                  type: 'SET_LAST_LOCATION_ID',
+                  payload: lastStoreLocationId,
+               })
+            }
+            localStorage.setItem(
+               'storeLocationId',
+               JSON.stringify(firstStoreOfSortedBrandLocation.location.id)
+            )
+            localStorage.setItem(
+               'userLocation',
+               JSON.stringify({
+                  ...address,
+                  latitude: address.lat.toString(),
+                  longitude: address.lng.toString(),
+               })
+            )
+            setShowLocationSelectionPopup(false)
+         }
       }
    }, [stores])
 
