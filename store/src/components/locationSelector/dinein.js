@@ -288,6 +288,7 @@ export const DineIn = props => {
                            display: 'flex',
                            alignItems: 'center',
                            justifyContent: 'space-between',
+                           position: 'relative',
                         }}
                      >
                         <div
