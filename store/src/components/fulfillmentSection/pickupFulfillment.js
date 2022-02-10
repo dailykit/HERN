@@ -285,7 +285,9 @@ export const Pickup = props => {
       if (
          cartTimeSlotFrom &&
          cartTimeSlotTo &&
-         cartFulfillmentType == 'PREORDER_PICKUP'
+         cartFulfillmentType == 'PREORDER_PICKUP' &&
+         fulfillmentType == 'PREORDER_PICKUP' &&
+         !showSlots
       ) {
          const isValid = getPickupTimeSlotValidation(
             stores[0].fulfillmentStatus.rec,
@@ -317,7 +319,9 @@ export const Pickup = props => {
       }
       if (
          cartFulfillmentType == 'ONDEMAND_PICKUP' &&
-         cartState.cart?.fulfillmentInfo?.slot?.timeslotId
+         cartState.cart?.fulfillmentInfo?.slot?.timeslotId &&
+         fulfillmentType === 'ONDEMAND_PICKUP' &&
+         !showSlots
       ) {
          const isValid = getOndemandPickupTimeValidation(
             stores[0].fulfillmentStatus.rec,

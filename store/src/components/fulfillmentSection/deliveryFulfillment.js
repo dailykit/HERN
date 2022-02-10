@@ -285,7 +285,9 @@ export const Delivery = props => {
             if (
                cartTimeSlotFrom &&
                cartTimeSlotTo &&
-               cartFulfillmentType == 'PREORDER_DELIVERY'
+               cartFulfillmentType == 'PREORDER_DELIVERY' &&
+               fulfillmentType === 'PREORDER_DELIVERY' &&
+               !showSlots
             ) {
                const isValid = getTimeSlotsValidation(
                   stores[0].fulfillmentStatus.rec,
@@ -316,7 +318,9 @@ export const Delivery = props => {
             }
             if (
                cartFulfillmentType == 'ONDEMAND_DELIVERY' &&
-               cartState.cart?.fulfillmentInfo?.slot?.mileRangeId
+               cartState.cart?.fulfillmentInfo?.slot?.mileRangeId &&
+               fulfillmentType === 'ONDEMAND_DELIVERY' &&
+               !showSlots
             ) {
                const isValid = getOnDemandValidation(
                   stores[0].fulfillmentStatus.rec,
@@ -358,7 +362,9 @@ export const Delivery = props => {
          if (
             cartTimeSlotFrom &&
             cartTimeSlotTo &&
-            cartFulfillmentType == 'PREORDER_DELIVERY'
+            cartFulfillmentType == 'PREORDER_DELIVERY' &&
+            fulfillmentType === 'PREORDER_DELIVERY' &&
+            !showSlots
          ) {
             const isValid = getTimeSlotsValidation(
                stores[0].fulfillmentStatus.rec,
@@ -388,7 +394,12 @@ export const Delivery = props => {
                })
             }
          }
-         if (cartFulfillmentType == 'ONDEMAND_DELIVERY') {
+         if (
+            cartFulfillmentType == 'ONDEMAND_DELIVERY' &&
+            fulfillmentType === 'ONDEMAND_DELIVERY' &&
+            !showSlots &&
+            cartState.cart?.fulfillmentInfo?.slot?.mileRangeId
+         ) {
             const isValid = getOnDemandValidation(
                stores[0].fulfillmentStatus.rec,
                cartState.cart?.fulfillmentInfo.slot.mileRangeId
