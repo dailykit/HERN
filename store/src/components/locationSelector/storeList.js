@@ -229,7 +229,7 @@ export const StoreList = props => {
                                  id: finalCartId,
                                  _set: {
                                     address: addressToBeSaveInCart,
-                                    locationId: selectedStore.location.id,
+                                    locationId: storeAddress.id,
                                     orderTabId: selectedOrderTab.id,
                                  },
                               },
