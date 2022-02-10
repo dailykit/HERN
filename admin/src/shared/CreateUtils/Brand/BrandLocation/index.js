@@ -51,6 +51,18 @@ const CreateBrandLocation = ({ closeTunnel }) => {
             errors: [],
          },
       },
+      city: {
+         value: '',
+      },
+      state: {
+         value: '',
+      },
+      country: {
+         value: '',
+      },
+      zipcode: {
+         value: '',
+      },
    }
    const [location, setLocation] = React.useState([locationInstance])
 
@@ -84,6 +96,10 @@ const CreateBrandLocation = ({ closeTunnel }) => {
                line1: `${eachLocation.line1.value}`,
                line2: `${eachLocation.line2.value}`,
             },
+            city: eachLocation.city.value,
+            state: eachLocation.state.value,
+            country: eachLocation.country.value,
+            zipcode: eachLocation.zipcode.value,
          }))
          if (!objects.length) {
             throw Error('Nothing to add!')
@@ -173,6 +189,7 @@ const CreateBrandLocation = ({ closeTunnel }) => {
       </>
    )
 }
+
 export default CreateBrandLocation
 
 const LocationSelector = props => {
@@ -427,7 +444,7 @@ const BrandLocationMap = props => {
                   options={{ gestureHandling: 'greedy' }}
                ></GoogleMapReact>
             </div>
-            {/* <AddressInfo address={address} /> */}
+            <AddressInfo address={address} />
             <LocationForm
                address={address}
                i={i}
@@ -469,6 +486,22 @@ const LocationForm = props => {
                ...newLocation[i]['line2']['meta'],
                isTouched: true,
             },
+         },
+         ['city']: {
+            ...newLocation[i]['city'],
+            value: address.city,
+         },
+         ['state']: {
+            ...newLocation[i]['state'],
+            value: address.state,
+         },
+         ['country']: {
+            ...newLocation[i]['country'],
+            value: address.country,
+         },
+         ['zipcode']: {
+            ...newLocation[i]['country'],
+            value: address.zipcode,
          },
       }
       setLocation([...newLocation])
@@ -611,24 +644,66 @@ const LocationForm = props => {
                      <Form.Error key={index}>{error}</Form.Error>
                   ))}
             </Form.Group>
+            <Spacer yAxis size="16px" />
+            <Form.Group>
+               <Form.Label
+                  htmlFor={`locationCity-${i}`}
+                  title={`Location ${i + 1}`}
+               >
+                  City
+               </Form.Label>
+               <Form.Text
+                  id={`location-${i}`}
+                  name={`location-${i}`}
+                  value={eachLocation.city.value}
+               />
+            </Form.Group>
+            <Spacer yAxis size="16px" />
+            <Form.Group>
+               <Form.Label
+                  htmlFor={`locationState-${i}`}
+                  title={`Location ${i + 1}`}
+               >
+                  State
+               </Form.Label>
+               <Form.Text
+                  id={`location-${i}`}
+                  name={`location-${i}`}
+                  value={eachLocation.state.value}
+               />
+            </Form.Group>
+            <Spacer yAxis size="16px" />
+            <Form.Group>
+               <Form.Label
+                  htmlFor={`locationCountry-${i}`}
+                  title={`Location ${i + 1}`}
+               >
+                  Country
+               </Form.Label>
+               <Form.Text
+                  id={`location-${i}`}
+                  name={`location-${i}`}
+                  value={eachLocation.country.value}
+               />
+            </Form.Group>
          </Flex>
          <Spacer yAxis size="16px" />
       </>
    )
 }
-// const AddressInfo = props => {
-//    const { address } = props
-//    return (
-//       <div className="hern-store-location-selector__user-address">
-//          <div className="hern-store-location-selector__user-address-info">
-//             <span className="hern-store-location-selector__user-address-info-text hern-store-location-selector__user-address-info-main-text">
-//                {address.mainText}
-//             </span>
-//             <br />
-//             <span className="hern-store-location-selector__user-address-info-text hern-store-location-selector__user-address-info-secondary-text">
-//                {address.secondaryText} {address.zipcode}
-//             </span>
-//          </div>
-//       </div>
-//    )
-// }
+const AddressInfo = props => {
+   const { address } = props
+   return (
+      <div className="hern-store-location-selector__user-address">
+         <div className="hern-store-location-selector__user-address-info">
+            <span className="hern-store-location-selector__user-address-info-text hern-store-location-selector__user-address-info-main-text">
+               {address.mainText}
+            </span>
+            <br />
+            <span className="hern-store-location-selector__user-address-info-text hern-store-location-selector__user-address-info-secondary-text">
+               {address.secondaryText} {address.zipcode}
+            </span>
+         </div>
+      </div>
+   )
+}
