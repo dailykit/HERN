@@ -30,9 +30,8 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
             : orderTabs[0].orderFulfillmentTypeLabel
                  .replace('_', ' ')
                  .split(' ')[1],
-      [orderTabs]
+      [orderTabs, selectedOrderTab]
    )
-   const [fulfillment, setFulfillment] = useState(selectedFulfillment) // DELIVERY, PICKUP or DINEIN
    const [showRefineLocation, setShowRefineLocation] = useState(false)
    const [showLocationSelectorPopup, setShowLocationSelectionPopup] =
       React.useState(false)
@@ -83,7 +82,7 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
    }, [orderTabFulfillmentType])
 
    const fulfillmentLabel = React.useMemo(() => {
-      switch (fulfillment) {
+      switch (selectedFulfillment) {
          case 'DELIVERY':
             return 'Delivery At'
          case 'PICKUP':
@@ -91,7 +90,7 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
          case 'DINEIN':
             return 'DineIn At'
       }
-   }, [fulfillment])
+   }, [selectedFulfillment])
 
    return (
       <div className="hern-cart__fulfillment-card">
@@ -165,17 +164,18 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
                   Change
                </Button>
             </div>
-            {(fulfillment === 'DELIVERY' || fulfillment === 'PICKUP') && (
+            {(selectedFulfillment === 'DELIVERY' ||
+               selectedFulfillment === 'PICKUP') && (
                <Row className="hern-address__location-input-field">
                   <ConsumerAddress
                      setShowRefineLocation={setShowRefineLocation}
-                     showEditIcon={fulfillment === 'DELIVERY'}
+                     showEditIcon={selectedFulfillment === 'DELIVERY'}
                   />
                </Row>
             )}
          </div>
-         {fulfillment === 'DELIVERY' && <Delivery />}
-         {fulfillment === 'PICKUP' && <Pickup />}
+         {selectedFulfillment === 'DELIVERY' && <Delivery />}
+         {selectedFulfillment === 'PICKUP' && <Pickup />}
          <RefineLocationPopup
             showRefineLocation={showRefineLocation}
             setShowRefineLocation={setShowRefineLocation}
