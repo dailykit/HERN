@@ -171,7 +171,7 @@ export const PRODUCT = {
          upsertProductSetting: insert_products_product_productPageSetting(
             objects: $object
             on_conflict: {
-               constraint: productPage_productPageSetting_pkey
+               constraint: product_productPageSetting_pkey
                update_columns: value
             }
          ) {

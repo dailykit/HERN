@@ -9,10 +9,10 @@
 .hern-profile-sidebar {
    background-color: rgba(243, 244, 246, 1);
    border-right-width: 1px;
-   z-index: 30;
+   z-index: 999;
    display: block;
-   position: absolute;
-   top: 4rem;
+   position: fixed;
+   top: 64px;
    right: 0px;
    bottom: 0px;
    left: 0;

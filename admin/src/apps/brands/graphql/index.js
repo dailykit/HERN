@@ -361,3 +361,12 @@ export const BRAND_ID_LIST = gql`
       }
    }
 `
+
+// getting brandSettingId using identifier
+export const BRAND_ID = gql`
+ query MyQuery($identifier: String_comparison_exp!) {
+  brands_brand_brandSetting(where: {brandSetting: {identifier: $identifier}}, limit: 1) {
+    brandSettingId
+  }
+}
+`
