@@ -64,7 +64,7 @@ export const Actions = ({ order }) => {
             </TextButton>
          </ResponsiveFlex>
          <Spacer size="8px" yAxis />
-         {!order.paymentId && (
+         {/* {!order.paymentId && (
             <ComboButton
                type="outline"
                size="sm"
@@ -75,7 +75,7 @@ export const Actions = ({ order }) => {
                <CardIcon />
                {order.cart.paymentStatus}
             </ComboButton>
-         )}
+         )} */}
          <Portal>
             <Popup show={isOpen}>
                <Popup.Text type="danger">

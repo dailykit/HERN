@@ -41,6 +41,7 @@ export const Styles = {
          flex-direction: column;
          background: #fff;
          position: relative;
+         border-radius: 8px;
       `
    ),
 }

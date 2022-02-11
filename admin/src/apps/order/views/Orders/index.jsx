@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import { useLocation } from 'react-router-dom'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
+import { Scrollbars } from 'react-custom-scrollbars'
 
 import { paginate } from '../../utils'
 import { QUERIES, MUTATIONS } from '../../graphql'
@@ -269,12 +270,32 @@ const Orders = () => {
                         }}
                         key={columnId}
                      >
-                        <h2>{column.name}</h2>
-                        <div style={{ margin: 8 }}>
+                        <h2 style={{ color: '#555B6E' }}>{column.name}</h2>
+                        <div
+                           style={{
+                              margin: 8,
+                           }}
+                        >
                            <Droppable droppableId={columnId} key={columnId}>
                               {(provided, snapshot) => {
                                  return (
                                     <div
+                                       {...provided.droppableProps}
+                                       ref={provided.innerRef}
+                                    >
+                                       <Scrollbars
+                                          style={{
+                                             background: snapshot.isDraggingOver
+                                                ? 'lightblue'
+                                                : 'lightgrey',
+                                             padding: 4,
+                                             width: 320,
+                                             minHeight: 580,
+                                             maxHeight: 580,
+                                             borderRadius: '8px',
+                                          }}
+                                       >
+                                          {/* <div
                                        {...provided.droppableProps}
                                        ref={provided.innerRef}
                                        style={{
@@ -287,62 +308,65 @@ const Orders = () => {
                                           maxHeight: 580,
                                           overflowY: 'auto',
                                        }}
-                                    >
-                                       {column.items.length > 0 &&
-                                          column.items.map((item, index) => {
-                                             return (
-                                                <Draggable
-                                                   key={item.id}
-                                                   draggableId={item.id.toString()}
-                                                   index={index}
-                                                >
-                                                   {(provided, snapshot) => {
-                                                      return (
-                                                         <div
-                                                            ref={
-                                                               provided.innerRef
-                                                            }
-                                                            {...provided.draggableProps}
-                                                            {...provided.dragHandleProps}
-                                                            style={{
-                                                               userSelect:
-                                                                  'none',
-                                                               padding: '8px',
-                                                               margin:
-                                                                  '0 0 8px 0',
-                                                               width: '100%',
-                                                               // backgroundColor:
-                                                               //    snapshot.isDragging
-                                                               //       ? '#263B4A'
-                                                               //       : '#456C86',
-                                                               // color: 'white',
-                                                               ...provided
-                                                                  .draggableProps
-                                                                  .style,
-                                                            }}
-                                                         >
-                                                            {/* {item.content} */}
-                                                            <OrderListItem
-                                                               order={item}
-                                                               key={item.id}
-                                                               containerId={`${
-                                                                  index % 10 ===
-                                                                  0
-                                                                     ? `${
-                                                                          index /
-                                                                             10 +
-                                                                          1
-                                                                       }`
-                                                                     : ''
-                                                               }`}
-                                                            />
-                                                         </div>
-                                                      )
-                                                   }}
-                                                </Draggable>
-                                             )
-                                          })}
-                                       {provided.placeholder}
+                                    > */}
+                                          {column.items.length > 0 &&
+                                             column.items.map((item, index) => {
+                                                return (
+                                                   <Draggable
+                                                      key={item.id}
+                                                      draggableId={item.id.toString()}
+                                                      index={index}
+                                                   >
+                                                      {(provided, snapshot) => {
+                                                         return (
+                                                            <div
+                                                               ref={
+                                                                  provided.innerRef
+                                                               }
+                                                               {...provided.draggableProps}
+                                                               {...provided.dragHandleProps}
+                                                               style={{
+                                                                  userSelect:
+                                                                     'none',
+                                                                  padding:
+                                                                     '8px',
+                                                                  margin:
+                                                                     '0 0 8px 0',
+                                                                  width: '100%',
+                                                                  // backgroundColor:
+                                                                  //    snapshot.isDragging
+                                                                  //       ? '#263B4A'
+                                                                  //       : '#456C86',
+                                                                  // color: 'white',
+                                                                  ...provided
+                                                                     .draggableProps
+                                                                     .style,
+                                                               }}
+                                                            >
+                                                               {/* {item.content} */}
+                                                               <OrderListItem
+                                                                  order={item}
+                                                                  key={item.id}
+                                                                  containerId={`${
+                                                                     index %
+                                                                        10 ===
+                                                                     0
+                                                                        ? `${
+                                                                             index /
+                                                                                10 +
+                                                                             1
+                                                                          }`
+                                                                        : ''
+                                                                  }`}
+                                                               />
+                                                            </div>
+                                                         )
+                                                      }}
+                                                   </Draggable>
+                                                )
+                                             })}
+                                          {provided.placeholder}
+                                       </Scrollbars>
                                     </div>
                                  )
                               }}
