@@ -23,6 +23,7 @@ const LinkedBrandsTunnel = ({ close, locationId, state }) => {
    //subscription
    const { loading: loadingList, error } = useSubscription(BRAND_ID_LIST, {
       variables: {
+         locationId: locationId,
          identifier: 'Brand Info',
       },
       onSubscriptionData: data => {
