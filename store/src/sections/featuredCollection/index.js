@@ -9,8 +9,8 @@ import {
 } from '../../components'
 import { useQuery } from '@apollo/react-hooks'
 import _ from 'lodash'
-import { CartContext, onDemandMenuContext } from '../../context'
-import { PRODUCTS } from '../../graphql'
+import { CartContext } from '../../context'
+import { PRODUCTS, PRODUCTS_BY_CATEGORY } from '../../graphql'
 import classNames from 'classnames'
 import * as Scroll from 'react-scroll'
 
@@ -24,22 +24,26 @@ import CartBar from '../order/CartBar'
 export const FeaturedCollection = ({ config }) => {
    const router = useRouter()
    const { addToast } = useToasts()
-   // props
 
    console.log('config123', config)
 
    // context
-   const { brand, locationId, storeStatus } = useConfig()
+   const { brand, isConfigLoading, locationId, storeStatus } = useConfig()
 
    // component state
    const [hydratedMenu, setHydratedMenu] = React.useState([])
    const [status, setStatus] = useState('loading')
-   const { onDemandMenu } = React.useContext(onDemandMenuContext)
    const { cartState, addToCart } = React.useContext(CartContext)
-   const { isMenuLoading, allProductIds, categories } = onDemandMenu
+   const [menuData, setMenuData] = useState({
+      categories: [],
+      allProductIds: [],
+      isMenuLoading: true,
+   })
 
-   // const date = React.useMemo(() => new Date(Date.now()).toISOString(), [])
-
+   const date = React.useMemo(() => new Date(Date.now()).toISOString(), [])
+   const collectionIdArray = React.useMemo(() => config?.data?.collectionData?.value?.map(
+      collection => collection.id
+   ), [config])
    const menuType = config?.display?.dropdown?.value[0]?.value
       ? config?.display?.dropdown?.value[0]?.value
       : 'side-nav'
@@ -69,6 +73,41 @@ export const FeaturedCollection = ({ config }) => {
       '--hern-order-product-section-scroll-width',
       productsScrollWidth + 'px'
    )
+
+   // query for get products by category (contain array of product ids)
+   const { error: menuError } = useQuery(PRODUCTS_BY_CATEGORY, {
+      skip: isConfigLoading || !brand?.id,
+      variables: {
+         params: {
+            brandId: brand?.id,
+            date,
+            ...(collectionIdArray.length > 0 && { collectionIdArray }),
+            locationId,
+         },
+      },
+      onCompleted: data => {
+         if (data?.onDemand_getMenuV2copy?.length) {
+            const [res] = data.onDemand_getMenuV2copy
+            const { menu } = res.data
+            const ids = menu.map(category => category.products).flat()
+            setMenuData(prev => ({
+               ...prev,
+               allProductIds: ids,
+               categories: menu,
+               isMenuLoading: false,
+            }))
+         }
+      },
+      onError: error => {
+         setMenuData(prev => ({
+            ...prev,
+            isMenuLoading: false,
+         }))
+         setStatus('error')
+         console.log(error)
+      },
+   })
+   const { isMenuLoading, allProductIds, categories } = menuData
 
    const argsForByLocation = React.useMemo(
       () => ({
@@ -127,274 +166,6 @@ export const FeaturedCollection = ({ config }) => {
    )
    const [productModifier, setProductModifier] = useState(null)
 
-   const productData = {
-      id: 1080,
-      name: "Adrish's Special",
-      type: 'simple',
-      assets: {
-         images: [
-            'https://dailykit-133-test.s3.amazonaws.com/images/07783-burger.jpg',
-            'https://dailykit-133-test.s3.amazonaws.com/images/07783-burger.jpg',
-            'https://dailykit-133-test.s3.amazonaws.com/images/07783-burger.jpg',
-         ],
-         videos: [],
-      },
-      tags: ['Hot', 'New', 'Trending', 'Trending', 'Final'],
-      additionalText: 'comes with Ketchup',
-      description: 'SLdhasldha',
-      price: 5,
-      discount: 50,
-      isPopupAllowed: true,
-      isPublished: true,
-      defaultProductOptionId: null,
-      productOptions: [
-         {
-            id: 1203,
-            position: 1000000,
-            type: 'readyToEat',
-            label: 'Basic',
-            price: 10,
-            discount: 0,
-            cartItem: {
-               childs: {
-                  data: [
-                     {
-                        childs: {
-                           data: [],
-                        },
-                        unitPrice: 10,
-                        productOptionId: 1203,
-                     },
-                  ],
-               },
-               productId: 1080,
-               unitPrice: 2.5,
-            },
-            modifier: {
-               id: 1003,
-               name: 'modifier-sGh3i',
-               categories: [
-                  {
-                     id: 1003,
-                     name: 'category-IOSqx',
-                     isRequired: true,
-                     type: 'single',
-                     limits: {
-                        max: null,
-                        min: 1,
-                     },
-                     options: [],
-                     __typename: 'onDemand_modifierCategory',
-                  },
-               ],
-               __typename: 'onDemand_modifier',
-            },
-            __typename: 'products_productOption',
-         },
-         {
-            id: 1206,
-            position: 500000,
-            type: 'mealKit',
-            label: 'Basic',
-            price: 20,
-            discount: 0,
-            cartItem: {
-               childs: {
-                  data: [
-                     {
-                        childs: {
-                           data: [
-                              {
-                                 simpleRecipeYieldId: 1025,
-                              },
-                              {
-                                 simpleRecipeYieldId: 1025,
-                              },
-                              {
-                                 simpleRecipeYieldId: 1025,
-                              },
-                              {
-                                 simpleRecipeYieldId: 1025,
-                              },
-                              {
-                                 simpleRecipeYieldId: 1025,
-                              },
-                              {
-                                 simpleRecipeYieldId: 1025,
-                              },
-                           ],
-                        },
-                        unitPrice: 20,
-                        productOptionId: 1206,
-                     },
-                  ],
-               },
-               productId: 1080,
-               unitPrice: 2.5,
-            },
-            modifier: null,
-            __typename: 'products_productOption',
-         },
-         {
-            id: 1237,
-            position: 0,
-            type: null,
-            label: 'Serves 4',
-            price: 5,
-            discount: 0,
-            cartItem: {
-               childs: {
-                  data: [
-                     {
-                        childs: {
-                           data: [],
-                        },
-                        unitPrice: 5,
-                        productOptionId: 1237,
-                     },
-                  ],
-               },
-               productId: 1080,
-               unitPrice: 2.5,
-            },
-            modifier: {
-               id: 1002,
-               name: 'Pizza options',
-               categories: [
-                  {
-                     id: 1002,
-                     name: 'choose your crust',
-                     isRequired: true,
-                     type: 'multiple',
-                     limits: {
-                        max: 2,
-                        min: 1,
-                     },
-                     options: [
-                        {
-                           id: 1004,
-                           name: 'Cheese burst',
-                           price: 100,
-                           discount: 0,
-                           quantity: 1,
-                           image: 'https://dailykit-133-test.s3.amazonaws.com/images/11479-1-1.jpg',
-                           isActive: true,
-                           sachetItemId: null,
-                           ingredientSachetId: null,
-                           cartItem: {
-                              data: [
-                                 {
-                                    unitPrice: 100,
-                                    modifierOptionId: 1004,
-                                 },
-                              ],
-                           },
-                           __typename: 'onDemand_modifierCategoryOption',
-                        },
-                        {
-                           id: 1016,
-                           name: 'Mushroom Soba Noodles - 2 servings',
-                           price: 0,
-                           discount: 0,
-                           quantity: 1,
-                           image: 'https://dailykit-133-test.s3.amazonaws.com/images/07783-burger.jpg',
-                           isActive: false,
-                           sachetItemId: null,
-                           ingredientSachetId: null,
-                           cartItem: {
-                              data: [
-                                 {
-                                    unitPrice: 0,
-                                    modifierOptionId: 1016,
-                                 },
-                              ],
-                           },
-                           __typename: 'onDemand_modifierCategoryOption',
-                        },
-                        {
-                           id: 1021,
-                           name: 'option-UzL0q',
-                           price: 0,
-                           discount: 0,
-                           quantity: 1,
-                           image: null,
-                           isActive: true,
-                           sachetItemId: null,
-                           ingredientSachetId: null,
-                           cartItem: {
-                              data: [
-                                 {
-                                    unitPrice: 0,
-                                    modifierOptionId: 1021,
-                                 },
-                              ],
-                           },
-                           __typename: 'onDemand_modifierCategoryOption',
-                        },
-                     ],
-                     __typename: 'onDemand_modifierCategory',
-                  },
-                  {
-                     id: 1022,
-                     name: 'Another one',
-                     isRequired: true,
-                     type: 'single',
-                     limits: {
-                        max: 1,
-                        min: 1,
-                     },
-                     options: [
-                        {
-                           id: 1017,
-                           name: 'Beans',
-                           price: 1,
-                           discount: 50,
-                           quantity: 1,
-                           image: 'https://dailykit-133-test.s3.amazonaws.com/images/21814-mac-cheese.jpg',
-                           isActive: true,
-                           sachetItemId: null,
-                           ingredientSachetId: null,
-                           cartItem: {
-                              data: [
-                                 {
-                                    unitPrice: 0.5,
-                                    modifierOptionId: 1017,
-                                 },
-                              ],
-                           },
-                           __typename: 'onDemand_modifierCategoryOption',
-                        },
-                        {
-                           id: 10171,
-                           name: 'Beans Return',
-                           price: 1,
-                           discount: 50,
-                           quantity: 1,
-                           image: 'https://dailykit-133-test.s3.amazonaws.com/images/21814-mac-cheese.jpg',
-                           isActive: true,
-                           sachetItemId: null,
-                           ingredientSachetId: null,
-                           cartItem: {
-                              data: [
-                                 {
-                                    unitPrice: 0.5,
-                                    modifierOptionId: 1017,
-                                 },
-                              ],
-                           },
-                           __typename: 'onDemand_modifierCategoryOption',
-                        },
-                     ],
-                     __typename: 'onDemand_modifierCategory',
-                  },
-               ],
-               __typename: 'onDemand_modifier',
-            },
-            __typename: 'products_productOption',
-         },
-      ],
-      __typename: 'products_product',
-   }
    const CustomArea = props => {
       const { data } = props
       return (
@@ -615,15 +386,16 @@ export const FeaturedCollection = ({ config }) => {
                   })}
                </div>
             </div>
-            {(config?.informationVisibility?.menuCategories?.menu?.value && menuType !== 'fixed-top-nav') && (
-               <OnDemandMenu
-                  categories={categories}
-                  menuType={
-                     config?.informationVisibility?.menuCategories?.menuType
-                        ?.value?.value
-                  }
-               />
-            )}
+            {config?.informationVisibility?.menuCategories?.menu?.value &&
+               menuType !== 'fixed-top-nav' && (
+                  <OnDemandMenu
+                     categories={categories}
+                     menuType={
+                        config?.informationVisibility?.menuCategories?.menuType
+                           ?.value?.value
+                     }
+                  />
+               )}
             {(config?.informationVisibility?.cart?.bottomCartBar?.value ??
                true) &&
                cartState.cart &&
