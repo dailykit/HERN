@@ -1,7 +1,7 @@
 import { useMutation } from '@apollo/react-hooks'
 import {
    ButtonGroup,
-   ButtonTile,
+   CloseIconv2,
    ComboButton,
    Flex,
    Form,
@@ -13,7 +13,12 @@ import React from 'react'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
 import { toast } from 'react-toastify'
 import { LOCATIONS } from '../../../../apps/brands/graphql'
-import { DeleteIcon, LocationMarkerIcon, PlusIcon } from '../../../assets/icons'
+import {
+   DeleteIcon,
+   LocationMarkerIcon,
+   PlusIcon,
+   SearchIcon,
+} from '../../../assets/icons'
 import { Banner } from '../../../components'
 import { useTabs } from '../../../providers'
 import { get_env, useScript } from '../../../utils'
@@ -63,6 +68,8 @@ const CreateBrandLocation = ({ closeTunnel }) => {
       zipcode: {
          value: '',
       },
+      showGooglePlacesAutocompleteInside: false,
+      showGooglePlacesAutocompleteOutside: true,
    }
    const [location, setLocation] = React.useState([locationInstance])
 
@@ -219,6 +226,13 @@ const LocationSelector = props => {
          }
          console.log('userCoordinate', userCoordinate)
          setAddress(userCoordinate)
+
+         const newLocation = [...location]
+         newLocation[i] = {
+            ...newLocation[i],
+            showGooglePlacesAutocompleteOutside: false,
+         }
+         setLocation([...newLocation])
       }
    }
    React.useEffect(() => {
@@ -234,15 +248,14 @@ const LocationSelector = props => {
       <>
          {loaded && !error && (
             <>
-               <Flex>
+               {eachLocation.showGooglePlacesAutocompleteOutside && (
                   <GooglePlacesAutocomplete
                      selectProps={{
                         placeholder: 'Enter Your Store Location',
                         onChange: input => formatAddress(input),
                      }}
-                     width={'100%'}
                   />
-               </Flex>
+               )}
                {location[i].address && (
                   <>
                      <RefineLocationPopup
@@ -289,6 +302,15 @@ const BrandLocationMap = props => {
       if (eachLocation.address.latitude && eachLocation.address.longitude) {
          // console.log('geo', eachLocation.address)
 
+         // making initial locationSelector of this instance disable
+         const newLocation = [...location]
+         newLocation[i] = {
+            ...newLocation[i],
+            ['showGooglePlacesAutocompleteOutside']: false,
+         }
+         setLocation([...newLocation])
+
+         //fetching the details of location address when map is moved
          fetch(
             `https://maps.googleapis.com/maps/api/geocode/json?latlng=${
                eachLocation.address.latitude
@@ -420,6 +442,44 @@ const BrandLocationMap = props => {
    const onClickOnMap = () => {
       console.log('hello')
    }
+   //location selector declaration
+
+   const formatAddress = async input => {
+      console.log('inputfn', input)
+
+      const response = await fetch(
+         `https://maps.googleapis.com/maps/api/geocode/json?key=${get_env(
+            'REACT_APP_MAPS_API_KEY'
+         )}&address=${encodeURIComponent(input.value.description)}`
+      )
+      const data = await response.json()
+      console.log('data', data)
+      if (data.status === 'OK' && data.results.length > 0) {
+         const [result] = data.results
+         const userCoordinate = {
+            latitude: result.geometry.location.lat,
+            longitude: result.geometry.location.lng,
+         }
+         console.log('userCoordinate', userCoordinate)
+         const newLocation = [...location]
+         newLocation[i] = {
+            ...newLocation[i],
+            ['address']: userCoordinate,
+            ['showGooglePlacesAutocompleteInside']: false,
+            // ['showGooglePlacesAutocompleteOutside']: false,
+         }
+         setLocation([...newLocation])
+      }
+   }
+   const handleShowAutoGoogleSelect = () => {
+      const newLocation = [...location]
+      newLocation[i] = {
+         ...newLocation[i],
+         ['showGooglePlacesAutocompleteInside']:
+            !newLocation[i].showGooglePlacesAutocompleteInside,
+      }
+      setLocation([...newLocation])
+   }
 
    return (
       <>
@@ -444,7 +504,48 @@ const BrandLocationMap = props => {
                   options={{ gestureHandling: 'greedy' }}
                ></GoogleMapReact>
             </div>
-            <AddressInfo address={address} />
+
+            <div
+               style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '1rem',
+                  padding: '0.5em 0',
+               }}
+            >
+               {eachLocation.showGooglePlacesAutocompleteInside ? (
+                  <div style={{ width: '100%' }}>
+                     <GooglePlacesAutocomplete
+                        selectProps={{
+                           placeholder: 'Enter Your Store Location',
+                           onChange: input => formatAddress(input),
+                        }}
+                     />
+                  </div>
+               ) : (
+                  <AddressInfo address={address} />
+               )}
+               {eachLocation.showGooglePlacesAutocompleteInside ? (
+                  <div
+                     onClick={handleShowAutoGoogleSelect}
+                     style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                     }}
+                     title="Click to exit from search box"
+                  >
+                     <CloseIconv2 color="#404040CC" stroke="currentColor" />
+                  </div>
+               ) : (
+                  <div
+                     onClick={handleShowAutoGoogleSelect}
+                     title="Click to select google search box"
+                  >
+                     <SearchIcon />
+                  </div>
+               )}
+            </div>
             <LocationForm
                address={address}
                i={i}
@@ -694,16 +795,19 @@ const LocationForm = props => {
 const AddressInfo = props => {
    const { address } = props
    return (
-      <div className="hern-store-location-selector__user-address">
-         <div className="hern-store-location-selector__user-address-info">
-            <span className="hern-store-location-selector__user-address-info-text hern-store-location-selector__user-address-info-main-text">
-               {address.mainText}
-            </span>
-            <br />
-            <span className="hern-store-location-selector__user-address-info-text hern-store-location-selector__user-address-info-secondary-text">
-               {address.secondaryText} {address.zipcode}
-            </span>
-         </div>
+      <div
+         style={{
+            fontFamily: 'Roboto',
+            fontStyle: 'normal',
+            fontWeight: '500',
+            fontSize: '15px',
+         }}
+      >
+         <span>{address.mainText}</span>
+         <br />
+         <span>
+            {address.secondaryText} {address.zipcode}
+         </span>
       </div>
    )
 }
