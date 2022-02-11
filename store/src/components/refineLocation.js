@@ -9,7 +9,7 @@ import {
    LocationSelectorWrapper,
    useScript,
 } from '../utils'
-import { Form, Button, GoogleSuggestionsList } from '.'
+import { Form, Button, GoogleSuggestionsList, Tunnel } from '.'
 import LocationSelectorConfig from './locatoinSeletorConfig.json'
 import { useConfig } from '../lib'
 import { useUser, useCart } from '../context'
@@ -327,109 +327,114 @@ const RefineLocation = props => {
       }
    }
    return (
-      <div className="hern-refine-location">
-         <div className="hern-refine-location_content">
-            {/* <LocationSelectorWrapper
-               showLocationSelectorPopup={showLocationSelectorPopup}
-               setShowLocationSelectionPopup={setShowLocationSelectorPopup}
-            /> */}
-            <RefineLocationHeader
-               onRefineCloseClick={onRefineCloseClick}
-               onChangeClick={onChangeClick}
-            />
-            <div>
-               <div
-                  style={{
-                     height: '200px',
-                     width: '100%',
-                     position: 'relative',
-                  }}
-               >
-                  <UserLocationMarker />
-                  <GoogleMapReact
-                     bootstrapURLKeys={{ key: get_env('GOOGLE_API_KEY') }}
-                     defaultCenter={defaultProps.center}
-                     center={defaultProps.center}
-                     defaultZoom={defaultProps.zoom}
-                     onClick={onClickOnMap}
-                     onChildClick={(a, b, c, d) => {
-                        console.log('childClick', a, b, c, d)
-                     }}
-                     onChange={onChangeMap}
-                     options={{ gestureHandling: 'greedy' }}
-                  ></GoogleMapReact>
-               </div>
-            </div>
+      <div style={{ position: 'relative' }}>
+         {/* <LocationSelectorWrapper
+         showLocationSelectorPopup={showLocationSelectorPopup}
+         setShowLocationSelectionPopup={setShowLocationSelectorPopup}
+      /> */}
+
+         <div>
             <div
                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
+                  height: '200px',
+                  width: '100%',
+                  position: 'relative',
                }}
             >
-               {showGooglePlacesAutocomplete ? (
-                  <div style={{ width: '100%', padding: '14px' }}>
-                     {loaded && !error && (
-                        <GooglePlacesAutocomplete
-                           inputClassName="hern-store-location-selector-main__location-input"
-                           placeholder={
-                              LocationSelectorConfig.informationVisibility
-                                 .deliverySettings.userAddressInputPlaceHolder
-                                 .value || 'Enter your delivery location'
-                           }
-                           renderSuggestions={(active, suggestions) => (
-                              <GoogleSuggestionsList
-                                 suggestions={suggestions}
-                                 onSuggestionClick={formatAddress}
-                              />
-                           )}
-                           loader={() => {
-                              return (
-                                 <Skeleton.Input
-                                    style={{ width: 100 }}
-                                    active={true}
-                                    size={'small'}
-                                    loading={true}
-                                 />
-                              )
-                           }}
-                        />
-                     )}
-                  </div>
-               ) : (
-                  <AddressInfo
-                     address={address}
-                     isStoreAvailableOnAddress={isStoreAvailableOnAddress}
-                  />
-               )}
-               {showGooglePlacesAutocomplete ? (
-                  <div
-                     onClick={() => {
-                        setShowGooglePlacesAutocomplete(false)
-                     }}
-                     className="hern-refine-location-search-close-icon hern-refine-location-close-icon"
-                     style={{ padding: '5px' }}
-                  >
-                     <CloseIcon color="#404040CC" stroke="currentColor" />
-                  </div>
-               ) : (
-                  <div
-                     onClick={() => {
-                        setShowGooglePlacesAutocomplete(true)
-                     }}
-                     className="hern-refine-location-search-close-icon"
-                  >
-                     <SearchIcon />
-                  </div>
-               )}
+               <UserLocationMarker />
+               <GoogleMapReact
+                  bootstrapURLKeys={{ key: get_env('GOOGLE_API_KEY') }}
+                  defaultCenter={defaultProps.center}
+                  center={defaultProps.center}
+                  defaultZoom={defaultProps.zoom}
+                  onClick={onClickOnMap}
+                  onChildClick={(a, b, c, d) => {
+                     console.log('childClick', a, b, c, d)
+                  }}
+                  onChange={onChangeMap}
+                  options={{ gestureHandling: 'greedy' }}
+               ></GoogleMapReact>
             </div>
-            <AddressForm
-               isStoreAvailableOnAddress={isStoreAvailableOnAddress}
-               additionalAddressInfo={additionalAddressInfo}
-               setAdditionalAddressInfo={setAdditionalAddressInfo}
-               handleOnSubmit={handleOnSubmit}
-            />
          </div>
+         <div
+            style={{
+               display: 'flex',
+               alignItems: 'center',
+               justifyContent: 'space-between',
+            }}
+         >
+            {showGooglePlacesAutocomplete ? (
+               <div style={{ width: '100%', padding: '14px' }}>
+                  {loaded && !error && (
+                     <GooglePlacesAutocomplete
+                        inputClassName="hern-store-location-selector-main__location-input"
+                        placeholder={
+                           LocationSelectorConfig.informationVisibility
+                              .deliverySettings.userAddressInputPlaceHolder
+                              .value || 'Enter your delivery location'
+                        }
+                        renderSuggestions={(active, suggestions) => (
+                           <GoogleSuggestionsList
+                              suggestions={suggestions}
+                              onSuggestionClick={formatAddress}
+                           />
+                        )}
+                        loader={() => {
+                           return (
+                              <Skeleton.Input
+                                 style={{ width: 100 }}
+                                 active={true}
+                                 size={'small'}
+                                 loading={true}
+                              />
+                           )
+                        }}
+                     />
+                  )}
+               </div>
+            ) : (
+               <AddressInfo
+                  address={address}
+                  isStoreAvailableOnAddress={isStoreAvailableOnAddress}
+               />
+            )}
+            {showGooglePlacesAutocomplete ? (
+               <div
+                  onClick={() => {
+                     setShowGooglePlacesAutocomplete(false)
+                  }}
+                  className="hern-refine-location-search-close-icon hern-refine-location-close-icon"
+                  style={{ padding: '5px' }}
+               >
+                  <CloseIcon color="#404040CC" stroke="currentColor" />
+               </div>
+            ) : (
+               <div
+                  onClick={() => {
+                     setShowGooglePlacesAutocomplete(true)
+                  }}
+                  className="hern-refine-location-search-close-icon"
+               >
+                  <SearchIcon />
+               </div>
+            )}
+         </div>
+         <AddressForm
+            isStoreAvailableOnAddress={isStoreAvailableOnAddress}
+            additionalAddressInfo={additionalAddressInfo}
+            setAdditionalAddressInfo={setAdditionalAddressInfo}
+            handleOnSubmit={handleOnSubmit}
+         />
+         <Button
+            size="sm"
+            onClick={handleOnSubmit}
+            className="hern-refine-location__save-proceed-btn"
+            disabled={
+               !isStoreAvailableOnAddress || !additionalAddressInfo?.line1
+            }
+         >
+            Save & Proceed
+         </Button>
       </div>
    )
 }
@@ -558,16 +563,6 @@ const AddressForm = ({
                />
             </Form.Field>
          </div>
-         <Button
-            size="sm"
-            onClick={handleOnSubmit}
-            className="hern-refine-location__save-proceed-btn"
-            disabled={
-               !isStoreAvailableOnAddress || !additionalAddressInfo?.line1
-            }
-         >
-            Save & Proceed
-         </Button>
       </div>
    )
 }
@@ -594,7 +589,7 @@ const AddressInfo = props => {
    )
 }
 
-export const RefineLocationPopup = props => {
+export const RefineLocationPopup1 = props => {
    const { showRefineLocation } = props
    return (
       <CSSTransition
@@ -605,5 +600,25 @@ export const RefineLocationPopup = props => {
       >
          <RefineLocation {...props} />
       </CSSTransition>
+   )
+}
+export const RefineLocationPopup = props => {
+   const {
+      showRefineLocation,
+      onRefineLocationCloseIconClick,
+      setShowRefineLocation,
+   } = props
+   return (
+      <Tunnel.Left
+         in={showRefineLocation}
+         title={'Refine Location'}
+         visible={showRefineLocation}
+         onClose={() => {
+            setShowRefineLocation(false)
+            onRefineLocationCloseIconClick && onRefineLocationCloseIconClick()
+         }}
+      >
+         <RefineLocation {...props} />
+      </Tunnel.Left>
    )
 }
