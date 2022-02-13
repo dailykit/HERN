@@ -296,40 +296,55 @@ export const Delivery = props => {
                   !error &&
                   LocationSelectorConfig.informationVisibility.deliverySettings
                      .userAddressInput.value && (
-                     <GooglePlacesAutocomplete
-                        inputClassName="hern-store-location-selector-main__location-input"
-                        onSelect={data => formatAddress(data)}
-                        placeholder={
-                           LocationSelectorConfig.informationVisibility
-                              .deliverySettings.userAddressInputPlaceHolder
-                              .value || 'Enter your delivery location'
-                        }
-                        renderSuggestions={(active, suggestions) => (
-                           <GoogleSuggestionsList
-                              suggestions={suggestions}
-                              onSuggestionClick={formatAddress}
-                           />
-                        )}
-                        loader={() => {
-                           return (
-                              <Skeleton.Input
-                                 style={{ width: 100 }}
-                                 active={true}
-                                 size={'small'}
-                                 loading={true}
-                              />
-                           )
+                     <div
+                        style={{
+                           display: 'flex',
+                           alignItems: 'center',
+                           justifyContent: 'space-between',
+                           position: 'relative',
                         }}
-                     />
+                     >
+                        <div
+                           style={{
+                              width: '100%',
+                           }}
+                        >
+                           <GooglePlacesAutocomplete
+                              inputClassName="hern-store-location-selector-main__location-input"
+                              onSelect={data => formatAddress(data)}
+                              placeholder={
+                                 LocationSelectorConfig.informationVisibility
+                                    .deliverySettings
+                                    .userAddressInputPlaceHolder.value ||
+                                 'Enter your delivery location'
+                              }
+                              renderSuggestions={(active, suggestions) => (
+                                 <GoogleSuggestionsList
+                                    suggestions={suggestions}
+                                    onSuggestionClick={formatAddress}
+                                 />
+                              )}
+                              loader={() => {
+                                 return (
+                                    <Skeleton.Input
+                                       style={{ width: 100 }}
+                                       active={true}
+                                       size={'small'}
+                                       loading={true}
+                                    />
+                                 )
+                              }}
+                           />
+                        </div>
+                        <div
+                           className="hern-store-location-selector-main__get-current-location"
+                           onClick={locationByBrowser}
+                        >
+                           <GPSIcon />
+                        </div>
+                     </div>
                   )}
 
-               <div
-                  className="hern-store-location-selector-main__get-current-location"
-                  onClick={locationByBrowser}
-               >
-                  <GPSIcon />
-                  <span>Get Current Location</span>
-               </div>
                {/* <RefineLocation /> */}
                {locationSearching.error &&
                   locationSearching.errorType === 'blockByBrowser' && (

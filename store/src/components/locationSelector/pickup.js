@@ -288,40 +288,54 @@ export const Pickup = props => {
                   !error &&
                   LocationSelectorConfig.informationVisibility.pickupSettings
                      .userAddressInput.value && (
-                     <GooglePlacesAutocomplete
-                        inputClassName="hern-store-location-selector-main__location-input"
-                        onSelect={data => formatAddress(data)}
-                        placeholder={
-                           LocationSelectorConfig.informationVisibility
-                              .pickupSettings.userAddressInputPlaceHolder
-                              .value || 'Enter your address'
-                        }
-                        renderSuggestions={(active, suggestions) => (
-                           <GoogleSuggestionsList
-                              suggestions={suggestions}
-                              onSuggestionClick={formatAddress}
-                           />
-                        )}
-                        loader={() => {
-                           return (
-                              <Skeleton.Input
-                                 style={{ width: 100 }}
-                                 active={true}
-                                 size={'small'}
-                                 loading={true}
-                              />
-                           )
+                     <div
+                        style={{
+                           display: 'flex',
+                           alignItems: 'center',
+                           justifyContent: 'space-between',
+                           position: 'relative',
                         }}
-                     />
+                     >
+                        <div
+                           style={{
+                              width: '100%',
+                           }}
+                        >
+                           <GooglePlacesAutocomplete
+                              inputClassName="hern-store-location-selector-main__location-input"
+                              onSelect={data => formatAddress(data)}
+                              placeholder={
+                                 LocationSelectorConfig.informationVisibility
+                                    .pickupSettings.userAddressInputPlaceHolder
+                                    .value || 'Enter your address'
+                              }
+                              renderSuggestions={(active, suggestions) => (
+                                 <GoogleSuggestionsList
+                                    suggestions={suggestions}
+                                    onSuggestionClick={formatAddress}
+                                 />
+                              )}
+                              loader={() => {
+                                 return (
+                                    <Skeleton.Input
+                                       style={{ width: 100 }}
+                                       active={true}
+                                       size={'small'}
+                                       loading={true}
+                                    />
+                                 )
+                              }}
+                           />
+                        </div>
+                        <div
+                           className="hern-store-location-selector-main__get-current-location"
+                           onClick={locationByBrowser}
+                        >
+                           <GPSIcon />
+                        </div>
+                     </div>
                   )}
 
-               <div
-                  className="hern-store-location-selector-main__get-current-location"
-                  onClick={locationByBrowser}
-               >
-                  <GPSIcon />
-                  <span>Get Current Location</span>
-               </div>
                {locationSearching.error &&
                   locationSearching.errorType === 'blockByBrowser' && (
                      <span className="hern-store-location-selector-main__get-current-location-error-message">

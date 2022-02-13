@@ -1,19 +1,24 @@
 import React, { useState, useEffect } from 'react'
 import GoogleMapReact from 'google-map-react'
-import { LocationMarker, CloseIcon } from '../assets/icons'
+import { LocationMarker, CloseIcon, SearchIcon } from '../assets/icons'
 import { CSSTransition } from 'react-transition-group'
 import {
    get_env,
    getStoresWithValidations,
    isClient,
    LocationSelectorWrapper,
+   useScript,
 } from '../utils'
-import { Form, Button } from '.'
+import { Form, Button, GoogleSuggestionsList, Tunnel } from '.'
+import LocationSelectorConfig from './locatoinSeletorConfig.json'
 import { useConfig } from '../lib'
 import { useUser, useCart } from '../context'
 import { useMutation } from '@apollo/react-hooks'
 import { MUTATIONS } from '../graphql'
 import { useToasts } from 'react-toast-notifications'
+import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
+import { Modal, Skeleton } from 'antd'
+
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 const RefineLocation = props => {
@@ -46,7 +51,24 @@ const RefineLocation = props => {
    const [isGetStoresLoading, setIsGetStoresLoading] = useState(true)
    const [showLocationSelectorPopup, setShowLocationSelectorPopup] =
       useState(false)
+   const [showGooglePlacesAutocomplete, setShowGooglePlacesAutocomplete] =
+      useState(false)
+   const [defaultProps, setDefaultProps] = useState({
+      center: {
+         lat: +address.latitude,
+         lng: +address.longitude,
+      },
+      zoom: 16,
+   })
    console.log('this is address', address)
+
+   const [loaded, error] = useScript(
+      isClient
+         ? `https://maps.googleapis.com/maps/api/js?key=${get_env(
+              'GOOGLE_API_KEY'
+           )}&libraries=places`
+         : ''
+   )
 
    React.useEffect(() => {
       if (address?.mainText) {
@@ -73,13 +95,6 @@ const RefineLocation = props => {
    })
 
    // defaultProps for google map
-   const defaultProps = {
-      center: {
-         lat: +address.latitude,
-         lng: +address.longitude,
-      },
-      zoom: 16,
-   }
 
    const onClickOnMap = () => {
       console.log('hello')
@@ -269,50 +284,157 @@ const RefineLocation = props => {
    const onChangeClick = () => {
       setShowLocationSelectorPopup(true)
    }
+   const formatAddress = async input => {
+      if (!isClient) return 'Runs only on client side.'
+      console.log('inputfn', input)
+      const response = await fetch(
+         `https://maps.googleapis.com/maps/api/geocode/json?key=${
+            isClient ? get_env('GOOGLE_API_KEY') : ''
+         }&address=${encodeURIComponent(input.description)}`
+      )
+      const data = await response.json()
+      if (data.status === 'OK' && data.results.length > 0) {
+         const [result] = data.results
+         const userCoordinate = {
+            latitude: result.geometry.location.lat.toString(),
+            longitude: result.geometry.location.lng.toString(),
+         }
+         const address = {
+            mainText: input.structured_formatting.main_text,
+            secondaryText: input.structured_formatting.secondary_text,
+         }
+         result.address_components.forEach(node => {
+            if (node.types.includes('postal_code')) {
+               address.zipcode = node.long_name
+            }
+         })
+         if (address.zipcode) {
+            setDefaultProps(prev => ({
+               ...prev,
+               center: {
+                  lat: +userCoordinate.latitude,
+                  lng: +userCoordinate.longitude,
+               },
+            }))
+            setShowGooglePlacesAutocomplete(false)
+         } else {
+            Modal.warning({
+               title: `Please select a precise location. Try typing a landmark near your house.`,
+               maskClosable: true,
+               centered: true,
+            })
+         }
+      }
+   }
    return (
-      <div className="hern-refine-location">
-         <div className="hern-refine-location_content">
-            {/* <LocationSelectorWrapper
-               showLocationSelectorPopup={showLocationSelectorPopup}
-               setShowLocationSelectionPopup={setShowLocationSelectorPopup}
-            /> */}
-            <RefineLocationHeader
-               onRefineCloseClick={onRefineCloseClick}
-               onChangeClick={onChangeClick}
-            />
-            <div>
-               <div
-                  style={{
-                     height: '200px',
-                     width: '100%',
-                     position: 'relative',
+      <div style={{ position: 'relative' }}>
+         {/* <LocationSelectorWrapper
+         showLocationSelectorPopup={showLocationSelectorPopup}
+         setShowLocationSelectionPopup={setShowLocationSelectorPopup}
+      /> */}
+
+         <div>
+            <div
+               style={{
+                  height: '200px',
+                  width: '100%',
+                  position: 'relative',
+               }}
+            >
+               <UserLocationMarker />
+               <GoogleMapReact
+                  bootstrapURLKeys={{ key: get_env('GOOGLE_API_KEY') }}
+                  defaultCenter={defaultProps.center}
+                  center={defaultProps.center}
+                  defaultZoom={defaultProps.zoom}
+                  onClick={onClickOnMap}
+                  onChildClick={(a, b, c, d) => {
+                     console.log('childClick', a, b, c, d)
                   }}
-               >
-                  <UserLocationMarker />
-                  <GoogleMapReact
-                     bootstrapURLKeys={{ key: get_env('GOOGLE_API_KEY') }}
-                     defaultCenter={defaultProps.center}
-                     defaultZoom={defaultProps.zoom}
-                     onClick={onClickOnMap}
-                     onChildClick={(a, b, c, d) => {
-                        console.log('childClick', a, b, c, d)
-                     }}
-                     onChange={onChangeMap}
-                     options={{ gestureHandling: 'greedy' }}
-                  ></GoogleMapReact>
-               </div>
+                  onChange={onChangeMap}
+                  options={{ gestureHandling: 'greedy' }}
+               ></GoogleMapReact>
             </div>
-            <AddressInfo
-               address={address}
-               isStoreAvailableOnAddress={isStoreAvailableOnAddress}
-            />
-            <AddressForm
-               isStoreAvailableOnAddress={isStoreAvailableOnAddress}
-               additionalAddressInfo={additionalAddressInfo}
-               setAdditionalAddressInfo={setAdditionalAddressInfo}
-               handleOnSubmit={handleOnSubmit}
-            />
          </div>
+         <div
+            style={{
+               display: 'flex',
+               alignItems: 'center',
+               justifyContent: 'space-between',
+            }}
+         >
+            {showGooglePlacesAutocomplete ? (
+               <div style={{ width: '100%', padding: '14px' }}>
+                  {loaded && !error && (
+                     <GooglePlacesAutocomplete
+                        inputClassName="hern-store-location-selector-main__location-input"
+                        placeholder={
+                           LocationSelectorConfig.informationVisibility
+                              .deliverySettings.userAddressInputPlaceHolder
+                              .value || 'Enter your delivery location'
+                        }
+                        renderSuggestions={(active, suggestions) => (
+                           <GoogleSuggestionsList
+                              suggestions={suggestions}
+                              onSuggestionClick={formatAddress}
+                           />
+                        )}
+                        loader={() => {
+                           return (
+                              <Skeleton.Input
+                                 style={{ width: 100 }}
+                                 active={true}
+                                 size={'small'}
+                                 loading={true}
+                              />
+                           )
+                        }}
+                     />
+                  )}
+               </div>
+            ) : (
+               <AddressInfo
+                  address={address}
+                  isStoreAvailableOnAddress={isStoreAvailableOnAddress}
+               />
+            )}
+            {showGooglePlacesAutocomplete ? (
+               <div
+                  onClick={() => {
+                     setShowGooglePlacesAutocomplete(false)
+                  }}
+                  className="hern-refine-location-search-close-icon hern-refine-location-close-icon"
+                  style={{ padding: '5px' }}
+               >
+                  <CloseIcon color="#404040CC" stroke="currentColor" />
+               </div>
+            ) : (
+               <div
+                  onClick={() => {
+                     setShowGooglePlacesAutocomplete(true)
+                  }}
+                  className="hern-refine-location-search-close-icon"
+               >
+                  <SearchIcon />
+               </div>
+            )}
+         </div>
+         <AddressForm
+            isStoreAvailableOnAddress={isStoreAvailableOnAddress}
+            additionalAddressInfo={additionalAddressInfo}
+            setAdditionalAddressInfo={setAdditionalAddressInfo}
+            handleOnSubmit={handleOnSubmit}
+         />
+         <Button
+            size="sm"
+            onClick={handleOnSubmit}
+            className="hern-refine-location__save-proceed-btn"
+            disabled={
+               !isStoreAvailableOnAddress || !additionalAddressInfo?.line1
+            }
+         >
+            Save & Proceed
+         </Button>
       </div>
    )
 }
@@ -441,16 +563,6 @@ const AddressForm = ({
                />
             </Form.Field>
          </div>
-         <Button
-            size="sm"
-            onClick={handleOnSubmit}
-            className="hern-refine-location__save-proceed-btn"
-            disabled={
-               !isStoreAvailableOnAddress || !additionalAddressInfo?.line1
-            }
-         >
-            Save & Proceed
-         </Button>
       </div>
    )
 }
@@ -477,7 +589,7 @@ const AddressInfo = props => {
    )
 }
 
-export const RefineLocationPopup = props => {
+export const RefineLocationPopup1 = props => {
    const { showRefineLocation } = props
    return (
       <CSSTransition
@@ -488,5 +600,25 @@ export const RefineLocationPopup = props => {
       >
          <RefineLocation {...props} />
       </CSSTransition>
+   )
+}
+export const RefineLocationPopup = props => {
+   const {
+      showRefineLocation,
+      onRefineLocationCloseIconClick,
+      setShowRefineLocation,
+   } = props
+   return (
+      <Tunnel.Left
+         in={showRefineLocation}
+         title={'Refine Location'}
+         visible={showRefineLocation}
+         onClose={() => {
+            setShowRefineLocation(false)
+            onRefineLocationCloseIconClick && onRefineLocationCloseIconClick()
+         }}
+      >
+         <RefineLocation {...props} />
+      </Tunnel.Left>
    )
 }

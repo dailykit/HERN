@@ -54,114 +54,94 @@ export const LocationSelector = props => {
    }
 
    return (
-      <div className={classNames('hern-store-location-selector')}>
-         <div
-            className="hern-store-location-selector-container"
-            ref={locationSelectorRef}
-         >
-            {/* Header */}
-            <div className="hern-store-location-selector-header">
-               <div className="hern-store-location-selector-header-left">
-                  <CloseIcon
-                     size={16}
-                     color="#404040CC"
-                     stroke="currentColor"
-                     onClick={() => setShowLocationSelectionPopup(false)}
-                  />
-                  <span>Location</span>
-               </div>
-            </div>
-            {/* fulfillment type*/}
-            <div className="hern-store-location-selector__fulfillment-selector">
-               {(orderTabFulfillmentType.includes('ONDEMAND_DELIVERY') ||
-                  orderTabFulfillmentType.includes('PREORDER_DELIVERY')) &&
-                  availableFulFillmentType.includes('DELIVERY') && (
-                     <button
-                        className={classNames(
-                           'hern-store-location-selector__fulfillment-selector-button',
-                           {
-                              'hern-store-location-selector__fulfillment-selector-button--active':
-                                 fulfillmentType === 'DELIVERY',
-                           }
-                        )}
-                        onClick={() => setFulfillmentType('DELIVERY')}
-                     >
+      <div>
+         <div className="hern-store-location-selector__fulfillment-selector">
+            {(orderTabFulfillmentType.includes('ONDEMAND_DELIVERY') ||
+               orderTabFulfillmentType.includes('PREORDER_DELIVERY')) &&
+               availableFulFillmentType.includes('DELIVERY') && (
+                  <button
+                     className={classNames(
+                        'hern-store-location-selector__fulfillment-selector-button',
                         {
-                           orderTabs.find(
-                              x =>
-                                 x.orderFulfillmentTypeLabel ===
-                                    'ONDEMAND_DELIVERY' ||
-                                 x.orderFulfillmentTypeLabel ===
-                                    'PREORDER_DELIVERY'
-                           ).label
+                           'hern-store-location-selector__fulfillment-selector-button--active':
+                              fulfillmentType === 'DELIVERY',
                         }
-                     </button>
-                  )}
-               {(orderTabFulfillmentType.includes('ONDEMAND_PICKUP') ||
-                  orderTabFulfillmentType.includes('PREORDER_PICKUP')) &&
-                  availableFulFillmentType.includes('PICKUP') && (
-                     <button
-                        className={classNames(
-                           'hern-store-location-selector__fulfillment-selector-button',
-                           {
-                              'hern-store-location-selector__fulfillment-selector-button--active':
-                                 fulfillmentType === 'PICKUP',
-                           }
-                        )}
-                        onClick={() => setFulfillmentType('PICKUP')}
-                     >
+                     )}
+                     onClick={() => setFulfillmentType('DELIVERY')}
+                  >
+                     {
+                        orderTabs.find(
+                           x =>
+                              x.orderFulfillmentTypeLabel ===
+                                 'ONDEMAND_DELIVERY' ||
+                              x.orderFulfillmentTypeLabel ===
+                                 'PREORDER_DELIVERY'
+                        ).label
+                     }
+                  </button>
+               )}
+            {(orderTabFulfillmentType.includes('ONDEMAND_PICKUP') ||
+               orderTabFulfillmentType.includes('PREORDER_PICKUP')) &&
+               availableFulFillmentType.includes('PICKUP') && (
+                  <button
+                     className={classNames(
+                        'hern-store-location-selector__fulfillment-selector-button',
                         {
-                           orderTabs.find(
-                              x =>
-                                 x.orderFulfillmentTypeLabel ===
-                                    'ONDEMAND_PICKUP' ||
-                                 x.orderFulfillmentTypeLabel ===
-                                    'PREORDER_PICKUP'
-                           ).label
+                           'hern-store-location-selector__fulfillment-selector-button--active':
+                              fulfillmentType === 'PICKUP',
                         }
-                     </button>
-                  )}
-               {(orderTabFulfillmentType.includes('ONDEMAND_DINEIN') ||
-                  orderTabFulfillmentType.includes('SCHEDULED_DINEIN')) &&
-                  availableFulFillmentType.includes('DINEIN') && (
-                     <button
-                        className={classNames(
-                           'hern-store-location-selector__fulfillment-selector-button',
-                           {
-                              'hern-store-location-selector__fulfillment-selector-button--active':
-                                 fulfillmentType === 'DINEIN',
-                           }
-                        )}
-                        onClick={() => setFulfillmentType('DINEIN')}
-                     >
+                     )}
+                     onClick={() => setFulfillmentType('PICKUP')}
+                  >
+                     {
+                        orderTabs.find(
+                           x =>
+                              x.orderFulfillmentTypeLabel ===
+                                 'ONDEMAND_PICKUP' ||
+                              x.orderFulfillmentTypeLabel === 'PREORDER_PICKUP'
+                        ).label
+                     }
+                  </button>
+               )}
+            {(orderTabFulfillmentType.includes('ONDEMAND_DINEIN') ||
+               orderTabFulfillmentType.includes('SCHEDULED_DINEIN')) &&
+               availableFulFillmentType.includes('DINEIN') && (
+                  <button
+                     className={classNames(
+                        'hern-store-location-selector__fulfillment-selector-button',
                         {
-                           orderTabs.find(
-                              x =>
-                                 x.orderFulfillmentTypeLabel ===
-                                    'ONDEMAND_DINEIN' ||
-                                 x.orderFulfillmentTypeLabel ===
-                                    'SCHEDULED_DINEIN'
-                           ).label
+                           'hern-store-location-selector__fulfillment-selector-button--active':
+                              fulfillmentType === 'DINEIN',
                         }
-                     </button>
-                  )}
-            </div>
-            <Divider style={{ margin: '1em 0' }} />
-            {fulfillmentType === 'DELIVERY' && (
-               <Delivery
-                  setShowLocationSelectionPopup={setShowLocationSelectionPopup}
-                  settings={settings}
-               />
-            )}
-            {fulfillmentType === 'PICKUP' && (
-               <Pickup
-                  setShowLocationSelectionPopup={setShowLocationSelectionPopup}
-                  settings={settings}
-               />
-            )}
-            {fulfillmentType === 'DINEIN' && <DineIn />}
-            <div className="hern-store-location-selector-footer"></div>
+                     )}
+                     onClick={() => setFulfillmentType('DINEIN')}
+                  >
+                     {
+                        orderTabs.find(
+                           x =>
+                              x.orderFulfillmentTypeLabel ===
+                                 'ONDEMAND_DINEIN' ||
+                              x.orderFulfillmentTypeLabel === 'SCHEDULED_DINEIN'
+                        ).label
+                     }
+                  </button>
+               )}
          </div>
+         <Divider style={{ margin: '1em 0' }} />
+         {fulfillmentType === 'DELIVERY' && (
+            <Delivery
+               setShowLocationSelectionPopup={setShowLocationSelectionPopup}
+               settings={settings}
+            />
+         )}
+         {fulfillmentType === 'PICKUP' && (
+            <Pickup
+               setShowLocationSelectionPopup={setShowLocationSelectionPopup}
+               settings={settings}
+            />
+         )}
+         {fulfillmentType === 'DINEIN' && <DineIn />}
+         <div className="hern-store-location-selector-footer"></div>
       </div>
    )
 }
