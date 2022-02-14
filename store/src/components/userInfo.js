@@ -5,6 +5,8 @@ import { detectCountry, get_env } from '../utils'
 import { UserIcon } from '../assets/icons'
 import { useUser, CartContext } from '../context'
 import { useToasts } from 'react-toast-notifications'
+import { UPDATE_PLATFORM_CUSTOMER } from '../graphql'
+import { useMutation } from '@apollo/react-hooks'
 
 export const UserInfo = props => {
    const { cart, editable = true } = props
@@ -15,7 +17,7 @@ export const UserInfo = props => {
    const [firstName, setFirstName] = useState(
       cart?.customerInfo?.customerFirstName ||
          user.platform_customer?.firstName ||
-         'N/A'
+         ''
    )
    const [lastName, setLastName] = useState(
       cart?.customerInfo?.customerLastName ||
@@ -27,6 +29,16 @@ export const UserInfo = props => {
          user.platform_customer?.phoneNumber ||
          ''
    )
+   const [updateCustomer] = useMutation(UPDATE_PLATFORM_CUSTOMER, {
+      onCompleted: () => {
+         console.log('updated')
+      },
+      onError: error => {
+         addToast('Failed to save!', {
+            appearance: 'error',
+         })
+      },
+   })
 
    const onBlurData = type => {
       let infoToBeSend
@@ -58,6 +70,15 @@ export const UserInfo = props => {
             },
          },
       })
+      if (user?.keycloakId && type !== 'phoneNumber') {
+         const nameData = type === 'firstName' ? { firstName } : { lastName }
+         updateCustomer({
+            variables: {
+               keycloakId: user.keycloakId,
+               _set: { ...nameData },
+            },
+         })
+      }
    }
    const UserInfoHeader = () => {
       return (

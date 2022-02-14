@@ -187,6 +187,10 @@
    color: #40404099;
    border-bottom: 1px solid rgba(64, 64, 64, 0.25);
    margin: 2px 0;
+   width: 400px !important;
+   white-space: nowrap;
+   text-overflow: ellipsis;
+   overflow: hidden;
    @media only screen and (max-width: 600px) {
       width: 200px !important;
    }
