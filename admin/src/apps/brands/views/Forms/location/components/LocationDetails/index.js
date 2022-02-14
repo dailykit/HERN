@@ -22,7 +22,9 @@ import {
 const LocationDetails = ({ state, locationId }) => {
    console.log('state', state)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
-   const UserLocationMarker = () => {
+
+   const UserLocationMarker = props => {
+      // console.log('userLocationProps', props)
       return (
          <LocationMarkerIcon
             size={48}
@@ -36,13 +38,17 @@ const LocationDetails = ({ state, locationId }) => {
          />
       )
    }
-   const defaultProps = {
-      center: {
-         lat: Number(state.lat),
-         lng: Number(state.lng),
-      },
-      zoom: 15,
-   }
+   const defaultProps = React.useMemo(
+      () => ({
+         center: {
+            lat: parseFloat(state.lat),
+            lng: parseFloat(state.lng),
+         },
+         zoom: 16,
+      }),
+      [state]
+   )
+   // console.log('default props', defaultProps)
    return (
       <>
          <StyledContainer>
@@ -57,8 +63,8 @@ const LocationDetails = ({ state, locationId }) => {
                   options={{ gestureHandling: 'greedy' }}
                >
                   <UserLocationMarker
-                     lat={defaultProps.center.lat}
-                     lng={defaultProps.center.lng}
+                     lat={+defaultProps.center.lat}
+                     lng={+defaultProps.center.lng}
                   />
                </GoogleMapReact>
             </StyledMap>

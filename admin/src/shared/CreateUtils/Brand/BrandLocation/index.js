@@ -117,15 +117,11 @@ const CreateBrandLocation = ({ closeTunnel }) => {
          if (!objects.length) {
             throw Error('Nothing to add!')
          }
-         if (location.every(object => object.zipcode.length > 0)) {
-            createLocation({
-               variables: {
-                  objects,
-               },
-            })
-         } else {
-            throw Error('Not valid Zipcode!')
-         }
+         createLocation({
+            variables: {
+               objects,
+            },
+         })
       } catch (error) {
          toast.error(error.message)
       }
