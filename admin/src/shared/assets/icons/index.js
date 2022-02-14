@@ -50,7 +50,8 @@ import AvailableIcon from './Available'
 import UnavailableIcon from './Unavailable'
 import PlaceHolderImgIcon from './PlaceHolderImg'
 import CrossIcon from './Cross'
-import WarningIcon from './WarningIcon'
+import LocationMarkerIcon from './LocationMarker'
+import ForwardIcon from './ForwardArrows'
 export {
    SearchIcon,
    AddIcon,
@@ -103,7 +104,9 @@ export {
    PlaceHolderImgIcon,
    AvailableIcon,
    UnavailableIcon,
-   CrossIcon
+   CrossIcon,
+   LocationMarkerIcon,
+   ForwardIcon,
 }
 
 export * from './Tick'
@@ -117,4 +120,3 @@ export * from './CircleChecked'
 export * from './Square'
 export * from './SquareChecked'
 export * from './WarningIcon'
-

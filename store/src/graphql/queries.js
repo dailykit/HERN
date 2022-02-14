@@ -2249,21 +2249,24 @@ export const GET_ALL_RECURRENCES = gql`
 `
 export const PRODUCT_SEO_SETTINGS_BY_ID = gql`
    query PRODUCT_SEO_SETTINGS($productId: Int!, $type: String!) {
-      products(where: { id: { _eq: $productId } }) {
-         description
-         name
-         assets
-      }
-      products_productPageSetting(where: { type: { _eq: $type } }) {
-         product_productPageSettings(
-            where: { productId: { _eq: $productId } }
-         ) {
-            value
-            productId
-         }
-         identifier
-      }
-   }
+  products(where: {id: {_eq: $productId}}) {
+    description
+    name
+  }
+  products_productPageSetting(where: {type: {_eq: $type}}) {
+    product_productPageSettings(where: {productId: {_eq: $productId}}) {
+      value
+      productId
+    }
+    identifier
+  }
+  brands {
+    brand_brandSettings(where: {brandSettingId: {_eq: 33}, brandId: {_eq: 1}}) {
+      value
+    }
+  }
+}
+
 `
 export const SUPPORTED_PAYMENT_OPTIONS = gql`
    query SUPPORTED_PAYMENT_OPTIONS {

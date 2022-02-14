@@ -214,19 +214,34 @@ export const PLANS = {
 
 export const LOCATIONS = {
    LIST: gql`
-      subscription locations {
+      subscription locations($identifier: String!) {
          brands_location(order_by: { id: asc }) {
             id
             label
-            city
-            country
-            state
-            zipcode
-            brand_locations_aggregate {
-               aggregate {
-                  count
+            isActive
+            brand_locations {
+               brandId
+               brand {
+                  title
+                  brand_brandSettings(
+                     where: {
+                        brandSetting: { identifier: { _eq: $identifier } }
+                     }
+                  ) {
+                     value
+                  }
                }
             }
+            locationTables {
+               id
+            }
+            locationAddress
+            lng
+            lat
+            country
+            city
+            state
+            zipcode
          }
       }
    `,
@@ -272,7 +287,7 @@ export const LOCATIONS = {
 }
 export const BRAND_LOCATION = {
    VIEW: gql`
-      subscription MySubscription($locationId: Int!) {
+      subscription linkedBrands($locationId: Int!, $identifier: String!) {
          brands_brand_location(where: { locationId: { _eq: $locationId } }) {
             brandId
             doesDeliver
@@ -282,9 +297,17 @@ export const BRAND_LOCATION = {
             doesPickup
             isActive
             locationId
+            location {
+               label
+            }
             brand {
                id
                title
+               brand_brandSettings(
+                  where: { brandSetting: { identifier: { _eq: $identifier } } }
+               ) {
+                  value
+               }
             }
          }
       }
@@ -320,14 +343,25 @@ export const BRAND_LOCATION = {
    `,
 }
 export const BRAND_ID_LIST = gql`
-   subscription brandId {
+   subscription brandId($identifier: String!, $locationId: Int!) {
       brandsAggregate(
-         order_by: { id: asc }
-         where: { isArchived: { _eq: false } }
+         order_by: { title: asc }
+         where: {
+            _not: { brand_locations: { locationId: { _eq: $locationId } } }
+         }
       ) {
+         aggregate {
+            count
+         }
          nodes {
             title
             id
+            domain
+            brand_brandSettings(
+               where: { brandSetting: { identifier: { _eq: $identifier } } }
+            ) {
+               value
+            }
          }
       }
    }
@@ -335,9 +369,12 @@ export const BRAND_ID_LIST = gql`
 
 // getting brandSettingId using identifier
 export const BRAND_ID = gql`
- query MyQuery($identifier: String_comparison_exp!) {
-  brands_brand_brandSetting(where: {brandSetting: {identifier: $identifier}}, limit: 1) {
-    brandSettingId
-  }
-}
+   query MyQuery($identifier: String_comparison_exp!) {
+      brands_brand_brandSetting(
+         where: { brandSetting: { identifier: $identifier } }
+         limit: 1
+      ) {
+         brandSettingId
+      }
+   }
 `

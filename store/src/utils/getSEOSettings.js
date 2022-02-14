@@ -58,7 +58,7 @@ export const getProductSEOSettings = async (productId) => {
    const client = await graphQLClient()
 
    //calling product info and seodetails
-   const { products_productPageSetting: ProductPageSettings, products } =
+   const { products_productPageSetting: ProductPageSettings, products, brands } =
       await client.request(PRODUCT_SEO_SETTINGS_BY_ID, {
          productId,
          type: 'seo',
@@ -70,7 +70,7 @@ export const getProductSEOSettings = async (productId) => {
          "value": {
             "metaTitle": products[0]?.name,
             "metaDescription": products[0]?.description,
-            "favicon": products[0]?.assets?.images[0]
+            "favicon": brands[0].brand_brandSettings[0].value.favicon
          }
 
       }
