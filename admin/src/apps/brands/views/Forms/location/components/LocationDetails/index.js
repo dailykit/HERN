@@ -1,12 +1,27 @@
-import { Text } from '@dailykit/ui'
+import {
+   ButtonGroup,
+   Spacer,
+   Text,
+   TextButton,
+   Tunnel,
+   Tunnels,
+   useTunnel,
+} from '@dailykit/ui'
 import GoogleMapReact from 'google-map-react'
 import React from 'react'
 import { get_env } from '../../../../../../../shared/utils'
 import { LocationMarkerIcon } from '../../../../../assets/icons'
-import { StyledAddress, StyledContainer, StyledMap } from './styled'
+import { EditLocationDetails } from '../../tunnels'
+import {
+   StyledAddress,
+   StyledAddressContainer,
+   StyledContainer,
+   StyledMap,
+} from './styled'
 
 const LocationDetails = ({ state, locationId }) => {
    console.log('state', state)
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const UserLocationMarker = () => {
       return (
          <LocationMarkerIcon
@@ -47,8 +62,30 @@ const LocationDetails = ({ state, locationId }) => {
                   />
                </GoogleMapReact>
             </StyledMap>
-            <AddressInfo address={state} />
+            <StyledAddressContainer>
+               <AddressInfo address={state} />
+               <ButtonGroup>
+                  <TextButton
+                     type="ghost"
+                     size="sm"
+                     onClick={() => openTunnel(1)}
+                     title={'Click to edit store location'}
+                  >
+                     Edit Location
+                  </TextButton>
+               </ButtonGroup>
+            </StyledAddressContainer>
          </StyledContainer>
+
+         <Tunnels tunnels={tunnels}>
+            <Tunnel layer={1} popup={true} size="md">
+               <EditLocationDetails
+                  state={state}
+                  locationId={locationId}
+                  close={closeTunnel}
+               />
+            </Tunnel>
+         </Tunnels>
       </>
    )
 }
@@ -58,10 +95,9 @@ export default LocationDetails
 const AddressInfo = props => {
    const { address } = props
    return (
-      <>
-         <Text as="h3" style={{ margin: '1rem' }}>
-            Your Store Address
-         </Text>
+      <div style={{ padding: '0.5rem' }}>
+         <Text as="h3">Your Store Address</Text>
+         <Spacer size="0.5rem" />
          <StyledAddress>
             <span>
                {address.locationAddress.line1}, {address.locationAddress.line2}
@@ -71,6 +107,6 @@ const AddressInfo = props => {
                {address.zipcode}
             </span>
          </StyledAddress>
-      </>
+      </div>
    )
 }

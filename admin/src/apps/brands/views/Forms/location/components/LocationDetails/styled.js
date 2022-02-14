@@ -9,10 +9,15 @@ export const StyledMap = styled.div`
    height: 400px;
    position: relative;
 `
+export const StyledAddressContainer = styled.div`
+   display: flex;
+   margin: 0.5rem;
+   padding: 0.5rem;
+   justify-content: space-between;
+`
 export const StyledAddress = styled.div`
    display: flex;
    flex-direction: column;
-   margin: 1rem;
    font-family: Roboto;
    font-style: normal;
    font-weight: 500;
