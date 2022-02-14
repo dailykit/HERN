@@ -667,6 +667,7 @@ const LocationInfo = ({ settings }) => {
                            (storeAddress.line1 ||
                               '' + storeAddress.line2 ||
                               '')}
+                        {_.isNull(prefix) && 'Please select address...'}
                      </div>
                      <div className="hern-header__location-warning">
                         {!storeStatus?.status ? storeStatus?.message : ''}
