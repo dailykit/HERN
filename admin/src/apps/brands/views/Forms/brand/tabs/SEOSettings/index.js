@@ -10,6 +10,7 @@ import SEOBasics from './SEObasics'
 import SocialShare from './SocialShare'
 import TwitterCard from './TwitterCard'
 import MarketingIntegration from './MarketingIntegration'
+import AdditionalTags from './AdditionalTags'
 
 export const SEOSettings = ({ domain }) => {
    const params = useParams()
@@ -43,6 +44,7 @@ export const SEOSettings = ({ domain }) => {
          <SocialShare update={update} domain={domain} />
          <TwitterCard update={update} domain={domain} />
          <MarketingIntegration />
+         <AdditionalTags update={update} domain={domain} />
       </div>
    )
 }
