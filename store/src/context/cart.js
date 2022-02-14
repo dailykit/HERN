@@ -443,7 +443,7 @@ export const CartProvider = ({ children }) => {
                            id: subscriptionData.data.carts[0].id,
                         },
                      })
-                     // localStorage.removeItem('cart-id')
+                     localStorage.removeItem('cart-id')
                      setStoredCartId(guestCartId)
                      setIsFinalCartLoading(false)
                   } else {
@@ -523,6 +523,7 @@ export const CartProvider = ({ children }) => {
                         },
                      })
                      setStoredCartId(subscriptionData.data.carts[0].id)
+                     localStorage.removeItem('cart-id')
                      setIsFinalCartLoading(false)
                   }
                } else {
@@ -555,6 +556,7 @@ export const CartProvider = ({ children }) => {
                            },
                         },
                      })
+                     localStorage.removeItem('cart-id')
                      setIsFinalCartLoading(false)
                   } else {
                      setIsFinalCartLoading(false)
