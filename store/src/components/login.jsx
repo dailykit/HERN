@@ -194,7 +194,7 @@ const Email = props => {
    })
    const [showPassword, setShowPassword] = useState(false)
 
-   const isValid = form.email && form.password
+   const isValid = React.useMemo(() => form.email && form.password, [form])
 
    //handle input field change
    const onChange = e => {
@@ -248,7 +248,11 @@ const Email = props => {
          })
       }
    }
-
+   const handleKeyPressLogin = event => {
+      if (event.key === 'Enter') {
+         isValid && submit()
+      }
+   }
    return (
       <div className="hern-login-v1__email">
          <fieldset className="hern-login-v1__fieldset">
@@ -264,6 +268,7 @@ const Email = props => {
                onChange={onChange}
                placeholder="Enter your email"
                required
+               onKeyPress={handleKeyPressLogin}
             />
          </fieldset>
          <fieldset className="hern-login-v1__fieldset">
@@ -279,6 +284,7 @@ const Email = props => {
                value={form.password}
                placeholder="Enter your password"
                required
+               onKeyPress={handleKeyPressLogin}
             />
          </fieldset>
          <div className="hern-login-v1__password-config">
@@ -526,6 +532,22 @@ const OTPLogin = props => {
       setTime(null)
       await resendOTP({ variables: { id: otp?.id } })
    }
+   const handleSendOTPKeyPress = event => {
+      if (event.key === 'Enter') {
+         if (form.phone && isValidPhoneNumber(form.phone)) {
+            sendOTP()
+         }
+      }
+   }
+   const handleSubmitOTPKeyPress = event => {
+      if (event.key === 'Enter') {
+         if (
+            !(resending || loading || !form.otp || (isNewUser && !form.email))
+         ) {
+            submit(event)
+         }
+      }
+   }
 
    return (
       <div className="hern-login-v1__otp">
@@ -552,6 +574,7 @@ const OTPLogin = props => {
                      }}
                      defaultCountry={get_env('COUNTRY_CODE')}
                      placeholder="Enter your phone number"
+                     onKeyPress={handleSendOTPKeyPress}
                   />
                </fieldset>
                <button
@@ -599,6 +622,7 @@ const OTPLogin = props => {
                      onChange={onChange}
                      value={form.otp}
                      placeholder="Enter the otp"
+                     onKeyPress={handleSubmitOTPKeyPress}
                   />
                </fieldset>
                <button

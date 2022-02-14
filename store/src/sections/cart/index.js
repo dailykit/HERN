@@ -8,6 +8,7 @@ import {
    PaymentOptionsRenderer,
    Coupon,
    WalletAmount,
+   FulfillmentForm,
 } from '../../components'
 import { CartContext, onDemandMenuContext, useUser } from '../../context'
 import { EmptyCart, PaymentIcon } from '../../assets/icons'
@@ -78,7 +79,7 @@ export const OnDemandCart = () => {
                <UserInfo cart={cartState.cart} />
             </div>
             <div className="hern-ondemand-cart__left-card">
-               <Fulfillment cart={cartState.cart} />
+               <FulfillmentForm cart={cartState.cart} />
             </div>
             <div className="hern-ondemand-cart__left-card">
                <Coupon upFrontLayout={true} cart={cartState.cart} />
