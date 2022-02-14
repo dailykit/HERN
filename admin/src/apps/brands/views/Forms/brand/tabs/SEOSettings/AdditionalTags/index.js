@@ -72,7 +72,6 @@ const AdditionalTags = ({ update }) => {
                 if (!isEmpty(brandSettings)) {
                     const { brand, id } = brandSettings[0]
                     setSettingId(id)
-                    console.log("newSetting", brand[0]?.value, "🎎", brand[0]?.value?.additionalTags)
                     setForm(prev => ({
                         ...prev,
                         additionalTags: {
@@ -102,19 +101,19 @@ const AdditionalTags = ({ update }) => {
     const Save = () => {
         const tagName = form?.tagName?.value
         const tagContent = form?.tagContent?.value
-        const prevAdditionalSettings = form?.additionalTags?.value
+        const prevAdditionalSettings = form?.additionalTags?.value || null
         const newSetting = {}
         newSetting[tagName] = tagContent
         console.log(newSetting, "newSetting")
         update({
             id: settingId,
             brandId: params.id,
-            value: {
+            value: prevAdditionalSettings ? {
                 "additionalTags": [
                     ...prevAdditionalSettings,
                     newSetting
                 ]
-            }
+            } : { "additionalTags": [newSetting] }
         })
         setIsSEOBasicsModalVisible(false)
     }
@@ -238,7 +237,7 @@ const AdditionalTags = ({ update }) => {
                         </Form.Item>
                     </Form>
                 </Modal>
-                <Button type="primary" onClick={showSEOBasicsModal}>
+                <Button type="primary" ghost onClick={showSEOBasicsModal}>
                     Add Other Additional Tags
                 </Button>
             </div>
