@@ -233,9 +233,9 @@ const BrandAvatar = ({ cell }) => {
                            eachBrand.brand.brand_brandSettings[0]?.value
                               .brandLogo.value
                               ? eachBrand.brand.brand_brandSettings[0]?.value
-                                   .brandLogo.value
+                                 .brandLogo.value
                               : eachBrand.brand.brand_brandSettings[0]?.value
-                                   .brandLogo.default.url
+                                 .brandLogo.default.url
                         }
                      />
                   ) : (
