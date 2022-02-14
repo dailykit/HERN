@@ -288,7 +288,10 @@ export const LOCATIONS = {
 export const BRAND_LOCATION = {
    VIEW: gql`
       subscription linkedBrands($locationId: Int!, $identifier: String!) {
-         brands_brand_location(where: { locationId: { _eq: $locationId } }) {
+         brands_brand_location(
+            where: { locationId: { _eq: $locationId } }
+            order_by: { brand: { title: asc, created_at: asc_nulls_first } }
+         ) {
             brandId
             doesDeliver
             doesDeliverOutsideCity
