@@ -47,7 +47,8 @@ export const getSEOSettings = async (domain, dataByRoute) => {
       ogTitle: getSEOValue('ogTitle', 'og-card'),
       ogDescription: getSEOValue('ogDescription', 'og-card'),
       googleAnalyticsId: getSEOValue('googleAnalyticsId', 'googleAnalyticsId'),
-      facebookPixelId: getSEOValue('fbPixelId', 'facebookPixelId')
+      facebookPixelId: getSEOValue('fbPixelId', 'facebookPixelId'),
+      additionalTags: getSEOValue('additionalTags', 'additionalTags')
    }
 
    return settings
