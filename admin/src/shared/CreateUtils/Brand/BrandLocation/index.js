@@ -102,20 +102,30 @@ const CreateBrandLocation = ({ closeTunnel }) => {
             locationAddress: {
                line1: `${eachLocation.line1.value}`,
                line2: `${eachLocation.line2.value}`,
+               locationCoordinates: {
+                  latitude: Number(eachLocation.address.latitude),
+                  longitude: Number(eachLocation.address.longitude),
+               },
             },
             city: eachLocation.city.value,
             state: eachLocation.state.value,
             country: eachLocation.country.value,
             zipcode: eachLocation.zipcode.value,
+            lat: `${eachLocation.address.latitude}`,
+            lng: `${eachLocation.address.longitude}`,
          }))
          if (!objects.length) {
             throw Error('Nothing to add!')
          }
-         createLocation({
-            variables: {
-               objects,
-            },
-         })
+         if (location.every(object => object.zipcode.length > 0)) {
+            createLocation({
+               variables: {
+                  objects,
+               },
+            })
+         } else {
+            throw Error('Not valid Zipcode!')
+         }
       } catch (error) {
          toast.error(error.message)
       }
@@ -209,7 +219,7 @@ const LocationSelector = props => {
    )
 
    const formatAddress = async input => {
-      console.log('inputfn', input)
+      // console.log('inputfn', input)
 
       const response = await fetch(
          `https://maps.googleapis.com/maps/api/geocode/json?key=${get_env(
@@ -217,14 +227,14 @@ const LocationSelector = props => {
          )}&address=${encodeURIComponent(input.value.description)}`
       )
       const data = await response.json()
-      console.log('data', data)
+      // console.log('data', data)
       if (data.status === 'OK' && data.results.length > 0) {
          const [result] = data.results
          const userCoordinate = {
             latitude: result.geometry.location.lat,
             longitude: result.geometry.location.lng,
          }
-         console.log('userCoordinate', userCoordinate)
+         // console.log('userCoordinate', userCoordinate)
          setAddress(userCoordinate)
 
          const newLocation = [...location]
@@ -243,7 +253,7 @@ const LocationSelector = props => {
       }
       setLocation([...newLocation])
    }, [address])
-   // console.log('address', address)
+   // console.log('address', location)
    return (
       <>
          {loaded && !error && (
@@ -397,7 +407,7 @@ const BrandLocationMap = props => {
       )
          .then(res => res.json())
          .then(data => {
-            console.log('InitialfetchData', data)
+            // console.log('InitialfetchData', data)
             if (data.status === 'OK' && data.results.length > 0) {
                const formatted_address =
                   data.results[0].formatted_address.split(',')
@@ -425,7 +435,7 @@ const BrandLocationMap = props => {
                      address.zipcode = node.long_name
                   }
                })
-               console.log('finalfetchData', address)
+               // console.log('finalfetchData', address)
 
                setAddress(prev => ({
                   ...address,
@@ -445,7 +455,7 @@ const BrandLocationMap = props => {
    //location selector declaration
 
    const formatAddress = async input => {
-      console.log('inputfn', input)
+      // console.log('inputfn', input)
 
       const response = await fetch(
          `https://maps.googleapis.com/maps/api/geocode/json?key=${get_env(
@@ -453,14 +463,14 @@ const BrandLocationMap = props => {
          )}&address=${encodeURIComponent(input.value.description)}`
       )
       const data = await response.json()
-      console.log('data', data)
+      // console.log('data', data)
       if (data.status === 'OK' && data.results.length > 0) {
          const [result] = data.results
          const userCoordinate = {
             latitude: result.geometry.location.lat,
             longitude: result.geometry.location.lng,
          }
-         console.log('userCoordinate', userCoordinate)
+         // console.log('userCoordinate', userCoordinate)
          const newLocation = [...location]
          newLocation[i] = {
             ...newLocation[i],
@@ -610,7 +620,7 @@ const LocationForm = props => {
    const onChange = (field, value, index) => {
       //serving, value, i
       const newLocation = [...location]
-      console.log(newLocation)
+      // console.log(newLocation)
       newLocation[index] = {
          ...newLocation[index],
          [field]: {
@@ -635,9 +645,9 @@ const LocationForm = props => {
          },
       }
       setLocation([...newLocation])
-      console.log(newLocation)
+      // console.log(newLocation)
    }
-   // console.log('location', location)
+   console.log('location', location, address)
    return (
       <>
          <Flex
