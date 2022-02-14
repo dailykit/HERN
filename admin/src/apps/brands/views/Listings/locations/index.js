@@ -24,7 +24,6 @@ import { useTabs, useTooltip } from '../../../../../shared/providers'
 import CreateBrandLocation from '../../../../../shared/CreateUtils/Brand/BrandLocation'
 import { Avatar, Tooltip } from 'antd'
 import { PublishIcon, UnPublishIcon } from '../../../assets/icons'
-import BrandLocationMap from './locationSelector'
 import { DisplayLocation } from './tunnels'
 
 export const Locations = () => {
@@ -234,9 +233,9 @@ const BrandAvatar = ({ cell }) => {
                            eachBrand.brand.brand_brandSettings[0]?.value
                               .brandLogo.value
                               ? eachBrand.brand.brand_brandSettings[0]?.value
-                                   .brandLogo.value
+                                 .brandLogo.value
                               : eachBrand.brand.brand_brandSettings[0]?.value
-                                   .brandLogo.default.url
+                                 .brandLogo.default.url
                         }
                      />
                   ) : (

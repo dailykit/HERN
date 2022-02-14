@@ -1677,6 +1677,10 @@ export const GET_CARTS = gql`
    subscription GET_CARTS($where: order_cart_bool_exp!) {
       carts(where: $where) {
          id
+         address
+         fulfillmentInfo
+         locationId
+         orderTabId
       }
    }
 `
@@ -1775,7 +1779,7 @@ export const BRAND_LOCATIONS = gql`
    }
 `
 export const PREORDER_DELIVERY_BRAND_RECURRENCES = gql`
-   query BRAND_ONDEMAND_DELIVERY_RECURRENCES(
+   query PREORDER_DELIVERY_BRAND_RECURRENCES(
       $where: fulfilment_brand_recurrence_bool_exp!
    ) {
       brandRecurrences(where: $where) {
@@ -1944,7 +1948,7 @@ export const SCHEDULED_DINEIN_BRAND_RECURRENCES = gql`
 `
 export const GET_BRAND_LOCATION = gql`
    query GET_BRAND_LOCATION($where: brands_brand_location_bool_exp!) {
-      brands_brand_location(where: $where) {
+      brandLocations: brands_brand_location(where: $where) {
          id
          brandId
          location {
@@ -2207,23 +2211,62 @@ export const GET_ORDER_DETAILS = gql`
       }
    }
 `
-export const PRODUCT_SEO_SETTINGS_BY_ID = gql`
-   query PRODUCT_SEO_SETTINGS($productId: Int!, $type: String!) {
-      products(where: { id: { _eq: $productId } }) {
-         description
-         name
-         assets
-      }
-      products_productPageSetting(where: { type: { _eq: $type } }) {
-         product_productPageSettings(
-            where: { productId: { _eq: $productId } }
-         ) {
-            value
-            productId
+
+export const GET_ALL_RECURRENCES = gql`
+   query GET_ALL_RECURRENCES($where: fulfilment_brand_recurrence_bool_exp!) {
+      brandRecurrences(where: $where) {
+         brandId
+         brandLocationId
+         recurrenceId
+         recurrence {
+            id
+            rrule
+            type
+            timeSlots {
+               from
+               to
+               pickUpPrepTime
+               id
+               pickUpLeadTime
+               slotInterval
+               mileRanges {
+                  id
+                  from
+                  city
+                  distanceType
+                  to
+                  zipcodes
+                  state
+                  prepTime
+                  geoBoundary
+                  isExcluded
+                  leadTime
+               }
+            }
          }
-         identifier
       }
    }
+`
+export const PRODUCT_SEO_SETTINGS_BY_ID = gql`
+   query PRODUCT_SEO_SETTINGS($productId: Int!, $type: String!) {
+  products(where: {id: {_eq: $productId}}) {
+    description
+    name
+  }
+  products_productPageSetting(where: {type: {_eq: $type}}) {
+    product_productPageSettings(where: {productId: {_eq: $productId}}) {
+      value
+      productId
+    }
+    identifier
+  }
+  brands {
+    brand_brandSettings(where: {brandSettingId: {_eq: 33}, brandId: {_eq: 1}}) {
+      value
+    }
+  }
+}
+
 `
 export const SUPPORTED_PAYMENT_OPTIONS = gql`
    query SUPPORTED_PAYMENT_OPTIONS {

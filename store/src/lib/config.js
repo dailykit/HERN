@@ -26,6 +26,7 @@ const initialState = {
       message: '',
       loading: true,
    },
+   lastLocationId: null,
 }
 
 const reducers = (state, { type, payload }) => {
@@ -50,6 +51,8 @@ const reducers = (state, { type, payload }) => {
          return { ...state, userLocation: payload }
       case 'SET_STORE_STATUS':
          return { ...state, storeStatus: payload }
+      case 'SET_LAST_LOCATION_ID':
+         return { ...state, lastLocationId: payload }
       default:
          return state
    }
