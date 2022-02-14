@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 export const StyledWrapper = styled.div`
 display: flex;
-justify-content: end;
+justify-content: center;
 padding: 2rem;
 .ant-input {
    font-weight: 500;
@@ -51,6 +51,12 @@ div.ant-typography,span.ant-typography{
 .ant-modal-content{
    width: 50%;
    height: auto;
+}
+.ant-btn-background-ghost{
+   width:23rem !important;
+   height:3rem !important;
+    font-size: 15px !important;
+    border-radius: 6px !important;
 }
 `
 export const ImageContainer = styled.div`
