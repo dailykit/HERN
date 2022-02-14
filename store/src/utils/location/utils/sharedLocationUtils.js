@@ -25,7 +25,10 @@ const getSortedStoresByAerialDistance = async (brandLocations, address) => {
                latitude: address.latitude,
                longitude: address.longitude,
             },
-            eachStore.location.locationAddress.locationCoordinates,
+            {
+               latitude: eachStore.location.lat,
+               longitude: eachStore.location.lng,
+            },
             0.1
          )
          const aerialDistanceInMiles = convertDistance(aerialDistance, 'mi')
