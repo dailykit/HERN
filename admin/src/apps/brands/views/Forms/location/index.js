@@ -16,7 +16,7 @@ import { InlineLoader, Tooltip } from '../../../../../shared/components'
 import { logger } from '../../../../../shared/utils'
 import { LOCATIONS } from '../../../graphql'
 import validator from '../../validator'
-import { Address, Assets, LinkedBrands } from './components'
+import { Address, Assets, LinkedBrands, LocationDetails } from './components'
 import { ResponsiveFlex, StyledFlex } from './styled'
 
 export const Location = () => {
@@ -179,13 +179,14 @@ export const Location = () => {
                   <HorizontalTabPanel>
                      <StyledFlex
                         as="section"
-                        container
-                        alignItems="start"
-                        justifyContent="space-between"
+                        // container
+                        // alignItems="start"
+                        // justifyContent="space-between"
                      >
-                        <Address state={state} locationId={id} />
-                        <Spacer xAxis size="16px" />
-                        <Assets state={state} locationId={id} />
+                        {/* <Address state={state} locationId={id} /> */}
+                        <LocationDetails state={state} locationId={id} />
+                        {/* <Spacer xAxis size="16px" />
+                        <Assets state={state} locationId={id} /> */}
                      </StyledFlex>
                   </HorizontalTabPanel>
                   <HorizontalTabPanel>
