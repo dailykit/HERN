@@ -11,9 +11,15 @@ import {
    WalletAmount,
 } from '../../components'
 import { CartContext, onDemandMenuContext, useUser } from '../../context'
-import { EmptyCart, PaymentIcon, LeftArrowIcon } from '../../assets/icons'
+import {
+   EmptyCart,
+   PaymentIcon,
+   ChevronIcon,
+   LeftArrowIcon,
+} from '../../assets/icons'
 import { UserInfo, UserType, Tunnel } from '../../components'
 import { useConfig } from '../../lib'
+import classNames from 'classnames'
 
 export const OnDemandCart = () => {
    const { cartState, combinedCartItems, isFinalCartLoading, storedCartId } =
@@ -24,7 +30,7 @@ export const OnDemandCart = () => {
    if (isFinalCartLoading || isMenuLoading)
       return (
          <>
-            <CarPageHeader />
+            <CartPageHeader />
             <Loader type="cart-loading" />
          </>
       )
@@ -37,7 +43,7 @@ export const OnDemandCart = () => {
    ) {
       return (
          <>
-            <CarPageHeader />
+            <CartPageHeader />
             <div className="hern-cart-empty-cart">
                <EmptyCart />
                <span>Oops! Your cart is empty </span>
@@ -51,7 +57,7 @@ export const OnDemandCart = () => {
    if (!isAuthenticated && userType !== 'guest') {
       return (
          <>
-            <CarPageHeader />
+            <CartPageHeader />
             <div className="hern-on-demand-cart-section">
                <div>
                   <div className="hern-on-demand-cart-section__left">
@@ -67,7 +73,7 @@ export const OnDemandCart = () => {
    }
    return (
       <>
-         <CarPageHeader />
+         <CartPageHeader />
          <div className="hern-on-demand-cart-section">
             <div>
                <div className="hern-on-demand-cart-section__left">
@@ -90,32 +96,59 @@ const PaymentSection = () => {
 
    return (
       <>
-         {!open && (
+         {/* {!open && (
             <button
                className="hern-make-payment__btn"
                onClick={() => setOpen(true)}
             >
                Make Payment
             </button>
-         )}
-         <div className="hern-ondemand-cart__left-card">
-            <div className="hern-on-demand-cart__payment-section__content">
-               <div className="hern-on-demand-cart__payment-section__header">
-                  <PaymentIcon width={20} height={22} />
-                  <span className="hern-user-info__heading">Payment</span>
-               </div>
-               {isAuthenticated && (
-                  <div className="hern-ondemand-cart__left-card">
-                     <WalletAmount cart={cartState.cart} version={2} />
-                  </div>
+         )} */}
+         <div className="hern-on-demand-cart__payment-section__content">
+            <div
+               className={classNames(
+                  'hern-on-demand-cart__payment-section__content__header',
+                  {
+                     'hern-on-demand-cart__payment-section__content__header--open':
+                        open,
+                  }
                )}
-               <PaymentOptionsRenderer
-                  cartId={cartState?.cart?.id}
-                  setPaymentTunnelOpen={setOpen}
-               />
+            >
+               <div>
+                  <span className="hern-payment-icon-shawdow">
+                     <PaymentIcon
+                        color="rgba(64, 64, 64, 0.6)"
+                        width={20}
+                        height={20}
+                     />
+                  </span>
+                  &nbsp; &nbsp;
+                  <h3>Payment</h3>
+               </div>
+               <span onClick={() => setOpen(!open)} role="button">
+                  <ChevronIcon
+                     direction={open ? 'down' : 'right'}
+                     color="rgba(64, 64, 64, 0.6)"
+                     width={16}
+                     height={16}
+                  />
+               </span>
             </div>
+
+            {open && (
+               <>
+                  {isAuthenticated && (
+                     <WalletAmount cart={cartState.cart} version={2} />
+                  )}
+                  <PaymentOptionsRenderer
+                     cartId={cartState?.cart?.id}
+                     setPaymentTunnelOpen={setOpen}
+                  />
+               </>
+            )}
          </div>
-         <Tunnel.Bottom
+
+         {/* <Tunnel.Bottom
             title={
                <div className="hern-on-demand-cart__payment-section__header--tunnel">
                   <PaymentIcon width={20} height={22} />
@@ -135,12 +168,12 @@ const PaymentSection = () => {
                cartId={cartState?.cart?.id}
                setPaymentTunnelOpen={setOpen}
             />
-         </Tunnel.Bottom>
+         </Tunnel.Bottom> */}
       </>
    )
 }
 
-const CarPageHeader = () => {
+const CartPageHeader = () => {
    const {
       BrandName: { value: showBrandName } = {},
       BrandLogo: { value: showBrandLogo } = {},
