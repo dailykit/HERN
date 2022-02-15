@@ -1,35 +1,26 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { CartContext, onDemandMenuContext, useUser } from '../../context'
 import {
    Button,
    Divider,
-   ProductCard,
-   ModifierPopup,
-   CounterButton,
    Loader,
    CartBillingDetails,
    LoyaltyPoints,
    Coupon,
+   CartCard,
 } from '../../components'
 import _, { isEmpty } from 'lodash'
-import { combineCartItems, formatCurrency } from '../../utils'
-import { DeleteIcon, EditIcon, EmptyCart, CloseIcon } from '../../assets/icons'
-import { useLazyQuery, useQuery } from '@apollo/react-hooks'
-import { PRODUCTS } from '../../graphql'
+import { formatCurrency } from '../../utils'
+import { EmptyCart, CloseIcon } from '../../assets/icons'
 import Link from 'next/link'
 import { useConfig } from '../../lib'
 
 export const CartDetails = () => {
    //context
-   const {
-      cartState,
-      methods,
-      addToCart,
-      combinedCartItems,
-      isFinalCartLoading,
-   } = React.useContext(CartContext)
+   const { cartState, methods, combinedCartItems, isFinalCartLoading } =
+      React.useContext(CartContext)
    const { onDemandMenu } = React.useContext(onDemandMenuContext)
-   const { brand, isConfigLoading, locationId, settings } = useConfig()
+   const { settings } = useConfig()
    const { user, isAuthenticated } = useUser()
    //context data
    const { cart } = cartState
@@ -39,45 +30,6 @@ export const CartDetails = () => {
       settings?.rewards?.find(
          setting => setting?.identifier === 'Loyalty Points Availability'
       )?.value?.['Loyalty Points']?.IsLoyaltyPointsAvailable?.value ?? true
-   //component state
-   const [increaseProductId, setIncreaseProductId] = useState(null)
-   const [increaseProduct, setIncreaseProduct] = useState(null)
-   const [popUpType, setPopupType] = useState(null)
-   const [cartDetailSelectedProduct, setCartDetailSelectedProduct] =
-      useState(null)
-   const [tip, setTip] = useState(null)
-
-   const argsForByLocation = React.useMemo(
-      () => ({
-         params: {
-            brandId: brand?.id,
-            locationId: locationId,
-         },
-      }),
-      [brand]
-   )
-
-   //fetch product detail which to be increase or edit
-   useQuery(PRODUCTS, {
-      skip: !increaseProductId,
-      variables: {
-         ids: increaseProductId,
-         priceArgs: argsForByLocation,
-         discountArgs: argsForByLocation,
-         defaultCartItemArgs: argsForByLocation,
-         productOptionPriceArgs: argsForByLocation,
-         productOptionDiscountArgs: argsForByLocation,
-         productOptionCartItemArgs: argsForByLocation,
-         modifierCategoryOptionPriceArgs: argsForByLocation,
-         modifierCategoryOptionDiscountArgs: argsForByLocation,
-         modifierCategoryOptionCartItemArgs: argsForByLocation,
-      },
-      onCompleted: data => {
-         if (data) {
-            setIncreaseProduct(data.products[0])
-         }
-      },
-   })
 
    //remove cartItem or cartItems
    const removeCartItems = cartItemIds => {
@@ -91,72 +43,6 @@ export const CartDetails = () => {
             },
          },
       })
-   }
-
-   //custom area for product card
-   const customArea = props => {
-      const { data } = props
-      const { productId } = data
-
-      return (
-         <>
-            <div className="hern-cart-product-custom-area">
-               <div className="hern-cart-product-custom-area-quantity">
-                  <CounterButton
-                     count={data.ids.length}
-                     incrementClick={() => {
-                        if (data.childs.length === 0) {
-                           addToCart({ productId: data.productId }, 1)
-                           return
-                        }
-                        setCartDetailSelectedProduct(data)
-                        setIncreaseProductId(productId)
-                        setPopupType('newItem')
-                     }}
-                     decrementClick={() =>
-                        removeCartItems([data.ids[data.ids.length - 1]])
-                     }
-                     showDeleteButton
-                  />
-                  {/* price */}
-                  {data.childs[0].price !== 0 && (
-                     <div>
-                        {data.childs[0].discount > 0 && (
-                           <span
-                              style={{
-                                 textDecoration: 'line-through',
-                              }}
-                           >
-                              {formatCurrency(
-                                 data.childs[0].price * data.ids.length
-                              )}
-                           </span>
-                        )}
-
-                        <span className="hern-cart-product-custom-area-price">
-                           {formatCurrency(
-                              (data.childs[0].price - data.childs[0].discount) *
-                                 data.ids.length
-                           )}
-                        </span>
-                     </div>
-                  )}
-               </div>
-            </div>
-         </>
-      )
-   }
-
-   const closeModifier = () => {
-      setIncreaseProduct(null)
-      setCartDetailSelectedProduct(null)
-      setIncreaseProductId(null)
-   }
-
-   const address = address => {
-      if (!address) {
-         return 'Address Not Available'
-      }
    }
 
    if (isFinalCartLoading || isMenuLoading) {
@@ -202,69 +88,16 @@ export const CartDetails = () => {
    return (
       <section className="hern-cart-container">
          <h2>Items({combinedCartItems.length})</h2>
-         <div className="hern-cart-products-product-list">
-            {combinedCartItems.map((product, index) => {
-               return (
-                  <div key={index}>
-                     <ProductCard
-                        data={product}
-                        showImage={false}
-                        showProductAdditionalText={false}
-                        customAreaComponent={customArea}
-                        showModifier={Boolean(increaseProduct)}
-                        closeModifier={closeModifier}
-                        modifierPopupConfig={{
-                           productData: increaseProduct,
-                           showCounterBtn: Boolean(popUpType === 'edit'),
-                           forNewItem: Boolean(popUpType === 'newItem'),
-                           edit: Boolean(popUpType === 'edit'),
-                           productCartDetail: cartDetailSelectedProduct,
-                        }}
-                        useForThirdParty={true}
-                     />
-
-                     <div className="hern-cart__edit-area">
-                        <button
-                           style={{
-                              borderRight: '1px solid rgba(64, 64, 64, 0.25)',
-                              color: 'var(--hern-accent)',
-                           }}
-                           onClick={() => {
-                              setCartDetailSelectedProduct(product)
-                              setIncreaseProductId(product.productId)
-                              setPopupType('edit')
-                           }}
-                        >
-                           {product.childs.length > 0 && (
-                              <EditIcon
-                                 size={12}
-                                 fill={'var(--hern-accent)'}
-                                 style={{
-                                    cursor: 'pointer',
-                                 }}
-                                 title="Edit"
-                              />
-                           )}{' '}
-                           Edit
-                        </button>
-
-                        <button
-                           style={{ color: `rgba(64, 64, 64, 0.6)` }}
-                           onClick={() => removeCartItems(product.ids)}
-                        >
-                           <DeleteIcon
-                              stroke={'rgba(64, 64, 64, 0.6)'}
-                              onClick={() => {}}
-                              title="Delete"
-                              size={12}
-                           />
-                           Remove
-                        </button>
-                     </div>
-                  </div>
-               )
-            })}
-         </div>
+         {combinedCartItems.map((product, index) => {
+            return (
+               <CartCard
+                  key={product.productId}
+                  productData={product}
+                  quantity={product?.ids?.length}
+                  removeCartItems={removeCartItems}
+               />
+            )
+         })}
          <Coupon upFrontLayout={true} cart={cart} />
          {isAuthenticated &&
             isLoyaltyPointsAvailable &&
@@ -274,75 +107,6 @@ export const CartDetails = () => {
          <Divider />
          <CartBillingDetails billing={cart.billing} />
       </section>
-   )
-}
-
-const ModifiersList = props => {
-   const { data } = props
-   console.log('this is modifier data', data)
-   return (
-      <div className="hern-cart-product-modifiers">
-         <span className="hern-cart-product-modifiers-heading">
-            Product Option:
-         </span>
-         <div className="hern-cart-product-modifiers-product-option">
-            <span>{data.childs[0].productOption.label || 'N/A'}</span>{' '}
-            {data.childs[0].price !== 0 && (
-               <div>
-                  {data.childs[0].discount > 0 && (
-                     <span
-                        style={{
-                           textDecoration: 'line-through',
-                        }}
-                     >
-                        {formatCurrency(data.childs[0].price)}
-                     </span>
-                  )}
-                  <span style={{ marginLeft: '6px' }}>
-                     {formatCurrency(
-                        data.childs[0].price - data.childs[0].discount
-                     )}
-                  </span>
-               </div>
-            )}
-         </div>
-         <div className="hern-cart-product-modifiers-list">
-            {data.childs[0].childs.some(each => each.modifierOption) && (
-               <span className="hern-cart-product-modifiers-heading">
-                  Add ons:
-               </span>
-            )}
-            <ul>
-               {data.childs.length > 0 &&
-                  data.childs[0].childs.map((modifier, index) =>
-                     modifier.modifierOption ? (
-                        <li key={index}>
-                           <span>{modifier.modifierOption.name}</span>
-
-                           {modifier.price !== 0 && (
-                              <div>
-                                 {modifier.discount > 0 && (
-                                    <span
-                                       style={{
-                                          textDecoration: 'line-through',
-                                       }}
-                                    >
-                                       {formatCurrency(modifier.price)}
-                                    </span>
-                                 )}
-                                 <span style={{ marginLeft: '6px' }}>
-                                    {formatCurrency(
-                                       modifier.price - modifier.discount
-                                    )}
-                                 </span>
-                              </div>
-                           )}
-                        </li>
-                     ) : null
-                  )}
-            </ul>
-         </div>
-      </div>
    )
 }
 
