@@ -39,6 +39,8 @@ export const ProductCard = props => {
       showProductDetails = true,
       customProductDetails = false,
       showProductCard = true,
+      className = '',
+      config,
    } = props
 
    const slideRef = React.useRef()
@@ -89,7 +91,7 @@ export const ProductCard = props => {
    return (
       <>
          {showProductCard && (
-            <div className="hern-product-card">
+            <div className={classNames('hern-product-card', className)}>
                {showImage && (
                   <div className="hern-product-card-image-container">
                      <Slide ref={slideRef} {...properties}>
@@ -116,8 +118,10 @@ export const ProductCard = props => {
                                        }
                                     )}
                                     onClick={e => {
-                                       e.stopPropagation()
-                                       onImageClick ? onImageClick() : null
+                                       if (onImageClick) {
+                                          e.stopPropagation()
+                                          onImageClick()
+                                       }
                                     }}
                                     style={{
                                        cursor: onImageClick ? 'pointer' : null,
@@ -131,8 +135,10 @@ export const ProductCard = props => {
                         <div
                            className="hern-product-card-on-image-icon"
                            onClick={e => {
-                              e.stopPropagation()
-                              onIconOnImageClick ? onIconOnImageClick() : null
+                              if (onIconOnImageClick) {
+                                 e.stopPropagation()
+                                 onIconOnImageClick()
+                              }
                            }}
                         >
                            <IconOnImage />
@@ -147,20 +153,20 @@ export const ProductCard = props => {
                   })}
                   style={contentAreaCustomStyle}
                   onClick={e => {
-                     e.stopPropagation()
-                     onProductCardContentClick
-                        ? onProductCardContentClick
-                        : null
+                     if (onProductCardContentClick) {
+                        e.stopPropagation()
+                        onProductCardContentClick()
+                     }
                   }}
                >
                   {AdditionalIcon && (
                      <div
                         className="hern-product-card-additional-icon"
                         onClick={e => {
-                           e.stopPropagation()
-                           onAdditionalIconClick
-                              ? onAdditionalIconClick()
-                              : null
+                           if (onAdditionalIconClick) {
+                              e.stopPropagation()
+                              onAdditionalIconClick()
+                           }
                         }}
                      >
                         <AdditionalIcon />
@@ -173,10 +179,10 @@ export const ProductCard = props => {
                               <div
                                  className="hern-product-card__name"
                                  onClick={e => {
-                                    e.stopPropagation()
-                                    onProductNameClick
-                                       ? onProductNameClick()
-                                       : null
+                                    if (onProductNameClick) {
+                                       e.stopPropagation()
+                                       onProductNameClick()
+                                    }
                                  }}
                                  title={data?.name}
                                  style={{
@@ -197,10 +203,10 @@ export const ProductCard = props => {
                               <div
                                  className="hern-product-card-show-image-icon"
                                  onClick={e => {
-                                    e.stopPropagation()
-                                    onShowImageIconClick
-                                       ? onShowImageIconClick()
-                                       : null
+                                    if (onShowImageIconClick) {
+                                       e.stopPropagation()
+                                       onShowImageIconClick()
+                                    }
                                  }}
                               >
                                  <ShowImageIcon />
@@ -215,12 +221,14 @@ export const ProductCard = props => {
                                        textDecoration: 'line-through',
                                     }}
                                  >
-                                    {formatCurrency(data.price)}
+                                    {formatCurrency(data.price - data.discount)}
                                  </span>
                               )}
-                              <span style={{ marginLeft: '6px' }}>
-                                 {finalProductPrice()}
-                              </span>
+                              {finalProductPrice > 0 && (
+                                 <span style={{ marginLeft: '6px' }}>
+                                    {finalProductPrice()}
+                                 </span>
+                              )}
                            </div>
                         )}
                         {showProductAdditionalText && data?.additionalText && (
@@ -265,6 +273,7 @@ export const ProductCard = props => {
                showModifierImage={modifierPopupConfig?.showModifierImage}
                modifierWithoutPopup={modifierWithoutPopup}
                customProductDetails={customProductDetails}
+               config={config}
             />
          )}
       </>

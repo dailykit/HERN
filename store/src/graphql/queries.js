@@ -1449,6 +1449,43 @@ export const PRODUCTS = gql`
                      cartItem: cartItemByLocation(
                         args: $modifierCategoryOptionCartItemArgs
                      )
+                     additionalModifierTemplate {
+                        id
+                        name
+                        categories(
+                           where: { isVisible: { _eq: true } }
+                           order_by: { position: desc_nulls_last }
+                        ) {
+                           id
+                           name
+                           isRequired
+                           type
+                           limits
+                           options(
+                              where: { isVisible: { _eq: true } }
+                              order_by: { position: desc_nulls_last }
+                           ) {
+                              id
+                              name
+                              price: priceByLocation(
+                                 args: $modifierCategoryOptionPriceArgs
+                              )
+                              discount: discountByLocation(
+                                 args: $modifierCategoryOptionDiscountArgs
+                              )
+                              quantity
+                              image
+                              isActive
+                              additionalModifierTemplateId
+                              isAdditionalModifierRequired
+                              sachetItemId
+                              ingredientSachetId
+                              cartItem: cartItemByLocation(
+                                 args: $modifierCategoryOptionCartItemArgs
+                              )
+                           }
+                        }
+                     }
                   }
                }
             }
