@@ -47,8 +47,8 @@ export const FulfillmentForm = () => {
       }
    }, [selectedFulfillment])
    const [fulfillementAddressOpen, setFulfillementAddressOpen] =
-      React.useState(false)
-   const [fulfillementTimeOpen, setFulfillementTimeOpen] = React.useState(false)
+      React.useState(true)
+   const [fulfillementTimeOpen, setFulfillementTimeOpen] = React.useState(true)
 
    return (
       <div>
@@ -350,18 +350,23 @@ export const Fulfillment = ({ cart, editable = true }) => {
 }
 
 const ConsumerAddress = ({ setShowRefineLocation, showEditIcon }) => {
-   const { cartState } = React.useContext(CartContext)
+   const { cartState: { cart } = {} } = React.useContext(CartContext)
+
    const address = React.useMemo(() => {
-      if (cartState.cart?.address) {
-         return cartState.cart?.address
+      if (cart?.address) {
+         return cart?.address
       } else {
          return JSON.parse(localStorage.getItem('userLocation'))
       }
-   }, [cartState.cart])
+   }, [cart])
    if (!address) {
       return null
    }
    const fullAddress = `${address?.line1} ${address?.line2} ${address?.city} ${address?.state} ${address?.country},${address?.zipcode}`
+   const isChangeButtonDisabled =
+      !cart?.customerInfo?.customerFirstName ||
+      !cart?.customerInfo?.customerLastName ||
+      !cart?.customerInfo?.customerPhone
    return (
       <>
          <address title={fullAddress}>{fullAddress}</address>
@@ -369,6 +374,7 @@ const ConsumerAddress = ({ setShowRefineLocation, showEditIcon }) => {
             <button
                onClick={() => setShowRefineLocation(true)}
                className="hern-fulfillment__address__content__change-btn"
+               disabled={isChangeButtonDisabled}
             >
                Change
             </button>
