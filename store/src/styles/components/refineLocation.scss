@@ -55,6 +55,7 @@
    width: 100%;
    position: sticky;
    bottom: 0;
+   height: 40px;
 }
 .hern-refine-location__no-store-available {
    color: #ec4730;
@@ -67,9 +68,10 @@
    box-shadow: 0px 1px 8px rgb(0 0 0 / 5%);
    border-radius: 6px;
    margin-right: 8px;
+   height: 36px;
 }
 .hern-refine-location-close-icon {
-   height: 36px;
+   // margin-top: 14px;
 }
 @media (min-width: 768px) {
    .hern-refine-location_content {

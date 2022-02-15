@@ -617,6 +617,7 @@ export const RefineLocationPopup = props => {
             setShowRefineLocation(false)
             onRefineLocationCloseIconClick && onRefineLocationCloseIconClick()
          }}
+         destroyOnClose={true}
       >
          <RefineLocation {...props} />
       </Tunnel.Left>
