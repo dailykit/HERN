@@ -113,6 +113,9 @@ const Subscriptions = dynamic(() =>
 const CartOrderDetails = dynamic(() =>
    import('../sections/view-order').then(promise => promise.CartOrderDetails)
 )
+const Testimonials = dynamic(() =>
+   import('../sections/testimonials').then(promise => promise.Testimonials)
+)
 export const renderComponentByName = (fold, options) => {
    const getProps = component => {
       if (options) {
@@ -304,18 +307,13 @@ export const renderComponentByName = (fold, options) => {
       case 'CartOrderDetails':
          return <CartOrderDetails />
 
-      /*
-      Global
-      */
+      /** Global  */
       case 'ProductGallery':
          return <ProductGallery config={fold.config} />
-
-      /*
-      Global
-      */
+      case 'Testimonials':
+         return <Testimonials config={fold.config} />
       case 'SliderSection':
          return <SliderSection config={fold.config} />
-
       case 'ContactUs':
          return <ContactUs config={fold.config} />
    }
