@@ -4,6 +4,7 @@ export const StyledWrapper = styled.div`
 display: flex;
 justify-content: center;
 padding: 2rem;
+
 .ant-input {
    font-weight: 500;
    font-size: 16px;
@@ -58,25 +59,25 @@ div.ant-typography,span.ant-typography{
     font-size: 15px !important;
     border-radius: 6px !important;
 }
+
 `
-export const ImageContainer = styled.div`
-display: flex;
-    flex-direction: row-reverse;
-    justify-content: flex-end;
-   width: 464px;
-   height: 128px;
-   position: relative;
-   margin-bottom: 16px;
-   img {
-      width: 464px;
-      height: 128px;
-      object-fit: cover;
-   }
-   div {
-      span {
-         margin-right: 16px;
-         cursor: pointer;
-      }
-   }
+export const DrawerWrapper = styled.div`
+.ant-drawer.ant-drawer-open .ant-drawer-mask{
+   opacity: 0.2 !important;
+}
+.ant-drawer-content-wrapper{
+   width:250px !important;
+}
+.ant-drawer-body{
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+   padding-bottom:10px !important;
+}
+.ant-drawer.ant-drawer-open .ant-drawer-mask {
+   animation-duration: 0s !important;
+   animation:none !important;
+}
 `
 
