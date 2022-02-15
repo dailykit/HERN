@@ -15,12 +15,13 @@ import {
    HorizontalTabList,
    HorizontalTabPanel,
    HorizontalTabPanels,
+   Loader,
 } from '@dailykit/ui'
 import React from 'react'
 import { toast } from 'react-toastify'
 import { DeleteIcon, PlusIcon } from '../../../../../shared/assets/icons'
 import { Banner, InlineLoader } from '../../../../../shared/components'
-import { logger } from '../../../../../shared/utils'
+import { get_env, logger } from '../../../../../shared/utils'
 import { LOCATIONS } from '../../../graphql'
 import { StyledHeader, StyledWrapper } from '../styled'
 import tableOptions from '../../../tableOption'
@@ -28,9 +29,16 @@ import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { useTabs, useTooltip } from '../../../../../shared/providers'
 import CreateBrandLocation from '../../../../../shared/CreateUtils/Brand/BrandLocation'
 import { Avatar, Tooltip } from 'antd'
-import { PublishIcon, UnPublishIcon } from '../../../assets/icons'
+import {
+   LocationMarkerIcon,
+   PublishIcon,
+   UnPublishIcon,
+} from '../../../assets/icons'
 import { DisplayLocation } from './tunnels'
 import { EditLocationDetails } from '../../Forms/location/tunnels'
+import GoogleMapReact from 'google-map-react'
+import { isEmpty } from 'lodash'
+import '@reach/tabs/styles.css'
 
 export const Locations = () => {
    const [locations, setLocations] = React.useState()
@@ -176,7 +184,9 @@ export const Locations = () => {
                <HorizontalTab>Table</HorizontalTab>
             </HorizontalTabList>
             <HorizontalTabPanels>
-               <HorizontalTabPanel>Bulk Content</HorizontalTabPanel>
+               <HorizontalTabPanel>
+                  <LocationsOnMap locations={locations} />
+               </HorizontalTabPanel>
                <HorizontalTabPanel>
                   <ReactTabulator
                      ref={tableRef}
@@ -341,6 +351,77 @@ const LocationOnMap = ({ cell, openTunnel, setSelectedRowData }) => {
                View Map
             </TextButton>
          </ButtonGroup>
+      </>
+   )
+}
+
+const LocationsOnMap = ({ locations }) => {
+   console.log('details', locations)
+
+   const defaultProps = {
+      center: {
+         lat: 26.909911628518344,
+         lng: 75.77575138297402,
+      },
+      zoom: 12,
+   }
+   const getInfoWindowString = location => `
+    <div>
+      <div style="font-size: 16px;">
+        ${location.label}
+      </div>
+      `
+
+   const handleApiLoaded = (map, maps, locations) => {
+      const markers = []
+      const infowindows = []
+
+      locations.forEach(location => {
+         markers.push(
+            new maps.Marker({
+               position: {
+                  lat: Number(location.lat),
+                  lng: Number(location.lng),
+               },
+               map,
+            })
+         )
+
+         infowindows.push(
+            new maps.InfoWindow({
+               content: getInfoWindowString(location),
+            })
+         )
+      })
+
+      markers.forEach((marker, i) => {
+         marker.addListener('click', () => {
+            infowindows[i].open(map, marker)
+         })
+      })
+   }
+   return (
+      <>
+         <div
+            style={{
+               height: '400px',
+               width: '100%',
+               position: 'relative',
+            }}
+         >
+            <GoogleMapReact
+               bootstrapURLKeys={{
+                  key: get_env('REACT_APP_MAPS_API_KEY'),
+               }}
+               defaultCenter={defaultProps.center}
+               defaultZoom={defaultProps.zoom}
+               options={{ gestureHandling: 'greedy' }}
+               yesIWantToUseGoogleMapApiInternals
+               onGoogleApiLoaded={({ map, maps }) =>
+                  handleApiLoaded(map, maps, locations)
+               }
+            />
+         </div>
       </>
    )
 }
