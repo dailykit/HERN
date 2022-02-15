@@ -25,13 +25,14 @@ import CreateBrandLocation from '../../../../../shared/CreateUtils/Brand/BrandLo
 import { Avatar, Tooltip } from 'antd'
 import { PublishIcon, UnPublishIcon } from '../../../assets/icons'
 import { DisplayLocation } from './tunnels'
+import { EditLocationDetails } from '../../Forms/location/tunnels'
 
 export const Locations = () => {
    const [locations, setLocations] = React.useState()
    const tableRef = React.useRef()
    const { tooltip } = useTooltip()
    const { addTab, tab } = useTabs()
-   const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
    const [selectedRowData, setSelectedRowData] = React.useState(null)
 
    // subscriptions
@@ -180,6 +181,13 @@ export const Locations = () => {
                <DisplayLocation
                   closeTunnel={closeTunnel}
                   selectedRowData={selectedRowData}
+                  openTunnel={openTunnel}
+               />
+            </Tunnel>
+            <Tunnel layer={3} popup={true} size="md">
+               <EditLocationDetails
+                  state={selectedRowData}
+                  closeTunnel={closeTunnel}
                />
             </Tunnel>
          </Tunnels>
@@ -233,9 +241,9 @@ const BrandAvatar = ({ cell }) => {
                            eachBrand.brand.brand_brandSettings[0]?.value
                               .brandLogo.value
                               ? eachBrand.brand.brand_brandSettings[0]?.value
-                                 .brandLogo.value
+                                   .brandLogo.value
                               : eachBrand.brand.brand_brandSettings[0]?.value
-                                 .brandLogo.default.url
+                                   .brandLogo.default.url
                         }
                      />
                   ) : (

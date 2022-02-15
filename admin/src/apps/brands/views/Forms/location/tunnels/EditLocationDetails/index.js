@@ -1,18 +1,10 @@
 import { useMutation } from '@apollo/react-hooks'
-import {
-   CloseIconv2,
-   Flex,
-   Form,
-   IconButton,
-   Spacer,
-   TunnelHeader,
-} from '@dailykit/ui'
+import { CloseIconv2, Flex, Form, Spacer, TunnelHeader } from '@dailykit/ui'
 import GoogleMapReact from 'google-map-react'
 import React from 'react'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
 import { toast } from 'react-toastify'
 import {
-   DeleteIcon,
    LocationMarkerIcon,
    SearchIcon,
 } from '../../../../../../../shared/assets/icons'
@@ -21,7 +13,9 @@ import { LOCATIONS } from '../../../../../graphql'
 import validator from '../../../../validator'
 import { StyledContainer } from './styled'
 
-const EditLocationDetails = ({ state, locationId, close }) => {
+const EditLocationDetails = ({ state, locationId, close, closeTunnel }) => {
+   // console.log('state', state)
+
    const [location, setLocation] = React.useState({
       lat: {
          value: state.lat || '',
@@ -97,7 +91,6 @@ const EditLocationDetails = ({ state, locationId, close }) => {
       },
       showGooglePlacesAutocompleteInside: false,
    })
-
    //mutation
    const [updateLocation] = useMutation(LOCATIONS.UPDATE, {
       onCompleted: () => {
@@ -135,12 +128,12 @@ const EditLocationDetails = ({ state, locationId, close }) => {
          //fetching the details of location address when map is moved
          fetch(
             `https://maps.googleapis.com/maps/api/geocode/json?latlng=${
-               location.lat
-            },${location.lng}&key=${get_env('REACT_APP_MAPS_API_KEY')}`
+               location.lat.value
+            },${location.lng.value}&key=${get_env('REACT_APP_MAPS_API_KEY')}`
          )
             .then(res => res.json())
             .then(data => {
-               // console.log('fetchData', data)
+               console.log('fetchData', data)
                if (data.status === 'OK' && data.results.length > 0) {
                   const formatted_address =
                      data.results[0].formatted_address.split(',')
@@ -180,7 +173,7 @@ const EditLocationDetails = ({ state, locationId, close }) => {
                console.log('error', e)
             })
       }
-   }, [location.lat, location.lng])
+   }, [location.lat.value, location.lng.value])
 
    const UserLocationMarker = () => {
       return (
@@ -303,7 +296,7 @@ const EditLocationDetails = ({ state, locationId, close }) => {
    const Save = () => {
       updateLocation({
          variables: {
-            id: locationId,
+            id: state.id,
             _set: {
                label: location.label.value,
                locationAddress: {
@@ -318,12 +311,14 @@ const EditLocationDetails = ({ state, locationId, close }) => {
                lng: String(location.lng.value),
                city: location.city.value,
                state: location.state.value,
-               country: location.state.value,
+               country: location.country.value,
                zipcode: location.zipcode.value,
             },
          },
       })
-      close(1)
+      {
+         closeTunnel ? closeTunnel(3) : close(1)
+      }
    }
    return (
       <>
@@ -333,7 +328,11 @@ const EditLocationDetails = ({ state, locationId, close }) => {
                title: 'Save',
                action: Save,
             }}
-            close={() => close(1)}
+            close={() => {
+               {
+                  closeTunnel ? closeTunnel(3) : close(1)
+               }
+            }}
             nextAction="Done"
          />
 
@@ -441,7 +440,7 @@ const LocationForm = props => {
             ...location['city'],
             value: address.city,
             meta: {
-               ...location['line2']['meta'],
+               ...location['city']['meta'],
                isTouched: true,
             },
          },
@@ -449,7 +448,7 @@ const LocationForm = props => {
             ...location['state'],
             value: address.state,
             meta: {
-               ...location['line2']['meta'],
+               ...location['state']['meta'],
                isTouched: true,
             },
          },
@@ -457,15 +456,15 @@ const LocationForm = props => {
             ...location['country'],
             value: address.country,
             meta: {
-               ...location['line2']['meta'],
+               ...location['country']['meta'],
                isTouched: true,
             },
          },
          ['zipcode']: {
-            ...location['country'],
+            ...location['zipcode'],
             value: address.zipcode,
             meta: {
-               ...location['line2']['meta'],
+               ...location['zipcode']['meta'],
                isTouched: true,
             },
          },
@@ -473,7 +472,7 @@ const LocationForm = props => {
             ...location['lat'],
             value: address.latitude,
             meta: {
-               ...location['line2']['meta'],
+               ...location['lat']['meta'],
                isTouched: true,
             },
          },
@@ -481,7 +480,7 @@ const LocationForm = props => {
             ...location['lng'],
             value: address.longitude,
             meta: {
-               ...location['line2']['meta'],
+               ...location['lng']['meta'],
                isTouched: true,
             },
          },
