@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Head from 'next/head'
+// import { useConfig } from '../lib'
 
 export const SEO = ({ seoSettings, richresult, children }) => {
    const {
@@ -15,6 +16,7 @@ export const SEO = ({ seoSettings, richresult, children }) => {
       ogDescription,
       googleAnalyticsId,
       facebookPixelId,
+      additionalTags
    } = seoSettings
 
    return (
@@ -22,16 +24,19 @@ export const SEO = ({ seoSettings, richresult, children }) => {
          <title>
             {metaTitle}
          </title>
-         <link rel="icon" href={favicon} type="image/png" />
-         <meta
-            name={metaTitle}
-            content={metaDescription || ''}
-         />
+         <link rel="icon" href={favicon} type="image/png" sizes="16x16" />
          <meta
             property="description"
             content={metaDescription || ''}
             name="description"
          />
+         {/* additionalTags if any */}
+         {additionalTags.length > 0 && (
+            additionalTags.map((obj) => {
+               return (<meta name={Object.keys(obj)[0]} content={Object.values(obj)[0]} />)
+            }))
+         }
+
          <meta
             property="og:title"
             content={

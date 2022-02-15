@@ -1677,6 +1677,10 @@ export const GET_CARTS = gql`
    subscription GET_CARTS($where: order_cart_bool_exp!) {
       carts(where: $where) {
          id
+         address
+         fulfillmentInfo
+         locationId
+         orderTabId
       }
    }
 `
@@ -1775,7 +1779,7 @@ export const BRAND_LOCATIONS = gql`
    }
 `
 export const PREORDER_DELIVERY_BRAND_RECURRENCES = gql`
-   query BRAND_ONDEMAND_DELIVERY_RECURRENCES(
+   query PREORDER_DELIVERY_BRAND_RECURRENCES(
       $where: fulfilment_brand_recurrence_bool_exp!
    ) {
       brandRecurrences(where: $where) {
@@ -1944,7 +1948,7 @@ export const SCHEDULED_DINEIN_BRAND_RECURRENCES = gql`
 `
 export const GET_BRAND_LOCATION = gql`
    query GET_BRAND_LOCATION($where: brands_brand_location_bool_exp!) {
-      brands_brand_location(where: $where) {
+      brandLocations: brands_brand_location(where: $where) {
          id
          brandId
          location {
@@ -2203,6 +2207,42 @@ export const GET_ORDER_DETAILS = gql`
                }
             }
             productId
+         }
+      }
+   }
+`
+
+export const GET_ALL_RECURRENCES = gql`
+   query GET_ALL_RECURRENCES($where: fulfilment_brand_recurrence_bool_exp!) {
+      brandRecurrences(where: $where) {
+         brandId
+         brandLocationId
+         recurrenceId
+         recurrence {
+            id
+            rrule
+            type
+            timeSlots {
+               from
+               to
+               pickUpPrepTime
+               id
+               pickUpLeadTime
+               slotInterval
+               mileRanges {
+                  id
+                  from
+                  city
+                  distanceType
+                  to
+                  zipcodes
+                  state
+                  prepTime
+                  geoBoundary
+                  isExcluded
+                  leadTime
+               }
+            }
          }
       }
    }
