@@ -274,13 +274,16 @@ export const LOCATIONS = {
    VIEW: gql`
       subscription viewLocation($id: Int!) {
          brands_location(where: { id: { _eq: $id } }) {
+            locationAddress
+            id
+            lat
+            lng
             city
+            state
             country
+            zipcode
             isActive
             label
-            state
-            zipcode
-            locationAddress
          }
       }
    `,
@@ -288,7 +291,10 @@ export const LOCATIONS = {
 export const BRAND_LOCATION = {
    VIEW: gql`
       subscription linkedBrands($locationId: Int!, $identifier: String!) {
-         brands_brand_location(where: { locationId: { _eq: $locationId } }) {
+         brands_brand_location(
+            where: { locationId: { _eq: $locationId } }
+            order_by: { brand: { title: asc, created_at: asc_nulls_first } }
+         ) {
             brandId
             doesDeliver
             doesDeliverOutsideCity
