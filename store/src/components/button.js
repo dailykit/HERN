@@ -12,6 +12,8 @@ export const Button = ({ children, style = {}, className, ...props }) => {
    setThemeVariable('--hern-accent', themeColor)
    const buttonClasses = classNames('hern__btn', {
       'hern__btn--disabled': props.disabled,
+      'hern__btn--outline--disabled':
+         props.disabled && props.variant === 'outline',
       'hern__btn--warn': !props.disabled && props.variant === 'warn',
       'hern__btn--danger': !props.disabled && props.variant === 'danger',
       'hern__btn--dull': !props.disabled && props.variant === 'dull',
