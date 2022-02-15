@@ -10,6 +10,7 @@ export const LocationSelectorWrapper = props => {
          title={'Location'}
          visible={showLocationSelectorPopup}
          onClose={() => setShowLocationSelectionPopup(false)}
+         destroyOnClose={true}
       >
          <LocationSelector {...props} />
       </Tunnel.Left>
