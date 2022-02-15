@@ -10,6 +10,11 @@ import {
    Tunnel,
    Tunnels,
    useTunnel,
+   HorizontalTab,
+   HorizontalTabs,
+   HorizontalTabList,
+   HorizontalTabPanel,
+   HorizontalTabPanels,
 } from '@dailykit/ui'
 import React from 'react'
 import { toast } from 'react-toastify'
@@ -164,15 +169,28 @@ export const Locations = () => {
                Create Location
             </ComboButton>
          </StyledHeader>
-         <ReactTabulator
-            ref={tableRef}
-            columns={columns}
-            data={locations || []}
-            options={{
-               ...tableOptions,
-               placeholder: 'No Locations Available Yet!',
-            }}
-         />
+
+         <HorizontalTabs>
+            <HorizontalTabList>
+               <HorizontalTab>Map</HorizontalTab>
+               <HorizontalTab>Table</HorizontalTab>
+            </HorizontalTabList>
+            <HorizontalTabPanels>
+               <HorizontalTabPanel>Bulk Content</HorizontalTabPanel>
+               <HorizontalTabPanel>
+                  <ReactTabulator
+                     ref={tableRef}
+                     columns={columns}
+                     data={locations || []}
+                     options={{
+                        ...tableOptions,
+                        placeholder: 'No Locations Available Yet!',
+                     }}
+                  />
+               </HorizontalTabPanel>
+            </HorizontalTabPanels>
+         </HorizontalTabs>
+
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1} size="md">
                <CreateBrandLocation closeTunnel={closeTunnel} />
