@@ -1,0 +1,111 @@
+.hern-testimonials {
+   background-color: rgba(0, 0, 0, 0.8);
+}
+.hern-testimonials__wrapper {
+   max-width: 800px;
+   margin: 0 auto;
+   padding: 130px 0;
+   display: flex;
+   position: relative;
+   > span {
+      position: absolute;
+      top: 45%;
+      padding: 12px;
+      display: block;
+      background-color: var(--hern-accent);
+      cursor: pointer;
+   }
+   .hern-testimonials__arrow-left {
+      left: -56px;
+   }
+   .hern-testimonials__arrow-right {
+      right: -56px;
+   }
+}
+.hern-testimonials__image {
+   height: auto;
+   width: 120px;
+   > img {
+      width: 100%;
+      height: 100%;
+   }
+}
+.hern-testimonials__content {
+   background-color: #f4f4f4;
+   padding: 32px 48px;
+   position: relative;
+   width: 100%;
+   p {
+      color: #777;
+      font-style: italic;
+      font-size: 16px;
+      letter-spacing: 0.64px;
+      line-height: 28px;
+      margin-bottom: 0;
+   }
+
+   > h4 {
+      color: #222;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.98px;
+      text-transform: uppercase;
+      > span {
+         color: #777;
+         display: inline-block;
+         font-family: 'Lato', sans-serif;
+         font-size: 14px;
+         letter-spacing: 0.98px;
+         text-transform: capitalize;
+      }
+   }
+
+   > span {
+      background: var(--hern-accent);
+      position: absolute;
+      left: -20px;
+      top: 35%;
+      padding: 16px;
+      border-radius: 50%;
+   }
+}
+
+@media only screen and (max-width: 900px) {
+   .hern-testimonials__wrapper {
+      max-width: 300px;
+      padding: 64px 0;
+      display: block;
+   }
+   .hern-testimonials__content {
+      padding: 16px 16px 16px 32px;
+      > p {
+         margin-bottom: 16px;
+         line-height: 20px;
+      }
+   }
+   .hern-testimonials__image {
+      max-width: 120px;
+      width: 120px;
+      height: auto;
+   }
+}
+
+@media only screen and (max-width: 400px) {
+   .hern-testimonials__wrapper {
+      max-width: 200px;
+      padding: 64px 0;
+      display: block;
+   }
+   .hern-testimonials__content {
+      padding: 16px 16px 16px 32px;
+      > p {
+         margin-bottom: 16px;
+         line-height: 20px;
+      }
+   }
+   .hern-testimonials__image {
+      max-width: 120px;
+      width: 120px;
+      height: auto;
+   }
+}
