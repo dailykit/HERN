@@ -107,6 +107,7 @@ const Bottom = props => {
          onClose={onClose}
          visible={visible}
          {...props}
+         className="hern-tunnel__ant__bottom"
       >
          {children}
       </Drawer>
