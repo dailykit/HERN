@@ -44,7 +44,7 @@ export const TimeSlots = ({
                      const newTimeStamp = generateTimeStamp(
                         e.target.value.time,
                         selectedSlot.date,
-                        60
+                        e.target.value.intervalInMinutes
                      )
                      onFulfillmentTimeClick(
                         newTimeStamp,

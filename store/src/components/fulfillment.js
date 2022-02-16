@@ -165,10 +165,11 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
                   Change
                </Button>
             </div>
-            {fulfillment === 'DELIVERY' && (
+            {(fulfillment === 'DELIVERY' || fulfillment === 'PICKUP') && (
                <Row className="hern-address__location-input-field">
                   <ConsumerAddress
                      setShowRefineLocation={setShowRefineLocation}
+                     showEditIcon={fulfillment === 'DELIVERY'}
                   />
                </Row>
             )}
@@ -420,7 +421,7 @@ export const Fulfillment = ({ cart, editable = true }) => {
    )
 }
 
-const ConsumerAddress = ({ setShowRefineLocation }) => {
+const ConsumerAddress = ({ setShowRefineLocation, showEditIcon }) => {
    const { configOf } = useConfig()
    const { cartState } = React.useContext(CartContext)
    const theme = configOf('theme-color', 'Visual')
@@ -438,6 +439,7 @@ const ConsumerAddress = ({ setShowRefineLocation }) => {
    return (
       <div className="hern-fulfillment-consumer-address">
          <label>Address</label>
+         <p>{address.label}</p>
          <p>{address?.line1}</p>
          <p>{address?.line2}</p>
          <span>{address?.city} </span>
@@ -447,18 +449,20 @@ const ConsumerAddress = ({ setShowRefineLocation }) => {
             {', '}
          </span>
          <span>{address?.zipcode}</span>
-         <EditIcon
-            style={{
-               position: 'absolute',
-               right: '8px',
-               top: '8px',
-               cursor: 'pointer',
-            }}
-            onClick={() => {
-               setShowRefineLocation(true)
-            }}
-            fill={theme?.accent || 'rgba(5, 150, 105, 1)'}
-         />
+         {showEditIcon && (
+            <EditIcon
+               style={{
+                  position: 'absolute',
+                  right: '8px',
+                  top: '8px',
+                  cursor: 'pointer',
+               }}
+               onClick={() => {
+                  setShowRefineLocation(true)
+               }}
+               fill={theme?.accent || 'rgba(5, 150, 105, 1)'}
+            />
+         )}
       </div>
    )
 }

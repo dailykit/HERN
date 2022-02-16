@@ -1,4 +1,6 @@
 import { rrulestr } from 'rrule'
+import _ from 'lodash'
+import moment from 'moment'
 
 export const isStoreOnDemandPickupAvailable = finalRecurrences => {
    for (let rec in finalRecurrences) {
@@ -11,7 +13,16 @@ export const isStoreOnDemandPickupAvailable = finalRecurrences => {
       )
       if (dates.length) {
          if (finalRecurrences[rec].recurrence.timeSlots.length) {
-            for (let timeslot of finalRecurrences[rec].recurrence.timeSlots) {
+            const sortedTimeSlots = _.sortBy(
+               finalRecurrences[rec].recurrence.timeSlots,
+               [
+                  function (slot) {
+                     return moment(slot.from, 'HH:mm')
+                  },
+               ]
+            )
+            let validTimeSlots = []
+            for (let timeslot of sortedTimeSlots) {
                const timeslotFromArr = timeslot.from.split(':')
                const timeslotToArr = timeslot.to.split(':')
                const fromTimeStamp = new Date(now.getTime())
@@ -31,10 +42,12 @@ export const isStoreOnDemandPickupAvailable = finalRecurrences => {
                   now.getTime() > fromTimeStamp.getTime() &&
                   now.getTime() < toTimeStamp.getTime()
                ) {
+                  finalRecurrences[rec].recurrence.validTimeSlots =
+                     validTimeSlots
                   if (rec == finalRecurrences.length - 1) {
                      return {
                         status: true,
-                        rec: finalRecurrences[rec],
+                        rec: [finalRecurrences[rec]],
                         timeSlotInfo: timeslot,
                         message: 'Store available for pickup.',
                      }

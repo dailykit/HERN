@@ -189,7 +189,6 @@ export const generateMiniSlots = (data, size) => {
    return newData
 }
 export const generatePickUpSlots = recurrences => {
-   console.log('recurrences', recurrences)
    let data = []
    recurrences.forEach(rec => {
       const now = new Date() // now
@@ -223,26 +222,31 @@ export const generatePickUpSlots = recurrences => {
                   let slotStart
                   let slotEnd =
                      toTimeStamp.getHours() + ':' + toTimeStamp.getMinutes()
-                  if (now.getTime() + leadMiliSecs > fromTimeStamp.getTime()) {
-                     // new start time = lead time + now
-                     const newStartTimeStamp = new Date(
-                        now.getTime() + leadMiliSecs
-                     )
-                     slotStart =
-                        newStartTimeStamp.getHours() +
-                        ':' +
-                        newStartTimeStamp.getMinutes()
-                  } else {
-                     slotStart =
-                        fromTimeStamp.getHours() +
-                        ':' +
-                        fromTimeStamp.getMinutes()
-                  }
+                  // if (now.getTime() + leadMiliSecs > fromTimeStamp.getTime()) {
+                  //    // new start time = lead time + now
+                  //    const newStartTimeStamp = new Date(
+                  //       now.getTime() + leadMiliSecs
+                  //    )
+                  //    slotStart =
+                  //       newStartTimeStamp.getHours() +
+                  //       ':' +
+                  //       newStartTimeStamp.getMinutes()
+                  // } else {
+
+                  // }
+                  slotStart =
+                     fromTimeStamp.getHours() + ':' + fromTimeStamp.getMinutes()
                   // check if date already in slots
                   const dateWithoutTime = date.toDateString()
                   const index = data.findIndex(
                      slot => slot.date === dateWithoutTime
                   )
+                  const [HH, MM, SS] = timeslot.slotInterval
+                     ? timeslot.slotInterval.split(':')
+                     : []
+                  const intervalInMinutes = Boolean(HH && MM && SS)
+                     ? +HH * 60 + +MM
+                     : null
                   if (index === -1) {
                      data.push({
                         date: dateWithoutTime,
@@ -250,6 +254,7 @@ export const generatePickUpSlots = recurrences => {
                            {
                               start: slotStart,
                               end: slotEnd,
+                              intervalInMinutes: intervalInMinutes,
                            },
                         ],
                      })
@@ -257,6 +262,7 @@ export const generatePickUpSlots = recurrences => {
                      data[index].slots.push({
                         start: slotStart,
                         end: slotEnd,
+                        intervalInMinutes: intervalInMinutes,
                      })
                   }
                }

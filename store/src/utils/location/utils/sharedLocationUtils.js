@@ -13,7 +13,10 @@ import { GET_ALL_RECURRENCES, GET_BRAND_LOCATION } from '../../../graphql'
 import { isClient } from '../../index'
 
 const getSortedStoresByAerialDistance = async (brandLocations, address) => {
-   console.log('address', address)
+   console.log('address', address, brandLocations)
+   if (!address && brandLocations.length === 1) {
+      return brandLocations
+   }
    // add arial distance
    const brandLocationsWithAerialDistance = await Promise.all(
       brandLocations.map(async eachStore => {
@@ -62,7 +65,7 @@ export const getStoresWithValidations = async props => {
             brandId: {
                _eq: brand.id,
             },
-            ...(locationId || { locationId: { _eq: locationId } }),
+            ...(locationId && { locationId: { _eq: locationId } }),
          },
       }
    )

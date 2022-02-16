@@ -247,9 +247,31 @@ export const CartProvider = ({ children }) => {
    const addToCart = async (cartItem, quantity) => {
       setIsFinalCartLoading(true)
       const cartItems = new Array(quantity).fill({ ...cartItem })
-      const customerAddressFromLocal = JSON.parse(
-         localStorage.getItem('userLocation')
-      )
+      const orderTabInLocal = JSON.parse(localStorage.getItem('orderTab'))
+      let customerAddressFromLocal
+      switch (orderTabInLocal) {
+         case 'ONDEMAND_DELIVERY':
+            customerAddressFromLocal = JSON.parse(
+               localStorage.getItem('userLocation')
+            )
+            break
+         case 'PREORDER_DELIVERY':
+            customerAddressFromLocal = JSON.parse(
+               localStorage.getItem('userLocation')
+            )
+            break
+         case 'PREORDER_PICKUP':
+            customerAddressFromLocal = JSON.parse(
+               localStorage.getItem('pickupLocation')
+            )
+            break
+         case 'ONDEMAND_PICKUP':
+            customerAddressFromLocal = JSON.parse(
+               localStorage.getItem('pickupLocation')
+            )
+            break
+      }
+
       const customerAddress = {
          line1: customerAddressFromLocal.line1,
          line2: customerAddressFromLocal.line2,
@@ -259,9 +281,13 @@ export const CartProvider = ({ children }) => {
          zipcode: customerAddressFromLocal.zipcode,
          notes: customerAddressFromLocal.notes,
          label: customerAddressFromLocal.label,
-         lat: customerAddressFromLocal.latitude.toString(),
-         lng: customerAddressFromLocal.longitude.toString(),
-         landmark: customerAddressFromLocal.landmark,
+         lat:
+            customerAddressFromLocal.latitude?.toString() ||
+            customerAddressFromLocal.lat?.toString(),
+         lng:
+            customerAddressFromLocal.longitude?.toString() ||
+            customerAddressFromLocal.lng?.toString(),
+         landmark: customerAddressFromLocal?.landmark || null,
          searched: '',
       }
       if (!isAuthenticated) {

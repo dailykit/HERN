@@ -1,76 +1,54 @@
 import React, { useState, useEffect } from 'react'
 import { Col, Radio, Row, Space, Carousel, Modal } from 'antd'
 import { useConfig } from '../../lib'
-import { isEmpty } from 'lodash'
+import { OrderTime, EditIcon } from '../../assets/icons'
+import { TimeSlots } from './components/timeSlots'
 import {
-   DineinTable,
-   GPSIcon,
-   OrderTime,
-   ArrowLeftIcon,
-   ArrowRightIcon,
-   EditIcon,
-   CloseIcon,
-   Info,
-} from '../../assets/icons'
-import {
-   BRAND_LOCATIONS,
-   BRAND_ONDEMAND_DELIVERY_RECURRENCES,
-   GET_BRAND_LOCATION,
-   MUTATIONS,
-   ONDEMAND_DINE_BRAND_RECURRENCES,
-   ONDEMAND_PICKUP_BRAND_RECURRENCES,
-   PREORDER_DELIVERY_BRAND_RECURRENCES,
-   PREORDER_PICKUP_BRAND_RECURRENCES,
-   SCHEDULED_DINEIN_BRAND_RECURRENCES,
-} from '../../graphql'
-import { getDistance, convertDistance } from 'geolib'
-import moment from 'moment'
-
-import {
-   get_env,
-   isClient,
-   isPreOrderDeliveryAvailable,
-   isStoreOnDemandDeliveryAvailable,
-   generateDeliverySlots,
    generateMiniSlots,
-   isStoreOnDemandPickupAvailable,
-   isStorePreOrderPickupAvailable,
    generatePickUpSlots,
-   generateTimeStamp,
+   getStoresWithValidations,
+   getPickupTimeSlotValidation,
+   getOndemandPickupTimeValidation,
 } from '../../utils'
 import { CartContext, useUser } from '../../context'
-import { useMutation, useQuery } from '@apollo/react-hooks'
 import { Loader, Button } from '../'
-import classNames from 'classnames'
-// import AddressListOuter from './address_list_outer'
-import { AddressTunnel } from '../../sections/select-delivery/address_tunnel'
-import AddressList from '../address_list'
-import { useToasts } from 'react-toast-notifications'
-const ReactPixel = isClient ? require('react-facebook-pixel').default : null
+import moment from 'moment'
 
 export const Pickup = props => {
    const {
-      brands_brand_location_aggregate,
-      address,
-      orderTabFulfillmentType,
-      onPickUpAddressSelect,
-      brandLocations,
-      setIsEdit,
-   } = props
-
-   const { brand, locationId, configOf, orderTabs } = useConfig()
+      brand,
+      locationId,
+      configOf,
+      orderTabs,
+      lastStoreLocationId,
+      dispatch,
+   } = useConfig()
    const { methods, cartState } = React.useContext(CartContext)
 
    const theme = configOf('theme-color', 'visual')
-   const storeCarousal = React.useRef()
-   const lastCarousal = e => {
-      e.stopPropagation()
-      storeCarousal.current.prev()
-   }
-   const nextCarousal = e => {
-      e.stopPropagation()
-      storeCarousal.current.next()
-   }
+
+   const [fulfillmentType, setFulfillmentType] = useState(null)
+   const [isGetStoresLoading, setIsGetStoresLoading] = useState(true)
+   const [updateFulfillmentInfoForNow, setUpdateFulfillmentInfoForNow] =
+      React.useState(false)
+   const [stores, setStores] = useState(null)
+   const [isLoading, setIsLoading] = React.useState(true)
+   const [showSlots, setShowSlots] = React.useState(false)
+
+   const [pickupSlots, setPickupSlots] = useState(null)
+   const [selectedSlot, setSelectedSlot] = useState(null)
+   const [fulfillmentTabInfo, setFulfillmentTabInfo] = useState({
+      orderTabId: null,
+      locationId: null,
+   })
+
+   const orderTabFulfillmentType = React.useMemo(
+      () =>
+         orderTabs
+            ? orderTabs.map(eachTab => eachTab.orderFulfillmentTypeLabel)
+            : null,
+      [orderTabs]
+   )
 
    const pickupRadioOptions = React.useMemo(() => {
       let options = []
@@ -78,178 +56,303 @@ export const Pickup = props => {
          orderTabFulfillmentType &&
          orderTabFulfillmentType.includes('ONDEMAND_PICKUP')
       ) {
-         options.push({ label: 'Now', value: 'ONDEMAND' })
+         options.push({ label: 'Now', value: 'ONDEMAND_PICKUP' })
       }
       if (
          orderTabFulfillmentType &&
          orderTabFulfillmentType.includes('PREORDER_PICKUP')
       ) {
-         options.push({ label: 'Later', value: 'PREORDER' })
+         options.push({ label: 'Later', value: 'PREORDER_PICKUP' })
       }
 
       return options
    }, [orderTabFulfillmentType])
 
-   const [pickupType, setPickUpType] = useState(null)
-   const [onDemandBrandRecurrence, setOnDemandBrandReoccurrence] =
-      useState(null)
-   const [preOrderBrandRecurrence, setPreOrderBrandReoccurrence] =
-      useState(null)
-   const [status, setStatus] = useState('loading')
-   const [sortedBrandLocation, setSortedBrandLocation] = useState(null)
-   const [selectedStore, setSelectedStore] = useState(null)
-   const [pickupSlots, setPickupSlots] = useState(null)
-   const [selectedSlot, setSelectedSlot] = useState(null)
-   const [fulfillmentTabInfo, setFulfillmentTabInfo] = useState({
-      orderTabId: null,
-      locationId: null,
-   })
-   const fulfillmentStatus = React.useMemo(() => {
-      let type
-      if (pickupType === 'ONDEMAND' || pickupType === 'PREORDER') {
-         type = 'pickupStatus'
-         return type
+   const timeSlotInfo = React.useMemo(() => {
+      if (stores?.length > 0 && fulfillmentType === 'ONDEMAND_PICKUP') {
+         const timeSlot = stores[0].fulfillmentStatus.timeSlotInfo
+         return timeSlot
+      } else {
+         null
       }
-   }, [pickupType])
+   }, [stores, fulfillmentType])
 
-   const { loading: onDemandPickupRecurrenceLoading } = useQuery(
-      ONDEMAND_PICKUP_BRAND_RECURRENCES,
-      {
-         skip: !brand || !brand.id,
-         variables: {
-            where: {
-               isActive: { _eq: true },
-               recurrence: {
-                  isActive: { _eq: true },
-                  type: { _eq: 'ONDEMAND_PICKUP' },
-               },
-               brandId: { _eq: brand.id },
-            },
-         },
-         onCompleted: data => {
-            if (data) {
-               setOnDemandBrandReoccurrence(data.brandRecurrences)
-            }
-         },
+   const title = React.useMemo(() => {
+      switch (cartState.cart?.fulfillmentInfo?.type) {
+         case 'ONDEMAND_PICKUP':
+            return `You order will be delivered within ${
+               timeSlotInfo?.pickUpPrepTime || '...'
+            } minutes.`
+         case 'PREORDER_PICKUP':
+            return 'Schedule pickup'
       }
-   )
-   const { loading: preOrderPickRecurrencesLoading } = useQuery(
-      PREORDER_PICKUP_BRAND_RECURRENCES,
-      {
-         skip: !brand || !brand.id,
-         variables: {
-            where: {
-               isActive: { _eq: true },
-               recurrence: {
-                  isActive: { _eq: true },
-                  type: { _eq: 'PREORDER_PICKUP' },
-               },
-               brandId: { _eq: brand.id },
-            },
-         },
-         onCompleted: data => {
-            if (data) {
-               setPreOrderBrandReoccurrence(data.brandRecurrences)
-            }
-         },
-      }
-   )
-   const brandRecurrences = React.useMemo(() =>
-      pickupType === 'ONDEMAND'
-         ? onDemandBrandRecurrence
-         : preOrderBrandRecurrence
-   )
+   }, [cartState.cart, timeSlotInfo])
 
+   // update cart by when only ONDEMAN_PICKUP available
    useEffect(() => {
-      if (pickupType === 'PREORDER' && selectedStore) {
-         const pickupSlots = generatePickUpSlots(
-            selectedStore.pickupStatus.rec.map(x => x.recurrence)
-         )
-         const miniSlots = generateMiniSlots(pickupSlots.data, 60)
-         setPickupSlots(miniSlots)
+      if (
+         fulfillmentType === 'ONDEMAND_PICKUP' &&
+         pickupRadioOptions?.length === 1 &&
+         stores?.length > 0 &&
+         !cartState?.cart?.fulfillmentInfo?.type
+      ) {
+         onNowPickup({ timeSlotInfo: stores[0].fulfillmentStatus.timeSlotInfo })
       }
-   }, [selectedStore])
+   }, [stores, fulfillmentType])
 
-   useEffect(() => {
-      if (brandLocations && address) {
-         ;(async () => {
-            const brandLocationSortedByAerialDistance = await getAerialDistance(
-               brandLocations,
-               true
-            )
-            setSortedBrandLocation(brandLocationSortedByAerialDistance)
-         })()
-      }
-   }, [brandLocations, brandRecurrences, address, pickupType])
-
-   const getAerialDistance = async (data, sorted = false) => {
-      // const userLocation = JSON.parse(localStorage.getItem('userLocation'))
-      const userLocationWithLatLang = {
-         latitude: address.latitude,
-         longitude: address.longitude,
-      }
-
-      // // add arial distance
-      const dataWithAerialDistance = await Promise.all(
-         data.map(async eachStore => {
-            const aerialDistance = getDistance(
-               userLocationWithLatLang,
-               eachStore.location.locationAddress.locationCoordinates,
-               0.1
-            )
-            const aerialDistanceInMiles = convertDistance(aerialDistance, 'mi')
-            eachStore['aerialDistance'] = parseFloat(
-               aerialDistanceInMiles.toFixed(2)
-            )
-            eachStore['distanceUnit'] = 'mi'
-            if (brandRecurrences && pickupType === 'ONDEMAND') {
-               const pickupStatus = await isStoreOnDemandPickupAvailable(
-                  brandRecurrences,
-                  eachStore
-               )
-               eachStore[fulfillmentStatus] = pickupStatus
+   // update fulfillmentType and fulfillmentInfo when cart available or only one pickup type available
+   React.useEffect(() => {
+      if (cartState.cart?.fulfillmentInfo?.type) {
+         setFulfillmentType(cartState.cart?.fulfillmentInfo?.type)
+         const orderTabId = orderTabs.find(
+            t =>
+               t.orderFulfillmentTypeLabel ===
+               `${cartState.cart?.fulfillmentInfo?.type}`
+         )?.id
+         setFulfillmentTabInfo(prev => {
+            return {
+               orderTabId,
+               locationId: cartState.cart?.locationId,
             }
-            if (brandRecurrences && pickupType === 'PREORDER') {
-               const pickupStatus = await isStorePreOrderPickupAvailable(
-                  brandRecurrences,
-                  eachStore
-               )
-               eachStore[fulfillmentStatus] = pickupStatus
-            }
-            return eachStore
          })
-      )
-      // sort by distance
-      if (sorted) {
-         const sortedDataWithAerialDistance = _.sortBy(dataWithAerialDistance, [
-            x => x.aerialDistance,
-         ])
-
-         if (brandRecurrences) {
-            setStatus('success')
-         }
-         return sortedDataWithAerialDistance
+         return
       }
-      return dataWithAerialDistance
+      if (pickupRadioOptions.length === 1) {
+         const availablePickupType = pickupRadioOptions[0].value
+         setFulfillmentType(availablePickupType)
+         const orderTabId = orderTabs.find(
+            t => t.orderFulfillmentTypeLabel === `${availablePickupType}`
+         )?.id
+         setFulfillmentTabInfo(prev => {
+            return { ...prev, orderTabId }
+         })
+      }
+   }, [pickupRadioOptions, cartState.cart])
+
+   // get available store, get minislots, if fulfillmentType === ONDEMAND_DELIVERY then fire onNowPick()
+   React.useEffect(() => {
+      if (brand.id && fulfillmentType) {
+         async function fetchStores() {
+            const brandClone = { ...brand }
+            const storeLocationId = JSON.parse(
+               localStorage.getItem('storeLocationId')
+            )
+            const availableStore = await getStoresWithValidations({
+               brand: brandClone,
+               fulfillmentType,
+               // address: consumerAddress,
+               autoSelect: true,
+               locationId: locationId,
+            })
+            if (availableStore.length > 0) {
+               setFulfillmentTabInfo(prev => {
+                  return { ...prev, locationId: availableStore[0].location.id }
+               })
+               if (fulfillmentType === 'PREORDER_PICKUP') {
+                  const pickupSlots = generatePickUpSlots(
+                     availableStore[0].fulfillmentStatus.rec.map(
+                        eachFulfillRecurrence =>
+                           eachFulfillRecurrence.recurrence
+                     )
+                  )
+                  const miniSlots = generateMiniSlots(pickupSlots.data, 60)
+                  const validMiniSlots = miniSlots.map(eachMiniSlot => {
+                     const eachMiniSlotDate = moment(eachMiniSlot.date).format(
+                        'YYYY-MM-DD'
+                     )
+                     const currentDate = moment().format('YYYY-MM-DD')
+                     const isSameDate = moment(currentDate).isSame(
+                        moment(eachMiniSlotDate)
+                     )
+                     if (isSameDate) {
+                        let newMiniSlots = []
+                        eachMiniSlot.slots.forEach(eachSlot => {
+                           const slot = moment(eachSlot.time, 'HH:mm')
+                              .add(eachSlot.intervalInMinutes, 'm')
+                              .format('HH:mm')
+                           const isSlotIsValidForCurrentTime =
+                              slot > moment().format('HH:mm')
+                           if (isSlotIsValidForCurrentTime) {
+                              newMiniSlots.push(eachSlot)
+                           }
+                        })
+                        return {
+                           ...eachMiniSlot,
+                           slots: newMiniSlots,
+                        }
+                     } else {
+                        return eachMiniSlot
+                     }
+                  })
+                  setPickupSlots(validMiniSlots)
+               }
+
+               // this will only run when fulfillment will change manually
+               if (
+                  fulfillmentType === 'ONDEMAND_PICKUP' &&
+                  pickupRadioOptions?.length > 1 &&
+                  updateFulfillmentInfoForNow
+               ) {
+                  onNowPickup({
+                     timeSlotInfo:
+                        availableStore[0].fulfillmentStatus.timeSlotInfo,
+                  })
+               }
+            }
+            setStores(availableStore)
+            console.log('availableStore', availableStore)
+            setIsGetStoresLoading(false)
+            setUpdateFulfillmentInfoForNow(false)
+         }
+         fetchStores()
+      }
+   }, [brand, fulfillmentType])
+
+   // if cart has slot info then show slot detail otherwise show time slots
+   React.useEffect(() => {
+      if (!_.isEmpty(cartState.cart)) {
+         if (
+            cartState.cart?.fulfillmentInfo?.slot?.to &&
+            cartState.cart?.fulfillmentInfo?.slot?.from
+         ) {
+            const showTimeSlots = Boolean(
+               !lastStoreLocationId == null ||
+                  localStorage.getItem('lastStoreLocationId')
+            )
+            setShowSlots(showTimeSlots)
+            setIsLoading(false)
+         } else if (
+            cartState.cart?.fulfillmentInfo?.type === 'ONDEMAND_PICKUP'
+         ) {
+            setIsLoading(false)
+         } else {
+            setShowSlots(true)
+            setIsLoading(false)
+         }
+      }
+   }, [cartState.cart])
+
+   // time validation on selected timeSlotId
+   useEffect(() => {
+      const interval = setInterval(() => {
+         if (stores && stores.length > 0) {
+            pickupTimeValidationForOndemandPreorder()
+         }
+      }, 10000)
+      return () => {
+         clearInterval(interval)
+      }
+   }, [stores, cartState.cart])
+
+   useEffect(() => {
+      // when store is not available and cart has fulfillment info && component showing info then update cart by fulfillment null
+      if (
+         stores?.length === 0 &&
+         cartState.cart?.fulfillmentInfo &&
+         !showSlots
+      ) {
+         methods.cart.update({
+            variables: {
+               id: cartState?.cart?.id,
+               _set: {
+                  fulfillmentInfo: null,
+               },
+            },
+         })
+         setFulfillmentType(null)
+         setFulfillmentTabInfo(prev => ({
+            orderTabId: null,
+            locationId: null,
+         }))
+         setStores(null)
+         Modal.warning({
+            title: `This time slot is not available now. Please select new time.`,
+            maskClosable: true,
+            centered: true,
+         })
+         setShowSlots(true)
+         setIsLoading(false)
+      } else {
+         if (stores?.length > 0) {
+            pickupTimeValidationForOndemandPreorder()
+         }
+      }
+   }, [stores, cartState.cart])
+   const pickupTimeValidationForOndemandPreorder = () => {
+      const cartTimeSlotFrom = cartState.cart?.fulfillmentInfo?.slot?.from
+      const cartTimeSlotTo = cartState.cart?.fulfillmentInfo?.slot?.to
+      const cartFulfillmentType = cartState.cart?.fulfillmentInfo?.type
+      if (
+         cartTimeSlotFrom &&
+         cartTimeSlotTo &&
+         cartFulfillmentType == 'PREORDER_PICKUP'
+      ) {
+         const isValid = getPickupTimeSlotValidation(
+            stores[0].fulfillmentStatus.rec,
+            cartTimeSlotFrom,
+            cartTimeSlotTo,
+            cartState.cart?.fulfillmentInfo?.slot?.timeslotId
+         )
+         if (!isValid.status) {
+            methods.cart.update({
+               variables: {
+                  id: cartState?.cart?.id,
+                  _set: {
+                     fulfillmentInfo: null,
+                  },
+               },
+            })
+            setStores(null)
+            setFulfillmentType(null)
+            setFulfillmentTabInfo({
+               orderTabId: null,
+               locationId: null,
+            })
+            Modal.warning({
+               title: `This time slot is not available now.`,
+               maskClosable: true,
+               centered: true,
+            })
+         }
+      }
+      if (
+         cartFulfillmentType == 'ONDEMAND_PICKUP' &&
+         cartState.cart?.fulfillmentInfo?.slot?.timeslotId
+      ) {
+         const isValid = getOndemandPickupTimeValidation(
+            stores[0].fulfillmentStatus.rec,
+            cartState.cart?.fulfillmentInfo?.slot?.timeslotId
+         )
+         if (!isValid.status) {
+            methods.cart.update({
+               variables: {
+                  id: cartState?.cart?.id,
+                  _set: {
+                     fulfillmentInfo: null,
+                  },
+               },
+            })
+            setStores(null)
+            setFulfillmentType(null)
+            setFulfillmentTabInfo({
+               orderTabId: null,
+               locationId: null,
+            })
+            Modal.warning({
+               title: `This time slot expired.`,
+               maskClosable: true,
+               centered: true,
+            })
+         }
+      }
    }
 
-   useEffect(() => {
-      if (pickupType === 'ONDEMAND' && selectedStore) {
-         onNowPickup()
-      }
-   }, [selectedStore, pickupType])
-
-   const onNowPickup = () => {
-      const mileRange = selectedStore.pickupStatus.timeSlotInfo.mileRanges
-         ? selectedStore.pickupStatus.timeSlotInfo.mileRanges[0]
-         : null
+   const onNowPickup = ({ timeSlotInfo }) => {
       const slotInfo = {
          slot: {
-            from: moment().format(),
-            to: moment()
-               .add(mileRange ? mileRange.prepTime : 60, 'minutes')
-               .format(),
-            timeslotId: selectedStore.pickupStatus.timeSlotInfo.id,
+            from: null,
+            to: null,
+            timeslotId: timeSlotInfo.id,
          },
          type: 'ONDEMAND_PICKUP',
       }
@@ -258,28 +361,34 @@ export const Pickup = props => {
          variables: {
             id: cartState?.cart?.id,
             _set: {
-               ...fulfillmentTabInfo,
+               orderTabId: fulfillmentTabInfo.orderTabId,
+               locationId: fulfillmentTabInfo.locationId || locationId,
                fulfillmentInfo: slotInfo,
-               locationId: locationId,
-               address,
             },
          },
       })
-      setIsEdit(false)
+      localStorage.removeItem('lastStoreLocationId')
+      dispatch({
+         type: 'SET_LAST_LOCATION_ID',
+         payload: null,
+      })
+      setShowSlots(false)
+      // setIsEdit(false)
    }
 
    const onFulfillmentTimeClick = timestamp => {
       let timeslotInfo = null
-      selectedStore.pickupStatus.rec.forEach(x => {
+      stores[0].fulfillmentStatus.rec.forEach(x => {
          x.recurrence.timeSlots.forEach(timeSlot => {
-            const format = 'HH:mm:ss'
-            const chosenTime = moment(timestamp.from).format(format)
-            const toTime = moment(timeSlot.to, format)
-            const fromTime = moment(timeSlot.from, format)
-            const isInBetween = moment(chosenTime, format).isBetween(
-               fromTime,
-               toTime
-            )
+            const format = 'HH:mm'
+            const selectedFromTime = moment(timestamp.from).format(format)
+            const selectedToTime = moment(timestamp.to).format(format)
+            const fromTime = moment(timeSlot.from, format).format(format)
+            const toTime = moment(timeSlot.to, format).format(format)
+            const isInBetween =
+               selectedFromTime >= fromTime &&
+               selectedFromTime <= toTime &&
+               selectedToTime <= toTime
             if (isInBetween) {
                timeslotInfo = timeSlot
             }
@@ -290,7 +399,7 @@ export const Pickup = props => {
          slot: {
             from: timestamp.from,
             to: timestamp.to,
-            timeslotId: timeslotInfo ? timeslotInfo?.id : null,
+            timeslotId: timeslotInfo?.id || null,
          },
          type: 'PREORDER_PICKUP',
       }
@@ -301,214 +410,123 @@ export const Pickup = props => {
             _set: {
                ...fulfillmentTabInfo,
                fulfillmentInfo: slotInfo,
-               address,
                locationId: locationId,
             },
          },
       })
-      setIsEdit(false)
+      localStorage.removeItem('lastStoreLocationId')
+      dispatch({
+         type: 'SET_LAST_LOCATION_ID',
+         payload: null,
+      })
+      setShowSlots(false)
+      // setIsEdit(false)
    }
-   return (
-      <div>
-         <Row>
-            <Col span={10}>
-               <AddressTunnel
-                  outside={true}
-                  showAddressForm={false}
-                  onInputFiledSelect={onPickUpAddressSelect}
-                  useLocalAddress={true}
-               />
-            </Col>
-         </Row>
-         {!address ? (
-            <p>Please Select an address</p>
-         ) : (
-            <div style={{ position: 'relative' }}>
-               <div className="hern-cart__fulfillment-time-section-heading">
-                  <OrderTime />
-                  <span>When would you like your order?</span>
-               </div>
-               <div>
-                  <Radio.Group
-                     options={pickupRadioOptions}
-                     onChange={e => {
-                        setPickUpType(e.target.value)
-                        const orderTabId = orderTabs.find(
-                           t =>
-                              t.orderFulfillmentTypeLabel ===
-                              `${e.target.value}_DELIVERY`
-                        )?.id
-                        setFulfillmentTabInfo(prev => {
-                           return { ...prev, orderTabId }
-                        })
-                        setSelectedStore(null)
-                     }}
-                     value={pickupType}
-                  />
-               </div>
+
+   if (isLoading) {
+      return <p>Loading</p>
+   }
+
+   if (!showSlots) {
+      return (
+         <div className="hern-cart__fulfillment-time-section">
+            <div className="hern-cart__fulfillment-time-section-heading">
+               <OrderTime />
+               <span>When would you like to order?</span>
             </div>
-         )}
-         {sortedBrandLocation &&
-            sortedBrandLocation.some(x => x?.pickupStatus?.status) && (
-               <div style={{ position: 'relative' }}>
-                  <ArrowLeftIcon
-                     size={24}
-                     className="hern-cart__store-arrow hern-cart__store-arrow-left"
-                     style={{
-                        background: `${theme?.accent}` || '#367bf599',
-                     }}
-                     onClick={lastCarousal}
-                  />
-                  <ArrowRightIcon
-                     size={24}
-                     className="hern-cart__store-arrow hern-cart__store-arrow-right"
-                     style={{
-                        background: `${theme?.accent}` || '#367bf599',
-                     }}
-                     onClick={nextCarousal}
-                  />
-                  <Carousel
-                     ref={storeCarousal}
-                     dots={false}
-                     slidesToShow={3}
-                     slidesToScroll={3}
-                     infinite={false}
-                  >
-                     {sortedBrandLocation.map((eachStore, index) => {
-                        const {
-                           location: {
-                              label,
-                              id,
-                              locationAddress,
-                              city,
-                              state,
-                              country,
-                              zipcode,
-                           },
-                           aerialDistance,
-                           distanceUnit,
-                        } = eachStore
-                        const { line1, line2 } = locationAddress
-                        if (!eachStore[fulfillmentStatus].status) {
-                           return null
+            <div
+               style={{
+                  display: 'flex',
+                  alignItems: 'center',
+               }}
+            >
+               <label style={{ marginTop: '5px' }}>
+                  {title}{' '}
+                  {cartState.cart?.fulfillmentInfo?.type ===
+                     'PREORDER_PICKUP' && (
+                     <span>
+                        {' '}
+                        on{' '}
+                        {moment(
+                           cartState.cart?.fulfillmentInfo?.slot?.from
+                        ).format('DD MMM YYYY')}
+                        {' ('}
+                        {moment(
+                           cartState.cart?.fulfillmentInfo?.slot?.from
+                        ).format('HH:mm')}
+                        {'-'}
+                        {moment(
+                           cartState.cart?.fulfillmentInfo?.slot?.to
+                        ).format('HH:mm')}
+                        {')'}
+                     </span>
+                  )}
+               </label>
+               {(pickupRadioOptions.length > 0 ||
+                  fulfillmentType === 'PREORDER_PICKUP') && (
+                  <EditIcon
+                     fill={theme?.accent || 'rgba(5, 150, 105, 1)'}
+                     onClick={() => {
+                        if (pickupRadioOptions.length > 1) {
+                           setFulfillmentType(null)
+                           setFulfillmentTabInfo(prev => ({
+                              ...prev,
+                              orderTabId: null,
+                           }))
                         }
-                        return (
-                           <div
-                              key={index}
-                              className={classNames(
-                                 'hern-store-location-selector__each-store',
-                                 {
-                                    'hern-store-location-selector__each-store--border':
-                                       selectedStore && id === selectedStore.id,
-                                 }
-                              )}
-                              onClick={() => {
-                                 if (eachStore[fulfillmentStatus].status) {
-                                    setSelectedStore(eachStore)
-                                 }
-                              }}
-                              style={{ cursor: 'pointer' }}
-                           >
-                              <div className="hern-store-location-selector__store-location-info-container">
-                                 <div className="hern-store-location-selector__store-location-details">
-                                    {true && (
-                                       <span className="hern-store-location__store-location-label">
-                                          {label}
-                                       </span>
-                                    )}
-                                    {true && (
-                                       <>
-                                          <span className="hern-store-location__store-location-address hern-store-location__store-location-address-line1">
-                                             {line1}
-                                          </span>
-                                          <span className="hern-store-location__store-location-address hern-store-location__store-location-address-line2">
-                                             {line2}
-                                          </span>
-                                          <span className="hern-store-location__store-location-address hern-store-location__store-location-address-c-s-c-z">
-                                             {city} {state} {country}
-                                             {' ('}
-                                             {zipcode}
-                                             {')'}
-                                          </span>
-                                       </>
-                                    )}
-                                 </div>
-                              </div>
-                              <div className="hern-store-location-selector__time-distance">
-                                 <div className="hern-store-location-selector__aerialDistance">
-                                    <span>
-                                       {aerialDistance} {distanceUnit}
-                                    </span>
-                                 </div>
-                              </div>
-                           </div>
-                        )
-                     })}
-                  </Carousel>
-               </div>
-            )}
-         {pickupType === 'PREORDER' && pickupSlots && (
-            <Space direction={'vertical'}>
-               <div>
-                  <p className="hern-cart__fulfillment-slot-heading">
-                     Fulfillment Date
-                  </p>
-                  <Radio.Group
-                     onChange={e => {
-                        setSelectedSlot(e.target.value)
+                        setShowSlots(true)
                      }}
-                  >
-                     <Space size={'middle'}>
-                        {pickupSlots.map((eachSlot, index) => {
-                           return (
-                              <Radio.Button value={eachSlot}>
-                                 {moment(eachSlot.date).format('DD MMM YY')}
-                              </Radio.Button>
-                           )
-                        })}
-                     </Space>
-                  </Radio.Group>
-               </div>
-               {selectedSlot && (
-                  <div>
-                     <p className="hern-cart__fulfillment-slot-heading">
-                        Fulfillment Time
-                     </p>
-                     <Radio.Group
-                        onChange={e => {
-                           const newTimeStamp = generateTimeStamp(
-                              e.target.value.time,
-                              selectedSlot.date,
-                              60
-                           )
-                           onFulfillmentTimeClick(newTimeStamp)
-                        }}
-                     >
-                        {_.sortBy(selectedSlot.slots, [
-                           function (slot) {
-                              return moment(slot.time, 'HH:mm')
-                           },
-                        ]).map((eachSlot, index, elements) => {
-                           const slot = {
-                              from: eachSlot.time,
-                              to: moment(eachSlot.time, 'HH:mm')
-                                 .add(eachSlot.intervalInMinutes, 'm')
-                                 .format('HH:mm'),
-                           }
-                           return (
-                              <Radio.Button value={eachSlot}>
-                                 {slot.from}
-                                 {'-'}
-                                 {slot.to}
-                              </Radio.Button>
-                           )
-                        })}
-                     </Radio.Group>
-                  </div>
+                     style={{ cursor: 'pointer', margin: '0 6px' }}
+                  />
                )}
-            </Space>
+            </div>
+         </div>
+      )
+   }
+
+   return (
+      <div className="hern-cart__fulfillment-time-section">
+         <div className="hern-cart__fulfillment-time-section-heading">
+            <OrderTime />
+            <span>When would you like to order?</span>
+         </div>
+
+         {pickupRadioOptions.length > 1 && (
+            <Radio.Group
+               options={pickupRadioOptions}
+               onChange={e => {
+                  setFulfillmentType(e.target.value)
+                  const orderTabId = orderTabs.find(
+                     t => t.orderFulfillmentTypeLabel === `${e.target.value}`
+                  )?.id
+                  setFulfillmentTabInfo(prev => {
+                     return { ...prev, orderTabId }
+                  })
+                  setIsGetStoresLoading(true)
+                  if (e.target.value === 'ONDEMAND_PICKUP') {
+                     setUpdateFulfillmentInfoForNow(prev => !prev)
+                  }
+               }}
+               value={fulfillmentType}
+               className="hern-cart__fulfillment-date-slot"
+            />
          )}
-         <div></div>
+
+         {!fulfillmentType ? (
+            <p>Please select a pickup type.</p>
+         ) : isGetStoresLoading ? (
+            <Loader inline />
+         ) : stores.length === 0 ? (
+            <p>No store available</p>
+         ) : fulfillmentType === 'PREORDER_PICKUP' ? (
+            <TimeSlots
+               onFulfillmentTimeClick={onFulfillmentTimeClick}
+               selectedSlot={selectedSlot}
+               availableDaySlots={pickupSlots}
+               setSelectedSlot={setSelectedSlot}
+               timeSlotsFor={'Pickup'}
+            />
+         ) : null}
       </div>
    )
 }
