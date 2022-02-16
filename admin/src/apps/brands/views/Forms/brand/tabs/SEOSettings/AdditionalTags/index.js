@@ -21,7 +21,7 @@ import {
 import { useMutation, useLazyQuery } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { StyledWrapper, DrawerWrapper } from './styled'
+import { StyledWrapper, DrawerWrapper, ModalList, ListItemWrapper } from './styled'
 import { logger } from '../../../../../../../../shared/utils'
 import {
     Tooltip,
@@ -33,8 +33,10 @@ import {
     Input,
     Button,
     Modal,
-    Drawer
+    Drawer,
+    List
 } from 'antd'
+import { Form as Formd } from '@dailykit/ui'
 import { EditIcon, DeleteIcon } from '../../../../../../../../shared/assets/icons'
 import { BRANDS } from '../../../../../../graphql'
 import { InfoCircleOutlined } from '@ant-design/icons'
@@ -135,7 +137,7 @@ const AdditionalTags = ({ update }) => {
             },
         }))
     }
-    console.log([prevAdditionalSettings], "prevAdditionalSettings")
+    console.log(prevAdditionalSettings, "prevAdditionalSettings")
     return (
         <StyledWrapper>
             <div className="metaDetails">
@@ -157,7 +159,7 @@ const AdditionalTags = ({ update }) => {
                             label={<>
                                 <span
                                     style={{
-                                        color: '#555B6E',
+                                        color: "#919699",
                                         fontSize: '15px',
                                         fontWeight: '500',
                                     }}
@@ -185,22 +187,49 @@ const AdditionalTags = ({ update }) => {
                                 Add more
                             </ComboButton>
                         </Form.Item>
-                        <div className="site-drawer-render-in-current-wrapper">
 
-                            <DrawerWrapper>
-                                <Drawer
-                                    title="Add meta tags"
-                                    placement="right"
-                                    closable={true}
-                                    onClose={() => setShowDrawer(false)}
-                                    visible={showDrawer}
-                                    getContainer={false}
-                                    style={{ position: 'absolute', display: !showDrawer && 'none' }}
-                                    className='drawer'
+                    </Form>
+                    <div className="site-drawer-render-in-current-wrapper">
+
+                        <DrawerWrapper>
+                            <Drawer
+                                title="Add meta tags"
+                                placement="right"
+                                closable={true}
+                                onClose={() => setShowDrawer(false)}
+                                visible={showDrawer}
+                                getContainer={false}
+                                style={{ position: 'absolute', display: !showDrawer && 'none' }}
+                                className='drawer'
+                            >
+                                <><Form.Item
+                                    label="Tag Name"
+                                    name="tagName"
+                                    style={{
+                                        color: '#555B6E',
+                                        fontSize: '16px',
+                                        fontWeight: '600',
+                                    }}
                                 >
-                                    <><Form.Item
-                                        label="Tag Name"
+                                    <Input
+                                        strong
+                                        level={5}
+                                        placeholder="name(like keywords,author etc)"
+                                        style={{
+                                            width: '100%',
+                                            border: '2px solid #E4E4E4',
+                                            borderRadius: '4px',
+                                        }}
+                                        bordered={false}
+                                        value={form?.tagName?.value}
+                                        onChange={onChangeHandler}
+                                        id="tagName"
                                         name="tagName"
+                                    />
+                                </Form.Item>
+                                    <Form.Item
+                                        label="Tag Content"
+                                        name="tagContent"
                                         style={{
                                             color: '#555B6E',
                                             fontSize: '16px',
@@ -210,54 +239,61 @@ const AdditionalTags = ({ update }) => {
                                         <Input
                                             strong
                                             level={5}
-                                            placeholder="name(like keywords,author etc)"
+                                            placeholder="content/value"
                                             style={{
                                                 width: '100%',
                                                 border: '2px solid #E4E4E4',
                                                 borderRadius: '4px',
                                             }}
                                             bordered={false}
-                                            value={form?.tagName?.value}
+                                            value={form?.tagContent?.value}
                                             onChange={onChangeHandler}
-                                            id="tagName"
-                                            name="tagName"
+                                            id="tagContent"
+                                            name="tagContent"
                                         />
                                     </Form.Item>
-                                        <Form.Item
-                                            label="Tag Content"
-                                            name="tagContent"
-                                            style={{
-                                                color: '#555B6E',
-                                                fontSize: '16px',
-                                                fontWeight: '600',
-                                            }}
-                                        >
-                                            <Input
-                                                strong
-                                                level={5}
-                                                placeholder="content/value"
-                                                style={{
-                                                    width: '100%',
-                                                    border: '2px solid #E4E4E4',
-                                                    borderRadius: '4px',
-                                                }}
-                                                bordered={false}
-                                                value={form?.tagContent?.value}
-                                                onChange={onChangeHandler}
-                                                id="tagContent"
-                                                name="tagContent"
-                                            />
-                                        </Form.Item>
-                                        <Button type="primary" onClick={() => Save()}>
-                                            Save
-                                        </Button></>
-                                </Drawer>
-                            </DrawerWrapper>
-                        </div>
-                    </Form>
-                    {prevAdditionalSettings && prevAdditionalSettings.map((obj) => {
-                        return <div>{Object.keys(obj)}:{Object.values(obj)}</div>
-                    })}
+                                    <Button type="primary" onClick={() => Save()}>
+                                        Save
+                                    </Button></>
+                            </Drawer>
+                        </DrawerWrapper>
+                    </div>
+                    <List
+                        className="demo-loadmore-list"
+                        loading={false}
+                        itemLayout="horizontal"
+                        // loadMore={loadMore}
+                        dataSource={prevAdditionalSettings}
+                        renderItem={obj => (
+                            <ListItemWrapper>
+
+                                <List.Item
+                                    actions={[]}
+                                    style={{ fontWeight: "900", paddingTop: "6px" }}
+                                >
+                                    <Formd.Group>
+                                        <Formd.Label style={{ color: '#7d818d', fontWeight: '900' }} htmlFor='username' title='taglabel' className="taglabel">
+                                            Tag
+                                        </Formd.Label>
+                                        <ModalList>
+                                            <div className="listItem" style={{ display: "flex", justifyContent: "space-between" }} >
+                                                <div className="metatag_text">
+                                                    {`<meta name=`}
+                                                    <span>"{Object.keys(obj)}"</span>
+                                                    {`   content=`}
+                                                    <span>"{Object.values(obj)}"</span>
+                                                    {`/>`}
+                                                </div>
+                                                <div style={{ display: "flex", alignItems: "center" }}>
+                                                    <a key="list-loadmore-edit"> <EditIcon color="#919699" size={24} /></a>
+                                                    <a key="list-loadmore-more"> <DeleteIcon /></a></div>
+                                            </div>
+                                        </ModalList>
+                                    </Formd.Group>
+                                </List.Item>
+                            </ListItemWrapper>
+                        )}
+                    />
                 </Modal>
                 <Button type="primary" ghost onClick={showSEOBasicsModal}>
                     Add Other Additional Tags
