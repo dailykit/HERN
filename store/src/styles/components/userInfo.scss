@@ -63,6 +63,18 @@
       line-height: 12px;
       color: rgba(64, 64, 64, 0.6);
    }
+   @media only screen and (max-width: 767px) {
+      border-radius: 0;
+      padding: 8px;
+      > button {
+         font-size: 14px;
+      }
+      > div {
+         > div {
+            font-size: 14px;
+         }
+      }
+   }
 }
 .hern-user-info__name-field {
    display: flex;
@@ -176,4 +188,32 @@
    font-size: 12px;
    line-height: 12px;
    color: rgba(64, 64, 64, 0.6);
+}
+.hern-user-info__tunnel {
+   box-shadow: none;
+   padding: 0;
+   margin: 0;
+   display: flex;
+   flex-direction: column;
+   .hern-user-info__name-field {
+      flex-direction: column;
+      padding: 0;
+   }
+   .hern-user-info__fieldset-phone-number {
+      width: 100%;
+      padding: 0;
+      margin-bottom: 16px;
+   }
+   .hern-user-info__fieldset-last-name {
+      margin: 0;
+   }
+   .hern-user-info__header {
+      order: 1;
+      > div {
+         display: none;
+      }
+      button {
+         width: 100%;
+      }
+   }
 }
