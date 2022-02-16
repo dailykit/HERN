@@ -28,6 +28,9 @@
          width: 100%;
          max-height: 48px;
       }
+      @media only screen and (max-width: 767px) {
+         transform: unset;
+      }
    }
 }
 
@@ -387,7 +390,6 @@
 }
 .hern-on-demand-cart-section {
    background-color: #f9f9f9;
-   max-height: calc(100vh - 164px);
    overflow-y: auto;
    > div {
       max-width: 1200px;
@@ -403,6 +405,9 @@
          width: 100%;
          padding-bottom: 32px;
       }
+   }
+   @media only screen and (max-width: 767px) {
+      height: calc(100vh - 190px);
    }
    @media only screen and (min-width: 769px) {
       max-height: initial;
@@ -469,7 +474,6 @@
    }
 }
 // .hern-on-demand-cart__payment-section__content {
-//    padding: 16px;
 //    @media only screen and (max-width: 767px) {
 //       display: none;
 //    }
@@ -521,6 +525,9 @@
    border-radius: 8px;
    margin-bottom: 16px;
    padding: 12px 16px;
+   @media only screen and (max-width: 767px) {
+      display: none;
+   }
 }
 .hern-on-demand-cart__payment-section__content__header {
    display: flex;

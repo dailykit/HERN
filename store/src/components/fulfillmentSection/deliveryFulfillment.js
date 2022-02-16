@@ -10,6 +10,7 @@ import {
    generateMiniSlots,
    getTimeSlotsValidation,
    getOnDemandValidation,
+   setThemeVariable,
 } from '../../utils'
 import { CartContext } from '../../context'
 import { Loader } from '../'
@@ -493,28 +494,18 @@ export const Delivery = props => {
    if (isLoading) {
       return <p>Loading</p>
    }
+   setThemeVariable(
+      '--fufillment-time-section-top',
+      showSlots ? '64px' : 'auto'
+   )
    if (!showSlots) {
       return (
          <div className="hern-cart__fulfillment-time-section">
-            {/* <div className="hern-cart__fulfillment-time-section-heading">
-               <OrderTime />
-               <span>When would you like to order?</span>
-            </div> */}
-            <div
-               style={{
-                  display: 'flex',
-                  alignItems: 'center',
-               }}
-            >
-               <label
-                  style={{
-                     marginTop: '5px',
-                     fontSize: '16px',
-                     color: 'rgba(64, 64, 64, 0.8)',
-                     fontWeight: 'bold',
-                  }}
-               >
-                  {title}{' '}
+            <div style={{ display: 'flex' }}>
+               <OrderTime width={20} height={20} />
+               <label>
+                  {/* {title}{' '} */}
+
                   {(cartState.cart?.fulfillmentInfo?.type ===
                      'PREORDER_PICKUP' ||
                      cartState.cart?.fulfillmentInfo?.type ===
@@ -564,7 +555,6 @@ export const Delivery = props => {
    return (
       <div className="hern-cart__fulfillment-time-section">
          <div className="hern-cart__fulfillment-time-section-heading">
-            {/* <OrderTime /> */}
             <span>When would you like to order?</span>
          </div>
 
@@ -589,21 +579,24 @@ export const Delivery = props => {
             />
          )}
 
-         {!fulfillmentType ? (
-            <p>Please select a delivery type.</p>
-         ) : isGetStoresLoading ? (
-            <Loader inline />
-         ) : stores.length === 0 ? (
-            <p>No store available</p>
-         ) : fulfillmentType === 'PREORDER_DELIVERY' ? (
-            <TimeSlots
-               onFulfillmentTimeClick={onFulfillmentTimeClick}
-               selectedSlot={selectedSlot}
-               availableDaySlots={deliverySlots}
-               setSelectedSlot={setSelectedSlot}
-               timeSlotsFor={'Delivery'}
-            />
-         ) : null}
+         {
+            // !fulfillmentType ? (
+            //    <p>Please select a delivery type.</p>
+            // ) :
+            isGetStoresLoading ? (
+               <Loader inline />
+            ) : stores.length === 0 ? (
+               <p>No store available</p>
+            ) : fulfillmentType === 'PREORDER_DELIVERY' ? (
+               <TimeSlots
+                  onFulfillmentTimeClick={onFulfillmentTimeClick}
+                  selectedSlot={selectedSlot}
+                  availableDaySlots={deliverySlots}
+                  setSelectedSlot={setSelectedSlot}
+                  timeSlotsFor={'Delivery'}
+               />
+            ) : null
+         }
       </div>
    )
 }

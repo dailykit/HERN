@@ -17,20 +17,34 @@
 .hern-cart__fulfillment-time-section {
    display: flex;
    flex-direction: column;
-   // .ant-radio-button-wrapper {
-   //    margin: 0 0 0 18px;
-   // }
-   // .ant-radio-button-wrapper:first-child {
-   //    margin-left: 0;
-   // }
-   // .ant-radio-button-wrapper:last-child {
-   //    margin-right: 0;
-   // }
+   @media only screen and (max-width: 767px) {
+      label {
+         font-size: 14px !important;
+         font-weight: bold;
+      }
+      button {
+         font-size: 14px;
+      }
+   }
+}
+.hern-cart__fulfillment-time-section__change-btn {
+   @media only screen and (max-width: 767px) {
+      font-size: 14px;
+   }
+   &:disabled {
+      background-color: transparent !important;
+      color: rgba(64, 64, 64, 0.6);
+      margin-left: auto;
+      font-weight: bold;
+      font-size: 16px;
+      line-height: 16px;
+      padding: 0 !important;
+   }
 }
 .hern-cart__fulfillment-time-section-heading {
    display: flex;
    align-items: center;
-   margin: 10px 0;
+   margin-bottom: 10px;
    > span {
       font-weight: 600;
       font-size: 16px;
@@ -38,15 +52,39 @@
       color: rgba(64, 64, 64, 0.6);
    }
 }
+.hern-cart__fulfillment-time-section__content {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   label {
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 24px;
+      color: rgba(64, 64, 64, 0.8);
+   }
+}
 .hern-cart__fulfillment-date-slot {
    margin-bottom: 10px;
+   .ant-radio-checked .ant-radio-inner {
+      border-color: var(--hern-accent) !important ;
+   }
+
+   .ant-radio-checked .ant-radio-inner:after {
+      background-color: var(--hern-accent);
+   }
+
+   .ant-radio:hover .ant-radio-inner {
+      border-color: var(--hern-accent);
+   }
 }
 .hern-cart__fulfillment-slot-heading {
+   font-family: Nunito;
    font-style: normal;
    font-weight: 600;
-   font-size: 12px;
+   font-size: 14px;
    line-height: 12px;
-   color: #404040;
+   color: rgba(64, 64, 64, 0.6);
+   margin: 8px 0;
 }
 .hern-cart__fulfillment-change-btn {
    position: absolute;
@@ -58,41 +96,70 @@
    margin: 8px 0;
 }
 .hern-fulfillment__day-slots-container {
-   .ant-radio-group {
-      display: flex !important;
-      overflow: auto !important;
-      .ant-radio-button-wrapper {
-         white-space: nowrap;
-         margin: 0 0.5rem;
-         margin-bottom: 0.5rem;
-         &:first-child {
-            margin-left: 0;
-         }
-         &:last-child {
-            margin-right: 0;
-         }
-      }
+   .ant-radio-button-wrapper {
+      padding: 0 40px;
+      margin: 6px;
+   }
+   .ant-radio-button-wrapper:hover {
+      opacity: 0.7;
+      background-color: var(--hern-accent);
+      color: #fff;
    }
 }
 .hern-fulfillment__time-slots-container {
-   .ant-radio-group {
-      display: flex !important;
-      overflow: auto !important;
-      .ant-radio-button-wrapper {
-         margin: 0 0.5rem;
-         margin-bottom: 0.5rem;
-         white-space: nowrap;
-         &:first-child {
-            margin-left: 0;
-         }
-         &:last-child {
-            margin-right: 0;
-         }
-      }
+   .ant-radio-button-wrapper {
+      padding: 0 40px;
+      margin: 6px;
+   }
+   .ant-radio-button-wrapper:hover {
+      background-color: var(--hern-accent);
+      opacity: 0.7;
+      color: #fff;
    }
 }
 .hern-fulfillment-section__fulfillment-label-section {
    display: flex;
    align-items: center;
    justify-content: space-between;
+}
+.hern-cart__fulfillment-slots {
+   display: grid;
+   grid-gap: 12px;
+   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+}
+.hern-cart__fulfillment-slots__item {
+   cursor: pointer;
+   border: 1px solid #d9d9d9;
+   text-align: center;
+   border-radius: 6px;
+   padding: 8px 0;
+   font-weight: bold;
+   font-size: 14px;
+   line-height: 16px;
+   color: rgba(64, 64, 64, 0.6);
+   &:hover {
+      color: var(--hern-accent);
+      border: 1px solid var(--hern-accent);
+   }
+}
+.hern-cart__fulfillment-slots__item--active {
+   color: #fff;
+   background-color: var(--hern-accent);
+   border: 1px solid var(--hern-accent);
+   &:hover {
+      color: #fff;
+   }
+}
+.hern-cart__fulfillment-slots__item__show-all-btn {
+   display: block;
+   margin-left: auto;
+   margin-top: 8px;
+   margin-bottom: 8px;
+}
+.hern-cart__fulfillment__slot__header {
+   font-style: normal;
+   font-weight: 600;
+   font-size: 16px;
+   line-height: 24px;
+   color: rgba(64, 64, 64, 0.6);
 }

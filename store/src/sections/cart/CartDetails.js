@@ -19,12 +19,11 @@ export const CartDetails = () => {
    //context
    const { cartState, methods, combinedCartItems, isFinalCartLoading } =
       React.useContext(CartContext)
-   const { onDemandMenu } = React.useContext(onDemandMenuContext)
+
    const { settings } = useConfig()
    const { user, isAuthenticated } = useUser()
    //context data
    const { cart } = cartState
-   const { isMenuLoading } = onDemandMenu
 
    const isLoyaltyPointsAvailable =
       settings?.rewards?.find(
@@ -45,7 +44,7 @@ export const CartDetails = () => {
       })
    }
 
-   if (isFinalCartLoading || isMenuLoading) {
+   if (isFinalCartLoading) {
       return (
          <div className="hern-cart-container">
             <div className="hern-cart-page">

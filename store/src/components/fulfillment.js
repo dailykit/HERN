@@ -39,9 +39,9 @@ export const FulfillmentForm = () => {
    const fulfillmentLabel = React.useMemo(() => {
       switch (selectedFulfillment) {
          case 'DELIVERY':
-            return 'Delivery At'
+            return 'Delivery at'
          case 'PICKUP':
-            return 'Pickup From'
+            return 'Pickup from'
          case 'DINEIN':
             return 'DineIn At'
       }
@@ -50,13 +50,21 @@ export const FulfillmentForm = () => {
       React.useState(true)
    const [fulfillementTimeOpen, setFulfillementTimeOpen] = React.useState(true)
 
+   const isDisabled =
+      !cartState?.cart?.customerInfo?.customerFirstName ||
+      !cartState?.cart?.customerInfo?.customerLastName ||
+      !cartState?.cart?.customerInfo?.customerPhone
+
    return (
       <div>
          <LocationSelectorWrapper
             showLocationSelectorPopup={showLocationSelectorPopup}
             setShowLocationSelectionPopup={setShowLocationSelectionPopup}
          />
-         <div className="hern-fulfillment__address">
+         <div
+            style={{ opacity: isDisabled ? 0.7 : 1 }}
+            className="hern-fulfillment__address"
+         >
             <div
                className={classNames('hern-fulfillment__address__header', {
                   'hern-fulfillment__address__header--open':
@@ -104,7 +112,10 @@ export const FulfillmentForm = () => {
                </>
             )}
          </div>
-         <div className="hern-fulfillment__time">
+         <div
+            style={{ opacity: isDisabled ? 0.7 : 1 }}
+            className="hern-fulfillment__time"
+         >
             <div
                className={classNames('hern-fulfillment__time__header', {
                   'hern-fulfillment__time__header--open': fulfillementTimeOpen,
