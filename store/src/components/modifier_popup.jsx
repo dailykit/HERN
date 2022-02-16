@@ -1,7 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import { Button, ProductCard } from '.'
-import { RadioIcon, ShowImageIcon } from '../assets/icons'
-import { formatCurrency, getRoute } from '../utils'
+import React, {
+   useEffect,
+   useState,
+   forwardRef,
+   useImperativeHandle,
+} from 'react'
+import { Button, ModifierOptionCard, ProductCard, ModifierCategory } from '.'
+import { DownVector, RadioIcon, ShowImageIcon, UpVector } from '../assets/icons'
+import { formatCurrency, getCartItemWithModifiers, getRoute } from '../utils'
 import { CloseIcon, CheckBoxIcon } from '../assets/icons'
 import { useOnClickOutside } from '../utils/useOnClickOutisde'
 import { CartContext } from '../context'
@@ -10,6 +15,8 @@ import classNames from 'classnames'
 import Link from 'next/link'
 import { useToasts } from 'react-toast-notifications'
 import { useConfig } from '../lib'
+import { useModifier } from '../utils'
+import _ from 'lodash'
 
 export const ModifierPopup = props => {
    const {
@@ -23,27 +30,59 @@ export const ModifierPopup = props => {
       showModifierImage = true,
       modifierWithoutPopup,
       customProductDetails = false,
+      config,
    } = props
    //context
    const { addToCart, methods } = React.useContext(CartContext)
    const { addToast } = useToasts()
    const [productOption, setProductOption] = useState(
-      productData.productOptions[0]
+      productData.productOptions.find(
+         x => x.id === productData.defaultProductOptionId
+      ) || productData.productOptions[0]
    ) // for by default choose one product option
    const [quantity, setQuantity] = useState(1)
-   const [selectedOptions, setSelectedOptions] = useState({
-      single: [],
-      multiple: [],
+
+   // useModifier
+   const {
+      selectedModifierOptions,
+      setSelectedModifierOptions,
+      errorCategories,
+      setErrorCategories,
+      status,
+   } = useModifier({
+      product: productData,
+      productOption,
+      forNewItem,
+      edit,
+      setProductOption,
+      productCartDetail,
+      simpleModifier: true,
    })
-   const [status, setStatus] = useState('loading')
-   const [errorCategories, setErrorCategories] = useState([])
+   const {
+      selectedModifierOptions: nestedSelectedModifierOptions,
+      setSelectedModifierOptions: nestedSetSelectedModifierOptions,
+      errorCategories: nestedErrorCategories,
+      setErrorCategories: nestedSetErrorCategories,
+      status: nestedStatus,
+   } = useModifier({
+      product: productData,
+      productOption,
+      forNewItem,
+      edit,
+      setProductOption,
+      productCartDetail,
+      nestedModifier: true,
+   })
+
    const imagePopUpRef = React.useRef()
    const [modifierImage, setModifierImage] = useState({
       showImage: false,
       src: null,
    })
-   const { locationId, storeStatus } = useConfig()
+
+   const { locationId, storeStatus, configOf } = useConfig()
    const recipeLink = useConfig('Product Card').configOf('recipe-link')
+
    const recipeButton = {
       show:
          recipeLink?.['Recipe link Button']?.['Show link button']?.value ??
@@ -58,87 +97,29 @@ export const ModifierPopup = props => {
       })
    )
 
-   const onCheckClick = (eachOption, eachCategory) => {
-      //selected option
-      const selectedOption = {
-         modifierCategoryID: eachCategory.id,
-         modifierCategoryOptionsID: eachOption.id,
-         modifierCategoryOptionsPrice: eachOption.price,
-         cartItem: eachOption.cartItem,
-      }
-      //modifierCategoryOptionID
-      //modifierCategoryID
-      if (eachCategory.type === 'single') {
-         const existCategoryIndex = selectedOptions.single.findIndex(
-            x => x.modifierCategoryID == eachCategory.id
+   useEffect(() => {
+      if (forNewItem || edit) {
+         const productOptionId = productCartDetail.childs[0].productOption.id
+         const selectedProductOption = productData.productOptions.find(
+            x => x.id == productOptionId
          )
-         //single-->already exist category
-         if (existCategoryIndex !== -1) {
-            //for uncheck the option
-            if (
-               selectedOptions.single[existCategoryIndex][
-                  'modifierCategoryOptionsID'
-               ] === eachOption.id
-            ) {
-               const newSelectedOptions = selectedOptions.single.filter(
-                  x =>
-                     x.modifierCategoryID !== eachCategory.id &&
-                     x.modifierCategoryOptionsID !== eachOption.id
-               )
-               setSelectedOptions({
-                  ...selectedOptions,
-                  single: newSelectedOptions,
-               })
-               return
-            }
-            const newSelectedOptions = selectedOptions.single
-            newSelectedOptions[existCategoryIndex] = selectedOption
-            setSelectedOptions({
-               ...selectedOptions,
-               single: newSelectedOptions,
-            })
-            return
-         } else {
-            //single--> already not exist
-            setSelectedOptions({
-               ...selectedOptions,
-               single: [...selectedOptions.single, selectedOption],
-            })
-            return
+         setProductOption(selectedProductOption)
+         if (edit) {
+            setQuantity(productCartDetail.ids.length)
          }
       }
-      if (eachCategory.type === 'multiple') {
-         const existOptionIndex = selectedOptions.multiple.findIndex(
-            x => x.modifierCategoryOptionsID == eachOption.id
-         )
-
-         //already exist option
-         if (existOptionIndex !== -1) {
-            const newSelectedOptions = selectedOptions.multiple.filter(
-               x => x.modifierCategoryOptionsID !== eachOption.id
-            )
-            setSelectedOptions({
-               ...selectedOptions,
-               multiple: newSelectedOptions,
-            })
-            return
-         }
-         //new option select
-         else {
-            setSelectedOptions({
-               ...selectedOptions,
-               multiple: [...selectedOptions.multiple, selectedOption],
-            })
-         }
-      }
-   }
+   }, [])
 
    //add to cart
    const handleAddOnCartOn = async () => {
       //check category fulfillment conditions
       const allSelectedOptions = [
-         ...selectedOptions.single,
-         ...selectedOptions.multiple,
+         ...selectedModifierOptions.single,
+         ...selectedModifierOptions.multiple,
+      ]
+      const allNestedSelectedOptions = [
+         ...nestedSelectedModifierOptions.single,
+         ...nestedSelectedModifierOptions.multiple,
       ]
       //no modifier available in product options
       if (!productOption.modifier) {
@@ -170,46 +151,113 @@ export const ModifierPopup = props => {
       }
 
       let allCatagories = productOption.modifier?.categories || []
+      let allAdditionalCatagories = []
+      if (!_.isEmpty(productOption.additionalModifiers)) {
+         productOption.additionalModifiers.forEach(eachAdditionalModifier => {
+            eachAdditionalModifier.modifier.categories.forEach(eachCategory => {
+               allAdditionalCatagories.push(eachCategory)
+            })
+         })
+      }
+
+      let finalCategories = [...allCatagories, ...allAdditionalCatagories]
 
       let errorState = []
-      for (let i = 0; i < allCatagories.length; i++) {
+      for (let i = 0; i < finalCategories.length; i++) {
          const allFoundedOptionsLength = allSelectedOptions.filter(
-            x => x.modifierCategoryID === allCatagories[i].id
+            x => x.modifierCategoryID === finalCategories[i].id
          ).length
 
          if (
-            allCatagories[i]['isRequired'] &&
-            allCatagories[i]['type'] === 'multiple'
+            finalCategories[i]['isRequired'] &&
+            finalCategories[i]['type'] === 'multiple'
          ) {
-            const min = allCatagories[i]['limits']['min']
-            const max = allCatagories[i]['limits']['max']
+            const min = finalCategories[i]['limits']['min']
+            const max = finalCategories[i]['limits']['max']
             if (
                allFoundedOptionsLength > 0 &&
                min <= allFoundedOptionsLength &&
                (max
                   ? allFoundedOptionsLength <= max
-                  : allFoundedOptionsLength <= allCatagories[i].options.length)
+                  : allFoundedOptionsLength <=
+                    finalCategories[i].options.length)
             ) {
             } else {
-               errorState.push(allCatagories[i].id)
-               // setErrorCategories([...errorCategories, allCatagories[i].id])
+               errorState.push(finalCategories[i].id)
+            }
+         }
+      }
+      let nestedFinalCategories = []
+      let nestedFinalErrorCategories = []
+      console.log('finalCategories', finalCategories)
+      finalCategories.forEach(eachCategory => {
+         eachCategory.options.forEach(eachOption => {
+            if (eachOption.additionalModifierTemplateId) {
+               nestedFinalCategories.push(
+                  ...eachOption.additionalModifierTemplate.categories
+               )
+            }
+         })
+      })
+      if (nestedFinalCategories.length > 0) {
+         for (let i = 0; i < nestedFinalCategories.length; i++) {
+            const allFoundedOptionsLength = allNestedSelectedOptions.filter(
+               x => x.modifierCategoryID === nestedFinalCategories[i].id
+            ).length
+
+            if (
+               nestedFinalCategories[i]['isRequired'] &&
+               nestedFinalCategories[i]['type'] === 'multiple'
+            ) {
+               const min = nestedFinalCategories[i]['limits']['min']
+               const max = nestedFinalCategories[i]['limits']['max']
+               if (
+                  allFoundedOptionsLength > 0 &&
+                  min <= allFoundedOptionsLength &&
+                  (max
+                     ? allFoundedOptionsLength <= max
+                     : allFoundedOptionsLength <=
+                       nestedFinalCategories[i].options.length)
+               ) {
+               } else {
+                  nestedFinalErrorCategories.push(nestedFinalCategories[i].id)
+               }
             }
          }
       }
       setErrorCategories(errorState)
-      if (errorState.length > 0) {
+      nestedSetErrorCategories(nestedFinalErrorCategories)
+      if (errorState.length > 0 || nestedFinalErrorCategories.length > 0) {
          console.log('FAIL')
          return
       } else {
          console.log('PASS')
-         const cartItem = getCartItemWithModifiers(
-            productOption.cartItem,
-            allSelectedOptions.map(x => x.cartItem)
-         )
-         // const objects = new Array(quantity).fill({ ...cartItem })
-         // console.log('cartItem', objects)
+         const nestedModifierOptionsGroupByParentModifierOptionId =
+            allNestedSelectedOptions.length > 0
+               ? _.chain(allNestedSelectedOptions)
+                    .groupBy('parentModifierOptionId')
+                    .map((value, key) => ({
+                       parentModifierOptionId: +key,
+                       data: value,
+                    }))
+                    .value()
+               : []
 
-         await addToCart(cartItem, quantity)
+         if (!_.isEmpty(nestedModifierOptionsGroupByParentModifierOptionId)) {
+            const cartItem = getCartItemWithModifiers(
+               productOption.cartItem,
+               allSelectedOptions.map(x => x.cartItem),
+               nestedModifierOptionsGroupByParentModifierOptionId
+            )
+            console.log('finalCartItem', cartItem)
+            await addToCart(cartItem, quantity)
+         } else {
+            const cartItem = getCartItemWithModifiers(
+               productOption.cartItem,
+               allSelectedOptions.map(x => x.cartItem)
+            )
+            await addToCart(cartItem, quantity)
+         }
          if (edit) {
             methods.cartItems.delete({
                variables: {
@@ -229,45 +277,30 @@ export const ModifierPopup = props => {
    const totalAmount = () => {
       const productOptionPrice = productOption.price
       const allSelectedOptions = [
-         ...selectedOptions.single,
-         ...selectedOptions.multiple,
+         ...selectedModifierOptions.single,
+         ...selectedModifierOptions.multiple,
+      ]
+      const allNestedSelectedOptions = [
+         ...nestedSelectedModifierOptions.single,
+         ...nestedSelectedModifierOptions.multiple,
       ]
       let allSelectedOptionsPrice = 0
+      let allNestedSelectedOptionsPrice = 0
       allSelectedOptions.forEach(
          x => (allSelectedOptionsPrice += x?.modifierCategoryOptionsPrice || 0)
       )
-      const totalPrice =
-         productOptionPrice + allSelectedOptionsPrice + productData.price
-      return formatCurrency(totalPrice * quantity)
-   }
+      allNestedSelectedOptions.forEach(
+         x =>
+            (allNestedSelectedOptionsPrice +=
+               x?.modifierCategoryOptionsPrice || 0)
+      )
 
-   //render conditional text
-   const renderConditionText = category => {
-      if (category.type === 'single') {
-         return 'CHOOSE ONE*'
-      } else {
-         if (category.isRequired) {
-            if (category.limits.min) {
-               if (category.limits.max) {
-                  return `(CHOOSE AT LEAST ${category.limits.min} AND AT MOST ${category.limits.max})*`
-               } else {
-                  return `(CHOOSE AT LEAST ${category.limits.min})*`
-               }
-            } else {
-               if (category.limits.max) {
-                  return `(CHOOSE AT LEAST 1 AND AT MOST ${category.limits.max})*`
-               } else {
-                  return `(CHOOSE AT LEAST 1)*`
-               }
-            }
-         } else {
-            if (category.limits.max) {
-               return '(CHOOSE AS MANY AS YOU LIKE)'
-            } else {
-               return `(CHOOSE AS MANY AS YOU LIKE UPTO ${category.limits.max})`
-            }
-         }
-      }
+      const totalPrice =
+         productOptionPrice +
+         allSelectedOptionsPrice +
+         productData.price +
+         allNestedSelectedOptionsPrice
+      return formatCurrency(totalPrice * quantity)
    }
 
    //increment click
@@ -293,62 +326,6 @@ export const ModifierPopup = props => {
          </div>
       )
    }
-
-   useEffect(() => {
-      if (forNewItem || edit) {
-         const productOptionId = productCartDetail.childs[0].productOption.id
-         const modifierCategoryOptionsIds =
-            productCartDetail.childs[0].childs.map(x => x?.modifierOption?.id)
-
-         //selected product option
-         const selectedProductOption = productData.productOptions.find(
-            x => x.id == productOptionId
-         )
-
-         //selected modifiers
-         let singleModifier = []
-         let multipleModifier = []
-         if (selectedProductOption.modifier) {
-            selectedProductOption.modifier.categories.forEach(category => {
-               category.options.forEach(option => {
-                  const selectedOption = {
-                     modifierCategoryID: category.id,
-                     modifierCategoryOptionsID: option.id,
-                     modifierCategoryOptionsPrice: option.price,
-                     cartItem: option.cartItem,
-                  }
-                  if (category.type === 'single') {
-                     if (modifierCategoryOptionsIds.includes(option.id)) {
-                        singleModifier = singleModifier.concat(selectedOption)
-                     }
-                  }
-                  if (category.type === 'multiple') {
-                     if (modifierCategoryOptionsIds.includes(option.id)) {
-                        multipleModifier =
-                           multipleModifier.concat(selectedOption)
-                     }
-                  }
-               })
-            })
-         }
-
-         setProductOption(selectedProductOption)
-         setSelectedOptions(prevState => ({
-            ...prevState,
-            single: singleModifier,
-            multiple: multipleModifier,
-         }))
-         if (edit) {
-            setQuantity(productCartDetail.ids.length)
-         }
-         setStatus('success')
-      } else {
-         setStatus('success')
-      }
-      return () => {
-         setProductOption(null)
-      }
-   }, [])
 
    useEffect(() => {
       if (productData && !modifierWithoutPopup) {
@@ -416,6 +393,7 @@ export const ModifierPopup = props => {
          closeModifier()
       }
    }
+   console.log('productOption', productOption)
    return (
       <>
          <div
@@ -478,7 +456,7 @@ export const ModifierPopup = props => {
                      />
                   )}
                </div>
-               <div>
+               <div className="hern-product-modifier-pop-up-content-container">
                   <div className="hern-product-modifier-pop-up-product-option-list">
                      <label htmlFor="products">Available Options:</label>
                      <br />
@@ -533,29 +511,8 @@ export const ModifierPopup = props => {
                            )
                         })}
                      </ul>
-                     {/* <select
-                     className="hern-product-modifier-pop-up-product-options"
-                     name="product-options"
-                     onChange={e => {
-                        const selectedProductOption =
-                           productData.productOptions.find(
-                              x => x.id == e.target.value
-                           )
-                        setProductOption(selectedProductOption)
-                     }}
-                  >
-                     {productData.productOptions.map(eachOption => {
-                        return (
-                           <option value={eachOption.id} key={eachOption.id}>
-                              {eachOption.label}
-                              {' (+ '}
-                              {formatCurrency(eachOption.price)}
-                              {')'}
-                           </option>
-                        )
-                     })}
-                  </select> */}
                   </div>
+
                   {showModifiers && productOption.modifier && (
                      <div className="hern-product-modifier-pop-up-modifier-list">
                         <label
@@ -564,113 +521,55 @@ export const ModifierPopup = props => {
                         >
                            Add on:
                         </label>
+                        {productOption.additionalModifiers.length > 0 &&
+                           productOption.additionalModifiers.map(
+                              eachAdditionalModifier => {
+                                 return (
+                                    <AdditionalModifiers
+                                       eachAdditionalModifier={
+                                          eachAdditionalModifier
+                                       }
+                                       selectedOptions={selectedModifierOptions}
+                                       setSelectedOptions={
+                                          setSelectedModifierOptions
+                                       }
+                                       config={config}
+                                       errorCategories={errorCategories}
+                                       nestedSelectedModifierOptions={
+                                          nestedSelectedModifierOptions
+                                       }
+                                       nestedSetSelectedModifierOptions={
+                                          nestedSetSelectedModifierOptions
+                                       }
+                                       nestedErrorCategories={
+                                          nestedErrorCategories
+                                       }
+                                    />
+                                 )
+                              }
+                           )}
                         {productOption.modifier.categories.map(eachCategory => {
                            return (
-                              <div
-                                 className="hern-product-modifier-pop-up-modifier-category-list"
-                                 key={eachCategory.id}
-                              >
-                                 <span className="hern-product-modifier-pop-up-modifier-category__name">
-                                    {eachCategory.name}
-                                 </span>
-                                 <br />
-                                 <span
-                                    style={{
-                                       fontStyle: 'italic',
-                                       fontSize: '11px',
-                                    }}
-                                 >
-                                    {renderConditionText(eachCategory)}
-                                 </span>
-
-                                 {errorCategories.includes(eachCategory.id) && (
-                                    <>
-                                       <br />
-                                       <span
-                                          style={{
-                                             fontStyle: 'italic',
-                                             fontSize: '11px',
-                                             color: 'red',
-                                          }}
-                                       >
-                                          You have to choose this category.
-                                       </span>
-                                    </>
-                                 )}
-                                 <br />
-                                 <div className="hern-product-modifier-pop-up-modifier-category__options">
-                                    {eachCategory.options.map(eachOption => {
-                                       const foo = () => {
-                                          const foo1 = () => {
-                                             const isOptionSelected =
-                                                selectedOptions[
-                                                   eachCategory.type
-                                                ].find(
-                                                   x =>
-                                                      x.modifierCategoryID ===
-                                                         eachCategory.id &&
-                                                      x.modifierCategoryOptionsID ===
-                                                         eachOption.id
-                                                )
-                                             return eachCategory.type ===
-                                                'single' ? (
-                                                Boolean(isOptionSelected) ? (
-                                                   <RadioIcon showTick={true} />
-                                                ) : (
-                                                   <RadioIcon />
-                                                )
-                                             ) : Boolean(isOptionSelected) ? (
-                                                <CheckBoxIcon showTick={true} />
-                                             ) : (
-                                                <CheckBoxIcon />
-                                             )
-                                          }
-                                          return foo1
-                                       }
-                                       return (
-                                          <div
-                                             className="hern-product-modifier-pop-up-add-on-list"
-                                             key={eachOption.id}
-                                          >
-                                             <ProductCard
-                                                data={eachOption}
-                                                showImage={false}
-                                                showCustomText={false}
-                                                contentAreaCustomStyle={{
-                                                   justifyContent: 'flex-start',
-                                                }}
-                                                showImageIcon={
-                                                   eachOption.image &&
-                                                   showModifierImage
-                                                      ? ShowImageIcon
-                                                      : false
-                                                }
-                                                onShowImageIconClick={() => {
-                                                   setModifierImage({
-                                                      ...modifierImage,
-                                                      src: eachOption.image,
-                                                      showImage: true,
-                                                   })
-                                                }}
-                                                additionalIcon={foo()}
-                                                onAdditionalIconClick={() => {
-                                                   onCheckClick(
-                                                      eachOption,
-                                                      eachCategory
-                                                   )
-                                                }}
-                                             />
-                                          </div>
-                                       )
-                                    })}
-                                 </div>
-                              </div>
+                              <ModifierCategory
+                                 eachCategory={eachCategory}
+                                 selectedOptions={selectedModifierOptions}
+                                 setSelectedOptions={setSelectedModifierOptions}
+                                 config={config}
+                                 errorCategories={errorCategories}
+                                 nestedSelectedModifierOptions={
+                                    nestedSelectedModifierOptions
+                                 }
+                                 nestedSetSelectedModifierOptions={
+                                    nestedSetSelectedModifierOptions
+                                 }
+                                 nestedErrorCategories={nestedErrorCategories}
+                              />
                            )
                         })}
                      </div>
                   )}
                </div>
-               <div style={{ padding: '32px' }}>
+               <div style={{ padding: '0 32px' }}>
                   <Button
                      className="hern-product-modifier-pop-up-add-to-cart-btn"
                      onClick={() => setTimeout(handleAddOnCartOn, 500)}
@@ -716,36 +615,70 @@ export const ModifierPopup = props => {
       </>
    )
 }
-const getCartItemWithModifiers = (cartItemInput, selectedModifiersInput) => {
-   // const finalCartItem = { ...cartItemInput }
-   const finalCartItem = JSON.parse(JSON.stringify(cartItemInput))
 
-   const combinedModifiers = selectedModifiersInput.reduce(
-      (acc, obj) => [...acc, ...obj.data],
-      []
-   )
-   console.log('combineMOdifiers', combinedModifiers)
-   const dataArr = finalCartItem?.childs?.data[0]?.childs?.data
+const AdditionalModifiers = forwardRef(
+   ({
+      eachAdditionalModifier,
+      config,
+      selectedOptions,
+      setSelectedOptions,
+      errorCategories,
+      nestedSelectedModifierOptions,
+      nestedSetSelectedModifierOptions,
+      nestedErrorCategories,
+   }) => {
+      const additionalModifiersType = React.useMemo(
+         () => eachAdditionalModifier.type == 'hidden',
+         [eachAdditionalModifier]
+      )
+      const [showCustomize, setShowCustomize] = useState(
+         !Boolean(additionalModifiersType)
+      )
 
-   console.log('finalCartItemBefore 123', finalCartItem)
-   finalCartItem.childs.data[0].childs.data = [...dataArr, ...combinedModifiers]
-   return finalCartItem
-
-   // return finalCartItem
-   // if (dataArrLength === 0) {
-   //    finalCartItem.childs.data[0].childs.data = combinedModifiers
-   //    return finalCartItem
-   // } else {
-   //    for (let i = 0; i < dataArrLength; i++) {
-   //       const objWithModifiers = {
-   //          ...dataArr[i],
-   //          childs: {
-   //             data: combinedModifiers,
-   //          },
-   //       }
-   //       finalCartItem.childs.data[0].childs.data[i] = objWithModifiers
-   //    }
-   //    console.log('finalcartItems', finalCartItem)
-   //    return finalCartItem
-   // }
-}
+      return (
+         <>
+            <div className="">
+               <div
+                  className=""
+                  onClick={() => setShowCustomize(prev => !prev)}
+                  style={{
+                     display: 'flex',
+                     justifyContent: 'space-between',
+                     alignItems: 'center',
+                     cursor: 'pointer',
+                  }}
+               >
+                  <span className="">{eachAdditionalModifier.label}</span>
+                  {showCustomize ? (
+                     <UpVector size={18} />
+                  ) : (
+                     <DownVector size={18} />
+                  )}
+               </div>
+               {showCustomize &&
+                  eachAdditionalModifier.modifier &&
+                  eachAdditionalModifier.modifier.categories.map(
+                     (eachModifierCategory, index) => {
+                        return (
+                           <ModifierCategory
+                              eachCategory={eachModifierCategory}
+                              selectedOptions={selectedOptions}
+                              setSelectedOptions={setSelectedOptions}
+                              config={config}
+                              errorCategories={errorCategories}
+                              nestedSelectedModifierOptions={
+                                 nestedSelectedModifierOptions
+                              }
+                              nestedSetSelectedModifierOptions={
+                                 nestedSetSelectedModifierOptions
+                              }
+                              nestedErrorCategories={nestedErrorCategories}
+                           />
+                        )
+                     }
+                  )}
+            </div>
+         </>
+      )
+   }
+)

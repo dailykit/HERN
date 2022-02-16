@@ -20,6 +20,7 @@ import { useRouter } from 'next/router'
 import { useToasts } from 'react-toast-notifications'
 import { VegNonVegType } from '../../assets/icons'
 import CartBar from '../order/CartBar'
+import { CustomArea } from './productCustomArea'
 
 export const FeaturedCollection = ({ config }) => {
    const router = useRouter()
@@ -41,9 +42,11 @@ export const FeaturedCollection = ({ config }) => {
    })
 
    const date = React.useMemo(() => new Date(Date.now()).toISOString(), [])
-   const collectionIdArray = React.useMemo(() => config?.data?.collectionData?.value?.map(
-      collection => collection.id
-   ), [config])
+   const collectionIdArray = React.useMemo(
+      () =>
+         config?.data?.collectionData?.value?.map(collection => collection.id),
+      [config]
+   )
    const menuType = config?.display?.dropdown?.value[0]?.value
       ? config?.display?.dropdown?.value[0]?.value
       : 'side-nav'
@@ -166,36 +169,8 @@ export const FeaturedCollection = ({ config }) => {
    )
    const [productModifier, setProductModifier] = useState(null)
 
-   const CustomArea = props => {
-      const { data } = props
-      return (
-         <div className="hern-on-demand-product-custom-area">
-            <Button
-               className="hern-custom-area-add-btn"
-               type="outline"
-               onClick={() => {
-                  if (data.productOptions.length > 0) {
-                     setProductModifier(data)
-                  } else {
-                     addToast('Added to the Cart!', {
-                        appearance: 'success',
-                     })
-                     addToCart({ productId: data.id }, 1)
-                  }
-               }}
-               disabled={
-                  locationId ? (storeStatus.status ? false : true) : true
-               }
-            >
-               {locationId
-                  ? storeStatus.status
-                     ? 'ADD'
-                     : 'COMING SOON'
-                  : 'COMING SOON'}
-            </Button>
-            {data.productOptions.length > 0 && <span>Customizable</span>}
-         </div>
-      )
+   const CustomAreaWrapper = ({ data }) => {
+      return <CustomArea data={data} setProductModifier={setProductModifier} />
    }
    const closeModifier = () => {
       setProductModifier(null)
@@ -252,16 +227,16 @@ export const FeaturedCollection = ({ config }) => {
                         <Scroll.Element key={index} name={eachCategory.name}>
                            {config?.informationVisibility?.collection
                               ?.productCategory?.value && (
-                                 <p
-                                    className="hern-product-category-heading"
-                                    id={`hern-product-category-${eachCategory.name}`}
-                                 >
-                                    {eachCategory.name}
-                                    {showCategoryLengthOnCategoryTitle && (
-                                       <>({eachCategory.products.length})</>
-                                    )}
-                                 </p>
-                              )}
+                              <p
+                                 className="hern-product-category-heading"
+                                 id={`hern-product-category-${eachCategory.name}`}
+                              >
+                                 {eachCategory.name}
+                                 {showCategoryLengthOnCategoryTitle && (
+                                    <>({eachCategory.products.length})</>
+                                 )}
+                              </p>
+                           )}
                            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                               {eachCategory.products.map(
                                  (eachProduct, index) => {
@@ -290,7 +265,7 @@ export const FeaturedCollection = ({ config }) => {
                                                 router.push(
                                                    getRoute(
                                                       '/products/' +
-                                                      eachProduct.id
+                                                         eachProduct.id
                                                    )
                                                 )
                                              }
@@ -298,7 +273,7 @@ export const FeaturedCollection = ({ config }) => {
                                                 router.push(
                                                    getRoute(
                                                       '/products/' +
-                                                      eachProduct.id
+                                                         eachProduct.id
                                                    )
                                                 )
                                              }
@@ -356,13 +331,13 @@ export const FeaturedCollection = ({ config }) => {
                                                    ?.product
                                                    ?.showProductAdditionalText
                                                    ?.value
-                                                   ? CustomArea
+                                                   ? CustomAreaWrapper
                                                    : undefined
                                              }
                                              showModifier={
                                                 productModifier &&
                                                 productModifier.id ===
-                                                eachProduct.id
+                                                   eachProduct.id
                                              }
                                              closeModifier={closeModifier}
                                              modifierPopupConfig={{
@@ -374,6 +349,7 @@ export const FeaturedCollection = ({ config }) => {
                                              }}
                                              customAreaFlex={false}
                                              modifierWithoutPopup={false}
+                                             config={config}
                                           />
                                        </div>
                                     )
