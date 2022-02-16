@@ -7,6 +7,7 @@ import {
    get_env,
    LoginWrapper,
    autoSelectStore,
+   formatCurrency,
    getStoresWithValidations,
 } from '../utils'
 
@@ -115,8 +116,12 @@ export const Header = ({ settings, navigationMenus }) => {
 
    const newNavigationMenus = DataWithChildNodes(navigationMenus)
 
-   const { cartState, setStoredCartId, isFinalCartLoading } =
-      React.useContext(CartContext)
+   const {
+      cartState,
+      setStoredCartId,
+      isFinalCartLoading,
+      showCartIconToolTip,
+   } = React.useContext(CartContext)
    const numberOfItemsOnCart =
       cartState?.cart?.cartItems_aggregate?.aggregate?.count
 
@@ -440,6 +445,45 @@ export const Header = ({ settings, navigationMenus }) => {
                            <span className="number-of-cart-item">
                               {numberOfItemsOnCart}
                            </span>
+                           {cartState.cart?.cartItems_aggregate?.aggregate
+                              ?.count > 0 &&
+                              showCartIconToolTip && (
+                                 <div
+                                    className="hern-navbar-cart-tooltip"
+                                    style={{
+                                       backgroundColor: `${
+                                          theme?.accent
+                                             ? theme?.accent
+                                             : 'rgba(37, 99, 235, 1)'
+                                       }`,
+                                       color: '#ffffff',
+                                    }}
+                                 >
+                                    {
+                                       cartState.cart?.cartItems_aggregate
+                                          ?.aggregate?.count
+                                    }{' '}
+                                    {cartState.cart?.cartItems_aggregate
+                                       ?.aggregate?.count === 1
+                                       ? 'Item'
+                                       : 'Items'}
+                                    {' - '}
+                                    {formatCurrency(
+                                       cartState.cart?.cartOwnerBilling
+                                          ?.balanceToPay
+                                    )}
+                                    <div
+                                       className="hern-navbar-cart-tooltip__tip"
+                                       style={{
+                                          backgroundColor: `${
+                                             theme?.accent
+                                                ? theme?.accent
+                                                : 'rgba(37, 99, 235, 1)'
+                                          }`,
+                                       }}
+                                    ></div>
+                                 </div>
+                              )}
                         </div>
                      )}
                      {isLoading ? (

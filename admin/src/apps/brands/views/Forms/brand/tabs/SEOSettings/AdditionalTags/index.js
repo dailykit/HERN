@@ -9,8 +9,9 @@ import {
     TunnelHeader,
     ButtonTile,
     HelperText,
+    PlusIcon
 } from '@dailykit/ui'
-import { isEmpty } from 'lodash'
+import { findLastIndex, isEmpty, truncate } from 'lodash'
 import {
     InlineLoader,
     Flex,
@@ -20,7 +21,7 @@ import {
 import { useMutation, useLazyQuery } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { StyledWrapper, ImageContainer } from './styled'
+import { StyledWrapper, DrawerWrapper } from './styled'
 import { logger } from '../../../../../../../../shared/utils'
 import {
     Tooltip,
@@ -32,6 +33,7 @@ import {
     Input,
     Button,
     Modal,
+    Drawer
 } from 'antd'
 import { EditIcon, DeleteIcon } from '../../../../../../../../shared/assets/icons'
 import { BRANDS } from '../../../../../../graphql'
@@ -41,6 +43,7 @@ const AdditionalTags = ({ update }) => {
     const params = useParams()
     const [settingId, setSettingId] = React.useState(null)
     const [isSEOBasicsModalVisible, setIsSEOBasicsModalVisible] = useState(false)
+    const [showDrawer, setShowDrawer] = React.useState(false)
 
     const [form, setForm] = useState({
         additionalTags: {
@@ -63,7 +66,8 @@ const AdditionalTags = ({ update }) => {
     const handleAdditonalSEOCancel = () => {
         setIsSEOBasicsModalVisible(false)
     }
-    console.log(form.tagName, "formvalue")
+    const [prevAdditionalSettings, setPrevAdditionalSettings] = React.useState([])
+
 
     const [seoDetails, { loading: metaDetailsLoading, brandSettings }] =
         useLazyQuery(BRANDS.SETTINGS, {
@@ -72,6 +76,7 @@ const AdditionalTags = ({ update }) => {
                 if (!isEmpty(brandSettings)) {
                     const { brand, id } = brandSettings[0]
                     setSettingId(id)
+                    setPrevAdditionalSettings(brand[0]?.value?.additionalTags)
                     setForm(prev => ({
                         ...prev,
                         additionalTags: {
@@ -101,7 +106,6 @@ const AdditionalTags = ({ update }) => {
     const Save = () => {
         const tagName = form?.tagName?.value
         const tagContent = form?.tagContent?.value
-        const prevAdditionalSettings = form?.additionalTags?.value || null
         const newSetting = {}
         newSetting[tagName] = tagContent
         console.log(newSetting, "newSetting")
@@ -115,7 +119,8 @@ const AdditionalTags = ({ update }) => {
                 ]
             } : { "additionalTags": [newSetting] }
         })
-        setIsSEOBasicsModalVisible(false)
+        // setIsSEOBasicsModalVisible(false)
+        setShowDrawer(false)
     }
 
     if (metaDetailsLoading) return <InlineLoader />
@@ -130,7 +135,7 @@ const AdditionalTags = ({ update }) => {
             },
         }))
     }
-
+    console.log([prevAdditionalSettings], "prevAdditionalSettings")
     return (
         <StyledWrapper>
             <div className="metaDetails">
@@ -146,18 +151,21 @@ const AdditionalTags = ({ update }) => {
                         </Button>
                     ]}
                 >
-                    <Form layout="vertical">
+                    <Form>
                         <Form.Item
-                            label={
+                            style={{ columnGap: '1rem' }}
+                            label={<>
                                 <span
                                     style={{
                                         color: '#555B6E',
-                                        fontSize: '16px',
-                                        fontWeight: '600',
+                                        fontSize: '15px',
+                                        fontWeight: '500',
                                     }}
                                 >
-                                    Enter name and the value for the SEO that you want to add.
+                                    Add/Edit name and content for additional tags
                                 </span>
+
+                            </>
                             }
                             tooltip={{
                                 title: 'The name and the value will be added like this:<meta name={name} content={value}/>',
@@ -171,71 +179,85 @@ const AdditionalTags = ({ update }) => {
                                     />
                                 ),
                             }}
-                        >
-                            <Form.Item
-                                label="Tag Name"
-                                name="tagName"
-                                style={{
-                                    color: '#555B6E',
-                                    fontSize: '16px',
-                                    fontWeight: '600',
-                                }}
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please input your name of the SEO property you want to add.!',
-                                    },
-                                ]}
-                            >
-                                <Input
-                                    strong
-                                    level={5}
-                                    placeholder="name(like keywords,author etc)"
-                                    style={{
-                                        width: '50%',
-                                        border: '2px solid #E4E4E4',
-                                        borderRadius: '4px',
-                                    }}
-                                    bordered={false}
-                                    value={form?.tagName?.value}
-                                    onChange={onChangeHandler}
-                                    id="tagName"
-                                    name="tagName"
-                                />
-                            </Form.Item>
-                            <Form.Item
-                                label="Tag Content"
-                                name="tagContent"
-                                style={{
-                                    color: '#555B6E',
-                                    fontSize: '16px',
-                                    fontWeight: '600',
-                                }}
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please input your content/value of the SEO property you want to add.!',
-                                    },
-                                ]}
-                            >
-                                <Input
-                                    strong
-                                    level={5}
-                                    placeholder="content/value"
-                                    style={{
-                                        width: '80%',
-                                        border: '2px solid #E4E4E4',
-                                        borderRadius: '4px',
-                                    }}
-                                    bordered={false}
-                                    value={form?.tagContent?.value}
-                                    onChange={onChangeHandler}
-                                    id="tagContent"
-                                    name="tagContent"
-                                />
-                            </Form.Item>
+
+                        ><ComboButton type="outline" size='sm' style={{ border: '1px solid transparent', fontWeight: '600', fontSize: '15px', padding: '0px' }} onClick={() => setShowDrawer(true)}>
+                                <PlusIcon color='#367BF5' />
+                                Add more
+                            </ComboButton>
                         </Form.Item>
+                        <div className="site-drawer-render-in-current-wrapper">
+
+                            <DrawerWrapper>
+                                <Drawer
+                                    title="Add meta tags"
+                                    placement="right"
+                                    closable={true}
+                                    onClose={() => setShowDrawer(false)}
+                                    visible={showDrawer}
+                                    getContainer={false}
+                                    style={{ position: 'absolute', display: !showDrawer && 'none' }}
+                                    className='drawer'
+                                >
+                                    <><Form.Item
+                                        label="Tag Name"
+                                        name="tagName"
+                                        style={{
+                                            color: '#555B6E',
+                                            fontSize: '16px',
+                                            fontWeight: '600',
+                                        }}
+                                    >
+                                        <Input
+                                            strong
+                                            level={5}
+                                            placeholder="name(like keywords,author etc)"
+                                            style={{
+                                                width: '100%',
+                                                border: '2px solid #E4E4E4',
+                                                borderRadius: '4px',
+                                            }}
+                                            bordered={false}
+                                            value={form?.tagName?.value}
+                                            onChange={onChangeHandler}
+                                            id="tagName"
+                                            name="tagName"
+                                        />
+                                    </Form.Item>
+                                        <Form.Item
+                                            label="Tag Content"
+                                            name="tagContent"
+                                            style={{
+                                                color: '#555B6E',
+                                                fontSize: '16px',
+                                                fontWeight: '600',
+                                            }}
+                                        >
+                                            <Input
+                                                strong
+                                                level={5}
+                                                placeholder="content/value"
+                                                style={{
+                                                    width: '100%',
+                                                    border: '2px solid #E4E4E4',
+                                                    borderRadius: '4px',
+                                                }}
+                                                bordered={false}
+                                                value={form?.tagContent?.value}
+                                                onChange={onChangeHandler}
+                                                id="tagContent"
+                                                name="tagContent"
+                                            />
+                                        </Form.Item>
+                                        <Button type="primary" onClick={() => Save()}>
+                                            Save
+                                        </Button></>
+                                </Drawer>
+                            </DrawerWrapper>
+                        </div>
                     </Form>
+                    {prevAdditionalSettings && prevAdditionalSettings.map((obj) => {
+                        return <div>{Object.keys(obj)}:{Object.values(obj)}</div>
+                    })}
                 </Modal>
                 <Button type="primary" ghost onClick={showSEOBasicsModal}>
                     Add Other Additional Tags
