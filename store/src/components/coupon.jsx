@@ -12,7 +12,13 @@ import { useQueryParamState } from '../utils'
 import { CouponIcon, ChevronIcon, CouponTicketIcon } from '../assets/icons'
 import { Button } from '.'
 
-const Coupon_ = ({ cart, config, upFrontLayout = false, tunnel = false }) => {
+const Coupon_ = ({
+   cart,
+   config,
+   upFrontLayout = false,
+   tunnel = false,
+   listOntunnnel = true,
+}) => {
    // use this component for kiosk as well
    const [orderInterfaceType] = useQueryParamState('oiType', 'Website')
    const { state = {} } =
@@ -31,6 +37,8 @@ const Coupon_ = ({ cart, config, upFrontLayout = false, tunnel = false }) => {
 
    const [isCouponListOpen, setIsCouponListOpen] = React.useState(false)
    const [isCouponFormOpen, setIsCouponFormOpen] = React.useState(false)
+   const [isCouponListTunnelOpen, setIsCouponListTunnelOpen] =
+      React.useState(false)
    const [typedCode, setTypedCode] = React.useState('')
 
    // Mutation
@@ -184,9 +192,9 @@ const Coupon_ = ({ cart, config, upFrontLayout = false, tunnel = false }) => {
                         : 'hern-coupon__input-wrapper'
                   }
                >
-                  {orderInterfaceType != 'Kiosk Ordering' && upFrontLayout && (
-                     <CouponHeader />
-                  )}
+                  {false &&
+                     orderInterfaceType != 'Kiosk Ordering' &&
+                     upFrontLayout && <CouponHeader />}
 
                   <label
                      className={
@@ -240,23 +248,45 @@ const Coupon_ = ({ cart, config, upFrontLayout = false, tunnel = false }) => {
                   </button>
                ) : (
                   <Button
-                     className="hern-upfront-coupon__form__apply-btn"
                      disabled={searching || applying}
                      type="submit"
+                     variant="outline"
                   >
                      {searching || applying ? <Loader inline /> : t('Apply')}
                   </Button>
                )}
             </form>
-            {(orderInterfaceType === 'Kiosk Ordering' || upFrontLayout) && (
-               <CouponsList
-                  createOrderCartRewards={createOrderCartRewards}
-                  closeTunnel={() => setIsCouponListOpen(false)}
-                  cart={cart}
-                  config={config}
-                  upFrontLayout={upFrontLayout}
-               />
+            <Button
+               onClick={() => setIsCouponListTunnelOpen(true)}
+               variant="ghost"
+            >
+               View Offers
+            </Button>
+            {listOntunnnel && (
+               <Tunnel.Right
+                  title="Coupon"
+                  visible={isCouponListTunnelOpen}
+                  onClose={() => setIsCouponListTunnelOpen(false)}
+               >
+                  <CouponsList
+                     createOrderCartRewards={createOrderCartRewards}
+                     closeTunnel={() => setIsCouponListOpen(false)}
+                     cart={cart}
+                     config={config}
+                     upFrontLayout={upFrontLayout}
+                  />
+               </Tunnel.Right>
             )}
+            {!listOntunnnel &&
+               (orderInterfaceType === 'Kiosk Ordering' || upFrontLayout) && (
+                  <CouponsList
+                     createOrderCartRewards={createOrderCartRewards}
+                     closeTunnel={() => setIsCouponListOpen(false)}
+                     cart={cart}
+                     config={config}
+                     upFrontLayout={upFrontLayout}
+                  />
+               )}
             {orderInterfaceType !== 'Kiosk Ordering' && !upFrontLayout && (
                <Tunnel
                   isOpen={isCouponListOpen}
@@ -330,7 +360,7 @@ const Coupon_ = ({ cart, config, upFrontLayout = false, tunnel = false }) => {
    )
 }
 export const Coupon = props => {
-   const { tunnel = true } = props
+   const { tunnel = false } = props
    const [isCouponTunnelOpen, setIsCouponTunnelOpen] = React.useState(false)
    if (tunnel) {
       return (
