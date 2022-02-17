@@ -37,7 +37,10 @@ export const UserInfo = props => {
             isUserFormOpen ? (
                <UserInfoForm handleClose={handleClose} {...props} />
             ) : (
-               <UserDetails handleEdit={handleEdit} />
+               <UserDetails
+                  handleOpen={() => setIsUserFormOpen(true)}
+                  handleEdit={handleEdit}
+               />
             )
          ) : (
             <>
@@ -71,6 +74,7 @@ const UserInfoForm = props => {
    const { user } = useUser()
    const { addToast } = useToasts()
    const { cart } = cartState
+   const [savingUserInfo, setSavingUserInfo] = React.useState(false)
    const [firstName, setFirstName] = useState(
       cart?.customerInfo?.customerFirstName ||
          user.platform_customer?.firstName ||
@@ -97,10 +101,10 @@ const UserInfoForm = props => {
          })
       },
    })
-   // const [isOpen, setIsOpen] = useState(false)
 
-   const handleSave = () => {
-      methods.cart.update({
+   const handleSave = async () => {
+      setSavingUserInfo(true)
+      await methods.cart.update({
          variables: {
             id: cart.id,
             _set: {
@@ -113,20 +117,17 @@ const UserInfoForm = props => {
          },
       })
       if (user?.keycloakId) {
-         updateCustomer({
+         await updateCustomer({
             variables: {
                keycloakId: user.keycloakId,
                _set: { firstName: firstName, lastName: lastName },
             },
          })
       }
+      setSavingUserInfo(false)
       handleClose()
    }
-   // React.useEffect(() => {
-   //    if (!firstName.length || !lastName.length || !mobileNumber.length) {
-   //       setIsOpen(true)
-   //    }
-   // }, [])
+
    return (
       <div
          className={classNames('hern-user-info', {
@@ -140,9 +141,13 @@ const UserInfoForm = props => {
             </div>
             <Button
                disabled={
-                  !firstName.length || !lastName.length || !mobileNumber.length
+                  !firstName?.length ||
+                  !lastName?.length ||
+                  !mobileNumber?.length ||
+                  !isValidPhoneNumber(mobileNumber)
                }
                onClick={handleSave}
+               loading={savingUserInfo}
             >
                save
             </Button>
@@ -203,9 +208,17 @@ const UserInfoForm = props => {
       </div>
    )
 }
-const UserDetails = ({ handleEdit }) => {
+const UserDetails = ({ handleEdit, handleOpen }) => {
    const { cartState } = React.useContext(CartContext)
-
+   React.useEffect(() => {
+      if (
+         !cartState?.cart?.customerInfo?.customerFirstName?.length ||
+         !cartState?.cart?.customerInfo?.customerLastName?.length ||
+         !cartState?.cart?.customerInfo?.customerPhone?.length
+      ) {
+         handleOpen()
+      }
+   }, [])
    return (
       <div className="hern-user-info--closed">
          <div>
