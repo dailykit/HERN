@@ -46,191 +46,177 @@ export const CustomArea = props => {
       setShowModifierPopup(false)
    }
 
-   const repeatLastOne = productData => {
-      const cartDetailSelectedProduct = cartState.cartItems
+   const repeatLastOne = async productData => {
+      // select latest added product
+      const cartDetailSelectedOfLatestProduct = cartState.cartItems
          .filter(x => x.productId === productData.id)
          .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
          .pop()
-      if (cartDetailSelectedProduct.childs.length === 0) {
+
+      // if is there no  product option available in added product
+      if (cartDetailSelectedOfLatestProduct.childs.length === 0) {
          addToCart(productData.defaultCartItem, 1)
          setShowChooseIncreaseType(false)
          return
       }
+
       const productOptionId =
-         cartDetailSelectedProduct.childs[0].productOption.id
+         cartDetailSelectedOfLatestProduct.childs[0].productOption.id
+
       const selectedProductOption = productData.productOptions.find(
          eachProductOption => eachProductOption.id === productOptionId
       )
+
+      // if there is product option then check is there any modifier available in product option
+
+      // there is no modifier available in product option
       if (
          selectedProductOption.additionalModifiers.length === 0 &&
          selectedProductOption.modifier === null
       ) {
          addToCart(selectedProductOption.cartItem, 1)
-         closeModifier()
+         setShowChooseIncreaseType(false)
          return
       }
+
       const modifierCategoryOptionsIds =
-         cartDetailSelectedProduct.childs[0].childs.map(
+         cartDetailSelectedOfLatestProduct.childs[0].childs.map(
             x => x?.modifierOption?.id
          )
-
-      // select all modifier option id which has modifier option ( parent modifier option id)
-      const modifierOptionsConsistAdditionalModifiers =
-         cartDetailSelectedProduct.childs[0].childs
-            .map(eachModifierOption => {
-               if (eachModifierOption.childs.length > 0) {
-                  return {
-                     parentModifierOptionId:
-                        eachModifierOption.modifierOption.id,
-                     selectedModifierOptionIds: eachModifierOption.childs.map(
-                        x => x.modifierOption.id
-                     ),
-                  }
-               } else {
-                  return null
-               }
+      let nestedModifierCategoryOptionsIds = []
+      cartDetailSelectedOfLatestProduct.childs[0].childs.forEach(eachOption => {
+         if (eachOption.childs.length > 0) {
+            eachOption.childs.forEach(nestedEachOption => {
+               nestedModifierCategoryOptionsIds.push(
+                  nestedEachOption.modifierOption.id
+               )
             })
-            .filter(eachId => eachId !== null)
+         }
+      })
+      console.log(
+         'nestedModifierCategoryOptionsIds',
+         nestedModifierCategoryOptionsIds
+      )
 
-      //selected modifiers
-      let singleModifier = []
-      let multipleModifier = []
-      let singleAdditionalModifier = []
-      let multipleAdditionalModifier = []
-      if (productOptionInCart.modifier) {
-         selectedProductOption.modifier.categories.forEach(category => {
-            category.options.forEach(option => {
-               const selectedOption = {
-                  modifierCategoryID: category.id,
-                  modifierCategoryOptionsID: option.id,
-                  modifierCategoryOptionsPrice: option.price,
-                  cartItem: option.cartItem,
-               }
-               if (category.type === 'single') {
-                  if (modifierCategoryOptionsIds.includes(option.id)) {
-                     singleModifier = singleModifier.concat(selectedOption)
+      let allModifierOption = []
+      let allNestedModifierOption = []
+      // select all modifier options from modifier
+      selectedProductOption.modifier.categories.forEach(category => {
+         category.options.forEach(option => {
+            const selectedOption = {
+               modifierCategoryID: category.id,
+               modifierCategoryOptionsID: option.id,
+               modifierCategoryOptionsPrice: option.price,
+               cartItem: option.cartItem,
+            }
+            if (modifierCategoryOptionsIds.includes(option.id)) {
+               allModifierOption = allModifierOption.concat(selectedOption)
+            }
+         })
+      })
+      // select all modifier options from additionalModifiers
+      if (selectedProductOption.additionalModifiers) {
+         selectedProductOption.additionalModifiers.forEach(
+            eachAdditionalModifier => {
+               eachAdditionalModifier.modifier.categories.forEach(category => {
+                  category.options.forEach(option => {
+                     const selectedOption = {
+                        modifierCategoryID: category.id,
+                        modifierCategoryOptionsID: option.id,
+                        modifierCategoryOptionsPrice: option.price,
+                        cartItem: option.cartItem,
+                     }
+                     if (modifierCategoryOptionsIds.includes(option.id)) {
+                        allModifierOption =
+                           allModifierOption.concat(selectedOption)
+                     }
+                  })
+               })
+            }
+         )
+      }
+
+      // select all select nested modifier option
+
+      if (nestedModifierCategoryOptionsIds.length > 0) {
+         let allAvailableModifiers = []
+         if (!_.isEmpty(selectedProductOption.additionalModifiers)) {
+            allAvailableModifiers = [
+               ...allAvailableModifiers,
+               ...selectedProductOption.additionalModifiers.map(
+                  eachAdditionalModifier => eachAdditionalModifier.modifier
+               ),
+            ]
+         }
+         if (!_.isEmpty(selectedProductOption.modifier)) {
+            allAvailableModifiers.push(selectedProductOption.modifier)
+         }
+
+         let allNestedModifiers = []
+         console.log('allAvailableModifiers', allAvailableModifiers)
+         allAvailableModifiers.forEach(eachModifier => {
+            eachModifier.categories.forEach(eachCategory => {
+               eachCategory.options.forEach(eachOption => {
+                  if (eachOption.additionalModifierTemplateId) {
+                     allNestedModifiers.push({
+                        ...eachOption.additionalModifierTemplate,
+                        parentModifierOptionId: eachOption.id,
+                     })
                   }
-               }
-               if (category.type === 'multiple') {
-                  if (modifierCategoryOptionsIds.includes(option.id)) {
-                     multipleModifier = multipleModifier.concat(selectedOption)
-                  }
-               }
+               })
             })
          })
-      }
-      const allSelectedOptions = [...singleModifier, ...multipleModifier]
-      if (additionalModifierTemplateIds) {
-         productOptionInCart.additionalModifiers.forEach(option => {
-            option.modifier.categories.forEach(category => {
+         console.log('allNestedModifiers', allNestedModifiers)
+         allNestedModifiers.forEach(eachModifier => {
+            eachModifier.categories.forEach(category => {
                category.options.forEach(option => {
                   const selectedOption = {
                      modifierCategoryID: category.id,
                      modifierCategoryOptionsID: option.id,
                      modifierCategoryOptionsPrice: option.price,
                      cartItem: option.cartItem,
+                     parentModifierOptionId:
+                        eachModifier.parentModifierOptionId,
                   }
-                  if (category.type === 'single') {
-                     if (modifierCategoryOptionsIds.includes(option.id)) {
-                        singleAdditionalModifier =
-                           singleAdditionalModifier.concat(selectedOption)
-                     }
-                  }
-                  if (category.type === 'multiple') {
-                     if (modifierCategoryOptionsIds.includes(option.id)) {
-                        multipleAdditionalModifier =
-                           multipleAdditionalModifier.concat(selectedOption)
-                     }
+                  if (nestedModifierCategoryOptionsIds.includes(option.id)) {
+                     allNestedModifierOption =
+                        allNestedModifierOption.concat(selectedOption)
                   }
                })
             })
          })
-         const modifierOptionsConsistAdditionalModifiersWithData =
-            modifierOptionsConsistAdditionalModifiers.map(
-               eachModifierOptionsConsistAdditionalModifiers => {
-                  let additionalModifierOptions = []
-                  let additionalModifierTemplates = []
-                  selectedProductOption.additionalModifiers.forEach(
-                     additionalModifier => {
-                        if (additionalModifier.modifier) {
-                           additionalModifier.modifier.categories.forEach(
-                              eachCategory => {
-                                 eachCategory.options.forEach(eachOption => {
-                                    if (
-                                       eachOption.additionalModifierTemplateId
-                                    ) {
-                                       additionalModifierTemplates.push(
-                                          eachOption.additionalModifierTemplate
-                                       )
-                                    }
-                                 })
-                              }
-                           )
-                        }
-                     }
-                  )
-                  additionalModifierTemplates.modifiers.forEach(
-                     eachModifier => {
-                        eachModifier.categories.forEach(eachCategory => {
-                           additionalModifierOptions.push(
-                              ...eachCategory.options.map(eachOption => ({
-                                 ...eachOption,
-                                 categoryId: eachCategory.id,
-                              }))
-                           )
-                        })
-                     }
-                  )
-                  const mapedModifierOptions =
-                     eachModifierOptionsConsistAdditionalModifiers.selectedModifierOptionIds.map(
-                        eachId => {
-                           const additionalModifierOption =
-                              additionalModifierOptions.find(
-                                 x => x.id === eachId
-                              )
-                           const selectedOption = {
-                              modifierCategoryID:
-                                 additionalModifierOption.categoryId,
-                              modifierCategoryOptionsID:
-                                 additionalModifierOption.id,
-                              modifierCategoryOptionsPrice:
-                                 additionalModifierOption.price,
-                              cartItem: additionalModifierOption.cartItem,
-                           }
-                           return selectedOption
-                        }
-                     )
-                  return {
-                     ...eachModifierOptionsConsistAdditionalModifiers,
-                     data: mapedModifierOptions,
-                  }
-               }
-            )
+         console.log('allNestedModifierOption', allNestedModifierOption)
+      }
 
-         // root modifiers options + additional modifier's modifier options
-         const resultSelectedModifier = [
-            ...allSelectedOptions,
-            ...singleAdditionalModifier,
-            ...multipleAdditionalModifier,
-         ]
+      // no nested modifier option available
+      if (allNestedModifierOption.length > 0) {
+         const nestedModifierOptionsGroupByParentModifierOptionId = _.chain(
+            allNestedModifierOption
+         )
+            .groupBy('parentModifierOptionId')
+            .map((value, key) => ({
+               parentModifierOptionId: +key,
+               data: value,
+            }))
+            .value()
          const cartItem = getCartItemWithModifiers(
             selectedProductOption.cartItem,
-            resultSelectedModifier.map(x => x.cartItem),
-            modifierOptionsConsistAdditionalModifiersWithData
+            allModifierOption.map(x => x.cartItem),
+            nestedModifierOptionsGroupByParentModifierOptionId
          )
-
-         addToCart(cartItem, 1)
+         console.log('finalCartItem', cartItem)
+         await addToCart(cartItem, 1)
          setShowChooseIncreaseType(false)
-         return
+      } else {
+         const cartItem = getCartItemWithModifiers(
+            selectedProductOption.cartItem,
+            allModifierOption.map(x => x.cartItem)
+         )
+         await addToCart(cartItem, 1)
+         setShowChooseIncreaseType(false)
       }
-      const cartItem = getCartItemWithModifiers(
-         selectedProductOption.cartItem,
-         allSelectedOptions.map(x => x.cartItem)
-      )
-
-      addToCart(cartItem, 1)
-      setShowChooseIncreaseType(false)
    }
+
    return (
       <div className="hern-on-demand-product-custom-area">
          <Modal
@@ -266,8 +252,8 @@ export const CustomArea = props => {
                </Button>
                <Button
                   style={{ padding: '.1em 2em' }}
-                  onClick={() => {
-                     repeatLastOne(data)
+                  onClick={async () => {
+                     await repeatLastOne(data)
                   }}
                >
                   {'REPEAT LAST ONE'}
