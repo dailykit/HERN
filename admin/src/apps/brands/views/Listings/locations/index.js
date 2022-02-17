@@ -17,7 +17,7 @@ import {
    HorizontalTabPanels,
    Loader,
 } from '@dailykit/ui'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { DeleteIcon, PlusIcon } from '../../../../../shared/assets/icons'
 import { Banner, InlineLoader } from '../../../../../shared/components'
@@ -37,8 +37,6 @@ import {
 import { DisplayLocation } from './tunnels'
 import { EditLocationDetails } from '../../Forms/location/tunnels'
 import GoogleMapReact from 'google-map-react'
-import { isEmpty } from 'lodash'
-import '@reach/tabs/styles.css'
 
 export const Locations = () => {
    const [locations, setLocations] = React.useState()
@@ -47,7 +45,7 @@ export const Locations = () => {
    const { addTab, tab } = useTabs()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
    const [selectedRowData, setSelectedRowData] = React.useState(null)
-
+   const [isLoading, setIsLoading] = React.useState(true)
    // subscriptions
    const {
       error,
@@ -59,6 +57,7 @@ export const Locations = () => {
       },
       onSubscriptionData: data => {
          setLocations(data.subscriptionData.data.brands_location)
+         setIsLoading(false)
       },
    })
 
@@ -161,7 +160,7 @@ export const Locations = () => {
       console.log('error', error)
       logger(error)
    }
-   if (!locations) return <InlineLoader />
+   if (isLoading) return <InlineLoader />
    return (
       <StyledWrapper>
          <Banner id="brands-app-Locations-listing-top" />
@@ -356,7 +355,8 @@ const LocationOnMap = ({ cell, openTunnel, setSelectedRowData }) => {
 }
 
 const LocationsOnMap = ({ locations }) => {
-   console.log('details', locations)
+   const [locationDetails, setLocationDetails] = React.useState([...locations])
+   console.log('details', locations, locationDetails)
 
    const defaultProps = {
       center: {
@@ -365,41 +365,70 @@ const LocationsOnMap = ({ locations }) => {
       },
       zoom: 12,
    }
-   const getInfoWindowString = location => `
-    <div>
-      <div style="font-size: 16px;">
-        ${location.label}
-      </div>
-      `
 
-   const handleApiLoaded = (map, maps, locations) => {
-      const markers = []
-      const infowindows = []
+   const InfoWindow = props => {
+      const { location } = props
+      const infoWindowStyle = {
+         position: 'relative',
+         bottom: 100,
+         left: '-110px',
+         width: 220,
+         backgroundColor: 'white',
+         boxShadow: '0 2px 7px 1px rgba(0, 0, 0, 0.3)',
+         padding: 10,
+         fontSize: 14,
+         zIndex: 1000,
+      }
 
-      locations.forEach(location => {
-         markers.push(
-            new maps.Marker({
-               position: {
-                  lat: Number(location.lat),
-                  lng: Number(location.lng),
-               },
-               map,
-            })
-         )
-
-         infowindows.push(
-            new maps.InfoWindow({
-               content: getInfoWindowString(location),
-            })
-         )
-      })
-
-      markers.forEach((marker, i) => {
-         marker.addListener('click', () => {
-            infowindows[i].open(map, marker)
-         })
-      })
+      return (
+         <div style={infoWindowStyle}>
+            <div style={{ fontSize: 16 }}>{location.label}</div>
+         </div>
+      )
    }
+   const UserLocationMarker = ({ show, location }) => {
+      // console.log('show & location', show, location)
+      return (
+         <div>
+            <LocationMarkerIcon
+               size={48}
+               style={{
+                  position: 'absolute',
+                  top: 'calc(52.5% - 24px)',
+                  left: '49.5%',
+                  zIndex: '1000',
+                  transform: 'translate(-50%,-50%)',
+               }}
+            />
+            {show && <InfoWindow location={location} />}
+         </div>
+      )
+   }
+
+   useEffect(() => {
+      const locationArray = [...locationDetails]
+      for (let i = 0; i < locationDetails.length; i++) {
+         locationArray[i] = {
+            ...locationArray[i],
+            show: false,
+         }
+      }
+      setLocationDetails(locationArray)
+   }, [locations])
+   // console.log('locationDetails', locationDetails)
+
+   const onChildClickCallback = key => {
+      const index = locationDetails.findIndex(e => e.id === JSON.parse(key))
+      console.log('onChildClickCallback', locationDetails, key, index)
+      const loca = [...locationDetails]
+
+      loca[index] = {
+         ...loca[index],
+         show: !loca[index].show,
+      }
+      setLocationDetails([...loca])
+   }
+
    return (
       <>
          <div
@@ -415,12 +444,19 @@ const LocationsOnMap = ({ locations }) => {
                }}
                defaultCenter={defaultProps.center}
                defaultZoom={defaultProps.zoom}
+               onChildClick={onChildClickCallback}
                options={{ gestureHandling: 'greedy' }}
-               yesIWantToUseGoogleMapApiInternals
-               onGoogleApiLoaded={({ map, maps }) =>
-                  handleApiLoaded(map, maps, locations)
-               }
-            />
+            >
+               {locationDetails.map(location => (
+                  <UserLocationMarker
+                     key={location.id}
+                     lat={Number(location.lat)}
+                     lng={Number(location.lng)}
+                     show={location.show}
+                     location={location}
+                  />
+               ))}
+            </GoogleMapReact>
          </div>
       </>
    )
