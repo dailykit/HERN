@@ -560,13 +560,13 @@
    }
    .hern-kiosk__modifier-category-label-text {
       text-transform: capitalize;
-      margin-left: 1em;
+      margin: 0 1em;
       font-size: 1.1em;
       font-weight: 600;
    }
    .hern-kiosk__modifier-category-selection-condition {
       color: #ffffff;
-      margin: 0 1em;
+      // margin-right: 1em;
    }
 }
 .hern-kiosk__modifier-category-option {
@@ -582,8 +582,8 @@
 }
 .hern-kiosk__modifier-option-customize {
    position: absolute;
-   right: 0;
-   bottom: -10px;
+   // right: 0;
+   // bottom: -10px;
    font-size: 20px;
    text-decoration: underline;
 }
@@ -591,10 +591,7 @@
    width: 6.5em;
    height: 6.5em;
 }
-.hern-kiosk__modifier--option-name {
-   margin-left: 1em;
-   font-weight: bold;
-}
+
 .hern-kiosk__modifier-popup-footer {
    display: flex;
    justify-content: space-between;
@@ -618,10 +615,12 @@
    width: 20em;
 }
 .hern-kiosk__modifier--option-name {
-   margin-left: 1em;
+   margin-right: 1em;
    font-size: 1.9em;
    font-weight: 500;
    color: #ffffff;
+   margin-left: 1em;
+   font-weight: bold;
 }
 .hern-kiosk__modifier-total-label {
    font-size: 2em;
@@ -878,4 +877,12 @@
    font-size: 1.5em;
    font-weight: 600;
    letter-spacing: 0.08em;
+}
+.hern-kiosk__modifier-option-customize-rtl {
+   bottom: -15px;
+   left: 4px;
+}
+.hern-kiosk__modifier-option-customize-ltr {
+   right: 0;
+   bottom: -10px;
 }
