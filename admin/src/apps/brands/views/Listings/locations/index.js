@@ -6,7 +6,6 @@ import {
    IconButton,
    Text,
    TextButton,
-   ToolTip,
    Tunnel,
    Tunnels,
    useTunnel,
@@ -15,9 +14,11 @@ import {
    HorizontalTabList,
    HorizontalTabPanel,
    HorizontalTabPanels,
-   Loader,
+   Dropdown,
+   Spacer,
+   DropdownButton,
 } from '@dailykit/ui'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { DeleteIcon, PlusIcon } from '../../../../../shared/assets/icons'
 import { Banner, InlineLoader } from '../../../../../shared/components'
@@ -30,6 +31,7 @@ import { useTabs, useTooltip } from '../../../../../shared/providers'
 import CreateBrandLocation from '../../../../../shared/CreateUtils/Brand/BrandLocation'
 import { Avatar, Tooltip } from 'antd'
 import {
+   CloseIcon,
    LocationMarkerIcon,
    PublishIcon,
    UnPublishIcon,
@@ -37,16 +39,23 @@ import {
 import { DisplayLocation } from './tunnels'
 import { EditLocationDetails } from '../../Forms/location/tunnels'
 import GoogleMapReact from 'google-map-react'
-import { isEmpty } from 'lodash'
-import '@reach/tabs/styles.css'
 
 export const Locations = () => {
    const [locations, setLocations] = React.useState()
-   const tableRef = React.useRef()
+   const tableRef = React.useRef(null)
    const { tooltip } = useTooltip()
    const { addTab, tab } = useTabs()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
    const [selectedRowData, setSelectedRowData] = React.useState(null)
+   const [isLoading, setIsLoading] = React.useState(true)
+
+   const groupByOptions = [
+      { id: 1, title: 'Label', payLoad: 'label' },
+      { id: 2, title: 'City', payLoad: 'city' },
+      { id: 3, title: 'State', payLoad: 'state' },
+      { id: 4, title: 'Country', payLoad: 'country' },
+      { id: 5, title: 'Zipcode', payLoad: 'zipcode' },
+   ]
 
    // subscriptions
    const {
@@ -58,10 +67,22 @@ export const Locations = () => {
          identifier: 'Brand Info',
       },
       onSubscriptionData: data => {
-         setLocations(data.subscriptionData.data.brands_location)
+         const result = data.subscriptionData.data.brands_location.map(each => {
+            return {
+               ...each,
+               linkedBrands: each.brand_locations.map(eachBrand => {
+                  return {
+                     brandId: eachBrand.brandId,
+                     brandName: eachBrand.brand.title,
+                  }
+               }),
+            }
+         })
+         setLocations(result)
+         setIsLoading(false)
       },
    })
-
+   console.log('locations of', locations)
    //mutations
    const [deleteLocation] = useMutation(LOCATIONS.DELETE, {
       onCompleted: () => {
@@ -116,6 +137,7 @@ export const Locations = () => {
             )
          },
          width: 80,
+         download: false,
          headerHozAlign: 'center',
       },
       {
@@ -144,10 +166,12 @@ export const Locations = () => {
       },
       {
          title: 'Linked Brands',
+         field: 'linkedBrands',
          formatter: reactFormatter(<BrandAvatar />),
       },
       {
          title: 'Location On Map',
+         download: false,
          formatter: reactFormatter(
             <LocationOnMap
                openTunnel={openTunnel}
@@ -156,12 +180,98 @@ export const Locations = () => {
          ),
       },
    ])
+
+   const defaultIDS = () => {
+      let arr = []
+      const locationGroup = localStorage.getItem(
+         'tabulator-location_table-group'
+      )
+      const locationGroupParse =
+         locationGroup !== undefined &&
+         locationGroup !== null &&
+         locationGroup.length !== 0
+            ? JSON.parse(locationGroup)
+            : null
+      if (locationGroupParse !== null) {
+         locationGroupParse.forEach(x => {
+            const foundGroup = groupByOptions.find(y => y.payLoad == x)
+            arr.push(foundGroup.id)
+         })
+      }
+      return arr.length == 0 ? [2] : arr
+   }
+
+   const tableLoaded = () => {
+      const locationGroup = localStorage.getItem(
+         'tabulator-location_table-group'
+      )
+      const locationGroupParse =
+         locationGroup !== undefined &&
+         locationGroup !== null &&
+         locationGroup.length !== 0
+            ? JSON.parse(locationGroup)
+            : null
+      tableRef.current.table.setGroupBy(
+         !!locationGroupParse && locationGroupParse.length > 0
+            ? locationGroupParse
+            : 'city'
+      )
+      tableRef.current.table.setGroupHeader(function (
+         value,
+         count,
+         data1,
+         group
+      ) {
+         let newHeader
+         switch (group._group.field) {
+            case 'label':
+               newHeader = 'Label'
+               break
+            case 'city':
+               newHeader = 'City'
+               break
+            case 'state':
+               newHeader = 'State'
+               break
+            case 'country':
+               newHeader = 'Country'
+               break
+            case 'zipcode':
+               newHeader = 'Zipcode'
+            default:
+               break
+         }
+         return `${newHeader} - ${value} || ${count} Locations`
+      })
+   }
+
+   const clearHeaderFilter = () => {
+      tableRef.current.table.clearHeaderFilter()
+   }
+   const downloadCsvData = () => {
+      tableRef.current.table.download('csv', 'locations_table.csv')
+   }
+
+   const downloadPdfData = () => {
+      tableRef.current.table.downloadToTab('pdf', 'locations_table.pdf')
+   }
+
+   const downloadXlsxData = () => {
+      tableRef.current.table.download('xlsx', 'locations_table.xlsx')
+   }
+
+   const clearCustomerPersistence = () => {
+      localStorage.removeItem('tabulator-location_table-columns')
+      localStorage.removeItem('tabulator-location_table-sort')
+      localStorage.removeItem('tabulator-location_table-filter')
+      localStorage.removeItem('tabulator-location_table-group')
+   }
    if (error) {
       toast.error('Something went wrong!')
       console.log('error', error)
       logger(error)
    }
-   if (!locations) return <InlineLoader />
+   if (isLoading) return <InlineLoader />
    return (
       <StyledWrapper>
          <Banner id="brands-app-Locations-listing-top" />
@@ -188,15 +298,119 @@ export const Locations = () => {
                   <LocationsOnMap locations={locations} />
                </HorizontalTabPanel>
                <HorizontalTabPanel>
-                  <ReactTabulator
-                     ref={tableRef}
-                     columns={columns}
-                     data={locations || []}
-                     options={{
-                        ...tableOptions,
-                        placeholder: 'No Locations Available Yet!',
-                     }}
-                  />
+                  <div>
+                     <Flex
+                        container
+                        height="80px"
+                        width="100%"
+                        alignItems="center"
+                        justifyContent="space-between"
+                     >
+                        <Flex
+                           container
+                           as="header"
+                           width="25%"
+                           alignItems="center"
+                           justifyContent="space-between"
+                        ></Flex>
+                        <Flex
+                           container
+                           as="header"
+                           width="75%"
+                           alignItems="center"
+                           justifyContent="space-around"
+                        >
+                           <Flex
+                              container
+                              as="header"
+                              width="80%"
+                              alignItems="center"
+                              justifyContent="flex-end"
+                           >
+                              <TextButton
+                                 onClick={() => {
+                                    clearCustomerPersistence()
+                                 }}
+                                 type="ghost"
+                                 size="sm"
+                              >
+                                 Clear Persistence
+                              </TextButton>
+                              <Spacer size="15px" xAxis />
+                              <DropdownButton title="Download" width="150px">
+                                 <DropdownButton.Options>
+                                    <DropdownButton.Option
+                                       onClick={() => downloadCsvData()}
+                                    >
+                                       CSV
+                                    </DropdownButton.Option>
+                                    <DropdownButton.Option
+                                       onClick={() => downloadPdfData()}
+                                    >
+                                       PDF
+                                    </DropdownButton.Option>
+                                    <DropdownButton.Option
+                                       onClick={() => downloadXlsxData()}
+                                    >
+                                       XLSX
+                                    </DropdownButton.Option>
+                                 </DropdownButton.Options>
+                              </DropdownButton>
+
+                              <Spacer size="15px" xAxis />
+                              <Text as="text1">Group By:</Text>
+                              <Spacer size="5px" xAxis />
+                              <Dropdown
+                                 type="multi"
+                                 variant="revamp"
+                                 disabled={true}
+                                 defaultIds={defaultIDS()}
+                                 options={groupByOptions}
+                                 searchedOption={() => {}}
+                                 selectedOption={value => {
+                                    localStorage.setItem(
+                                       'tabulator-location_table-group',
+                                       JSON.stringify(value.map(x => x.payLoad))
+                                    )
+                                    tableRef.current.table.setGroupBy(
+                                       value.map(x => x.payLoad)
+                                    )
+                                 }}
+                                 typeName="groupBy"
+                              />
+                           </Flex>
+                           <Flex
+                              container
+                              as="header"
+                              width="20%"
+                              alignItems="center"
+                              justifyContent="flex-end"
+                           >
+                              <ButtonGroup align="left">
+                                 <TextButton
+                                    type="ghost"
+                                    size="sm"
+                                    onClick={() => clearHeaderFilter()}
+                                 >
+                                    Clear All Filter
+                                 </TextButton>
+                              </ButtonGroup>
+                           </Flex>
+                        </Flex>
+                     </Flex>
+                     <Spacer size="16px" />
+                     <ReactTabulator
+                        ref={tableRef}
+                        columns={columns}
+                        data={locations || []}
+                        dataLoaded={tableLoaded}
+                        options={{
+                           ...tableOptions,
+                           placeholder: 'No Locations Available Yet!',
+                           persistenceID: 'location_table',
+                        }}
+                     />
+                  </div>
                </HorizontalTabPanel>
             </HorizontalTabPanels>
          </HorizontalTabs>
@@ -244,6 +458,7 @@ const DeleteLocation = ({ cell, deleteHandler }) => {
 const BrandAvatar = ({ cell }) => {
    // console.log('avatar', cell._cell.row.data)
    const rowData = cell._cell.row.data
+
    return (
       <>
          <Avatar.Group
@@ -356,7 +571,8 @@ const LocationOnMap = ({ cell, openTunnel, setSelectedRowData }) => {
 }
 
 const LocationsOnMap = ({ locations }) => {
-   console.log('details', locations)
+   const [locationDetails, setLocationDetails] = React.useState([...locations])
+   // console.log('details', locationDetails)
 
    const defaultProps = {
       center: {
@@ -365,46 +581,154 @@ const LocationsOnMap = ({ locations }) => {
       },
       zoom: 12,
    }
-   const getInfoWindowString = location => `
-    <div>
-      <div style="font-size: 16px;">
-        ${location.label}
-      </div>
-      `
+   const BrandAvatarMap = ({ location }) => {
+      // console.log('avatar', cell._cell.row.data)
+      const rowData = location
 
-   const handleApiLoaded = (map, maps, locations) => {
-      const markers = []
-      const infowindows = []
-
-      locations.forEach(location => {
-         markers.push(
-            new maps.Marker({
-               position: {
-                  lat: Number(location.lat),
-                  lng: Number(location.lng),
-               },
-               map,
-            })
-         )
-
-         infowindows.push(
-            new maps.InfoWindow({
-               content: getInfoWindowString(location),
-            })
-         )
-      })
-
-      markers.forEach((marker, i) => {
-         marker.addListener('click', () => {
-            infowindows[i].open(map, marker)
-         })
-      })
+      return (
+         <>
+            <Avatar.Group
+               maxCount={
+                  rowData.brand_locations.length > 4
+                     ? 4
+                     : rowData.brand_locations.length
+               }
+               maxStyle={{
+                  color: '#f56a00',
+                  backgroundColor: '#fde3cf',
+               }}
+            >
+               {rowData.brand_locations.map(eachBrand => (
+                  <Tooltip
+                     title={eachBrand.brand.title}
+                     placement="top"
+                     key={eachBrand.brandId}
+                  >
+                     {eachBrand.brand.brand_brandSettings.length > 0 ? (
+                        <Avatar
+                           src={
+                              eachBrand.brand.brand_brandSettings[0]?.value
+                                 .brandLogo.value
+                                 ? eachBrand.brand.brand_brandSettings[0]?.value
+                                      .brandLogo.value
+                                 : eachBrand.brand.brand_brandSettings[0]?.value
+                                      .brandLogo.default.url
+                           }
+                        />
+                     ) : (
+                        <Avatar
+                           style={{
+                              backgroundColor: '#87d068',
+                           }}
+                        >
+                           {eachBrand.brand.title.charAt(0).toUpperCase()}
+                        </Avatar>
+                     )}
+                  </Tooltip>
+               ))}
+            </Avatar.Group>
+         </>
+      )
    }
+   const InfoWindow = props => {
+      const { location } = props
+      const infoWindowStyle = {
+         position: 'relative',
+         bottom: '12rem',
+         left: '-10rem',
+         width: '20rem',
+         backgroundColor: 'white',
+         boxShadow: '0 2px 7px 1px rgba(0, 0, 0, 0.3)',
+         padding: 10,
+         fontSize: 16,
+         zIndex: 10000,
+         display: 'flex',
+         cursor: 'pointer',
+         justifyContent: 'space-between',
+      }
+      // console.log('details for brand', location)
+      return (
+         <div style={infoWindowStyle}>
+            <div>
+               <div>{location.label}</div>
+               <div>
+                  {location.locationAddress.line1}{' '}
+                  {location.locationAddress.line2} <br />
+                  {location.city} {location.state} {location.country}{' '}
+                  {location.zipcode}
+               </div>
+               <div>
+                  <BrandAvatarMap location={location} />
+               </div>
+            </div>
+            <div onClick={() => closeHandler(location)}>
+               <CloseIcon color={'black'} />
+            </div>
+         </div>
+      )
+   }
+   const closeHandler = location => {
+      const index = locationDetails.findIndex(
+         e => e.id === JSON.parse(location.id)
+      )
+      console.log('id', location.id)
+      const loca = [...locationDetails]
+
+      loca[index] = {
+         ...loca[index],
+         show: !loca[index].show,
+      }
+      setLocationDetails([...loca])
+   }
+
+   const UserLocationMarker = ({ show, location }) => {
+      // console.log('show & location', show, location)
+      return (
+         <div>
+            <LocationMarkerIcon
+               size={48}
+               style={{
+                  position: 'absolute',
+                  top: 'calc(52.5% - 24px)',
+                  left: '49.5%',
+                  zIndex: '1000',
+                  transform: 'translate(-50%,-50%)',
+               }}
+            />
+            {show && <InfoWindow location={location} />}
+         </div>
+      )
+   }
+
+   useEffect(() => {
+      const locationArray = [...locationDetails]
+      for (let i = 0; i < locationDetails.length; i++) {
+         locationArray[i] = {
+            ...locationArray[i],
+            show: false,
+         }
+      }
+      setLocationDetails(locationArray)
+   }, [locations])
+   // console.log('locationDetails', locationDetails)
+
+   const onChildClickCallback = key => {
+      const index = locationDetails.findIndex(e => e.id === JSON.parse(key))
+      console.log('onChildClickCallback', locationDetails, key, index)
+      const loca = [...locationDetails]
+
+      loca[index] = {
+         ...loca[index],
+         show: !loca[index].show,
+      }
+      setLocationDetails([...loca])
+   }
+
    return (
       <>
          <div
             style={{
-               height: '400px',
+               height: '450px',
                width: '100%',
                position: 'relative',
             }}
@@ -415,12 +739,19 @@ const LocationsOnMap = ({ locations }) => {
                }}
                defaultCenter={defaultProps.center}
                defaultZoom={defaultProps.zoom}
+               onChildClick={onChildClickCallback}
                options={{ gestureHandling: 'greedy' }}
-               yesIWantToUseGoogleMapApiInternals
-               onGoogleApiLoaded={({ map, maps }) =>
-                  handleApiLoaded(map, maps, locations)
-               }
-            />
+            >
+               {locationDetails.map(location => (
+                  <UserLocationMarker
+                     key={location.id}
+                     lat={Number(location.lat)}
+                     lng={Number(location.lng)}
+                     show={location.show}
+                     location={location}
+                  />
+               ))}
+            </GoogleMapReact>
          </div>
       </>
    )
