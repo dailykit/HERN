@@ -272,27 +272,24 @@ export const CartProvider = ({ children }) => {
             break
       }
 
-      const customerAddress =
-         oiType === 'Kiosk Ordering'
-            ? null
-            : {
-                 line1: customerAddressFromLocal.line1,
-                 line2: customerAddressFromLocal.line2,
-                 city: customerAddressFromLocal.city,
-                 state: customerAddressFromLocal.state,
-                 country: customerAddressFromLocal.country,
-                 zipcode: customerAddressFromLocal.zipcode,
-                 notes: customerAddressFromLocal.notes,
-                 label: customerAddressFromLocal.label,
-                 lat:
-                    customerAddressFromLocal.latitude?.toString() ||
-                    customerAddressFromLocal.lat?.toString(),
-                 lng:
-                    customerAddressFromLocal.longitude?.toString() ||
-                    customerAddressFromLocal.lng?.toString(),
-                 landmark: customerAddressFromLocal?.landmark || null,
-                 searched: '',
-              }
+      const customerAddress = {
+         line1: customerAddressFromLocal?.line1,
+         line2: customerAddressFromLocal?.line2,
+         city: customerAddressFromLocal?.city,
+         state: customerAddressFromLocal?.state,
+         country: customerAddressFromLocal?.country,
+         zipcode: customerAddressFromLocal?.zipcode,
+         notes: customerAddressFromLocal?.notes,
+         label: customerAddressFromLocal?.label,
+         lat:
+            customerAddressFromLocal?.latitude?.toString() ||
+            customerAddressFromLocal?.lat?.toString(),
+         lng:
+            customerAddressFromLocal?.longitude?.toString() ||
+            customerAddressFromLocal?.lng?.toString(),
+         landmark: customerAddressFromLocal?.landmark || null,
+         searched: '',
+      }
       if (!isAuthenticated) {
          //without login
 
