@@ -59,6 +59,11 @@ div.ant-typography,span.ant-typography{
     font-size: 15px !important;
     border-radius: 6px !important;
 }
+`
+export const ListItemWrapper = styled.div`
+li.ant-list-item>section{
+   width: -webkit-fill-available !important;
+ }
 
 `
 export const DrawerWrapper = styled.div`
@@ -80,4 +85,30 @@ export const DrawerWrapper = styled.div`
    animation:none !important;
 }
 `
+export const ModalList = styled.div`
 
+content: '';
+width: 100%;
+height: 100%;
+font-weight:500;
+border-radius: 6px;
+cursor: default;
+background-color: #cfc6c61a;
+:hover{
+   background-color: #6e6a6a1a;
+}
+}
+.metatag_text{
+   span{
+      color: #000000d9;
+   }
+   color:#919699;
+}
+.listItem{
+   border-radius: 6px;
+   border: 1px solid #e3e3e3;
+   text-align: left;
+   font-size: 16px;
+   padding: 6px;
+}
+`
