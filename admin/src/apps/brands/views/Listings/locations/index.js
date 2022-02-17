@@ -358,7 +358,7 @@ const LocationOnMap = ({ cell, openTunnel, setSelectedRowData }) => {
 
 const LocationsOnMap = ({ locations }) => {
    const [locationDetails, setLocationDetails] = React.useState([...locations])
-   console.log('details', locationDetails)
+   // console.log('details', locationDetails)
 
    const defaultProps = {
       center: {
@@ -428,7 +428,9 @@ const LocationsOnMap = ({ locations }) => {
          padding: 10,
          fontSize: 16,
          zIndex: 10000,
+         display: 'flex',
          cursor: 'pointer',
+         justifyContent: 'space-between',
       }
       // console.log('details for brand', location)
       return (
@@ -445,8 +447,24 @@ const LocationsOnMap = ({ locations }) => {
                   <BrandAvatarMap location={location} />
                </div>
             </div>
+            <div onClick={() => closeHandler(location)}>
+               <CloseIcon color={'black'} />
+            </div>
          </div>
       )
+   }
+   const closeHandler = location => {
+      const index = locationDetails.findIndex(
+         e => e.id === JSON.parse(location.id)
+      )
+      console.log('id', location.id)
+      const loca = [...locationDetails]
+
+      loca[index] = {
+         ...loca[index],
+         show: !loca[index].show,
+      }
+      setLocationDetails([...loca])
    }
 
    const UserLocationMarker = ({ show, location }) => {
