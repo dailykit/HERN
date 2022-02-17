@@ -32,7 +32,7 @@ import {
     Tooltip,
     Row,
     Col,
-    Typography,
+    message,
     Card,
     Form,
     Input,
@@ -40,6 +40,7 @@ import {
     Modal,
     Drawer,
     List,
+    Popconfirm
 } from 'antd'
 import { Form as Formd } from '@dailykit/ui'
 import {
@@ -156,6 +157,11 @@ const AdditionalTags = ({ update }) => {
         setTagName(Object.keys(obj)[0])
         setTagContent(Object.values(obj)[0])
         console.log(tagName, tagContent, "from editForm")
+    }
+    //confirmation for deleting the tag
+    const confirmDelete = (obj) => {
+        deleteTag(Object.keys(obj))
+        message.success("Click on Save to save your changes")
     }
 
     return (
@@ -341,10 +347,18 @@ const AdditionalTags = ({ update }) => {
                                                     <span style={{ cursor: "pointer" }} onClick={() => editingForm(obj)}>
                                                         <EditIcon color="#919699" size={24} />
                                                     </span>
-                                                    <span style={{ cursor: "pointer" }} onClick={() => deleteTag(Object.keys(obj))}>
-                                                        <DeleteIcon
-                                                        />
-                                                    </span>
+
+                                                    <Popconfirm
+                                                        title="Are you sure to delete this task?"
+                                                        onConfirm={() => confirmDelete(obj)}
+                                                        onCancel={() => console.log("not deleted")}
+                                                        okText="Yes"
+                                                        cancelText="No"
+                                                    >
+                                                        <span style={{ cursor: "pointer" }}>
+                                                            <DeleteIcon /> </span>
+                                                    </Popconfirm>
+
                                                 </div>
                                             </div>
                                         </ModalList>
