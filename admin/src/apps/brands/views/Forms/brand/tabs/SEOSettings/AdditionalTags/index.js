@@ -9,7 +9,7 @@ import {
     TunnelHeader,
     ButtonTile,
     HelperText,
-    PlusIcon
+    PlusIcon,
 } from '@dailykit/ui'
 import { findLastIndex, isEmpty, truncate } from 'lodash'
 import {
@@ -21,7 +21,12 @@ import {
 import { useMutation, useLazyQuery } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { StyledWrapper, DrawerWrapper, ModalList, ListItemWrapper } from './styled'
+import {
+    StyledWrapper,
+    DrawerWrapper,
+    ModalList,
+    ListItemWrapper,
+} from './styled'
 import { logger } from '../../../../../../../../shared/utils'
 import {
     Tooltip,
@@ -34,29 +39,33 @@ import {
     Button,
     Modal,
     Drawer,
-    List
+    List,
 } from 'antd'
 import { Form as Formd } from '@dailykit/ui'
-import { EditIcon, DeleteIcon } from '../../../../../../../../shared/assets/icons'
+import {
+    EditIcon,
+    DeleteIcon,
+} from '../../../../../../../../shared/assets/icons'
 import { BRANDS } from '../../../../../../graphql'
 import { InfoCircleOutlined } from '@ant-design/icons'
+
 
 const AdditionalTags = ({ update }) => {
     const params = useParams()
     const [settingId, setSettingId] = React.useState(null)
     const [isSEOBasicsModalVisible, setIsSEOBasicsModalVisible] = useState(false)
     const [showDrawer, setShowDrawer] = React.useState(false)
-
+    const [temporaryValue, setTemporaryValue] = React.useState([])
     const [form, setForm] = useState({
         additionalTags: {
-            value: ''
+            value: '',
         },
         tagName: {
-            value: ''
+            value: '',
         },
         tagContent: {
-            value: ''
-        }
+            value: '',
+        },
     })
     const showSEOBasicsModal = () => {
         setIsSEOBasicsModalVisible(true)
@@ -70,11 +79,9 @@ const AdditionalTags = ({ update }) => {
     }
     const [prevAdditionalSettings, setPrevAdditionalSettings] = React.useState([])
 
-
     const [seoDetails, { loading: metaDetailsLoading, brandSettings }] =
         useLazyQuery(BRANDS.SETTINGS, {
-            onCompleted: ({ brandSettings
-            }) => {
+            onCompleted: ({ brandSettings }) => {
                 if (!isEmpty(brandSettings)) {
                     const { brand, id } = brandSettings[0]
                     setSettingId(id)
@@ -82,8 +89,8 @@ const AdditionalTags = ({ update }) => {
                     setForm(prev => ({
                         ...prev,
                         additionalTags: {
-                            value: brand[0]?.value?.additionalTags
-                        }
+                            value: brand[0]?.value?.additionalTags,
+                        },
                     }))
                 }
             },
@@ -99,29 +106,29 @@ const AdditionalTags = ({ update }) => {
             variables: {
                 identifier: { _eq: 'additionalTags' },
                 type: { _eq: 'seo' },
-                brandId: { _eq: Number(params?.id) }
-            }
+                brandId: { _eq: Number(params?.id) },
+            },
         })
     }, [])
 
-    //save changes 
+    //save changes
     const Save = () => {
         const tagName = form?.tagName?.value
         const tagContent = form?.tagContent?.value
         const newSetting = {}
         newSetting[tagName] = tagContent
-        console.log(newSetting, "newSetting")
         update({
             id: settingId,
             brandId: params.id,
-            value: prevAdditionalSettings ? {
-                "additionalTags": [
-                    ...prevAdditionalSettings,
-                    newSetting
-                ]
-            } : { "additionalTags": [newSetting] }
+            value: prevAdditionalSettings
+                ? {
+                    additionalTags: [...prevAdditionalSettings, newSetting],
+                }
+                : { additionalTags: [newSetting] },
         })
-        // setIsSEOBasicsModalVisible(false)
+        prevAdditionalSettings
+            ? setPrevAdditionalSettings([...prevAdditionalSettings, newSetting])
+            : setPrevAdditionalSettings([newSetting])
         setShowDrawer(false)
     }
 
@@ -137,7 +144,29 @@ const AdditionalTags = ({ update }) => {
             },
         }))
     }
-    console.log(prevAdditionalSettings, "prevAdditionalSettings")
+
+    //The Save button in modal for saving all changes and closing the modal
+    const SaveAllChanges = () => {
+        update({
+            id: settingId,
+            brandId: params.id,
+            value: {
+                additionalTags: [...prevAdditionalSettings]
+            }
+        })
+        setIsSEOBasicsModalVisible(false)
+    }
+
+    //delete tag
+    const deleteTag = key => {
+        let newObj = []
+        prevAdditionalSettings.map((object) => Object.keys(object) != key[0] && newObj.push(object))
+        //newObj will now have  undeleted objects and empty objects.
+        console.log(newObj, "newObj")
+        // then set value to prevAdditionalSettings
+        setPrevAdditionalSettings(newObj)
+    }
+
     return (
         <StyledWrapper>
             <div className="metaDetails">
@@ -148,26 +177,26 @@ const AdditionalTags = ({ update }) => {
                     onOk={handleAdditonalSEOOk}
                     onCancel={handleAdditonalSEOCancel}
                     footer={[
-                        <Button type="primary" onClick={() => Save()}>
+                        <Button type="primary" onClick={() => SaveAllChanges()}>
                             Save
-                        </Button>
+                        </Button>,
                     ]}
                 >
                     <Form>
                         <Form.Item
                             style={{ columnGap: '1rem' }}
-                            label={<>
-                                <span
-                                    style={{
-                                        color: "#919699",
-                                        fontSize: '15px',
-                                        fontWeight: '500',
-                                    }}
-                                >
-                                    Add/Edit name and content for additional tags
-                                </span>
-
-                            </>
+                            label={
+                                <>
+                                    <span
+                                        style={{
+                                            color: '#919699',
+                                            fontSize: '15px',
+                                            fontWeight: '500',
+                                        }}
+                                    >
+                                        Add/Edit name and content for additional tags
+                                    </span>
+                                </>
                             }
                             tooltip={{
                                 title: 'The name and the value will be added like this:<meta name={name} content={value}/>',
@@ -181,16 +210,24 @@ const AdditionalTags = ({ update }) => {
                                     />
                                 ),
                             }}
-
-                        ><ComboButton type="outline" size='sm' style={{ border: '1px solid transparent', fontWeight: '600', fontSize: '15px', padding: '0px' }} onClick={() => setShowDrawer(true)}>
-                                <PlusIcon color='#367BF5' />
+                        >
+                            <ComboButton
+                                type="outline"
+                                size="sm"
+                                style={{
+                                    border: '1px solid transparent',
+                                    fontWeight: '600',
+                                    fontSize: '15px',
+                                    padding: '0px',
+                                }}
+                                onClick={() => setShowDrawer(true)}
+                            >
+                                <PlusIcon color="#367BF5" />
                                 Add more
                             </ComboButton>
                         </Form.Item>
-
                     </Form>
                     <div className="site-drawer-render-in-current-wrapper">
-
                         <DrawerWrapper>
                             <Drawer
                                 title="Add meta tags"
@@ -199,34 +236,38 @@ const AdditionalTags = ({ update }) => {
                                 onClose={() => setShowDrawer(false)}
                                 visible={showDrawer}
                                 getContainer={false}
-                                style={{ position: 'absolute', display: !showDrawer && 'none' }}
-                                className='drawer'
+                                style={{
+                                    position: 'absolute',
+                                    display: !showDrawer && 'none',
+                                }}
+                                className="drawer"
                             >
-                                <><Form.Item
-                                    label="Tag Name"
-                                    name="tagName"
-                                    style={{
-                                        color: '#555B6E',
-                                        fontSize: '16px',
-                                        fontWeight: '600',
-                                    }}
-                                >
-                                    <Input
-                                        strong
-                                        level={5}
-                                        placeholder="name(like keywords,author etc)"
-                                        style={{
-                                            width: '100%',
-                                            border: '2px solid #E4E4E4',
-                                            borderRadius: '4px',
-                                        }}
-                                        bordered={false}
-                                        value={form?.tagName?.value}
-                                        onChange={onChangeHandler}
-                                        id="tagName"
+                                <>
+                                    <Form.Item
+                                        label="Tag Name"
                                         name="tagName"
-                                    />
-                                </Form.Item>
+                                        style={{
+                                            color: '#555B6E',
+                                            fontSize: '16px',
+                                            fontWeight: '600',
+                                        }}
+                                    >
+                                        <Input
+                                            strong
+                                            level={5}
+                                            placeholder="name(like keywords,author etc)"
+                                            style={{
+                                                width: '100%',
+                                                border: '2px solid #E4E4E4',
+                                                borderRadius: '4px',
+                                            }}
+                                            bordered={false}
+                                            value={form?.tagName?.value}
+                                            onChange={onChangeHandler}
+                                            id="tagName"
+                                            name="tagName"
+                                        />
+                                    </Form.Item>
                                     <Form.Item
                                         label="Tag Content"
                                         name="tagContent"
@@ -254,7 +295,8 @@ const AdditionalTags = ({ update }) => {
                                     </Form.Item>
                                     <Button type="primary" onClick={() => Save()}>
                                         Save
-                                    </Button></>
+                                    </Button>
+                                </>
                             </Drawer>
                         </DrawerWrapper>
                     </div>
@@ -266,17 +308,27 @@ const AdditionalTags = ({ update }) => {
                         dataSource={prevAdditionalSettings}
                         renderItem={obj => (
                             <ListItemWrapper>
-
                                 <List.Item
                                     actions={[]}
-                                    style={{ fontWeight: "900", paddingTop: "6px" }}
+                                    style={{ fontWeight: '900', paddingTop: '6px' }}
                                 >
                                     <Formd.Group>
-                                        <Formd.Label style={{ color: '#7d818d', fontWeight: '900' }} htmlFor='username' title='taglabel' className="taglabel">
+                                        <Formd.Label
+                                            style={{ color: '#7d818d', fontWeight: '900' }}
+                                            htmlFor="username"
+                                            title="taglabel"
+                                            className="taglabel"
+                                        >
                                             Tag
                                         </Formd.Label>
                                         <ModalList>
-                                            <div className="listItem" style={{ display: "flex", justifyContent: "space-between" }} >
+                                            <div
+                                                className="listItem"
+                                                style={{
+                                                    display: 'flex',
+                                                    justifyContent: 'space-between',
+                                                }}
+                                            >
                                                 <div className="metatag_text">
                                                     {`<meta name=`}
                                                     <span>"{Object.keys(obj)}"</span>
@@ -284,9 +336,21 @@ const AdditionalTags = ({ update }) => {
                                                     <span>"{Object.values(obj)}"</span>
                                                     {`/>`}
                                                 </div>
-                                                <div style={{ display: "flex", alignItems: "center" }}>
-                                                    <a key="list-loadmore-edit"> <EditIcon color="#919699" size={24} /></a>
-                                                    <a key="list-loadmore-more"> <DeleteIcon /></a></div>
+                                                <div
+                                                    style={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                    }}
+                                                >
+                                                    <span onClick={() => setShowDrawer(true)}>
+                                                        {' '}
+                                                        <EditIcon color="#919699" size={24} />
+                                                    </span>
+                                                    <span onClick={() => deleteTag(Object.keys(obj))}>
+                                                        <DeleteIcon
+                                                        />
+                                                    </span>
+                                                </div>
                                             </div>
                                         </ModalList>
                                     </Formd.Group>
