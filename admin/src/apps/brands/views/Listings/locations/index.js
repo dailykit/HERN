@@ -16,6 +16,7 @@ import {
    HorizontalTabPanels,
    Dropdown,
    Spacer,
+   DropdownButton,
 } from '@dailykit/ui'
 import React, { useEffect } from 'react'
 import { toast } from 'react-toastify'
@@ -41,7 +42,7 @@ import GoogleMapReact from 'google-map-react'
 
 export const Locations = () => {
    const [locations, setLocations] = React.useState()
-   const tableRef = React.useRef()
+   const tableRef = React.useRef(null)
    const { tooltip } = useTooltip()
    const { addTab, tab } = useTabs()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
@@ -66,11 +67,22 @@ export const Locations = () => {
          identifier: 'Brand Info',
       },
       onSubscriptionData: data => {
-         setLocations(data.subscriptionData.data.brands_location)
+         const result = data.subscriptionData.data.brands_location.map(each => {
+            return {
+               ...each,
+               linkedBrands: each.brand_locations.map(eachBrand => {
+                  return {
+                     brandId: eachBrand.brandId,
+                     brandName: eachBrand.brand.title,
+                  }
+               }),
+            }
+         })
+         setLocations(result)
          setIsLoading(false)
       },
    })
-
+   console.log('locations of', locations)
    //mutations
    const [deleteLocation] = useMutation(LOCATIONS.DELETE, {
       onCompleted: () => {
@@ -125,6 +137,7 @@ export const Locations = () => {
             )
          },
          width: 80,
+         download: false,
          headerHozAlign: 'center',
       },
       {
@@ -153,10 +166,12 @@ export const Locations = () => {
       },
       {
          title: 'Linked Brands',
+         field: 'linkedBrands',
          formatter: reactFormatter(<BrandAvatar />),
       },
       {
          title: 'Location On Map',
+         download: false,
          formatter: reactFormatter(
             <LocationOnMap
                openTunnel={openTunnel}
@@ -229,8 +244,20 @@ export const Locations = () => {
          return `${newHeader} - ${value} || ${count} Locations`
       })
    }
+
    const clearHeaderFilter = () => {
       tableRef.current.table.clearHeaderFilter()
+   }
+   const downloadCsvData = () => {
+      tableRef.current.table.download('csv', 'locations_table.csv')
+   }
+
+   const downloadPdfData = () => {
+      tableRef.current.table.downloadToTab('pdf', 'locations_table.pdf')
+   }
+
+   const downloadXlsxData = () => {
+      tableRef.current.table.download('xlsx', 'locations_table.xlsx')
    }
    if (error) {
       toast.error('Something went wrong!')
@@ -265,7 +292,6 @@ export const Locations = () => {
                </HorizontalTabPanel>
                <HorizontalTabPanel>
                   <div>
-                     {' '}
                      <Flex
                         container
                         height="80px"
@@ -294,6 +320,27 @@ export const Locations = () => {
                               alignItems="center"
                               justifyContent="flex-end"
                            >
+                              <DropdownButton title="Download" width="150px">
+                                 <DropdownButton.Options>
+                                    <DropdownButton.Option
+                                       onClick={() => downloadCsvData()}
+                                    >
+                                       CSV
+                                    </DropdownButton.Option>
+                                    <DropdownButton.Option
+                                       onClick={() => downloadPdfData()}
+                                    >
+                                       PDF
+                                    </DropdownButton.Option>
+                                    <DropdownButton.Option
+                                       onClick={() => downloadXlsxData()}
+                                    >
+                                       XLSX
+                                    </DropdownButton.Option>
+                                 </DropdownButton.Options>
+                              </DropdownButton>
+
+                              <Spacer size="15px" xAxis />
                               <Text as="text1">Group By:</Text>
                               <Spacer size="5px" xAxis />
                               <Dropdown
@@ -343,6 +390,7 @@ export const Locations = () => {
                         options={{
                            ...tableOptions,
                            placeholder: 'No Locations Available Yet!',
+                           persistenceID: 'locations_table',
                         }}
                      />
                   </div>
