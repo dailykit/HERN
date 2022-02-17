@@ -517,24 +517,21 @@ export const Pickup = props => {
             />
          )}
 
-         {
-            // !fulfillmentType ? (
-            //    <p>Please select a pickup type.</p>
-            // ) :
-            isGetStoresLoading ? (
-               <Loader inline />
-            ) : stores.length === 0 ? (
-               <p>No store available</p>
-            ) : fulfillmentType === 'PREORDER_PICKUP' ? (
-               <TimeSlots
-                  onFulfillmentTimeClick={onFulfillmentTimeClick}
-                  selectedSlot={selectedSlot}
-                  availableDaySlots={pickupSlots}
-                  setSelectedSlot={setSelectedSlot}
-                  timeSlotsFor={'Pickup'}
-               />
-            ) : null
-         }
+         {!fulfillmentType ? (
+            <p>Please select a pickup type.</p>
+         ) : isGetStoresLoading ? (
+            <Loader inline />
+         ) : stores.length === 0 ? (
+            <p>No store available</p>
+         ) : fulfillmentType === 'PREORDER_PICKUP' ? (
+            <TimeSlots
+               onFulfillmentTimeClick={onFulfillmentTimeClick}
+               selectedSlot={selectedSlot}
+               availableDaySlots={pickupSlots}
+               setSelectedSlot={setSelectedSlot}
+               timeSlotsFor={'Pickup'}
+            />
+         ) : null}
       </div>
    )
 }

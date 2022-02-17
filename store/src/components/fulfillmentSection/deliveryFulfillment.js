@@ -28,7 +28,6 @@ export const Delivery = props => {
       configOf,
    } = useConfig()
    const theme = configOf('theme-color', 'Visual')
-
    const { methods, cartState } = React.useContext(CartContext)
    // map orderTabs to get order fulfillment type label
    const orderTabFulfillmentType = React.useMemo(
@@ -54,7 +53,7 @@ export const Delivery = props => {
          return JSON.parse(localStorage.getItem('userLocation'))
       }
    }, [cartState.cart])
-
+   console.log('cart', cartState)
    const [deliverySlots, setDeliverySlots] = useState(null)
    const [selectedSlot, setSelectedSlot] = useState(null)
    const [fulfillmentTabInfo, setFulfillmentTabInfo] = useState({
@@ -460,11 +459,11 @@ export const Delivery = props => {
    const title = React.useMemo(() => {
       switch (cartState.cart?.fulfillmentInfo?.type) {
          case 'ONDEMAND_DELIVERY':
-            return `You order will be delivered within ${
+            return `Order will be delivered within ${
                validMileRangeInfo?.prepTime || '...'
             } minutes.`
-         case 'PREORDER_DELIVERY':
-            return 'Schedule Delivery'
+         default:
+            return ''
       }
    }, [cartState.cart, validMileRangeInfo])
 
@@ -503,16 +502,15 @@ export const Delivery = props => {
          <div className="hern-cart__fulfillment-time-section">
             <div style={{ display: 'flex' }}>
                <OrderTime width={20} height={20} />
+               &nbsp;&nbsp;
                <label>
-                  {/* {title}{' '} */}
-
+                  {title}
                   {(cartState.cart?.fulfillmentInfo?.type ===
                      'PREORDER_PICKUP' ||
                      cartState.cart?.fulfillmentInfo?.type ===
                         'PREORDER_DELIVERY') && (
                      <span>
                         {' '}
-                        on{' '}
                         {moment(
                            cartState.cart?.fulfillmentInfo?.slot?.from
                         ).format('DD MMM YYYY')}
@@ -579,24 +577,21 @@ export const Delivery = props => {
             />
          )}
 
-         {
-            // !fulfillmentType ? (
-            //    <p>Please select a delivery type.</p>
-            // ) :
-            isGetStoresLoading ? (
-               <Loader inline />
-            ) : stores.length === 0 ? (
-               <p>No store available</p>
-            ) : fulfillmentType === 'PREORDER_DELIVERY' ? (
-               <TimeSlots
-                  onFulfillmentTimeClick={onFulfillmentTimeClick}
-                  selectedSlot={selectedSlot}
-                  availableDaySlots={deliverySlots}
-                  setSelectedSlot={setSelectedSlot}
-                  timeSlotsFor={'Delivery'}
-               />
-            ) : null
-         }
+         {!fulfillmentType ? (
+            <p>Please select a delivery type.</p>
+         ) : isGetStoresLoading ? (
+            <Loader inline />
+         ) : stores.length === 0 ? (
+            <p>No store available</p>
+         ) : fulfillmentType === 'PREORDER_DELIVERY' ? (
+            <TimeSlots
+               onFulfillmentTimeClick={onFulfillmentTimeClick}
+               selectedSlot={selectedSlot}
+               availableDaySlots={deliverySlots}
+               setSelectedSlot={setSelectedSlot}
+               timeSlotsFor={'Delivery'}
+            />
+         ) : null}
       </div>
    )
 }
