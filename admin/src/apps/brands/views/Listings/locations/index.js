@@ -30,6 +30,7 @@ import { useTabs, useTooltip } from '../../../../../shared/providers'
 import CreateBrandLocation from '../../../../../shared/CreateUtils/Brand/BrandLocation'
 import { Avatar, Tooltip } from 'antd'
 import {
+   CloseIcon,
    LocationMarkerIcon,
    PublishIcon,
    UnPublishIcon,
@@ -243,6 +244,7 @@ const DeleteLocation = ({ cell, deleteHandler }) => {
 const BrandAvatar = ({ cell }) => {
    // console.log('avatar', cell._cell.row.data)
    const rowData = cell._cell.row.data
+
    return (
       <>
          <Avatar.Group
@@ -356,7 +358,7 @@ const LocationOnMap = ({ cell, openTunnel, setSelectedRowData }) => {
 
 const LocationsOnMap = ({ locations }) => {
    const [locationDetails, setLocationDetails] = React.useState([...locations])
-   console.log('details', locations, locationDetails)
+   console.log('details', locationDetails)
 
    const defaultProps = {
       center: {
@@ -365,27 +367,88 @@ const LocationsOnMap = ({ locations }) => {
       },
       zoom: 12,
    }
+   const BrandAvatarMap = ({ location }) => {
+      // console.log('avatar', cell._cell.row.data)
+      const rowData = location
 
+      return (
+         <>
+            <Avatar.Group
+               maxCount={
+                  rowData.brand_locations.length > 4
+                     ? 4
+                     : rowData.brand_locations.length
+               }
+               maxStyle={{
+                  color: '#f56a00',
+                  backgroundColor: '#fde3cf',
+               }}
+            >
+               {rowData.brand_locations.map(eachBrand => (
+                  <Tooltip
+                     title={eachBrand.brand.title}
+                     placement="top"
+                     key={eachBrand.brandId}
+                  >
+                     {eachBrand.brand.brand_brandSettings.length > 0 ? (
+                        <Avatar
+                           src={
+                              eachBrand.brand.brand_brandSettings[0]?.value
+                                 .brandLogo.value
+                                 ? eachBrand.brand.brand_brandSettings[0]?.value
+                                      .brandLogo.value
+                                 : eachBrand.brand.brand_brandSettings[0]?.value
+                                      .brandLogo.default.url
+                           }
+                        />
+                     ) : (
+                        <Avatar
+                           style={{
+                              backgroundColor: '#87d068',
+                           }}
+                        >
+                           {eachBrand.brand.title.charAt(0).toUpperCase()}
+                        </Avatar>
+                     )}
+                  </Tooltip>
+               ))}
+            </Avatar.Group>
+         </>
+      )
+   }
    const InfoWindow = props => {
       const { location } = props
       const infoWindowStyle = {
          position: 'relative',
-         bottom: 100,
-         left: '-110px',
-         width: 220,
+         bottom: '12rem',
+         left: '-10rem',
+         width: '20rem',
          backgroundColor: 'white',
          boxShadow: '0 2px 7px 1px rgba(0, 0, 0, 0.3)',
          padding: 10,
-         fontSize: 14,
-         zIndex: 1000,
+         fontSize: 16,
+         zIndex: 10000,
+         cursor: 'pointer',
       }
-
+      // console.log('details for brand', location)
       return (
          <div style={infoWindowStyle}>
-            <div style={{ fontSize: 16 }}>{location.label}</div>
+            <div>
+               <div>{location.label}</div>
+               <div>
+                  {location.locationAddress.line1}{' '}
+                  {location.locationAddress.line2} <br />
+                  {location.city} {location.state} {location.country}{' '}
+                  {location.zipcode}
+               </div>
+               <div>
+                  <BrandAvatarMap location={location} />
+               </div>
+            </div>
          </div>
       )
    }
+
    const UserLocationMarker = ({ show, location }) => {
       // console.log('show & location', show, location)
       return (
@@ -433,7 +496,7 @@ const LocationsOnMap = ({ locations }) => {
       <>
          <div
             style={{
-               height: '400px',
+               height: '450px',
                width: '100%',
                position: 'relative',
             }}
