@@ -1,8 +1,15 @@
 import classNames from 'classnames'
 import { useConfig } from '../lib'
 import { setThemeVariable } from '../utils'
+import { FaSpinner } from 'react-icons/fa'
 
-export const Button = ({ children, style = {}, className, ...props }) => {
+export const Button = ({
+   children,
+   loading,
+   style = {},
+   className,
+   ...props
+}) => {
    const { configOf } = useConfig()
    const theme = configOf('theme-color', 'Visual')?.themeColor
    const themeColor = theme?.accent?.value
@@ -25,8 +32,10 @@ export const Button = ({ children, style = {}, className, ...props }) => {
          style={{ ...style }}
          className={`${buttonClasses} ${className ? className : ''}`}
          {...props}
+         loading
       >
-         {children}
+         {loading ? <Spinner /> : <>{children}</>}
       </button>
    )
 }
+const Spinner = () => <FaSpinner className="hern-btn__spinner" />
