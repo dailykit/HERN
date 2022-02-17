@@ -165,6 +165,7 @@ export const Locations = () => {
          ),
       },
    ])
+
    const defaultIDS = () => {
       let arr = []
       const locationGroup = localStorage.getItem(
@@ -184,6 +185,7 @@ export const Locations = () => {
       }
       return arr.length == 0 ? [2] : arr
    }
+
    const tableLoaded = () => {
       const locationGroup = localStorage.getItem(
          'tabulator-location_table-group'
@@ -226,6 +228,9 @@ export const Locations = () => {
          }
          return `${newHeader} - ${value} || ${count} Locations`
       })
+   }
+   const clearHeaderFilter = () => {
+      tableRef.current.table.clearHeaderFilter()
    }
    if (error) {
       toast.error('Something went wrong!')
@@ -310,9 +315,26 @@ export const Locations = () => {
                                  typeName="groupBy"
                               />
                            </Flex>
+                           <Flex
+                              container
+                              as="header"
+                              width="20%"
+                              alignItems="center"
+                              justifyContent="flex-end"
+                           >
+                              <ButtonGroup align="left">
+                                 <TextButton
+                                    type="ghost"
+                                    size="sm"
+                                    onClick={() => clearHeaderFilter()}
+                                 >
+                                    Clear All Filter
+                                 </TextButton>
+                              </ButtonGroup>
+                           </Flex>
                         </Flex>
                      </Flex>
-                     <Spacer size="30px" />
+                     <Spacer size="16px" />
                      <ReactTabulator
                         ref={tableRef}
                         columns={columns}
