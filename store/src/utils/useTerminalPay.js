@@ -35,6 +35,7 @@ function useTerminalPay() {
    useEffect(() => {
       const ws = new WebSocket(TERMINAL_WEBSOCKET_URL)
       if (isClient && !socket) {
+         console.log('setting socket', ws)
          setSocket(ws)
       }
       return () => {
@@ -97,6 +98,15 @@ function useTerminalPay() {
          if (socket.readyState === WebSocket.OPEN) {
             const jsonStringifiedData = JSON.stringify(data)
             socket.send(jsonStringifiedData)
+         } else {
+            await updateCartPayment({
+               variables: {
+                  id: cartIdRef.current,
+                  _set: {
+                     paymentStatus: 'CANCELLED',
+                  },
+               },
+            })
          }
       }
    }
