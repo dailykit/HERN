@@ -213,6 +213,15 @@ export const PLANS = {
 }
 
 export const LOCATIONS = {
+   AGGREGATE: gql`
+      subscription locations {
+         brands_location_aggregate {
+            aggregate {
+               count
+            }
+         }
+      }
+   `,
    LIST: gql`
       subscription locations($identifier: String!) {
          brands_location(order_by: { id: asc }) {

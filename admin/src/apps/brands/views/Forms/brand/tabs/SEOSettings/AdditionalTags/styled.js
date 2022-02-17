@@ -4,6 +4,7 @@ export const StyledWrapper = styled.div`
 display: flex;
 justify-content: center;
 padding: 2rem;
+
 .ant-input {
    font-weight: 500;
    font-size: 16px;
@@ -59,24 +60,55 @@ div.ant-typography,span.ant-typography{
     border-radius: 6px !important;
 }
 `
-export const ImageContainer = styled.div`
-display: flex;
-    flex-direction: row-reverse;
-    justify-content: flex-end;
-   width: 464px;
-   height: 128px;
-   position: relative;
-   margin-bottom: 16px;
-   img {
-      width: 464px;
-      height: 128px;
-      object-fit: cover;
-   }
-   div {
-      span {
-         margin-right: 16px;
-         cursor: pointer;
-      }
-   }
-`
+export const ListItemWrapper = styled.div`
+li.ant-list-item>section{
+   width: -webkit-fill-available !important;
+ }
 
+`
+export const DrawerWrapper = styled.div`
+.ant-drawer.ant-drawer-open .ant-drawer-mask{
+   opacity: 0.2 !important;
+}
+.ant-drawer-content-wrapper{
+   width:250px !important;
+}
+.ant-drawer-body{
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+   padding-bottom:10px !important;
+}
+.ant-drawer.ant-drawer-open .ant-drawer-mask {
+   animation-duration: 0s !important;
+   animation:none !important;
+}
+`
+export const ModalList = styled.div`
+
+content: '';
+width: 100%;
+height: 100%;
+font-weight:500;
+border-radius: 6px;
+cursor: default;
+background-color: #cfc6c61a;
+:hover{
+   background-color: #6e6a6a1a;
+}
+}
+.metatag_text{
+   span{
+      color: #000000d9;
+   }
+   color:#919699;
+}
+.listItem{
+   border-radius: 6px;
+   border: 1px solid #e3e3e3;
+   text-align: left;
+   font-size: 16px;
+   padding: 6px;
+}
+`
