@@ -259,6 +259,13 @@ export const Locations = () => {
    const downloadXlsxData = () => {
       tableRef.current.table.download('xlsx', 'locations_table.xlsx')
    }
+
+   const clearCustomerPersistence = () => {
+      localStorage.removeItem('tabulator-location_table-columns')
+      localStorage.removeItem('tabulator-location_table-sort')
+      localStorage.removeItem('tabulator-location_table-filter')
+      localStorage.removeItem('tabulator-location_table-group')
+   }
    if (error) {
       toast.error('Something went wrong!')
       console.log('error', error)
@@ -320,6 +327,16 @@ export const Locations = () => {
                               alignItems="center"
                               justifyContent="flex-end"
                            >
+                              <TextButton
+                                 onClick={() => {
+                                    clearCustomerPersistence()
+                                 }}
+                                 type="ghost"
+                                 size="sm"
+                              >
+                                 Clear Persistence
+                              </TextButton>
+                              <Spacer size="15px" xAxis />
                               <DropdownButton title="Download" width="150px">
                                  <DropdownButton.Options>
                                     <DropdownButton.Option
@@ -390,7 +407,7 @@ export const Locations = () => {
                         options={{
                            ...tableOptions,
                            placeholder: 'No Locations Available Yet!',
-                           persistenceID: 'locations_table',
+                           persistenceID: 'location_table',
                         }}
                      />
                   </div>
