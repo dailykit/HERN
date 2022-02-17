@@ -245,7 +245,7 @@ export const CartProvider = ({ children }) => {
    const [updateCartItems] = useMutation(UPDATE_CART_ITEMS)
    //add to cart
    const addToCart = async (cartItem, quantity) => {
-      setIsFinalCartLoading(true)
+      // setIsFinalCartLoading(true)
       const cartItems = new Array(quantity).fill({ ...cartItem })
       const orderTabInLocal = JSON.parse(localStorage.getItem('orderTab'))
       let customerAddressFromLocal

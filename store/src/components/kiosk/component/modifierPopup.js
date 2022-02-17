@@ -26,6 +26,7 @@ import { GET_MODIFIER_BY_ID } from '../../../graphql'
 import { useQuery } from '@apollo/react-hooks'
 import { useConfig } from '../../../lib'
 import { Loader } from '../..'
+import classNames from 'classnames'
 
 export const KioskModifier = props => {
    const {
@@ -37,7 +38,7 @@ export const KioskModifier = props => {
       productCartDetail,
       setCurrentPage,
    } = props
-   const { t, dynamicTrans, locale } = useTranslation()
+   const { t, dynamicTrans, locale, direction } = useTranslation()
    //context
    const { addToCart, methods } = React.useContext(CartContext)
 
@@ -307,7 +308,7 @@ export const KioskModifier = props => {
    //render conditional text
    const renderConditionText = category => {
       if (category.type === 'single') {
-         return 'CHOOSE ONE*'
+         return locale == 'ar' ? 'إختر واحد*' : 'CHOOSE ONE*'
       } else {
          if (category.isRequired) {
             if (category.limits.min) {
@@ -320,14 +321,18 @@ export const KioskModifier = props => {
                if (category.limits.max) {
                   return `(CHOOSE AT LEAST 1 AND AT MOST ${category.limits.max})*`
                } else {
-                  return `(CHOOSE AT LEAST 1)*`
+                  return locale == 'ar'
+                     ? 'إختر خيار واحد على الأقل'
+                     : `(CHOOSE AT LEAST 1)*`
                }
             }
          } else {
             if (category.limits.max) {
                return `(CHOOSE AS MANY AS YOU LIKE UPTO ${category.limits.max})`
             } else {
-               return '(CHOOSE AS MANY AS YOU LIKE)'
+               return locale == 'ar'
+                  ? 'إختر زي ما تحب'
+                  : '(CHOOSE AS MANY AS YOU LIKE)'
             }
          }
       }
@@ -831,25 +836,24 @@ export const KioskModifier = props => {
                                  {renderConditionText(eachModifierCategory)}
                                  {')'}
                               </span>
-                              {errorCategories.includes(
-                                 eachModifierCategory.id
-                              ) && (
-                                 <>
-                                    <br />
-                                    <span
-                                       style={{
-                                          fontStyle: 'italic',
-                                          fontSize: '1em',
-                                          color: `${config.kioskSettings.theme.categorySelectionWarningColor.value}`,
-                                       }}
-                                    >
-                                       {'('}
-                                       {t(`You have to choose this category`)}
-                                       {')'}
-                                    </span>
-                                 </>
-                              )}
                            </label>
+                           {errorCategories.includes(
+                              eachModifierCategory.id
+                           ) && (
+                              <>
+                                 <span
+                                    style={{
+                                       fontStyle: 'italic',
+                                       fontSize: '1.7em',
+                                       color: `${config.kioskSettings.theme.categorySelectionWarningColor.value}`,
+                                    }}
+                                 >
+                                    {'('}
+                                    {t(`You have to choose this category`)}
+                                    {')'}
+                                 </span>
+                              </>
+                           )}
                            <div className="hern-kiosk__modifier-category-options">
                               {eachModifierCategory.options.map(
                                  (eachOption, index) => {
@@ -941,7 +945,15 @@ export const KioskModifier = props => {
                                              )}
                                              {eachOption.additionalModifierTemplateId && (
                                                 <span
-                                                   className="hern-kiosk__modifier-option-customize"
+                                                   className={classNames(
+                                                      'hern-kiosk__modifier-option-customize',
+                                                      {
+                                                         'hern-kiosk__modifier-option-customize-rtl':
+                                                            direction == 'rtl',
+                                                         'hern-kiosk__modifier-option-customize-ltr':
+                                                            direction == 'ltr',
+                                                      }
+                                                   )}
                                                    onClick={() => {
                                                       setShowNestedModifierOptions(
                                                          prev => !prev
@@ -1062,7 +1074,7 @@ const AdditionalModifiers = forwardRef(
          useState(false)
       const [errorCategories, setErrorCategories] = useState([])
 
-      const { t, dynamicTrans } = useTranslation()
+      const { t, dynamicTrans, direction } = useTranslation()
       useEffect(() => {
          const languageTags = document.querySelectorAll(
             '[data-translation="true"]'
@@ -1499,7 +1511,17 @@ const AdditionalModifiers = forwardRef(
                                                 )}
                                                 {eachOption.additionalModifierTemplateId && (
                                                    <span
-                                                      className="hern-kiosk__modifier-option-customize"
+                                                      className={classNames(
+                                                         'hern-kiosk__modifier-option-customize',
+                                                         {
+                                                            'hern-kiosk__modifier-option-customize-rtl':
+                                                               direction ==
+                                                               'rtl',
+                                                            'hern-kiosk__modifier-option-customize-ltr':
+                                                               direction ==
+                                                               'ltr',
+                                                         }
+                                                      )}
                                                       onClick={() => {
                                                          setShowNestedModifierOptions(
                                                             prev => !prev
@@ -1888,23 +1910,23 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                         {renderConditionText(eachModifierCategory)}
                         {')'}
                      </span>
-                     {errorCategories.includes(eachModifierCategory.id) && (
-                        <>
-                           <br />
-                           <span
-                              style={{
-                                 fontStyle: 'italic',
-                                 fontSize: '1em',
-                                 color: `${config.kioskSettings.theme.categorySelectionWarningColor.value}`,
-                              }}
-                           >
-                              {'('}
-                              {t(`You have to choose this category`)}
-                              {')'}
-                           </span>
-                        </>
-                     )}
                   </label>
+                  {errorCategories.includes(eachModifierCategory.id) && (
+                     <>
+                        <span
+                           style={{
+                              fontStyle: 'italic',
+                              fontSize: '1.7em',
+                              color: `${config.kioskSettings.theme.categorySelectionWarningColor.value}`,
+                              margin: '0 .5em',
+                           }}
+                        >
+                           {'('}
+                           {t(`You have to choose this category`)}
+                           {')'}
+                        </span>
+                     </>
+                  )}
                   <div className="hern-kiosk__modifier-category-options">
                      {eachModifierCategory.options.map((eachOption, index) => {
                         const isModifierOptionInProduct = () => {
