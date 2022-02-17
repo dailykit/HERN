@@ -245,7 +245,7 @@ export const CartProvider = ({ children }) => {
    const [updateCartItems] = useMutation(UPDATE_CART_ITEMS)
    //add to cart
    const addToCart = async (cartItem, quantity) => {
-      setIsFinalCartLoading(true)
+      // setIsFinalCartLoading(true)
       const cartItems = new Array(quantity).fill({ ...cartItem })
       const orderTabInLocal = JSON.parse(localStorage.getItem('orderTab'))
       let customerAddressFromLocal
@@ -272,24 +272,27 @@ export const CartProvider = ({ children }) => {
             break
       }
 
-      const customerAddress = {
-         line1: customerAddressFromLocal.line1,
-         line2: customerAddressFromLocal.line2,
-         city: customerAddressFromLocal.city,
-         state: customerAddressFromLocal.state,
-         country: customerAddressFromLocal.country,
-         zipcode: customerAddressFromLocal.zipcode,
-         notes: customerAddressFromLocal.notes,
-         label: customerAddressFromLocal.label,
-         lat:
-            customerAddressFromLocal.latitude?.toString() ||
-            customerAddressFromLocal.lat?.toString(),
-         lng:
-            customerAddressFromLocal.longitude?.toString() ||
-            customerAddressFromLocal.lng?.toString(),
-         landmark: customerAddressFromLocal?.landmark || null,
-         searched: '',
-      }
+      const customerAddress =
+         oiType === 'Kiosk Ordering'
+            ? null
+            : {
+                 line1: customerAddressFromLocal.line1,
+                 line2: customerAddressFromLocal.line2,
+                 city: customerAddressFromLocal.city,
+                 state: customerAddressFromLocal.state,
+                 country: customerAddressFromLocal.country,
+                 zipcode: customerAddressFromLocal.zipcode,
+                 notes: customerAddressFromLocal.notes,
+                 label: customerAddressFromLocal.label,
+                 lat:
+                    customerAddressFromLocal.latitude?.toString() ||
+                    customerAddressFromLocal.lat?.toString(),
+                 lng:
+                    customerAddressFromLocal.longitude?.toString() ||
+                    customerAddressFromLocal.lng?.toString(),
+                 landmark: customerAddressFromLocal?.landmark || null,
+                 searched: '',
+              }
       if (!isAuthenticated) {
          //without login
 

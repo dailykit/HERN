@@ -308,7 +308,7 @@ export const KioskModifier = props => {
    //render conditional text
    const renderConditionText = category => {
       if (category.type === 'single') {
-         return 'CHOOSE ONE*'
+         return locale == 'ar' ? 'إختر واحد*' : 'CHOOSE ONE*'
       } else {
          if (category.isRequired) {
             if (category.limits.min) {
@@ -321,14 +321,18 @@ export const KioskModifier = props => {
                if (category.limits.max) {
                   return `(CHOOSE AT LEAST 1 AND AT MOST ${category.limits.max})*`
                } else {
-                  return `(CHOOSE AT LEAST 1)*`
+                  return locale == 'ar'
+                     ? 'إختر خيار واحد على الأقل'
+                     : `(CHOOSE AT LEAST 1)*`
                }
             }
          } else {
             if (category.limits.max) {
                return `(CHOOSE AS MANY AS YOU LIKE UPTO ${category.limits.max})`
             } else {
-               return '(CHOOSE AS MANY AS YOU LIKE)'
+               return locale == 'ar'
+                  ? 'إختر زي ما تحب'
+                  : '(CHOOSE AS MANY AS YOU LIKE)'
             }
          }
       }
