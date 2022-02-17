@@ -49,13 +49,14 @@ import {
 } from '../../../../../../../../shared/assets/icons'
 import { BRANDS } from '../../../../../../graphql'
 import { InfoCircleOutlined } from '@ant-design/icons'
-
+import _ from 'lodash'
 
 const AdditionalTags = ({ update }) => {
     const params = useParams()
     const [settingId, setSettingId] = React.useState(null)
     const [isSEOBasicsModalVisible, setIsSEOBasicsModalVisible] = useState(false)
     const [showDrawer, setShowDrawer] = React.useState(false)
+    const [editData, setEditData] = React.useState([])
     //(1) tagName and tagContent states (empty)
     const [tagName, setTagName] = React.useState('')
     const [tagContent, setTagContent] = React.useState('')
@@ -109,28 +110,37 @@ const AdditionalTags = ({ update }) => {
     }, [])
 
 
+
     //save changes
     const Save = () => {
         const newSetting = {}
-        newSetting[tagName] = tagContent
-        update({
-            id: settingId,
-            brandId: params.id,
-            value: prevAdditionalSettings
-                ? {
-                    additionalTags: [...prevAdditionalSettings, newSetting],
-                }
-                : { additionalTags: [newSetting] },
-        })
-        prevAdditionalSettings
-            ? setPrevAdditionalSettings([...prevAdditionalSettings, newSetting])
-            : setPrevAdditionalSettings([newSetting])
-        setShowDrawer(false)
+        if (tagName in prevAdditionalSettings && prevAdditionalSettings[tagName] == tagContent) {
+            setTagName('')
+            setTagContent('')
+            setShowDrawer(false)
+            message.success("No changes found")
+        }
+        else {
+            newSetting[tagName] = tagContent
+            if (editData.length > 0) {
+                deleteTag(editData)
+                console.log(prevAdditionalSettings, "new")
+                prevAdditionalSettings
+                    ? setPrevAdditionalSettings([...prevAdditionalSettings, newSetting])
+                    : setPrevAdditionalSettings([newSetting])
+            }
+
+            //in order to close we need to destroy all input values
+            setTagName('')
+            setTagContent('')
+            setShowDrawer(false)
+            message.success("Changes added. Click Save to save your changes")
+        }
     }
 
     if (metaDetailsLoading) return <InlineLoader />
 
-    //The Save button in modal for saving all changes and closing the modal
+    //The Save button in modal for updating all changes in db and closing the modal
     const SaveAllChanges = () => {
         update({
             id: settingId,
@@ -144,6 +154,7 @@ const AdditionalTags = ({ update }) => {
 
     //delete tag
     const deleteTag = key => {
+
         let newObj = []
         //newObj will now have  undeleted objects and empty objects.
         prevAdditionalSettings.map((object) => Object.keys(object) != key[0] && newObj.push(object))
@@ -156,8 +167,9 @@ const AdditionalTags = ({ update }) => {
         //(2)onclicking editButton tagName and tagContent states (obj)
         setTagName(Object.keys(obj)[0])
         setTagContent(Object.values(obj)[0])
-        console.log(tagName, tagContent, "from editForm")
+        setEditData((Object.keys(obj)[0]))
     }
+
     //confirmation for deleting the tag
     const confirmDelete = (obj) => {
         deleteTag(Object.keys(obj))
@@ -229,7 +241,6 @@ const AdditionalTags = ({ update }) => {
                             <Drawer
                                 title={tagName ? "Edit meta tags" : "Add meta tags"}
                                 placement="right"
-                                closable={true}
                                 onClose={() => { setShowDrawer(false); setTagName(''); setTagContent(''); }}
                                 visible={(tagName && tagContent) || showDrawer}
                                 getContainer={false}
@@ -368,6 +379,7 @@ const AdditionalTags = ({ update }) => {
                         )}
                     />
                 </Modal>
+                {/* main-button for showing modal */}
                 <Button type="primary" ghost onClick={showSEOBasicsModal}>
                     Add Other Additional Tags
                 </Button>

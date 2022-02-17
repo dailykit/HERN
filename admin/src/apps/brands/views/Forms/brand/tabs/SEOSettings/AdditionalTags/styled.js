@@ -67,6 +67,9 @@ li.ant-list-item>section{
 
 `
 export const DrawerWrapper = styled.div`
+.ant-drawer-close{
+   display:none;
+}
 .ant-drawer.ant-drawer-open .ant-drawer-mask{
    opacity: 0.2 !important;
 }
