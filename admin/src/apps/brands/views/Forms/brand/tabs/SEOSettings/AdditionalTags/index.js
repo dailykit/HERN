@@ -11,7 +11,7 @@ import {
     HelperText,
     PlusIcon,
 } from '@dailykit/ui'
-import { findLastIndex, isEmpty, truncate } from 'lodash'
+import { findLastIndex, isEmpty, set, truncate } from 'lodash'
 import {
     InlineLoader,
     Flex,
@@ -55,17 +55,13 @@ const AdditionalTags = ({ update }) => {
     const [settingId, setSettingId] = React.useState(null)
     const [isSEOBasicsModalVisible, setIsSEOBasicsModalVisible] = useState(false)
     const [showDrawer, setShowDrawer] = React.useState(false)
-    const [temporaryValue, setTemporaryValue] = React.useState([])
+    //(1) tagName and tagContent states (empty)
+    const [tagName, setTagName] = React.useState('')
+    const [tagContent, setTagContent] = React.useState('')
     const [form, setForm] = useState({
         additionalTags: {
             value: '',
-        },
-        tagName: {
-            value: '',
-        },
-        tagContent: {
-            value: '',
-        },
+        }
     })
     const showSEOBasicsModal = () => {
         setIsSEOBasicsModalVisible(true)
@@ -111,10 +107,9 @@ const AdditionalTags = ({ update }) => {
         })
     }, [])
 
+
     //save changes
     const Save = () => {
-        const tagName = form?.tagName?.value
-        const tagContent = form?.tagContent?.value
         const newSetting = {}
         newSetting[tagName] = tagContent
         update({
@@ -134,17 +129,6 @@ const AdditionalTags = ({ update }) => {
 
     if (metaDetailsLoading) return <InlineLoader />
 
-    const onChangeHandler = e => {
-        const { name, value } = e.target
-        setForm(prev => ({
-            ...prev,
-            [name]: {
-                ...prev[name],
-                value,
-            },
-        }))
-    }
-
     //The Save button in modal for saving all changes and closing the modal
     const SaveAllChanges = () => {
         update({
@@ -160,11 +144,18 @@ const AdditionalTags = ({ update }) => {
     //delete tag
     const deleteTag = key => {
         let newObj = []
-        prevAdditionalSettings.map((object) => Object.keys(object) != key[0] && newObj.push(object))
         //newObj will now have  undeleted objects and empty objects.
-        console.log(newObj, "newObj")
+        prevAdditionalSettings.map((object) => Object.keys(object) != key[0] && newObj.push(object))
         // then set value to prevAdditionalSettings
         setPrevAdditionalSettings(newObj)
+    }
+
+    //edit tag
+    const editingForm = (obj) => {
+        //(2)onclicking editButton tagName and tagContent states (obj)
+        setTagName(Object.keys(obj)[0])
+        setTagContent(Object.values(obj)[0])
+        console.log(tagName, tagContent, "from editForm")
     }
 
     return (
@@ -228,19 +219,22 @@ const AdditionalTags = ({ update }) => {
                         </Form.Item>
                     </Form>
                     <div className="site-drawer-render-in-current-wrapper">
-                        <DrawerWrapper>
+                        {((tagName && tagContent) || showDrawer) && <DrawerWrapper>
                             <Drawer
-                                title="Add meta tags"
+                                title={tagName ? "Edit meta tags" : "Add meta tags"}
                                 placement="right"
                                 closable={true}
-                                onClose={() => setShowDrawer(false)}
-                                visible={showDrawer}
+                                onClose={() => { setShowDrawer(false); setTagName(''); setTagContent(''); }}
+                                visible={(tagName && tagContent) || showDrawer}
                                 getContainer={false}
                                 style={{
                                     position: 'absolute',
-                                    display: !showDrawer && 'none',
+                                    visibility: !((tagName && tagContent) || showDrawer) ? 'hidden' : 'unset'
                                 }}
                                 className="drawer"
+                                destroyOnClose={true}
+                                forceRender={true}
+
                             >
                                 <>
                                     <Form.Item
@@ -261,11 +255,11 @@ const AdditionalTags = ({ update }) => {
                                                 border: '2px solid #E4E4E4',
                                                 borderRadius: '4px',
                                             }}
-                                            bordered={false}
-                                            value={form?.tagName?.value}
-                                            onChange={onChangeHandler}
+                                            defaultValue={tagName}
+                                            onChange={(e) => setTagName(e.target.value)}
                                             id="tagName"
                                             name="tagName"
+
                                         />
                                     </Form.Item>
                                     <Form.Item
@@ -287,8 +281,8 @@ const AdditionalTags = ({ update }) => {
                                                 borderRadius: '4px',
                                             }}
                                             bordered={false}
-                                            value={form?.tagContent?.value}
-                                            onChange={onChangeHandler}
+                                            defaultValue={tagContent}
+                                            onChange={(e) => setTagContent(e.target.value)}
                                             id="tagContent"
                                             name="tagContent"
                                         />
@@ -298,13 +292,14 @@ const AdditionalTags = ({ update }) => {
                                     </Button>
                                 </>
                             </Drawer>
-                        </DrawerWrapper>
+                        </DrawerWrapper>}
                     </div>
                     <List
                         className="demo-loadmore-list"
                         loading={false}
                         itemLayout="horizontal"
                         // loadMore={loadMore}
+
                         dataSource={prevAdditionalSettings}
                         renderItem={obj => (
                             <ListItemWrapper>
@@ -336,17 +331,17 @@ const AdditionalTags = ({ update }) => {
                                                     <span>"{Object.values(obj)}"</span>
                                                     {`/>`}
                                                 </div>
+
                                                 <div
                                                     style={{
                                                         display: 'flex',
                                                         alignItems: 'center',
                                                     }}
                                                 >
-                                                    <span onClick={() => setShowDrawer(true)}>
-                                                        {' '}
+                                                    <span style={{ cursor: "pointer" }} onClick={() => editingForm(obj)}>
                                                         <EditIcon color="#919699" size={24} />
                                                     </span>
-                                                    <span onClick={() => deleteTag(Object.keys(obj))}>
+                                                    <span style={{ cursor: "pointer" }} onClick={() => deleteTag(Object.keys(obj))}>
                                                         <DeleteIcon
                                                         />
                                                     </span>
