@@ -6,7 +6,6 @@ import {
    IconButton,
    Text,
    TextButton,
-   ToolTip,
    Tunnel,
    Tunnels,
    useTunnel,
@@ -15,7 +14,8 @@ import {
    HorizontalTabList,
    HorizontalTabPanel,
    HorizontalTabPanels,
-   Loader,
+   Dropdown,
+   Spacer,
 } from '@dailykit/ui'
 import React, { useEffect } from 'react'
 import { toast } from 'react-toastify'
@@ -47,6 +47,15 @@ export const Locations = () => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
    const [selectedRowData, setSelectedRowData] = React.useState(null)
    const [isLoading, setIsLoading] = React.useState(true)
+
+   const groupByOptions = [
+      { id: 1, title: 'Label', payLoad: 'label' },
+      { id: 2, title: 'City', payLoad: 'city' },
+      { id: 3, title: 'State', payLoad: 'state' },
+      { id: 4, title: 'Country', payLoad: 'country' },
+      { id: 5, title: 'Zipcode', payLoad: 'zipcode' },
+   ]
+
    // subscriptions
    const {
       error,
@@ -156,6 +165,68 @@ export const Locations = () => {
          ),
       },
    ])
+   const defaultIDS = () => {
+      let arr = []
+      const locationGroup = localStorage.getItem(
+         'tabulator-location_table-group'
+      )
+      const locationGroupParse =
+         locationGroup !== undefined &&
+         locationGroup !== null &&
+         locationGroup.length !== 0
+            ? JSON.parse(locationGroup)
+            : null
+      if (locationGroupParse !== null) {
+         locationGroupParse.forEach(x => {
+            const foundGroup = groupByOptions.find(y => y.payLoad == x)
+            arr.push(foundGroup.id)
+         })
+      }
+      return arr.length == 0 ? [2] : arr
+   }
+   const tableLoaded = () => {
+      const locationGroup = localStorage.getItem(
+         'tabulator-location_table-group'
+      )
+      const locationGroupParse =
+         locationGroup !== undefined &&
+         locationGroup !== null &&
+         locationGroup.length !== 0
+            ? JSON.parse(locationGroup)
+            : null
+      tableRef.current.table.setGroupBy(
+         !!locationGroupParse && locationGroupParse.length > 0
+            ? locationGroupParse
+            : 'city'
+      )
+      tableRef.current.table.setGroupHeader(function (
+         value,
+         count,
+         data1,
+         group
+      ) {
+         let newHeader
+         switch (group._group.field) {
+            case 'label':
+               newHeader = 'Label'
+               break
+            case 'city':
+               newHeader = 'City'
+               break
+            case 'state':
+               newHeader = 'State'
+               break
+            case 'country':
+               newHeader = 'Country'
+               break
+            case 'zipcode':
+               newHeader = 'Zipcode'
+            default:
+               break
+         }
+         return `${newHeader} - ${value} || ${count} Locations`
+      })
+   }
    if (error) {
       toast.error('Something went wrong!')
       console.log('error', error)
@@ -188,15 +259,71 @@ export const Locations = () => {
                   <LocationsOnMap locations={locations} />
                </HorizontalTabPanel>
                <HorizontalTabPanel>
-                  <ReactTabulator
-                     ref={tableRef}
-                     columns={columns}
-                     data={locations || []}
-                     options={{
-                        ...tableOptions,
-                        placeholder: 'No Locations Available Yet!',
-                     }}
-                  />
+                  <div>
+                     {' '}
+                     <Flex
+                        container
+                        height="80px"
+                        width="100%"
+                        alignItems="center"
+                        justifyContent="space-between"
+                     >
+                        <Flex
+                           container
+                           as="header"
+                           width="25%"
+                           alignItems="center"
+                           justifyContent="space-between"
+                        ></Flex>
+                        <Flex
+                           container
+                           as="header"
+                           width="75%"
+                           alignItems="center"
+                           justifyContent="space-around"
+                        >
+                           <Flex
+                              container
+                              as="header"
+                              width="80%"
+                              alignItems="center"
+                              justifyContent="flex-end"
+                           >
+                              <Text as="text1">Group By:</Text>
+                              <Spacer size="5px" xAxis />
+                              <Dropdown
+                                 type="multi"
+                                 variant="revamp"
+                                 disabled={true}
+                                 defaultIds={defaultIDS()}
+                                 options={groupByOptions}
+                                 searchedOption={() => {}}
+                                 selectedOption={value => {
+                                    localStorage.setItem(
+                                       'tabulator-location_table-group',
+                                       JSON.stringify(value.map(x => x.payLoad))
+                                    )
+                                    tableRef.current.table.setGroupBy(
+                                       value.map(x => x.payLoad)
+                                    )
+                                 }}
+                                 typeName="groupBy"
+                              />
+                           </Flex>
+                        </Flex>
+                     </Flex>
+                     <Spacer size="30px" />
+                     <ReactTabulator
+                        ref={tableRef}
+                        columns={columns}
+                        data={locations || []}
+                        dataLoaded={tableLoaded}
+                        options={{
+                           ...tableOptions,
+                           placeholder: 'No Locations Available Yet!',
+                        }}
+                     />
+                  </div>
                </HorizontalTabPanel>
             </HorizontalTabPanels>
          </HorizontalTabs>
