@@ -439,6 +439,10 @@ export const Pickup = props => {
             '--fufillment-time-section-top',
             showSlots ? '64px' : 'auto'
          )
+         setThemeVariable(
+            '--fufillment-time-section-bottom',
+            showSlots ? '0px' : '56px'
+         )
       }
    }, [isMobileViewOpen, showSlots])
 

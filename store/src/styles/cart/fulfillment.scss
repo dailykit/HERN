@@ -260,7 +260,7 @@
    text-align: center;
    width: 100%;
    color: #fff;
-   z-index: 999;
+   // z-index: 999;
    font-size: 16px;
 }
 
@@ -270,7 +270,7 @@
 @media only screen and (max-width: 767px) {
    .hern-fulfillment__time {
       position: fixed;
-      bottom: 56px;
+      bottom: var(--fufillment-time-section-bottom);
       left: 0;
       margin-bottom: 0;
       right: 0;
