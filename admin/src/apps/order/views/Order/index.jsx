@@ -123,7 +123,7 @@ const Order = () => {
       skip: !order?.cartId,
       variables: {
          where: {
-            // levelType: { _eq: 'orderItem' },
+            ...(!isSwitchedToTreeview && { levelType: { _eq: 'orderItem' } }),
             cartId: {
                _eq: order?.cartId,
             },
@@ -145,7 +145,7 @@ const Order = () => {
    }
 
    React.useEffect(() => {
-      if (!productsLoading && !isEmpty(products)) {
+      if (isSwitchedToTreeview && !productsLoading && !isEmpty(products)) {
          const treeViewArray = getTreeViewArray({
             dataset: products,
             rootIdKeyName: 'id',
@@ -160,7 +160,7 @@ const Order = () => {
             payload: product,
          })
       }
-   }, [productsLoading, products])
+   }, [productsLoading, products, isSwitchedToTreeview])
 
    // React.useEffect(() => {
    //    if (!isEmpty(products)) {
