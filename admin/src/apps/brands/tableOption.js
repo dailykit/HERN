@@ -15,7 +15,7 @@ const options = {
       columns: true, //persist columns
    },
    persistenceMode: 'local',
-   downloadDataFormatter: data => data,
+   accessorDownload: data => data,
    downloadReady: (fileContents, blob) => blob,
 }
 
