@@ -32,6 +32,22 @@ const CreateBrandLocation = ({ closeTunnel }) => {
    const [click, setClick] = React.useState(null)
 
    const locationInstance = {
+      lat: {
+         value: '',
+         meta: {
+            isTouched: false,
+            isValid: true,
+            errors: [],
+         },
+      },
+      lng: {
+         value: '',
+         meta: {
+            isTouched: false,
+            isValid: true,
+            errors: [],
+         },
+      },
       label: {
          value: '',
          meta: {
@@ -111,8 +127,8 @@ const CreateBrandLocation = ({ closeTunnel }) => {
             state: eachLocation.state.value,
             country: eachLocation.country.value,
             zipcode: eachLocation.zipcode.value,
-            lat: `${eachLocation.address.latitude}`,
-            lng: `${eachLocation.address.longitude}`,
+            lat: String(eachLocation.lat.value),
+            lng: String(eachLocation.lng.value),
          }))
          if (!objects.length) {
             throw Error('Nothing to add!')
@@ -249,7 +265,7 @@ const LocationSelector = props => {
       }
       setLocation([...newLocation])
    }, [address])
-   // console.log('address', location)
+   console.log('address', location)
    return (
       <>
          {loaded && !error && (
@@ -609,6 +625,22 @@ const LocationForm = props => {
          ['zipcode']: {
             ...newLocation[i]['country'],
             value: address.zipcode,
+         },
+         ['lat']: {
+            ...location['lat'],
+            value: address.latitude,
+            meta: {
+               ...newLocation[i]['lat']['meta'],
+               isTouched: true,
+            },
+         },
+         ['lng']: {
+            ...location['lng'],
+            value: address.longitude,
+            meta: {
+               ...newLocation[i]['lng']['meta'],
+               isTouched: true,
+            },
          },
       }
       setLocation([...newLocation])
