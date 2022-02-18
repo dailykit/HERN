@@ -21,6 +21,7 @@ import { CartContext } from '../../context'
 import { Loader } from '../'
 import { TimeSlots } from './components/timeSlots'
 import { Button } from '../button'
+import classNames from 'classnames'
 
 export const Delivery = props => {
    const { setIsEdit } = props
@@ -632,7 +633,10 @@ export const Delivery = props => {
                {deliveryRadioOptions.map(({ label, value }) => (
                   <button
                      key={label}
-                     className="hern-fulfillment__options__type-btn"
+                     className={classNames({
+                        'hern-fulfillment__options__type-btn--active':
+                           fulfillmentType === value,
+                     })}
                      onClick={() => {
                         setFulfillmentType(value)
                         const orderTabId = orderTabs.find(

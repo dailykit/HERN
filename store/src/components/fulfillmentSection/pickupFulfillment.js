@@ -19,7 +19,7 @@ import {
 import { CartContext, useUser } from '../../context'
 import { Loader, Button } from '../'
 import moment from 'moment'
-
+import classNames from 'classnames'
 export const Pickup = props => {
    const {
       brand,
@@ -570,7 +570,10 @@ export const Pickup = props => {
                {pickupRadioOptions.map(({ label, value }) => (
                   <button
                      key={label}
-                     className="hern-fulfillment__options__type-btn"
+                     className={classNames({
+                        'hern-fulfillment__options__type-btn--active':
+                           fulfillmentType === value,
+                     })}
                      onClick={() => {
                         setFulfillmentType(value)
                         const orderTabId = orderTabs.find(
