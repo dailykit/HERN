@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { Col, Radio, Row, Space, Carousel, Modal } from 'antd'
 import { useConfig } from '../../lib'
-import { OrderTime, EditIcon } from '../../assets/icons'
+import {
+   OrderTime,
+   DeliveryNowIcon,
+   DeliveryLaterIcon,
+} from '../../assets/icons'
 import { TimeSlots } from './components/timeSlots'
 import {
    generateMiniSlots,
@@ -58,13 +62,29 @@ export const Pickup = props => {
          orderTabFulfillmentType &&
          orderTabFulfillmentType.includes('ONDEMAND_PICKUP')
       ) {
-         options.push({ label: 'Now', value: 'ONDEMAND_PICKUP' })
+         options.push({
+            label: (
+               <span>
+                  <DeliveryNowIcon />
+                  &nbsp;Pickup
+               </span>
+            ),
+            value: 'ONDEMAND_PICKUP',
+         })
       }
       if (
          orderTabFulfillmentType &&
          orderTabFulfillmentType.includes('PREORDER_PICKUP')
       ) {
-         options.push({ label: 'Later', value: 'PREORDER_PICKUP' })
+         options.push({
+            label: (
+               <span>
+                  <DeliveryLaterIcon />
+                  &nbsp; Schedule Later
+               </span>
+            ),
+            value: 'PREORDER_PICKUP',
+         })
       }
 
       return options
@@ -546,24 +566,29 @@ export const Pickup = props => {
          </div>
 
          {pickupRadioOptions.length > 1 && (
-            <Radio.Group
-               options={pickupRadioOptions}
-               onChange={e => {
-                  setFulfillmentType(e.target.value)
-                  const orderTabId = orderTabs.find(
-                     t => t.orderFulfillmentTypeLabel === `${e.target.value}`
-                  )?.id
-                  setFulfillmentTabInfo(prev => {
-                     return { ...prev, orderTabId }
-                  })
-                  setIsGetStoresLoading(true)
-                  if (e.target.value === 'ONDEMAND_PICKUP') {
-                     setUpdateFulfillmentInfoForNow(prev => !prev)
-                  }
-               }}
-               value={fulfillmentType}
-               className="hern-cart__fulfillment-date-slot"
-            />
+            <div className="hern-fulfillment__options__type-btn">
+               {pickupRadioOptions.map(({ label, value }) => (
+                  <button
+                     key={label}
+                     className="hern-fulfillment__options__type-btn"
+                     onClick={() => {
+                        setFulfillmentType(value)
+                        const orderTabId = orderTabs.find(
+                           t => t.orderFulfillmentTypeLabel === `${value}`
+                        )?.id
+                        setFulfillmentTabInfo(prev => {
+                           return { ...prev, orderTabId }
+                        })
+                        setIsGetStoresLoading(true)
+                        if (value === 'ONDEMAND_PICKUP') {
+                           setUpdateFulfillmentInfoForNow(prev => !prev)
+                        }
+                     }}
+                  >
+                     {label}
+                  </button>
+               ))}
+            </div>
          )}
 
          {!fulfillmentType ? null : isGetStoresLoading ? (

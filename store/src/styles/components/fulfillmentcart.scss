@@ -64,7 +64,14 @@
       color: rgba(64, 64, 64, 0.8);
    }
 }
+
 .hern-cart__fulfillment-date-slot {
+   .hern-fulfillment-info__options {
+      font-weight: 600;
+      font-size: 12px;
+      line-height: 16px;
+      color: rgba(64, 64, 64, 0.4);
+   }
    margin-bottom: 10px;
    .ant-radio-checked .ant-radio-inner {
       border-color: var(--hern-accent) !important ;
@@ -163,4 +170,26 @@
    font-size: 16px;
    line-height: 24px;
    color: rgba(64, 64, 64, 0.6);
+}
+.hern-fulfillment__options__type-btn {
+   display: flex;
+   align-items: center;
+   > button {
+      background: #f9f9f9;
+      border: 1px solid #f3f3f3;
+      box-sizing: border-box;
+      border-radius: 4px;
+      padding: 8px 12px;
+      border: none;
+      outline: none;
+      margin-right: 12px;
+      > span {
+         font-weight: 600;
+         font-size: 12px;
+         line-height: 16px;
+         color: rgba(64, 64, 64, 0.4);
+         display: flex;
+         align-items: center;
+      }
+   }
 }
