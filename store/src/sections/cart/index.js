@@ -21,6 +21,7 @@ import { UserInfo, UserType, Tunnel } from '../../components'
 import { useConfig } from '../../lib'
 import classNames from 'classnames'
 import { formatCurrency, isClient } from '../../utils'
+import { useRouter } from 'next/router'
 
 export const OnDemandCart = () => {
    const { cartState, combinedCartItems, isFinalCartLoading, storedCartId } =
@@ -219,11 +220,17 @@ const CartPageHeader = () => {
       brandName: { value: brandName } = {},
       brandLogo: { value: logo } = {},
    } = useConfig('brand').configOf('Brand Info')
-
+   const router = useRouter()
    return (
       <header className="hern-cart-page__header">
          <div>
-            <LeftArrowIcon /> &nbsp;&nbsp;
+            <a
+               style={{ display: 'flex', alignItems: 'center' }}
+               onClick={() => router.back()}
+            >
+               <LeftArrowIcon /> &nbsp;&nbsp;
+            </a>
+
             <span>Cart</span>
          </div>
          <div className="hern-cart-page__header-logo">
