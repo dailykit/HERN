@@ -10,7 +10,7 @@ import {
    PaymentOptionsRenderer,
    WalletAmount,
 } from '../../components'
-import { CartContext, onDemandMenuContext, useUser } from '../../context'
+import { CartContext, useUser } from '../../context'
 import {
    EmptyCart,
    PaymentIcon,
@@ -71,6 +71,12 @@ export const OnDemandCart = () => {
          </>
       )
    }
+   const isDisabled =
+      !cartState.cart?.customerInfo?.customerFirstName ||
+      !cartState.cart?.customerInfo?.customerLastName ||
+      !cartState.cart?.customerInfo?.customerPhone
+   const isSmallerDevice = isClient && window.innerWidth < 768
+   console.log('isDisabled : ', isDisabled, isSmallerDevice)
    return (
       <>
          <CartPageHeader />
@@ -78,8 +84,19 @@ export const OnDemandCart = () => {
             <div>
                <div className="hern-on-demand-cart-section__left">
                   <UserInfo cart={cartState.cart} />
-                  <Fulfillment cart={cartState.cart} />
-                  <PaymentSection />
+                  {isSmallerDevice ? (
+                     isDisabled ? null : (
+                        <React.Fragment key="smaller-device">
+                           <Fulfillment cart={cartState.cart} />
+                           <PaymentSection />
+                        </React.Fragment>
+                     )
+                  ) : (
+                     <React.Fragment key="large-device">
+                        <Fulfillment cart={cartState.cart} />
+                        <PaymentSection />
+                     </React.Fragment>
+                  )}
                </div>
                <div className="hern-on-demand-cart-section__right">
                   <CartDetails />
@@ -99,7 +116,7 @@ const PaymentSection = () => {
       !cartState.cart?.customerInfo?.customerFirstName ||
       !cartState.cart?.customerInfo?.customerLastName ||
       !cartState.cart?.customerInfo?.customerPhone
-
+   console.log('first', cartState)
    const isSmallerDevice = isClient && window.innerWidth < 768
 
    return (
@@ -157,7 +174,7 @@ const PaymentSection = () => {
             </div>
          )}
 
-         {isSmallerDevice && (
+         {isSmallerDevice && !isDisabled && (
             <>
                <button
                   className="hern-cart__make-payment-btn"

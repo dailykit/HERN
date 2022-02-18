@@ -210,33 +210,47 @@ const UserInfoForm = props => {
 }
 const UserDetails = ({ handleEdit, handleOpen }) => {
    const { cartState } = React.useContext(CartContext)
+   const isSmallerDevice = isClient && window.innerWidth < 768
+
+   const hasUserInfo =
+      cartState?.cart?.customerInfo?.customerFirstName?.length ||
+      cartState?.cart?.customerInfo?.customerLastName?.length ||
+      cartState?.cart?.customerInfo?.customerPhone?.length
+
    React.useEffect(() => {
-      if (
-         !cartState?.cart?.customerInfo?.customerFirstName?.length ||
-         !cartState?.cart?.customerInfo?.customerLastName?.length ||
-         !cartState?.cart?.customerInfo?.customerPhone?.length
-      ) {
+      if (!isSmallerDevice && !hasUserInfo) {
          handleOpen()
       }
    }, [])
    return (
-      <div className="hern-user-info--closed">
-         <div>
-            <span>
-               <UserIcon size={16} />
-            </span>
-            <div>
-               <span>
-                  {cartState?.cart?.customerInfo?.customerFirstName +
-                     ' ' +
-                     cartState?.cart?.customerInfo?.customerLastName}
-               </span>
-               <span className="hern-user-info--closed__phone-no">
-                  {cartState?.cart?.customerInfo?.customerPhone}
-               </span>
+      <>
+         {isSmallerDevice && !hasUserInfo ? (
+            <button
+               onClick={handleEdit}
+               className="hern-user-info-tunnel__open-btn"
+            >
+               Add user info
+            </button>
+         ) : (
+            <div className="hern-user-info--closed">
+               <div>
+                  <span>
+                     <UserIcon size={16} />
+                  </span>
+                  <div>
+                     <span>
+                        {cartState?.cart?.customerInfo?.customerFirstName +
+                           ' ' +
+                           cartState?.cart?.customerInfo?.customerLastName}
+                     </span>
+                     <span className="hern-user-info--closed__phone-no">
+                        {cartState?.cart?.customerInfo?.customerPhone}
+                     </span>
+                  </div>
+               </div>
+               <button onClick={handleEdit}>Edit</button>
             </div>
-         </div>
-         <button onClick={handleEdit}>Edit</button>
-      </div>
+         )}
+      </>
    )
 }

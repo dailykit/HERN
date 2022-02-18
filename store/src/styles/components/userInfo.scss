@@ -217,3 +217,17 @@
       }
    }
 }
+.hern-user-info-tunnel__open-btn {
+   position: fixed;
+   left: 0;
+   right: 0;
+   bottom: 0;
+   width: 100%;
+   background-color: var(--hern-accent);
+   padding: 16px 0;
+   border: none;
+   outline: none;
+   font-size: 16px;
+   font-weight: bold;
+   color: #fff;
+}

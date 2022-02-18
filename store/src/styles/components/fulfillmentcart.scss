@@ -17,6 +17,7 @@
 .hern-cart__fulfillment-time-section {
    display: flex;
    flex-direction: column;
+   padding: 8px;
    @media only screen and (max-width: 767px) {
       label {
          font-size: 14px !important;

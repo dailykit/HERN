@@ -10,6 +10,7 @@ import {
    getPickupTimeSlotValidation,
    getOndemandPickupTimeValidation,
    setThemeVariable,
+   isClient,
 } from '../../utils'
 import { CartContext, useUser } from '../../context'
 import { Loader, Button } from '../'
@@ -81,11 +82,9 @@ export const Pickup = props => {
    const title = React.useMemo(() => {
       switch (cartState.cart?.fulfillmentInfo?.type) {
          case 'ONDEMAND_PICKUP':
-            return `Order will be delivered within ${
-               timeSlotInfo?.pickUpPrepTime || '...'
-            } min.`
+            return `Pick up after ${timeSlotInfo?.pickUpPrepTime || '...'} min.`
          case 'PREORDER_PICKUP':
-            return 'Schedule pickup'
+            return ''
       }
    }, [cartState.cart, timeSlotInfo])
 
@@ -428,24 +427,70 @@ export const Pickup = props => {
       // setIsEdit(false)
    }
 
+   const [isMobileViewOpen, setIsMobileViewOpen] = React.useState(true)
+   const isSmallerDevice = isClient && window.innerWidth < 768
+
+   React.useEffect(() => {
+      if (cartState.cart?.fulfillmentInfo !== null) {
+         setIsMobileViewOpen(false)
+      }
+      if (!isMobileViewOpen) {
+         setThemeVariable(
+            '--fufillment-time-section-top',
+            showSlots ? '64px' : 'auto'
+         )
+      }
+   }, [isMobileViewOpen, showSlots])
+
+   setThemeVariable(
+      '--user-info-section-bottom',
+      isSmallerDevice &&
+         cartState.cart?.fulfillmentInfo === null &&
+         showSlots &&
+         isMobileViewOpen
+         ? '92px'
+         : '128px'
+   )
+   setThemeVariable(
+      '--fufillment-address-section-bottom',
+      isSmallerDevice &&
+         cartState.cart?.fulfillmentInfo === null &&
+         showSlots &&
+         isMobileViewOpen
+         ? '56px'
+         : '92px'
+   )
+   if (
+      isSmallerDevice &&
+      cartState.cart?.fulfillmentInfo === null &&
+      showSlots &&
+      isMobileViewOpen
+   ) {
+      return (
+         <button
+            className="hern-user-info-tunnel__open-btn"
+            onClick={() => {
+               setShowSlots(true)
+               setIsMobileViewOpen(false)
+            }}
+         >
+            Add pickup time{' '}
+         </button>
+      )
+   }
+
    if (isLoading) {
       return <p>Loading</p>
    }
-   setThemeVariable(
-      '--fufillment-time-section-top',
-      showSlots ? '64px' : 'auto'
-   )
+
    if (!showSlots) {
       return (
          <div className="hern-cart__fulfillment-time-section">
-            {/* <div className="hern-cart__fulfillment-time-section-heading">
-               <span>When would you like to order?</span>
-            </div> */}
             <div className="hern-cart__fulfillment-time-section__content">
                <div style={{ display: 'flex', alignItems: 'center' }}>
                   <OrderTime width={20} height={20} />
                   <label>
-                     {/* {title}{' '} */}
+                     {title}&nbsp;
                      {cartState.cart?.fulfillmentInfo?.type ===
                         'PREORDER_PICKUP' && (
                         <span>
@@ -517,9 +562,7 @@ export const Pickup = props => {
             />
          )}
 
-         {!fulfillmentType ? (
-            <p>Please select a pickup type.</p>
-         ) : isGetStoresLoading ? (
+         {!fulfillmentType ? null : isGetStoresLoading ? (
             <Loader inline />
          ) : stores.length === 0 ? (
             <p>No store available</p>

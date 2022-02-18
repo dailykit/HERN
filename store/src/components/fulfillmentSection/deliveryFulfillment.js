@@ -11,6 +11,7 @@ import {
    getTimeSlotsValidation,
    getOnDemandValidation,
    setThemeVariable,
+   isClient,
 } from '../../utils'
 import { CartContext } from '../../context'
 import { Loader } from '../'
@@ -459,9 +460,7 @@ export const Delivery = props => {
    const title = React.useMemo(() => {
       switch (cartState.cart?.fulfillmentInfo?.type) {
          case 'ONDEMAND_DELIVERY':
-            return `Order will be delivered within ${
-               validMileRangeInfo?.prepTime || '...'
-            } minutes.`
+            return `Delivering in ${validMileRangeInfo?.prepTime || '...'} min.`
          default:
             return ''
       }
@@ -489,14 +488,62 @@ export const Delivery = props => {
          }
       }
    }, [cartState.cart])
+   const [isMobileViewOpen, setIsMobileViewOpen] = React.useState(true)
+   const isSmallerDevice = isClient && window.innerWidth < 768
+
+   React.useEffect(() => {
+      if (cartState.cart?.fulfillmentInfo !== null) {
+         setIsMobileViewOpen(false)
+      }
+      if (!isMobileViewOpen) {
+         setThemeVariable(
+            '--fufillment-time-section-top',
+            showSlots ? '64px' : 'auto'
+         )
+      }
+   }, [isMobileViewOpen, showSlots])
+
+   setThemeVariable(
+      '--user-info-section-bottom',
+      isSmallerDevice &&
+         cartState.cart?.fulfillmentInfo === null &&
+         showSlots &&
+         isMobileViewOpen
+         ? '92px'
+         : '128px'
+   )
+   setThemeVariable(
+      '--fufillment-address-section-bottom',
+      isSmallerDevice &&
+         cartState.cart?.fulfillmentInfo === null &&
+         showSlots &&
+         isMobileViewOpen
+         ? '56px'
+         : '92px'
+   )
 
    if (isLoading) {
       return <p>Loading</p>
    }
-   setThemeVariable(
-      '--fufillment-time-section-top',
-      showSlots ? '64px' : 'auto'
-   )
+   if (
+      isSmallerDevice &&
+      cartState.cart?.fulfillmentInfo === null &&
+      showSlots &&
+      isMobileViewOpen
+   ) {
+      return (
+         <button
+            className="hern-user-info-tunnel__open-btn"
+            onClick={() => {
+               setShowSlots(true)
+               setIsMobileViewOpen(false)
+            }}
+         >
+            Add delivery time{' '}
+         </button>
+      )
+   }
+
    if (!showSlots) {
       return (
          <div className="hern-cart__fulfillment-time-section">
@@ -577,9 +624,7 @@ export const Delivery = props => {
             />
          )}
 
-         {!fulfillmentType ? (
-            <p>Please select a delivery type.</p>
-         ) : isGetStoresLoading ? (
+         {!fulfillmentType ? null : isGetStoresLoading ? (
             <Loader inline />
          ) : stores.length === 0 ? (
             <p>No store available</p>

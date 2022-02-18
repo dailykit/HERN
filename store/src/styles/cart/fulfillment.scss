@@ -277,10 +277,11 @@
       z-index: 1;
       top: var(--fufillment-time-section-top);
       overflow-y: auto;
+      padding: 0;
    }
    .hern-fulfillment__address {
       position: fixed;
-      bottom: 92px;
+      bottom: var(--fufillment-address-section-bottom);
       left: 0;
       margin-bottom: 0;
       right: 0;
@@ -288,7 +289,7 @@
    }
    .hern-user-info--closed {
       position: fixed;
-      bottom: 128px;
+      bottom: var(--user-info-section-bottom);
       left: 0;
       margin-bottom: 0;
       right: 0;
