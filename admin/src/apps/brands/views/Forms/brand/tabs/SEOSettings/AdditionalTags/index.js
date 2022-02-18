@@ -115,23 +115,11 @@ const AdditionalTags = ({ update }) => {
     const Save = () => {
         const newSetting = {}
         newSetting[tagName] = tagContent
-        // if (tagName in prevAdditionalSettings && prevAdditionalSettings[tagName] == tagContent) {
-        //     setTagName('')
-        //     setTagContent('')
-        //     setShowDrawer(false)
-        //     message.success("No changes found")
-        // }
         let checkKeyPresenceInArray = key => prevAdditionalSettings.some(obj => Object.keys(obj).includes(key))
-        console.log(checkKeyPresenceInArray(tagName), "from Save")
         if (checkKeyPresenceInArray(tagName)) {
             message.error("This Tag already exist")
         }
         else {
-            // if (editData.length > 0) {
-            //     deleteTag(editData)
-            //     console.log(prevAdditionalSettings, "new")
-
-            // }
             prevAdditionalSettings
                 ? setPrevAdditionalSettings([...prevAdditionalSettings, newSetting])
                 : setPrevAdditionalSettings([newSetting])
@@ -143,6 +131,21 @@ const AdditionalTags = ({ update }) => {
         }
     }
 
+    const Edit = () => {
+        const newSetting = {}
+        newSetting[tagName] = tagContent
+        let newObj = []
+        //newObj will now have  undeleted objects and empty objects.
+        prevAdditionalSettings.map((object) => Object.keys(object) != tagName ? newObj.push(object) : newObj.push(newSetting))
+        // then set value to prevAdditionalSettings
+        setPrevAdditionalSettings([...newObj])
+        setEditData([])
+        //in order to close we need to destroy all input values
+        setTagName('')
+        setTagContent('')
+        setShowDrawer(false)
+        message.success("Changes added. Click Save to save your changes")
+    }
     if (metaDetailsLoading) return <InlineLoader />
 
     //The Save button in modal for updating all changes in db and closing the modal
@@ -159,7 +162,6 @@ const AdditionalTags = ({ update }) => {
 
     //delete tag
     const deleteTag = key => {
-
         let newObj = []
         //newObj will now have  undeleted objects and empty objects.
         prevAdditionalSettings.map((object) => Object.keys(object) != key[0] && newObj.push(object))
@@ -172,7 +174,8 @@ const AdditionalTags = ({ update }) => {
         //(2)onclicking editButton tagName and tagContent states (obj)
         setTagName(Object.keys(obj)[0])
         setTagContent(Object.values(obj)[0])
-        setEditData((Object.keys(obj)[0]))
+        setEditData([tagName, tagContent])
+        console.log(editData, "editData")
     }
 
     //confirmation for deleting the tag
@@ -244,9 +247,9 @@ const AdditionalTags = ({ update }) => {
                     <div className="site-drawer-render-in-current-wrapper">
                         {((tagName && tagContent) || showDrawer) && <DrawerWrapper>
                             <Drawer
-                                title={tagName ? "Edit meta tags" : "Add meta tags"}
+                                title={editData.length > 1 ? "Edit meta tags" : "Add meta tags"}
                                 placement="right"
-                                onClose={() => { setShowDrawer(false); setTagName(''); setTagContent(''); }}
+                                onClose={() => { setShowDrawer(false); setTagName(''); setTagContent(''); setEditData([]); }}
                                 visible={(tagName && tagContent) || showDrawer}
                                 getContainer={false}
                                 style={{
@@ -276,12 +279,17 @@ const AdditionalTags = ({ update }) => {
                                                 width: '100%',
                                                 border: '2px solid #E4E4E4',
                                                 borderRadius: '4px',
+                                                cursor: editData.length > 1 && "not-allowed",
+                                                backgroundColor: editData.length > 1 && '#f9f7f7'
                                             }}
                                             defaultValue={tagName}
                                             onChange={(e) => setTagName(e.target.value)}
                                             id="tagName"
                                             name="tagName"
-
+                                            readOnly={editData.length > 1}
+                                            onClick={() => {
+                                                editData.length > 1 && message.warning("Property 'name' is uneditable.Try adding new metaData")
+                                            }}
                                         />
                                     </Form.Item>
                                     <Form.Item
@@ -303,13 +311,14 @@ const AdditionalTags = ({ update }) => {
                                                 borderRadius: '4px',
                                             }}
                                             bordered={false}
+                                            value={tagContent}
                                             defaultValue={tagContent}
                                             onChange={(e) => setTagContent(e.target.value)}
                                             id="tagContent"
                                             name="tagContent"
                                         />
                                     </Form.Item>
-                                    <Button type="primary" onClick={() => Save()}>
+                                    <Button type="primary" onClick={() => editData.length > 1 ? Edit() : Save()}>
                                         Save
                                     </Button>
                                 </>
