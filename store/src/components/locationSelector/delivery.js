@@ -324,16 +324,11 @@ export const Delivery = props => {
                                     onSuggestionClick={formatAddress}
                                  />
                               )}
-                              loader={() => {
-                                 return (
-                                    <Skeleton.Input
-                                       style={{ width: 100 }}
-                                       active={true}
-                                       size={'small'}
-                                       loading={true}
-                                    />
-                                 )
-                              }}
+                              loader={
+                                 <div>
+                                    <Skeleton paragraph={{ rows: 4 }} />
+                                 </div>
+                              }
                            />
                         </div>
                         <div

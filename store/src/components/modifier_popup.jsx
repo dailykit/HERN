@@ -526,6 +526,7 @@ export const ModifierPopup = props => {
                               eachAdditionalModifier => {
                                  return (
                                     <AdditionalModifiers
+                                       key={`${eachAdditionalModifier.productOptionId} - ${eachAdditionalModifier.modifierId}`}
                                        eachAdditionalModifier={
                                           eachAdditionalModifier
                                        }
@@ -551,6 +552,7 @@ export const ModifierPopup = props => {
                         {productOption.modifier.categories.map(eachCategory => {
                            return (
                               <ModifierCategory
+                                 key={eachCategory.id}
                                  eachCategory={eachCategory}
                                  selectedOptions={selectedModifierOptions}
                                  setSelectedOptions={setSelectedModifierOptions}
@@ -661,6 +663,7 @@ const AdditionalModifiers = forwardRef(
                      (eachModifierCategory, index) => {
                         return (
                            <ModifierCategory
+                              key={eachModifierCategory.id}
                               eachCategory={eachModifierCategory}
                               selectedOptions={selectedOptions}
                               setSelectedOptions={setSelectedOptions}

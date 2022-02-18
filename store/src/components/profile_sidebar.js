@@ -25,12 +25,6 @@ export const ProfileSidebar = ({ toggle = true, logout }) => {
    const walletSettings = configOf('Wallet', 'rewards')
    const referralsAllowed = configOf('Referral', 'rewards')?.isAvailable
    const { loading, error, data } = useQuery(SUPPORTED_PAYMENT_OPTIONS)
-   console.log(
-      'Data',
-      loading,
-      error,
-      data?.brands_supportedPaymentCompany.some(pm => pm.label === 'stripe')
-   )
 
    const sidebarLinks = [
       {

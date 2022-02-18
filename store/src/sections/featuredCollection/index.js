@@ -26,8 +26,6 @@ export const FeaturedCollection = ({ config }) => {
    const router = useRouter()
    const { addToast } = useToasts()
 
-   console.log('config123', config)
-
    // context
    const { brand, isConfigLoading, locationId, storeStatus } = useConfig()
 

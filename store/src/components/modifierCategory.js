@@ -223,6 +223,7 @@ export const ModifierCategory = props => {
                         eachOption.additionalModifierTemplate.categories.map(
                            eachAdditionalCategory => (
                               <ModifierCategory
+                                 key={`${eachAdditionalCategory.id} - ${eachOption.id}`}
                                  eachCategory={eachAdditionalCategory}
                                  selectedOptions={nestedSelectedModifierOptions}
                                  setSelectedOptions={
