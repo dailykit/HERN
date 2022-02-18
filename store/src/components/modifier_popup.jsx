@@ -383,10 +383,18 @@ export const ModifierPopup = props => {
       return (
          <div className="hern-product-options__custom-details">
             <div>
-               <div className="hern-product-options__custom-details__product-title">
+               <div
+                  className="hern-product-options__custom-details__product-title"
+                  data-translation="true"
+                  data-original-value={productData.name}
+               >
                   {productData.name}
                </div>
-               <div className="hern-product-options__custom-details__product-desc">
+               <div
+                  className="hern-product-options__custom-details__product-desc"
+                  data-translation="true"
+                  data-original-value={productData.description}
+               >
                   {productData.description}
                </div>
                <div className="hern-product-options__custom-details__product-tags">
@@ -440,6 +448,8 @@ export const ModifierPopup = props => {
                      <div
                         className="hern-product-card__name"
                         style={{ fontSize: '20px', fontWeight: '600px' }}
+                        data-translation="true"
+                        data-original-value={productData.name}
                      >
                         {productData?.name}
                      </div>
@@ -509,7 +519,10 @@ export const ModifierPopup = props => {
                                  }}
                                  onClick={e => setProductOption(eachOption)}
                               >
-                                 <li>
+                                 <li
+                                    data-translation="true"
+                                    data-original-value={eachOption.label}
+                                 >
                                     {eachOption.label}
 
                                     {' (+ '}
@@ -519,7 +532,10 @@ export const ModifierPopup = props => {
                                     {')'}
                                  </li>
                                  {recipeButton.show && (
-                                    <div>
+                                    <div
+                                       data-translation="true"
+                                       data-original-value={recipeButton.label}
+                                    >
                                        <Link
                                           href={getRoute(
                                              '/recipes/' + eachOption.id
@@ -570,7 +586,11 @@ export const ModifierPopup = props => {
                                  className="hern-product-modifier-pop-up-modifier-category-list"
                                  key={eachCategory.id}
                               >
-                                 <span className="hern-product-modifier-pop-up-modifier-category__name">
+                                 <span
+                                    className="hern-product-modifier-pop-up-modifier-category__name"
+                                    data-translation="true"
+                                    data-original-value={eachCategory.name}
+                                 >
                                     {eachCategory.name}
                                  </span>
                                  <br />
