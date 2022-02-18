@@ -114,22 +114,27 @@ const AdditionalTags = ({ update }) => {
     //save changes
     const Save = () => {
         const newSetting = {}
-        if (tagName in prevAdditionalSettings && prevAdditionalSettings[tagName] == tagContent) {
-            setTagName('')
-            setTagContent('')
-            setShowDrawer(false)
-            message.success("No changes found")
+        newSetting[tagName] = tagContent
+        // if (tagName in prevAdditionalSettings && prevAdditionalSettings[tagName] == tagContent) {
+        //     setTagName('')
+        //     setTagContent('')
+        //     setShowDrawer(false)
+        //     message.success("No changes found")
+        // }
+        let checkKeyPresenceInArray = key => prevAdditionalSettings.some(obj => Object.keys(obj).includes(key))
+        console.log(checkKeyPresenceInArray(tagName), "from Save")
+        if (checkKeyPresenceInArray(tagName)) {
+            message.error("This Tag already exist")
         }
         else {
-            newSetting[tagName] = tagContent
-            if (editData.length > 0) {
-                deleteTag(editData)
-                console.log(prevAdditionalSettings, "new")
-                prevAdditionalSettings
-                    ? setPrevAdditionalSettings([...prevAdditionalSettings, newSetting])
-                    : setPrevAdditionalSettings([newSetting])
-            }
+            // if (editData.length > 0) {
+            //     deleteTag(editData)
+            //     console.log(prevAdditionalSettings, "new")
 
+            // }
+            prevAdditionalSettings
+                ? setPrevAdditionalSettings([...prevAdditionalSettings, newSetting])
+                : setPrevAdditionalSettings([newSetting])
             //in order to close we need to destroy all input values
             setTagName('')
             setTagContent('')
