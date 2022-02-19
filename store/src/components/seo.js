@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Head from 'next/head'
-// import { useConfig } from '../lib'
 
 export const SEO = ({ seoSettings, richresult, children }) => {
    const {
@@ -16,14 +15,12 @@ export const SEO = ({ seoSettings, richresult, children }) => {
       ogDescription,
       googleAnalyticsId,
       facebookPixelId,
-      additionalTags
+      additionalTags,
    } = seoSettings
 
    return (
       <Head>
-         <title>
-            {metaTitle}
-         </title>
+         <title>{metaTitle}</title>
          <link rel="icon" href={favicon} type="image/png" sizes="16x16" />
          <meta
             property="description"
@@ -31,63 +28,45 @@ export const SEO = ({ seoSettings, richresult, children }) => {
             name="description"
          />
          {/* additionalTags if any */}
-         {additionalTags.length > 0 && (
-            additionalTags.map((obj) => {
-               return (<meta name={Object.keys(obj)[0]} content={Object.values(obj)[0]} />)
-            }))
-         }
+         {additionalTags?.length > 0 &&
+            additionalTags.map(obj => {
+               return (
+                  <meta
+                     name={Object.keys(obj)[0]}
+                     content={Object.values(obj)[0]}
+                  />
+               )
+            })}
 
          <meta
             property="og:title"
-            content={
-               ogTitle ||
-               metaTitle
-            }
+            content={ogTitle || metaTitle}
             title="og-title"
          />
          <meta
             property="og:description"
-            content={
-               ogDescription ||
-               metaDescription ||
-               ''
-            }
+            content={ogDescription || metaDescription || ''}
             title="og-desc"
          />
-         <meta
-            property="og:image"
-            content={ogImage}
-            title="og-image"
-         />
+         <meta property="og:image" content={ogImage} title="og-image" />
          <meta property="og:type" content="website" />
          <meta property="og:url" content={ogImage} />
          <meta property="twitter:card" content="summary" />
          <meta
             property="twitter:title"
-            content={
-               twitterTitle ||
-               ogTitle ||
-               metaTitle
-            }
+            content={twitterTitle || ogTitle || metaTitle}
             title="tw-title"
          />
          <meta
             property="twitter:description"
             content={
-               twitterDescription ||
-               ogDescription ||
-               metaDescription ||
-               ''
+               twitterDescription || ogDescription || metaDescription || ''
             }
             title="tw-desc"
          />
          <meta
             property="twitter:image:src"
-            content={
-               twitterImage ||
-               ogImage ||
-               favicon
-            }
+            content={twitterImage || ogImage || favicon}
             title="tw-image"
          />
          {/* <!-- Global site tag (gtag.js) - Google Analytics --> */}
