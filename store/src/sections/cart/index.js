@@ -81,7 +81,7 @@ export const OnDemandCart = () => {
       '--cart-section-height-sm',
       isSmallerDevice && isDisabled
          ? 'calc(100vh - 56px)'
-         : 'calc(100vh - 190px)'
+         : 'calc(100vh - 200px)'
    )
    return (
       <>

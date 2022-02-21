@@ -534,8 +534,8 @@ export const Delivery = props => {
          cartState.cart?.fulfillmentInfo === null &&
          showSlots &&
          isMobileViewOpen
-         ? '92px'
-         : '128px'
+         ? '100px'
+         : '132px'
    )
    setThemeVariable(
       '--fufillment-address-section-bottom',
