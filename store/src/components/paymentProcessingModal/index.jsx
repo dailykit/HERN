@@ -31,7 +31,7 @@ const PaymentProcessingModal = ({
    const isKioskMode = isKiosk()
    const [isCelebrating, setIsCelebrating] = useState(false)
    const { width, height } = useWindowSize()
-   const [countDown, setCountDown] = useState(10)
+   const [countDown, setCountDown] = useState(60)
 
    const closeModalHandler = async () => {
       setIsCelebrating(false)

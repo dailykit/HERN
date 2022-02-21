@@ -68,7 +68,7 @@ export const KioskHeader = props => {
 }
 const LanguageSelector = props => {
    const { config, setShowReloadWarningPopup } = props
-   const { changeLocale, locales } = useTranslation()
+   const { changeLocale, locales, t } = useTranslation()
    const defaultLang = React.useMemo(() => {
       return locales.find(x => x.default).langCode
    }, [locales])
@@ -132,7 +132,7 @@ const LanguageSelector = props => {
                margin: '0 20px',
             }}
          >
-            <ReloadIcon size={32} />
+            {t('Reset')}
          </div>
       </div>
    )

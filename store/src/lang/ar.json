@@ -45,5 +45,6 @@
    "CONTINUE": "إستمرار",
    "Current changes will lose do you wish to continue?": "سوف يتم إلغاء التعديلات الحالية , هل ترغب في الإستمرار ؟",
    "Add": "إضافة",
-   "Item Total": "مجموع الأصناف"
+   "Item Total": "مجموع الأصناف",
+   "Reset": "إعادة"
 }
