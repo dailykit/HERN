@@ -8,6 +8,7 @@ import { ProductCard } from '../../components/product_card'
 import { ArrowLeftIcon, ArrowRightIcon } from '../../assets/icons'
 import { useRouter } from 'next/router'
 import { getRoute } from '../../utils'
+import { CustomArea } from '../featuredCollection/productCustomArea'
 
 export const ProductGallery = ({ config }) => {
    const [productsData, setProductsData] = React.useState([])
@@ -54,7 +55,9 @@ export const ProductGallery = ({ config }) => {
          },
       }
    )
+
    if (status == 'loading') return <Loader inline />
+   if (status == 'error') return <p>Something went wrong</p>
    return (
       <>
          <div className="hern-product_gallery-header">
@@ -100,62 +103,24 @@ const ProductGrid = ({ product, index }) => {
    const { locationId, storeStatus } = useConfig()
    const router = useRouter()
    const [productModifier, setProductModifier] = React.useState(null)
-   const CustomArea = props => {
-
-      const { data } = props
-      return (
-         <div className="hern-product_gallery-product-custom-area">
-            <Button
-               className="hern-custom-area-add-btn"
-               type="outline"
-               onClick={() => {
-                  if (data.productOptions.length > 0) {
-                     setProductModifier(data)
-                  } else {
-                     addToCart({ productId: data.id }, 1)
-                  }
-               }}
-            // disabled={
-            //    locationId ? (storeStatus.status ? false : true) : true
-            // }
-            >
-               {/* {locationId
-                  ? storeStatus.status
-                     ? 'ADD'
-                     : 'COMING SOON'
-                  : 'COMING SOON'} */}
-               ADD
-            </Button>
-            {data.productOptions.length > 0 && <span>Customizable</span>}
-         </div>
-      )
+   const CustomAreaWrapper = ({ data }) => {
+      return <CustomArea data={data} setProductModifier={setProductModifier} />
    }
+
    const closeModifier = () => {
       setProductModifier(null)
    }
    return (
       <ProductCard
          onProductNameClick={() =>
-            router.push(
-               getRoute(
-                  '/products/' +
-                  product.id
-               )
-            )
+            router.push(getRoute('/products/' + product.id))
          }
-         onImageClick={() =>
-            router.push(
-               getRoute(
-                  '/products/' +
-                  product.id
-               )
-            )
-         }
+         onImageClick={() => router.push(getRoute('/products/' + product.id))}
          key={index}
          data={product}
          showProductDescription={true}
          showImage={product.assets.images.length > 0 ? true : false}
-         customAreaComponent={CustomArea}
+         customAreaComponent={CustomAreaWrapper}
          showModifier={productModifier && productModifier.id === product.id}
          closeModifier={closeModifier}
          customAreaFlex={false}

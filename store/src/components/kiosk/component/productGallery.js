@@ -7,7 +7,7 @@ import isEmpty from 'lodash/isEmpty'
 import { formatCurrency } from '../../../utils'
 import { useCart, useTranslation } from '../../../context'
 import KioskButton from './button'
-import classNames from 'classNames'
+import classNames from 'classnames'
 import { Carousel } from 'antd'
 import { ArrowLeftIcon, ArrowRightIcon } from '../../../assets/icons'
 
@@ -80,7 +80,7 @@ export const ProductGalleryKiosk = ({ config }) => {
       }
    )
 
-   if (!config.productGallery.showGoToMenuCheckoutPopup.value) {
+   if (!config.productGallery.showProductGallery.value) {
       return null
    }
    if (status == 'loading') {
@@ -189,7 +189,7 @@ const ProductGalleryCard = ({ product }) => {
             >
                {product.name}
             </span>
-            <span class="hern-kiosk__product-gallery-product-price">
+            <span className="hern-kiosk__product-gallery-product-price">
                {getTotalPrice.totalDiscount > 0 && (
                   <span style={{ textDecoration: 'line-through' }}>
                      {' '}

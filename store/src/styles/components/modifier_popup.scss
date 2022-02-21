@@ -35,7 +35,8 @@
    }
 }
 .hern-product-modifier-pop-up-product-option-list {
-   padding: 0 1em;
+   padding: 0 14px;
+   width: 50%;
    > label {
       font-weight: 600;
       font-size: 14px;
@@ -59,7 +60,8 @@
    }
 }
 .hern-product-modifier-pop-up-modifier-list {
-   padding: 0 1em;
+   padding: 0 14px;
+   width: 50%;
    .hern-product-modifier-pop-up-add-on {
       font-weight: 600;
       font-size: 14px;
@@ -76,6 +78,7 @@
    font-weight: normal;
    font-size: 14px;
    line-height: 20px;
+   margin-bottom: 8px;
 }
 // .hern-product-modifier-pop-up-modifier-category__options {
 //    overflow-x: auto;
@@ -162,15 +165,17 @@
       // left: calc(50% - 14em);
    }
    .hern-product-modifier-pop-up-product {
-      height: fit-content;
+      // height: fit-content;
+      height: calc(100vh - 130px);
+      overflow: auto;
       background: #ffffff;
       border-radius: 16px;
       // overflow: auto;
       position: absolute;
-      width: 600px;
+      width: 60vw;
       left: 50%;
       transform: translateX(-50%);
-      bottom: 10%;
+      bottom: 5%;
       .hern-product-card__name {
          max-width: 15em;
          font-weight: 700;
@@ -200,4 +205,41 @@
 .hern-product-modifier-pop-up-product-option-and-modifier--without-popup {
    height: auto;
    max-height: 650px;
+}
+.hern-product-modifier-pop-up-content-container {
+   display: flex;
+   overflow: auto;
+   height: calc(81% - 70px);
+}
+.hern-product-modifier-option {
+   padding: 0;
+   box-shadow: unset;
+   margin: 0;
+   &:hover {
+      box-shadow: unset;
+   }
+
+   .hern-product-card-content {
+      margin: 0;
+      padding: 5px 8px;
+   }
+   .hern-product-card__name {
+      font-size: 14px;
+      line-height: 20px;
+      color: #404040;
+      font-style: normal;
+      font-weight: normal;
+   }
+}
+.hern-product-modifier-pop-up-modifier-category__name {
+   font-style: italic;
+   font-weight: normal;
+   font-size: 14px;
+   line-height: 16px;
+   color: #281813;
+}
+.hern-product-modifier-pop-up-add-on-list-wrapper {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
 }
