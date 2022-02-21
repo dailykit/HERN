@@ -64,7 +64,7 @@ export const UserProvider = ({ children }) => {
    const [isLoading, setIsLoading] = React.useState(true)
    const [keycloakId, setKeycloakId] = React.useState('')
    const [session, loadingSession] = useSession()
-   console.log('session from userprovider', session)
+   // console.log('session from userprovider', session)
 
    const [createCustomer] = useMutation(MUTATIONS.CUSTOMER.CREATE, {
       onError: error => console.log('createCustomer => error => ', error),

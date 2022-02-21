@@ -4,7 +4,6 @@ import { useConfig } from '../lib'
 
 export const GoogleSuggestionsList = ({ suggestions, onSuggestionClick }) => {
    const { configOf } = useConfig()
-   console.log('suggestions', suggestions)
 
    const theme = configOf('theme-color', 'Visual')?.themeColor
    const themeColor = theme?.accent?.value

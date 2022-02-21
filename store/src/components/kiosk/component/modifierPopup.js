@@ -625,7 +625,7 @@ export const KioskModifier = props => {
                      {productData.assets.images.map((eachImage, index) => (
                         <img
                            src={eachImage}
-                           key={index}
+                           key={productData.id}
                            style={{ height: '680px', width: '100%' }}
                            className="hern-kiosk__menu-product-modifier-header-image"
                         />
@@ -871,9 +871,8 @@ export const KioskModifier = props => {
                                     }
 
                                     return (
-                                       <>
+                                       <React.Fragment key={eachOption.id}>
                                           <div
-                                             key={eachOption.id}
                                              className="hern-kiosk__modifier-category-option"
                                              onClick={() => {
                                                 onCheckClick(
@@ -974,6 +973,7 @@ export const KioskModifier = props => {
                                              eachOption.additionalModifierTemplateId && (
                                                 <ModifierOptionsList
                                                    ref={nestedModifierRef}
+                                                   key={`${eachOption.additionalModifierTemplateId}-${eachOption.id}`}
                                                    nestedModifierTemplateId={
                                                       eachOption.additionalModifierTemplateId
                                                    }
@@ -1004,7 +1004,7 @@ export const KioskModifier = props => {
                                                    }
                                                 />
                                              )}
-                                       </>
+                                       </React.Fragment>
                                     )
                                  }
                               )}
@@ -1371,6 +1371,7 @@ const AdditionalModifiers = forwardRef(
                               style={{
                                  backgroundColor: `${config.kioskSettings.theme.primaryColorDark.value}`,
                               }}
+                              key={eachModifierCategory.id}
                            >
                               <label className="hern-kiosk__modifier-category-label">
                                  <Badge
@@ -1435,7 +1436,9 @@ const AdditionalModifiers = forwardRef(
                                           return Boolean(isOptionSelected)
                                        }
                                        return (
-                                          <>
+                                          <React.Fragment
+                                             key={`${eachModifierCategory.id}-${eachOption.id}`}
+                                          >
                                              <div
                                                 key={index}
                                                 className="hern-kiosk__modifier-category-option"
@@ -1548,6 +1551,7 @@ const AdditionalModifiers = forwardRef(
                                                       modifierOptionId={
                                                          eachOption.id
                                                       }
+                                                      key={`${eachOption.additionalModifierTemplateId}-${eachOption.id}`}
                                                       nestedModifierTemplateRequired={
                                                          eachOption.isAdditionalModifierRequired
                                                       }
@@ -1571,7 +1575,7 @@ const AdditionalModifiers = forwardRef(
                                                       }
                                                    />
                                                 )}
-                                          </>
+                                          </React.Fragment>
                                        )
                                     }
                                  )}
@@ -1885,6 +1889,7 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                   style={{
                      backgroundColor: `${config.kioskSettings.theme.primaryColorDark.value}`,
                   }}
+                  key={`${eachModifierCategory.id}`}
                >
                   <label className="hern-kiosk__modifier-category-label">
                      <Badge
