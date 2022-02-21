@@ -185,7 +185,6 @@ export const OnDemandOrder = ({ config }) => {
             )}
          >
             <div
-               id="hern-on-demand-order-container"
                className={classNames('hern-on-demand-page', {
                   'hern-on-demand-page-pop-up--active': productModifier,
                })}
@@ -235,7 +234,7 @@ export const OnDemandOrder = ({ config }) => {
                                                 router.push(
                                                    getRoute(
                                                       '/products/' +
-                                                      eachProduct.id
+                                                         eachProduct.id
                                                    )
                                                 )
                                              }
@@ -243,7 +242,7 @@ export const OnDemandOrder = ({ config }) => {
                                                 router.push(
                                                    getRoute(
                                                       '/products/' +
-                                                      eachProduct.id
+                                                         eachProduct.id
                                                    )
                                                 )
                                              }
@@ -260,7 +259,7 @@ export const OnDemandOrder = ({ config }) => {
                                              showModifier={
                                                 productModifier &&
                                                 productModifier.id ===
-                                                eachProduct.id
+                                                   eachProduct.id
                                              }
                                              closeModifier={closeModifier}
                                              customAreaFlex={false}
