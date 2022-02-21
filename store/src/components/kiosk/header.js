@@ -130,6 +130,8 @@ const LanguageSelector = props => {
             }}
             style={{
                margin: '0 20px',
+               color: '#fff',
+               fontSize: '16px',
             }}
          >
             {t('Reset')}
