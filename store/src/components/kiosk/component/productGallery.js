@@ -80,7 +80,7 @@ export const ProductGalleryKiosk = ({ config }) => {
       }
    )
 
-   if (!config.productGallery.showGoToMenuCheckoutPopup.value) {
+   if (!config.productGallery.showProductGallery.value) {
       return null
    }
    if (status == 'loading') {
