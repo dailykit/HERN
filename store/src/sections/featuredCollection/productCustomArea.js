@@ -291,15 +291,14 @@ export const CustomArea = props => {
          ) : (
             <CounterButton
                count={availableQuantityInCart}
-               incrementClick={() => {
-                  console.log('hello bro')
-                  setShowChooseIncreaseType(true)
+               incrementClick={async () => {
+                  if (data.productOptions.length > 0 && data.isPopupAllowed) {
+                     setShowChooseIncreaseType(true)
+                  } else {
+                     await addToCart(data.defaultCartItem, 1)
+                  }
                }}
                decrementClick={() => {
-                  console.log(
-                     'ids',
-                     productCartItemIds[availableQuantityInCart - 1]
-                  )
                   removeCartItems([
                      productCartItemIds[availableQuantityInCart - 1],
                   ])
