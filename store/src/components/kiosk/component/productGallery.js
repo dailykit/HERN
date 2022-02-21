@@ -7,7 +7,7 @@ import isEmpty from 'lodash/isEmpty'
 import { formatCurrency } from '../../../utils'
 import { useCart, useTranslation } from '../../../context'
 import KioskButton from './button'
-import classNames from 'classNames'
+import classNames from 'classnames'
 import { Carousel } from 'antd'
 import { ArrowLeftIcon, ArrowRightIcon } from '../../../assets/icons'
 
