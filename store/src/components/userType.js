@@ -9,11 +9,13 @@ export const UserType = () => {
    const { dispatch } = useUser()
    const { configOf } = useConfig()
    const theme = configOf('theme-color', 'Visual')?.themeColor
-   const themeColor = theme?.accent?.value ? theme?.accent?.value : 'rgba(5, 150, 105, 1)'
+   const themeColor = theme?.accent?.value
+      ? theme?.accent?.value
+      : 'rgba(5, 150, 105, 1)'
    const [showLoginPopup, setShowLoginPopup] = React.useState(false)
 
    return (
-      <div className="hern-user-type__footer">
+      <div className="hern-user-type__wrapper">
          <LoginWrapper
             closeLoginPopup={() => {
                setShowLoginPopup(false)

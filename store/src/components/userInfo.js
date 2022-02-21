@@ -1,19 +1,80 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
-import { detectCountry, get_env } from '../utils'
+import { get_env, isClient } from '../utils'
 import { UserIcon } from '../assets/icons'
+import { Button } from './button'
+import { Tunnel } from './Tunnel'
 import { useUser, CartContext } from '../context'
 import { useToasts } from 'react-toast-notifications'
 import { UPDATE_PLATFORM_CUSTOMER } from '../graphql'
 import { useMutation } from '@apollo/react-hooks'
+import classNames from 'classnames'
 
 export const UserInfo = props => {
-   const { cart, editable = true } = props
-   const { methods } = React.useContext(CartContext)
+   const [isTunnelOpen, setIsTunnelOpen] = useState(false)
+   const [isUserFormOpen, setIsUserFormOpen] = useState(false)
+
+   const isSmallerDevice = isClient && window.innerWidth < 768
+
+   const handleEdit = () => {
+      if (isSmallerDevice) {
+         setIsTunnelOpen(true)
+      } else {
+         setIsUserFormOpen(true)
+      }
+   }
+   const handleClose = () => {
+      if (isSmallerDevice) {
+         setIsTunnelOpen(false)
+      } else {
+         setIsUserFormOpen(false)
+      }
+   }
+   return (
+      <>
+         {!isSmallerDevice ? (
+            isUserFormOpen ? (
+               <UserInfoForm handleClose={handleClose} {...props} />
+            ) : (
+               <UserDetails
+                  handleOpen={() => setIsUserFormOpen(true)}
+                  handleEdit={handleEdit}
+               />
+            )
+         ) : (
+            <>
+               <UserDetails handleEdit={handleEdit} />
+               <Tunnel.Right
+                  title={
+                     <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <UserIcon size={16} />
+                        <h2 className="hern-user-info__heading">
+                           User Details
+                        </h2>
+                     </div>
+                  }
+                  visible={isTunnelOpen}
+                  onClose={() => setIsTunnelOpen(false)}
+               >
+                  <UserInfoForm
+                     tunnel={true}
+                     handleClose={handleClose}
+                     {...props}
+                  />
+               </Tunnel.Right>
+            </>
+         )}
+      </>
+   )
+}
+const UserInfoForm = props => {
+   const { editable = true, tunnel = false, handleClose } = props
+   const { cartState, methods } = React.useContext(CartContext)
    const { user } = useUser()
    const { addToast } = useToasts()
-
+   const { cart } = cartState
+   const [savingUserInfo, setSavingUserInfo] = React.useState(false)
    const [firstName, setFirstName] = useState(
       cart?.customerInfo?.customerFirstName ||
          user.platform_customer?.firstName ||
@@ -34,90 +95,63 @@ export const UserInfo = props => {
          console.log('updated')
       },
       onError: error => {
+         console.error(error)
          addToast('Failed to save!', {
             appearance: 'error',
          })
       },
    })
 
-   const onBlurData = type => {
-      let infoToBeSend
-      switch (type) {
-         case 'firstName':
-            infoToBeSend = {
-               customerFirstName: firstName,
-            }
-            break
-         case 'lastName':
-            infoToBeSend = {
-               customerLastName: lastName,
-            }
-            break
-         case 'phoneNumber':
-            infoToBeSend = {
-               customerPhone: mobileNumber,
-            }
-            break
-      }
-      methods.cart.update({
+   const handleSave = async () => {
+      setSavingUserInfo(true)
+      await methods.cart.update({
          variables: {
             id: cart.id,
             _set: {
                customerInfo: {
-                  ...cart?.customerInfo,
-                  ...infoToBeSend,
+                  customerFirstName: firstName,
+                  customerLastName: lastName,
+                  customerPhone: mobileNumber,
                },
             },
          },
       })
-      if (user?.keycloakId && type !== 'phoneNumber') {
-         const nameData = type === 'firstName' ? { firstName } : { lastName }
-         updateCustomer({
+      if (user?.keycloakId) {
+         await updateCustomer({
             variables: {
                keycloakId: user.keycloakId,
-               _set: { ...nameData },
+               _set: { firstName: firstName, lastName: lastName },
             },
          })
       }
+      setSavingUserInfo(false)
+      handleClose()
    }
-   const UserInfoHeader = () => {
-      return (
-         <div
-            style={{
-               display: 'flex',
-               alignItems: 'center',
-               marginBottom: '10px',
-               justifyContent: 'space-between',
-            }}
-         >
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-               <UserIcon />
-               <span className="hern-user-info__heading">User Details</span>
-            </div>
-         </div>
-      )
-   }
-   // if (!isEdit) {
-   //    return (
-   //       <div className="hern-user-info">
-   //          <UserInfoHeader />
-   //          <div>
-   //             <span className="hern-user-info_name">{firstName} </span>{' '}
-   //             <span className="hern-user-info_name">{lastName}</span>
-   //          </div>
-   //          <div
-   //             style={{ display: 'flex', alignItems: 'center' }}
-   //             className="hern-user-info__phoneNumber"
-   //          >
-   //             <PhoneIcon stroke="currentColor" size={14} />
-   //             {mobileNumber}
-   //          </div>
-   //       </div>
-   //    )
-   // }
+
    return (
-      <div className="hern-user-info">
-         <UserInfoHeader />
+      <div
+         className={classNames('hern-user-info', {
+            'hern-user-info__tunnel': tunnel,
+         })}
+      >
+         <div className="hern-user-info__header">
+            <div>
+               <UserIcon size={16} />
+               <h2 className="hern-user-info__heading">User Details</h2>
+            </div>
+            <Button
+               disabled={
+                  !firstName?.length ||
+                  !lastName?.length ||
+                  !mobileNumber?.length ||
+                  !isValidPhoneNumber(mobileNumber)
+               }
+               onClick={handleSave}
+               loading={savingUserInfo}
+            >
+               save
+            </Button>
+         </div>
          <div className="hern-user-info__name-field">
             <fieldset className="hern-user-info__fieldset hern-user-info__fieldset-first-name">
                <label className="hern-user-info__label">First Name</label>
@@ -130,13 +164,6 @@ export const UserInfo = props => {
                   }}
                   value={firstName}
                   placeholder="Enter your first name"
-                  onBlur={() => {
-                     if (
-                        !(cart?.customerInfo?.customerFirstName == firstName)
-                     ) {
-                        onBlurData('firstName')
-                     }
-                  }}
                   disabled={!editable}
                />
             </fieldset>
@@ -151,11 +178,6 @@ export const UserInfo = props => {
                   }}
                   value={lastName}
                   placeholder="Enter your last name"
-                  onBlur={() => {
-                     if (!(cart?.customerInfo?.customerLastName == lastName)) {
-                        onBlurData('lastName')
-                     }
-                  }}
                   disabled={!editable}
                />
             </fieldset>
@@ -173,15 +195,6 @@ export const UserInfo = props => {
                onChange={e => {
                   setMobileNumber(e)
                }}
-               onBlur={() => {
-                  if (
-                     mobileNumber &&
-                     isValidPhoneNumber(mobileNumber) &&
-                     !(cart?.customerInfo?.customerPhone == mobileNumber)
-                  ) {
-                     onBlurData('phoneNumber')
-                  }
-               }}
                defaultCountry={get_env('COUNTRY_CODE')}
                placeholder="Enter your phone number"
                disabled={!editable}
@@ -193,5 +206,51 @@ export const UserInfo = props => {
             </span>
          </fieldset>
       </div>
+   )
+}
+const UserDetails = ({ handleEdit, handleOpen }) => {
+   const { cartState } = React.useContext(CartContext)
+   const isSmallerDevice = isClient && window.innerWidth < 768
+
+   const hasUserInfo =
+      cartState?.cart?.customerInfo?.customerFirstName?.length ||
+      cartState?.cart?.customerInfo?.customerLastName?.length ||
+      cartState?.cart?.customerInfo?.customerPhone?.length
+
+   React.useEffect(() => {
+      if (!isSmallerDevice && !hasUserInfo) {
+         handleOpen()
+      }
+   }, [])
+   return (
+      <>
+         {isSmallerDevice && !hasUserInfo ? (
+            <button
+               onClick={handleEdit}
+               className="hern-user-info-tunnel__open-btn"
+            >
+               Add user info
+            </button>
+         ) : (
+            <div className="hern-user-info--closed">
+               <div>
+                  <span>
+                     <UserIcon size={16} />
+                  </span>
+                  <div>
+                     <span>
+                        {cartState?.cart?.customerInfo?.customerFirstName +
+                           ' ' +
+                           cartState?.cart?.customerInfo?.customerLastName}
+                     </span>
+                     <span className="hern-user-info--closed__phone-no">
+                        {cartState?.cart?.customerInfo?.customerPhone}
+                     </span>
+                  </div>
+               </div>
+               <button onClick={handleEdit}>Edit</button>
+            </div>
+         )}
+      </>
    )
 }

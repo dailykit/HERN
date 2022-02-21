@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from 'react'
-import { Col, Radio, Row, Space, Carousel, Modal } from 'antd'
+import React, { useState } from 'react'
 import { useConfig } from '../lib'
 import { isEmpty } from 'lodash'
-import { DineinTable, EditIcon, CloseIcon } from '../assets/icons'
+import { DineinTable, LocationIcon, ChevronIcon } from '../assets/icons'
 import { BRAND_LOCATIONS } from '../graphql'
 import { getDistance, convertDistance } from 'geolib'
 import moment from 'moment'
-import { CartContext, useUser } from '../context'
+import { CartContext } from '../context'
 import { useQuery } from '@apollo/react-hooks'
-import { Loader, Button } from '.'
+import { Loader } from '.'
 import { Delivery, Pickup } from './fulfillmentSection'
 import { RefineLocationPopup } from './refineLocation'
 import { LocationSelectorWrapper } from '../utils'
+import classNames from 'classnames'
+import TimeIcon from '../assets/icons/Time'
 
-export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
-   const { orderTabs, selectedOrderTab, configOf } = useConfig()
-   const theme = configOf('theme-color', 'Visual')
+export const FulfillmentForm = () => {
+   const { orderTabs, selectedOrderTab } = useConfig()
    const { cartState } = React.useContext(CartContext)
 
    // check whether user select fulfillment type or not
@@ -36,146 +36,120 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
    const [showLocationSelectorPopup, setShowLocationSelectionPopup] =
       React.useState(false)
 
-   // useEffect(() => {
-   //    const localUserLocation = JSON.parse(localStorage.getItem('userLocation'))
-   //    console.log(localUserLocation, "localUserLocation")
-   //    if (localUserLocation) {
-   //       setAddress(localUserLocation)
-   //    }
-   // }, [])
-
-   // map orderTabs to get order fulfillment type label
-   const orderTabFulfillmentType = React.useMemo(
-      () =>
-         orderTabs
-            ? orderTabs.map(eachTab => eachTab.orderFulfillmentTypeLabel)
-            : null,
-      [orderTabs]
-   )
-
-   // show
-   const fulfillmentRadioOptions = React.useMemo(() => {
-      let options = []
-      if (
-         orderTabFulfillmentType &&
-         (orderTabFulfillmentType.includes('ONDEMAND_DELIVERY') ||
-            orderTabFulfillmentType.includes('PREORDER_DELIVERY'))
-      ) {
-         options.push({ label: 'Delivery', value: 'DELIVERY' })
-      }
-      if (
-         orderTabFulfillmentType &&
-         (orderTabFulfillmentType.includes('ONDEMAND_PICKUP') ||
-            orderTabFulfillmentType.includes('PREORDER_PICKUP'))
-      ) {
-         options.push({ label: 'Pickup', value: 'PICKUP' })
-      }
-      if (
-         orderTabFulfillmentType &&
-         (orderTabFulfillmentType.includes('ONDEMAND_DINEIN') ||
-            orderTabFulfillmentType.includes('PREORDER_DINEIN'))
-      ) {
-         options.push({ label: 'Dinein', value: 'DINEIN' })
-      }
-
-      return options
-   }, [orderTabFulfillmentType])
-
    const fulfillmentLabel = React.useMemo(() => {
       switch (selectedFulfillment) {
          case 'DELIVERY':
-            return 'Delivery At'
+            return 'Delivery at'
          case 'PICKUP':
-            return 'Pickup From'
+            return 'Pickup from'
          case 'DINEIN':
             return 'DineIn At'
       }
    }, [selectedFulfillment])
+   const [fulfillementAddressOpen, setFulfillementAddressOpen] =
+      React.useState(true)
+   const [fulfillementTimeOpen, setFulfillementTimeOpen] = React.useState(true)
+
+   const isDisabled =
+      !cartState?.cart?.customerInfo?.customerFirstName ||
+      !cartState?.cart?.customerInfo?.customerLastName ||
+      !cartState?.cart?.customerInfo?.customerPhone
 
    return (
-      <div className="hern-cart__fulfillment-card">
+      <div>
          <LocationSelectorWrapper
             showLocationSelectorPopup={showLocationSelectorPopup}
             setShowLocationSelectionPopup={setShowLocationSelectionPopup}
          />
-         <div style={{ position: 'relative' }}>
-            <div className="hern-cart__fulfillment-heading">
-               <DineinTable style={{}} />
-               <span className="hern-cart__fulfillment-heading-text">
-                  How would you like to your order?
+         <div
+            style={{ opacity: isDisabled ? 0.7 : 1 }}
+            className="hern-fulfillment__address"
+         >
+            <div
+               className={classNames('hern-fulfillment__address__header', {
+                  'hern-fulfillment__address__header--open':
+                     fulfillementAddressOpen,
+               })}
+            >
+               <div>
+                  <span className="hern-location-icon-shawdow">
+                     <LocationIcon size={18} />
+                  </span>
+                  &nbsp; &nbsp;
+                  <h3>Address</h3>
+               </div>
+               <span
+                  onClick={() =>
+                     setFulfillementAddressOpen(!fulfillementAddressOpen)
+                  }
+                  role="button"
+               >
+                  <ChevronIcon
+                     direction={fulfillementAddressOpen ? 'down' : 'right'}
+                     color="rgba(64, 64, 64, 0.6)"
+                     width={16}
+                     height={16}
+                  />
                </span>
             </div>
-            {false && (
+            {fulfillementAddressOpen && (
                <>
-                  <Button
-                     onClick={() => {
-                        setIsEdit(false)
-                     }}
-                     className="hern-cart__fulfillment-change-btn"
-                     style={{
-                        color: theme?.accent || 'rgba(5, 150, 105, 1)',
-                        border: `1px solid ${
-                           theme?.accent || 'rgba(5, 150, 105, 1)'
-                        }`,
-                        bottom: '8px',
-                        top: '0',
-                     }}
-                  >
-                     Close
-                  </Button>
-                  <CloseIcon
-                     style={{
-                        position: 'absolute',
-                        right: '8px',
-                        top: '30px',
-                        cursor: 'pointer',
-                        stroke: 'currentColor',
-                        zIndex: '100000',
-                     }}
-                     onClick={() => {
-                        setIsEdit(false)
-                     }}
-                     fill={theme?.accent || 'rgba(5, 150, 105, 1)'}
-                     className="hern-cart__fulfillment-close-icon"
-                  />
+                  <div className="hern-fulfillment__address__content">
+                     <span>{fulfillmentLabel}</span>
+                     <button
+                        onClick={() => setShowLocationSelectionPopup(true)}
+                     >
+                        <ChevronIcon direction="down" />
+                     </button>
+                     {(selectedFulfillment === 'DELIVERY' ||
+                        selectedFulfillment === 'PICKUP') && (
+                        <ConsumerAddress
+                           setShowRefineLocation={setShowRefineLocation}
+                           showEditIcon={selectedFulfillment === 'DELIVERY'}
+                        />
+                     )}
+                  </div>
                </>
             )}
-            {/* {fulfillmentRadioOptions.length > 1 && (
-               <Space size={'large'} style={{ margin: '10px 0' }}>
-                  <Radio.Group
-                     options={fulfillmentRadioOptions}
-                     onChange={e => {
-                        setFulfillment(e.target.value)
-                     }}
-                     value={fulfillment}
-                  />
-               </Space>
-            )} */}
-            <div className="hern-fulfillment-section__fulfillment-label-section">
-               <span className="hern-fulfillment-section__fulfillment-label">
-                  {fulfillmentLabel}
-               </span>
-               <Button
-                  variant={'outline'}
-                  onClick={() => {
-                     setShowLocationSelectionPopup(true)
-                  }}
+         </div>
+         <div
+            style={{ opacity: isDisabled ? 0.7 : 1 }}
+            className="hern-fulfillment__time"
+         >
+            <div
+               className={classNames('hern-fulfillment__time__header', {
+                  'hern-fulfillment__time__header--open': fulfillementTimeOpen,
+               })}
+            >
+               <div>
+                  <span className="hern-time-icon-shawdow">
+                     <TimeIcon color="rgba(64, 64, 64, 0.6)" size={18} />
+                  </span>
+                  &nbsp; &nbsp;
+                  <h3>
+                     {selectedFulfillment === 'PICKUP' && 'Pick up time'}
+                     {selectedFulfillment === 'DELIVERY' && 'Delivery time'}
+                  </h3>
+               </div>
+               <span
+                  onClick={() => setFulfillementTimeOpen(!fulfillementTimeOpen)}
+                  role="button"
                >
-                  Change
-               </Button>
-            </div>
-            {(selectedFulfillment === 'DELIVERY' ||
-               selectedFulfillment === 'PICKUP') && (
-               <Row className="hern-address__location-input-field">
-                  <ConsumerAddress
-                     setShowRefineLocation={setShowRefineLocation}
-                     showEditIcon={selectedFulfillment === 'DELIVERY'}
+                  <ChevronIcon
+                     direction={fulfillementTimeOpen ? 'down' : 'right'}
+                     color="rgba(64, 64, 64, 0.6)"
+                     width={16}
+                     height={16}
                   />
-               </Row>
+               </span>
+            </div>
+            {fulfillementTimeOpen && (
+               <div>
+                  {selectedFulfillment === 'DELIVERY' && <Delivery />}
+                  {selectedFulfillment === 'PICKUP' && <Pickup />}
+               </div>
             )}
          </div>
-         {selectedFulfillment === 'DELIVERY' && <Delivery />}
-         {selectedFulfillment === 'PICKUP' && <Pickup />}
          <RefineLocationPopup
             showRefineLocation={showRefineLocation}
             setShowRefineLocation={setShowRefineLocation}
@@ -197,11 +171,7 @@ export const FulfillmentForm = ({ isEdit, setIsEdit }) => {
 }
 
 export const Fulfillment = ({ cart, editable = true }) => {
-   // const { cartState } = React.useContext(CartContext)
-   const { brand, configOf } = useConfig()
-   const theme = configOf('theme-color', 'Visual')
-
-   const [isEdit, setIsEdit] = useState(false)
+   const { brand } = useConfig()
    const title = React.useMemo(() => {
       switch (cart?.fulfillmentInfo?.type) {
          case 'ONDEMAND_DELIVERY':
@@ -310,8 +280,8 @@ export const Fulfillment = ({ cart, editable = true }) => {
    }
    return (
       <>
-         {editable && (cart?.fulfillmentInfo === null || isEdit) ? (
-            <FulfillmentForm isEdit={isEdit} setIsEdit={setIsEdit} />
+         {editable ? (
+            <FulfillmentForm />
          ) : (
             <div className="hern-cart__fulfillment-card">
                <div className="hern-cart__fulfillment-heading">
@@ -346,37 +316,6 @@ export const Fulfillment = ({ cart, editable = true }) => {
                         </span>
                      )}
                   </label>
-                  {editable && (
-                     <>
-                        <Button
-                           onClick={() => {
-                              setIsEdit(true)
-                           }}
-                           className="hern-cart__fulfillment-change-btn"
-                           style={{
-                              color: theme?.accent || 'rgba(5, 150, 105, 1)',
-                              border: `1px solid ${
-                                 theme?.accent || 'rgba(5, 150, 105, 1)'
-                              }`,
-                           }}
-                        >
-                           Change
-                        </Button>
-                        <EditIcon
-                           style={{
-                              position: 'absolute',
-                              right: '8px',
-                              top: '8px',
-                              cursor: 'pointer',
-                           }}
-                           onClick={() => {
-                              setIsEdit(true)
-                           }}
-                           fill={theme?.accent || 'rgba(5, 150, 105, 1)'}
-                           className="hern-cart__fulfillment-change-edit-icon"
-                        />
-                     </>
-                  )}
 
                   {!isEmpty(addressInfo) ? (
                      <div className="hern-store-location-selector__each-store">
@@ -422,47 +361,35 @@ export const Fulfillment = ({ cart, editable = true }) => {
 }
 
 const ConsumerAddress = ({ setShowRefineLocation, showEditIcon }) => {
-   const { configOf } = useConfig()
-   const { cartState } = React.useContext(CartContext)
-   const theme = configOf('theme-color', 'Visual')
+   const { cartState: { cart } = {} } = React.useContext(CartContext)
 
    const address = React.useMemo(() => {
-      if (cartState.cart?.address) {
-         return cartState.cart?.address
+      if (cart?.address) {
+         return cart?.address
       } else {
          return JSON.parse(localStorage.getItem('userLocation'))
       }
-   }, [cartState.cart])
+   }, [cart])
    if (!address) {
       return null
    }
+   const fullAddress = `${address?.line1} ${address?.line2} ${address?.city} ${address?.state} ${address?.country},${address?.zipcode}`
+   const isChangeButtonDisabled =
+      !cart?.customerInfo?.customerFirstName ||
+      !cart?.customerInfo?.customerLastName ||
+      !cart?.customerInfo?.customerPhone
    return (
-      <div className="hern-fulfillment-consumer-address">
-         <label>Address</label>
-         <p>{address.label}</p>
-         <p>{address?.line1}</p>
-         <p>{address?.line2}</p>
-         <span>{address?.city} </span>
-         <span>{address?.state} </span>
-         <span>
-            {address?.country}
-            {', '}
-         </span>
-         <span>{address?.zipcode}</span>
+      <>
+         <address title={fullAddress}>{fullAddress}</address>
          {showEditIcon && (
-            <EditIcon
-               style={{
-                  position: 'absolute',
-                  right: '8px',
-                  top: '8px',
-                  cursor: 'pointer',
-               }}
-               onClick={() => {
-                  setShowRefineLocation(true)
-               }}
-               fill={theme?.accent || 'rgba(5, 150, 105, 1)'}
-            />
+            <button
+               onClick={() => setShowRefineLocation(true)}
+               className="hern-fulfillment__address__content__change-btn"
+               disabled={isChangeButtonDisabled}
+            >
+               Change
+            </button>
          )}
-      </div>
+      </>
    )
 }

@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { Modal, Radio, Space } from 'antd'
 import { useConfig } from '../../lib'
-import { EditIcon, OrderTime } from '../../assets/icons'
+import {
+   DeliveryNowIcon,
+   DeliveryLaterIcon,
+   OrderTime,
+} from '../../assets/icons'
 import moment from 'moment'
 import {
    generateTimeStamp,
@@ -10,11 +14,14 @@ import {
    generateMiniSlots,
    getTimeSlotsValidation,
    getOnDemandValidation,
+   setThemeVariable,
+   isClient,
 } from '../../utils'
 import { CartContext } from '../../context'
 import { Loader } from '../'
 import { TimeSlots } from './components/timeSlots'
 import { Button } from '../button'
+import classNames from 'classnames'
 
 export const Delivery = props => {
    const { setIsEdit } = props
@@ -27,7 +34,6 @@ export const Delivery = props => {
       configOf,
    } = useConfig()
    const theme = configOf('theme-color', 'Visual')
-
    const { methods, cartState } = React.useContext(CartContext)
    // map orderTabs to get order fulfillment type label
    const orderTabFulfillmentType = React.useMemo(
@@ -53,7 +59,7 @@ export const Delivery = props => {
          return JSON.parse(localStorage.getItem('userLocation'))
       }
    }, [cartState.cart])
-
+   console.log('cart', cartState)
    const [deliverySlots, setDeliverySlots] = useState(null)
    const [selectedSlot, setSelectedSlot] = useState(null)
    const [fulfillmentTabInfo, setFulfillmentTabInfo] = useState({
@@ -86,13 +92,29 @@ export const Delivery = props => {
          orderTabFulfillmentType &&
          orderTabFulfillmentType.includes('ONDEMAND_DELIVERY')
       ) {
-         options.push({ label: 'Now', value: 'ONDEMAND_DELIVERY' })
+         options.push({
+            label: (
+               <span>
+                  <DeliveryNowIcon />
+                  &nbsp;Delivery Now
+               </span>
+            ),
+            value: 'ONDEMAND_DELIVERY',
+         })
       }
       if (
          orderTabFulfillmentType &&
          orderTabFulfillmentType.includes('PREORDER_DELIVERY')
       ) {
-         options.push({ label: 'Later', value: 'PREORDER_DELIVERY' })
+         options.push({
+            label: (
+               <span>
+                  <DeliveryLaterIcon />
+                  &nbsp; Schedule Later
+               </span>
+            ),
+            value: 'PREORDER_DELIVERY',
+         })
       }
 
       return options
@@ -459,11 +481,9 @@ export const Delivery = props => {
    const title = React.useMemo(() => {
       switch (cartState.cart?.fulfillmentInfo?.type) {
          case 'ONDEMAND_DELIVERY':
-            return `You order will be delivered within ${
-               validMileRangeInfo?.prepTime || '...'
-            } minutes.`
-         case 'PREORDER_DELIVERY':
-            return 'Schedule Delivery'
+            return `Delivering in ${validMileRangeInfo?.prepTime || '...'} min.`
+         default:
+            return ''
       }
    }, [cartState.cart, validMileRangeInfo])
 
@@ -489,32 +509,80 @@ export const Delivery = props => {
          }
       }
    }, [cartState.cart])
+   const [isMobileViewOpen, setIsMobileViewOpen] = React.useState(true)
+   const isSmallerDevice = isClient && window.innerWidth < 768
+
+   React.useEffect(() => {
+      if (cartState.cart?.fulfillmentInfo !== null) {
+         setIsMobileViewOpen(false)
+      }
+      if (!isMobileViewOpen) {
+         setThemeVariable(
+            '--fufillment-time-section-top',
+            showSlots ? '64px' : 'auto'
+         )
+         setThemeVariable(
+            '--fufillment-time-section-bottom',
+            showSlots ? '0px' : '56px'
+         )
+      }
+   }, [isMobileViewOpen, showSlots])
+
+   setThemeVariable(
+      '--user-info-section-bottom',
+      isSmallerDevice &&
+         cartState.cart?.fulfillmentInfo === null &&
+         showSlots &&
+         isMobileViewOpen
+         ? '100px'
+         : '132px'
+   )
+   setThemeVariable(
+      '--fufillment-address-section-bottom',
+      isSmallerDevice &&
+         cartState.cart?.fulfillmentInfo === null &&
+         showSlots &&
+         isMobileViewOpen
+         ? '56px'
+         : '92px'
+   )
 
    if (isLoading) {
       return <p>Loading</p>
    }
+   if (
+      isSmallerDevice &&
+      cartState.cart?.fulfillmentInfo === null &&
+      showSlots &&
+      isMobileViewOpen
+   ) {
+      return (
+         <button
+            className="hern-user-info-tunnel__open-btn"
+            onClick={() => {
+               setShowSlots(true)
+               setIsMobileViewOpen(false)
+            }}
+         >
+            Add delivery time{' '}
+         </button>
+      )
+   }
+
    if (!showSlots) {
       return (
          <div className="hern-cart__fulfillment-time-section">
-            <div className="hern-cart__fulfillment-time-section-heading">
-               <OrderTime />
-               <span>When would you like to order?</span>
-            </div>
-            <div
-               style={{
-                  display: 'flex',
-                  alignItems: 'center',
-               }}
-            >
-               <label style={{ marginTop: '5px' }}>
-                  {title}{' '}
+            <div style={{ display: 'flex' }}>
+               <OrderTime width={20} height={20} />
+               &nbsp;&nbsp;
+               <label>
+                  {title}
                   {(cartState.cart?.fulfillmentInfo?.type ===
                      'PREORDER_PICKUP' ||
                      cartState.cart?.fulfillmentInfo?.type ===
                         'PREORDER_DELIVERY') && (
                      <span>
                         {' '}
-                        on{' '}
                         {moment(
                            cartState.cart?.fulfillmentInfo?.slot?.from
                         ).format('DD MMM YYYY')}
@@ -532,8 +600,9 @@ export const Delivery = props => {
                </label>
                {(deliveryRadioOptions.length > 0 ||
                   fulfillmentType === 'PREORDER_DELIVERY') && (
-                  <EditIcon
-                     fill={theme?.accent || 'rgba(5, 150, 105, 1)'}
+                  <Button
+                     variant="ghost"
+                     style={{ marginLeft: 'auto' }}
                      onClick={() => {
                         if (deliveryRadioOptions.length > 1) {
                            setFulfillmentType(null)
@@ -544,8 +613,9 @@ export const Delivery = props => {
                         }
                         setShowSlots(true)
                      }}
-                     style={{ cursor: 'pointer', margin: '0 6px' }}
-                  />
+                  >
+                     Change
+                  </Button>
                )}
             </div>
          </div>
@@ -555,34 +625,39 @@ export const Delivery = props => {
    return (
       <div className="hern-cart__fulfillment-time-section">
          <div className="hern-cart__fulfillment-time-section-heading">
-            <OrderTime />
             <span>When would you like to order?</span>
          </div>
 
          {deliveryRadioOptions.length > 1 && (
-            <Radio.Group
-               options={deliveryRadioOptions}
-               onChange={e => {
-                  setFulfillmentType(e.target.value)
-                  const orderTabId = orderTabs.find(
-                     t => t.orderFulfillmentTypeLabel === `${e.target.value}`
-                  )?.id
-                  setFulfillmentTabInfo(prev => {
-                     return { ...prev, orderTabId }
-                  })
-                  setIsGetStoresLoading(true)
-                  if (e.target.value === 'ONDEMAND_DELIVERY') {
-                     setUpdateFulfillmentInfoForNow(prev => !prev)
-                  }
-               }}
-               value={fulfillmentType}
-               className="hern-cart__fulfillment-date-slot"
-            />
+            <div className="hern-fulfillment__options__type-btn">
+               {deliveryRadioOptions.map(({ label, value }) => (
+                  <button
+                     key={label}
+                     className={classNames({
+                        'hern-fulfillment__options__type-btn--active':
+                           fulfillmentType === value,
+                     })}
+                     onClick={() => {
+                        setFulfillmentType(value)
+                        const orderTabId = orderTabs.find(
+                           t => t.orderFulfillmentTypeLabel === `${value}`
+                        )?.id
+                        setFulfillmentTabInfo(prev => {
+                           return { ...prev, orderTabId }
+                        })
+                        setIsGetStoresLoading(true)
+                        if (value === 'ONDEMAND_DELIVERY') {
+                           setUpdateFulfillmentInfoForNow(prev => !prev)
+                        }
+                     }}
+                  >
+                     {label}
+                  </button>
+               ))}
+            </div>
          )}
 
-         {!fulfillmentType ? (
-            <p>Please select a delivery type.</p>
-         ) : isGetStoresLoading ? (
+         {!fulfillmentType ? null : isGetStoresLoading ? (
             <Loader inline />
          ) : stores.length === 0 ? (
             <p>No store available</p>
