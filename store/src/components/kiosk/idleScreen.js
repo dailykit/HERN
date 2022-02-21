@@ -78,26 +78,28 @@ export const IdleScreen = props => {
                )}
             </Slide>
          )}
-         <footer
-            style={{
-               backgroundColor: `${config.kioskSettings.theme.primaryColor.value}`,
-            }}
-         >
-            <img
-               src={config.kioskSettings.logo.value}
-               alt="logo"
-               className="hern-kiosk__idle-screen-footer-logo"
-            />
-            <span
-               className="hern-kiosk__idle-screen-page-text"
+         {config.idlePageSettings.showTouchToContinueFooter.value && (
+            <footer
                style={{
-                  color: `${config.idlePageSettings.idlePageTextColor.value}`,
+                  backgroundColor: `${config.kioskSettings.theme.primaryColor.value}`,
                }}
             >
-               {config.idlePageSettings.idlePageText.value ||
-                  config.idlePageText.value}
-            </span>
-         </footer>
+               <img
+                  src={config.kioskSettings.logo.value}
+                  alt="logo"
+                  className="hern-kiosk__idle-screen-footer-logo"
+               />
+               <span
+                  className="hern-kiosk__idle-screen-page-text"
+                  style={{
+                     color: `${config.idlePageSettings.idlePageTextColor.value}`,
+                  }}
+               >
+                  {config.idlePageSettings.idlePageText.value ||
+                     config.idlePageText.value}
+               </span>
+            </footer>
+         )}
       </div>
    )
 }
