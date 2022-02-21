@@ -189,7 +189,7 @@ const ProductGalleryCard = ({ product }) => {
             >
                {product.name}
             </span>
-            <span class="hern-kiosk__product-gallery-product-price">
+            <span className="hern-kiosk__product-gallery-product-price">
                {getTotalPrice.totalDiscount > 0 && (
                   <span style={{ textDecoration: 'line-through' }}>
                      {' '}

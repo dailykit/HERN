@@ -403,6 +403,7 @@ export const KioskProduct = props => {
                }}
                productData={productData}
                setCurrentPage={setCurrentPage}
+               key={productData.id}
             />
          )}
       </>
