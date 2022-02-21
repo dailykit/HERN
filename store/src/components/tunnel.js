@@ -83,7 +83,7 @@ const Body = ({ children }) => {
    return <main className="hern-tunnel__body">{children}</main>
 }
 
-const Right = ({ title, children, visible, onClose }) => {
+const Right = ({ title, children, visible, onClose, ...props }) => {
    return (
       <Drawer
          title={title}
@@ -92,12 +92,13 @@ const Right = ({ title, children, visible, onClose }) => {
          onClose={onClose}
          visible={visible}
          className="hern-tunnel__ant"
+         {...props}
       >
          {children}
       </Drawer>
    )
 }
-const Left = ({ title, children, visible, onClose }) => {
+const Left = ({ title, children, visible, onClose, ...props }) => {
    return (
       <Drawer
          title={title}
@@ -106,6 +107,7 @@ const Left = ({ title, children, visible, onClose }) => {
          onClose={onClose}
          visible={visible}
          className="hern-tunnel__ant"
+         {...props}
       >
          {children}
       </Drawer>

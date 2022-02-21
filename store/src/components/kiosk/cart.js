@@ -23,7 +23,7 @@ import {
    UpVector,
 } from '../../assets/icons'
 import { useTranslation, CartContext } from '../../context'
-import { KioskCounterButton } from './component'
+import { KioskCounterButton, ProductGalleryKiosk } from './component'
 import {
    formatCurrency,
    getCartItemWithModifiers,
@@ -93,7 +93,9 @@ export const KioskCart = props => {
    }
 
    return (
-      <Layout style={{ height: '100%', overflowY: 'hidden' }}>
+      <Layout
+         style={{ height: '100%', overflowY: 'hidden', background: '#fff' }}
+      >
          <div
             style={{
                background: `${config.kioskSettings.theme.primaryColorLight.value}`,
@@ -189,6 +191,7 @@ export const KioskCart = props => {
                      </div>
                   </div>
                </Content>
+               <ProductGalleryKiosk config={config} />
                <Footer className="hern-kiosk__cart-page-footer">
                   <Layout>
                      <Header className="hern-kiosk__cart-page-offer">

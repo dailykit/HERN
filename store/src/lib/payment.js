@@ -584,6 +584,8 @@ export const PaymentProvider = ({ children }) => {
                PaymentOptions={cartState.kioskPaymentOptions}
                initializePrinting={initializePrinting}
                resetPaymentProviderStates={resetPaymentProviderStates}
+               setIsProcessingPayment={setIsProcessingPayment}
+               setIsPaymentInitiated={setIsPaymentInitiated}
             />
          )}
          {state.printDetails.isPrintInitiated && (
