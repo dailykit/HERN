@@ -20,7 +20,7 @@ import {
 import { UserInfo, UserType, Tunnel } from '../../components'
 import { useConfig } from '../../lib'
 import classNames from 'classnames'
-import { formatCurrency, isClient } from '../../utils'
+import { formatCurrency, isClient, setThemeVariable } from '../../utils'
 import { useRouter } from 'next/router'
 
 export const OnDemandCart = () => {
@@ -77,7 +77,12 @@ export const OnDemandCart = () => {
       !cartState.cart?.customerInfo?.customerLastName ||
       !cartState.cart?.customerInfo?.customerPhone
    const isSmallerDevice = isClient && window.innerWidth < 768
-   console.log('isDisabled : ', isDisabled, isSmallerDevice)
+   setThemeVariable(
+      '--cart-section-height-sm',
+      isSmallerDevice && isDisabled
+         ? 'calc(100vh - 56px)'
+         : 'calc(100vh - 190px)'
+   )
    return (
       <>
          <CartPageHeader />

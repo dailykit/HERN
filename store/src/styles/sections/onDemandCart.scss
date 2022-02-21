@@ -407,7 +407,7 @@
       }
    }
    @media only screen and (max-width: 767px) {
-      height: calc(100vh - 190px);
+      height: var(--cart-section-height-sm);
    }
    @media only screen and (min-width: 769px) {
       max-height: initial;
