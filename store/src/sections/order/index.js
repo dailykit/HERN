@@ -257,10 +257,7 @@ export const OnDemandOrder = ({ config }) => {
             {menuType !== 'fixed-top-nav' && (
                <OnDemandMenu categories={categories} />
             )}
-            {cartState.cart &&
-               cartState.cart?.products?.aggregate?.count !== 0 && (
-                  <BottomCartBar />
-               )}
+            {cartState.cart && <BottomCartBar />}
             {showCartOnRight && <CartBar />}
          </div>
       </>

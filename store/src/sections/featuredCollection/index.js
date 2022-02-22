@@ -373,10 +373,7 @@ export const FeaturedCollection = ({ config }) => {
                )}
             {(config?.informationVisibility?.cart?.bottomCartBar?.value ??
                true) &&
-               cartState.cart &&
-               cartState.cart?.products?.aggregate?.count !== 0 && (
-                  <BottomCartBar />
-               )}
+               cartState.cart && <BottomCartBar />}
             {showCartOnRight && <CartBar />}
          </div>
       </>
