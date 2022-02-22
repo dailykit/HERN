@@ -19,6 +19,7 @@ import { setThemeVariable, getRoute } from '../../utils'
 import { useRouter } from 'next/router'
 import { useToasts } from 'react-toast-notifications'
 import { VegNonVegType } from '../../assets/icons'
+import { CustomArea } from '../featuredCollection/productCustomArea'
 
 export const OnDemandOrder = ({ config }) => {
    const router = useRouter()
@@ -118,36 +119,8 @@ export const OnDemandOrder = ({ config }) => {
       }
    )
    const [productModifier, setProductModifier] = useState(null)
-   const CustomArea = props => {
-      const { data } = props
-      return (
-         <div className="hern-on-demand-product-custom-area">
-            <Button
-               className="hern-custom-area-add-btn"
-               type="outline"
-               onClick={() => {
-                  if (data.productOptions.length > 0) {
-                     setProductModifier(data)
-                  } else {
-                     addToast('Added to the Cart!', {
-                        appearance: 'success',
-                     })
-                     addToCart({ productId: data.id }, 1)
-                  }
-               }}
-               disabled={
-                  locationId ? (storeStatus.status ? false : true) : true
-               }
-            >
-               {locationId
-                  ? storeStatus.status
-                     ? 'ADD'
-                     : 'COMING SOON'
-                  : 'COMING SOON'}
-            </Button>
-            {data.productOptions.length > 0 && <span>Customizable</span>}
-         </div>
-      )
+   const CustomAreaWrapper = ({ data }) => {
+      return <CustomArea data={data} setProductModifier={setProductModifier} />
    }
    const closeModifier = () => {
       setProductModifier(null)
@@ -255,7 +228,9 @@ export const OnDemandOrder = ({ config }) => {
                                                    ? true
                                                    : false
                                              }
-                                             customAreaComponent={CustomArea}
+                                             customAreaComponent={
+                                                CustomAreaWrapper
+                                             }
                                              showModifier={
                                                 productModifier &&
                                                 productModifier.id ===

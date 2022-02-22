@@ -41,6 +41,7 @@ export const ProductCard = props => {
       showProductCard = true,
       className = '',
       config,
+      stepView = false,
    } = props
 
    const slideRef = React.useRef()
@@ -274,6 +275,7 @@ export const ProductCard = props => {
                modifierWithoutPopup={modifierWithoutPopup}
                customProductDetails={customProductDetails}
                config={config}
+               stepView={stepView}
             />
          )}
       </>

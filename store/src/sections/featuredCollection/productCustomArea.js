@@ -27,6 +27,10 @@ export const CustomArea = props => {
             .flat()
          setProductCartItemIds(allCartItemsIdsForThisProducts)
          setAvailableQuantityInCart(allCartItemsIdsForThisProducts.length)
+         console.log(
+            'allCartItemsIdsForThisProducts',
+            allCartItemsIdsForThisProducts
+         )
       }
    }, [combinedCartItems])
    const removeCartItems = cartItemIds => {
