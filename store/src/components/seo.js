@@ -29,9 +29,10 @@ export const SEO = ({ seoSettings, richresult, children }) => {
          />
          {/* additionalTags if any */}
          {additionalTags?.length > 0 &&
-            additionalTags.map(obj => {
+            additionalTags.map((obj, index) => {
                return (
                   <meta
+                     key={`${Object.keys(obj)[0]}-${index} `}
                      name={Object.keys(obj)[0]}
                      content={Object.values(obj)[0]}
                   />
