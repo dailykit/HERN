@@ -42,7 +42,6 @@ export const OnDemandMenuProvider = ({ children }) => {
             brandId: brand?.id,
             date,
             locationId: locationId,
-            collectionIdArray: [1303],
          },
       },
       onCompleted: data => {
