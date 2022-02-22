@@ -14,6 +14,7 @@ function PayButton({
    selectedAvailablePaymentOptionId = null,
    cartId = null,
    fullWidthSkeleton = true,
+   setPaymentTunnelOpen,
    ...props
 }) {
    const isKioskMode = isKiosk()
@@ -55,6 +56,7 @@ function PayButton({
          ?.supportedPaymentCompany?.label === 'stripe'
 
    const onPayClickHandler = async () => {
+      setPaymentTunnelOpen && setPaymentTunnelOpen(false)
       console.log('PayButton: onPayClickHandler')
       if (isKioskMode) {
          console.log('inside kiosk condition')

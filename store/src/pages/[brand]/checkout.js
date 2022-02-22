@@ -6,7 +6,12 @@ const CheckoutPage = props => {
    const { folds, settings, navigationMenus, seoSettings, linkedFiles } = props
 
    return (
-      <Layout settings={settings} navigationMenus={navigationMenus}>
+      <Layout
+         settings={settings}
+         navigationMenus={navigationMenus}
+         noFooter={true}
+         noHeader={true}
+      >
          <SEO seoSettings={seoSettings} />
          <ExternalJSCSSFiles externalFiles={linkedFiles} />
          <main>{renderPageContent(folds)}</main>

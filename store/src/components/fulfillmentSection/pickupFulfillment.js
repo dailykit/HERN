@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { Col, Radio, Row, Space, Carousel, Modal } from 'antd'
 import { useConfig } from '../../lib'
-import { OrderTime, EditIcon } from '../../assets/icons'
+import {
+   OrderTime,
+   DeliveryNowIcon,
+   DeliveryLaterIcon,
+} from '../../assets/icons'
 import { TimeSlots } from './components/timeSlots'
 import {
    generateMiniSlots,
@@ -9,11 +13,13 @@ import {
    getStoresWithValidations,
    getPickupTimeSlotValidation,
    getOndemandPickupTimeValidation,
+   setThemeVariable,
+   isClient,
 } from '../../utils'
 import { CartContext, useUser } from '../../context'
 import { Loader, Button } from '../'
 import moment from 'moment'
-
+import classNames from 'classnames'
 export const Pickup = props => {
    const {
       brand,
@@ -56,13 +62,29 @@ export const Pickup = props => {
          orderTabFulfillmentType &&
          orderTabFulfillmentType.includes('ONDEMAND_PICKUP')
       ) {
-         options.push({ label: 'Now', value: 'ONDEMAND_PICKUP' })
+         options.push({
+            label: (
+               <span>
+                  <DeliveryNowIcon />
+                  &nbsp;Pickup
+               </span>
+            ),
+            value: 'ONDEMAND_PICKUP',
+         })
       }
       if (
          orderTabFulfillmentType &&
          orderTabFulfillmentType.includes('PREORDER_PICKUP')
       ) {
-         options.push({ label: 'Later', value: 'PREORDER_PICKUP' })
+         options.push({
+            label: (
+               <span>
+                  <DeliveryLaterIcon />
+                  &nbsp; Schedule Later
+               </span>
+            ),
+            value: 'PREORDER_PICKUP',
+         })
       }
 
       return options
@@ -80,11 +102,9 @@ export const Pickup = props => {
    const title = React.useMemo(() => {
       switch (cartState.cart?.fulfillmentInfo?.type) {
          case 'ONDEMAND_PICKUP':
-            return `You order will be delivered within ${
-               timeSlotInfo?.pickUpPrepTime || '...'
-            } minutes.`
+            return `Pick up after ${timeSlotInfo?.pickUpPrepTime || '...'} min.`
          case 'PREORDER_PICKUP':
-            return 'Schedule pickup'
+            return ''
       }
    }, [cartState.cart, timeSlotInfo])
 
@@ -427,6 +447,62 @@ export const Pickup = props => {
       // setIsEdit(false)
    }
 
+   const [isMobileViewOpen, setIsMobileViewOpen] = React.useState(true)
+   const isSmallerDevice = isClient && window.innerWidth < 768
+
+   React.useEffect(() => {
+      if (cartState.cart?.fulfillmentInfo !== null) {
+         setIsMobileViewOpen(false)
+      }
+      if (!isMobileViewOpen) {
+         setThemeVariable(
+            '--fufillment-time-section-top',
+            showSlots ? '64px' : 'auto'
+         )
+         setThemeVariable(
+            '--fufillment-time-section-bottom',
+            showSlots ? '0px' : '56px'
+         )
+      }
+   }, [isMobileViewOpen, showSlots])
+
+   setThemeVariable(
+      '--user-info-section-bottom',
+      isSmallerDevice &&
+         cartState.cart?.fulfillmentInfo === null &&
+         showSlots &&
+         isMobileViewOpen
+         ? '100px'
+         : '132px'
+   )
+   setThemeVariable(
+      '--fufillment-address-section-bottom',
+      isSmallerDevice &&
+         cartState.cart?.fulfillmentInfo === null &&
+         showSlots &&
+         isMobileViewOpen
+         ? '56px'
+         : '92px'
+   )
+   if (
+      isSmallerDevice &&
+      cartState.cart?.fulfillmentInfo === null &&
+      showSlots &&
+      isMobileViewOpen
+   ) {
+      return (
+         <button
+            className="hern-user-info-tunnel__open-btn"
+            onClick={() => {
+               setShowSlots(true)
+               setIsMobileViewOpen(false)
+            }}
+         >
+            Add pickup time{' '}
+         </button>
+      )
+   }
+
    if (isLoading) {
       return <p>Loading</p>
    }
@@ -434,42 +510,36 @@ export const Pickup = props => {
    if (!showSlots) {
       return (
          <div className="hern-cart__fulfillment-time-section">
-            <div className="hern-cart__fulfillment-time-section-heading">
-               <OrderTime />
-               <span>When would you like to order?</span>
-            </div>
-            <div
-               style={{
-                  display: 'flex',
-                  alignItems: 'center',
-               }}
-            >
-               <label style={{ marginTop: '5px' }}>
-                  {title}{' '}
-                  {cartState.cart?.fulfillmentInfo?.type ===
-                     'PREORDER_PICKUP' && (
-                     <span>
-                        {' '}
-                        on{' '}
-                        {moment(
-                           cartState.cart?.fulfillmentInfo?.slot?.from
-                        ).format('DD MMM YYYY')}
-                        {' ('}
-                        {moment(
-                           cartState.cart?.fulfillmentInfo?.slot?.from
-                        ).format('HH:mm')}
-                        {'-'}
-                        {moment(
-                           cartState.cart?.fulfillmentInfo?.slot?.to
-                        ).format('HH:mm')}
-                        {')'}
-                     </span>
-                  )}
-               </label>
+            <div className="hern-cart__fulfillment-time-section__content">
+               <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <OrderTime width={20} height={20} />
+                  <label>
+                     {title}&nbsp;
+                     {cartState.cart?.fulfillmentInfo?.type ===
+                        'PREORDER_PICKUP' && (
+                        <span>
+                           {' '}
+                           on{' '}
+                           {moment(
+                              cartState.cart?.fulfillmentInfo?.slot?.from
+                           ).format('DD MMM YYYY')}
+                           {' ('}
+                           {moment(
+                              cartState.cart?.fulfillmentInfo?.slot?.from
+                           ).format('HH:mm')}
+                           {'-'}
+                           {moment(
+                              cartState.cart?.fulfillmentInfo?.slot?.to
+                           ).format('HH:mm')}
+                           {')'}
+                        </span>
+                     )}
+                  </label>
+               </div>
                {(pickupRadioOptions.length > 0 ||
                   fulfillmentType === 'PREORDER_PICKUP') && (
-                  <EditIcon
-                     fill={theme?.accent || 'rgba(5, 150, 105, 1)'}
+                  <Button
+                     variant="ghost"
                      onClick={() => {
                         if (pickupRadioOptions.length > 1) {
                            setFulfillmentType(null)
@@ -480,8 +550,9 @@ export const Pickup = props => {
                         }
                         setShowSlots(true)
                      }}
-                     style={{ cursor: 'pointer', margin: '0 6px' }}
-                  />
+                  >
+                     Change
+                  </Button>
                )}
             </div>
          </div>
@@ -491,34 +562,39 @@ export const Pickup = props => {
    return (
       <div className="hern-cart__fulfillment-time-section">
          <div className="hern-cart__fulfillment-time-section-heading">
-            <OrderTime />
             <span>When would you like to order?</span>
          </div>
 
          {pickupRadioOptions.length > 1 && (
-            <Radio.Group
-               options={pickupRadioOptions}
-               onChange={e => {
-                  setFulfillmentType(e.target.value)
-                  const orderTabId = orderTabs.find(
-                     t => t.orderFulfillmentTypeLabel === `${e.target.value}`
-                  )?.id
-                  setFulfillmentTabInfo(prev => {
-                     return { ...prev, orderTabId }
-                  })
-                  setIsGetStoresLoading(true)
-                  if (e.target.value === 'ONDEMAND_PICKUP') {
-                     setUpdateFulfillmentInfoForNow(prev => !prev)
-                  }
-               }}
-               value={fulfillmentType}
-               className="hern-cart__fulfillment-date-slot"
-            />
+            <div className="hern-fulfillment__options__type-btn">
+               {pickupRadioOptions.map(({ label, value }) => (
+                  <button
+                     key={label}
+                     className={classNames({
+                        'hern-fulfillment__options__type-btn--active':
+                           fulfillmentType === value,
+                     })}
+                     onClick={() => {
+                        setFulfillmentType(value)
+                        const orderTabId = orderTabs.find(
+                           t => t.orderFulfillmentTypeLabel === `${value}`
+                        )?.id
+                        setFulfillmentTabInfo(prev => {
+                           return { ...prev, orderTabId }
+                        })
+                        setIsGetStoresLoading(true)
+                        if (value === 'ONDEMAND_PICKUP') {
+                           setUpdateFulfillmentInfoForNow(prev => !prev)
+                        }
+                     }}
+                  >
+                     {label}
+                  </button>
+               ))}
+            </div>
          )}
 
-         {!fulfillmentType ? (
-            <p>Please select a pickup type.</p>
-         ) : isGetStoresLoading ? (
+         {!fulfillmentType ? null : isGetStoresLoading ? (
             <Loader inline />
          ) : stores.length === 0 ? (
             <p>No store available</p>

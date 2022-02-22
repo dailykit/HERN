@@ -3,8 +3,8 @@ import _ from 'lodash'
 import moment from 'moment'
 import { Radio, Space } from 'antd'
 import { generateTimeStamp } from '../../../utils'
-import { useConfig } from '../../../lib'
-import { useCart } from '../../../context'
+import { Button } from '../../button'
+import classNames from 'classnames'
 
 export const TimeSlots = ({
    onFulfillmentTimeClick,
@@ -13,46 +13,63 @@ export const TimeSlots = ({
    availableDaySlots,
    setSelectedSlot,
 }) => {
+   const [showAllDates, setShowAllDates] = React.useState(false)
+   const [showAllTimeSlots, setShowAllTimeSlots] = React.useState(false)
+
+   //Showing first 5 slots at a time
+   const daySlots = showAllDates
+      ? availableDaySlots
+      : _.slice(availableDaySlots, 0, 5)
+
+   const timeSlots = selectedSlot
+      ? showAllTimeSlots
+         ? selectedSlot.slots
+         : _.slice(selectedSlot.slots, 0, 5)
+      : null
+
    return (
-      <Space direction={'vertical'}>
+      <>
          <div className="hern-fulfillment__day-slots-container">
-            <p>Please Select Schedule For {timeSlotsFor}</p>
-            <p className="hern-cart__fulfillment-slot-heading">
-               Fulfillment Date
+            <p className="hern-cart__fulfillment__slot__header">
+               Schedule your {timeSlotsFor}
             </p>
-            <Radio.Group
-               onChange={e => {
-                  setSelectedSlot(e.target.value)
-               }}
-            >
-               {availableDaySlots.map((eachSlot, index) => {
+            <p className="hern-cart__fulfillment-slot-heading">Select Date</p>
+
+            <ul className="hern-cart__fulfillment-slots">
+               {daySlots.map(eachSlot => {
                   return (
-                     <Radio.Button value={eachSlot} size="large">
+                     <li
+                        key={eachSlot.date}
+                        role="button"
+                        className={classNames(
+                           'hern-cart__fulfillment-slots__item',
+                           {
+                              'hern-cart__fulfillment-slots__item--active':
+                                 selectedSlot?.date === eachSlot.date,
+                           }
+                        )}
+                        onClick={() => setSelectedSlot(eachSlot)}
+                     >
                         {moment(eachSlot.date).format('DD MMM YY')}
-                     </Radio.Button>
+                     </li>
                   )
                })}
-            </Radio.Group>
+            </ul>
+            <Button
+               className="hern-cart__fulfillment-slots__item__show-all-btn"
+               variant="ghost"
+               onClick={() => setShowAllDates(!showAllDates)}
+            >
+               {showAllDates ? 'Show less' : 'show all'}
+            </Button>
          </div>
          {selectedSlot && (
             <div className="hern-fulfillment__time-slots-container">
                <p className="hern-cart__fulfillment-slot-heading">
-                  Fulfillment Time
+                  Select Time
                </p>
-               <Radio.Group
-                  onChange={e => {
-                     const newTimeStamp = generateTimeStamp(
-                        e.target.value.time,
-                        selectedSlot.date,
-                        e.target.value.intervalInMinutes
-                     )
-                     onFulfillmentTimeClick(
-                        newTimeStamp,
-                        e.target.value.mileRangeId
-                     )
-                  }}
-               >
-                  {_.sortBy(selectedSlot.slots, [
+               <ul className="hern-cart__fulfillment-slots">
+                  {_.sortBy(timeSlots, [
                      function (slot) {
                         return moment(slot.time, 'HH:mm')
                      },
@@ -63,17 +80,47 @@ export const TimeSlots = ({
                            .add(eachSlot.intervalInMinutes, 'm')
                            .format('HH:mm'),
                      }
+
+                     const handleOnTimeSlotClick = () => {
+                        const newTimeStamp = generateTimeStamp(
+                           eachSlot.time,
+                           selectedSlot.date,
+                           eachSlot.intervalInMinutes
+                        )
+                        onFulfillmentTimeClick(
+                           newTimeStamp,
+                           eachSlot.mileRangeId
+                        )
+                     }
                      return (
-                        <Radio.Button value={eachSlot}>
+                        <li
+                           key={eachSlot}
+                           role="button"
+                           onClick={() => handleOnTimeSlotClick(eachSlot)}
+                           className={classNames(
+                              'hern-cart__fulfillment-slots__item',
+                              {
+                                 'hern-cart__fulfillment-slots__item--active':
+                                    selectedSlot?.date === eachSlot.date,
+                              }
+                           )}
+                        >
                            {slot.from}
                            {'-'}
                            {slot.to}
-                        </Radio.Button>
+                        </li>
                      )
                   })}
-               </Radio.Group>
+               </ul>
+               <Button
+                  className="hern-cart__fulfillment-slots__item__show-all-btn"
+                  variant="ghost"
+                  onClick={() => setShowAllTimeSlots(!showAllTimeSlots)}
+               >
+                  {showAllTimeSlots ? 'Show less' : 'show all'}
+               </Button>
             </div>
          )}
-      </Space>
+      </>
    )
 }

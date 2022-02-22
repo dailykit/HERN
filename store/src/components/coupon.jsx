@@ -9,10 +9,16 @@ import { CouponsList } from './coupons_list'
 import { Loader } from './loader'
 import { Tunnel } from './tunnel'
 import { useQueryParamState } from '../utils'
-import { CouponIcon } from '../assets/icons'
+import { CouponIcon, ChevronIcon, CouponTicketIcon } from '../assets/icons'
 import { Button } from '.'
 
-const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
+const Coupon_ = ({
+   cart,
+   config,
+   upFrontLayout = false,
+   tunnel = false,
+   listOntunnnel = true,
+}) => {
    // use this component for kiosk as well
    const [orderInterfaceType] = useQueryParamState('oiType', 'Website')
    const { state = {} } =
@@ -31,6 +37,8 @@ const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
 
    const [isCouponListOpen, setIsCouponListOpen] = React.useState(false)
    const [isCouponFormOpen, setIsCouponFormOpen] = React.useState(false)
+   const [isCouponListTunnelOpen, setIsCouponListTunnelOpen] =
+      React.useState(false)
    const [typedCode, setTypedCode] = React.useState('')
 
    // Mutation
@@ -184,9 +192,9 @@ const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
                         : 'hern-coupon__input-wrapper'
                   }
                >
-                  {orderInterfaceType != 'Kiosk Ordering' && upFrontLayout && (
-                     <CouponHeader />
-                  )}
+                  {false &&
+                     orderInterfaceType != 'Kiosk Ordering' &&
+                     upFrontLayout && <CouponHeader />}
 
                   <label
                      className={
@@ -240,23 +248,45 @@ const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
                   </button>
                ) : (
                   <Button
-                     className="hern-upfront-coupon__form__apply-btn"
                      disabled={searching || applying}
                      type="submit"
+                     variant="outline"
                   >
                      {searching || applying ? <Loader inline /> : t('Apply')}
                   </Button>
                )}
             </form>
-            {(orderInterfaceType === 'Kiosk Ordering' || upFrontLayout) && (
-               <CouponsList
-                  createOrderCartRewards={createOrderCartRewards}
-                  closeTunnel={() => setIsCouponListOpen(false)}
-                  cart={cart}
-                  config={config}
-                  upFrontLayout={upFrontLayout}
-               />
+            <Button
+               onClick={() => setIsCouponListTunnelOpen(true)}
+               variant="ghost"
+            >
+               View Offers
+            </Button>
+            {listOntunnnel && (
+               <Tunnel.Right
+                  title="Coupon"
+                  visible={isCouponListTunnelOpen}
+                  onClose={() => setIsCouponListTunnelOpen(false)}
+               >
+                  <CouponsList
+                     createOrderCartRewards={createOrderCartRewards}
+                     closeTunnel={() => setIsCouponListOpen(false)}
+                     cart={cart}
+                     config={config}
+                     upFrontLayout={upFrontLayout}
+                  />
+               </Tunnel.Right>
             )}
+            {!listOntunnnel &&
+               (orderInterfaceType === 'Kiosk Ordering' || upFrontLayout) && (
+                  <CouponsList
+                     createOrderCartRewards={createOrderCartRewards}
+                     closeTunnel={() => setIsCouponListOpen(false)}
+                     cart={cart}
+                     config={config}
+                     upFrontLayout={upFrontLayout}
+                  />
+               )}
             {orderInterfaceType !== 'Kiosk Ordering' && !upFrontLayout && (
                <Tunnel
                   isOpen={isCouponListOpen}
@@ -329,13 +359,33 @@ const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
       </div>
    )
 }
-export const Coupon = props => (
-   <>
+export const Coupon = props => {
+   const { tunnel = false } = props
+   const [isCouponTunnelOpen, setIsCouponTunnelOpen] = React.useState(false)
+   if (tunnel) {
+      return (
+         <>
+            <CouponTunnlelTrigger
+               setIsCouponTunnelOpen={setIsCouponTunnelOpen}
+            />
+            <Tunnel.Right
+               title="Coupon"
+               visible={isCouponTunnelOpen}
+               onClose={() => setIsCouponTunnelOpen(false)}
+            >
+               <MenuProvider>
+                  <Coupon_ {...props} />
+               </MenuProvider>
+            </Tunnel.Right>
+         </>
+      )
+   }
+   return (
       <MenuProvider>
          <Coupon_ {...props} />
       </MenuProvider>
-   </>
-)
+   )
+}
 export const CouponHeader = () => {
    return (
       <div
@@ -352,6 +402,28 @@ export const CouponHeader = () => {
          >
             Apply Coupons
          </label>
+      </div>
+   )
+}
+const CouponTunnlelTrigger = ({ setIsCouponTunnelOpen }) => {
+   return (
+      <div className="hern-upfront-coupon-header__tunnel">
+         <div>
+            <span>
+               <CouponTicketIcon />
+            </span>
+            <div>
+               <h4>Apply Coupon</h4>
+               <button onClick={() => setIsCouponTunnelOpen(true)}>
+                  <span>View All Offers</span>
+                  <ChevronIcon />
+               </button>
+            </div>
+         </div>
+         <button onClick={() => setIsCouponTunnelOpen(true)}>
+            <span>Apply</span>
+            <ChevronIcon />
+         </button>
       </div>
    )
 }

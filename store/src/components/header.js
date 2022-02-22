@@ -133,7 +133,6 @@ export const Header = ({ settings, navigationMenus }) => {
    React.useEffect(() => {
       if (!isFinalCartLoading) {
          const storeLocationId = localStorage.getItem('storeLocationId')
-         console.log('im in')
          if (storeLocationId && !locationId) {
             dispatch({
                type: 'SET_LOCATION_ID',
@@ -350,7 +349,7 @@ export const Header = ({ settings, navigationMenus }) => {
 
    return (
       <>
-         {console.log(settings, isSubscriptionStore)}
+         {/* {console.log(settings, isSubscriptionStore)} */}
          {headerNavigationSettings?.headerNavigation?.custom?.value ? (
             <TemplateFile
                path={headerNavigationSettings?.headerNavigation?.path?.value}
@@ -371,7 +370,7 @@ export const Header = ({ settings, navigationMenus }) => {
                         {logo && showLogo && (
                            <>
                               <img
-                                 class={classNames({
+                                 className={classNames({
                                     'hern-header__brand__logo':
                                        logoForSmallDevice,
                                  })}
@@ -380,7 +379,7 @@ export const Header = ({ settings, navigationMenus }) => {
                               />
                               {logoForSmallDevice && (
                                  <img
-                                    class="hern-header__brand__logo--sm"
+                                    className="hern-header__brand__logo--sm"
                                     src={logoForSmallDevice}
                                     alt={displayName || 'Subscription Shop'}
                                  />
@@ -657,7 +656,6 @@ const LocationInfo = ({ settings }) => {
          ? localStorage.getItem('pickupLocation')
          : ''
 
-      console.log('storeAddress', storeAddress)
       if (storeAddress) {
          const parseStoreAddress = JSON.parse(
             localStorage.getItem('pickupLocation')

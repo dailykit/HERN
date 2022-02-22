@@ -209,6 +209,7 @@ const RefineLocation = props => {
          .then(res => res.json())
          .then(data => {
             if (data.status === 'OK' && data.results.length > 0) {
+               setIsGetStoresLoading(true)
                const formatted_address =
                   data.results[0].formatted_address.split(',')
                const mainText = formatted_address
@@ -238,7 +239,6 @@ const RefineLocation = props => {
                      address.zipcode = node.long_name
                   }
                })
-               setIsGetStoresLoading(true)
                setAddress(prev => ({
                   mainText,
                   secondaryText,
@@ -430,10 +430,16 @@ const RefineLocation = props => {
             onClick={handleOnSubmit}
             className="hern-refine-location__save-proceed-btn"
             disabled={
-               !isStoreAvailableOnAddress || !additionalAddressInfo?.line1
+               !isStoreAvailableOnAddress ||
+               !additionalAddressInfo?.line1 ||
+               isGetStoresLoading
             }
          >
-            Save & Proceed
+            {isGetStoresLoading
+               ? 'Searching store'
+               : isStoreAvailableOnAddress
+               ? 'Save & Proceed'
+               : 'No store available'}
          </Button>
       </div>
    )
@@ -580,11 +586,6 @@ const AddressInfo = props => {
                {address.secondaryText} {address.zipcode}
             </span>
          </div>
-         {!isStoreAvailableOnAddress && (
-            <div className="hern-refine-location__no-store-available">
-               No store available on this location.
-            </div>
-         )}
       </div>
    )
 }

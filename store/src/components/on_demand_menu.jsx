@@ -45,11 +45,11 @@ export const OnDemandMenu = props => {
                         key={'menu-list' + index}
                      >
                         <Scroll.Link
-                           containerId="hern-on-demand-order-container"
                            smooth={true}
                            activeClass="hern-on-demand-menu__navigationAnchor-li--active"
                            to={each.name}
                            spy={true}
+                           offset={-130}
                         >
                            <span>
                               {each.name}
