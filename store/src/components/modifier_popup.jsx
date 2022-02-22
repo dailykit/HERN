@@ -5,8 +5,19 @@ import React, {
    useImperativeHandle,
 } from 'react'
 import { Button, ModifierOptionCard, ProductCard, ModifierCategory } from '.'
-import { DownVector, RadioIcon, ShowImageIcon, UpVector } from '../assets/icons'
-import { formatCurrency, getCartItemWithModifiers, getRoute } from '../utils'
+import {
+   ArrowLeftIconBG,
+   DownVector,
+   RadioIcon,
+   ShowImageIcon,
+   UpVector,
+} from '../assets/icons'
+import {
+   formatCurrency,
+   getCartItemWithModifiers,
+   getRoute,
+   isClient,
+} from '../utils'
 import { CloseIcon, CheckBoxIcon } from '../assets/icons'
 import { useOnClickOutside } from '../utils/useOnClickOutisde'
 import { CartContext } from '../context'
@@ -17,7 +28,9 @@ import { useToasts } from 'react-toast-notifications'
 import { useConfig } from '../lib'
 import { useModifier } from '../utils'
 import _ from 'lodash'
+import { LeftArrowIcon } from '../assets/icons/LeftArrow'
 
+const isSmallerDevice = isClient && window.innerWidth < 768
 export const ModifierPopup = props => {
    const {
       productData,
@@ -31,6 +44,8 @@ export const ModifierPopup = props => {
       modifierWithoutPopup,
       customProductDetails = false,
       config,
+      stepView = false,
+      counterButtonPosition = 'TOP',
    } = props
    //context
    const { addToCart, methods } = React.useContext(CartContext)
@@ -41,7 +56,13 @@ export const ModifierPopup = props => {
       ) || productData.productOptions[0]
    ) // for by default choose one product option
    const [quantity, setQuantity] = useState(1)
+   const [isModifierOptionsViewOpen, setIsModifierOptionsViewOpen] =
+      useState(false) // used only when --> product option has modifier options and mobile view open
 
+   const showStepViewProductOptionAndModifiers = React.useMemo(
+      () => stepView || isSmallerDevice,
+      [stepView]
+   )
    // useModifier
    const {
       selectedModifierOptions,
@@ -316,7 +337,7 @@ export const ModifierPopup = props => {
    const CustomArea = () => {
       return (
          <div className="hern-menu-popup-product-custom-area">
-            {showCounterBtn && (
+            {showCounterBtn && counterButtonPosition == 'TOP' && (
                <CounterButton
                   count={quantity}
                   incrementClick={incrementClick}
@@ -457,7 +478,27 @@ export const ModifierPopup = props => {
                   )}
                </div>
                <div className="hern-product-modifier-pop-up-content-container">
-                  <div className="hern-product-modifier-pop-up-product-option-list">
+                  <div
+                     className={classNames(
+                        'hern-product-modifier-pop-up-product-option-list',
+                        {
+                           'hern-product-modifier-pop-up-product-option-list--with-modifiers':
+                              showModifiers &&
+                              productOption.modifier &&
+                              !showStepViewProductOptionAndModifiers,
+                           'hern-product-modifier-pop-up-product-option-list--with-modifiers-in-viewport':
+                              showModifiers &&
+                              productOption.modifier &&
+                              showStepViewProductOptionAndModifiers &&
+                              isModifierOptionsViewOpen,
+                           'hern-product-modifier-pop-up-product-option-list--with-modifiers-not-in-viewport':
+                              showModifiers &&
+                              productOption.modifier &&
+                              showStepViewProductOptionAndModifiers &&
+                              isModifierOptionsViewOpen,
+                        }
+                     )}
+                  >
                      <label htmlFor="products">Available Options:</label>
                      <br />
                      <ul
@@ -485,7 +526,15 @@ export const ModifierPopup = props => {
                                     marginBottom: '8px',
                                     cursor: 'pointer',
                                  }}
-                                 onClick={e => setProductOption(eachOption)}
+                                 onClick={e => {
+                                    setProductOption(eachOption)
+                                    if (
+                                       showModifiers &&
+                                       productOption.modifier
+                                    ) {
+                                       setIsModifierOptionsViewOpen(true)
+                                    }
+                                 }}
                               >
                                  <li>
                                     {eachOption.label}
@@ -514,7 +563,45 @@ export const ModifierPopup = props => {
                   </div>
 
                   {showModifiers && productOption.modifier && (
-                     <div className="hern-product-modifier-pop-up-modifier-list">
+                     <div
+                        // className="hern-product-modifier-pop-up-modifier-list"
+                        className={classNames(
+                           'hern-product-modifier-pop-up-modifier-list',
+                           {
+                              'hern-product-modifier-pop-up-modifier-list-in-view-port':
+                                 showStepViewProductOptionAndModifiers &&
+                                 isModifierOptionsViewOpen,
+                              'hern-product-modifier-pop-up-modifier-list-not-in-view-port':
+                                 showStepViewProductOptionAndModifiers &&
+                                 !isModifierOptionsViewOpen,
+                           }
+                        )}
+                     >
+                        {showStepViewProductOptionAndModifiers && (
+                           <div
+                              style={{
+                                 display: 'flex',
+                                 alignItems: 'center',
+                                 marginBottom: '4px',
+                              }}
+                           >
+                              <ArrowLeftIconBG
+                                 size={18}
+                                 bgColor={'#404040'}
+                                 onClick={() => {
+                                    setIsModifierOptionsViewOpen(false)
+                                 }}
+                              />
+                              <span
+                                 style={{
+                                    fontSize: '16px',
+                                    marginLeft: '10px',
+                                 }}
+                              >
+                                 {productOption.label}
+                              </span>
+                           </div>
+                        )}
                         <label
                            htmlFor="products"
                            className="hern-product-modifier-pop-up-add-on"
@@ -571,10 +658,32 @@ export const ModifierPopup = props => {
                      </div>
                   )}
                </div>
-               <div style={{ padding: '0 32px' }}>
+               <div
+                  style={{ padding: '0 32px' }}
+                  className="hern-modifier-popup-add-to-cart-btn-parent-div"
+               >
+                  {showCounterBtn && counterButtonPosition == 'BOTTOM' && (
+                     <div className="hern-modifier-pop-bottom-counter-btn-div">
+                        <CounterButton
+                           count={quantity}
+                           incrementClick={incrementClick}
+                           decrementClick={decrementClick}
+                        />
+                     </div>
+                  )}
                   <Button
                      className="hern-product-modifier-pop-up-add-to-cart-btn"
-                     onClick={() => setTimeout(handleAddOnCartOn, 500)}
+                     onClick={() => {
+                        if (showStepViewProductOptionAndModifiers) {
+                           if (isModifierOptionsViewOpen) {
+                              setTimeout(handleAddOnCartOn, 500)
+                           } else {
+                              setIsModifierOptionsViewOpen(true)
+                           }
+                        } else {
+                           setTimeout(handleAddOnCartOn, 500)
+                        }
+                     }}
                      style={{ padding: '16px 0px 34px 0px' }}
                      disabled={
                         locationId ? (storeStatus.status ? false : true) : true
@@ -582,7 +691,13 @@ export const ModifierPopup = props => {
                   >
                      {locationId
                         ? storeStatus.status
-                           ? `ADD TO CART ${totalAmount()}`
+                           ? showModifiers && productOption.modifier
+                              ? showStepViewProductOptionAndModifiers
+                                 ? !isModifierOptionsViewOpen
+                                    ? 'PROCEED'
+                                    : `ADD TO CART ${totalAmount()}`
+                                 : `ADD TO CART ${totalAmount()}`
+                              : `ADD TO CART ${totalAmount()}`
                            : 'COMING SOON'
                         : 'COMING SOON'}
                   </Button>

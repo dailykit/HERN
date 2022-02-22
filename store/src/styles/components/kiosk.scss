@@ -17,7 +17,8 @@
 .hern-kiosk__idle-screen-image-slider {
 }
 .hern-kiosk__idle-screen-image {
-   height: calc(100vh - 12em);
+   // height: calc(100vh - 12em);
+   height: 100vh;
 }
 .hern-kiosk__idle-screen-video__background {
    filter: blur(8px);
