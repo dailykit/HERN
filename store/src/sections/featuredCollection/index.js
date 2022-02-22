@@ -344,6 +344,7 @@ export const FeaturedCollection = ({ config }) => {
                                                       ?.modifier
                                                       ?.showModifierImage
                                                       ?.value ?? true,
+                                                counterButtonPosition: 'BOTTOM',
                                              }}
                                              customAreaFlex={false}
                                              modifierWithoutPopup={false}

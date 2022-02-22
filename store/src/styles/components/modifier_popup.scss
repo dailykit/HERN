@@ -162,8 +162,19 @@
 }
 .hern-modifier-popup-add-to-cart-btn-parent-div {
    position: absolute;
-   bottom: 20px;
+   // bottom: 20px;
+   bottom: 14px;
    width: 100%;
+   display: flex;
+   align-items: center;
+   .hern-counter-button {
+      width: 140px;
+      height: 40px;
+      font-size: 16px;
+   }
+}
+.hern-modifier-pop-bottom-counter-btn-div {
+   margin-right: 15px;
 }
 .hern-product-modifier-pop-up-add-to-cart-btn {
    width: 100%;

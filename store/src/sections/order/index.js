@@ -239,6 +239,9 @@ export const OnDemandOrder = ({ config }) => {
                                              closeModifier={closeModifier}
                                              customAreaFlex={false}
                                              modifierWithoutPopup={false}
+                                             modifierPopupConfig={{
+                                                counterButtonPosition: 'BOTTOM',
+                                             }}
                                           />
                                        </div>
                                     )

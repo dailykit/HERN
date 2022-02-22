@@ -45,6 +45,7 @@ export const ModifierPopup = props => {
       customProductDetails = false,
       config,
       stepView = false,
+      counterButtonPosition = 'TOP',
    } = props
    //context
    const { addToCart, methods } = React.useContext(CartContext)
@@ -336,7 +337,7 @@ export const ModifierPopup = props => {
    const CustomArea = () => {
       return (
          <div className="hern-menu-popup-product-custom-area">
-            {showCounterBtn && (
+            {showCounterBtn && counterButtonPosition == 'TOP' && (
                <CounterButton
                   count={quantity}
                   incrementClick={incrementClick}
@@ -661,6 +662,15 @@ export const ModifierPopup = props => {
                   style={{ padding: '0 32px' }}
                   className="hern-modifier-popup-add-to-cart-btn-parent-div"
                >
+                  {showCounterBtn && counterButtonPosition == 'BOTTOM' && (
+                     <div className="hern-modifier-pop-bottom-counter-btn-div">
+                        <CounterButton
+                           count={quantity}
+                           incrementClick={incrementClick}
+                           decrementClick={decrementClick}
+                        />
+                     </div>
+                  )}
                   <Button
                      className="hern-product-modifier-pop-up-add-to-cart-btn"
                      onClick={() => {

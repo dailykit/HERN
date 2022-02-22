@@ -276,6 +276,9 @@ export const ProductCard = props => {
                customProductDetails={customProductDetails}
                config={config}
                stepView={stepView}
+               counterButtonPosition={
+                  modifierPopupConfig?.counterButtonPosition
+               }
             />
          )}
       </>
