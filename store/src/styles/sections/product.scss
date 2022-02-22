@@ -13,6 +13,11 @@
    margin: 0 auto;
    padding: 1rem;
 }
+.hern-product-page {
+   .hern-modifier-popup-add-to-cart-btn-parent-div {
+      position: unset;
+   }
+}
 .hern-product-page__product-section {
    display: flex;
    width: 100%;

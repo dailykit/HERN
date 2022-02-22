@@ -457,7 +457,15 @@ export const ModifierPopup = props => {
                   )}
                </div>
                <div className="hern-product-modifier-pop-up-content-container">
-                  <div className="hern-product-modifier-pop-up-product-option-list">
+                  <div
+                     className={classNames(
+                        'hern-product-modifier-pop-up-product-option-list',
+                        {
+                           'hern-product-modifier-pop-up-product-option-list--with-modifiers':
+                              showModifiers && productOption.modifier,
+                        }
+                     )}
+                  >
                      <label htmlFor="products">Available Options:</label>
                      <br />
                      <ul
@@ -571,7 +579,10 @@ export const ModifierPopup = props => {
                      </div>
                   )}
                </div>
-               <div style={{ padding: '0 32px' }}>
+               <div
+                  style={{ padding: '0 32px' }}
+                  className="hern-modifier-popup-add-to-cart-btn-parent-div"
+               >
                   <Button
                      className="hern-product-modifier-pop-up-add-to-cart-btn"
                      onClick={() => setTimeout(handleAddOnCartOn, 500)}
