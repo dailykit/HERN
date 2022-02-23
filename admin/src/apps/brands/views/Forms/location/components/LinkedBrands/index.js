@@ -110,175 +110,171 @@ export const LinkedBrands = ({ state, locationId }) => {
                   </StyledHeader>
                   <StyledContainer>
                      {LinkedBrands.map(eachBrand => (
-                        <>
-                           <StyledCard
-                              key={`${eachBrand.brandId}-${eachBrand.locationId}`}
-                           >
-                              <TopBrandLocationCard />
-                              <StyledContent>
-                                 <StyledBrandHeader>
-                                    <Tooltip
-                                       title={eachBrand.brand.title}
-                                       placement="top"
-                                       key={eachBrand.brandId}
-                                    >
-                                       {eachBrand.brand.brand_brandSettings
-                                          .length > 0 ? (
-                                          <Avatar
-                                             src={
-                                                eachBrand.brand
-                                                   .brand_brandSettings[0]
-                                                   ?.value.brandLogo.value
-                                                   ? eachBrand.brand
-                                                        .brand_brandSettings[0]
-                                                        ?.value.brandLogo.value
-                                                   : eachBrand.brand
-                                                        .brand_brandSettings[0]
-                                                        ?.value.brandLogo
-                                                        .default.url
-                                             }
-                                          />
-                                       ) : (
-                                          <Avatar
-                                             style={{
-                                                backgroundColor: '#87d068',
-                                             }}
-                                          >
-                                             {eachBrand.brand.title
-                                                .charAt(0)
-                                                .toUpperCase()}
-                                          </Avatar>
-                                       )}
-                                    </Tooltip>
-                                    <Text as="h3">{eachBrand.brand.title}</Text>
-                                 </StyledBrandHeader>
-                                 <StyledServiceType>
-                                    <StyledServiceToggle>
-                                       <DeliveryIcon />
+                        <StyledCard
+                           key={`${eachBrand.brandId}-${eachBrand.locationId}`}
+                        >
+                           <TopBrandLocationCard />
+                           <StyledContent>
+                              <StyledBrandHeader>
+                                 <Tooltip
+                                    title={eachBrand.brand.title}
+                                    placement="top"
+                                    key={eachBrand.brandId}
+                                 >
+                                    {eachBrand.brand.brand_brandSettings
+                                       .length > 0 ? (
+                                       <Avatar
+                                          src={
+                                             eachBrand.brand
+                                                .brand_brandSettings[0]?.value
+                                                .brandLogo.value
+                                                ? eachBrand.brand
+                                                     .brand_brandSettings[0]
+                                                     ?.value.brandLogo.value
+                                                : eachBrand.brand
+                                                     .brand_brandSettings[0]
+                                                     ?.value.brandLogo.default
+                                                     .url
+                                          }
+                                       />
+                                    ) : (
+                                       <Avatar
+                                          style={{
+                                             backgroundColor: '#87d068',
+                                          }}
+                                       >
+                                          {eachBrand.brand.title
+                                             .charAt(0)
+                                             .toUpperCase()}
+                                       </Avatar>
+                                    )}
+                                 </Tooltip>
+                                 <Text as="h3">{eachBrand.brand.title}</Text>
+                              </StyledBrandHeader>
+                              <StyledServiceType>
+                                 <StyledServiceToggle>
+                                    <DeliveryIcon />
+                                    <Switch
+                                       name={`brand-${eachBrand.brandId}`}
+                                       value={eachBrand.doesDeliver}
+                                       checked={eachBrand.doesDeliver}
+                                       checkedChildren="Deliver"
+                                       unCheckedChildren="Deliver"
+                                       title="Press to change Delivery Service"
+                                       onChange={() =>
+                                          updateBrandLocation({
+                                             variables: {
+                                                brandId: eachBrand.brandId,
+
+                                                locationId:
+                                                   eachBrand.locationId,
+                                                _set: {
+                                                   doesDeliver:
+                                                      !eachBrand.doesDeliver,
+                                                },
+                                             },
+                                          })
+                                       }
+                                    />
+                                 </StyledServiceToggle>
+                                 <StyledServiceToggle>
+                                    <PickUpIcon />
+                                    <Switch
+                                       name={`brand-${eachBrand.brandId}`}
+                                       value={eachBrand.doesPickup}
+                                       checked={eachBrand.doesPickup}
+                                       checkedChildren="Pickup"
+                                       unCheckedChildren="Pickup"
+                                       title="Press to change Pickup Service"
+                                       onChange={() =>
+                                          updateBrandLocation({
+                                             variables: {
+                                                brandId: eachBrand.brandId,
+
+                                                locationId:
+                                                   eachBrand.locationId,
+                                                _set: {
+                                                   doesPickup:
+                                                      !eachBrand.doesPickup,
+                                                },
+                                             },
+                                          })
+                                       }
+                                    />
+                                 </StyledServiceToggle>
+                                 <StyledServiceToggle>
+                                    <DineInIcon />
+                                    <Switch
+                                       name={`brand-${eachBrand.brandId}`}
+                                       value={eachBrand.doesDinein}
+                                       checked={eachBrand.doesDinein}
+                                       checkedChildren="Dinein"
+                                       unCheckedChildren="Dinein"
+                                       title="Press to change Dinein Service"
+                                       onChange={() =>
+                                          updateBrandLocation({
+                                             variables: {
+                                                brandId: eachBrand.brandId,
+
+                                                locationId:
+                                                   eachBrand.locationId,
+                                                _set: {
+                                                   doesDinein:
+                                                      !eachBrand.doesDinein,
+                                                },
+                                             },
+                                          })
+                                       }
+                                    />
+                                 </StyledServiceToggle>
+                              </StyledServiceType>
+                              {eachBrand.doesDeliver && (
+                                 <Flex>
+                                    <StyledDeliveryService>
+                                       <div>Does Deliver outside city?</div>
                                        <Switch
-                                          name={`brand-${eachBrand.brandId}`}
-                                          value={eachBrand.doesDeliver}
-                                          checked={eachBrand.doesDeliver}
-                                          checkedChildren="Deliver"
-                                          unCheckedChildren="Deliver"
-                                          title="Press to change Delivery Service"
+                                          defaultChecked
+                                          size="small"
                                           onChange={() =>
                                              updateBrandLocation({
                                                 variables: {
                                                    brandId: eachBrand.brandId,
-
                                                    locationId:
                                                       eachBrand.locationId,
                                                    _set: {
-                                                      doesDeliver:
-                                                         !eachBrand.doesDeliver,
+                                                      doesDeliverOutsideCity:
+                                                         !eachBrand.doesDeliverOutsideCity,
                                                    },
                                                 },
                                              })
                                           }
                                        />
-                                    </StyledServiceToggle>
-                                    <StyledServiceToggle>
-                                       <PickUpIcon />
+                                    </StyledDeliveryService>
+                                    <StyledDeliveryService>
+                                       <div>Does Deliver outside state?</div>
                                        <Switch
-                                          name={`brand-${eachBrand.brandId}`}
-                                          value={eachBrand.doesPickup}
-                                          checked={eachBrand.doesPickup}
-                                          checkedChildren="Pickup"
-                                          unCheckedChildren="Pickup"
-                                          title="Press to change Pickup Service"
+                                          defaultChecked
+                                          size="small"
                                           onChange={() =>
                                              updateBrandLocation({
                                                 variables: {
                                                    brandId: eachBrand.brandId,
-
                                                    locationId:
                                                       eachBrand.locationId,
                                                    _set: {
-                                                      doesPickup:
-                                                         !eachBrand.doesPickup,
+                                                      doesDeliverOutsideState:
+                                                         !eachBrand.doesDeliverOutsideState,
                                                    },
                                                 },
                                              })
                                           }
                                        />
-                                    </StyledServiceToggle>
-                                    <StyledServiceToggle>
-                                       <DineInIcon />
-                                       <Switch
-                                          name={`brand-${eachBrand.brandId}`}
-                                          value={eachBrand.doesDinein}
-                                          checked={eachBrand.doesDinein}
-                                          checkedChildren="Dinein"
-                                          unCheckedChildren="Dinein"
-                                          title="Press to change Dinein Service"
-                                          onChange={() =>
-                                             updateBrandLocation({
-                                                variables: {
-                                                   brandId: eachBrand.brandId,
-
-                                                   locationId:
-                                                      eachBrand.locationId,
-                                                   _set: {
-                                                      doesDinein:
-                                                         !eachBrand.doesDinein,
-                                                   },
-                                                },
-                                             })
-                                          }
-                                       />
-                                    </StyledServiceToggle>
-                                 </StyledServiceType>
-                                 {eachBrand.doesDeliver && (
-                                    <Flex>
-                                       <StyledDeliveryService>
-                                          <div>Does Deliver outside city?</div>
-                                          <Switch
-                                             defaultChecked
-                                             size="small"
-                                             onChange={() =>
-                                                updateBrandLocation({
-                                                   variables: {
-                                                      brandId:
-                                                         eachBrand.brandId,
-                                                      locationId:
-                                                         eachBrand.locationId,
-                                                      _set: {
-                                                         doesDeliverOutsideCity:
-                                                            !eachBrand.doesDeliverOutsideCity,
-                                                      },
-                                                   },
-                                                })
-                                             }
-                                          />
-                                       </StyledDeliveryService>
-                                       <StyledDeliveryService>
-                                          <div>Does Deliver outside state?</div>
-                                          <Switch
-                                             defaultChecked
-                                             size="small"
-                                             onChange={() =>
-                                                updateBrandLocation({
-                                                   variables: {
-                                                      brandId:
-                                                         eachBrand.brandId,
-                                                      locationId:
-                                                         eachBrand.locationId,
-                                                      _set: {
-                                                         doesDeliverOutsideState:
-                                                            !eachBrand.doesDeliverOutsideState,
-                                                      },
-                                                   },
-                                                })
-                                             }
-                                          />
-                                       </StyledDeliveryService>
-                                    </Flex>
-                                 )}
-                              </StyledContent>
-                              <BottomBrandLocationCard />
-                           </StyledCard>
-                        </>
+                                    </StyledDeliveryService>
+                                 </Flex>
+                              )}
+                           </StyledContent>
+                           <BottomBrandLocationCard />
+                        </StyledCard>
                      ))}
                   </StyledContainer>
                </StyledContainerHead>
