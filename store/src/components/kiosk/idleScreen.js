@@ -8,11 +8,11 @@ export const IdleScreen = props => {
    const [playing, setPlaying] = React.useState(0)
    const properties = {
       duration: 3000,
-      autoplay: true,
       transitionDuration: 500,
       infinite: true,
       easing: 'ease',
       arrows: false,
+      autoplay: config.idlePageSettings.idlePageImage.value.url.length > 1,
    }
    useEffect(() => {
       const b = document.querySelector('body')
