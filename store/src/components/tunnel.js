@@ -98,6 +98,21 @@ const Right = ({ title, children, visible, onClose, ...props }) => {
       </Drawer>
    )
 }
+const Bottom = props => {
+   const { title, children, visible, onClose } = props
+   return (
+      <Drawer
+         title={title}
+         placement="bottom"
+         onClose={onClose}
+         visible={visible}
+         {...props}
+         className="hern-tunnel__ant__bottom"
+      >
+         {children}
+      </Drawer>
+   )
+}
 const Left = ({ title, children, visible, onClose, ...props }) => {
    return (
       <Drawer
@@ -118,3 +133,4 @@ Tunnel.Header = Header
 Tunnel.Body = Body
 Tunnel.Right = Right
 Tunnel.Left = Left
+Tunnel.Bottom = Bottom

@@ -37,7 +37,7 @@ export const NoTickRoundCheckBoxIcon = props => {
             height="49"
             rx="24.5"
             fill={fill}
-            fill-opacity="0.85"
+            fillOpacity="0.85"
             stroke="#00406A"
          />
       </svg>

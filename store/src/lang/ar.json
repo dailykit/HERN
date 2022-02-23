@@ -43,5 +43,8 @@
    "Items": "الأصناف",
    "CANCEL": "إلغاء",
    "CONTINUE": "إستمرار",
-   "Current changes will lose do you wish to continue?": "سوف يتم إلغاء التعديلات الحالية , هل ترغب في الإستمرار ؟"
+   "Current changes will lose do you wish to continue?": "سوف يتم إلغاء التعديلات الحالية , هل ترغب في الإستمرار ؟",
+   "Add": "إضافة",
+   "Item Total": "مجموع الأصناف",
+   "Reset": "إعادة"
 }

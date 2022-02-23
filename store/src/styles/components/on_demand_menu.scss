@@ -74,12 +74,13 @@
 }
 .hern-on-demand-menu__navigationAnchor {
    position: fixed;
-   position: static;
+   position: sticky;
    display: flex;
    justify-content: center;
    top: 64px;
    z-index: 10;
    width: inherit;
+   background-color: #fff;
    > ul {
       display: flex;
       width: inherit;

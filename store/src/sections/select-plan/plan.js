@@ -68,7 +68,7 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
          pricePerServing: formatCurrency(
             Number.parseFloat(
                (defaultItemCount?.price || 1) /
-               ((defaultItemCount?.count || 1) * (defaultServing?.size || 1))
+                  ((defaultItemCount?.count || 1) * (defaultServing?.size || 1))
             ).toFixed(2)
          ),
       })
@@ -92,12 +92,12 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
    const priceDisplay = configOf('priceDisplay', 'Visual')?.priceDisplay
 
    const yieldLabel = {
-      singular: config?.yieldLabel?.singular || 'serving',
-      plural: config?.yieldLabel?.singular || 'servings',
+      singular: config?.yieldLabel?.singular?.value || 'serving',
+      plural: config?.yieldLabel?.singular?.value || 'servings',
    }
    const itemCountLabel = {
-      singular: config?.itemLabel?.singular || 'recipe',
-      plural: config?.itemLabel?.singular || 'recipes',
+      singular: config?.itemLabel?.singular?.value || 'recipe',
+      plural: config?.itemLabel?.singular?.value || 'recipes',
    }
 
    if (!defaultServing) return <Loader inline />
@@ -121,8 +121,11 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                <h2
                   className="hern-our-plans__plan__title"
                   style={{
-                     color: `${colorConfig?.accent?.value ? colorConfig?.accent?.value : 'rgba(5, 150, 105, 1)'
-                        }`,
+                     color: `${
+                        colorConfig?.accent?.value
+                           ? colorConfig?.accent?.value
+                           : 'rgba(5, 150, 105, 1)'
+                     }`,
                   }}
                >
                   {plan.title}
@@ -235,18 +238,19 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                         )}
                         <span
                            style={{
-                              color: `${colorConfig?.accent?.value
-                                 ? colorConfig?.accent?.value
-                                 : 'rgba(5, 150, 105, 1)'
-                                 }`,
+                              color: `${
+                                 colorConfig?.accent?.value
+                                    ? colorConfig?.accent?.value
+                                    : 'rgba(5, 150, 105, 1)'
+                              }`,
                            }}
                            className="hern-our-plans__price-per-servings__price"
                         >
                            {formatCurrency(
                               Number.parseFloat(
                                  (defaultItemCount?.price || 1) /
-                                 ((defaultItemCount?.count || 1) *
-                                    (defaultServing?.size || 1))
+                                    ((defaultItemCount?.count || 1) *
+                                       (defaultServing?.size || 1))
                               ).toFixed(2)
                            )}{' '}
                            <span className="hern-our-plans__price-per-servings__suffix">
@@ -266,16 +270,17 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                         )}
                         <span
                            style={{
-                              color: `${colorConfig?.accent?.value
-                                 ? colorConfig?.accent?.value
-                                 : 'rgba(5, 150, 105, 1)'
-                                 }`,
+                              color: `${
+                                 colorConfig?.accent?.value
+                                    ? colorConfig?.accent?.value
+                                    : 'rgba(5, 150, 105, 1)'
+                              }`,
                            }}
                            className="hern-our-plans__price-total-servings__price"
                         >
                            {Number.parseFloat(
                               (defaultItemCount?.count || 1) *
-                              (defaultServing?.size || 1)
+                                 (defaultServing?.size || 1)
                            ).toFixed(0)}{' '}
                         </span>
                      </section>
@@ -291,10 +296,11 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                         <div className="hern-our-plans__price-total-servings__wrapper">
                            <span
                               style={{
-                                 color: `${colorConfig?.accent?.value
-                                    ? colorConfig?.accent?.value
-                                    : 'rgba(5, 150, 105, 1)'
-                                    }`,
+                                 color: `${
+                                    colorConfig?.accent?.value
+                                       ? colorConfig?.accent?.value
+                                       : 'rgba(5, 150, 105, 1)'
+                                 }`,
                               }}
                               className="hern-our-plans__price-total-servings__price"
                            >
@@ -317,10 +323,11 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                   className="hern-our-plans__select-plan__btn"
                   onClick={() => selectPlan()}
                   style={{
-                     backgroundColor: `${colorConfig?.accent?.value
-                        ? colorConfig?.accent?.value
-                        : 'rgba(96, 165, 250, 1)'
-                        }`,
+                     backgroundColor: `${
+                        colorConfig?.accent?.value
+                           ? colorConfig?.accent?.value
+                           : 'rgba(96, 165, 250, 1)'
+                     }`,
                   }}
                >
                   Select

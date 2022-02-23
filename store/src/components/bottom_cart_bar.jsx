@@ -4,8 +4,14 @@ import { CartContext } from './../context'
 import { formatCurrency } from '../utils'
 
 export const BottomCartBar = () => {
-   const { cartState } = React.useContext(CartContext)
+   const { cartState, storedCartId } = React.useContext(CartContext)
    const { cart } = cartState
+   if (!Boolean(storedCartId)) {
+      return null
+   }
+   if (Boolean(storedCartId) && !cart?.cartItems_aggregate?.aggregate?.count) {
+      return null
+   }
    return (
       <div className="hern-bottom-cart-bar">
          <div className="hern-bottom-cart-bar-details">

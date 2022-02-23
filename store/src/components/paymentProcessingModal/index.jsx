@@ -23,22 +23,29 @@ const PaymentProcessingModal = ({
    cancelTerminalPayment = () => null,
    initializePrinting = () => null,
    resetPaymentProviderStates = () => null,
+   setIsProcessingPayment = () => null,
+   setIsPaymentInitiated = () => null,
 }) => {
    console.log('PaymentProcessingModal')
    const router = useRouter()
    const isKioskMode = isKiosk()
    const [isCelebrating, setIsCelebrating] = useState(false)
    const { width, height } = useWindowSize()
+   const [countDown, setCountDown] = useState(60)
 
    const closeModalHandler = async () => {
       setIsCelebrating(false)
       await closeModal()
       // await resetPaymentProviderStates()
    }
-   const resetStateAfterModalClose = async () => {
+   const resetStateAfterModalClose = async ({ showChoosePayment = false }) => {
       setIsCelebrating(false)
       await closeModal()
       await resetPaymentProviderStates()
+      if (showChoosePayment) {
+         setIsProcessingPayment(true)
+         setIsPaymentInitiated(true)
+      }
    }
 
    const stopCelebration = async () => {
@@ -118,7 +125,9 @@ const PaymentProcessingModal = ({
                   type="primary"
                   className="tryOtherPayment"
                   key="console"
-                  onClick={resetStateAfterModalClose}
+                  onClick={() =>
+                     resetStateAfterModalClose({ showChoosePayment: true })
+                  }
                >
                   Try other payment method
                </Button>,
@@ -137,7 +146,9 @@ const PaymentProcessingModal = ({
                   type="primary"
                   className="tryOtherPayment"
                   key="console"
-                  onClick={resetStateAfterModalClose}
+                  onClick={() =>
+                     resetStateAfterModalClose({ showChoosePayment: true })
+                  }
                >
                   Try other payment method
                </Button>,
@@ -266,6 +277,7 @@ const PaymentProcessingModal = ({
 
    useEffect(() => {
       let timer
+      let countdownTimer
       if (!isEmpty(cartPayment)) {
          // start celebration (confetti effect) once payment is successful
          if (cartPayment?.paymentStatus === 'SUCCEEDED') {
@@ -276,16 +288,26 @@ const PaymentProcessingModal = ({
                cartPayment?.paymentStatus
             )
          ) {
-            timer = setTimeout(() => {
-               cancelTerminalPayment({
-                  cartPayment,
-                  retryPaymentAttempt: false,
-               })
-            }, 1000 * 60)
+            if (countDown >= 0) {
+               countdownTimer = setInterval(() => {
+                  countDown > 0 && setCountDown(prev => prev - 1)
+                  if (countDown === 0) {
+                     clearInterval(countdownTimer)
+                     cancelTerminalPayment({
+                        cartPayment,
+                        retryPaymentAttempt: false,
+                     })
+                  }
+               }, 1000)
+            }
+            // timer = setTimeout(() => {}, 1000 * 60)
          }
       }
-      return () => clearTimeout(timer)
-   }, [cartPayment?.paymentStatus])
+      return () => {
+         // clearTimeout(timer)
+         clearInterval(countdownTimer)
+      }
+   }, [cartPayment?.paymentStatus, countDown])
 
    return (
       <Modal
@@ -307,31 +329,16 @@ const PaymentProcessingModal = ({
             backgroundColor: isKioskMode ? 'rgba(0, 64, 106, 0.9)' : '#fff',
          }}
       >
-         {/* {!isEmpty(cartPayment) && (
-            <Wrapper>
-               <Result
-                  icon={ShowPaymentStatusInfo().icon}
-                  title={ShowPaymentStatusInfo().title}
-                  subTitle={ShowPaymentStatusInfo().subtitle}
-                  extra={ShowPaymentStatusInfo().extra}
-               />
-
-               {isCelebrating === 'success' && <Confetti />}
-            </Wrapper>
-         )}
-         {!isKioskMode && isEmpty(cartPayment) && (
-            <Wrapper>
-               <Result
-                  icon={ShowPaymentStatusInfo().icon}
-                  title={ShowPaymentStatusInfo().title}
-                  subTitle={ShowPaymentStatusInfo().subtitle}
-                  extra={ShowPaymentStatusInfo().extra}
-               />
-
-               {isCelebrating === 'success' && <Confetti />}
-            </Wrapper>
-         )} */}
-
+         {!isEmpty(cartPayment) &&
+            !['SUCCEEDED', 'FAILED', 'CANCELLED'].includes(
+               cartPayment?.paymentStatus
+            ) && (
+               <h1 tw="font-extrabold color[rgba(0, 64, 106, 0.9)] text-xl text-center margin[2rem 0]">
+                  {countDown > 0
+                     ? `Timout in ${countDown} seconds`
+                     : 'Request timed out'}
+               </h1>
+            )}
          {/* this payment option selection screen and back button, it will only show in kiosk app  */}
          {isKioskMode && isEmpty(cartPayment) ? (
             <>

@@ -1,27 +1,41 @@
 import classNames from 'classnames'
 import { useConfig } from '../lib'
 import { setThemeVariable } from '../utils'
+import { FaSpinner } from 'react-icons/fa'
 
-export const Button = ({ children, style = {}, className, ...props }) => {
+export const Button = ({
+   children,
+   loading,
+   style = {},
+   className,
+   ...props
+}) => {
    const { configOf } = useConfig()
    const theme = configOf('theme-color', 'Visual')?.themeColor
-   const themeColor = theme?.accent?.value ? theme?.accent?.value : 'rgba(5, 150, 105, 1)'
+   const themeColor = theme?.accent?.value
+      ? theme?.accent?.value
+      : 'rgba(5, 150, 105, 1)'
    /*TODO: Somer other button type could be added */
    setThemeVariable('--hern-accent', themeColor)
    const buttonClasses = classNames('hern__btn', {
       'hern__btn--disabled': props.disabled,
+      'hern__btn--outline--disabled':
+         props.disabled && props.variant === 'outline',
       'hern__btn--warn': !props.disabled && props.variant === 'warn',
       'hern__btn--danger': !props.disabled && props.variant === 'danger',
       'hern__btn--dull': !props.disabled && props.variant === 'dull',
       'hern__btn--outline': !props.disabled && props.variant === 'outline',
+      'hern__btn--ghost': !props.disabled && props.variant === 'ghost',
    })
    return (
       <button
          style={{ ...style }}
          className={`${buttonClasses} ${className ? className : ''}`}
          {...props}
+         loading
       >
-         {children}
+         {loading ? <Spinner /> : <>{children}</>}
       </button>
    )
 }
+const Spinner = () => <FaSpinner className="hern-btn__spinner" />

@@ -476,16 +476,16 @@ export const PaymentProvider = ({ children }) => {
 
    // useEffect which checks the payment company and payment related status and does required actions
    useEffect(() => {
-      console.log(
-         'useEffect=>',
-         !_isEmpty(cartPayment),
-         !_isEmpty(cartPayment?.transactionRemark),
-         _has(
-            cartPayment,
-            'availablePaymentOption.supportedPaymentOption.supportedPaymentCompany.label'
-         ),
-         !isCartPaymentLoading
-      )
+      // console.log(
+      //    'useEffect=>',
+      //    !_isEmpty(cartPayment),
+      //    !_isEmpty(cartPayment?.transactionRemark),
+      //    _has(
+      //       cartPayment,
+      //       'availablePaymentOption.supportedPaymentOption.supportedPaymentCompany.label'
+      //    ),
+      //    !isCartPaymentLoading
+      // )
 
       if (
          isPaymentInitiated &&
@@ -584,6 +584,8 @@ export const PaymentProvider = ({ children }) => {
                PaymentOptions={cartState.kioskPaymentOptions}
                initializePrinting={initializePrinting}
                resetPaymentProviderStates={resetPaymentProviderStates}
+               setIsProcessingPayment={setIsProcessingPayment}
+               setIsPaymentInitiated={setIsPaymentInitiated}
             />
          )}
          {state.printDetails.isPrintInitiated && (

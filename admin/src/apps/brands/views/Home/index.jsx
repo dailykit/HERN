@@ -2,7 +2,7 @@ import React from 'react'
 import { DashboardTile } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 
-import { BRANDS } from '../../graphql'
+import { BRANDS, LOCATIONS } from '../../graphql'
 import { StyledCardList, StyledHome } from './styled'
 import { useTabs } from '../../../../shared/providers'
 import { Banner } from '../../../../shared/components'
@@ -15,6 +15,10 @@ export const Home = () => {
       data: { brandsAggregate = {} } = {},
    } = useSubscription(BRANDS.AGGREGATE)
 
+   const {
+      loading: loadingLocations,
+      data: { brands_location_aggregate = {} } = {}
+   } = useSubscription(LOCATIONS.AGGREGATE)
    return (
       <StyledHome>
          <Banner id="brands-app-home-top" />
@@ -32,9 +36,9 @@ export const Home = () => {
             <DashboardTile
                title="Locations"
                conf="All available"
-               // count={
-               //    loadingBrands ? '...' : brandsAggregate?.aggregate?.count || 0
-               // }
+               count={
+                  loadingLocations ? '...' : brands_location_aggregate?.aggregate?.count || 0
+               }
                onClick={() => addTab('Locations', '/brands/locations')}
                tileSvg={<BrandLocationsSvg />}
             />

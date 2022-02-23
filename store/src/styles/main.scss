@@ -33,6 +33,7 @@
 @use './components/refineLocation.scss';
 @use './components/userAddressList.scss';
 @use './components/googleSuggestionsList.scss';
+@use './components/modifierOptionCard.scss';
 
 @use './sections/register';
 @use './sections/our-plans';
@@ -74,4 +75,5 @@
 @use './sections/privacy-policy.scss';
 @use './components/order_history_Card.scss';
 @use './components/cart_billing_details.scss';
+@use './components/cart_card.scss';
 @use './sections/testimonials.scss';
