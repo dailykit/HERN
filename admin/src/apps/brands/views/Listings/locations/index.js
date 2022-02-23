@@ -22,7 +22,7 @@ import React, { useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { DeleteIcon, PlusIcon } from '../../../../../shared/assets/icons'
 import { Banner, InlineLoader } from '../../../../../shared/components'
-import { get_env, logger } from '../../../../../shared/utils'
+import { get_env, logger, useScript } from '../../../../../shared/utils'
 import { LOCATIONS } from '../../../graphql'
 import { StyledHeader, StyledWrapper } from '../styled'
 import tableOptions from '../../../tableOption'
@@ -59,7 +59,7 @@ export const Locations = () => {
 
    // subscriptions
    const {
-      error,
+      error: listError,
       loading: listLoading,
       data,
    } = useSubscription(LOCATIONS.LIST, {
@@ -83,6 +83,7 @@ export const Locations = () => {
       },
    })
    console.log('locations of', locations)
+
    //mutations
    const [deleteLocation] = useMutation(LOCATIONS.DELETE, {
       onCompleted: () => {
@@ -248,6 +249,7 @@ export const Locations = () => {
    const clearHeaderFilter = () => {
       tableRef.current.table.clearHeaderFilter()
    }
+
    const downloadCsvData = () => {
       tableRef.current.table.download('csv', 'locations_table.csv')
    }
@@ -266,10 +268,15 @@ export const Locations = () => {
       localStorage.removeItem('tabulator-location_table-filter')
       localStorage.removeItem('tabulator-location_table-group')
    }
-   if (error) {
+   const [loaded, error] = useScript(
+      `https://maps.googleapis.com/maps/api/js?key=${get_env(
+         'REACT_APP_MAPS_API_KEY'
+      )}&libraries=places`
+   )
+   if (listError) {
       toast.error('Something went wrong!')
-      console.log('error', error)
-      logger(error)
+      console.log('error', listError)
+      logger(listError)
    }
    if (isLoading) return <InlineLoader />
    return (
@@ -572,7 +579,7 @@ const LocationOnMap = ({ cell, openTunnel, setSelectedRowData }) => {
 
 const LocationsOnMap = ({ locations }) => {
    const [locationDetails, setLocationDetails] = React.useState([...locations])
-   // console.log('details', locationDetails)
+   console.log('details', locationDetails)
 
    const defaultProps = {
       center: {
@@ -586,48 +593,46 @@ const LocationsOnMap = ({ locations }) => {
       const rowData = location
 
       return (
-         <>
-            <Avatar.Group
-               maxCount={
-                  rowData.brand_locations.length > 4
-                     ? 4
-                     : rowData.brand_locations.length
-               }
-               maxStyle={{
-                  color: '#f56a00',
-                  backgroundColor: '#fde3cf',
-               }}
-            >
-               {rowData.brand_locations.map(eachBrand => (
-                  <Tooltip
-                     title={eachBrand.brand.title}
-                     placement="top"
-                     key={eachBrand.brandId}
-                  >
-                     {eachBrand.brand.brand_brandSettings.length > 0 ? (
-                        <Avatar
-                           src={
-                              eachBrand.brand.brand_brandSettings[0]?.value
-                                 .brandLogo.value
-                                 ? eachBrand.brand.brand_brandSettings[0]?.value
-                                      .brandLogo.value
-                                 : eachBrand.brand.brand_brandSettings[0]?.value
-                                      .brandLogo.default.url
-                           }
-                        />
-                     ) : (
-                        <Avatar
-                           style={{
-                              backgroundColor: '#87d068',
-                           }}
-                        >
-                           {eachBrand.brand.title.charAt(0).toUpperCase()}
-                        </Avatar>
-                     )}
-                  </Tooltip>
-               ))}
-            </Avatar.Group>
-         </>
+         <Avatar.Group
+            maxCount={
+               rowData.brand_locations.length > 4
+                  ? 4
+                  : rowData.brand_locations.length
+            }
+            maxStyle={{
+               color: '#f56a00',
+               backgroundColor: '#fde3cf',
+            }}
+         >
+            {rowData.brand_locations.map(eachBrand => (
+               <Tooltip
+                  title={eachBrand.brand.title}
+                  placement="top"
+                  key={eachBrand.brandId}
+               >
+                  {eachBrand.brand.brand_brandSettings.length > 0 ? (
+                     <Avatar
+                        src={
+                           eachBrand.brand.brand_brandSettings[0]?.value
+                              .brandLogo.value
+                              ? eachBrand.brand.brand_brandSettings[0]?.value
+                                   .brandLogo.value
+                              : eachBrand.brand.brand_brandSettings[0]?.value
+                                   .brandLogo.default.url
+                        }
+                     />
+                  ) : (
+                     <Avatar
+                        style={{
+                           backgroundColor: '#87d068',
+                        }}
+                     >
+                        {eachBrand.brand.title.charAt(0).toUpperCase()}
+                     </Avatar>
+                  )}
+               </Tooltip>
+            ))}
+         </Avatar.Group>
       )
    }
    const InfoWindow = props => {
@@ -671,14 +676,14 @@ const LocationsOnMap = ({ locations }) => {
       const index = locationDetails.findIndex(
          e => e.id === JSON.parse(location.id)
       )
-      console.log('id', location.id)
-      const loca = [...locationDetails]
+      // console.log('id', location.id)
+      const locationDetail = [...locationDetails]
 
-      loca[index] = {
-         ...loca[index],
-         show: !loca[index].show,
+      locationDetail[index] = {
+         ...locationDetail[index],
+         show: !locationDetail[index].show,
       }
-      setLocationDetails([...loca])
+      setLocationDetails([...locationDetail])
    }
 
    const UserLocationMarker = ({ show, location }) => {
@@ -715,44 +720,39 @@ const LocationsOnMap = ({ locations }) => {
    const onChildClickCallback = key => {
       const index = locationDetails.findIndex(e => e.id === JSON.parse(key))
       console.log('onChildClickCallback', locationDetails, key, index)
-      const loca = [...locationDetails]
+      const locationDetail = [...locationDetails]
 
-      loca[index] = {
-         ...loca[index],
-         show: !loca[index].show,
+      locationDetail[index] = {
+         ...locationDetail[index],
+         show: !locationDetail[index].show,
       }
-      setLocationDetails([...loca])
+      setLocationDetails([...locationDetail])
    }
 
    return (
-      <>
-         <div
-            style={{
-               height: '450px',
-               width: '100%',
-               position: 'relative',
-            }}
-         >
-            <GoogleMapReact
-               bootstrapURLKeys={{
-                  key: get_env('REACT_APP_MAPS_API_KEY'),
-               }}
-               defaultCenter={defaultProps.center}
-               defaultZoom={defaultProps.zoom}
-               onChildClick={onChildClickCallback}
-               options={{ gestureHandling: 'greedy' }}
-            >
-               {locationDetails.map(location => (
-                  <UserLocationMarker
-                     key={location.id}
-                     lat={Number(location.lat)}
-                     lng={Number(location.lng)}
-                     show={location.show}
-                     location={location}
-                  />
-               ))}
-            </GoogleMapReact>
-         </div>
-      </>
+      <GoogleMapReact
+         bootstrapURLKeys={{
+            key: get_env('REACT_APP_MAPS_API_KEY'),
+         }}
+         defaultCenter={defaultProps.center}
+         defaultZoom={defaultProps.zoom}
+         onChildClick={onChildClickCallback}
+         options={{ gestureHandling: 'greedy' }}
+         style={{
+            height: '450px',
+            width: '100%',
+            position: 'relative',
+         }}
+      >
+         {locationDetails.map(location => (
+            <UserLocationMarker
+               key={location.id}
+               lat={Number(location.lat)}
+               lng={Number(location.lng)}
+               show={location.show}
+               location={location}
+            />
+         ))}
+      </GoogleMapReact>
    )
 }
