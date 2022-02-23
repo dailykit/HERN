@@ -381,18 +381,10 @@ export const ModifierPopup = props => {
       return (
          <div className="hern-product-options__custom-details">
             <div>
-               <div
-                  className="hern-product-options__custom-details__product-title"
-                  data-translation="true"
-                  data-original-value={productData.name}
-               >
+               <div className="hern-product-options__custom-details__product-title">
                   {productData.name}
                </div>
-               <div
-                  className="hern-product-options__custom-details__product-desc"
-                  data-translation="true"
-                  data-original-value={productData.description}
-               >
+               <div className="hern-product-options__custom-details__product-desc">
                   {productData.description}
                </div>
                <div className="hern-product-options__custom-details__product-tags">
@@ -447,8 +439,6 @@ export const ModifierPopup = props => {
                      <div
                         className="hern-product-card__name"
                         style={{ fontSize: '20px', fontWeight: '600px' }}
-                        data-translation="true"
-                        data-original-value={productData.name}
                      >
                         {productData?.name}
                      </div>
@@ -546,10 +536,7 @@ export const ModifierPopup = props => {
                                     }
                                  }}
                               >
-                                 <li
-                                    data-translation="true"
-                                    data-original-value={eachOption.label}
-                                 >
+                                 <li>
                                     {eachOption.label}
 
                                     {' (+ '}
@@ -559,10 +546,7 @@ export const ModifierPopup = props => {
                                     {')'}
                                  </li>
                                  {recipeButton.show && (
-                                    <div
-                                       data-translation="true"
-                                       data-original-value={recipeButton.label}
-                                    >
+                                    <div>
                                        <Link
                                           href={getRoute(
                                              '/recipes/' + eachOption.id
@@ -656,106 +640,19 @@ export const ModifierPopup = props => {
                            return (
                               <ModifierCategory
                                  key={eachCategory.id}
-                              >
-                                 <span
-                                    className="hern-product-modifier-pop-up-modifier-category__name"
-                                    data-translation="true"
-                                    data-original-value={eachCategory.name}
-                                 >
-                                    {eachCategory.name}
-                                 </span>
-                                 <br />
-                                 <span
-                                    style={{
-                                       fontStyle: 'italic',
-                                       fontSize: '11px',
-                                    }}
-                                 >
-                                    {renderConditionText(eachCategory)}
-                                 </span>
-
-                                 {errorCategories.includes(eachCategory.id) && (
-                                    <>
-                                       <br />
-                                       <span
-                                          style={{
-                                             fontStyle: 'italic',
-                                             fontSize: '11px',
-                                             color: 'red',
-                                          }}
-                                       >
-                                          You have to choose this category.
-                                       </span>
-                                    </>
-                                 )}
-                                 <br />
-                                 <div className="hern-product-modifier-pop-up-modifier-category__options">
-                                    {eachCategory.options.map(eachOption => {
-                                       const foo = () => {
-                                          const foo1 = () => {
-                                             const isOptionSelected =
-                                                selectedOptions[
-                                                   eachCategory.type
-                                                ].find(
-                                                   x =>
-                                                      x.modifierCategoryID ===
-                                                         eachCategory.id &&
-                                                      x.modifierCategoryOptionsID ===
-                                                         eachOption.id
-                                                )
-                                             return eachCategory.type ===
-                                                'single' ? (
-                                                Boolean(isOptionSelected) ? (
-                                                   <RadioIcon showTick={true} />
-                                                ) : (
-                                                   <RadioIcon />
-                                                )
-                                             ) : Boolean(isOptionSelected) ? (
-                                                <CheckBoxIcon showTick={true} />
-                                             ) : (
-                                                <CheckBoxIcon />
-                                             )
-                                          }
-                                          return foo1
-                                       }
-                                       return (
-                                          <div
-                                             className="hern-product-modifier-pop-up-add-on-list"
-                                             key={eachOption.id}
-                                          >
-                                             <ProductCard
-                                                data={eachOption}
-                                                showImage={false}
-                                                showCustomText={false}
-                                                contentAreaCustomStyle={{
-                                                   justifyContent: 'flex-start',
-                                                }}
-                                                showImageIcon={
-                                                   eachOption.image &&
-                                                   showModifierImage
-                                                      ? ShowImageIcon
-                                                      : false
-                                                }
-                                                onShowImageIconClick={() => {
-                                                   setModifierImage({
-                                                      ...modifierImage,
-                                                      src: eachOption.image,
-                                                      showImage: true,
-                                                   })
-                                                }}
-                                                additionalIcon={foo()}
-                                                onAdditionalIconClick={() => {
-                                                   onCheckClick(
-                                                      eachOption,
-                                                      eachCategory
-                                                   )
-                                                }}
-                                             />
-                                          </div>
-                                       )
-                                    })}
-                                 </div>
-                              </div>
+                                 eachCategory={eachCategory}
+                                 selectedOptions={selectedModifierOptions}
+                                 setSelectedOptions={setSelectedModifierOptions}
+                                 config={config}
+                                 errorCategories={errorCategories}
+                                 nestedSelectedModifierOptions={
+                                    nestedSelectedModifierOptions
+                                 }
+                                 nestedSetSelectedModifierOptions={
+                                    nestedSetSelectedModifierOptions
+                                 }
+                                 nestedErrorCategories={nestedErrorCategories}
+                              />
                            )
                         })}
                      </div>
