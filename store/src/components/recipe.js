@@ -39,14 +39,17 @@ export const Recipe = ({ productOption, config }) => {
       config?.['information Visibility']?.recipe?.nutritionAndRecipeSameline
          ?.value ?? true
 
+   // if (!recipe) {
+   //    return (
+   //       <main className="hern-recipe__wrapper">
+   //          <HelperBar type="info">
+   //             <HelperBar.Title> No such recipe exists!</HelperBar.Title>
+   //          </HelperBar>
+   //       </main>
+   //    )
+   // }
    if (!recipe) {
-      return (
-         <main className="hern-recipe__wrapper">
-            <HelperBar type="info">
-               <HelperBar.Title> No such recipe exists!</HelperBar.Title>
-            </HelperBar>
-         </main>
-      )
+      return null
    }
    return (
       <div className="hern-recipe__wrapper">

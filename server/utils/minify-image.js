@@ -1,10 +1,19 @@
-const sharp = require('sharp')
-
 export const minifyImage = async (buffer, type) => {
-   console.log('compressing image')
+   let fileType
    // minifying buffer through imagemin
-   const miniBuffer = await sharp(buffer)
-      [type.ext]({ quality: 70, lossless: true })
-      .toBuffer()
-   return miniBuffer
+   if (type.ext === 'jpg') {
+      fileType = 'jpeg'
+   } else {
+      fileType = type.ext
+   }
+   try {
+      const miniBuffer = await sharp(buffer)
+         [fileType]({ quality: 70, lossless: true })
+         .toBuffer()
+
+      return miniBuffer
+   } catch (error) {
+      console.log(error)
+      return error
+   }
 }

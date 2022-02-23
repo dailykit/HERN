@@ -80,6 +80,10 @@ export const Product = ({ config }) => {
                   customProductDetails={true}
                   modifierWithoutPopup={true}
                   showProductCard={false}
+                  stepView={true}
+                  modifierPopupConfig={{
+                     counterButtonPosition: 'BOTTOM',
+                  }}
                />
             </div>
          </div>

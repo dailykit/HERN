@@ -4,21 +4,17 @@ import GoogleMapReact from 'google-map-react'
 import React from 'react'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
 import { toast } from 'react-toastify'
-import { SearchIcon } from '../../../../../../../shared/assets/icons'
+import {
+   LocationMarkerIcon,
+   SearchIcon,
+} from '../../../../../../../shared/assets/icons'
 import { get_env, logger, useScript } from '../../../../../../../shared/utils'
-import { LocationMarkerIcon } from '../../../../../assets/icons'
 import { LOCATIONS } from '../../../../../graphql'
 import validator from '../../../../validator'
 import { StyledContainer } from './styled'
 
-const EditLocationDetails = ({
-   state,
-   locationId,
-   close,
-   closeTunnel,
-   setIsLoading,
-}) => {
-   // console.log('state in edit', state)
+const EditLocationDetails = ({ state, locationId, close, closeTunnel }) => {
+   // console.log('state', state)
 
    const [location, setLocation] = React.useState({
       lat: {
@@ -106,7 +102,7 @@ const EditLocationDetails = ({
          logger(error)
       },
    })
-   // console.log('location ', location)
+   console.log('location', location)
 
    // map declaration
    const [address, setAddress] = React.useState({
@@ -193,31 +189,23 @@ const EditLocationDetails = ({
          />
       )
    }
-   // const [loaded, error] = useScript(
-   //    `https://maps.googleapis.com/maps/api/js?key=${get_env(
-   //       'REACT_APP_MAPS_API_KEY'
-   //    )}&libraries=places`
-   // )
-   let changedCoordinates = React.useMemo(
+   const [loaded, error] = useScript(
+      `https://maps.googleapis.com/maps/api/js?key=${get_env(
+         'REACT_APP_MAPS_API_KEY'
+      )}&libraries=places`
+   )
+   const defaultProps = React.useMemo(
       () => ({
          center: {
             lat: parseFloat(location.lat.value),
             lng: parseFloat(location.lng.value),
          },
-         zoom: 14,
+         zoom: 16,
       }),
       [location]
    )
-   const defaultProps = {
-      center: {
-         lat: 49.53184629449487,
-         lng: 15.138331906395052,
-      },
-      zoom: 14,
-   }
 
    const onChangeMap = ({ center, zoom, bounds, marginBounds }) => {
-      // console.log('center', center)
       fetch(
          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${
             center.lat
@@ -305,8 +293,8 @@ const EditLocationDetails = ({
             !location.showGooglePlacesAutocompleteInside,
       })
    }
-   const Save = async () => {
-      await updateLocation({
+   const Save = () => {
+      updateLocation({
          variables: {
             id: state.id,
             _set: {
@@ -328,14 +316,8 @@ const EditLocationDetails = ({
             },
          },
       })
-      // {
-      //    closeTunnel ? closeTunnel(3) : (close(1), setIsLoading(true))
-      // }
-      if (closeTunnel) {
-         closeTunnel(3)
-      } else {
-         close(1)
-         setIsLoading(true)
+      {
+         closeTunnel ? closeTunnel(3) : close(1)
       }
    }
    return (
@@ -347,11 +329,8 @@ const EditLocationDetails = ({
                action: Save,
             }}
             close={() => {
-               if (closeTunnel) {
-                  closeTunnel(3)
-               } else {
-                  close(1)
-                  setIsLoading(true)
+               {
+                  closeTunnel ? closeTunnel(3) : close(1)
                }
             }}
             nextAction="Done"
@@ -371,8 +350,8 @@ const EditLocationDetails = ({
                      key: get_env('REACT_APP_MAPS_API_KEY'),
                   }}
                   defaultCenter={defaultProps.center}
+                  center={defaultProps.center}
                   defaultZoom={defaultProps.zoom}
-                  center={changedCoordinates.center}
                   zoom={defaultProps.zoom}
                   onClick={onClickOnMap}
                   onChange={onChangeMap}
@@ -380,49 +359,49 @@ const EditLocationDetails = ({
                ></GoogleMapReact>
             </div>
 
-            {/* {loaded && !error && ( */}
-            <div
-               style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: '1rem',
-                  padding: '0.5em 0',
-               }}
-            >
-               {location.showGooglePlacesAutocompleteInside ? (
-                  <div style={{ width: '100%' }}>
-                     <GooglePlacesAutocomplete
-                        selectProps={{
-                           placeholder: 'Enter Your Store Location',
-                           onChange: input => formatAddress(input),
+            {loaded && !error && (
+               <div
+                  style={{
+                     display: 'flex',
+                     alignItems: 'center',
+                     justifyContent: 'space-between',
+                     gap: '1rem',
+                     padding: '0.5em 0',
+                  }}
+               >
+                  {location.showGooglePlacesAutocompleteInside ? (
+                     <div style={{ width: '100%' }}>
+                        <GooglePlacesAutocomplete
+                           selectProps={{
+                              placeholder: 'Enter Your Store Location',
+                              onChange: input => formatAddress(input),
+                           }}
+                        />
+                     </div>
+                  ) : (
+                     <AddressInfo address={address} />
+                  )}
+                  {location.showGooglePlacesAutocompleteInside ? (
+                     <div
+                        onClick={handleShowAutoGoogleSelect}
+                        style={{
+                           display: 'flex',
+                           alignItems: 'center',
                         }}
-                     />
-                  </div>
-               ) : (
-                  <AddressInfo address={address} />
-               )}
-               {location.showGooglePlacesAutocompleteInside ? (
-                  <div
-                     onClick={handleShowAutoGoogleSelect}
-                     style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                     }}
-                     title="Click to exit from search box"
-                  >
-                     <CloseIconv2 color="#404040CC" stroke="currentColor" />
-                  </div>
-               ) : (
-                  <div
-                     onClick={handleShowAutoGoogleSelect}
-                     title="Click to select google search box"
-                  >
-                     <SearchIcon />
-                  </div>
-               )}
-            </div>
-            {/* )} */}
+                        title="Click to exit from search box"
+                     >
+                        <CloseIconv2 color="#404040CC" stroke="currentColor" />
+                     </div>
+                  ) : (
+                     <div
+                        onClick={handleShowAutoGoogleSelect}
+                        title="Click to select google search box"
+                     >
+                        <SearchIcon />
+                     </div>
+                  )}
+               </div>
+            )}
             <LocationForm
                address={address}
                location={location}

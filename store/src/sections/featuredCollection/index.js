@@ -117,7 +117,7 @@ export const FeaturedCollection = ({ config }) => {
             locationId: locationId,
          },
       }),
-      [brand]
+      [brand, locationId]
    )
    const { loading: productsLoading, error: productsError } = useQuery(
       PRODUCTS,
@@ -135,7 +135,7 @@ export const FeaturedCollection = ({ config }) => {
             modifierCategoryOptionDiscountArgs: argsForByLocation,
             modifierCategoryOptionCartItemArgs: argsForByLocation,
          },
-         fetchPolicy: 'network-only',
+         // fetchPolicy: 'network-only',
          onCompleted: data => {
             if (data && data.products.length) {
                const updatedMenu = categories.map(category => {
@@ -344,6 +344,7 @@ export const FeaturedCollection = ({ config }) => {
                                                       ?.modifier
                                                       ?.showModifierImage
                                                       ?.value ?? true,
+                                                counterButtonPosition: 'BOTTOM',
                                              }}
                                              customAreaFlex={false}
                                              modifierWithoutPopup={false}
@@ -372,10 +373,7 @@ export const FeaturedCollection = ({ config }) => {
                )}
             {(config?.informationVisibility?.cart?.bottomCartBar?.value ??
                true) &&
-               cartState.cart &&
-               cartState.cart?.products?.aggregate?.count !== 0 && (
-                  <BottomCartBar />
-               )}
+               cartState.cart && <BottomCartBar />}
             {showCartOnRight && <CartBar />}
          </div>
       </>
