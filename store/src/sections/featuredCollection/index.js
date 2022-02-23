@@ -117,7 +117,7 @@ export const FeaturedCollection = ({ config }) => {
             locationId: locationId,
          },
       }),
-      [brand]
+      [brand, locationId]
    )
    const { loading: productsLoading, error: productsError } = useQuery(
       PRODUCTS,
@@ -135,7 +135,7 @@ export const FeaturedCollection = ({ config }) => {
             modifierCategoryOptionDiscountArgs: argsForByLocation,
             modifierCategoryOptionCartItemArgs: argsForByLocation,
          },
-         fetchPolicy: 'network-only',
+         // fetchPolicy: 'network-only',
          onCompleted: data => {
             if (data && data.products.length) {
                const updatedMenu = categories.map(category => {
