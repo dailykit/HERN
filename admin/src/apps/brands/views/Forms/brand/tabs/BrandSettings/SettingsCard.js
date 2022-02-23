@@ -18,7 +18,6 @@ export const SettingsCard = ({ setting, title, isChangeSaved, setIsSavedChange, 
 
     React.useEffect(() => {
         if (inView && !componentIsOnView.includes(title)) {
-
             setIsComponentIsOnView([...componentIsOnView, title])
         }
         else if (!inView && componentIsOnView.includes(title)) {
@@ -33,7 +32,7 @@ export const SettingsCard = ({ setting, title, isChangeSaved, setIsSavedChange, 
 
     const [updateSetting] = useMutation(BRANDS.UPDATE_BRAND_SETTING, {
         onCompleted: () => {
-            toast.success('Successfully updated!')
+            toast.success('Successfully updated brandSetting')
         },
         onError: error => {
             toast.error('Something went wrong!!')
@@ -72,7 +71,8 @@ export const SettingsCard = ({ setting, title, isChangeSaved, setIsSavedChange, 
     const [getBrandSettingId, { loading, brands_brand_brandSetting }] =
         useLazyQuery(BRAND_ID, {
             onCompleted: ({ brands_brand_brandSetting }) => {
-                setBrandId(brands_brand_brandSetting[0].brandSettingId)
+                console.log(brands_brand_brandSetting, "inside onComplted")
+                setBrandId(brands_brand_brandSetting[0]?.brandSettingId)
             },
             onError: error => {
                 toast.error('Something went wrong!')
@@ -82,7 +82,7 @@ export const SettingsCard = ({ setting, title, isChangeSaved, setIsSavedChange, 
 
     const saveInfo = () => {
         //saving changes in alert box(save changes button)
-        if (saveAllSettings !== {}) {
+        if (saveAllSettings !== {} && isChangeSaved == false && setting_brand_Id) {
             updateSetting({
                 variables: {
                     object: {
@@ -96,6 +96,13 @@ export const SettingsCard = ({ setting, title, isChangeSaved, setIsSavedChange, 
         }
         else {
             //normal updating setting(save button in each config)
+            console.log({
+                "object": {
+                    "brandId": params?.id,
+                    "brandSettingId": setting?.brandSetting?.id,
+                    "value": config,
+                }
+            })
             updateSetting({
                 variables: {
                     object: {
@@ -122,7 +129,6 @@ export const SettingsCard = ({ setting, title, isChangeSaved, setIsSavedChange, 
                 //all for alert box 
                 saveAllSettings={saveAllSettings}
                 setSaveAllSettings={setSaveAllSettings}
-                updateAllSettings={saveInfo}
                 alertShow={alertShow}
             />
         </div>
