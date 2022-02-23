@@ -193,14 +193,12 @@ const CreateBrandLocation = ({ closeTunnel }) => {
          <Banner id="brand-app-location-create-location-tunnel-top" />
          <StyledContainer>
             {location.map((eachLocation, i) => (
-               <>
-                  <LocationSelector
-                     i={i}
-                     eachLocation={eachLocation}
-                     location={location}
-                     setLocation={setLocation}
-                  />
-               </>
+               <LocationSelector
+                  i={i}
+                  eachLocation={eachLocation}
+                  location={location}
+                  setLocation={setLocation}
+               />
             ))}
             <ButtonGroup>
                <ComboButton
@@ -224,11 +222,11 @@ export default CreateBrandLocation
 const LocationSelector = props => {
    const { i, eachLocation, location, setLocation } = props
    const [address, setAddress] = React.useState(null)
-   const [loaded, error] = useScript(
-      `https://maps.googleapis.com/maps/api/js?key=${get_env(
-         'REACT_APP_MAPS_API_KEY'
-      )}&libraries=places`
-   )
+   // const [loaded, error] = useScript(
+   //    `https://maps.googleapis.com/maps/api/js?key=${get_env(
+   //       'REACT_APP_MAPS_API_KEY'
+   //    )}&libraries=places`
+   // )
 
    const formatAddress = async input => {
       // console.log('inputfn', input)
@@ -268,29 +266,27 @@ const LocationSelector = props => {
    console.log('address', location)
    return (
       <>
-         {loaded && !error && (
-            <>
-               {eachLocation.showGooglePlacesAutocompleteOutside && (
-                  <GooglePlacesAutocomplete
-                     selectProps={{
-                        placeholder: 'Enter Your Store Location',
-                        onChange: input => formatAddress(input),
-                     }}
-                  />
-               )}
-               {location[i].address && (
-                  <>
-                     <RefineLocationPopup
-                        geoCoordinates={address}
-                        i={i}
-                        eachLocation={eachLocation}
-                        location={location}
-                        setLocation={setLocation}
-                     />
-                  </>
-               )}
-            </>
-         )}
+         {/* {loaded && !error && ( */}
+         <>
+            {eachLocation.showGooglePlacesAutocompleteOutside && (
+               <GooglePlacesAutocomplete
+                  selectProps={{
+                     placeholder: 'Enter Your Store Location',
+                     onChange: input => formatAddress(input),
+                  }}
+               />
+            )}
+            {location[i].address && (
+               <RefineLocationPopup
+                  geoCoordinates={address}
+                  i={i}
+                  eachLocation={eachLocation}
+                  location={location}
+                  setLocation={setLocation}
+               />
+            )}
+         </>
+         {/* )} */}
       </>
    )
 }
@@ -504,79 +500,77 @@ const BrandLocationMap = props => {
    }
 
    return (
-      <>
-         <div>
-            <div
-               style={{
-                  height: '300px',
-                  width: '100%',
-                  position: 'relative',
+      <div>
+         <div
+            style={{
+               height: '300px',
+               width: '100%',
+               position: 'relative',
+            }}
+         >
+            <UserLocationMarker />
+            <GoogleMapReact
+               bootstrapURLKeys={{
+                  key: get_env('REACT_APP_MAPS_API_KEY'),
                }}
-            >
-               <UserLocationMarker />
-               <GoogleMapReact
-                  bootstrapURLKeys={{
-                     key: get_env('REACT_APP_MAPS_API_KEY'),
-                  }}
-                  defaultCenter={defaultProps.center}
-                  center={defaultProps.center}
-                  defaultZoom={defaultProps.zoom}
-                  onClick={onClickOnMap}
-                  onChange={onChangeMap}
-                  options={{ gestureHandling: 'greedy' }}
-               ></GoogleMapReact>
-            </div>
-
-            <div
-               style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: '1rem',
-                  padding: '0.5em 0',
-               }}
-            >
-               {eachLocation.showGooglePlacesAutocompleteInside ? (
-                  <div style={{ width: '100%' }}>
-                     <GooglePlacesAutocomplete
-                        selectProps={{
-                           placeholder: 'Enter Your Store Location',
-                           onChange: input => formatAddress(input),
-                        }}
-                     />
-                  </div>
-               ) : (
-                  <AddressInfo address={address} />
-               )}
-               {eachLocation.showGooglePlacesAutocompleteInside ? (
-                  <div
-                     onClick={handleShowAutoGoogleSelect}
-                     style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                     }}
-                     title="Click to exit from search box"
-                  >
-                     <CloseIconv2 color="#404040CC" stroke="currentColor" />
-                  </div>
-               ) : (
-                  <div
-                     onClick={handleShowAutoGoogleSelect}
-                     title="Click to select google search box"
-                  >
-                     <SearchIcon />
-                  </div>
-               )}
-            </div>
-            <LocationForm
-               address={address}
-               i={i}
-               eachLocation={eachLocation}
-               location={location}
-               setLocation={setLocation}
-            />
+               defaultCenter={defaultProps.center}
+               center={defaultProps.center}
+               defaultZoom={defaultProps.zoom}
+               onClick={onClickOnMap}
+               onChange={onChangeMap}
+               options={{ gestureHandling: 'greedy' }}
+            ></GoogleMapReact>
          </div>
-      </>
+
+         <div
+            style={{
+               display: 'flex',
+               alignItems: 'center',
+               justifyContent: 'space-between',
+               gap: '1rem',
+               padding: '0.5em 0',
+            }}
+         >
+            {eachLocation.showGooglePlacesAutocompleteInside ? (
+               <div style={{ width: '100%' }}>
+                  <GooglePlacesAutocomplete
+                     selectProps={{
+                        placeholder: 'Enter Your Store Location',
+                        onChange: input => formatAddress(input),
+                     }}
+                  />
+               </div>
+            ) : (
+               <AddressInfo address={address} />
+            )}
+            {eachLocation.showGooglePlacesAutocompleteInside ? (
+               <div
+                  onClick={handleShowAutoGoogleSelect}
+                  style={{
+                     display: 'flex',
+                     alignItems: 'center',
+                  }}
+                  title="Click to exit from search box"
+               >
+                  <CloseIconv2 color="#404040CC" stroke="currentColor" />
+               </div>
+            ) : (
+               <div
+                  onClick={handleShowAutoGoogleSelect}
+                  title="Click to select google search box"
+               >
+                  <SearchIcon />
+               </div>
+            )}
+         </div>
+         <LocationForm
+            address={address}
+            i={i}
+            eachLocation={eachLocation}
+            location={location}
+            setLocation={setLocation}
+         />
+      </div>
    )
 }
 const LocationForm = props => {
@@ -677,157 +671,160 @@ const LocationForm = props => {
    }
    console.log('location', location, address)
    return (
-      <>
-         <Flex
-            key={i}
-            style={{
-               border: '2px solid #ffffff',
-               boxShadow: '0px 1px 8px rgb(0 0 0 / 10%)',
-               padding: '16px',
-            }}
-         >
-            <Form.Group>
-               <Flex
-                  container
+      <Flex
+         key={i}
+         style={{
+            border: '2px solid #ffffff',
+            boxShadow: '0px 1px 8px rgb(0 0 0 / 10%)',
+            padding: '16px',
+         }}
+      >
+         <Form.Group>
+            <Flex
+               container
+               style={{
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+               }}
+            >
+               <Form.Label
+                  htmlFor={`locationLabel-${i}`}
+                  title={`Location ${i + 1}`}
+               >
+                  Label
+               </Form.Label>
+               <IconButton
+                  type="ghost"
+                  title="Delete this Location"
+                  onClick={() => removeField(i)}
                   style={{
-                     alignItems: 'center',
-                     justifyContent: 'space-between',
+                     width: '30px',
+                     height: '20px',
+                     marginBottom: '4px',
                   }}
                >
-                  <Form.Label
-                     htmlFor={`locationLabel-${i}`}
-                     title={`Location ${i + 1}`}
-                  >
-                     Label
-                  </Form.Label>
-                  <IconButton
-                     type="ghost"
-                     title="Delete this Location"
-                     onClick={() => removeField(i)}
-                     style={{
-                        width: '30px',
-                        height: '20px',
-                        marginBottom: '4px',
-                     }}
-                  >
-                     <DeleteIcon color="#FF5A52" />
-                  </IconButton>
-               </Flex>
-               <Form.Text
-                  id={`location-${i}`}
-                  name={`location-${i}`}
-                  value={eachLocation.label.value}
-                  placeholder="Enter Label"
-                  onChange={e => onChange('label', e.target.value, i)}
-                  onBlur={() => onBlur('label', i)}
-                  hasError={
-                     !eachLocation.label.meta.isValid &&
-                     eachLocation.label.meta.isTouched
-                  }
-               />
-               {eachLocation.label.meta.isTouched &&
+                  <DeleteIcon color="#FF5A52" />
+               </IconButton>
+            </Flex>
+            <Form.Text
+               id={`location-${i}`}
+               name={`location-${i}`}
+               value={eachLocation.label.value}
+               placeholder="Enter Label"
+               onChange={e => onChange('label', e.target.value, i)}
+               onBlur={() => onBlur('label', i)}
+               hasError={
                   !eachLocation.label.meta.isValid &&
-                  eachLocation.label.meta.errors.map((error, index) => (
-                     <Form.Error key={index}>{error}</Form.Error>
-                  ))}
-            </Form.Group>
-            <Spacer yAxis size="16px" />
-            <Form.Group>
-               <Form.Label
-                  htmlFor={`locationLine1-${i}`}
-                  title={`Location ${i + 1}`}
-               >
-                  Address Line 1
-               </Form.Label>
-               <Form.Text
-                  id={`location-${i}`}
-                  name={`location-${i}`}
-                  value={eachLocation.line1.value}
-                  placeholder="Enter Address"
-                  onChange={e => onChange('line1', e.target.value, i)}
-                  onBlur={() => onBlur('line1', i)}
-                  hasError={
-                     !eachLocation.line1.meta.isValid &&
-                     eachLocation.line1.meta.isTouched
-                  }
-               />
-               {eachLocation.line1.meta.isTouched &&
-                  !eachLocation.line1.meta.isValid &&
-                  eachLocation.line1.meta.errors.map((error, index) => (
-                     <Form.Error key={index}>{error}</Form.Error>
-                  ))}
-            </Form.Group>
-            <Spacer yAxis size="16px" />
-            <Form.Group>
-               <Form.Label
-                  htmlFor={`locationLine2-${i}`}
-                  title={`Location ${i + 1}`}
-               >
-                  Address Line 2
-               </Form.Label>
-               <Form.Text
-                  id={`location-${i}`}
-                  name={`location-${i}`}
-                  value={eachLocation.line2.value}
-                  placeholder="Enter Address"
-                  onChange={e => onChange('line2', e.target.value, i)}
-                  onBlur={() => onBlur('line2', i)}
-                  hasError={
-                     !eachLocation.line2.meta.isValid &&
-                     eachLocation.line2.meta.isTouched
-                  }
-               />
-               {eachLocation.line2.meta.isTouched &&
-                  !eachLocation.line2.meta.isValid &&
-                  eachLocation.line2.meta.errors.map((error, index) => (
-                     <Form.Error key={index}>{error}</Form.Error>
-                  ))}
-            </Form.Group>
-            <Spacer yAxis size="16px" />
-            <Form.Group>
-               <Form.Label
-                  htmlFor={`locationCity-${i}`}
-                  title={`Location ${i + 1}`}
-               >
-                  City
-               </Form.Label>
-               <Form.Text
-                  id={`location-${i}`}
-                  name={`location-${i}`}
-                  value={eachLocation.city.value}
-               />
-            </Form.Group>
-            <Spacer yAxis size="16px" />
-            <Form.Group>
-               <Form.Label
-                  htmlFor={`locationState-${i}`}
-                  title={`Location ${i + 1}`}
-               >
-                  State
-               </Form.Label>
-               <Form.Text
-                  id={`location-${i}`}
-                  name={`location-${i}`}
-                  value={eachLocation.state.value}
-               />
-            </Form.Group>
-            <Spacer yAxis size="16px" />
-            <Form.Group>
-               <Form.Label
-                  htmlFor={`locationCountry-${i}`}
-                  title={`Location ${i + 1}`}
-               >
-                  Country
-               </Form.Label>
-               <Form.Text
-                  id={`location-${i}`}
-                  name={`location-${i}`}
-                  value={eachLocation.country.value}
-               />
-            </Form.Group>
-         </Flex>
+                  eachLocation.label.meta.isTouched
+               }
+            />
+            {eachLocation.label.meta.isTouched &&
+               !eachLocation.label.meta.isValid &&
+               eachLocation.label.meta.errors.map((error, index) => (
+                  <Form.Error key={index}>{error}</Form.Error>
+               ))}
+         </Form.Group>
          <Spacer yAxis size="16px" />
-      </>
+         <Form.Group>
+            <Form.Label
+               htmlFor={`locationLine1-${i}`}
+               title={`Location ${i + 1}`}
+            >
+               Address Line 1
+            </Form.Label>
+            <Form.Text
+               id={`location-${i}`}
+               name={`location-${i}`}
+               value={eachLocation.line1.value}
+               placeholder="Enter Address"
+               onChange={e => onChange('line1', e.target.value, i)}
+               onBlur={() => onBlur('line1', i)}
+               hasError={
+                  !eachLocation.line1.meta.isValid &&
+                  eachLocation.line1.meta.isTouched
+               }
+            />
+            {eachLocation.line1.meta.isTouched &&
+               !eachLocation.line1.meta.isValid &&
+               eachLocation.line1.meta.errors.map((error, index) => (
+                  <Form.Error key={index}>{error}</Form.Error>
+               ))}
+         </Form.Group>
+         <Spacer yAxis size="16px" />
+         <Form.Group>
+            <Form.Label
+               htmlFor={`locationLine2-${i}`}
+               title={`Location ${i + 1}`}
+            >
+               Address Line 2
+            </Form.Label>
+            <Form.Text
+               id={`location-${i}`}
+               name={`location-${i}`}
+               value={eachLocation.line2.value}
+               placeholder="Enter Address"
+               onChange={e => onChange('line2', e.target.value, i)}
+               onBlur={() => onBlur('line2', i)}
+               hasError={
+                  !eachLocation.line2.meta.isValid &&
+                  eachLocation.line2.meta.isTouched
+               }
+            />
+            {eachLocation.line2.meta.isTouched &&
+               !eachLocation.line2.meta.isValid &&
+               eachLocation.line2.meta.errors.map((error, index) => (
+                  <Form.Error key={index}>{error}</Form.Error>
+               ))}
+         </Form.Group>
+         <Spacer yAxis size="16px" />
+         <Form.Group>
+            <Form.Label
+               htmlFor={`locationCity-${i}`}
+               title={`Location ${i + 1}`}
+            >
+               City
+            </Form.Label>
+            <Form.Text
+               id={`location-${i}`}
+               name={`location-${i}`}
+               value={eachLocation.city.value}
+               hasReadAccess={true}
+               hasWriteAccess={false}
+            />
+         </Form.Group>
+         <Spacer yAxis size="16px" />
+         <Form.Group>
+            <Form.Label
+               htmlFor={`locationState-${i}`}
+               title={`Location ${i + 1}`}
+            >
+               State
+            </Form.Label>
+            <Form.Text
+               id={`location-${i}`}
+               name={`location-${i}`}
+               value={eachLocation.state.value}
+               hasReadAccess={true}
+               hasWriteAccess={false}
+            />
+         </Form.Group>
+         <Spacer yAxis size="16px" />
+         <Form.Group>
+            <Form.Label
+               htmlFor={`locationCountry-${i}`}
+               title={`Location ${i + 1}`}
+            >
+               Country
+            </Form.Label>
+            <Form.Text
+               id={`location-${i}`}
+               name={`location-${i}`}
+               value={eachLocation.country.value}
+               hasReadAccess={true}
+               hasWriteAccess={false}
+            />
+         </Form.Group>
+      </Flex>
    )
 }
 const AddressInfo = props => {
