@@ -320,12 +320,8 @@ const AdditionalTags = ({ update }) => {
                                                     border: '2px solid #E4E4E4',
                                                     borderRadius: '4px',
                                                 }}
-                                                bordered={false}
-                                                value={tagContent}
                                                 defaultValue={tagContent}
-                                                onChange={e =>
-                                                    setTagContent(e.target.value)
-                                                }
+                                                onBlur={e => { setTagContent(e.target.value) }}
                                                 id="tagContent"
                                                 name="tagContent"
                                             />
