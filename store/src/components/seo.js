@@ -28,13 +28,6 @@ export const SEO = ({ seoSettings, richresult, children }) => {
             name="description"
          />
          {/* additionalTags if any */}
-<<<<<<< HEAD
-         {additionalTags?.length > 0 && (
-            additionalTags.map((obj) => {
-               return (<meta name={Object.keys(obj)[0]} content={Object.values(obj)[0]} />)
-            }))
-         }
-=======
          {additionalTags?.length > 0 &&
             additionalTags.map((obj, index) => {
                return (
@@ -45,7 +38,6 @@ export const SEO = ({ seoSettings, richresult, children }) => {
                   />
                )
             })}
->>>>>>> b8678e6108018ecc0ddd2bed4011e481f0b6705b
 
          <meta
             property="og:title"

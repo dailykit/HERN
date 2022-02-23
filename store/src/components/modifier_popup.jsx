@@ -656,7 +656,6 @@ export const ModifierPopup = props => {
                            return (
                               <ModifierCategory
                                  key={eachCategory.id}
-<<<<<<< HEAD
                               >
                                  <span
                                     className="hern-product-modifier-pop-up-modifier-category__name"
@@ -757,21 +756,6 @@ export const ModifierPopup = props => {
                                     })}
                                  </div>
                               </div>
-=======
-                                 eachCategory={eachCategory}
-                                 selectedOptions={selectedModifierOptions}
-                                 setSelectedOptions={setSelectedModifierOptions}
-                                 config={config}
-                                 errorCategories={errorCategories}
-                                 nestedSelectedModifierOptions={
-                                    nestedSelectedModifierOptions
-                                 }
-                                 nestedSetSelectedModifierOptions={
-                                    nestedSetSelectedModifierOptions
-                                 }
-                                 nestedErrorCategories={nestedErrorCategories}
-                              />
->>>>>>> b8678e6108018ecc0ddd2bed4011e481f0b6705b
                            )
                         })}
                      </div>
