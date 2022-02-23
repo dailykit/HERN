@@ -70,7 +70,7 @@ export const OnDemandOrder = ({ config }) => {
             locationId: locationId,
          },
       }),
-      [brand]
+      [brand, locationId]
    )
    const { loading: productsLoading, error: productsError } = useQuery(
       PRODUCTS,
@@ -88,7 +88,7 @@ export const OnDemandOrder = ({ config }) => {
             modifierCategoryOptionDiscountArgs: argsForByLocation,
             modifierCategoryOptionCartItemArgs: argsForByLocation,
          },
-         fetchPolicy: 'network-only',
+         // fetchPolicy: 'network-only',
          onCompleted: data => {
             if (data && data.products.length) {
                const updatedMenu = categories.map(category => {
@@ -242,6 +242,7 @@ export const OnDemandOrder = ({ config }) => {
                                              modifierPopupConfig={{
                                                 counterButtonPosition: 'BOTTOM',
                                              }}
+                                             stepView={false}
                                           />
                                        </div>
                                     )
