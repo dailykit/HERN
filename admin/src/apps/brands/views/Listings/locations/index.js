@@ -58,31 +58,31 @@ export const Locations = () => {
    ]
 
    // subscriptions
-   const {
-      error: listError,
-      loading: listLoading,
-      data,
-   } = useSubscription(LOCATIONS.LIST, {
-      variables: {
-         identifier: 'Brand Info',
-      },
-      onSubscriptionData: data => {
-         const result = data.subscriptionData.data.brands_location.map(each => {
-            return {
-               ...each,
-               linkedBrands: each.brand_locations.map(eachBrand => {
+   const { error: listError, loading: listLoading } = useSubscription(
+      LOCATIONS.LIST,
+      {
+         variables: {
+            identifier: 'Brand Info',
+         },
+         onSubscriptionData: data => {
+            const result = data.subscriptionData.data.brands_location.map(
+               each => {
                   return {
-                     brandId: eachBrand.brandId,
-                     brandName: eachBrand.brand.title,
+                     ...each,
+                     linkedBrands: each.brand_locations.map(eachBrand => {
+                        return {
+                           brandId: eachBrand.brandId,
+                           brandName: eachBrand.brand.title,
+                        }
+                     }),
                   }
-               }),
-            }
-         })
-         setLocations(result)
-         setIsLoading(false)
-      },
-   })
-   console.log('locations of', locations)
+               }
+            )
+            setLocations(result)
+            setIsLoading(false)
+         },
+      }
+   )
 
    //mutations
    const [deleteLocation] = useMutation(LOCATIONS.DELETE, {
@@ -279,6 +279,8 @@ export const Locations = () => {
       logger(listError)
    }
    if (isLoading) return <InlineLoader />
+   console.log('locations of', locations[0])
+
    return (
       <StyledWrapper>
          <Banner id="brands-app-Locations-listing-top" />
@@ -579,14 +581,14 @@ const LocationOnMap = ({ cell, openTunnel, setSelectedRowData }) => {
 
 const LocationsOnMap = ({ locations }) => {
    const [locationDetails, setLocationDetails] = React.useState([...locations])
-   console.log('details', locationDetails)
+   console.log('details', locationDetails[0])
 
    const defaultProps = {
       center: {
-         lat: 26.909911628518344,
-         lng: 75.77575138297402,
+         lat: 23.83109506992757,
+         lng: 79.41140201388032,
       },
-      zoom: 12,
+      zoom: 5,
    }
    const BrandAvatarMap = ({ location }) => {
       // console.log('avatar', cell._cell.row.data)
@@ -706,7 +708,7 @@ const LocationsOnMap = ({ locations }) => {
    }
 
    useEffect(() => {
-      const locationArray = [...locationDetails]
+      const locationArray = [...locations]
       for (let i = 0; i < locationDetails.length; i++) {
          locationArray[i] = {
             ...locationArray[i],
@@ -719,7 +721,7 @@ const LocationsOnMap = ({ locations }) => {
 
    const onChildClickCallback = key => {
       const index = locationDetails.findIndex(e => e.id === JSON.parse(key))
-      console.log('onChildClickCallback', locationDetails, key, index)
+      // console.log('onChildClickCallback', locationDetails, key, index)
       const locationDetail = [...locationDetails]
 
       locationDetail[index] = {
