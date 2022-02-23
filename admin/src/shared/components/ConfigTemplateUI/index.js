@@ -37,7 +37,6 @@ const ConfigUI = ({
    mode,
    saveAllSettings,
    setSaveAllSettings,
-   updateAllSettings,
    alertShow,
 }) => {
    const [configJSON, setConfigJSON] = React.useState({})
@@ -223,7 +222,7 @@ const ConfigUI = ({
    const handleOk = () => {
       setModalLoading(true)
       setTimeout(() => {
-         updateAllSettings()
+         configSaveHandler()
          setModalLoading(false)
          noneditMode && setLinkedModuleId(null)
          setMode('saved')
