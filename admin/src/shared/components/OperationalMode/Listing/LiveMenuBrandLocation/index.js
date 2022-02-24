@@ -108,10 +108,12 @@ const LiveMenuProductTable = ({ brandDetail }) => {
                  null
                ? product?.productPrice_brand_locations[0]?.specificPrice
                : product.price *
-                 (1 +
-                    product?.productPrice_brand_locations[0]
-                       ?.markupOnStandardPriceInPercentage /
-                       100)
+                 parseFloat(
+                    1 +
+                       product?.productPrice_brand_locations[0]
+                          ?.markupOnStandardPriceInPercentage /
+                          100
+                 ).toFixed(2)
             // console.log('specialPrice', specialPrice)
             // console.log('whole data', product?.productPrice_brand_locations)
             return {
@@ -493,10 +495,12 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
                   ? productOptions?.productPrice_brand_locations[0]
                        ?.specificPrice
                   : productOptions.price *
-                    (1 +
-                       productOptions?.productPrice_brand_locations[0]
-                          ?.markupOnStandardPriceInPercentage /
-                          100)
+                    parseFloat(
+                       1 +
+                          productOptions?.productPrice_brand_locations[0]
+                             ?.markupOnStandardPriceInPercentage /
+                             100
+                    ).toFixed(2)
                // console.log('specialPrice', specialPrice)
                // console.log(
                //    'whole data',
@@ -896,6 +900,7 @@ const options = {
    persistence: true,
    persistenceMode: 'local',
    selectablePersistence: true,
+   tooltips: true,
    persistence: {
       group: false,
       sort: true, //persist column sorting
