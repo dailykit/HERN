@@ -52,7 +52,7 @@ export const OnDemandMenu = props => {
                            offset={-130}
                         >
                            <span>
-                              {each.name}
+                              {t(each.name)}
                               {showProductCount && (
                                  <> ({each?.products?.length})</>
                               )}

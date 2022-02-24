@@ -6,6 +6,7 @@ import { Recipe, ProductCard, Loader } from '../../components'
 import { useRouter } from 'next/router'
 import ProductMedia from './ProductMedia'
 import { VegNonVegType } from '../../assets/icons'
+import { useTranslation } from '../../context'
 
 export const Product = ({ config }) => {
    const router = useRouter()
@@ -13,6 +14,9 @@ export const Product = ({ config }) => {
    const [status, setStatus] = React.useState('loading')
    const { brand, locationId } = useConfig()
    const [productDetails, setProductDetails] = React.useState({})
+
+   const { t, dynamicTrans, locale } = useTranslation()
+   const currentLang = React.useMemo(() => locale, [locale])
 
    const argsForByLocation = React.useMemo(
       () => ({
@@ -52,6 +56,16 @@ export const Product = ({ config }) => {
          },
       }
    )
+   React.useEffect(() => {
+      console.log(currentLang, status, 'product,productsLoading ', productsLoading)
+      if (status == 'success') {
+         const languageTags = document.querySelectorAll(
+            '[data-translation="true"]'
+         )
+         dynamicTrans(languageTags)
+      }
+   }, [status, currentLang, productsLoading])
+
    if (productsLoading || status === 'loading') return <Loader />
    if (productsError) return <p>Something went wrong</p>
 

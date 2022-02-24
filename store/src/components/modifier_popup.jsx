@@ -19,9 +19,9 @@ import {
    getRoute,
    isClient,
 } from '../utils'
-import { CloseIcon, CheckBoxIcon } from '../assets/icons'
+import { CloseIcon } from '../assets/icons'
 import { useOnClickOutside } from '../utils/useOnClickOutisde'
-import { CartContext } from '../context'
+import { CartContext, useTranslation } from '../context'
 import { CounterButton } from './counterBtn'
 import classNames from 'classnames'
 import Link from 'next/link'
@@ -29,7 +29,6 @@ import { useToasts } from 'react-toast-notifications'
 import { useConfig } from '../lib'
 import { useModifier } from '../utils'
 import _ from 'lodash'
-import { LeftArrowIcon } from '../assets/icons/LeftArrow'
 
 const isSmallerDevice = isClient && window.innerWidth < 768
 export const ModifierPopup = props => {
@@ -50,7 +49,10 @@ export const ModifierPopup = props => {
    } = props
    //context
    const { addToCart, methods } = React.useContext(CartContext)
+   const { t, dynamicTrans, locale } = useTranslation()
    const { addToast } = useToasts()
+   const currentLang = React.useMemo(() => locale, [locale])
+
    const [productOption, setProductOption] = useState(
       productData.productOptions.find(
          x => x.id === productData.defaultProductOptionId
@@ -145,10 +147,14 @@ export const ModifierPopup = props => {
       }
    }, [])
 
-   console.log(
-      'productOptionsGroupedByProductOptionType',
-      productOptionsGroupedByProductOptionType
-   )
+   useEffect(() => {
+      if (status == 'success') {
+         const languageTags = document.querySelectorAll(
+            '[data-translation="true"]'
+         )
+         dynamicTrans(languageTags)
+      }
+   }, [status, currentLang])
 
    //add to cart
    const handleAddOnCartOn = async () => {
@@ -397,17 +403,36 @@ export const ModifierPopup = props => {
       }
    }
 
-   const CustomProductDetails = () => {
+   const CustomProductDetails = React.memo(() => {
+      useEffect(() => {
+         const languageTags = document.querySelectorAll(
+            '[data-translation="true"]'
+         )
+         dynamicTrans(languageTags)
+      }, [currentLang])
+
       return (
          <div className="hern-product-options__custom-details">
             <div>
-               <div className="hern-product-options__custom-details__product-title">
+               <div
+                  className="hern-product-options__custom-details__product-title"
+                  data-translation="true"
+                  data-original-value={productData.name}
+               >
                   {productData.name}
                </div>
-               <div className="hern-product-options__custom-details__product-desc">
+               <div
+                  className="hern-product-options__custom-details__product-desc"
+                  data-translation="true"
+                  data-original-value={productData.description}
+               >
                   {productData.description}
                </div>
-               <div className="hern-product-options__custom-details__product-tags">
+               <div
+                  className="hern-product-options__custom-details__product-tags"
+                  data-translation="true"
+                  data-original-value={productData?.tags?.join(',')}
+               >
                   {productData?.tags?.join(',')}
                </div>
             </div>
@@ -415,13 +440,17 @@ export const ModifierPopup = props => {
                <div className="hern-product-options__custom-details__product-counter">
                   <CustomArea />
                </div>
-               <div className="hern-product-options__custom-details__product-price">
+               <div
+                  className="hern-product-options__custom-details__product-price"
+                  data-translation="true"
+                  data-original-value={finalProductPrice()}
+               >
                   {finalProductPrice()}
                </div>
             </div>
          </div>
       )
-   }
+   })
 
    window.onclick = function (event) {
       if (
@@ -459,6 +488,8 @@ export const ModifierPopup = props => {
                      <div
                         className="hern-product-card__name"
                         style={{ fontSize: '20px', fontWeight: '600px' }}
+                        data-translation="true"
+                        data-original-value={productData.name}
                      >
                         {productData?.name}
                      </div>
