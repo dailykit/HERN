@@ -19,7 +19,7 @@ const AddTypesTunnel = ({ closeTunnel }) => {
    const [addType, { loading: addingUnit }] = useMutation(MASTER.UNITS.CREATE, {
       onCompleted: () => {
          toast.success('Units added.')
-         closeTunnel(1)
+         closeTunnel(7)
       },
       onError: error => {
          toast.error('Failed to add unit!')
@@ -62,7 +62,7 @@ const AddTypesTunnel = ({ closeTunnel }) => {
                isLoading: addingUnit,
                disabled: types.filter(Boolean).length === 0,
             }}
-            close={() => closeTunnel(1)}
+            close={() => closeTunnel(7)}
             tooltip={<Tooltip identifier="tunnel_unit_heading" />}
          />
          <Banner id="settings-app-master-lists-unit-tunnel-top" />

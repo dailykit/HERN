@@ -21,7 +21,7 @@ const AddTypesTunnel = ({ closeTunnel }) => {
       {
          onCompleted: () => {
             toast.success('Successfully added accompaniment!')
-            closeTunnel(1)
+            closeTunnel(13)
          },
          onError: error => {
             toast.error('Failed to add accompaniment!')
@@ -65,7 +65,7 @@ const AddTypesTunnel = ({ closeTunnel }) => {
                isLoading: addingAccompaniment,
                disabled: types.filter(Boolean).length === 0,
             }}
-            close={() => closeTunnel(1)}
+            close={() => closeTunnel(13)}
             tooltip={<Tooltip identifier="tunnel_accompaniment_heading" />}
          />
          <Banner id="settings-app-master-lists-accompaniments-tunnel-top" />
