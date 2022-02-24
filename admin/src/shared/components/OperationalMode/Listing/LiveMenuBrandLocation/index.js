@@ -417,7 +417,9 @@ const LiveMenuProductTable = ({ brandDetail }) => {
       tableRef.current.table.deselectRow(id)
    }
    // console.log('table ref', tableRef)
-
+   const clearHeaderFilter = () => {
+      tableRef.current.table.clearHeaderFilter()
+   }
    if (isLoading) return <InlineLoader />
    return (
       <>
@@ -430,6 +432,7 @@ const LiveMenuProductTable = ({ brandDetail }) => {
             handleGroupBy={handleGroupBy}
             openTunnel={openTunnel}
             width={width}
+            clearHeaderFilter={clearHeaderFilter}
          />
          <ReactTabulator
             columns={[selectionColumn, ...columns]}
@@ -819,7 +822,9 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
       tableRef.current.table.deselectRow(id)
    }
    // console.log('table ref', tableRef)
-
+   const clearHeaderFilter = () => {
+      tableRef.current.table.clearHeaderFilter()
+   }
    if (isLoading) return <InlineLoader />
    return (
       <>
@@ -831,6 +836,7 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
             handleGroupBy={handleGroupBy}
             openTunnel={openTunnel}
             width={width}
+            clearHeaderFilter={clearHeaderFilter}
          />
          <ReactTabulator
             columns={[selectionColumn, ...columns]}
@@ -924,6 +930,7 @@ const ActionBar = ({
    groupByOptions,
    handleGroupBy,
    width,
+   clearHeaderFilter,
 }) => {
    const defaultIDs = () => {
       let arr = []
@@ -954,11 +961,13 @@ const ActionBar = ({
    }
    const searchedOption = option => console.log(option)
    return (
-      <>
+      <div>
          <Flex
             container
-            as="header"
+            height="80px"
             width="100%"
+            alignItems="center"
+            justifyContent="space-between"
             style={
                width > 500
                   ? { paddingBottom: '2em', gap: '3em' }
@@ -968,48 +977,87 @@ const ActionBar = ({
             justifyContent="flex-start"
             flexDirection={width > 500 ? 'row' : 'column'}
          >
-            <Text as="subtitle">
-               {selectedRows.length == 0
-                  ? `No ${title}`
-                  : selectedRows.length == 1
-                  ? `${selectedRows.length} ${title}`
-                  : `${selectedRows.length} ${title}s`}{' '}
-               selected
-            </Text>
-            <ButtonGroup align="left">
-               <TextButton
-                  type="ghost"
-                  size="sm"
-                  disabled={selectedRows.length === 0 ? true : false}
-                  onClick={() => openTunnel(1)}
-                  style={
-                     width > 500
-                        ? {
-                             padding: '7px 20px 8px 20px',
-                          }
-                        : { padding: 0 }
-                  }
+            <Flex
+               container
+               as="header"
+               width="25%"
+               alignItems="center"
+               justifyContent="space-between"
+            >
+               <Text as="subtitle">
+                  {selectedRows.length == 0
+                     ? `No ${title}`
+                     : selectedRows.length == 1
+                     ? `${selectedRows.length} ${title}`
+                     : `${selectedRows.length} ${title}s`}{' '}
+                  selected
+               </Text>
+               <ButtonGroup align="left">
+                  <TextButton
+                     type="ghost"
+                     size="sm"
+                     disabled={selectedRows.length === 0 ? true : false}
+                     onClick={() => openTunnel(1)}
+                     style={
+                        width > 500
+                           ? {
+                                padding: '7px 20px 8px 20px',
+                             }
+                           : { padding: 0 }
+                     }
+                  >
+                     APPLY BULK ACTIONS
+                  </TextButton>
+               </ButtonGroup>
+            </Flex>
+            <Flex
+               container
+               as="header"
+               width="75%"
+               alignItems="center"
+               justifyContent="space-around"
+            >
+               <Flex
+                  container
+                  as="header"
+                  width="80%"
+                  alignItems="center"
+                  justifyContent="flex-end"
                >
-                  APPLY BULK ACTIONS
-               </TextButton>
-            </ButtonGroup>
-
-            <StyledGroupBy>
-               <Text as="text1">Group By:</Text>
-               <Spacer size="5px" xAxis />
-               <Dropdown
-                  type="multi"
-                  variant="revamp"
-                  disabled={true}
-                  defaultIds={defaultIDs()}
-                  options={groupByOptions}
-                  searchedOption={searchedOption}
-                  selectedOption={selectedOption}
-                  typeName="groupBy"
-               />
-            </StyledGroupBy>
+                  <Spacer size="15px" xAxis />
+                  <Text as="text1">Group By:</Text>
+                  <Spacer size="5px" xAxis />
+                  <Dropdown
+                     type="multi"
+                     variant="revamp"
+                     disabled={true}
+                     defaultIds={defaultIDs()}
+                     options={groupByOptions}
+                     searchedOption={searchedOption}
+                     selectedOption={selectedOption}
+                     typeName="groupBy"
+                  />
+               </Flex>
+               <Flex
+                  container
+                  as="header"
+                  width="20%"
+                  alignItems="center"
+                  justifyContent="flex-end"
+               >
+                  <ButtonGroup align="left">
+                     <TextButton
+                        type="ghost"
+                        size="sm"
+                        onClick={() => clearHeaderFilter()}
+                     >
+                        Clear All Filter
+                     </TextButton>
+                  </ButtonGroup>
+               </Flex>
+            </Flex>
          </Flex>
-      </>
+      </div>
    )
 }
 const AvailableToggleStatus = ({ cell, update, check }) => {
