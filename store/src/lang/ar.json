@@ -46,5 +46,9 @@
    "Current changes will lose do you wish to continue?": "سوف يتم إلغاء التعديلات الحالية , هل ترغب في الإستمرار ؟",
    "Add": "إضافة",
    "Item Total": "مجموع الأصناف",
-   "Reset": "إعادة"
+   "Reset": "إعادة",
+   "ADD": "إضافة",
+   "COMING SOON": "قريبا",
+   "Customizable": "قابل للتخصيص",
+   "DELIVER AT": "تسليم في"
 }
