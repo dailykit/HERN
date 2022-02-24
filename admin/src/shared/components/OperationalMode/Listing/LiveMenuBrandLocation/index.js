@@ -108,10 +108,12 @@ const LiveMenuProductTable = ({ brandDetail }) => {
                  null
                ? product?.productPrice_brand_locations[0]?.specificPrice
                : product.price *
-                 (1 +
-                    product?.productPrice_brand_locations[0]
-                       ?.markupOnStandardPriceInPercentage /
-                       100)
+                 parseFloat(
+                    1 +
+                       product?.productPrice_brand_locations[0]
+                          ?.markupOnStandardPriceInPercentage /
+                          100
+                 ).toFixed(2)
             // console.log('specialPrice', specialPrice)
             // console.log('whole data', product?.productPrice_brand_locations)
             return {
@@ -195,7 +197,8 @@ const LiveMenuProductTable = ({ brandDetail }) => {
          field: 'id',
          headerFilter: true,
          frozen: true,
-         horAlign: 'center',
+         hozAlign: 'center',
+         width: 80,
       },
 
       {
@@ -203,7 +206,7 @@ const LiveMenuProductTable = ({ brandDetail }) => {
          field: 'name',
          width: 350,
          headerFilter: true,
-         // frozen: true,
+         // hozAlign: 'center',
          cssClass: 'colHover',
          resizable: 'true',
          minWidth: 100,
@@ -214,6 +217,7 @@ const LiveMenuProductTable = ({ brandDetail }) => {
          field: 'specificPrice',
          width: 190,
          headerFilter: true,
+         hozAlign: 'center',
          formatter: reactFormatter(
             <SpecificPrice
                openPopupTunnel={openPopupTunnel}
@@ -225,10 +229,12 @@ const LiveMenuProductTable = ({ brandDetail }) => {
          title: 'Specific Discount',
          field: 'specificDiscount',
          headerFilter: true,
+         hozAlign: 'center',
       },
       {
          title: 'Published',
          field: 'isPublished',
+         hozAlign: 'center',
          formatter: reactFormatter(
             <PublishedToggleStatus update={updateBrandProduct} />
          ),
@@ -236,12 +242,14 @@ const LiveMenuProductTable = ({ brandDetail }) => {
       {
          title: 'Availability',
          field: 'isAvailable',
+         hozAlign: 'center',
          formatter: reactFormatter(
             <AvailableToggleStatus update={updateBrandProduct} />
          ),
       },
       {
          title: 'Reset Row',
+         hozAlign: 'center',
          formatter: reactFormatter(<ResetProduct onReset={resetHandler} />),
       },
    ]
@@ -409,7 +417,9 @@ const LiveMenuProductTable = ({ brandDetail }) => {
       tableRef.current.table.deselectRow(id)
    }
    // console.log('table ref', tableRef)
-
+   const clearHeaderFilter = () => {
+      tableRef.current.table.clearHeaderFilter()
+   }
    if (isLoading) return <InlineLoader />
    return (
       <>
@@ -422,6 +432,7 @@ const LiveMenuProductTable = ({ brandDetail }) => {
             handleGroupBy={handleGroupBy}
             openTunnel={openTunnel}
             width={width}
+            clearHeaderFilter={clearHeaderFilter}
          />
          <ReactTabulator
             columns={[selectionColumn, ...columns]}
@@ -487,10 +498,12 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
                   ? productOptions?.productPrice_brand_locations[0]
                        ?.specificPrice
                   : productOptions.price *
-                    (1 +
-                       productOptions?.productPrice_brand_locations[0]
-                          ?.markupOnStandardPriceInPercentage /
-                          100)
+                    parseFloat(
+                       1 +
+                          productOptions?.productPrice_brand_locations[0]
+                             ?.markupOnStandardPriceInPercentage /
+                             100
+                    ).toFixed(2)
                // console.log('specialPrice', specialPrice)
                // console.log(
                //    'whole data',
@@ -570,6 +583,7 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
          })
       }
    }
+
    const groupByOptions = [
       { id: 1, title: 'Published', payload: 'isPublished' },
       { id: 2, title: 'Available', payload: 'isAvailable' },
@@ -581,7 +595,8 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
          field: 'id',
          headerFilter: true,
          frozen: true,
-         horAlign: 'center',
+         hozAlign: 'center',
+         width: 80,
       },
 
       {
@@ -589,7 +604,7 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
          field: 'name',
          width: 350,
          headerFilter: true,
-         // frozen: true,
+         // hozAlign: 'center',
          cssClass: 'colHover',
          resizable: 'true',
          minWidth: 100,
@@ -600,6 +615,7 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
          field: 'specificPrice',
          width: 190,
          headerFilter: true,
+         hozAlign: 'center',
          formatter: reactFormatter(
             <SpecificPrice
                openPopupTunnel={openPopupTunnel}
@@ -612,10 +628,12 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
          title: 'Specific Discount',
          field: 'specificDiscount',
          headerFilter: true,
+         hozAlign: 'center',
       },
       {
          title: 'Published',
          field: 'isPublished',
+         hozAlign: 'center',
          formatter: reactFormatter(
             <PublishedToggleStatus
                update={updateBrandProduct}
@@ -626,6 +644,7 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
       {
          title: 'Availability',
          field: 'isAvailable',
+         hozAlign: 'center',
          formatter: reactFormatter(
             <AvailableToggleStatus
                update={updateBrandProduct}
@@ -635,6 +654,7 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
       },
       {
          title: 'Reset Row',
+         hozAlign: 'center',
          formatter: reactFormatter(<ResetProduct onReset={resetHandler} />),
       },
    ]
@@ -802,7 +822,9 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
       tableRef.current.table.deselectRow(id)
    }
    // console.log('table ref', tableRef)
-
+   const clearHeaderFilter = () => {
+      tableRef.current.table.clearHeaderFilter()
+   }
    if (isLoading) return <InlineLoader />
    return (
       <>
@@ -814,6 +836,7 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
             handleGroupBy={handleGroupBy}
             openTunnel={openTunnel}
             width={width}
+            clearHeaderFilter={clearHeaderFilter}
          />
          <ReactTabulator
             columns={[selectionColumn, ...columns]}
@@ -883,6 +906,7 @@ const options = {
    persistence: true,
    persistenceMode: 'local',
    selectablePersistence: true,
+   tooltips: true,
    persistence: {
       group: false,
       sort: true, //persist column sorting
@@ -906,6 +930,7 @@ const ActionBar = ({
    groupByOptions,
    handleGroupBy,
    width,
+   clearHeaderFilter,
 }) => {
    const defaultIDs = () => {
       let arr = []
@@ -936,11 +961,13 @@ const ActionBar = ({
    }
    const searchedOption = option => console.log(option)
    return (
-      <>
+      <div>
          <Flex
             container
-            as="header"
+            height="80px"
             width="100%"
+            alignItems="center"
+            justifyContent="space-between"
             style={
                width > 500
                   ? { paddingBottom: '2em', gap: '3em' }
@@ -950,48 +977,87 @@ const ActionBar = ({
             justifyContent="flex-start"
             flexDirection={width > 500 ? 'row' : 'column'}
          >
-            <Text as="subtitle">
-               {selectedRows.length == 0
-                  ? `No ${title}`
-                  : selectedRows.length == 1
-                  ? `${selectedRows.length} ${title}`
-                  : `${selectedRows.length} ${title}s`}{' '}
-               selected
-            </Text>
-            <ButtonGroup align="left">
-               <TextButton
-                  type="ghost"
-                  size="sm"
-                  disabled={selectedRows.length === 0 ? true : false}
-                  onClick={() => openTunnel(1)}
-                  style={
-                     width > 500
-                        ? {
-                             padding: '7px 20px 8px 20px',
-                          }
-                        : { padding: 0 }
-                  }
+            <Flex
+               container
+               as="header"
+               width="25%"
+               alignItems="center"
+               justifyContent="space-between"
+            >
+               <Text as="subtitle">
+                  {selectedRows.length == 0
+                     ? `No ${title}`
+                     : selectedRows.length == 1
+                     ? `${selectedRows.length} ${title}`
+                     : `${selectedRows.length} ${title}s`}{' '}
+                  selected
+               </Text>
+               <ButtonGroup align="left">
+                  <TextButton
+                     type="ghost"
+                     size="sm"
+                     disabled={selectedRows.length === 0 ? true : false}
+                     onClick={() => openTunnel(1)}
+                     style={
+                        width > 500
+                           ? {
+                                padding: '7px 20px 8px 20px',
+                             }
+                           : { padding: 0 }
+                     }
+                  >
+                     APPLY BULK ACTIONS
+                  </TextButton>
+               </ButtonGroup>
+            </Flex>
+            <Flex
+               container
+               as="header"
+               width="75%"
+               alignItems="center"
+               justifyContent="space-around"
+            >
+               <Flex
+                  container
+                  as="header"
+                  width="80%"
+                  alignItems="center"
+                  justifyContent="flex-end"
                >
-                  APPLY BULK ACTIONS
-               </TextButton>
-            </ButtonGroup>
-
-            <StyledGroupBy>
-               <Text as="text1">Group By:</Text>
-               <Spacer size="5px" xAxis />
-               <Dropdown
-                  type="multi"
-                  variant="revamp"
-                  disabled={true}
-                  defaultIds={defaultIDs()}
-                  options={groupByOptions}
-                  searchedOption={searchedOption}
-                  selectedOption={selectedOption}
-                  typeName="groupBy"
-               />
-            </StyledGroupBy>
+                  <Spacer size="15px" xAxis />
+                  <Text as="text1">Group By:</Text>
+                  <Spacer size="5px" xAxis />
+                  <Dropdown
+                     type="multi"
+                     variant="revamp"
+                     disabled={true}
+                     defaultIds={defaultIDs()}
+                     options={groupByOptions}
+                     searchedOption={searchedOption}
+                     selectedOption={selectedOption}
+                     typeName="groupBy"
+                  />
+               </Flex>
+               <Flex
+                  container
+                  as="header"
+                  width="20%"
+                  alignItems="center"
+                  justifyContent="flex-end"
+               >
+                  <ButtonGroup align="left">
+                     <TextButton
+                        type="ghost"
+                        size="sm"
+                        onClick={() => clearHeaderFilter()}
+                     >
+                        Clear All Filter
+                     </TextButton>
+                  </ButtonGroup>
+               </Flex>
+            </Flex>
          </Flex>
-      </>
+      </div>
    )
 }
 const AvailableToggleStatus = ({ cell, update, check }) => {
