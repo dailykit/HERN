@@ -40,56 +40,55 @@ const LiveMenu = () => {
 
    console.log('brandDetail:::', brandDetail)
    return (
-      <>
+      <Flex>
+         <StyledTitle>
+            {width > 768 ? (
+               <Text as="h2">
+                  We are changing product settings for {brandDetail.brandName}{' '}
+                  brand{' '}
+               </Text>
+            ) : (
+               <Text as="h2">{brandDetail.brandName} Brand </Text>
+            )}
+         </StyledTitle>
          <Flex>
-            <StyledTitle>
-               {width > 768 ? (
-                  <Text as="h2">
-                     We are changing product settings for{' '}
-                     {brandDetail.brandName} brand{' '}
-                  </Text>
-               ) : (
-                  <Text as="h2">{brandDetail.brandName} Brand </Text>
-               )}
-            </StyledTitle>
-            <Flex>
-               <HorizontalTabs>
-                  <HorizontalTabList
-                     style={
-                        width > 500
-                           ? {
-                                justifyContent: 'center',
-                             }
-                           : { marginLeft: '1em', justifyContent: 'flex-start' }
-                     }
-                  >
-                     <HorizontalTab>Product</HorizontalTab>
-                     <HorizontalTab>By Product Option</HorizontalTab>
-                  </HorizontalTabList>
-                  <HorizontalTabPanels>
-                     <HorizontalTabPanel>
-                        <LiveMenuProductTable brandDetail={brandDetail} />
-                     </HorizontalTabPanel>
-                     <HorizontalTabPanel>
-                        <LiveMenuProductOptionTable brandDetail={brandDetail} />
-                     </HorizontalTabPanel>
-                  </HorizontalTabPanels>
-               </HorizontalTabs>
-            </Flex>
+            <HorizontalTabs>
+               <HorizontalTabList
+                  style={
+                     width > 500
+                        ? {
+                             justifyContent: 'center',
+                          }
+                        : { marginLeft: '1em', justifyContent: 'flex-start' }
+                  }
+               >
+                  <HorizontalTab>Product</HorizontalTab>
+                  <HorizontalTab>By Product Option</HorizontalTab>
+               </HorizontalTabList>
+               <HorizontalTabPanels>
+                  <HorizontalTabPanel>
+                     <LiveMenuProductTable brandDetail={brandDetail} />
+                  </HorizontalTabPanel>
+                  <HorizontalTabPanel>
+                     <LiveMenuProductOptionTable brandDetail={brandDetail} />
+                  </HorizontalTabPanel>
+               </HorizontalTabPanels>
+            </HorizontalTabs>
          </Flex>
-      </>
+      </Flex>
    )
 }
 const LiveMenuProductTable = ({ brandDetail }) => {
    const [CollectionProducts, setCollectionProducts] = React.useState([])
    const tableRef = useRef()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
-   const [checked, setChecked] = useState(false) //me
+   const [checked, setChecked] = useState(false)
    const [selectedRows, setSelectedRows] = React.useState([])
    const [popupTunnels, openPopupTunnel, closePopupTunnel] = useTunnel(1)
    const [selectedRowData, setSelectedRowData] = React.useState(null)
    const { width } = useWindowSize()
    const [isLoading, setIsLoading] = React.useState(true)
+
    //subscription
    const { loading, error } = useSubscription(COLLECTION_PRODUCTS, {
       variables: {
@@ -195,7 +194,8 @@ const LiveMenuProductTable = ({ brandDetail }) => {
          field: 'id',
          headerFilter: true,
          frozen: true,
-         horAlign: 'center',
+         hozAlign: 'center',
+         width: 80,
       },
 
       {
@@ -203,7 +203,7 @@ const LiveMenuProductTable = ({ brandDetail }) => {
          field: 'name',
          width: 350,
          headerFilter: true,
-         // frozen: true,
+         // hozAlign: 'center',
          cssClass: 'colHover',
          resizable: 'true',
          minWidth: 100,
@@ -214,6 +214,7 @@ const LiveMenuProductTable = ({ brandDetail }) => {
          field: 'specificPrice',
          width: 190,
          headerFilter: true,
+         hozAlign: 'center',
          formatter: reactFormatter(
             <SpecificPrice
                openPopupTunnel={openPopupTunnel}
@@ -224,11 +225,13 @@ const LiveMenuProductTable = ({ brandDetail }) => {
       {
          title: 'Specific Discount',
          field: 'specificDiscount',
+         hozAlign: 'center',
          headerFilter: true,
       },
       {
          title: 'Published',
          field: 'isPublished',
+         hozAlign: 'center',
          formatter: reactFormatter(
             <PublishedToggleStatus update={updateBrandProduct} />
          ),
@@ -236,12 +239,14 @@ const LiveMenuProductTable = ({ brandDetail }) => {
       {
          title: 'Availability',
          field: 'isAvailable',
+         hozAlign: 'center',
          formatter: reactFormatter(
             <AvailableToggleStatus update={updateBrandProduct} />
          ),
       },
       {
          title: 'Reset Row',
+         hozAlign: 'center',
          formatter: reactFormatter(<ResetProduct onReset={resetHandler} />),
       },
    ]
@@ -578,7 +583,8 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
          field: 'id',
          headerFilter: true,
          frozen: true,
-         horAlign: 'center',
+         width: 80,
+         hozAlign: 'center',
          // cellClick: function (e, cell) {
          //    console.log('cell clicked ', e, cell)
          // },
@@ -588,6 +594,7 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
          title: 'Product Name',
          field: 'name',
          width: 350,
+         // hozAlign: 'center',
          headerFilter: true,
          // frozen: true,
          cssClass: 'colHover',
@@ -599,6 +606,7 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
          title: 'Specific Price',
          field: 'specificPrice',
          width: 190,
+         hozAlign: 'center',
          headerFilter: true,
          formatter: reactFormatter(
             <SpecificPrice
@@ -612,10 +620,12 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
          title: 'Specific Discount',
          field: 'specificDiscount',
          headerFilter: true,
+         hozAlign: 'center',
       },
       {
          title: 'Published',
          field: 'isPublished',
+         hozAlign: 'center',
          formatter: reactFormatter(
             <PublishedToggleStatus
                update={updateBrandProduct}
@@ -626,6 +636,7 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
       {
          title: 'Availability',
          field: 'isAvailable',
+         hozAlign: 'center',
          formatter: reactFormatter(
             <AvailableToggleStatus
                update={updateBrandProduct}
@@ -635,6 +646,7 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
       },
       {
          title: 'Reset Row',
+         hozAlign: 'center',
          formatter: reactFormatter(<ResetProduct onReset={resetHandler} />),
       },
    ]

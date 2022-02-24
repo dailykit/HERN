@@ -195,7 +195,8 @@ const LiveMenuProductTable = ({ brandDetail }) => {
          field: 'id',
          headerFilter: true,
          frozen: true,
-         horAlign: 'center',
+         hozAlign: 'center',
+         width: 80,
       },
 
       {
@@ -203,7 +204,7 @@ const LiveMenuProductTable = ({ brandDetail }) => {
          field: 'name',
          width: 350,
          headerFilter: true,
-         // frozen: true,
+         // hozAlign: 'center',
          cssClass: 'colHover',
          resizable: 'true',
          minWidth: 100,
@@ -214,6 +215,7 @@ const LiveMenuProductTable = ({ brandDetail }) => {
          field: 'specificPrice',
          width: 190,
          headerFilter: true,
+         hozAlign: 'center',
          formatter: reactFormatter(
             <SpecificPrice
                openPopupTunnel={openPopupTunnel}
@@ -225,10 +227,12 @@ const LiveMenuProductTable = ({ brandDetail }) => {
          title: 'Specific Discount',
          field: 'specificDiscount',
          headerFilter: true,
+         hozAlign: 'center',
       },
       {
          title: 'Published',
          field: 'isPublished',
+         hozAlign: 'center',
          formatter: reactFormatter(
             <PublishedToggleStatus update={updateBrandProduct} />
          ),
@@ -236,12 +240,14 @@ const LiveMenuProductTable = ({ brandDetail }) => {
       {
          title: 'Availability',
          field: 'isAvailable',
+         hozAlign: 'center',
          formatter: reactFormatter(
             <AvailableToggleStatus update={updateBrandProduct} />
          ),
       },
       {
          title: 'Reset Row',
+         hozAlign: 'center',
          formatter: reactFormatter(<ResetProduct onReset={resetHandler} />),
       },
    ]
@@ -570,6 +576,7 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
          })
       }
    }
+
    const groupByOptions = [
       { id: 1, title: 'Published', payload: 'isPublished' },
       { id: 2, title: 'Available', payload: 'isAvailable' },
@@ -581,7 +588,8 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
          field: 'id',
          headerFilter: true,
          frozen: true,
-         horAlign: 'center',
+         hozAlign: 'center',
+         width: 80,
       },
 
       {
@@ -589,7 +597,7 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
          field: 'name',
          width: 350,
          headerFilter: true,
-         // frozen: true,
+         // hozAlign: 'center',
          cssClass: 'colHover',
          resizable: 'true',
          minWidth: 100,
@@ -600,6 +608,7 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
          field: 'specificPrice',
          width: 190,
          headerFilter: true,
+         hozAlign: 'center',
          formatter: reactFormatter(
             <SpecificPrice
                openPopupTunnel={openPopupTunnel}
@@ -612,10 +621,12 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
          title: 'Specific Discount',
          field: 'specificDiscount',
          headerFilter: true,
+         hozAlign: 'center',
       },
       {
          title: 'Published',
          field: 'isPublished',
+         hozAlign: 'center',
          formatter: reactFormatter(
             <PublishedToggleStatus
                update={updateBrandProduct}
@@ -626,6 +637,7 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
       {
          title: 'Availability',
          field: 'isAvailable',
+         hozAlign: 'center',
          formatter: reactFormatter(
             <AvailableToggleStatus
                update={updateBrandProduct}
@@ -635,6 +647,7 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
       },
       {
          title: 'Reset Row',
+         hozAlign: 'center',
          formatter: reactFormatter(<ResetProduct onReset={resetHandler} />),
       },
    ]
