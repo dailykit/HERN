@@ -87,7 +87,16 @@ const PaymentProcessingModal = ({
          )
          title = 'Processing your order'
          subtitle = 'Please wait while we process your order'
-         if (cartPayment?.paymentStatus === 'SUCCEEDED') {
+         if (cartPayment?.paymentStatus === 'PENDING') {
+            icon = (
+               <img
+                  src="/assets/gifs/kioskLoader.gif"
+                  className="payment_status_loader"
+               />
+            )
+            title = 'Processing your order'
+            subtitle = 'Please wait while we process your order'
+         } else if (cartPayment?.paymentStatus === 'SUCCEEDED') {
             icon = (
                <img
                   src="/assets/gifs/successful.gif"
@@ -156,7 +165,7 @@ const PaymentProcessingModal = ({
          } else if (cartPayment?.paymentStatus === 'SWIPE_CARD') {
             icon = (
                <img
-                  src="/assets/gifs/swipe.gif"
+                  src="/assets/gifs/swipe_card.gif"
                   className="payment_status_loader"
                />
             )
@@ -166,12 +175,33 @@ const PaymentProcessingModal = ({
          } else if (cartPayment?.paymentStatus === 'ENTER_PIN') {
             icon = (
                <img
-                  src="/assets/gifs/swipe.gif"
+                  src="/assets/gifs/swipe_card.gif"
                   className="payment_status_loader"
                />
             )
             title = 'Enter your pin'
             subtitle = 'Please your pin to complete the payment'
+         } else if (
+            ![
+               'SUCCEEDED',
+               'FAILED',
+               'CANCELLED',
+               'SWIPE_CARD',
+               'ENTER_PIN',
+            ].includes(cartPayment?.paymentStatus)
+         ) {
+            icon = (
+               <img
+                  src="/assets/gifs/payment_fail.gif"
+                  className="payment_status_loader"
+               />
+            )
+            title =
+               formatTerminalStatus[cartPayment.transactionRemark?.StatusCode]
+                  ?.status
+            subtitle =
+               formatTerminalStatus[cartPayment.transactionRemark?.StatusCode]
+                  ?.message
          }
       } else {
          if (cartPayment?.paymentStatus === 'SUCCEEDED') {
@@ -276,7 +306,6 @@ const PaymentProcessingModal = ({
    }
 
    useEffect(() => {
-      let timer
       let countdownTimer
       if (!isEmpty(cartPayment)) {
          // start celebration (confetti effect) once payment is successful
@@ -300,7 +329,6 @@ const PaymentProcessingModal = ({
                   }
                }, 1000)
             }
-            // timer = setTimeout(() => {}, 1000 * 60)
          }
       }
       return () => {
@@ -308,6 +336,11 @@ const PaymentProcessingModal = ({
          clearInterval(countdownTimer)
       }
    }, [cartPayment?.paymentStatus, countDown])
+
+   // resetting countdown timer when payment status changes
+   useEffect(() => {
+      setCountDown(60)
+   }, [cartPayment?.paymentStatus])
 
    return (
       <Modal
@@ -333,7 +366,7 @@ const PaymentProcessingModal = ({
             !['SUCCEEDED', 'FAILED', 'CANCELLED'].includes(
                cartPayment?.paymentStatus
             ) && (
-               <h1 tw="font-extrabold color[rgba(0, 64, 106, 0.9)] text-xl text-center margin[2rem 0]">
+               <h1 tw="font-extrabold color[rgba(0, 64, 106, 0.9)] text-xl text-center">
                   {countDown > 0
                      ? `Timout in ${countDown} seconds`
                      : 'Request timed out'}
