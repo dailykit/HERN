@@ -1,25 +1,31 @@
 import { useSubscription } from '@apollo/react-hooks'
-import { Flex, Spacer } from '@dailykit/ui'
-import { Avatar, Space } from 'antd'
+import { Spacer } from '@dailykit/ui'
+import { Avatar } from 'antd'
 import React, { useContext, useState } from 'react'
 import { BrandContext } from '../../../../../App'
 import { UnionIcon } from '../../../../assets/icons'
 import { ArrowDown, ArrowUp } from '../../../../assets/navBarIcons'
-import { BRAND_LIST } from '../../graphql/subscription'
+import { BRAND_LIST, BRAND_LOCATIONS } from '../../graphql/subscription'
 import {
+   StyledBrandLocations,
    StyledBrandName,
    StyledBrandSelector,
    StyledBrandSelectorList,
 } from './styled'
 
 const BrandSelector = ({ mouseOver }) => {
-   const [arrowClicked, setArrowClicked] = useState(false)
+   const [brandArrowClicked, setBrandArrowClicked] = useState(false)
+   const [locationArrowClicked, setLocationArrowClicked] = useState(false)
+
    const [brandList, setBrandList] = React.useState([])
+   const [brandLocationsList, setBrandLocationsList] = React.useState([])
    const [brandContext, setBrandContext] = useContext(BrandContext)
    const [viewingFor, setViewingFor] = useState({
       brandId: null,
       brandName: '',
       logo: '',
+      locationId: null,
+      locationLabel: '',
    })
 
    const { loading: loadingList, error } = useSubscription(BRAND_LIST, {
@@ -54,6 +60,7 @@ const BrandSelector = ({ mouseOver }) => {
                   logo: brand.logo,
                })
                setBrandContext({
+                  ...brandContext,
                   brandId: brand.id,
                   brandName: brand.title,
                })
@@ -61,80 +68,174 @@ const BrandSelector = ({ mouseOver }) => {
          })
       },
    })
-   console.log('Brand list', brandList)
+
+   const { loading: brandLocationsLoading, error: brandLocationsError } =
+      useSubscription(BRAND_LOCATIONS, {
+         variables: {
+            id: viewingFor.brandId,
+         },
+         onSubscriptionData: data => {
+            console.log(data.subscriptionData.data.brands[0].brand_locations)
+            const result =
+               data.subscriptionData.data.brands[0].brand_locations.map(
+                  brandLocation => {
+                     return {
+                        id: brandLocation.locationId,
+                        label: brandLocation.location.label,
+                     }
+                  }
+               )
+            setBrandLocationsList(result)
+
+            setViewingFor({
+               ...viewingFor,
+               locationId: result[0]?.id || null,
+               locationLabel: result[0]?.label || '',
+            })
+            setBrandContext({
+               ...brandContext,
+               locationId: result[0]?.id || null,
+               locationLabel: result[0]?.label || '',
+            })
+         },
+      })
+   console.log('brandContext', brandContext)
 
    return (
       <div style={{ padding: '7px', textAlign: 'center' }}>
          {mouseOver ? (
-            <div>
-               <StyledBrandSelector>
-                  <div>
-                     {viewingFor.logo ? (
-                        <Avatar src={viewingFor.logo} size={52} />
-                     ) : (
-                        <Avatar
-                           style={{
-                              backgroundColor: '#87d068',
+            <>
+               <div>
+                  <StyledBrandSelector>
+                     <div>
+                        {viewingFor.logo ? (
+                           <Avatar src={viewingFor.logo} size={52} />
+                        ) : (
+                           <Avatar
+                              style={{
+                                 backgroundColor: '#87d068',
+                              }}
+                              size={52}
+                           >
+                              {viewingFor.brandName.charAt(0).toUpperCase()}
+                           </Avatar>
+                        )}
+                     </div>
+                     <div>
+                        <StyledBrandName>
+                           <p>Brand</p>
+                           <Spacer size="2px" />
+                           <p>{viewingFor.brandName}</p>
+                        </StyledBrandName>
+                        <span
+                           onClick={() => {
+                              setBrandArrowClicked(!brandArrowClicked)
+                              setLocationArrowClicked(false)
                            }}
-                           size={52}
                         >
-                           {viewingFor.brandName.charAt(0).toUpperCase()}
-                        </Avatar>
-                     )}
-                  </div>
-                  <div>
-                     <StyledBrandName>
-                        <p>Brand</p>
-                        <Spacer size="2px" />
-                        <p>{viewingFor.brandName}</p>
-                     </StyledBrandName>
-                     <span onClick={() => setArrowClicked(!arrowClicked)}>
-                        {arrowClicked ? <ArrowUp /> : <ArrowDown />}
-                     </span>
-                  </div>
-               </StyledBrandSelector>
-               {arrowClicked && (
-                  <StyledBrandSelectorList>
-                     {brandList.map(brand => {
-                        return (
+                           {brandArrowClicked ? <ArrowUp /> : <ArrowDown />}
+                        </span>
+                     </div>
+                  </StyledBrandSelector>
+                  {brandArrowClicked && (
+                     <StyledBrandSelectorList>
+                        {brandList.map(brand => {
+                           return (
+                              <div
+                                 key={brand.id}
+                                 onClick={() => {
+                                    setViewingFor({
+                                       ...viewingFor,
+                                       brandId: brand.id,
+                                       brandName: brand.title,
+                                       logo: brand.logo,
+                                    })
+                                    setBrandContext({
+                                       ...brandContext,
+                                       brandId: brand.id,
+                                       brandName: brand.title,
+                                    })
+                                    setBrandArrowClicked(false)
+                                 }}
+                              >
+                                 <span>
+                                    {brand.logo ? (
+                                       <Avatar src={brand.logo} size="small" />
+                                    ) : (
+                                       <Avatar
+                                          style={{
+                                             backgroundColor: '#87d068',
+                                          }}
+                                          size="small"
+                                       >
+                                          {brand.title.charAt(0).toUpperCase()}
+                                       </Avatar>
+                                    )}
+                                 </span>
+                                 <span>{brand.title}</span>
+                              </div>
+                           )
+                        })}
+                     </StyledBrandSelectorList>
+                  )}
+               </div>
+               <Spacer size="10px" />
+
+               <div>
+                  {viewingFor.locationId ? (
+                     <div>
+                        <StyledBrandLocations>
+                           <div>
+                              <span>Location</span>
+                              <span>{viewingFor.locationLabel}</span>
+                           </div>
                            <div
-                              key={brand.id}
                               onClick={() => {
-                                 setViewingFor({
-                                    ...viewingFor,
-                                    brandId: brand.id,
-                                    brandName: brand.title,
-                                    logo: brand.logo,
-                                 })
-                                 setBrandContext({
-                                    ...brandContext,
-                                    brandId: brand.id,
-                                    brandName: brand.title,
-                                 })
-                                 setArrowClicked(false)
+                                 setLocationArrowClicked(!locationArrowClicked)
+                                 setBrandArrowClicked(false)
                               }}
                            >
-                              <span>
-                                 {brand.logo ? (
-                                    <Avatar src={brand.logo} size="small" />
-                                 ) : (
-                                    <Avatar
-                                       style={{
-                                          backgroundColor: '#87d068',
-                                       }}
-                                       size="small"
-                                    >
-                                       {brand.title.charAt(0).toUpperCase()}
-                                    </Avatar>
-                                 )}
-                              </span>
-                              <span>{brand.title}</span>
+                              {locationArrowClicked ? (
+                                 <ArrowUp />
+                              ) : (
+                                 <ArrowDown />
+                              )}
                            </div>
-                        )
-                     })}
-                  </StyledBrandSelectorList>
-               )}
-            </div>
+                        </StyledBrandLocations>
+                        {locationArrowClicked && (
+                           <StyledBrandSelectorList>
+                              {brandLocationsList.map(location => {
+                                 return (
+                                    <div
+                                       key={location.id}
+                                       onClick={() => {
+                                          setViewingFor({
+                                             ...viewingFor,
+                                             locationId: location.id,
+                                             locationLabel: location.label,
+                                          })
+                                          setBrandContext({
+                                             ...brandContext,
+                                             locationId: location.id,
+                                             locationLabel: location.label,
+                                          })
+                                          setLocationArrowClicked(false)
+                                       }}
+                                    >
+                                       <span>{location.label}</span>
+                                    </div>
+                                 )
+                              })}
+                           </StyledBrandSelectorList>
+                        )}
+                     </div>
+                  ) : (
+                     <StyledBrandLocations>
+                        Locations not Available !
+                     </StyledBrandLocations>
+                  )}
+               </div>
+            </>
          ) : (
             <UnionIcon />
          )}

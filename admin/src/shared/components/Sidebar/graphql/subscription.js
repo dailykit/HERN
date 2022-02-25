@@ -20,3 +20,15 @@ export const BRAND_LIST = gql`
       }
    }
 `
+export const BRAND_LOCATIONS = gql`
+   subscription brandLocationId($id: Int!) {
+      brands(where: { id: { _eq: $id } }) {
+         brand_locations {
+            locationId
+            location {
+               label
+            }
+         }
+      }
+   }
+`

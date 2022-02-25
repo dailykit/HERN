@@ -61,3 +61,42 @@ export const StyledBrandSelectorList = styled.div`
       column-gap: 7px;
    }
 `
+export const StyledBrandLocations = styled.div`
+   width: 100%;
+   height: 40px;
+   background: #ffffff;
+   border: 1px solid #f3f3f3;
+   box-sizing: border-box;
+   box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.05);
+   border-radius: 4px;
+   display: flex;
+   justify-content: space-between;
+   padding: 7px;
+   align-items: center;
+
+   > div:nth-child(1) {
+      display: flex;
+      font-family: Roboto;
+      font-style: normal;
+      flex-direction: column;
+      text-align: left;
+      gap: 2px;
+
+      > span:nth-child(1) {
+         font-weight: normal;
+         font-size: 10px;
+         line-height: 12px;
+
+         color: #919699;
+      }
+      > span:nth-child(2) {
+         font-weight: 500;
+         font-size: 13px;
+         line-height: 15px;
+
+         color: #555b6e;
+      }
+   }
+   > div:nth-child(2) {
+   }
+`
