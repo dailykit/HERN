@@ -4,6 +4,7 @@ import { MenuIcon } from '../assets/icons'
 import { onDemandMenuContext } from '../context'
 import { useOnClickOutside } from '../utils/useOnClickOutisde'
 import * as Scroll from 'react-scroll'
+import { useTranslation } from '../context'
 
 export const OnDemandMenu = props => {
    // props
@@ -14,6 +15,8 @@ export const OnDemandMenu = props => {
    const [activeCategory, setActiveCategory] = useState(null)
    const ref = React.useRef()
    useOnClickOutside(ref, () => setShowMenuItems('0'))
+
+   const { t } = useTranslation()
 
    // const { isMenuLoading, categories } = onDemandMenu
    // if (isMenuLoading) {
