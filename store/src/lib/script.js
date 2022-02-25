@@ -10,12 +10,13 @@ export const ScriptProvider = ({ children }) => {
    React.useEffect(() => {
       const scripts = configOf('Scripts')?.scripts
       if (!isEmpty(scripts?.value)) {
+         const parsedScript = JSON.parse(scripts?.value)
          const {
             startHead = [],
             endHead = [],
             startBody = [],
             endBody = [],
-         } = scripts?.value
+         } = parsedScript
 
          if (isClient) {
             // MOUNT IN STARTING OF HEAD
