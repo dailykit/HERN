@@ -1,26 +1,22 @@
 import { useSubscription } from '@apollo/react-hooks'
-import { Flex } from '@dailykit/ui'
+import { Flex, Spacer } from '@dailykit/ui'
+import { Avatar, Space } from 'antd'
 import React, { useContext, useState } from 'react'
 import { BrandContext } from '../../../../../App'
 import { UnionIcon } from '../../../../assets/icons'
 import { ArrowDown, ArrowUp } from '../../../../assets/navBarIcons'
 import { BRAND_LIST } from '../../graphql/subscription'
+import { StyledBrandName, StyledBrandSelector } from './styled'
 
 const BrandSelector = ({ mouseOver }) => {
-   return (
-      <div style={{ padding: '7px', textAlign: 'center' }}>
-         {mouseOver ? <BrandSelect /> : <UnionIcon />}
-      </div>
-   )
-}
-const BrandSelect = () => {
    const [arrowClicked, setArrowClicked] = useState(false)
    const [brandList, setBrandList] = React.useState([])
+   const [brandContext, setBrandContext] = useContext(BrandContext)
    const [viewingFor, setViewingFor] = useState({
       brandId: null,
       brandName: '',
+      logo: '',
    })
-   const [brandContext, setBrandContext] = useContext(BrandContext)
 
    const { loading: loadingList, error } = useSubscription(BRAND_LIST, {
       variables: {
@@ -51,6 +47,7 @@ const BrandSelect = () => {
                   ...viewingFor,
                   brandId: brand.id,
                   brandName: brand.title,
+                  logo: brand.logo,
                })
                setBrandContext({
                   brandId: brand.id,
@@ -60,44 +57,70 @@ const BrandSelect = () => {
          })
       },
    })
-   console.log('Brand list', brandContext)
+   console.log('Brand list', brandList)
+
    return (
-      <div>
-         <Flex
-            container
-            style={{ justifyContent: 'space-between', padding: '7px' }}
-         >
-            <p>{viewingFor.brandName}</p>
-            <span onClick={() => setArrowClicked(!arrowClicked)}>
-               {arrowClicked ? <ArrowUp /> : <ArrowDown />}
-            </span>
-         </Flex>
-         {arrowClicked && (
-            <div style={{ position: 'absolute' }}>
-               {brandList.map(brand => {
-                  return (
-                     <div
-                        key={brand.id}
-                        onClick={() => {
-                           setViewingFor({
-                              ...viewingFor,
-                              brandId: brand.id,
-                              brandName: brand.title,
-                           })
-                           setBrandContext({
-                              ...brandContext,
-                              brandId: brand.id,
-                              brandName: brand.title,
-                           })
-                        }}
-                     >
-                        {brand.title}
-                     </div>
-                  )
-               })}
+      <div style={{ padding: '7px', textAlign: 'center' }}>
+         {mouseOver ? (
+            <div>
+               <StyledBrandSelector>
+                  <div>
+                     {viewingFor.logo ? (
+                        <Avatar src={viewingFor.logo} size={52} />
+                     ) : (
+                        <Avatar
+                           style={{
+                              backgroundColor: '#87d068',
+                           }}
+                           size={52}
+                        >
+                           {viewingFor.brandName.charAt(0).toUpperCase()}
+                        </Avatar>
+                     )}
+                  </div>
+                  <div>
+                     <StyledBrandName>
+                        <p>Brand</p>
+                        <Spacer size="2px" />
+                        <p>{viewingFor.brandName}</p>
+                     </StyledBrandName>
+                     <span onClick={() => setArrowClicked(!arrowClicked)}>
+                        {arrowClicked ? <ArrowUp /> : <ArrowDown />}
+                     </span>
+                  </div>
+               </StyledBrandSelector>
+               {arrowClicked && (
+                  <div style={{ position: 'absolute' }}>
+                     {brandList.map(brand => {
+                        return (
+                           <div
+                              key={brand.id}
+                              onClick={() => {
+                                 setViewingFor({
+                                    ...viewingFor,
+                                    brandId: brand.id,
+                                    brandName: brand.title,
+                                    logo: brand.logo,
+                                 })
+                                 setBrandContext({
+                                    ...brandContext,
+                                    brandId: brand.id,
+                                    brandName: brand.title,
+                                 })
+                              }}
+                           >
+                              {brand.title}
+                           </div>
+                        )
+                     })}
+                  </div>
+               )}
             </div>
+         ) : (
+            <UnionIcon />
          )}
       </div>
    )
 }
+
 export default BrandSelector
