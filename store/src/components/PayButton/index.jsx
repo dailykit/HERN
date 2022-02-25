@@ -7,6 +7,7 @@ import { useToasts } from 'react-toast-notifications'
 import { Button } from '../button'
 import * as QUERIES from '../../graphql'
 import { isKiosk, useTerminalPay } from '../../utils'
+import { usePayment } from '../../lib'
 
 function PayButton({
    children,
