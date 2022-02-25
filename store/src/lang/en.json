@@ -46,5 +46,10 @@
    "Current changes will lose do you wish to continue?": "Current changes will lose do you wish to continue?",
    "Add": "Add",
    "Item Total": "Item Total",
-   "Reset": "Reset"
+   "Reset": "Reset",
+   "ADD": "ADD",
+   "COMING SOON": "COMING SOON",
+   "Customizable": "Customizable",
+   "DELIVER AT": "DELIVER AT",
+   "Available Options": "Available Options"
 }
