@@ -141,6 +141,12 @@
    padding: 16px;
 }
 
+.hern-product-modifier-pop-up-product-option-list > label {
+   &::after {
+      content: ' :';
+   }
+}
+
 .hern-product-modifier-pop-up-modifier-category-list {
    font-style: normal;
    font-weight: normal;

@@ -594,7 +594,7 @@ export const ModifierPopup = props => {
                      <label htmlFor="products">
                         {productData.productionOptionSelectionStatement
                            ? productData.productionOptionSelectionStatement
-                           : 'Available Options:'}
+                           : t('Available Options')}
                      </label>
                      <br />
                      <ul
