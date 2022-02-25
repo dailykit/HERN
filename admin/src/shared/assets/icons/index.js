@@ -52,6 +52,8 @@ import PlaceHolderImgIcon from './PlaceHolderImg'
 import CrossIcon from './Cross'
 import LocationMarkerIcon from './LocationMarker'
 import ForwardIcon from './ForwardArrows'
+import UnionIcon from './Union'
+
 export {
    SearchIcon,
    AddIcon,
@@ -107,6 +109,7 @@ export {
    CrossIcon,
    LocationMarkerIcon,
    ForwardIcon,
+   UnionIcon,
 }
 
 export * from './Tick'
