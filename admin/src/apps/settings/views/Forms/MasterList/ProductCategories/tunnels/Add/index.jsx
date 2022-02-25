@@ -89,9 +89,9 @@ const AddTypesTunnel = ({ closeTunnel }) => {
       MASTER.PRODUCT_CATEGORY.CREATE,
       {
          onCompleted: () => {
-            
+
             toast.success('Product category added!')
-            closeTunnel(1)
+            closeTunnel(10)
          },
          onError: error => {
             toast.error('Failed to add product category!')
@@ -106,15 +106,15 @@ const AddTypesTunnel = ({ closeTunnel }) => {
       setIconUploadLoading(true)
       setBannerUploadLoading(true)
       let imageLocation, imageKey;
-      if(imageFiles.length){
+      if (imageFiles.length) {
          [imageLocation, imageKey] = await imageUpload()
       }
       let iconLocation, iconKey;
-      if (iconFiles.length){
+      if (iconFiles.length) {
          [iconLocation, iconKey] = await iconUpload()
       }
       let bannerLocation, bannerKey;
-      if (bannerFiles.length){
+      if (bannerFiles.length) {
          [bannerLocation, bannerKey] = await bannerUpload()
       }
       setImageUploadLoading(false)
@@ -142,7 +142,7 @@ const AddTypesTunnel = ({ closeTunnel }) => {
       if (imageInputRef.current?.value) {
          imageInputRef.current.value = null
       }
-      setImageUrl({...imageUrl, 'value': ''})
+      setImageUrl({ ...imageUrl, 'value': '' })
    }
 
    const iconClearSelected = () => {
@@ -150,7 +150,7 @@ const AddTypesTunnel = ({ closeTunnel }) => {
       if (iconInputRef.current?.value) {
          iconInputRef.current.value = null
       }
-      setIconUrl({...iconUrl, 'value': ''})
+      setIconUrl({ ...iconUrl, 'value': '' })
    }
 
    const bannerClearSelected = () => {
@@ -158,18 +158,18 @@ const AddTypesTunnel = ({ closeTunnel }) => {
       if (bannerInputRef.current?.value) {
          bannerInputRef.current.value = null
       }
-      setBannerUrl({...bannerUrl, 'value': ''})
+      setBannerUrl({ ...bannerUrl, 'value': '' })
    }
 
    const imageUpload = async () => {
       try {
-         const list = await upload({ files:imageFiles })
+         const list = await upload({ files: imageFiles })
          let file
          if (Array.isArray(list) && list.length === 1) {
             [file] = list
-            setImageUrl({...imageUrl, value: file.Location })
+            setImageUrl({ ...imageUrl, value: file.Location })
          }
-         
+
          imageClearSelected()
          return [file.Location, file.key]
       } catch (error) {
@@ -179,11 +179,11 @@ const AddTypesTunnel = ({ closeTunnel }) => {
 
    const iconUpload = async () => {
       try {
-         const list = await upload({ files:iconFiles })
+         const list = await upload({ files: iconFiles })
          let file
          if (Array.isArray(list) && list.length === 1) {
             [file] = list
-            setIconUrl({...iconUrl, value:file.Location})
+            setIconUrl({ ...iconUrl, value: file.Location })
          }
          iconClearSelected()
          return [file.Location, file.key]
@@ -194,11 +194,11 @@ const AddTypesTunnel = ({ closeTunnel }) => {
 
    const bannerUpload = async () => {
       try {
-         const list = await upload({ files:bannerFiles })
+         const list = await upload({ files: bannerFiles })
          let file
          if (Array.isArray(list) && list.length === 1) {
             [file] = list
-            setBannerUrl({...bannerUrl, value:file.Location})
+            setBannerUrl({ ...bannerUrl, value: file.Location })
          }
          bannerClearSelected()
          return [file.Location, file.key]
@@ -218,7 +218,7 @@ const AddTypesTunnel = ({ closeTunnel }) => {
                isLoading: imageUploadLoading || addingCategory || iconUploadLoading || bannerUploadLoading,
                disabled: !name.meta.isValid,
             }}
-            close={() => closeTunnel(1)}
+            close={() => closeTunnel(10)}
             tooltip={<Tooltip identifier="tunnel_product_category_heading" />}
          />
          <Banner id="settings-app-master-lists-product-categories-tunnel-top" />
@@ -296,7 +296,7 @@ const AddTypesTunnel = ({ closeTunnel }) => {
                </Form.Label>
                <Upload inputRef={bannerInputRef} files={bannerFiles} setFiles={setBannerFiles} clearSelected={bannerClearSelected} />
             </Form.Group>
-            
+
          </Flex>
          <Banner id="settings-app-master-lists-product-categories-tunnel-bottom" />
       </>

@@ -21,7 +21,7 @@ const AddTypesTunnel = ({ closeTunnel }) => {
       {
          onCompleted: () => {
             toast.success('Processings added.')
-            closeTunnel(1)
+            closeTunnel(8)
          },
          onError: error => {
             toast.error('Failed to add processing!')
@@ -65,7 +65,7 @@ const AddTypesTunnel = ({ closeTunnel }) => {
                isLoading: addingProcessing,
                disabled: types.filter(Boolean).length === 0,
             }}
-            close={() => closeTunnel(1)}
+            close={() => closeTunnel(8)}
             tooltip={<Tooltip identifier="tunnel_processing_heading" />}
          />
          <Banner id="settings-app-master-lists-processing-tunnel-top" />

@@ -15,7 +15,7 @@ import validator from '../validator'
 import { Banner, Tooltip } from '../../components'
 import { CREATE_COLLECTIONS } from '../../../apps/menu/graphql'
 
-const CreateCollection = ({ close }) => {
+const CreateCollection = ({ closeTunnel }) => {
    const { addTab, tab } = useTabs()
    const [click, setClick] = React.useState(null)
    const [collection, setCollection] = React.useState([
@@ -57,7 +57,7 @@ const CreateCollection = ({ close }) => {
             },
          ])
          toast.success('Successfully created the Collection!')
-         closeTunnel(1)
+         closeTunnel(17)
       },
       onError: () =>
          toast.success('Failed to create the Collection, please try again!'),
@@ -144,7 +144,7 @@ const CreateCollection = ({ close }) => {
       }
       return toast.error('Collection Name and Author is required!')
    }
-   const closeTunnel = () => {
+   const close = () => {
       setCollection([
          {
             collectionName: {
@@ -157,7 +157,7 @@ const CreateCollection = ({ close }) => {
             },
          },
       ])
-      close(1)
+      closeTunnel(17)
    }
    return (
       <>
@@ -181,7 +181,7 @@ const CreateCollection = ({ close }) => {
                         : 'Save & Open',
                },
             ]}
-            close={closeTunnel}
+            close={close}
             tooltip={<Tooltip identifier="create_collection_tunnelHeader" />}
          />
          <Banner id="product-app-collection-create-collection-tunnel-top" />
