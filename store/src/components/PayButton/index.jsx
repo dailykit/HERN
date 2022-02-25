@@ -6,8 +6,8 @@ import { useToasts } from 'react-toast-notifications'
 
 import { Button } from '../button'
 import * as QUERIES from '../../graphql'
-import { usePayment } from '../../lib'
 import { isKiosk, useTerminalPay } from '../../utils'
+import { usePayment } from '../../lib'
 
 function PayButton({
    children,
@@ -27,7 +27,6 @@ function PayButton({
       initializePayment,
       setPaymentInfo,
    } = usePayment()
-   const { checkTerminalStatus } = useTerminalPay()
    const { addToast } = useToasts()
    const [cartValidity, setCartValidity] = useState(null)
 
@@ -60,9 +59,6 @@ function PayButton({
       console.log('PayButton: onPayClickHandler')
       if (isKioskMode) {
          console.log('inside kiosk condition')
-         const response = await checkTerminalStatus()
-         if (response && response === 'BUSY')
-            return addToast('Terminal is busy', { appearance: 'error' })
          if (cartId) {
             initializePayment(cartId)
             updatePaymentState({
