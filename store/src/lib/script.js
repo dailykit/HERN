@@ -5,11 +5,10 @@ import { useConfig } from '.'
 import { isClient } from '../utils'
 
 export const ScriptProvider = ({ children }) => {
-   const { configOf } = useConfig('app')
+   const { scripts } = useConfig('app').configOf('Scripts')
 
    React.useEffect(() => {
-      const scripts = configOf('Scripts')?.scripts
-      if (!isEmpty(scripts?.value)) {
+      if (scripts?.value) {
          const parsedScript = JSON.parse(scripts?.value)
          const {
             startHead = [],
@@ -37,7 +36,7 @@ export const ScriptProvider = ({ children }) => {
             }
          }
       }
-   }, [])
+   }, [scripts])
    return <>{children}</>
 }
 
