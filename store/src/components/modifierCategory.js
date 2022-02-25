@@ -69,7 +69,7 @@ export const ModifierCategory = props => {
             //for uncheck the option
             if (
                selectedOptions.single[existCategoryIndex][
-                  'modifierCategoryOptionsID'
+               'modifierCategoryOptionsID'
                ] === eachOption.id &&
                !eachModifierCategory.isRequired
             ) {
@@ -137,7 +137,9 @@ export const ModifierCategory = props => {
                alignItems: 'center',
             }}
          >
-            <span className="hern-product-modifier-pop-up-modifier-category__name">
+            <span className="hern-product-modifier-pop-up-modifier-category__name" data-translation="true"
+               data-original-value={eachCategory.name}>
+
                {eachCategory.name}
             </span>{' '}
             <span
@@ -145,7 +147,9 @@ export const ModifierCategory = props => {
                   fontStyle: 'italic',
                   fontSize: '11px',
                }}
-            >
+
+               data-translation="true"
+               data-original-value={renderConditionText(eachCategory)}>
                {'('}
                {renderConditionText(eachCategory)}
                {')'}
@@ -161,7 +165,7 @@ export const ModifierCategory = props => {
                      color: 'red',
                   }}
                >
-                  You have to choose this category.
+                  {t('You have to choose this category.')}
                </span>
             </>
          )}

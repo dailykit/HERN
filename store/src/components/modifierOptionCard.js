@@ -30,7 +30,8 @@ export const ModifierOptionCard = ({
                   <CheckIcon />
                </span>
             )}
-            <span className="hern-modifier-option-name">
+            <span className="hern-modifier-option-name" data-translation="true"
+               data-original-value={modifierOption.name}>
                {modifierOption.name}
             </span>
             {showPrice &&
@@ -110,7 +111,7 @@ export const ModifierOptionCard = ({
                      }
                   }}
                >
-                  customize
+                  {t('customize')}
                </span>
             )}
          </div>
