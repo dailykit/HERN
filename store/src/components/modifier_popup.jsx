@@ -556,6 +556,10 @@ export const ModifierPopup = props => {
                                           setIsModifierOptionsViewOpen(false)
                                        }
                                     }}
+                                    data-translation="true"
+                                    data-original-value={
+                                       eachProductOptionType.type
+                                    }
                                  >
                                     {camelCaseToNormalText(
                                        eachProductOptionType.type == 'null'
@@ -695,6 +699,8 @@ export const ModifierPopup = props => {
                                     fontSize: '16px',
                                     marginLeft: '10px',
                                  }}
+                                 data-translation="true"
+                                 data-original-value={productOption.label}
                               >
                                  {productOption.label}
                               </span>
@@ -704,7 +710,7 @@ export const ModifierPopup = props => {
                            htmlFor="products"
                            className="hern-product-modifier-pop-up-add-on"
                         >
-                           Add on:
+                           {t('Add on')}:
                         </label>
                         {productOption.additionalModifiers.length > 0 &&
                            productOption.additionalModifiers.map(
@@ -792,12 +798,12 @@ export const ModifierPopup = props => {
                            ? showModifiers && productOption.modifier
                               ? showStepViewProductOptionAndModifiers
                                  ? !isModifierOptionsViewOpen
-                                    ? 'PROCEED'
-                                    : `ADD TO CART ${totalAmount()}`
-                                 : `ADD TO CART ${totalAmount()}`
-                              : `ADD TO CART ${totalAmount()}`
-                           : 'COMING SOON'
-                        : 'COMING SOON'}
+                                    ? t('PROCEED')
+                                    : `${t('ADD TO CART')} ${totalAmount()}`
+                                 : `${t('ADD TO CART')} ${totalAmount()}`
+                              : `${t('ADD TO CART')} ${totalAmount()}`
+                           : t('COMING SOON')
+                        : t('COMING SOON')}
                   </Button>
                </div>
             </div>
@@ -863,7 +869,13 @@ const AdditionalModifiers = forwardRef(
                      cursor: 'pointer',
                   }}
                >
-                  <span className="">{eachAdditionalModifier.label}</span>
+                  <span
+                     className=""
+                     data-translation="true"
+                     data-original-value={eachAdditionalModifier.label}
+                  >
+                     {eachAdditionalModifier.label}
+                  </span>
                   {showCustomize ? (
                      <UpVector size={18} />
                   ) : (

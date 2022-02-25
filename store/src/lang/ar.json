@@ -10,6 +10,7 @@
    "Take Away": "الطلبات الخارجية ",
    "Menu": "القائمة",
    "Add To Cart": "إضافة إلى السلة ",
+   "ADD TO CART": "إضافة إلى السلة ",
    "Customize": "تعديل",
    "CHECKOUT": "الإستمرار للدفع",
    "SEE MENU": "الإطلاع على قائمة الطعام",
@@ -51,5 +52,7 @@
    "COMING SOON": "قريبا",
    "Customizable": "قابل للتخصيص",
    "DELIVER AT": "تسليم في",
-   "Available Options": "الخيارات المتاحة"
+   "Available Options": "الخيارات المتاحة",
+   "Add on": "اضافه",
+   "PROCEED": "تقدم"
 }
