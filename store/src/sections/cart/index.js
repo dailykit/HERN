@@ -55,6 +55,7 @@ export const OnDemandCart = () => {
          </>
       )
    }
+
    if (!isAuthenticated && userType !== 'guest') {
       return (
          <>

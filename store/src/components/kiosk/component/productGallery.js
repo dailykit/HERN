@@ -9,7 +9,11 @@ import { useCart, useTranslation } from '../../../context'
 import KioskButton from './button'
 import classNames from 'classnames'
 import { Carousel } from 'antd'
-import { ArrowLeftIcon, ArrowRightIcon } from '../../../assets/icons'
+import {
+   ArrowLeftIcon,
+   ArrowRightIcon,
+   ProductGalleryBG,
+} from '../../../assets/icons'
 
 export const ProductGalleryKiosk = ({ config }) => {
    const { brand, isConfigLoading, kioskDetails, configOf } = useConfig()
@@ -91,6 +95,17 @@ export const ProductGalleryKiosk = ({ config }) => {
    }
    return (
       <div className="hern-kiosk__product-gallery-container">
+         <div
+            className="hern-kiosk__product-gallery-background"
+            style={{ background: '#E5F0F7' }}
+         >
+            <ProductGalleryBG
+               fill={
+                  config?.kioskSettings?.theme?.secondaryColorLight?.value ||
+                  theme?.accent
+               }
+            />
+         </div>
          <label
             className="hern-kiosk__product-gallery-title"
             data-translation="true"
@@ -125,8 +140,8 @@ export const ProductGalleryKiosk = ({ config }) => {
             />
             <Carousel
                ref={carousalRef}
-               slidesToShow={3}
-               slidesToScroll={3}
+               slidesToShow={4}
+               slidesToScroll={4}
                infinite={false}
             >
                {products.map(eachProduct => {
