@@ -27,7 +27,46 @@ export const OnDemandCart = () => {
    const { cartState, combinedCartItems, isFinalCartLoading, storedCartId } =
       React.useContext(CartContext)
    const { isAuthenticated, userType } = useUser()
+   const { locationId, dispatch } = useConfig()
+   React.useEffect(() => {
+      if (!isFinalCartLoading) {
+         const storeLocationId = localStorage.getItem('storeLocationId')
+         if (storeLocationId && !locationId) {
+            dispatch({
+               type: 'SET_LOCATION_ID',
+               payload: JSON.parse(storeLocationId),
+            })
+            const localUserLocation = JSON.parse(
+               localStorage.getItem('userLocation')
+            )
 
+            dispatch({
+               type: 'SET_USER_LOCATION',
+               payload: { ...localUserLocation },
+            })
+            dispatch({
+               type: 'SET_STORE_STATUS',
+               payload: {
+                  status: true,
+                  message: 'Store available on your location.',
+                  loading: false,
+               },
+            })
+         } else {
+            const localUserLocation = localStorage.getItem('userLocation')
+            if (localUserLocation) {
+               const localUserLocationParse = JSON.parse(localUserLocation)
+               dispatch({
+                  type: 'SET_USER_LOCATION',
+                  payload: {
+                     ...localUserLocationParse,
+                  },
+               })
+               return
+            }
+         }
+      }
+   }, [isFinalCartLoading])
    if (isFinalCartLoading)
       return (
          <>
