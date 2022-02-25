@@ -6,7 +6,11 @@ import { BrandContext } from '../../../../../App'
 import { UnionIcon } from '../../../../assets/icons'
 import { ArrowDown, ArrowUp } from '../../../../assets/navBarIcons'
 import { BRAND_LIST } from '../../graphql/subscription'
-import { StyledBrandName, StyledBrandSelector } from './styled'
+import {
+   StyledBrandName,
+   StyledBrandSelector,
+   StyledBrandSelectorList,
+} from './styled'
 
 const BrandSelector = ({ mouseOver }) => {
    const [arrowClicked, setArrowClicked] = useState(false)
@@ -90,7 +94,7 @@ const BrandSelector = ({ mouseOver }) => {
                   </div>
                </StyledBrandSelector>
                {arrowClicked && (
-                  <div style={{ position: 'absolute' }}>
+                  <StyledBrandSelectorList>
                      {brandList.map(brand => {
                         return (
                            <div
@@ -107,13 +111,28 @@ const BrandSelector = ({ mouseOver }) => {
                                     brandId: brand.id,
                                     brandName: brand.title,
                                  })
+                                 setArrowClicked(false)
                               }}
                            >
-                              {brand.title}
+                              <span>
+                                 {brand.logo ? (
+                                    <Avatar src={brand.logo} size="small" />
+                                 ) : (
+                                    <Avatar
+                                       style={{
+                                          backgroundColor: '#87d068',
+                                       }}
+                                       size="small"
+                                    >
+                                       {brand.title.charAt(0).toUpperCase()}
+                                    </Avatar>
+                                 )}
+                              </span>
+                              <span>{brand.title}</span>
                            </div>
                         )
                      })}
-                  </div>
+                  </StyledBrandSelectorList>
                )}
             </div>
          ) : (

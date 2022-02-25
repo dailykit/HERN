@@ -11,6 +11,7 @@ export const StyledBrandSelector = styled.div`
    border-radius: 4px;
    align-items: center;
    padding: 7px;
+   cursor: pointer;
 
    > div:nth-child(1) {
    }
@@ -40,5 +41,23 @@ export const StyledBrandName = styled.div`
       line-height: 15px;
 
       color: #555b6e;
+   }
+`
+export const StyledBrandSelectorList = styled.div`
+   position: absolute;
+   background: rgba(255, 255, 255, 0.25);
+   border: 1px solid #f3f3f3;
+   box-sizing: border-box;
+   box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.05);
+   backdrop-filter: blur(20px);
+   width: 93.5%;
+   padding: 7px;
+   border-radius: 4px;
+   cursor: pointer;
+   > div:nth-child(n) {
+      display: flex;
+      padding: 7px;
+      align-items: center;
+      column-gap: 7px;
    }
 `
