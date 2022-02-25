@@ -102,11 +102,13 @@ export const CartProvider = ({ children }) => {
             cartId: {
                _eq: storedCartId,
             },
-            paymentStatus: {
-               _eq: 'PENDING',
-            },
-            status: {
-               _eq: 'CART_PENDING',
+            cart: {
+               paymentStatus: {
+                  _eq: 'PENDING',
+               },
+               status: {
+                  _eq: 'CART_PENDING',
+               },
             },
          },
       },
@@ -120,7 +122,6 @@ export const CartProvider = ({ children }) => {
          !isEmpty(cartData.carts) &&
          oiType === 'Kiosk Ordering'
       ) {
-         console.log('carts consoling ', cartData.carts)
          const cart = cartData.carts[0]
          const terminalPaymentOption = cart?.paymentMethods.find(
             option =>
@@ -323,7 +324,8 @@ export const CartProvider = ({ children }) => {
       if (!isAuthenticated) {
          //without login
 
-         if (!isEmpty(cartData?.carts)) {
+         if (isEmpty(cartData?.carts)) {
+            console.log('cartData check for empty', cartData)
             //new cart
 
             // finding terminal payment method option id for setting as default
