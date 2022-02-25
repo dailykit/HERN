@@ -170,6 +170,8 @@ const PaymentSection = () => {
          {!isSmallerDevice && (
             <div className="hern-on-demand-cart__payment-section__content">
                <div
+                  role="button"
+                  onClick={() => !isDisabled && setOpen(!open)}
                   className={classNames(
                      'hern-on-demand-cart__payment-section__content__header',
                      {
@@ -193,10 +195,7 @@ const PaymentSection = () => {
                      &nbsp; &nbsp;
                      <h3>Payment</h3>
                   </div>
-                  <span
-                     onClick={() => !isDisabled && setOpen(!open)}
-                     role="button"
-                  >
+                  <span role="button">
                      <ChevronIcon
                         direction={open ? 'down' : 'right'}
                         color="rgba(64, 64, 64, 0.6)"
