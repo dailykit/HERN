@@ -394,8 +394,8 @@ export const TextArea = ({
             value={fieldDetail?.value || fieldDetail.default}
          />
       ) : (
-         <Text as="h4" style={{ color: '#555B6E' }}>
-            {fieldDetail?.value || fieldDetail.default}
+         <Text as="h3" style={{ color: '#555B6E', fontSize: "16px" }}>
+            {fieldDetail?.value?.length > 45 ? fieldDetail?.value?.substring(0, 25) : (fieldDetail?.value || fieldDetail.default)}
          </Text>
       )}
    </Flex>
