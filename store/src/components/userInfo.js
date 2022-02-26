@@ -14,6 +14,7 @@ import classNames from 'classnames'
 export const UserInfo = props => {
    const [isTunnelOpen, setIsTunnelOpen] = useState(false)
    const [isUserFormOpen, setIsUserFormOpen] = useState(false)
+   const [settingCartinfo, setSettingCartinfo] = useState(false)
 
    const isSmallerDevice = isClient && window.innerWidth < 768
 
@@ -31,15 +32,23 @@ export const UserInfo = props => {
          setIsUserFormOpen(false)
       }
    }
+
    return (
       <>
          {!isSmallerDevice ? (
             isUserFormOpen ? (
-               <UserInfoForm handleClose={handleClose} {...props} />
+               <UserInfoForm
+                  settingCartinfo={settingCartinfo}
+                  setSettingCartinfo={setSettingCartinfo}
+                  handleClose={handleClose}
+                  {...props}
+               />
             ) : (
                <UserDetails
+                  settingCartinfo={settingCartinfo}
                   handleOpen={() => setIsUserFormOpen(true)}
                   handleEdit={handleEdit}
+                  setSettingCartinfo={setSettingCartinfo}
                />
             )
          ) : (
@@ -69,7 +78,13 @@ export const UserInfo = props => {
    )
 }
 const UserInfoForm = props => {
-   const { editable = true, tunnel = false, handleClose } = props
+   const {
+      editable = true,
+      tunnel = false,
+      handleClose,
+      settingCartinfo,
+      setSettingCartinfo,
+   } = props
    const { cartState, methods } = React.useContext(CartContext)
    const { user } = useUser()
    const { addToast } = useToasts()
@@ -90,6 +105,9 @@ const UserInfoForm = props => {
          user.platform_customer?.phoneNumber ||
          ''
    )
+
+   const isSmallerDevice = isClient && window.innerWidth < 768
+
    const [updateCustomer] = useMutation(UPDATE_PLATFORM_CUSTOMER, {
       onCompleted: () => {
          console.log('updated')
@@ -125,8 +143,18 @@ const UserInfoForm = props => {
          })
       }
       setSavingUserInfo(false)
-      handleClose()
+      if (!isSmallerDevice && cart?.customerInfo === null) {
+         setSettingCartinfo(true)
+      } else {
+         handleClose()
+      }
    }
+
+   React.useEffect(() => {
+      if (!isSmallerDevice && cart?.customerInfo !== null && settingCartinfo) {
+         handleClose()
+      }
+   }, [cart])
 
    return (
       <div
@@ -208,7 +236,12 @@ const UserInfoForm = props => {
       </div>
    )
 }
-const UserDetails = ({ handleEdit, handleOpen }) => {
+const UserDetails = ({
+   handleEdit,
+   handleOpen,
+   settingCartinfo,
+   setSettingCartinfo,
+}) => {
    const { cartState } = React.useContext(CartContext)
    const isSmallerDevice = isClient && window.innerWidth < 768
 
@@ -218,7 +251,7 @@ const UserDetails = ({ handleEdit, handleOpen }) => {
       cartState?.cart?.customerInfo?.customerPhone?.length
 
    React.useEffect(() => {
-      if (!isSmallerDevice && !hasUserInfo) {
+      if (!isSmallerDevice && !hasUserInfo && !settingCartinfo) {
          handleOpen()
       }
    }, [])
@@ -248,7 +281,14 @@ const UserDetails = ({ handleEdit, handleOpen }) => {
                      </span>
                   </div>
                </div>
-               <button onClick={handleEdit}>Edit</button>
+               <button
+                  onClick={() => {
+                     setSettingCartinfo && setSettingCartinfo(false)
+                     handleEdit()
+                  }}
+               >
+                  Edit
+               </button>
             </div>
          )}
       </>

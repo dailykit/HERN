@@ -256,7 +256,7 @@ const Coupon_ = ({
                   </Button>
                )}
             </form>
-            {!orderInterfaceType === 'Kiosk Ordering' && (
+            {orderInterfaceType !== 'Kiosk Ordering' && (
                <Button
                   onClick={() => setIsCouponListTunnelOpen(true)}
                   variant="ghost"

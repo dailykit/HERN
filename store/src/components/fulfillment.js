@@ -68,7 +68,7 @@ export const FulfillmentForm = () => {
             <div
                className={classNames('hern-fulfillment__address__header', {
                   'hern-fulfillment__address__header--open':
-                     fulfillementAddressOpen,
+                     fulfillementAddressOpen && isDisabled,
                })}
             >
                <div>
@@ -79,20 +79,26 @@ export const FulfillmentForm = () => {
                   <h3>Address</h3>
                </div>
                <span
+                  style={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}
                   onClick={() =>
+                     !isDisabled &&
                      setFulfillementAddressOpen(!fulfillementAddressOpen)
                   }
                   role="button"
                >
                   <ChevronIcon
-                     direction={fulfillementAddressOpen ? 'down' : 'right'}
+                     direction={
+                        fulfillementAddressOpen && !isDisabled
+                           ? 'down'
+                           : 'right'
+                     }
                      color="rgba(64, 64, 64, 0.6)"
                      width={16}
                      height={16}
                   />
                </span>
             </div>
-            {fulfillementAddressOpen && (
+            {!isDisabled && fulfillementAddressOpen && (
                <>
                   <div className="hern-fulfillment__address__content">
                      <span>{fulfillmentLabel}</span>
@@ -132,18 +138,24 @@ export const FulfillmentForm = () => {
                   </h3>
                </div>
                <span
-                  onClick={() => setFulfillementTimeOpen(!fulfillementTimeOpen)}
+                  style={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}
+                  onClick={() =>
+                     !isDisabled &&
+                     setFulfillementTimeOpen(!fulfillementTimeOpen)
+                  }
                   role="button"
                >
                   <ChevronIcon
-                     direction={fulfillementTimeOpen ? 'down' : 'right'}
+                     direction={
+                        fulfillementTimeOpen && !isDisabled ? 'down' : 'right'
+                     }
                      color="rgba(64, 64, 64, 0.6)"
                      width={16}
                      height={16}
                   />
                </span>
             </div>
-            {fulfillementTimeOpen && (
+            {!isDisabled && fulfillementTimeOpen && (
                <div>
                   {selectedFulfillment === 'DELIVERY' && <Delivery />}
                   {selectedFulfillment === 'PICKUP' && <Pickup />}
