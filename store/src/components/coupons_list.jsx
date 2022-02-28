@@ -12,7 +12,7 @@ import {
    Scissor,
 } from '../assets/icons'
 import classNames from 'classnames'
-import { isClient, useQueryParamState } from '../utils'
+import { isClient, useQueryParamState, isKiosk } from '../utils'
 import { Carousel } from 'antd'
 import { Button } from '.'
 import { useWindowSize } from '../utils'
@@ -43,6 +43,8 @@ const Coupons_List = ({
    const [availableCoupons, setAvailableCoupons] = React.useState([])
    const [applying, setApplying] = React.useState(false)
    const { width, height } = useWindowSize()
+   const isKioskMode = isKiosk()
+
    const { loading, error } = useSubscription(COUPONS, {
       variables: {
          params: {
@@ -232,7 +234,7 @@ const Coupons_List = ({
 
             {availableCoupons.length > 0 && (
                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  {showListOnCarousel && (
+                  {(showListOnCarousel || isKioskMode) && (
                      <ArrowLeftIcon
                         className="hern-upfront-coupons-list__carousal-left-arrow hern-upfront-coupons-list__carousal-arrow"
                         size={42}
@@ -240,7 +242,7 @@ const Coupons_List = ({
                      />
                   )}
                   <div className="hern-upfront-coupons-list__carousal-wrapper">
-                     {showListOnCarousel ? (
+                     {showListOnCarousel || isKioskMode ? (
                         <Carousel
                            ref={carousalRef}
                            slidesToShow={width < 1600 ? 1 : 2}
@@ -264,7 +266,7 @@ const Coupons_List = ({
                         </>
                      )}
                   </div>
-                  {showListOnCarousel && (
+                  {(showListOnCarousel || isKioskMode) && (
                      <ArrowRightIcon
                         className="hern-upfront-coupons-list__carousal-right-arrow hern-upfront-coupons-list__carousal-arrow"
                         size={42}

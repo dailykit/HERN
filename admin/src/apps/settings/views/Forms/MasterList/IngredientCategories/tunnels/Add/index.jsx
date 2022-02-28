@@ -29,7 +29,7 @@ const AddTypesTunnel = ({ closeTunnel }) => {
       {
          onCompleted: () => {
             toast.success('Ingredient category added!')
-            closeTunnel(1)
+            closeTunnel(11)
          },
          onError: error => {
             toast.error('Failed to add ingredient category!')
@@ -57,7 +57,7 @@ const AddTypesTunnel = ({ closeTunnel }) => {
                isLoading: addingCategory,
                disabled: !name.meta.isValid,
             }}
-            close={() => closeTunnel(1)}
+            close={() => closeTunnel(11)}
             tooltip={
                <Tooltip identifier="tunnel_ingredient_category_heading" />
             }

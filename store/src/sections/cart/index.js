@@ -27,7 +27,46 @@ export const OnDemandCart = () => {
    const { cartState, combinedCartItems, isFinalCartLoading, storedCartId } =
       React.useContext(CartContext)
    const { isAuthenticated, userType } = useUser()
+   const { locationId, dispatch } = useConfig()
+   React.useEffect(() => {
+      if (!isFinalCartLoading) {
+         const storeLocationId = localStorage.getItem('storeLocationId')
+         if (storeLocationId && !locationId) {
+            dispatch({
+               type: 'SET_LOCATION_ID',
+               payload: JSON.parse(storeLocationId),
+            })
+            const localUserLocation = JSON.parse(
+               localStorage.getItem('userLocation')
+            )
 
+            dispatch({
+               type: 'SET_USER_LOCATION',
+               payload: { ...localUserLocation },
+            })
+            dispatch({
+               type: 'SET_STORE_STATUS',
+               payload: {
+                  status: true,
+                  message: 'Store available on your location.',
+                  loading: false,
+               },
+            })
+         } else {
+            const localUserLocation = localStorage.getItem('userLocation')
+            if (localUserLocation) {
+               const localUserLocationParse = JSON.parse(localUserLocation)
+               dispatch({
+                  type: 'SET_USER_LOCATION',
+                  payload: {
+                     ...localUserLocationParse,
+                  },
+               })
+               return
+            }
+         }
+      }
+   }, [isFinalCartLoading])
    if (isFinalCartLoading)
       return (
          <>
@@ -55,6 +94,7 @@ export const OnDemandCart = () => {
          </>
       )
    }
+
    if (!isAuthenticated && userType !== 'guest') {
       return (
          <>
@@ -130,6 +170,8 @@ const PaymentSection = () => {
          {!isSmallerDevice && (
             <div className="hern-on-demand-cart__payment-section__content">
                <div
+                  role="button"
+                  onClick={() => !isDisabled && setOpen(!open)}
                   className={classNames(
                      'hern-on-demand-cart__payment-section__content__header',
                      {
@@ -153,10 +195,7 @@ const PaymentSection = () => {
                      &nbsp; &nbsp;
                      <h3>Payment</h3>
                   </div>
-                  <span
-                     onClick={() => !isDisabled && setOpen(!open)}
-                     role="button"
-                  >
+                  <span role="button">
                      <ChevronIcon
                         direction={open ? 'down' : 'right'}
                         color="rgba(64, 64, 64, 0.6)"

@@ -69,7 +69,17 @@ export const CartProvider = ({ children }) => {
    } = useSubscription(GET_CART, {
       skip: !storedCartId,
       variables: {
-         id: storedCartId,
+         where: {
+            id: {
+               _eq: storedCartId,
+            },
+            paymentStatus: {
+               _eq: 'PENDING',
+            },
+            status: {
+               _eq: 'CART_PENDING',
+            },
+         },
       },
       fetchPolicy: 'no-cache',
       onSubscriptionData: data => {
@@ -85,18 +95,39 @@ export const CartProvider = ({ children }) => {
    } = useSubscription(GET_CART_ITEMS_BY_CART, {
       skip: !storedCartId,
       variables: {
-         id: storedCartId,
+         where: {
+            level: {
+               _eq: 1,
+            },
+            cartId: {
+               _eq: storedCartId,
+            },
+            cart: {
+               paymentStatus: {
+                  _eq: 'PENDING',
+               },
+               status: {
+                  _eq: 'CART_PENDING',
+               },
+            },
+         },
       },
       fetchPolicy: 'no-cache',
    })
 
    useEffect(() => {
-      if (!isCartLoading && !isEmpty(cartData) && oiType === 'Kiosk Ordering') {
-         const terminalPaymentOption = cartData?.cart?.paymentMethods.find(
+      if (
+         !isCartLoading &&
+         !isEmpty(cartData) &&
+         !isEmpty(cartData.carts) &&
+         oiType === 'Kiosk Ordering'
+      ) {
+         const cart = cartData.carts[0]
+         const terminalPaymentOption = cart?.paymentMethods.find(
             option =>
                option?.supportedPaymentOption?.paymentOptionLabel === 'TERMINAL'
          )
-         const codPaymentOption = cartData?.cart?.paymentMethods.find(
+         const codPaymentOption = cart?.paymentMethods.find(
             option =>
                option?.supportedPaymentOption?.paymentOptionLabel === 'CASH'
          )
@@ -293,7 +324,8 @@ export const CartProvider = ({ children }) => {
       if (!isAuthenticated) {
          //without login
 
-         if (!cartData?.cart) {
+         if (isEmpty(cartData?.carts)) {
+            console.log('cartData check for empty', cartData)
             //new cart
 
             // finding terminal payment method option id for setting as default
@@ -338,7 +370,7 @@ export const CartProvider = ({ children }) => {
          }
       } else {
          // logged in
-         if (!cartData?.cart) {
+         if (!isEmpty(cartData?.carts)) {
             console.log('Login ✔ Cart ❌')
             // new cart
             const object = {
@@ -401,6 +433,7 @@ export const CartProvider = ({ children }) => {
          skip: !(brand?.id && user?.keycloakId && orderTabs.length > 0),
          fetchPolicy: 'no-cache',
          onSubscriptionData: ({ subscriptionData }) => {
+            console.log('subscriptionData', subscriptionData)
             // pending cart available
             ;(async () => {
                if (
@@ -570,7 +603,7 @@ export const CartProvider = ({ children }) => {
       <CartContext.Provider
          value={{
             cartState: {
-               cart: cartData?.cart || {},
+               cart: !isEmpty(cartData?.carts) ? cartData?.carts[0] : {} || {},
                cartItems: cartItemsData?.cartItems || {},
                kioskPaymentOptions: cartState.kioskPaymentOptions,
             },

@@ -256,12 +256,14 @@ const Coupon_ = ({
                   </Button>
                )}
             </form>
-            <Button
-               onClick={() => setIsCouponListTunnelOpen(true)}
-               variant="ghost"
-            >
-               View Offers
-            </Button>
+            {orderInterfaceType !== 'Kiosk Ordering' && (
+               <Button
+                  onClick={() => setIsCouponListTunnelOpen(true)}
+                  variant="ghost"
+               >
+                  View Offers
+               </Button>
+            )}
             {listOntunnnel && (
                <Tunnel.Right
                   title="Coupon"
@@ -277,16 +279,24 @@ const Coupon_ = ({
                   />
                </Tunnel.Right>
             )}
-            {!listOntunnnel &&
-               (orderInterfaceType === 'Kiosk Ordering' || upFrontLayout) && (
-                  <CouponsList
-                     createOrderCartRewards={createOrderCartRewards}
-                     closeTunnel={() => setIsCouponListOpen(false)}
-                     cart={cart}
-                     config={config}
-                     upFrontLayout={upFrontLayout}
-                  />
-               )}
+            {!listOntunnnel && upFrontLayout && (
+               <CouponsList
+                  createOrderCartRewards={createOrderCartRewards}
+                  closeTunnel={() => setIsCouponListOpen(false)}
+                  cart={cart}
+                  config={config}
+                  upFrontLayout={upFrontLayout}
+               />
+            )}
+            {orderInterfaceType === 'Kiosk Ordering' && (
+               <CouponsList
+                  createOrderCartRewards={createOrderCartRewards}
+                  closeTunnel={() => setIsCouponListOpen(false)}
+                  cart={cart}
+                  config={config}
+                  upFrontLayout={upFrontLayout}
+               />
+            )}
             {orderInterfaceType !== 'Kiosk Ordering' && !upFrontLayout && (
                <Tunnel
                   isOpen={isCouponListOpen}

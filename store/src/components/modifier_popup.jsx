@@ -13,6 +13,7 @@ import {
    UpVector,
 } from '../assets/icons'
 import {
+   camelCaseToNormalText,
    formatCurrency,
    getCartItemWithModifiers,
    getRoute,
@@ -58,6 +59,19 @@ export const ModifierPopup = props => {
    const [quantity, setQuantity] = useState(1)
    const [isModifierOptionsViewOpen, setIsModifierOptionsViewOpen] =
       useState(false) // used only when --> product option has modifier options and mobile view open
+   const productOptionsGroupedByProductOptionType = React.useMemo(() => {
+      const groupedData = _.chain(productData.productOptions)
+         .groupBy('type')
+         .map((value, key) => ({
+            type: key,
+            data: value,
+         }))
+         .value()
+      return groupedData
+   }, [productData])
+   const [productOptionType, setProductOptionType] = useState(
+      productOptionsGroupedByProductOptionType[0]['type']
+   )
 
    const showStepViewProductOptionAndModifiers = React.useMemo(
       () => stepView || isSmallerDevice,
@@ -130,6 +144,11 @@ export const ModifierPopup = props => {
          }
       }
    }, [])
+
+   console.log(
+      'productOptionsGroupedByProductOptionType',
+      productOptionsGroupedByProductOptionType
+   )
 
    //add to cart
    const handleAddOnCartOn = async () => {
@@ -356,6 +375,7 @@ export const ModifierPopup = props => {
          document.querySelector('body').style.overflowY = 'auto'
       }
    }, [productData])
+
    if (status === 'loading') {
       return <p>Loading</p>
    }
@@ -477,6 +497,47 @@ export const ModifierPopup = props => {
                      />
                   )}
                </div>
+               {productOptionsGroupedByProductOptionType.length > 1 && (
+                  <div>
+                     <ul className="hern-modifier-pop-up-product-option-type-list">
+                        {productOptionsGroupedByProductOptionType.map(
+                           (eachProductOptionType, index) => {
+                              return (
+                                 <li
+                                    role="button"
+                                    key={`${eachProductOptionType.type}-${index}`}
+                                    className={classNames(
+                                       'hern-modifier-pop-up-product-option-type',
+                                       {
+                                          'hern-modifier-pop-up-product-option-type--active':
+                                             eachProductOptionType.type ==
+                                             productOptionType,
+                                       }
+                                    )}
+                                    onClick={() => {
+                                       setProductOptionType(
+                                          eachProductOptionType.type
+                                       )
+                                       setProductOption(
+                                          eachProductOptionType.data[0]
+                                       )
+                                       if (isModifierOptionsViewOpen) {
+                                          setIsModifierOptionsViewOpen(false)
+                                       }
+                                    }}
+                                 >
+                                    {camelCaseToNormalText(
+                                       eachProductOptionType.type == 'null'
+                                          ? 'Others'
+                                          : eachProductOptionType.type
+                                    )}
+                                 </li>
+                              )
+                           }
+                        )}
+                     </ul>
+                  </div>
+               )}
                <div className="hern-product-modifier-pop-up-content-container">
                   <div
                      className={classNames(
@@ -499,7 +560,11 @@ export const ModifierPopup = props => {
                         }
                      )}
                   >
-                     <label htmlFor="products">Available Options:</label>
+                     <label htmlFor="products">
+                        {productData.productionOptionSelectionStatement
+                           ? productData.productionOptionSelectionStatement
+                           : 'Available Options:'}
+                     </label>
                      <br />
                      <ul
                         className={classNames(
@@ -510,55 +575,57 @@ export const ModifierPopup = props => {
                            }
                         )}
                      >
-                        {productData.productOptions.map(eachOption => {
-                           return (
-                              <div
-                                 key={eachOption.id}
-                                 style={{
-                                    border: `${
-                                       productOption.id === eachOption.id
-                                          ? '1px solid var(--hern-accent)'
-                                          : '1px solid #e4e4e4'
-                                    }`,
-                                    padding: '16px',
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    marginBottom: '8px',
-                                    cursor: 'pointer',
-                                 }}
-                                 onClick={e => {
-                                    setProductOption(eachOption)
-                                    if (
-                                       showModifiers &&
-                                       productOption.modifier
-                                    ) {
-                                       setIsModifierOptionsViewOpen(true)
-                                    }
-                                 }}
-                              >
-                                 <li>
-                                    {eachOption.label}
+                        {productOptionsGroupedByProductOptionType
+                           .find(eachType => eachType.type == productOptionType)
+                           .data.map(eachOption => {
+                              return (
+                                 <div
+                                    key={eachOption.id}
+                                    style={{
+                                       border: `${
+                                          productOption.id === eachOption.id
+                                             ? '1px solid var(--hern-accent)'
+                                             : '1px solid #e4e4e4'
+                                       }`,
+                                       padding: '16px',
+                                       display: 'flex',
+                                       justifyContent: 'space-between',
+                                       marginBottom: '8px',
+                                       cursor: 'pointer',
+                                    }}
+                                    onClick={e => {
+                                       setProductOption(eachOption)
+                                       if (
+                                          showModifiers &&
+                                          productOption.modifier
+                                       ) {
+                                          setIsModifierOptionsViewOpen(true)
+                                       }
+                                    }}
+                                 >
+                                    <li>
+                                       {eachOption.label}
 
-                                    {' (+ '}
-                                    {formatCurrency(
-                                       eachOption.price - eachOption.discount
+                                       {' (+ '}
+                                       {formatCurrency(
+                                          eachOption.price - eachOption.discount
+                                       )}
+                                       {')'}
+                                    </li>
+                                    {recipeButton.show && (
+                                       <div>
+                                          <Link
+                                             href={getRoute(
+                                                '/recipes/' + eachOption.id
+                                             )}
+                                          >
+                                             <>{recipeButton.label}</>
+                                          </Link>
+                                       </div>
                                     )}
-                                    {')'}
-                                 </li>
-                                 {recipeButton.show && (
-                                    <div>
-                                       <Link
-                                          href={getRoute(
-                                             '/recipes/' + eachOption.id
-                                          )}
-                                       >
-                                          <>{recipeButton.label}</>
-                                       </Link>
-                                    </div>
-                                 )}
-                              </div>
-                           )
-                        })}
+                                 </div>
+                              )
+                           })}
                      </ul>
                   </div>
 

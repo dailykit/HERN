@@ -8,7 +8,7 @@ export const FulfillmentSection = props => {
    const { config, setCurrentPage } = props
    const { orderTabs, isConfigLoading } = useConfig()
    const { t, direction } = useTranslation()
-
+   console.log('config', config)
    return (
       <div className="hern-kiosk__fulfillment-section-container">
          {config.fulfillmentPageSettings.backgroundImage.value.url[0] && (
@@ -16,6 +16,12 @@ export const FulfillmentSection = props => {
                className="hern-kiosk__fulfillment-section-bg-image"
                src={config.fulfillmentPageSettings.backgroundImage.value.url[0]}
                alt="bg-image"
+               style={{
+                  filter: config.fulfillmentPageSettings
+                     .showFulfillmentPageBgImageBlur.value
+                     ? 'blur(6px)'
+                     : 'unset',
+               }}
             />
          )}
          <span
