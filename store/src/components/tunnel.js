@@ -59,7 +59,7 @@ export const Tunnel = ({
    return null
 }
 
-const Header = ({ title, children }) => {
+export const Header = ({ title, children }) => {
    const { configOf } = useConfig('Visual')
    const theme = configOf('theme-color')
    return (
@@ -79,11 +79,11 @@ const Header = ({ title, children }) => {
    )
 }
 
-const Body = ({ children }) => {
+export const Body = ({ children }) => {
    return <main className="hern-tunnel__body">{children}</main>
 }
 
-const Right = ({ title, children, visible, onClose, ...props }) => {
+export const Right = ({ title, children, visible, onClose, ...props }) => {
    return (
       <Drawer
          title={title}
@@ -98,7 +98,7 @@ const Right = ({ title, children, visible, onClose, ...props }) => {
       </Drawer>
    )
 }
-const Bottom = props => {
+export const Bottom = props => {
    const { title, children, visible, onClose } = props
    return (
       <Drawer
@@ -113,7 +113,7 @@ const Bottom = props => {
       </Drawer>
    )
 }
-const Left = ({ title, children, visible, onClose, ...props }) => {
+export const Left = ({ title, children, visible, onClose, ...props }) => {
    return (
       <Drawer
          title={title}
@@ -128,9 +128,3 @@ const Left = ({ title, children, visible, onClose, ...props }) => {
       </Drawer>
    )
 }
-
-Tunnel.Header = Header
-Tunnel.Body = Body
-Tunnel.Right = Right
-Tunnel.Left = Left
-Tunnel.Bottom = Bottom

@@ -1,45 +1,154 @@
-import PaymentProcessingModal from './paymentProcessingModal'
-import FloatingBar from './floatingBar'
-import PaymentOptionsRenderer from './paymentOptionsRenderer'
-import PayButton from './PayButton'
-import PrintProcessingModal from './printProcessingModal'
+import dynamic from 'next/dynamic'
+const PaymentProcessingModal = dynamic(() => import('./paymentProcessingModal'))
+const FloatingBar = dynamic(() => import('./floatingBar'))
+const PaymentOptionsRenderer = dynamic(() => import('./paymentOptionsRenderer'))
+const PayButton = dynamic(() => import('./PayButton'))
+const PrintProcessingModal = dynamic(() => import('./printProcessingModal'))
 
-export * from './seo'
-export * from './form'
-export * from './button'
-export * from './layout'
-export * from './tunnel'
-export * from './spacer'
-export * from './loader'
-export * from './helper_bar'
-export * from './steps_navbar'
-export * from './page_loader'
-export * from './profile_sidebar'
-export * from './styled_tags'
-export * from './product_skeleton'
-export * from './cart_product'
-export * from './billing'
-export * from './wallet_amount'
-export * from './loyalty_points'
-export * from './coupon'
-export * from './coupons_list'
-export * from './referral'
-export * from './address_list'
-export * from './card_list'
-export * from './on_demand_menu'
-export * from './product_card'
-export * from './bottom_cart_bar'
-export * from './divider'
-export * from './modifier_popup'
-export * from './counterBtn'
-export * from './login'
-// export * from './locationSelector'
-export * from './language_switch'
-export * from './loginWarning'
-export * from './templateFile'
-export * from './recipe'
-export * from './fulfillment'
-export * from './cartPayment'
+const SEO = dynamic(() => import('./seo').then(promise => promise.SEO))
+const Text = dynamic(() => import('./form').then(promise => promise.Text))
+const Label = dynamic(() => import('./form').then(promise => promise.Label))
+const Field = dynamic(() => import('./form').then(promise => promise.Field))
+const TextArea = dynamic(() =>
+   import('./form').then(promise => promise.TextArea)
+)
+const DisabledText = dynamic(() =>
+   import('./form').then(promise => promise.DisabledText)
+)
+const Button = dynamic(() => import('./button').then(promise => promise.Button))
+const Layout = dynamic(() => import('./layout').then(promise => promise.Layout))
+// const Tunnel = dynamic(() => import('./tunnel').then(promise => promise.Tunnel))
+const Spacer = dynamic(() => import('./spacer').then(promise => promise.Spacer))
+const Loader = dynamic(() => import('./loader').then(promise => promise.Loader))
+const HelperBar = dynamic(() =>
+   import('./helper_bar').then(promise => promise.HelperBar)
+)
+const StepsNavbar = dynamic(() =>
+   import('./steps_navbar').then(promise => promise.StepsNavbar)
+)
+const OnDemandMenu = dynamic(() =>
+   import('./on_demand_menu').then(promise => promise.OnDemandMenu)
+)
+
+const PageLoader = dynamic(() =>
+   import('./page_loader').then(promise => promise.PageLoader)
+)
+const ProfileSidebar = dynamic(() =>
+   import('./profile_sidebar').then(promise => promise.ProfileSidebar)
+)
+const StyledArticle = dynamic(() =>
+   import('./styled_tags').then(promise => promise.StyledArticle)
+)
+const ProductSkeleton = dynamic(() =>
+   import('./product_skeleton').then(promise => promise.ProductSkeleton)
+)
+const CartProduct = dynamic(() =>
+   import('./cart_product').then(promise => promise.CartProduct)
+)
+const Billing = dynamic(() =>
+   import('./billing').then(promise => promise.Billing)
+)
+const WalletAmount = dynamic(() =>
+   import('./wallet_amount').then(promise => promise.WalletAmount)
+)
+const LoyaltyPoints = dynamic(() =>
+   import('./loyalty_points').then(promise => promise.LoyaltyPoints)
+)
+const Coupon = dynamic(() => import('./coupon').then(promise => promise.Coupon))
+const CouponsList = dynamic(() =>
+   import('./coupons_list').then(promise => promise.CouponsList)
+)
+const Referral = dynamic(() =>
+   import('./referral').then(promise => promise.Referral)
+)
+const AddressList = dynamic(() =>
+   import('./address_list').then(promise => promise.AddressList)
+)
+const AddressListHeader = dynamic(() =>
+   import('./address_list').then(promise => promise.AddressListHeader)
+)
+const CardList = dynamic(() =>
+   import('./card_list').then(promise => promise.CardList)
+)
+
+const ProductCard = dynamic(() =>
+   import('./product_card').then(promise => promise.ProductCard)
+)
+const BottomCartBar = dynamic(() =>
+   import('./bottom_cart_bar').then(promise => promise.BottomCartBar)
+)
+const Divider = dynamic(() =>
+   import('./divider').then(promise => promise.Divider)
+)
+const ModifierPopup = dynamic(() =>
+   import('./modifier_popup').then(promise => promise.ModifierPopup)
+)
+const CounterButton = dynamic(() =>
+   import('./counterBtn').then(promise => promise.CounterButton)
+)
+const Login = dynamic(() => import('./login').then(promise => promise.Login))
+// const SEO = dynamic(() => import('./locationSelector'
+const LanguageSwitch = dynamic(() =>
+   import('./language_switch').then(promise => promise.LanguageSwitch)
+)
+const LoginWarning = dynamic(() =>
+   import('./loginWarning').then(promise => promise.LoginWarning)
+)
+const LoginWarningWithText = dynamic(() =>
+   import('./loginWarning').then(promise => promise.LoginWarningWithText)
+)
+const TemplateFile = dynamic(() =>
+   import('./templateFile').then(promise => promise.TemplateFile)
+)
+const Recipe = dynamic(() => import('./recipe').then(promise => promise.Recipe))
+const FulfillmentForm = dynamic(() =>
+   import('./fulfillment').then(promise => promise.FulfillmentForm)
+)
+const Fulfillment = dynamic(() =>
+   import('./fulfillment').then(promise => promise.Fulfillment)
+)
+const CartPaymentComponent = dynamic(() =>
+   import('./cartPayment').then(promise => promise.CartPaymentComponent)
+)
+
+const UserInfo = dynamic(() =>
+   import('./userInfo').then(promise => promise.UserInfo)
+)
+const Nutritions = dynamic(() =>
+   import('./nutrition').then(promise => promise.Nutritions)
+)
+const UserType = dynamic(() =>
+   import('./userType').then(promise => promise.UserType)
+)
+const ExternalJSCSSFiles = dynamic(() =>
+   import('./externalJSCSSFiles').then(promise => promise.ExternalJSCSSFiles)
+)
+const CartBillingDetails = dynamic(() =>
+   import('./cart_billing_details').then(promise => promise.CartBillingDetails)
+)
+const OrderDetails = dynamic(() =>
+   import('./order_details').then(promise => promise.OrderDetails)
+)
+const UserAddressList = dynamic(() =>
+   import('./userAddressList').then(promise => promise.UserAddressList)
+)
+const CartOrderDetails = dynamic(() =>
+   import('./cart_order_details').then(promise => promise.CartOrderDetails)
+)
+const GoogleSuggestionsList = dynamic(() =>
+   import('./googleSuggestionsList').then(
+      promise => promise.GoogleSuggestionsList
+   )
+)
+const CartCard = dynamic(() =>
+   import('./cart_card').then(promise => promise.CartCard)
+)
+const ModifierOptionCard = dynamic(() =>
+   import('./modifierOptionCard').then(promise => promise.ModifierOptionCard)
+)
+const ModifierCategory = dynamic(() =>
+   import('./modifierCategory').then(promise => promise.ModifierCategory)
+)
 
 export {
    PaymentProcessingModal,
@@ -47,16 +156,70 @@ export {
    PaymentOptionsRenderer,
    PayButton,
    PrintProcessingModal,
+   SEO,
+   Button,
+   Layout,
+   // Tunnel,
+   Spacer,
+   Loader,
+   HelperBar,
+   StepsNavbar,
+   OnDemandMenu,
+   PageLoader,
+   ProfileSidebar,
+   StyledArticle,
+   ProductSkeleton,
+   CartProduct,
+   Billing,
+   WalletAmount,
+   LoyaltyPoints,
+   Coupon,
+   CouponsList,
+   Referral,
+   AddressList,
+   AddressListHeader,
+   CardList,
+   ProductCard,
+   BottomCartBar,
+   Divider,
+   ModifierPopup,
+   CounterButton,
+   Login,
+   LoginWarning,
+   LoginWarningWithText,
+   TemplateFile,
+   Fulfillment,
+   FulfillmentForm,
+   Recipe,
+   CartPaymentComponent,
+   UserInfo,
+   Nutritions,
+   UserType,
+   ExternalJSCSSFiles,
+   CartBillingDetails,
+   OrderDetails,
+   UserAddressList,
+   CartOrderDetails,
+   GoogleSuggestionsList,
+   CartCard,
+   ModifierOptionCard,
+   ModifierCategory,
+   LanguageSwitch,
 }
-export * from './userInfo'
-export * from './nutrition'
-export * from './userType'
-export * from './externalJSCSSFiles'
-export * from './cart_billing_details'
-export * from './order_details'
-export * from './userAddressList'
-export * from './cart_order_details'
-export * from './googleSuggestionsList'
-export * from './cart_card'
-export * from './modifierOptionCard'
-export * from './modifierCategory'
+
+const TunnelHeader = dynamic(() =>
+   import('./tunnel').then(promise => promise.Header)
+)
+// const Tunnel = dynamic(() => import('./tunnel').then(promise => promise.Tunnel))
+const Body = dynamic(() => import('./tunnel').then(promise => promise.Body))
+const Left = dynamic(() => import('./tunnel').then(promise => promise.Left))
+const Right = dynamic(() => import('./tunnel').then(promise => promise.Right))
+const Bottom = dynamic(() => import('./tunnel').then(promise => promise.Bottom))
+export const Form = { Text, Label, Field, TextArea, DisabledText }
+export const Tunnel = {
+   Header: TunnelHeader,
+   Left,
+   Right,
+   Bottom,
+   Body,
+}
