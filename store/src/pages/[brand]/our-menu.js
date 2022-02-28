@@ -31,7 +31,7 @@ export async function getStaticProps({ params }) {
          navigationMenus,
          seoSettings,
       },
-      revalidate: 60, // will be passed to the page component as props
+      // revalidate: 60, // will be passed to the page component as props
    }
 }
 

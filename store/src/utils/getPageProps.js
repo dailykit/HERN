@@ -4,10 +4,9 @@ import {
    getSettings,
    foldsResolver,
    getSEOSettings,
-   getProductSEOSettings
+   getProductSEOSettings,
 } from '.'
 import { NAVIGATION_MENU, BRAND_PAGE, GET_JS_CSS_FILES } from '../graphql'
-
 
 export const getPageProps = async (params, route) => {
    const client = await graphQLClient()
@@ -17,11 +16,10 @@ export const getPageProps = async (params, route) => {
       domain: params.brand,
       route,
    })
-
    //Seo and settings(for product pages, checks route and internal page name )
    const seoSettings =
-      (dataByRoute?.brands_brandPages[0]?.route == '/products' &&
-         dataByRoute?.brands_brandPages[0]?.internalPageName == 'Product ')
+      dataByRoute?.brands_brandPages[0]?.route == '/products' &&
+      dataByRoute?.brands_brandPages[0]?.internalPageName == 'Product '
          ? await getProductSEOSettings(params.id)
          : await getSEOSettings(params.brand, dataByRoute)
 
