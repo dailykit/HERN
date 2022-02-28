@@ -596,9 +596,18 @@ export const ModifierPopup = props => {
                      )}
                   >
                      <label htmlFor="products">
-                        {productData.productionOptionSelectionStatement
-                           ? productData.productionOptionSelectionStatement
-                           : t('Available Options')}
+                        {productData.productionOptionSelectionStatement ? (
+                           <span
+                              data-translation="true"
+                              data-original-value={
+                                 productData.productionOptionSelectionStatement
+                              }
+                           >
+                              {productData.productionOptionSelectionStatement}
+                           </span>
+                        ) : (
+                           t('Available Options')
+                        )}
                      </label>
                      <br />
                      <ul
@@ -638,7 +647,10 @@ export const ModifierPopup = props => {
                                        }
                                     }}
                                  >
-                                    <li>
+                                    <li
+                                       data-translation="true"
+                                       data-original-value={eachOption.label}
+                                    >
                                        {eachOption.label}
 
                                        {' (+ '}
@@ -793,17 +805,36 @@ export const ModifierPopup = props => {
                         locationId ? (storeStatus.status ? false : true) : true
                      }
                   >
-                     {locationId
-                        ? storeStatus.status
-                           ? showModifiers && productOption.modifier
-                              ? showStepViewProductOptionAndModifiers
-                                 ? !isModifierOptionsViewOpen
-                                    ? t('PROCEED')
-                                    : `${t('ADD TO CART')} ${totalAmount()}`
-                                 : `${t('ADD TO CART')} ${totalAmount()}`
-                              : `${t('ADD TO CART')} ${totalAmount()}`
-                           : t('COMING SOON')
-                        : t('COMING SOON')}
+                     {locationId ? (
+                        storeStatus.status ? (
+                           showModifiers && productOption.modifier ? (
+                              showStepViewProductOptionAndModifiers ? (
+                                 !isModifierOptionsViewOpen ? (
+                                    t('PROCEED')
+                                 ) : (
+                                    <span>
+                                       {t('ADD TO CART')}&nbsp;
+                                       {totalAmount()}
+                                    </span>
+                                 )
+                              ) : (
+                                 <span>
+                                    {t('ADD TO CART')}&nbsp;
+                                    {totalAmount()}
+                                 </span>
+                              )
+                           ) : (
+                              <span>
+                                 {t('ADD TO CART')}&nbsp;
+                                 {totalAmount()}
+                              </span>
+                           )
+                        ) : (
+                           t('COMING SOON')
+                        )
+                     ) : (
+                        t('COMING SOON')
+                     )}
                   </Button>
                </div>
             </div>

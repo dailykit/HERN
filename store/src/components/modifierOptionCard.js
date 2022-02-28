@@ -2,6 +2,7 @@ import React from 'react'
 import { ShowImageIcon } from '../assets/icons'
 import { formatCurrency } from '../utils'
 import classNames from 'classnames'
+import { useTranslation } from '../context'
 
 export const ModifierOptionCard = ({
    modifierOption,
@@ -14,8 +15,7 @@ export const ModifierOptionCard = ({
    showImageIcon = false,
    showCustomize = true,
 }) => {
-   // console.log('modifierOption', modifierOption)
-
+   const { t } = useTranslation()
    return (
       <div
          className="hern-modifier-option-card"
