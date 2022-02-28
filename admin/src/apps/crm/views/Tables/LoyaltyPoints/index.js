@@ -9,12 +9,15 @@ import { useTooltip } from '../../../../../shared/providers'
 import { logger } from '../../../../../shared/utils'
 import { LOYALTYPOINTS_LISTING } from '../../../graphql'
 import { Tooltip, InlineLoader } from '../../../../../shared/components'
-import BrandContext from '../../../context/Brand'
+// import BrandContext from '../../../context/Brand'
 import * as moment from 'moment'
 import { PlusIcon } from '../../../../../shared/assets/icons'
+import { BrandContext } from '../../../../../App'
 
 const LoyaltyPointTable = ({ openLoyaltyPointsTxnTunnel }) => {
-   const [context, setContext] = useContext(BrandContext)
+   // const [context, setContext] = useContext(BrandContext)
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
    const tableRef = useRef()
    const { tooltip } = useTooltip()
    const { id } = useParams()
@@ -25,7 +28,7 @@ const LoyaltyPointTable = ({ openLoyaltyPointsTxnTunnel }) => {
    const { loading: listloading } = useSubscription(LOYALTYPOINTS_LISTING, {
       variables: {
          keycloakId: id,
-         brandId: context.brandId,
+         brandId: brandContext.brandId,
       },
       onSubscriptionData: data => {
          const { loyaltyPointsTransactions } = data.subscriptionData.data

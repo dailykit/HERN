@@ -16,12 +16,14 @@ import {
 import { useTooltip, useTabs } from '../../../../../shared/providers'
 import { currencyFmt, logger } from '../../../../../shared/utils'
 import { toast } from 'react-toastify'
-import BrandContext from '../../../context/Brand'
+// import BrandContext from '../../../context/Brand'
 import { OCCURENCES_REPORT } from '../../../graphql/queries'
-
+import { BrandContext } from '../../../../../App'
 
 const SubscriptionTable = ({ brandCustomerId }) => {
-   const [context, setContext] = useContext(BrandContext)
+   // const [context, setContext] = useContext(BrandContext)
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
    const { dispatch, tab } = useTabs()
    const { tooltip } = useTooltip()
    const history = useHistory()
@@ -51,7 +53,7 @@ const SubscriptionTable = ({ brandCustomerId }) => {
       }
    }, [history, tab])
 
-   const columns = React.useMemo(   
+   const columns = React.useMemo(
       () => [
          {
             title: 'ID',
@@ -372,7 +374,7 @@ const SubscriptionTable = ({ brandCustomerId }) => {
                placeholder: 'No Occurences Available Yet !',
             }}
             ref={tableRef}
-            className='crmCustomerTable'
+            className="crmCustomerTable"
          />
       )
    }, [occurencesData])

@@ -9,10 +9,13 @@ import { logger } from '../../../../../shared/utils'
 import { REFERRAL_LISTING } from '../../../graphql'
 import { Tooltip, InlineLoader } from '../../../../../shared/components'
 import { useTooltip, useTabs } from '../../../../../shared/providers'
-import BrandContext from '../../../context/Brand'
+import { BrandContext } from '../../../../../App'
+// import BrandContext from '../../../context/Brand'
 
 const ReferralTable = () => {
-   const [context, setContext] = useContext(BrandContext)
+   // const [context, setContext] = useContext(BrandContext)
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
    const { addTab } = useTabs()
    const { tooltip } = useTooltip()
    const tableRef = useRef()
@@ -24,7 +27,7 @@ const ReferralTable = () => {
    const { loading: listloading } = useQuery(REFERRAL_LISTING, {
       variables: {
          keycloakId: id,
-         brandId: context.brandId,
+         brandId: brandContext.brandId,
       },
       onCompleted: ({ customerReferrals = [] } = {}) => {
          const result = customerReferrals.map(referral => {

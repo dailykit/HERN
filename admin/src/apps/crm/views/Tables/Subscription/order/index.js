@@ -30,28 +30,29 @@ import { Tooltip, InlineLoader } from '../../../../../../shared/components'
 import { useTooltip, useTabs } from '../../../../../../shared/providers'
 import { logger } from '../../../../../../shared/utils'
 import options from '../../../tableOptions'
-import BrandContext from '../../../../context/Brand'
+import { BrandContext } from '../../../../../../App'
+// import BrandContext from '../../../../context/Brand'
 
 const OrderInfo = () => {
-   const [context, setContext] = useContext(BrandContext)
+   // const [context, setContext] = useContext(BrandContext)
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
    const { dispatch, tab } = useTabs()
    const { tooltip } = useTooltip()
    const tableRef = useRef()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [tunnels1, openTunnel1, closeTunnel1] = useTunnel(1)
-   const {
-      data: { brand: { brand_Orders = [] } = {} } = {},
-      loading,
-   } = useQuery(ORDER, {
-      variables: {
-         orderId: tab.data.oid,
-         brandId: context.brandId,
-      },
-      onError: error => {
-         toast.error('Something went wrong subscriptionOrder')
-         logger(error)
-      },
-   })
+   const { data: { brand: { brand_Orders = [] } = {} } = {}, loading } =
+      useQuery(ORDER, {
+         variables: {
+            orderId: tab.data.oid,
+            brandId: brandContext.brandId,
+         },
+         onError: error => {
+            toast.error('Something went wrong subscriptionOrder')
+            logger(error)
+         },
+      })
 
    const setOrder = (orderId, order) => {
       dispatch({
