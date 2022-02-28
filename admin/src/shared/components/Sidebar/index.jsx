@@ -710,7 +710,7 @@ export const Sidebar = ({ setOpen }) => {
                   <>
                      <BrandSelector mouseOver={mouseOver} />
                      {appMenuItems.data.map(app => (
-                        <Styles.AppItem key={app.id}>
+                        <Styles.AppItem key={app.path}>
                            <Styles.Choices
                               type="ghost"
                               size="sm"
@@ -763,6 +763,7 @@ export const Sidebar = ({ setOpen }) => {
                               {isOpen === app.title &&
                                  app.childs.map(child => (
                                     <Styles.PageBox
+                                       key={child.path}
                                        active={
                                           isChildOpen === child.title &&
                                           isChildrenOpen === null
@@ -782,7 +783,6 @@ export const Sidebar = ({ setOpen }) => {
                                              isChildOpen === child.title &&
                                              isChildrenOpen === null
                                           }
-                                          key={child.path}
                                           title={child.title}
                                        >
                                           <Styles.PageOneTitle
@@ -810,6 +810,7 @@ export const Sidebar = ({ setOpen }) => {
                                              child.children?.map(children => {
                                                 return (
                                                    <Styles.Choices
+                                                      key={`${children.title}-${children.payload}`}
                                                       onClick={() => {
                                                          setIsChildrenOpen(
                                                             children.title
