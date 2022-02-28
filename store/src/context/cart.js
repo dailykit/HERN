@@ -73,12 +73,14 @@ export const CartProvider = ({ children }) => {
             id: {
                _eq: storedCartId,
             },
-            paymentStatus: {
-               _eq: 'PENDING',
-            },
-            status: {
-               _eq: 'CART_PENDING',
-            },
+            ...(!oiType === 'Kiosk Ordering' && {
+               paymentStatus: {
+                  _eq: 'PENDING',
+               },
+               status: {
+                  _eq: 'CART_PENDING',
+               },
+            }),
          },
       },
       fetchPolicy: 'no-cache',
@@ -102,14 +104,16 @@ export const CartProvider = ({ children }) => {
             cartId: {
                _eq: storedCartId,
             },
-            cart: {
-               paymentStatus: {
-                  _eq: 'PENDING',
+            ...(!oiType === 'Kiosk Ordering' && {
+               cart: {
+                  paymentStatus: {
+                     _eq: 'PENDING',
+                  },
+                  status: {
+                     _eq: 'CART_PENDING',
+                  },
                },
-               status: {
-                  _eq: 'CART_PENDING',
-               },
-            },
+            }),
          },
       },
       fetchPolicy: 'no-cache',
