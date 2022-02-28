@@ -16,7 +16,7 @@ export const OnDemandMenu = props => {
    const ref = React.useRef()
    useOnClickOutside(ref, () => setShowMenuItems('0'))
 
-   const { t } = useTranslation()
+   const { t, dynamicTrans } = useTranslation()
 
    // const { isMenuLoading, categories } = onDemandMenu
    // if (isMenuLoading) {
@@ -29,6 +29,11 @@ export const OnDemandMenu = props => {
       } else {
          document.querySelector('body').style.overflowY = 'auto'
       }
+      //for lang. translation
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
    }, [showMenuItems])
 
    if (menuType && menuType === 'navigationAnchorMenu') {
@@ -55,7 +60,12 @@ export const OnDemandMenu = props => {
                            offset={-130}
                         >
                            <span>
-                              {t(each.name)}
+                              <span
+                                 data-translation="true"
+                                 data-original-value={each.name}
+                              >
+                                 {each.name}
+                              </span>
                               {showProductCount && (
                                  <> ({each?.products?.length})</>
                               )}

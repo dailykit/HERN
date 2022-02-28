@@ -529,7 +529,7 @@ export const Header = ({ settings, navigationMenus }) => {
                            }}
                            onClick={() => setShowLoginPopup(true)}
                         >
-                           Log In
+                           {t('Log In')}
                         </button>
                      )}
                      <button
