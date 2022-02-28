@@ -10,11 +10,14 @@ import { useTooltip, useTabs } from '../../../../../shared/providers'
 import options from '../../tableOptions'
 import { toast } from 'react-toastify'
 import { currencyFmt, logger } from '../../../../../shared/utils'
-import BrandContext from '../../../context/Brand'
+// import BrandContext from '../../../context/Brand'
 import * as moment from 'moment'
+import { BrandContext } from '../../../../../App'
 
 const OrdersTable = ({ id }) => {
-   const [context, setContext] = useContext(BrandContext)
+   // const [context, setContext] = useContext(BrandContext)
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
    const { dispatch, tab } = useTabs()
    const { tooltip } = useTooltip()
    const [orders, setOrders] = useState([])
@@ -23,7 +26,7 @@ const OrdersTable = ({ id }) => {
    const { loading: listLoading } = useQuery(ORDERS_LISTING, {
       variables: {
          keycloakId: id,
-         brandId: context.brandId,
+         brandId: brandContext.brandId,
       },
       onCompleted: ({ brand: { brand_customers = [] } = {} } = {}) => {
          const result = brand_customers[0]?.customer?.orders.map(order => ({

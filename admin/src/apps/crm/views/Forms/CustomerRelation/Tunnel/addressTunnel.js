@@ -13,7 +13,7 @@ import { ALL_DATA } from '../../../../graphql'
 import { TunnelHeaderContainer, CustomerAddress } from './styled'
 import { logger, parseAddress } from '../../../../../../shared/utils'
 import { toast } from 'react-toastify'
-import BrandContext from '../../../../context/Brand'
+// import BrandContext from '../../../../context/Brand'
 import { EditIcon } from '../../../../../../shared/assets/icons'
 import {
    Tooltip,
@@ -21,9 +21,12 @@ import {
    AddressTunnel as EditAddress,
    Banner,
 } from '../../../../../../shared/components'
+import { BrandContext } from '../../../../../../App'
 
 const AddressTunnel = ({ id, tunnels, closeTunnel }) => {
-   const [context, setContext] = useContext(BrandContext)
+   // const [context, setContext] = useContext(BrandContext)
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
    const [address, setAddress] = React.useState(null)
    const [editTunnels, openEditTunnel, closeEditTunnel] = useTunnel(1)
    const {
@@ -32,7 +35,7 @@ const AddressTunnel = ({ id, tunnels, closeTunnel }) => {
    } = useQuery(ALL_DATA, {
       variables: {
          keycloakId: id,
-         brandId: context.brandId,
+         brandId: brandContext.brandId,
       },
       onError: error => {
          toast.error('Something went wrong')

@@ -30,11 +30,14 @@ import {
 } from './styled'
 import options from '../../../tableOptions'
 import { currencyFmt, logger } from '../../../../../../shared/utils'
-import BrandContext from '../../../../context/Brand'
+// import BrandContext from '../../../../context/Brand'
 import * as moment from 'moment'
+import { BrandContext } from '../../../../../../App'
 
 const OrderInfo = () => {
-   const [context, setContext] = useContext(BrandContext)
+   // const [context, setContext] = useContext(BrandContext)
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
    const { dispatch, tab } = useTabs()
    const { tooltip } = useTooltip()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
@@ -45,11 +48,12 @@ const OrderInfo = () => {
    const { loading } = useQuery(ORDER, {
       variables: {
          orderId: tab.data.oid,
-         brandId: context.brandId,
+         brandId: brandContext.brandId,
       },
       onCompleted: ({ brand: { brand_Orders = [] } = {} } = {}) => {
-         const quantity = combineCartItems(brand_Orders[0]?.cart?.cartItems)
-            .length
+         const quantity = combineCartItems(
+            brand_Orders[0]?.cart?.cartItems
+         ).length
          console.log('quantity', quantity)
          setOrderData(brand_Orders[0])
          const result = brand_Orders[0]?.cart?.cartItems?.map(item => {
