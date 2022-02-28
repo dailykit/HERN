@@ -11,6 +11,7 @@ import { HelperBar } from './helper_bar'
 import { Nutritions } from './nutrition'
 import { getRoute } from '../utils'
 import { useRouter } from 'next/router'
+import { HernLazyImage } from '../utils/hernImage'
 
 export const Recipe = ({ productOption, config }) => {
    const { configOf } = useConfig()
@@ -74,7 +75,10 @@ export const Recipe = ({ productOption, config }) => {
                <h1 className="hern-recipe__title">{recipe.name}</h1>
                <div className="hern-recipe__img__wrapper">
                   {recipe?.assets?.images?.length && (
-                     <img src={recipe?.assets?.images[0]} alt={recipe.name} />
+                     <HernLazyImage
+                        data-src={recipe?.assets?.images[0]}
+                        alt={recipe.name}
+                     />
                   )}
                </div>
                {!!recipe.description && (
@@ -161,8 +165,8 @@ export const Recipe = ({ productOption, config }) => {
                                           <>
                                              {sachet.ingredient.assets?.images
                                                 ?.length && (
-                                                <img
-                                                   src={
+                                                <HernLazyImage
+                                                   data-src={
                                                       sachet.ingredient.assets
                                                          .images[0]
                                                    }
@@ -219,8 +223,8 @@ export const Recipe = ({ productOption, config }) => {
                                              <div className="hern-recipe__cooking-setps__step__img">
                                                 {step.assets.images.length >
                                                    0 && (
-                                                   <img
-                                                      src={
+                                                   <HernLazyImage
+                                                      data-src={
                                                          step.assets.images[0]
                                                             .url
                                                       }
