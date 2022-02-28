@@ -11,10 +11,13 @@ import {
    InlineLoader,
 } from '../../../../../../shared/components'
 import { useTabs } from '../../../../../../shared/providers'
-import BrandContext from '../../../../context/Brand'
+import { BrandContext } from '../../../../../../App'
+// import BrandContext from '../../../../context/Brand'
 
 const OrderStatus = ({ tunnels, closeTunnel }) => {
-   const [context, setContext] = useContext(BrandContext)
+   // const [context, setContext] = useContext(BrandContext)
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
    const { tab } = useTabs()
    const {
       loading: listLoading,
@@ -22,7 +25,7 @@ const OrderStatus = ({ tunnels, closeTunnel }) => {
    } = useQuery(STATUS, {
       variables: {
          oid: tab.data.oid,
-         brandId: context.brandId,
+         brandId: brandContext.brandId,
       },
       onError: error => {
          toast.error('Something went wrong')

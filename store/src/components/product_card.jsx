@@ -69,20 +69,20 @@ export const ProductCard = props => {
       // use for product card
       if (!useForThirdParty) {
          if (data.isPopupAllowed && data.productOptions.length > 0) {
-            return formatCurrency(
+            return (
                data.price -
-                  data.discount +
-                  ((data?.productOptions[0]?.price || 0) -
-                     (data?.productOptions[0]?.discount || 0))
+               data.discount +
+               ((data?.productOptions[0]?.price || 0) -
+                  (data?.productOptions[0]?.discount || 0))
             )
          } else {
-            return formatCurrency(data.price - data.discount)
+            return data.price - data.discount
          }
       }
       // when using this product card some where else
       else {
          if (data.price > 0) {
-            return formatCurrency(data.price - data.discount)
+            return data.price - data.discount
          } else {
             return null
          }
@@ -225,11 +225,12 @@ export const ProductCard = props => {
                                     {formatCurrency(data.price - data.discount)}
                                  </span>
                               )}
-                              {finalProductPrice > 0 && (
-                                 <span style={{ marginLeft: '6px' }}>
-                                    {finalProductPrice()}
-                                 </span>
-                              )}
+                              {finalProductPrice() &&
+                                 finalProductPrice() > 0 && (
+                                    <span style={{ marginLeft: '6px' }}>
+                                       {formatCurrency(finalProductPrice())}
+                                    </span>
+                                 )}
                            </div>
                         )}
                         {showProductAdditionalText && data?.additionalText && (
