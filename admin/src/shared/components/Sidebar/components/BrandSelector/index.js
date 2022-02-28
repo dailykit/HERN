@@ -39,7 +39,7 @@ const BrandSelector = ({ mouseOver }) => {
                   id: eachBrand.id,
                   title: eachBrand.title,
                   isDefault: eachBrand.isDefault,
-                  domain: [eachBrand.domain],
+                  domain: eachBrand.domain,
                   logo: eachBrand.brand_brandSettings.length
                      ? eachBrand.brand_brandSettings[0]?.value.brandLogo.value
                         ? eachBrand.brand_brandSettings[0]?.value.brandLogo
@@ -63,6 +63,7 @@ const BrandSelector = ({ mouseOver }) => {
                   ...brandContext,
                   brandId: brand.id,
                   brandName: brand.title,
+                  brandDomain: brand.domain,
                })
             }
          })
@@ -154,6 +155,7 @@ const BrandSelector = ({ mouseOver }) => {
                                        ...brandContext,
                                        brandId: brand.id,
                                        brandName: brand.title,
+                                       brandDomain: brand.domain,
                                     })
                                     setBrandArrowClicked(false)
                                  }}
