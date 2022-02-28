@@ -9,7 +9,7 @@ import {
 } from '../../components'
 import { useQuery } from '@apollo/react-hooks'
 import _ from 'lodash'
-import { CartContext, onDemandMenuContext } from '../../context'
+import { CartContext, onDemandMenuContext, useTranslation } from '../../context'
 import { PRODUCTS } from '../../graphql'
 import classNames from 'classnames'
 import * as Scroll from 'react-scroll'
@@ -24,7 +24,7 @@ import { CustomArea } from '../featuredCollection/productCustomArea'
 export const OnDemandOrder = ({ config }) => {
    const router = useRouter()
    const { addToast } = useToasts()
-
+   const { dynamicTrans } = useTranslation()
    const { brand, locationId, storeStatus } = useConfig()
 
    const menuType = config?.display?.dropdown?.value[0]?.value
@@ -72,6 +72,13 @@ export const OnDemandOrder = ({ config }) => {
       }),
       [brand, locationId]
    )
+   React.useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [])
+
    const { loading: productsLoading, error: productsError } = useQuery(
       PRODUCTS,
       {
@@ -173,8 +180,12 @@ export const OnDemandOrder = ({ config }) => {
                            <p
                               className="hern-product-category-heading"
                               id={`hern-product-category-${eachCategory.name}`}
+
                            >
-                              {eachCategory.name}
+                              <span data-translation="true"
+                                 data-original-value={eachCategory.name}>
+                                 {eachCategory.name}</span>
+
                               {showCategoryLengthOnCategoryTitle && (
                                  <>({eachCategory.products.length})</>
                               )}
@@ -207,7 +218,7 @@ export const OnDemandOrder = ({ config }) => {
                                                 router.push(
                                                    getRoute(
                                                       '/products/' +
-                                                         eachProduct.id
+                                                      eachProduct.id
                                                    )
                                                 )
                                              }
@@ -215,7 +226,7 @@ export const OnDemandOrder = ({ config }) => {
                                                 router.push(
                                                    getRoute(
                                                       '/products/' +
-                                                         eachProduct.id
+                                                      eachProduct.id
                                                    )
                                                 )
                                              }
@@ -234,7 +245,7 @@ export const OnDemandOrder = ({ config }) => {
                                              showModifier={
                                                 productModifier &&
                                                 productModifier.id ===
-                                                   eachProduct.id
+                                                eachProduct.id
                                              }
                                              closeModifier={closeModifier}
                                              customAreaFlex={false}
