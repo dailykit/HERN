@@ -55,6 +55,20 @@ export const DELETE_COLLECTION_PRODUCT_CATEGORY = gql`
    }
 `
 
+export const UPDATE_COLLECTION_PRODUCT_CATEGORY = gql`
+   mutation MyMutation(
+      $_set: onDemand_collection_productCategory_set_input!
+      $id: Int!
+   ) {
+      updateCollectionProductCategories(
+         where: { id: { _eq: $id } }
+         _set: $_set
+      ) {
+         affected_rows
+      }
+   }
+`
+
 export const CREATE_COLLECTION_PRODUCT_CATEGORY_PRODUCTS = gql`
    mutation createCollectionProductCategoryProducts(
       $objects: [onDemand_collection_productCategory_product_insert_input!]!
