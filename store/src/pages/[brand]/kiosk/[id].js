@@ -50,7 +50,7 @@ export async function getStaticProps({ params }) {
          kioskDetails: kioskDetails.brands_locationKiosk_by_pk,
          settings: settings,
       },
-      revalidate: 60,
+      // revalidate: 60,
    }
 }
 export async function getStaticPaths() {

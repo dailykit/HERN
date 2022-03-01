@@ -55,7 +55,7 @@ export const getStaticProps = async ({ params }) => {
 
    return {
       props: { folds: parsedData, linkedFiles, settings, seoSettings },
-      revalidate: 60,
+      // revalidate: 60,
    }
 }
 export const getStaticPaths = () => {

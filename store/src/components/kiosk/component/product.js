@@ -12,6 +12,7 @@ import { KioskModifier, KioskCounterButton } from '.'
 import { GET_MODIFIER_BY_ID } from '../../../graphql'
 import { useQuery } from '@apollo/react-hooks'
 import { useConfig } from '../../../lib'
+import { HernLazyImage } from '../../../utils/hernImage'
 
 const { Header, Content, Footer } = Layout
 
@@ -266,10 +267,10 @@ export const KioskProduct = props => {
                               }}
                               key={eachImage}
                            >
-                              <img
-                                 src={eachImage}
-                                 key={index}
-                                 // style={{ height: '100%', width: '100%' }}
+                              <HernLazyImage
+                                 // src={eachImage}
+                                 // key={index}
+                                 data-src={eachImage}
                               />
                            </div>
                         ))}

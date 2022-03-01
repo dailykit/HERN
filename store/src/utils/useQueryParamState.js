@@ -1,6 +1,6 @@
 import qs from 'query-string'
 import { isClient } from '.'
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { useRouter } from 'next/router'
 
 export const useQueryParamState = (key, initialValue) => {
@@ -17,7 +17,7 @@ export const useQueryParamState = (key, initialValue) => {
             // Set new or modify existing page value
             queryParams.set(key, queryTerm)
             // Replace current querystring with the new one
-            history.replaceState(null, null, '?' + queryParams.toString())
+            history.pushState(null, null, '?' + queryParams.toString())
          }
       },
       [key, router]
@@ -31,8 +31,10 @@ export const useQueryParamState = (key, initialValue) => {
          setValue(initialValue)
          queryParams.delete(key)
          // Replace current querystring with the new one
-         history.replaceState(null, null, '?' + queryParams.toString())
+         history.pushState(null, null, '?' + queryParams.toString())
       }
    })
    return [value, onSetValue, deleteQuery]
 }
+
+export default useQueryParamState

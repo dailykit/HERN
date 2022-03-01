@@ -1,7 +1,8 @@
 import React from 'react'
-import { get_env, compileEJSFile } from '../utils'
-import ReactHTMLParser, { convertNodeToElement } from 'react-html-parser'
+import { get_env } from '../utils'
+import ReactHTMLParser from 'react-html-parser'
 import axios from 'axios'
+import { compileEJSFile } from '../utils/renderTemplateFile'
 
 export const TemplateFile = ({ path = '/navigation-menu/index.ejs', data }) => {
    const [templateString, setTemplateString] = React.useState('')
@@ -22,22 +23,12 @@ export const TemplateFile = ({ path = '/navigation-menu/index.ejs', data }) => {
       setTemplateData(data)
    }, [data])
 
-   const htmlParserTransform = (node, index) => {
-      if (node.type === 'tag' && node?.attribs?.onclick) {
-         return (
-            <div
-               data-div-info="template-listener-wrapper"
-               key={index}
-               onClick={new Function(node.attribs.onclick)}
-            >
-               {convertNodeToElement(node)}
-            </div>
-         )
-      } else {
-         return convertNodeToElement(node)
-      }
-   }
-
+   console.log(
+      'promsie',
+      import('../utils/renderTemplateFile').then(promise =>
+         promise.compileEJSFile(templateString, templateData)
+      )
+   )
    return (
       <div>{ReactHTMLParser(compileEJSFile(templateString, templateData))}</div>
    )

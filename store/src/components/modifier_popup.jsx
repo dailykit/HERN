@@ -30,6 +30,7 @@ import { useConfig } from '../lib'
 import { useModifier } from '../utils'
 import _ from 'lodash'
 import { LeftArrowIcon } from '../assets/icons/LeftArrow'
+import { HernLazyImage } from '../utils/hernImage'
 
 const isSmallerDevice = isClient && window.innerWidth < 768
 export const ModifierPopup = props => {
@@ -784,7 +785,10 @@ export const ModifierPopup = props => {
                      className="hern-product-modifier-image-pop-up-content"
                      ref={imagePopUpRef}
                   >
-                     <img src={modifierImage.src} />
+                     <HernLazyImage
+                        data-src={modifierImage.src}
+                        alt="modifier"
+                     />
                      {/* <div className="hern-product-modifier-pop-up-close-icon">
                         <CloseIcon size={20} stroke="currentColor" />
                      </div> */}
