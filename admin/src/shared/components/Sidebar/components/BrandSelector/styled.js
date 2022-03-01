@@ -54,11 +54,12 @@ export const StyledBrandSelectorList = styled.div`
    padding: 7px;
    border-radius: 4px;
    cursor: pointer;
-   color: ${props => (props.active ? `#367BF5` : `#555B6E`)};
+
    > div:nth-child(n) {
       display: flex;
       padding: 7px;
       align-items: center;
+      color: ${props => (props.active ? `#367BF5` : `#555B6E`)};
       column-gap: 7px;
       :hover {
          background-color: #f9f9f9;

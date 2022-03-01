@@ -18,7 +18,7 @@ import { StyledWrapper } from './styled'
 import NavigationMenuTunnel from './Tunnel'
 import options from '../tableOption'
 import NavMenuContext from '../../../context/NavMenu'
-import BrandContext from '../../../context/Brand'
+// import BrandContext from '../../../context/Brand'
 import {
    NAVIGATION_MENU,
    INSERT_NAVIGATION_MENU,
@@ -29,17 +29,20 @@ import { logger, randomSuffix } from '../../../../../shared/utils'
 import { Tooltip, InlineLoader, Banner } from '../../../../../shared/components'
 import { DeleteIcon, LeftIcon } from '../../../../../shared/assets/icons'
 import { useTooltip, useTabs } from '../../../../../shared/providers'
+import { BrandContext } from '../../../../../App'
 
 const NavigationMenuListing = () => {
    const { tab, addTab, closeAllTabs } = useTabs()
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
    const location = useLocation()
    const [navMenuContext, setNavMenuContext] = useContext(NavMenuContext)
-   const [context, setContext] = useContext(BrandContext)
+   // const [context, setContext] = useContext(BrandContext)
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
    const { tooltip } = useTooltip()
    const tableRef = useRef(null)
    const [menuList, setMenuList] = useState(undefined)
-   const { brandId } = context
+   const { brandId } = brandContext
    const prevBrandId = useRef(brandId)
 
    //    Subscription for page listing

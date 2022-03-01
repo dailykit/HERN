@@ -5,13 +5,15 @@ import { toast } from 'react-toastify'
 import { TunnelBody, StyledWrapper, InputWrapper } from './styled'
 import { useTabs } from '../../../../../../shared/providers'
 import { CREATE_WEBPAGE } from '../../../../graphql'
-import BrandContext from '../../../../context/Brand'
+// import BrandContext from '../../../../context/Brand'
 
 import { Tooltip, Banner } from '../../../../../../shared/components'
+import { BrandContext } from '../../../../../../App'
 
 export default function PageCreationTunnel({ close }) {
    const { addTab } = useTabs()
-   const [context, setContext] = useContext(BrandContext)
+   // const [context, setContext] = useContext(BrandContext)
+   const [brandContext, setBrandContext] = useContext(BrandContext)
    const [types, setTypes] = useState([])
    const [pageTitle, setPageTitle] = useState({
       value: '',
@@ -131,7 +133,7 @@ export default function PageCreationTunnel({ close }) {
          createPage({
             variables: {
                object: {
-                  brandId: context.brandId,
+                  brandId: brandContext.brandId,
                   route: pageRoute.value,
                   internalPageName: pageTitle.value,
                },
@@ -190,7 +192,7 @@ export default function PageCreationTunnel({ close }) {
                   <Form.Text
                      id="domain"
                      name="domain"
-                     value={context.brandDomain}
+                     value={brandContext.brandDomain}
                      disabled
                   />
                   <Form.Text

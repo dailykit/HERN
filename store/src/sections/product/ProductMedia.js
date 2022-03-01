@@ -1,4 +1,5 @@
 import React from 'react'
+import { HernLazyImage } from '../../utils/hernImage'
 
 const ProductMedia = ({ assets, config }) => {
    const [activeImage, setActiveImage] = React.useState(0)
@@ -11,9 +12,9 @@ const ProductMedia = ({ assets, config }) => {
          <div className="hern-product-image-gallery__not-previewed">
             {assets?.images.map((image, index) => (
                <div key={index}>
-                  <img
+                  <HernLazyImage
                      className={index === activeImage ? 'active-img' : ''}
-                     src={image}
+                     data-src={image}
                      onClick={() => setActiveImage(index)}
                   />
                </div>
@@ -43,7 +44,7 @@ const ImageAspectRatio = ({ imageURL, aspectRatio = '1/1', altText }) => {
       >
          <div>
             <div style={{ backgroundImage: `url('${imageURL}')` }}>
-               <img src={imageURL} alt={altText} />
+               <ProductMedia data-src={imageURL} alt={altText} />
             </div>
          </div>
       </div>

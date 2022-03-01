@@ -20,8 +20,6 @@ const SelectMenu = props => {
       }
    }, [isAuthenticated, isLoading])
 
-
-
    return (
       <Layout settings={settings}>
          <SEO seoSettings={seoSettings} />
@@ -43,7 +41,7 @@ export async function getStaticProps({ params }) {
 
    return {
       props: { folds: parsedData, linkedFiles, settings, seoSettings },
-      revalidate: 60, // will be passed to the page component as props
+      // revalidate: 60, // will be passed to the page component as props
    }
 }
 

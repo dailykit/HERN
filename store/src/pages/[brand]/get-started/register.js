@@ -6,19 +6,29 @@ import { getPageProps, renderPageContent } from '../../../utils'
 import { SEO, Layout, ExternalJSCSSFiles } from '../../../components'
 import 'regenerator-runtime'
 
-
 const Register = props => {
    const { settings, linkedFiles, folds, seoSettings } = props
    const { configOf } = useConfig()
-   const backgroundFromConfig = configOf('register-background', 'Register')?.registerBackground
+   const backgroundFromConfig = configOf(
+      'register-background',
+      'Register'
+   )?.registerBackground
    return (
       <Layout settings={settings}>
          <SEO seoSettings={seoSettings} />
          <ExternalJSCSSFiles externalFiles={linkedFiles} />
-         <main className="hern-register" style={backgroundFromConfig && {
-            backgroundImage: "url(" + backgroundFromConfig?.BackgroundImage?.value + ")",
-            backgroundColor: backgroundFromConfig?.backgroundColor?.value
-         }}>
+         <main
+            className="hern-register"
+            style={
+               backgroundFromConfig && {
+                  backgroundImage:
+                     'url(' +
+                     backgroundFromConfig?.BackgroundImage?.value +
+                     ')',
+                  backgroundColor: backgroundFromConfig?.backgroundColor?.value,
+               }
+            }
+         >
             {renderPageContent(folds, [
                {
                   component: 'Registration',
@@ -45,7 +55,7 @@ export const getStaticProps = async context => {
             session,
             settings,
             seoSettings,
-            revalidate: 60,
+            // revalidate: 60,
             linkedFiles,
             providers: await providers(context),
          },
@@ -59,7 +69,7 @@ export const getStaticProps = async context => {
          settings,
          seoSettings,
          linkedFiles,
-         revalidate: 60,
+         // revalidate: 60,
          providers: await providers(context),
       },
    }

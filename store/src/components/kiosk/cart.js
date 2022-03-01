@@ -37,6 +37,7 @@ import KioskButton from './component/button'
 import { ProgressBar } from './component/progressBar'
 import { Coupon } from '../coupon'
 import isEmpty from 'lodash/isEmpty'
+import { HernLazyImage } from '../../utils/hernImage'
 
 const { Header, Content, Footer } = Layout
 
@@ -604,8 +605,8 @@ const CartCard = props => {
    }, [locale, showAdditionalDetailsOnCard])
    return (
       <div className="hern-kiosk__cart-card">
-         <img
-            src={productData.image}
+         <HernLazyImage
+            data-src={productData.image}
             alt="p-image"
             className="hern-kiosk__cart-card-p-image"
          />

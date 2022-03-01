@@ -112,9 +112,9 @@ const proxy = createProxyMiddleware({
 /*
 request on test.dailykit.org forwards to http://localhost:3000
 */
-app.use('/api/:path(*)', proxy)
-app.use('/_next/image', proxy)
-app.use('/assets/:path(*)', proxy)
+// app.use('/api/:path(*)', proxy)
+// app.use('/_next/image', proxy)
+// app.use('/assets/:path(*)', proxy)
 
 const RESTRICTED_FILES = ['env-config.js', 'favicon', '.next', '_next']
 
@@ -123,87 +123,87 @@ catches routes of subscription shop
 
 test.dailykit.org/menu
 */
-const serveSubscription = async (req, res, next) => {
-   //     Subscription shop: Browser <-> Express <-> NextJS
-   try {
-      const { path: routePath } = req.params
-      const { preview } = req.query
-      const { host } = req.headers
-      const brand = host.replace(':', '')
+// const serveSubscription = async (req, res, next) => {
+//    //     Subscription shop: Browser <-> Express <-> NextJS
+//    try {
+//       const { path: routePath } = req.params
+//       const { preview } = req.query
+//       const { host } = req.headers
+//       const brand = host.replace(':', '')
 
-      /*
-      -> user requests test.dailykit.org/menu
-      -> extracts brand i.e test.dailykit.org
-      -> test.dailykit.org/test.dailykit.org/menu
-      -> network request to above url and returns response back to browser
+//       /*
+//       -> user requests test.dailykit.org/menu
+//       -> extracts brand i.e test.dailykit.org
+//       -> test.dailykit.org/test.dailykit.org/menu
+//       -> network request to above url and returns response back to browser
 
-      during development
-         -> serves via running next dev
-      during production
-         -> serves via running next build && next start
-      */
-      if (process.env.NODE_ENV === 'development') {
-         const url = RESTRICTED_FILES.some(file => routePath.includes(file))
-            ? `http://localhost:3000/${routePath}`
-            : `http://localhost:3000/${brand}/${routePath}`
-         request(url, (error, _, body) => {
-            if (error) {
-               throw error
-            } else {
-               res.send(body)
-            }
-         })
-      } else {
-         const isAllowed = !RESTRICTED_FILES.some(file =>
-            routePath.includes(file)
-         )
-         if (isAllowed) {
-            const filePath =
-               routePath === ''
-                  ? path.join(
-                       __dirname,
-                       `./store/.next/server/pages/${brand}.html`
-                    )
-                  : path.join(
-                       __dirname,
-                       `./store/.next/server/pages/${brand}/${routePath}.html`
-                    )
+//       during development
+//          -> serves via running next dev
+//       during production
+//          -> serves via running next build && next start
+//       */
+//       if (process.env.NODE_ENV === 'development') {
+//          const url = RESTRICTED_FILES.some(file => routePath.includes(file))
+//             ? `http://localhost:3000/${routePath}`
+//             : `http://localhost:3000/${brand}/${routePath}`
+//          request(url, (error, _, body) => {
+//             if (error) {
+//                throw error
+//             } else {
+//                res.send(body)
+//             }
+//          })
+//       } else {
+//          const isAllowed = !RESTRICTED_FILES.some(file =>
+//             routePath.includes(file)
+//          )
+//          if (isAllowed) {
+//             const filePath =
+//                routePath === ''
+//                   ? path.join(
+//                        __dirname,
+//                        `./store/.next/server/pages/${brand}.html`
+//                     )
+//                   : path.join(
+//                        __dirname,
+//                        `./store/.next/server/pages/${brand}/${routePath}.html`
+//                     )
 
-            /*
-               SSR: Server Side Rendering
-               ISR: Incremental Server Regeneration
-               SSG: Server Side Generation
+//             /*
+//                SSR: Server Side Rendering
+//                ISR: Incremental Server Regeneration
+//                SSG: Server Side Generation
 
-               with preview requests are served via .next
-            */
-            if (fs.existsSync(filePath) && preview !== 'true') {
-               res.sendFile(filePath)
-            } else {
-               const url = RESTRICTED_FILES.some(file =>
-                  routePath.includes(file)
-               )
-                  ? `http://localhost:3000/${routePath}`
-                  : `http://localhost:3000/${brand}/${routePath}`
-               request(url, (error, _, body) => {
-                  if (error) {
-                     console.log(error)
-                  } else {
-                     res.send(body)
-                  }
-               })
-            }
-         } else if (routePath.includes('env-config.js')) {
-            res.sendFile(path.join(__dirname, 'store/public/env-config.js'))
-         } else {
-            res.sendFile(
-               path.join(__dirname, routePath.replace('_next', 'store/.next'))
-            )
-         }
-      }
-   } catch (error) {
-      res.status(404).json({ success: false, error: 'Page not found!' })
-   }
-}
+//                with preview requests are served via .next
+//             */
+//             if (fs.existsSync(filePath) && preview !== 'true') {
+//                res.sendFile(filePath)
+//             } else {
+//                const url = RESTRICTED_FILES.some(file =>
+//                   routePath.includes(file)
+//                )
+//                   ? `http://localhost:3000/${routePath}`
+//                   : `http://localhost:3000/${brand}/${routePath}`
+//                request(url, (error, _, body) => {
+//                   if (error) {
+//                      console.log(error)
+//                   } else {
+//                      res.send(body)
+//                   }
+//                })
+//             }
+//          } else if (routePath.includes('env-config.js')) {
+//             res.sendFile(path.join(__dirname, 'store/public/env-config.js'))
+//          } else {
+//             res.sendFile(
+//                path.join(__dirname, routePath.replace('_next', 'store/.next'))
+//             )
+//          }
+//       }
+//    } catch (error) {
+//       res.status(404).json({ success: false, error: 'Page not found!' })
+//    }
+// }
 
 /*
 manages files in templates folder
@@ -274,7 +274,7 @@ const ayrshareApolloserver = new ApolloServer({
 
 ayrshareApolloserver.applyMiddleware({ app, path: '/ayrshare/graphql' })
 
-app.use('/:path(*)', serveSubscription)
+app.use('/:path(*)', proxy)
 
 app.listen(PORT, () => {
    console.log(`Server started on ${PORT}`)

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { Switch, Route } from 'react-router-dom'
 import { BrandName } from './styled'
-import BrandContext from '../../context/Brand'
+// import BrandContext from '../../context/Brand'
 import { ViewIcon } from '../../../../shared/assets/icons'
 // Views
 import {
@@ -11,10 +11,13 @@ import {
    SubscriptionFold,
    NavigationMenu,
 } from '../../views'
+import { BrandContext } from '../../../../App'
 
 export default function Main() {
-   const [context, setContext] = useContext(BrandContext)
-   const { brandName } = context
+   // const [context, setContext] = useContext(BrandContext)
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
+   const { brandName } = brandContext
    return (
       <main>
          <Route exact path="/content" component={Home} />

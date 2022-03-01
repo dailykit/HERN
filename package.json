@@ -10,6 +10,7 @@
       "dev": "concurrently \"nodemon -r esm index.js\" \"cd store && yarn dev\" \"cd admin && yarn start\"",
       "dev-mac": "concurrently \"nodemon -r esm index.js\" \"cd store && yarn dev\" \"cd admin && yarn start-mac\"",
       "build": "cd store && yarn build && cd ../admin && yarn build",
+      "build-store": "cd store && yarn build",
       "prod": "concurrently \"nodemon -r esm index.js\" \"cd store && yarn start\"",
       "dev:server": "concurrently \"nodemon -r esm index.js\" \"cd store && yarn dev\"",
       "download-graphql": "chmod +x ./fetchgraphqlschema.sh && ./fetchgraphqlschema.sh",

@@ -282,11 +282,12 @@ export const CustomArea = props => {
                   locationId ? (storeStatus.status ? false : true) : true
                }
             >
-               {locationId
+               {/* {locationId
                   ? storeStatus.status
                      ? 'ADD'
                      : 'COMING SOON'
-                  : 'COMING SOON'}
+                  : 'COMING SOON'} */}
+               ADD
             </Button>
          ) : (
             <CounterButton

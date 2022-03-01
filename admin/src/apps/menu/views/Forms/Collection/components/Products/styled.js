@@ -10,6 +10,13 @@ export const StyledHeader = styled.div`
    justify-content: space-between;
    align-items: center;
 `
+
+export const StyledAction = styled.div`
+   display: flex;
+   justify-content: flex-end;
+   gap: 10px;
+`
+
 export const StyledProductWrapper = styled.div`
    border: 1px solid #efefef;
    height: 76px;
