@@ -15,6 +15,7 @@ import { ModifierPopup } from '.'
 import { useQuery } from '@apollo/react-hooks'
 import { Button } from './button'
 import { CounterButton } from '.'
+import { HernLazyImage } from '../utils/hernImage'
 
 const CartCard = props => {
    // productData --> product data from cart
@@ -309,7 +310,7 @@ const CartCard = props => {
    return (
       <div className="hern-cart-card">
          <div className="hern-cart-card__img">
-            <img src={productData.image} alt="p-image" />
+            <HernLazyImage data-src={productData.image} alt="p-image" />
          </div>
          <div className="hern-cart-card__details">
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>

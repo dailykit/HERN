@@ -14,6 +14,7 @@ import {
    ArrowRightIcon,
    ProductGalleryBG,
 } from '../../../assets/icons'
+import { HernLazyImage } from '../../../utils/hernImage'
 
 export const ProductGalleryKiosk = ({ config }) => {
    const { brand, isConfigLoading, kioskDetails, configOf } = useConfig()
@@ -191,8 +192,8 @@ const ProductGalleryCard = ({ product }) => {
 
    return (
       <div className="hern-kiosk__product-gallery-card" dir={direction}>
-         <img
-            src={product.assets.images[0]}
+         <HernLazyImage
+            data-src={product.assets.images[0]}
             alt="p-image"
             className="hern-kiosk__product-gallery-p-image"
          />
