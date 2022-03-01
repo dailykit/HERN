@@ -95,5 +95,9 @@
    "terms and conditions": "الأحكام والشروط",
    "REGISTER": "تسجيل",
    "REGISTERING...": "التسجيل ...",
-   "Looks like your email already exists. If you remember your password then go to": "يبدو أن بريدك الإلكتروني موجود بالفعل. إذا كنت تتذكر كلمة المرور الخاصة بك ، فانتقل إلى"
+   "Looks like your email already exists. If you remember your password then go to": "يبدو أن بريدك الإلكتروني موجود بالفعل. إذا كنت تتذكر كلمة المرور الخاصة بك ، فانتقل إلى",
+   "User already exist": "المستخدم موجود بالفعل",
+   "Referral code applied!": "تم تطبيق كود الإحالة!",
+   "Referral code not applied!": "رمز الإحالة غير مطبق!",
+   "Login successfully": "تسجيل الدخول بنجاح"
 }

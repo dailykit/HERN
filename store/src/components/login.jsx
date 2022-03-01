@@ -941,7 +941,9 @@ const Signup = props => {
       onCompleted: ({ customers = [] }) => {
          if (customers.length > 0) {
             setEmailExists(true)
-            addToast(t('User already exist'), { appearance: 'info' })
+            addToast(<span>{t('User already exist')}</span>, {
+               appearance: 'info',
+            })
          }
       },
       onError: () => {},
@@ -949,12 +951,16 @@ const Signup = props => {
 
    const [applyReferralCode] = useMutation(MUTATIONS.CUSTOMER_REFERRAL.UPDATE, {
       onCompleted: () => {
-         addToast(t('Referral code applied!'), { appearance: 'success' })
+         addToast(<span>{t('Referral code applied!')}</span>, {
+            appearance: 'success',
+         })
          deleteStoredReferralCode()
       },
       onError: error => {
          console.log(error)
-         addToast(t('Referral code not applied!'), { appearance: 'error' })
+         addToast(<span>{t('Referral code not applied!')}</span>, {
+            appearance: 'error',
+         })
       },
    })
 
@@ -982,7 +988,9 @@ const Signup = props => {
                         },
                      })
                   }
-                  addToast(t('Login successfully'), { appearance: 'success' })
+                  addToast(<span>{t('Login successfully')}</span>, {
+                     appearance: 'success',
+                  })
                   if (!isSilentlyLogin) {
                      window.location.href =
                         window.location.origin +
