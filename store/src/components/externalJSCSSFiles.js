@@ -8,6 +8,7 @@ const ExternalJSCSSFiles = ({ externalFiles }) => {
       <Head>
          {cssFiles.map(file => (
             <link
+               key={file.id}
                id={file.id}
                rel="stylesheet"
                href={file.path}
