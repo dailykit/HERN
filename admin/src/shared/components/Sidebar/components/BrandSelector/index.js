@@ -16,10 +16,10 @@ import {
 const BrandSelector = ({ mouseOver }) => {
    const [brandArrowClicked, setBrandArrowClicked] = useState(false)
    const [locationArrowClicked, setLocationArrowClicked] = useState(false)
-
    const [brandList, setBrandList] = React.useState([])
    const [brandLocationsList, setBrandLocationsList] = React.useState([])
    const [brandContext, setBrandContext] = useContext(BrandContext)
+
    const [viewingFor, setViewingFor] = useState({
       brandId: null,
       brandName: '',
@@ -39,7 +39,7 @@ const BrandSelector = ({ mouseOver }) => {
                   id: eachBrand.id,
                   title: eachBrand.title,
                   isDefault: eachBrand.isDefault,
-                  domain: [eachBrand.domain],
+                  domain: eachBrand.domain,
                   logo: eachBrand.brand_brandSettings.length
                      ? eachBrand.brand_brandSettings[0]?.value.brandLogo.value
                         ? eachBrand.brand_brandSettings[0]?.value.brandLogo
@@ -63,6 +63,7 @@ const BrandSelector = ({ mouseOver }) => {
                   ...brandContext,
                   brandId: brand.id,
                   brandName: brand.title,
+                  brandDomain: brand.domain,
                })
             }
          })
@@ -99,7 +100,7 @@ const BrandSelector = ({ mouseOver }) => {
             })
          },
       })
-   console.log('brandContext', brandContext)
+   // console.log('brandContext', brandContext)
 
    return (
       <div style={{ padding: '7px', textAlign: 'center' }}>
@@ -154,25 +155,25 @@ const BrandSelector = ({ mouseOver }) => {
                                        ...brandContext,
                                        brandId: brand.id,
                                        brandName: brand.title,
+                                       brandDomain: brand.domain,
                                     })
                                     setBrandArrowClicked(false)
                                  }}
+                                 active={brand.id === viewingFor.brandId}
                               >
-                                 <span>
-                                    {brand.logo ? (
-                                       <Avatar src={brand.logo} size="small" />
-                                    ) : (
-                                       <Avatar
-                                          style={{
-                                             backgroundColor: '#87d068',
-                                          }}
-                                          size="small"
-                                       >
-                                          {brand.title.charAt(0).toUpperCase()}
-                                       </Avatar>
-                                    )}
-                                 </span>
-                                 <span>{brand.title}</span>
+                                 {brand.logo ? (
+                                    <Avatar src={brand.logo} size="small" />
+                                 ) : (
+                                    <Avatar
+                                       style={{
+                                          backgroundColor: '#87d068',
+                                       }}
+                                       size="small"
+                                    >
+                                       {brand.title.charAt(0).toUpperCase()}
+                                    </Avatar>
+                                 )}
+                                 {brand.title}
                               </div>
                            )
                         })}
@@ -221,8 +222,11 @@ const BrandSelector = ({ mouseOver }) => {
                                           })
                                           setLocationArrowClicked(false)
                                        }}
+                                       active={
+                                          location.id === viewingFor.locationId
+                                       }
                                     >
-                                       <span>{location.label}</span>
+                                       {location.label}
                                     </div>
                                  )
                               })}

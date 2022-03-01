@@ -34,6 +34,7 @@ export const S_COLLECTION = gql`
             id
             position
             productCategoryName
+            isActive
             products(order_by: { position: desc_nulls_last }) {
                id
                position
