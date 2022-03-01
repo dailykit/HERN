@@ -10,7 +10,7 @@ const ExternalJSCSSFiles = ({ externalFiles }) => {
             <link
                key={file.id}
                id={file.id}
-               rel="stylesheet"
+               rel="preload preconnect stylesheet"
                href={file.path}
                type="text/css"
                media="screen"

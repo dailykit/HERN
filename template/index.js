@@ -140,7 +140,12 @@ export const hydrateFold = async (req, res) => {
    }
 }
 
-router.use('/files', express.static(`${__dirname}../../template/templates`))
+router.use(
+   '/files',
+   express.static(`${__dirname}../../template/templates`, {
+      maxAge: 604800
+   })
+)
 router.get('/', root)
 router.post('/hydrate-fold', hydrateFold)
 router.post('/download/:path(*)', download)
