@@ -756,17 +756,13 @@ export const ModifierPopup = props => {
                         locationId ? (storeStatus.status ? false : true) : true
                      }
                   >
-                     {locationId
-                        ? storeStatus.status
-                           ? showModifiers && productOption.modifier
-                              ? showStepViewProductOptionAndModifiers
-                                 ? !isModifierOptionsViewOpen
-                                    ? 'PROCEED'
-                                    : `ADD TO CART ${totalAmount()}`
-                                 : `ADD TO CART ${totalAmount()}`
+                     {showModifiers && productOption.modifier
+                        ? showStepViewProductOptionAndModifiers
+                           ? !isModifierOptionsViewOpen
+                              ? 'PROCEED'
                               : `ADD TO CART ${totalAmount()}`
-                           : 'COMING SOON'
-                        : 'COMING SOON'}
+                           : `ADD TO CART ${totalAmount()}`
+                        : `ADD TO CART ${totalAmount()}`}
                   </Button>
                </div>
             </div>
