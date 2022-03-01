@@ -1089,7 +1089,12 @@ const Signup = props => {
             variables: { where: { email: { _eq: value } } },
          })
       } else {
-         setEmailError('Must be a valid email!')
+         setEmailError(
+            <>
+               <span>{t('Must be a valid email')}</span>
+               <span>{'!'}</span>
+            </>
+         )
       }
    }
 
@@ -1121,7 +1126,12 @@ const Signup = props => {
          )
          if (!isCodeValid) {
             deleteStoredReferralCode()
-            return setError('Referral code is not valid!')
+            return setError(
+               <>
+                  <span>{t('Referral code is not valid')}</span>
+                  <span>{'!'}</span>
+               </>
+            )
          }
          if (form.code) {
             setStoredReferralCode(form.code)
@@ -1151,10 +1161,21 @@ const Signup = props => {
       } catch (error) {
          console.log(error)
          setLoading(false)
-         setError('Failed to register, please try again!')
-         addToast('Failed to register, please try again!', {
-            appearance: 'error',
-         })
+         setError(
+            <>
+               <span>{t('Failed to register, please try again')}</span>
+               <span>{'!'}</span>
+            </>
+         )
+         addToast(
+            <>
+               <span>{t('Failed to register, please try again')}</span>
+               <span>{'!'}</span>
+            </>,
+            {
+               appearance: 'error',
+            }
+         )
       }
    }
 
@@ -1198,7 +1219,14 @@ const Signup = props => {
                      onBlur={e =>
                         e.target.value.length < 6
                            ? setPasswordError(
-                                'Password must be at least 6 letters long!'
+                                <>
+                                   <span>
+                                      {t(
+                                         'Password must be at least 6 letters long'
+                                      )}
+                                   </span>
+                                   <span>{'!'}</span>
+                                </>
                              )
                            : setPasswordError('')
                      }
@@ -1288,7 +1316,7 @@ const Signup = props => {
                      {t('I accept')}{' '}
                      <Link href={getRoute('/terms-and-conditions')}>
                         <a className="hern-signup__signup__term__link">
-                           {t('terms and conditions.')}
+                           {t('terms and conditions')}
                         </a>
                      </Link>
                   </label>
