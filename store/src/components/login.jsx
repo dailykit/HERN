@@ -44,6 +44,7 @@ import {
 } from '../utils/referrals'
 import gql from 'graphql-tag'
 import { useRouter } from 'next/router'
+import { useTranslation } from '../context'
 
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
@@ -70,7 +71,7 @@ export const Login = props => {
 
    //component state
    const [defaultLogin, setDefaultLogin] = useState(loginBy)
-
+   const { t } = useTranslation()
    return (
       <div className={`hern-login-v1-container`}>
          <div className="hern-login-v1-content">
@@ -151,8 +152,8 @@ export const Login = props => {
                            }}
                         >
                            {defaultLogin === 'email'
-                              ? 'Log in with Phone Number'
-                              : 'Log in with Email'}
+                              ? t('Log in with Phone Number')
+                              : t('Log in with Email')}
                         </Button>
                      </div>
                   </>
@@ -163,7 +164,8 @@ export const Login = props => {
             </section>
             {defaultLogin !== 'signup' && (
                <footer className="hern-login-v1__footer">
-                  <span>{t('No account?')} </span>{' '}
+                  <span>{t('No account')} </span>
+                  {'?'}
                   <button
                      className="hern-login-v1__create-one-btn"
                      onClick={() => {
@@ -195,7 +197,7 @@ const Email = props => {
    const [showPassword, setShowPassword] = useState(false)
 
    const isValid = React.useMemo(() => form.email && form.password, [form])
-
+   const { t } = useTranslation()
    //handle input field change
    const onChange = e => {
       const { name, value } = e.target
@@ -218,10 +220,21 @@ const Email = props => {
          })
          setLoading(false)
          if (response?.status !== 200) {
-            setError('Email or password is incorrect!')
-            addToast('Email or password is incorrect!', {
-               appearance: 'error',
-            })
+            setError(
+               <>
+                  <span>{t('Email or password is incorrect')}</span>
+                  <span>{'!'}</span>
+               </>
+            )
+            addToast(
+               <>
+                  <span>{t('Email or password is incorrect')}</span>
+                  <span>{'!'}</span>
+               </>,
+               {
+                  appearance: 'error',
+               }
+            )
          } else if (response?.status === 200) {
             // fb pixel integration for tracking customer login
             ReactPixel.trackCustom('login', {
@@ -307,7 +320,8 @@ const Email = props => {
                   setDefaultLogin('forgotPassword')
                }}
             >
-               {t('Forgot password?')}{' '}
+               <span>{t('Forgot password')}</span>
+               {'?'}
             </span>
          </div>
          {error && <span className="hern-login-v1__error">{error}</span>}
@@ -318,7 +332,14 @@ const Email = props => {
             })}
             onClick={() => isValid && submit()}
          >
-            {loading ? t('LOGGING IN...') : t('LOGIN')}
+            {loading ? (
+               <>
+                  <span>{t('LOGGING IN')}</span>
+                  {'...'}
+               </>
+            ) : (
+               t('LOGIN')
+            )}
          </Button>
       </div>
    )
@@ -329,7 +350,7 @@ const OTPLogin = props => {
    //props
    const { isSilentlyLogin, closeLoginPopup, callbackURL } = props
    const { addToast } = useToasts()
-
+   const { t } = useTranslation()
    //component state
    const [error, setError] = React.useState('')
    const [loading, setLoading] = React.useState(false)
@@ -578,7 +599,7 @@ const OTPLogin = props => {
                         }))
                      }}
                      defaultCountry={get_env('COUNTRY_CODE')}
-                     placeholder="Enter your phone number"
+                     placeholder={t('Enter your phone number')}
                      onKeyPress={handleSendOTPKeyPress}
                   />
                </fieldset>
@@ -701,7 +722,7 @@ const SocialLogin = props => {
 
    const { configOf, isConfigLoading } = useConfig()
    const authConfig = configOf('Auth Methods', 'brand')
-
+   const { t } = useTranslation()
    //fetch all available provider
    const {
       loading: providerLoading,
@@ -723,7 +744,7 @@ const SocialLogin = props => {
 
    return (
       <>
-         <DividerBar text={'or sign in with'} />
+         <DividerBar text={t('or sign in with')} />
          <div className="hern-login-v1__social__login">
             <div className="hern-login-v1__social__login__providers">
                {providerLoading && (
@@ -774,7 +795,7 @@ const SocialLogin = props => {
 const ForgotPassword = props => {
    //props
    const { closeLoginPopup } = props
-
+   const { t } = useTranslation()
    const { addToast } = useToasts()
    const { configOf } = useConfig()
 
@@ -819,10 +840,21 @@ const ForgotPassword = props => {
          }
       } catch (error) {
          if (error?.code === 401) {
-            setError(t('Email or password is incorrect!'))
-            addToast(t('Email or password is incorrect!'), {
-               appearance: 'error',
-            })
+            setError(
+               <>
+                  <span>{t('Email or password is incorrect')}</span>
+                  <span>{'!'}</span>
+               </>
+            )
+            addToast(
+               <>
+                  <span>{t('Email or password is incorrect')}</span>
+                  <span>{'!'}</span>
+               </>,
+               {
+                  appearance: 'error',
+               }
+            )
          }
       }
    }
@@ -863,9 +895,10 @@ const ForgotPassword = props => {
 //divider bar
 const DividerBar = props => {
    const { text } = props
+   const { t } = useTranslation()
    return (
       <div className="hern-login-v1-divider-bar">
-         <span>{text || 'or'}</span>
+         <span>{text || t('or')}</span>
       </div>
    )
 }
@@ -881,7 +914,7 @@ const Signup = props => {
    //props
    const { setDefaultLogin, isSilentlyLogin, closeLoginPopup, callbackURL } =
       props
-
+   const { t } = useTranslation()
    //component state
    const [showPassword, setShowPassword] = useState(false)
    const { addToast } = useToasts()
@@ -960,19 +993,36 @@ const Signup = props => {
                   setLoading(false)
                } else {
                   setLoading(false)
-                  setError(t('Failed to signup, please try again!'))
-                  addToast(t('Failed to signup!'), { appearance: 'error' })
+                  setError(
+                     <>
+                        <span>{t('Failed to signup, please try again')}</span>
+                        <span>{'!'}</span>
+                     </>
+                  )
+                  addToast(
+                     <>
+                        <span>{t('Failed to signup')}</span>
+                        <span>{'!'}</span>
+                     </>,
+                     { appearance: 'error' }
+                  )
                }
             }
          } catch (error) {
             console.error(error)
-            addToast(t('Failed to signup!'), { appearance: 'error' })
+            addToast(
+               <>
+                  <span>{t('Failed to signup')}</span>
+                  <span>{'!'}</span>
+               </>,
+               { appearance: 'error' }
+            )
          }
       },
       onError: error => {
          setLoading(false)
          if (error.message.includes('customer__phoneNumber_key')) {
-            setPhoneError(t('Phone no. already exist'))
+            setPhoneError(<span>{t('Phone no. already exist')}</span>)
          }
          console.error(error)
       },
@@ -984,23 +1034,31 @@ const Signup = props => {
          onCompleted: ({ forgotPassword = {} } = {}) => {
             if (forgotPassword?.success) {
                setForgotPasswordText(
-                  t(
-                     'An email has been sent to your provided email. Please check your inbox.'
-                  )
+                  <span>
+                     {t(
+                        'An email has been sent to your provided email. Please check your inbox.'
+                     )}
+                  </span>
                )
                setTimeout(() => {
                   setForgotPasswordText('')
                }, 4000)
             }
-            addToast(t('Successfully sent the set password email.'), {
-               appearance: 'success',
-            })
+            addToast(
+               <span>{t('Successfully sent the set password email.')}</span>,
+               {
+                  appearance: 'success',
+               }
+            )
             closeLoginPopup()
          },
          onError: () => {
-            addToast(t('Failed to send the set password email.'), {
-               appearance: 'error',
-            })
+            addToast(
+               <span>{t('Failed to send the set password email.')}</span>,
+               {
+                  appearance: 'error',
+               }
+            )
          },
       }
    )
