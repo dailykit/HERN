@@ -40,8 +40,8 @@ export const LocationSelector = props => {
 
    const [fulfillmentType, setFulfillmentType] = useState(
       orderTabFulfillmentType[0]?.split('_')[1] ||
-         defaultFulfillmentType.value?.value ||
-         defaultFulfillmentType.default?.value
+      defaultFulfillmentType.value?.value ||
+      defaultFulfillmentType.default?.value
    )
 
    React.useEffect(() => {
@@ -73,9 +73,9 @@ export const LocationSelector = props => {
                         orderTabs.find(
                            x =>
                               x.orderFulfillmentTypeLabel ===
-                                 'ONDEMAND_DELIVERY' ||
+                              'ONDEMAND_DELIVERY' ||
                               x.orderFulfillmentTypeLabel ===
-                                 'PREORDER_DELIVERY'
+                              'PREORDER_DELIVERY'
                         ).label
                      }
                   </button>
@@ -97,7 +97,7 @@ export const LocationSelector = props => {
                         orderTabs.find(
                            x =>
                               x.orderFulfillmentTypeLabel ===
-                                 'ONDEMAND_PICKUP' ||
+                              'ONDEMAND_PICKUP' ||
                               x.orderFulfillmentTypeLabel === 'PREORDER_PICKUP'
                         ).label
                      }
@@ -120,7 +120,7 @@ export const LocationSelector = props => {
                         orderTabs.find(
                            x =>
                               x.orderFulfillmentTypeLabel ===
-                                 'ONDEMAND_DINEIN' ||
+                              'ONDEMAND_DINEIN' ||
                               x.orderFulfillmentTypeLabel === 'SCHEDULED_DINEIN'
                         ).label
                      }

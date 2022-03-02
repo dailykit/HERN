@@ -10,12 +10,13 @@ import { StoreList } from '../locationSelector/storeList'
 import { GPSIcon, NotFound } from '../../assets/icons'
 import { Loader, UserAddressList, GoogleSuggestionsList } from '..'
 import { AddressInfo } from './addressInfo'
+import { useTranslation } from '../../context'
 
 // delivery section
 export const Delivery = props => {
    const { deliveryType: storeDeliveryType } =
       LocationSelectorConfig.informationVisibility.deliverySettings
-
+   const { t } = useTranslation()
    const availableStoreType =
       storeDeliveryType.value.length > 0
          ? storeDeliveryType.value.map(x => x.value)
@@ -40,14 +41,14 @@ export const Delivery = props => {
          orderTabFulfillmentType.includes('ONDEMAND_DELIVERY') &&
          Boolean(availableStoreType.find(x => x === 'ONDEMAND'))
       ) {
-         options.push({ label: 'Now', value: 'ONDEMAND_DELIVERY' })
+         options.push({ label: <span>{t('Now')}</span>, value: 'ONDEMAND_DELIVERY' })
       }
       if (
          orderTabFulfillmentType &&
          orderTabFulfillmentType.includes('PREORDER_DELIVERY') &&
          Boolean(availableStoreType.find(x => x === 'PREORDER'))
       ) {
-         options.push({ label: 'Later', value: 'PREORDER_DELIVERY' })
+         options.push({ label: <span>{t('Later')}</span>, value: 'PREORDER_DELIVERY' })
       }
 
       return options
@@ -256,8 +257,10 @@ export const Delivery = props => {
       }
    }
    const showWarningPopup = () => {
+      // const title = <span> {t('Please select a precise location. Try typing a landmark near your house.')}</span>
+      // console.log(title, "title")
       Modal.warning({
-         title: <span>{t('Please select a precise location. Try typing a landmark near your house.')}</span>,
+         title: 'Please select a precise location. Try typing a landmark near your house.',
          maskClosable: true,
          centered: true,
       })
@@ -314,7 +317,7 @@ export const Delivery = props => {
                                  LocationSelectorConfig.informationVisibility
                                     .deliverySettings
                                     .userAddressInputPlaceHolder.value ||
-                                 t('Enter your delivery location')
+                                 'Enter your delivery location'
                               }
                               renderSuggestions={(active, suggestions) => (
                                  <GoogleSuggestionsList
@@ -342,7 +345,9 @@ export const Delivery = props => {
                {locationSearching.error &&
                   locationSearching.errorType === 'blockByBrowser' && (
                      <span className="hern-store-location-selector-main__get-current-location-error-message">
-                        {t("You have blocked this site from tracking your location. To use this, change your location settings in browser.")}
+                        {t(
+                           'You have blocked this site from tracking your location. To use this, change your location settings in browser.'
+                        )}
                      </span>
                   )}
             </div>
@@ -352,7 +357,7 @@ export const Delivery = props => {
             <p style={{ padding: '1em' }}>{t('getting your location...')}</p>
          ) : locationSearching.error ? (
             <p style={{ padding: '1em', fontWeight: 'bold' }}>
-               {t('Unable to find location')}
+               {/* {t('Unable to find location')} */}
             </p>
          ) : address ? (
             <div className="hern-store-location-selector__user-location">
@@ -376,7 +381,9 @@ export const Delivery = props => {
                   width={72}
                   height={72}
                />
-               <span>{t('Finding nearest store location to you')}</span>
+               <span>
+                  {t('Finding nearest store location to you')}
+               </span>
             </div>
          ) : stores?.length == 0 ? (
             <div
@@ -396,7 +403,7 @@ export const Delivery = props => {
                      lineHeight: '26px',
                   }}
                >
-                  {t('No store available on this location.')}{' '}
+                  {t('No store available on this location.')}
                </span>
             </div>
          ) : isGetStoresLoading ? (
@@ -413,7 +420,9 @@ export const Delivery = props => {
                   width={72}
                   height={72}
                />
-               <span>{t('Finding nearest store location to you')}</span>
+               <span>
+                  {t('Finding nearest store location to you')}
+               </span>
             </div>
          ) : (
             <StoreList
