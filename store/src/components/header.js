@@ -295,7 +295,12 @@ export const Header = ({ settings, navigationMenus }) => {
                      type: 'SET_STORE_STATUS',
                      payload: {
                         status: false,
-                        message: 'No store available on this location.',
+                        message: (
+                           <span>
+                              {' '}
+                              {t('No store available on this location.')}
+                           </span>
+                        ),
                         loading: false,
                      },
                   })
@@ -515,7 +520,7 @@ export const Header = ({ settings, navigationMenus }) => {
                               className="hern-header__logout-btn"
                               onClick={logout}
                            >
-                              Logout
+                              {t('Logout')}
                            </button>
                         </>
                      ) : (
