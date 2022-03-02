@@ -5,7 +5,7 @@ import { get_env, isClient } from '../utils'
 import { UserIcon } from '../assets/icons'
 import { Button } from './button'
 import { Tunnel } from './tunnel'
-import { useUser, CartContext } from '../context'
+import { useUser, CartContext, useTranslation } from '../context'
 import { useToasts } from 'react-toast-notifications'
 import { UPDATE_PLATFORM_CUSTOMER } from '../graphql'
 import { useMutation } from '@apollo/react-hooks'
@@ -73,22 +73,24 @@ const UserInfoForm = props => {
    const { cartState, methods } = React.useContext(CartContext)
    const { user } = useUser()
    const { addToast } = useToasts()
+   const { t } = useTranslation(
+   )
    const { cart } = cartState
    const [savingUserInfo, setSavingUserInfo] = React.useState(false)
    const [firstName, setFirstName] = useState(
       cart?.customerInfo?.customerFirstName ||
-         user.platform_customer?.firstName ||
-         ''
+      user.platform_customer?.firstName ||
+      ''
    )
    const [lastName, setLastName] = useState(
       cart?.customerInfo?.customerLastName ||
-         user.platform_customer?.lastName ||
-         ''
+      user.platform_customer?.lastName ||
+      ''
    )
    const [mobileNumber, setMobileNumber] = useState(
       cart?.customerInfo?.customerPhone ||
-         user.platform_customer?.phoneNumber ||
-         ''
+      user.platform_customer?.phoneNumber ||
+      ''
    )
    const [updateCustomer] = useMutation(UPDATE_PLATFORM_CUSTOMER, {
       onCompleted: () => {
@@ -137,7 +139,7 @@ const UserInfoForm = props => {
          <div className="hern-user-info__header">
             <div>
                <UserIcon size={16} />
-               <h2 className="hern-user-info__heading">User Details</h2>
+               <h2 className="hern-user-info__heading">{t('User Details')}</h2>
             </div>
             <Button
                disabled={
@@ -149,7 +151,7 @@ const UserInfoForm = props => {
                onClick={handleSave}
                loading={savingUserInfo}
             >
-               save
+               {t('save')}
             </Button>
          </div>
          <div className="hern-user-info__name-field">
@@ -185,11 +187,10 @@ const UserInfoForm = props => {
          <fieldset className="hern-user-info__fieldset hern-user-info__fieldset-phone-number">
             <label className="hern-user-info__label">Phone Number</label>
             <PhoneInput
-               className={`hern-user-info__phone__input hern-user-info__phone__input${
-                  !(mobileNumber && isValidPhoneNumber(mobileNumber))
-                     ? '-invalid'
-                     : '-valid'
-               }`}
+               className={`hern-user-info__phone__input hern-user-info__phone__input${!(mobileNumber && isValidPhoneNumber(mobileNumber))
+                  ? '-invalid'
+                  : '-valid'
+                  }`}
                initialValueFormat="national"
                value={mobileNumber}
                onChange={e => {
