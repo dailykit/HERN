@@ -5,7 +5,7 @@ import { DineinTable, LocationIcon, ChevronIcon } from '../assets/icons'
 import { BRAND_LOCATIONS } from '../graphql'
 import { getDistance, convertDistance } from 'geolib'
 import moment from 'moment'
-import { CartContext } from '../context'
+import { CartContext, useTranslation } from '../context'
 import { useQuery } from '@apollo/react-hooks'
 import { Loader } from '.'
 import { Delivery, Pickup } from './fulfillmentSection'
@@ -17,19 +17,19 @@ import TimeIcon from '../assets/icons/Time'
 export const FulfillmentForm = () => {
    const { orderTabs, selectedOrderTab } = useConfig()
    const { cartState } = React.useContext(CartContext)
-
+   const { t } = useTranslation()
    // check whether user select fulfillment type or not
    const selectedFulfillment = React.useMemo(
       () =>
          selectedOrderTab
             ? selectedOrderTab.orderFulfillmentTypeLabel
-                 .replace('_', ' ')
-                 .split(' ')[1]
+               .replace('_', ' ')
+               .split(' ')[1]
             : orderTabs.length == 0
-            ? null
-            : orderTabs[0].orderFulfillmentTypeLabel
-                 .replace('_', ' ')
-                 .split(' ')[1],
+               ? null
+               : orderTabs[0].orderFulfillmentTypeLabel
+                  .replace('_', ' ')
+                  .split(' ')[1],
       [orderTabs, selectedOrderTab]
    )
    const [showRefineLocation, setShowRefineLocation] = useState(false)
@@ -76,7 +76,7 @@ export const FulfillmentForm = () => {
                      <LocationIcon size={18} />
                   </span>
                   &nbsp; &nbsp;
-                  <h3>Address</h3>
+                  <h3>{t('Address')}</h3>
                </div>
                <span
                   onClick={() =>
@@ -95,7 +95,7 @@ export const FulfillmentForm = () => {
             {fulfillementAddressOpen && (
                <>
                   <div className="hern-fulfillment__address__content">
-                     <span>{fulfillmentLabel}</span>
+                     <span>{t(fulfillmentLabel)}</span>
                      <button
                         onClick={() => setShowLocationSelectionPopup(true)}
                      >
@@ -103,11 +103,11 @@ export const FulfillmentForm = () => {
                      </button>
                      {(selectedFulfillment === 'DELIVERY' ||
                         selectedFulfillment === 'PICKUP') && (
-                        <ConsumerAddress
-                           setShowRefineLocation={setShowRefineLocation}
-                           showEditIcon={selectedFulfillment === 'DELIVERY'}
-                        />
-                     )}
+                           <ConsumerAddress
+                              setShowRefineLocation={setShowRefineLocation}
+                              showEditIcon={selectedFulfillment === 'DELIVERY'}
+                           />
+                        )}
                   </div>
                </>
             )}
@@ -172,6 +172,8 @@ export const FulfillmentForm = () => {
 
 export const Fulfillment = ({ cart, editable = true }) => {
    const { brand } = useConfig()
+   const { t } = useTranslation()
+
    const title = React.useMemo(() => {
       switch (cart?.fulfillmentInfo?.type) {
          case 'ONDEMAND_DELIVERY':
@@ -288,33 +290,33 @@ export const Fulfillment = ({ cart, editable = true }) => {
                   <DineinTable />
                   <span className="hern-cart__fulfillment-heading-text">
                      {editable
-                        ? 'How would you like to your order?'
-                        : 'Order details'}
+                        ? t('How would you like to your order?')
+                        : t('Order details')}
                   </span>
                </div>
                <div style={{ position: 'relative' }}>
                   <label style={{ marginTop: '5px' }}>
-                     {title}{' '}
+                     {t(title)}{' '}
                      {(cart?.fulfillmentInfo?.type === 'PREORDER_PICKUP' ||
                         cart?.fulfillmentInfo?.type ===
-                           'PREORDER_DELIVERY') && (
-                        <span>
-                           {' '}
-                           on{' '}
-                           {moment(cart?.fulfillmentInfo?.slot?.from).format(
-                              'DD MMM YYYY'
-                           )}
-                           {' ('}
-                           {moment(cart?.fulfillmentInfo?.slot?.from).format(
-                              'HH:mm'
-                           )}
-                           {'-'}
-                           {moment(cart?.fulfillmentInfo?.slot?.to).format(
-                              'HH:mm'
-                           )}
-                           {')'}
-                        </span>
-                     )}
+                        'PREORDER_DELIVERY') && (
+                           <span>
+                              {' '}
+                              on{' '}
+                              {moment(cart?.fulfillmentInfo?.slot?.from).format(
+                                 'DD MMM YYYY'
+                              )}
+                              {' ('}
+                              {moment(cart?.fulfillmentInfo?.slot?.from).format(
+                                 'HH:mm'
+                              )}
+                              {'-'}
+                              {moment(cart?.fulfillmentInfo?.slot?.to).format(
+                                 'HH:mm'
+                              )}
+                              {')'}
+                           </span>
+                        )}
                   </label>
 
                   {!isEmpty(addressInfo) ? (
@@ -351,7 +353,7 @@ export const Fulfillment = ({ cart, editable = true }) => {
                         </div>
                      </div>
                   ) : (
-                     <p>No address available ! </p>
+                     <p>{t('No address available!')} </p>
                   )}
                </div>
             </div>
@@ -362,7 +364,7 @@ export const Fulfillment = ({ cart, editable = true }) => {
 
 const ConsumerAddress = ({ setShowRefineLocation, showEditIcon }) => {
    const { cartState: { cart } = {} } = React.useContext(CartContext)
-
+   const { t } = useTranslation()
    const address = React.useMemo(() => {
       if (cart?.address) {
          return cart?.address
@@ -387,7 +389,7 @@ const ConsumerAddress = ({ setShowRefineLocation, showEditIcon }) => {
                className="hern-fulfillment__address__content__change-btn"
                disabled={isChangeButtonDisabled}
             >
-               Change
+               {t('Change')}
             </button>
          )}
       </>
