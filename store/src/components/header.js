@@ -636,13 +636,13 @@ const LocationInfo = ({ settings }) => {
 
       switch (fulfillmentType) {
          case 'PREORDER_DELIVERY':
-            return 'DELIVER AT'
+            return t('DELIVER AT')
          case 'ONDEMAND_DELIVERY':
-            return 'DELIVER AT'
+            return t('DELIVER AT')
          case 'PREORDER_PICKUP':
-            return 'PICKUP FROM'
+            return t('PICKUP FROM')
          case 'ONDEMAND_PICKUP':
-            return 'PICKUP FROM'
+            return t('PICKUP FROM')
          default:
             return null
       }
@@ -677,13 +677,13 @@ const LocationInfo = ({ settings }) => {
             </div>
             {storeStatus.loading ? (
                <div className="hern-header__location-right-loading">
-                  getting your location...
+                  {t('getting your location...')}
                </div>
             ) : (
                <div className="hern-header__location-right">
                   {storeStatus?.status && prefix && (
                      <div className="hern-header__location-upper">
-                        {t(prefix)}{' '}
+                        {prefix}{' '}
                         <span className="hern-header__downvector-icon">
                            {prefix && <DownVector size={12} />}
                         </span>
@@ -691,7 +691,7 @@ const LocationInfo = ({ settings }) => {
                   )}
                   <div>
                      <div className="hern-header__location-content">
-                        {prefix === 'DELIVER AT' &&
+                        {prefix == t('DELIVER AT') &&
                            (userLocation?.label
                               ? userLocation?.label
                               : userLocation?.mainText
@@ -700,13 +700,13 @@ const LocationInfo = ({ settings }) => {
                                     ? userLocation?.address?.mainText
                                     : userLocation?.line1
                                        ? userLocation?.line1
-                                       : 'Please select address...')}
-                        {prefix === 'PICKUP FROM' &&
+                                       : t('Please select address...'))}
+                        {prefix == t('PICKUP FROM') &&
                            storeAddress &&
                            (storeAddress.line1 ||
                               '' + storeAddress.line2 ||
                               '')}
-                        {_.isNull(prefix) && 'Please select address...'}
+                        {_.isNull(prefix) && t('Please select address...')}
                      </div>
                      <div className="hern-header__location-warning">
                         {!storeStatus?.status ? storeStatus?.message : ''}
