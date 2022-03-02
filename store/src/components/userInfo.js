@@ -14,7 +14,8 @@ import classNames from 'classnames'
 export const UserInfo = props => {
    const [isTunnelOpen, setIsTunnelOpen] = useState(false)
    const [isUserFormOpen, setIsUserFormOpen] = useState(false)
-
+   const { t } = useTranslation(
+   )
    const isSmallerDevice = isClient && window.innerWidth < 768
 
    const handleEdit = () => {
@@ -50,7 +51,7 @@ export const UserInfo = props => {
                      <div style={{ display: 'flex', alignItems: 'center' }}>
                         <UserIcon size={16} />
                         <h2 className="hern-user-info__heading">
-                           User Details
+                           {t('User Details')}
                         </h2>
                      </div>
                   }
@@ -98,7 +99,7 @@ const UserInfoForm = props => {
       },
       onError: error => {
          console.error(error)
-         addToast('Failed to save!', {
+         addToast(<span>{t('Failed to save!')}</span>, {
             appearance: 'error',
          })
       },
@@ -156,7 +157,7 @@ const UserInfoForm = props => {
          </div>
          <div className="hern-user-info__name-field">
             <fieldset className="hern-user-info__fieldset hern-user-info__fieldset-first-name">
-               <label className="hern-user-info__label">First Name</label>
+               <label className="hern-user-info__label">{t('First Name')}</label>
                <input
                   name="user-first-name"
                   type="text"
@@ -170,7 +171,7 @@ const UserInfoForm = props => {
                />
             </fieldset>
             <fieldset className="hern-user-info__fieldset hern-user-info__fieldset-last-name">
-               <label className="hern-user-info__label">Last Name</label>
+               <label className="hern-user-info__label">{t('Last Name')}</label>
                <input
                   name="user-last-name"
                   type="text"
@@ -185,7 +186,7 @@ const UserInfoForm = props => {
             </fieldset>
          </div>
          <fieldset className="hern-user-info__fieldset hern-user-info__fieldset-phone-number">
-            <label className="hern-user-info__label">Phone Number</label>
+            <label className="hern-user-info__label">{t('Phone Number')}</label>
             <PhoneInput
                className={`hern-user-info__phone__input hern-user-info__phone__input${!(mobileNumber && isValidPhoneNumber(mobileNumber))
                   ? '-invalid'
@@ -203,7 +204,7 @@ const UserInfoForm = props => {
             <span className="hern-user-info__phone-number-warning">
                {mobileNumber &&
                   !isValidPhoneNumber(mobileNumber) &&
-                  'Invalid phone number'}
+                  t('Invalid phone number')}
             </span>
          </fieldset>
       </div>
@@ -212,7 +213,8 @@ const UserInfoForm = props => {
 const UserDetails = ({ handleEdit, handleOpen }) => {
    const { cartState } = React.useContext(CartContext)
    const isSmallerDevice = isClient && window.innerWidth < 768
-
+   const { t } = useTranslation(
+   )
    const hasUserInfo =
       cartState?.cart?.customerInfo?.customerFirstName?.length ||
       cartState?.cart?.customerInfo?.customerLastName?.length ||
@@ -230,7 +232,7 @@ const UserDetails = ({ handleEdit, handleOpen }) => {
                onClick={handleEdit}
                className="hern-user-info-tunnel__open-btn"
             >
-               Add user info
+               {t('Add user info')}
             </button>
          ) : (
             <div className="hern-user-info--closed">
@@ -249,7 +251,7 @@ const UserDetails = ({ handleEdit, handleOpen }) => {
                      </span>
                   </div>
                </div>
-               <button onClick={handleEdit}>Edit</button>
+               <button onClick={handleEdit}>{t('Edit')}</button>
             </div>
          )}
       </>
