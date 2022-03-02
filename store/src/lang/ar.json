@@ -107,7 +107,6 @@
    "No store available on this location.": "لا يوجد متجر متاح في هذا الموقع.",
    "PICKUP FROM": "تلتقط من",
    "You have blocked this site from tracking your location. To use this, change your location settings in browser.": "لقد منعت هذا الموقع من تتبع موقعك. لاستخدام هذا ، قم بتغيير إعدادات الموقع في المتصفح.",
-   "Enter your delivery location": "أدخل موقع التسليم الخاص بك",
    "Please select a precise location. Try typing a landmark near your house.": "الرجاء تحديد موقع دقيق. حاول كتابة معلم بالقرب من منزلك.",
    "User Details": "بيانات المستخدم",
    "save": "حفظ",
@@ -115,5 +114,9 @@
    "Last Name": "الكنية",
    "First Name": "الاسم الأول",
    "Invalid phone number": "رقم الهاتف غير صحيح",
-   "Failed to save!": "فشلت في انقاذ!"
+   "Failed to save!": "فشلت في انقاذ!",
+   "Edit": "يحرر",
+   "Logout": "تسجيل خروج",
+   "Now": "حاليا",
+   "Later": "في وقت لاحق"
 }
