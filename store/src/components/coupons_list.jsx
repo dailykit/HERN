@@ -332,7 +332,6 @@ const Coupons_List = ({
 
 export const CouponsList = props => (
    <MenuProvider>
-      {' '}
       <Coupons_List {...props} />
    </MenuProvider>
 )

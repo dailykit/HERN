@@ -339,6 +339,10 @@ export const createEnvFiles = async () => {
    )
 
    writeFileSync(
+      path.join(__dirname, '../../../', 'env-config.js'),
+      `window._env_ = ${JSON.stringify(store, null, 2)}`
+   )
+   writeFileSync(
       PATH_TO_SUBS,
       `window._env_ = ${JSON.stringify(store, null, 2)}`
    )
