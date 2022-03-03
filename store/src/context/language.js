@@ -59,7 +59,10 @@ export const useTranslation = () => {
       React.useContext(LanguageContext)
 
    const t = text => {
-      return <FormattedMessage id={text} />
+      if (text) {
+         return <FormattedMessage id={text} />
+      } else
+         return text
    }
    const dynamicTrans = langTags => {
       // strings.forEach(x => {

@@ -140,5 +140,11 @@
    "Searching store": "Searching store",
    "Save & Proceed": "Save & Proceed",
    "No store available": "No store available",
-   "Address has been saved.": "Address has been saved."
+   "Address has been saved.": "Address has been saved.",
+   "Pick up time": "Pick up time",
+   "Delivery time": "Delivery time",
+   "When would you like to order?": "When would you like to order?",
+   "Schedule Later": "Schedule Later",
+   "Delivery Now": "Delivery Now",
+   "Cart": "Cart"
 }

@@ -127,8 +127,8 @@ export const FulfillmentForm = () => {
                   </span>
                   &nbsp; &nbsp;
                   <h3>
-                     {selectedFulfillment === 'PICKUP' && 'Pick up time'}
-                     {selectedFulfillment === 'DELIVERY' && 'Delivery time'}
+                     {selectedFulfillment === 'PICKUP' && <span>{t('Pick up time')}</span>}
+                     {selectedFulfillment === 'DELIVERY' && <span>{t('Delivery time')}</span>}
                   </h3>
                </div>
                <span
@@ -380,6 +380,7 @@ const ConsumerAddress = ({ setShowRefineLocation, showEditIcon }) => {
       !cart?.customerInfo?.customerFirstName ||
       !cart?.customerInfo?.customerLastName ||
       !cart?.customerInfo?.customerPhone
+   { console.log(showEditIcon, "showEditIcon") }
    return (
       <>
          <address title={fullAddress}>{fullAddress}</address>

@@ -34,6 +34,9 @@ export const Delivery = props => {
       configOf,
    } = useConfig()
    const theme = configOf('theme-color', 'Visual')
+
+   const { t } = useTranslation()
+
    const { methods, cartState } = React.useContext(CartContext)
    // map orderTabs to get order fulfillment type label
    const orderTabFulfillmentType = React.useMemo(
@@ -96,7 +99,8 @@ export const Delivery = props => {
             label: (
                <span>
                   <DeliveryNowIcon />
-                  &nbsp;Delivery Now
+                  &nbsp;
+                  <span>{t('Delivery Now')}</span>
                </span>
             ),
             value: 'ONDEMAND_DELIVERY',
@@ -110,7 +114,8 @@ export const Delivery = props => {
             label: (
                <span>
                   <DeliveryLaterIcon />
-                  &nbsp; Schedule Later
+                  &nbsp;
+                  <span>{t('Schedule Later')}</span>
                </span>
             ),
             value: 'PREORDER_DELIVERY',
@@ -495,7 +500,7 @@ export const Delivery = props => {
          ) {
             const showTimeSlots = Boolean(
                !lastStoreLocationId == null ||
-                  localStorage.getItem('lastStoreLocationId')
+               localStorage.getItem('lastStoreLocationId')
             )
             setShowSlots(showTimeSlots)
             setIsLoading(false)
@@ -580,43 +585,43 @@ export const Delivery = props => {
                   {(cartState.cart?.fulfillmentInfo?.type ===
                      'PREORDER_PICKUP' ||
                      cartState.cart?.fulfillmentInfo?.type ===
-                        'PREORDER_DELIVERY') && (
-                     <span>
-                        {' '}
-                        {moment(
-                           cartState.cart?.fulfillmentInfo?.slot?.from
-                        ).format('DD MMM YYYY')}
-                        {' ('}
-                        {moment(
-                           cartState.cart?.fulfillmentInfo?.slot?.from
-                        ).format('HH:mm')}
-                        {'-'}
-                        {moment(
-                           cartState.cart?.fulfillmentInfo?.slot?.to
-                        ).format('HH:mm')}
-                        {')'}
-                     </span>
-                  )}
+                     'PREORDER_DELIVERY') && (
+                        <span>
+                           {' '}
+                           {moment(
+                              cartState.cart?.fulfillmentInfo?.slot?.from
+                           ).format('DD MMM YYYY')}
+                           {' ('}
+                           {moment(
+                              cartState.cart?.fulfillmentInfo?.slot?.from
+                           ).format('HH:mm')}
+                           {'-'}
+                           {moment(
+                              cartState.cart?.fulfillmentInfo?.slot?.to
+                           ).format('HH:mm')}
+                           {')'}
+                        </span>
+                     )}
                </label>
                {(deliveryRadioOptions.length > 0 ||
                   fulfillmentType === 'PREORDER_DELIVERY') && (
-                  <Button
-                     variant="ghost"
-                     style={{ marginLeft: 'auto' }}
-                     onClick={() => {
-                        if (deliveryRadioOptions.length > 1) {
-                           setFulfillmentType(null)
-                           setFulfillmentTabInfo(prev => ({
-                              ...prev,
-                              orderTabId: null,
-                           }))
-                        }
-                        setShowSlots(true)
-                     }}
-                  >
-                     Change
-                  </Button>
-               )}
+                     <Button
+                        variant="ghost"
+                        style={{ marginLeft: 'auto' }}
+                        onClick={() => {
+                           if (deliveryRadioOptions.length > 1) {
+                              setFulfillmentType(null)
+                              setFulfillmentTabInfo(prev => ({
+                                 ...prev,
+                                 orderTabId: null,
+                              }))
+                           }
+                           setShowSlots(true)
+                        }}
+                     >
+                        Change
+                     </Button>
+                  )}
             </div>
          </div>
       )
@@ -625,7 +630,7 @@ export const Delivery = props => {
    return (
       <div className="hern-cart__fulfillment-time-section">
          <div className="hern-cart__fulfillment-time-section-heading">
-            <span>When would you like to order?</span>
+            <span>{t('When would you like to order?')}</span>
          </div>
 
          {deliveryRadioOptions.length > 1 && (

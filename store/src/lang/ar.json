@@ -140,5 +140,14 @@
    "Searching store": "البحث في المتجر",
    "Save & Proceed": "حفظ والمتابعة",
    "No store available": "لا يوجد متجر متاح",
-   "Address has been saved.": "تم حفظ العنوان."
+   "Address has been saved.": "تم حفظ العنوان.",
+   "Pick up time": "اختار المعاد",
+   "Delivery time": "موعد التسليم",
+   "When would you like to order?": "متى ترغب في الطلب؟",
+   "Schedule Later": "جدولة لاحقًا",
+   "Delivery Now": "التسليم الآن",
+   "Cart": "عربة التسوق",
+   "Bill Details": "تفاصيل الفاتورة",
+   "free": "مجانا",
+   "Tip": "نصيحة"
 }

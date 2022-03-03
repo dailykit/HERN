@@ -314,8 +314,8 @@ export const CartProvider = ({ children }) => {
                address: customerAddress,
                ...(oiType === 'Kiosk Ordering' &&
                   !isEmpty(terminalPayment) && {
-                     toUseAvailablePaymentOptionId: terminalPayment.id,
-                  }),
+                  toUseAvailablePaymentOptionId: terminalPayment.id,
+               }),
             }
             // console.log('object new cart', object)
             await createCart({
@@ -402,7 +402,7 @@ export const CartProvider = ({ children }) => {
          fetchPolicy: 'no-cache',
          onSubscriptionData: ({ subscriptionData }) => {
             // pending cart available
-            ;(async () => {
+            ; (async () => {
                if (
                   subscriptionData.data.carts &&
                   subscriptionData.data.carts.length > 0

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useSubscription } from '@apollo/react-hooks'
-import { useUser } from '../../context'
+import { useTranslation, useUser } from '../../context'
 import {
    combineCartItems,
    formatCurrency,
@@ -138,19 +138,19 @@ const OrderCard = ({ cart }) => {
                {getTitle(cart?.fulfillmentInfo?.type)}{' '}
                {(cart?.fulfillmentInfo?.type === 'PREORDER_PICKUP' ||
                   cart?.fulfillmentInfo?.type === 'PREORDER_DELIVERY') && (
-                  <span>
-                     {' '}
-                     on{' '}
-                     {moment(cart?.fulfillmentInfo?.slot?.from).format(
-                        'DD MMM YYYY'
-                     )}
-                     {' ('}
-                     {moment(cart?.fulfillmentInfo?.slot?.from).format('HH:mm')}
-                     {'-'}
-                     {moment(cart?.fulfillmentInfo?.slot?.to).format('HH:mm')}
-                     {')'}
-                  </span>
-               )}
+                     <span>
+                        {' '}
+                        on{' '}
+                        {moment(cart?.fulfillmentInfo?.slot?.from).format(
+                           'DD MMM YYYY'
+                        )}
+                        {' ('}
+                        {moment(cart?.fulfillmentInfo?.slot?.from).format('HH:mm')}
+                        {'-'}
+                        {moment(cart?.fulfillmentInfo?.slot?.to).format('HH:mm')}
+                        {')'}
+                     </span>
+                  )}
             </div>
             <div
                style={{
@@ -181,6 +181,7 @@ const OrderCard = ({ cart }) => {
 
 const CartItems = ({ products, border = false, title = false }) => {
    const cartItems = combineCartItems(products)
+   const { t } = useTranslation()
 
    return (
       <div
@@ -190,7 +191,8 @@ const CartItems = ({ products, border = false, title = false }) => {
       >
          {title && (
             <h3 className="hern-order-history__cart-items__title">
-               Items({cartItems?.length})
+               Items
+               ({cartItems?.length})
             </h3>
          )}
          {cartItems.map((product, index) => {
@@ -198,11 +200,10 @@ const CartItems = ({ products, border = false, title = false }) => {
                <div
                   className="hern-order-history__cart-items"
                   style={{
-                     borderBottom: `${
-                        cartItems?.length > 1
-                           ? '1px solid rgba(64, 64, 64, 0.25)'
-                           : 'none'
-                     }`,
+                     borderBottom: `${cartItems?.length > 1
+                        ? '1px solid rgba(64, 64, 64, 0.25)'
+                        : 'none'
+                        }`,
                      border: `${border && '1px solid rgba(64, 64, 64, 0.25)'}`,
                      paddingLeft: `${border && '16px'}`,
                   }}
