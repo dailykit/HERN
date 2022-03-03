@@ -50,7 +50,7 @@ export const Header = ({ settings, navigationMenus }) => {
 
       if (isRouteProtected) {
          // router.push(signOutData.url)
-         window.location.href = window.location.origin + getRoute('/')
+         window.location.href = get_env('BASE_BRAND_URL') + getRoute('/')
       }
       setStoredCartId(null)
    }

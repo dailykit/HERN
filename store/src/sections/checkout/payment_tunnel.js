@@ -59,7 +59,7 @@ export const PaymentTunnel = () => {
 const createSetupIntent = async customer => {
    try {
       console.log({ customer })
-      const origin = isClient ? window.location.origin : ''
+      const origin = isClient ? get_env('BASE_BRAND_URL') : ''
       const url = `${origin}/server/api/payment/setup-intent`
       const { data } = await axios.post(url, {
          customer,

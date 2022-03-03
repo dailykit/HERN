@@ -554,7 +554,7 @@ const RegisterPanel = ({ setCurrent }) => {
                   }
 
                   window.location.href =
-                     window.location.origin +
+                     get_env('BASE_BRAND_URL') +
                      getRoute('/get-started/select-plan')
 
                   setLoading(false)
@@ -665,7 +665,7 @@ const RegisterPanel = ({ setCurrent }) => {
             setStoredReferralCode(form.code)
          }
 
-         const url = `${window.location.origin}/api/hash`
+         const url = `${get_env('BASE_BRAND_URL')}/api/hash`
          const { data } = await axios.post(url, { password: form.password })
 
          if (data?.success && data?.hash) {

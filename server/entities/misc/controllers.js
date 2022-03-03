@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { get, groupBy, isEmpty } from 'lodash'
 import { createEvent } from 'ics'
-import { writeFileSync } from 'fs'
+import { writeFileSync, mkdirSync, existsSync } from 'fs'
 import path from 'path'
 import { client } from '../../lib/graphql'
 import { globalTemplate } from '../../utils'
@@ -337,7 +337,15 @@ export const createEnvFiles = async () => {
       'public',
       'env-config.js'
    )
-
+   const dirPath = path.join(__dirname, '../../../hern/')
+   const isDirectoryExist = existsSync(dirPath)
+   if (!isDirectoryExist) {
+      mkdirSync(dirPath, { recursive: true })
+   }
+   writeFileSync(
+      path.join(dirPath, 'env-config.js'),
+      `window._env_ = ${JSON.stringify(store, null, 2)}`
+   )
    writeFileSync(
       PATH_TO_SUBS,
       `window._env_ = ${JSON.stringify(store, null, 2)}`

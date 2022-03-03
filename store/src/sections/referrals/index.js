@@ -5,6 +5,7 @@ import { useQuery } from '@apollo/react-hooks'
 
 import { useConfig } from '../../lib'
 import { useUser } from '../../context'
+import { get_env } from '../../utils'
 import { Spacer, ProfileSidebar, Form, Button, Loader } from '../../components'
 import { CUSTOMERS_REFERRED } from '../../graphql'
 
@@ -59,7 +60,9 @@ const Content = () => {
                   {user.customerReferral.referralCode}
                </div>
                <CopyToClipboard
-                  text={`${window.location.origin}/?invite-code=${user.customerReferral.referralCode}`}
+                  text={`${get_env('BASE_BRAND_URL')}/?invite-code=${
+                     user.customerReferral.referralCode
+                  }`}
                   onCopy={() =>
                      addToast('Invite like copied!', {
                         appearance: 'success',

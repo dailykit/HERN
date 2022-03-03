@@ -3,7 +3,7 @@ import { useToasts } from 'react-toast-notifications'
 import { useMutation } from '@apollo/react-hooks'
 import classNames from 'classnames'
 
-import { isClient } from '../../utils'
+import { isClient, get_env } from '../../utils'
 import { FORGOT_PASSWORD } from '../../graphql'
 import { useConfig } from '../../lib'
 
@@ -41,7 +41,7 @@ export const ForgotPassword = () => {
       try {
          setError('')
          if (isClient) {
-            const origin = window.location.origin
+            const origin = get_env('BASE_BRAND_URL')
             forgotPassword({
                variables: {
                   email: form.email,

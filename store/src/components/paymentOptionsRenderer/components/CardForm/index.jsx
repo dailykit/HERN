@@ -11,12 +11,11 @@ import {
 } from '@stripe/react-stripe-js'
 
 import { useConfig, usePayment } from '../../../../lib'
-import { get_env, isClient } from '../../../../utils'
+import { get_env, isClient, isConnectedIntegration } from '../../../../utils'
 import { useUser } from '../../../../context'
 import { HelperBar } from '../../../helper_bar'
 import { Loader } from '../../../loader'
 import { BRAND, CREATE_CUSTOMER_PAYMENT_METHOD } from '../../../../graphql'
-import { isConnectedIntegration } from '../../../../utils'
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const CardForm = ({ intent }) => {
@@ -45,7 +44,7 @@ export const CardForm = ({ intent }) => {
    const handleResult = async ({ setupIntent }) => {
       try {
          if (setupIntent.status === 'succeeded') {
-            const origin = isClient ? window.location.origin : ''
+            const origin = isClient ? get_env('BASE_BRAND_URL') : ''
             const url = `${origin}/server/api/payment/payment-method/${setupIntent.payment_method}`
             const { data: { success, data = {} } = {} } = await axios.get(url)
 
