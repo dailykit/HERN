@@ -337,6 +337,12 @@ export const QUERIES = {
                   paymentStatus
                   fulfillmentInfo
                   customer: customerInfo
+                  products: cartItems(where: { level: { _eq: 1 } }) {
+                     id
+                     displayName
+                     displayUnit
+                     unitPrice
+                  }
                   subscriptionOccurence {
                      id
                      itemCount: subscriptionItemCount {

@@ -7,12 +7,13 @@
    "license": "MIT",
    "scripts": {
       "install:packages": "yarn && cd store && yarn && cd ../admin && yarn",
-      "dev": "concurrently \"nodemon -r esm index.js\" \"cd store && yarn dev\" \"cd admin && yarn start\"",
+      "dev": "concurrently \"nodemon -r esm index.js\" \"nodemon -r esm template.js\" \"cd store && yarn dev\" \"cd admin && yarn start\"",
+      "template": "concurrently \"nodemon -r esm index.js --config nodemon.json\" \"nodemon -r esm template.js --config templateNodemon.json\"",
       "dev-mac": "concurrently \"nodemon -r esm index.js\" \"cd store && yarn dev\" \"cd admin && yarn start-mac\"",
       "build": "cd store && yarn build && cd ../admin && yarn build",
       "build-store": "cd store && yarn build",
-      "prod": "concurrently \"nodemon -r esm index.js\" \"cd store && yarn start\"",
-      "dev:server": "concurrently \"nodemon -r esm index.js\" \"cd store && yarn dev\"",
+      "prod": "concurrently \"nodemon -r esm index.js\" \"nodemon -r esm template.js\" \"cd store && yarn start\"",
+      "dev:server": "concurrently \"nodemon -r esm index.js\" \"nodemon -r esm template.js\" \"cd store && yarn dev\"",
       "download-graphql": "chmod +x ./fetchgraphqlschema.sh && ./fetchgraphqlschema.sh",
       "lint:graphql": "eslint **/graphql/*.js > graphqlerrors.txt",
       "start-hasura": "cd hasura && hasura console"
@@ -81,11 +82,5 @@
       "eslint-plugin-prettier": "^3.4.0",
       "nodemon": "^2.0.3",
       "prettier": "^2.3.2"
-   },
-   "nodemonConfig": {
-      "ignore": [
-         "store",
-         "admin"
-      ]
    }
 }
