@@ -68,10 +68,10 @@ const ContentWrapper = () => {
       isClient && window.localStorage.removeItem('plan')
       if (isClient) {
          window.location.href = cart?.fulfillmentInfo?.slot?.from
-            ? `${window.location.origin}/menu?d=${moment(
+            ? `${get_env('BASE_BRAND_URL')}/menu?d=${moment(
                  cart?.fulfillmentInfo?.slot?.from
               ).format('YYYY-MM-DD')}`
-            : `${window.location.origin}/menu`
+            : `${get_env('BASE_BRAND_URL')}/menu`
       }
    }
 
@@ -87,7 +87,7 @@ const ContentWrapper = () => {
                <HelperBar.Button
                   onClick={() =>
                      (window.location.href =
-                        window.location.origin + getRoute('/'))
+                        get_env('BASE_BRAND_URL') + getRoute('/'))
                   }
                >
                   Go to Home
@@ -119,7 +119,7 @@ const ContentWrapper = () => {
                <HelperBar.Button
                   onClick={() =>
                      (window.location.href =
-                        window.location.origin + getRoute('/'))
+                        get_env('BASE_BRAND_URL') + getRoute('/'))
                   }
                >
                   Go to Home
@@ -139,7 +139,7 @@ const ContentWrapper = () => {
                <HelperBar.Button
                   onClick={() =>
                      (window.location.href =
-                        window.location.origin + getRoute('/'))
+                        get_env('BASE_BRAND_URL') + getRoute('/'))
                   }
                >
                   Go to Home

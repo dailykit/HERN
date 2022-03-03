@@ -44,7 +44,7 @@ export const ResetPassword = () => {
       onCompleted: () => {
          // if (isClient) {
          //    window.location.href =
-         //       window.location.origin + '/get-started/select-plan'
+         //       get_env('BASE_BRAND_URL') + '/get-started/select-plan'
          // }
       },
       onError: error => {
@@ -56,7 +56,7 @@ export const ResetPassword = () => {
          dispatch({ type: 'SET_USER', payload: {} })
          // if (isClient) {
          //    window.location.href =
-         //       window.location.origin + '/get-started/select-plan'
+         //       get_env('BASE_BRAND_URL') + '/get-started/select-plan'
          // }
       },
       onError: () =>
@@ -113,7 +113,8 @@ export const ResetPassword = () => {
                   localStorage.removeItem('landed_on')
                   window.location.href = landedOn
                } else {
-                  window.location.href = window.location.origin + getRoute('/')
+                  window.location.href =
+                     get_env('BASE_BRAND_URL') + getRoute('/')
                }
             }
          }

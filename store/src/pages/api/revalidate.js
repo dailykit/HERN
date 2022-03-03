@@ -4,7 +4,7 @@ import fs from 'fs'
 
 export default async function handler(req, res) {
    const content = await fs.readFileSync(
-      process.cwd() + '/public/env-config.js',
+      process.cwd() + '/../hern/env-config.js',
       'utf-8'
    )
    const config = JSON.parse(content.replace('window._env_ = ', ''))

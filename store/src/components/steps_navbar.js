@@ -6,7 +6,7 @@ import { signOut } from 'next-auth/client'
 
 import { useConfig } from '../lib'
 import { useUser } from '../context'
-import { getProtectedRoutes, getRoute, isClient } from '../utils'
+import { getProtectedRoutes, getRoute, isClient, get_env } from '../utils'
 
 const routes = {
    '/[brand]/get-started/select-plan': {
@@ -37,7 +37,10 @@ export const StepsNavbar = () => {
 
    React.useEffect(() => {
       if (hasConfig('steps-labels', 'conventions')?.stepsLabels) {
-         const stepsLabels = hasConfig('steps-labels', 'conventions')?.stepsLabels
+         const stepsLabels = hasConfig(
+            'steps-labels',
+            'conventions'
+         )?.stepsLabels
          const steps_labels = {
             register: stepsLabels?.Register?.value,
             selectDelivery: stepsLabels?.selectDelivery?.value,
@@ -68,7 +71,7 @@ export const StepsNavbar = () => {
       const currentPathName = router.pathname
       if (getProtectedRoutes(true).find(x => x === currentPathName)) {
          // router.push(getRoute('/'))
-         window.location.href = window.location.origin + getRoute('/')
+         window.location.href = get_env('BASE_BRAND_URL') + getRoute('/')
       }
    }
 

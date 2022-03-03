@@ -13,7 +13,7 @@ import { HelperBar } from '../helper_bar'
 import PayButton from '../PayButton'
 import { useUser } from '../../context'
 import * as QUERIES from '../../graphql'
-import { isClient, formatCurrency, getRoute } from '../../utils'
+import { isClient, formatCurrency, getRoute, get_env } from '../../utils'
 
 export default function PaymentOptionsRenderer({
    cartId,
@@ -143,7 +143,7 @@ export default function PaymentOptionsRenderer({
                                  <HelperBar.Button
                                     onClick={() =>
                                        (window.location.href =
-                                          window.location.origin +
+                                          get_env('BASE_BRAND_URL') +
                                           getRoute('/'))
                                     }
                                  >
