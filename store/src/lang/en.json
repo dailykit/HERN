@@ -146,5 +146,19 @@
    "When would you like to order?": "When would you like to order?",
    "Schedule Later": "Schedule Later",
    "Delivery Now": "Delivery Now",
-   "Cart": "Cart"
+   "Cart": "Cart",
+   "Bill Details": "Bill Details",
+   "free": "free",
+   "Tip": "Tip",
+   "Recipe": "Recipe",
+   "Ingredients": "Ingredients",
+   "Nutritions": "Nutritions",
+   "Cooking Process": "Cooking Process",
+   "Details": "Details",
+   "What you'll need": "What you'll need",
+   "Description": "Description",
+   "Allergens": "Allergens",
+   "&": "&",
+   "nutrition info not available": "nutrition info not available",
+   "Go back to Main menu": "Go back to Main menu"
 }

@@ -149,5 +149,16 @@
    "Cart": "عربة التسوق",
    "Bill Details": "تفاصيل الفاتورة",
    "free": "مجانا",
-   "Tip": "نصيحة"
+   "Tip": "نصيحة",
+   "Recipe": "وصفة",
+   "Ingredients": "مكونات",
+   "Nutritions": "تغذية",
+   "Cooking Process": "عملية الطهي",
+   "Details": "تفاصيل",
+   "What you'll need": "ماذا ستحتاج",
+   "Description": "وصف",
+   "Allergens": "مسببات الحساسية",
+   "&": "و",
+   "nutrition info not available": "معلومات التغذية غير متوفرة",
+   "Go back to Main menu": "ارجع إلى القائمة الرئيسية"
 }

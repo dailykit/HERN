@@ -1,7 +1,10 @@
 import React from 'react'
 import _ from 'lodash'
+import { useTranslation } from '../context'
 
 export const Nutritions = ({ simpleRecipeYield }) => {
+   const { t, dynamicTrans } = useTranslation()
+
    const nutritionalInfo = simpleRecipeYield?.nutritionalInfo || {}
    const nutritions = Object.keys(nutritionalInfo).filter(
       item =>
@@ -11,23 +14,39 @@ export const Nutritions = ({ simpleRecipeYield }) => {
          Number(nutritionalInfo[item]) !== 0
    )
    const allergens = nutritionalInfo?.allergens
+
+
+   React.useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [])
+
    return (
       <div id="nutrition">
          <header className="hern-nutritionas-header">
-            <h2>Nutritions &amp; Allergens </h2>
+            <h2><span>{t('Nutritions')}</span><span>{t('&')}</span> <span>{t('Allergens')}</span> </h2>
          </header>
          {nutritions.length > 0 ? (
             <>
                <div className="hern-nutrition-info">
                   {nutritions.map((nutrition, index) => (
                      <div key={index}>
-                        <div>{_.startCase(nutrition)}</div>
+                        <div data-translation="true"
+                           data-original-value={_.startCase(nutrition)}>{_.startCase(nutrition)}</div>
                         <span></span>
+
                         <div>{nutritionalInfo[nutrition]}</div>
                      </div>
                   ))}
                   {allergens?.length > 0 && (
-                     <span>Allergens : {allergens?.join(',')}</span>
+                     <span> <span>{t('Allergens')}</span>{': '}
+                        <span data-translation="true"
+                           data-original-value={allergens?.join(',')} >
+                           {allergens?.join(',')} </span>
+
+                     </span>
                   )}
                </div>
             </>
@@ -39,9 +58,10 @@ export const Nutritions = ({ simpleRecipeYield }) => {
                   color: '#6b7280',
                }}
             >
-               (nutrition info not available)
+               (<span>{t('nutrition info not available')}</span>)
             </div>
-         )}
-      </div>
+         )
+         }
+      </div >
    )
 }
