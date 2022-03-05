@@ -436,6 +436,7 @@ export const ZIPCODE = gql`
          deliveryTime
          deliveryPrice
          isPickupActive
+         locationId
          isDeliveryActive
          defaultAutoSelectFulfillmentMode
          pickupOptionId: subscriptionPickupOptionId

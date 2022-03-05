@@ -156,6 +156,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
             console.log('updateOccurenceCustomer => error =>', error),
       }
    )
+
    const [createCart] = useMutation(MUTATIONS.CART.CREATE, {
       onError: error => console.log('createCart => error =>', error),
    })
@@ -182,6 +183,9 @@ export const MenuProvider = ({ isCheckout, children }) => {
             zipcode: user?.defaultAddress?.zipcode,
          },
       })
+
+   //query 
+
 
    React.useEffect(() => {
       if (!loadingZipcode && !isEmpty(zipcode) && state.week?.fulfillmentDate) {
@@ -380,6 +384,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
    const addProduct = (item, product) => {
       dispatch({ type: 'CART_STATE', payload: 'SAVING' })
 
+
       const isSkipped = occurenceCustomer?.isSkipped
       if (occurenceCustomer?.validStatus?.hasCart) {
          const cart = insertCartId(item, occurenceCustomer?.cart?.id)
@@ -510,6 +515,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
                   customerId: user.id,
                   source: 'subscription',
                   paymentStatus: 'PENDING',
+                  locationId: zipcode?.locationId,
                   address: user.defaultAddress,
                   fulfillmentInfo: fulfillment,
                   customerKeycloakId: user.keycloakId,
@@ -644,7 +650,9 @@ export const MenuProvider = ({ isCheckout, children }) => {
          !Boolean(state.week?.id),
       ].every(node => node)
    )
+
       return <PageLoader />
+
    return (
       <MenuContext.Provider
          value={{
