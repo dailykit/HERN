@@ -209,5 +209,8 @@
    "Select an address to get started": "حدد عنوانًا للبدء",
    "Failed to fetch delivery days": "فشل إحضار أيام التسليم",
    "Select a delivery day to get started": "حدد يوم التسليم لتبدأ",
-   "No dates are available for delivery on this address.": "لا توجد تواريخ متاحة للتسليم على هذا العنوان."
+   "No dates are available for delivery on this address.": "لا توجد تواريخ متاحة للتسليم على هذا العنوان.",
+   "Your Weekly Total:": "الإجمالي الأسبوعي الخاص بك:",
+   "You have paused your plan.": "لقد أوقفت خطتك مؤقتًا.",
+   "EARLY PAY": "الدفع المبكر"
 }

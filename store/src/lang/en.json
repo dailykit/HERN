@@ -209,5 +209,8 @@
    "Select an address to get started": "Select an address to get started",
    "Failed to fetch delivery days": "Failed to fetch delivery days",
    "Select a delivery day to get started": "Select a delivery day to get started",
-   "No dates are available for delivery on this address.": "No dates are available for delivery on this address."
+   "No dates are available for delivery on this address.": "No dates are available for delivery on this address.",
+   "Your Weekly Total:": "Your Weekly Total:",
+   "You have paused your plan.": "You have paused your plan.",
+   "EARLY PAY": "EARLY PAY"
 }
