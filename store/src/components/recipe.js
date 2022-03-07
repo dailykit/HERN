@@ -27,11 +27,21 @@ export const Recipe = ({ productOption, config }) => {
       dynamicTrans(languageTags)
    }, [])
 
-   const renderIngredientName = (slipName, sachet) => {
+   const RenderIngredientName = (slipName, sachet) => {
       if (recipe.showIngredientsQuantity) {
-         return `${slipName} - ${sachet.quantity} ${sachet.unit}`
+         return (<>
+            <span data-translation="true"
+               data-original-value={slipName}>
+               {slipName}
+            </span>
+            <span> - {sachet.quantity} {sachet.unit}</span>
+         </>
+         )
       }
-      return slipName
+      return (
+         <span data-translation="true"
+            data-original-value={slipName}> {slipName}</span>
+      )
    }
    const customIngredientsLabel =
       config?.['information Visibility']?.recipe?.customIngredientsLabel
@@ -186,12 +196,8 @@ export const Recipe = ({ productOption, config }) => {
                                                       }
                                                    />
                                                 )}
-                                             <span data-translation="true"
-                                                data-original-value={renderIngredientName(
-                                                   slipName,
-                                                   sachet
-                                                )}>
-                                                {renderIngredientName(
+                                             <span>
+                                                {RenderIngredientName(
                                                    slipName,
                                                    sachet
                                                 )}</span>

@@ -497,10 +497,13 @@ const Product = ({
                className="hern-our-menu__product-link "
                theme={theme}
                onClick={openRecipe}
-               data-translation="true"
-               data-original-value={product.name - product.label}
+
             >
-               {product.name} - {product.label}
+               <span data-translation="true"
+                  data-original-value={product.name}>{product.name} </span>
+               {"-"}
+               <span data-translation="true"
+                  data-original-value={product.label}> {product.label}</span>
             </a>
          </section>
          <p data-translation="true"
