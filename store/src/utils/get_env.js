@@ -29,7 +29,7 @@ export const get_env = title => {
                )
                return origin
             default:
-               return env
+               return window.location.origin
          }
       }
       return env
