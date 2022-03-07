@@ -66,6 +66,8 @@ export const ConfigProvider = ({ children }) => {
       'currentPage',
       'fulfillmentPage'
    )
+   const [showLocationSelectorPopup, setShowLocationSelectionPopup] =
+      React.useState(false)
 
    const { loading, data: { settings = [] } = {} } = useSubscription(SETTINGS, {
       variables: {
@@ -206,6 +208,8 @@ export const ConfigProvider = ({ children }) => {
             currentPage,
             setIsIdleScreen,
             clearCurrentPage,
+            showLocationSelectorPopup,
+            setShowLocationSelectionPopup,
          }}
       >
          {children}
@@ -226,6 +230,8 @@ export const useConfig = (globalType = '') => {
       currentPage,
       setIsIdleScreen,
       clearCurrentPage,
+      showLocationSelectorPopup,
+      setShowLocationSelectionPopup,
    } = React.useContext(ConfigContext)
 
    const hasConfig = React.useCallback(
@@ -283,5 +289,7 @@ export const useConfig = (globalType = '') => {
       userLocation: state.userLocation,
       storeStatus: state.storeStatus,
       clearCurrentPage,
+      showLocationSelectorPopup,
+      setShowLocationSelectionPopup,
    }
 }

@@ -49,10 +49,6 @@ AWS.config.setPromisesDependency(bluebird)
 
 const PORT = process.env.PORT || 4000
 
-app.get('/', (req, res) => {
-   res.send('Hello World!')
-})
-
 // serves dailyos-backend endpoints for ex. hasura event triggers, upload, parseur etc.
 app.use('/server', ServerRouter)
 /*
