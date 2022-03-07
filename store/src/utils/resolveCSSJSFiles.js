@@ -17,7 +17,7 @@ export const resolveCSSJSFiles = async linkedCSSJSFiles => {
 
    const files = linkedCSSJSFiles.map(file => ({
       id: file.id,
-      path: `${config['EXPRESS_URL']}/template/files${file.file.path}`,
+      path: `${config['BASE_BRAND_URL']}/template/files${file.file.path}`,
       type: file.file.fileType,
       fileScope: getFileScope(file),
       fileId: file.file.id,
