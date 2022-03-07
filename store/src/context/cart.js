@@ -374,7 +374,7 @@ export const CartProvider = ({ children }) => {
          }
       } else {
          // logged in
-         if (!isEmpty(cartData?.carts)) {
+         if (isEmpty(cartData?.carts)) {
             console.log('Login ✔ Cart ❌')
             // new cart
             const object = {
