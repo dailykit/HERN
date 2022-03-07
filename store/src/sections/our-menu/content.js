@@ -15,6 +15,7 @@ import { formatDate, getRoute } from '../../utils'
 import { ArrowLeftIcon, ArrowRightIcon } from '../../assets/icons'
 import { Form, HelperBar, Loader, Spacer } from '../../components'
 import { OUR_MENU, OCCURENCE_PRODUCTS_BY_CATEGORIES } from '../../graphql'
+import { useTranslation } from '../../context'
 
 export const Content = () => {
    const [current, setCurrent] = React.useState(0)
@@ -24,7 +25,7 @@ export const Content = () => {
    const [isOccurencesLoading, setIsOccurencesLoading] = React.useState(true)
    const { brand, configOf, buildImageUrl, noProductImage } =
       useConfig('conventions')
-
+   const { t, dynamicTrans } = useTranslation()
    const [fetchProducts] = useLazyQuery(OCCURENCE_PRODUCTS_BY_CATEGORIES, {
       onCompleted: ({ categories = [] }) => {
          setCategories(categories)
@@ -150,6 +151,13 @@ export const Content = () => {
       }
    }, [fetchTitles, brand.id])
 
+   React.useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [fetchTitles, brand.id])
+
    const next = () => {
       if (current === occurences.length - 1) return
       const nextOne = current + 1
@@ -178,20 +186,22 @@ export const Content = () => {
    const theme = configOf('theme-color', 'Visual')?.themeColor
    const imageRatio = useConfig().configOf('image-aspect-ratio', 'Visual')?.imageAspectRatio
 
-   const yieldLabel = {
+   const yieldLabel = [{
       singular: config?.yieldLabel?.singular || 'serving',
       plural: config?.yieldLabel?.singular || 'servings',
    }
-   const itemCountLabel = {
+   ]
+   const itemCountLabel = [{
       singular: config?.itemLabel?.singular || 'recipe',
       plural: config?.itemLabel?.singular || 'recipes',
    }
+   ]
    if (isEmpty(titles))
       return (
          <>
             <Spacer size="sm" />
             <HelperBar type="info">
-               <HelperBar.SubTitle>No Menu Available!</HelperBar.SubTitle>
+               <HelperBar.SubTitle>{t('No Menu Available!')}</HelperBar.SubTitle>
             </HelperBar>
          </>
       )
@@ -201,7 +211,7 @@ export const Content = () => {
             <div>
                {!loading && titles.length > 0 && (
                   <section className="hern-our-menu__select-section__plans">
-                     <Form.Label htmlFor="plans">Plans</Form.Label>
+                     <Form.Label htmlFor="plans">{t('Plans')}</Form.Label>
                      <select
                         id="plans"
                         name="plans"
@@ -211,7 +221,8 @@ export const Content = () => {
                         }
                      >
                         {titles.map(({ id, title }) => (
-                           <option key={id} value={id}>
+                           <option key={id} value={id} data-translation="true"
+                              data-original-value={title}>
                               {title}
                            </option>
                         ))}
@@ -222,7 +233,8 @@ export const Content = () => {
                {[!loading, !loadingTitle].every(node => node) &&
                   title?.servings?.length > 0 && (
                      <section className="hern-our-menu__select-section__serving">
-                        <Form.Label htmlFor="serving">
+                        <Form.Label htmlFor="serving" data-translation="true"
+                           data-original-value={yieldLabel.plural}>
                            {yieldLabel.plural}
                         </Form.Label>
                         <select
@@ -236,7 +248,8 @@ export const Content = () => {
                            }
                         >
                            {title?.servings.map(({ id, size }) => (
-                              <option key={id} value={id}>
+                              <option key={id} value={id} data-translation="true"
+                                 data-original-value={size}>
                                  {size}
                               </option>
                            ))}
@@ -249,7 +262,8 @@ export const Content = () => {
                ) &&
                   serving?.counts?.length > 0 && (
                      <section className="hern-our-menu__select-section__counts">
-                        <Form.Label htmlFor="counts">
+                        <Form.Label htmlFor="counts" data-translation="true"
+                           data-original-value={itemCountLabel.plural}>
                            {itemCountLabel.plural}
                         </Form.Label>
                         <select
@@ -263,7 +277,8 @@ export const Content = () => {
                            }
                         >
                            {serving?.counts.map(({ id, count }) => (
-                              <option key={id} value={id}>
+                              <option key={id} value={id} data-translation="true"
+                                 data-original-value={count}>
                                  {count}
                               </option>
                            ))}
@@ -279,7 +294,7 @@ export const Content = () => {
                   itemCount?.subscriptions?.length > 0 && (
                      <section className="hern-our-menu__select-section__subscriptions">
                         <Form.Label htmlFor="subscriptions">
-                           Delivery Day
+                           {t('Delivery Day')}
                         </Form.Label>
                         <select
                            id="subscriptions"
@@ -292,7 +307,8 @@ export const Content = () => {
                            }
                         >
                            {itemCount?.subscriptions.map(({ id, rrule }) => (
-                              <option key={id} value={id}>
+                              <option key={id} value={id} data-translation="true"
+                                 data-original-value={rrulestr(rrule).toText()}>
                                  {rrulestr(rrule).toText()}
                               </option>
                            ))}
@@ -308,7 +324,7 @@ export const Content = () => {
                {occurences.length === 0 ? (
                   <HelperBar type="info">
                      <HelperBar.SubTitle>
-                        No weeks are available.
+                        {t('No weeks are available.')}
                      </HelperBar.SubTitle>
                   </HelperBar>
                ) : (
@@ -324,11 +340,11 @@ export const Content = () => {
                                  }`}
                            />
                         </span>
-                        Past week
+                        {t('Past week')}
                      </button>
                      {current in occurences && (
                         <span className="hern-our-menu__occurences__current-date-range">
-                           Showing menu of:&nbsp;
+                           <span>{t('Showing menu of:')}</span>&nbsp;
                            {formatDate(
                               moment(occurences[current]?.fulfillmentDate)
                                  .subtract(7, 'days')
@@ -353,7 +369,7 @@ export const Content = () => {
                         onClick={next}
                         disabled={current === occurences.length - 1}
                      >
-                        Upcoming Week
+                        {t('Upcoming Week')}
                         <span>
                            <ArrowRightIcon
                               className={`hern-our-menu__occurences___btn__icon${current === occurences.length - 1
@@ -372,7 +388,8 @@ export const Content = () => {
                            key={category.name}
                            className="hern-our-menu__products__wrapper"
                         >
-                           <h4 className="hern-our-menu__products__category-title">
+                           <h4 className="hern-our-menu__products__category-title" data-translation="true"
+                              data-original-value={category.name}>
                               {category.name} (
                               {
                                  uniqBy(category.productsAggregate.nodes, v =>
@@ -406,7 +423,7 @@ export const Content = () => {
                   ) : (
                      <HelperBar type="info">
                         <HelperBar.SubTitle>
-                           No products available this week!
+                           {t('No products available this week!')}
                         </HelperBar.SubTitle>
                      </HelperBar>
                   )}
@@ -470,7 +487,8 @@ const Product = ({
             )}
          </ImageWrapper>
          {node?.addOnLabel && (
-            <span className="hern-our-menu__product-label">
+            <span className="hern-our-menu__product-label" data-translation="true"
+               data-original-value={node?.addOnLabel}>
                {node?.addOnLabel}
             </span>
          )}
@@ -479,21 +497,27 @@ const Product = ({
                className="hern-our-menu__product-link "
                theme={theme}
                onClick={openRecipe}
+               data-translation="true"
+               data-original-value={product.name - product.label}
             >
                {product.name} - {product.label}
             </a>
          </section>
-         <p>{product?.additionalText}</p>
-         {product.tags.length > 0 && (
-            <ul className="hern-our-menu__product-tag-list">
-               {product.tags.map(tag => (
-                  <li className="hern-our-menu__product-tag-list__item">
-                     {tag}
-                  </li>
-               ))}
-            </ul>
-         )}
-      </li>
+         <p data-translation="true"
+            data-original-value={product?.additionalText}>{product?.additionalText}</p>
+         {
+            product.tags.length > 0 && (
+               <ul className="hern-our-menu__product-tag-list">
+                  {product.tags.map(tag => (
+                     <li className="hern-our-menu__product-tag-list__item" data-translation="true"
+                        data-original-value={tag}>
+                        {tag}
+                     </li>
+                  ))}
+               </ul>
+            )
+         }
+      </li >
    )
 }
 

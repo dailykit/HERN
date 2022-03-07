@@ -160,5 +160,13 @@
    "Allergens": "مسببات الحساسية",
    "&": "و",
    "nutrition info not available": "معلومات التغذية غير متوفرة",
-   "Go back to Main menu": "ارجع إلى القائمة الرئيسية"
+   "Go back to Main menu": "ارجع إلى القائمة الرئيسية",
+   "No Menu Available!": "لا توجد قائمة متاحة!",
+   "Plans": "الخطط",
+   "Delivery Day": "يوم التوصيل",
+   "No weeks are available.": "لا توجد أسابيع متاحة.",
+   "Past week": "الأسبوع الماضي",
+   "Showing menu of:": "عرض قائمة:",
+   "Upcoming Week": "الأسبوع القادم",
+   "No products available this week!": "لا توجد منتجات متاحة هذا الأسبوع!"
 }
