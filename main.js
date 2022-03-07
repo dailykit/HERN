@@ -91,18 +91,6 @@ handles template endpoints for ex. serving labels, sachets, emails in pdf or htm
 
 const isProd = process.env.NODE_ENV === 'production'
 
-const proxy = createProxyMiddleware({
-   target: 'http://localhost:3000',
-   changeOrigin: true,
-   onProxyReq: (proxyReq, req) => {
-      if (req.body) {
-         const bodyData = JSON.stringify(req.body)
-         proxyReq.setHeader('Content-Type', 'application/json')
-         proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData))
-         proxyReq.write(bodyData)
-      }
-   }
-})
 const templateProxy = createProxyMiddleware({
    target: 'http://localhost:5000',
    changeOrigin: true,
@@ -119,8 +107,6 @@ const templateProxy = createProxyMiddleware({
    }
 })
 app.use('/template', templateProxy)
-
-const RESTRICTED_FILES = ['env-config.js', 'favicon', '.next', '_next']
 
 /*
 manages files in templates folder
@@ -190,8 +176,6 @@ const ayrshareApolloserver = new ApolloServer({
 })
 
 ayrshareApolloserver.applyMiddleware({ app, path: '/ayrshare/graphql' })
-
-app.use('/:path(*)', proxy)
 
 app.listen(PORT, () => {
    console.log(`Server started on ${PORT}`)
