@@ -248,7 +248,7 @@ export const PaymentProvider = ({ children }) => {
             isPaymentProcessing: false,
          },
       })
-      const url = isClient ? window.location.origin : ''
+      const url = isClient ? get_env('BASE_BRAND_URL') : ''
       const { data } = await axios.post(
          `${url}/server/api/payment/handle-payment-webhook`,
          response

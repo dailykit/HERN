@@ -93,7 +93,10 @@ export const Header = ({ order }) => {
                      onClick={() =>
                         dispatch({
                            type: 'DELIVERY_PANEL',
-                           payload: { orderId: order.id },
+                           payload: {
+                              orderId: order.id,
+                              order,
+                           },
                         })
                      }
                   >

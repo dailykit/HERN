@@ -100,7 +100,7 @@ export const Login = props => {
                      onClick={() => {
                         if (isClient) {
                            window.location.href =
-                              window.location.origin + getRoute('/')
+                              get_env('BASE_BRAND_URL') + getRoute('/')
                         }
                      }}
                   >
@@ -796,7 +796,7 @@ const ForgotPassword = props => {
       try {
          setError('')
          if (isClient) {
-            const origin = window.location.origin
+            const origin = get_env('BASE_BRAND_URL')
             forgotPassword({
                variables: {
                   email: form.email,
@@ -937,7 +937,7 @@ const Signup = props => {
                   addToast('Login successfully', { appearance: 'success' })
                   if (!isSilentlyLogin) {
                      window.location.href =
-                        window.location.origin +
+                        get_env('BASE_BRAND_URL') +
                         getRoute('/get-started/select-plan')
                   } else {
                      closeLoginPopup()
@@ -1052,7 +1052,7 @@ const Signup = props => {
             setStoredReferralCode(form.code)
          }
 
-         const url = `${window.location.origin}/api/hash`
+         const url = `${get_env('BASE_BRAND_URL')}/api/hash`
          const { data } = await axios.post(url, { password: form.password })
 
          if (data?.success && data?.hash) {

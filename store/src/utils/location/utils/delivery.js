@@ -249,7 +249,7 @@ const isStoreDeliveryAvailableByDistance = async (
          console.log('drivableDistance', drivableDistance)
          if (drivableDistance.from !== null && drivableDistance.to !== null) {
             try {
-               const origin = isClient ? window.location.origin : ''
+               const origin = isClient ? get_env('BASE_BRAND_URL') : ''
                const url = `${origin}/server/api/distance-matrix`
                const postLocationData = {
                   key: get_env('GOOGLE_API_KEY'),

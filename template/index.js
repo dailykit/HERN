@@ -6,10 +6,12 @@ import { GraphQLClient, gql } from 'graphql-request'
 
 import get_env from '../get_env'
 
-const checkExist = require('./utils/checkExist')
-const copyFolder = require('./utils/copyFolder')
+// const checkExist = require('./utils/checkExist')
+// const copyFolder = require('./utils/copyFolder')
 
-const router = express.Router()
+const app = express()
+
+const PORT = 5000
 
 const format_currency = async (amount = 0) => {
    const currency = await get_env('CURRENCY')
@@ -93,16 +95,16 @@ export const root = async (req, res) => {
    }
 }
 
-export const download = async (req, res) => {
-   try {
-      const src = `/${req.params.path}`
-      const dest = await checkExist(src)
-      const result = await copyFolder(src, dest)
-      res.send(result)
-   } catch (err) {
-      console.log(err)
-   }
-}
+// export const download = async (req, res) => {
+//    try {
+//       const src = `/${req.params.path}`
+//       const dest = await checkExist(src)
+//       const result = await copyFolder(src, dest)
+//       res.send(result)
+//    } catch (err) {
+//       console.log(err)
+//    }
+// }
 
 export const hydrateFold = async (req, res) => {
    try {
@@ -140,17 +142,15 @@ export const hydrateFold = async (req, res) => {
    }
 }
 
-router.use(
+app.use(
    '/files',
    express.static(`${__dirname}../../template/templates`, {
       maxAge: 604800
    })
 )
-router.get('/', root)
-router.post('/hydrate-fold', hydrateFold)
-router.post('/download/:path(*)', download)
-
-export default router
+app.get('/', root)
+app.post('/hydrate-fold', hydrateFold)
+// app.post('/download/:path(*)', download)
 
 const PLUGIN = gql`
    query PLUGIN($id: Int!) {
@@ -176,3 +176,6 @@ const PLUGIN = gql`
       }
    }
 `
+app.listen(PORT, () => {
+   console.log(`Template server started on port ${PORT}`)
+})
