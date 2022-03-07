@@ -15,7 +15,7 @@ export const hernImage = props => {
    removebgImageSrc = removebgImageSrc.replace('jpg', 'png')
    removebgImageSrc = removebgImageSrc.replace('jpeg', 'png')
    const fallbackImageSrc = `${get_env(
-      EXPRESS_URL
+      BASE_BRAND_URL
    )}/server/api/assets/serve-image?removebg=true&src=${imageSrc}`
    return (
       <>
