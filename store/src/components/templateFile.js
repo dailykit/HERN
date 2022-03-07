@@ -9,7 +9,7 @@ export const TemplateFile = ({ path = '/navigation-menu/index.ejs', data }) => {
    const [templateData, setTemplateData] = React.useState(data)
 
    React.useEffect(() => {
-      const url = `${get_env('EXPRESS_URL')}/template/files${path}`
+      const url = `${get_env('BASE_BRAND_URL')}/template/files${path}`
       console.log(url)
       const fetchData = async () => {
          const { data } = await axios.get(url)

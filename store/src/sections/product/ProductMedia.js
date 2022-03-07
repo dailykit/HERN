@@ -44,7 +44,7 @@ const ImageAspectRatio = ({ imageURL, aspectRatio = '1/1', altText }) => {
       >
          <div>
             <div style={{ backgroundImage: `url('${imageURL}')` }}>
-               <ProductMedia data-src={imageURL} alt={altText} />
+               {/* <ProductMedia data-src={imageURL} alt={altText} /> */}
             </div>
          </div>
       </div>

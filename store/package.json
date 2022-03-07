@@ -95,5 +95,8 @@
       "twin": {
          "preset": "styled-components"
       }
+   },
+   "resolutions": {
+      "typeorm": "0.2.41"
    }
 }

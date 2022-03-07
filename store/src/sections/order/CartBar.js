@@ -209,7 +209,7 @@ const CartBar = () => {
                   </div>
                   <div className="hern-ondemand-cart__review-cart">
                      <button>
-                        <Link href="/on-demand-cart">
+                        <Link href="/checkout">
                            <div
                               style={{ display: 'flex', alignItems: 'center' }}
                            >
