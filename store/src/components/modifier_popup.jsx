@@ -742,7 +742,11 @@ export const ModifierPopup = props => {
                   <Button
                      className="hern-product-modifier-pop-up-add-to-cart-btn"
                      onClick={() => {
-                        if (showStepViewProductOptionAndModifiers) {
+                        if (
+                           showModifiers &&
+                           productOption.modifier &&
+                           showStepViewProductOptionAndModifiers
+                        ) {
                            if (isModifierOptionsViewOpen) {
                               setTimeout(handleAddOnCartOn, 500)
                            } else {
