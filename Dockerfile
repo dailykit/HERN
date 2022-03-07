@@ -49,9 +49,13 @@ COPY --from=builder /usr/src/app/admin/build ./admin/build
 # copy express server files in to docker image
 COPY --from=builder /usr/src/app/server ./server
 COPY --from=builder /usr/src/app/template ./template
+COPY --from=builder /usr/src/app/dailygit ./dailygit
 
 COPY --from=builder /usr/src/app/index.js ./index.js
 COPY --from=builder /usr/src/app/main.js ./main.js
+COPY --from=builder /usr/src/app/template.js ./template.js
+COPY --from=builder /usr/src/app/nodemon.json ./nodemon.json
+COPY --from=builder /usr/src/app/templateNodemon.json ./templateNodemon.json
 COPY --from=builder /usr/src/app/package.json ./package.json
 COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY --from=builder /usr/src/app/get_env.js ./get_env.js

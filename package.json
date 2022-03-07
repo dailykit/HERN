@@ -3,7 +3,7 @@
    "version": "1.22.11",
    "main": "index.js",
    "repository": "https://github.com/dailykit/hern.git",
-   "author": "Praveen Bisht <prvnbist@gmail.com>",
+   "author": "Dailykit",
    "license": "MIT",
    "scripts": {
       "install:packages": "yarn && cd store && yarn && cd ../admin && yarn",
