@@ -1,3 +1,5 @@
+const sharp = require('sharp')
+
 export const minifyImage = async (buffer, type) => {
    let fileType
    // minifying buffer through imagemin
