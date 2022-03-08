@@ -17,7 +17,7 @@ import {
    setThemeVariable,
    isClient,
 } from '../../utils'
-import { CartContext } from '../../context'
+import { CartContext, useTranslation } from '../../context'
 import { Loader } from '../'
 import { TimeSlots } from './components/timeSlots'
 import { Button } from '../button'

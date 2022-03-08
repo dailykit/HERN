@@ -5,7 +5,11 @@ export const LanguageSwitch = () => {
    const { changeLocale, locales } = useTranslation()
 
    return (
-      <select onChange={e => changeLocale(e.target.value)}>
+      <select onChange={e => {
+         changeLocale(e.target.value);
+         window.localStorage.setItem('language', e.target.value)
+      }
+      }>
          {locales.map(locale => (
             <option key={locale.langCode} value={locale.langCode}>
                {locale.title}

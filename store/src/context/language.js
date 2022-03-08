@@ -36,12 +36,21 @@ export const LanguageProvider = ({ children }) => {
 
    //Change direction for right to left read languages
    React.useEffect(() => {
+      if (window?.localStorage?.getItem('language') == 'ar') {
+         changeLocale('ar')
+      }
+      else {
+         changeLocale('en')
+      }
+      // JSON.parse(localStorage.getItem('language'))
       if (rltLanguages.includes(locale)) {
          changeDirection('rtl')
       } else {
          changeDirection('ltr')
       }
+
    }, [locale])
+
 
    return (
       <LanguageContext.Provider
@@ -65,31 +74,12 @@ export const useTranslation = () => {
          return text
    }
    const dynamicTrans = langTags => {
-      // strings.forEach(x => {
-      //    if (locale === 'en') {
-      //       if (x.innerHTML.match(/\##EN##(.*?)\##EN##/g)) {
-      //          x.innerHTML = x.innerHTML
-      //             .match(/\##EN##(.*?)\##EN##/g)[0]
-      //             .replaceAll('##EN##', '')
-      //       }
-      //    }
-      //    if (locale === 'ar') {
-      //       if (x.innerHTML.match(/\##AR##(.*?)\##AR##/g)) {
-      //          x.innerHTML = x.innerHTML
-      //             .match(/\##AR##(.*?)\##AR##/g)[0]
-      //             .replaceAll('##AR##', '')
-      //       }
-      //    }
-      // })
+
       langTags.forEach(tag => {
          const langPattern = tag.getAttribute('data-original-value')
          let innerHTMLToBe = langPattern
          if (locale === 'en') {
-            // if (langPattern.match(/\##EN##(.*?)\##EN##/g)) {
-            //    tag.innerHTML = langPattern
-            //       .match(/\##EN##(.*?)\##EN##/g)[0]
-            //       .replaceAll('##EN##', '')
-            // }
+
             if (langPattern && langPattern.match(/\@@AR@@(.*?)\@@AR@@/g)) {
                const arabic = langPattern.match(/\@@AR@@(.*?)\@@AR@@/g)[0]
                innerHTMLToBe = langPattern.replaceAll(arabic, '')
