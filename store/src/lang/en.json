@@ -160,5 +160,19 @@
    "Allergens": "Allergens",
    "&": "&",
    "nutrition info not available": "nutrition info not available",
-   "Go back to Main menu": "Go back to Main menu"
+   "Go back to Main menu": "Go back to Main menu",
+   "No Menu Available!": "No Menu Available!",
+   "Plans": "Plans",
+   "Delivery Day": "Delivery Day",
+   "No weeks are available.": "No weeks are available.",
+   "Past week": "Past week",
+   "Showing menu of:": "Showing menu of:",
+   "Upcoming Week": "Upcoming Week",
+   "No products available this week!": "No products available this week!",
+   "per week": "per week",
+   "Select": "Select",
+   "Tax Inclusive": "Tax Inclusive",
+   "Tax Exclusive": "Tax Exclusive",
+   "Weekly total": "Weekly total",
+   "No. of": "No. of"
 }
