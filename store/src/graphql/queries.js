@@ -2192,7 +2192,7 @@ export const GET_CART_ITEMS_BY_CART = gql`
          discount
          name: displayName
          image: displayImage
-         childs {
+         childs(where: { ingredientId: { _is_null: true } }) {
             price: unitPrice
             name: displayName
             discount
@@ -2200,7 +2200,7 @@ export const GET_CART_ITEMS_BY_CART = gql`
                id
                label
             }
-            childs {
+            childs(where: { ingredientId: { _is_null: true } }) {
                displayName
                price: unitPrice
                discount
@@ -2208,7 +2208,7 @@ export const GET_CART_ITEMS_BY_CART = gql`
                   id
                   name
                }
-               childs {
+               childs(where: { ingredientId: { _is_null: true } }) {
                   displayName
                   price: unitPrice
                   discount

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { DashboardTile, Text } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
-import BrandContext from '../../context/Brand'
+// import BrandContext from '../../context/Brand'
 // State
 
 import { useTabs } from '../../../../shared/providers'
@@ -13,14 +13,16 @@ import {
    CouponsSvg,
    CustomersSvg,
 } from '../../../../shared/assets/illustrationTileSvg'
+import { BrandContext } from '../../../../App'
 
 const Home = () => {
-   const [context, setContext] = useContext(BrandContext)
+   // const [context, setContext] = useContext(BrandContext)
+   const [brandContext, setBrandContext] = useContext(BrandContext)
    const { addTab } = useTabs()
    // const { t } = useTranslation()
    const { data: customersCount } = useSubscription(CUSTOMERS_COUNT, {
       variables: {
-         brandId: context.brandId,
+         brandId: brandContext.brandId,
       },
    })
    const { data: couponTotal } = useSubscription(COUPON_TOTAL)

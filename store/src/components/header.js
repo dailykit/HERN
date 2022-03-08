@@ -34,7 +34,14 @@ import { useConfig } from '../lib'
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const Header = ({ settings, navigationMenus }) => {
-   const { dispatch, brand: configBrand, orderTabs, locationId } = useConfig()
+   const {
+      dispatch,
+      brand: configBrand,
+      orderTabs,
+      locationId,
+      showLocationSelectorPopup,
+      setShowLocationSelectionPopup,
+   } = useConfig()
    const router = useRouter()
    const { width } = useWindowSize()
    const { isAuthenticated, user, isLoading } = useUser()
@@ -50,7 +57,7 @@ export const Header = ({ settings, navigationMenus }) => {
 
       if (isRouteProtected) {
          // router.push(signOutData.url)
-         window.location.href = window.location.origin + getRoute('/')
+         window.location.href = get_env('BASE_BRAND_URL') + getRoute('/')
       }
       setStoredCartId(null)
    }
@@ -99,8 +106,8 @@ export const Header = ({ settings, navigationMenus }) => {
    const [toggle, setToggle] = React.useState(true)
    const [isMobileNavVisible, setIsMobileNavVisible] = React.useState(false)
    const [showLoginPopup, setShowLoginPopup] = React.useState(false)
-   const [showLocationSelectorPopup, setShowLocationSelectionPopup] =
-      React.useState(false)
+   // const [showLocationSelectorPopup, setShowLocationSelectionPopup] =
+   //    React.useState(false)
    const [address, setAddress] = useState(null)
    const [userCoordinate, setUserCoordinate] = useState({
       latitude: null,

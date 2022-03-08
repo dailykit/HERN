@@ -275,7 +275,7 @@ const CartPageHeader = () => {
                <LeftArrowIcon /> &nbsp;&nbsp;
             </a>
 
-            <span>Cart</span>
+            {/* <span>Go back</span> */}
          </div>
          <div className="hern-cart-page__header-logo">
             {showBrandLogo && logo && <img src={logo} alt={brandName} />}

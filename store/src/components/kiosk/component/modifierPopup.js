@@ -27,6 +27,7 @@ import { useQuery } from '@apollo/react-hooks'
 import { useConfig } from '../../../lib'
 import { Loader } from '../..'
 import classNames from 'classnames'
+import { HernLazyImage } from '../../../utils/hernImage'
 
 export const KioskModifier = props => {
    const {
@@ -616,8 +617,8 @@ export const KioskModifier = props => {
                   {t('Customize')}
                </div> */}
                {productData.assets.images.length === 0 ? (
-                  <img
-                     src={config.productSettings.defaultImage.value}
+                  <HernLazyImage
+                     data-src={config.productSettings.defaultImage.value}
                      style={{ height: '680px' }}
                   />
                ) : (
@@ -882,10 +883,10 @@ export const KioskModifier = props => {
                                              }}
                                           >
                                              <div className="hern-kiosk__modifier-category-right">
-                                                <img
+                                                <HernLazyImage
                                                    className="hern-kiosk__modifier-category-option-image"
                                                    alt="modifier image"
-                                                   src={
+                                                   data-src={
                                                       eachOption.image ||
                                                       config.productSettings
                                                          .defaultImage.value
@@ -1450,10 +1451,10 @@ const AdditionalModifiers = forwardRef(
                                                 }}
                                              >
                                                 <div className="hern-kiosk__modifier-category-right">
-                                                   <img
+                                                   <HernLazyImage
                                                       className="hern-kiosk__modifier-category-option-image"
                                                       alt="modifier image"
-                                                      src={
+                                                      data-src={
                                                          eachOption.image ||
                                                          config.productSettings
                                                             .defaultImage.value
@@ -1958,10 +1959,10 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                                  }}
                               >
                                  <div className="hern-kiosk__modifier-category-right">
-                                    <img
+                                    <HernLazyImage
                                        className="hern-kiosk__modifier-category-option-image"
                                        alt="modifier image"
-                                       src={
+                                       data-src={
                                           eachOption.image ||
                                           config.productSettings.defaultImage
                                              .value

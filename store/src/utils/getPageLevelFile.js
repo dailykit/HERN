@@ -16,14 +16,14 @@ export const getPageLevelFiles = async dataByRoute => {
       .filter(file => file.fileType === 'css')
       .map(
          file =>
-            `${config['EXPRESS_URL']}/template/files${file.linkedFile.path}`
+            `${config['BASE_BRAND_URL']}/template/files${file.linkedFile.path}`
       )
 
    const scripts = linkedFiles
       .filter(file => file.fileType === 'js')
       .map(
          file =>
-            `${config['EXPRESS_URL']}/template/files${file.linkedFile.path}`
+            `${config['BASE_BRAND_URL']}/template/files${file.linkedFile.path}`
       )
 
    return { scripts, css }

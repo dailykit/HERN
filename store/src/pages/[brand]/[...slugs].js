@@ -36,7 +36,7 @@ export const getStaticProps = async ({ params }) => {
          seoSettings,
          linkedFiles,
       },
-      revalidate: 60, // will be passed to the page component as props
+      // revalidate: 60, // will be passed to the page component as props
    }
 }
 export async function getStaticPaths() {

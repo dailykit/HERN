@@ -8,7 +8,7 @@ const renderComponent = (fold, options) => {
       } else if (fold.content) {
          return ReactHtmlParser(fold.content)
       } else {
-         // const url = get_env('EXPRESS_URL') + `/template/hydrate-fold`
+         // const url = get_env('BASE_BRAND_URL') + `/template/hydrate-fold`
          const url = 'http://localhost:4000' + `/template/hydrate-fold`
          axios
             .post(url, {

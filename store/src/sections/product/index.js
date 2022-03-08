@@ -21,7 +21,7 @@ export const Product = ({ config }) => {
             locationId: locationId,
          },
       }),
-      [brand]
+      [brand, locationId]
    )
    const { loading: productsLoading, error: productsError } = useQuery(
       PRODUCT_DETAILS,

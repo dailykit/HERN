@@ -16,20 +16,20 @@ const fetchFile = fold => {
          const config = JSON.parse(content.replace('window._env_ = ', ''))
 
          const { data } = await axios.get(
-            `${config['EXPRESS_URL']}/template/files${path}`
+            `${config['BASE_BRAND_URL']}/template/files${path}`
          )
 
          // add css links + html
          const parsedData =
             linkedCssFiles.map(
                ({ cssFile }) =>
-                  `<link rel="stylesheet" type="text/css" href="${config['EXPRESS_URL']}/template/files${cssFile.path}" media="screen"/>`
+                  `<link rel="stylesheet" type="text/css" href="${config['BASE_BRAND_URL']}/template/files${cssFile.path}" media="screen"/>`
             ).join`` + data
 
          // script urls
          const scripts = linkedJsFiles.map(
             ({ jsFile }) =>
-               `${config['EXPRESS_URL']}/template/files${jsFile.path}`
+               `${config['BASE_BRAND_URL']}/template/files${jsFile.path}`
          )
 
          if (data) resolve({ id: fold.id, content: parsedData, scripts })

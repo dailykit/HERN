@@ -475,7 +475,7 @@ const PaymentContent = () => {
                   <HelperBar.Button
                      onClick={() =>
                         (window.location.href =
-                           window.location.origin + getRoute('/'))
+                           get_env('BASE_BRAND_URL') + getRoute('/'))
                      }
                   >
                      Go to Home
@@ -511,7 +511,7 @@ const PaymentContent = () => {
                   <HelperBar.Button
                      onClick={() =>
                         (window.location.href =
-                           window.location.origin + getRoute('/'))
+                           get_env('BASE_BRAND_URL') + getRoute('/'))
                      }
                   >
                      Go to Home
@@ -533,7 +533,7 @@ const PaymentContent = () => {
                   <HelperBar.Button
                      onClick={() =>
                         (window.location.href =
-                           window.location.origin + getRoute('/'))
+                           get_env('BASE_BRAND_URL') + getRoute('/'))
                      }
                   >
                      Go to Home

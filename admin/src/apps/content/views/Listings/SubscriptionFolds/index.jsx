@@ -17,7 +17,7 @@ import { StyledWrapper } from './styled'
 import LinkFoldTunnel from './Tunnel'
 import options from '../tableOption'
 import FoldContext from '../../../context/Fold'
-import BrandContext from '../../../context/Brand'
+// import BrandContext from '../../../context/Brand'
 import {
    GET_SUBSCRIPTION_FOLDS,
    DELETE_SUBSCRIPTION_FOLD,
@@ -26,17 +26,20 @@ import { logger } from '../../../../../shared/utils'
 import { Tooltip, InlineLoader, Banner } from '../../../../../shared/components'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
 import { useTooltip, useTabs } from '../../../../../shared/providers'
+import { BrandContext } from '../../../../../App'
 
 const SubscriptionFoldListing = () => {
    const { tab, addTab, closeAllTabs } = useTabs()
    const location = useLocation()
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
    const [foldContext, setFoldContext] = useContext(FoldContext)
-   const [context, setContext] = useContext(BrandContext)
+   // const [context, setContext] = useContext(BrandContext)
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
    const { tooltip } = useTooltip()
    const tableRef = useRef(null)
    const [foldList, setFoldList] = useState(undefined)
-   const { brandId } = context
+   const { brandId } = brandContext
    const prevBrandId = useRef(brandId)
 
    //    Subscription for page listing
@@ -203,7 +206,7 @@ const SubscriptionFoldListing = () => {
       },
    ]
 
-   if (context.brandId !== prevBrandId.current) {
+   if (brandContext.brandId !== prevBrandId.current) {
       closeAllTabs()
    }
 
@@ -224,7 +227,7 @@ const SubscriptionFoldListing = () => {
             justifyContent="space-between"
          >
             <Flex container alignItems="center">
-               <Text as="h2" style={{marginBottom:'0em'}}>
+               <Text as="h2" style={{ marginBottom: '0em' }}>
                   Subscription Folds(
                   {foldList?.length})
                </Text>

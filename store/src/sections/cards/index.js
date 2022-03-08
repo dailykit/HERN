@@ -253,7 +253,7 @@ export const PaymentForm = ({ intent, toggleTunnel }) => {
    const handleResult = async ({ setupIntent }) => {
       try {
          if (setupIntent.status === 'succeeded') {
-            const origin = isClient ? window.location.origin : ''
+            const origin = isClient ? get_env('BASE_BRAND_URL') : ''
             const url = `${origin}/server/api/payment/payment-method/${setupIntent.payment_method}`
 
             const { data: { success, data = {} } = {} } = await axios.get(url)
@@ -423,7 +423,7 @@ const CardSection = ({ setError }) => (
 
 const createSetupIntent = async customer => {
    try {
-      const origin = isClient ? window.location.origin : ''
+      const origin = isClient ? get_env('BASE_BRAND_URL') : ''
       const url = `${origin}/server/api/payment/setup-intent`
       const { data } = await axios.post(url, { customer })
       return data.data

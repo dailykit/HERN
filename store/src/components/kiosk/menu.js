@@ -28,6 +28,7 @@ import { Divider } from '../../components'
 import { ProgressBar } from './component/progressBar'
 import { PromotionCarousal } from '../../sections/promotionCarousel'
 import * as Scroll from 'react-scroll'
+import { HernLazyImage } from '../../utils/hernImage'
 
 const { Content, Sider, Header, Footer } = Layout
 const { Step } = Steps
@@ -277,8 +278,8 @@ const KioskMenu = props => {
                               spy={true}
                               className="hern-kiosk__category-scroll-link"
                            >
-                              <img
-                                 src={
+                              <HernLazyImage
+                                 data-src={
                                     eachCategory?.imageUrl ||
                                     config.productSettings.defaultImage.value
                                  }
@@ -427,8 +428,9 @@ const KioskMenu = props => {
                         >
                            <div name={eachCategory.name} ref={menuRef}></div>
                            {eachCategory?.bannerImageUrl ? (
-                              <img
-                                 src={eachCategory?.bannerImageUrl}
+                              <HernLazyImage
+                                 // src={eachCategory?.bannerImageUrl}
+                                 data-src={eachCategory?.bannerImageUrl}
                                  className="hern-kiosk__menu-category-banner-img"
                               />
                            ) : (

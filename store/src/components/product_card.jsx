@@ -1,10 +1,15 @@
 import React from 'react'
+import { Carousel } from 'antd'
 import { Slide } from 'react-slideshow-image'
 import 'react-slideshow-image/dist/styles.css'
-import { formatCurrency } from '../utils'
+import { formatCurrency, isClient } from '../utils'
 import { ModifierPopup } from './index'
 import classNames from 'classnames'
 import { EditIcon } from '../assets/icons'
+import { HernLazyImage } from '../utils/hernImage'
+if (isClient) {
+   import('lazysizes/plugins/unveilhooks/ls.unveilhooks').then(module => module)
+}
 
 export const ProductCard = props => {
    const {
@@ -98,19 +103,22 @@ export const ProductCard = props => {
                      <Slide ref={slideRef} {...properties}>
                         {data.assets.images.map((each, index) => {
                            return (
-                              <div key={index}>
+                              <div key={each}>
                                  <div
                                     className={classNames(
-                                       'hern-product-card-image-background',
+                                       'lazyload hern-product-card-image-background',
                                        {
                                           'hern-product-card-image-background--aspect-ratio':
                                              maintainRatio,
                                        }
                                     )}
-                                    style={{ backgroundImage: `url(${each})` }}
+                                    // style={{ backgroundImage: `url(${each})` }}
+                                    data-bg={each}
                                  ></div>
-                                 <img
-                                    src={each}
+                                 <HernLazyImage
+                                    // src={each}
+                                    data-src={each}
+                                    alt={data.name}
                                     className={classNames(
                                        'hern-product-card__image',
                                        {
