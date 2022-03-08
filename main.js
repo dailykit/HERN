@@ -106,8 +106,6 @@ const templateProxy = createProxyMiddleware({
       }
    }
 })
-app.use('/template', templateProxy)
-
 /*
 manages files in templates folder
 */
@@ -130,8 +128,8 @@ const apolloserver = new ApolloServer({
       media: await get_env('MEDIA_PATH')
    })
 })
-
 apolloserver.applyMiddleware({ app, path: `/template/graphql` })
+app.use('/template', templateProxy)
 
 // ohyay remote schema integration
 const ohyayApolloserver = new ApolloServer({
