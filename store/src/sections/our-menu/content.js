@@ -221,8 +221,7 @@ export const Content = () => {
                         }
                      >
                         {titles.map(({ id, title }) => (
-                           <option key={id} value={id} data-translation="true"
-                              data-original-value={title}>
+                           <option key={id} value={id} data-translation="true" data-original-value={title}>
                               {title}
                            </option>
                         ))}
