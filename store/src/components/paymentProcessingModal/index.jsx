@@ -56,6 +56,7 @@ const PaymentProcessingModal = ({
       } else {
          if (router.pathname !== `/view-order`) {
             await closeModalHandler()
+            await resetStateAfterModalClose()
             router.push(`/view-order?id=${cartPayment?.cartId}`)
          }
       }
