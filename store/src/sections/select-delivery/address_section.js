@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import classNames from 'classnames'
 import { useDelivery } from './state'
 import { useConfig } from '../../lib'
-import { useUser } from '../../context'
+import { useTranslation, useUser } from '../../context'
 import { CheckIcon } from '../../assets/icons'
 import { AddressTunnel } from './address_tunnel'
 import { Button, HelperBar } from '../../components'
@@ -15,6 +15,7 @@ export const AddressSection = () => {
    const { user } = useUser()
    const { configOf } = useConfig()
    const { state, dispatch } = useDelivery()
+   const { t, dynamicTrans } = useTranslation()
 
    React.useEffect(() => {
       if (
@@ -25,6 +26,13 @@ export const AddressSection = () => {
          addressSelection(address)
       }
    }, [dispatch, user])
+
+   React.useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [])
 
    const addressSelection = address => {
       dispatch({ type: 'SET_ADDRESS', payload: address })
@@ -47,23 +55,23 @@ export const AddressSection = () => {
                   color: theme?.accent ? theme.accent : 'rgba(5, 150, 105, 1)',
                }}
             >
-               {addressLabelFromConfig?.value || 'Select Address'}
+               {<span data-translation="true" value={addressLabelFromConfig?.value}>{addressLabelFromConfig?.value}</span> || <span>{t('Select Address')}</span>}
             </h3>
             {user?.platform_customer?.addresses.length > 0 && (
                <Button bg={theme?.accent} onClick={() => toggleTunnel(true)}>
-                  Add Address
+                  {t('Add Address')}
                </Button>
             )}
          </header>
          {state.address.error && (
             <HelperBar type="error">
-               <HelperBar.SubTitle>{state.address.error}</HelperBar.SubTitle>
+               <HelperBar.SubTitle><span data-translation="true" value={state.address.error}>{state.address.error}</span></HelperBar.SubTitle>
                <HelperBar.Button
                   onClick={() =>
                      router.push(getRoute('/get-started/select-plan'))
                   }
                >
-                  Change Plan
+                  {t('Change Plan')}
                </HelperBar.Button>
             </HelperBar>
          )}
@@ -108,10 +116,10 @@ export const AddressSection = () => {
          ) : (
             <HelperBar type="info">
                <HelperBar.SubTitle>
-                  Let's start with adding an address
+                  {t("Let's start with adding an address")}
                </HelperBar.SubTitle>
                <HelperBar.Button onClick={() => toggleTunnel(true)}>
-                  Add Address
+                  {t('Add Address')}
                </HelperBar.Button>
             </HelperBar>
          )}

@@ -11,10 +11,12 @@ import { Loader, HelperBar } from '../../components'
 import { OCCURENCES_BY_SUBSCRIPTION } from '../../graphql'
 import { formatDate, getRoute } from '../../utils'
 import classNames from 'classnames'
+import { useTranslation } from '../../context'
 
 export const DeliveryDateSection = () => {
    const router = useRouter()
    const { addToast } = useToasts()
+   const { t, dynamicTrans } = useTranslation()
    const { state, dispatch } = useDelivery()
    const [occurences, setOccurences] = React.useState([])
    const [fetchOccurences, { loading }] = useLazyQuery(
@@ -54,6 +56,13 @@ export const DeliveryDateSection = () => {
       }
    }, [state.delivery.selected, fetchOccurences])
 
+   React.useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [])
+
    const occurenceSelection = occurence => {
       const dateIndex = occurences.findIndex(node => node.id === occurence.id)
       const skipList = occurences
@@ -70,7 +79,7 @@ export const DeliveryDateSection = () => {
          <>
             <HelperBar type="info">
                <HelperBar.SubTitle>
-                  {getStartedDate?.value || 'Select a delivery day to get started'}
+                  {(getStartedDate?.value) ? <span data-translation="true" data-original-value={getStartedDate?.value}>{getStartedDate?.value}</span> : t('Select a delivery day to get started')}
                </HelperBar.SubTitle>
             </HelperBar>
          </>
@@ -80,12 +89,21 @@ export const DeliveryDateSection = () => {
       return (
          <HelperBar type="warning">
             <HelperBar.SubTitle>
-               {noDatesAvailable?.value || 'No dates are available for delivery on this address.'}
+               {noDatesAvailable?.value ? (
+                  <span
+                     data-translation="true"
+                     data-original-value={noDatesAvailable?.value}
+                  >
+                     {noDatesAvailable?.value}
+                  </span>
+               ) : (
+                  t('No dates are available for delivery on this address.')
+               )}
             </HelperBar.SubTitle>
             <HelperBar.Button
                onClick={() => router.push(getRoute('/get-started/select-plan'))}
             >
-               Select Plan
+               {t('Select Plan')}
             </HelperBar.Button>
          </HelperBar>
       )

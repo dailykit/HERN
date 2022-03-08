@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { useMutation } from '@apollo/react-hooks'
 import { useToasts } from 'react-toast-notifications'
 
-import { useUser } from '../../context'
+import { useTranslation, useUser } from '../../context'
 import { BRAND } from '../../graphql'
 import { useConfig } from '../../lib'
 import { Button } from '../../components'
@@ -26,10 +26,10 @@ const DeliveryContent = () => {
    const { state } = useDelivery()
    const { addToast } = useToasts()
    const { brand, configOf } = useConfig()
-
+   const { t, dynamicTrans } = useTranslation()
    const [updateBrandCustomer] = useMutation(BRAND.CUSTOMER.UPDATE, {
       onCompleted: () => {
-         addToast('Successfully saved delivery preferences.', {
+         addToast(t('Successfully saved delivery preferences.'), {
             appearance: 'success',
          })
          router.push(
@@ -63,7 +63,12 @@ const DeliveryContent = () => {
          },
       })
    }
-
+   React.useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [])
    const isValid = () => {
       if (Object.keys(state.delivery.selected).length === 0) return false
       if (Object.keys(state.address.selected).length === 0) return false
@@ -88,21 +93,23 @@ const DeliveryContent = () => {
       }}>
          <header className="hern-delivery__header">
             <h2 className="hern-delivery__title" style={brandTextColor}>
-               Delivery
+               {t('Delivery')}
             </h2>
          </header>
          <AddressSection />
          <h3 className="hern-delivery__section-title" style={brandTextColor}>
-            {deliveryDayLabelFromConfig?.value || 'Delivery Day'}
+            {<span data-translation="true" data-original-value={deliveryDayLabelFromConfig?.value}>{deliveryDayLabelFromConfig?.value}</span> || t('Delivery Day')}
          </h3>
          <DeliverySection />
          <h3 className="hern-delivery__section-title" style={brandTextColor}>
-            {firstDeliveryDayLabelFromConfig?.value || 'Select your first delivery date'}
+            {<span data-translation="true" data-original-value={firstDeliveryDayLabelFromConfig?.value}>{firstDeliveryDayLabelFromConfig?.value}</span> || t('Select your first delivery date')}
          </h3>
          <DeliveryDateSection />
          <div className="hern-delivery__continue">
-            <Button bg={theme?.accent} onClick={nextStep} disabled={!isValid()}>
-               Continue
+            <Button bg={theme?.accent} onClick={nextStep}
+               disabled={!isValid()}
+            >
+               {t('Continue')}
             </Button>
          </div>
       </main>
