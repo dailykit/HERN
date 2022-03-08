@@ -75,11 +75,15 @@ export const HernLazyImage = ({
                   'lazyload'
                )
                if (removeBg && !(Boolean(width) && Boolean(height))) {
-                  const fallbackImageUrl = `http://localhost:4000/server/api/assets/serve-image?removebg=true&src=${src}`
+                  const fallbackImageUrl = `${get_env(
+                     BASE_BRAND_URL
+                  )}/server/api/assets/serve-image?removebg=true&src=${src}`
                   const imageData = await axios.get(fallbackImageUrl)
                   setSrc(imageData.data)
                } else if (!removeBg && Boolean(width) && Boolean(height)) {
-                  const fallbackImageUrl = `http://localhost:4000/server/api/assets/serve-image?width=${width}&height=${height}&src=${imageUrl}`
+                  const fallbackImageUrl = `${get_env(
+                     BASE_BRAND_URL
+                  )}/server/api/assets/serve-image?width=${width}&height=${height}&src=${imageUrl}`
                   const imageData = await axios.get(fallbackImageUrl)
                   setSrc(imageData.data)
                }
