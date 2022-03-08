@@ -21,6 +21,9 @@ export const get_env = title => {
          switch (process.env.NEXT_PUBLIC_MODE) {
             case 'production':
                return window.location.origin
+            // full-dev will still give error because now we are using BASE_BRAND_URL
+            // as http://localhost:4000 and since we have also replaced express url
+            // with BASE_BRAND_URL hence in development it will look for local templates folder
             case 'full-dev':
                return 'http://localhost:4000'
             case 'store-dev':
