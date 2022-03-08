@@ -1,11 +1,17 @@
 import get_env from '../../../get_env'
 import aws from '../../lib/aws'
-import { removeBackgroundFromImageUrl } from "remove.bg"
+import { removeBackgroundFromImageUrl } from 'remove.bg'
+import axios from 'axios'
 
 const fs = require('fs')
 const fileType = require('file-type')
 const multiparty = require('multiparty')
-const { listS3Files, uploadFile, createUrl } = require('../../utils')
+const {
+   listS3Files,
+   uploadFile,
+   createUrl,
+   resizeImage
+} = require('../../utils')
 
 export const upload = (request, response) => {
    const form = new multiparty.Form()
@@ -120,7 +126,7 @@ export const list = async (req, res) => {
 
 export const remove = async (req, res) => {
    try {
-      console.log("remove reached", req.query)
+      console.log('remove reached', req.query)
       const { key } = req.query
       const AWS = await aws()
       const s3 = new AWS.S3()
@@ -142,44 +148,85 @@ export const remove = async (req, res) => {
 // to do in future :- send mail to customers in case monthly free tries have been used using remove.bg apiKey
 // for our customers :-  company api key will be used
 export const serveImage = async (req, res) => {
-
-   try{
-      
+   try {
       // get the src url of the original image from the url query string
       const url = req.query.src
-      // const removebg = req.query.removebg // for future application
+      const imageWidth = parseInt(req.query.width)
+      const imageHeight = parseInt(req.query.height)
+      const imageFit = req.query.fit || 'cover'
+      const removeImageBg = req.query.removebg || false
 
-      // api key of remove.bg
-      const api_key = await get_env('REMOVE_BG_API_KEY')
+      // get only remove background image
+      if (removeImageBg && !(Boolean(imageWidth) && Boolean(imageHeight))) {
+         // api key of remove.bg
+         const api_key = await get_env('REMOVE_BG_API_KEY')
+         // directory to store output image after altering the image
+         const outputFile = `${__dirname}/image.png`
+         const responseImage = await removeBackgroundFromImageUrl({
+            url,
+            apiKey: api_key,
+            size: 'regular',
+            outputFile
+         })
+         // to get the image name and alter it from /images/ to /images-rb/
+         const IndexFromString = url.indexOf('/images/')
+         var imageName = url.slice(IndexFromString)
 
-      // directory to store output image after altering the image
-      const outputFile = `${__dirname}/image.png`;
-      const responseImage = await removeBackgroundFromImageUrl({
-         url,
-         apiKey: api_key, 
-         size: "regular",
-         outputFile
-       });
+         // imageName example --> /images-rb/xyz
+         imageName = imageName.replace('/images/', 'images-rb/')
+         // remove format from image name
+         imageName = imageName.replace('.jpg', '')
+         imageName = imageName.replace('.jpeg', '')
+         imageName = imageName.replace('.png', '')
 
-      // to get the image name and alter it from /images/ to /images-rb/
-      const IndexFromString = url.indexOf('/images/');
-      var imageName = url.slice(IndexFromString)
-      
-      // imageName example --> /images-rb/xyz
-      imageName = imageName.replace('/images/' , 'images-rb/')
-      // remove format from image name
-      imageName = imageName.replace('.jpg' , '');
-      imageName = imageName.replace('.jpeg' , '');
-      imageName = imageName.replace('.png' , '');
+         // now upload it to aws
+         const buffer = fs.readFileSync(outputFile)
+         let type = await fileType.fromBuffer(buffer)
+         const data = await uploadFile(buffer, imageName, type)
 
-      // now upload it to aws
-      const buffer = fs.readFileSync(outputFile);
-      let type = await fileType.fromBuffer(buffer)
-      const data = await uploadFile(buffer, imageName, type)
+         // send altered image as response
+         res.sendFile(outputFile)
+      } else if (
+         !removeImageBg &&
+         Boolean(imageWidth) &&
+         Boolean(imageHeight)
+      ) {
+         // create a buffer of regular image
+         const response = await axios.get(url, {
+            responseType: 'arraybuffer'
+         })
+         const urlBuffer = response.data
 
-      // send altered image as response 
-      res.sendFile(outputFile);
+         // resizing of regular image according to requirements
+         const s3buffer = await resizeImage(
+            urlBuffer,
+            imageWidth,
+            imageHeight,
+            imageFit
+         )
 
+         const IndexFromString = url.indexOf('/images/')
+         var imageName = url.slice(IndexFromString)
+
+         // change folder for image
+         // /images/xyz --> /300x400/xyz
+         imageName = imageName.replace(
+            '/images/',
+            `${imageWidth}x${imageHeight}/`
+         )
+         imageName = imageName.replace('.jpg', '')
+         imageName = imageName.replace('.jpeg', '')
+         imageName = imageName.replace('.png', '')
+
+         // upload in s3
+         let type = await fileType.fromBuffer(s3buffer)
+         const data = await uploadFile(s3buffer, imageName, type)
+
+         // send image url as response
+         res.status(200).send(data.Location)
+      } else if (removeImageBg && Boolean(imageWidth) && Boolean(imageHeight)) {
+         // particular dimension image without background
+      }
    } catch (error) {
       console.log(error)
       return res.status(400).send(error)
