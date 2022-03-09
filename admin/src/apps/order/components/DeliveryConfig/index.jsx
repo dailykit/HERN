@@ -71,326 +71,334 @@ export const DeliveryConfig = ({ closeTunnel: closeParentTunnel }) => {
    }
 
    const addDeliveryPartner = async () => {
-      console.log('add delivery partner', {
+      await updateOrder({
          id: order.id,
          set: selectedService.partnershipId
             ? {
                  deliveryPartnershipId: selectedService.partnershipId,
+                 deliveryInfo: {
+                    deliveryId: '',
+                    webhookUrl: '',
+                    deliveryCompany: {
+                       logo: selectedService.logo,
+                       name: selectedService.companyName,
+                       ...(selectedService.isThirdParty && {
+                          id: selectedService.partnershipId,
+                       }),
+                    },
+                    deliveryFee: {
+                       value: '',
+                       unit: '',
+                    },
+                    tracking: {
+                       location: {
+                          isAvailable: false,
+                          longitude: '',
+                          latitude: '',
+                       },
+                       code: {
+                          isAvailable: false,
+                          value: '',
+                          url: '',
+                       },
+                       sms: {
+                          isAvailable: false,
+                       },
+                       eta: '',
+                    },
+                    orderInfo: {
+                       products: [].concat(
+                          ...delivery_config?.order?.cart?.products.map(
+                             item => {
+                                return {
+                                   id: item.productId,
+                                   name: item.displayName,
+                                   quantity: item?.displayUnit || 1,
+                                   price: item?.price * 100 || 0,
+                                }
+                             }
+                          )
+                       ),
+                    },
+                    deliveryRequest: {
+                       status: {
+                          value: 'WAITING',
+                          timeStamp: '',
+                          description: '',
+                          data: {},
+                       },
+                       distance: {
+                          value: 0,
+                          unit: 'mile',
+                       },
+                    },
+                    assigned: {
+                       status: {
+                          value: 'WAITING',
+                          timeStamp: '',
+                          description: '',
+                          data: {},
+                       },
+                       driverInfo: {
+                          driverFirstName: '',
+                          driverLastName: '',
+                          driverPhone: '',
+                          driverPicture: '',
+                       },
+                       vehicleInfo: {
+                          vehicleType: '',
+                          vehicleMake: '',
+                          vehicleModel: '',
+                          vehicleColor: '',
+                          vehicleLicensePlateNumber: '',
+                          vehicleLicensePlateState: '',
+                       },
+                    },
+                    pickup: {
+                       window: {
+                          ...(isPickup(
+                             delivery_config?.order?.cart?.fulfillmentInfo?.type
+                          )
+                             ? {
+                                  approved: {
+                                     startsAt: formatTime(
+                                        delivery_config?.order?.cart
+                                           ?.fulfillmentInfo?.slot?.from
+                                     ),
+                                     endsAt: formatTime(
+                                        delivery_config?.order?.cart
+                                           ?.fulfillmentInfo?.slot?.to
+                                     ),
+                                  },
+                               }
+                             : { approved: {} }),
+                       },
+                       status: {
+                          value: 'WAITING',
+                       },
+                       confirmation: {
+                          photo: {
+                             data: {},
+                             isRequired: false,
+                          },
+                          idProof: {
+                             data: {},
+                             isRequired: false,
+                          },
+                          signature: {
+                             data: {},
+                             isRequired: false,
+                          },
+                       },
+                       pickupInfo: {
+                          //   organizationId: process.env.ORGANIZATION_ID,
+                          //   organizationName: settings?.brand?.name,
+                          //   organizationPhone: settings?.contact?.phoneNo,
+                          //   organizationEmail: settings?.contact?.email,
+                          //   organizationAddress: {
+                          //      line1: settings?.address?.line1,
+                          //      line2: settings?.address?.line2,
+                          //      city: settings?.address?.city,
+                          //      state: settings?.address?.state,
+                          //      country: settings?.address?.country,
+                          //      zipcode: settings?.address?.zip,
+                          //      latitude: settings?.address?.lat,
+                          //      longitude: settings?.address?.lng,
+                          //   },
+                          organizationId: 133,
+                          organizationName: 'Dailykit',
+                          organizationPhone: '9910270925',
+                          organizationEmail: 'st.deepak15@gmail.com',
+                          organizationAddress: {
+                             line1: 'Street-32,east burj',
+                             line2: 'mullaperiyar',
+                             city: 'kochi',
+                             state: 'Kerala',
+                             country: 'India',
+                             zipcode: '685532',
+                             latitude: '9.956297',
+                             longitude: '76.332486',
+                          },
+                       },
+                    },
+                    ...(isPickup(
+                       delivery_config?.order?.cart?.fulfillmentInfo?.type
+                    )
+                       ? {
+                            dropoff: {
+                               dropoffInfo: {
+                                  ...(delivery_config?.order?.cart?.customer &&
+                                     Object.keys(
+                                        delivery_config?.order?.cart?.customer
+                                     ).length > 0 && {
+                                        customerEmail:
+                                           delivery_config?.order?.cart
+                                              ?.customer?.customerEmail,
+                                        customerPhone:
+                                           delivery_config?.order?.cart
+                                              ?.customer?.customerPhone,
+                                        customerLastName:
+                                           delivery_config?.order?.cart
+                                              ?.customer?.customerLastName,
+                                        customerFirstName:
+                                           delivery_config?.order?.cart
+                                              ?.customer?.customerFirstName,
+                                     }),
+                               },
+                            },
+                         }
+                       : {
+                            dropoff: {
+                               status: {
+                                  value: 'WAITING',
+                               },
+                               window: {
+                                  approved: {},
+                                  requested: {
+                                     startsAt: new Date(
+                                        `${delivery_config?.order?.cart?.fulfillmentInfo?.date} ${delivery_config?.order?.cart?.fulfillmentInfo?.slot?.from}`
+                                     ),
+                                     endsAt: new Date(
+                                        `${delivery_config?.order?.cart?.fulfillmentInfo?.date} ${delivery_config?.order?.cart?.fulfillmentInfo?.slot?.to}`
+                                     ),
+                                  },
+                               },
+                               confirmation: {
+                                  photo: {
+                                     data: {},
+                                     isRequired: false,
+                                  },
+                                  idProof: {
+                                     data: {},
+                                     isRequired: false,
+                                  },
+                                  signature: {
+                                     data: {},
+                                     isRequired: false,
+                                  },
+                               },
+                               dropoffInfo: {
+                                  ...(delivery_config?.order?.cart?.customer &&
+                                     Object.keys(
+                                        delivery_config?.order?.cart?.customer
+                                     ).length > 0 && {
+                                        customerEmail:
+                                           delivery_config?.order?.cart
+                                              ?.customer?.customerEmail,
+                                        customerPhone:
+                                           delivery_config?.order?.cart
+                                              ?.customer?.customerPhone,
+                                        customerLastName:
+                                           delivery_config?.order?.cart
+                                              ?.customer?.customerLastName,
+                                        customerFirstName:
+                                           delivery_config?.order?.cart
+                                              ?.customer?.customerFirstName,
+                                        ...('address' in
+                                           delivery_config?.order?.cart &&
+                                           delivery_config?.order?.cart
+                                              ?.address &&
+                                           Object.keys(
+                                              delivery_config?.order?.cart
+                                                 ?.address
+                                           ).length > 0 && {
+                                              customerAddress: {
+                                                 line1: delivery_config?.order
+                                                    ?.cart?.address?.line1,
+                                                 line2: delivery_config?.order
+                                                    ?.cart?.address?.line2,
+                                                 city: delivery_config?.order
+                                                    ?.cart?.address?.city,
+                                                 state: delivery_config?.order
+                                                    ?.cart?.address?.state,
+                                                 zipcode:
+                                                    delivery_config?.order?.cart
+                                                       ?.address?.zipcode,
+                                                 country:
+                                                    delivery_config?.order?.cart
+                                                       ?.address?.country,
+                                                 notes: delivery_config?.order
+                                                    ?.cart?.address?.notes,
+                                                 label: delivery_config?.order
+                                                    ?.cart?.address?.label,
+                                                 landmark:
+                                                    delivery_config?.order?.cart
+                                                       ?.address?.landmark,
+                                              },
+                                           }),
+                                     }),
+                               },
+                            },
+                         }),
+                    return: {
+                       status: {
+                          value: 'WAITING',
+                          timeStamp: '',
+                          description: '',
+                          data: {},
+                       },
+                       window: {
+                          requested: {
+                             id: '',
+                             buffer: '',
+                             startsAt: '',
+                             endsAt: '',
+                          },
+                          approved: {
+                             id: '',
+                             startsAt: '',
+                             endsAt: '',
+                          },
+                       },
+                       confirmation: {
+                          photo: {
+                             isRequired: false,
+                             data: {},
+                          },
+                          signature: {
+                             isRequired: false,
+                             data: {},
+                          },
+                          idProof: {
+                             isRequired: false,
+                             data: {},
+                          },
+                       },
+                       returnInfo: {
+                          //   organizationId: process.env.ORGANIZATION_ID,
+                          //   organizationName: settings?.brand?.name,
+                          //   organizationPhone: settings?.contact?.phoneNo,
+                          //   organizationEmail: settings?.contact?.email,
+                          //   organizationAddress: {
+                          //      line1: settings?.address?.line1,
+                          //      line2: settings?.address?.line2,
+                          //      city: settings?.address?.city,
+                          //      state: settings?.address?.state,
+                          //      country: settings?.address?.country,
+                          //      zipcode: settings?.address?.zip,
+                          //      latitude: settings?.address?.lat,
+                          //      longitude: settings?.address?.lng,
+                          //   },
+                          organizationId: 133,
+                          organizationName: 'Dailykit',
+                          organizationPhone: '9910270925',
+                          organizationEmail: 'st.deepak15@gmail.com',
+                          organizationAddress: {
+                             line1: 'Street-32,east burj',
+                             line2: 'mullaperiyar',
+                             city: 'kochi',
+                             state: 'Kerala',
+                             country: 'India',
+                             zipcode: '685532',
+                             latitude: '9.956297',
+                             longitude: '76.332486',
+                          },
+                       },
+                    },
+                 },
               }
             : null,
-         append: {
-            deliveryInfo: {
-               deliveryId: '',
-               webhookUrl: '',
-               deliveryCompany: {
-                  logo: selectedService.logo,
-                  name: selectedService.companyName,
-                  ...(selectedService.isThirdParty && {
-                     id: selectedService.partnershipId,
-                  }),
-               },
-               deliveryFee: {
-                  value: '',
-                  unit: '',
-               },
-               tracking: {
-                  location: {
-                     isAvailable: false,
-                     longitude: '',
-                     latitude: '',
-                  },
-                  code: {
-                     isAvailable: false,
-                     value: '',
-                     url: '',
-                  },
-                  sms: {
-                     isAvailable: false,
-                  },
-                  eta: '',
-               },
-               orderInfo: {
-                  products: [].concat(
-                     ...delivery_config?.order?.cart?.products.map(product => {
-                        return product.items.map(item => {
-                           return {
-                              id: item.productId,
-                              name: item.displayName,
-                              quantity: item?.displayUnit || 1,
-                              price: item?.price * 100 || 0,
-                           }
-                        })
-                     })
-                  ),
-               },
-               deliveryRequest: {
-                  status: {
-                     value: 'WAITING',
-                     timeStamp: '',
-                     description: '',
-                     data: {},
-                  },
-                  distance: {
-                     value: 0,
-                     unit: 'mile',
-                  },
-               },
-               assigned: {
-                  status: {
-                     value: 'WAITING',
-                     timeStamp: '',
-                     description: '',
-                     data: {},
-                  },
-                  driverInfo: {
-                     driverFirstName: '',
-                     driverLastName: '',
-                     driverPhone: '',
-                     driverPicture: '',
-                  },
-                  vehicleInfo: {
-                     vehicleType: '',
-                     vehicleMake: '',
-                     vehicleModel: '',
-                     vehicleColor: '',
-                     vehicleLicensePlateNumber: '',
-                     vehicleLicensePlateState: '',
-                  },
-               },
-               pickup: {
-                  window: {
-                     ...(isPickup(
-                        delivery_config?.order?.cart.fulfillmentInfo.type
-                     )
-                        ? {
-                             approved: {
-                                startsAt: formatTime(
-                                   delivery_config?.order?.cart.fulfillmentInfo
-                                      .slot.from
-                                ),
-                                endsAt: formatTime(
-                                   delivery_config?.order?.cart.fulfillmentInfo
-                                      .slot.to
-                                ),
-                             },
-                          }
-                        : { approved: {} }),
-                  },
-                  status: {
-                     value: 'WAITING',
-                  },
-                  confirmation: {
-                     photo: {
-                        data: {},
-                        isRequired: false,
-                     },
-                     idProof: {
-                        data: {},
-                        isRequired: false,
-                     },
-                     signature: {
-                        data: {},
-                        isRequired: false,
-                     },
-                  },
-                  pickupInfo: {
-                     organizationId: process.env.ORGANIZATION_ID,
-                     organizationName: settings.brand.name,
-                     organizationPhone: settings.contact.phoneNo,
-                     organizationEmail: settings.contact.email,
-                     organizationAddress: {
-                        line1: settings.address.line1,
-                        line2: settings.address.line2,
-                        city: settings.address.city,
-                        state: settings.address.state,
-                        country: settings.address.country,
-                        zipcode: settings.address.zip,
-                        latitude: settings.address.lat,
-                        longitude: settings.address.lng,
-                     },
-                  },
-               },
-               ...(isPickup(delivery_config?.order?.cart.fulfillmentInfo.type)
-                  ? {
-                       dropoff: {
-                          dropoffInfo: {
-                             ...(delivery_config?.order?.cart.customer &&
-                                Object.keys(
-                                   delivery_config?.order?.cart.customer
-                                ).length > 0 && {
-                                   customerEmail:
-                                      delivery_config?.order?.cart.customer
-                                         .customerEmail,
-                                   customerPhone:
-                                      delivery_config?.order?.cart.customer
-                                         .customerPhone,
-                                   customerLastName:
-                                      delivery_config?.order?.cart.customer
-                                         .customerLastName,
-                                   customerFirstName:
-                                      delivery_config?.order?.cart.customer
-                                         .customerFirstName,
-                                }),
-                          },
-                       },
-                    }
-                  : {
-                       dropoff: {
-                          status: {
-                             value: 'WAITING',
-                          },
-                          window: {
-                             approved: {},
-                             requested: {
-                                startsAt: new Date(
-                                   `${delivery_config?.order?.cart.fulfillmentInfo.date} ${delivery_config?.order?.cart.fulfillmentInfo.slot.from}`
-                                ),
-                                endsAt: new Date(
-                                   `${delivery_config?.order?.cart.fulfillmentInfo.date} ${delivery_config?.order?.cart.fulfillmentInfo.slot.to}`
-                                ),
-                             },
-                          },
-                          confirmation: {
-                             photo: {
-                                data: {},
-                                isRequired: false,
-                             },
-                             idProof: {
-                                data: {},
-                                isRequired: false,
-                             },
-                             signature: {
-                                data: {},
-                                isRequired: false,
-                             },
-                          },
-                          dropoffInfo: {
-                             ...(delivery_config?.order?.cart.customer &&
-                                Object.keys(
-                                   delivery_config?.order?.cart.customer
-                                ).length > 0 && {
-                                   customerEmail:
-                                      delivery_config?.order?.cart.customer
-                                         .customerEmail,
-                                   customerPhone:
-                                      delivery_config?.order?.cart.customer
-                                         .customerPhone,
-                                   customerLastName:
-                                      delivery_config?.order?.cart.customer
-                                         .customerLastName,
-                                   customerFirstName:
-                                      delivery_config?.order?.cart.customer
-                                         .customerFirstName,
-                                   ...('customerAddress' in
-                                      delivery_config?.order?.cart
-                                         .customerInfo &&
-                                      delivery_config?.order?.cart.customer
-                                         .customerAddress &&
-                                      Object.keys(
-                                         delivery_config?.order?.cart
-                                            .customerInfo.customerAddress
-                                      ).length > 0 && {
-                                         customerAddress: {
-                                            line1: delivery_config?.order?.cart
-                                               .address.line1,
-                                            line2: delivery_config?.order?.cart
-                                               .address.line2,
-                                            city: delivery_config?.order?.cart
-                                               .address.city,
-                                            state: delivery_config?.order?.cart
-                                               .address.state,
-                                            zipcode:
-                                               delivery_config?.order?.cart
-                                                  .address.zipcode,
-                                            country:
-                                               delivery_config?.order?.cart
-                                                  .address.country,
-                                            notes: delivery_config?.order?.cart
-                                               .address.notes,
-                                            label: delivery_config?.order?.cart
-                                               .address.label,
-                                            landmark:
-                                               delivery_config?.order?.cart
-                                                  .address.landmark,
-                                         },
-                                      }),
-                                }),
-                          },
-                       },
-                    }),
-               return: {
-                  status: {
-                     value: 'WAITING',
-                     timeStamp: '',
-                     description: '',
-                     data: {},
-                  },
-                  window: {
-                     requested: {
-                        id: '',
-                        buffer: '',
-                        startsAt: '',
-                        endsAt: '',
-                     },
-                     approved: {
-                        id: '',
-                        startsAt: '',
-                        endsAt: '',
-                     },
-                  },
-                  confirmation: {
-                     photo: {
-                        isRequired: false,
-                        data: {},
-                     },
-                     signature: {
-                        isRequired: false,
-                        data: {},
-                     },
-                     idProof: {
-                        isRequired: false,
-                        data: {},
-                     },
-                  },
-                  returnInfo: {
-                     organizationId: process.env.ORGANIZATION_ID,
-                     organizationName: settings.brand.name,
-                     organizationPhone: settings.contact.phoneNo,
-                     organizationEmail: settings.contact.email,
-                     organizationAddress: {
-                        line1: settings.address.line1,
-                        line2: settings.address.line2,
-                        city: settings.address.city,
-                        state: settings.address.state,
-                        country: settings.address.country,
-                        zipcode: settings.address.zip,
-                        latitude: settings.address.lat,
-                        longitude: settings.address.lng,
-                     },
-                  },
-               },
-            },
-         },
       })
-      // await updateOrder({
-      //    id: order.id,
-      //    set: selectedService.partnershipId
-      //       ? {
-      //            deliveryPartnershipId: selectedService.partnershipId,
-      //         }
-      //       : null,
-      //    append: {
-      //       deliveryInfo: {
-      //          deliveryCompany: {
-      //             logo: selectedService.logo,
-      //             name: selectedService.companyName,
-      //             ...(selectedService.isThirdParty && {
-      //                id: selectedService.partnershipId,
-      //             }),
-      //          },
-      //       },
-      //    },
-      // })
       closeParentTunnel(1)
    }
 
