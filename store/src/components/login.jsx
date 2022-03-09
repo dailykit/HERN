@@ -70,7 +70,8 @@ export const Login = props => {
 
    //component state
    const [defaultLogin, setDefaultLogin] = useState(loginBy)
-
+   const { configOf } = useConfig()
+   const authConfig = configOf('Auth Methods', 'brand')
    return (
       <div className={`hern-login-v1-container`}>
          <div className="hern-login-v1-content">
@@ -161,19 +162,20 @@ export const Login = props => {
                {/* google or facebook */}
                {socialLogin && <SocialLogin callbackURL={callbackURL} />}
             </section>
-            {defaultLogin !== 'signup' && (
-               <footer className="hern-login-v1__footer">
-                  <span>No account? </span>{' '}
-                  <button
-                     className="hern-login-v1__create-one-btn"
-                     onClick={() => {
-                        setDefaultLogin('signup')
-                     }}
-                  >
-                     Create one
-                  </button>
-               </footer>
-            )}
+            {defaultLogin !== 'signup' &&
+               authConfig.loginSettings?.signup?.value && (
+                  <footer className="hern-login-v1__footer">
+                     <span>No account? </span>{' '}
+                     <button
+                        className="hern-login-v1__create-one-btn"
+                        onClick={() => {
+                           setDefaultLogin('signup')
+                        }}
+                     >
+                        Create one
+                     </button>
+                  </footer>
+               )}
          </div>
       </div>
    )

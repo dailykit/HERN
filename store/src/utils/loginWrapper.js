@@ -19,6 +19,13 @@ export const LoginWrapper = ({ ...props }) => {
          <Login
             {...props}
             socialLogin={authConfig.socialLoginMethods?.socialLogin?.value}
+            singleLoginMethod={
+               authConfig.loginSettings?.singleLoginMethod?.value || false
+            }
+            loginBy={
+               authConfig.loginSettings?.defaultLogInMethod?.value?.value ||
+               'email'
+            }
          />
       </CSSTransition>
    )
