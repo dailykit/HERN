@@ -93,21 +93,21 @@ export const HernLazyImage = ({
                if (removeBg && !(Boolean(width) && Boolean(height))) {
                   // remove only background
                   const fallbackImageUrl = `${get_env(
-                     BASE_BRAND_URL
+                     'BASE_BRAND_URL'
                   )}/server/api/assets/serve-image?removebg=true&src=${imageUrl}`
                   const imageData = await axios.get(fallbackImageUrl)
                   setSrc(imageData.data)
                } else if (!removeBg && Boolean(width) && Boolean(height)) {
                   // resize image only
                   const fallbackImageUrl = `${get_env(
-                     BASE_BRAND_URL
+                     'BASE_BRAND_URL'
                   )}/server/api/assets/serve-image?width=${width}&height=${height}&src=${imageUrl}`
                   const imageData = await axios.get(fallbackImageUrl)
                   setSrc(imageData.data)
                } else if (removeBg && Boolean(width) && Boolean(height)) {
                   // remove background and resize image
                   const fallbackImageUrl = `${get_env(
-                     BASE_BRAND_URL
+                     'BASE_BRAND_URL'
                   )}/server/api/assets/serve-image?width=${width}&height=${height}&src=${imageUrl}&removebg=true`
                   const imageData = await axios.get(fallbackImageUrl)
                   setSrc(imageData.data)
