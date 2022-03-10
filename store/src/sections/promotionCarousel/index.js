@@ -38,9 +38,9 @@ export const PromotionCarousal = props => {
    if (subsError) {
       return <p>Something went wrong</p>
    }
-   if (data.coupons.length === 0) {
-      return <p> No Coupons available</p>
-   }
+   // if (data.coupons.length === 0) {
+   //    return <p> No Coupons available</p>
+   // }
 
    return (
       <div style={{ height: 'inherit', width: '100%' }}>
