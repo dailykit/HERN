@@ -10,6 +10,15 @@
    background-color: #ffffff;
    transition: all 0.4s ease-in-out;
 }
+.hern-login-v1-container__img {
+   display: none;
+   height: 400px;
+   width: auto;
+   > img {
+      height: 100%;
+      width: 100%;
+   }
+}
 .hern-login-v1__css-transition-enter {
    height: 0;
 
@@ -407,14 +416,23 @@
 }
 
 @media only screen and (min-width: 769px) {
+   .hern-login-v1-container__img {
+      display: block;
+   }
    .hern-login-v1-container {
       background-color: rgb(251, 252, 246);
       display: flex;
       justify-content: center;
+      align-items: center;
+      gap: 96px;
+      padding: 16px;
    }
    .hern-login-v1-content {
-      padding: 0;
-      width: 28em;
-      background-color: #ffffff;
+      padding: 20px;
+      max-width: 460px;
+      height: auto;
+      background: #ffffff;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+      border-radius: 12px;
    }
 }
