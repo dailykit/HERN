@@ -9,6 +9,14 @@ export const LoginWrapper = ({ ...props }) => {
    const { configOf, isConfigLoading } = useConfig()
    const authConfig = configOf('Auth Methods', 'brand')
 
+   const loginIllustration = configOf('Login Illustrations', 'brand')
+   const illustration =
+      loginIllustration?.['Login Illustration']?.illustrationImage?.value ||
+      'https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/16322-user_login.png'
+   const showIllustration =
+      loginIllustration?.['Login Illustration']?.showLoginIllustration?.value ||
+      false
+
    React.useEffect(() => {
       if (showLoginPopup) {
          document.querySelector('body').style.overflowY = 'hidden'
@@ -25,12 +33,11 @@ export const LoginWrapper = ({ ...props }) => {
          classNames="hern-login-v1__css-transition"
       >
          <div className="hern-login-v1-container">
-            <div className="hern-login-v1-container__img">
-               <img
-                  src="https://dailykit-133-test.s3.us-east-2.amazonaws.com/misc/07680-user%20login.svg"
-                  alt="Login"
-               />
-            </div>
+            {showIllustration && (
+               <div className="hern-login-v1-container__img">
+                  <img src={illustration} alt="Login" />
+               </div>
+            )}
             <Login
                {...props}
                socialLogin={authConfig.socialLoginMethods?.socialLogin?.value}
