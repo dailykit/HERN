@@ -35,13 +35,14 @@ export const HernLazyImage = ({
    width = null,
    height = null,
    removeBg = false,
+   dataSrc,
    ...rest
 }) => {
-   const imageUrl = rest['data-src']
-   const imageUrlOfParticularDimension = imageUrl
+   // const imageUrl = rest['data-src']
+   const imageUrlOfParticularDimension = dataSrc
       .slice()
       .replace('images', `${width}x${height}`)
-   const imageUrlOfRemovedBg = imageUrl.slice()
+   const imageUrlOfRemovedBg = dataSrc.slice()
    let removebgImageSrc = imageUrlOfRemovedBg.replace('images', 'images-rb')
    removebgImageSrc = removebgImageSrc.replace('jpg', 'png')
    removebgImageSrc = removebgImageSrc.replace('jpeg', 'png')
@@ -59,21 +60,21 @@ export const HernLazyImage = ({
       } else if (removeBg && Boolean(width) && Boolean(height)) {
          return imageUrlOfParticularDimensionWithoutBg
       } else {
-         return imageUrl
+         return dataSrc
       }
    }, [])
-   console.log('finalImageSrc', finalImageSrc)
+
    const [src, setSrc] = React.useState(finalImageSrc)
    const [error, setError] = React.useState(false)
 
-   const propWithoutDataSrc = React.useMemo(() => {
-      const dataSrc = 'data-src'
-      const { [dataSrc]: datasrc, ...withoutDataSrc } = rest
-      return withoutDataSrc
-   }, [rest])
-
    if (!(width && height) && !removeBg) {
-      return <img className={`lazyload ${className}`} {...rest} />
+      return (
+         <img
+            className={`lazyload ${className}`}
+            data-src={dataSrc}
+            {...rest}
+         />
+      )
    }
 
    // removing data-src from rest bcz data-src using dynamically by state
@@ -94,28 +95,28 @@ export const HernLazyImage = ({
                   // remove only background
                   const fallbackImageUrl = `${get_env(
                      'BASE_BRAND_URL'
-                  )}/server/api/assets/serve-image?removebg=true&src=${imageUrl}`
+                  )}/server/api/assets/serve-image?removebg=true&src=${dataSrc}`
                   const imageData = await axios.get(fallbackImageUrl)
                   setSrc(imageData.data)
                } else if (!removeBg && Boolean(width) && Boolean(height)) {
                   // resize image only
                   const fallbackImageUrl = `${get_env(
                      'BASE_BRAND_URL'
-                  )}/server/api/assets/serve-image?width=${width}&height=${height}&src=${imageUrl}`
+                  )}/server/api/assets/serve-image?width=${width}&height=${height}&src=${dataSrc}`
                   const imageData = await axios.get(fallbackImageUrl)
                   setSrc(imageData.data)
                } else if (removeBg && Boolean(width) && Boolean(height)) {
                   // remove background and resize image
                   const fallbackImageUrl = `${get_env(
                      'BASE_BRAND_URL'
-                  )}/server/api/assets/serve-image?width=${width}&height=${height}&src=${imageUrl}&removebg=true`
+                  )}/server/api/assets/serve-image?width=${width}&height=${height}&src=${dataSrc}&removebg=true`
                   const imageData = await axios.get(fallbackImageUrl)
                   setSrc(imageData.data)
                }
                setError(true)
             }
          }}
-         {...propWithoutDataSrc}
+         {...rest}
       />
    )
 }

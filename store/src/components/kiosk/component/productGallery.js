@@ -193,7 +193,7 @@ const ProductGalleryCard = ({ product }) => {
    return (
       <div className="hern-kiosk__product-gallery-card" dir={direction}>
          <HernLazyImage
-            data-src={product.assets.images[0]}
+            dataSrc={product.assets.images[0]}
             alt="p-image"
             className="hern-kiosk__product-gallery-p-image"
          />

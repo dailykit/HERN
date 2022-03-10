@@ -311,7 +311,7 @@ const CartCard = props => {
       <div className="hern-cart-card">
          <div className="hern-cart-card__img">
             <HernLazyImage
-               data-src={productData.image}
+               dataSrc={productData.image}
                alt="p-image"
                width={300}
                height={300}

@@ -2,6 +2,7 @@ import React from 'react'
 import { FaQuoteLeft } from 'react-icons/fa'
 import { BiChevronRight, BiChevronLeft } from 'react-icons/bi'
 import { Carousel } from 'antd'
+import { HernLazyImage } from '../../utils/hernImage'
 
 export const Testimonials = ({ config }) => {
    const content = config.display.review.content
@@ -20,7 +21,7 @@ export const Testimonials = ({ config }) => {
                         <BiChevronLeft color="#fff" size={20} />
                      </span>
                      <div className="hern-testimonials__image">
-                        <img src={img} alt={userName} />
+                        <HernLazyImage dataSrc={img} alt={userName} />
                      </div>
                      <div className="hern-testimonials__content">
                         <span>

@@ -61,7 +61,7 @@ const DeliveryNowIcon = dynamic(() =>
    import('./DeliveryNowIcon').then(promise => promise.DeliveryNowIcon)
 )
 const DineInIcon = dynamic(() =>
-   import('./Dinein').then(promise => promise.DineinTable)
+   import('./Dinein').then(promise => promise.DineInIcon)
 )
 const DineinTable = dynamic(() =>
    import('./DineinTable').then(promise => promise.DineinTable)
@@ -135,6 +135,9 @@ const PlusIcon = dynamic(() =>
 )
 const PlusCircle = dynamic(() =>
    import('./PlusCircle').then(promise => promise.PlusCircle)
+)
+const ProductGalleryBG = dynamic(() =>
+   import('./ProductGalleryBG').then(promise => promise.ProductGalleryBG)
 )
 const RadioIcon = dynamic(() =>
    import('./RadioIcon').then(promise => promise.RadioIcon)
@@ -340,4 +343,5 @@ export {
    DownVector,
    UpVector,
    ProfileSidebarIcon,
+   ProductGalleryBG,
 }

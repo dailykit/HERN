@@ -117,7 +117,7 @@ export const ProductCard = props => {
                                  ></div>
                                  <HernLazyImage
                                     // src={each}
-                                    data-src={each}
+                                    dataSrc={each}
                                     alt={data.name}
                                     className={classNames(
                                        'hern-product-card__image',
