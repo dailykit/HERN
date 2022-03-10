@@ -9,6 +9,14 @@ export const LoginWrapper = ({ ...props }) => {
    const { configOf, isConfigLoading } = useConfig()
    const authConfig = configOf('Auth Methods', 'brand')
 
+   React.useEffect(() => {
+      if (showLoginPopup) {
+         document.querySelector('body').style.overflowY = 'hidden'
+      }
+      return () => {
+         document.querySelector('body').style.overflowY = 'auto'
+      }
+   }, [showLoginPopup])
    return (
       <CSSTransition
          in={showLoginPopup}
