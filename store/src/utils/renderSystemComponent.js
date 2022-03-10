@@ -1,12 +1,34 @@
 import axios from 'axios'
-import ReactHtmlParser from 'react-html-parser'
+import ReactHtmlParser, { convertNodeToElement } from 'react-html-parser'
 import { renderComponentByName } from '../utils'
 const renderComponent = (fold, options) => {
    try {
       if (fold.component) {
          return renderComponentByName(fold, options)
       } else if (fold.content) {
-         return ReactHtmlParser(fold.content)
+         // parser = new DOMParser()
+         // doc = parser.parseFromString(fold.content, 'text/html')
+         // let images = doc.firstChild.getElementsByTagName('img')
+
+         // for (let i = 0; i < images.length; i++) {
+         //    images[i].classList.add('lazyload')
+         //    const scrValue = images[i].getAttribute('src')
+         //    images[i].setAttribute('data-src', scrValue)
+         // }
+         // parser = new DOMParser()
+         // doc = parser.parseFromString(fold.content, 'text/html')
+
+         return ReactHtmlParser(fold.content, {
+            transform: function (node, index) {
+               if (node.type === 'tag' && node.name === 'img') {
+                  node.attribs['data-src'] = node.attribs.src
+                  delete node.attribs.src
+                  node.attribs.class =
+                     (node.attribs?.class || '') + ' ' + 'lazyload'
+                  return undefined
+               }
+            },
+         })
       } else {
          // const url = get_env('EXPRESS_URL') + `/template/hydrate-fold`
          const url = 'http://localhost:4000' + `/template/hydrate-fold`

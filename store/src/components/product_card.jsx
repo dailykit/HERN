@@ -7,9 +7,9 @@ import { ModifierPopup } from './index'
 import classNames from 'classnames'
 import { EditIcon } from '../assets/icons'
 import { HernLazyImage } from '../utils/hernImage'
-if (isClient) {
-   import('lazysizes/plugins/unveilhooks/ls.unveilhooks').then(module => module)
-}
+// if (isClient) {
+//    import('lazysizes/plugins/unveilhooks/ls.unveilhooks').then(module => module)
+// }
 
 export const ProductCard = props => {
    const {
@@ -112,7 +112,9 @@ export const ProductCard = props => {
                                              maintainRatio,
                                        }
                                     )}
-                                    // style={{ backgroundImage: `url(${each})` }}
+                                    style={{
+                                       backgroundImage: `url(https://dailykit-502-chefbaskit1.s3.us-east-2.amazonaws.com/images/64330-Lal-Maas.jpg)`,
+                                    }}
                                     data-bg={each}
                                  ></div>
                                  <HernLazyImage

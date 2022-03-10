@@ -2,9 +2,9 @@ import React from 'react'
 import ReactImageFallback from 'react-image-fallback'
 import { get_env } from './get_env'
 import axios from 'axios'
-import 'lazysizes'
-import 'lazysizes/plugins/parent-fit/ls.parent-fit'
-import 'lazysizes/plugins/attrchange/ls.attrchange'
+// import 'lazysizes'
+// import 'lazysizes/plugins/parent-fit/ls.parent-fit'
+// import 'lazysizes/plugins/attrchange/ls.attrchange'
 
 export const hernImage = props => {
    const imageSrc = props.imageSrc
