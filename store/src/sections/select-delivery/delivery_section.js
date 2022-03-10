@@ -143,7 +143,7 @@ export const DeliverySection = ({ planId }) => {
                         <CheckIcon className={iconClasses} size={18} />
                      </div>
                      <section className="hern-delivery__delivery-days__content">
-                        <label className="hern-delivery__delivery-days__label">
+                        <label className="hern-delivery__delivery-days__label" data-translation="true" data-original-value={rrulestr(day.rrule).toText()}  >
                            {rrulestr(day.rrule).toText()}
                         </label>
                         {day.zipcodes.length > 0 && (
@@ -200,7 +200,7 @@ export const DeliverySection = ({ planId }) => {
                         />
                      </div>
                      <section className="hern-delivery__delivery-days__content">
-                        <label className="hern-delivery__delivery-days__label">
+                        <label className="hern-delivery__delivery-days__label" data-translation="true" data-original-value={rrulestr(day.rrule).toText()}>
                            {rrulestr(day.rrule).toText()}
                         </label>
                         {day.zipcodes.length > 0 && (
