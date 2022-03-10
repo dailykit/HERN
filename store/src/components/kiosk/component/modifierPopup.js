@@ -157,7 +157,7 @@ export const KioskModifier = props => {
       }
    }
    // add product(s) to cartItem
-   const handleAddOnCart = () => {
+   const handleAddOnCart = async () => {
       //check category fulfillment conditions
       const allSelectedOptions = [
          ...selectedOptions.single,
@@ -171,7 +171,7 @@ export const KioskModifier = props => {
             allSelectedOptions.map(x => x.cartItem)
          )
 
-         addToCart(cartItem, quantity)
+         await addToCart(cartItem, quantity)
          if (edit) {
             methods.cartItems.delete({
                variables: {
@@ -277,7 +277,7 @@ export const KioskModifier = props => {
             )
          }
 
-         addToCart(cartItem, quantity)
+         await addToCart(cartItem, quantity)
          if (edit) {
             methods.cartItems.delete({
                variables: {

@@ -46,5 +46,22 @@
    "Current changes will lose do you wish to continue?": "سوف يتم إلغاء التعديلات الحالية , هل ترغب في الإستمرار ؟",
    "Add": "إضافة",
    "Item Total": "مجموع الأصناف",
-   "Reset": "إعادة"
+   "Reset": "إعادة",
+   "VAT": "ضربة القيمة المضافه ",
+   "No": "من غير",
+   "Extra And Add": "إضافات",
+   "Ice Cream": "آيس كريم",
+   "Something went wrong": "حدث خطأ",
+   "PAY VIA CARD": "الدفع عن طريق البطاقه",
+   "Printed your receipt successfully": "تمت طباعة الإيصال بنجاح",
+   "Taking you back to the home page shortly": "سوف يتم إعادتكم للصفحه الرئيسية بعد قليل",
+   "Successfully placed your order": "تم إنشاء طلبكم بنجاح ",
+   "You will be redirected to your page shortly": "سوف يتم إعادتكم للصفحه الخاصه بكم بعد قليل",
+   "Tap or Insert your card": "مرر أو أدخل البطاقة ",
+   "Please tap or insert your card to complete the payment": "المرجو تمرير أو إدخال البطاقة لإتمام عملية الدفع ",
+   "Failed to print your receipt.": "تعثر طبع الإيصال ",
+   "Something went wrong while printing please try again!": "حدث خطأ أثناء طباعة الإيصال , المرجو المحاولة مره أخرى ",
+   "Retry print receipt": "إعادة طباعة الإيصال ",
+   "Choose a payment method": "إختر طريقة الدفع ",
+   "PAY AT COUNTER": "الدفع على الكاونتر"
 }

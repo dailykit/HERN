@@ -37,10 +37,10 @@ const ChefIcon = dynamic(() =>
    import('./ArrowLeft').then(promise => promise.ChefIcon)
 )
 const CloseIcon = dynamic(() =>
-   import('./ArrowLeft').then(promise => promise.CloseIcon)
+   import('./Close').then(promise => promise.CloseIcon)
 )
 const CouponIcon = dynamic(() =>
-   import('./ArrowLeft').then(promise => promise.CouponIcon)
+   import('./CouponIcon').then(promise => promise.CouponIcon)
 )
 const CouponTicketIcon = dynamic(() =>
    import('./CouponTicketIcon').then(promise => promise.CouponTicketIcon)
@@ -70,7 +70,7 @@ const DistanceIcon = dynamic(() =>
    import('./DistanceIcon').then(promise => promise.DistanceIcon)
 )
 const EditIcon = dynamic(() =>
-   import('./Edit').then(promise => promise.EmptyCart)
+   import('./Edit').then(promise => promise.EditIcon)
 )
 const EmptyCart = dynamic(() =>
    import('./EmptyCart').then(promise => promise.EmptyCart)

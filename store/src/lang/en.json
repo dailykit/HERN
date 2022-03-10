@@ -46,5 +46,21 @@
    "Current changes will lose do you wish to continue?": "Current changes will lose do you wish to continue?",
    "Add": "Add",
    "Item Total": "Item Total",
-   "Reset": "Reset"
+   "VAT": "VAT",
+   "No": "No",
+   "Extra And Add": "Extra And Add",
+   "Ice Cream": "Ice Cream",
+   "Something went wrong": "Something went wrong",
+   "PAY VIA CARD": "PAY VIA CARD",
+   "Printed your receipt successfully": "Printed your receipt successfully",
+   "Taking you back to the home page shortly": "Taking you back to the home page shortly",
+   "Successfully placed your order": "Successfully placed your order",
+   "You will be redirected to your page shortly": "You will be redirected to your page shortly",
+   "Tap or Insert your card": "Tap or Insert your card",
+   "Please tap or insert your card to complete the payment": "Please tap or insert your card to complete the payment",
+   "Failed to print your receipt": "Failed to print your receipt",
+   "Something went wrong while printing please try again!": "Something went wrong while printing please try again!",
+   "Retry print receipt": "Retry print receipt",
+   "Choose a payment method": "Choose a payment method",
+   "PAY AT COUNTER": "PAY AT COUNTER"
 }

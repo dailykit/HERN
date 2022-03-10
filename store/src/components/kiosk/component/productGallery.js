@@ -18,7 +18,7 @@ import { HernLazyImage } from '../../../utils/hernImage'
 
 export const ProductGalleryKiosk = ({ config }) => {
    const { brand, isConfigLoading, kioskDetails, configOf } = useConfig()
-   const { locale, dynamicTrans } = useTranslation()
+   const { locale, dynamicTrans, t } = useTranslation()
 
    const argsForByLocation = React.useMemo(
       () => ({
@@ -92,7 +92,7 @@ export const ProductGalleryKiosk = ({ config }) => {
       return <Loader inline />
    }
    if (status == 'error') {
-      return <p>Something went wrong</p>
+      return <p>{t('Something went wrong')}</p>
    }
    return (
       <div className="hern-kiosk__product-gallery-container">
