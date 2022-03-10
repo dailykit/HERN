@@ -74,7 +74,8 @@ const ConfigUI = ({
          ...prev,
          ...updatedConfig,
       }))
-      setSaveAllSettings(configJSON)
+      //only for brandSettings
+      !noneditMode && setSaveAllSettings(configJSON)
    }
 
    const handleToggle = key => {
@@ -197,6 +198,7 @@ const ConfigUI = ({
       }
    }, [alertShow])
 
+   console.log(editMode, "editMode", mode)
    const handleEdit = () => {
       //after saving
       if (editMode) {
@@ -270,7 +272,7 @@ const ConfigUI = ({
                   }
                   style={{ width: '100%' }}
                   extra={
-                     editMode && mode == 'editing' ? (
+                     (editMode && mode == 'editing' || noneditMode) ? (
                         <>
                            <TextButton
                               type="solid"
