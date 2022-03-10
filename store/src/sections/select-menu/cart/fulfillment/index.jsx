@@ -7,7 +7,7 @@ import classNames from 'classnames'
 
 import { useMenu } from '../../state'
 import { useConfig } from '../../../../lib'
-import { useUser } from '../../../../context'
+import { useTranslation, useUser } from '../../../../context'
 import { Loader, Tunnel } from '../../../../components'
 import { CheckIcon } from '../../../../assets/icons'
 import { ZIPCODE, MUTATIONS, UPDATE_CART } from '../../../../graphql'
@@ -24,7 +24,7 @@ const Fulfillment = () => {
    const { user } = useUser()
    const { addToast } = useToasts()
    const { brand, configOf } = useConfig()
-
+   const { t } = useTranslation()
    const [isAddressListOpen, setIsAddressListOpen] = React.useState(false)
 
    const store = configOf(
@@ -50,7 +50,9 @@ const Fulfillment = () => {
             },
          }).then(({ data: { updateOccurenceCustomer = {} } = {} }) => {
             if (isSkipped !== updateOccurenceCustomer?.isSkipped) {
-               addToast('This week has been unskipped', { appearance: 'info' })
+               addToast(t('This week has been unskipped'), {
+                  appearance: 'info',
+               })
             }
          })
          dispatch({ type: 'CART_STATE', payload: 'SAVED' })
@@ -72,13 +74,15 @@ const Fulfillment = () => {
                },
                _set: { isSkipped: false, cartId: id },
             },
-         }).then(({ data: { updateOccurenceCustomer = {} } = {} }) => {
-            if (isSkipped !== updateOccurenceCustomer?.isSkipped) {
-               addToast('This week has been unskipped', { appearance: 'info' })
-            }
          })
-
-         dispatch({ type: 'CART_STATE', payload: 'SAVED' })
+            .then(({ data: { updateOccurenceCustomer = {} } = {} }) => {
+               if (isSkipped !== updateOccurenceCustomer?.isSkipped) {
+                  addToast(t('This week has been unskipped'), {
+                     appearance: 'info',
+                  })
+               }
+            })
+            .dispatch({ type: 'CART_STATE', payload: 'SAVED' })
       },
       onError: error => {
          dispatch({ type: 'CART_STATE', payload: 'SAVED' })
@@ -123,7 +127,7 @@ const Fulfillment = () => {
       }
 
       if (isEmpty(fulfillmentInfo)) {
-         return addToast('Fulfillment mode is not available!', {
+         return addToast(t('Fulfillment mode is not available!'), {
             appearance: 'error',
          })
       }
@@ -134,7 +138,7 @@ const Fulfillment = () => {
                _set: { fulfillmentInfo },
             },
          }).then(() =>
-            addToast('Your fulfillment preference has been saved', {
+            addToast(t('Your fulfillment preference has been saved'), {
                appearance: 'success',
             })
          )
@@ -167,7 +171,7 @@ const Fulfillment = () => {
                },
             },
          }).then(() =>
-            addToast('Your fulfillment preference has been saved', {
+            addToast(t('Your fulfillment preference has been saved'), {
                appearance: 'success',
             })
          )
@@ -176,7 +180,9 @@ const Fulfillment = () => {
    return (
       <>
          <section className="hern-cart-fulfillment">
-            <h4 className="hern-cart-fulfillment__heading">Fulfillment Mode</h4>
+            <h4 className="hern-cart-fulfillment__heading">
+               {t('Fulfillment Mode')}
+            </h4>
             {loading ? (
                <Loader inline />
             ) : (
@@ -215,7 +221,7 @@ const Fulfillment = () => {
                         _set: { address },
                      },
                   }).then(() => {
-                     addToast('Address updated for delivery!', {
+                     addToast(t('Address updated for delivery!'), {
                         appearance: 'success',
                      })
                      setIsAddressListOpen(false)
@@ -237,6 +243,7 @@ const FulfillmentOption = ({
    setFulfillment,
    setIsAddressListOpen,
 }) => {
+   const { t } = useTranslation()
    const isActive = state.occurenceCustomer?.validStatus?.hasCart
       ? state.occurenceCustomer?.cart?.fulfillmentInfo?.type?.includes(type)
       : state?.fulfillment?.type?.includes(type)
@@ -256,21 +263,23 @@ const FulfillmentOption = ({
             {type === 'DELIVERY' && (
                <>
                   {zipcode.deliveryPrice === 0 ? (
-                     <h3>Free Delivery</h3>
+                     <h3>{t('Free Delivery')}</h3>
                   ) : (
                      <h3>
-                        Delivery at {formatCurrency(zipcode.deliveryPrice)}
+                        <span>{t('Delivery at')}</span>
+                        {formatCurrency(zipcode.deliveryPrice)}
                      </h3>
                   )}
                   <p className="hern-cart-fulfillment__delivery-details">
-                     Your box will be delivered on{' '}
+                     <span>{t('Your box will be delivered on')}</span>
                      <span>
                         {moment(state?.week?.fulfillmentDate).format('MMM D')}
-                        &nbsp;between {zipcode?.deliveryTime?.from}
+                        &nbsp;<span>{t('between')}</span>
+                        {zipcode?.deliveryTime?.from}
                         &nbsp;-&nbsp;
                         {zipcode?.deliveryTime?.to}
-                     </span>{' '}
-                     at{' '}
+                     </span>
+                     <span>{t('at')}</span>
                      <span>
                         {normalizeAddress(
                            state?.occurenceCustomer?.cart?.address ||
@@ -282,12 +291,13 @@ const FulfillmentOption = ({
             )}
             {type === 'PICKUP' && (
                <>
-                  <h3>Pick Up</h3>
+                  <h3>{t('Pick Up')}</h3>
                   <p className="hern-cart-fulfillment__pickup-details">
-                     Pickup your box in between{' '}
-                     {moment(state?.week?.fulfillmentDate).format('MMM D')},{' '}
-                     {zipcode?.pickupOption?.time?.from} -{' '}
-                     {zipcode?.pickupOption?.time?.to} from{' '}
+                     <span> {t('Pickup your box in between')} </span>
+                     {moment(state?.week?.fulfillmentDate).format(
+                        'MMM D'
+                     )}, {zipcode?.pickupOption?.time?.from} -{' '}
+                     {zipcode?.pickupOption?.time?.to} <span> {t('from')}</span>{' '}
                      {normalizeAddress(zipcode?.pickupOption?.address)}
                   </p>
                </>
@@ -301,7 +311,7 @@ const FulfillmentOption = ({
                   setIsAddressListOpen(true)
                }}
             >
-               Change
+               {t('Change')}
             </span>
          )}
       </section>

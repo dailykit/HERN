@@ -7,7 +7,7 @@ import { useToasts } from 'react-toast-notifications'
 
 import { useMenu } from './state'
 import { useConfig } from '../../lib'
-import { useUser } from '../../context'
+import { useUser, useTranslation } from '../../context'
 import { HelperBar, Loader } from '../../components'
 import { formatCurrency, getRoute, isClient, debounce } from '../../utils'
 import { SkeletonProduct } from './skeletons'
@@ -20,6 +20,7 @@ const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 export const Menu = () => {
    const { user } = useUser()
    const { addToast } = useToasts()
+   const { t, dynamicTrans } = useTranslation()
    const { state } = useMenu()
    const { configOf, buildImageUrl, noProductImage } = useConfig()
    const { loading, data: { categories = [] } = {} } = useQuery(
@@ -67,6 +68,14 @@ export const Menu = () => {
          })
       }
    }, [categories, loading])
+   React.useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+
+   }, [])
+
 
    if (loading) return <SkeletonProduct />
    if (isEmpty(categories))
@@ -74,7 +83,7 @@ export const Menu = () => {
          <main className="hern-select-menu__menu__helper-bar">
             <HelperBar>
                <HelperBar.SubTitle>
-                  No products available yet!
+                  {t('No products available yet!')}
                </HelperBar.SubTitle>
             </HelperBar>
          </main>
@@ -84,7 +93,7 @@ export const Menu = () => {
          {categories.map(category => (
             <section key={category.name} className="hern-select-menu__menu">
                <h4 className="hern-select-menu__menu__category-name">
-                  {category.name} (
+                  <span data-translation="true" data-original-value={category.name}>{category.name}</span> (
                   {
                      uniqBy(category.productsAggregate.nodes, v =>
                         [
@@ -122,7 +131,7 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
    const router = useRouter()
    const { addToast } = useToasts()
    const { state, methods } = useMenu()
-
+   const { t, dynamicTrans } = useTranslation()
    const openRecipe = () =>
       router.push(getRoute(`/recipes/${node?.productOption?.id}`))
 
@@ -137,12 +146,12 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
    // }, 500)
    const add = (item, node) => {
       if (state.occurenceCustomer?.betweenPause) {
-         return addToast('You have paused your plan!', {
+         return addToast(t('You have paused your plan!'), {
             appearance: 'warning',
          })
       }
       if (state.occurenceCustomer?.validStatus?.itemCountValid) {
-         addToast("You're cart is already full!", {
+         addToast(t("You're cart is already full!"), {
             appearance: 'warning',
          })
          return
@@ -210,6 +219,12 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
             </style>`
          )
       }
+
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+
    }, [])
 
    return (
@@ -250,17 +265,19 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
             )}
          </div>
          {node.addOnLabel && (
-            <span className="hern-select-menu__menu__product__add-on-label">
+            <span className="hern-select-menu__menu__product__add-on-label" data-translation="true" data-original-value={node.addOnLabel} >
                {node.addOnLabel}
             </span>
          )}
          <section className="hern-select-menu__menu__product__link">
             <CheckIcon size={16} className={checkIconClasses} />
             <a theme={theme} onClick={openRecipe}>
-               {product.name} - {product.label}
+               <span data-translation="true" data-original-value={product.name}>{product.name}</span>
+               {"-"}
+               <span data-translation="true" data-original-value={product.label}>{product.label}</span>
             </a>
          </section>
-         <p className="hern-select-menu__menu__product__link__additional-text">
+         <p className="hern-select-menu__menu__product__link__additional-text" data-translation="true" data-original-value={product?.additionalText}>
             {product?.additionalText}
          </p>
          {console.log(state.occurenceCustomer?.validStatus?.itemCountValid)}
@@ -275,19 +292,19 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
                onClick={() => add(node.cartItem, node)}
                title={
                   node.isAvailable
-                     ? 'Add product'
-                     : 'This product is out of stock.'
+                     ? <span>{t('Add product')}</span>
+                     : <span>{t('This product is out of stock.')}</span>
                }
             >
                {node.isAvailable ? (
                   <>
-                     {isActive ? 'REPEAT' : 'ADD'}
+                     {isActive ? t('REPEAT') : t('ADD')}
                      {node.addOnPrice > 0 && ' + '}
                      {node.addOnPrice > 0 &&
                         formatCurrency(Number(node.addOnPrice) || 0)}
                   </>
                ) : (
-                  'Out of Stock'
+                  t('Out of Stock')
                )}
             </button>
          )}

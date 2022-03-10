@@ -6,7 +6,7 @@ import { useToasts } from 'react-toast-notifications'
 import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks'
 
 import { useConfig } from '../../lib'
-import { useUser } from '../../context'
+import { useTranslation, useUser } from '../../context'
 import { PageLoader } from '../../components'
 import {
    ZIPCODE,
@@ -32,6 +32,7 @@ const initialState = {
 }
 
 const reducers = (state, { type, payload }) => {
+   const { t } = useTranslation()
    switch (type) {
       case 'SET_WEEK': {
          return {
@@ -55,7 +56,8 @@ const reducers = (state, { type, payload }) => {
             occurences: payload,
          }
       default:
-         return 'No such type!'
+         return t('No such type!')
+
    }
 }
 
@@ -85,6 +87,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
    const router = useRouter()
    const { user } = useUser()
    const { addToast } = useToasts()
+   const { t } = useTranslation()
    const { brand, configOf } = useConfig()
    const [cart, setCart] = React.useState({})
    const [fulfillment, setFulfillment] = React.useState({})
@@ -144,7 +147,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
 
    if (!occurenceCustomerLoading && occurenceCustomerError) {
       setIsCustomerLoading(false)
-      addToast('Failed to fetch week details', {
+      addToast(t('Failed to fetch week details'), {
          appearance: 'error',
       })
    }
@@ -324,7 +327,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
             subscription?.occurences?.length === 0 &&
             user?.subscriptionId
          ) {
-            addToast('No weeks are available for menu selection.', {
+            addToast(t('No weeks are available for menu selection.'), {
                appearance: 'error',
             })
          }
@@ -383,7 +386,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
    const store = configOf('Store Availability', 'availability')?.storeAvailability
    const addProduct = (item, product) => {
       dispatch({ type: 'CART_STATE', payload: 'SAVING' })
-
+      const { t } = useTranslation()
 
       const isSkipped = occurenceCustomer?.isSkipped
       if (occurenceCustomer?.validStatus?.hasCart) {
@@ -463,7 +466,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
             },
          })
             .then(({ data: { createCartItem = {} } = {} } = {}) => {
-               addToast(`Successfully added the product.`, {
+               addToast(t(`Successfully added the product.`), {
                   appearance: 'info',
                })
 
@@ -489,7 +492,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
                   }
                   if (updateOccurenceCustomer?.isSkipped !== isSkipped) {
                      if (!updateOccurenceCustomer?.isSkipped) {
-                        addToast('This week has been unskipped.', {
+                        addToast(t('This week has been unskipped.'), {
                            appearance: 'info',
                         })
                      }
@@ -604,7 +607,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
                insertCartItem({
                   variables: { object: cart },
                }).then(({ data: { createCartItem = {} } = {} } = {}) => {
-                  addToast(`Successfully added the product.`, {
+                  addToast(t(`Successfully added the product.`), {
                      appearance: 'info',
                   })
                   updateOccurenceCustomer({
@@ -630,7 +633,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
                      }
                      if (updateOccurenceCustomer?.isSkipped !== isSkipped) {
                         if (!updateOccurenceCustomer?.isSkipped) {
-                           addToast('This week has been unskipped.', {
+                           addToast(t('This week has been unskipped.'), {
                               appearance: 'info',
                            })
                         }

@@ -129,6 +129,7 @@ export const CartPanel = ({ noSkip, isCheckout }) => {
 const CartBar = ({ setIsCartPanelOpen }) => {
    const { state } = useMenu()
    const { user } = useUser()
+   const { t } = useTranslation()
    return (
       <section
          className="hern-select-menu__cart__cart-bar"
