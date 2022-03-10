@@ -31,16 +31,16 @@ const CheckIcon = dynamic(() =>
    import('./Close').then(promise => promise.CheckIcon)
 )
 const CheckBoxIcon = dynamic(() =>
-   import('./CouponIcon').then(promise => promise.CheckBoxIcon)
+   import('./Checkbox').then(promise => promise.CheckBoxIcon)
 )
 const ChefIcon = dynamic(() =>
-   import('./ArrowLeft').then(promise => promise.ChefIcon)
+   import('./Chef').then(promise => promise.ChefIcon)
 )
 const CloseIcon = dynamic(() =>
-   import('./ArrowLeft').then(promise => promise.CloseIcon)
+   import('./Close').then(promise => promise.CloseIcon)
 )
 const CouponIcon = dynamic(() =>
-   import('./ArrowLeft').then(promise => promise.CouponIcon)
+   import('./CouponIcon').then(promise => promise.CouponIcon)
 )
 const CouponTicketIcon = dynamic(() =>
    import('./CouponTicketIcon').then(promise => promise.CouponTicketIcon)
