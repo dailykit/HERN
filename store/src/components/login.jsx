@@ -141,6 +141,7 @@ export const Login = props => {
                   <div style={{ margin: '1em' }}>
                      <Button
                         className="hern-login-login-switcher-btn"
+                        variant="outline"
                         onClick={() => {
                            defaultLogin === 'email'
                               ? setDefaultLogin('otp')

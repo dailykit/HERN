@@ -65,7 +65,7 @@
    margin: 1em;
    padding: 1em 0.5em;
    span {
-      color: #367bf5;
+      color: var(--hern-accent);
       cursor: pointer;
    }
 }
@@ -85,12 +85,13 @@
 
 .hern-login-v1__input {
    height: 40px;
-   background: #f4f4f4;
+   background: #38a1691a;
    border-radius: 8px;
    padding: 0 10px;
    outline: none;
    &:focus {
-      outline: 1px solid #367bf5;
+      background: #38a1691a;
+      outline: 1px solid var(--hern-accent);
    }
 }
 
@@ -115,7 +116,7 @@
    font-weight: 600;
    font-size: 14px;
    line-height: 18px;
-   color: #367bf5;
+   color: var(--hern-accent);
    cursor: pointer;
 }
 
@@ -132,7 +133,7 @@
    margin-top: 2.5em;
    width: 100%;
    border-radius: 20px;
-   background-color: #367bf5 !important;
+   // background-color: var(--hern-accent) !important;
    transform: none !important;
    box-shadow: none !important;
    color: '#ffffff' !important;
@@ -141,9 +142,10 @@
 }
 
 .hern-login-v1__login-btn--disabled {
-   background: #367bf580 !important;
+   background: var(--hern-accent) !important;
    cursor: not-allowed;
    color: '#ffffff' !important;
+   opacity: 0.5;
 }
 
 .hern-login-v1-divider-bar {
@@ -155,17 +157,17 @@
       font-weight: 600;
       font-size: 18px;
       line-height: 18px;
-      color: rgba(64, 64, 64, 0.25);
+      color: var(--hern-accent);
    }
 }
 
 .hern-login-login-switcher-btn {
    width: 100%;
    background: #ffffff !important;
-   border: 1px solid #367bf5 !important;
+   border: 1px solid var(--hern-accent) !important;
    box-sizing: border-box;
    border-radius: 20px;
-   color: #367bf5;
+   // color: var(--hern-accent);
    height: 40px;
 }
 
@@ -177,13 +179,14 @@
    margin-top: 1.5em;
    border-radius: 20px !important;
    width: 100%;
-   background-color: #367bf5 !important;
+   background-color: var(--hern-accent) !important;
    color: #ffffff !important;
 }
 
 .hern-login-v1__otp-submit--disabled {
-   background-color: #367bf580 !important;
+   background-color: var(--hern-accent) !important;
    cursor: not-allowed;
+   opacity: 0.5;
 }
 
 .hern-login-v1__otp__phone__input {
@@ -194,7 +197,7 @@
       padding: 0 10px;
       outline: none;
       &:focus {
-         outline: 1px solid #367bf5;
+         outline: 1px solid var(--hern-accent);
       }
    }
 }
@@ -230,17 +233,18 @@
    width: 100%;
    height: 2.5rem;
    // text-transform: uppercase;
-   color: #367bf5;
+   color: var(--hern-accent);
    // letter-spacing: 0.05em;
    border-radius: 20px;
    outline: none !important;
    &:hover {
-      border: 1px solid #367bf5 !important;
+      border: 1px solid var(--hern-accent) !important;
    }
 }
 
 .hern-login-v1__otp__resend--disabled {
    cursor: not-allowed;
+   opacity: 0.5;
    &:hover {
       background: #fff;
    }
@@ -261,7 +265,7 @@
    }
 }
 .hern-login-v1__create-one-btn {
-   color: #367bf5;
+   color: var(--hern-accent);
    outline: none !important;
    background: transparent;
    font-size: 14px;
@@ -279,15 +283,16 @@
    margin-top: 2.5em;
    width: 100%;
    border-radius: 20px;
-   background-color: #367bf5 !important;
+   background-color: var(--hern-accent) !important;
    transform: none !important;
    box-shadow: none !important;
    color: #ffffff;
    height: 40px;
 }
 .hern-forgot-password-v1__submit-btn--disabled {
-   background: #367bf580 !important;
+   background: var(--hern-accent) !important;
    cursor: not-allowed;
+   opacity: 0.5;
 }
 
 .hern-signup-v1 {
@@ -316,7 +321,7 @@
 .hern-signup__referral-code {
    align-self: flex-start;
    margin-bottom: 0.25rem;
-   color: #367bf5;
+   color: var(--hern-accent);
 }
 
 .hern-signup-v1__signup__term {
@@ -330,11 +335,11 @@
 }
 
 .hern-signup__signup__term__link {
-   color: #367bf5;
+   color: var(--hern-accent);
 }
 
 .hern-signup-v1__referral-code {
-   color: #367bf5;
+   color: var(--hern-accent);
    cursor: pointer;
    outline: none !important;
 }
@@ -345,12 +350,13 @@
    color: #ffffff;
    height: 40px;
    outline: none !important;
-   background-color: #367bf5 !important;
+   background-color: var(--hern-accent) !important;
 }
 
 .hern-signup-v1__signup__submit--disabled {
-   background: #367bf580 !important;
+   background: var(--hern-accent) !important;
    cursor: not-allowed;
+   opacity: 0.5;
 }
 
 .hern-signup-v1__signup__email-already-exits {
@@ -361,7 +367,7 @@
 .hern-signup-v1__signup__login-switch {
    align-self: flex-start;
    margin-top: 0.5rem;
-   color: #367bf5;
+   color: var(--hern-accent);
    outline: none !important;
 }
 
