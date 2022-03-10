@@ -5,9 +5,19 @@ import { formatCurrency } from '../utils'
 import { CloseIcon } from '../assets/icons'
 import { useConfig } from '../lib'
 import { Loader } from './loader'
+import { useTranslation } from '../context'
 
 export const CartProduct = ({ product, isRemovable, onDelete }) => {
    const { buildImageUrl, noProductImage } = useConfig()
+   const { dynamicTrans, t } = useTranslation()
+
+   React.useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [])
+
    return (
       <li className="hern-cart-product">
          <div className="hern-cart-product__img">
@@ -24,7 +34,12 @@ export const CartProduct = ({ product, isRemovable, onDelete }) => {
             )}
          </div>
          <main className="hern-cart-product__info">
-            <p className="hern-cart-product__name" title={product.name}>
+            <p
+               className="hern-cart-product__name"
+               title={product.name}
+               data-translation="true"
+               data-original-value={product.name}
+            >
                {product.name}
             </p>
             <p className="hern-cart-product__quantity">
@@ -32,11 +47,19 @@ export const CartProduct = ({ product, isRemovable, onDelete }) => {
                {product?.quantity || 1}
             </p>
             {!product.isAddOn && product.isAutoAdded && (
-               <span className="hern-cart-product__tag">Auto Selected</span>
+               <span className="hern-cart-product__tag">
+                  {t('Auto Selected')}
+               </span>
             )}
             {Boolean(product.addOnPrice) && (
                <span className="hern-cart-product__tag">
-                  {product.addOnLabel}&nbsp;
+                  <span
+                     data-translation="true"
+                     data-original-value={product.addOnLabel}
+                  >
+                     {product.addOnLabel}
+                  </span>
+                  &nbsp;
                   {formatCurrency(product.addOnPrice)}
                </span>
             )}
@@ -46,7 +69,7 @@ export const CartProduct = ({ product, isRemovable, onDelete }) => {
                <button
                   className="hern-cart-product__remove__btn"
                   onClick={() => onDelete(product)}
-                  title="Remove Product"
+                  title={<span>{t('Remove Product')}</span>}
                >
                   <CloseIcon
                      size={16}
