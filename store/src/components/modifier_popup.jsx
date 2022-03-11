@@ -579,6 +579,9 @@ export const ModifierPopup = props => {
                         {productOptionsGroupedByProductOptionType
                            .find(eachType => eachType.type == productOptionType)
                            .data.map(eachOption => {
+                              const hasRecipe =
+                                 eachOption?.simpleRecipeYield?.simpleRecipe
+
                               return (
                                  <div
                                     key={eachOption.id}
@@ -613,14 +616,14 @@ export const ModifierPopup = props => {
                                        )}
                                        {')'}
                                     </li>
-                                    {recipeButton.show && (
+                                    {recipeButton.show && hasRecipe && (
                                        <div>
                                           <Link
                                              href={getRoute(
                                                 '/recipes/' + eachOption.id
                                              )}
                                           >
-                                             <>{recipeButton.label}</>
+                                             <a>{recipeButton.label}</a>
                                           </Link>
                                        </div>
                                     )}
