@@ -88,7 +88,7 @@ const AddOnProducts = () => {
             </>
          )}
          {tunnel && (
-            <Tunnel
+            <Tunnel.Wrapper
                size="md"
                isOpen={tunnel}
                style={{ zIndex: 1030 }}
@@ -102,7 +102,7 @@ const AddOnProducts = () => {
                <Tunnel.Body>
                   <AddOns />
                </Tunnel.Body>
-            </Tunnel>
+            </Tunnel.Wrapper>
          )}
       </div>
    )

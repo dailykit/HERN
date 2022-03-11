@@ -28,10 +28,10 @@ const ChevronIcon = dynamic(() =>
    import('./Chevron').then(promise => promise.ChevronIcon)
 )
 const CheckIcon = dynamic(() =>
-   import('./Close').then(promise => promise.CheckIcon)
+   import('./Check').then(promise => promise.CheckIcon)
 )
 const CheckBoxIcon = dynamic(() =>
-   import('./CouponIcon').then(promise => promise.CheckBoxIcon)
+   import('./Checkbox').then(promise => promise.CheckBoxIcon)
 )
 const ChefIcon = dynamic(() =>
    import('./ArrowLeft').then(promise => promise.ChefIcon)

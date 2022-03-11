@@ -298,7 +298,7 @@ const Coupon_ = ({
                />
             )}
             {orderInterfaceType !== 'Kiosk Ordering' && !upFrontLayout && (
-               <Tunnel
+               <Tunnel.Wrapper
                   isOpen={isCouponListOpen}
                   toggleTunnel={setIsCouponListOpen}
                   style={{ zIndex: 1030 }}
@@ -308,7 +308,7 @@ const Coupon_ = ({
                      closeTunnel={() => setIsCouponListOpen(false)}
                      cart={cart}
                   />
-               </Tunnel>
+               </Tunnel.Wrapper>
             )}
          </>
       )

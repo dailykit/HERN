@@ -36,7 +36,7 @@ export const PaymentTunnel = () => {
    }, [user])
 
    return (
-      <Tunnel
+      <Tunnel.Wrapper
          size="sm"
          toggleTunnel={toggleTunnel}
          isOpen={paymentInfo.tunnel.isVisible}
@@ -52,7 +52,7 @@ export const PaymentTunnel = () => {
          <Tunnel.Body>
             <PaymentForm intent={intent} />
          </Tunnel.Body>
-      </Tunnel>
+      </Tunnel.Wrapper>
    )
 }
 
