@@ -77,7 +77,8 @@
    position: sticky;
    display: flex;
    justify-content: center;
-   top: 64px;
+   /*Stick to the top  with the equal height of navigatin menu*/
+   top: var(--hern-navigation-menu-height);
    z-index: 10;
    width: inherit;
    background-color: #fff;

@@ -27,6 +27,7 @@ h2 {
    --hern-accent: rgb(56, 161, 105);
    --hern-order-product-section-scroll-width: 8px;
    --cart-section-height-sm: calc(100vh - 200px);
+   --hern-navigation-menu-height: 100px;
 }
 
 .react-toast-notifications__container {

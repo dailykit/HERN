@@ -56,15 +56,10 @@ export const Header = ({ settings, navigationMenus }) => {
       })
 
       if (isRouteProtected) {
-         // router.push(signOutData.url)
          window.location.href = get_env('BASE_BRAND_URL') + getRoute('/')
       }
       setStoredCartId(null)
    }
-   const params = useQueryParams()
-   const [loginPopup, setLoginPopup, deleteLoginPopUp] =
-      useQueryParamState('showLogin')
-
    const brand = settings['brand']['theme-brand']
    const theme = settings['Visual']?.['theme-color']
    const headerNavigationSettings =
@@ -106,8 +101,6 @@ export const Header = ({ settings, navigationMenus }) => {
    const [toggle, setToggle] = React.useState(true)
    const [isMobileNavVisible, setIsMobileNavVisible] = React.useState(false)
    const [showLoginPopup, setShowLoginPopup] = React.useState(false)
-   // const [showLocationSelectorPopup, setShowLocationSelectionPopup] =
-   //    React.useState(false)
    const [address, setAddress] = useState(null)
    const [userCoordinate, setUserCoordinate] = useState({
       latitude: null,
@@ -115,11 +108,6 @@ export const Header = ({ settings, navigationMenus }) => {
    })
 
    const [fulfillmentType, setFulfillmentType] = useState(null)
-   // const [storeStatus, setStoreStatus] = useState({
-   //    status: false,
-   //    message: '',
-   //    loading: true,
-   // })
 
    const newNavigationMenus = DataWithChildNodes(navigationMenus)
 
@@ -355,8 +343,7 @@ export const Header = ({ settings, navigationMenus }) => {
    }, [address, fulfillmentType, brand, isFinalCartLoading])
 
    return (
-      <>
-         {/* {console.log(settings, isSubscriptionStore)} */}
+      <header className="hern-header">
          {headerNavigationSettings?.headerNavigation?.custom?.value ? (
             <TemplateFile
                path={headerNavigationSettings?.headerNavigation?.path?.value}
@@ -364,8 +351,8 @@ export const Header = ({ settings, navigationMenus }) => {
             />
          ) : (
             <>
-               <header
-                  className={classNames('hern-header', {
+               <section
+                  className={classNames('hern-header__top', {
                      'hern-header--grid-3-col': !showLocationButton,
                   })}
                >
@@ -398,12 +385,6 @@ export const Header = ({ settings, navigationMenus }) => {
                         )}
                      </div>
                   </Link>
-                  <div className="hern-header__location-in-navbar">
-                     {showLocationButton && (
-                        <LocationInfo address={address} settings={settings} />
-                     )}
-                  </div>
-                  {/* {address && <StoreList settings={settings} />} */}
                   <section className="hern-navigatin-menu__wrapper">
                      <NavigationBar Data={newNavigationMenus}>
                         {showLanguageSwitcher && (
@@ -587,13 +568,13 @@ export const Header = ({ settings, navigationMenus }) => {
                         </NavigationBar>
                      </section>
                   )}
-               </header>
-               {showLocationButton && (
-                  <div className="hern-header__mobile-view-header">
-                     <LocationInfo address={address} settings={settings} />
-                  </div>
-               )}
+               </section>
             </>
+         )}
+         {showLocationButton && (
+            <div>
+               <LocationInfo address={address} settings={settings} />
+            </div>
          )}
          <LocationSelectorWrapper
             showLocationSelectorPopup={showLocationSelectorPopup}
@@ -603,17 +584,11 @@ export const Header = ({ settings, navigationMenus }) => {
          {isClient && width < 768 && (
             <ProfileSidebar toggle={toggle} logout={logout} />
          )}
-         {/* <LoginWrapper
-            closeLoginPopup={() => {
-               setLoginPopup('false')
-            }}
-            showLoginPopup={Boolean(params['showLogin'] === 'true')}
-         /> */}
          <LoginWrapper
             closeLoginPopup={() => setShowLoginPopup(false)}
             showLoginPopup={showLoginPopup}
          />
-      </>
+      </header>
    )
 }
 
@@ -672,9 +647,6 @@ const LocationInfo = ({ settings }) => {
          return null
       }
    }, [selectedOrderTab])
-   // if (storeStatus.loading) {
-   //    return <Loader inline />
-   // }
 
    return (
       <>
