@@ -32,7 +32,7 @@ const initialState = {
 }
 
 const reducers = (state, { type, payload }) => {
-   const { t } = useTranslation()
+
    switch (type) {
       case 'SET_WEEK': {
          return {
@@ -56,7 +56,7 @@ const reducers = (state, { type, payload }) => {
             occurences: payload,
          }
       default:
-         return t('No such type!')
+         return state
 
    }
 }
@@ -384,9 +384,10 @@ export const MenuProvider = ({ isCheckout, children }) => {
    }
 
    const store = configOf('Store Availability', 'availability')?.storeAvailability
+
    const addProduct = (item, product) => {
       dispatch({ type: 'CART_STATE', payload: 'SAVING' })
-      const { t } = useTranslation()
+
 
       const isSkipped = occurenceCustomer?.isSkipped
       if (occurenceCustomer?.validStatus?.hasCart) {
