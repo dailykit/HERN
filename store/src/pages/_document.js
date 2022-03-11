@@ -10,6 +10,8 @@ class MyDocument extends Document {
          <Html lang="en">
             <Head>
                <script src="/env-config.js"></script>
+               <script src="/lazysizes.min.js" async=""></script>
+               <script src="/ls.unveilhooks.min.js" async=""></script>
             </Head>
             <body>
                <div id="portal" />

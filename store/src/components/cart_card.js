@@ -310,7 +310,12 @@ const CartCard = props => {
    return (
       <div className="hern-cart-card">
          <div className="hern-cart-card__img">
-            <HernLazyImage data-src={productData.image} alt="p-image" />
+            <HernLazyImage
+               dataSrc={productData.image}
+               alt="p-image"
+               width={300}
+               height={300}
+            />
          </div>
          <div className="hern-cart-card__details">
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>

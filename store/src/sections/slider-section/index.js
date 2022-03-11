@@ -1,6 +1,7 @@
 import React from 'react'
 import { Carousel } from 'antd'
 import { ArrowLeftIcon, ArrowRightIcon } from '../../assets/icons'
+import { HernLazyImage } from '../../utils/hernImage'
 
 export const SliderSection = ({ config }) => {
    const showDotsOnSlider =
@@ -44,8 +45,8 @@ const SliderDiv = ({ content, index, getStartedURL }) => {
             position: 'relative',
          }}
       >
-         <img
-            src={
+         <HernLazyImage
+            dataSrc={
                content.images.value[index]
                   ? content.images.value[index]
                   : content.images.default

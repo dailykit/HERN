@@ -790,7 +790,7 @@ export const ModifierPopup = props => {
                      ref={imagePopUpRef}
                   >
                      <HernLazyImage
-                        data-src={modifierImage.src}
+                        dataSrc={modifierImage.src}
                         alt="modifier"
                      />
                      {/* <div className="hern-product-modifier-pop-up-close-icon">

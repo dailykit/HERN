@@ -14,7 +14,7 @@ const ProductMedia = ({ assets, config }) => {
                <div key={index}>
                   <HernLazyImage
                      className={index === activeImage ? 'active-img' : ''}
-                     data-src={image}
+                     dataSrc={image}
                      onClick={() => setActiveImage(index)}
                   />
                </div>

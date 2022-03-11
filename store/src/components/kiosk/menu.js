@@ -279,7 +279,7 @@ const KioskMenu = props => {
                               className="hern-kiosk__category-scroll-link"
                            >
                               <HernLazyImage
-                                 data-src={
+                                 dataSrc={
                                     eachCategory?.imageUrl ||
                                     config.productSettings.defaultImage.value
                                  }
@@ -430,7 +430,7 @@ const KioskMenu = props => {
                            {eachCategory?.bannerImageUrl ? (
                               <HernLazyImage
                                  // src={eachCategory?.bannerImageUrl}
-                                 data-src={eachCategory?.bannerImageUrl}
+                                 dataSrc={eachCategory?.bannerImageUrl}
                                  className="hern-kiosk__menu-category-banner-img"
                               />
                            ) : (

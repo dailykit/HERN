@@ -606,7 +606,7 @@ const CartCard = props => {
    return (
       <div className="hern-kiosk__cart-card">
          <HernLazyImage
-            data-src={productData.image}
+            dataSrc={productData.image}
             alt="p-image"
             className="hern-kiosk__cart-card-p-image"
          />
