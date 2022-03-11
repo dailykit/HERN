@@ -138,7 +138,7 @@ export const ModifierCategory = props => {
             }}
          >
             <span className="hern-product-modifier-pop-up-modifier-category__name" data-translation="true"
-               data-original-value={eachCategory.name}>
+            >
 
                {eachCategory.name}
             </span>{' '}
@@ -148,11 +148,12 @@ export const ModifierCategory = props => {
                   fontSize: '11px',
                }}
 
-               data-translation="true"
-               data-original-value={renderConditionText(eachCategory)}>
-               {'('}
-               {renderConditionText(eachCategory)}
-               {')'}
+
+            >
+               <span>{'('}</span>
+               <span data-translation="true">{renderConditionText(eachCategory)}</span>
+
+               <span>{')'}</span>
             </span>
          </div>
          {errorCategories.includes(eachCategory.id) && (

@@ -60,12 +60,7 @@ export const OnDemandMenu = props => {
                            offset={-130}
                         >
                            <span>
-                              <span
-                                 data-translation="true"
-                                 data-original-value={each.name}
-                              >
-                                 {each.name}
-                              </span>
+                              <span data-translation="true">{each.name}</span>
                               {showProductCount && (
                                  <> ({each?.products?.length})</>
                               )}

@@ -76,15 +76,7 @@ export const LocationSelector = props => {
                      )}
                      onClick={() => setFulfillmentType('DELIVERY')}
                      data-translation="true"
-                     data-original-value={
-                        orderTabs.find(
-                           x =>
-                              x.orderFulfillmentTypeLabel ===
-                              'ONDEMAND_DELIVERY' ||
-                              x.orderFulfillmentTypeLabel ===
-                              'PREORDER_DELIVERY'
-                        ).label
-                     }
+
                   >
                      {
                         orderTabs.find(
@@ -110,14 +102,7 @@ export const LocationSelector = props => {
                      )}
                      onClick={() => setFulfillmentType('PICKUP')}
                      data-translation="true"
-                     data-original-value={
-                        orderTabs.find(
-                           x =>
-                              x.orderFulfillmentTypeLabel ===
-                              'ONDEMAND_PICKUP' ||
-                              x.orderFulfillmentTypeLabel === 'PREORDER_PICKUP'
-                        ).label
-                     }
+
                   >
                      {
                         orderTabs.find(

@@ -31,7 +31,7 @@ export const Recipe = ({ productOption, config }) => {
       if (recipe.showIngredientsQuantity) {
          return (<>
             <span data-translation="true"
-               data-original-value={slipName}>
+            >
                {slipName}
             </span>
             <span> - {sachet.quantity} {sachet.unit}</span>
@@ -40,7 +40,7 @@ export const Recipe = ({ productOption, config }) => {
       }
       return (
          <span data-translation="true"
-            data-original-value={slipName}> {slipName}</span>
+         > {slipName}</span>
       )
    }
    const customIngredientsLabel =
@@ -92,7 +92,7 @@ export const Recipe = ({ productOption, config }) => {
          <div>
             <main className="hern-recipe">
                <h1 className="hern-recipe__title" data-translation="true"
-                  data-original-value={recipe.name} >{recipe.name}</h1>
+               >{recipe.name}</h1>
                <div className="hern-recipe__img__wrapper">
                   {recipe?.assets?.images?.length && (
                      <img src={recipe?.assets?.images[0]} alt={recipe.name} />
@@ -102,7 +102,7 @@ export const Recipe = ({ productOption, config }) => {
                   <div className="hern-recipe__description">
                      <h2>{t('Description')}</h2>
                      <p data-translation="true"
-                        data-original-value={recipe.description}>{recipe.description}</p>
+                     >{recipe.description}</p>
                   </div>
                )}
                <div className="hern-product-page-section-ending" />
@@ -116,35 +116,35 @@ export const Recipe = ({ productOption, config }) => {
                               size={38}
                            />
                            <p data-translation="true"
-                              data-original-value={recipe.type}>{recipe.type}</p>
+                           >{recipe.type}</p>
                         </div>
                      )}
                      {!!recipe.cuisine && (
                         <div className="hern-recipe__details__cuisine">
                            <CuisineIcon size={40} color={theme?.accent} />
                            <p data-translation="true"
-                              data-original-value={recipe.cuisine}>{recipe.cuisine}</p>
+                           >{recipe.cuisine}</p>
                         </div>
                      )}
                      {!!recipe.author && showAuthor && (
                         <div className="hern-recipe__details__author">
                            <ChefIcon size={40} color={theme?.accent} />
                            <p data-translation="true"
-                              data-original-value={recipe.author}>{recipe.author}</p>
+                           >{recipe.author}</p>
                         </div>
                      )}
                      {!!recipe.cookingTime && (
                         <div className="hern-recipe__details__cooking-time">
                            <TimeIcon size={40} color={theme?.accent} />
                            <p data-translation="true"
-                              data-original-value={recipe.cookingTime}>{recipe.cookingTime} mins.</p>
+                           >{recipe.cookingTime} mins.</p>
                         </div>
                      )}
                      {!!recipe.utensils?.length && (
                         <div className="hern-recipe__details__utelsils">
                            <UtensilsIcon size={40} color={theme?.accent} />
                            <p data-translation="true"
-                              data-original-value={recipe.utensils.join(', ')}>{recipe.utensils.join(', ')}</p>
+                           >{recipe.utensils.join(', ')}</p>
                         </div>
                      )}
                   </div>
@@ -154,7 +154,7 @@ export const Recipe = ({ productOption, config }) => {
                   <div className="hern-recipe__not-included">
                      <h2>{t("What you'll need")}</h2>
                      <p data-translation="true"
-                        data-original-value={recipe.notIncluded.join(', ')}>{recipe.notIncluded.join(', ')}</p>
+                     >{recipe.notIncluded.join(', ')}</p>
                   </div>
                )}
                <div
@@ -232,7 +232,7 @@ export const Recipe = ({ productOption, config }) => {
                               >
                                  <ol className="hern-recipe__cooking-setps">
                                     <h4 className="hern-recipe__cooking-setps__heading" data-translation="true"
-                                       data-original-value={set.title}>
+                                    >
                                        {set.title}
                                     </h4>
                                     {set.instructionSteps.map(step =>
@@ -243,7 +243,7 @@ export const Recipe = ({ productOption, config }) => {
                                           >
                                              {step.title && (
                                                 <span className="hern-recipe__cooking-setps__step__title" data-translation="true"
-                                                   data-original-value={step.title}>
+                                                >
                                                    {step.title}
                                                 </span>
                                              )}
@@ -267,7 +267,7 @@ export const Recipe = ({ productOption, config }) => {
                                                    )}
                                              </div>
                                              <p className="hern-recipe__cooking-setps__step__description" data-translation="true"
-                                                data-original-value={step.description}>
+                                             >
                                                 {step.description}
                                              </p>
                                           </li>

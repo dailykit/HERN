@@ -221,7 +221,7 @@ export const Content = () => {
                         }
                      >
                         {titles.map(({ id, title }) => (
-                           <option key={id} value={id} data-translation="true" data-original-value={title}>
+                           <option key={id} value={id} data-translation="true">
                               {title}
                            </option>
                         ))}
@@ -233,7 +233,7 @@ export const Content = () => {
                   title?.servings?.length > 0 && (
                      <section className="hern-our-menu__select-section__serving">
                         <Form.Label htmlFor="serving" data-translation="true"
-                           data-original-value={yieldLabel.plural}>
+                        >
                            {yieldLabel.plural}
                         </Form.Label>
                         <select
@@ -248,7 +248,7 @@ export const Content = () => {
                         >
                            {title?.servings.map(({ id, size }) => (
                               <option key={id} value={id} data-translation="true"
-                                 data-original-value={size}>
+                              >
                                  {size}
                               </option>
                            ))}
@@ -262,7 +262,7 @@ export const Content = () => {
                   serving?.counts?.length > 0 && (
                      <section className="hern-our-menu__select-section__counts">
                         <Form.Label htmlFor="counts" data-translation="true"
-                           data-original-value={itemCountLabel.plural}>
+                        >
                            {itemCountLabel.plural}
                         </Form.Label>
                         <select
@@ -277,7 +277,7 @@ export const Content = () => {
                         >
                            {serving?.counts.map(({ id, count }) => (
                               <option key={id} value={id} data-translation="true"
-                                 data-original-value={count}>
+                              >
                                  {count}
                               </option>
                            ))}
@@ -307,7 +307,7 @@ export const Content = () => {
                         >
                            {itemCount?.subscriptions.map(({ id, rrule }) => (
                               <option key={id} value={id} data-translation="true"
-                                 data-original-value={rrulestr(rrule).toText()}>
+                              >
                                  {rrulestr(rrule).toText()}
                               </option>
                            ))}
@@ -388,7 +388,7 @@ export const Content = () => {
                            className="hern-our-menu__products__wrapper"
                         >
                            <h4 className="hern-our-menu__products__category-title" data-translation="true"
-                              data-original-value={category.name}>
+                           >
                               {category.name} (
                               {
                                  uniqBy(category.productsAggregate.nodes, v =>
@@ -487,7 +487,7 @@ const Product = ({
          </ImageWrapper>
          {node?.addOnLabel && (
             <span className="hern-our-menu__product-label" data-translation="true"
-               data-original-value={node?.addOnLabel}>
+            >
                {node?.addOnLabel}
             </span>
          )}
@@ -499,20 +499,19 @@ const Product = ({
 
             >
                <span data-translation="true"
-                  data-original-value={product.name}>{product.name} </span>
+               >{product.name} </span>
                {"-"}
                <span data-translation="true"
-                  data-original-value={product.label}> {product.label}</span>
+               > {product.label}</span>
             </a>
          </section>
          <p data-translation="true"
-            data-original-value={product?.additionalText}>{product?.additionalText}</p>
+         >{product?.additionalText}</p>
          {
             product.tags.length > 0 && (
                <ul className="hern-our-menu__product-tag-list">
                   {product.tags.map(tag => (
-                     <li className="hern-our-menu__product-tag-list__item" data-translation="true"
-                        data-original-value={tag}>
+                     <li className="hern-our-menu__product-tag-list__item" data-translation="true">
                         {tag}
                      </li>
                   ))}

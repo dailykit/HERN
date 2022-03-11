@@ -21,12 +21,12 @@ export const CartBillingDetails = ({ billing, tip }) => {
             <ul className="hern-cart-billing-details-list">
                <li>
                   <span data-translation="true"
-                     data-original-value={billing.itemTotal.label}>{billing.itemTotal.label}</span>
+                  >{billing.itemTotal.label}</span>
                   <span>{formatCurrency(billing.itemTotal.value || 0)}</span>
                </li>
                <li>
                   <span data-translation="true"
-                     data-original-value={billing.deliveryPrice.label}>
+                  >
                      {billing.deliveryPrice.label}</span>
                   {billing.deliveryPrice.value === 0 ? (
                      <span
@@ -45,7 +45,7 @@ export const CartBillingDetails = ({ billing, tip }) => {
                </li>
                <li>
                   <span data-translation="true"
-                     data-original-value={billing.tax.label}>{billing.tax.label}</span>
+                  >{billing.tax.label}</span>
                   <span>{formatCurrency(billing.tax.value || 0)}</span>
                </li>
                {billing.discount.value > 0 && (
@@ -76,7 +76,7 @@ export const CartBillingDetails = ({ billing, tip }) => {
                )}
                <li className="hern-cart-billing-details-total-price">
                   <span data-translation="true"
-                     data-original-value={billing.totalPrice.label} >{billing.totalPrice.label}</span>
+                  >{billing.totalPrice.label}</span>
                   <span>{formatCurrency(billing.totalPrice.value || 0)}</span>
                </li>
             </ul>

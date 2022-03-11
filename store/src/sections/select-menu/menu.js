@@ -93,7 +93,7 @@ export const Menu = () => {
          {categories.map(category => (
             <section key={category.name} className="hern-select-menu__menu">
                <h4 className="hern-select-menu__menu__category-name">
-                  <span data-translation="true" data-original-value={category.name}>{category.name}</span> (
+                  <span data-translation="true">{category.name}</span> (
                   {
                      uniqBy(category.productsAggregate.nodes, v =>
                         [
@@ -265,19 +265,19 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
             )}
          </div>
          {node.addOnLabel && (
-            <span className="hern-select-menu__menu__product__add-on-label" data-translation="true" data-original-value={node.addOnLabel} >
+            <span className="hern-select-menu__menu__product__add-on-label" data-translation="true"  >
                {node.addOnLabel}
             </span>
          )}
          <section className="hern-select-menu__menu__product__link">
             <CheckIcon size={16} className={checkIconClasses} />
             <a theme={theme} onClick={openRecipe}>
-               <span data-translation="true" data-original-value={product.name}>{product.name}</span>
+               <span data-translation="true" >{product.name}</span>
                {"-"}
-               <span data-translation="true" data-original-value={product.label}>{product.label}</span>
+               <span data-translation="true" >{product.label}</span>
             </a>
          </section>
-         <p className="hern-select-menu__menu__product__link__additional-text" data-translation="true" data-original-value={product?.additionalText}>
+         <p className="hern-select-menu__menu__product__link__additional-text" data-translation="true" >
             {product?.additionalText}
          </p>
          {console.log(state.occurenceCustomer?.validStatus?.itemCountValid)}

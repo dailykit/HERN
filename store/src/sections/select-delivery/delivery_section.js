@@ -81,7 +81,7 @@ export const DeliverySection = ({ planId }) => {
          <>
             <HelperBar type="info">
                <HelperBar.SubTitle>
-                  {addressLabelFromConfig?.value ? <span data-translation="true" data-original-value={addressLabelFromConfig?.value} >{addressLabelFromConfig?.value}</span> : t('Select an address to get started')}
+                  {addressLabelFromConfig?.value ? <span data-translation="true" >{addressLabelFromConfig?.value}</span> : t('Select an address to get started')}
                </HelperBar.SubTitle>
             </HelperBar>
          </>
@@ -90,7 +90,7 @@ export const DeliverySection = ({ planId }) => {
       return (
          <HelperBar type="warning">
             <HelperBar.SubTitle>
-               {unavailableDaysFromConfig?.noDays?.value ? <span data-translation="true" data-original-value={unavailableDaysFromConfig?.noDays?.value}>
+               {unavailableDaysFromConfig?.noDays?.value ? <span data-translation="true" >
                   {unavailableDaysFromConfig?.noDays?.value}
                </span> :
                   t('No days are available for delivery on this address.')}
@@ -109,7 +109,7 @@ export const DeliverySection = ({ planId }) => {
          {isEmpty(itemCount?.valid) && !isEmpty(itemCount?.invalid) && (
             <HelperBar type="warning">
                <HelperBar.SubTitle>
-                  {unavailableDaysFromConfig?.followingDays?.value ? <span data-translation="true" data-original-value={unavailableDaysFromConfig?.followingDays?.value} >
+                  {unavailableDaysFromConfig?.followingDays?.value ? <span data-translation="true"  >
                      {unavailableDaysFromConfig?.followingDays?.value}
                   </span> : t('Following days are not available for delivery on this address.')}
                   {/* {unavailableDaysFromConfig?.followingDays?.value || 'Following days are not available for delivery on this address.'} */}
@@ -143,7 +143,7 @@ export const DeliverySection = ({ planId }) => {
                         <CheckIcon className={iconClasses} size={18} />
                      </div>
                      <section className="hern-delivery__delivery-days__content">
-                        <label className="hern-delivery__delivery-days__label" data-translation="true" data-original-value={rrulestr(day.rrule).toText()}  >
+                        <label className="hern-delivery__delivery-days__label" data-translation="true"  >
                            {rrulestr(day.rrule).toText()}
                         </label>
                         {day.zipcodes.length > 0 && (
@@ -200,7 +200,7 @@ export const DeliverySection = ({ planId }) => {
                         />
                      </div>
                      <section className="hern-delivery__delivery-days__content">
-                        <label className="hern-delivery__delivery-days__label" data-translation="true" data-original-value={rrulestr(day.rrule).toText()}>
+                        <label className="hern-delivery__delivery-days__label" data-translation="true" >
                            {rrulestr(day.rrule).toText()}
                         </label>
                         {day.zipcodes.length > 0 && (

@@ -183,7 +183,7 @@ export const OnDemandOrder = ({ config }) => {
 
                            >
                               <span data-translation="true"
-                                 data-original-value={eachCategory.name}>
+                              >
                                  {eachCategory.name}</span>
 
                               {showCategoryLengthOnCategoryTitle && (

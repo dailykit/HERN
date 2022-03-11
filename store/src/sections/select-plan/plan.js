@@ -138,7 +138,7 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                   }}
                >
                   <span data-translation="true"
-                     data-original-value={plan.title}>{plan.title}</span>
+                  >{plan.title}</span>
 
                   {plan.metaDetails?.icon && (
                      <img
@@ -149,7 +149,7 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                </h2>
                {plan?.metaDetails?.description && (
                   <p className="hern-our-plans__plan__description" data-translation="true"
-                     data-original-value={plan?.metaDetails?.description}>
+                  >
 
                      {plan?.metaDetails?.description}
                   </p>
@@ -158,13 +158,11 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                   {plan.servings.length === 1 ? (
                      <span className="hern-our-plans__plan__servings__label">
                         <span data-translation="true"
-                           data-original-value={plan.servings[0].size}>
+                        >
                            {plan.servings[0].size}
                         </span>
                         <span data-translation="true"
-                           data-original-value={plan.servings[0].size > 1
-                              ? yieldLabel.singular
-                              : yieldLabel.plural}>
+                        >
                            {plan.servings[0].size > 1
                               ? yieldLabel.singular
                               : yieldLabel.plural}</span>
@@ -173,7 +171,7 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                      <div className="hern-our-plans__plan__servings__wrapper">
                         <span className="hern-our-plans__plan__servings__label--multi">
                            <span>{t('No. of')}</span> <span data-translation="true"
-                              data-original-value={yieldLabel.plural}>{yieldLabel.plural}</span>
+                           >{yieldLabel.plural}</span>
                         </span>
                         <ul className="hern-our-plans__plan__servings__count-list">
                            {plan.servings.map(serving => {
@@ -192,10 +190,10 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                                  >
                                     <div className="hern-our-plans__plan__servings-size">
                                        <div data-translation="true"
-                                          data-original-value={serving.size}>{serving.size}</div>
+                                       >{serving.size}</div>
                                        {serving?.metaDetails?.label && (
                                           <div data-translation="true"
-                                             data-original-value={serving?.metaDetails?.label}>
+                                          >
                                              {serving?.metaDetails?.label}
                                           </div>
                                        )}
@@ -210,13 +208,11 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                   {defaultServing.itemCounts.length === 1 ? (
                      <span className="hern-our-plans__plan__items-per-week__label">
                         <span data-translation="true"
-                           data-original-value={defaultServing.itemCounts[0].count}>
+                        >
                            {defaultServing.itemCounts[0].count
                            }</span>
                         <span data-translation="true"
-                           data-original-value={defaultServing.itemCounts[0].count === 1
-                              ? itemCountLabel.singular
-                              : itemCountLabel.plural}>
+                        >
                            {defaultServing.itemCounts[0].count === 1
                               ? itemCountLabel.singular
                               : itemCountLabel.plural}</span>
@@ -226,7 +222,7 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                      <div className="hern-our-plans__plan__items-per-week__wrapper">
                         <span className="hern-our-plans__plan__items-per-week__label">
                            <span data-translation="true"
-                              data-original-value={itemCountLabel.singular}>
+                           >
                               {itemCountLabel.singular}
                            </span> {t('per week')}
                         </span>
@@ -248,10 +244,10 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                                  >
                                     <div className="hern-our-plans__plan__items-per-week__count">
                                        <div data-translation="true"
-                                          data-original-value={item.count}>{item.count}</div>
+                                       >{item.count}</div>
                                        {item?.metaDetails?.label && (
                                           <div data-translation="true"
-                                             data-original-value={item?.metaDetails?.label}>{item?.metaDetails?.label}</div>
+                                          >{item?.metaDetails?.label}</div>
                                        )}
                                     </div>
                                  </li>
@@ -267,7 +263,7 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                      <section className="hern-our-plans__price-per-servings">
                         {priceDisplay?.pricePerServing?.prefix && (
                            <span className="hern-our-plans__price-per-servings__prefix" data-translation="true"
-                              data-original-value={priceDisplay?.pricePerServing?.prefix}>
+                           >
                               {priceDisplay?.pricePerServing?.prefix}
                            </span>
                         )}
@@ -280,14 +276,7 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                            }}
                            className="hern-our-plans__price-per-servings__price"
                            data-translation="true"
-                           data-original-value=
-                           {formatCurrency(
-                              Number.parseFloat(
-                                 (defaultItemCount?.price || 1) /
-                                 ((defaultItemCount?.count || 1) *
-                                    (defaultServing?.size || 1))
-                              ).toFixed(2)
-                           )}
+
                         >
                            {formatCurrency(
                               Number.parseFloat(
@@ -297,8 +286,7 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                               ).toFixed(2)
                            )}
                            <span className="hern-our-plans__price-per-servings__suffix" data-translation="true"
-                              data-original-value={priceDisplay?.pricePerServing?.suffix ||
-                                 yieldLabel.singular}>
+                           >
                               {priceDisplay?.pricePerServing?.suffix ||
                                  `per ${yieldLabel.singular}`}
                            </span>
@@ -310,7 +298,7 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                      <section className="hern-our-plans__price-total-servings">
                         {priceDisplay?.totalServing?.prefix && (
                            <span className="hern-our-plans__price-total-servings__prefix" data-translation="true"
-                              data-original-value={priceDisplay?.totalServing?.prefix}>
+                           >
                               {priceDisplay?.totalServing?.prefix}
                            </span>
                         )}
@@ -323,10 +311,7 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                            }}
                            className="hern-our-plans__price-total-servings__price"
                            data-translation="true"
-                           data-original-value={Number.parseFloat(
-                              (defaultItemCount?.count || 1) *
-                              (defaultServing?.size || 1)
-                           ).toFixed(0)}
+
                         >
                            {Number.parseFloat(
                               (defaultItemCount?.count || 1) *
@@ -340,7 +325,7 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                      <section className="hern-our-plans__price-per-plan">
                         {priceDisplay?.pricePerPlan?.prefix && (
                            <span className="hern-our-plans__price-total-servings__prefix" data-translation="true"
-                              data-original-value={priceDisplay?.pricePerPlan?.prefix}>
+                           >
                               {priceDisplay?.pricePerPlan?.prefix}
                            </span>
                         )}
@@ -354,7 +339,7 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                               }}
                               className="hern-our-plans__price-total-servings__price"
                               data-translation="true"
-                              data-original-value={formatCurrency(defaultItemCount?.price)}
+
                            >
                               {formatCurrency(defaultItemCount?.price)}
                            </span>
@@ -365,7 +350,7 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                            </span>
                            <span className="hern-our-plans__price-total-servings__suffix" >
                               {<span data-translation="true"
-                                 data-original-value={priceDisplay?.pricePerPlan?.suffix}>{priceDisplay?.pricePerPlan?.suffix}</span> ||
+                              >{priceDisplay?.pricePerPlan?.suffix}</span> ||
                                  <span>{t('Weekly total')}</span>}
                            </span>
                         </div>

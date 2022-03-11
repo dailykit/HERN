@@ -202,7 +202,6 @@ export const ProductCard = props => {
                                        : null,
                                  }}
                                  data-translation="true"
-                                 data-original-value={data.name}
                               >
                                  {data.name}
                               </div>
@@ -248,7 +247,6 @@ export const ProductCard = props => {
                            <div
                               className="hern-product-card__additional-text"
                               data-translation="true"
-                              data-original-value={data.additionalText}
                            >
                               {data.additionalText}
                            </div>
@@ -259,10 +257,10 @@ export const ProductCard = props => {
                      <div
                         className="hern-product-card__description"
                         title={data?.description}
-                        data-translation="true"
-                        data-original-value={data?.description?.slice(0, 50)}
                      >
-                        {data?.description?.slice(0, 50)}
+                        <span data-translation="true">
+                           {data?.description?.slice(0, 50)}
+                        </span>
                         {data?.description?.length > 50 && '...'}
                      </div>
                   )}

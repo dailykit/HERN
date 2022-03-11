@@ -143,7 +143,7 @@ export const StepsNavbar = () => {
                   isActive={currentStep === 33}
                   route="/[brand]/get-started/select-delivery"
                >
-                  <span data-translation="true" data-original-value={steps.selectDelivery}> {steps.selectDelivery}</span>
+                  <span data-translation="true" > {steps.selectDelivery}</span>
                </RenderStep>
                <RenderStep
                   goToStep={goToStep}
@@ -151,7 +151,7 @@ export const StepsNavbar = () => {
                   isActive={currentStep === 66}
                   route="/[brand]/get-started/select-menu"
                >
-                  <span data-translation="true" data-original-value={steps.selectMenu}>  {steps.selectMenu}</span>
+                  <span data-translation="true" >  {steps.selectMenu}</span>
 
 
                </RenderStep>
@@ -161,7 +161,7 @@ export const StepsNavbar = () => {
                   isActive={currentStep === 100}
                   route="/[brand]/get-started/checkout"
                >
-                  <span data-translation="true" data-original-value={steps.checkout}>  {steps.checkout} </span>
+                  <span data-translation="true" >  {steps.checkout} </span>
                </RenderStep>
             </ul>
          </section>

@@ -98,11 +98,11 @@ const DeliveryContent = () => {
          </header>
          <AddressSection />
          <h3 className="hern-delivery__section-title" style={brandTextColor}>
-            {<span data-translation="true" data-original-value={deliveryDayLabelFromConfig?.value}>{deliveryDayLabelFromConfig?.value}</span> || t('Delivery Day')}
+            {<span data-translation="true">{deliveryDayLabelFromConfig?.value}</span> || t('Delivery Day')}
          </h3>
          <DeliverySection />
          <h3 className="hern-delivery__section-title" style={brandTextColor}>
-            {<span data-translation="true" data-original-value={firstDeliveryDayLabelFromConfig?.value}>{firstDeliveryDayLabelFromConfig?.value}</span> || t('Select your first delivery date')}
+            {<span data-translation="true" >{firstDeliveryDayLabelFromConfig?.value}</span> || t('Select your first delivery date')}
          </h3>
          <DeliveryDateSection />
          <div className="hern-delivery__continue">

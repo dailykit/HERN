@@ -79,7 +79,7 @@ export const DeliveryDateSection = () => {
          <>
             <HelperBar type="info">
                <HelperBar.SubTitle>
-                  {(getStartedDate?.value) ? <span data-translation="true" data-original-value={getStartedDate?.value}>{getStartedDate?.value}</span> : t('Select a delivery day to get started')}
+                  {(getStartedDate?.value) ? <span data-translation="true">{getStartedDate?.value}</span> : t('Select a delivery day to get started')}
                </HelperBar.SubTitle>
             </HelperBar>
          </>
@@ -92,7 +92,7 @@ export const DeliveryDateSection = () => {
                {noDatesAvailable?.value ? (
                   <span
                      data-translation="true"
-                     data-original-value={noDatesAvailable?.value}
+
                   >
                      {noDatesAvailable?.value}
                   </span>

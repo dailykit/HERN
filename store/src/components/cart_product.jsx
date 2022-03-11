@@ -38,7 +38,6 @@ export const CartProduct = ({ product, isRemovable, onDelete }) => {
                className="hern-cart-product__name"
                title={product.name}
                data-translation="true"
-               data-original-value={product.name}
             >
                {product.name}
             </p>
@@ -53,12 +52,7 @@ export const CartProduct = ({ product, isRemovable, onDelete }) => {
             )}
             {Boolean(product.addOnPrice) && (
                <span className="hern-cart-product__tag">
-                  <span
-                     data-translation="true"
-                     data-original-value={product.addOnLabel}
-                  >
-                     {product.addOnLabel}
-                  </span>
+                  <span data-translation="true">{product.addOnLabel}</span>
                   &nbsp;
                   {formatCurrency(product.addOnPrice)}
                </span>

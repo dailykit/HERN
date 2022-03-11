@@ -34,7 +34,7 @@ export const Nutritions = ({ simpleRecipeYield }) => {
                   {nutritions.map((nutrition, index) => (
                      <div key={index}>
                         <div data-translation="true"
-                           data-original-value={_.startCase(nutrition)}>{_.startCase(nutrition)}</div>
+                        >{_.startCase(nutrition)}</div>
                         <span></span>
 
                         <div>{nutritionalInfo[nutrition]}</div>
@@ -43,7 +43,7 @@ export const Nutritions = ({ simpleRecipeYield }) => {
                   {allergens?.length > 0 && (
                      <span> <span>{t('Allergens')}</span>{': '}
                         <span data-translation="true"
-                           data-original-value={allergens?.join(',')} >
+                        >
                            {allergens?.join(',')} </span>
 
                      </span>

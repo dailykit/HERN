@@ -417,21 +417,18 @@ export const ModifierPopup = props => {
                <div
                   className="hern-product-options__custom-details__product-title"
                   data-translation="true"
-                  data-original-value={productData.name}
                >
                   {productData.name}
                </div>
                <div
                   className="hern-product-options__custom-details__product-desc"
                   data-translation="true"
-                  data-original-value={productData.description}
                >
                   {productData.description}
                </div>
                <div
                   className="hern-product-options__custom-details__product-tags"
                   data-translation="true"
-                  data-original-value={productData?.tags?.join(',')}
                >
                   {productData?.tags?.join(',')}
                </div>
@@ -443,7 +440,6 @@ export const ModifierPopup = props => {
                <div
                   className="hern-product-options__custom-details__product-price"
                   data-translation="true"
-                  data-original-value={finalProductPrice()}
                >
                   {finalProductPrice()}
                </div>
@@ -489,7 +485,6 @@ export const ModifierPopup = props => {
                         className="hern-product-card__name"
                         style={{ fontSize: '20px', fontWeight: '600px' }}
                         data-translation="true"
-                        data-original-value={productData.name}
                      >
                         {productData?.name}
                      </div>
@@ -557,9 +552,6 @@ export const ModifierPopup = props => {
                                        }
                                     }}
                                     data-translation="true"
-                                    data-original-value={
-                                       eachProductOptionType.type
-                                    }
                                  >
                                     {camelCaseToNormalText(
                                        eachProductOptionType.type == 'null'
@@ -597,12 +589,7 @@ export const ModifierPopup = props => {
                   >
                      <label htmlFor="products">
                         {productData.productionOptionSelectionStatement ? (
-                           <span
-                              data-translation="true"
-                              data-original-value={
-                                 productData.productionOptionSelectionStatement
-                              }
-                           >
+                           <span data-translation="true">
                               {productData.productionOptionSelectionStatement}
                            </span>
                         ) : (
@@ -647,10 +634,7 @@ export const ModifierPopup = props => {
                                        }
                                     }}
                                  >
-                                    <li
-                                       data-translation="true"
-                                       data-original-value={eachOption.label}
-                                    >
+                                    <li data-translation="true">
                                        {eachOption.label}
 
                                        {' (+ '}
@@ -712,7 +696,6 @@ export const ModifierPopup = props => {
                                     marginLeft: '10px',
                                  }}
                                  data-translation="true"
-                                 data-original-value={productOption.label}
                               >
                                  {productOption.label}
                               </span>
@@ -900,11 +883,7 @@ const AdditionalModifiers = forwardRef(
                      cursor: 'pointer',
                   }}
                >
-                  <span
-                     className=""
-                     data-translation="true"
-                     data-original-value={eachAdditionalModifier.label}
-                  >
+                  <span className="" data-translation="true">
                      {eachAdditionalModifier.label}
                   </span>
                   {showCustomize ? (

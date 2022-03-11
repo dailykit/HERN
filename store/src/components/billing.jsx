@@ -23,18 +23,12 @@ export const Billing = ({ billing }) => {
                   className="hern-billing__table__cell"
                   title={billing?.itemTotal?.description}
                >
-                  <span
-                     data-translation="true"
-                     data-original-value={billing?.itemTotal?.label}
-                  >
+                  <span data-translation="true">
                      {billing?.itemTotal?.label}
                   </span>
                   <p
                      className="hern-billing__table__cell__comment"
                      data-translation="true"
-                     data-original-value={parseText(
-                        billing?.itemTotal?.comment
-                     )}
                   >
                      {parseText(billing?.itemTotal?.comment)}
                   </p>
@@ -48,18 +42,12 @@ export const Billing = ({ billing }) => {
                   className="hern-billing__table__cell"
                   title={billing?.deliveryPrice?.description}
                >
-                  <span
-                     data-translation="true"
-                     data-original-value={billing?.deliveryPrice?.label}
-                  >
+                  <span data-translation="true">
                      {billing?.deliveryPrice?.label}
                   </span>
                   <p
                      className="hern-billing__table__cell__comment"
                      data-translation="true"
-                     data-original-value={parseText(
-                        billing?.deliveryPrice?.comment
-                     )}
                   >
                      {parseText(billing?.deliveryPrice?.comment)}
                   </p>
@@ -74,18 +62,12 @@ export const Billing = ({ billing }) => {
                      className="hern-billing__table__cell"
                      title={billing?.subTotal?.description}
                   >
-                     <span
-                        data-translation="true"
-                        data-original-value={billing?.subTotal?.label}
-                     >
+                     <span data-translation="true">
                         {billing?.subTotal?.label}
                      </span>
                      <p
                         className="hern-billing__table__cell__comment"
                         data-translation="true"
-                        data-original-value={parseText(
-                           billing?.subTotal?.comment
-                        )}
                      >
                         {parseText(billing?.subTotal?.comment)}
                      </p>
@@ -101,16 +83,10 @@ export const Billing = ({ billing }) => {
                      className="hern-billing__table__cell"
                      title={billing?.tax?.description}
                   >
-                     <span
-                        data-translation="true"
-                        data-original-value={billing?.tax?.label}
-                     >
-                        {billing?.tax?.label}
-                     </span>
+                     <span data-translation="true">{billing?.tax?.label}</span>
                      <p
                         className="hern-billing__table__cell__comment"
                         data-translation="true"
-                        data-original-value={parseText(billing?.tax?.comment)}
                      >
                         {parseText(billing?.tax?.comment)}
                      </p>
@@ -125,12 +101,8 @@ export const Billing = ({ billing }) => {
                   <td
                      className="hern-billing__table__cell"
                      data-translation="true"
-                     data-original-value={billing?.walletAmountUsed?.label}
                   >
-                     <span
-                        data-translation="true"
-                        data-original-value={billing?.walletAmountUsed?.label}
-                     >
+                     <span data-translation="true">
                         {billing?.walletAmountUsed?.label}
                      </span>
                   </td>
@@ -144,7 +116,6 @@ export const Billing = ({ billing }) => {
                   <td
                      className="hern-billing__table__cell"
                      data-translation="true"
-                     data-original-value={billing?.loyaltyPointsUsed?.label}
                   >
                      {billing?.loyaltyPointsUsed?.label}
                   </td>
@@ -158,12 +129,8 @@ export const Billing = ({ billing }) => {
                   <td
                      className="hern-billing__table__cell"
                      data-translation="true"
-                     data-original-value={billing?.discount?.label}
                   >
-                     <span
-                        data-translation="true"
-                        data-original-value={billing?.discount?.label}
-                     >
+                     <span data-translation="true">
                         {billing?.discount?.label}
                      </span>
                   </td>
@@ -177,18 +144,12 @@ export const Billing = ({ billing }) => {
                   className="hern-billing__table__cell"
                   title={billing?.totalPrice?.description}
                >
-                  <span
-                     data-translation="true"
-                     data-original-value={billing?.totalPrice?.label}
-                  >
+                  <span data-translation="true">
                      {billing?.totalPrice?.label}
                   </span>
                   <p
                      className="hern-billing__table__cell__comment"
                      data-translation="true"
-                     data-original-value={parseText(
-                        billing?.totalPrice?.comment
-                     )}
                   >
                      {parseText(billing?.totalPrice?.comment)}
                   </p>

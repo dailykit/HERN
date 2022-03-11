@@ -76,7 +76,13 @@ export const useTranslation = () => {
    const dynamicTrans = langTags => {
 
       langTags.forEach(tag => {
-         const langPattern = tag.getAttribute('data-original-value')
+         let langPattern
+         if (tag.hasAttribute('data-original-value')) {
+            langPattern = tag.getAttribute('data-original-value')
+         } else {
+            langPattern = tag.innerHTML
+            tag.setAttribute('data-original-value', langPattern)
+         }
          let innerHTMLToBe = langPattern
          if (locale === 'en') {
 

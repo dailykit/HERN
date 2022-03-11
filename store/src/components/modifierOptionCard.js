@@ -31,7 +31,7 @@ export const ModifierOptionCard = ({
                </span>
             )}
             <span className="hern-modifier-option-name" data-translation="true"
-               data-original-value={modifierOption.name}>
+            >
                {modifierOption.name}
             </span>
             {showPrice &&
