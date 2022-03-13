@@ -69,7 +69,7 @@ export const HernLazyImage = ({
    const SERVER_URL = React.useMemo(() => {
       switch (process.env.NEXT_PUBLIC_MODE) {
          case 'production':
-            return window.location.origin
+            return isClient && window.location.origin
          case 'full-dev':
             return 'http://localhost:4000'
          case 'store-dev':
@@ -79,7 +79,7 @@ export const HernLazyImage = ({
             // return origin
             return 'http://localhost:4000'
          default:
-            return window.location.origin
+            return isClient && window.location.origin
       }
    }, [])
    if (!(width && height) && !removeBg) {
