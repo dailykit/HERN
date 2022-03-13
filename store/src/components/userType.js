@@ -9,6 +9,8 @@ export const UserType = () => {
    const { dispatch } = useUser()
    const { configOf } = useConfig()
    const theme = configOf('theme-color', 'Visual')?.themeColor
+   const authConfig = configOf('Auth Methods', 'brand')
+
    const themeColor = theme?.accent?.value
       ? theme?.accent?.value
       : 'rgba(5, 150, 105, 1)'
@@ -31,21 +33,25 @@ export const UserType = () => {
             >
                Login
             </Button>
-            <span className="hern-user-type__or">Or</span>
-            <span
-               className="hern-user-info__footer-guest"
-               onClick={() => {
-                  localStorage.setItem('userType', 'guest')
-                  dispatch({
-                     type: 'SET_USER_TYPE',
-                     payload: 'guest',
-                  })
-               }}
-               style={{ color: themeColor }}
-               className="hern-user-type__guest"
-            >
-               Continue as Guest
-            </span>
+            {authConfig?.loginSettings?.guestMode?.value && (
+               <>
+                  <span className="hern-user-type__or">Or</span>
+                  <span
+                     className="hern-user-info__footer-guest"
+                     onClick={() => {
+                        localStorage.setItem('userType', 'guest')
+                        dispatch({
+                           type: 'SET_USER_TYPE',
+                           payload: 'guest',
+                        })
+                     }}
+                     style={{ color: themeColor }}
+                     className="hern-user-type__guest"
+                  >
+                     Continue as Guest
+                  </span>
+               </>
+            )}
          </div>
       </div>
    )
