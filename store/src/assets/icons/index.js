@@ -34,7 +34,7 @@ const CheckBoxIcon = dynamic(() =>
    import('./Checkbox').then(promise => promise.CheckBoxIcon)
 )
 const ChefIcon = dynamic(() =>
-   import('./ArrowLeft').then(promise => promise.ChefIcon)
+   import('./Chef').then(promise => promise.ChefIcon)
 )
 const CloseIcon = dynamic(() =>
    import('./Close').then(promise => promise.CloseIcon)
