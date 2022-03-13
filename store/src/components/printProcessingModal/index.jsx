@@ -6,7 +6,7 @@ import { Result, Spin, Button, Modal } from 'antd'
 import { Wrapper } from './styles'
 import { Button as StyledButton } from '../button'
 import { useWindowSize, isKiosk, isClient } from '../../utils'
-import { useCart } from '../../context'
+import { useCart, useTranslation } from '../../context'
 import { useConfig } from '../../lib'
 
 const PrintProcessingModal = ({
@@ -27,6 +27,7 @@ const PrintProcessingModal = ({
    } = printDetails
    const { setStoredCartId } = useCart()
    const { setIsIdleScreen, clearCurrentPage } = useConfig()
+   const { t } = useTranslation()
 
    const showPrintingStatus = () => {
       let icon = (
@@ -46,8 +47,8 @@ const PrintProcessingModal = ({
                className="payment_status_loader"
             />
          )
-         title = 'Printed your receipt successfully'
-         subtitle = 'Taking you back to the home page shortly'
+         title = `${t('Printed your receipt successfully')}`
+         subtitle = `${t('Taking you back to the home page shortly')}`
       } else if (printStatus === 'failed') {
          icon = (
             <img
@@ -55,11 +56,11 @@ const PrintProcessingModal = ({
                className="payment_status_loader"
             />
          )
-         title = 'Failed to print your receipt'
+         title = `${t('Failed to print your receipt')}`
          subtitle = message
          extra = [
             <Button type="primary" onClick={initializePrinting}>
-               Retry Print Receipt
+               {t('Retry Print Receipt')}
             </Button>,
          ]
       }

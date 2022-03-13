@@ -215,7 +215,7 @@ export const PaymentTunnel = ({ tunnel, toggleTunnel }) => {
    }, [user])
 
    return (
-      <Tunnel size="sm" isOpen={tunnel} toggleTunnel={toggleTunnel}>
+      <Tunnel.Wrapper size="sm" isOpen={tunnel} toggleTunnel={toggleTunnel}>
          <Tunnel.Header title="Add Payment Method">
             <button
                onClick={() => toggleTunnel(false)}
@@ -227,7 +227,7 @@ export const PaymentTunnel = ({ tunnel, toggleTunnel }) => {
          <Tunnel.Body>
             <PaymentForm intent={intent} toggleTunnel={toggleTunnel} />
          </Tunnel.Body>
-      </Tunnel>
+      </Tunnel.Wrapper>
    )
 }
 

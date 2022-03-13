@@ -73,95 +73,17 @@ export const Login = props => {
    const { configOf } = useConfig()
    const authConfig = configOf('Auth Methods', 'brand')
    return (
-      <div className={`hern-login-v1-container`}>
-         <div className="hern-login-v1-content">
-            <div className="hern-login-v1-header">
-               {(defaultLogin === 'email' || defaultLogin === 'otp') && (
-                  <span>Log in</span>
-               )}
-
-               {defaultLogin === 'forgotPassword' && (
-                  <span>Forgot Password</span>
-               )}
-               {defaultLogin === 'signup' && <span>Sign Up</span>}
-
-               {!forceLogin && (
-                  <CloseIcon
-                     size={18}
-                     stroke={'#404040'}
-                     style={{ cursor: 'pointer' }}
-                     onClick={closeLoginPopup}
-                  />
-               )}
-            </div>
-            {forceLogin && (
-               <div className="hern-login-v1__custom-warning">
-                  You must login first to access this page.
-                  <span
-                     onClick={() => {
-                        if (isClient) {
-                           window.location.href =
-                              get_env('BASE_BRAND_URL') + getRoute('/')
-                        }
-                     }}
-                  >
-                     Go To Home
-                  </span>
-               </div>
+      <div className="hern-login-v1-content">
+         <div className="hern-login-v1-header">
+            {(defaultLogin === 'email' || defaultLogin === 'otp') && (
+               <span>Log in</span>
             )}
-            <section>
-               {/* email login  or phone number login*/}
-               {defaultLogin === 'email' && (
-                  <Email
-                     setDefaultLogin={setDefaultLogin}
-                     isSilentlyLogin={isSilentlyLogin}
-                     closeLoginPopup={closeLoginPopup}
-                     callbackURL={callbackURL}
-                  />
-               )}
-               {defaultLogin === 'otp' && (
-                  <OTPLogin
-                     closeLoginPopup={closeLoginPopup}
-                     isSilentlyLogin={isSilentlyLogin}
-                     callbackURL={callbackURL}
-                  />
-               )}
-               {defaultLogin === 'forgotPassword' && (
-                  <ForgotPassword closeLoginPopup={closeLoginPopup} />
-               )}
-               {defaultLogin === 'signup' && (
-                  <Signup
-                     setDefaultLogin={setDefaultLogin}
-                     isSilentlyLogin={isSilentlyLogin}
-                     closeLoginPopup={closeLoginPopup}
-                     callbackURL={callbackURL}
-                  />
-               )}
-               {/* {defaultLogin === 'email' ? <Email /> : <OTPLogin />} */}
 
-               {!singleLoginMethod && (
-                  <>
-                     <DividerBar />
-                     <div style={{ margin: '1em' }}>
-                        <Button
-                           className="hern-login-login-switcher-btn"
-                           onClick={() => {
-                              defaultLogin === 'email'
-                                 ? setDefaultLogin('otp')
-                                 : setDefaultLogin('email')
-                           }}
-                        >
-                           {defaultLogin === 'email'
-                              ? 'Log in with Phone Number'
-                              : 'Log in with Email'}
-                        </Button>
-                     </div>
-                  </>
-               )}
+            {defaultLogin === 'forgotPassword' && <span>Forgot Password</span>}
+            {defaultLogin === 'signup' && <span>Sign Up</span>}
 
-               {/* google or facebook */}
-               {socialLogin && <SocialLogin callbackURL={callbackURL} />}
-            </section>
+            {/* google or facebook */}
+            {socialLogin && <SocialLogin callbackURL={callbackURL} />}
             {defaultLogin !== 'signup' &&
                authConfig.loginSettings?.signup?.value && (
                   <footer className="hern-login-v1__footer">
@@ -176,7 +98,97 @@ export const Login = props => {
                      </button>
                   </footer>
                )}
+            {!forceLogin && (
+               <CloseIcon
+                  size={18}
+                  stroke={'#404040'}
+                  style={{ cursor: 'pointer' }}
+                  onClick={closeLoginPopup}
+               />
+            )}
          </div>
+         {forceLogin && (
+            <div className="hern-login-v1__custom-warning">
+               You must login first to access this page.
+               <span
+                  onClick={() => {
+                     if (isClient) {
+                        window.location.href =
+                           get_env('BASE_BRAND_URL') + getRoute('/')
+                     }
+                  }}
+               >
+                  Go To Home
+               </span>
+            </div>
+         )}
+         <section>
+            {/* email login  or phone number login*/}
+            {defaultLogin === 'email' && (
+               <Email
+                  setDefaultLogin={setDefaultLogin}
+                  isSilentlyLogin={isSilentlyLogin}
+                  closeLoginPopup={closeLoginPopup}
+                  callbackURL={callbackURL}
+               />
+            )}
+            {defaultLogin === 'otp' && (
+               <OTPLogin
+                  closeLoginPopup={closeLoginPopup}
+                  isSilentlyLogin={isSilentlyLogin}
+                  callbackURL={callbackURL}
+               />
+            )}
+            {defaultLogin === 'forgotPassword' && (
+               <ForgotPassword closeLoginPopup={closeLoginPopup} />
+            )}
+            {defaultLogin === 'signup' && (
+               <Signup
+                  setDefaultLogin={setDefaultLogin}
+                  isSilentlyLogin={isSilentlyLogin}
+                  closeLoginPopup={closeLoginPopup}
+                  callbackURL={callbackURL}
+               />
+            )}
+            {/* {defaultLogin === 'email' ? <Email /> : <OTPLogin />} */}
+
+            {!singleLoginMethod && (
+               <>
+                  <DividerBar />
+                  <div style={{ margin: '1em' }}>
+                     <Button
+                        className="hern-login-login-switcher-btn"
+                        variant="outline"
+                        onClick={() => {
+                           defaultLogin === 'email'
+                              ? setDefaultLogin('otp')
+                              : setDefaultLogin('email')
+                        }}
+                     >
+                        {defaultLogin === 'email'
+                           ? 'Log in with Phone Number'
+                           : 'Log in with Email'}
+                     </Button>
+                  </div>
+               </>
+            )}
+
+            {/* google or facebook */}
+            {socialLogin && <SocialLogin callbackURL={callbackURL} />}
+         </section>
+         {defaultLogin !== 'signup' && (
+            <footer className="hern-login-v1__footer">
+               <span>No account? </span>{' '}
+               <button
+                  className="hern-login-v1__create-one-btn"
+                  onClick={() => {
+                     setDefaultLogin('signup')
+                  }}
+               >
+                  Create one
+               </button>
+            </footer>
+         )}
       </div>
    )
 }

@@ -201,7 +201,7 @@ const Fulfillment = () => {
                </section>
             )}
          </section>
-         <Tunnel
+         <Tunnel.Wrapper
             isOpen={isAddressListOpen}
             toggleTunnel={setIsAddressListOpen}
             style={{ zIndex: 1030 }}
@@ -222,7 +222,7 @@ const Fulfillment = () => {
                   })
                }
             />
-         </Tunnel>
+         </Tunnel.Wrapper>
       </>
    )
 }
