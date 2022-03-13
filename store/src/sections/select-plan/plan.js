@@ -7,6 +7,7 @@ import { useConfig } from '../../lib'
 import { useUser } from '../../context'
 import { Loader } from '../../components'
 import { isClient, formatCurrency, getRoute, LoginWrapper } from '../../utils'
+import { HernLazyImage } from '../../utils/hernImage'
 
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
@@ -111,8 +112,8 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
          <li className={planClasses}>
             {plan.metaDetails?.coverImage && (
                <div className="hern-our-plans__img__wrapper">
-                  <img
-                     src={plan.metaDetails?.coverImage}
+                  <HernLazyImage
+                     dataSrc={plan.metaDetails?.coverImage}
                      className="hern-our-plans__plan__img"
                   />
                </div>

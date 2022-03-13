@@ -17,12 +17,8 @@ const DisabledText = dynamic(() =>
 )
 const Button = dynamic(() => import('./button').then(promise => promise.Button))
 const Layout = dynamic(() => import('./layout').then(promise => promise.Layout))
-// const Tunnel = dynamic(() => import('./tunnel').then(promise => promise.Tunnel))
 const Spacer = dynamic(() => import('./spacer').then(promise => promise.Spacer))
 const Loader = dynamic(() => import('./loader').then(promise => promise.Loader))
-const HelperBar = dynamic(() =>
-   import('./helper_bar').then(promise => promise.HelperBar)
-)
 const StepsNavbar = dynamic(() =>
    import('./steps_navbar').then(promise => promise.StepsNavbar)
 )
@@ -162,7 +158,6 @@ export {
    // Tunnel,
    Spacer,
    Loader,
-   HelperBar,
    StepsNavbar,
    OnDemandMenu,
    PageLoader,
@@ -210,16 +205,20 @@ export {
 const TunnelHeader = dynamic(() =>
    import('./tunnel').then(promise => promise.Header)
 )
-// const Tunnel = dynamic(() => import('./tunnel').then(promise => promise.Tunnel))
+const TunnelWrapper = dynamic(() =>
+   import('./tunnel').then(promise => promise.Tunnel)
+)
 const Body = dynamic(() => import('./tunnel').then(promise => promise.Body))
 const Left = dynamic(() => import('./tunnel').then(promise => promise.Left))
 const Right = dynamic(() => import('./tunnel').then(promise => promise.Right))
 const Bottom = dynamic(() => import('./tunnel').then(promise => promise.Bottom))
 export const Form = { Text, Label, Field, TextArea, DisabledText }
 export const Tunnel = {
+   Wrapper: TunnelWrapper,
    Header: TunnelHeader,
    Left,
    Right,
    Bottom,
    Body,
 }
+export * from './helper_bar'

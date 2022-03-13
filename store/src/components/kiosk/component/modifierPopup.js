@@ -157,7 +157,7 @@ export const KioskModifier = props => {
       }
    }
    // add product(s) to cartItem
-   const handleAddOnCart = () => {
+   const handleAddOnCart = async () => {
       //check category fulfillment conditions
       const allSelectedOptions = [
          ...selectedOptions.single,
@@ -171,7 +171,7 @@ export const KioskModifier = props => {
             allSelectedOptions.map(x => x.cartItem)
          )
 
-         addToCart(cartItem, quantity)
+         await addToCart(cartItem, quantity)
          if (edit) {
             methods.cartItems.delete({
                variables: {
@@ -277,7 +277,7 @@ export const KioskModifier = props => {
             )
          }
 
-         addToCart(cartItem, quantity)
+         await addToCart(cartItem, quantity)
          if (edit) {
             methods.cartItems.delete({
                variables: {
@@ -618,7 +618,7 @@ export const KioskModifier = props => {
                </div> */}
                {productData.assets.images.length === 0 ? (
                   <HernLazyImage
-                     data-src={config.productSettings.defaultImage.value}
+                     dataSrc={config.productSettings.defaultImage.value}
                      style={{ height: '680px' }}
                   />
                ) : (
@@ -886,7 +886,7 @@ export const KioskModifier = props => {
                                                 <HernLazyImage
                                                    className="hern-kiosk__modifier-category-option-image"
                                                    alt="modifier image"
-                                                   data-src={
+                                                   dataSrc={
                                                       eachOption.image ||
                                                       config.productSettings
                                                          .defaultImage.value
@@ -1454,7 +1454,7 @@ const AdditionalModifiers = forwardRef(
                                                    <HernLazyImage
                                                       className="hern-kiosk__modifier-category-option-image"
                                                       alt="modifier image"
-                                                      data-src={
+                                                      dataSrc={
                                                          eachOption.image ||
                                                          config.productSettings
                                                             .defaultImage.value
@@ -1962,7 +1962,7 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                                     <HernLazyImage
                                        className="hern-kiosk__modifier-category-option-image"
                                        alt="modifier image"
-                                       data-src={
+                                       dataSrc={
                                           eachOption.image ||
                                           config.productSettings.defaultImage
                                              .value

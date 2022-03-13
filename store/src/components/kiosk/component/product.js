@@ -270,7 +270,7 @@ export const KioskProduct = props => {
                               <HernLazyImage
                                  // src={eachImage}
                                  // key={index}
-                                 data-src={eachImage}
+                                 dataSrc={eachImage}
                               />
                            </div>
                         ))}

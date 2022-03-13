@@ -10,6 +10,8 @@ import { Button as StyledButton } from '../button'
 import PayButton from '../PayButton'
 import { ArrowLeftIconBG } from '../../assets/icons'
 import { useWindowSize, isKiosk, formatTerminalStatus } from '../../utils'
+import { useTranslation } from '../../context'
+
 const PaymentProcessingModal = ({
    isOpen,
    cartPayment,
@@ -32,6 +34,7 @@ const PaymentProcessingModal = ({
    const [isCelebrating, setIsCelebrating] = useState(false)
    const { width, height } = useWindowSize()
    const [countDown, setCountDown] = useState(60)
+   const { t } = useTranslation()
 
    const closeModalHandler = async () => {
       setIsCelebrating(false)
@@ -104,8 +107,10 @@ const PaymentProcessingModal = ({
                   className="payment_status_loader"
                />
             )
-            title = 'Successfully placed your order'
-            subtitle = 'You will be redirected to your order page shortly'
+            title = `${t('Successfully placed your order')}`
+            subtitle = `${t(
+               'You will be redirected to your order page shortly'
+            )}`
          } else if (cartPayment?.paymentStatus === 'FAILED') {
             icon = (
                <img
@@ -379,7 +384,7 @@ const PaymentProcessingModal = ({
                <Wrapper>
                   <div tw="flex flex-col">
                      <h1 tw="font-extrabold color[rgba(0, 64, 106, 0.9)] text-4xl text-center margin[2rem 0]">
-                        Choose a payment method
+                        {t('Choose a payment method')}
                      </h1>
                      {PaymentOptions.map(option => {
                         return (
@@ -390,7 +395,7 @@ const PaymentProcessingModal = ({
                                  key={option.id}
                                  selectedAvailablePaymentOptionId={option.id}
                               >
-                                 {LABEL[option.label]}
+                                 {t(LABEL[option.label])}
                               </PayButton>
 
                               <p tw="last:(hidden) font-extrabold margin[2rem 0] color[rgba(0, 64, 106, 0.9)] text-2xl text-center">
@@ -458,6 +463,6 @@ const PaymentProcessingModal = ({
 export default PaymentProcessingModal
 
 const LABEL = {
-   COD: 'PAY AT COUNTER ',
+   COD: 'PAY AT COUNTER',
    TERMINAL: 'PAY VIA CARD',
 }

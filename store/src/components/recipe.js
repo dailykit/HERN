@@ -76,7 +76,7 @@ export const Recipe = ({ productOption, config }) => {
                <div className="hern-recipe__img__wrapper">
                   {recipe?.assets?.images?.length && (
                      <HernLazyImage
-                        data-src={recipe?.assets?.images[0]}
+                        dataSrc={recipe?.assets?.images[0]}
                         alt={recipe.name}
                      />
                   )}
@@ -166,7 +166,7 @@ export const Recipe = ({ productOption, config }) => {
                                              {sachet.ingredient.assets?.images
                                                 ?.length && (
                                                 <HernLazyImage
-                                                   data-src={
+                                                   dataSrc={
                                                       sachet.ingredient.assets
                                                          .images[0]
                                                    }
@@ -224,7 +224,7 @@ export const Recipe = ({ productOption, config }) => {
                                                 {step.assets.images.length >
                                                    0 && (
                                                    <HernLazyImage
-                                                      data-src={
+                                                      dataSrc={
                                                          step.assets.images[0]
                                                             .url
                                                       }
