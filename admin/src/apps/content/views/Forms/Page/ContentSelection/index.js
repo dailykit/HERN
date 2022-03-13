@@ -41,6 +41,7 @@ const ContentSelection = () => {
    const [identifier, setIdentifier] = useState('')
    const [seletedModules, setSeletedModules] = useState([])
    const [isChangeSaved, setIsSavedChange] = useState(true)
+   const [mode, setMode] = useState('editing')
    const { loading, error: subscriptionError } = useSubscription(
       LINKED_COMPONENT,
       {
@@ -290,6 +291,8 @@ const ContentSelection = () => {
                      setIsSavedChange={setIsSavedChange}
                      noneditMode={"noneditMode"}
                      setLinkedModuleId={setLinkedModuleId}
+                     mode={mode}
+                     setMode={setMode}
                   />
                   <Styles.LinkWrapper>
                      <LinkFiles
