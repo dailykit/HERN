@@ -8,7 +8,13 @@ import { useConfig, usePayment } from '../../lib'
 import * as Icon from '../../assets/icons'
 import OrderInfo from '../../sections/OrderInfo'
 import { OnDemandCart } from '../cart'
-import { isClient, formatCurrency, getRoute, useQueryParams } from '../../utils'
+import {
+   isClient,
+   formatCurrency,
+   getRoute,
+   useQueryParams,
+   get_env,
+} from '../../utils'
 import {
    Loader,
    Button,
@@ -162,7 +168,7 @@ export const Checkout = props => {
                   <HelperBar.Button
                      onClick={() =>
                         (window.location.href =
-                           window.location.origin + getRoute('/'))
+                           get_env('BASE_BRAND_URL') + getRoute('/'))
                      }
                   >
                      Go to Home
@@ -198,7 +204,7 @@ export const Checkout = props => {
                   <HelperBar.Button
                      onClick={() =>
                         (window.location.href =
-                           window.location.origin + getRoute('/'))
+                           get_env('BASE_BRAND_URL') + getRoute('/'))
                      }
                   >
                      Go to Home
@@ -231,7 +237,7 @@ export const Checkout = props => {
    //                <HelperBar.Button
    //                   onClick={() =>
    //                      (window.location.href =
-   //                         window.location.origin + getRoute('/'))
+   //                         get_env('BASE_BRAND_URL') + getRoute('/'))
    //                   }
    //                >
    //                   Go to Home

@@ -35,7 +35,8 @@ import {
    sendStripeInvoice,
    sendSMS,
    updateDailyosStripeStatus,
-   getAccountDetails
+   getAccountDetails,
+   SSLRouter
 } from './entities'
 
 import { PrintRouter } from './entities/print'
@@ -114,7 +115,7 @@ router.post(
    '/webhook/emails/handle-subscription-cancelled',
    handleSubscriptionCancelled
 )
-router.use('/api/developer',  DeveloperRouter);
+router.use('/api/developer', DeveloperRouter)
 
 router.post('/webhook/email-template-handler', emailTemplateHandler)
 
@@ -122,5 +123,7 @@ router.use('/api/store', StoreRouter)
 router.post('/api/envs', populate_env)
 
 router.get('/images/:url(*)', handleImage)
+
+router.use('/api/ssl', SSLRouter)
 
 export default router

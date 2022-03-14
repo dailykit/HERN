@@ -29,6 +29,8 @@ import { useToasts } from 'react-toast-notifications'
 import { useConfig } from '../lib'
 import { useModifier } from '../utils'
 import _ from 'lodash'
+import { LeftArrowIcon } from '../assets/icons/LeftArrow'
+import { HernLazyImage } from '../utils/hernImage'
 
 const isSmallerDevice = isClient && window.innerWidth < 768
 export const ModifierPopup = props => {
@@ -609,6 +611,9 @@ export const ModifierPopup = props => {
                         {productOptionsGroupedByProductOptionType
                            .find(eachType => eachType.type == productOptionType)
                            .data.map(eachOption => {
+                              const hasRecipe =
+                                 eachOption?.simpleRecipeYield?.simpleRecipe
+
                               return (
                                  <div
                                     key={eachOption.id}
@@ -643,14 +648,14 @@ export const ModifierPopup = props => {
                                        )}
                                        {')'}
                                     </li>
-                                    {recipeButton.show && (
+                                    {recipeButton.show && hasRecipe && (
                                        <div>
                                           <Link
                                              href={getRoute(
                                                 '/recipes/' + eachOption.id
                                              )}
                                           >
-                                             <>{recipeButton.label}</>
+                                             <a>{recipeButton.label}</a>
                                           </Link>
                                        </div>
                                     )}
@@ -773,7 +778,11 @@ export const ModifierPopup = props => {
                   <Button
                      className="hern-product-modifier-pop-up-add-to-cart-btn"
                      onClick={() => {
-                        if (showStepViewProductOptionAndModifiers) {
+                        if (
+                           showModifiers &&
+                           productOption.modifier &&
+                           showStepViewProductOptionAndModifiers
+                        ) {
                            if (isModifierOptionsViewOpen) {
                               setTimeout(handleAddOnCartOn, 500)
                            } else {
@@ -788,24 +797,10 @@ export const ModifierPopup = props => {
                         locationId ? (storeStatus.status ? false : true) : true
                      }
                   >
-                     {locationId ? (
-                        storeStatus.status ? (
-                           showModifiers && productOption.modifier ? (
-                              showStepViewProductOptionAndModifiers ? (
-                                 !isModifierOptionsViewOpen ? (
-                                    t('PROCEED')
-                                 ) : (
-                                    <span>
-                                       {t('ADD TO CART')}&nbsp;
-                                       {totalAmount()}
-                                    </span>
-                                 )
-                              ) : (
-                                 <span>
-                                    {t('ADD TO CART')}&nbsp;
-                                    {totalAmount()}
-                                 </span>
-                              )
+                     {showModifiers && productOption.modifier ? (
+                        showStepViewProductOptionAndModifiers ? (
+                           !isModifierOptionsViewOpen ? (
+                              t('PROCEED')
                            ) : (
                               <span>
                                  {t('ADD TO CART')}&nbsp;
@@ -813,10 +808,16 @@ export const ModifierPopup = props => {
                               </span>
                            )
                         ) : (
-                           t('COMING SOON')
+                           <span>
+                              {t('ADD TO CART')}&nbsp;
+                              {totalAmount()}
+                           </span>
                         )
                      ) : (
-                        t('COMING SOON')
+                        <span>
+                           {t('ADD TO CART')}&nbsp;
+                           {totalAmount()}
+                        </span>
                      )}
                   </Button>
                </div>
@@ -839,7 +840,10 @@ export const ModifierPopup = props => {
                      className="hern-product-modifier-image-pop-up-content"
                      ref={imagePopUpRef}
                   >
-                     <img src={modifierImage.src} />
+                     <HernLazyImage
+                        dataSrc={modifierImage.src}
+                        alt="modifier"
+                     />
                      {/* <div className="hern-product-modifier-pop-up-close-icon">
                         <CloseIcon size={20} stroke="currentColor" />
                      </div> */}

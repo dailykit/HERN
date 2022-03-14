@@ -1804,8 +1804,8 @@ export const PRODUCT_DETAILS = gql`
    }
 `
 export const GET_CART = gql`
-   subscription cart($id: Int!) {
-      cart(id: $id) {
+   subscription cart($where: order_cart_bool_exp!) {
+      carts(where: $where) {
          id
          status
          tax
@@ -1837,7 +1837,6 @@ export const GET_CART = gql`
          }
          address
          fulfillmentInfo
-
          cartItems_aggregate(where: { level: { _eq: 1 } }) {
             aggregate {
                count
@@ -2183,8 +2182,8 @@ export const GET_JS_CSS_FILES = gql`
 `
 
 export const GET_CART_ITEMS_BY_CART = gql`
-   subscription GET_CART_ITEMS_BY_CART($id: Int!) {
-      cartItems(where: { level: { _eq: 1 }, cartId: { _eq: $id } }) {
+   subscription GET_CART_ITEMS_BY_CART($where: order_cartItem_bool_exp!) {
+      cartItems(where: $where) {
          cartItemId: id
          parentCartItemId
          addOnLabel
@@ -2194,7 +2193,7 @@ export const GET_CART_ITEMS_BY_CART = gql`
          discount
          name: displayName
          image: displayImage
-         childs {
+         childs(where: { ingredientId: { _is_null: true } }) {
             price: unitPrice
             name: displayName
             discount
@@ -2202,7 +2201,7 @@ export const GET_CART_ITEMS_BY_CART = gql`
                id
                label
             }
-            childs {
+            childs(where: { ingredientId: { _is_null: true } }) {
                displayName
                price: unitPrice
                discount
@@ -2210,7 +2209,7 @@ export const GET_CART_ITEMS_BY_CART = gql`
                   id
                   name
                }
-               childs {
+               childs(where: { ingredientId: { _is_null: true } }) {
                   displayName
                   price: unitPrice
                   discount

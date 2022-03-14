@@ -436,7 +436,7 @@ export const StoreList = props => {
 // get distance
 // const getDataWithDrivableDistance = async brandLocation => {
 //    try {
-//       const origin = isClient ? window.location.origin : ''
+//       const origin = isClient ? get_env('BASE_BRAND_URL') : ''
 //       const url = `${origin}/server/api/distance-matrix`
 //       const userLocationInLocal = JSON.parse(
 //          localStorage.getItem('userLocation')

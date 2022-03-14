@@ -27,6 +27,7 @@ import { useQuery } from '@apollo/react-hooks'
 import { useConfig } from '../../../lib'
 import { Loader } from '../..'
 import classNames from 'classnames'
+import { HernLazyImage } from '../../../utils/hernImage'
 
 export const KioskModifier = props => {
    const {
@@ -156,7 +157,7 @@ export const KioskModifier = props => {
       }
    }
    // add product(s) to cartItem
-   const handleAddOnCart = () => {
+   const handleAddOnCart = async () => {
       //check category fulfillment conditions
       const allSelectedOptions = [
          ...selectedOptions.single,
@@ -170,7 +171,7 @@ export const KioskModifier = props => {
             allSelectedOptions.map(x => x.cartItem)
          )
 
-         addToCart(cartItem, quantity)
+         await addToCart(cartItem, quantity)
          if (edit) {
             methods.cartItems.delete({
                variables: {
@@ -276,7 +277,7 @@ export const KioskModifier = props => {
             )
          }
 
-         addToCart(cartItem, quantity)
+         await addToCart(cartItem, quantity)
          if (edit) {
             methods.cartItems.delete({
                variables: {
@@ -616,8 +617,8 @@ export const KioskModifier = props => {
                   {t('Customize')}
                </div> */}
                {productData.assets.images.length === 0 ? (
-                  <img
-                     src={config.productSettings.defaultImage.value}
+                  <HernLazyImage
+                     dataSrc={config.productSettings.defaultImage.value}
                      style={{ height: '680px' }}
                   />
                ) : (
@@ -882,10 +883,10 @@ export const KioskModifier = props => {
                                              }}
                                           >
                                              <div className="hern-kiosk__modifier-category-right">
-                                                <img
+                                                <HernLazyImage
                                                    className="hern-kiosk__modifier-category-option-image"
                                                    alt="modifier image"
-                                                   src={
+                                                   dataSrc={
                                                       eachOption.image ||
                                                       config.productSettings
                                                          .defaultImage.value
@@ -1446,10 +1447,10 @@ const AdditionalModifiers = forwardRef(
                                                 }}
                                              >
                                                 <div className="hern-kiosk__modifier-category-right">
-                                                   <img
+                                                   <HernLazyImage
                                                       className="hern-kiosk__modifier-category-option-image"
                                                       alt="modifier image"
-                                                      src={
+                                                      dataSrc={
                                                          eachOption.image ||
                                                          config.productSettings
                                                             .defaultImage.value
@@ -1952,10 +1953,10 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                                  }}
                               >
                                  <div className="hern-kiosk__modifier-category-right">
-                                    <img
+                                    <HernLazyImage
                                        className="hern-kiosk__modifier-category-option-image"
                                        alt="modifier image"
-                                       src={
+                                       dataSrc={
                                           eachOption.image ||
                                           config.productSettings.defaultImage
                                              .value

@@ -1,7 +1,10 @@
 'use strict'
-
-module.exports = {
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+   enabled: false,
+})
+module.exports = withBundleAnalyzer({
    pageExtensions: ['js', 'jsx'],
+   productionBrowserSourceMaps: true,
    webpack: (config, { isServer }) => {
       // Fixes npm packages that depend on `fs` module
       if (!isServer) {
@@ -17,4 +20,4 @@ module.exports = {
       })
       return config
    },
-}
+})

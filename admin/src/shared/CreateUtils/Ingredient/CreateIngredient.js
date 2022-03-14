@@ -57,7 +57,7 @@ const CreateIngredient = ({ closeTunnel }) => {
             },
          ])
          toast.success('Successfully created the Ingredient!')
-         closeTunnel(1)
+         closeTunnel(2)
       },
       onError: () =>
          toast.success('Failed to create the Ingredient, please try again!'),
@@ -133,7 +133,7 @@ const CreateIngredient = ({ closeTunnel }) => {
             },
          },
       ])
-      closeTunnel(1)
+      closeTunnel(2)
    }
    return (
       <>

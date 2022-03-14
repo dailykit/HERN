@@ -8,7 +8,7 @@ import validator from '../validator'
 import { Banner, Tooltip } from '../../components'
 import { CREATE_COUPONS } from '../../../apps/crm/graphql/mutations'
 
-const CreateCoupon = ({ close }) => {
+const CreateCoupon = ({ closeTunnel }) => {
    const { addTab, tab } = useTabs()
    const [click, setClick] = React.useState(null)
    const [coupon, setCoupon] = React.useState([
@@ -47,7 +47,7 @@ const CreateCoupon = ({ close }) => {
             },
          ])
          toast.success('Successfully created the Coupon!')
-         closeTunnel(1)
+         closeTunnel(15)
       },
       onError: () =>
          toast.success('Failed to create the Coupon, please try again!'),
@@ -134,7 +134,7 @@ const CreateCoupon = ({ close }) => {
       }
       return toast.error('Coupon Name and Author is required!')
    }
-   const closeTunnel = () => {
+   const close = () => {
       setCoupon([
          {
             couponName: {
@@ -147,7 +147,7 @@ const CreateCoupon = ({ close }) => {
             },
          },
       ])
-      close(1)
+      closeTunnel(15)
    }
    return (
       <>
@@ -171,7 +171,7 @@ const CreateCoupon = ({ close }) => {
                         : 'Save & Open',
                },
             ]}
-            close={closeTunnel}
+            close={close}
             tooltip={<Tooltip identifier="create_coupon_tunnelHeader" />}
          />
          <Banner id="crm-app-coupon-create-coupon-tunnel-top" />

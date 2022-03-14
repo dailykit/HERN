@@ -312,5 +312,21 @@
    "Failed to change the default payment method.": " فشل تغيير طريقة الدفع الافتراضية .",
    "Can not delete a default payment method!": " لا يمكن حذف طريقة الدفع الافتراضية! ",
    "Couldn't complete card setup, please try again": "تعذر إكمال إعداد البطاقة ، يرجى المحاولة مرة أخرى",
-   "Add Payment Method": "إضافة طريقة دفع"
+   "Add Payment Method": "إضافة طريقة دفع",
+   "VAT": "ضربة القيمة المضافه ",
+   "No": "من غير",
+   "Extra And Add": "إضافات",
+   "Ice Cream": "آيس كريم",
+   "PAY VIA CARD": "الدفع عن طريق البطاقه",
+   "Printed your receipt successfully": "تمت طباعة الإيصال بنجاح",
+   "Taking you back to the home page shortly": "سوف يتم إعادتكم للصفحه الرئيسية بعد قليل",
+   "Successfully placed your order": "تم إنشاء طلبكم بنجاح ",
+   "You will be redirected to your page shortly": "سوف يتم إعادتكم للصفحه الخاصه بكم بعد قليل",
+   "Tap or Insert your card": "مرر أو أدخل البطاقة ",
+   "Please tap or insert your card to complete the payment": "المرجو تمرير أو إدخال البطاقة لإتمام عملية الدفع ",
+   "Failed to print your receipt.": "تعثر طبع الإيصال ",
+   "Something went wrong while printing please try again!": "حدث خطأ أثناء طباعة الإيصال , المرجو المحاولة مره أخرى ",
+   "Retry print receipt": "إعادة طباعة الإيصال ",
+   "Choose a payment method": "إختر طريقة الدفع ",
+   "PAY AT COUNTER": "الدفع على الكاونتر"
 }

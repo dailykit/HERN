@@ -71,112 +71,143 @@ export const Login = props => {
 
    //component state
    const [defaultLogin, setDefaultLogin] = useState(loginBy)
+   const { configOf } = useConfig()
+   const authConfig = configOf('Auth Methods', 'brand')
    const { t } = useTranslation()
+   const showCreateOne = React.useMemo(() => {
+      if (singleLoginMethod) {
+         if (loginBy === 'email') {
+            return true
+         } else {
+            return false
+         }
+      } else {
+         return true
+      }
+   }, [])
+   console.log('authConfig', authConfig)
    return (
-      <div className={`hern-login-v1-container`}>
-         <div className="hern-login-v1-content">
-            <div className="hern-login-v1-header">
-               {(defaultLogin === 'email' || defaultLogin === 'otp') && (
-                  <span>{t('Log In')}</span>
-               )}
-
-               {defaultLogin === 'forgotPassword' && (
-                  <span>{t('Forgot Password')}</span>
-               )}
-               {defaultLogin === 'signup' && <span>{t('Sign Up')}</span>}
-
-               {!forceLogin && (
-                  <CloseIcon
-                     size={18}
-                     stroke={'#404040'}
-                     style={{ cursor: 'pointer' }}
-                     onClick={closeLoginPopup}
-                  />
-               )}
-            </div>
-            {forceLogin && (
-               <div className="hern-login-v1__custom-warning">
-                  {t('You must login first to access this page.')}
-                  <span
-                     onClick={() => {
-                        if (isClient) {
-                           window.location.href =
-                              window.location.origin + getRoute('/')
-                        }
-                     }}
-                  >
-                     {t('Go To Home')}
-                  </span>
-               </div>
+      <div className="hern-login-v1-content">
+         <div className="hern-login-v1-header">
+            {(defaultLogin === 'email' || defaultLogin === 'otp') && (
+               <span>{t('Log in')}</span>
             )}
-            <section>
-               {/* email login  or phone number login*/}
-               {defaultLogin === 'email' && (
-                  <Email
-                     setDefaultLogin={setDefaultLogin}
-                     isSilentlyLogin={isSilentlyLogin}
-                     closeLoginPopup={closeLoginPopup}
-                     callbackURL={callbackURL}
-                  />
-               )}
-               {defaultLogin === 'otp' && (
-                  <OTPLogin
-                     closeLoginPopup={closeLoginPopup}
-                     isSilentlyLogin={isSilentlyLogin}
-                     callbackURL={callbackURL}
-                  />
-               )}
-               {defaultLogin === 'forgotPassword' && (
-                  <ForgotPassword closeLoginPopup={closeLoginPopup} />
-               )}
-               {defaultLogin === 'signup' && (
-                  <Signup
-                     setDefaultLogin={setDefaultLogin}
-                     isSilentlyLogin={isSilentlyLogin}
-                     closeLoginPopup={closeLoginPopup}
-                     callbackURL={callbackURL}
-                  />
-               )}
-               {/* {defaultLogin === 'email' ? <Email /> : <OTPLogin />} */}
 
-               {!singleLoginMethod && (
-                  <>
-                     <DividerBar />
-                     <div style={{ margin: '1em' }}>
-                        <Button
-                           className="hern-login-login-switcher-btn"
-                           onClick={() => {
-                              defaultLogin === 'email'
-                                 ? setDefaultLogin('otp')
-                                 : setDefaultLogin('email')
-                           }}
-                        >
-                           {defaultLogin === 'email'
-                              ? t('Log in with Phone Number')
-                              : t('Log in with Email')}
-                        </Button>
-                     </div>
-                  </>
-               )}
+            {defaultLogin === 'forgotPassword' && (
+               <span>{t('Forgot Password')}</span>
+            )}
+            {defaultLogin === 'signup' && <span>{t('Sign Up')}</span>}
 
-               {/* google or facebook */}
-               {socialLogin && <SocialLogin callbackURL={callbackURL} />}
-            </section>
-            {defaultLogin !== 'signup' && (
-               <footer className="hern-login-v1__footer">
-                  <span>{t('No account')} </span>
-                  {'?'}
-                  <button
-                     className="hern-login-v1__create-one-btn"
-                     onClick={() => {
-                        setDefaultLogin('signup')
-                     }}
-                  >
-                     {t('Create one')}
-                  </button>
-               </footer>
+            {/* google or facebook */}
+            {socialLogin && <SocialLogin callbackURL={callbackURL} />}
+            {defaultLogin !== 'signup' &&
+               showCreateOne &&
+               authConfig.loginSettings?.signup?.value && (
+                  <footer className="hern-login-v1__footer">
+                     <span>{t('No account?')} </span>{' '}
+                     <button
+                        className="hern-login-v1__create-one-btn"
+                        onClick={() => {
+                           setDefaultLogin('signup')
+                        }}
+                     >
+                        {t('Create one')}
+                     </button>
+                  </footer>
+               )}
+            {!forceLogin && (
+               <CloseIcon
+                  size={18}
+                  stroke={'#404040'}
+                  style={{ cursor: 'pointer' }}
+                  onClick={closeLoginPopup}
+               />
             )}
          </div>
+         {forceLogin && (
+            <div className="hern-login-v1__custom-warning">
+               {t('You must login first to access this page.')}
+               <span
+                  onClick={() => {
+                     if (isClient) {
+                        window.location.href =
+                           get_env('BASE_BRAND_URL') + getRoute('/')
+                     }
+                  }}
+               >
+                  {t('Go To Home')}
+               </span>
+            </div>
+         )}
+         <section>
+            {/* email login  or phone number login*/}
+            {defaultLogin === 'email' && (
+               <Email
+                  setDefaultLogin={setDefaultLogin}
+                  isSilentlyLogin={isSilentlyLogin}
+                  closeLoginPopup={closeLoginPopup}
+                  callbackURL={callbackURL}
+               />
+            )}
+            {defaultLogin === 'otp' && (
+               <OTPLogin
+                  closeLoginPopup={closeLoginPopup}
+                  isSilentlyLogin={isSilentlyLogin}
+                  callbackURL={callbackURL}
+               />
+            )}
+            {defaultLogin === 'forgotPassword' && (
+               <ForgotPassword closeLoginPopup={closeLoginPopup} />
+            )}
+            {defaultLogin === 'signup' && (
+               <Signup
+                  setDefaultLogin={setDefaultLogin}
+                  isSilentlyLogin={isSilentlyLogin}
+                  closeLoginPopup={closeLoginPopup}
+                  callbackURL={callbackURL}
+               />
+            )}
+            {/* {defaultLogin === 'email' ? <Email /> : <OTPLogin />} */}
+
+            {!singleLoginMethod && (
+               <>
+                  <DividerBar />
+                  <div style={{ margin: '1em' }}>
+                     <Button
+                        className="hern-login-login-switcher-btn"
+                        variant="outline"
+                        onClick={() => {
+                           defaultLogin === 'email'
+                              ? setDefaultLogin('otp')
+                              : setDefaultLogin('email')
+                        }}
+                     >
+                        {defaultLogin === 'email' ? (
+                           <span>{t('Log in with Phone Number')}</span>
+                        ) : (
+                           <span> {t('Log in with Email')}</span>
+                        )}
+                     </Button>
+                  </div>
+               </>
+            )}
+
+            {/* google or facebook */}
+            {socialLogin && <SocialLogin callbackURL={callbackURL} />}
+         </section>
+         {defaultLogin !== 'signup' && showCreateOne && (
+            <footer className="hern-login-v1__footer">
+               <span>{t('No account?')} </span>
+               <button
+                  className="hern-login-v1__create-one-btn"
+                  onClick={() => {
+                     setDefaultLogin('signup')
+                  }}
+               >
+                  {t('Create one')}
+               </button>
+            </footer>
+         )}
       </div>
    )
 }
@@ -830,7 +861,7 @@ const ForgotPassword = props => {
       try {
          setError('')
          if (isClient) {
-            const origin = window.location.origin
+            const origin = get_env('BASE_BRAND_URL')
             forgotPassword({
                variables: {
                   email: form.email,
@@ -993,7 +1024,7 @@ const Signup = props => {
                   })
                   if (!isSilentlyLogin) {
                      window.location.href =
-                        window.location.origin +
+                        get_env('BASE_BRAND_URL') +
                         getRoute('/get-started/select-plan')
                   } else {
                      closeLoginPopup()
@@ -1145,7 +1176,7 @@ const Signup = props => {
             setStoredReferralCode(form.code)
          }
 
-         const url = `${window.location.origin}/api/hash`
+         const url = `${get_env('BASE_BRAND_URL')}/api/hash`
          const { data } = await axios.post(url, { password: form.password })
 
          if (data?.success && data?.hash) {

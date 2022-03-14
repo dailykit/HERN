@@ -1,10 +1,15 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import { useRouter } from 'next/router'
-import React from 'react'
+import React, { useState } from 'react'
 import { useToasts } from 'react-toast-notifications'
 import { Button, Form, Loader, ProfileSidebar, Spacer } from '../../components'
 import { useTranslation, useUser } from '../../context'
-import { BRAND, SUBSCRIPTION_PLAN } from '../../graphql'
+
+import {
+   BRAND,
+   SUBSCRIPTION_PLAN,
+   UPDATE_PLATFORM_CUSTOMER,
+} from '../../graphql'
 import { useConfig } from '../../lib'
 import { getRoute, isClient } from '../../utils'
 import * as moment from 'moment'
@@ -35,7 +40,43 @@ const ProfileForm = () => {
    const { configOf } = useConfig()
    const { t } = useTranslation()
    const theme = configOf('theme-color', 'Visual')
+   const { addToast } = useToasts()
 
+   const [firstName, setFirstName] = useState(
+      user?.platform_customer?.firstName
+   )
+   const [lastName, setLastName] = useState(user?.platform_customer?.lastName)
+
+   const [updateCustomer] = useMutation(UPDATE_PLATFORM_CUSTOMER, {
+      onCompleted: () => {
+         addToast('User info updated succesfully !', {
+            appearance: 'success',
+         })
+      },
+      onError: error => {
+         console.error(error)
+
+         addToast('Failed to save!', {
+            appearance: 'error',
+         })
+      },
+   })
+   React.useEffect(() => {
+      setFirstName(user?.platform_customer?.firstName)
+      setLastName(user?.platform_customer?.lastName)
+   }, [user])
+
+   const handleSubmit = async e => {
+      e.preventDefault()
+      if (user?.keycloakId) {
+         await updateCustomer({
+            variables: {
+               keycloakId: user.keycloakId,
+               _set: { firstName: firstName, lastName: lastName },
+            },
+         })
+      }
+   }
    return (
       <section className="hern-profile__profile-form">
          <header className="hern-profile__profile-form__header">
@@ -59,7 +100,8 @@ const ProfileForm = () => {
                   type="text"
                   name="firstName"
                   placeholder="Enter your first name"
-                  defaultValue={user?.platform_customer?.firstName}
+                  value={firstName}
+                  onChange={e => setFirstName(e.target.value)}
                />
             </Form.Field>
             <Form.Field>
@@ -67,11 +109,19 @@ const ProfileForm = () => {
                <Form.Text
                   type="text"
                   name="lastName"
+                  value={lastName}
+                  onChange={e => setLastName(e.target.value)}
                   placeholder="Enter your last name"
-                  defaultValue={user?.platform_customer?.lastName}
                />
             </Form.Field>
          </div>
+         <Button
+            onClick={handleSubmit}
+            type="submit"
+            disabled={!firstName?.length || !lastName?.length}
+         >
+            Submit
+         </Button>
       </section>
    )
 }

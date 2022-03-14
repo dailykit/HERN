@@ -312,5 +312,21 @@
    "Failed to change the default payment method.": "Failed to change the default payment method.",
    "Can not delete a default payment method!": "Can not delete a default payment method!",
    "Couldn't complete card setup, please try again": "Couldn't complete card setup, please try again",
-   "Add Payment Method": "Add Payment Method"
+   "Add Payment Method": "Add Payment Method",
+   "VAT": "VAT",
+   "No": "No",
+   "Extra And Add": "Extra And Add",
+   "Ice Cream": "Ice Cream",
+   "PAY VIA CARD": "PAY VIA CARD",
+   "Printed your receipt successfully": "Printed your receipt successfully",
+   "Taking you back to the home page shortly": "Taking you back to the home page shortly",
+   "Successfully placed your order": "Successfully placed your order",
+   "You will be redirected to your page shortly": "You will be redirected to your page shortly",
+   "Tap or Insert your card": "Tap or Insert your card",
+   "Please tap or insert your card to complete the payment": "Please tap or insert your card to complete the payment",
+   "Failed to print your receipt": "Failed to print your receipt",
+   "Something went wrong while printing please try again!": "Something went wrong while printing please try again!",
+   "Retry print receipt": "Retry print receipt",
+   "Choose a payment method": "Choose a payment method",
+   "PAY AT COUNTER": "PAY AT COUNTER"
 }

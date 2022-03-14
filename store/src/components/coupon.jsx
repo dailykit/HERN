@@ -7,7 +7,7 @@ import { useConfig } from '../lib'
 import { useMenu, MenuProvider } from '../sections/select-menu'
 import { CouponsList } from './coupons_list'
 import { Loader } from './loader'
-import { Tunnel } from './tunnel'
+import { Tunnel } from '.'
 import { useQueryParamState } from '../utils'
 import { CouponIcon, ChevronIcon, CouponTicketIcon } from '../assets/icons'
 import { Button } from '.'
@@ -256,7 +256,7 @@ const Coupon_ = ({
                   </Button>
                )}
             </form>
-            {!orderInterfaceType === 'Kiosk Ordering' && (
+            {orderInterfaceType !== 'Kiosk Ordering' && (
                <Button
                   onClick={() => setIsCouponListTunnelOpen(true)}
                   variant="ghost"
@@ -298,7 +298,7 @@ const Coupon_ = ({
                />
             )}
             {orderInterfaceType !== 'Kiosk Ordering' && !upFrontLayout && (
-               <Tunnel
+               <Tunnel.Wrapper
                   isOpen={isCouponListOpen}
                   toggleTunnel={setIsCouponListOpen}
                   style={{ zIndex: 1030 }}
@@ -308,7 +308,7 @@ const Coupon_ = ({
                      closeTunnel={() => setIsCouponListOpen(false)}
                      cart={cart}
                   />
-               </Tunnel>
+               </Tunnel.Wrapper>
             )}
          </>
       )

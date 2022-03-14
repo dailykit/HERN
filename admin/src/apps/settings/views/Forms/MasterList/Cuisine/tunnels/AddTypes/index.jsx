@@ -21,7 +21,7 @@ const AddTypesTunnel = ({ closeTunnel }) => {
       {
          onCompleted: () => {
             toast.success('Cuisines added.')
-            closeTunnel(1)
+            closeTunnel(9)
          },
          onError: error => {
             toast.error('Failed to add cuisine!')
@@ -66,7 +66,7 @@ const AddTypesTunnel = ({ closeTunnel }) => {
                isLoading: addingCuisine,
                disabled: types.filter(Boolean).length === 0,
             }}
-            close={() => closeTunnel(1)}
+            close={() => closeTunnel(9)}
             tooltip={<Tooltip identifier="tunnel_cuisine_heading" />}
          />
          <Banner id="settings-app-master-lists-cuisine-tunnel-top" />

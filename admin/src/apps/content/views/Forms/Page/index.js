@@ -25,18 +25,20 @@ import {
    Banner,
 } from '../../../../../shared/components'
 import ContentSelection from './ContentSelection'
-import BrandContext from '../../../context/Brand'
+// import BrandContext from '../../../context/Brand'
 import { PagePreviewTunnel } from './Tunnel'
 // for SEO Tools
 import SocialShare from './SEO/SocialShare'
 import SEObasics from './SEO/SEObasics'
 import TwitterCard from './SEO/TwitterCard'
+import { BrandContext } from '../../../../../App'
 
 const PageForm = () => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
    const { addTab, tab, setTabTitle, closeAllTabs } = useTabs()
-   const [context, setContext] = useContext(BrandContext)
-   const prevBrandId = useRef(context.brandId)
+   // const [context, setContext] = useContext(BrandContext)
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+   const prevBrandId = useRef(brandContext.brandId)
    const { pageId, pageName } = useParams()
    const [pageTitle, setPageTitle] = useState({
       value: '',
@@ -148,7 +150,7 @@ const PageForm = () => {
       }
    }, [pageTitle])
 
-   if (context.brandId !== prevBrandId.current) {
+   if (brandContext.brandId !== prevBrandId.current) {
       closeAllTabs()
    }
 
@@ -282,7 +284,7 @@ const PageForm = () => {
                                  <Form.Text
                                     id="domain"
                                     name="domain"
-                                    value={context.brandDomain}
+                                    value={brandContext.brandDomain}
                                     disabled
                                  />
                                  <Form.Text

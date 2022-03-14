@@ -9,7 +9,7 @@ import { formatTerminalStatus } from './formatTerminalStatus'
 import { UPDATE_CART, UPDATE_CART_PAYMENT } from '../graphql'
 
 const passResponseToWebhook = async data => {
-   const baseUrl = isClient ? window.location.origin : ''
+   const baseUrl = isClient ? get_env('BASE_BRAND_URL') : ''
    const url = `${baseUrl}/server/api/payment/handle-payment-webhook`
    const response = await axios({
       url,

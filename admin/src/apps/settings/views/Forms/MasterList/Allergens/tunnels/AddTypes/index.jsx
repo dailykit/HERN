@@ -21,7 +21,7 @@ const AddTypesTunnel = ({ closeTunnel }) => {
       {
          onCompleted: () => {
             toast.success('Allergens added.')
-            closeTunnel(1)
+            closeTunnel(12)
          },
          onError: error => {
             toast.error('Failed to add allergen!')
@@ -65,7 +65,7 @@ const AddTypesTunnel = ({ closeTunnel }) => {
                isLoading: addingAllergen,
                disabled: types.filter(Boolean).length === 0,
             }}
-            close={() => closeTunnel(1)}
+            close={() => closeTunnel(12)}
             tooltip={<Tooltip identifier="tunnel_allergen_heading" />}
          />
          <Banner id="settings-app-master-lists-allergens-tunnel-top" />

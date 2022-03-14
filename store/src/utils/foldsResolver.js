@@ -3,9 +3,9 @@ import { get_env } from './get_env'
 
 const axios = require('axios')
 /*
-There could be two type of fold[module] 
+There could be two type of fold[module]
 1. system defined (These are mainly components exists in  our code base)
-2. Plugin or third party plugin 
+2. Plugin or third party plugin
  - This could be either html file or JS file
 */
 const resolveComponent = fold => {
@@ -40,7 +40,7 @@ const resolveComponent = fold => {
          // script urls
          const scripts = linkedJsFiles.map(
             ({ jsFile }) =>
-               `${config['EXPRESS_URL']}/template/files${jsFile.path}`
+               `${config['BASE_BRAND_URL']}/template/files${jsFile.path}`
          )
 
          if (extension !== 'html') {
@@ -54,15 +54,15 @@ const resolveComponent = fold => {
          }
 
          const { data } = await axios.get(
-            `${config['EXPRESS_URL']}/template/files${path}`
-            // `${config['EXPRESS_URL']}/template/files/default/components/faq.html`
+            `${config['BASE_BRAND_URL']}/template/files${path}`
+            // `${config['BASE_BRAND_URL']}/template/files/default/components/faq.html`
          )
 
          // add css links + html
          // const parsedData =
          //    linkedCssFiles.map(
          //       ({ cssFile }) =>
-         //          `<link rel="stylesheet" type="text/css" href="${config['EXPRESS_URL']}/template/files${cssFile.path}" media="screen"/>`
+         //          `<link rel="stylesheet" type="text/css" href="${config['BASE_BRAND_URL']}/template/files${cssFile.path}" media="screen"/>`
          //    ).join`` + data
 
          /*
@@ -74,7 +74,7 @@ const resolveComponent = fold => {
                      <h1>Hello</h1>
                   `
                }
-            
+
             */
 
          if (data) {

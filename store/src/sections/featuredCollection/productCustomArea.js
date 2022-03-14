@@ -9,7 +9,8 @@ export const CustomArea = props => {
    const { data, setProductModifier } = props
    const { addToCart, combinedCartItems, methods, cartState } =
       React.useContext(CartContext)
-   const { locationId, storeStatus, configOf } = useConfig()
+   const { locationId, storeStatus, configOf, setShowLocationSelectionPopup } =
+      useConfig()
    const theme = configOf('theme-color', 'Visual')?.themeColor
    const themeColor = theme?.accent?.value
       ? theme?.accent?.value
@@ -274,23 +275,27 @@ export const CustomArea = props => {
             <Button
                className="hern-custom-area-add-btn"
                type="outline"
-               onClick={() => {
-                  if (data.productOptions.length > 0) {
-                     setProductModifier(data)
+               onClick={async () => {
+                  if (!locationId) {
+                     setShowLocationSelectionPopup(true)
                   } else {
-                     addToCart({ productId: data.id }, 1)
+                     if (data.productOptions.length > 0) {
+                        setProductModifier(data)
+                     } else {
+                        await addToCart(data.defaultCartItem, 1)
+                     }
                   }
                }}
-               disabled={
-                  locationId ? (storeStatus.status ? false : true) : true
-               }
+            // disabled={
+            //    locationId ? (storeStatus.status ? false : true) : true
+            // }
             >
-               {locationId
+               {/* {locationId
                   ? storeStatus.status
                      ? t('ADD')
                      : t('COMING SOON')
-                  : t('COMING SOON')}
-
+                  : t('COMING SOON')}*/}
+               {t('ADD')}
             </Button>
          ) : (
             <CounterButton

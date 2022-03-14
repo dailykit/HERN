@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import gql from 'graphql-tag'
 import Loadable from 'react-loadable'
 import { Loader, Spacer } from '@dailykit/ui'
@@ -114,6 +114,8 @@ const OperationMode = Loadable({
    loader: () => import('../src/shared/components/OperationalMode'),
    loading: Loader,
 })
+export const BrandContext = React.createContext()
+
 const App = () => {
    // const location = useLocation()
    // const { routes, setRoutes } = useTabs()
@@ -121,6 +123,7 @@ const App = () => {
    const { loading, data: { apps = [] } = {} } = useSubscription(APPS)
    const { user } = useAuth()
    const { tabs } = useTabs()
+   const [brandContext, setBrandContext] = useState({ brandId: 0, brandName: "" })
 
    const ViewStore = Loadable({
       loader: () => import('./apps/viewStore'),
@@ -129,46 +132,48 @@ const App = () => {
 
    if (loading) return <Loader />
    return (
-      <Layout TabShow={tabs.length > 0}>
-         <TabBar />
-         <Sidebar />
+      <BrandContext.Provider value={[brandContext, setBrandContext]}>
+         <Layout TabShow={tabs.length > 0}>
+            <TabBar />
+            <Sidebar />
 
-         <main>
-            <Switch>
-               <Route path="/" exact>
-                  <Banner id="app-home-top" />
-                  <HomeContainer>
-                     <DashboardPanel>
-                        <DashboardCards />
-                        <DashboardTables />
-                        <DashboardWeeklyAnalysis />
-                     </DashboardPanel>
-                     <DashboardRight>
-                        <DashboardRightPanel />
-                     </DashboardRight>
-                  </HomeContainer>
-                  <Banner id="app-home-bottom" />
-               </Route>
-               <Route path="/inventory" component={Inventory} />
-               <Route path="/safety" component={Safety} />
-               <Route path="/products" component={Products} />
-               <Route path="/menu" component={Menu} />
-               <Route path="/settings" component={Settings} />
-               <Route path="/order" component={Order} />
-               <Route path="/crm" component={CRM} />
-               <Route path="/subscription" component={Subscription} />
-               <Route path="/insights" component={Insights} />
-               <Route path="/brands" component={Brands} />
-               <Route path="/content" component={Content} />
-               <Route path="/editor" component={Editor} />
-               <Route path="/carts" component={Carts} />
-               <Route path="/developer" component={Developer} />
-               <Route path="/viewStore" component={ViewStore} />
-               <Route path="/operationMode" component={OperationMode} />
-            </Switch>
-         </main>
-         {/* {!isKeycloakSupported() && <RedirectBanner />} */}
-      </Layout>
+            <main>
+               <Switch>
+                  <Route path="/" exact>
+                     <Banner id="app-home-top" />
+                     <HomeContainer>
+                        <DashboardPanel>
+                           <DashboardCards />
+                           <DashboardTables />
+                           <DashboardWeeklyAnalysis />
+                        </DashboardPanel>
+                        <DashboardRight>
+                           <DashboardRightPanel />
+                        </DashboardRight>
+                     </HomeContainer>
+                     <Banner id="app-home-bottom" />
+                  </Route>
+                  <Route path="/inventory" component={Inventory} />
+                  <Route path="/safety" component={Safety} />
+                  <Route path="/products" component={Products} />
+                  <Route path="/menu" component={Menu} />
+                  <Route path="/settings" component={Settings} />
+                  <Route path="/order" component={Order} />
+                  <Route path="/crm" component={CRM} />
+                  <Route path="/subscription" component={Subscription} />
+                  <Route path="/insights" component={Insights} />
+                  <Route path="/brands" component={Brands} />
+                  <Route path="/content" component={Content} />
+                  <Route path="/editor" component={Editor} />
+                  <Route path="/carts" component={Carts} />
+                  <Route path="/developer" component={Developer} />
+                  <Route path="/viewStore" component={ViewStore} />
+                  <Route path="/operationMode" component={OperationMode} />
+               </Switch>
+            </main>
+            {/* {!isKeycloakSupported() && <RedirectBanner />} */}
+         </Layout>
+      </BrandContext.Provider>
    )
 }
 

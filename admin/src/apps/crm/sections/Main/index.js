@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { Switch, Route } from 'react-router-dom'
 import { BrandName } from './styled'
-import BrandContext from '../../context/Brand'
+// import BrandContext from '../../context/Brand'
 import { ViewIcon } from '../../../../shared/assets/icons'
 // Views
 import {
@@ -13,9 +13,12 @@ import {
    CampaignListing,
    CampaignForm,
 } from '../../views'
+import { BrandContext } from '../../../../App'
 
 const Main = () => {
-   const [context, setContext] = useContext(BrandContext)
+   // const [context, setContext] = useContext(BrandContext)
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
    return (
       <main>
          <Switch>
@@ -34,7 +37,7 @@ const Main = () => {
 
          <BrandName>
             <ViewIcon size="24" /> &nbsp;
-            <p>Showing information for {context.brandName} brand</p>
+            <p>Showing information for {brandContext.brandName} brand</p>
          </BrandName>
       </main>
    )

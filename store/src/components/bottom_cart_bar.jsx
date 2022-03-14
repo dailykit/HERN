@@ -24,7 +24,7 @@ export const BottomCartBar = () => {
             <span className="hern-bottom-cart-bar__taxes">+ taxes</span>
          </div>
          <div className="hern-bottom-cart-bar-view-cart">
-            <Link href="/on-demand-cart">VIEW CART</Link>{' '}
+            <Link href="/checkout">VIEW CART</Link>{' '}
          </div>
       </div>
    )

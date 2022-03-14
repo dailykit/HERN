@@ -46,7 +46,7 @@ export async function getStaticProps({ params }) {
          settings,
          productId: parseInt(params.id),
       },
-      revalidate: 60, // will be passed to the page component as props
+      // revalidate: 60, // will be passed to the page component as props
    }
 }
 

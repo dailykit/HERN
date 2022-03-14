@@ -18,7 +18,7 @@ import {
    CREATE_PRINT_JOB,
    UPDATE_CART,
 } from '../graphql'
-import { useUser, useCart } from '../context'
+import { useUser, useCart, useTranslation } from '../context'
 import { useConfig } from '../lib'
 import {
    getRazorpayOptions,
@@ -103,6 +103,7 @@ export const PaymentProvider = ({ children }) => {
    } = useTerminalPay()
    const { cartState } = useCart()
    const { addToast } = useToasts()
+   const { t } = useTranslation()
 
    const BY_PASS_TERMINAL_PAYMENT = get_env('BY_PASS_TERMINAL_PAYMENT')
    const ALLOW_POSIST_PUSH_ORDER = get_env('ALLOW_POSIST_PUSH_ORDER')
@@ -131,7 +132,7 @@ export const PaymentProvider = ({ children }) => {
    const [updateCartPayment] = useMutation(UPDATE_CART_PAYMENT, {
       onError: error => {
          console.error(error)
-         addToast('Something went wrong!', { appearance: 'error' })
+         addToast(`${t('Something went wrong')}`, { appearance: 'error' })
       },
    })
 
@@ -139,7 +140,7 @@ export const PaymentProvider = ({ children }) => {
    const [updateCart] = useMutation(UPDATE_CART, {
       onError: error => {
          console.error(error)
-         addToast('Something went wrong!', { appearance: 'error' })
+         addToast(`${t('Something went wrong')}`, { appearance: 'error' })
       },
    })
 
@@ -172,15 +173,16 @@ export const PaymentProvider = ({ children }) => {
          },
          onError: error => {
             console.error(error)
-            addToast('Something went wrong!', { appearance: 'error' })
+            addToast(`${t('Something went wrong')}`, { appearance: 'error' })
             dispatch({
                type: 'UPDATE_INITIAL_STATE',
                payload: {
                   printDetails: {
                      ...state.printDetails,
                      printStatus: 'failed',
-                     message:
-                        'Something went wrong while printing, please try again!',
+                     message: `${t(
+                        'Something went wrong while printing please try again!'
+                     )}`,
                   },
                },
             })
@@ -248,7 +250,7 @@ export const PaymentProvider = ({ children }) => {
             isPaymentProcessing: false,
          },
       })
-      const url = isClient ? window.location.origin : ''
+      const url = isClient ? get_env('BASE_BRAND_URL') : ''
       const { data } = await axios.post(
          `${url}/server/api/payment/handle-payment-webhook`,
          response

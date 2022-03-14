@@ -284,7 +284,7 @@ export const AddressTunnel = ({ theme, tunnel, toggleTunnel }) => {
    }
 
    return (
-      <Tunnel
+      <Tunnel.Wrapper
          size="sm"
          isOpen={tunnel}
          toggleTunnel={() => toggleTunnel(false)}
@@ -403,6 +403,6 @@ export const AddressTunnel = ({ theme, tunnel, toggleTunnel }) => {
                </>
             )}
          </Tunnel.Body>
-      </Tunnel>
+      </Tunnel.Wrapper>
    )
 }
