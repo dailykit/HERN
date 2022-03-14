@@ -72,6 +72,19 @@ export const Login = props => {
    const [defaultLogin, setDefaultLogin] = useState(loginBy)
    const { configOf } = useConfig()
    const authConfig = configOf('Auth Methods', 'brand')
+
+   const showCreateOne = React.useMemo(() => {
+      if (singleLoginMethod) {
+         if (loginBy === 'email') {
+            return true
+         } else {
+            return false
+         }
+      } else {
+         return true
+      }
+   }, [])
+   console.log('authConfig', authConfig)
    return (
       <div className="hern-login-v1-content">
          <div className="hern-login-v1-header">
@@ -85,6 +98,7 @@ export const Login = props => {
             {/* google or facebook */}
             {socialLogin && <SocialLogin callbackURL={callbackURL} />}
             {defaultLogin !== 'signup' &&
+               showCreateOne &&
                authConfig.loginSettings?.signup?.value && (
                   <footer className="hern-login-v1__footer">
                      <span>No account? </span>{' '}
@@ -176,7 +190,7 @@ export const Login = props => {
             {/* google or facebook */}
             {socialLogin && <SocialLogin callbackURL={callbackURL} />}
          </section>
-         {defaultLogin !== 'signup' && (
+         {defaultLogin !== 'signup' && showCreateOne && (
             <footer className="hern-login-v1__footer">
                <span>No account? </span>{' '}
                <button
