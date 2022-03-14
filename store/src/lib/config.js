@@ -6,6 +6,7 @@ import { get_env, isClient, useQueryParamState } from '../utils'
 import { PageLoader } from '../components'
 import { SETTINGS } from '../graphql/queries'
 import { ORDER_TAB } from '../graphql'
+import moment from 'moment'
 
 const ConfigContext = React.createContext()
 
@@ -27,6 +28,7 @@ const initialState = {
       loading: true,
    },
    lastLocationId: null,
+   storeOperatingTime: null,
 }
 
 const reducers = (state, { type, payload }) => {
@@ -53,6 +55,8 @@ const reducers = (state, { type, payload }) => {
          return { ...state, storeStatus: payload }
       case 'SET_LAST_LOCATION_ID':
          return { ...state, lastLocationId: payload }
+      case 'SET_STORE_OPERATING_TIME':
+         return { ...state, storeOperatingTime: payload }
       default:
          return state
    }
@@ -266,6 +270,35 @@ export const useConfig = (globalType = '') => {
       [state, globalType]
    )
 
+   const isStoreAvailable = React.useMemo(() => {
+      if (state.storeOperatingTime) {
+         let storeAvailability
+         for (let i = 0; i <= state.storeOperatingTime.length - 1; i++) {
+            const currentTime = moment()
+            const openingTime = moment(
+               state.storeOperatingTime[i].openingTime,
+               'HH:mm'
+            )
+            const closingTime = moment(
+               state.storeOperatingTime[i].closingTime,
+               'HH:mm'
+            )
+            storeAvailability = currentTime.isBetween(
+               openingTime,
+               closingTime,
+               'minutes',
+               []
+            )
+            if (storeAvailability) {
+               break
+            }
+         }
+         return storeAvailability
+      } else {
+         return false
+      }
+   }, [state.storeOperatingTime])
+
    return {
       configOf,
       hasConfig,
@@ -291,5 +324,7 @@ export const useConfig = (globalType = '') => {
       clearCurrentPage,
       showLocationSelectorPopup,
       setShowLocationSelectionPopup,
+      storeOperatingTime: state.storeOperatingTime,
+      isStoreAvailable,
    }
 }
