@@ -270,5 +270,12 @@
    "Pause Plan": "Pause Plan",
    "Reason(Optional)": "Reason(Optional)",
    "Yes! Cancel my subscription.": "Yes! Cancel my subscription.",
-   "Cancel Subscription": "Cancel Subscription"
+   "Cancel Subscription": "Cancel Subscription",
+   "Wallet": "Wallet",
+   "Loyalty Points": "Loyalty Points",
+   "Referrals": "Referrals",
+   "Order History": "Order History",
+   "Subscriptions": "Subscriptions",
+   "Manage Addresses": "Manage Addresses",
+   "Manage Cards": "Manage Cards"
 }

@@ -270,5 +270,12 @@
    "Pause Plan": "خطة وقفة",
    "Reason(Optional)": "السبب (اختياري)",
    "Yes! Cancel my subscription.": "نعم! إلغاء اشتراكي.",
-   "Cancel Subscription": "إلغاء الاشتراك"
+   "Cancel Subscription": "إلغاء الاشتراك",
+   "Wallet": "محفظة نقود",
+   "Loyalty Points": "نقاط الولاء",
+   "Referrals": "الإحالات",
+   "Order History": "تاريخ الطلب",
+   "Subscriptions": "الاشتراكات",
+   "Manage Addresses": "إدارة العناوين",
+   "Manage Cards": "إدارة البطاقات"
 }
