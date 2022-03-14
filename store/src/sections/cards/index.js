@@ -20,7 +20,7 @@ import {
 } from '../../components'
 import { useConfig } from '../../lib'
 import { get_env, isClient, isConnectedIntegration } from '../../utils'
-import { useUser } from '../../context'
+import { useTranslation, useUser } from '../../context'
 import { CloseIcon, DeleteIcon } from '../../assets/icons'
 import {
    BRAND,
@@ -40,18 +40,19 @@ export const ManageCards = () => {
 const Content = () => {
    const { user } = useUser()
    const { addToast } = useToasts()
+   const { t } = useTranslation()
    const { brand, configOf } = useConfig()
    const [tunnel, toggleTunnel] = React.useState(false)
    const [deleteStripePaymentMethod] = useMutation(
       DELETE_STRIPE_PAYMENT_METHOD,
       {
          onCompleted: () => {
-            addToast('Successfully deleted the payment method.', {
+            addToast(t('Successfully deleted the payment method.'), {
                appearance: 'success',
             })
          },
          onError: () => {
-            addToast('Failed to delete the payment method.', {
+            addToast(t('Failed to delete the payment method.'), {
                appearance: 'error',
             })
          },
@@ -59,12 +60,12 @@ const Content = () => {
    )
    const [updateBrandCustomer] = useMutation(BRAND.CUSTOMER.UPDATE, {
       onCompleted: () => {
-         addToast('Successfully changed default payment method.', {
+         addToast(t('Successfully changed default payment method.'), {
             appearance: 'success',
          })
       },
       onError: () => {
-         addToast('Failed to change the default payment method.', {
+         addToast(t('Failed to change the default payment method.'), {
             appearance: 'error',
          })
       },
@@ -72,7 +73,7 @@ const Content = () => {
 
    const deletePaymentMethod = id => {
       if (user?.subscriptionPaymentMethodId === id) {
-         addToast('Can not delete a default payment method!', {
+         addToast(t('Can not delete a default payment method!'), {
             appearance: 'error',
          })
          return
@@ -107,16 +108,15 @@ const Content = () => {
             <h2
                className="hern-cards__header__title"
                style={{
-                  color: `${
-                     theme?.accent ? theme?.accent : 'rgba(5,150,105,1)'
-                  }`,
+                  color: `${theme?.accent ? theme?.accent : 'rgba(5,150,105,1)'
+                     }`,
                }}
             >
-               Cards
+               {t('Cards')}
             </h2>
             {user?.platform_customer?.paymentMethods.length > 0 && (
                <Button bg={theme?.accent} onClick={() => toggleTunnel(true)}>
-                  Add Card
+                  {t('Add Card')}
                </Button>
             )}
          </header>
@@ -134,21 +134,20 @@ const Content = () => {
                            <section className="hern-cards__card">
                               <header className="hern-cards__card__header">
                                  {user.subscriptionPaymentMethodId ===
-                                 method.paymentMethodId ? (
+                                    method.paymentMethodId ? (
                                     <span className="hern-cards__card__default-tag">
-                                       Default
+                                       {t('Default')}
                                     </span>
                                  ) : (
                                     <button
                                        className="hern-cards__card__makedefault-btn"
                                        onClick={() => makeDefault(method)}
                                     >
-                                       Make Default
+                                       {t('Make Default')}
                                     </button>
                                  )}
                                  <button
-                                    className="group"
-                                    className="hern-cards__card__delete-btn"
+                                    className="hern-cards__card__delete-btn group"
                                     onClick={() =>
                                        deletePaymentMethod(
                                           method.paymentMethodId
@@ -173,7 +172,7 @@ const Content = () => {
                                  </div>
                               </div>
                               <span className="hern-cards__card__last-4">
-                                 <span>Last 4:</span>
+                                 <span>{t("Last 4:")}</span>
                                  {method.last4}
                               </span>
                            </section>
@@ -183,10 +182,10 @@ const Content = () => {
                ) : (
                   <HelperBar type="info">
                      <HelperBar.SubTitle>
-                        Let's start with adding a card
+                        {t("Let's start with adding a card")}
                      </HelperBar.SubTitle>
                      <HelperBar.Button onClick={() => toggleTunnel(true)}>
-                        Add Card
+                        {t('Add Card')}
                      </HelperBar.Button>
                   </HelperBar>
                )}
@@ -202,10 +201,10 @@ const Content = () => {
 export const PaymentTunnel = ({ tunnel, toggleTunnel }) => {
    const { user } = useUser()
    const [intent, setIntent] = React.useState(null)
-
+   const { t } = useTranslation()
    React.useEffect(() => {
       if (user?.platform_customer?.paymentCustomerId && isClient) {
-         ;(async () => {
+         ; (async () => {
             const setup_intent = await createSetupIntent(
                user?.platform_customer?.paymentCustomerId
             )
@@ -216,7 +215,7 @@ export const PaymentTunnel = ({ tunnel, toggleTunnel }) => {
 
    return (
       <Tunnel size="sm" isOpen={tunnel} toggleTunnel={toggleTunnel}>
-         <Tunnel.Header title="Add Payment Method">
+         <Tunnel.Header title={t("Add Payment Method")}>
             <button
                onClick={() => toggleTunnel(false)}
                className="hern-cards__payment-tunnel__close-btn"
@@ -234,6 +233,7 @@ export const PaymentTunnel = ({ tunnel, toggleTunnel }) => {
 export const PaymentForm = ({ intent, toggleTunnel }) => {
    const { user } = useUser()
    const { brand } = useConfig()
+   const { t } = useTranslation()
    const STRIPE_ACCOUNT_ID = get_env('STRIPE_ACCOUNT_ID')
    const isConnected = isConnectedIntegration()
    const [updateBrandCustomer] = useMutation(BRAND.CUSTOMER.UPDATE, {
@@ -297,12 +297,12 @@ export const PaymentForm = ({ intent, toggleTunnel }) => {
 
                toggleTunnel(false)
             } else {
-               throw Error("Couldn't complete card setup, please try again")
+               throw Error(t("Couldn't complete card setup, please try again"))
             }
          } else {
-            throw Error("Couldn't complete card setup, please try again")
+            throw Error(t("Couldn't complete card setup, please try again"))
          }
-      } catch (error) {}
+      } catch (error) { }
    }
 
    const stripePromise = loadStripe(isClient ? get_env('STRIPE_KEY') : '', {
@@ -324,6 +324,7 @@ export const PaymentForm = ({ intent, toggleTunnel }) => {
 const CardSetupForm = ({ intent, handleResult }) => {
    const stripe = useStripe()
    const elements = useElements()
+   const { t } = useTranslation()
    const inputRef = React.useRef(null)
    const [name, setName] = React.useState('')
    const [error, setError] = React.useState('')
@@ -366,7 +367,7 @@ const CardSetupForm = ({ intent, handleResult }) => {
                   className="hern-cards__setup-form__card-holder-name__label"
                   htmlFor="name"
                >
-                  Card Holder Name
+                  {t('Card Holder Name')}
                </label>
                <input
                   className="hern-cards__setup-form__card-holder-name__input"
@@ -384,7 +385,7 @@ const CardSetupForm = ({ intent, handleResult }) => {
             className="hern-cards__setup-form__submit-btn"
             disabled={!stripe || submitting}
          >
-            {submitting ? 'Saving...' : 'Save'}
+            {submitting ? <span>{t('Saving...')}</span> : <span>{t('Save')}</span>}
          </button>
          {error && (
             <span className="hern-cards__setup-form__error">{error}</span>
@@ -409,17 +410,20 @@ const CARD_ELEMENT_OPTIONS = {
    },
 }
 
-const CardSection = ({ setError }) => (
-   <div className="hern-cards__payment-tunnel__card-section">
-      <h6 className="hern-cards__payment-tunnel__card-section__heading">
-         Card Details
-      </h6>
-      <CardElement
-         options={CARD_ELEMENT_OPTIONS}
-         onChange={({ error }) => setError(error?.message || '')}
-      />
-   </div>
-)
+const CardSection = ({ setError }) => {
+   const { t } = useTranslation()
+   return (
+      <div className="hern-cards__payment-tunnel__card-section">
+         <h6 className="hern-cards__payment-tunnel__card-section__heading">
+            {t('Card Details')}
+         </h6>
+         <CardElement
+            options={CARD_ELEMENT_OPTIONS}
+            onChange={({ error }) => setError(error?.message || '')}
+         />
+      </div>
+   )
+}
 
 const createSetupIntent = async customer => {
    try {
