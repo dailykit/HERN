@@ -4,7 +4,7 @@ import { useToasts } from 'react-toast-notifications'
 import { useQuery } from '@apollo/react-hooks'
 
 import { useConfig } from '../../lib'
-import { useUser } from '../../context'
+import { useTranslation, useUser } from '../../context'
 import { Spacer, ProfileSidebar, Form, Button, Loader } from '../../components'
 import { CUSTOMERS_REFERRED } from '../../graphql'
 
@@ -21,7 +21,7 @@ const Content = () => {
    const { addToast } = useToasts()
    const { user } = useUser()
    const { brand, configOf } = useConfig()
-
+   const { t, dynamicTrans } = useTranslation()
    const theme = configOf('theme-color', 'Visual')
    const referralsAllowed = configOf('Referral', 'rewards')?.isAvailable
 
@@ -37,55 +37,61 @@ const Content = () => {
       }
    )
 
+   React.useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [])
+
    if (loading) return <Loader inline />
    return (
       <section className="hern-referrals__content">
          <header className="hern-referrals__header">
             <h2
                style={{
-                  color: `${
-                     theme?.accent ? theme?.accent : 'rgba(5,150,105,1)'
-                  }`,
+                  color: `${theme?.accent ? theme?.accent : 'rgba(5,150,105,1)'
+                     }`,
                }}
                className="hern-referrals__header__title"
             >
-               Referrals
+               {t('Referrals')}
             </h2>
          </header>
          {referralsAllowed && !!user.customerReferral && (
             <>
-               <Form.Label>Referral Code</Form.Label>
+               <Form.Label>{t('Referral Code')}</Form.Label>
                <div className="hern-referrals__customer-referral-code">
                   {user.customerReferral.referralCode}
                </div>
                <CopyToClipboard
                   text={`${window.location.origin}/?invite-code=${user.customerReferral.referralCode}`}
                   onCopy={() =>
-                     addToast('Invite like copied!', {
+                     addToast(t('Invite like copied!'), {
                         appearance: 'success',
                      })
                   }
                >
-                  <Button size="sm"> Copy invite link </Button>
+                  <Button size="sm"> {t('Copy invite link')} </Button>
                </CopyToClipboard>
                <Spacer />
                <Form.Label>
-                  Customers Referred ({customerReferrals.length}){' '}
+                  <span> {t('Customers Referred')}</span> ({customerReferrals.length}){' '}
                </Form.Label>
                <table className="hern-referrals__table">
                   <thead>
                      <tr>
-                        <th>First Name</th>
-                        <th>Last Name</th>
+                        <th>{t('First Name')}</th>
+                        <th>{t('Last Name')}</th>
                      </tr>
                   </thead>
                   <tbody>
                      {customerReferrals.map(ref => (
                         <tr key={ref.id}>
-                           <td className="hern-referrals__table__cell">
+                           <td className="hern-referrals__table__cell" data-translation="true">
                               {ref.customer.platform_customer.firstName}
                            </td>
-                           <td className="hern-referrals__table__cell">
+                           <td className="hern-referrals__table__cell" data-translation="true">
                               {ref.customer.platform_customer.lastName}
                            </td>
                         </tr>
