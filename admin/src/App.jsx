@@ -45,6 +45,20 @@ const APPS = gql`
       }
    }
 `
+const BRAND_LOCATION_ID = gql`
+  subscription brandAndLocationId($email: String_comparison_exp!) {
+  settings_user(where: {email: $email}) {
+    brand {
+      id
+      title
+    }
+    location {
+      label
+      id
+    }
+  }
+}
+`
 
 const Safety = Loadable({
    loader: () => import('./apps/safety'),
@@ -114,6 +128,10 @@ const OperationMode = Loadable({
    loader: () => import('../src/shared/components/OperationalMode'),
    loading: Loader,
 })
+const ViewStore = Loadable({
+   loader: () => import('./apps/viewStore'),
+   loading: Loader,
+})
 export const BrandContext = React.createContext()
 
 const App = () => {
@@ -121,14 +139,29 @@ const App = () => {
    // const { routes, setRoutes } = useTabs()
    const { pathname } = useLocation()
    const { loading, data: { apps = [] } = {} } = useSubscription(APPS)
-   const { user } = useAuth()
-   const { tabs } = useTabs()
-   const [brandContext, setBrandContext] = useState({ brandId: 0, brandName: "" })
+   const user = useAuth()
+   const [brandContext, setBrandContext] = useState({})
 
-   const ViewStore = Loadable({
-      loader: () => import('./apps/viewStore'),
-      loading: Loader,
+   console.log("user", user.user.email);
+
+   const { loading: loadingUser, data } = useSubscription(BRAND_LOCATION_ID, {
+      variables: {
+         email: {
+            _eq: user.user.email
+         }
+      },
+      onSubscriptionData: ({ subscriptionData }) => {
+         setBrandContext({
+            brandId: subscriptionData.data.settings_user[0]?.brand?.id || null,
+            brandName: subscriptionData.data.settings_user[0]?.brand?.title || '',
+            locationId: subscriptionData.data.settings_user[0]?.location?.id || null,
+            locationLabel: subscriptionData.data.settings_user[0]?.location?.label || ''
+         })
+      }
    })
+   const { tabs } = useTabs()
+
+
 
    if (loading) return <Loader />
    return (

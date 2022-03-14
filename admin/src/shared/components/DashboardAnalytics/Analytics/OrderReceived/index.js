@@ -114,20 +114,20 @@ const OrderReceivedAnalytics = () => {
             ...prevState,
             data: subscriptionData.data.insights_analytics[0],
          }))
-         console.log(
-            'order compare data',
-            subscriptionData.data.insights_analytics[0]
-         )
+         // console.log(
+         //    'order compare data',
+         //    subscriptionData.data.insights_analytics[0]
+         // )
          dataCompareMachine(subscriptionData.data.insights_analytics[0])
       },
    })
-   console.log(
-      'insight data order',
-      insights_analytics,
-      subsLoading,
-      compareLoading
-   )
-   console.log('global order compare', analyticsApiArgState.compare)
+   // console.log(
+   //    'insight data order',
+   //    insights_analytics,
+   //    subsLoading,
+   //    compareLoading
+   // )
+   // console.log('global order compare', analyticsApiArgState.compare)
    const dataCompareMachine = data => {
       const result = {}
       const present = insights_analytics[0]
