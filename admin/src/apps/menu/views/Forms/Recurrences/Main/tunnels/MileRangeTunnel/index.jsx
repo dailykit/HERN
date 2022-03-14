@@ -8,7 +8,7 @@ import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { logger } from '../../../../../../../../shared/utils'
 import { RecurrenceContext } from '../../../../../../context/recurrence'
-import { CREATE_MILE_RANGES } from '../../../../../../graphql'
+import { CREATE_MILE_RANGES, UPDATE_MILE_RANGE } from '../../../../../../graphql'
 import validator from '../../../../validators'
 import { InputHeading, InputsNotes, StyledGeoBoundary, TunnelBody } from '../styled'
 import { Radio } from 'antd'
@@ -20,7 +20,7 @@ const MileRangeTunnel = ({ closeTunnel }) => {
    const { recurrenceState } = React.useContext(RecurrenceContext)
    const { type } = useParams()
    const [from, setFrom] = React.useState({
-      value: '',
+      value: recurrenceState?.mileRange?.from || '',
       meta: {
          isTouched: false,
          isValid: true,
@@ -28,7 +28,7 @@ const MileRangeTunnel = ({ closeTunnel }) => {
       },
    })
    const [to, setTo] = React.useState({
-      value: '',
+      value: recurrenceState?.mileRange?.to || '',
       meta: {
          isTouched: false,
          isValid: true,
@@ -36,18 +36,20 @@ const MileRangeTunnel = ({ closeTunnel }) => {
       },
    })
    const [time, setTime] = React.useState({
-      value: '',
+      value: 
+         type.includes('PREORDER') ? (recurrenceState?.mileRange?.leadTime || '') :
+         type.includes('ONDEMAND') ? (recurrenceState?.mileRange?.prepTime || '') : ''
+      ,
       meta: {
          isTouched: false,
          isValid: true,
          errors: [],
       },
    })
-   const [isExcluded, setIsExcluded] = React.useState(false)
-
+   const [isExcluded, setIsExcluded] = React.useState(recurrenceState?.mileRange?.isExcluded)
    // Zipcodes declarations
    const [zipcodes, setZipcodes] = React.useState({
-      value: "",
+      value: recurrenceState?.mileRange?.zipcodes?.zipcodes || [],
       meta: {
          isTouched: false,
          isValid: true,
@@ -55,7 +57,7 @@ const MileRangeTunnel = ({ closeTunnel }) => {
       },
    })
    const [initialZipcodes, setInitialZipcodes] = React.useState({
-      value: "",
+      value: recurrenceState?.mileRange?.zipcodes?.zipcodes.join() || '',
    })
 
    // goe boundary Co-ordinates
@@ -77,13 +79,22 @@ const MileRangeTunnel = ({ closeTunnel }) => {
          },
       }
    }
-   const [geoBoundary, setGeoBoundary] = React.useState([
-      geoBoundaryInstance,
-      geoBoundaryInstance,
-      geoBoundaryInstance
-   ])
+
+   const geoBoundaries = []
+   if(recurrenceState?.mileRange?.geoBoundary?.geoBoundaries){
+      recurrenceState.mileRange.geoBoundary.geoBoundaries.forEach(each=>{
+         let geoBoundaryObj = JSON.parse(JSON.stringify(geoBoundaryInstance));
+         geoBoundaryObj.latitude.value = `${each.latitude}`;
+         geoBoundaryObj.longitude.value = `${each.longitude}`;
+         geoBoundaries.push(geoBoundaryObj);
+      })
+   }else{
+      for(var i=0; i<3; i++){
+         geoBoundaries.push(JSON.parse(JSON.stringify(geoBoundaryInstance)));
+      }
+   }
+   const [geoBoundary, setGeoBoundary] = React.useState(geoBoundaries)
    const addField = () => {
-      // console.log('added')
       if (geoBoundary.every(object => object.latitude.value.trim().length && object.longitude.value.trim().length)) {
          setGeoBoundary([
             ...geoBoundary,
@@ -105,7 +116,6 @@ const MileRangeTunnel = ({ closeTunnel }) => {
    }
    const handleGeoBoundaryChange = (field, value, index) => {  //serving, value, i
       const newGeoBoundary = [...geoBoundary]
-      console.log(newGeoBoundary)
       newGeoBoundary[index] = {
          ...newGeoBoundary[index],
          [field]: {
@@ -129,7 +139,6 @@ const MileRangeTunnel = ({ closeTunnel }) => {
          },
       }
       setGeoBoundary([...newGeoBoundary])
-      console.log(newGeoBoundary)
    }
    const validate = (field, index) => {
       const { isValid, errors } = validator[field](geoBoundary[index][field].value)
@@ -154,9 +163,8 @@ const MileRangeTunnel = ({ closeTunnel }) => {
       object.latitude.value.trim().length && object.longitude.value.trim().length)
 
    // Distance type declearation
-   const [valueDistanceType, setValueDistanceType] = React.useState('aerial');
+   const [valueDistanceType, setValueDistanceType] = React.useState(recurrenceState?.mileRange?.distanceType || 'aerial');
    const onChangeDistanceType = e => {
-      console.log('radio checked', e.target.value)
       setValueDistanceType(e.target.value)
    }
    // Mutation
@@ -173,57 +181,61 @@ const MileRangeTunnel = ({ closeTunnel }) => {
          },
       }
    )
+
+   const [updateMileRange] = useMutation(UPDATE_MILE_RANGE, {
+      onCompleted: () => {
+         toast.success('Mile range updated!')
+         closeTunnel(3)
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
    // console.log("zipcodes", initialZipcodes, zipcodes)
    // console.log("geoBoundary", geoBoundary);
    // Handlers
    const save = () => {
-      console.log({ geoBoundaryNotMandatory });
       if (inFlight) return
       if (!from.value || !to.value || !time.value) {
          return toast.error('Invalid values!')
       }
       if (from.meta.isValid && to.meta.isValid && time.meta.isValid) {
+         const formData = {
+            timeSlotId: recurrenceState.timeSlotId,
+            from: +from.value,
+            to: +to.value,
+            prepTime: type.includes('ONDEMAND') ? +time.value : null,
+            leadTime: type.includes('PREORDER') ? +time.value : null,
+            isExcluded: isExcluded,
+            distanceType: valueDistanceType,
+            zipcodes: zipcodes.value ? { zipcodes: zipcodes.value } : null,
+         }
          if (geoBoundaryValidation) {
             const coordinates = geoBoundary.map(each => ({
                latitude: parseInt(each.latitude.value),
                longitude: parseInt(each.longitude.value)
             }))
-            console.log("coordinate", coordinates);
-            createMileRanges({
-               variables: {
-                  objects: [
-                     {
-                        timeSlotId: recurrenceState.timeSlotId,
-                        from: +from.value,
-                        to: +to.value,
-                        prepTime: type.includes('ONDEMAND') ? +time.value : null,
-                        leadTime: type.includes('PREORDER') ? +time.value : null,
-                        isExcluded: isExcluded,
-                        distanceType: valueDistanceType,
-                        zipcodes: zipcodes.value ? { zipcodes: zipcodes.value } : null,
-                        geoBoundary: { geoBoundaries: coordinates }
-                     },
-                  ],
-               },
-            })
+            formData.geoBoundary = { geoBoundaries: coordinates }
+            
          }
-         else if (geoBoundaryNotMandatory) {
-            createMileRanges({
-               variables: {
-                  objects: [
-                     {
-                        timeSlotId: recurrenceState.timeSlotId,
-                        from: +from.value,
-                        to: +to.value,
-                        prepTime: type.includes('ONDEMAND') ? +time.value : null,
-                        leadTime: type.includes('PREORDER') ? +time.value : null,
-                        isExcluded: isExcluded,
-                        distanceType: valueDistanceType,
-                        zipcodes: zipcodes.value ? { zipcodes: zipcodes.value } : null,
-                     },
-                  ],
-               },
-            })
+         if (geoBoundaryValidation || geoBoundaryNotMandatory) {
+            if(recurrenceState?.mileRange){
+               updateMileRange({
+                  variables: {
+                     id: recurrenceState.mileRange.id,
+                     set: formData,
+                  },
+               })
+            }else{
+               createMileRanges({
+                  variables: {
+                     objects: [
+                        formData,
+                     ],
+                  },
+               })
+            }
          }
          else {
             toast.error("Empty Geo-cordinates or Fill atleast 3 co-ordinates")
@@ -236,8 +248,14 @@ const MileRangeTunnel = ({ closeTunnel }) => {
    return (
       <>
          <TunnelHeader
-            title="Add Mile Range"
-            right={{ action: save, title: inFlight ? 'Adding...' : 'Add' }}
+            title={`${recurrenceState.mileRange ? 'Update' : 'Add'
+         } Mile Range`}
+            right={{ 
+               action: save, 
+               title: inFlight 
+                  ? `${recurrenceState.mileRange ? 'Sav' : 'Add'}ing...`
+                  : `${recurrenceState.mileRange ? 'Save' : 'Add'}` 
+            }}
             close={() => closeTunnel(3)}
          />
          <TunnelBody>
@@ -245,7 +263,7 @@ const MileRangeTunnel = ({ closeTunnel }) => {
                <Form.Toggle
                   name={`isExcluded-${recurrenceState.timeSlotId}`}
                   value={isExcluded}
-                  onChange={() => setIsExcluded(!isExcluded)
+                  onChange={() => setIsExcluded(isExcluded => !isExcluded)
                   }
                >
                   Exclude
