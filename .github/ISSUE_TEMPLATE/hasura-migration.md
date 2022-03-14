@@ -4,7 +4,7 @@ about: This issue template is to record any changes made at the hasura level. It
   any db change or hasura's meta data change.
 title: 'Hasura Migrations -- '
 labels: hasura migration
-assignees: niku5793, shubhamz950, jayant13o6
+assignees: jayant13o6, niku5793, shubhamz950
 
 ---
 
