@@ -271,7 +271,7 @@ export const useConfig = (globalType = '') => {
    )
 
    const isStoreAvailable = React.useMemo(() => {
-      if (state.storeOperatingTime) {
+      if (state.storeOperatingTime && state.storeOperatingTime.length > 0) {
          let storeAvailability
          for (let i = 0; i <= state.storeOperatingTime.length - 1; i++) {
             const currentTime = moment()
@@ -295,7 +295,7 @@ export const useConfig = (globalType = '') => {
          }
          return storeAvailability
       } else {
-         return false
+         return true
       }
    }, [state.storeOperatingTime])
 
