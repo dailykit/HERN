@@ -252,7 +252,9 @@ const DownVector = dynamic(() =>
 const UpVector = dynamic(() =>
    import('./Vector').then(promise => promise.UpVector)
 )
-
+const NoImage = dynamic(() =>
+   import('./NoImage').then(promise => promise.NoImage)
+)
 const ProfileSidebarIcon = {
    Profile,
    Wallet,
@@ -344,4 +346,5 @@ export {
    UpVector,
    ProfileSidebarIcon,
    ProductGalleryBG,
+   NoImage,
 }

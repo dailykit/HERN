@@ -569,6 +569,7 @@ const CartCard = props => {
                         productData.ids[productData.ids.length - 1],
                      ])
                   }
+                  showDeleteButton
                />
                <div className="hern-cart-card__price">
                   {getTotalPrice.totalDiscount > 0 && (
