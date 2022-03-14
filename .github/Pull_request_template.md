@@ -28,3 +28,35 @@ Please delete options that are not relevant.
 - [ ] Looks good on large screens
 - [ ] Looks good on mobiles
 - [ ] Looks good on Tablets
+
+Affected Apps
+- [ ] Store
+    - [ ] SEO
+    - [ ] Menu
+    - [ ] Checkout
+    - [ ] Add to Cart logic
+    - [ ] Location Logic
+    - [ ] Product page
+    - [ ] Login
+    - [ ] Payment
+    - [ ] Kiosk
+- [ ] Admin
+    - [ ] Order
+    - [ ] CRM
+    - [ ] Product app
+    - [ ] Analytics
+    - [ ] Settings
+    - [ ] Brand
+    - [ ] Config Builder
+    - [ ] Coupons
+    - [ ] Locations
+    - [ ] Users
+    - [ ] Inventory
+- [ ] Server
+    - [ ] Payment
+    - [ ] Email
+    - [ ] SMS
+    - [ ] Notifications
+    - [ ] Integration
+    - [ ] Hasura auth
+- [ ] Template Engine
