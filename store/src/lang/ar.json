@@ -277,5 +277,11 @@
    "Order History": "تاريخ الطلب",
    "Subscriptions": "الاشتراكات",
    "Manage Addresses": "إدارة العناوين",
-   "Manage Cards": "إدارة البطاقات"
+   "Manage Cards": "إدارة البطاقات",
+   "Balance": "الرصيد",
+   "Transactions": "المعاملات",
+   "ID": "هوية شخصية",
+   "Type": "اكتب",
+   "Amount": "مقدار",
+   "Created At": "أنشئت في"
 }

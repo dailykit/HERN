@@ -277,5 +277,11 @@
    "Order History": "Order History",
    "Subscriptions": "Subscriptions",
    "Manage Addresses": "Manage Addresses",
-   "Manage Cards": "Manage Cards"
+   "Manage Cards": "Manage Cards",
+   "Balance": "Balance",
+   "Transactions": "Transactions",
+   "ID": "ID",
+   "Type": "Type",
+   "Amount": "Amount",
+   "Created At": "Created At"
 }
