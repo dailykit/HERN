@@ -272,14 +272,14 @@ export const CustomArea = props => {
             <Button
                className="hern-custom-area-add-btn"
                type="outline"
-               onClick={() => {
+               onClick={async () => {
                   if (!locationId) {
                      setShowLocationSelectionPopup(true)
                   } else {
                      if (data.productOptions.length > 0) {
                         setProductModifier(data)
                      } else {
-                        addToCart({ productId: data.id }, 1)
+                        await addToCart(data.defaultCartItem, 1)
                      }
                   }
                }}
