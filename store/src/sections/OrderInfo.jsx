@@ -68,7 +68,7 @@ const OrderInfo = ({ cart, showViewOrderButton = false }) => {
             <Billing billing={cart?.billingDetails} />
          </section>
          <section className="hern-order-info__delivery">
-            {cart?.fulfillmentInfo?.type.includes('DELIVERY') ? (
+            {cart?.fulfillmentInfo?.type?.includes('DELIVERY') ? (
                <p className="hern-order-info__delivery__details">
                   Your box will be delivered on{' '}
                   <span>
