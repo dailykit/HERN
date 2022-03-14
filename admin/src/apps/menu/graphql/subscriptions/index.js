@@ -79,6 +79,7 @@ export const RECURRENCES = gql`
                leadTime
                prepTime
                isActive
+               isExcluded
                distanceType
                geoBoundary
                zipcodes
