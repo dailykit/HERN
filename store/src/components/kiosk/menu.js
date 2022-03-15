@@ -190,7 +190,7 @@ export const MenuSection = props => {
                   style={{
                      background: `${config.kioskSettings.theme.primaryColorLight.value}`,
                      padding: '1em 2em',
-                     height: '6em',
+                     height: '10em',
                   }}
                >
                   <ProgressBar
@@ -246,7 +246,7 @@ const KioskMenu = props => {
    return (
       <Layout
          style={{
-            height: `calc(100vh - ${isStoreAvailable ? '35em' : '40em'})`,
+            height: `calc(100vh - ${isStoreAvailable ? '37em' : '42em'})`,
          }}
       >
          <Sider
