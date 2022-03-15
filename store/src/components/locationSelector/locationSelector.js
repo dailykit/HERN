@@ -18,7 +18,7 @@ export const LocationSelector = props => {
    const { setShowLocationSelectionPopup, settings } = props
 
    const { brand, orderTabs } = useConfig()
-   const { dynamicTrans } = useTranslation()
+   const { dynamicTrans, locale } = useTranslation()
    const orderTabFulfillmentType = React.useMemo(
       () =>
          orderTabs
@@ -50,12 +50,15 @@ export const LocationSelector = props => {
       return () => (document.querySelector('body').style.overflowY = 'auto')
    }, [])
 
+   const currentLang = React.useMemo(() => locale, [locale])
+
    React.useEffect(() => {
       const languageTags = document.querySelectorAll(
          '[data-translation="true"]'
       )
       dynamicTrans(languageTags)
-   }, [])
+   }, [currentLang])
+
    if (!orderTabFulfillmentType) {
       return <Loader inline />
    }

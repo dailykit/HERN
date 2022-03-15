@@ -24,7 +24,7 @@ import { CustomArea } from '../featuredCollection/productCustomArea'
 export const OnDemandOrder = ({ config }) => {
    const router = useRouter()
    const { addToast } = useToasts()
-   const { dynamicTrans } = useTranslation()
+   const { dynamicTrans, locale } = useTranslation()
    const { brand, locationId, storeStatus } = useConfig()
 
    const menuType = config?.display?.dropdown?.value[0]?.value
@@ -72,12 +72,13 @@ export const OnDemandOrder = ({ config }) => {
       }),
       [brand, locationId]
    )
+   const currentLang = React.useMemo(() => locale, [locale])
    React.useEffect(() => {
       const languageTags = document.querySelectorAll(
          '[data-translation="true"]'
       )
       dynamicTrans(languageTags)
-   }, [])
+   }, [currentLang])
 
    const { loading: productsLoading, error: productsError } = useQuery(
       PRODUCTS,

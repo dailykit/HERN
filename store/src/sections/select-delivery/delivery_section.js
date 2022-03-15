@@ -16,7 +16,7 @@ import classNames from 'classnames'
 export const DeliverySection = ({ planId }) => {
    const { user } = useUser()
    const { addToast } = useToasts()
-   const { t, dynamicTrans } = useTranslation()
+   const { t, dynamicTrans, locale } = useTranslation()
    const { configOf } = useConfig()
    const { state, dispatch } = useDelivery()
    const [fetchDays, { loading, data: { itemCount = {} } = {} }] = useLazyQuery(
@@ -42,12 +42,14 @@ export const DeliverySection = ({ planId }) => {
       }
    }, [user.subscriptionId, dispatch])
 
+   const currentLang = React.useMemo(() => locale, [locale])
+
    React.useEffect(() => {
       const languageTags = document.querySelectorAll(
          '[data-translation="true"]'
       )
       dynamicTrans(languageTags)
-   }, [])
+   }, [currentLang])
 
    React.useEffect(() => {
       if (!isEmpty(state.address.selected)) {

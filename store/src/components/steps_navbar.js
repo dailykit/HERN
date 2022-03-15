@@ -28,7 +28,7 @@ export const StepsNavbar = () => {
    const { user, isAuthenticated } = useUser()
    const [currentStep, setCurrentStep] = React.useState(null)
    const { hasConfig, configOf } = useConfig()
-   const { t, dynamicTrans } = useTranslation()
+   const { t, dynamicTrans, locale } = useTranslation()
    const [steps, setSteps] = React.useState({
       register: 'Register',
       selectDelivery: 'Select Delivery',
@@ -53,7 +53,7 @@ export const StepsNavbar = () => {
    }, [hasConfig, configOf, setSteps])
 
    const router = useRouter()
-
+   const currentLang = React.useMemo(() => locale, [locale])
    React.useEffect(() => {
       if (router.pathname === '/get-started/select-delivery/') {
          router.push(getRoute('/get-started/select-delivery'))
@@ -66,7 +66,7 @@ export const StepsNavbar = () => {
       )
       dynamicTrans(languageTags)
 
-   }, [router.pathname])
+   }, [router.pathname, currentLang])
 
    //config properties
    const brand = configOf('Brand Info', 'brand')

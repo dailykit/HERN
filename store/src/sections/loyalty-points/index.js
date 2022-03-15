@@ -17,7 +17,7 @@ export const LoyaltyPoints = () => {
 const Content = () => {
    const { user } = useUser()
    const { configOf, settings } = useConfig()
-   const { t, dynamicTrans } = useTranslation()
+   const { t, dynamicTrans, locale } = useTranslation()
    const theme = configOf('theme-color', 'Visual')
    const { isAvailable = false, label = 'Loyalty Points' } = configOf(
       'Loyalty Points',
@@ -28,12 +28,15 @@ const Content = () => {
          setting => setting?.['Loyalty Points Availability']
       )?.value?.['Loyalty Points']?.IsLoyaltyPointsAvailable?.value ?? true
 
+   const currentLang = React.useMemo(() => locale, [locale])
+
    React.useEffect(() => {
       const languageTags = document.querySelectorAll(
          '[data-translation="true"]'
       )
       dynamicTrans(languageTags)
-   }, [])
+   }, [currentLang]
+   )
    return (
       <section className="hern-account-loyalty-points">
          <header className="hern-account-loyalty-points__header">

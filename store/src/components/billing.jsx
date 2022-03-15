@@ -8,13 +8,14 @@ const parseText = (text = '') =>
    })
 
 export const Billing = ({ billing }) => {
-   const { dynamicTrans } = useTranslation()
+   const { dynamicTrans, locale } = useTranslation()
+   const currentLang = React.useMemo(() => locale, [locale])
    React.useEffect(() => {
       const languageTags = document.querySelectorAll(
          '[data-translation="true"]'
       )
       dynamicTrans(languageTags)
-   }, [])
+   }, [currentLang])
    return (
       <table className="hern-billing__table">
          <tbody>

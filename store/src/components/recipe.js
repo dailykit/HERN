@@ -19,14 +19,14 @@ export const Recipe = ({ productOption, config }) => {
    const router = useRouter()
    const recipe = productOption?.simpleRecipeYield?.simpleRecipe
    const theme = configOf('theme-color', 'Visual')
-   const { t, dynamicTrans } = useTranslation()
-
+   const { t, dynamicTrans, locale } = useTranslation()
+   const currentLang = React.useMemo(() => locale, [locale])
    React.useEffect(() => {
       const languageTags = document.querySelectorAll(
          '[data-translation="true"]'
       )
       dynamicTrans(languageTags)
-   }, [])
+   }, [currentLang])
 
    const RenderIngredientName = (slipName, sachet) => {
       if (recipe.showIngredientsQuantity) {

@@ -17,18 +17,22 @@ export const Wallet = () => {
 const Content = () => {
    const { user } = useUser()
    const { configOf } = useConfig()
-   const { t, dynamicTrans } = useTranslation()
+   const { t, dynamicTrans, locale } = useTranslation()
    const theme = configOf('theme-color', 'Visual')
    const { isAvailable = false, label = 'Wallet' } = configOf(
       'Wallet',
       'rewards'
    )
+
+   const currentLang = React.useMemo(() => locale, [locale])
+
    React.useEffect(() => {
       const languageTags = document.querySelectorAll(
          '[data-translation="true"]'
       )
       dynamicTrans(languageTags)
-   }, [])
+   }, [currentLang])
+
    return (
       <section className="hern-wallet__content">
          <header className="hern-wallet__header">

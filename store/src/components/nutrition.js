@@ -3,7 +3,7 @@ import _ from 'lodash'
 import { useTranslation } from '../context'
 
 export const Nutritions = ({ simpleRecipeYield }) => {
-   const { t, dynamicTrans } = useTranslation()
+   const { t, dynamicTrans, locale } = useTranslation()
 
    const nutritionalInfo = simpleRecipeYield?.nutritionalInfo || {}
    const nutritions = Object.keys(nutritionalInfo).filter(
@@ -15,13 +15,13 @@ export const Nutritions = ({ simpleRecipeYield }) => {
    )
    const allergens = nutritionalInfo?.allergens
 
-
+   const currentLang = React.useMemo(() => locale, [locale])
    React.useEffect(() => {
       const languageTags = document.querySelectorAll(
          '[data-translation="true"]'
       )
       dynamicTrans(languageTags)
-   }, [])
+   }, [currentLang])
 
    return (
       <div id="nutrition">

@@ -20,7 +20,7 @@ const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 export const Menu = () => {
    const { user } = useUser()
    const { addToast } = useToasts()
-   const { t, dynamicTrans } = useTranslation()
+   const { t, dynamicTrans, locale } = useTranslation()
    const { state } = useMenu()
    const { configOf, buildImageUrl, noProductImage } = useConfig()
    const { loading, data: { categories = [] } = {} } = useQuery(
@@ -68,13 +68,15 @@ export const Menu = () => {
          })
       }
    }, [categories, loading])
+
+   const currentLang = React.useMemo(() => locale, [locale])
    React.useEffect(() => {
       const languageTags = document.querySelectorAll(
          '[data-translation="true"]'
       )
       dynamicTrans(languageTags)
 
-   }, [])
+   }, [currentLang])
 
 
    if (loading) return <SkeletonProduct />
@@ -131,7 +133,7 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
    const router = useRouter()
    const { addToast } = useToasts()
    const { state, methods } = useMenu()
-   const { t, dynamicTrans } = useTranslation()
+   const { t, dynamicTrans, locale } = useTranslation()
    const openRecipe = () =>
       router.push(getRoute(`/recipes/${node?.productOption?.id}`))
 
@@ -199,7 +201,7 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
    const btnClasses = classNames('hern-select-menu__menu__product__btn', {
       'hern-select-menu__menu__product__btn--disabled': !node.isAvailable,
    })
-
+   const currentLang = React.useMemo(() => locale, [locale])
    React.useEffect(() => {
       const elem = document.querySelector(
          '[data-stylesheet="hern-select-menu__menu"]'
@@ -219,13 +221,14 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
             </style>`
          )
       }
+   }, [])
 
+   React.useEffect(() => {
       const languageTags = document.querySelectorAll(
          '[data-translation="true"]'
       )
       dynamicTrans(languageTags)
-
-   }, [])
+   }, [currentLang])
 
    return (
       <li

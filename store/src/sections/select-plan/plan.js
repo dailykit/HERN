@@ -16,7 +16,7 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
    const { user, isAuthenticated, isLoading } = useUser()
    const { addToast } = useToasts()
    const { configOf } = useConfig('conventions')
-   const { t, dynamicTrans } = useTranslation()
+   const { t, dynamicTrans, locale } = useTranslation()
    const [defaultItemCount, setDefaultItemCount] = React.useState(null)
    const [defaultServing, setDefaultServing] = React.useState(null)
    const [showLoginPopup, setShowLoginPopup] = React.useState(false)
@@ -49,14 +49,14 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
       }
 
    }, [isAuthenticated, isLoading, selectedPlan])
-
+   const currentLang = React.useMemo(() => locale, [locale])
    React.useEffect(() => {
       const languageTags = document.querySelectorAll(
          '[data-translation="true"]'
       )
       dynamicTrans(languageTags)
 
-   }, [])
+   }, [currentLang])
    const selectPlan = () => {
       if (handlePlanClick) {
          return handlePlanClick(defaultItemCount.id)

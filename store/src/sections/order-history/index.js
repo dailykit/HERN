@@ -183,14 +183,16 @@ const OrderCard = ({ cart }) => {
 
 const CartItems = ({ products, border = false, title = false }) => {
    const cartItems = combineCartItems(products)
-   const { t, dynamicTrans } = useTranslation()
+   const { t, dynamicTrans, locale } = useTranslation()
+
+   const currentLang = React.useMemo(() => locale, [locale])
 
    React.useEffect(() => {
       const languageTags = document.querySelectorAll(
          '[data-translation="true"]'
       )
       dynamicTrans(languageTags)
-   }, [])
+   }, [currentLang])
 
    return (
       <div
@@ -235,13 +237,16 @@ const CartItems = ({ products, border = false, title = false }) => {
 }
 const ModifiersList = props => {
    const { data } = props
-   const { dynamicTrans } = useTranslation()
+   const { dynamicTrans, locale } = useTranslation()
+
+   const currentLang = React.useMemo(() => locale, [locale])
+
    React.useEffect(() => {
       const languageTags = document.querySelectorAll(
          '[data-translation="true"]'
       )
       dynamicTrans(languageTags)
-   }, [])
+   }, [currentLang])
    return (
       <div className="hern-order-history-card__modifier-list">
          <span data-translation="true">{data.childs[0].productOption.label || 'N/A'}</span>{' '}

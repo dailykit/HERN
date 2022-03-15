@@ -16,13 +16,13 @@ export const OnDemandMenu = props => {
    const ref = React.useRef()
    useOnClickOutside(ref, () => setShowMenuItems('0'))
 
-   const { t, dynamicTrans } = useTranslation()
+   const { t, dynamicTrans, locale } = useTranslation()
 
    // const { isMenuLoading, categories } = onDemandMenu
    // if (isMenuLoading) {
    //    return <p>Loading</p>
    // }
-
+   const currentLang = React.useMemo(() => locale, [locale])
    useEffect(() => {
       if (showMenuItems === '100%') {
          document.querySelector('body').style.overflowY = 'hidden'
@@ -34,7 +34,7 @@ export const OnDemandMenu = props => {
          '[data-translation="true"]'
       )
       dynamicTrans(languageTags)
-   }, [showMenuItems])
+   }, [showMenuItems, currentLang])
 
    if (menuType && menuType === 'navigationAnchorMenu') {
       return (

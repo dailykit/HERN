@@ -16,7 +16,7 @@ import { useTranslation } from '../../context'
 export const DeliveryDateSection = () => {
    const router = useRouter()
    const { addToast } = useToasts()
-   const { t, dynamicTrans } = useTranslation()
+   const { t, dynamicTrans, locale } = useTranslation()
    const { state, dispatch } = useDelivery()
    const [occurences, setOccurences] = React.useState([])
    const [fetchOccurences, { loading }] = useLazyQuery(
@@ -56,12 +56,13 @@ export const DeliveryDateSection = () => {
       }
    }, [state.delivery.selected, fetchOccurences])
 
+   const currentLang = React.useMemo(() => locale, [locale])
    React.useEffect(() => {
       const languageTags = document.querySelectorAll(
          '[data-translation="true"]'
       )
       dynamicTrans(languageTags)
-   }, [])
+   }, [currentLang])
 
    const occurenceSelection = occurence => {
       const dateIndex = occurences.findIndex(node => node.id === occurence.id)

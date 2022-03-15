@@ -9,14 +9,16 @@ import { useTranslation } from '../context'
 
 export const CartProduct = ({ product, isRemovable, onDelete }) => {
    const { buildImageUrl, noProductImage } = useConfig()
-   const { dynamicTrans, t } = useTranslation()
+   const { dynamicTrans, t, locale } = useTranslation()
+
+   const currentLang = React.useMemo(() => locale, [locale])
 
    React.useEffect(() => {
       const languageTags = document.querySelectorAll(
          '[data-translation="true"]'
       )
       dynamicTrans(languageTags)
-   }, [])
+   }, [currentLang])
 
    return (
       <li className="hern-cart-product">

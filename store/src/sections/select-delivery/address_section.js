@@ -15,7 +15,7 @@ export const AddressSection = () => {
    const { user } = useUser()
    const { configOf } = useConfig()
    const { state, dispatch } = useDelivery()
-   const { t, dynamicTrans } = useTranslation()
+   const { t, dynamicTrans, locale } = useTranslation()
 
    React.useEffect(() => {
       if (
@@ -26,13 +26,13 @@ export const AddressSection = () => {
          addressSelection(address)
       }
    }, [dispatch, user])
-
+   const currentLang = React.useMemo(() => locale, [locale])
    React.useEffect(() => {
       const languageTags = document.querySelectorAll(
          '[data-translation="true"]'
       )
       dynamicTrans(languageTags)
-   }, [])
+   }, [currentLang])
 
    const addressSelection = address => {
       dispatch({ type: 'SET_ADDRESS', payload: address })

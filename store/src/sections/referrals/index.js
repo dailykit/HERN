@@ -22,9 +22,11 @@ const Content = () => {
    const { addToast } = useToasts()
    const { user } = useUser()
    const { brand, configOf } = useConfig()
-   const { t, dynamicTrans } = useTranslation()
+   const { t, dynamicTrans, locale } = useTranslation()
    const theme = configOf('theme-color', 'Visual')
    const referralsAllowed = configOf('Referral', 'rewards')?.isAvailable
+
+   const currentLang = React.useMemo(() => locale, [locale])
 
    const { data: { customerReferrals = [] } = {}, loading } = useQuery(
       CUSTOMERS_REFERRED,
@@ -43,7 +45,7 @@ const Content = () => {
          '[data-translation="true"]'
       )
       dynamicTrans(languageTags)
-   }, [])
+   }, [currentLang])
 
    if (loading) return <Loader inline />
    return (

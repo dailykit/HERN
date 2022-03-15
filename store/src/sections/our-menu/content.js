@@ -25,7 +25,7 @@ export const Content = () => {
    const [isOccurencesLoading, setIsOccurencesLoading] = React.useState(true)
    const { brand, configOf, buildImageUrl, noProductImage } =
       useConfig('conventions')
-   const { t, dynamicTrans } = useTranslation()
+   const { t, dynamicTrans, locale } = useTranslation()
    const [fetchProducts] = useLazyQuery(OCCURENCE_PRODUCTS_BY_CATEGORIES, {
       onCompleted: ({ categories = [] }) => {
          setCategories(categories)
@@ -151,12 +151,14 @@ export const Content = () => {
       }
    }, [fetchTitles, brand.id])
 
+   const currentLang = React.useMemo(() => locale, [locale])
+
    React.useEffect(() => {
       const languageTags = document.querySelectorAll(
          '[data-translation="true"]'
       )
       dynamicTrans(languageTags)
-   }, [fetchTitles, brand.id])
+   }, [fetchTitles, brand.id, currentLang])
 
    const next = () => {
       if (current === occurences.length - 1) return

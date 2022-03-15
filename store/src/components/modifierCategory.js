@@ -18,7 +18,7 @@ export const ModifierCategory = props => {
    } = props
 
    const { configOf } = useConfig()
-   const { t, dynamicTrans } = useTranslation()
+   const { t, dynamicTrans, locale } = useTranslation()
    const theme = configOf('theme-color', 'Visual')?.themeColor
    const themeColor = theme?.accent?.value
       ? theme?.accent?.value
@@ -50,12 +50,13 @@ export const ModifierCategory = props => {
          }
       }
    }
+   const currentLang = React.useMemo(() => locale, [locale])
    React.useEffect(() => {
       const languageTags = document.querySelectorAll(
          '[data-translation="true"]'
       )
       dynamicTrans(languageTags)
-   }, [])
+   }, [currentLang])
 
    const onCheckClick = (eachOption, eachModifierCategory) => {
       //selected option
