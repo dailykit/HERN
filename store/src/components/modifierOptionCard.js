@@ -15,7 +15,14 @@ export const ModifierOptionCard = ({
    showImageIcon = false,
    showCustomize = true,
 }) => {
-   const { t } = useTranslation()
+   const { t, dynamicTrans } = useTranslation()
+   React.useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [])
+
    return (
       <div
          className="hern-modifier-option-card"

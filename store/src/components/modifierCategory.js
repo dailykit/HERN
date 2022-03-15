@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { RadioIcon, CheckBoxIcon } from '../assets/icons'
 import { ModifierOptionCard } from './'
 import { useConfig } from '../lib'
+import { useTranslation } from '../context'
 
 export const ModifierCategory = props => {
    const {
@@ -17,6 +18,7 @@ export const ModifierCategory = props => {
    } = props
 
    const { configOf } = useConfig()
+   const { t, dynamicTrans } = useTranslation()
    const theme = configOf('theme-color', 'Visual')?.themeColor
    const themeColor = theme?.accent?.value
       ? theme?.accent?.value
@@ -48,6 +50,13 @@ export const ModifierCategory = props => {
          }
       }
    }
+   React.useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [])
+
    const onCheckClick = (eachOption, eachModifierCategory) => {
       //selected option
       const selectedOption = {
@@ -150,10 +159,10 @@ export const ModifierCategory = props => {
 
 
             >
-               <span>{'('}</span>
+               {/* <span>{'('}</span> */}
                <span data-translation="true">{renderConditionText(eachCategory)}</span>
 
-               <span>{')'}</span>
+               {/* <span>{')'}</span> */}
             </span>
          </div>
          {errorCategories.includes(eachCategory.id) && (
