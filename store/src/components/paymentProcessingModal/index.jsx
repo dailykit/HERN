@@ -108,10 +108,8 @@ const PaymentProcessingModal = ({
                   className="payment_status_loader"
                />
             )
-            title = `${t('Successfully placed your order')}`
-            subtitle = `${t(
-               'You will be redirected to your order page shortly'
-            )}`
+            title = 'Successfully placed your order'
+            subtitle = 'You will be redirected to your order page shortly'
          } else if (cartPayment?.paymentStatus === 'FAILED') {
             icon = (
                <img
@@ -135,7 +133,7 @@ const PaymentProcessingModal = ({
                      })
                   }}
                >
-                  Try again
+                  {t('Try again')}
                </Button>,
                <Button
                   type="primary"
@@ -145,7 +143,7 @@ const PaymentProcessingModal = ({
                      resetStateAfterModalClose({ showChoosePayment: true })
                   }
                >
-                  Try other payment method
+                  {t('Try other payment method')}
                </Button>,
             ]
          } else if (cartPayment?.paymentStatus === 'CANCELLED') {
@@ -166,7 +164,7 @@ const PaymentProcessingModal = ({
                      resetStateAfterModalClose({ showChoosePayment: true })
                   }
                >
-                  Try other payment method
+                  {t('Try other payment method')}
                </Button>,
             ]
          } else if (cartPayment?.paymentStatus === 'SWIPE_CARD') {
@@ -237,10 +235,10 @@ const PaymentProcessingModal = ({
                   href={cartPayment?.actionUrl}
                   target="_blank"
                >
-                  Authenticate Here
+                  {t('Authenticate Here')}
                </Button>,
                <Button type="link" danger onClick={cancelPayment}>
-                  Cancel Payment
+                  {t('Cancel Payment')}
                </Button>,
             ]
          } else if (cartPayment?.paymentStatus === 'FAILED') {
@@ -259,7 +257,7 @@ const PaymentProcessingModal = ({
                   key="console"
                   onClick={resetStateAfterModalClose}
                >
-                  Try other payment method
+                  {t('Try other payment method')}
                </Button>,
             ]
          } else if (cartPayment?.paymentStatus === 'CANCELLED') {
@@ -278,7 +276,7 @@ const PaymentProcessingModal = ({
                   key="console"
                   onClick={resetStateAfterModalClose}
                >
-                  Try other payment method
+                  {t('Try other payment method')}
                </Button>,
             ]
          } else if (cartPayment?.paymentStatus === 'REQUIRES_PAYMENT_METHOD') {
@@ -298,7 +296,7 @@ const PaymentProcessingModal = ({
                   key="console"
                   onClick={resetStateAfterModalClose}
                >
-                  Try other payment method
+                  {t('Try other payment method')}
                </Button>,
             ]
          }
@@ -375,8 +373,8 @@ const PaymentProcessingModal = ({
             ) && (
                <h1 tw="font-extrabold color[rgba(0, 64, 106, 0.9)] text-xl text-center">
                   {countDown > 0
-                     ? `Timout in ${countDown} seconds`
-                     : 'Request timed out'}
+                     ? `Timeout in ${countDown} seconds`
+                     : `${t('Request timed out')}`}
                </h1>
             )}
          {/* this payment option selection screen and back button, it will only show in kiosk app  */}
@@ -400,7 +398,7 @@ const PaymentProcessingModal = ({
                               </PayButton>
 
                               <p tw="last:(hidden) font-extrabold margin[2rem 0] color[rgba(0, 64, 106, 0.9)] text-2xl text-center">
-                                 OR
+                                 {t('OR')}
                               </p>
                            </>
                         )
@@ -422,8 +420,8 @@ const PaymentProcessingModal = ({
             <Wrapper>
                <Result
                   icon={ShowPaymentStatusInfo().icon}
-                  title={ShowPaymentStatusInfo().title}
-                  subTitle={ShowPaymentStatusInfo().subtitle}
+                  title={t(ShowPaymentStatusInfo().title)}
+                  subTitle={t(ShowPaymentStatusInfo().subtitle)}
                   extra={ShowPaymentStatusInfo().extra}
                />
 
