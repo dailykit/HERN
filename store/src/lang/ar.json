@@ -88,5 +88,6 @@
    "Your payment is failed since your bank doesn't authenticate you": "Your payment is failed since your bank doesn't authenticate you",
    "Request timed out": "Request timed out",
    "Please wait while we print your receipt": "Please wait while we print your receipt",
-   "Not accepting orders right now. Feel free to browse the menu.": "Not accepting orders right now. Feel free to browse the menu."
+   "Not accepting orders right now. Feel free to browse the menu.": "Not accepting orders right now. Feel free to browse the menu.",
+   "View Product": "View Product"
 }
