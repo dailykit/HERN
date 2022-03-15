@@ -4,6 +4,7 @@ import Confetti from 'react-confetti'
 import { useRouter } from 'next/router'
 import { Result, Spin, Button, Modal } from 'antd'
 import isEmpty from 'lodash/isEmpty'
+import Countdown from 'react-countdown'
 
 import { Wrapper } from './styles'
 import { Button as StyledButton } from '../button'
@@ -33,7 +34,7 @@ const PaymentProcessingModal = ({
    const isKioskMode = isKiosk()
    const [isCelebrating, setIsCelebrating] = useState(false)
    const { width, height } = useWindowSize()
-   const [countDown, setCountDown] = useState(60)
+   const [countDown, setCountDown] = useState(null)
    const { t } = useTranslation()
 
    const closeModalHandler = async () => {
@@ -311,7 +312,6 @@ const PaymentProcessingModal = ({
    }
 
    useEffect(() => {
-      let countdownTimer
       if (!isEmpty(cartPayment)) {
          // start celebration (confetti effect) once payment is successful
          if (cartPayment?.paymentStatus === 'SUCCEEDED') {
@@ -322,30 +322,17 @@ const PaymentProcessingModal = ({
                cartPayment?.paymentStatus
             )
          ) {
-            if (countDown >= 0) {
-               countdownTimer = setInterval(() => {
-                  countDown > 0 && setCountDown(prev => prev - 1)
-                  if (countDown === 0) {
-                     clearInterval(countdownTimer)
-                     cancelTerminalPayment({
-                        cartPayment,
-                        retryPaymentAttempt: false,
-                     })
-                  }
-               }, 1000)
-            }
+            isKioskMode
+               ? setCountDown(Date.now() + 1 * 60000)
+               : setCountDown(Date.now() + 5 * 60000)
          }
       }
-      return () => {
-         // clearTimeout(timer)
-         clearInterval(countdownTimer)
-      }
-   }, [cartPayment?.paymentStatus, countDown])
+   }, [cartPayment?.paymentStatus])
 
    // resetting countdown timer when payment status changes
-   useEffect(() => {
-      setCountDown(60)
-   }, [cartPayment?.paymentStatus])
+   // useEffect(() => {
+   //    setCountDown(60)
+   // }, [cartPayment?.paymentStatus])
 
    return (
       <Modal
@@ -371,12 +358,38 @@ const PaymentProcessingModal = ({
             !['SUCCEEDED', 'FAILED', 'CANCELLED'].includes(
                cartPayment?.paymentStatus
             ) && (
-               <h1 tw="font-extrabold color[rgba(0, 64, 106, 0.9)] text-xl text-center">
-                  {countDown > 0
-                     ? `Timeout in ${countDown} seconds`
-                     : `${t('Request timed out')}`}
-               </h1>
+               <>
+                  {countDown && (
+                     <Countdown
+                        date={countDown}
+                        renderer={({ minutes, seconds, completed }) => {
+                           if (completed) {
+                              return (
+                                 <h1 tw="font-extrabold color[rgba(0, 64, 106, 0.9)] text-xl text-center">
+                                    Request timed out
+                                 </h1>
+                              )
+                           }
+                           return (
+                              <h1 tw="font-extrabold color[rgba(0, 64, 106, 0.9)] text-xl text-center">
+                                 {`Timout in ${minutes}:${
+                                    seconds <= 9 ? '0' : ''
+                                 }
+                              ${seconds}`}
+                              </h1>
+                           )
+                        }}
+                        onComplete={() =>
+                           cancelTerminalPayment({
+                              cartPayment,
+                              retryPaymentAttempt: false,
+                           })
+                        }
+                     />
+                  )}
+               </>
             )}
+
          {/* this payment option selection screen and back button, it will only show in kiosk app  */}
          {isKioskMode && isEmpty(cartPayment) ? (
             <>
