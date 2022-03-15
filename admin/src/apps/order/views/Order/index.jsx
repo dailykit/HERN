@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext, useState } from 'react'
 import axios from 'axios'
 import moment from 'moment'
 import { toast } from 'react-toastify'
@@ -53,6 +53,7 @@ import {
 } from '../../../../shared/components'
 
 import { ChevronRight, ChevronDown } from '../../../../shared/assets/icons'
+import { BrandContext } from '../../../../App'
 
 const isPickup = value => ['ONDEMAND_PICKUP', 'PREORDER_PICKUP'].includes(value)
 
@@ -73,6 +74,8 @@ const Order = () => {
    const [isThirdParty, setIsThirdParty] = React.useState(false)
    const [treeviewProduct, setTreeviewProduct] = React.useState([])
    const [isSwitchedToTreeview, setIsSwitchedToTreeview] = React.useState(false)
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+   const [order, setOrder] = React.useState({})
 
    const [updateOrder] = useMutation(MUTATIONS.ORDER.UPDATE, {
       onCompleted: () => {
@@ -105,16 +108,19 @@ const Order = () => {
    const {
       loading,
       error,
-      data: { order = {} } = {},
    } = useSubscription(QUERIES.ORDER.DETAILS, {
       variables: {
          id: params.id,
+         brandId: brandContext.brandId,
+         locationId: brandContext.locationId
+
       },
       onSubscriptionData: ({ subscriptionData: { data = {} } = {} }) => {
-         setIsThirdParty(Boolean(data?.order?.thirdPartyOrderId))
+         console.log("dataDetails", data.orders[0]);
+         setOrder(data.orders[0])
+         setIsThirdParty(Boolean(data?.orders[0]?.thirdPartyOrderId))
       },
    })
-
    const {
       loading: productsLoading,
       error: productsError,
@@ -127,6 +133,12 @@ const Order = () => {
             cartId: {
                _eq: order?.cartId,
             },
+            brandId: {
+               _in: brandContext.brandId
+            },
+            locationId: {
+               _in: brandContext.locationId
+            }
          },
       },
       onSubscriptionData: ({ subscriptionData: { data = {} } = {} }) => {
@@ -316,9 +328,8 @@ const Order = () => {
 
    const printKOT = async () => {
       try {
-         const url = `${
-            new URL(window._env_.REACT_APP_DATA_HUB_URI).origin
-         }/datahub/v1/query`
+         const url = `${new URL(window._env_.REACT_APP_DATA_HUB_URI).origin
+            }/datahub/v1/query`
          await axios.post(
             url,
             {
@@ -351,8 +362,7 @@ const Order = () => {
       const kots = async () => {
          try {
             const { data: { data = {}, success } = {} } = await axios.get(
-               `${get_env('REACT_APP_DAILYOS_SERVER_URI')}/api/kot-urls?id=${
-                  order.id
+               `${get_env('REACT_APP_DAILYOS_SERVER_URI')}/api/kot-urls?id=${order.id
                }`
             )
             if (success) {
@@ -1085,8 +1095,7 @@ const TreeContainer = styled(Tree)`
       display: flex;
       align-items: center;
    }
-   ${
-      '' /* .ant-tree-list-holder-inner .ant-tree-treenode {
+   ${'' /* .ant-tree-list-holder-inner .ant-tree-treenode {
       width: 100%;
    } */
    }

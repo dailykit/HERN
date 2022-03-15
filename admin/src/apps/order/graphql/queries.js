@@ -47,8 +47,18 @@ export const QUERIES = {
          }
       `,
       DETAILS: gql`
-         subscription order($id: oid!) {
-            order(id: $id) {
+         subscription order(
+            $brandId: [Int!]!
+            $locationId: [Int!]!
+            $id: oid!
+         ) {
+            orders(
+               where: {
+                  brandId: { _in: $brandId }
+                  locationId: { _in: $locationId }
+                  id: { _eq: $id }
+               }
+            ) {
                id
                tax
                discount
@@ -437,8 +447,14 @@ export const QUERIES = {
             }
          `,
          CANCELLED: gql`
-            subscription orders {
-               orders: ordersAggregate(where: { isRejected: { _eq: true } }) {
+            subscription orders($brandId: [Int!]!, $locationId: [Int!]!) {
+               orders: ordersAggregate(
+                  where: {
+                     isRejected: { _eq: true }
+                     brandId: { _in: $brandId }
+                     locationId: { _in: $locationId }
+                  }
+               ) {
                   aggregate {
                      count
                      sum {
@@ -1018,6 +1034,8 @@ export const ORDERS_ACCOUNTS = gql`
    subscription ORDERS_ACCOUNTS($where: order_cart_bool_exp = {}) {
       carts(where: $where, order_by: { created_at: desc_nulls_last }) {
          orderId
+         brandId
+         locationId
          customerId
          paymentStatus
          tip
