@@ -492,7 +492,7 @@ export const PaymentProvider = ({ children }) => {
       if (
          isPaymentInitiated &&
          !_isEmpty(cartPayment) &&
-         // !_isEmpty(cartPayment?.transactionRemark) &&
+         !_isEmpty(cartPayment?.transactionRemark) &&
          _has(
             cartPayment,
             'availablePaymentOption.supportedPaymentOption.supportedPaymentCompany.label'
@@ -512,8 +512,8 @@ export const PaymentProvider = ({ children }) => {
                ;(async () => {
                   const options = getRazorpayOptions({
                      orderDetails: cartPayment.transactionRemark,
-                     paymentInfo: state.paymentInfo,
-                     profileInfo: state.profileInfo,
+                     paymentInfo: cartPayment.availablePaymentOption,
+                     profileInfo: cartPayment.cart.customerInfo,
                      ondismissHandler: () => onCancelledHandler(),
                      eventHandler,
                   })

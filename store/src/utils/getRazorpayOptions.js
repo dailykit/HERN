@@ -24,54 +24,36 @@ export const getRazorpayOptions = ({
          receipt,
          currency,
       } = orderDetails
-      const selectedCustomerPaymentMethod = paymentInfo?.paymentMethods.find(
-         method =>
-            method.supportedPaymentOptionId ===
-            paymentInfo?.selectedAvailablePaymentOption?.supportedPaymentOption
-               ?.id
-      )
+
       let checkout_option = {}
       if (
-         paymentInfo?.selectedAvailablePaymentOption?.supportedPaymentOption
-            ?.paymentOptionLabel === 'NETBANKING'
+         paymentInfo?.supportedPaymentOption?.paymentOptionLabel ===
+         'NETBANKING'
       ) {
          checkout_option = {
             method:
-               METHOD[
-                  paymentInfo?.selectedAvailablePaymentOption
-                     ?.supportedPaymentOption?.paymentOptionLabel
-               ],
-            bank: selectedCustomerPaymentMethod?.paymentMethodId || '',
+               METHOD[paymentInfo?.supportedPaymentOption?.paymentOptionLabel],
+            bank: 'SBIN',
          }
       } else if (
-         paymentInfo?.selectedAvailablePaymentOption?.supportedPaymentOption
-            ?.paymentOptionLabel === 'UPI'
+         paymentInfo?.supportedPaymentOption?.paymentOptionLabel === 'UPI'
       ) {
          checkout_option = {
             method:
-               METHOD[
-                  paymentInfo?.selectedAvailablePaymentOption
-                     ?.supportedPaymentOption?.paymentOptionLabel
-               ],
-            vpa: selectedCustomerPaymentMethod?.paymentMethodId || '',
+               METHOD[paymentInfo?.supportedPaymentOption?.paymentOptionLabel],
+            vpa: '.ax@ybl',
          }
       } else if (
-         paymentInfo?.selectedAvailablePaymentOption?.supportedPaymentOption
-            ?.paymentOptionLabel === 'CREDIT_CARD/DEBIT_CARD(ONE_TIME)'
+         paymentInfo?.supportedPaymentOption?.paymentOptionLabel ===
+         'CREDIT_CARD/DEBIT_CARD(ONE_TIME)'
       ) {
          checkout_option = {
             method:
-               METHOD[
-                  paymentInfo?.selectedAvailablePaymentOption
-                     ?.supportedPaymentOption?.paymentOptionLabel
-               ],
-            'card[name]':
-               paymentInfo?.selectedAvailablePaymentOption?.cardName || '',
-            'card[number]':
-               paymentInfo?.selectedAvailablePaymentOption?.cardNumber || '',
-            'card[expiry]':
-               paymentInfo?.selectedAvailablePaymentOption?.expiry || '',
-            'card[cvv]': paymentInfo?.selectedAvailablePaymentOption?.cvv || '',
+               METHOD[paymentInfo?.supportedPaymentOption?.paymentOptionLabel],
+            'card[name]': '',
+            'card[number]': '',
+            'card[expiry]': '',
+            'card[cvv]': '',
          }
       }
 
@@ -83,9 +65,9 @@ export const getRazorpayOptions = ({
          order_id: razorpay_order_id,
          notes,
          prefill: {
-            name: `${profileInfo?.firstName} ${profileInfo?.lastName}`,
-            email: `${profileInfo?.email}`,
-            contact: `${profileInfo?.phone}`,
+            name: `${profileInfo?.customerFirstName} ${profileInfo?.customerLastName}`,
+            email: `${profileInfo?.customerEmail}`,
+            contact: `${profileInfo?.customerPhone}`,
             ...checkout_option,
          },
          theme: {
