@@ -9,24 +9,31 @@ import {
    Text,
 } from '@dailykit/ui'
 import moment from 'moment'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { toast } from 'react-toastify'
+import { BrandContext } from '../../../../../App'
 import { ErrorState, InlineLoader } from '../../../../../shared/components'
 import { useTabs } from '../../../../../shared/providers'
 import { logger } from '../../../../../shared/utils'
 import { ORDERS_ACCOUNTS } from '../../../graphql'
 import TableOptions from '../tableOptions'
 import '../tableStyle.css'
+
 const OrdersAccounts = () => {
    const [orderData, setOrderData] = useState([])
    const [status, setStatus] = useState({ loading: true })
+   const [brandContext, setBrandContext] = useContext(BrandContext)
 
    //get orders data (subscription)
    const { loading: subsLoading, error: subsError } = useSubscription(
       ORDERS_ACCOUNTS,
       {
          variables: {
-            where: { orderId: { _is_null: false } },
+            where: {
+               orderId: { _is_null: false },
+               locationId: { _in: brandContext.locationId },
+               brandId: { _in: brandContext.brandId },
+            },
          },
          onSubscriptionData: ({ subscriptionData }) => {
             const cartData = subscriptionData.data.carts.map(cart => {
