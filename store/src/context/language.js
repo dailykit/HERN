@@ -4,7 +4,7 @@ import fr from '../lang/fr.json'
 import ar from '../lang/ar.json'
 
 import { IntlProvider, FormattedMessage } from 'react-intl'
-
+import { isClient, isKiosk } from '../utils'
 const LanguageContext = React.createContext()
 
 const languages = { en, fr, ar }
@@ -36,12 +36,6 @@ export const LanguageProvider = ({ children }) => {
 
    //Change direction for right to left read languages
    React.useEffect(() => {
-      if (window?.localStorage?.getItem('language') == 'ar') {
-         changeLocale('ar')
-      }
-      else {
-         changeLocale('en')
-      }
       // JSON.parse(localStorage.getItem('language'))
       if (rltLanguages.includes(locale)) {
          changeDirection('rtl')
@@ -51,7 +45,20 @@ export const LanguageProvider = ({ children }) => {
 
    }, [locale])
 
+   const kiosk = isKiosk()
 
+   React.useEffect(() => {
+      if (!kiosk) {
+         const languageInLocal = isClient ? window.localStorage.getItem('language') : ""
+         if (languageInLocal == 'ar') {
+            changeLocale('ar')
+         }
+         else if (languageInLocal == "en") {
+            changeLocale('en')
+         }
+      }
+
+   }, [])
    return (
       <LanguageContext.Provider
          value={{ locale, changeLocale, direction, changeDirection, locales }}
