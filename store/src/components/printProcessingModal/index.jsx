@@ -106,10 +106,10 @@ const PrintProcessingModal = ({
       >
          <Wrapper>
             <Result
-               icon={t(showPrintingStatus().icon)}
+               icon={showPrintingStatus().icon}
                title={t(showPrintingStatus().title)}
                subTitle={t(showPrintingStatus().subtitle)}
-               extra={t(showPrintingStatus().extra)}
+               extra={showPrintingStatus().extra}
             />
 
             {printStatus === 'success' && <Confetti />}
