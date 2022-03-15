@@ -12,7 +12,7 @@ import { HernLazyImage } from '../../utils/hernImage'
 export const PromotionCarousal = props => {
    const { config: componentConfig } = props
    const { brand, locationId } = useConfig()
-   const { configOf } = useConfig()
+   const { configOf, isStoreAvailable } = useConfig()
    const { addToCart } = useCart()
 
    const carousalRef = React.useRef()
@@ -97,7 +97,9 @@ export const PromotionCarousal = props => {
                   setShowModifierPopup(true)
                   setProductData(clickedProduct)
                } else {
-                  addToCart(clickedProduct.defaultCartItem, 1)
+                  if (isStoreAvailable) {
+                     addToCart(clickedProduct.defaultCartItem, 1)
+                  }
                }
             }
          }
