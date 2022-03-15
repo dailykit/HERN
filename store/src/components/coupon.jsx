@@ -261,7 +261,7 @@ const Coupon_ = ({
                   onClick={() => setIsCouponListTunnelOpen(true)}
                   variant="ghost"
                >
-                  View Offers
+                  {t('View Offers')}
                </Button>
             )}
             {listOntunnnel && (
