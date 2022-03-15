@@ -29,6 +29,7 @@ const STATUS = {
    created: 'CREATED',
    cancelled: 'CANCELLED',
    succeeded: 'SUCCEEDED',
+   paid: 'SUCCEEDED',
    processing: 'PROCESSING',
    payment_failed: 'FAILED',
    requires_action: 'REQUIRES_ACTION',
