@@ -492,7 +492,6 @@ export const PaymentProvider = ({ children }) => {
       if (
          isPaymentInitiated &&
          !_isEmpty(cartPayment) &&
-         !_isEmpty(cartPayment?.transactionRemark) &&
          _has(
             cartPayment,
             'availablePaymentOption.supportedPaymentOption.supportedPaymentCompany.label'
@@ -508,7 +507,10 @@ export const PaymentProvider = ({ children }) => {
          ) {
             console.log('inside payment provider useEffect 1', cartPayment)
 
-            if (cartPayment.paymentStatus === 'CREATED') {
+            if (
+               cartPayment.paymentStatus === 'CREATED' &&
+               !_isEmpty(cartPayment?.stripeInvoiceId)
+            ) {
                ;(async () => {
                   const options = getRazorpayOptions({
                      orderDetails: cartPayment.transactionRemark,
@@ -549,7 +551,6 @@ export const PaymentProvider = ({ children }) => {
       }
    }, [
       cartPayment?.paymentStatus,
-      cartPayment?.transactionRemark,
       cartPayment?.transactionId,
       cartPayment?.stripeInvoiceId,
       cartPayment?.actionUrl,
