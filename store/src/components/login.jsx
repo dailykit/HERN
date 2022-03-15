@@ -90,7 +90,7 @@ export const Login = props => {
       <div className="hern-login-v1-content">
          <div className="hern-login-v1-header">
             {(defaultLogin === 'email' || defaultLogin === 'otp') && (
-               <span>{t('Log in')}</span>
+               <span>{t('Log In')}</span>
             )}
 
             {defaultLogin === 'forgotPassword' && (
@@ -541,18 +541,18 @@ const OTPLogin = props => {
             }
          } else {
             setLoading(false)
-            setError('Entered OTP is incorrect, please try again!')
-            addToast('Entered OTP is incorrect!', {
+            setError(t('Entered OTP is incorrect, please try again!'))
+            addToast(t('Entered OTP is incorrect!'), {
                appearance: 'error',
             })
          }
       } catch (error) {
          setLoading(false)
          console.error(error)
-         addToast('Failed to log in, please try again!', {
+         addToast(t('Failed to log in, please try again!'), {
             appearance: 'error',
          })
-         setError('Failed to log in, please try again!')
+         setError(t('Failed to log in, please try again!'))
       }
    }
 
@@ -560,7 +560,7 @@ const OTPLogin = props => {
    const sendOTP = async () => {
       try {
          if (!form.phone) {
-            setError('Phone number is required!')
+            setError(t('Phone number is required!'))
             return
          }
 
@@ -575,8 +575,8 @@ const OTPLogin = props => {
       } catch (error) {
          setSendingOtp(false)
          console.log('error is this', error)
-         setError('Failed to send otp, please try again!')
-         addToast('Failed to send OTP!', { appearance: 'error' })
+         setError(t('Failed to send otp, please try again!'))
+         addToast(t('Failed to send OTP!'), { appearance: 'error' })
       }
    }
 
@@ -630,7 +630,7 @@ const OTPLogin = props => {
                         }))
                      }}
                      defaultCountry={get_env('COUNTRY_CODE')}
-                     placeholder={t('Enter your phone number')}
+                     placeholder={'Enter your phone number'}
                      onKeyPress={handleSendOTPKeyPress}
                   />
                </fieldset>
@@ -666,7 +666,9 @@ const OTPLogin = props => {
             <>
                {isNewUser && (
                   <fieldset className="hern-login-v1__fieldset">
-                     <label className="hern-login-v1__label">Email*</label>
+                     <label className="hern-login-v1__label">
+                        {t('Email*')}
+                     </label>
                      <input
                         className="hern-login-v1__input"
                         name="email"
@@ -678,7 +680,7 @@ const OTPLogin = props => {
                   </fieldset>
                )}
                <fieldset className="hern-login-v1__fieldset">
-                  <label className="hern-login-v1__label">OTP*</label>
+                  <label className="hern-login-v1__label">{t('OTP*')}</label>
                   <input
                      className="hern-login-v1__input"
                      name="otp"
