@@ -57,6 +57,11 @@
    height: 7em;
    width: 7em;
 }
+.hern-kiosk__header-fulfillment-info-label {
+   font-size: 3em;
+   font-weight: 700;
+   margin-left: 10px;
+}
 .hern-kiosk__kiosk-language-option {
    > span:last-child {
       display: flex;
@@ -146,7 +151,7 @@
    // margin: 1em;
    margin: 0 1em;
    // padding-top: 1em;
-   z-index: 0;
+   // z-index: 0;
    .ant-carousel .slick-slide img {
       padding: 0 1em;
    }

@@ -360,7 +360,9 @@ export const KioskProduct = props => {
                               }
                            }}
                         >
-                           {t('Add To Cart')}
+                           {isStoreAvailable
+                              ? t('Add To Cart')
+                              : t('View Product')}
                         </KioskButton>
                      ) : null
                   ) : (
