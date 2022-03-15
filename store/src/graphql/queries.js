@@ -1970,6 +1970,7 @@ export const BRAND_LOCATIONS = gql`
             orderExperienceOptionType
             doesDeliverOutsideCity
             doesDeliverOutsideState
+            operatingTime
          }
       }
    }

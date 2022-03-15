@@ -3,12 +3,13 @@ import React, { useEffect } from 'react'
 import { graphQLClient } from '../../../lib'
 import Kiosk from '../../../sections/kiosk'
 import { useConfig } from '../../../lib'
-import { LOCATION_KIOSK } from '../../../graphql'
+import { BRAND_LOCATIONS, LOCATION_KIOSK } from '../../../graphql'
 import { getSettings, isClient } from '../../../utils'
+import { useQuery } from '@apollo/react-hooks'
 
 const KioskScreen = props => {
    const { kioskId, kioskDetails, settings } = props
-   const { dispatch } = useConfig()
+   const { dispatch, brand } = useConfig()
 
    useEffect(() => {
       dispatch({
@@ -24,6 +25,26 @@ const KioskScreen = props => {
          payload: kioskDetails.locationId,
       })
    }, [])
+
+   useQuery(BRAND_LOCATIONS, {
+      skip: !brand || !brand?.id,
+      variables: {
+         where: {
+            brandId: { _eq: brand.id },
+            locationId: { _eq: kioskDetails.locationId },
+         },
+      },
+      onCompleted: data => {
+         if (data) {
+            dispatch({
+               type: 'SET_STORE_OPERATING_TIME',
+               payload:
+                  data.brands_brand_location_aggregate.nodes[0].operatingTime
+                     .operatingTime,
+            })
+         }
+      },
+   })
    return (
       <div>
          <Kiosk
