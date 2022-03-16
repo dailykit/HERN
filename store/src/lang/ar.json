@@ -349,5 +349,13 @@
    "Email sent!": "أرسل البريد الإلكتروني!",
    "SEND EMAIL": "ارسل بريد الكتروني",
    "customize": "يعدل أو يكيف",
-   "View Offers": "مشاهدة العروض"
+   "View Offers": "مشاهدة العروض",
+   "Add delivery time": "أضف وقت التسليم",
+   "on": "على",
+   "Add pickup time": "إضافة وقت الاستلام",
+   "Loading": "جار التحميل",
+   "Make Payment": "قم بالدفع",
+   "Your Add Ons": "إضافاتك",
+   "Charges": "شحنة",
+   "Go to Order": "اذهب إلى الطلب"
 }
