@@ -13,6 +13,7 @@ import { GET_MODIFIER_BY_ID } from '../../../graphql'
 import { useQuery } from '@apollo/react-hooks'
 import { useConfig } from '../../../lib'
 import { HernLazyImage } from '../../../utils/hernImage'
+import moment from 'moment'
 
 const { Header, Content, Footer } = Layout
 
@@ -20,7 +21,8 @@ export const KioskProduct = props => {
    // context
    const { cartState, methods, addToCart, combinedCartItems } =
       React.useContext(CartContext)
-   const { brand, isConfigLoading, kioskDetails } = useConfig()
+   const { brand, isConfigLoading, kioskDetails, isStoreAvailable } =
+      useConfig()
 
    const { config, productData, setCurrentPage } = props
    const { t, locale, dynamicTrans } = useTranslation()
@@ -246,7 +248,19 @@ export const KioskProduct = props => {
       addToCart(cartItem, 1)
       setShowChooseIncreaseType(false)
    }
-
+   const showAddToCartButton = React.useMemo(() => {
+      // if product has modifier option then add to cart handle by modifier
+      if (productData.productOptions.length > 0 && productData.isPopupAllowed) {
+         return true
+      } else {
+         // else we will hide add to cart button
+         if (isStoreAvailable) {
+            return true
+         } else {
+            return false
+         }
+      }
+   }, [isStoreAvailable])
    return (
       <>
          <div className="hern-kiosk__menu-product">
@@ -271,6 +285,24 @@ export const KioskProduct = props => {
                                  // src={eachImage}
                                  // key={index}
                                  dataSrc={eachImage}
+                                 // width={190}
+                                 // height={190}
+                                 onClick={() => {
+                                    if (showAddToCartButton) {
+                                       if (
+                                          productData.productOptions.length >
+                                             0 &&
+                                          productData.isPopupAllowed
+                                       ) {
+                                          setShowModifier(true)
+                                       } else {
+                                          addToCart(
+                                             productData.defaultCartItem,
+                                             1
+                                          )
+                                       }
+                                    }
+                                 }}
                               />
                            </div>
                         ))}
@@ -302,33 +334,37 @@ export const KioskProduct = props => {
                            {productData.additionalText}
                         </span>
                      )}
+                     <span className="hern-kiosk__menu-product-price">
+                        {/* <sup></sup> */}
+                        {formatCurrency(
+                           productData.price -
+                              productData.discount +
+                              (productData?.productOptions[0]?.price ||
+                                 0 - productData?.productOptions[0]?.discount ||
+                                 0)
+                        )}
+                     </span>
                   </div>
-                  <span className="hern-kiosk__menu-product-price">
-                     {/* <sup></sup> */}
-                     {formatCurrency(
-                        productData.price -
-                           productData.discount +
-                           (productData?.productOptions[0]?.price ||
-                              0 - productData?.productOptions[0]?.discount ||
-                              0)
-                     )}
-                  </span>
                   {availableQuantityInCart === 0 ? (
-                     <KioskButton
-                        onClick={() => {
-                           // setShowModifier(true)
-                           if (
-                              productData.productOptions.length > 0 &&
-                              productData.isPopupAllowed
-                           ) {
-                              setShowModifier(true)
-                           } else {
-                              addToCart(productData.defaultCartItem, 1)
-                           }
-                        }}
-                     >
-                        {t('Add To Cart')}
-                     </KioskButton>
+                     showAddToCartButton ? (
+                        <KioskButton
+                           onClick={() => {
+                              // setShowModifier(true)
+                              if (
+                                 productData.productOptions.length > 0 &&
+                                 productData.isPopupAllowed
+                              ) {
+                                 setShowModifier(true)
+                              } else {
+                                 addToCart(productData.defaultCartItem, 1)
+                              }
+                           }}
+                        >
+                           {isStoreAvailable
+                              ? t('Add To Cart')
+                              : t('View Product')}
+                        </KioskButton>
+                     ) : null
                   ) : (
                      <KioskCounterButton
                         config={config}

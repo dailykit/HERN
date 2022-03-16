@@ -1970,6 +1970,7 @@ export const BRAND_LOCATIONS = gql`
             orderExperienceOptionType
             doesDeliverOutsideCity
             doesDeliverOutsideState
+            operatingTime
          }
       }
    }
@@ -2244,6 +2245,9 @@ export const GET_CART_PAYMENT_INFO = gql`
          amount
          cancelAttempt
          cartId
+         cart {
+            customerInfo
+         }
          isTest
          paymentStatus
          paymentType
