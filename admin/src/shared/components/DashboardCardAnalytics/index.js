@@ -1,6 +1,6 @@
 import { useSubscription } from '@apollo/react-hooks'
 import { Text } from '@dailykit/ui'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { toast } from 'react-toastify'
 import { get_env, logger } from '../../utils'
 import { Card, CardContainer, Cards } from '../DashboardCards'
@@ -13,6 +13,7 @@ import {
    ProductIcon,
 } from './assets/icons'
 import { GET_TOTAL_EARNING_ORDER_CUSTOMER_TOP_PRODUCT } from './graphql/subscription'
+import { BrandContext } from './../../../../src/App'
 //currencies
 const currency = {
    USD: '$',
@@ -24,6 +25,7 @@ const DashboardCards = () => {
    const [status, setStatus] = useState({
       loading: true,
    })
+   const [brandContext, setBrandContext] = useContext(BrandContext)
    const { loading: subsLoading, error: subsError } = useSubscription(
       GET_TOTAL_EARNING_ORDER_CUSTOMER_TOP_PRODUCT,
       {
@@ -32,6 +34,10 @@ const DashboardCards = () => {
          //       params: { where: '"paymentStatus"=\'SUCCEEDED\'' },
          //    },
          // },
+         variables: {
+            brandId: brandContext.brandId,
+            locationId: brandContext.locationId,
+         },
          onSubscriptionData: ({ subscriptionData }) => {
             // console.log('subscription data', subscriptionData)
             const total = {}
