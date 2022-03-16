@@ -507,7 +507,7 @@ export const CartProvider = ({ children }) => {
                            eachOrderTab =>
                               eachOrderTab.id ===
                               subscriptionData.data.carts[0].orderTabId
-                        ).orderFulfillmentTypeLabel
+                        )?.orderFulfillmentTypeLabel
                      const locationIdForLocal =
                         subscriptionData.data.carts[0].locationId
                      localStorage.setItem(

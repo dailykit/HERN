@@ -254,7 +254,11 @@ export const Header = ({ settings, navigationMenus }) => {
    React.useEffect(() => {
       if (orderTabs.length > 0) {
          const localOrderTabLabel = localStorage.getItem('orderTab')
-         if (localOrderTabLabel) {
+         if (
+            localOrderTabLabel &&
+            localOrderTabLabel != 'undefined' &&
+            localOrderTabLabel != 'null'
+         ) {
             const selectedOrderTab = orderTabs.find(
                x =>
                   x.orderFulfillmentTypeLabel == JSON.parse(localOrderTabLabel)
@@ -615,7 +619,9 @@ const LocationInfo = ({ settings }) => {
 
       const fulfillmentType = selectedOrderTab?.orderFulfillmentTypeLabel
          ? selectedOrderTab?.orderFulfillmentTypeLabel
-         : selectedOrderTabInLocal
+         : selectedOrderTabInLocal &&
+           selectedOrderTabInLocal != 'undefined' &&
+           selectedOrderTabInLocal != 'null'
          ? JSON.parse(selectedOrderTabInLocal)
          : null
 

@@ -238,7 +238,7 @@ const FulfillmentOption = ({
    setIsAddressListOpen,
 }) => {
    const isActive = state.occurenceCustomer?.validStatus?.hasCart
-      ? state.occurenceCustomer?.cart?.fulfillmentInfo?.type.includes(type)
+      ? state.occurenceCustomer?.cart?.fulfillmentInfo?.type?.includes(type)
       : state?.fulfillment?.type?.includes(type)
    const fulfillmentClasses = classNames(
       'hern-cart-fulfillment__fulfillment-option',
