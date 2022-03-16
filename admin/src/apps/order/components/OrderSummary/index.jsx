@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import moment from 'moment'
 import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
@@ -19,21 +19,41 @@ import { QUERIES, QUERIES2 } from '../../graphql'
 import { Wrapper, FilterSection, StyledIconButton } from './styled'
 import { logger, currencyFmt } from '../../../../shared/utils'
 import { InlineLoader, ErrorState } from '../../../../shared/components'
+import { BrandContext } from '../../../../App'
 
 const address = 'apps.order.components.ordersummary.'
 
 export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
    const { t } = useTranslation()
    const { state, dispatch } = useOrder()
+   const [brandContext, setBrandContext] = useContext(BrandContext)
 
    const { data: { orders = {} } = {} } = useSubscription(
       QUERIES.ORDERS.AGGREGATE.TOTAL,
       {
-         variables: { where: { isArchived: { _eq: false } } },
+         variables: {
+            where: {
+               isArchived: { _eq: false },
+               brandId: {
+                  _in: brandContext.brandId
+               }, locationId: {
+                  _in: brandContext.locationId
+               }
+            }
+         },
       }
    )
    const { data: { orders: cancelledOrders = {} } = {} } = useSubscription(
-      QUERIES.ORDERS.AGGREGATE.CANCELLED
+      QUERIES.ORDERS.AGGREGATE.CANCELLED,
+      {
+         variables: {
+            brandId: {
+               _in: brandContext.brandId
+            }, locationId: {
+               _in: brandContext.locationId
+            }
+         }
+      }
    )
    const {
       loading,
@@ -149,16 +169,16 @@ export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
                         <span title="From">
                            {state.orders.where?.readyByTimestamp?._gte
                               ? moment(
-                                   state.orders.where?.readyByTimestamp?._gte
-                                ).format('HH:MM - MMM DD, YYYY')
+                                 state.orders.where?.readyByTimestamp?._gte
+                              ).format('HH:MM - MMM DD, YYYY')
                               : ''}
                         </span>
                         <Spacer size="16px" xAxis />
                         <span title="To">
                            {state.orders.where?.readyByTimestamp?._lte
                               ? moment(
-                                   state.orders.where?.readyByTimestamp?._lte
-                                ).format('HH:MM - MMM DD, YYYY')
+                                 state.orders.where?.readyByTimestamp?._lte
+                              ).format('HH:MM - MMM DD, YYYY')
                               : ''}
                         </span>
                      </Flex>
@@ -168,7 +188,7 @@ export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
             )}
          {state.orders.where?.fulfillmentTimestamp &&
             Object.keys(state.orders.where?.fulfillmentTimestamp).length >
-               0 && (
+            0 && (
                <>
                   <FilterSection>
                      <h3>Fulfillment Time</h3>
@@ -176,18 +196,18 @@ export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
                         <span title="From">
                            {state.orders.where?.fulfillmentTimestamp?._gte
                               ? moment(
-                                   state.orders.where?.fulfillmentTimestamp
-                                      ?._gte
-                                ).format('HH:MM - MMM DD, YYYY')
+                                 state.orders.where?.fulfillmentTimestamp
+                                    ?._gte
+                              ).format('HH:MM - MMM DD, YYYY')
                               : ''}
                         </span>
                         <Spacer size="16px" xAxis />
                         <span title="To">
                            {state.orders.where?.fulfillmentTimestamp?._lte
                               ? moment(
-                                   state.orders.where?.fulfillmentTimestamp
-                                      ?._lte
-                                ).format('HH:MM - MMM DD, YYYY')
+                                 state.orders.where?.fulfillmentTimestamp
+                                    ?._lte
+                              ).format('HH:MM - MMM DD, YYYY')
                               : ''}
                         </span>
                      </Flex>
