@@ -1,22 +1,20 @@
 import crypto from 'crypto'
-
+import razorpay from '../../../../lib/razorpay'
 import get_env from '../../../../../get_env'
+import has from 'lodash/has'
 
 const razorpayWebhookEvents = async arg => {
    try {
-      const { razorpay_signature, razorpay_order_id, razorpay_payment_id } =
-         arg.body
-
-      const RAZORPAY_SECRET_KEY = await get_env('RAZORPAY_SECRET_KEY')
-
-      const body = `${razorpay_order_id}|${razorpay_payment_id}`
-
+      const razorpay_signature = arg.headers['x-razorpay-signature']
+      const RAZORPAY_WEBHOOK_SECRET = await get_env('RAZORPAY_WEBHOOK_SECRET')
+      const razorpayInstance = await razorpay()
       let expectedSignature = crypto
-         .createHmac('sha256', RAZORPAY_SECRET_KEY)
-         .update(body)
+         .createHmac('sha256', RAZORPAY_WEBHOOK_SECRET)
+         .update(JSON.stringify(arg.body))
          .digest('hex')
 
       if (expectedSignature !== razorpay_signature) {
+         console.log('signature mismatch')
          return {
             success: false,
             signatureIsValid: false,
@@ -24,10 +22,31 @@ const razorpayWebhookEvents = async arg => {
             error: 'Signature is not valid'
          }
       }
+      console.log('signature matched')
+      let requiredData
+      if (
+         has(arg.body, 'payload.payment.entity') &&
+         arg.body.payload.payment.entity.status === 'captured'
+      ) {
+         console.log('payment captured')
+         const { entity } = arg.body.payload.payment
+         console.log('fetching order details', entity)
+         const { id, receipt, status } = await razorpayInstance.orders.fetch(
+            entity.order_id
+         )
+         requiredData = {
+            cartPaymentId: parseInt(receipt.replace('order_rcptid_', '')),
+            transactionRemark: entity,
+            requestId: id,
+            paymentStatus: status,
+            transactionId: entity.id
+         }
+      }
       return {
-         success: false,
+         success: true,
          signatureIsValid: true,
          code: 200,
+         data: requiredData,
          received: true
       }
    } catch (error) {

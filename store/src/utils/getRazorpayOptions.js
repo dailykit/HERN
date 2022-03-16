@@ -9,6 +9,8 @@ const METHOD = {
 }
 export const getRazorpayOptions = ({
    orderDetails = null,
+   brand = null,
+   theme = null,
    paymentInfo = null,
    profileInfo = null,
    ondismissHandler = () => null,
@@ -24,72 +26,56 @@ export const getRazorpayOptions = ({
          receipt,
          currency,
       } = orderDetails
-      const selectedCustomerPaymentMethod = paymentInfo?.paymentMethods.find(
-         method =>
-            method.supportedPaymentOptionId ===
-            paymentInfo?.selectedAvailablePaymentOption?.supportedPaymentOption
-               ?.id
-      )
+
       let checkout_option = {}
       if (
-         paymentInfo?.selectedAvailablePaymentOption?.supportedPaymentOption
-            ?.paymentOptionLabel === 'NETBANKING'
+         paymentInfo?.supportedPaymentOption?.paymentOptionLabel ===
+         'NETBANKING'
       ) {
          checkout_option = {
             method:
-               METHOD[
-                  paymentInfo?.selectedAvailablePaymentOption
-                     ?.supportedPaymentOption?.paymentOptionLabel
-               ],
-            bank: selectedCustomerPaymentMethod?.paymentMethodId || '',
+               METHOD[paymentInfo?.supportedPaymentOption?.paymentOptionLabel],
+            bank: '',
          }
       } else if (
-         paymentInfo?.selectedAvailablePaymentOption?.supportedPaymentOption
-            ?.paymentOptionLabel === 'UPI'
+         paymentInfo?.supportedPaymentOption?.paymentOptionLabel === 'UPI'
       ) {
          checkout_option = {
             method:
-               METHOD[
-                  paymentInfo?.selectedAvailablePaymentOption
-                     ?.supportedPaymentOption?.paymentOptionLabel
-               ],
-            vpa: selectedCustomerPaymentMethod?.paymentMethodId || '',
+               METHOD[paymentInfo?.supportedPaymentOption?.paymentOptionLabel],
+            vpa: '',
          }
       } else if (
-         paymentInfo?.selectedAvailablePaymentOption?.supportedPaymentOption
-            ?.paymentOptionLabel === 'CREDIT_CARD/DEBIT_CARD(ONE_TIME)'
+         paymentInfo?.supportedPaymentOption?.paymentOptionLabel === 'CARD'
       ) {
          checkout_option = {
             method:
-               METHOD[
-                  paymentInfo?.selectedAvailablePaymentOption
-                     ?.supportedPaymentOption?.paymentOptionLabel
-               ],
-            'card[name]':
-               paymentInfo?.selectedAvailablePaymentOption?.cardName || '',
-            'card[number]':
-               paymentInfo?.selectedAvailablePaymentOption?.cardNumber || '',
-            'card[expiry]':
-               paymentInfo?.selectedAvailablePaymentOption?.expiry || '',
-            'card[cvv]': paymentInfo?.selectedAvailablePaymentOption?.cvv || '',
+               METHOD[paymentInfo?.supportedPaymentOption?.paymentOptionLabel],
+            'card[name]': '',
+            'card[number]': '',
+            'card[expiry]': '',
+            'card[cvv]': '',
          }
       }
 
       const options = {
          key: RAZORPAY_KEY_ID,
+         theme: {
+            hide_topbar: true,
+            backdrop_color: '#231F20',
+            ...(theme?.accent?.value && { color: theme?.accent?.value }),
+         },
+         ...(brand?.brandLogo?.value && { image: brand?.brandLogo?.value }),
+         ...(brand?.brandName?.value && { name: brand?.brandName?.value }),
          amount: amount.toString(),
          currency,
-         name: 'Test Hern',
          order_id: razorpay_order_id,
          notes,
          prefill: {
-            name: `${profileInfo?.firstName} ${profileInfo?.lastName}`,
-            email: `${profileInfo?.email}`,
-            contact: `${profileInfo?.phone}`,
+            name: `${profileInfo?.customerFirstName} ${profileInfo?.customerLastName}`,
+            email: `${profileInfo?.customerEmail}`,
+            contact: `${profileInfo?.customerPhone}`,
             ...checkout_option,
-         },
-         theme: {
-            hide_topbar: true,
          },
          readonly: {
             email: '1',
