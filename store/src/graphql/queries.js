@@ -2475,3 +2475,11 @@ export const SUPPORTED_PAYMENT_OPTIONS = gql`
       }
    }
 `
+export const COUPON_BY_ID = gql`
+   query coupon($id: Int!) {
+      coupon(id: $id) {
+         code
+         metaDetails
+      }
+   }
+`
