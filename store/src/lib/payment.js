@@ -93,7 +93,7 @@ export const PaymentProvider = ({ children }) => {
    const [isProcessingPayment, setIsProcessingPayment] = useState(false)
    const [isPaymentInitiated, setIsPaymentInitiated] = useState(false)
    const { user, isAuthenticated, isLoading } = useUser()
-   const { brand, kioskDetails, settings, selectedOrderTab } = useConfig()
+   const { kioskDetails, settings, selectedOrderTab, configOf } = useConfig()
    const { displayRazorpay } = useRazorPay()
    const { displayPaytm } = usePaytm()
    const {
@@ -107,7 +107,8 @@ export const PaymentProvider = ({ children }) => {
 
    const BY_PASS_TERMINAL_PAYMENT = get_env('BY_PASS_TERMINAL_PAYMENT')
    const ALLOW_POSIST_PUSH_ORDER = get_env('ALLOW_POSIST_PUSH_ORDER')
-
+   const brand = configOf('Brand Info', 'brand')
+   const theme = configOf('theme-color', 'Visual')?.themeColor
    // subscription to get cart payment info
    const {
       data: { cartPayments: cartPaymentsFromQuery = [] } = {},
@@ -514,6 +515,8 @@ export const PaymentProvider = ({ children }) => {
                ;(async () => {
                   const options = getRazorpayOptions({
                      orderDetails: cartPayment.transactionRemark,
+                     brand,
+                     theme,
                      paymentInfo: cartPayment.availablePaymentOption,
                      profileInfo: cartPayment.cart.customerInfo,
                      ondismissHandler: () => onCancelledHandler(),

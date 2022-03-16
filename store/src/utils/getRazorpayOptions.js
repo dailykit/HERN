@@ -9,6 +9,8 @@ const METHOD = {
 }
 export const getRazorpayOptions = ({
    orderDetails = null,
+   brand = null,
+   theme = null,
    paymentInfo = null,
    profileInfo = null,
    ondismissHandler = () => null,
@@ -33,7 +35,7 @@ export const getRazorpayOptions = ({
          checkout_option = {
             method:
                METHOD[paymentInfo?.supportedPaymentOption?.paymentOptionLabel],
-            bank: 'SBIN',
+            bank: '',
          }
       } else if (
          paymentInfo?.supportedPaymentOption?.paymentOptionLabel === 'UPI'
@@ -41,11 +43,10 @@ export const getRazorpayOptions = ({
          checkout_option = {
             method:
                METHOD[paymentInfo?.supportedPaymentOption?.paymentOptionLabel],
-            vpa: '.ax@ybl',
+            vpa: '',
          }
       } else if (
-         paymentInfo?.supportedPaymentOption?.paymentOptionLabel ===
-         'CREDIT_CARD/DEBIT_CARD(ONE_TIME)'
+         paymentInfo?.supportedPaymentOption?.paymentOptionLabel === 'CARD'
       ) {
          checkout_option = {
             method:
@@ -59,9 +60,15 @@ export const getRazorpayOptions = ({
 
       const options = {
          key: RAZORPAY_KEY_ID,
+         theme: {
+            hide_topbar: true,
+            backdrop_color: '#231F20',
+            ...(theme?.accent?.value && { color: theme?.accent?.value }),
+         },
+         ...(brand?.brandLogo?.value && { image: brand?.brandLogo?.value }),
+         ...(brand?.brandName?.value && { name: brand?.brandName?.value }),
          amount: amount.toString(),
          currency,
-         name: 'Test Hern',
          order_id: razorpay_order_id,
          notes,
          prefill: {
@@ -69,9 +76,6 @@ export const getRazorpayOptions = ({
             email: `${profileInfo?.customerEmail}`,
             contact: `${profileInfo?.customerPhone}`,
             ...checkout_option,
-         },
-         theme: {
-            hide_topbar: true,
          },
          readonly: {
             email: '1',

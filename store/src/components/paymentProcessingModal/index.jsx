@@ -374,8 +374,7 @@ const PaymentProcessingModal = ({
                               <h1 tw="font-extrabold color[rgba(0, 64, 106, 0.9)] text-xl text-center">
                                  {`Timout in ${minutes}:${
                                     seconds <= 9 ? '0' : ''
-                                 }
-                              ${seconds}`}
+                                 }${seconds}`}
                               </h1>
                            )
                         }}
