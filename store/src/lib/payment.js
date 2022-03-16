@@ -284,9 +284,8 @@ export const PaymentProvider = ({ children }) => {
          },
       })
       if (!isEmpty(settings) && isClient) {
-         const path = settings['printing'].find(
-            item => item?.identifier === 'KioskCustomerTokenTemplate'
-         )?.value?.path?.value
+         const path =
+            settings['printing']?.['KioskCustomerTokenTemplate']?.path?.value
          const DATA_HUB_HTTPS = get_env('DATA_HUB_HTTPS')
          const { origin } = new URL(DATA_HUB_HTTPS)
          const templateOptions = encodeURI(
