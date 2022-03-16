@@ -11,10 +11,11 @@ import { GET_ORDER_DETAILS } from '../graphql'
 import { combineCartItems, formatCurrency, useQueryParamState } from '../utils'
 import { Loader } from './loader'
 import { Empty } from 'antd'
+import { useTranslation } from '../context'
 
 export const CartOrderDetails = () => {
    const [cartId] = useQueryParamState('id')
-
+   const { t } = useTranslation()
    const {
       error,
       loading: orderHistoryLoading,
@@ -72,7 +73,7 @@ export const CartOrderDetails = () => {
                   cart?.fulfillmentInfo?.type === 'PREORDER_DELIVERY') && (
                      <span>
                         {' '}
-                        on{' '}
+                        {t('on')}{' '}
                         {moment(cart?.fulfillmentInfo?.slot?.from).format(
                            'DD MMM YYYY'
                         )}

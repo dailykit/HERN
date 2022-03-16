@@ -81,7 +81,7 @@ const RefineLocation = props => {
 
    const [createAddress] = useMutation(MUTATIONS.CUSTOMER.ADDRESS.CREATE, {
       onCompleted: () => {
-         addToast(<span>{t('Address has been saved.')}</span>, {
+         addToast(t('Address has been saved.'), {
             appearance: 'success',
          })
          // fb pixel custom event for adding a new address

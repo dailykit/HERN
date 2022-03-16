@@ -20,14 +20,13 @@ export const CartBillingDetails = ({ billing, tip }) => {
          {billing && (
             <ul className="hern-cart-billing-details-list">
                <li>
-                  <span data-translation="true"
-                  >{billing.itemTotal.label}</span>
+                  <span data-translation="true">{billing.itemTotal.label}</span>
                   <span>{formatCurrency(billing.itemTotal.value || 0)}</span>
                </li>
                <li>
-                  <span data-translation="true"
-                  >
-                     {billing.deliveryPrice.label}</span>
+                  <span data-translation="true">
+                     {billing.deliveryPrice.label}
+                  </span>
                   {billing.deliveryPrice.value === 0 ? (
                      <span
                         style={{
@@ -44,13 +43,14 @@ export const CartBillingDetails = ({ billing, tip }) => {
                   )}
                </li>
                <li>
-                  <span data-translation="true"
-                  >{billing.tax.label}</span>
+                  <span data-translation="true">{billing.tax.label}</span>
                   <span>{formatCurrency(billing.tax.value || 0)}</span>
                </li>
                {billing.discount.value > 0 && (
                   <li>
-                     <span >{billing.discount.label}</span>
+                     <span data-translation="true">
+                        {billing.discount.label}
+                     </span>
                      <span>
                         - {formatCurrency(billing.discount.value || 0)}
                      </span>
@@ -58,13 +58,17 @@ export const CartBillingDetails = ({ billing, tip }) => {
                )}
                {user?.keycloakId && billing.loyaltyPointsUsed.value > 0 && (
                   <li>
-                     <span >{billing.loyaltyPointsUsed.label}</span>
+                     <span data-translation="true">
+                        {billing.loyaltyPointsUsed.label}
+                     </span>
                      <span>{billing.loyaltyPointsUsed.value}</span>
                   </li>
                )}
                {user?.keycloakId && billing.walletAmountUsed.value > 0 && (
                   <li>
-                     <span >{billing.walletAmountUsed.label}</span>
+                     <span data-translation="true">
+                        {billing.walletAmountUsed.label}
+                     </span>
                      <span>{billing.walletAmountUsed.value}</span>
                   </li>
                )}
@@ -75,13 +79,13 @@ export const CartBillingDetails = ({ billing, tip }) => {
                   </li>
                )}
                <li className="hern-cart-billing-details-total-price">
-                  <span data-translation="true"
-                  >{billing.totalPrice.label}</span>
+                  <span data-translation="true">
+                     {billing.totalPrice.label}
+                  </span>
                   <span>{formatCurrency(billing.totalPrice.value || 0)}</span>
                </li>
             </ul>
-         )
-         }
-      </div >
+         )}
+      </div>
    )
 }

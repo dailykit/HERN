@@ -29,6 +29,8 @@ export const OnDemandCart = () => {
       React.useContext(CartContext)
    const { isAuthenticated, userType } = useUser()
    const { locationId, dispatch } = useConfig()
+   const { t } = useTranslation()
+
    React.useEffect(() => {
       if (!isFinalCartLoading) {
          const storeLocationId = localStorage.getItem('storeLocationId')
@@ -87,9 +89,9 @@ export const OnDemandCart = () => {
             <CartPageHeader />
             <div className="hern-cart-empty-cart">
                <EmptyCart />
-               <span>Oops! Your cart is empty </span>
+               <span>{t('Oops! Your cart is empty')} </span>
                <Button className="hern-cart-go-to-menu-btn" onClick={() => { }}>
-                  <Link href="/order">GO TO MENU</Link>
+                  <Link href="/order">{t('GO TO MENU')}</Link>
                </Button>
             </div>
          </>
@@ -226,7 +228,7 @@ const PaymentSection = () => {
                   className="hern-cart__make-payment-btn"
                   onClick={() => setIsTunnelOpen(true)}
                >
-                  Make Payment{' '}
+                  {t('Make Payment')}
                   {`(${formatCurrency(
                      cartState?.cart?.cartOwnerBilling?.balanceToPay
                   )})`}

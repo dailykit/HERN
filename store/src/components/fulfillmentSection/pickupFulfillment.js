@@ -502,13 +502,13 @@ export const Pickup = props => {
                setIsMobileViewOpen(false)
             }}
          >
-            Add pickup time{' '}
+            {t('Add pickup time')}
          </button>
       )
    }
 
    if (isLoading) {
-      return <p>Loading</p>
+      return <p>{t('Loading')}</p>
    }
 
    if (!showSlots) {
@@ -522,8 +522,7 @@ export const Pickup = props => {
                      {cartState.cart?.fulfillmentInfo?.type ===
                         'PREORDER_PICKUP' && (
                            <span>
-                              {' '}
-                              on{' '}
+                              <span>{t('on')}</span>
                               {moment(
                                  cartState.cart?.fulfillmentInfo?.slot?.from
                               ).format('DD MMM YYYY')}
@@ -555,7 +554,7 @@ export const Pickup = props => {
                            setShowSlots(true)
                         }}
                      >
-                        Change
+                        {t('Change')}
                      </Button>
                   )}
             </div>
@@ -601,7 +600,7 @@ export const Pickup = props => {
          {!fulfillmentType ? null : isGetStoresLoading ? (
             <Loader inline />
          ) : stores.length === 0 ? (
-            <p>No store available</p>
+            <p>{t('No store available')}</p>
          ) : fulfillmentType === 'PREORDER_PICKUP' ? (
             <TimeSlots
                onFulfillmentTimeClick={onFulfillmentTimeClick}

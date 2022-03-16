@@ -41,14 +41,14 @@ export const Delivery = props => {
          orderTabFulfillmentType.includes('ONDEMAND_DELIVERY') &&
          Boolean(availableStoreType.find(x => x === 'ONDEMAND'))
       ) {
-         options.push({ label: <span>{t('Now')}</span>, value: 'ONDEMAND_DELIVERY' })
+         options.push({ label: 'Now', value: 'ONDEMAND_DELIVERY' })
       }
       if (
          orderTabFulfillmentType &&
          orderTabFulfillmentType.includes('PREORDER_DELIVERY') &&
          Boolean(availableStoreType.find(x => x === 'PREORDER'))
       ) {
-         options.push({ label: <span>{t('Later')}</span>, value: 'PREORDER_DELIVERY' })
+         options.push({ label: 'Later', value: 'PREORDER_DELIVERY' })
       }
 
       return options
@@ -283,7 +283,7 @@ export const Delivery = props => {
             )}
          >
             <Radio.Group
-               options={deliveryRadioOptions}
+               options={t(deliveryRadioOptions)}
                onChange={e => {
                   setFulfillmentType(e.target.value)
                   setIsGetStoresLoading(true)

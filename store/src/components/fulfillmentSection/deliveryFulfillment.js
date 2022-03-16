@@ -569,7 +569,7 @@ export const Delivery = props => {
                setIsMobileViewOpen(false)
             }}
          >
-            Add delivery time{' '}
+            {t('Add delivery time')}
          </button>
       )
    }
@@ -619,7 +619,7 @@ export const Delivery = props => {
                            setShowSlots(true)
                         }}
                      >
-                        Change
+                        {t('Change')}
                      </Button>
                   )}
             </div>
@@ -665,7 +665,7 @@ export const Delivery = props => {
          {!fulfillmentType ? null : isGetStoresLoading ? (
             <Loader inline />
          ) : stores.length === 0 ? (
-            <p>No store available</p>
+            <p>{t('No store available')}</p>
          ) : fulfillmentType === 'PREORDER_DELIVERY' ? (
             <TimeSlots
                onFulfillmentTimeClick={onFulfillmentTimeClick}

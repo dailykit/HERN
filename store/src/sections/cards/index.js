@@ -385,7 +385,7 @@ const CardSetupForm = ({ intent, handleResult }) => {
             className="hern-cards__setup-form__submit-btn"
             disabled={!stripe || submitting}
          >
-            {submitting ? <span>{t('Saving...')}</span> : <span>{t('Save')}</span>}
+            {submitting ? t('Saving...') : t('Save')}
          </button>
          {error && (
             <span className="hern-cards__setup-form__error">{error}</span>
