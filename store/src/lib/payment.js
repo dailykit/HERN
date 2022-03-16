@@ -93,7 +93,7 @@ export const PaymentProvider = ({ children }) => {
    const [isProcessingPayment, setIsProcessingPayment] = useState(false)
    const [isPaymentInitiated, setIsPaymentInitiated] = useState(false)
    const { user, isAuthenticated, isLoading } = useUser()
-   const { brand, kioskDetails, settings, selectedOrderTab } = useConfig()
+   const { kioskDetails, settings, selectedOrderTab, configOf } = useConfig()
    const { displayRazorpay } = useRazorPay()
    const { displayPaytm } = usePaytm()
    const {
@@ -107,7 +107,8 @@ export const PaymentProvider = ({ children }) => {
 
    const BY_PASS_TERMINAL_PAYMENT = get_env('BY_PASS_TERMINAL_PAYMENT')
    const ALLOW_POSIST_PUSH_ORDER = get_env('ALLOW_POSIST_PUSH_ORDER')
-
+   const brand = configOf('Brand Info', 'brand')
+   const theme = configOf('theme-color', 'Visual')?.themeColor
    // subscription to get cart payment info
    const {
       data: { cartPayments: cartPaymentsFromQuery = [] } = {},
@@ -492,7 +493,6 @@ export const PaymentProvider = ({ children }) => {
       if (
          isPaymentInitiated &&
          !_isEmpty(cartPayment) &&
-         // !_isEmpty(cartPayment?.transactionRemark) &&
          _has(
             cartPayment,
             'availablePaymentOption.supportedPaymentOption.supportedPaymentCompany.label'
@@ -508,12 +508,17 @@ export const PaymentProvider = ({ children }) => {
          ) {
             console.log('inside payment provider useEffect 1', cartPayment)
 
-            if (cartPayment.paymentStatus === 'CREATED') {
+            if (
+               cartPayment.paymentStatus === 'CREATED' &&
+               !_isEmpty(cartPayment?.stripeInvoiceId)
+            ) {
                ;(async () => {
                   const options = getRazorpayOptions({
                      orderDetails: cartPayment.transactionRemark,
-                     paymentInfo: state.paymentInfo,
-                     profileInfo: state.profileInfo,
+                     brand,
+                     theme,
+                     paymentInfo: cartPayment.availablePaymentOption,
+                     profileInfo: cartPayment.cart.customerInfo,
                      ondismissHandler: () => onCancelledHandler(),
                      eventHandler,
                   })
@@ -549,7 +554,6 @@ export const PaymentProvider = ({ children }) => {
       }
    }, [
       cartPayment?.paymentStatus,
-      cartPayment?.transactionRemark,
       cartPayment?.transactionId,
       cartPayment?.stripeInvoiceId,
       cartPayment?.actionUrl,

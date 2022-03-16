@@ -98,7 +98,7 @@ export const SparkChart = ({
          setDataForGraph(dayBundlePresent)
       }
    }
-   console.log('data for graph:::::', dataForGraph)
+   // console.log('data for graph:::::', dataForGraph)
    useEffect(() => {
       dataGeneratorBetweenToDates(moment(from), moment(to), groupBy)
    }, [from, to, groupBy])

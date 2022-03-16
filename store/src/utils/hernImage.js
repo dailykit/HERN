@@ -2,9 +2,10 @@ import React from 'react'
 import ReactImageFallback from 'react-image-fallback'
 import { get_env, isClient } from './get_env'
 import axios from 'axios'
-// import 'lazysizes'
-// import 'lazysizes/plugins/parent-fit/ls.parent-fit'
-// import 'lazysizes/plugins/attrchange/ls.attrchange'
+import isNull from 'lodash/isNull'
+import isEmpty from 'lodash/isEmpty'
+import { NoImage } from '../assets/icons'
+import { useConfig } from '../lib'
 
 export const hernImage = props => {
    const imageSrc = props.imageSrc
@@ -38,7 +39,15 @@ export const HernLazyImage = ({
    dataSrc,
    ...rest
 }) => {
-   // const imageUrl = rest['data-src']
+   const { configOf } = useConfig()
+   const theme = configOf('theme-color', 'Visual')?.themeColor
+   const themeColor = theme?.accent?.value
+      ? theme?.accent?.value
+      : 'rgba(5, 150, 105, 1)'
+   // no image src available
+   if (isNull(dataSrc) || isEmpty(dataSrc)) {
+      return <NoImage size={'100%'} fill={themeColor} />
+   }
    const imageUrlOfParticularDimension = dataSrc
       .slice()
       .replace('images', `${width}x${height}`)
