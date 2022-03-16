@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useSubscription } from '@apollo/react-hooks'
 import moment from 'moment'
 import '../../tableStyle.css'
@@ -12,26 +12,40 @@ import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import TableOptions from '../../tableOptions'
 import { TableHeader } from '../../shared'
 import { useEffect } from 'react'
-import { DashboardTableContext } from '../../context'
+// import { DashboardTableContext } from '../../context'
 import { useHistory } from 'react-router-dom'
+import { BrandContext } from './../../../../../../src/App'
+import { useTabs } from '../../../../providers'
+
 const RecentOrderTable = () => {
    const [recentOrders, setRecentOrders] = useState([])
    const [status, setStatus] = useState({ loading: true })
-   const { dashboardTableState } = React.useContext(DashboardTableContext)
+   // const { dashboardTableState } = React.useContext(DashboardTableContext)
    const history = useHistory()
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+   const { addTab } = useTabs()
+
    const { loading: subsLoading, error: subsError } = useSubscription(
       RECENT_ORDERS,
       {
          variables: {
-            where:
-               dashboardTableState.from && dashboardTableState.to
-                  ? {
-                     created_at: {
-                        _gte: dashboardTableState.from,
-                        _lte: dashboardTableState.to,
-                     },
-                  }
-                  : {},
+            // where:
+            //    dashboardTableState.from && dashboardTableState.to
+            //       ? {
+            //            created_at: {
+            //               _gte: dashboardTableState.from,
+            //               _lte: dashboardTableState.to,
+            //            },
+            //         }
+            //       : {},
+            where: {
+               brandId: {
+                  _in: brandContext.brandId,
+               },
+               locationId: {
+                  _in: brandContext.locationId,
+               },
+            },
          },
          onSubscriptionData: ({ subscriptionData }) => {
             const data = subscriptionData.data.orders
@@ -39,8 +53,9 @@ const RecentOrderTable = () => {
                const newOrder = {}
                newOrder.id = order.id
                newOrder.created_at = moment(order.created_at).format('ll')
-               newOrder.customerName = `${order.cart?.customerInfo?.customerFirstName || 'N/A'
-                  } ${order.cart?.customerInfo?.customerLastName || ''}`
+               newOrder.customerName = `${
+                  order.cart?.customerInfo?.customerFirstName || 'N/A'
+               } ${order.cart?.customerInfo?.customerLastName || ''}`
                switch (order.cart?.status) {
                   case 'ORDER_PENDING':
                      newOrder.status = 'Pending'
@@ -71,9 +86,13 @@ const RecentOrderTable = () => {
          },
       }
    )
+   console.log('recent orders', recentOrders)
    const tableHeaderOnClick = () => {
       history.push('order')
    }
+   React.useEffect(() => {
+      addTab('Home', '/')
+   }, [brandContext.brandId, brandContext.locationId])
    const columns = [
       { title: 'Order Id', field: 'id' },
       {
