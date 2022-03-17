@@ -20,9 +20,8 @@ export const Profile = () => {
    if (isConfigLoading || isLoading) return <Loader component />
 
    const isSubscriptionStore =
-      settings?.availability?.find(
-         i => i.identifier === 'isSubscriptionAvailable'
-      )?.value?.Subscription?.isSubscriptionAvailable?.value ?? false
+      settings?.availability?.['isSubscriptionAvailable']?.Subscription
+         ?.isSubscriptionAvailable?.value ?? false
    return (
       <main className="hern-profile__main">
          <ProfileSidebar />

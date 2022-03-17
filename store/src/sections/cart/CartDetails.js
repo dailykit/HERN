@@ -26,9 +26,8 @@ export const CartDetails = () => {
    const { cart } = cartState
 
    const isLoyaltyPointsAvailable =
-      settings?.rewards?.find(
-         setting => setting?.identifier === 'Loyalty Points Availability'
-      )?.value?.['Loyalty Points']?.IsLoyaltyPointsAvailable?.value ?? true
+      settings?.rewards?.['Loyalty Points Availability']?.['Loyalty Points']
+         ?.IsLoyaltyPointsAvailable?.value ?? true
 
    //remove cartItem or cartItems
    const removeCartItems = cartItemIds => {
