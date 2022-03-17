@@ -144,6 +144,7 @@ export const PromotionCarousal = props => {
             slidesToShow={2}
             slidesToScroll={2}
             infinite={false}
+            style={{ minHeight: '230px' }}
          >
             {data.coupons.map(eachCoupon => {
                if (!eachCoupon.metaDetails?.image) {

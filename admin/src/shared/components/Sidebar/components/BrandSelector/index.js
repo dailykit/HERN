@@ -20,7 +20,6 @@ const BrandSelector = ({ mouseOver }) => {
    const [locationArrowClicked, setLocationArrowClicked] = useState(false)
    const [brandList, setBrandList] = React.useState([])
    const [brandContext, setBrandContext] = useContext(BrandContext)
-   const [list, setList] = React.useState({ brandList: [], locationList: [] })
 
    const { loading } = useSubscription(LOCATION_SELECTOR_LIST, {
       variables: {
@@ -91,8 +90,8 @@ const BrandSelector = ({ mouseOver }) => {
             )
             setBrandContext({
                ...brandContext,
-               logo: result[0].logo,
-               domain: result[0].domain,
+               logo: result[index].logo,
+               domain: result[index].domain,
             })
             return setBrandList([
                {
