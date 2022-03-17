@@ -34,7 +34,8 @@ const { Content, Sider, Header, Footer } = Layout
 const { Step } = Steps
 
 export const MenuSection = props => {
-   const { brand, isConfigLoading, kioskDetails } = useConfig()
+   const { brand, isConfigLoading, kioskDetails, isStoreAvailable } =
+      useConfig()
    const carousalRef = React.useRef()
 
    const { config, setCurrentPage } = props
@@ -189,7 +190,7 @@ export const MenuSection = props => {
                   style={{
                      background: `${config.kioskSettings.theme.primaryColorLight.value}`,
                      padding: '1em 2em',
-                     height: '6em',
+                     height: '10em',
                   }}
                >
                   <ProgressBar
@@ -222,6 +223,7 @@ const KioskMenu = props => {
 
    const { cartState, showCartIconToolTip } = React.useContext(CartContext)
    const { cart } = cartState
+   const { isStoreAvailable } = useConfig()
 
    const menuRef = React.useRef()
    const [selectedCategory, setSelectedCategory] = useState(
@@ -242,7 +244,11 @@ const KioskMenu = props => {
    }, [])
 
    return (
-      <Layout style={{ height: 'calc(100vh - 35em)' }}>
+      <Layout
+         style={{
+            height: `calc(100vh - ${isStoreAvailable ? '37em' : '42em'})`,
+         }}
+      >
          <Sider
             width={250}
             theme={'light'}

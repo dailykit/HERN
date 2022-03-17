@@ -42,7 +42,7 @@ const DeliveryCharges = ({ mileRangeId, charges, openTunnel }) => {
       })
       recurrenceDispatch({
          type: 'MILE_RANGE',
-         payload: mileRangeId,
+         payload: {id: mileRangeId},
       })
       openTunnel(4)
    }

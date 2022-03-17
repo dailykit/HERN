@@ -33,7 +33,7 @@ const DashboardCards = () => {
          //    },
          // },
          onSubscriptionData: ({ subscriptionData }) => {
-            console.log('subscription data', subscriptionData)
+            // console.log('subscription data', subscriptionData)
             const total = {}
             total.totalEarnings =
                subscriptionData.data.ordersAggregate.aggregate.sum.amountPaid
@@ -48,7 +48,7 @@ const DashboardCards = () => {
          },
       }
    )
-   console.log('analyticsData', analyticsData)
+   // console.log('analyticsData', analyticsData)
    if (subsLoading || status.loading) {
       return <InlineLoader />
    }

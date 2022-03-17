@@ -1,11 +1,9 @@
+import { useQuery } from '@apollo/react-hooks'
+import { has, isEmpty } from 'lodash'
+import moment from 'moment'
 import React from 'react'
-import { groupBy, has, isEmpty } from 'lodash'
-import { useQuery, useSubscription } from '@apollo/react-hooks'
-
-import { get_env, isClient, useQueryParamState } from '../utils'
-import { PageLoader } from '../components'
-import { SETTINGS } from '../graphql/queries'
 import { ORDER_TAB } from '../graphql'
+import { get_env, isClient, useQueryParamState } from '../utils'
 
 const ConfigContext = React.createContext()
 
@@ -27,6 +25,7 @@ const initialState = {
       loading: true,
    },
    lastLocationId: null,
+   storeOperatingTime: null,
 }
 
 const reducers = (state, { type, payload }) => {
@@ -53,6 +52,8 @@ const reducers = (state, { type, payload }) => {
          return { ...state, storeStatus: payload }
       case 'SET_LAST_LOCATION_ID':
          return { ...state, lastLocationId: payload }
+      case 'SET_STORE_OPERATING_TIME':
+         return { ...state, storeOperatingTime: payload }
       default:
          return state
    }
@@ -68,23 +69,6 @@ export const ConfigProvider = ({ children }) => {
    )
    const [showLocationSelectorPopup, setShowLocationSelectionPopup] =
       React.useState(false)
-
-   const { loading, data: { settings = [] } = {} } = useSubscription(SETTINGS, {
-      variables: {
-         domain: {
-            _eq: isClient ? window.location.hostname : null,
-         },
-      },
-   })
-
-   const transform = React.useCallback(
-      ({ value, meta }) => ({
-         value,
-         type: meta.type,
-         identifier: meta.identifier,
-      }),
-      []
-   )
 
    useQuery(ORDER_TAB, {
       skip: isLoading || !orderInterfaceType,
@@ -132,22 +116,6 @@ export const ConfigProvider = ({ children }) => {
       }
    }
 
-   React.useEffect(() => {
-      if (!loading) {
-         if (!isEmpty(settings)) {
-            dispatch({
-               type: 'SET_BRANDID',
-               payload: { id: settings[0].brandId },
-            })
-            dispatch({
-               type: 'SET_SETTINGS',
-               payload: groupBy(settings.map(transform), 'type'),
-            })
-         }
-         setIsLoading(false)
-      }
-   }, [loading, settings])
-
    const buildImageUrl = React.useCallback((size, url) => {
       const server_url = `${
          new URL(get_env('DATA_HUB_HTTPS')).origin
@@ -168,7 +136,7 @@ export const ConfigProvider = ({ children }) => {
 
       const urlSearchParams = new URLSearchParams(window.location.search)
       const params = Object.fromEntries(urlSearchParams.entries())
-      console.log('these are params', params)
+
       if (params && params.oiType) {
          localStorage.setItem(
             'orderInterfaceType',
@@ -210,6 +178,7 @@ export const ConfigProvider = ({ children }) => {
             clearCurrentPage,
             showLocationSelectorPopup,
             setShowLocationSelectionPopup,
+            setIsLoading,
          }}
       >
          {children}
@@ -232,6 +201,7 @@ export const useConfig = (globalType = '') => {
       clearCurrentPage,
       showLocationSelectorPopup,
       setShowLocationSelectionPopup,
+      setIsLoading,
    } = React.useContext(ConfigContext)
 
    const hasConfig = React.useCallback(
@@ -239,12 +209,9 @@ export const useConfig = (globalType = '') => {
          const type = localType || globalType
          if (isEmpty(state.settings)) return false
          if (identifier && type && has(state.settings, type)) {
-            const index = state.settings[type].findIndex(
-               node => node.identifier === identifier
-            )
-            if (index === -1) return false
-            if (isEmpty(state.settings[type][index].value)) return false
-            return true
+            const identifierValue = state.settings[type][identifier]
+            if (identifierValue) return true
+            return false
          }
          return false
       },
@@ -256,15 +223,41 @@ export const useConfig = (globalType = '') => {
          const type = localType || globalType
          if (isEmpty(state.settings)) return {}
          if (identifier && type && has(state.settings, type)) {
-            return (
-               state.settings[type].find(node => node.identifier === identifier)
-                  ?.value || {}
-            )
+            return state.settings[type][identifier] || {}
          }
          return {}
       },
       [state, globalType]
    )
+
+   const isStoreAvailable = React.useMemo(() => {
+      if (state.storeOperatingTime && state.storeOperatingTime.length > 0) {
+         let storeAvailability
+         for (let i = 0; i <= state.storeOperatingTime.length - 1; i++) {
+            const currentTime = moment()
+            const openingTime = moment(
+               state.storeOperatingTime[i].openingTime,
+               'HH:mm'
+            )
+            const closingTime = moment(
+               state.storeOperatingTime[i].closingTime,
+               'HH:mm'
+            )
+            storeAvailability = currentTime.isBetween(
+               openingTime,
+               closingTime,
+               'minutes',
+               []
+            )
+            if (storeAvailability) {
+               break
+            }
+         }
+         return storeAvailability
+      } else {
+         return true
+      }
+   }, [state.storeOperatingTime])
 
    return {
       configOf,
@@ -291,5 +284,8 @@ export const useConfig = (globalType = '') => {
       clearCurrentPage,
       showLocationSelectorPopup,
       setShowLocationSelectionPopup,
+      storeOperatingTime: state.storeOperatingTime,
+      isStoreAvailable,
+      setIsLoading,
    }
 }

@@ -24,12 +24,12 @@ export const CartDetails = () => {
    const { user, isAuthenticated } = useUser()
    //context data
    const { cart } = cartState
+   const { t } = useTranslation()
 
    const isLoyaltyPointsAvailable =
-      settings?.rewards?.find(
-         setting => setting?.identifier === 'Loyalty Points Availability'
-      )?.value?.['Loyalty Points']?.IsLoyaltyPointsAvailable?.value ?? true
-   const { t } = useTranslation()
+      settings?.rewards?.['Loyalty Points Availability']?.['Loyalty Points']
+         ?.IsLoyaltyPointsAvailable?.value ?? true
+
    //remove cartItem or cartItems
    const removeCartItems = cartItemIds => {
       console.log('removed id', cartItemIds)
@@ -49,8 +49,8 @@ export const CartDetails = () => {
          <div className="hern-cart-container">
             <div className="hern-cart-page">
                <div className="hern-cart-content">
-                  <header>Cart</header>
-                  <Loader />
+                  <header>{t('Cart')}</header>
+                  < Loader />
                </div>
             </div>
          </div>
@@ -70,12 +70,12 @@ export const CartDetails = () => {
                   <header>Cart</header>
                   <div className="hern-cart-empty-cart">
                      <EmptyCart />
-                     <span>Oops! Your cart is empty </span>
+                     <span>{t('Oops! Your cart is empty')} </span>
                      <Button
                         className="hern-cart-go-to-menu-btn"
                         onClick={() => { }}
                      >
-                        <Link href="/order">GO TO MENU</Link>
+                        <Link href="/order">{t('GO TO MENU')}</Link>
                      </Button>
                   </div>
                </div>
@@ -137,7 +137,7 @@ const Tips = props => {
    return (
       <div className="hern-cart__tip">
          <div className="hern-cart__tip-heading">
-            <span>Add a Tip</span>
+            <span>{t('Add a Tip')}</span>
          </div>
          {!customPanel && (
             <div className="hern-cart__tip-tip-options-list">
@@ -178,7 +178,7 @@ const Tips = props => {
                      setCustomPanel(prevState => !prevState)
                   }}
                >
-                  Custom
+                  {t('Custom')}
                </button>
             </div>
          )}
@@ -209,7 +209,7 @@ const Tips = props => {
                      setCustomPanel(prevState => !prevState)
                   }}
                >
-                  ADD
+                  {t('ADD')}
                </button>
                <CloseIcon
                   title="Close"

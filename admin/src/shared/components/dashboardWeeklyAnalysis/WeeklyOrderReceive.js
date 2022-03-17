@@ -36,7 +36,7 @@ const WeeklyOrderReceive = ({ onClick }) => {
 
    //subscription for compare data
 
-   console.log('insight data order', insights_analytics, subsLoading)
+   // console.log('insight data order', insights_analytics, subsLoading)
    if (subsLoading) {
       return <InlineLoader />
    }
@@ -49,10 +49,10 @@ const WeeklyOrderReceive = ({ onClick }) => {
          <ErrorState height="320px" message="Could not get the Insight data" />
       )
    }
-   console.log(
-      'WeeklyOrderReceived:::',
-      insights_analytics[0].getOrdersRecieved.filter(x => x.year !== null)
-   )
+   // console.log(
+   //    'WeeklyOrderReceived:::',
+   //    insights_analytics[0].getOrdersRecieved.filter(x => x.year !== null)
+   // )
    return (
       <Card onClick={onClick} title="Click to see order report">
          <CardText>Total Orders Received in last week</CardText>

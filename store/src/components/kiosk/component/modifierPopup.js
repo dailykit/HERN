@@ -28,6 +28,7 @@ import { useConfig } from '../../../lib'
 import { Loader } from '../..'
 import classNames from 'classnames'
 import { HernLazyImage } from '../../../utils/hernImage'
+import moment from 'moment'
 
 export const KioskModifier = props => {
    const {
@@ -42,6 +43,7 @@ export const KioskModifier = props => {
    const { t, dynamicTrans, locale, direction } = useTranslation()
    //context
    const { addToCart, methods } = React.useContext(CartContext)
+   const { isStoreAvailable } = useConfig()
 
    // component state
    const [selectedProductOption, setSelectedProductOption] = useState(
@@ -1032,12 +1034,14 @@ export const KioskModifier = props => {
                      {formatCurrency(totalAmount())}
                   </span>
                </div>
-               <KioskButton
-                  onClick={handleAddOnCart}
-                  customClass="hern-kiosk__modifier-add-to-cart"
-               >
-                  {t('Add To Cart')}
-               </KioskButton>
+               {isStoreAvailable && (
+                  <KioskButton
+                     onClick={handleAddOnCart}
+                     customClass="hern-kiosk__modifier-add-to-cart"
+                  >
+                     {t('Add To Cart')}
+                  </KioskButton>
+               )}
             </div>
          </div>
       </div>

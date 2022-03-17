@@ -245,3 +245,5 @@ Require stack:
 [/api/payment-intent] | [2022-01-26 02:01:10AM +05:30] | [Error: This payment requires additional user action before it can be completed successfully. Payment can be completed using the PaymentIntent associated with the invoice. For more details see: https://stripe.com/docs/billing/subscriptions/overview#requires-action]
 [/api/payment-intent] | [2022-01-26 03:01:66AM +05:30] | [Error: This payment requires additional user action before it can be completed successfully. Payment can be completed using the PaymentIntent associated with the invoice. For more details see: https://stripe.com/docs/billing/subscriptions/overview#requires-action]
 [/api/payment-intent] | [2022-01-26 03:01:01AM +05:30] | [Error: This payment requires additional user action before it can be completed successfully. Payment can be completed using the PaymentIntent associated with the invoice. For more details see: https://stripe.com/docs/billing/subscriptions/overview#requires-action]
+[/api/payment-intent] | [2022-03-15 15:03:14PM +05:30] | [[object Object]]
+[/api/payment-intent] | [2022-03-15 15:03:72PM +05:30] | [[object Object]]
