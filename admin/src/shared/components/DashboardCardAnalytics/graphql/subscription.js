@@ -16,7 +16,9 @@ export const GET_TOTAL_EARNING_ORDER_CUSTOMER_TOP_PRODUCT = gql`
             count
          }
       }
-      customers_aggregate {
+      customers_aggregate(
+         where: { brandId: { _in: $brandId }, locationId: { _in: $locationId } }
+      ) {
          aggregate {
             count
          }
