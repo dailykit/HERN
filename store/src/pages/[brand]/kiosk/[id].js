@@ -45,10 +45,10 @@ const KioskScreen = props => {
       onCompleted: data => {
          if (data) {
             dispatch({
-               type: 'SET_STORE_OPERATING_TIME',
+               type: 'SET_KIOSK_RECURRENCES',
                payload:
-                  data.brands_brand_location_aggregate.nodes[0].operatingTime
-                     .operatingTime,
+                  data.brands_brand_location_aggregate.nodes[0]
+                     .brand_recurrences,
             })
          }
       },

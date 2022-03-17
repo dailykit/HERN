@@ -102,6 +102,9 @@ export const KioskCart = props => {
                background: `${config.kioskSettings.theme.primaryColorLight.value}`,
                padding: '1em 2em',
                height: '10em',
+               display: 'flex',
+               flexDirection: 'column',
+               justifyContent: 'center',
             }}
          >
             <ProgressBar config={config} setCurrentPage={setCurrentPage} />

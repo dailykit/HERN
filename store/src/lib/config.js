@@ -3,6 +3,8 @@ import { has, isEmpty } from 'lodash'
 import moment from 'moment'
 import React from 'react'
 import { ORDER_TAB } from '../graphql'
+import moment from 'moment'
+import { rrulestr } from 'rrule'
 import { get_env, isClient, useQueryParamState } from '../utils'
 
 const ConfigContext = React.createContext()
@@ -25,7 +27,12 @@ const initialState = {
       loading: true,
    },
    lastLocationId: null,
-   storeOperatingTime: null,
+   kioskRecurrences: null,
+   kioskAvailability: {
+      ONDEMAND_PICKUP: false,
+      ONDEMAND_DINEIN: false,
+      isValidated: false, // show that above two values are validate or not, initially false
+   },
 }
 
 const reducers = (state, { type, payload }) => {
@@ -52,8 +59,14 @@ const reducers = (state, { type, payload }) => {
          return { ...state, storeStatus: payload }
       case 'SET_LAST_LOCATION_ID':
          return { ...state, lastLocationId: payload }
-      case 'SET_STORE_OPERATING_TIME':
-         return { ...state, storeOperatingTime: payload }
+      case 'SET_KIOSK_RECURRENCES':
+         return { ...state, kioskRecurrences: payload }
+      case 'SET_KIOSK_AVAILABILITY': {
+         return {
+            ...state,
+            kioskAvailability: { ...state.kioskAvailability, ...payload },
+         }
+      }
       default:
          return state
    }
@@ -230,34 +243,13 @@ export const useConfig = (globalType = '') => {
       [state, globalType]
    )
 
+   // this is final availability for store like PICKUP_AVAILABLE || DINE_AVAILABLE
    const isStoreAvailable = React.useMemo(() => {
-      if (state.storeOperatingTime && state.storeOperatingTime.length > 0) {
-         let storeAvailability
-         for (let i = 0; i <= state.storeOperatingTime.length - 1; i++) {
-            const currentTime = moment()
-            const openingTime = moment(
-               state.storeOperatingTime[i].openingTime,
-               'HH:mm'
-            )
-            const closingTime = moment(
-               state.storeOperatingTime[i].closingTime,
-               'HH:mm'
-            )
-            storeAvailability = currentTime.isBetween(
-               openingTime,
-               closingTime,
-               'minutes',
-               []
-            )
-            if (storeAvailability) {
-               break
-            }
-         }
-         return storeAvailability
-      } else {
-         return true
-      }
-   }, [state.storeOperatingTime])
+      return (
+         state.kioskAvailability['ONDEMAND_PICKUP'] ||
+         state.kioskAvailability['ONDEMAND_DINEIN']
+      )
+   }, [state.kioskAvailability])
 
    return {
       configOf,
@@ -284,8 +276,9 @@ export const useConfig = (globalType = '') => {
       clearCurrentPage,
       showLocationSelectorPopup,
       setShowLocationSelectionPopup,
-      storeOperatingTime: state.storeOperatingTime,
+      kioskRecurrences: state.kioskRecurrences,
       isStoreAvailable,
+      kioskAvailability: state.kioskAvailability,
       setIsLoading,
    }
 }

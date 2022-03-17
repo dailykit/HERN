@@ -86,7 +86,13 @@ export const ProgressBar = props => {
       }
    }
    return (
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <div
+         style={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+         }}
+      >
          <div
             style={{
                display: 'flex',
@@ -94,7 +100,7 @@ export const ProgressBar = props => {
                alignItems: 'center',
             }}
          >
-            {selectedOrderTab.orderFulfillmentTypeLabel ===
+            {selectedOrderTab?.orderFulfillmentTypeLabel ===
                'ONDEMAND_PICKUP' && (
                <TakeOutIcon
                   width={50}
@@ -102,7 +108,7 @@ export const ProgressBar = props => {
                   fill={config.kioskSettings.theme.primaryColor.value}
                />
             )}
-            {selectedOrderTab.orderFulfillmentTypeLabel ===
+            {selectedOrderTab?.orderFulfillmentTypeLabel ===
                'ONDEMAND_DINEIN' && (
                <DineInIcon
                   width={50}
