@@ -35,7 +35,7 @@ const razorpayWebhookEvents = async arg => {
             entity.order_id
          )
          requiredData = {
-            cartPaymentId: parseInt(receipt.replace('order_rcptid_', '')),
+            cartPaymentId: parseInt(receipt.split('_').pop()),
             transactionRemark: entity,
             requestId: id,
             paymentStatus: status,
