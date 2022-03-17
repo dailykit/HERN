@@ -85,12 +85,11 @@ const PaymentProcessingModal = ({
       let title = 'Processing your payment'
       let subtitle = (
          <>
-            <p>Please wait while we process your payment</p>
+            <p>{t('Please wait while we process your payment')}</p>
             <br />
-            <p>
-               Please do not refresh or reload the page <br /> you'll be
-               automatically redirected
-            </p>
+            <p>{t('Please do not refresh or reload the page')}</p>
+            <br />
+            <p>{t("you'll be automatically redirected")}</p>
          </>
       )
       let extra = null
@@ -102,7 +101,7 @@ const PaymentProcessingModal = ({
             />
          )
          title = 'Processing your order'
-         subtitle = 'Please wait while we process your order'
+         subtitle = t('Please wait while we process your order')
          if (cartPayment?.paymentStatus === 'PENDING') {
             icon = (
                <img
@@ -111,7 +110,7 @@ const PaymentProcessingModal = ({
                />
             )
             title = 'Processing your order'
-            subtitle = 'Please wait while we process your order'
+            subtitle = t('Please wait while we process your order')
          } else if (cartPayment?.paymentStatus === 'SUCCEEDED') {
             icon = (
                <img
@@ -120,7 +119,7 @@ const PaymentProcessingModal = ({
                />
             )
             title = 'Successfully placed your order'
-            subtitle = 'You will be redirected to your order page shortly'
+            subtitle = t('You will be redirected to your order page shortly')
          } else if (cartPayment?.paymentStatus === 'FAILED') {
             icon = (
                <img
@@ -129,9 +128,10 @@ const PaymentProcessingModal = ({
                />
             )
             title = 'Payment Failed'
-            subtitle =
+            subtitle = t(
                formatTerminalStatus[cartPayment.transactionRemark?.StatusCode]
                   ?.message || 'Unknown error'
+            )
             extra = [
                <Button
                   type="primary"
@@ -165,7 +165,7 @@ const PaymentProcessingModal = ({
                />
             )
             title = 'Payment Cancelled'
-            subtitle = 'You cancelled your payment process'
+            subtitle = t('You cancelled your payment process')
             extra = [
                <Button
                   type="primary"
@@ -186,8 +186,9 @@ const PaymentProcessingModal = ({
                />
             )
             title = 'Swipe or Insert your card'
-            subtitle =
+            subtitle = t(
                'Please swipe or insert your card to complete the payment'
+            )
          } else if (cartPayment?.paymentStatus === 'ENTER_PIN') {
             icon = (
                <img
@@ -196,7 +197,7 @@ const PaymentProcessingModal = ({
                />
             )
             title = 'Enter your pin'
-            subtitle = 'Please your pin to complete the payment'
+            subtitle = t('Please your pin to complete the payment')
          } else if (
             ![
                'SUCCEEDED',
@@ -228,7 +229,7 @@ const PaymentProcessingModal = ({
                />
             )
             title = 'Successfully placed your order'
-            subtitle = 'You will be redirected to your booking page shortly'
+            subtitle = t('You will be redirected to your booking page shortly')
          } else if (cartPayment?.paymentStatus === 'REQUIRES_ACTION') {
             icon = (
                <img
@@ -237,8 +238,9 @@ const PaymentProcessingModal = ({
                />
             )
             title = 'Looks like your card requires authentication'
-            subtitle =
+            subtitle = t(
                'An additional verification step which direct you to an authentication page on your bank’s website'
+            )
             extra = [
                <Button
                   type="primary"
@@ -260,7 +262,7 @@ const PaymentProcessingModal = ({
                />
             )
             title = 'Payment Failed'
-            subtitle = 'Something went wrong'
+            subtitle = t('Something went wrong')
             extra = [
                <Button
                   type="primary"
@@ -279,7 +281,7 @@ const PaymentProcessingModal = ({
                />
             )
             title = 'Payment Cancelled'
-            subtitle = 'You cancelled your payment process'
+            subtitle = t('You cancelled your payment process')
             extra = [
                <Button
                   type="primary"
@@ -298,8 +300,9 @@ const PaymentProcessingModal = ({
                />
             )
             title = 'Payment Failed'
-            subtitle =
+            subtitle = t(
                "Your payment is failed since your bank doesn't authenticate you"
+            )
             extra = [
                <Button
                   type="primary"
@@ -353,11 +356,12 @@ const PaymentProcessingModal = ({
          keyboard={false}
          maskClosable={false}
          centered
+         width={isKioskMode ? 780 : 'auto'}
          onCancel={closeModalHandler}
          zIndex={10000}
          bodyStyle={{
             maxHeight: '100%',
-            height: 'calc(100vh - 16px)',
+            height: isKioskMode ? '100%' : 'calc(100vh - 16px)',
             width: '100%',
             overflowY: 'auto',
          }}
@@ -456,15 +460,17 @@ const PaymentProcessingModal = ({
                            if (completed) {
                               return (
                                  <h1 tw="font-extrabold color[rgba(0, 64, 106, 0.9)] text-xl text-center">
-                                    Request timed out
+                                    {t('Request timed out')}
                                  </h1>
                               )
                            }
                            return (
                               <h1 tw="font-extrabold color[rgba(0, 64, 106, 0.9)] text-xl text-center">
-                                 {`Timout in ${minutes}:${
-                                    seconds <= 9 ? '0' : ''
-                                 }${seconds}`}
+                                 {t(
+                                    `Timout in ${minutes}:${
+                                       seconds <= 9 ? '0' : ''
+                                    }${seconds}`
+                                 )}
                               </h1>
                            )
                         }}

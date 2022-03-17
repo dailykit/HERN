@@ -1,6 +1,5 @@
 import { useQuery } from '@apollo/react-hooks'
 import { has, isEmpty } from 'lodash'
-import moment from 'moment'
 import React from 'react'
 import { ORDER_TAB } from '../graphql'
 import { get_env, isClient, useQueryParamState } from '../utils'
