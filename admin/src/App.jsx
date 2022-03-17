@@ -140,7 +140,13 @@ const App = () => {
    const { pathname } = useLocation()
    const { loading, data: { apps = [] } = {} } = useSubscription(APPS)
    const user = useAuth()
-   const [brandContext, setBrandContext] = useState({})
+   const { tabs } = useTabs()
+   const [brandContext, setBrandContext] = useState({
+      brandId: null,
+      brandName: "",
+      locationId: null,
+      locationLabel: ""
+   })
 
    console.log("user", user.user.email);
 
@@ -159,9 +165,6 @@ const App = () => {
          })
       }
    })
-   const { tabs } = useTabs()
-
-
 
    if (loading) return <Loader />
    return (
