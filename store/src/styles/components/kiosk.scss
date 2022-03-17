@@ -107,7 +107,7 @@
 }
 .hern-kiosk__fulfillment-options {
    display: grid;
-   grid-template-columns: 1fr 1fr;
+   grid-template-columns: 1fr auto;
    grid-gap: 4em;
 }
 .hern-kiosk__fulfillment-option {

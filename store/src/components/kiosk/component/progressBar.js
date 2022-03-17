@@ -94,7 +94,7 @@ export const ProgressBar = props => {
                alignItems: 'center',
             }}
          >
-            {selectedOrderTab.orderFulfillmentTypeLabel ===
+            {selectedOrderTab?.orderFulfillmentTypeLabel ===
                'ONDEMAND_PICKUP' && (
                <TakeOutIcon
                   width={50}
@@ -102,7 +102,7 @@ export const ProgressBar = props => {
                   fill={config.kioskSettings.theme.primaryColor.value}
                />
             )}
-            {selectedOrderTab.orderFulfillmentTypeLabel ===
+            {selectedOrderTab?.orderFulfillmentTypeLabel ===
                'ONDEMAND_DINEIN' && (
                <DineInIcon
                   width={50}

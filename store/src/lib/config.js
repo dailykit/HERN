@@ -7,6 +7,7 @@ import { PageLoader } from '../components'
 import { SETTINGS } from '../graphql/queries'
 import { ORDER_TAB } from '../graphql'
 import moment from 'moment'
+import { rrulestr } from 'rrule'
 
 const ConfigContext = React.createContext()
 
@@ -28,7 +29,12 @@ const initialState = {
       loading: true,
    },
    lastLocationId: null,
-   storeOperatingTime: null,
+   kioskRecurrences: null,
+   kioskAvailability: {
+      ONDEMAND_PICKUP: false,
+      ONDEMAND_DINEIN: false,
+      isValidated: false, // show that above two values are validate or not, initially false
+   },
 }
 
 const reducers = (state, { type, payload }) => {
@@ -55,8 +61,14 @@ const reducers = (state, { type, payload }) => {
          return { ...state, storeStatus: payload }
       case 'SET_LAST_LOCATION_ID':
          return { ...state, lastLocationId: payload }
-      case 'SET_STORE_OPERATING_TIME':
-         return { ...state, storeOperatingTime: payload }
+      case 'SET_KIOSK_RECURRENCES':
+         return { ...state, kioskRecurrences: payload }
+      case 'SET_KIOSK_AVAILABILITY': {
+         return {
+            ...state,
+            kioskAvailability: { ...state.kioskAvailability, ...payload },
+         }
+      }
       default:
          return state
    }
@@ -270,34 +282,86 @@ export const useConfig = (globalType = '') => {
       [state, globalType]
    )
 
+   // this is final availability for store like PICKUP_AVAILABLE || DINE_AVAILABLE
    const isStoreAvailable = React.useMemo(() => {
-      if (state.storeOperatingTime && state.storeOperatingTime.length > 0) {
-         let storeAvailability
-         for (let i = 0; i <= state.storeOperatingTime.length - 1; i++) {
-            const currentTime = moment()
-            const openingTime = moment(
-               state.storeOperatingTime[i].openingTime,
-               'HH:mm'
-            )
-            const closingTime = moment(
-               state.storeOperatingTime[i].closingTime,
-               'HH:mm'
-            )
-            storeAvailability = currentTime.isBetween(
-               openingTime,
-               closingTime,
-               'minutes',
-               []
-            )
-            if (storeAvailability) {
-               break
+      // check is there any recurrence available or not
+      // if available then check that store is available for current day and time
+      if (state.kioskRecurrences && state.kioskRecurrences.length > 0) {
+         const now = new Date() // now
+         const start = new Date(now.getTime() - 1000 * 60 * 60 * 24) // yesterday
+         const ondemandPickupRecs = state.kioskRecurrences.filter(
+            eachRec => eachRec.recurrence.type === 'ONDEMAND_PICKUP'
+         )
+         const ondemandDineinRecs = state.kioskRecurrences.filter(
+            eachRec => eachRec.recurrence.type === 'ONDEMAND_DINEIN'
+         )
+         const recurrencesValidation = recurrences => {
+            for (let i = 0; i <= recurrences.length - 1; i++) {
+               // check current day is valid for rrule
+               const dates = rrulestr(recurrences[i].recurrence.rrule).between(
+                  start,
+                  now
+               )
+               if (dates.length) {
+                  // check time slots available or not
+                  // if available then check current time is valid or not
+                  if (recurrences[i].recurrence.timeSlots.length) {
+                     let storeAvailability = false
+                     for (let timeslot of recurrences[i].recurrence.timeSlots) {
+                        const currentTime = moment()
+                        const openingTime = moment(timeslot.from, 'HH:mm:ss')
+                        const closingTime = moment(timeslot.to, 'HH:mm:ss')
+                        storeAvailability = currentTime.isBetween(
+                           openingTime,
+                           closingTime,
+                           'minutes',
+                           []
+                        )
+                        if (storeAvailability) {
+                           return storeAvailability
+                        }
+                     }
+                  } else {
+                     // when no time slots available
+                     return true
+                  }
+               } else {
+                  return false
+               }
             }
          }
-         return storeAvailability
+         const isOndemandPickupValid = recurrencesValidation(ondemandPickupRecs)
+         const isOndemandDineinValid = recurrencesValidation(ondemandDineinRecs)
+
+         const finalValue =
+            Boolean(isOndemandDineinValid) || Boolean(isOndemandPickupValid)
+
+         dispatch({
+            type: 'SET_KIOSK_AVAILABILITY',
+            payload: {
+               ONDEMAND_PICKUP: Boolean(isOndemandPickupValid),
+               ONDEMAND_DINEIN: Boolean(isOndemandDineinValid),
+               isValidated: true,
+            },
+         })
+         return finalValue
       } else {
+         // if there is no rec. available then store will available
          return true
       }
-   }, [state.storeOperatingTime])
+   }, [state.kioskRecurrences])
+   React.useEffect(() => {
+      if (state.kioskAvailability.isValidated && !isConfigLoading) {
+         if (
+            !(
+               state.kioskAvailability.ONDEMAND_PICKUP ||
+               state.kioskAvailability.ONDEMAND_DINEIN
+            )
+         ) {
+            setCurrentPage('menuPage')
+         }
+      }
+   }, [state.kioskAvailability, isConfigLoading])
 
    return {
       configOf,
@@ -324,7 +388,8 @@ export const useConfig = (globalType = '') => {
       clearCurrentPage,
       showLocationSelectorPopup,
       setShowLocationSelectionPopup,
-      storeOperatingTime: state.storeOperatingTime,
+      kioskRecurrences: state.kioskRecurrences,
       isStoreAvailable,
+      kioskAvailability: state.kioskAvailability,
    }
 }

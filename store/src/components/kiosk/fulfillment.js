@@ -82,7 +82,7 @@ const FulfillmentOption = props => {
       fulfillment,
    } = props
 
-   const { dispatch } = useConfig()
+   const { dispatch, kioskAvailability } = useConfig()
    const { t } = useTranslation()
    const { methods } = useCart()
 
@@ -105,6 +105,9 @@ const FulfillmentOption = props => {
       setCurrentPage('menuPage')
    }
 
+   if (!kioskAvailability[fulfillment.orderFulfillmentTypeLabel]) {
+      return null
+   }
    return (
       <div
          className="hern-kiosk__fulfillment-option"
