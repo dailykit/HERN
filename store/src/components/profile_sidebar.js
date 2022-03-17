@@ -13,13 +13,11 @@ export const ProfileSidebar = ({ toggle = true, logout }) => {
    const { configOf, settings } = useConfig()
    const router = useRouter()
    const isSubscriptionStore =
-      settings?.availability?.find(
-         i => i.identifier === 'isSubscriptionAvailable'
-      )?.value?.Subscription?.isSubscriptionAvailable?.value ?? false
+      settings?.availability?.isSubscriptionAvailable?.Subscription
+         ?.isSubscriptionAvailable?.value ?? false
    const isLoyaltyPointsAvailable =
-      settings?.rewards?.find(
-         setting => setting?.identifier === 'Loyalty Points Availability'
-      )?.value?.['Loyalty Points']?.IsLoyaltyPointsAvailable?.value ?? true
+      settings?.rewards?.['Loyalty Points Availability']?.['Loyalty Points']
+         ?.IsLoyaltyPointsAvailable?.value ?? true
 
    const loyaltyPointsSettings = configOf('Loyalty Points', 'rewards')
    const walletSettings = configOf('Wallet', 'rewards')

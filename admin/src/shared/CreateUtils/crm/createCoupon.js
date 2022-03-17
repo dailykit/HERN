@@ -47,7 +47,7 @@ const CreateCoupon = ({ closeTunnel }) => {
             },
          ])
          toast.success('Successfully created the Coupon!')
-         closeTunnel(15)
+         closeTunnel(1)
       },
       onError: () =>
          toast.success('Failed to create the Coupon, please try again!'),
@@ -147,7 +147,7 @@ const CreateCoupon = ({ closeTunnel }) => {
             },
          },
       ])
-      closeTunnel(15)
+      closeTunnel(1)
    }
    return (
       <>

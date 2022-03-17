@@ -9,14 +9,13 @@ export const ScriptProvider = ({ children }) => {
 
    React.useEffect(() => {
       if (scripts?.value) {
-         const parsedScript = JSON.parse(scripts?.value)
+         const parsedScript = JSON.parse(scripts?.value)[0]
          const {
             startHead = [],
             endHead = [],
             startBody = [],
             endBody = [],
          } = parsedScript
-
          if (isClient) {
             // MOUNT IN STARTING OF HEAD
             if (!isEmpty(startHead)) {
@@ -62,6 +61,9 @@ const loadScript = (node, position, parent) => {
       fragment.appendChild(element)
    } else if (type === 'inline' && tag === 'noscript') {
       // TODO: handle noscript markup injection
+      const noscript = document.createElement('noscript')
+      noscript.innerHTML = code.replace('<noscript>', '').replace('</noscript>', '')
+      fragment.appendChild(noscript)
    }
 
    if (position === 'start') {

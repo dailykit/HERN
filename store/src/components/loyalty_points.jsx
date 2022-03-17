@@ -65,7 +65,6 @@ export const LoyaltyPoints = ({ cart, version = 1 }) => {
          >
             {isVersion2 && <LoyaltyPointsIcon />}
             <label
-               className="hern-loyalty-points__label"
                className={classNames('hern-loyalty-points__label', {
                   'hern-loyalty-points__label-v2': isVersion2,
                })}
@@ -79,7 +78,6 @@ export const LoyaltyPoints = ({ cart, version = 1 }) => {
    if (!user?.keycloakId) {
       return (
          <div
-            className="hern-loyalty-points"
             className={classNames('hern-loyalty-points', {
                'hern-loyalty-points-v2': isVersion2,
             })}
@@ -94,7 +92,6 @@ export const LoyaltyPoints = ({ cart, version = 1 }) => {
 
    return (
       <div
-         className="hern-loyalty-points"
          className={classNames('hern-loyalty-points', {
             'hern-loyalty-points-v2': isVersion2,
          })}
