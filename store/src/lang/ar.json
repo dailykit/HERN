@@ -384,5 +384,16 @@
    "Request timed out": "الطلب منتهي المدة",
    "Please wait while we print your receipt": "من فضلك انتظر ريثما نطبع الإيصال",
    "Not accepting orders right now. Feel free to browse the menu.": "عدم قبول الطلبات الآن. لا تتردد في تصفح القائمة.",
-   "View Product": "عرض المنتج"
+   "View Product": "عرض المنتج",
+   "Invalid code!": "الرمز غير صحيح!",
+   "Referral code is not valid!": "رمز الإحالة غير صالح!",
+   "Referral code is valid!": "رمز الإحالة صالح!",
+   "Select Payment Method": "اختار طريقة الدفع",
+   "Failed to update the user profile!": "فشل تحديث ملف تعريف المستخدم!",
+   "Please select payment method": "الرجاء تحديد طريقة الدفع",
+   "Error fetching cart": "خطأ في جلب سلة التسوق",
+   "Confirm & Pay": "تأكيد ودفع",
+   "No Store Available": "لا يوجد متجر متوفر",
+   "NO store Available on this location": "لا يوجد متجر متوفر في هذا الموقع",
+   "View on map": "عرض على الخريطة"
 }
