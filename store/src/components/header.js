@@ -543,7 +543,7 @@ const LocationInfo = ({ settings, layout, additionalClasses }) => {
             onClick={() => setShowLocationSelectionPopup(true)}
          >
             <div className="hern-header__location-icon">
-               <LocationIcon size={18} />
+               <LocationIcon color="var(--hern-accent)" size={18} />
             </div>
             {storeStatus.loading ? (
                <div className="hern-header__location-right-loading">
@@ -717,6 +717,13 @@ const AuthMenu = ({
    const numberOfItemsOnCart =
       cartState?.cart?.cartItems_aggregate?.aggregate?.count
 
+   const loginButtonLabel =
+      settings?.brand['Login Illustrations']?.loginButton?.loginbuttonLabel
+         .value ?? 'Log in'
+   const roundedLoginButton =
+      settings?.brand['Login Illustrations']?.loginButton?.roundedLoginButton
+         .value ?? false
+
    return (
       <section className={classNames('hern-header__auth')}>
          {!isSubscriptionStore && (
@@ -792,13 +799,15 @@ const AuthMenu = ({
             </>
          ) : (
             <button
-               className="hern-header__logout"
+               className={classNames('hern-header__logout', {
+                  'hern-header__login-btn--rounded': roundedLoginButton,
+               })}
                style={{
                   backgroundColor: `var(--hern-accent)`,
                }}
                onClick={() => setShowLoginPopup(true)}
             >
-               Log In
+               {loginButtonLabel}
             </button>
          )}
          <button

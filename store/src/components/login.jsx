@@ -57,6 +57,7 @@ export const Login = props => {
       singleLoginMethod = false,
       callbackURL,
       socialLogin = true,
+      showBackground = false,
    } = props
 
    //loginBy --> initial login method ('email', 'otp' , 'signup', 'forgotPassword').
@@ -86,7 +87,17 @@ export const Login = props => {
    }, [])
    console.log('authConfig', authConfig)
    return (
-      <div className="hern-login-v1-content">
+      <div
+         style={
+            showBackground
+               ? {
+                    background: 'transparent',
+                    boxShadow: 'none',
+                 }
+               : {}
+         }
+         className="hern-login-v1-content"
+      >
          <div className="hern-login-v1-header">
             {(defaultLogin === 'email' || defaultLogin === 'otp') && (
                <span>Log in</span>
