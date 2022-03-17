@@ -101,7 +101,7 @@ export const KioskCart = props => {
             style={{
                background: `${config.kioskSettings.theme.primaryColorLight.value}`,
                padding: '1em 2em',
-               height: '6em',
+               height: '10em',
             }}
          >
             <ProgressBar config={config} setCurrentPage={setCurrentPage} />
