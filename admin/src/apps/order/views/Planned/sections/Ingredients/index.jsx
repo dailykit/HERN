@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import styled, { css } from 'styled-components'
 import { useSubscription } from '@apollo/react-hooks'
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from '@reach/tabs'
@@ -11,6 +11,7 @@ import { NewTabIcon } from '../../../../assets/icons'
 import { logger } from '../../../../../../shared/utils'
 import { useTabs } from '../../../../../../shared/providers'
 import { ErrorState, InlineLoader } from '../../../../../../shared/components'
+import { BrandContext } from './../../../../../../../src/App'
 
 export const Ingredients = () => {
    const [total, setTotal] = React.useState(0)
@@ -32,11 +33,15 @@ export const Ingredients = () => {
 
 const Listing = ({ setTotal, setQuantity }) => {
    const { state } = useOrder()
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
    const { loading, error, data: { ingredients = {} } = {} } = useSubscription(
       QUERIES.PLANNED.INGREDIENTS,
       {
          variables: {
             cart: state.orders.where.cart,
+            brandId: brandContext.brandId,
+            locationId: brandContext.locationId
          },
          onSubscriptionData: ({
             subscriptionData: { data: { ingredients: list = {} } = {} } = {},

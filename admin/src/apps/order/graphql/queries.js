@@ -599,9 +599,16 @@ export const QUERIES = {
          subscription plannedProducts(
             $type: String_comparison_exp = {}
             $cart: order_cart_bool_exp = {}
+            $brandId: [Int!]!
+            $locationId: [Int!]!
          ) {
             plannedProducts: productsAggregate(
-               where: { type: $type, cartItems: { cart: $cart } }
+               where: {
+                  type: $type
+                  cartItems: { cart: $cart }
+                  brandId: { _in: $brandId }
+                  locationId: { _in: $locationId }
+               }
             ) {
                aggregate {
                   count
@@ -609,6 +616,9 @@ export const QUERIES = {
                nodes {
                   id
                   name
+                  type
+                  brandId
+                  locationId
                   cartItems_aggregate(where: { cart: $cart }) {
                      aggregate {
                         count
@@ -663,12 +673,18 @@ export const QUERIES = {
          }
       `,
       SIMPLE_RECIPES: gql`
-         subscription simpleRecipes($cart: order_cart_bool_exp = {}) {
+         subscription simpleRecipes(
+            $cart: order_cart_bool_exp = {}
+            $brandId: [Int!]!
+            $locationId: [Int!]!
+         ) {
             simpleRecipes: simpleRecipesAggregate(
                where: {
                   simpleRecipeYields: {
                      simpleRecipeCartItems: { level: { _eq: 3 }, cart: $cart }
                   }
+                  brandId: { _in: $brandId }
+                  locationId: { _in: $locationId }
                }
             ) {
                aggregate {
@@ -677,6 +693,8 @@ export const QUERIES = {
                nodes {
                   id
                   name
+                  brandId
+                  locationId
                   simpleRecipeYields_aggregate(
                      where: {
                         simpleRecipeCartItems: {
@@ -718,12 +736,18 @@ export const QUERIES = {
          }
       `,
       SUB_RECIPES: gql`
-         subscription subRecipes($cart: order_cart_bool_exp = {}) {
+         subscription subRecipes(
+            $cart: order_cart_bool_exp = {}
+            $brandId: [Int!]!
+            $locationId: [Int!]!
+         ) {
             subRecipes: simpleRecipesAggregate(
                where: {
                   simpleRecipeYields: {
                      subRecipeCartItems: { level: { _gte: 4 }, cart: $cart }
                   }
+                  brandId: { _in: $brandId }
+                  locationId: { _in: $locationId }
                }
             ) {
                aggregate {
@@ -770,7 +794,11 @@ export const QUERIES = {
          }
       `,
       INGREDIENTS: gql`
-         subscription ingredients($cart: order_cart_bool_exp = {}) {
+         subscription ingredients(
+            $cart: order_cart_bool_exp = {}
+            $brandId: [Int!]!
+            $locationId: [Int!]!
+         ) {
             ingredients: ingredientsAggregate(
                where: {
                   ingredientSachetViews: {
@@ -782,6 +810,8 @@ export const QUERIES = {
                         cart: $cart
                      }
                   }
+                  brandId: { _in: $brandId }
+                  locationId: { _in: $locationId }
                }
             ) {
                aggregate {
@@ -790,6 +820,8 @@ export const QUERIES = {
                nodes {
                   id
                   name
+                  brandId
+                  locationId
                   cartItems_aggregate(
                      where: {
                         level: { _eq: 4 }
