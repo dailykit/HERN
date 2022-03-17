@@ -6,8 +6,7 @@ export const RefundPolicy = () => {
    const { settings } = useConfig('brand')
 
    const refundPolicy =
-      settings?.brand?.find(setting => setting.identifier === 'Refund Policy')
-         ?.value?.['Refund Policy']?.value ?? ''
+      settings?.brand?.['Refund Policy']?.['Refund Policy']?.value ?? ''
 
    return (
       <div className="hern-refund-policy">

@@ -155,7 +155,7 @@ export const OnDemandCart = () => {
 const PaymentSection = () => {
    const { isAuthenticated } = useUser()
    const { cartState } = React.useContext(CartContext)
-   const [open, setOpen] = React.useState(false)
+   const [open, setOpen] = React.useState(true)
    const [isTunnelOpen, setIsTunnelOpen] = React.useState(false)
    const isDisabled =
       !cartState?.cart.fulfillmentInfo ||

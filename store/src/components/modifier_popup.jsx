@@ -117,7 +117,7 @@ export const ModifierPopup = props => {
    })
 
    const { locationId, storeStatus, configOf } = useConfig()
-   const recipeLink = useConfig('Product Card').configOf('recipe-link')
+   const recipeLink = useConfig('Product card').configOf('recipe-link')
 
    const recipeButton = {
       show:

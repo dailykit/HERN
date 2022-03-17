@@ -9,7 +9,7 @@ import { useQuery } from '@apollo/react-hooks'
 
 const KioskScreen = props => {
    const { kioskId, kioskDetails, settings } = props
-   const { dispatch, brand } = useConfig()
+   const { dispatch, setIsLoading } = useConfig()
 
    useEffect(() => {
       dispatch({
@@ -24,23 +24,31 @@ const KioskScreen = props => {
          type: 'SET_LOCATION_ID',
          payload: kioskDetails.locationId,
       })
+      dispatch({
+         type: 'SET_BRANDID',
+         payload: { id: settings.brandId },
+      })
+      dispatch({
+         type: 'SET_SETTINGS',
+         payload: settings,
+      })
+      setIsLoading(false)
    }, [])
 
    useQuery(BRAND_LOCATIONS, {
-      skip: !brand || !brand?.id,
       variables: {
          where: {
-            brandId: { _eq: brand.id },
+            brandId: { _eq: settings.brandId },
             locationId: { _eq: kioskDetails.locationId },
          },
       },
       onCompleted: data => {
          if (data) {
             dispatch({
-               type: 'SET_STORE_OPERATING_TIME',
+               type: 'SET_KIOSK_RECURRENCES',
                payload:
-                  data.brands_brand_location_aggregate.nodes[0].operatingTime
-                     .operatingTime,
+                  data.brands_brand_location_aggregate.nodes[0]
+                     .brand_recurrences,
             })
          }
       },

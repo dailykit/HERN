@@ -1971,6 +1971,16 @@ export const BRAND_LOCATIONS = gql`
             doesDeliverOutsideCity
             doesDeliverOutsideState
             operatingTime
+            brand_recurrences(where: { isActive: { _eq: true } }) {
+               recurrence {
+                  rrule
+                  type
+                  timeSlots {
+                     from
+                     to
+                  }
+               }
+            }
          }
       }
    }
