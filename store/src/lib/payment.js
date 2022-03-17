@@ -395,6 +395,8 @@ export const PaymentProvider = ({ children }) => {
    useEffect(() => {
       if (!isEmpty(cartPaymentsFromQuery)) {
          setCartPayment(cartPaymentsFromQuery[0])
+      } else {
+         setCartPayment(null)
       }
    }, [cartPaymentsFromQuery])
 

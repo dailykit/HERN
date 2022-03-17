@@ -490,6 +490,18 @@ export const UPDATE_CART_PAYMENT = gql`
       }
    }
 `
+export const UPDATE_CART_PAYMENTS = gql`
+   mutation UPDATE_CART_PAYMENTS(
+      $where: order_cartPayment_bool_exp!
+      $_set: order_cartPayment_set_input!
+   ) {
+      updateCartPayments(where: $where, _set: $_set) {
+         returning {
+            id
+         }
+      }
+   }
+`
 export const CREATE_PRINT_JOB = gql`
    mutation CREATE_PRINT_JOB(
       $contentType: String!

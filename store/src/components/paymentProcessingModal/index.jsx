@@ -12,6 +12,7 @@ import PayButton from '../PayButton'
 import { ArrowLeftIconBG } from '../../assets/icons'
 import { useWindowSize, isKiosk, formatTerminalStatus } from '../../utils'
 import { useTranslation } from '../../context'
+import { useConfig } from '../../lib'
 
 const PaymentProcessingModal = ({
    isOpen,
@@ -82,7 +83,16 @@ const PaymentProcessingModal = ({
       )
 
       let title = 'Processing your payment'
-      let subtitle = 'Please wait while we process your payment'
+      let subtitle = (
+         <>
+            <p>Please wait while we process your payment</p>
+            <br />
+            <p>
+               Please do not refresh or reload the page <br /> you'll be
+               automatically redirected
+            </p>
+         </>
+      )
       let extra = null
       if (isKioskMode) {
          icon = (
@@ -344,51 +354,18 @@ const PaymentProcessingModal = ({
          maskClosable={false}
          centered
          onCancel={closeModalHandler}
-         width={780}
          zIndex={10000}
          bodyStyle={{
-            maxHeight: '520px',
+            maxHeight: '100%',
+            height: 'calc(100vh - 16px)',
+            width: '100%',
             overflowY: 'auto',
          }}
          maskStyle={{
             backgroundColor: isKioskMode ? 'rgba(0, 64, 106, 0.9)' : '#fff',
          }}
       >
-         {!isEmpty(cartPayment) &&
-            !['SUCCEEDED', 'FAILED', 'CANCELLED'].includes(
-               cartPayment?.paymentStatus
-            ) && (
-               <>
-                  {countDown && (
-                     <Countdown
-                        date={countDown}
-                        renderer={({ minutes, seconds, completed }) => {
-                           if (completed) {
-                              return (
-                                 <h1 tw="font-extrabold color[rgba(0, 64, 106, 0.9)] text-xl text-center">
-                                    Request timed out
-                                 </h1>
-                              )
-                           }
-                           return (
-                              <h1 tw="font-extrabold color[rgba(0, 64, 106, 0.9)] text-xl text-center">
-                                 {`Timout in ${minutes}:${
-                                    seconds <= 9 ? '0' : ''
-                                 }${seconds}`}
-                              </h1>
-                           )
-                        }}
-                        onComplete={() =>
-                           cancelTerminalPayment({
-                              cartPayment,
-                              retryPaymentAttempt: false,
-                           })
-                        }
-                     />
-                  )}
-               </>
-            )}
-
+         <CartPageHeader />
          {/* this payment option selection screen and back button, it will only show in kiosk app  */}
          {isKioskMode && isEmpty(cartPayment) ? (
             <>
@@ -433,7 +410,7 @@ const PaymentProcessingModal = ({
                <Result
                   icon={ShowPaymentStatusInfo().icon}
                   title={t(ShowPaymentStatusInfo().title)}
-                  subTitle={t(ShowPaymentStatusInfo().subtitle)}
+                  subTitle={ShowPaymentStatusInfo().subtitle}
                   extra={ShowPaymentStatusInfo().extra}
                />
 
@@ -467,6 +444,40 @@ const PaymentProcessingModal = ({
                   </Button>
                </div>
             )}
+         {!isEmpty(cartPayment) &&
+            !['SUCCEEDED', 'FAILED', 'CANCELLED'].includes(
+               cartPayment?.paymentStatus
+            ) && (
+               <>
+                  {countDown && (
+                     <Countdown
+                        date={countDown}
+                        renderer={({ minutes, seconds, completed }) => {
+                           if (completed) {
+                              return (
+                                 <h1 tw="font-extrabold color[rgba(0, 64, 106, 0.9)] text-xl text-center">
+                                    Request timed out
+                                 </h1>
+                              )
+                           }
+                           return (
+                              <h1 tw="font-extrabold color[rgba(0, 64, 106, 0.9)] text-xl text-center">
+                                 {`Timout in ${minutes}:${
+                                    seconds <= 9 ? '0' : ''
+                                 }${seconds}`}
+                              </h1>
+                           )
+                        }}
+                        onComplete={() =>
+                           cancelTerminalPayment({
+                              cartPayment,
+                              retryPaymentAttempt: false,
+                           })
+                        }
+                     />
+                  )}
+               </>
+            )}
       </Modal>
    )
 }
@@ -476,4 +487,22 @@ export default PaymentProcessingModal
 const LABEL = {
    COD: 'PAY AT COUNTER',
    TERMINAL: 'PAY VIA CARD',
+}
+
+const CartPageHeader = () => {
+   const {
+      BrandName: { value: showBrandName } = {},
+      BrandLogo: { value: showBrandLogo } = {},
+      brandName: { value: brandName } = {},
+      brandLogo: { value: logo } = {},
+   } = useConfig('brand').configOf('Brand Info')
+   return (
+      <header className="hern-cart-page__header">
+         <div className="hern-cart-page__header-logo">
+            {showBrandLogo && logo && <img src={logo} alt={brandName} />}
+            &nbsp;&nbsp;
+            {showBrandName && brandName && <span>{brandName}</span>}
+         </div>
+      </header>
+   )
 }
