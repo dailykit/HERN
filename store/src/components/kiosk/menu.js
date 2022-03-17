@@ -29,6 +29,7 @@ import { ProgressBar } from './component/progressBar'
 import { PromotionCarousal } from '../../sections/promotionCarousel'
 import * as Scroll from 'react-scroll'
 import { HernLazyImage } from '../../utils/hernImage'
+import KioskButton from './component/button'
 
 const { Content, Sider, Header, Footer } = Layout
 const { Step } = Steps
@@ -191,6 +192,9 @@ export const MenuSection = props => {
                      background: `${config.kioskSettings.theme.primaryColorLight.value}`,
                      padding: '1em 2em',
                      height: '10em',
+                     display: 'flex',
+                     flexDirection: 'column',
+                     justifyContent: 'center',
                   }}
                >
                   <ProgressBar
@@ -230,7 +234,7 @@ const KioskMenu = props => {
       (categoryId && categoryId.toString()) || '0'
    )
 
-   const { t, dynamicTrans } = useTranslation()
+   const { t, dynamicTrans, direction } = useTranslation()
 
    const onCategorySelect = e => {
       setSelectedCategory(e.key)
@@ -317,7 +321,7 @@ const KioskMenu = props => {
             <Layout style={{ height: '100%', backgroundColor: '#fff' }}>
                <Header theme={'light'} className="hern-kiosk__menu-header">
                   <Row className="hern-kiosk__menu-header-row">
-                     <Col span={21} className="hern-kiosk__menu-header-col-1">
+                     <Col span={18} className="hern-kiosk__menu-header-col-1">
                         <Row>
                            <Col
                               span={24}
@@ -330,64 +334,79 @@ const KioskMenu = props => {
                            </Col>
                         </Row>
                      </Col>
-                     <Col
-                        span={3}
-                        className="hern-kiosk__menu-header-col-2"
-                        onClick={() => {
-                           setCurrentPage('cartPage')
-                        }}
-                     >
-                        <CartIcon size={43} />
-                        <div
-                           style={{
-                              position: 'absolute',
-                              top: '-2em',
-                              right: '1.5em',
+                     {isStoreAvailable && (
+                        <Col
+                           span={6}
+                           className="hern-kiosk__menu-header-col-2"
+                           onClick={() => {
+                              setCurrentPage('cartPage')
                            }}
                         >
-                           <Badge
-                              count={
-                                 cart?.cartItems_aggregate?.aggregate?.count ||
-                                 0
-                              }
-                           />
-                        </div>
-                        {cart?.cartItems_aggregate?.aggregate?.count > 0 &&
-                           showCartIconToolTip && (
-                              <div className="hern-kiosk__cart-tool-tip">
-                                 <span
-                                    className="hern-kiosk__cart-tool-tip-text"
-                                    style={{
-                                       background:
-                                          config.kioskSettings.theme
-                                             .secondaryColorLight.value,
-                                       color: config.kioskSettings.theme
-                                          .primaryColor.value,
-                                    }}
-                                 >
+                           <KioskButton customClass="hern-kiosk__goto-cart-btn">
+                              <CartIcon size={25} />
+                              <span
+                                 className="hern-kiosk__goto-cart-btn-text"
+                                 style={{
+                                    color: `${config.kioskSettings.theme.primaryColor.value}`,
+                                 }}
+                              >
+                                 {t('Go To Cart')}
+                              </span>
+                           </KioskButton>
+                           <div
+                              style={{
+                                 position: 'absolute',
+                                 top: '-1.2em',
+                                 right: '-17px',
+                              }}
+                           >
+                              {cart?.cartItems_aggregate?.aggregate?.count >
+                                 0 && (
+                                 <span className="hern-kiosk__cart-item-badge">
                                     {
                                        cart?.cartItems_aggregate?.aggregate
                                           ?.count
-                                    }{' '}
-                                    {cart?.cartItems_aggregate?.aggregate
-                                       ?.count === 1
-                                       ? t('Item')
-                                       : t('Items')}{' '}
-                                    {formatCurrency(
-                                       cart?.cartOwnerBilling?.balanceToPay
-                                    )}
+                                    }
                                  </span>
-                                 <div
-                                    className="hern-kiosk__cart-tip"
-                                    style={{
-                                       background:
-                                          config.kioskSettings.theme
-                                             .secondaryColorLight.value,
-                                    }}
-                                 ></div>
-                              </div>
-                           )}
-                     </Col>
+                              )}
+                           </div>
+                           {cart?.cartItems_aggregate?.aggregate?.count > 0 &&
+                              showCartIconToolTip && (
+                                 <div className="hern-kiosk__cart-tool-tip">
+                                    <span
+                                       className="hern-kiosk__cart-tool-tip-text"
+                                       style={{
+                                          background:
+                                             config.kioskSettings.theme
+                                                .secondaryColorLight.value,
+                                          color: config.kioskSettings.theme
+                                             .primaryColor.value,
+                                       }}
+                                    >
+                                       {
+                                          cart?.cartItems_aggregate?.aggregate
+                                             ?.count
+                                       }{' '}
+                                       {cart?.cartItems_aggregate?.aggregate
+                                          ?.count === 1
+                                          ? t('Item')
+                                          : t('Items')}{' '}
+                                       {formatCurrency(
+                                          cart?.cartOwnerBilling?.balanceToPay
+                                       )}
+                                    </span>
+                                    <div
+                                       className="hern-kiosk__cart-tip"
+                                       style={{
+                                          background:
+                                             config.kioskSettings.theme
+                                                .secondaryColorLight.value,
+                                       }}
+                                    ></div>
+                                 </div>
+                              )}
+                        </Col>
+                     )}
                   </Row>
                </Header>
                <Content

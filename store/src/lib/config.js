@@ -284,84 +284,11 @@ export const useConfig = (globalType = '') => {
 
    // this is final availability for store like PICKUP_AVAILABLE || DINE_AVAILABLE
    const isStoreAvailable = React.useMemo(() => {
-      // check is there any recurrence available or not
-      // if available then check that store is available for current day and time
-      if (state.kioskRecurrences && state.kioskRecurrences.length > 0) {
-         const now = new Date() // now
-         const start = new Date(now.getTime() - 1000 * 60 * 60 * 24) // yesterday
-         const ondemandPickupRecs = state.kioskRecurrences.filter(
-            eachRec => eachRec.recurrence.type === 'ONDEMAND_PICKUP'
-         )
-         const ondemandDineinRecs = state.kioskRecurrences.filter(
-            eachRec => eachRec.recurrence.type === 'ONDEMAND_DINEIN'
-         )
-         const recurrencesValidation = recurrences => {
-            for (let i = 0; i <= recurrences.length - 1; i++) {
-               // check current day is valid for rrule
-               const dates = rrulestr(recurrences[i].recurrence.rrule).between(
-                  start,
-                  now
-               )
-               if (dates.length) {
-                  // check time slots available or not
-                  // if available then check current time is valid or not
-                  if (recurrences[i].recurrence.timeSlots.length) {
-                     let storeAvailability = false
-                     for (let timeslot of recurrences[i].recurrence.timeSlots) {
-                        const currentTime = moment()
-                        const openingTime = moment(timeslot.from, 'HH:mm:ss')
-                        const closingTime = moment(timeslot.to, 'HH:mm:ss')
-                        storeAvailability = currentTime.isBetween(
-                           openingTime,
-                           closingTime,
-                           'minutes',
-                           []
-                        )
-                        if (storeAvailability) {
-                           return storeAvailability
-                        }
-                     }
-                  } else {
-                     // when no time slots available
-                     return true
-                  }
-               } else {
-                  return false
-               }
-            }
-         }
-         const isOndemandPickupValid = recurrencesValidation(ondemandPickupRecs)
-         const isOndemandDineinValid = recurrencesValidation(ondemandDineinRecs)
-
-         const finalValue =
-            Boolean(isOndemandDineinValid) || Boolean(isOndemandPickupValid)
-
-         dispatch({
-            type: 'SET_KIOSK_AVAILABILITY',
-            payload: {
-               ONDEMAND_PICKUP: Boolean(isOndemandPickupValid),
-               ONDEMAND_DINEIN: Boolean(isOndemandDineinValid),
-               isValidated: true,
-            },
-         })
-         return finalValue
-      } else {
-         // if there is no rec. available then store will available
-         return true
-      }
-   }, [state.kioskRecurrences])
-   React.useEffect(() => {
-      if (state.kioskAvailability.isValidated && !isConfigLoading) {
-         if (
-            !(
-               state.kioskAvailability.ONDEMAND_PICKUP ||
-               state.kioskAvailability.ONDEMAND_DINEIN
-            )
-         ) {
-            setCurrentPage('menuPage')
-         }
-      }
-   }, [state.kioskAvailability, isConfigLoading])
+      return (
+         state.kioskAvailability['ONDEMAND_PICKUP'] ||
+         state.kioskAvailability['ONDEMAND_DINEIN']
+      )
+   }, [state.kioskAvailability])
 
    return {
       configOf,

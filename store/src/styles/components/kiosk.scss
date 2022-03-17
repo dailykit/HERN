@@ -122,6 +122,17 @@
    border-radius: 1.5em;
    z-index: 1000;
 }
+.hern-kiosk__fulfillment-view-menu-btn-wrapper {
+   padding: 1em;
+   display: flex;
+   flex-direction: column;
+   justify-content: space-between;
+   align-items: center;
+   width: 30em;
+   border-radius: 1.5em;
+   z-index: 1000;
+   margin-top: 50px;
+}
 .hern-kiosk_fulfillment-icon {
    height: calc(100% - 5em);
    display: flex;
@@ -324,24 +335,34 @@
 }
 .hern-kiosk__cart-tool-tip {
    position: absolute;
-   bottom: -5px;
+   // bottom: -5px;
+   transform: translateY(40px);
    animation-name: cart-tool-tip;
-   animation-duration: 1.5s;
+   animation-duration: 3s;
    animation-iteration-count: infinite;
 }
 @keyframes cart-tool-tip {
-   from {
-      bottom: -5px;
+   // from {
+   //    bottom: -5px;
+   // }
+   // to {
+   //    bottom: -12px;
+   // }
+   0% {
+      transform: translateY(40px);
    }
-   to {
-      bottom: -12px;
+   50% {
+      transform: translateY(47px);
+   }
+   100% {
+      transform: translateY(40px);
    }
 }
 .hern-kiosk__cart-tool-tip-text {
-   padding: 0.5em;
+   padding: 0.5em 1em;
    border-radius: 12px;
    font-weight: 600;
-   font-size: 16px;
+   font-size: 18px;
    line-height: 22px;
    white-space: nowrap;
 }
@@ -866,6 +887,32 @@
    .hern-kiosk__cart-place-order-btn-total {
       font-size: 1.3em;
    }
+}
+.hern-kiosk__goto-cart-btn {
+   padding: 1em 1em;
+   height: 2.5em;
+   display: flex;
+   align-items: center;
+   // width: 100%;
+   justify-content: center;
+   .hern-kiosk__goto-cart-btn-text {
+      font-size: 1em;
+      margin: 0 1em;
+      white-space: nowrap;
+   }
+}
+.hern-kiosk__cart-item-badge {
+   background: #ff0000;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   width: 31px;
+   height: 31px;
+   font-size: 18px;
+   font-weight: 600;
+   border-radius: 50%;
+   padding: 10px;
+   color: #fff;
 }
 .hern-kiosk__cart-payment-method-label {
    color: #5a5a5a;
