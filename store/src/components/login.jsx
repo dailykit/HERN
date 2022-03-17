@@ -272,7 +272,7 @@ const Email = props => {
                email: form.email,
                phone: form.phone,
             })
-            addToast('Login successfully!', { appearance: 'success' })
+            addToast(t('Login successfully!'), { appearance: 'success' })
             const landedOn = isClient && localStorage.getItem('landed_on')
             if (!isSilentlyLogin) {
                if (isClient && landedOn) {
@@ -287,7 +287,7 @@ const Email = props => {
          }
       } catch (error) {
          console.error(error)
-         addToast('Login failed', {
+         addToast(t('Login failed'), {
             appearance: 'error',
          })
       }
@@ -409,11 +409,11 @@ const OTPLogin = props => {
       onCompleted: () => {
          setResending(false)
          setTime(Date.now() + 120000)
-         addToast('OTP has been sent!', { appearance: 'success' })
+         addToast(t('OTP has been sent!'), { appearance: 'success' })
       },
       onError: error => {
          console.error(error)
-         addToast('Failed to send OTP!', { appearance: 'error' })
+         addToast(t('Failed to send OTP!'), { appearance: 'error' })
          setResending(false)
       },
    })
@@ -452,13 +452,13 @@ const OTPLogin = props => {
          setHasOtpSent(true)
          setSendingOtp(false)
          setTime(Date.now() + 120000)
-         addToast('OTP has been sent!', { appearance: 'success' })
+         addToast(t('OTP has been sent!'), { appearance: 'success' })
       },
       onError: error => {
          console.error(error)
          setSendingOtp(false)
          setError('Failed to send otp, please try again!')
-         addToast('Failed to send OTP!', { appearance: 'error' })
+         addToast(t('Failed to send OTP!'), { appearance: 'error' })
       },
    })
 
@@ -481,7 +481,7 @@ const OTPLogin = props => {
          console.error(error)
          setSendingOtp(false)
          setError('Failed to send otp, please try again!')
-         addToast('Failed to send OTP!', { appearance: 'error' })
+         addToast(t('Failed to send OTP!'), { appearance: 'error' })
       },
    })
 
@@ -503,7 +503,7 @@ const OTPLogin = props => {
          setLoading(true)
          if (!form.otp) {
             setError('Please enter the OTP!')
-            addToast('Please enter the OTP!', {
+            addToast(t('Please enter the OTP!'), {
                appearance: 'error',
             })
             setLoading(false)
@@ -513,7 +513,7 @@ const OTPLogin = props => {
             /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
          if (isNewUser && !emailRegex.test(form.email)) {
             setError('Please enter a valid email!')
-            addToast('Please enter a valid email!', {
+            addToast(t('Please enter a valid email!'), {
                appearance: 'error',
             })
             setLoading(false)
@@ -528,7 +528,7 @@ const OTPLogin = props => {
          })
          if (response?.status === 200) {
             const landedOn = localStorage.getItem('landed_on')
-            addToast('Login successfully!', { appearance: 'success' })
+            addToast(t('Login successfully!'), { appearance: 'success' })
             if (!isSilentlyLogin) {
                if (landedOn) {
                   localStorage.removeItem('landed_on')
@@ -764,7 +764,7 @@ const SocialLogin = props => {
    } = useQuery(PROVIDERS)
 
    if (providerError) {
-      return <p>Some went wrong</p>
+      return <p>{t('Something went wrong')}</p>
    }
 
    if (!providerLoading && settings_authProvider.length === 0) {

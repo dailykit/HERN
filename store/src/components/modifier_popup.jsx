@@ -180,7 +180,7 @@ export const ModifierPopup = props => {
          // const objects = new Array(quantity).fill({ ...cartItem })
          // console.log('cartItem', objects)
          await addToCart(cartItem, quantity)
-         addToast('Added to the Cart!', {
+         addToast(t('Added to the Cart!'), {
             appearance: 'success',
          })
          if (edit) {

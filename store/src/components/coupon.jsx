@@ -46,7 +46,7 @@ const Coupon_ = ({
       MUTATIONS.CART_REWARDS.CREATE,
       {
          onCompleted: () => {
-            addToast('Coupon applied!', { appearance: 'success' })
+            addToast(t('Coupon applied!'), { appearance: 'success' })
             setIsCouponListOpen(false)
             setIsCouponFormOpen(false)
          },
@@ -88,15 +88,17 @@ const Coupon_ = ({
                      },
                   })
                } else {
-                  addToast('Coupon is not applicable!', { appearance: 'error' })
+                  addToast(t('Coupon is not applicable!'), {
+                     appearance: 'error',
+                  })
                }
             } else {
-               addToast('Coupon is not valid!', { appearance: 'error' })
+               addToast(t('Coupon is not valid!'), { appearance: 'error' })
             }
          },
          onError: error => {
             console.log(error)
-            addToast('Something went wrong!', { appearance: 'error' })
+            addToast(t('Something went wrong!'), { appearance: 'error' })
          },
          fetchPolicy: 'cache-and-network',
       }
@@ -119,7 +121,7 @@ const Coupon_ = ({
                console.log('Coupon is valid!')
             } else {
                console.log('Coupon is not valid anymore!')
-               addToast('Coupon is not valid!', { appearance: 'error' })
+               addToast(t('Coupon is not valid!'), { appearance: 'error' })
                deleteCartRewards()
             }
          }
@@ -151,7 +153,7 @@ const Coupon_ = ({
          })
       } catch (err) {
          console.log(err)
-         addToast('Something went wrong!', { appearance: 'error' })
+         addToast(t('Something went wrong!'), { appearance: 'error' })
       }
    }
 
@@ -397,6 +399,7 @@ export const Coupon = props => {
    )
 }
 export const CouponHeader = () => {
+   const { t } = useTranslation()
    return (
       <div
          style={{
@@ -410,12 +413,13 @@ export const CouponHeader = () => {
             className={'hern-upfront-coupon-header__label'}
             htmlFor="coupon-header"
          >
-            Apply Coupons
+            {t('Apply Coupons')}
          </label>
       </div>
    )
 }
 const CouponTunnlelTrigger = ({ setIsCouponTunnelOpen }) => {
+   const { t } = useTranslation()
    return (
       <div className="hern-upfront-coupon-header__tunnel">
          <div>
@@ -423,15 +427,15 @@ const CouponTunnlelTrigger = ({ setIsCouponTunnelOpen }) => {
                <CouponTicketIcon />
             </span>
             <div>
-               <h4>Apply Coupon</h4>
+               <h4>{t('Apply Coupon')}</h4>
                <button onClick={() => setIsCouponTunnelOpen(true)}>
-                  <span>View All Offers</span>
+                  <span>{t('View All Offers')}</span>
                   <ChevronIcon />
                </button>
             </div>
          </div>
          <button onClick={() => setIsCouponTunnelOpen(true)}>
-            <span>Apply</span>
+            <span>{t('Apply')}</span>
             <ChevronIcon />
          </button>
       </div>

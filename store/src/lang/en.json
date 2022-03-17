@@ -384,5 +384,16 @@
    "Request timed out": "Request timed out",
    "Please wait while we print your receipt": "Please wait while we print your receipt",
    "Not accepting orders right now. Feel free to browse the menu.": "Not accepting orders right now. Feel free to browse the menu.",
-   "View Product": "View Product"
+   "View Product": "View Product",
+   "Invalid code!": "Invalid code!",
+   "Referral code is not valid!": "Referral code is not valid!",
+   "Referral code is valid!": "Referral code is valid!",
+   "Select Payment Method": "Select Payment Method",
+   "Failed to update the user profile!": "Failed to update the user profile!",
+   "Please select payment method": "Please select payment method",
+   "Error fetching cart": "Error fetching cart",
+   "Confirm & Pay": "Confirm & Pay",
+   "No Store Available": "No Store Available",
+   "NO store Available on this location": "NO store Available on this location",
+   "View on map": "View on map"
 }
