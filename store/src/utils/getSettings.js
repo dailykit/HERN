@@ -6,9 +6,9 @@ export const getSettings = async (domain, path = '/') => {
    const data = await client.request(SETTINGS_QUERY, {
       domain,
    })
-
+   const brandId = data.settings[0].brandId
    if (data) {
-      const settings = {}
+      const settings = { brandId }
 
       data.settings.forEach(setting => {
          if (settings[setting.meta.type]) {

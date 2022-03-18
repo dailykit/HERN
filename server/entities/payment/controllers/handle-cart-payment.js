@@ -88,30 +88,31 @@ export const handleCartPayment = async (req, res) => {
                }
 
                res.status(200).json(createCartPayment)
-            } else {
-               const updatedCartPayment = await Promise.all(
-                  cartPayments.map(async cartPayment => {
-                     try {
-                        const { updateCartPayment = {} } = await client.request(
-                           UPDATE_CART_PAYMENT,
-                           {
-                              id: cartPayment.id,
-                              _inc: {
-                                 paymentRetryAttempt: 1
-                              }
-                           }
-                        )
-                        return updateCartPayment
-                     } catch (error) {
-                        return {
-                           success: false,
-                           message: error.message
-                        }
-                     }
-                  })
-               )
-               res.status(200).json(updatedCartPayment)
             }
+            // else {
+            //    const updatedCartPayment = await Promise.all(
+            //       cartPayments.map(async cartPayment => {
+            //          try {
+            //             const { updateCartPayment = {} } = await client.request(
+            //                UPDATE_CART_PAYMENT,
+            //                {
+            //                   id: cartPayment.id,
+            //                   _inc: {
+            //                      paymentRetryAttempt: 1
+            //                   }
+            //                }
+            //             )
+            //             return updateCartPayment
+            //          } catch (error) {
+            //             return {
+            //                success: false,
+            //                message: error.message
+            //             }
+            //          }
+            //       })
+            //    )
+            //    res.status(200).json(updatedCartPayment)
+            // }
          } else {
             const { createCartPayment = {} } = await client.request(
                CREATE_CART_PAYMENT,

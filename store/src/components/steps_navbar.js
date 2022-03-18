@@ -36,8 +36,8 @@ export const StepsNavbar = () => {
    })
 
    React.useEffect(() => {
-      if (hasConfig('steps-labels', 'conventions')?.stepsLabels) {
-         const stepsLabels = hasConfig(
+      if (hasConfig('steps-labels', 'conventions')) {
+         const stepsLabels = configOf(
             'steps-labels',
             'conventions'
          )?.stepsLabels

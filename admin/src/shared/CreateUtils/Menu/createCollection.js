@@ -57,7 +57,7 @@ const CreateCollection = ({ closeTunnel }) => {
             },
          ])
          toast.success('Successfully created the Collection!')
-         closeTunnel(17)
+         closeTunnel(1)
       },
       onError: () =>
          toast.success('Failed to create the Collection, please try again!'),
@@ -96,7 +96,6 @@ const CreateCollection = ({ closeTunnel }) => {
          console.log('Collection Name::::', collection)
       }
    }
-   console.log('collection :>> ', collection)
 
    // const onBlur = (e, i) => {
    //    const { name, value } = e.target
@@ -157,7 +156,7 @@ const CreateCollection = ({ closeTunnel }) => {
             },
          },
       ])
-      closeTunnel(17)
+      closeTunnel(1)
    }
    return (
       <>
