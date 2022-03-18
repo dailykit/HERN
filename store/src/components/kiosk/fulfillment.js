@@ -61,7 +61,7 @@ export const FulfillmentSection = props => {
                      return true
                   }
                } else {
-                  return false
+                  if (i == recurrences.length - 1) return false
                }
             }
          }
