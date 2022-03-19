@@ -110,9 +110,7 @@ export const ProductGalleryKiosk = ({ config }) => {
          <label
             className="hern-kiosk__product-gallery-title"
             data-translation="true"
-            data-original-value={
-               config?.productGallery.productGalleryTitle?.value
-            }
+
          >
             {config?.productGallery.productGalleryTitle?.value}
          </label>
@@ -122,10 +120,9 @@ export const ProductGalleryKiosk = ({ config }) => {
                size={36}
                onClick={lastCarousal}
                style={{
-                  backgroundColor: `${
-                     config?.kioskSettings?.theme?.secondaryColor?.value ||
+                  backgroundColor: `${config?.kioskSettings?.theme?.secondaryColor?.value ||
                      theme?.accent
-                  }99`,
+                     }99`,
                }}
             />
             <ArrowRightIcon
@@ -133,10 +130,9 @@ export const ProductGalleryKiosk = ({ config }) => {
                size={36}
                onClick={nextCarousal}
                style={{
-                  backgroundColor: `${
-                     config?.kioskSettings?.theme?.secondaryColor?.value ||
+                  backgroundColor: `${config?.kioskSettings?.theme?.secondaryColor?.value ||
                      theme?.accent
-                  }99`,
+                     }99`,
                }}
             />
             <Carousel
@@ -201,7 +197,7 @@ const ProductGalleryCard = ({ product }) => {
             <span
                className="hern-kiosk__product-gallery-product-name"
                data-translation="true"
-               data-original-value={product.name}
+
             >
                {product.name}
             </span>

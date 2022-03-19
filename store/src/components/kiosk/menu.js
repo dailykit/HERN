@@ -306,7 +306,7 @@ const KioskMenu = props => {
                                     }),
                                  }}
                                  data-translation="true"
-                                 data-original-value={eachCategory.name}
+
                               >
                                  {eachCategory.name}
                               </span>
@@ -462,7 +462,7 @@ const KioskMenu = props => {
                               <p
                                  className="hern-kiosk__menu-category-name"
                                  data-translation="true"
-                                 data-original-value={eachCategory.name}
+
                               >
                                  {eachCategory.name}
                               </p>
@@ -480,29 +480,29 @@ const KioskMenu = props => {
                                              key={eachType.type}
                                              className="hern-kiosk__menu-product-type-radio-btn"
                                              data-translation="true"
-                                             data-original-value={eachType.type}
+
                                              style={{
                                                 backgroundColor:
                                                    currentGroup ===
-                                                   eachType.type
+                                                      eachType.type
                                                       ? config.kioskSettings
-                                                           .theme.primaryColor
-                                                           .value
+                                                         .theme.primaryColor
+                                                         .value
                                                       : config.kioskSettings
-                                                           .theme
-                                                           .primaryColorLight
-                                                           .value,
+                                                         .theme
+                                                         .primaryColorLight
+                                                         .value,
                                                 color:
                                                    currentGroup ===
-                                                   eachType.type
+                                                      eachType.type
                                                       ? '#ffffff'
                                                       : config.kioskSettings
-                                                           .theme.primaryColor
-                                                           .value,
+                                                         .theme.primaryColor
+                                                         .value,
                                                 borderRadius: '0.5em',
                                                 border:
                                                    currentGroup ===
-                                                   eachType.type
+                                                      eachType.type
                                                       ? `1px solid ${config.kioskSettings.theme.successColor.value}`
                                                       : 'none',
                                              }}

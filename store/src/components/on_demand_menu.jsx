@@ -4,6 +4,7 @@ import { MenuIcon } from '../assets/icons'
 import { onDemandMenuContext } from '../context'
 import { useOnClickOutside } from '../utils/useOnClickOutisde'
 import * as Scroll from 'react-scroll'
+import { useTranslation } from '../context'
 
 export const OnDemandMenu = props => {
    // props
@@ -15,18 +16,25 @@ export const OnDemandMenu = props => {
    const ref = React.useRef()
    useOnClickOutside(ref, () => setShowMenuItems('0'))
 
+   const { t, dynamicTrans, locale } = useTranslation()
+
    // const { isMenuLoading, categories } = onDemandMenu
    // if (isMenuLoading) {
    //    return <p>Loading</p>
    // }
-
+   const currentLang = React.useMemo(() => locale, [locale])
    useEffect(() => {
       if (showMenuItems === '100%') {
          document.querySelector('body').style.overflowY = 'hidden'
       } else {
          document.querySelector('body').style.overflowY = 'auto'
       }
-   }, [showMenuItems])
+      //for lang. translation
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [showMenuItems, currentLang])
 
    if (menuType && menuType === 'navigationAnchorMenu') {
       return (
@@ -52,7 +60,7 @@ export const OnDemandMenu = props => {
                            offset={-130}
                         >
                            <span>
-                              {each.name}
+                              <span data-translation="true">{each.name}</span>
                               {showProductCount && (
                                  <> ({each?.products?.length})</>
                               )}

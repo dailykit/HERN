@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { CSSTransition } from 'react-transition-group'
 import Link from 'next/link'
 import { getRoute } from '../../utils'
+import { useTranslation } from '../../context'
 
 function NavigationBar({ children, Data }) {
    return (
@@ -37,13 +38,13 @@ function Navbar(props) {
 
 function NavItem({ children, menu }) {
    const [open, setOpen] = useState(false)
-
+   const { t } = useTranslation()
    return (
       <li className="hern-navbar__list__item">
          {menu.childNodes.length > 0 ? (
-            <span onClick={() => setOpen(!open)}>{menu.label}</span>
+            <span onClick={() => setOpen(!open)}>{t(menu.label)}</span>
          ) : (
-            <Link href={getRoute(menu.url)}>{menu.label}</Link>
+            <Link href={getRoute(menu.url)}>{t(menu.label)}</Link>
          )}
 
          {open && children}

@@ -11,10 +11,11 @@ import { GET_ORDER_DETAILS } from '../graphql'
 import { combineCartItems, formatCurrency, useQueryParamState } from '../utils'
 import { Loader } from './loader'
 import { Empty } from 'antd'
+import { useTranslation } from '../context'
 
 export const CartOrderDetails = () => {
    const [cartId] = useQueryParamState('id')
-
+   const { t } = useTranslation()
    const {
       error,
       loading: orderHistoryLoading,
@@ -70,19 +71,19 @@ export const CartOrderDetails = () => {
                {getTitle(cart?.fulfillmentInfo?.type)}{' '}
                {(cart?.fulfillmentInfo?.type === 'PREORDER_PICKUP' ||
                   cart?.fulfillmentInfo?.type === 'PREORDER_DELIVERY') && (
-                  <span>
-                     {' '}
-                     on{' '}
-                     {moment(cart?.fulfillmentInfo?.slot?.from).format(
-                        'DD MMM YYYY'
-                     )}
-                     {' ('}
-                     {moment(cart?.fulfillmentInfo?.slot?.from).format('HH:mm')}
-                     {'-'}
-                     {moment(cart?.fulfillmentInfo?.slot?.to).format('HH:mm')}
-                     {')'}
-                  </span>
-               )}
+                     <span>
+                        {' '}
+                        {t('on')}{' '}
+                        {moment(cart?.fulfillmentInfo?.slot?.from).format(
+                           'DD MMM YYYY'
+                        )}
+                        {' ('}
+                        {moment(cart?.fulfillmentInfo?.slot?.from).format('HH:mm')}
+                        {'-'}
+                        {moment(cart?.fulfillmentInfo?.slot?.to).format('HH:mm')}
+                        {')'}
+                     </span>
+                  )}
             </div>
          </div>
          <div className="hern-order-history-card__tunnel-payment-info">
@@ -118,11 +119,10 @@ const CartItems = ({ products, border = false, title = false }) => {
                <div
                   className="hern-order-history__cart-items"
                   style={{
-                     borderBottom: `${
-                        cartItems?.length > 1
-                           ? '1px solid rgba(64, 64, 64, 0.25)'
-                           : 'none'
-                     }`,
+                     borderBottom: `${cartItems?.length > 1
+                        ? '1px solid rgba(64, 64, 64, 0.25)'
+                        : 'none'
+                        }`,
                      border: `${border && '1px solid rgba(64, 64, 64, 0.25)'}`,
                      paddingLeft: `${border && '16px'}`,
                   }}

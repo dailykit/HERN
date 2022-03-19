@@ -4,7 +4,7 @@ import { useToasts } from 'react-toast-notifications'
 import classNames from 'classnames'
 
 import { useConfig } from '../../lib'
-import { useUser } from '../../context'
+import { useTranslation, useUser } from '../../context'
 import { Loader } from '../../components'
 import { isClient, formatCurrency, getRoute, LoginWrapper } from '../../utils'
 import { HernLazyImage } from '../../utils/hernImage'
@@ -16,6 +16,7 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
    const { user, isAuthenticated, isLoading } = useUser()
    const { addToast } = useToasts()
    const { configOf } = useConfig('conventions')
+   const { t, dynamicTrans, locale } = useTranslation()
    const [defaultItemCount, setDefaultItemCount] = React.useState(null)
    const [defaultServing, setDefaultServing] = React.useState(null)
    const [showLoginPopup, setShowLoginPopup] = React.useState(false)
@@ -46,7 +47,16 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
       if (isAuthenticated && !isLoading && selectedPlan) {
          router.push(getRoute('/get-started/select-delivery'))
       }
+
    }, [isAuthenticated, isLoading, selectedPlan])
+   const currentLang = React.useMemo(() => locale, [locale])
+   React.useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+
+   }, [currentLang])
    const selectPlan = () => {
       if (handlePlanClick) {
          return handlePlanClick(defaultItemCount.id)
@@ -54,7 +64,7 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
       if (isClient) {
          window.localStorage.setItem('plan', defaultItemCount.id)
       }
-      addToast('Successfully selected a plan.', {
+      addToast(t('Successfully selected a plan.'), {
          appearance: 'success',
       })
       setSelectedPlan(defaultItemCount.id)
@@ -69,7 +79,7 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
          pricePerServing: formatCurrency(
             Number.parseFloat(
                (defaultItemCount?.price || 1) /
-                  ((defaultItemCount?.count || 1) * (defaultServing?.size || 1))
+               ((defaultItemCount?.count || 1) * (defaultServing?.size || 1))
             ).toFixed(2)
          ),
       })
@@ -122,14 +132,15 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                <h2
                   className="hern-our-plans__plan__title"
                   style={{
-                     color: `${
-                        colorConfig?.accent?.value
-                           ? colorConfig?.accent?.value
-                           : 'rgba(5, 150, 105, 1)'
-                     }`,
+                     color: `${colorConfig?.accent?.value
+                        ? colorConfig?.accent?.value
+                        : 'rgba(5, 150, 105, 1)'
+                        }`,
                   }}
                >
-                  {plan.title}
+                  <span data-translation="true"
+                  >{plan.title}</span>
+
                   {plan.metaDetails?.icon && (
                      <img
                         className="hern-our-plans__plan__icon"
@@ -138,22 +149,30 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                   )}
                </h2>
                {plan?.metaDetails?.description && (
-                  <p className="hern-our-plans__plan__description">
+                  <p className="hern-our-plans__plan__description" data-translation="true"
+                  >
+
                      {plan?.metaDetails?.description}
                   </p>
                )}
                <section className="hern-our-plans__plan__servings">
                   {plan.servings.length === 1 ? (
                      <span className="hern-our-plans__plan__servings__label">
-                        {plan.servings[0].size}{' '}
-                        {plan.servings[0].size > 1
-                           ? yieldLabel.singular
-                           : yieldLabel.plural}
+                        <span data-translation="true"
+                        >
+                           {plan.servings[0].size}
+                        </span>
+                        <span data-translation="true"
+                        >
+                           {plan.servings[0].size > 1
+                              ? yieldLabel.singular
+                              : yieldLabel.plural}</span>
                      </span>
                   ) : (
                      <div className="hern-our-plans__plan__servings__wrapper">
                         <span className="hern-our-plans__plan__servings__label--multi">
-                           No. of {yieldLabel.plural}
+                           <span>{t('No. of')}</span> <span data-translation="true"
+                           >{yieldLabel.plural}</span>
                         </span>
                         <ul className="hern-our-plans__plan__servings__count-list">
                            {plan.servings.map(serving => {
@@ -171,9 +190,11 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                                     onClick={() => setDefaultServing(serving)}
                                  >
                                     <div className="hern-our-plans__plan__servings-size">
-                                       <div>{serving.size}</div>
+                                       <div data-translation="true"
+                                       >{serving.size}</div>
                                        {serving?.metaDetails?.label && (
-                                          <div>
+                                          <div data-translation="true"
+                                          >
                                              {serving?.metaDetails?.label}
                                           </div>
                                        )}
@@ -184,20 +205,27 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                         </ul>
                      </div>
                   )}
-               </section>
-               <section className="hern-our-plans__plan__items-per-week">
+               </section> <section className="hern-our-plans__plan__items-per-week">
                   {defaultServing.itemCounts.length === 1 ? (
                      <span className="hern-our-plans__plan__items-per-week__label">
-                        {defaultServing.itemCounts[0].count}{' '}
-                        {defaultServing.itemCounts[0].count === 1
-                           ? itemCountLabel.singular
-                           : itemCountLabel.plural}{' '}
-                        per week
+                        <span data-translation="true"
+                        >
+                           {defaultServing.itemCounts[0].count
+                           }</span>
+                        <span data-translation="true"
+                        >
+                           {defaultServing.itemCounts[0].count === 1
+                              ? itemCountLabel.singular
+                              : itemCountLabel.plural}</span>
+                        {t('per week')}
                      </span>
                   ) : (
                      <div className="hern-our-plans__plan__items-per-week__wrapper">
                         <span className="hern-our-plans__plan__items-per-week__label">
-                           {itemCountLabel.singular} per week
+                           <span data-translation="true"
+                           >
+                              {itemCountLabel.singular}
+                           </span> {t('per week')}
                         </span>
                         <ul className="hern-our-plans__plan__items-per-week__count-list">
                            {defaultServing?.itemCounts.map(item => {
@@ -216,9 +244,11 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                                     onClick={() => setDefaultItemCount(item)}
                                  >
                                     <div className="hern-our-plans__plan__items-per-week__count">
-                                       <div>{item.count}</div>
+                                       <div data-translation="true"
+                                       >{item.count}</div>
                                        {item?.metaDetails?.label && (
-                                          <div>{item?.metaDetails?.label}</div>
+                                          <div data-translation="true"
+                                          >{item?.metaDetails?.label}</div>
                                        )}
                                     </div>
                                  </li>
@@ -233,56 +263,61 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                   {priceDisplay?.pricePerServing?.isVisible === true && (
                      <section className="hern-our-plans__price-per-servings">
                         {priceDisplay?.pricePerServing?.prefix && (
-                           <span className="hern-our-plans__price-per-servings__prefix">
-                              {priceDisplay?.pricePerServing?.prefix}{' '}
+                           <span className="hern-our-plans__price-per-servings__prefix" data-translation="true"
+                           >
+                              {priceDisplay?.pricePerServing?.prefix}
                            </span>
                         )}
                         <span
                            style={{
-                              color: `${
-                                 colorConfig?.accent?.value
-                                    ? colorConfig?.accent?.value
-                                    : 'rgba(5, 150, 105, 1)'
-                              }`,
+                              color: `${colorConfig?.accent?.value
+                                 ? colorConfig?.accent?.value
+                                 : 'rgba(5, 150, 105, 1)'
+                                 }`,
                            }}
                            className="hern-our-plans__price-per-servings__price"
+                           data-translation="true"
+
                         >
                            {formatCurrency(
                               Number.parseFloat(
                                  (defaultItemCount?.price || 1) /
-                                    ((defaultItemCount?.count || 1) *
-                                       (defaultServing?.size || 1))
+                                 ((defaultItemCount?.count || 1) *
+                                    (defaultServing?.size || 1))
                               ).toFixed(2)
-                           )}{' '}
-                           <span className="hern-our-plans__price-per-servings__suffix">
+                           )}
+                           <span className="hern-our-plans__price-per-servings__suffix" data-translation="true"
+                           >
                               {priceDisplay?.pricePerServing?.suffix ||
                                  `per ${yieldLabel.singular}`}
                            </span>
                         </span>
                      </section>
                   )}
-
+                  {/* ///start from here */}
                   {priceDisplay?.totalServing?.isVisible === true && (
                      <section className="hern-our-plans__price-total-servings">
                         {priceDisplay?.totalServing?.prefix && (
-                           <span className="hern-our-plans__price-total-servings__prefix">
-                              {priceDisplay?.totalServing?.prefix}{' '}
+                           <span className="hern-our-plans__price-total-servings__prefix" data-translation="true"
+                           >
+                              {priceDisplay?.totalServing?.prefix}
                            </span>
                         )}
                         <span
                            style={{
-                              color: `${
-                                 colorConfig?.accent?.value
-                                    ? colorConfig?.accent?.value
-                                    : 'rgba(5, 150, 105, 1)'
-                              }`,
+                              color: `${colorConfig?.accent?.value
+                                 ? colorConfig?.accent?.value
+                                 : 'rgba(5, 150, 105, 1)'
+                                 }`,
                            }}
                            className="hern-our-plans__price-total-servings__price"
+                           data-translation="true"
+
                         >
                            {Number.parseFloat(
                               (defaultItemCount?.count || 1) *
-                                 (defaultServing?.size || 1)
-                           ).toFixed(0)}{' '}
+                              (defaultServing?.size || 1)
+                           ).toFixed(0)}
                         </span>
                      </section>
                   )}
@@ -290,31 +325,34 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                   {priceDisplay?.pricePerPlan?.isVisible === true && (
                      <section className="hern-our-plans__price-per-plan">
                         {priceDisplay?.pricePerPlan?.prefix && (
-                           <span className="hern-our-plans__price-total-servings__prefix">
-                              {priceDisplay?.pricePerPlan?.prefix}{' '}
+                           <span className="hern-our-plans__price-total-servings__prefix" data-translation="true"
+                           >
+                              {priceDisplay?.pricePerPlan?.prefix}
                            </span>
                         )}
                         <div className="hern-our-plans__price-total-servings__wrapper">
                            <span
                               style={{
-                                 color: `${
-                                    colorConfig?.accent?.value
-                                       ? colorConfig?.accent?.value
-                                       : 'rgba(5, 150, 105, 1)'
-                                 }`,
+                                 color: `${colorConfig?.accent?.value
+                                    ? colorConfig?.accent?.value
+                                    : 'rgba(5, 150, 105, 1)'
+                                    }`,
                               }}
                               className="hern-our-plans__price-total-servings__price"
+                              data-translation="true"
+
                            >
                               {formatCurrency(defaultItemCount?.price)}
                            </span>
-                           <span className="hern-our-plans__price-total-servings__tax">
+                           <span className="hern-our-plans__price-total-servings__tax" >
                               {defaultItemCount?.isTaxIncluded
-                                 ? 'Tax Inclusive'
-                                 : 'Tax Exclusive'}
+                                 ? t('Tax Inclusive')
+                                 : t('Tax Exclusive')}
                            </span>
-                           <span className="hern-our-plans__price-total-servings__suffix">
-                              {priceDisplay?.pricePerPlan?.suffix ||
-                                 'Weekly total'}
+                           <span className="hern-our-plans__price-total-servings__suffix" >
+                              {<span data-translation="true"
+                              >{priceDisplay?.pricePerPlan?.suffix}</span> ||
+                                 <span>{t('Weekly total')}</span>}
                            </span>
                         </div>
                      </section>
@@ -324,14 +362,13 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                   className="hern-our-plans__select-plan__btn"
                   onClick={() => selectPlan()}
                   style={{
-                     backgroundColor: `${
-                        colorConfig?.accent?.value
-                           ? colorConfig?.accent?.value
-                           : 'rgba(96, 165, 250, 1)'
-                     }`,
+                     backgroundColor: `${colorConfig?.accent?.value
+                        ? colorConfig?.accent?.value
+                        : 'rgba(96, 165, 250, 1)'
+                        }`,
                   }}
                >
-                  Select
+                  {t('Select')}
                </button>
             </div>
          </li>

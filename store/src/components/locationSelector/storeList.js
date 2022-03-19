@@ -10,7 +10,7 @@ import { DistanceIcon, RadioIcon, StoreIcon } from '../../assets/icons'
 import { RefineLocationPopup } from '../refineLocation'
 import { MUTATIONS } from '../../graphql'
 import { useMutation } from '@apollo/react-hooks'
-import { useCart, useUser } from '../../context'
+import { useCart, useTranslation, useUser } from '../../context'
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 // render all available stores
@@ -31,6 +31,7 @@ export const StoreList = props => {
    // console.log('settings', settings)
    const { dispatch, orderTabs } = useConfig()
    const { addToast } = useToasts()
+   const { t } = useTranslation()
    const { methods, storedCartId } = useCart()
    const { user } = useUser()
 
@@ -56,7 +57,7 @@ export const StoreList = props => {
 
    const [createAddress] = useMutation(MUTATIONS.CUSTOMER.ADDRESS.CREATE, {
       onCompleted: () => {
-         addToast('Address has been saved.', {
+         addToast(t('Address has been saved.'), {
             appearance: 'success',
          })
          // fb pixel custom event for adding a new address
@@ -149,7 +150,7 @@ export const StoreList = props => {
             if (
                localStorage.getItem('storeLocationId') &&
                JSON.parse(localStorage.getItem('storeLocationId')) !==
-                  firstStoreOfSortedBrandLocation.location.id
+               firstStoreOfSortedBrandLocation.location.id
             ) {
                const lastStoreLocationId = JSON.parse(
                   localStorage.getItem('storeLocationId')
@@ -210,7 +211,7 @@ export const StoreList = props => {
 
    // when no store available on user location
    if (stores.length === 0) {
-      return <p>No Store Available</p>
+      return <p>{t('No Store Available')}</p>
    }
    console.log('sortedBrandLocation', stores)
    // when there is no stores which do not fulfill delivery time and mile range for brandRecurrences
@@ -235,7 +236,7 @@ export const StoreList = props => {
    ) {
       return (
          <div className="hern-location-selector__stores-list">
-            NO store Available on this location
+            {t('NO store Available on this location')}
          </div>
       )
    }
@@ -245,7 +246,7 @@ export const StoreList = props => {
       <div className="hern-location-selector__stores-list">
          {showStoresOnMap.value && (
             <div className="hern-location-selector__view-on-map">
-               <span onClick={() => setShowStoreOnMap(true)}>View on map</span>
+               <span onClick={() => setShowStoreOnMap(true)}>{t('View on map')}</span>
             </div>
          )}
          <RefineLocationPopup
@@ -289,7 +290,7 @@ export const StoreList = props => {
                      {
                         'hern-store-location-selector__each-store--disabled':
                            disabledLocationDisplayStyle.value?.value ===
-                              'disabled' &&
+                           'disabled' &&
                            !eachStore['fulfillmentStatus'].status,
                      }
                   )}
@@ -398,10 +399,10 @@ export const StoreList = props => {
                   {cardSelectionStyle.value?.value === 'radio' &&
                      (storeDistanceValidation
                         ? !(
-                             disabledLocationDisplayStyle.value?.value ===
-                                'disabled' &&
-                             !eachStore['fulfillmentStatus'].status
-                          )
+                           disabledLocationDisplayStyle.value?.value ===
+                           'disabled' &&
+                           !eachStore['fulfillmentStatus'].status
+                        )
                         : true) && (
                         <RadioIcon
                            size={18}

@@ -6,6 +6,7 @@ import { formatCurrency, isClient } from '../utils'
 import { ModifierPopup } from './index'
 import classNames from 'classnames'
 import { EditIcon } from '../assets/icons'
+import { useTranslation } from '../context'
 import { HernLazyImage } from '../utils/hernImage'
 // if (isClient) {
 //    import('lazysizes/plugins/unveilhooks/ls.unveilhooks').then(module => module)
@@ -48,7 +49,8 @@ export const ProductCard = props => {
       config,
       stepView = false,
    } = props
-
+   const { t, dynamicTrans, locale } = useTranslation()
+   const currentLang = React.useMemo(() => locale, [locale])
    const slideRef = React.useRef()
    const properties = {
       duration: 5000,
@@ -70,6 +72,14 @@ export const ProductCard = props => {
          data.assets.images.length !== 1 &&
          canSwipe && { canSwipe: canSwipe }),
    }
+
+   React.useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [currentLang])
+
    const finalProductPrice = () => {
       // use for product card
       if (!useForThirdParty) {
@@ -201,6 +211,7 @@ export const ProductCard = props => {
                                        ? 'pointer'
                                        : null,
                                  }}
+                                 data-translation="true"
                               >
                                  {data.name}
                               </div>
@@ -244,7 +255,10 @@ export const ProductCard = props => {
                            </div>
                         )}
                         {showProductAdditionalText && data?.additionalText && (
-                           <div className="hern-product-card__additional-text">
+                           <div
+                              className="hern-product-card__additional-text"
+                              data-translation="true"
+                           >
                               {data.additionalText}
                            </div>
                         )}
@@ -255,7 +269,9 @@ export const ProductCard = props => {
                         className="hern-product-card__description"
                         title={data?.description}
                      >
-                        {data?.description?.slice(0, 50)}
+                        <span data-translation="true">
+                           {data?.description?.slice(0, 50)}
+                        </span>
                         {data?.description?.length > 50 && '...'}
                      </div>
                   )}

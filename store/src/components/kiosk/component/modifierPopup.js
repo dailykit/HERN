@@ -102,7 +102,7 @@ export const KioskModifier = props => {
             //for uncheck the option
             if (
                selectedOptions.single[existCategoryIndex][
-                  'modifierCategoryOptionsID'
+               'modifierCategoryOptionsID'
                ] === eachOption.id &&
                !eachModifierCategory.isRequired
             ) {
@@ -370,10 +370,10 @@ export const KioskModifier = props => {
       let allSelectedOptionsPrice = 0
       allSelectedOptions.forEach(
          x =>
-            (allSelectedOptionsPrice =
-               allSelectedOptionsPrice +
-               (x?.modifierCategoryOptionsPrice || 0) -
-               (x?.modifierCategoryOptionsDiscount || 0))
+         (allSelectedOptionsPrice =
+            allSelectedOptionsPrice +
+            (x?.modifierCategoryOptionsPrice || 0) -
+            (x?.modifierCategoryOptionsDiscount || 0))
       )
 
       const totalPrice =
@@ -482,13 +482,13 @@ export const KioskModifier = props => {
                      optionsWithZeroPrice.length >= eachCategory.limits.min
                         ? optionsWithZeroPrice.slice(0, eachCategory.limits.min)
                         : [
-                             ...optionsWithZeroPrice,
-                             ...optionsWithOutZeroPrice.slice(
-                                0,
-                                eachCategory.limits.min -
-                                   optionsWithZeroPrice.length
-                             ),
-                          ]
+                           ...optionsWithZeroPrice,
+                           ...optionsWithOutZeroPrice.slice(
+                              0,
+                              eachCategory.limits.min -
+                              optionsWithZeroPrice.length
+                           ),
+                        ]
 
                   defaultMultiSelectedOptions.forEach(eachModifierOption => {
                      // default selected modifier option
@@ -655,7 +655,7 @@ export const KioskModifier = props => {
                      color: `${config.kioskSettings.theme.modifierTextColor.value}`,
                   }}
                   data-translation="true"
-                  data-original-value={productData.name}
+
                >
                   {productData.name}
                </span>
@@ -686,7 +686,7 @@ export const KioskModifier = props => {
                               backgroundColor:
                                  selectedProductOption.id === eachOption.id
                                     ? config.kioskSettings.theme
-                                         .primaryColorDark.value
+                                       .primaryColorDark.value
                                     : 'transparent',
                               color: '#ffffff',
                               border:
@@ -707,7 +707,7 @@ export const KioskModifier = props => {
                            <span
                               data-name={eachOption.label}
                               data-translation="true"
-                              data-original-value={eachOption.label}
+
                            >
                               {eachOption.label}
                            </span>
@@ -736,7 +736,7 @@ export const KioskModifier = props => {
                            backgroundColor:
                               selectedProductOption.id === eachOption.id
                                  ? config.kioskSettings.theme.primaryColorDark
-                                      .value
+                                    .value
                                  : 'transparent',
                            color: '#ffffff',
                            border:
@@ -757,7 +757,7 @@ export const KioskModifier = props => {
                         <span
                            data-name={eachOption.label}
                            data-translation="true"
-                           data-original-value={eachOption.label}
+
                         >
                            {eachOption.label}
                         </span>
@@ -776,7 +776,7 @@ export const KioskModifier = props => {
                         color: `${config.kioskSettings.theme.modifierTextColor.value}`,
                      }}
                      data-translation="true"
-                     data-original-value={productData.additionalText}
+
                   >
                      {productData.additionalText}
                   </span>
@@ -830,7 +830,7 @@ export const KioskModifier = props => {
                                     color: `${config.kioskSettings.theme.modifierTextColor.value}`,
                                  }}
                                  data-translation="true"
-                                 data-original-value={eachModifierCategory.name}
+
                               >
                                  {eachModifierCategory.name}
                               </span>
@@ -843,20 +843,20 @@ export const KioskModifier = props => {
                            {errorCategories.includes(
                               eachModifierCategory.id
                            ) && (
-                              <>
-                                 <span
-                                    style={{
-                                       fontStyle: 'italic',
-                                       fontSize: '1.7em',
-                                       color: `${config.kioskSettings.theme.categorySelectionWarningColor.value}`,
-                                    }}
-                                 >
-                                    {'('}
-                                    {t(`You have to choose this category`)}
-                                    {')'}
-                                 </span>
-                              </>
-                           )}
+                                 <>
+                                    <span
+                                       style={{
+                                          fontStyle: 'italic',
+                                          fontSize: '1.7em',
+                                          color: `${config.kioskSettings.theme.categorySelectionWarningColor.value}`,
+                                       }}
+                                    >
+                                       {'('}
+                                       {t(`You have to choose this category`)}
+                                       {')'}
+                                    </span>
+                                 </>
+                              )}
                            <div className="hern-kiosk__modifier-category-options">
                               {eachModifierCategory.options.map(
                                  (eachOption, index) => {
@@ -866,9 +866,9 @@ export const KioskModifier = props => {
                                        ].find(
                                           x =>
                                              x.modifierCategoryID ===
-                                                eachModifierCategory.id &&
+                                             eachModifierCategory.id &&
                                              x.modifierCategoryOptionsID ===
-                                                eachOption.id
+                                             eachOption.id
                                        )
                                        return Boolean(isOptionSelected)
                                     }
@@ -898,9 +898,7 @@ export const KioskModifier = props => {
                                                 <span className="hern-kiosk__modifier--option-name">
                                                    <span
                                                       data-translation="true"
-                                                      data-original-value={
-                                                         eachOption.name
-                                                      }
+
                                                    >
                                                       {eachOption.name}
                                                    </span>
@@ -909,7 +907,7 @@ export const KioskModifier = props => {
                                                          {' ('}
                                                          {formatCurrency(
                                                             eachOption.price -
-                                                               eachOption.discount
+                                                            eachOption.discount
                                                          )}
                                                          {')'}
                                                       </>
@@ -1216,7 +1214,7 @@ const AdditionalModifiers = forwardRef(
                      (max
                         ? allFoundedOptionsLength <= max
                         : allFoundedOptionsLength <=
-                          allCatagories[i].options.length)
+                        allCatagories[i].options.length)
                   ) {
                   } else {
                      errorState.push(allCatagories[i].id)
@@ -1269,7 +1267,7 @@ const AdditionalModifiers = forwardRef(
                //for uncheck the option
                if (
                   additionalModifierOptions.single[existCategoryIndex][
-                     'modifierCategoryOptionsID'
+                  'modifierCategoryOptionsID'
                   ] === eachOption.id &&
                   !eachModifierCategory.isRequired
                ) {
@@ -1347,7 +1345,7 @@ const AdditionalModifiers = forwardRef(
                      className="hern-kiosk__additional-modifier-label"
                      style={{ color: '#ffffff' }}
                      data-translation="true"
-                     data-original-value={eachAdditionalModifier.label}
+
                   >
                      {eachAdditionalModifier.label}
                   </span>
@@ -1393,9 +1391,7 @@ const AdditionalModifiers = forwardRef(
                                        color: `${config.kioskSettings.theme.modifierTextColor.value}`,
                                     }}
                                     data-translation="true"
-                                    data-original-value={
-                                       eachModifierCategory.name
-                                    }
+
                                  >
                                     {eachModifierCategory.name}
                                  </span>
@@ -1407,22 +1403,22 @@ const AdditionalModifiers = forwardRef(
                                  {errorCategories.includes(
                                     eachModifierCategory.id
                                  ) && (
-                                    <>
-                                       <br />
-                                       <span
-                                          style={{
-                                             fontStyle: 'italic',
-                                             fontSize: '1em',
-                                             color: `${config.kioskSettings.theme.categorySelectionWarningColor.value}`,
-                                          }}
-                                       >
-                                          {'('}
-                                          {t(`You have to choose
+                                       <>
+                                          <br />
+                                          <span
+                                             style={{
+                                                fontStyle: 'italic',
+                                                fontSize: '1em',
+                                                color: `${config.kioskSettings.theme.categorySelectionWarningColor.value}`,
+                                             }}
+                                          >
+                                             {'('}
+                                             {t(`You have to choose
                                                       this category`)}
-                                          {')'}
-                                       </span>
-                                    </>
-                                 )}
+                                             {')'}
+                                          </span>
+                                       </>
+                                    )}
                               </label>
                               <div className="hern-kiosk__modifier-category-options">
                                  {eachModifierCategory.options.map(
@@ -1434,9 +1430,9 @@ const AdditionalModifiers = forwardRef(
                                              ].find(
                                                 x =>
                                                    x.modifierCategoryID ===
-                                                      eachModifierCategory.id &&
+                                                   eachModifierCategory.id &&
                                                    x.modifierCategoryOptionsID ===
-                                                      eachOption.id
+                                                   eachOption.id
                                              )
                                           return Boolean(isOptionSelected)
                                        }
@@ -1468,9 +1464,7 @@ const AdditionalModifiers = forwardRef(
                                                    <span className="hern-kiosk__modifier--option-name">
                                                       <span
                                                          data-translation="true"
-                                                         data-original-value={
-                                                            eachOption.name
-                                                         }
+
                                                       >
                                                          {eachOption.name}
                                                       </span>
@@ -1479,7 +1473,7 @@ const AdditionalModifiers = forwardRef(
                                                             {' ('}
                                                             {formatCurrency(
                                                                eachOption.price -
-                                                                  eachOption.discount
+                                                               eachOption.discount
                                                             )}
                                                             {')'}
                                                          </>
@@ -1722,7 +1716,7 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                   (max
                      ? allFoundedOptionsLength <= max
                      : allFoundedOptionsLength <=
-                       allCatagories[i].options.length)
+                     allCatagories[i].options.length)
                ) {
                } else {
                   errorState.push(allCatagories[i].id)
@@ -1767,7 +1761,7 @@ const ModifierOptionsList = forwardRef((props, ref) => {
             //for uncheck the option
             if (
                nestedSelectedOptions.single[existCategoryIndex][
-                  'modifierCategoryOptionsID'
+               'modifierCategoryOptionsID'
                ] === eachOption.id &&
                !eachModifierCategory.isRequired
             ) {
@@ -1911,7 +1905,7 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                            color: `${config.kioskSettings.theme.modifierTextColor.value}`,
                         }}
                         data-translation="true"
-                        data-original-value={eachModifierCategory.name}
+
                      >
                         {eachModifierCategory.name}
                      </span>
@@ -1945,7 +1939,7 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                            ].find(
                               x =>
                                  x.modifierCategoryID ===
-                                    eachModifierCategory.id &&
+                                 eachModifierCategory.id &&
                                  x.modifierCategoryOptionsID === eachOption.id
                            )
                            return Boolean(isOptionSelected)
@@ -1976,7 +1970,7 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                                     <span className="hern-kiosk__modifier--option-name">
                                        <span
                                           data-translation="true"
-                                          data-original-value={eachOption.name}
+
                                        >
                                           {eachOption.name}
                                        </span>
@@ -1985,7 +1979,7 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                                              {' ('}
                                              {formatCurrency(
                                                 eachOption.price -
-                                                   eachOption.discount
+                                                eachOption.discount
                                              )}
                                              {')'}
                                           </>

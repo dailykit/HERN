@@ -324,7 +324,7 @@ const CartCard = props => {
                      <div style={{ display: 'flex', gap: '12px' }}>
                         <span
                            data-translation="true"
-                           data-original-value={productData.name}
+
                            className="hern-cart-card__title"
                         >
                            {productData.name}
@@ -352,10 +352,7 @@ const CartCard = props => {
                            <div className="hern-cart-card-modifiers__product-option">
                               <span
                                  data-translation="true"
-                                 data-original-value={
-                                    productData.childs[0].productOption.label ||
-                                    'N/A'
-                                 }
+
                               >
                                  {productData.childs[0].productOption.label ||
                                     'N/A'}
@@ -366,22 +363,22 @@ const CartCard = props => {
                                        <>
                                           {productData.childs[0].discount >
                                              0 && (
-                                             <span
-                                                style={{
-                                                   textDecoration:
-                                                      'line-through',
-                                                }}
-                                             >
-                                                {formatCurrency(
-                                                   productData.childs[0].price
-                                                )}
-                                             </span>
-                                          )}
+                                                <span
+                                                   style={{
+                                                      textDecoration:
+                                                         'line-through',
+                                                   }}
+                                                >
+                                                   {formatCurrency(
+                                                      productData.childs[0].price
+                                                   )}
+                                                </span>
+                                             )}
                                           <span style={{ marginLeft: '6px' }}>
                                              {formatCurrency(
                                                 productData.childs[0].price -
-                                                   productData.childs[0]
-                                                      .discount
+                                                productData.childs[0]
+                                                   .discount
                                              )}
                                           </span>
                                        </>
@@ -393,139 +390,131 @@ const CartCard = props => {
                               {productData.childs[0].childs.some(
                                  each => each.modifierOption
                               ) && (
-                                 <>
-                                    <ul>
-                                       {productData.childs.length > 0 &&
-                                          productData.childs[0].childs.map(
-                                             (modifier, index) =>
-                                                modifier.modifierOption ? (
-                                                   <li
-                                                      key={index}
-                                                      className="hern-cart-card-modifiers__list__parent"
-                                                   >
-                                                      <div className="hern-cart-card-modifiers__list__details">
-                                                         <span
-                                                            data-translation="true"
-                                                            data-original-value={
-                                                               modifier
-                                                                  .modifierOption
-                                                                  .name
-                                                            }
-                                                         >
-                                                            {
-                                                               modifier
-                                                                  .modifierOption
-                                                                  .name
-                                                            }
-                                                         </span>
+                                    <>
+                                       <ul>
+                                          {productData.childs.length > 0 &&
+                                             productData.childs[0].childs.map(
+                                                (modifier, index) =>
+                                                   modifier.modifierOption ? (
+                                                      <li
+                                                         key={index}
+                                                         className="hern-cart-card-modifiers__list__parent"
+                                                      >
+                                                         <div className="hern-cart-card-modifiers__list__details">
+                                                            <span
+                                                               data-translation="true"
 
-                                                         {modifier.price !==
-                                                            0 && (
-                                                            <div>
+                                                            >
                                                                {
-                                                                  <>
-                                                                     {modifier.discount >
-                                                                        0 && (
-                                                                        <span
-                                                                           style={{
-                                                                              textDecoration:
-                                                                                 'line-through',
-                                                                           }}
-                                                                        >
-                                                                           {formatCurrency(
-                                                                              modifier.price
-                                                                           )}
-                                                                        </span>
-                                                                     )}
-                                                                     <span
-                                                                        style={{
-                                                                           marginLeft:
-                                                                              '6px',
-                                                                        }}
-                                                                     >
-                                                                        {formatCurrency(
-                                                                           modifier.price -
-                                                                              modifier.discount
-                                                                        )}
-                                                                     </span>
-                                                                  </>
+                                                                  modifier
+                                                                     .modifierOption
+                                                                     .name
                                                                }
-                                                            </div>
-                                                         )}
-                                                      </div>
-                                                      {modifier.childs.length >
-                                                         0 && (
-                                                         <ul>
-                                                            {modifier.childs.map(
-                                                               (
-                                                                  eachNestedModifier,
-                                                                  index
-                                                               ) => {
-                                                                  return (
-                                                                     <li
-                                                                        key={
-                                                                           index
-                                                                        }
-                                                                     >
-                                                                        <span
-                                                                           data-translation="true"
-                                                                           data-original-value={
-                                                                              eachNestedModifier
-                                                                                 .modifierOption
-                                                                                 .name
-                                                                           }
-                                                                        >
-                                                                           {
-                                                                              eachNestedModifier
-                                                                                 .modifierOption
-                                                                                 .name
-                                                                           }
-                                                                        </span>
-                                                                        {eachNestedModifier.price !==
-                                                                           0 && (
-                                                                           <div>
-                                                                              {
-                                                                                 <>
-                                                                                    {eachNestedModifier.discount >
-                                                                                       0 && (
-                                                                                       <span
-                                                                                          style={{
-                                                                                             textDecoration:
-                                                                                                'line-through',
-                                                                                          }}
-                                                                                       >
-                                                                                          {formatCurrency(
-                                                                                             eachNestedModifier.price
-                                                                                          )}
-                                                                                       </span>
+                                                            </span>
+
+                                                            {modifier.price !==
+                                                               0 && (
+                                                                  <div>
+                                                                     {
+                                                                        <>
+                                                                           {modifier.discount >
+                                                                              0 && (
+                                                                                 <span
+                                                                                    style={{
+                                                                                       textDecoration:
+                                                                                          'line-through',
+                                                                                    }}
+                                                                                 >
+                                                                                    {formatCurrency(
+                                                                                       modifier.price
                                                                                     )}
-                                                                                    <span
-                                                                                       style={{
-                                                                                          marginLeft:
-                                                                                             '6px',
-                                                                                       }}
-                                                                                    >
-                                                                                       {formatCurrency(
-                                                                                          eachNestedModifier.price -
-                                                                                             eachNestedModifier.discount
-                                                                                       )}
-                                                                                    </span>
-                                                                                 </>
+                                                                                 </span>
+                                                                              )}
+                                                                           <span
+                                                                              style={{
+                                                                                 marginLeft:
+                                                                                    '6px',
+                                                                              }}
+                                                                           >
+                                                                              {formatCurrency(
+                                                                                 modifier.price -
+                                                                                 modifier.discount
+                                                                              )}
+                                                                           </span>
+                                                                        </>
+                                                                     }
+                                                                  </div>
+                                                               )}
+                                                         </div>
+                                                         {modifier.childs.length >
+                                                            0 && (
+                                                               <ul>
+                                                                  {modifier.childs.map(
+                                                                     (
+                                                                        eachNestedModifier,
+                                                                        index
+                                                                     ) => {
+                                                                        return (
+                                                                           <li
+                                                                              key={
+                                                                                 index
                                                                               }
-                                                                           </div>
-                                                                        )}
-                                                                     </li>
-                                                                  )
-                                                               }
+                                                                           >
+                                                                              <span
+                                                                                 data-translation="true"
+
+                                                                              >
+                                                                                 {
+                                                                                    eachNestedModifier
+                                                                                       .modifierOption
+                                                                                       .name
+                                                                                 }
+                                                                              </span>
+                                                                              {eachNestedModifier.price !==
+                                                                                 0 && (
+                                                                                    <div>
+                                                                                       {
+                                                                                          <>
+                                                                                             {eachNestedModifier.discount >
+                                                                                                0 && (
+                                                                                                   <span
+                                                                                                      style={{
+                                                                                                         textDecoration:
+                                                                                                            'line-through',
+                                                                                                      }}
+                                                                                                   >
+                                                                                                      {formatCurrency(
+                                                                                                         eachNestedModifier.price
+                                                                                                      )}
+                                                                                                   </span>
+                                                                                                )}
+                                                                                             <span
+                                                                                                style={{
+                                                                                                   marginLeft:
+                                                                                                      '6px',
+                                                                                                }}
+                                                                                             >
+                                                                                                {formatCurrency(
+                                                                                                   eachNestedModifier.price -
+                                                                                                   eachNestedModifier.discount
+                                                                                                )}
+                                                                                             </span>
+                                                                                          </>
+                                                                                       }
+                                                                                    </div>
+                                                                                 )}
+                                                                           </li>
+                                                                        )
+                                                                     }
+                                                                  )}
+                                                               </ul>
                                                             )}
-                                                         </ul>
-                                                      )}
-                                                   </li>
-                                                ) : null
-                                          )}
-                                    </ul>
-                                 </>
-                              )}
+                                                      </li>
+                                                   ) : null
+                                             )}
+                                       </ul>
+                                    </>
+                                 )}
                            </div>
                         </div>
                      )}
@@ -580,9 +569,9 @@ const CartCard = props => {
                   <span>
                      {getTotalPrice.totalPrice !== 0
                         ? formatCurrency(
-                             getTotalPrice.totalPrice -
-                                getTotalPrice.totalDiscount
-                          )
+                           getTotalPrice.totalPrice -
+                           getTotalPrice.totalDiscount
+                        )
                         : null}
                   </span>
                </div>
