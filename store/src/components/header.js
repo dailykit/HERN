@@ -819,7 +819,7 @@ const AuthMenu = ({
             {isMobileNavVisible ? (
                <CrossIcon stroke="#111" size={24} />
             ) : (
-               <MenuIcon color="#111" />
+               <MenuIcon variant="hamburger" color="#111" />
             )}
          </button>
       </section>
