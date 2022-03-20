@@ -223,7 +223,7 @@
    display: flex;
    justify-content: space-between;
    align-items: center;
-   padding-top: 12px;
+   padding: 24px;
 }
 .hern-header__auth--layout-one {
    transform: translateX(-80px);
@@ -232,8 +232,19 @@
    }
 }
 .hern-navbar__list--layout-one {
+   padding-bottom: 24px;
    ul {
       justify-content: center;
+   }
+   .hern-navbar__list__item {
+      font-family: 'Inter';
+      font-style: normal;
+      font-weight: 500;
+      font-size: 18px;
+      line-height: 22px;
+      text-align: center;
+      letter-spacing: 0.04em;
+      color: #000000;
    }
 }
 .hern-header__location-container--layout-one {
