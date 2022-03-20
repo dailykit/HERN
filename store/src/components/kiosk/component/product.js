@@ -291,7 +291,7 @@ export const KioskProduct = props => {
                                     if (showAddToCartButton) {
                                        if (
                                           productData.productOptions.length >
-                                             0 &&
+                                          0 &&
                                           productData.isPopupAllowed
                                        ) {
                                           setShowModifier(true)
@@ -321,7 +321,7 @@ export const KioskProduct = props => {
                      <span
                         className="hern-kiosk__menu-product-name"
                         data-translation="true"
-                        data-original-value={productData.name}
+
                      >
                         {productData.name}
                      </span>
@@ -329,7 +329,7 @@ export const KioskProduct = props => {
                         <span
                            className="hern-kiosk__menu-product-description"
                            data-translation="true"
-                           data-original-value={productData.additionalText}
+
                         >
                            {productData.additionalText}
                         </span>
@@ -338,10 +338,10 @@ export const KioskProduct = props => {
                         {/* <sup></sup> */}
                         {formatCurrency(
                            productData.price -
-                              productData.discount +
-                              (productData?.productOptions[0]?.price ||
-                                 0 - productData?.productOptions[0]?.discount ||
-                                 0)
+                           productData.discount +
+                           (productData?.productOptions[0]?.price ||
+                              0 - productData?.productOptions[0]?.discount ||
+                              0)
                         )}
                      </span>
                   </div>

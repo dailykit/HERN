@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { RadioIcon, CheckBoxIcon } from '../assets/icons'
 import { ModifierOptionCard } from './'
 import { useConfig } from '../lib'
+import { useTranslation } from '../context'
 
 export const ModifierCategory = props => {
    const {
@@ -17,6 +18,7 @@ export const ModifierCategory = props => {
    } = props
 
    const { configOf } = useConfig()
+   const { t, dynamicTrans, locale } = useTranslation()
    const theme = configOf('theme-color', 'Visual')?.themeColor
    const themeColor = theme?.accent?.value
       ? theme?.accent?.value
@@ -48,6 +50,14 @@ export const ModifierCategory = props => {
          }
       }
    }
+   const currentLang = React.useMemo(() => locale, [locale])
+   React.useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [currentLang])
+
    const onCheckClick = (eachOption, eachModifierCategory) => {
       //selected option
       const selectedOption = {
@@ -69,7 +79,7 @@ export const ModifierCategory = props => {
             //for uncheck the option
             if (
                selectedOptions.single[existCategoryIndex][
-                  'modifierCategoryOptionsID'
+               'modifierCategoryOptionsID'
                ] === eachOption.id &&
                !eachModifierCategory.isRequired
             ) {
@@ -137,7 +147,9 @@ export const ModifierCategory = props => {
                alignItems: 'center',
             }}
          >
-            <span className="hern-product-modifier-pop-up-modifier-category__name">
+            <span className="hern-product-modifier-pop-up-modifier-category__name" data-translation="true"
+            >
+
                {eachCategory.name}
             </span>{' '}
             <span
@@ -145,10 +157,13 @@ export const ModifierCategory = props => {
                   fontStyle: 'italic',
                   fontSize: '11px',
                }}
+
+
             >
-               {'('}
-               {renderConditionText(eachCategory)}
-               {')'}
+               {/* <span>{'('}</span> */}
+               <span data-translation="true">{renderConditionText(eachCategory)}</span>
+
+               {/* <span>{')'}</span> */}
             </span>
          </div>
          {errorCategories.includes(eachCategory.id) && (
@@ -161,7 +176,7 @@ export const ModifierCategory = props => {
                      color: 'red',
                   }}
                >
-                  You have to choose this category.
+                  {t('You have to choose this category.')}
                </span>
             </>
          )}

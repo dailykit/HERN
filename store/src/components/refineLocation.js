@@ -12,7 +12,7 @@ import {
 import { Form, Button, GoogleSuggestionsList, Tunnel } from '.'
 import LocationSelectorConfig from './locatoinSeletorConfig.json'
 import { useConfig } from '../lib'
-import { useUser, useCart } from '../context'
+import { useUser, useCart, useTranslation } from '../context'
 import { useMutation } from '@apollo/react-hooks'
 import { MUTATIONS } from '../graphql'
 import { useToasts } from 'react-toast-notifications'
@@ -35,7 +35,7 @@ const RefineLocation = props => {
    const { user } = useUser()
    const { storedCartId, methods } = useCart()
    const { addToast } = useToasts()
-
+   const { t } = useTranslation()
    // component state
    const [centerCoordinate, setCenterCoordinate] = useState({})
    const [address, setAddress] = React.useState(props.address)
@@ -65,8 +65,8 @@ const RefineLocation = props => {
    const [loaded, error] = useScript(
       isClient
          ? `https://maps.googleapis.com/maps/api/js?key=${get_env(
-              'GOOGLE_API_KEY'
-           )}&libraries=places`
+            'GOOGLE_API_KEY'
+         )}&libraries=places`
          : ''
    )
 
@@ -81,7 +81,7 @@ const RefineLocation = props => {
 
    const [createAddress] = useMutation(MUTATIONS.CUSTOMER.ADDRESS.CREATE, {
       onCompleted: () => {
-         addToast('Address has been saved.', {
+         addToast(t('Address has been saved.'), {
             appearance: 'success',
          })
          // fb pixel custom event for adding a new address
@@ -167,7 +167,7 @@ const RefineLocation = props => {
       if (
          localStorage.getItem('storeLocationId') &&
          JSON.parse(localStorage.getItem('storeLocationId')) !==
-            selectedStore.location.id
+         selectedStore.location.id
       ) {
          const lastStoreLocationId = JSON.parse(
             localStorage.getItem('storeLocationId')
@@ -202,8 +202,7 @@ const RefineLocation = props => {
          longitude: center.lng.toString(),
       }))
       fetch(
-         `https://maps.googleapis.com/maps/api/geocode/json?latlng=${
-            center.lat
+         `https://maps.googleapis.com/maps/api/geocode/json?latlng=${center.lat
          },${center.lng}&key=${get_env('GOOGLE_API_KEY')}`
       )
          .then(res => res.json())
@@ -288,8 +287,7 @@ const RefineLocation = props => {
       if (!isClient) return 'Runs only on client side.'
       console.log('inputfn', input)
       const response = await fetch(
-         `https://maps.googleapis.com/maps/api/geocode/json?key=${
-            isClient ? get_env('GOOGLE_API_KEY') : ''
+         `https://maps.googleapis.com/maps/api/geocode/json?key=${isClient ? get_env('GOOGLE_API_KEY') : ''
          }&address=${encodeURIComponent(input.description)}`
       )
       const data = await response.json()
@@ -436,10 +434,10 @@ const RefineLocation = props => {
             }
          >
             {isGetStoresLoading
-               ? 'Searching store'
+               ? t('Searching store')
                : isStoreAvailableOnAddress
-               ? 'Save & Proceed'
-               : 'No store available'}
+                  ? t('Save & Proceed')
+                  : t('No store available')}
          </Button>
       </div>
    )
@@ -461,6 +459,7 @@ const UserLocationMarker = () => {
 }
 
 const RefineLocationHeader = ({ onRefineCloseClick, onChangeClick }) => {
+   const { t } = useTranslation()
    return (
       <div className="hern-store-location-selector-header">
          <div className="hern-store-location-selector-header-left">
@@ -470,7 +469,7 @@ const RefineLocationHeader = ({ onRefineCloseClick, onChangeClick }) => {
                stroke="currentColor"
                onClick={onRefineCloseClick}
             />
-            <span>Refine Your Location</span>
+            <span>{t('Refine Your Location')}</span>
          </div>
       </div>
    )
@@ -486,13 +485,13 @@ const AddressForm = ({
       line1: false,
    }) // to show warning for required field
    const [address] = React.useState({})
-
+   const { t } = useTranslation()
    return (
       <div style={{ position: 'relative' }}>
          <div className="hern-refine-location__address-form">
             <Form.Field className="hern-refine-location__address-form-field">
                <Form.Label>
-                  Apartment/Building Info/Street info*{' '}
+                  {t('Apartment/Building Info/Street info*')}{' '}
                   <span className="hern-address-warning">
                      {addressWarnings?.line1 ? 'fill this field' : null}
                   </span>
@@ -523,7 +522,7 @@ const AddressForm = ({
                />
             </Form.Field>
             <Form.Field className="hern-refine-location__address-form-field">
-               <Form.Label>Landmark</Form.Label>
+               <Form.Label>{t('Landmark')}</Form.Label>
                <Form.Text
                   className="hern-refine-location__address-input"
                   type="text"
@@ -539,7 +538,7 @@ const AddressForm = ({
             </Form.Field>
 
             <Form.Field className="hern-refine-location__address-form-field">
-               <Form.Label>Label</Form.Label>
+               <Form.Label>{t('Label')}</Form.Label>
                <Form.Text
                   className="hern-refine-location__address-input"
                   type="text"
@@ -554,7 +553,7 @@ const AddressForm = ({
                />
             </Form.Field>
             <Form.Field className="hern-refine-location__address-form-field">
-               <Form.Label>Dropoff Instructions</Form.Label>
+               <Form.Label>{t('Dropoff Instructions')}</Form.Label>
                <Form.TextArea
                   className="hern-refine-location__address-text-area"
                   type="text"
@@ -609,10 +608,11 @@ export const RefineLocationPopup = props => {
       onRefineLocationCloseIconClick,
       setShowRefineLocation,
    } = props
+   const { t } = useTranslation()
    return (
       <Tunnel.Left
          in={showRefineLocation}
-         title={'Refine Location'}
+         title={<span>{t('Refine Location')}</span>}
          visible={showRefineLocation}
          onClose={() => {
             setShowRefineLocation(false)

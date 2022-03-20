@@ -9,15 +9,16 @@ import { Divider } from 'antd'
 import 'antd/dist/antd.css'
 import { Delivery, Pickup, DineIn } from './index'
 import { useOnClickOutside, useScript, isClient, get_env } from '../../utils'
-
+import { useTranslation } from '../../context'
 // this Location selector is a pop up for mobile view so can user can select there location
 
 export const LocationSelector = props => {
+
    // WARNING this component using settings so whenever using this component make sure this component can access settings
    const { setShowLocationSelectionPopup, settings } = props
 
    const { brand, orderTabs } = useConfig()
-
+   const { dynamicTrans, locale } = useTranslation()
    const orderTabFulfillmentType = React.useMemo(
       () =>
          orderTabs
@@ -40,14 +41,23 @@ export const LocationSelector = props => {
 
    const [fulfillmentType, setFulfillmentType] = useState(
       orderTabFulfillmentType[0]?.split('_')[1] ||
-         defaultFulfillmentType.value?.value ||
-         defaultFulfillmentType.default?.value
+      defaultFulfillmentType.value?.value ||
+      defaultFulfillmentType.default?.value
    )
 
    React.useEffect(() => {
       document.querySelector('body').style.overflowY = 'hidden'
       return () => (document.querySelector('body').style.overflowY = 'auto')
    }, [])
+
+   const currentLang = React.useMemo(() => locale, [locale])
+
+   React.useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [currentLang])
 
    if (!orderTabFulfillmentType) {
       return <Loader inline />
@@ -68,14 +78,16 @@ export const LocationSelector = props => {
                         }
                      )}
                      onClick={() => setFulfillmentType('DELIVERY')}
+                     data-translation="true"
+
                   >
                      {
                         orderTabs.find(
                            x =>
                               x.orderFulfillmentTypeLabel ===
-                                 'ONDEMAND_DELIVERY' ||
+                              'ONDEMAND_DELIVERY' ||
                               x.orderFulfillmentTypeLabel ===
-                                 'PREORDER_DELIVERY'
+                              'PREORDER_DELIVERY'
                         ).label
                      }
                   </button>
@@ -92,12 +104,14 @@ export const LocationSelector = props => {
                         }
                      )}
                      onClick={() => setFulfillmentType('PICKUP')}
+                     data-translation="true"
+
                   >
                      {
                         orderTabs.find(
                            x =>
                               x.orderFulfillmentTypeLabel ===
-                                 'ONDEMAND_PICKUP' ||
+                              'ONDEMAND_PICKUP' ||
                               x.orderFulfillmentTypeLabel === 'PREORDER_PICKUP'
                         ).label
                      }
@@ -120,7 +134,7 @@ export const LocationSelector = props => {
                         orderTabs.find(
                            x =>
                               x.orderFulfillmentTypeLabel ===
-                                 'ONDEMAND_DINEIN' ||
+                              'ONDEMAND_DINEIN' ||
                               x.orderFulfillmentTypeLabel === 'SCHEDULED_DINEIN'
                         ).label
                      }

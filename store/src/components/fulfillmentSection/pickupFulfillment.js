@@ -16,7 +16,7 @@ import {
    setThemeVariable,
    isClient,
 } from '../../utils'
-import { CartContext, useUser } from '../../context'
+import { CartContext, useTranslation, useUser } from '../../context'
 import { Loader, Button } from '../'
 import moment from 'moment'
 import classNames from 'classnames'
@@ -32,6 +32,8 @@ export const Pickup = props => {
    const { methods, cartState } = React.useContext(CartContext)
 
    const theme = configOf('theme-color', 'visual')
+
+   const { t } = useTranslation()
 
    const [fulfillmentType, setFulfillmentType] = useState(null)
    const [isGetStoresLoading, setIsGetStoresLoading] = useState(true)
@@ -66,7 +68,8 @@ export const Pickup = props => {
             label: (
                <span>
                   <DeliveryNowIcon />
-                  &nbsp;Pickup
+                  &nbsp;
+                  <span>{t('Pickup')}</span>
                </span>
             ),
             value: 'ONDEMAND_PICKUP',
@@ -80,7 +83,8 @@ export const Pickup = props => {
             label: (
                <span>
                   <DeliveryLaterIcon />
-                  &nbsp; Schedule Later
+                  &nbsp;
+                  <span>{t('Schedule Later')}</span>
                </span>
             ),
             value: 'PREORDER_PICKUP',
@@ -237,7 +241,7 @@ export const Pickup = props => {
          ) {
             const showTimeSlots = Boolean(
                !lastStoreLocationId == null ||
-                  localStorage.getItem('lastStoreLocationId')
+               localStorage.getItem('lastStoreLocationId')
             )
             setShowSlots(showTimeSlots)
             setIsLoading(false)
@@ -498,13 +502,13 @@ export const Pickup = props => {
                setIsMobileViewOpen(false)
             }}
          >
-            Add pickup time{' '}
+            {t('Add pickup time')}
          </button>
       )
    }
 
    if (isLoading) {
-      return <p>Loading</p>
+      return <p>{t('Loading')}</p>
    }
 
    if (!showSlots) {
@@ -517,43 +521,42 @@ export const Pickup = props => {
                      {title}&nbsp;
                      {cartState.cart?.fulfillmentInfo?.type ===
                         'PREORDER_PICKUP' && (
-                        <span>
-                           {' '}
-                           on{' '}
-                           {moment(
-                              cartState.cart?.fulfillmentInfo?.slot?.from
-                           ).format('DD MMM YYYY')}
-                           {' ('}
-                           {moment(
-                              cartState.cart?.fulfillmentInfo?.slot?.from
-                           ).format('HH:mm')}
-                           {'-'}
-                           {moment(
-                              cartState.cart?.fulfillmentInfo?.slot?.to
-                           ).format('HH:mm')}
-                           {')'}
-                        </span>
-                     )}
+                           <span>
+                              <span>{t('on')}</span>
+                              {moment(
+                                 cartState.cart?.fulfillmentInfo?.slot?.from
+                              ).format('DD MMM YYYY')}
+                              {' ('}
+                              {moment(
+                                 cartState.cart?.fulfillmentInfo?.slot?.from
+                              ).format('HH:mm')}
+                              {'-'}
+                              {moment(
+                                 cartState.cart?.fulfillmentInfo?.slot?.to
+                              ).format('HH:mm')}
+                              {')'}
+                           </span>
+                        )}
                   </label>
                </div>
                {(pickupRadioOptions.length > 0 ||
                   fulfillmentType === 'PREORDER_PICKUP') && (
-                  <Button
-                     variant="ghost"
-                     onClick={() => {
-                        if (pickupRadioOptions.length > 1) {
-                           setFulfillmentType(null)
-                           setFulfillmentTabInfo(prev => ({
-                              ...prev,
-                              orderTabId: null,
-                           }))
-                        }
-                        setShowSlots(true)
-                     }}
-                  >
-                     Change
-                  </Button>
-               )}
+                     <Button
+                        variant="ghost"
+                        onClick={() => {
+                           if (pickupRadioOptions.length > 1) {
+                              setFulfillmentType(null)
+                              setFulfillmentTabInfo(prev => ({
+                                 ...prev,
+                                 orderTabId: null,
+                              }))
+                           }
+                           setShowSlots(true)
+                        }}
+                     >
+                        {t('Change')}
+                     </Button>
+                  )}
             </div>
          </div>
       )
@@ -562,7 +565,7 @@ export const Pickup = props => {
    return (
       <div className="hern-cart__fulfillment-time-section">
          <div className="hern-cart__fulfillment-time-section-heading">
-            <span>When would you like to order?</span>
+            <span>{t('When would you like to order?')}</span>
          </div>
 
          {pickupRadioOptions.length > 1 && (
@@ -597,7 +600,7 @@ export const Pickup = props => {
          {!fulfillmentType ? null : isGetStoresLoading ? (
             <Loader inline />
          ) : stores.length === 0 ? (
-            <p>No store available</p>
+            <p>{t('No store available')}</p>
          ) : fulfillmentType === 'PREORDER_PICKUP' ? (
             <TimeSlots
                onFulfillmentTimeClick={onFulfillmentTimeClick}

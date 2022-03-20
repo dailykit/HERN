@@ -10,7 +10,7 @@ import OrderInfo from '../../OrderInfo'
 import Fulfillment from './fulfillment'
 import PaymentCard from './PaymentCard'
 import { useConfig } from '../../../lib'
-import { useUser } from '../../../context'
+import { useTranslation, useUser } from '../../../context'
 import { getRoute, isClient } from '../../../utils'
 import { Button } from '../../../components'
 import { CloseIcon } from '../../../assets/icons'
@@ -21,6 +21,7 @@ export const CartPanel = ({ noSkip, isCheckout }) => {
    const router = useRouter()
    const { user } = useUser()
    const { state } = useMenu()
+   const { t } = useTranslation()
    const { configOf } = useConfig()
    const [updateBrandCustomer] = useMutation(UPDATE_BRAND_CUSTOMER, {
       skip: !isCheckout || !user?.brandCustomerId,
@@ -75,7 +76,7 @@ export const CartPanel = ({ noSkip, isCheckout }) => {
          >
             <header className="hern-select-menu__cart__cart-panel__header">
                <h1 className="hern-select-menu__cart__cart-panel__header__title">
-                  Cart Summary
+                  {t('Cart Summary')}
                </h1>
                <button
                   className="hern-select-menu__cart__cart-panel__header__close-icon"
@@ -115,7 +116,7 @@ export const CartPanel = ({ noSkip, isCheckout }) => {
                               ?.itemCountValid
                         }
                      >
-                        PROCEED TO CHECKOUT
+                        {t('PROCEED TO CHECKOUT')}
                      </Button>
                   )}
                </>
@@ -128,6 +129,7 @@ export const CartPanel = ({ noSkip, isCheckout }) => {
 const CartBar = ({ setIsCartPanelOpen }) => {
    const { state } = useMenu()
    const { user } = useUser()
+   const { t } = useTranslation()
    return (
       <section
          className="hern-select-menu__cart__cart-bar"
@@ -135,22 +137,23 @@ const CartBar = ({ setIsCartPanelOpen }) => {
       >
          <section>
             <h4 className="hern-select-menu__cart__cart-bar__count">
-               Cart {state?.occurenceCustomer?.validStatus?.addedProductsCount}/
+               <span>{t('Cart')}</span>{' '}
+               {state?.occurenceCustomer?.validStatus?.addedProductsCount}/
                {user?.subscription?.recipes?.count}
             </h4>
             <h4 className="hern-select-menu__cart__cart-bar__summary">
-               View full summary <span>&#8657;</span>
+               <span>{t('View full summary')}</span> <span>&#8657;</span>
             </h4>
          </section>
          <section className="hern-select-menu__cart__cart-bar__saving-status">
             {state.cartState === 'SAVING' && (
                <span className="hern-select-menu__cart__cart-bar__saving">
-                  SAVING
+                  {t('SAVING')}
                </span>
             )}
             {state.cartState === 'SAVED' && (
                <span className="hern-select-menu__cart__cart-bar__saved">
-                  SAVED
+                  {t('SAVED')}
                </span>
             )}
          </section>

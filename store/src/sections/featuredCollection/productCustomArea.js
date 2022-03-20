@@ -1,7 +1,7 @@
 import { Modal } from 'antd'
 import React, { useState } from 'react'
 import { Button, CounterButton, ModifierPopup } from '../../components'
-import { CartContext } from '../../context'
+import { CartContext, useTranslation } from '../../context'
 import { useConfig } from '../../lib'
 import { getCartItemWithModifiers } from '../../utils'
 
@@ -20,6 +20,9 @@ export const CustomArea = props => {
    const [productCartItemIds, setProductCartItemIds] = React.useState([])
    const [showChooseIncreaseType, setShowChooseIncreaseType] = useState(false)
    const [showModifierPopup, setShowModifierPopup] = React.useState(false)
+
+   const { t } = useTranslation()
+
    React.useEffect(() => {
       if (combinedCartItems) {
          const allCartItemsIdsForThisProducts = combinedCartItems
@@ -249,7 +252,7 @@ export const CustomArea = props => {
                      color: themeColor,
                   }}
                >
-                  {"I'LL CHOOSE"}
+                  {t("I'LL CHOOSE")}
                </Button>
                <Button
                   style={{ padding: '.1em 2em' }}
@@ -257,7 +260,7 @@ export const CustomArea = props => {
                      await repeatLastOne(data)
                   }}
                >
-                  {'REPEAT LAST ONE'}
+                  {t('REPEAT LAST ONE')}
                </Button>
             </div>
          </Modal>
@@ -283,16 +286,16 @@ export const CustomArea = props => {
                      }
                   }
                }}
-               // disabled={
-               //    locationId ? (storeStatus.status ? false : true) : true
-               // }
+            // disabled={
+            //    locationId ? (storeStatus.status ? false : true) : true
+            // }
             >
                {/* {locationId
                   ? storeStatus.status
-                     ? 'ADD'
-                     : 'COMING SOON'
-                  : 'COMING SOON'} */}
-               ADD
+                     ? t('ADD')
+                     : t('COMING SOON')
+                  : t('COMING SOON')}*/}
+               {t('ADD')}
             </Button>
          ) : (
             <CounterButton
@@ -312,7 +315,7 @@ export const CustomArea = props => {
                showDeleteButton
             />
          )}
-         {data.productOptions.length > 0 && <span>Customizable</span>}
+         {data.productOptions.length > 0 && <span>{t('Customizable')}</span>}
       </div>
    )
 }

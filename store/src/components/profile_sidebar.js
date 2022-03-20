@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
 import classNames from 'classnames'
-
+import { useTranslation } from './../context'
 import { useConfig } from '../lib'
 import { getRoute } from '../utils'
 import { ProfileSidebarIcon } from '../assets/icons'
@@ -12,6 +12,7 @@ import { SUPPORTED_PAYMENT_OPTIONS } from '../graphql'
 export const ProfileSidebar = ({ toggle = true, logout }) => {
    const { configOf, settings } = useConfig()
    const router = useRouter()
+   const { t } = useTranslation()
    const isSubscriptionStore =
       settings?.availability?.isSubscriptionAvailable?.Subscription
          ?.isSubscriptionAvailable?.value ?? false
@@ -36,11 +37,10 @@ export const ProfileSidebar = ({ toggle = true, logout }) => {
          Icon: ProfileSidebarIcon.Wallet,
       },
       {
-         title: `${
-            loyaltyPointsSettings?.label
-               ? loyaltyPointsSettings.label
-               : 'Loyalty Points'
-         }`,
+         title: `${loyaltyPointsSettings?.label
+            ? loyaltyPointsSettings.label
+            : 'Loyalty Points'
+            }`,
          href: '/account/loyalty-points/',
          Icon: ProfileSidebarIcon.LoyaltyPoints,
       },
@@ -98,7 +98,7 @@ export const ProfileSidebar = ({ toggle = true, logout }) => {
                   <Link href={getRoute(node.href)} key={node.href} passHref>
                      <span className={manuItemClasses}>
                         <Icon />
-                        <span>{node.title}</span>
+                        <span>{t(node.title)}</span>
                      </span>
                   </Link>
                )

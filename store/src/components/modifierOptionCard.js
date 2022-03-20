@@ -2,6 +2,7 @@ import React from 'react'
 import { ShowImageIcon } from '../assets/icons'
 import { formatCurrency } from '../utils'
 import classNames from 'classnames'
+import { useTranslation } from '../context'
 
 export const ModifierOptionCard = ({
    modifierOption,
@@ -14,7 +15,14 @@ export const ModifierOptionCard = ({
    showImageIcon = false,
    showCustomize = true,
 }) => {
-   // console.log('modifierOption', modifierOption)
+   const { t, dynamicTrans, locale } = useTranslation()
+   const currentLang = React.useMemo(() => locale, [locale])
+   React.useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [currentLang])
 
    return (
       <div
@@ -30,7 +38,8 @@ export const ModifierOptionCard = ({
                   <CheckIcon />
                </span>
             )}
-            <span className="hern-modifier-option-name">
+            <span className="hern-modifier-option-name" data-translation="true"
+            >
                {modifierOption.name}
             </span>
             {showPrice &&
@@ -110,7 +119,7 @@ export const ModifierOptionCard = ({
                      }
                   }}
                >
-                  customize
+                  {t('customize')}
                </span>
             )}
          </div>

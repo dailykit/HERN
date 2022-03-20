@@ -4,7 +4,7 @@ import { useToasts } from 'react-toast-notifications'
 import Countdown from 'react-countdown'
 
 import { useMenu } from '../../state'
-import { useUser } from '../../../../context'
+import { useTranslation, useUser } from '../../../../context'
 import { formatDate } from '../../../../utils'
 import { MUTATIONS } from '../../../../graphql'
 import { ProductSkeleton, CartProduct } from '../../../../components'
@@ -12,6 +12,7 @@ import { ProductSkeleton, CartProduct } from '../../../../components'
 const PlanProducts = ({ noSkip, isCheckout }) => {
    const { user } = useUser()
    const { addToast } = useToasts()
+   const { t } = useTranslation()
    const { state, methods, dispatch } = useMenu()
 
    const [upsertOccurenceCustomer] = useMutation(
@@ -19,9 +20,11 @@ const PlanProducts = ({ noSkip, isCheckout }) => {
       {
          onCompleted: ({ upsertOccurenceCustomerCart = {} }) => {
             if (upsertOccurenceCustomerCart.isSkipped) {
-               return addToast('Skipped this week', { appearance: 'warning' })
+               return addToast(t('Skipped this week'), {
+                  appearance: 'warning',
+               })
             }
-            addToast('This week is now available for menu selection', {
+            addToast(t('This week is now available for menu selection'), {
                appearance: 'success',
             })
          },
@@ -77,7 +80,7 @@ const PlanProducts = ({ noSkip, isCheckout }) => {
       <div>
          <header className="hern-cart-plan-products__header">
             <h4 className="hern-cart-plan-products__header__title">
-               Your Box{' '}
+               {t('Your Box')}{' '}
                {state?.occurenceCustomer?.validStatus?.addedProductsCount}/
                {user?.subscription?.recipes?.count}
             </h4>
@@ -85,12 +88,12 @@ const PlanProducts = ({ noSkip, isCheckout }) => {
             <section className="hern-cart-plan-products__saving-status">
                {state.cartState === 'SAVING' && (
                   <span className="hern-cart-plan-products__saving-status__saving">
-                     SAVING
+                     {t('SAVING')}
                   </span>
                )}
                {state.cartState === 'SAVED' && (
                   <span className="hern-cart-plan-products__saving-status__saved">
-                     SAVED
+                     {t('SAVED')}
                   </span>
                )}
             </section>
@@ -100,7 +103,7 @@ const PlanProducts = ({ noSkip, isCheckout }) => {
                      className="hern-cart-plan-products__skip-week__label"
                      htmlFor="skip"
                   >
-                     Skip
+                     {t('Skip')}
                   </label>
                   <input
                      name="skip"
@@ -117,7 +120,7 @@ const PlanProducts = ({ noSkip, isCheckout }) => {
                className="hern-cart-plan-products__count-down"
                title={formatDate(state.week.cutoffTimeStamp)}
             >
-               Time remaining:{' '}
+               {t('Time remaining:')}{' '}
                <Countdown
                   onComplete={onWeekEnd}
                   date={state.week.cutoffTimeStamp}
