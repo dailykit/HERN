@@ -147,7 +147,7 @@
    --tw-bg-opacity: 1;
    background-color: rgba(255, 255, 255, var(--tw-bg-opacity));
    width: 100%;
-   top: 6rem;
+   top: auto;
    list-style-type: none;
    -webkit-transition-property: all;
    transition-property: all;
@@ -223,7 +223,7 @@
    display: flex;
    justify-content: space-between;
    align-items: center;
-   padding: 24px;
+   padding: 12px 0;
 }
 .hern-header__auth--layout-one {
    transform: translateX(-80px);
@@ -232,7 +232,7 @@
    }
 }
 .hern-navbar__list--layout-one {
-   padding-bottom: 24px;
+   padding-bottom: 12px;
    ul {
       justify-content: center;
    }
@@ -263,7 +263,6 @@
    }
 }
 .hern-navigatin-menu__wrapper--mobile--layout-one {
-   top: 80px;
    z-index: 999;
 }
 
