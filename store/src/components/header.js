@@ -9,6 +9,7 @@ import {
    formatCurrency,
    getStoresWithValidations,
 } from '../utils'
+import { CSSTransition } from 'react-transition-group'
 
 import { useUser, CartContext } from '../context'
 import { isClient, getRoute, LocationSelectorWrapper } from '../utils'
@@ -404,13 +405,18 @@ const LayoutOne = ({
             />
          )}
 
-         {isMobileNavVisible && (
+         <CSSTransition
+            in={isMobileNavVisible}
+            timeout={300}
+            unmountOnExit
+            classNames="hern-header__css-transition"
+         >
             <MobileNavigationMenu
                settings={settings}
                newNavigationMenus={newNavigationMenus}
                layout="layout-one"
             />
-         )}
+         </CSSTransition>
       </header>
    )
 }
@@ -464,10 +470,17 @@ const LayoutTwo = ({
          )}
 
          {isMobileNavVisible && (
-            <MobileNavigationMenu
-               settings={settings}
-               newNavigationMenus={newNavigationMenus}
-            />
+            <CSSTransition
+               in={isMobileNavVisible}
+               timeout={300}
+               unmountOnExit
+               classNames="hern-header__css-transition"
+            >
+               <MobileNavigationMenu
+                  settings={settings}
+                  newNavigationMenus={newNavigationMenus}
+               />
+            </CSSTransition>
          )}
       </header>
    )

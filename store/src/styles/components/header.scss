@@ -271,3 +271,21 @@
 .hern-header__location-right--layout-two {
    display: flex;
 }
+.hern-header__css-transition-enter {
+   height: 0;
+   opacity: 0;
+}
+.hern-header__css-transition-enter-active {
+   transition: all 0.4s;
+   height: auto;
+   opacity: 1;
+}
+.hern-header__css-transition-exit {
+   opacity: 1;
+   height: auto;
+}
+.hern-header__css-transition-exit-active {
+   transition: all 0.4s;
+   height: 0;
+   opacity: 0;
+}
