@@ -42,10 +42,9 @@ export const SliderSection2 = ({ config }) => {
                centerMode={true}
                responsive={[
                   {
-                     breakpoint: 1024,
+                     breakpoint: 768,
                      settings: {
-                        slidesToShow: 3,
-                        initialSlide: 1,
+                        slidesToShow: 1,
                      },
                   },
                   {
