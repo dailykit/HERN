@@ -34,7 +34,10 @@
    margin-top: 4px;
    // height: 26.5rem;
    overflow: auto;
-   // height: 220px;
+   height: 220px;
+   @media (max-width: 480px) {
+      height: unset;
+   }
 }
 .hern-refine-location__address-form-field {
    width: 100%;
