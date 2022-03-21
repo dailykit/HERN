@@ -119,12 +119,12 @@ export const ContactUs = ({ config }) => {
       }
 
       if (
-         !config?.informationVisibility?.styleType?.value[0]?.value ||
-         config.informationVisibility.styleType.value[0].value === 1
+         !config?.informationVisibility?.styleType?.value?.value ||
+         config.informationVisibility.styleType.value.value === 1
       ) {
          return response
       } else {
-         switch (config.informationVisibility.styleType.value[0].value) {
+         switch (config.informationVisibility.styleType.value.value) {
             case 2:
                return <div>Address Block Type 2</div>
          }
@@ -155,12 +155,12 @@ export const ContactUs = ({ config }) => {
       }
 
       if (
-         !config?.informationVisibility?.styleType?.value[0]?.value ||
-         config.informationVisibility.styleType.value[0].value === 1
+         !config?.informationVisibility?.styleType?.value?.value ||
+         config.informationVisibility.styleType.value.value === 1
       ) {
          return response
       } else {
-         switch (config.informationVisibility.styleType.value[0].value) {
+         switch (config.informationVisibility.styleType.value.value) {
             case 2:
                return (
                   <div class="hern_contact_us-2-info-block">
@@ -205,12 +205,12 @@ export const ContactUs = ({ config }) => {
       }
 
       if (
-         !config?.informationVisibility?.styleType?.value[0]?.value ||
-         config.informationVisibility.styleType.value[0].value === 1
+         !config?.informationVisibility?.styleType?.value?.value ||
+         config.informationVisibility.styleType.value.value === 1
       ) {
          return response
       } else {
-         switch (config.informationVisibility.styleType.value[0].value) {
+         switch (config.informationVisibility.styleType.value.value) {
             case 2:
                return (
                   <div class="hern_contact_us-2-info-block">
@@ -246,11 +246,10 @@ export const ContactUs = ({ config }) => {
                </div>
                <div
                   className={`hern-contact_us-details ${
-                     !config?.informationVisibility?.styleType?.value[0]
-                        ?.value ||
-                     config.informationVisibility.styleType.value[0].value === 1
+                     !config?.informationVisibility?.styleType?.value?.value ||
+                     config.informationVisibility.styleType.value.value === 1
                         ? 'contact-form'
-                        : `contact-form-${config.informationVisibility.styleType.value[0].value}`
+                        : `contact-form-${config.informationVisibility.styleType.value.value}`
                   }`}
                >
                   {formState ? (
