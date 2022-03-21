@@ -13,7 +13,7 @@ import { CustomArea } from '../featuredCollection/productCustomArea'
 export const ProductGallery = ({ config }) => {
    const [productsData, setProductsData] = React.useState([])
    const [productOrientation, setProductOrientation] = React.useState(
-      config.informationVisibility.productOrientation.value[0].value
+      config.informationVisibility.productOrientation.value.value
    )
    const [status, setStatus] = React.useState('loading')
    const { brand, locationId } = useConfig()
@@ -63,7 +63,7 @@ export const ProductGallery = ({ config }) => {
          <div className="hern-product_gallery-header">
             <h3
                className={
-                  config?.informationVisibility?.headingStyleType?.value[0]
+                  config?.informationVisibility?.headingStyleType?.value
                      ?.value || 'hern-product_gallery-header-heading'
                }
             >
@@ -148,8 +148,9 @@ const ProductGrid = ({ config, product, index }) => {
          data={product}
          showImage={product.assets.images.length > 0 ? true : false}
          customAreaComponent={
-            config?.informationVisibility?.showAddButtonInProduct?.value ||
             (!config?.informationVisibility?.showAddButtonInProduct &&
+               CustomAreaWrapper) ||
+            (config?.informationVisibility?.showAddButtonInProduct?.value &&
                CustomAreaWrapper)
          }
          showModifier={productModifier && productModifier.id === product.id}
@@ -162,7 +163,7 @@ const ProductGrid = ({ config, product, index }) => {
             config?.informationVisibility?.showSliderArrows?.value
          }
          productDetailType={
-            config?.informationVisibility?.productDetailType?.value[0]?.value
+            config?.informationVisibility?.productDetailType?.value?.value
          }
          showProductDescription={
             config?.informationVisibility?.showProductDescription?.value ||
