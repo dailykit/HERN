@@ -8,7 +8,7 @@ import * as Scroll from 'react-scroll'
 export const OnDemandMenu = props => {
    // props
    // menuTYpe --> floating or navigation anchor
-   const { menuType, categories, showCount } = props
+   const { menuType, categories, showCount, navbarAlignment = 'CENTER' } = props
    const showProductCount = showCount ?? showCount ?? true
    const [showMenuItems, setShowMenuItems] = useState('0')
    const [activeCategory, setActiveCategory] = useState(null)
@@ -27,10 +27,21 @@ export const OnDemandMenu = props => {
          document.querySelector('body').style.overflowY = 'auto'
       }
    }, [showMenuItems])
+   const navAlignment = React.useMemo(() => {
+      const value = {
+         CENTER: 'center',
+         LEFT: 'flex-start',
+         RIGHT: 'flex-end',
+      }
+      return value[navbarAlignment]
+   }, [navbarAlignment])
 
    if (menuType && menuType === 'navigationAnchorMenu') {
       return (
-         <div className={classNames('hern-on-demand-menu__navigationAnchor')}>
+         <div
+            className={classNames('hern-on-demand-menu__navigationAnchor')}
+            style={{ justifyContent: navAlignment }}
+         >
             <ul>
                {categories.map((each, index) => (
                   <React.Fragment key={index}>
