@@ -100,22 +100,23 @@ export const ProductGallery = ({ config }) => {
                )}
                {config?.informationVisibility?.showPageButton?.value && (
                   <Row
-                     gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
                      style={{
                         justifyContent: 'center',
-                        margin: '1.5em 7em 1em',
+                        margin: '20px 0px',
                      }}
                   >
-                     <a
-                        class="hern-product_gallery_page-button"
-                        href={
-                           config?.data?.pageButton?.route?.value ||
-                           config?.data?.pageButton?.route?.default
-                        }
-                     >
-                        {config.data.pageButton.title.value ||
-                           config.data.pageButton.title.default}
-                     </a>
+                     <Col span={12} style={{ textAlign: 'center' }}>
+                        <a
+                           class="hern-product_gallery_page-button"
+                           href={
+                              config?.data?.pageButton?.route?.value ||
+                              config?.data?.pageButton?.route?.default
+                           }
+                        >
+                           {config.data.pageButton.title.value ||
+                              config.data.pageButton.title.default}
+                        </a>
+                     </Col>
                   </Row>
                )}
             </>

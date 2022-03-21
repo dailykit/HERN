@@ -120,6 +120,7 @@ const SliderSection2 = dynamic(() =>
    import('../sections/slider-section-2').then(
       promise => promise.SliderSection2
    )
+)
 const FeaturedCoupon = dynamic(() =>
    import('../sections/featured-coupon').then(promise => promise.FeaturedCoupon)
 )
