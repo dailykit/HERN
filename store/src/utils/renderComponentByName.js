@@ -116,6 +116,10 @@ const CartOrderDetails = dynamic(() =>
 const Testimonials = dynamic(() =>
    import('../sections/testimonials').then(promise => promise.Testimonials)
 )
+const SliderSection2 = dynamic(() =>
+   import('../sections/slider-section-2').then(
+      promise => promise.SliderSection2
+   )
 const FeaturedCoupon = dynamic(() =>
    import('../sections/featured-coupon').then(promise => promise.FeaturedCoupon)
 )
@@ -319,6 +323,8 @@ export const renderComponentByName = (fold, options) => {
          return <SliderSection config={fold.config} />
       case 'ContactUs':
          return <ContactUs config={fold.config} />
+      case 'SliderSection2':
+         return <SliderSection2 config={fold.config} />
       case 'FeaturedCoupon':
          return <FeaturedCoupon config={fold.config} />
    }

@@ -97,35 +97,76 @@ export const ContactUs = ({ config }) => {
    const validatePhone = phone => {
       return phone.match(/^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\./0-9]*$/g)
    }
-   return (
-      <>
-         <div className="hern-contact_us">
-            <div className="hern-contact_us-header">
-               <h3>{config?.heading.value}</h3>
-               <h5>{config?.title.value}</h5>
-               <p>{config?.subTitle.value}</p>
-            </div>
-            <div className="hern-contact_us-div">
-               <div className="hern-contact_us-details">
-                  <div>
-                     <AddressIcon
-                        className="hern-contact_us-icon"
-                        fill="#7CC41E"
-                     />
-                     <h3>visit Us</h3>
-                     <p>
-                        {config?.addressLine1.value}, <br />
-                        {config?.addressLine2.value}, <br />
-                        {config?.addressLine3.value} <br />
-                     </p>
-                  </div>
-                  <div>
-                     <MailIcon
-                        className="hern-contact_us-icon"
-                        fill="#7CC41E"
-                     />
-                     <h3>Email Us</h3>
-                     <p>
+
+   const loadCompanyAddressBlock = config => {
+      let response = (
+         <div>
+            <AddressIcon className="hern-contact_us-icon" fill="#7CC41E" />
+            <h3>visit Us</h3>
+            <p>
+               {config?.addressLine1.value}, <br />
+               {config?.addressLine2.value}, <br />
+               {config?.addressLine3.value} <br />
+            </p>
+         </div>
+      )
+      if (config?.informationVisibility?.showCompanyAddress) {
+         if (!config?.informationVisibility?.showCompanyAddress?.value) {
+            return false
+         }
+      } else {
+         return response
+      }
+
+      if (
+         !config?.informationVisibility?.styleType?.value[0]?.value ||
+         config.informationVisibility.styleType.value[0].value === 1
+      ) {
+         return response
+      } else {
+         switch (config.informationVisibility.styleType.value[0].value) {
+            case 2:
+               return <div>Address Block Type 2</div>
+         }
+      }
+   }
+
+   const loadCompanyEmailBlock = config => {
+      let response = (
+         <div>
+            <MailIcon className="hern-contact_us-icon" fill="#7CC41E" />
+            <h3>Email Us</h3>
+            <p>
+               <a
+                  href={`mailto: ${config?.email.value}`}
+                  title={config?.email.value}
+               >
+                  {config?.email.value}
+               </a>
+            </p>
+         </div>
+      )
+      if (config?.informationVisibility?.showCompanyEmail) {
+         if (!config?.informationVisibility?.showCompanyEmail?.value) {
+            return false
+         }
+      } else {
+         return response
+      }
+
+      if (
+         !config?.informationVisibility?.styleType?.value[0]?.value ||
+         config.informationVisibility.styleType.value[0].value === 1
+      ) {
+         return response
+      } else {
+         switch (config.informationVisibility.styleType.value[0].value) {
+            case 2:
+               return (
+                  <div class="hern_contact_us-2-info-block">
+                     <img src="https://dailykit-237-breezychef.s3.us-east-2.amazonaws.com/images/26676-email-icon.png" />
+                     <p class="heading">Ask an Expert</p>
+                     <p class="email">
                         <a
                            href={`mailto: ${config?.email.value}`}
                            title={config?.email.value}
@@ -134,13 +175,48 @@ export const ContactUs = ({ config }) => {
                         </a>
                      </p>
                   </div>
-                  <div>
-                     <PhoneIcon
-                        className="hern-contact_us-icon"
-                        fill="#7CC41E"
-                     />
-                     <h3>Call Us</h3>
-                     <p>
+               )
+         }
+      }
+   }
+
+   const loadCompanyPhoneBlock = config => {
+      let response = (
+         <div>
+            <PhoneIcon className="hern-contact_us-icon" fill="#7CC41E" />
+            <h3>Call Us</h3>
+            <p>
+               <a
+                  href={`tel:${config?.phone.value}`}
+                  title={config?.phone.value}
+               >
+                  {config?.phone.value}
+               </a>
+            </p>
+         </div>
+      )
+
+      if (config?.informationVisibility?.showCompanyPhone) {
+         if (!config?.informationVisibility?.showCompanyPhone?.value) {
+            return false
+         }
+      } else {
+         return response
+      }
+
+      if (
+         !config?.informationVisibility?.styleType?.value[0]?.value ||
+         config.informationVisibility.styleType.value[0].value === 1
+      ) {
+         return response
+      } else {
+         switch (config.informationVisibility.styleType.value[0].value) {
+            case 2:
+               return (
+                  <div class="hern_contact_us-2-info-block">
+                     <img src="https://dailykit-237-breezychef.s3.us-east-2.amazonaws.com/images/34151-whatsapp-icon.png" />
+                     <p class="heading">Whatsapp</p>
+                     <p class="phone">
                         <a
                            href={`tel:${config?.phone.value}`}
                            title={config?.phone.value}
@@ -149,11 +225,39 @@ export const ContactUs = ({ config }) => {
                         </a>
                      </p>
                   </div>
+               )
+         }
+      }
+   }
+
+   return (
+      <>
+         <div className="hern-contact_us">
+            <div className="hern-contact_us-header-2">
+               <h3>{config?.heading.value}</h3>
+               <h5>{config?.title.value}</h5>
+               <p>{config?.subTitle.value}</p>
+            </div>
+            <div className="hern-contact_us-div">
+               <div className="hern-contact_us-details">
+                  {loadCompanyAddressBlock(config)}
+                  {loadCompanyEmailBlock(config)}
+                  {loadCompanyPhoneBlock(config)}
                </div>
-               <div className="hern-contact_us-details contact-form">
+               <div
+                  className={`hern-contact_us-details ${
+                     !config?.informationVisibility?.styleType?.value[0]
+                        ?.value ||
+                     config.informationVisibility.styleType.value[0].value === 1
+                        ? 'contact-form'
+                        : `contact-form-${config.informationVisibility.styleType.value[0].value}`
+                  }`}
+               >
                   {formState ? (
                      <form>
                         <div className="form-group">
+                           {config?.informationVisibility?.showFormLabels
+                              ?.value && <label>Name</label>}
                            <input
                               type="text"
                               placeholder="Your Name *"
@@ -164,6 +268,8 @@ export const ContactUs = ({ config }) => {
                            />
                         </div>
                         <div className="form-group">
+                           {config?.informationVisibility?.showFormLabels
+                              ?.value && <label>Email</label>}
                            <input
                               type="email"
                               required
@@ -174,6 +280,8 @@ export const ContactUs = ({ config }) => {
                            />
                         </div>
                         <div className="form-group">
+                           {config?.informationVisibility?.showFormLabels
+                              ?.value && <label>Phone Number</label>}
                            <input
                               type="text"
                               required
@@ -184,6 +292,8 @@ export const ContactUs = ({ config }) => {
                            />
                         </div>
                         <div className="form-group">
+                           {config?.informationVisibility?.showFormLabels
+                              ?.value && <label>Subject</label>}
                            <input
                               type="text"
                               required=""
@@ -194,6 +304,8 @@ export const ContactUs = ({ config }) => {
                            />
                         </div>
                         <div className="form-group">
+                           {config?.informationVisibility?.showFormLabels
+                              ?.value && <label>Message</label>}
                            <textarea
                               placeholder="Message"
                               id="textarea_message"
@@ -202,13 +314,20 @@ export const ContactUs = ({ config }) => {
                               className="form-control"
                            ></textarea>
                         </div>
-                        <div className="form-group">
+                        <div className="form-group submit-form-group">
                            <input
                               type="button"
                               className="submit-button"
                               name="post"
                               id="btn_submit"
-                              value="Send"
+                              value={
+                                 config?.submitButtonTitle
+                                    ? config?.submitButtonTitle?.value
+                                       ? config.submitButtonTitle.value
+                                       : config.submitButtonTitle.default ||
+                                         'Send'
+                                    : 'Send'
+                              }
                               title="Send"
                               onClick={() => send()}
                            />
