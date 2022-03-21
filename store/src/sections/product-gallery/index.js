@@ -61,12 +61,19 @@ export const ProductGallery = ({ config }) => {
    return (
       <>
          <div className="hern-product_gallery-header">
-            <h3 className="hern-product_gallery-header-heading">
+            <h3
+               className={
+                  config?.informationVisibility?.headingStyleType?.value[0]
+                     ?.value || 'hern-product_gallery-header-heading'
+               }
+            >
                {config.data.title.value}
             </h3>
-            <h5 className="hern-product_gallery-header-description">
-               {config.data.subTitle.value}
-            </h5>
+            {config?.data?.subTitle?.value && (
+               <h5 className="hern-product_gallery-header-description">
+                  {config.data.subTitle.value}
+               </h5>
+            )}
          </div>
          {productsData.length ? (
             <>
@@ -91,6 +98,26 @@ export const ProductGallery = ({ config }) => {
                      })}
                   </Row>
                )}
+               {config?.informationVisibility?.showPageButton?.value && (
+                  <Row
+                     gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
+                     style={{
+                        justifyContent: 'center',
+                        margin: '1.5em 7em 1em',
+                     }}
+                  >
+                     <a
+                        class="hern-product_gallery_page-button"
+                        href={
+                           config?.data?.pageButton?.route?.value ||
+                           config?.data?.pageButton?.route?.default
+                        }
+                     >
+                        {config.data.pageButton.title.value ||
+                           config.data.pageButton.title.default}
+                     </a>
+                  </Row>
+               )}
             </>
          ) : (
             <Loader />
@@ -99,7 +126,7 @@ export const ProductGallery = ({ config }) => {
    )
 }
 
-const ProductGrid = ({ product, index }) => {
+const ProductGrid = ({ config, product, index }) => {
    const { locationId, storeStatus } = useConfig()
    const router = useRouter()
    const [productModifier, setProductModifier] = React.useState(null)
@@ -118,19 +145,54 @@ const ProductGrid = ({ product, index }) => {
          onImageClick={() => router.push(getRoute('/products/' + product.id))}
          key={index}
          data={product}
-         showProductDescription={true}
          showImage={product.assets.images.length > 0 ? true : false}
-         customAreaComponent={CustomAreaWrapper}
+         customAreaComponent={
+            config?.informationVisibility?.showAddButtonInProduct?.value ||
+            (!config?.informationVisibility?.showAddButtonInProduct &&
+               CustomAreaWrapper)
+         }
          showModifier={productModifier && productModifier.id === product.id}
          closeModifier={closeModifier}
          customAreaFlex={false}
+         showSliderIndicators={
+            config?.informationVisibility?.showSliderIndicators?.value
+         }
+         showSliderArrows={
+            config?.informationVisibility?.showSliderArrows?.value
+         }
+         productDetailType={
+            config?.informationVisibility?.productDetailType?.value[0]?.value
+         }
+         showProductDescription={
+            config?.informationVisibility?.showProductDescription?.value ||
+            !config?.informationVisibility?.showProductDescription
+         }
       />
    )
 }
 
+const isMobile = () => {
+   if (window.innerWidth <= 599) {
+      return true
+   }
+   return false
+}
+
+const isTab = () => {
+   if (window.innerWidth > 599 && window.innerWidth <= 1024) {
+      return true
+   }
+   return false
+}
+
 const ProductSlider = ({ config, productsData }) => {
-   const numberOfProductsToShow =
-      config?.informationVisibility.numberOfProductsToShow.value
+   let numberOfProductsToShow
+   if (isMobile() || isTab()) {
+      numberOfProductsToShow = 1
+   } else {
+      numberOfProductsToShow =
+         config?.informationVisibility.numberOfProductsToShow.value
+   }
    const numberOfSliders = Math.ceil(
       productsData.length / numberOfProductsToShow
    )
@@ -154,13 +216,13 @@ const ProductSlider = ({ config, productsData }) => {
          nextArrow={<RightArrow />}
       >
          {sliderProducts.map((productsArray, index) => {
-            return <SliderDiv productsArray={productsArray} />
+            return <SliderDiv productsArray={productsArray} config={config} />
          })}
       </Carousel>
    )
 }
 
-const SliderDiv = ({ productsArray }) => {
+const SliderDiv = ({ config, productsArray }) => {
    return (
       <Row
          gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
@@ -168,9 +230,16 @@ const SliderDiv = ({ productsArray }) => {
       >
          {productsArray.map((product, index) => {
             return (
-               <Col className="gutter-row" span={6}>
+               <Col
+                  className="gutter-row"
+                  span={isMobile() || isTab() ? 12 : 6}
+               >
                   <div>
-                     <ProductGrid product={product} index={index} />
+                     <ProductGrid
+                        product={product}
+                        index={index}
+                        config={config}
+                     />
                   </div>
                </Col>
             )
