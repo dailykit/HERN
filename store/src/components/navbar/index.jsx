@@ -44,7 +44,9 @@ function NavItem({ children, menu }) {
          {menu.childNodes.length > 0 ? (
             <span onClick={() => setOpen(!open)}>{t(menu.label)}</span>
          ) : (
-            <Link href={getRoute(menu.url)}>{t(menu.label)}</Link>
+            <Link href={getRoute(menu.url)}>
+               <a>{t(menu.label)}</a>
+            </Link>
          )}
 
          {open && children}

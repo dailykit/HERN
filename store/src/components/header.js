@@ -395,11 +395,11 @@ export const Header = ({ settings, navigationMenus }) => {
                         {isLoading ? (
                            <li className="hern-navbar__list__item__skeleton" />
                         ) : isAuthenticated &&
-                           user?.isSubscriber &&
-                           isSubscriptionStore ? (
+                          user?.isSubscriber &&
+                          isSubscriptionStore ? (
                            <li className="hern-navbar__list__item">
                               <Link href={getRoute('/menu')}>
-                                 {t('Select Menu')}
+                                 <a> {t('Select Menu')}</a>
                               </Link>
                            </li>
                         ) : (
@@ -407,7 +407,7 @@ export const Header = ({ settings, navigationMenus }) => {
                               {isSubscriptionStore && (
                                  <li className="hern-navbar__list__item">
                                     <Link href={getRoute('/our-menu')}>
-                                       {t('Our Menu')}
+                                       <a>{t('Our Menu')}</a>
                                     </Link>
                                  </li>
                               )}
@@ -416,7 +416,7 @@ export const Header = ({ settings, navigationMenus }) => {
                         {!user?.isSubscriber && isSubscriptionStore && (
                            <li className="hern-navbar__list__item">
                               <Link href={getRoute('/our-plans')}>
-                                 {t('Get Started')}
+                                 <a> {t('Get Started')}</a>
                               </Link>
                            </li>
                         )}
@@ -438,10 +438,11 @@ export const Header = ({ settings, navigationMenus }) => {
                                  <div
                                     className="hern-navbar-cart-tooltip"
                                     style={{
-                                       backgroundColor: `${theme?.accent
-                                          ? theme?.accent
-                                          : 'rgba(37, 99, 235, 1)'
-                                          }`,
+                                       backgroundColor: `${
+                                          theme?.accent
+                                             ? theme?.accent
+                                             : 'rgba(37, 99, 235, 1)'
+                                       }`,
                                        color: '#ffffff',
                                     }}
                                  >
@@ -461,10 +462,11 @@ export const Header = ({ settings, navigationMenus }) => {
                                     <div
                                        className="hern-navbar-cart-tooltip__tip"
                                        style={{
-                                          backgroundColor: `${theme?.accent
-                                             ? theme?.accent
-                                             : 'rgba(37, 99, 235, 1)'
-                                             }`,
+                                          backgroundColor: `${
+                                             theme?.accent
+                                                ? theme?.accent
+                                                : 'rgba(37, 99, 235, 1)'
+                                          }`,
                                        }}
                                     ></div>
                                  </div>
@@ -510,10 +512,11 @@ export const Header = ({ settings, navigationMenus }) => {
                         <button
                            className="hern-header__logout"
                            style={{
-                              backgroundColor: `${theme?.accent
-                                 ? theme?.accent
-                                 : 'rgba(37, 99, 235, 1)'
-                                 }`,
+                              backgroundColor: `${
+                                 theme?.accent
+                                    ? theme?.accent
+                                    : 'rgba(37, 99, 235, 1)'
+                              }`,
                            }}
                            onClick={() => setShowLoginPopup(true)}
                         >
@@ -537,11 +540,11 @@ export const Header = ({ settings, navigationMenus }) => {
                      <section className="hern-navigatin-menu__wrapper--mobile">
                         <NavigationBar Data={newNavigationMenus}>
                            {isAuthenticated &&
-                              user?.isSubscriber &&
-                              isSubscriptionStore ? (
+                           user?.isSubscriber &&
+                           isSubscriptionStore ? (
                               <li className="hern-navbar__list__item">
                                  <Link href={getRoute('/menu')}>
-                                    {t('Select Menu')}
+                                    <a>{t('Select Menu')}</a>
                                  </Link>
                               </li>
                            ) : (
@@ -549,7 +552,7 @@ export const Header = ({ settings, navigationMenus }) => {
                                  {isSubscriptionStore && (
                                     <li className="hern-navbar__list__item">
                                        <Link href={getRoute('/our-menu')}>
-                                          {t('Our Menu')}
+                                          <a>{t('Our Menu')}</a>
                                        </Link>
                                     </li>
                                  )}
@@ -558,7 +561,7 @@ export const Header = ({ settings, navigationMenus }) => {
                            {!user?.isSubscriber && isSubscriptionStore && (
                               <li className="hern-navbar__list__item">
                                  <Link href={getRoute('/our-plans')}>
-                                    {t('Get Started')}
+                                    <a> {t('Get Started')}</a>
                                  </Link>
                               </li>
                            )}
@@ -613,8 +616,8 @@ const LocationInfo = ({ settings }) => {
       const fulfillmentType = selectedOrderTab?.orderFulfillmentTypeLabel
          ? selectedOrderTab?.orderFulfillmentTypeLabel
          : selectedOrderTabInLocal
-            ? JSON.parse(selectedOrderTabInLocal)
-            : null
+         ? JSON.parse(selectedOrderTabInLocal)
+         : null
 
       switch (fulfillmentType) {
          case 'PREORDER_DELIVERY':
@@ -674,12 +677,12 @@ const LocationInfo = ({ settings }) => {
                            (userLocation?.label
                               ? userLocation?.label
                               : userLocation?.mainText
-                                 ? userLocation?.mainText
-                                 : userLocation?.address?.mainText
-                                    ? userLocation?.address?.mainText
-                                    : userLocation?.line1
-                                       ? userLocation?.line1
-                                       : t('Please select address...'))}
+                              ? userLocation?.mainText
+                              : userLocation?.address?.mainText
+                              ? userLocation?.address?.mainText
+                              : userLocation?.line1
+                              ? userLocation?.line1
+                              : t('Please select address...'))}
                         {prefix == 'PICKUP FROM' &&
                            storeAddress &&
                            (storeAddress.line1 ||
