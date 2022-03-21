@@ -161,7 +161,7 @@ export const serveImage = async (req, res) => {
          const api_key = await get_env('REMOVE_BG_API_KEY')
          // directory to store output image after altering the image
          const outputFile = `${__dirname}/image.png`
-         const validURL = url.replaceAll(' ', '+')
+         const validURL = url.replace(' ', '+')
 
          await removeBackgroundFromImageUrl({
             url: validURL,
@@ -190,7 +190,8 @@ export const serveImage = async (req, res) => {
             // if no error, file has been deleted successfully
             console.log('File deleted!')
          })
-         res.status(200).send(data.Location)
+         res.contentType(type.mime)
+         res.send(Buffer.from(buffer, 'binary'))
       } else if (
          !removeImageBg &&
          Boolean(imageWidth) &&
@@ -228,7 +229,8 @@ export const serveImage = async (req, res) => {
          const data = await uploadFile(s3buffer, imageName, type)
 
          // send image url as response
-         res.status(200).send(data.Location)
+         res.contentType(type.mime)
+         res.send(Buffer.from(s3buffer, 'binary'))
       } else if (removeImageBg && Boolean(imageWidth) && Boolean(imageHeight)) {
          // particular dimension image without background
          const imageUrlWithoutBg = url.slice().replace('images', 'images-rb')
@@ -269,7 +271,8 @@ export const serveImage = async (req, res) => {
                imageName,
                type
             )
-            res.status(200).send(data.Location)
+            res.contentType(type.mime)
+            res.send(Buffer.from(resizeRemovedBackgroundBuffer, 'binary'))
          } catch (e) {
             // when image-rb not available
             const api_key = await get_env('REMOVE_BG_API_KEY')
@@ -308,7 +311,9 @@ export const serveImage = async (req, res) => {
                // if no error, file has been deleted successfully
                console.log('File deleted!')
             })
-            res.status(200).send(data.Location)
+            // res.status(200).sendFile(resizeRemovedBackgroundBuffer)
+            res.contentType(type.mime)
+            res.end(resizeRemovedBackgroundBuffer, 'binary')
          }
       }
    } catch (error) {
