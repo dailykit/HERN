@@ -1,4 +1,5 @@
 import { Modal } from 'antd'
+import classNames from 'classnames'
 import React, { useState } from 'react'
 import { Button, CounterButton, ModifierPopup } from '../../components'
 import { CartContext, useTranslation } from '../../context'
@@ -6,7 +7,7 @@ import { useConfig } from '../../lib'
 import { getCartItemWithModifiers } from '../../utils'
 
 export const CustomArea = props => {
-   const { data, setProductModifier } = props
+   const { data, setProductModifier, showAddToCartButtonFullWidth } = props
    const { addToCart, combinedCartItems, methods, cartState } =
       React.useContext(CartContext)
    const { locationId, storeStatus, configOf, setShowLocationSelectionPopup } =
@@ -222,7 +223,12 @@ export const CustomArea = props => {
    }
 
    return (
-      <div className="hern-on-demand-product-custom-area">
+      <div
+         className={classNames('hern-on-demand-product-custom-area', {
+            'hern-on-demand-product-custom-area--no-full-width':
+               !showAddToCartButtonFullWidth,
+         })}
+      >
          <Modal
             title={'Repeat last used customization'}
             visible={showChooseIncreaseType}

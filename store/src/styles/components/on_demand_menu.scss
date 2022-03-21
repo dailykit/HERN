@@ -110,8 +110,9 @@
             color: var(--hern-accent);
             text-decoration: none;
             padding: 0.5em 1em;
-            border-radius: 2em;
-            border: 2px solid var(--hern-accent);
+            box-sizing: border-box;
+            border-radius: 12px;
+            border: 1px solid var(--hern-accent);
          }
          > a:hover {
             text-decoration: none;

@@ -194,8 +194,9 @@ export const ProductCard = props => {
                         <AdditionalIcon />
                      </div>
                   )}
-                  {showProductDetails && ( productDetailType==1 ? 
-                     (<div className="hern-product-card-details">
+                  {showProductDetails &&
+                     (productDetailType == 1 ? (
+                        <div className="hern-product-card-details">
                            <div className="hern-product-card-title">
                               {showProductName && (
                                  <div
@@ -218,7 +219,8 @@ export const ProductCard = props => {
                               )}
                               {data?.childs?.length > 0 && (
                                  <div className="hern-product-card-productOption-label">
-                                    {data.childs[0].productOption.label || 'N/A'}
+                                    {data.childs[0].productOption.label ||
+                                       'N/A'}
                                  </div>
                               )}
                               {ShowImageIcon && (
@@ -243,7 +245,9 @@ export const ProductCard = props => {
                                           textDecoration: 'line-through',
                                        }}
                                     >
-                                       {formatCurrency(data.price - data.discount)}
+                                       {formatCurrency(
+                                          data.price - data.discount
+                                       )}
                                     </span>
                                  )}
                                  {finalProductPrice() &&
@@ -254,34 +258,41 @@ export const ProductCard = props => {
                                     )}
                               </div>
                            )}
-                           {showProductAdditionalText && data?.additionalText && (
-                              <div className="hern-product-card__additional-text">
-                                 {data.additionalText}
+                           {showProductAdditionalText &&
+                              data?.additionalText && (
+                                 <div className="hern-product-card__additional-text">
+                                    {data.additionalText}
+                                 </div>
+                              )}
+                        </div>
+                     ) : (
+                        <div className="hern-product-card-details-2">
+                           {showProductName && (
+                              <div
+                                 className="hern-product-card__name"
+                                 onClick={e => {
+                                    if (onProductNameClick) {
+                                       e.stopPropagation()
+                                       onProductNameClick()
+                                    }
+                                 }}
+                                 title={data?.name}
+                                 style={{
+                                    cursor: onProductNameClick
+                                       ? 'pointer'
+                                       : null,
+                                 }}
+                              >
+                                 {data.name}
                               </div>
                            )}
-                        </div>) :
-                     (<div className="hern-product-card-details-2">
-                        {showProductName && (
-                           <div
-                              className="hern-product-card__name"
-                              onClick={e => {
-                                 if (onProductNameClick) {
-                                    e.stopPropagation()
-                                    onProductNameClick()
-                                 }
-                              }}
-                              title={data?.name}
-                              style={{
-                                 cursor: onProductNameClick
-                                    ? 'pointer'
-                                    : null,
-                              }}
-                           >
-                              {data.name}
-                           </div>
-                        )}
-                     </div>)
-                  )} 
+                        </div>
+                     ))}
+                  {showProductAdditionalText && data?.additionalText && (
+                     <div className="hern-product-card__additional-text">
+                        {data.additionalText}
+                     </div>
+                  )}
                   {showProductDescription && (
                      <div
                         className="hern-product-card__description"
