@@ -31,14 +31,14 @@
 }
 
 .hern-slider_section2-carousel-dots .slick-active button {
-   background-color: #7cc144 !important;
+   background-color: var(--hern-accent) !important;
 }
 
 .slider-section-2 .separator {
    width: 200px;
    height: 12px;
    border-radius: 12px;
-   background-color: #7cc144;
+   background-color: var(--hern-accent);
    margin: 50px auto 0px;
 }
 
@@ -50,7 +50,7 @@
    letter-spacing: 0.02em;
    text-align: center;
    margin: 30px auto;
-   color: #7cc144;
+   color: var(--hern-accent);
 }
 
 .slider-section-2 .slider-div {
@@ -87,7 +87,7 @@
    .slider-section-2 .separator {
       width: 100px !important;
       height: 8px !important;
-      background-color: #7cc144;
+      background-color: var(--hern-accent);
    }
    .slider-section-2 .slider-img {
       width: 230px;
@@ -117,7 +117,7 @@
    .slider-section-2 .separator {
       width: 100px !important;
       height: 8px !important;
-      background-color: #7cc144;
+      background-color: var(--hern-accent);
    }
    .slider-section-2 .slider-img {
       width: 210px;
