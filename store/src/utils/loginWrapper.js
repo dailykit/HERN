@@ -19,6 +19,12 @@ export const LoginWrapper = ({ ...props }) => {
       loginIllustration?.['Login Illustration']?.showLoginIllustration?.value ??
       false //false as fallback value
 
+   const loginBackgroundImages =
+      loginIllustration?.['Login Background Image']?.backgroundImage?.value ??
+      'https://dailykit-237-breezychef.s3.us-east-2.amazonaws.com/images/93576-Coupon%20Image%20%282%29.png' //fallback Image
+   const showBackground =
+      loginIllustration?.['Login Background Image']?.showBackground?.value ??
+      false
    /**Hide or show scrollbar based on loginPopup open or close  */
    React.useEffect(() => {
       if (showLoginPopup) {
@@ -36,7 +42,20 @@ export const LoginWrapper = ({ ...props }) => {
          unmountOnExit
          classNames="hern-login-v1__css-transition"
       >
-         <div className="hern-login-v1-container">
+         <div
+            style={
+               showBackground
+                  ? {
+                       backgroundImage: `url('${loginBackgroundImages}')`,
+                       backgroundSize: 'contain',
+                       backgroundPosition: 'center',
+                       backgroundRepeat: 'no-repeat',
+                       backgroundColor: '#fff',
+                    }
+                  : {}
+            }
+            className="hern-login-v1-container"
+         >
             {/**Illustration image */}
             {showIllustration && (
                <div className="hern-login-v1-container__img">
@@ -54,6 +73,7 @@ export const LoginWrapper = ({ ...props }) => {
                   authConfig.loginSettings?.defaultLogInMethod?.value?.value ||
                   'email'
                }
+               showBackground={showBackground}
             />
          </div>
       </CSSTransition>

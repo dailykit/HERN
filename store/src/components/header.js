@@ -6,20 +6,13 @@ import {
    getProtectedRoutes,
    get_env,
    LoginWrapper,
-   autoSelectStore,
    formatCurrency,
    getStoresWithValidations,
 } from '../utils'
+import { CSSTransition } from 'react-transition-group'
 
-import { useUser, useTranslation, CartContext, useCart } from '../context'
-import {
-   isClient,
-   getInitials,
-   getRoute,
-   LocationSelectorWrapper,
-   useQueryParams,
-   useQueryParamState,
-} from '../utils'
+import { useUser, CartContext } from '../context'
+import { isClient, getRoute, LocationSelectorWrapper } from '../utils'
 import { MenuIcon, UserIcon } from '../assets/icons'
 
 import { ProfileSidebar } from './profile_sidebar'
@@ -27,7 +20,7 @@ import { CrossIcon, CartIcon, LocationIcon, DownVector } from '../assets/icons'
 
 import NavigationBar from './navbar'
 import { useWindowSize } from '../utils/useWindowSize'
-import { LanguageSwitch, StoreList, TemplateFile, Button, Loader } from '.'
+import { LanguageSwitch, TemplateFile } from '.'
 import classNames from 'classnames'
 import { useConfig } from '../lib'
 
@@ -44,8 +37,7 @@ export const Header = ({ settings, navigationMenus }) => {
    } = useConfig()
    const router = useRouter()
    const { width } = useWindowSize()
-   const { isAuthenticated, user, isLoading } = useUser()
-   const { t } = useTranslation()
+
    const logout = async () => {
       const currentPathName = router.pathname
       const isRouteProtected = Boolean(
@@ -61,48 +53,22 @@ export const Header = ({ settings, navigationMenus }) => {
       setStoredCartId(null)
    }
    const brand = settings['brand']['theme-brand']
-   const theme = settings['Visual']?.['theme-color']
    const headerNavigationSettings =
-      settings['navigation']?.['header-navigation']
-   const isSubscriptionStore =
-      settings?.availability?.isSubscriptionAvailable?.Subscription
-         ?.isSubscriptionAvailable?.value
-   const logo = settings?.brand?.['Brand Info']?.brandLogo?.value
-      ? settings?.brand?.['Brand Info']?.brandLogo?.value
-      : settings?.brand?.['Brand Info']?.brandLogo?.default
-   const logoForSmallDevice =
-      settings?.brand?.['Brand Info']?.brandLogoSmall?.value
-   const showLogo =
-      settings?.brand?.['Brand Info']?.BrandLogo?.value ??
-      settings?.brand?.['Brand Info']?.BrandLogo?.default ??
-      true
-
-   const displayName = settings?.brand?.['Brand Info']?.brandName?.value
-      ? settings?.brand?.['Brand Info']?.brandName?.value
-      : settings?.brand?.['Brand Info']?.brandName?.value
-   const showBrandName =
-      settings?.brand?.['Brand Info']?.BrandName?.value ??
-      settings?.brand?.['Brand Info']?.BrandName?.default ??
-      true
-
+      settings['navigation']?.['header-navigation']?.headerNavigation
+   console.log('header navigation : ', headerNavigationSettings?.layout.value)
    const showLocationButton =
       settings?.['navigation']?.['Show Location Selector']?.[
          'Location-Selector'
       ]?.['Location-Selector'].value ?? true
-   const showLanguageSwitcher =
-      settings?.['navigation']?.['language-translation']?.[
-         'LanguageTranslation'
-      ]?.['showLanguageTranslation'].value ?? true
 
-   const showLocationText =
-      settings?.['navigation']?.['Show Location Text']?.[
-         'Show Location Text'
-      ]?.['Show Location Text']?.value ?? true
+   const layoutStyle =
+      headerNavigationSettings?.layout?.value?.value ?? 'layout-two'
+
    const [toggle, setToggle] = React.useState(true)
    const [isMobileNavVisible, setIsMobileNavVisible] = React.useState(false)
    const [showLoginPopup, setShowLoginPopup] = React.useState(false)
    const [address, setAddress] = useState(null)
-   const [userCoordinate, setUserCoordinate] = useState({
+   const [, setUserCoordinate] = useState({
       latitude: null,
       longitude: null,
    })
@@ -117,8 +83,6 @@ export const Header = ({ settings, navigationMenus }) => {
       isFinalCartLoading,
       showCartIconToolTip,
    } = React.useContext(CartContext)
-   const numberOfItemsOnCart =
-      cartState?.cart?.cartItems_aggregate?.aggregate?.count
 
    // FB pixel event tracking for page view
    React.useEffect(() => {
@@ -341,237 +305,41 @@ export const Header = ({ settings, navigationMenus }) => {
          }
       }
    }, [address, fulfillmentType, brand, isFinalCartLoading])
-
    return (
-      <header className="hern-header">
-         {headerNavigationSettings?.headerNavigation?.custom?.value ? (
+      <>
+         {headerNavigationSettings?.headerNavigation?.custom?.value && (
             <TemplateFile
                path={headerNavigationSettings?.headerNavigation?.path?.value}
                data={{}}
             />
-         ) : (
-            <>
-               <section
-                  className={classNames('hern-header__top', {
-                     'hern-header--grid-3-col': !showLocationButton,
-                  })}
-               >
-                  <Link
-                     href={getRoute('/')}
-                     title={displayName || 'Subscription Shop'}
-                  >
-                     <div className="hern-header__brand">
-                        {logo && showLogo && (
-                           <>
-                              <img
-                                 className={classNames({
-                                    'hern-header__brand__logo':
-                                       logoForSmallDevice,
-                                 })}
-                                 src={logo}
-                                 alt={displayName || 'Subscription Shop'}
-                              />
-                              {logoForSmallDevice && (
-                                 <img
-                                    className="hern-header__brand__logo--sm"
-                                    src={logoForSmallDevice}
-                                    alt={displayName || 'Subscription Shop'}
-                                 />
-                              )}
-                           </>
-                        )}
-                        {displayName && showBrandName && (
-                           <span>{displayName}</span>
-                        )}
-                     </div>
-                  </Link>
-                  <section className="hern-navigatin-menu__wrapper">
-                     <NavigationBar Data={newNavigationMenus}>
-                        {showLanguageSwitcher && (
-                           <li className="hern-navbar__list__item">
-                              <LanguageSwitch />
-                           </li>
-                        )}
-                        {isLoading ? (
-                           <li className="hern-navbar__list__item__skeleton" />
-                        ) : isAuthenticated &&
-                           user?.isSubscriber &&
-                           isSubscriptionStore ? (
-                           <li className="hern-navbar__list__item">
-                              <Link href={getRoute('/menu')}>
-                                 {t('Select Menu')}
-                              </Link>
-                           </li>
-                        ) : (
-                           <>
-                              {isSubscriptionStore && (
-                                 <li className="hern-navbar__list__item">
-                                    <Link href={getRoute('/our-menu')}>
-                                       {t('Our Menu')}
-                                    </Link>
-                                 </li>
-                              )}
-                           </>
-                        )}
-                        {!user?.isSubscriber && isSubscriptionStore && (
-                           <li className="hern-navbar__list__item">
-                              <Link href={getRoute('/our-plans')}>
-                                 {t('Get Started')}
-                              </Link>
-                           </li>
-                        )}
-                     </NavigationBar>
-                  </section>
-                  <section className="hern-header__auth">
-                     {!isSubscriptionStore && (
-                        <div
-                           onClick={() => router.push(getRoute(`/checkout`))}
-                           className="hern-navbar__list__item hern-navbar__list__item--cart-icon"
-                        >
-                           <CartIcon size="20px" stroke="var(--hern-accent)" />
-                           <span className="number-of-cart-item">
-                              {numberOfItemsOnCart}
-                           </span>
-                           {cartState.cart?.cartItems_aggregate?.aggregate
-                              ?.count > 0 &&
-                              showCartIconToolTip && (
-                                 <div
-                                    className="hern-navbar-cart-tooltip"
-                                    style={{
-                                       backgroundColor: `${theme?.accent
-                                          ? theme?.accent
-                                          : 'rgba(37, 99, 235, 1)'
-                                          }`,
-                                       color: '#ffffff',
-                                    }}
-                                 >
-                                    {
-                                       cartState.cart?.cartItems_aggregate
-                                          ?.aggregate?.count
-                                    }{' '}
-                                    {cartState.cart?.cartItems_aggregate
-                                       ?.aggregate?.count === 1
-                                       ? 'Item'
-                                       : 'Items'}
-                                    {' - '}
-                                    {formatCurrency(
-                                       cartState.cart?.cartOwnerBilling
-                                          ?.balanceToPay
-                                    )}
-                                    <div
-                                       className="hern-navbar-cart-tooltip__tip"
-                                       style={{
-                                          backgroundColor: `${theme?.accent
-                                             ? theme?.accent
-                                             : 'rgba(37, 99, 235, 1)'
-                                             }`,
-                                       }}
-                                    ></div>
-                                 </div>
-                              )}
-                        </div>
-                     )}
-                     {isLoading ? (
-                        <>
-                           <span className="hern-navbar__list__item__skeleton" />
-                           <span className="hern-header__avatar__skeleton" />
-                        </>
-                     ) : isAuthenticated ? (
-                        <>
-                           {isClient && width > 767 ? (
-                              <span className="hern-header__avatar">
-                                 <button
-                                    onClick={() =>
-                                       router.push(
-                                          getRoute('/account/profile/')
-                                       )
-                                    }
-                                 >
-                                    <UserIcon size="20" />
-                                 </button>
-                              </span>
-                           ) : (
-                              <span
-                                 className="hern-header__avatar"
-                                 onClick={() => setToggle(!toggle)}
-                              >
-                                 <UserIcon size="20" />
-                              </span>
-                           )}
-
-                           <button
-                              className="hern-header__logout-btn"
-                              onClick={logout}
-                           >
-                              {t('Logout')}
-                           </button>
-                        </>
-                     ) : (
-                        <button
-                           className="hern-header__logout"
-                           style={{
-                              backgroundColor: `${theme?.accent
-                                 ? theme?.accent
-                                 : 'rgba(37, 99, 235, 1)'
-                                 }`,
-                           }}
-                           onClick={() => setShowLoginPopup(true)}
-                        >
-                           {t('Log In')}
-                        </button>
-                     )}
-                     <button
-                        className="hern-header__menu-btn"
-                        onClick={() =>
-                           setIsMobileNavVisible(!isMobileNavVisible)
-                        }
-                     >
-                        {isMobileNavVisible ? (
-                           <CrossIcon stroke="#111" size={24} />
-                        ) : (
-                           <MenuIcon color="#111" />
-                        )}
-                     </button>
-                  </section>
-                  {isMobileNavVisible && (
-                     <section className="hern-navigatin-menu__wrapper--mobile">
-                        <NavigationBar Data={newNavigationMenus}>
-                           {isAuthenticated &&
-                              user?.isSubscriber &&
-                              isSubscriptionStore ? (
-                              <li className="hern-navbar__list__item">
-                                 <Link href={getRoute('/menu')}>
-                                    {t('Select Menu')}
-                                 </Link>
-                              </li>
-                           ) : (
-                              <>
-                                 {isSubscriptionStore && (
-                                    <li className="hern-navbar__list__item">
-                                       <Link href={getRoute('/our-menu')}>
-                                          {t('Our Menu')}
-                                       </Link>
-                                    </li>
-                                 )}
-                              </>
-                           )}
-                           {!user?.isSubscriber && isSubscriptionStore && (
-                              <li className="hern-navbar__list__item">
-                                 <Link href={getRoute('/our-plans')}>
-                                    {t('Get Started')}
-                                 </Link>
-                              </li>
-                           )}
-                        </NavigationBar>
-                     </section>
-                  )}
-               </section>
-            </>
          )}
-         {showLocationButton && (
-            <div>
-               <LocationInfo address={address} settings={settings} />
-            </div>
+         {layoutStyle === 'layout-one' && (
+            <LayoutOne
+               settings={settings}
+               logout={logout}
+               toggle={toggle}
+               setToggle={setToggle}
+               setShowLoginPopup={setShowLoginPopup}
+               isMobileNavVisible={isMobileNavVisible}
+               setIsMobileNavVisible={setIsMobileNavVisible}
+               showLocationButton={showLocationButton}
+               address={address}
+               newNavigationMenus={newNavigationMenus}
+            />
+         )}
+         {layoutStyle === 'layout-two' && (
+            <LayoutTwo
+               settings={settings}
+               logout={logout}
+               toggle={toggle}
+               setToggle={setToggle}
+               setShowLoginPopup={setShowLoginPopup}
+               isMobileNavVisible={isMobileNavVisible}
+               setIsMobileNavVisible={setIsMobileNavVisible}
+               showLocationButton={showLocationButton}
+               address={address}
+               newNavigationMenus={newNavigationMenus}
+            />
          )}
          <LocationSelectorWrapper
             showLocationSelectorPopup={showLocationSelectorPopup}
@@ -585,6 +353,135 @@ export const Header = ({ settings, navigationMenus }) => {
             closeLoginPopup={() => setShowLoginPopup(false)}
             showLoginPopup={showLoginPopup}
          />
+      </>
+   )
+}
+const LayoutOne = ({
+   settings,
+   logout,
+   toggle,
+   setToggle,
+   setShowLoginPopup,
+   isMobileNavVisible,
+   setIsMobileNavVisible,
+   showLocationButton,
+   address,
+   newNavigationMenus,
+}) => {
+   return (
+      <header>
+         <div className="hern-header--layout-one">
+            {showLocationButton && (
+               <LocationInfo
+                  address={address}
+                  settings={settings}
+                  layout="layout-one"
+               />
+            )}
+            <BrandInfo settings={settings} layout="layout-one" />
+            <AuthMenu
+               settings={settings}
+               logout={logout}
+               toggle={toggle}
+               setToggle={setToggle}
+               setShowLoginPopup={setShowLoginPopup}
+               isMobileNavVisible={isMobileNavVisible}
+               setIsMobileNavVisible={setIsMobileNavVisible}
+               layout="layout-one"
+            />
+         </div>
+
+         <Navigation
+            settings={settings}
+            newNavigationMenus={newNavigationMenus}
+            layout="layout-one"
+         />
+         {showLocationButton && (
+            <LocationInfo
+               address={address}
+               settings={settings}
+               layout="layout-one"
+               additionalClasses="hern-location-info--layout-one--sm"
+            />
+         )}
+
+         <CSSTransition
+            in={isMobileNavVisible}
+            timeout={300}
+            unmountOnExit
+            classNames="hern-header__css-transition"
+         >
+            <MobileNavigationMenu
+               settings={settings}
+               newNavigationMenus={newNavigationMenus}
+               layout="layout-one"
+            />
+         </CSSTransition>
+      </header>
+   )
+}
+
+const LayoutTwo = ({
+   settings,
+   logout,
+   toggle,
+   setToggle,
+   setShowLoginPopup,
+   isMobileNavVisible,
+   setIsMobileNavVisible,
+   showLocationButton,
+   address,
+   newNavigationMenus,
+}) => {
+   return (
+      <header className="hern-header-stickey">
+         <div className="hern-header--layout-two">
+            <BrandInfo settings={settings} layout="layout-two" />
+            <div
+               style={{
+                  marginLeft: 'auto',
+                  display: 'flex',
+                  alignItems: 'center',
+               }}
+            >
+               <Navigation
+                  settings={settings}
+                  newNavigationMenus={newNavigationMenus}
+                  layout="layout-two"
+               />
+               <AuthMenu
+                  settings={settings}
+                  logout={logout}
+                  toggle={toggle}
+                  setToggle={setToggle}
+                  setShowLoginPopup={setShowLoginPopup}
+                  isMobileNavVisible={isMobileNavVisible}
+                  setIsMobileNavVisible={setIsMobileNavVisible}
+                  layout="layout-two"
+               />
+            </div>
+         </div>
+         {showLocationButton && (
+            <LocationInfo
+               address={address}
+               settings={settings}
+               layout="layout-two"
+            />
+         )}
+
+         {isMobileNavVisible && (
+            <CSSTransition
+               in={isMobileNavVisible}
+               timeout={300}
+               unmountOnExit
+               classNames="hern-header__css-transition"
+            >
+               <MobileNavigationMenu
+                  settings={settings}
+                  newNavigationMenus={newNavigationMenus}
+               />
+            </CSSTransition>
+         )}
       </header>
    )
 }
@@ -600,7 +497,7 @@ const DataWithChildNodes = dataList => {
    return dataList
 }
 
-const LocationInfo = ({ settings }) => {
+const LocationInfo = ({ settings, layout, additionalClasses }) => {
    const { selectedOrderTab, userLocation, storeStatus } = useConfig()
    const [showLocationSelectorPopup, setShowLocationSelectionPopup] =
       React.useState(false)
@@ -613,8 +510,8 @@ const LocationInfo = ({ settings }) => {
       const fulfillmentType = selectedOrderTab?.orderFulfillmentTypeLabel
          ? selectedOrderTab?.orderFulfillmentTypeLabel
          : selectedOrderTabInLocal
-            ? JSON.parse(selectedOrderTabInLocal)
-            : null
+         ? JSON.parse(selectedOrderTabInLocal)
+         : null
 
       switch (fulfillmentType) {
          case 'PREORDER_DELIVERY':
@@ -648,18 +545,30 @@ const LocationInfo = ({ settings }) => {
    return (
       <>
          <div
-            className="hern-header__location-container"
+            className={classNames(
+               'hern-header__location-container',
+               additionalClasses,
+               {
+                  'hern-header__location-container--layout-one':
+                     layout === 'layout-one',
+               }
+            )}
             onClick={() => setShowLocationSelectionPopup(true)}
          >
             <div className="hern-header__location-icon">
-               <LocationIcon size={18} />
+               <LocationIcon color="var(--hern-accent)" size={18} />
             </div>
             {storeStatus.loading ? (
                <div className="hern-header__location-right-loading">
                   {t('getting your location...')}
                </div>
             ) : (
-               <div className="hern-header__location-right">
+               <div
+                  className={classNames('hern-header__location-right', {
+                     'hern-header__location-right--layout-two':
+                        layout === 'layout-two',
+                  })}
+               >
                   {storeStatus?.status && prefix && (
                      <div className="hern-header__location-upper">
                         {t(prefix)}
@@ -674,12 +583,12 @@ const LocationInfo = ({ settings }) => {
                            (userLocation?.label
                               ? userLocation?.label
                               : userLocation?.mainText
-                                 ? userLocation?.mainText
-                                 : userLocation?.address?.mainText
-                                    ? userLocation?.address?.mainText
-                                    : userLocation?.line1
-                                       ? userLocation?.line1
-                                       : t('Please select address...'))}
+                              ? userLocation?.mainText
+                              : userLocation?.address?.mainText
+                              ? userLocation?.address?.mainText
+                              : userLocation?.line1
+                              ? userLocation?.line1
+                              : t('Please select address...'))}
                         {prefix == 'PICKUP FROM' &&
                            storeAddress &&
                            (storeAddress.line1 ||
@@ -700,5 +609,268 @@ const LocationInfo = ({ settings }) => {
             settings={settings}
          />
       </>
+   )
+}
+const BrandInfo = ({ settings, layout }) => {
+   const logo = settings?.brand?.['Brand Info']?.brandLogo?.value
+      ? settings?.brand?.['Brand Info']?.brandLogo?.value
+      : settings?.brand?.['Brand Info']?.brandLogo?.default
+   const logoForSmallDevice =
+      settings?.brand?.['Brand Info']?.brandLogoSmall?.value
+   const showLogo =
+      settings?.brand?.['Brand Info']?.BrandLogo?.value ??
+      settings?.brand?.['Brand Info']?.BrandLogo?.default ??
+      true
+
+   const displayName = settings?.brand?.['Brand Info']?.brandName?.value
+      ? settings?.brand?.['Brand Info']?.brandName?.value
+      : settings?.brand?.['Brand Info']?.brandName?.value
+   const showBrandName =
+      settings?.brand?.['Brand Info']?.BrandName?.value ??
+      settings?.brand?.['Brand Info']?.BrandName?.default ??
+      true
+
+   return (
+      <Link href={getRoute('/')} title={displayName || 'Subscription Shop'}>
+         <div
+            className={classNames('hern-header__brand', {
+               'hern-header__auth--layout-one': layout === 'layout-one',
+            })}
+         >
+            {logo && showLogo && (
+               <>
+                  <img
+                     className={classNames({
+                        'hern-header__brand__logo': logoForSmallDevice,
+                     })}
+                     src={logo}
+                     alt={displayName || 'Subscription Shop'}
+                  />
+                  {logoForSmallDevice && (
+                     <img
+                        className="hern-header__brand__logo--sm"
+                        src={logoForSmallDevice}
+                        alt={displayName || 'Subscription Shop'}
+                     />
+                  )}
+               </>
+            )}
+            {displayName && showBrandName && <span>{displayName}</span>}
+         </div>
+      </Link>
+   )
+}
+const Navigation = ({ newNavigationMenus, settings, layout }) => {
+   const { isAuthenticated, user, isLoading } = useUser()
+   const isSubscriptionStore =
+      settings?.availability?.isSubscriptionAvailable?.Subscription
+         ?.isSubscriptionAvailable?.value
+   const showLanguageSwitcher =
+      settings?.['navigation']?.['language-translation']?.[
+         'LanguageTranslation'
+      ]?.['showLanguageTranslation'].value ?? true
+   return (
+      <section
+         className={classNames('hern-navigatin-menu__wrapper', {
+            'hern-navbar__list--layout-one': layout === 'layout-one',
+         })}
+      >
+         <NavigationBar Data={newNavigationMenus}>
+            {showLanguageSwitcher && (
+               <li className="hern-navbar__list__item">
+                  <LanguageSwitch />
+               </li>
+            )}
+            {isLoading ? (
+               <li className="hern-navbar__list__item__skeleton" />
+            ) : isAuthenticated && user?.isSubscriber && isSubscriptionStore ? (
+               <li className="hern-navbar__list__item">
+                  <Link href={getRoute('/menu')}>{t('Select Menu')}</Link>
+               </li>
+            ) : (
+               <>
+                  {isSubscriptionStore && (
+                     <li className="hern-navbar__list__item">
+                        <Link href={getRoute('/our-menu')}>
+                           {t('Our Menu')}
+                        </Link>
+                     </li>
+                  )}
+               </>
+            )}
+            {!user?.isSubscriber && isSubscriptionStore && (
+               <li className="hern-navbar__list__item">
+                  <Link href={getRoute('/our-plans')}>{t('Get Started')}</Link>
+               </li>
+            )}
+         </NavigationBar>
+      </section>
+   )
+}
+const AuthMenu = ({
+   settings,
+   logout,
+   toggle,
+   setToggle,
+   setShowLoginPopup,
+   isMobileNavVisible,
+   setIsMobileNavVisible,
+   layout,
+}) => {
+   const { isAuthenticated, user, isLoading } = useUser()
+   const router = useRouter()
+   const isSubscriptionStore =
+      settings?.availability?.isSubscriptionAvailable?.Subscription
+         ?.isSubscriptionAvailable?.value
+   const {
+      cartState,
+
+      showCartIconToolTip,
+   } = React.useContext(CartContext)
+   const numberOfItemsOnCart =
+      cartState?.cart?.cartItems_aggregate?.aggregate?.count
+
+   const loginButtonLabel =
+      settings?.brand['Login Illustrations']?.loginButton?.loginbuttonLabel
+         .value ?? 'Log in'
+   const roundedLoginButton =
+      settings?.brand['Login Illustrations']?.loginButton?.roundedLoginButton
+         .value ?? false
+
+   return (
+      <section className={classNames('hern-header__auth')}>
+         {!isSubscriptionStore && (
+            <div
+               onClick={() => router.push(getRoute(`/checkout`))}
+               className="hern-navbar__list__item hern-navbar__list__item--cart-icon"
+            >
+               <CartIcon size="20px" stroke="var(--hern-accent)" />
+               <span className="number-of-cart-item">
+                  {numberOfItemsOnCart}
+               </span>
+               {cartState.cart?.cartItems_aggregate?.aggregate?.count > 0 &&
+                  showCartIconToolTip && (
+                     <div
+                        className="hern-navbar-cart-tooltip"
+                        style={{
+                           backgroundColor: `${
+                              theme?.accent
+                                 ? theme?.accent
+                                 : 'rgba(37, 99, 235, 1)'
+                           }`,
+                           color: '#ffffff',
+                        }}
+                     >
+                        {cartState.cart?.cartItems_aggregate?.aggregate?.count}{' '}
+                        {cartState.cart?.cartItems_aggregate?.aggregate
+                           ?.count === 1
+                           ? 'Item'
+                           : 'Items'}
+                        {' - '}
+                        {formatCurrency(
+                           cartState.cart?.cartOwnerBilling?.balanceToPay
+                        )}
+                        <div
+                           className="hern-navbar-cart-tooltip__tip"
+                           style={{
+                              backgroundColor: `var(--hern-accent)`,
+                           }}
+                        ></div>
+                     </div>
+                  )}
+            </div>
+         )}
+         {isLoading ? (
+            <>
+               <span className="hern-navbar__list__item__skeleton" />
+               <span className="hern-header__avatar__skeleton" />
+            </>
+         ) : isAuthenticated ? (
+            <>
+               {isClient && width > 767 ? (
+                  <span className="hern-header__avatar">
+                     <button
+                        onClick={() =>
+                           router.push(getRoute('/account/profile/'))
+                        }
+                     >
+                        <UserIcon size="20" />
+                     </button>
+                  </span>
+               ) : (
+                  <span
+                     className="hern-header__avatar"
+                     onClick={() => setToggle(!toggle)}
+                  >
+                     <UserIcon size="20" />
+                  </span>
+               )}
+
+               <button className="hern-header__logout-btn" onClick={logout}>
+                  Logout
+               </button>
+            </>
+         ) : (
+            <button
+               className={classNames('hern-header__logout', {
+                  'hern-header__login-btn--rounded': roundedLoginButton,
+               })}
+               style={{
+                  backgroundColor: `var(--hern-accent)`,
+               }}
+               onClick={() => setShowLoginPopup(true)}
+            >
+               {loginButtonLabel}
+            </button>
+         )}
+         <button
+            className="hern-header__menu-btn"
+            onClick={() =>
+               setIsMobileNavVisible(isMobileNavVisible => !isMobileNavVisible)
+            }
+         >
+            {isMobileNavVisible ? (
+               <CrossIcon stroke="#111" size={24} />
+            ) : (
+               <MenuIcon variant="hamburger" color="#111" />
+            )}
+         </button>
+      </section>
+   )
+}
+const MobileNavigationMenu = ({ settings, newNavigationMenus, layout }) => {
+   const { isAuthenticated, user } = useUser()
+   const isSubscriptionStore =
+      settings?.availability?.isSubscriptionAvailable?.Subscription
+         ?.isSubscriptionAvailable?.value
+
+   return (
+      <section
+         className={classNames('hern-navigatin-menu__wrapper--mobile', {
+            'hern-navigatin-menu__wrapper--mobile--layout-one':
+               layout === 'layout-one',
+         })}
+      >
+         <NavigationBar Data={newNavigationMenus}>
+            {isAuthenticated && user?.isSubscriber && isSubscriptionStore ? (
+               <li className="hern-navbar__list__item">
+                  <Link href={getRoute('/menu')}>Select Menu</Link>
+               </li>
+            ) : (
+               <>
+                  {isSubscriptionStore && (
+                     <li className="hern-navbar__list__item">
+                        <Link href={getRoute('/our-menu')}>Our Menu</Link>
+                     </li>
+                  )}
+               </>
+            )}
+            {!user?.isSubscriber && isSubscriptionStore && (
+               <li className="hern-navbar__list__item">
+                  <Link href={getRoute('/our-plans')}>Get Started</Link>
+               </li>
+            )}
+         </NavigationBar>
+      </section>
    )
 }
