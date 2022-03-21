@@ -264,7 +264,7 @@
       padding: 16px 0;
    }
    .hern-modifier-popup-add-to-cart-btn-parent-div {
-      padding: 0;
+      padding: 0 !important;
    }
    padding: 20px;
    // border: 1px solid rgba(0, 0, 0, 0.15);
@@ -290,6 +290,9 @@
    line-height: 50px;
    /* identical to box height */
    color: #000000;
+   @media only screen and (max-width: 767px) {
+      font-size: 24px;
+   }
 }
 .hern-product__product-price {
    font-weight: 600;
@@ -297,4 +300,7 @@
    line-height: 50px;
    /* identical to box height */
    color: #000000;
+   @media only screen and (max-width: 767px) {
+      font-size: 24px;
+   }
 }

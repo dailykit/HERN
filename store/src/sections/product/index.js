@@ -84,6 +84,12 @@ export const Product = ({ config }) => {
       <div className="hern-product-page">
          <div className="hern-product-page__product-section">
             <div
+               style={{
+                  ...(showProductDetailOnImage && {
+                     backgroundColor: 'rgba(223, 249, 164, 0.2)',
+                     borderRadius: '24px',
+                  }),
+               }}
                className={classNames(
                   'hern-product-page__product-media-wrapper',
                   {
@@ -167,9 +173,6 @@ const ProductInfo = ({ productData }) => {
          </div>
          <div className="hern-product_product-additional-text">
             {productData?.additionalText}
-         </div>
-         <div className="hern-product_product-description">
-            {productData?.description}
          </div>
       </div>
    )
