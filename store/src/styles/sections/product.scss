@@ -245,3 +245,56 @@
    align-items: flex-end;
    justify-content: space-between;
 }
+.hern-product-page__product-options-wrapper-detail-on-image {
+   .hern-product-modifier-pop-up-header-container {
+      display: none;
+   }
+   .hern-modifier-pop-up-product-option-type-list {
+      justify-content: flex-start;
+      overflow: auto;
+      margin-left: 0;
+   }
+   .hern-product-modifier-pop-up-product-option-list {
+      padding: 0;
+   }
+   .hern-product-modifier-pop-up-product-option-list > label {
+      padding-left: 0;
+   }
+   .hern-product-modifier-pop-up-product-option-list > ul {
+      padding: 16px 0;
+   }
+   .hern-modifier-popup-add-to-cart-btn-parent-div {
+      padding: 0;
+   }
+   padding: 20px;
+   // border: 1px solid rgba(0, 0, 0, 0.15);
+   // box-sizing: border-box;
+   // border-radius: 20px;
+}
+.hern-product-page__product-media-wrapper-detail-on-image {
+   padding: 20px;
+   // background: rgba(223, 249, 164, 0.2);
+   // border-radius: 24px;
+}
+.hern-product__product-info {
+   margin-bottom: 10px;
+}
+.hern-product__product-header {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+}
+.hern-product__product-name {
+   font-weight: 600;
+   font-size: 36px;
+   line-height: 50px;
+   /* identical to box height */
+   color: #000000;
+}
+.hern-product__product-price {
+   font-weight: 600;
+   font-size: 36px;
+   line-height: 50px;
+   /* identical to box height */
+   color: #000000;
+}
