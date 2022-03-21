@@ -214,6 +214,27 @@ const ProductSlider = ({ config, productsData }) => {
          arrows
          prevArrow={<LeftArrow />}
          nextArrow={<RightArrow />}
+         responsive={[
+            {
+               breakpoint: 1024,
+               settings: {
+                  slidesToShow: 3,
+                  initialSlide: 1,
+               },
+            },
+            {
+               breakpoint: 599,
+               settings: {
+                  slidesToShow: 1,
+               },
+            },
+            {
+               breakpoint: 480,
+               settings: {
+                  slidesToShow: 1,
+               },
+            },
+         ]}
       >
          {sliderProducts.map((productsArray, index) => {
             return <SliderDiv productsArray={productsArray} config={config} />
