@@ -6,13 +6,12 @@ import Link from 'next/link'
 
 export const FeaturedCoupon = ({ config }) => {
    const couponConfig = {
-      couponId: config.Coupon.couponId.value,
-      heading: config.Coupon.heading.value,
-      backgroundImage: config.Coupon.backgroundImage.value,
-      backgroundImageSmall: config.Coupon.backgroundImageSmall.value,
-      callToActionURL:
-         config.Coupon['Call to action ']['Call to action URL'].value,
-      ctaButtonLabel: config.Coupon['Call to action '].label.value,
+      couponId: config?.Coupon?.couponId?.value,
+      heading: config?.Coupon?.heading?.value,
+      backgroundImage: config?.Coupon?.backgroundImage?.value,
+      backgroundImageSmall: config?.Coupon?.backgroundImageSmall?.value,
+      callToActionURL: config?.Coupon?.['Call to action']?.url?.value,
+      ctaButtonLabel: config?.Coupon?.['Call to action']?.label?.value,
    }
 
    const {
@@ -33,18 +32,18 @@ export const FeaturedCoupon = ({ config }) => {
    if (!loading && !couponConfig.couponId) return null
 
    return (
-      <div className="hern-featured-coupon">
-         <div className="hern-featured-coupon__background">
-            <img src={couponConfig.backgroundImage} alt="" />
-            <img
-               className="hern-featured-coupon__background--sm"
-               src={couponConfig.backgroundImageSmall}
-               alt=""
-            />
-         </div>
-         <div className="hern-featured-coupon__content">
-            {!loading && !isEmpty(coupon) && (
-               <>
+      <>
+         {!loading && !isEmpty(coupon) && (
+            <div className="hern-featured-coupon">
+               <div className="hern-featured-coupon__background">
+                  <img src={couponConfig.backgroundImage} alt="" />
+                  <img
+                     className="hern-featured-coupon__background--sm"
+                     src={couponConfig.backgroundImageSmall}
+                     alt=""
+                  />
+               </div>
+               <div className="hern-featured-coupon__content">
                   <h2 className="hern-featured-coupon__header">
                      {couponConfig.heading}
                   </h2>
@@ -63,9 +62,9 @@ export const FeaturedCoupon = ({ config }) => {
                         </a>
                      </Link>
                   </div>
-               </>
-            )}
-         </div>
-      </div>
+               </div>
+            </div>
+         )}
+      </>
    )
 }
