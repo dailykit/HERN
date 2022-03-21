@@ -719,6 +719,9 @@ const AuthMenu = ({
 }) => {
    const { isAuthenticated, user, isLoading } = useUser()
    const router = useRouter()
+   const { configOf } = useConfig()
+   const { width } = useWindowSize()
+   const theme = configOf('theme-color', 'Visual')?.themeColor
    const isSubscriptionStore =
       settings?.availability?.isSubscriptionAvailable?.Subscription
          ?.isSubscriptionAvailable?.value
@@ -754,8 +757,8 @@ const AuthMenu = ({
                         className="hern-navbar-cart-tooltip"
                         style={{
                            backgroundColor: `${
-                              theme?.accent
-                                 ? theme?.accent
+                              theme?.accent?.value
+                                 ? theme?.accent?.value
                                  : 'rgba(37, 99, 235, 1)'
                            }`,
                            color: '#ffffff',
