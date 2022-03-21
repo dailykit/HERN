@@ -11,7 +11,7 @@ import {
 } from '../utils'
 import { CSSTransition } from 'react-transition-group'
 
-import { useUser, CartContext } from '../context'
+import { useUser, CartContext, useTranslation } from '../context'
 import { isClient, getRoute, LocationSelectorWrapper } from '../utils'
 import { MenuIcon, UserIcon } from '../assets/icons'
 
