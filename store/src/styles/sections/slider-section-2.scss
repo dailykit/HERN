@@ -5,7 +5,7 @@
 }
 
 .hern-slider_section2-carousel-dots {
-   bottom: -3px !important;
+   bottom: 10px !important;
 }
 
 .hern-slider_section2-carousel-dots li {
@@ -57,8 +57,8 @@
    display: flex;
    justify-content: center;
    align-items: center;
-   padding: 40px 0px;
-   height: 560px;
+   padding: 40px 0px 50px;
+   height: 570px;
    overflow-x: hidden;
 }
 
@@ -101,8 +101,8 @@
       height: 10px !important;
    }
    .slider-section-2 .slider-div {
-      padding: 10px 0px 20px;
-      height: 370px;
+      padding: 10px 0px 40px;
+      height: 390px;
    }
 }
 
@@ -131,7 +131,7 @@
       height: 10px !important;
    }
    .slider-section-2 .slider-div {
-      padding: 10px 0px 20px;
-      height: 290px;
+      padding: 10px 0px 30px;
+      height: 300px;
    }
 }
