@@ -89,24 +89,23 @@ const UserInfoForm = props => {
    const { cartState, methods } = React.useContext(CartContext)
    const { user } = useUser()
    const { addToast } = useToasts()
-   const { t } = useTranslation(
-   )
+   const { t } = useTranslation()
    const { cart } = cartState
    const [savingUserInfo, setSavingUserInfo] = React.useState(false)
    const [firstName, setFirstName] = useState(
       cart?.customerInfo?.customerFirstName ||
-      user.platform_customer?.firstName ||
-      ''
+         user.platform_customer?.firstName ||
+         ''
    )
    const [lastName, setLastName] = useState(
       cart?.customerInfo?.customerLastName ||
-      user.platform_customer?.lastName ||
-      ''
+         user.platform_customer?.lastName ||
+         ''
    )
    const [mobileNumber, setMobileNumber] = useState(
       cart?.customerInfo?.customerPhone ||
-      user.platform_customer?.phoneNumber ||
-      ''
+         user.platform_customer?.phoneNumber ||
+         ''
    )
 
    const isSmallerDevice = isClient && window.innerWidth < 768
@@ -133,6 +132,9 @@ const UserInfoForm = props => {
                   customerFirstName: firstName,
                   customerLastName: lastName,
                   customerPhone: mobileNumber,
+                  customerEmail:
+                     cart?.customerInfo?.customerEmail ||
+                     user.platform_customer?.email,
                },
             },
          },
@@ -185,7 +187,9 @@ const UserInfoForm = props => {
          </div>
          <div className="hern-user-info__name-field">
             <fieldset className="hern-user-info__fieldset hern-user-info__fieldset-first-name">
-               <label className="hern-user-info__label">{t('First Name')}</label>
+               <label className="hern-user-info__label">
+                  {t('First Name')}
+               </label>
                <input
                   name="user-first-name"
                   type="text"
@@ -216,10 +220,11 @@ const UserInfoForm = props => {
          <fieldset className="hern-user-info__fieldset hern-user-info__fieldset-phone-number">
             <label className="hern-user-info__label">{t('Phone Number')}</label>
             <PhoneInput
-               className={`hern-user-info__phone__input hern-user-info__phone__input${!(mobileNumber && isValidPhoneNumber(mobileNumber))
-                  ? '-invalid'
-                  : '-valid'
-                  }`}
+               className={`hern-user-info__phone__input hern-user-info__phone__input${
+                  !(mobileNumber && isValidPhoneNumber(mobileNumber))
+                     ? '-invalid'
+                     : '-valid'
+               }`}
                initialValueFormat="national"
                value={mobileNumber}
                onChange={e => {
@@ -246,8 +251,7 @@ const UserDetails = ({
 }) => {
    const { cartState } = React.useContext(CartContext)
    const isSmallerDevice = isClient && window.innerWidth < 768
-   const { t } = useTranslation(
-   )
+   const { t } = useTranslation()
    const hasUserInfo =
       cartState?.cart?.customerInfo?.customerFirstName?.length ||
       cartState?.cart?.customerInfo?.customerLastName?.length ||
@@ -290,7 +294,8 @@ const UserDetails = ({
                      handleEdit()
                   }}
                >
-                  {t('Edit')}</button>
+                  {t('Edit')}
+               </button>
             </div>
          )}
       </>
