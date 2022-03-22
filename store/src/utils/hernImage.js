@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactImageFallback from 'react-image-fallback'
-import { get_env, isClient } from './get_env'
+import { get_env } from './get_env'
+import { isClient } from './isClient'
 import axios from 'axios'
 import isNull from 'lodash/isNull'
 import isEmpty from 'lodash/isEmpty'
@@ -76,21 +77,17 @@ export const HernLazyImage = ({
    const [src, setSrc] = React.useState(finalImageSrc)
    const [error, setError] = React.useState(false)
    const SERVER_URL = React.useMemo(() => {
-      switch (process.env.NEXT_PUBLIC_MODE) {
-         case 'production':
-            return isClient && window.location.origin
-         case 'full-dev':
-            return 'http://localhost:4000'
-         case 'store-dev':
-            // const { origin } = new URL(
-            //    get(window, '_env_.' + 'DATA_HUB_HTTPS', '')
-            // )
-            // return origin
-            return 'http://localhost:4000'
-         default:
-            return isClient && window.location.origin
+      const storeMode = process?.env?.NEXT_PUBLIC_MODE || 'production'
+      if (isClient) {
+         return {
+            production: window.location.origin,
+            'full-dev': 'http://localhost:4000',
+            'store-dev': 'http://localhost:4000',
+         }[storeMode]
+      } else {
+         return null
       }
-   }, [])
+   }, [isClient])
    if (!(width && height) && !removeBg) {
       return (
          <img
@@ -118,18 +115,20 @@ export const HernLazyImage = ({
                if (removeBg && !(Boolean(width) && Boolean(height))) {
                   // remove only background
                   const fallbackImageUrl = `${SERVER_URL}/server/api/assets/serve-image?removebg=true&src=${dataSrc}`
-                  const imageData = await axios.get(fallbackImageUrl)
-                  setSrc(imageData.data)
+                  // const imageData = await axios.get(fallbackImageUrl)
+                  setSrc(fallbackImageUrl)
                } else if (!removeBg && Boolean(width) && Boolean(height)) {
                   // resize image only
+                  console.log('resize image only', SERVER_URL)
                   const fallbackImageUrl = `${SERVER_URL}/server/api/assets/serve-image?width=${width}&height=${height}&src=${dataSrc}`
-                  const imageData = await axios.get(fallbackImageUrl)
-                  setSrc(imageData.data)
+                  console.log('fallbacl url', fallbackImageUrl)
+                  // const imageData = await axios.get(fallbackImageUrl)
+                  setSrc(fallbackImageUrl)
                } else if (removeBg && Boolean(width) && Boolean(height)) {
                   // remove background and resize image
                   const fallbackImageUrl = `${SERVER_URL}/server/api/assets/serve-image?width=${width}&height=${height}&src=${dataSrc}&removebg=true`
-                  const imageData = await axios.get(fallbackImageUrl)
-                  setSrc(imageData.data)
+                  // const imageData = await axios.get(fallbackImageUrl)
+                  setSrc(fallbackImageUrl)
                }
                setError(true)
             }
