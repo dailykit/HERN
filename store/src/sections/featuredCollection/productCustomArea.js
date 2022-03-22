@@ -287,20 +287,13 @@ export const CustomArea = props => {
                   } else {
                      if (data.productOptions.length > 0) {
                         setProductModifier(data)
+                        setShowModifierPopup(true)
                      } else {
                         await addToCart(data.defaultCartItem, 1)
                      }
                   }
                }}
-            // disabled={
-            //    locationId ? (storeStatus.status ? false : true) : true
-            // }
             >
-               {/* {locationId
-                  ? storeStatus.status
-                     ? t('ADD')
-                     : t('COMING SOON')
-                  : t('COMING SOON')}*/}
                {t('ADD')}
             </Button>
          ) : (
