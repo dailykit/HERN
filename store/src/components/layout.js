@@ -5,7 +5,7 @@ import { TemplateFile } from '.'
 import { MailIcon, PhoneIcon } from '../assets/icons'
 import { useTranslation, useUser } from '../context'
 import { useConfig } from '../lib'
-import { getRoute, normalizeAddress } from '../utils'
+import { getRoute, normalizeAddress, setThemeVariable } from '../utils'
 import FloatingBar from './floatingBar'
 import { Header } from './header'
 
@@ -36,6 +36,10 @@ export const Layout = ({
    const theme = settings['Visual']?.['theme-color']?.themeColor
    const { direction } = useTranslation()
    const { dispatch, setIsLoading } = useConfig()
+
+   //Making theme variable for all pages
+   setThemeVariable('--hern-accent', theme?.accent?.value)
+
    React.useEffect(() => {
       dispatch({
          type: 'SET_BRANDID',
