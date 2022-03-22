@@ -17,7 +17,7 @@ export const Product = ({ config }) => {
 
    const { t, dynamicTrans, locale } = useTranslation()
    const currentLang = React.useMemo(() => locale, [locale])
-
+   console.log(config, "config")
    const argsForByLocation = React.useMemo(
       () => ({
          params: {
@@ -67,7 +67,7 @@ export const Product = ({ config }) => {
    }, [status, currentLang, productsLoading])
 
    if (productsLoading || status === 'loading') return <Loader />
-   if (productsError) return <p>Something went wrong</p>
+   if (productsError) return <p>{t('Something went wrong')}</p>
 
    return (
       <div className="hern-product-page">
