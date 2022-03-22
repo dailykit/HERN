@@ -159,15 +159,12 @@ export const serveImage = async (req, res) => {
       // get only remove background image
       if (removeImageBg && !(Boolean(imageWidth) && Boolean(imageHeight))) {
          const api_key = await get_env('REMOVE_BG_API_KEY')
-         // directory to store output image after altering the image
-         const outputFile = `${__dirname}/image.png`
          const validURL = url.replace(' ', '+')
 
-         await removeBackgroundFromImageUrl({
+         const { base64img } = await removeBackgroundFromImageUrl({
             url: validURL,
             apiKey: api_key,
-            size: 'regular',
-            outputFile
+            size: 'regular'
          })
          // to get the image name and alter it from /images/ to /images-rb/
          const IndexFromString = url.indexOf('/images/')
@@ -181,15 +178,9 @@ export const serveImage = async (req, res) => {
          imageName = imageName.replace('.png', '')
 
          // now upload it to aws
-         const buffer = fs.readFileSync(outputFile)
+         const buffer = Buffer.from(base64img, 'base64')
          let type = await fileType.fromBuffer(buffer)
          const data = await uploadFile(buffer, imageName, type)
-
-         fs.unlink(`${__dirname}/image.png`, function (err) {
-            if (err) throw err
-            // if no error, file has been deleted successfully
-            console.log('File deleted!')
-         })
          res.contentType(type.mime)
          res.send(Buffer.from(buffer, 'binary'))
       } else if (
@@ -276,19 +267,15 @@ export const serveImage = async (req, res) => {
          } catch (e) {
             // when image-rb not available
             const api_key = await get_env('REMOVE_BG_API_KEY')
-            // the path to save the returned file to
-            const outputFile = `${__dirname}/image.png`
-
-            const validURL = url.replaceAll(' ', '+')
-            await removeBackgroundFromImageUrl({
+            const validURL = url.replace(' ', '+')
+            const { base64img } = await removeBackgroundFromImageUrl({
                url: validURL,
                apiKey: api_key,
-               size: 'regular',
-               outputFile
+               size: 'regular'
             })
 
             // crate a buffer of removed background image
-            const removedBackgroundBuffer = fs.readFileSync(outputFile)
+            const removedBackgroundBuffer = Buffer.from(base64img, 'base64')
 
             // resize removedBackgroundBuffer buffer
             const resizeRemovedBackgroundBuffer = await resizeImage(
@@ -305,13 +292,6 @@ export const serveImage = async (req, res) => {
                imageName,
                type
             )
-            // delete saved file on server bcz it has been save on s3
-            fs.unlink(`${__dirname}/image.png`, function (err) {
-               if (err) throw err
-               // if no error, file has been deleted successfully
-               console.log('File deleted!')
-            })
-            // res.status(200).sendFile(resizeRemovedBackgroundBuffer)
             res.contentType(type.mime)
             res.end(resizeRemovedBackgroundBuffer, 'binary')
          }
