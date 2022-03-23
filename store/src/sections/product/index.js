@@ -74,10 +74,10 @@ export const Product = ({ config }) => {
    }, [status, currentLang, productsLoading])
 
    const showProductDetailOnImage =
-      config?.display?.showProductDetailOnImage?.value ??
-      config?.display?.showProductDetailOnImage?.default ??
       productSetting?.display?.showProductDetailOnImage?.value ??
       productSetting?.display?.showProductDetailOnImage?.default ??
+      config?.display?.showProductDetailOnImage?.value ??
+      config?.display?.showProductDetailOnImage?.default ??
       false
 
    if (productsLoading || status === 'loading') return <Loader />
