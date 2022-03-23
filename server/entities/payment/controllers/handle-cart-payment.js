@@ -128,7 +128,8 @@ export const handleCartPayment = async (req, res) => {
                      paymentMethodId: cart.paymentMethodId,
                      paymentCustomerId: cart.paymentCustomerId,
                      usedAvailablePaymentOptionId:
-                        cart.toUseAvailablePaymentOptionId
+                        cart.toUseAvailablePaymentOptionId,
+                     comment: 'Created by handle-cart-payment'
                   }
                }
             )
