@@ -4,4 +4,5 @@ import ProductTile from './ProductTile'
 import ProductOptionsPanel from './ProductOptionsPanel'
 import Pricing from './Pricing'
 import SEOSettings from './SEOSettings'
-export { Assets, Description, ProductTile, ProductOptionsPanel, Pricing, SEOSettings }
+import ProductSettings from './ProductSettings'
+export { Assets, Description, ProductTile, ProductOptionsPanel, Pricing, SEOSettings, ProductSettings }
