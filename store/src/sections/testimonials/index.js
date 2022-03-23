@@ -142,14 +142,35 @@ export const Testimonials = ({ config }) => {
                   <Carousel
                      ref={carouselRef}
                      dots={{ className: 'green-dots' }}
-                     slidesToShow={1}
+                     slidesToShow={3}
+                     centerMode={true}
+                     responsive={[
+                        {
+                           breakpoint: 768,
+                           settings: {
+                              slidesToShow: 1,
+                           },
+                        },
+                        {
+                           breakpoint: 599,
+                           settings: {
+                              slidesToShow: 1,
+                           },
+                        },
+                        {
+                           breakpoint: 480,
+                           settings: {
+                              slidesToShow: 1,
+                           },
+                        },
+                     ]}
                   >
                      {content.map(({ userName, review }) => (
                         <div className="hern-testimonials--without-image__review_container">
                            <div
                               className="hern-testimonials--without-image__review"
                               style={{
-                                 borderColor: '#AEE57A',
+                                 border: 'none',
                                  backgroundColor: '#AEE57A',
                                  textAlign: 'center',
                               }}
