@@ -220,6 +220,8 @@ export const PaymentProvider = ({ children }) => {
                id: cartPayment?.id,
                _set: {
                   paymentStatus: 'CANCELLED',
+                  comment:
+                     'Cancelled by user using back button or dismiss modal',
                },
                _inc: {
                   cancelAttempt: 1,

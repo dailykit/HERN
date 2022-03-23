@@ -41,7 +41,8 @@ const initiatePayment = async arg => {
             cartPaymentId,
             transactionRemark: response,
             requestId: response.id,
-            paymentStatus: response.status
+            paymentStatus: response.status,
+            comment: 'Updated by payment logger by initiate payment'
          })
          return {
             success: true,

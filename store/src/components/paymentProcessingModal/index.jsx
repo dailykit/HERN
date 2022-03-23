@@ -9,8 +9,13 @@ import Countdown from 'react-countdown'
 import { Wrapper } from './styles'
 import { Button as StyledButton } from '../button'
 import PayButton from '../PayButton'
-import { ArrowLeftIconBG } from '../../assets/icons'
-import { useWindowSize, isKiosk, formatTerminalStatus } from '../../utils'
+import { ArrowLeftIconBG, ArrowLeftIcon } from '../../assets/icons'
+import {
+   useWindowSize,
+   isKiosk,
+   formatTerminalStatus,
+   isClient,
+} from '../../utils'
 import { useTranslation } from '../../context'
 import { useConfig } from '../../lib'
 
@@ -369,7 +374,10 @@ const PaymentProcessingModal = ({
             backgroundColor: isKioskMode ? 'rgba(0, 64, 106, 0.9)' : '#fff',
          }}
       >
-         <CartPageHeader />
+         <CartPageHeader
+            resetPaymentProviderStates={resetPaymentProviderStates}
+            closeModal={closeModal}
+         />
          {/* this payment option selection screen and back button, it will only show in kiosk app  */}
          {isKioskMode && isEmpty(cartPayment) ? (
             <>
@@ -495,17 +503,50 @@ const LABEL = {
    TERMINAL: 'PAY VIA CARD',
 }
 
-const CartPageHeader = () => {
+const CartPageHeader = ({
+   closeModal = () => null,
+   resetPaymentProviderStates = () => null,
+}) => {
+   const { configOf } = useConfig('brand')
    const {
       BrandName: { value: showBrandName } = {},
       BrandLogo: { value: showBrandLogo } = {},
       brandName: { value: brandName } = {},
       brandLogo: { value: logo } = {},
-   } = useConfig('brand').configOf('Brand Info')
+   } = configOf('Brand Info')
+   const theme = configOf('theme-color', 'Visual')?.themeColor
+   const themeColor = theme?.accent?.value
+      ? theme?.accent?.value
+      : 'rgba(5, 150, 105, 1)'
+   const isKioskMode = isKiosk()
    return (
       <header className="hern-cart-page__header">
-         <div className="hern-cart-page__header-logo">
-            {showBrandLogo && logo && <img src={logo} alt={brandName} />}
+         <div>
+            {isKioskMode && (
+               <span
+                  tw="hover:(cursor-pointer)"
+                  onClick={async () => {
+                     const isConfirmed =
+                        isClient &&
+                        window.confirm(
+                           'Your payment will be cancelled,Are you sure you want to go back?'
+                        )
+                     if (isConfirmed) {
+                        await closeModal()
+                        await resetPaymentProviderStates()
+                     }
+                  }}
+               >
+                  <ArrowLeftIconBG
+                     size={40}
+                     bgColor="#fff"
+                     arrowColor={themeColor}
+                  />
+               </span>
+            )}
+            {showBrandLogo && logo && (
+               <img src={logo} alt={brandName} tw="height[40px]" />
+            )}
             &nbsp;&nbsp;
             {showBrandName && brandName && <span>{brandName}</span>}
          </div>

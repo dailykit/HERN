@@ -27,7 +27,10 @@ export const handlePaymentWebhook = async (req, res) => {
       const result = await method.default(req, 'webhook')
       if (result.success && result.data) {
          console.log('result.data', result.data)
-         await paymentLogger(result.data)
+         await paymentLogger({
+            ...result.data,
+            comment: 'Updated by payment logger by handle payment webhook'
+         })
       }
       if (result.success && result.company === 'paytm') {
          const paymentStatus = {
