@@ -518,29 +518,32 @@ const CartPageHeader = ({
    const themeColor = theme?.accent?.value
       ? theme?.accent?.value
       : 'rgba(5, 150, 105, 1)'
+   const isKioskMode = isKiosk()
    return (
       <header className="hern-cart-page__header">
          <div>
-            <span
-               tw="hover:(cursor-pointer)"
-               onClick={async () => {
-                  const isConfirmed =
-                     isClient &&
-                     window.confirm(
-                        'Your payment will be cancelled,Are you sure you want to go back?'
-                     )
-                  if (isConfirmed) {
-                     await closeModal()
-                     await resetPaymentProviderStates()
-                  }
-               }}
-            >
-               <ArrowLeftIconBG
-                  size={40}
-                  bgColor="#fff"
-                  arrowColor={themeColor}
-               />
-            </span>
+            {isKioskMode && (
+               <span
+                  tw="hover:(cursor-pointer)"
+                  onClick={async () => {
+                     const isConfirmed =
+                        isClient &&
+                        window.confirm(
+                           'Your payment will be cancelled,Are you sure you want to go back?'
+                        )
+                     if (isConfirmed) {
+                        await closeModal()
+                        await resetPaymentProviderStates()
+                     }
+                  }}
+               >
+                  <ArrowLeftIconBG
+                     size={40}
+                     bgColor="#fff"
+                     arrowColor={themeColor}
+                  />
+               </span>
+            )}
             {showBrandLogo && logo && (
                <img src={logo} alt={brandName} tw="height[40px]" />
             )}
