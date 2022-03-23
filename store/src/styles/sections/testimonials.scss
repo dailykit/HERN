@@ -24,7 +24,6 @@
    > span {
       display: block;
       width: 200px;
-      background: #fe8b76;
       border-radius: 12px;
       height: 12px;
       margin-bottom: 24px;
@@ -100,12 +99,23 @@
 }
 
 @media only screen and (max-width: 900px) {
+   .hern-testimonials__container {
+      padding-bottom: 45px;
+   }
+   .hern-testimonials--without-image {
+      min-height: 491px !important;
+   }
    .hern-testimonials__header {
       font-size: 28px;
       line-height: 34px;
+      padding-bottom: 10px;
       > span {
          width: 100px;
          height: 8px;
+      }
+      > h6 {
+         font-size: 26px !important;
+         line-height: 30px !important;
       }
    }
    .hern-testimonials--without-image__reviews {
@@ -150,7 +160,8 @@
    margin: 0 auto;
 }
 .hern-testimonials--without-image__review {
-   border: 6px solid #fe8b76;
+   border-width: 6px;
+   border-style: solid;
    box-sizing: border-box;
    border-radius: 20px;
    padding: 32px;
@@ -180,6 +191,68 @@
    letter-spacing: 0.02em;
    color: #000000;
    margin-top: 24px;
+}
+
+.hern-testimonials__container .slick-track .slick-slide > div {
+   padding: 0px 15px;
+}
+
+.hern-testimonials__container .slick-track {
+   display: flex;
+   align-items: center;
+}
+
+.hern-testimonials--without-image-center-aligned .hern-testimonials__header {
+   padding-bottom: 20px;
+   > h6 {
+      font-weight: 500;
+      font-size: 36px;
+      line-height: 44px;
+   }
+}
+
+// Navigation Dots Style
+.hern-testimonials__container .ant-carousel .slick-dots {
+   transform: translateY(180%);
+   bottom: 0px;
+}
+.hern-testimonials__container .slick-dots.slick-dots-bottom li {
+   width: 14px !important;
+   height: 14px;
+   border-radius: 50%;
+   @media screen and (max-width: 567px) {
+      width: 10px !important;
+      height: 10px;
+   }
+}
+.hern-testimonials__container .slick-dots.slick-dots-bottom li button {
+   width: 100%;
+   height: 100%;
+   border-radius: 50%;
+}
+.hern-testimonials__container
+   .slick-dots.slick-dots-bottom.green-dots
+   li:not(.slick-active)
+   button {
+   background-color: #aee57a;
+}
+.hern-testimonials__container
+   .slick-dots.slick-dots-bottom.pink-dots
+   li:not(.slick-active)
+   button {
+   background-color: rgba(255, 181, 161, 0.25);
+}
+.hern-testimonials__container
+   .slick-dots.slick-dots-bottom.green-dots
+   li.slick-active
+   button {
+   background-color: #7cc144;
+}
+.hern-testimonials__container
+   .slick-dots.slick-dots-bottom.pink-dots
+   li.slick-active
+   button {
+   background-color: #fe8b76;
 }
 
 @media only screen and (min-width: 400px) {

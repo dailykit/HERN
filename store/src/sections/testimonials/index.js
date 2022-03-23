@@ -8,8 +8,8 @@ export const Testimonials = ({ config }) => {
    const content = config.display.review.content
    const variant = config.display.variant.value.value
    const header = config.data.title.value
+   const subHeading = config?.data?.subTitle?.value
 
-   console.log('variant', config.data.backgroundImage.value)
    const carouselRef = React.createRef()
    return (
       <div className="hern-testimonials__container">
@@ -61,38 +61,43 @@ export const Testimonials = ({ config }) => {
                className="hern-testimonials--without-image"
             >
                <div className="hern-testimonials__header">
-                  <span></span>
+                  <span style={{ background: '#fe8b76' }}></span>
                   <h3>{header}</h3>
                </div>
                <div className="hern-testimonials--without-image__reviews">
-                  <Carousel ref={carouselRef} dots={true}>
+                  <Carousel ref={carouselRef} dots={{ className: 'pink-dots' }}>
                      {content.map(({ userName, review }) => (
-                        <div className="hern-testimonials--without-image__review">
-                           <div style={{ marginBottom: '24px' }}>
-                              <svg
-                                 width="61"
-                                 height="61"
-                                 viewBox="0 0 61 61"
-                                 fill="none"
-                                 xmlns="http://www.w3.org/2000/svg"
-                              >
-                                 <path
-                                    d="M0.103333 30.8994V60.8994H25.8177V30.8994H8.67482C8.67482 19.8717 16.3653 10.8995 25.8177 10.8995V0.899414C11.6379 0.899414 0.103333 14.3564 0.103333 30.8994Z"
-                                    fill="#FE8B76"
-                                 />
-                                 <path
-                                    d="M60.1033 10.8995V0.899414C45.9236 0.899414 34.389 14.3564 34.389 30.8994V60.8994H60.1033V30.8994H42.9605C42.9605 19.8717 50.651 10.8995 60.1033 10.8995Z"
-                                    fill="#FE8B76"
-                                 />
-                              </svg>
-                           </div>
-                           <div>
-                              <p className="hern-testimonials--without-image__review__content">
-                                 {review}
-                              </p>
-                              <h4 className="hern-testimonials--without-image__review__user">
-                                 {userName}
-                              </h4>
+                        <div class="hern-testimonials--without-image__review_container">
+                           <div
+                              className="hern-testimonials--without-image__review"
+                              style={{ borderColor: '#fe8b76' }}
+                           >
+                              <div style={{ marginBottom: '24px' }}>
+                                 <svg
+                                    width="61"
+                                    height="61"
+                                    viewBox="0 0 61 61"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                 >
+                                    <path
+                                       d="M0.103333 30.8994V60.8994H25.8177V30.8994H8.67482C8.67482 19.8717 16.3653 10.8995 25.8177 10.8995V0.899414C11.6379 0.899414 0.103333 14.3564 0.103333 30.8994Z"
+                                       fill="#FE8B76"
+                                    />
+                                    <path
+                                       d="M60.1033 10.8995V0.899414C45.9236 0.899414 34.389 14.3564 34.389 30.8994V60.8994H60.1033V30.8994H42.9605C42.9605 19.8717 50.651 10.8995 60.1033 10.8995Z"
+                                       fill="#FE8B76"
+                                    />
+                                 </svg>
+                              </div>
+                              <div>
+                                 <p className="hern-testimonials--without-image__review__content">
+                                    {review}
+                                 </p>
+                                 <h4 className="hern-testimonials--without-image__review__user">
+                                    {userName}
+                                 </h4>
+                              </div>
                            </div>
                         </div>
                      ))}
@@ -117,6 +122,74 @@ export const Testimonials = ({ config }) => {
                         />
                      </svg>
                   </span>
+               </div>
+            </div>
+         )}
+
+         {variant === 'slider-without-image-center-aligned' && (
+            <div
+               style={{
+                  backgroundImage: `url('${config.data.backgroundImage.value}')`,
+               }}
+               className="hern-testimonials--without-image hern-testimonials--without-image-center-aligned"
+            >
+               <div className="hern-testimonials__header">
+                  <span style={{ background: '#AEE57A' }}></span>
+                  <h3>{header}</h3>
+                  {subHeading && <h6>{subHeading}</h6>}
+               </div>
+               <div className="hern-testimonials--without-image__reviews">
+                  <Carousel
+                     ref={carouselRef}
+                     dots={{ className: 'green-dots' }}
+                     slidesToShow={1}
+                  >
+                     {content.map(({ userName, review }) => (
+                        <div className="hern-testimonials--without-image__review_container">
+                           <div
+                              className="hern-testimonials--without-image__review"
+                              style={{
+                                 borderColor: '#AEE57A',
+                                 backgroundColor: '#AEE57A',
+                                 textAlign: 'center',
+                              }}
+                           >
+                              <div
+                                 style={{
+                                    marginBottom: '24px',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                 }}
+                              >
+                                 <svg
+                                    width="61"
+                                    height="61"
+                                    viewBox="0 0 61 61"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                 >
+                                    <path
+                                       d="M0.103333 30.8994V60.8994H25.8177V30.8994H8.67482C8.67482 19.8717 16.3653 10.8995 25.8177 10.8995V0.899414C11.6379 0.899414 0.103333 14.3564 0.103333 30.8994Z"
+                                       fill="#fff"
+                                    />
+                                    <path
+                                       d="M60.1033 10.8995V0.899414C45.9236 0.899414 34.389 14.3564 34.389 30.8994V60.8994H60.1033V30.8994H42.9605C42.9605 19.8717 50.651 10.8995 60.1033 10.8995Z"
+                                       fill="#fff"
+                                    />
+                                 </svg>
+                              </div>
+                              <div>
+                                 <p className="hern-testimonials--without-image__review__content">
+                                    {review}
+                                 </p>
+                                 <h4 className="hern-testimonials--without-image__review__user">
+                                    {userName}
+                                 </h4>
+                              </div>
+                           </div>
+                        </div>
+                     ))}
+                  </Carousel>
                </div>
             </div>
          )}
