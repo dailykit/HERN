@@ -59,6 +59,7 @@ export const Login = props => {
       callbackURL,
       socialLogin = true,
       showBackground = false,
+      showLoginWarning = true, //Determine if we want to show loginwanring when forced login
    } = props
 
    //loginBy --> initial login method ('email', 'otp' , 'signup', 'forgotPassword').
@@ -69,15 +70,16 @@ export const Login = props => {
    //callbackURL --> callback url for signIn (string)
    //socialLogin --> need social login or not
    const router = useRouter()
-
-   //component state
-   const [defaultLogin, setDefaultLogin] = useState(loginBy)
    const { configOf } = useConfig()
    const authConfig = configOf('Auth Methods', 'brand')
+
+   //component state
+   const [defaultLogin, setDefaultLogin] = useState(null)
+
    const { t } = useTranslation()
    const showCreateOne = React.useMemo(() => {
       if (singleLoginMethod) {
-         if (loginBy === 'email') {
+         if (defaultLogin === 'email') {
             return true
          } else {
             return false
@@ -86,7 +88,12 @@ export const Login = props => {
          return true
       }
    }, [])
-   console.log('authConfig', authConfig)
+   React.useEffect(() => {
+      setDefaultLogin(
+         authConfig.loginSettings?.defaultLogInMethod?.value?.value ?? 'email'
+      )
+   }, [authConfig])
+
    return (
       <div
          style={
@@ -135,7 +142,7 @@ export const Login = props => {
                />
             )}
          </div>
-         {forceLogin && (
+         {forceLogin && showLoginWarning && (
             <div className="hern-login-v1__custom-warning">
                {t('You must login first to access this page.')}
                <span

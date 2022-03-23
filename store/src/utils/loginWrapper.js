@@ -8,7 +8,9 @@ export const LoginWrapper = ({ ...props }) => {
 
    const { configOf } = useConfig()
    const authConfig = configOf('Auth Methods', 'brand')
+   const [loginBy, setLoginBy] = React.useState('email')
 
+   console.log({ authConfig })
    /** Brand level config for login illustration **/
    const loginIllustration = configOf('Login Illustrations', 'brand')
    const illustration =
@@ -34,6 +36,11 @@ export const LoginWrapper = ({ ...props }) => {
          document.querySelector('body').style.overflowY = 'auto'
       }
    }, [showLoginPopup])
+   React.useEffect(() => {
+      setLoginBy(
+         authConfig.loginSettings?.defaultLogInMethod?.value?.value ?? 'email'
+      )
+   }, [authConfig])
 
    return (
       <CSSTransition
@@ -63,16 +70,17 @@ export const LoginWrapper = ({ ...props }) => {
                </div>
             )}
             {/**Login Component */}
+            {console.log(
+               'authconfig',
+               authConfig.loginSettings?.defaultLogInMethod?.value?.value
+            )}
             <Login
                {...props}
                socialLogin={authConfig.socialLoginMethods?.socialLogin?.value}
                singleLoginMethod={
                   authConfig.loginSettings?.singleLoginMethod?.value || false
                }
-               loginBy={
-                  authConfig.loginSettings?.defaultLogInMethod?.value?.value ||
-                  'email'
-               }
+               loginBy={loginBy}
                showBackground={showBackground}
             />
          </div>
