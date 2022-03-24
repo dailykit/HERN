@@ -110,7 +110,7 @@ export const Pickup = props => {
          case 'PREORDER_PICKUP':
             return ''
       }
-   }, [cartState.cart, timeSlotInfo])
+   }, [cartState.cart?.fulfillmentInfo?.type, timeSlotInfo?.pickUpPrepTime])
 
    // update cart by when only ONDEMAN_PICKUP available
    useEffect(() => {
@@ -151,7 +151,7 @@ export const Pickup = props => {
             return { ...prev, orderTabId }
          })
       }
-   }, [pickupRadioOptions, cartState.cart])
+   }, [pickupRadioOptions, cartState.cart?.fulfillmentInfo?.type])
 
    // get available store, get minislots, if fulfillmentType === ONDEMAND_DELIVERY then fire onNowPick()
    React.useEffect(() => {
@@ -241,7 +241,7 @@ export const Pickup = props => {
          ) {
             const showTimeSlots = Boolean(
                !lastStoreLocationId == null ||
-               localStorage.getItem('lastStoreLocationId')
+                  localStorage.getItem('lastStoreLocationId')
             )
             setShowSlots(showTimeSlots)
             setIsLoading(false)
@@ -254,7 +254,7 @@ export const Pickup = props => {
             setIsLoading(false)
          }
       }
-   }, [cartState.cart])
+   }, [cartState.cart?.fulfillmentInfo])
 
    // time validation on selected timeSlotId
    useEffect(() => {
@@ -301,7 +301,7 @@ export const Pickup = props => {
             pickupTimeValidationForOndemandPreorder()
          }
       }
-   }, [stores, cartState.cart])
+   }, [stores, cartState.cart?.fulfillmentInfo])
    const pickupTimeValidationForOndemandPreorder = () => {
       const cartTimeSlotFrom = cartState.cart?.fulfillmentInfo?.slot?.from
       const cartTimeSlotTo = cartState.cart?.fulfillmentInfo?.slot?.to
@@ -521,42 +521,42 @@ export const Pickup = props => {
                      {title}&nbsp;
                      {cartState.cart?.fulfillmentInfo?.type ===
                         'PREORDER_PICKUP' && (
-                           <span>
-                              <span>{t('on')}</span>
-                              {moment(
-                                 cartState.cart?.fulfillmentInfo?.slot?.from
-                              ).format('DD MMM YYYY')}
-                              {' ('}
-                              {moment(
-                                 cartState.cart?.fulfillmentInfo?.slot?.from
-                              ).format('HH:mm')}
-                              {'-'}
-                              {moment(
-                                 cartState.cart?.fulfillmentInfo?.slot?.to
-                              ).format('HH:mm')}
-                              {')'}
-                           </span>
-                        )}
+                        <span>
+                           <span>{t('on')}</span>
+                           {moment(
+                              cartState.cart?.fulfillmentInfo?.slot?.from
+                           ).format('DD MMM YYYY')}
+                           {' ('}
+                           {moment(
+                              cartState.cart?.fulfillmentInfo?.slot?.from
+                           ).format('HH:mm')}
+                           {'-'}
+                           {moment(
+                              cartState.cart?.fulfillmentInfo?.slot?.to
+                           ).format('HH:mm')}
+                           {')'}
+                        </span>
+                     )}
                   </label>
                </div>
                {(pickupRadioOptions.length > 0 ||
                   fulfillmentType === 'PREORDER_PICKUP') && (
-                     <Button
-                        variant="ghost"
-                        onClick={() => {
-                           if (pickupRadioOptions.length > 1) {
-                              setFulfillmentType(null)
-                              setFulfillmentTabInfo(prev => ({
-                                 ...prev,
-                                 orderTabId: null,
-                              }))
-                           }
-                           setShowSlots(true)
-                        }}
-                     >
-                        {t('Change')}
-                     </Button>
-                  )}
+                  <Button
+                     variant="ghost"
+                     onClick={() => {
+                        if (pickupRadioOptions.length > 1) {
+                           setFulfillmentType(null)
+                           setFulfillmentTabInfo(prev => ({
+                              ...prev,
+                              orderTabId: null,
+                           }))
+                        }
+                        setShowSlots(true)
+                     }}
+                  >
+                     {t('Change')}
+                  </Button>
+               )}
             </div>
          </div>
       )
