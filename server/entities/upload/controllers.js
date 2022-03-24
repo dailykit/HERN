@@ -38,7 +38,8 @@ export const upload = (request, response) => {
                   let originalFilename = `${timestamp}-${file.originalFilename
                      .split('.')
                      .slice(0, -1)
-                     .join('.')}`
+                     .join('.')
+                     .replace(/[^\w\s]/gi, '')}`
 
                   let name
                   if (type && type.mime.includes('image')) {
