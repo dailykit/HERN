@@ -48,6 +48,7 @@ const UserForm = () => {
    } = useSubscription(USERS.USER, {
       variables: { id: params.id },
    })
+   console.log('user', user)
 
    const { loading: scopeLoading } = useSubscription(SCOPE_SELECTOR, {
       variables: {
@@ -81,7 +82,7 @@ const UserForm = () => {
 
    React.useEffect(() => {
       if (!loading && !isEmpty(user)) {
-         const { email, phoneNo, lastName, firstName } = user
+         const { email, phoneNo, lastName, firstName, brand, location } = user
 
          dispatch({
             type: 'SET_FIELD',
@@ -99,6 +100,14 @@ const UserForm = () => {
             type: 'SET_FIELD',
             payload: { field: 'email', value: email || '' },
          })
+         dispatch({
+            type: 'SET_FIELD_BRAND',
+            payload: { field: 'brand', brandId: brand?.id || null, brandName: brand?.title || '--- Choose Brand ---', isTouched: true },
+         })
+         dispatch({
+            type: 'SET_FIELD_LOCATION',
+            payload: { field: 'location', locationId: location?.id || null, locationLabel: location?.label || "--- Choose Location ---", isTouched: true },
+         })
       }
    }, [loading, user])
 
@@ -107,14 +116,16 @@ const UserForm = () => {
          validate.firstName(state.firstName.value).isValid &&
          validate.lastName(state.lastName.value).isValid &&
          validate.email(state.email.value).isValid &&
-         validate.phoneNo(state.phoneNo.value).isValid
+         validate.phoneNo(state.phoneNo.value).isValid &&
+         state.brand.isTouched &&
+         state.location.isTouched
       ) {
          setIsValid(true)
       } else {
          setIsValid(false)
       }
    }, [state])
-
+   console.log("isValid", validate.firstName(state.firstName.value).isValid, state.brand.isTouched, state.location.isTouched);
    const createUser = () => {
       updateUser({
          variables: {
@@ -123,6 +134,8 @@ const UserForm = () => {
                firstName: state.firstName.value,
                lastName: state.lastName.value,
                phoneNo: state.phoneNo.value,
+               brandId: state.brand.brandId,
+               locationId: state.location.locationId,
                ...(!user?.email && { email: state.email.value }),
             },
          },
@@ -325,13 +338,33 @@ const UserForm = () => {
                            <StyledBrandSelectorList
                               active={brandArrowClicked}
                            >
+                              <div
+                                 key={`allSelected-null`}
+                                 onClick={() => {
+                                    dispatch({
+                                       type: 'SET_FIELD_BRAND',
+                                       payload: { field: "brand", brandId: null, brandName: "All Brands Are Selected", isTouched: true },
+                                    })
+                                    dispatch({
+                                       type: 'SET_FIELD_LOCATION',
+                                       payload: { field: "location", locationId: null, locationLabel: "--- Choose Location ---", isTouched: false },
+                                    })
+                                    setBrandArrowClicked(false)
+                                 }}
+                              >
+                                 {"All Brands Are Selected"}
+                              </div>
                               {scopeList.map(brand => (
                                  <div
                                     key={brand.id}
                                     onClick={() => {
                                        dispatch({
                                           type: 'SET_FIELD_BRAND',
-                                          payload: { field: "brand", brandId: brand.id, brandName: brand.title },
+                                          payload: { field: "brand", brandId: brand.id, brandName: brand.title, isTouched: true },
+                                       })
+                                       dispatch({
+                                          type: 'SET_FIELD_LOCATION',
+                                          payload: { field: "location", locationId: null, locationLabel: "--- Choose Location ---", isTouched: false },
                                        })
                                        setBrandArrowClicked(false)
                                     }}
@@ -354,7 +387,7 @@ const UserForm = () => {
                   </Flex>
                   {scopeList[
                      scopeList.findIndex(obj => obj.id === state.brand.brandId)
-                  ]?.location.length > 0 ? (
+                  ]?.location.length > 0 || state.brand.brandName === "All Brands Are Selected" ? (
                      <div>
                         <StyledBrandLocations>
                            <div>
@@ -378,6 +411,21 @@ const UserForm = () => {
                            <StyledBrandSelectorList
                               active={brandArrowClicked}
                            >
+                              <div
+                                 key={`allLocations-null`}
+                                 onClick={() => {
+                                    dispatch({
+                                       type: 'SET_FIELD_LOCATION',
+                                       payload: {
+                                          field: "location", locationId: null, locationLabel: "All Locations Selected", isTouched: true
+                                       },
+                                    })
+                                    setLocationArrowClicked(false)
+                                 }}
+
+                              >
+                                 {"All Locations Selected"}
+                              </div>
                               {scopeList[
                                  scopeList.findIndex(
                                     obj => obj.id === state.brand.brandId
@@ -389,11 +437,10 @@ const UserForm = () => {
                                        onClick={() => {
                                           dispatch({
                                              type: 'SET_FIELD_LOCATION',
-                                             payload: { field: "location", locationId: eachLocation.location.id, locationLabel: eachLocation.location.label },
+                                             payload: { field: "location", locationId: eachLocation.location.id, locationLabel: eachLocation.location.label, isTouched: true },
                                           })
                                           setLocationArrowClicked(false)
                                        }}
-
                                     >
                                        {eachLocation.location.label}
                                     </div>

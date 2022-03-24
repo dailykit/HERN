@@ -34,20 +34,12 @@ export const initialState = {
    brand: {
       brandName: '--- Choose Brand ---',
       brandId: null,
-      meta: {
-         errors: [],
-         isValid: false,
-         isTouched: false,
-      },
+      isTouched: false,
    },
    location: {
       locationLabel: '--- Choose Location ---',
       locationId: null,
-      meta: {
-         errors: [],
-         isValid: false,
-         isTouched: false,
-      },
+      isTouched: false,
    },
 }
 
@@ -76,6 +68,7 @@ export const reducers = (state, { type, payload }) => {
                ...state[payload.field],
                brandName: payload.brandName,
                brandId: payload.brandId,
+               isTouched: payload.isTouched,
             },
          }
       case 'SET_FIELD_LOCATION':
@@ -85,6 +78,7 @@ export const reducers = (state, { type, payload }) => {
                ...state[payload.field],
                locationLabel: payload.locationLabel,
                locationId: payload.locationId,
+               isTouched: payload.isTouched,
             },
          }
       default:

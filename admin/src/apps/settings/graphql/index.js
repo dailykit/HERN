@@ -393,6 +393,14 @@ export const USERS = {
             phoneNo
             tempPassword
             keycloakId
+            location {
+               label
+               id
+            }
+            brand {
+               id
+               title
+            }
          }
       }
    `,
