@@ -128,6 +128,10 @@ export const Header = ({ settings, navigationMenus }) => {
    React.useEffect(() => {
       if (!isFinalCartLoading) {
          const storeLocationId = localStorage.getItem('storeLocationId')
+         const showLocationSelectorInSession = sessionStorage.getItem(
+            'showLocationSelectorAfterPageLoad'
+         )
+
          if (storeLocationId && !locationId) {
             dispatch({
                type: 'SET_LOCATION_ID',
@@ -160,6 +164,17 @@ export const Header = ({ settings, navigationMenus }) => {
                   type: 'SET_USER_LOCATION',
                   payload: {
                      ...localUserLocationParse,
+                  },
+               })
+               return
+            }
+            if (showLocationSelectorInSession === 'false') {
+               dispatch({
+                  type: 'SET_STORE_STATUS',
+                  payload: {
+                     status: true,
+                     message: 'Please select location.',
+                     loading: false,
                   },
                })
                return
