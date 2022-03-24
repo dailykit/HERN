@@ -9,6 +9,8 @@ import { VegNonVegType } from '../../assets/icons'
 import { useTranslation } from '../../context'
 import classNames from 'classnames'
 import { formatCurrency } from '../../utils'
+import { isEmpty } from 'lodash'
+import { CustomArea } from '../featuredCollection/productCustomArea'
 
 export const Product = ({ config }) => {
    const router = useRouter()
@@ -82,7 +84,13 @@ export const Product = ({ config }) => {
 
    return (
       <div className="hern-product-page">
-         <div className="hern-product-page__product-section">
+         <div
+            className={classNames('hern-product-page__product-section', {
+               'hern-product-page__product-section--no-product-option': isEmpty(
+                  productDetails?.productOptions
+               ),
+            })}
+         >
             <div
                style={{
                   ...(showProductDetailOnImage && {
@@ -137,16 +145,36 @@ export const Product = ({ config }) => {
                      }}
                   />
                )}
-               {showProductDetailOnImage && (
-                  <ModifierPopup
-                     productData={productDetails}
-                     closeModifier={() => {}}
-                     showCounterBtn={true}
-                     modifierWithoutPopup={true}
-                     config={config}
-                     stepView={true}
-                     counterButtonPosition={'BOTTOM'}
-                  />
+               {showProductDetailOnImage &&
+                  !isEmpty(productDetails?.productOptions) && (
+                     <ModifierPopup
+                        productData={productDetails}
+                        closeModifier={() => {}}
+                        showCounterBtn={true}
+                        modifierWithoutPopup={true}
+                        config={config}
+                        stepView={true}
+                        counterButtonPosition={'BOTTOM'}
+                     />
+                  )}
+               {isEmpty(productDetails?.productOptions) && (
+                  <>
+                     <CustomArea
+                        data={productDetails}
+                        setProductModifier={{}}
+                        showAddToCartButtonFullWidth={true}
+                     />
+
+                     <div
+                        className="hern-product-card__description"
+                        title={productDetails?.description}
+                     >
+                        <span data-translation="true">
+                           {productDetails?.description?.slice(0, 50)}
+                        </span>
+                        {productDetails?.description?.length > 50 && '...'}
+                     </div>
+                  </>
                )}
             </div>
          </div>
