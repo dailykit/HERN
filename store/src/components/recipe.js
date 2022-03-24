@@ -9,7 +9,7 @@ import { useConfig } from '../lib'
 import classNames from 'classnames'
 import { HelperBar } from './helper_bar'
 import { Nutritions } from './nutrition'
-import { getRoute } from '../utils'
+import { getRoute, isClient } from '../utils'
 import { useRouter } from 'next/router'
 import { useTranslation } from '../context'
 import { HernLazyImage } from '../utils/hernImage'
@@ -75,9 +75,47 @@ export const Recipe = ({ productOption, config }) => {
       (productSetting &&
          productSetting?.['information Visibility']?.nutritionAndRecipeSameline
             ?.value) ??
-      config?.['information Visibility']?.recipe?.nutritionAndRecipeSameline
-         ?.value ??
+      config?.['information Visibility']?.recipe?.nutritionAndRecipeSameline?.value ??
       true
+
+   const recipeImageSize = React.useMemo(() => {
+      const innerWidth = isClient ? window.innerWidth : ''
+      if (0 <= innerWidth && innerWidth <= 468) {
+         return {
+            width: 370,
+            height: 183,
+         }
+      } else if (469 <= innerWidth && innerWidth <= 900) {
+         return {
+            width: 892,
+            height: 442,
+         }
+      } else if (901 <= innerWidth) {
+         return {
+            width: 1180,
+            height: 585,
+         }
+      }
+   }, [])
+   const recipeIngredientItemSize = React.useMemo(() => {
+      const innerWidth = isClient ? window.innerWidth : ''
+      if (0 <= innerWidth && innerWidth <= 468) {
+         return {
+            width: 153,
+            height: 153,
+         }
+      } else if (469 <= innerWidth && innerWidth <= 900) {
+         return {
+            width: 174,
+            height: 174,
+         }
+      } else if (901 <= innerWidth) {
+         return {
+            width: 184,
+            height: 184,
+         }
+      }
+   }, [])
 
    // if (!recipe) {
    //    return (
@@ -122,6 +160,8 @@ export const Recipe = ({ productOption, config }) => {
                      <HernLazyImage
                         dataSrc={recipe?.assets?.images[0]}
                         alt={recipe.name}
+                        width={recipeImageSize.width}
+                        height={recipeImageSize.height}
                      />
                   )}
                </div>
@@ -225,6 +265,12 @@ export const Recipe = ({ productOption, config }) => {
                                                    dataSrc={
                                                       sachet.ingredient.assets
                                                          .images[0]
+                                                   }
+                                                   width={
+                                                      recipeIngredientItemSize.width
+                                                   }
+                                                   height={
+                                                      recipeIngredientItemSize.height
                                                    }
                                                 />
                                              )}
