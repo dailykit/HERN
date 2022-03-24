@@ -224,11 +224,18 @@
    justify-content: space-between;
    align-items: center;
    padding: 12px 0;
+   position: relative;
 }
 .hern-header__auth--layout-one {
-   transform: translateX(-80px);
-   @media screen and (max-width: 767px) {
-      transform: translateX(0px);
+   position: absolute;
+   left: 50%;
+   top: 50%;
+   transform: translate(-50%, -50%);
+   @media screen and (max-width: 1023px) {
+      position: unset;
+      left: unset;
+      top: unset;
+      transform: unset;
    }
 }
 .hern-navbar__list--layout-one {
