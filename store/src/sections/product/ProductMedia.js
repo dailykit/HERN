@@ -16,6 +16,8 @@ const ProductMedia = ({ assets, config }) => {
                      className={index === activeImage ? 'active-img' : ''}
                      dataSrc={image}
                      onClick={() => setActiveImage(index)}
+                     height={52}
+                     width={52}
                   />
                </div>
             ))}
