@@ -52,7 +52,6 @@ export const Login = props => {
    //props
    const {
       closeLoginPopup,
-      loginBy = 'email',
       forceLogin = false,
       isSilentlyLogin = true,
       singleLoginMethod = false,
