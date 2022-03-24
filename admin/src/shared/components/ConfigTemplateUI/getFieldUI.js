@@ -18,6 +18,7 @@ import {
     MultipleImageUpload,
     RichText,
     CollectionSelector,
+    ProductSelector
 } from './UIComponents'
 import { Address } from './UIComponents/Address'
 import { useEditMode } from './EditModeContext'
@@ -300,9 +301,13 @@ export const getFieldUI = (
         )
     } else if (field.userInsertType === 'productSelector' && field.dataType === 'product') {
         configUI = (
-            <>
-                <p>product-selector</p>
-            </>
+            <ProductSelector
+                fieldDetail={field}
+                marginLeft={indentation}
+                path={fieldKey}
+                onConfigChange={onConfigChange}
+                editMode={editMode}
+            />
         )
     }
     return <div data-config-path={fieldKey}>{configUI}</div>
