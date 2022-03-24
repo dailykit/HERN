@@ -13,10 +13,14 @@ import { getRoute, isClient } from '../utils'
 import { useRouter } from 'next/router'
 import { useTranslation } from '../context'
 import { HernLazyImage } from '../utils/hernImage'
+import { useProductConfig } from '../utils/getProductSettings'
 
 export const Recipe = ({ productOption, config }) => {
    const { configOf } = useConfig()
    const router = useRouter()
+   const { id } = router.query
+   const { value: productSetting } = useProductConfig('recipe-section', id)
+
    const recipe = productOption?.simpleRecipeYield?.simpleRecipe
    const theme = configOf('theme-color', 'Visual')
    const { t, dynamicTrans, locale } = useTranslation()
@@ -42,20 +46,38 @@ export const Recipe = ({ productOption, config }) => {
       }
       return <span data-translation="true"> {slipName}</span>
    }
+
    const customIngredientsLabel =
+      (productSetting &&
+         productSetting?.['information Visibility']?.customIngredientsLabel
+            ?.value) ??
       config?.['information Visibility']?.recipe?.customIngredientsLabel?.value
    const showAuthor =
-      config?.['information Visibility']?.recipe?.showAuthor?.value ?? true
+      (productSetting &&
+         productSetting?.['information Visibility']?.showAuthor?.value) ??
+      config?.['information Visibility']?.recipe?.showAuthor?.value ??
+      true
    const showCookingProcess =
+      (productSetting &&
+         productSetting?.['information Visibility']?.showCookingProcess
+            ?.value) ??
       config?.['information Visibility']?.recipe?.showCookingProcess?.value ??
       false
    const showNavigationCategory =
+      (productSetting &&
+         productSetting?.['information Visibility']?.showNavigationCategory
+            ?.value) ??
       config?.['information Visibility']?.recipe?.showNavigationCategory
-         ?.value ?? false
+         ?.value ??
+      false
 
    const nutritionAndRecipeSameline =
-      config?.['information Visibility']?.recipe?.nutritionAndRecipeSameline
-         ?.value ?? true
+      (productSetting &&
+         productSetting?.['information Visibility']?.nutritionAndRecipeSameline
+            ?.value) ??
+      config?.['information Visibility']?.recipe?.nutritionAndRecipeSameline?.value ??
+      true
+
    const recipeImageSize = React.useMemo(() => {
       const innerWidth = isClient ? window.innerWidth : ''
       if (0 <= innerWidth && innerWidth <= 468) {
@@ -94,6 +116,7 @@ export const Recipe = ({ productOption, config }) => {
          }
       }
    }, [])
+
    // if (!recipe) {
    //    return (
    //       <main className="hern-recipe__wrapper">

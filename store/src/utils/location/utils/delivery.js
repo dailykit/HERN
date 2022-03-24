@@ -3,6 +3,7 @@ import { isPointInPolygon, convertDistance } from 'geolib'
 import { isClient, get_env } from '../../index'
 import axios from 'axios'
 import moment from 'moment'
+import { isDateValidInRRule } from '../../'
 
 // return delivery status of store (with recurrences, mileRange info, timeSlot info and drivable distance if store available for on demand delivery)
 export const isStoreOnDemandDeliveryAvailable = async (
@@ -13,13 +14,11 @@ export const isStoreOnDemandDeliveryAvailable = async (
    let fulfilledRecurrences = []
    for (let rec in finalRecurrences) {
       const now = new Date() // now
-      const start = new Date(now.getTime() - 1000 * 60 * 60 * 24) // yesterday
-      const end = new Date(now.getTime() + 1000 * 60 * 60 * 24) // tomorrow
-      const dates = rrulestr(finalRecurrences[rec].recurrence.rrule).between(
-         start,
-         now
+
+      const isValidDay = isDateValidInRRule(
+         finalRecurrences[rec].recurrence.rrule
       )
-      if (dates.length) {
+      if (isValidDay) {
          if (finalRecurrences[rec].recurrence.timeSlots.length) {
             const sortedTimeSlots = _.sortBy(
                finalRecurrences[rec].recurrence.timeSlots,
