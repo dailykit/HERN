@@ -522,7 +522,7 @@ const CartPageHeader = ({
    return (
       <header className="hern-cart-page__header">
          <div>
-            {isKioskMode && (
+            {!isKioskMode && (
                <span
                   tw="hover:(cursor-pointer)"
                   onClick={async () => {
