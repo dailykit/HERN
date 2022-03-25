@@ -220,7 +220,7 @@ const ProductSlider = ({ config, productsData }) => {
             {
                breakpoint: 1024,
                settings: {
-                  slidesToShow: 3,
+                  slidesToShow: 1,
                   initialSlide: 1,
                },
             },
