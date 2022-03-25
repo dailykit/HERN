@@ -43,18 +43,18 @@ export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
          },
       }
    )
-   const { data: { orders: cancelledOrders = {} } = {} } = useSubscription(
-      QUERIES.ORDERS.AGGREGATE.CANCELLED,
-      {
-         variables: {
-            brandId: {
-               _in: brandContext.brandId
-            }, locationId: {
-               _in: brandContext.locationId
-            }
-         }
-      }
-   )
+   // const { data: { orders: cancelledOrders = {} } = {} } = useSubscription(
+   //    QUERIES.ORDERS.AGGREGATE.CANCELLED,
+   //    {
+   //       variables: {
+   //          brandId: {
+   //             _in: brandContext.brandId
+   //          }, locationId: {
+   //             _in: brandContext.locationId
+   //          }
+   //       }
+   //    }
+   // )
    const {
       loading,
       error,
@@ -126,14 +126,14 @@ export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
                />
             ))}
          </ul>
-         <MetricItem
+         {/* <MetricItem
             title="Rejected or Cancelled"
             variant="ORDER_REJECTED_OR_CANCELLED"
             count={cancelledOrders?.aggregate?.count}
             amount={cancelledOrders?.aggregate?.sum?.amountPaid}
             average={cancelledOrders?.aggregate?.avg?.amountPaid}
             closeOrderSummaryTunnel={closeOrderSummaryTunnel}
-         />
+         /> */}
          <Flex container alignItems="center" justifyContent="space-between">
             <Text as="h4">Advanced Filters</Text>
             <Flex container alignItems="center">
