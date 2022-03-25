@@ -2,10 +2,20 @@ import React from 'react'
 import { Login } from '../components'
 import { CSSTransition } from 'react-transition-group'
 import { useConfig } from '../lib'
+import isEmpty from 'lodash/isEmpty'
+import isNull from 'lodash/isNull'
 
 export const LoginWrapper = ({ ...props }) => {
-   const { showLoginPopup } = props
+   const { showLoginPopup, currentAuth, setAuth, deleteAuth } = props
 
+   const loginBy = React.useMemo(() => {
+      if (isEmpty(currentAuth) || isNull(currentAuth)) {
+         return null
+      } else {
+         return currentAuth === 'sign-in' ? 'email' : 'signup'
+      }
+   }, [currentAuth])
+   console.log({ loginBy })
    const { configOf } = useConfig()
    const authConfig = configOf('Auth Methods', 'brand')
 
@@ -71,9 +81,12 @@ export const LoginWrapper = ({ ...props }) => {
                }
                loginBy={
                   authConfig.loginSettings?.defaultLogInMethod?.value?.value ||
+                  loginBy ||
                   'email'
                }
+               currentAuth={loginBy}
                showBackground={showBackground}
+               setAuth={setAuth}
             />
          </div>
       </CSSTransition>

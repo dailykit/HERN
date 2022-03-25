@@ -36,6 +36,9 @@ import {
    useSubscription,
 } from '@apollo/react-hooks'
 import axios from 'axios'
+import isEmpty from 'lodash/isEmpty'
+import isNull from 'lodash/isNull'
+
 import {
    deleteStoredReferralCode,
    isReferralCodeValid,
@@ -59,6 +62,8 @@ export const Login = props => {
       callbackURL,
       socialLogin = true,
       showBackground = false,
+      currentAuth = null,
+      setAuth = null,
    } = props
 
    //loginBy --> initial login method ('email', 'otp' , 'signup', 'forgotPassword').
@@ -86,7 +91,13 @@ export const Login = props => {
          return true
       }
    }, [])
+   React.useEffect(() => {
+      if (!isNull(currentAuth)) {
+         setDefaultLogin(loginBy)
+      }
+   }, [currentAuth])
    console.log('authConfig', authConfig)
+   console.log(loginBy, defaultLogin, 'Login by ')
    return (
       <div
          style={
@@ -119,7 +130,9 @@ export const Login = props => {
                      <button
                         className="hern-login-v1__create-one-btn"
                         onClick={() => {
-                           setDefaultLogin('signup')
+                           setAuth
+                              ? setAuth('sign-up')
+                              : setDefaultLogin('signup')
                         }}
                      >
                         {t('Create one')}
@@ -188,6 +201,7 @@ export const Login = props => {
                         className="hern-login-login-switcher-btn"
                         variant="outline"
                         onClick={() => {
+                           setAuth('sign-in')
                            defaultLogin === 'email'
                               ? setDefaultLogin('otp')
                               : setDefaultLogin('email')

@@ -5,10 +5,12 @@ import { signOut } from 'next-auth/client'
 import {
    getProtectedRoutes,
    get_env,
-   LoginWrapper,
+   // LoginWrapper,
    formatCurrency,
    getStoresWithValidations,
+   useQueryParamState,
 } from '../utils'
+
 import { CSSTransition } from 'react-transition-group'
 
 import { useUser, CartContext, useTranslation } from '../context'
@@ -23,7 +25,13 @@ import { useWindowSize } from '../utils/useWindowSize'
 import { LanguageSwitch, TemplateFile } from '.'
 import classNames from 'classnames'
 import { useConfig } from '../lib'
+import isEmpty from 'lodash/isEmpty'
+import isNull from 'lodash/isNull'
+import dynamic from 'next/dynamic'
 
+const LoginWrapper = dynamic('../utils/loginWrapper', { ssr: false }).then(
+   promise => promise.LoginWrapper
+)
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const Header = ({ settings, navigationMenus }) => {
@@ -77,6 +85,12 @@ export const Header = ({ settings, navigationMenus }) => {
 
    const newNavigationMenus = DataWithChildNodes(navigationMenus)
 
+   const [currentAuth, setAuth, deleteAuth] = useQueryParamState('auth')
+   React.useEffect(() => {
+      if (!(isEmpty(currentAuth) || isNull(currentAuth))) {
+         setShowLoginPopup(true)
+      }
+   }, [currentAuth])
    const {
       cartState,
       setStoredCartId,
@@ -325,6 +339,9 @@ export const Header = ({ settings, navigationMenus }) => {
                showLocationButton={showLocationButton}
                address={address}
                newNavigationMenus={newNavigationMenus}
+               currentAuth={currentAuth}
+               setAuth={setAuth}
+               deleteAuth={deleteAuth}
             />
          )}
          {layoutStyle === 'layout-two' && (
@@ -339,6 +356,9 @@ export const Header = ({ settings, navigationMenus }) => {
                showLocationButton={showLocationButton}
                address={address}
                newNavigationMenus={newNavigationMenus}
+               currentAuth={currentAuth}
+               setAuth={setAuth}
+               deleteAuth={deleteAuth}
             />
          )}
          <LocationSelectorWrapper
@@ -352,6 +372,9 @@ export const Header = ({ settings, navigationMenus }) => {
          <LoginWrapper
             closeLoginPopup={() => setShowLoginPopup(false)}
             showLoginPopup={showLoginPopup}
+            currentAuth={currentAuth}
+            setAuth={setAuth}
+            deleteAuth={deleteAuth}
          />
       </>
    )
