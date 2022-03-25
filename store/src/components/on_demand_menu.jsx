@@ -82,7 +82,7 @@ export const OnDemandMenu = props => {
                            to={each.name}
                            spy={true}
                            offset={
-                              headerLayoutStyle === 'layout-one' ? -130 : -150
+                              headerLayoutStyle === 'layout-one' ? -60 : -130
                            }
                         >
                            <span>
