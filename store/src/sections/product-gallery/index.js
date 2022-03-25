@@ -57,7 +57,12 @@ export const ProductGallery = ({ config }) => {
    )
 
    if (status == 'loading') return <Loader inline />
-   if (status == 'error') return <p>Something went wrong</p>
+   if (status == 'error')
+      return (
+         <p className="hern-product-galllery__something-went-wrong">
+            (Something went wrong)
+         </p>
+      )
    return (
       <>
          <div className="hern-product_gallery-header">
