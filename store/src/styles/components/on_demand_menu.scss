@@ -82,6 +82,8 @@
    z-index: 99;
    width: inherit;
    background-color: #fff;
+   max-width: 1200px;
+   margin: 0 auto;
    > ul {
       display: flex;
       width: inherit;
