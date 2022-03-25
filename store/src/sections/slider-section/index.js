@@ -19,6 +19,7 @@ export const SliderSection = ({ config }) => {
                dots={showDotsOnSlider}
                prevArrow={showArrowsOnSlider ? <LeftArrow /> : false}
                nextArrow={showArrowsOnSlider ? <RightArrow /> : false}
+               autoplay={true}
             >
                {sliderContent &&
                   config.display.slider.content.images.value.map(
