@@ -8,7 +8,7 @@ import {
    // LoginWrapper,
    formatCurrency,
    getStoresWithValidations,
-   useQueryParamState,
+   useQueryParams,
 } from '../utils'
 
 import { CSSTransition } from 'react-transition-group'
@@ -29,8 +29,9 @@ import isEmpty from 'lodash/isEmpty'
 import isNull from 'lodash/isNull'
 import dynamic from 'next/dynamic'
 
-const LoginWrapper = dynamic('../utils/loginWrapper', { ssr: false }).then(
-   promise => promise.LoginWrapper
+const LoginWrapper = dynamic(
+   () => import('../utils/loginWrapper').then(promise => promise.LoginWrapper),
+   { ssr: false }
 )
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
@@ -45,7 +46,7 @@ export const Header = ({ settings, navigationMenus }) => {
    } = useConfig()
    const router = useRouter()
    const { width } = useWindowSize()
-
+   const { deleteAuth } = useConfig()
    const logout = async () => {
       const currentPathName = router.pathname
       const isRouteProtected = Boolean(
@@ -63,7 +64,7 @@ export const Header = ({ settings, navigationMenus }) => {
    const brand = settings['brand']['theme-brand']
    const headerNavigationSettings =
       settings['navigation']?.['header-navigation']?.headerNavigation
-   console.log('header navigation : ', headerNavigationSettings?.layout.value)
+   // console.log('header navigation : ', headerNavigationSettings?.layout.value)
    const showLocationButton =
       settings?.['navigation']?.['Show Location Selector']?.[
          'Location-Selector'
@@ -84,13 +85,24 @@ export const Header = ({ settings, navigationMenus }) => {
    const [fulfillmentType, setFulfillmentType] = useState(null)
 
    const newNavigationMenus = DataWithChildNodes(navigationMenus)
+   const { auth: currentAuth } = useQueryParams()
+   const { isAuthenticated, isLoading } = useUser()
 
-   const [currentAuth, setAuth, deleteAuth] = useQueryParamState('auth')
    React.useEffect(() => {
-      if (!(isEmpty(currentAuth) || isNull(currentAuth))) {
-         setShowLoginPopup(true)
+      if (isClient) {
+         if (!isLoading) {
+            if (!isAuthenticated) {
+               if (!(isEmpty(currentAuth) || isNull(currentAuth))) {
+                  setShowLoginPopup(true)
+               }
+            } else {
+               if (!(isEmpty(currentAuth) || isNull(currentAuth))) {
+                  deleteAuth('auth')
+               }
+            }
+         }
       }
-   }, [currentAuth])
+   }, [currentAuth, isClient, isLoading, isAuthenticated])
    const {
       cartState,
       setStoredCartId,
@@ -339,9 +351,6 @@ export const Header = ({ settings, navigationMenus }) => {
                showLocationButton={showLocationButton}
                address={address}
                newNavigationMenus={newNavigationMenus}
-               currentAuth={currentAuth}
-               setAuth={setAuth}
-               deleteAuth={deleteAuth}
             />
          )}
          {layoutStyle === 'layout-two' && (
@@ -356,9 +365,6 @@ export const Header = ({ settings, navigationMenus }) => {
                showLocationButton={showLocationButton}
                address={address}
                newNavigationMenus={newNavigationMenus}
-               currentAuth={currentAuth}
-               setAuth={setAuth}
-               deleteAuth={deleteAuth}
             />
          )}
          <LocationSelectorWrapper
@@ -369,13 +375,16 @@ export const Header = ({ settings, navigationMenus }) => {
          {isClient && width < 768 && (
             <ProfileSidebar toggle={toggle} logout={logout} />
          )}
-         <LoginWrapper
-            closeLoginPopup={() => setShowLoginPopup(false)}
-            showLoginPopup={showLoginPopup}
-            currentAuth={currentAuth}
-            setAuth={setAuth}
-            deleteAuth={deleteAuth}
-         />
+         {isClient && (
+            <LoginWrapper
+               closeLoginPopup={() => {
+                  setShowLoginPopup(false)
+                  deleteAuth('auth')
+               }}
+               showLoginPopup={showLoginPopup}
+               currentAuth={currentAuth}
+            />
+         )}
       </>
    )
 }
@@ -742,7 +751,7 @@ const AuthMenu = ({
 }) => {
    const { isAuthenticated, user, isLoading } = useUser()
    const router = useRouter()
-   const { configOf } = useConfig()
+   const { configOf, setAuth } = useConfig()
    const { width } = useWindowSize()
    const theme = configOf('theme-color', 'Visual')?.themeColor
    const isSubscriptionStore =
@@ -844,7 +853,11 @@ const AuthMenu = ({
                style={{
                   backgroundColor: `var(--hern-accent)`,
                }}
-               onClick={() => setShowLoginPopup(true)}
+               onClick={() => {
+                  setShowLoginPopup(true)
+                  setAuth('sign-in')
+               }}
+               id="hern-header__global-login-button"
             >
                {loginButtonLabel}
             </button>

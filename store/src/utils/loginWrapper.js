@@ -6,18 +6,32 @@ import isEmpty from 'lodash/isEmpty'
 import isNull from 'lodash/isNull'
 
 export const LoginWrapper = ({ ...props }) => {
-   const { showLoginPopup, currentAuth, setAuth, deleteAuth } = props
+   const { showLoginPopup, currentAuth = null } = props
+   const { configOf } = useConfig()
+   const authConfig = configOf('Auth Methods', 'brand')
 
    const loginBy = React.useMemo(() => {
       if (isEmpty(currentAuth) || isNull(currentAuth)) {
-         return null
+         if (authConfig?.loginSettings?.defaultLogInMethod?.value?.value) {
+            return authConfig?.loginSettings?.defaultLogInMethod?.value?.value
+         } else {
+            return 'email'
+         }
       } else {
-         return currentAuth === 'sign-in' ? 'email' : 'signup'
+         if (currentAuth === 'sign-up') {
+            return 'signup'
+         } else if (currentAuth === 'sign-in') {
+            if (authConfig?.loginSettings?.defaultLogInMethod?.value?.value) {
+               return authConfig?.loginSettings?.defaultLogInMethod?.value
+                  ?.value
+            } else {
+               return 'email'
+            }
+         } else if (currentAuth === 'forgotPassword') {
+            return 'forgotPassword'
+         }
       }
    }, [currentAuth])
-   console.log({ loginBy })
-   const { configOf } = useConfig()
-   const authConfig = configOf('Auth Methods', 'brand')
 
    /** Brand level config for login illustration **/
    const loginIllustration = configOf('Login Illustrations', 'brand')
@@ -79,14 +93,9 @@ export const LoginWrapper = ({ ...props }) => {
                singleLoginMethod={
                   authConfig.loginSettings?.singleLoginMethod?.value || false
                }
-               loginBy={
-                  authConfig.loginSettings?.defaultLogInMethod?.value?.value ||
-                  loginBy ||
-                  'email'
-               }
+               loginBy={loginBy}
                currentAuth={loginBy}
                showBackground={showBackground}
-               setAuth={setAuth}
             />
          </div>
       </CSSTransition>
