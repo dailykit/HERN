@@ -363,7 +363,7 @@
    }
 }
 
-@media only screen and (min-width: 400px) {
+@media only screen and (max-width: 400px) {
    .hern-testimonials__wrapper {
       max-width: 200px;
       padding: 64px 0;
