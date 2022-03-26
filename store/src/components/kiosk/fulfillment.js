@@ -5,6 +5,7 @@ import { DineInIcon, TakeOutIcon } from '../../assets/icons'
 import { useConfig } from '../../lib'
 import { rrulestr } from 'rrule'
 import moment from 'moment'
+import { isDateValidInRRule } from '../../utils'
 
 export const FulfillmentSection = props => {
    const { config, setCurrentPage } = props
@@ -33,11 +34,10 @@ export const FulfillmentSection = props => {
          const recurrencesValidation = recurrences => {
             for (let i = 0; i <= recurrences.length - 1; i++) {
                // check current day is valid for rrule
-               const dates = rrulestr(recurrences[i].recurrence.rrule).between(
-                  start,
-                  now
+               const isValidDay = isDateValidInRRule(
+                  recurrences[i].recurrence.rrule
                )
-               if (dates.length) {
+               if (isValidDay) {
                   // check time slots available or not
                   // if available then check current time is valid or not
                   if (recurrences[i].recurrence.timeSlots.length) {
