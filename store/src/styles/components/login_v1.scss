@@ -76,7 +76,7 @@
 .hern-login-v1__fieldset {
    display: flex;
    flex-direction: column;
-   margin: 16px 0;
+   margin: 16px 0 5px;
 }
 
 .hern-login-v1__label {
@@ -207,6 +207,11 @@
          outline: 1px solid rgba(239, 68, 68, 1) !important;
       }
    }
+}
+.hern-login-v1__otp__phone__error {
+   color: #ef4444;
+   font-size: 14px;
+   line-height: 15px;
 }
 .hern-login-v1__otp__phone__input-valid {
    input {
