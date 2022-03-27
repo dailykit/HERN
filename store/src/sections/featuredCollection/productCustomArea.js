@@ -24,7 +24,7 @@ export const CustomArea = props => {
 
    const { t } = useTranslation()
 
-   React.useEffect(() => {
+   React.useLayoutEffect(() => {
       if (combinedCartItems) {
          const allCartItemsIdsForThisProducts = combinedCartItems
             .filter(x => x.productId === data.id)
