@@ -2,12 +2,12 @@ import React from 'react'
 import { PRODUCTS } from '../../graphql'
 import { useQuery } from '@apollo/react-hooks'
 import { useConfig } from '../../lib'
-import { Button, Loader } from '../../components'
+import { Loader } from '../../components'
 import { Carousel, Row, Col } from 'antd'
 import { ProductCard } from '../../components/product_card'
 import { ArrowLeftIcon, ArrowRightIcon } from '../../assets/icons'
 import { useRouter } from 'next/router'
-import { getRoute } from '../../utils'
+import { getRoute, isClient } from '../../utils'
 import { CustomArea } from '../featuredCollection/productCustomArea'
 
 export const ProductGallery = ({ config }) => {
@@ -59,9 +59,19 @@ export const ProductGallery = ({ config }) => {
    if (status == 'loading') return <Loader inline />
    if (status == 'error')
       return (
-         <p className="hern-product-galllery__something-went-wrong">
-            (Something went wrong)
-         </p>
+         <div className="hern-product-galllery__something-went-wrong">
+            Opps!
+            <br /> Something went wrong while loading products. <br />
+            <button
+               onClick={() => {
+                  if (isClient) {
+                     window.location.reload()
+                  }
+               }}
+            >
+               Reload
+            </button>
+         </div>
       )
    return (
       <>
