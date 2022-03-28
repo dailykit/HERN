@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import styled, { css } from 'styled-components'
 import { useSubscription } from '@apollo/react-hooks'
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from '@reach/tabs'
@@ -11,6 +11,7 @@ import { NewTabIcon } from '../../../../assets/icons'
 import { logger } from '../../../../../../shared/utils'
 import { useTabs } from '../../../../../../shared/providers'
 import { ErrorState, InlineLoader } from '../../../../../../shared/components'
+import { BrandContext } from '../../../../../../App'
 
 export const SachetItems = () => {
    const [total, setTotal] = React.useState(0)
@@ -32,11 +33,20 @@ export const SachetItems = () => {
 
 const Listing = ({ setTotal, setQuantity }) => {
    const { state } = useOrder()
+   const [brandContext] = useContext(BrandContext)
    const { loading, error, data: { sachetItems = {} } = {} } = useSubscription(
       QUERIES.PLANNED.SACHET_ITEMS,
       {
          variables: {
             cart: state.orders.where.cart,
+            cart: {
+               brandId: {
+                  _in: brandContext.brandId
+               },
+               locationId: {
+                  _in: brandContext.locationId
+               }
+            }
          },
          onSubscriptionData: ({
             subscriptionData: { data: { sachetItems: items = {} } = {} } = {},
