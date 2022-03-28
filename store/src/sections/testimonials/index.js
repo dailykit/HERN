@@ -6,14 +6,14 @@ import { HernLazyImage } from '../../utils/hernImage'
 
 export const Testimonials = ({ config }) => {
    const content = config.display.review.content
-   const variant = config.display.variant.value.value
-   const header = config.data.title.value
+   const variant = config?.display?.variant?.value?.value
+   const header = config?.data?.title?.value
    const subHeading = config?.data?.subTitle?.value
 
    const carouselRef = React.createRef()
    return (
       <div className="hern-testimonials__container">
-         {variant === 'slider-with-image' && (
+         {(!variant || variant === 'slider-with-image') && (
             <div className="hern-testimonials">
                <Carousel ref={carouselRef} dots={false}>
                   {content.map(({ userName, img, review, location }) => (

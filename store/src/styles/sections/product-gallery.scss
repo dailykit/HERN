@@ -178,3 +178,18 @@
       padding: 0.3em 0.5em 0.3em 0.3em;
    }
 }
+.hern-product-galllery__something-went-wrong {
+   color: #222;
+   font-size: 22px;
+   font-weight: 600;
+   letter-spacing: 0.88px;
+   text-align: center;
+   padding: 64px 0;
+   > button {
+      border: 1px solid #222;
+      font-size: 16px;
+      border-radius: 3px;
+      padding: 4px 12px;
+      margin-top: 12px;
+   }
+}

@@ -1,5 +1,10 @@
 import React, { useState } from 'react'
-import { CartContext, onDemandMenuContext, useUser, useTranslation } from '../../context'
+import {
+   CartContext,
+   onDemandMenuContext,
+   useUser,
+   useTranslation,
+} from '../../context'
 import {
    Button,
    Divider,
@@ -50,7 +55,7 @@ export const CartDetails = () => {
             <div className="hern-cart-page">
                <div className="hern-cart-content">
                   <header>{t('Cart')}</header>
-                  < Loader />
+                  <Loader />
                </div>
             </div>
          </div>
@@ -73,9 +78,11 @@ export const CartDetails = () => {
                      <span>{t('Oops! Your cart is empty')} </span>
                      <Button
                         className="hern-cart-go-to-menu-btn"
-                        onClick={() => { }}
+                        onClick={() => {}}
                      >
-                        <Link href="/order">{t('GO TO MENU')}</Link>
+                        <Link href="/order">
+                           <a>{t('GO TO MENU')}</a>
+                        </Link>
                      </Button>
                   </div>
                </div>
@@ -86,7 +93,9 @@ export const CartDetails = () => {
 
    return (
       <section className="hern-cart-container">
-         <h2><span>{t('Items')}</span>({combinedCartItems.length})</h2>
+         <h2>
+            <span>{t('Items')}</span>({combinedCartItems.length})
+         </h2>
          {combinedCartItems.map((product, index) => {
             return (
                <CartCard

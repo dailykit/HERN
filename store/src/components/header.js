@@ -717,14 +717,16 @@ const Navigation = ({ newNavigationMenus, settings, layout }) => {
                <li className="hern-navbar__list__item__skeleton" />
             ) : isAuthenticated && user?.isSubscriber && isSubscriptionStore ? (
                <li className="hern-navbar__list__item">
-                  <Link href={getRoute('/menu')}>{t('Select Menu')}</Link>
+                  <Link href={getRoute('/menu')}>
+                     <a>{t('Select Menu')}</a>
+                  </Link>
                </li>
             ) : (
                <>
                   {isSubscriptionStore && (
                      <li className="hern-navbar__list__item">
                         <Link href={getRoute('/our-menu')}>
-                           {t('Our Menu')}
+                           <a> {t('Our Menu')}</a>
                         </Link>
                      </li>
                   )}
@@ -732,7 +734,9 @@ const Navigation = ({ newNavigationMenus, settings, layout }) => {
             )}
             {!user?.isSubscriber && isSubscriptionStore && (
                <li className="hern-navbar__list__item">
-                  <Link href={getRoute('/our-plans')}>{t('Get Started')}</Link>
+                  <Link href={getRoute('/our-plans')}>
+                     <a>{t('Get Started')}</a>
+                  </Link>
                </li>
             )}
          </NavigationBar>
