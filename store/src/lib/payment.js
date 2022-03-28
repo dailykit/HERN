@@ -395,10 +395,18 @@ export const PaymentProvider = ({ children }) => {
 
    // setting cartPayment in state
    useEffect(() => {
+      console.log('useEffect for setting cartPayment')
+      if (!cartId) {
+         setCartId(cartState?.cart?.id || null)
+      }
       if (!isEmpty(cartPaymentsFromQuery)) {
          setCartPayment(cartPaymentsFromQuery[0])
+         initializePayment(cartPaymentsFromQuery[0].cartId)
+         console.log('initializedPayment', cartPaymentsFromQuery[0].cartId)
       } else {
          setCartPayment(null)
+         setIsPaymentInitiated(false)
+         setIsProcessingPayment(false)
       }
    }, [cartPaymentsFromQuery])
 
