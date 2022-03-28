@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { useToasts } from 'react-toast-notifications'
 import { Button, Form, Loader, ProfileSidebar, Spacer } from '../../components'
 import { useTranslation, useUser } from '../../context'
+import { useForm } from 'react-hook-form'
 
 import {
    BRAND,
@@ -40,11 +41,11 @@ const ProfileForm = () => {
    const { t } = useTranslation()
    const theme = configOf('theme-color', 'Visual')
    const { addToast } = useToasts()
-
-   const [firstName, setFirstName] = useState(
-      user?.platform_customer?.firstName
-   )
-   const [lastName, setLastName] = useState(user?.platform_customer?.lastName)
+   const {
+      register,
+      handleSubmit,
+      formState: { errors },
+   } = useForm()
 
    const [updateCustomer] = useMutation(UPDATE_PLATFORM_CUSTOMER, {
       onCompleted: () => {
@@ -60,18 +61,21 @@ const ProfileForm = () => {
          })
       },
    })
-   React.useEffect(() => {
-      setFirstName(user?.platform_customer?.firstName)
-      setLastName(user?.platform_customer?.lastName)
-   }, [user])
 
-   const handleSubmit = async e => {
-      e.preventDefault()
+   const onSubmit = async data => {
+      const name = {
+         firstName: data.firstName
+            ? data.firstName
+            : user?.platform_customer?.firstName,
+         lastName: data.lastName
+            ? data.lastName
+            : user?.platform_customer?.lastName,
+      }
       if (user?.keycloakId) {
          await updateCustomer({
             variables: {
                keycloakId: user.keycloakId,
-               _set: { firstName: firstName, lastName: lastName },
+               _set: name,
             },
          })
       }
@@ -88,39 +92,47 @@ const ProfileForm = () => {
                {t('Profile')}
             </h2>
          </header>
-         <Form.Field>
-            <Form.Label> {t('Email')}</Form.Label>
-            <Form.DisabledText value={user?.platform_customer?.email} />
-         </Form.Field>
-         <div className="hern-profile__profile-form__name">
+         <form onSubmit={handleSubmit(onSubmit)}>
             <Form.Field>
-               <Form.Label> {t('First Name')}</Form.Label>
-               <Form.Text
-                  type="text"
-                  name="firstName"
-                  placeholder="Enter your first name"
-                  value={firstName}
-                  onChange={e => setFirstName(e.target.value)}
-               />
+               <Form.Label> {t('Email')}</Form.Label>
+               <Form.DisabledText value={user?.platform_customer?.email} />
             </Form.Field>
-            <Form.Field>
-               <Form.Label> {t('Last Name')}</Form.Label>
-               <Form.Text
-                  type="text"
-                  name="lastName"
-                  value={lastName}
-                  onChange={e => setLastName(e.target.value)}
-                  placeholder="Enter your last name"
-               />
-            </Form.Field>
-         </div>
-         <Button
-            onClick={handleSubmit}
-            type="submit"
-            disabled={!firstName?.length || !lastName?.length}
-         >
-            Submit
-         </Button>
+            <div className="hern-profile__profile-form__name">
+               <Form.Field>
+                  <Form.Label> {t('First Name')}</Form.Label>
+                  <input
+                     type="text"
+                     name="firstName"
+                     defaultValue={user?.platform_customer?.firstName}
+                     required
+                     {...register('firstName', { pattern: /^[a-zA-Z .]+$/ })}
+                     placeholder="Enter your first name"
+                  />
+                  {errors.firstName && errors.firstName.type === 'pattern' && (
+                     <span className="hern-profile__profile-form__error">
+                        Invalid Chrecter.{' '}
+                     </span>
+                  )}
+               </Form.Field>
+               <Form.Field>
+                  <Form.Label> {t('Last Name')}</Form.Label>
+                  <input
+                     type="text"
+                     name="lastName"
+                     defaultValue={user?.platform_customer?.lastName}
+                     required
+                     {...register('lastName', { pattern: /^[a-zA-Z .]+$/ })}
+                     placeholder="Enter your last name"
+                  />
+                  {errors.lastName && errors.lastName.type === 'pattern' && (
+                     <span className="hern-profile__profile-form__error">
+                        Invalid Chrecter.{' '}
+                     </span>
+                  )}
+               </Form.Field>
+            </div>
+            <Button type="submit">Submit</Button>
+         </form>
       </section>
    )
 }
@@ -235,9 +247,13 @@ const CurrentPlan = () => {
          const end = new Date(endDate)
          const now = moment().format('YYYY-MM-DD')
          if (moment(start).isBefore(now)) {
-            return addToast(t('Start date is not valid!'), { appearance: 'error' })
+            return addToast(t('Start date is not valid!'), {
+               appearance: 'error',
+            })
          } else if (moment(end).isBefore(now)) {
-            return addToast(t('End date is not valid!'), { appearance: 'error' })
+            return addToast(t('End date is not valid!'), {
+               appearance: 'error',
+            })
          } else if (moment(end).isBefore(start)) {
             return addToast(
                t('End date should be greater than or same as start date!'),
