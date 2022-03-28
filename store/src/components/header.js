@@ -5,10 +5,12 @@ import { signOut } from 'next-auth/client'
 import {
    getProtectedRoutes,
    get_env,
-   LoginWrapper,
+   // LoginWrapper,
    formatCurrency,
    getStoresWithValidations,
+   useQueryParams,
 } from '../utils'
+
 import { CSSTransition } from 'react-transition-group'
 
 import { useUser, CartContext, useTranslation } from '../context'
@@ -23,7 +25,14 @@ import { useWindowSize } from '../utils/useWindowSize'
 import { LanguageSwitch, TemplateFile } from '.'
 import classNames from 'classnames'
 import { useConfig } from '../lib'
+import isEmpty from 'lodash/isEmpty'
+import isNull from 'lodash/isNull'
+import dynamic from 'next/dynamic'
 
+const LoginWrapper = dynamic(
+   () => import('../utils/loginWrapper').then(promise => promise.LoginWrapper),
+   { ssr: false }
+)
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const Header = ({ settings, navigationMenus }) => {
@@ -37,7 +46,7 @@ export const Header = ({ settings, navigationMenus }) => {
    } = useConfig()
    const router = useRouter()
    const { width } = useWindowSize()
-
+   const { deleteAuth } = useConfig()
    const logout = async () => {
       const currentPathName = router.pathname
       const isRouteProtected = Boolean(
@@ -55,7 +64,7 @@ export const Header = ({ settings, navigationMenus }) => {
    const brand = settings['brand']['theme-brand']
    const headerNavigationSettings =
       settings['navigation']?.['header-navigation']?.headerNavigation
-   console.log('header navigation : ', headerNavigationSettings?.layout.value)
+   // console.log('header navigation : ', headerNavigationSettings?.layout.value)
    const showLocationButton =
       settings?.['navigation']?.['Show Location Selector']?.[
          'Location-Selector'
@@ -76,7 +85,24 @@ export const Header = ({ settings, navigationMenus }) => {
    const [fulfillmentType, setFulfillmentType] = useState(null)
 
    const newNavigationMenus = DataWithChildNodes(navigationMenus)
+   const { auth: currentAuth } = useQueryParams()
+   const { isAuthenticated, isLoading } = useUser()
 
+   React.useEffect(() => {
+      if (isClient) {
+         if (!isLoading) {
+            if (!isAuthenticated) {
+               if (!(isEmpty(currentAuth) || isNull(currentAuth))) {
+                  setShowLoginPopup(true)
+               }
+            } else {
+               if (!(isEmpty(currentAuth) || isNull(currentAuth))) {
+                  deleteAuth('auth')
+               }
+            }
+         }
+      }
+   }, [currentAuth, isClient, isLoading, isAuthenticated])
    const {
       cartState,
       setStoredCartId,
@@ -349,10 +375,16 @@ export const Header = ({ settings, navigationMenus }) => {
          {isClient && width < 768 && (
             <ProfileSidebar toggle={toggle} logout={logout} />
          )}
-         <LoginWrapper
-            closeLoginPopup={() => setShowLoginPopup(false)}
-            showLoginPopup={showLoginPopup}
-         />
+         {isClient && (
+            <LoginWrapper
+               closeLoginPopup={() => {
+                  setShowLoginPopup(false)
+                  deleteAuth('auth')
+               }}
+               showLoginPopup={showLoginPopup}
+               currentAuth={currentAuth}
+            />
+         )}
       </>
    )
 }
@@ -723,7 +755,7 @@ const AuthMenu = ({
 }) => {
    const { isAuthenticated, user, isLoading } = useUser()
    const router = useRouter()
-   const { configOf } = useConfig()
+   const { configOf, setAuth } = useConfig()
    const { width } = useWindowSize()
    const theme = configOf('theme-color', 'Visual')?.themeColor
    const isSubscriptionStore =
@@ -825,7 +857,11 @@ const AuthMenu = ({
                style={{
                   backgroundColor: `var(--hern-accent)`,
                }}
-               onClick={() => setShowLoginPopup(true)}
+               onClick={() => {
+                  setShowLoginPopup(true)
+                  setAuth('sign-in')
+               }}
+               id="hern-header__global-login-button"
             >
                {loginButtonLabel}
             </button>

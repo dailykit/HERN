@@ -36,6 +36,9 @@ import {
    useSubscription,
 } from '@apollo/react-hooks'
 import axios from 'axios'
+import isEmpty from 'lodash/isEmpty'
+import isNull from 'lodash/isNull'
+
 import {
    deleteStoredReferralCode,
    isReferralCodeValid,
@@ -59,6 +62,7 @@ export const Login = props => {
       callbackURL,
       socialLogin = true,
       showBackground = false,
+      currentAuth = null,
    } = props
 
    //loginBy --> initial login method ('email', 'otp' , 'signup', 'forgotPassword').
@@ -72,7 +76,7 @@ export const Login = props => {
 
    //component state
    const [defaultLogin, setDefaultLogin] = useState(loginBy)
-   const { configOf } = useConfig()
+   const { configOf, setAuth } = useConfig()
    const authConfig = configOf('Auth Methods', 'brand')
    const { t } = useTranslation()
    const showCreateOne = React.useMemo(() => {
@@ -86,7 +90,12 @@ export const Login = props => {
          return true
       }
    }, [])
-   console.log('authConfig', authConfig)
+   React.useEffect(() => {
+      if (!isNull(currentAuth)) {
+         setDefaultLogin(loginBy)
+      }
+   }, [currentAuth])
+
    return (
       <div
          style={
@@ -119,6 +128,7 @@ export const Login = props => {
                      <button
                         className="hern-login-v1__create-one-btn"
                         onClick={() => {
+                           setAuth('sign-up')
                            setDefaultLogin('signup')
                         }}
                      >
@@ -188,6 +198,7 @@ export const Login = props => {
                         className="hern-login-login-switcher-btn"
                         variant="outline"
                         onClick={() => {
+                           setAuth('sign-in')
                            defaultLogin === 'email'
                               ? setDefaultLogin('otp')
                               : setDefaultLogin('email')
@@ -213,6 +224,7 @@ export const Login = props => {
                   className="hern-login-v1__create-one-btn"
                   onClick={() => {
                      setDefaultLogin('signup')
+                     setAuth('sign-up')
                   }}
                >
                   {t('Create one')}
@@ -229,6 +241,7 @@ const Email = props => {
    const { setDefaultLogin, isSilentlyLogin, closeLoginPopup, callbackURL } =
       props
    const { addToast } = useToasts()
+   const { setAuth, deleteAuth } = useConfig()
    //component state
    const [loading, setLoading] = React.useState(false)
    const [error, setError] = React.useState('')
@@ -292,7 +305,9 @@ const Email = props => {
                } else {
                   window.location.href = getRoute('/menu')
                }
+               deleteAuth('auth')
             } else {
+               deleteAuth('auth')
                closeLoginPopup()
             }
          }
@@ -358,6 +373,7 @@ const Email = props => {
                className="hern-login-v1__forgot-password"
                onClick={() => {
                   setDefaultLogin('forgotPassword')
+                  setAuth('forgotPassword')
                }}
             >
                <span>{t('Forgot password')}</span>
@@ -390,6 +406,7 @@ const OTPLogin = props => {
    const { isSilentlyLogin, closeLoginPopup, callbackURL } = props
    const { addToast } = useToasts()
    const { t } = useTranslation()
+   const { deleteAuth } = useConfig()
    //component state
    const [error, setError] = React.useState('')
    const [loading, setLoading] = React.useState(false)
@@ -544,8 +561,10 @@ const OTPLogin = props => {
                } else {
                   window.location.href = getRoute('/menu')
                }
+               deleteAuth('auth')
             } else {
                closeLoginPopup()
+               deleteAuth('auth')
             }
          } else {
             setLoading(false)
@@ -849,7 +868,7 @@ const ForgotPassword = props => {
    const { closeLoginPopup } = props
    const { t } = useTranslation()
    const { addToast } = useToasts()
-   const { configOf } = useConfig()
+   const { configOf, deleteAuth } = useConfig()
 
    const theme = configOf('theme-color', 'Visual')
 
@@ -864,6 +883,7 @@ const ForgotPassword = props => {
       onCompleted: () => {
          addToast(t('Email sent!'), { appearance: 'success' })
          closeLoginPopup()
+         deleteAuth('auth')
       },
       onError: error => {
          addToast(error.message, { appearance: 'error' })
@@ -970,7 +990,7 @@ const Signup = props => {
    //component state
    const [showPassword, setShowPassword] = useState(false)
    const { addToast } = useToasts()
-   const { brand } = useConfig()
+   const { brand, deleteAuth } = useConfig()
 
    const [emailExists, setEmailExists] = React.useState(false)
    const [hasAccepted, setHasAccepted] = React.useState(false)
@@ -1049,6 +1069,7 @@ const Signup = props => {
                         getRoute('/get-started/select-plan')
                   } else {
                      closeLoginPopup()
+                     deleteAuth('auth')
                   }
                   setLoading(false)
                } else {
@@ -1111,6 +1132,7 @@ const Signup = props => {
                }
             )
             closeLoginPopup()
+            deleteAuth('auth')
          },
          onError: () => {
             addToast(
