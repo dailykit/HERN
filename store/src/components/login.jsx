@@ -621,7 +621,8 @@ const OTPLogin = props => {
                   </label>
                   <PhoneInput
                      className={`hern-login-v1__otp__phone__input hern-login-v1__otp__phone__input${
-                        !(form.phone==="" || form.phone===undefined) && !(
+                        !(form.phone === '' || form.phone === undefined) &&
+                        !(
                            (form.phone && isValidPhoneNumber(form.phone)) ||
                            sendingOtp
                         )
@@ -641,13 +642,18 @@ const OTPLogin = props => {
                      onKeyPress={handleSendOTPKeyPress}
                   />
                </fieldset>
-               { form.phone!=="" && form.phone!==undefined && !(form.phone && isValidPhoneNumber(form.phone)) && <label class="hern-login-v1__otp__phone__error">
-                  Invalid Phone Number!
-               </label> }
+               {form.phone !== '' &&
+                  form.phone !== undefined &&
+                  !(form.phone && isValidPhoneNumber(form.phone)) && (
+                     <label class="hern-login-v1__otp__phone__error">
+                        Invalid Phone Number!
+                     </label>
+                  )}
                <button
                   className={`hern-login-v1__otp-submit ${
                      !(
-                        (form.phone && isValidPhoneNumber(form.phone)) &&
+                        form.phone &&
+                        isValidPhoneNumber(form.phone) &&
                         !sendingOtp
                      )
                         ? 'hern-login-v1__otp-submit--disabled'
@@ -656,7 +662,8 @@ const OTPLogin = props => {
                   onClick={sendOTP}
                   disabled={
                      !(
-                        (form.phone && isValidPhoneNumber(form.phone)) &&
+                        form.phone &&
+                        isValidPhoneNumber(form.phone) &&
                         !sendingOtp
                      )
                   }
@@ -691,9 +698,12 @@ const OTPLogin = props => {
                <fieldset className="hern-login-v1__fieldset">
                   <label className="hern-login-v1__label">{t('OTP')}</label>
                   <input
-                     className="hern-login-v1__input"
+                     className={classNames(
+                        'hern-login-v1__input',
+                        'hern-login-v1__input__otp'
+                     )}
                      name="otp"
-                     type="text"
+                     type="number"
                      onChange={onChange}
                      value={form.otp}
                      placeholder="Enter the otp"
@@ -1308,7 +1318,7 @@ const Signup = props => {
                   </label>
                   <PhoneInput
                      className={`hern-login-v1__otp__phone__input hern-login-v1__otp__phone__input${
-                        !( form.phone==="" || form.phone===undefined ) &&
+                        !(form.phone === '' || form.phone === undefined) &&
                         !(form.phone && isValidPhoneNumber(form.phone))
                            ? '-invalid'
                            : '-valid'
@@ -1316,14 +1326,17 @@ const Signup = props => {
                      initialValueFormat="national"
                      value={form.phone}
                      onChange={e => {
-                        if( !(e==="" || e===undefined) && !(e && isValidPhoneNumber(e)) ){
-                           setPhoneError('Invalid Phone Number!');
-                        }else{
-                           setPhoneError('');
+                        if (
+                           !(e === '' || e === undefined) &&
+                           !(e && isValidPhoneNumber(e))
+                        ) {
+                           setPhoneError('Invalid Phone Number!')
+                        } else {
+                           setPhoneError('')
                            setForm(form => ({
                               ...form,
                               ['phone']: e,
-                           }))   
+                           }))
                         }
                      }}
                      defaultCountry={get_env('COUNTRY_CODE')}
@@ -1424,7 +1437,12 @@ const Signup = props => {
                         ? 'hern-login-v1__login-btn--disabled'
                         : ''
                   }`}
-                  style={{ height: '40px', margin: '0', color: '#ffffff', backgroundColor: "var(--hern-accent)" }}
+                  style={{
+                     height: '40px',
+                     margin: '0',
+                     color: '#ffffff',
+                     backgroundColor: 'var(--hern-accent)',
+                  }}
                >
                   {forgotPasswordLoading ? (
                      <>
