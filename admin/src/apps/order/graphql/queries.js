@@ -1031,13 +1031,21 @@ export const DEVICES = {
 
 export const QUERIES2 = {
    ORDERS_AGGREGATE: gql`
-      subscription ordersAggregate {
-         ordersAggregate: order_ordersAggregate {
+      subscription MySubscription(
+         $brandId: Int_comparison_exp!
+         $locationId: Int_comparison_exp!
+      ) {
+         order_orderStatusEnum(order_by: { index: desc }) {
+            index
             title
             value
-            count: totalOrders
-            sum: totalOrderSum
-            avg: totalOrderAverage
+            groupedOrderSummary(
+               where: { brandId: $brandId, locationId: $locationId }
+            ) {
+               avg
+               count
+               sum
+            }
          }
       }
    `,

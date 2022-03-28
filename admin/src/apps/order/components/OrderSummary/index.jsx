@@ -27,6 +27,7 @@ export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
    const { t } = useTranslation()
    const { state, dispatch } = useOrder()
    const [brandContext, setBrandContext] = useContext(BrandContext)
+   const [ordersAggregate, setOrdersAggregate] = React.useState([])
 
    const { data: { orders = {} } = {} } = useSubscription(
       QUERIES.ORDERS.AGGREGATE.TOTAL,
@@ -55,11 +56,45 @@ export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
    //       }
    //    }
    // )
+
+   // const {
+   //    loading,
+   //    error,
+   //    data: { ordersAggregate = [] } = {},
+   // } = useSubscription(QUERIES2.ORDERS_AGGREGATE)
+   // console.log("orderSummary", ordersAggregate);
+
    const {
       loading,
       error,
-      data: { ordersAggregate = [] } = {},
-   } = useSubscription(QUERIES2.ORDERS_AGGREGATE)
+   } = useSubscription(QUERIES2.ORDERS_AGGREGATE, {
+      variables: {
+         brandId: brandContext.brandId === null ? { _is_null: true } : {
+            _in: brandContext.brandId
+         },
+         locationId: brandContext.locationId === null ? { _is_null: true } : {
+            _in: brandContext.locationId
+         },
+      },
+      onSubscriptionData: ({
+         subscriptionData: { data: { order_orderStatusEnum = [] } = {} },
+      }) => {
+         const result = order_orderStatusEnum.map(order => {
+            return (
+               {
+                  title: order.title,
+                  value: order.value,
+                  count: order.groupedOrderSummary[0]?.count || 0,
+                  sum: order.groupedOrderSummary[0]?.sum || 0,
+                  avg: order.groupedOrderSummary[0]?.avg || 0,
+               }
+            )
+         })
+         setOrdersAggregate(result)
+         // console.log("orderSummary", order_orderStatusEnum);
+      }
+   })
+   console.log("orderSummary", ordersAggregate);
 
    const clearFilters = () => {
       dispatch({ type: 'CLEAR_READY_BY_FILTER' })
@@ -105,14 +140,14 @@ export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
             )}
          </Flex> */}
          <Spacer size="8px" />
-         <MetricItem
+         {/* <MetricItem
             title="All"
             variant="ORDER_ALL"
             count={orders?.aggregate?.count}
             amount={orders?.aggregate?.sum?.amountPaid}
             average={orders?.aggregate?.avg?.amountPaid}
             closeOrderSummaryTunnel={closeOrderSummaryTunnel}
-         />
+         /> */}
          <ul>
             {ordersAggregate.map(({ title, value, count, sum, avg }) => (
                <MetricItem
