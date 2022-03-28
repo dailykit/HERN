@@ -79,9 +79,11 @@
    justify-content: center;
    /*Stick to the top  with the equal height of navigatin menu*/
    top: var(--hern-navigation-menu-height);
-   z-index: 10;
+   z-index: 99;
    width: inherit;
    background-color: #fff;
+   max-width: 1200px;
+   margin: 0 auto;
    > ul {
       display: flex;
       width: inherit;
