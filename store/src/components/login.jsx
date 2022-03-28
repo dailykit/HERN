@@ -313,7 +313,6 @@ const Email = props => {
          <fieldset className="hern-login-v1__fieldset">
             <label className="hern-login-v1__label" htmlFor="email">
                {t('Email')}
-               <span>*</span>
             </label>
 
             <input
@@ -330,7 +329,6 @@ const Email = props => {
          <fieldset className="hern-login-v1__fieldset">
             <label className="hern-login-v1__label" htmlFor="password">
                {t('Password')}
-               <span>*</span>
             </label>
 
             <input
@@ -377,7 +375,6 @@ const Email = props => {
             {loading ? (
                <>
                   <span>{t('LOGGING IN')}</span>
-                  {'...'}
                </>
             ) : (
                t('LOGIN')
@@ -621,11 +618,10 @@ const OTPLogin = props => {
                <fieldset className="hern-login-v1__fieldset">
                   <label className="hern-login-v1__label">
                      {t('Phone Number')}
-                     <span>*</span>
                   </label>
                   <PhoneInput
                      className={`hern-login-v1__otp__phone__input hern-login-v1__otp__phone__input${
-                        !(
+                        !(form.phone==="" || form.phone===undefined) && !(
                            (form.phone && isValidPhoneNumber(form.phone)) ||
                            sendingOtp
                         )
@@ -645,11 +641,14 @@ const OTPLogin = props => {
                      onKeyPress={handleSendOTPKeyPress}
                   />
                </fieldset>
+               { form.phone!=="" && form.phone!==undefined && !(form.phone && isValidPhoneNumber(form.phone)) && <label class="hern-login-v1__otp__phone__error">
+                  Invalid Phone Number!
+               </label> }
                <button
                   className={`hern-login-v1__otp-submit ${
                      !(
-                        (form.phone && isValidPhoneNumber(form.phone)) ||
-                        sendingOtp
+                        (form.phone && isValidPhoneNumber(form.phone)) &&
+                        !sendingOtp
                      )
                         ? 'hern-login-v1__otp-submit--disabled'
                         : ''
@@ -657,8 +656,8 @@ const OTPLogin = props => {
                   onClick={sendOTP}
                   disabled={
                      !(
-                        (form.phone && isValidPhoneNumber(form.phone)) ||
-                        sendingOtp
+                        (form.phone && isValidPhoneNumber(form.phone)) &&
+                        !sendingOtp
                      )
                   }
                   style={{ height: '40px' }}
@@ -666,7 +665,6 @@ const OTPLogin = props => {
                   {sendingOtp ? (
                      <>
                         <span>{t('SENDING OTP')}</span>
-                        <span>'...'</span>
                      </>
                   ) : (
                      t('SEND OTP')
@@ -678,7 +676,7 @@ const OTPLogin = props => {
                {isNewUser && (
                   <fieldset className="hern-login-v1__fieldset">
                      <label className="hern-login-v1__label">
-                        {t('Email*')}
+                        {t('Email')}
                      </label>
                      <input
                         className="hern-login-v1__input"
@@ -691,7 +689,7 @@ const OTPLogin = props => {
                   </fieldset>
                )}
                <fieldset className="hern-login-v1__fieldset">
-                  <label className="hern-login-v1__label">{t('OTP*')}</label>
+                  <label className="hern-login-v1__label">{t('OTP')}</label>
                   <input
                      className="hern-login-v1__input"
                      name="otp"
@@ -744,7 +742,7 @@ const OTPLogin = props => {
                         }
                         return (
                            <span className="hern-login-v1__otp__resend__time">
-                              <span>{t('Resend OTP in')}</span>0{minutes}:
+                              <span>{t('Resend OTP in')}</span>&nbsp;0{minutes}:
                               {seconds <= 9 ? '0' : ''}
                               {seconds}
                            </span>
@@ -906,7 +904,7 @@ const ForgotPassword = props => {
       <div className="hern-forgot-password-v1">
          <fieldset className="hern-login-v1__fieldset">
             <label htmlFor="email" className="hern-login-v1__label">
-               <span>{t('Email')}</span>*
+               <span>{t('Email')}</span>
             </label>
             <input
                className="hern-login-v1__input"
@@ -1120,7 +1118,8 @@ const Signup = props => {
       form.password &&
       form.password.length >= 6 &&
       form.phone &&
-      form.phone.length > 0
+      form.phone.length > 0 &&
+      isValidPhoneNumber(form.phone)
 
    const onEmailBlur = async e => {
       const { value } = e.target
@@ -1235,7 +1234,7 @@ const Signup = props => {
       <div className="hern-signup-v1">
          <fieldset className="hern-login-v1__fieldset">
             <label className="hern-login-v1__label" htmlFor="email">
-               <span> {t('Email')}</span>*
+               <span> {t('Email')}</span>
             </label>
             <input
                name="email"
@@ -1259,7 +1258,7 @@ const Signup = props => {
                   style={passwordError ? { marginBottom: '0.25rem' } : null}
                >
                   <label className="hern-login-v1__label" htmlFor="password">
-                     <span>{t('Password')}</span>*
+                     <span>{t('Password')}</span>
                   </label>
                   <input
                      className="hern-login-v1__input"
@@ -1305,10 +1304,11 @@ const Signup = props => {
                   style={phoneError ? { marginBottom: '0.25rem' } : null}
                >
                   <label className="hern-login-v1__label" htmlFor="phone">
-                     <span> {t('Phone Number')}</span>*
+                     <span> {t('Phone Number')}</span>
                   </label>
                   <PhoneInput
                      className={`hern-login-v1__otp__phone__input hern-login-v1__otp__phone__input${
+                        !( form.phone==="" || form.phone===undefined ) &&
                         !(form.phone && isValidPhoneNumber(form.phone))
                            ? '-invalid'
                            : '-valid'
@@ -1316,10 +1316,15 @@ const Signup = props => {
                      initialValueFormat="national"
                      value={form.phone}
                      onChange={e => {
-                        setForm(form => ({
-                           ...form,
-                           ['phone']: e,
-                        }))
+                        if( !(e==="" || e===undefined) && !(e && isValidPhoneNumber(e)) ){
+                           setPhoneError('Invalid Phone Number!');
+                        }else{
+                           setPhoneError('');
+                           setForm(form => ({
+                              ...form,
+                              ['phone']: e,
+                           }))   
+                        }
                      }}
                      defaultCountry={get_env('COUNTRY_CODE')}
                      placeholder="Enter your phone number"
@@ -1381,7 +1386,7 @@ const Signup = props => {
                   }`}
                   onClick={() => isValid && submit()}
                >
-                  {loading ? t('REGISTERING...') : t('REGISTER')}
+                  {loading ? t('REGISTERING') : t('REGISTER')}
                </button>
             </>
          ) : (
@@ -1419,11 +1424,11 @@ const Signup = props => {
                         ? 'hern-login-v1__login-btn--disabled'
                         : ''
                   }`}
-                  style={{ height: '40px', margin: '0', color: '#ffffff' }}
+                  style={{ height: '40px', margin: '0', color: '#ffffff', backgroundColor: "var(--hern-accent)" }}
                >
                   {forgotPasswordLoading ? (
                      <>
-                        <span>{t('SENDING EMAIL')}</span>'...'
+                        <span>{t('SENDING EMAIL')}</span>
                      </>
                   ) : (
                      t('SEND LOGIN EMAIL')

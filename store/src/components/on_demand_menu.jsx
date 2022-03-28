@@ -5,6 +5,7 @@ import { onDemandMenuContext } from '../context'
 import { useOnClickOutside } from '../utils/useOnClickOutisde'
 import * as Scroll from 'react-scroll'
 import { useTranslation } from '../context'
+import { useConfig } from '../lib'
 
 export const OnDemandMenu = props => {
    // props
@@ -13,6 +14,11 @@ export const OnDemandMenu = props => {
    const showProductCount = showCount ?? showCount ?? true
    const [showMenuItems, setShowMenuItems] = useState('0')
    const [activeCategory, setActiveCategory] = useState(null)
+
+   const { configOf } = useConfig()
+   const headerLayoutStyle =
+      configOf('header-navigation', 'navigation')?.headerNavigation?.layout
+         ?.value?.value ?? 'layout-two'
    const ref = React.useRef()
    useOnClickOutside(ref, () => setShowMenuItems('0'))
 
@@ -49,7 +55,13 @@ export const OnDemandMenu = props => {
       return (
          <div
             className={classNames('hern-on-demand-menu__navigationAnchor')}
-            style={{ justifyContent: navAlignment }}
+            style={{
+               justifyContent: navAlignment,
+               top:
+                  headerLayoutStyle === 'layout-one'
+                     ? 0
+                     : 'var(--hern-navigation-menu-height)',
+            }}
          >
             <ul>
                {categories.map((each, index) => (
@@ -69,7 +81,9 @@ export const OnDemandMenu = props => {
                            activeClass="hern-on-demand-menu__navigationAnchor-li--active"
                            to={each.name}
                            spy={true}
-                           offset={-130}
+                           offset={
+                              headerLayoutStyle === 'layout-one' ? -60 : -130
+                           }
                         >
                            <span>
                               <span data-translation="true">{each.name}</span>
