@@ -744,39 +744,50 @@ const OTPLogin = props => {
                >
                   {t('SUBMIT')}
                </button>
-               {time && otp && otp?.isResendAllowed && (
+               {time && (
                   <Countdown
                      date={time}
                      renderer={({ minutes, seconds, completed }) => {
                         if (completed) {
                            return (
-                              <button
-                                 onClick={resend}
-                                 disabled={
-                                    resending || !(otp && otp?.isResendAllowed)
-                                 }
-                                 title={
-                                    otp?.id && otp?.isResendAllowed
-                                       ? ''
-                                       : 'Maximum resend limit reached'
-                                 }
-                                 className={`hern-login-v1__otp__resend ${
-                                    resending || !(otp && otp?.isResendAllowed)
-                                       ? 'hern-login-v1__otp__resend--disabled'
-                                       : ''
-                                 }`}
-                              >
-                                 {t('Resend OTP')}
-                              </button>
+                              <>
+                                 {otp && otp?.isResendAllowed && (
+                                    <button
+                                       onClick={resend}
+                                       disabled={
+                                          resending ||
+                                          !(otp && otp?.isResendAllowed)
+                                       }
+                                       title={
+                                          otp?.id && otp?.isResendAllowed
+                                             ? ''
+                                             : 'Maximum resend limit reached'
+                                       }
+                                       className={`hern-login-v1__otp__resend ${
+                                          resending ||
+                                          !(otp && otp?.isResendAllowed)
+                                             ? 'hern-login-v1__otp__resend--disabled'
+                                             : ''
+                                       }`}
+                                    >
+                                       {t('Resend OTP')}
+                                    </button>
+                                 )}
+                              </>
+                           )
+                        } else {
+                           return (
+                              <>
+                                 {otp && otp?.resendAttempts <= 2 && (
+                                    <span className="hern-login-v1__otp__resend__time">
+                                       <span>{t('Resend OTP in')}</span>&nbsp;0
+                                       {minutes}:{seconds <= 9 ? '0' : ''}
+                                       {seconds}
+                                    </span>
+                                 )}
+                              </>
                            )
                         }
-                        return (
-                           <span className="hern-login-v1__otp__resend__time">
-                              <span>{t('Resend OTP in')}</span>&nbsp;0
-                              {minutes}:{seconds <= 9 ? '0' : ''}
-                              {seconds}
-                           </span>
-                        )
                      }}
                   />
                )}
