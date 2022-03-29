@@ -9,7 +9,7 @@ export const sendOtp = async (req, res) => {
          })
       }
 
-      if (phoneNumber && code) {
+      if (!phoneNumber && !code) {
          return res.status(400).json({
             success: false,
             message: 'Either phone number or code is missing'
