@@ -9,6 +9,13 @@ export const sendOtp = async (req, res) => {
          })
       }
 
+      if (phoneNumber && code) {
+         return res.status(400).json({
+            success: false,
+            message: 'Either phone number or code is missing'
+         })
+      }
+
       const { sendSMS } = await client.request(SEND_SMS, {
          message: `Your OTP is ${code}`,
          phone: phoneNumber
