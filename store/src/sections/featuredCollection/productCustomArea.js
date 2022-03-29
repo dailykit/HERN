@@ -13,6 +13,9 @@ export const CustomArea = props => {
    const { locationId, storeStatus, configOf, setShowLocationSelectionPopup } =
       useConfig()
    const theme = configOf('theme-color', 'Visual')?.themeColor
+   const addToCartButtonConfig = configOf('Add to cart button', 'Visual')?.[
+      'Add to cart Button'
+   ]
    const themeColor = theme?.accent?.value
       ? theme?.accent?.value
       : 'rgba(5, 150, 105, 1)'
@@ -35,7 +38,6 @@ export const CustomArea = props => {
       }
    }, [combinedCartItems])
    const removeCartItems = cartItemIds => {
-      console.log('removed id', cartItemIds)
       methods.cartItems.delete({
          variables: {
             where: {
@@ -279,7 +281,10 @@ export const CustomArea = props => {
          )}
          {availableQuantityInCart === 0 ? (
             <Button
-               className="hern-custom-area-add-btn"
+               className={classNames('hern-custom-area-add-btn', {
+                  'hern-custom-area-add-btn--rounded':
+                     addToCartButtonConfig?.variant?.value?.value === 'rounded',
+               })}
                type="outline"
                onClick={async () => {
                   if (!locationId) {
@@ -294,7 +299,7 @@ export const CustomArea = props => {
                   }
                }}
             >
-               {t('ADD')}
+               {t(`${addToCartButtonConfig?.label?.value ?? 'ADD'}`)}
             </Button>
          ) : (
             <CounterButton
