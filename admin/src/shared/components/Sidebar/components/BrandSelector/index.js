@@ -278,6 +278,7 @@ const BrandSelector = ({ mouseOver }) => {
                                        onClick={() => {
                                           setBrandContext({
                                              ...brandContext,
+                                             brandLocationId: eachLocation.id,
                                              locationId:
                                                 eachLocation.location.id,
                                              locationLabel:
