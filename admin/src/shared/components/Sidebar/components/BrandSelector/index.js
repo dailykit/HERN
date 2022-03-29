@@ -54,12 +54,8 @@ const BrandSelector = ({ mouseOver }) => {
          ) {
             setBrandContext({
                ...brandContext,
-               brandId: result[0].id,
-               brandName: result[0].title,
-               logo: result[0].logo,
-               domain: result[0].domain,
-               locationId: result[0]?.location[0]?.location.id,
-               locationLabel: result[0]?.location[0]?.location.label,
+               brandName: 'All Brands are selected',
+               locationLabel: 'All locations are selected',
             })
             return setBrandList(result)
          } else if (
@@ -67,16 +63,16 @@ const BrandSelector = ({ mouseOver }) => {
             brandContext.brandId !== null &&
             brandContext.locationId === null
          ) {
+            const index = result.findIndex(
+               obj => obj.id === brandContext.brandId
+            )
             setBrandContext({
                ...brandContext,
-               logo: result[0].logo,
-               domain: result[0].domain,
-               locationId: result[0]?.location[0]?.location.id,
-               locationLabel: result[0]?.location[0]?.location.label,
+               logo: result[index].logo,
+               domain: result[index].domain,
+               locationLabel: 'All locations are selected',
             })
-            return setBrandList([
-               result[result.findIndex(obj => obj.id === brandContext.brandId)],
-            ])
+            return setBrandList([result[index]])
          } else if (
             //brand_location scope
             brandContext.brandId !== null &&
@@ -108,11 +104,6 @@ const BrandSelector = ({ mouseOver }) => {
             brandContext.locationId !== null
          ) {
             setDisplayBrand(false)
-            setBrandContext({
-               ...brandContext,
-               locationId: result[0]?.location[0]?.location.id,
-               locationLabel: result[0]?.location[0]?.location.label,
-            })
             return setBrandList([
                {
                   id: brandContext.brandId,
@@ -131,7 +122,7 @@ const BrandSelector = ({ mouseOver }) => {
       },
    })
    console.log('brandContext', brandContext)
-   console.log('brandList', brandList)
+   // console.log('brandList', brandList)
 
    React.useEffect(() => {
       setBrandContext({
@@ -155,7 +146,7 @@ const BrandSelector = ({ mouseOver }) => {
                   <div>
                      <StyledBrandSelector>
                         <div>
-                           {brandContext.logo ? (
+                           {brandContext?.logo ? (
                               <Avatar src={brandContext.logo} size={52} />
                            ) : (
                               <Avatar
