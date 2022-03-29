@@ -22,6 +22,11 @@ export const Product = ({ config }) => {
    const { t, dynamicTrans, locale } = useTranslation()
    const currentLang = React.useMemo(() => locale, [locale])
 
+   const { value: productSetting } = useProductConfig(
+      'showProductDetailOnImage',
+      id
+   )
+
    const argsForByLocation = React.useMemo(
       () => ({
          params: {
@@ -80,7 +85,7 @@ export const Product = ({ config }) => {
       config?.display?.showProductDetailOnImage?.default ??
       false
    if (productsLoading || status === 'loading') return <Loader />
-   if (productsError) return <p>Something went wrong</p>
+   if (productsError) return <p>{t('Something went wrong')}</p>
 
    return (
       <div className="hern-product-page">

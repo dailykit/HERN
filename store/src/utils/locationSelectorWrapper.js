@@ -11,7 +11,10 @@ export const LocationSelectorWrapper = props => {
       <Tunnel.Left
          title={<span>{t('Location')}</span>}
          visible={showLocationSelectorPopup}
-         onClose={() => setShowLocationSelectionPopup(false)}
+         onClose={() => {
+            setShowLocationSelectionPopup(false)
+            sessionStorage.setItem('showLocationSelectorAfterPageLoad', 'false')
+         }}
          destroyOnClose={true}
       >
          <LocationSelector {...props} />

@@ -3,6 +3,7 @@ import { FaQuoteLeft, FaQuoteRight } from 'react-icons/fa'
 import { BiChevronRight, BiChevronLeft } from 'react-icons/bi'
 import { Carousel } from 'antd'
 import { HernLazyImage } from '../../utils/hernImage'
+import { isClient } from '../../utils'
 
 export const Testimonials = ({ config }) => {
    const content = config.display.review.content
@@ -11,6 +12,25 @@ export const Testimonials = ({ config }) => {
    const subHeading = config?.data?.subTitle?.value
 
    const carouselRef = React.createRef()
+   const testimonialImageSize = React.useMemo(() => {
+      const innerWidth = isClient ? window.innerWidth : ''
+      if (0 <= innerWidth && innerWidth <= 468) {
+         return {
+            width: 120,
+            height: 160,
+         }
+      } else if (469 <= innerWidth && innerWidth <= 900) {
+         return {
+            width: 120,
+            height: 160,
+         }
+      } else if (901 <= innerWidth) {
+         return {
+            width: 103,
+            height: 193,
+         }
+      }
+   }, [])
    return (
       <div className="hern-testimonials__container">
          {(!variant || variant === 'slider-with-image') && (

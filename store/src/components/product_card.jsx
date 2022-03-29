@@ -104,7 +104,25 @@ export const ProductCard = props => {
          }
       }
    }
-
+   const productImageSize = React.useMemo(() => {
+      const innerWidth = isClient ? window.innerWidth : ''
+      if (0 <= innerWidth && innerWidth <= 468) {
+         return {
+            width: 120,
+            height: 120,
+         }
+      } else if (469 <= innerWidth && innerWidth <= 900) {
+         return {
+            width: 190,
+            height: 190,
+         }
+      } else if (901 <= innerWidth) {
+         return {
+            width: 280,
+            height: 280,
+         }
+      }
+   }, [])
    return (
       <>
          {showProductCard && (
@@ -148,6 +166,8 @@ export const ProductCard = props => {
                                     style={{
                                        cursor: onImageClick ? 'pointer' : null,
                                     }}
+                                    width={productImageSize.width}
+                                    height={productImageSize.height}
                                  />
                               </div>
                            )
