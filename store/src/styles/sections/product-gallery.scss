@@ -44,6 +44,7 @@
    padding: 1em 1em 1em 1.2em;
    top: 35%;
    border-radius: 50%;
+   transition: 200ms;
    // padding-left: 0.2rem;
 }
 
@@ -55,7 +56,18 @@
    padding: 1em 1.2em 1em 1em;
    top: 35%;
    border-radius: 50%;
+   transition: 200ms;
    // padding-right: 0.2rem;
+}
+
+.hern-product_gallery-left_arrow:hover,
+.hern-product_gallery-right_arrow:hover {
+   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.hern-product_gallery-left_arrow:active,
+.hern-product_gallery-right_arrow:active {
+   background: var(--arrow-active-color);
 }
 
 .hern-product_gallery-product-custom-area {

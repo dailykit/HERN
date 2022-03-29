@@ -9,6 +9,7 @@ import { ArrowLeftIcon, ArrowRightIcon } from '../../assets/icons'
 import { useRouter } from 'next/router'
 import { getRoute, isClient } from '../../utils'
 import { CustomArea } from '../featuredCollection/productCustomArea'
+import { setThemeVariable } from '../../utils'
 
 export const ProductGallery = ({ config }) => {
    const [productsData, setProductsData] = React.useState([])
@@ -54,6 +55,12 @@ export const ProductGallery = ({ config }) => {
             console.log('Error: ', error)
          },
       }
+   )
+
+   // Setting arrows active color into root variables
+   setThemeVariable(
+      '--arrow-active-color',
+      config?.data?.arrowActiveColor?.value
    )
 
    if (status == 'loading') return <Loader inline />
