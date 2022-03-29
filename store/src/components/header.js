@@ -701,6 +701,15 @@ const Navigation = ({ newNavigationMenus, settings, layout }) => {
       settings?.['navigation']?.['language-translation']?.[
          'LanguageTranslation'
       ]?.['showLanguageTranslation'].value ?? true
+
+   //list items classe define the active class for the current page
+   const getListItemsClasses = url => {
+      return classNames('hern-navbar__list__item', {
+         'hern-navbar__list__item--active':
+            isClient && window.location.pathname === url,
+      })
+   }
+
    return (
       <section
          className={classNames('hern-navigatin-menu__wrapper', {
@@ -716,7 +725,7 @@ const Navigation = ({ newNavigationMenus, settings, layout }) => {
             {isLoading ? (
                <li className="hern-navbar__list__item__skeleton" />
             ) : isAuthenticated && user?.isSubscriber && isSubscriptionStore ? (
-               <li className="hern-navbar__list__item">
+               <li className={getListItemsClasses(getRoute('/menu'))}>
                   <Link href={getRoute('/menu')}>
                      <a>{t('Select Menu')}</a>
                   </Link>
@@ -724,7 +733,7 @@ const Navigation = ({ newNavigationMenus, settings, layout }) => {
             ) : (
                <>
                   {isSubscriptionStore && (
-                     <li className="hern-navbar__list__item">
+                     <li className={getListItemsClasses(getRoute('/our-menu'))}>
                         <Link href={getRoute('/our-menu')}>
                            <a> {t('Our Menu')}</a>
                         </Link>
@@ -733,7 +742,7 @@ const Navigation = ({ newNavigationMenus, settings, layout }) => {
                </>
             )}
             {!user?.isSubscriber && isSubscriptionStore && (
-               <li className="hern-navbar__list__item">
+               <li className={getListItemsClasses(getRoute('/our-plans'))}>
                   <Link href={getRoute('/our-plans')}>
                      <a>{t('Get Started')}</a>
                   </Link>

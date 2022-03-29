@@ -95,16 +95,20 @@
       }
       > li {
          list-style: none;
-         // padding: 4px 10px;
          cursor: pointer;
          margin: 0 0.4em;
-         // border-radius: 1em;
          font-weight: 700;
          font-size: 14px;
          line-height: 16px;
          font-size: 18px;
          line-height: 20px;
          color: var(--hern-accent);
+         > li:active {
+            background-color: var(--hern-accent);
+            > a {
+               color: #000;
+            }
+         }
          > a {
             width: 100%;
             display: flex;
@@ -118,6 +122,7 @@
          }
          > a:hover {
             text-decoration: none;
+            color: #000000;
          }
       }
    }

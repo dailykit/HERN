@@ -246,12 +246,31 @@
    .hern-navbar__list__item {
       font-family: 'Inter';
       font-style: normal;
-      font-weight: 500;
       font-size: 18px;
       line-height: 22px;
       text-align: center;
       letter-spacing: 0.04em;
       color: #000000;
+      &:active {
+         > a {
+            font-weight: 600 !important;
+         }
+         border-bottom: 2px solid var(--hern-accent);
+      }
+   }
+   .hern-navbar__list__item--active {
+      a {
+         font-weight: 600 !important;
+      }
+      border-bottom: 2px solid var(--hern-accent);
+   }
+   .hern-navbar__list__item a {
+      font-weight: 500;
+      transition: all 0.3s ease-in-out;
+   }
+   .hern-navbar__list__item a:hover {
+      font-weight: 600;
+      color: #000000 !important;
    }
 }
 .hern-header__location-container--layout-one {
