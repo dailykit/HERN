@@ -27,7 +27,6 @@ import {
    OTPS,
    PLATFORM_CUSTOMERS,
    RESEND_OTP,
-   SEND_SMS,
 } from '../graphql'
 import {
    useLazyQuery,
@@ -471,33 +470,15 @@ const OTPLogin = props => {
       }
    }, [otpId, otpsLoading, otps])
 
-   //send sms on valid phone number
-   const [sendSms] = useMutation(SEND_SMS, {
-      onCompleted: () => {
-         setHasOtpSent(true)
-         setSendingOtp(false)
-         setTime(Date.now() + 120000)
-         addToast(t('OTP has been sent!'), { appearance: 'success' })
-      },
-      onError: error => {
-         console.error(error)
-         setSendingOtp(false)
-         setError('Failed to send otp, please try again!')
-         addToast(t('Failed to send OTP!'), { appearance: 'error' })
-      },
-   })
-
    //insert a entry of phone number in table and get otp code then send sms
    const [insertOtpTransaction] = useMutation(INSERT_OTP_TRANSACTION, {
       onCompleted: async ({ insertOtp = {} } = {}) => {
          if (insertOtp?.code) {
             setOtpId(insertOtp?.id)
-            await sendSms({
-               variables: {
-                  phone: `${form.phone}`,
-                  message: `Here's your OTP - ${insertOtp?.code}.`,
-               },
-            })
+            setHasOtpSent(true)
+            setSendingOtp(false)
+            setTime(Date.now() + 120000)
+            addToast(t('OTP has been sent!'), { appearance: 'success' })
          } else {
             setSendingOtp(false)
          }
@@ -597,7 +578,12 @@ const OTPLogin = props => {
             variables: { where: { phoneNumber: { _eq: form.phone } } },
          })
          await insertOtpTransaction({
-            variables: { object: { phoneNumber: form.phone } },
+            variables: {
+               object: {
+                  phoneNumber: form.phone,
+                  domain: isClient ? window.location.host : '',
+               },
+            },
          })
       } catch (error) {
          setSendingOtp(false)
@@ -621,11 +607,14 @@ const OTPLogin = props => {
       }
    }
    const handleSubmitOTPKeyPress = event => {
-      if (event.which != 8 && event.which != 0 && event.which < 48 || event.which > 57){
-         event.preventDefault();
+      if (
+         (event.which != 8 && event.which != 0 && event.which < 48) ||
+         event.which > 57
+      ) {
+         event.preventDefault()
       }
-      if( event.key !== 'Enter' && form.otp.length >= 6 ){
-         event.preventDefault();
+      if (event.key !== 'Enter' && form.otp.length >= 6) {
+         event.preventDefault()
       }
       if (event.key === 'Enter') {
          if (
@@ -755,18 +744,24 @@ const OTPLogin = props => {
                >
                   {t('SUBMIT')}
                </button>
-               {time && (
+               {time && otp && otp?.isResendAllowed && (
                   <Countdown
                      date={time}
                      renderer={({ minutes, seconds, completed }) => {
-                        //otp?.id && otp?.isResendAllowed &&
                         if (completed) {
                            return (
                               <button
                                  onClick={resend}
-                                 disabled={resending}
+                                 disabled={
+                                    resending || !(otp && otp?.isResendAllowed)
+                                 }
+                                 title={
+                                    otp?.id && otp?.isResendAllowed
+                                       ? ''
+                                       : 'Maximum resend limit reached'
+                                 }
                                  className={`hern-login-v1__otp__resend ${
-                                    resending
+                                    resending || !(otp && otp?.isResendAllowed)
                                        ? 'hern-login-v1__otp__resend--disabled'
                                        : ''
                                  }`}
@@ -777,8 +772,8 @@ const OTPLogin = props => {
                         }
                         return (
                            <span className="hern-login-v1__otp__resend__time">
-                              <span>{t('Resend OTP in')}</span>&nbsp;0{minutes}:
-                              {seconds <= 9 ? '0' : ''}
+                              <span>{t('Resend OTP in')}</span>&nbsp;0
+                              {minutes}:{seconds <= 9 ? '0' : ''}
                               {seconds}
                            </span>
                         )
