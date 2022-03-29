@@ -76,54 +76,57 @@ const LanguageSelector = props => {
    const [lang, setLang] = useState(defaultLang)
    return (
       <div style={{ display: 'flex', alignItems: 'center' }}>
-         <Radio.Group
-            defaultValue={lang}
-            buttonStyle="solid"
-            onChange={e => {
-               setLang(e.target.value)
-               changeLocale(e.target.value)
-            }}
-            style={{ display: 'flex' }}
-            size="large"
-         >
-            <Space size={'large'}>
-               {locales.map((eachLang, index) => {
-                  return (
-                     <Radio.Button
-                        value={eachLang.langCode}
-                        key={index}
-                        className={classNames(
-                           'hern-kiosk__kiosk-language-option',
-                           {
-                              'hern-kiosk__kiosk-language-option--active':
-                                 lang === eachLang.langCode,
-                           }
-                        )}
-                        style={{
-                           backgroundColor: `${config.kioskSettings.theme.primaryColor.value}`,
-                           border: `2px solid ${
-                              lang === eachLang.langCode
-                                 ? config.kioskSettings.theme.successColor.value
-                                 : config.kioskSettings.theme.primaryColorDark
-                                      .value
-                           }`,
-                           borderRadius: `.5em`,
-                           color: '#fff',
-                        }}
-                     >
-                        {eachLang.flagIcon && (
-                           <img
-                              src={eachLang.flagIcon}
-                              alt="flagIcon"
-                              className="hern-kiosk__kiosk-language-flag-icon"
-                           />
-                        )}{' '}
-                        {eachLang.title}
-                     </Radio.Button>
-                  )
-               })}
-            </Space>
-         </Radio.Group>
+         {config.kioskSettings.showLanguageSwitcher.value && (
+            <Radio.Group
+               defaultValue={lang}
+               buttonStyle="solid"
+               onChange={e => {
+                  setLang(e.target.value)
+                  changeLocale(e.target.value)
+               }}
+               style={{ display: 'flex' }}
+               size="large"
+            >
+               <Space size={'large'}>
+                  {locales.map((eachLang, index) => {
+                     return (
+                        <Radio.Button
+                           value={eachLang.langCode}
+                           key={index}
+                           className={classNames(
+                              'hern-kiosk__kiosk-language-option',
+                              {
+                                 'hern-kiosk__kiosk-language-option--active':
+                                    lang === eachLang.langCode,
+                              }
+                           )}
+                           style={{
+                              backgroundColor: `${config.kioskSettings.theme.primaryColor.value}`,
+                              border: `2px solid ${
+                                 lang === eachLang.langCode
+                                    ? config.kioskSettings.theme.successColor
+                                         .value
+                                    : config.kioskSettings.theme
+                                         .primaryColorDark.value
+                              }`,
+                              borderRadius: `.5em`,
+                              color: '#fff',
+                           }}
+                        >
+                           {eachLang.flagIcon && (
+                              <img
+                                 src={eachLang.flagIcon}
+                                 alt="flagIcon"
+                                 className="hern-kiosk__kiosk-language-flag-icon"
+                              />
+                           )}{' '}
+                           {eachLang.title}
+                        </Radio.Button>
+                     )
+                  })}
+               </Space>
+            </Radio.Group>
+         )}
          <div
             onClick={() => {
                setShowReloadWarningPopup(true)

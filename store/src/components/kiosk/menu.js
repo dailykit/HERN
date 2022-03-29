@@ -187,21 +187,7 @@ export const MenuSection = props => {
          <Content>
             {/* Promotion, coupons and progress bar */}
             <Layout style={{ height: '100%' }}>
-               <Header
-                  style={{
-                     background: `${config.kioskSettings.theme.primaryColorLight.value}`,
-                     padding: '1em 2em',
-                     height: '10em',
-                     display: 'flex',
-                     flexDirection: 'column',
-                     justifyContent: 'center',
-                  }}
-               >
-                  <ProgressBar
-                     config={config}
-                     setCurrentPage={setCurrentPage}
-                  />
-               </Header>
+               <ProgressBar config={config} setCurrentPage={setCurrentPage} />
                <Content className="hern-kiosk__menu-promotion-coupons">
                   <PromotionCarousal config={config} />
                </Content>
@@ -343,12 +329,21 @@ const KioskMenu = props => {
                               setCurrentPage('cartPage')
                            }}
                         >
-                           <KioskButton customClass="hern-kiosk__goto-cart-btn">
-                              <CartIcon size={25} />
+                           <KioskButton
+                              customClass="hern-kiosk__goto-cart-btn"
+                              buttonConfig={config.kioskSettings.buttonSettings}
+                           >
+                              <CartIcon
+                                 size={25}
+                                 stroke={
+                                    config.kioskSettings.buttonSettings
+                                       .textColor.value
+                                 }
+                              />
                               <span
                                  className="hern-kiosk__goto-cart-btn-text"
                                  style={{
-                                    color: `${config.kioskSettings.theme.primaryColor.value}`,
+                                    color: `${config.kioskSettings.buttonSettings.textColor.value}`,
                                  }}
                               >
                                  {t('Go To Cart')}
