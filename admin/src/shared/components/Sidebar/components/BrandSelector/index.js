@@ -1,7 +1,6 @@
 import { useSubscription } from '@apollo/react-hooks'
 import { Spacer } from '@dailykit/ui'
 import { Avatar } from 'antd'
-import { rearg } from 'lodash'
 import React, { useContext, useEffect, useState } from 'react'
 import { BrandContext } from '../../../../../App'
 import { UnionIcon } from '../../../../assets/icons'
@@ -124,17 +123,11 @@ const BrandSelector = ({ mouseOver }) => {
    console.log('brandContext', brandContext)
    // console.log('brandList', brandList)
 
-   React.useEffect(() => {
+   useEffect(() => {
       setBrandContext({
          ...brandContext,
-         locationId:
-            brandList[
-               brandList.findIndex(obj => obj.id === brandContext.brandId)
-            ]?.location[0]?.location?.id || brandContext.locationId,
-         locationLabel:
-            brandList[
-               brandList.findIndex(obj => obj.id === brandContext.brandId)
-            ]?.location[0]?.location?.label || brandContext.locationLabel,
+         locationId: null,
+         locationLabel: 'All locations are selected',
       })
    }, [brandContext.brandId])
 
@@ -179,6 +172,22 @@ const BrandSelector = ({ mouseOver }) => {
                      </StyledBrandSelector>
                      {brandArrowClicked && (
                         <StyledBrandSelectorList>
+                           <div
+                              key={`${brandContext.brandId}-brand`}
+                              onClick={() => {
+                                 setBrandContext({
+                                    ...brandContext,
+                                    brandId: null,
+                                    brandName: 'All Brands are selected',
+                                    locationId: null,
+                                    locationLabel: 'All locations are selected',
+                                    logo: '',
+                                 })
+                                 setBrandArrowClicked(false)
+                              }}
+                           >
+                              {'Select all Brands'}
+                           </div>
                            {brandList.map(brand => (
                               <div
                                  key={brand.id}
@@ -244,6 +253,20 @@ const BrandSelector = ({ mouseOver }) => {
                         </StyledBrandLocations>
                         {locationArrowClicked && (
                            <StyledBrandSelectorList>
+                              <div
+                                 key={`${brandContext.locationId}-${brandContext.brandId}-location`}
+                                 onClick={() => {
+                                    setBrandContext({
+                                       ...brandContext,
+                                       locationId: null,
+                                       locationLabel:
+                                          'All locations are selected',
+                                    })
+                                    setLocationArrowClicked(false)
+                                 }}
+                              >
+                                 {'Select all Locations'}
+                              </div>
                               {brandList[
                                  brandList.findIndex(
                                     obj => obj.id === brandContext.brandId
