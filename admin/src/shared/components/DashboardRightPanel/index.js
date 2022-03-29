@@ -6,7 +6,7 @@ import {
    Tunnels,
    useTunnel,
 } from '@dailykit/ui'
-import React from 'react'
+import React, { useContext } from 'react'
 import { useAuth } from '../../providers'
 import {
    CustomerIcon,
@@ -26,11 +26,13 @@ import {
    TextQuickNav,
    AppItem,
 } from './styled'
-import { useLocation, useHistory } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import EarningOverTime from '../Reports/ReportTiles/TotalEarnings/Tunnels/earningOverTime'
 import OrderSummaryReport from '../Reports/ReportTiles/TotalOrders/tunnels/orderSummary'
 import BrandShopDate from '../BrandShopDateProvider'
 import CustomerOverTime from '../Reports/ReportTiles/Customers/Tunnels/customerOverTime'
+import { BrandContext } from './../../../App'
+import BrandManagerList from '../OperationalMode/Listing/ListForIds/brandId'
 
 const DashboardRightPanel = () => {
    const { user } = useAuth()
@@ -43,6 +45,8 @@ const DashboardRightPanel = () => {
       openCustomerReportTunnel,
       closeCustomerReportTunnel,
    ] = useTunnel(2)
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+   const [brandTunnels, openBrandTunnel, closeBrandTunnel] = useTunnel(1)
 
    return (
       <div>
@@ -55,8 +59,16 @@ const DashboardRightPanel = () => {
                <span>Would you like to see your Reports</span>
             </UserText>
             <OptionTypes>
-               <li onClick={() => history.push('/operationMode')}>
-                  Operation Mode
+               <li
+                  onClick={() => {
+                     brandContext.brandId !== null
+                        ? history.push(
+                             `/operationMode/${brandContext.brandName}-${brandContext.brandId}`
+                          )
+                        : openBrandTunnel(1)
+                  }}
+               >
+                  Brand Manager Operation Mode
                </li>
                <li onClick={() => openOrderReportTunnel(1)}>Order Summary</li>
                <li onClick={() => openReportTunnel(1)}>Earnings Overtime</li>
@@ -143,6 +155,11 @@ const DashboardRightPanel = () => {
                >
                   <CustomerOverTime />
                </BrandShopDate>
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={brandTunnels}>
+            <Tunnel popup={true} layer={4} size="md">
+               <BrandManagerList closeTunnel={closeBrandTunnel} />
             </Tunnel>
          </Tunnels>
       </div>
