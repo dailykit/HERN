@@ -33,6 +33,7 @@ import BrandShopDate from '../BrandShopDateProvider'
 import CustomerOverTime from '../Reports/ReportTiles/Customers/Tunnels/customerOverTime'
 import { BrandContext } from './../../../App'
 import BrandManagerList from '../OperationalMode/Listing/ListForIds/brandId'
+import BrandLocationManagerList from '../OperationalMode/Listing/ListForIds/brandIdLocation'
 
 const DashboardRightPanel = () => {
    const { user } = useAuth()
@@ -47,6 +48,11 @@ const DashboardRightPanel = () => {
    ] = useTunnel(2)
    const [brandContext, setBrandContext] = useContext(BrandContext)
    const [brandTunnels, openBrandTunnel, closeBrandTunnel] = useTunnel(1)
+   const [
+      brandLocationTunnels,
+      openBrandLocationTunnel,
+      closeBrandLocationTunnel,
+   ] = useTunnel(1)
 
    return (
       <div>
@@ -61,7 +67,7 @@ const DashboardRightPanel = () => {
             <OptionTypes>
                <li
                   onClick={() => {
-                     brandContext.brandId !== null
+                     brandContext.brandId
                         ? history.push(
                              `/operationMode/${brandContext.brandName}-${brandContext.brandId}`
                           )
@@ -69,6 +75,17 @@ const DashboardRightPanel = () => {
                   }}
                >
                   Brand Manager Operation Mode
+               </li>
+               <li
+                  onClick={() => {
+                     brandContext.brandLocationId
+                        ? history.push(
+                             `/operationMode/${brandContext.brandName}-${brandContext.brandId}${brandContext.brandLocationId}`
+                          )
+                        : openBrandLocationTunnel(1)
+                  }}
+               >
+                  Brand Location Manager Operation Mode
                </li>
                <li onClick={() => openOrderReportTunnel(1)}>Order Summary</li>
                <li onClick={() => openReportTunnel(1)}>Earnings Overtime</li>
@@ -160,6 +177,13 @@ const DashboardRightPanel = () => {
          <Tunnels tunnels={brandTunnels}>
             <Tunnel popup={true} layer={4} size="md">
                <BrandManagerList closeTunnel={closeBrandTunnel} />
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={brandLocationTunnels}>
+            <Tunnel popup={true} layer={4} size="md">
+               <BrandLocationManagerList
+                  closeTunnel={closeBrandLocationTunnel}
+               />
             </Tunnel>
          </Tunnels>
       </div>
