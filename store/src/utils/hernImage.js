@@ -119,9 +119,7 @@ export const HernLazyImage = ({
                   setSrc(fallbackImageUrl)
                } else if (!removeBg && Boolean(width) && Boolean(height)) {
                   // resize image only
-                  console.log('resize image only', SERVER_URL)
                   const fallbackImageUrl = `${SERVER_URL}/server/api/assets/serve-image?width=${width}&height=${height}&src=${dataSrc}`
-                  console.log('fallbacl url', fallbackImageUrl)
                   // const imageData = await axios.get(fallbackImageUrl)
                   setSrc(fallbackImageUrl)
                } else if (removeBg && Boolean(width) && Boolean(height)) {
