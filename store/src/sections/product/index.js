@@ -2,14 +2,15 @@ import React from 'react'
 import { useQuery } from '@apollo/react-hooks'
 import { PRODUCT_DETAILS } from '../../graphql'
 import { useConfig } from '../../lib'
-import { Recipe, ProductCard, Loader } from '../../components'
+import { Recipe, ProductCard, Loader, ModifierPopup } from '../../components'
 import { useRouter } from 'next/router'
 import ProductMedia from './ProductMedia'
 import { VegNonVegType } from '../../assets/icons'
 import { useTranslation } from '../../context'
 import classNames from 'classnames'
-import { useProductConfig } from '../../utils/getProductSettings'
 import { formatCurrency } from '../../utils'
+import { isEmpty } from 'lodash'
+import { CustomArea } from '../featuredCollection/productCustomArea'
 
 export const Product = ({ config }) => {
    const router = useRouter()
@@ -65,6 +66,12 @@ export const Product = ({ config }) => {
       }
    )
    React.useEffect(() => {
+      console.log(
+         currentLang,
+         status,
+         'product,productsLoading ',
+         productsLoading
+      )
       if (status == 'success') {
          const languageTags = document.querySelectorAll(
             '[data-translation="true"]'
@@ -74,19 +81,28 @@ export const Product = ({ config }) => {
    }, [status, currentLang, productsLoading])
 
    const showProductDetailOnImage =
-      productSetting?.display?.showProductDetailOnImage?.value ??
-      productSetting?.display?.showProductDetailOnImage?.default ??
       config?.display?.showProductDetailOnImage?.value ??
       config?.display?.showProductDetailOnImage?.default ??
       false
-
    if (productsLoading || status === 'loading') return <Loader />
    if (productsError) return <p>{t('Something went wrong')}</p>
 
    return (
       <div className="hern-product-page">
-         <div className="hern-product-page__product-section">
+         <div
+            className={classNames('hern-product-page__product-section', {
+               'hern-product-page__product-section--no-product-option': isEmpty(
+                  productDetails?.productOptions
+               ),
+            })}
+         >
             <div
+               style={{
+                  ...(showProductDetailOnImage && {
+                     backgroundColor: 'rgba(223, 249, 164, 0.2)',
+                     borderRadius: '24px',
+                  }),
+               }}
                className={classNames(
                   'hern-product-page__product-media-wrapper',
                   {
@@ -106,24 +122,65 @@ export const Product = ({ config }) => {
                   />
                </div>
             </div>
-            <div className="hern-product-page__product-options-wrapper">
-               <ProductCard
-                  data={productDetails}
-                  showProductPrice={false}
-                  showProductDescription={false}
-                  showImage={false}
-                  showProductName={false}
-                  closeModifier={() => console.log('close')}
-                  customAreaFlex={false}
-                  showModifier={true}
-                  customProductDetails={true}
-                  modifierWithoutPopup={true}
-                  showProductCard={false}
-                  stepView={true}
-                  modifierPopupConfig={{
-                     counterButtonPosition: 'BOTTOM',
-                  }}
-               />
+            <div
+               className={classNames(
+                  'hern-product-page__product-options-wrapper',
+                  {
+                     'hern-product-page__product-options-wrapper-detail-on-image':
+                        showProductDetailOnImage,
+                  }
+               )}
+            >
+               {!showProductDetailOnImage && (
+                  <ProductCard
+                     data={productDetails}
+                     showProductPrice={false}
+                     showProductDescription={false}
+                     showImage={false}
+                     showProductName={false}
+                     closeModifier={() => console.log('close')}
+                     customAreaFlex={false}
+                     showModifier={true}
+                     customProductDetails={true}
+                     modifierWithoutPopup={true}
+                     showProductCard={false}
+                     stepView={true}
+                     modifierPopupConfig={{
+                        counterButtonPosition: 'BOTTOM',
+                     }}
+                  />
+               )}
+               {showProductDetailOnImage &&
+                  !isEmpty(productDetails?.productOptions) && (
+                     <ModifierPopup
+                        productData={productDetails}
+                        closeModifier={() => {}}
+                        showCounterBtn={true}
+                        modifierWithoutPopup={true}
+                        config={config}
+                        stepView={true}
+                        counterButtonPosition={'BOTTOM'}
+                     />
+                  )}
+               {isEmpty(productDetails?.productOptions) && (
+                  <>
+                     <CustomArea
+                        data={productDetails}
+                        setProductModifier={{}}
+                        showAddToCartButtonFullWidth={true}
+                     />
+
+                     <div
+                        className="hern-product-card__description"
+                        title={productDetails?.description}
+                     >
+                        <span data-translation="true">
+                           {productDetails?.description?.slice(0, 50)}
+                        </span>
+                        {productDetails?.description?.length > 50 && '...'}
+                     </div>
+                  </>
+               )}
             </div>
          </div>
          <div className="hern-product-page-section-ending" />
@@ -136,7 +193,6 @@ export const Product = ({ config }) => {
       </div>
    )
 }
-
 const ProductInfo = ({ productData }) => {
    return (
       <div className={classNames('hern-product__product-info')}>

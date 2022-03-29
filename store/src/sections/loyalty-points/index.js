@@ -19,14 +19,12 @@ const Content = () => {
    const { configOf, settings } = useConfig()
    const { t, dynamicTrans, locale } = useTranslation()
    const theme = configOf('theme-color', 'Visual')
-   const { isAvailable = false, label = 'Loyalty Points' } = configOf(
-      'Loyalty Points',
-      'rewards'
-   )
-   const isLoyaltyPointsAvailable =
-      settings?.rewards?.find(
-         setting => setting?.['Loyalty Points Availability']
-      )?.value?.['Loyalty Points']?.IsLoyaltyPointsAvailable?.value ?? true
+
+   const loyaltyPointConfig = configOf('Loyalty Points ', 'rewards')
+   const isLoyaltyPointsAvailable = React.useMemo(() => {
+      return loyaltyPointConfig?.['Loyalty Points']?.IsLoyaltyPointsAvailable
+         ?.value
+   }, [loyaltyPointConfig])
 
    const currentLang = React.useMemo(() => locale, [locale])
 
@@ -35,8 +33,8 @@ const Content = () => {
          '[data-translation="true"]'
       )
       dynamicTrans(languageTags)
-   }, [currentLang]
-   )
+   }, [currentLang])
+
    return (
       <section className="hern-account-loyalty-points">
          <header className="hern-account-loyalty-points__header">
@@ -46,8 +44,7 @@ const Content = () => {
                   color: `${theme.accent ? theme.accent : 'rgba(5,150,105,1)'}`,
                }}
             >
-               {label == 'Loyalty Points' ? t(label) : <span data-translation="true">{label}</span>}
-
+               <span data-translation="true">{t('Loyalty Points')}</span>
             </h2>
          </header>
          {isLoyaltyPointsAvailable && !!user.loyaltyPoint ? (
@@ -91,7 +88,8 @@ const Content = () => {
                         ))
                      ) : (
                         <div style={{ textAlign: 'center', color: 'gray' }}>
-                           <span>(</span> {t('not available')}<span>)</span>
+                           <span>(</span> {t('not available')}
+                           <span>)</span>
                         </div>
                      )}
                   </tbody>

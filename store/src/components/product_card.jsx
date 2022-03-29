@@ -43,6 +43,7 @@ export const ProductCard = props => {
       contentAreaCustomStyle = {},
       modifierWithoutPopup = false,
       showProductDetails = true,
+      productDetailType = 1,
       customProductDetails = false,
       showProductCard = true,
       className = '',
@@ -213,9 +214,79 @@ export const ProductCard = props => {
                         <AdditionalIcon />
                      </div>
                   )}
-                  {showProductDetails && (
-                     <div className="hern-product-card-details">
-                        <div className="hern-product-card-title">
+                  {showProductDetails &&
+                     (productDetailType == 1 ? (
+                        <div className="hern-product-card-details">
+                           <div className="hern-product-card-title">
+                              {showProductName && (
+                                 <div
+                                    className="hern-product-card__name"
+                                    onClick={e => {
+                                       if (onProductNameClick) {
+                                          e.stopPropagation()
+                                          onProductNameClick()
+                                       }
+                                    }}
+                                    title={data?.name}
+                                    style={{
+                                       cursor: onProductNameClick
+                                          ? 'pointer'
+                                          : null,
+                                    }}
+                                 >
+                                    {data.name}
+                                 </div>
+                              )}
+                              {data?.childs?.length > 0 && (
+                                 <div className="hern-product-card-productOption-label">
+                                    {data.childs[0].productOption.label ||
+                                       'N/A'}
+                                 </div>
+                              )}
+                              {ShowImageIcon && (
+                                 <div
+                                    className="hern-product-card-show-image-icon"
+                                    onClick={e => {
+                                       if (onShowImageIconClick) {
+                                          e.stopPropagation()
+                                          onShowImageIconClick()
+                                       }
+                                    }}
+                                 >
+                                    <ShowImageIcon />
+                                 </div>
+                              )}
+                           </div>
+                           {showProductPrice && (
+                              <div className="hern-product-card__price">
+                                 {useForThirdParty && data.discount > 0 && (
+                                    <span
+                                       style={{
+                                          textDecoration: 'line-through',
+                                       }}
+                                    >
+                                       {formatCurrency(
+                                          data.price - data.discount
+                                       )}
+                                    </span>
+                                 )}
+                                 {finalProductPrice() &&
+                                    finalProductPrice() > 0 && (
+                                       <span style={{ marginLeft: '6px' }}>
+                                          {formatCurrency(finalProductPrice())}
+                                       </span>
+                                    )}
+                              </div>
+                           )}
+                           {showProductAdditionalText &&
+                              data?.additionalText && (
+                                 <div className="hern-product-card__additional-text">
+                                    {data.additionalText}
+                                 </div>
+                              )}
+                        </div>
+                     ) : (
+                        <div className="hern-product-card-details-2">
                            {showProductName && (
                               <div
                                  className="hern-product-card__name"
@@ -231,57 +302,15 @@ export const ProductCard = props => {
                                        ? 'pointer'
                                        : null,
                                  }}
-                                 data-translation="true"
                               >
                                  {data.name}
                               </div>
                            )}
-                           {data?.childs?.length > 0 && (
-                              <div className="hern-product-card-productOption-label">
-                                 {data.childs[0].productOption.label || 'N/A'}
-                              </div>
-                           )}
-                           {ShowImageIcon && (
-                              <div
-                                 className="hern-product-card-show-image-icon"
-                                 onClick={e => {
-                                    if (onShowImageIconClick) {
-                                       e.stopPropagation()
-                                       onShowImageIconClick()
-                                    }
-                                 }}
-                              >
-                                 <ShowImageIcon />
-                              </div>
-                           )}
                         </div>
-                        {showProductPrice && (
-                           <div className="hern-product-card__price">
-                              {useForThirdParty && data.discount > 0 && (
-                                 <span
-                                    style={{
-                                       textDecoration: 'line-through',
-                                    }}
-                                 >
-                                    {formatCurrency(data.price - data.discount)}
-                                 </span>
-                              )}
-                              {finalProductPrice() &&
-                                 finalProductPrice() > 0 && (
-                                    <span style={{ marginLeft: '6px' }}>
-                                       {formatCurrency(finalProductPrice())}
-                                    </span>
-                                 )}
-                           </div>
-                        )}
-                        {showProductAdditionalText && data?.additionalText && (
-                           <div
-                              className="hern-product-card__additional-text"
-                              data-translation="true"
-                           >
-                              {data.additionalText}
-                           </div>
-                        )}
+                     ))}
+                  {showProductAdditionalText && data?.additionalText && (
+                     <div className="hern-product-card__additional-text">
+                        {data.additionalText}
                      </div>
                   )}
                   {showProductDescription && (

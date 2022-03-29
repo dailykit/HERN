@@ -1,8 +1,9 @@
 import { client } from '../../lib/graphql'
 export const sendOtp = async (req, res) => {
    try {
-      const { id, phoneNumber, resendAttempts, code } = req.body.event.data.new
-      if (resendAttempts >= 3) {
+      const { id, phoneNumber, resendAttempts, code, domain } =
+         req.body.event.data.new
+      if (resendAttempts > 3) {
          return res.status(429).json({
             success: false,
             message: 'You have reached maximum resend attempts'
@@ -17,7 +18,7 @@ export const sendOtp = async (req, res) => {
       }
 
       const { sendSMS } = await client.request(SEND_SMS, {
-         message: `Your OTP is ${code}`,
+         message: ` ${code} - your OTP for logging into ${domain}`,
          phone: phoneNumber
       })
 

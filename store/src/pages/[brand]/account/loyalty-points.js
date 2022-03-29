@@ -8,12 +8,7 @@ import {
    ExternalJSCSSFiles,
 } from '../../../components'
 
-import {
-   getPageProps,
-   getRoute,
-   processExternalFiles,
-   renderPageContent,
-} from '../../../utils'
+import { getPageProps, renderPageContent, isClient } from '../../../utils'
 
 const LoyaltyPointsPage = props => {
    const router = useRouter()

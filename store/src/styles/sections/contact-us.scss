@@ -1,162 +1,295 @@
-.hern-contact_us-header{
-    text-align: center;
-    margin-bottom: 85px;
-    > h3{
-        color: rgb(124 196 30);
-        font-family: "Poppins", sans-serif;
-        text-transform: uppercase;
-        font-size: 40px;
-        letter-spacing: 0.8px;
-        margin-bottom: 15px;
-        margin-top: 0;
-    }
-    > h5{
-        color: #222;
-        font-size: 22px;
-        font-weight: 600;
-        font-family: "Poppins", sans-serif;
-        letter-spacing: 0.88px;
-        margin-bottom: 15px;
-        text-transform: uppercase;
-    }
-    > p{
-        color: #777;
-        font-family: "Lato", sans-serif;
-        font-size: 14px;
-        padding: 0 15px;
-        letter-spacing: 0.56px;
-        line-height: 26px;
-        margin-bottom: 0;
-        margin-top: 25px;
-        @media (min-width: 992px){
-            padding: 0 22%;
-        }
-    }
+.hern-contact_us {
+   padding: 30px 0px;
 }
 
-.hern-contact_us-details{
-    > form{
-        text-align: center;
-    }
-    @media (min-width: 768px){
-        width: 40%;
-        float: left;
-    }
-    position: relative;
-    min-height: 1px;
-    padding-right: 15px;
-    padding-left: 15px;
-}
-.hern-contact_us-details.contact-form{
-    @media (min-width: 768px){
-        width: 60%;
-        float: left;
-    }
-    width: 100%;
-}
-
-.hern-contact_us-details{
-    >div{
-        position: relative;
-        padding-left: 100px;
-        padding-right: 64px;
-        margin-bottom: 60px;
-        > h3{
-            color: #222;
-            font-family: "Poppins", sans-serif;
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: 0.56px;
-            text-transform: uppercase;
-        }
-        > p{
-            color: rgb(95, 90, 90);
-            font-family: "Lato", sans-serif;
-            font-size: 16px;
-            line-height: 26px;
-            letter-spacing: 0.64px;
-            margin-bottom: 0;
-        }
-    }
+.hern-contact_us-header {
+   text-align: center;
+   margin-bottom: 85px;
+   > h3 {
+      color: var(--hern-accent);
+      font-family: 'Poppins', sans-serif;
+      text-transform: uppercase;
+      font-size: 40px;
+      letter-spacing: 0.8px;
+      margin-bottom: 15px;
+      margin-top: 0;
+   }
+   > h5 {
+      color: #222;
+      font-size: 22px;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      letter-spacing: 0.88px;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+   }
+   > p {
+      color: #777;
+      font-family: 'Lato', sans-serif;
+      font-size: 14px;
+      padding: 0 15px;
+      letter-spacing: 0.56px;
+      line-height: 26px;
+      margin-bottom: 0;
+      margin-top: 25px;
+      @media (min-width: 992px) {
+         padding: 0 22%;
+      }
+   }
 }
 
-.hern-contact_us-contact-form{
-    @media (min-width: 768px){
-        width: 50%;
-    }
+.hern-contact_us-header-2 {
+   text-align: center;
+   margin-bottom: 85px;
+   > h3 {
+      font-weight: 700;
+      font-size: 64px;
+      line-height: 77px;
+      letter-spacing: 0.04em;
+   }
+   @media (max-width: 768px) {
+      > h3 {
+         font-size: 44px;
+         line-height: 47px;
+      }
+      margin-bottom: 60px;
+   }
+   @media (max-width: 599px) {
+      > h3 {
+         font-size: 34px;
+         line-height: 37px;
+      }
+      margin-bottom: 40px;
+   }
 }
 
-.hern-contact_us-details .form-group{
-    margin-bottom: 20px;
+.hern-contact_us-details {
+   > form {
+      text-align: center;
+   }
+   @media (min-width: 769px) {
+      width: 40%;
+      float: left;
+   }
+   width: 100%;
+   position: relative;
+   min-height: 1px;
+   padding-right: 15px;
+   padding-left: 15px;
+}
+.hern-contact_us-details.contact-form {
+   @media (min-width: 768px) {
+      width: 60%;
+      float: left;
+   }
+   width: 100%;
 }
 
-.hern-contact_us-details .form-control{
-    min-height: 40px;
-    border-color: #e4e4e4;
-    border-radius: 5px;
-    box-shadow: none;
-    font-family: "Lato", sans-serif;
-    font-size: 12px;
-    padding: 6px 25px;
-    letter-spacing: 0.48px;
-    text-transform: uppercase;
-    display: block;
-    width: 100%;
-    line-height: 1.42857143;
-    color: #555;
-    background-color: #fff;
-    background-image: none;
-    border: 1px solid #ccc;
-    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-
-
+.hern-contact_us-details {
+   > div {
+      position: relative;
+      padding-left: 100px;
+      padding-right: 64px;
+      margin-bottom: 60px;
+      > h3 {
+         color: #222;
+         font-family: 'Poppins', sans-serif;
+         font-size: 14px;
+         font-weight: 600;
+         letter-spacing: 0.56px;
+         text-transform: uppercase;
+      }
+      > p {
+         color: rgb(95, 90, 90);
+         font-family: 'Lato', sans-serif;
+         font-size: 16px;
+         line-height: 26px;
+         letter-spacing: 0.64px;
+         margin-bottom: 0;
+      }
+   }
 }
 
-.hern-contact_us-details .submit-button{
-    color: white;
-    font-size: 14px;
-    display: inline-block;
-    font-weight: 600;
-    font-family: "Poppins", sans-serif;
-    background-color: rgb(124 196 30);
-    border: 1px solid rgb(124 196 30);
-    border-radius: 50px;
-    padding: 12px 68px;
-    letter-spacing: 1.8px;
-    text-transform: uppercase;
-    text-decoration: none;
-    transition: all 1s ease 0s;
-    box-shadow: none;
-    outline: none;
+.hern-contact_us-contact-form {
+   @media (min-width: 768px) {
+      width: 50%;
+   }
 }
 
-.hern-contact_us-div{
-    display: flex;
-    padding: 0 9% 0 9%;
-    flex-wrap: wrap;
+.hern-contact_us-details .form-group {
+   margin-bottom: 20px;
 }
 
-.hern-contact_us-icon{
-    color: rgb(124 196 30);
-    display: inline-block;
-    border: 2px solid #d3d3d3;
-    font-size: 20px;
-    position: absolute;
-    left: 0;
-    border-radius: 100%;
-    height: 79px;
-    width: 79px;
-    padding: 28px;
-    line-height: 75px;
-    text-align: center;
+.hern-contact_us-details .form-control {
+   min-height: 40px;
+   border-color: #e4e4e4;
+   border-radius: 5px;
+   box-shadow: none;
+   font-family: 'Lato', sans-serif;
+   font-size: 12px;
+   padding: 6px 25px;
+   letter-spacing: 0.48px;
+   text-transform: uppercase;
+   display: block;
+   width: 100%;
+   line-height: 1.42857143;
+   color: #555;
+   background-color: #fff;
+   background-image: none;
+   border: 1px solid #ccc;
+   transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
 }
 
-.hern-contact_us-success_message{
-    // height: 80vh;
-    @media (min-width: 768px){
-        margin-top: 5em;
-    }
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.hern-contact_us-details .submit-button {
+   color: white;
+   font-size: 14px;
+   display: inline-block;
+   font-weight: 600;
+   font-family: 'Poppins', sans-serif;
+   background-color: var(--hern-accent);
+   border: 1px solid var(--hern-accent);
+   border-radius: 50px;
+   padding: 12px 68px;
+   letter-spacing: 1.8px;
+   text-transform: uppercase;
+   text-decoration: none;
+   transition: all 1s ease 0s;
+   box-shadow: none;
+   outline: none;
+}
+
+.hern-contact_us-div {
+   display: flex;
+   padding: 0 9% 0 9%;
+   flex-wrap: wrap;
+}
+
+.hern-contact_us-icon {
+   color: var(--hern-accent);
+   display: inline-block;
+   border: 2px solid #d3d3d3;
+   font-size: 20px;
+   position: absolute;
+   left: 0;
+   border-radius: 100%;
+   height: 79px;
+   width: 79px;
+   padding: 28px;
+   line-height: 75px;
+   text-align: center;
+}
+
+.hern-contact_us-success_message {
+   // height: 80vh;
+   @media (min-width: 768px) {
+      margin-top: 5em;
+   }
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
+
+.hern_contact_us-2-info-block {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   margin-right: auto;
+   padding: unset !important;
+   > img {
+      width: 100px;
+      margin-bottom: 0.2em;
+   }
+   > p.heading {
+      font-weight: 700;
+      font-size: 28px;
+      line-height: 51px;
+      margin: 0.1em 0px;
+   }
+   > p.email,
+   p.phone {
+      font-weight: 700;
+      font-size: 28px;
+      line-height: 30px;
+      letter-spacing: 0.02em;
+      margin-top: 0.1em;
+      > a {
+         color: var(--hern-accent) !important;
+      }
+   }
+   @media screen and (max-width: 1024px) {
+      > img {
+         width: 100px;
+         margin-bottom: 0.2em;
+      }
+      > p.heading {
+         font-size: 28px;
+         line-height: 51px;
+         margin: 0.1em 0px;
+      }
+      > p.email,
+      p.phone {
+         font-size: 28px;
+         line-height: 30px;
+         margin-top: 0.1em;
+      }
+   }
+   @media screen and (max-width: 599px) {
+      > img {
+         width: 60px;
+         margin-bottom: 0.2em;
+      }
+      > p.heading {
+         font-size: 22px;
+         line-height: 24px;
+         margin: 0.2em 0px;
+      }
+      > p.email,
+      p.phone {
+         font-size: 26px;
+         line-height: 30px;
+         margin-top: 0.1em;
+      }
+   }
+}
+
+.hern-contact_us-details.contact-form-2 {
+   @media (min-width: 769px) {
+      width: 60%;
+      float: left;
+   }
+   width: 100%;
+}
+
+.contact-form-2 .submit-button {
+   text-transform: none;
+   margin: 10px auto;
+   font-size: 20px;
+   line-height: 24px;
+   height: 48px;
+   border-radius: 8.86364px;
+}
+
+.contact-form-2 input:not(.submit-button),
+.contact-form-2 textarea {
+   border: none !important;
+   background-color: #f9f9f9 !important;
+   box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.1) !important;
+   border-radius: 10px !important;
+   font-size: 20px;
+   line-height: 24px;
+   padding: 12px 14px !important;
+   text-transform: none !important;
+}
+.contact-form-2 .form-group {
+   text-align: left;
+}
+.contact-form-2 .submit-form-group {
+   text-align: center;
+}
+
+.contact-form-2 label {
+   font-weight: 500;
+   font-size: 18px;
+   line-height: 22px;
+   letter-spacing: 0.02em;
 }
