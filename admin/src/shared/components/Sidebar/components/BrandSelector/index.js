@@ -44,7 +44,7 @@ const BrandSelector = ({ mouseOver }) => {
             }
          )
          // setBrandList(result)
-         console.log('result', result)
+         // console.log('result', result)
 
          if (
             //organization scope
@@ -185,6 +185,7 @@ const BrandSelector = ({ mouseOver }) => {
                                  })
                                  setBrandArrowClicked(false)
                               }}
+                              style={{ position: 'relative', left: '31px' }}
                            >
                               {'Select all Brands'}
                            </div>
