@@ -621,6 +621,12 @@ const OTPLogin = props => {
       }
    }
    const handleSubmitOTPKeyPress = event => {
+      if (event.which != 8 && event.which != 0 && event.which < 48 || event.which > 57){
+         event.preventDefault();
+      }
+      if( event.key !== 'Enter' && form.otp.length >= 6 ){
+         event.preventDefault();
+      }
       if (event.key === 'Enter') {
          if (
             !(resending || loading || !form.otp || (isNewUser && !form.email))
@@ -665,7 +671,7 @@ const OTPLogin = props => {
                   form.phone !== undefined &&
                   !(form.phone && isValidPhoneNumber(form.phone)) && (
                      <label class="hern-login-v1__otp__phone__error">
-                        Invalid Phone Number!
+                        Please enter a valid phone number
                      </label>
                   )}
                <button
@@ -1352,7 +1358,7 @@ const Signup = props => {
                            !(e === '' || e === undefined) &&
                            !(e && isValidPhoneNumber(e))
                         ) {
-                           setPhoneError('Invalid Phone Number!')
+                           setPhoneError('Please enter a valid phone number')
                         } else {
                            setPhoneError('')
                            setForm(form => ({
