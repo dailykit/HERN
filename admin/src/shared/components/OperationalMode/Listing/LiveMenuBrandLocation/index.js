@@ -966,8 +966,6 @@ const ActionBar = ({
             container
             height="80px"
             width="100%"
-            alignItems="center"
-            justifyContent="space-between"
             style={
                width > 500
                   ? { paddingBottom: '2em', gap: '3em' }

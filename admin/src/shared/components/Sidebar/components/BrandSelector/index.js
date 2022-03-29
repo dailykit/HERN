@@ -53,7 +53,7 @@ const BrandSelector = ({ mouseOver }) => {
          ) {
             setBrandContext({
                ...brandContext,
-               brandName: 'All Brands are selected',
+               brandName: 'All',
                locationLabel: 'All locations are selected',
             })
             return setBrandList(result)
@@ -69,7 +69,7 @@ const BrandSelector = ({ mouseOver }) => {
                ...brandContext,
                logo: result[index].logo,
                domain: result[index].domain,
-               locationLabel: 'All locations are selected',
+               locationLabel: 'All',
             })
             return setBrandList([result[index]])
          } else if (
@@ -127,7 +127,7 @@ const BrandSelector = ({ mouseOver }) => {
       setBrandContext({
          ...brandContext,
          locationId: null,
-         locationLabel: 'All locations are selected',
+         locationLabel: 'All',
       })
    }, [brandContext.brandId])
 
@@ -178,9 +178,9 @@ const BrandSelector = ({ mouseOver }) => {
                                  setBrandContext({
                                     ...brandContext,
                                     brandId: null,
-                                    brandName: 'All Brands are selected',
+                                    brandName: 'All',
                                     locationId: null,
-                                    locationLabel: 'All locations are selected',
+                                    locationLabel: 'All',
                                     logo: '',
                                  })
                                  setBrandArrowClicked(false)
@@ -260,8 +260,7 @@ const BrandSelector = ({ mouseOver }) => {
                                     setBrandContext({
                                        ...brandContext,
                                        locationId: null,
-                                       locationLabel:
-                                          'All locations are selected',
+                                       locationLabel: 'All',
                                     })
                                     setLocationArrowClicked(false)
                                  }}
