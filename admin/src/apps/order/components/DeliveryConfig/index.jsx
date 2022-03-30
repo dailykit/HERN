@@ -1,5 +1,11 @@
 import React from 'react'
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api'
+import {
+   useJsApiLoader,
+   GoogleMap,
+   Marker,
+   DirectionsService,
+   DirectionsRenderer,
+} from '@react-google-maps/api'
 import { useQuery, useSubscription } from '@apollo/react-hooks'
 import {
    Text,
@@ -12,6 +18,7 @@ import {
 } from '@dailykit/ui'
 import moment from 'moment'
 
+import { greyWhite, subtleColorful } from './mapStyles'
 import { useOrder } from '../../context'
 import { QUERIES, DELIVERY_SERVICES, ORDER_DELIVERY_INFO } from '../../graphql'
 import {
@@ -47,7 +54,24 @@ const settings = {
    },
 }
 
+const containerStyle = {
+   width: '100%',
+   height: '400px',
+}
+
+const options = {
+   styles: subtleColorful,
+   // disableDefaultUI: true,
+   // zoomControl: true,
+}
+
+const isClient = typeof window !== 'undefined' && window.document ? true : false
+
 export const DeliveryConfig = ({ closeTunnel: closeParentTunnel }) => {
+   const { isLoaded } = useJsApiLoader({
+      id: 'google-map-id',
+      googleMapsApiKey: get_env('REACT_APP_MAPS_API_KEY'),
+   })
    const {
       updateOrder,
       state: { delivery_config },
@@ -410,7 +434,7 @@ export const DeliveryConfig = ({ closeTunnel: closeParentTunnel }) => {
       window.open(order.deliveryInfo.tracking.code.url, '__blank')
    }
 
-   if (loadingOrder)
+   if (loadingOrder && !isLoaded)
       return (
          <Wrapper>
             <InlineLoader />
@@ -486,8 +510,12 @@ export const DeliveryConfig = ({ closeTunnel: closeParentTunnel }) => {
 }
 
 const DeliveryDetails = ({ details }) => {
-   const [map, setMap] = React.useState(null)
+   // const { isLoaded } = useJsApiLoader({
+   //    id: 'google-map-id',
+   //    googleMapsApiKey: get_env('REACT_APP_MAPS_API_KEY'),
+   // })
    const [isLoading, setIsLoading] = React.useState(true)
+   const [directions, setDirections] = React.useState('')
    const [coordinates, setCoordinates] = React.useState({
       driver: null,
       customer: null,
@@ -495,6 +523,10 @@ const DeliveryDetails = ({ details }) => {
    })
    const [deliveryInfo, setDeliveryInfo] = React.useState(null)
    const [order, setOrder] = React.useState(null)
+   const mapRef = React.useRef()
+   const onMapLoad = React.useCallback(map => {
+      mapRef.current = map
+   }, [])
 
    React.useEffect(() => {
       const { deliveryInfo, ...rest } = details
@@ -502,35 +534,30 @@ const DeliveryDetails = ({ details }) => {
       setDeliveryInfo(deliveryInfo)
       setCoordinates({
          driver: {
-            lat: deliveryInfo.tracking.location.latitude,
-            lng: deliveryInfo.tracking.location.longitude,
+            lat: +deliveryInfo.tracking.location.latitude,
+            lng: +deliveryInfo.tracking.location.longitude,
          },
          customer: {
-            lat: deliveryInfo.dropoff.dropoffInfo.customerAddress.latitude,
-            lng: deliveryInfo.dropoff.dropoffInfo.customerAddress.longitude,
+            lat: +deliveryInfo.dropoff.dropoffInfo.customerAddress.lat,
+            lng: +deliveryInfo.dropoff.dropoffInfo.customerAddress.lng,
          },
          organization: {
-            lat: deliveryInfo.pickup.pickupInfo.organizationAddress.latitude,
-            lng: deliveryInfo.pickup.pickupInfo.organizationAddress.longitude,
+            lat: +deliveryInfo.pickup.pickupInfo.organizationAddress.lat,
+            lng: +deliveryInfo.pickup.pickupInfo.organizationAddress.lng,
          },
       })
       setIsLoading(false)
    }, [details])
 
-   const onLoad = React.useCallback(function callback(map) {
-      const bounds = new window.google.maps.LatLngBounds()
-      map.fitBounds(bounds)
-      setMap(map)
-   }, [])
+   // const onLoad = React.useCallback(function callback(map) {
+   //    const bounds = new window.google.maps.LatLngBounds()
+   //    map.fitBounds(bounds)
+   //    setMap(map)
+   // }, [])
 
-   const onUnmount = React.useCallback(function callback(map) {
-      setMap(null)
-   }, [])
-
-   const containerStyle = {
-      width: '100%',
-      height: '400px',
-   }
+   // const onUnmount = React.useCallback(function callback(map) {
+   //    setMap(null)
+   // }, [])
 
    if (isLoading) return <InlineLoader />
    return (
@@ -543,29 +570,62 @@ const DeliveryDetails = ({ details }) => {
                title={deliveryInfo.deliveryCompany.name || 'N/A'}
             />
          </StyledDeliveryBy>
-         <LoadScript googleMapsApiKey={get_env('REACT_APP_MAPS_API_KEY')}>
-            <GoogleMap
-               zoom={15}
-               onLoad={onLoad}
-               onUnmount={onUnmount}
-               clickableIcons={false}
-               center={coordinates.driver}
-               mapContainerStyle={containerStyle}
-            >
-               <Marker
-                  position={coordinates.organization}
-                  icon="https://dailykit-133-test.s3.us-east-2.amazonaws.com/icons/store.png"
-               />
-               <Marker
-                  position={coordinates.customer}
-                  icon="https://dailykit-133-test.s3.us-east-2.amazonaws.com/icons/home.png"
-               />
-               <Marker
-                  position={coordinates.driver}
-                  icon="https://dailykit-133-test.s3.us-east-2.amazonaws.com/icons/package.png"
-               />
-            </GoogleMap>
-         </LoadScript>
+         <GoogleMap
+            center={coordinates.driver}
+            zoom={15}
+            options={options}
+            onLoad={onMapLoad}
+            mapContainerStyle={containerStyle}
+         >
+            <Marker
+               position={coordinates.organization}
+               icon={{
+                  url: 'https://dailykit-133-test.s3.us-east-2.amazonaws.com/icons/store.png',
+                  ...(isClient && {
+                     scaledSize: new window.google.maps.Size(30, 30),
+                     origin: new window.google.maps.Point(0, 0),
+                     anchor: new window.google.maps.Point(15, 15),
+                  }),
+               }}
+            />
+            <Marker
+               position={coordinates.customer}
+               icon={{
+                  url: 'https://dailykit-133-test.s3.us-east-2.amazonaws.com/icons/home.png',
+                  ...(isClient && {
+                     scaledSize: new window.google.maps.Size(30, 30),
+                     origin: new window.google.maps.Point(0, 0),
+                     anchor: new window.google.maps.Point(15, 15),
+                  }),
+               }}
+            />
+            <Marker
+               position={coordinates.driver}
+               icon={{
+                  url: 'https://dailykit-133-test.s3.us-east-2.amazonaws.com/icons/driver.png',
+                  ...(isClient && {
+                     scaledSize: new window.google.maps.Size(30, 30),
+                     origin: new window.google.maps.Point(0, 0),
+                     anchor: new window.google.maps.Point(15, 15),
+                  }),
+               }}
+            />
+            <DirectionsService
+               options={{
+                  destination: coordinates.organization,
+                  origin: coordinates.customer,
+                  travelMode: 'DRIVING',
+               }}
+               callback={(response, status) => {
+                  if (status === 'OK') {
+                     console.log('direction service response', response)
+                     setDirections(response)
+                  }
+               }}
+            />
+            <DirectionsRenderer directions={directions} />
+         </GoogleMap>
+
          <section data-type="delivery-states">
             <DeliveryStates
                status={{
