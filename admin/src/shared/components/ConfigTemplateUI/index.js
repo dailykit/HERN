@@ -102,6 +102,7 @@ const ConfigUI = ({
          }
       })
    }
+
    const getHeaderUI = ({ title, fieldData, key, isArray, isSubarray }) => {
       const indentation = `${key.split('.').length * 8}px`
       return (
@@ -115,12 +116,18 @@ const ConfigUI = ({
                {fieldData.description && <p>{fieldData.description}</p>}
             </div>
             <div className="btn-group">
-               {isArray && (
+               {editMode && isArray && (
                   <button
                      type="button"
                      className={`add-${key}`}
                      onClick={e => {
-                        console.log(`Added! - ${key}`, fieldData)
+                        fieldData.value.push(
+                           JSON.parse(JSON.stringify(fieldData.userInsertType))
+                        )
+                        setConfigJSON(prev => ({
+                           ...prev,
+                           ...configJSON,
+                        }))
                      }}
                   >
                      <svg
@@ -147,12 +154,24 @@ const ConfigUI = ({
                      </svg>
                   </button>
                )}
-               {isSubarray && (
+               {editMode && isSubarray && (
                   <button
                      type="button"
                      className={`delete-${key}`}
                      onClick={e => {
-                        console.log(`Deleted! - ${key}`, fieldData)
+                        let index = Number(_.last(key.split('.')))
+                        let parentKey = key.split('.')
+                        parentKey.splice(parentKey.length - 1)
+                        parentKey = parentKey.join('.')
+                        console.log('[Config]---> ', configJSON)
+                        let new_values = _.get(configJSON, parentKey)
+                        console.log('[New Values]---> ', new_values, parentKey)
+                        new_values.splice(index, 1)
+                        console.log('[Config]---> ', configJSON)
+                        setConfigJSON(prev => ({
+                           ...prev,
+                           ...configJSON,
+                        }))
                      }}
                   >
                      <svg
@@ -255,7 +274,7 @@ const ConfigUI = ({
             } else if (value !== null && Array.isArray(value)) {
                elements.push(
                   getHeaderUI({
-                     title: key,
+                     title: Number(key) + 1,
                      fieldData: value,
                      key: updatedRootkey,
                      isSubarray: true,
@@ -275,7 +294,7 @@ const ConfigUI = ({
       if (Object.keys(configJSON).length) {
          renderAllFields(configJSON, '')
       }
-   }, [configJSON])
+   }, [configJSON, editMode])
 
    React.useEffect(() => {
       if (config) {
