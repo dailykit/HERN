@@ -57,12 +57,14 @@ const SliderDiv = ({ content, index, getStartedURL }) => {
             width: 820,
             height: 410,
          }
-      } else if (901 <= innerWidth) {
-         return {
-            width: 1280,
-            height: 640,
-         }
-      } else {
+      }
+      //  else if (901 <= innerWidth) {
+      //    return {
+      //       width: null,
+      //       height: null,
+      //    }
+      // }
+      else {
          return {
             width: null,
             height: null,
