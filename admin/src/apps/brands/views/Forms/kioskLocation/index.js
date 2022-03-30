@@ -154,7 +154,7 @@ export const KioskLocation = () => {
 
             <Form.Toggle
                name="Active"
-               value={kiosk[0].isActive}
+               value={kiosk[0]?.isActive}
                onChange={() =>
                   update({
                      variables: {

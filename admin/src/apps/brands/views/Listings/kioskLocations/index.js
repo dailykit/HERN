@@ -10,6 +10,7 @@ import {
    Tunnel,
    Tunnels,
    useTunnel,
+   TextButton,
 } from '@dailykit/ui'
 import { KIOSK, BRANDS } from '../../../graphql'
 import tableOptions from '../../../tableOption'
@@ -183,11 +184,22 @@ export const KioskLocations = () => {
                </Text>
                <Tooltip identifier="brands_listing_heading" />
             </Flex>
+            <div style={{ display: 'flex', gap: '10px' }}>
+               <TextButton
+                  type="solid"
+                  align="left"
+                  onClick={() =>
+                     addTab('kioskReport', '/brands/kiosks/kioskReport/table')
+                  }
+               >
+                  Kiosk Report
+               </TextButton>
 
-            <ComboButton type="solid" onClick={() => openTunnel(1)}>
-               <PlusIcon color="white" />
-               Create Kiosks
-            </ComboButton>
+               <ComboButton type="solid" onClick={() => openTunnel(1)}>
+                  <PlusIcon color="white" />
+                  Create Kiosks
+               </ComboButton>
+            </div>
          </StyledHeader>
          {loading ? (
             <InlineLoader />
@@ -205,6 +217,7 @@ export const KioskLocations = () => {
                />
             </>
          )}
+
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1} size="md">
                <CreateKiosk closeTunnel={closeTunnel} />

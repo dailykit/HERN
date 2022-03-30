@@ -553,4 +553,35 @@ export const KIOSK = {
          }
       }
    `,
+
+   KIOSK_REPORT: gql`
+      subscription kiosk_report {
+         order_kioskReport {
+            amount
+            auth
+            bankId
+            cardNumber
+            cardType
+            city
+            date
+            dateTime
+            id
+            internalLocationKioskLabel
+            isTest
+            label
+            locationId
+            outlet
+            locationKioskId
+            par
+            paymentStatus
+            paymentType
+            posist_sourceName
+            posist_sourceOrderId
+            posist_tabType
+            terminalId
+            time
+            zipcode
+         }
+      }
+   `,
 }

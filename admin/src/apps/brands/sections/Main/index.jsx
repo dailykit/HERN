@@ -7,6 +7,7 @@ import { Home, Brands, Brand, Locations, Location, KioskLocations} from '../../v
 import KioskLocation from '../../views/Forms/kioskLocation'
 import { Flex } from '../../../../shared/components'
 import { useAccess } from '../../../../shared/providers'
+import KioskReportTable from '../../views/Listings/kioskLocations/KioskReportTable'
 export default function Main() {
    return (
       <main>
@@ -65,6 +66,14 @@ export default function Main() {
                   message="You do not have sufficient permission to access location details."
                >
                   <KioskLocation />
+               </AccessCheck>
+            </Route>
+            <Route path="/brands/kiosks/kioskReport/table" exact>
+               <AccessCheck
+                  title="kioskReport"
+                  message="You do not have sufficient permission to access location details."
+               >
+                  <KioskReportTable />
                </AccessCheck>
             </Route>
          </Switch>
