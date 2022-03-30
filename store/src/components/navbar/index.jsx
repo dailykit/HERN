@@ -3,8 +3,9 @@ import LeftArrow from './icons/leftArrow.svg'
 import React, { useState, useEffect, useRef } from 'react'
 import { CSSTransition } from 'react-transition-group'
 import Link from 'next/link'
-import { getRoute } from '../../utils'
+import { getRoute, isClient } from '../../utils'
 import { useTranslation } from '../../context'
+import classNames from 'classnames'
 
 function NavigationBar({ children, Data }) {
    return (
@@ -37,10 +38,17 @@ function Navbar(props) {
 }
 
 function NavItem({ children, menu }) {
+   //list items classe define the active class for the current page
+   const getListItemsClasses = url => {
+      return classNames('hern-navbar__list__item', {
+         'hern-navbar__list__item--active':
+            isClient && window.location.pathname === url,
+      })
+   }
    const [open, setOpen] = useState(false)
    const { t } = useTranslation()
    return (
-      <li className="hern-navbar__list__item">
+      <li className={getListItemsClasses(getRoute(menu.url))}>
          {menu.childNodes.length > 0 ? (
             <span onClick={() => setOpen(!open)}>{t(menu.label)}</span>
          ) : (

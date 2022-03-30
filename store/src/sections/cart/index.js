@@ -90,9 +90,16 @@ export const OnDemandCart = () => {
             <div className="hern-cart-empty-cart">
                <EmptyCart />
                <span>{t('Oops! Your cart is empty')} </span>
-               <Button className="hern-cart-go-to-menu-btn" onClick={() => { }}>
-                  <Link href="/order">{t('GO TO MENU')}</Link>
-               </Button>
+               <Link href="/order">
+                  <a>
+                     <Button
+                        className="hern-cart-go-to-menu-btn"
+                        onClick={() => {}}
+                     >
+                        {t('GO TO MENU')}
+                     </Button>
+                  </a>
+               </Link>
             </div>
          </>
       )

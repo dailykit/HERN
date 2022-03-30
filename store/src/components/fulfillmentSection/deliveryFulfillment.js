@@ -61,8 +61,13 @@ export const Delivery = props => {
       } else {
          return JSON.parse(localStorage.getItem('userLocation'))
       }
-   }, [cartState.cart])
-   console.log('cart', cartState)
+   }, [
+      cartState.cart?.address?.lat,
+      cartState.cart?.address?.lng,
+      cartState.cart?.address?.latitude,
+      cartState.cart?.address?.longitude,
+   ])
+   // console.log('cart', cartState)
    const [deliverySlots, setDeliverySlots] = useState(null)
    const [selectedSlot, setSelectedSlot] = useState(null)
    const [fulfillmentTabInfo, setFulfillmentTabInfo] = useState({
@@ -152,11 +157,10 @@ export const Delivery = props => {
             return { ...prev, orderTabId }
          })
       }
-   }, [deliveryRadioOptions, cartState.cart])
+   }, [deliveryRadioOptions, cartState.cart?.fulfillmentInfo?.type])
 
    React.useEffect(() => {
       if (consumerAddress && brand.id && fulfillmentType) {
-         console.log('consumerAddress', consumerAddress)
          async function fetchStores() {
             const brandClone = { ...brand }
             const availableStore = await getStoresWithValidations({
@@ -222,13 +226,13 @@ export const Delivery = props => {
                }
             }
             setStores(availableStore)
-            console.log('availableStore', availableStore)
+            // console.log('availableStore', availableStore)
             setIsGetStoresLoading(false)
             setUpdateFulfillmentInfoForNow(false)
          }
          fetchStores()
       }
-   }, [consumerAddress, brand, fulfillmentType])
+   }, [consumerAddress, brand?.id, fulfillmentType])
 
    // this will run when ondemand delivery auto select
    useEffect(() => {
@@ -243,7 +247,12 @@ export const Delivery = props => {
             locationId: stores[0].location.id,
          })
       }
-   }, [fulfillmentType, stores, cartState?.cart, deliveryRadioOptions])
+   }, [
+      fulfillmentType,
+      stores,
+      cartState?.cart?.fulfillmentInfo?.type,
+      deliveryRadioOptions,
+   ])
 
    const onFulfillmentTimeClick = (timestamp, mileRangeId) => {
       const slotInfo = {
@@ -379,7 +388,7 @@ export const Delivery = props => {
       return () => {
          clearInterval(interval)
       }
-   }, [stores, cartState.cart])
+   }, [stores, cartState.cart?.fulfillmentInfo])
 
    React.useEffect(() => {
       if (stores && stores.length > 0) {
@@ -399,7 +408,7 @@ export const Delivery = props => {
                cartTimeSlotTo,
                cartState.cart?.fulfillmentInfo.slot.mileRangeId
             )
-            console.log('isValid', isValid)
+            // console.log('isValid', isValid)
             if (!isValid.status) {
                methods.cart.update({
                   variables: {
@@ -481,7 +490,7 @@ export const Delivery = props => {
             setIsLoading(false)
          }
       }
-   }, [stores, cartState.cart])
+   }, [stores, cartState.cart?.fulfillmentInfo])
 
    const title = React.useMemo(() => {
       switch (cartState.cart?.fulfillmentInfo?.type) {
@@ -490,7 +499,7 @@ export const Delivery = props => {
          default:
             return ''
       }
-   }, [cartState.cart, validMileRangeInfo])
+   }, [cartState.cart?.fulfillmentInfo?.type, validMileRangeInfo?.prepTime])
 
    React.useEffect(() => {
       if (!_.isEmpty(cartState.cart)) {
@@ -500,7 +509,7 @@ export const Delivery = props => {
          ) {
             const showTimeSlots = Boolean(
                !lastStoreLocationId == null ||
-               localStorage.getItem('lastStoreLocationId')
+                  localStorage.getItem('lastStoreLocationId')
             )
             setShowSlots(showTimeSlots)
             setIsLoading(false)
@@ -513,7 +522,7 @@ export const Delivery = props => {
             setIsLoading(false)
          }
       }
-   }, [cartState.cart])
+   }, [cartState.cart?.fulfillmentInfo])
    const [isMobileViewOpen, setIsMobileViewOpen] = React.useState(true)
    const isSmallerDevice = isClient && window.innerWidth < 768
 
@@ -585,43 +594,43 @@ export const Delivery = props => {
                   {(cartState.cart?.fulfillmentInfo?.type ===
                      'PREORDER_PICKUP' ||
                      cartState.cart?.fulfillmentInfo?.type ===
-                     'PREORDER_DELIVERY') && (
-                        <span>
-                           {' '}
-                           {moment(
-                              cartState.cart?.fulfillmentInfo?.slot?.from
-                           ).format('DD MMM YYYY')}
-                           {' ('}
-                           {moment(
-                              cartState.cart?.fulfillmentInfo?.slot?.from
-                           ).format('HH:mm')}
-                           {'-'}
-                           {moment(
-                              cartState.cart?.fulfillmentInfo?.slot?.to
-                           ).format('HH:mm')}
-                           {')'}
-                        </span>
-                     )}
+                        'PREORDER_DELIVERY') && (
+                     <span>
+                        {' '}
+                        {moment(
+                           cartState.cart?.fulfillmentInfo?.slot?.from
+                        ).format('DD MMM YYYY')}
+                        {' ('}
+                        {moment(
+                           cartState.cart?.fulfillmentInfo?.slot?.from
+                        ).format('HH:mm')}
+                        {'-'}
+                        {moment(
+                           cartState.cart?.fulfillmentInfo?.slot?.to
+                        ).format('HH:mm')}
+                        {')'}
+                     </span>
+                  )}
                </label>
                {(deliveryRadioOptions.length > 0 ||
                   fulfillmentType === 'PREORDER_DELIVERY') && (
-                     <Button
-                        variant="ghost"
-                        style={{ marginLeft: 'auto' }}
-                        onClick={() => {
-                           if (deliveryRadioOptions.length > 1) {
-                              setFulfillmentType(null)
-                              setFulfillmentTabInfo(prev => ({
-                                 ...prev,
-                                 orderTabId: null,
-                              }))
-                           }
-                           setShowSlots(true)
-                        }}
-                     >
-                        {t('Change')}
-                     </Button>
-                  )}
+                  <Button
+                     variant="ghost"
+                     style={{ marginLeft: 'auto' }}
+                     onClick={() => {
+                        if (deliveryRadioOptions.length > 1) {
+                           setFulfillmentType(null)
+                           setFulfillmentTabInfo(prev => ({
+                              ...prev,
+                              orderTabId: null,
+                           }))
+                        }
+                        setShowSlots(true)
+                     }}
+                  >
+                     {t('Change')}
+                  </Button>
+               )}
             </div>
          </div>
       )

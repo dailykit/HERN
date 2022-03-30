@@ -285,13 +285,13 @@ export const KioskProduct = props => {
                                  // src={eachImage}
                                  // key={index}
                                  dataSrc={eachImage}
-                                 // width={190}
-                                 // height={190}
+                                 width={187}
+                                 height={187}
                                  onClick={() => {
                                     if (showAddToCartButton) {
                                        if (
                                           productData.productOptions.length >
-                                          0 &&
+                                             0 &&
                                           productData.isPopupAllowed
                                        ) {
                                           setShowModifier(true)
@@ -321,7 +321,6 @@ export const KioskProduct = props => {
                      <span
                         className="hern-kiosk__menu-product-name"
                         data-translation="true"
-
                      >
                         {productData.name}
                      </span>
@@ -329,7 +328,6 @@ export const KioskProduct = props => {
                         <span
                            className="hern-kiosk__menu-product-description"
                            data-translation="true"
-
                         >
                            {productData.additionalText}
                         </span>
@@ -338,10 +336,10 @@ export const KioskProduct = props => {
                         {/* <sup></sup> */}
                         {formatCurrency(
                            productData.price -
-                           productData.discount +
-                           (productData?.productOptions[0]?.price ||
-                              0 - productData?.productOptions[0]?.discount ||
-                              0)
+                              productData.discount +
+                              (productData?.productOptions[0]?.price ||
+                                 0 - productData?.productOptions[0]?.discount ||
+                                 0)
                         )}
                      </span>
                   </div>

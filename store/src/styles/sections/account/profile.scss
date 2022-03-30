@@ -39,19 +39,18 @@
    line-height: 2rem;
 }
 .hern-profile__profile-form__name {
-   display: -webkit-box;
-   display: -webkit-flex;
-   display: -ms-flexbox;
-   display: flex;
-   -webkit-flex-wrap: wrap;
-   -ms-flex-wrap: wrap;
-   flex-wrap: wrap;
-   gap: 16px;
-   @media (min-width: 768px) {
-      -webkit-flex-wrap: nowrap;
-      -ms-flex-wrap: nowrap;
-      flex-wrap: nowrap;
-      gap: 8px;
+   input {
+      border-radius: 0;
+      border: 1px solid #7e7e7e;
+      padding: 8px 0 8px 8px;
+      line-height: 2rem;
+      width: 100%;
+      @media (min-width: 768px) {
+         width: 100%;
+      }
+   }
+   .hern-profile__profile-form__error {
+      color: #bf1650;
    }
 }
 .hern-profile__current-plan {

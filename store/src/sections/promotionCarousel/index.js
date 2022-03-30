@@ -158,6 +158,8 @@ export const PromotionCarousal = props => {
                      <HernLazyImage
                         dataSrc={eachCoupon.metaDetails.image}
                         style={{ padding: '1em' }}
+                        height={225}
+                        width={540}
                      />
                   </div>
                )
@@ -175,6 +177,8 @@ export const PromotionCarousal = props => {
                            onClick={() => {
                               onImageClick(eachImage)
                            }}
+                           height={225}
+                           width={540}
                         />
                      </div>
                   )
@@ -190,6 +194,8 @@ export const PromotionCarousal = props => {
                         <HernLazyImage
                            dataSrc={eachImage}
                            style={{ padding: '1em' }}
+                           height={225}
+                           width={540}
                         />
                      </div>
                   )
