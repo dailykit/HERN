@@ -1,8 +1,7 @@
 import { useSubscription } from '@apollo/react-hooks'
 import { Spacer } from '@dailykit/ui'
 import { Avatar } from 'antd'
-import { rearg } from 'lodash'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { BrandContext } from '../../../../../App'
 import { UnionIcon } from '../../../../assets/icons'
 import { ArrowDown, ArrowUp } from '../../../../assets/navBarIcons'
@@ -46,7 +45,7 @@ const BrandSelector = ({ mouseOver }) => {
             }
          )
          // setBrandList(result)
-         console.log('result', result)
+         // console.log('result', result)
 
          if (
             //organization scope
@@ -133,7 +132,7 @@ const BrandSelector = ({ mouseOver }) => {
       },
    })
    console.log('brandContext', brandContext)
-   console.log('brandList', brandList)
+   // console.log('brandList', brandList)
 
    React.useEffect(() => {
       setBrandContext({

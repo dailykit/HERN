@@ -22,7 +22,7 @@ const RecentOrderTable = () => {
    const [status, setStatus] = useState({ loading: true })
    // const { dashboardTableState } = React.useContext(DashboardTableContext)
    const history = useHistory()
-   const [brandContext, setBrandContext] = useContext(BrandContext)
+   const [brandContext] = useContext(BrandContext)
    const { addTab } = useTabs()
 
    const { loading: subsLoading, error: subsError } = useSubscription(
@@ -79,7 +79,7 @@ const RecentOrderTable = () => {
          },
       }
    )
-   console.log('recent orders', recentOrders)
+   // console.log('recent orders', recentOrders)
    const tableHeaderOnClick = () => {
       history.push('order')
    }
