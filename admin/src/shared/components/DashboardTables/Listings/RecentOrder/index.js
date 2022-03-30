@@ -29,21 +29,14 @@ const RecentOrderTable = () => {
       RECENT_ORDERS,
       {
          variables: {
-            // where:
-            //    dashboardTableState.from && dashboardTableState.to
-            //       ? {
-            //            created_at: {
-            //               _gte: dashboardTableState.from,
-            //               _lte: dashboardTableState.to,
-            //            },
-            //         }
-            //       : {},
             where: {
-               brandId: {
-                  _in: brandContext.brandId,
-               },
-               locationId: {
-                  _in: brandContext.locationId,
+               cart: {
+                  brandId: {
+                     _in: brandContext.brandId,
+                  },
+                  locationId: {
+                     _in: brandContext.locationId,
+                  },
                },
             },
          },

@@ -145,7 +145,8 @@ const App = () => {
       brandId: null,
       brandName: "",
       locationId: null,
-      locationLabel: ""
+      locationLabel: "",
+      isLoading: true
    })
 
    console.log("user", user.user.email);
@@ -161,7 +162,8 @@ const App = () => {
             brandId: subscriptionData.data.settings_user[0]?.brand?.id || null,
             brandName: subscriptionData.data.settings_user[0]?.brand?.title || '',
             locationId: subscriptionData.data.settings_user[0]?.location?.id || null,
-            locationLabel: subscriptionData.data.settings_user[0]?.location?.label || ''
+            locationLabel: subscriptionData.data.settings_user[0]?.location?.label || '',
+            isLoading: false,
          })
       }
    })

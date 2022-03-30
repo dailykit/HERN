@@ -34,6 +34,7 @@ const DashboardCards = () => {
          //       params: { where: '"paymentStatus"=\'SUCCEEDED\'' },
          //    },
          // },
+         skip: brandContext.isLoading,
          variables: {
             brandId: brandContext.brandId,
             locationId: brandContext.locationId,
@@ -54,6 +55,7 @@ const DashboardCards = () => {
          },
       }
    )
+   console.log('brandContextCard', brandContext, subsError)
    // console.log('analyticsData', analyticsData)
    if (subsLoading || status.loading) {
       return <InlineLoader />
