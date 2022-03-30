@@ -623,7 +623,7 @@ const DeliveryDetails = ({ details }) => {
                   }
                }}
             />
-            <DirectionsRenderer directions={directions} />
+            {directions && <DirectionsRenderer directions={directions} />}
          </GoogleMap>
 
          <section data-type="delivery-states">
