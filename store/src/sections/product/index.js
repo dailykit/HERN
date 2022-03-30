@@ -8,7 +8,7 @@ import ProductMedia from './ProductMedia'
 import { VegNonVegType } from '../../assets/icons'
 import { useTranslation } from '../../context'
 import classNames from 'classnames'
-import { formatCurrency } from '../../utils'
+import { formatCurrency, useProductConfig } from '../../utils'
 import { isEmpty } from 'lodash'
 import { CustomArea } from '../featuredCollection/productCustomArea'
 

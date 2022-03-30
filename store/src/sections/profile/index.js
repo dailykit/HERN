@@ -110,7 +110,7 @@ const ProfileForm = () => {
                   />
                   {errors.firstName && errors.firstName.type === 'pattern' && (
                      <span className="hern-profile__profile-form__error">
-                        Invalid Chrecter.{' '}
+                        Please enter a valid first name.
                      </span>
                   )}
                </Form.Field>
@@ -126,7 +126,7 @@ const ProfileForm = () => {
                   />
                   {errors.lastName && errors.lastName.type === 'pattern' && (
                      <span className="hern-profile__profile-form__error">
-                        Invalid Chrecter.{' '}
+                        Please enter a valid last name.
                      </span>
                   )}
                </Form.Field>
